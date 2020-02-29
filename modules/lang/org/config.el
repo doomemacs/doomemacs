@@ -669,9 +669,9 @@ between the two."
       ("^\\*\\(?:Agenda Com\\|Calendar\\|Org Export Dispatcher\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
       ("^\\*Org Select" :slot -1 :vslot -2 :ttl 0 :size 0.25)
-      ("^\\*Org Agenda"    :ignore t)
-      ("^\\*Org Src"       :size 0.4  :quit nil :select t :autosave t :modeline t :ttl nil)
-      ("^CAPTURE.*\\.org$" :size 0.25 :quit nil :select t :autosave t))))
+      ("^\\*Org Agenda"     :ignore t)
+      ("^\\*Org Src"        :size 0.4  :quit nil :select t :autosave t :modeline t :ttl nil)
+      ("^CAPTURE-.*\\.org$" :size 0.25 :quit nil :select t :autosave t))))
 
 
 (defun +org-init-protocol-lazy-loader-h ()
