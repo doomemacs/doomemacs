@@ -8,6 +8,7 @@
 ;;; Packages
 
 (use-package! racket-mode
+  :mode "\\.rkt\\'"  ; give it precedence over :lang scheme
   :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-repl-handler! 'racket-mode #'+racket/open-repl)
