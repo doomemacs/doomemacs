@@ -3,7 +3,7 @@
 
 (cond
  ((featurep! :editor evil)
-  (package! evil-multiedit :pin "c3d43b1a65")
-  (package! evil-mc :pin "007d471e26"))
+  (package! evil-multiedit :pin "9f271e0e60")
+  (package! evil-mc :pin "4d4c0172e4"))
 
  ((package! multiple-cursors :pin "b880554d04")))
