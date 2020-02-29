@@ -105,13 +105,6 @@
         :desc "attach"        "a" #'mail-add-attachment))
 
 
-(use-package! mu4e-maildirs-extension
-  :after mu4e
-  :config
-  (mu4e-maildirs-extension)
-  (setq mu4e-maildirs-extension-title nil))
-
-
 (use-package! org-mu4e
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
