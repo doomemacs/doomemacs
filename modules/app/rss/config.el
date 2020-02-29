@@ -64,7 +64,7 @@ easier to scroll through.")
 (use-package! elfeed-org
   :when (featurep! +org)
   :after elfeed
-  :init
+  :preface
   (setq rmh-elfeed-org-files (list "elfeed.org"))
   :config
   (and (let ((default-directory org-directory))
