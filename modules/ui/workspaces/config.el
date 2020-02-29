@@ -179,6 +179,11 @@ stored in `persp-save-dir'.")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
+  (when (featurep! :completion helm)
+    (after! helm-projectile
+      (setcar helm-source-projectile-projects-actions
+              '("Switch to Project" . +workspaces-switch-to-project-h))))
+
   ;; Fix #1973: visual selection surviving workspace changes
   (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
 
