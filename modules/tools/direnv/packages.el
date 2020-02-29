@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/direnv/packages.el
 
-(package! direnv :pin "fd0b6bbd5e")
+(package! direnv :pin "1f93e3f9ca")
