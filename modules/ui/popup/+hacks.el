@@ -26,6 +26,15 @@
 ;;
 ;;; Core functions
 
+(defadvice! +popup--make-case-sensitive-a (orig-fn &rest args)
+  "Make regexps in `display-buffer-alist' case-sensitive.
+
+To reduce fewer edge cases and improve performance when `display-buffer-alist'
+grows larger."
+  :around #'display-buffer-assq-regexp
+  (let (case-fold-search)
+    (apply orig-fn args)))
+
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
 
