@@ -162,7 +162,7 @@ Small modules that give Emacs access to external tools & services.
 + gist - TODO
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
   backend
-+ [[file:../modules/tools/lsp/README.org][lsp]] - TODO
++ [[file:../modules/tools/lsp/README.org][lsp]] =+peek= - TODO
 + macos - TODO
 + magit - TODO
 + make - TODO
