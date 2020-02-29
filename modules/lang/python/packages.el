@@ -4,18 +4,18 @@
 ;; Major modes
 (package! pip-requirements :pin "216cd1690f")
 (when (featurep! +cython)
-  (package! cython-mode :pin "1bc86b5750")
+  (package! cython-mode :pin "f6bf6aa9c7")
   (when (featurep! :checkers syntax)
     (package! flycheck-cython :pin "ecc4454d35")))
 
 ;; LSP
 (when (featurep! +lsp)
-  (package! lsp-python-ms :pin "83ef84d9a4"))
+  (package! lsp-python-ms :pin "5d0c799099"))
 
 ;; Programming environment
-(package! anaconda-mode :pin "1bc301b2d2")
+(package! anaconda-mode :pin "10299bd9ff")
 (when (featurep! :completion company)
-  (package! company-anaconda :pin "398fad1916"))
+  (package! company-anaconda :pin "a31354ca8e"))
 
 ;; Environment management
 (package! pipenv :pin "b730bb509e")
