@@ -14,7 +14,7 @@ cleanup() {
 }
 
 # If emacs isn't running, we start a temporary daemon, solely for this window.
-if ! emacsclient -e nil; then
+if ! emacsclient --suppress-output --eval nil; then
   emacs --daemon
   trap cleanup EXIT INT TERM
   daemon=1
