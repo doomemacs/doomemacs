@@ -20,6 +20,7 @@
     (yaml-mode       :lang data)
     (csv-mode        :lang data)
     (dhall-mode      :lang data)
+    (systemd-mode    :lang data)
     (erlang-mode     :lang erlang)
     (elixir-mode     :lang elixir)
     (elm-mode        :lang elm)

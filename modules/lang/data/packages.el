@@ -10,3 +10,4 @@
 (package! protobuf-mode
   :recipe (:host github :repo "emacsmirror/protobuf-mode" :files (:defaults "*"))
   :pin "94b7bd7e8b")
+(package! systemd :pin "51c148e09a")
