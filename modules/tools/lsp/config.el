@@ -139,8 +139,8 @@ This also logs the resolved project root, if found, so we know where we are."
                (and arg (not (equal arg 1))))))
          ;; read-process-output-max is only available on recent
          ;; development builds of Emacs 27 and above
-         (when (boundp 'read-process-output-max)
-           (setq-local read-process-output-max (* 1024 1024)))
+         (or (not (boundp 'read-process-output-max))
+             (setq-local read-process-output-max (* 1024 1024)))
          (prog1 (lsp-mode 1)
            (setq-local lsp-buffer-uri (lsp--buffer-uri))
            ;; Announce what project root we're using, for diagnostic purposes
