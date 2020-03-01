@@ -51,7 +51,6 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
               (git-gutter-mode +1)
               (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
-  (setq git-gutter:handled-backends '(git hg svn bzr))
   ;; Disable in Org mode, as per
   ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
   ;; <https://github.com/syohex/emacs-git-gutter/issues/24>. Apparently, the
@@ -61,6 +60,13 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; here fixes the issue.
   (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
   :config
+  ;; Only enable the backends that are available, so it doesn't have to check
+  ;; when opening each buffer.
+  (setq git-gutter:handled-backends '(git))
+  (dolist (backend '(hg svn bzr))
+    (when (executable-find (symbol-name backend))
+      (add-to-list 'git-gutter:handled-backends backend)))
+
   (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
 
   ;; Update git-gutter on focus (in case I was using git externally)
