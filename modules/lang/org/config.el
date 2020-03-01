@@ -178,6 +178,9 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         ;; Our :lang common-lisp module uses sly, so...
         org-babel-lisp-eval-fn #'sly-eval)
 
+  ;; Add convenience lang alias for markdown blocks
+  (add-to-list 'org-src-lang-modes '("md" . markdown))
+
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
