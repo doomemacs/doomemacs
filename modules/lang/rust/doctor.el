@@ -12,10 +12,8 @@
   (warn! "Couldn't find cargo binary"))
 
 (if (featurep! +lsp)
-    (let ((lsp-server 'rls))
-      (when (require 'rustic nil t)
-        (setq lsp-server rustic-lsp-server))
-      (pcase lsp-server
+    (when (require 'rustic nil t)
+      (pcase rustic-lsp-server
         (`rust-analyzer
          (unless (executable-find "rust-analyzer")
            (warn! "Couldn't find rust analyzer (rust-analyzer)")))
