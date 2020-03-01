@@ -11,7 +11,7 @@
 
 ;;;###autoload
 (defvar +org-capture-frame-parameters
-  `((name . "org-capture")
+  `((name . "doom-capture")
     (width . 70)
     (height . 25)
     (transient . t)
@@ -29,7 +29,7 @@
 (defun +org-capture-frame-p (&rest _)
   "Return t if the current frame is an org-capture frame opened by
 `+org-capture/open-frame'."
-  (and (equal "org-capture" (frame-parameter nil 'name))
+  (and (equal "doom-capture" (frame-parameter nil 'name))
        (frame-parameter nil 'transient)))
 
 ;;;###autoload
