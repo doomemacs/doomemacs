@@ -23,4 +23,4 @@ This module provides no flags.
 This module has no prereqisites.
 
 * Features
-Please refer to the README.rst at the github repository.
+Please refer [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].
