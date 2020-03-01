@@ -1,11 +1,11 @@
 ;;; tools/ein/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Packages
+;;; Packages
 
 (after! ein
   (defun +ein-buffer-p (buf)
-    (or (memq (or (buffer-base-buffer buf) (current-buffer)) (ein:notebook-opened-buffers))
+    (or (memq buf (ein:notebook-opened-buffers))
         (memq buf (mapcar #'ein:notebooklist-get-buffer (ein:notebooklist-keys)))))
   (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
   (map! :map ein:notebook-mode-map

@@ -139,6 +139,8 @@ If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
       (stringp buffer-or-name)
       (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
   (when-let (buf (get-buffer buffer-or-name))
+    (when-let (basebuf (buffer-base-buffer buf))
+      (setq buf basebuf))
     (and (buffer-live-p buf)
          (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)
