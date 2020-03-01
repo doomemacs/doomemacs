@@ -1,15 +1,15 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
 (defvar +lsp-company-backend 'company-lsp
-  "What backend to use for lsp-driven autocompletion, unless
-overridden by `+lsp-capf-blacklist'.
+  "What backend to use for lsp-driven autocompletion.
 
-While `company-capf' does not require the `company-lsp' package
-and should offer better performance, it has been integrated into
-lsp only recently and as of 02/25/2020 is known to cause issues
-with some language servers. If you wish to use `company-capf' in
-general but fall back to `company-lsp' for specific language
-servers, set `+lsp-company-backend' to `company-capf' and add the
+This can be overridden by `+lsp-capf-blacklist'.
+
+While `company-capf' does not require the `company-lsp' package and should offer
+better performance, it has been integrated into lsp only recently and as of
+02/25/2020 is known to cause issues with some language servers. If you wish to
+use `company-capf' in general but fall back to `company-lsp' for specific
+language servers, set `+lsp-company-backend' to `company-capf' and add the
 excluded servers' identifiers to `+lsp-capf-blacklist'.")
 
 (defvar +lsp-capf-blacklist '(ts-ls gopls)
@@ -29,88 +29,22 @@ irrespective of what `+lsp-company-backend' is set to.")
   ;; Auto-kill LSP server once you've killed the last buffer associated with its
   ;; project.
   (setq lsp-keep-workspace-alive nil)
-  (add-hook! 'lsp-mode-hook
-    (defun +lsp-init-company-h ()
-      (if (not (bound-and-true-p company-mode))
-          (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
-        (let ((preferred-backend +lsp-company-backend))
-          (lsp-foreach-workspace
-           (when (memq (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace))
-                       +lsp-capf-blacklist)
-             (setq preferred-backend 'company-lsp)))
-          (if (eq 'company-capf preferred-backend)
-              ;; use capf backend
-              (progn
-                (setq-local lsp-enable-completion-at-point t)
-                (setq-local lsp-prefer-capf t)
-                (setq-local company-backends
-                            (cons 'company-capf (remq 'company-capf company-backends))))
-            ;; use company-lsp backend (may need to be loaded first)
-            (require 'company-lsp)
-            (setq-local lsp-enable-completion-at-point nil)
-            (setq-local lsp-prefer-capf nil)
-            (setq-local company-backends
-                        (cons 'company-lsp (remq 'company-capf company-backends)))
-            (setq-default company-lsp-cache-candidates 'auto))
-          (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
-    (defun +lsp-init-flycheck-or-flymake-h ()
-      "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
-      (cond ((eq :none lsp-diagnostic-package))
-            ((or (eq :flymake lsp-diagnostic-package)
-                 (eq t lsp-diagnostic-package))
-             (lsp--flymake-setup))
-            ((require 'flycheck nil t)
-             (let ((old-checker flycheck-checker))
-               (lsp-flycheck-enable t)
-               (when old-checker
-                 (setq-local flycheck-checker old-checker)
-                 (kill-local-variable 'flycheck-check-syntax-automatically)))))))
-
+  ;; Let `flycheck-check-syntax-automatically' determine this.
+  (setq lsp-flycheck-live-reporting nil)
   ;; For `lsp-clients'
   (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")
         lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
   :config
+  (set-lookup-handlers! 'lsp-mode :async t
+    :documentation #'lsp-describe-thing-at-point
+    :definition #'lsp-find-definition
+    :references #'lsp-find-references)
+
   (when lsp-auto-configure
     (mapc (lambda (package) (require package nil t))
           lsp-client-packages))
-
-  (set-lookup-handlers! 'lsp-mode :async t
-    :documentation 'lsp-describe-thing-at-point
-    :definition 'lsp-find-definition
-    :references 'lsp-find-references)
-
-  (defvar +lsp--deferred-shutdown-timer nil)
-  (defadvice! +lsp-defer-server-shutdown-a (orig-fn &optional restart)
-    "Defer server shutdown for a few seconds.
-This gives the user a chance to open other project files before the server is
-auto-killed (which is usually an expensive process)."
-    :around #'lsp--shutdown-workspace
-    (if (or lsp-keep-workspace-alive
-            restart)
-        (funcall orig-fn)
-      (when (timerp +lsp--deferred-shutdown-timer)
-        (cancel-timer +lsp--deferred-shutdown-timer))
-      (setq +lsp--deferred-shutdown-timer
-            (run-at-time
-             3 nil (lambda (workspace)
-                     (let ((lsp--cur-workspace workspace))
-                       (unless (lsp--workspace-buffers lsp--cur-workspace)
-                         (funcall orig-fn))))
-             lsp--cur-workspace))))
-
-  (defadvice! +lsp-prompt-if-no-project-a (session file-name)
-    "Prompt for the project root only if no project was found."
-    :after-until #'lsp--calculate-root
-    (cond ((not lsp-auto-guess-root)
-           nil)
-          ((cl-find-if (lambda (dir)
-                         (and (lsp--files-same-host dir file-name)
-                              (file-in-directory-p file-name dir)))
-                       (lsp-session-folders-blacklist session))
-           nil)
-          ((lsp--find-root-interactively session))))
 
   (defadvice! +lsp-init-a (&optional arg)
     "Enable `lsp-mode' in the current buffer.
@@ -153,13 +87,84 @@ This also logs the resolved project root, if found, so we know where we are."
                               (lambda (it) (format "[%s]" (lsp--workspace-print it)))
                               lsp--buffer-workspaces))))))
 
+  (add-hook! 'lsp-mode-hook
+    (defun +lsp-init-company-h ()
+      (if (not (bound-and-true-p company-mode))
+          (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
+        (let ((preferred-backend +lsp-company-backend))
+          (lsp-foreach-workspace
+           (when (memq (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace))
+                       +lsp-capf-blacklist)
+             (setq preferred-backend 'company-lsp)))
+          (if (eq 'company-capf preferred-backend)
+              ;; use capf backend
+              (progn
+                (setq-local lsp-enable-completion-at-point t)
+                (setq-local lsp-prefer-capf t)
+                (setq-local company-backends
+                            (cons 'company-capf (remq 'company-capf company-backends))))
+            ;; use company-lsp backend (may need to be loaded first)
+            (require 'company-lsp)
+            (setq-local lsp-enable-completion-at-point nil)
+            (setq-local lsp-prefer-capf nil)
+            (setq-local company-backends
+                        (cons 'company-lsp (remq 'company-capf company-backends)))
+            (setq-default company-lsp-cache-candidates 'auto))
+          (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
+    (defun +lsp-init-flycheck-or-flymake-h ()
+      "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
+      (pcase lsp-diagnostic-package
+        ((or :auto 'nil) ; try flycheck, fall back to flymake
+         (let ((lsp-diagnostic-package
+                (if (require 'flycheck nil t) :flycheck :flymake)))
+           (+lsp-init-flycheck-or-flymake-h)))
+        ((or :flymake 't)
+         (lsp--flymake-setup))
+        (:flycheck
+         (let ((old-checker flycheck-checker))
+           (lsp-flycheck-enable)
+           ;; Ensure file/dir local `flycheck-checker' is respected
+           (when old-checker
+             (setq-local flycheck-checker old-checker)
+             (kill-local-variable 'flycheck-check-syntax-automatically)))))))
+
+  (defvar +lsp--deferred-shutdown-timer nil)
+  (defadvice! +lsp-defer-server-shutdown-a (orig-fn &optional restart)
+    "Defer server shutdown for a few seconds.
+This gives the user a chance to open other project files before the server is
+auto-killed (which is a potentially expensive process)."
+    :around #'lsp--shutdown-workspace
+    (if (or lsp-keep-workspace-alive
+            restart)
+        (funcall orig-fn)
+      (when (timerp +lsp--deferred-shutdown-timer)
+        (cancel-timer +lsp--deferred-shutdown-timer))
+      (setq +lsp--deferred-shutdown-timer
+            (run-at-time
+             3 nil (lambda (workspace)
+                     (let ((lsp--cur-workspace workspace))
+                       (unless (lsp--workspace-buffers lsp--cur-workspace)
+                         (funcall orig-fn))))
+             lsp--cur-workspace))))
+
+  (defadvice! +lsp-prompt-if-no-project-a (session file-name)
+    "Prompt for the project root only if no project was found."
+    :after-until #'lsp--calculate-root
+    (cond ((not lsp-auto-guess-root)
+           nil)
+          ((cl-find-if (lambda (dir)
+                         (and (lsp--files-same-host dir file-name)
+                              (file-in-directory-p file-name dir)))
+                       (lsp-session-folders-blacklist session))
+           nil)
+          ((lsp--find-root-interactively session))))
+
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
 
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
-
   :config
   (setq lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
