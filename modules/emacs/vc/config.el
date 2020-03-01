@@ -3,6 +3,7 @@
 (when IS-WINDOWS
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
+
 (after! log-view
   (set-evil-initial-state!
     '(log-view-mode
@@ -11,23 +12,24 @@
       vc-bzr-log-view-mode
       vc-svn-log-view-mode)
     'emacs)
-  (evil-define-key* '(emacs) log-view-mode-map (kbd doom-leader-key) 'doom/leader)
-  (map! :mode log-view-mode
+  (map! :map log-view-mode-map
         "j" #'log-view-msg-next
         "k" #'log-view-msg-prev))
+
 
 (after! vc-annotate
   (set-popup-rules!
     '(("^\\*vc-diff" :select nil)   ; *vc-diff*
       ("^\\*vc-change" :select t))) ; *vc-change-log*
-  (set-evil-initial-state!
-    '(vc-annotate-mode)
-    'normal)
+  (set-evil-initial-state! 'vc-annotate-mode 'normal)
 
   ;; Clean up after itself
   (define-key vc-annotate-mode-map [remap quit-window] #'kill-current-buffer))
 
-(after! vc-dir (set-evil-initial-state! '(vc-dir-mode) 'emacs))
+
+(after! vc-dir
+  (set-evil-initial-state! 'vc-dir-mode 'emacs))
+
 
 (after! git-timemachine
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
