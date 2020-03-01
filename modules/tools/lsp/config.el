@@ -129,7 +129,7 @@ Also see:
 This also logs the resolved project root, if found, so we know where we are."
     :override #'lsp
     (interactive "P")
-    (and (buffer-file-name)
+    (and (buffer-file-name (buffer-base-buffer))
          (require 'lsp-mode nil t)
          (setq-local
           lsp--buffer-workspaces
