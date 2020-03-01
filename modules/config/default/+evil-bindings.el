@@ -395,15 +395,17 @@
         :desc "Sudo this file"              "U"   #'doom/sudo-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
-      ;;; <leader> g --- git
+      ;;; <leader> g --- git/version control
       (:prefix-map ("g" . "git")
-        :desc "Git revert file"             "R"   #'vc-revert
+        :desc "Revert file"                 "R"   #'vc-revert
         :desc "Copy link to remote"         "y"   #'+vc/browse-at-remote-kill-file-or-region
         :desc "Copy link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
         (:when (featurep! :ui hydra)
           :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body)
         (:when (featurep! :ui vc-gutter)
-          :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
+          (:when (featurep! :ui hydra)
+            :desc "VCGutter"                "."   #'+vc/gutter-hydra/body)
+          :desc "Revert hunk"               "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
           :desc "Git time machine"          "t"   #'git-timemachine-toggle
           :desc "Jump to next hunk"         "]"   #'git-gutter:next-hunk

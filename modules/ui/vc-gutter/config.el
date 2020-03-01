@@ -51,6 +51,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
               (git-gutter-mode +1)
               (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
+  (setq git-gutter:handled-backends '(git hg svn bzr))
   ;; Disable in Org mode, as per
   ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
   ;; <https://github.com/syohex/emacs-git-gutter/issues/24>. Apparently, the

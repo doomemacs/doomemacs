@@ -23,5 +23,12 @@
   ("m" git-gutter:mark-hunk)
   ("p" git-gutter:popup-hunk)
   ("R" git-gutter:set-start-revision)
-  ("q" nil :color blue)
-  ("Q" (git-gutter-mode -1) :color blue))
+  ("q"
+   (when (get-buffer git-gutter:popup-buffer)
+     (kill-buffer (get-buffer git-gutter:popup-buffer)))
+   :color blue)
+  ("Q"
+   (progn (git-gutter-mode -1)
+          (when (get-buffer git-gutter:popup-buffer)
+            (kill-buffer (get-buffer git-gutter:popup-buffer))))
+   :color blue))
