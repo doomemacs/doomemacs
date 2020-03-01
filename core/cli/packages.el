@@ -168,6 +168,9 @@ declaration) or dependency thereof that hasn't already been."
          (unless (file-in-directory-p default-directory repo-dir)
            (print! (warn "(%d/%d) Skipping %s because it is local") i total package)
            (cl-return))
+         (when (eq type 'git)
+           (unless (file-exists-p ".git")
+             (error "%S is not a valid repository" package)))
          (condition-case-unless-debug e
              (let ((ref (straight-vc-get-commit type local-repo))
                    (target-ref (cdr (assoc local-repo pinned)))
