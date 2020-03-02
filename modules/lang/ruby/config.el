@@ -130,6 +130,7 @@
 (use-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
+  (setq rspec-use-spring-when-possible nil)
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
