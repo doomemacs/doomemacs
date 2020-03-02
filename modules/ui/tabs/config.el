@@ -12,6 +12,7 @@
 
   :config
   (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
+  (add-hook '+popup-buffer-mode-hook #'centaur-tabs-local-mode)
 
   (centaur-tabs-mode +1))
 
