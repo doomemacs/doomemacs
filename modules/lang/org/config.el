@@ -959,6 +959,6 @@ compelling reason, so..."
   ;;      writeable before trying to read/write to it.
   (defadvice! +org--fail-gracefully-a (&rest _)
     :before-while '(org-id-locations-save org-id-locations-load)
-    (file-exists-p org-id-locations-file))
+    (file-writable-p org-id-locations-file))
 
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h))
