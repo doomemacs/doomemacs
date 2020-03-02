@@ -12,6 +12,10 @@
         evil-goggles-enable-change nil)
   :config
   (pushnew! evil-goggles--commands
+            '(evil-magit-yank-whole-line
+              :face evil-goggles-yank-face
+              :switch evil-goggles-enable-yank
+              :advice evil-goggles--generic-async-advice)
             '(+evil:yank-unindented
               :face evil-goggles-yank-face
               :switch evil-goggles-enable-yank
