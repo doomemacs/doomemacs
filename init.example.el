@@ -174,6 +174,7 @@
        ;;calendar
        ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
+       ;;spotify
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
