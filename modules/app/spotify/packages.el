@@ -3,7 +3,7 @@
 ;;
 ;;; Packages
 
-(package! helm-spotify-plus :pin "3383b1399a"
+(package! helm-spotify-plus :pin "c3922ec368"
   :when (featurep! helm)
   :config
   (map! :localleader
@@ -14,4 +14,4 @@
         "x" #'helm-spotify-plus-pause
         "q" #'helm-spotify-plus-queue-stop
         "s" #'helm-spotify-plus
-        ))
+        ) :pin "c3922ec368")
