@@ -131,7 +131,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + qt - TODO
 + racket - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
-+ ruby =+lsp +rvm +rbenv= - TODO
++ ruby =+lsp +rvm +rbenv +rails= - TODO
 + [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
 + scala =+lsp= - TODO
 + [[file:../modules/lang/scheme/README.org][scheme]] - TODO

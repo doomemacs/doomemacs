@@ -27,3 +27,8 @@
 ;; Testing frameworks
 (package! rspec-mode :pin "c4353a1bff")
 (package! minitest :pin "6d9f6233b7")
+
+;; Rails
+(when (featurep! +rails)
+  (package! projectile-rails :pin "228f631")
+  (package! inflections :pin "e4f1372"))
