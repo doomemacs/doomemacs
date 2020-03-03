@@ -20,7 +20,7 @@ overwrite the destination file if it exists, without confirmation."
     (user-error "No new path was specified"))
   (doom/move-this-file new-path force-p))
 
-;;;###autoload (autoload '+evil:copy-this-file "editor/evil/autoload/files" nil nil)
+;;;###autoload (autoload '+evil:copy-this-file "editor/evil/autoload/files" nil t)
 (evil-define-command +evil:copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH. Replaces %, # and other vim-esque
 filename modifiers (see `+evil*ex-replace-special-filenames'). If FORCE-P,
