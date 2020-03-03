@@ -29,14 +29,8 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
           (when (bound-and-true-p evil-local-mode)
             (evil-change-to-initial-state))
           (goto-char (point-max)))
-      (require 'vterm)
       (setenv "PROOT" (or (doom-project-root) default-directory))
-      (let ((buffer (get-buffer-create buffer-name)))
-        (with-current-buffer buffer
-          (doom-mark-buffer-as-real-h)
-          (unless (eq major-mode 'vterm-mode)
-            (vterm-mode)))
-        (pop-to-buffer buffer)))))
+      (vterm-other-window buffer-name))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
@@ -53,7 +47,8 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   (let ((default-directory
           (if arg
               default-directory
-            (or (doom-project-root) default-directory))))
+            (or (doom-project-root) default-directory)))
+        display-buffer-alist)
     (vterm)))
 
 
