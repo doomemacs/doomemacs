@@ -12,6 +12,7 @@
        evil
        :tools
        pass
+       ein
        :lang
        org
        web)
