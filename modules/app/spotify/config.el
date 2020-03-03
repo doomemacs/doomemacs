@@ -11,4 +11,5 @@
         "x" #'helm-spotify-plus-pause
         "q" #'helm-spotify-plus-queue-stop
         "s" #'helm-spotify-plus
+        "w" #'helm-spotify-plus-play
         ))
