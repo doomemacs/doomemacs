@@ -193,6 +193,12 @@ localleader prefix."
   (which-key-add-key-based-replacements doom-leader-key "<leader>")
   (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
 
+  ;; Fix #2647: Hide common "evilem-motion-" prefix in easymotion keymap, so
+  ;; the actual motion descriptions would be visible
+  (push
+   '(("\\`g s" . "evilem--?motion-\\(.*\\)") . (nil . "EM \\1"))
+   which-key-replacement-alist)
+
   (which-key-mode +1))
 
 
