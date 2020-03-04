@@ -5,8 +5,9 @@
   (require 'vterm)
   (let ((buffer (get-buffer-create buffer-name)))
     (with-current-buffer buffer
-      (vterm-mode))
-    (pop-to-buffer buffer)))
+      (unless (eq major-mode 'vterm-mode)
+        (vterm-mode)))
+    buffer))
 
 ;;;###autoload
 (defun +vterm/toggle (arg)
@@ -37,7 +38,7 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
           (when (bound-and-true-p evil-local-mode)
             (evil-change-to-initial-state))
           (goto-char (point-max)))
-      (+vterm--get-create-buffer buffer-name))))
+      (pop-to-buffer (+vterm--get-create-buffer buffer-name)))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
@@ -55,7 +56,7 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
           (if arg
               default-directory
             (or (doom-project-root) default-directory))))
-    (+vterm--get-create-buffer buffer-name)))
+    (switch-to-buffer (+vterm--get-create-buffer buffer-name))))
 
 
 (defvar +vterm--insert-point nil)
