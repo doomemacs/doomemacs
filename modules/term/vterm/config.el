@@ -2,7 +2,7 @@
 
 (use-package! vterm
   :when (boundp 'module-file-suffix)
-  :defer t
+  :commands (vterm vterm-mode)
   :preface (setq vterm-install t)
   :config
   (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
