@@ -1,14 +1,5 @@
 ;;; term/vterm/autoload.el -*- lexical-binding: t; -*-
 
-(defun +vterm--get-create-buffer (buffer-name)
-  (setenv "PROOT" (or (doom-project-root) default-directory))
-  (require 'vterm)
-  (let ((buffer (get-buffer-create buffer-name)))
-    (with-current-buffer buffer
-      (unless (eq major-mode 'vterm-mode)
-        (vterm-mode)))
-    buffer))
-
 ;;;###autoload
 (defun +vterm/toggle (arg)
   "Toggles a terminal popup window at project root.
@@ -38,7 +29,12 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
           (when (bound-and-true-p evil-local-mode)
             (evil-change-to-initial-state))
           (goto-char (point-max)))
-      (pop-to-buffer (+vterm--get-create-buffer buffer-name)))))
+      (setenv "PROOT" (or (doom-project-root) default-directory))
+      (let ((buffer (get-buffer-create buffer-name)))
+        (with-current-buffer buffer
+          (unless (eq major-mode 'vterm-mode)
+            (vterm-mode)))
+        (pop-to-buffer buffer)))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
@@ -52,11 +48,14 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
   (save-window-excursion
     (pop-to-buffer "*scratch*"))
-  (let ((default-directory
-          (if arg
-              default-directory
-            (or (doom-project-root) default-directory))))
-    (switch-to-buffer (+vterm--get-create-buffer buffer-name))))
+  (let* ((project-root (or (doom-project-root) default-directory))
+         (default-directory
+           (if arg
+               default-directory
+             project-root))
+         display-buffer-alist)
+    (setenv "PROOT" project-root)
+    (vterm)))
 
 
 (defvar +vterm--insert-point nil)
