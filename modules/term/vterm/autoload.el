@@ -2,6 +2,7 @@
 
 (defun +vterm--get-create-buffer (buffer-name)
   (setenv "PROOT" (or (doom-project-root) default-directory))
+  (require 'vterm)
   (let ((buffer (get-buffer-create buffer-name)))
     (with-current-buffer buffer
       (vterm-mode))
