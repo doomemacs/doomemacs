@@ -63,7 +63,7 @@
         "'"  #'robe-start
         ;; robe mode specific
         "h"  #'robe-doc
-        "rr" #'robe-rails-refresh
+        "R" #'robe-rails-refresh
         ;; inf-enh-ruby-mode
         :prefix "s"
         "d"  #'ruby-send-definition
@@ -130,6 +130,7 @@
 (use-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
+  (setq rspec-use-spring-when-possible nil)
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
@@ -168,3 +169,20 @@
         "a" #'minitest-verify-all
         "s" #'minitest-verify-single
         "v" #'minitest-verify))
+
+
+(use-package! projectile-rails
+  :when (featurep! +rails)
+  :hook (enh-ruby-mode . projectile-rails-mode)
+  :init
+  (when (featurep! :lang web)
+    (add-hook 'web-mode-hook #'projectile-rails-mode))
+  :config
+  (when (featurep! :editor evil)
+    (add-hook 'projectile-rails-mode-hook #'evil-normalize-keymaps))
+  (map! :localleader
+        :map projectile-rails-mode-map
+        "r" #'projectile-rails-command-map)
+  (push '((nil . "projectile-rails-\\(.+\\)") . (nil . "\\1"))
+        which-key-replacement-alist)
+  (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil))

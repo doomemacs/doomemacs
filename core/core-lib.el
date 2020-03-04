@@ -236,6 +236,8 @@ The current file is the file from which `add-to-load-path!' is used."
      (dolist (dir (list ,@dirs))
        (cl-pushnew (expand-file-name dir) load-path))))
 
+;;; Hooks
+(defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
@@ -246,9 +248,12 @@ HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
 advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
-        (fn (intern (format "doom--transient-%s-h" (sxhash hook-or-function)))))
+        ;; Avoid `make-symbol' and `gensym' here because an interned symbol is
+        ;; easier to debug in backtraces (and is visible to `describe-function')
+        (fn (intern (format "doom--transient-%d-h" (cl-incf doom--transient-counter)))))
     `(let ((sym ,hook-or-function))
        (defun ,fn (&rest _)
+         ,(format "Transient hook for %S" (doom-unquote hook-or-function))
          ,@forms
          (let ((sym ,hook-or-function))
            (cond ((functionp sym) (advice-remove sym #',fn))

@@ -350,10 +350,13 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (setq prescient-filter-method
         (if (featurep! +fuzzy)
             '(literal regexp initialism fuzzy)
-          '(literal regexp initialism))
-        ivy-prescient-retain-classic-highlighting t)
-
+          '(literal regexp initialism)))
   :config
+  (setq ivy-prescient-sort-commands
+        '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
+               counsel-git-grep counsel-ag counsel-rg counsel-imenu
+               counsel-yank-pop counsel-recentf counsel-buffer-or-recentf)
+        ivy-prescient-retain-classic-highlighting t)
   (defun +ivy-prescient-non-fuzzy (str)
     (let ((prescient-filter-method '(literal regexp)))
       (ivy-prescient-re-builder str)))

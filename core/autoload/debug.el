@@ -23,17 +23,19 @@
     (when (file-exists-p file)
       (insert-file-contents file))))
 
-(defun doom--collect-forms-in (file form)
+(defsubst doom--collect-forms-in (file form)
   (when (file-readable-p file)
     (let (forms)
       (with-temp-buffer
         (insert-file-contents file)
         (delay-mode-hooks (emacs-lisp-mode))
         (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
-          (unless (doom-point-in-string-or-comment-p)
-            (save-excursion
-              (goto-char (match-beginning 0))
-              (push (sexp-at-point) forms))))
+          (let ((ppss (syntax-ppss)))
+            (unless (or (nth 4 ppss)
+                        (nth 3 ppss))
+              (save-excursion
+                (goto-char (match-beginning 0))
+                (push (sexp-at-point) forms)))))
         (nreverse forms)))))
 
 ;;;###autoload
