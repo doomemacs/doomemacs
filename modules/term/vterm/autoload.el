@@ -1,5 +1,12 @@
 ;;; term/vterm/autoload.el -*- lexical-binding: t; -*-
 
+(defun +vterm--get-create-buffer (buffer-name)
+  (setenv "PROOT" (or (doom-project-root) default-directory))
+  (let ((buffer (get-buffer-create buffer-name)))
+    (with-current-buffer buffer
+      (vterm-mode))
+    (pop-to-buffer buffer)))
+
 ;;;###autoload
 (defun +vterm/toggle (arg)
   "Toggles a terminal popup window at project root.
@@ -29,8 +36,7 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
           (when (bound-and-true-p evil-local-mode)
             (evil-change-to-initial-state))
           (goto-char (point-max)))
-      (setenv "PROOT" (or (doom-project-root) default-directory))
-      (vterm-other-window buffer-name))))
+      (+vterm--get-create-buffer buffer-name))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
@@ -47,9 +53,8 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   (let ((default-directory
           (if arg
               default-directory
-            (or (doom-project-root) default-directory)))
-        display-buffer-alist)
-    (vterm)))
+            (or (doom-project-root) default-directory))))
+    (+vterm--get-create-buffer buffer-name)))
 
 
 (defvar +vterm--insert-point nil)
