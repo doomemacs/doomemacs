@@ -123,8 +123,8 @@
   :when (featurep! +chruby)
   :defer t
   :hook
-  (chruby-use-corresponding . enh-ruby-mode-hook)
-  (chruby-use-corresponding . ruby-mode-hook)
+  (enh-ruby-mode . chruby-use-corresponding)
+  (ruby-mode . chruby-use-corresponding)
   )
 
 (after! rbenv
