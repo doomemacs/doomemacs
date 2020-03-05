@@ -119,6 +119,14 @@
         "e" #'bundle-exec
         "o" #'bundle-open))
 
+(use-package! chruby
+  :when (featurep! +chruby)
+  :defer t
+  :hook
+  (chruby-use-corresponding . enh-ruby-mode-hook)
+  (chruby-use-corresponding . ruby-mode-hook)
+  )
+
 (after! rbenv
   (setq rspec-use-rvm nil)
   (add-to-list 'exec-path (expand-file-name "shims" rbenv-installation-dir)))
