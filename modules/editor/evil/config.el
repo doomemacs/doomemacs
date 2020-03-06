@@ -174,7 +174,7 @@ directives. By default, this only recognizes C directives.")
                 evil-ex-search-previous
                 evil-ex-search-forward
                 evil-ex-search-backward))
-    (advice-add fn :after #'doom-recenter-a))
+    (advice-add fn :around #'doom-preserve-window-position-a))
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer

@@ -28,8 +28,18 @@ are open."
 
 ;;;###autoload
 (defun doom-recenter-a (&rest _)
-  "Generic advisor for recentering window (typically :after other functions)."
+  "Generic advice for recentering window (typically :after other functions)."
   (recenter))
+
+;;;###autoload
+(defun doom-preserve-window-position-a (orig-fn &rest args)
+  "Generic advice for preserving cursor position on screen after scrolling."
+  (let ((row (cdr (posn-col-row (posn-at-point)))))
+    (prog1 (apply orig-fn args)
+      (save-excursion
+        (let ((target-row (- (line-number-at-pos) row)))
+          (unless (< target-row 0)
+            (evil-scroll-line-to-top target-row)))))))
 
 ;;;###autoload
 (defun doom-shut-up-a (orig-fn &rest args)
