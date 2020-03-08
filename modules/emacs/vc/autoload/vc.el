@@ -5,9 +5,7 @@
 
 ;;;###autoload
 (defun +vc/browse-at-remote-kill-file-or-region ()
-  "Copy the current file's remote URL to your clipboard.
-If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
-the URL."
+  "Copy the current file's remote URL, with line number, to your clipboard."
   (interactive)
   (let ((url (browse-at-remote-get-url)))
     (kill-new url)
