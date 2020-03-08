@@ -15,6 +15,9 @@
 ;;
 ;;; Packages
 
+(add-to-list 'auto-mode-alist '("\\.\\(?:offlineimap\\|mbsync\\)rc\\'" . conf-mode))
+
+
 (after! notmuch
   (set-company-backend! 'notmuch-message-mode
     '(notmuch-company :with company-ispell company-yasnippet))
