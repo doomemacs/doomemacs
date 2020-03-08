@@ -238,7 +238,7 @@
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")
         :desc "Git revert file"             "R"   #'vc-revert
-        :desc "Kill link to remote"         "y"   #'+vc/browse-at-remote-kill-file-or-region
+        :desc "Kill link to remote"         "y"   #'browse-at-remote-kill
         :desc "Kill link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
