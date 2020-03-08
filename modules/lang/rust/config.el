@@ -16,12 +16,7 @@
 
   (setq rustic-indent-method-chain t
         ;; use :editor format instead
-        rustic-format-trigger nil
-        ;; REVIEW `rust-ordinary-lt-gt-p' is terribly expensive in large rust
-        ;;        buffers, so we disable it, but only for evil users, because it
-        ;;        affects `forward-sexp' and its ilk. See
-        ;;        https://github.com/rust-lang/rust-mode/issues/288.
-        rustic-match-angle-brackets (not (featurep! :editor evil)))
+        rustic-format-trigger nil)
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
