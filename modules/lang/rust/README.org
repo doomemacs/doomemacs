@@ -93,3 +93,16 @@ want rust to use eglot instead of LSP, use the following:
 #+END_SRC
 
 * TODO Troubleshooting
+
+** Operations in angle brackets not work as expected
+When trying to delete text between angle brackets or adding lifetime between angle brackets adds double `'`, set the following:
+
+#+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
+(after! rustic
+  (setq rustic-match-angle-brackets t))
+#+END_SRC
+
+`rustic-match-angle-brackets` is disabled by default because it can be terrible expensive in large rust buffers.
+
+
