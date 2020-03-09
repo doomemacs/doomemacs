@@ -64,7 +64,7 @@ You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby 
 *** robe
 | command              | key / ex command | description                                                        |
 |----------------------+------------------+--------------------------------------------------------------------|
-| ~robe-start~         | =SPC m ' =       | Open ruby lang server for auto-completions and jump to definitions |
+| ~robe-start~         | =SPC m \'=       | Open ruby lang server for auto-completions and jump to definitions |
 | ~robe-rails-refresh~ | =SPC m R=        | Refresh the lang server.                                           |
 
 *** projectile-rails
