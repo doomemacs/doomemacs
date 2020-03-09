@@ -107,7 +107,7 @@
 
 (use-package! bundler
   :defer t
-  :ini
+  :init
   (map! :after enh-ruby-mode
         :localleader
         :map enh-ruby-mode-map
