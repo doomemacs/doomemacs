@@ -23,6 +23,8 @@
   (package! rbenv :pin "2ea1a5bdc1"))
 (when (featurep! +rvm)
   (package! rvm :pin "134497bc46"))
+(when (featurep! +chruby)
+  (package! chruby :pin "42bc6d521f"))
 
 ;; Testing frameworks
 (package! rspec-mode :pin "c4353a1bff")

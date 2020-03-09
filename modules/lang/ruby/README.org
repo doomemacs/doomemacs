@@ -5,7 +5,7 @@
 
 * Table of contents :TOC:
 - [[#description][Description]]
-  - [[#module-flags][Module Flags...]]
+  - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
 - [[#prerequisites][Prerequisites]]
   - [[#ubuntu][Ubuntu]]
@@ -23,12 +23,13 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + Bundler
 + Rubocop integration (flycheck)
 
-** Module Flags...
+** Module Flags
 + =+lsp= Enables LangServer support for ruby. You must have =:tools lsp= enabled
   for this to work, as well as the langserver (solargraph) installed on your
   system.
 + =+rvm= Enables RVM (Ruby Version Manager) integration.
-+ =+rbenv= Eanbles rbenv integration.
++ =+rbenv= Enables rbenv integration.
++ =+chruby= Enables chruby integration.
 + =+rails= Enables rails navigational commands, plus server+console integration.
 
 ** Packages
@@ -45,6 +46,7 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + [[https://github.com/arthurnn/minitest-emacs][minitest]]
 + [[https://github.com/asok/projectile-rails][projectile-rails]]
 + [[https://github.com/eschulte/jump.el/tree/e4f1372cf22e811faca52fc86bdd5d817498a4d8][inflections]]
++ [[https://github.com/plexus/chruby.el][chruby]]
 
 * Prerequisites
 Many of this modules plugins require ruby with some version manager (RVM or
@@ -62,7 +64,7 @@ You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby 
 *** robe
 | command              | key / ex command | description                                                        |
 |----------------------+------------------+--------------------------------------------------------------------|
-| ~robe-start~         | =SPC m '=        | Open ruby lang server for auto-completions and jump to definitions |
+| ~robe-start~         | =SPC m \'=       | Open ruby lang server for auto-completions and jump to definitions |
 | ~robe-rails-refresh~ | =SPC m R=        | Refresh the lang server.                                           |
 
 *** projectile-rails
