@@ -15,7 +15,7 @@
 
 (use-package! enh-ruby-mode
   :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby-init-h)
-  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|podspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
+  :mode ("\\.\\(?:rb\\|arb\\|axlsx\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|podspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
   :mode ("/\\(?:Berks\\|Brew\\|Cap\\|Fast\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
   :interpreter ("j?ruby\\([0-9.]+\\)" . +ruby-init-h)
   :preface
@@ -25,8 +25,6 @@
         (enh-ruby-mode)
       (ruby-mode)))
   :config
-  (add-to-list 'auto-mode-alist '("\\.arb\\'" . enh-ruby-mode))
-  (add-to-list 'auto-mode-alist '("\\.axlsx\\'" . enh-ruby-mode))
   (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
