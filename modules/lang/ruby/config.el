@@ -107,7 +107,7 @@
 
 (use-package! bundler
   :defer t
-  :init
+  :ini
   (map! :after enh-ruby-mode
         :localleader
         :map enh-ruby-mode-map
@@ -121,11 +121,12 @@
 
 (use-package! chruby
   :when (featurep! +chruby)
-  :defer t
+  :config
+  (setq rspec-use-rvm nil)
+  (setq rspec-use-chruby t)
   :hook
   (enh-ruby-mode . chruby-use-corresponding)
-  (ruby-mode . chruby-use-corresponding)
-  )
+  (ruby-mode . chruby-use-corresponding))
 
 (after! rbenv
   (setq rspec-use-rvm nil)

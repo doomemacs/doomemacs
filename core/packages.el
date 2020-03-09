@@ -19,7 +19,7 @@
 (when IS-MAC
   (package! ns-auto-titlebar :pin "1efc30d385"))
 (package! pcre2el :pin "0b5b2a2c17")
-(package! smartparens :pin "be8d5c9a63")
+(package! smartparens :pin "1f8857c5fe")
 (package! so-long
   :built-in 'prefer ; included in Emacs 27+
   ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
