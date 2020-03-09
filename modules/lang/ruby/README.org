@@ -1,6 +1,6 @@
-#+TITLE: lang/ruby
-#+DATE:  March 8, 2020
-#+SINCE:   v2.0.9
+#+TITLE:   lang/ruby
+#+DATE:    January 16, 2007
+#+SINCE:   v1.3
 #+STARTUP: inlineimages
 
 * Table of contents :TOC:
@@ -15,7 +15,7 @@
   - [[#commands][Commands]]
 
 * Description
-This module add Ruby and Ruby on Rails support.
+This module add Ruby and optional Ruby on Rails support to Emacs.
 
 + Code completion (robe)
 + Syntax checking (flycheck)
@@ -24,11 +24,12 @@ This module add Ruby and Ruby on Rails support.
 + Rubocop integration (flycheck)
 
 ** Module Flags...
-+ =+lsp= Enables LangServer support for this module. You must have =:tools lsp=
-  enabled for this to work, as well as the langserver (solargraph) installed on your system.
-+ =+rvm= Rvm (Ruby Version Manager) integration.
-+ =+rbenv= Rbenv integration.
-+ =+rails= Rails navigation commands and server \ console integration.
++ =+lsp= Enables LangServer support for ruby. You must have =:tools lsp= enabled
+  for this to work, as well as the langserver (solargraph) installed on your
+  system.
++ =+rvm= Enables RVM (Ruby Version Manager) integration.
++ =+rbenv= Eanbles rbenv integration.
++ =+rails= Enables rails navigational commands, plus server+console integration.
 
 ** Packages
 + [[https://github.com/zenspider/enhanced-ruby-mode][enh-ruby-mode]]
@@ -50,11 +51,11 @@ Many of this modules plugins require ruby with some version manager (RVM or
 Rbenv) and the rubocop gem.
 
 ** Ubuntu
-You can follow [[https://gorails.com/setup/ubuntu/18.04][this guide]]. After ruby installation, run gem install rubocop.
+You can follow [[https://gorails.com/setup/ubuntu/18.04][this guide]]. After ruby installation, run ~gem install rubocop~.
 ** MacOS
-You can follow [[https://gorails.com/setup/osx/10.15-catalina][this guide]]. After ruby installation, run gem install rubocop.
+You can follow [[https://gorails.com/setup/osx/10.15-catalina][this guide]]. After ruby installation, run ~gem install rubocop~.
 ** Windows
-You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby installation, run gem install rubocop.
+You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby installation, run ~gem install rubocop~.
 
 * Appendix
 ** Commands
