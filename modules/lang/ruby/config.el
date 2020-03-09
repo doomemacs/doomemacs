@@ -25,6 +25,8 @@
         (enh-ruby-mode)
       (ruby-mode)))
   :config
+  (add-to-list 'auto-mode-alist '("\\.arb\\'" . enh-ruby-mode))
+  (add-to-list 'auto-mode-alist '("\\.axlsx\\'" . enh-ruby-mode))
   (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
@@ -54,7 +56,7 @@
         (robe-mode +1))))
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)
-  (set-company-backend! 'enh-ruby-mode 'company-robe)
+  (set-company-backend! 'enh-ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'enh-ruby-mode
     :definition #'robe-jump
     :documentation #'robe-doc)
@@ -183,6 +185,7 @@
   :when (featurep! +rails)
   :hook (enh-ruby-mode . projectile-rails-mode)
   :init
+  (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
   :config
