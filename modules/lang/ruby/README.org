@@ -82,8 +82,8 @@ The bundler prefix is =SPC m b=.  Here is some examples:
 | ~bundle-update~  | =SPC m b u=      | Runs bundle update  |
 *** rspec-mode
 The rspec-mode prefix is =SPC m t=.  Here is some examples:
-|                |                  |                                    |
-| command        | key / ex command | description                        |
-|----------------+------------------+------------------------------------|
-| ~rspec-verify~ | =SPC m t v=      | Runs rspec on current file         |
-| ~rspec-verify~ | =SPC m t f=      | Runs rspec for the item on cursor  |
+|                       |                  |                                   |
+| command               | key / ex command | description                       |
+|-----------------------+------------------+-----------------------------------|
+| ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
+| ~rspec-verify-method~ | =SPC m t f=      | Runs rspec for the item on cursor |
