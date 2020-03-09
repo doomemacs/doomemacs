@@ -47,10 +47,6 @@
       ;; buffers are meant to be displayed with sufficient vertical space.
       ("^\\*sly-\\(?:db\\|inspector\\)" :ignore t)))
 
-  (sp-with-modes '(sly-mrepl-mode)
-    (sp-local-pair "'" "'" :actions nil)
-    (sp-local-pair "`" "`" :actions nil))
-
   (defun +common-lisp--cleanup-sly-maybe-h ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))

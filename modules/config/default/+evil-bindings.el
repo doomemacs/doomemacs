@@ -77,7 +77,7 @@
         :n "q"    #'kill-current-buffer)
 
       :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
-      (:after evil-org
+      (:after (evil-org evil-easymotion)
         :map evil-org-mode-map
         :m "gsh" #'+org/goto-visible)
 

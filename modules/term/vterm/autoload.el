@@ -30,7 +30,11 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
             (evil-change-to-initial-state))
           (goto-char (point-max)))
       (setenv "PROOT" (or (doom-project-root) default-directory))
-      (vterm-other-window buffer-name))))
+      (let ((buffer (get-buffer-create buffer-name)))
+        (with-current-buffer buffer
+          (unless (eq major-mode 'vterm-mode)
+            (vterm-mode)))
+        (pop-to-buffer buffer)))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
@@ -44,11 +48,13 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
   (save-window-excursion
     (pop-to-buffer "*scratch*"))
-  (let ((default-directory
-          (if arg
-              default-directory
-            (or (doom-project-root) default-directory)))
-        display-buffer-alist)
+  (let* ((project-root (or (doom-project-root) default-directory))
+         (default-directory
+           (if arg
+               default-directory
+             project-root))
+         display-buffer-alist)
+    (setenv "PROOT" project-root)
     (vterm)))
 
 

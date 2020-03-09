@@ -423,9 +423,10 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   :after-call doom-switch-buffer-hook after-find-file
   :commands sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string
   :config
+  ;; smartparens recognizes `slime-mrepl-mode', but not `sly-mrepl-mode', so...
+  (add-to-list 'sp-lisp-modes 'sly-mrepl-mode)
   ;; Load default smartparens rules for various languages
   (require 'smartparens-config)
-
   ;; Overlays are too distracting and not terribly helpful. show-parens does
   ;; this for us already (and is faster), so...
   (setq sp-highlight-pair-overlay nil

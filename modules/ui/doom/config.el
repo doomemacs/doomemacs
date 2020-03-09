@@ -1,52 +1,10 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
-(defvar +doom-solaire-themes
-  '((doom-acario-dark . t)
-    (doom-acario-light . t)
-    (doom-challenger-deep . t)
-    (doom-city-lights . t)
-    (doom-dark+ . t)
-    (doom-dracula . t)
-    (doom-fairy-floss . t)
-    (doom-gruvbox . t)
-    (doom-horizon . t)
-    (doom-laserwave . t)
-    (doom-losvkem . t)
-    (doom-manegarm . t)
-    (doom-material . t)
-    (doom-molokai . t)
-    (doom-moonlight . t)
-    (doom-nord . t)
-    (doom-nord-light . t)
-    (doom-nova . t)
-    (doom-oceanic-next . t)
-    (doom-one . t)
-    (doom-one-light . t)
-    (doom-outrun-electric . t)
-    (doom-opera . t)
-    (doom-palenight . t)
-    (doom-peacock . t)
-    (doom-snazzy . t)
-    (doom-solarized-dark . t)
-    (doom-solarized-light)
-    (doom-sourcerer . t)
-    (doom-spacegrey . t)
-    (doom-tomorrow-day . t)
-    (doom-tomorrow-night . t)
-    (doom-vibrant . t))
-  "An alist of themes that support `solaire-mode'. If CDR is t, then
-`solaire-mode-swap-bg' will be used automatically, when the theme is loaded.")
-
-
-;;
-;;; Packages
-
 (use-package! doom-themes
   :defer t
   :init
   (unless doom-theme
     (setq doom-theme 'doom-one))
-  :config
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
   ;; more Atom-esque file icons for neotree/treemacs
@@ -65,9 +23,9 @@
   :init
   (add-hook! 'doom-load-theme-hook :append
     (defun +doom-solaire-mode-swap-bg-maybe-h ()
-      (pcase-let ((`(,_theme . ,swap) (assq doom-theme +doom-solaire-themes)))
+      (when (string-prefix-p "doom-" (symbol-name doom-theme))
         (require 'solaire-mode)
-        (if swap (solaire-mode-swap-bg)))))
+        (solaire-mode-swap-bg))))
   :config
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)

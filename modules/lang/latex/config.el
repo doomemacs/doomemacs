@@ -124,6 +124,8 @@ If no viewers are found, `latex-preview-pane' is used.")
   :when (featurep! +cdlatex)
   :hook (LaTeX-mode . cdlatex-mode)
   :config
+  ;; Use \( ... \) instead of $ ... $
+  (setq cdlatex-use-dollar-to-ensure-math nil)
   ;; Disabling keys that have overlapping functionality with other parts of Doom
   (map! :map cdlatex-mode-map
         ;; smartparens takes care of inserting closing delimiters, and if you
