@@ -121,16 +121,16 @@
 
 (use-package! chruby
   :when (featurep! +chruby)
+  :hook (enh-ruby-mode . chruby-use-corresponding)
+  :hook (ruby-mode . chruby-use-corresponding)
   :config
-  (setq rspec-use-rvm nil)
-  (setq rspec-use-chruby t)
-  :hook
-  (enh-ruby-mode . chruby-use-corresponding)
-  (ruby-mode . chruby-use-corresponding))
+  (setq rspec-use-rvm nil
+        rspec-use-chruby t))
 
 (after! rbenv
   (setq rspec-use-rvm nil)
   (add-to-list 'exec-path (expand-file-name "shims" rbenv-installation-dir)))
+
 
 ;;
 ;;; Testing frameworks
