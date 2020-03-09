@@ -3,7 +3,7 @@
 ;;
 ;;; Packages
 
-(after! ein
+(after! ein-notebook
   (defun +ein-buffer-p (buf)
     (or (memq buf (ein:notebook-opened-buffers))
         (memq buf (mapcar #'ein:notebooklist-get-buffer (ein:notebooklist-keys)))))
