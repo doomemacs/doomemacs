@@ -35,6 +35,6 @@ reformatting), so we restore a (false) modified state."
         :localleader
         "t" #'dante-type-at
         "i" #'dante-info
-        "l" #'haskell-process-load-or-reload
+        "l" #'haskell-process-load-file
         "e" #'dante-eval-block
         "a" #'attrap-attrap))
