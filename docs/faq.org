@@ -89,7 +89,7 @@ Although Doom is less polished without evil, its growing non-evil user base is
 slowly improving the situation. We welcome suggestions and PRs to help
 accommodate a non-evil workflow.
 
-If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][removing evil-mode]] section in the
+If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing evil-mode][removing evil-mode]] section in the
 [[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
 
 ** I am a beginner. Can I use Doom?
@@ -651,7 +651,7 @@ tools for experienced Emacs users to skirt around it (most of the time):
   ~doom/restart-and-restore~ (bound to =SPC q r=).
 
 ** Can Vim/Evil be removed for a more vanilla Emacs experience?
-Yes! See the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in [[file:../modules/editor/evil/README.org][:editor evil]]'s documentation.
+Yes! See the [[file:../modules/editor/evil/README.org::Removing evil-mode][Removing evil-mode]] section in [[file:../modules/editor/evil/README.org][:editor evil]]'s documentation.
 
 ** Should I use ~make~ or ~bin/doom~?
 ~bin/doom~ is recommended. Doom's Makefile (to manage your config, at least) is
@@ -712,10 +712,10 @@ YES=1 doom update
 
 * Package Management
 ** How do I install a package from ELPA?
-See the "[[file:getting_started.org::*Installing%20packages][Installing packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
+See the "[[file:getting_started.org::*Installing packages][Installing packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
 
 ** How do I install a package from github/another source?
-See the "[[file:getting_started.org::*Installing%20packages%20from%20external%20sources][Installing packages from external sources]]" section of the [[file:getting_started.org][Getting
+See the "[[file:getting_started.org::*Installing packages from external sources][Installing packages from external sources]]" section of the [[file:getting_started.org][Getting
 Started]] guide.
 
 ** How do I change where an existing package is installed from?
@@ -723,7 +723,7 @@ See the "[[file:getting_started.org::*Changing a recipe for a included package][
 Started]] guide.
 
 ** How do I disable a package completely?
-See the "[[file:getting_started.org::*Disabling%20packages][disabling packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
+See the "[[file:getting_started.org::*Disabling packages][disabling packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
 
 ** How do I reconfigure a package included in Doom?
 See the "[[file:getting_started.org::*Configuring packages][configuring packages]]" section of the Getting Started guide.

@@ -1194,7 +1194,7 @@ provide tools to make this easier. Here are a few things you can try, first:
 + Investigate the =*Messages*= log for warnings or error messages. This log can
   be opened with =SPC h e=, =C-h e= or =M-x view-echo-area-messages=.
 
-+ Look up errors/warnings [[file:faq.org::Common%20Issues][on the FAQ]] and [[https://github.com/hlissner/doom-emacs/issues][Doom's issue tracker]]. It is possible
++ Look up errors/warnings [[file:faq.org::Common Issues][on the FAQ]] and [[https://github.com/hlissner/doom-emacs/issues][Doom's issue tracker]]. It is possible
   that a solution for your issue already exists. The FAQ can be searched from
   inside Doom with =SPC h d f= (or =C-h d f= for non-evil users).
 
