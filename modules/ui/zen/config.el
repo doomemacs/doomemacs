@@ -51,14 +51,4 @@
             'org-indent
             'font-lock-comment-face
             'line-number
-            'line-number-current-line)
-
-  ;; See https://gitlab.com/jabranham/mixed-pitch/issues/6#note_79691741
-  (defadvice! +zen--fix-scaled-fixed-pitch-faces-a (orig-fn &rest args)
-    :around #'mixed-pitch-mode
-    (cl-letf* ((old-face-remap-add-relative (symbol-function #'face-remap-add-relative))
-               ((symbol-function #'face-remap-add-relative)
-                (lambda (face &rest specs)
-                  (funcall old-face-remap-add-relative
-                           face (doom-plist-delete specs :height)))))
-      (apply orig-fn args))))
+            'line-number-current-line))
