@@ -15,7 +15,7 @@
 
 (use-package! enh-ruby-mode
   :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby-init-h)
-  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|podspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
+  :mode ("\\.\\(?:rb\\|arb\\|axlsx\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|podspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
   :mode ("/\\(?:Berks\\|Brew\\|Cap\\|Fast\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
   :interpreter ("j?ruby\\([0-9.]+\\)" . +ruby-init-h)
   :preface
@@ -54,7 +54,7 @@
         (robe-mode +1))))
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)
-  (set-company-backend! 'enh-ruby-mode 'company-robe)
+  (set-company-backend! 'enh-ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'enh-ruby-mode
     :definition #'robe-jump
     :documentation #'robe-doc)
@@ -183,6 +183,7 @@
   :when (featurep! +rails)
   :hook (enh-ruby-mode . projectile-rails-mode)
   :init
+  (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
   :config
