@@ -158,13 +158,14 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
           (progn
             (save-excursion
               (pp info (current-buffer)))
-            (when (search-forward "(modules " nil t)
-              (goto-char (match-beginning 0))
-              (cl-destructuring-bind (beg . end)
-                  (bounds-of-thing-at-point 'sexp)
-                (let ((sexp (prin1-to-string (sexp-at-point))))
-                  (delete-region beg end)
-                  (insert sexp)))))
+            (dolist (sym '(modules packages))
+              (when (re-search-forward (format "^ *\\((%s\\)" sym) nil t)
+                (goto-char (match-beginning 1))
+                (cl-destructuring-bind (beg . end)
+                    (bounds-of-thing-at-point 'sexp)
+                  (let ((sexp (prin1-to-string (sexp-at-point))))
+                    (delete-region beg end)
+                    (insert sexp))))))
         (insert "<details>\n\n```\n")
         (dolist (group info)
           (insert! "%-8s%-10s %s\n"
