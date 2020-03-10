@@ -80,6 +80,8 @@
   (package! ob-crystal :pin "d84c1adee4"))
 (when (featurep! :lang go)
   (package! ob-go :pin "2067ed55f4"))
+(when (featurep! :lang hy)
+  (package! ob-hy :pin "a42ecaf440"))
 (when (featurep! :lang nim)
   (package! ob-nim :pin "bf1642cb93"))
 (when (featurep! :lang racket)
