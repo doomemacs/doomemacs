@@ -526,12 +526,13 @@ This be hooked to `projectile-after-switch-project-hook'."
   (when dir
     (setq +workspaces--project-dir dir))
   (when (and persp-mode +workspaces--project-dir)
-    (with-temp-buffer
-      ;; Load the project dir-local variables into the switch buffer, so the
-      ;; action can make use of them
-      (setq default-directory +workspaces--project-dir)
-      (hack-dir-local-variables-non-file-buffer)
-      (run-hooks 'projectile-before-switch-project-hook))
+    (when projectile-before-switch-project-hook
+      (with-temp-buffer
+        ;; Load the project dir-local variables into the switch buffer, so the
+        ;; action can make use of them
+        (setq default-directory +workspaces--project-dir)
+        (hack-dir-local-variables-non-file-buffer)
+        (run-hooks 'projectile-before-switch-project-hook)))
     (unwind-protect
         (if (and (not (null +workspaces-on-switch-project-behavior))
                  (or (eq +workspaces-on-switch-project-behavior t)
@@ -552,6 +553,7 @@ This be hooked to `projectile-after-switch-project-hook'."
                'success))
           (with-current-buffer (doom-fallback-buffer)
             (setq default-directory +workspaces--project-dir)
+            (hack-dir-local-variables-non-file-buffer)
             (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
           (with-demoted-errors "Workspace error: %s"
             (+workspace-rename (+workspace-current-name) (doom-project-name +workspaces--project-dir)))
