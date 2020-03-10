@@ -55,4 +55,4 @@ This is controlled by `+format-on-save-enabled-modes'."
 ;;   1. Enables partial reformatting (while preserving leading indentation),
 ;;   2. Applies changes via RCS patch, line by line, to protect buffer markers
 ;;      and avoid any jarring cursor+window scrolling.
-(advice-add #'format-all-buffer :override #'+format/buffer)
+(advice-add #'format-all-buffer--with :around #'+format-buffer-a)
