@@ -8,9 +8,35 @@
 ;;; Packages
 
 (after! scala-mode
+  (set-pretty-symbols! 'scala-mode
+      ;; Functional
+      :def "def"
+      :composition "compose"
+      ;; HKT
+      :lambda "Lambda"
+      ;; Types
+      :null "none"
+      :Null "None"
+      :true "true"
+      :false "false"
+      :int "Int"
+      :str "String"
+      :float "Float"
+      :bool "Boolean"
+      :list "List"
+      ;; Flow
+      :not "!"
+      :and "&&"
+      :or "||"
+      :yield "yield"
+      ;; Other
+      :union "union"
+      :intersect "intersect")
+
   (setq scala-indent:align-parameters t
         ;; indent block comments to first asterix, not second
         scala-indent:use-javadoc-style t)
+  
 
   (setq-hook! 'scala-mode-hook
     comment-line-break-function #'+scala-comment-indent-new-line-fn)
