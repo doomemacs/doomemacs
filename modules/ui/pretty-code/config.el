@@ -1,4 +1,4 @@
-j;;; ui/pretty-code/config.el -*- lexical-binding: t; -*-
+;;; ui/pretty-code/config.el -*- lexical-binding: t; -*-
 
 (defvar +pretty-code-symbols
   '(;; org
