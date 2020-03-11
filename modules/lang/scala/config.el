@@ -11,27 +11,29 @@
   (set-pretty-symbols! 'scala-mode
       ;; Functional
       :def "def"
-      :composition "compose"
+      :composition  "compose"
       ;; HKT
-      :lambda "Lambda"
+      :lambda       "Lambda"
       ;; Types
-      :null "none"
-      :Null "None"
-      :true "true"
-      :false "false"
-      :int "Int"
-      :str "String"
-      :float "Float"
-      :bool "Boolean"
-      :list "List"
+      :null         "none"
+      :Null         "None"
+      :true         "true"
+      :false        "false"
+      :int          "Int"
+      :str          "String"
+      :float        "Float"
+      :bool         "Boolean"
+      :list         "List"
       ;; Flow
-      :not "!"
-      :and "&&"
-      :or "||"
-      :yield "yield"
+      :for          "for"
+      :not          "!"
+      :and          "&&"
+      :or           "||"
+      :yield        "yield"
       ;; Other
-      :union "union"
-      :intersect "intersect")
+      :union        "union"
+      :intersect    "intersect"
+      :diff         "diff")
 
   (setq scala-indent:align-parameters t
         ;; indent block comments to first asterix, not second
