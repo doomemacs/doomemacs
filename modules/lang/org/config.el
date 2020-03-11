@@ -949,6 +949,8 @@ compelling reason, so..."
     (run-hooks 'org-load-hook))
 
   :config
+  (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
+
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.
   (setq org-id-track-globally t
