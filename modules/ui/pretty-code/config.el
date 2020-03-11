@@ -1,4 +1,4 @@
-;;; ui/pretty-code/config.el -*- lexical-binding: t; -*-
+j;;; ui/pretty-code/config.el -*- lexical-binding: t; -*-
 
 (defvar +pretty-code-symbols
   '(;; org
@@ -12,12 +12,15 @@
     :map           "↦"
     ;; Types
     :null          "∅"
+    :Null          "∅"
     :true          "𝕋"
     :false         "𝔽"
     :int           "ℤ"
+    :Int           "ℤ"
     :float         "ℝ"
     :str           "𝕊"
     :bool          "𝔹"
+    :list          "𝕃"
     ;; Flow
     :not           "￢"
     :in            "∈"
@@ -29,6 +32,9 @@
     :return        "⟼"
     :yield         "⟻"
     ;; Other
+    :union         "⋃"
+    :intersect     "∩"
+    :diff          "∖"
     :tuple         "⨂"
     :pipe          "" ;; FIXME: find a non-private char
     :dot           "•")
