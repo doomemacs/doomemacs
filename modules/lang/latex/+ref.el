@@ -23,6 +23,8 @@
           (?t . "\\textcite[]{%l}"))
         reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
+  (when (featurep! :editor evil)
+    (add-hook 'reftex-mode-hook #'evil-normalize-keymaps))
   (map! :map reftex-mode-map
         :localleader
         ";" 'reftex-toc)
