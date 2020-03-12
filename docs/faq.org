@@ -539,7 +539,7 @@ modify the syntax-table in all buffers of some mode, e.g.:
 ;; For python
 (add-hook! 'python-mode-hook (modify-syntax-entry ?_ "w"))
 ;; For ruby
-(add-hook! 'enh-ruby-mode-hook (modify-syntax-entry ?_ "w"))
+(add-hook! 'ruby-mode-hook (modify-syntax-entry ?_ "w"))
 ;; For Javascript
 (add-hook! 'js2-mode-hook (modify-syntax-entry ?_ "w"))
 #+END_SRC

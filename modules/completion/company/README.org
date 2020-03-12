@@ -116,7 +116,7 @@ There is no guarantee your language mode will have completion support.
 
 Some, like ~lua-mode~, don't have completion support in Emacs at all. Others may
 requires additional setup to get code completion working. For instance,
-~go-mode~ requires ~guru~ to be installed on your system, and ~enh-ruby-mode~
+~go-mode~ requires ~guru~ to be installed on your system, and ~ruby-mode~
 requires that you have a Robe server running (~M-x robe-start~).
 
 Check the relevant module's documentation for this kind of information.

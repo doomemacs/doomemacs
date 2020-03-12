@@ -33,7 +33,6 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + =+rails= Enables rails navigational commands, plus server+console integration.
 
 ** Packages
-+ [[https://github.com/zenspider/enhanced-ruby-mode][enh-ruby-mode]]
 + [[https://github.com/nonsequitur/inf-ruby][inf-ruby]]
 + [[https://github.com/company-mode/company-inf-ruby][company-inf-ruby]]
 + [[https://github.com/rubocop-hq/rubocop-emacs][rubocop]]

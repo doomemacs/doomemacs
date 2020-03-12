@@ -44,7 +44,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
 | [[../../lang/php/README.org][:lang php]]        | php-mode                                                | php-language-server                                           |
 | [[../../lang/python/README.org][:lang python]]     | python-mode                                             | lsp-python-ms                                                 |
-| [[../../lang/ruby/README.org][:lang ruby]]       | ruby-mode, enh-ruby-mode                                | solargraph                                                    |
+| [[../../lang/ruby/README.org][:lang ruby]]       | ruby-mode                                               | solargraph                                                    |
 | [[../../lang/rust/README.org][:lang rust]]       | rust-mode                                               | rls                                                           |
 | [[../../lang/scala/README.org][:lang scala]]      | scala-mode                                              | metals                                                        |
 | [[../../lang/sh/README.org][:lang sh]]         | sh-mode                                                 | bash-language-server                                          |

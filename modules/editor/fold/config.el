@@ -48,10 +48,6 @@
                         "end\\|[]}]"
                         "#\\|=begin"
                         ruby-forward-sexp)
-             (enh-ruby-mode "class\\|d\\(?:ef\\|o\\)\\|module\\|[[{]"
-                            "end\\|[]}]"
-                            "#\\|=begin"
-                            enh-ruby-forward-sexp nil)
              (matlab-mode "if\\|switch\\|case\\|otherwise\\|while\\|for\\|try\\|catch"
                           "end"
                           nil (lambda (_arg) (matlab-forward-sexp)))

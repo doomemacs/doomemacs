@@ -6,7 +6,6 @@
 ;; appending an extension to `buffer-file-name' when we talk to editorconfig.
 (defvar +editorconfig-mode-alist
   '((emacs-lisp-mode . "el")
-    (enh-ruby-mode   . "rb")
     (js2-mode        . "js")
     (perl-mode       . "pl")
     (php-mode        . "php")

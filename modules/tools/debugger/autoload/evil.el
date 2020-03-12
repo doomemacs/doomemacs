@@ -10,7 +10,7 @@
     (pcase major-mode
       ((or 'c-mode 'c++-mode)
        (realgud:gdb (if path (concat "gdb " path))))
-      ((or 'ruby-mode 'enh-ruby-mode)
+      ('ruby-mode
        ;; FIXME
        (doom:repl nil (format "run '%s'" (file-name-nondirectory (or path buffer-file-name)))))
       ('sh-mode
