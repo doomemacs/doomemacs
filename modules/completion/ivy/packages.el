@@ -1,14 +1,14 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/ivy/packages.el
 
-(package! swiper :pin "7084d60312")
+(package! swiper :pin "5f1d9ce045")
 (package! ivy)
 (package! ivy-hydra)
 (package! counsel)
 
 (package! amx :pin "e512e74e83")
 (package! counsel-projectile :pin "b556ed8995")
-(package! ivy-rich :pin "af43abad5c")
+(package! ivy-rich :pin "0f22aff4c7")
 (package! wgrep :pin "5977b8e000")
 
 (if (featurep! +prescient)
