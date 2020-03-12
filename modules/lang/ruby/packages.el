@@ -2,7 +2,7 @@
 ;;; lang/ruby/packages.el
 
 ;; Major modes
-(package! enh-ruby-mode :pin "732331b99a")
+(package! ruby-mode :built-in t)
 (package! yard-mode :pin "ba74a47463")
 
 ;; REPL
