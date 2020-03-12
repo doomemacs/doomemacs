@@ -98,9 +98,7 @@
                :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
     ;; In lisps ( should open a new form if before another parenthesis
-    (sp-with-modes sp-lisp-modes
-      (sp-local-pair "`" "`" :actions nil)
-      (sp-local-pair "(" ")" :unless '(:rem sp-point-before-same-p)))
+    (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
 
     ;; Major-mode specific fixes
     (sp-local-pair 'ruby-mode "{" "}"
