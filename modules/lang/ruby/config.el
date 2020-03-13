@@ -11,7 +11,7 @@
   ;; Other extensions are already registered in `auto-mode-alist' by `ruby-mode'
   :mode "\\.\\(?:a?rb\\|aslsx\\)\\'"
   :mode "/\\(?:Brew\\|Fast\\)file\\'"
-  :interpreter "j?ruby\\([0-9.]+\\)"
+  :interpreter "j?ruby\\(?:[0-9.]+\\)"
   :config
   (setq ruby-insert-encoding-magic-comment nil)
 
@@ -20,9 +20,6 @@
 
   (when (featurep! +lsp)
     (add-hook 'ruby-mode-local-vars-hook #'lsp!))
-
-  (after! company-dabbrev-code
-    (pushnew 'company-dabbrev-code-modes 'ruby-mode))
 
   (after! inf-ruby
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
@@ -43,15 +40,17 @@
   (add-hook! 'ruby-mode-hook
     (defun +ruby-init-robe-mode-maybe-h ()
       "Start `robe-mode' if `lsp-mode' isn't active."
-      (unless (or (bound-and-true-p lsp-mode)
-                  (bound-and-true-p lsp--buffer-deferred))
-        (robe-mode +1))))
+      (or (bound-and-true-p lsp-mode)
+          (bound-and-true-p lsp--buffer-deferred)
+          (robe-mode +1))))
   :config
   (set-repl-handler! 'ruby-mode #'robe-start)
   (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'ruby-mode
     :definition #'robe-jump
     :documentation #'robe-doc)
+  (when (featurep! :editor evil)
+    (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map robe-mode-map
         "'"  #'robe-start
@@ -173,7 +172,7 @@
 
 (use-package! projectile-rails
   :when (featurep! +rails)
-  :hook (ruby-mode . projectile-rails-mode)
+  :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
   :init
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)

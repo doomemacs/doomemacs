@@ -39,13 +39,13 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + [[https://github.com/dgutov/robe][robe]]
 + [[https://github.com/endofunky/bundler.el/tree/43efb6be4ed118b06d787ce7fbcffd68a31732a7][bundler]]
 + [[https://github.com/asok/rake][rake]]
-+ [[https://github.com/senny/rbenv.el][rbenv]]
-+ [[https://github.com/senny/rvm.el][rvm]]
++ [[https://github.com/senny/rbenv.el][rbenv]] (=+rbenv=)
++ [[https://github.com/senny/rvm.el][rvm]] (=+rvm=)
 + [[https://github.com/pezra/rspec-mode][rspec-mode]]
 + [[https://github.com/arthurnn/minitest-emacs][minitest]]
-+ [[https://github.com/asok/projectile-rails][projectile-rails]]
++ [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
 + [[https://github.com/eschulte/jump.el/tree/e4f1372cf22e811faca52fc86bdd5d817498a4d8][inflections]]
-+ [[https://github.com/plexus/chruby.el][chruby]]
++ [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
 
 * Prerequisites
 Many of this modules plugins require ruby with some version manager (RVM or
