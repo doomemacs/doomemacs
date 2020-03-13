@@ -1,0 +1,47 @@
+#+TITLE:   lang/java
+#+DATE:    March 13, 2020
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#lsp-features][=+lsp= features]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds [[https://www.java.com][java]] support as well as adds the =android-mode= and the =groovy-mode=.
+
+** Module Flags
+The =+lsp= and =+meghanada= packages are mutually exclusive and do not work
+together. At the time of writing the =+meghanada= is already configured whereas
+=+lsp= needs to manual configuring.
+
++ =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
++ =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
+
+** =+lsp= features
+According to [[https://github.com/emacs-lsp/lsp-java]] it adds
+
++ As you type reporting of parsing and compilation errors (via flycheck/[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]])
++ Code completion - using [[https://github.com/tigersoldier/company-lsp][company-lsp]] or builtin complete-at-point
++ Javadoc hovers - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code actions - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code outline - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html][imenu]]
++ Code navigation - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Code lens (references/implementations) - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Highlights
++ Code formatting
++ Maven pom.xml project support
++ Limited Gradle support
++ Visual debugger - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Test runner - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Project explorer integration - [[https://github.com/Alexander-Miller/treemacs][treemacs]]
++ Integration with [[https://start.spring.io/][Spring Initializr]]
+
+
+* TODO Prerequisites
+* TODO Features
+* TODO Configuration
