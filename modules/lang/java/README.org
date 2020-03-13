@@ -7,7 +7,11 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#lsp-features][=+lsp= features]]
+  - [[#meghanada-features][=+meghanada= features]]
 - [[#prerequisites][Prerequisites]]
+  - [[#java][Java]]
+    - [[#openjdk-11][OpenJDK 11]]
+    - [[#oracle-jdk-11][Oracle JDK 11]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
 
@@ -41,7 +45,65 @@ According to [[https://github.com/emacs-lsp/lsp-java]] it adds
 + Project explorer integration - [[https://github.com/Alexander-Miller/treemacs][treemacs]]
 + Integration with [[https://start.spring.io/][Spring Initializr]]
 
+** =+meghanada= features
+According to [[https://github.com/mopemope/meghanada-emacs/]] it adds
 
-* TODO Prerequisites
++ Auto-update server module
++ [[https://gradle.org/][Gradle]] and [[http://maven.apache.org/][Maven]] and Eclipse project support
++ No need build tool's plugin
++ Run build tool task
++ Compile your project
++ Syntax check and analyze java source (=flycheck-meghanada=)
++ Support =Generic Types=
++ Code completion with [[http://company-mode.github.io/][company-mode]] (=company-meghanada=)
++ Optimize import and sort
++ Jump declaration
++ Run [[http://www.junit.org/][JUnit]] test (include test runner)
++ Diagnostic reporting with [[http://flycheck.org/][flycheck]] (=flycheck-meghanada=)
++ Show symbol's type info with =el-doc=
++ Search references
++ Full-featured text search
+
+* Prerequisites
+** Java
+*** OpenJDK 11
+**** Ubuntu
+#+BEGIN_SRC sh
+sudo apt-get install openjdk-11-jdk-headless
+#+END_SRC
+**** Fedora
+#+BEGIN_SRC sh
+sudo dnf install java-11-openjdk
+#+END_SRC
+
+*** Oracle JDK 11
+**** Ubuntu
+#+BEGIN_SRC sh
+sudo add-apt-repository ppa:linuxuprising/java
+sudo apt update
+sudo apt install oracle-java11-installer
+sudo apt install oracle-java11-set-default
+#+END_SRC
+**** Fedora
+#+BEGIN_SRC sh
+curl -O https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+tar zxvf openjdk-11.0.2_linux-x64_bin.tar.gz
+sudo mv jdk-11.0.2/ /usr/local/
+#+END_SRC
+
+open =/etc/profile.d/jdk11.sh= as root and add
+
+#+BEGIN_SRC sh
+export JAVA_HOME=/usr/local/jdk-11.0.2
+export PATH=$PATH:$JAVA_HOME/bin
+#+END_SRC
+
+save the file and source the file
+
+#+BEGIN_SRC sh
+source /etc/profile.d/jdk11.sh
+java -version
+#+END_SRC
+
 * TODO Features
 * TODO Configuration
