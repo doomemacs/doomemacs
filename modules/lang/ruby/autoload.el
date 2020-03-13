@@ -2,10 +2,10 @@
 
 ;;;###autoload
 (defun +ruby|cleanup-robe-servers ()
-  "Clean up dangling inf robe processes if there are no more `enh-ruby-mode'
+  "Clean up dangling inf robe processes if there are no more `ruby-mode'
 buffers open."
   ;; FIXME This should wait X seconds before cleaning up
-  (unless (or (not robe-mode) (doom-buffers-in-mode 'enh-ruby-mode))
+  (unless (or (not robe-mode) (doom-buffers-in-mode 'ruby-mode))
     (let (inf-buffer kill-buffer-query-functions)
       (while (setq inf-buffer (robe-inf-buffer))
         (let ((process (get-buffer-process inf-buffer))

@@ -47,6 +47,7 @@
                   (bound-and-true-p lsp--buffer-deferred))
         (robe-mode +1))))
   :config
+  (add-hook 'robe-mode-hook #'evil-normalize-keymaps)
   (set-repl-handler! 'ruby-mode #'robe-start)
   (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'ruby-mode
@@ -173,7 +174,8 @@
 
 (use-package! projectile-rails
   :when (featurep! +rails)
-  :hook (ruby-mode . projectile-rails-mode)
+  :hook
+  ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
   :init
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)

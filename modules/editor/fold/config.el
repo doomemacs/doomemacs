@@ -48,7 +48,7 @@
                         "end\\|[]}]"
                         "#\\|=begin"
                         ruby-forward-sexp)
-             (enh-ruby-mode "class\\|d\\(?:ef\\|o\\)\\|module\\|[[{]"
+             (ruby-mode "class\\|d\\(?:ef\\|o\\)\\|module\\|[[{]"
                             "end\\|[]}]"
                             "#\\|=begin"
                             enh-ruby-forward-sexp nil)
