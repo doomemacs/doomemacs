@@ -47,7 +47,8 @@
                   (bound-and-true-p lsp--buffer-deferred))
         (robe-mode +1))))
   :config
-  (add-hook 'robe-mode-hook #'evil-normalize-keymaps)
+  (when (featurep! :editor evil)
+    (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
   (set-repl-handler! 'ruby-mode #'robe-start)
   (set-company-backend! 'ruby-mode 'company-robe 'company-dabbrev-code)
   (set-lookup-handlers! 'ruby-mode
