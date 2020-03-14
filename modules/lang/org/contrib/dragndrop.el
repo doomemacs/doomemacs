@@ -52,7 +52,7 @@ an file icon produced by `+org-attach-icon-for')."
                (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
              (format org-download-link-format
                      (cond ((file-in-directory-p filename org-attach-directory)
-                            (file-relative-name filename org-download-image-dir))
+                            (file-relative-name filename org-attach-directory))
                            ((file-in-directory-p filename org-directory)
                             (file-relative-name filename org-directory))
                            (filename)))))
