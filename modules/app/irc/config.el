@@ -48,7 +48,6 @@ playback.")
 
 (use-package! circe
   :commands circe circe-server-buffers
-  :init (setq circe-network-defaults nil)
   :config
   (setq circe-default-quit-message nil
         circe-default-part-message nil
