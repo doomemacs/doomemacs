@@ -169,7 +169,11 @@ to tide."
   :defer t
   :config
   (setq tide-completion-detailed t
-        tide-always-show-documentation t)
+        tide-always-show-documentation t
+        ;; Fix #1792: by default, tide ignores payloads larger than 100kb. This
+        ;; is too small for larger projects that produce long completion lists,
+        ;; so we up it to 512kb.
+        tide-server-max-response-length 524288)
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle
