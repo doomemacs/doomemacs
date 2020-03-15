@@ -7,5 +7,7 @@
 (unless (executable-find "dart")
   (warn! "Dart isn't on PATH."))
 
-(unless (file-readable-p lsp-dart-sdk-dir)
-  (warn! "LSP Mode can't find lsp-dart-sdk-dir."))
+(when (featurep! +lsp)
+  (require 'dart-mode)
+  (unless (file-readable-p lsp-dart-sdk-dir)
+    (warn! "LSP Mode can't find lsp-dart-sdk-dir.")))
