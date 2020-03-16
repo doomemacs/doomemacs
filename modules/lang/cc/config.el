@@ -107,7 +107,8 @@ This is ignored by ccls.")
              ;; another level
              (access-label . -)
              (inclass +cc-c++-lineup-inclass +)
-             (label . 0))))
+             (label . 0)
+             (innamespace . [0])))
 
   (when (listp c-default-style)
     (setf (alist-get 'other c-default-style) "doom"))
