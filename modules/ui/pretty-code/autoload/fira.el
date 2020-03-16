@@ -1,8 +1,7 @@
 ;;; ui/pretty-code/autoload/fira.el -*- lexical-binding: t; -*-
 
 (defvar +pretty-code--fira-font-names
-  '(
-    "FiraCode-Bold.ttf"
+  '("FiraCode-Bold.ttf"
     "FiraCode-Light.ttf"
     "FiraCode-Medium.ttf"
     "FiraCode-Regular.ttf"

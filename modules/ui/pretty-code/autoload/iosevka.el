@@ -1,8 +1,7 @@
 ;;; ui/pretty-code/autoload/iosevka.el -*- lexical-binding: t; -*-
 
 (defvar +pretty-code--iosevka-font-names
-  '(
-    "iosevka-custom-lightoblique.ttf"
+  '("iosevka-custom-lightoblique.ttf"
     "iosevka-custom-thinoblique.ttf"
     "iosevka-custom-mediumitalic.ttf"
     "iosevka-custom-light.ttf"

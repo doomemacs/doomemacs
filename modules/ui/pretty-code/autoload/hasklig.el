@@ -1,8 +1,7 @@
 ;;; ui/pretty-code/autoload/hasklig.el -*- lexical-binding: t; -*-
 
 (defvar +pretty-code--hasklig-font-names
-  '(
-    "Hasklig-Black.otf"
+  '("Hasklig-Black.otf"
     "Hasklig-BlackIt.otf"
     "Hasklig-Bold.otf"
     "Hasklig-BoldIt.otf"
