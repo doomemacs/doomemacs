@@ -139,7 +139,9 @@ possible."
     (defun doom-init-clipboard-in-tty-emacs-h ()
       (and (not (getenv "SSH_CONNECTION"))
            (require 'xclip nil t)
-           (xclip-mode +1)))))
+           (xclip-mode +1))
+      (and (require 'clipetty nil t)
+           (global-clipetty-mode +1)))))
 
 
 ;;
