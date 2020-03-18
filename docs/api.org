@@ -302,6 +302,10 @@ Or to create aliases for functions that behave differently:
         :n "M-s" 'some-fn
         :i "M-o" (lambda (interactive) (message "Hi"))))
 
+(map! :after evil-easymotion
+      :map evilem-map
+      "l" #'avy-goto-word-0) ; Add a binding to an existing prefix
+
 (map! (:when (featurep! :completion company) ; Conditional loading
         :i "C-@" #'+company/complete
         (:prefix "C-x"                       ; Use a prefix key
