@@ -180,6 +180,12 @@ If no viewers are found, `latex-preview-pane' is used.")
   :init
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
+(after! tex-mode
+  (when (featurep! +lsp)
+    (add-hook 'tex-mode-local-vars-hook #'lsp!)
+    (add-hook 'latex-mode-local-vars-hook #'lsp!)
+    (after! yatex
+      (add-hook 'yatex-mode-local-vars-hook #'lsp!))))
 
 ;; bibtex + reftex
 (load! "+ref")
