@@ -626,7 +626,7 @@
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
         :desc "Soft line wrapping"           "w" #'visual-line-mode
-        (:when (featurep! :ui word-wrap)
+        (:when (featurep! :editor word-wrap)
           :desc "Soft line wrapping"         "w" #'+word-wrap-mode)
         :desc "Zen mode"                     "z" #'writeroom-mode))
 
