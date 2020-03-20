@@ -106,7 +106,7 @@ To enable support for auto-formatting with black enable ~:editor format-all~ in
 | ~<localleader> t O~ | ~nosetests-pdb-one~              |
 | ~<localleader> t V~ | ~nosetests-pdb-module~           |
 | ~<localleader> t f~ | ~python-pytest-file~             |
-| ~<localleader> t k~ | ~python-pytest-file-dwin~        |
+| ~<localleader> t k~ | ~python-pytest-file-dwim~        |
 | ~<localleader> t t~ | ~python-pytest-function~         |
 | ~<localleader> t m~ | ~python-pytest-function-dwim~    |
 | ~<localleader> t r~ | ~python-pytest-repeat~           |
