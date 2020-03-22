@@ -1,5 +1,7 @@
 ;;; term/vterm/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +vterm--popup-rule '("^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0))
+
 ;;;###autoload
 (defun +vterm/toggle (arg)
   "Toggles a terminal popup window at project root.
@@ -33,7 +35,8 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
           (unless (eq major-mode 'vterm-mode)
-            (vterm-mode)))
+            (with-popup-rules! '('+vterm--popup-rule)
+              (vterm-mode))))
         (pop-to-buffer buffer)))))
 
 ;;;###autoload
@@ -55,7 +58,8 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
              project-root))
          display-buffer-alist)
     (setenv "PROOT" project-root)
-    (vterm)))
+    (with-popup-rules! '('+vterm--popup-rule)
+      (vterm))))
 
 
 (defvar +vterm--insert-point nil)

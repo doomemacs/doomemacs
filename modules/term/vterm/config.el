@@ -5,7 +5,6 @@
   :commands (vterm vterm-mode)
   :preface (setq vterm-install t)
   :config
-  (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
   (setq-hook! 'vterm-mode-hook
     ;; Don't prompt about processes when killing vterm
