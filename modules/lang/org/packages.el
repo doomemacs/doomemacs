@@ -73,6 +73,12 @@
   (package! ox-reveal :pin "0d947cbce6"))
 (when (featurep! +journal)
   (package! org-journal :pin "9d40f6260c"))
+(when (featurep! +roam)
+  (package! org-roam)
+  (when (featurep! :completion +company)
+    (package! company-org-roam
+      :recipe (:host github :repo "jethrokuan/company-org-roam")
+      :pin "eb01e12174")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
