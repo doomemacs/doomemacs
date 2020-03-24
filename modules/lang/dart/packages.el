@@ -15,4 +15,4 @@
     :recipe (:host github
                    :repo "MYDavoodeh/dart-snippets"
                    :files ("*.el" ("snippets" "snippets/*")))
-    :pin "87ccb4defd"))
+    :pin "946ad5aaa5"))
