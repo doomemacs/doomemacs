@@ -60,7 +60,8 @@
   (setq mail-user-agent 'mu4e-user-agent)
 
   ;; Use fancy icons
-  (setq mu4e-headers-has-child-prefix '("+" . "")
+  (setq mu4e-use-fancy-chars t
+        mu4e-headers-has-child-prefix '("+" . "")
         mu4e-headers-empty-parent-prefix '("-" . "")
         mu4e-headers-first-child-prefix '("\\" . "")
         mu4e-headers-duplicate-prefix '("=" . "")
