@@ -541,6 +541,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; Underline looks a bit better when drawn lower
 (setq x-underline-at-descent-line t)
 
+;; DEPRECATED In Emacs 27
 (defvar doom--prefer-theme-elc nil
   "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
 behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
@@ -588,7 +589,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
   "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
     (with-selected-frame (or frame (selected-frame))
-      (let ((doom--prefer-theme-elc t))
+      (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
         (load-theme doom-theme t)))))
 
 (defadvice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
@@ -605,18 +606,21 @@ Otherwise, themes can conflict with each other."
   :before #'load-theme
   (mapc #'disable-theme custom-enabled-themes))
 
-(defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
-  "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
-startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
-  :around #'load-theme
-  (if (or (null after-init-time)
-          doom--prefer-theme-elc)
-      (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-                 ((symbol-function 'locate-file)
-                  (lambda (filename path &optional _suffixes predicate)
-                    (funcall old-locate-file filename path '("c" "") predicate))))
-        (apply orig-fn args))
-    (apply orig-fn args)))
+(unless EMACS27+
+  ;; DEPRECATED Not needed in Emacs 27
+  (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
+    "Have `load-theme' prioritize the byte-compiled theme.
+This offers a moderate boost in startup (or theme switch) time, so long as
+`doom--prefer-theme-elc' is non-nil."
+    :around #'load-theme
+    (if (or (null after-init-time)
+            doom--prefer-theme-elc)
+        (cl-letf* ((old-locate-file (symbol-function 'locate-file))
+                   ((symbol-function 'locate-file)
+                    (lambda (filename path &optional _suffixes predicate)
+                      (funcall old-locate-file filename path '("c" "") predicate))))
+          (apply orig-fn args))
+      (apply orig-fn args))))
 
 
 ;;
