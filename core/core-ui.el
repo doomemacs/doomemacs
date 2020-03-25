@@ -599,6 +599,12 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
           doom-init-theme-p t)
     (run-hooks 'doom-load-theme-hook)))
 
+(defadvice! doom--disable-enabled-themes-a (&rest _)
+  "Disable previously enabled themes before loading a new one.
+Otherwise, themes can conflict with each other."
+  :before #'load-theme
+  (mapc #'disable-theme custom-enabled-themes))
+
 (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
   "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
 startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
