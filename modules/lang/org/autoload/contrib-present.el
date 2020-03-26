@@ -1,6 +1,9 @@
 ;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +present)
 
+(defvar +org-present--overlays nil)
+
+
 ;;
 ;;; Helpers
 
