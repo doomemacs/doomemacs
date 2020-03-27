@@ -1,5 +1,24 @@
-#+TITLE: :lang php
+#+TITLE:   lang/php
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#php][PHP]]
+    - [[#macos][MacOS]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#opensuse][openSUSE]]
+  - [[#dependencies][Dependencies]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
 This module adds support for PHP 5.3+ (including PHP7).
 
 + ctags-based code completion (~company-php~ and ~phpctags~)
@@ -12,17 +31,39 @@ This module adds support for PHP 5.3+ (including PHP7).
 + [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote
-PHP was the first programming language I got paid to code in, back in the Cretaceous period (2003). My sincerest apologies go out to all the programmers who inherited my earliest PHP work. I know you're out there, writhing in your straitjackets.
+PHP was the first programming language I got paid to code in, back in the
+Cretaceous period (2003). My sincerest apologies go out to all the programmers
+who inherited my earliest PHP work. I know you're out there, writhing in your
+straitjackets.
 
-Save a programmer today. Stop a friend from choosing PHP as their first language.
+Save a programmer today. Stop a friend from choosing PHP as their first
+language.
 #+end_quote
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#php][PHP]]
-  - [[#dependencies][Dependencies]]
+** Maintainers
+This module has no dedicated maintainers.
 
-* Install
+** Module Flags
++ =+hack= Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
++ =+lsp= Enable LSP support through phpactor. Requires the ~:tools lsp~ module
+  and the phpactor server to be installed on your system.
+
+** Plugins
++ [[https://github.com/tomterl/php-boris][async]]
++ [[https://github.com/tomterl/php-boris][php-boris]]
++ [[https://github.com/arnested/php-extras][php-extras]]
++ [[https://github.com/emacs-php/php-mode][php-mode]]
++ [[https://github.com/keelerm84/php-refactor-mode.el][php-refactor-mode]]
++ [[https://github.com/nlamirault/phpunit.el][phpunit]]
++ =+hack=
+  + [[https://github.com/hhvm/hack-mode][hack-mode]]
++ =+lsp=
+  + [[https://github.com/emacs-php/phpactor.el][phpactor]]
+  + [[https://github.com/emacs-php/phpactor.el][company-phpactor]]
++ =:editor format=
+  + [[https://github.com/OVYA/php-cs-fixer][php-cs-fixer]]
+
+* Prerequisites
 ** PHP
 To get started with PHP, you'll need ~php~ (5.3+) and ~composer~:
 
@@ -65,3 +106,12 @@ Ensure that ~\~/.composer/vendor/bin~ is in ~PATH~:
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
 #+END_SRC
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.
