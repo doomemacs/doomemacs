@@ -207,8 +207,8 @@ If ARG (universal argument), open selection in other-window."
 ;;;###autoload
 (defun +ivy/projectile-find-file ()
   "A more sensible `counsel-projectile-find-file', which will revert to
-`counsel-find-file' if invoked from $HOME, `counsel-file-jump' if invoked from a
-non-project, `projectile-find-file' if in a big project (more than
+`counsel-find-file' if invoked from $HOME or /, `counsel-file-jump' if invoked
+from a non-project, `projectile-find-file' if in a big project (more than
 `ivy-sort-max-size' files), or `counsel-projectile-find-file' otherwise.
 
 The point of this is to avoid Emacs locking up indexing massive file trees."
@@ -219,6 +219,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (let ((this-command 'counsel-find-file))
     (call-interactively
      (cond ((or (file-equal-p default-directory "~")
+                (file-equal-p default-directory "/")
                 (when-let (proot (doom-project-root))
                   (file-equal-p proot "~")))
             #'counsel-find-file)
