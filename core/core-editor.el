@@ -90,6 +90,9 @@ possible."
       auto-save-file-name-transforms `((".*" ,(concat doom-cache-dir "autosave/") t))
       backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
 
+(after! tramp
+  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil)))
+
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
     "Guess mode when saving a file in `fundamental-mode'."
