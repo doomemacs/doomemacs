@@ -7,7 +7,8 @@
 
 ;;;###autoload (autoload '+evil:defun-txtobj "editor/evil/autoload/textobjects" nil nil)
 (evil-define-text-object +evil:defun-txtobj (count &optional _beg _end type)
-  "Text object to select the whole buffer."
+  "Text object to select the top-level Lisp form or function definition at
+point."
   (cl-destructuring-bind (beg . end)
       (bounds-of-thing-at-point 'defun)
     (evil-range beg end type)))
