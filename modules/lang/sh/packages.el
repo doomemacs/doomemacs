@@ -2,7 +2,7 @@
 ;;; lang/sh/packages.el
 
 (when (featurep! :completion company)
-  (package! company-shell))
+  (package! company-shell :pin "52f3bf26b7"))
 
 (when (featurep! +fish)
-  (package! fish-mode :pin "688c82deca"))
+  (package! fish-mode :pin "db257db810"))

@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "0a8faecb7f")
+  :pin "ba685555c4")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -53,16 +53,16 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e7cddf39e3"))
 (when (featurep! +brain)
-  (package! org-brain :pin "6b7fced801"))
+  (package! org-brain :pin "cae8e2213b"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "3c48102793"))
+  (package! org-download :pin "b96fd7ba02"))
 (when (featurep! +gnuplot)
-  (package! gnuplot :pin "a406143d52")
+  (package! gnuplot :pin "f0001c3001")
   (package! gnuplot-mode :pin "601f639298"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "d4b06c54d3"))
+  (package! jupyter :pin "de7af256a9"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318"))
 (when (featurep! +present)
@@ -70,9 +70,9 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "24f7c5be9d")
   (package! org-tree-slide :pin "7bf09a02bd")
-  (package! ox-reveal :pin "0d947cbce6"))
+  (package! ox-reveal :pin "ea8b502170"))
 (when (featurep! +journal)
-  (package! org-journal :pin "9d40f6260c"))
+  (package! org-journal :pin "664c08e12c"))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
@@ -89,7 +89,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient :pin "c5c22e6035"))
+  (package! ob-restclient :pin "f7449b2068"))
 (when (featurep! :lang rust)
   (package! ob-rust :pin "6a82587598"))
 (when (featurep! :lang scala)

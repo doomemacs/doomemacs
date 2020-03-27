@@ -13,4 +13,4 @@
     (package! company-emacs-eclim :pin "23f5b294f8")))
 
 (when (featurep! +lsp)
-  (package! lsp-java :pin "dbeeee9c74"))
+  (package! lsp-java :pin "6efb741845"))

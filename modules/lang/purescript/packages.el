@@ -7,5 +7,5 @@
 ;; unnecessary altogether.
 ;;(package! flycheck-purescript :pin "30f0435d5e")
 
-(package! psc-ide :pin "2a9394422d")
+(package! psc-ide :pin "7fc2b841be")
 (package! purescript-mode :pin "8db1d0243c")

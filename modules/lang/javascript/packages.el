@@ -2,21 +2,21 @@
 ;;; lang/javascript/packages.el
 
 ;; Major modes
-(package! coffee-mode :pin "86ab8aae86")
+(package! coffee-mode :pin "35a41c7d82")
 (package! js2-mode :pin "fe53814dc2")
-(package! rjsx-mode :pin "014c760138")
-(package! typescript-mode :pin "a0f2c3ebd4")
+(package! rjsx-mode :pin "0061587a06")
+(package! typescript-mode :pin "102587e458")
 
 ;; Tools
-(package! eslintd-fix :pin "98c669e365")
+(package! eslintd-fix :pin "0c431141be")
 (package! js2-refactor :pin "d4c40b5fc8")
 (package! npm-mode :pin "3ee7c0bad5")
 
 ;; Eval
-(package! nodejs-repl :pin "8b90948265")
-(package! skewer-mode :pin "123215dd9b")
+(package! nodejs-repl :pin "6fad7d764f")
+(package! skewer-mode :pin "e5bed35193")
 
 ;; Programming environment
-(package! tide :pin "1878a097fc")
+(package! tide :pin "3b45610faa")
 (when (featurep! :tools lookup)
   (package! xref-js2 :pin "6f1ed5dae0"))

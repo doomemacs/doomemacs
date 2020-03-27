@@ -4,7 +4,7 @@
 ;; Major modes
 (package! pip-requirements :pin "216cd1690f")
 (when (featurep! +cython)
-  (package! cython-mode :pin "f6bf6aa9c7")
+  (package! cython-mode :pin "48dc1f0169")
   (when (featurep! :checkers syntax)
     (package! flycheck-cython :pin "ecc4454d35")))
 
@@ -23,7 +23,7 @@
 (when (featurep! +pyenv)
   (package! pyenv-mode :pin "aec6f2aa28"))
 (when (featurep! +conda)
-  (package! conda :pin "814439dffa"))
+  (package! conda :pin "335474e409"))
 
 ;; Testing frameworks
 (package! nose :pin "f852829751")
