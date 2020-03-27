@@ -41,15 +41,17 @@
   ;; after eob. On Emacs 27 this no longer happens.
   (unless EMACS27+
     (defun +doom--line-range-fn ()
-      (cons (line-beginning-position)
-            (cond ((let ((eol (line-end-position)))
-                     (and (=  eol (point-max))
-                          (/= eol (line-beginning-position))))
-                   (1- (line-end-position)))
-                  ((or (eobp)
-                       (= (line-end-position 2) (point-max)))
-                   (line-end-position))
-                  ((line-beginning-position 2)))))
+      (let ((bol (line-beginning-position))
+            (eol (line-end-position))
+            (pmax (point-max)))
+        (cons bol
+              (cond ((and (=  eol pmax)
+                          (/= eol bol))
+                     (1- eol))
+                    ((or (eobp)
+                         (= eol pmax))
+                     eol)
+                    ((line-beginning-position 2))))))
     (setq hl-line-range-function #'+doom--line-range-fn))
 
   ;; Because fringes can't be given a buffer-local face, they can look odd, so

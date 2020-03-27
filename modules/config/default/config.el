@@ -1,19 +1,19 @@
 ;;; config/default/config.el -*- lexical-binding: t; -*-
 
 (defvar +default-minibuffer-maps
-  `(minibuffer-local-map
-    minibuffer-local-ns-map
-    minibuffer-local-completion-map
-    minibuffer-local-must-match-map
-    minibuffer-local-isearch-map
-    read-expression-map
-    ,@(cond ((featurep! :completion ivy)
-             '(ivy-minibuffer-map
-               ivy-switch-buffer-map))
-            ((featurep! :completion helm)
-             '(helm-map
-               helm-ag-map
-               helm-read-file-map))))
+  (append '(minibuffer-local-map
+            minibuffer-local-ns-map
+            minibuffer-local-completion-map
+            minibuffer-local-must-match-map
+            minibuffer-local-isearch-map
+            read-expression-map)
+          (cond ((featurep! :completion ivy)
+                 '(ivy-minibuffer-map
+                   ivy-switch-buffer-map))
+                ((featurep! :completion helm)
+                 '(helm-map
+                   helm-ag-map
+                   helm-read-file-map))))
   "A list of all the keymaps used for the minibuffer.")
 
 
@@ -32,7 +32,7 @@
   ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
   ;; for the key passphrase.
   (setq epa-pinentry-mode 'loopback)
-   ;; Default to the first secret key available in your keyring.
+  ;; Default to the first secret key available in your keyring.
   (setq-default
    epa-file-encrypt-to
    (or (default-value 'epa-file-encrypt-to)
@@ -254,6 +254,7 @@
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
+        "s-x" #'execute-extended-command
         :v "s-x" #'kill-region
         ;; Buffer-local font scaling
         "s-+" #'doom/reset-font-size

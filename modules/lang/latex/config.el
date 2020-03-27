@@ -39,6 +39,7 @@ If no viewers are found, `latex-preview-pane' is used.")
       ;; automatically insert braces after sub/superscript in math mode
       TeX-electric-sub-and-superscript t)
 
+
 (after! tex
   ;; fontify common latex commands
   (load! "+fontification")
@@ -120,9 +121,9 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 
 (use-package! cdlatex
-  :defer t
   :when (featurep! +cdlatex)
   :hook (LaTeX-mode . cdlatex-mode)
+  :hook (org-mode . org-cdlatex-mode)
   :config
   ;; Use \( ... \) instead of $ ... $
   (setq cdlatex-use-dollar-to-ensure-math nil)
@@ -130,22 +131,22 @@ If no viewers are found, `latex-preview-pane' is used.")
   (map! :map cdlatex-mode-map
         ;; smartparens takes care of inserting closing delimiters, and if you
         ;; don't use smartparens you probably won't want these also.
-        :g  "$" nil
-        :g  "(" nil
-        :g  "{" nil
-        :g  "[" nil
-        :g  "|" nil
-        :g  "<" nil
+        "$" nil
+        "(" nil
+        "{" nil
+        "[" nil
+        "|" nil
+        "<" nil
         ;; TAB is used for cdlatex's snippets and navigation. But we have
         ;; yasnippet for that.
         (:when (featurep! :editor snippets)
-          :g "TAB" nil)
+          "TAB" nil)
         ;; AUCTeX takes care of auto-inserting {} on _^ if you want, with
         ;; `TeX-electric-sub-and-superscript'
-        :g  "^" nil
-        :g  "_" nil
+        "^" nil
+        "_" nil
         ;; AUCTeX already provides this with `LaTeX-insert-item'
-        :g  [(control return)] nil))
+        [(control return)] nil))
 
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated

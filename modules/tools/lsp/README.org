@@ -52,7 +52,8 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/web/README.org][:lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
 
 ** Module Flags
-+ =+peek= Enables the =lsp-ui-peek= navigation frontend provided by the =lsp-ui= package.
++ =+peek= Use =lsp-ui-peek= when looking up definitions and references with
+  functionality from the =:tools lookup= module.
 
 ** Plugins
 + [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]

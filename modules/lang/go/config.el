@@ -44,7 +44,7 @@
         (:prefix ("ri" . "imports")
           "a" #'go-import-add
           "r" #'go-remove-unused-imports)
-        (:prefix ( "b" . "build")
+        (:prefix ("b" . "build")
           :desc "go run ." "r" (λ! (compile "go run ."))
           :desc "go build" "b" (λ! (compile "go build"))
           :desc "go clean" "c" (λ! (compile "go clean")))

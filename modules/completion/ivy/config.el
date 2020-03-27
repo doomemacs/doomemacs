@@ -297,8 +297,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; no highlighting visited files; slows down the filtering
   (ivy-set-display-transformer #'counsel-projectile-find-file nil)
 
-  (if (featurep! +prescient)
-      (setq counsel-projectile-sort-files t)))
+  (when (featurep! +prescient)
+    (setq counsel-projectile-sort-files t)))
 
 
 (use-package! wgrep

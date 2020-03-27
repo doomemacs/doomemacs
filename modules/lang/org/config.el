@@ -126,9 +126,9 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   ;;      underlying faces like the `org-todo' face does, so we define our own
   ;;      intermediary faces that extend from org-todo.
   (with-no-warnings
-    (custom-declare-face '+org-todo-active '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
+    (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
     (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
-    (custom-declare-face '+org-todo-onhold '((t (:inherit (bold warning org-todo)))) ""))
+    (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) ""))
   (setq org-todo-keywords
         '((sequence
            "TODO(t)"  ; A task that needs doing & is ready to do
@@ -159,7 +159,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         (apply orig-fn args)))
 
   ;; Automatic indent detection in org files is meaningless
-  (cl-pushnew 'org-mode doom-detect-indentation-excluded-modes :test #'eq)
+  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
 
   (set-pretty-symbols! 'org-mode
     :name "#+NAME:"

@@ -58,11 +58,7 @@
     mode-name "JS2")
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
-  (set-repl-handler! 'js2-mode #'+javascript/open-repl)
-
-  (map! :map js2-mode-map
-        :localleader
-        "S" #'+javascript/skewer-this-buffer))
+  (set-repl-handler! 'js2-mode #'+javascript/open-repl))
 
 
 (use-package! rjsx-mode
@@ -84,10 +80,10 @@
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
 
-  ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
-  ;; a self-closing tag, so that it can insert a matching ending tag at point.
-  ;; However, the parser doesn't run immediately, so a fast typist can outrun
-  ;; it, causing tags to stay unclosed, so we force it to parse.
+  ;; HACK `rjsx-electric-gt' relies on js2's parser to tell it when the cursor
+  ;;      is in a self-closing tag, so that it can insert a matching ending tag
+  ;;      at point. The parser doesn't run immediately however, so a fast typist
+  ;;      can outrun it, causing tags to stay unclosed, so force it to parse:
   (defadvice! +javascript-reparse-a (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     :before #'rjsx-electric-gt
@@ -95,7 +91,7 @@
 
 
 (use-package! typescript-mode
-  :defer t
+  :hook (typescript-mode . rainbow-delimiters-mode)
   :init
   ;; REVIEW Fix #2252. This is overwritten if the :lang web module is enabled.
   ;;        We associate TSX files with `web-mode' by default instead because
@@ -104,9 +100,6 @@
   (unless (featurep! :lang web)
     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
   :config
-  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
-  (setq-hook! 'typescript-mode-hook
-    comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
@@ -125,7 +118,10 @@
     :not "!"
     :and "&&" :or "||"
     :for "for"
-    :return "return" :yield "import"))
+    :return "return" :yield "import")
+  ;; HACK Fixes comment continuation on newline
+  (setq-hook! 'typescript-mode-hook
+    comment-line-break-function #'js2-line-break))
 
 
 ;;;###package coffee-mode
@@ -254,6 +250,7 @@ to tide."
 (map! :localleader
       (:after js2-mode
         :map js2-mode-map
+        "S" #'+javascript/skewer-this-buffer
         :prefix ("s" . "skewer"))
       :prefix "s"
       (:after skewer-mode
@@ -278,13 +275,12 @@ to tide."
 (use-package! npm-mode
   :hook ((js-mode typescript-mode) . npm-mode)
   :config
-  (map! (:localleader
-          :map npm-mode-keymap
+  (map! :localleader
+        (:map npm-mode-keymap
           "n" npm-mode-command-keymap)
         (:after js2-mode
           :map js2-mode-map
-          :localleader
-          (:prefix ("n" . "npm")))))
+          :prefix ("n" . "npm"))))
 
 
 ;;

@@ -4,19 +4,16 @@
   :commands company-complete-common company-manual-begin company-grab-line
   :after-call pre-command-hook after-find-file
   :init
-  (setq company-minimum-prefix-length 2
+  (setq company-idle-delay 0.25
+        company-minimum-prefix-length 2
         company-tooltip-limit 14
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case nil
-        company-dabbrev-code-other-buffers t
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes
         '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-        company-backends '(company-capf)
-        company-frontends
-        '(company-pseudo-tooltip-frontend
-          company-echo-metadata-frontend))
+        company-backends  '(company-capf)
+        company-frontends '(company-pseudo-tooltip-frontend
+                            company-echo-metadata-frontend))
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)

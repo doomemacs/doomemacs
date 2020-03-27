@@ -34,8 +34,9 @@ all themes. It will apply to all themes once they are loaded."
 (defmacro custom-set-faces! (&rest specs)
   "Apply a list of face SPECS as user customizations.
 
-This is a drop-in replacement for `custom-set-face' that allows for a simplified
-face format."
+This is a convenience macro alternative to `custom-set-face' which allows for a
+simplified face format, and takes care of load order issues, so you can use
+doom-themes' API without worry."
   (declare (indent defun))
   `(custom-theme-set-faces! 'user ,@specs))
 
