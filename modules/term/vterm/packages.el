@@ -3,4 +3,4 @@
 
 (package! vterm
   :built-in 'prefer
-  :pin "b9bccf38df")
+  :pin "996c535b9c")
