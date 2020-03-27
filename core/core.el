@@ -292,6 +292,7 @@ users).")
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
 (setq gc-cons-percentage 0.6)
+(add-transient-hook! 'pre-command-hook (gcmh-mode +1))
 (with-eval-after-load 'gcmh
   (setq gcmh-idle-delay 10
         gcmh-high-cons-threshold 16777216
