@@ -77,23 +77,25 @@ be negative.")
     (setq helm-display-function #'+helm-posframe-display-fn))
 
   (let ((fuzzy (featurep! +fuzzy)))
-    (setq helm-M-x-fuzzy-match fuzzy
-          helm-apropos-fuzzy-match fuzzy
-          helm-apropos-fuzzy-match fuzzy
+    (setq helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
-          helm-completion-in-region-fuzzy-match fuzzy
-          helm-completion-in-region-fuzzy-match fuzzy
           helm-ff-fuzzy-matching fuzzy
           helm-file-cache-fuzzy-match fuzzy
           helm-flx-for-helm-locate fuzzy
           helm-imenu-fuzzy-match fuzzy
           helm-lisp-fuzzy-completion fuzzy
           helm-locate-fuzzy-match fuzzy
-          helm-mode-fuzzy-match fuzzy
           helm-projectile-fuzzy-match fuzzy
           helm-recentf-fuzzy-match fuzzy
-          helm-semantic-fuzzy-match fuzzy))
+          helm-semantic-fuzzy-match fuzzy)
+    ;; Make sure that we have helm-multi-matching or fuzzy matching,
+    ;; (as prescribed by the fuzzy flag) also in the following cases:
+    ;; - helmized commands that use `completion-at-point' and similar functions
+    ;; - native commands that fall back to `completion-styles' like `helm-M-x'
+    (if (< emacs-major-version 27)
+        (push (if fuzzy 'helm-flex 'helm) completion-styles)
+      (push (if fuzzy 'flex 'helm) completion-styles)))
 
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
@@ -120,7 +122,6 @@ be negative.")
   ;; Use helpful instead of describe-* to display documentation
   (dolist (fn '(helm-describe-variable helm-describe-function))
     (advice-add fn :around #'doom-use-helpful-a)))
-
 
 (use-package! helm-flx
   :when (featurep! +fuzzy)
