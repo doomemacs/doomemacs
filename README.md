@@ -30,13 +30,18 @@
 
 **Quick start**
 
-```bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install
-```
+1. **Install Emacs 26.1+**. 27 is recommended. _28+ is not supported_.
+2. Install [ripgrep](https://github.com/BurntSushi/ripgrep) 11.0+.
+3. Windows and BSD users will need GNU Find.
+4. Clone Doom and run its installer:
 
-More details, including dependencies and how to install Emacs, can be found [in
-the documentation](docs/getting_started.org#install).
+   ```bash
+   git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+   ~/.emacs.d/bin/doom install
+   ```
+
+Find more detailed install instructions [in the
+documentation](docs/getting_started.org#install).
 
 **Table of Contents**
 
