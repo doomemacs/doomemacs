@@ -117,7 +117,7 @@ in some cases."
 ;;; Commands
 
 (defun doom--bol-bot-eot-eol (&optional pos)
-  (save-excursion
+  (save-mark-and-excursion
     (when pos
       (goto-char pos))
     (let* ((bol (if visual-line-mode
@@ -157,6 +157,9 @@ beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
   (interactive "d")
   (let ((pt (or point (point))))
+    (when (and shift-select-mode this-command-keys-shift-translated)
+      (set-mark pt)
+      (activate-mark))
     (cl-destructuring-bind (bol bot _eot _eol)
         (doom--bol-bot-eot-eol pt)
       (cond ((> pt bot)
@@ -179,6 +182,9 @@ beginning of the line. The opposite of
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive "d")
   (let ((pt (or point (point))))
+    (when (and shift-select-mode this-command-keys-shift-translated)
+      (set-mark pt)
+      (activate-mark))
     (cl-destructuring-bind (_bol _bot eot eol)
         (doom--bol-bot-eot-eol pt)
       (cond ((< pt eot)
