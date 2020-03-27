@@ -196,6 +196,7 @@ variable for an explanation of the defaults (in comments). See
     which-key
     woman
     xref
+    xwidget
     youtube-dl
     (ztree ztree-diff)))
 

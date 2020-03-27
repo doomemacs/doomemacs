@@ -221,7 +221,6 @@ directives. By default, this only recognizes C directives.")
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-previous #'evil-ex-search-previous
                       :bind ((evil-ex-search-highlight-all nil)))
-
   (evilem-make-motion evilem-motion-search-word-forward #'evil-ex-search-word-forward
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-word-backward #'evil-ex-search-word-backward

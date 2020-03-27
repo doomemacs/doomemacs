@@ -36,7 +36,6 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
 + [[https://github.com/edkolev/evil-lion][evil-lion]]
 + [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
-+ [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]
 + [[https://github.com/cofi/evil-numbers][evil-numbers]]
 + [[https://github.com/noctuid/evil-textobj-anyblock][evil-textobj-anyblock]]
 + [[https://github.com/hlissner/evil-snipe][evil-snipe]]
