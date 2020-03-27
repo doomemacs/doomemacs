@@ -28,7 +28,7 @@
     '("tidy" "-q" "-indent"
       "--tidy-mark" "no"
       "--drop-empty-elements" "no"
-      "--show-body-only" "true"  ; don't inject html/body tags
+      ("--show-body-only" "%s" (if +format-region-p "true" "auto"))
       ("--indent-spaces" "%d" tab-width)
       ("--indent-with-tabs" "%s" (if indent-tabs-mode "yes" "no"))
       ("-xml" (memq major-mode '(nxml-mode xml-mode))))
