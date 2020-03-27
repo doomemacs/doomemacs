@@ -74,7 +74,11 @@ If no viewers are found, `latex-preview-pane' is used.")
         (sp-local-pair modes open nil :actions :rem))
       ;; And tweak these so that users can decide whether they want use latex
       ;; quotes or not, via `+latex-enable-plain-double-quotes'
-      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
+      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p))))
+  ;; Hook lsp if enabled
+  (when (and (featurep! +lsp) (featurep! :tools lsp))
+    (add-hook 'tex-mode-local-vars-hook #'lsp!)
+    (add-hook 'latex-mode-local-vars-hook #'lsp!)))
 
 
 (after! latex
@@ -179,11 +183,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   :defer t
   :init
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
-
-(after! tex-mode
-  (when (and (featurep! +lsp) (featurep! :tools lsp))
-    (add-hook 'tex-mode-local-vars-hook #'lsp!)
-    (add-hook 'latex-mode-local-vars-hook #'lsp!)))
 
 ;; bibtex + reftex
 (load! "+ref")
