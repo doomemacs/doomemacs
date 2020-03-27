@@ -1,14 +1,14 @@
 <a href="http://doomemacs.org">
-  <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&color=orange"  alt="Made with Doom Emacs">
+  <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&color=orange&style=for-the-badge"  alt="Made with Doom Emacs">
 </a>
 <a href="https://emacs.org">
-  <img src="https://img.shields.io/badge/Made_for-Emacs_26.1+-blueviolet.svg" alt="Made for Emacs 26.1+">
+  <img src="https://img.shields.io/badge/Supports-26.1_--_27.0.50-blueviolet.svg?style=for-the-badge&logo=GNU%20Emacs&logoColor=white" alt="Supports Emacs 26.x - 27.0.50">
 </a>
 <a href="https://github.com/hlissner/doom-emacs/actions">
-  <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
+  <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg?style=for-the-badge" alt="Build status: develop">
 </a>
 <a href="https://discord.gg/qvGgnVx">
-  <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join" alt="Join our discord server" align="right">
+  <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge" alt="Join our discord server" align="right">
 </a>
 <br><br>
 
