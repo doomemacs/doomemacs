@@ -10,6 +10,7 @@
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
   :commands rustic-run-cargo-command rustic-cargo-outdated
+  :hook (rustic-mode . rainbow-delimiters-mode)
   :config
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
@@ -17,8 +18,6 @@
   (setq rustic-indent-method-chain t
         ;; use :editor format instead
         rustic-format-trigger nil)
-
-  (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
   (if (featurep! +lsp)
       (add-hook 'rustic-mode-local-vars-hook #'lsp!)

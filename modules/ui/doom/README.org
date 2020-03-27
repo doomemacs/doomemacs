@@ -1,7 +1,7 @@
 #+TITLE:   ui/doom
 #+DATE:    October 9, 2019
 #+SINCE:   v1.3
-#+STARTUP: inlineimages
+#+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]

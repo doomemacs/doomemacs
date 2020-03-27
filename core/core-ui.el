@@ -353,8 +353,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; while we're in the minibuffer.
 (setq enable-recursive-minibuffers t)
 
-;; Show current key-sequence in minibuffer, like vim does. Any feedback after
-;; typing is better UX than no feedback at all.
+;; Show current key-sequence in minibuffer ala 'set showcmd' in vim. Any
+;; feedback after typing is better UX than no feedback at all.
 (setq echo-keystrokes 0.02)
 
 ;; Expand the minibuffer to fit multi-line text displayed in the echo-area. This
@@ -364,7 +364,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       max-mini-window-height 0.15)
 
 ;; Typing yes/no is obnoxious when y/n will do
-(fset #'yes-or-no-p #'y-or-n-p)
+(advice-add #'yes-or-no-p :override #'y-or-n-p)
 
 ;; Try really hard to keep the cursor from getting stuck in the read-only prompt
 ;; portion of the minibuffer.
@@ -421,17 +421,17 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
   ;; Temporarily disable `hl-line' when selection is active, since it doesn't
   ;; serve much purpose when the selection is so much more visible.
-  (defvar doom-buffer-hl-line-mode nil)
+  (defvar doom--hl-line-mode nil)
 
   (add-hook! '(evil-visual-state-entry-hook activate-mark-hook)
     (defun doom-disable-hl-line-h ()
       (when hl-line-mode
-        (setq-local doom-buffer-hl-line-mode t)
+        (setq-local doom--hl-line-mode t)
         (hl-line-mode -1))))
 
   (add-hook! '(evil-visual-state-exit-hook deactivate-mark-hook)
     (defun doom-enable-hl-line-maybe-h ()
-      (when doom-buffer-hl-line-mode
+      (when doom--hl-line-mode
         (hl-line-mode +1)))))
 
 
@@ -681,8 +681,8 @@ This offers a moderate boost in startup (or theme switch) time, so long as
 
 (after! whitespace
   (defun doom-disable-whitespace-mode-in-childframes-a (orig-fn)
-    "`whitespace-mode' inundates child frames with whitspace markers, so disable
-it to fix all that visual noise."
+    "`whitespace-mode' inundates child frames with whitespace markers, so
+disable it to fix all that visual noise."
     (unless (frame-parameter nil 'parent-frame)
       (funcall orig-fn)))
   (add-function :around whitespace-enable-predicate #'doom-disable-whitespace-mode-in-childframes-a))
