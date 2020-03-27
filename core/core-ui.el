@@ -600,11 +600,12 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
           doom-init-theme-p t)
     (run-hooks 'doom-load-theme-hook)))
 
-(defadvice! doom--disable-enabled-themes-a (&rest _)
+(defadvice! doom--disable-enabled-themes-a (theme &optional _no-confirm no-enable)
   "Disable previously enabled themes before loading a new one.
 Otherwise, themes can conflict with each other."
-  :before #'load-theme
-  (mapc #'disable-theme custom-enabled-themes))
+  :after-while #'load-theme
+  (unless no-enable
+    (mapc #'disable-theme (remq theme custom-enabled-themes))))
 
 (unless EMACS27+
   ;; DEPRECATED Not needed in Emacs 27
