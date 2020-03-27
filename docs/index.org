@@ -29,7 +29,7 @@ d s= (or =C-h d s=).
   - [[#asking-for-help][Asking for help]]
   - [[#project-roadmap][Project roadmap]]
   - [[#tutorials--guides][Tutorials & guides]]
-  - [[#projects-that-supportcompliment-doom][Projects that support/compliment Doom]]
+  - [[#projects-that-supportcomplement-doom][Projects that support/complement Doom]]
   - [[#similar-projects][Similar projects]]
 
 * TODO Release Notes
@@ -96,7 +96,7 @@ d s= (or =C-h d s=).
 + *Vim & Evil*
   - [[https://gist.github.com/dmsul/8bb08c686b70d5a68da0e2cb81cd857f][A crash course on modal editing and Ex commands]]
 
-** Projects that support/compliment Doom
+** Projects that support/complement Doom
 + [[https://github.com/plexus/chemacs][plexus/chemacs]]
 + [[https://github.com/r-darwish/topgrade][r-darwish/topgrade]]
 
