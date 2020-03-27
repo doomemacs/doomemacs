@@ -291,14 +291,15 @@ users).")
 
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
-(setq gc-cons-percentage 0.6)
-(add-transient-hook! 'pre-command-hook (gcmh-mode +1))
-(with-eval-after-load 'gcmh
-  (setq gcmh-idle-delay 10
-        gcmh-high-cons-threshold 16777216
-        gcmh-verbose doom-debug-mode  ; 16mb
-        gc-cons-percentage 0.1)
-  (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect))
+(when doom-interactive-mode
+  (setq gc-cons-percentage 0.6)
+  (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
+  (with-eval-after-load 'gcmh
+    (setq gcmh-idle-delay 10
+          gcmh-high-cons-threshold 16777216
+          gcmh-verbose doom-debug-mode  ; 16mb
+          gc-cons-percentage 0.1)
+    (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
