@@ -114,7 +114,7 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   vim-slanted tastes. Doom's defaults enforce very particular (albeit optional)
   workflows.
 + *Doom lacks manpower.* Bugs stick around longer, documentation is light and
-  development is at the mercy of it's single maintainer's schedule, health and
+  development is at the mercy of its single maintainer's schedule, health and
   whims.
 + *Doom is not beginner friendly.* Spacemacs works out of the box. Your mileage
   may vary with Doom; assembly is required! Familiarity with Emacs Lisp (or
