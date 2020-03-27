@@ -93,7 +93,7 @@ playback.")
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'circe-mode-hook #'+irc--add-circe-buffer-to-persp-h)
   (add-hook 'circe-mode-hook #'turn-off-smartparens-mode)
-  (add-hook 'circe-mode-hook (lambda () (setq-local tls-end-of-info
+  (setq-hook! 'circe-mode-hook tls-end-of-info
       (concat
        "\\("
        ;; `openssl s_client' regexp.  See ssl/ssl_txt.c lines 219-220.
@@ -107,8 +107,7 @@ playback.")
        ;; in `main' the handshake will start after this message.  If the
        ;; handshake fails, the programs will abort.
        "^\\*\\*\\* Starting TLS handshake\n\\)*"
-       "\\)")
-                                         )))
+       "\\)"))
 
 
   (defadvice! +irc--circe-run-disconnect-hook-a (&rest _)
