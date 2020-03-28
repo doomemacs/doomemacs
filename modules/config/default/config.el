@@ -378,10 +378,12 @@
 
   ;; A Doom convention where C-s on popups and interactive searches will invoke
   ;; ivy/helm for their superior filtering.
-  (define-key! :keymaps +default-minibuffer-maps
-    "C-s" (if (featurep! :completion ivy)
-              #'counsel-minibuffer-history
-            #'helm-minibuffer-history))
+  (when-let (command (cond ((featurep! :completion ivy)
+                            #'counsel-minibuffer-history)
+                           ((featurep! :completion helm)
+                            #'helm-minibuffer-history)))
+    (define-key! :keymaps +default-minibuffer-maps
+      "C-s" command))
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except

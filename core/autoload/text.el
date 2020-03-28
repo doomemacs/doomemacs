@@ -155,11 +155,8 @@ in some cases."
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
-  (interactive "d")
+  (interactive "^d")
   (let ((pt (or point (point))))
-    (when (and shift-select-mode this-command-keys-shift-translated)
-      (set-mark pt)
-      (activate-mark))
     (cl-destructuring-bind (bol bot _eot _eol)
         (doom--bol-bot-eot-eol pt)
       (cond ((> pt bot)
@@ -180,11 +177,8 @@ beginning of the line. The opposite of
 (defun doom/forward-to-last-non-comment-or-eol (&optional point)
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
-  (interactive "d")
+  (interactive "^d")
   (let ((pt (or point (point))))
-    (when (and shift-select-mode this-command-keys-shift-translated)
-      (set-mark pt)
-      (activate-mark))
     (cl-destructuring-bind (_bol _bot eot eol)
         (doom--bol-bot-eot-eol pt)
       (cond ((< pt eot)
