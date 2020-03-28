@@ -190,7 +190,9 @@ users).")
 ;; dependencies it pulls in from all corners of the globe. Let's try to be at
 ;; least a little more discerning.
 (setq gnutls-verify-error (not (getenv "INSECURE"))
-      gnutls-algorithm-priority "SECURE128:+SECURE192:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3"
+      gnutls-algorithm-priority
+      (let ((support-tls1.3 (if (>= libgnutls-version 30605) ":+VERS-TLS1.3" nil)))
+        (concat "SECURE128:+SECURE192:-VERS-ALL:+VERS-TLS1.2" support-tls1.3))
       ;; `gnutls-min-prime-bits' is set based on recommendations from
       ;; https://www.keylength.com/en/4/
       gnutls-min-prime-bits 3072
