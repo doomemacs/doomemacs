@@ -55,6 +55,8 @@ irrespective of what `+lsp-company-backend' is set to.")
     :definition #'lsp-find-definition
     :references #'lsp-find-references)
 
+  ;; TODO Lazy load these. They don't need to be loaded all at once unless the
+  ;;      user uses `lsp-install-server'.
   (when lsp-auto-configure
     (mapc (lambda (package) (require package nil t))
           lsp-client-packages))

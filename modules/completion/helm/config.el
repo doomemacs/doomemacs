@@ -93,9 +93,10 @@ be negative.")
     ;; (as prescribed by the fuzzy flag) also in the following cases:
     ;; - helmized commands that use `completion-at-point' and similar functions
     ;; - native commands that fall back to `completion-styles' like `helm-M-x'
-    (if (< emacs-major-version 27)
-        (push (if fuzzy 'helm-flex 'helm) completion-styles)
-      (push (if fuzzy 'flex 'helm) completion-styles)))
+    (push (if EMACS27+
+              (if fuzzy 'flex 'helm)
+            (if fuzzy 'helm-flex 'helm))
+          completion-styles))
 
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)

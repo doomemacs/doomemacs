@@ -1,12 +1,12 @@
 ;;; lang/dart/config.el -*- lexical-binding: t; -*-
 
-(after! dart-mode
-  (when (featurep! +lsp)
-    (add-hook 'dart-mode-local-vars-hook #'lsp!)
-    (when (and (featurep! +flutter) IS-LINUX)
-      (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))
-        (setq lsp-dart-sdk-dir path)))))
-
+(use-package! dart-mode
+  :when (featurep! +lsp)
+  :hook (dart-mode-local-vars . lsp!)
+  :config
+  (when (and (featurep! +flutter) IS-LINUX)
+    (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))
+      (setq lsp-dart-sdk-dir path))))
 
 
 (use-package! flutter
