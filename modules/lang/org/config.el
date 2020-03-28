@@ -179,7 +179,9 @@ background (and foreground) match the current theme."
   (set-pretty-symbols! 'org-mode
     :name "#+NAME:"
     :src_block "#+BEGIN_SRC"
-    :src_block_end "#+END_SRC"))
+    :src_block_end "#+END_SRC"
+    :src_block "#+begin_src"
+    :src_block_end "#+end_src"))
 
 
 (defun +org-init-babel-h ()
