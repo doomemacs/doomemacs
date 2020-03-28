@@ -14,6 +14,7 @@
 
 (use-package! ivy-erlang-complete
   :when (featurep! :completion ivy)
+  :unless (featurep! +lsp)
   :hook (erlang-mode . ivy-erlang-complete-init)
   :config
   (add-hook! 'erlang-mode-hook
