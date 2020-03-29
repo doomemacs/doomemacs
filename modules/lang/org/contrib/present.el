@@ -11,15 +11,10 @@
 ;;
 ;;; Packages
 
-(use-package! ox-reveal
+(use-package! org-re-reveal
   :after ox
   :init
-  ;; Fix #1127, where ox-reveal adds an errant entry to
-  ;; `org-structure-template-alist'
-  (setq org-reveal-note-key-char nil)
-  :config
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3/"
-        org-reveal-mathjax t))
+  (setq org-re-reveal-root "https://revealjs.com"))
 
 
 (use-package! org-tree-slide
