@@ -936,6 +936,7 @@ compelling reason, so..."
   (if (featurep! +jupyter)   (load! "contrib/jupyter"))
   (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
   (if (featurep! +present)   (load! "contrib/present"))
+  (if (featurep! +roam)      (load! "contrib/roam"))
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)

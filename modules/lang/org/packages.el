@@ -73,6 +73,10 @@
   (package! ox-reveal :pin "ea8b502170"))
 (when (featurep! +journal)
   (package! org-journal :pin "664c08e12c"))
+(when (featurep! +roam)
+  (package! org-roam :pin "b86d2c8637")
+  (when (featurep! :completion company)
+    (package! company-org-roam :pin "0d14bf56f5")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")

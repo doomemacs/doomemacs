@@ -481,6 +481,14 @@
         :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
         :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
 
+        (:when (featurep! :lang org +roam)
+          (:prefix ("r" . "roam")
+            :desc "Org Roam"         "r" #'org-roam
+            :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
+            :desc "Insert"           "i" #'org-roam-insert
+            :desc "Find file"        "f" #'org-roam-find-file
+            :desc "Show graph"       "g" #'org-roam-show-graph))
+
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
             :desc "New Entry"      "j" #'org-journal-new-entry
