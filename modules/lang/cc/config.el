@@ -40,7 +40,7 @@ This is ignored by ccls.")
   ;; set up before the likes of irony/lsp are initialized. Also, we use
   ;; local-vars hooks to ensure these only run in their respective major modes,
   ;; and not their derived modes.
-  :hook ((after-c-mode after-c++-mode after-objc-mode) . +cc-init-ffap-integration-h)
+  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-ffap-integration-h)
   ;;; Improve fontification in C/C++ (also see `modern-cpp-font-lock')
   :hook (c-mode-common . rainbow-delimiters-mode)
   :hook ((c-mode c++-mode) . +cc-fontify-constants-h)
@@ -120,7 +120,7 @@ This is ignored by ccls.")
   :hook (irony-mode . +cc-init-irony-compile-options-h)
   ;; Only initialize `irony-mode' if the server is available. Otherwise fail
   ;; quietly and gracefully.
-  :hook ((after-c-mode after-c++-mode after-objc-mode) . +cc-init-irony-mode-maybe-h)
+  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-irony-mode-maybe-h)
   :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :config
   (defun +cc-init-irony-mode-maybe-h ()
@@ -171,7 +171,7 @@ This is ignored by ccls.")
 (use-package! rtags
   :unless (featurep! +lsp)
   ;; Only initialize rtags-mode if rtags and rdm are available.
-  :hook ((after-c-mode after-c++-mode after-objc-mode) . +cc-init-rtags-maybe-h)
+  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-rtags-maybe-h)
   :preface (setq rtags-install-path (concat doom-etc-dir "rtags/"))
   :config
   (defun +cc-init-rtags-maybe-h ()
