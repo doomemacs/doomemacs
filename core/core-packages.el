@@ -151,7 +151,7 @@ necessary package metadata is initialized and available for them."
           doom-packages (doom-package-list))
     (dolist (package doom-packages)
       (let ((name (car package)))
-        (with-plist! (cdr package) (recipe modules disable ignore pin)
+        (with-plist! (cdr package) (recipe modules disable ignore _pin)
           (if ignore
               (doom-log "Ignoring package %S" name)
             (if (not disable)
