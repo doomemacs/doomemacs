@@ -10,7 +10,8 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#cabal][Cabal]]
-  - [[#lsp][LSP]]
+  - [[#lsp-haskell-ide-engine][LSP (haskell-ide-engine)]]
+  - [[#lsp-ghcide][LSP (ghcide)]]
   - [[#stack][Stack]]
   - [[#haskell-packages][Haskell packages]]
 - [[#configuration][Configuration]]
@@ -18,8 +19,8 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default), LSP or
-[[https://haskell-lang.org/intero][intero]].
+This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default), LSP
+(haskell-language-server or ghcide) or [[https://haskell-lang.org/intero][intero]].
 
 + Code completion (~company-ghc~)
 + Look up documentation (~hoogle~)
@@ -41,7 +42,9 @@ Here are a few resources I've found indispensable in my Haskell adventures:
 + =+dante= Enables dante; a fork of intero aimed at lightweightedness. It
   doesn't depend on =stack=, supports both ~cabal~-only and ~stack~ projects,
   but lacks eldoc support.
-+ =+lsp= Enables lsp-haskell (this requires the ~:tools lsp~ to be enabled).
++ =+ghcide= Enables LSP support with ghcide (requires the ~:tools lsp~ module).
++ =+lsp= Enables LSP support with haskell-ide-engine (requires the ~:tools lsp~
+  module).
 + =+intero= (Deprecated) Enables intero; a comprehensive, stack-based
   development environment for Haskell.
 
@@ -53,7 +56,7 @@ Here are a few resources I've found indispensable in my Haskell adventures:
 + =+lsp=
   + [[https://github.com/emacs-lsp/lsp-haskell][lsp-haskell]]
 + =+intero=
-  + [[https://github.com/chrisdone/intero][intero]]
+  + [[https://github.com/chrisdone/intero][intero]] =DEPRECATED=
 
 * Prerequisites
 Depending on whether you use Intero, Dante or LSP, your dependencies will
@@ -83,7 +86,7 @@ sudo pacman -S cabal-install ghc
 sudo zypper install cabal-install ghc
 #+END_SRC
 
-** LSP
+** LSP (haskell-ide-engine)
 You will need =stack= and =git= installed.
 
 You will find a comprehensive [[https://github.com/haskell/haskell-ide-engine#installation][install guide for haskell-ide-engine on its
@@ -92,7 +95,7 @@ project page]], but here's a TL;DR:
 *** MacOS
 haskell-ide-engine must be build and installed manually on MacOS, e.g.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC bash
 git clone https://github.com/haskell/haskell-ide-engine
 cd haskell-ide-engine
 make
@@ -101,9 +104,11 @@ make
 *** Arch Linux
 =haskell-ide-engine-git= is available on the AUR
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC bash
 yay -S haskell-ide-engine-git
 #+END_SRC
+** LSP (ghcide)
+See https://github.com/digital-asset/ghcide for install instructions.
 
 ** Stack
 To use Intero or LSP, you need =stack=:

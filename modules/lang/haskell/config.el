@@ -3,14 +3,9 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "stack.yaml"))
 
-;; TODO ghcide?
-(cond ((featurep! +intero) (load! "+intero")) ; DEPRECATED
-      ((featurep! +dante)  (load! "+dante"))
-      ((featurep! +lsp)    (load! "+lsp")))
-
 
 ;;
-;; Common packages
+;;; Common packages
 
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
@@ -45,3 +40,13 @@
         "c" #'haskell-cabal-visit-file
         "h" #'haskell-hide-toggle
         "H" #'haskell-hide-toggle-all))
+
+
+;;
+;;; Backends
+
+(cond ((featurep! +intero) (load! "+intero")) ; DEPRECATED
+      ((featurep! +dante)  (load! "+dante"))
+      ((or (featurep! +lsp)
+           (featurep! +ghcide))
+       (load! "+lsp")))
