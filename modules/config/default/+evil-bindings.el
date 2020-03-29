@@ -6,10 +6,7 @@
   ;; Minibuffer
   (define-key! evil-ex-completion-map
     "C-a" #'evil-beginning-of-line
-    "C-b" #'evil-backward-char
-    "C-s" (if (featurep! :completion ivy)
-              #'counsel-minibuffer-history
-            #'helm-minibuffer-history))
+    "C-b" #'evil-backward-char)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit

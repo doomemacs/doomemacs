@@ -382,7 +382,10 @@
                             #'counsel-minibuffer-history)
                            ((featurep! :completion helm)
                             #'helm-minibuffer-history)))
-    (define-key! :keymaps +default-minibuffer-maps
+    (define-key!
+      :keymaps (append +default-minibuffer-maps
+                       (when (featurep! :editor evil +everywhere)
+                         '(evil-ex-completion-map)))
       "C-s" command))
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
