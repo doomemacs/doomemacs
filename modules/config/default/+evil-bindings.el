@@ -487,7 +487,7 @@
             :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
             :desc "Insert"           "i" #'org-roam-insert
             :desc "Find file"        "f" #'org-roam-find-file
-            :desc "Show graph"       "g" #'org-roam-show-graph))
+            :desc "Show graph"       "g" #'org-roam-graph-show))
 
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")

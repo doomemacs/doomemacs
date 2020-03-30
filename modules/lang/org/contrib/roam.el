@@ -6,7 +6,7 @@
              org-roam-insert
              org-roam-find-file
              org-roam-switch-to-buffer
-             org-roam-show-graph)
+             org-roam-graph-show)
   :init
   (map! :after org
         :map org-mode-map
@@ -16,7 +16,7 @@
         "i" #'org-roam-insert
         "b" #'org-roam-switch-to-buffer
         "f" #'org-roam-find-file
-        "g" #'org-roam-show-graph
+        "g" #'org-roam-graph-show
         "i" #'org-roam-insert)
   :config
   (setq org-roam-directory org-directory)
