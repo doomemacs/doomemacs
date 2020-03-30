@@ -29,7 +29,7 @@
   :after org-protocol)
 
 
-(use-package company-org-roam
+(use-package! company-org-roam
   :when (featurep! :completion company)
   :after org-roam
   :config
