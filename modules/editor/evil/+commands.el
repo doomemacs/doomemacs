@@ -28,8 +28,6 @@
 
 ;; TODO (evil-ex-define-cmd "rx"          'doom:regex)             ; open re-builder
 (evil-ex-define-cmd "sh[ell]"     #'+eshell:run)
-(evil-ex-define-cmd "t[mux]"      #'+tmux:run)              ; send to tmux
-(evil-ex-define-cmd "tcd"         #'+tmux:cd-here)          ; cd to default-directory in tmux
 (evil-ex-define-cmd "pad"         #'+evil:open-scratch-buffer)
 
 ;;; GIT
