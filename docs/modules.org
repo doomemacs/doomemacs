@@ -191,7 +191,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/neotree/README.org][neotree]] - TODO
 + [[file:../modules/ui/ophints/README.org][ophints]] - TODO
 + [[file:../modules/ui/popup/README.org][popup]] =+all +defaults= - Makes temporary/disposable windows less intrusive
-+ pretty-code - TODO
++ [[file:../modules//ui/pretty-code/README.org][pretty-code]] =+fira +hasklig +iosevka +pragmata-pro= - TODO
 + [[file:../modules/ui/tabs/README.org][tabs]] - TODO
 + treemacs - TODO
 + [[file:../modules/ui/unicode/README.org][unicode]] - TODO

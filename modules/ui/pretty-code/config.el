@@ -38,6 +38,27 @@ This should not contain any symbols from the Unicode Private Area! There is no
 universal way of getting the correct symbol as that area varies from font to
 font.")
 
+(defvar +pretty-code-enabled-modes t
+  "List of major modes in which `prettify-symbols-mode' should be enabled.
+If t, enable it everywhere. If the first element is 'not, enable it in any mode
+besides what is listed.")
+
+(defvar +pretty-code-symbols-alist '((t))
+  "An alist containing a mapping of major modes to its value for
+`prettify-symbols-alist'.")
+
+
+;;
+;;; Packages
+
+;;;###package prettify-symbols
+;; When you get to the right edge, it goes back to how it normally prints
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+
+
+;;
+;;; Bootstrap
+
 (defun +pretty-code--correct-symbol-bounds (ligature-alist)
   "Prepend non-breaking spaces to a ligature.
 
@@ -49,14 +70,6 @@ correct width of the symbols instead of the width measured by `char-width'."
       (setq acc (cons #X00a0 (cons '(Br . Bl) acc))
             len (1- len)))
     (cons (car ligature-alist) acc)))
-
-(defvar +pretty-code-enabled-modes t
-  "List of major modes in which `prettify-symbols-mode' should be enabled.
-If t, enable it everywhere. If the first element is 'not, enable it in any mode
-besides what is listed.")
-
-;; When you get to the right edge, it goes back to how it normally prints
-(setq prettify-symbols-unprettify-at-point 'right-edge)
 
 (defun +pretty-code-init-pretty-symbols-h ()
   "Enable `prettify-symbols-mode'.
@@ -80,6 +93,7 @@ Otherwise it builds `prettify-code-symbols-alist' according to
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
 
+
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
 ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
@@ -95,38 +109,3 @@ Otherwise it builds `prettify-code-symbols-alist' according to
        (load! "+hasklig"))
       ((featurep! +pragmata-pro)
        (load! "+pragmata-pro")))
-
-(defun +pretty-code--install-font (prefix name url-format fonts-alist)
-  "Install fonts to the local system.
-
-If PREFIX is nil, will prompt whether or not to download. NAME is informational only.
-URL-FORMAT is a format string that should be a url and have a single %s, which is expanded
-for each font in FONTS-ALIST. FONTS-ALIST should be the filename of each font. It is used
-as the source and destination filename.
-"
-  (when (or prefix (yes-or-no-p
-                    (format "This will download and install the %s fonts, are you sure you want to do this?" name)))
-    (let* ((font-dest (cl-case window-system
-                        ;; Linux
-                        (x  (concat (or (getenv "XDG_DATA_HOME")
-                                        (concat (getenv "HOME") "/.local/share"))
-                                    "/fonts/"))
-                        ;; MacOS
-                        (mac (concat (getenv "HOME") "/Library/Fonts/" ))
-                        (ns (concat (getenv "HOME") "/Library/Fonts/" ))))
-           (known-dest? (stringp font-dest))
-           (font-dest (or font-dest (read-directory-name "Font installation directory: " "~/"))))
-
-      (unless (file-directory-p font-dest) (mkdir font-dest t))
-
-      (dolist (font fonts-alist)
-        (url-copy-file (format url-format font) (expand-file-name font font-dest) t))
-
-      (when known-dest?
-        (message "Font downloaded, updating font cache... <fc-cache -f -v> ")
-        (shell-command-to-string (format "fc-cache -f -v")))
-      (message "Successfully %s `%s' fonts to `%s'!"
-               (if known-dest? "installed" "downloaded")
-               name
-               font-dest)))
-  )
