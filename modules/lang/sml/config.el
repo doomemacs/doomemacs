@@ -12,7 +12,7 @@
 
   (map! :map sml-mode-map
         :i "RET"   #'reindent-then-newline-and-indent
-        :i "M-SPC" #'sml-electric-space
+        :i "S-SPC" #'sml-electric-space
         :i "|"     #'sml-electric-pipe
         :localleader
         :desc "Run SML" "'" #'run-sml
