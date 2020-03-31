@@ -272,16 +272,16 @@ users).")
 ;; Don't ping things that look like domain names.
 (setq ffap-machine-p-known 'reject)
 
+;; Font compacting can be terribly expensive, especially for rendering icon
+;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+;; been determined, but we inhibit it there anyway.
+(setq inhibit-compacting-font-caches t)
+
 ;; Performance on Windows is considerably worse than elsewhere, especially if
 ;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
   ;; Reduce the workload when doing file IO
-  (setq w32-get-true-file-attributes nil)
-
-  ;; Font compacting can be terribly expensive, especially for rendering icon
-  ;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
-  ;; been determined.
-  (setq inhibit-compacting-font-caches t))
+  (setq w32-get-true-file-attributes nil))
 
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.
