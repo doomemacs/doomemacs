@@ -8,6 +8,7 @@
 ;; Packages
 
 (use-package! yasnippet
+  :defer-incrementally eldoc easymenu help-mode
   :commands (yas-minor-mode-on
              yas-expand
              yas-expand-snippet
