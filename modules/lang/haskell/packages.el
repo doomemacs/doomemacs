@@ -6,7 +6,8 @@
 (when (featurep! +dante)
   (package! dante :pin "4955bc7363")
   (package! attrap :pin "4cf3e4a162"))
-(when (featurep! +lsp)
+(when (or (featurep! +lsp)
+          (featurep! +ghcide))
   (package! lsp-haskell :pin "582fa27c88"))
 ;; DEPRECATED
 (when (featurep! +intero)

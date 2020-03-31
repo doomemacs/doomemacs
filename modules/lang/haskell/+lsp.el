@@ -2,7 +2,7 @@
 
 (use-package! lsp-haskell
   :after lsp-clients
-  :init (add-hook 'haskell-mode-local-vars #'lsp!)
+  :preface (add-hook 'haskell-mode-local-vars-hook #'lsp!)
   :config
   (when IS-MAC
     (setq lsp-haskell-process-path-hie "hie-wrapper"))
