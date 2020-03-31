@@ -512,6 +512,13 @@ current workspace (and clean them up)."
                 (lambda (file-or-data &optional type data-p &rest props)
                   (let ((type (if (plist-get props :width) type)))
                     (apply old-create-image file-or-data type data-p props)))))
+      (apply orig-fn args)))
+
+  (defadvice! +org--fix-inconsistent-uuidgen-case (orig-fn &rest args)
+    "Ensure uuidgen always produces lowercase output regardless of system."
+    :around #'org-id-new
+    (if (equal org-id-method 'uuid)
+        (downcase (apply orig-fn args))
       (apply orig-fn args))))
 
 
