@@ -165,17 +165,6 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
 
-  ;; Recenter screen after most searches
-  (dolist (fn '(evil-visualstar/begin-search-forward
-                evil-visualstar/begin-search-backward
-                evil-ex-search-word-forward
-                evil-ex-search-word-backward
-                evil-ex-search-next
-                evil-ex-search-previous
-                evil-ex-search-forward
-                evil-ex-search-backward))
-    (advice-add fn :around #'doom-preserve-window-position-a))
-
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type regexp-match
