@@ -7,7 +7,8 @@
              langtool-correct-buffer)
   :init (setq langtool-default-language "en-US")
   :config
-  (unless langtool-language-tool-jar
+  (unless (or langtool-bin
+              langtool-language-tool-jar)
     (setq langtool-language-tool-jar
           (cond (IS-MAC
                  (locate-file "libexec/languagetool-commandline.jar"
