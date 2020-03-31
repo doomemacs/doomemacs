@@ -39,19 +39,11 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  #'+company/complete)
-      :n [tab] (general-predicate-dispatch nil
-                 (and (featurep! :editor fold)
-                      (save-excursion (end-of-line) (invisible-p (point))))
-                 #'+fold/toggle
-                 (fboundp 'evil-jump-item)
-                 #'evil-jump-item)
       :v [tab] (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
                           (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
-                 #'yas-insert-snippet
-                 (fboundp 'evil-jump-item)
-                 #'evil-jump-item)
+                 #'yas-insert-snippet)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
