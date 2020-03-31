@@ -24,4 +24,6 @@
 
 (use-package! company-mlton
   :when (featurep! :completion company)
-  :hook (sml-mode . company-mlton-init))
+  :hook (sml-mode . company-mlton-init)
+  :config
+  (set-company-backend! 'sml-mode company-mlton-grouped-backend))
