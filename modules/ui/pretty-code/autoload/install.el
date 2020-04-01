@@ -95,6 +95,6 @@ When PREFIX is non-nil, ignore the prompt and just install it."
           "Install font: "
           (mapcar #'car +pretty-code-font-alist))))
   (if-let (font-files (cdr (assoc font-name +pretty-code-font-alist)))
-      (cl-destructuring-bind (&keys url files) font-files
+      (cl-destructuring-bind (&key url files) font-files
         (+pretty-code--install-font prefix font-name url font-files))
     (user-error "%S is not a valid font")))
