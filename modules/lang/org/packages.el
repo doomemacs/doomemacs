@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "ba685555c4")
+  :pin "b9935765f7")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -53,7 +53,7 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e7cddf39e3"))
 (when (featurep! +brain)
-  (package! org-brain :pin "cae8e2213b"))
+  (package! org-brain :pin "ec4bd9dd29"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "b96fd7ba02"))
 (when (featurep! +gnuplot)
@@ -62,7 +62,7 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "de7af256a9"))
+  (package! jupyter :pin "3322ce7b31"))
 (when (featurep! +journal)
   (package! org-journal :pin "664c08e12c"))
 (when (featurep! +pomodoro)
