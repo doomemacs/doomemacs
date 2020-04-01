@@ -209,7 +209,7 @@ called.")
       (:description . "Run Python script")))
   (map! :map python-mode-map
         :localleader
-        :prefix "e"
+        :prefix ("e" . "pipenv")
         :desc "activate"    "a" #'pipenv-activate
         :desc "deactivate"  "d" #'pipenv-deactivate
         :desc "install"     "i" #'pipenv-install
