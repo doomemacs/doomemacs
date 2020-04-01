@@ -74,9 +74,9 @@
   (package! org-tree-slide :pin "7bf09a02bd")
   (package! org-re-reveal :pin "e4460a98b6"))
 (when (featurep! +roam)
-  (package! org-roam :pin "b86d2c8637")
+  (package! org-roam :pin "dfb8449680")
   (when (featurep! :completion company)
-    (package! company-org-roam :pin "0d14bf56f5")))
+    (package! company-org-roam :pin "063581df54")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
