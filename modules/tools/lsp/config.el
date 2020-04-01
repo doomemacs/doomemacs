@@ -16,6 +16,13 @@ excluded servers' identifiers to `+lsp-capf-blacklist'.")
   "Language servers listed here will always use the `company-lsp' backend,
 irrespective of what `+lsp-company-backend' is set to.")
 
+(defvar +lsp-defer-shutdown 3
+  "If non-nil, defer shutdown of LSP servers for this many seconds after last
+workspace buffer is closed.
+
+This delay prevents premature server shutdown when a user still intends on
+working on that project after closing the last buffer.")
+
 
 ;;
 ;;; Packages
@@ -150,16 +157,19 @@ This gives the user a chance to open other project files before the server is
 auto-killed (which is a potentially expensive process)."
     :around #'lsp--shutdown-workspace
     (if (or lsp-keep-workspace-alive
-            restart)
+            restart
+            (null +lsp-defer-shutdown)
+            (= +lsp-defer-shutdown 0))
         (funcall orig-fn)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
             (run-at-time
-             3 nil (lambda (workspace)
-                     (let ((lsp--cur-workspace workspace))
-                       (unless (lsp--workspace-buffers lsp--cur-workspace)
-                         (funcall orig-fn))))
+             (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
+             nil (lambda (workspace)
+                   (let ((lsp--cur-workspace workspace))
+                     (unless (lsp--workspace-buffers lsp--cur-workspace)
+                       (funcall orig-fn))))
              lsp--cur-workspace))))
 
   (defadvice! +lsp-prompt-if-no-project-a (session file-name)
