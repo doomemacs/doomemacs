@@ -7,6 +7,10 @@
              org-roam-find-file
              org-roam-switch-to-buffer
              org-roam-graph-show)
+  :preface
+  ;; Set this to nil so we can later detect whether the user has set a custom
+  ;; directory for it, and default to `org-directory' if they haven't.
+  (defvar org-roam-directory nil)
   :init
   (map! :after org
         :map org-mode-map
@@ -19,7 +23,8 @@
         "g" #'org-roam-graph-show
         "i" #'org-roam-insert)
   :config
-  (setq org-roam-directory org-directory)
+  (unless org-roam-directory
+    (setq org-roam-directory org-directory))
   (org-roam-mode +1))
 
 
