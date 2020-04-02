@@ -66,3 +66,8 @@ This must be set before `treemacs' has loaded.")
 (use-package! treemacs-magit
   :when (featurep! :tools magit)
   :after treemacs magit)
+
+(use-package! treemacs-persp
+  :when (featurep! :ui workspaces)
+  :after (treemacs persp-mode)
+  :config (treemacs-set-scope-type 'Perspectives))
