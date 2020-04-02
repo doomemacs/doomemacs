@@ -59,17 +59,17 @@ which is expanded for each font in FONTS-ALIST. FONTS-ALIST should be the
 filename of each font. It is used as the source and destination filename."
   (or prefix
       (yes-or-no-p
-       (format "This will download and install the %s fonts, are you
-sure you want to do this?" name))
+       (format "This will download and install the %s fonts, are you sure you want to do this?"
+               name))
       (user-error "Aborted"))
   (let* ((font-dest
           (pcase window-system
             (`x
              (expand-file-name
-              "/fonts/" (or (getenv "XDG_DATA_HOME")
-                            (concat (getenv "HOME") "/.local/share"))))
+              "fonts/" (or (getenv "XDG_DATA_HOME")
+                           "~/.local/share")))
             ((or `mac `ns)
-             (expand-file-name "~/Library/Fonts/" ))))
+             (expand-file-name "~/Library/Fonts/"))))
          (known-dest? (stringp font-dest))
          (font-dest (or font-dest (read-directory-name "Font installation directory: " "~/"))))
     (unless (file-directory-p font-dest)
@@ -80,11 +80,10 @@ sure you want to do this?" name))
                      t))
     (when known-dest?
       (message "Font downloaded, updating font cache... <fc-cache -f -v> ")
-      (shell-command-to-string (format "fc-cache -f -v")))
+      (shell-command-to-string "fc-cache -f -v"))
     (message "Successfully %s `%s' fonts to `%s'!%s"
              (if known-dest? "installed" "downloaded")
-             name
-             font-dest)))
+             name font-dest)))
 
 ;;;###autoload
 (defun +pretty-code/install-patched-font (font-name &optional prefix)
