@@ -61,6 +61,7 @@ Modules that affect and augment your ability to manipulate or insert text.
 + [[file:../modules/editor/file-templates/README.org][file-templates]] - Auto-inserted templates in blank new files
 + [[file:../modules/editor/fold/README.org][fold]] - universal code folding
 + format =+onsave= - TODO
++ god - TODO
 + [[file:../modules/editor/lispy/README.org][lispy]] - TODO
 + multiple-cursors - TODO
 + [[file:../modules/editor/objed/README.org][objed]] - TODO
