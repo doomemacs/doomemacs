@@ -101,6 +101,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+gnuplot=
   + [[https://github.com/mkmcc/gnuplot-mode][gnuplot]]
   + [[https://github.com/bruceravel/gnuplot-mode][gnuplot-mode]]
++ =+hugo=
+  + [[https://github.com/kaushalmodi/ox-hugo][ox-hugo]]
 + =+ipython=
   + [[https://github.com/gregsexton/ob-ipython][ob-ipython]]
 + =+jupyter=
@@ -113,8 +115,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/anler/centered-window-mode][centered-window]]
   + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
   + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
-+ =+hugo=
-  + [[https://github.com/kaushalmodi/ox-hugo][ox-hugo]]
++ =+roam=
+  + [[https://github.com/jethrokuan/org-roam][org-roam]]
 
 ** Hacks
 + The window is recentered when following links.
