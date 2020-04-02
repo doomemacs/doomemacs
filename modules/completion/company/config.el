@@ -17,8 +17,10 @@
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
-    ;; Don't persist company popups when switching back to normal mode.
-    (add-hook 'evil-normal-state-entry-hook #'company-abort)
+    (unless (featurep! +childframe)
+      ;; Don't persist company popups when switching back to normal mode.
+      ;; `company-box' aborts on mode switch so it doesn't need this.
+      (add-hook 'evil-normal-state-entry-hook #'company-abort))
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.

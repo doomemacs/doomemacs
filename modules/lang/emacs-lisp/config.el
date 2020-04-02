@@ -48,9 +48,6 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
-  ;; Use helpful instead of describe-* from `company'
-  (advice-add #'elisp--company-doc-buffer :around #'doom-use-helpful-a)
-
   (add-hook! 'emacs-lisp-mode-hook
              #'outline-minor-mode
              ;; fontificiation
