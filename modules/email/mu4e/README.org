@@ -16,6 +16,8 @@
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#no-such-file-or-directory-mu4e][=No such file or directory, mu4e=]]
 
 * Description
 This module makes Emacs an email client, using ~mu4e~.
@@ -121,3 +123,7 @@ Then configure Emacs to use your email address:
 #+END_SRC
 
 ** TODO mbsync
+* Troubleshooting
+** =No such file or directory, mu4e=
+You will get =No such file or directory, mu4e= errors if you don't run ~doom
+sync~ after installing =mu= through your package manager.
