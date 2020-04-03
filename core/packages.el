@@ -32,7 +32,7 @@
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
   :recipe (:host github :repo "hlissner/ws-butler")
-  :pin "e4430d3778")
+  :pin "2bb49d3ee7")
 (unless IS-WINDOWS
   (package! xclip :pin "d022cf947d"))
 
