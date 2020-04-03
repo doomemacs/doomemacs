@@ -80,7 +80,7 @@ filename of each font. It is used as the source and destination filename."
     (when known-dest-p
       (message "Font downloaded, updating font cache... <fc-cache -f -v> ")
       (shell-command-to-string "fc-cache -f -v"))
-    (message "Successfully %s `%s' fonts to `%s'!%s"
+    (message "Successfully %s `%s' fonts to `%s'!"
              (if known-dest-p "installed" "downloaded")
              name font-dest)))
 
