@@ -6,7 +6,7 @@
 (package! diff-hl :pin "2cf8b489f3")
 (package! dired-rsync :pin "bfd5c155be")
 (when (featurep! +ranger)
-  (package! ranger :pin "ae9b3816a6"))
+  (package! ranger :pin "af6f781a60"))
 (when (featurep! +icons)
   (package! all-the-icons-dired :pin "816987d339"))
 (package! fd-dired :pin "fd4c3f490b")
