@@ -746,7 +746,18 @@ compelling reason, so..."
 
 (use-package! toc-org ; auto-table of contents
   :hook (org-mode . toc-org-enable)
-  :config (setq toc-org-hrefify-default "gh"))
+  :config
+  (setq toc-org-hrefify-default "gh")
+
+  (defadvice! +org-inhibit-scrolling-a (orig-fn &rest args)
+    "Prevent the jarring scrolling that occurs when the-ToC is regenerated."
+    :around #'toc-org-insert-toc
+    (let ((p (set-marker (make-marker) (point)))
+          (s (window-start)))
+      (prog1 (apply orig-fn args)
+        (goto-char p)
+        (set-window-start nil s t)
+        (set-marker p nil)))))
 
 
 (use-package! org-bullets ; "prettier" bullets
