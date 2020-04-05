@@ -68,6 +68,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
   Emacs can be used for presentations.
 + =+roam= Enables org-roam integration.
++ =+noter= Enables org-noter integration. Keeps notes in sync with a document.
+  Requires [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][pdf-tools]] or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
 
 ** Plugins
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
@@ -117,6 +119,10 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
 + =+roam=
   + [[https://github.com/jethrokuan/org-roam][org-roam]]
++ =:lang latex=
+  + [[https://github.com/jkitchin/org-ref][org-ref]]
++ =+noter=
+  + [[https://github.com/weirdNox/org-noter][org-noter]]
 
 ** Hacks
 + The window is recentered when following links.
