@@ -715,32 +715,6 @@ compelling reason, so..."
   )
 
 
-(defun +org-init-smartparens-h ()
-  "TODO"
-  (after! smartparens
-    (defun +org-sp-point-in-checkbox-p (_id action _context)
-      (and (eq action 'insert)
-           (sp--looking-at-p "\\s-*]")))
-
-    (defun +org-sp-point-at-bol-p (_id action _context)
-      (and (eq action 'insert)
-           (save-excursion
-             (skip-chars-backward "*")
-             (bolp))))
-
-    (defun +org-sp-in-src-block-p (_id action _context)
-      (and (eq action 'insert)
-           (org-in-src-block-p)))
-
-    ;; make delimiter auto-closing a little more conservative
-    (sp-with-modes 'org-mode
-      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-at-bol-p +org-sp-in-src-block-p))
-      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p))
-      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-in-checkbox-p +org-sp-in-src-block-p))
-      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
-      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
-
-
 ;;
 ;;; Packages
 
@@ -939,8 +913,7 @@ compelling reason, so..."
              #'+org-init-keybinds-h
              #'+org-init-popup-rules-h
              #'+org-init-protocol-h
-             #'+org-init-protocol-lazy-loader-h
-             #'+org-init-smartparens-h)
+             #'+org-init-protocol-lazy-loader-h)
 
   ;;; Custom org modules
   (if (featurep! +brain)     (load! "contrib/brain"))
