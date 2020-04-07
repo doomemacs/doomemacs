@@ -514,12 +514,12 @@ current workspace (and clean them up)."
                     (apply old-create-image file-or-data type data-p props)))))
       (apply orig-fn args)))
 
-  (defadvice! +org--fix-inconsistent-uuidgen-case (orig-fn &rest args)
+  (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
     "Ensure uuidgen always produces lowercase output regardless of system."
-    :around #'org-id-new
-    (if (equal org-id-method 'uuid)
-        (downcase (apply orig-fn args))
-      (apply orig-fn args))))
+    :filter-return #'org-id-new
+    (if (eq org-id-method 'uuid)
+        (downcase uuid)
+      uuid)))
 
 
 (defun +org-init-keybinds-h ()
