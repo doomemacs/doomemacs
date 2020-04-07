@@ -75,6 +75,14 @@ Emacs.")
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  ;; Override projectile's dirconfig file '.projectile' with doom's project marker '.project'.
+  (defadvice! doom--projectile-dirconfig-file-a ()
+    :override #'projectile-dirconfig-file
+    (cond
+     ;; Prefers '.projectile' to maintain compatibility with existing projects.
+     ((file-exists-p! (or ".projectile" ".project") (projectile-project-root)))
+     ((expand-file-name ".project" (projectile-project-root)))))
+
   ;; Disable commands that won't work, as is, and that Doom already provides a
   ;; better alternative for.
   (put 'projectile-ag 'disabled "Use +{ivy,helm}/project-search instead")
