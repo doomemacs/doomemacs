@@ -34,7 +34,10 @@
   :recipe (:host github :repo "hlissner/ws-butler")
   :pin "2bb49d3ee7")
 (unless IS-WINDOWS
-  (package! xclip :pin "d022cf947d"))
+  (package! xclip :pin "d022cf947d")
+  (package! clipetty
+    :recipe (:host github :repo "spudlyo/clipetty")
+    :pin "fda5a80cf4"))
 
 ;; core-projects.el
 (package! projectile :pin "588692ad56")
