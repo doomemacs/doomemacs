@@ -8,6 +8,10 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#ubuntu][Ubuntu]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#macos][macOS]]
+  - [[#nixos][NixOS]]
 - [[#features][Features]]
 - [[#customization][Customization]]
   - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
@@ -42,7 +46,41 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
 + [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
 
-* TODO Prerequisites
+* Prerequisites
+You will need ghostscript, dvipng and a latex compiler. All this is provided by
+the =texlive= bundle, available through many OS package managers:
+
+** Ubuntu
+#+BEGIN_SRC sh
+apt-get install texlive
+#+END_SRC
+
+#+begin_quote
+=ghostscript 9.26/9.27= is reportedly buggy on Ubuntu 19.04. You may have to
+build a newer version yourself. Later versions of Ubuntu+texlive don't suffer
+this issue.
+#+end_quote
+
+** Arch Linux
+#+BEGIN_SRC sh
+pacman -S texlive
+#+END_SRC
+
+** TODO macOS
+#+BEGIN_SRC sh
+brew cask install basictex
+# If the above doesn't work, then
+brew cask install mactex  # WARNING: large 4gb download!
+#+END_SRC
+
+#+begin_quote
+This has not been verified.
+#+end_quote
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.texlive.combined.scheme-medium ];
+#+END_SRC
 
 * TODO Features
 
