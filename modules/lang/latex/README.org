@@ -28,7 +28,6 @@ Provide a helping hand when working with LaTeX documents.
 + Change PDF viewer to Okular or ~latex-preview-pane~
 + Bibtex editor
 + Autocompletion using ~company-mode~
-+ Ivy or Helm for selecting bibliography
 + Compile your .tex code only once using LatexMk
 
 ** Module Flags
@@ -43,7 +42,6 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/alexeyr/company-auctex][company-auctex]]*
 + [[https://github.com/TheBB/company-reftex][company-reftex]]*
 + [[https://github.com/vspinu/company-math][company-math]]*
-+ [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
 + [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
 
 * Prerequisites
@@ -86,14 +84,11 @@ environment.systemPackages = [ pkgs.texlive.combined.scheme-medium ];
 
 * Customization
 ** Specifying the location of a bibtex file & corresponding PDFs
-The reftex and bibtex-completion packages have two variables that allow you to
-specify where it should find your bibliography file(s) and their corresponding
-PDFs:
+Reftex has a variable that allow you to
+specify where it should find your bibliography file(s):
 
 #+BEGIN_SRC emacs-lisp
 (setq reftex-default-bibliography "/your/bib/file.bib")
-;; Optionally specifying a location for the corresponding PDFs
-(setq bibtex-completion-library-path (list "/your/bib/pdfs"))
 #+END_SRC
 
 ** Changing the PDFs viewer

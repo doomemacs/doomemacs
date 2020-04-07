@@ -19,7 +19,3 @@
   (package! company-auctex :pin "48c42c58ce")
   (package! company-reftex :pin "275ef708f0")
   (package! company-math :pin "a796053590"))
-(when (featurep! :completion ivy)
-  (package! ivy-bibtex :pin "d4471232be"))
-(when (featurep! :completion helm)
-  (package! helm-bibtex :pin "d4471232be"))
