@@ -5,6 +5,8 @@
     :name          "»"
     :src_block     "»"
     :src_block_end "«"
+    :quote         "“"
+    :quote_end     "”"
     ;; Functional
     :lambda        "λ"
     :def           "ƒ"
