@@ -40,6 +40,18 @@ Continuation lines are indented either twice `LaTeX-indent-level', or
             ((+ contin indent))))))
 
 ;;;###autoload
+(defun +latex-fold-last-macro-a (&rest _)
+  "Advice to auto-fold LaTeX macros after functions that
+typically insert macros."
+  ;; A simpler approach would be to just fold the whole line, but if point was
+  ;; inside a macro that would would kick it out. So instead we fold the last
+  ;; macro before point, hoping its the one newly inserted.
+  (TeX-fold-region (save-excursion
+                     (search-backward "\\" (line-beginning-position) t)
+                     (point))
+                   (1+ (point))))
+
+;;;###autoload
 (defun +latex-symbols-company-backend (command &optional arg &rest _ignored)
   "A wrapper backend for `company-mode' that either uses
 `company-math-symbols-unicode' or `company-math-symbols-latex'. If
