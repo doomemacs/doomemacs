@@ -3,9 +3,6 @@
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
-(defvar +latex-bibtex-file nil
-  "File AUCTeX (specifically RefTeX) uses to search for citations.")
-
 (defvar +latex-enable-unicode-math nil
   "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
 enabling unicode symbols in math regions. This requires the unicode-math latex
