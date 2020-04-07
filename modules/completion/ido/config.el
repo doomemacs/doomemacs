@@ -1,59 +1,64 @@
 ;;; completion/ido/config.el -*- lexical-binding: t; -*-
 
-(defun +ido-init-h ()
-  (setq ido-ignore-buffers
-        '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
-          "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
-          "_region_" " output\\*$" "^TAGS$" "^\*Ido")
-        ido-use-faces nil
-        ido-confirm-unique-completion t
-        ido-case-fold t
-        ido-enable-tramp-completion nil
-        ido-enable-flex-matching t
-        ido-create-new-buffer 'always
-        ido-enable-tramp-completion t
-        ido-enable-last-directory-history t
-        ido-save-directory-list-file (concat doom-cache-dir "ido.last"))
+(defvar ido-mode-hook nil
+  "List of hooks to run when `ido-mode' is activated.")
 
-  (unless (member "\\`.DS_Store$" ido-ignore-files)
-    (push "\\`.DS_Store$" ido-ignore-files)
-    (push "Icon\\?$" ido-ignore-files))
-
-  (define-key! (ido-common-completion-map ido-completion-map ido-file-completion-map)
-    "\C-n" #'ido-next-match
-    "\C-p" #'ido-prev-match
-    "\C-w" #'ido-delete-backward-word-updir
-    ;; Go to $HOME with ~
-    "~" (λ! (if (looking-back "/" (point-min))
-                (insert "~/")
-              (call-interactively #'self-insert-command))))
-
-  (defadvice! +ido--sort-mtime-a ()
-    "Sort ido filelist by mtime instead of alphabetically."
-    :override #'ido-sort-mtime
-    (setq ido-temp-list
-          (sort ido-temp-list
-                (lambda (a b)
-                  (time-less-p
-                   (sixth (file-attributes (concat ido-current-directory b)))
-                   (sixth (file-attributes (concat ido-current-directory a)))))))
-    (ido-to-end  ;; move . files to end (again)
-     (cl-loop for x in ido-temp-list
-              if (char-equal (string-to-char x) ?.)
-              collect x)))
-  (add-hook! '(ido-make-file-list-hook ido-make-dir-list-hook)
-             #'ido-sort-mtime)
-
-  ;;
-  (ido-mode 1)
-  (ido-everywhere 1)
-  (ido-ubiquitous-mode 1)
-  (ido-vertical-mode 1)
-  (flx-ido-mode +1)
-  (crm-custom-mode +1)
-
-  ;;
-  (remove-hook 'ido-setup-hook #'+ido-init-h))
 
 ;;
-(add-hook 'ido-setup-hook #'+ido-init-h)
+;;; Packages
+
+(use-package! ido
+  :after-call pre-command-hook
+  :hook (ido-mode . ido-everywhere)
+  :hook (ido-mode . ido-ubiquitous-mode)
+  :preface
+  ;; HACK `ido' is a really old package. It defines `ido-mode' manually and
+  ;;      doesn't define a hook, so we define one for it.")
+  (defadvice! +ido-run-hooks-a (&rest _)
+    :after #'ido-mode
+    (run-hooks 'ido-mode-hook))
+  :init
+  (setq ido-save-directory-list-file (concat doom-cache-dir "ido.last"))
+  :config
+  (pushnew! ido-ignore-files "\\`.DS_Store$" "Icon\\?$")
+  (setq ido-ignore-buffers
+        '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*[Hh]elp" "^\\*Buffer"
+          "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-" "_region_"
+          " output\\*$" "^TAGS$" "^\*Ido")
+        ido-auto-merge-work-directories-length -1
+        ido-confirm-unique-completion t
+        ido-case-fold t
+        ido-create-new-buffer 'always
+        ido-enable-flex-matching t)
+
+  (map! :map (ido-common-completion-map ido-file-completion-map)
+        "C-w"  #'ido-delete-backward-word-updir
+        :map ido-common-completion-map
+        "C-n"  #'ido-next-match
+        "C-p"  #'ido-prev-match
+        [down] #'ido-next-match
+        [up]   #'ido-prev-match
+        :map ido-file-completion-map
+        ;; Go to $HOME with ~
+        "~"    (λ! (if (looking-back "/" (point-min))
+                       (insert "~/")
+                     (call-interactively #'self-insert-command))))
+
+  (ido-mode +1))
+
+
+(use-package! ido-vertical-mode
+  :hook (ido-mode . ido-vertical-mode)
+  :config (setq ido-vertical-show-count t))
+
+
+(use-package! ido-sort-mtime
+  :hook (ido-mode . ido-sort-mtime-mode))
+
+
+(use-package! crm-custom
+  :hook (ido-mode . crm-custom-mode))
+
+
+(use-package! flx-ido
+  :hook (ido-mode . flx-ido-mode))
