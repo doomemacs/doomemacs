@@ -141,7 +141,7 @@ Dictionary.app behind the scenes to get definitions.")
 
   (use-package! helm-xref
     :when (featurep! :completion helm)
-    :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs)))
+    :config (setq xref-show-xrefs-function (if EMACS27+ #'helm-xref-show-xrefs-27 #'helm-xref-show-xrefs))))
 
 
 ;;
