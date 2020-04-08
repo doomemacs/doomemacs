@@ -34,8 +34,7 @@ working on that project after closing the last buffer.")
   ;; Don't prompt the user for the project root every time we open a new
   ;; lsp-worthy file, instead, try to guess it with projectile.
   (setq lsp-auto-guess-root t)
-  ;; Auto-kill LSP server once you've killed the last buffer associated with its
-  ;; project.
+  ;; Auto-kill LSP server after last workspace buffer is killed.
   (setq lsp-keep-workspace-alive nil)
   ;; Let `flycheck-check-syntax-automatically' determine this.
   (setq lsp-flycheck-live-reporting nil)
