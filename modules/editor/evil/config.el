@@ -389,26 +389,6 @@ To change these keys see `+evil-repeat-keys'."
                evil-ex-search-previous evil-ex-search-next)
 
 
-;; `evil-collection'
-(when (featurep! +everywhere)
-  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
-
-  (unless doom-reloading-p
-    (load! "+everywhere"))
-
-  ;; Don't let evil-collection interfere with certain keys
-  (appendq! evil-collection-key-blacklist
-            (append (when (featurep! :tools lookup)
-                      '("gd" "gf" "K"))
-                    (when (featurep! :tools eval)
-                      '("gr" "gR"))
-                    '("[" "]" "gz" "<escape>")))
-
-  (defadvice! +evil-collection-disable-blacklist-a (orig-fn)
-    :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
-    (let (evil-collection-key-blacklist)
-      (funcall-interactively orig-fn))))
-
 ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
 ;;   zq - mark word at point as good word
 ;;   zw - mark word at point as bad
