@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Supports-26.1_--_27.0.50-blueviolet.svg?style=for-the-badge&logo=GNU%20Emacs&logoColor=white" alt="Supports Emacs 26.x - 27.0.50">
 </a>
 <a href="https://github.com/hlissner/doom-emacs/actions">
-  <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg?style=for-the-badge" alt="Build status: develop">
+  <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
 </a>
 <a href="https://discord.gg/qvGgnVx">
   <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge" alt="Join our discord server" align="right">
@@ -59,7 +59,7 @@ documentation](docs/getting_started.org#install).
   <img src="https://github.com/hlissner/doom-emacs/raw/screenshots/cacochan.png" align="right" />
 </a>
 
-It is a story as old as time. A stubborn, shell-dwelling, and melodramatic as
+It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
 vimmer -- envious of the features of modern text editors -- spirals into despair
 before succumbing to the [dark side][url:evil-mode]. This is his config.
 
@@ -91,24 +91,23 @@ resource for Emacs enthusiasts to learn more about our favorite OS.
 ## Features
 
 - Minimalistic good looks inspired by modern editors.
-- A modular architecture for a more organized Emacs configuration.
-- A custom elisp library to help simplify your config.
-- (Optional) Vim-emulation powered by [evil-mode][url:evil-mode], including
-  ports of popular vim plugins and functionality.
+- A modular architecture that can be extended to your own configs.
+- A standard library suited to simplifying your config.
 - A declarative [package management system][doom:packages] (powered by
   [straight.el][url:straight]) with a command line interface. Install packages
   from anywhere, not just (M)ELPA.
-- A curated set of sane defaults for all packages, all (major) OSes, and Emacs
-  itself.
-- Support for *many* programming languages. Too many to list. Includes syntax
-  highlighting, linters/checker integration, inline code evaluation, code
-  completion (where possible), REPLs, documentation lookups, snippets, and more!
+- (Optional) Vim-emulation powered by [evil-mode][url:evil-mode], including
+  ports of popular vim plugins and functionality.
+- Curated and sane defaults for many packages, (major) OSes, and Emacs itself.
+- Support for *many* programming languages. Includes syntax highlighting,
+  linters/checker integration, inline code evaluation, code completion (where
+  possible), REPLs, documentation lookups, snippets, and more!
 - Support for *many* tools, like docker, pass, ansible, terraform, and more.
 - A Spacemacs-esque [keybinding scheme][doom:bindings], centered around leader
   and localleader prefix keys (<kbd>SPC</kbd> and <kbd>SPC</kbd><kbd>m</kbd>, by
   default).
-- A rule-based [popup management system][doom:popups] that dictates how
-  temporary or disposable buffers are displayed (and disposed of).
+- A rule-based [popup management system][doom:popups] to control how temporary
+  or disposable buffers are displayed (and disposed of).
 - Automatic indentation detection and [editorconfig][url:editorconfig]
   integration. Let someone else argue about tabs vs **\_\***spaces**\*\_**.
 - Project-management tools and framework-specific minor modes with their own
@@ -127,31 +126,29 @@ We have [a Discord server][url:discord]! Hop on and say hi!
 
 ## Troubleshooting
 
-Encountered strange behavior or an error? Here are some things to try before you
-shoot off that bug report:
+Encountered a problem? Here are some things to try before shooting off that bug
+report:
 
 - Run `bin/doom sync`. This ensures Doom is properly set up and its autoloads
   files are up-to-date.
-- If you have byte-compiled your config (with `bin/doom compile`), see if
-  `bin/doom clean` makes the issue go away. Never debug issues with a
-  byte-compiled config, it will make your job harder.
-- Run `bin/doom doctor` to detect common issues in your development environment.
-- Search Doom's issue tracker for mention of any error messages you've received.
+- Folks who have byte-compiled their config (with `bin/doom compile`) should run
+  `bin/doom clean` to rule out stale bytecode. Never debug with a byte-compiled
+  config. It makes your job harder.
+- Run `bin/doom doctor` to detect common issues in your development environment
+  and missing third party dependencies.
+- Search [Doom's issue tracker][github:issues] in case your issue was already
+  reported.
 - [Visit our FAQ][docs:faq] to see if your issue is listed.
 
-If all else fails, [file that bug report][github:new-issue]! Please include the
-behavior you've observed, the behavior you expected, and any error messages or
-warnings logged to the \*Messages\* buffer (can be opened with <kbd>SPC h
-e</kbd> or `M-x view-echo-area-messages`).
-
-It's a great help if you included a backtrace with errors, i.e. `M-x
-toggle-debug-on-error` then recreating the error(s).
+If all else fails, [file that bug report][github:new-issue]! **Please do not
+ignore the issue template!** It's a great help if you can [include a backtrace
+with errors][docs:backtrace].
 
 ## Contributing
 
 Doom (and my Emacs work in general) is a labor of love and incurable madness,
 done on my spare time. If you'd like to support my work, there are many things
-you can do to help; I welcome any contribution!
+you can do to help. I welcome contributions!
 
 - I love pull requests and bug reports. Check out the [Contributing
   Guidelines][docs:contributing] to find out how you can help out.
@@ -166,13 +163,16 @@ you can do to help; I welcome any contribution!
   great help. My work here contends with studies, ventures in indie gamedev, and
   my freelance work.
 
+
 [docs:wiki]: docs/index.org
 [docs:wiki-quickstart]: docs/getting_started.org
 [docs:wiki-modules]: docs/index.org#Module%20List
 [docs:wiki-customization]: docs/getting_started.org#Customize
 [docs:contributing]: docs/contributing.org
 [docs:faq]: docs/faq.org
+[docs:backtrace]: https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#how-to-extract-a-backtrace-from-an-error
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
+[github:issues]: https://github.com/hlissner/doom-emacs/issues
 [doom:bindings]: modules/config/default/+evil-bindings.el
 [doom:packages]: core/autoload/packages.el
 [doom:popups]: modules/ui/popup/README.org
