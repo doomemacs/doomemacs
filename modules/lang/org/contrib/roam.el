@@ -2,16 +2,7 @@
 ;;;###if (featurep! +roam)
 
 (use-package! org-roam
-  :commands (org-roam
-             org-roam-capture
-             org-roam-date
-             org-roam-find-file
-             org-roam-graph-show
-             org-roam-insert
-             org-roam-switch-to-buffer
-             org-roam-today
-             org-roam-tomorrow
-             org-roam-yesterday)
+  :after org
   :preface
   ;; Set this to nil so we can later detect whether the user has set a custom
   ;; directory for it, and default to `org-directory' if they haven't.
