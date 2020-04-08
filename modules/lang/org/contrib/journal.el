@@ -22,7 +22,6 @@
         (:map org-journal-search-mode-map
           "C-n" #'org-journal-search-next
           "C-p" #'org-journal-search-previous)
-
         :localleader
         (:map org-journal-mode-map
           "c" #'org-journal-new-entry

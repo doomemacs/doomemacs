@@ -24,10 +24,9 @@
 (add-hook! '(css-mode-hook sass-mode-hook stylus-mode-hook)
            #'rainbow-mode)
 
-;; built-in, and contains both css-mode & scss-mode
+;; built-in. Contains both css-mode & scss-mode
 (after! css-mode
   ;; css-mode hooks apply to scss and less-css modes
-  (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
   (map! :localleader
         :map scss-mode-map
         "b" #'+css/scss-build
@@ -61,5 +60,7 @@
 ;;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! '(css-mode-hook sass-mode-hook less-css-mode-hook)
+  (add-hook! '(css-mode-local-vars-hook
+               sass-mode-local-vars-hook
+               less-css-mode-local-vars-hook)
              #'lsp!))

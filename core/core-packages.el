@@ -1,23 +1,21 @@
 ;;; core/core-packages.el -*- lexical-binding: t; -*-
 
 ;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
-;; to create a declarative, lazy-loaded and optionally rolling-release package
+;; to create a declarative, lazy-loaded and (nominally) reproducible package
 ;; management system. We use `straight' over `package' because the latter is
-;; tempermental. ELPA sources suffer downtime occasionally, and often fail at
-;; building some packages when GNU Tar is unavailable (e.g. MacOS users start
-;; with BSD tar). There are also known gnutls errors in the current stable
-;; release of Emacs (26.x) which bork TLS handshakes with ELPA repos (mainly
-;; gnu.elpa.org). See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=3434.
+;; tempermental. ELPA sources suffer downtime occasionally and often fail to
+;; build packages when GNU Tar is unavailable (e.g. MacOS users start with BSD
+;; tar). Known gnutls errors plague the current stable release of Emacs (26.x)
+;; which bork TLS handshakes with ELPA repos (mainly gnu.elpa.org). See
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=3434.
 ;;
 ;; What's worse, you can only get the latest version of packages through ELPA.
 ;; In an ecosystem that is constantly changing, this is more frustrating than
-;; convenient. Straight (and Doom) can do rolling release, but it is optional
-;; (and will eventually be opt-in).
+;; convenient. Straight (and Doom) can do rolling release, but it is opt-in.
 ;;
-;; ANyhow, interacting with this package management system is done through the
-;; bin/doom script included with Doom Emacs. You'll find more about it by
-;; running 'doom help' (I highly recommend you add it to your PATH), but here
-;; are the highlights:
+;; Interacting with this package management system is done through Doom's
+;; bin/doom script. Find out more about it by running 'doom help' (I highly
+;; recommend you add the script to your PATH). Here are some highlights:
 ;;
 ;; + `bin/doom install`: a wizard that guides you through setting up Doom and
 ;;   your private config for the first time.
@@ -83,35 +81,36 @@ missing) and shouldn't be deleted.")
           ("melpa" . ,(concat proto "://melpa.org/packages/"))
           ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
 
+;; package.el has no business modifying the user's init.el
 (advice-add #'package--ensure-init-file :override #'ignore)
 
-;; Don't save `package-selected-packages' to `custom-file'
-(defadvice! doom--package-inhibit-custom-file-a (&optional value)
-  :override #'package--save-selected-packages
-  (if value (setq package-selected-packages value)))
-
-;; Refresh package.el the first time you call `package-install'
+;; Refresh package.el the first time you call `package-install', so it can still
+;; be used (e.g. to temporarily test packages). Remember to run 'doom sync' to
+;; purge them; they can conflict with packages installed via straight!
 (add-transient-hook! 'package-install (package-refresh-contents))
 
-;;; straight
+
+;;
+;;; Straight
+
 (setq straight-base-dir doom-local-dir
       straight-repository-branch "develop"
       straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
-      ;; makes 'doom refresh' instant (once everything set up), which is much
-      ;; nicer UX than the several seconds modification checks.
+      ;; makes 'doom sync' instant (once everything set up), which is much nicer
+      ;; UX than the several seconds modification checks.
       straight-check-for-modifications nil
       ;; We handle package.el ourselves (and a little more comprehensively)
       straight-enable-package-integration nil
       ;; Before switching to straight, `doom-local-dir' would average out at
       ;; around 100mb with half Doom's modules at ~230 packages. Afterwards, at
-      ;; around 1gb. With shallow cloning, that is reduced to ~400mb. This
-      ;; imposes an issue with packages that require their git history for
-      ;; certain things to work (like magit and org), but we can deal with that
-      ;; when we cross that bridge.
+      ;; around 1gb. With shallow cloning, that is reduced to ~400mb. This has
+      ;; no affect on packages that are pinned, however (run 'doom purge' to
+      ;; compact those after-the-fact). Some packages break when shallow cloned
+      ;; (like magit and org), but we'll deal with that elsewhere.
       straight-vc-git-default-clone-depth 1
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
-      ;; we just don't have to deal with them at all.
+      ;; we don't have to deal with them at all.
       autoload-compute-prefixes nil
       ;; We handle it ourselves
       straight-fix-org nil)
@@ -119,7 +118,7 @@ missing) and shouldn't be deleted.")
 (defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
   "Read from `doom-pinned-packages' on top of straight's lockfiles."
   :around #'straight--lockfile-read-all
-  (append (apply orig-fn args)
+  (append (apply orig-fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))
 
 
@@ -260,7 +259,7 @@ elsewhere."
      (doplist! ((prop val) (list ,@plist) plist)
        (unless (null val)
          (plist-put! plist prop val)))
-     ;; Some basic key validation; error if you're not using a valid key
+     ;; Some basic key validation; throws an error on invalid properties
      (condition-case e
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
@@ -286,8 +285,8 @@ elsewhere."
   "A convenience macro for disabling packages in bulk.
 Only use this macro in a module's (or your private) packages.el file."
   (macroexp-progn
-   (cl-loop for p in packages
-            collect `(package! ,p :disable t))))
+   (mapcar (lambda (p) `(package! ,p :disable t))
+           packages)))
 
 (defmacro unpin! (&rest targets)
   "Unpin packages in TARGETS.

@@ -93,7 +93,7 @@ Accepts the same arguments as `message'."
 ARGS is a list of the last N arguments to pass to FUN. The result is a new
 function which does the same as FUN, except that the last N arguments are fixed
 at the values with which this function was called."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 

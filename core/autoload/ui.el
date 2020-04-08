@@ -105,7 +105,7 @@ See `display-line-numbers' for what these values mean."
                (_ (symbol-name next))))))
 
 ;;;###autoload
-(defun doom/delete-frame ()
+(defun doom/delete-frame-with-prompt ()
   "Delete the current frame, but ask for confirmation if it isn't empty."
   (interactive)
   (if (cdr (frame-list))

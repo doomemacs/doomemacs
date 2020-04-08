@@ -62,30 +62,31 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup--init-%s-handlers-h" mode))))
-      (cond ((null (car plist))
-             (remove-hook hook fn)
-             (unintern fn nil))
-            ((fset
-              fn
-              (lambda ()
-                (cl-destructuring-bind (&key definition references documentation file xref-backend async)
-                    plist
-                  (cl-mapc #'+lookup--set-handler
-                           (list definition
-                                 references
-                                 documentation
-                                 file
-                                 xref-backend)
-                           (list '+lookup-definition-functions
-                                 '+lookup-references-functions
-                                 '+lookup-documentation-functions
-                                 '+lookup-file-functions
-                                 'xref-backend-functions)
-                           (make-list 5 async)
-                           (make-list 5 (or (eq major-mode mode)
-                                            (and (boundp mode)
-                                                 (symbol-value mode))))))))
-             (add-hook hook fn))))))
+      (if (null (car plist))
+          (progn
+            (remove-hook hook fn)
+            (unintern fn nil))
+        (fset
+         fn
+         (lambda ()
+           (cl-destructuring-bind (&key definition references documentation file xref-backend async)
+               plist
+             (cl-mapc #'+lookup--set-handler
+                      (list definition
+                            references
+                            documentation
+                            file
+                            xref-backend)
+                      (list '+lookup-definition-functions
+                            '+lookup-references-functions
+                            '+lookup-documentation-functions
+                            '+lookup-file-functions
+                            'xref-backend-functions)
+                      (make-list 5 async)
+                      (make-list 5 (or (eq major-mode mode)
+                                       (and (boundp mode)
+                                            (symbol-value mode))))))))
+        (add-hook hook fn)))))
 
 
 ;;

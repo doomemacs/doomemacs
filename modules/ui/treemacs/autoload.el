@@ -3,6 +3,7 @@
 (defun +treemacs--init ()
   (require 'treemacs)
   (let ((origin-buffer (current-buffer)))
+    ;; Toggle treemacs without prompting for the first project.
     (cl-letf (((symbol-function 'treemacs-workspace->is-empty?)
                (symbol-function 'ignore)))
       (treemacs--init))

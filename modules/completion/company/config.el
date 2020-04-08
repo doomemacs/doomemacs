@@ -49,8 +49,7 @@
 ;; Packages
 
 (after! company-files
-  (pushnew! company-files--regexps
-            "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
+  (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
 
 
 (use-package! company-prescient

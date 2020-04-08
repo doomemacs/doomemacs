@@ -97,7 +97,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           "v" #'find-variable
           "l" #'find-library)))
 
-;; Adapted from http://www.modernemacs.com/post/comint-highlighting/
+;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
+;; syntax highlighting to ielm REPLs.
 (add-hook! 'ielm-mode-hook
   (defun +emacs-lisp-init-syntax-highlighting-h ()
     (font-lock-add-keywords
@@ -122,7 +123,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 ;;;###package overseer
 (autoload 'overseer-test "overseer" nil t)
-(remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
+(remove-hook 'emacs-lisp-mode-hook #'overseer-enable-mode)
 
 
 (use-package! flycheck-cask

@@ -328,8 +328,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
-;; Prompt the user for confirmation when deleting a non-empty frame
-(global-set-key [remap delete-frame] #'doom/delete-frame)
+;; Prompt for confirmation when deleting a non-empty frame; a last line of
+;; defense against accidental loss of work.
+(global-set-key [remap delete-frame] #'doom/delete-frame-with-prompt)
 
 ;; always avoid GUI
 (setq use-dialog-box nil)
@@ -513,10 +514,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; languages like Lisp.
 (setq rainbow-delimiters-max-face-count 3)
 
-;;;###package pos-tip
-(setq pos-tip-internal-border-width 6
-      pos-tip-border-width 1)
-
 
 ;;
 ;;; Line numbers
@@ -635,9 +632,13 @@ This offers a moderate boost in startup (or theme switch) time, so long as
   (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
+  ;;
   ;; + `doom-switch-buffer-hook'
   ;; + `doom-switch-window-hook'
   ;; + `doom-switch-frame-hook'
+  ;;
+  ;; These should be done as late as possible, as not to prematurely trigger
+  ;; hooks during startup.
   (add-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
   (add-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
   (dolist (fn '(switch-to-next-buffer switch-to-prev-buffer))
@@ -675,7 +676,7 @@ This offers a moderate boost in startup (or theme switch) time, so long as
 (put 'customize-themes 'disabled "Set `doom-theme' or use `load-theme' in $DOOMDIR/config.el instead")
 
 ;; Doesn't exist in terminal Emacs, so we define it to prevent void-function
-;; errors emitted from packages use it without checking for it first.
+;; errors emitted from packages that blindly try to use it.
 (unless (fboundp 'define-fringe-bitmap)
   (fset 'define-fringe-bitmap #'ignore))
 

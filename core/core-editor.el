@@ -87,7 +87,7 @@ possible."
       ;; But have a place to store them in case we do use them...
       ;; auto-save-list-file-name (concat doom-cache-dir "autosave")
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms `((".*" ,(concat doom-cache-dir "autosave/") t))
+      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
       backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
 
 (after! tramp
@@ -106,39 +106,63 @@ possible."
 ;;
 ;;; Formatting
 
-;; Indentation
-(setq-default tab-width 4
-              tab-always-indent t
-              indent-tabs-mode nil
-              fill-column 80)
+;; Favor spaces over tabs. Pls dun h8, but I think spaces (and 4 of them) is a
+;; more consistent default than 8-space tabs. It can be changed on a per-mode
+;; basis anyway (and is, where tabs are the canonical style, like go-mode).
+(setq-default indent-tabs-mode nil
+              tab-width 4)
 
-;; Word wrapping
-(setq-default word-wrap t
-              truncate-lines t
-              truncate-partial-width-windows nil)
+;; Make `tabify' and `untabify' only affect indentation. Not tabs/spaces in the
+;; middle of a line.
+(setq tabify-regexp "^\t* [ \t]+")
 
-(setq sentence-end-double-space nil
-      delete-trailing-lines nil
-      require-final-newline t
-      tabify-regexp "^\t* [ \t]+")  ; for :retab
+;; An archaic default in the age of widescreen 4k displays? I disagree. We still
+;; frequently split our terminals and editor frames, or have them side-by-side,
+;; using up more of that newly available horizontal real-estate.
+(setq-default fill-column 80)
 
-;; Favor hard-wrapping in text modes
+;; Continue wrapped words at whitespace, rather than in the middle of a word.
+(setq-default word-wrap t)
+;; ...but don't do any wrapping by default. It's expensive. Enable
+;; `visual-line-mode' if you want soft line-wrapping. `auto-fill-mode' for hard
+;; line-wrapping.
+(setq-default truncate-lines t)
+;; If enabled (and `truncate-lines' was disabled), soft wrapping no longer
+;; occurs when that window is less than `truncate-partial-width-windows'
+;; characters wide. We don't need this, and it's extra work for Emacs otherwise,
+;; so off it goes.
+(setq truncate-partial-width-windows nil)
+
+;; This was a widespread practice in the days of typewriters. I actually prefer
+;; it when writing prose with monospace fonts, but it is obsolete otherwise.
+(setq sentence-end-double-space nil)
+
+;; The POSIX standard defines a line is "a sequence of zero or more non-newline
+;; characters followed by a terminating newline", so files should end in a
+;; newline. Windows doesn't respect this (because it's Windows), but we should,
+;; since programmers' tools tend to be POSIX compliant.
+(setq require-final-newline t)
+
+;; Default to hard line-wrapping in text modes. Hard wrapping is more
+;; performant, and Emacs makes it trivially easy to reflow text with
+;; `fill-paragraph' and `evil-fill'.
 (add-hook 'text-mode-hook #'auto-fill-mode)
 
 
 ;;
 ;;; Clipboard / kill-ring
 
-;; Eliminate duplicates in the kill ring. That is, if you kill the same thing
-;; twice, you won't have to use M-y twice to get past it to older entries in the
-;; kill ring.
+;; Cull duplicates in the kill ring to reduce bloat and make the kill ring
+;; easier to peruse (with `counsel-yank-pop' or `helm-show-kill-ring'.
 (setq kill-do-not-save-duplicates t)
 
-;;
+;; Allow UTF or composed text from the clipboard, even in the terminal or on
+;; non-X systems (like Windows or macOS), where only `STRING' is used.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; Fixes the clipboard in tty Emacs by piping clipboard I/O through xclip, xsel,
-;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin).
+;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin); depending
+;; on what is available.
 (unless IS-WINDOWS
   (add-hook! 'tty-setup-hook
     (defun doom-init-clipboard-in-tty-emacs-h ()
@@ -154,7 +178,6 @@ possible."
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 (push '("\\.log\\'" . text-mode) auto-mode-alist)
-(push '("\\.env\\'" . sh-mode) auto-mode-alist)
 
 
 ;;
@@ -173,13 +196,13 @@ possible."
         ;; Only prompts for confirmation when buffer is unsaved.
         revert-without-query (list "."))
 
-  ;; Instead of using `auto-revert-mode' or `global-auto-revert-mode', we employ
-  ;; lazy auto reverting on `focus-in-hook' and `doom-switch-buffer-hook'.
+  ;; Instead of `auto-revert-mode' or `global-auto-revert-mode', we lazily auto
+  ;; revert; when we save a file or switch buffers/windows (or focus on Emacs).
   ;;
-  ;; This is because autorevert abuses the heck out of inotify handles which can
-  ;; grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
-  ;; files you have open (like compression). We only really need to revert
-  ;; changes when we switch to a buffer or when we focus the Emacs frame.
+  ;; Autorevert normally abuses the heck out of inotify handles which can grind
+  ;; Emacs to a halt if you do expensive IO (outside of Emacs) on the files you
+  ;; have open (like compression). The only alternative is aggressive polling,
+  ;; which is unreliable and expensive with a lot of buffers open.
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
@@ -204,9 +227,9 @@ possible."
         (file-truename file)
       file))
   (setq recentf-filename-handlers
-        '(substring-no-properties
-          doom--recent-file-truename
-          abbreviate-file-name)
+        '(substring-no-properties    ; strip out lingering text properties
+          doom--recent-file-truename ; resolve symlinks of local files
+          abbreviate-file-name)      ; replace $HOME with ~
         recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
@@ -272,8 +295,7 @@ possible."
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
 files, so we replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (cl-letf (((symbol-function #'pp)
-               (symbol-function #'prin1)))
+    (cl-letf (((symbol-function #'pp) #'prin1))
       (funcall orig-fn)))
 
   (save-place-mode +1))
@@ -347,19 +369,18 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
   :when doom-interactive-mode
-  :defer t
-  :init
-  (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
-    (defun doom-detect-indentation-h ()
-      (unless (or (not after-init-time)
-                  doom-inhibit-indent-detection
-                  doom-large-file-p
-                  (memq major-mode doom-detect-indentation-excluded-modes)
-                  (member (substring (buffer-name) 0 1) '(" " "*")))
-        ;; Don't display messages in the echo area, but still log them
-        (let ((inhibit-message (not doom-debug-mode)))
-          (dtrt-indent-mode +1)))))
+  :hook ((change-major-mode-after-body read-only-mode) . doom-detect-indentation-h)
   :config
+  (defun doom-detect-indentation-h ()
+    (unless (or (not after-init-time)
+                doom-inhibit-indent-detection
+                doom-large-file-p
+                (memq major-mode doom-detect-indentation-excluded-modes)
+                (member (substring (buffer-name) 0 1) '(" " "*")))
+      ;; Don't display messages in the echo area, but still log them
+      (let ((inhibit-message (not doom-debug-mode)))
+        (dtrt-indent-mode +1))))
+
   ;; Enable dtrt-indent even in smie modes so that it can update `tab-width',
   ;; `standard-indent' and `evil-shift-width' there as well.
   (setq dtrt-indent-run-after-smie t)

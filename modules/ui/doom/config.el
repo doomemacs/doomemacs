@@ -1,5 +1,10 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
+;;;###package pos-tip
+(setq pos-tip-internal-border-width 6
+      pos-tip-border-width 1)
+
+
 (use-package! doom-themes
   :defer t
   :init

@@ -250,8 +250,8 @@ users).")
 ;;; Optimizations
 
 ;; Disable bidirectional text rendering for a modest performance boost. I've set
-;; this to `nil' in the past, but the `bidi-display-reordering's docs say this
-;; isn't a good idea, and suggests this is just as good:
+;; this to `nil' in the past, but the `bidi-display-reordering's docs say that
+;; is an undefined state and suggest this to be just as good:
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
 
@@ -261,7 +261,8 @@ users).")
 (setq highlight-nonselected-windows nil)
 
 ;; More performant rapid scrolling over unfontified regions. May cause brief
-;; spells of inaccurate fontification immediately after scrolling.
+;; spells of inaccurate syntax highlighting right after scrolling, which should
+;; quickly self-correct.
 (setq fast-but-imprecise-scrolling t)
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
@@ -280,8 +281,7 @@ users).")
 ;; Performance on Windows is considerably worse than elsewhere, especially if
 ;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
-  ;; Reduce the workload when doing file IO
-  (setq w32-get-true-file-attributes nil))
+  (setq w32-get-true-file-attributes nil)) ; slightly faster IO
 
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.

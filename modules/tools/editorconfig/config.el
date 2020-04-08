@@ -33,7 +33,7 @@ extension, try to guess one."
                     (file-name-extension buffer-file-name))
                buffer-file-name
              (format "%s%s" (buffer-file-name (buffer-base-buffer))
-                     (if-let* ((ext (cdr (assq major-mode +editorconfig-mode-alist))))
+                     (if-let (ext (alist-get major-mode +editorconfig-mode-alist))
                          (concat "." ext)
                        "")))))
       (funcall orig-fn)))

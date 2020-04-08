@@ -122,7 +122,14 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
               '(:columns
                 ((counsel-describe-variable-transformer (:width 40)) ; the original transformer
                  (+ivy-rich-describe-variable-transformer (:width 50))
-                 (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face)))))
+                 (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face))))
+              'counsel-M-x
+              '(:columns
+                ((counsel-M-x-transformer (:width 60))
+                 (ivy-rich-counsel-function-docstring (:face font-lock-doc-face))))
+              ;; Apply switch buffer transformers to `counsel-projectile-switch-to-buffer' as well
+              'counsel-projectile-switch-to-buffer
+              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
@@ -134,11 +141,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
          (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (when switch-buffer-alist
       (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
-
-  ;; Apply switch buffer transformers to `counsel-projectile-switch-to-buffer' as well
-  (plist-put! ivy-rich-display-transformers-list
-              'counsel-projectile-switch-to-buffer
-              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
 
   (ivy-rich-mode +1))
 
@@ -153,9 +155,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   (all-the-icons-ivy-setup)
   (after! counsel-projectile
-    (let ((all-the-icons-ivy-file-commands '(counsel-projectile
-                                             counsel-projectile-find-file
-                                             counsel-projectile-find-dir)))
+    (let ((all-the-icons-ivy-file-commands
+           '(counsel-projectile
+             counsel-projectile-find-file
+             counsel-projectile-find-dir)))
       (all-the-icons-ivy-setup))))
 
 
@@ -336,8 +339,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
 
 (use-package! ivy-prescient
-  :hook (ivy-mode . ivy-prescient-mode)
   :when (featurep! +prescient)
+  :hook (ivy-mode . ivy-prescient-mode)
+  :hook (ivy-prescient-mode . prescient-persist-mode)
   :init
   (setq prescient-filter-method
         (if (featurep! +fuzzy)
@@ -354,8 +358,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
       (ivy-prescient-re-builder str)))
 
   ;; NOTE prescient config duplicated with `company'
-  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
-  (prescient-persist-mode +1))
+  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el")))
 
 
 ;;;###package swiper
