@@ -27,7 +27,8 @@
   ;;        on a potato.
   :recipe (:host github :repo "hlissner/emacs-so-long")
   :pin "ed666b0716")
-(package! undo-tree :pin "5b6df03781")
+(package! undo-fu :pin "8c461a00a0")
+(package! undo-fu-session :pin "35d4cf3771")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).

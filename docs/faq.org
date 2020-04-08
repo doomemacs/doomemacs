@@ -968,9 +968,6 @@ known fix for this. To work around it, you must either:
 ** Doom crashes when...
 Here are a few common causes for random crashes:
 
-+ You have enabled ~undo-tree-auto-save-history~. A bloated cache for a
-  particular file can cause a stack overflow. These caches are stored in
-  =~/.emacs.d/.local/cache/undo-tree-hist/=. Delete this folder to clear it.
 + On some systems (particularly MacOS), manipulating the fringes or window
   margins can cause Emacs to crash. This is most prominent in the Doom Dashboard
   (which tries to center its contents), in org-mode buffers (which uses

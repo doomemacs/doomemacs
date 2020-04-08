@@ -543,49 +543,38 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
-(use-package! undo-tree
-  ;; Branching & persistent undo
+(use-package! undo-fu
   :after-call doom-switch-buffer-hook after-find-file
   :config
-  (setq undo-tree-visualizer-diff t
-        undo-tree-auto-save-history t
-        undo-tree-enable-undo-in-region t
-        ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
-        ;; truncating the undo history and corrupting the tree. See
-        ;; https://github.com/syl20bnr/spacemacs/issues/12110
-        undo-limit 800000
-        undo-strong-limit 12000000
-        undo-outer-limit 120000000
-        undo-tree-history-directory-alist
-        `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
+  ;; Store more undo history to prevent loss of data
+  (setq undo-limit 400000
+        undo-strong-limit 3000000
+        undo-outer-limit 3000000)
 
-  ;; Compress undo-tree history files with zstd, if available. File size isn't
-  ;; the (only) concern here: the file IO barrier is slow for Emacs to cross;
-  ;; reading a tiny file and piping it in-memory through zstd is *slightly*
-  ;; faster than Emacs reading the entire undo-tree file from the get go (on
-  ;; SSDs). Whether or not that's true in practice, we still enjoy zstd's ~80%
-  ;; file savings (these files add up over time and zstd is so incredibly fast).
+  (global-set-key [remap undo] #'undo-fu-only-undo)
+  (global-set-key [remap redo] #'undo-fu-only-redo)
+
+  (with-eval-after-load 'undo-tree
+    (global-set-key [remap undo-tree-undo] #'undo-fu-only-undo)
+    (global-set-key [remap undo-tree-redo] #'undo-fu-only-redo)
+    (global-undo-tree-mode -1)))
+
+
+(use-package! undo-fu-session
+  :after undo-fu
+  :init
+  (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
+        undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  :config
+  ;; HACK Use the faster zstd to compress undo files instead of gzip
   (when (executable-find "zstd")
-    (defadvice! doom--undo-tree-make-history-save-file-name-a (file)
-      :filter-return #'undo-tree-make-history-save-file-name
-      (concat file ".zst")))
+    (defadvice! doom--undo-fu-session-use-zstd-a (filename)
+      :filter-return #'undo-fu-session--make-file-name
+      (if undo-fu-session-compression
+          (concat (file-name-sans-extension filename) ".zst")
+        filename)))
 
-  ;; Strip text properties from undo-tree data to stave off bloat. File size
-  ;; isn't the concern here; undo cache files bloat easily, which can cause
-  ;; freezing, crashes, GC-induced stuttering or delays when opening files.
-  (defadvice! doom--undo-tree-strip-text-properties-a (&rest _)
-    :before #'undo-list-transfer-to-tree
-    (dolist (item buffer-undo-list)
-      (and (consp item)
-           (stringp (car item))
-           (setcar item (substring-no-properties (car item))))))
-
-  ;; Undo-tree is too chatty about saving its history files. This doesn't
-  ;; totally suppress it logging to *Messages*, it only stops it from appearing
-  ;; in the echo-area.
-  (advice-add #'undo-tree-save-history :around #'doom-shut-up-a)
-
-  (global-undo-tree-mode +1))
+  (global-undo-fu-session-mode +1))
 
 
 (use-package! ws-butler
