@@ -1,6 +1,5 @@
 ;;; lang/julia/config.el -*- lexical-binding: t; -*-
 
-
 (use-package! julia-mode
   :interpreter "julia"
   :config
