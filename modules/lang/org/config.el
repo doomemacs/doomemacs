@@ -886,6 +886,8 @@ compelling reason, so..."
         org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
+  ;; Make most of the default modules opt-in, because I sincerely doubt most
+  ;; users use all of them.
   (defvar org-modules
     '(;; ol-w3m
       ;; ol-bbdb
@@ -899,8 +901,18 @@ compelling reason, so..."
       ;; ol-eww
       ))
 
-  (add-hook 'org-mode-local-vars-hook #'eldoc-mode)
+  ;;; Custom org modules
+  (if (featurep! +brain)     (load! "contrib/brain"))
+  (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
+  (if (featurep! +ipython)   (load! "contrib/ipython"))
+  (if (featurep! +journal)   (load! "contrib/journal"))
+  (if (featurep! +jupyter)   (load! "contrib/jupyter"))
+  (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
+  (if (featurep! +present)   (load! "contrib/present"))
+  (if (featurep! +roam)      (load! "contrib/roam"))
 
+  ;; Add our general hooks after the submodules, so that any hooks the
+  ;; submodules add run after them, and can overwrite any defaults if necessary.
   (add-hook! 'org-mode-hook
              ;; `show-paren-mode' causes flickering with indent overlays made by
              ;; `org-indent-mode', so we turn off show-paren-mode altogether
@@ -928,15 +940,9 @@ compelling reason, so..."
              #'+org-init-protocol-h
              #'+org-init-protocol-lazy-loader-h)
 
-  ;;; Custom org modules
-  (if (featurep! +brain)     (load! "contrib/brain"))
-  (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
-  (if (featurep! +ipython)   (load! "contrib/ipython"))
-  (if (featurep! +journal)   (load! "contrib/journal"))
-  (if (featurep! +jupyter)   (load! "contrib/jupyter"))
-  (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
-  (if (featurep! +present)   (load! "contrib/present"))
-  (if (featurep! +roam)      (load! "contrib/roam"))
+  ;; (Re)activate eldoc-mode in org-mode a little later, because it disables
+  ;; itself if started too soon (which is the case with `global-eldoc-mode').
+  (add-hook 'org-mode-local-vars-hook #'eldoc-mode)
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
