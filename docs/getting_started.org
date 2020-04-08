@@ -564,7 +564,7 @@ disabled by adding or removing them from your ~doom!~ block (found in
 =$DOOMDIR/init.el=).
 
 #+begin_quote
-If =$DOOMDIR/init.el= doesn't exist, you haven't installed Doom yet. See [[*Install][the
+If =$DOOMDIR/init.el= doesn't exist, you haven't installed Doom yet. See [[#install][the
 "Install" section]] above.
 #+end_quote
 
