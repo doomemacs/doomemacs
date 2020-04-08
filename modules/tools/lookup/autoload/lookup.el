@@ -324,7 +324,7 @@ Otherwise, falls back on `find-file-at-point'."
          current-prefix-arg))
   (message "Looking up synonyms for %S" identifier)
   (cond ((and +lookup-dictionary-prefer-offline
-              (require 'synosaurus nil t))
+              (require 'synosaurus-wordnet nil t))
          (unless (executable-find synosaurus-wordnet--command)
            (user-error "Couldn't find %S installed on your system"
                        synosaurus-wordnet--command))
