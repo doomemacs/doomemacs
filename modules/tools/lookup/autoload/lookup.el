@@ -166,23 +166,25 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 ;;
 ;;; Lookup backends
 
-(defun +lookup--xref-show (fn identifier)
+(defun +lookup--xref-show (fn identifier &optional show-fn)
   (let ((xrefs (funcall fn
                         (xref-find-backend)
                         identifier)))
     (when xrefs
-      (xref--show-xrefs xrefs nil)
+      (funcall (or show-fn #'xref--show-defs)
+               (lambda () xrefs)
+               nil)
       (if (cdr xrefs)
           'deferred
         t))))
 
 (defun +lookup-xref-definitions-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
-  (+lookup--xref-show 'xref-backend-definitions identifier))
+  (+lookup--xref-show 'xref-backend-definitions identifier #'xref--show-defs))
 
 (defun +lookup-xref-references-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-references'"
-  (+lookup--xref-show 'xref-backend-references identifier))
+  (+lookup--xref-show 'xref-backend-references identifier #'xref--show-xrefs))
 
 (defun +lookup-dumb-jump-backend-fn (_identifier)
   "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
