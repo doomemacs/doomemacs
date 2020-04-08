@@ -71,7 +71,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (setq-default
    ;; Don't monopolize the whole frame just for the agenda
    org-agenda-window-setup 'current-window
-   org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files t
    ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
    ;; better context instead of just the current week which is a bit confusing
