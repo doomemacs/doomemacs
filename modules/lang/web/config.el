@@ -29,6 +29,13 @@
   (when (eq major-mode 'web-mode)
     (web-mode-set-engine "django")))
 
+(def-project-mode! +web-django-mode
+  :modes '(web-mode)
+  :files ("manage.py")
+  :on-enter
+  (when (derived-mode-p 'web-mode)
+    (web-mode-set-engine "django")))
+
 (def-project-mode! +web-wordpress-mode
   :modes '(php-mode web-mode css-mode haml-mode pug-mode)
   :files (or "wp-config.php" "wp-config-sample.php"))
