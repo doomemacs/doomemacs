@@ -31,7 +31,10 @@
 
 
 (use-package! julia-repl
-  :hook (julia-repl-mode . julia-repl-use-emacsclient)
+  :preface (defvar +julia-repl-start-hook nil)
+  :hook (julia-mode . julia-repl-mode)
+  :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
+  :hook (+julia-repl-start . julia-repl-use-emacsclient)
   :config
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
 
@@ -41,11 +44,15 @@
       :override #'julia-repl--inferior-buffer-name
       (concat julia-repl-inferior-buffer-name-base ":" (+workspace-current-name))))
 
-  (defadvice! +julia--override-repl-escape-char-a (inferior-buffer)
-    "Use C-c instead of C-x for escaping."
+  (defadvice! +julia--run-start-hook-a (inferior-buffer)
+    "Run `+julia-repl-start-hook' before displaying the REPL."
     :after #'julia-repl--setup-term
     (with-current-buffer inferior-buffer
-      (term-set-escape-char ?\C-c))))
+      (run-hooks '+julia-repl-start-hook)))
+
+  (defun +julia-override-repl-escape-char-h ()
+    "Use C-c instead of C-x for escaping."
+    (term-set-escape-char ?\C-c)))
 
 
 (use-package! lsp-julia
