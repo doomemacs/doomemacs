@@ -45,18 +45,18 @@ Emacs.")
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
-  ;; + `projectile-root-local' -> consults the `projectile-project-root'
-  ;;   variable for an explicit path.
-  ;; + `projectile-root-bottom-up' -> consults
-  ;;   `projectile-project-root-files-bottom-up'; searches from / to your
-  ;;   current directory for certain files (including .project and .git)
-  ;; + `projectile-root-top-down' -> consults `projectile-project-root-files';
-  ;;   searches from the current directory down to / for certain project
-  ;;   markers, like package.json, setup.py, or Cargo.toml
-  ;; + `projectile-root-top-down-recurring' -> consults
-  ;;   `projectile-project-root-files-top-down-recurring'; e.g. searches from
-  ;;   the current directory down to / for a directory that has Makefile but
-  ;;   doesn't have a parent with one of those files.
+  ;; + `projectile-root-local' -> checks the `projectile-project-root' variable
+  ;;    for an explicit path.
+  ;; + `projectile-root-bottom-up' -> searches from / to your current directory
+  ;;   for the paths listed in `projectile-project-root-files-bottom-up'. This
+  ;;   includes .git and .project
+  ;; + `projectile-root-top-down' -> searches from the current directory down to
+  ;;   / the paths listed in `projectile-root-top-down-recurring', like
+  ;;   package.json, setup.py, or Cargo.toml
+  ;; + `projectile-root-top-down-recurring' -> searches from the current
+  ;;   directory down to / for a directory that has one of
+  ;;   `projectile-project-root-files-top-down-recurring' but doesn't have a
+  ;;   parent directory with the same file.
   ;;
   ;; In the interest of performance, we reduce the number of project root marker
   ;; files/directories projectile searches for when resolving the project root.
