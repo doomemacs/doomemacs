@@ -7,6 +7,8 @@
         ;; de-couples filename and note title:
         deft-use-filename-as-title nil
         deft-use-filter-string-for-filename t
+        ;; disable auto-save
+        deft-auto-save-interval -1.0
         ;; converts the filter string into a readable file-name using kebab-case:
         deft-file-naming-rules
         '((noslash . "-")
