@@ -2,6 +2,7 @@
 ;;;###if (featurep! +roam)
 
 (use-package! org-roam
+  :hook (org-load . org-roam-mode)
   :commands (org-roam
              org-roam-capture
              org-roam-date
@@ -33,8 +34,7 @@
           :desc "Yesterday"      "y" #'org-roam-yesterday))
   :config
   (unless org-roam-directory
-    (setq org-roam-directory org-directory))
-  (org-roam-mode +1))
+    (setq org-roam-directory org-directory)))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
