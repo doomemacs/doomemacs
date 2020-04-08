@@ -21,7 +21,9 @@
            doom-interactive-mode
            (not doom-reloading-p))
 
-  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
+  (setq evil-collection-company-use-tng (featurep! :completion company +tng)
+        ;; must be set before evil/evil-collection is loaded
+        evil-want-keybinding nil)
 
   (defvar +evil-collection-disabled-list
     '(anaconda-mode

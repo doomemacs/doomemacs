@@ -45,8 +45,6 @@ directives. By default, this only recognizes C directives.")
         evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
-        ;; must be set before evil/evil-collection is loaded
-        evil-want-keybinding (not (featurep! +everywhere))
         ;; Only do highlighting in selected window so that Emacs has less work
         ;; to do highlighting them all.
         evil-ex-interactive-search-highlight 'selected-window)
