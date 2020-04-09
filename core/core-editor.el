@@ -573,8 +573,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap redo] #'undo-fu-only-redo)
 
   (with-eval-after-load 'undo-tree
-    (global-set-key [remap undo-tree-undo] #'undo-fu-only-undo)
-    (global-set-key [remap undo-tree-redo] #'undo-fu-only-redo)
     (global-undo-tree-mode -1)))
 
 
