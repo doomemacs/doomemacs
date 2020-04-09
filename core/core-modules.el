@@ -542,12 +542,14 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
 
 ;; DEPRECATED
 (defmacro def-package! (&rest args)
-  (message "`def-package!' was renamed to `use-package!'; use that instead.")
+  "Do not use this macro. Use `use-package!' instead."
+  (warn "`def-package!' is deprecated and was renamed to `use-package!'")
   `(use-package! ,@args))
 (make-obsolete 'def-package! 'use-package! "2.0.9")
 
 (defmacro def-package-hook! (&rest args)
-  (message "`def-package-hook!' was renamed to `use-package-hook!'; use that instead.")
+  "Do not use this macro. Use `use-package!' instead."
+  (warn "`def-package-hook!' is deprecated and was renamed to `use-package-hook!'")
   `(use-package-hook! ,@args))
 (make-obsolete 'def-package-hook! 'use-package-hook! "2.0.9")
 
