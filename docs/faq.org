@@ -13,11 +13,11 @@
   - [[#why-is-startup-time-important-why-not-use-the-daemon][Why is startup time important? Why not use the daemon?]]
   - [[#how-do-i-use-doom-alongside-other-emacs-configs][How do I use Doom alongside other Emacs configs?]]
   - [[#why-should-i-use-doom-instead-of-rolling-my-own-config][Why should I use Doom instead of rolling my own config?]]
-  - [[#what-is-the-meaning-behind-dooms-naming-conventions][What is the meaning behind Doom's naming conventions?]]
-  - [[#how-can-i-contribute-tosupport-doom][How can I contribute to/support Doom?]]
+  - [[#what-is-the-meaning-behind-dooms-naming-convention-in-its-source-code][What is the meaning behind Doom's naming convention in its source code?]]
   - [[#what-version-of-doom-am-i-running][What version of Doom am I running?]]
+  - [[#is-discord-the-only-option-for-interacting-with-your-community][Is Discord the only option for interacting with your community?]]
 - [[#configuration][Configuration]]
-  - [[#should-i-fork-doom-to-customize-it][Should I fork Doom to customize it?]]
+  - [[#does-doom-respect-xdg-conventions][Does Doom respect XDG conventions]]
   - [[#how-do-i-configure-doom-emacs][How do I configure Doom Emacs?]]
   - [[#how-do-i-enable-or-disable-a-doom-module][How do I enable or disable a Doom module?]]
   - [[#how-do-i-change-the-theme][How do I change the theme?]]
@@ -30,10 +30,10 @@
   - [[#how-do-i-change-the-appearance-of-a-face-or-faces][How do I change the appearance of a face (or faces)?]]
   - [[#can-doom-be-customized-without-restarting-emacs][Can Doom be customized without restarting Emacs?]]
   - [[#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][Can Vim/Evil be removed for a more vanilla Emacs experience?]]
-  - [[#should-i-use-make-or-bindoom][Should I use ~make~ or ~bin/doom~?]]
   - [[#when-should-and-shouldnt-i-use-bindoom][When should and shouldn't I use ~bin/doom~?]]
   - [[#when-to-run-doom-sync][When to run ~doom sync~]]
   - [[#how-to-suppress-confirmation-prompts-while-bindoom-is-running][How to suppress confirmation prompts while ~bin/doom~ is running]]
+  - [[#how-do-i-enable-lsp-support-for-insert-language-here][How do I enable LSP support for <insert language here>?]]
 - [[#package-management][Package Management]]
   - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
   - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
@@ -62,6 +62,7 @@
   - [[#tramp-connections-hang-forever-when-connecting][TRAMP connections hang forever when connecting]]
   - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
   - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
+  - [[#clipetty--emit-opening-output-file-permission-denied-devpts29-error]["clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error]]
 - [[#contributing][Contributing]]
 
 * General
@@ -81,9 +82,9 @@ in the [[file:getting_started.org::On Windows][Getting Starting guide]].
 If you're a Windows user, help us improve our documentation!
 
 ** Is Doom only for vimmers?
-No, but it is Doom's primary audience. Its maintainer is a dyed-in-the-wool
-vimmer with almost two decades of vim muscle memory, and he came to Emacs to
-find a better vim.
+No, but it is Doom's primary audience, because its maintainer is a
+dyed-in-the-wool vimmer with almost two decades of vim muscle memory, and he
+adopted Emacs in search of a better vim.
 
 Although Doom is less polished without evil, its growing non-evil user base is
 slowly improving the situation. We welcome suggestions and PRs to help
@@ -93,12 +94,16 @@ If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org
 [[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
 
 ** I am a beginner. Can I use Doom?
-If you're new to the terminal, to programming, or Emacs and/or vim, Doom (or
-Emacs, for that matter) is a rough place to start. Neither Doom nor Emacs are
-particularly beginner friendly. That's not to say it's impossible, or that we
-won't help you if you ask, but expect a hefty commitment and a bumpy journey.
+This isn't a choice I can make for you. Generally, if you're new to the
+terminal, to programming, or Emacs and/or vim, then Doom (and Emacs, for that
+matter) will be a rough place to start. Neither Doom nor Emacs are particularly
+beginner friendly. Emacs' main draw is its unparalleled extensibility, but
+anything so extensible has a learning curve.
 
-Remember to check out the [[file:index.org][Documentation]] for a guide to getting started.
+That's not to say it's impossible, or that we won't help you if you ask, but
+expect a hefty commitment and a bumpy journey. And don't pass up on the
+[[file:index.org][Documentation]], which will walk you through setting up Doom, and includes links
+to external resources created by our community.
 
 ** How does Doom compare to Spacemacs?
 To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0oq/quickstart_tutorial_for_emacs_newbies_with_doom/dkp1bhd/][reddit answer]] to this question by [[https://github.com/gilbertw1][@gilbertw1]]:
@@ -113,18 +118,19 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   consensus. It is [mostly] the work of one developer and caters to his
   vim-slanted tastes. Doom's defaults enforce very particular (albeit optional)
   workflows.
-+ *Doom lacks manpower.* Bugs stick around longer, documentation is light and
-  development is at the mercy of its single maintainer's schedule, health and
-  whims.
-+ *Doom is not beginner friendly.* Spacemacs works out of the box. Your mileage
-  may vary with Doom; assembly is required! Familiarity with Emacs Lisp (or
-  programming in general), git and the command line will go a long way to ease
-  you into Doom.
-+ *Doom manages its packages outside of Emacs.* Spacemacs installs (and checks
-  for packages) on startup or on demand. Doom leaves package management to be
-  done externally, through the ~bin/doom~ script. This allows for package
-  management to be scripted on the command line and enables a number of startup
-  optimizations we wouldn't have otherwise.
++ *Doom lacks manpower.* Bugs stick around longer, documentation is lighter and
+  development is at the mercy of it's maintainer's schedule, health and whims.
++ *Doom is not beginner friendly.* Doom lacks a large community to constantly
+  improve and produce tutorials/guides for it. Spacemacs is more likely to work
+  right out of the box. Doom also holds your hand less. A little elisp, shell
+  and git-fu will go a long way to ease you into Doom.
++ *Doom is managed through it's command line interface.* The ~bin/doom~ script
+  allows you to script package management, manage your config, or utilize elisp
+  functionality externally, like org tangling or batch processing.
++ *Doom's package manager is declarative and rolling release is opt-in.* Doom
+  takes a little after nix, striving for as much config reproducibility as Emacs
+  (and git) will permit. Spacemacs uses package.el, which is rolling release
+  only.
 
 ** Why such a complicated package management system?
 Doom had +four+ *five* goals for its package management system:
@@ -293,34 +299,65 @@ Note: package.el is sneaky, and will initialize itself if you're not careful.
 
 *** Lazy load more than everything
 ~use-package~ can defer your packages. Using it is a no-brainer, but Doom goes a
-little further with lazy loading. There are some massive plugins out there. For
-some of them, ordinary lazy loading techniques don't work. To name a few:
+step further. There are some massive plugins out there for which ordinary lazy
+loading techniques don't work. To name a few:
 
 + The =lang/org= module defers loading babel packages until their src blocks are
   executed or read. You no longer need ~org-babel-do-load-languages~ in your
   config -- in fact, you shouldn't use it at all!
++ =org-protocol= needs to be loaded to intercept requests for org-protocol://
+  URLs. Since org-protocol depends on org, this can be expensive to load
+  yourself, so Doom loads as soon as a org-protocol:// request is received, just
+  before it is processed.
 + Company and yasnippet are loaded as late as possible (waiting until the user
   opens a non-read-only, file-visiting buffer (that isn't in fundamental-mode)).
 + The =evil-easymotion= package binds many keys, none of which are available
   until you load the package. Instead of loading it at startup, =gs= is bound to
   a command that loads the package, populates =gs=, then simulates the =gs= key
   press as though those new keys had always been there.
-+ Doom loads some packages "incrementally". i.e. after a few seconds of idle
-  time post-startup, Doom loads packages piecemeal (one dependency at a time)
-  while Emacs. It aborts if it detects input, as to make the process as subtle
-  as possible.
 
-  For example, instead of loading =org= (a giant package), it will load these
-  dependencies, one at a time, before finally loading =org=:
+In addition, Doom loads some packages "incrementally". i.e. after a few seconds
+of idle time post-startup, Doom loads packages piecemeal (one dependency at a
+time) while Emacs. It aborts if it detects input, as to make the process as
+subtle as possible.
 
-  #+BEGIN_SRC elisp
-  (calendar find-func format-spec org-macs org-compat org-faces org-entities
-   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
-   org-capture)
-  #+END_SRC
+For example, instead of loading =org= (a giant package), it will load these
+dependencies, one at a time, before finally loading =org=:
 
-  This ensures packages load as quickly as possible when you first load an org
-  file.
+#+BEGIN_SRC elisp
+(calendar find-func format-spec org-macs org-compat org-faces
+ org-entities org-list org-pcomplete org-src org-footnote
+ org-macro ob org org-agenda org-capture)
+#+END_SRC
+
+This ensures packages load as quickly as possible when you first load an org
+file.
+
+*** Unset ~file-name-handler-alist~ temporarily
+Emacs consults this variable every time a file is read or library loaded, or
+when certain functions in the file API are used (like ~expand-file-name~ or
+~file-truename~).
+
+Emacs does to check if a special handler is needed to read that file, but none
+of them are (typically) necessary at startup, so we disable them (temporarily!):
+
+#+BEGIN_SRC emacs-lisp
+(defvar doom--file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+;; ... your whole emacs config here ...
+
+;; Then restore it later:
+(setq file-name-handler-alist doom--file-name-handler-alist)
+
+;; Alternatively, restore it even later:
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (setq file-name-handler-alist doom--file-name-handler-alist)))
+#+END_SRC
+
+Don't forget to restore ~file-name-handler-alist~, otherwise TRAMP won't work
+and compressed/encrypted files won't open.
 
 *** Use [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Lexical-Binding.html][lexical-binding]] everywhere
 Add ~;; -*- lexical-binding: t; -*-~ to the top of your elisp files. This can
@@ -382,44 +419,61 @@ permanent entry point.
 #+end_quote
 
 ** Why should I use Doom instead of rolling my own config?
-If you care about personalizing the software you use on a daily basis, even half
-as much as I do, then you probably need professional help, but you also know it
-is time consuming. Emacs out-of-the-box is a barren wasteland with archaic
-defaults. Building anything out here and getting a feel for it will take /a lot/
-of time. Time that I've already wasted and can never get back.
+Time. If you care about personalizing the software you use on a daily basis,
+even half as much as I do, then you probably need professional help, but you
+also know it is time consuming. Emacs out-of-the-box is a barren wasteland with
+archaic defaults. Building anything out here and getting a feel for it will take
+/a lot/ of time. Time that I've already wasted and can never get back.
 
 Time you could otherwise spend attending your daughter's dance recitals, that
 baseball game your son's team almost won last Thursday, or answering the court
 summons to fight for custody of your kids.
 
++ Doom has solved many problems big and small you'll likely run into at some
+  point in your Emacs career. And the problems don't end there! Let someone else
+  worry about the menial things.
++ Doom will be faster than most hand-rolled configs. Startup is one thing, but
+  Doom invests a lot of effort to improve runtime performance as well.
++ Doom's package manager (powered by straight.el) is declarative, non-rolling
+  release and (nominally) reproducible; which is unique on the Emacs distro
+  scene. Upstream issues won't surprise you as much, and you can roll back when
+  you don't have the time to deal with them.
++ It facilitates integration with the command line, which makes it easy to
+  integrate external tools with Emacs via the =bin/doom= script.
+
 Also, Doom's fast yo.
 
-** What is the meaning behind Doom's naming conventions?
+** What is the meaning behind Doom's naming convention in its source code?
 You'll find [[file:contributing.org::*Conventions][an overview of Doom's code conventions]] in the [[file:contributing.org][contributing guide]].
-
-** How can I contribute to/support Doom?
-Take a look at the [[file:contributing.org][Contributing guide]].
 
 ** What version of Doom am I running?
 You'll find the current version displayed in the modeline on the dashboard. It
 can also be retrieved using ~M-x doom/version~ (bound to =SPC h d v= by default)
 or ~doom info~ on the command line.
 
+** Is Discord the only option for interacting with your community?
+Yes. I selected it for my personal convenience and have no plans to extend our
+community to any other platform (like Matrix, IRC or Slack), or add bridges for
+them. I already have my hands full managing the one.
+
+My being so active on our Discord is owed to that fact that my friends, family
+and other communities were on Discord to begin with. My availability was the
+most important factor in choosing a platform, even if there are other platforms
+better suited to the task.
+
+Email is a possible alternative, but it is constantly swamped; expect a long
+turn-around time.
+
 * Configuration
-** Should I fork Doom to customize it?
-No. Not unless you have a good reason for doing so (and you're comfortable with
-the git-rebase workflow). Your customization can be relegated to =~/.doom.d/=
-(or =~/.config/doom/=) entirely.
+** Does Doom respect XDG conventions
+Yes. Your private config (normally in =~/.doom.d=) can be moved to
+=~/.config/doom=.
 
-If you /must/ modify Doom proper to get something done, it's a code smell.
-
-Visit the [[file:getting_started.org::*Customize][Customize section]] of [[file:getting_started.org][the Getting Started guide]] for details on how to
-do this.
+And as of Emacs 27, Emacs will recognize =~/.config/emacs=.
 
 ** How do I configure Doom Emacs?
-Canonically, your private config is kept in =~/.doom.d/= or =~/.config/doom/=.
-Doom will prioritize =~/.config/doom=, if it exists. This directory is referred
-to as your ~$DOOMDIR~.
+Canonically, your private config is kept in =~/.doom.d/= (or =~/.config/doom/=).
+This directory is referred to as your ~$DOOMDIR~.
 
 Your private config is typically comprised of an =init.el=, =config.el= and
 =packages.el= file. Put all your config in =config.el=, install packages by
@@ -427,11 +481,14 @@ adding ~package!~ declarations to =packages.el=, and enable/disable modules in
 you ~doom!~ block, which should have been created in your =init.el= when you
 first ran ~doom install~.
 
+You shouldn't need to fork Doom or modify =~/.emacs.d=. If you have to do this
+to achieve something, it can be considered a bug.
+
 Check out the [[file:getting_started.org::Customize][Customize section]] in the [[file:getting_started.org][Getting Started]] guide for details.
 
 ** How do I enable or disable a Doom module?
 Comment or uncomment the module in your ~doom!~ block, found in
-=$DOOMDIR/init.el=.
+=~/.doom.d/init.el=.
 
 Remember to run ~bin/doom sync~ afterwards, on the command line, to sync your
 module list with Doom.
@@ -653,10 +710,6 @@ tools for experienced Emacs users to skirt around it (most of the time):
 ** Can Vim/Evil be removed for a more vanilla Emacs experience?
 Yes! See the [[file:../modules/editor/evil/README.org::Removing evil-mode][Removing evil-mode]] section in [[file:../modules/editor/evil/README.org][:editor evil]]'s documentation.
 
-** Should I use ~make~ or ~bin/doom~?
-~bin/doom~ is recommended. Doom's Makefile (to manage your config, at least) is
-deprecated. It forwards to ~bin/doom~ anyway.
-
 ** When should and shouldn't I use ~bin/doom~?
 ~bin/doom~ is your best friend. It'll keep all your secrets (mostly because it's
 a shell script incapable of sentience and thus incapable of retaining, much less
@@ -709,6 +762,16 @@ doom -y update
 doom --yes update
 YES=1 doom update
 #+END_SRC
+
+** How do I enable LSP support for <insert language here>?
+Doom supports LSP, but it is not enabled by default. To enable it, you must:
+
+1. Enable the =:tools lsp= module,
+2. Enable the =+lsp= flag for the appropriate modules you want LSP support for
+   (e.g. =:lang (python +lsp)= or =:lang (rust +lsp)=),
+3. Install the prerequisite LSP servers through your package manager or other
+   means. You can find a list of supported servers on [[https://github.com/emacs-lsp/lsp-mode#supported-languages][the lsp-mode project page]].
+4. Run ~doom sync~ on the command line and restart Emacs.
 
 * Package Management
 ** How do I install a package from ELPA?
@@ -1061,5 +1124,8 @@ There are a couple ways to address this:
    when you open a file (that isn't in a project with an editorconfig file).
    This isn't foolproof, and won't work for files that have no content in them,
    but it can help in one-off scenarios.
+** "clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error
+This applies to tmux users, in particular. See
+https://github.com/spudlyo/clipetty/issues/15 for a solution.
 
 * TODO Contributing
