@@ -454,6 +454,11 @@
       (:prefix-map ("n" . "notes")
         :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                   "a" #'org-agenda
+        (:when (featurep! :tools biblio)
+          :desc "Bibliographic entries"        "b"
+          (cond ((featurep! :completion ivy)   #'ivy-bibtex)
+                ((featurep! :completion helm)  #'helm-bibtex)))
+
         :desc "Toggle org-clock"             "c" #'+org/toggle-clock
         :desc "Cancel org-clock"             "C" #'org-clock-cancel
         :desc "Open deft"                    "d" #'deft
