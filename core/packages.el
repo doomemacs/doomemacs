@@ -3,7 +3,7 @@
 
 ;; core.el
 (package! auto-minor-mode :pin "17cfa1b548")
-(package! gcmh :pin "9e241e0a9f")
+(package! gcmh :pin "b1bde50891")
 
 ;; core-ui.el
 (package! all-the-icons :pin "f6cbb51c15")
@@ -27,8 +27,8 @@
   ;;        on a potato.
   :recipe (:host github :repo "hlissner/emacs-so-long")
   :pin "ed666b0716")
-(package! undo-fu :pin "8c461a00a0")
-(package! undo-fu-session :pin "35d4cf3771")
+(package! undo-fu :pin "0c34b6747e")
+(package! undo-fu-session :pin "b808ef0cdc")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -37,10 +37,10 @@
 (unless IS-WINDOWS
   (package! clipetty
     :recipe (:host github :repo "spudlyo/clipetty")
-    :pin "fda5a80cf4"))
+    :pin "7ee3f9c52f"))
 
 ;; core-projects.el
-(package! projectile :pin "588692ad56")
+(package! projectile :pin "56e18fcefa")
 
 ;; core-keybinds.el
 (package! general :pin "14ad4c888b")
