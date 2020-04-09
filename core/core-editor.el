@@ -580,19 +580,22 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! undo-fu-session
   :after undo-fu
-  :init
+  :preface
   (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
         undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
-  :config
-  ;; HACK Use the faster zstd to compress undo files instead of gzip
-  (when (executable-find "zstd")
-    (defadvice! doom--undo-fu-session-use-zstd-a (filename)
-      :filter-return #'undo-fu-session--make-file-name
-      (if undo-fu-session-compression
-          (concat (file-name-sans-extension filename) ".zst")
-        filename)))
-
-  (global-undo-fu-session-mode +1))
+  ;; HACK We avoid `:config' here because `use-package's `:after' complicates
+  ;;      the load order of a package's `:config' block and makes it impossible
+  ;;      for the user to override its settings with merely `after!' (or
+  ;;      `eval-after-load'). See jwiegley/use-package#829.
+  (after! undo-fu-session
+    ;; HACK Use the faster zstd to compress undo files instead of gzip
+    (when (executable-find "zstd")
+      (defadvice! doom--undo-fu-session-use-zstd-a (filename)
+        :filter-return #'undo-fu-session--make-file-name
+        (if undo-fu-session-compression
+            (concat (file-name-sans-extension filename) ".zst")
+          filename)))
+    (global-undo-fu-session-mode +1)))
 
 
 (use-package! ws-butler
