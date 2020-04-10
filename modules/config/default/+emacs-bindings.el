@@ -86,6 +86,7 @@
 
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
+        :desc "Search project for symbol"    "." #'+default/search-project-for-symbol-at-point
         :desc "Search buffer"                "b" #'swiper
         :desc "Search current directory"     "d" #'+default/search-cwd
         :desc "Search other directory"       "D" #'+default/search-other-cwd
@@ -180,6 +181,7 @@
 
       ;;; <leader> p --- project
       (:prefix ("p" . "project")
+        :desc "Search project for symbol"   "." #'+default/search-project-for-symbol-at-point
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
         :desc "List project tasks"          "t" #'magit-todos-list
