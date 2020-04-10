@@ -33,8 +33,9 @@
           :desc "Tomorrow"       "m" #'org-roam-tomorrow
           :desc "Yesterday"      "y" #'org-roam-yesterday))
   :config
-  (unless org-roam-directory
-    (setq org-roam-directory org-directory)))
+  (setq org-roam-directory (expand-file-name (or org-roam-directory "")
+                                             org-directory)
+        org-roam-verbose nil))  ; https://youtu.be/fn4jIlFwuLU
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
