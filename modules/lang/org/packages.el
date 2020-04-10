@@ -62,7 +62,7 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "3322ce7b31"))
+  (package! jupyter :pin "587ed4e029"))
 (when (featurep! +journal)
   (package! org-journal :pin "664c08e12c"))
 (when (featurep! +pomodoro)
