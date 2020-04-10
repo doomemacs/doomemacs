@@ -41,7 +41,8 @@ be negative.")
         [remap projectile-switch-project] #'helm-projectile-switch-project
         [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
         [remap recentf-open-files]        #'helm-recentf
-        [remap yank-pop]                  #'helm-show-kill-ring)
+        [remap yank-pop]                  #'helm-show-kill-ring
+        [remap describe-bindings]         #'helm-descbinds)
   :config
   (helm-mode +1)
   ;; helm is too heavy for `find-file-at-point'
@@ -189,3 +190,9 @@ be negative.")
         (lambda (buf &optional _resume) (pop-to-buffer buf)))
   (global-set-key [remap swiper] #'swiper-helm)
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))
+
+
+(use-package! helm-descbinds
+  :after helm-mode
+  :config
+  (helm-descbinds-mode +1))
