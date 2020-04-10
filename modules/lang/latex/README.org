@@ -47,19 +47,17 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
 
 * Prerequisites
-You will need ghostscript, dvipng and a latex compiler. All this is provided by
-the =texlive= bundle, available through many OS package managers:
+You will need ghostscript and a latex compiler. All this is provided by
+the =texlive= bundle, available through many OS package managers.
 
+Ghostscript <= 9.27 is [[https://www.gnu.org/software/auctex/manual/preview-latex/No-images-are-displayed-with-gs-9_002e27-and-earlier.html][reported buggy]] and doesn't work with auctex's math
+previews. (You can check you ghostscript version with ~gs --version~.) Most
+package managers already have newer versions, but if not you might have to build
+gs from source.
 ** Ubuntu
 #+BEGIN_SRC sh
 apt-get install texlive
 #+END_SRC
-
-#+begin_quote
-=ghostscript 9.26/9.27= is reportedly buggy on Ubuntu 19.04. You may have to
-build a newer version yourself. Later versions of Ubuntu+texlive don't suffer
-this issue.
-#+end_quote
 
 ** Arch Linux
 #+BEGIN_SRC sh
