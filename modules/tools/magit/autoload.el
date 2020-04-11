@@ -48,12 +48,11 @@
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
-    (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
-           (file (buffer-file-name buffer)))
-      (if (or (buffer-modified-p buffer)
-              (and file (file-exists-p file)))
+    (when buffer-file-name
+      (if (buffer-modified-p (current-buffer))
           (when (bound-and-true-p vc-mode)
-            (vc-refresh-state))
+            (vc-refresh-state)
+            (force-mode-line-update))
         (revert-buffer t t)))))
 
 ;;;###autoload

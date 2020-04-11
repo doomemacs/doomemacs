@@ -30,7 +30,7 @@
     (web-mode-set-engine "django")))
 
 (def-project-mode! +web-django-mode
-  :modes '(web-mode)
+  :modes '(web-mode python-mode)
   :files ("manage.py")
   :on-enter
   (when (derived-mode-p 'web-mode)

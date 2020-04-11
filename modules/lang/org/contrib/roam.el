@@ -33,13 +33,15 @@
           :desc "Tomorrow"       "m" #'org-roam-tomorrow
           :desc "Yesterday"      "y" #'org-roam-yesterday))
   :config
-  (unless org-roam-directory
-    (setq org-roam-directory org-directory))
-  (setq org-roam-completion-system
+  (setq org-roam-directory (expand-file-name (or org-roam-directory "")
+                                             org-directory)
+        org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
+        org-roam-completion-system
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)
               ((featurep! :completion ido) 'ido)
               ('default))))
+
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
 ;; detected), we can safely chain `org-roam-protocol' to it.
