@@ -906,7 +906,10 @@ compelling reason, so..."
   (if (featurep! +jupyter)   (load! "contrib/jupyter"))
   (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
   (if (featurep! +present)   (load! "contrib/present"))
+  (if (featurep! +pt)        (load! "+pt"))
   (if (featurep! +roam)      (load! "contrib/roam"))
+  (if (featurep! +sidebar)   (load! "+sidebar"))
+  (if (featurep! +trello)    (load! "+trello"))
 
   ;; Add our general hooks after the submodules, so that any hooks the
   ;; submodules add run after them, and can overwrite any defaults if necessary.

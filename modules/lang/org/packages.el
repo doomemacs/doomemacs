@@ -25,8 +25,8 @@
 ;; code.orgmode.org runs on a potato.
 (package! org-mode
   :recipe (:host github
-           :repo "emacs-straight/org-mode"
-           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
+                 :repo "emacs-straight/org-mode"
+                 :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
   :pin "b9935765f7")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
@@ -77,6 +77,8 @@
   (package! org-roam :pin "6e97003967")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
+(when (featurep! +sidebar)
+  (package! org-sidebar))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
@@ -108,3 +110,10 @@
     :pin "1c1e3ec467"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd180"))
+
+;;; Sync
+(when (featurep! +pt)
+  (package! org-pivotal))
+
+(when (featurep! +trello)
+  (package! org-trello))
