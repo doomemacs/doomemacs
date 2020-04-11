@@ -235,7 +235,12 @@ If on a:
        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
          (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
-      (_ (+org--refresh-inline-images-in-subtree)))))
+      (_
+       (if (or (org-in-regexp org-ts-regexp-both nil t)
+               (org-in-regexp org-tsr-regexp-both nil  t)
+               (org-in-regexp org-any-link-re nil t))
+           (call-interactively #'org-open-at-point)
+         (+org--refresh-inline-images-in-subtree))))))
 
 
 ;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
