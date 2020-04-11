@@ -36,14 +36,11 @@ be negative.")
         [remap noop-show-kill-ring]       #'helm-show-kill-ring
         [remap persp-switch-to-buffer]    #'+helm/workspace-mini
         [remap switch-to-buffer]          #'helm-buffers-list
-        [remap projectile-find-file]      #'+helm/projectile-find-file
-        [remap projectile-recentf]        #'helm-projectile-recentf
-        [remap projectile-switch-project] #'helm-projectile-switch-project
-        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
         [remap recentf-open-files]        #'helm-recentf
         [remap yank-pop]                  #'helm-show-kill-ring)
   :config
   (helm-mode +1)
+  (helm-projectile-on)
   ;; helm is too heavy for `find-file-at-point'
   (add-to-list 'helm-completing-read-handlers-alist (cons #'find-file-at-point nil)))
 
