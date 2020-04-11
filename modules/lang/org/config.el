@@ -907,6 +907,7 @@ compelling reason, so..."
   (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
   (if (featurep! +present)   (load! "contrib/present"))
   (if (featurep! +roam)      (load! "contrib/roam"))
+  (if (featurep! +noter)     (load! "contrib/noter"))
 
   ;; Add our general hooks after the submodules, so that any hooks the
   ;; submodules add run after them, and can overwrite any defaults if necessary.

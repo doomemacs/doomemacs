@@ -77,6 +77,8 @@
   (package! org-roam :pin "6e97003967")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
+(when (featurep! +noter)
+  (package! org-noter :pin "9ead81d42d"))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
