@@ -128,7 +128,9 @@
           :desc "Bibliographic entries"        "b"
           (cond ((featurep! :completion ivy)   #'ivy-bibtex)
                 ((featurep! :completion helm)  #'helm-bibtex)))
-
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                    "e" #'org-noter)
+      
         :desc "Find file in notes"             "f" #'+default/find-in-notes
         :desc "Browse notes"                   "F" #'+default/browse-notes
         :desc "Org store link"                 "l" #'org-store-link

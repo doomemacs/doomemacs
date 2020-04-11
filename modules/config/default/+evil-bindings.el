@@ -464,6 +464,9 @@
         :desc "Toggle org-clock"             "c" #'+org/toggle-clock
         :desc "Cancel org-clock"             "C" #'org-clock-cancel
         :desc "Open deft"                    "d" #'deft
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                  "e" #'org-noter)
+
         :desc "Find file in notes"           "f" #'+default/find-in-notes
         :desc "Browse notes"                 "F" #'+default/browse-notes
         :desc "Org store link"               "l" #'org-store-link
