@@ -51,8 +51,8 @@ Emacs.")
   ;;   for the paths listed in `projectile-project-root-files-bottom-up'. This
   ;;   includes .git and .project
   ;; + `projectile-root-top-down' -> searches from the current directory down to
-  ;;   / the paths listed in `projectile-root-top-down-recurring', like
-  ;;   package.json, setup.py, or Cargo.toml
+  ;;   / the paths listed in `projectile-root-files', like package.json,
+  ;;   setup.py, or Cargo.toml
   ;; + `projectile-root-top-down-recurring' -> searches from the current
   ;;   directory down to / for a directory that has one of
   ;;   `projectile-project-root-files-top-down-recurring' but doesn't have a
