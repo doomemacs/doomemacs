@@ -23,6 +23,7 @@
         :localleader
         :prefix ("m" . "org-roam")
         "b" #'org-roam-switch-to-buffer
+        "c" #'org-roam-capture
         "f" #'org-roam-find-file
         "g" #'org-roam-graph-show
         "i" #'org-roam-insert
