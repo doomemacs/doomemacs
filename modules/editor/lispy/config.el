@@ -1,7 +1,7 @@
 ;;; editor/lispy/config.el -*- lexical-binding: t; -*-
 
 (use-package! lispy
-  :hook ((common-lisp-mode . lispy-mode)
+  :hook ((lisp-mode . lispy-mode)
          (emacs-lisp-mode . lispy-mode)
          (scheme-mode . lispy-mode)
          (racket-mode . lispy-mode)
