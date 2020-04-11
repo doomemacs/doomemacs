@@ -16,3 +16,4 @@
   (package! posframe :pin "c15800a838"))
 (when (featurep! :lang org)
   (package! helm-org :pin "b7a18dfc17"))
+(package! helm-descbinds :pin "b725159823")
