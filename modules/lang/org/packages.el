@@ -102,12 +102,14 @@
   (package! ob-ammonite :pin "39937dff39"))
 
 ;;; Export
-(when (featurep! +pandoc)
-  (package! ox-pandoc :pin "aa37dc7e94"))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
     :pin "1c1e3ec467"))
+(when (featurep! +jira)
+  (package! ox-jira))
+(when (featurep! +pandoc)
+  (package! ox-pandoc :pin "aa37dc7e94"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd180"))
 
