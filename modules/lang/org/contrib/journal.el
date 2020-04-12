@@ -1,18 +1,24 @@
 ;;; lang/org/contrib/journal.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +journal)
 
-;; HACK org-journal does some file-path magic at load time that creates
-;;      duplicate `auto-mode-alist' entries, so we suppress it for now, so we
-;;      can do it properly later.
-(advice-add #'org-journal-update-auto-mode-alist :override #'ignore)
-
-(after! org-journal
-  (setq org-journal-dir (expand-file-name "journal/" org-directory)
-        org-journal-cache-file (concat doom-cache-dir "org-journal")
-        org-journal-file-pattern (org-journal-dir-and-format->regex
-                                  org-journal-dir org-journal-file-format))
-
-  (add-to-list 'auto-mode-alist (cons org-journal-file-pattern 'org-journal-mode))
+(use-package! org-journal
+  :mode ("/\\(?1:[0-9]\\{4\\}\\)\\(?2:[0-9][0-9]\\)\\(?3:[0-9][0-9]\\)\\(\\.gpg\\)?\\'"
+         . org-journal-mode)
+  :preface
+  ;; HACK org-journal does some file-path magic at load time that creates
+  ;;      duplicate and hard-coded `auto-mode-alist' entries, so we suppress it
+  ;;      and use the more generalize regexp (above).
+  (advice-add #'org-journal-update-auto-mode-alist :override #'ignore)
+  ;; HACK `org-journal-dir' has is surrounded by setter and `auto-mode-alist'
+  ;;      magic which makes its needlessly difficult to create an "overrideable"
+  ;;      default for Doom users, so we set this to an empty string (anything
+  ;;      else will throw an error) so we can detect it being changed later.
+  (setq org-journal-dir ""
+        org-journal-cache-file (concat doom-cache-dir "org-journal"))
+  :config
+  (when (string-empty-p org-journal-dir)
+    (setq! org-journal-dir (expand-file-name "journal/" org-directory)))
+  (setq org-journal-find-file #'find-file)
 
   (map! (:map org-journal-mode-map
           :n "]f"  #'org-journal-open-next-entry
