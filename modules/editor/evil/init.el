@@ -257,7 +257,7 @@ and complains if a module is loaded too early (during startup)."
   (add-transient-hook! 'emacs-lisp-mode
     (+evil-collection-init 'elisp-mode))
   (add-transient-hook! 'occur-mode
-    (+evil-collection-init 'occur))
+    (+evil-collection-init '(occur replace)))
 
   ;; HACK Do this ourselves because evil-collection break's `eval-after-load'
   ;;      load order by loading their target plugin before applying keys. This
