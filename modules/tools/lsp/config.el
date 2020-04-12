@@ -56,6 +56,7 @@ working on that project after closing the last buffer.")
         lsp-enable-on-type-formatting nil)
 
   :config
+  (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t)
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation #'lsp-describe-thing-at-point
     :definition #'lsp-find-definition
