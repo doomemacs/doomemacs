@@ -12,12 +12,12 @@
 (package! wgrep :pin "5977b8e000")
 
 (if (featurep! +prescient)
-    (package! ivy-prescient :pin "a194852e80")
+    (package! ivy-prescient :pin "53307731f3")
   (when (featurep! +fuzzy)
     (package! flx :pin "17f5c9cb2a")))
 
 (when (featurep! +childframe)
-  (package! ivy-posframe :pin "6d697ff00a"))
+  (package! ivy-posframe :pin "ae9bafe94f"))
 
 (when (featurep! +icons)
   (package! all-the-icons-ivy :pin "a70cbfa1ef"))
