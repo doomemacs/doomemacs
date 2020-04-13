@@ -17,6 +17,11 @@
     :keymap (let ((map (make-sparse-keymap)))
               (define-key map [remap undo] #'undo-fu-only-undo)
               (define-key map [remap redo] #'undo-fu-only-redo)
+              (define-key map (kbd "C-_")     #'undo-fu-only-undo)
+              (define-key map (kbd "M-_")     #'undo-fu-only-redo)
+              (define-key map (kbd "C-M-_")   #'undo-fu-only-redo-all)
+              (define-key map (kbd "C-x r u") #'undo-fu-session-save)
+              (define-key map (kbd "C-x r U") #'undo-fu-session-recover)
               map)
     :init-value t
     :global t))
