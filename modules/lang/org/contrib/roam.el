@@ -3,6 +3,7 @@
 
 (use-package! org-roam
   :hook (org-load . org-roam-mode)
+  :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam
              org-roam-capture
              org-roam-date
