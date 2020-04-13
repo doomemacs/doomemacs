@@ -801,6 +801,16 @@ Doom supports LSP, but it is not enabled by default. To enable it, you must:
    means. You can find a list of supported servers on [[https://github.com/emacs-lsp/lsp-mode#supported-languages][the lsp-mode project page]].
 4. Run ~doom sync~ on the command line and restart Emacs.
 
+Some language modules may lack LSP support (either because it hasn't been
+implemented yet or I'm not aware of it yet -- let us know!). To enable LSP for
+these languages, add this to =$DOOMDIR/config.el=:
+
+#+BEGIN_SRC elisp
+(add-hook 'MAJOR-MODE-local-vars-hook #'lsp!)
+;; Where =MAJOR-MODE= is the major mode you're targeting. e.g.
+;; lisp-mode-local-vars-hook
+#+END_SRC
+
 * Package Management
 ** How do I install a package from ELPA?
 See the "[[file:getting_started.org::*Installing packages][Installing packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
