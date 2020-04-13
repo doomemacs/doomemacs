@@ -33,6 +33,7 @@
   - [[#when-should-and-shouldnt-i-use-bindoom][When should and shouldn't I use ~bin/doom~?]]
   - [[#when-to-run-doom-sync][When to run ~doom sync~]]
   - [[#how-to-suppress-confirmation-prompts-while-bindoom-is-running][How to suppress confirmation prompts while ~bin/doom~ is running]]
+  - [[#which-terminal-should-i-use][Which terminal should I use?]]
   - [[#how-do-i-enable-lsp-support-for-insert-language-here][How do I enable LSP support for <insert language here>?]]
 - [[#package-management][Package Management]]
   - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
@@ -762,6 +763,33 @@ doom -y update
 doom --yes update
 YES=1 doom update
 #+END_SRC
+
+** Which terminal should I use?
+Looking for a terminal in Emacs? Doom offers four modules:
+
++ =:term eshell=
++ =:term shell=,
++ =:term term=
++ =:term vterm=.
+
+Which do you choose?
+
++ =eshell= is the Emacs Lisp shell. It's stable, works anywhere Emacs runs (on
+  any OS) and has no external dependencies, /but/ lacks features you'll expect
+  from mature shells and tends to be slower than them.
++ =shell= is a shell /for/ your shell. Think of it like a REPL for bash/zsh,
+  rather than terminal emulation. For simple back-and-forth this has the
+  greatest compatibility, but the simplest feature set. It won't work with
+  TUI programs like htop or vim.
++ =term= is Emacs' built-in terminal emulator. It's alright when it works, awful
+  when it doesn't.
++ =vterm= is as good as terminal emulation gets in Emacs atm, but requires that
+  a) Emacs be built with dynamic modules support and b) that you compile
+  vterm-module.so (this is done when you first start up vterm, but may have
+  additional dependencies, like libvterm). In any case, this doesn't work on
+  Windows.
+
+Ultimately, I recommend =eshell= or =vterm=. The former is
 
 ** How do I enable LSP support for <insert language here>?
 Doom supports LSP, but it is not enabled by default. To enable it, you must:
