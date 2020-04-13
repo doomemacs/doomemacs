@@ -17,6 +17,7 @@
         :localleader
         "r" #'flutter-run-or-hot-reload))
 
+
 (use-package! hover
   :when (featurep! +flutter)
   :defer t
