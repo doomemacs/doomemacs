@@ -208,11 +208,23 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
 (defun +org-init-babel-lazy-loader-h ()
   "Load babel libraries lazily when babel blocks are executed."
-  (defun +org--babel-lazy-load (lang)
-    (cl-check-type lang symbol)
-    (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-        (require (intern (format "ob-%s" lang)) nil t)
-        (require lang nil t)))
+  (defun +org--babel-lazy-load (lang &optional async)
+    (cl-check-type lang (or symbol null))
+    (unless (cdr (assq lang org-babel-load-languages))
+      (when async
+        ;; ob-async has its own agenda for lazy loading packages (in the child
+        ;; process), so we only need to make sure it's loaded.
+        (require 'ob-async nil t))
+      (prog1 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+                 (require (intern (format "ob-%s" lang)) nil t)
+                 (require lang nil t))
+        (add-to-list 'org-babel-load-languages (cons lang t)))))
+
+  ;; Lazy load babel packages for exporting
+  (add-hook! 'org-export-filter-src-block-functions
+    (defun lazy-load-library-h (data lang plist)
+      (+org--babel-lazy-load lang)
+      data))
 
   (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
@@ -220,7 +232,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
     (or (cdr (assoc lang org-src-lang-modes))
         (+org--babel-lazy-load lang)))
 
-  ;; This also works for tangling and exporting
+  ;; This also works for tangling
   (defadvice! +org--babel-lazy-load-library-a (info)
     "Load babel libraries lazily when babel blocks are executed."
     :after-while #'org-babel-confirm-evaluate
@@ -229,14 +241,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
                        ((stringp lang) (intern lang))))
            (lang (or (cdr (assq lang +org-babel-mode-alist))
                      lang)))
-      (when (and lang
-                 (not (cdr (assq lang org-babel-load-languages)))
-                 (+org--babel-lazy-load lang))
-        (when (assq :async (nth 2 info))
-          ;; ob-async has its own agenda for lazy loading packages (in the
-          ;; child process), so we only need to make sure it's loaded.
-          (require 'ob-async nil t))
-        (add-to-list 'org-babel-load-languages (cons lang t)))
+      (+org--babel-lazy-load lang (assq :async (nth 2 info)))
       t))
 
   (advice-add #'org-babel-do-load-languages :override #'ignore))
