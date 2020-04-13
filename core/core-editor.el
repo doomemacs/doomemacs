@@ -563,41 +563,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
-(use-package! undo-fu
-  :after-call doom-switch-buffer-hook after-find-file
-  :config
-  ;; Store more undo history to prevent loss of data
-  (setq undo-limit 400000
-        undo-strong-limit 3000000
-        undo-outer-limit 3000000)
-
-  (global-set-key [remap undo] #'undo-fu-only-undo)
-  (global-set-key [remap redo] #'undo-fu-only-redo)
-
-  (with-eval-after-load 'undo-tree
-    (global-undo-tree-mode -1)))
-
-
-(use-package! undo-fu-session
-  :after undo-fu
-  :preface
-  (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
-        undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
-  ;; HACK We avoid `:config' here because `use-package's `:after' complicates
-  ;;      the load order of a package's `:config' block and makes it impossible
-  ;;      for the user to override its settings with merely `after!' (or
-  ;;      `eval-after-load'). See jwiegley/use-package#829.
-  (after! undo-fu-session
-    ;; HACK Use the faster zstd to compress undo files instead of gzip
-    (when (executable-find "zstd")
-      (defadvice! doom--undo-fu-session-use-zstd-a (filename)
-        :filter-return #'undo-fu-session--make-file-name
-        (if undo-fu-session-compression
-            (concat (file-name-sans-extension filename) ".zst")
-          filename)))
-    (global-undo-fu-session-mode +1)))
-
-
 (use-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
   :after-call after-find-file

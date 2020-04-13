@@ -76,6 +76,7 @@ Modules that reconfigure or augment packages or features built into Emacs.
 + [[file:../modules/emacs/dired/README.org][dired]] =+ranger +icons= - TODO
 + electric - TODO
 + [[file:../modules/emacs/ibuffer/README.org][ibuffer]] =+icons= - TODO
++ [[file:../modules/emacs/undo/README.org][undo]] =+tree= - A smarter, more intuitive & persistent undo history
 + vc - TODO
 
 * :email
