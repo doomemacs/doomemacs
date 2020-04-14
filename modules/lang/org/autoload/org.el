@@ -436,12 +436,14 @@ with `org-cycle')."
 
 ;;;###autoload
 (defun +org-unfold-to-2nd-level-or-point-h ()
-  "My version of the 'overview' #+STARTUP option: expand first-level headings.
-Expands the first level, but no further. If point was left somewhere deeper,
-unfold to point on startup."
+  "Alters '#+STARTUP overview' to only expand first-level headings.
+Expands the first level, but no further. If a different startup option was
+provided, do that instead."
   (unless org-agenda-inhibit-startup
+    ;; TODO Implement a custom #+STARTUP option?
     (when (eq org-startup-folded t)
       (outline-hide-sublevels +org-initial-fold-level))
+    ;; If point was left somewhere deeper, unfold to point on startup.
     (when (outline-invisible-p)
       (ignore-errors
         (save-excursion

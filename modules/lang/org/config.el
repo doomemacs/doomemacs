@@ -230,8 +230,8 @@ This forces it to read the background before rendering."
                  (require lang nil t))
         (add-to-list 'org-babel-load-languages (cons lang t)))))
 
-  ;; Lazy load babel packages for exporting
   (defadvice! +org--export-lazy-load-library-h ()
+    "Lazy load a babel package when a block is executed during exporting."
     :before #'org-babel-exp-src-block
     (+org--babel-lazy-load-library-a (org-babel-get-src-block-info)))
 
