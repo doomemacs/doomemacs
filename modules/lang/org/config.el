@@ -782,16 +782,17 @@ compelling reason, so..."
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
 
-(use-package! org-pdfview
+(use-package! org-pdftools
   :when (featurep! :tools pdf)
-  :commands org-pdfview-open
+  :commands org-pdftools-export
   :init
   (after! org
-    (delete '("\\.pdf\\'" . default) org-file-apps)
-    ;; org links to pdf files are opened in pdf-view-mode
-    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
-    ;; support for links to specific pages
-    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link))))))
+    (org-link-set-parameters "pdftools"
+                             :follow #'org-pdftools-open
+                             :complete #'org-pdftools-complete-link
+                             :store #'org-pdftools-store-link
+                             :export #'org-pdftools-export)
+    (add-hook 'org-store-link-functions #'org-pdftools-store-link)))
 
 
 (use-package! evil-org
