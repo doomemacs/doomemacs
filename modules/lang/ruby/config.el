@@ -178,11 +178,9 @@
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
   :config
+  (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil)
   (when (featurep! :editor evil)
     (add-hook 'projectile-rails-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map projectile-rails-mode-map
-        "r" #'projectile-rails-command-map)
-  (push '((nil . "projectile-rails-\\(.+\\)") . (nil . "\\1"))
-        which-key-replacement-alist)
-  (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil))
+        "r" #'projectile-rails-command-map))
