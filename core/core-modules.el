@@ -142,10 +142,8 @@ following properties:
   :path  [STRING]       path to category root directory
 
 Example:
-  (doom-module-set :lang 'haskell :flags '(+intero))"
-  (puthash (cons category module)
-           plist
-           doom-modules))
+  (doom-module-set :lang 'haskell :flags '(+dante))"
+  (puthash (cons category module) plist doom-modules))
 
 (defun doom-module-path (category module &optional file)
   "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and

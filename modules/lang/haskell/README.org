@@ -19,8 +19,8 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default), LSP
-(haskell-language-server or ghcide) or [[https://haskell-lang.org/intero][intero]].
+This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default) or LSP
+(haskell-language-server or ghcide).
 
 + Code completion (~company-ghc~)
 + Look up documentation (~hoogle~)
@@ -45,8 +45,6 @@ Here are a few resources I've found indispensable in my Haskell adventures:
 + =+ghcide= Enables LSP support with ghcide (requires the ~:tools lsp~ module).
 + =+lsp= Enables LSP support with haskell-ide-engine (requires the ~:tools lsp~
   module).
-+ =+intero= (Deprecated) Enables intero; a comprehensive, stack-based
-  development environment for Haskell.
 
 ** Plugins
 + [[https://github.com/haskell/haskell-mode][haskell-mode]]
@@ -55,16 +53,13 @@ Here are a few resources I've found indispensable in my Haskell adventures:
   + [[https://github.com/jyp/attrap][attrap]]
 + =+lsp=
   + [[https://github.com/emacs-lsp/lsp-haskell][lsp-haskell]]
-+ =+intero=
-  + [[https://github.com/chrisdone/intero][intero]] =DEPRECATED=
 
 * Prerequisites
-Depending on whether you use Intero, Dante or LSP, your dependencies will
-differ:
+Depending on whether you use Dante, haskell-language-server or ghcide, your
+dependencies will differ:
 
 + Dante users need =cabal=, =ghc= and =ghc-mod=
-+ LSP users need the =haskell-ide-engine= LSP server
-+ Intero and LSP users need =stack=
++ LSP users need the =haskell-ide-engine= LSP server OR =ghcide=
 + All users will need the =hoogle= package
 
 ** Cabal
@@ -111,7 +106,7 @@ yay -S haskell-ide-engine-git
 See https://github.com/digital-asset/ghcide for install instructions.
 
 ** Stack
-To use Intero or LSP, you need =stack=:
+To use LSP, you need =stack=:
 
 *** MacOS
 #+BEGIN_SRC sh

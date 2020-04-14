@@ -9,6 +9,3 @@
 (when (or (featurep! +lsp)
           (featurep! +ghcide))
   (package! lsp-haskell :pin "582fa27c88"))
-;; DEPRECATED
-(when (featurep! +intero)
-  (package! intero :pin "fdb0550a2d"))

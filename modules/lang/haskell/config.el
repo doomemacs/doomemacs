@@ -35,7 +35,6 @@
 
   (map! :localleader
         :map haskell-mode-map
-        ;; this is set to use cabal for dante users and stack for intero users:
         "b" #'haskell-process-cabal-build
         "c" #'haskell-cabal-visit-file
         "h" #'haskell-hide-toggle
@@ -45,8 +44,7 @@
 ;;
 ;;; Backends
 
-(cond ((featurep! +intero) (load! "+intero")) ; DEPRECATED
-      ((featurep! +dante)  (load! "+dante"))
+(cond ((featurep! +dante)  (load! "+dante"))
       ((or (featurep! +lsp)
            (featurep! +ghcide))
        (load! "+lsp")))
