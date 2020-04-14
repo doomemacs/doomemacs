@@ -72,7 +72,6 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 ** Plugins
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
 + [[https://github.com/astahlman/ob-async][ob-async]]
-+ [[https://github.com/alphapapa/org-bookmark-heading][org-bookmark-heading]]
 + [[https://github.com/integral-dw/org-superstar-mode][org-superstar]]
 + [[https://github.com/rexim/org-cliplink][org-cliplink]]
 + [[https://github.com/magit/orgit][orgit]]
@@ -90,12 +89,16 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/DEADB17/ob-racket][ob-racket]]
 + =:lang rest=
   + [[https://github.com/alf/ob-restclient.el][ob-restclient]]
++ =:lang rst=
+  + [[https://github.com/msnoigrs/ox-rst][ox-rst]]
 + =:lang rust=
   + [[https://github.com/micanzhang/ob-rust][ob-rust]]
++ =:lang scala=
+  + [[https://github.com/zwild/ob-ammonite][ob-ammonite]]
 + =:editor evil=
   + [[https://github.com/Somelauw/evil-org-mode][evil-org]]
 + =:tools pdf=
-  + [[https://github.com/markus1189/org-pdfview/tree/09ef4bf8ff8319c1ac78046c7e6b89f6a0beb82c][org-pdfview]]
+  + [[https://github.com/fuxialexander/org-pdftools][org-pdftools]]
 + =+dragndrop=
   + [[https://github.com/abo-abo/org-download][org-download]]
 + =+gnuplot=
@@ -117,6 +120,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
 + =+roam=
   + [[https://github.com/jethrokuan/org-roam][org-roam]]
+  + [[https://github.com/jethrokuan/company-org-roam][company-org-roam]]
 
 ** Hacks
 + The window is recentered when following links.
