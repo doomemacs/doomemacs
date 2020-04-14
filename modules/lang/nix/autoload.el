@@ -46,7 +46,8 @@
   (save-excursion
     (goto-char (point-min))
     (save-match-data
-      (when (re-search-forward "#! *\\(?:cached-\\)?nix-shell +-i +\\([^ \n]+\\)" 256 t)
+      (if (not (re-search-forward "#! *\\(?:cached-\\)?nix-shell +-i +\\([^ \n]+\\)" 256 t))
+          (message "Couldn't determine mode for this script")
         (let* ((interp (match-string 1))
                (mode
                 (assoc-default
