@@ -34,9 +34,7 @@
 
 (package! avy)
 (package! htmlize :pin "86f22f211e")
-(package! org-bullets
-  :recipe (:host github :repo "Kaligule/org-bullets")
-  :pin "8b4f0aab6d")
+(package! org-superstar :pin "4897c333a8")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d")
