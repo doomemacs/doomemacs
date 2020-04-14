@@ -116,10 +116,20 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
   ;; Fontify latex blocks and entities, but not natively -- that's too slow
   (setq org-highlight-latex-and-related '(latex script entities))
-  (plist-put! org-format-latex-options
-              :scale 1.5         ; larger previews
-              :foreground 'auto  ; match the theme foreground
-              :background 'auto) ; ... and its background
+
+  (plist-put org-format-latex-options :scale 1.5) ; larger previews
+  (add-hook! 'doom-load-theme-hook
+    (defun +org-refresh-latex-background-h ()
+      "Previews are rendered with the incorrect background.
+This forces it to read the background before rendering."
+      (plist-put! org-format-latex-options
+                  :background
+                  (face-attribute (if-let (remap (cadr (assq 'default face-remapping-alist)))
+                                      (if (keywordp (car-safe remap))
+                                          (plist-get remap :background)
+                                        remap)
+                                      'default)
+                                  :background nil t))))
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own
