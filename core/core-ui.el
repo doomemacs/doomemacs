@@ -203,13 +203,8 @@ read-only or not file-visiting."
 ;;
 ;;; Cursor
 
-;; Don't blink the cursor, it's too distracting.
-(blink-cursor-mode -1)
-
 ;; Don't blink the paren matching the one at point, it's too distracting.
 (setq blink-matching-paren nil)
-
-(setq visible-cursor nil)
 
 ;; Don't stretch the cursor to fit wide characters, it is disorienting,
 ;; especially for tabs.
