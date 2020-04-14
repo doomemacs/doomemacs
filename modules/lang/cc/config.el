@@ -67,6 +67,13 @@ This is ignored by ccls.")
     :return "return"
     :yield "#require")
 
+  ;; HACK Suppress 'Args out of range' error in when multiple modifications are
+  ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
+  ;;      multiple cursors.
+  (undefadvice! +cc--suppress-silly-errors-a (orig-fn &rest args)
+    :around #'c-after-change-mark-abnormal-strings
+    (ignore-errors (apply orig-fn args)))
+
   ;; Custom style, based off of linux
   (setq c-basic-offset tab-width
         c-backspace-function #'delete-backward-char)
