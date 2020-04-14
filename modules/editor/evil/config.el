@@ -201,6 +201,7 @@ directives. By default, this only recognizes C directives.")
 ;;; Packages
 
 (use-package! evil-easymotion
+  :after-call pre-command-hook
   :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
@@ -533,6 +534,7 @@ To change these keys see `+evil-repeat-keys'."
 
       ;; evil-easymotion (see `+evil/easymotion')
       (:after evil-easymotion
+        :m "gs" evilem-map
         (:map evilem-map
           "a" (evilem-create #'evil-forward-arg)
           "A" (evilem-create #'evil-backward-arg)
