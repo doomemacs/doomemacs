@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "b9935765f7")
+  :pin "0fadd06b72")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -49,20 +49,20 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "4f22e13e06"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "e7cddf39e3"))
+  (package! orgit :pin "0242088fb2"))
 (when (featurep! +brain)
-  (package! org-brain :pin "ec4bd9dd29"))
+  (package! org-brain :pin "3630eb88a3"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "b96fd7ba02"))
+  (package! org-download :pin "46417e2bd3"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "f0001c3001")
   (package! gnuplot-mode :pin "601f639298"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "587ed4e029"))
+  (package! jupyter :pin "97c421a698"))
 (when (featurep! +journal)
-  (package! org-journal :pin "664c08e12c"))
+  (package! org-journal :pin "8a844deeb7"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318"))
 (when (featurep! +present)
@@ -70,9 +70,9 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "24f7c5be9d")
   (package! org-tree-slide :pin "7bf09a02bd")
-  (package! org-re-reveal :pin "e4460a98b6"))
+  (package! org-re-reveal :pin "61549f4c00"))
 (when (featurep! +roam)
-  (package! org-roam :pin "6e97003967")
+  (package! org-roam :pin "a71176ee40")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
 
@@ -103,6 +103,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "1c1e3ec467"))
+    :pin "b6f4142de2"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd180"))
