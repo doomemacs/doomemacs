@@ -221,10 +221,9 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         (add-to-list 'org-babel-load-languages (cons lang t)))))
 
   ;; Lazy load babel packages for exporting
-  (add-hook! 'org-export-filter-src-block-functions
-    (defun lazy-load-library-h (data lang plist)
-      (+org--babel-lazy-load lang)
-      data))
+  (defadvice! +org--export-lazy-load-library-h ()
+    :before #'org-babel-exp-src-block
+    (+org--babel-lazy-load-library-a (org-babel-get-src-block-info)))
 
   (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
