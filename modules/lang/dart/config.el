@@ -6,7 +6,7 @@
   :config
   (when (and (featurep! +flutter) IS-LINUX)
     (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))
-      (setq lsp-dart-sdk-dir path))))
+      (setq flutter-sdk-path path))))
 
 
 (use-package! flutter
@@ -16,3 +16,13 @@
   (map! :map dart-mode-map
         :localleader
         "r" #'flutter-run-or-hot-reload))
+
+
+(use-package! hover
+  :when (featurep! +flutter)
+  :defer t
+  :config
+  (map! :map dart-mode-map
+        :localleader
+        "h r" #'hover-run-or-hot-reload
+        "h R" #'hover-run-or-hot-restart))

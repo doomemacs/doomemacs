@@ -31,11 +31,12 @@ This module has no dedicated maintainers.
 ** Module Flags
 + =+lsp= Enable LSP server integration.
 + =+flutter= Adds ~flutter~ integration and some sane defaults for Flutter
-  development.
+  development along with ~hover~ for desktop development.
 
 ** Plugins
 + [[https://github.com/bradyt/dart-mode][dart-mode]]
 + [[https://github.com/amake/flutter.el][flutter.el]]
++ [[https://github.com/ericdallo/hover.el][hover.el]]
 
 * Prerequisites
 Make sure that the Dart SDK is on your ~PATH~, and if using Flutter, make sure
@@ -85,8 +86,8 @@ flutter doctor # for Dependency check and further instructions
 ** Dart & Flutter
 On Linux, the installers for Dart and Flutter use the ~/opt~ directory, and this
 module assumes that. However, you may set ~lsp-dart-sdk-dir~ to your Dart
-install directory, if it differs, to make sure LSP can find the language server
-included with the Dart SDK.
+install directory and ~flutter-sdk-path~ to you flutter SDK folder, to make sure
+LSP can find the language server included with the Dart SDK.
 
 Alternatively, these variables shouldn't be necessary if you just include Dart
 and Flutter on your `PATH` variable.
