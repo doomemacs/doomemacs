@@ -23,8 +23,10 @@
               (define-key map (kbd "C-x r u") #'undo-fu-session-save)
               (define-key map (kbd "C-x r U") #'undo-fu-session-recover)
               map)
-    :init-value t
-    :global t))
+    :init-value nil
+    :global t)
+
+  (undo-fu-mode +1))
 
 
 (use-package! undo-fu-session
