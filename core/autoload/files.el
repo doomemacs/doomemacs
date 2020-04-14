@@ -358,9 +358,12 @@ file if it exists, without confirmation."
   (let ((file (doom--sudo-file buffer-file-name)))
     (if-let (buffer (find-file-noselect file))
         (let ((origin (current-buffer)))
+          (copy-to-buffer buffer (point-min) (point-max))
           (unwind-protect
               (with-current-buffer buffer
                 (save-buffer))
             (unless (eq origin buffer)
-              (kill-buffer buffer))))
+              (kill-buffer buffer))
+            (with-current-buffer origin
+              (revert-buffer t t))))
       (user-error "Unable to open %S" file))))
