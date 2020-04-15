@@ -206,6 +206,12 @@ read-only or not file-visiting."
 ;; Don't blink the paren matching the one at point, it's too distracting.
 (setq blink-matching-paren nil)
 
+;; Some terminals offer two different cursors: a “visible” static cursor and a
+;; “very visible” blinking one. By default, Emacs uses the very visible cursor
+;; and switches to it when you start or resume Emacs. If `visible-cursor' is nil
+;; when Emacs starts or resumes, it uses the normal cursor.
+(setq visible-cursor nil)
+
 ;; Don't stretch the cursor to fit wide characters, it is disorienting,
 ;; especially for tabs.
 (setq x-stretch-cursor nil)
