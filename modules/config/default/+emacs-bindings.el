@@ -124,6 +124,11 @@
       (:prefix-map ("n" . "notes")
         :desc "Search notes for symbol"        "." #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                     "a" #'org-agenda
+        (:when (featurep! :tools biblio)
+          :desc "Bibliographic entries"        "b"
+          (cond ((featurep! :completion ivy)   #'ivy-bibtex)
+                ((featurep! :completion helm)  #'helm-bibtex)))
+
         :desc "Find file in notes"             "f" #'+default/find-in-notes
         :desc "Browse notes"                   "F" #'+default/browse-notes
         :desc "Org store link"                 "l" #'org-store-link
