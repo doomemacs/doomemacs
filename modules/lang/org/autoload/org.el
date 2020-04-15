@@ -393,11 +393,6 @@ Made for `org-tab-first-hook' in evil-mode."
           ;; Smart indentation doesn't work with yasnippet, and painfully slow
           ;; in the few cases where it does.
           (yas-indent-line 'fixed))
-      ;; HACK Yasnippet field overlays break org-bullet-mode. Don't ask me why.
-      (add-hook! 'yas-after-exit-snippet-hook :local
-        (when (bound-and-true-p org-bullets-mode)
-          (org-bullets-mode -1)
-          (org-bullets-mode +1)))
       (cond ((and (or (not (bound-and-true-p evil-local-mode))
                       (evil-insert-state-p))
                   (yas--templates-for-key-at-point))
