@@ -449,8 +449,8 @@ You'll find [[file:contributing.org::*Conventions][an overview of Doom's code co
 
 ** What version of Doom am I running?
 You'll find the current version displayed in the modeline on the dashboard. It
-can also be retrieved using ~M-x doom/version~ (bound to =SPC h d v= by default)
-or ~doom info~ on the command line.
+can also be retrieved using ~M-x doom/version~ (bound to =SPC h d v= or =C-h d
+v= by default) or ~bin/doom version~ on the command line.
 
 ** Is Discord the only option for interacting with your community?
 Yes. I selected it for my personal convenience and have no plans to extend our
@@ -701,10 +701,7 @@ tools for experienced Emacs users to skirt around it (most of the time):
   runs ~doom sync~, restarts the Doom initialization process and re-evaluates
   your personal config. However, this won't clear pre-existing state; Doom won't
   unload modules/packages that have already been loaded and it can't anticipate
-  complications arising from a private config that isn't idempotent.
-- Some ~bin/doom~ commands are available as elisp commands. e.g. ~doom/reload~
-  for ~doom sync~, ~doom/upgrade~ for ~doom upgrade~ ~doom//s~, ~doom//update~, etc. Feel free to use them, but
-  consider them highly experimental and subject to change without notice.
+  complications arising from your private config.
 - You can quickly restart Emacs and restore the last session with
   ~doom/restart-and-restore~ (bound to =SPC q r=).
 
