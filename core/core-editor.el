@@ -146,7 +146,7 @@ possible."
 ;; Default to hard line-wrapping in text modes. Hard wrapping is more
 ;; performant, and Emacs makes it trivially easy to reflow text with
 ;; `fill-paragraph' and `evil-fill'.
-(add-hook 'text-mode-hook #'auto-fill-mode)
+(add-hook 'text-mode-hook #'visual-line-mode)
 
 
 ;;
