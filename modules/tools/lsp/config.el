@@ -160,7 +160,7 @@ auto-killed (which is a potentially expensive process)."
             restart
             (null +lsp-defer-shutdown)
             (= +lsp-defer-shutdown 0))
-        (funcall orig-fn)
+        (funcall orig-fn restart)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
