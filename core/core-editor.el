@@ -143,9 +143,8 @@ possible."
 ;; since programmers' tools tend to be POSIX compliant.
 (setq require-final-newline t)
 
-;; Default to hard line-wrapping in text modes. Hard wrapping is more
-;; performant, and Emacs makes it trivially easy to reflow text with
-;; `fill-paragraph' and `evil-fill'.
+;; Default to soft line-wrapping in text modes. It is more sensibile for text
+;; modes, even if hard wrapping is more performant.
 (add-hook 'text-mode-hook #'visual-line-mode)
 
 
