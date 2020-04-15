@@ -59,7 +59,7 @@ Why this over exec-path-from-shell?
 (defvar doom-env-ignored-vars
   '("^DBUS_SESSION_BUS_ADDRESS$"
     "^GPG_AGENT_INFO$"
-    "^GPG_TTY$"
+    "^\\(SSH\\|GPG\\)_TTY$"
     "^HOME$"
     "^PS1$"
     "^PWD$"
