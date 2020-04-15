@@ -27,7 +27,7 @@
   - [[#how-do-i-change-the-leaderlocalleader-keys][How do I change the leader/localleader keys?]]
   - [[#how-do-i-change-the-style-of-line-numbers-or-disable-them-altogether][How do I change the style of line-numbers (or disable them altogether)?]]
   - [[#how-do-i-change-the-behavior-and-appearance-of-popup-windows][How do I change the behavior and appearance of popup windows?]]
-  - [[#how-do-i-change-the-appearance-of-a-face-or-faces][How do I change the appearance of a face (or faces)?]]
+  - [[#how-do-i-customize-a-theme-or-faces][How do I customize a theme or face(s)?]]
   - [[#can-doom-be-customized-without-restarting-emacs][Can Doom be customized without restarting Emacs?]]
   - [[#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][Can Vim/Evil be removed for a more vanilla Emacs experience?]]
   - [[#when-should-and-shouldnt-i-use-bindoom][When should and shouldn't I use ~bin/doom~?]]
@@ -671,18 +671,18 @@ rules.
 You'll find more comprehensive documentation on ~set-popup-rule!~ in its
 docstring (available through =SPC h f= -- or =C-h f= for non-evil users).
 
-** How do I change the appearance of a face (or faces)?
+** How do I customize a theme or face(s)?
 Doom provides the ~custom-set-faces!~ and ~custom-theme-set-faces!~ macros as a
 convenience.
 
-#+begin_quote
-*Do not use ~M-x customize~ or any of the built-in Emacs customize-* API.* Doom
-does not support it and never will; those settings could break at any time.
-#+end_quote
+See =SPC h f custom-set-faces\!= (or =C-h f custom-set-faces\!=) for
+documentation on and examples of its use.
 
-See =<help> f custom-set-faces\!= (or =M-x helpful-function custom-set-faces\!=)
-for documentation and examples on how to use it. =<help>= is =SPC h= for evil
-users and =C-h= for non-evil users.
+#+begin_quote
+Other sources may recommend ~M-x customize~, ~M-x customize-themes~ or ~M-x
+customize-face~. *Do not use these commands.* Doom does not support them and
+their settings could break any time.
+#+end_quote
 
 ** Can Doom be customized without restarting Emacs?
 Short answer: You can, but you shouldn't.
