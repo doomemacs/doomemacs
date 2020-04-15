@@ -9,10 +9,10 @@ them manually from your private config with the `doom-load-envvars-file'
 function."))
   "Creates or regenerates your envvars file.
 
-The envvars file is created by scraping your (interactive) shell environment
-into newline-delimited KEY=VALUE pairs. Typically by running '$SHELL -ic env'
-(or '$SHELL -c set' on windows). Doom loads this file at startup (if it exists)
-to ensure Emacs mirrors your shell environment (particularly to ensure PATH and
+The envvars file is created by scraping the current shell environment into
+newline-delimited KEY=VALUE pairs. Typically by running '$SHELL -ic env' (or
+'$SHELL -c set' on windows). Doom loads this file at startup (if it exists) to
+ensure Emacs mirrors your shell environment (particularly to ensure PATH and
 SHELL are correctly set).
 
 This is useful in cases where you cannot guarantee that Emacs (or the daemon)
