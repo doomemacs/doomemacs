@@ -772,24 +772,25 @@ Looking for a terminal in Emacs? Doom offers four modules:
 + =:term term=
 + =:term vterm=.
 
-Which do you choose?
+But which do you choose?
 
 + =eshell= is the Emacs Lisp shell. It's stable, works anywhere Emacs runs (on
   any OS) and has no external dependencies, /but/ lacks features you'll expect
   from mature shells and tends to be slower than them.
 + =shell= is a shell /for/ your shell. Think of it like a REPL for bash/zsh,
-  rather than terminal emulation. For simple back-and-forth this has the
-  greatest compatibility, but the simplest feature set. It won't work with
-  TUI programs like htop or vim.
+  rather than terminal emulation. Due to its simplicity, you're less likely to
+  encounter edge cases (e.g. against your shell config), but it has the smallest
+  feature set. It also won't work with TUI programs like htop or vim.
 + =term= is Emacs' built-in terminal emulator. It's alright when it works, awful
-  when it doesn't.
-+ =vterm= is as good as terminal emulation gets in Emacs atm, but requires that
-  a) Emacs be built with dynamic modules support and b) that you compile
-  vterm-module.so (this is done when you first start up vterm, but may have
-  additional dependencies, like libvterm). In any case, this doesn't work on
-  Windows.
+  when it doesn't. =vterm= is almost always a better option.
++ =vterm= is as good as terminal emulation gets in Emacs atm, but has a few
+  extra steps to get going. a) Emacs must be built with dynamic modules support
+  and b) you'll need to compile vterm-module.so, which has external dependencies
+  (libvterm). It is automatically built when you first open =vterm=, but this
+  will fail on Windows, NixOS and Guix out of the box -- you're on your own
+  there!
 
-Ultimately, I recommend =eshell= or =vterm=. The former is
+For a terminal in Emacs, =eshell= and =vterm= are generally the best options.
 
 ** How do I enable LSP support for <insert language here>?
 Doom supports LSP, but it is not enabled by default. To enable it, you must:
