@@ -159,6 +159,10 @@ read-only or not file-visiting."
 ;; Simpler confirmation prompt when killing Emacs
 (setq confirm-kill-emacs #'doom-quit-p)
 
+;; Don't prompt for confirmation when we create a new file or buffer (assume the
+;; user knows what they're doing).
+(setq confirm-nonexistent-file-or-buffer nil)
+
 (setq uniquify-buffer-name-style 'forward
       ;; no beeping or blinking please
       ring-bell-function #'ignore
@@ -222,8 +226,6 @@ read-only or not file-visiting."
 
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
 (push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
-
-(setq confirm-nonexistent-file-or-buffer t)
 
 (defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
