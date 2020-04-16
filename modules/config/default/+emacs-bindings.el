@@ -145,7 +145,20 @@
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
             :desc "New Entry"      "j" #'org-journal-new-entry
-            :desc "Search Forever" "s" #'org-journal-search-forever)))
+            :desc "Search Forever" "s" #'org-journal-search-forever))
+        (:when (featurep! :lang org +roam)
+          (:prefix ("r" . "roam")
+            :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
+            :desc "Org Roam Capture" "c" #'org-roam-capture
+            :desc "Find file"        "f" #'org-roam-find-file
+            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Insert"           "i" #'org-roam-insert
+            :desc "Org Roam"         "r" #'org-roam
+            (:prefix ("d" . "by date")
+              :desc "Arbitrary date" "d" #'org-roam-date
+              :desc "Today"          "t" #'org-roam-today
+              :desc "Tomorrow"       "m" #'org-roam-tomorrow
+              :desc "Yesterday"      "y" #'org-roam-yesterday))))
 
       ;;; <leader> o --- open
       "o" nil ; we need to unbind it first as Org claims this prefix
