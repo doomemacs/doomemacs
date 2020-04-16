@@ -142,6 +142,7 @@ Does nothing if `whitespace-mode' is already active or the current buffer is
 read-only or not file-visiting."
   (unless (or (eq major-mode 'fundamental-mode)
               buffer-read-only
+              (equal global-whitespace-mode t)
               (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
