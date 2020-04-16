@@ -4,8 +4,7 @@
 (use-package! org-roam
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
-  :commands (org-roam
-             org-roam-capture
+  :commands (org-roam-buffer-toggle-display
              org-roam-date
              org-roam-find-file
              org-roam-graph-show

@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "0fadd06b72")
+  :pin "9994e8ee89")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -47,7 +47,7 @@
     :recipe (:host github :repo "hlissner/evil-org-mode")
     :pin "4d44e9bbdc"))
 (when (featurep! :tools pdf)
-  (package! org-pdftools :pin "4f22e13e06"))
+  (package! org-pdftools :pin "4156b677fc"))
 (when (featurep! :tools magit)
   (package! orgit :pin "0242088fb2"))
 (when (featurep! +brain)
@@ -60,9 +60,9 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "97c421a698"))
+  (package! jupyter :pin "62ad054001"))
 (when (featurep! +journal)
-  (package! org-journal :pin "8a844deeb7"))
+  (package! org-journal :pin "3fdb5b3036"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318"))
 (when (featurep! +present)
@@ -72,7 +72,7 @@
   (package! org-tree-slide :pin "7bf09a02bd")
   (package! org-re-reveal :pin "61549f4c00"))
 (when (featurep! +roam)
-  (package! org-roam :pin "a71176ee40")
+  (package! org-roam :pin "e33c144298")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
 
