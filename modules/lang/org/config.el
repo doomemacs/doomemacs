@@ -824,9 +824,9 @@ compelling reason, so..."
                              :export #'org-pdftools-export)
 
     (add-hook! 'org-open-link-functions
-      (defun +org-open-old-pdf-links-fn (path)
+      (defun +org-open-old-pdf-links-fn (link)
         (let ((regexp "^pdf\\(?:tools\\|view\\):"))
-          (when (string-match-p regexp path)
+          (when (string-match-p regexp link)
             (org-link-open (replace-regexp-in-string regexp "pdf:" link))
             t))))
 
