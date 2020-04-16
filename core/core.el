@@ -31,6 +31,10 @@
   ;; Restore `file-name-handler-alist', because it is needed for handling
   ;; encrypted or compressed files, among other things.
   (defun doom-reset-file-handler-alist-h ()
+    ;; Re-add rather than `setq', because file-name-handler-alist may have
+    ;; changed since startup, and we want to preserve those.
+    (dolist (handler file-name-handler-alist)
+      (add-to-list 'doom--initial-file-name-handler-alist handler))
     (setq file-name-handler-alist doom--initial-file-name-handler-alist))
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
