@@ -3,6 +3,6 @@
 
 (package! bibtex-completion :pin "b14b628261")
 (when (featurep! :completion ivy)
-  (package! ivy-bibtex :pin "3cff6bd702"))
+  (package! ivy-bibtex :pin "b14b628261"))
 (when (featurep! :completion helm)
-  (package! helm-bibtex :pin "3cff6bd702"))
+  (package! helm-bibtex :pin "b14b628261"))
