@@ -40,7 +40,14 @@
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)
               ((featurep! :completion ido) 'ido)
-              ('default))))
+              ('default)))
+
+  ;; HACK Hide the mode line in the org-roam buffer, since it serves no purpose.
+  ;;      This makes it easier to distinguish among other org buffers.
+  (defadvice! +org--hide-mode-line-a (&rest _)
+    :after #'org-roam-buffer--get-create
+    (with-current-buffer org-roam-buffer
+      (hide-mode-line-mode +1))))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
