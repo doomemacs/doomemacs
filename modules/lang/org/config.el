@@ -826,7 +826,7 @@ compelling reason, so..."
     (add-hook! 'org-open-link-functions
       (defun +org-open-old-pdf-links-fn (path)
         (let ((regexp "^pdf\\(?:tools\\|view\\):"))
-          (when (string-match-p regexp)
+          (when (string-match-p regexp path)
             (org-link-open (replace-regexp-in-string regexp "pdf:" link))
             t))))
 
