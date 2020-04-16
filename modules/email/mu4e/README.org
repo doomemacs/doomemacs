@@ -12,6 +12,7 @@
   - [[#arch-linux][Arch Linux]]
   - [[#nixos][NixOS]]
   - [[#opensuse][openSUSE]]
+  - [[Debian/Ubuntu]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
@@ -87,9 +88,18 @@ Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of
 sync_program=isync # mbsync
 #sync_program=offlineimap
 
-sudo zypper install maildir-utils $sync_programm
+sudo zypper install maildir-utils $sync_program
 #+END_SRC
 
+** Debian/Ubuntu
+Run the command corresponding to the desired backend and the last one.
+#+BEGIN_SRC sh
+sudo apt-get install isync  # mbsync
+# or
+sudo apt-get install offlineimap
+# then
+sudo apt-get install maildir-utils # mu
+#+END_SRC
 * TODO Features
 
 * Configuration
@@ -104,7 +114,8 @@ Then you must set up offlineimap and index your mail:
 
 1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It
    is configured to download mail to ~\~/.mail~. I use [[https://www.passwordstore.org/][unix pass]] to securely
-   store my login credentials.
+   store my login credentials. You can find a *very* detailed configuration
+   [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
 2. Download your email: ~offlineimap -o~ (may take a while)
 3. Index it with mu: ~mu index --maildir ~/.mail~
 
