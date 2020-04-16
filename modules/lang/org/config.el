@@ -825,10 +825,9 @@ compelling reason, so..."
 
     (add-hook! 'org-open-link-functions
       (defun +org-open-old-pdf-links-fn (link)
-        (let ((regexp "^pdf\\(?:tools\\|view\\):")
-              (org-open-link-functions (remq #'+org-open-old-pdf-links-fn org-open-link-functions)))
+        (let ((regexp "^pdf\\(?:tools\\|view\\):"))
           (when (string-match-p regexp link)
-            (org-link-open (replace-regexp-in-string regexp "pdf:" link))
+            (org-pdftools-open (replace-regexp-in-string regexp "" link))
             t))))
 
     ;; TODO Perhaps PR a variable for changing the link upstream?
@@ -842,7 +841,9 @@ compelling reason, so..."
       (cl-letf* ((old-store-props (symbol-function #'org-link-store-props))
                  ((symbol-function #'org-link-store-props)
                   (lambda (&rest plist)
-                    (apply old-store-props (plist-put plist :type "pdf")))))
+                    (plist-put! plist :type "pdf")
+                    (plist-put! plist :link (+org--use-generic-link-a (plist-get plist :link)))
+                    (apply old-store-props plist))))
         (apply orig-fn args)))))
 
 
