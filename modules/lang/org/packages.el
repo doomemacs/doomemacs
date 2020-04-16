@@ -34,7 +34,9 @@
 
 (package! avy)
 (package! htmlize :pin "86f22f211e")
-(package! org-superstar :pin "4897c333a8")
+(package! org-superstar
+  :recipe (:host github :repo "integral-dw/org-superstar-mode")
+  :pin "4897c333a8")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d")
