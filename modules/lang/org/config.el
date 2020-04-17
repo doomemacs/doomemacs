@@ -811,40 +811,18 @@ compelling reason, so..."
   :commands org-pdftools-export
   :init
   (after! org
-    (add-hook 'org-store-link-functions #'org-pdftools-store-link)
-
-    ;; HACK `org-pdftools' hard-codes "pdftools:" for its links. We want to use
-    ;;      a generic link so that the backend doesn't matter. These hacks are
-    ;;      in place so that the old pdf(view|tools) links still work, but that
-    ;;      org-pdftools will only generate pdf: links.
-    (org-link-set-parameters "pdf"
+    (org-link-set-parameters (or (bound-and-true-p org-pdftools-link-prefix) "pdf")
                              :follow #'org-pdftools-open
                              :complete #'org-pdftools-complete-link
                              :store #'org-pdftools-store-link
                              :export #'org-pdftools-export)
-
+    (add-hook 'org-store-link-functions #'org-pdftools-store-link)
     (add-hook! 'org-open-link-functions
       (defun +org-open-old-pdf-links-fn (link)
         (let ((regexp "^pdf\\(?:tools\\|view\\):"))
           (when (string-match-p regexp link)
             (org-pdftools-open (replace-regexp-in-string regexp "" link))
-            t))))
-
-    ;; TODO Perhaps PR a variable for changing the link upstream?
-    (defadvice! +org--use-generic-link-a (link)
-      :filter-return '(org-pdftools-complete-link
-                       org-pdftools-get-link)
-      (replace-regexp-in-string "^pdftools:" "pdf:" link))
-
-    (defadvice! +org--store-generic-link-a (orig-fn &rest args)
-      :around #'org-pdftools-store-link
-      (cl-letf* ((old-store-props (symbol-function #'org-link-store-props))
-                 ((symbol-function #'org-link-store-props)
-                  (lambda (&rest plist)
-                    (plist-put! plist :type "pdf")
-                    (plist-put! plist :link (+org--use-generic-link-a (plist-get plist :link)))
-                    (apply old-store-props plist))))
-        (apply orig-fn args)))))
+            t))))))
 
 
 (use-package! evil-org

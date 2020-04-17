@@ -34,7 +34,7 @@
 
 (package! avy)
 (package! htmlize :pin "86f22f211e")
-(package! org-superstar :pin "4897c333a8")
+(package! org-superstar :pin "09ddc28383")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d")
@@ -47,9 +47,9 @@
     :recipe (:host github :repo "hlissner/evil-org-mode")
     :pin "4d44e9bbdc"))
 (when (featurep! :tools pdf)
-  (package! org-pdftools :pin "4156b677fc"))
+  (package! org-pdftools :pin "22d9a367ab"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "0242088fb2"))
+  (package! orgit :pin "e147f05577"))
 (when (featurep! +brain)
   (package! org-brain :pin "3630eb88a3"))
 (when (featurep! +dragndrop)
@@ -72,7 +72,7 @@
   (package! org-tree-slide :pin "7bf09a02bd")
   (package! org-re-reveal :pin "61549f4c00"))
 (when (featurep! +roam)
-  (package! org-roam :pin "e33c144298")
+  (package! org-roam :pin "6175739b33")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
 

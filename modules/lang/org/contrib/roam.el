@@ -5,14 +5,14 @@
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
-             org-roam-date
              org-roam-find-file
              org-roam-graph-show
              org-roam-insert
              org-roam-switch-to-buffer
-             org-roam-today
-             org-roam-tomorrow
-             org-roam-yesterday)
+             org-roam-dailies-date
+             org-roam-dailies-today
+             org-roam-dailies-tomorrow
+             org-roam-dailies-yesterday)
   :preface
   ;; Set this to nil so we can later detect whether the user has set a custom
   ;; directory for it, and default to `org-directory' if they haven't.
@@ -28,10 +28,10 @@
         "i" #'org-roam-insert
         "m" #'org-roam
         (:prefix ("d" . "by date")
-          :desc "Arbitrary date" "d" #'org-roam-date
-          :desc "Today"          "t" #'org-roam-today
-          :desc "Tomorrow"       "m" #'org-roam-tomorrow
-          :desc "Yesterday"      "y" #'org-roam-yesterday))
+          :desc "Arbitrary date" "d" #'org-roam-dailies-date
+          :desc "Today"          "t" #'org-roam-dailies-today
+          :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
+          :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))
   :config
   (setq org-roam-directory (expand-file-name (or org-roam-directory "")
                                              org-directory)
