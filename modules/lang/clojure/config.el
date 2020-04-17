@@ -90,6 +90,8 @@
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
             "C"  #'cider-connect-cljs
+            "m"  #'cider-macroexpand-1
+            "M"  #'cider-macroexpand-all
             (:prefix ("e" . "eval")
               "b" #'cider-eval-buffer
               "d" #'cider-eval-defun-at-point
@@ -114,9 +116,6 @@
               "e" #'cider-enlighten-mode
               "i" #'cider-inspect
               "r" #'cider-inspect-last-result)
-            (:prefix ("m" . "macro")
-              "e" #'cider-macroexpand-1
-              "E" #'cider-macroexpand-all)
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all
