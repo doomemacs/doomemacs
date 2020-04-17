@@ -159,6 +159,25 @@
           :i "U"  #'cider-repl-history-undo-other-window)))
 
 
+(after! cider-doc
+  ;; Fixes raxod502/radian#446: CIDER tries to do color calculations when it's
+  ;; loaded, sometimes too early, causing errors. Better to wait until something
+  ;; is actually rendered.
+  (setq cider-docview-code-background-color nil)
+
+  (defadvice! +clojure--defer-color-calculation-a (&rest _)
+    "Set `cider-docview-code-background-color'.
+This is needed because we have ripped out the code that would normally set it
+(since that code will run during early init, which is a problem)."
+    :before #'cider-docview-fontify-code-blocks
+    (setq cider-docview-code-background-color (cider-scale-background-color)))
+
+  ;; HACK Disable cider's advice on these; and hope no one else is using these
+  ;;      old-style advice.
+  (ad-deactivate #'enable-theme)
+  (ad-deactivate #'disable-theme))
+
+
 (use-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
   :config
