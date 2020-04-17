@@ -17,9 +17,9 @@
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
-(when (and (featurep! +everywhere)
-           doom-interactive-mode
-           (not doom-reloading-p))
+(when (and doom-interactive-mode
+           (not doom-reloading-p)
+           (featurep! +everywhere))
 
   (setq evil-collection-company-use-tng (featurep! :completion company +tng)
         ;; must be set before evil/evil-collection is loaded
