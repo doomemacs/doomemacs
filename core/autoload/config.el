@@ -88,7 +88,7 @@ Runs `doom-reload-hook' afterwards."
           (unwind-protect
               (doom-initialize-modules 'force)
             (general-auto-unbind-keys t)))
-        (run-hook-wrapped 'doom-reload-hook #'doom-try-hook)
+        (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
         (print! (success "Config successfully reloaded!")))
     (user-error "Failed to reload your config")))
 
