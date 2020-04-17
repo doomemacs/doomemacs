@@ -6,7 +6,7 @@
 (package! gcmh :pin "b1bde50891")
 
 ;; core-ui.el
-(package! all-the-icons :pin "f6cbb51c15")
+(package! all-the-icons :pin "0b74fc3618")
 (package! hide-mode-line :pin "88888825b5")
 (package! highlight-numbers :pin "8b4744c7f4")
 (package! rainbow-delimiters :pin "5125f4e476")
@@ -14,7 +14,7 @@
 
 ;; core-editor.el
 (package! better-jumper :pin "6d240032ca")
-(package! dtrt-indent :pin "1569b712ea")
+(package! dtrt-indent :pin "9163cd990f")
 (package! helpful :pin "c54e9ddbd6")
 (when IS-MAC
   (package! ns-auto-titlebar :pin "1efc30d385"))
@@ -38,7 +38,7 @@
     :pin "7ee3f9c52f"))
 
 ;; core-projects.el
-(package! projectile :pin "56e18fcefa")
+(package! projectile :pin "eec569dc32")
 
 ;; core-keybinds.el
 (package! general :pin "14ad4c888b")
