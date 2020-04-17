@@ -32,7 +32,7 @@
 
   ;; Kill the omnisharp server once the last csharp-mode buffer is killed
   (add-hook! 'omnisharp-mode-hook
-    (add-hook 'kill-buffer-hook #'+csharp-cleanup-omnisharp-server-h nil t))
+    (add-hook 'kill-buffer-hook #'+csharp-kill-omnisharp-server-h nil t))
 
   (map! :localleader
         :map omnisharp-mode-map
