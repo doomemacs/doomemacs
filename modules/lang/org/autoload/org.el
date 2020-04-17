@@ -386,21 +386,25 @@ Made for `org-tab-first-hook' in evil-mode."
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
   (when (bound-and-true-p yas-minor-mode)
-    (let ((major-mode (if (org-in-src-block-p t)
-                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
-                        major-mode))
-          (org-src-tab-acts-natively nil) ; causes breakages
-          ;; Smart indentation doesn't work with yasnippet, and painfully slow
-          ;; in the few cases where it does.
-          (yas-indent-line 'fixed))
-      (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                      (evil-insert-state-p))
-                  (yas--templates-for-key-at-point))
-             (yas-expand)
-             t)
-            ((use-region-p)
-             (yas-insert-snippet)
-             t)))))
+    (and (let ((major-mode (if (org-in-src-block-p t)
+                               (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                             major-mode))
+               (org-src-tab-acts-natively nil) ; causes breakages
+               ;; Smart indentation doesn't work with yasnippet, and painfully slow
+               ;; in the few cases where it does.
+               (yas-indent-line 'fixed))
+           (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                           (evil-insert-state-p))
+                       (yas--templates-for-key-at-point))
+                  (yas-expand)
+                  t)
+                 ((use-region-p)
+                  (yas-insert-snippet)
+                  t)))
+         ;; HACK Yasnippet breaks org-superstar-mode because yasnippets is
+         ;;      overzealous about cleaning up overlays.
+         (when (bound-and-true-p org-superstar-mode)
+           (org-superstar-restart)))))
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
