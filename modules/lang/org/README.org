@@ -18,6 +18,7 @@
   - [[#built-in-custom-link-types][Built-in custom link types]]
 - [[#configuration][Configuration]]
   - [[#changing-org-directory][Changing ~org-directory~]]
+  - [[#changing-org-noter-notes-search-path][Changing ~org-noter-notes-search-path~]]
 
 * Description
 This module adds org-mode support to Doom Emacs, along with a number of
@@ -68,6 +69,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
   Emacs can be used for presentations.
 + =+roam= Enables org-roam integration.
++ =+noter= Enables org-noter integration. Keeps notes in sync with a document.
+  Requires [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][pdf-tools]] (=:tools pdf=) or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
 
 ** Plugins
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
@@ -121,6 +124,9 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+roam=
   + [[https://github.com/jethrokuan/org-roam][org-roam]]
   + [[https://github.com/jethrokuan/company-org-roam][company-org-roam]]
++ =+noter=
+  + [[https://github.com/weirdNox/org-noter][org-noter]]
+
 
 ** Hacks
 + The window is recentered when following links.
@@ -222,4 +228,11 @@ To modify ~org-directory~ it must be set /before/ =org= has loaded:
 #+BEGIN_SRC emacs-lisp
 ;; ~/.doom.d/config.el
 (setq org-directory "~/new/org/location/")
+#+END_SRC
+** Changing ~org-noter-notes-search-path~
+To modify ~org-noter-notes-search-path~ set:
+
+#+BEGIN_SRC emacs-lisp
+;; ~/.doom.d/config.el
+(setq org-noter-notes-search-path '("~/notes/path/"))
 #+END_SRC
