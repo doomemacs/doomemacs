@@ -29,6 +29,7 @@
   (defun +org-journal-mode-maybe ()
     "Activate `org-journal-mode', maybe."
     (and (eq major-mode 'org-mode)
+         (stringp buffer-file-name)
          (string-match-p org-journal-file-pattern buffer-file-name)
          (let ((org-mode-hook (remq '+org-journal-mode-maybe org-mode-hook)))
            (org-journal-mode))))
