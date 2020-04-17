@@ -2,8 +2,8 @@
 ;;; lang/clojure/packages.el
 
 (package! clojure-mode :pin "c970c4605c")
-(package! cider :pin "8f5657bc35")
+(package! cider :pin "d63e5652fd")
 (package! clj-refactor :pin "8259791e05")
 
 (when (featurep! :checkers syntax)
-  (package! flycheck-clj-kondo :pin "d46745c416"))
+  (package! flycheck-clj-kondo :pin "5472c26ffd"))
