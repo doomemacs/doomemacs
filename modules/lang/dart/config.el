@@ -8,7 +8,6 @@
         (setq lsp-dart-sdk-dir path)))))
 
 
-
 (use-package! flutter
   :when (featurep! +flutter)
   :defer t

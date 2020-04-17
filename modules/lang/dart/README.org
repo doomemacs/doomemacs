@@ -30,7 +30,8 @@ The `dart` module wraps `dart-mode`, with LSP code completion for `.dart` files,
 syntax highlighting, etc. Included is a `+lsp` flag for enabling LSP features,
 and a `+flutter` flag for working with Flutter.
 
-+ =+lsp= Will start LSP automatically in `dart-mode-hook`.
++ =+lsp= Will start LSP automatically in `dart-mode-hook` and install LSP-Dart
+for more functionality.
 + =+flutter= Adds the `flutter` package and some settings for Flutter development.
 
 ** Plugins
