@@ -138,7 +138,7 @@ size.")
 e.g. If you indent with spaces by default, tabs will be highlighted. If you
 indent with tabs, spaces at BOL are highlighted.
 
-Does nothing if `whitespace-mode' or 'global-whitespace-mode'is already 
+Does nothing if `whitespace-mode' or 'global-whitespace-mode' is already 
 active or if the current buffer is read-only or not file-visiting."
   (unless (or (eq major-mode 'fundamental-mode)
               buffer-read-only
