@@ -128,6 +128,10 @@
           :desc "Bibliographic entries"        "b"
           (cond ((featurep! :completion ivy)   #'ivy-bibtex)
                 ((featurep! :completion helm)  #'helm-bibtex)))
+
+        :desc "Toggle org-clock"               "c" #'+org/toggle-clock
+        :desc "Cancel org-clock"               "C" #'org-clock-cancel
+        :desc "Open deft"                      "d" #'deft
         (:when (featurep! :lang org +noter)
           :desc "Org noter"                    "e" #'org-noter)
       

@@ -472,6 +472,7 @@
         :desc "Org store link"               "l" #'org-store-link
         :desc "Tags search"                  "m" #'org-tags-view
         :desc "Org capture"                  "n" #'org-capture
+        :desc "Goto capture"                 "N" #'org-capture-goto-target
         :desc "Active org-clock"             "o" #'org-clock-goto
         :desc "Todo list"                    "t" #'org-todo-list
         :desc "Search notes"                 "s" #'+default/org-notes-search
