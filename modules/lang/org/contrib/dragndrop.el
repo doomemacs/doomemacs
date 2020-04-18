@@ -17,7 +17,8 @@
   (after! org
     ;; A shorter link to attachments
     (+org-def-link "download" org-attach-id-dir)
-    (org-link-set-parameters "download" :image-data-fun #'+org-dragndrop-image-fn))
+    (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
+          (abbreviate-file-name org-attach-id-dir)))
   :config
   (setq org-download-image-dir org-attach-id-dir
         org-download-link-format "[[download:%s]]\n"
