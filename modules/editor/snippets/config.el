@@ -5,7 +5,7 @@
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! yasnippet
   :defer-incrementally eldoc easymenu help-mode
@@ -20,9 +20,12 @@
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)
 
-  ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
-  ;; have additional configuration for yasnippet. For example, file-templates.
-  (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
+  (if (daemonp)
+      (after! yasnippet (yas-reload-all))
+    ;; Ensure `yas-reload-all' is called as late as possible. Other modules
+    ;; could have additional configuration for yasnippet. For example,
+    ;; file-templates.
+    (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all)))
 
   (add-hook! '(text-mode-hook
                prog-mode-hook
@@ -31,24 +34,28 @@
              #'yas-minor-mode-on)
 
   :config
-  (setq yas-verbosity (if doom-debug-mode 3 0)
-        yas-also-auto-indent-first-line t)
-
-  (add-to-list 'load-path +snippets-dir)
-  ;; default snippets library, if available
-  (require 'doom-snippets nil t)
-
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir)
 
-  ;; In case `+snippets-dir' and `doom-snippets-dir' are the same
+  ;; Reduce verbosity. 3 is too chatty about initializing yasnippet. 2 is just
+  ;; right (only shows errors).
+  (setq yas-verbosity (if doom-debug-mode 3 0))
+  ;; Ensure the snippet is properly indented
+  (setq yas-also-auto-indent-first-line t)
+
+  ;; default snippets library, if available
+  (add-to-list 'load-path +snippets-dir)
+  (require 'doom-snippets nil t)
+
+  ;; HACK In case `+snippets-dir' and `doom-snippets-dir' are the same, or
+  ;;      duplicates exist in `yas-snippet-dirs'.
   (advice-add #'yas-snippet-dirs :filter-return #'delete-dups)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
   (delq! 'yas-dropdown-prompt yas-prompt-functions)
   ;; Prioritize private snippets in `+snippets-dir' over built-in ones if there
   ;; are multiple choices.
-  (add-to-list 'yas-prompt-functions #'+snippets-prompt-private nil #'eq)
+  (add-to-list 'yas-prompt-functions #'+snippets-prompt-private)
 
   ;; Register `def-project-mode!' modes with yasnippet. This enables project
   ;; specific snippet libraries (e.g. for Laravel, React or Jekyll projects).
@@ -61,22 +68,14 @@
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay))
 
-  ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
-  (add-hook 'snippet-mode-hook #'+snippets-read-only-maybe-h)
-
   ;; (Evil only) fix off-by-one issue with line-wise visual selections in
   ;; `yas-insert-snippet', and switches to insert mode afterwards.
   (advice-add #'yas-insert-snippet :around #'+snippets-expand-on-region-a)
 
-  (define-key! snippet-mode-map
-    "C-c C-k" #'+snippet--abort
-    "C-c C-e" #'+snippet--edit)
+  ;; Show keybind hints in snippet header-line
   (add-hook 'snippet-mode-hook #'+snippets-show-hints-in-header-line-h)
-
-  ;; Replace commands with superior alternatives
-  (define-key! yas-minor-mode-map
-    [remap yas-new-snippet]        #'+snippets/new
-    [remap yas-visit-snippet-file] #'+snippets/edit)
+  ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
+  (add-hook 'snippet-mode-hook #'+snippets-read-only-maybe-h)
 
   (map! :map yas-keymap
         "C-e"         #'+snippets/goto-end-of-field
@@ -85,7 +84,11 @@
         [M-left]      #'+snippets/goto-start-of-field
         [M-backspace] #'+snippets/delete-to-start-of-field
         [backspace]   #'+snippets/delete-backward-char
-        [delete]      #'+snippets/delete-forward-char-or-field))
+        [delete]      #'+snippets/delete-forward-char-or-field
+        ;; Replace commands with superior alternatives
+        :map yas-minor-mode-map
+        [remap yas-new-snippet]        #'+snippets/new
+        [remap yas-visit-snippet-file] #'+snippets/edit))
 
 
 (use-package! auto-yasnippet
