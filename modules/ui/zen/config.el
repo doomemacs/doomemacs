@@ -48,6 +48,7 @@
             'org-todo-keyword-kill
             'org-todo-keyword-outd
             'org-todo
+            'org-done
             'org-indent
             'font-lock-comment-face
             'line-number
