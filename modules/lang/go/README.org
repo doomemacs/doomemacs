@@ -15,7 +15,8 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds [[https://golang.org][Go]] support.
+This module adds [[https://golang.org][Go]] support, with optional (but recommended) LSP support via
+[[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]].
 
 + Code completion (~gocode~)
 + Documentation lookup (~godoc~)
@@ -30,7 +31,8 @@ This module adds [[https://golang.org][Go]] support.
 + Code checking (~flycheck-golangci-lint~)
 
 ** Module Flags
-+ =+lsp= Enables integration for the gopls LSP server.
++ =+lsp= Enables integration for the gopls LSP server. It is highly recommended
+  you use this, as the non-LSP experience is deprecated (and poor).
 
 ** Plugins
 + [[https://github.com/dominikh/go-mode.el][go-mode]]
@@ -38,7 +40,7 @@ This module adds [[https://golang.org][Go]] support.
 + [[https://github.com/dominikh/go-mode.el][go-guru]]
 + [[https://github.com/manute/gorepl-mode][gorepl-mode]]
 + [[https://github.com/brantou/emacs-go-tag][go-tag]]
-+ [[https://github.com/mdempsky/gocode][company-go]]*
++ [[https://github.com/mdempsky/gocode][company-go]]* =DEPRECATED=
 + [[https://github.com/s-kostyaev/go-gen-test][go-gen-test]]
 + [[https://github.com/weijiangan/flycheck-golangci-lint][flycheck-golangci-lint]] (if =:checkers syntax= is enabled)
 
