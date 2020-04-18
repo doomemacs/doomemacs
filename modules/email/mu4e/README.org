@@ -19,6 +19,7 @@
   - [[#mbsync][mbsync]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#no-such-file-or-directory-mu4e][=No such file or directory, mu4e=]]
+  - [[#void-function-org-time-add-error-on-gentoo][~(void-function org-time-add)~ error on Gentoo]]
 
 * Description
 This module makes Emacs an email client, using ~mu4e~.
@@ -139,3 +140,11 @@ Then configure Emacs to use your email address:
 ** =No such file or directory, mu4e=
 You will get =No such file or directory, mu4e= errors if you don't run ~doom
 sync~ after installing =mu= through your package manager.
+** ~(void-function org-time-add)~ error on Gentoo
+Gentoo users will see this error because [[https://gitweb.gentoo.org/repo/gentoo.git/tree/net-mail/mu/files/70mu-gentoo.el#n2][the =net-mail/mu= package eagerly loads
+=mu4e= (which pulls in =org=) much too early]]; before Emacs reads =~/.emacs.d=.
+So early, that it loads the built-in version of org-mode, rather than the newer
+version that Doom installs.
+
+Later versions of the =net-mail/mu= package have [[https://gitweb.gentoo.org/repo/gentoo.git/commit/net-mail/mu?id=770e1fccb119fbce8ba6d16021a3598123f212ff][fixed this issue]], but you may
+need to switch to the unstable build of =net-mail/mu= to see it.
