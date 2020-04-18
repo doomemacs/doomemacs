@@ -818,7 +818,6 @@ compelling reason, so..."
                              :complete #'org-pdftools-complete-link
                              :store #'org-pdftools-store-link
                              :export #'org-pdftools-export)
-    (add-hook 'org-store-link-functions #'org-pdftools-store-link)
     (add-hook! 'org-open-link-functions
       (defun +org-open-old-pdf-links-fn (link)
         (let ((regexp "^pdf\\(?:tools\\|view\\):"))
