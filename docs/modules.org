@@ -156,7 +156,7 @@ Modules that offer terminal emulation.
 Small modules that give Emacs access to external tools & services.
 
 + ansible - TODO
-+ debugger - A (nigh-)universal debugger in Emacs
++ debugger =+lsp= - A (nigh-)universal debugger in Emacs
 + [[file:../modules/tools/direnv/README.org][direnv]] - TODO
 + [[file:../modules/tools/docker/README.org][docker]] =+lsp= - TODO
 + [[file:../modules/tools/editorconfig/README.org][editorconfig]] - TODO

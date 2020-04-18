@@ -5,5 +5,6 @@
   (when (featurep! :lang javascript)
     (package! realgud-trepan-ni :pin "6e9cac5e80")))
 
-(when (featurep! :tools lsp)
-  (package! dap-mode :pin "0b9c8f28ad"))
+(when (featurep! +lsp)
+  (package! dap-mode :pin "0b9c8f28ad")
+  (package! posframe :pin "e62e584268"))
