@@ -99,3 +99,7 @@
 
 ;;; Org-mode
 (evil-ex-define-cmd "cap"         #'org-capture)
+
+;;; ibuffer
+(when (featurep! :emacs ibuffer)
+  (evil-ex-define-cmd "buffers" #'ibuffer))
