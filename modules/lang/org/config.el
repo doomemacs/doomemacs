@@ -819,7 +819,8 @@ compelling reason, so..."
                              :store #'org-pdftools-store-link
                              :export #'org-pdftools-export)
     (add-hook! 'org-open-link-functions
-      (defun +org-open-old-pdf-links-fn (link)
+      (defun +org-open-legacy-pdf-links-fn (link)
+        "Open pdftools:* and pdfviews:* links as if they were pdf:* links."
         (let ((regexp "^pdf\\(?:tools\\|view\\):"))
           (when (string-match-p regexp link)
             (org-pdftools-open (replace-regexp-in-string regexp "" link))
