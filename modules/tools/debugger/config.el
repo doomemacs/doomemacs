@@ -27,13 +27,13 @@
 
 (use-package! dap-mode
   :when (featurep! :tools lsp)
+  :hook (dap-mode . dap-tooltip-mode)
   :after lsp-mode
+  :demand t
   :preface
-  (add-hook 'dap-mode-hook #'dap-ui-mode) ; use a hook so users can remove it
   (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
         dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
   :config
-  (dap-mode 1)
   (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
                     ((:lang . elixir) elixir-mode dap-elixir)
                     ((:lang . go) go-mode dap-go)
@@ -52,7 +52,14 @@
       (require 'dap-chrome)
       (require 'dap-firefox)
       (when IS-WINDOWS
-        (require 'dap-edge)))))
+        (require 'dap-edge))))
+
+  (dap-mode 1))
+
+
+(use-package! dap-ui-mode
+  :hook (dap-mode . dap-ui-mode)
+  :hook (dap-ui-mode . dap-ui-controls-mode))
 
 
 (use-package! realgud
