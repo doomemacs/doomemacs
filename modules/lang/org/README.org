@@ -64,13 +64,13 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+ipython= (**DEPRECATED**) Enables ipython integration for babel.
 + =+journal= Enables [[https://github.com/bastibe/org-journal][org-journal]] integration.
 + =+jupyter= Enables Jupyter integration for babel.
++ =+noter= Enables org-noter integration. Keeps notes in sync with a document.
+  Requires [[https://github.com/politza/pdf-tools][pdf-tools]] (=:tools pdf=) or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
 + =+pandoc= Enables pandoc integration into the Org exporter.
 + =+pomodoro= Enables a pomodoro timer for clocking time on tasks.
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
   Emacs can be used for presentations.
 + =+roam= Enables org-roam integration.
-+ =+noter= Enables org-noter integration. Keeps notes in sync with a document.
-  Requires [[https://github.com/politza/pdf-tools][pdf-tools]] (=:tools pdf=) or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
 
 ** Plugins
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
