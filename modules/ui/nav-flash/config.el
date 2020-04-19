@@ -5,6 +5,10 @@
     org-find-file org-find-file-at-mouse)
   "A list of commands that should not trigger nav-flash.")
 
+
+;;
+;;; Packages
+
 (use-package! nav-flash
   :defer t
   :init
@@ -30,4 +34,7 @@
   (advice-add #'evil-window-bottom :after #'+nav-flash-blink-cursor-a)
 
   ;; Bound to `ga' for evil users
-  (advice-add #'what-cursor-position :after #'+nav-flash-blink-cursor-a))
+  (advice-add #'what-cursor-position :after #'+nav-flash-blink-cursor-a)
+
+  :config
+  (if EMACS27+ (set-face-extend 'nav-flash-face t)))
