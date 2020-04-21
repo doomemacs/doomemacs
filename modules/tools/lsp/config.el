@@ -66,6 +66,9 @@ working on that project after closing the last buffer.")
     :documentation #'lsp-describe-thing-at-point
     :definition #'lsp-find-definition
     :references #'lsp-find-references)
+  (map! :leader
+        (:prefix "c"
+          :desc "LSP" "l" lsp-command-map))
 
   ;; TODO Lazy load these. They don't need to be loaded all at once unless the
   ;;      user uses `lsp-install-server'.

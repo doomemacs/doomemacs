@@ -46,6 +46,7 @@
         :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
         :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
+        :desc "LSP"                                   "l"   'lsp-command-map
         (:when (featurep! :completion ivy)
           :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
           :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
