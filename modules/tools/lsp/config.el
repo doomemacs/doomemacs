@@ -42,6 +42,8 @@ working on that project after closing the last buffer.")
   (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")
         lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
+  ;; Let doom bind the LSP keymap.
+  (setq lsp-keymap-prefix nil)
 
   ;; Disable LSP's superfluous, expensive and/or debatably unnecessary features.
   ;; Some servers implement these poorly. Better to just rely on Emacs' native
@@ -113,6 +115,10 @@ This also logs the resolved project root, if found, so we know where we are."
                              (mapcar
                               (lambda (it) (format "[%s]" (lsp--workspace-print it)))
                               lsp--buffer-workspaces))))))
+
+  (dolist (leader-key (list doom-leader-key doom-leader-alt-key))
+    (let ((lsp-keymap-prefix (concat leader-key " c l")))
+      (lsp-enable-which-key-integration)))
 
   (add-hook! 'lsp-mode-hook
     (defun +lsp-init-company-h ()
