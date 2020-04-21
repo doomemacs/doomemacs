@@ -28,7 +28,12 @@
   (if IS-MAC
       (package! osx-dictionary :pin "1b79ff64c7")
     (package! define-word :pin "d8c76d503b")
-    (package! powerthesaurus :pin "81a262ec0c")
+    ;; HACK Fix #2945: the main package is broken (see
+    ;;      SavchenkoValeriy/emacs-powerthesaurus). We use this fork until it is
+    ;;      merged.
+    (package! powerthesaurus
+      :recipe (:host github :repo "maxchaos/emacs-powerthesaurus" :branch "pt-api-change")
+      :pin "81a262ec0c")
     (when (featurep! +offline)
       (package! wordnut :pin "feac531404")
       (package! synosaurus :pin "14d34fc92a"))))
