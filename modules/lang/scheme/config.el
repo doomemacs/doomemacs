@@ -1,6 +1,5 @@
 ;;; lang/scheme/config.el -*- lexical-binding: t; -*-
 
-;;;###package scheme
 (use-package! scheme
   :hook ((scheme-mode . rainbow-delimiters)))
 
