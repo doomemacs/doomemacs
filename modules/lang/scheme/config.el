@@ -4,11 +4,10 @@
   :hook ((scheme-mode . rainbow-delimiters)))
 
 (use-package! geiser
-  :custom
-  (geiser-active-implementations '(guile chicken mit chibi chez))
-  (geiser-mode-start-repl-p t)
-  (geiser-smart-tab-p t)
   :init
+  (setq geiser-active-implementations '(guile chicken mit chibi chez))
+  (setq geiser-mode-start-repl-p t)
+  (setq geiser-smart-tab-p t)
   (unless (featurep! :lang racket)
     (push 'racket geiser-active-implementations))
   (after! scheme                        ; built-in
