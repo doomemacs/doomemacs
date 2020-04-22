@@ -24,6 +24,8 @@
   (package! pyenv-mode :pin "aec6f2aa28"))
 (when (featurep! +conda)
   (package! conda :pin "335474e409"))
+(when (featurep! +poetry)
+  (package! poetry :pin "6dcc9d22ca"))
 
 ;; Testing frameworks
 (package! nose :pin "f852829751")
