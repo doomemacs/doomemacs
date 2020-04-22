@@ -3,6 +3,7 @@
 (use-package! pdf-tools
   :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
+  :hook pdf-view-mode
   :init
   (after! pdf-annot
     (defun +pdf-cleanup-windows-h ()
