@@ -117,6 +117,35 @@
       (when IS-WINDOWS
         (require 'dap-edge))))
 
+  (map! :map dap-mode-map
+        :leader
+        (:prefix-map ("d" . "debug")
+          :desc "Debug"          "d" #'dap-debug
+          :desc "Next"           "n" #'dap-next
+          :desc "Step in"        "i" #'dap-step-in
+          :desc "Step out"       "o" #'dap-step-out
+          :desc "Continue"       "c" #'dap-continue
+          :desc "Restart frame"  "r" #'dap-restart-frame
+          :desc "Disconnect"     "Q" #'dap-disconnect
+          :desc "Evaluate"       "e" #'+debugger/dap-eval
+          :desc "Add expression" "a" #'dap-ui-expressions-add
+
+          (:prefix ("s" . "switch")
+            :desc "Session"          "s" #'dap-switch-session
+            :desc "Thread"           "t" #'dap-switch-thread
+            :desc "Stack frame"      "f" #'dap-switch-stack-frame
+            :desc "List locals"      "l" #'dap-ui-locals
+            :desc "List breakpoints" "b" #'dap-ui-breakpoints
+            :desc "List sessions"    "S" #'dap-ui-sessions)
+
+          (:prefix ("b" . "breakpoints")
+            :desc "Toggle"            "b" #'dap-breakpoint-toggle
+            :desc "Delete"            "d" #'dap-breakpoint-delete
+            :desc "Add"               "a" #'dap-breakpoint-add
+            :desc "Set condition"     "c" #'dap-breakpoint-condition
+            :desc "Set hit condition" "h" #'dap-breakpoint-hit-condition
+            :desc "Set log message"   "l" #'dap-breakpoint-log-message)))
+
   (dap-mode 1))
 
 

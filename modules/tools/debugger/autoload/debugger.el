@@ -68,6 +68,14 @@ for what debugger to use. If the prefix ARG is set, prompt anyway."
              (kill-buffer buf))))
         ((user-error "No debugging session to quit"))))
 
+;;;###autoload
+  (defun +debugger/dap-eval ()
+    "Evaluate the expression at point or selected region."
+    (interactive)
+    (if (use-region-p)
+        (dap-eval-region)
+      (dap-eval-thing-at-point)))
+
 ;; TODO debugger breakpoint commands
 ;; ;;;###autoload
 ;; (defun +debugger/toggle-breakpoint ()
