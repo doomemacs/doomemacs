@@ -4,6 +4,7 @@
   :hook ((scheme-mode . rainbow-delimiters)))
 
 (use-package! geiser
+  :defer t
   :init
   (setq geiser-active-implementations '(guile chicken mit chibi chez))
   (setq geiser-mode-start-repl-p t)
