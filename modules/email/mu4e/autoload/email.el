@@ -6,7 +6,7 @@
 list of cons cells (VARIABLE . VALUE) -- you may want to modify:
 
  + `user-full-name' (this or the global `user-full-name' is required)
- + `user-mail-address' (required)
+ + `user-mail-address' (required in mu4e < 1.4)
  + `smtpmail-smtp-user' (required for sending mail from Emacs)
 
 OPTIONAL:
@@ -19,8 +19,9 @@ OPTIONAL:
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   (after! mu4e
-    (when-let (address (cdr (assq 'user-mail-address letvars)))
-      (add-to-list 'mu4e-user-mail-address-list address))
+    (when (version< mu4e-mu-version "1.4")
+      (when-let (address (cdr (assq 'user-mail-address letvars)))
+        (add-to-list 'mu4e-user-mail-address-list address)))
     (setq mu4e-contexts
           (cl-loop for context in mu4e-contexts
                    unless (string= (mu4e-context-name context) label)
