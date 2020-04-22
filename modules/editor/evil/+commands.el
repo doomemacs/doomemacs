@@ -98,7 +98,7 @@
 (evil-ex-define-cmd "tabsave"     #'+workspace:save)
 
 ;;; Org-mode
-(evil-ex-define-cmd "cap"         #'org-capture)
+(evil-ex-define-cmd "cap[ture]"   #'org-capture)
 
 ;;; ibuffer
 (when (featurep! :emacs ibuffer)
