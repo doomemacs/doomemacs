@@ -2,7 +2,8 @@
 
 (use-package! scheme
   :defer t
-  :hook ((scheme-mode . rainbow-delimiters)))
+  :hook ((scheme-mode . rainbow-delimiters-mode)
+         (scheme-mode . geiser-mode)))
 
 (use-package! geiser
   :defer t
