@@ -3,7 +3,6 @@
 
 (package! graphql-mode :pin "7c37aee28b")
 (package! jsonnet-mode :pin "d8b486c837")
-(package! yaml-mode :pin "cecf4b106b")
 (package! csv-mode :pin "635337407c")
 (package! dhall-mode :pin "ef4d33debe")
 (package! protobuf-mode

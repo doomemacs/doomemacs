@@ -143,6 +143,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + swift =+lsp= - TODO
 + terra - TODO
 + web =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
++ [[file:../modules/lang/yaml/README.org][yaml]] =+lsp= - TODO
 
 * :term
 Modules that offer terminal emulation.

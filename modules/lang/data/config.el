@@ -37,9 +37,6 @@
 (after! jsonnet-mode
   (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
-(after! yaml-mode
-  (setq-hook! 'yaml-mode-hook tab-width yaml-indent-offset))
-
 
 ;;
 ;;; Frameworks
