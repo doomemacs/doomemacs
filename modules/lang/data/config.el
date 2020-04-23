@@ -34,11 +34,6 @@
   :mode "\\.gql\\'"
   :config (setq-hook! 'graphql-mode-hook tab-width graphql-indent-level))
 
-(use-package! json-mode
-  :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
-  :config
-  (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
-
 (after! jsonnet-mode
   (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
