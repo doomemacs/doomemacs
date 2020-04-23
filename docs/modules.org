@@ -92,7 +92,6 @@ Modules that reconfigure or augment packages or features built into Emacs.
 Modules that bring support for a language or group of languages to Emacs.
 
 + [[file:../modules/lang/agda/README.org][agda]] - TODO
-+ assembly - TODO
 + [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
 + [[file:../modules/lang/clojure/README.org][clojure]] =+lsp= - TODO
 + common-lisp - TODO
