@@ -35,8 +35,8 @@
   :config
   (when (daemonp)
     (add-hook! 'doom-switch-frame-hook
-      (defun +doom-disable-solaire-mode-maybe-h (frame)
-        (if (display-graphic-p frame)
+      (defun +doom-disable-solaire-mode-maybe-h ()
+        (if (display-graphic-p)
             (solaire-global-mode +1)
           (solaire-global-mode -1)))))
 
