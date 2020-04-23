@@ -174,6 +174,8 @@ possible."
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 (push '("\\.log\\'" . text-mode) auto-mode-alist)
+(push '("rc\\'" . conf-mode) auto-mode-alist)
+(push '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode) auto-mode-alist)
 
 
 ;;
