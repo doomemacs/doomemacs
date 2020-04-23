@@ -33,6 +33,13 @@
         (solaire-mode-swap-bg)))
     #'solaire-global-mode)
   :config
+  (when (daemonp)
+    (add-hook! 'doom-switch-frame-hook
+      (defun +doom-disable-solaire-mode-maybe-h (frame)
+        (if (display-graphic-p frame)
+            (solaire-global-mode +1)
+          (solaire-global-mode -1)))))
+
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
