@@ -168,7 +168,7 @@ Small modules that give Emacs access to external tools & services.
   backend
 + [[file:../modules/tools/lsp/README.org][lsp]] =+peek= - TODO
 + macos - TODO
-+ magit - TODO
++ [[file:../modules/tools/magit/README.org][magit]] =+forge= - TODO
 + make - TODO
 + pass - TODO
 + pdf - TODO
