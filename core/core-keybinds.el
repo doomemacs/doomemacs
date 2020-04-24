@@ -77,7 +77,8 @@ all hooks after it are ignored.")
   :init
   ;; Convenience aliases
   (defalias 'define-key! #'general-def)
-  (defalias 'unmap! #'general-unbind))
+  (defalias 'undefine-key! #'general-unbind))
+
 
 ;; HACK `map!' uses this instead of `define-leader-key!' because it consumes
 ;; 20-30% more startup time, so we reimplement it ourselves.

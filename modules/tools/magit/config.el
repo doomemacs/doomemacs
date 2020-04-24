@@ -162,7 +162,7 @@ ensure it is built when we actually use Forge."
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (unmap! magit-mode-map
+  (undefine-key! magit-mode-map
     ;; Replaced by z1, z2, z3, etc
     "M-1" "M-2" "M-3" "M-4"
     "1" "2" "3" "4"
