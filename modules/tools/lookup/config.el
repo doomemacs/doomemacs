@@ -172,11 +172,10 @@ See https://github.com/magit/ghub/issues/81"
     (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
       (funcall orig-fn url)))
 
-  (use-package! helm-dash
-    :when (featurep! :completion helm))
-
-  (use-package! counsel-dash
-    :when (featurep! :completion ivy)))
+  (cond ((featurep! :completion helm)
+         (require 'helm-dash nil t))
+        ((featurep! :completion ivy)
+         (require 'counsel-dash nil t))))
 
 
 ;;

@@ -38,7 +38,7 @@
   (defadvice! +org--dragndrop-insert-link-a (_link filename)
     "Produces and inserts a link to FILENAME into the document.
 
-If FILENAME is an image, produce an attach:%s path, otherwise use file:%s (with
+If FILENAME is an image, produce an download:%s path, otherwise use file:%s (with
 an file icon produced by `+org-attach-icon-for')."
     :override #'org-download-insert-link
     (if (looking-back "^[ \t]+" (line-beginning-position))
@@ -54,11 +54,9 @@ an file icon produced by `+org-attach-icon-for')."
              (if (= org-download-image-org-width 0) ""
                (format "#+attr_org: :width %dpx\n" org-download-image-org-width))
              (format org-download-link-format
-                     (cond ((file-in-directory-p filename org-attach-id-dir)
-                            (file-relative-name filename org-attach-id-dir))
-                           ((file-in-directory-p filename org-directory)
-                            (file-relative-name filename org-directory))
-                           (filename)))))
+                     (if (file-in-directory-p filename org-attach-id-dir)
+                         (file-relative-name filename org-attach-id-dir)
+                       filename))))
            (org-display-inline-images))
           ((insert
             (format "%s [[./%s][%s]] "
@@ -72,6 +70,6 @@ an file icon produced by `+org-attach-icon-for')."
     :filter-return #'org-download--fullname
     (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))
                    default-directory)))
-      (if (file-in-directory-p dir org-directory)
+      (if (file-in-directory-p dir org-attach-id-dir)
           (file-relative-name path dir)
         path))))

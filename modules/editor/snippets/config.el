@@ -21,6 +21,7 @@
   (defvar yas-snippet-dirs nil)
 
   (if (daemonp)
+      ;; If in a daemon session, front-load this expensive work:
       (after! yasnippet (yas-reload-all))
     ;; Ensure `yas-reload-all' is called as late as possible. Other modules
     ;; could have additional configuration for yasnippet. For example,

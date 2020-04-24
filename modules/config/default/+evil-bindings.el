@@ -6,7 +6,8 @@
   ;; Minibuffer
   (define-key! evil-ex-completion-map
     "C-a" #'evil-beginning-of-line
-    "C-b" #'evil-backward-char)
+    "C-b" #'evil-backward-char
+    "C-f" #'evil-forward-char)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
@@ -15,16 +16,21 @@
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'doom/delete-backward-word
-    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-    ;; Scrolling lines
-    "C-j"    #'next-line
-    "C-k"    #'previous-line
-    "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command)
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo))))
 
-  (define-key! read-expression-map
-    "C-j" #'next-line-or-history-element
-    "C-k" #'previous-line-or-history-element))
+  (when (featurep! :editor evil +everywhere)
+    (define-key! :keymaps +default-minibuffer-maps
+      "C-f"    #'forward-word
+      "C-b"    #'backward-word
+      "M-f"    #'foward-char
+      "M-b"    #'backward-char
+      "C-j"    #'next-line
+      "C-k"    #'previous-line
+      "C-S-j"  #'scroll-up-command
+      "C-S-k"  #'scroll-down-command)
+    (define-key! read-expression-map
+      "C-j" #'next-line-or-history-element
+      "C-k" #'previous-line-or-history-element)))
 
 
 ;;

@@ -12,7 +12,7 @@
   - [[#arch-linux][Arch Linux]]
   - [[#nixos][NixOS]]
   - [[#opensuse][openSUSE]]
-  - [[Debian/Ubuntu]]
+  - [[#debianubuntu][Debian/Ubuntu]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
