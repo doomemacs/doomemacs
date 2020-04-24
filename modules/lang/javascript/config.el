@@ -241,13 +241,6 @@ to tide."
       (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
 
 
-(use-package! eslintd-fix
-  :commands eslintd-fix
-  :config
-  (setq-hook! 'eslintd-fix-mode-hook
-    flycheck-javascript-eslint-executable eslintd-fix-executable))
-
-
 ;;;###package skewer-mode
 (map! :localleader
       (:after js2-mode
