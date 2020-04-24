@@ -262,7 +262,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         (cond ((executable-find doom-projectile-fd-binary)
                (cons doom-projectile-fd-binary (list "-t" "f" "-E" ".git")))
               ((executable-find "rg")
-               (split-string (format counsel-rg-base-command "--files --no-messages") " " t))
+               (append (list "rg" "-0" "--files" "--color=never" "--hidden" "--no-messages")
+                       (cl-loop for dir in projectile-globally-ignored-directories
+                                collect (format "--glob '!%s'" dir))
+                       (if IS-WINDOWS (list "--path-separator /"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
