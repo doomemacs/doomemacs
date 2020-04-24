@@ -1,7 +1,7 @@
 ;;; lang/yaml/config.el -*- lexical-binding: t; -*-
 
 (use-package! yaml-mode
-  :hook "Procfile\\'"
+  :mode "Procfile\\'"
   :init
   (when (featurep! +lsp)
     (add-hook 'yaml-mode-local-vars-hook #'lsp!))
