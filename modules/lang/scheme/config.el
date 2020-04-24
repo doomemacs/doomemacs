@@ -1,7 +1,8 @@
 ;;; lang/scheme/config.el -*- lexical-binding: t; -*-
 
 (use-package! scheme
-  :hook (scheme-mode . rainbow-delimiters-mode))
+  :hook (scheme-mode . rainbow-delimiters-mode)
+  :config (advice-add #'scheme-indent-function :override #'+scheme-scheme-indent-function-a))
 
 
 (use-package! geiser
