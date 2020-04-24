@@ -590,7 +590,6 @@ between the two."
           "." #'helm-org-in-buffer-headings
           "/" #'helm-org-agenda-files-headings)
         "A" #'org-archive-subtree
-        "d" #'org-deadline
         "e" #'org-export-dispatch
         "f" #'org-footnote-new
         "h" #'org-toggle-heading
@@ -600,7 +599,6 @@ between the two."
         "o" #'org-set-property
         "p" #'org-priority
         "q" #'org-set-tags-command
-        "s" #'org-schedule
         "t" #'org-todo
         "T" #'org-todo-list
         (:prefix ("a" . "attachments")
@@ -648,6 +646,11 @@ between the two."
           "x" #'org-clock-cancel
           "=" #'org-clock-timestamps-up
           "-" #'org-clock-timestamps-down)
+        (:prefix ("d" . "date/deadline")
+          "d" #'org-deadline
+          "s" #'org-schedule
+          "t" #'org-time-stamp
+          "T" #'org-time-stamp-inactive)
         (:prefix ("g" . "goto")
           "g" #'org-goto
           (:when (featurep! :completion ivy)
