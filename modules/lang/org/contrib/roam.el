@@ -46,12 +46,9 @@
         (or (featurep! :completion helm +fuzzy)
             (featurep! :completion ivy +fuzzy)))
 
-  ;; HACK Hide the mode line in the org-roam buffer, since it serves no purpose.
-  ;;      This makes it easier to distinguish among other org buffers.
-  (defadvice! +org--hide-mode-line-a (&rest _)
-    :after #'org-roam-buffer--get-create
-    (with-current-buffer org-roam-buffer
-      (hide-mode-line-mode +1))))
+  ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
+  ;; makes it easier to distinguish among other org buffers.
+  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
