@@ -1,6 +1,13 @@
 ;;; lang/org/contrib/roam.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +roam)
 
+(defvar +org-roam-open-buffer-on-find-file t
+  "If non-nil, open the org-roam buffer when opening an org roam file.")
+
+
+;;
+;;; Packages
+
 (use-package! org-roam
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
@@ -45,6 +52,18 @@
         org-roam-completion-fuzzy-match
         (or (featurep! :completion helm +fuzzy)
             (featurep! :completion ivy +fuzzy)))
+
+  ;; Normally, the org-roam buffer doesn't open until you explicitly call
+  ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
+  ;; org-roam buffer will be opened for you when you use `org-roam-find-file'
+  ;; (but not `find-file', to limit the scope of this behavior).
+  (add-hook! 'find-file-hook
+    (defun +org-roam-open-buffer-maybe-h ()
+      (and +org-roam-open-buffer-on-find-file
+           (memq 'org-roam-buffer--update-maybe post-command-hook)
+           (not (eq 'visible (org-roam-buffer--visibility)))
+           (with-current-buffer (window-buffer)
+             (org-roam-buffer--get-create)))))
 
   ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
   ;; makes it easier to distinguish among other org buffers.
