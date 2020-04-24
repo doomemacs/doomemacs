@@ -133,7 +133,9 @@
 ;;
 ;;; Tools
 
-(add-hook! '(js-mode-hook typescript-mode-hook web-mode-hook)
+(add-hook! '(js2-mode-local-vars-hook
+             typescript-mode-local-vars-hook
+             web-mode-local-vars-hook)
   (defun +javascript-init-lsp-or-tide-maybe-h ()
     "Start `lsp' or `tide' in the current buffer.
 
