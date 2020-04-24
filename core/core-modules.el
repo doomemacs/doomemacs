@@ -481,39 +481,6 @@ WARNINGS:
                (lambda () ,@body)
                'append)))
 
-(defmacro require! (category module &rest flags)
-  "Loads the CATEGORY MODULE module with FLAGS.
-
-CATEGORY is a keyword, MODULE is a symbol and FLAGS are symbols.
-
-  (require! :lang php +lsp)
-
-This is for testing and internal use. This is not the correct way to enable a
-module."
-  `(let ((doom-modules (or ,doom-modules (doom-modules)))
-         (module-path (doom-module-locate-path ,category ',module)))
-     (doom-module-set
-      ,category ',module
-      (let ((plist (doom-module-get ,category ',module)))
-        ,(when flags
-           `(plist-put plist :flags `,flags))
-        (unless (plist-member plist :path)
-          (plist-put plist :path ,(doom-module-locate-path category module)))
-        plist))
-     (if (directory-name-p module-path)
-         (condition-case-unless-debug ex
-             (let ((doom--current-module ',(cons category module))
-                   (doom--current-flags ',flags))
-               (load! "init" module-path :noerror)
-               (load! "config" module-path :noerror))
-           ('error
-            (lwarn 'doom-modules :error
-                   "%s in '%s %s' -> %s"
-                   (car ex) ,category ',module
-                   (error-message-string ex))))
-       (warn 'doom-modules :warning "Couldn't find module '%s %s'"
-             ,category ',module))))
-
 (defmacro featurep! (category &optional module flag)
   "Returns t if CATEGORY MODULE is enabled.
 
