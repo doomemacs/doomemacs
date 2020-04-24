@@ -657,12 +657,13 @@ between the two."
           "x" #'org-capture-goto-last-stored)
         (:prefix ("l" . "links")
           "c" #'org-cliplink
+          "d" #'+org/remove-link
+          "i" #'org-id-store-link
           "l" #'org-insert-link
           "L" #'org-insert-all-links
           "s" #'org-store-link
           "S" #'org-insert-last-stored-link
-          "i" #'org-id-store-link
-          "d" #'+org/remove-link)
+          "t" #'org-toggle-link-display)
         (:prefix ("r" . "refile")
           "." #'+org/refile-to-current-file
           "c" #'+org/refile-to-running-clock
