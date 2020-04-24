@@ -37,4 +37,5 @@
   (advice-add #'what-cursor-position :after #'+nav-flash-blink-cursor-a)
 
   :config
-  (if EMACS27+ (set-face-extend 'nav-flash-face t)))
+  (when (fboundp 'set-face-extend)
+    (set-face-extend 'nav-flash-face t)))
