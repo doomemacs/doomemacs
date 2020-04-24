@@ -40,7 +40,10 @@
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)
               ((featurep! :completion ido) 'ido)
-              ('default)))
+              ('default))
+        org-roam-completion-fuzzy-match
+        (or (featurep! :completion helm +fuzzy)
+            (featurep! :completion ivy +fuzzy)))
 
   ;; HACK Hide the mode line in the org-roam buffer, since it serves no purpose.
   ;;      This makes it easier to distinguish among other org buffers.
