@@ -124,4 +124,4 @@
       (expect (doom-load-envvars-file doom-env-file))
       (expect (getenv "A") :to-equal "1")
       (expect (getenv "B") :to-equal "2")
-      (expect (getenv "C") :to-equal "3"))))
+      (expect (getenv "C") :to-equal "3")))))
