@@ -98,6 +98,7 @@ Otherwise it builds `prettify-code-symbols-alist' according to
 
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
+;;; Automatic font-specific ligatures
 (defvar +prog-ligatures-alist
   '((?! . "!\\(?:\\(==\\|[!=]\\)[!=]?\\)")
     (?# . "#\\(?:\\(###?\\|_(\\|[(:=?[_{]\\)[#(:=?[_{]?\\)")
@@ -134,20 +135,19 @@ The car is the character ASCII number, cdr is a regex which will call `font-shap
 when matched.
 
 Because of the underlying code in :ui pretty-code module, the regex should match a string
-starting with the character contained in car."
-  )
+starting with the character contained in car.
 
-;; Defaults to not org-mode because org-bullets might be incompatible
-;; with the ?*-based replacements in the default value of +prg-ligatures-alist
+This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
+
 (defvar +prog-ligatures-modes '(not org-mode)
   "List of major modes in which ligatures should be enabled.
 
-If t, enable it everywhere.
+If t, enable it everywhere. Fundamental mode, and modes derived from special-mode,
+comint-mode, eshell-mode and term-mode are *still* excluded.
 
 If the first element is 'not, enable it in any mode besides what is listed.
 
-If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code)."
-  )
+If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code).")
 
 (defun +pretty-code-init-ligatures-h ()
   "Enable ligatures.
@@ -184,7 +184,7 @@ Otherwise it sets the buffer-local composition table to a composition table enha
 (cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
        (mac-auto-operator-composition-mode))
       ;; Harfbuzz builds do not need font-specific ligature support
-      ;; if they brought in the fe903c5 commit
+      ;; if they are above emacs-27
       ((and (version<= "28.0" emacs-version)
             (string-match-p "HARFBUZZ" system-configuration-features)
             (not (null +prog-ligatures-modes)))
