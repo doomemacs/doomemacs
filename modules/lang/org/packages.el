@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "9994e8ee89")
+  :pin "14d6f95bec")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -47,11 +47,11 @@
     :recipe (:host github :repo "hlissner/evil-org-mode")
     :pin "4d44e9bbdc"))
 (when (featurep! :tools pdf)
-  (package! org-pdftools :pin "22d9a367ab"))
+  (package! org-pdftools :pin "8cc15bb801"))
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f05577"))
 (when (featurep! +brain)
-  (package! org-brain :pin "3630eb88a3"))
+  (package! org-brain :pin "7ffbf6816a"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "46417e2bd3"))
 (when (featurep! +gnuplot)
@@ -60,9 +60,11 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "62ad054001"))
+  (package! jupyter :pin "785edbbff6"))
 (when (featurep! +journal)
-  (package! org-journal :pin "3fdb5b3036"))
+  (package! org-journal :pin "8bf06b28d6"))
+(when (featurep! +noter)
+  (package! org-noter :pin "9ead81d42d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318"))
 (when (featurep! +present)
@@ -72,11 +74,9 @@
   (package! org-tree-slide :pin "7bf09a02bd")
   (package! org-re-reveal :pin "61549f4c00"))
 (when (featurep! +roam)
-  (package! org-roam :pin "6175739b33")
+  (package! org-roam :pin "963692f353")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f16")))
-(when (featurep! +noter)
-  (package! org-noter :pin "9ead81d42d"))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
@@ -105,6 +105,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "b6f4142de2"))
+    :pin "5106b430a1"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd180"))
