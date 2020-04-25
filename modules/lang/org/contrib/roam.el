@@ -61,6 +61,7 @@
     (defun +org-roam-open-buffer-maybe-h ()
       (and +org-roam-open-buffer-on-find-file
            (memq 'org-roam-buffer--update-maybe post-command-hook)
+           (not (window-parameter nil 'window-side)) ; don't proc for popups
            (not (eq 'visible (org-roam-buffer--visibility)))
            (with-current-buffer (window-buffer)
              (org-roam-buffer--get-create)))))
