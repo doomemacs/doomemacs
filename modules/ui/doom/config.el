@@ -30,8 +30,10 @@
     (add-hook! 'doom-switch-frame-hook
       (defun +doom-disable-solaire-mode-maybe-h ()
         (if (display-graphic-p)
-            (solaire-global-mode +1)
-          (solaire-global-mode -1)))))
+            (unless solaire-global-mode
+              (solaire-global-mode +1))
+          (when solaire-global-mode
+            (solaire-global-mode -1))))))
 
   (add-hook! 'solaire-global-mode-hook
     (defun +doom-solaire-swap-bg-faces-maybe-h ()
