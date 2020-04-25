@@ -331,7 +331,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; posframe.
   (dolist (fn '(swiper counsel-rg counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-posframe-display-functions-alist)
-          #'ivy-display-function-fallback)))
+          #'ivy-display-function-fallback))
+
+  (add-hook 'doom-reload-hook #'posframe-delete-all))
 
 
 (use-package! flx
