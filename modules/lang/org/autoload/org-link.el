@@ -19,16 +19,20 @@ links relative to. PLIST is passed to `org-link-set-parameters' verbatim.
 Links defined with this will be rendered in the `error' face if the file doesn't
 exist, and `org-link' otherwise."
   (declare (indent 2))
-  (let ((requires (plist-get plist :requires)))
+  (let ((requires (plist-get plist :requires))
+        (dir-fn (if (functionp dir-var)
+                    dir-var
+                  (lambda () (symbol-value 'dir-var)))))
     (apply #'org-link-set-parameters
            key
            :complete (lambda ()
                        (if requires (mapc #'require (doom-enlist requires)))
-                       (+org--relative-path (+org--read-link-path key (symbol-value dir-var))
-                                            (symbol-value dir-var)))
-           :follow   (lambda (link) (find-file (expand-file-name link (symbol-value dir-var))))
+                       (+org--relative-path (+org--read-link-path key (funcall dir-fn))
+                                            (funcall dir-fn)))
+           :follow   (lambda (link)
+                       (org-link-open-as-file (expand-file-name link (funcall dir-fn)) nil))
            :face     (lambda (link)
-                       (if (file-exists-p (expand-file-name link (symbol-value dir-var)))
+                       (if (file-exists-p (expand-file-name link (funcall dir-fn)))
                            'org-link
                          'error))
            (doom-plist-delete plist :requires))))
@@ -40,11 +44,20 @@ exist, and `org-link' otherwise."
 ;;;###autoload
 (defun +org-image-file-data-fn (protocol link _description)
   "Intepret LINK as an image file path and return its data."
+  (setq
+   link (expand-file-name
+         link
+         (pcase protocol
+           ("download" (or org-download-image-dir org-attach-id-dir default-directory))
+           ("attachment" org-attach-id-dir)
+           (_ default-directory))))
   (when (and (file-exists-p link)
              (image-type-from-file-name link))
     (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (setq buffer-file-coding-system 'binary)
       (insert-file-contents-literally link)
-      (buffer-string))))
+      (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;;;###autoload
 (defun +org-inline-image-data-fn (_protocol link _description)
