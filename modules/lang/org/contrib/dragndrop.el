@@ -16,7 +16,7 @@
 
   (after! org
     ;; A shorter link to attachments
-    (+org-define-basic-link "download" 'org-attach-id-dir
+    (+org-define-basic-link "download" 'org-download-image-dir
       :image-data-fun #'+org-image-file-data-fn
       :requires 'org-download))
   :config
