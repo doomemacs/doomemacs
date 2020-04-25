@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&color=orange&style=for-the-badge"  alt="Made with Doom Emacs">
 </a>
 <a href="https://emacs.org">
-  <img src="https://img.shields.io/badge/Supports-26.1_--_27.0.50-blueviolet.svg?style=for-the-badge&logo=GNU%20Emacs&logoColor=white" alt="Supports Emacs 26.x - 27.0.50">
+  <img src="https://img.shields.io/badge/Supports-26.1_--_27.0.91-blueviolet.svg?style=for-the-badge&logo=GNU%20Emacs&logoColor=white" alt="Supports Emacs 26.x - 27.0.91">
 </a>
 <a href="https://github.com/hlissner/doom-emacs/actions">
   <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
