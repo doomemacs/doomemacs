@@ -273,6 +273,11 @@ users).")
 ;; quickly self-correct.
 (setq fast-but-imprecise-scrolling t)
 
+;; Font locking is the source of much slowness in Emacs. jit-lock-mode tries to
+;; defer fontification until the user is idle. This should help... in theory.
+(setq jit-lock-defer-time 0    ; only defer while processing input
+      jit-lock-stealth-time 2) ; fontify the rest of the buffer after a delay
+
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we halve startup times, particularly when we use
 ;; fonts that are larger than the system default (which would resize the frame).
