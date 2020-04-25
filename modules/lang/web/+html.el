@@ -13,6 +13,7 @@
   :mode "\\.vue\\'"
   :mode "\\.twig\\'"
   :mode "\\.jinja\\'"
+  :mode "\\.jinja2\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   ;; REVIEW We associate TSX files with `web-mode' because `typescript-mode'
