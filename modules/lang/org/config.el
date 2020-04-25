@@ -65,6 +65,12 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 ;;
 ;;; `org-load' hooks
 
+(defun +org-init-org-directory-h ()
+  (unless org-directory
+    (setq org-directory "~/org"))
+  (setq org-id-locations-file (expand-file-name ".orgids" org-directory)))
+
+
 (defun +org-init-agenda-h ()
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
@@ -340,7 +346,7 @@ relative to `org-directory', unless it is an absolute path."
   (defadvice! +org--prevent-save-prompts-when-refiling-a (&rest _)
     "Fix #462: when refiling from org-capture, Emacs prompts to kill the
 underlying, modified buffer. This fixes that."
-    :after 'org-refile
+    :after #'org-refile
     (when (bound-and-true-p org-capture-is-refiling)
       (org-save-all-org-buffers)))
 
@@ -366,13 +372,15 @@ underlying, modified buffer. This fixes that."
 
 (defun +org-init-attachments-h ()
   "Sets up org's attachment system."
+  (setq org-attach-store-link-p t     ; store link after attaching files
+        org-attach-use-inheritance t) ; inherit properties from parent nodes
+
   ;; Centralized attachments directory
-  (unless org-attach-id-dir
-    (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
-  (setq org-attach-store-link-p t     ; store link when attaching files
-        org-attach-use-inheritance t) ; inherit attachment properties from parent nodes
-  (after! projectile
-    (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
+  (after! org-attach
+    (unless org-attach-id-dir
+      (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
+    (after! projectile
+      (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir))))
 
 
 (defun +org-init-custom-links-h ()
@@ -457,9 +465,9 @@ underlying, modified buffer. This fixes that."
 
 (defun +org-init-hacks-h ()
   "Getting org to behave."
-  ;; Don't open separate windows
+  ;; Open file links in current window, rather than new ones
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
-  ;; Open directory links in Emacs
+  ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
 
   ;; When you create a sparse tree and `org-indent-mode' is enabled, the
@@ -930,8 +938,11 @@ compelling reason, so..."
   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
   org-capture
   :preface
-  ;; Change org defaults (should be set before org loads)
-  (defvar org-attach-id-dir nil) ; set later
+  ;; Set these to nil now so we can detect user changes to them later (and fall
+  ;; back on defaults otherwise)
+  (defvar org-directory nil)
+  (defvar org-attach-id-dir nil)
+
   (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
@@ -974,6 +985,7 @@ compelling reason, so..."
              #'+org-unfold-to-2nd-level-or-point-h)
 
   (add-hook! 'org-load-hook
+             #'+org-init-org-directory-h
              #'+org-init-appearance-h
              #'+org-init-agenda-h
              #'+org-init-attachments-h
@@ -1007,7 +1019,6 @@ compelling reason, so..."
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.
   (setq org-id-track-globally t
-        org-id-locations-file (expand-file-name ".orgids" org-directory)
         org-id-locations-file-relative t)
 
   ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is

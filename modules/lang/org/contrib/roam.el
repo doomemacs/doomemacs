@@ -40,7 +40,7 @@
           :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
           :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))
   :config
-  (setq org-roam-directory (expand-file-name (or org-roam-directory "")
+  (setq org-roam-directory (expand-file-name (or org-roam-directory "roam")
                                              org-directory)
         org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
         org-roam-buffer-no-delete-other-windows t ; make org-roam buffer sticky
