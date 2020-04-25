@@ -367,11 +367,10 @@ underlying, modified buffer. This fixes that."
 (defun +org-init-attachments-h ()
   "Sets up org's attachment system."
   ;; Centralized attachments directory
-  (setq org-attach-id-dir (doom-path org-directory org-attach-id-dir)
-        ;; Store a link to attachments when they are attached
-        org-attach-store-link-p t
-        ;; Inherit attachment properties from parent nodes
-        org-attach-use-inheritance t)
+  (unless org-attach-id-dir
+    (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
+  (setq org-attach-store-link-p t     ; store link when attaching files
+        org-attach-use-inheritance t) ; inherit attachment properties from parent nodes
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
 
@@ -932,9 +931,8 @@ compelling reason, so..."
   org-capture
   :preface
   ;; Change org defaults (should be set before org loads)
-  (setq org-directory "~/org/"
-        org-attach-id-dir ".attach/"
-        org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
+  (defvar org-attach-id-dir nil) ; set later
+  (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   ;; Make most of the default modules opt-in, because I sincerely doubt most
