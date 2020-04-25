@@ -56,8 +56,8 @@ an file icon produced by `+org-attach-icon-for')."
              (if (= org-download-image-org-width 0) ""
                (format "#+attr_org: :width %dpx\n" org-download-image-org-width))
              (format org-download-link-format
-                     (if (file-in-directory-p filename org-attach-id-dir)
-                         (file-relative-name filename org-attach-id-dir)
+                     (if (file-in-directory-p filename org-download-image-dir)
+                         (file-relative-name filename org-download-image-dir)
                        filename))))
            (org-display-inline-images))
           ((insert
