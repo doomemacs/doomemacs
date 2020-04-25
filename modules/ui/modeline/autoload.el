@@ -31,14 +31,16 @@ Meant for `doom-change-font-size-hook'."
   "Update version strings in all buffers."
   (dolist (window (window-list))
     (with-selected-window window
-      (doom-modeline-update-env)
+      (when (fboundp 'doom-modeline-update-env)
+        (doom-modeline-update-env))
       (force-mode-line-update))))
 
 ;;;###autoload
 (defun +modeline-clear-env-in-all-windows-h (&rest _)
   "Blank out version strings in all buffers."
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (setq doom-modeline-env--version
-            (bound-and-true-p doom-modeline-load-string))))
+  (unless (featurep! +light)
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (setq doom-modeline-env--version
+              (bound-and-true-p doom-modeline-load-string)))))
   (force-mode-line-update t))
