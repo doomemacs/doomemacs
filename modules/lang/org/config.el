@@ -397,15 +397,15 @@ underlying, modified buffer. This fixes that."
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
             '("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s"))
 
-  (+org-def-link "org" org-directory)
-  (+org-def-link "doom" doom-emacs-dir)
-  (+org-def-link "doom-docs" doom-docs-dir)
-  (+org-def-link "doom-modules" doom-modules-dir)
+  (+org-define-basic-link "org" 'org-directory)
+  (+org-define-basic-link "doom" 'doom-emacs-dir)
+  (+org-define-basic-link "doom-docs" 'doom-docs-dir)
+  (+org-define-basic-link "doom-modules" 'doom-modules-dir)
 
   ;; Allow inline image previews of http(s)? urls or data uris
-  (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
-  (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
-  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image)
+  (org-link-set-parameters "http"  :image-data-fun #'+org-http-image-data-fn)
+  (org-link-set-parameters "https" :image-data-fun #'+org-http-image-data-fn)
+  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-image-data-fn)
 
   ;; Add support for youtube links + previews
   (require 'org-yt nil t))

@@ -16,12 +16,14 @@
 
   (after! org
     ;; A shorter link to attachments
-    (+org-def-link "download" org-attach-id-dir)
-    (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
-          (abbreviate-file-name org-attach-id-dir)))
+    (+org-define-basic-link "download" 'org-attach-id-dir
+      :image-data-fun #'+org-image-file-data-fn
+      :requires 'org-download))
   :config
-  (setq org-download-image-dir org-attach-id-dir
-        org-download-link-format "[[download:%s]]\n"
+  (unless org-download-image-dir
+    (setq org-download-image-dir (expand-file-name (or org-attach-id-dir "")
+                                                   org-directory)))
+  (setq org-download-link-format "[[download:%s]]\n"
         org-download-method 'attach
         org-download-heading-lvl nil
         org-download-timestamp "_%Y%m%d_%H%M%S"
