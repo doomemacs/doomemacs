@@ -169,7 +169,8 @@ Otherwise it sets the buffer-local composition table to a composition table enha
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h)
 
 (use-package! composite
-  :when (and (version<= "27.0" emacs-version) (string-match-p "HARFBUZZ" system-configuration-features))
+  ;; Starting from emacs "28" because this code breaks without fe903c5
+  :when (and (version<= "28.0" emacs-version) (string-match-p "HARFBUZZ" system-configuration-features))
   :init
   (defvar composition-ligature-table (make-char-table nil))
   :config
@@ -183,7 +184,8 @@ Otherwise it sets the buffer-local composition table to a composition table enha
 (cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
        (mac-auto-operator-composition-mode))
       ;; Harfbuzz builds do not need font-specific ligature support
-      ((and (version<= "27.0" emacs-version)
+      ;; if they brought in the fe903c5 commit
+      ((and (version<= "28.0" emacs-version)
             (string-match-p "HARFBUZZ" system-configuration-features)
             (not (null +prog-ligatures-modes)))
        nil)
