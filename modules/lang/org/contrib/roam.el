@@ -57,7 +57,7 @@
   ;;      list of unresolved file paths. If those are symlinks, you will later
   ;;      end up with duplicate entries in your roam DB (e.g. after
   ;;      `org-roam-capture'ing to an existing file).
-  ;; TODO Report/PR this upstream!
+  ;; REVIEW When jethrokuan/org-roam#518 is merged
   (defadvice! +org-roam-resolve-symlinks-a (args)
     :filter-args #'org-roam--list-files
     (setcar args (file-truename (car args)))
