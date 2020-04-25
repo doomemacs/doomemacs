@@ -22,7 +22,7 @@ exist, and `org-link' otherwise."
   (let ((requires (plist-get plist :requires))
         (dir-fn (if (functionp dir-var)
                     dir-var
-                  (lambda () (symbol-value 'dir-var)))))
+                  (lambda () (symbol-value dir-var)))))
     (apply #'org-link-set-parameters
            key
            :complete (lambda ()
