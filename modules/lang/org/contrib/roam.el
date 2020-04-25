@@ -53,6 +53,16 @@
         (or (featurep! :completion helm +fuzzy)
             (featurep! :completion ivy +fuzzy)))
 
+  ;; HACK On first invocation, `org-roam-db-build-cache' builds the cache with a
+  ;;      list of unresolved file paths. If those are symlinks, you will later
+  ;;      end up with duplicate entries in your roam DB (e.g. after
+  ;;      `org-roam-capture'ing to an existing file).
+  ;; TODO Report/PR this upstream!
+  (defadvice! +org-roam-resolve-symlinks-a (args)
+    :filter-args #'org-roam--list-files
+    (setcar args (file-truename (car args)))
+    args)
+
   ;; Normally, the org-roam buffer doesn't open until you explicitly call
   ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
   ;; org-roam buffer will be opened for you when you use `org-roam-find-file'
