@@ -109,8 +109,8 @@ all hooks after it are ignored.")
                            (general--concat t doom-leader-key ,key)
                            ,desc))))))))
     (macroexp-progn
-     (cons `(after! which-key ,@(nreverse wkforms))
-           (nreverse forms)))))
+     (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+             (nreverse forms)))))
 
 (defmacro define-leader-key! (&rest args)
   "Define <leader> keys.
