@@ -65,10 +65,10 @@
     (defun +spell-inhibit-duplicate-detection-maybe-h ()
       "Don't mark duplicates when style/grammar linters are present.
 e.g. proselint and langtool."
-      (when (or (and (bound-and-true-p flycheck-mode)
-                     (executable-find "proselint"))
-                (featurep 'langtool))
-        (setq-local flyspell-mark-duplications-flag nil))))
+      (and (or (and (bound-and-true-p flycheck-mode)
+                    (executable-find "proselint"))
+               (featurep 'langtool))
+           (setq-local flyspell-mark-duplications-flag nil))))
 
   ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
   ;; used in their respective major modes.

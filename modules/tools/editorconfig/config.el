@@ -21,6 +21,9 @@
 (use-package! editorconfig
   :after-call doom-switch-buffer-hook after-find-file
   :config
+  (when (require 'ws-butler nil t)
+    (setq editorconfig-trim-whitespaces-mode 'ws-butler-mode))
+
   (defadvice! +editorconfig--smart-detection-a (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
@@ -30,17 +33,10 @@ extension, try to guess one."
                     (file-name-extension buffer-file-name))
                buffer-file-name
              (format "%s%s" (buffer-file-name (buffer-base-buffer))
-                     (if-let* ((ext (cdr (assq major-mode +editorconfig-mode-alist))))
+                     (if-let (ext (alist-get major-mode +editorconfig-mode-alist))
                          (concat "." ext)
                        "")))))
       (funcall orig-fn)))
-
-  (add-hook! 'editorconfig-after-apply-functions
-    (defun +editorconfig-disable-ws-butler-maybe-h (props)
-      "Disable `ws-butler-mode' if trim_trailing_whitespace is true."
-      (when (and (equal (gethash 'trim_trailing_whitespace props) "true")
-                 (bound-and-true-p ws-butler-mode))
-        (ws-butler-mode -1))))
 
   (add-hook! 'editorconfig-after-apply-functions
     (defun +editorconfig-disable-indent-detection-h (props)

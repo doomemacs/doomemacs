@@ -53,8 +53,8 @@ And jumps to your `doom!' block."
 ;;
 ;;; Managements
 
-(cl-defmacro doom--compile (command &key on-success on-failure)
-  (declare (indent defun))
+(defmacro doom--if-compile (command on-success &optional on-failure)
+  (declare (indent 2))
   `(with-current-buffer (compile ,command)
      (add-hook
       'compilation-finish-functions
@@ -76,19 +76,20 @@ Runs `doom-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
-    (warn "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
-  (doom--compile (format "%s sync -e" doom-bin)
-    :on-success
-    (let ((doom-reloading-p t))
-      (doom-initialize 'force)
-      (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-        (general-auto-unbind-keys)
-        (unwind-protect
-            (doom-initialize-modules 'force)
-          (general-auto-unbind-keys t)))
-      (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
-      (print! (success "Config successfully reloaded!")))
-    :on-failure
+    (message "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
+  ;; In case doom/reload is run before incrementally loaded packages are loaded,
+  ;; which could cause odd load order issues.
+  (mapc #'require (cdr doom-incremental-packages))
+  (doom--if-compile (format "%s sync -e" doom-bin)
+      (let ((doom-reloading-p t))
+        (doom-initialize 'force)
+        (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
+          (general-auto-unbind-keys)
+          (unwind-protect
+              (doom-initialize-modules 'force)
+            (general-auto-unbind-keys t)))
+        (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
+        (print! (success "Config successfully reloaded!")))
     (user-error "Failed to reload your config")))
 
 ;;;###autoload
@@ -119,25 +120,22 @@ imported into Emacs."
   (interactive "P")
   (when IS-WINDOWS
     (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
-  (doom--compile
-    (format "%s -ic '%s env%s'"
-            (string-trim
-             (shell-command-to-string
-             (format "getent passwd %S | cut -d: -f7"
-                     (user-login-name))))
-            doom-bin (if arg " -c" ""))
-    :on-success
-    (let ((doom-reloading-p t))
-      (unless arg
-        (doom-load-envvars-file doom-env-file)))
-    :on-failure
+  (doom--if-compile
+      (format "%s -ic '%s env%s'"
+              (string-trim
+               (shell-command-to-string
+                (format "getent passwd %S | cut -d: -f7"
+                        (user-login-name))))
+              doom-bin (if arg " -c" ""))
+      (let ((doom-reloading-p t))
+        (unless arg
+          (doom-load-envvars-file doom-env-file)))
     (error "Failed to generate env file")))
 
 ;;;###autoload
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--compile (format "%s upgrade" doom-bin)
-    :on-success
-    (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
-      (doom/restart-and-restore))))
+  (doom--if-compile (format "%s -y upgrade" doom-bin)
+      (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
+        (doom/restart-and-restore))))

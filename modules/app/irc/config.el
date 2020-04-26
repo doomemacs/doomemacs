@@ -48,7 +48,6 @@ playback.")
 
 (use-package! circe
   :commands circe circe-server-buffers
-  :init (setq circe-network-defaults nil)
   :config
   (setq circe-default-quit-message nil
         circe-default-part-message nil
@@ -94,6 +93,25 @@ playback.")
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
   (add-hook 'circe-mode-hook #'+irc--add-circe-buffer-to-persp-h)
   (add-hook 'circe-mode-hook #'turn-off-smartparens-mode)
+
+  ;; HACK Fix #1862: circe hangs on TLS connections when using OpenSSL versions
+  ;;      > 1.1.0, where tls.el does not correctly determine the end of the info
+  ;;      block. This fixes proposed in jorgenschaefer/circe#340
+  (setq-hook! 'circe-mode-hook
+    tls-end-of-info
+    (concat "\\("
+            ;; `openssl s_client' regexp. See ssl/ssl_txt.c lines 219-220.
+            ;; According to apps/s_client.c line 1515 `---' is always the last
+            ;; line that is printed by s_client before the real data.
+            "^    Verify return code: .+\n\\(\\|^    Extended master secret: .+\n\\)\\(\\|^    Max Early Data: .+\n\\)---\n\\|"
+            ;; `gnutls' regexp. See src/cli.c lines 721-.
+            "^- Simple Client Mode:\n"
+            "\\(\n\\|"                           ; ignore blank lines
+            ;; According to GnuTLS v2.1.5 src/cli.c lines 640-650 and 705-715 in
+            ;; `main' the handshake will start after this message. If the
+            ;; handshake fails, the programs will abort.
+            "^\\*\\*\\* Starting TLS handshake\n\\)*"
+            "\\)"))
 
   (defadvice! +irc--circe-run-disconnect-hook-a (&rest _)
     "Runs `+irc-disconnect-hook' after circe disconnects."

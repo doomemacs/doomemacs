@@ -324,7 +324,7 @@ file if it exists, without confirmation."
     (`aborted (message "Aborted"))
     (_ t)))
 
-(defun doom--sudo-file (file)
+(defun doom--sudo-file-path (file)
   (let ((host (or (file-remote-p file 'host) "localhost")))
     (concat "/" (when (file-remote-p file)
                   (concat (file-remote-p file 'method) ":"
@@ -340,27 +340,32 @@ file if it exists, without confirmation."
 (defun doom/sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
-  (find-file (doom--sudo-file file)))
+  (find-file (doom--sudo-file-path file)))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
   "Open the current file as root."
   (interactive)
-  (find-alternate-file (doom--sudo-file (or buffer-file-name
-                                            (when (or (derived-mode-p 'dired-mode)
-                                                      (derived-mode-p 'wdired-mode))
-                                              default-directory)))))
+  (find-file
+   (doom--sudo-file-path
+    (or buffer-file-name
+        (when (or (derived-mode-p 'dired-mode)
+                  (derived-mode-p 'wdired-mode))
+          default-directory)))))
 
 ;;;###autoload
 (defun doom/sudo-save-buffer ()
   "Save this file as root."
   (interactive)
-  (let ((file (doom--sudo-file buffer-file-name)))
+  (let ((file (doom--sudo-file-path buffer-file-name)))
     (if-let (buffer (find-file-noselect file))
         (let ((origin (current-buffer)))
+          (copy-to-buffer buffer (point-min) (point-max))
           (unwind-protect
               (with-current-buffer buffer
                 (save-buffer))
             (unless (eq origin buffer)
-              (kill-buffer buffer))))
+              (kill-buffer buffer))
+            (with-current-buffer origin
+              (revert-buffer t t))))
       (user-error "Unable to open %S" file))))

@@ -184,15 +184,45 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
 
 ;;;###autoload
 (defun doom/am-i-secure ()
-  "Test to see if your root certificates are securely configured in emacs."
+  "Test to see if your root certificates are securely configured in emacs.
+Some items are not supported by the `nsm.el' module."
   (declare (interactive-only t))
   (interactive)
   (unless (string-match-p "\\_<GNUTLS\\_>" system-configuration-features)
     (warn "gnutls support isn't built into Emacs, there may be problems"))
   (if-let* ((bad-hosts
              (cl-loop for bad
-                      in '("https://wrong.host.badssl.com/"
-                           "https://self-signed.badssl.com/")
+                      in '("https://expired.badssl.com/"
+                           "https://wrong.host.badssl.com/"
+                           "https://self-signed.badssl.com/"
+                           "https://untrusted-root.badssl.com/"
+                           ;; "https://revoked.badssl.com/"
+                           ;; "https://pinning-test.badssl.com/"
+                           "https://sha1-intermediate.badssl.com/"
+                           "https://rc4-md5.badssl.com/"
+                           "https://rc4.badssl.com/"
+                           "https://3des.badssl.com/"
+                           "https://null.badssl.com/"
+                           "https://sha1-intermediate.badssl.com/"
+                           ;; "https://client-cert-missing.badssl.com/"
+                           "https://dh480.badssl.com/"
+                           "https://dh512.badssl.com/"
+                           "https://dh-small-subgroup.badssl.com/"
+                           "https://dh-composite.badssl.com/"
+                           "https://invalid-expected-sct.badssl.com/"
+                           ;; "https://no-sct.badssl.com/"
+                           ;; "https://mixed-script.badssl.com/"
+                           ;; "https://very.badssl.com/"
+                           "https://subdomain.preloaded-hsts.badssl.com/"
+                           "https://superfish.badssl.com/"
+                           "https://edellroot.badssl.com/"
+                           "https://dsdtestprovider.badssl.com/"
+                           "https://preact-cli.badssl.com/"
+                           "https://webpack-dev-server.badssl.com/"
+                           "https://captive-portal.badssl.com/"
+                           "https://mitm-software.badssl.com/"
+                           "https://sha1-2016.badssl.com/"
+                           "https://sha1-2017.badssl.com/")
                       if (condition-case _e
                              (url-retrieve-synchronously bad)
                            (error nil))

@@ -19,20 +19,26 @@
 (defvar doom--initial-load-path load-path)
 (defvar doom--initial-process-environment process-environment)
 (defvar doom--initial-exec-path exec-path)
-(defvar doom--initial-file-name-handler-alist file-name-handler-alist)
 
-;; This is consulted on every `require', `load' and various path/io functions.
-;; You get a minor speed up by nooping this.
+;; `file-name-handler-alist' is consulted on every `require', `load' and various
+;; path/io functions. You get a minor speed up by nooping this. However, this
+;; may cause problems on builds of Emacs where its site lisp files aren't
+;; byte-compiled and we're forced to load the *.el.gz files (e.g. on Alpine)
 (unless noninteractive
-  (setq file-name-handler-alist nil))
+  (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
 
-;; Restore `file-name-handler-alist', because it is needed for handling
-;; encrypted or compressed files, among other things.
-(defun doom-reset-file-handler-alist-h ()
-  (setq file-name-handler-alist doom--initial-file-name-handler-alist))
-(add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h)
+  (setq file-name-handler-alist nil)
+  ;; Restore `file-name-handler-alist', because it is needed for handling
+  ;; encrypted or compressed files, among other things.
+  (defun doom-reset-file-handler-alist-h ()
+    ;; Re-add rather than `setq', because file-name-handler-alist may have
+    ;; changed since startup, and we want to preserve those.
+    (dolist (handler file-name-handler-alist)
+      (add-to-list 'doom--initial-file-name-handler-alist handler))
+    (setq file-name-handler-alist doom--initial-file-name-handler-alist))
+  (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
-;; Load the bare necessities
+;; Just the bare necessities
 (require 'core-lib)
 
 
@@ -135,65 +141,88 @@ users).")
 ;;
 ;;; Emacs core configuration
 
-;; lo', longer logs ahoy, so we may reliably locate lapses in doom's logic
+;; lo', longer logs ahoy, so to reliably locate lapses in doom's logic later
 (setq message-log-max 8192)
 
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
       jka-compr-verbose doom-debug-mode)
 
-;; UTF-8 as the default coding system
+;; Contrary to what many Emacs users have in their configs, you really don't
+;; need more than this to make UTF-8 the default coding system:
 (when (fboundp 'set-charset-priority)
   (set-charset-priority 'unicode))       ; pretty
 (prefer-coding-system 'utf-8)            ; pretty
 (setq locale-coding-system 'utf-8)       ; please
-;; Except for the clipboard on Windows, where its contents could be in an
-;; encoding that's wider than utf-8, so we let Emacs/the OS decide what encoding
-;; to use.
+;; The clipboard's on Windows could be in an encoding that's wider (or thinner)
+;; than utf-8, so let Emacs/the OS decide what encoding to use there.
 (unless IS-WINDOWS
   (setq selection-coding-system 'utf-8)) ; with sugar on top
 
-;; Disable warnings from legacy advice system. They aren't useful, and we can't
-;; often do anything about them besides changing packages upstream
+;; Disable warnings from legacy advice system. They aren't useful, and what can
+;; we do about them, besides changing packages upstream?
 (setq ad-redefinition-action 'accept)
 
 ;; Make apropos omnipotent. It's more useful this way.
 (setq apropos-do-all t)
 
-;; Don't make a second case-insensitive pass over `auto-mode-alist'. If it has
-;; to, it's our (the user's) failure. One case for all!
+;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
+;; indicates misconfiguration (or that the user needs to stop relying on case
+;; insensitivity).
 (setq auto-mode-case-fold nil)
 
-;; Display the bare minimum at startup. We don't need all that noise. The
-;; dashboard/empty scratch buffer is good enough.
+;; Less noise at startup. The dashboard/empty scratch buffer is good enough.
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init t
+      ;; Avoid pulling in many packages by starting the scratch buffer in
+      ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode'.
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
-(fset #'display-startup-echo-area-message #'ignore)
+
+;; Get rid of "For information about GNU Emacs..." message at startup, unless
+;; we're in a daemon session, where it'll say "Starting Emacs daemon." instead,
+;; which isn't so bad.
+(unless (daemonp)
+  (advice-add #'display-startup-echo-area-message :override #'ignore))
 
 ;; Emacs "updates" its ui more often than it needs to, so we slow it down
-;; slightly, from 0.5s:
+;; slightly from 0.5s:
 (setq idle-update-delay 1)
 
-;; Emacs is a huge security vulnerability, what with all the dependencies it
-;; pulls in from all corners of the globe. Let's at least try to be more
-;; discerning.
-(setq gnutls-verify-error (getenv "INSECURE")
+;; Emacs is essentially one huge security vulnerability, what with all the
+;; dependencies it pulls in from all corners of the globe. Let's try to be at
+;; least a little more discerning.
+(setq gnutls-verify-error (not (getenv "INSECURE"))
+      gnutls-algorithm-priority
+      (when (boundp 'libgnutls-version)
+        (concat "SECURE128:+SECURE192:-VERS-ALL"
+                (if (and (not IS-WINDOWS)
+                         (not (version< emacs-version "26.3"))
+                         (>= libgnutls-version 30605))
+                    ":+VERS-TLS1.3")
+                ":+VERS-TLS1.2"))
+      ;; `gnutls-min-prime-bits' is set based on recommendations from
+      ;; https://www.keylength.com/en/4/
+      gnutls-min-prime-bits 3072
       tls-checktrust gnutls-verify-error
-      tls-program '("gnutls-cli --x509cafile %t -p %p %h"
+      ;; Emacs is built with `gnutls' by default, so `tls-program' would not
+      ;; be used in that case. Otherwiese, people have reasons to not go with
+      ;; `gnutls', we use `openssl' instead.
+      ;; For more details, see https://redd.it/8sykl1
+      tls-program '("openssl s_client -connect %h:%p -CAfile %t -nbio -no_ssl3 -no_tls1 -no_tls1_1 -ign_eof"
+                    "gnutls-cli -p %p --dh-bits=3072 --ocsp --x509cafile=%t \
+--strict-tofu --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3' %h"
                     ;; compatibility fallbacks
-                    "gnutls-cli -p %p %h"
-                    "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof"))
+                    "gnutls-cli -p %p %h"))
 
-;; Emacs stores authinfo in HOME and in plaintext. Let's not do that, mkay? This
-;; file usually stores usernames, passwords, and other such treasures for the
+;; Emacs stores authinfo in $HOME and in plaintext. Let's not do that, mkay?
+;; This file stores usernames, passwords, and other such treasures for the
 ;; aspiring malicious third party.
 (setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
                          "~/.authinfo.gpg"))
 
-;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and APPDATA,
+;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and %APPDATA%,
 ;; causing `abbreviate-home-dir' to produce incorrect paths.
 (when IS-WINDOWS
   (setq abbreviated-home-dir "\\`'"))
@@ -228,9 +257,9 @@ users).")
 ;;
 ;;; Optimizations
 
-;; Disable bidirectional text rendering for a modest performance boost. Of
-;; course, this renders Emacs unable to detect/display right-to-left languages
-;; (sorry!), but for us left-to-right language speakers/writers, it's a boon.
+;; Disable bidirectional text rendering for a modest performance boost. I've set
+;; this to `nil' in the past, but the `bidi-display-reordering's docs say that
+;; is an undefined state and suggest this to be just as good:
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
 
@@ -240,8 +269,14 @@ users).")
 (setq highlight-nonselected-windows nil)
 
 ;; More performant rapid scrolling over unfontified regions. May cause brief
-;; spells of inaccurate fontification immediately after scrolling.
+;; spells of inaccurate syntax highlighting right after scrolling, which should
+;; quickly self-correct.
 (setq fast-but-imprecise-scrolling t)
+
+;; Font locking is the source of much slowness in Emacs. jit-lock-mode tries to
+;; defer fontification until the user is idle. This should help... in theory.
+(setq jit-lock-defer-time 0    ; only defer while processing input
+      jit-lock-stealth-time 2) ; fontify the rest of the buffer after a delay
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we halve startup times, particularly when we use
@@ -251,16 +286,15 @@ users).")
 ;; Don't ping things that look like domain names.
 (setq ffap-machine-p-known 'reject)
 
+;; Font compacting can be terribly expensive, especially for rendering icon
+;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+;; been determined, but we inhibit it there anyway.
+(setq inhibit-compacting-font-caches t)
+
 ;; Performance on Windows is considerably worse than elsewhere, especially if
 ;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
-  ;; Reduce the workload when doing file IO
-  (setq w32-get-true-file-attributes nil)
-
-  ;; Font compacting can be terribly expensive, especially for rendering icon
-  ;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
-  ;; been determined.
-  (setq inhibit-compacting-font-caches t))
+  (setq w32-get-true-file-attributes nil)) ; slightly faster IO
 
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.
@@ -274,17 +308,19 @@ users).")
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
 (when doom-interactive-mode
+  (setq gc-cons-percentage 0.6)
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
     (setq gcmh-idle-delay 10
-          gcmh-verbose doom-debug-mode
-          gcmh-high-cons-threshold 16777216) ; 16mb
+          gcmh-high-cons-threshold 16777216
+          gcmh-verbose doom-debug-mode  ; 16mb
+          gc-cons-percentage 0.1)
     (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
-;;      defer it until later.
-(unless (display-graphic-p)
+;;      defer it until later, at which time it (somehow) runs very quickly.
+(unless (daemonp)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook! 'window-setup-hook
     (defun doom-init-tty-h ()
@@ -338,12 +374,12 @@ If you want to disable incremental loading altogether, either remove
 `doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
 in daemon sessions (they are loaded immediately at startup).")
 
-(defvar doom-incremental-first-idle-timer 2
+(defvar doom-incremental-first-idle-timer 2.0
   "How long (in idle seconds) until incremental loading starts.
 
 Set this to nil to disable incremental loading.")
 
-(defvar doom-incremental-idle-timer 1.5
+(defvar doom-incremental-idle-timer 0.75
   "How long (in idle seconds) in between incrementally loading packages.")
 
 (defun doom-load-packages-incrementally (packages &optional now)
@@ -384,7 +420,7 @@ intervals."
 If this is a daemon session, load them all immediately instead."
   (if (daemonp)
       (mapc #'require (cdr doom-incremental-packages))
-    (when (integerp doom-incremental-first-idle-timer)
+    (when (numberp doom-incremental-first-idle-timer)
       (run-with-idle-timer doom-incremental-first-idle-timer
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
@@ -407,8 +443,7 @@ Meant to be used with `run-hook-wrapped'."
   nil)
 
 (defun doom-display-benchmark-h (&optional return-p)
-  "Display a benchmark, showing number of packages and modules, and how quickly
-they were loaded at startup.
+  "Display a benchmark including number of packages and modules loaded.
 
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
@@ -481,7 +516,7 @@ The overall load order of Doom is as follows:
   Module config.el files
   ~/.doom.d/config.el
   `doom-init-modules-hook'
-  `after-init-hook'
+  `doom-after-init-hook' (`after-init-hook')
   `emacs-startup-hook'
   `doom-init-ui-hook'
   `window-setup-hook'
@@ -493,7 +528,7 @@ to least)."
     (setq doom-init-p t)
 
     ;; Reset as much state as possible, so `doom-initialize' can be treated like
-    ;; a reset function. Particularly useful for reloading the config.
+    ;; a reset function. e.g. when reloading the config.
     (setq-default exec-path doom--initial-exec-path
                   load-path doom--initial-load-path
                   process-environment doom--initial-process-environment)

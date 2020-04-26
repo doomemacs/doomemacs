@@ -136,12 +136,17 @@ Dictionary.app behind the scenes to get definitions.")
   (use-package! ivy-xref
     :when (featurep! :completion ivy)
     :config
-    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-    (set-popup-rule! "^\\*xref\\*$" :ignore t))
+    (set-popup-rule! "^\\*xref\\*$" :ignore t)
+    ;; xref initialization is different in Emacs 27 - there are two different
+    ;; variables which can be set rather than just one
+    (when EMACS27+
+      (setq xref-show-definitions-function #'ivy-xref-show-defs))
+    ;; Necessary in Emacs <27. In Emacs 27 it will affect all xref-based
+    ;; commands other than xref-find-definitions too (eg project-find-regexp)
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
   (use-package! helm-xref
-    :when (featurep! :completion helm)
-    :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs)))
+    :when (featurep! :completion helm)))
 
 
 ;;
@@ -172,11 +177,10 @@ See https://github.com/magit/ghub/issues/81"
     (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
       (funcall orig-fn url)))
 
-  (use-package! helm-dash
-    :when (featurep! :completion helm))
-
-  (use-package! counsel-dash
-    :when (featurep! :completion ivy)))
+  (cond ((featurep! :completion helm)
+         (require 'helm-dash nil t))
+        ((featurep! :completion ivy)
+         (require 'counsel-dash nil t))))
 
 
 ;;

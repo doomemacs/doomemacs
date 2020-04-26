@@ -15,9 +15,6 @@ Emacs.")
       "fd")
   "name of `fd-find' executable binary")
 
-(defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
-  "Where to save project file cache timers.")
-
 
 ;;
 ;;; Packages
@@ -45,18 +42,18 @@ Emacs.")
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
-  ;; + `projectile-root-local' -> consults the `projectile-project-root'
-  ;;   variable for an explicit path.
-  ;; + `projectile-root-bottom-up' -> consults
-  ;;   `projectile-project-root-files-bottom-up'; searches from / to your
-  ;;   current directory for certain files (including .project and .git)
-  ;; + `projectile-root-top-down' -> consults `projectile-project-root-files';
-  ;;   searches from the current directory down to / for certain project
-  ;;   markers, like package.json, setup.py, or Cargo.toml
-  ;; + `projectile-root-top-down-recurring' -> consults
-  ;;   `projectile-project-root-files-top-down-recurring'; e.g. searches from
-  ;;   the current directory down to / for a directory that has Makefile but
-  ;;   doesn't have a parent with one of those files.
+  ;; + `projectile-root-local' -> checks the `projectile-project-root' variable
+  ;;    for an explicit path.
+  ;; + `projectile-root-bottom-up' -> searches from / to your current directory
+  ;;   for the paths listed in `projectile-project-root-files-bottom-up'. This
+  ;;   includes .git and .project
+  ;; + `projectile-root-top-down' -> searches from the current directory down to
+  ;;   / the paths listed in `projectile-root-files', like package.json,
+  ;;   setup.py, or Cargo.toml
+  ;; + `projectile-root-top-down-recurring' -> searches from the current
+  ;;   directory down to / for a directory that has one of
+  ;;   `projectile-project-root-files-top-down-recurring' but doesn't have a
+  ;;   parent directory with the same file.
   ;;
   ;; In the interest of performance, we reduce the number of project root marker
   ;; files/directories projectile searches for when resolving the project root.
@@ -74,6 +71,14 @@ Emacs.")
         projectile-project-root-files-top-down-recurring '("Makefile"))
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
+
+  ;; Override projectile's dirconfig file '.projectile' with doom's project marker '.project'.
+  (defadvice! doom--projectile-dirconfig-file-a ()
+    :override #'projectile-dirconfig-file
+    (cond
+     ;; Prefers '.projectile' to maintain compatibility with existing projects.
+     ((file-exists-p! (or ".projectile" ".project") (projectile-project-root)))
+     ((expand-file-name ".project" (projectile-project-root)))))
 
   ;; Disable commands that won't work, as is, and that Doom already provides a
   ;; better alternative for.

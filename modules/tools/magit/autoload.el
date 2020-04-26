@@ -48,16 +48,12 @@
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
-    (let ((buffer (or (buffer-base-buffer) (current-buffer))))
-      (if-let (file (buffer-file-name buffer))
-          (and (file-exists-p file)
-               (or (not (buffer-modified-p buffer))
-                   (y-or-n-p
-                    (format "Version control data is outdated in %s, but it is unsaved. Revert anyway?"
-                            buffer)))
-               (revert-buffer t t))
-        (when (and vc-mode (fboundp 'vc-refresh-state))
-          (vc-refresh-state))))))
+    (when buffer-file-name
+      (if (buffer-modified-p (current-buffer))
+          (when (bound-and-true-p vc-mode)
+            (vc-refresh-state)
+            (force-mode-line-update))
+        (revert-buffer t t)))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()

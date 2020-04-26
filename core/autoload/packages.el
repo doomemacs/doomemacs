@@ -128,7 +128,8 @@ installed."
          'builtin)
         ((assq package package-alist)
          'elpa)
-        ('other)))
+        ((locate-library (symbol-name package))
+         'other)))
 
 ;;;###autoload
 (defun doom-package-different-recipe-p (name)

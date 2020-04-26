@@ -4,24 +4,23 @@
   :commands company-complete-common company-manual-begin company-grab-line
   :after-call pre-command-hook after-find-file
   :init
-  (setq company-minimum-prefix-length 2
+  (setq company-idle-delay 0.25
+        company-minimum-prefix-length 2
         company-tooltip-limit 14
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case nil
-        company-dabbrev-code-other-buffers t
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes
         '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-        company-backends '(company-capf)
-        company-frontends
-        '(company-pseudo-tooltip-frontend
-          company-echo-metadata-frontend))
+        company-backends  '(company-capf)
+        company-frontends '(company-pseudo-tooltip-frontend
+                            company-echo-metadata-frontend))
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
-    ;; Don't persist company popups when switching back to normal mode.
-    (add-hook 'evil-normal-state-entry-hook #'company-abort)
+    (unless (featurep! +childframe)
+      ;; Don't persist company popups when switching back to normal mode.
+      ;; `company-box' aborts on mode switch so it doesn't need this.
+      (add-hook 'evil-normal-state-entry-hook #'company-abort))
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.
@@ -50,8 +49,7 @@
 ;; Packages
 
 (after! company-files
-  (pushnew! company-files--regexps
-            "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
+  (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
 
 
 (use-package! company-prescient

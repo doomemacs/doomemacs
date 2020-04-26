@@ -14,8 +14,8 @@
   (setq-hook! 'rjsx-mode-hook emmet-expand-jsx-className? t)
   (map! :map emmet-mode-keymap
         :v [tab] #'emmet-wrap-with-markup
-        :i [tab] #'+web/indent-or-yas-or-emmet-expand
-        :i "M-E" #'emmet-expand-line))
+        [tab] #'+web/indent-or-yas-or-emmet-expand
+        "M-E" #'emmet-expand-line))
 
 
 ;;
@@ -27,6 +27,13 @@
               (or "_layouts/" "_posts/"))
   :on-enter
   (when (eq major-mode 'web-mode)
+    (web-mode-set-engine "django")))
+
+(def-project-mode! +web-django-mode
+  :modes '(web-mode python-mode)
+  :files ("manage.py")
+  :on-enter
+  (when (derived-mode-p 'web-mode)
     (web-mode-set-engine "django")))
 
 (def-project-mode! +web-wordpress-mode

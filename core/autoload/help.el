@@ -3,9 +3,6 @@
 (defvar doom--help-major-mode-module-alist
   '((dockerfile-mode :tools docker)
     (agda2-mode      :lang agda)
-    (haxor-mode      :lang assembly)
-    (mips-mode       :lang assembly)
-    (nasm-mode       :lang assembly)
     (c-mode          :lang cc)
     (c++-mode        :lang cc)
     (objc++-mode     :lang cc)

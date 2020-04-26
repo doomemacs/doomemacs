@@ -564,7 +564,7 @@ disabled by adding or removing them from your ~doom!~ block (found in
 =$DOOMDIR/init.el=).
 
 #+begin_quote
-If =$DOOMDIR/init.el= doesn't exist, you haven't installed Doom yet. See [[*Install][the
+If =$DOOMDIR/init.el= doesn't exist, you haven't installed Doom yet. See [[#install][the
 "Install" section]] above.
 #+end_quote
 
@@ -717,13 +717,28 @@ To unpin a package, use the ~unpin!~ macro:
 
 ;; Or to unpin an entire category of modules
 (unpin! :completion :lang :tools)
+
+;; This will work too, if you prefer the syntax, but it provides no concise
+;; syntax for unpinning multiple packages:
+(package! helm :pin nil)
 #+END_SRC
 
-To unpin all packages and make Doom Emacs rolling release, use
+Though it is *highly* discouraged, you may unpin all packages and make Doom
+Emacs rolling release:
 
 #+BEGIN_SRC elisp
 (unpin! t)
 #+END_SRC
+
+#+begin_quote
+Unpinning all packages is discouraged because Doom's modules are designed
+against the pinned versions of its packages. More volatile packages (like
+lsp-mode, ein and org) change rapidly, and are likely to cause breakages if
+unpinned.
+
+Instead, it's a better idea to selectively unpin packages, or repin them to the
+exact commit you want.
+#+end_quote
 
 *** Disabling packages
 The ~package!~ macro possesses a ~:disable~ property:
@@ -895,7 +910,7 @@ also be helpful for debugging.
 + define-key
 + global-set-key
 + map!
-+ unmap!
++ undefine-key!
 + define-key!
 
 ** Writing your own modules

@@ -86,6 +86,7 @@
 
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
+        :desc "Search project for symbol"    "." #'+default/search-project-for-symbol-at-point
         :desc "Search buffer"                "b" #'swiper
         :desc "Search current directory"     "d" #'+default/search-cwd
         :desc "Search other directory"       "D" #'+default/search-other-cwd
@@ -123,6 +124,17 @@
       (:prefix-map ("n" . "notes")
         :desc "Search notes for symbol"        "." #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                     "a" #'org-agenda
+        (:when (featurep! :tools biblio)
+          :desc "Bibliographic entries"        "b"
+          (cond ((featurep! :completion ivy)   #'ivy-bibtex)
+                ((featurep! :completion helm)  #'helm-bibtex)))
+
+        :desc "Toggle org-clock"               "c" #'+org/toggle-clock
+        :desc "Cancel org-clock"               "C" #'org-clock-cancel
+        :desc "Open deft"                      "d" #'deft
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                    "e" #'org-noter)
+      
         :desc "Find file in notes"             "f" #'+default/find-in-notes
         :desc "Browse notes"                   "F" #'+default/browse-notes
         :desc "Org store link"                 "l" #'org-store-link
@@ -139,7 +151,20 @@
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
             :desc "New Entry"      "j" #'org-journal-new-entry
-            :desc "Search Forever" "s" #'org-journal-search-forever)))
+            :desc "Search Forever" "s" #'org-journal-search-forever))
+        (:when (featurep! :lang org +roam)
+          (:prefix ("r" . "roam")
+            :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
+            :desc "Org Roam Capture" "c" #'org-roam-capture
+            :desc "Find file"        "f" #'org-roam-find-file
+            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Insert"           "i" #'org-roam-insert
+            :desc "Org Roam"         "r" #'org-roam
+            (:prefix ("d" . "by date")
+              :desc "Arbitrary date" "d" #'org-roam-dailies-date
+              :desc "Today"          "t" #'org-roam-dailies-today
+              :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
+              :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))))
 
       ;;; <leader> o --- open
       "o" nil ; we need to unbind it first as Org claims this prefix
@@ -180,6 +205,7 @@
 
       ;;; <leader> p --- project
       (:prefix ("p" . "project")
+        :desc "Search project for symbol"   "." #'+default/search-project-for-symbol-at-point
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
         :desc "List project tasks"          "t" #'magit-todos-list

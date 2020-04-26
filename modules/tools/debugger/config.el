@@ -25,36 +25,6 @@
       gdb-many-windows t)
 
 
-(use-package! dap-mode
-  :when (featurep! :tools lsp)
-  :after lsp-mode
-  :preface
-  (add-hook 'dap-mode-hook #'dap-ui-mode) ; use a hook so users can remove it
-  (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
-        dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
-  :config
-  (dap-mode 1)
-  (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
-                    ((:lang . elixir) elixir-mode dap-elixir)
-                    ((:lang . go) go-mode dap-go)
-                    ((:lang . java) lsp-java dap-java)
-                    ((:lang . php) php-mode dap-php)
-                    ((:lang . python) python dap-python)
-                    ((:lang . ruby) ruby-mode dap-ruby)
-                    ((:lang . rust) rust-mode dap-lldb)))
-    (when (doom-module-p (caar module) (cdar module) '+lsp)
-      (with-eval-after-load (nth 1 module)
-        (mapc #'require (cddr module)))))
-
-  (when (featurep! :lang javascript +lsp)
-    (with-eval-after-load 'js2-mode
-      (require 'dap-node)
-      (require 'dap-chrome)
-      (require 'dap-firefox)
-      (when IS-WINDOWS
-        (require 'dap-edge)))))
-
-
 (use-package! realgud
   :defer t
   :init
@@ -116,3 +86,41 @@
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))
       cmd-buf)))
+
+
+(use-package! dap-mode
+  :when (featurep! +lsp)
+  :hook (dap-mode . dap-tooltip-mode)
+  :after lsp-mode
+  :demand t
+  :preface
+  (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
+        dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
+  :config
+  (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
+                    ((:lang . elixir) elixir-mode dap-elixir)
+                    ((:lang . go) go-mode dap-go)
+                    ((:lang . java) lsp-java dap-java)
+                    ((:lang . php) php-mode dap-php)
+                    ((:lang . python) python dap-python)
+                    ((:lang . ruby) ruby-mode dap-ruby)
+                    ((:lang . rust) rust-mode dap-lldb)))
+    (when (doom-module-p (caar module) (cdar module) '+lsp)
+      (with-eval-after-load (nth 1 module)
+        (mapc #'require (cddr module)))))
+
+  (when (featurep! :lang javascript +lsp)
+    (with-eval-after-load 'js2-mode
+      (require 'dap-node)
+      (require 'dap-chrome)
+      (require 'dap-firefox)
+      (when IS-WINDOWS
+        (require 'dap-edge))))
+
+  (dap-mode 1))
+
+
+(use-package! dap-ui-mode
+  :when (featurep! +lsp)
+  :hook (dap-mode . dap-ui-mode)
+  :hook (dap-ui-mode . dap-ui-controls-mode))

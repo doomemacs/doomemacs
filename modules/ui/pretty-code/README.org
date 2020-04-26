@@ -1,0 +1,56 @@
+#+TITLE:   ui/pretty-code
+#+DATE:    June 16, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#set-pretty-symbols][~set-pretty-symbols!~]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module enables ligatures and/or arbitrary symbol substitutions with
+~prettify-symbols-mode~.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+fira= Enables =Fira Code= ligatures. This requires Fira Code Symbol and a
+  patched version of Fira Code (see below).
++ =+hasklig= Enable =Hasklig= ligatures. This requires a patched version of the
+  HaskLig font (see below).
++ =+iosevka= Enable =Iosevka= ligatures. This requires a patched version of the
+  Iosevka font (see below).
++ =+pragmata-pro= Enable =Pragmata Pro= ligatures. This requires the [[https://www.fsd.it/shop/fonts/pragmatapro/][Pragmata
+  Pro font]].
+
+** Plugins
+This module installs no packages.
+
+* Prerequisites
+For ligatures to work, you must:
+
+1. Enable one of the four ligature font flags: =+fira=, =+hasklig=, =+iosevka=
+   or =+pragmata-pro=.
+2. Install the patched version of the associated font with ~M-x
+   +pretty-code/install-patched-font~. Note: Pragmata Pro cannot be installed
+   this way because it isn't a non-free font and must be purchased and installed
+   manually.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+** TODO ~set-pretty-symbols!~
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

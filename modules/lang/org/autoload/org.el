@@ -235,7 +235,12 @@ If on a:
        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
          (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
-      (_ (+org--refresh-inline-images-in-subtree)))))
+      (_
+       (if (or (org-in-regexp org-ts-regexp-both nil t)
+               (org-in-regexp org-tsr-regexp-both nil  t)
+               (org-in-regexp org-any-link-re nil t))
+           (call-interactively #'org-open-at-point)
+         (+org--refresh-inline-images-in-subtree))))))
 
 
 ;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
@@ -381,26 +386,25 @@ Made for `org-tab-first-hook' in evil-mode."
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
   (when (bound-and-true-p yas-minor-mode)
-    (let ((major-mode (if (org-in-src-block-p t)
-                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
-                        major-mode))
-          (org-src-tab-acts-natively nil) ; causes breakages
-          ;; Smart indentation doesn't work with yasnippet, and painfully slow
-          ;; in the few cases where it does.
-          (yas-indent-line 'fixed))
-      ;; HACK Yasnippet field overlays break org-bullet-mode. Don't ask me why.
-      (add-hook! 'yas-after-exit-snippet-hook :local
-        (when (bound-and-true-p org-bullets-mode)
-          (org-bullets-mode -1)
-          (org-bullets-mode +1)))
-      (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                      (evil-insert-state-p))
-                  (yas--templates-for-key-at-point))
-             (yas-expand)
-             t)
-            ((use-region-p)
-             (yas-insert-snippet)
-             t)))))
+    (and (let ((major-mode (if (org-in-src-block-p t)
+                               (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                             major-mode))
+               (org-src-tab-acts-natively nil) ; causes breakages
+               ;; Smart indentation doesn't work with yasnippet, and painfully slow
+               ;; in the few cases where it does.
+               (yas-indent-line 'fixed))
+           (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                           (evil-insert-state-p))
+                       (yas--templates-for-key-at-point))
+                  (yas-expand)
+                  t)
+                 ((use-region-p)
+                  (yas-insert-snippet)
+                  t)))
+         ;; HACK Yasnippet breaks org-superstar-mode because yasnippets is
+         ;;      overzealous about cleaning up overlays.
+         (when (bound-and-true-p org-superstar-mode)
+           (org-superstar-restart)))))
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
@@ -431,12 +435,14 @@ with `org-cycle')."
 
 ;;;###autoload
 (defun +org-unfold-to-2nd-level-or-point-h ()
-  "My version of the 'overview' #+STARTUP option: expand first-level headings.
-Expands the first level, but no further. If point was left somewhere deeper,
-unfold to point on startup."
+  "Alters '#+STARTUP overview' to only expand first-level headings.
+Expands the first level, but no further. If a different startup option was
+provided, do that instead."
   (unless org-agenda-inhibit-startup
+    ;; TODO Implement a custom #+STARTUP option?
     (when (eq org-startup-folded t)
       (outline-hide-sublevels +org-initial-fold-level))
+    ;; If point was left somewhere deeper, unfold to point on startup.
     (when (outline-invisible-p)
       (ignore-errors
         (save-excursion

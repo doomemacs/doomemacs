@@ -8,3 +8,8 @@
               (sp-point-after-word-p id action context))
              ((eq action 'autoskip)
               (/= (char-before) 32)))))
+
+;;;###autoload
+(defun +csharp-kill-omnisharp-server-h ()
+  (unless (doom-buffers-in-mode 'csharp-mode (buffer-list))
+    (omnisharp-stop-server)))

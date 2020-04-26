@@ -16,6 +16,14 @@ excluded servers' identifiers to `+lsp-capf-blacklist'.")
   "Language servers listed here will always use the `company-lsp' backend,
 irrespective of what `+lsp-company-backend' is set to.")
 
+(defvar +lsp-defer-shutdown 3
+  "If non-nil, defer shutdown of LSP servers for this many seconds after last
+workspace buffer is closed.
+
+This delay prevents premature server shutdown when a user still intends on
+working on that project after closing the last buffer.")
+
+
 ;;
 ;;; Packages
 
@@ -26,8 +34,7 @@ irrespective of what `+lsp-company-backend' is set to.")
   ;; Don't prompt the user for the project root every time we open a new
   ;; lsp-worthy file, instead, try to guess it with projectile.
   (setq lsp-auto-guess-root t)
-  ;; Auto-kill LSP server once you've killed the last buffer associated with its
-  ;; project.
+  ;; Auto-kill LSP server after last workspace buffer is killed.
   (setq lsp-keep-workspace-alive nil)
   ;; Let `flycheck-check-syntax-automatically' determine this.
   (setq lsp-flycheck-live-reporting nil)
@@ -36,12 +43,32 @@ irrespective of what `+lsp-company-backend' is set to.")
         lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
+  ;; Disable LSP's superfluous, expensive and/or debatably unnecessary features.
+  ;; Some servers implement these poorly. Better to just rely on Emacs' native
+  ;; mechanisms and make these opt-in.
+  (setq lsp-enable-folding nil
+        ;; HACK Fix #2911, until it is resolved upstream. Links come in
+        ;;      asynchronously from the server, but lsp makes no effort to
+        ;;      "select" the original buffer before laying them down, so they
+        ;;      could be rendered in the wrong buffer (like the minibuffer).
+        lsp-enable-links nil
+        ;; Potentially slow
+        lsp-enable-file-watchers nil
+        lsp-enable-text-document-color nil
+        lsp-enable-semantic-highlighting nil
+        ;; Don't modify our code without our permission
+        lsp-enable-indentation nil
+        lsp-enable-on-type-formatting nil)
+
   :config
+  (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation #'lsp-describe-thing-at-point
     :definition #'lsp-find-definition
     :references #'lsp-find-references)
 
+  ;; TODO Lazy load these. They don't need to be loaded all at once unless the
+  ;;      user uses `lsp-install-server'.
   (when lsp-auto-configure
     (mapc (lambda (package) (require package nil t))
           lsp-client-packages))
@@ -135,16 +162,19 @@ This gives the user a chance to open other project files before the server is
 auto-killed (which is a potentially expensive process)."
     :around #'lsp--shutdown-workspace
     (if (or lsp-keep-workspace-alive
-            restart)
-        (funcall orig-fn)
+            restart
+            (null +lsp-defer-shutdown)
+            (= +lsp-defer-shutdown 0))
+        (funcall orig-fn restart)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
             (run-at-time
-             3 nil (lambda (workspace)
-                     (let ((lsp--cur-workspace workspace))
-                       (unless (lsp--workspace-buffers lsp--cur-workspace)
-                         (funcall orig-fn))))
+             (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
+             nil (lambda (workspace)
+                   (let ((lsp--cur-workspace workspace))
+                     (unless (lsp--workspace-buffers lsp--cur-workspace)
+                       (funcall orig-fn))))
              lsp--cur-workspace))))
 
   (defadvice! +lsp-prompt-if-no-project-a (session file-name)
@@ -181,6 +211,39 @@ auto-killed (which is a potentially expensive process)."
     (set-lookup-handlers! 'lsp-ui-mode :async t
       :definition 'lsp-ui-peek-find-definitions
       :references 'lsp-ui-peek-find-references)))
+
+
+(use-package! company-lsp
+  :defer t
+  :config
+  (setq company-lsp-cache-candidates 'auto)
+  ;; HACK Fix tigersoldier/company-lsp#128 causing company-lsp results to
+  ;;      display candidates that are unrelated to the prefix. Source:
+  ;;      emacs-lsp/lsp-python-ms#79
+  (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
+  (defadvice! +company---fix-lsp-caching-on-competion-a (response prefix)
+    :override #'company-lsp--on-completion
+    (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+           (items (cond ((hash-table-p response) (gethash "items" response))
+                        ((sequencep response) response)))
+           (candidates (mapcar (lambda (item)
+                                 (company-lsp--make-candidate item prefix))
+                               (lsp--sort-completions items)))
+           (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+           (should-filter (or
+                           ;; CHANGE BEGIN
+                           (eq company-lsp-cache-candidates t)
+                           ;; CHANGE END
+                           (and (null company-lsp-cache-candidates)
+                                (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+      (when (null company-lsp--completion-cache)
+        (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+        (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+      (when (eq company-lsp-cache-candidates 'auto)
+        (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+      (if should-filter
+          (company-lsp--filter-candidates candidates prefix)
+        candidates))))
 
 
 (use-package! helm-lsp

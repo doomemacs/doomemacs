@@ -3,9 +3,6 @@
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
-(defvar +latex-bibtex-file nil
-  "File AUCTeX (specifically RefTeX) uses to search for citations.")
-
 (defvar +latex-enable-unicode-math nil
   "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
 enabling unicode symbols in math regions. This requires the unicode-math latex
@@ -39,6 +36,7 @@ If no viewers are found, `latex-preview-pane' is used.")
       ;; automatically insert braces after sub/superscript in math mode
       TeX-electric-sub-and-superscript t)
 
+
 (after! tex
   ;; fontify common latex commands
   (load! "+fontification")
@@ -55,8 +53,6 @@ If no viewers are found, `latex-preview-pane' is used.")
     fill-nobreak-predicate (cons #'texmathp fill-nobreak-predicate))
   ;; Enable word wrapping
   (add-hook 'TeX-mode-hook #'visual-line-mode)
-  ;; Fold TeX macros
-  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
@@ -80,6 +76,45 @@ If no viewers are found, `latex-preview-pane' is used.")
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
                #'lsp!)))
+
+
+(use-package! tex-fold
+  :when (featurep! +fold)
+  :hook (TeX-mode . TeX-fold-buffer)
+  :hook (TeX-mode . TeX-fold-mode)
+
+  :config
+  ;; Fold after all auctex macro insertions
+  (advice-add #'TeX-insert-macro :after #'+latex-fold-last-macro-a)
+  ;; Fold after cdlatex macro insertions
+  (advice-add #'cdlatex-math-symbol :after #'+latex-fold-last-macro-a)
+  (advice-add #'cdlatex-math-modify :after #'+latex-fold-last-macro-a)
+  ;; Fold after snippets
+  (when (featurep! :editor snippets)
+    (add-hook 'TeX-fold-mode-hook
+              (defun +latex-fold-set-yas-hook-h ()
+                "Set a local after-snippet-hook to fold the snippet contents."
+                (add-hook! 'yas-after-exit-snippet-hook :local
+                  (TeX-fold-region yas-snippet-beg yas-snippet-end)))))
+
+  (add-hook 'mixed-pitch-mode-hook
+            (defun +latex-fold-set-variable-pitch-h ()
+              "Fix folded things invariably getting fixed pitch when using mixed-pitch.
+Math faces should stay fixed by the mixed-pitch blacklist, this
+is mostly for \\section etc."
+              (when mixed-pitch-mode
+                ;; Adding to this list makes mixed-pitch clean the face remaps after us
+                (add-to-list 'mixed-pitch-fixed-cookie
+                             (face-remap-add-relative
+                              'TeX-fold-folded-face
+                              :family (face-attribute 'variable-pitch :family)
+                              :height (face-attribute 'variable-pitch :height))))))
+
+  (map! :map TeX-fold-mode-map
+        :localleader
+        :desc "Fold paragraph"   "f"   #'TeX-fold-paragraph
+        :desc "Unfold paragraph" "F"   #'TeX-fold-clearout-paragraph
+        :desc "Unfold buffer"    "C-f" #'TeX-fold-clearout-buffer))
 
 
 (after! latex
@@ -125,9 +160,9 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 
 (use-package! cdlatex
-  :defer t
   :when (featurep! +cdlatex)
   :hook (LaTeX-mode . cdlatex-mode)
+  :hook (org-mode . org-cdlatex-mode)
   :config
   ;; Use \( ... \) instead of $ ... $
   (setq cdlatex-use-dollar-to-ensure-math nil)
@@ -135,22 +170,22 @@ If no viewers are found, `latex-preview-pane' is used.")
   (map! :map cdlatex-mode-map
         ;; smartparens takes care of inserting closing delimiters, and if you
         ;; don't use smartparens you probably won't want these also.
-        :g  "$" nil
-        :g  "(" nil
-        :g  "{" nil
-        :g  "[" nil
-        :g  "|" nil
-        :g  "<" nil
+        "$" nil
+        "(" nil
+        "{" nil
+        "[" nil
+        "|" nil
+        "<" nil
         ;; TAB is used for cdlatex's snippets and navigation. But we have
         ;; yasnippet for that.
         (:when (featurep! :editor snippets)
-          :g "TAB" nil)
+          "TAB" nil)
         ;; AUCTeX takes care of auto-inserting {} on _^ if you want, with
         ;; `TeX-electric-sub-and-superscript'
-        :g  "^" nil
-        :g  "_" nil
+        "^" nil
+        "_" nil
         ;; AUCTeX already provides this with `LaTeX-insert-item'
-        :g  [(control return)] nil))
+        [(control return)] nil))
 
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated

@@ -110,6 +110,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
   `(let* ((in-popup-p (+popup-buffer-p))
           (popups (+popup-windows))
           (+popup--inhibit-transient t)
+          buffer-list-update-hook
           +popup--last)
      (dolist (p popups)
        (+popup/close p 'force))

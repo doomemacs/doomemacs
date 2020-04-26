@@ -42,6 +42,10 @@ capture, the end position, and the output buffer.")
                 "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
                 "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
 
+  ;; A shorter alias for org src blocks than "markdown"
+  (after! org-src
+    (add-to-list 'org-src-lang-modes '("md" . markdown)))
+
   :config
   (set-flyspell-predicate! '(markdown-mode gfm-mode)
     #'+markdown-flyspell-word-p)
@@ -66,6 +70,7 @@ capture, the end position, and the output buffer.")
 
   (map! :map markdown-mode-map
         :localleader
+        "'" #'markdown-edit-code-block
         "o" #'markdown-open
         "p" #'markdown-preview
         "e" #'markdown-export
@@ -80,6 +85,10 @@ capture, the end position, and the output buffer.")
 (use-package! evil-markdown
   :when (featurep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
+  :init
+  ;; REVIEW Until Somelauw/evil-markdown#1 is resolved:
+  (defun evil-disable-insert-state-bindings ()
+    evil-disable-insert-state-bindings)
   :config
   (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)
   (map! :map evil-markdown-mode-map

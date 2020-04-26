@@ -90,7 +90,6 @@ one wants that.")
 (defun doom-cli--byte-compile-file (file)
   (condition-case-unless-debug e
       (let ((byte-compile-warnings (if doom-debug-mode byte-compile-warnings))
-            (byte-compile-dynamic t)
             (byte-compile-dynamic-docstrings t))
         (when (byte-compile-file file)
           (unless doom-interactive-mode

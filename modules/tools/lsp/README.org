@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#lsp-powered-project-search][LSP-powered project search]]
@@ -52,11 +53,18 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/web/README.org][:lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
 
 ** Module Flags
-+ =+peek= Enables the =lsp-ui-peek= navigation frontend provided by the =lsp-ui= package.
++ =+peek= Use =lsp-ui-peek= when looking up definitions and references with
+  functionality from the =:tools lookup= module.
 
 ** Plugins
 + [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]
 + [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
+** Hacks
++ ~lsp-mode~ has been modified not to automatically install missing LSP servers.
+  This is done to adhere to our "Your system, your rules" mantra, which insist
+  that it is better etiquette to let the user decide when their development
+  environment is modified. Use ~M-x lsp-install-server~ to install LSP servers
+  manually.
 
 * Prerequisites
 This module has no direct prerequisites, but major-modes require you to install

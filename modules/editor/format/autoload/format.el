@@ -201,7 +201,7 @@ See `+format/buffer' for the interactive version of this function, and
 (defalias '+format/buffer #'format-all-buffer)
 
 ;;;###autoload
-(defun +format/region (beg end &optional arg)
+(defun +format/region (beg end)
   "Runs the active formatter on the lines within BEG and END.
 
 WARNING: this may not work everywhere. It will throw errors if the region
@@ -211,7 +211,7 @@ snippets or single lines."
   (save-restriction
     (narrow-to-region beg end)
     (let ((+format-region-p t))
-      (+format/buffer arg))))
+      (+format/buffer))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()

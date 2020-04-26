@@ -5,6 +5,8 @@
     :name          "»"
     :src_block     "»"
     :src_block_end "«"
+    :quote         "“"
+    :quote_end     "”"
     ;; Functional
     :lambda        "λ"
     :def           "ƒ"
@@ -38,6 +40,27 @@ This should not contain any symbols from the Unicode Private Area! There is no
 universal way of getting the correct symbol as that area varies from font to
 font.")
 
+(defvar +pretty-code-enabled-modes t
+  "List of major modes in which `prettify-symbols-mode' should be enabled.
+If t, enable it everywhere. If the first element is 'not, enable it in any mode
+besides what is listed.")
+
+(defvar +pretty-code-symbols-alist '((t))
+  "An alist containing a mapping of major modes to its value for
+`prettify-symbols-alist'.")
+
+
+;;
+;;; Packages
+
+;;;###package prettify-symbols
+;; When you get to the right edge, it goes back to how it normally prints
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+
+
+;;
+;;; Bootstrap
+
 (defun +pretty-code--correct-symbol-bounds (ligature-alist)
   "Prepend non-breaking spaces to a ligature.
 
@@ -49,14 +72,6 @@ correct width of the symbols instead of the width measured by `char-width'."
       (setq acc (cons #X00a0 (cons '(Br . Bl) acc))
             len (1- len)))
     (cons (car ligature-alist) acc)))
-
-(defvar +pretty-code-enabled-modes t
-  "List of major modes in which `prettify-symbols-mode' should be enabled.
-If t, enable it everywhere. If the first element is 'not, enable it in any mode
-besides what is listed.")
-
-;; When you get to the right edge, it goes back to how it normally prints
-(setq prettify-symbols-unprettify-at-point 'right-edge)
 
 (defun +pretty-code-init-pretty-symbols-h ()
   "Enable `prettify-symbols-mode'.
@@ -79,6 +94,7 @@ Otherwise it builds `prettify-code-symbols-alist' according to
       (when prettify-symbols-mode
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
+
 
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 

@@ -82,6 +82,22 @@
                 :test #'eq
                 :key #'car))
 
+  ;; HACK Allow these commands to be repeated by prefixing them with a numerical
+  ;;      argument. See gabesoft/evil-mc#110
+  (defadvice! +multiple-cursors--make-repeatable-a (orig-fn)
+    :around '(evil-mc-make-and-goto-first-cursor
+              evil-mc-make-and-goto-last-cursor
+              evil-mc-make-and-goto-prev-cursor
+              evil-mc-make-and-goto-next-cursor
+              evil-mc-skip-and-goto-prev-cursor
+              evil-mc-skip-and-goto-next-cursor
+              evil-mc-make-and-goto-prev-match
+              evil-mc-make-and-goto-next-match
+              evil-mc-skip-and-goto-prev-match
+              evil-mc-skip-and-goto-next-match)
+    (dotimes (i (if (integerp current-prefix-arg) current-prefix-arg 1))
+      (funcall orig-fn)))
+
   ;; If we're entering insert mode, it's a good bet that we want to start using
   ;; our multiple cursors
   (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)

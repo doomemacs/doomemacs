@@ -58,11 +58,7 @@
     mode-name "JS2")
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
-  (set-repl-handler! 'js2-mode #'+javascript/open-repl)
-
-  (map! :map js2-mode-map
-        :localleader
-        "S" #'+javascript/skewer-this-buffer))
+  (set-repl-handler! 'js2-mode #'+javascript/open-repl))
 
 
 (use-package! rjsx-mode
@@ -84,10 +80,10 @@
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
 
-  ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
-  ;; a self-closing tag, so that it can insert a matching ending tag at point.
-  ;; However, the parser doesn't run immediately, so a fast typist can outrun
-  ;; it, causing tags to stay unclosed, so we force it to parse.
+  ;; HACK `rjsx-electric-gt' relies on js2's parser to tell it when the cursor
+  ;;      is in a self-closing tag, so that it can insert a matching ending tag
+  ;;      at point. The parser doesn't run immediately however, so a fast typist
+  ;;      can outrun it, causing tags to stay unclosed, so force it to parse:
   (defadvice! +javascript-reparse-a (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     :before #'rjsx-electric-gt
@@ -95,7 +91,7 @@
 
 
 (use-package! typescript-mode
-  :defer t
+  :hook (typescript-mode . rainbow-delimiters-mode)
   :init
   ;; REVIEW Fix #2252. This is overwritten if the :lang web module is enabled.
   ;;        We associate TSX files with `web-mode' by default instead because
@@ -104,9 +100,6 @@
   (unless (featurep! :lang web)
     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
   :config
-  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
-  (setq-hook! 'typescript-mode-hook
-    comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
@@ -125,7 +118,10 @@
     :not "!"
     :and "&&" :or "||"
     :for "for"
-    :return "return" :yield "import"))
+    :return "return" :yield "import")
+  ;; HACK Fixes comment continuation on newline
+  (setq-hook! 'typescript-mode-hook
+    comment-line-break-function #'js2-line-break))
 
 
 ;;;###package coffee-mode
@@ -137,7 +133,9 @@
 ;;
 ;;; Tools
 
-(add-hook! '(js-mode-hook typescript-mode-hook web-mode-hook)
+(add-hook! '(js2-mode-local-vars-hook
+             typescript-mode-local-vars-hook
+             web-mode-local-vars-hook)
   (defun +javascript-init-lsp-or-tide-maybe-h ()
     "Start `lsp' or `tide' in the current buffer.
 
@@ -169,7 +167,11 @@ to tide."
   :defer t
   :config
   (setq tide-completion-detailed t
-        tide-always-show-documentation t)
+        tide-always-show-documentation t
+        ;; Fix #1792: by default, tide ignores payloads larger than 100kb. This
+        ;; is too small for larger projects that produce long completion lists,
+        ;; so we up it to 512kb.
+        tide-server-max-response-length 524288)
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle
@@ -177,9 +179,11 @@ to tide."
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
-  (set-lookup-handlers! 'tide-mode
-    :definition '(tide-jump-to-definition :async t)
-    :references '(tide-references :async t))
+  (set-lookup-handlers! 'tide-mode :async t
+    :definition #'tide-jump-to-definition
+    :references #'tide-references
+    :documentation #'tide-documentation-at-point)
+  (set-popup-rule! "^\\*tide-documentation" :quit t)
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript-tide-project-root-a)
   ;; cleanup tsserver when no tide buffers are left
@@ -191,8 +195,6 @@ to tide."
   ;; support exists. It is set *after* tide-mode is enabled, so enabling it on
   ;; `tide-mode-hook' is too early, so...
   (advice-add #'tide-setup :after #'eldoc-mode)
-
-  (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
   (map! :localleader
         :map tide-mode-map
@@ -239,17 +241,11 @@ to tide."
       (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
 
 
-(use-package! eslintd-fix
-  :commands eslintd-fix
-  :config
-  (setq-hook! 'eslintd-fix-mode-hook
-    flycheck-javascript-eslint-executable eslintd-fix-executable))
-
-
 ;;;###package skewer-mode
 (map! :localleader
       (:after js2-mode
         :map js2-mode-map
+        "S" #'+javascript/skewer-this-buffer
         :prefix ("s" . "skewer"))
       :prefix "s"
       (:after skewer-mode
@@ -274,13 +270,12 @@ to tide."
 (use-package! npm-mode
   :hook ((js-mode typescript-mode) . npm-mode)
   :config
-  (map! (:localleader
-          :map npm-mode-keymap
+  (map! :localleader
+        (:map npm-mode-keymap
           "n" npm-mode-command-keymap)
         (:after js2-mode
           :map js2-mode-map
-          :localleader
-          (:prefix ("n" . "npm")))))
+          :prefix ("n" . "npm"))))
 
 
 ;;
@@ -292,10 +287,11 @@ to tide."
            web-mode
            markdown-mode
            js-mode
+           json-mode
            typescript-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks '(+javascript-add-node-modules-path-h npm-mode))
+  :add-hooks '(add-node-modules-path npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))

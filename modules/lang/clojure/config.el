@@ -11,21 +11,22 @@
 ;;
 ;;; Packages
 
-;;;###package clojure-mode
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-(when (featurep! +lsp)
-  (add-hook! '(clojure-mode-local-vars-hook
-               clojurec-mode-local-vars-hook
-               clojurescript-mode-local-vars-hook)
-    (defun +clojure-disable-lsp-indentation-h ()
-      (setq-local lsp-enable-indentation nil))
-    #'lsp!)
-  (after! lsp-clojure
-    (dolist (m '(clojure-mode
-                 clojurec-mode
-                 clojurescript-mode
-                 clojurex-mode))
-      (add-to-list 'lsp-language-id-configuration (cons m "clojure")))))
+(use-package! clojure-mode
+  :hook (clojure-mode . rainbow-delimiters-mode)
+  :config
+  (when (featurep! +lsp)
+    (add-hook! '(clojure-mode-local-vars-hook
+                 clojurec-mode-local-vars-hook
+                 clojurescript-mode-local-vars-hook)
+      (defun +clojure-disable-lsp-indentation-h ()
+        (setq-local lsp-enable-indentation nil))
+      #'lsp!)
+    (after! lsp-clojure
+      (dolist (m '(clojure-mode
+                   clojurec-mode
+                   clojurescript-mode
+                   clojurex-mode))
+        (add-to-list 'lsp-language-id-configuration (cons m "clojure"))))))
 
 
 (use-package! cider
@@ -58,13 +59,18 @@
         cider-repl-history-quit-action 'delete-and-restore
         cider-repl-history-highlight-inserted-item t
         cider-repl-history-size 1000
-        cider-repl-pop-to-buffer-on-connect 'display-only
         cider-repl-result-prefix ";; => "
         cider-repl-print-length 100
         cider-repl-use-clojure-font-lock t
         cider-repl-use-pretty-printing t
         cider-repl-wrap-history nil
-        cider-stacktrace-default-filters '(tooling dup))
+        cider-stacktrace-default-filters '(tooling dup)
+
+        ;; Don't focus the CIDER REPL when it starts. Since it can take so long
+        ;; to start up, you either wait for a minute doing nothing or be
+        ;; prepared for your cursor to suddenly change buffers without warning.
+        ;; See https://github.com/clojure-emacs/cider/issues/1872
+        cider-repl-pop-to-buffer-on-connect 'display-only)
 
   ;; Error messages emitted from CIDER is silently funneled into *nrepl-server*
   ;; rather than the *cider-repl* buffer. How silly. We might want to see that
@@ -90,6 +96,8 @@
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
             "C"  #'cider-connect-cljs
+            "m"  #'cider-macroexpand-1
+            "M"  #'cider-macroexpand-all
             (:prefix ("e" . "eval")
               "b" #'cider-eval-buffer
               "d" #'cider-eval-defun-at-point
@@ -114,9 +122,6 @@
               "e" #'cider-enlighten-mode
               "i" #'cider-inspect
               "r" #'cider-inspect-last-result)
-            (:prefix ("m" . "macro")
-              "e" #'cider-macroexpand-1
-              "E" #'cider-macroexpand-all)
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all
@@ -157,6 +162,25 @@
           :i "s"  #'cider-repl-history-search-forward
           :i "r"  #'cider-repl-history-search-backward
           :i "U"  #'cider-repl-history-undo-other-window)))
+
+
+(after! cider-doc
+  ;; Fixes raxod502/radian#446: CIDER tries to do color calculations when it's
+  ;; loaded, sometimes too early, causing errors. Better to wait until something
+  ;; is actually rendered.
+  (setq cider-docview-code-background-color nil)
+
+  (defadvice! +clojure--defer-color-calculation-a (&rest _)
+    "Set `cider-docview-code-background-color'.
+This is needed because we have ripped out the code that would normally set it
+(since that code will run during early init, which is a problem)."
+    :before #'cider-docview-fontify-code-blocks
+    (setq cider-docview-code-background-color (cider-scale-background-color)))
+
+  ;; HACK Disable cider's advice on these; and hope no one else is using these
+  ;;      old-style advice.
+  (ad-deactivate #'enable-theme)
+  (ad-deactivate #'disable-theme))
 
 
 (use-package! clj-refactor

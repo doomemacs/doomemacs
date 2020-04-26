@@ -164,6 +164,7 @@ PLIST can have the following properties:
   "Face used for the title of menu widgets on the dashboard"
   :group 'doom-dashboard)
 
+
 ;;
 ;;; Major mode
 

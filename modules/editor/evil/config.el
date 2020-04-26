@@ -45,8 +45,6 @@ directives. By default, this only recognizes C directives.")
         evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
-        ;; must be set before evil/evil-collection is loaded
-        evil-want-keybinding (not (featurep! +everywhere))
         ;; Only do highlighting in selected window so that Emacs has less work
         ;; to do highlighting them all.
         evil-ex-interactive-search-highlight 'selected-window)
@@ -146,6 +144,15 @@ directives. By default, this only recognizes C directives.")
     (when (eq major-mode 'fundamental-mode)
       (hack-local-variables)))
 
+  ;; HACK Invoking helpful from evil-ex throws a "No recursive edit is in
+  ;;      progress" error because, between evil-ex and helpful,
+  ;;      `abort-recursive-edit' gets called one time too many.
+  (defadvice! +evil--fix-helpful-key-in-evil-ex-a (key-sequence)
+    :before #'helpful-key
+    (when (evil-ex-p)
+      (run-at-time 0.1 nil #'helpful-key key-sequence)
+      (abort-recursive-edit)))
+
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
 
@@ -164,17 +171,6 @@ directives. By default, this only recognizes C directives.")
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments' to disable)
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
-
-  ;; Recenter screen after most searches
-  (dolist (fn '(evil-visualstar/begin-search-forward
-                evil-visualstar/begin-search-backward
-                evil-ex-search-word-forward
-                evil-ex-search-word-backward
-                evil-ex-search-next
-                evil-ex-search-previous
-                evil-ex-search-forward
-                evil-ex-search-backward))
-    (advice-add fn :around #'doom-preserve-window-position-a))
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
@@ -214,6 +210,7 @@ directives. By default, this only recognizes C directives.")
 ;;; Packages
 
 (use-package! evil-easymotion
+  :after-call pre-command-hook
   :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
@@ -221,7 +218,6 @@ directives. By default, this only recognizes C directives.")
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-previous #'evil-ex-search-previous
                       :bind ((evil-ex-search-highlight-all nil)))
-
   (evilem-make-motion evilem-motion-search-word-forward #'evil-ex-search-word-forward
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-word-backward #'evil-ex-search-word-backward
@@ -403,26 +399,6 @@ To change these keys see `+evil-repeat-keys'."
                evil-ex-search-previous evil-ex-search-next)
 
 
-;; `evil-collection'
-(when (featurep! +everywhere)
-  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
-
-  (unless doom-reloading-p
-    (load! "+everywhere"))
-
-  ;; Don't let evil-collection interfere with certain keys
-  (appendq! evil-collection-key-blacklist
-            (append (when (featurep! :tools lookup)
-                      '("gd" "gf" "K"))
-                    (when (featurep! :tools eval)
-                      '("gr" "gR"))
-                    '("[" "]" "gz" "<escape>")))
-
-  (defadvice! +evil-collection-disable-blacklist-a (orig-fn)
-    :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
-    (let (evil-collection-key-blacklist)
-      (funcall-interactively orig-fn))))
-
 ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
 ;;   zq - mark word at point as good word
 ;;   zw - mark word at point as bad
@@ -567,6 +543,7 @@ To change these keys see `+evil-repeat-keys'."
 
       ;; evil-easymotion (see `+evil/easymotion')
       (:after evil-easymotion
+        :m "gs" evilem-map
         (:map evilem-map
           "a" (evilem-create #'evil-forward-arg)
           "A" (evilem-create #'evil-backward-arg)

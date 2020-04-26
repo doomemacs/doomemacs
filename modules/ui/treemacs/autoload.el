@@ -3,11 +3,13 @@
 (defun +treemacs--init ()
   (require 'treemacs)
   (let ((origin-buffer (current-buffer)))
+    ;; Toggle treemacs without prompting for the first project.
     (cl-letf (((symbol-function 'treemacs-workspace->is-empty?)
                (symbol-function 'ignore)))
       (treemacs--init))
-    (dolist (project (treemacs-workspace->projects (treemacs-current-workspace)))
-      (treemacs-do-remove-project-from-workspace project))
+    (unless (bound-and-true-p persp-mode)
+      (dolist (project (treemacs-workspace->projects (treemacs-current-workspace)))
+        (treemacs-do-remove-project-from-workspace project)))
     (with-current-buffer origin-buffer
       (let ((project-root (or (doom-project-root) default-directory)))
         (treemacs-do-add-project-to-workspace

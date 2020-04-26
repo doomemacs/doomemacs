@@ -7,9 +7,9 @@
   (define-key! evil-ex-completion-map
     "C-a" #'evil-beginning-of-line
     "C-b" #'evil-backward-char
-    "C-s" (if (featurep! :completion ivy)
-              #'counsel-minibuffer-history
-            #'helm-minibuffer-history))
+    "C-f" #'evil-forward-char
+    "C-j" #'previous-complete-history-element
+    "C-k" #'next-complete-history-element)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
@@ -18,16 +18,21 @@
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'doom/delete-backward-word
-    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-    ;; Scrolling lines
-    "C-j"    #'next-line
-    "C-k"    #'previous-line
-    "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command)
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo))))
 
-  (define-key! read-expression-map
-    "C-j" #'next-line-or-history-element
-    "C-k" #'previous-line-or-history-element))
+  (when (featurep! :editor evil +everywhere)
+    (define-key! :keymaps +default-minibuffer-maps
+      "C-f"    #'forward-word
+      "C-b"    #'backward-word
+      "M-f"    #'foward-char
+      "M-b"    #'backward-char
+      "C-j"    #'next-line
+      "C-k"    #'previous-line
+      "C-S-j"  #'scroll-up-command
+      "C-S-k"  #'scroll-down-command)
+    (define-key! read-expression-map
+      "C-j" #'next-line-or-history-element
+      "C-k" #'previous-line-or-history-element)))
 
 
 ;;
@@ -42,19 +47,11 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  #'+company/complete)
-      :n [tab] (general-predicate-dispatch nil
-                 (and (featurep! :editor fold)
-                      (save-excursion (end-of-line) (invisible-p (point))))
-                 #'+fold/toggle
-                 (fboundp 'evil-jump-item)
-                 #'evil-jump-item)
       :v [tab] (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
                           (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
-                 #'yas-insert-snippet
-                 (fboundp 'evil-jump-item)
-                 #'evil-jump-item)
+                 #'yas-insert-snippet)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
@@ -76,7 +73,6 @@
       (:after man :map Man-mode-map
         :n "q"    #'kill-current-buffer)
 
-      :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
       (:after (evil-org evil-easymotion)
         :map evil-org-mode-map
         :m "gsh" #'+org/goto-visible)
@@ -161,15 +157,18 @@
 
       (:when (featurep! :completion helm)
         (:after helm :map helm-map
+          [remap next-line]     #'helm-next-line
+          [remap previous-line] #'helm-previous-line
           [left]     #'left-char
           [right]    #'right-char
           "C-S-f"    #'helm-previous-page
           "C-S-n"    #'helm-next-source
           "C-S-p"    #'helm-previous-source
-          "C-S-j"    #'helm-next-source
-          "C-S-k"    #'helm-previous-source
-          "C-j"      #'helm-next-line
-          "C-k"      #'helm-previous-line
+          (:when (featurep! :editor evil +everywhere)
+            "C-j"    #'helm-next-line
+            "C-k"    #'helm-previous-line
+            "C-S-j"  #'helm-next-source
+            "C-S-k"  #'helm-previous-source)
           "C-u"      #'helm-delete-minibuffer-contents
           "C-s"      #'helm-minibuffer-history
           ;; Swap TAB and C-z
@@ -266,7 +265,6 @@
       :desc "M-x"                   ":"    #'execute-extended-command
       :desc "Pop up scratch buffer" "x"    #'doom/open-scratch-buffer
       :desc "Org Capture"           "X"    #'org-capture
-
       ;; C-u is used by evil
       :desc "Universal argument"    "u"    #'universal-argument
       :desc "window"                "w"    evil-window-map
@@ -275,12 +273,10 @@
       (:when (featurep! :ui popup)
         :desc "Toggle last popup"     "~"    #'+popup/toggle)
       :desc "Find file"             "."    #'find-file
-
       :desc "Switch buffer"         ","    #'switch-to-buffer
       (:when (featurep! :ui workspaces)
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
-
       :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
@@ -468,14 +464,23 @@
       (:prefix-map ("n" . "notes")
         :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                   "a" #'org-agenda
+        (:when (featurep! :tools biblio)
+          :desc "Bibliographic entries"        "b"
+          (cond ((featurep! :completion ivy)   #'ivy-bibtex)
+                ((featurep! :completion helm)  #'helm-bibtex)))
+
         :desc "Toggle org-clock"             "c" #'+org/toggle-clock
         :desc "Cancel org-clock"             "C" #'org-clock-cancel
         :desc "Open deft"                    "d" #'deft
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                  "e" #'org-noter)
+
         :desc "Find file in notes"           "f" #'+default/find-in-notes
         :desc "Browse notes"                 "F" #'+default/browse-notes
         :desc "Org store link"               "l" #'org-store-link
         :desc "Tags search"                  "m" #'org-tags-view
         :desc "Org capture"                  "n" #'org-capture
+        :desc "Goto capture"                 "N" #'org-capture-goto-target
         :desc "Active org-clock"             "o" #'org-clock-goto
         :desc "Todo list"                    "t" #'org-todo-list
         :desc "Search notes"                 "s" #'+default/org-notes-search
@@ -483,6 +488,20 @@
         :desc "View search"                  "v" #'org-search-view
         :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
         :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
+
+        (:when (featurep! :lang org +roam)
+          (:prefix ("r" . "roam")
+            :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
+            :desc "Org Roam Capture" "c" #'org-roam-capture
+            :desc "Find file"        "f" #'org-roam-find-file
+            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Insert"           "i" #'org-roam-insert
+            :desc "Org Roam"         "r" #'org-roam
+            (:prefix ("d" . "by date")
+              :desc "Arbitrary date" "d" #'org-roam-dailies-date
+              :desc "Today"          "t" #'org-roam-dailies-today
+              :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
+              :desc "Yesterday"      "y" #'org-roam-dailies-yesterday)))
 
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
@@ -553,10 +572,10 @@
         :desc "Find recent project files"    "r" #'projectile-recentf
         :desc "Run project"                  "R" #'projectile-run-project
         :desc "Save project files"           "s" #'projectile-save-project-buffers
-        :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
-        :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
         :desc "List project tasks"           "t" #'magit-todos-list
-        :desc "Test project"                 "T" #'projectile-test-project)
+        :desc "Test project"                 "T" #'projectile-test-project
+        :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
+        :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer)
 
       ;;; <leader> q --- quit/session
       (:prefix-map ("q" . "quit/session")
@@ -626,7 +645,7 @@
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
         :desc "Soft line wrapping"           "w" #'visual-line-mode
-        (:when (featurep! :ui word-wrap)
+        (:when (featurep! :editor word-wrap)
           :desc "Soft line wrapping"         "w" #'+word-wrap-mode)
         :desc "Zen mode"                     "z" #'writeroom-mode))
 

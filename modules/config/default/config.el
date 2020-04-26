@@ -1,19 +1,19 @@
 ;;; config/default/config.el -*- lexical-binding: t; -*-
 
 (defvar +default-minibuffer-maps
-  `(minibuffer-local-map
-    minibuffer-local-ns-map
-    minibuffer-local-completion-map
-    minibuffer-local-must-match-map
-    minibuffer-local-isearch-map
-    read-expression-map
-    ,@(cond ((featurep! :completion ivy)
-             '(ivy-minibuffer-map
-               ivy-switch-buffer-map))
-            ((featurep! :completion helm)
-             '(helm-map
-               helm-ag-map
-               helm-read-file-map))))
+  (append '(minibuffer-local-map
+            minibuffer-local-ns-map
+            minibuffer-local-completion-map
+            minibuffer-local-must-match-map
+            minibuffer-local-isearch-map
+            read-expression-map)
+          (cond ((featurep! :completion ivy)
+                 '(ivy-minibuffer-map
+                   ivy-switch-buffer-map))
+                ((featurep! :completion helm)
+                 '(helm-map
+                   helm-ag-map
+                   helm-read-file-map))))
   "A list of all the keymaps used for the minibuffer.")
 
 
@@ -31,8 +31,11 @@
 (after! epa
   ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
   ;; for the key passphrase.
-  (setq epa-pinentry-mode 'loopback)
-   ;; Default to the first secret key available in your keyring.
+  (set (if EMACS27+
+           'epg-pinentry-mode
+         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+       'loopback)
+  ;; Default to the first secret key available in your keyring.
   (setq-default
    epa-file-encrypt-to
    (or (default-value 'epa-file-encrypt-to)
@@ -254,6 +257,7 @@
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
+        "s-x" #'execute-extended-command
         :v "s-x" #'kill-region
         ;; Buffer-local font scaling
         "s-+" #'doom/reset-font-size
@@ -377,10 +381,15 @@
 
   ;; A Doom convention where C-s on popups and interactive searches will invoke
   ;; ivy/helm for their superior filtering.
-  (define-key! :keymaps +default-minibuffer-maps
-    "C-s" (if (featurep! :completion ivy)
-              #'counsel-minibuffer-history
-            #'helm-minibuffer-history))
+  (when-let (command (cond ((featurep! :completion ivy)
+                            #'counsel-minibuffer-history)
+                           ((featurep! :completion helm)
+                            #'helm-minibuffer-history)))
+    (define-key!
+      :keymaps (append +default-minibuffer-maps
+                       (when (featurep! :editor evil +everywhere)
+                         '(evil-ex-completion-map)))
+      "C-s" command))
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except

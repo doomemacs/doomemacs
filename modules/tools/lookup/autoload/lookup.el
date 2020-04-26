@@ -62,30 +62,31 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup--init-%s-handlers-h" mode))))
-      (cond ((null (car plist))
-             (remove-hook hook fn)
-             (unintern fn nil))
-            ((fset
-              fn
-              (lambda ()
-                (cl-destructuring-bind (&key definition references documentation file xref-backend async)
-                    plist
-                  (cl-mapc #'+lookup--set-handler
-                           (list definition
-                                 references
-                                 documentation
-                                 file
-                                 xref-backend)
-                           (list '+lookup-definition-functions
-                                 '+lookup-references-functions
-                                 '+lookup-documentation-functions
-                                 '+lookup-file-functions
-                                 'xref-backend-functions)
-                           (make-list 5 async)
-                           (make-list 5 (or (eq major-mode mode)
-                                            (and (boundp mode)
-                                                 (symbol-value mode))))))))
-             (add-hook hook fn))))))
+      (if (null (car plist))
+          (progn
+            (remove-hook hook fn)
+            (unintern fn nil))
+        (fset
+         fn
+         (lambda ()
+           (cl-destructuring-bind (&key definition references documentation file xref-backend async)
+               plist
+             (cl-mapc #'+lookup--set-handler
+                      (list definition
+                            references
+                            documentation
+                            file
+                            xref-backend)
+                      (list '+lookup-definition-functions
+                            '+lookup-references-functions
+                            '+lookup-documentation-functions
+                            '+lookup-file-functions
+                            'xref-backend-functions)
+                      (make-list 5 async)
+                      (make-list 5 (or (eq major-mode mode)
+                                       (and (boundp mode)
+                                            (symbol-value mode))))))))
+        (add-hook hook fn)))))
 
 
 ;;
@@ -166,23 +167,25 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 ;;
 ;;; Lookup backends
 
-(defun +lookup--xref-show (fn identifier)
+(defun +lookup--xref-show (fn identifier &optional show-fn)
   (let ((xrefs (funcall fn
                         (xref-find-backend)
                         identifier)))
     (when xrefs
-      (xref--show-xrefs xrefs nil)
+      (funcall (or show-fn #'xref--show-defs)
+               (lambda () xrefs)
+               nil)
       (if (cdr xrefs)
           'deferred
         t))))
 
 (defun +lookup-xref-definitions-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
-  (+lookup--xref-show 'xref-backend-definitions identifier))
+  (+lookup--xref-show 'xref-backend-definitions identifier #'xref--show-defs))
 
 (defun +lookup-xref-references-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-references'"
-  (+lookup--xref-show 'xref-backend-references identifier))
+  (+lookup--xref-show 'xref-backend-references identifier #'xref--show-xrefs))
 
 (defun +lookup-dumb-jump-backend-fn (_identifier)
   "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
@@ -324,7 +327,7 @@ Otherwise, falls back on `find-file-at-point'."
          current-prefix-arg))
   (message "Looking up synonyms for %S" identifier)
   (cond ((and +lookup-dictionary-prefer-offline
-              (require 'synosaurus nil t))
+              (require 'synosaurus-wordnet nil t))
          (unless (executable-find synosaurus-wordnet--command)
            (user-error "Couldn't find %S installed on your system"
                        synosaurus-wordnet--command))

@@ -8,6 +8,10 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#ubuntu][Ubuntu]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#macos][macOS]]
+  - [[#nixos][NixOS]]
 - [[#features][Features]]
 - [[#customization][Customization]]
   - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
@@ -24,7 +28,6 @@ Provide a helping hand when working with LaTeX documents.
 + Change PDF viewer to Okular or ~latex-preview-pane~
 + Bibtex editor
 + Autocompletion using ~company-mode~
-+ Ivy or Helm for selecting bibliography
 + Compile your .tex code only once using LatexMk
 
 ** Module Flags
@@ -32,6 +35,8 @@ Provide a helping hand when working with LaTeX documents.
 + =+cdlatex= Enable [[https://github.com/cdominik/cdlatex][cdlatex]] for fast math insertion.
 + =+lsp= Start LSP automatically in `tex-mode-hook`. This requires the =:tools
   lsp= module. Supported servers are `digestif` and `TexLab`.
++ =+fold= Use TeX-fold (from auctex) to fold LaTeX macros to unicode, and make
+  folding hook-based and less manual.
 
 ** Plugins
 + [[http://www.gnu.org/software/auctex/][auctex]]
@@ -41,23 +46,51 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/alexeyr/company-auctex][company-auctex]]*
 + [[https://github.com/TheBB/company-reftex][company-reftex]]*
 + [[https://github.com/vspinu/company-math][company-math]]*
-+ [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
 + [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
 
-* TODO Prerequisites
+* Prerequisites
+You will need ghostscript and a latex compiler. All this is provided by
+the =texlive= bundle, available through many OS package managers.
+
+Ghostscript <= 9.27 is [[https://www.gnu.org/software/auctex/manual/preview-latex/No-images-are-displayed-with-gs-9_002e27-and-earlier.html][reported buggy]] and doesn't work with auctex's math
+previews. (You can check you ghostscript version with ~gs --version~.) Most
+package managers already have newer versions, but if not you might have to build
+gs from source.
+** Ubuntu
+#+BEGIN_SRC sh
+apt-get install texlive
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+pacman -S texlive
+#+END_SRC
+
+** TODO macOS
+#+BEGIN_SRC sh
+brew cask install basictex
+# If the above doesn't work, then
+brew cask install mactex  # WARNING: large 4gb download!
+#+END_SRC
+
+#+begin_quote
+This has not been verified.
+#+end_quote
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.texlive.combined.scheme-medium ];
+#+END_SRC
 
 * TODO Features
 
 * Customization
 ** Specifying the location of a bibtex file & corresponding PDFs
-The reftex and bibtex-completion packages have two variables that allow you to
-specify where it should find your bibliography file(s) and their corresponding
-PDFs:
+Reftex has a variable that allow you to
+specify where it should find your bibliography file(s):
 
 #+BEGIN_SRC emacs-lisp
 (setq reftex-default-bibliography "/your/bib/file.bib")
-;; Optionally specifying a location for the corresponding PDFs
-(setq bibtex-completion-library-path (list "/your/bib/pdfs"))
 #+END_SRC
 
 ** Changing the PDFs viewer

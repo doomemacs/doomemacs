@@ -6,7 +6,7 @@
 (package! haml-mode :pin "bf5b6c11b1")
 (package! pug-mode :pin "685fd3414d")
 (package! slim-mode :pin "3636d18ab1")
-(when (package! web-mode :pin "d1b6660aea")
+(when (package! web-mode :pin "b0bb4ab82b")
   (when (featurep! :completion company)
     (package! company-web :pin "f0cc9187c9")))
 

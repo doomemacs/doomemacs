@@ -15,11 +15,14 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-# A summary of what this module does.
+This module adds support for the Clojure(Script) language.
 
-+ If possible, include a brief list of feature highlights here
-+ Like code completion, syntax checking or available snippets
-+ Include links to packages & external things where possible
++ Interactive development environment (~cider~): REPL, compilation, debugging,
+  running tests, definitions & documentation lookup, code completion, and many
+  more
++ Refactoring (~clj-refactor~)
++ Linting (~clj-kondo~), requires ~:checkers syntax~
++ LSP support
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -30,7 +33,7 @@ This module has no dedicated maintainers.
 ** Plugins
 + [[https://github.com/clojure-emacs/cider][cider]]
 + [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor]]
-+ [[https://github.com/candid82/flycheck-joker][flycheck-joker]]
++ [[https://github.com/borkdude/flycheck-clj-kondo][flycheck-clj-kondo]]
 
 ** Hacks
 + Error messages emitted from CIDER are piped into the REPL buffer when it is
@@ -44,8 +47,8 @@ This module requires:
 + With =+lsp=
   + clojure-lsp
 + Without =+lsp=
-  + leiningen (REPL)
-  + joker (linter)
+  + [[https://leiningen.org/][leiningen]] (REPL)
+  + [[https://github.com/borkdude/clj-kondo][clj-kondo]] (linter)
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.

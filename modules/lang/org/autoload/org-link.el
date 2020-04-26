@@ -1,43 +1,72 @@
 ;;; lang/org/autoload/org-link.el -*- lexical-binding: t; -*-
 
-(defun +org--relpath (path root)
+(defun +org--relative-path (path root)
   (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
       (file-relative-name path)
     path))
 
-;;;###autoload
-(defun +org-def-link (key dir)
-  (org-link-set-parameters
-   key
-   :complete (lambda () (+org--relpath (+org-link-read-file key dir) dir))
-   :follow   (lambda (link) (find-file (expand-file-name link dir)))
-   :face     (lambda (link)
-               (if (file-exists-p (expand-file-name link dir))
-                   'org-link
-                 'error))))
+(defun +org--read-link-path (key dir &optional fn)
+  (let ((file (funcall (or fn #'read-file-name) (format "%s: " (capitalize key)) dir)))
+    (format "%s:%s" key (file-relative-name file dir))))
 
 ;;;###autoload
-(defun +org-link-read-file (key dir)
-  (let ((file (read-file-name (format "%s: " (capitalize key)) dir)))
-    (format "%s:%s"
-            key
-            (file-relative-name file dir))))
+(defun +org-define-basic-link (key dir-var &rest plist)
+  "Define a link with some basic completion & fontification.
+
+KEY is the name of the link type. DIR-VAR is the directory variable to resolve
+links relative to. PLIST is passed to `org-link-set-parameters' verbatim.
+
+Links defined with this will be rendered in the `error' face if the file doesn't
+exist, and `org-link' otherwise."
+  (declare (indent 2))
+  (let ((requires (plist-get plist :requires))
+        (dir-fn (if (functionp dir-var)
+                    dir-var
+                  (lambda () (symbol-value dir-var)))))
+    (apply #'org-link-set-parameters
+           key
+           :complete (lambda ()
+                       (if requires (mapc #'require (doom-enlist requires)))
+                       (+org--relative-path (+org--read-link-path key (funcall dir-fn))
+                                            (funcall dir-fn)))
+           :follow   (lambda (link)
+                       (org-link-open-as-file (expand-file-name link (funcall dir-fn)) nil))
+           :face     (lambda (link)
+                       (if (file-exists-p (expand-file-name link (funcall dir-fn)))
+                           'org-link
+                         'error))
+           (doom-plist-delete plist :requires))))
+
+
+;;
+;;; Image data functions (for custom inline images)
 
 ;;;###autoload
-(defun +org-link-read-directory (key dir)
-  (let ((file (read-directory-name (format "%s: " (capitalize key)) dir)))
-    (format "%s:%s"
-            key
-            (file-relative-name file dir))))
+(defun +org-image-file-data-fn (protocol link _description)
+  "Intepret LINK as an image file path and return its data."
+  (setq
+   link (expand-file-name
+         link
+         (pcase protocol
+           ("download" (or org-download-image-dir org-attach-id-dir default-directory))
+           ("attachment" org-attach-id-dir)
+           (_ default-directory))))
+  (when (and (file-exists-p link)
+             (image-type-from-file-name link))
+    (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (setq buffer-file-coding-system 'binary)
+      (insert-file-contents-literally link)
+      (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;;;###autoload
-(defun +org-inline-data-image (_protocol link _description)
+(defun +org-inline-image-data-fn (_protocol link _description)
   "Interpret LINK as base64-encoded image data."
   (base64-decode-string link))
 
 ;;;###autoload
-(defun +org-image-link (protocol link _description)
-  "Interpret LINK as base64-encoded image data."
+(defun +org-http-image-data-fn (protocol link _description)
+  "Interpret LINK as an URL to an image file."
   (when (image-type-from-file-name link)
     (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
         (with-current-buffer buf

@@ -29,7 +29,8 @@
 (defun +org-capture-frame-p (&rest _)
   "Return t if the current frame is an org-capture frame opened by
 `+org-capture/open-frame'."
-  (and (equal "doom-capture" (frame-parameter nil 'name))
+  (and (equal (alist-get 'name +org-capture-frame-parameters)
+              (frame-parameter nil 'name))
        (frame-parameter nil 'transient)))
 
 ;;;###autoload
@@ -49,14 +50,13 @@ you're done. This can be called from an external shell script."
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
-          (cl-letf (((symbol-function #'pop-to-buffer)
-                     (symbol-function #'switch-to-buffer)))
+          (cl-letf (((symbol-function #'pop-to-buffer) #'switch-to-buffer))
             (switch-to-buffer (doom-fallback-buffer))
             (let ((org-capture-initial initial-input)
                   org-capture-entry)
               (when (and key (not (string-empty-p key)))
                 (setq org-capture-entry (org-capture-select-template key)))
-              (call-interactively +org-capture-fn)))
+              (funcall +org-capture-fn)))
         ('error
          (message "org-capture: %s" (error-message-string ex))
          (delete-frame frame))))))

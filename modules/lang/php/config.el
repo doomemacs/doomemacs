@@ -14,7 +14,7 @@
   :mode "\\.inc\\'"
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
-  ;; php+html. Use the .phtml
+  ;; php+html. Use the .phtml extension instead.
   (setq php-template-compatibility nil)
 
   (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
@@ -54,7 +54,6 @@
   :config
   (set-lookup-handlers! 'php-mode
     :definition #'phpactor-goto-definition)
-
   (map! :localleader
         :map php-mode-map
         :prefix ("r" . "refactor")

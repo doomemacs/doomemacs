@@ -84,18 +84,6 @@ Run this for any buffer you want to skewer."
 ;; Hooks
 
 ;;;###autoload
-(defun +javascript-add-node-modules-path-h ()
-  "Add current project's `node_modules/.bin` to `exec-path', so js tools
-prioritize project-local packages over global ones."
-  (make-local-variable 'exec-path)
-  (cl-pushnew (expand-file-name "node_modules/.bin/"
-                                (or (locate-dominating-file
-                                     (or (buffer-file-name) default-directory)
-                                     "node_modules")
-                                    (doom-project-root)))
-              exec-path :test #'string=))
-
-;;;###autoload
 (defun +javascript-cleanup-tide-processes-h ()
   "Clean up dangling tsserver processes if there are no more buffers with
 `tide-mode' active that belong to that server's project."

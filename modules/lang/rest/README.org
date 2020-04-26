@@ -1,55 +1,58 @@
-#+TITLE: :lang rest
+#+TITLE:   lang/rest
+#+DATE:    March 17, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
 This module adds [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] support.
 
 + Code-completion (~company-restclient~)
 + Code evaluation
++ Imenu support for ~restclient-mode~
 + org-mode: babel support (~ob-restclient~)
 
 #+begin_quote
-~restclient-mode~ is tremendously useful for testing REST APIs. My workflow is to open an ~org-mode~ buffer, create a restclient source block and hack away. ~restclient-mode~ and ~company-restclient~ power this arcane wizardry.
+~restclient-mode~ is tremendously useful for automated or quick testing REST
+APIs. My workflow is to open an ~org-mode~ buffer, create a restclient source
+block and hack away. ~restclient-mode~ and ~company-restclient~ power this
+arcane wizardry.
 #+end_quote
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-- [[#example][Example]]
+** Maintainers
+This module has no dedicated maintainers.
 
-* Install
-No additional setup required.
+** Module Flags
+This module provides no flags.
 
-* Example
-#+BEGIN_SRC restclient
-GET https://jsonplaceholder.typicode.com/posts/1
-#+END_SRC
+** Plugins
++ [[https://github.com/pashky/restclient.el][restclient]]
++ =:completion company=
+  + [[https://github.com/iquiw/company-restclient][company-restclient]]
 
-#+BEGIN_EXAMPLE
-#+RESULTS:
-#+BEGIN_SRC js
-{
-  "userId": 1,
-  "id": 1,
-  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-}
-// GET https://jsonplaceholder.typicode.com/posts/1
-// HTTP/1.1 200 OK
-// Date: Thu, 25 May 2017 13:43:42 GMT
-// Content-Type: application/json; charset=utf-8
-// Content-Length: 292
-// Connection: keep-alive
-// Set-Cookie: __cfduid=d3484257c800700f9882305963fa9d5d91495719822; expires=Fri, 25-May-18 13:43:42 GMT; path=/; domain=.typicode.com; HttpOnly
-// X-Powered-By: Express
-// Vary: Origin, Accept-Encoding
-// Access-Control-Allow-Credentials: true
-// Cache-Control: public, max-age=14400
-// Pragma: no-cache
-// Expires: Thu, 25 May 2017 17:43:42 GMT
-// X-Content-Type-Options: nosniff
-// Etag: W/"124-yiKdLzqO5gfBrJFrcdJ8Yq0LGnU"
-// Via: 1.1 vegur
-// CF-Cache-Status: HIT
-// Server: cloudflare-nginx
-// CF-RAY: 3648ecd7ef833d0d-CPH
-// Request duration: 0.347179s
-#+END_SRC
-#+END_EXAMPLE
+** Hacks
++ restclient has been modified not to silently reject self-signed or invalid
+  certificates.
++ Adds imenu support to ~restclient-mode~.
+
+* Prerequisites
+This module has no prereqisites.
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+# How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.

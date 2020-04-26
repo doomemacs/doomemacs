@@ -12,7 +12,7 @@ scaled up by `doom-big-font-increment'. See `doom-font' for details on
 acceptable values for this variable.")
 
 ;;;###autoload
-(defvar doom-big-font-increment 8
+(defvar doom-big-font-increment 4
   "How many steps to increase the font size (with `doom-font' as the base) when
 `doom-big-font-mode' is enabled and `doom-big-font' is nil.")
 
