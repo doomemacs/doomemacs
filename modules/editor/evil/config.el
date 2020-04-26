@@ -94,7 +94,7 @@ directives. By default, this only recognizes C directives.")
   (defun +evil-emacs-cursor-fn ()
     (evil-set-cursor-color +evil--emacs-cursor-color))
 
-  (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
+  (setq-hook! 'after-change-major-mode-hook evil-shift-width standard-indent)
 
 
   ;; --- keybind fixes ----------------------

@@ -109,8 +109,9 @@ possible."
 ;; Favor spaces over tabs. Pls dun h8, but I think spaces (and 4 of them) is a
 ;; more consistent default than 8-space tabs. It can be changed on a per-mode
 ;; basis anyway (and is, where tabs are the canonical style, like go-mode).
+(setq standard-indent 4)
 (setq-default indent-tabs-mode nil
-              tab-width 4)
+              tab-width standard-indent)
 
 ;; Make `tabify' and `untabify' only affect indentation. Not tabs/spaces in the
 ;; middle of a line.
