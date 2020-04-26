@@ -32,7 +32,7 @@
 </a>
 
 > It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
-> vimmer -- envious of the features of modern text editors -- spirals into
+> vimmer—envious of the features of modern text editors—spirals into
 > despair before he succumbs to the [dark side][evil-mode]. This is his config.
 
 Doom is a configuration framework for [GNU Emacs] tailored for Emacs bankruptcy
@@ -98,7 +98,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 # Prerequisites
 + Git 2.23+
-+ Emacs 26.1+ *(27 is recommended)* with GNUTLS support
++ Emacs 26.1+ (*27 is recommended*) with GNUTLS support
 + [ripgrep] 11.0+
 + GNU `find`
 + *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
@@ -138,12 +138,12 @@ Doom is an active and ongoing project. To make that development more
 transparent, its roadmap (and other concerns) are published across three github
 project boards and a newsletter:
 
-+ [Development Roadmap](/projects/3): roughly outlines our goals between release
++ [Development Roadmap](https://github.com/hlissner/doom-emacs/projects/3): roughly outlines our goals between release
   milestones and their progress.
-+ [Plugins under review](/projects/2): lists plugins we are watching and
++ [Plugins under review](https://github.com/hlissner/doom-emacs/projects/2): lists plugins we are watching and
   considering for inclusion, and what their status for inclusion is. Please
   consult this list before requesting new packages/features.
-+ [Upstream bugs](/projects/5): lists issues that originate from elsewhere, and
++ [Upstream bugs](https://github.com/hlissner/doom-emacs/projects/5): lists issues that originate from elsewhere, and
   whether or not we have local workarounds or temporary fixes for them.
 + ~~Doom's newsletter~~ (not finished) will contain changelogs in between
   releases.
@@ -167,10 +167,10 @@ mysterious errors. When you do, here are some places you can look for help:
   + [This answer][change-font] shows you how to change the default font.
   + Your issue may be documented in the [FAQ].
 + With Emacs built-in help system documentation is a keystroke away:
-  + For functions: `SPC h f` or `C-h f`
-  + For variables: `SPC h v` or `C-h v`
-  + For a keybind: `SPC h k` or `C-h k`
-  + To search available keybinds: `SPC h b b` or `C-h b b`
+  + For functions: <kbd>SPC h for</kbd> or <kbd>C-h f</kbd>
+  + For variables: <kbd>SPC h v</kbd> or <kbd>C-h v</kbd>
+  + For a keybind: <kbd>SPC h k</kbd> or <kbd>C-h k</kbd>
+  + To search available keybinds: <kbd>SPC h b b</kbd> or <kbd>C-h b b</kbd>
 + Run `bin/doom doctor` to detect common issues with your development
   environment and private config.
 + Check out the [FAQ], in case your question has already been answered.
@@ -192,7 +192,7 @@ kind!
 
 + I :heart: pull requests and bug reports (see the [Contributing
   Guidelines][contribute])!
-+ Don't hesitate to [tell me my Elisp-fu sucks](/issues/new), but please tell me
++ Don't hesitate to [tell me my Elisp-fu sucks](https://github.com/hlissner/doom-emacs/issues/new), but please tell me
   why.
 + Hop on [our Discord server][Discord] and say hi! Help others, hang out or talk
   to me about Emacs, gamedev, programming, physics, pixel art, anime, gaming --
