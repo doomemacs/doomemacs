@@ -419,7 +419,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (use-package! hl-line
   ;; Highlights the current line
-  :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
+  :hook ((prog-mode text-mode conf-mode special-mode) . hl-line-mode)
   :config
   ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
   ;; performance boost. I also don't need to see it in other buffers.
