@@ -169,7 +169,7 @@ mysterious errors. When you do, here are some places you can look for help:
   + [This answer][change-font] shows you how to change the default font.
   + Your issue may be documented in the [FAQ].
 + With Emacs built-in help system documentation is a keystroke away:
-  + For functions: <kbd>SPC h for</kbd> or <kbd>C-h f</kbd>
+  + For functions: <kbd>SPC h f</kbd> or <kbd>C-h f</kbd>
   + For variables: <kbd>SPC h v</kbd> or <kbd>C-h v</kbd>
   + For a keybind: <kbd>SPC h k</kbd> or <kbd>C-h k</kbd>
   + To search available keybinds: <kbd>SPC h b b</kbd> or <kbd>C-h b b</kbd>
