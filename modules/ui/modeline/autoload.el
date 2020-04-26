@@ -1,15 +1,5 @@
 ;;; ui/modeline/autoload/modeline.el -*- lexical-binding: t; -*-
 
-;;;###autodef
-(fset 'def-modeline-format! #'doom-modeline-def-modeline)
-
-;;;###autodef
-(fset 'def-modeline-segment! #'doom-modeline-def-segment)
-
-;;;###autodef
-(fset 'set-modeline! #'doom-modeline-set-modeline)
-
-
 (defvar +modeline--old-bar-height nil)
 ;;;###autoload
 (defun +modeline-resize-for-font-h ()
