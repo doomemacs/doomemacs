@@ -8,8 +8,8 @@
     "C-a" #'evil-beginning-of-line
     "C-b" #'evil-backward-char
     "C-f" #'evil-forward-char
-    "C-j" #'previous-complete-history-element
-    "C-k" #'next-complete-history-element)
+    "C-j" #'next-complete-history-element
+    "C-k" #'previous-complete-history-element)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
