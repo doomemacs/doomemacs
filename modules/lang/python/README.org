@@ -25,6 +25,8 @@ Adds Python support to Doom Emacs.
 + ~+lsp~ Language Server Protocol support
 + ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
 + ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
++ ~+poetry~ Python packaging, dependency management, and virtual environment
+  support via [[https://python-poetry.org/][Poetry]]
 + ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
 
 ** Plugins
@@ -41,6 +43,8 @@ Adds Python support to Doom Emacs.
   + [[https://github.com/necaris/conda.el][conda]]*
 + ~+pyenv~
   + [[https://github.com/pythonic-emacs/pyenv-mode][pyenv]]*
++ ~+poetry~
+  + [[https://github.com/galaunay/poetry.el][poetry]]*
 + ~+lsp~ and ~:tools lsp~
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
   + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]*
@@ -67,6 +71,7 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
 + Python virtual environments install instructions at:
   + [[https://github.com/pyenv/pyenv][pyenv]]
   + [[https://conda.io/en/latest/][Conda]]
+  + [[https://python-poetry.org/][Poetry]]
 
 + ~pipenv~ requires [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
 

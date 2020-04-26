@@ -280,6 +280,11 @@ called.")
                'append))
 
 
+(use-package! poetry
+  :when (featurep! +poetry)
+  :after python)
+
+
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
   :after lsp-clients

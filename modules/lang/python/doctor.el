@@ -20,6 +20,10 @@
   (unless (executable-find "conda")
     (warn! "Couldn't find conda in your PATH")))
 
+(when (featurep! +poetry)
+  (if (not (executable-find "poetry"))
+      (warn! "Couldn't find poetry in your PATH")))
+
 (when (featurep! +cython)
   (unless (executable-find "cython")
     (warn! "Couldn't find cython. cython-mode will not work.")))
