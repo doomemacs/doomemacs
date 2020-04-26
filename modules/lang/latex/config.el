@@ -221,5 +221,6 @@ is mostly for \\section etc."
   :init
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
+
 ;; bibtex + reftex
 (load! "+ref")
