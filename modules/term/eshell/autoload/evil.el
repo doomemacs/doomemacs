@@ -6,7 +6,7 @@
   "TODO"
   (interactive "<fsh><!>")
   (let ((buffer (+eshell-last-buffer))
-        (command (+evil-resolve-vim-path-a command)))
+        (command (+evil-replace-filename-modifiers-a command)))
     (cond (buffer
            (select-window (get-buffer-window buffer))
            (+eshell-run-command command buffer))
