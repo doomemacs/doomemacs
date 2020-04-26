@@ -109,8 +109,7 @@
 
   ;; Only render to html once. If the first send fails for whatever reason,
   ;; org-mu4e would do so each time you try again.
-  (add-hook! 'message-send-hook
-    (setq-local org-mu4e-convert-to-html nil)))
+  (setq-hook! 'message-send-hook org-mu4e-convert-to-html nil))
 
 
 ;;
