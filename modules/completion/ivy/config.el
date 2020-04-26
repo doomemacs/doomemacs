@@ -265,7 +265,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                (append (list "rg" "--files" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob" and collect (concat "!" dir))
-                       (if IS-WINDOWS (list "--path-separator /"))))
+                       (if IS-WINDOWS (list "--path-separator" "/"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
