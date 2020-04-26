@@ -194,9 +194,9 @@
 
 ;;; :ui
 (map! (:when (featurep! :ui popup)
-        :n "C-`"   #'+popup/toggle
-        :n "C-~"   #'+popup/raise
-        :g "C-x p" #'+popup/other)
+        "C-`"   #'+popup/toggle
+        "C-~"   #'+popup/raise
+        "C-x p" #'+popup/other)
 
       (:when (featurep! :ui workspaces)
         :n "C-t"   #'+workspace/new
