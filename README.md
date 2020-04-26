@@ -138,13 +138,15 @@ Doom is an active and ongoing project. To make that development more
 transparent, its roadmap (and other concerns) are published across three github
 project boards and a newsletter:
 
-+ [Development Roadmap](https://github.com/hlissner/doom-emacs/projects/3): roughly outlines our goals between release
-  milestones and their progress.
-+ [Plugins under review](https://github.com/hlissner/doom-emacs/projects/2): lists plugins we are watching and
-  considering for inclusion, and what their status for inclusion is. Please
-  consult this list before requesting new packages/features.
-+ [Upstream bugs](https://github.com/hlissner/doom-emacs/projects/5): lists issues that originate from elsewhere, and
-  whether or not we have local workarounds or temporary fixes for them.
++ [Development Roadmap](https://github.com/hlissner/doom-emacs/projects/3):
+  roughly outlines our goals between release milestones and their progress.
++ [Plugins under review](https://github.com/hlissner/doom-emacs/projects/2):
+  lists plugins we are watching and considering for inclusion, and what their
+  status for inclusion is. Please consult this list before requesting new
+  packages/features.
++ [Upstream bugs](https://github.com/hlissner/doom-emacs/projects/5): lists
+  issues that originate from elsewhere, and whether or not we have local
+  workarounds or temporary fixes for them.
 + ~~Doom's newsletter~~ (not finished) will contain changelogs in between
   releases.
   
@@ -192,7 +194,8 @@ kind!
 
 + I :heart: pull requests and bug reports (see the [Contributing
   Guidelines][contribute])!
-+ Don't hesitate to [tell me my Elisp-fu sucks](https://github.com/hlissner/doom-emacs/issues/new), but please tell me
++ Don't hesitate to [tell me my Elisp-fu
+  sucks](https://github.com/hlissner/doom-emacs/issues/new), but please tell me
   why.
 + Hop on [our Discord server][Discord] and say hi! Help others, hang out or talk
   to me about Emacs, gamedev, programming, physics, pixel art, anime, gaming --
