@@ -262,7 +262,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         (cond ((executable-find doom-projectile-fd-binary)
                (cons doom-projectile-fd-binary (list "-t" "f" "-E" ".git")))
               ((executable-find "rg")
-               (append (list "rg" "-0" "--files" "--color=never" "--hidden" "--no-messages")
+               (append (list "rg" "--files" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob" and collect (concat "!" dir))
                        (if IS-WINDOWS (list "--path-separator /"))))
