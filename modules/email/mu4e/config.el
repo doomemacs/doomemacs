@@ -14,8 +14,8 @@
   :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
-  (require 'mu4e-meta)
-  (when (version< mu4e-mu-version "1.4")
+  (when (or (not (require 'mu4e-meta nil t))
+            (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
   (setq mu4e-attachment-dir "~/.mail/.attachments")
