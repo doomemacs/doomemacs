@@ -38,13 +38,13 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 + ~+gmail~ Enables gmail-specific configuration.
 
 ** Plugins
-+ [[https://github.com/agpchil/mu4e-maildirs-extension][mu4e-maildirs-extension]]
+This module install no plugins.
 
 * Prerequisites
 This module requires:
 
 + Either ~mbsync~ (default) or ~offlineimap~ (to sync mail with)
-+ ~mu~ (to index your downloaded messages)
++ ~mu~, to index your downloaded messages and to provide the ~mu4e~ package.
 
 ** MacOS
 #+BEGIN_SRC sh
