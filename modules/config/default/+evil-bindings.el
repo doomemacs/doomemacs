@@ -22,10 +22,6 @@
 
   (when (featurep! :editor evil +everywhere)
     (define-key! :keymaps +default-minibuffer-maps
-      "C-f"    #'forward-word
-      "C-b"    #'backward-word
-      "M-f"    #'forward-char
-      "M-b"    #'backward-char
       "C-j"    #'next-line
       "C-k"    #'previous-line
       "C-S-j"  #'scroll-up-command
