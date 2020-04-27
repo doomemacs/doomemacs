@@ -114,8 +114,8 @@ git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
 
-Then [read our Getting Started guide][documentation] to be walked through
-setting up, configuring and maintaining Doom Emacs.
+Then [read our Getting Started guide][getting-started] to be walked through
+installing, configuring and maintaining Doom Emacs.
 
 It's a good idea to add `~/.emacs.d/bin` to your `PATH`! Other `bin/doom`
 commands you should know about:
@@ -219,6 +219,7 @@ kind!
 [discord]: https://discord.gg/qvGgnVx
 [documentation]: docs/index.org
 [faq]: docs/faq.org
+[getting-started]: docs/getting_started.org
 [install]: docs/getting_started.org#install
 [backtrace]: docs/getting_started.org#how-to-extract-a-backtrace-from-an-error
 [configuration]: docs/getting_started.org#configuring-doom

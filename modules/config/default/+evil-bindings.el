@@ -4,7 +4,7 @@
   ;; NOTE SPC u replaces C-u as the universal argument.
 
   ;; Minibuffer
-  (define-key! evil-ex-completion-map
+  (define-key! :keymaps '(evil-ex-completion-map evil-ex-search-keymap)
     "C-a" #'evil-beginning-of-line
     "C-b" #'evil-backward-char
     "C-f" #'evil-forward-char
