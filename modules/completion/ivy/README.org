@@ -21,6 +21,7 @@
     - [[#general][General]]
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects)]]
     - [[#search][Search]]
+  - [[#regular-expression][Regular Expression]]
 - [[#configuration][Configuration]]
   - [[#enable-fuzzynon-fuzzy-search-for-specific-commands][Enable fuzzy/non-fuzzy search for specific commands]]
   - [[#change-the-position-of-the-ivy-childframe][Change the position of the ivy childframe]]
@@ -186,6 +187,13 @@ A wgrep buffer can be opened from swiper with =C-c C-e=.
 | =SPC s p= | Search project                            |
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
+
+** Regular Expression
+Regular expression can be used to perform more precise search. However,
+usage of regular expression *disables fuzzy search capabilities*.
+
+If you have =+fuzzy=, you can make use of this behaviour to perform non-fuzzy
+search
 
 * Configuration
 ** TODO Enable fuzzy/non-fuzzy search for specific commands
