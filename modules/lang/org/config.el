@@ -575,6 +575,9 @@ between the two."
         "C-c C-S-l"  #'+org/remove-link
         "C-c C-i"    #'org-toggle-inline-images
         ;; textmate-esque newline insertion
+        "C-RET"      #'+org/insert-item-below
+        "C-S-RET"    #'+org/insert-item-above
+        "C-M-RET"    #'org-insert-subheading
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
