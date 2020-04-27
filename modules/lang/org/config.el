@@ -168,12 +168,17 @@ This forces it to read the background before rendering."
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)))
 
-  (defadvice! +org-display-link-in-eldoc-a (orig-fn &rest args)
+  (after! org-eldoc
+    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in an 'org' src
+    ;;      block.
+    ;; TODO Should be reported upstream!
+    (puthash "org" "ignore" org-eldoc-local-functions-cache))
+
+  (defadvice! +org-display-link-in-eldoc-a (&rest args)
     "Display full link in minibuffer when cursor/mouse is over it."
-    :around #'org-eldoc-documentation-function
-    (or (when-let (link (org-element-property :raw-link (org-element-context)))
-          (format "Link: %s" link))
-        (apply orig-fn args)))
+    :before-until #'org-eldoc-documentation-function
+    (when-let (link (org-element-property :raw-link (org-element-context)))
+      (format "Link: %s" link)))
 
   ;; Automatic indent detection in org files is meaningless
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
