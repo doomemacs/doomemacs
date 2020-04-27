@@ -13,7 +13,7 @@
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
              org-roam-find-file
-             org-roam-graph-show
+             org-roam-graph
              org-roam-insert
              org-roam-switch-to-buffer
              org-roam-dailies-date
@@ -31,7 +31,7 @@
         :prefix ("m" . "org-roam")
         "b" #'org-roam-switch-to-buffer
         "f" #'org-roam-find-file
-        "g" #'org-roam-graph-show
+        "g" #'org-roam-graph
         "i" #'org-roam-insert
         "m" #'org-roam
         (:prefix ("d" . "by date")
