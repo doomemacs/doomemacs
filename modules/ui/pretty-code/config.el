@@ -167,7 +167,7 @@ Otherwise it sets the buffer-local composition table to a composition table enha
 
 (use-package! composite
   ;; Starting from emacs "28" because this code breaks without fe903c5
-  :when (and (version<= "28.0" emacs-version) (string-match-p "HARFBUZZ" system-configuration-features))
+  :when (and EMACS28+ (string-match-p "HARFBUZZ" system-configuration-features))
   :init
   (defvar composition-ligature-table (make-char-table nil))
   :config
@@ -177,12 +177,14 @@ Otherwise it sets the buffer-local composition table to a composition table enha
   (set-char-table-parent composition-ligature-table composition-function-table))
 
 ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
+;; using the same composition-function-table method
+;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
 ;; so use that instead if this module is enabled.
 (cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
        (mac-auto-operator-composition-mode))
       ;; Harfbuzz builds do not need font-specific ligature support
       ;; if they are above emacs-27
-      ((and (version<= "28.0" emacs-version)
+      ((and EMACS28+
             (string-match-p "HARFBUZZ" system-configuration-features)
             (not (null +prog-ligatures-modes)))
        nil)
