@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "14d6f95bec")
+  :pin "31068373dc")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
