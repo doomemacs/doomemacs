@@ -2,7 +2,7 @@
 
 # Doom Emacs
 
-[Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
+[Install](#install) • [Documentation] • [FAQ] • [Getting Started][getting-started] • [Contribute](#contribute)
 
 ![Made with Doom Emacs](https://img.shields.io/github/tag/hlissner/doom-emacs.svg?style=flat-square&label=release&color=58839b)
 ![Supports Emacs 26-27](https://img.shields.io/badge/Supports-Emacs_26.1_--_27.x-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
@@ -114,7 +114,7 @@ git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
 
-Then [read our Getting Started guide][getting-started] to be walked through
+Then read our [Getting Started][getting-started] guide to be walked through
 installing, configuring and maintaining Doom Emacs.
 
 It's a good idea to add `~/.emacs.d/bin` to your `PATH`! Other `bin/doom`
@@ -230,7 +230,6 @@ kind!
 [change-font]: docs/faq.org#how-do-i-change-the-fonts
 [modules]: docs/modules.org
 [popup-system]: modules/ui/popup/README.org
-[screenshots]: #screenshots
 
 [bindings]: modules/config/default/+evil-bindings.el
 [editorconfig]: http://editorconfig.org/
