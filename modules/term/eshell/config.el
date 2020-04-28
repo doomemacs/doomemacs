@@ -82,10 +82,6 @@ You should use `set-eshell-alias!' to change this.")
   ;; Enable autopairing in eshell
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
-  ;; Comapny completion integration
-  (when (featurep! :completion company)
-    (add-hook 'eshell-mode-hook #'company-mode))
-
   ;; Persp-mode/workspaces integration
   (when (featurep! :ui workspaces)
     (add-hook 'persp-activated-functions #'+eshell-switch-workspace-fn)
@@ -157,8 +153,6 @@ You should use `set-eshell-alias!' to change this.")
             [remap evil-delete-back-to-indentation] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
             [remap evil-window-vsplit]  #'+eshell/split-right
-
-            ;; Local-leader keybindings
             (:localleader
              "b" #'eshell-insert-buffer-name
              "e" #'eshell-insert-envvar
@@ -196,4 +190,6 @@ You should use `set-eshell-alias!' to change this.")
 
 ;; Active eshell-did-you-mean using its setup function which provides
 ;; its own hooks.
-(eshell-did-you-mean-setup)
+(use-package! eshell-did-you-mean
+  :after eshell
+  :config (eshell-did-you-mean-setup))

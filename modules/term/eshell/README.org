@@ -1,9 +1,17 @@
 #+TITLE:   term/eshell
-#+DATE:    April 17, 2020
-#+SINCE:   {replace with next tagged release version}
+#+DATE:    May 18, 2020
+#+SINCE:   v2.0
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module provides additional features for the built-in [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][Emacs Shell]]
@@ -30,7 +38,8 @@ company= is enabled.
   + [[https://github.com/szermatt/emacs-bash-completion][bash-completion]]
 
 * Prerequisites
-This module has no prerequisites.
+[[https://fishshell.com/][=fish= shell]] for completions, falling back to [[https://www.gnu.org/software/bash/][=bash= shell]] if =fish= is not
+found. If neither shell is found, completions may not be available.
 
 * Features
 + Command completion with Company

@@ -5,7 +5,7 @@
 (package! eshell-z :pin "337cb241e1")
 (package! shrink-path :pin "c14882c859")
 (package! esh-help :pin "417673ed18")
-(package! eshell-did-you-mean :pin "7cb6ef")
+(package! eshell-did-you-mean :pin "7cb6ef8e22")
 
 (when (featurep! :completion company)
   (package! fish-completion :pin "1038488181")
