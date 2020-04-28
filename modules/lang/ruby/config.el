@@ -172,7 +172,8 @@
 
 (use-package! projectile-rails
   :when (featurep! +rails)
-  :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
+  :hook (((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
+         ((inf-ruby-mode projectile-rails-server-mode) . doom-mark-buffer-as-real-h))
   :init
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
