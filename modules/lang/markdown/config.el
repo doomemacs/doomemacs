@@ -70,6 +70,7 @@ capture, the end position, and the output buffer.")
 
   (map! :map markdown-mode-map
         :localleader
+        "'" #'markdown-edit-code-block
         "o" #'markdown-open
         "p" #'markdown-preview
         "e" #'markdown-export

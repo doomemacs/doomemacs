@@ -71,6 +71,7 @@ The following vim plugins have been ported to evil:
 | vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
+| vim-unimpaired        | (provided by Doom)             | [[https://github.com/hlissner/doom-emacs/blob/develop/modules/editor/evil/config.el#L413-L460][see the list]]                               |
 
 This module has also ported vim-unimpaired keybinds to Emacs.
 

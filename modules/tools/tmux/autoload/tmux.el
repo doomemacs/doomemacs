@@ -104,7 +104,7 @@ but do not execute them."
   (if-let* ((lines
              (+tmux (format "list-windows %s -F '#{window_id};#{session_id};#{window_active};#{window_name};#{window_activity_flag}'"
                             (if session
-                                (concat "-t " (car session))
+                                (concat "-t " (shell-quote-argument (car session)))
                               "-a")))))
       (cl-loop for line in (split-string lines "\n" t)
                collect (let ((window (split-string line ";")))
@@ -122,7 +122,7 @@ but do not execute them."
                             (if sess-or-win
                                 (concat (if (string-prefix-p "$" (car sess-or-win)) "-s ")
                                         "-t "
-                                        (car sess-or-win))
+                                        (shell-quote-argument (car sess-or-win)))
                               "-a")))))
       (cl-loop for line in (split-string lines "\n" t)
                collect (let ((pane (split-string line ";")))

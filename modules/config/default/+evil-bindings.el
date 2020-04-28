@@ -4,9 +4,12 @@
   ;; NOTE SPC u replaces C-u as the universal argument.
 
   ;; Minibuffer
-  (define-key! evil-ex-completion-map
+  (define-key! :keymaps '(evil-ex-completion-map evil-ex-search-keymap)
     "C-a" #'evil-beginning-of-line
-    "C-b" #'evil-backward-char)
+    "C-b" #'evil-backward-char
+    "C-f" #'evil-forward-char
+    "C-j" #'next-complete-history-element
+    "C-k" #'previous-complete-history-element)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
@@ -15,16 +18,17 @@
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'doom/delete-backward-word
-    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-    ;; Scrolling lines
-    "C-j"    #'next-line
-    "C-k"    #'previous-line
-    "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command)
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo))))
 
-  (define-key! read-expression-map
-    "C-j" #'next-line-or-history-element
-    "C-k" #'previous-line-or-history-element))
+  (when (featurep! :editor evil +everywhere)
+    (define-key! :keymaps +default-minibuffer-maps
+      "C-j"    #'next-line
+      "C-k"    #'previous-line
+      "C-S-j"  #'scroll-up-command
+      "C-S-k"  #'scroll-down-command)
+    (define-key! read-expression-map
+      "C-j" #'next-line-or-history-element
+      "C-k" #'previous-line-or-history-element)))
 
 
 ;;
@@ -186,9 +190,9 @@
 
 ;;; :ui
 (map! (:when (featurep! :ui popup)
-        :n "C-`"   #'+popup/toggle
-        :n "C-~"   #'+popup/raise
-        :g "C-x p" #'+popup/other)
+        "C-`"   #'+popup/toggle
+        "C-~"   #'+popup/raise
+        "C-x p" #'+popup/other)
 
       (:when (featurep! :ui workspaces)
         :n "C-t"   #'+workspace/new
@@ -464,11 +468,15 @@
         :desc "Toggle org-clock"             "c" #'+org/toggle-clock
         :desc "Cancel org-clock"             "C" #'org-clock-cancel
         :desc "Open deft"                    "d" #'deft
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                  "e" #'org-noter)
+
         :desc "Find file in notes"           "f" #'+default/find-in-notes
         :desc "Browse notes"                 "F" #'+default/browse-notes
         :desc "Org store link"               "l" #'org-store-link
         :desc "Tags search"                  "m" #'org-tags-view
         :desc "Org capture"                  "n" #'org-capture
+        :desc "Goto capture"                 "N" #'org-capture-goto-target
         :desc "Active org-clock"             "o" #'org-clock-goto
         :desc "Todo list"                    "t" #'org-todo-list
         :desc "Search notes"                 "s" #'+default/org-notes-search
@@ -482,14 +490,14 @@
             :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
             :desc "Org Roam Capture" "c" #'org-roam-capture
             :desc "Find file"        "f" #'org-roam-find-file
-            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Show graph"       "g" #'org-roam-graph
             :desc "Insert"           "i" #'org-roam-insert
             :desc "Org Roam"         "r" #'org-roam
             (:prefix ("d" . "by date")
-              :desc "Arbitrary date" "d" #'org-roam-date
-              :desc "Today"          "t" #'org-roam-today
-              :desc "Tomorrow"       "m" #'org-roam-tomorrow
-              :desc "Yesterday"      "y" #'org-roam-yesterday)))
+              :desc "Arbitrary date" "d" #'org-roam-dailies-date
+              :desc "Today"          "t" #'org-roam-dailies-today
+              :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
+              :desc "Yesterday"      "y" #'org-roam-dailies-yesterday)))
 
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")

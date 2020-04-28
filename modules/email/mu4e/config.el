@@ -14,9 +14,11 @@
   :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
-  (setq mu4e-maildir "~/.mail"
-        mu4e-attachment-dir "~/.mail/.attachments"
-        mu4e-user-mail-address-list nil)
+  (when (or (not (require 'mu4e-meta nil t))
+            (version< mu4e-mu-version "1.4"))
+    (setq mu4e-maildir "~/.mail"
+          mu4e-user-mail-address-list nil))
+  (setq mu4e-attachment-dir "~/.mail/.attachments")
   :config
   (pcase +mu4e-backend
     (`mbsync
@@ -104,13 +106,13 @@
 (use-package! org-mu4e
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
-  (setq org-mu4e-link-query-in-headers-mode nil
-        org-mu4e-convert-to-html t)
+  (setq org-mu4e-convert-to-html t)
+  (when (version< mu4e-mu-version "1.4")
+    (setq org-mu4e-link-query-in-headers-mode nil))
 
   ;; Only render to html once. If the first send fails for whatever reason,
   ;; org-mu4e would do so each time you try again.
-  (add-hook! 'message-send-hook
-    (setq-local org-mu4e-convert-to-html nil)))
+  (setq-hook! 'message-send-hook org-mu4e-convert-to-html nil))
 
 
 ;;

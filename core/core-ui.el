@@ -138,10 +138,11 @@ size.")
 e.g. If you indent with spaces by default, tabs will be highlighted. If you
 indent with tabs, spaces at BOL are highlighted.
 
-Does nothing if `whitespace-mode' is already active or the current buffer is
-read-only or not file-visiting."
+Does nothing if `whitespace-mode' or 'global-whitespace-mode' is already 
+active or if the current buffer is read-only or not file-visiting."
   (unless (or (eq major-mode 'fundamental-mode)
               buffer-read-only
+              (bound-and-true-p global-whitespace-mode)
               (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
@@ -276,9 +277,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; useful information, like git-gutter and flycheck.
 (setq indicate-buffer-boundaries nil
       indicate-empty-lines nil)
-
-;; remove continuation arrow on right fringe
-(delq! 'continuation fringe-indicator-alist 'assq)
 
 
 ;;
@@ -421,7 +419,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (use-package! hl-line
   ;; Highlights the current line
-  :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
+  :hook ((prog-mode text-mode conf-mode special-mode) . hl-line-mode)
   :config
   ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
   ;; performance boost. I also don't need to see it in other buffers.
@@ -597,20 +595,25 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
       (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
         (load-theme doom-theme t)))))
 
-(defadvice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
-  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  :after-while #'load-theme
-  (unless no-enable
-    (setq doom-theme theme
-          doom-init-theme-p t)
-    (run-hooks 'doom-load-theme-hook)))
+(defadvice! doom--load-theme-a (orig-fn theme &optional no-confirm no-enable)
+  "Run `doom-load-theme-hook' on `load-theme' and fix its issues.
 
-(defadvice! doom--disable-enabled-themes-a (theme &optional _no-confirm no-enable)
-  "Disable previously enabled themes before loading a new one.
-Otherwise, themes can conflict with each other."
-  :after-while #'load-theme
-  (unless no-enable
-    (mapc #'disable-theme (remq theme custom-enabled-themes))))
+1. Disable previously enabled themes.
+2. Don't let face-remapping screw up loading the new theme
+   (*cough*`mixed-pitch-mode').
+3. Record the current theme in `doom-theme'."
+  :around #'load-theme
+  ;; HACK Run `load-theme' from an estranged buffer, where we can be assured
+  ;;      that buffer-local face remaps (by `mixed-pitch-mode', for instance)
+  ;;      won't interfere with changing themes.
+  (with-temp-buffer
+    (when-let (result (funcall orig-fn theme no-confirm no-enable))
+      (unless no-enable
+        (setq doom-theme theme
+              doom-init-theme-p t)
+        (mapc #'disable-theme (remq theme custom-enabled-themes))
+        (run-hooks 'doom-load-theme-hook))
+      result)))
 
 (unless EMACS27+
   ;; DEPRECATED Not needed in Emacs 27

@@ -8,6 +8,7 @@
   "Current version of Doom Emacs.")
 
 (defconst EMACS27+   (> emacs-major-version 26))
+(defconst EMACS28+   (> emacs-major-version 27))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
@@ -196,11 +197,12 @@ users).")
 (setq gnutls-verify-error (not (getenv "INSECURE"))
       gnutls-algorithm-priority
       (when (boundp 'libgnutls-version)
-        (concat "SECURE128:+SECURE192:-VERS-ALL:+VERS-TLS1.2"
+        (concat "SECURE128:+SECURE192:-VERS-ALL"
                 (if (and (not IS-WINDOWS)
                          (not (version< emacs-version "26.3"))
                          (>= libgnutls-version 30605))
-                    ":+VERS-TLS1.3")))
+                    ":+VERS-TLS1.3")
+                ":+VERS-TLS1.2"))
       ;; `gnutls-min-prime-bits' is set based on recommendations from
       ;; https://www.keylength.com/en/4/
       gnutls-min-prime-bits 3072
@@ -271,6 +273,11 @@ users).")
 ;; spells of inaccurate syntax highlighting right after scrolling, which should
 ;; quickly self-correct.
 (setq fast-but-imprecise-scrolling t)
+
+;; Font locking is the source of much slowness in Emacs. jit-lock-mode tries to
+;; defer fontification until the user is idle. This should help... in theory.
+(setq jit-lock-defer-time 0    ; only defer while processing input
+      jit-lock-stealth-time 2) ; fontify the rest of the buffer after a delay
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we halve startup times, particularly when we use

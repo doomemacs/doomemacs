@@ -144,13 +144,22 @@ directives. By default, this only recognizes C directives.")
     (when (eq major-mode 'fundamental-mode)
       (hack-local-variables)))
 
+  ;; HACK Invoking helpful from evil-ex throws a "No recursive edit is in
+  ;;      progress" error because, between evil-ex and helpful,
+  ;;      `abort-recursive-edit' gets called one time too many.
+  (defadvice! +evil--fix-helpful-key-in-evil-ex-a (key-sequence)
+    :before #'helpful-key
+    (when (evil-ex-p)
+      (run-at-time 0.1 nil #'helpful-key key-sequence)
+      (abort-recursive-edit)))
+
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
 
   ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
   ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
   ;; and one custom one: %:P (expand to the project root).
-  (advice-add #'evil-ex-replace-special-filenames :override #'+evil-resolve-vim-path-a)
+  (advice-add #'evil-ex-replace-special-filenames :override #'+evil-replace-filename-modifiers-a)
 
   ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
   (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-h)

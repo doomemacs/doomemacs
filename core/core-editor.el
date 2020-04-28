@@ -174,6 +174,8 @@ possible."
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 (push '("\\.log\\'" . text-mode) auto-mode-alist)
+(push '("rc\\'" . conf-mode) auto-mode-alist)
+(push '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode) auto-mode-alist)
 
 
 ;;
@@ -383,8 +385,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Reduced from the default of 5000 for slightly faster analysis
   (setq dtrt-indent-max-lines 2000)
 
-  ;; Add support for more languages
-  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level))
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 

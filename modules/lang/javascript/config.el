@@ -133,7 +133,9 @@
 ;;
 ;;; Tools
 
-(add-hook! '(js-mode-hook typescript-mode-hook web-mode-hook)
+(add-hook! '(js2-mode-local-vars-hook
+             typescript-mode-local-vars-hook
+             web-mode-local-vars-hook)
   (defun +javascript-init-lsp-or-tide-maybe-h ()
     "Start `lsp' or `tide' in the current buffer.
 
@@ -177,9 +179,11 @@ to tide."
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
-  (set-lookup-handlers! 'tide-mode
-    :definition '(tide-jump-to-definition :async t)
-    :references '(tide-references :async t))
+  (set-lookup-handlers! 'tide-mode :async t
+    :definition #'tide-jump-to-definition
+    :references #'tide-references
+    :documentation #'tide-documentation-at-point)
+  (set-popup-rule! "^\\*tide-documentation" :quit t)
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript-tide-project-root-a)
   ;; cleanup tsserver when no tide buffers are left
@@ -191,8 +195,6 @@ to tide."
   ;; support exists. It is set *after* tide-mode is enabled, so enabling it on
   ;; `tide-mode-hook' is too early, so...
   (advice-add #'tide-setup :after #'eldoc-mode)
-
-  (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
   (map! :localleader
         :map tide-mode-map
@@ -237,13 +239,6 @@ to tide."
     (add-hook 'js2-refactor-mode-hook #'evil-normalize-keymaps)
     (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
       (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
-
-
-(use-package! eslintd-fix
-  :commands eslintd-fix
-  :config
-  (setq-hook! 'eslintd-fix-mode-hook
-    flycheck-javascript-eslint-executable eslintd-fix-executable))
 
 
 ;;;###package skewer-mode
@@ -292,10 +287,11 @@ to tide."
            web-mode
            markdown-mode
            js-mode
+           json-mode
            typescript-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks '(+javascript-add-node-modules-path-h npm-mode))
+  :add-hooks '(add-node-modules-path npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))

@@ -13,8 +13,8 @@
   :config
   (set-repl-handler! 'racket-mode #'+racket/open-repl)
   (set-lookup-handlers! 'racket-mode
-    :definition    #'racket-visit-definition
-    :documentation #'racket-describe)
+    :definition    #'racket-xp-visit-definition
+    :documentation #'racket-xp-describe)
   (set-docsets! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
     :lambda  "lambda"

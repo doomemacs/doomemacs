@@ -15,9 +15,6 @@ Emacs.")
       "fd")
   "name of `fd-find' executable binary")
 
-(defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
-  "Where to save project file cache timers.")
-
 
 ;;
 ;;; Packages
@@ -42,6 +39,16 @@ Emacs.")
 
   :config
   (projectile-mode +1)
+
+  ;; REVIEW Resolve the project root once, when the file/buffer is opened. This
+  ;;        speeds up projectile's project root resolution by leaps, but does
+  ;;        put you at risk of having a stale project root.
+  (setq-hook! '(after-change-major-mode-hook
+                ;; In case the user saves the file to a new location
+                after-save-hook
+                ;; ...or makes external changes then returns to Emacs
+                focus-in-hook)
+    projectile-project-root (if default-directory (doom-project-root)))
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;

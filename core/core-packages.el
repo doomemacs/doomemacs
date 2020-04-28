@@ -94,7 +94,7 @@ missing) and shouldn't be deleted.")
 ;;; Straight
 
 (setq straight-base-dir doom-local-dir
-      straight-repository-branch "develop"
+      straight-repository-branch "master"
       straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom sync' instant (once everything set up), which is much nicer

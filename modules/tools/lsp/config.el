@@ -213,6 +213,39 @@ auto-killed (which is a potentially expensive process)."
       :references 'lsp-ui-peek-find-references)))
 
 
+(use-package! company-lsp
+  :defer t
+  :config
+  (setq company-lsp-cache-candidates 'auto)
+  ;; HACK Fix tigersoldier/company-lsp#128 causing company-lsp results to
+  ;;      display candidates that are unrelated to the prefix. Source:
+  ;;      emacs-lsp/lsp-python-ms#79
+  (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
+  (defadvice! +company---fix-lsp-caching-on-competion-a (response prefix)
+    :override #'company-lsp--on-completion
+    (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+           (items (cond ((hash-table-p response) (gethash "items" response))
+                        ((sequencep response) response)))
+           (candidates (mapcar (lambda (item)
+                                 (company-lsp--make-candidate item prefix))
+                               (lsp--sort-completions items)))
+           (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+           (should-filter (or
+                           ;; CHANGE BEGIN
+                           (eq company-lsp-cache-candidates t)
+                           ;; CHANGE END
+                           (and (null company-lsp-cache-candidates)
+                                (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+      (when (null company-lsp--completion-cache)
+        (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+        (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+      (when (eq company-lsp-cache-candidates 'auto)
+        (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+      (if should-filter
+          (company-lsp--filter-candidates candidates prefix)
+        candidates))))
+
+
 (use-package! helm-lsp
   :when (featurep! :completion helm)
   :commands helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)

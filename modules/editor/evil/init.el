@@ -258,6 +258,9 @@ and complains if a module is loaded too early (during startup)."
     (+evil-collection-init 'elisp-mode))
   (add-transient-hook! 'occur-mode
     (+evil-collection-init '(occur replace)))
+  (add-transient-hook! 'minibuffer-setup-hook
+    (when evil-collection-setup-minibuffer
+      (+evil-collection-init 'minibuffer)))
 
   ;; HACK Do this ourselves because evil-collection break's `eval-after-load'
   ;;      load order by loading their target plugin before applying keys. This

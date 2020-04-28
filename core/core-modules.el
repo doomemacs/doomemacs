@@ -481,39 +481,6 @@ WARNINGS:
                (lambda () ,@body)
                'append)))
 
-(defmacro require! (category module &rest flags)
-  "Loads the CATEGORY MODULE module with FLAGS.
-
-CATEGORY is a keyword, MODULE is a symbol and FLAGS are symbols.
-
-  (require! :lang php +lsp)
-
-This is for testing and internal use. This is not the correct way to enable a
-module."
-  `(let ((doom-modules (or ,doom-modules (doom-modules)))
-         (module-path (doom-module-locate-path ,category ',module)))
-     (doom-module-set
-      ,category ',module
-      (let ((plist (doom-module-get ,category ',module)))
-        ,(when flags
-           `(plist-put plist :flags `,flags))
-        (unless (plist-member plist :path)
-          (plist-put plist :path ,(doom-module-locate-path category module)))
-        plist))
-     (if (directory-name-p module-path)
-         (condition-case-unless-debug ex
-             (let ((doom--current-module ',(cons category module))
-                   (doom--current-flags ',flags))
-               (load! "init" module-path :noerror)
-               (load! "config" module-path :noerror))
-           ('error
-            (lwarn 'doom-modules :error
-                   "%s in '%s %s' -> %s"
-                   (car ex) ,category ',module
-                   (error-message-string ex))))
-       (warn 'doom-modules :warning "Couldn't find module '%s %s'"
-             ,category ',module))))
-
 (defmacro featurep! (category &optional module flag)
   "Returns t if CATEGORY MODULE is enabled.
 
@@ -537,19 +504,6 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
                          category module flag (file!)))
                 (memq category (doom-module-get (car module) (cdr module) :flags)))))
        t))
-
-;; DEPRECATED
-(defmacro def-package! (&rest args)
-  "Do not use this macro. Use `use-package!' instead."
-  (warn "`def-package!' is deprecated and was renamed to `use-package!'")
-  `(use-package! ,@args))
-(make-obsolete 'def-package! 'use-package! "2.0.9")
-
-(defmacro def-package-hook! (&rest args)
-  "Do not use this macro. Use `use-package!' instead."
-  (warn "`def-package-hook!' is deprecated and was renamed to `use-package-hook!'")
-  `(use-package-hook! ,@args))
-(make-obsolete 'def-package-hook! 'use-package-hook! "2.0.9")
 
 (provide 'core-modules)
 ;;; core-modules.el ends here

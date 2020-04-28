@@ -129,6 +129,12 @@
           (cond ((featurep! :completion ivy)   #'ivy-bibtex)
                 ((featurep! :completion helm)  #'helm-bibtex)))
 
+        :desc "Toggle org-clock"               "c" #'+org/toggle-clock
+        :desc "Cancel org-clock"               "C" #'org-clock-cancel
+        :desc "Open deft"                      "d" #'deft
+        (:when (featurep! :lang org +noter)
+          :desc "Org noter"                    "e" #'org-noter)
+      
         :desc "Find file in notes"             "f" #'+default/find-in-notes
         :desc "Browse notes"                   "F" #'+default/browse-notes
         :desc "Org store link"                 "l" #'org-store-link
@@ -151,14 +157,14 @@
             :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
             :desc "Org Roam Capture" "c" #'org-roam-capture
             :desc "Find file"        "f" #'org-roam-find-file
-            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Show graph"       "g" #'org-roam-graph
             :desc "Insert"           "i" #'org-roam-insert
             :desc "Org Roam"         "r" #'org-roam
             (:prefix ("d" . "by date")
-              :desc "Arbitrary date" "d" #'org-roam-date
-              :desc "Today"          "t" #'org-roam-today
-              :desc "Tomorrow"       "m" #'org-roam-tomorrow
-              :desc "Yesterday"      "y" #'org-roam-yesterday))))
+              :desc "Arbitrary date" "d" #'org-roam-dailies-date
+              :desc "Today"          "t" #'org-roam-dailies-today
+              :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
+              :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))))
 
       ;;; <leader> o --- open
       "o" nil ; we need to unbind it first as Org claims this prefix
@@ -535,14 +541,4 @@
       ;;; treemacs
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
-        "<C-f9>" #'+treemacs/find-file)
-
-      ;;; yasnippet
-      (:after yasnippet
-        :map yas-keymap  ; keymap while editing an inserted snippet
-        "C-e"           #'+snippets/goto-end-of-field
-        "C-a"           #'+snippets/goto-start-of-field
-        "<S-tab>"       #'yas-prev-field
-        "<M-backspace>" #'+snippets/delete-to-start-of-field
-        [backspace]     #'+snippets/delete-backward-char
-        [delete]        #'+snippets/delete-forward-char-or-field))
+        "<C-f9>" #'+treemacs/find-file))

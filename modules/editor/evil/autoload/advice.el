@@ -7,7 +7,7 @@
     (call-interactively #'doom/escape)))
 
 ;;;###autoload
-(defun +evil-resolve-vim-path-a (file-name)
+(defun +evil-replace-filename-modifiers-a (file-name)
   "Take a path and resolve any vim-like filename modifiers in it. This adds
 support for most vim file modifiers, as well as:
 
@@ -15,66 +15,65 @@ support for most vim file modifiers, as well as:
 
 See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers for
 more information on modifiers."
-  (let (case-fold-search)
+  (let ((origin-buffer (current-buffer))
+        case-fold-search)
     (with-temp-buffer
-      (save-excursion (insert file-name))
-      (while (re-search-forward "\\(^\\|[^\\\\]\\)\\(\\([%#]\\)\\(:\\([PphtreS~.]\\|g?s\\)\\)*\\)" nil t)
-        (catch 'continue
-          (unless buffer-file-name
-            (replace-match (match-string 1) t t nil 2)
-            (throw 'continue t))
-          (let ((beg (match-beginning 2))
-                (end (match-end 3))
-                (path (pcase (match-string 3)
-                        ("%" (file-relative-name buffer-file-name))
-                        ("#" (and (other-buffer)
-                                  (buffer-file-name (other-buffer)))))))
-            (save-match-data
-              (goto-char beg)
-              (while (re-search-forward ":\\([PphtreS~.]\\|g?s\\)" (+ (point) 3) t)
-                (let* ((modifier (match-string 1))
-                       (global (string-prefix-p "gs" modifier)))
-                  (when global
-                    (setq modifier (substring modifier 1)))
-                  (setq end (match-end 1)
-                        path
-                        (or (when path
-                              (pcase (substring modifier 0 1)
-                                ("p" (expand-file-name path))
-                                ("~" (concat "~/" (file-relative-name path "~")))
-                                ("." (file-relative-name path default-directory))
-                                ("t" (file-name-nondirectory (directory-file-name path)))
-                                ("r" (file-name-sans-extension path))
-                                ("e" (file-name-extension path))
-                                ("S" (shell-quote-argument path))
-                                ("h"
-                                 (let ((parent (file-name-directory (expand-file-name path))))
-                                   (unless (file-equal-p path parent)
-                                     (if (file-name-absolute-p path)
-                                         (directory-file-name parent)
-                                       (file-relative-name parent)))))
-                                ("s"
-                                 (if (featurep 'evil)
-                                     (when-let (args (evil-delimited-arguments (substring modifier 1) 2))
-                                       (let ((pattern (evil-transform-vim-style-regexp (car args)))
-                                             (replace (cadr args)))
-                                         (replace-regexp-in-string
-                                          (if global pattern (concat "\\(" pattern "\\).*\\'"))
-                                          (evil-transform-vim-style-regexp replace) path t t
-                                          (unless global 1))))
-                                   path))
-                                ("P"
-                                 (let ((project-root (doom-project-root (file-name-directory (expand-file-name path)))))
-                                   (unless project-root
-                                     (user-error "Not in a project"))
-                                   (abbreviate-file-name project-root)))))
-                            ""))
-                  ;; strip trailing slash, if applicable
-                  (or (string-empty-p path)
-                      (not (equal (substring path -1) "/"))
-                      (setq path (substring path 0 -1))))))
-            (replace-match path t t nil 2))))
-      (replace-regexp-in-string "\\\\\\([#%]\\)" "\\1" (buffer-string) t))))
+      (let ((buffer-file-name (buffer-file-name origin-buffer)))
+        (save-excursion (insert file-name))
+        (while (re-search-forward "\\(^\\|[^\\\\]\\)\\(\\([%#]\\)\\(:\\([PphtreS~.]\\|g?s\\)\\)*\\)" nil t)
+          (if (null buffer-file-name)
+              (replace-match (match-string 1) t t nil 2)
+            (let ((beg (match-beginning 2))
+                  (end (match-end 3))
+                  (path (pcase (match-string 3)
+                          ("%" (file-relative-name buffer-file-name default-directory))
+                          ("#" (and (other-buffer origin-buffer)
+                                    (buffer-file-name (other-buffer origin-buffer)))))))
+              (save-match-data
+                (goto-char beg)
+                (while (re-search-forward ":\\([PphtreS~.]\\|g?s\\)" (+ (point) 3) t)
+                  (let* ((modifier (match-string 1))
+                         (global (string-prefix-p "gs" modifier)))
+                    (when global
+                      (setq modifier (substring modifier 1)))
+                    (setq end (match-end 1)
+                          path
+                          (pcase (and path (substring modifier 0 1))
+                            (`nil "")
+                            ("p" (expand-file-name path))
+                            ("~" (concat "~/" (file-relative-name path "~")))
+                            ("." (file-relative-name path))
+                            ("t" (file-name-nondirectory (directory-file-name path)))
+                            ("r" (file-name-sans-extension path))
+                            ("e" (file-name-extension path))
+                            ("S" (shell-quote-argument path))
+                            ("h"
+                             (let ((parent (file-name-directory (expand-file-name path))))
+                               (unless (file-equal-p path parent)
+                                 (if (file-name-absolute-p path)
+                                     (directory-file-name parent)
+                                   (file-relative-name parent)))))
+                            ("s"
+                             (if (featurep 'evil)
+                                 (when-let (args (evil-delimited-arguments (substring modifier 1) 2))
+                                   (let ((pattern (evil-transform-vim-style-regexp (car args)))
+                                         (replace (cadr args)))
+                                     (replace-regexp-in-string
+                                      (if global pattern (concat "\\(" pattern "\\).*\\'"))
+                                      (evil-transform-vim-style-regexp replace) path t t
+                                      (unless global 1))))
+                               path))
+                            ("P"
+                             (let ((project-root (doom-project-root (file-name-directory (expand-file-name path)))))
+                               (unless project-root
+                                 (user-error "Not in a project"))
+                               (abbreviate-file-name project-root)))))
+                    ;; strip trailing slash, if applicable
+                    (or (string-empty-p path)
+                        (not (equal (substring path -1) "/"))
+                        (setq path (substring path 0 -1))))))
+              (replace-match path t t nil 2))))
+        (replace-regexp-in-string "\\\\\\([#%]\\)" "\\1" (buffer-string) t)))))
 
 (defun +evil--insert-newline (&optional above _noextranewline)
   (let ((pos (save-excursion (beginning-of-line-text) (point)))

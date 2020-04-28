@@ -910,7 +910,7 @@ also be helpful for debugging.
 + define-key
 + global-set-key
 + map!
-+ unmap!
++ undefine-key!
 + define-key!
 
 ** Writing your own modules

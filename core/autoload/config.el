@@ -76,7 +76,7 @@ Runs `doom-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
-    (warn "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
+    (message "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
   ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))

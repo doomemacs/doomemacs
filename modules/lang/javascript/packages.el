@@ -8,9 +8,9 @@
 (package! typescript-mode :pin "102587e458")
 
 ;; Tools
-(package! eslintd-fix :pin "0c431141be")
 (package! js2-refactor :pin "d4c40b5fc8")
 (package! npm-mode :pin "3ee7c0bad5")
+(package! add-node-modules-path :pin "f31e69ccb6")
 
 ;; Eval
 (package! nodejs-repl :pin "6fad7d764f")

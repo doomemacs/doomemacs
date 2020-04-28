@@ -33,6 +33,8 @@ Provide a helping hand when working with LaTeX documents.
 ** Module Flags
 + =+latexmk= Use LatexMk instead of LaTeX to compile documents.
 + =+cdlatex= Enable [[https://github.com/cdominik/cdlatex][cdlatex]] for fast math insertion.
++ =+lsp= Start LSP automatically in `tex-mode-hook`. This requires the =:tools
+  lsp= module. Supported servers are `digestif` and `TexLab`.
 + =+fold= Use TeX-fold (from auctex) to fold LaTeX macros to unicode, and make
   folding hook-based and less manual.
 
