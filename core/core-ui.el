@@ -105,7 +105,10 @@ size.")
 (defun doom-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
   (let ((gc-cons-threshold most-positive-fixnum))
     (if (or doom-inhibit-switch-buffer-hooks
-            (eq (current-buffer) (get-buffer buffer-or-name))
+            (eq (current-buffer)
+                (get-buffer (or buffer-or-name
+                                (if (eq orig-fn #'switch-to-buffer)
+                                    (other-buffer)))))
             (and (eq orig-fn #'switch-to-buffer) (car args)))
         (apply orig-fn buffer-or-name args)
       (let ((doom-inhibit-switch-buffer-hooks t)
