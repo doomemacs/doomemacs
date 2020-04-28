@@ -168,12 +168,6 @@ This forces it to read the background before rendering."
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)))
 
-  (after! org-eldoc
-    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in an 'org' src
-    ;;      block.
-    ;; TODO Should be reported upstream!
-    (puthash "org" "ignore" org-eldoc-local-functions-cache))
-
   (defadvice! +org-display-link-in-eldoc-a (&rest args)
     "Display full link in minibuffer when cursor/mouse is over it."
     :before-until #'org-eldoc-documentation-function
@@ -500,6 +494,13 @@ eldoc string."
                       (org-add-props fixedpart
                           nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
              width prefix separator))
+
+  (after! org-eldoc
+    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
+    ;;      'python' src blocks.
+    ;; TODO Should be reported upstream!
+    (puthash "org" #'ignore org-eldoc-local-functions-cache)
+    (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
 
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
