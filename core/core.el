@@ -465,34 +465,24 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
 unreadable. Returns the names of envvars that were changed."
   (if (not (file-readable-p file))
       (unless noerror
-        (signal 'file-error (list "Couldn't read envvar file" file)))
-    (let (envvars environment)
-      (with-temp-buffer
-        (save-excursion
-          (insert "\n")
-          (insert-file-contents file))
-        (while (re-search-forward "\n *\\([^#= \n]*\\)=" nil t)
-          (push (match-string 1) envvars)
-          (push (buffer-substring
-                 (match-beginning 1)
-                 (1- (or (save-excursion
-                           (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                             (line-beginning-position)))
-                         (point-max))))
-                environment)))
-      (when environment
-        (setq process-environment
-              (append (nreverse environment) process-environment)
-              exec-path
-              (if (member "PATH" envvars)
-                  (append (split-string (getenv "PATH") path-separator t)
-                          (list exec-directory))
-                exec-path)
-              shell-file-name
-              (if (member "SHELL" envvars)
-                  (or (getenv "SHELL") shell-file-name)
-                shell-file-name))
-        envvars))))
+        (signal 'file-error (list "No envvar file exists" file)))
+    (when-let
+        (env
+         (with-temp-buffer
+           (save-excursion
+             (insert "\0\n") ; to prevent off-by-one
+             (insert-file-contents file))
+           (save-match-data
+             (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
+               (setq
+                env (split-string (buffer-substring (match-beginning 1) (point-max))
+                                  "\0\n"
+                                  'omit-nulls))))))
+      (setq process-environment (append (nreverse env) process-environment)
+            exec-path (append (split-string (getenv "PATH") path-separator t)
+                              (list exec-directory))
+            shell-file-name (or (getenv "SHELL") shell-file-name))
+      env)))
 
 (defun doom-initialize (&optional force-p noerror)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
