@@ -43,7 +43,7 @@ Emacs.")
   ;; REVIEW Resolve the project root once, when the file/buffer is opened. This
   ;;        speeds up projectile's project root resolution by leaps, but does
   ;;        put you at risk of having a stale project root.
-  (setq-hook! '(after-change-major-mode-hook
+  (setq-hook! '(change-major-mode-after-body-hook
                 ;; In case the user saves the file to a new location
                 after-save-hook
                 ;; ...or makes external changes then returns to Emacs
