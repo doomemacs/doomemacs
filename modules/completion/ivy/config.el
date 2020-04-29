@@ -129,7 +129,11 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                  (ivy-rich-counsel-function-docstring (:face font-lock-doc-face))))
               ;; Apply switch buffer transformers to `counsel-projectile-switch-to-buffer' as well
               'counsel-projectile-switch-to-buffer
-              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
+              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer)
+              'counsel-bookmark
+              '(:columns
+                ((ivy-rich-candidate (:width 0.5))
+                 (ivy-rich-bookmark-filename (:width 60)))))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
