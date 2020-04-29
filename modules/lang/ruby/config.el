@@ -22,6 +22,7 @@
     (add-hook 'ruby-mode-local-vars-hook #'lsp!))
 
   (after! inf-ruby
+    (add-hook 'inf-ruby-mode-hook #'doom-mark-buffer-as-real-h)
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
     (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
@@ -172,8 +173,8 @@
 
 (use-package! projectile-rails
   :when (featurep! +rails)
-  :hook (((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
-         ((inf-ruby-mode projectile-rails-server-mode) . doom-mark-buffer-as-real-h))
+  :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
+  :hook (projectile-rails-server-mode . doom-mark-buffer-as-real-h)
   :init
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
