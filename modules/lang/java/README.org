@@ -1,0 +1,114 @@
+#+TITLE:   lang/java
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+- [[#prerequisites][Prerequisites]]
+  - [[#openjdk-11][OpenJDK 11]]
+    - [[#ubuntu][Ubuntu]]
+    - [[#fedora][Fedora]]
+  - [[#oracle-jdk-11][Oracle JDK 11]]
+    - [[#ubuntu-1][Ubuntu]]
+    - [[#fedora-1][Fedora]]
+- [[#features][Features]]
+  - [[#lsp-features][=+lsp= features]]
+  - [[#meghanada-features][=+meghanada= features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds [[https://www.java.com][java]] support to Doom Emacs, including =android-mode= and
+=groovy-mode=.
+
+** Module Flags
++ =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
++ =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
+
+The =+lsp= and =+meghanada= packages are mutually exclusive and do not work
+together. At the time of writing the =+meghanada= is already configured whereas
+=+lsp= needs to manual configuring.
+
+* Prerequisites
+This module requires the Java SDK.
+
+** OpenJDK 11
+*** Ubuntu
+#+BEGIN_SRC sh
+sudo apt-get install openjdk-11-jdk-headless
+#+END_SRC
+*** Fedora
+#+BEGIN_SRC sh
+sudo dnf install java-11-openjdk
+#+END_SRC
+
+** Oracle JDK 11
+*** Ubuntu
+#+BEGIN_SRC sh
+sudo add-apt-repository ppa:linuxuprising/java
+sudo apt update
+sudo apt install oracle-java11-installer
+sudo apt install oracle-java11-set-default
+#+END_SRC
+*** Fedora
+#+BEGIN_SRC sh
+curl -O https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+tar zxvf openjdk-11.0.2_linux-x64_bin.tar.gz
+sudo mv jdk-11.0.2/ /usr/local/
+#+END_SRC
+
+Open =/etc/profile.d/jdk11.sh= as root and add
+
+#+BEGIN_SRC sh
+export JAVA_HOME=/usr/local/jdk-11.0.2
+export PATH=$PATH:$JAVA_HOME/bin
+#+END_SRC
+
+Save the file and source the file
+
+#+BEGIN_SRC sh
+source /etc/profile.d/jdk11.sh
+java -version
+#+END_SRC
+
+* Features
+** =+lsp= features
+According to [[https://github.com/emacs-lsp/lsp-java]] it adds
+
++ As you type reporting of parsing and compilation errors (via flycheck/[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]])
++ Code completion - using [[https://github.com/tigersoldier/company-lsp][company-lsp]] or builtin complete-at-point
++ Javadoc hovers - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code actions - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code outline - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html][imenu]]
++ Code navigation - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Code lens (references/implementations) - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Highlights
++ Code formatting
++ Maven pom.xml project support
++ Limited Gradle support
++ Visual debugger - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Test runner - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Project explorer integration - [[https://github.com/Alexander-Miller/treemacs][treemacs]]
++ Integration with [[https://start.spring.io/][Spring Initializr]]
+
+** =+meghanada= features
+According to [[https://github.com/mopemope/meghanada-emacs/]] it adds
+
++ Auto-update server module
++ [[https://gradle.org/][Gradle]] and [[http://maven.apache.org/][Maven]] and Eclipse project support
++ No need build tool's plugin
++ Run build tool task
++ Compile your project
++ Syntax check and analyze java source (=flycheck-meghanada=)
++ Support =Generic Types=
++ Code completion with [[http://company-mode.github.io/][company-mode]] (=company-meghanada=)
++ Optimize import and sort
++ Jump declaration
++ Run [[http://www.junit.org/][JUnit]] test (include test runner)
++ Diagnostic reporting with [[http://flycheck.org/][flycheck]] (=flycheck-meghanada=)
++ Show symbol's type info with =el-doc=
++ Search references
++ Full-featured text search
+
+* TODO Configuration
