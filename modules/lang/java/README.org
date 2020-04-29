@@ -6,13 +6,13 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
-  - [[#lsp-features][=+lsp= features]]
-  - [[#meghanada-features][=+meghanada= features]]
 - [[#prerequisites][Prerequisites]]
   - [[#java][Java]]
     - [[#openjdk-11][OpenJDK 11]]
     - [[#oracle-jdk-11][Oracle JDK 11]]
 - [[#features][Features]]
+  - [[#lsp-features][=+lsp= features]]
+  - [[#meghanada-features][=+meghanada= features]]
 - [[#configuration][Configuration]]
 
 * Description
