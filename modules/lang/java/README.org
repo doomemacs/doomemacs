@@ -7,60 +7,65 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
 - [[#prerequisites][Prerequisites]]
-  - [[#java][Java]]
-    - [[#openjdk-11][OpenJDK 11]]
-    - [[#oracle-jdk-11][Oracle JDK 11]]
+  - [[#openjdk-11][OpenJDK 11]]
+    - [[#ubuntu][Ubuntu]]
+    - [[#fedora][Fedora]]
+  - [[#oracle-jdk-11][Oracle JDK 11]]
+    - [[#ubuntu-1][Ubuntu]]
+    - [[#fedora-1][Fedora]]
 - [[#features][Features]]
   - [[#lsp-features][=+lsp= features]]
   - [[#meghanada-features][=+meghanada= features]]
 - [[#configuration][Configuration]]
 
 * Description
-This module adds [[https://www.java.com][java]] support as well as adds the =android-mode= and the =groovy-mode=.
+This module adds [[https://www.java.com][java]] support to Doom Emacs, including =android-mode= and
+=groovy-mode=.
 
 ** Module Flags
++ =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
++ =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
+
 The =+lsp= and =+meghanada= packages are mutually exclusive and do not work
 together. At the time of writing the =+meghanada= is already configured whereas
 =+lsp= needs to manual configuring.
 
-+ =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
-+ =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
-
 * Prerequisites
-** Java
-*** OpenJDK 11
-**** Ubuntu
+This module requires the Java SDK.
+
+** OpenJDK 11
+*** Ubuntu
 #+BEGIN_SRC sh
 sudo apt-get install openjdk-11-jdk-headless
 #+END_SRC
-**** Fedora
+*** Fedora
 #+BEGIN_SRC sh
 sudo dnf install java-11-openjdk
 #+END_SRC
 
-*** Oracle JDK 11
-**** Ubuntu
+** Oracle JDK 11
+*** Ubuntu
 #+BEGIN_SRC sh
 sudo add-apt-repository ppa:linuxuprising/java
 sudo apt update
 sudo apt install oracle-java11-installer
 sudo apt install oracle-java11-set-default
 #+END_SRC
-**** Fedora
+*** Fedora
 #+BEGIN_SRC sh
 curl -O https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
 tar zxvf openjdk-11.0.2_linux-x64_bin.tar.gz
 sudo mv jdk-11.0.2/ /usr/local/
 #+END_SRC
 
-open =/etc/profile.d/jdk11.sh= as root and add
+Open =/etc/profile.d/jdk11.sh= as root and add
 
 #+BEGIN_SRC sh
 export JAVA_HOME=/usr/local/jdk-11.0.2
 export PATH=$PATH:$JAVA_HOME/bin
 #+END_SRC
 
-save the file and source the file
+Save the file and source the file
 
 #+BEGIN_SRC sh
 source /etc/profile.d/jdk11.sh
