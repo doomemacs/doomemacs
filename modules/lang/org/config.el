@@ -120,9 +120,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
-  ;; Fontify latex blocks and entities, but not natively -- that's too slow
-  (setq org-highlight-latex-and-related '(latex script entities))
-
   (plist-put org-format-latex-options :scale 1.5) ; larger previews
   (add-hook! 'doom-load-theme-hook
     (defun +org-refresh-latex-background-h ()
