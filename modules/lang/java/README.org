@@ -1,6 +1,6 @@
 #+TITLE:   lang/java
-#+DATE:    March 13, 2020
-#+SINCE:   v2.0
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
@@ -25,44 +25,6 @@ together. At the time of writing the =+meghanada= is already configured whereas
 
 + =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
 + =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
-
-** =+lsp= features
-According to [[https://github.com/emacs-lsp/lsp-java]] it adds
-
-+ As you type reporting of parsing and compilation errors (via flycheck/[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]])
-+ Code completion - using [[https://github.com/tigersoldier/company-lsp][company-lsp]] or builtin complete-at-point
-+ Javadoc hovers - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
-+ Code actions - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
-+ Code outline - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html][imenu]]
-+ Code navigation - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
-+ Code lens (references/implementations) - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
-+ Highlights
-+ Code formatting
-+ Maven pom.xml project support
-+ Limited Gradle support
-+ Visual debugger - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
-+ Test runner - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
-+ Project explorer integration - [[https://github.com/Alexander-Miller/treemacs][treemacs]]
-+ Integration with [[https://start.spring.io/][Spring Initializr]]
-
-** =+meghanada= features
-According to [[https://github.com/mopemope/meghanada-emacs/]] it adds
-
-+ Auto-update server module
-+ [[https://gradle.org/][Gradle]] and [[http://maven.apache.org/][Maven]] and Eclipse project support
-+ No need build tool's plugin
-+ Run build tool task
-+ Compile your project
-+ Syntax check and analyze java source (=flycheck-meghanada=)
-+ Support =Generic Types=
-+ Code completion with [[http://company-mode.github.io/][company-mode]] (=company-meghanada=)
-+ Optimize import and sort
-+ Jump declaration
-+ Run [[http://www.junit.org/][JUnit]] test (include test runner)
-+ Diagnostic reporting with [[http://flycheck.org/][flycheck]] (=flycheck-meghanada=)
-+ Show symbol's type info with =el-doc=
-+ Search references
-+ Full-featured text search
 
 * Prerequisites
 ** Java
@@ -105,5 +67,43 @@ source /etc/profile.d/jdk11.sh
 java -version
 #+END_SRC
 
-* TODO Features
+* Features
+** =+lsp= features
+According to [[https://github.com/emacs-lsp/lsp-java]] it adds
+
++ As you type reporting of parsing and compilation errors (via flycheck/[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]])
++ Code completion - using [[https://github.com/tigersoldier/company-lsp][company-lsp]] or builtin complete-at-point
++ Javadoc hovers - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code actions - using [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ Code outline - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html][imenu]]
++ Code navigation - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Code lens (references/implementations) - using builtin [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
++ Highlights
++ Code formatting
++ Maven pom.xml project support
++ Limited Gradle support
++ Visual debugger - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Test runner - [[https://github.com/yyoncho/dap-mode/][dap-mode]]
++ Project explorer integration - [[https://github.com/Alexander-Miller/treemacs][treemacs]]
++ Integration with [[https://start.spring.io/][Spring Initializr]]
+
+** =+meghanada= features
+According to [[https://github.com/mopemope/meghanada-emacs/]] it adds
+
++ Auto-update server module
++ [[https://gradle.org/][Gradle]] and [[http://maven.apache.org/][Maven]] and Eclipse project support
++ No need build tool's plugin
++ Run build tool task
++ Compile your project
++ Syntax check and analyze java source (=flycheck-meghanada=)
++ Support =Generic Types=
++ Code completion with [[http://company-mode.github.io/][company-mode]] (=company-meghanada=)
++ Optimize import and sort
++ Jump declaration
++ Run [[http://www.junit.org/][JUnit]] test (include test runner)
++ Diagnostic reporting with [[http://flycheck.org/][flycheck]] (=flycheck-meghanada=)
++ Show symbol's type info with =el-doc=
++ Search references
++ Full-featured text search
+
 * TODO Configuration
