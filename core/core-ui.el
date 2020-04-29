@@ -412,13 +412,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (set-window-configuration doom--ediff-saved-wconf)))))
 
 
-(use-package! goto-addr
-  :hook (text-mode . goto-address-mode)
-  :hook (prog-mode . goto-address-prog-mode)
-  :config
-  (define-key goto-address-highlight-keymap (kbd "RET") #'goto-address-at-point))
-
-
 (use-package! hl-line
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode special-mode) . hl-line-mode)
