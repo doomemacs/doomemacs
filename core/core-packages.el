@@ -269,9 +269,13 @@ elsewhere."
                recipe
              ;; Expand :local-repo from current directory
              (when local-repo
-               (plist-put! plist :recipe
-                           (plist-put recipe :local-repo
-                                      (expand-file-name local-repo ,(dir!)))))))
+               (plist-put!
+                plist :recipe
+                (plist-put recipe :local-repo
+                           (let ((local-path (expand-file-name local-repo ,(dir!))))
+                             (if (file-directory-p local-path)
+                                 local-path
+                               local-repo)))))))
        (error
         (signal 'doom-package-error
                 (cons ,(symbol-name name)
