@@ -49,17 +49,54 @@ besides what is listed.")
   "An alist containing a mapping of major modes to its value for
 `prettify-symbols-alist'.")
 
+;;; Automatic font-specific ligatures
+(defvar +prog-ligatures-alist
+  (eval-when-compile
+    `((?!  . ,(regexp-opt '("!!" "!=" "!==")))
+      (?#  . ,(regexp-opt '("##" "###" "####" "#(" "#:" "#=" "#?" "#[" "#_" "#_(" "#{")))
+      (?$  . ,(regexp-opt '("$>" "$>>")))
+      (?%  . ,(regexp-opt '("%%" "%%%")))
+      (?&  . ,(regexp-opt '("&&" "&&&")))
+      (?*  . ,(regexp-opt '("*" "**" "***" "**/" "*/" "*>")))
+      (?+  . ,(regexp-opt '("+" "++" "+++" "+>")))
+      (?-  . ,(regexp-opt '("--" "---" "-->" "-<" "-<<" "->" "->>" "-}" "-~")))
+      (?.  . ,(regexp-opt '(".-" ".." "..." "..<" ".=")))
+      (?/  . ,(regexp-opt '("/*" "/**" "//" "///" "/=" "/==" "/>")))
+      (?:  . ,(regexp-opt '(":" "::" ":::" ":=" ":<" ":=" ":>")))
+      (?0  . "0\\(?:\\(x[a-fA-F0-9]\\).?\\)") ; Tries to match the x in 0xDEADBEEF
+      ;; (?x . ,(regexp-opt '("x"))) ; Also tries to match the x in 0xDEADBEEF
+      (?\; . ,(regexp-opt '(";;")))
+      (?<  . ,(regexp-opt '("<!--" "<$" "<$>" "<*" "<*>" "<+" "<+>" "<-" "<--" "<->" "</" "</>" "<<" "<<-" "<<<" "<<=" "<=" "<=" "<=<" "<==" "<=>" "<>" "<|" "<|>" "<~" "<~~")))
+      (?=  . ,(regexp-opt '("=/=" "=:=" "=<<" "==" "===" "==>" "=>" "=>>")))
+      (?>  . ,(regexp-opt '(">-" ">->" ">:" ">=" ">=>" ">>" ">>-" ">>=" ">>>")))
+      (??  . ,(regexp-opt '("??" "?." "?:" "?=")))
+      (?\[ . ,(regexp-opt '("[]" "[|]" "[|")))
+      (?\\ . ,(regexp-opt '("\\\\" "\\\\\\" "\\\\n")))
+      (?^  . ,(regexp-opt '("^=" "^==")))
+      (?w  . ,(regexp-opt '("www" "wwww")))
+      (?{  . ,(regexp-opt '("{-" "{|" "{||" "{|}" "{||}")))
+      (?|  . ,(regexp-opt '("|=" "|>" "||" "||=" "|->" "|=>" "|]" "|}")))
+      (?_  . ,(regexp-opt '("_|_" "__")))
+      (?~  . ,(regexp-opt '("~-" "~=" "~>" "~@" "~~" "~~>")))))
+  "An alist of all ligatures used by `+prog-ligatures-modes'.
 
-;;
-;;; Packages
+The car is the character ASCII number, cdr is a regex which will call
+`font-shape-gstring' when matched.
 
-;;;###package prettify-symbols
-;; When you get to the right edge, it goes back to how it normally prints
-(setq prettify-symbols-unprettify-at-point 'right-edge)
+Because of the underlying code in :ui pretty-code module, the regex should match
+a string starting with the character contained in car.
 
+This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 
-;;
-;;; Bootstrap
+(defvar +prog-ligatures-modes '(not org-mode)
+  "List of major modes in which ligatures should be enabled.
+
+If t, enable it everywhere. Fundamental mode, and modes derived from special-mode,
+comint-mode, eshell-mode and term-mode are *still* excluded.
+
+If the first element is 'not, enable it in any mode besides what is listed.
+
+If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code).")
 
 (defun +pretty-code--correct-symbol-bounds (ligature-alist)
   "Prepend non-breaking spaces to a ligature.
@@ -95,57 +132,6 @@ Otherwise it builds `prettify-code-symbols-alist' according to
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
 
-
-(add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
-
-;;; Automatic font-specific ligatures
-(defvar +prog-ligatures-alist
-  `((?! . ,(regexp-opt '("!!" "!=" "!==")))
-    (?# . ,(regexp-opt '("##" "###" "####" "#(" "#:" "#=" "#?" "#[" "#_" "#_(" "#{")))
-    (?$ . ,(regexp-opt '("$>" "$>>")))
-    (?% . ,(regexp-opt '("%%" "%%%")))
-    (?& . ,(regexp-opt '("&&" "&&&")))
-    (?* . ,(regexp-opt '("*" "**" "***" "**/" "*/" "*>")))
-    (?+ . ,(regexp-opt '("+" "++" "+++" "+>")))
-    (?- . ,(regexp-opt '("--" "---" "-->" "-<" "-<<" "->" "->>" "-}" "-~")))
-    (?. . ,(regexp-opt '(".-" ".." "..." "..<" ".=")))
-    (?/ . ,(regexp-opt '("/*" "/**" "//" "///" "/=" "/==" "/>")))
-    (?: . ,(regexp-opt '(":" "::" ":::" ":=" ":<" ":=" ":>")))
-    (?0 . "0\\(?:\\(x[a-fA-F0-9]\\).?\\)") ; Tries to match the x in 0xDEADBEEF
-    ;; (?x . ,(regexp-opt '("x"))) ; Also tries to match the x in 0xDEADBEEF
-    (?\; . ,(regexp-opt '(";;")))
-    (?< . ,(regexp-opt '("<!--" "<$" "<$>" "<*" "<*>" "<+" "<+>" "<-" "<--" "<->" "</" "</>" "<<" "<<-" "<<<" "<<=" "<=" "<=" "<=<" "<==" "<=>" "<>" "<|" "<|>" "<~" "<~~")))
-    (?= . ,(regexp-opt '("=/=" "=:=" "=<<" "==" "===" "==>" "=>" "=>>")))
-    (?> . ,(regexp-opt '(">-" ">->" ">:" ">=" ">=>" ">>" ">>-" ">>=" ">>>")))
-    (?? . ,(regexp-opt '("??" "?." "?:" "?=")))
-    (?\[ . ,(regexp-opt '("[]" "[|]" "[|")))
-    (?\\ . ,(regexp-opt '("\\\\" "\\\\\\" "\\\\n")))
-    (?^ . ,(regexp-opt '("^=" "^==")))
-    (?w . ,(regexp-opt '("www" "wwww")))
-    (?{ . ,(regexp-opt '("{-" "{|" "{||" "{|}" "{||}")))
-    (?| . ,(regexp-opt '("|=" "|>" "||" "||=" "|->" "|=>" "|]" "|}")))
-    (?_ . ,(regexp-opt '("_|_" "__")))
-    (?~ . ,(regexp-opt '("~-" "~=" "~>" "~@" "~~" "~~>"))))
-  "An alist containing all the ligatures used when in a `+prog-ligatures-modes' mode.
-
-The car is the character ASCII number, cdr is a regex which will call `font-shape-gstring'
-when matched.
-
-Because of the underlying code in :ui pretty-code module, the regex should match a string
-starting with the character contained in car.
-
-This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
-
-(defvar +prog-ligatures-modes '(not org-mode)
-  "List of major modes in which ligatures should be enabled.
-
-If t, enable it everywhere. Fundamental mode, and modes derived from special-mode,
-comint-mode, eshell-mode and term-mode are *still* excluded.
-
-If the first element is 'not, enable it in any mode besides what is listed.
-
-If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code).")
-
 (defun +pretty-code-init-ligatures-h ()
   "Enable ligatures.
 
@@ -163,37 +149,45 @@ Otherwise it sets the buffer-local composition table to a composition table enha
                 (memq major-mode +prog-ligatures-modes)))
       (setq-local composition-function-table composition-ligature-table))))
 
-(add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h)
 
-(use-package! composite
-  ;; Starting from emacs "28" because this code breaks without fe903c5
-  :when (and EMACS28+ (string-match-p "HARFBUZZ" system-configuration-features))
-  :init
+;;
+;;; Bootstrap
+
+(add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
+
+;;;###package prettify-symbols
+;; When you get to the right edge, it goes back to how it normally prints
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+
+(cond
+ ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
+ ;; using the same composition-function-table method
+ ;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
+ ;; so use that instead if this module is enabled.
+ ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
+  (mac-auto-operator-composition-mode))
+
+ ;; Harfbuzz builds do not need font-specific ligature support
+ ;; if they are above emacs-27
+ ((and EMACS28+
+       (string-match-p "HARFBUZZ" system-configuration-features)
+       +prog-ligatures-modes
+       (require 'composite nil t))
   (defvar composition-ligature-table (make-char-table nil))
-  :config
+
   (dolist (char-regexp +prog-ligatures-alist)
     (set-char-table-range composition-ligature-table (car char-regexp)
                           `([,(cdr char-regexp) 0 font-shape-gstring])))
-  (set-char-table-parent composition-ligature-table composition-function-table))
+  (set-char-table-parent composition-ligature-table composition-function-table)
 
-;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
-;; using the same composition-function-table method
-;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
-;; so use that instead if this module is enabled.
-(cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
-       (mac-auto-operator-composition-mode))
-      ;; Harfbuzz builds do not need font-specific ligature support
-      ;; if they are above emacs-27
-      ((and EMACS28+
-            (string-match-p "HARFBUZZ" system-configuration-features)
-            (not (null +prog-ligatures-modes)))
-       nil)
-      ;; Font-specific ligature support
-      ((featurep! +fira)
-       (load! "+fira"))
-      ((featurep! +iosevka)
-       (load! "+iosevka"))
-      ((featurep! +hasklig)
-       (load! "+hasklig"))
-      ((featurep! +pragmata-pro)
-       (load! "+pragmata-pro")))
+  (add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h))
+
+ ;; Font-specific ligature support
+ ((featurep! +fira)
+  (load! "+fira"))
+ ((featurep! +iosevka)
+  (load! "+iosevka"))
+ ((featurep! +hasklig)
+  (load! "+hasklig"))
+ ((featurep! +pragmata-pro)
+  (load! "+pragmata-pro")))
