@@ -302,7 +302,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars)))
 
-(when IS-MAC
+(when! IS-MAC
   ;; Curse Lion and its sudden but inevitable fullscreen mode!
   ;; NOTE Meaningless to railwaycat's emacs-mac build
   (setq ns-use-native-fullscreen nil)
@@ -610,7 +610,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (run-hooks 'doom-load-theme-hook))
       result)))
 
-(unless EMACS27+
+(when! (not EMACS27+)
   ;; DEPRECATED Not needed in Emacs 27
   (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
     "Have `load-theme' prioritize the byte-compiled theme.
