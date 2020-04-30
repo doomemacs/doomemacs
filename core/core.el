@@ -40,6 +40,8 @@
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
 ;; Just the bare necessities
+(require 'subr-x)
+(require 'cl-lib)
 (require 'core-lib)
 
 

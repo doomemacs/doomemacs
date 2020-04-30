@@ -1,8 +1,5 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(require 'cl-lib)
-(require 'subr-x)
-
 ;;
 ;;; Helpers
 
