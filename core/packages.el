@@ -9,7 +9,7 @@
 (package! all-the-icons :pin "0b74fc361817e885580c3f3408079f949f5830e1")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
-(package! rainbow-delimiters :pin "5125f4e476")
+(package! rainbow-delimiters :pin "5125f4e47604ad36c3eb4706310fcafac729ca8c")
 (package! restart-emacs :pin "9aa90d3df9e08bc420e1c9845ee3ff568e911bd9")
 
 ;; core-editor.el
