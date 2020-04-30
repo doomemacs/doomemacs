@@ -27,11 +27,17 @@ capture, the end position, and the output buffer.")
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
 
-        ;; Preview/compilation defaults
+        ;; `+markdown-compile' offers support for many transpilers (see
+        ;; `+markdown-compile-functions'), which it tries until one succeeds.
         markdown-command #'+markdown-compile
+        ;; This is set to `nil' by default, which causes a wrong-type-arg error
+        ;; when you use `markdown-open'. These are more sensible defaults.
         markdown-open-command
         (cond (IS-MAC "open")
               (IS-LINUX "xdg-open"))
+
+        ;; A sensible and simple default preamble for markdown exports that
+        ;; takes after the github asthetic (plus highlightjs syntax coloring).
         markdown-content-type "application/xhtml+xml"
         markdown-css-paths
         '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
@@ -57,6 +63,7 @@ capture, the end position, and the output buffer.")
   (sp-local-pair '(markdown-mode gfm-mode) "`" "`"
                  :unless '(:add sp-point-before-word-p sp-point-before-same-p))
 
+  ;; Don't trigger autofill in code blocks (see `auto-fill-mode')
   (setq-hook! 'markdown-mode-hook
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
                                  fill-nobreak-predicate))
