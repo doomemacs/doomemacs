@@ -606,6 +606,9 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
       (unless no-enable
         (setq doom-theme theme
               doom-init-theme-p t)
+        ;; `load-theme' doesn't disable previously enabled themes, which seems
+        ;; like what you'd want. You could always use `enable-theme' to activate
+        ;; multiple themes instead.
         (mapc #'disable-theme (remq theme custom-enabled-themes))
         (run-hooks 'doom-load-theme-hook))
       result)))
