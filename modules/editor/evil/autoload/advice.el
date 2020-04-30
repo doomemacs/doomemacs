@@ -123,8 +123,7 @@ more information on modifiers."
           (not (eq this-command 'evil-open-below))
           (evil-insert-state-p))
       (funcall orig-fn count)
-    (cl-letf (((symbol-function 'evil-insert-newline-below)
-               (lambda () (+evil--insert-newline))))
+    (letf! (defun evil-insert-newline-below () (+evil--insert-newline))
       (let ((evil-auto-indent evil-auto-indent))
         (funcall orig-fn count)))))
 
@@ -134,8 +133,7 @@ more information on modifiers."
           (not (eq this-command 'evil-open-above))
           (evil-insert-state-p))
       (funcall orig-fn count)
-    (cl-letf (((symbol-function 'evil-insert-newline-above)
-               (lambda () (+evil--insert-newline 'above))))
+    (letf! (defun evil-insert-newline-above () (+evil--insert-newline 'above))
       (let ((evil-auto-indent evil-auto-indent))
         (funcall orig-fn count)))))
 

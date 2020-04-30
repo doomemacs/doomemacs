@@ -195,20 +195,18 @@ the command buffer."
   ;; Fix #897: "cannot open side window" error when TAB-completing file links
   (defadvice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
     :around #'org-insert-link
-    (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
-               ((symbol-function 'org-completing-read)
-                (lambda (&rest args)
-                  (when-let (win (get-buffer-window "*Org Links*"))
-                    ;; While helm is opened as a popup, it will mistaken the
-                    ;; *Org Links* popup for the "originated window", and will
-                    ;; target it for actions invoked by the user. However, since
-                    ;; *Org Links* is a popup too (they're dedicated side
-                    ;; windows), Emacs complains about being unable to split a
-                    ;; side window. The simple fix: get rid of *Org Links*!
-                    (delete-window win)
-                    ;; But it must exist for org to clean up later.
-                    (get-buffer-create "*Org Links*"))
-                  (apply old-org-completing-read args))))
+    (letf! ((defun org-completing-read (&rest args)
+              (when-let (win (get-buffer-window "*Org Links*"))
+                ;; While helm is opened as a popup, it will mistaken the *Org
+                ;; Links* popup for the "originated window", and will target it
+                ;; for actions invoked by the user. However, since *Org Links*
+                ;; is a popup too (they're dedicated side windows), Emacs
+                ;; complains about being unable to split a side window. The
+                ;; simple fix: get rid of *Org Links*!
+                (delete-window win)
+                ;; ...but it must exist for org to clean up later.
+                (get-buffer-create "*Org Links*"))
+              (apply org-completing-read args)))
       (apply #'funcall-interactively orig-fn args)))
 
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
@@ -228,7 +226,6 @@ the command buffer."
     (when (+popup-window-p win)
       (select-window win))))
 
-
 ;;;###package org
 (after! org
   ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
@@ -242,10 +239,8 @@ the command buffer."
               org-fast-tag-selection
               org-fast-todo-selection)
     (if +popup-mode
-        (cl-letf (((symbol-function #'delete-other-windows)
-                   (symbol-function #'ignore))
-                  ((symbol-function #'delete-window)
-                   (symbol-function #'ignore)))
+        (letf! ((#'delete-other-windows #'ignore)
+                (#'delete-window        #'ignore))
           (apply orig-fn args))
       (apply orig-fn args)))
 
@@ -256,16 +251,14 @@ Ugh, such an ugly hack."
     :around '(org-fast-tag-selection
               org-fast-todo-selection)
     (if +popup-mode
-        (cl-letf* ((old-fit-buffer-fn (symbol-function #'org-fit-window-to-buffer))
-                   ((symbol-function #'org-fit-window-to-buffer)
-                    (lambda (&optional window max-height min-height shrink-only)
-                      (when-let (buf (window-buffer window))
-                        (delete-window window)
-                        (select-window
-                         (setq window (display-buffer-at-bottom buf nil)))
-                        (with-current-buffer buf
-                          (setq mode-line-format nil)))
-                      (funcall old-fit-buffer-fn window max-height min-height shrink-only))))
+        (letf! ((defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
+                  (when-let (buf (window-buffer window))
+                    (delete-window window)
+                    (select-window
+                     (setq window (display-buffer-at-bottom buf nil)))
+                    (with-current-buffer buf
+                      (setq mode-line-format nil)))
+                  (funcall org-fit-window-to-buffer window max-height min-height shrink-only)))
           (apply orig-fn args))
       (apply orig-fn args)))
 
@@ -284,8 +277,7 @@ Ugh, such an ugly hack."
   ;;      _then_ hand off the buffer to the pop up manager.
   (defadvice! +popup--org-src-switch-to-buffer-a (orig-fn &rest args)
     :around #'org-src-switch-to-buffer
-    (cl-letf (((symbol-function #'pop-to-buffer-same-window)
-               (symbol-function #'switch-to-buffer)))
+    (letf! ((#'pop-to-buffer-same-window #'switch-to-buffer))
       (apply orig-fn args))))
 
 
@@ -316,8 +308,7 @@ Ugh, such an ugly hack."
 ;;;###package profiler
 (defadvice! +popup--profiler-report-find-entry-in-other-window-a (orig-fn function)
   :around #'profiler-report-find-entry
-  (cl-letf (((symbol-function 'find-function)
-             (symbol-function 'find-function-other-window)))
+  (letf! ((#'find-function #'find-function-other-window))
     (funcall orig-fn function)))
 
 
@@ -337,10 +328,9 @@ Ugh, such an ugly hack."
           which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
           which-key-custom-show-popup-function
           (lambda (act-popup-dim)
-            (cl-letf (((symbol-function 'display-buffer-in-side-window)
-                       (lambda (buffer alist)
-                         (+popup-display-buffer-stacked-side-window-fn
-                          buffer (append '((vslot . -9999)) alist)))))
+            (letf! ((defun display-buffer-in-side-window (buffer alist)
+                      (+popup-display-buffer-stacked-side-window-fn
+                       buffer (append '((vslot . -9999)) alist))))
               ;; HACK Fix #2219 where the which-key popup would get cut off.
               (setcar act-popup-dim (1+ (car act-popup-dim)))
               (which-key--show-buffer-side-window act-popup-dim))))))
@@ -351,9 +341,8 @@ Ugh, such an ugly hack."
 (defadvice! +popup--ignore-window-parameters-a (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   :around '(windmove-up windmove-down windmove-left windmove-right)
-  (cl-letf (((symbol-function #'windmove-find-other-window)
-             (lambda (dir &optional arg window)
-               (window-in-direction
-                (pcase dir (`up 'above) (`down 'below) (_ dir))
-                window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))))
+  (letf! ((defun windmove-find-other-window (dir &optional arg window)
+            (window-in-direction
+             (pcase dir (`up 'above) (`down 'below) (_ dir))
+             window (bound-and-true-p +popup-mode) arg windmove-wrap-around t)))
     (apply orig-fn args)))

@@ -46,10 +46,7 @@ ready to be pasted in a bug report on github."
   (require 'core-packages)
   (let ((default-directory doom-emacs-dir)
         (doom-modules (doom-modules)))
-    (cl-letf
-        (((symbol-function 'sh)
-          (lambda (&rest args)
-            (cdr (apply #'doom-call-process args)))))
+    (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
       `((emacs
          (version . ,emacs-version)
          (features ,@system-configuration-features)

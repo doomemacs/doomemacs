@@ -539,11 +539,9 @@ current workspace (and clean them up)."
   ;;      upstream (if ever).
   (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
     :around #'org-display-inline-images
-    (cl-letf* ((old-create-image (symbol-function #'create-image))
-               ((symbol-function #'create-image)
-                (lambda (file-or-data &optional type data-p &rest props)
-                  (let ((type (if (plist-get props :width) type)))
-                    (apply old-create-image file-or-data type data-p props)))))
+    (letf! (defun create-image (file-or-data &optional type data-p &rest props)
+             (let ((type (if (plist-get props :width) type)))
+               (apply create-image file-or-data type data-p props)))
       (apply orig-fn args)))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)

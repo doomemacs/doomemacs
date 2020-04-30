@@ -101,10 +101,9 @@
 ;;;###autoload
 (defun +rss-put-sliced-image-fn (spec alt &optional flags)
   "TODO"
-  (cl-letf (((symbol-function #'insert-image)
-             (lambda (image &optional alt _area _slice)
-               (let ((height (cdr (image-size image t))))
-                 (insert-sliced-image image alt nil (max 1 (/ height 20.0)) 1)))))
+  (letf! (defun insert-image (image &optional alt _area _slice)
+           (let ((height (cdr (image-size image t))))
+             (insert-sliced-image image alt nil (max 1 (/ height 20.0)) 1)))
     (shr-put-image spec alt flags)))
 
 ;;;###autoload

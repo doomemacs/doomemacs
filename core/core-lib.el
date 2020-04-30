@@ -191,6 +191,37 @@ aliases."
        (setenv (car var) (cdr var)))
      ,@body))
 
+(defmacro letf! (bindings &rest body)
+  "Temporarily rebind function and macros in BODY.
+
+BINDINGS is either a) a list of, or a single, `defun' or `defmacro'-ish form, or
+b) a list of (PLACE VALUE) bindings as `cl-letf*' would accept.
+
+TYPE is either `defun' or `defmacro'. NAME is the name of the function. If an
+original definition for NAME exists, it can be accessed as a lexical variable by
+the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
+`defun'.
+
+\(fn ((TYPE NAME ARGLIST &rest BODY) ...) BODY...)"
+  (declare (indent defun))
+  (setq body (macroexp-progn body))
+  (when (memq (car bindings) '(defun defmacro))
+    (setq bindings (list bindings)))
+  (dolist (binding (nreverse bindings) body)
+    (let ((type (car binding))
+          (rest (cdr binding)))
+      (setq
+       body (pcase type
+              (`defmacro `(cl-macrolet ((,(car rest) ,(cadr rest) ,@(cddr rest))) ,body))
+              (`defun `(cl-letf* ((,(car rest) (symbol-function #',(car rest)))
+                                   ((symbol-function #',(car rest))
+                                    (lambda ,(cadr rest) ,@(cddr rest))))
+                          ,body))
+              (_
+               (when (eq (car-safe type) 'function)
+                 (setq type `(symbol-function ,type)))
+               `(cl-letf ((,type ,@rest)) ,body)))))))
+
 (defmacro quiet! (&rest forms)
   "Run FORMS without generating any output.
 
@@ -198,15 +229,13 @@ This silences calls to `message', `load-file', `write-region' and anything that
 writes to `standard-output'."
   `(cond (doom-debug-mode ,@forms)
          ((not doom-interactive-mode)
-          (let ((old-fn (symbol-function 'write-region)))
-            (cl-letf ((standard-output (lambda (&rest _)))
-                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                      ((symbol-function 'message) (lambda (&rest _)))
-                      ((symbol-function 'write-region)
-                       (lambda (start end filename &optional append visit lockname mustbenew)
-                         (unless visit (setq visit 'no-message))
-                         (funcall old-fn start end filename append visit lockname mustbenew))))
-              ,@forms)))
+          (letf! ((standard-output (lambda (&rest _)))
+                  (defun load-file (file) (load-file nil t))
+                  (defun message (&rest _))
+                  (defun write-region (start end filename &optional append visit lockname mustbenew)
+                    (unless visit (setq visit 'no-message))
+                    (funcall write-region start end filename append visit lockname mustbenew)))
+            ,@forms))
          ((let ((inhibit-message t)
                 (save-silently t))
             (prog1 ,@forms (message ""))))))

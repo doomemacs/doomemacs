@@ -33,12 +33,10 @@
       :around '(pdf-annot-show-annotation
                 pdf-isearch-hl-matches
                 pdf-view-display-region)
-      (cl-letf* ((old-create-image (symbol-function #'create-image))
-                 ((symbol-function #'create-image)
-                  (lambda (file-or-data &optional type data-p &rest props)
-                    (apply old-create-image file-or-data type data-p
-                           :width (car (pdf-view-image-size))
-                           props))))
+      (letf! (defun create-image (file-or-data &optional type data-p &rest props)
+               (apply create-image file-or-data type data-p
+                      :width (car (pdf-view-image-size))
+                      props))
         (apply orig-fn args))))
 
   ;; Handle PDF-tools related popups better

@@ -619,10 +619,8 @@ This offers a moderate boost in startup (or theme switch) time, so long as
     :around #'load-theme
     (if (or (null after-init-time)
             doom--prefer-theme-elc)
-        (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-                   ((symbol-function 'locate-file)
-                    (lambda (filename path &optional _suffixes predicate)
-                      (funcall old-locate-file filename path '("c" "") predicate))))
+        (letf! (defun locate-file (filename path &optional _suffixes predicate)
+                 (funcall locate-file filename path '("c" "") predicate))
           (apply orig-fn args))
       (apply orig-fn args))))
 
