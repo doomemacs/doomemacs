@@ -85,6 +85,58 @@ Accepts the same arguments as `message'."
                  format-string)
         ,@args))))
 
+(defun doom-try-run-hook (hook)
+  "Run HOOK (a hook function) with better error handling.
+Meant to be used with `run-hook-wrapped'."
+  (doom-log "Running doom hook: %s" hook)
+  (condition-case e
+      (funcall hook)
+    ((debug error)
+     (signal 'doom-hook-error (list hook e))))
+  ;; return nil so `run-hook-wrapped' won't short circuit
+  nil)
+
+(defun doom-load-autoloads-file (file &optional noerror)
+  "Tries to load FILE (an autoloads file).
+Return t on success, nil otherwise (but logs a warning)."
+  (condition-case e
+      ;; Avoid `file-name-sans-extension' for premature optimization reasons.
+      ;; `string-remove-suffix' is much cheaper (because it does no file sanity
+      ;; checks during or after; just plain ol' string manipulation).
+      (load (string-remove-suffix ".el" file) noerror 'nomessage)
+    ((debug error)
+     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
+     nil)))
+
+(defun doom-load-envvars-file (file &optional noerror)
+  "Read and set envvars from FILE.
+If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
+unreadable. Returns the names of envvars that were changed."
+  (if (null (file-exists-p file))
+      (unless noerror
+        (signal 'file-error (list "No envvar file exists" file)))
+    (when-let
+        (env
+         (with-temp-buffer
+           (save-excursion
+             (insert "\0\n") ; to prevent off-by-one
+             (insert-file-contents file))
+           (save-match-data
+             (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
+               (setq
+                env (split-string (buffer-substring (match-beginning 1) (point-max))
+                                  "\0\n"
+                                  'omit-nulls))))))
+      (setq process-environment (append (nreverse env) process-environment)
+            exec-path (append (split-string (getenv "PATH") path-separator t)
+                              (list exec-directory))
+            shell-file-name (or (getenv "SHELL") shell-file-name))
+      env)))
+
+
+;;
+;;; Functional library
+
 (defalias 'doom-partial #'apply-partially)
 
 (defun doom-rpartial (fn &rest args)

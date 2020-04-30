@@ -427,17 +427,6 @@ If this is a daemon session, load them all immediately instead."
 ;;
 ;;; Bootstrap helpers
 
-(defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function) with better error handling.
-Meant to be used with `run-hook-wrapped'."
-  (doom-log "Running doom hook: %s" hook)
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'doom-hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
-
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark including number of packages and modules loaded.
 
@@ -449,40 +438,6 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
-
-(defun doom-load-autoloads-file (file &optional noerror)
-  "Tries to load FILE (an autoloads file).
-Return t on success, nil otherwise (but logs a warning)."
-  (condition-case e
-      (load (substring file 0 -3) noerror 'nomessage)
-    ((debug error)
-     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
-     nil)))
-
-(defun doom-load-envvars-file (file &optional noerror)
-  "Read and set envvars from FILE.
-If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
-unreadable. Returns the names of envvars that were changed."
-  (if (not (file-readable-p file))
-      (unless noerror
-        (signal 'file-error (list "No envvar file exists" file)))
-    (when-let
-        (env
-         (with-temp-buffer
-           (save-excursion
-             (insert "\0\n") ; to prevent off-by-one
-             (insert-file-contents file))
-           (save-match-data
-             (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
-               (setq
-                env (split-string (buffer-substring (match-beginning 1) (point-max))
-                                  "\0\n"
-                                  'omit-nulls))))))
-      (setq process-environment (append (nreverse env) process-environment)
-            exec-path (append (split-string (getenv "PATH") path-separator t)
-                              (list exec-directory))
-            shell-file-name (or (getenv "SHELL") shell-file-name))
-      env)))
 
 (defun doom-initialize (&optional force-p noerror)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -502,7 +457,7 @@ The overall load order of Doom is as follows:
   Module config.el files
   ~/.doom.d/config.el
   `doom-init-modules-hook'
-  `doom-after-init-hook' (`after-init-hook')
+  `doom-after-init-modules-hook' (`after-init-hook')
   `emacs-startup-hook'
   `doom-init-ui-hook'
   `window-setup-hook'
