@@ -25,6 +25,7 @@ This module adds [[https://www.java.com][java]] support to Doom Emacs, including
 ** Module Flags
 + =+lsp= Enables integration for the eclipse.jdt.ls LSP server.
 + =+meghanada= Enables the [[https://github.com/mopemope/meghanada-emacs/tree/master][meghanada-mode]]
++ =+google-java-format= Prefers [[https://github.com/google/google-java-format][google-java-format]] for code-formatting.
 
 The =+lsp= and =+meghanada= packages are mutually exclusive and do not work
 together. At the time of writing the =+meghanada= is already configured whereas

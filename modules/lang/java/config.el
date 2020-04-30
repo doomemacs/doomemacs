@@ -24,6 +24,17 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 ;;
 ;;; java-mode
 
+(when (featurep! +google-java-format)
+  (set-formatter! 'google-java-format
+    '("google-java-format" "-")
+    :modes 'java-mode)
+
+  ;; Enforce Google Java Style Guide.
+  ;; See https://google.github.io/styleguide/javaguide.html
+  (setq-hook! 'java-mode-hook
+    tab-width 2
+    fill-column 100))
+
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
 (cond ((featurep! +lsp)       (load! "+lsp"))
