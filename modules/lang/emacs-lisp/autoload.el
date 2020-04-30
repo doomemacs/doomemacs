@@ -228,10 +228,11 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
     (goto-char (match-beginning 0))
     (and (stringp (plist-get (sexp-at-point) :pin))
          (search-forward ":pin" nil t)
-         (put-text-property (re-search-forward "\"[^\"]\\{10\\}" nil t)
-                            (progn (re-search-forward "\"" nil t)
-                                   (match-beginning 0))
-                            'display "...")))
+         (let ((start (re-search-forward "\"[^\"]\\{10\\}" nil t))
+               (finish (and (re-search-forward "\"" (line-end-position) t)
+                            (match-beginning 0))))
+           (when (and start finish)
+             (put-text-property start finish 'display "...")))))
   nil)
 
 ;;;###autoload
