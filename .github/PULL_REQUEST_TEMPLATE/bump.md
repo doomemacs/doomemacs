@@ -15,12 +15,13 @@ labels: is:update re:packages
 >
 >    OR, if multiple packages are bumped in one commit:
 >
->      Bump package1, package2 & package 3
+>      Bump :tools lsp
 >
 >      emacs-lsp/lsp-mode@91e37a6 -> emacs-lsp/lsp-mode@c8188ef
 >      emacs-lsp/lsp-ui@cf6906c -> emacs-lsp/lsp-ui@582e153
 >
->    (Commit hashes should be limited to 7 characters)
+>    Commit hashes should be limited to 7 characters. Include additional
+>    commentary after the list of commit changes.
 >
 > 4. You've included links to relevant issues, if any
 > 5. You've deleted this template
