@@ -11,9 +11,26 @@
         company-require-match 'never
         company-global-modes
         '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-        company-backends  '(company-capf)
         company-frontends '(company-pseudo-tooltip-frontend
-                            company-echo-metadata-frontend))
+                            company-echo-metadata-frontend)
+
+        ;; Buffer-local backends will be computed when loading a major mode, so
+        ;; only specify a global default here.
+        company-backends  '(company-capf)
+
+        ;; Company overrides `company-active-map' based on
+        ;; `company-auto-complete-chars'; no magic please!
+        company-auto-complete-chars nil
+
+        ;; Only search the current buffer for `company-dabbrev' (a backend that
+        ;; suggests text your open buffers). This prevents Company from causing
+        ;; lag once you have a lot of buffers open.
+        company-dabbrev-other-buffers nil
+        ;; Make `company-dabbrev' fully case-sensitive, to improve UX with
+        ;; domain-specific words with particular casing.
+        company-dabbrev-ignore-case nil
+        company-dabbrev-downcase nil)
+
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
@@ -105,6 +122,8 @@
             (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
             (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
             (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink)))))
+
+  (delq! 'company-echo-metadata-frontend company-frontends)
 
   (defun +company-box-icons--elisp-fn (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)
