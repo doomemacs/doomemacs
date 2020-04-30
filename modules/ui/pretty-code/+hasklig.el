@@ -49,7 +49,7 @@
 
 
 (defun +pretty-code-setup-hasklig-ligatures-h ()
-  (set-fontset-font t '(#Xe100 . #Xe129) +pretty-code-hasklig-font-name)
+  (set-fontset-font t '(#Xe100 . #Xe129) +pretty-code-hasklig-font-name nil 'prepend)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         (mapcar #'+pretty-code--correct-symbol-bounds

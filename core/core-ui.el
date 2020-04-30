@@ -54,6 +54,9 @@ examples.
 It is recommended you don't set specify a font-size, as to inherit `doom-font's
 size.")
 
+(defvar doom-unicode-extra-fonts nil
+  "Fonts to inject into the unicode charset before `doom-unicode-font'.")
+
 
 ;;
 ;;; Custom hooks
@@ -481,6 +484,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
              all-the-icons-wicon
              all-the-icons-material
              all-the-icons-alltheicon)
+  :preface
+  (setq doom-unicode-extra-fonts
+        (list "Weather Icons"
+              "github-octicons"
+              "FontAwesome"
+              "all-the-icons"
+              "file-icons"
+              "Material Icons"))
   :config
   (cond ((daemonp)
          (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
@@ -575,8 +586,9 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
           (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
-        (when (and doom-unicode-font (fboundp 'set-fontset-font))
-          (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
+        (when (fboundp 'set-fontset-font)
+          (dolist (font (append doom-unicode-extra-fonts (doom-enlist doom-unicode-font)))
+            (set-fontset-font t 'unicode font nil 'prepend))))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
          (lwarn 'doom-ui :warning
