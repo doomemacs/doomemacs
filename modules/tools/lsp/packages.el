@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/lsp/packages.el
 
-(package! lsp-mode :pin "87ea1df50f1659c521684f01bc518eac4bf7b2a0")
+(package! lsp-mode :pin "d0096ccf22e0e70eaad6cc99e5ae4bd9fc81f75f")
 (package! lsp-ui :pin "242dfe859c3497c456eaacfd84942e12419529fe")
 (when (featurep! :completion company)
   (package! company-lsp :pin "f921ffa0cdc542c21dc3dd85f2c93df4288e83bd"))
