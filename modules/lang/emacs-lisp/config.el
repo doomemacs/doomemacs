@@ -75,7 +75,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
              ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
-             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))
+
+           `(("(package!\\_>" (0 (+emacs-lisp-truncate-pin))))))
 
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom-recenter-a)

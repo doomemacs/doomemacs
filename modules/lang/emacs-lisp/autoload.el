@@ -222,6 +222,19 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                  ")"))))
 
 ;;;###autoload
+(defun +emacs-lisp-truncate-pin ()
+  "Truncates long SHA1 hashes in `package!' :pin's."
+  (save-excursion
+    (goto-char (match-beginning 0))
+    (and (stringp (plist-get (sexp-at-point) :pin))
+         (search-forward ":pin" nil t)
+         (put-text-property (re-search-forward "\"[^\"]\\{10\\}" nil t)
+                            (progn (re-search-forward "\"" nil t)
+                                   (match-beginning 0))
+                            'display "...")))
+  nil)
+
+;;;###autoload
 (defun +emacs-lisp/edebug-instrument-defun-on ()
   "Toggle on instrumentalisation for the function under `defun'."
   (interactive)
