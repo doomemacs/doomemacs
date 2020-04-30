@@ -85,50 +85,51 @@ size.")
 (defvar doom--last-frame nil)
 
 (defun doom-run-switch-window-hooks-h ()
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (unless (or doom-inhibit-switch-window-hooks
-                (eq doom--last-window (selected-window))
-                (minibufferp))
-      (let ((doom-inhibit-switch-window-hooks t)
-            (inhibit-redisplay t))
-        (run-hooks 'doom-switch-window-hook)
-        (setq doom--last-window (selected-window))))))
+  (unless (or doom-inhibit-switch-window-hooks
+              (eq doom--last-window (selected-window))
+              (minibufferp))
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-window-hooks t)
+          (inhibit-redisplay t))
+      (run-hooks 'doom-switch-window-hook)
+      (setq doom--last-window (selected-window)))))
 
 (defun doom-run-switch-frame-hooks-h (&rest _)
   (unless (or doom-inhibit-switch-frame-hooks
               (eq doom--last-frame (selected-frame))
               (frame-parameter nil 'parent-frame))
-    (let ((doom-inhibit-switch-frame-hooks t))
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-frame-hooks t))
       (run-hooks 'doom-switch-frame-hook)
       (setq doom--last-frame (selected-frame)))))
 
 (defun doom-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (if (or doom-inhibit-switch-buffer-hooks
-            (and buffer-or-name
-                 (eq (current-buffer)
-                     (get-buffer buffer-or-name)))
-            (and (eq orig-fn #'switch-to-buffer) (car args)))
-        (apply orig-fn buffer-or-name args)
-      (let ((doom-inhibit-switch-buffer-hooks t)
-            (inhibit-redisplay t))
-        (when-let (buffer (apply orig-fn buffer-or-name args))
-          (with-current-buffer (if (windowp buffer)
-                                   (window-buffer buffer)
-                                 buffer)
-            (run-hooks 'doom-switch-buffer-hook))
-          buffer)))))
+  (if (or doom-inhibit-switch-buffer-hooks
+          (and buffer-or-name
+               (eq (current-buffer)
+                   (get-buffer buffer-or-name)))
+          (and (eq orig-fn #'switch-to-buffer) (car args)))
+      (apply orig-fn buffer-or-name args)
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-buffer-hooks t)
+          (inhibit-redisplay t))
+      (when-let (buffer (apply orig-fn buffer-or-name args))
+        (with-current-buffer (if (windowp buffer)
+                                 (window-buffer buffer)
+                               buffer)
+          (run-hooks 'doom-switch-buffer-hook))
+        buffer))))
 
 (defun doom-run-switch-to-next-prev-buffer-hooks-a (orig-fn &rest args)
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (if doom-inhibit-switch-buffer-hooks
-        (apply orig-fn args)
-      (let ((doom-inhibit-switch-buffer-hooks t)
-            (inhibit-redisplay t))
-        (when-let (buffer (apply orig-fn args))
-          (with-current-buffer buffer
-            (run-hooks 'doom-switch-buffer-hook))
-          buffer)))))
+  (if doom-inhibit-switch-buffer-hooks
+      (apply orig-fn args)
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-buffer-hooks t)
+          (inhibit-redisplay t))
+      (when-let (buffer (apply orig-fn args))
+        (with-current-buffer buffer
+          (run-hooks 'doom-switch-buffer-hook))
+        buffer))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."

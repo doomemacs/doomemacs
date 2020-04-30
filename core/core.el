@@ -209,20 +209,20 @@ users).")
       ;; https://www.keylength.com/en/4/
       gnutls-min-prime-bits 3072
       tls-checktrust gnutls-verify-error
-      ;; Emacs is built with `gnutls' by default, so `tls-program' would not
-      ;; be used in that case. Otherwiese, people have reasons to not go with
-      ;; `gnutls', we use `openssl' instead.
-      ;; For more details, see https://redd.it/8sykl1
+      ;; Emacs is built with `gnutls' by default, so `tls-program' would not be
+      ;; used in that case. Otherwise, people have reasons to not go with
+      ;; `gnutls', we use `openssl' instead. For more details, see
+      ;; https://redd.it/8sykl1
       tls-program '("openssl s_client -connect %h:%p -CAfile %t -nbio -no_ssl3 -no_tls1 -no_tls1_1 -ign_eof"
                     "gnutls-cli -p %p --dh-bits=3072 --ocsp --x509cafile=%t \
 --strict-tofu --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3' %h"
                     ;; compatibility fallbacks
                     "gnutls-cli -p %p %h"))
 
-;; Emacs stores authinfo in $HOME and in plaintext. Let's not do that, mkay?
+;; Emacs stores `authinfo' in $HOME and in plain-text. Let's not do that, mkay?
 ;; This file stores usernames, passwords, and other such treasures for the
 ;; aspiring malicious third party.
-(setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 ;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and %APPDATA%,
@@ -285,7 +285,7 @@ users).")
 (setq ffap-machine-p-known 'reject)
 
 ;; Font compacting can be terribly expensive, especially for rendering icon
-;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+;; fonts on Windows. Whether it has a notable affect on Linux and Mac hasn't
 ;; been determined, but we inhibit it there anyway.
 (setq inhibit-compacting-font-caches t)
 
