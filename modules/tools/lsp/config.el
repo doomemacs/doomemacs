@@ -40,7 +40,6 @@ working on that project after closing the last buffer.")
   (setq lsp-flycheck-live-reporting nil)
   ;; For `lsp-clients'
   (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")
-        lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
   ;; Disable LSP's superfluous, expensive and/or debatably unnecessary features.
