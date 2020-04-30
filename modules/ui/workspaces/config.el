@@ -180,6 +180,30 @@ stored in `persp-save-dir'.")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
+  (when (featurep! :completion ivy)
+    (defun +workspace--buffers (workspace)
+      (if-let (workspace (gethash workspace *persp-hash*))
+          ;; repulsive. but there doesn't seem to be a better to extract the
+          ;; visible buffers out of a workspace
+          (let (ws-buffers)
+            (dolist (window-option (persp-window-conf workspace) (nreverse ws-buffers))
+              (pcase window-option
+                (`(buffer ,name . ,_)
+                 (push name ws-buffers))
+                (`(leaf . ,leaf)
+                 (dolist (buffer-option leaf)
+                         (pcase buffer-option
+                           (`(buffer ,name . ,_) (push name ws-buffers))))))))))
+    (defun +workspace--ivy-rich-preview (workspace)
+      (if-let (buffers (+workspace--buffers workspace))
+          (string-join buffers " ")
+        "*No buffers*"))
+    (plist-put! ivy-rich-display-transformers-list
+                '+workspace/switch-to
+                '(:columns
+                  ((ivy-rich-candidate (:width 50))
+                   (+workspace--ivy-rich-preview)))))
+
   (when (featurep! :completion helm)
     (after! helm-projectile
       (setcar helm-source-projectile-projects-actions
