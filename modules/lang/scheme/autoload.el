@@ -15,15 +15,18 @@ lists properly and names starting with 'default'."
     (if (and (elt state 2)
              ;; NOTE looking-at -> looking-at-p
              (not (looking-at-p "\\sw\\|\\s_")))
-        (unless (> (save-excursion (forward-line 1) (point))
-                   calculate-lisp-indent-last-sexp)
-          (goto-char calculate-lisp-indent-last-sexp)
-          (beginning-of-line)
-          (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t))
-      (backward-prefix-chars)
-      (current-column)
+        (progn
+          ;; NOTE (if (not ...) (progn ...)) -> (unless ... ...)
+          (unless (> (save-excursion (forward-line 1) (point))
+                     calculate-lisp-indent-last-sexp)
+            (goto-char calculate-lisp-indent-last-sexp)
+            (beginning-of-line)
+            (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t))
+          (backward-prefix-chars)
+          (current-column))
       (let* ((function (buffer-substring
                         (point) (progn (forward-sexp 1) (point))))
+             ;; NOTE let -> let* & moved `method' def into let bindings
              (method (or (get (intern-soft function) 'scheme-indent-function)
                          (get (intern-soft function) 'scheme-indent-hook))))
         (cond ((or (eq method 'defun)
@@ -32,11 +35,12 @@ lists properly and names starting with 'default'."
                         ;; NOTE string-match -> string-match-p
                         ;; NOTE The original regexp is "\\`def" but it will mess
                         ;;      indentation with such names as 'default-...'.
-                        (string-match-p "\\`define" function)))
+                        (string-match-p "\\`def" function)))
                (lisp-indent-defform state indent-point))
               ;; NOTE Added this clause to handle alignment of keyword symbols
               ((and (null method)
                     (> (length function) 1)
+                    ;; NOTE string-match -> string-match-p
                     (string-match-p "\\`:" function))
                (let ((lisp-body-indent 1))
                  (lisp-indent-defform state indent-point)))
