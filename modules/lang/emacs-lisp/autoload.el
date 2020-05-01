@@ -242,7 +242,9 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
 Indents plists more sensibly. Adapted from
 https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
   (let ((normal-indent (current-column))
-        (orig-point (point)))
+        (orig-point (point))
+        ;; TODO Refactor `target' usage (ew!)
+        target)
     (goto-char (1+ (elt state 1)))
     (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
     (cond ((and (elt state 2)
@@ -261,10 +263,11 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
                   (not (eq (char-after) ?:)))
                 (save-excursion
                   (goto-char orig-point)
-                  (eq (char-after) ?:)))
+                  (and (eq (char-after) ?:)
+                       (setq target (current-column)))))
            (save-excursion
-             (goto-char (+ 2 (elt state 1)))
-             (current-column)))
+             (move-to-column target t)
+             target))
           ((let* ((function (buffer-substring (point) (progn (forward-sexp 1) (point))))
                   (method (or (function-get (intern-soft function) 'lisp-indent-function)
                               (get (intern-soft function) 'lisp-indent-hook))))
@@ -274,8 +277,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
                              (string-match-p "\\`def" function)))
                     (lisp-indent-defform state indent-point))
                    ((integerp method)
-                    (lisp-indent-specform method state
-                                          indent-point normal-indent))
+                    (lisp-indent-specform method state indent-point normal-indent))
                    (method
                     (funcall method indent-point state))))))))
 
