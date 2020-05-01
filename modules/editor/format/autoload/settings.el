@@ -91,7 +91,7 @@
     (name formatter &key modes filter ok-statuses error-regexp)
   "Define (or modify) a formatter named NAME.
 
-Supported keywords: :modes :install :filter :ok-statuses :error-regexp
+Supported keywords: :modes :filter :ok-statuses :error-regexp
 
 NAME is a symbol that identifies this formatter.
 
