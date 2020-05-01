@@ -89,7 +89,7 @@
 
 
 (use-package! dap-mode
-  :when (featurep! +lsp)
+  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
   :hook (dap-mode . dap-tooltip-mode)
   :after lsp-mode
   :demand t

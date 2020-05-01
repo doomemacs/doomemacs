@@ -27,6 +27,11 @@
     (after! rustic-flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))
 
+  (when (featurep! +lsp)
+    (if (featurep! :tools lsp +eglot)
+        (setq rustic-lsp-client 'eglot)
+      (setq rustic-lsp-client 'lsp-mode)))
+
   (map! :map rustic-mode-map
         :localleader
         (:prefix ("b" . "build")

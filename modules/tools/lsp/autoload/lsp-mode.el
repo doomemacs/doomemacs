@@ -1,4 +1,5 @@
-;;; feature/lsp/autoload.el -*- lexical-binding: t; -*-
+;;; tools/lsp/autoload/lsp-mode.el -*- lexical-binding: t; -*-
+;;;###if (not (featurep! +eglot))
 
 ;;;###autodef
 (defun set-lsp-priority! (client priority)
@@ -8,9 +9,6 @@
       (setf (lsp--client-priority client)
             priority)
     (error "No LSP client named %S" client)))
-
-;;;###autodef
-(defalias 'lsp! #'lsp-deferred)
 
 ;;;###autoload
 (defun +lsp/uninstall-server (dir)

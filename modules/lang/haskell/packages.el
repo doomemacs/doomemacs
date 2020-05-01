@@ -6,6 +6,6 @@
 (when (featurep! +dante)
   (package! dante :pin "4955bc7363")
   (package! attrap :pin "4cf3e4a162"))
-(when (or (featurep! +lsp)
+(when (or (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
           (featurep! +ghcide))
   (package! lsp-haskell :pin "582fa27c88"))

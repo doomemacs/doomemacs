@@ -7,11 +7,34 @@ workspace buffer is closed.
 This delay prevents premature server shutdown when a user still intends on
 working on that project after closing the last buffer.")
 
+;; TODO : set eglot-events-buffer-size to nil in doom-debug-mode
 
 ;;
 ;;; Packages
 
+(use-package! eglot
+  :when (featurep! +eglot)
+  :init
+  (setq eglot-sync-connect 1
+        eglot-connect-timeout 10
+        eglot-autoshutdown t
+        eglot-send-changes-idle-time 0.5
+        ;; NOTE: Do NOT set eglot-auto-display-help-buffer to t.
+        ;; With popup-rule! :select t, eglot will steal focus from the source code very often.
+        eglot-auto-display-help-buffer nil)
+  :config
+  (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
+  (when (featurep! :checkers syntax)
+    ;; Eager loading which is okay-ish since we want eglot to feed flycheck as soon as possible.
+    (load! "flycheck-eglot.el")
+    (require 'flycheck-eglot))
+  (set-lookup-handlers! 'eglot--managed-mode
+    :documentation #'+eglot/documentation-lookup-handler
+    :definition '(xref-find-definitions :async t)
+    :references '(xref-find-references :async t)))
+
 (use-package! lsp-mode
+  :unless (featurep! +eglot)
   :commands lsp-install-server
   :init
   (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
@@ -123,7 +146,7 @@ This also logs the resolved project root, if found, so we know where we are."
     (defun +lsp-init-flycheck-or-flymake-h ()
       "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
       (pcase lsp-diagnostic-package
-        ((or :auto 'nil) ; try flycheck, fall back to flymake
+        ((or :auto 'nil)                ; try flycheck, fall back to flymake
          (let ((lsp-diagnostic-package
                 (if (require 'flycheck nil t) :flycheck :flymake)))
            (+lsp-init-flycheck-or-flymake-h)))
@@ -164,6 +187,7 @@ auto-killed (which is a potentially expensive process)."
 
 
 (use-package! lsp-ui
+  :unless (featurep! +eglot)
   :hook (lsp-mode . lsp-ui-mode)
   :config
   (setq lsp-ui-doc-max-height 8
@@ -185,10 +209,12 @@ auto-killed (which is a potentially expensive process)."
 
 
 (use-package! helm-lsp
+  :unless (featurep! +eglot)
   :when (featurep! :completion helm)
   :commands helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
 
 
 (use-package! lsp-ivy
+  :unless (featurep! +eglot)
   :when (featurep! :completion ivy)
   :commands lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)

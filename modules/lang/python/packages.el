@@ -9,7 +9,7 @@
     (package! flycheck-cython :pin "ecc4454d35")))
 
 ;; LSP
-(when (featurep! +lsp)
+(when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
   (package! lsp-python-ms :pin "5d0c799099"))
 
 ;; Programming environment
