@@ -73,26 +73,36 @@
             ((message "WARNING: Couldn't find `inferior-lisp-program' (%s)"
                       inferior-lisp-program)))))
 
-  (map! :localleader
-        :map lisp-mode-map
-        :desc "Sly"          "'" #'sly
-        :desc "Sly (ask)"    ";" (λ!! #'sly '-)
-        :desc "Expand macro" "m" #'macrostep-expand
-        (:prefix ("c" . "compile")
+  (map! (:map sly-db-mode-map
+         :n "gr" #'sly-db-restart-frame)
+        (:map sly-inspector-mode-map
+         :n "gr" #'sly-inspector-reinspect
+         :n "gR" #'sly-inspector-fetch-all
+         :n "K"  #'sly-inspector-describe-inspectee)
+        (:map sly-xref-mode-map
+         :n "gr" #'sly-recompile-xref
+         :n "gR" #'sly-recompile-all-xrefs)
+
+        (:localleader
+         :map lisp-mode-map
+         :desc "Sly"          "'" #'sly
+         :desc "Sly (ask)"    ";" (λ!! #'sly '-)
+         :desc "Expand macro" "m" #'macrostep-expand
+         (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file
           :desc "Compile/load file"     "C" #'sly-compile-and-load-file
           :desc "Compile toplevel form" "f" #'sly-compile-defun
           :desc "Load file"             "l" #'sly-load-file
           :desc "Remove notes"          "n" #'sly-remove-notes
           :desc "Compile region"        "r" #'sly-compile-region)
-        (:prefix ("e" . "evaluate")
+         (:prefix ("e" . "evaluate")
           :desc "Evaulate buffer"     "b" #'sly-eval-buffer
           :desc "Evaluate last"       "e" #'sly-eval-last-expression
           :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
           :desc "Evaluate defun"      "f" #'sly-eval-defun
           :desc "Undefine function"   "F" #'sly-undefine-function
           :desc "Evaluate region"     "r" #'sly-eval-region)
-        (:prefix ("g" . "goto")
+         (:prefix ("g" . "goto")
           :desc "Go back"              "b" #'sly-pop-find-definition-stack
           :desc "Go to"                "d" #'sly-edit-definition
           :desc "Go to (other window)" "D" #'sly-edit-definition-other-window
@@ -100,7 +110,7 @@
           :desc "Previous note"        "N" #'sly-previous-note
           :desc "Next sticker"         "s" #'sly-stickers-next-sticker
           :desc "Previous sticker"     "S" #'sly-stickers-prev-sticker)
-        (:prefix ("h" . "help")
+         (:prefix ("h" . "help")
           :desc "Who calls"               "<" #'sly-who-calls
           :desc "Calls who"               ">" #'sly-calls-who
           :desc "Lookup format directive" "~" #'hyperspec-lookup-format
@@ -115,22 +125,22 @@
           :desc "Who references"          "r" #'sly-who-references
           :desc "Who specializes"         "s" #'sly-who-specializes
           :desc "Who sets"                "S" #'sly-who-sets)
-        (:prefix ("r" . "repl")
+         (:prefix ("r" . "repl")
           :desc "Clear REPL"         "c" #'sly-mrepl-clear-repl
           :desc "Quit connection"    "q" #'sly-quit-lisp
           :desc "Restart connection" "r" #'sly-restart-inferior-lisp
           :desc "Sync REPL"          "s" #'sly-mrepl-sync)
-        (:prefix ("s" . "stickers")
+         (:prefix ("s" . "stickers")
           :desc "Toggle breaking stickers" "b" #'sly-stickers-toggle-break-on-stickers
           :desc "Clear defun stickers"     "c" #'sly-stickers-clear-defun-stickers
           :desc "Clear buffer stickers"    "C" #'sly-stickers-clear-buffer-stickers
           :desc "Fetch stickers"           "f" #'sly-stickers-fetch
           :desc "Replay stickers"          "r" #'sly-stickers-replay
           :desc "Add/remove sticker"       "s" #'sly-stickers-dwim)
-        (:prefix ("t" . "trace")
+         (:prefix ("t" . "trace")
           :desc "Toggle"         "t" #'sly-toggle-trace-fdefinition
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
-          :desc "Untrace all"    "u" #'sly-untrace-all))
+          :desc "Untrace all"    "u" #'sly-untrace-all)))
 
   (when (featurep! :editor evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)))
