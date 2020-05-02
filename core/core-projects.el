@@ -146,7 +146,7 @@ c) are not valid projectile projects."
    ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-generic-command
-          (format "%s . --color=never --type f -0 -H -E .git"
+          (format "%s . --color=never --type f --type l -0 -H -E .git"
                   doom-projectile-fd-binary)
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
