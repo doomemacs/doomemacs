@@ -813,10 +813,10 @@ compelling reason, so..."
   ;; org-crypt falls back to CRYPTKEY property then `epa-file-encrypt-to', which
   ;; is a better default than the empty string `org-crypt-key' defaults to.
   (defvar org-crypt-key nil)
-  :config
-  (add-to-list 'org-tags-exclude-from-inheritance "crypt")
-  (add-hook! 'org-mode-hook
-    (add-hook 'before-save-hook 'org-encrypt-entries nil t)))
+  (after! org
+    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+    (add-hook! 'org-mode-hook
+      (add-hook 'before-save-hook 'org-encrypt-entries nil t))))
 
 
 (use-package! org-clock ; built-in
