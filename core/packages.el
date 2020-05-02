@@ -43,6 +43,3 @@
 ;; core-keybinds.el
 (package! general :pin "42e38034cd2305fa7432866323c923979d8f9b06")
 (package! which-key :pin "8b49ae978cceca65967f3544c236f32964ddbed0")
-
-;; autoload/cache.el
-(package! persistent-soft :pin "a1e0ddf2a12a6f18cab565dee250f070384cbe02")
