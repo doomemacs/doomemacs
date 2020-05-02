@@ -15,6 +15,8 @@ to persist across Emacs sessions.")
 name under `pcache-directory' (by default a subdirectory under
 `doom-store-dir'). One file may contain multiple cache entries.")
 
+(defvar doom--store-table (make-hash-table :test 'equal))
+
 (defun doom-save-persistent-store-h ()
   "Hook to run when an Emacs session is killed. Saves all persisted variables
 listed in `doom-store-persist-alist' to files."
@@ -22,7 +24,7 @@ listed in `doom-store-persist-alist' to files."
     (cl-loop with key = (car alist)
              for var in (cdr alist)
              if (symbol-value var)
-             do (doom-store-set var it nil key))))
+             do (doom-store-put var it nil key))))
 (add-hook 'kill-emacs-hook #'doom-save-persistent-store-h)
 
 
@@ -56,49 +58,48 @@ Does not affect the actual variables themselves or their values."
           doom-store-persist-alist)))
 
 (defun doom--store-init (location)
-  (or (gethash location doom--cache)
-      (not (file-exists-p doom-store-dir))
-      (let* ((store (expand-file-name location doom-store-dir))
-             (data (and (file-exists-p store)
-                        (with-temp-buffer
-                          (set-buffer-multibyte nil)
-                          (setq buffer-file-coding-system 'binary)
-                          (let (file-name-handler-alist)
-                            (insert-file-contents-literally store))
-                          (setq data (read (current-buffer)))))))
-        (puthash location data doom--cache)
-        data)))
+  (or (gethash location doom--store-table)
+      (if (file-exists-p doom-store-dir)
+          (let* ((store (expand-file-name location doom-store-dir))
+                 (data (and (file-exists-p store)
+                            (with-temp-buffer
+                              (set-buffer-multibyte nil)
+                              (setq buffer-file-coding-system 'binary)
+                              (let (file-name-handler-alist)
+                                (insert-file-contents-literally store))
+                              (read (current-buffer))))))
+            (puthash location data doom--store-table)
+            data)
+        (make-hash-table :test #'equal))))
 
-(defun doom--store-get (key location &optional ttl)
-  (when-let* ((location-data (doom--store-init location))
-              (data (gethash location location-data)))
-    (and (or (null (car data))
-             (time-less-p (time-add (current-time) ttl) (car data)))
-         (cdr data))))
+(defun doom--store-get (key location &optional default-value)
+  (if-let* ((location-data (doom--store-init location))
+            (data (gethash location location-data))
+            (_ (or (null (car data))
+                   (not (time-less-p (car data) (current-time))))))
+      (cdr data)
+    default-value))
 
 (defun doom--store-put (key value location &optional ttl)
   (let ((data (doom--store-init location)))
-    (puthash location
-             (cons (time-add (current-time) ttl)
-                   (doom--store-get key location))
-             data)
+    (puthash location (cons (if ttl (time-add (current-time) ttl)) value) data)
     (let ((coding-system-for-write 'binary)
           (write-region-annotate-functions nil)
           (write-region-post-annotation-function nil))
+      (make-directory doom-store-dir 'parents)
       (with-temp-file (expand-file-name location doom-store-dir)
         (prin1 data (current-buffer))))
     data))
 
 
-(defvar doom--cache (make-hash-table :test 'equal))
 ;;;###autoload
-(defun doom-store-get (key &optional location)
+(defun doom-store-get (key &optional location default-value)
   "Retrieve KEY from LOCATION (defaults to `doom-store-location'), if it exists
 and hasn't expired."
-  (doom--store-get key (or location doom-store-location)))
+  (doom--store-get key (or location doom-store-location) default-value))
 
 ;;;###autoload
-(defun doom-store-set (key value &optional ttl location)
+(defun doom-store-put (key value &optional ttl location)
   "Set KEY to VALUE in the cache. TTL is the time (in seconds) until this cache
 entry expires. LOCATION is the super-key to store this cache item under; the
 default is `doom-store-location'. "
