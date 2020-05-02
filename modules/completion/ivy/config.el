@@ -270,7 +270,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
               ((executable-find "rg")
                (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
-                                collect "--glob" and collect (concat "!" dir))
+                                collect "--glob"
+                                collect (concat "!" dir))
                        (if IS-WINDOWS (list "--path-separator" "/"))))
               ((cons find-program args)))
       (unless (listp args)
