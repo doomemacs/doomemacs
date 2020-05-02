@@ -5,7 +5,9 @@
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
-(package! evil-escape :pin "f4e9116bfbaac8c9d210c17ad488e0982291245f")
+(package! evil-escape
+  :recipe (:host github :repo "hlissner/evil-escape")
+  :pin "819f1ee1cf3f69a1ae920e6004f2c0baeebbe077")
 (package! evil-exchange :pin "3030e21ee16a42dfce7f7cf86147b778b3f5d8c1")
 (package! evil-indent-plus :pin "0c7501e6efed661242c3a20e0a6c79a6455c2c40")
 (package! evil-lion :pin "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
