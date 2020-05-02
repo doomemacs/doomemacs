@@ -146,7 +146,7 @@ c) are not valid projectile projects."
    ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-generic-command
-          (format "%s . --color=never --type f --type l -0 -H -E .git"
+          (format "%s . --color=never --type file --type symlink --follow -0 -H -E .git"
                   doom-projectile-fd-binary)
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
@@ -156,7 +156,7 @@ c) are not valid projectile projects."
    ;; Otherwise, resort to ripgrep, which is also faster than find
    ((executable-find "rg")
     (setq projectile-generic-command
-          (concat "rg -0 --files --color=never --hidden"
+          (concat "rg -0 --files --follow --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
                            concat (format " --glob '!%s'" dir)))
           projectile-git-command projectile-generic-command
