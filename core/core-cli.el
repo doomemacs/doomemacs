@@ -258,7 +258,7 @@ BODY will be run when this dispatcher is called."
                    (print! "%2s) %s" (1+ (length options))
                            (if (cl-find-if (doom-rpartial #'string-match-p desc)
                                            doom--cli-straight-discard-options)
-                               (concat desc " (Recommended)")
+                               (green (concat desc " (Recommended)"))
                              desc))))
          (terpri)
          (let* ((options
