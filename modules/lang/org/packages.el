@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "90cf5009cbb7379d6650f44494376b11c21a31f5")
+  :pin "e5eda0beeb3b6b0666550091bcc0df066d52c008")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -53,7 +53,7 @@
 (when (featurep! +brain)
   (package! org-brain :pin "ae7fe0f628bd093526786ece6917f7a4310e5e4d"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "d542a3072f75581f2223d7419df0f66991f19e6f"))
+  (package! org-download :pin "48d3952ad8ebc5ef5a6a77b8c6a4a0da61653036"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "f0001c30010b2899e36d7d89046322467e923088")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
@@ -74,7 +74,7 @@
   (package! org-tree-slide :pin "7bf09a02bd2d8f1ccfcb5209bfb18fbe02d1f44e")
   (package! org-re-reveal :pin "61549f4c00284a30e34caa3d76001b233ea5d2ad"))
 (when (featurep! +roam)
-  (package! org-roam :pin "65d99e998cad4beef77b1b5d9b6235d90395f374")
+  (package! org-roam :pin "e698ed7f5378106da8a8fec4537658392157657c")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "0913d86f167164e18831206e611f44bb8e7297e3")))
 
@@ -105,6 +105,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "5106b430a139bb9e37beda177a082dfe36b407f5"))
+    :pin "8f36181977377383cb54803651d93b24e370122d"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))
