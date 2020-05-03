@@ -14,6 +14,10 @@
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
+;; Unix tools looks for HOME, but this is normally not defined on Windows.
+(when (and IS-WINDOWS (null (getenv "HOME")))
+  (setenv "HOME" (getenv "USERPROFILE")))
+
 ;; Ensure `doom-core-dir' is in `load-path'
 (add-to-list 'load-path (file-name-directory load-file-name))
 
