@@ -49,5 +49,3 @@
   ;; hack to avoid the deferred.el error
   (defun org-gcal--notify (title mes)
     (message "org-gcal::%s - %s" title mes)))
-
-;; (use-package! alert)
