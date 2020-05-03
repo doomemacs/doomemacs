@@ -94,14 +94,11 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-entities-user
         '(("flat"  "\\flat" nil "" "" "266D" "♭")
           ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-        org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label 'plain
         org-hide-leading-stars t
-        org-hide-leading-stars-before-indent-mode t
         org-image-actual-width nil
-        org-list-description-max-indent 4
         org-priority-faces
         '((?A . error)
           (?B . warning)
