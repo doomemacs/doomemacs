@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/lsp/packages.el
 
-(package! lsp-mode :pin "d0096ccf22e0e70eaad6cc99e5ae4bd9fc81f75f")
-(package! lsp-ui :pin "242dfe859c3497c456eaacfd84942e12419529fe")
+(package! lsp-mode :pin "941e6062a5b407675e13ba471e9878f4a2dbd10e")
+(package! lsp-ui :pin "43f71e3837b07f377444ad631b12f8198c495aa7")
 (when (featurep! :completion ivy)
   (package! lsp-ivy :pin "81e81ced99829358674c5a6bbe2c3e15cecd4ed8"))
 (when (featurep! :completion helm)
