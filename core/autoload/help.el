@@ -135,7 +135,8 @@ selection of all minor-modes, active or not."
                                           (list (or (+org-get-global-property "TITLE")
                                                     (file-relative-name (buffer-file-name)))))
                                         path
-                                        (list (replace-regexp-in-string org-link-any-re "\\4" text)))
+                                        (when text
+                                          (list (replace-regexp-in-string org-link-any-re "\\4" text))))
                                 " > ")
                                tags)
                          " ")
