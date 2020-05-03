@@ -39,7 +39,7 @@
         :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-        (:when (featurep! :tools flycheck)
+        (:when (featurep! :checkers syntax)
           :desc "List errors"                         "x"   #'flycheck-list-errors)
         (:when (featurep! :tools lsp)
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
@@ -247,14 +247,14 @@
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
         :desc "Word-wrap mode"               "w" #'+word-wrap-mode
-        (:when (featurep! :tools flycheck)
+        (:when (featurep! :checkers syntax)
           :desc "Flycheck"                   "f" #'flycheck-mode)
         (:when (featurep! :ui indent-guides)
           :desc "Indent guides"              "i" #'highlight-indent-guides-mode)
         (:when (featurep! :lang org +present)
           :desc "org-tree-slide mode"        "p" #'+org-present/start)
         :desc "Read-only mode"               "r" #'read-only-mode
-        (:when (featurep! :tools flyspell)
+        (:when (featurep! :checkers spell)
           :desc "Flyspell"                   "s" #'flyspell-mode)
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
