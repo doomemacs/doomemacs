@@ -31,20 +31,16 @@
           (setq insert-directory-program gls)
         ;; BSD ls doesn't support --group-directories-first
         (setq args (delete "--group-directories-first" args))))
-    (setq dired-listing-switches (string-join args " ")))
+    (setq dired-listing-switches (string-join args " "))
 
-  (add-hook! 'dired-mode-hook
-    (defun +dired-disable-gnu-ls-flags-in-tramp-buffers-h ()
-      "Fix #1703: dired over TRAMP displays a blank screen.
+    (add-hook! 'dired-mode-hook
+      (defun +dired-disable-gnu-ls-flags-in-tramp-buffers-h ()
+        "Fix #1703: dired over TRAMP displays a blank screen.
 
 This is because there's no guarantee the remote system has GNU ls, which is the
 only variant that supports --group-directories-first."
-      (when (file-remote-p default-directory)
-        (setq-local dired-listing-switches
-                    (string-join
-                     (split-string dired-listing-switches
-                                   "--group-directories-first")
-                     " ")))))
+        (when (file-remote-p default-directory)
+          (setq-local dired-listing-switches (car args))))))
 
   ;; Don't complain about this command being disabled when we use it
   (put 'dired-find-alternate-file 'disabled nil)
