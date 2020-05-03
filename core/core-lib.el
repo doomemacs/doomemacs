@@ -101,6 +101,8 @@ Return t on success, nil otherwise (but logs a warning)."
       ;; `string-remove-suffix' is much cheaper (because it does no file sanity
       ;; checks during or after; just plain ol' string manipulation).
       (load (string-remove-suffix ".el" file) noerror 'nomessage)
+    (doom-error
+     (signal (car e) (cdr e)))
     ((debug error)
      (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
      nil)))
