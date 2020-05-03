@@ -180,7 +180,7 @@
           :desc "Find file in project sidebar"  "P" #'+neotree/find-this-file)
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar"               "p" #'+treemacs/toggle
-          :desc "Find file in project rsidebar" "P" #'+treemacs/find-file)
+          :desc "Find file in project rsidebar" "P" #'treemacs-find-file)
         (:when (featurep! :term shell)
           :desc "Toggle shell popup"            "t" #'+shell/toggle
           :desc "Open shell here"               "T" #'+shell/here)
@@ -541,4 +541,4 @@
       ;;; treemacs
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
-        "<C-f9>" #'+treemacs/find-file))
+        "<C-f9>" #'treemacs-find-file))
