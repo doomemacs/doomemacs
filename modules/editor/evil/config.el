@@ -427,22 +427,22 @@ To change these keys see `+evil-repeat-keys'."
       :m  "]y"    #'+evil:c-string-encode
       :m  "[y"    #'+evil:c-string-decode
       (:when (featurep! :lang web)
-        :m "]x"   #'+web:encode-html-entities
-        :m "[x"   #'+web:decode-html-entities)
+       :m "]x"   #'+web:encode-html-entities
+       :m "[x"   #'+web:decode-html-entities)
       (:when (featurep! :ui vc-gutter)
-        :m "]d"   #'git-gutter:next-hunk
-        :m "[d"   #'git-gutter:previous-hunk)
+       :m "]d"   #'git-gutter:next-hunk
+       :m "[d"   #'git-gutter:previous-hunk)
       (:when (featurep! :ui hl-todo)
-        :m "]t"   #'hl-todo-next
-        :m "[t"   #'hl-todo-previous)
+       :m "]t"   #'hl-todo-next
+       :m "[t"   #'hl-todo-previous)
       (:when (featurep! :ui workspaces)
-        :n "gt"   #'+workspace:switch-next
-        :n "gT"   #'+workspace:switch-previous
-        :n "]w"   #'+workspace/switch-right
-        :n "[w"   #'+workspace/switch-left)
+       :n "gt"   #'+workspace:switch-next
+       :n "gT"   #'+workspace:switch-previous
+       :n "]w"   #'+workspace/switch-right
+       :n "[w"   #'+workspace/switch-left)
       (:when (featurep! :ui tabs)
-        :n "gt"   #'centaur-tabs-forward
-        :n "gT"   #'centaur-tabs-backward)
+       :n "gt"   #'centaur-tabs-forward
+       :n "gT"   #'centaur-tabs-backward)
 
       ;; custom vim-unmpaired-esque keys
       :m  "]#"    #'+evil/next-preproc-directive
@@ -475,27 +475,27 @@ To change these keys see `+evil-repeat-keys'."
       :v  "g-"    #'evil-numbers/dec-at-pt-incremental
       :v  "g+"    #'evil-numbers/inc-at-pt
       (:when (featurep! :tools lookup)
-        :nv "K"   #'+lookup/documentation
-        :nv "gd"  #'+lookup/definition
-        :nv "gD"  #'+lookup/references
-        :nv "gf"  #'+lookup/file)
+       :nv "K"   #'+lookup/documentation
+       :nv "gd"  #'+lookup/definition
+       :nv "gD"  #'+lookup/references
+       :nv "gf"  #'+lookup/file)
       (:when (featurep! :tools eval)
-        :nv "gr"  #'+eval:region
-        :n  "gR"  #'+eval/buffer
-        :v  "gR"  #'+eval:replace-region
-        ;; Restore these keybinds, since the blacklisted/overwritten gr/gR will
-        ;; undo them:
-        (:after dired
-          :map dired-mode-map
-          :n "gr" #'revert-buffer)
-        (:after notmuch
-          :map notmuch-common-keymap
-          :n "gr" #'notmuch-refresh-this-buffer
-          :n "gR" #'notmuch-poll-and-refresh-this-buffer)
-        (:after elfeed
-          :map elfeed-search-mode-map
-          :n "gr" #'elfeed-search-update--force
-          :n "gR" #'elfeed-search-fetch))
+       :nv "gr"  #'+eval:region
+       :n  "gR"  #'+eval/buffer
+       :v  "gR"  #'+eval:replace-region
+       ;; Restore these keybinds, since the blacklisted/overwritten gr/gR will
+       ;; undo them:
+       (:after dired
+        :map dired-mode-map
+        :n "gr" #'revert-buffer)
+       (:after notmuch
+        :map notmuch-common-keymap
+        :n "gr" #'notmuch-refresh-this-buffer
+        :n "gR" #'notmuch-poll-and-refresh-this-buffer)
+       (:after elfeed
+        :map elfeed-search-mode-map
+        :n "gr" #'elfeed-search-update--force
+        :n "gR" #'elfeed-search-fetch))
 
       :nv "z="    #'flyspell-correct-at-point
       ;; custom evil keybinds
@@ -509,30 +509,30 @@ To change these keys see `+evil-repeat-keys'."
 
       ;; window management (prefix "C-w")
       (:map evil-window-map
-        ;; Navigation
-        "C-h"     #'evil-window-left
-        "C-j"     #'evil-window-down
-        "C-k"     #'evil-window-up
-        "C-l"     #'evil-window-right
-        "C-w"     #'other-window
-        ;; Swapping windows
-        "H"       #'+evil/window-move-left
-        "J"       #'+evil/window-move-down
-        "K"       #'+evil/window-move-up
-        "L"       #'+evil/window-move-right
-        "C-S-w"   #'ace-swap-window
-        ;; Window undo/redo
-        (:prefix "m"
-          "m"       #'doom/window-maximize-buffer
-          "v"       #'doom/window-maximize-vertically
-          "s"       #'doom/window-maximize-horizontally)
-        "u"       #'winner-undo
-        "C-u"     #'winner-undo
-        "C-r"     #'winner-redo
-        "o"       #'doom/window-enlargen
-        ;; Delete window
-        "d"       #'evil-window-delete
-        "C-C"     #'ace-delete-window)
+       ;; Navigation
+       "C-h"     #'evil-window-left
+       "C-j"     #'evil-window-down
+       "C-k"     #'evil-window-up
+       "C-l"     #'evil-window-right
+       "C-w"     #'other-window
+       ;; Swapping windows
+       "H"       #'+evil/window-move-left
+       "J"       #'+evil/window-move-down
+       "K"       #'+evil/window-move-up
+       "L"       #'+evil/window-move-right
+       "C-S-w"   #'ace-swap-window
+       ;; Window undo/redo
+       (:prefix "m"
+        "m"       #'doom/window-maximize-buffer
+        "v"       #'doom/window-maximize-vertically
+        "s"       #'doom/window-maximize-horizontally)
+       "u"       #'winner-undo
+       "C-u"     #'winner-undo
+       "C-r"     #'winner-redo
+       "o"       #'doom/window-enlargen
+       ;; Delete window
+       "d"       #'evil-window-delete
+       "C-C"     #'ace-delete-window)
 
       ;; text objects
       :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
@@ -548,23 +548,23 @@ To change these keys see `+evil-repeat-keys'."
 
       ;; evil-easymotion (see `+evil/easymotion')
       (:after evil-easymotion
-        :m "gs" evilem-map
-        (:map evilem-map
-          "a" (evilem-create #'evil-forward-arg)
-          "A" (evilem-create #'evil-backward-arg)
-          "s" #'evil-avy-goto-char-2
-          "SPC" (λ!! #'evil-avy-goto-char-timer t)
-          "/" #'evil-avy-goto-char-timer))
+       :m "gs" evilem-map
+       (:map evilem-map
+        "a" (evilem-create #'evil-forward-arg)
+        "A" (evilem-create #'evil-backward-arg)
+        "s" #'evil-avy-goto-char-2
+        "SPC" (λ!! #'evil-avy-goto-char-timer t)
+        "/" #'evil-avy-goto-char-timer))
 
-        ;; evil-snipe
+      ;; evil-snipe
       (:after evil-snipe
-        :map evil-snipe-parent-transient-map
-        "C-;" (λ! (require 'evil-easymotion)
-                  (call-interactively
-                   (evilem-create #'evil-snipe-repeat
-                                  :bind ((evil-snipe-scope 'whole-buffer)
-                                         (evil-snipe-enable-highlight)
-                                         (evil-snipe-enable-incremental-highlight))))))
+       :map evil-snipe-parent-transient-map
+       "C-;" (λ! (require 'evil-easymotion)
+                 (call-interactively
+                  (evilem-create #'evil-snipe-repeat
+                                 :bind ((evil-snipe-scope 'whole-buffer)
+                                        (evil-snipe-enable-highlight)
+                                        (evil-snipe-enable-incremental-highlight))))))
 
       ;; evil-surround
       :v "S" #'evil-surround-region
@@ -579,13 +579,13 @@ To change these keys see `+evil-repeat-keys'."
 
       ;; Omni-completion
       (:when (featurep! :completion company)
-        (:prefix "C-x"
-          :i "C-l"    #'+company/whole-lines
-          :i "C-k"    #'+company/dict-or-keywords
-          :i "C-f"    #'company-files
-          :i "C-]"    #'company-etags
-          :i "s"      #'company-ispell
-          :i "C-s"    #'company-yasnippet
-          :i "C-o"    #'company-capf
-          :i "C-n"    #'+company/dabbrev
-          :i "C-p"    #'+company/dabbrev-code-previous)))
+       (:prefix "C-x"
+        :i "C-l"    #'+company/whole-lines
+        :i "C-k"    #'+company/dict-or-keywords
+        :i "C-f"    #'company-files
+        :i "C-]"    #'company-etags
+        :i "s"      #'company-ispell
+        :i "C-s"    #'company-yasnippet
+        :i "C-o"    #'company-capf
+        :i "C-n"    #'+company/dabbrev
+        :i "C-p"    #'+company/dabbrev-code-previous)))
