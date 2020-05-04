@@ -6,7 +6,7 @@
 :; DOOMBASE="$(dirname "$0")/.."
 :; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
 :; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l bin/doom "$@"; exit 0; }
-:; exec $EMACS --script "$0" -- "$@"
+:; exec $EMACS --no-site-file --script "$0" -- "$@"
 :; exit 0
 
 (let* ((load-prefer-newer t)
@@ -14,6 +14,13 @@
        (emacsdir (getenv "EMACSDIR"))
        (user-emacs-directory
         (abbreviate-file-name (or emacsdir (expand-file-name "../" loaddir)))))
+
+  ;; HACK Load `cl' and site files manually so we can stop them from polluting
+  ;;      CLI logs with deprecation and file load messages.
+  (let ((inhibit-message t))
+    (when (> emacs-major-version 26)
+      (require 'cl))
+    (load "site-start" t t))
 
   (push (expand-file-name "core" user-emacs-directory) load-path)
   (require 'core)
