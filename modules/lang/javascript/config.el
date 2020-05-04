@@ -135,7 +135,8 @@
 
 (add-hook! '(js2-mode-local-vars-hook
              typescript-mode-local-vars-hook
-             web-mode-local-vars-hook)
+             web-mode-local-vars-hook
+             rjsx-mode-local-vars-hook)
   (defun +javascript-init-lsp-or-tide-maybe-h ()
     "Start `lsp' or `tide' in the current buffer.
 
