@@ -12,7 +12,7 @@
   :mode "\\.svelte\\'"
   :mode "\\.vue\\'"
   :mode "\\.twig\\'"
-  :mode "\\.jinja\\'"
+  :mode "\\.jinja2?\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   ;; REVIEW We associate TSX files with `web-mode' because `typescript-mode'
@@ -162,4 +162,6 @@
 
 
 (when (featurep! +lsp)
-  (add-hook! '(html-mode-hook web-mode-hook) #'lsp!))
+  (add-hook! '(html-mode-local-vars-hook
+               web-mode-local-vars-hook)
+             #'lsp!))

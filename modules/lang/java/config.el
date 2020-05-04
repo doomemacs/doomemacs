@@ -22,7 +22,7 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 
 ;;
-;; java-mode
+;;; java-mode
 
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
@@ -31,7 +31,7 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 
 ;;
-;; Common packages
+;;; Common packages
 
 (use-package! android-mode
   :commands android-mode

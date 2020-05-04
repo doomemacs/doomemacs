@@ -92,7 +92,6 @@ Modules that reconfigure or augment packages or features built into Emacs.
 Modules that bring support for a language or group of languages to Emacs.
 
 + [[file:../modules/lang/agda/README.org][agda]] - TODO
-+ assembly - TODO
 + [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
 + [[file:../modules/lang/clojure/README.org][clojure]] =+lsp= - TODO
 + common-lisp - TODO
@@ -112,11 +111,12 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/haskell/README.org][haskell]] =+dante +ghcide +lsp= - TODO
 + hy - TODO
 + [[file:../modules/lang/idris/README.org][idris]] - TODO
++ [[file:../modules/lang/json/README.org][json]] =+lsp= - TODO
 + java =+meghanada +lsp= - TODO
 + [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypeScript, and CoffeeScript support
 + julia =+lsp= - TODO
 + kotlin =+lsp+= - TODO
-+ [[file:../modules/lang/latex/README.org][latex]] =+latexmk +cdlatex +fold= - TODO
++ [[file:../modules/lang/latex/README.org][latex]] =+latexmk +cdlatex +fold +lsp= - TODO
 + lean - TODO
 + [[file:../modules/lang/ledger/README.org][ledger]] - TODO
 + lua =+moonscript= - TODO
@@ -129,7 +129,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/php/README.org][php]] =+lsp= - TODO
 + plantuml - TODO
 + purescript - TODO
-+ [[file:../modules/lang/python/README.org][python]] =+lsp +pyenv +conda= - TODO
++ [[file:../modules/lang/python/README.org][python]] =+lsp +pyenv +conda +poetry= - TODO
 + qt - TODO
 + racket - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
@@ -143,6 +143,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + swift =+lsp= - TODO
 + terra - TODO
 + web =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
++ [[file:../modules/lang/yaml/README.org][yaml]] =+lsp= - TODO
 
 * :term
 Modules that offer terminal emulation.
@@ -167,7 +168,7 @@ Small modules that give Emacs access to external tools & services.
   backend
 + [[file:../modules/tools/lsp/README.org][lsp]] =+peek= - TODO
 + macos - TODO
-+ magit - TODO
++ [[file:../modules/tools/magit/README.org][magit]] =+forge= - TODO
 + make - TODO
 + pass - TODO
 + pdf - TODO

@@ -88,6 +88,13 @@ There are several ways to manually install the module:
 1. You can use =M-x vterm-module-compile= to let emacs automatically compile and
    install the module.
 
+   Modify ~vterm-module-cmake-args~ to pass arguments to the cmake build script.
+   e.g. To use a local build of libvterm instead of the included one.
+
+   #+BEGIN_SRC elisp
+   (setq vterm-module-cmake-args "-DUSE_SYSTEM_LIBVTERM=yes")
+   #+END_SRC
+
    *WARNING*: Emacs will hang during the compilation. It may take a while.
 
 2. You can compile and install the module yourself. Go to the vterm installation

@@ -54,6 +54,9 @@ examples.
 It is recommended you don't set specify a font-size, as to inherit `doom-font's
 size.")
 
+(defvar doom-unicode-extra-fonts nil
+  "Fonts to inject into the unicode charset before `doom-unicode-font'.")
+
 
 ;;
 ;;; Custom hooks
@@ -85,48 +88,51 @@ size.")
 (defvar doom--last-frame nil)
 
 (defun doom-run-switch-window-hooks-h ()
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (unless (or doom-inhibit-switch-window-hooks
-                (eq doom--last-window (selected-window))
-                (minibufferp))
-      (let ((doom-inhibit-switch-window-hooks t)
-            (inhibit-redisplay t))
-        (run-hooks 'doom-switch-window-hook)
-        (setq doom--last-window (selected-window))))))
+  (unless (or doom-inhibit-switch-window-hooks
+              (eq doom--last-window (selected-window))
+              (minibufferp))
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-window-hooks t)
+          (inhibit-redisplay t))
+      (run-hooks 'doom-switch-window-hook)
+      (setq doom--last-window (selected-window)))))
 
 (defun doom-run-switch-frame-hooks-h (&rest _)
   (unless (or doom-inhibit-switch-frame-hooks
               (eq doom--last-frame (selected-frame))
               (frame-parameter nil 'parent-frame))
-    (let ((doom-inhibit-switch-frame-hooks t))
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-frame-hooks t))
       (run-hooks 'doom-switch-frame-hook)
       (setq doom--last-frame (selected-frame)))))
 
 (defun doom-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (if (or doom-inhibit-switch-buffer-hooks
-            (eq (current-buffer) (get-buffer buffer-or-name))
-            (and (eq orig-fn #'switch-to-buffer) (car args)))
-        (apply orig-fn buffer-or-name args)
-      (let ((doom-inhibit-switch-buffer-hooks t)
-            (inhibit-redisplay t))
-        (when-let (buffer (apply orig-fn buffer-or-name args))
-          (with-current-buffer (if (windowp buffer)
-                                   (window-buffer buffer)
-                                 buffer)
-            (run-hooks 'doom-switch-buffer-hook))
-          buffer)))))
+  (if (or doom-inhibit-switch-buffer-hooks
+          (and buffer-or-name
+               (eq (current-buffer)
+                   (get-buffer buffer-or-name)))
+          (and (eq orig-fn #'switch-to-buffer) (car args)))
+      (apply orig-fn buffer-or-name args)
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-buffer-hooks t)
+          (inhibit-redisplay t))
+      (when-let (buffer (apply orig-fn buffer-or-name args))
+        (with-current-buffer (if (windowp buffer)
+                                 (window-buffer buffer)
+                               buffer)
+          (run-hooks 'doom-switch-buffer-hook))
+        buffer))))
 
 (defun doom-run-switch-to-next-prev-buffer-hooks-a (orig-fn &rest args)
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (if doom-inhibit-switch-buffer-hooks
-        (apply orig-fn args)
-      (let ((doom-inhibit-switch-buffer-hooks t)
-            (inhibit-redisplay t))
-        (when-let (buffer (apply orig-fn args))
-          (with-current-buffer buffer
-            (run-hooks 'doom-switch-buffer-hook))
-          buffer)))))
+  (if doom-inhibit-switch-buffer-hooks
+      (apply orig-fn args)
+    (let ((gc-cons-threshold most-positive-fixnum)
+          (doom-inhibit-switch-buffer-hooks t)
+          (inhibit-redisplay t))
+      (when-let (buffer (apply orig-fn args))
+        (with-current-buffer buffer
+          (run-hooks 'doom-switch-buffer-hook))
+        buffer))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -278,9 +284,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq indicate-buffer-boundaries nil
       indicate-empty-lines nil)
 
-;; remove continuation arrow on right fringe
-(delq! 'continuation fringe-indicator-alist 'assq)
-
 
 ;;
 ;;; Windows/frames
@@ -303,7 +306,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars)))
 
-(when IS-MAC
+(when! IS-MAC
   ;; Curse Lion and its sudden but inevitable fullscreen mode!
   ;; NOTE Meaningless to railwaycat's emacs-mac build
   (setq ns-use-native-fullscreen nil)
@@ -413,16 +416,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (set-window-configuration doom--ediff-saved-wconf)))))
 
 
-(use-package! goto-addr
-  :hook (text-mode . goto-address-mode)
-  :hook (prog-mode . goto-address-prog-mode)
-  :config
-  (define-key goto-address-highlight-keymap (kbd "RET") #'goto-address-at-point))
-
-
 (use-package! hl-line
   ;; Highlights the current line
-  :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
+  :hook ((prog-mode text-mode conf-mode special-mode) . hl-line-mode)
   :config
   ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
   ;; performance boost. I also don't need to see it in other buffers.
@@ -488,6 +484,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
              all-the-icons-wicon
              all-the-icons-material
              all-the-icons-alltheicon)
+  :preface
+  (setq doom-unicode-extra-fonts
+        (list "Weather Icons"
+              "github-octicons"
+              "FontAwesome"
+              "all-the-icons"
+              "file-icons"
+              "Material Icons"))
   :config
   (cond ((daemonp)
          (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
@@ -582,8 +586,9 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
           (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
-        (when (and doom-unicode-font (fboundp 'set-fontset-font))
-          (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
+        (when (fboundp 'set-fontset-font)
+          (dolist (font (append doom-unicode-extra-fonts (doom-enlist doom-unicode-font)))
+            (set-fontset-font t 'unicode font nil 'prepend))))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
          (lwarn 'doom-ui :warning
@@ -598,22 +603,30 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
       (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
         (load-theme doom-theme t)))))
 
-(defadvice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
-  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  :after-while #'load-theme
-  (unless no-enable
-    (setq doom-theme theme
-          doom-init-theme-p t)
-    (run-hooks 'doom-load-theme-hook)))
+(defadvice! doom--load-theme-a (orig-fn theme &optional no-confirm no-enable)
+  "Run `doom-load-theme-hook' on `load-theme' and fix its issues.
 
-(defadvice! doom--disable-enabled-themes-a (theme &optional _no-confirm no-enable)
-  "Disable previously enabled themes before loading a new one.
-Otherwise, themes can conflict with each other."
-  :after-while #'load-theme
-  (unless no-enable
-    (mapc #'disable-theme (remq theme custom-enabled-themes))))
+1. Disable previously enabled themes.
+2. Don't let face-remapping screw up loading the new theme
+   (*cough*`mixed-pitch-mode').
+3. Record the current theme in `doom-theme'."
+  :around #'load-theme
+  ;; HACK Run `load-theme' from an estranged buffer, where we can be assured
+  ;;      that buffer-local face remaps (by `mixed-pitch-mode', for instance)
+  ;;      won't interfere with changing themes.
+  (with-temp-buffer
+    (when-let (result (funcall orig-fn theme no-confirm no-enable))
+      (unless no-enable
+        (setq doom-theme theme
+              doom-init-theme-p t)
+        ;; `load-theme' doesn't disable previously enabled themes, which seems
+        ;; like what you'd want. You could always use `enable-theme' to activate
+        ;; multiple themes instead.
+        (mapc #'disable-theme (remq theme custom-enabled-themes))
+        (run-hooks 'doom-load-theme-hook))
+      result)))
 
-(unless EMACS27+
+(when! (not EMACS27+)
   ;; DEPRECATED Not needed in Emacs 27
   (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
     "Have `load-theme' prioritize the byte-compiled theme.
@@ -622,10 +635,8 @@ This offers a moderate boost in startup (or theme switch) time, so long as
     :around #'load-theme
     (if (or (null after-init-time)
             doom--prefer-theme-elc)
-        (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-                   ((symbol-function 'locate-file)
-                    (lambda (filename path &optional _suffixes predicate)
-                      (funcall old-locate-file filename path '("c" "") predicate))))
+        (letf! (defun locate-file (filename path &optional _suffixes predicate)
+                 (funcall locate-file filename path '("c" "") predicate))
           (apply orig-fn args))
       (apply orig-fn args))))
 

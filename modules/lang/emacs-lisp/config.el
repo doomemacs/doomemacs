@@ -43,7 +43,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp +emacs-lisp-outline-regexp)
+    outline-regexp +emacs-lisp-outline-regexp
+    ;; Fixed indenter that intends plists sensibly.
+    lisp-indent-function #'+emacs-lisp-indent-function)
 
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
@@ -75,7 +77,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
              ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
-             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))
+
+           `(("(package!\\_>" (0 (+emacs-lisp-truncate-pin))))))
 
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom-recenter-a)

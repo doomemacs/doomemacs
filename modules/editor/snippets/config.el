@@ -20,8 +20,7 @@
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)
 
-  (if (daemonp)
-      (after! yasnippet (yas-reload-all))
+  (unless (daemonp)
     ;; Ensure `yas-reload-all' is called as late as possible. Other modules
     ;; could have additional configuration for yasnippet. For example,
     ;; file-templates.
@@ -88,7 +87,10 @@
         ;; Replace commands with superior alternatives
         :map yas-minor-mode-map
         [remap yas-new-snippet]        #'+snippets/new
-        [remap yas-visit-snippet-file] #'+snippets/edit))
+        [remap yas-visit-snippet-file] #'+snippets/edit)
+
+  ;; If in a daemon session, front-load this expensive work:
+  (if (daemonp) (yas-reload-all)))
 
 
 (use-package! auto-yasnippet
@@ -100,6 +102,6 @@
 us who use yas-minor-mode and enable yasnippet more selectively. This advice
 swaps `yas-global-mode' with `yas-minor-mode'."
     :around '(aya-expand aya-open-line)
-    (cl-letf (((symbol-function #'yas-global-mode) #'yas-minor-mode)
-              (yas-global-mode yas-minor-mode))
+    (letf! ((#'yas-global-mode #'yas-minor-mode)
+            (yas-global-mode yas-minor-mode))
       (apply orig-fn args))))

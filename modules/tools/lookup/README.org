@@ -25,13 +25,14 @@
   - [[#commands][Commands]]
 
 * Description
-Integrates with code navigation and documentation tools to help you quickly look
-up definitions, references and documentation.
+This module adds code navigation and documentation lookup tools to help you
+quickly look up definitions, references, documentation, dictionary definitions
+or synonyms.
 
 + Jump-to-definition and find-references implementations that just work.
 + Powerful xref integration for languages that support it.
-+ Documentation lookup for a variety of online sources (like devdocs.io,
-  stackoverflow or youtube).
++ Search online providers like devdocs.io, stackoverflow, google, duckduckgo or
+  youtube (duckduckgo and google have live suggestions).
 + Integration with Dash.app docsets.
 + Support for online (and offline) dictionaries and thesauruses.
 
@@ -43,14 +44,27 @@ up definitions, references and documentation.
 ** Plugins
 + [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
 + [[https://github.com/alexmurray/ivy-xref][ivy-xref]] or [[https://github.com/brotzeit/helm-xref][helm-xref]]
-+ [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
++ [[https://github.com/tkf/emacs-request][request]]
++ =+docsets=
+  + [[https://github.com/dash-docs-el/dash-docs][dash-docs]]
+  + [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
++ =+dictionary=
+  + if macOS
+    + [[https://github.com/xuchunyang/osx-dictionary.el][osx-dictionary]]* (on macOS)
+  + else
+    + [[https://github.com/abo-abo/define-word][define-word]]
+    + [[https://github.com/maxchaos/emacs-powerthesaurus][powerthesaurus]]
+    + =+offline=
+      + [[https://github.com/gromnitsky/wordnut][wordnut]]
+      + [[https://github.com/hpdeifel/synosaurus][synosaurus]]
 
 * Prerequisites
 This module has several soft dependencies:
 
 + ~ripgrep~ as a last-resort fallback for jump-to-definition/find-references.
-+ ~sqlite3~ for Dash docset support.
-+ ~wordnet~ for offline dictionary and thesaurus support.
++ ~sqlite3~ for Dash docset support (if you have =+docsets= enabled)
++ ~wordnet~ for offline dictionary and thesaurus support (if you have
+  =+dictionary +offline= enabled).
 
 ** MacOS
 #+BEGIN_SRC sh

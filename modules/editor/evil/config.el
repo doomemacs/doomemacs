@@ -159,7 +159,7 @@ directives. By default, this only recognizes C directives.")
   ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
   ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
   ;; and one custom one: %:P (expand to the project root).
-  (advice-add #'evil-ex-replace-special-filenames :override #'+evil-resolve-vim-path-a)
+  (advice-add #'evil-ex-replace-special-filenames :override #'+evil-replace-filename-modifiers-a)
 
   ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
   (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-h)
@@ -280,8 +280,13 @@ directives. By default, this only recognizes C directives.")
         evil-escape-delay 0.15)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; no `evil-escape' in minibuffer
-  (add-hook 'evil-escape-inhibit-functions #'minibufferp)
+  ;; no `evil-escape' in minibuffer, unless `evil-collection-setup-minibuffer'
+  ;; is enabled, where we could be in insert mode in the minibuffer.
+  (add-hook! 'evil-escape-inhibit-functions
+    (defun +evil-inhibit-escape-in-minibuffer-fn ()
+      (and (minibufferp)
+           (or (not (bound-and-true-p evil-collection-setup-minibuffer))
+               (evil-normal-state-p)))))
   ;; so that evil-escape-mode-hook runs, and can be toggled by evil-mc
   (evil-escape-mode +1))
 

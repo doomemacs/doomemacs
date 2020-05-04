@@ -77,7 +77,8 @@ all hooks after it are ignored.")
   :init
   ;; Convenience aliases
   (defalias 'define-key! #'general-def)
-  (defalias 'unmap! #'general-unbind))
+  (defalias 'undefine-key! #'general-unbind))
+
 
 ;; HACK `map!' uses this instead of `define-leader-key!' because it consumes
 ;; 20-30% more startup time, so we reimplement it ourselves.
@@ -108,8 +109,8 @@ all hooks after it are ignored.")
                            (general--concat t doom-leader-key ,key)
                            ,desc))))))))
     (macroexp-progn
-     (cons `(after! which-key ,@(nreverse wkforms))
-           (nreverse forms)))))
+     (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+             (nreverse forms)))))
 
 (defmacro define-leader-key! (&rest args)
   "Define <leader> keys.
@@ -219,16 +220,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
            if (cdr (assq l doom-evil-state-alist)) collect it
            else do (error "not a valid state: %s" l)))
 
-
-;; Register keywords for proper indentation (see `map!')
-(put :after        'lisp-indent-function 'defun)
-(put :desc         'lisp-indent-function 'defun)
-(put :leader       'lisp-indent-function 'defun)
-(put :localleader  'lisp-indent-function 'defun)
-(put :map          'lisp-indent-function 'defun)
-(put :mode         'lisp-indent-function 'defun)
-(put :prefix       'lisp-indent-function 'defun)
-(put :prefix-map   'lisp-indent-function 'defun)
 
 ;; specials
 (defvar doom--map-forms nil)

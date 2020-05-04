@@ -7,9 +7,15 @@
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
+    - [[#font-ligatures-module-flags][Font ligatures module flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#ligatures][Ligatures]]
+    - [[#emacs-mac-port-or-emacs-28][Emacs-mac port or Emacs 28+]]
+    - [[#not-emacs-mac-and-emacs--27][Not Emacs-mac and Emacs <= 27]]
 - [[#features][Features]]
+  - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
+  - [[#coding-ligatures][Coding ligatures]]
 - [[#configuration][Configuration]]
   - [[#set-pretty-symbols][~set-pretty-symbols!~]]
 - [[#troubleshooting][Troubleshooting]]
@@ -22,6 +28,11 @@ This module enables ligatures and/or arbitrary symbol substitutions with
 This module has no dedicated maintainers.
 
 ** Module Flags
+*** Font ligatures module flags
+Those flags are ignored on emacs-mac and on other platforms if running emacs 28+
+with harfbuzz feature. In those cases, ligatures are handled without needing the
+extra configuration provided by those flags.
+
 + =+fira= Enables =Fira Code= ligatures. This requires Fira Code Symbol and a
   patched version of Fira Code (see below).
 + =+hasklig= Enable =Hasklig= ligatures. This requires a patched version of the
@@ -35,8 +46,19 @@ This module has no dedicated maintainers.
 This module installs no packages.
 
 * Prerequisites
-For ligatures to work, you must:
+** Ligatures
+For ligatures to work, you must either:
 
+- Have a recent enough version of Emacs which will compose ligatures
+  automatically, or
+- Use one of our font-specific configurations.
+
+*** Emacs-mac port or Emacs 28+
+Ligatures are handled without needing additional configuration. If this doesn't
+work, report a bug with your current version of emacs and the ligatures which
+aren't working.
+
+*** Not Emacs-mac and Emacs <= 27
 1. Enable one of the four ligature font flags: =+fira=, =+hasklig=, =+iosevka=
    or =+pragmata-pro=.
 2. Install the patched version of the associated font with ~M-x
@@ -46,6 +68,32 @@ For ligatures to work, you must:
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
+** TODO Mathematical symbols replacement
+** Coding ligatures
+This module includes configuration to compose combinations like =->= or =::=
+into prettier glyphs (called a ligature). Depending on the current version of
+emacs, this is implemented in two different ways :
+
+- prettify-symbols-mode method :: this is the "legacy" method. It uses a font
+  which haves the ligatures as separate unicode symbols, and using
+  prettify-symbols-mode, =->=-like combinations are manually listed and replaced
+  with the correct symbol. The mapping between =->=-like sequences and unicode
+  values in the font are font-specific ; therefore =+fira=, =+iosevka=... files
+  and specific fonts are necessary for it to work.
+- composition-function-table method :: regexes are used to match all the usual
+  sequences which are composed into ligatures. These regexes are passed to emacs
+  directly, which asks Harfbuzz to shape it. Ligatures are obtained
+  automatically depending on the capabilities of the font, and no font-specific
+  configuration is necessary.
+
+Emacs-mac port implements the /composition-function-table/ method in its code,
+nothing is necessary on Doom side; otherwise, Doom implements the
+/composition-function-table/ for emacs 28+ built with Harfbuzz support, and the
+/prettify-symbols-mode/ method otherwise.
+
+Even though harfbuzz has been included in emacs 27, there is currently a [[https://lists.gnu.org/archive/html/bug-gnu-emacs/2020-04/msg01121.html][bug
+(#40864)]] which prevents a safe usage of /composition-function-table/ method in
+emacs 27.
 
 * TODO Configuration
 # How to configure this module, including common problems and how to address them.

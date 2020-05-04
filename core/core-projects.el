@@ -15,9 +15,6 @@ Emacs.")
       "fd")
   "name of `fd-find' executable binary")
 
-(defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
-  "Where to save project file cache timers.")
-
 
 ;;
 ;;; Packages
@@ -42,6 +39,16 @@ Emacs.")
 
   :config
   (projectile-mode +1)
+
+  ;; REVIEW Resolve the project root once, when the file/buffer is opened. This
+  ;;        speeds up projectile's project root resolution by leaps, but does
+  ;;        put you at risk of having a stale project root.
+  (setq-hook! '(change-major-mode-after-body-hook
+                ;; In case the user saves the file to a new location
+                after-save-hook
+                ;; ...or makes external changes then returns to Emacs
+                focus-in-hook)
+    projectile-project-root (if default-directory (doom-project-root)))
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
@@ -139,7 +146,7 @@ c) are not valid projectile projects."
    ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-generic-command
-          (format "%s . --color=never --type f -0 -H -E .git"
+          (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
                   doom-projectile-fd-binary)
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
@@ -149,9 +156,11 @@ c) are not valid projectile projects."
    ;; Otherwise, resort to ripgrep, which is also faster than find
    ((executable-find "rg")
     (setq projectile-generic-command
-          (concat "rg -0 --files --color=never --hidden"
+          (concat "rg -0 --files --follow --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
-                           concat (format " --glob '!%s'" dir)))
+                           concat " --glob "
+                           concat (shell-quote-argument (concat "!" dir)))
+                  (if IS-WINDOWS " --path-separator /"))
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
           ;; ensure Windows users get rg's benefits

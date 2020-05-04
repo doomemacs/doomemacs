@@ -48,7 +48,7 @@ You should use `set-eshell-alias!' to change this.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (after! eshell ; built-in
   (setq eshell-banner-message

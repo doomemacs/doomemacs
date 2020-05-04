@@ -8,10 +8,15 @@
   "Current version of Doom Emacs.")
 
 (defconst EMACS27+   (> emacs-major-version 26))
+(defconst EMACS28+   (> emacs-major-version 27))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+
+;; Unix tools looks for HOME, but this is normally not defined on Windows.
+(when (and IS-WINDOWS (null (getenv "HOME")))
+  (setenv "HOME" (getenv "USERPROFILE")))
 
 ;; Ensure `doom-core-dir' is in `load-path'
 (add-to-list 'load-path (file-name-directory load-file-name))
@@ -39,6 +44,8 @@
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
 ;; Just the bare necessities
+(require 'subr-x)
+(require 'cl-lib)
 (require 'core-lib)
 
 
@@ -196,29 +203,30 @@ users).")
 (setq gnutls-verify-error (not (getenv "INSECURE"))
       gnutls-algorithm-priority
       (when (boundp 'libgnutls-version)
-        (concat "SECURE128:+SECURE192:-VERS-ALL:+VERS-TLS1.2"
+        (concat "SECURE128:+SECURE192:-VERS-ALL"
                 (if (and (not IS-WINDOWS)
                          (not (version< emacs-version "26.3"))
                          (>= libgnutls-version 30605))
-                    ":+VERS-TLS1.3")))
+                    ":+VERS-TLS1.3")
+                ":+VERS-TLS1.2"))
       ;; `gnutls-min-prime-bits' is set based on recommendations from
       ;; https://www.keylength.com/en/4/
       gnutls-min-prime-bits 3072
       tls-checktrust gnutls-verify-error
-      ;; Emacs is built with `gnutls' by default, so `tls-program' would not
-      ;; be used in that case. Otherwiese, people have reasons to not go with
-      ;; `gnutls', we use `openssl' instead.
-      ;; For more details, see https://redd.it/8sykl1
+      ;; Emacs is built with `gnutls' by default, so `tls-program' would not be
+      ;; used in that case. Otherwise, people have reasons to not go with
+      ;; `gnutls', we use `openssl' instead. For more details, see
+      ;; https://redd.it/8sykl1
       tls-program '("openssl s_client -connect %h:%p -CAfile %t -nbio -no_ssl3 -no_tls1 -no_tls1_1 -ign_eof"
                     "gnutls-cli -p %p --dh-bits=3072 --ocsp --x509cafile=%t \
 --strict-tofu --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3' %h"
                     ;; compatibility fallbacks
                     "gnutls-cli -p %p %h"))
 
-;; Emacs stores authinfo in $HOME and in plaintext. Let's not do that, mkay?
+;; Emacs stores `authinfo' in $HOME and in plain-text. Let's not do that, mkay?
 ;; This file stores usernames, passwords, and other such treasures for the
 ;; aspiring malicious third party.
-(setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 ;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and %APPDATA%,
@@ -281,7 +289,7 @@ users).")
 (setq ffap-machine-p-known 'reject)
 
 ;; Font compacting can be terribly expensive, especially for rendering icon
-;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+;; fonts on Windows. Whether it has a notable affect on Linux and Mac hasn't
 ;; been determined, but we inhibit it there anyway.
 (setq inhibit-compacting-font-caches t)
 
@@ -425,17 +433,6 @@ If this is a daemon session, load them all immediately instead."
 ;;
 ;;; Bootstrap helpers
 
-(defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function) with better error handling.
-Meant to be used with `run-hook-wrapped'."
-  (doom-log "Running doom hook: %s" hook)
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'doom-hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
-
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark including number of packages and modules loaded.
 
@@ -447,50 +444,6 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
-
-(defun doom-load-autoloads-file (file &optional noerror)
-  "Tries to load FILE (an autoloads file).
-Return t on success, nil otherwise (but logs a warning)."
-  (condition-case e
-      (load (substring file 0 -3) noerror 'nomessage)
-    ((debug error)
-     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
-     nil)))
-
-(defun doom-load-envvars-file (file &optional noerror)
-  "Read and set envvars from FILE.
-If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
-unreadable. Returns the names of envvars that were changed."
-  (if (not (file-readable-p file))
-      (unless noerror
-        (signal 'file-error (list "Couldn't read envvar file" file)))
-    (let (envvars environment)
-      (with-temp-buffer
-        (save-excursion
-          (insert "\n")
-          (insert-file-contents file))
-        (while (re-search-forward "\n *\\([^#= \n]*\\)=" nil t)
-          (push (match-string 1) envvars)
-          (push (buffer-substring
-                 (match-beginning 1)
-                 (1- (or (save-excursion
-                           (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                             (line-beginning-position)))
-                         (point-max))))
-                environment)))
-      (when environment
-        (setq process-environment
-              (append (nreverse environment) process-environment)
-              exec-path
-              (if (member "PATH" envvars)
-                  (append (split-string (getenv "PATH") path-separator t)
-                          (list exec-directory))
-                exec-path)
-              shell-file-name
-              (if (member "SHELL" envvars)
-                  (or (getenv "SHELL") shell-file-name)
-                shell-file-name))
-        envvars))))
 
 (defun doom-initialize (&optional force-p noerror)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -510,7 +463,7 @@ The overall load order of Doom is as follows:
   Module config.el files
   ~/.doom.d/config.el
   `doom-init-modules-hook'
-  `doom-after-init-hook' (`after-init-hook')
+  `doom-after-init-modules-hook' (`after-init-hook')
   `emacs-startup-hook'
   `doom-init-ui-hook'
   `window-setup-hook'

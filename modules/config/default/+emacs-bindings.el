@@ -39,7 +39,7 @@
         :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-        (:when (featurep! :tools flycheck)
+        (:when (featurep! :checkers syntax)
           :desc "List errors"                         "x"   #'flycheck-list-errors)
         (:when (featurep! :tools lsp)
           :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
@@ -159,7 +159,7 @@
             :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
             :desc "Org Roam Capture" "c" #'org-roam-capture
             :desc "Find file"        "f" #'org-roam-find-file
-            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Show graph"       "g" #'org-roam-graph
             :desc "Insert"           "i" #'org-roam-insert
             :desc "Org Roam"         "r" #'org-roam
             (:prefix ("d" . "by date")
@@ -182,7 +182,7 @@
           :desc "Find file in project sidebar"  "P" #'+neotree/find-this-file)
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar"               "p" #'+treemacs/toggle
-          :desc "Find file in project rsidebar" "P" #'+treemacs/find-file)
+          :desc "Find file in project rsidebar" "P" #'treemacs-find-file)
         (:when (featurep! :term shell)
           :desc "Toggle shell popup"            "t" #'+shell/toggle
           :desc "Open shell here"               "T" #'+shell/here)
@@ -249,14 +249,14 @@
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
         :desc "Word-wrap mode"               "w" #'+word-wrap-mode
-        (:when (featurep! :tools flycheck)
+        (:when (featurep! :checkers syntax)
           :desc "Flycheck"                   "f" #'flycheck-mode)
         (:when (featurep! :ui indent-guides)
           :desc "Indent guides"              "i" #'highlight-indent-guides-mode)
         (:when (featurep! :lang org +present)
           :desc "org-tree-slide mode"        "p" #'+org-present/start)
         :desc "Read-only mode"               "r" #'read-only-mode
-        (:when (featurep! :tools flyspell)
+        (:when (featurep! :checkers spell)
           :desc "Flyspell"                   "s" #'flyspell-mode)
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
@@ -543,14 +543,4 @@
       ;;; treemacs
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
-        "<C-f9>" #'+treemacs/find-file)
-
-      ;;; yasnippet
-      (:after yasnippet
-        :map yas-keymap  ; keymap while editing an inserted snippet
-        "C-e"           #'+snippets/goto-end-of-field
-        "C-a"           #'+snippets/goto-start-of-field
-        "<S-tab>"       #'yas-prev-field
-        "<M-backspace>" #'+snippets/delete-to-start-of-field
-        [backspace]     #'+snippets/delete-backward-char
-        [delete]        #'+snippets/delete-forward-char-or-field))
+        "<C-f9>" #'treemacs-find-file))

@@ -1,6 +1,6 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
-(use-package! pdf-tools
+(use-package! pdf-view
   :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :init
@@ -20,9 +20,10 @@
   :config
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
-  (setq-default pdf-view-display-size 'fit-page
-                pdf-view-use-scaling t
-                pdf-view-use-imagemagick nil)
+  (setq-default pdf-view-display-size 'fit-page)
+  ;; Enable hiDPI support, but at the cost of memory! See politza/pdf-tools#51
+  (setq pdf-view-use-scaling t
+        pdf-view-use-imagemagick nil)
 
   ;; Add retina support for MacOS users
   (when IS-MAC
@@ -32,12 +33,10 @@
       :around '(pdf-annot-show-annotation
                 pdf-isearch-hl-matches
                 pdf-view-display-region)
-      (cl-letf* ((old-create-image (symbol-function #'create-image))
-                 ((symbol-function #'create-image)
-                  (lambda (file-or-data &optional type data-p &rest props)
-                    (apply old-create-image file-or-data type data-p
-                           :width (car (pdf-view-image-size))
-                           props))))
+      (letf! (defun create-image (file-or-data &optional type data-p &rest props)
+               (apply create-image file-or-data type data-p
+                      :width (car (pdf-view-image-size))
+                      props))
         (apply orig-fn args))))
 
   ;; Handle PDF-tools related popups better
@@ -52,6 +51,7 @@
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
   ;; Install epdfinfo binary if needed, blocking until it is finished
+  (require 'pdf-tools)
   (unless (file-executable-p pdf-info-epdfinfo-program)
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)

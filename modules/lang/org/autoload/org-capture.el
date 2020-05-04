@@ -50,7 +50,7 @@ you're done. This can be called from an external shell script."
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
-          (cl-letf (((symbol-function #'pop-to-buffer) #'switch-to-buffer))
+          (letf! ((#'pop-to-buffer #'switch-to-buffer))
             (switch-to-buffer (doom-fallback-buffer))
             (let ((org-capture-initial initial-input)
                   org-capture-entry)

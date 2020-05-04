@@ -49,17 +49,54 @@ besides what is listed.")
   "An alist containing a mapping of major modes to its value for
 `prettify-symbols-alist'.")
 
+;;; Automatic font-specific ligatures
+(defvar +prog-ligatures-alist
+  (eval-when-compile
+    `((?!  . ,(regexp-opt '("!!" "!=" "!==")))
+      (?#  . ,(regexp-opt '("##" "###" "####" "#(" "#:" "#=" "#?" "#[" "#_" "#_(" "#{")))
+      (?$  . ,(regexp-opt '("$>" "$>>")))
+      (?%  . ,(regexp-opt '("%%" "%%%")))
+      (?&  . ,(regexp-opt '("&&" "&&&")))
+      (?*  . ,(regexp-opt '("*" "**" "***" "**/" "*/" "*>")))
+      (?+  . ,(regexp-opt '("+" "++" "+++" "+>")))
+      (?-  . ,(regexp-opt '("--" "---" "-->" "-<" "-<<" "->" "->>" "-}" "-~")))
+      (?.  . ,(regexp-opt '(".-" ".." "..." "..<" ".=")))
+      (?/  . ,(regexp-opt '("/*" "/**" "//" "///" "/=" "/==" "/>")))
+      (?:  . ,(regexp-opt '(":" "::" ":::" ":=" ":<" ":=" ":>")))
+      (?0  . "0\\(?:\\(x[a-fA-F0-9]\\).?\\)") ; Tries to match the x in 0xDEADBEEF
+      ;; (?x . ,(regexp-opt '("x"))) ; Also tries to match the x in 0xDEADBEEF
+      (?\; . ,(regexp-opt '(";;")))
+      (?<  . ,(regexp-opt '("<!--" "<$" "<$>" "<*" "<*>" "<+" "<+>" "<-" "<--" "<->" "</" "</>" "<<" "<<-" "<<<" "<<=" "<=" "<=" "<=<" "<==" "<=>" "<>" "<|" "<|>" "<~" "<~~")))
+      (?=  . ,(regexp-opt '("=/=" "=:=" "=<<" "==" "===" "==>" "=>" "=>>")))
+      (?>  . ,(regexp-opt '(">-" ">->" ">:" ">=" ">=>" ">>" ">>-" ">>=" ">>>")))
+      (??  . ,(regexp-opt '("??" "?." "?:" "?=")))
+      (?\[ . ,(regexp-opt '("[]" "[|]" "[|")))
+      (?\\ . ,(regexp-opt '("\\\\" "\\\\\\" "\\\\n")))
+      (?^  . ,(regexp-opt '("^=" "^==")))
+      (?w  . ,(regexp-opt '("www" "wwww")))
+      (?{  . ,(regexp-opt '("{-" "{|" "{||" "{|}" "{||}")))
+      (?|  . ,(regexp-opt '("|=" "|>" "||" "||=" "|->" "|=>" "|]" "|}")))
+      (?_  . ,(regexp-opt '("_|_" "__")))
+      (?~  . ,(regexp-opt '("~-" "~=" "~>" "~@" "~~" "~~>")))))
+  "An alist of all ligatures used by `+prog-ligatures-modes'.
 
-;;
-;;; Packages
+The car is the character ASCII number, cdr is a regex which will call
+`font-shape-gstring' when matched.
 
-;;;###package prettify-symbols
-;; When you get to the right edge, it goes back to how it normally prints
-(setq prettify-symbols-unprettify-at-point 'right-edge)
+Because of the underlying code in :ui pretty-code module, the regex should match
+a string starting with the character contained in car.
 
+This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 
-;;
-;;; Bootstrap
+(defvar +prog-ligatures-modes '(not org-mode)
+  "List of major modes in which ligatures should be enabled.
+
+If t, enable it everywhere. Fundamental mode, and modes derived from special-mode,
+comint-mode, eshell-mode and term-mode are *still* excluded.
+
+If the first element is 'not, enable it in any mode besides what is listed.
+
+If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code).")
 
 (defun +pretty-code--correct-symbol-bounds (ligature-alist)
   "Prepend non-breaking spaces to a ligature.
@@ -95,19 +132,62 @@ Otherwise it builds `prettify-code-symbols-alist' according to
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
 
+(defun +pretty-code-init-ligatures-h ()
+  "Enable ligatures.
+
+If in fundamental-mode, or a mode derived from special, comint, eshell or term
+modes, this function does nothing.
+
+Otherwise it sets the buffer-local composition table to a composition table enhanced with
+`+prog-ligatures-alist' ligatures regexes."
+  (unless (or (eq major-mode 'fundamental-mode)
+              (eq (get major-mode 'mode-class) 'special)
+              (derived-mode-p 'comint-mode 'eshell-mode 'term-mode))
+    (when (or (eq +prog-ligatures-modes t)
+              (if (eq (car +prog-ligatures-modes) 'not)
+                  (not (memq major-mode (cdr +prog-ligatures-modes)))
+                (memq major-mode +prog-ligatures-modes)))
+      (setq-local composition-function-table composition-ligature-table))))
+
+
+;;
+;;; Bootstrap
 
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
-;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
-;; so use that instead if this module is enabled.
-(cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
-       (mac-auto-operator-composition-mode))
-      ;; Font-specific ligature support
-      ((featurep! +fira)
-       (load! "+fira"))
-      ((featurep! +iosevka)
-       (load! "+iosevka"))
-      ((featurep! +hasklig)
-       (load! "+hasklig"))
-      ((featurep! +pragmata-pro)
-       (load! "+pragmata-pro")))
+;;;###package prettify-symbols
+;; When you get to the right edge, it goes back to how it normally prints
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+
+(cond
+ ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
+ ;; using the same composition-function-table method
+ ;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
+ ;; so use that instead if this module is enabled.
+ ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
+  (mac-auto-operator-composition-mode))
+
+ ;; Harfbuzz builds do not need font-specific ligature support
+ ;; if they are above emacs-27
+ ((and EMACS28+
+       (string-match-p "HARFBUZZ" system-configuration-features)
+       +prog-ligatures-modes
+       (require 'composite nil t))
+  (defvar composition-ligature-table (make-char-table nil))
+
+  (dolist (char-regexp +prog-ligatures-alist)
+    (set-char-table-range composition-ligature-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring])))
+  (set-char-table-parent composition-ligature-table composition-function-table)
+
+  (add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h))
+
+ ;; Font-specific ligature support
+ ((featurep! +fira)
+  (load! "+fira"))
+ ((featurep! +iosevka)
+  (load! "+iosevka"))
+ ((featurep! +hasklig)
+  (load! "+hasklig"))
+ ((featurep! +pragmata-pro)
+  (load! "+pragmata-pro")))

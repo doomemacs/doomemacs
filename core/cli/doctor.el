@@ -123,11 +123,8 @@ in."
                     "both is rarely intentional; you should one or the other."))
 
         ;; Check for fonts
-        (if (not (fboundp 'find-font))
-            (progn
-              (warn! "Warning: unable to detect font")
-              (explain! "The `find-font' function is missing. This could indicate the incorrect "
-                        "version of Emacs is being used!"))
+        (if (not (executable-find "fc-list"))
+            (warn! "Warning: unable to detect fonts because fontconfig isn't installed")
           ;; all-the-icons fonts
           (when (and (pcase system-type
                        (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")

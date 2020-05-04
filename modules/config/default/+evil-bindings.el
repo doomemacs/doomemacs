@@ -4,9 +4,12 @@
   ;; NOTE SPC u replaces C-u as the universal argument.
 
   ;; Minibuffer
-  (define-key! evil-ex-completion-map
+  (define-key! :keymaps '(evil-ex-completion-map evil-ex-search-keymap)
     "C-a" #'evil-beginning-of-line
-    "C-b" #'evil-backward-char)
+    "C-b" #'evil-backward-char
+    "C-f" #'evil-forward-char
+    "C-j" #'next-complete-history-element
+    "C-k" #'previous-complete-history-element)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
@@ -15,16 +18,20 @@
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'doom/delete-backward-word
-    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-    ;; Scrolling lines
-    "C-j"    #'next-line
-    "C-k"    #'previous-line
-    "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command)
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo))))
 
-  (define-key! read-expression-map
-    "C-j" #'next-line-or-history-element
-    "C-k" #'previous-line-or-history-element))
+  (when (featurep! :editor evil +everywhere)
+    (define-key! :keymaps +default-minibuffer-maps
+      "C-j"    #'next-line
+      "C-k"    #'previous-line
+      "C-S-j"  #'scroll-up-command
+      "C-S-k"  #'scroll-down-command)
+    (define-key! :states 'insert :keymaps +default-minibuffer-maps
+      "C-j"    #'next-line
+      "C-k"    #'previous-line)
+    (define-key! read-expression-map
+      "C-j" #'next-line-or-history-element
+      "C-k" #'previous-line-or-history-element)))
 
 
 ;;
@@ -186,9 +193,9 @@
 
 ;;; :ui
 (map! (:when (featurep! :ui popup)
-        :n "C-`"   #'+popup/toggle
-        :n "C-~"   #'+popup/raise
-        :g "C-x p" #'+popup/other)
+        "C-`"   #'+popup/toggle
+        "C-~"   #'+popup/raise
+        "C-x p" #'+popup/other)
 
       (:when (featurep! :ui workspaces)
         :n "C-t"   #'+workspace/new
@@ -489,7 +496,7 @@
             :desc "Switch to buffer" "b" #'org-roam-switch-to-buffer
             :desc "Org Roam Capture" "c" #'org-roam-capture
             :desc "Find file"        "f" #'org-roam-find-file
-            :desc "Show graph"       "g" #'org-roam-graph-show
+            :desc "Show graph"       "g" #'org-roam-graph
             :desc "Insert"           "i" #'org-roam-insert
             :desc "Org Roam"         "r" #'org-roam
             (:prefix ("d" . "by date")
@@ -522,7 +529,7 @@
           :desc "Find file in project sidebar" "P" #'+neotree/find-this-file)
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
-          :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
+          :desc "Find file in project sidebar" "P" #'treemacs-find-file)
         (:when (featurep! :term shell)
           :desc "Toggle shell popup"    "t" #'+shell/toggle
           :desc "Open shell here"       "T" #'+shell/here)

@@ -76,7 +76,7 @@ Runs `doom-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
-    (warn "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
+    (message "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
   ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))
@@ -136,6 +136,6 @@ imported into Emacs."
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%s upgrade" doom-bin)
+  (doom--if-compile (format "%s -y upgrade" doom-bin)
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))
