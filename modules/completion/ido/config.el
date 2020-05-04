@@ -33,7 +33,7 @@
 
   (map! :map (ido-common-completion-map ido-file-completion-map)
         "C-w"  #'ido-delete-backward-word-updir
-        :map ido-common-completion-map
+        :map (ido-common-completion-map ido-file-dir-completion-map)
         "C-n"  #'ido-next-match
         "C-p"  #'ido-prev-match
         [down] #'ido-next-match
