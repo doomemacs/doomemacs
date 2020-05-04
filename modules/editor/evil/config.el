@@ -493,7 +493,7 @@ To change these keys see `+evil-repeat-keys'."
           :n "gr" #'notmuch-refresh-this-buffer
           :n "gR" #'notmuch-poll-and-refresh-this-buffer)
         (:after elfeed
-          :map elfeed-search-update--force
+          :map elfeed-search-mode-map
           :n "gr" #'elfeed-search-update--force
           :n "gR" #'elfeed-search-fetch))
 
