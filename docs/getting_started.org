@@ -17,6 +17,7 @@ us know!
     - [[#on-linux][On Linux]]
       - [[#arch-linux][Arch Linux:]]
       - [[#ubuntu][Ubuntu:]]
+      - [[#fedora][Fedora:]]
       - [[#nixos][NixOS]]
     - [[#on-macos][On macOS]]
       - [[#with-homebrew][With Homebrew]]
@@ -141,6 +142,14 @@ does not support. Extra steps are necessary to acquire 26.3:
 add-apt-repository ppa:kelleyk/emacs
 apt-get update
 apt-get install emacs26
+#+END_SRC
+
+**** Fedora:
+#+BEGIN_SRC bash
+# required dependencies
+sudo dnf install emacs git ripgrep
+# optional dependencies
+sudo dnf install tar fd-find clang multimarkdown ShellCheck
 #+END_SRC
 
 **** NixOS
