@@ -43,7 +43,6 @@
         :desc "List errors"                         "x"   #'flycheck-list-errors)
        (:when (featurep! :tools lsp)
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
-        :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
         :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
         (:after lsp-mode
