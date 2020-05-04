@@ -42,16 +42,18 @@
         (:when (featurep! :checkers syntax)
           :desc "List errors"                         "x"   #'flycheck-list-errors)
         (:when (featurep! :tools lsp)
-        :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
-        :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
-        :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
-        :desc "LSP Rename"                            "r"   #'lsp-rename
-        (:when (featurep! :completion ivy)
-          :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
-          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
-        (:when (featurep! :completion helm)
-          :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
-          :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)))
+          :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
+          :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
+          :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
+          :desc "LSP Rename"                            "r"   #'lsp-rename
+          (:after lsp-mode
+            :desc "LSP"                                   "l"   lsp-command-map)
+          (:when (featurep! :completion ivy)
+            :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
+            :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
+          (:when (featurep! :completion helm)
+            :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
+            :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
