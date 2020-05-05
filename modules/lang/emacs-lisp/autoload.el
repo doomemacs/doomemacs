@@ -264,6 +264,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
                 (save-excursion
                   (goto-char orig-point)
                   (and (eq (char-after) ?:)
+                       (eq (char-before) ?\()
                        (setq target (current-column)))))
            (save-excursion
              (move-to-column target t)
