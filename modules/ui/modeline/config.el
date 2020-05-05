@@ -45,7 +45,7 @@
   (defvar mouse-wheel-down-event nil)
   (defvar mouse-wheel-up-event nil)
 
-  (add-hook 'doom-change-font-size-hook #'+modeline-resize-for-font-h)
+  (add-hook 'after-setting-font-hook #'+modeline-resize-for-font-h)
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
