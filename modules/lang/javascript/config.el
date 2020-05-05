@@ -153,7 +153,7 @@ to tide."
         (if (not buffer-file-name)
             ;; necessary because `tide-setup' and `lsp' will error if not a
             ;; file-visiting buffer
-            (add-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h nil 'local)
+            (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h nil 'local)
           (or (and (featurep! +lsp) (lsp!))
               ;; fall back to tide
               (if (executable-find "node")
@@ -161,7 +161,7 @@ to tide."
                        (progn (tide-setup) tide-mode))
                 (ignore
                  (doom-log "Couldn't start tide because 'node' is missing"))))
-          (remove-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h 'local))))))
+          (remove-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h 'local))))))
 
 
 (use-package! tide
