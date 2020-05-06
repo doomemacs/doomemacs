@@ -219,13 +219,15 @@ snippets or single lines."
 is selected)."
   (interactive)
   (call-interactively
-   (if (bound-and-true-p lsp-mode)
-       (if (doom-region-active-p)
+   (if (doom-region-active-p)
+       (if (and (bound-and-true-p lsp-mode)
+                (lsp-feature? "textDocument/rangeFormatting"))
            #'lsp-format-region
-         #'lsp-format-buffer)
-     (if (use-region-p)
-         #'+format/region
-       #'+format/buffer))))
+         #'+format/region)
+     (if (and (bound-and-true-p lsp-mode)
+              (lsp-feature? "textDocument/formatting"))
+         #'lsp-format-buffer
+       #'+format/buffer)))
 
 
 ;;
