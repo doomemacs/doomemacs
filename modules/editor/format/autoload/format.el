@@ -227,7 +227,7 @@ is selected)."
      (if (and (bound-and-true-p lsp-mode)
               (lsp-feature? "textDocument/formatting"))
          #'lsp-format-buffer
-       #'+format/buffer)))
+       #'+format/buffer))))
 
 
 ;;
