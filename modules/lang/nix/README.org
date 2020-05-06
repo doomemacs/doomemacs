@@ -10,6 +10,7 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+  - [[#keybindings][Keybindings]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
 
@@ -32,15 +33,14 @@ This module provides no flags.
 + [[https://github.com/jwiegley/nix-update-el][nix-update]]
 
 * Prerequisites
-
-* Features
 + ~nixfmt~ is required to use formatting
   + If you have Nix(OS) installed it can be installed through Nix configuration ~environment.systemPackages = with pkgs; [ nixfmt ];~ (recommended)
   + Or through nix-env ~nix-env -iA nixpkgs.nixfmt~
   + Or through nix-shell ~nix-shell -f https://github.com/serokell/nixfmt/archive/master.tar.gz -i~
 + ~:editor format~ ~format-all~ also supports ~nixfmt~ so you can use that also to format Nix code, default binding is ~SPC c f~ in evil.
 
-* Configuration
+* Features
+** Keybindings
 | Binding           | Description          |
 |-------------------+----------------------|
 | ~<localleader> b~ | ~nix-build~          |
@@ -50,6 +50,8 @@ This module provides no flags.
 | ~<localleader> r~ | ~nix-repl-show~      |
 | ~<localleader> s~ | ~nix-repl-shell~     |
 | ~<localleader> u~ | ~nix-unpack~         |
+
+* Configuration
 
 * Troubleshooting
 + There aren't any known problems.
