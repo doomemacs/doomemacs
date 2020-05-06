@@ -118,7 +118,7 @@
     ("*"      . #Xe16f)))
 
 (defun +pretty-code-setup-fira-ligatures-h ()
-  (set-fontset-font t '(#Xe100 . #Xe16f) +pretty-code-fira-code-font-name)
+  (set-fontset-font t '(#Xe100 . #Xe16f) +pretty-code-fira-code-font-name nil 'prepend)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         (mapcar #'+pretty-code--correct-symbol-bounds

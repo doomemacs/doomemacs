@@ -17,6 +17,7 @@ us know!
     - [[#on-linux][On Linux]]
       - [[#arch-linux][Arch Linux:]]
       - [[#ubuntu][Ubuntu:]]
+      - [[#fedora][Fedora:]]
       - [[#nixos][NixOS]]
     - [[#on-macos][On macOS]]
       - [[#with-homebrew][With Homebrew]]
@@ -141,6 +142,14 @@ does not support. Extra steps are necessary to acquire 26.3:
 add-apt-repository ppa:kelleyk/emacs
 apt-get update
 apt-get install emacs26
+#+END_SRC
+
+**** Fedora:
+#+BEGIN_SRC bash
+# required dependencies
+sudo dnf install emacs git ripgrep
+# optional dependencies
+sudo dnf install tar fd-find clang multimarkdown ShellCheck
 #+END_SRC
 
 **** NixOS
@@ -343,9 +352,7 @@ provides, and ~bin/doom help COMMAND~ to display documentation for a particular
 #+begin_quote
 I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
 directly and from anywhere. Accomplish this by adding this to your .bashrc or
-.zshrc file:
-
-~export PATH="$HOME/.emacs.d/bin:$PATH"~
+.zshrc file: ~export PATH=~/.emacs.d/bin:$PATH~
 #+end_quote
 
 *** Install Doom Manually

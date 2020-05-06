@@ -92,6 +92,9 @@
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
+  ;; Html mails might be better rendered in a browser
+  (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
+
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 

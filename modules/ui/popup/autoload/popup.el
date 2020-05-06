@@ -436,13 +436,14 @@ window and return that window."
 (defun +popup/diagnose ()
   "Reveal what popup rule will be used for the current buffer."
   (interactive)
-  (or (cl-loop with bname = (buffer-name)
-               for (pred . action) in display-buffer-alist
-               if (and (functionp pred) (funcall pred bname action))
-               return (cons pred action)
-               else if (and (stringp pred) (string-match-p pred bname))
-               return (cons pred action))
-      (message "No popup rule for this buffer")))
+  (if-let (rule (cl-loop with bname = (buffer-name)
+                         for (pred . action) in display-buffer-alist
+                         if (and (functionp pred) (funcall pred bname action))
+                         return (cons pred action)
+                         else if (and (stringp pred) (string-match-p pred bname))
+                         return (cons pred action)))
+      (message "Rule matches: %s" rule)
+    (message "No popup rule for this buffer")))
 
 
 ;;

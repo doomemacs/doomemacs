@@ -113,10 +113,11 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                          "# run 'doom sync'. To create a safe-to-edit envvar file use:\n#\n"
                          "#   doom env -o ~/.doom.d/myenv\n#\n"
                          "# And load it with (doom-load-envvars-file \"~/.doom.d/myenv\").\n")
-               (concat "# This file is safe to edit by hand, but needs to be loaded manually with:\n#\n"
+               (concat "# This file is safe to edit by hand, but remember to preserve the null bytes at\n"
+                       "# the end of each line! needs to be loaded manually with:\n#\n"
                        "#   (doom-load-envvars-file \"path/to/this/file\")\n#\n"
                        "# Use 'doom env -o path/to/this/file' to regenerate it."))
-             "# ---------------------------------------------------------------------------\n\n"))
+             "# ---------------------------------------------------------------------------\n\0\n"))
            ;; We assume that this noninteractive session was spawned from the
            ;; user's interactive shell, therefore we just dump
            ;; `process-environment' to a file.
@@ -124,7 +125,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
              (if (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
                              doom-env-ignored-vars)
                  (print! (info "Ignoring %s") env)
-               (insert env "\n")))
+               (insert env "\0\n")))
            (print! (success "Successfully generated %S")
                    (path env-file))
            t))))))

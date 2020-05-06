@@ -102,6 +102,6 @@
 us who use yas-minor-mode and enable yasnippet more selectively. This advice
 swaps `yas-global-mode' with `yas-minor-mode'."
     :around '(aya-expand aya-open-line)
-    (cl-letf (((symbol-function #'yas-global-mode) #'yas-minor-mode)
-              (yas-global-mode yas-minor-mode))
+    (letf! ((#'yas-global-mode #'yas-minor-mode)
+            (yas-global-mode yas-minor-mode))
       (apply orig-fn args))))

@@ -4,6 +4,7 @@
   '((cpp . C)
     (C++ . C)
     (D . C)
+    (elisp . emacs-lisp)
     (sh . shell)
     (bash . shell)
     (matlab . octave)
@@ -94,14 +95,11 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-entities-user
         '(("flat"  "\\flat" nil "" "" "266D" "♭")
           ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-        org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label 'plain
         org-hide-leading-stars t
-        org-hide-leading-stars-before-indent-mode t
         org-image-actual-width nil
-        org-list-description-max-indent 4
         org-priority-faces
         '((?A . error)
           (?B . warning)
@@ -119,9 +117,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         ;; target! e.g. FILE/Tasks/heading/subheading
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
-
-  ;; Fontify latex blocks and entities, but not natively -- that's too slow
-  (setq org-highlight-latex-and-related '(latex script entities))
 
   (plist-put org-format-latex-options :scale 1.5) ; larger previews
   (add-hook! 'doom-load-theme-hook
@@ -167,12 +162,6 @@ This forces it to read the background before rendering."
           ("WAIT" . +org-todo-onhold)
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)))
-
-  (after! org-eldoc
-    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in an 'org' src
-    ;;      block.
-    ;; TODO Should be reported upstream!
-    (puthash "org" "ignore" org-eldoc-local-functions-cache))
 
   (defadvice! +org-display-link-in-eldoc-a (&rest args)
     "Display full link in minibuffer when cursor/mouse is over it."
@@ -501,6 +490,13 @@ eldoc string."
                           nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
              width prefix separator))
 
+  (after! org-eldoc
+    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
+    ;;      'python' src blocks.
+    ;; TODO Should be reported upstream!
+    (puthash "org" #'ignore org-eldoc-local-functions-cache)
+    (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
+
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
     (quiet! (org-mode-restart))
@@ -541,11 +537,9 @@ current workspace (and clean them up)."
   ;;      upstream (if ever).
   (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
     :around #'org-display-inline-images
-    (cl-letf* ((old-create-image (symbol-function #'create-image))
-               ((symbol-function #'create-image)
-                (lambda (file-or-data &optional type data-p &rest props)
-                  (let ((type (if (plist-get props :width) type)))
-                    (apply old-create-image file-or-data type data-p props)))))
+    (letf! (defun create-image (file-or-data &optional type data-p &rest props)
+             (let ((type (if (plist-get props :width) type)))
+               (apply create-image file-or-data type data-p props)))
       (apply orig-fn args)))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
@@ -797,6 +791,7 @@ compelling reason, so..."
   :config
   ;; Make leading stars truly invisible, by rendering them as spaces!
   (setq org-superstar-leading-bullet ?\s
+        org-superstar-leading-fallback ?\s
         org-hide-leading-stars nil)
   ;; Don't do anything special for item bullets or TODOs by default; these slow
   ;; down larger org buffers.
@@ -813,11 +808,14 @@ compelling reason, so..."
 (use-package! org-crypt ; built-in
   :commands org-encrypt-entries org-encrypt-entry org-decrypt-entries org-decrypt-entry
   :hook (org-reveal-start . org-decrypt-entry)
-  :config
-  (add-hook! 'org-mode-hook
-    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
-  (add-to-list 'org-tags-exclude-from-inheritance "crypt")
-  (setq org-crypt-key user-mail-address))
+  :preface
+  ;; org-crypt falls back to CRYPTKEY property then `epa-file-encrypt-to', which
+  ;; is a better default than the empty string `org-crypt-key' defaults to.
+  (defvar org-crypt-key nil)
+  (after! org
+    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+    (add-hook! 'org-mode-hook
+      (add-hook 'before-save-hook 'org-encrypt-entries nil t))))
 
 
 (use-package! org-clock ; built-in

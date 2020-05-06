@@ -293,10 +293,7 @@ possible."
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
 files, so we replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (cl-letf (((symbol-function #'pp) #'prin1))
-      (funcall orig-fn)))
-
-  (save-place-mode +1))
+    (letf! ((#'pp #'prin1)) (funcall orig-fn))))
 
 
 (use-package! server
@@ -394,18 +391,14 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode
     (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
-      (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
-                 (old-smie-config--guess (symbol-function 'symbol-config--guess))
-                 ((symbol-function 'symbol-config--guess)
-                  (lambda (beg end)
-                    (funcall old-smie-config--guess beg (min end 10000))))
-                 ((symbol-function 'smie-config-guess)
-                  (lambda ()
-                    (condition-case e (funcall old-smie-config-guess)
-                      (error (setq dtrt-indent-run-after-smie t)
-                             (message "[WARNING] Indent detection: %s"
-                                      (error-message-string e))
-                             (message "")))))) ; warn silently
+      (letf! ((defun symbol-config--guess (beg end)
+                (funcall symbol-config--guess beg (min end 10000)))
+              (defun smie-config-guess ()
+                (condition-case e (funcall smie-config-guess)
+                  (error (setq dtrt-indent-run-after-smie t)
+                         (message "[WARNING] Indent detection: %s"
+                                  (error-message-string e))
+                         (message ""))))) ; warn silently
         (funcall orig-fn arg)))))
 
 
@@ -421,8 +414,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
   (defun doom-use-helpful-a (orig-fn &rest args)
     "Force ORIG-FN to use helpful instead of the old describe-* commands."
-    (cl-letf (((symbol-function #'describe-function) #'helpful-function)
-              ((symbol-function #'describe-variable) #'helpful-variable))
+    (letf! ((#'describe-function #'helpful-function)
+            (#'describe-variable #'helpful-variable))
       (apply orig-fn args)))
 
   (after! apropos
@@ -486,8 +479,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()
       "Enable `smartparens-mode' in the minibuffer, during `eval-expression',
 `pp-eval-expression' or `evil-ex'."
-      (when (memq this-command '(eval-expression pp-eval-expression evil-ex))
-        (smartparens-mode))))
+      (and (memq this-command '(eval-expression pp-eval-expression evil-ex))
+           smartparens-global-mode
+           (smartparens-mode))))
 
   ;; You're likely writing lisp in the minibuffer, therefore, disable these
   ;; quote pairs, which lisps doesn't use for strings:

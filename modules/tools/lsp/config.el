@@ -1,21 +1,5 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
-(defvar +lsp-company-backend 'company-lsp
-  "What backend to use for lsp-driven autocompletion.
-
-This can be overridden by `+lsp-capf-blacklist'.
-
-While `company-capf' does not require the `company-lsp' package and should offer
-better performance, it has been integrated into lsp only recently and as of
-02/25/2020 is known to cause issues with some language servers. If you wish to
-use `company-capf' in general but fall back to `company-lsp' for specific
-language servers, set `+lsp-company-backend' to `company-capf' and add the
-excluded servers' identifiers to `+lsp-capf-blacklist'.")
-
-(defvar +lsp-capf-blacklist '(ts-ls gopls)
-  "Language servers listed here will always use the `company-lsp' backend,
-irrespective of what `+lsp-company-backend' is set to.")
-
 (defvar +lsp-defer-shutdown 3
   "If non-nil, defer shutdown of LSP servers for this many seconds after last
 workspace buffer is closed.
@@ -40,8 +24,11 @@ working on that project after closing the last buffer.")
   (setq lsp-flycheck-live-reporting nil)
   ;; For `lsp-clients'
   (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")
-        lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
+
+  (when (featurep! :config default +bindings)
+    ;; Let doom bind the lsp keymap.
+    (setq lsp-keymap-prefix nil))
 
   ;; Disable LSP's superfluous, expensive and/or debatably unnecessary features.
   ;; Some servers implement these poorly. Better to just rely on Emacs' native
@@ -58,7 +45,9 @@ working on that project after closing the last buffer.")
         lsp-enable-semantic-highlighting nil
         ;; Don't modify our code without our permission
         lsp-enable-indentation nil
-        lsp-enable-on-type-formatting nil)
+        lsp-enable-on-type-formatting nil
+        ;; capf is the preferred completion mechanism for lsp-mode now
+        lsp-prefer-capf t)
 
   :config
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
@@ -114,30 +103,20 @@ This also logs the resolved project root, if found, so we know where we are."
                               (lambda (it) (format "[%s]" (lsp--workspace-print it)))
                               lsp--buffer-workspaces))))))
 
+  (when (featurep! :config default +bindings)
+    (dolist (leader-key (list doom-leader-key doom-leader-alt-key))
+      (let ((lsp-keymap-prefix (concat leader-key " c l")))
+        (lsp-enable-which-key-integration))))
+
   (add-hook! 'lsp-mode-hook
     (defun +lsp-init-company-h ()
       (if (not (bound-and-true-p company-mode))
           (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
-        (let ((preferred-backend +lsp-company-backend))
-          (lsp-foreach-workspace
-           (when (memq (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace))
-                       +lsp-capf-blacklist)
-             (setq preferred-backend 'company-lsp)))
-          (if (eq 'company-capf preferred-backend)
-              ;; use capf backend
-              (progn
-                (setq-local lsp-enable-completion-at-point t)
-                (setq-local lsp-prefer-capf t)
-                (setq-local company-backends
-                            (cons 'company-capf (remq 'company-capf company-backends))))
-            ;; use company-lsp backend (may need to be loaded first)
-            (require 'company-lsp)
-            (setq-local lsp-enable-completion-at-point nil)
-            (setq-local lsp-prefer-capf nil)
-            (setq-local company-backends
-                        (cons 'company-lsp (remq 'company-capf company-backends)))
-            (setq-default company-lsp-cache-candidates 'auto))
-          (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
+        ;; Ensure `company-capf' is at the front of `company-backends'
+        (setq-local company-backends
+                    (cons 'company-capf
+                          (remq 'company-capf company-backends)))
+        (remove-hook 'company-mode-hook #'+lsp-init-company-h t)))
     (defun +lsp-init-flycheck-or-flymake-h ()
       "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
       (pcase lsp-diagnostic-package
@@ -211,39 +190,6 @@ auto-killed (which is a potentially expensive process)."
     (set-lookup-handlers! 'lsp-ui-mode :async t
       :definition 'lsp-ui-peek-find-definitions
       :references 'lsp-ui-peek-find-references)))
-
-
-(use-package! company-lsp
-  :defer t
-  :config
-  (setq company-lsp-cache-candidates 'auto)
-  ;; HACK Fix tigersoldier/company-lsp#128 causing company-lsp results to
-  ;;      display candidates that are unrelated to the prefix. Source:
-  ;;      emacs-lsp/lsp-python-ms#79
-  (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
-  (defadvice! +company---fix-lsp-caching-on-competion-a (response prefix)
-    :override #'company-lsp--on-completion
-    (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
-           (items (cond ((hash-table-p response) (gethash "items" response))
-                        ((sequencep response) response)))
-           (candidates (mapcar (lambda (item)
-                                 (company-lsp--make-candidate item prefix))
-                               (lsp--sort-completions items)))
-           (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
-           (should-filter (or
-                           ;; CHANGE BEGIN
-                           (eq company-lsp-cache-candidates t)
-                           ;; CHANGE END
-                           (and (null company-lsp-cache-candidates)
-                                (company-lsp--get-config company-lsp-filter-candidates server-id)))))
-      (when (null company-lsp--completion-cache)
-        (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
-        (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
-      (when (eq company-lsp-cache-candidates 'auto)
-        (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
-      (if should-filter
-          (company-lsp--filter-candidates candidates prefix)
-        candidates))))
 
 
 (use-package! helm-lsp

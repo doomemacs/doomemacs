@@ -535,7 +535,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions
 #+BEGIN_SRC elisp
 ;; add to ~/.doom.d/config.el
-(when-let (dims (doom-cache-get 'last-frame-size))
+(when-let (dims (doom-store-get 'last-frame-size))
   (cl-destructuring-bind ((left . top) width height fullscreen) dims
     (setq initial-frame-alist
           (append initial-frame-alist
@@ -546,7 +546,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
                     (fullscreen . ,fullscreen))))))
 
 (defun save-frame-dimensions ()
-  (doom-cache-set 'last-frame-size
+  (doom-store-set 'last-frame-size
                   (list (frame-position)
                         (frame-width)
                         (frame-height)

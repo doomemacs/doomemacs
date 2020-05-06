@@ -50,21 +50,6 @@ If `buffer-file-name' isn't set, uses `default-directory'."
          (abbreviate-file-name path)
        (file-name-nondirectory path)))))
 
-;;;###autoload
-(defun +default--newline-indent-and-continue-comments-a ()
-  "A replacement for `newline-and-indent'.
-
-Continues comments if executed from a commented line, with special support for
-languages with weak native comment continuation support (like C-family
-languages)."
-  (interactive)
-  (if (and (sp-point-in-comment)
-           comment-line-break-function)
-      (funcall comment-line-break-function nil)
-    (delete-horizontal-space t)
-    (newline nil t)
-    (indent-according-to-mode)))
-
 
 (defun doom--backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much whitespace as

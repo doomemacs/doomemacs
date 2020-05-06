@@ -25,7 +25,8 @@ If prefix ARG is set, prompt for a directory to search from."
   "Conduct a text search in the current project root.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive "P")
-  (let* ((disabled-command-function nil)
+  (let* ((projectile-project-root nil)
+         (disabled-command-function nil)
          (default-directory
            (if arg
                (if-let (projects (projectile-relevant-known-projects))
@@ -51,13 +52,14 @@ If prefix ARG is set, prompt for a known project to search from."
   (interactive
    (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))
          current-prefix-arg))
-  (let ((default-directory
-          (if arg
-              (if-let (projects (projectile-relevant-known-projects))
-                  (completing-read "Switch to project: " projects
-                                   nil t nil nil (doom-project-root))
-                (user-error "There are no known projects"))
-            default-directory)))
+  (let* ((projectile-project-root nil)
+         (default-directory
+           (if arg
+               (if-let (projects (projectile-relevant-known-projects))
+                   (completing-read "Switch to project: " projects
+                                    nil t nil nil (doom-project-root))
+                 (user-error "There are no known projects"))
+             default-directory)))
     (cond ((featurep! :completion ivy)
            (+ivy/project-search nil symbol))
           ((featurep! :completion helm)

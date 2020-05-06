@@ -221,16 +221,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
            else do (error "not a valid state: %s" l)))
 
 
-;; Register keywords for proper indentation (see `map!')
-(put :after        'lisp-indent-function 'defun)
-(put :desc         'lisp-indent-function 'defun)
-(put :leader       'lisp-indent-function 'defun)
-(put :localleader  'lisp-indent-function 'defun)
-(put :map          'lisp-indent-function 'defun)
-(put :mode         'lisp-indent-function 'defun)
-(put :prefix       'lisp-indent-function 'defun)
-(put :prefix-map   'lisp-indent-function 'defun)
-
 ;; specials
 (defvar doom--map-forms nil)
 (defvar doom--map-fn nil)

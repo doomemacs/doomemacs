@@ -224,7 +224,7 @@
   "Defines the character mappings for ligatures for Iosevka.")
 
 (defun +pretty-code-setup-iosevka-ligatures-h ()
-  (set-fontset-font t '(#Xe100 . #Xe1cc) +pretty-code-iosevka-font-name)
+  (set-fontset-font t '(#Xe100 . #Xe1cc) +pretty-code-iosevka-font-name nil 'prepend)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         +pretty-code-iosevka-font-ligatures)))
