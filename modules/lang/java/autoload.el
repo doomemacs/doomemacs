@@ -71,3 +71,9 @@ root)."
     (user-error "This buffer has no filepath; cannot guess its class name"))
   (or (file-name-sans-extension (file-name-base (buffer-file-name)))
       "ClassName"))
+
+;;;###autoload
+(defun +java/run-tests ()
+  "Run tests at point. If in a method, runs the test method, otherwise runs the entire test class."
+
+  )
