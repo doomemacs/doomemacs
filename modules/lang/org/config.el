@@ -4,6 +4,7 @@
   '((cpp . C)
     (C++ . C)
     (D . C)
+    (elisp . emacs-lisp)
     (sh . shell)
     (bash . shell)
     (matlab . octave)
