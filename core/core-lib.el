@@ -119,7 +119,7 @@ unreadable. Returns the names of envvars that were changed."
          (with-temp-buffer
            (save-excursion
              (insert "\0\n") ; to prevent off-by-one
-             (insert-file-contents-literally file))
+             (insert-file-contents file))
            (save-match-data
              (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
                (setq
