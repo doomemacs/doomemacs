@@ -74,6 +74,7 @@ root)."
 
 ;;;###autoload
 (defun +java/groovy-open-repl ()
+  "Open a Groovy REPL."
   (interactive)
   (call-interactively #'run-groovy)
   (pop-to-buffer groovy-buffer))
