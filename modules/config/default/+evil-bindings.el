@@ -360,7 +360,6 @@
        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
        (:when (featurep! :tools lsp)
         :desc "LSP Execute code action"               "a"   #'lsp-execute-code-action
-        :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
         :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
         (:after lsp-mode

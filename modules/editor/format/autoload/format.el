@@ -219,9 +219,11 @@ snippets or single lines."
 is selected)."
   (interactive)
   (call-interactively
-   (if (use-region-p)
-       #'+format/region
-     #'+format/buffer)))
+   (if (bound-and-true-p lsp-mode)
+       #'+default/lsp-format-region-or-buffer
+     (if (use-region-p)
+         #'+format/region
+       #'+format/buffer))))
 
 
 ;;
