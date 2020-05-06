@@ -178,6 +178,26 @@ See https://github.com/magit/ghub/issues/81"
     (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
       (funcall orig-fn url)))
 
+  ;; Dash docset + Xwidget integration
+  (when (and (featurep! :tools lookup +xwidget) (display-graphic-p))
+    (setq dash-docs-browser-func #'xwidget-webkit-browse-url)
+
+    (set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil)
+
+    (defun +xwidget--webkit-goto-url-a (&rest _)
+      (pop-to-buffer xwidget-webkit-last-session-buffer))
+    (advice-add #'xwidget-webkit-goto-url :after #'+xwidget--webkit-goto-url-a)
+
+    (defun +xwidget--webkit-new-session-a (orig-fun &rest args)
+      (save-window-excursion
+        (apply orig-fun args))
+      (pop-to-buffer xwidget-webkit-last-session-buffer))
+    (advice-add #'xwidget-webkit-new-session :around #'+xwidget--webkit-new-session-a)
+
+    (when (featurep! :editor evil +everywhere)
+      (add-transient-hook! 'xwidget-webkit-mode-hook
+        (+evil-collection-init 'xwidget))))
+
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
         ((featurep! :completion ivy)
