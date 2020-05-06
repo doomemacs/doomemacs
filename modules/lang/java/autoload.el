@@ -77,4 +77,4 @@ root)."
   "Open a Groovy REPL."
   (interactive)
   (call-interactively #'run-groovy)
-  (pop-to-buffer groovy-buffer))
+  (get-buffer groovy-buffer))
