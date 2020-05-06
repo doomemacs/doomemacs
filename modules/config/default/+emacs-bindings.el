@@ -41,7 +41,7 @@
        :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
        (:when (featurep! :checkers syntax)
         :desc "List errors"                         "x"   #'flycheck-list-errors)
-       (:when (featurep! :tools lsp)
+       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp + eglot)))
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
@@ -52,7 +52,13 @@
          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
         (:when (featurep! :completion helm)
          :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
-         :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)))
+         :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol))
+       (:when (featurep! :tools lsp +eglot)
+        :desc "LSP Execute code action"              "a" #'eglot-code-actions
+        :desc "LSP Format buffer/region"             "F" #'eglot-format
+        :desc "LSP Rename"                           "r" #'eglot-rename
+        :desc "LSP Find declaration"                 "j" #'eglot-find-declaration
+        :desc "LSP Find implementation"              "J" #' eglot-find-implementation))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
