@@ -229,11 +229,6 @@ users).")
 (setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
-;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and %APPDATA%,
-;; causing `abbreviate-home-dir' to produce incorrect paths.
-(when IS-WINDOWS
-  (setq abbreviated-home-dir "\\`'"))
-
 ;; Don't litter `doom-emacs-dir'. We don't use `no-littering' because it's a
 ;; mote too opinionated for our needs.
 (setq abbrev-file-name             (concat doom-local-dir "abbrev.el")
