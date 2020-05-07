@@ -181,16 +181,18 @@ See https://github.com/magit/ghub/issues/81"
       (funcall orig-fn url)))
 
   ;; Dash docset + Xwidget integration
-  (when (and (featurep! +xwidget) (display-graphic-p))
+  (when (featurep! +xwidget)
     (defun +lookup/dash-docs-xwidget-webkit-browse-url (url &optional new-session)
-      (setq xwidget-webkit-last-session-buffer +lookup--dash-docs-xwidget-webkit-last-session-buffer)
-      (save-window-excursion
-        (xwidget-webkit-browse-url url new-session))
-      (with-popup-rules!
-        '((set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil))
-        (pop-to-buffer xwidget-webkit-last-session-buffer))
-      (setq +lookup--dash-docs-xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
-            xwidget-webkit-last-session-buffer nil))
+      (if (not (display-graphic-p))
+          (eww url new-session)
+        (setq xwidget-webkit-last-session-buffer +lookup--dash-docs-xwidget-webkit-last-session-buffer)
+        (save-window-excursion
+          (xwidget-webkit-browse-url url new-session))
+        (with-popup-rules!
+          '((set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil))
+          (pop-to-buffer xwidget-webkit-last-session-buffer))
+        (setq +lookup--dash-docs-xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
+              xwidget-webkit-last-session-buffer nil)))
     (setq dash-docs-browser-func #'+lookup/dash-docs-xwidget-webkit-browse-url))
 
   (cond ((featurep! :completion helm)
