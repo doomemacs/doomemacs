@@ -71,3 +71,10 @@ root)."
     (user-error "This buffer has no filepath; cannot guess its class name"))
   (or (file-name-sans-extension (file-name-base (buffer-file-name)))
       "ClassName"))
+
+;;;###autoload
+(defun +java/groovy-open-repl ()
+  "Open a Groovy REPL."
+  (interactive)
+  (call-interactively #'run-groovy)
+  (get-buffer groovy-buffer))
