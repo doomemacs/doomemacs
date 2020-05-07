@@ -96,6 +96,8 @@ Used by `+lookup/dictionary-definition' and `+lookup/synonyms'.
 For `+lookup/dictionary-definition', this is ignored on Mac, where Emacs users
 Dictionary.app behind the scenes to get definitions.")
 
+(defvar +lookup--dash-docs-xwidget-webkit-last-session-buffer nil)
+
 
 ;;
 ;;; dumb-jump
@@ -179,24 +181,21 @@ See https://github.com/magit/ghub/issues/81"
       (funcall orig-fn url)))
 
   ;; Dash docset + Xwidget integration
-  (when (and (featurep! :tools lookup +xwidget) (display-graphic-p))
-    (setq dash-docs-browser-func #'xwidget-webkit-browse-url)
-
-    (set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil)
-
-    (defun +xwidget--webkit-goto-url-a (&rest _)
-      (pop-to-buffer xwidget-webkit-last-session-buffer))
-    (advice-add #'xwidget-webkit-goto-url :after #'+xwidget--webkit-goto-url-a)
-
-    (defun +xwidget--webkit-new-session-a (orig-fun &rest args)
+  (when (and (featurep! +xwidget) (display-graphic-p))
+    (defun +lookup/dash-docs-xwidget-webkit-browse-url (url &optional new-session)
+      (setq xwidget-webkit-last-session-buffer +lookup--dash-docs-xwidget-webkit-last-session-buffer)
       (save-window-excursion
-        (apply orig-fun args))
-      (pop-to-buffer xwidget-webkit-last-session-buffer))
-    (advice-add #'xwidget-webkit-new-session :around #'+xwidget--webkit-new-session-a)
+        (xwidget-webkit-browse-url url new-session))
+      (with-popup-rules!
+        '((set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil))
+        (pop-to-buffer xwidget-webkit-last-session-buffer))
+      (setq +lookup--dash-docs-xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
+            xwidget-webkit-last-session-buffer nil))
+    (setq dash-docs-browser-func #'+lookup/dash-docs-xwidget-webkit-browse-url))
 
-    (when (featurep! :editor evil +everywhere)
-      (add-transient-hook! 'xwidget-webkit-mode-hook
-        (+evil-collection-init 'xwidget))))
+  (when (featurep! :editor evil +everywhere)
+    (add-transient-hook! 'xwidget-webkit-mode-hook
+      (+evil-collection-init 'xwidget)))
 
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
