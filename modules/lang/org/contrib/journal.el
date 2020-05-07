@@ -32,6 +32,8 @@
     ;; ...By exploiting `org-journal-dir''s setter
     (setq! org-journal-dir (expand-file-name org-journal-dir org-directory)))
 
+  (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
+
   (map! (:map org-journal-mode-map
          :n "]f"  #'org-journal-open-next-entry
          :n "[f"  #'org-journal-open-previous-entry
