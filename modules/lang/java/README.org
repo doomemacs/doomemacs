@@ -33,7 +33,7 @@ together. At the time of writing the =+meghanada= is already configured whereas
 =+lsp= needs to manual configuring.
 
 The =lsp= test runner requires that =:tools (debugger +lsp)= is enabled, as this
-provides =dap-mode=.
+provides =dap-mode= which contains the Java test runner.
 
 * Prerequisites
 This module requires the Java SDK.
