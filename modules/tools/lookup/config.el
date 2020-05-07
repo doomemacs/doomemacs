@@ -193,10 +193,6 @@ See https://github.com/magit/ghub/issues/81"
             xwidget-webkit-last-session-buffer nil))
     (setq dash-docs-browser-func #'+lookup/dash-docs-xwidget-webkit-browse-url))
 
-  (when (featurep! :editor evil +everywhere)
-    (add-transient-hook! 'xwidget-webkit-mode-hook
-      (+evil-collection-init 'xwidget)))
-
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
         ((featurep! :completion ivy)
