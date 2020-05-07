@@ -374,7 +374,10 @@ underlying, modified buffer. This fixes that."
     (unless org-attach-id-dir
       (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
     (after! projectile
-      (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir))))
+      (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
+
+  ;; Add inline image previews for attachment links
+  (org-link-set-parameters "attachment" :image-data-fun #'+org-inline-image-data-fn))
 
 
 (defun +org-init-custom-links-h ()
