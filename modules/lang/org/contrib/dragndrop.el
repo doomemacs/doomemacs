@@ -10,7 +10,7 @@
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
   (pushnew! dnd-protocol-alist
-            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
+            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . org-download-dnd)
             '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
 
