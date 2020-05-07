@@ -142,7 +142,7 @@ automatically.
 To update the server, perform =SPC u M-x lsp-install-server=.
 
 Note that if you change Java version you may need to remove the LSP server and
-reinstall it. You can do this by removing
-=~/.emacs.d/.local/etc/lsp/eclipse.jdt.ls= then running =lsp-install-server=.
+install it again. You can do this with =M-x +lsp/uninstall-server= followed by
+=M-x lsp-install-server=.
 
 Enable the =:tools (debugger +lsp)= module to get test runner support.

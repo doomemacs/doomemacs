@@ -10,8 +10,16 @@
   (when (featurep! :tools debugger +lsp)
     (setq lsp-jt-root (concat lsp-java-server-install-dir "java-test/server/")
           dap-java-test-runner (concat lsp-java-server-install-dir "test-runner/junit-platform-console-standalone.jar"))
+
+    (defun +java/run-test ()
+      "Runs test at point. If in a method, runs the test method, otherwise runs the entire test class."
+      (interactive)
+      (condition-case nil
+          (dap-java-run-test-method)
+        (user-error (dap-java-run-test-class))))
+
     (map! :map java-mode-map
           :localleader
           (:prefix ("t" . "Test")
-           :desc "Run tests in class" "t" #'dap-java-run-test-class
-           :desc "Run single test method" "s" #'dap-java-run-test-method))))
+           :desc "Run test class or method" "t" #'+java/run-test
+           :desc "Run all tests in class" "a" #'dap-java-run-test-class))))
