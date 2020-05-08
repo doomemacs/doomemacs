@@ -1,4 +1,4 @@
-;;; lang/java/config.el -*- lexical-binding: t; -*-
+;;; lang/java/autoload/java.el -*- lexical-binding: t; -*-
 
 ;; yasnippet defuns
 ;;;###autoload
