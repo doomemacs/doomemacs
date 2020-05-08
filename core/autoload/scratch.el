@@ -34,30 +34,19 @@ the first, fresh scratch buffer you create. This accepts:
                   doom-scratch-default-file))
   (let ((smart-scratch-file
          (expand-file-name (concat doom-scratch-current-project ".el")
-                           doom-scratch-dir))
-        (scratch-file
-         (expand-file-name doom-scratch-current-project
                            doom-scratch-dir)))
     (make-directory doom-scratch-dir t)
-    (cond ((file-readable-p smart-scratch-file)
-           (message "Reading %s" smart-scratch-file)
-           (cl-destructuring-bind (content point mode)
-               (with-temp-buffer
-                 (save-excursion (insert-file-contents smart-scratch-file))
-                 (read (current-buffer)))
-             (erase-buffer)
-             (funcall mode)
-             (insert content)
-             (goto-char point)
-             t))
-          ((file-readable-p scratch-file) ; DEPRECATED
-           (when (file-readable-p scratch-file)
-             (let ((pt (point)))
-               (erase-buffer)
-               (insert-file-contents scratch-file)
-               (set-auto-mode)
-               (goto-char pt))
-             t)))))
+    (when (file-readable-p smart-scratch-file)
+      (message "Reading %s" smart-scratch-file)
+      (cl-destructuring-bind (content point mode)
+          (with-temp-buffer
+            (save-excursion (insert-file-contents smart-scratch-file))
+            (read (current-buffer)))
+        (erase-buffer)
+        (funcall mode)
+        (insert content)
+        (goto-char point)
+        t))))
 
 ;;;###autoload
 (defun doom-scratch-buffer (&optional dont-restore-p mode directory project-name)
