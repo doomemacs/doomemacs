@@ -23,14 +23,15 @@ the first, fresh scratch buffer you create. This accepts:
 
 (defvar doom-scratch-current-project nil
   "The name of the project associated with the current scratch buffer.")
+(put 'doom-scratch-current-project 'permanent-local t)
 
 (defvar doom-scratch-buffer-hook ()
   "The hooks to run after a scratch buffer is created.")
 
 
-(defun doom--load-persistent-scratch-buffer (name)
+(defun doom--load-persistent-scratch-buffer (project-name)
   (setq-local doom-scratch-current-project
-              (or name
+              (or project-name
                   doom-scratch-default-file))
   (let ((smart-scratch-file
          (expand-file-name (concat doom-scratch-current-project ".el")
