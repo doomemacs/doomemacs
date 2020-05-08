@@ -2,11 +2,10 @@
 ;;;###if (featurep! +journal)
 
 (use-package! org-journal
-  :hook (org-load . org-journal-update-auto-mode-alist)
-  ;; This is necessary if the user decides opens a journal file directly, via
-  ;; `find-file' or something, and not through org-journal's commands.
-  :mode ("/[0-9]\\{8\\}\\.org\\(?:\\.gpg\\)?\\'" . org-journal-mode)
-  :preface
+  :defer t
+  :init
+  (remove-hook 'org-mode-hook #'org-journal-update-auto-mode-alist)
+
   ;; Not using the .org file extension causes needless headache with file
   ;; detection for no compelling reason, so we make it the default, so
   ;; `org-journal' doesn't have to do all its `auto-mode-alist' magic.
@@ -22,16 +21,20 @@
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
 
-  :config
-  (when (or (equal org-journal-dir "journal/")
-            (not (equal org-journal-file-format "%Y%m%d.org")))
-    ;; HACK `org-journal' does some file-path magic at load time that creates
-    ;;      several, duplicate and hard-coded `auto-mode-alist' entries, so get
-    ;;      rid of them all here so we can create a one-true-entry right after.
-    (setq auto-mode-alist (rassq-delete-all 'org-journal-mode auto-mode-alist))
-    ;; ...By exploiting `org-journal-dir''s setter
+  ;; HACK `org-journal' does some file-path magic at load time that creates
+  ;;      duplicate entries in `auto-mode-alist'. We load org-journal in such a
+  ;;      way that we can generate a final entry after the user could possibly
+  ;;      customize `org-journal-dir'.
+  (after! org
+    (require 'org-journal)
+    ;; Delete duplicate entries in `auto-mode-alist'
+    (rassq-delete-all 'org-journal-mode auto-mode-alist)
+    ;; ...and exploit `org-journal-dir''s setter to set up
+    ;; `org-journal-file-pattern' and call `org-journal-update-auto-mode-alist'
+    ;; for us, to create the one-true-entry in `auto-mode-alist.'
     (setq! org-journal-dir (expand-file-name org-journal-dir org-directory)))
 
+  :config
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
   (map! (:map org-journal-mode-map
