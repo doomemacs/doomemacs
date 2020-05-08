@@ -214,6 +214,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
   (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
+  (add-hook 'counsel-grep-post-action-hook #'recenter)
   (ivy-add-actions
    'counsel-rg ; also applies to `counsel-rg'
    '(("O" +ivy-git-grep-other-window-action "open in other window")))
