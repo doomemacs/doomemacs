@@ -13,10 +13,12 @@
   - [[#oracle-jdk-11][Oracle JDK 11]]
     - [[#ubuntu-1][Ubuntu]]
     - [[#fedora-1][Fedora]]
+  - [[#multiple-java-versions][Multiple Java Versions]]
 - [[#features][Features]]
   - [[#lsp-features][=+lsp= features]]
   - [[#meghanada-features][=+meghanada= features]]
 - [[#configuration][Configuration]]
+  - [[#lsp][=+lsp=]]
 
 * Description
 This module adds [[https://www.java.com][java]] support to Doom Emacs, including =android-mode= and
@@ -29,6 +31,9 @@ This module adds [[https://www.java.com][java]] support to Doom Emacs, including
 The =+lsp= and =+meghanada= packages are mutually exclusive and do not work
 together. At the time of writing the =+meghanada= is already configured whereas
 =+lsp= needs to manual configuring.
+
+The =lsp= test runner requires that =:tools (debugger +lsp)= is enabled, as this
+provides =dap-mode= which contains the Java test runner.
 
 * Prerequisites
 This module requires the Java SDK.
@@ -72,6 +77,23 @@ source /etc/profile.d/jdk11.sh
 java -version
 #+END_SRC
 
+** Multiple Java Versions
+It is common to need support for multiple Java versions. You can use a generic
+tool like [[https://github.com/shyiko/jabba][jabba]] to install and manage multiple Java versions on any OS.
+
+To switch between Java versions in Doom, you can use [[https://github.com/direnv/direnv][direnv]] and the [[file:~/.emacs.d/modules/tools/direnv/README.org::+TITLE: tools/direnv][direnv module]]. To set a
+Java version for a particular project, create a =.envrc= pointing to the Java
+installation in the root of the project:
+
+#+BEGIN_SRC conf-unix
+PATH_add ~/.jabba/jdk/adopt@1.11.0-3
+JAVA_HOME=~/.jabba/jdk/adopt@1.11.0-3
+#+END_SRC
+
+And then run =direnv allow .= in the project directory. If the =direnv= module
+is enabled, then Doom will automatically source this environment before
+executing the LSP server.
+
 * Features
 ** =+lsp= features
 According to [[https://github.com/emacs-lsp/lsp-java]] it adds
@@ -111,4 +133,16 @@ According to [[https://github.com/mopemope/meghanada-emacs/]] it adds
 + Search references
 + Full-featured text search
 
-* TODO Configuration
+* Configuration
+** =+lsp=
+Install the eclipse server by executing =M-x lsp-install-server= and selecting
+=jdtls=. After that any newly opened =java= files should start the LSP server
+automatically.
+
+To update the server, perform =SPC u M-x lsp-install-server=.
+
+Note that if you change Java version you may need to remove the LSP server and
+install it again. You can do this with =M-x +lsp/uninstall-server= followed by
+=M-x lsp-install-server=.
+
+Enable the =:tools (debugger +lsp)= module to get test runner support.
