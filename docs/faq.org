@@ -16,6 +16,7 @@
   - [[#what-is-the-meaning-behind-dooms-naming-convention-in-its-source-code][What is the meaning behind Doom's naming convention in its source code?]]
   - [[#what-version-of-doom-am-i-running][What version of Doom am I running?]]
   - [[#is-discord-the-only-option-for-interacting-with-your-community][Is Discord the only option for interacting with your community?]]
+  - [[#why-is-scrolling-slow-in-emacsdoom][Why is scrolling slow in Emacs/Doom?]]
 - [[#configuration][Configuration]]
   - [[#does-doom-respect-xdg-conventions][Does Doom respect XDG conventions]]
   - [[#how-do-i-configure-doom-emacs][How do I configure Doom Emacs?]]
