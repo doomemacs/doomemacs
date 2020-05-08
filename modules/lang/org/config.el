@@ -1025,6 +1025,16 @@ compelling reason, so..."
   :config
   (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
 
+  ;; Autoload all these commands that org-attach doesn't autoload itself
+  (use-package! org-attach
+    :commands (org-attach-new
+               org-attach-open
+               org-attach-open-in-emacs
+               org-attach-reveal-in-emacs
+               org-attach-url
+               org-attach-set-directory
+               org-attach-sync))
+
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.
   (setq org-id-track-globally t
