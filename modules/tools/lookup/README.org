@@ -40,6 +40,7 @@ or synonyms.
 + ~+dictionary~ Enable word definition and thesaurus lookup functionality.
   + ~+offline~ Install and prefer offline dictionary/thesaurus.
 + ~+docsets~ Enable integration with Dash.app docsets.
+  + ~+xwidget~ Enable integration with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Embedded-WebKit-Widgets.html][Embedded Webkit Widgets]].
 
 ** Plugins
 + [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
