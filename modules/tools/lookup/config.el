@@ -182,7 +182,7 @@ See https://github.com/magit/ghub/issues/81"
 
   ;; Dash docset + Xwidget integration
   (when (featurep! +xwidget)
-    (defun +lookup/dash-docs-xwidget-webkit-browse-url (url &optional new-session)
+    (defun +lookup-dash-docs-xwidget-webkit-browse-url-fn (url &optional new-session)
       (if (not (display-graphic-p))
           (eww url new-session)
         (setq xwidget-webkit-last-session-buffer +lookup--dash-docs-xwidget-webkit-last-session-buffer)
@@ -193,7 +193,7 @@ See https://github.com/magit/ghub/issues/81"
           (pop-to-buffer xwidget-webkit-last-session-buffer))
         (setq +lookup--dash-docs-xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
               xwidget-webkit-last-session-buffer nil)))
-    (setq dash-docs-browser-func #'+lookup/dash-docs-xwidget-webkit-browse-url))
+    (setq dash-docs-browser-func #'+lookup-dash-docs-xwidget-webkit-browse-url-fn))
 
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
