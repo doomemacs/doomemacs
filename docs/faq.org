@@ -435,6 +435,51 @@ better suited to the task. I already have my hands full managing the one.
 Email is a possible alternative, but is constantly swamped; expect a long
 turn-around time.
 
+** Why is scrolling slow in Emacs/Doom?
+This comes up often. The first thing folks fresh off the boat from other editors
+will notice is that Emacs has a low threshold for performance issues. It doesn't
+take much to get it to scroll like molasses.
+
+Retina/4K/high res users have it especially hard. MacOS users too, where Emacs
+seem even slower. Add to that files that are large (perhaps 1mb+) or have long
+lines (200 characters+) and we've got ourselves a really poor experience. And
+that's before we factor in plugins and poorly optimized major modes.
+
+There is an unfortunate but necessary adjustment of expectations new users must
+undergo, when they adopt Emacs. Doom has inherited this curse. It's raison
+d'etre is to improve the situation, but I can only go so far. You /will/ find
+cases where Emacs just scrolls slowly.
+
+What can you do about it?
+
+1. Disable some of Doom's slowest modules. The biggest offenders tend to be:
+   =:ui tabs=, =:ui indent-guides=, =:ui pretty-code=, and =:ui word-wrap=.
+2. Turn off line numbers ~(setq display-line-numbers-type nil)~. It's known to
+   slow down scrolling, in particular.
+3. Org users can turn off ~org-superstar-mode~: ~(remove-hook 'org-mode-hook
+   #'org-superstar-mode)~. It's an aesthetic plugin that offers fancier bullets.
+   Emacs seems to struggle to display those characters with some fonts.
+
+   Org uses can also turn off the rest of org's eye candy:
+
+   #+BEGIN_SRC elisp
+   (after! org
+     (setq org-fontify-quote-and-verse-blocks nil
+           org-fontify-whole-heading-line nil
+           org-hide-leading-stars nil
+           org-hide-leading-stars-before-indent-mode nil
+           org-startup-indented nil))
+   #+END_SRC
+4. Turn on =M-x so-long-minor-mode=. This is a minor mode that disables
+   non-essential functionality and can be used to temporarily view files that
+   would be too slow otherwise. =M-x so-long-mode= is its extreme version; it
+   turns off /everything/, including syntax highlighting.
+5. Try replacing the =:ui modeline= module with =:ui (modeline +light)=. There
+   are aspects of the default modeline that can be unpredictably slow.
+6. Don't mash =j= (or =C-n=) to scroll. Evil users can scroll long distances
+   with =C-d= and =C-u=, for instance, to avoid that slowness. Otherwise, use
+   search mechanisms to move around, like isearch (=C-s=) or evil-search (=/=).
+
 * Configuration
 ** Does Doom respect XDG conventions
 Yes. Your private config (normally in =~/.doom.d=) can be moved to
