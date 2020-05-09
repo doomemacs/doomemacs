@@ -19,6 +19,23 @@
     ;; Prevent premature horizontal scrolling
     hscroll-margin 0)
 
+  (defun +vterm-open-remote-maybe ()
+    "When `default-directory` is remote, use the corresponding
+method to prepare vterm at the corresponding remote directory."
+    (when (and (featurep 'tramp)
+               (tramp-tramp-file-p default-directory))
+      (message "default-directory is %s" default-directory)
+      (with-parsed-tramp-file-name default-directory path
+        (let ((method (cadr (assoc `tramp-login-program
+                                   (assoc path-method tramp-methods)))))
+          (vterm-send-string
+           (concat method " "
+                   (when path-user (concat path-user "@")) path-host))
+          (vterm-send-return)
+          (vterm-send-string
+           (concat "cd " path-localname))
+          (vterm-send-return)))))
+
   ;; Restore the point's location when leaving and re-entering insert mode.
   (when (featurep! :editor evil)
     (add-hook! 'vterm-mode-hook
