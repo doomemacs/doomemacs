@@ -84,7 +84,7 @@
          :n "gr" #'sly-recompile-xref
          :n "gR" #'sly-recompile-all-xrefs)
         (:map lisp-mode-map
-         :n "gb" #'sly-pop-find-definition)
+         :n "gb" #'sly-pop-find-definition-stack)
 
         (:localleader
          :map lisp-mode-map
