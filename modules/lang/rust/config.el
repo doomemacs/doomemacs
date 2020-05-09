@@ -22,7 +22,23 @@
         rustic-format-trigger nil)
 
   (if (featurep! +lsp)
-      (add-hook 'rustic-mode-local-vars-hook #'lsp!)
+      (progn
+        (add-hook 'rustic-mode-local-vars-hook #'lsp!)
+
+        ;; HACK RLS and rust-analyzer doesn't search `Cargo.toml' through child
+        ;;      projects. It means they won't work with mixed workspace. So we
+        ;;      make sure the LSP workspace contains a single project.
+        ;;
+        ;;      [rls] https://github.com/rust-lang/rls/issues/1202
+        ;;      [rust-analyzer] https://github.com/rust-analyzer/rust-analyzer/issues/3897
+        (defun +rust--lsp-suggest-project-root-a ()
+          (when (and (eq major-mode 'rustic-mode) (featurep 'projectile))
+            (condition-case nil
+                (projectile-root-bottom-up (file-truename default-directory)
+                                           `("Cargo.toml"))
+              (error nil))))
+        (advice-add 'lsp--suggest-project-root
+                    :before-until #'+rust--lsp-suggest-project-root-a))
     (setq rustic-lsp-server nil)
     (after! rustic-flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))
