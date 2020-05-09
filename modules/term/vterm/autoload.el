@@ -33,7 +33,20 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
           (unless (eq major-mode 'vterm-mode)
-            (vterm-mode)))
+            (vterm-mode))
+          (when (and (featurep 'tramp)
+                     (tramp-tramp-file-p default-directory))
+            (message "default-directory is %s" default-directory)
+            (with-parsed-tramp-file-name default-directory path
+              (let ((method (cadr (assoc `tramp-login-program
+                                         (assoc path-method tramp-methods)))))
+                (vterm-send-string
+                 (concat method " "
+                         (when path-user (concat path-user "@")) path-host))
+                (vterm-send-return)
+                (vterm-send-string
+                 (concat "cd " path-localname))
+                (vterm-send-return)))))
         (pop-to-buffer buffer)))))
 
 ;;;###autoload
