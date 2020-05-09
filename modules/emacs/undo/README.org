@@ -12,10 +12,12 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#disabling-persistent-undo-history][Disabling persistent undo history]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module augments Emacs' built-in undo system to be more intuitive.
+This module augments Emacs' built-in undo system to be more intuitive and to
+persist across Emacs sessions.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -47,8 +49,20 @@ This module has no prereqisites.
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
 
-* TODO Configuration
-# How to configure this module, including common problems and how to address them.
+* Configuration
+** Disabling persistent undo history
++ If you are using =+tree=:
+
+  #+BEGIN_SRC elisp
+  (after! undo-tree
+    (setq undo-tree-auto-save-history nil))
+  #+END_SRC
+
++ If you aren't:
+
+  #+BEGIN_SRC elisp
+  (remove-hook 'undo-fu-mode-hook #'global-undo-fu-session-mode)
+  #+END_SRC
 
 * TODO Troubleshooting
 # Common issues and their solution, or places to look for help.
