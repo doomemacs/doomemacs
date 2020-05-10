@@ -468,7 +468,6 @@ What can you do about it?
      (setq org-fontify-quote-and-verse-blocks nil
            org-fontify-whole-heading-line nil
            org-hide-leading-stars nil
-           org-hide-leading-stars-before-indent-mode nil
            org-startup-indented nil))
    #+END_SRC
 4. Turn on =M-x so-long-minor-mode=. This is a minor mode that disables
