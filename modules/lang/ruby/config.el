@@ -92,7 +92,7 @@
   (map! :after ruby-mode
         :localleader
         :map ruby-mode-map 
-        :prefix "k"
+        :prefix ("k" . "rake")
         "k" #'rake
         "r" #'rake-rerun
         "R" #'rake-regenerate-cache
@@ -104,7 +104,7 @@
   (map! :after ruby-mode
         :localleader
         :map ruby-mode-map
-        :prefix "b"
+        :prefix ("b" . "bundle")
         "c" #'bundle-check
         "C" #'bundle-console
         "i" #'bundle-install
