@@ -1,6 +1,6 @@
 #+TITLE:   email/notmuch
-#+DATE:    July 31, 2018
-#+SINCE:   v2.0.9
+#+DATE:    May 5, 2019
+#+SINCE:   v2.0
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
