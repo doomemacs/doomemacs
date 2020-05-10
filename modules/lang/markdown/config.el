@@ -92,10 +92,6 @@ capture, the end position, and the output buffer.")
 (use-package! evil-markdown
   :when (featurep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
-  :init
-  ;; REVIEW Until Somelauw/evil-markdown#1 is resolved:
-  (defun evil-disable-insert-state-bindings ()
-    evil-disable-insert-state-bindings)
   :config
   (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)
   (map! :map evil-markdown-mode-map
