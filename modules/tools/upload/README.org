@@ -1,0 +1,64 @@
+#+TITLE:   tools/upload
+#+DATE:    Feb 19, 2020
+#+SINCE:   2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#root-local-and-root-remote-must-match][~root-local~ and ~root-remote~ must match]]
+
+* Description
+Uses ~ssh-deploy~ to map a local folder to a remote one.
+
+From the [[https://github.com/cjohansson/emacs-ssh-deploy/blob/master/README.md][ssh-deploy README]]:
+
+#+BEGIN_QUOTE
+The ssh-deploy plug-in for Emacs makes it possible to effortlessly deploy local files and directories to remote hosts via Tramp (including but not limited to SSH, SFTP, FTP). It tries to provide functions that can be easily used by custom scripts.
+
+The idea for this plug-in was to mimic the behavior of PhpStorm deployment functionality.
+#+END_QUOTE
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/cjohansson/emacs-ssh-deploy][ssh-deploy]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+Uses ~ssh-deploy~ to map a local folder to a remote one. Set
+~ssh-deploy-root-remote~ and ~ssh-deploy-root-local~ in a .dir-locals.el file
+to establish this mapping.
+
+Example:
+#+BEGIN_SRC emacs-lisp
+((nil . ((ssh-deploy-root-local . "/local/path/to/project")
+         (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
+         (ssh-deploy-on-explicity-save . t))))
+#+END_SRC
+
+Note: ~ssh-deploy-root-local~ is optional, and will resort to
+~doom-project-root~ if unspecified.
+
+* TODO Configuration
+Check out [[https://github.com/cjohansson/emacs-ssh-deploy#deployment-configuration-examples][Deployment configuration examples]] for some ideas of what's possible.
+
+* Troubleshooting
+** ~root-local~ and ~root-remote~ must match
+The final directory names much match
+#+BEGIN_SRC emacs-lisp
+((nil . ((ssh-deploy-root-local . "/local/path/to/example-project")
+         (ssh-deploy-root-remote . "/ssh:user@server:/remote/example-project/")
+#+END_SRC
