@@ -50,6 +50,11 @@
   (set-lookup-handlers! 'ruby-mode
     :definition #'robe-jump
     :documentation #'robe-doc)
+  (when (boundp 'read-process-output-max)
+    ;; Robe can over saturate IPC, making interacting with it slow/clobbering
+    ;; the GC, so increase the amount of data Emacs reads from it at a time.
+    (setq-hook! '(robe-mode-hook inf-ruby-mode-hook)
+      read-process-output-max (* 1024 1024)))
   (when (featurep! :editor evil)
     (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
