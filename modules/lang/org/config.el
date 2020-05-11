@@ -319,11 +319,17 @@ I like:
   (after! org-capture
     (org-capture-put :kill-buffer t))
 
+  ;; Fix #462: when refiling from org-capture, Emacs prompts to kill the
+  ;; underlying, modified buffer. This fixes that.
+  (add-hook 'org-after-refile-insert-hook #'save-buffer)
+
   ;; HACK Doom doesn't support `customize'. Best not to advertise it as an
   ;;      option in `org-capture's menu.
   (defadvice! +org--remove-customize-option-a (orig-fn table title &optional prompt specials)
     :around #'org-mks
-    (funcall orig-fn table title prompt (remove '("C" "Customize org-capture-templates") specials)))
+    (funcall orig-fn table title prompt
+             (remove '("C" "Customize org-capture-templates")
+                     specials)))
 
   (defadvice! +org--capture-expand-variable-file-a (file)
     "If a variable is used for a file path in `org-capture-template', it is used
@@ -333,13 +339,6 @@ relative to `org-directory', unless it is an absolute path."
     (if (and (symbolp file) (boundp file))
         (expand-file-name (symbol-value file) org-directory)
       file))
-
-  (defadvice! +org--prevent-save-prompts-when-refiling-a (&rest _)
-    "Fix #462: when refiling from org-capture, Emacs prompts to kill the
-underlying, modified buffer. This fixes that."
-    :after #'org-refile
-    (when (bound-and-true-p org-capture-is-refiling)
-      (org-save-all-org-buffers)))
 
   (add-hook! 'org-capture-mode-hook
     (defun +org-show-target-in-capture-header-h ()
