@@ -30,6 +30,14 @@ and Emacs states, and for non-evil users.")
   (setq mac-command-modifier 'super
         mac-option-modifier 'meta))
 
+;; HACK Emacs cannot distinguish C-i from TAB, which is disturbing. Instead,
+;;      let's at least make GUI Emacs aware of this distinction:
+(define-key key-translation-map [?\C-i]
+  (λ! (if (and (not (cl-position 'tab    (this-single-command-raw-keys)))
+               (not (cl-position 'kp-tab (this-single-command-raw-keys)))
+               (display-graphic-p))
+          [C-i] [?\C-i])))
+
 
 ;;
 ;;; Universal, non-nuclear escape
