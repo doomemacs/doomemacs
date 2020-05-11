@@ -50,9 +50,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defvar +org-capture-projects-file "projects.org"
   "Default, centralized target for org-capture templates.")
 
-(defvar +org-initial-fold-level 2
-  "The initial fold level of org files when no #+STARTUP options for it.")
-
 (defvar +org-habit-graph-padding 2
   "The padding added to the end of the consistency graph")
 
@@ -991,7 +988,7 @@ compelling reason, so..."
              #'doom-disable-show-trailing-whitespace-h
              #'+org-enable-auto-reformat-tables-h
              #'+org-enable-auto-update-cookies-h
-             #'+org-unfold-to-2nd-level-or-point-h)
+             #'+org-make-last-point-visible-h)
 
   (add-hook! 'org-load-hook
              #'+org-init-org-directory-h
