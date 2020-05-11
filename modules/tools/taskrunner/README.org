@@ -1,0 +1,38 @@
+#+TITLE:   tools/taskrunner
+#+DATE:    November 9, 2019
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module integrates [[https://github.com/emacs-taskrunner/emacs-taskrunner][Taskrunner]] into Doom Emacs, which scraps runnable tasks
+from build systems like make, gradle, npm and the like.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/emacs-taskrunner/emacs-taskrunner][emacs-taskrunner]]
++ [[https://github.com/emacs-taskrunner/ivy-taskrunner][ivy-taskrunner]]
++ [[https://github.com/emacs-taskrunner/helm-taskrunner][helm-taskrunner]]
+
+* Prerequisites
+This module has no prereqisites.
+
+* Features
+Keybindings
+
+| Binding | Description          |
+| ~p z~   | ~List project tasks~ |
+
+* Configuration
+
+* Troubleshooting
