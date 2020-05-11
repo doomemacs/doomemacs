@@ -157,7 +157,7 @@ at the values with which this function was called."
 A factory for quickly producing interaction commands, particularly for keybinds
 or aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda () (interactive) ,@body))
+  `(lambda (&rest _) (interactive) ,@body))
 (defalias 'lambda! 'λ!)
 
 (defun λ!! (command &optional arg)
@@ -165,7 +165,7 @@ or aliases."
 A factory for quickly producing interactive, prefixed commands for keybinds or
 aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
-  (lambda () (interactive)
+  (lambda (&rest _) (interactive)
      (let ((current-prefix-arg arg))
        (call-interactively command))))
 (defalias 'lambda!! 'λ!!)
