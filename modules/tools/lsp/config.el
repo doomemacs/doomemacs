@@ -55,6 +55,7 @@ working on that project after closing the last buffer.")
     :documentation #'lsp-describe-thing-at-point
     :definition #'lsp-find-definition
     :implementations #'lsp-find-implementation
+    :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
 
   ;; TODO Lazy load these. They don't need to be loaded all at once unless the

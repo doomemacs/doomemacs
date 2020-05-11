@@ -63,6 +63,15 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
+(defvar +lookup-type-definition-functions ()
+  "Functions for `+lookup/type-definition' to try. Stops at the first function to
+return non-nil or change the current window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
+
 (defvar +lookup-references-functions
   '(+lookup-xref-references-backend-fn
     +lookup-project-search-backend-fn)
