@@ -202,7 +202,14 @@
         :desc "Send to Launchbar"          "l" #'+macos/send-to-launchbar
         :desc "Send project to Launchbar"  "L" #'+macos/send-project-to-launchbar)
        (:when (featurep! :tools docker)
-        :desc "Docker" "D" #'docker))
+        :desc "Docker" "D" #'docker)
+       (:when (featurep! :email mu4e)
+        :desc "mu4e" "m" #'=mu4e)
+       (:when (featurep! :email notmuch)
+        :desc "notmuch" "m" #'=notmuch)
+       (:when (featurep! :email wanderlust)
+        :desc "wanderlust" "m" #'=wanderlust))
+
 
       ;;; <leader> p --- project
       (:prefix ("p" . "project")
