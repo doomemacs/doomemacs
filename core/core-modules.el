@@ -254,6 +254,17 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   ;; Macros are already fontified, no need for this
   (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
 
+  ;; A common mistake for new users is that they inadvertantly try to install
+  ;; their packages with package.el, by copying over old `use-package'
+  ;; declarations with an :ensure t property. Doom doesn't use package.el, so
+  ;; this will throw an error that will confuse beginners.
+  (setq use-package-ensure-function #'ignore)
+  ;; ...On the other hand, if the user has loaded `package', then we should
+  ;; assume they know what they're doing and restore the old behavior:
+  (add-transient-hook! 'package-initialize
+    (when (eq use-package-ensure-function #'ignore)
+     (setq use-package-ensure-function #'use-package-ensure-elpa)))
+
   ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
   ;; so we don't have to load `auto-minor-mode' so early.
   (dolist (keyword '(:minor :magic-minor))
