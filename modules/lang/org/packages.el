@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "b171ff02f6e69bcce0dec56ea23e11c75e558704")
+  :pin "20c13221942183290dc440ca6ba91597f243b9e7")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -51,7 +51,7 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
 (when (featurep! +brain)
-  (package! org-brain :pin "ae7fe0f628bd093526786ece6917f7a4310e5e4d"))
+  (package! org-brain :pin "ed99f7e38dd687800fb898f8934a0da0541ebcd9"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "d248fcb8f2592a40507682e91eed9a31ead4e4a6"))
 (when (featurep! +gnuplot)
@@ -74,9 +74,9 @@
   (package! org-tree-slide :pin "7bf09a02bd2d8f1ccfcb5209bfb18fbe02d1f44e")
   (package! org-re-reveal :pin "61549f4c00284a30e34caa3d76001b233ea5d2ad"))
 (when (featurep! +roam)
-  (package! org-roam :pin "689f55908048eede3cb65aa30ab990be3ac93263")
+  (package! org-roam :pin "ad5fca5440e5c8a6b8078013684df43b3e43d773")
   (when (featurep! :completion company)
-    (package! company-org-roam :pin "0913d86f167164e18831206e611f44bb8e7297e3")))
+    (package! company-org-roam :pin "3da3821d1736e0d05a042bd944b74ea1da4a021b")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")
