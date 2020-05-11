@@ -436,27 +436,6 @@ underlying, modified buffer. This fixes that."
             (variable . "revealjs-url=https://revealjs.com")))))
 
 
-(defun +org-init-habit-h ()
-  "TODO"
-  (add-hook! 'org-agenda-mode-hook
-    (defun +org-habit-resize-graph-h ()
-      "Right align and resize the consistency graphs based on
-`+org-habit-graph-window-ratio'"
-      (require 'org-habit)
-      (let* ((total-days (float (+ org-habit-preceding-days org-habit-following-days)))
-             (preceding-days-ratio (/ org-habit-preceding-days total-days))
-             (graph-width (floor (* (window-width) +org-habit-graph-window-ratio)))
-             (preceding-days (floor (* graph-width preceding-days-ratio)))
-             (following-days (- graph-width preceding-days))
-             (graph-column (- (window-width) (+ preceding-days following-days)))
-             (graph-column-adjusted (if (> graph-column +org-habit-min-width)
-                                        (- graph-column +org-habit-graph-padding)
-                                      nil)))
-        (setq-local org-habit-preceding-days preceding-days)
-        (setq-local org-habit-following-days following-days)
-        (setq-local org-habit-graph-column graph-column-adjusted)))))
-
-
 (defun +org-init-hacks-h ()
   "Getting org to behave."
   ;; Open file links in current window, rather than new ones
@@ -994,7 +973,6 @@ compelling reason, so..."
              #'+org-init-capture-frame-h
              #'+org-init-custom-links-h
              #'+org-init-export-h
-             #'+org-init-habit-h
              #'+org-init-hacks-h
              #'+org-init-keybinds-h
              #'+org-init-popup-rules-h
@@ -1029,6 +1007,24 @@ compelling reason, so..."
   ;; `org-brain', however.
   (setq org-id-track-globally t
         org-id-locations-file-relative t)
+
+  (add-hook! 'org-agenda-mode-hook
+    (defun +org-habit-resize-graph-h ()
+      "Right align and resize the consistency graphs based on
+`+org-habit-graph-window-ratio'"
+      (when (featurep 'org-habit)
+        (let* ((total-days (float (+ org-habit-preceding-days org-habit-following-days)))
+               (preceding-days-ratio (/ org-habit-preceding-days total-days))
+               (graph-width (floor (* (window-width) +org-habit-graph-window-ratio)))
+               (preceding-days (floor (* graph-width preceding-days-ratio)))
+               (following-days (- graph-width preceding-days))
+               (graph-column (- (window-width) (+ preceding-days following-days)))
+               (graph-column-adjusted (if (> graph-column +org-habit-min-width)
+                                          (- graph-column +org-habit-graph-padding)
+                                        nil)))
+          (setq-local org-habit-preceding-days preceding-days)
+          (setq-local org-habit-following-days following-days)
+          (setq-local org-habit-graph-column graph-column-adjusted)))))
 
   ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is
   ;;      writeable before trying to read/write to it.
