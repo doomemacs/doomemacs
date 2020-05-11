@@ -947,7 +947,7 @@ compelling reason, so..."
 
   ;;; Custom org modules
   (dolist (flag doom--current-flags)
-    (load! (concat "contrib/" (substring (symbol-name flag) 1))))
+    (load! (concat "contrib/" (substring (symbol-name flag) 1)) nil t))
 
   ;; Add our general hooks after the submodules, so that any hooks the
   ;; submodules add run after them, and can overwrite any defaults if necessary.
