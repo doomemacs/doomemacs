@@ -54,6 +54,7 @@ working on that project after closing the last buffer.")
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation #'lsp-describe-thing-at-point
     :definition #'lsp-find-definition
+    :implementations #'lsp-find-implementation
     :references #'lsp-find-references)
 
   ;; TODO Lazy load these. They don't need to be loaded all at once unless the
@@ -189,6 +190,7 @@ auto-killed (which is a potentially expensive process)."
   (when (featurep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode :async t
       :definition 'lsp-ui-peek-find-definitions
+      :implementations 'lsp-ui-peek-find-implementation
       :references 'lsp-ui-peek-find-references)))
 
 
