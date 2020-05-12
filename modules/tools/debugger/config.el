@@ -16,14 +16,13 @@
     (realgud:trepanpl  :modes (perl-mode perl6-mode))
     (realgud:zshdb     :modes (sh-mode))))
 
-(defun +debugger--load-dap-web ()
+(defun +debugger--load-dap-web-h ()
   "Load the DAP extensions for web development."
   (require 'dap-node)
   (require 'dap-chrome)
   (require 'dap-firefox)
   (when IS-WINDOWS
-    (require 'dap-edge))
-  )
+    (require 'dap-edge)))
 
 ;;
 ;;; Packages
@@ -118,9 +117,8 @@
         (mapc #'require (cddr module)))))
 
   (when (featurep! :lang javascript +lsp)
-    (with-eval-after-load 'js2-mode #'+debugger--load-dap-web)
-    (with-eval-after-load 'typescript-mode #'+debugger--load-dap-web)
-    )
+    (with-eval-after-load 'js2-mode #'+debugger--load-dap-web-h)
+    (with-eval-after-load 'typescript-mode #'+debugger--load-dap-web-h))
 
   (dap-mode 1))
 
