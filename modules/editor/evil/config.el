@@ -59,6 +59,12 @@ directives. By default, this only recognizes C directives.")
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
+  ;; evil binds C-i to evil-jump-forward, but we translate C-i
+  ;; to <C-i> to distinguish TAB from C-i in GUI Emacs.
+  ;; Ref commit 63ab88105f7c64b9b3e59546906ec5fe5857303a
+  (when (display-graphic-p)
+    (define-key evil-motion-state-map (kbd "<C-i>") 'evil-jump-forward))
+
   ;; stop copying each visual state move to the clipboard:
   ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
   ;; grokked from:
