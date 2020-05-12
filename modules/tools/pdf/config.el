@@ -29,10 +29,10 @@
   (add-hook! 'pdf-view-change-page-hook
     (defun +pdf-remember-page-number-h ()
       (when buffer-file-name
-        (doom-store-put buffer-file-name (pdf-view-current-page) nil "pdf-view-page"))))
+        (doom-store-put buffer-file-name (pdf-view-current-page) nil "pdf-view"))))
   (add-hook! 'pdf-view-mode-hook
     (defun +pdf-restore-page-number-h ()
-      (when-let (page (doom-store-get buffer-file-name "pdf-view-page"))
+      (when-let (page (doom-store-get buffer-file-name "pdf-view"))
         (or (and (< page 1)
                  (> page (pdf-cache-number-of-pages)))
             (pdf-view-goto-page page)))))
