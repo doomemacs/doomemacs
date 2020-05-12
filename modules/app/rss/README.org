@@ -1,0 +1,78 @@
+#+TITLE:   app/rss
+#+DATE:    May 12, 2020
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#without-org][Without +org]]
+  - [[#with-org][With +org]]
+  - [[#keybindings][Keybindings]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+# A summary of what this module does.
+
++ Read RSS feeds in comfort of DOOM (emacs)
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+org= to enable ~elfeed-org~ to use ~org-directory/elfeed.org~
+  + With [[https://github.com/remyhonig/elfeed-org][elfeed-org]] you can easily organize your feeds as you want and tag them too.
+
+** Plugins
+# A list of linked plugins
++ [[https://github.com/skeeto/elfeed][elfeed]]
++ =+org=
+  + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
+
+** TODO Hacks
++ By default setting ~elfeed-search-filter~ is set to ~@2-week-ago~ what makes only last 2 weeks visible, to change this you can ~(setq elfeed-search-filter "")~
++ If ~:editor evil +everywhere~
+  | Key | Description                 |
+  |-----+-----------------------------|
+  | q   | elfeed-kill-buffer          |
+  | r   | elfeed-search-update--force |
+
+* Prerequisites
+This module has no prerequisites.
+
+* TODO Features
+
+* Configuration
+** Without +org
+When you don't want to use org mode to manage your elfeed feeds you can put your subscriptions to personal ~config.el~ file, ex:
+#+BEGIN_SRC elisp
+(setq elfeed-feeds
+      '("https://this-week-in-rust.org/rss.xml"
+        "http://feeds.bbci.co.uk/news/rss.xml"))
+#+END_SRC
+** With +org
+When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to configure feeds to follow.
+#+BEGIN_SRC org
+,* root :elfeed:
+,** Programming :programming:
+,*** [[https://this-week-in-rust.org/rss.xml][This Week in Rust]] :rust:
+,** News :news:
+,*** Top news :tops:
+,**** http://feeds.bbci.co.uk/news/rss.xml
+#+END_SRC
++ Root of ~elfeed-org~ needs to have ~:elfeed:~ tag. This is where ~elfeed-org~ starts to read.
++ You can have subheaders as in example ~:programming:~, and ~elfeed-org~ applies that tag to all subheader feeds.
++ You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ and put name as you want into description.
+** Keybindings
+| Key | Description |
+|-----+-------------|
+|     |             |
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
