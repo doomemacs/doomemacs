@@ -265,9 +265,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
         (cond ((executable-find doom-projectile-fd-binary)
-               (cons doom-projectile-fd-binary
-                     (list "--color=never" "-E" ".git"
-                           "--type" "file" "--type" "symlink" "--follow")))
+               (append (list doom-projectile-fd-binary
+                             "--color=never" "-E" ".git" "--type" "file" "--type" "symlink" "--follow")
+                       (if IS-WINDOWS '("--path-separator=/"))))
               ((executable-find "rg")
                (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
