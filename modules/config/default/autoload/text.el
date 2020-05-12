@@ -50,8 +50,8 @@ If `buffer-file-name' isn't set, uses `default-directory'."
          (abbreviate-file-name path)
        (file-name-nondirectory path)))))
 
-
-(defun doom--backward-delete-whitespace-to-column ()
+;;;###autoload
+(defun doom/backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
@@ -74,7 +74,7 @@ possible, or just one char if that's not possible."
           ;; point and bol.
           ((and (not indent-tabs-mode)
                 (not (bolp))
-                (not (sp-point-in-string))
+                (not (doom-point-in-string-p))
                 (save-excursion (>= (- (skip-chars-backward " \t")) tab-width)))
            (let ((movement (% (current-column) tab-width)))
              (when (= movement 0)
@@ -97,7 +97,7 @@ possible, or just one char if that's not possible."
   {
   |
   } => {|}
-+ Otherwise, resort to `doom--backward-delete-whitespace-to-column'.
++ Otherwise, resort to `doom/backward-delete-whitespace-to-column'.
 + Resorts to `delete-char' if n > 1"
   (interactive "p\nP")
   (or (integerp n)
@@ -120,12 +120,14 @@ possible, or just one char if that's not possible."
            (save-excursion
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
-        ((and (= n 1) (bound-and-true-p smartparens-mode))
-         (cond ((and (memq (char-before) (list ?\  ?\t))
-                     (save-excursion
-                       (and (/= (skip-chars-backward " \t" (line-beginning-position)) 0)
-                            (bolp))))
-                (doom--backward-delete-whitespace-to-column))
+        ((= n 1)
+         (cond ((or (not (featurep! +smartparens))
+                    (not (bound-and-true-p smartparens-mode))
+                    (and (memq (char-before) (list ?\  ?\t))
+                         (save-excursion
+                           (and (/= (skip-chars-backward " \t" (line-beginning-position)) 0)
+                                (bolp)))))
+                (doom/backward-delete-whitespace-to-column))
                ((let* ((pair (ignore-errors (sp-get-thing)))
                        (op   (plist-get pair :op))
                        (cl   (plist-get pair :cl))
@@ -144,6 +146,6 @@ possible, or just one char if that's not possible."
                          (sp-insert-pair op)
                          t)
                         ((run-hook-with-args-until-success 'doom-delete-backward-functions))
-                        ((doom--backward-delete-whitespace-to-column)))))))
+                        ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
         ((delete-char (- n) killflag))))
