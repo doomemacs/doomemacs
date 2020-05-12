@@ -462,6 +462,12 @@ relative to `org-directory', unless it is an absolute path."
   ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
 
+  ;; HACK Org is known to use a lot of unicode symbols (and large org files tend
+  ;;      to be especially memory hungry). Compounded with
+  ;;      `inhibit-compacting-font-caches' being non-nil, org needs more memory
+  ;;      to be performant.
+  (setq-hook! 'org-mode-hook gcmh-high-cons-threshold (* 2 gcmh-high-cons-threshold))
+
   ;; When you create a sparse tree and `org-indent-mode' is enabled, the
   ;; highlighting destroys the invisibility added by `org-indent-mode'.
   ;; Therefore, don't highlight when creating a sparse tree.
