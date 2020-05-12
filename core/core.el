@@ -291,7 +291,9 @@ users).")
 ;; Performance on Windows is considerably worse than elsewhere, especially if
 ;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
-  (setq w32-get-true-file-attributes nil)) ; slightly faster IO
+  (setq w32-get-true-file-attributes nil   ; slightly faster IO
+        w32-pipe-read-delay 0              ; faster ipc
+        w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.
