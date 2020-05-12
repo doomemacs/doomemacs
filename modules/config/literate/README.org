@@ -27,7 +27,7 @@ This module provides no flags.
 + ~ob-tangle~ (builtin)
 
 ** Hacks
-This is only for personal config from ~$HOME/.doom.d/config.org~.
+This is only for personal config from ~$HOME/.config/doom~ or ~$HOME/.doom.d/config.org~.
 
 * Prerequisites
 This module has no prerequisites.
