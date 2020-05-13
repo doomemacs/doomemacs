@@ -31,7 +31,9 @@
 
   (map! :map haskell-mode-map
         :n "o" #'+haskell/evil-open-below
-        :n "O" #'+haskell/evil-open-above)
+        :n "O" #'+haskell/evil-open-above
+        (:when (featurep! :tools lookup)
+         [remap haskell-mode-jump-to-def-or-tag] #'+lookup/definition))
 
   (map! :localleader
         :map haskell-mode-map
