@@ -85,7 +85,7 @@
 
        :tools
        ;;ansible
-       ;;biblio            ; Writes a PhD for you (citation needed)
+       ;;biblio            ; A collection of bibliographic reference tools
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
