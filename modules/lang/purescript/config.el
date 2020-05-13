@@ -1,6 +1,9 @@
 ;;; lang/purescript/config.el -*- lexical-binding: t; -*-
 
 (after! purescript-mode
+  (when (featurep! +lsp)
+    (add-hook 'purescript-mode-local-vars-hook  #'lsp!))
+
   (add-hook! 'purescript-mode-hook
              #'purescript-indentation-mode
              #'rainbow-delimiters-mode)
