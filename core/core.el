@@ -314,7 +314,7 @@ users).")
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
     (setq gc-cons-percentage 0.1)
-    (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect))
+    (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
