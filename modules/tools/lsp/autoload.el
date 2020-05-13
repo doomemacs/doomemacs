@@ -5,7 +5,7 @@
   "Change the PRIORITY of lsp CLIENT."
   (require 'lsp-mode)
   (if-let (client (gethash client lsp-clients))
-      (setf (lsp--client-priority (gethash server lsp-clients))
+      (setf (lsp--client-priority client)
             priority)
     (error "No LSP client named %S" client)))
 

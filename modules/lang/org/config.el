@@ -50,9 +50,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defvar +org-capture-projects-file "projects.org"
   "Default, centralized target for org-capture templates.")
 
-(defvar +org-initial-fold-level 2
-  "The initial fold level of org files when no #+STARTUP options for it.")
-
 (defvar +org-habit-graph-padding 2
   "The padding added to the end of the consistency graph")
 
@@ -322,11 +319,17 @@ I like:
   (after! org-capture
     (org-capture-put :kill-buffer t))
 
+  ;; Fix #462: when refiling from org-capture, Emacs prompts to kill the
+  ;; underlying, modified buffer. This fixes that.
+  (add-hook 'org-after-refile-insert-hook #'save-buffer)
+
   ;; HACK Doom doesn't support `customize'. Best not to advertise it as an
   ;;      option in `org-capture's menu.
   (defadvice! +org--remove-customize-option-a (orig-fn table title &optional prompt specials)
     :around #'org-mks
-    (funcall orig-fn table title prompt (remove '("C" "Customize org-capture-templates") specials)))
+    (funcall orig-fn table title prompt
+             (remove '("C" "Customize org-capture-templates")
+                     specials)))
 
   (defadvice! +org--capture-expand-variable-file-a (file)
     "If a variable is used for a file path in `org-capture-template', it is used
@@ -336,13 +339,6 @@ relative to `org-directory', unless it is an absolute path."
     (if (and (symbolp file) (boundp file))
         (expand-file-name (symbol-value file) org-directory)
       file))
-
-  (defadvice! +org--prevent-save-prompts-when-refiling-a (&rest _)
-    "Fix #462: when refiling from org-capture, Emacs prompts to kill the
-underlying, modified buffer. This fixes that."
-    :after #'org-refile
-    (when (bound-and-true-p org-capture-is-refiling)
-      (org-save-all-org-buffers)))
 
   (add-hook! 'org-capture-mode-hook
     (defun +org-show-target-in-capture-header-h ()
@@ -374,7 +370,10 @@ underlying, modified buffer. This fixes that."
     (unless org-attach-id-dir
       (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
     (after! projectile
-      (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir))))
+      (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
+
+  ;; Add inline image previews for attachment links
+  (org-link-set-parameters "attachment" :image-data-fun #'+org-inline-image-data-fn))
 
 
 (defun +org-init-custom-links-h ()
@@ -437,24 +436,23 @@ underlying, modified buffer. This fixes that."
 
 
 (defun +org-init-habit-h ()
-  "TODO"
   (add-hook! 'org-agenda-mode-hook
     (defun +org-habit-resize-graph-h ()
       "Right align and resize the consistency graphs based on
 `+org-habit-graph-window-ratio'"
-      (require 'org-habit)
-      (let* ((total-days (float (+ org-habit-preceding-days org-habit-following-days)))
-             (preceding-days-ratio (/ org-habit-preceding-days total-days))
-             (graph-width (floor (* (window-width) +org-habit-graph-window-ratio)))
-             (preceding-days (floor (* graph-width preceding-days-ratio)))
-             (following-days (- graph-width preceding-days))
-             (graph-column (- (window-width) (+ preceding-days following-days)))
-             (graph-column-adjusted (if (> graph-column +org-habit-min-width)
-                                        (- graph-column +org-habit-graph-padding)
-                                      nil)))
-        (setq-local org-habit-preceding-days preceding-days)
-        (setq-local org-habit-following-days following-days)
-        (setq-local org-habit-graph-column graph-column-adjusted)))))
+      (when (featurep 'org-habit)
+        (let* ((total-days (float (+ org-habit-preceding-days org-habit-following-days)))
+               (preceding-days-ratio (/ org-habit-preceding-days total-days))
+               (graph-width (floor (* (window-width) +org-habit-graph-window-ratio)))
+               (preceding-days (floor (* graph-width preceding-days-ratio)))
+               (following-days (- graph-width preceding-days))
+               (graph-column (- (window-width) (+ preceding-days following-days)))
+               (graph-column-adjusted (if (> graph-column +org-habit-min-width)
+                                          (- graph-column +org-habit-graph-padding)
+                                        nil)))
+          (setq-local org-habit-preceding-days preceding-days)
+          (setq-local org-habit-following-days following-days)
+          (setq-local org-habit-graph-column graph-column-adjusted))))))
 
 
 (defun +org-init-hacks-h ()
@@ -463,6 +461,12 @@ underlying, modified buffer. This fixes that."
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
   ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
+
+  ;; HACK Org is known to use a lot of unicode symbols (and large org files tend
+  ;;      to be especially memory hungry). Compounded with
+  ;;      `inhibit-compacting-font-caches' being non-nil, org needs more memory
+  ;;      to be performant.
+  (setq-hook! 'org-mode-hook gcmh-high-cons-threshold (* 2 gcmh-high-cons-threshold))
 
   ;; When you create a sparse tree and `org-indent-mode' is enabled, the
   ;; highlighting destroys the invisibility added by `org-indent-mode'.
@@ -704,12 +708,12 @@ between the two."
         :localleader
         "d" #'org-agenda-deadline
         (:prefix ("c" . "clock")
-          "c" #'org-agenda-clock-in
-          "C" #'org-agenda-clock-out
+          "c" #'org-agenda-clock-cancel
           "g" #'org-agenda-clock-goto
+          "i" #'org-agenda-clock-in
+          "o" #'org-agenda-clock-out
           "r" #'org-agenda-clockreport-mode
-          "s" #'org-agenda-show-clocking-issues
-          "x" #'org-agenda-clock-cancel)
+          "s" #'org-agenda-show-clocking-issues)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
@@ -968,15 +972,8 @@ compelling reason, so..."
       ))
 
   ;;; Custom org modules
-  (if (featurep! +brain)     (load! "contrib/brain"))
-  (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
-  (if (featurep! +ipython)   (load! "contrib/ipython"))
-  (if (featurep! +journal)   (load! "contrib/journal"))
-  (if (featurep! +jupyter)   (load! "contrib/jupyter"))
-  (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
-  (if (featurep! +present)   (load! "contrib/present"))
-  (if (featurep! +roam)      (load! "contrib/roam"))
-  (if (featurep! +noter)     (load! "contrib/noter"))
+  (dolist (flag doom--current-flags)
+    (load! (concat "contrib/" (substring (symbol-name flag) 1)) nil t))
 
   ;; Add our general hooks after the submodules, so that any hooks the
   ;; submodules add run after them, and can overwrite any defaults if necessary.
@@ -988,7 +985,7 @@ compelling reason, so..."
              #'doom-disable-show-trailing-whitespace-h
              #'+org-enable-auto-reformat-tables-h
              #'+org-enable-auto-update-cookies-h
-             #'+org-unfold-to-2nd-level-or-point-h)
+             #'+org-make-last-point-visible-h)
 
   (add-hook! 'org-load-hook
              #'+org-init-org-directory-h
@@ -1021,6 +1018,16 @@ compelling reason, so..."
 
   :config
   (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
+
+  ;; Autoload all these commands that org-attach doesn't autoload itself
+  (use-package! org-attach
+    :commands (org-attach-new
+               org-attach-open
+               org-attach-open-in-emacs
+               org-attach-reveal-in-emacs
+               org-attach-url
+               org-attach-set-directory
+               org-attach-sync))
 
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.

@@ -76,12 +76,15 @@
   (map! (:map sly-db-mode-map
          :n "gr" #'sly-db-restart-frame)
         (:map sly-inspector-mode-map
+         :n "gb" #'sly-inspector-pop
          :n "gr" #'sly-inspector-reinspect
          :n "gR" #'sly-inspector-fetch-all
          :n "K"  #'sly-inspector-describe-inspectee)
         (:map sly-xref-mode-map
          :n "gr" #'sly-recompile-xref
          :n "gR" #'sly-recompile-all-xrefs)
+        (:map lisp-mode-map
+         :n "gb" #'sly-pop-find-definition-stack)
 
         (:localleader
          :map lisp-mode-map

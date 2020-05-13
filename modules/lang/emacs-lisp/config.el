@@ -84,6 +84,24 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom-recenter-a)
 
+  (defadvice! +emacs-lisp-append-value-to-eldoc-a (orig-fn sym)
+    "Display variable value next to documentation in eldoc."
+    :around #'elisp-get-var-docstring
+    (when-let (ret (funcall orig-fn sym))
+      (concat ret " "
+              (let* ((truncated " [...]")
+                     (limit (- (frame-width) (length ret) (length truncated) 1))
+                     (str (symbol-value sym))
+                     (str (prin1-to-string
+                           (if (stringp str)
+                               (replace-regexp-in-string "\n" "" str)
+                             str)))
+                     (str-length (length str))
+                     (short (< str-length limit)))
+                (concat (substring (propertize str 'face 'warning)
+                                   0 (if short str-length limit))
+                        (unless short truncated))))))
+
   (map! :localleader
         :map emacs-lisp-mode-map
         :desc "Expand macro" "m" #'macrostep-expand

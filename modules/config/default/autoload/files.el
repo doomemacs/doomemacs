@@ -28,13 +28,15 @@
 (defun +default/browse-notes ()
   "Browse files from `org-directory'."
   (interactive)
-  (require 'org)
+  (unless (boundp 'org-directory)
+    (require 'org))
   (doom-project-browse org-directory))
 ;;;###autoload
 (defun +default/find-in-notes ()
   "Find a file under `org-directory', recursively."
   (interactive)
-  (require 'org)
+  (unless (boundp 'org-directory)
+    (require 'org))
   (doom-project-find-file org-directory))
 
 ;;;###autoload

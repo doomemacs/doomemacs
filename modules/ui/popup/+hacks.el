@@ -281,6 +281,13 @@ Ugh, such an ugly hack."
       (apply orig-fn args))))
 
 
+;;;###package org-journal
+(defadvice! +popup--use-popup-window-a (orig-fn &rest args)
+  :around #'org-journal-search-by-string
+  (letf! ((#'switch-to-buffer #'pop-to-buffer))
+    (apply orig-fn args)))
+
+
 ;;;###package persp-mode
 (defadvice! +popup--persp-mode-restore-popups-a (&rest _)
   "Restore popup windows when loading a perspective from file."

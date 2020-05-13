@@ -2,7 +2,7 @@
 
 (use-package! undo-fu
   :unless (featurep! +tree)
-  :after-call doom-switch-buffer after-find-file
+  :after-call doom-switch-buffer-hook after-find-file
   :init
   (after! undo-tree
     (global-undo-tree-mode -1))

@@ -291,7 +291,9 @@ users).")
 ;; Performance on Windows is considerably worse than elsewhere, especially if
 ;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
-  (setq w32-get-true-file-attributes nil)) ; slightly faster IO
+  (setq w32-get-true-file-attributes nil   ; slightly faster IO
+        w32-pipe-read-delay 0              ; faster ipc
+        w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.
@@ -305,13 +307,13 @@ users).")
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
 (when doom-interactive-mode
-  (setq gc-cons-percentage 0.6)
+  (setq gcmh-idle-delay 5
+        gcmh-high-cons-threshold 16777216  ; 16mb
+        gcmh-verbose doom-debug-mode
+        gc-cons-percentage 0.6)
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
-    (setq gcmh-idle-delay 10
-          gcmh-high-cons-threshold 16777216
-          gcmh-verbose doom-debug-mode  ; 16mb
-          gc-cons-percentage 0.1)
+    (setq gc-cons-percentage 0.1)
     (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
@@ -379,13 +381,16 @@ Set this to nil to disable incremental loading.")
 (defvar doom-incremental-idle-timer 0.75
   "How long (in idle seconds) in between incrementally loading packages.")
 
+(defvar doom-incremental-load-immediately (daemonp)
+  "If non-nil, load all incrementally deferred packages immediately at startup.")
+
 (defun doom-load-packages-incrementally (packages &optional now)
   "Registers PACKAGES to be loaded incrementally.
 
 If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
 intervals."
   (if (not now)
-      (nconc doom-incremental-packages packages)
+      (appendq! doom-incremental-packages packages)
     (while packages
       (let ((req (pop packages)))
         (unless (featurep req)
@@ -415,7 +420,7 @@ intervals."
   "Begin incrementally loading packages in `doom-incremental-packages'.
 
 If this is a daemon session, load them all immediately instead."
-  (if (daemonp)
+  (if doom-incremental-load-immediately
       (mapc #'require (cdr doom-incremental-packages))
     (when (numberp doom-incremental-first-idle-timer)
       (run-with-idle-timer doom-incremental-first-idle-timer

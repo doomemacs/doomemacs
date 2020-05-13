@@ -16,6 +16,7 @@
   - [[#what-is-the-meaning-behind-dooms-naming-convention-in-its-source-code][What is the meaning behind Doom's naming convention in its source code?]]
   - [[#what-version-of-doom-am-i-running][What version of Doom am I running?]]
   - [[#is-discord-the-only-option-for-interacting-with-your-community][Is Discord the only option for interacting with your community?]]
+  - [[#why-is-scrolling-slow-in-emacsdoom][Why is scrolling slow in Emacs/Doom?]]
 - [[#configuration][Configuration]]
   - [[#does-doom-respect-xdg-conventions][Does Doom respect XDG conventions]]
   - [[#how-do-i-configure-doom-emacs][How do I configure Doom Emacs?]]
@@ -64,32 +65,29 @@
   - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
   - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
   - [[#clipetty--emit-opening-output-file-permission-denied-devpts29-error]["clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error]]
-- [[#contributing][Contributing]]
 
 * General
 ** Why is it called Doom?
-It's an homage to idsoftware's classic game, whose open sourced code was
-Henrik's (Doom's maintainer) first exposure to programming.
+It's an homage to idsoftware's classic game, whose source code was Henrik's
+(Doom's maintainer) first exposure to programming, back in the Cretaceous period
+(1999).
 
 And if you're obsessed enough with a text editor that you write a community
 config for it, you're doomed from the start.
 
 ** Does Doom work on Windows?
-Windows support is weak and generally lags behind Linux/MacOS support, so your
-mileage will vary. However, some have reported success using Doom Emacs on
-Windows (using WSL, WSL2 or scoop/chocolatey). You'll find install instructions
-in the [[file:getting_started.org::On Windows][Getting Starting guide]].
+Windows support is weaker and will lag behind Linux/MacOS support, but your
+mileage will vary. Many have reported success using Doom Emacs on Windows (using
+WSL, WSL2 or scoop/chocolatey). You'll find install instructions in the [[file:getting_started.org::On Windows][Getting
+Starting guide]].
 
 If you're a Windows user, help us improve our documentation!
 
 ** Is Doom only for vimmers?
-No, but it is Doom's primary audience, because its maintainer is a
-dyed-in-the-wool vimmer with almost two decades of vim muscle memory, and he
-adopted Emacs in search of a better vim.
-
-Although Doom is less polished without evil, its growing non-evil user base is
-slowly improving the situation. We welcome suggestions and PRs to help
-accommodate a non-evil workflow.
+No, but its maintainer /is/ a dyed-in-the-wool vimmer with almost two decades of
+vim muscle memory, so the non-vim experience will be less polished. Still, Doom
+has a growing user base of non-vim users, who continue to improve the situation,
+and we welcome suggestions and contributions!
 
 If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing evil-mode][removing evil-mode]] section in the
 [[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
@@ -144,15 +142,17 @@ Doom had +four+ *five* goals for its package management system:
    superior fork, or aren't available in ELPA repos.
 3. *Performance:* lazy-loading the package management system is a tremendous
    boon to start up speed. Initializing package.el and straight (and/or checking
-   that your packages are installed) each time you start up is expensive.
+   that your packages are installed) or loading package autoloads files each
+   time you start up is expensive.
 4. *Organization:* an Emacs configuration grows so quickly, in complexity and
    size. A clear separation of concerns (configuration of packages from their
-   installation) is more organized.
-5. *Reproducibility:* /This goal hasn't been implemented yet/, but all our work
-   up until now is aimed at this goal. Emacs is a tumultuous ecosystem; packages
-   break left and right, and we rely on hundreds of them. Eventually, we want
-   package versions to be locked to Doom's releases so that Doom installs are
-   reproducible.
+   installation) is easier to manage.
+5. *Reproducibility:* Emacs is a tumultuous ecosystem; packages break left and
+   right, and we rely on hundreds of them. By pinning our packages we achieve a
+   degree of config reproducibility and significantly limit the damage upstream
+   changes can do. Better yet, we stave off having to deal with those issues
+   until we are ready to. Although technical limitations prevent us from
+   achieving true reproducibility, this is better than nothing.
 
 ** How does Doom start up so quickly?
 Doom employs a number of techniques to cut down startup time. Here are its most
@@ -199,50 +199,25 @@ helm and ivy). Here is how Doom does it:
 (add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
 #+END_SRC
 
-Another alternative (which is [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L269-L274][what Doom uses]]) is to use the [[https://gitlab.com/koral/gcmh/][gcmh]] package to
-stave off the GC until you are idle or unfocus the Emacs frame.
-
-*** Unset ~file-name-handler-alist~ temporarily
-Emacs consults this variable every time a file is read or library loaded, or
-when certain functions in the file API are used (like ~expand-file-name~ or
-~file-truename~).
-
-Emacs does to check if a special handler is needed to read that file, but none
-of them are (typically) necessary at startup, so we disable them (temporarily!):
-
-#+BEGIN_SRC emacs-lisp
-(defvar doom--file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
-;; ... your whole emacs config here ...
-
-;; Then restore it later:
-(setq file-name-handler-alist doom--file-name-handler-alist)
-
-;; Alternatively, restore it even later:
-(add-hook 'emacs-startup-hook
-  (lambda ()
-    (setq file-name-handler-alist doom--file-name-handler-alist)))
-#+END_SRC
-
-Don't forget to restore ~file-name-handler-alist~, otherwise TRAMP won't work
-and compressed/encrypted files won't open.
+Another alternative (which is [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L269-L274][what Doom uses]]) is the [[https://gitlab.com/koral/gcmh/][gcmh]] package; which staves
+off the GC until you are idle. Doom also triggers GC when you unfocus the Emacs
+frame.
 
 *** Concatenate package autoloads
 When you install a package, a PACKAGE-autoloads.el file is generated. This file
-contains a map of autoloaded functions and snippets declared by the package.
-They tell Emacs where to find them when they are eventually called. In your
-conventional Emacs config, every one of these autoloads files are loaded
-immediately at startup (when ~package-initialize~ is called).
+maps autoloaded functions and snippets to their containing package so Emacs will
+know where to find them when they are used. In your conventional Emacs config,
+every one of these autoloads files are loaded immediately at startup (when
+~package-initialize~ is called).
 
 Since you'll commonly have hundreds of packages, loading hundreds of autoloads
 file can hurt startup times, especially without an SSD. We get around this by
 concatenating these files into one giant one when you run ~doom sync~.
 
-Emacs 27+ introduces a ~package-quickstart~ command does this for you, and
-=straight=, our package manager, does this for you too, but [[https://github.com/hlissner/doom-emacs/tree/develop/core/cli/autoloads.el][Doom Emacs has its
-own specialized mechanism]] for this, topped off with a few Doom-specific
-optimizations.
+Emacs 27+ introduces a ~package-quickstart~ command that does this for you, and
+=straight= (which powers our package manager) does this for you too, but [[https://github.com/hlissner/doom-emacs/tree/develop/core/cli/autoloads.el][Doom
+Emacs has its own specialized mechanism]] for this, topped off with a few
+Doom-specific optimizations.
 
 *** Lazy load package management system(s)
 Initializing package.el or straight.el at startup is expensive. We can save some
@@ -437,8 +412,8 @@ summons to fight for custody of your kids.
   Doom invests a lot of effort to improve runtime performance as well.
 + Doom's package manager (powered by straight.el) is declarative, non-rolling
   release and (nominally) reproducible; which is unique on the Emacs distro
-  scene. Upstream issues won't surprise you as much, and you can roll back when
-  you don't have the time to deal with them.
+  scene. Don't let upstream issues surprise you. Roll back or re-pin packages
+  when you don't have the time to deal with issues.
 + It facilitates integration with the command line, which makes it easy to
   integrate external tools with Emacs via the =bin/doom= script.
 
@@ -453,24 +428,64 @@ can also be retrieved using ~M-x doom/version~ (bound to =SPC h d v= or =C-h d
 v= by default) or ~bin/doom version~ on the command line.
 
 ** Is Discord the only option for interacting with your community?
-Yes. I selected it for my personal convenience and have no plans to extend our
-community to any other platform (like Matrix, IRC or Slack), or add bridges for
-them. I already have my hands full managing the one.
+Yes. Discord is already woven into my social and work life, and was selected to
+maximize my availability to the community. I have no plans to extend it to other
+platforms (like Matrix, IRC or Slack), or add bridges for them, even if they are
+better suited to the task. I already have my hands full managing the one.
 
-My being so active on our Discord is owed to that fact that my friends, family
-and other communities were on Discord to begin with. My availability was the
-most important factor in choosing a platform, even if there are other platforms
-better suited to the task.
-
-Email is a possible alternative, but it is constantly swamped; expect a long
+Email is a possible alternative, but is constantly swamped; expect a long
 turn-around time.
+
+** Why is scrolling slow in Emacs/Doom?
+This comes up often. The first thing folks fresh off the boat from other editors
+will notice is that Emacs has a low threshold for performance issues. It doesn't
+take much to get it to scroll like molasses.
+
+Retina/4K/high res users have it especially hard. MacOS users too, where Emacs
+seem even slower. Add to that files that are large (perhaps 1mb+) or have long
+lines (200 characters+) and we've got ourselves a really poor experience. And
+that's before we factor in plugins and poorly optimized major modes.
+
+There is an unfortunate but necessary adjustment of expectations new users must
+undergo, when they adopt Emacs. Doom has inherited this curse. It's raison
+d'etre is to improve the situation, but I can only go so far. You /will/ find
+cases where Emacs just scrolls slowly.
+
+What can you do about it?
+
+1. Disable some of Doom's slowest modules. The biggest offenders tend to be:
+   =:ui tabs=, =:ui indent-guides=, =:ui pretty-code=, and =:ui word-wrap=.
+2. Turn off line numbers ~(setq display-line-numbers-type nil)~. It's known to
+   slow down scrolling, in particular.
+3. Org users can turn off ~org-superstar-mode~: ~(remove-hook 'org-mode-hook
+   #'org-superstar-mode)~. It's an aesthetic plugin that offers fancier bullets.
+   Emacs seems to struggle to display those characters with some fonts.
+
+   Org uses can also turn off the rest of org's eye candy:
+
+   #+BEGIN_SRC elisp
+   (after! org
+     (setq org-fontify-quote-and-verse-blocks nil
+           org-fontify-whole-heading-line nil
+           org-hide-leading-stars nil
+           org-startup-indented nil))
+   #+END_SRC
+4. Turn on =M-x so-long-minor-mode=. This is a minor mode that disables
+   non-essential functionality and can be used to temporarily view files that
+   would be too slow otherwise. =M-x so-long-mode= is its extreme version; it
+   turns off /everything/, including syntax highlighting.
+5. Try replacing the =:ui modeline= module with =:ui (modeline +light)=. There
+   are aspects of the default modeline that can be unpredictably slow.
+6. Don't mash =j= (or =C-n=) to scroll. Evil users can scroll long distances
+   with =C-d= and =C-u=, for instance, to avoid that slowness. Otherwise, use
+   search mechanisms to move around, like isearch (=C-s=) or evil-search (=/=).
 
 * Configuration
 ** Does Doom respect XDG conventions
 Yes. Your private config (normally in =~/.doom.d=) can be moved to
 =~/.config/doom=.
 
-And as of Emacs 27, Emacs will recognize =~/.config/emacs=.
+And as of Emacs 27, you can move =~/.emacs.d= to =~/.config/emacs=.
 
 ** How do I configure Doom Emacs?
 Canonically, your private config is kept in =~/.doom.d/= (or =~/.config/doom/=).
@@ -840,14 +855,13 @@ Long answer: Features and performance appear to be the main talking points when
 comparing the two, but as far as I'm concerned they are equal in both respects
 (not all across the board, but on average).
 
-Instead, what is important to me is maintainability. As someone who frequently
-extends and debugs his editor (and maintains a community config), I frequently
-run up against issues with ivy and helm, but spend disproportionally more time
-doing so with helm than I do ivy, for little or no gain. Though both frameworks
-are excellent, the difference in complexity is also reflected in their plugin
-ecosystems; ivy plugins tend to be lighter, simpler, more consistent and
-significantly easier to hack if I want to change something. Unless you like helm
-/just/ the way it is out of the box, ivy is just the simpler choice.
+Instead, maintainability is most important for someone that frequently tinkers
+with their editor. When I have an issue, I spend a disproportionately more time
+dealing helm than I do ivy, for little or no gain. Though both frameworks are
+excellent, the difference in complexity is reflected in their plugin ecosystems;
+ivy plugins tend to be lighter, simpler, more consistent and significantly
+easier to hack if I want to change something. Unless you like helm /just/ the
+way it is out of the box, ivy is just the simpler choice.
 
 And since I dogfood it, Ivy's integration into Doom will always be a step or
 three ahead of helm's.
@@ -941,12 +955,13 @@ you have rambunctious colleagues peppering trailing whitespace into your
 project, you need to have a talk (with wiffle bats, preferably) rather than play
 a passive-aggressive game of whack-a-mole.
 
-Here at Doom Inc we believe that operations that mutate entire files should not
-be automated. Rather, they should be invoked deliberately, when and where it is
-needed, by someone that is aware of the potential consequences. This is where
-=ws-butler= comes in. It only cleans up whitespace /on the lines you've touched/
-*and* it leaves behind virtual whitespace (which is never written to the file)
-so your cursor doesn't get thrown around in all that cleanup work.
+Here at Doom Inc we believe that operations that mutate entire files (or worse,
+projects) should not be automated. Rather, they should be invoked deliberately,
+only when and where it is needed, by someone that is aware of the consequences.
+This is where =ws-butler= comes in. It only cleans up whitespace /on the lines
+you've touched/ *and* it leaves behind virtual whitespace (which is never
+written to the file) so your cursor doesn't get thrown around in all that
+cleanup work.
 
 In any case, if you had used =ws-butler= from the beginning, trailing whitespace
 and newlines would never be a problem!
@@ -1082,6 +1097,8 @@ Here are a few common causes for random crashes:
   #+END_SRC
 
   Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/hlissner/doom-emacs/issues/1170][#1170]]).
++ Ligatures and some fonts can cause Emacs to crash. You may want to try a
+  different font, or disable the =:ui pretty-code= module.
 
 ** Can't load my theme; ~unable to find theme file for X~ errors
 This means Emacs can't find the X-theme.el file for the theme you want to load.
@@ -1163,5 +1180,3 @@ There are a couple ways to address this:
 ** "clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error
 This applies to tmux users, in particular. See
 https://github.com/spudlyo/clipetty/issues/15 for a solution.
-
-* TODO Contributing

@@ -82,7 +82,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   :when (featurep! +fold)
   :hook (TeX-mode . TeX-fold-buffer)
   :hook (TeX-mode . TeX-fold-mode)
-
   :config
   ;; Fold after all auctex macro insertions
   (advice-add #'TeX-insert-macro :after #'+latex-fold-last-macro-a)
@@ -91,24 +90,23 @@ If no viewers are found, `latex-preview-pane' is used.")
   (advice-add #'cdlatex-math-modify :after #'+latex-fold-last-macro-a)
   ;; Fold after snippets
   (when (featurep! :editor snippets)
-    (add-hook 'TeX-fold-mode-hook
-              (defun +latex-fold-set-yas-hook-h ()
-                "Set a local after-snippet-hook to fold the snippet contents."
-                (add-hook! 'yas-after-exit-snippet-hook :local
-                  (TeX-fold-region yas-snippet-beg yas-snippet-end)))))
+    (add-hook! 'TeX-fold-mode-hook
+      (defun +latex-fold-snippet-contents-h ()
+        (add-hook! 'yas-after-exit-snippet-hook :local
+          (TeX-fold-region yas-snippet-beg yas-snippet-end)))))
 
-  (add-hook 'mixed-pitch-mode-hook
-            (defun +latex-fold-set-variable-pitch-h ()
-              "Fix folded things invariably getting fixed pitch when using mixed-pitch.
-Math faces should stay fixed by the mixed-pitch blacklist, this
-is mostly for \\section etc."
-              (when mixed-pitch-mode
-                ;; Adding to this list makes mixed-pitch clean the face remaps after us
-                (add-to-list 'mixed-pitch-fixed-cookie
-                             (face-remap-add-relative
-                              'TeX-fold-folded-face
-                              :family (face-attribute 'variable-pitch :family)
-                              :height (face-attribute 'variable-pitch :height))))))
+  (add-hook! 'mixed-pitch-mode-hook
+    (defun +latex-fold-set-variable-pitch-h ()
+      "Fix folded things invariably getting fixed pitch when using mixed-pitch.
+Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
+\\section etc."
+      (when mixed-pitch-mode
+        ;; Adding to this list makes mixed-pitch clean the face remaps after us
+        (add-to-list 'mixed-pitch-fixed-cookie
+                     (face-remap-add-relative
+                      'TeX-fold-folded-face
+                      :family (face-attribute 'variable-pitch :family)
+                      :height (face-attribute 'variable-pitch :height))))))
 
   (map! :map TeX-fold-mode-map
         :localleader

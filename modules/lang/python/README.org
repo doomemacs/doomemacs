@@ -79,13 +79,18 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
 
 ** Language Server Protocol Support
 This module must be enabled with the =+lsp= flag, and the =:tools lsp= module
-must be enabled. LSP will try mspyls, then pyls; whichever is available.
+must be enabled. LSP will try pyls then mspyls; the first that is available.
 
-mypyls can be installed with ~M-x lsp-install-server~ after opening a python
-buffer.
-
-Alternatively, use the [[https://pypi.org/project/python-language-server/][Python Language Server]] instead. ~pip install
+*To use [[https://pypi.org/project/python-language-server/][Python Language Server]] (pyls)* install it with ~pip install
 'python-language-server[all]'~
+
+*To use mspyls*, install it with ~M-x lsp-install-server~ and add this to your
+private config.el:
+
+#+BEGIN_SRC elisp
+(after! lsp-python-ms
+  (set-lsp-priority! 'mspyls 1))
+#+END_SRC
 
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language

@@ -37,17 +37,6 @@ If ARG (universal argument), runs `compile' from the current directory."
         (funcall (default-value 'major-mode))))))
 
 ;;;###autoload
-(defun +default/lsp-format-region-or-buffer ()
-  "Format the buffer (or selection) with LSP."
-  (interactive)
-  (unless (bound-and-true-p lsp-mode)
-    (user-error "Not in an LSP buffer"))
-  (call-interactively
-   (if (doom-region-active-p)
-       #'lsp-format-region
-     #'lsp-format-buffer)))
-
-;;;###autoload
 (defun +default/restart-server ()
   "Restart the Emacs server."
   (interactive)

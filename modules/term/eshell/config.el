@@ -187,9 +187,8 @@ You should use `set-eshell-alias!' to change this.")
   ;;      installed for bash completion to work. How frustrating. This way we
   ;;      can at least get bash completion whether or not fish is present.
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
-    :before-while #'fish-completion--list-completions-with-desc
-    (executable-find "fish")))
-
+    :before-until #'fish-completion--list-completions-with-desc
+    (unless (executable-find "fish") "")))
 
 ;; Activate eshell-did-you-mean using its setup function (lazily)
 (use-package! eshell-did-you-mean

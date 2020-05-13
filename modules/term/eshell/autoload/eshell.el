@@ -21,13 +21,15 @@
     t))
 
 (defun +eshell--bury-buffer (&optional dedicated-p)
-  (unless (switch-to-prev-buffer nil 'bury)
-    (switch-to-buffer (doom-fallback-buffer)))
-  (when (eq major-mode 'eshell-mode)
-    (switch-to-buffer (doom-fallback-buffer)))
-  (when +eshell-enable-new-shell-on-split
-    (when-let (win (get-buffer-window (+eshell/here)))
-      (set-window-dedicated-p win dedicated-p))))
+  (let ((directory default-directory))
+    (unless (switch-to-prev-buffer nil 'bury)
+      (switch-to-buffer (doom-fallback-buffer)))
+    (when (eq major-mode 'eshell-mode)
+      (switch-to-buffer (doom-fallback-buffer)))
+    (when +eshell-enable-new-shell-on-split
+      (let ((default-directory directory))
+        (when-let (win (get-buffer-window (+eshell/here t)))
+          (set-window-dedicated-p win dedicated-p))))))
 
 (defun +eshell--setup-window (window &optional flag)
   (when (window-live-p window)

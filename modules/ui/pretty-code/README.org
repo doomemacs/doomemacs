@@ -86,7 +86,7 @@ emacs, this is implemented in two different ways :
   automatically depending on the capabilities of the font, and no font-specific
   configuration is necessary.
 
-Emacs-mac port implements the /composition-function-table/ method in its code,
+Emacs-mac port implements the /composition-function-table/ method in [[https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805][its code]],
 nothing is necessary on Doom side; otherwise, Doom implements the
 /composition-function-table/ for emacs 28+ built with Harfbuzz support, and the
 /prettify-symbols-mode/ method otherwise.
