@@ -306,6 +306,20 @@ the prefix ARG changes this command's behavior."
 ;;;###autoload
 (defalias #'+org/close-fold #'outline-hide-subtree)
 
+;;;###autoload
+(defun +org/close-all-folds (&optional level)
+  "Close all folds in the buffer (or below LEVEL)."
+  (interactive "p")
+  (outline-hide-sublevels (or level 1)))
+
+;;;###autoload
+(defun +org/open-all-folds (&optional level)
+  "Open all folds in the buffer (or up to LEVEL)."
+  (interactive "P")
+  (if (integerp level)
+      (outline-hide-sublevels level)
+    (outline-show-all)))
+
 (defun +org--get-foldlevel ()
   (let ((max 1))
     (save-restriction
@@ -321,22 +335,20 @@ the prefix ARG changes this command's behavior."
       max)))
 
 ;;;###autoload
-(defun +org/show-next-fold-level ()
+(defun +org/show-next-fold-level (&optional count)
   "Decrease the fold-level of the visible area of the buffer. This unfolds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (1+ current-level)))
+  (interactive "p")
+  (let ((new-level (+ (+org--get-foldlevel) (or count 1))))
     (outline-hide-sublevels new-level)
     (message "Folded to level %s" new-level)))
 
 ;;;###autoload
-(defun +org/hide-next-fold-level ()
+(defun +org/hide-next-fold-level (&optional count)
   "Increase the global fold-level of the visible area of the buffer. This folds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (max 1 (1- current-level))))
+  (interactive "p")
+  (let ((new-level (max 1 (- (+org--get-foldlevel) (or count 1)))))
     (outline-hide-sublevels new-level)
     (message "Folded to level %s" new-level)))
 

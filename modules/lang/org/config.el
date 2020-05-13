@@ -907,11 +907,12 @@ compelling reason, so..."
         :n "zc"  #'+org/close-fold
         :n "zC"  #'outline-hide-subtree
         :n "zm"  #'+org/hide-next-fold-level
+        :n "zM"  #'+org/close-all-folds
         :n "zn"  #'org-tree-to-indirect-buffer
         :n "zo"  #'+org/open-fold
         :n "zO"  #'outline-show-subtree
         :n "zr"  #'+org/show-next-fold-level
-        :n "zR"  #'outline-show-all
+        :n "zR"  #'+org/open-all-folds
         :n "zi"  #'org-toggle-inline-images
 
         :map org-read-date-minibuffer-local-map
