@@ -11,7 +11,7 @@
 
 Accepts :core and :private as special arguments, which target Doom's core files
 and your private config files, respectively. To recompile your packages, use
-'doom rebuild' instead."
+'doom build' instead."
   (doom-cli-byte-compile targets recompile-p))
 
 (defcli! clean ()
