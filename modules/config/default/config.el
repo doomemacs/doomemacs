@@ -225,7 +225,7 @@
 ;;  d) properly delete smartparen pairs when they are encountered, without the
 ;;     need for strict mode.
 ;;  e) do none of this when inside a string
-(advice-add #'delete-backward-char :override #'doom/backward-delete-whitespace-to-column)
+(advice-add #'delete-backward-char :override #'+default--delete-backward-char-a)
 
 ;; HACK Makes `newline-and-indent' continue comments (and more reliably).
 ;;      Consults `doom-point-in-comment-functions' to detect a commented region
