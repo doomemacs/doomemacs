@@ -198,7 +198,7 @@ called.")
 (use-package! pipenv
   :commands pipenv-project-p
   :hook (python-mode . pipenv-mode)
-  :init (setq pipenv-with-projectile nil)
+  :init
   :config
   (set-eval-handler! 'python-mode
     '((:command . (lambda () python-shell-interpreter))
