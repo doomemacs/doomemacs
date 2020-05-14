@@ -755,7 +755,7 @@ The ~package!~ macro possesses a ~:disable~ property:
 (package! rtags :disable t)
 #+END_SRC
 
-Once a package is disabled, ~use-packages!~ and ~after!~ blocks for it will be
+Once a package is disabled, ~use-package!~ and ~after!~ blocks for it will be
 ignored, and the package is removed the next time you run ~bin/doom sync~. Use
 this to disable Doom's packages that you don't want or need.
 
