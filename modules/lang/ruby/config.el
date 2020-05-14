@@ -96,7 +96,7 @@
   (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
   (map! :after ruby-mode
         :localleader
-        :map ruby-mode-map 
+        :map ruby-mode-map
         :prefix "k"
         "k" #'rake
         "r" #'rake-rerun
@@ -180,7 +180,9 @@
   :when (featurep! +rails)
   :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
   :hook (projectile-rails-server-mode . doom-mark-buffer-as-real-h)
+  :hook (projectile-rails-mode . auto-insert-mode)
   :init
+  (setq auto-insert-query nil)
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
