@@ -89,6 +89,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                     doom-env-file)))
     (when (or force-p (not (file-exists-p env-file)))
       (with-temp-file env-file
+        (setq coding-system-for-write 'utf-8)
         (print! (start "%s envvars file at %S")
                 (if (file-exists-p env-file)
                     "Regenerating"

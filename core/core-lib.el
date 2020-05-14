@@ -118,6 +118,7 @@ unreadable. Returns the names of envvars that were changed."
         (env
          (with-temp-buffer
            (save-excursion
+             (setq coding-system-for-read 'utf-8)
              (insert "\0\n") ; to prevent off-by-one
              (insert-file-contents file))
            (save-match-data
