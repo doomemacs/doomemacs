@@ -51,6 +51,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/sh/README.org][:lang sh]]         | sh-mode                                                 | bash-language-server                                          |
 | [[../../lang/swift/README.org][:lang swift]]      | swift-mode                                              | sourcekit                                                     |
 | [[../../lang/web/README.org][:lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
+| [[../../lang/purescript/README.org][:lang purescript]] | purescript-mode                                         | purescript-language-server                                    |
 
 ** Module Flags
 + =+peek= Use =lsp-ui-peek= when looking up definitions and references with
