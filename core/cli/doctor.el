@@ -48,8 +48,8 @@ in."
 
   ;; REVIEW Refactor me
   (print! (start "Checking your Emacs version..."))
-  (when EMACS27+
-    (warn! "Emacs %s detected. Emacs HEAD is unstable and may cause errors."
+  (when EMACS28+
+    (warn! "Emacs %s detected. Doom doesn't support Emacs 28/HEAD. It is unstable and may cause errors."
            emacs-version))
 
   (print! (start "Checking for Emacs config conflicts..."))
