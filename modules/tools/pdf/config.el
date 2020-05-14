@@ -26,16 +26,18 @@
         pdf-view-use-imagemagick nil)
 
   ;; Persist current page for PDF files viewed in Emacs
+  (defvar +pdf--page-restored-p nil)
   (add-hook! 'pdf-view-change-page-hook
     (defun +pdf-remember-page-number-h ()
-      (when buffer-file-name
-        (doom-store-put buffer-file-name (pdf-view-current-page) nil "pdf-view"))))
+      (when-let (page (and buffer-file-name (pdf-view-current-page)))
+        (doom-store-put buffer-file-name page nil "pdf-view"))))
   (add-hook! 'pdf-view-mode-hook
     (defun +pdf-restore-page-number-h ()
-      (when-let (page (doom-store-get buffer-file-name "pdf-view"))
-        (or (and (< page 1)
-                 (> page (pdf-cache-number-of-pages)))
-            (pdf-view-goto-page page)))))
+      (when-let (page (and buffer-file-name (doom-store-get buffer-file-name "pdf-view")))
+        (and (not +pdf--page-restored-p)
+             (<= page (or (pdf-cache-number-of-pages) 1))
+             (pdf-view-goto-page page)
+             (setq-local +pdf--page-restored-p t)))))
 
   ;; Add retina support for MacOS users
   (when IS-MAC
