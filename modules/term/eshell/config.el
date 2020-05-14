@@ -12,6 +12,10 @@
   "Where to store eshell configuration files, as opposed to
 `eshell-directory-name', which is where Doom will store temporary/data files.")
 
+(defvar eshell-directory-name (concat doom-etc-dir "eshell")
+  "Where to store temporary/data files, as opposed to `eshell-config-dir',
+which is where Doom will store eshell configuration files.")
+
 (defvar +eshell-enable-new-shell-on-split t
   "If non-nil, spawn a new eshell session after splitting from an eshell
 buffer.")
@@ -22,11 +26,13 @@ buffer.")
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
+    ("ff" "find-file $1")
     ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
     ("l"  "ls -lh $*")
     ("ll" "ls -lah $*")
+    ("gg" "magit-status")
     ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
@@ -35,14 +41,10 @@ to define your aliases.
 
 You should use `set-eshell-alias!' to change this.")
 
-;;
-(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
-
 ;; These files are exceptions, because they may contain configuration
 (defvar eshell-aliases-file (concat +eshell-config-dir "aliases"))
 (defvar eshell-rc-script    (concat +eshell-config-dir "profile"))
 (defvar eshell-login-script (concat +eshell-config-dir "login"))
-
 
 (defvar +eshell--default-aliases nil)
 
@@ -152,7 +154,11 @@ You should use `set-eshell-alias!' to change this.")
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
             [remap evil-delete-back-to-indentation] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right))))
+            [remap evil-window-vsplit]  #'+eshell/split-right
+            (:localleader
+             "b" #'eshell-insert-buffer-name
+             "e" #'eshell-insert-envvar
+             "s" #'+eshell/search-history)))))
 
 
 (use-package! eshell-up
@@ -183,3 +189,14 @@ You should use `set-eshell-alias!' to change this.")
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
     (unless (executable-find "fish") "")))
+
+;; Activate eshell-did-you-mean using its setup function (lazily)
+(use-package! eshell-did-you-mean
+  :after esh-mode ; Specifically esh-mode, not eshell
+  :config
+  (eshell-did-you-mean-setup)
+  ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
+  ;;      work on first invocation, so we invoke it once manually by setting
+  ;;      the last command and then calling the output filter.
+  (setq eshell-last-command-name "catt")
+  (eshell-did-you-mean-output-filter "catt: command not found"))
