@@ -467,10 +467,18 @@ advised)."
               (put ',fn 'permanent-local-hook t)
               (add-hook sym #',fn ,append))))))
 
+(defmacro add-hook-trigger! (hook-var &rest targets)
+  "TODO"
+  `(let ((fn (intern (format "%s-h" ,hook-var))))
+     (fset fn (lambda (&rest _) (run-hooks ,hook-var) (set ,hook-var nil)))
+     (put ,hook-var 'permanent-local t)
+     (dolist (on (list ,@targets))
+       (if (functionp on)
+           (advice-add on :before fn)
+         (add-hook on fn)))))
+
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
-
-If N and M = 1, there's no benefit to using this macro over `add-hook'.
 
 This macro accepts, in order:
 

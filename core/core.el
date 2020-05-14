@@ -1,8 +1,9 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
-(when (version< emacs-version "26.1")
-  (error "Detected Emacs %s. Doom only supports Emacs 26.1 and higher"
-         emacs-version))
+(eval-when-compile
+  (when (< emacs-major-version 26)
+    (error "Detected Emacs v%s. Doom only supports Emacs 26 and newer"
+           emacs-version)))
 
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
@@ -195,7 +196,7 @@ users).")
 
 ;; Emacs "updates" its ui more often than it needs to, so we slow it down
 ;; slightly from 0.5s:
-(setq idle-update-delay 1)
+(setq idle-update-delay 1.0)
 
 ;; Emacs is essentially one huge security vulnerability, what with all the
 ;; dependencies it pulls in from all corners of the globe. Let's try to be at
@@ -306,15 +307,13 @@ users).")
 
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
-(when doom-interactive-mode
-  (setq gcmh-idle-delay 5
-        gcmh-high-cons-threshold 16777216  ; 16mb
-        gcmh-verbose doom-debug-mode
-        gc-cons-percentage 0.6)
-  (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
-  (with-eval-after-load 'gcmh
-    (setq gc-cons-percentage 0.1)
-    (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
+(setq gcmh-idle-delay 5
+      gcmh-high-cons-threshold 16777216  ; 16mb
+      gcmh-verbose doom-debug-mode
+      gc-cons-percentage 0.6)
+(with-eval-after-load 'gcmh
+  ;; But restore this later, otherwise we risk freezing and stuttering!
+  (setq gc-cons-percentage 0.1))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
@@ -337,18 +336,14 @@ users).")
   "Run MODE-local-vars-hook after local variables are initialized."
   (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                     #'doom-try-run-hook))
-(add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
 ;; of `after-change-major-mode-hook':
-(defun doom-run-local-var-hooks-if-necessary-h ()
+(defun doom-run-local-var-hooks-maybe-h ()
   "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
   (unless enable-local-variables
     (doom-run-local-var-hooks-h)))
-(add-hook 'after-change-major-mode-hook
-          #'doom-run-local-var-hooks-if-necessary-h
-          'append)
 
 
 ;;
@@ -427,7 +422,18 @@ If this is a daemon session, load them all immediately instead."
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
 
-(add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
+
+;;
+;;; Custom hooks
+
+(defvar doom-first-input-hook nil
+  "Transient hooks run before the first user input.")
+
+(defvar doom-first-file-hook nil
+  "Transient hooks run before the first interactively opened file.")
+
+(defvar doom-first-buffer-hook nil
+  "Transient hooks run before the first interactively opened buffer.")
 
 
 ;;
@@ -445,7 +451,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom-initialize (&optional force-p noerror)
+(defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
 The bootstrap process ensures that the essential directories exist, all core
@@ -473,6 +479,7 @@ for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)
+    (doom-log "Initializing Doom")
 
     ;; Reset as much state as possible, so `doom-initialize' can be treated like
     ;; a reset function. e.g. when reloading the config.
@@ -480,70 +487,51 @@ to least)."
                   load-path doom--initial-load-path
                   process-environment doom--initial-process-environment)
 
-    ;; Load shell environment, optionally generated from 'doom env'. No need to
-    ;; do so if we're in terminal Emacs, because Emacs will correctly inherit
+    (or (and
+         ;; `doom-autoload-file' tells Emacs where to load all its functions
+         ;; from. This includes everything in core/autoload/*.el and
+         ;; autoload files in enabled modules.
+         (or (doom-load-autoloads-file doom-autoload-file)
+             (ignore (warn "Doom's core autoloads file is missing")))
+         ;; Loads `doom-package-autoload-file', which loads a concatenated
+         ;; package autoloads file which caches `load-path',
+         ;; `auto-mode-alist', `Info-directory-list', and
+         ;; `doom-disabled-packages'. A big reduction in startup time.
+         (or (doom-load-autoloads-file doom-package-autoload-file)
+             (ignore (warn "Doom's package autoloads file is missing"))))
+        (signal 'doom-error
+                (list "Doom is in an incomplete state"
+                      "run 'bin/doom sync' on the command line to repair it")))
+
+    ;; Load shell environment, optionally generated from 'doom env'. No need
+    ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
     ;; your shell environment there.
-    (when (and (or (display-graphic-p)
-                   (daemonp))
-               (file-exists-p doom-env-file))
-      (doom-load-envvars-file doom-env-file))
+    (and (or (display-graphic-p)
+             (daemonp))
+         (doom-load-envvars-file doom-env-file 'noerror))
 
     (require 'core-modules)
-    (let (;; `doom-autoload-file' tells Emacs where to load all its functions
-          ;; from. This includes everything in core/autoload/*.el and autoload
-          ;; files in enabled modules.
-          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file noerror))
-          ;; Loads `doom-package-autoload-file', which loads a concatenated
-          ;; package autoloads file which caches `load-path', `auto-mode-alist',
-          ;; `Info-directory-list', and `doom-disabled-packages'. A big
-          ;; reduction in startup time.
-          (pkg-autoloads-p (doom-load-autoloads-file doom-package-autoload-file noerror)))
+    (autoload 'doom-initialize-packages "core-packages")
+    (autoload 'doom-initialize-core-packages "core-packages")
 
-      (if (and core-autoloads-p pkg-autoloads-p (not force-p))
-          ;; In case we want to use package.el or straight via M-x
-          (progn
-            (with-eval-after-load 'package
-              (require 'core-packages))
-            (with-eval-after-load 'straight
-              (require 'core-packages)
-              (doom-initialize-packages)))
+    ;; In case we want to use package.el or straight via M-x
+    (with-eval-after-load 'package (require 'core-packages))
+    (with-eval-after-load 'straight (doom-initialize-packages))
 
-        ;; Eagerly load these libraries because we may be in a session that hasn't been
-        ;; fully initialized (e.g. where autoloads files haven't been generated or
-        ;; `load-path' populated).
-        (mapc (doom-rpartial #'load nil (not doom-debug-mode) 'nosuffix)
-              (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
+    ;; Bootstrap interactive session
+    (add-hook! 'window-setup-hook
+      (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
+      (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h 'append)
+      (add-hook 'doom-first-input-hook #'gcmh-mode)
+      (add-hook-trigger! 'doom-first-input-hook 'pre-command-hook)
+      (add-hook-trigger! 'doom-first-file-hook 'after-find-hook 'dired-initial-position-hook)
+      (add-hook-trigger! 'doom-first-buffer-hook 'after-find-hook 'doom-switch-buffer-hook))
+    (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
+    (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
 
-        ;; Create all our core directories to quell file errors
-        (mapc (doom-rpartial #'make-directory 'parents)
-              (list doom-local-dir
-                    doom-etc-dir
-                    doom-cache-dir))
+    (doom-initialize-modules force-p))
 
-        ;; Ensure the package management system (and straight) are ready for
-        ;; action (and all core packages/repos are installed)
-        (require 'core-packages)
-        (doom-initialize-packages force-p))
-
-      (unless (or (and core-autoloads-p pkg-autoloads-p)
-                  noerror)
-        (unless core-autoloads-p
-          (warn "Your Doom core autoloads file is missing"))
-        (unless pkg-autoloads-p
-          (warn "Your package autoloads file is missing"))
-        (signal 'doom-autoload-error (list "Run `bin/doom refresh' to generate them")))
-
-      (when doom-interactive-mode
-        (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
-        (add-to-list 'command-switch-alist (cons "--restore" #'doom-restore-session-handler))))
-    t))
-
-(defun doom-initialize-core ()
-  "Load Doom's core files for an interactive session."
-  (require 'core-keybinds)
-  (require 'core-ui)
-  (require 'core-projects)
-  (require 'core-editor))
+  doom-init-p)
 
 (provide 'core)
 ;;; core.el ends here

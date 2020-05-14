@@ -5,7 +5,7 @@
 
 (use-package! flycheck
   :commands flycheck-list-errors flycheck-buffer
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . global-flycheck-mode)
   :config
   (setq flycheck-emacs-lisp-load-path 'inherit)
 
@@ -39,9 +39,7 @@
         :n "j"      #'flycheck-error-list-next-error
         :n "k"      #'flycheck-error-list-previous-error
         :n "RET"    #'flycheck-error-list-goto-error
-        :n [return] #'flycheck-error-list-goto-error)
-
-  (global-flycheck-mode +1))
+        :n [return] #'flycheck-error-list-goto-error))
 
 
 (use-package! flycheck-popup-tip

@@ -81,7 +81,6 @@ in."
       (print-group!
        (let ((doom-interactive-mode 'doctor))
          (doom-initialize 'force)
-         (doom-initialize-core)
          (doom-initialize-modules))
 
        (print! (success "Initialized Doom Emacs %s") doom-version)

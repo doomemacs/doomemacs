@@ -432,7 +432,19 @@ relative to `org-directory', unless it is an absolute path."
     (setq org-pandoc-options
           '((standalone . t)
             (mathjax . t)
-            (variable . "revealjs-url=https://revealjs.com")))))
+            (variable . "revealjs-url=https://revealjs.com"))))
+
+  (defadvice! +org--fix-async-export-a (orig-fn &rest args)
+    :around #'org-export-to-file
+    (if (not org-export-in-background)
+        (apply orig-fn args)
+      (setq org-export-async-init-file (make-temp-file "doom-org-async-export"))
+      (with-temp-file org-export-async-init-file
+        (prin1 `(progn (setq org-export-async-debug ,debug-on-error
+                             load-path ',load-path)
+                       (load ,user-init-file nil t))
+               (current-buffer)))
+      (apply orig-fn args))))
 
 
 (defun +org-init-habit-h ()

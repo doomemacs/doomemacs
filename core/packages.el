@@ -5,6 +5,22 @@
 (package! auto-minor-mode :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
 (package! gcmh :pin "b1bde5089169a74f62033d027e06e98cbeedd43f")
 
+;; core-packages.el
+(package! straight
+  ;; :type 'core
+  :recipe `(:host github
+            :repo "raxod502/straight.el"
+            :branch ,straight-repository-branch
+            :local-repo "straight.el"
+            :files ("straight*.el")
+            :no-build t)
+  :pin "f606bfaf9330cfb1ef6971bb1f6ac4e2c39a39c2")
+
+;; core-modules.el
+(package! use-package
+  ;; :type 'core
+  :pin "c873d5529c9c80cb58222f22873a4f081c307cb2")
+
 ;; core-ui.el
 (package! all-the-icons :pin "d6cb6d4a779eaa3570d8e451fd4d38b2b4554860")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")

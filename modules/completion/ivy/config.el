@@ -19,7 +19,7 @@ results buffer.")
 ;;; Packages
 
 (use-package! ivy
-  :after-call pre-command-hook
+  :hook (doom-first-input . ivy-mode)
   :init
   (let ((standard-search-fn
          (if (featurep! +prescient)
@@ -98,12 +98,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
       (apply orig-fn args)))
 
   (define-key! ivy-minibuffer-map
-    "C-c C-e" #'+ivy/woccur
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
+    "C-c C-e" #'+ivy/woccur
     "C-o" #'ivy-dispatching-done
-    "M-o" #'hydra-ivy/body)
-
-  (ivy-mode +1))
+    "M-o" #'hydra-ivy/body))
 
 
 (use-package! ivy-rich

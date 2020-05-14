@@ -179,8 +179,7 @@ localleader prefix."
 ;;; Packages
 
 (use-package! which-key
-  :defer 1
-  :after-call pre-command-hook
+  :hook (doom-first-input . which-key-mode)
   :init
   (setq which-key-sort-order #'which-key-prefix-then-key-order
         which-key-sort-uppercase-first nil
@@ -195,9 +194,7 @@ localleader prefix."
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
 
   (which-key-add-key-based-replacements doom-leader-key "<leader>")
-  (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
-
-  (which-key-mode +1))
+  (which-key-add-key-based-replacements doom-localleader-key "<localleader>"))
 
 
 ;;

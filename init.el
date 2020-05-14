@@ -47,7 +47,3 @@
 
 ;; And let 'er rip!
 (doom-initialize)
-(if noninteractive
-    (doom-initialize-packages)
-  (doom-initialize-core)
-  (doom-initialize-modules))

@@ -55,14 +55,19 @@ And jumps to your `doom!' block."
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(with-current-buffer (compile ,command)
-     (add-hook
-      'compilation-finish-functions
-      (lambda (_buf status)
-        (if (equal status "finished\n")
-            ,on-success
-          ,on-failure))
-      nil 'local)))
+  (let ((windowsym (make-symbol "doom-sync-window")))
+    `(with-current-buffer (compile ,command t)
+       (let ((,windowsym (get-buffer-window (current-buffer))))
+         (select-window ,windowsym)
+         (add-hook
+          'compilation-finish-functions
+          (lambda (_buf status)
+            (if (equal status "finished\n")
+                (progn
+                  (delete-window ,windowsym)
+                  ,on-success)
+              ,on-failure))
+          nil 'local)))))
 
 ;;;###autoload
 (defun doom/reload ()
@@ -89,7 +94,7 @@ Runs `doom-reload-hook' afterwards."
               (doom-initialize-modules 'force)
             (general-auto-unbind-keys t)))
         (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
-        (print! (success "Config successfully reloaded!")))
+        (message "Config successfully reloaded!"))
     (user-error "Failed to reload your config")))
 
 ;;;###autoload

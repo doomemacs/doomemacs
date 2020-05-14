@@ -79,8 +79,8 @@ possible."
                     t))))))
 
 ;; Don't autosave files or create lock/history/backup files. We don't want
-;; copies of potentially sensitive material floating around, and we'll rely on
-;; git and our own good fortune instead. Fingers crossed!
+;; copies of potentially sensitive material floating around or polluting our
+;; filesystem. We rely on git and our own good fortune instead. Fingers crossed!
 (setq auto-save-default nil
       create-lockfiles nil
       make-backup-files nil
@@ -216,7 +216,7 @@ possible."
 (use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
-  :after-call after-find-file
+  :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
   :config
   (defun doom--recent-file-truename (file)
@@ -246,22 +246,20 @@ possible."
       "Add dired directory to recentf file list."
       (recentf-add-file default-directory)))
 
-  (when doom-interactive-mode
-    (add-hook 'kill-emacs-hook #'recentf-cleanup)
-    (quiet! (recentf-mode +1))))
+  (add-hook 'kill-emacs-hook #'recentf-cleanup)
+  (advice-add #'recentf-load-list :around #'doom-shut-up-a))
 
 
 (use-package! savehist
   ;; persist variables across sessions
   :defer-incrementally custom
-  :after-call post-command-hook
+  :hook (doom-first-input . savehist-mode)
+  :init
+  (setq savehist-file (concat doom-cache-dir "savehist"))
   :config
-  (setq savehist-file (concat doom-cache-dir "savehist")
-        savehist-save-minibuffer-history t
+  (setq savehist-save-minibuffer-history t
         savehist-autosave-interval nil ; save on kill only
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (savehist-mode +1)
-
   (add-hook! 'kill-emacs-hook
     (defun doom-unpropertize-kill-ring-h ()
       "Remove text properties from `kill-ring' for a smaller savehist file."
@@ -273,11 +271,11 @@ possible."
 
 (use-package! saveplace
   ;; persistent point location in buffers
-  :after-call after-find-file dired-initial-position-hook
-  :config
+  :hook (doom-first-file . save-place-mode)
+  :init
   (setq save-place-file (concat doom-cache-dir "saveplace")
         save-place-limit 100)
-
+  :config
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
     :after-while #'save-place-find-file-hook
@@ -293,9 +291,7 @@ possible."
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
 files, so we replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (letf! ((#'pp #'prin1)) (funcall orig-fn)))
-
-  (save-place-mode +1))
+    (letf! ((#'pp #'prin1)) (funcall orig-fn))))
 
 
 (use-package! server
@@ -314,7 +310,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 ;;; Packages
 
 (use-package! better-jumper
-  :after-call pre-command-hook
+  :hook (doom-first-input . better-jumper-mode)
+  :hook (better-jumper-post-jump . recenter)
   :preface
   ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at
   ;; startup. This can be removed once gilbertw1/better-jumper#2 is merged.
@@ -324,17 +321,16 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
   (global-set-key [remap xref-pop-marker-stack] #'better-jumper-jump-backward)
   :config
-  (better-jumper-mode +1)
-  (add-hook 'better-jumper-post-jump-hook #'recenter)
+  (advice-add #'dired-find-file :before #'doom-set-jump-maybe-a)
 
-  (defadvice! doom-set-jump-a (orig-fn &rest args)
+  (defun doom-set-jump-a (orig-fn &rest args)
     "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
     (let ((evil--jumps-jumping t)
           (better-jumper--jumping t))
       (apply orig-fn args)))
 
-  (defadvice! doom-set-jump-maybe-a (orig-fn &rest args)
+  (defun doom-set-jump-maybe-a (orig-fn &rest args)
     "Set a jump point if ORIG-FN returns non-nil."
     (let ((origin (point-marker))
           (result
@@ -441,7 +437,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . smartparens-global-mode)
   :commands sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string
   :config
   ;; smartparens recognizes `slime-mrepl-mode', but not `sly-mrepl-mode', so...
@@ -501,16 +497,12 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (defun doom-disable-smartparens-mode-maybe-h ()
       (when smartparens-mode
         (setq-local doom-buffer-smartparens-mode t)
-        (turn-off-smartparens-mode))))
-
-  (smartparens-global-mode +1))
+        (turn-off-smartparens-mode)))))
 
 
 (use-package! so-long
-  :after-call after-find-file
+  :hook (doom-first-file . global-so-long-mode)
   :config
-  (when doom-interactive-mode
-    (global-so-long-mode +1))
   (setq so-long-threshold 400) ; reduce false positives w/ larger threshold
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
@@ -530,6 +522,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (appendq! so-long-minor-modes
             '(flycheck-mode
               flyspell-mode
+              spell-fu-mode
               eldoc-mode
               smartparens-mode
               highlight-numbers-mode
@@ -560,8 +553,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
-  :after-call after-find-file
-  :config (ws-butler-global-mode +1))
+  :hook (doom-first-buffer . ws-butler-global-mode))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

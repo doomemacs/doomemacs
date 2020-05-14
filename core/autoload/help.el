@@ -427,8 +427,8 @@ If prefix arg is present, refresh the cache."
    (let ((guess (or (function-called-at-point)
                     (symbol-at-point))))
      (require 'finder-inf nil t)
-     (require 'core-packages)
-     (doom-initialize-packages)
+     (require 'package)
+     (require 'straight)
      (let ((packages (delete-dups
                       (append (mapcar #'car package-alist)
                               (mapcar #'car package--builtins)
@@ -503,7 +503,7 @@ If prefix arg is present, refresh the cache."
             (modules
              (if (gethash (symbol-name package) straight--build-cache)
                  (doom-package-get package :modules)
-               (plist-get (cdr (assq package (doom-packages-list 'all)))
+               (plist-get (cdr (assq package (doom-package-list 'all)))
                           :modules)))
           (package--print-help-section "Modules")
           (insert "Declared by the following Doom modules:\n")
