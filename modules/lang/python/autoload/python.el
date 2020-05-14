@@ -4,6 +4,7 @@
 (defun +python/open-repl ()
   "Open the Python REPL."
   (interactive)
+  (require 'python)
   (unless python-shell-interpreter
     (user-error "`python-shell-interpreter' isn't set"))
   (pop-to-buffer
@@ -23,6 +24,7 @@
 (defun +python/open-ipython-repl ()
   "Open an IPython REPL."
   (interactive)
+  (require 'python)
   (let ((python-shell-interpreter (or (+python-executable-find "ipython") "ipython"))
         (python-shell-interpreter-args (string-join +python-ipython-repl-args " ")))
     (+python/open-repl)))
@@ -31,6 +33,7 @@
 (defun +python/open-jupyter-repl ()
   "Open a Jupyter console."
   (interactive)
+  (require 'python)
   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
   (let ((python-shell-interpreter (or (+python-executable-find "jupyter") "jupyter"))
         (python-shell-interpreter-args (format "console %s" (string-join +python-jupyter-repl-args " "))))
