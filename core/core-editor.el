@@ -293,7 +293,9 @@ possible."
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
 files, so we replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (letf! ((#'pp #'prin1)) (funcall orig-fn))))
+    (letf! ((#'pp #'prin1)) (funcall orig-fn)))
+
+  (save-place-mode +1))
 
 
 (use-package! server
