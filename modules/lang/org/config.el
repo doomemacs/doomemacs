@@ -766,6 +766,11 @@ compelling reason, so..."
   )
 
 
+(defun +org-init-smartparens-h ()
+  ;; Disable the slow defaults
+  (provide 'smartparens-org))
+
+
 ;;
 ;;; Packages
 
@@ -999,7 +1004,8 @@ compelling reason, so..."
              #'+org-init-keybinds-h
              #'+org-init-popup-rules-h
              #'+org-init-protocol-h
-             #'+org-init-protocol-lazy-loader-h)
+             #'+org-init-protocol-lazy-loader-h
+             #'+org-init-smartparens-h)
 
   ;; (Re)activate eldoc-mode in org-mode a little later, because it disables
   ;; itself if started too soon (which is the case with `global-eldoc-mode').
