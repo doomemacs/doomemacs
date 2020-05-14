@@ -3,6 +3,8 @@
 ;; "What am I looking at?" This module helps you answer this question.
 ;;
 ;;   + `+lookup/definition': a jump-to-definition that should 'just work'
+;;   + `+lookup/implementations': find a symbol's implementations in the current
+;;                                project
 ;;   + `+lookup/references': find a symbol's references in the current project
 ;;   + `+lookup/file': open the file referenced at point
 ;;   + `+lookup/online'; look up a symbol on online resources
@@ -46,6 +48,24 @@ Used by `+lookup/online'.")
   "Functions for `+lookup/definition' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
 window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
+
+(defvar +lookup-implementations-functions ()
+  "Function for `+lookup/implementations' to try. Stops at the first function to
+return non-nil or change the current window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
+
+(defvar +lookup-type-definition-functions ()
+  "Functions for `+lookup/type-definition' to try. Stops at the first function to
+return non-nil or change the current window/point.
 
 If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
