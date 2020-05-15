@@ -232,7 +232,7 @@ BODY will be run when this dispatcher is called."
     (" has a dirty worktree:"
      . "^Discard changes$")
     ("^In repository "
-     . "^Reset branch "))
+     . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL"))
   "A list of regexps, mapped to regexps.
 
 Their CAR is tested against the prompt, and CDR is tested against the presented
