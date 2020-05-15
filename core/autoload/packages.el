@@ -144,30 +144,37 @@ Grabs the latest commit id of the package using 'git'."
 If SELECT (prefix arg) is non-nil, prompt you to choose a specific commit for
 each package."
   (interactive
-   (append
-    (mapcar #'intern
-            (split-string
-             (completing-read
-              "Bump module: "
-              (let ((modules (doom-module-list 'all)))
-                (mapcar (lambda (m)
-                          (if (listp m)
-                              (format "%s %s" (car m) (cdr m))
-                            (format "%s" m)))
-                        (append (list ":private")
-                                (delete-dups (mapcar #'car modules))
-                                modules)))
-              nil t nil nil)
-             " " t))
-    (list current-prefix-arg)))
-  (if-let (packages-file (if (eq category :private)
-                             (doom-glob doom-private-dir "packages.el")
-                           (doom-module-locate-path category module "packages.el")))
-      (with-current-buffer
-          (or (get-file-buffer packages-file)
-              (find-file-noselect packages-file))
-        (doom/bump-packages-in-buffer select))
-    (user-error "Module %s %s has no packages.el file")))
+   (let* ((module (completing-read
+                   "Bump module: "
+                   (let ((modules (cons (list :core) (doom-module-list 'all))))
+                     (mapcar (lambda (m)
+                               (if (listp m)
+                                   (format "%s %s" (car m) (cdr m))
+                                 (format "%s" m)))
+                             (append (list ":private")
+                                     (delete-dups (mapcar #'car modules))
+                                     modules)))
+                   nil t nil nil))
+          (module (split-string module " " t)))
+     (list (intern (car module))
+           (ignore-errors (intern (cadr module)))
+           current-prefix-arg)))
+  (mapc (lambda (module)
+          (if-let (packages-file
+                   (pcase category
+                     (:private (doom-glob doom-private-dir "packages.el"))
+                     (:core    (doom-glob doom-core-dir "packages.el"))
+                     (_ (doom-module-locate-path category module "packages.el"))))
+              (with-current-buffer
+                  (or (get-file-buffer packages-file)
+                      (find-file-noselect packages-file))
+                (doom/bump-packages-in-buffer select)
+                (save-buffer))
+            (message "Module %s has no packages.el file" (cons category module))))
+        (if module
+            (list (cons category module))
+          (cl-remove-if-not (lambda (m) (eq (car m) category))
+                            (cons (list :core) (doom-module-list 'all))))))
 
 ;;;###autoload
 (defun doom/bump-package (package)
