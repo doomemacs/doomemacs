@@ -231,18 +231,19 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
 
 This silences calls to `message', `load-file', `write-region' and anything that
 writes to `standard-output'."
-  `(cond (doom-debug-mode ,@forms)
-         ((not doom-interactive-mode)
-          (letf! ((standard-output (lambda (&rest _)))
-                  (defun load-file (file) (load-file nil t))
-                  (defun message (&rest _))
-                  (defun write-region (start end filename &optional append visit lockname mustbenew)
-                    (unless visit (setq visit 'no-message))
-                    (funcall write-region start end filename append visit lockname mustbenew)))
-            ,@forms))
-         ((let ((inhibit-message t)
-                (save-silently t))
-            (prog1 ,@forms (message ""))))))
+  `(if doom-debug-mode
+       (progn ,@forms)
+     ,(if doom-interactive-mode
+          `(let ((inhibit-message t)
+                 (save-silently t))
+             (prog1 ,@forms (message "")))
+        `(letf! ((standard-output (lambda (&rest _)))
+                 (defun load-file (file) (load-file nil t))
+                 (defun message (&rest _))
+                 (defun write-region (start end filename &optional append visit lockname mustbenew)
+                   (unless visit (setq visit 'no-message))
+                   (funcall write-region start end filename append visit lockname mustbenew)))
+           ,@forms))))
 
 (defmacro if! (cond then &rest body)
   "Expands to THEN if COND is non-nil, to BODY otherwise.
