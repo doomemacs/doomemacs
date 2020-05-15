@@ -210,20 +210,21 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
   (setq body (macroexp-progn body))
   (when (memq (car bindings) '(defun defmacro))
     (setq bindings (list bindings)))
-  (dolist (binding (nreverse bindings) body)
+  (dolist (binding (reverse bindings) (macroexpand body))
     (let ((type (car binding))
           (rest (cdr binding)))
       (setq
        body (pcase type
               (`defmacro `(cl-macrolet ((,(car rest) ,(cadr rest) ,@(cddr rest))) ,body))
               (`defun `(cl-letf* ((,(car rest) (symbol-function #',(car rest)))
-                                   ((symbol-function #',(car rest))
-                                    (lambda ,(cadr rest) ,@(cddr rest))))
-                          ,body))
+                                  ((symbol-function #',(car rest))
+                                   (lambda ,(cadr rest) ,@(cddr rest))))
+                         (ignore ,(car rest))
+                         ,body))
               (_
                (when (eq (car-safe type) 'function)
-                 (setq type `(symbol-function ,type)))
-               `(cl-letf ((,type ,@rest)) ,body)))))))
+                 (setq type (list 'symbol-function type)))
+               (list 'cl-letf (list (cons type rest)) body)))))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without generating any output.
