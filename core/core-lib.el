@@ -229,7 +229,7 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
 (defmacro quiet! (&rest forms)
   "Run FORMS without generating any output.
 
-This silences calls to `message', `load-file', `write-region' and anything that
+This silences calls to `message', `load', `write-region' and anything that
 writes to `standard-output'."
   `(if doom-debug-mode
        (progn ,@forms)
@@ -238,8 +238,9 @@ writes to `standard-output'."
                  (save-silently t))
              (prog1 ,@forms (message "")))
         `(letf! ((standard-output (lambda (&rest _)))
-                 (defun load-file (file) (load-file nil t))
                  (defun message (&rest _))
+                 (defun load (file &optional noerror nomessage nosuffix must-suffix)
+                   (funcall load file noerror t nosuffix must-suffix))
                  (defun write-region (start end filename &optional append visit lockname mustbenew)
                    (unless visit (setq visit 'no-message))
                    (funcall write-region start end filename append visit lockname mustbenew)))
