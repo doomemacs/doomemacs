@@ -58,12 +58,13 @@ DOOMDIR environment variable. e.g.
 
     ;; In case no init.el was present the first time `doom-initialize-modules' was
     ;; called in core.el (e.g. on first install)
-    (ignore-errors (load! "init" doom-private-dir t))
+    (ignore-errors
+      (load! "init" doom-private-dir t))
     (when doom-modules
       (maphash (lambda (key plist)
                  (let ((doom--current-module key)
                        (doom--current-flags (plist-get plist :flags)))
-                   (load! "init" (plist-get plist :path) t)))
+                   (ignore-errors (load! "init" (plist-get plist :path) t))))
                doom-modules))
 
     ;; Ask if user would like an envvar file generated
