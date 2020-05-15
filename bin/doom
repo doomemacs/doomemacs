@@ -12,7 +12,10 @@
 (let* ((loaddir (file-name-directory (file-truename load-file-name)))
        (emacsdir (getenv "EMACSDIR"))
        (user-emacs-directory
-        (abbreviate-file-name (or emacsdir (expand-file-name "../" loaddir)))))
+        (abbreviate-file-name
+         (if emacsdir
+             (file-name-as-directory emacsdir)
+           (expand-file-name "../" loaddir)))))
 
   ;;
   (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
