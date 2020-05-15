@@ -137,8 +137,7 @@
     "This disables the company-box scrollbar, because:
 https://github.com/sebastiencs/company-box/issues/44"
     :around #'company-box--update-scrollbar
-    (cl-letf (((symbol-function #'display-buffer-in-side-window)
-               (symbol-function #'ignore)))
+    (letf! ((#'display-buffer-in-side-window #'ignore))
       (apply orig-fn args))))
 
 

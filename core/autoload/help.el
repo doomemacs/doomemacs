@@ -115,7 +115,8 @@ selection of all minor-modes, active or not."
   (require 'org)
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
-         (depth (if (integerp depth) depth)))
+         (depth (if (integerp depth) depth))
+         (org-inhibit-startup t))
     (message "Loading search results...")
     (unwind-protect
         (delq
@@ -218,7 +219,7 @@ selection of all minor-modes, active or not."
            :prompt "Search documentation for: "))
 
 ;;;###autoload
-(defun doom/help-news-search (&optional initial-input)
+(defun doom/help-search-news (&optional initial-input)
   "Search headlines in Doom's newsletters."
   (interactive)
   (doom-completing-read-org-headings

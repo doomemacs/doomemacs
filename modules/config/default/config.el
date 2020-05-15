@@ -353,7 +353,7 @@ Continues comments if executed from a commented line. Consults
   "dL"   #'doom/help-search-loaded-files
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
-  "dN"   #'doom/help-news-search
+  "dN"   #'doom/help-search-news
   "dpc"  #'doom/help-package-config
   "dpd"  #'doom/goto-private-packages-file
   "dph"  #'doom/help-package-homepage

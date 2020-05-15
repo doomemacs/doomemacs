@@ -141,7 +141,7 @@ current file). Only scans first 2048 bytes of the document."
 ;;; Commands
 
 ;;;###autoload
-(defun +org/dwim-at-point ()
+(defun +org/dwim-at-point (&optional arg)
   "Do-what-I-mean at point.
 
 If on a:
@@ -158,7 +158,7 @@ If on a:
 - latex fragment: toggle it.
 - link: follow it
 - otherwise, refresh all inline images in current tree."
-  (interactive)
+  (interactive "P")
   (let* ((context (org-element-context))
          (type (org-element-type context)))
     ;; skip over unimportant contexts
@@ -206,7 +206,7 @@ If on a:
 
       (`table-cell
        (org-table-blank-field)
-       (org-table-recalculate)
+       (org-table-recalculate arg)
        (when (and (string-empty-p (string-trim (org-table-get-field)))
                   (bound-and-true-p evil-local-mode))
          (evil-change-state 'insert)))
@@ -215,13 +215,13 @@ If on a:
        (org-babel-lob-execute-maybe))
 
       (`statistics-cookie
-       (save-excursion (org-update-statistics-cookies nil)))
+       (save-excursion (org-update-statistics-cookies arg)))
 
       ((or `src-block `inline-src-block)
-       (org-babel-execute-src-block))
+       (org-babel-execute-src-block arg))
 
       ((or `latex-fragment `latex-environment)
-       (org-latex-preview))
+       (org-latex-preview arg))
 
       (`link
        (let* ((lineage (org-element-lineage context '(link) t))
@@ -229,7 +229,7 @@ If on a:
          (if (or (equal (org-element-property :type lineage) "img")
                  (and path (image-type-from-file-name path)))
              (+org--refresh-inline-images-in-subtree)
-           (org-open-at-point))))
+           (org-open-at-point arg))))
 
       ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
@@ -238,7 +238,7 @@ If on a:
       (_
        (if (or (org-in-regexp org-ts-regexp-both nil t)
                (org-in-regexp org-tsr-regexp-both nil  t)
-               (org-in-regexp org-any-link-re nil t))
+               (org-in-regexp org-link-any-re nil t))
            (call-interactively #'org-open-at-point)
          (+org--refresh-inline-images-in-subtree))))))
 

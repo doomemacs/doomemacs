@@ -1,5 +1,7 @@
 ;;; editor/evil/init.el -*- lexical-binding: t; -*-
 
+(defvar evil-collection-key-blacklist)
+
 ;; We load evil-collection ourselves for these reasons:
 ;;
 ;; 1. To truly lazy load it. Some of its modules, like

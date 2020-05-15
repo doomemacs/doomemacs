@@ -5,7 +5,7 @@
          "This module requires (:tools lsp)")
 
 (if (not (executable-find "python"))
-    (error! "Python isn't installed.")
+    (error! "Couldn't find python in your PATH")
   (unless (featurep! +lsp)
     (unless (zerop (shell-command "python -c 'import setuptools'"))
       (warn! "setuptools wasn't detected, which anaconda-mode requires"))))

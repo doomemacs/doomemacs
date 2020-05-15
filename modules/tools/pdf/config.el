@@ -65,29 +65,30 @@
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
   ;; Install epdfinfo binary if needed, blocking until it is finished
-  (require 'pdf-tools)
-  (unless (file-executable-p pdf-info-epdfinfo-program)
-    (let ((wconf (current-window-configuration)))
-      (pdf-tools-install)
-      (message "Building epdfinfo, this will take a moment...")
-      ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
-      ;;      `pdf-tools-install' has a chance to reinitialize them as
-      ;;      `pdf-view-mode' buffers. This is necessary because
-      ;;      `pdf-tools-install' won't do this to buffers that are already in
-      ;;      pdf-view-mode.
-      (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
-        (with-current-buffer buffer (fundamental-mode)))
-      (while compilation-in-progress
-        ;; Block until `pdf-tools-install' is done
-        (redisplay)
-        (sleep-for 1))
-      ;; HACK If pdf-tools was loaded by you opening a pdf file, once
-      ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
-      ;;      because the compilation buffer is focused, not the pdf buffer.
-      ;;      Therefore, it is imperative that the window config is restored.
-      (when (file-executable-p pdf-info-epdfinfo-program)
-        (set-window-configuration wconf))))
+  (when doom-interactive-mode
+    (require 'pdf-tools)
+    (unless (file-executable-p pdf-info-epdfinfo-program)
+      (let ((wconf (current-window-configuration)))
+        (pdf-tools-install)
+        (message "Building epdfinfo, this will take a moment...")
+        ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
+        ;;      `pdf-tools-install' has a chance to reinitialize them as
+        ;;      `pdf-view-mode' buffers. This is necessary because
+        ;;      `pdf-tools-install' won't do this to buffers that are already in
+        ;;      pdf-view-mode.
+        (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+          (with-current-buffer buffer (fundamental-mode)))
+        (while compilation-in-progress
+          ;; Block until `pdf-tools-install' is done
+          (redisplay)
+          (sleep-for 1))
+        ;; HACK If pdf-tools was loaded by you opening a pdf file, once
+        ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
+        ;;      because the compilation buffer is focused, not the pdf buffer.
+        ;;      Therefore, it is imperative that the window config is restored.
+        (when (file-executable-p pdf-info-epdfinfo-program)
+          (set-window-configuration wconf))))
 
-  ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
-  ;; `pdf-virtual-global-minor-mode'.
-  (pdf-tools-install-noverify))
+    ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
+    ;; `pdf-virtual-global-minor-mode'.
+    (pdf-tools-install-noverify)))

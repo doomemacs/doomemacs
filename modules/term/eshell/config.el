@@ -183,9 +183,10 @@ You should use `set-eshell-alias!' to change this.")
   :hook (eshell-mode . fish-completion-mode)
   :init (setq fish-completion-fallback-on-bash-p t)
   :config
-  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil, fish must be
-  ;;      installed for bash completion to work. How frustrating. This way we
-  ;;      can at least get bash completion whether or not fish is present.
+  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil,
+  ;;      `fish-completion--list-completions-with-desc' will throw an error if
+  ;;      fish isn't installed (and so, will fail to fall back to bash), so we
+  ;;      advise it to fail silently.
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
     (unless (executable-find "fish") "")))

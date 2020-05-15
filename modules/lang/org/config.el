@@ -160,7 +160,7 @@ This forces it to read the background before rendering."
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)))
 
-  (defadvice! +org-display-link-in-eldoc-a (&rest args)
+  (defadvice! +org-display-link-in-eldoc-a (&rest _)
     "Display full link in minibuffer when cursor/mouse is over it."
     :before-until #'org-eldoc-documentation-function
     (when-let (link (org-element-property :raw-link (org-element-context)))
@@ -196,10 +196,10 @@ This forces it to read the background before rendering."
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
-  (defadvice! +org-fix-newline-and-indent-in-src-blocks-a ()
+  (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
-    :after #'org-return-indent
-    (when (org-in-src-block-p t)
+    :after #'org-return
+    (when (and indent (org-in-src-block-p t))
       (org-babel-do-in-edit-buffer
        (call-interactively #'indent-for-tab-command))))
 
@@ -916,8 +916,8 @@ compelling reason, so..."
         :ni "C-S-k" #'org-shiftup
         :ni "C-S-j" #'org-shiftdown
         ;; more intuitive RET keybinds
-        :i [return] #'org-return-indent
-        :i "RET"    #'org-return-indent
+        :i [return] (λ! (org-return t))
+        :i "RET"    (λ! (org-return t))
         :n [return] #'+org/dwim-at-point
         :n "RET"    #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
