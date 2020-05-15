@@ -121,7 +121,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                   (use-package-defaults use-package-defaults)
                   (use-package-expand-minimally t)
                   (targets (delete-dups targets))
-                  (modules (seq-group-by (lambda (t) (doom-module-from-path t)) targets))
+                  (modules (seq-group-by #'doom-module-from-path targets))
                   (total-files (length targets))
                   (total-modules (length modules))
                   (i 0)
