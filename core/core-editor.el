@@ -321,8 +321,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
   (global-set-key [remap xref-pop-marker-stack] #'better-jumper-jump-backward)
   :config
-  (advice-add #'dired-find-file :before #'doom-set-jump-maybe-a)
-
   (defun doom-set-jump-a (orig-fn &rest args)
     "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
