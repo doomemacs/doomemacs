@@ -164,7 +164,7 @@ in."
                                                      (mapcar #'car doom-packages))
                                        unless (or (doom-package-get name :disable)
                                                   (eval (doom-package-get name :ignore))
-                                                  (plist-get (doom-package-get name :recipe) :local-repo)
+                                                  (plist-member (doom-package-get name :recipe) :local-repo)
                                                   (doom-package-built-in-p name)
                                                   (doom-package-installed-p name))
                                        do (print! (error "Missing emacs package: %S") name))
