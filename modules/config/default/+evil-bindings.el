@@ -4,12 +4,12 @@
   ;; NOTE SPC u replaces C-u as the universal argument.
 
   ;; Minibuffer
-  (define-key! :keymaps '(evil-ex-completion-map evil-ex-search-keymap)
-    "C-a" #'evil-beginning-of-line
-    "C-b" #'evil-backward-char
-    "C-f" #'evil-forward-char
-    "C-j" #'next-complete-history-element
-    "C-k" #'previous-complete-history-element)
+  (map! :map (evil-ex-completion-map evil-ex-search-keymap)
+        "C-a" #'evil-beginning-of-line
+        "C-b" #'evil-backward-char
+        "C-f" #'evil-forward-char
+        :gi "C-j" #'next-complete-history-element
+        :gi "C-k" #'previous-complete-history-element)
 
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
@@ -26,6 +26,7 @@
       "C-k"    #'previous-line
       "C-S-j"  #'scroll-up-command
       "C-S-k"  #'scroll-down-command)
+    ;; For folks with `evil-collection-setup-minibuffer' enabled
     (define-key! :states 'insert :keymaps +default-minibuffer-maps
       "C-j"    #'next-line
       "C-k"    #'previous-line)
