@@ -7,7 +7,7 @@
 
 ;; core-packages.el
 (package! straight
-  ;; :type 'core
+  :type 'core
   :recipe `(:host github
             :repo "raxod502/straight.el"
             :branch ,straight-repository-branch
@@ -18,7 +18,7 @@
 
 ;; core-modules.el
 (package! use-package
-  ;; :type 'core
+  :type 'core
   :pin "c873d5529c9c80cb58222f22873a4f081c307cb2")
 
 ;; core-ui.el
