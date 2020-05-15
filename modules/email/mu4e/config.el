@@ -18,7 +18,6 @@
             (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
-  (setq mu4e-attachment-dir "~/.mail/.attachments")
   :config
   (pcase +mu4e-backend
     (`mbsync
