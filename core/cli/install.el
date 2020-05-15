@@ -107,5 +107,5 @@ DOOMDIR environment variable. e.g.
 
     (print! (success "\nFinished! Doom is ready to go!\n"))
     (with-temp-buffer
-      (insert (doom-glob doom-core-dir "templates/QUICKSTART_INTRO"))
+      (insert-file-contents (doom-glob doom-core-dir "templates/QUICKSTART_INTRO"))
       (print! "%s" (buffer-string)))))
