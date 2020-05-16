@@ -179,6 +179,17 @@ You should use `set-eshell-alias!' to change this.")
   :config (setup-esh-help-eldoc))
 
 
+(use-package! eshell-did-you-mean
+  :after esh-mode ; Specifically esh-mode, not eshell
+  :config
+  (eshell-did-you-mean-setup)
+  ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
+  ;;      work on first invocation, so we invoke it once manually by setting the
+  ;;      last command and then calling the output filter.
+  (setq eshell-last-command-name "catt")
+  (eshell-did-you-mean-output-filter "catt: command not found"))
+
+
 (use-package! fish-completion
   :unless IS-WINDOWS
   :hook (eshell-mode . fish-completion-mode)
@@ -191,14 +202,3 @@ You should use `set-eshell-alias!' to change this.")
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
     (unless (executable-find "fish") "")))
-
-;; Activate eshell-did-you-mean using its setup function (lazily)
-(use-package! eshell-did-you-mean
-  :after esh-mode ; Specifically esh-mode, not eshell
-  :config
-  (eshell-did-you-mean-setup)
-  ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
-  ;;      work on first invocation, so we invoke it once manually by setting
-  ;;      the last command and then calling the output filter.
-  (setq eshell-last-command-name "catt")
-  (eshell-did-you-mean-output-filter "catt: command not found"))
