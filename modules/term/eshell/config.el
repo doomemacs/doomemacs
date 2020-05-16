@@ -180,6 +180,7 @@ You should use `set-eshell-alias!' to change this.")
 
 
 (use-package! fish-completion
+  :unless IS-WINDOWS
   :hook (eshell-mode . fish-completion-mode)
   :init (setq fish-completion-fallback-on-bash-p t)
   :config

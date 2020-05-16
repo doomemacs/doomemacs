@@ -7,6 +7,7 @@
 (package! esh-help :pin "417673ed18a983930a66a6692dbfb288a995cb80")
 (package! eshell-did-you-mean :pin "7cb6ef8e2274d0a50a9e114d412307a6543533d5")
 
-(when (featurep! :completion company)
-  (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
-  (package! bash-completion :pin "96ce14af9674f3e605bacca87abc0c23b8f13cd5"))
+(unless IS-WINDOWS
+  (when (featurep! :completion company)
+    (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
+    (package! bash-completion :pin "96ce14af9674f3e605bacca87abc0c23b8f13cd5")))
