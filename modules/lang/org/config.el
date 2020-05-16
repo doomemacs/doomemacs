@@ -831,19 +831,7 @@ compelling reason, so..."
   (after! org
     (add-to-list 'org-tags-exclude-from-inheritance "crypt")
     (add-hook! 'org-mode-hook
-      (add-hook 'before-save-hook 'org-encrypt-entries nil t)))
-  :config
-  (after! epa
-    ;; HACK Fix #3123: `org-encrypt-string' expects `epa-file-encrypt-to' to be
-    ;;      a string, but its docs say it can be a string or list of strings,
-    ;;      and Doom sets it to a list of strings by default. Remove this when
-    ;;      this is addressed upstream.
-    ;; TODO Report this upstream.
-    (unless org-crypt-key
-      (setq org-crypt-key
-            (if (listp epa-file-encrypt-to)
-                (car epa-file-encrypt-to)
-              epa-file-encrypt-to)))))
+      (add-hook 'before-save-hook 'org-encrypt-entries nil t))))
 
 
 (use-package! org-clock ; built-in
