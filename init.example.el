@@ -47,6 +47,7 @@
        ;;window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
        ;;zen               ; distraction-free coding or writing
+       ;;minimap           ; show a map of the code on the side
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies

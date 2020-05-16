@@ -655,7 +655,8 @@
        :desc "Soft line wrapping"           "w" #'visual-line-mode
        (:when (featurep! :editor word-wrap)
         :desc "Soft line wrapping"         "w" #'+word-wrap-mode)
-       :desc "Zen mode"                     "z" #'writeroom-mode))
+       :desc "Zen mode"                     "z" #'writeroom-mode
+       :desc "Minimap"                      "m" #'minimap-mode))
 
 (after! which-key
   (let ((prefix-re (regexp-opt (list doom-leader-key doom-leader-alt-key))))

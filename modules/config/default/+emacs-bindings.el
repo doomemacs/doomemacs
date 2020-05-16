@@ -267,7 +267,9 @@
        (:when (featurep! :lang org +pomodoro)
         :desc "Pomodoro timer"             "t" #'org-pomodoro)
        (:when (featurep! :ui zen)
-        :desc "Zen mode"                   "z" #'writeroom-mode))
+        :desc "Zen mode"                   "z" #'writeroom-mode)
+       (:when (featurep! :ui minimap)
+        :desc "Minimap mode"               "m" #'minimap-mode))
 
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")
