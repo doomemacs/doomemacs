@@ -183,6 +183,7 @@
   :hook (projectile-rails-mode . auto-insert-mode)
   :init
   (setq auto-insert-query nil)
+  (setq projectile-rails-custom-server-command "bundle exec spring rails server --no-log-to-stdout")
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
