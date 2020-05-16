@@ -87,6 +87,7 @@ e.g. proselint and langtool."
 
 (use-package! flyspell-correct
   :commands flyspell-correct-at-point flyspell-correct-previous
+  :general ([remap ispell-word] #'flyspell-correct-at-point)
   :config
   (cond ((and (featurep! :completion helm)
               (require 'flyspell-correct-helm nil t)))
