@@ -113,7 +113,7 @@ following shell commands:
 
                    ;; Reload Doom's CLI & libraries, in case there were any
                    ;; upstream changes. Major changes will still break, however
-                   (condition-case e
+                   (condition-case-unless-debug e
                        (progn
                          (mapc (doom-rpartial #'unload-feature t)
                                '(core core-lib
