@@ -223,13 +223,13 @@ BODY will be run when this dispatcher is called."
 ;;; Straight hacks
 
 (defvar doom--cli-straight-discard-options
-  '((" has diverged from branch "
+  '(("has diverged from"
      . "^Reset [^ ]+ to branch")
-    (" but recipe specifies a URL of "
-     . "^Delete remote \"[^\"]+\", re-create it with correct ")
-    (" has a merge conflict:"
+    ("but recipe specifies a URL of"
+     . "re-create it with correct URL")
+    ("has a merge conflict:"
      . "^Abort merge$")
-    (" has a dirty worktree:"
+    ("has a dirty worktree:"
      . "^Discard changes$")
     ("^In repository "
      . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL"))
