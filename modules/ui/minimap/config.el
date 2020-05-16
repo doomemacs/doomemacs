@@ -1,4 +1,4 @@
-;;; ~/Nextcloud/Dotfiles/doom/minimap/config.el -*- lexical-binding: t; -*-
+;;; ui/minimap/config.el -*- lexical-binding: t; -*-
 
 (use-package! minimap
   :hook doom-load-theme-hook

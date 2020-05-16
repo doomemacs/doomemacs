@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; ~/Nextcloud/Dotfiles/doom/minimap/packages.el
+;;; ui/minimap/packages.el
 
-(package! minimap)
+(package! minimap :pin "5765245dee97a3c8818fd5cd3db1eca7247fcbbc")
