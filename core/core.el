@@ -499,6 +499,8 @@ to least)."
          ;; `doom-disabled-packages'. A big reduction in startup time.
          (or (doom-load-autoloads-file doom-package-autoload-file)
              (ignore (warn "Doom's package autoloads file is missing"))))
+        ;; If neither autoloads file loads, then the user forgot to sync, or
+        ;; aborted a doom command midway!
         (signal 'doom-error
                 (list "Doom is in an incomplete state"
                       "run 'bin/doom sync' on the command line to repair it")))
@@ -510,15 +512,16 @@ to least)."
              (daemonp))
          (doom-load-envvars-file doom-env-file 'noerror))
 
+    ;; Loads `use-package' and our module helper library
     (require 'core-modules)
+
+    ;; In case we want to use package.el or straight via M-x later
     (autoload 'doom-initialize-packages "core-packages")
     (autoload 'doom-initialize-core-packages "core-packages")
-
-    ;; In case we want to use package.el or straight via M-x
     (with-eval-after-load 'package (require 'core-packages))
     (with-eval-after-load 'straight (doom-initialize-packages))
 
-    ;; Bootstrap interactive session
+    ;; Bootstrap the interactive session
     (add-hook! 'window-setup-hook
       (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
       (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h 'append)
@@ -529,6 +532,7 @@ to least)."
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
 
+    ;; Load core/core-*.el, the user's private init.el and their config.el
     (doom-initialize-modules force-p))
 
   doom-init-p)
