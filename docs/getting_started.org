@@ -217,7 +217,7 @@ to least recommended for Doom (based on compatibility).
   of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage):
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
-  brew install emacs-mac
+  brew install emacs-mac --with-modules
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
