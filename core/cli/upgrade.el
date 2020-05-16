@@ -125,7 +125,8 @@ following shell commands:
                                doom-init-modules-p nil)
                          (doom-initialize))
                      (error
-                      (signal 'doom-error (list "Could not upgrade Doom without issues"))))
+                      (signal 'doom-error (list "Could not upgrade Doom without issues"
+                                                e))))
 
                    (print! (success "Finished upgrading Doom Emacs")))
                   t)))))
