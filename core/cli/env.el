@@ -1,7 +1,8 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
 (defcli! env
-    ((allow      ["-a" "--allow"] "An envvar whitelist regexp")
+    ((allow      ["-a" "--allow" regexp]  "An envvar whitelist regexp")
+     (reject     ["-r" "--reject" regexp] "An envvar blacklist regexp")
      (clear-p    ["-c" "--clear"] "Clear and delete your envvar file")
      (outputfile ["-o" PATH]
     "Generate the envvar file at PATH. Envvar files that aren't in
@@ -47,17 +48,18 @@ Why this over exec-path-from-shell?
            (print! (success "Successfully deleted %S")
                    (path env-file)))
 
-          (args
+          ((and args (not (or allow reject)))
            (user-error "I don't understand 'doom env %s'"
                        (string-join args " ")))
 
-          ((doom-cli-reload-env-file 'force env-file)))))
+          ((doom-cli-reload-env-file
+            'force env-file (list allow) (list reject))))))
 
 
 ;;
 ;; Helpers
 
-(defvar doom-env-ignored-vars
+(defvar doom-env-blacklist
   '("^DBUS_SESSION_BUS_ADDRESS$"
     "^GPG_AGENT_INFO$" "^\\(SSH\\|GPG\\)_TTY$"
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$"
@@ -69,7 +71,13 @@ Why this over exec-path-from-shell?
 Each string is a regexp, matched against variable names to omit from
 `doom-env-file'.")
 
-(defun doom-cli-reload-env-file (&optional force-p env-file whitelist)
+(defvar doom-env-whitelist '()
+  "A whitelist for envvars to save in `doom-env-file'.
+
+This overrules `doom-env-ignored-vars'. Each string is a regexp, matched against
+variable names to omit from `doom-env-file'.")
+
+(defun doom-cli-reload-env-file (&optional force-p env-file whitelist blacklist)
   "Generates `doom-env-file', if it doesn't exist (or if FORCE-P).
 
 This scrapes the variables from your shell environment by running
@@ -112,11 +120,13 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
          ;; user's interactive shell, therefore we just dump
          ;; `process-environment' to a file.
          (dolist (env process-environment)
-           (if (and (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
-                                doom-env-ignored-vars)
-                    (not (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
-                                     whitelist)))
-               (print! (info "Ignoring %s") env)
+           (if (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
+                           (remq nil (append blacklist doom-env-blacklist)))
+               (if (not (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
+                                    (remq nil (append whitelist doom-env-whitelist))))
+                   (print! (info "Ignoring %s") env)
+                 (print! (info "Whitelisted %s") env)
+                 (insert env "\0\n"))
              (insert env "\0\n")))
          (print! (success "Successfully generated %S")
                  (path env-file))
