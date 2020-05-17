@@ -13,6 +13,7 @@
         ;; replaces the tab list with that of another Doom workspace. This
         ;; prevents that.
         centaur-tabs-cycle-scope 'tabs)
+  (centaur-tabs-group-by-projectile-project)
 
   :config
   (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
