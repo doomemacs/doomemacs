@@ -315,19 +315,19 @@ was installed with."
             (let (emacs-lisp-mode) (emacs-lisp-mode))
             ;; Scrape `package!' blocks from FILE for a comprehensive listing of
             ;; packages used by this module.
-            (while (search-forward "(package! " nil t)
-              (goto-char (match-beginning 0))
+            (while (search-forward "(package!" nil t)
               (let ((ppss (save-excursion (syntax-ppss))))
                 ;; Don't collect packages in comments or strings
-                (or (nth 3 ppss)
-                    (nth 4 ppss)
-                    (cl-destructuring-bind (_ name . plist)
-                        (read (current-buffer))
-                      (push (cons
-                             name (plist-put
-                                   plist :modules
-                                   (list (doom-module-from-path file))))
-                            doom-packages))))))))
+                (unless (or (nth 3 ppss)
+                            (nth 4 ppss))
+                  (goto-char (match-beginning 0))
+                  (cl-destructuring-bind (_ name . plist)
+                      (read (current-buffer))
+                    (push (cons
+                           name (plist-put
+                                 plist :modules
+                                 (list (doom-module-from-path file))))
+                          doom-packages))))))))
     (error
      (signal 'doom-package-error
              (list (doom-module-from-path file)
