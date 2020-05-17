@@ -5,7 +5,7 @@
 :; case "$VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
 :; DOOMBASE="$(dirname "$0")/.."
 :; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
-:; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l init.el "$@"; exit 0; }
+:; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l init.el -f doom-run-all-startup-hooks-h "$@"; exit 0; }
 :; exec $EMACS --no-site-file --script "$0" -- "$@"
 :; exit 0
 
