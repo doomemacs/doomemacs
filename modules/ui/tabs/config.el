@@ -3,9 +3,10 @@
 (use-package! centaur-tabs
   :after-call after-find-file dired-initial-position-hook
   :init
+  (when (window-system)
+    (setq centaur-tabs-set-bar 'left))
   (setq centaur-tabs-set-icons t
         centaur-tabs-gray-out-icons 'buffer
-        centaur-tabs-set-bar 'left
         centaur-tabs-set-modified-marker t
         centaur-tabs-close-button "✕"
         centaur-tabs-modified-marker "⬤"
