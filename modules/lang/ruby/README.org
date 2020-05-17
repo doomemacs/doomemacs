@@ -13,7 +13,7 @@
   - [[#windows][Windows]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
-  - [[#rails-server][Rails Server]]
+  - [[#hacks][Hacks]]
 
 * Description
 This module add Ruby and optional Ruby on Rails support to Emacs.
@@ -91,12 +91,8 @@ The rspec-mode prefix is =SPC m t=.  Here is some examples:
 | ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
 | ~rspec-verify-method~ | =SPC m t s=      | Runs rspec for the item on cursor |
 
-** Rails Server
-By default, doom has disabled stdout from rails server to prevent emacs lag and performance issues.  You can enable by adding:
-
-#+BEGIN_SRC elisp
-;; On ~/.doom.d/config.el
-(setq projectile-rails-custom-server-command nil)
-#+END_SRC
-
-Also, you can change =bundle exec spring rails server= to another command, like docker.
+** Hacks
++ =projectile-rails-custom-server-command= were changed to suppress extraneous output logged
+  to console. This was done to prevent a memory leak where the underlying
+  process would continue logging to an Emacs buffer, which would grow forever.  You can change to default behaviour by
+  setting this variable to =nil=.
