@@ -1,7 +1,7 @@
 ;;; ui/minimap/config.el -*- lexical-binding: t; -*-
 
 (use-package! minimap
-  :hook doom-load-theme-hook
+  :defer t
   :config
   (setq minimap-window-location 'right
         minimap-update-delay 0
