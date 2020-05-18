@@ -26,7 +26,8 @@ This module gives Doom its signature look: powered by the =doom-one= theme
 + File-visiting buffers are slightly brighter (thanks to solaire-mode)
 
 ** Module Flags
-This module provides no flags.
++ =-solaire= disables [[https://github.com/hlissner/emacs-solaire-mode][solaire-mode]] integration (useful when you want to have a
+  single emacs daemon serve both GUI and TTY emacsen)
 
 ** Plugins
 + [[https://github.com/hlissner/emacs-doom-themes][doom-themes]]
