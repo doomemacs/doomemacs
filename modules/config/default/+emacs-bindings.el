@@ -56,32 +56,42 @@
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
+       (:when (featurep! :tools editorconfig)
+        :desc "Open project editorconfig"  "c"   #'editorconfig-find-current-editorconfig)
        :desc "Copy this file"              "C"   #'doom/copy-this-file
-       :desc "Find file in private config" "C"   #'doom/find-file-in-private-config
+       :desc "Find directory"              "d"   #'dired
        :desc "Delete this file"            "D"   #'doom/delete-this-file
        :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
        :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-       :desc "Find file from here"         "f"   #'+default/find-file-under-here
+       :desc "Find file"                   "f"   #'find-file
+       :desc "Find file from here"         "F"   #'+default/find-file-under-here
+       :desc "Locate file"                 "l"   #'locate
        :desc "Rename/move this file"       "m"   #'doom/move-this-file
-       :desc "Browse private config"       "p"   #'doom/open-private-config
+       :desc "Find file in private config" "p"   #'doom/open-private-config
        :desc "Browse private config"       "P"   #'doom/open-private-config
        :desc "Recent files"                "r"   #'recentf-open-files
        :desc "Recent project files"        "R"   #'projectile-recentf
-       :desc "Sudo this file"              "s"   #'doom/sudo-this-file
-       :desc "Sudo find file"              "S"   #'doom/sudo-find-file
+       :desc "Sudo this file"              "u"   #'doom/sudo-this-file
+       :desc "Sudo find file"              "U"   #'doom/sudo-find-file
        :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
        :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
-       :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
-       (:when (featurep! :tools editorconfig)
-        :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig))
+       :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer)
 
       ;;; <leader> r --- remote
       (:when (featurep! :tools upload)
        (:prefix-map ("r" . "remote")
+        :desc "Browse remote"              "b" #'ssh-deploy-browse-remote-base-handler
+        :desc "Browse relative"            "B" #'ssh-deploy-browse-remote-handler
+        :desc "Download remote"            "d" #'ssh-deploy-download-handler
+        :desc "Delete local & remote"      "D" #'ssh-deploy-delete-handler
+        :desc "Eshell base terminal"       "e" #'ssh-deploy-remote-terminal-eshell-base-handler
+        :desc "Eshell relative terminal"   "E" #'ssh-deploy-remote-terminal-eshell-handler
+        :desc "Move/rename local & remote" "m" #'ssh-deploy-rename-handler
+        :desc "Open this file on remote"   "o" #'ssh-deploy-open-remote-file-handler
+        :desc "Run deploy script"          "s" #'ssh-deploy-run-deploy-script-handler
         :desc "Upload local"               "u" #'ssh-deploy-upload-handler
         :desc "Upload local (force)"       "U" #'ssh-deploy-upload-handler-forced
-        :desc "Download remote"            "d" #'ssh-deploy-download-handler
-        :desc "Diff local & remote"        "D" #'ssh-deploy-diff-handler
+        :desc "Diff local & remote"        "x" #'ssh-deploy-diff-handler
         :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
         :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
@@ -91,27 +101,21 @@
        :desc "Search buffer"                "b" #'swiper
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
-       :desc "Locate file"                  "f" #'locate
+       :desc "Locate file"                  "f" #'+lookup/file
        :desc "Jump to symbol"               "i" #'imenu
        :desc "Jump to visible link"         "l" #'link-hint-open-link
        :desc "Jump to link"                 "L" #'ffap-menu
-       :desc "Jump list"                    "j" #'evil-show-jumps
-       :desc "Jump to mark"                 "m" #'evil-show-marks
+       :desc "Jump to bookmark"             "m" #'bookmark-jump
+       :desc "Look up online"               "o" #'+lookup/online
+       :desc "Look up online (w/ prompt)"   "O" #'+lookup/online-select
+       :desc "Look up in local docsets"     "k" #'+lookup/in-docsets
+       :desc "Look up in all docsets"       "K" #'+lookup/in-all-docsets
        :desc "Search project"               "p" #'+default/search-project
        :desc "Search other project"         "P" #'+default/search-other-project
        :desc "Search buffer"                "s" #'swiper-isearch
-       :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
-
-      ;;; <leader> g --- lookup
-      (:when (featurep! :tools lookup)
-       (:prefix-map ("g" . "lookup")
-        "k" #'+lookup/documentation
-        "d" #'+lookup/definition
-        "D" #'+lookup/references
-        "f" #'+lookup/file
-        "o" #'+lookup/online-select
-        "i" #'+lookup/in-docsets
-        "I" #'+lookup/in-all-docsets))
+       :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point
+       :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
+       :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
@@ -281,22 +285,22 @@
        :desc "Kill link to remote"         "y"   #'browse-at-remote-kill
        :desc "Kill link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
        (:when (featurep! :ui vc-gutter)
-        :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
-        :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
-        :desc "Git time machine"          "t"   #'git-timemachine-toggle
-        :desc "Jump to next hunk"         "n"   #'git-gutter:next-hunk
-        :desc "Jump to previous hunk"     "p"   #'git-gutter:previous-hunk)
+        :desc "Git revert hunk"            "r"   #'git-gutter:revert-hunk
+        :desc "Git stage hunk"             "s"   #'git-gutter:stage-hunk
+        :desc "Git time machine"           "t"   #'git-timemachine-toggle
+        :desc "Jump to next hunk"          "n"   #'git-gutter:next-hunk
+        :desc "Jump to previous hunk"      "p"   #'git-gutter:previous-hunk)
        (:when (featurep! :tools magit)
-        :desc "Magit dispatch"            "/"   #'magit-dispatch
-        :desc "Forge dispatch"            "'"   #'forge-dispatch
-        :desc "Magit status"              "g"   #'magit-status
-        :desc "Magit file delete"         "x"   #'magit-file-delete
-        :desc "Magit blame"               "B"   #'magit-blame-addition
-        :desc "Magit clone"               "C"   #'magit-clone
-        :desc "Magit fetch"               "F"   #'magit-fetch
-        :desc "Magit buffer log"          "L"   #'magit-log
-        :desc "Git stage file"            "S"   #'magit-stage-file
-        :desc "Git unstage file"          "U"   #'magit-unstage-file
+        :desc "Magit dispatch"             "/"   #'magit-dispatch
+        :desc "Forge dispatch"             "'"   #'forge-dispatch
+        :desc "Magit status"               "g"   #'magit-status
+        :desc "Magit file delete"          "x"   #'magit-file-delete
+        :desc "Magit blame"                "B"   #'magit-blame-addition
+        :desc "Magit clone"                "C"   #'magit-clone
+        :desc "Magit fetch"                "F"   #'magit-fetch
+        :desc "Magit buffer log"           "L"   #'magit-log
+        :desc "Git stage file"             "S"   #'magit-stage-file
+        :desc "Git unstage file"           "U"   #'magit-unstage-file
         (:prefix ("f" . "find")
          :desc "Find file"                 "f"   #'magit-find-file
          :desc "Find gitconfig file"       "g"   #'magit-find-git-config-file
@@ -314,7 +318,7 @@
          :desc "Browse pull requests"      "P"   #'forge-browse-pullreqs)
         (:prefix ("l" . "list")
          (:when (featurep! :tools gist)
-          :desc "List gists"              "g"   #'+gist:list)
+          :desc "List gists"               "g"   #'+gist:list)
          :desc "List repositories"         "r"   #'magit-list-repositories
          :desc "List submodules"           "s"   #'magit-list-submodules
          :desc "List issues"               "i"   #'forge-list-issues
