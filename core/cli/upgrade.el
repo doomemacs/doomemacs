@@ -121,6 +121,7 @@ following shell commands:
                                       core-modules
                                       core-packages))
                          (require 'core)
+                         (require 'core-cli)
                          (setq doom-init-p nil
                                doom-init-modules-p nil)
                          (doom-initialize))
