@@ -2,7 +2,7 @@
 
 (use-package! company
   :commands company-complete-common company-manual-begin company-grab-line
-  :after-call pre-command-hook after-find-file
+  :hook (doom-first-input . global-company-mode)
   :init
   (setq company-idle-delay 0.25
         company-minimum-prefix-length 2
@@ -52,8 +52,7 @@
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
-  (global-company-mode +1))
+  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append))
 
 
 (use-package! company-tng
