@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
+  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
   - [[#ubuntu][Ubuntu]]
   - [[#macos][MacOS]]
@@ -46,6 +47,12 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
 + [[https://github.com/eschulte/jump.el/tree/e4f1372cf22e811faca52fc86bdd5d817498a4d8][inflections]]
 + [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
+
+** Hacks
++ =projectile-rails-custom-server-command= were changed to suppress extraneous output logged
+  to console. This was done to prevent a memory leak where the underlying
+  process would continue logging to an Emacs buffer, which would grow forever.  You can change to default behaviour by
+  setting this variable to =nil=.
 
 * Prerequisites
 Many of this modules plugins require ruby with some version manager (RVM or
@@ -88,4 +95,5 @@ The rspec-mode prefix is =SPC m t=.  Here is some examples:
 | command               | key / ex command | description                       |
 |-----------------------+------------------+-----------------------------------|
 | ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
-| ~rspec-verify-method~ | =SPC m t f=      | Runs rspec for the item on cursor |
+| ~rspec-verify-method~ | =SPC m t s=      | Runs rspec for the item on cursor |
+
