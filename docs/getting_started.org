@@ -19,6 +19,7 @@ us know!
       - [[#ubuntu][Ubuntu:]]
       - [[#fedora][Fedora:]]
       - [[#nixos][NixOS]]
+      - [[#opensuse][openSUSE]]
     - [[#on-macos][On macOS]]
       - [[#with-homebrew][With Homebrew]]
       - [[#with-macports][With MacPorts]]
@@ -181,6 +182,40 @@ environment.systemPackages = with pkgs; [
   emacsGit
 ];
 #+END_SRC
+
+**** openSUSE
+***** Emacs 26.3
+
+Check the [[https://software.opensuse.org/download.html?project=editors&package=emacs][package list]] and download the package for your distribution or manually install via zypper.
+
+Example: installing on openSUSE Leap 15.1 (requires root):
+#+BEGIN_SRC bash
+zypper addrepo https://download.opensuse.org/repositories/editors/openSUSE_Leap_15.1/editors.repo
+zypper refresh
+zypper install emacs
+#+END_SRC
+
+If you already have an older version of Emacs installed, you will be prompted to install the update candidate (Emacs 26.3).
+
+***** ripgrep
+
+Tumbleweed has ripgrep 11.0.2, which can be downloaded from [[https://software.opensuse.org/download/package?package=ripgrep&project=openSUSE%3AFactory][the package list]] or installed manually (requires root):
+#+BEGIN_SRC bash
+zypper addrepo https://download.opensuse.org/repositories/openSUSE:Factory/standard/openSUSE:Factory.repo
+zypper refresh
+zypper install ripgrep
+#+END_SRC
+
+On Leap 15.1 and 15.2 only ripgrep 0.8.1 is officially available. You will need to install Rust and build ripgrep from source; you can download Rust [[https://software.opensuse.org/package/rust][from the package list]] or install it manually via zypper.
+
+Example: installing on openSUSE Leap 15.1 (standard, requires root):
+#+BEGIN_SRC bash
+zypper addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
+zypper refresh
+zypper install rust
+#+END_SRC
+
+See the [[https://github.com/BurntSushi/ripgrep#building][ripgrep documentation]] for instructions on building from source.
 
 *** On macOS
 MacOS users have many options for installing Emacs, but not all of them are well
