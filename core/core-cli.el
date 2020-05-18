@@ -226,7 +226,7 @@ BODY will be run when this dispatcher is called."
   '(("has diverged from"
      . "^Reset [^ ]+ to branch")
     ("but recipe specifies a URL of"
-     . "re-create it with correct URL")
+     . "Delete remote \"[^\"]+\", re-create it with correct URL")
     ("has a merge conflict:"
      . "^Abort merge$")
     ("has a dirty worktree:"
