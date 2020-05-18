@@ -216,9 +216,13 @@
        :desc "Search project for symbol"   "." #'+default/search-project-for-symbol-at-point
        :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
        :desc "Search project"              "s" #'+default/search-project
-       :desc "List project tasks"          "t" #'magit-todos-list
+       :desc "List project todos"          "t" #'magit-todos-list
        :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
        :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
+       (:when (and (featurep! :tools taskrunner)
+                   (or (featurep! :completion ivy)
+                       (featurep! :completion helm)))
+        :desc "List project tasks"         "z" #'+taskrunner/project-tasks)
        ;; later expanded by projectile
        (:prefix ("4" . "in other window"))
        (:prefix ("5" . "in other frame")))
