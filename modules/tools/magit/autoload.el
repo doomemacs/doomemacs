@@ -1,10 +1,22 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK Magit complains loudly when it can't determine its own version, which is
-;;      the case when magit is built through straight. The warning is harmless,
-;;      however, so we just need it to shut up.
+;; HACK Magit complains loudly (but harmlessly) when it can't determine its own
+;;      version (in the case of a sparse clone).
 ;;;###autoload
-(advice-add #'magit-version :override #'ignore)
+(defadvice! +magit--ignore-version-a (&optional print-dest)
+  :override #'magit-version
+  (when print-dest
+    (defvar magit-git-debug)
+    (princ (format "Magit (unknown), Git %s, Emacs %s, %s"
+                   (or (let ((magit-git-debug
+                              (lambda (err)
+                                (display-warning '(magit git) err :error))))
+                         (magit-git-version t))
+                       "(unknown)")
+                   emacs-version
+                   system-type)
+           print-dest))
+  nil)
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)

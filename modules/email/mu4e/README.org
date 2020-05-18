@@ -80,7 +80,7 @@ environment.systemPackages = with pkgs; [
 ];
 #+END_SRC
 
-[[https://github.com/Emiller88/dotfiles/blob/master/modules/shell/mail.nix][An example of setting up mbsync with home-manager]]
+[[https://github.com/Emiller88/dotfiles/blob/5eaabedf1b141c80a8d32e1b496055231476f65e/modules/shell/mail.nix][An example of setting up mbsync and mu with home-manager]]
 
 ** openSUSE
 Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of

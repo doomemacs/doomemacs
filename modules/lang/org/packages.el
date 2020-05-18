@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "b171ff02f6e69bcce0dec56ea23e11c75e558704")
+  :pin "93c50e3a7867a1a85fc78b337172585f7a10dcc6")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -51,7 +51,7 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
 (when (featurep! +brain)
-  (package! org-brain :pin "ae7fe0f628bd093526786ece6917f7a4310e5e4d"))
+  (package! org-brain :pin "ed99f7e38dd687800fb898f8934a0da0541ebcd9"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "d248fcb8f2592a40507682e91eed9a31ead4e4a6"))
 (when (featurep! +gnuplot)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "8bf06b28d6f14f52d4968123e2b4b91930c8f947"))
+  (package! org-journal :pin "2c43b10eed0659f8e47797e5e53d2973f939284d"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -72,11 +72,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "7bf09a02bd2d8f1ccfcb5209bfb18fbe02d1f44e")
-  (package! org-re-reveal :pin "61549f4c00284a30e34caa3d76001b233ea5d2ad"))
+  (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "689f55908048eede3cb65aa30ab990be3ac93263")
+  (package! org-roam :pin "1267a430431f11035798cc4007c5dd3efe543ced")
   (when (featurep! :completion company)
-    (package! company-org-roam :pin "0913d86f167164e18831206e611f44bb8e7297e3")))
+    (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")

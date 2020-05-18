@@ -141,7 +141,7 @@ current file). Only scans first 2048 bytes of the document."
 ;;; Commands
 
 ;;;###autoload
-(defun +org/dwim-at-point ()
+(defun +org/dwim-at-point (&optional arg)
   "Do-what-I-mean at point.
 
 If on a:
@@ -158,7 +158,7 @@ If on a:
 - latex fragment: toggle it.
 - link: follow it
 - otherwise, refresh all inline images in current tree."
-  (interactive)
+  (interactive "P")
   (let* ((context (org-element-context))
          (type (org-element-type context)))
     ;; skip over unimportant contexts
@@ -206,7 +206,7 @@ If on a:
 
       (`table-cell
        (org-table-blank-field)
-       (org-table-recalculate)
+       (org-table-recalculate arg)
        (when (and (string-empty-p (string-trim (org-table-get-field)))
                   (bound-and-true-p evil-local-mode))
          (evil-change-state 'insert)))
@@ -215,13 +215,13 @@ If on a:
        (org-babel-lob-execute-maybe))
 
       (`statistics-cookie
-       (save-excursion (org-update-statistics-cookies nil)))
+       (save-excursion (org-update-statistics-cookies arg)))
 
       ((or `src-block `inline-src-block)
-       (org-babel-execute-src-block))
+       (org-babel-execute-src-block arg))
 
       ((or `latex-fragment `latex-environment)
-       (org-latex-preview))
+       (org-latex-preview arg))
 
       (`link
        (let* ((lineage (org-element-lineage context '(link) t))
@@ -229,7 +229,7 @@ If on a:
          (if (or (equal (org-element-property :type lineage) "img")
                  (and path (image-type-from-file-name path)))
              (+org--refresh-inline-images-in-subtree)
-           (org-open-at-point))))
+           (org-open-at-point arg))))
 
       ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
@@ -238,7 +238,7 @@ If on a:
       (_
        (if (or (org-in-regexp org-ts-regexp-both nil t)
                (org-in-regexp org-tsr-regexp-both nil  t)
-               (org-in-regexp org-any-link-re nil t))
+               (org-in-regexp org-link-any-re nil t))
            (call-interactively #'org-open-at-point)
          (+org--refresh-inline-images-in-subtree))))))
 
@@ -306,6 +306,20 @@ the prefix ARG changes this command's behavior."
 ;;;###autoload
 (defalias #'+org/close-fold #'outline-hide-subtree)
 
+;;;###autoload
+(defun +org/close-all-folds (&optional level)
+  "Close all folds in the buffer (or below LEVEL)."
+  (interactive "p")
+  (outline-hide-sublevels (or level 1)))
+
+;;;###autoload
+(defun +org/open-all-folds (&optional level)
+  "Open all folds in the buffer (or up to LEVEL)."
+  (interactive "P")
+  (if (integerp level)
+      (outline-hide-sublevels level)
+    (outline-show-all)))
+
 (defun +org--get-foldlevel ()
   (let ((max 1))
     (save-restriction
@@ -321,22 +335,20 @@ the prefix ARG changes this command's behavior."
       max)))
 
 ;;;###autoload
-(defun +org/show-next-fold-level ()
+(defun +org/show-next-fold-level (&optional count)
   "Decrease the fold-level of the visible area of the buffer. This unfolds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (1+ current-level)))
+  (interactive "p")
+  (let ((new-level (+ (+org--get-foldlevel) (or count 1))))
     (outline-hide-sublevels new-level)
     (message "Folded to level %s" new-level)))
 
 ;;;###autoload
-(defun +org/hide-next-fold-level ()
+(defun +org/hide-next-fold-level (&optional count)
   "Increase the global fold-level of the visible area of the buffer. This folds
 another level of headings on each invocation."
-  (interactive)
-  (let* ((current-level (+org--get-foldlevel))
-         (new-level (max 1 (1- current-level))))
+  (interactive "p")
+  (let ((new-level (max 1 (- (+org--get-foldlevel) (or count 1)))))
     (outline-hide-sublevels new-level)
     (message "Folded to level %s" new-level)))
 
@@ -434,20 +446,14 @@ with `org-cycle')."
     t))
 
 ;;;###autoload
-(defun +org-unfold-to-2nd-level-or-point-h ()
-  "Alters '#+STARTUP overview' to only expand first-level headings.
-Expands the first level, but no further. If a different startup option was
-provided, do that instead."
-  (unless org-agenda-inhibit-startup
-    ;; TODO Implement a custom #+STARTUP option?
-    (when (eq org-startup-folded t)
-      (outline-hide-sublevels +org-initial-fold-level))
-    ;; If point was left somewhere deeper, unfold to point on startup.
-    (when (outline-invisible-p)
-      (ignore-errors
-        (save-excursion
-          (outline-previous-visible-heading 1)
-          (org-show-subtree))))))
+(defun +org-make-last-point-visible-h ()
+  "Unfold subtree around point if saveplace places it to a folded region."
+  (and (not org-agenda-inhibit-startup)
+       (outline-invisible-p)
+       (ignore-errors
+         (save-excursion
+           (outline-previous-visible-heading 1)
+           (org-show-subtree)))))
 
 ;;;###autoload
 (defun +org-remove-occur-highlights-h ()

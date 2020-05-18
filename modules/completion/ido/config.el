@@ -8,12 +8,12 @@
 ;;; Packages
 
 (use-package! ido
-  :after-call pre-command-hook
+  :hook (doom-first-input . ido-mode)
   :hook (ido-mode . ido-everywhere)
   :hook (ido-mode . ido-ubiquitous-mode)
   :preface
   ;; HACK `ido' is a really old package. It defines `ido-mode' manually and
-  ;;      doesn't define a hook, so we define one for it.")
+  ;;      doesn't define a hook, so we define one for it, so we can use it!
   (defadvice! +ido-run-hooks-a (&rest _)
     :after #'ido-mode
     (run-hooks 'ido-mode-hook))
@@ -42,9 +42,7 @@
         ;; Go to $HOME with ~
         "~"    (λ! (if (looking-back "/" (point-min))
                        (insert "~/")
-                     (call-interactively #'self-insert-command))))
-
-  (ido-mode +1))
+                     (call-interactively #'self-insert-command)))))
 
 
 (use-package! ido-vertical-mode

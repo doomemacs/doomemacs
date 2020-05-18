@@ -2,7 +2,7 @@
 
 (use-package! evil-goggles
   :when (featurep! :editor evil)
-  :after-call pre-command-hook
+  :hook (doom-first-input . evil-goggles-mode)
   :init
   (setq evil-goggles-duration 0.1
         evil-goggles-pulse nil ; too slow
@@ -23,13 +23,12 @@
             '(+eval:region
               :face evil-goggles-yank-face
               :switch evil-goggles-enable-yank
-              :advice evil-goggles--generic-async-advice))
-  (evil-goggles-mode +1))
+              :advice evil-goggles--generic-async-advice)))
 
 
 (use-package! volatile-highlights
   :unless (featurep! :editor evil)
-  :after-call pre-command-hook
+  :hook (doom-first-input . volatile-highlights-mode)
   :config
   (after! undo-fu
     (vhl/define-extension 'undo-fu 'undo-fu-only-undo 'undo-fu-only-redo)

@@ -1,5 +1,36 @@
 ;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
+;;
+;;; Doom's debug mode
+
+;;;###autoload
+(defvar doom-debug-variables
+  '(doom-debug-mode
+    init-file-debug
+    debug-on-error
+    garbage-collection-messages
+    use-package-verbose
+    jka-compr-verbose
+    lsp-log-io
+    gcmh-verbose
+    magit-refresh-verbose
+    url-debug)
+  "A list of variable to toggle on `doom/toggle-debug-mode'.")
+
+;;;###autoload
+(defun doom/toggle-debug-mode (&optional arg)
+  "Toggle `debug-on-error' and `doom-debug-mode' for verbose logging."
+  (interactive (list (or current-prefix-arg 'toggle)))
+  (let ((value
+         (cond ((eq arg 'toggle) (not doom-debug-mode))
+               ((> (prefix-numeric-value arg) 0)))))
+    (mapc (doom-rpartial #'set value) doom-debug-variables)
+    (message "Debug mode %s" (if value "on" "off"))))
+
+
+;;
+;;; Hooks
+
 ;;;###autoload
 (defun doom-run-all-startup-hooks-h ()
   "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
@@ -17,18 +48,12 @@
 ;;
 ;;; Helpers
 
-(defun doom-template-insert (template)
-  "TODO"
-  (let ((file (expand-file-name (format "templates/%s" template) doom-core-dir)))
-    (when (file-exists-p file)
-      (insert-file-contents file))))
-
 (defsubst doom--collect-forms-in (file form)
   (when (file-readable-p file)
     (let (forms)
       (with-temp-buffer
         (insert-file-contents file)
-        (delay-mode-hooks (emacs-lisp-mode))
+        (let (emacs-lisp-mode) (emacs-lisp-mode))
         (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
           (let ((ppss (syntax-ppss)))
             (unless (or (nth 4 ppss)
@@ -45,7 +70,7 @@ ready to be pasted in a bug report on github."
   (require 'vc-git)
   (require 'core-packages)
   (let ((default-directory doom-emacs-dir)
-        (doom-modules (doom-modules)))
+        (doom-modules (doom-module-list)))
     (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
       `((emacs
          (version . ,emacs-version)
@@ -243,48 +268,62 @@ Some items are not supported by the `nsm.el' module."
         (file (make-temp-file "doom-sandbox-")))
     (require 'package)
     (with-temp-file file
-      (insert
-       (prin1-to-string
-        (macroexp-progn
-         (append `((setq noninteractive nil
-                         init-file-debug t
-                         load-path ',load-path
-                         package--init-file-ensured t
-                         package-user-dir ,package-user-dir
-                         package-archives ',package-archives
-                         user-emacs-directory ,doom-emacs-dir)
-                   (with-eval-after-load 'undo-tree
-                     ;; undo-tree throws errors because `buffer-undo-tree' isn't
-                     ;; corrrectly initialized
-                     (setq-default buffer-undo-tree (make-undo-tree))))
-                 (pcase mode
-                   (`vanilla-doom+ ; Doom core + modules - private config
-                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
-                      (doom-initialize)
-                      (doom-initialize-core)
-                      (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-                      (setq doom-modules ',doom-modules)
-                      (maphash (lambda (key plist)
-                                 (let ((doom--current-module key)
-                                       (doom--current-flags (plist-get plist :flags)))
-                                   (load! "init" (doom-module-locate-path (car key) (cdr key)) t)))
-                               doom-modules)
-                      (maphash (lambda (key plist)
-                                 (let ((doom--current-module key)
-                                       (doom--current-flags (plist-get plist :flags)))
-                                   (load! "config" (doom-module-locate-path (car key) (cdr key)) t)))
-                               doom-modules)
-                      (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-                      (doom-run-all-startup-hooks-h)))
-                   (`vanilla-doom  ; only Doom core
-                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
-                      (doom-initialize)
-                      (doom-initialize-core)
-                      (doom-run-all-startup-hooks-h)))
-                   (`vanilla       ; nothing loaded
-                    `((package-initialize)))))))
-       "\n(unwind-protect (progn\n" contents "\n)\n"
-       (format "(delete-file %S))" file)))
+      (prin1 `(progn
+                (setq noninteractive nil
+                      process-environment ',doom--initial-process-environment
+                      exec-path ',doom--initial-exec-path
+                      init-file-debug t
+                      load-path ',load-path
+                      package--init-file-ensured t
+                      package-user-dir ,package-user-dir
+                      package-archives ',package-archives
+                      user-emacs-directory ,doom-emacs-dir)
+                (with-eval-after-load 'undo-tree
+                  ;; undo-tree throws errors because `buffer-undo-tree' isn't
+                  ;; correctly initialized
+                  (setq-default buffer-undo-tree (make-undo-tree)))
+                (ignore-errors
+                  (delete-directory ,(expand-file-name "auto-save-list" doom-emacs-dir) 'parents)))
+             (current-buffer))
+      (prin1 `(unwind-protect
+                  (defun --run-- () ,(read (concat "(progn\n" contents "\n)")))
+                (delete-file ,file))
+             (current-buffer))
+      (prin1 (pcase mode
+               (`vanilla-doom+ ; Doom core + modules - private config
+                `(progn
+                   (load-file ,(expand-file-name "core.el" doom-core-dir))
+                   (setq doom-modules-dirs (list doom-modules-dir))
+                   (let ((doom-init-modules-p t))
+                     (doom-initialize)
+                     (doom-initialize-core-modules))
+                   (setq doom-modules ',doom-modules)
+                   (--run--)
+                   (maphash (lambda (key plist)
+                              (let ((doom--current-module key)
+                                    (doom--current-flags (plist-get plist :flags)))
+                                (load! "init" (doom-module-locate-path (car key) (cdr key)) t)))
+                            doom-modules)
+                   (maphash (lambda (key plist)
+                              (let ((doom--current-module key)
+                                    (doom--current-flags (plist-get plist :flags)))
+                                (load! "config" (doom-module-locate-path (car key) (cdr key)) t)))
+                            doom-modules)
+                   (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
+                   (doom-run-all-startup-hooks-h)))
+               (`vanilla-doom  ; only Doom core
+                `(progn
+                   (load-file ,(expand-file-name "core.el" doom-core-dir))
+                   (let ((doom-init-modules-p t))
+                     (doom-initialize)
+                     (doom-initialize-core-modules))
+                   (--run--)
+                   (doom-run-all-startup-hooks-h)))
+               (`vanilla       ; nothing loaded
+                `(progn
+                   (package-initialize)
+                   (--run--))))
+             (current-buffer)))
     (let ((args (if (eq mode 'doom)
                     (list "-l" file)
                   (list "-Q" "-l" file))))
@@ -343,7 +382,7 @@ to reproduce bugs and determine if Doom is to blame."
       (doom-sandbox-emacs-lisp-mode)
       (setq-local default-directory doom-emacs-dir)
       (unless (buffer-live-p exists)
-        (doom-template-insert "VANILLA_SANDBOX")
+        (insert-file-contents (doom-glob doom-core-dir "templates/VANILLA_SANDBOX"))
         (let ((contents (substitute-command-keys (buffer-string))))
           (erase-buffer)
           (insert contents "\n")))
@@ -378,20 +417,3 @@ will be automatically appended to the result."
     (profiler-report)
     (profiler-stop))
   (setq doom--profiler (not doom--profiler)))
-
-;;;###autoload
-(defun doom/toggle-debug-mode (&optional arg)
-  "Toggle `debug-on-error' and `doom-debug-mode' for verbose logging."
-  (interactive (list (or current-prefix-arg 'toggle)))
-  (let ((value
-         (cond ((eq arg 'toggle) (not doom-debug-mode))
-               ((> (prefix-numeric-value arg) 0)))))
-    (setq doom-debug-mode value
-          debug-on-error value
-          garbage-collection-messages value
-          use-package-verbose value
-          jka-compr-verbose value
-          lsp-log-io value
-          gcmh-verbose value
-          magit-refresh-verbose value)
-    (message "Debug mode %s" (if value "on" "off"))))

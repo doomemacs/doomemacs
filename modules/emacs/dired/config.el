@@ -40,7 +40,7 @@
 This is because there's no guarantee the remote system has GNU ls, which is the
 only variant that supports --group-directories-first."
         (when (file-remote-p default-directory)
-          (setq-local dired-listing-switches (car args))))))
+          (setq-local dired-actual-switches (car args))))))
 
   ;; Don't complain about this command being disabled when we use it
   (put 'dired-find-alternate-file 'disabled nil)

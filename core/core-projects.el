@@ -20,7 +20,6 @@ Emacs.")
 ;;; Packages
 
 (use-package! projectile
-  :after-call after-find-file dired-before-readin-hook minibuffer-setup-hook
   :commands (projectile-project-root
              projectile-project-name
              projectile-project-p
@@ -146,8 +145,9 @@ c) are not valid projectile projects."
    ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-generic-command
-          (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
-                  doom-projectile-fd-binary)
+          (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
+                          doom-projectile-fd-binary)
+                  (if IS-WINDOWS " --path-separator=/"))
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
           ;; ensure Windows users get fd's benefits

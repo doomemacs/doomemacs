@@ -46,11 +46,15 @@ exist, and `org-link' otherwise."
   "Intepret LINK as an image file path and return its data."
   (setq
    link (expand-file-name
-         link
-         (pcase protocol
-           ("download" (or org-download-image-dir org-attach-id-dir default-directory))
-           ("attachment" org-attach-id-dir)
-           (_ default-directory))))
+         link (pcase protocol
+                ("download"
+                 (or (if (require 'org-download nil t) org-download-image-dir)
+                     (if (require 'org-attach)         org-attach-id-dir)
+                     default-directory))
+                ("attachment"
+                 (require 'org-attach)
+                 org-attach-id-dir)
+                (_ default-directory))))
   (when (and (file-exists-p link)
              (image-type-from-file-name link))
     (with-temp-buffer

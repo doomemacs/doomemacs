@@ -115,7 +115,8 @@ selection of all minor-modes, active or not."
   (require 'org)
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
-         (depth (if (integerp depth) depth)))
+         (depth (if (integerp depth) depth))
+         (org-inhibit-startup t))
     (message "Loading search results...")
     (unwind-protect
         (delq
@@ -218,7 +219,7 @@ selection of all minor-modes, active or not."
            :prompt "Search documentation for: "))
 
 ;;;###autoload
-(defun doom/help-news-search (&optional initial-input)
+(defun doom/help-search-news (&optional initial-input)
   "Search headlines in Doom's newsletters."
   (interactive)
   (doom-completing-read-org-headings
@@ -427,8 +428,8 @@ If prefix arg is present, refresh the cache."
    (let ((guess (or (function-called-at-point)
                     (symbol-at-point))))
      (require 'finder-inf nil t)
-     (require 'core-packages)
-     (doom-initialize-packages)
+     (require 'package)
+     (require 'straight)
      (let ((packages (delete-dups
                       (append (mapcar #'car package-alist)
                               (mapcar #'car package--builtins)
@@ -503,7 +504,7 @@ If prefix arg is present, refresh the cache."
             (modules
              (if (gethash (symbol-name package) straight--build-cache)
                  (doom-package-get package :modules)
-               (plist-get (cdr (assq package (doom-packages-list 'all)))
+               (plist-get (cdr (assq package (doom-package-list 'all)))
                           :modules)))
           (package--print-help-section "Modules")
           (insert "Declared by the following Doom modules:\n")

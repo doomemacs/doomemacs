@@ -1,25 +1,19 @@
-Before you doom yourself, there are a few things you should know:
+But before you doom yourself, here are some things you should know:
 
-1. Whenever you edit your doom! block in ~/.doom.d/init.el or modify your
-   modules, run:
+1. Don't forget to run 'doom sync', then restart Emacs, after modifying
+   ~/.doom.d/init.el or ~/.doom.d/packages.el.
 
-     bin/doom refresh
+   This command ensures needed packages are installed, orphaned packages are
+   removed, and your autoloads/cache files are up to date. When in doubt, run
+   'doom sync'!
 
-   This will ensure all needed packages are installed, all orphaned packages are
-   removed, and your autoloads files are up to date. This is important! If you
-   forget to do this you will get errors!
+2. If something goes wrong, run `doom doctor`. It diagnoses common issues with
+   your environment and setup, and may offer clues about what is wrong.
 
-2. If something inexplicably goes wrong, try `bin/doom doctor`
+3. Use 'doom upgrade' to update Doom. Doing it any other way will require
+   additional steps. Run 'doom help upgrade' to understand those extra steps.
 
-   This will diagnose common issues with your environment and setup, and may
-   give you clues about what is wrong.
-
-3. Use `bin/doom upgrade` to update Doom. Doing it any other way may require
-   additional work. When in doubt, run `bin/doom sync`.
-
-4. Check out `bin/doom help` to see what else `bin/doom` can do (and it is
-   recommended you add ~/.emacs.d/bin to your PATH).
-
-5. You can find Doom's documentation via `M-x doom/help` or `SPC h D`.
+4. Access Doom's documentation from within Emacs via 'SPC h D' or 'C-h D' (or
+   'M-x doom/help')
 
 Have fun!

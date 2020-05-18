@@ -28,9 +28,8 @@
   (if IS-MAC
       (package! osx-dictionary :pin "1b79ff64c72485cb078db9ab7ee3256b11a99f4b")
     (package! define-word :pin "08c71b1ff4fd07bf0c78d1fcf77efeaafc8f7443")
-    ;; HACK Fix #2945: the main package is broken (see
-    ;;      SavchenkoValeriy/emacs-powerthesaurus). We use this fork until it is
-    ;;      merged.
+    ;; HACK Fix #2945: the main package is broken due to
+    ;;      SavchenkoValeriy/emacs-powerthesaurus#11
     (package! powerthesaurus
       :recipe (:host github :repo "maxchaos/emacs-powerthesaurus" :branch "pt-api-change")
       :pin "4a834782a394f2dc70fc02d68b6962b44d87f0cf")

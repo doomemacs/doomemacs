@@ -1,7 +1,4 @@
-;;; core/autoload/cli.el -*- lexical-binding: t; -*-
-
-;;
-;;; Library
+;;; core/autoload/process.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom-call-process (command &rest args)
@@ -10,7 +7,7 @@
 Returns (STATUS . OUTPUT) when it is done, where STATUS is the returned error
 code of the process and OUTPUT is its stdout output."
   (with-temp-buffer
-    (cons (or (apply #'call-process command nil t nil args)
+    (cons (or (apply #'call-process command nil t nil (remq nil args))
               -1)
           (string-trim (buffer-string)))))
 
@@ -28,7 +25,7 @@ Warning: freezes indefinitely on any stdin prompt."
     (cons (let ((process
                  (make-process :name "doom-sh"
                                :buffer (current-buffer)
-                               :command (cons command args)
+                               :command (cons command (remq nil args))
                                :connection-type 'pipe))
                 done-p)
             (set-process-filter

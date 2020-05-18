@@ -443,9 +443,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (use-package! winner
   ;; undo/redo changes to Emacs' window layout
-  :after-call after-find-file doom-switch-window-hook
+  :hook (window-configuration-change . winner-mode)
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
-  :config (winner-mode +1)
+  :config
+  (remove-hook 'window-configuration-change #'winner-mode)
   (appendq! winner-boring-buffers
             '("*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
               "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*"
@@ -454,13 +455,12 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (use-package! paren
   ;; highlight matching delimiters
-  :after-call after-find-file doom-switch-buffer-hook
+  :hook (doom-first-buffer . show-paren-mode)
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
         show-paren-when-point-inside-paren t
-        show-paren-when-point-in-periphery t)
-  (show-paren-mode +1))
+        show-paren-when-point-in-periphery t))
 
 
 ;;;###package whitespace

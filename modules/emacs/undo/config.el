@@ -2,8 +2,9 @@
 
 (use-package! undo-fu
   :unless (featurep! +tree)
-  :after-call doom-switch-buffer after-find-file
+  :after-call pre-command-hook after-find-file
   :init
+  ;; `evil' activates undo-tree, so we must pre-emptively disable it.
   (after! undo-tree
     (global-undo-tree-mode -1))
   :config

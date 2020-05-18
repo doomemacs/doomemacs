@@ -546,7 +546,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
                     (fullscreen . ,fullscreen))))))
 
 (defun save-frame-dimensions ()
-  (doom-store-set 'last-frame-size
+  (doom-store-put 'last-frame-size
                   (list (frame-position)
                         (frame-width)
                         (frame-height)

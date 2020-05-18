@@ -41,19 +41,19 @@
   (defadvice! +org-present--narrow-to-subtree-a (orig-fn &rest args)
     "Narrow to the target subtree when you start the presentation."
     :around #'org-tree-slide--display-tree-with-narrow
-    (letf! ((defun org-narrow-to-subtree ()
-              (save-excursion
-                (save-match-data
-                  (org-with-limited-levels
-                   (narrow-to-region
-                    (progn
-                      (when (org-before-first-heading-p)
-                        (org-next-visible-heading 1))
-                      (ignore-errors (org-up-heading-all 99))
-                      (forward-line 1)
-                      (point))
-                    (progn (org-end-of-subtree t t)
-                           (when (and (org-at-heading-p) (not (eobp)))
-                             (backward-char 1))
-                           (point))))))))
+    (letf! (defun org-narrow-to-subtree ()
+             (save-excursion
+               (save-match-data
+                 (org-with-limited-levels
+                  (narrow-to-region
+                   (progn
+                     (when (org-before-first-heading-p)
+                       (org-next-visible-heading 1))
+                     (ignore-errors (org-up-heading-all 99))
+                     (forward-line 1)
+                     (point))
+                   (progn (org-end-of-subtree t t)
+                          (when (and (org-at-heading-p) (not (eobp)))
+                            (backward-char 1))
+                          (point)))))))
       (apply orig-fn args))))

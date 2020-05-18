@@ -71,6 +71,13 @@ before the user's private module.")
 ;;
 ;;; Bootstrap API
 
+(defun doom-initialize-core-modules ()
+  "Load Doom's core files for an interactive session."
+  (require 'core-keybinds)
+  (require 'core-ui)
+  (require 'core-projects)
+  (require 'core-editor))
+
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
@@ -78,16 +85,18 @@ non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t
           doom-modules nil)
-    (load custom-file 'noerror 'nomessage)
-    (when (load! "init" doom-private-dir t)
-      (when doom-modules
-        (maphash (lambda (key plist)
-                   (let ((doom--current-module key)
-                         (doom--current-flags (plist-get plist :flags)))
-                     (load! "init" (plist-get plist :path) t)))
-                 doom-modules))
-      (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
-      (when doom-interactive-mode
+    (with-temp-buffer
+      (doom-log "Initializing core modules")
+      (doom-initialize-core-modules)
+      (when-let (init-p (load! "init" doom-private-dir t))
+        (doom-log "Initializing user config")
+        (when doom-modules
+          (maphash (lambda (key plist)
+                     (let ((doom--current-module key)
+                           (doom--current-flags (plist-get plist :flags)))
+                       (load! "init" (plist-get plist :path) t)))
+                   doom-modules))
+        (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
         (when doom-modules
           (maphash (lambda (key plist)
                      (let ((doom--current-module key)
@@ -95,7 +104,8 @@ non-nil."
                        (load! "config" (plist-get plist :path) t)))
                    doom-modules))
         (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-        (load! "config" doom-private-dir t)))))
+        (load! "config" doom-private-dir t)
+        (load custom-file 'noerror (not doom-debug-mode))))))
 
 
 ;;
@@ -122,15 +132,17 @@ non-nil."
 of PROPERTY and VALUEs.
 
 \(fn CATEGORY MODULE PROPERTY VALUE &rest [PROPERTY VALUE [...]])"
-  (if-let (old-plist (doom-module-get category module))
-      (progn
-        (when plist
-          (when (cl-oddp (length plist))
-            (signal 'wrong-number-of-arguments (list (length plist))))
-          (while plist
-            (plist-put old-plist (pop plist) (pop plist))))
-        (puthash (cons category module) old-plist doom-modules))
-    (puthash (cons category module) plist doom-modules)))
+  (puthash (cons category module)
+           (if-let (old-plist (doom-module-get category module))
+               (if (null plist)
+                   old-plist
+                 (when (cl-oddp (length plist))
+                   (signal 'wrong-number-of-arguments (list (length plist))))
+                 (while plist
+                   (plist-put old-plist (pop plist) (pop plist)))
+                 old-plist)
+             plist)
+           doom-modules))
 
 (defun doom-module-set (category module &rest plist)
   "Enables a module by adding it to `doom-modules'.
@@ -223,18 +235,21 @@ those directories. The first returned path is always `doom-private-dir'."
                      collect (plist-get plist :path)))
           nil))
 
-(defun doom-modules (&optional refresh-p)
+(defun doom-module-list (&optional all-p)
   "Minimally initialize `doom-modules' (a hash table) and return it.
 This value is cached. If REFRESH-P, then don't use the cached value."
-  (or (unless refresh-p doom-modules)
-      (let (doom-interactive-mode
-            doom-modules
-            doom-init-modules-p)
-        (load! "init" doom-private-dir t)
-        (or doom-modules
-            (make-hash-table :test 'equal
-                             :size 20
-                             :rehash-threshold 1.0)))))
+  (if all-p
+      (cl-loop for path in (cdr (doom-module-load-path 'all))
+               collect (doom-module-from-path path))
+    (or doom-modules
+        (let (doom-interactive-mode
+              doom-modules
+              doom-init-modules-p)
+          (load! "init" doom-private-dir t)
+          (or doom-modules
+              (make-hash-table :test 'equal
+                               :size 20
+                               :rehash-threshold 1.0))))))
 
 
 ;;
@@ -253,6 +268,17 @@ This value is cached. If REFRESH-P, then don't use the cached value."
 (with-eval-after-load 'use-package-core
   ;; Macros are already fontified, no need for this
   (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
+
+  ;; A common mistake for new users is that they inadvertantly try to install
+  ;; their packages with package.el, by copying over old `use-package'
+  ;; declarations with an :ensure t property. Doom doesn't use package.el, so
+  ;; this will throw an error that will confuse beginners.
+  (setq use-package-ensure-function #'ignore)
+  ;; ...On the other hand, if the user has loaded `package', then we should
+  ;; assume they know what they're doing and restore the old behavior:
+  (add-transient-hook! 'package-initialize
+    (when (eq use-package-ensure-function #'ignore)
+     (setq use-package-ensure-function #'use-package-ensure-elpa)))
 
   ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
   ;; so we don't have to load `auto-minor-mode' so early.
@@ -364,8 +390,8 @@ for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   `(let ((modules
           ,@(if (keywordp (car modules))
-               (list (list 'quote modules))
-             modules)))
+                (list (list 'quote modules))
+              modules)))
      (unless doom-modules
        (setq doom-modules
              (make-hash-table :test 'equal

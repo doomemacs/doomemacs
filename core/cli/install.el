@@ -24,7 +24,6 @@ DOOMDIR environment variable. e.g.
 
   doom -p ~/.config/doom install
   DOOMDIR=~/.config/doom doom install"
-  :bare t
   (print! (green "Installing Doom Emacs!\n"))
   (let ((default-directory (doom-path "~")))
     ;; Create `doom-private-dir'
@@ -59,8 +58,14 @@ DOOMDIR environment variable. e.g.
 
     ;; In case no init.el was present the first time `doom-initialize-modules' was
     ;; called in core.el (e.g. on first install)
-    (doom-initialize 'force 'noerror)
-    (doom-initialize-modules)
+    (ignore-errors
+      (load! "init" doom-private-dir t))
+    (when doom-modules
+      (maphash (lambda (key plist)
+                 (let ((doom--current-module key)
+                       (doom--current-flags (plist-get plist :flags)))
+                   (ignore-errors (load! "init" (plist-get plist :path) t))))
+               doom-modules))
 
     ;; Ask if user would like an envvar file generated
     (if noenv-p
@@ -79,28 +84,28 @@ DOOMDIR environment variable. e.g.
 
     (print! "Regenerating autoloads files")
     (doom-cli-reload-autoloads)
-       
+
     (cond (nofonts-p)
-         (IS-WINDOWS
-          (print! (warn "Doom cannot install all-the-icons' fonts on Windows!\n"))
-          (print-group!
-           (print!
-            (concat "You'll have to do so manually:\n\n"
-                    "  1. Launch Doom Emacs\n"
-                    "  2. Execute 'M-x all-the-icons-install-fonts' to download the fonts\n"
-                    "  3. Open the download location in windows explorer\n"
-                    "  4. Open each font file to install them"))))
-         ((or doom-auto-accept
-              (y-or-n-p "Download and install all-the-icon's fonts?"))
-          (require 'all-the-icons)
-          (let ((window-system (cond (IS-MAC 'ns)
-                                     (IS-LINUX 'x))))
-            (all-the-icons-install-fonts 'yes))))
+          (IS-WINDOWS
+           (print! (warn "Doom cannot install all-the-icons' fonts on Windows!\n"))
+           (print-group!
+            (print!
+             (concat "You'll have to do so manually:\n\n"
+                     "  1. Launch Doom Emacs\n"
+                     "  2. Execute 'M-x all-the-icons-install-fonts' to download the fonts\n"
+                     "  3. Open the download location in windows explorer\n"
+                     "  4. Open each font file to install them"))))
+          ((or doom-auto-accept
+               (y-or-n-p "Download and install all-the-icon's fonts?"))
+           (require 'all-the-icons)
+           (let ((window-system (cond (IS-MAC 'ns)
+                                      (IS-LINUX 'x))))
+             (all-the-icons-install-fonts 'yes))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))
 
     (print! (success "\nFinished! Doom is ready to go!\n"))
     (with-temp-buffer
-      (doom-template-insert "QUICKSTART_INTRO")
-      (print! (buffer-string)))))
+      (insert-file-contents (doom-glob doom-core-dir "templates/QUICKSTART_INTRO"))
+      (print! "%s" (buffer-string)))))

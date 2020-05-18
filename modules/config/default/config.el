@@ -204,51 +204,51 @@
 
       ;; This keybind allows * to skip over **.
       (map! :map markdown-mode-map
-            :ig "*" (λ! (if (looking-at-p "\\*\\* *$")
-                            (forward-char 2)
-                          (call-interactively 'self-insert-command)))))
-
-    ;; Highjacks backspace to:
-    ;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)
-    ;;  b) delete up to nearest column multiple of `tab-width' at a time
-    ;;  c) close empty multiline brace blocks in one step:
-    ;;     {
-    ;;     |
-    ;;     }
-    ;;     becomes {|}
-    ;;  d) refresh smartparens' :post-handlers, so SPC and RET expansions work
-    ;;     even after a backspace.
-    ;;  e) properly delete smartparen pairs when they are encountered, without
-    ;;     the need for strict mode.
-    ;;  f) do none of this when inside a string
-    (advice-add #'delete-backward-char :override #'+default--delete-backward-char-a))
-
-  ;; HACK Makes `newline-and-indent' continue comments (and more reliably).
-  ;;      Consults `doom-point-in-comment-functions' to detect a commented
-  ;;      region and uses that mode's `comment-line-break-function' to continue
-  ;;      comments. If neither exists, it will fall back to the normal behavior
-  ;;      of `newline-and-indent'.
-  ;;
-  ;;      We use an advice here instead of a remapping because many modes define
-  ;;      and remap to their own newline-and-indent commands, and tackling all
-  ;;      those cases was judged to be more work than dealing with the edge
-  ;;      cases on a case by case basis.
-  (defadvice! +default--newline-indent-and-continue-comments-a (&rest _)
-    "A replacement for `newline-and-indent'.
-
-Continues comments if executed from a commented line. Consults
-`doom-point-in-comment-functions' to determine if in a comment."
-    :before-until #'newline-and-indent
-    (interactive "*")
-    (when (and +default-want-RET-continue-comments
-               (doom-point-in-comment-p)
-               (fboundp comment-line-break-function))
-      (funcall comment-line-break-function nil)
-      t)))
+            :ig "*" (general-predicate-dispatch nil
+                      (looking-at-p "\\*\\* *")
+                      (λ! (forward-char 2)))))))
 
 
 ;;
 ;;; Keybinding fixes
+
+;; Highjacks backspace to delete up to nearest column multiple of `tab-width' at
+;; a time. If you have smartparens enabled, it will also:
+;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)
+;;  b) close empty multiline brace blocks in one step:
+;;     {
+;;     |
+;;     }
+;;     becomes {|}
+;;  c) refresh smartparens' :post-handlers, so SPC and RET expansions work even
+;;     after a backspace.
+;;  d) properly delete smartparen pairs when they are encountered, without the
+;;     need for strict mode.
+;;  e) do none of this when inside a string
+(advice-add #'delete-backward-char :override #'+default--delete-backward-char-a)
+
+;; HACK Makes `newline-and-indent' continue comments (and more reliably).
+;;      Consults `doom-point-in-comment-functions' to detect a commented region
+;;      and uses that mode's `comment-line-break-function' to continue comments.
+;;      If neither exists, it will fall back to the normal behavior of
+;;      `newline-and-indent'.
+;;
+;;      We use an advice here instead of a remapping because many modes define
+;;      and remap to their own newline-and-indent commands, and tackling all
+;;      those cases was judged to be more work than dealing with the edge cases
+;;      on a case by case basis.
+(defadvice! +default--newline-indent-and-continue-comments-a (&rest _)
+  "A replacement for `newline-and-indent'.
+
+Continues comments if executed from a commented line. Consults
+`doom-point-in-comment-functions' to determine if in a comment."
+  :before-until #'newline-and-indent
+  (interactive "*")
+  (when (and +default-want-RET-continue-comments
+             (doom-point-in-comment-p)
+             (fboundp comment-line-break-function))
+    (funcall comment-line-break-function nil)
+    t))
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).
@@ -353,7 +353,7 @@ Continues comments if executed from a commented line. Consults
   "dL"   #'doom/help-search-loaded-files
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
-  "dN"   #'doom/help-news-search
+  "dN"   #'doom/help-search-news
   "dpc"  #'doom/help-package-config
   "dpd"  #'doom/goto-private-packages-file
   "dph"  #'doom/help-package-homepage

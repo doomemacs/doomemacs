@@ -56,6 +56,7 @@ PATTERN as literal. PATTERN is a delimited regexp (the same that :g or :s uses).
 FLAGS can be g and/or i; which mean the same thing they do in
 `evil-ex-substitute'."
   :evil-mc t
+  :keep-visual t
   (interactive "<R><//!><!>")
   (unless (and (stringp pattern)
                (not (string-empty-p pattern)))

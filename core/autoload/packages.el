@@ -1,276 +1,5 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
-;;
-;;; Package metadata
-
-;;;###autoload
-(defun doom-package-get (package &optional prop nil-value)
-  "Returns PACKAGE's `package!' recipe from `doom-packages'."
-  (let ((plist (cdr (assq package doom-packages))))
-    (if prop
-        (if (plist-member plist prop)
-            (plist-get plist prop)
-          nil-value)
-      plist)))
-
-;;;###autoload
-(defun doom-package-set (package prop value)
-  "Set PROPERTY in PACKAGE's recipe to VALUE."
-  (setf (alist-get package doom-packages)
-        (plist-put (alist-get package doom-packages)
-                   prop value)))
-
-;;;###autoload
-(defun doom-package-recipe (package &optional prop nil-value)
-  "Returns the `straight' recipe PACKAGE was registered with."
-  (let ((plist (gethash (symbol-name package) straight--recipe-cache)))
-    (if prop
-        (if (plist-member plist prop)
-            (plist-get plist prop)
-          nil-value)
-      plist)))
-
-;;;###autoload
-(defun doom-package-recipe-repo (package)
-  "Resolve and return PACKAGE's (symbol) local-repo property."
-  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
-            (repo (straight-vc-local-repo-name recipe)))
-      repo
-    (symbol-name package)))
-
-;;;###autoload
-(defun doom-package-build-recipe (package &optional prop nil-value)
-  "Returns the `straight' recipe PACKAGE was installed with."
-  (let ((plist (nth 2 (gethash (symbol-name package) straight--build-cache))))
-    (if prop
-        (if (plist-member plist prop)
-            (plist-get plist prop)
-          nil-value)
-      plist)))
-
-;;;###autoload
-(defun doom-package-build-time (package)
-  "TODO"
-  (car (gethash (symbol-name package) straight--build-cache)))
-
-;;;###autoload
-(defun doom-package-dependencies (package &optional recursive _noerror)
-  "Return a list of dependencies for a package."
-  (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
-    (if recursive
-        (nconc deps (mapcan (lambda (dep) (doom-package-dependencies dep t t))
-                            deps))
-      deps)))
-
-;;;###autoload
-(defun doom-package-depending-on (package &optional noerror)
-  "Return a list of packages that depend on the package named NAME."
-  (cl-check-type name symbol)
-  ;; can't get dependencies for built-in packages
-  (unless (or (doom-package-build-recipe name)
-              noerror)
-    (error "Couldn't find %s, is it installed?" name))
-  (cl-loop for pkg in (hash-table-keys straight--build-cache)
-           for deps = (doom-package-dependencies pkg)
-           if (memq package deps)
-           collect pkg
-           and append (doom-package-depending-on pkg t)))
-
-
-;;
-;;; Predicate functions
-
-;;;###autoload
-(defun doom-package-built-in-p (package)
-  "Return non-nil if PACKAGE (a symbol) is built-in."
-  (eq (doom-package-build-recipe package :type)
-      'built-in))
-
-;;;###autoload
-(defun doom-package-installed-p (package)
-  "Return non-nil if PACKAGE (a symbol) is installed."
-  (file-directory-p (straight--build-dir (symbol-name package))))
-
-;;;###autoload
-(defun doom-package-registered-p (package)
-  "Return non-nil if PACKAGE (a symbol) has been registered with `package!'.
-
-Excludes packages that have a non-nil :built-in property."
-  (when-let (plist (doom-package-get package))
-    (not (plist-get plist :ignore))))
-
-;;;###autoload
-(defun doom-package-private-p (package)
-  "Return non-nil if PACKAGE was installed by the user's private config."
-  (assq :private (doom-package-get package :modules)))
-
-;;;###autoload
-(defun doom-package-protected-p (package)
-  "Return non-nil if PACKAGE is protected.
-
-A protected package cannot be deleted and will be auto-installed if missing."
-  (memq package doom-core-packages))
-
-;;;###autoload
-(defun doom-package-core-p (package)
-  "Return non-nil if PACKAGE is a core Doom package."
-  (or (doom-package-protected-p package)
-      (assq :core (doom-package-get package :modules))))
-
-;;;###autoload
-(defun doom-package-backend (package)
-  "Return 'straight, 'builtin, 'elpa or 'other, depending on how PACKAGE is
-installed."
-  (cond ((gethash (symbol-name package) straight--build-cache)
-         'straight)
-        ((or (doom-package-built-in-p package)
-             (assq package package--builtins))
-         'builtin)
-        ((assq package package-alist)
-         'elpa)
-        ((locate-library (symbol-name package))
-         'other)))
-
-;;;###autoload
-(defun doom-package-different-recipe-p (name)
-  "Return t if a package named NAME (a symbol) has a different recipe than it
-was installed with."
-  (cl-check-type name symbol)
-  ;; TODO
-  ;; (when (doom-package-installed-p name)
-  ;;   (when-let* ((doom-recipe (assq name doom-packages))
-  ;;               (install-recipe (doom-package-recipe)))
-  ;;     (not (equal (cdr quelpa-recipe)
-  ;;                 (cdr (plist-get (cdr doom-recipe) :recipe))))))
-  )
-
-
-;;
-;;; Package list getters
-
-(defun doom--read-module-packages-file (file &optional noeval noerror)
-  (with-temp-buffer ; prevent buffer-local settings from propagating
-    (condition-case e
-        (if (not noeval)
-            (load file noerror t t)
-          (when (file-readable-p file)
-            (insert-file-contents file)
-            (delay-mode-hooks (emacs-lisp-mode))
-            (while (search-forward "(package! " nil t)
-              (save-excursion
-                (goto-char (match-beginning 0))
-                (unless (let ((ppss (syntax-ppss)))
-                          (or (nth 3 ppss)
-                              (nth 4 ppss)))
-                  (cl-destructuring-bind (name . plist)
-                      (cdr (sexp-at-point))
-                    (push (cons
-                           name (plist-put
-                                 plist :modules
-                                 (list (doom-module-from-path file))))
-                          doom-packages)))))))
-      ((debug error)
-       (signal 'doom-package-error
-               (list (doom-module-from-path file)
-                     file
-                     e))))))
-
-;;;###autoload
-(defun doom-package-list (&optional all-p)
-  "Retrieve a list of explicitly declared packages from enabled modules.
-
-This excludes core packages listed in `doom-core-packages'.
-
-If ALL-P, gather packages unconditionally across all modules, including disabled
-ones."
-  (let ((doom-interactive-mode t)
-        (doom-modules (doom-modules))
-        doom-packages)
-    (doom--read-module-packages-file
-     (doom-path doom-core-dir "packages.el") all-p t)
-    (let ((private-packages (doom-path doom-private-dir "packages.el")))
-      (unless all-p
-        ;; We load the private packages file twice to ensure disabled packages
-        ;; are seen ASAP, and a second time to ensure privately overridden
-        ;; packages are properly overwritten.
-        (doom--read-module-packages-file private-packages nil t))
-      (if all-p
-          (mapc #'doom--read-module-packages-file
-                (doom-files-in doom-modules-dir
-                               :depth 2
-                               :match "/packages\\.el$"))
-        (cl-loop for key being the hash-keys of doom-modules
-                 for path = (doom-module-path (car key) (cdr key) "packages.el")
-                 for doom--current-module = key
-                 do (doom--read-module-packages-file path nil t)))
-      (doom--read-module-packages-file private-packages all-p t))
-    (nreverse doom-packages)))
-
-;;;###autoload
-(defun doom-package-pinned-list ()
-  "Return an alist mapping package names (strings) to pinned commits (strings)."
-  (let (alist)
-    (dolist (package doom-packages alist)
-      (cl-destructuring-bind (name &key disable ignore pin unpin &allow-other-keys)
-          package
-        (when (and (not ignore)
-                   (not disable)
-                   (or pin unpin))
-          (setf (alist-get (doom-package-recipe-repo name) alist
-                           nil 'remove #'equal)
-                (unless unpin pin)))))))
-
-;;;###autoload
-(defun doom-package-unpinned-list ()
-  "Return an alist mapping package names (strings) to pinned commits (strings)."
-  (let (alist)
-    (dolist (package doom-packages alist)
-      (cl-destructuring-bind
-          (_ &key recipe disable ignore pin unpin &allow-other-keys)
-          package
-        (when (and (not ignore)
-                   (not disable)
-                   (or unpin
-                       (and (plist-member recipe :pin)
-                            (null pin))))
-          (cl-pushnew (doom-package-recipe-repo (car package)) alist
-                      :test #'equal))))))
-
-;;;###autoload
-(defun doom-package-recipe-list ()
-  "Return straight recipes for non-builtin packages with a local-repo."
-  (let (recipes)
-    (dolist (recipe (hash-table-values straight--recipe-cache))
-      (cl-destructuring-bind (&key local-repo type no-build &allow-other-keys)
-          recipe
-        (unless (or (null local-repo)
-                    (eq type 'built-in)
-                    no-build)
-          (push recipe recipes))))
-    (nreverse recipes)))
-
-;;;###autoload
-(defmacro doom-with-package-recipes (recipes binds &rest body)
-  "TODO"
-  (declare (indent 2))
-  (let ((recipe-var  (make-symbol "recipe"))
-        (recipes-var (make-symbol "recipes")))
-    `(let* ((,recipes-var ,recipes)
-            (built ())
-            (straight-use-package-pre-build-functions
-             (cons (lambda (pkg) (cl-pushnew pkg built :test #'equal))
-                   straight-use-package-pre-build-functions)))
-       (dolist (,recipe-var ,recipes-var)
-         (cl-block nil
-           (straight--with-plist (append (list :recipe ,recipe-var) ,recipe-var)
-               ,(doom-enlist binds)
-             ,@body)))
-       (nreverse built))))
-
-
-;;
-;;; Main functions
-
 ;;;###autoload
 (defun doom/reload-packages ()
   "Reload `doom-packages', `package' and `quelpa'."
@@ -280,47 +9,192 @@ ones."
   (doom-initialize-packages t)
   (message "Reloading packages...DONE"))
 
-;;;###autoload
-(defun doom/update-pinned-package-form (&optional select)
-  "Inserts or updates a `:pin' for the `package!' statement at point.
 
+;;
+;;; Bump commands
+
+(defun doom--package-full-recipe (package plist)
+  (doom-plist-merge
+   (plist-get plist :recipe)
+   (or (cdr (straight-recipes-retrieve package))
+       (plist-get (cdr (assq package doom-packages))
+                  :recipe))))
+
+(defun doom--package-to-bump-string (package plist)
+  "Return a PACKAGE and its PLIST in 'username/repo@commit' format."
+  (format "%s@%s"
+          (plist-get (doom--package-full-recipe package plist) :repo)
+          (substring-no-properties (plist-get plist :pin) 0 7)))
+
+(defun doom--package-at-point (&optional point)
+  "Return the package and plist from the (package! PACKAGE PLIST...) at point."
+  (save-match-data
+    (save-excursion
+      (and point (goto-char point))
+      (if (eq (sexp-at-point) 'package!)
+          (progn
+            (backward-sexp)
+            (backward-char)
+            t)
+        (while (and (search-backward "(package!" nil t)
+                    (doom-point-in-string-or-comment-p))))
+      (unless (or (doom-point-in-string-or-comment-p)
+                  (not (eq (car-safe (sexp-at-point)) 'package!)))
+        (cl-destructuring-bind (beg . end)
+            (bounds-of-thing-at-point 'sexp)
+          (let ((package (let (doom-packages)
+                           (eval (sexp-at-point) t))))
+            (list :beg beg
+                  :end end
+                  :package (car package)
+                  :plist (cdr package))))))))
+
+;;;###autoload
+(defun doom/bumpify-package-at-point ()
+  "Convert `package!' call at point to a bump string."
+  (interactive)
+  (cl-destructuring-bind (&key package plist beg end)
+      (doom--package-at-point)
+    (when-let (str (doom--package-to-bump-string package plist))
+      (goto-char beg)
+      (delete-region beg end)
+      (insert str))))
+
+;;;###autoload
+(defun doom/bumpify-packages-in-buffer ()
+  "Convert all `package!' calls in buffer into bump strings."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "(package!" nil t)
+      (unless (doom-point-in-string-or-comment-p)
+        (doom/bumpify-package-at-point)))))
+
+;;;###autoload
+(defun doom/bump-package-at-point (&optional select)
+  "Inserts or updates a `:pin' for the `package!' statement at point.
 Grabs the latest commit id of the package using 'git'."
   (interactive "P")
-  ;; REVIEW Better error handling
-  ;; TODO Insert a new `package!' if no `package!' at poin
-  (require 'straight)
-  (ignore-errors
-    (while (and (atom (sexp-at-point))
-                (not (bolp)))
-      (forward-sexp -1)))
+  (doom-initialize-packages)
+  (cl-destructuring-bind (&key package plist beg end)
+      (or (doom--package-at-point)
+          (user-error "Not on a `package!' call"))
+    (let* ((recipe (doom--package-full-recipe package plist))
+           (branch (or (plist-get recipe :branch)
+                       straight-vc-git-default-branch))
+           (oldid (or (plist-get plist :pin)
+                      (doom-package-get package :pin)))
+           id url)
+      (when (or (eq (plist-get plist :built-in) t)
+                (and (eq (plist-get plist :built-in) 'prefer)
+                     (locate-library (symbol-name package))))
+        (user-error "%s: skipping built-in package" package))
+      (setq url (straight-vc-git--destructure recipe (upstream-repo upstream-host)
+                  (straight-vc-git--encode-url upstream-repo upstream-host))
+            id (when url
+                 (cdr (doom-call-process
+                       "git" "ls-remote" url
+                       (unless select
+                         (or branch straight-vc-git-default-branch))))))
+      (unless id
+        (user-error "%s: no id from %s" package url))
+      (let* ((id (car (split-string
+                       (if select
+                           (completing-read "Commit: " (split-string id "\n" t))
+                         id)))))
+        (when (and oldid (equal oldid id))
+          (user-error "%s: no update necessary" package))
+        (save-excursion
+          (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" end t)
+              (replace-match id t t nil 1)
+            (thing-at-point--end-of-sexp)
+            (backward-char)
+            (insert " :pin " (prin1-to-string id))))
+        (message "Updated %S: %s -> %s"
+                 package
+                 (substring oldid 0 10)
+                 (substring id 0 10))))))
+
+;;;###autoload
+(defun doom/bump-packages-in-buffer (&optional select)
+  "Inserts or updates a `:pin' for the `package!' statement at point.
+Grabs the latest commit id of the package using 'git'."
+  (interactive "P")
   (save-excursion
-    (if (not (eq (sexp-at-point) 'package!))
-        (user-error "Not on a `package!' call")
-      (backward-char)
-      (let* ((recipe (cdr (sexp-at-point)))
-             (package (car recipe))
-             (oldid (doom-package-get package :pin))
-             (id
-              (cdr (doom-call-process
-                    "git" "ls-remote"
-                    (straight-vc-git--destructure
-                        (doom-plist-merge
-                         (plist-get (cdr recipe) :recipe)
-                         (or (cdr (straight-recipes-retrieve package))
-                             (plist-get (cdr (assq package doom-packages)) :recipe)))
-                        (upstream-repo upstream-host)
-                      (straight-vc-git--encode-url upstream-repo upstream-host))))))
-        (unless id
-          (user-error "No id for %S package" package))
-        (let* ((id (if select
-                       (car (split-string (completing-read "Commit: " (split-string id "\n" t))))
-                     (car (split-string id))))
-               (id (substring id 0 10)))
-          (if (and oldid (string-match-p (concat "^" oldid) id))
-              (user-error "No update necessary")
-            (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" (cdr (bounds-of-thing-at-point 'sexp)) t)
-                (replace-match id t t nil 1)
-              (thing-at-point--end-of-sexp)
-              (backward-char)
-              (insert " :pin " (prin1-to-string id)))
-            (message "Updated %S: %s -> %s" package oldid id)))))))
+    (goto-char (point-min))
+    (doom-initialize-packages)
+    (let (packages)
+      (while (search-forward "(package! " nil t)
+        (unless (let ((ppss (syntax-ppss)))
+                  (or (nth 4 ppss)
+                      (nth 3 ppss)
+                      (save-excursion
+                        (and (goto-char (match-beginning 0))
+                             (not (plist-member (sexp-at-point) :pin))))))
+          (condition-case e
+              (push (doom/bump-package-at-point) packages)
+            (user-error (message "%s" (error-message-string e))))))
+      (if packages
+          (message "Updated %d packages\n- %s" (length packages) (string-join packages "\n- "))
+        (message "No packages to update")))))
+
+;;;###autoload
+(defun doom/bump-module (category &optional module select)
+  "Bump packages in CATEGORY MODULE.
+If SELECT (prefix arg) is non-nil, prompt you to choose a specific commit for
+each package."
+  (interactive
+   (let* ((module (completing-read
+                   "Bump module: "
+                   (let ((modules (cons (list :core) (doom-module-list 'all))))
+                     (mapcar (lambda (m)
+                               (if (listp m)
+                                   (format "%s %s" (car m) (cdr m))
+                                 (format "%s" m)))
+                             (append (list ":private")
+                                     (delete-dups (mapcar #'car modules))
+                                     modules)))
+                   nil t nil nil))
+          (module (split-string module " " t)))
+     (list (intern (car module))
+           (ignore-errors (intern (cadr module)))
+           current-prefix-arg)))
+  (mapc (lambda (module)
+          (if-let (packages-file
+                   (pcase category
+                     (:private (doom-glob doom-private-dir "packages.el"))
+                     (:core    (doom-glob doom-core-dir "packages.el"))
+                     (_ (doom-module-locate-path category module "packages.el"))))
+              (with-current-buffer
+                  (or (get-file-buffer packages-file)
+                      (find-file-noselect packages-file))
+                (doom/bump-packages-in-buffer select)
+                (save-buffer))
+            (message "Module %s has no packages.el file" (cons category module))))
+        (if module
+            (list (cons category module))
+          (cl-remove-if-not (lambda (m) (eq (car m) category))
+                            (cons (list :core) (doom-module-list 'all))))))
+
+;;;###autoload
+(defun doom/bump-package (package)
+  "Bump PACKAGE in all modules that install it."
+  (interactive
+   (list (completing-read "Bump package: "
+                          (mapcar #'car (doom-package-list 'all)))))
+
+  (let* ((packages (doom-package-list 'all))
+         (modules (plist-get (alist-get package packages) :modules)))
+    (unless modules
+      (user-error "This package isn't installed by any Doom module"))
+    (dolist (module modules)
+      (when-let (packages-file (doom-module-locate-path (car module) (cdr module)))
+        (doom/bump-module (car module) (cdr module))))))
+
+
+;;
+;;; Bump commits
+
+;;;###autoload
+(defun doom/commit-bumps ()
+  (interactive))

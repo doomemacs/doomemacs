@@ -178,7 +178,7 @@ If ARG (universal argument), open selection in other-window."
         (user-error "%S doesn't support wgrep" caller)))))
 
 ;;;###autoload
-(defun +ivy-yas-prompt (prompt choices &optional display-fn)
+(defun +ivy-yas-prompt-fn (prompt choices &optional display-fn)
   (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))
 
 ;;;###autoload

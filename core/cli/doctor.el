@@ -48,8 +48,8 @@ in."
 
   ;; REVIEW Refactor me
   (print! (start "Checking your Emacs version..."))
-  (when EMACS27+
-    (warn! "Emacs %s detected. Emacs HEAD is unstable and may cause errors."
+  (when EMACS28+
+    (warn! "Emacs %s detected. Doom doesn't support Emacs 28/HEAD. It is unstable and may cause errors."
            emacs-version))
 
   (print! (start "Checking for Emacs config conflicts..."))
@@ -81,7 +81,6 @@ in."
       (print-group!
        (let ((doom-interactive-mode 'doctor))
          (doom-initialize 'force)
-         (doom-initialize-core)
          (doom-initialize-modules))
 
        (print! (success "Initialized Doom Emacs %s") doom-version)
@@ -133,14 +132,21 @@ in."
                        (`darwin "~/Library/Fonts/"))
                      (require 'all-the-icons nil t))
             (with-temp-buffer
-              (insert (cdr (doom-call-process "fc-list" "" "file")))
-              (dolist (font all-the-icons-font-names)
-                (if (save-excursion (re-search-backward font nil t))
-                    (success! "Found font %s" font)
-                  (print! (warn "Warning: couldn't find %S font") font)
-                  (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
-                            "This could also mean you've installed them in non-standard locations, in which "
-                            "case feel free to ignore this warning.")))))))
+              (let ((errors 0))
+                (cl-destructuring-bind (status . output)
+                    (doom-call-process "fc-list" "" "file")
+                  (if (not (zerop status))
+                      (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
+                    (insert (cdr (doom-call-process "fc-list" "" "file")))
+                    (dolist (font all-the-icons-font-names)
+                      (if (save-excursion (re-search-backward font nil t))
+                          (success! "Found font %s" font)
+                        (print! (warn "Warning: couldn't find %S font") font)))
+                    (when (> errors 0)
+                      (explain! "Some all-the-icons fonts were missing.\n\n"
+                                "You can install them by running `M-x all-the-icons-install-fonts' within Emacs.\n"
+                                "This could also mean you've installed them in non-standard locations, in which "
+                                "case feel free to ignore this warning.")))))))))
 
        (print! (start "Checking for stale elc files in your DOOMDIR..."))
        (when (file-directory-p doom-private-dir)
@@ -158,15 +164,17 @@ in."
                         (condition-case-unless-debug ex
                             (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
                                   (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
-                              (cl-loop for name in (let (doom-packages
+                              (cl-loop with doom-format-indent = 6
+                                       for name in (let (doom-packages
                                                          doom-disabled-packages)
                                                      (load packages-file 'noerror 'nomessage)
                                                      (mapcar #'car doom-packages))
                                        unless (or (doom-package-get name :disable)
                                                   (eval (doom-package-get name :ignore))
+                                                  (plist-member (doom-package-get name :recipe) :local-repo)
                                                   (doom-package-built-in-p name)
                                                   (doom-package-installed-p name))
-                                       do (print! (error "%s is not installed") name))
+                                       do (print! (error "Missing emacs package: %S") name))
                               (let ((inhibit-message t))
                                 (load doctor-file 'noerror 'nomessage)))
                           (file-missing (error! "%s" (error-message-string ex)))

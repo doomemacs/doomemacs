@@ -19,7 +19,7 @@ results buffer.")
 ;;; Packages
 
 (use-package! ivy
-  :after-call pre-command-hook
+  :hook (doom-first-input . ivy-mode)
   :init
   (let ((standard-search-fn
          (if (featurep! +prescient)
@@ -88,7 +88,7 @@ results buffer.")
       (setq +ivy--origin nil)))
 
   (after! yasnippet
-    (add-hook 'yas-prompt-functions #'+ivy-yas-prompt))
+    (add-hook 'yas-prompt-functions #'+ivy-yas-prompt-fn))
 
   (defadvice! +ivy--inhibit-completion-in-region-a (orig-fn &rest args)
     "`ivy-completion-in-region' struggles with completing certain
@@ -98,12 +98,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
       (apply orig-fn args)))
 
   (define-key! ivy-minibuffer-map
-    "C-c C-e" #'+ivy/woccur
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
+    "C-c C-e" #'+ivy/woccur
     "C-o" #'ivy-dispatching-done
-    "M-o" #'hydra-ivy/body)
-
-  (ivy-mode +1))
+    "M-o" #'hydra-ivy/body))
 
 
 (use-package! ivy-rich
@@ -116,12 +114,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                 (cadr (plist-get ivy-rich-display-transformers-list
                                  'ivy-switch-buffer))))
 
-  ;; Include variable value in `counsel-describe-variable'
+  ;; Enahnce the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
               'counsel-describe-variable
               '(:columns
                 ((counsel-describe-variable-transformer (:width 40)) ; the original transformer
-                 (+ivy-rich-describe-variable-transformer (:width 50))
+                 (+ivy-rich-describe-variable-transformer (:width 50)) ; display variable value
                  (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face))))
               'counsel-M-x
               '(:columns
@@ -141,10 +139,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   ;; Highlight buffers differently based on whether they're in the same project
   ;; as the current project or not.
-  (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
-         (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
-    (when switch-buffer-alist
-      (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
+  (when-let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
+              (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
+    (setcar switch-buffer-alist '+ivy-rich-buffer-name))
 
   (ivy-rich-mode +1))
 
@@ -265,9 +262,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
         (cond ((executable-find doom-projectile-fd-binary)
-               (cons doom-projectile-fd-binary
-                     (list "--color=never" "-E" ".git"
-                           "--type" "file" "--type" "symlink" "--follow")))
+               (append (list doom-projectile-fd-binary
+                             "--color=never" "-E" ".git"
+                             "--type" "file" "--type" "symlink" "--follow")
+                       (if IS-WINDOWS '("--path-separator=/"))))
               ((executable-find "rg")
                (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
@@ -284,8 +282,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
          (let ((offset (if (member find-program (list "rg" doom-projectile-fd-binary)) 0 2))
                files)
            (while (< (point) (point-max))
-             (push (buffer-substring
-                    (+ offset (line-beginning-position)) (line-end-position)) files)
+             (push (buffer-substring (+ offset (line-beginning-position)) (line-end-position))
+                   files)
              (forward-line 1))
            (nreverse files)))))))
 

@@ -1,0 +1,61 @@
+#+TITLE:   term/eshell
+#+DATE:    May 18, 2020
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides additional features for the built-in [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][Emacs Shell]]
+
+The Emacs Shell or =eshell= is a shell-like command interpreter implemented in
+Emacs Lisp. It is an alternative to traditional shells such as =bash=, =zsh=,
+=fish=, etc. that is built into Emacs and entirely cross-platform.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags, but does gain auto-completion if =:completion
+company= is enabled.
+
+** Plugins
++ [[https://github.com/peterwvj/eshell-up][eshell-up]]
++ [[https://github.com/xuchunyang/eshell-z][eshell-z]]
++ [[https://github.com/tom-tan/esh-help][esh-help]]
++ [[https://gitlab.com/bennya/shrink-path.el][shrink-path]]
++ [[https://github.com/xuchunyang/eshell-did-you-mean][eshell-did-you-mean]]
++ =:completion company=
+  + [[https://gitlab.com/ambrevar/emacs-fish-completion][fish-completion]]
+  + [[https://github.com/szermatt/emacs-bash-completion][bash-completion]]
+
+** Hacks
++ Even with =fish-completion-fallback-on-bash-p= non-nil, fish must be installed
+  for bash completion to work. Workaround in =config.el=.
++ =eshell-did-you-mean= does not work on first invocation, so we manually invoke
+  it once.
+
+* Prerequisites
+[[https://fishshell.com/][=fish= shell]] for completions, falling back to [[https://www.gnu.org/software/bash/][=bash= shell]] if =fish= is not
+found. If neither shell is found, completions may not be available.
+
+* Features
++ Command completion with Company
++ =fish=-style prompt with Git integration
++ [[https://github.com/rupa/z][=z=]]-like directory jumping
++ Command-not-found recommendations
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

@@ -1,13 +1,10 @@
 ;;; editor/evil/config.el -*- lexical-binding: t; -*-
 
-;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
-;; strives to make Emacs a much better vim than vim was.
-
 (defvar +evil-repeat-keys (cons ";" ",")
   "The keys to use for universal repeating motions.
 
 This is a cons cell whose CAR is the key for repeating a motion forward, and
-whose CDR is for repeating backward. They should both be kbd-able strings.")
+whose CDR is for repeating backward. They should both be `kbd'-able strings.")
 
 (defvar +evil-want-o/O-to-continue-comments t
   "If non-nil, the o/O keys will continue comment lines if the point is on a
@@ -137,8 +134,8 @@ directives. By default, this only recognizes C directives.")
     (and (>= char ?2) (<= char ?9)))
 
   ;; REVIEW Fix #2493: dir-locals cannot target fundamental-mode when evil-mode
-  ;;        is active. See https://github.com/hlissner/doom-emacs/issues/2493.
-  ;;        Revert this if this is ever fixed upstream.
+  ;;        is active. See hlissner/doom-emacs#2493. Revert this if
+  ;;        emacs-evil/evil#1268 is resolved upstream.
   (defadvice! +evil--fix-local-vars-a (&rest _)
     :before #'turn-on-evil-mode
     (when (eq major-mode 'fundamental-mode)
@@ -227,12 +224,12 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-embrace
   :commands embrace-add-pair embrace-add-pair-regexp
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
+  :hook (LaTeX-mode . +evil-embrace-latex-mode-hook-h)
   :hook (org-mode . embrace-org-mode-hook)
   :hook (ruby-mode . embrace-ruby-mode-hook)
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
   :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode hy-mode)
          . +evil-embrace-lisp-mode-hook-h)
-  :hook ((org-mode LaTeX-mode) . +evil-embrace-latex-mode-hook-h)
   :hook ((c++-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
          . +evil-embrace-angle-bracket-modes-hook-h)
   :init
@@ -369,14 +366,12 @@ directives. By default, this only recognizes C directives.")
 (defmacro set-repeater! (command next-func prev-func)
   "Makes ; and , the universal repeat-keys in evil-mode.
 To change these keys see `+evil-repeat-keys'."
-  (let ((fn-sym (intern (format "+evil/repeat-%s" (doom-unquote command)))))
-    `(progn
-       (defun ,fn-sym (&rest _)
-         (when +evil-repeat-keys
-           (evil-define-key* 'motion 'local
-             (kbd (car +evil-repeat-keys)) #',next-func
-             (kbd (cdr +evil-repeat-keys)) #',prev-func)))
-       (advice-add #',command :after-while #',fn-sym))))
+  `(defadvice! ,(intern (format "+evil--repeat-%s-a" (doom-unquote command))) (&rest _)
+     :after-while #',command
+     (when +evil-repeat-keys
+       (evil-define-key* 'motion 'local
+         (kbd (car +evil-repeat-keys)) #',next-func
+         (kbd (cdr +evil-repeat-keys)) #',prev-func))))
 
 ;; n/N
 (set-repeater! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)

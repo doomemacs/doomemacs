@@ -15,6 +15,12 @@ properties:
 
 :definition FN
   Run when jumping to a symbol's definition. Used by `+lookup/definition'.
+:implementations FN
+  Run when looking for implementations of a symbol in the current project. Used
+  by `+lookup/implementations'.
+:type-definition FN
+  Run when jumping to a symbol's type definition. Used by
+  `+lookup/type-definition'.
 :references FN
   Run when looking for usage references of a symbol in the current project. Used
   by `+lookup/references'.
@@ -46,6 +52,7 @@ change the current buffer or window or return non-nil when it succeeds.
 
 If it doesn't change the current buffer, or it returns nil, the lookup module
 will fall back to the next handler in `+lookup-definition-functions',
+`+lookup-implementations-functions', `+lookup-type-definition-functions',
 `+lookup-references-functions', `+lookup-file-functions' or
 `+lookup-documentation-functions'.
 
@@ -57,7 +64,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
   (set-lookup-handlers! 'python-mode nil)
 
-\(fn MODES &key DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC)"
+\(fn MODES &key DEFINITION IMPLEMENTATIONS TYPE-DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC)"
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
@@ -69,15 +76,19 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
         (fset
          fn
          (lambda ()
-           (cl-destructuring-bind (&key definition references documentation file xref-backend async)
+           (cl-destructuring-bind (&key definition implementations type-definition references documentation file xref-backend async)
                plist
              (cl-mapc #'+lookup--set-handler
                       (list definition
+                            implementations
+                            type-definition
                             references
                             documentation
                             file
                             xref-backend)
                       (list '+lookup-definition-functions
+                            '+lookup-implementations-functions
+                            '+lookup-type-definition-functions
                             '+lookup-references-functions
                             '+lookup-documentation-functions
                             '+lookup-file-functions
@@ -133,6 +144,8 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
   (let* ((origin (point-marker))
          (handlers
           (plist-get (list :definition '+lookup-definition-functions
+                           :implementations '+lookup-implementations-functions
+                           :type-definition '+lookup-type-definition-functions
                            :references '+lookup-references-functions
                            :documentation '+lookup-documentation-functions
                            :file '+lookup-file-functions)
@@ -239,6 +252,30 @@ evil-mode is active."
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :definition identifier nil arg))
+        ((error "Couldn't find the definition of %S" identifier))))
+
+;;;###autoload
+(defun +lookup/implementations (identifier &optional arg)
+  "Jump to the implementations of IDENTIFIER (defaults to the symbol at point).
+
+Each function in `+lookup-implementations-functions' is tried until one changes
+the point or current buffer."
+  (interactive (list (doom-thing-at-point-or-region)
+                     current-prefix-arg))
+  (cond ((null identifier) (user-error "Nothing under point"))
+        ((+lookup--jump-to :implementations identifier nil arg))
+        ((error "Couldn't find the implementations of %S" identifier))))
+
+;;;###autoload
+(defun +lookup/type-definition (identifier &optional arg)
+  "Jump to the type definition of IDENTIFIER (defaults to the symbol at point).
+
+Each function in `+lookup-type-definition-functions' is tried until one changes
+the point or current buffer."
+  (interactive (list (doom-thing-at-point-or-region)
+                     current-prefix-arg))
+  (cond ((null identifier) (user-error "Nothing under point"))
+        ((+lookup--jump-to :type-definition identifier nil arg))
         ((error "Couldn't find the definition of %S" identifier))))
 
 ;;;###autoload

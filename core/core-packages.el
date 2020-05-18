@@ -30,43 +30,20 @@
 ;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
 ;; plugins to install and where from.
 ;;
-;; All that said, you can still use package.el's commands, but 'bin/doom
-;; refresh' will purge ELPA packages.
-
-(defvar doom-init-packages-p nil
-  "If non-nil, Doom's package management system has been initialized.")
+;; All that said, you can still use package.el's commands, but 'bin/doom sync'
+;; will purge ELPA packages.
 
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
-(defvar doom-core-packages '(straight use-package)
-  "A list of packages that must be installed (and will be auto-installed if
-missing) and shouldn't be deleted.")
-
-(defvar doom-core-package-sources
-  '((org-elpa :local-repo nil)
-    (melpa
-     :type git :host github
-     :repo "melpa/melpa"
-     :no-build t)
-    (gnu-elpa-mirror
-     :type git :host github
-     :repo "emacs-straight/gnu-elpa-mirror"
-     :no-build t)
-    (emacsmirror-mirror
-     :type git :host github
-     :repo "emacs-straight/emacsmirror-mirror"
-     :no-build t))
-  "A list of recipes for straight's recipe repos.")
-
 (defvar doom-disabled-packages ()
   "A list of packages that should be ignored by `use-package!' and `after!'.")
 
 
 ;;
-;;; Package managers
+;;; package.el
 
 ;; Ensure that, if we do need package.el, it is configured correctly. You really
 ;; shouldn't be using it, but it may be convenient for quick package testing.
@@ -94,7 +71,7 @@ missing) and shouldn't be deleted.")
 ;;; Straight
 
 (setq straight-base-dir doom-local-dir
-      straight-repository-branch "master"
+      straight-repository-branch "develop"
       straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom sync' instant (once everything set up), which is much nicer
@@ -123,88 +100,327 @@ missing) and shouldn't be deleted.")
 
 
 ;;
-;;; Bootstrapper
+;;; Bootstrappers
+
+(defun doom--ensure-straight ()
+  (cl-destructuring-bind (&key pin recipe &allow-other-keys)
+      (doom-package-get 'straight)
+    (let ((repo-dir (doom-path straight-base-dir "straight/repos/straight.el"))
+          (repo-url (concat "http" (if gnutls-verify-error "s")
+                            "://github.com/"
+                            (or (plist-get recipe :repo) "raxod502/straight.el")))
+          (branch (or (plist-get recipe :branch) straight-repository-branch))
+          (call (if doom-debug-mode #'doom-exec-process #'doom-call-process)))
+      (if (not (file-directory-p repo-dir))
+          (message "Installing straight...")
+        ;; TODO Rethink this clumsy workaround
+        (let ((default-directory repo-dir))
+          (unless (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) pin)
+            (delete-directory repo-dir 'recursive)
+            (message "Updating straight..."))))
+      (unless (file-directory-p repo-dir)
+        (cond
+         ((eq straight-vc-git-default-clone-depth 'full)
+          (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
+         ((null pin)
+          (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir
+                   "--depth" (number-to-string straight-vc-git-default-clone-depth)
+                   "--branch" straight-repository-branch))
+         ((integerp straight-vc-git-default-clone-depth)
+          (make-directory repo-dir t)
+          (let ((default-directory repo-dir))
+            (funcall call "git" "init")
+            (funcall call "git" "checkout" "-b" straight-repository-branch)
+            (funcall call "git" "remote" "add" "origin" repo-url)
+            (funcall call "git" "fetch" "origin" pin
+                     "--depth" (number-to-string straight-vc-git-default-clone-depth))
+            (funcall call "git" "checkout" "--detach" pin)))))
+      (require 'straight (concat repo-dir "/straight.el"))
+      (doom-log "Initializing recipes")
+      (with-temp-buffer
+        (insert-file-contents (doom-path repo-dir "bootstrap.el"))
+        ;; Don't install straight for us -- we've already done that -- only set
+        ;; up its recipe repos for us.
+        (eval-region (search-forward "(require 'straight)")
+                     (point-max))))))
+
+(defun doom-initialize-core-packages (&optional force-p)
+  "Ensure `straight' is installed and was compiled with this version of Emacs."
+  (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
+    (doom-log "Initializing straight")
+    (let ((doom-disabled-packages nil)
+          (doom-packages (doom-package-list nil 'core-only)))
+      (doom--ensure-straight)
+      (doom-log "Installing core packages")
+      (dolist (package doom-packages)
+        (cl-destructuring-bind (name &key recipe &allow-other-keys)
+            package
+          (when recipe
+            (straight-override-recipe (cons name recipe)))
+          (straight-use-package name))))))
 
 (defun doom-initialize-packages (&optional force-p)
-  "Ensures that Doom's package system and straight.el are initialized.
+  "Process all packages, essential and otherwise, if they haven't already been.
 
 If FORCE-P is non-nil, do it anyway.
 
-This ensure `doom-packages' is populated, if isn't aren't already. Use this
-before any of straight's or Doom's package management's API to ensure all the
-necessary package metadata is initialized and available for them."
-  (unless doom-init-packages-p
-    (setq force-p t))
+This ensures `doom-packages' is populated and `straight' recipes are properly
+processed."
+  (doom-initialize-core-packages force-p)
   (when (or force-p (not (bound-and-true-p package--initialized)))
     (doom-log "Initializing package.el")
     (require 'package)
-    (package-initialize))
-  (when (or force-p (not doom-packages))
-    (doom-log "Initializing straight")
-    (setq doom-init-packages-p t)
-    (doom-ensure-straight)
-    (mapc #'straight-use-package doom-core-packages)
-    (doom-log "Initializing doom-packages")
-    (setq doom-disabled-packages nil
-          doom-pinned-packages nil
-          doom-packages (doom-package-list))
+    (package-initialize)
+    (unless package--initialized
+      (error "Failed to initialize package.el")))
+  (when (or force-p (null doom-packages))
+    (doom-log "Initializing straight.el")
+    (or (setq doom-disabled-packages nil
+              doom-packages (doom-package-list))
+        (error "Failed to read any packages"))
     (dolist (package doom-packages)
-      (let ((name (car package)))
-        (with-plist! (cdr package) (recipe modules disable ignore pin)
-          (if ignore
-              (doom-log "Ignoring package %S" name)
-            (if (not disable)
-                (with-demoted-errors "Package error: %s"
-                  (when recipe
-                    (straight-override-recipe (cons name recipe)))
-                  (straight-register-package name))
-              (doom-log "Disabling package %S" name)
+      (cl-destructuring-bind
+          (name &key recipe disable ignore &allow-other-keys) package
+        (unless ignore
+          (if disable
               (cl-pushnew name doom-disabled-packages)
-              ;; Warn about disabled core packages
-              (when (cl-find :core modules :key #'car)
-                (print! (warn "%s\n%s")
-                        (format "You've disabled %S" name)
-                        (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))))
+            (when recipe
+              (straight-override-recipe (cons name recipe)))
+            (straight-register-package name)))))))
 
-(defun doom-ensure-straight ()
-  "Ensure `straight' is installed and was compiled with this version of Emacs."
-  (unless (fboundp 'straight--reset-caches)
-    (defvar bootstrap-version)
-    (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
-           ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
-           (user-emacs-directory straight-base-dir)
-           (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
-           (bootstrap-version 5))
-      (make-directory (doom-path straight-base-dir "straight/build") 'parents)
-      (or (require 'straight nil t)
-          (file-readable-p bootstrap-file)
-          (with-current-buffer
-              (url-retrieve-synchronously
-               (format "https://raw.githubusercontent.com/raxod502/straight.el/%s/install.el"
-                       straight-repository-branch)
-               'silent 'inhibit-cookies)
-            (goto-char (point-max))
-            (eval-print-last-sexp)))
-        (load bootstrap-file nil t))
-    (require 'straight))
-  (straight--reset-caches)
-  (setq straight-recipe-repositories nil
-        straight-recipe-overrides nil)
-  (mapc #'straight-use-recipes doom-core-package-sources)
-  (straight-register-package
-   `(straight :type git :host github
-              :repo ,(format "%s/straight.el" straight-repository-user)
-              :files ("straight*.el")
-              :branch ,straight-repository-branch
-              :no-byte-compile t)))
+
+;;
+;;; Package management API
+
+(defun doom-package-get (package &optional prop nil-value)
+  "Returns PACKAGE's `package!' recipe from `doom-packages'."
+  (let ((plist (cdr (assq package doom-packages))))
+    (if prop
+        (if (plist-member plist prop)
+            (plist-get plist prop)
+          nil-value)
+      plist)))
+
+(defun doom-package-set (package prop value)
+  "Set PROPERTY in PACKAGE's recipe to VALUE."
+  (setf (alist-get package doom-packages)
+        (plist-put (alist-get package doom-packages)
+                   prop value)))
+
+(defun doom-package-recipe (package &optional prop nil-value)
+  "Returns the `straight' recipe PACKAGE was registered with."
+  (let ((plist (gethash (symbol-name package) straight--recipe-cache)))
+    (if prop
+        (if (plist-member plist prop)
+            (plist-get plist prop)
+          nil-value)
+      plist)))
+
+(defun doom-package-recipe-repo (package)
+  "Resolve and return PACKAGE's (symbol) local-repo property."
+  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
+            (repo (straight-vc-local-repo-name recipe)))
+      repo
+    (symbol-name package)))
+
+(defun doom-package-build-recipe (package &optional prop nil-value)
+  "Returns the `straight' recipe PACKAGE was installed with."
+  (let ((plist (nth 2 (gethash (symbol-name package) straight--build-cache))))
+    (if prop
+        (if (plist-member plist prop)
+            (plist-get plist prop)
+          nil-value)
+      plist)))
+
+(defun doom-package-build-time (package)
+  "TODO"
+  (car (gethash (symbol-name package) straight--build-cache)))
+
+(defun doom-package-dependencies (package &optional recursive _noerror)
+  "Return a list of dependencies for a package."
+  (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
+    (if recursive
+        (append deps (mapcan (lambda (dep) (doom-package-dependencies dep t t))
+                             (copy-sequence deps)))
+      (copy-sequence deps))))
+
+(defun doom-package-depending-on (package &optional noerror)
+  "Return a list of packages that depend on the package named NAME."
+  (cl-check-type name symbol)
+  ;; can't get dependencies for built-in packages
+  (unless (or (doom-package-build-recipe name)
+              noerror)
+    (error "Couldn't find %s, is it installed?" name))
+  (cl-loop for pkg in (hash-table-keys straight--build-cache)
+           for deps = (doom-package-dependencies pkg)
+           if (memq package deps)
+           collect pkg
+           and append (doom-package-depending-on pkg t)))
+
+
+;;; Predicate functions
+(defun doom-package-built-in-p (package)
+  "Return non-nil if PACKAGE (a symbol) is built-in."
+  (eq (doom-package-build-recipe package :type)
+      'built-in))
+
+(defun doom-package-installed-p (package)
+  "Return non-nil if PACKAGE (a symbol) is installed."
+  (file-directory-p (straight--build-dir (symbol-name package))))
+
+(defun doom-package-is-type-p (package type)
+  "TODO"
+  (memq type (doom-enlist (doom-package-get package :type))))
+
+(defun doom-package-in-module-p (package category &optional module)
+  "Return non-nil if PACKAGE was installed by the user's private config."
+  (when-let (modules (doom-package-get package :modules))
+    (or (and (not module) (assq :private modules))
+        (member (cons category module) modules))))
+
+(defun doom-package-backend (package)
+  "Return 'straight, 'builtin, 'elpa or 'other, depending on how PACKAGE is
+installed."
+  (cond ((gethash (symbol-name package) straight--build-cache)
+         'straight)
+        ((or (doom-package-built-in-p package)
+             (assq package package--builtins))
+         'builtin)
+        ((assq package package-alist)
+         'elpa)
+        ((locate-library (symbol-name package))
+         'other)))
+
+(defun doom-package-changed-recipe-p (name)
+  "Return t if a package named NAME (a symbol) has a different recipe than it
+was installed with."
+  (cl-check-type name symbol)
+  ;; TODO
+  ;; (when (doom-package-installed-p name)
+  ;;   (when-let* ((doom-recipe (assq name doom-packages))
+  ;;               (install-recipe (doom-package-recipe)))
+  ;;     (not (equal (cdr quelpa-recipe)
+  ;;                 (cdr (plist-get (cdr doom-recipe) :recipe))))))
+  )
+
+
+;;; Package getters
+(defun doom--read-packages (file &optional noeval noerror)
+  (condition-case-unless-debug e
+      (with-temp-buffer ; prevent buffer-local state from propagating
+        (if (not noeval)
+            (load file noerror 'nomessage 'nosuffix)
+          (when (file-exists-p file)
+            (insert-file-contents file)
+            (let (emacs-lisp-mode) (emacs-lisp-mode))
+            ;; Scrape `package!' blocks from FILE for a comprehensive listing of
+            ;; packages used by this module.
+            (while (search-forward "(package!" nil t)
+              (let ((ppss (save-excursion (syntax-ppss))))
+                ;; Don't collect packages in comments or strings
+                (unless (or (nth 3 ppss)
+                            (nth 4 ppss))
+                  (goto-char (match-beginning 0))
+                  (cl-destructuring-bind (_ name . plist)
+                      (read (current-buffer))
+                    (push (cons
+                           name (plist-put
+                                 plist :modules
+                                 (list (doom-module-from-path file))))
+                          doom-packages))))))))
+    (error
+     (signal 'doom-package-error
+             (list (doom-module-from-path file)
+                   file e)))))
+
+(defun doom-package-list (&optional all-p core-only-p)
+  "Retrieve a list of explicitly declared packages from enabled modules.
+
+If ALL-P, gather packages unconditionally across all modules, including disabled
+ones."
+  (let ((doom-interactive-mode t)
+        doom-packages)
+    (doom--read-packages
+     (doom-path doom-core-dir "packages.el") all-p 'noerror)
+    (unless core-only-p
+      (let ((private-packages (doom-path doom-private-dir "packages.el"))
+            (doom-modules (doom-module-list)))
+        (if all-p
+            (mapc #'doom--read-packages
+                  (doom-files-in doom-modules-dir
+                                 :depth 2
+                                 :match "/packages\\.el$"))
+          ;; We load the private packages file twice to ensure disabled packages
+          ;; are seen ASAP, and a second time to ensure privately overridden
+          ;; packages are properly overwritten.
+          (doom--read-packages private-packages nil 'noerror)
+          (cl-loop for key being the hash-keys of doom-modules
+                   for path = (doom-module-path (car key) (cdr key) "packages.el")
+                   for doom--current-module = key
+                   do (doom--read-packages path nil 'noerror)))
+        (doom--read-packages private-packages all-p 'noerror)))
+    (cl-remove-if-not
+     (if core-only-p
+         (lambda (pkg) (eq (plist-get (cdr pkg) :type) 'core))
+       #'identity)
+     (nreverse doom-packages))))
+
+(defun doom-package-pinned-list ()
+  "Return an alist mapping package names (strings) to pinned commits (strings)."
+  (let (alist)
+    (dolist (package doom-packages alist)
+      (cl-destructuring-bind (name &key disable ignore pin unpin &allow-other-keys)
+          package
+        (when (and (not ignore)
+                   (not disable)
+                   (or pin unpin))
+          (setf (alist-get (doom-package-recipe-repo name) alist
+                           nil 'remove #'equal)
+                (unless unpin pin)))))))
+
+(defun doom-package-unpinned-list ()
+  "Return an alist mapping package names (strings) to pinned commits (strings)."
+  (let (alist)
+    (dolist (package doom-packages alist)
+      (cl-destructuring-bind
+          (_ &key recipe disable ignore pin unpin &allow-other-keys)
+          package
+        (when (and (not ignore)
+                   (not disable)
+                   (or unpin
+                       (and (plist-member recipe :pin)
+                            (null pin))))
+          (cl-pushnew (doom-package-recipe-repo (car package)) alist
+                      :test #'equal))))))
+
+(defun doom-package-recipe-list ()
+  "Return straight recipes for non-builtin packages with a local-repo."
+  (let (recipes)
+    (dolist (recipe (hash-table-values straight--recipe-cache))
+      (cl-destructuring-bind (&key local-repo type no-build &allow-other-keys)
+          recipe
+        (unless (or (null local-repo)
+                    (eq type 'built-in)
+                    no-build)
+          (push recipe recipes))))
+    (nreverse recipes)))
+
+(defun doom-package-state-list ()
+  "TODO"
+  (let (alist)
+    (dolist (recipe (hash-table-values straight--repo-cache) alist)
+      (cl-destructuring-bind (&key local-repo type &allow-other-keys)
+          recipe
+        (when (and local-repo (not (eq type 'built-in)))
+          (setf (alist-get local-repo alist nil nil #'equal)
+                (straight-vc-get-commit type local-repo)))))))
 
 
 ;;
 ;;; Module package macros
 
 (cl-defmacro package!
-    (name &rest plist &key built-in recipe ignore _pin _disable)
+    (name &rest plist &key built-in recipe ignore _type _pin _disable)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -215,6 +431,15 @@ Only use this macro in a module's packages.el file.
 
 Accepts the following properties:
 
+ :type core|local|built-in|virtual
+   Specifies what kind of package this is. Can be a symbol or a list thereof.
+     `core' = this is a protected package and cannot be disabled!
+     `local' = this package is being modified in-place. This package's repo is
+       unshallowed and will be skipped when you update packages.
+     `built-in' = this package is already built-in (otherwise, will be
+       installed)
+     `virtual' = this package is not tracked by Doom's package manager. It won't
+       be installed or uninstalled. Use this to pin 2nd order dependencies.
  :recipe RECIPE
    Specifies a straight.el recipe to allow you to acquire packages from external
    sources. See https://github.com/raxod502/straight.el#the-recipe-format for
@@ -254,6 +479,8 @@ elsewhere."
          (plist-put! plist :modules
                      (append module-list
                              (list module)
+                             (when (file-in-directory-p ,(dir!) doom-private-dir)
+                               '((:private . modules)))
                              nil))))
      ;; Merge given plist with pre-existing one
      (doplist! ((prop val) (list ,@plist) plist)
@@ -282,8 +509,9 @@ elsewhere."
                       (error-message-string e)))))
      ;; This is the only side-effect of this macro!
      (setf (alist-get name doom-packages) plist)
-     (with-no-warnings
-       (not (plist-get plist :disable)))))
+     (unless (plist-get plist :disable)
+       (with-no-warnings
+         (cons name plist)))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro for disabling packages in bulk.
@@ -311,24 +539,26 @@ should use it!"
   (if (memq t targets)
       `(mapc (doom-rpartial #'doom-package-set :unpin t)
              (mapcar #'car doom-packages))
-    (let (forms)
-      (dolist (target targets)
-        (cl-check-type target (or symbol keyword list))
-        (cond
-         ((symbolp target)
-          (push `(doom-package-set ',target :unpin t) forms))
-         ((or (keywordp target)
-              (listp target))
-          (cl-destructuring-bind (category . modules) (doom-enlist target)
-            (dolist (pkg doom-packages)
-              (let ((pkg-modules (plist-get (cdr pkg) :modules)))
-                (and (assq category pkg-modules)
-                     (or (null modules)
-                         (cl-loop for module in modules
-                                  if (member (cons category module) pkg-modules)
-                                  return t))
-                     (push `(doom-package-set ',(car pkg) :unpin t) forms))))))))
-      (macroexp-progn forms))))
+    (macroexp-progn
+     (mapcar
+      (lambda (target)
+        (when target
+          `(doom-package-set ',target :unpin t)))
+      (cl-loop for target in targets
+               if (or (keywordp target) (listp target))
+               append
+               (cl-loop with (category . modules) = (doom-enlist target)
+                        for (name . plist) in doom-packages
+                        for pkg-modules = (plist-get plist :modules)
+                        if (and (assq category pkg-modules)
+                                (or (null modules)
+                                    (cl-loop for module in modules
+                                             if (member (cons category module) pkg-modules)
+                                             return t))
+                                name)
+                        collect it)
+               else if (symbolp target)
+               collect target)))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

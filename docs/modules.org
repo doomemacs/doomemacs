@@ -128,7 +128,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/perl/README.org][perl]] - TODO
 + [[file:../modules/lang/php/README.org][php]] =+lsp= - TODO
 + plantuml - TODO
-+ purescript - TODO
++ purescript =+lsp= - TODO
 + [[file:../modules/lang/python/README.org][python]] =+lsp +pyenv +conda +poetry= - TODO
 + qt - TODO
 + racket - TODO

@@ -23,7 +23,7 @@
 - [Install](#install)
 - [Roadmap](#roadmap)
 - [Getting help](#getting-help)
-- [Contributing](#contributing)
+- [Contribute](#contribute)
 
 
 # Introduction
