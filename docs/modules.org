@@ -32,7 +32,7 @@ loaded last, before =:config= modules.
 
 * :checkers
 + syntax =+childframe= - Live error/warning highlights
-+ spell =+everywhere= - Spell checking
++ spell =+everywhere +aspell +hunspell= - Spell checking
 + grammar - TODO
 
 * :completion
@@ -64,7 +64,7 @@ Modules that affect and augment your ability to manipulate or insert text.
 + god - TODO
 + [[file:../modules/editor/lispy/README.org][lispy]] - TODO
 + multiple-cursors - TODO
-+ [[file:../modules/editor/objed/README.org][objed]] - TODO
++ [[file:../modules/editor/objed/README.org][objed]] =+manual= - TODO
 + [[file:../modules/editor/parinfer/README.org][parinfer]] - TODO
 + rotate-text - TODO
 + [[file:../modules/editor/snippets/README.org][snippets]] - Snippet expansion for lazy typists
@@ -91,28 +91,28 @@ Modules that reconfigure or augment packages or features built into Emacs.
 * :lang
 Modules that bring support for a language or group of languages to Emacs.
 
-+ [[file:../modules/lang/agda/README.org][agda]] - TODO
++ [[file:../modules/lang/agda/README.org][agda]] =+local= - TODO
 + [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
 + [[file:../modules/lang/clojure/README.org][clojure]] =+lsp= - TODO
 + common-lisp - TODO
 + [[file:../modules/lang/coq/README.org][coq]] - TODO
 + crystal - TODO
-+ [[file:../modules/lang/csharp/README.org][csharp]] - TODO
++ [[file:../modules/lang/csharp/README.org][csharp]] =+lsp +unity= - TODO
 + data - TODO
 + [[file:../modules/lang/elixir/README.org][elixir]] =+lsp= - TODO
-+ elm - TODO
++ elm =+lsp= - TODO
 + emacs-lisp - TODO
-+ erlang - TODO
++ erlang =+lsp= - TODO
 + [[file:../modules/lang/ess/README.org][ess]] =+lsp= - TODO
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
-+ [[file:../modules/lang/fsharp/README.org][fsharp]] - TODO
++ [[file:../modules/lang/fsharp/README.org][fsharp]] =+lsp= - TODO
 + [[file:../modules/lang/fstar/README.org][fstar]] - F* support
 + [[file:../modules/lang/go/README.org][go]] =+lsp= - TODO
 + [[file:../modules/lang/haskell/README.org][haskell]] =+dante +ghcide +lsp= - TODO
 + hy - TODO
 + [[file:../modules/lang/idris/README.org][idris]] - TODO
 + [[file:../modules/lang/json/README.org][json]] =+lsp= - TODO
-+ java =+meghanada +lsp= - TODO
++ java =+meghanada +eclim +lsp= - TODO
 + [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypeScript, and CoffeeScript support
 + julia =+lsp= - TODO
 + kotlin =+lsp+= - TODO
@@ -124,12 +124,12 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/nim/README.org][nim]] - TODO
 + nix - TODO
 + [[file:../modules/lang/ocaml/README.org][ocaml]] =+lsp= - TODO
-+ [[file:../modules/lang/org/README.org][org]] =+brain +dragndrop +gnuplot +hugo +ipython +journal +jupyter +pandoc +pomodoro +present +roam= - TODO
++ [[file:../modules/lang/org/README.org][org]] =+brain +dragndrop +gnuplot +hugo +ipython +journal +jupyter +noter +pandoc +pomodoro +present +roam= - TODO
 + [[file:../modules/lang/perl/README.org][perl]] - TODO
-+ [[file:../modules/lang/php/README.org][php]] =+lsp= - TODO
++ [[file:../modules/lang/php/README.org][php]] =+hack +lsp= - TODO
 + plantuml - TODO
 + purescript =+lsp= - TODO
-+ [[file:../modules/lang/python/README.org][python]] =+lsp +pyenv +conda +poetry= - TODO
++ [[file:../modules/lang/python/README.org][python]] =+cython +lsp +pyenv +conda +poetry= - TODO
 + qt - TODO
 + racket - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
@@ -170,7 +170,7 @@ Small modules that give Emacs access to external tools & services.
 + macos - TODO
 + [[file:../modules/tools/magit/README.org][magit]] =+forge= - TODO
 + make - TODO
-+ pass - TODO
++ pass =+auth= - TODO
 + pdf - TODO
 + prodigy - TODO
 + rgb - TODO
@@ -189,7 +189,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO
 + indent-guides - TODO
-+ [[file:../modules/ui/modeline/README.org][modeline]] - TODO
++ [[file:../modules/ui/modeline/README.org][modeline]] =+light= - TODO
 + [[file:../modules/ui/nav-flash/README.org][nav-flash]] - TODO
 + [[file:../modules/ui/neotree/README.org][neotree]] - TODO
 + [[file:../modules/ui/ophints/README.org][ophints]] - TODO
