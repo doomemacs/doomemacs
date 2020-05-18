@@ -527,8 +527,8 @@ to least)."
       (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h 'append)
       (add-hook 'doom-first-input-hook #'gcmh-mode)
       (add-hook-trigger! 'doom-first-input-hook 'pre-command-hook)
-      (add-hook-trigger! 'doom-first-file-hook 'after-find-hook 'dired-initial-position-hook)
-      (add-hook-trigger! 'doom-first-buffer-hook 'after-find-hook 'doom-switch-buffer-hook))
+      (add-hook-trigger! 'doom-first-file-hook 'after-find-file 'dired-initial-position-hook)
+      (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook))
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
 
