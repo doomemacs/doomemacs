@@ -25,8 +25,11 @@ CALLBACK is the function that we need to call when we are done, on all the error
            :buffer (current-buffer)
            :filename (buffer-file-name)))))
     ;; NOTE: Setting up eglot to automatically create flycheck errors for the buffer.
-    (eglot-flymake-backend (lambda (flymake-diags &rest _)
-                             (funcall callback 'finished (mapcar #'flymake-diag->flycheck-err flymake-diags))))
+    (eglot-flymake-backend
+     (lambda (flymake-diags &rest _)
+       (funcall callback
+                'finished
+                (mapcar #'flymake-diag->flycheck-err flymake-diags))))
     ;; NOTE: Forcefully trigger a check in the buffer (function name is confusing)
     (flycheck-buffer)))
 
