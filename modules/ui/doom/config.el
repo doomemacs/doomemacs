@@ -27,9 +27,9 @@
   :hook (doom-load-theme . solaire-global-mode)
   :config
   (when (daemonp)
-    (add-hook! 'doom-switch-frame-hook
-      (defun +doom-disable-solaire-mode-maybe-h ()
-        (if (display-graphic-p)
+    (add-hook! '(doom-switch-frame-hook after-make-frame-functions)
+      (defun +doom-disable-solaire-mode-maybe-h (&optional frame)
+        (if (display-graphic-p frame)
             (unless solaire-global-mode
               (solaire-global-mode +1))
           (when solaire-global-mode
