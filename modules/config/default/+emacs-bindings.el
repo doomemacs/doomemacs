@@ -41,7 +41,7 @@
        :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
        (:when (featurep! :checkers syntax)
         :desc "List errors"                         "x"   #'flycheck-list-errors)
-       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp + eglot)))
+       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
