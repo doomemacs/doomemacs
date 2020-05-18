@@ -2,7 +2,7 @@
 
 (use-package! undo-fu
   :unless (featurep! +tree)
-  :after-call pre-command-hook after-find-file
+  :hook (doom-first-buffer . undo-fu-mode)
   :init
   ;; `evil' activates undo-tree, so we must pre-emptively disable it.
   (after! undo-tree
@@ -25,9 +25,7 @@
               (define-key map (kbd "C-x r U") #'undo-fu-session-recover)
               map)
     :init-value nil
-    :global t)
-
-  (undo-fu-mode +1))
+    :global t))
 
 
 (use-package! undo-fu-session
@@ -54,7 +52,7 @@
 (use-package! undo-tree
   :when (featurep! +tree)
   ;; Branching & persistent undo
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . global-undo-tree-mode)
   :config
   (setq undo-tree-visualizer-diff t
         undo-tree-auto-save-history t
@@ -92,6 +90,4 @@
   ;; Undo-tree is too chatty about saving its history files. This doesn't
   ;; totally suppress it logging to *Messages*, it only stops it from appearing
   ;; in the echo-area.
-  (advice-add #'undo-tree-save-history :around #'doom-shut-up-a)
-
-  (global-undo-tree-mode +1))
+  (advice-add #'undo-tree-save-history :around #'doom-shut-up-a))
