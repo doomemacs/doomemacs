@@ -79,6 +79,8 @@
   :after (org notmuch)
   :config (setq org-mime-library 'mml))
 
+(use-package! ol-notmuch
+  :after (org notmuch))
 
 (use-package! counsel-notmuch
   :when (featurep! :completion ivy)
