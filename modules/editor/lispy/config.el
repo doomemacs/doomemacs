@@ -17,12 +17,14 @@
 (use-package! lispyville
   :when (featurep! :editor evil)
   :hook (lispy-mode . lispyville-mode)
+  :init
+  (setq lispyville-key-theme
+        '((operators normal)
+          c-w
+          (prettify insert)
+          (atom-movement normal visual)
+          slurp/barf-lispy
+          additional
+          additional-insert))
   :config
-  (lispyville-set-key-theme
-   '((operators normal)
-     c-w
-     (prettify insert)
-     (atom-movement normal visual)
-     slurp/barf-lispy
-     additional
-     additional-insert)))
+  (lispyville-set-key-theme))
