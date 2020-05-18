@@ -12,8 +12,8 @@
 ;;; Packages
 
 (use-package! direnv
-  :hook (before-hack-local-variables  . direnv-update-environment)
-  :hook (flycheck-before-syntax-check . direnv-update-environment)
+  :hook (before-hack-local-variables  . direnv--maybe-update-environment)
+  :hook (flycheck-before-syntax-check . direnv--maybe-update-environment)
   :hook (direnv-envrc-mode . +direnv-envrc-fontify-keywords-h)
   :config
   (add-to-list 'direnv-non-file-modes 'vterm-mode)
