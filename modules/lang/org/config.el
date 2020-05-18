@@ -8,6 +8,7 @@
     (sh . shell)
     (bash . shell)
     (matlab . octave)
+    (rust . rustic-babel)
     (amm . ammonite))
   "An alist mapping languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.

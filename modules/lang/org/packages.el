@@ -94,8 +94,6 @@
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (featurep! :lang rest)
   (package! ob-restclient :pin "f7449b2068498fe9d8ab9589e0a638148861533f"))
-(when (featurep! :lang rust)
-  (package! ob-rust :pin "6a82587598cd097e9642be916243c31f1231b24a"))
 (when (featurep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
