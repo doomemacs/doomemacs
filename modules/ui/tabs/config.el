@@ -1,7 +1,7 @@
 ;;; ui/tabs/config.el -*- lexical-binding: t; -*-
 
 (use-package! centaur-tabs
-  :after-call after-find-file dired-initial-position-hook
+  :hook (doom-first-file . centaur-tabs-mode)
   :init
   (setq centaur-tabs-set-icons t
         centaur-tabs-gray-out-icons 'buffer
@@ -16,9 +16,7 @@
 
   :config
   (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
-  (add-hook '+popup-buffer-mode-hook #'centaur-tabs-local-mode)
-
-  (centaur-tabs-mode +1))
+  (add-hook '+popup-buffer-mode-hook #'centaur-tabs-local-mode))
 
 
 ;; TODO tab-bar-mode (emacs 27)
