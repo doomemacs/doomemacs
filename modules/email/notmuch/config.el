@@ -15,7 +15,12 @@
 ;;
 ;;; Packages
 
-(after! notmuch
+(use-package! notmuch
+  :defer t
+  :init
+  (after! org
+    (add-to-list 'org-modules 'ol-notmuch))
+  :config
   (set-company-backend! 'notmuch-message-mode
     '(notmuch-company :with company-ispell company-yasnippet))
 
