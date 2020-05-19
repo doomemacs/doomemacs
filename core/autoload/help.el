@@ -660,8 +660,9 @@ Uses the symbol at point or the current selection, if available."
 Uses the symbol at point or the current selection, if available."
   (interactive
    (list (doom--help-search-prompt "Search loaded files: ")))
-  (let ((paths (cl-loop for (file . _) in load-history
-                        for filebase = (file-name-sans-extension file)
-                        if (file-exists-p! (format "%s.el" filebase))
-                        collect it)))
-    (doom--help-search paths query "Search loaded files: ")))
+  (doom--help-search
+   (cl-loop for (file . _) in (cl-remove-if-not #'stringp load-history :key #'car)
+            for filebase = (file-name-sans-extension file)
+            if (file-exists-p! (format "%s.el" filebase))
+            collect it)
+   query "Search loaded files: "))
