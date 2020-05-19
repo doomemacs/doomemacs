@@ -193,6 +193,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO
 + indent-guides - TODO
++ [[file:../modules/ui/minimap/README.org][minimap]]
 + [[file:../modules/ui/modeline/README.org][modeline]] =+light= - TODO
 + [[file:../modules/ui/nav-flash/README.org][nav-flash]] - TODO
 + [[file:../modules/ui/neotree/README.org][neotree]] - TODO
