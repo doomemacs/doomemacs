@@ -67,7 +67,8 @@ Emacs.")
   ;; In the interest of performance, we reduce the number of project root marker
   ;; files/directories projectile searches for when resolving the project root.
   (setq projectile-project-root-files-bottom-up
-        (append '(".project"     ; doom project marker
+        (append '(".projectile"  ; projectile's root marker
+                  ".project"     ; doom project marker
                   ".git")        ; Git VCS root dir
                 (when (executable-find "hg")
                   '(".hg"))      ; Mercurial VCS root dir
