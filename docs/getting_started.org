@@ -318,7 +318,7 @@ be enabled.
 #+end_quote
 
 #+BEGIN_SRC sh
-scoop enable extras
+scoop bucket add extras
 scoop install git emacs ripgrep fd llvm
 #+END_SRC
 
