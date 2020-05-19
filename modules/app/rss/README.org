@@ -20,9 +20,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-# A summary of what this module does.
-
-+ Read RSS feeds in comfort of DOOM (Emacs)
++ Read RSS feeds in the comfort of DOOM (Emacs)
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -31,13 +29,16 @@ This module has no dedicated maintainers.
 + =+org= to enable ~elfeed-org~ to use ~org-directory/elfeed.org~
 
 ** Plugins
-# A list of linked plugins
 + [[https://github.com/skeeto/elfeed][elfeed]]
 + =+org=
   + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
 
 ** Hacks
-+ By default setting ~elfeed-search-filter~ is set to ~@2-week-ago~ what makes only last 2 weeks visible, to change this you can ~(setq elfeed-search-filter "")~
++ By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last 2 weeks of entries visible. This needs to be set after elfeed has loaded like so in your ~config.el~
+  #+begin_src elisp
+(after! elfeed
+  (setq elfeed-search-filter "@1-month-ago +unread"))
+  #+end_src
 
 * Prerequisites
 This module has no prerequisites.
