@@ -98,12 +98,14 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/coq/README.org][coq]] - TODO
 + crystal - TODO
 + [[file:../modules/lang/csharp/README.org][csharp]] =+lsp +unity= - TODO
++ [[file:../modules/lang/dart/README.org][dart]] =+lsp +flutter=
 + data - TODO
 + [[file:../modules/lang/elixir/README.org][elixir]] =+lsp= - TODO
 + elm =+lsp= - TODO
 + emacs-lisp - TODO
 + erlang =+lsp= - TODO
 + [[file:../modules/lang/ess/README.org][ess]] =+lsp= - TODO
++ [[file:../modules/lang/factor/README.org][factor]]
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
 + [[file:../modules/lang/fsharp/README.org][fsharp]] =+lsp= - TODO
 + [[file:../modules/lang/fstar/README.org][fstar]] - F* support
@@ -133,6 +135,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + qt - TODO
 + racket - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
++ rst - TODO
 + [[file:../modules/lang/ruby/README.org][ruby]] =+lsp +rvm +rbenv +rails +chruby=
 + [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
 + scala =+lsp= - TODO
