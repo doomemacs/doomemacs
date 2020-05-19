@@ -174,7 +174,8 @@ each package."
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
-                            (cons (list :core) (doom-module-list 'all))))))
+                            (append '((:core) (:private))
+                                    (doom-module-list 'all))))))
 
 ;;;###autoload
 (defun doom/bump-package (package)
