@@ -177,6 +177,7 @@ Small modules that give Emacs access to external tools & services.
 + pdf - TODO
 + prodigy - TODO
 + rgb - TODO
++ [[file:../modules/tools/taskrunner/README.org][taskrunner]]
 + [[file:../modules/tools/terraform/README.org][terraform]]
 + tmux - TODO
 + upload - TODO
