@@ -54,7 +54,7 @@
     (defun +ibuffer/open-for-current-workspace ()
       "Open an ibuffer window for the current workspace"
       (interactive)
-      (+ibuffer/workspace (+workspace-current-name))))
+      (+ibuffer-workspace (+workspace-current-name))))
 
   (when (featurep! :completion ivy)
     (defadvice! +ibuffer-use-counsel-maybe-a (_file &optional _wildcards)
