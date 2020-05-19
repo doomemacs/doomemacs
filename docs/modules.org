@@ -113,9 +113,9 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/haskell/README.org][haskell]] =+dante +ghcide +lsp= - TODO
 + hy - TODO
 + [[file:../modules/lang/idris/README.org][idris]] - TODO
-+ [[file:../modules/lang/json/README.org][json]] =+lsp= - TODO
 + java =+meghanada +eclim +lsp= - TODO
 + [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypeScript, and CoffeeScript support
++ [[file:../modules/lang/json/README.org][json]] =+lsp= - TODO
 + julia =+lsp= - TODO
 + kotlin =+lsp+= - TODO
 + [[file:../modules/lang/latex/README.org][latex]] =+latexmk +cdlatex +fold +lsp= - TODO
