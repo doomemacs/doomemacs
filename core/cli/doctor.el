@@ -102,10 +102,11 @@ in."
                      file (/ size 1024))
               (explain! "Consider deleting it from your system (manually)"))))
 
+        (unless (executable-find "rg")
+          (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all"))
+
         (unless (ignore-errors (executable-find doom-projectile-fd-binary))
-          (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower")
-          (unless (executable-find "rg")
-            (warn! "Couldn't find the `rg' binary either; project file searches will be even slower")))
+          (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
         (require 'projectile)
         (when (projectile-project-root "~")
