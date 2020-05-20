@@ -30,3 +30,8 @@
       (package! ivy-rtags))
     (when (featurep! :completion helm)
       (package! helm-rtags))))
+
+(when (featurep! +google-c-style)
+  (package! google-c-style
+    :pin "35fd3f01678c63593b80c4abbf1691a79fed2dfe"
+    :recipe (:host github :repo "google/styleguide" :files ("google-c-style.el"))))

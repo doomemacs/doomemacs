@@ -31,6 +31,7 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 ** Module Flags
 + ~+lsp~ Disables irony+rtags and replaces them with LSP (ccls by default). This
   requires the =:tools lsp= module.
++ ~+google-c-style~ Prefers [[https://github.com/google/styleguide][google-c-style]] for code-formatting.
 
 ** Plugins
 + [[https://github.com/Kitware/CMake][cmake-mode]]
@@ -52,6 +53,8 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
   + [[https://github.com/Andersbakken/rtags][rtags]]
   + [[https://github.com/Andersbakken/rtags][ivy-rtags]]
   + [[https://github.com/Andersbakken/rtags][helm-rtags]]
++ =+google-c-style=
+  + [[https://github.com/google/styleguide][google-c-style]]
 
 * Prerequisites
 This module requires

@@ -252,3 +252,26 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                       "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                       "-isystem/usr/local/include"]
                           :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))
+
+
+;;
+;; Google C Style
+
+(when (featurep! +google-c-style)
+  (set-formatter! 'clang-format
+    '("clang-format"
+      ("-assume-filename=%s" (or buffer-file-name mode-result ""))
+      ("-style=Google"))
+    :modes '((c-mode ".c")
+             (c++-mode ".cpp")))
+
+  ;; Enforce Google C++ Style Guide
+  ;; See https://google.github.io/styleguide/cppguide.html
+  (setq-hook! 'c-mode-common-hook
+    tab-width 2
+    fill-column 80))
+
+(use-package! google-c-style
+  :when (featurep! +google-c-style)
+  :hook (c-mode-common . google-set-c-style)
+  :hook (c-mode-common . google-make-newline-indent))

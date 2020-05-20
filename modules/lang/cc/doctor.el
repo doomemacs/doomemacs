@@ -5,6 +5,10 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(assert! (or (not (featurep! +google-c-style))
+             (featurep! :editor format))
+         "This module requires (:editor format)")
+
 (when (require 'rtags nil t)
   ;; rtags
   (when-let (bins (cl-remove-if #'rtags-executable-find
