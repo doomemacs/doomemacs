@@ -31,15 +31,10 @@
   (save-match-data
     (save-excursion
       (and point (goto-char point))
-      (if (eq (sexp-at-point) 'package!)
-          (progn
-            (backward-sexp)
-            (backward-char)
-            t)
-        (while (and (search-backward "(package!" nil t)
-                    (doom-point-in-string-or-comment-p))))
-      (unless (or (doom-point-in-string-or-comment-p)
-                  (not (eq (car-safe (sexp-at-point)) 'package!)))
+      (while (and (or (atom (sexp-at-point))
+                      (doom-point-in-string-or-comment-p))
+                  (search-backward "(" nil t)))
+      (when (eq (car-safe (sexp-at-point)) 'package!)
         (cl-destructuring-bind (beg . end)
             (bounds-of-thing-at-point 'sexp)
           (let ((package (let (doom-packages)
