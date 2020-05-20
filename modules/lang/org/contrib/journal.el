@@ -28,7 +28,7 @@
   (after! org
     (require 'org-journal)
     ;; Delete duplicate entries in `auto-mode-alist'
-    (rassq-delete-all 'org-journal-mode auto-mode-alist)
+    (setq auto-mode-alist (rassq-delete-all 'org-journal-mode auto-mode-alist))
     ;; ...and exploit `org-journal-dir''s setter to set up
     ;; `org-journal-file-pattern' and call `org-journal-update-auto-mode-alist'
     ;; for us, to create the one-true-entry in `auto-mode-alist.'
