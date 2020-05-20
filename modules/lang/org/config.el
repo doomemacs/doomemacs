@@ -366,9 +366,18 @@ relative to `org-directory', unless it is an absolute path."
   (setq org-attach-store-link-p t     ; store link after attaching files
         org-attach-use-inheritance t) ; inherit properties from parent nodes
 
-  ;; Centralized attachments directory
-  (after! org-attach
+  ;; Autoload all these commands that org-attach doesn't autoload itself
+  (use-package! org-attach
+    :commands (org-attach-new
+               org-attach-open
+               org-attach-open-in-emacs
+               org-attach-reveal-in-emacs
+               org-attach-url
+               org-attach-set-directory
+               org-attach-sync)
+    :config
     (unless org-attach-id-dir
+      ;; Centralized attachments directory by default
       (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
     (after! projectile
       (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
@@ -1033,16 +1042,6 @@ compelling reason, so..."
 
   :config
   (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
-
-  ;; Autoload all these commands that org-attach doesn't autoload itself
-  (use-package! org-attach
-    :commands (org-attach-new
-               org-attach-open
-               org-attach-open-in-emacs
-               org-attach-reveal-in-emacs
-               org-attach-url
-               org-attach-set-directory
-               org-attach-sync))
 
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.
