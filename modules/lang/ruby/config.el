@@ -136,6 +136,7 @@
   :mode ("/\\.rspec\\'" . text-mode)
   :init
   (setq rspec-use-spring-when-possible nil)
+  (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.3 :ttl nil :select t)
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
