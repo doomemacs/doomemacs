@@ -102,7 +102,11 @@ Stolen shamelessly from go-mode"
 (defun +format-probe-a (orig-fn)
   "Use `+format-with' instead, if it is set.
 Prompts for a formatter if universal arg is set."
-  (cond (current-prefix-arg
+  (cond ((or (eq +format-with :none)
+             (doom-temp-buffer-p (current-buffer))
+             (doom-special-buffer-p (current-buffer)))
+         nil)
+        (current-prefix-arg
          (list (or (+format-completing-read)
                    (user-error "Aborted"))
                t))
