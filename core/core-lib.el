@@ -264,6 +264,13 @@ See `if!' for details on this macro's purpose."
     (macroexp-progn body)))
 
 
+;;; Closure factories
+(defmacro fn! (arglist &rest body)
+  "Expands to (cl-function (lambda ARGLIST BODY...))"
+  (declare (indent defun) (doc-string 1) (pure t) (side-effect-free t))
+  `(cl-function (lambda ,arglist ,@body)))
+
+
 ;;; Mutation
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
