@@ -79,36 +79,35 @@ Grabs the latest commit id of the package using 'git'."
                        straight-vc-git-default-branch))
            (oldid (or (plist-get plist :pin)
                       (doom-package-get package :pin)))
-           id url)
-      (when (or (eq (plist-get plist :built-in) t)
-                (and (eq (plist-get plist :built-in) 'prefer)
-                     (locate-library (symbol-name package))))
-        (user-error "%s: skipping built-in package" package))
-      (setq url (straight-vc-git--destructure recipe (upstream-repo upstream-host)
-                  (straight-vc-git--encode-url upstream-repo upstream-host))
-            id (when url
-                 (cdr (doom-call-process
-                       "git" "ls-remote" url
-                       (unless select
-                         (or branch straight-vc-git-default-branch))))))
-      (unless id
-        (user-error "%s: no id from %s" package url))
-      (let* ((id (car (split-string
-                       (if select
-                           (completing-read "Commit: " (split-string id "\n" t))
-                         id)))))
-        (when (and oldid (equal oldid id))
-          (user-error "%s: no update necessary" package))
-        (save-excursion
-          (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" end t)
-              (replace-match id t t nil 1)
-            (thing-at-point--end-of-sexp)
-            (backward-char)
-            (insert " :pin " (prin1-to-string id))))
-        (message "Updated %S: %s -> %s"
-                 package
-                 (substring oldid 0 10)
-                 (substring id 0 10))))))
+           (url (straight-vc-git--destructure recipe (upstream-repo upstream-host)
+                  (straight-vc-git--encode-url upstream-repo upstream-host)))
+           (id (or (when url
+                     (cdr (doom-call-process
+                           "git" "ls-remote" url
+                           (unless select
+                             (or branch straight-vc-git-default-branch)))))
+                   (user-error "%s: no id from %s" package url)))
+           (id (car (split-string
+                     (if select
+                         (completing-read "Commit: " (split-string id "\n" t))
+                       id)))))
+      (when (and oldid
+                 (plist-member plist :pin)
+                 (equal oldid id))
+        (user-error "%s: no update necessary" package))
+      (save-excursion
+        (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" end t)
+            (replace-match id t t nil 1)
+          (goto-char (1- end))
+          (insert " :pin " (prin1-to-string id))))
+      (cond ((not oldid)
+             (message "%s: → %s" package (substring id 0 10)))
+            ((< (length oldid) (length id))
+             (message "%s: extended to %s..." package id))
+            ((message "%s: %s → %s"
+                      package
+                      (substring oldid 0 10)
+                      (substring id 0 10)))))))
 
 ;;;###autoload
 (defun doom/bump-packages-in-buffer (&optional select)
@@ -141,12 +140,12 @@ each package."
   (interactive
    (let* ((module (completing-read
                    "Bump module: "
-                   (let ((modules (cons (list :core) (doom-module-list 'all))))
+                   (let ((modules (doom-module-list 'all)))
                      (mapcar (lambda (m)
                                (if (listp m)
                                    (format "%s %s" (car m) (cdr m))
                                  (format "%s" m)))
-                             (append (list ":private")
+                             (append '(:private :core)
                                      (delete-dups (mapcar #'car modules))
                                      modules)))
                    nil t nil nil))
@@ -154,18 +153,18 @@ each package."
      (list (intern (car module))
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
-  (mapc (lambda (module)
+  (mapc (fn! ((cat . mod))
           (if-let (packages-file
-                   (pcase category
+                   (pcase cat
                      (:private (doom-glob doom-private-dir "packages.el"))
                      (:core    (doom-glob doom-core-dir "packages.el"))
-                     (_ (doom-module-locate-path category module "packages.el"))))
+                     (_ (doom-module-locate-path cat mod "packages.el"))))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
                       (find-file-noselect packages-file))
                 (doom/bump-packages-in-buffer select)
                 (save-buffer))
-            (message "Module %s has no packages.el file" (cons category module))))
+            (message "Module %s has no packages.el file" (cons cat mod))))
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
@@ -178,7 +177,6 @@ each package."
   (interactive
    (list (completing-read "Bump package: "
                           (mapcar #'car (doom-package-list 'all)))))
-
   (let* ((packages (doom-package-list 'all))
          (modules (plist-get (alist-get package packages) :modules)))
     (unless modules
