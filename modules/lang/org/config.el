@@ -1035,9 +1035,9 @@ compelling reason, so..."
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
-             (not doom-reloading-p)
              (not byte-compile-current-file))
-    (message "`org' was already loaded by the time lang/org loaded, this may cause issues")
+    (unless doom-reloading-p
+      (message "`org' was already loaded by the time lang/org loaded, this may cause issues"))
     (run-hooks 'org-load-hook))
 
   :config
