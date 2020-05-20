@@ -8,7 +8,7 @@
   ;; If not set then use `org-directory'
   (defvar org-noter-notes-search-path nil)
   :config
-  (setq org-noter-auto-save-last-location t
-        org-noter-separate-notes-from-heading t)
   (unless org-noter-notes-search-path
-    (setq org-noter-notes-search-path org-directory)))
+    (setq org-noter-notes-search-path (list org-directory)))
+  (setq org-noter-auto-save-last-location t
+        org-noter-separate-notes-from-heading t))

@@ -272,14 +272,13 @@ See `if!' for details on this macro's purpose."
 (defmacro setq! (&rest settings)
   "A stripped-down `customize-set-variable' with the syntax of `setq'.
 
-Use this instead of `setq' when you know a variable has a custom setter (a :set
-property in its `defcustom' declaration). This trigger setters. `setq' does
-not."
+This can be used as a drop-in replacement for `setq'. Particularly when you know
+a variable has a custom setter (a :set property in its `defcustom' declaration).
+This triggers setters. `setq' does not."
   (macroexp-progn
    (cl-loop for (var val) on settings by 'cddr
-            collect (list (or (get var 'custom-set) #'set)
-                          (list 'quote var)
-                          val))))
+            collect `(funcall (or (get ',var 'custom-set) #'set)
+                              ',var ,val))))
 
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.

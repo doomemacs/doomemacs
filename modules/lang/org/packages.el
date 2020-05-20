@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "93c50e3a7867a1a85fc78b337172585f7a10dcc6")
+  :pin "9bc0cc7fb3285d9a1eb19bd4ce528e751240311e")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -51,7 +51,7 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
 (when (featurep! +brain)
-  (package! org-brain :pin "ed99f7e38dd687800fb898f8934a0da0541ebcd9"))
+  (package! org-brain :pin "3ce2a33b81ce611695ad74bf21cb911ef90d9a1a"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "d248fcb8f2592a40507682e91eed9a31ead4e4a6"))
 (when (featurep! +gnuplot)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "2c43b10eed0659f8e47797e5e53d2973f939284d"))
+  (package! org-journal :pin "524009b5daa9ab4740d1c8d91857eb89a6aff07c"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -74,7 +74,7 @@
   (package! org-tree-slide :pin "7bf09a02bd2d8f1ccfcb5209bfb18fbe02d1f44e")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "1267a430431f11035798cc4007c5dd3efe543ced")
+  (package! org-roam :pin "e3d101f4958eee16ded089ae27017e3b14c30ccb")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
@@ -103,6 +103,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "8f36181977377383cb54803651d93b24e370122d"))
+    :pin "01bc315d49f246d7ecc0bd37ea8ccb870b420a5b"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))

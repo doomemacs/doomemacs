@@ -106,25 +106,21 @@ following shell commands:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-clean-byte-compiled-files)
-                   (if (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
-                            (equal (vc-git--rev-parse "HEAD") new-rev))
-                       (print! (info "%s") (cdr result))
+                   (unless (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
+                                (equal (vc-git--rev-parse "HEAD") new-rev))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
+                   (print! (info "%s") (cdr result))
 
                    ;; Reload Doom's CLI & libraries, in case there were any
                    ;; upstream changes. Major changes will still break, however
                    (condition-case-unless-debug e
                        (progn
-                         (mapc (doom-rpartial #'unload-feature t)
+                         (mapc (lambda (f) (load (symbol-name f)))
                                '(core core-lib
                                       core-cli
                                       core-modules
                                       core-packages))
-                         (require 'core)
-                         (require 'core-cli)
-                         (setq doom-init-p nil
-                               doom-init-modules-p nil)
-                         (doom-initialize))
+                         (doom-initialize 'force))
                      (error
                       (signal 'doom-error (list "Could not upgrade Doom without issues"
                                                 e))))

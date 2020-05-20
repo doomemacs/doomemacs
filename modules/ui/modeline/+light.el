@@ -213,31 +213,25 @@ LHS and RHS will accept."
   (use-package! anzu
     :after-call isearch-mode
     :config
-    ;; anzu and evil-anzu expose current/total state that can be displayed in the
-    ;; mode-line.
-    (defadvice! +modeline-fix-anzu-count-a (positions here)
-      "Calulate anzu counts via POSITIONS and HERE."
-      :override #'anzu--where-is-here
-      (cl-loop for (start . end) in positions
-               collect t into before
-               when (and (>= here start) (<= here end))
-               return (length before)
-               finally return 0))
-
-    (setq anzu-cons-mode-line-p nil) ; manage modeline segment ourselves
+    ;; We manage our own modeline segments
+    (setq anzu-cons-mode-line-p nil)
     ;; Ensure anzu state is cleared when searches & iedit are done
-    (add-hook 'isearch-mode-end-hook #'anzu--reset-status 'append)
     (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
     (advice-add #'evil-force-normal-state :before #'anzu--reset-status)
     ;; Fix matches segment mirroring across all buffers
     (mapc #'make-variable-buffer-local
-          '(anzu--total-matched anzu--current-position anzu--state
-                                anzu--cached-count anzu--cached-positions anzu--last-command
-                                anzu--last-isearch-string anzu--overflow-p)))
+          '(anzu--total-matched
+            anzu--current-position
+            anzu--state
+            anzu--cached-count
+            anzu--cached-positions anzu--last-command
+            anzu--last-isearch-string anzu--overflow-p))
+
+    (anzu-mode +1))
 
   (use-package! evil-anzu
     :when (featurep! :editor evil)
-    :after-call (evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))
+    :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight)
 
   (defun +modeline--anzu ()
     "Show the match index and total number thereof.
@@ -251,7 +245,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
          (cond ((eq anzu--state 'replace-query)
                 (format " %d replace " anzu--cached-count))
                ((eq anzu--state 'replace)
-                (format " %d/%d " here total))
+                (format " %d/%d " (1+ here) total))
                (anzu--overflow-p
                 (format " %s+ " total))
                (t
