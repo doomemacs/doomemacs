@@ -1,23 +1,5 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK Magit complains loudly (but harmlessly) when it can't determine its own
-;;      version (in the case of a sparse clone).
-;;;###autoload
-(defadvice! +magit--ignore-version-a (&optional print-dest)
-  :override #'magit-version
-  (when print-dest
-    (defvar magit-git-debug)
-    (princ (format "Magit (unknown), Git %s, Emacs %s, %s"
-                   (or (let ((magit-git-debug
-                              (lambda (err)
-                                (display-warning '(magit git) err :error))))
-                         (magit-git-version t))
-                       "(unknown)")
-                   emacs-version
-                   system-type)
-           print-dest))
-  nil)
-
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
   "Same as `magit-display-buffer-traditional', except...
