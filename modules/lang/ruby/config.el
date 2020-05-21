@@ -188,7 +188,7 @@
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
   :config
-  (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil)
+  (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil :select t)
   (when (featurep! :editor evil)
     (add-hook 'projectile-rails-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
