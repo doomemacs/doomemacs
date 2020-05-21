@@ -23,6 +23,12 @@ Indentation is always preserved when formatting regions.")
 (defvar-local +format-with nil
   "Set this to explicitly use a certain formatter for the current buffer.")
 
+(defvar +format-with-lsp t
+  "If non-nil, format with LSP formatter if it's available.
+
+This can be set buffer-locally with `setq-hook!' to disable LSP formatting in
+select buffers.")
+
 
 ;;
 ;;; Bootstrap
