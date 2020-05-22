@@ -32,9 +32,12 @@ exist, and `org-link' otherwise."
            :follow   (lambda (link)
                        (org-link-open-as-file (expand-file-name link (funcall dir-fn)) nil))
            :face     (lambda (link)
-                       (if (file-exists-p (expand-file-name link (funcall dir-fn)))
-                           'org-link
-                         'error))
+                       (let* ((path (expand-file-name link (funcall dir-fn)))
+                              (option-index (string-match-p "::\\(.*\\)\\'" path))
+                              (file-name (substring path 0 option-index)))
+                         (if (file-exists-p file-name)
+                             'org-link
+                           'error)))
            (doom-plist-delete plist :requires))))
 
 
