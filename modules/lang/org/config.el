@@ -204,6 +204,13 @@ This forces it to read the background before rendering."
       (org-babel-do-in-edit-buffer
        (call-interactively #'indent-for-tab-command))))
 
+  (defadvice! +org-fix-evil-open-bellow-and-indent-in-src-blocks-a (_arg)
+    "Mimic `+org-fix-newline-and-indent-in-src-blocks-a' on evil mode"
+    :after #'evil-org-open-below
+    (when (org-in-src-block-p t)
+      (org-babel-do-in-edit-buffer
+       (call-interactively #'indent-for-tab-command))))
+
   ;; Refresh inline images after executing src blocks (useful for plantuml or
   ;; ipython, where the result could be an image)
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
