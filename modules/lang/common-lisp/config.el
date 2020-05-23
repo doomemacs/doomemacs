@@ -99,7 +99,7 @@
           :desc "Remove notes"          "n" #'sly-remove-notes
           :desc "Compile region"        "r" #'sly-compile-region)
          (:prefix ("e" . "evaluate")
-          :desc "Evaulate buffer"     "b" #'sly-eval-buffer
+          :desc "Evaluate buffer"     "b" #'sly-eval-buffer
           :desc "Evaluate last"       "e" #'sly-eval-last-expression
           :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
           :desc "Evaluate defun"      "f" #'sly-eval-defun
