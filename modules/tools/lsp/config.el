@@ -15,9 +15,8 @@ working on that project after closing the last buffer.")
   :commands lsp-install-server
   :init
   (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
-  ;; Don't prompt the user for the project root every time we open a new
-  ;; lsp-worthy file, instead, try to guess it with projectile.
-  (setq lsp-auto-guess-root t)
+  ;; Disable automatic project guessing with projectile
+  (setq lsp-auto-guess-root nil)
   ;; Auto-kill LSP server after last workspace buffer is killed.
   (setq lsp-keep-workspace-alive nil)
   ;; Let `flycheck-check-syntax-automatically' determine this.
