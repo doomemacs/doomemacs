@@ -39,15 +39,14 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
                          (not (memq major-mode git-gutter:disabled-modes))))
               (if (and (display-graphic-p)
                        (require 'git-gutter-fringe nil t))
-                  (progn
-                    (setq-local git-gutter:init-function      #'git-gutter-fr:init)
-                    (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-                    (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
-                    (setq-local git-gutter:window-width -1))
-                (setq-local git-gutter:init-function      'nil)
-                (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
-                (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
-                (setq-local git-gutter:window-width 1))
+                  (setq-local git-gutter:init-function      #'git-gutter-fr:init
+                              git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos
+                              git-gutter:clear-function     #'git-gutter-fr:clear
+                              git-gutter:window-width -1)
+                (setq-local git-gutter:init-function      'nil
+                            git-gutter:view-diff-function #'git-gutter:view-diff-infos
+                            git-gutter:clear-function     #'git-gutter:clear-diff-infos
+                            git-gutter:window-width 1))
               (git-gutter-mode +1)
               (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
