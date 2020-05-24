@@ -357,6 +357,10 @@ relative to `org-directory', unless it is an absolute path."
 (defun +org-init-capture-frame-h ()
   (add-hook 'org-capture-after-finalize-hook #'+org-capture-cleanup-frame-h)
 
+  (defadvice! +org-capture-refile-cleanup-frame (&rest _)
+    :after #'org-capture-refile
+    (+org-capture-cleanup-frame-h))
+
   (when (featurep! :ui doom-dashboard)
     (add-hook '+doom-dashboard-inhibit-functions #'+org-capture-frame-p)))
 
