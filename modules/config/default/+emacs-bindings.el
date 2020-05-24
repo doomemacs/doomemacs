@@ -294,6 +294,7 @@
         :desc "Magit dispatch"             "/"   #'magit-dispatch
         :desc "Forge dispatch"             "'"   #'forge-dispatch
         :desc "Magit status"               "g"   #'magit-status
+        :desc "Magit status here"          "G"   #'magit-status-here
         :desc "Magit file delete"          "x"   #'magit-file-delete
         :desc "Magit blame"                "B"   #'magit-blame-addition
         :desc "Magit clone"                "C"   #'magit-clone

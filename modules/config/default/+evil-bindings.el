@@ -413,6 +413,7 @@
         :desc "Forge dispatch"            "'"   #'forge-dispatch
         :desc "Magit switch branch"       "b"   #'magit-branch-checkout
         :desc "Magit status"              "g"   #'magit-status
+        :desc "Magit status here"         "G"   #'magit-status-here
         :desc "Magit file delete"         "D"   #'magit-file-delete
         :desc "Magit blame"               "B"   #'magit-blame-addition
         :desc "Magit clone"               "C"   #'magit-clone
