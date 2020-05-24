@@ -13,6 +13,7 @@
   - [[#distractions-free-mode][Distractions-free mode]]
 - [[#configuration][Configuration]]
   - [[#enable-fullscreen-on-activation][Enable fullscreen on activation]]
+  - [[#customize-the-text-scaling-factor][Customize the text scaling factor]]
 
 * Description
 This module provides ~writeroom-mode~, which transforms Emacs into a
@@ -49,3 +50,9 @@ non-evil users yet, so use 'M-x writeroom-mode'.
 #+END_SRC
 
 Or fullscreen manually with =SPC t F= (or =F11= for non-evil users).
+** Customize the text scaling factor
+#+BEGIN_SRC elisp
+(setq zen-text-scale 1)
+#+END_SRC
+
+Provide a value of =nil= or =0= to disable text scaling.
