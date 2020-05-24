@@ -137,7 +137,8 @@ By default, the value of ~+markdown-compile-functions~ is:
 #+BEGIN_SRC lisp
 '(+markdown-compile-marked
   +markdown-compile-pandoc
-  +markdown-compile-markdown)
+  +markdown-compile-markdown
+  +markdown-compile-multimarkdown)
 #+END_SRC
 
 These functions will attempt to use the marked, pandoc and markdown executables,
