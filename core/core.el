@@ -5,6 +5,10 @@
     (error "Detected Emacs v%s. Doom only supports Emacs 26 and newer"
            emacs-version)))
 
+
+;;
+;;; Variables
+
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
@@ -140,7 +144,7 @@ users).")
 ;;; Custom error types
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
-(define-error 'doom-autoload-error "Error in an autoloads file" 'doom-error)
+(define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
 (define-error 'doom-module-error "Error in a Doom module" 'doom-error)
 (define-error 'doom-private-error "Error in private config" 'doom-error)
 (define-error 'doom-package-error "Error with packages" 'doom-error)
@@ -398,7 +402,7 @@ intervals."
                     t)
                   (push req packages))
             ((error debug)
-             (message "Failed to load '%s' package incrementally, because: %s"
+             (message "Failed to load %S package incrementally, because: %s"
                       req e)))
           (if (not packages)
               (doom-log "Finished incremental loading")
@@ -504,14 +508,17 @@ to least)."
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
     ;; your shell environment there.
-    (and (or (display-graphic-p)
-             (daemonp))
-         (doom-load-envvars-file doom-env-file 'noerror))
+    (if (or (display-graphic-p)
+            (daemonp))
+        (doom-load-envvars-file doom-env-file 'noerror))
 
-    ;; Loads `use-package' and our module helper library
+    ;; Loads `use-package' and all the helper macros modules (and users) can use
+    ;; to configure their packages.
     (require 'core-modules)
 
-    ;; In case we want to use package.el or straight via M-x later
+    ;; There's a chance the user will want to use package.el or straight later
+    ;; on in this interactive session. If that's the case, make sure they're
+    ;; properly initialized when they do.
     (autoload 'doom-initialize-packages "core-packages")
     (autoload 'doom-initialize-core-packages "core-packages")
     (with-eval-after-load 'package (require 'core-packages))

@@ -220,9 +220,13 @@ BODY will be run when this dispatcher is called."
 
 
 ;;
-;;; Straight hacks
+;;; straight.el hacks
 
-(defvar doom--cli-straight-discard-options
+;; Straight was designed primarily for interactive use, in an interactive Emacs
+;; session, but Doom does its package management in the terminal. Some things
+;; must be modified get straight to behave and improve its UX for our users.
+
+(defvar doom--straight-discard-options
   '(("has diverged from"
      . "^Reset [^ ]+ to branch")
     ("but recipe specifies a URL of"
@@ -243,6 +247,7 @@ It may not be obvious to users what they should do for some straight prompts,
 so Doom will recommend the one that reverts a package back to its (or target)
 original state.")
 
+
 ;; HACK Remove dired & magit options from prompt, since they're inaccessible in
 ;;      noninteractive sessions.
 (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw)
@@ -257,7 +262,7 @@ original state.")
         (y-or-n-p (format! "%s" (or prompt ""))))))
 
 (defun doom--straight-recommended-option-p (prompt option)
-  (cl-loop for (prompt-re . opt-re) in doom--cli-straight-discard-options
+  (cl-loop for (prompt-re . opt-re) in doom--straight-discard-options
            if (string-match-p prompt-re prompt)
            return (string-match-p opt-re option)))
 
@@ -266,7 +271,7 @@ original state.")
   :around #'straight--popup-raw
   (if doom-interactive-mode
       (funcall orig-fn prompt actions)
-    (let ((doom--cli-straight-discard-options doom--cli-straight-discard-options))
+    (let ((doom--straight-discard-options doom--straight-discard-options))
       ;; We can't intercept C-g, so no point displaying any options for this key
       ;; when C-c is the proper way to abort batch Emacs.
       (delq! "C-g" actions 'assoc)
@@ -293,7 +298,7 @@ original state.")
                      (print! "%2s) %s" (1+ (length options))
                              (if (doom--straight-recommended-option-p prompt desc)
                                  (progn
-                                   (setq doom--cli-straight-discard-options nil)
+                                   (setq doom--straight-discard-options nil)
                                    (green (concat desc " (Recommended)")))
                                desc))))
            (terpri)

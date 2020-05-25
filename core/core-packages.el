@@ -93,7 +93,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
       straight-fix-org nil)
 
 (defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
-  "Read from `doom-pinned-packages' on top of straight's lockfiles."
+  "Read `:pin's in `doom-packages' on top of straight's lockfiles."
   :around #'straight--lockfile-read-all
   (append (apply orig-fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))

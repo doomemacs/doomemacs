@@ -17,7 +17,7 @@ flycheck indicators moved to the right fringe.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! git-gutter
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
