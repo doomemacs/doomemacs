@@ -63,7 +63,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
-(defvar doom-inhibit-module-warnings doom-interactive-mode
+(defvar doom-inhibit-module-warnings doom-interactive-p
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
