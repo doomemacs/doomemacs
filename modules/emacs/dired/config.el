@@ -22,15 +22,15 @@
     :slot 20 :size 0.8 :select t :quit nil :ttl 0)
   (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
 
-  (let ((args (list "-ahl" "--group-directories-first")))
+  (let ((args (list "-ahl" "-v" "--group-directories-first")))
     (when IS-BSD
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
       ;; when not using GNU ls.
       (if-let (gls (executable-find "gls"))
           (setq insert-directory-program gls)
-        ;; BSD ls doesn't support --group-directories-first
-        (setq args (delete "--group-directories-first" args))))
+        ;; BSD ls doesn't support -v or --group-directories-first
+        (setq args (car args))))
     (setq dired-listing-switches (string-join args " "))
 
     (add-hook! 'dired-mode-hook
