@@ -110,7 +110,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
                             "://github.com/"
                             (or (plist-get recipe :repo) "raxod502/straight.el")))
           (branch (or (plist-get recipe :branch) straight-repository-branch))
-          (call (if doom-debug-mode #'doom-exec-process #'doom-call-process)))
+          (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
       (if (not (file-directory-p repo-dir))
           (message "Installing straight...")
         ;; TODO Rethink this clumsy workaround

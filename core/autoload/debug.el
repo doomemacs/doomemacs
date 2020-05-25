@@ -5,7 +5,7 @@
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(doom-debug-mode
+  '(doom-debug-p
     init-file-debug
     debug-on-error
     garbage-collection-messages
@@ -18,9 +18,10 @@
   "A list of variable to toggle on `doom/toggle-debug-mode'.")
 
 ;;;###autoload
-(defun doom/toggle-debug-mode (&optional arg)
-  "Toggle `debug-on-error' and `doom-debug-mode' for verbose logging."
-  (interactive (list (or current-prefix-arg 'toggle)))
+(define-minor-mode doom-debug-mode
+  "Toggle `debug-on-error' and `doom-debug-p' for verbose logging."
+  :init-value doom-debug-p
+  :global t
   (let ((value
          (cond ((eq arg 'toggle) (not doom-debug-mode))
                ((> (prefix-numeric-value arg) 0)))))
@@ -77,7 +78,7 @@ ready to be pasted in a bug report on github."
          (features ,@system-configuration-features)
          (build . ,(format-time-string "%b %d, %Y" emacs-build-time))
          (buildopts ,system-configuration-options)
-         (windowsys . ,(if noninteractive 'batch window-system))
+         (windowsys . ,(if doom-interactive-p window-system 'batch))
          (daemonp . ,(cond ((daemonp) 'daemon)
                            ((and (require 'server)
                                  (server-running-p))
@@ -171,10 +172,10 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
   (let ((buffer (get-buffer-create "*doom-info*"))
         (info (doom-info)))
     (with-current-buffer buffer
-      (unless (or noninteractive
-                  (eq major-mode 'markdown-mode)
-                  (not (fboundp 'markdown-mode)))
-        (markdown-mode))
+      (or (not doom-interactive-p)
+          (eq major-mode 'markdown-mode)
+          (not (fboundp 'markdown-mode))
+          (markdown-mode))
       (erase-buffer)
       (if raw
           (progn
@@ -198,7 +199,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
             (insert! (indent 8 "%-10s %s\n")
                      ((car spec) (cdr spec)))))
         (insert "```\n</details>"))
-      (if noninteractive
+      (if (not doom-interactive-p)
           (print! (buffer-string))
         (switch-to-buffer buffer)
         (kill-new (buffer-string))

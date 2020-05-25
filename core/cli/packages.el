@@ -106,7 +106,7 @@ list remains lean."
           nil (mapcar (doom-rpartial #'gethash straight--repo-cache)
                       (mapcar #'symbol-name straight-recipe-repositories)))
          (recipe package type local-repo)
-       (let ((esc (unless doom-debug-mode "\033[1A"))
+       (let ((esc (unless doom-debug-p "\033[1A"))
              (ref (straight-vc-get-commit type local-repo))
              newref output)
          (print! (start "\033[KUpdating recipes for %s...%s") package esc)
@@ -207,7 +207,7 @@ declaration) or dependency thereof that hasn't already been."
          (packages-to-rebuild (make-hash-table :test 'equal))
          (repos-to-rebuild (make-hash-table :test 'equal))
          (total (length recipes))
-         (esc (unless doom-debug-mode "\033[1A"))
+         (esc (unless doom-debug-p "\033[1A"))
          (i 0)
          errors)
     (when recipes

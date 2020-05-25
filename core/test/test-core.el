@@ -2,9 +2,9 @@
 ;;; core/test/test-core.el
 
 (describe "core"
-  :var (doom-interactive-mode)
+  :var (doom-interactive-p)
   (before-each
-    (setq doom-interactive-mode nil))
+    (setq doom-interactive-p nil))
 
   (describe "initialization"
     (describe "doom-initialize"
@@ -33,7 +33,7 @@
           (expect 'doom-initialize-packages :to-have-been-called))
 
         (it "doesn't initialize packages if core autoload file was loaded"
-          (let ((doom-interactive-mode t))
+          (let ((doom-interactive-p t))
             (spy-on 'doom-load-autoloads-file :and-return-value t)
             (doom-initialize nil 'noerror)
             (expect 'doom-load-autoloads-file :to-have-been-called-with doom-package-autoload-file)

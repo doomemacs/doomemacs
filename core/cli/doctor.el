@@ -79,7 +79,7 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-       (let ((doom-interactive-mode 'doctor))
+       (let ((doom-interactive-p 'doctor))
          (doom-initialize 'force)
          (doom-initialize-modules))
 

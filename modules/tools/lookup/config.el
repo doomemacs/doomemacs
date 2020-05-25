@@ -181,7 +181,7 @@ Dictionary.app behind the scenes to get definitions.")
   :init
   (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend-fn)
   :config
-  (setq dash-docs-enable-debugging doom-debug-mode
+  (setq dash-docs-enable-debugging doom-debug-p
         dash-docs-docsets-path (concat doom-etc-dir "docsets/")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)

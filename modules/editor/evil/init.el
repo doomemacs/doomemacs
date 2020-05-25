@@ -19,7 +19,7 @@
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
-(when (and doom-interactive-mode
+(when (and doom-interactive-p
            (not doom-reloading-p)
            (featurep! +everywhere))
 

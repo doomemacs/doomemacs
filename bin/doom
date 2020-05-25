@@ -31,7 +31,7 @@
 
   (defcli! :main
       ((help-p   ["-h" "--help"]    "Same as help command")
-       (debug-p  ["-d" "--debug"]   "Turns on doom-debug-mode (and debug-on-error)")
+       (debug-p  ["-d" "--debug"]   "Turns on doom-debug-p (and debug-on-error)")
        (yes-p    ["-y" "--yes"]     "Auto-accept all confirmation prompts")
        (emacsdir ["--emacsdir" dir] "Use the emacs config at DIR (e.g. ~/.emacs.d)")
        (doomdir  ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
@@ -55,7 +55,7 @@ with a different private module."
       (print! (info "DOOMLOCALDIR=%s") localdir))
     (when debug-p
       (setenv "DEBUG" "1")
-      (setq doom-debug-mode t)
+      (setq doom-debug-p t)
       (print! (info "Debug mode on")))
     (when yes-p
       (setenv "YES" "1")

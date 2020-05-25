@@ -258,10 +258,10 @@ This value is cached. If REFRESH-P, then don't use the cached value."
 (eval-and-compile
   (autoload 'use-package "use-package-core" nil nil t)
 
-  (setq use-package-compute-statistics doom-debug-mode
-        use-package-verbose doom-debug-mode
-        use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
-        use-package-expand-minimally doom-interactive-mode))
+  (setq use-package-compute-statistics doom-debug-p
+        use-package-verbose doom-debug-p
+        use-package-minimum-reported-time (if doom-debug-p 0 0.1)
+        use-package-expand-minimally doom-interactive-p))
 
 (defvar doom--deferred-packages-alist '(t))
 

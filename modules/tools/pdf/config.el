@@ -65,7 +65,7 @@
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
   ;; Install epdfinfo binary if needed, blocking until it is finished
-  (when doom-interactive-mode
+  (when doom-interactive-p
     (require 'pdf-tools)
     (unless (file-executable-p pdf-info-epdfinfo-program)
       (let ((wconf (current-window-configuration)))

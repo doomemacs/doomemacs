@@ -66,10 +66,10 @@ list is returned as-is."
   (substring (symbol-name keyword) 1))
 
 (defmacro doom-log (format-string &rest args)
-  "Log to *Messages* if `doom-debug-mode' is on.
+  "Log to *Messages* if `doom-debug-p' is on.
 Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
 Accepts the same arguments as `message'."
-  `(when doom-debug-mode
+  `(when doom-debug-p
      (let ((inhibit-message (active-minibuffer-window)))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
@@ -231,9 +231,9 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
 
 This silences calls to `message', `load', `write-region' and anything that
 writes to `standard-output'."
-  `(if doom-debug-mode
+  `(if doom-debug-p
        (progn ,@forms)
-     ,(if doom-interactive-mode
+     ,(if doom-interactive-p
           `(let ((inhibit-message t)
                  (save-silently t))
              (prog1 ,@forms (message "")))

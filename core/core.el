@@ -63,13 +63,13 @@
 (defvar doom-init-time nil
   "The time it took, in seconds, for Doom Emacs to initialize.")
 
-(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
+(defvar doom-debug-p (or (getenv "DEBUG") init-file-debug)
   "If non-nil, Doom will log more.
 
 Use `doom/toggle-debug-mode' to toggle it. The --debug-init flag and setting the
 DEBUG envvar will enable this at startup.")
 
-(defvar doom-interactive-mode (not noninteractive)
+(defvar doom-interactive-p (not noninteractive)
   "If non-nil, Emacs is in interactive mode.")
 
 ;;; Directories/files
@@ -157,8 +157,8 @@ users).")
 (setq message-log-max 8192)
 
 ;; Reduce debug output, well, unless we've asked for it.
-(setq debug-on-error doom-debug-mode
-      jka-compr-verbose doom-debug-mode)
+(setq debug-on-error doom-debug-p
+      jka-compr-verbose doom-debug-p)
 
 ;; Contrary to what many Emacs users have in their configs, you really don't
 ;; need more than this to make UTF-8 the default coding system:
@@ -313,7 +313,7 @@ users).")
 ;; collect; staving off the collector while the user is working.
 (setq gcmh-idle-delay 5
       gcmh-high-cons-threshold (* 16 1024 1024)  ; 16mb
-      gcmh-verbose doom-debug-mode)
+      gcmh-verbose doom-debug-p)
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
@@ -534,6 +534,7 @@ to least)."
       (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook))
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
+    (if doom-debug-p (doom-debug-mode +1))
 
     ;; Load core/core-*.el, the user's private init.el and their config.el
     (doom-initialize-modules force-p))

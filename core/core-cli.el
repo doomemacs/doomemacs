@@ -257,7 +257,7 @@ original state.")
 (defadvice! doom--straight-fallback-to-y-or-n-prompt-a (orig-fn &optional prompt)
   :around #'straight-are-you-sure
   (or doom-auto-accept
-      (if doom-interactive-mode
+      (if doom-interactive-p
           (funcall orig-fn prompt)
         (y-or-n-p (format! "%s" (or prompt ""))))))
 
@@ -269,7 +269,7 @@ original state.")
 (defadvice! doom--straight-fallback-to-tty-prompt-a (orig-fn prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
   :around #'straight--popup-raw
-  (if doom-interactive-mode
+  (if doom-interactive-p
       (funcall orig-fn prompt actions)
     (let ((doom--straight-discard-options doom--straight-discard-options))
       ;; We can't intercept C-g, so no point displaying any options for this key

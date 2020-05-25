@@ -91,10 +91,10 @@ one wants that.")
 
 (defun doom-cli--byte-compile-file (file)
   (condition-case-unless-debug e
-      (let ((byte-compile-warnings (if doom-debug-mode byte-compile-warnings))
+      (let ((byte-compile-warnings (if doom-debug-p byte-compile-warnings))
             (byte-compile-dynamic-docstrings t))
         (when (byte-compile-file file)
-          (unless doom-interactive-mode
+          (unless doom-interactive-p
             (add-hook 'doom-cli-post-success-execute-hook #'doom-cli--warn-refresh-session-h))
           (load (byte-compile-dest-file file) nil t)))
     (error

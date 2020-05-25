@@ -95,7 +95,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                   "Generating")
                 (path env-file))
         (print-group!
-         (when doom-interactive-mode
+         (when doom-interactive-p
            (user-error "'doom env' must be run on the command line, not an interactive session"))
          (goto-char (point-min))
          (insert
