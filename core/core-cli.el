@@ -375,11 +375,13 @@ stale."
    (when (and (not inhibit-envvar-p)
               (file-exists-p doom-env-file))
      (doom-cli-reload-env-file 'force))
+   (run-hooks 'doom-sync-pre-hook)
    (doom-cli-packages-install)
    (doom-cli-packages-build)
    (when update-p
      (doom-cli-packages-update))
    (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
+   (run-hooks 'doom-sync-post-hook)
    (doom-autoloads-reload)
    t))
 
