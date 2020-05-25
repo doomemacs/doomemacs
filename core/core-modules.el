@@ -454,7 +454,7 @@ to least)."
                     (if-let (path (doom-module-locate-path category module))
                         (doom-module-set category module :flags flags :path path)
                       (message "WARNING Couldn't find the %s %s module" category module)))))))
-       (unless doom-interactive-mode
+       (unless doom-interactive-p
          (setq doom-inhibit-module-warnings t))
        doom-modules)))
 
