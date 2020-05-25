@@ -94,6 +94,7 @@
   :defer t
   :init
   (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
+  (setq rake-completion-system 'default)
   (map! :after ruby-mode
         :localleader
         :map ruby-mode-map 
