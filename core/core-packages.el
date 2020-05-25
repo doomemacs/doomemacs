@@ -345,12 +345,12 @@ was installed with."
 
 If ALL-P, gather packages unconditionally across all modules, including disabled
 ones."
-  (let ((doom-interactive-mode t)
+  (let ((packages-file (concat doom-packages-file ".el"))
         doom-packages)
     (doom--read-packages
-     (doom-path doom-core-dir "packages.el") all-p 'noerror)
+     (doom-path doom-core-dir packages-file) all-p 'noerror)
     (unless core-only-p
-      (let ((private-packages (doom-path doom-private-dir "packages.el"))
+      (let ((private-packages (doom-path doom-private-dir packages-file))
             (doom-modules (doom-module-list)))
         (if all-p
             (mapc #'doom--read-packages
@@ -362,7 +362,7 @@ ones."
           ;; packages are properly overwritten.
           (doom--read-packages private-packages nil 'noerror)
           (cl-loop for key being the hash-keys of doom-modules
-                   for path = (doom-module-path (car key) (cdr key) "packages.el")
+                   for path = (doom-module-path (car key) (cdr key) packages-file)
                    for doom--current-module = key
                    do (doom--read-packages path nil 'noerror)))
         (doom--read-packages private-packages all-p 'noerror)))
