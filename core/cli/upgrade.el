@@ -21,7 +21,7 @@ following shell commands:
                 (doom-cli-upgrade doom-auto-accept doom-auto-discard))
               (doom-cli-execute "sync")
               (when (doom-cli-packages-update)
-                (doom-cli-reload-package-autoloads)
+                (doom-autoloads-reload)
                 t)))
         (print! (success "Done! Restart Emacs for changes to take effect."))
       (print! "Nothing to do. Doom is up-to-date!"))))

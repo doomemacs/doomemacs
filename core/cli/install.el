@@ -83,7 +83,7 @@ DOOMDIR environment variable. e.g.
       (doom-cli-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-cli-reload-autoloads)
+    (doom-autoloads-reload)
 
     (cond (nofonts-p)
           (IS-WINDOWS

@@ -371,16 +371,16 @@ installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
   (print! (start "Synchronizing your config with Doom Emacs..."))
   (print-group!
-   (and (not inhibit-envvar-p)
-        (file-exists-p doom-env-file)
-        (doom-cli-reload-env-file 'force))
-   (doom-cli-reload-core-autoloads)
+   (delete-file doom-autoload-file)
+   (when (and (not inhibit-envvar-p)
+              (file-exists-p doom-env-file))
+     (doom-cli-reload-env-file 'force))
    (doom-cli-packages-install)
    (doom-cli-packages-build)
    (when update-p
      (doom-cli-packages-update))
    (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
-   (doom-cli-reload-package-autoloads)
+   (doom-autoloads-reload)
    t))
 
 (load! "cli/env")

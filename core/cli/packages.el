@@ -12,9 +12,8 @@ This excludes packages whose `package!' declaration contains a non-nil :freeze
 or :ignore property."
   (straight-check-all)
   (let ((doom-auto-discard discard-p))
-    (doom-cli-reload-core-autoloads)
     (when (doom-cli-packages-update)
-      (doom-cli-reload-package-autoloads))
+      (doom-autoloads-reload))
     t))
 
 (defcli! (build b)
@@ -25,7 +24,7 @@ This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled. This is especially necessary if you upgrade
 Emacs (as byte-code is generally not forward-compatible)."
   (when (doom-cli-packages-build (not rebuild-p))
-    (doom-cli-reload-package-autoloads))
+    (doom-autoloads-reload))
   t)
 
 (defcli! (purge p)
@@ -48,7 +47,7 @@ list remains lean."
          (not norepos-p)
          (not nobuilds-p)
          regraft-p)
-    (doom-cli-reload-package-autoloads))
+    (doom-autoloads-reload))
   t)
 
 ;; (defcli! rollback () ; TODO doom rollback

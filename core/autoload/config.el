@@ -111,7 +111,7 @@ line."
   (require 'core-cli)
   (require 'core-packages)
   (doom-initialize-packages)
-  (doom-cli-reload-autoloads))
+  (doom-autoloads-reload))
 
 ;;;###autoload
 (defun doom/reload-env (&optional arg)

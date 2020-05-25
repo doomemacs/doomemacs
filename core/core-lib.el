@@ -93,20 +93,6 @@ Meant to be used with `run-hook-wrapped'."
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 
-(defun doom-load-autoloads-file (file &optional noerror)
-  "Tries to load FILE (an autoloads file).
-Return t on success, nil otherwise (but logs a warning)."
-  (condition-case e
-      ;; Avoid `file-name-sans-extension' for premature optimization reasons.
-      ;; `string-remove-suffix' is much cheaper (because it does no file sanity
-      ;; checks during or after; just plain ol' string manipulation).
-      (load (string-remove-suffix ".el" file) noerror 'nomessage)
-    (doom-error
-     (signal (car e) (cdr e)))
-    ((debug error)
-     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
-     nil)))
-
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE.
 If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
