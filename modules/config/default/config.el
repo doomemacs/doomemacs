@@ -111,6 +111,9 @@
                    :pre-handlers '(:rem sp-ruby-pre-handler)
                    :post-handlers '(:rem sp-ruby-post-handler))
 
+    ;; Don't eagerly escape Swift style string interpolation
+    (sp-local-pair 'swift-mode "\\(" ")" :when '(sp-in-string-p))
+
     ;; Don't do square-bracket space-expansion where it doesn't make sense to
     (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
                    "[" nil :post-handlers '(:rem ("| " "SPC")))
