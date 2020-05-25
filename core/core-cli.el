@@ -351,7 +351,12 @@ everywhere we use it (and internally)."
 (load! "cli/help")
 (load! "cli/install")
 
-(defcli! (sync s refresh re)
+(defcli! (refresh re) ()
+  "Deprecated for 'doom sync'"
+  :hidden t
+  (user-error "'doom refresh' has been replaced with 'doom sync'. Use that instead"))
+
+(defcli! (sync s)
     ((inhibit-envvar-p ["-e"] "Don't regenerate the envvar file")
      (inhibit-elc-p    ["-c"] "Don't recompile config")
      (update-p         ["-u"] "...")
