@@ -118,14 +118,8 @@ uses a straight or package.el command directly).")
                             (or (plist-get recipe :repo) "raxod502/straight.el")))
           (branch (or (plist-get recipe :branch) straight-repository-branch))
           (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
-      (if (not (file-directory-p repo-dir))
-          (message "Installing straight...")
-        ;; TODO Rethink this clumsy workaround
-        (let ((default-directory repo-dir))
-          (unless (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) pin)
-            (delete-directory repo-dir 'recursive)
-            (message "Updating straight..."))))
       (unless (file-directory-p repo-dir)
+        (message "Installing straight...")
         (cond
          ((eq straight-vc-git-default-clone-depth 'full)
           (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
@@ -405,11 +399,10 @@ ones."
   "Return straight recipes for non-builtin packages with a local-repo."
   (let (recipes)
     (dolist (recipe (hash-table-values straight--recipe-cache))
-      (cl-destructuring-bind (&key local-repo type no-build &allow-other-keys)
+      (cl-destructuring-bind (&key local-repo type &allow-other-keys)
           recipe
         (unless (or (null local-repo)
-                    (eq type 'built-in)
-                    no-build)
+                    (eq type 'built-in))
           (push recipe recipes))))
     (nreverse recipes)))
 
