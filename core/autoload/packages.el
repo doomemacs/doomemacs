@@ -37,8 +37,11 @@
       (when (eq (car-safe (sexp-at-point)) 'package!)
         (cl-destructuring-bind (beg . end)
             (bounds-of-thing-at-point 'sexp)
-          (let ((package (let (doom-packages)
-                           (eval (sexp-at-point) t))))
+          (let* ((doom-packages nil)
+                 (buffer-file-name
+                  (or buffer-file-name
+                      (bound-and-true-p org-src-source-file-name)))
+                 (package (eval (sexp-at-point) t)))
             (list :beg beg
                   :end end
                   :package (car package)
