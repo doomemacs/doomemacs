@@ -1,6 +1,11 @@
 ;;; config/literate/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(after! org
+  ;; Recompile our literate config if we modify it
+  (add-hook 'after-save-hook #'+literate-recompile-maybe-h))
+
+;;;###autoload
 (defalias '+literate/reload #'doom/reload)
 
 ;;;###autoload
