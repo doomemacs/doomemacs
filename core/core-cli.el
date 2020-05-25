@@ -30,6 +30,13 @@ commands like `doom-cli-packages-install', `doom-cli-packages-update' and
 (defvar doom-auto-discard (getenv "FORCE")
   "If non-nil, discard all local changes while updating.")
 
+(defvar doom-cli-file "cli"
+  "The basename of CLI config files for modules.
+
+These are loaded when a Doom's CLI starts up. There users and modules can define
+additional CLI commands, or reconfigure existing ones to better suit their
+purpose.")
+
 (defvar doom--cli-commands (make-hash-table :test 'equal))
 (defvar doom--cli-groups (make-hash-table :test 'equal))
 (defvar doom--cli-group nil)
@@ -410,15 +417,6 @@ All arguments are passed on to Emacs.
 WARNING: this command exists for convenience and testing. Doom will suffer
 additional overhead by being started this way. For the best performance, it is
 best to run Doom out of ~/.emacs.d and ~/.doom.d."))
-
-
-;;
-;;; Load user config
-
-(condition-case-unless-debug e
-    (load! "init" doom-private-dir t)
-  (error
-   (signal 'doom-private-error (list "init.el" e))))
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

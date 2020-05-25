@@ -78,12 +78,21 @@ with a different private module."
     (when (or emacsdir doomdir localdir)
       (load! "core/core.el" user-emacs-directory))
 
+    ;; Load any the user's private init.el or any cli.el files in modules. This
+    ;; gives the user (and modules) an opportunity to define their own CLI
+    ;; commands, or to customize the CLI to better suit them.
+    (load! doom-module-init-file doom-private-dir t)
+    (maphash (doom-module-loader doom-cli-file) doom-modules)
+    (load! doom-cli-file doom-private-dir t)
+    (run-hooks 'doom-cli-pre-hook)
+
     (let (print-level print-gensym print-length)
       (condition-case e
           (if (null command)
               (doom-cli-execute "help")
             (let ((start-time (current-time)))
               (and (doom-cli-execute command args)
+                   (progn (run-hooks 'doom-cli-post-hook) t)
                    (print! (success "Finished! (%.4fs)")
                            (float-time
                             (time-subtract (current-time)

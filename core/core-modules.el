@@ -11,6 +11,19 @@
         doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
+(defvar doom-module-init-file "init"
+  "The basename of init files for modules.
+
+Init files are loaded early, just after Doom core, and before modules' config
+files. They are always loaded, even in non-interactive sessions, and before
+`doom-before-init-modules-hook'. Related to `doom-module-config-file'.")
+
+(defvar doom-module-config-file "config"
+  "The basename of config files for modules.
+
+Config files are loaded later, and almost always in interactive sessions. These
+run before `doom-init-modules-hook'. Relevant to `doom-module-init-file'.")
+
 (defconst doom-obsolete-modules
   '((:feature (version-control (:emacs vc) (:ui vc-gutter))
               (spellcheck (:checkers spell))
@@ -78,31 +91,31 @@ before the user's private module.")
   (require 'core-projects)
   (require 'core-editor))
 
-(defun doom-initialize-modules (&optional force-p)
+(defun doom-module-loader (file)
+  "Return a closure that loads FILE from a module.
+
+This closure takes two arguments: a cons cell containing (CATEGORY . MODULE)
+symbols, and that module's plist."
+  (declare (pure t) (side-effect-free t))
+  (lambda (module plist)
+    (let ((doom--current-module module)
+          (doom--current-flags (plist-get plist :flags)))
+      (load! file (plist-get plist :path) t))))
+
+(defun doom-initialize-modules (&optional force-p no-config-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not doom-init-modules-p))
-    (setq doom-init-modules-p t
-          doom-modules nil)
-    (with-temp-buffer
-      (doom-log "Initializing core modules")
-      (doom-initialize-core-modules)
-      (when-let (init-p (load! "init" doom-private-dir t))
-        (doom-log "Initializing user config")
-        (when doom-modules
-          (maphash (lambda (key plist)
-                     (let ((doom--current-module key)
-                           (doom--current-flags (plist-get plist :flags)))
-                       (load! "init" (plist-get plist :path) t)))
-                   doom-modules))
-        (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
-        (when doom-modules
-          (maphash (lambda (key plist)
-                     (let ((doom--current-module key)
-                           (doom--current-flags (plist-get plist :flags)))
-                       (load! "config" (plist-get plist :path) t)))
-                   doom-modules))
+    (setq doom-init-modules-p t)
+    (doom-log "Initializing core modules")
+    (doom-initialize-core-modules)
+    (when-let (init-p (load! "init" doom-private-dir t))
+      (doom-log "Initializing user config")
+      (maphash (doom-module-loader doom-module-init-file) doom-modules)
+      (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
+      (unless no-config-p
+        (maphash (doom-module-loader doom-module-config-file) doom-modules)
         (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
         (load! "config" doom-private-dir t)
         (load custom-file 'noerror (not doom-debug-mode))))))
