@@ -3,7 +3,7 @@
 
 (use-package! org-journal
   :defer t
-  :preface
+  :init
   ;; HACK `org-journal' adds a `magic-mode-alist' entry for detecting journal
   ;;      files, but this causes us lazy loaders a big problem: an unacceptable
   ;;      delay on the first file the user opens, because calling the autoloaded
@@ -29,19 +29,19 @@
     (let ((buffer-file-name (file-truename buffer-file-name)))
       (funcall orig-fn)))
 
-  :init
-  ;; HACK `org-journal-dir' is surrounded with setters and `auto-mode-alist'
-  ;;      magic which makes it difficult to create an better default for Doom
-  ;;      users. We set this here so we can detect user-changes to it later.
+  ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
+  ;; default, so we change it to {org-directory}/journal (we expand it after
+  ;; org-journal is loaded).
   (setq org-journal-dir "journal/"
-        org-journal-cache-file (concat doom-cache-dir "org-journal")
+        org-journal-cache-file (concat doom-cache-dir "org-journal"))
+
+  :config
+  ;; `org-journal' can't deal with symlinks, so resolve them here.
+  (setq org-journal-dir (file-truename (expand-file-name org-journal-dir org-directory))
         ;; Doom opts for an "open in a popup or here" strategy as a default.
         ;; Open in "other window" is less predictable, and can replace a window
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
-
-  :config
-  (setq org-journal-dir (file-truename (expand-file-name org-journal-dir org-directory)))
 
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
