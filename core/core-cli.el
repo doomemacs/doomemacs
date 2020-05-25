@@ -359,8 +359,8 @@ everywhere we use it (and internally)."
 (defcli! (sync s)
     ((inhibit-envvar-p ["-e"] "Don't regenerate the envvar file")
      (inhibit-elc-p    ["-c"] "Don't recompile config")
-     (update-p         ["-u"] "...")
-     (prune-p          ["-p" "--prune"] "Purge orphaned packages & regraft repos"))
+     (update-p         ["-u"] "Update installed packages after syncing")
+     (prune-p          ["-p" "--prune"] "Purge orphaned package repos & regraft them"))
   "Synchronize your config with Doom Emacs.
 
 This is the equivalent of running autoremove, install, autoloads, then
