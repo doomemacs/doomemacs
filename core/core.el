@@ -308,12 +308,8 @@ users).")
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
 (setq gcmh-idle-delay 5
-      gcmh-high-cons-threshold 16777216  ; 16mb
-      gcmh-verbose doom-debug-mode
-      gc-cons-percentage 0.6)
-(with-eval-after-load 'gcmh
-  ;; But restore this later, otherwise we risk freezing and stuttering!
-  (setq gc-cons-percentage 0.1))
+      gcmh-high-cons-threshold (* 16 1024 1024)  ; 16mb
+      gcmh-verbose doom-debug-mode)
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
