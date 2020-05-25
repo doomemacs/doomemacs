@@ -122,8 +122,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
   + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
 + =+roam=
-  + [[https://github.com/jethrokuan/org-roam][org-roam]]
-  + [[https://github.com/jethrokuan/company-org-roam][company-org-roam]]
+  + [[https://github.com/org-roam/org-roam][org-roam]]
+  + [[https://github.com/org-roam/company-org-roam][company-org-roam]]
 + =+noter=
   + [[https://github.com/weirdNox/org-noter][org-noter]]
 
