@@ -22,50 +22,6 @@ to a pop up buffer."
       (error (error-message-string e))))
    (current-buffer)))
 
-(defvar +emacs-lisp--face nil)
-;;;###autoload
-(defun +emacs-lisp-highlight-vars-and-faces (end)
-  "Match defined variables and functions.
-
-Functions are differentiated into special forms, built-in functions and
-library/userland functions"
-  (catch 'matcher
-    (while (re-search-forward "\\(?:\\sw\\|\\s_\\)+" end t)
-      (let ((ppss (save-excursion (syntax-ppss))))
-        (cond ((nth 3 ppss)  ; strings
-               (search-forward "\"" end t))
-              ((nth 4 ppss)  ; comments
-               (forward-line +1))
-              ((let ((symbol (intern-soft (match-string-no-properties 0))))
-                 (and (cond ((null symbol) nil)
-                            ((eq symbol t) nil)
-                            ((special-variable-p symbol)
-                             (setq +emacs-lisp--face 'font-lock-variable-name-face))
-                            ((and (fboundp symbol)
-                                  (eq (char-before (match-beginning 0)) ?\()
-                                  (not (memq (char-before (1- (match-beginning 0)))
-                                             (list ?\' ?\`))))
-                             (let ((unaliased (indirect-function symbol)))
-                               (unless (or (macrop unaliased)
-                                           (special-form-p unaliased))
-                                 (let (unadvised)
-                                   (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
-                                                   (setq unaliased (indirect-function unadvised)))))
-                                   unaliased)
-                                 (setq +emacs-lisp--face
-                                       (if (subrp unaliased)
-                                           'font-lock-constant-face
-                                         'font-lock-function-name-face))))))
-                      (throw 'matcher t)))))))
-    nil))
-
-;; `+emacs-lisp-highlight-vars-and-faces' is a potentially expensive function
-;; and should be byte-compiled, no matter what, to ensure it runs as fast as
-;; possible:
-(unless (byte-code-function-p (symbol-function '+emacs-lisp-highlight-vars-and-faces))
-  (with-no-warnings
-    (byte-compile #'+emacs-lisp-highlight-vars-and-faces)))
-
 
 ;;
 ;;; Handlers
@@ -230,6 +186,14 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 ;;
 ;;; Hooks
 
+(autoload 'straight-register-file-modification "straight")
+;;;###autoload
+(defun +emacs-lisp-init-straight-maybe-h ()
+  "Make sure straight sees modifications to installed packages."
+  (when (file-in-directory-p (or buffer-file-name default-directory) doom-local-dir)
+    (add-hook 'after-save-hook #'straight-register-file-modification
+              nil 'local)))
+
 ;;;###autoload
 (defun +emacs-lisp-extend-imenu-h ()
   "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
@@ -277,6 +241,10 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                  (default-value 'flycheck-emacs-lisp-check-form)
                  ")"))))
 
+
+;;
+;;; Fontification
+
 ;;;###autoload
 (defun +emacs-lisp-truncate-pin ()
   "Truncates long SHA1 hashes in `package!' :pin's."
@@ -290,3 +258,47 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
            (when (and start finish)
              (put-text-property start finish 'display "...")))))
   nil)
+
+(defvar +emacs-lisp--face nil)
+;;;###autoload
+(defun +emacs-lisp-highlight-vars-and-faces (end)
+  "Match defined variables and functions.
+
+Functions are differentiated into special forms, built-in functions and
+library/userland functions"
+  (catch 'matcher
+    (while (re-search-forward "\\(?:\\sw\\|\\s_\\)+" end t)
+      (let ((ppss (save-excursion (syntax-ppss))))
+        (cond ((nth 3 ppss)  ; strings
+               (search-forward "\"" end t))
+              ((nth 4 ppss)  ; comments
+               (forward-line +1))
+              ((let ((symbol (intern-soft (match-string-no-properties 0))))
+                 (and (cond ((null symbol) nil)
+                            ((eq symbol t) nil)
+                            ((special-variable-p symbol)
+                             (setq +emacs-lisp--face 'font-lock-variable-name-face))
+                            ((and (fboundp symbol)
+                                  (eq (char-before (match-beginning 0)) ?\()
+                                  (not (memq (char-before (1- (match-beginning 0)))
+                                             (list ?\' ?\`))))
+                             (let ((unaliased (indirect-function symbol)))
+                               (unless (or (macrop unaliased)
+                                           (special-form-p unaliased))
+                                 (let (unadvised)
+                                   (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
+                                                   (setq unaliased (indirect-function unadvised)))))
+                                   unaliased)
+                                 (setq +emacs-lisp--face
+                                       (if (subrp unaliased)
+                                           'font-lock-constant-face
+                                         'font-lock-function-name-face))))))
+                      (throw 'matcher t)))))))
+    nil))
+
+;; HACK Fontification is already expensive enough. We byte-compile
+;;      `+emacs-lisp-highlight-vars-and-faces' and `+emacs-lisp-truncate-pin' to
+;;      ensure they run as fast as possible:
+(dolist (fn '(+emacs-lisp-highlight-vars-and-faces +emacs-lisp-truncate-pin))
+  (unless (byte-code-function-p (symbol-function fn))
+    (with-no-warnings (byte-compile fn))))
