@@ -1,6 +1,6 @@
-;;; core/autoload/format.el -*- lexical-binding: t; -*-
+;;; core/autoload/output.el -*- lexical-binding: t; -*-
 
-(defvar doom-format-ansi-alist
+(defvar doom-output-ansi-alist
   '(;; fx
     (bold       1 :weight bold)
     (dark       2)
@@ -34,27 +34,27 @@
 This serves as the cipher for converting (COLOR ...) function calls in `print!'
 and `format!' into colored output, where COLOR is any car of this list.")
 
-(defvar doom-format-class-alist
-  `((color . doom--format-color)
-    (class . doom--format-class)
-    (indent . doom--format-indent)
-    (autofill . doom--format-autofill)
+(defvar doom-output-class-alist
+  `((color . doom--output-color)
+    (class . doom--output-class)
+    (indent . doom--output-indent)
+    (autofill . doom--output-autofill)
 
     (success . (lambda (str &rest args)
-                 (apply #'doom--format-color 'green (format "✓ %s" str) args)))
+                 (apply #'doom--output-color 'green (format "✓ %s" str) args)))
     (warn    . (lambda (str &rest args)
-                 (apply #'doom--format-color 'yellow (format "! %s" str) args)))
+                 (apply #'doom--output-color 'yellow (format "! %s" str) args)))
     (error   . (lambda (str &rest args)
-                 (apply #'doom--format-color 'red (format "x %s" str) args)))
+                 (apply #'doom--output-color 'red (format "x %s" str) args)))
     (info    . (lambda (str &rest args)
                  (concat "- " (if args (apply #'format str args) str))))
     (start    . (lambda (str &rest args)
                   (concat "> " (if args (apply #'format str args) str))))
     (debug   . (lambda (str &rest args)
-                 (if doom-debug-mode
-                     (if args
-                         (apply #'format str args)
-                       (format "%s" str))
+                 (if doom-debug-p
+                     (apply #'doom--output-color 'dark
+                            (format "- %s" str)
+                            args)
                    "")))
     (path    . abbreviate-file-name)
     (symbol . symbol-name)
@@ -78,14 +78,14 @@ and `format!' into colored output, where COLOR is any car of this list.")
 Any of these classes can be called like functions from within `format!' and
 `print!' calls, which will transform their input.")
 
-(defvar doom-format-indent 0
+(defvar doom-output-indent 0
   "Level to rigidly indent text returned by `format!' and `print!'.")
 
-(defvar doom-format-indent-increment 2
-  "Steps in which to increment `doom-format-indent' for consecutive levels.")
+(defvar doom-output-indent-increment 2
+  "Steps in which to increment `doom-output-indent' for consecutive levels.")
 
-(defvar doom-format-backend
-  (if noninteractive 'ansi 'text-properties)
+(defvar doom-output-backend
+  (if doom-interactive-p 'text-properties 'ansi)
   "Determines whether to print colors with ANSI codes or with text properties.
 
 Accepts 'ansi and 'text-properties. nil means don't render colors.")
@@ -98,21 +98,20 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 (defun doom--format (output)
   (if (string-empty-p (string-trim output))
       ""
-    (concat (make-string doom-format-indent 32)
+    (concat (make-string doom-output-indent 32)
             (replace-regexp-in-string
-             "\n" (concat "\n" (make-string doom-format-indent 32))
+             "\n" (concat "\n" (make-string doom-output-indent 32))
              output t t))))
 
 ;;;###autoload
-(defun doom--format-print (output)
+(defun doom--print (output)
   (unless (string-empty-p output)
     (princ output)
-    (when (or noninteractive (not (eq standard-output t)))
-      (terpri)) ; newline
+    (terpri)
     t))
 
 ;;;###autoload
-(defun doom--format-indent (width text &optional prefix)
+(defun doom--output-indent (width text &optional prefix)
   "Indent TEXT by WIDTH spaces. If ARGS, format TEXT with them."
   (with-temp-buffer
     (setq text (format "%s" text))
@@ -127,7 +126,7 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
     (buffer-string)))
 
 ;;;###autoload
-(defun doom--format-autofill (&rest msgs)
+(defun doom--output-autofill (&rest msgs)
   "Ensure MSG is split into lines no longer than `fill-column'."
   (with-temp-buffer
     (let ((fill-column 76))
@@ -138,19 +137,19 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
       (buffer-string))))
 
 ;;;###autoload
-(defun doom--format-color (style format &rest args)
+(defun doom--output-color (style format &rest args)
   "Apply STYLE to formatted MESSAGE with ARGS.
 
-STYLE is a symbol that correlates to `doom-format-ansi-alist'.
+STYLE is a symbol that correlates to `doom-output-ansi-alist'.
 
 In a noninteractive session, this wraps the result in ansi color codes.
 Otherwise, it maps colors to a term-color-* face."
-  (let* ((code (cadr (assq style doom-format-ansi-alist)))
+  (let* ((code (cadr (assq style doom-output-ansi-alist)))
          (format (format "%s" format))
          (message (if args (apply #'format format args) format)))
     (unless code
       (error "%S is an invalid color" style))
-    (pcase doom-format-backend
+    (pcase doom-output-backend
       (`ansi
        (format "\e[%dm%s\e[%dm" code message 0))
       (`text-properties
@@ -160,20 +159,20 @@ Otherwise, it maps colors to a term-color-* face."
         'face
         (append (get-text-property 0 'face format)
                 (cond ((>= code 40)
-                       `(:background ,(caddr (assq style doom-format-ansi-alist))))
+                       `(:background ,(caddr (assq style doom-output-ansi-alist))))
                       ((>= code 30)
-                       `(:foreground ,(face-foreground (caddr (assq style doom-format-ansi-alist)))))
-                      ((cddr (assq style doom-format-ansi-alist)))))))
+                       `(:foreground ,(face-foreground (caddr (assq style doom-output-ansi-alist)))))
+                      ((cddr (assq style doom-output-ansi-alist)))))))
       (_ message))))
 
 ;;;###autoload
-(defun doom--format-class (class format &rest args)
+(defun doom--output-class (class format &rest args)
   "Apply CLASS to formatted format with ARGS.
 
-CLASS is derived from `doom-format-class-alist', and can contain any arbitrary,
+CLASS is derived from `doom-output-class-alist', and can contain any arbitrary,
 transformative logic."
   (let (fn)
-    (cond ((setq fn (cdr (assq class doom-format-class-alist)))
+    (cond ((setq fn (cdr (assq class doom-output-class-alist)))
            (if (functionp fn)
                (apply fn format args)
              (error "%s does not have a function" class)))
@@ -181,20 +180,20 @@ transformative logic."
           (format))))
 
 ;;;###autoload
-(defun doom--format-apply (forms &optional sub)
-  "Replace color-name functions with calls to `doom--format-color'."
+(defun doom--output-apply (forms &optional sub)
+  "Replace color-name functions with calls to `doom--output-color'."
   (cond ((null forms) nil)
         ((listp forms)
          (append (cond ((not (symbolp (car forms)))
-                        (list (doom--format-apply (car forms))))
+                        (list (doom--output-apply (car forms))))
                        (sub
                         (list (car forms)))
-                       ((assq (car forms) doom-format-ansi-alist)
-                        `(doom--format-color ',(car forms)))
-                       ((assq (car forms) doom-format-class-alist)
-                        `(doom--format-class ',(car forms)))
+                       ((assq (car forms) doom-output-ansi-alist)
+                        `(doom--output-color ',(car forms)))
+                       ((assq (car forms) doom-output-class-alist)
+                        `(doom--output-class ',(car forms)))
                        ((list (car forms))))
-                 (doom--format-apply (cdr forms) t)
+                 (doom--output-apply (cdr forms) t)
                  nil))
         (forms)))
 
@@ -202,12 +201,12 @@ transformative logic."
 (defmacro format! (message &rest args)
   "An alternative to `format' that understands (color ...) and converts them
 into faces or ANSI codes depending on the type of sesssion we're in."
-  `(doom--format (format ,@(doom--format-apply `(,message ,@args)))))
+  `(doom--format (format ,@(doom--output-apply `(,message ,@args)))))
 
 ;;;###autoload
 (defmacro print-group! (&rest body)
   "Indents any `print!' or `format!' output within BODY."
-  `(let ((doom-format-indent (+ doom-format-indent-increment doom-format-indent)))
+  `(let ((doom-output-indent (+ doom-output-indent-increment doom-output-indent)))
      ,@body))
 
 ;;;###autoload
@@ -223,7 +222,7 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  `(doom--format-print (format! ,message ,@args)))
+  `(doom--print (format! ,message ,@args)))
 
 ;;;###autoload
 (defmacro insert! (message &rest args)
@@ -242,3 +241,11 @@ Uses faces in interactive sessions and ANSI codes otherwise."
 (defmacro user-error! (message &rest args)
   "Like `user-error', but with the power of `format!'."
   `(user-error (format! ,message ,@args)))
+
+;; ;;;###autoload
+;; (defmacro with-output-to-buffer! (dest &rest body)
+;;   "Send all output produced in BODY to DEST.
+;; DEST can be one or more of `standard-output', a buffer, a file
+
+
+;;   )

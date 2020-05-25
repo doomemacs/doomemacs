@@ -5,7 +5,7 @@
 (load! "autoload/process")
 (load! "autoload/plist")
 (load! "autoload/files")
-(load! "autoload/format")
+(load! "autoload/output")
 
 ;; Create all our core directories to quell file errors
 (mapc (doom-rpartial #'make-directory 'parents)
@@ -311,7 +311,7 @@ original state.")
            (terpri)
            (let* ((options
                    (cons (lambda ()
-                           (let ((doom-format-indent 0))
+                           (let ((doom-output-indent 0))
                              (terpri)
                              (print! (warn "Aborted")))
                            (kill-emacs 1))
@@ -329,7 +329,7 @@ original state.")
              (funcall (nth answer options)))))))))
 
 (defadvice! doom--straight-respect-print-indent-a (args)
-  "Indent straight progress messages to respect `doom-format-indent', so we
+  "Indent straight progress messages to respect `doom-output-indent', so we
 don't have to pass whitespace to `straight-use-package's fourth argument
 everywhere we use it (and internally)."
   :filter-args #'straight-use-package
@@ -338,9 +338,9 @@ everywhere we use it (and internally)."
       args
     (list melpa-style-recipe no-clone no-build
           (if (and (not cause)
-                   (boundp 'doom-format-indent)
-                   (> doom-format-indent 0))
-              (make-string (1- (or doom-format-indent 1)) 32)
+                   (boundp 'doom-output-indent)
+                   (> doom-output-indent 0))
+              (make-string (1- (or doom-output-indent 1)) 32)
             cause)
           interactive)))
 

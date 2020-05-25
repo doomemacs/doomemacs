@@ -165,7 +165,7 @@ in."
                         (condition-case-unless-debug ex
                             (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
                                   (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
-                              (cl-loop with doom-format-indent = 6
+                              (cl-loop with doom-output-indent = 6
                                        for name in (let (doom-packages
                                                          doom-disabled-packages)
                                                      (load packages-file 'noerror 'nomessage)
