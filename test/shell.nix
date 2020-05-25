@@ -1,5 +1,5 @@
-# Builds a sandbox for Doom Emacs with the latest stable Emacs (26.3). Use this
-# as a basis for module shell.nix's.
+# Builds a sandbox for Emacs (and optionally, Doom) with a particular version of
+# Emacs. Use this as a basis for module shell.nix's.
 #
 # Usage examples:
 #
@@ -10,24 +10,31 @@
 # With your own DOOMDIR:
 #
 #   nix-shell --argstr doomdir ~/.config/doom
+#
+# With a specific version of Emacs
+#
+#   nix-shell --arg emacs pkgs.emacs           # 26.3
+#   nix-shell --arg emacs pkgs.emacsUnstable   # 27.x
+#   nix-shell --arg emacs pkgs.emacs           # 28+
 
 { pkgs ? (import <nixpkgs> {})
 , emacs ? pkgs.emacs
 , emacsdir ? "$(pwd)/.."
 , doomdir ? "$(pwd)"
-, doomlocaldir ? "$(pwd)/.local.nix" }:
+, doomlocaldir ? "$(pwd)/.local" }:
 
 pkgs.stdenv.mkDerivation {
   name = "doom-emacs";
-  buildInputs = with pkgs; [
+  buildInputs = [
     emacs
-    git
-    (ripgrep.override {withPCRE2 = true;})
+    pkgs.git
+    (pkgs.ripgrep.override {withPCRE2 = true;})
   ];
   shellHook = ''
+    export EMACSVERSION="$(emacs --no-site-file --batch --eval '(princ emacs-version)')"
     export EMACSDIR="$(readlink -f "${emacsdir}")/"
     export DOOMDIR="$(readlink -f "${doomdir}")/"
-    export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}")/"
+    export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
     export PATH="$EMACSDIR/bin:$PATH"
     echo "EMACSDIR=$EMACSDIR"
     echo "DOOMDIR=$DOOMDIR"
