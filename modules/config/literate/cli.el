@@ -35,4 +35,4 @@ byte-compiled from.")
 
 
 ;; Let 'er rip
-(add-hook 'doom-cli-pre-hook #'+literate-tangle)
+(add-hook 'doom-cli-pre-hook #'+literate-tangle-h)

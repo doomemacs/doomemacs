@@ -16,4 +16,4 @@ We assume any org file in `doom-private-dir' is connected to your literate
 config, and should trigger a recompile if changed."
   (when (and (eq major-mode 'org-mode)
              (file-in-directory-p buffer-file-name doom-private-dir))
-    (+literate-tangle 'force)))
+    (+literate-tangle-h 'force)))
