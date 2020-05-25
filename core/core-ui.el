@@ -637,11 +637,11 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
   ;; DEPRECATED `doom--load-theme-a' handles this for us after the theme is
   ;;            loaded, but this only works on Emacs 27+. Disabling old themes
   ;;            must be done *before* the theme is loaded in Emacs 26.
-  (defadvice! doom--disable-previous-themes-a (theme &rest no-confirm no-enable)
+  (defadvice! doom--disable-previous-themes-a (theme &optional _no-confirm no-enable)
     "Disable other themes when loading a new one."
     :before #'load-theme
     (unless no-enable
-      (mapc #'disable-theme (remq theme custom-enabled-themes))))
+      (mapc #'disable-theme custom-enabled-themes)))
 
   ;; DEPRECATED Not needed in Emacs 27
   (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
