@@ -255,7 +255,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
       (cl-loop for path in (cdr (doom-module-load-path 'all))
                collect (doom-module-from-path path))
     (or doom-modules
-        (let (doom-interactive-mode
+        (let (doom-interactive-p
               doom-modules
               doom-init-modules-p)
           (load! "init" doom-private-dir t)
