@@ -122,8 +122,10 @@ following shell commands:
                                       core-packages))
                          (doom-initialize 'force))
                      (error
-                      (signal 'doom-error (list "Could not upgrade Doom without issues"
-                                                e))))
+                      (signal 'doom-error
+                              (list "Could not reload new version of Doom"
+                                    "Try running 'doom upgrade' again"
+                                    e))))
 
                    (print! (success "Finished upgrading Doom Emacs")))
                   t)))))
