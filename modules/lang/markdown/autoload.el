@@ -32,7 +32,7 @@ Runs `+markdown-compile-functions' until the first function to return non-nil,
 otherwise throws an error."
   (or (run-hook-with-args-until-success '+markdown-compile-functions
                                         beg end output-buffer)
-      (user-error "No markdown program could be found. Install marked, pandoc or markdown.")))
+      (user-error "No markdown program could be found. Install marked, pandoc, markdown or multimarkdown.")))
 
 ;;;###autoload
 (defun +markdown-compile-marked (beg end output-buffer)
