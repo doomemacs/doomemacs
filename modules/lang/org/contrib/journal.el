@@ -3,14 +3,33 @@
 
 (use-package! org-journal
   :defer t
+  :preface
+  ;; HACK `org-journal' adds a `magic-mode-alist' entry for detecting journal
+  ;;      files, but this causes us lazy loaders a big problem: an unacceptable
+  ;;      delay on the first file the user opens, because calling the autoloaded
+  ;;      `org-journal-is-journal' pulls all of `org' with it. So, we replace it
+  ;;      with our own, extra layer of heuristics.
+  (setq magic-mode-alist (assq-delete-all 'org-journal-is-journal magic-mode-alist))
+  (add-to-list 'magic-mode-alist '(+org-journal-p . org-journal-mode))
+
+  (defun +org-journal-p ()
+    (when buffer-file-name
+      (and (file-in-directory-p
+            buffer-file-name (expand-file-name org-journal-dir org-directory))
+           (delq! '+org-journal-p magic-mode-alist 'assq)
+           (require 'org-journal nil t)
+           (org-journal-is-journal))))
+
+  ;; HACK `org-journal-is-journal' doesn't anticipate symlinks, and won't
+  ;;      correctly detect journal files in an unresolved `org-directory' or
+  ;;      `org-journal'. `org-journal-dir' must be given the `file-truename'
+  ;;      treatment later, as well.
+  (defadvice! +org--journal-resolve-symlinks-a (orig-fn)
+    :around #'org-journal-is-journal
+    (let ((buffer-file-name (file-truename buffer-file-name)))
+      (funcall orig-fn)))
+
   :init
-  (remove-hook 'org-mode-hook #'org-journal-update-auto-mode-alist)
-
-  ;; Not using the .org file extension causes needless headache with file
-  ;; detection for no compelling reason, so we make it the default, so
-  ;; `org-journal' doesn't have to do all its `auto-mode-alist' magic.
-  (defvar org-journal-file-format "%Y%m%d.org")
-
   ;; HACK `org-journal-dir' is surrounded with setters and `auto-mode-alist'
   ;;      magic which makes it difficult to create an better default for Doom
   ;;      users. We set this here so we can detect user-changes to it later.
@@ -21,20 +40,9 @@
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
 
-  ;; HACK `org-journal' does some file-path magic at load time that creates
-  ;;      duplicate entries in `auto-mode-alist'. We load org-journal in such a
-  ;;      way that we can generate a final entry after the user could possibly
-  ;;      customize `org-journal-dir'.
-  (after! org
-    (require 'org-journal)
-    ;; Delete duplicate entries in `auto-mode-alist'
-    (setq auto-mode-alist (rassq-delete-all 'org-journal-mode auto-mode-alist))
-    ;; ...and exploit `org-journal-dir''s setter to set up
-    ;; `org-journal-file-pattern' and call `org-journal-update-auto-mode-alist'
-    ;; for us, to create the one-true-entry in `auto-mode-alist.'
-    (setq! org-journal-dir (expand-file-name org-journal-dir org-directory)))
-
   :config
+  (setq org-journal-dir (file-truename (expand-file-name org-journal-dir org-directory)))
+
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
   (map! (:map org-journal-mode-map
