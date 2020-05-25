@@ -173,7 +173,7 @@ declaration) or dependency thereof that hasn't already been."
      (unless force-p
        (straight--make-build-cache-available))
      (if-let (built
-              (doom--with-package-recipes recipes (package local-repo)
+              (doom--with-package-recipes recipes (package local-repo recipe)
                 (unless force-p
                   ;; Ensure packages with outdated files/bytecode are rebuilt
                   (let ((build-dir (straight--build-dir package))
@@ -189,6 +189,7 @@ declaration) or dependency thereof that hasn't already been."
                                         if (and (file-exists-p elc-file)
                                                 (file-newer-than-file-p file elc-file))
                                         return t)))
+                         (not (plist-get recipe :no-build))
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (print! (success "Rebuilt %d package(s)") (length built))
