@@ -15,9 +15,6 @@ working on that project after closing the last buffer.")
   :commands lsp-install-server
   :init
   (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
-  ;; Don't prompt the user for the project root every time we open a new
-  ;; lsp-worthy file, instead, try to guess it with projectile.
-  (setq lsp-auto-guess-root t)
   ;; Auto-kill LSP server after last workspace buffer is killed.
   (setq lsp-keep-workspace-alive nil)
   ;; Let `flycheck-check-syntax-automatically' determine this.
@@ -161,18 +158,6 @@ auto-killed (which is a potentially expensive process)."
                      (unless (lsp--workspace-buffers lsp--cur-workspace)
                        (funcall orig-fn))))
              lsp--cur-workspace))))
-
-  (defadvice! +lsp-prompt-if-no-project-a (session file-name)
-    "Prompt for the project root only if no project was found."
-    :after-until #'lsp--calculate-root
-    (cond ((not lsp-auto-guess-root)
-           nil)
-          ((cl-find-if (lambda (dir)
-                         (and (lsp--files-same-host dir file-name)
-                              (file-in-directory-p file-name dir)))
-                       (lsp-session-folders-blacklist session))
-           nil)
-          ((lsp--find-root-interactively session))))
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
