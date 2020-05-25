@@ -20,6 +20,7 @@
 - [[#troubleshooting][Troubleshooting]]
   - [[#where-are-my-minor-modes][Where are my minor modes?]]
   - [[#icons-in-my-modeline-look-strange][Icons in my modeline look strange]]
+  - [[#the-right-side-of-the-modeline-is-cut-off][The right side of the modeline is cut off]]
 - [[#appendix][Appendix]]
   - [[#autodefs][Autodefs]]
   - [[#variables][Variables]]
@@ -63,6 +64,31 @@ I rarely need to know what minor modes are active, so I removed them. ~M-x
 doom/describe-active-minor-mode~ was written to substitute for it.
 
 ** TODO Icons in my modeline look strange
+** TODO The right side of the modeline is cut off
+I believe the consensus is: this is due to oversized icons, i.e. a font issue. Some possible solutions:
+
+1. Tweak ~all-the-icons-scale-factor~ (1.2 by default): ~(setq
+   all-the-icons-scale-factor 1.1)~
+
+2. Add some padding to the modeline definition:
+
+    #+BEGIN_SRC elisp
+    (after! doom-modeline
+      (doom-modeline-def-modeline 'main
+        '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+        '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
+    #+END_SRC
+
+3. Use another font for the mode line (or a different ~:height~) (source)
+
+    #+BEGIN_SRC elisp
+    (custom-set-faces!
+      '(mode-line :family "Noto Sans" :height 0.9)
+      '(mode-line-inactive :family "Noto Sans" :height 0.9))
+    #+END_SRC
+
+(Mentioned in #1680, #278 and seagle0128/doom-modeline#334)
+
 
 * Appendix
 ** Autodefs
