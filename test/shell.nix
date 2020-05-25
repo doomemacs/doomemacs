@@ -41,7 +41,5 @@ pkgs.stdenv.mkDerivation {
       cp -r "$EMACSDIR/.local/straight/repos" ./repos
     fi
     popd >/dev/null
-
-    doom sync
   '';
 }

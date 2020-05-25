@@ -41,6 +41,13 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 (defvar doom-disabled-packages ()
   "A list of packages that should be ignored by `use-package!' and `after!'.")
 
+(defvar doom-packages-file "packages"
+  "The basename of packages file for modules.
+
+Package files are read whenever Doom's package manager wants a manifest of all
+desired packages. They are rarely read in interactive sessions (unless the user
+uses a straight or package.el command directly).")
+
 
 ;;
 ;;; package.el
