@@ -151,20 +151,21 @@ uses a straight or package.el command directly).")
         (eval-region (search-forward "(require 'straight)")
                      (point-max))))))
 
+(defun doom--ensure-core-packages ()
+  (doom-log "Installing core packages")
+  (dolist (package doom-packages)
+    (let ((name (car package)))
+      (when-let (recipe (plist-get (cdr package) :recipe))
+        (straight-override-recipe (cons name recipe)))
+      (straight-use-package name))))
+
 (defun doom-initialize-core-packages (&optional force-p)
   "Ensure `straight' is installed and was compiled with this version of Emacs."
   (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
     (doom-log "Initializing straight")
-    (let ((doom-disabled-packages nil)
-          (doom-packages (doom-package-list nil 'core-only)))
+    (let ((doom-packages (doom-package-list nil 'core-only)))
       (doom--ensure-straight)
-      (doom-log "Installing core packages")
-      (dolist (package doom-packages)
-        (cl-destructuring-bind (name &key recipe &allow-other-keys)
-            package
-          (when recipe
-            (straight-override-recipe (cons name recipe)))
-          (straight-use-package name))))))
+      (doom--ensure-core-packages))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Process all packages, essential and otherwise, if they haven't already been.
