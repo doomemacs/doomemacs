@@ -349,7 +349,7 @@ Continues comments if executed from a commented line. Consults
   "db"   #'doom/report-bug
   "dc"   #'doom/goto-private-config-file
   "dC"   #'doom/goto-private-init-file
-  "dd"   #'doom/toggle-debug-mode
+  "dd"   #'doom-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
   "dl"   #'doom/help-search-load-path

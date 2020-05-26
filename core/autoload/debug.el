@@ -15,7 +15,7 @@
     gcmh-verbose
     magit-refresh-verbose
     url-debug)
-  "A list of variable to toggle on `doom/toggle-debug-mode'.")
+  "A list of variable to toggle on `doom-debug-mode'.")
 
 ;;;###autoload
 (define-minor-mode doom-debug-mode

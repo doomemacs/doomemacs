@@ -66,8 +66,8 @@
 (defvar doom-debug-p (or (getenv "DEBUG") init-file-debug)
   "If non-nil, Doom will log more.
 
-Use `doom/toggle-debug-mode' to toggle it. The --debug-init flag and setting the
-DEBUG envvar will enable this at startup.")
+Use `doom-debug-mode' to toggle it. The --debug-init flag and setting the DEBUG
+envvar will enable this at startup.")
 
 (defvar doom-interactive-p (not noninteractive)
   "If non-nil, Emacs is in interactive mode.")
