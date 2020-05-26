@@ -753,12 +753,12 @@ between the two."
         :localleader
         "d" #'org-agenda-deadline
         (:prefix ("c" . "clock")
-         "c" #'org-agenda-clock-in
-         "C" #'org-agenda-clock-out
+         "c" #'org-agenda-clock-cancel
          "g" #'org-agenda-clock-goto
+         "i" #'org-agenda-clock-in
+         "o" #'org-agenda-clock-out
          "r" #'org-agenda-clockreport-mode
-         "s" #'org-agenda-show-clocking-issues
-         "x" #'org-agenda-clock-cancel)
+         "s" #'org-agenda-show-clocking-issues)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
