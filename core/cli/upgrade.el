@@ -50,7 +50,10 @@ following shell commands:
         process-file-side-effects)
     (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
 
-    (let* ((branch (vc-git--symbolic-ref doom-emacs-dir))
+    (let* ((branch
+            (string-trim-right
+             (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD"))
+             "~[0-9]$"))
            (target-remote (format "%s/%s" doom-repo-remote branch)))
       (unless branch
         (error! (if (file-exists-p! ".git" doom-emacs-dir)
