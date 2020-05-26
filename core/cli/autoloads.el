@@ -54,9 +54,8 @@ one wants that.")
                   (mapcan #'doom-glob doom-autoloads-files)))
          (doom-autoloads--scan
           (mapcar #'straight--autoloads-file
-                  (cl-set-difference (hash-table-keys straight--build-cache)
-                                     doom-autoloads-excluded-packages
-                                     :test #'equal))
+                  (seq-difference (hash-table-keys straight--build-cache)
+                                  doom-autoloads-excluded-packages))
           'literal))
         (print! (start "Byte-compiling autoloads file..."))
         (doom-autoloads--compile-file file)
@@ -196,7 +195,7 @@ one wants that.")
   (require 'autoload)
   (let (autoloads)
     (dolist (file
-             (cl-remove-if-not #'file-readable-p files)
+             (seq-filter #'file-readable-p files)
              (nreverse (delq nil autoloads)))
       (with-temp-buffer
         (print! (debug "- Scanning %s") (relpath file doom-emacs-dir))
