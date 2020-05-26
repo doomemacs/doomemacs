@@ -166,6 +166,24 @@ COMMAND, and passes ARGS to it."
                (doom--cli-process cli (remq nil args)))
     (user-error "Couldn't find any %S command" command)))
 
+(defun doom-cli-execute-after (&rest args)
+  "Execute shell command ARGS after this CLI session quits.
+
+This is particularly useful when the capabilities of Emacs' batch terminal are
+insufficient (like opening an instance of Emacs, or reloading Doom after a 'doom
+upgrade')."
+  (let ((post-script (concat doom-local-dir ".doom.sh")))
+    (with-temp-file post-script
+      (insert "#!/usr/bin/env sh\n"
+              "rm -f " (prin1-to-string post-script) "\n"
+              "exec " (mapconcat #'shell-quote-argument (remq nil args) " ")
+              "\n"))
+    (let* ((current-mode (file-modes post-script))
+           (add-mode (logand ?\111 (default-file-modes))))
+      (or (/= (logand ?\111 current-mode) 0)
+          (zerop add-mode)
+          (set-file-modes post-script (logior current-mode add-mode))))))
+
 (defmacro defcli! (name speclist &optional docstring &rest body)
   "Defines a CLI command.
 
@@ -423,7 +441,9 @@ All arguments are passed on to Emacs.
 
 WARNING: this command exists for convenience and testing. Doom will suffer
 additional overhead by being started this way. For the best performance, it is
-best to run Doom out of ~/.emacs.d and ~/.doom.d."))
+best to run Doom out of ~/.emacs.d and ~/.doom.d."
+    (apply #'doom-cli-execute-after invocation-name args)
+    nil))
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

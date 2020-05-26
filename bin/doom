@@ -1,13 +1,15 @@
 #!/usr/bin/env sh
 :; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 :; command -v $EMACS >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
-:; VERSION=$($EMACS --version | head -n1)
-:; case "$VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
-:; DOOMBASE="$(dirname "$0")/.."
-:; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
-:; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l init.el -f doom-run-all-startup-hooks-h "$@"; exit 0; }
-:; exec $EMACS --no-site-file --script "$0" -- "$@"
-:; exit 0
+:; _VERSION=$($EMACS --version | head -n1)
+:; case "$_VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $_VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
+:; _DOOMBASE="${EMACSDIR:-$(dirname "$0")/..}"
+:; _DOOMPOST="$_DOOMBASE/.local/.doom.sh"
+:; rm -f "$_DOOMPOST"
+:; $EMACS --no-site-file --script "$0" -- "$@"
+:; CODE=$?
+:; [ -x "$_DOOMPOST" ] && PATH="$_DOOMBASE/bin:$PATH" "$_DOOMPOST" "$0" "$@"
+:; exit $CODE
 
 (let* ((loaddir (file-name-directory (file-truename load-file-name)))
        (emacsdir (getenv "EMACSDIR"))
@@ -46,7 +48,7 @@ with a different private module."
     :bare t
     (when emacsdir
       (setq user-emacs-directory (file-name-as-directory emacsdir))
-      (print! (info "EMACSDIR=%s") localdir))
+      (print! (info "EMACSDIR=%s") emacsdir))
     (when doomdir
       (setenv "DOOMDIR" (file-name-as-directory doomdir))
       (print! (info "DOOMDIR=%s") localdir))
