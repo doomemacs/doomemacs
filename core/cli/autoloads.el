@@ -16,6 +16,9 @@ one wants that.")
     Info-directory-list)
   "A list of variables to be cached in `doom-autoload-file'.")
 
+(defvar doom-autoloads-files ()
+  "A list of additional files or file globs to scan for autoloads.")
+
 
 ;;
 ;;; Library
@@ -42,12 +45,13 @@ one wants that.")
          (mapcar (lambda (var) `(set ',var ',(symbol-value var)))
                  doom-autoloads-cached-vars)
          (doom-autoloads--scan
-          (cl-loop for dir
-                   in (append (list doom-core-dir)
-                              (cdr (doom-module-load-path 'all-p))
-                              (list doom-private-dir))
-                   if (doom-glob dir "autoload.el") collect it
-                   if (doom-glob dir "autoload/*.el") append it))
+          (append (cl-loop for dir
+                           in (append (list doom-core-dir)
+                                      (cdr (doom-module-load-path 'all-p))
+                                      (list doom-private-dir))
+                           if (doom-glob dir "autoload.el") collect it
+                           if (doom-glob dir "autoload/*.el") append it)
+                  (mapcan #'doom-glob doom-autoloads-files)))
          (doom-autoloads--scan
           (mapcar #'straight--autoloads-file
                   (cl-set-difference (hash-table-keys straight--build-cache)
