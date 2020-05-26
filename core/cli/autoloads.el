@@ -80,16 +80,11 @@ one wants that.")
 (defun doom-autoloads--compile-file (file)
   (condition-case-unless-debug e
       (let ((byte-compile-warnings (if doom-debug-p byte-compile-warnings)))
-        (when (byte-compile-file file)
-          (unless doom-interactive-p
-            (add-hook 'kill-emacs-hook #'doom-cli--warn-refresh-session-h))
-          (load (byte-compile-dest-file file) nil t)))
+        (and (byte-compile-file file)
+             (load (byte-compile-dest-file file) nil t)))
     (error
      (delete-file (byte-compile-dest-file file))
      (signal 'doom-autoload-error (list file e)))))
-
-(defun doom-cli--warn-refresh-session-h ()
-  (print! (info "Restart or 'M-x doom/reload' Doom Emacs for changes to take effect")))
 
 (defun doom-autoloads--cleanup-form (form &optional expand)
   (let ((func (car-safe form)))

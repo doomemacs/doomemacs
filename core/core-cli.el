@@ -405,7 +405,8 @@ stale."
      (doom-cli-packages-update))
    (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
    (run-hooks 'doom-sync-post-hook)
-   (doom-autoloads-reload)
+   (when (doom-autoloads-reload)
+     (print! (info "Restart Emacs or use 'M-x doom/reload' for changes to take effect")))
    t))
 
 (load! "cli/env")
