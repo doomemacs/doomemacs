@@ -223,7 +223,7 @@ snippets or single lines."
   (if (and +format-with-lsp
            (bound-and-true-p lsp-mode)
            (lsp-feature? "textDocument/rangeFormatting"))
-      #'lsp-format-region
+      (call-interactively #'lsp-format-region)
     (save-restriction
       (narrow-to-region beg end)
       (let ((+format-region-p t))
