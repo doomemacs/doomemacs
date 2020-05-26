@@ -25,10 +25,12 @@ This module has no dedicated maintainers.
 ** Module Flags
 + =+forge= Enable Forge; a porcelain for managing issues and PRs from within
   Emacs. Will take a while on first run to build emacsql-sqlite.
++ =+delta= Enable magit-delta; syntax-highlighted diffs with [[https://github.com/dandavison/delta][delta]]
 
 ** Plugins
 + [[https://github.com/magit/magit][magit]]
 + [[https://github.com/magit/forge][forge]]* (=+forge=)
++ [[https://github.com/dandavison/magit-delta][magit-delta]]* (=+delta=)
 + [[https://github.com/jtatarik/magit-gitflow][magit-gitflow]]
 + [[https://github.com/alphapapa/magit-todos][magit-todos]]
 + [[https://github.com/charignon/github-review][github-review]]

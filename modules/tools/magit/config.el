@@ -139,6 +139,17 @@ ensure it is built when we actually use Forge."
             (add-hook hook #'forge-bug-reference-setup)))))))
 
 
+(use-package! magit-delta
+  :after magit
+  :when (featurep! +delta)
+  :preface
+  (setq
+    magit-delta-default-dark-theme "OneHalfDark"
+    magit-delta-default-light-theme "OneHalfLight")
+  :config
+  (magit-delta-mode))
+
+
 (use-package! github-review
   :after magit
   :config
