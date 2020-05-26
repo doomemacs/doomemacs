@@ -41,8 +41,7 @@ they are absolute."
   "Preforms `projectile-find-file' in a known project of your choosing."
   (interactive
    (list
-    (completing-read "Find file in project: " (projectile-relevant-known-projects)
-                     nil nil nil nil (doom-project-root))))
+    (completing-read "Find file in project: " (projectile-relevant-known-projects))))
   (unless (file-directory-p project-root)
     (error "Project directory '%s' doesn't exist" project-root))
   (doom-project-find-file project-root))
@@ -52,8 +51,7 @@ they are absolute."
   "Preforms `find-file' in a known project of your choosing."
   (interactive
    (list
-    (completing-read "Browse in project: " (projectile-relevant-known-projects)
-                     nil nil nil nil (doom-project-root))))
+    (completing-read "Browse in project: " (projectile-relevant-known-projects))))
   (unless (file-directory-p project-root)
     (error "Project directory '%s' doesn't exist" project-root))
   (doom-project-browse project-root))
