@@ -11,7 +11,7 @@ This holy module brings the vim experience to Emacs.
   - [[#differences-from-vim][Differences from vim]]
 
 * Removing evil-mode
-See the [[https://github.com/hlissner/doom-emacs/wiki/FAQ#remove-vimevil-for-a-more-vanilla-emacs-experience][corresponding question in the FAQ]].
+See the [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][corresponding question in the FAQ]].
 
 * Features
 + A better ~:g[lobal]~ command with incremental highlighting.
