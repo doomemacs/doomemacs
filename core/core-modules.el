@@ -108,8 +108,9 @@ session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t)
-    (doom-log "Initializing core modules")
-    (doom-initialize-core-modules)
+    (unless no-config-p
+      (doom-log "Initializing core modules")
+      (doom-initialize-core-modules))
     (when-let (init-p (load! "init" doom-private-dir t))
       (doom-log "Initializing user config")
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
