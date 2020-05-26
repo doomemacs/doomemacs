@@ -154,12 +154,12 @@ branch and commit."
   (interactive)
   (require 'vc-git)
   (let ((default-directory doom-core-dir))
-    (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s\nBuild date: %s"
+    (print! "Doom v%s (%s)\nEmacs v%s\nBranch: %s\nBuild date: %s"
             doom-version
+            (or (vc-git-working-revision doom-core-dir)
+                "n/a")
             emacs-version
             (or (vc-git--symbolic-ref doom-core-dir)
-                "n/a")
-            (or (vc-git-working-revision doom-core-dir)
                 "n/a")
             (or (cdr (doom-call-process "git" "log" "-1" "--format=%ci"))
                 "n/a"))))

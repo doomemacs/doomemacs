@@ -89,7 +89,7 @@ Grabs the latest commit id of the package using 'git'."
                            "git" "ls-remote" url
                            (unless select
                              (or branch straight-vc-git-default-branch)))))
-                   (user-error "%s: no id from %s" package url)))
+                   (user-error "Couldn't find a recipe for %s" package)))
            (id (car (split-string
                      (if select
                          (completing-read "Commit: " (split-string id "\n" t))

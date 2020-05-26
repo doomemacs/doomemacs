@@ -19,7 +19,7 @@
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
-;; Unix tools looks for HOME, but this is normally not defined on Windows.
+;; Unix tools look for HOME, but this is normally not defined on Windows.
 (when (and IS-WINDOWS (null (getenv "HOME")))
   (setenv "HOME" (getenv "USERPROFILE")))
 
@@ -448,10 +448,10 @@ If RETURN-P, return the message as a string instead of displaying it."
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
-The bootstrap process ensures that the essential directories exist, all core
-packages are installed, `doom-autoload-file' and `doom-package-autoload-file'
-exist and are loaded, and that `core-packages' is auto-loaded when `package' or
-`straight' are.
+The bootstrap process ensures that everything Doom needs to run is set up;
+essential directories exist, core packages are installed, `doom-autoload-file'
+is loaded (failing if it isn't), that all the needed hooks are in place, and
+that `core-packages' will load when `package' or `straight' is used.
 
 The overall load order of Doom is as follows:
 

@@ -111,7 +111,7 @@ non-nil."
     (unless no-config-p
       (doom-log "Initializing core modules")
       (doom-initialize-core-modules))
-    (when-let (init-p (load! "init" doom-private-dir t))
+    (when-let (init-p (load! doom-module-init-file doom-private-dir t))
       (doom-log "Initializing user config")
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
       (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
