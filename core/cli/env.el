@@ -4,7 +4,7 @@
     ((allow      ["-a" "--allow" regexp]  "An envvar whitelist regexp")
      (reject     ["-r" "--reject" regexp] "An envvar blacklist regexp")
      (clear-p    ["-c" "--clear"] "Clear and delete your envvar file")
-     (outputfile ["-o" PATH]
+     (outputfile ["-o" path]
     "Generate the envvar file at PATH. Envvar files that aren't in
 `doom-env-file' won't be loaded automatically at startup. You will need to load
 them manually from your private config with the `doom-load-envvars-file'
@@ -40,20 +40,15 @@ Why this over exec-path-from-shell?
      or not at all. It frontloads the debugging process rather than hiding it
      until you least want to deal with it."
   (let ((env-file (expand-file-name (or outputfile doom-env-file))))
-    (cond (clear-p
-           (unless (file-exists-p env-file)
-             (user-error! "%S does not exist to be cleared"
-                          (path env-file)))
-           (delete-file env-file)
-           (print! (success "Successfully deleted %S")
-                   (path env-file)))
-
-          ((and args (not (or allow reject)))
-           (user-error "I don't understand 'doom env %s'"
-                       (string-join args " ")))
-
-          ((doom-cli-reload-env-file
-            'force env-file (list allow) (list reject))))))
+    (if (null clear-p)
+        (doom-cli-reload-env-file
+         'force env-file (list allow) (list reject))
+      (unless (file-exists-p env-file)
+        (user-error! "%S does not exist to be cleared"
+                     (path env-file)))
+      (delete-file env-file)
+      (print! (success "Successfully deleted %S")
+              (path env-file)))))
 
 
 ;;
