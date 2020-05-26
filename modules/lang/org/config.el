@@ -751,7 +751,9 @@ between the two."
         :map org-agenda-mode-map
         :m "C-SPC" #'org-agenda-show-and-scroll-up
         :localleader
-        "d" #'org-agenda-deadline
+        (:prefix ("d" . "date/deadline")
+         "d" #'org-agenda-deadline
+         "s" #'org-agenda-schedule)
         (:prefix ("c" . "clock")
          "c" #'org-agenda-clock-cancel
          "g" #'org-agenda-clock-goto
@@ -761,7 +763,6 @@ between the two."
          "s" #'org-agenda-show-clocking-issues)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
-        "s" #'org-agenda-schedule
         "t" #'org-agenda-todo))
 
 
