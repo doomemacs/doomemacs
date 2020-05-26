@@ -3,7 +3,7 @@
 (defvar doom-init-modules-p nil
   "Non-nil if `doom-initialize-modules' has run.")
 
-(defvar doom-modules ()
+(defvar doom-modules (make-hash-table :test 'equal)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-modules-dirs
@@ -25,31 +25,31 @@ Config files are loaded later, and almost always in interactive sessions. These
 run before `doom-init-modules-hook'. Relevant to `doom-module-init-file'.")
 
 (defconst doom-obsolete-modules
-  '((:feature (version-control (:emacs vc) (:ui vc-gutter))
-              (spellcheck (:checkers spell))
-              (syntax-checker (:checkers syntax))
-              (evil (:editor evil))
-              (snippets (:editor snippets))
-              (file-templates (:editor file-templates))
-              (workspaces (:ui workspaces))
-              (eval (:tools eval))
-              (lookup (:tools lookup))
-              (debugger (:tools debugger)))
-    (:tools (rotate-text (:editor rotate-text))
-            (vterm (:term vterm))
-            (password-store (:tools pass))
-            (flycheck (:checkers syntax))
-            (flyspell (:checkers spell)))
-    (:emacs (electric-indent (:emacs electric))
-            (hideshow (:editor fold))
-            (eshell (:term eshell))
-            (term (:term term)))
-    (:ui (doom-modeline (:ui modeline))
-         (fci (:ui fill-column))
-         (evil-goggles (:ui ophints))
-         (tabbar (:ui tabs)))
-    (:app (email (:email mu4e))
-          (notmuch (:email notmuch))))
+  '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
+              (spellcheck       (:checkers spell))
+              (syntax-checker   (:checkers syntax))
+              (evil             (:editor evil))
+              (snippets         (:editor snippets))
+              (file-templates   (:editor file-templates))
+              (workspaces       (:ui workspaces))
+              (eval             (:tools eval))
+              (lookup           (:tools lookup))
+              (debugger         (:tools debugger)))
+    (:tools   (rotate-text      (:editor rotate-text))
+              (vterm            (:term vterm))
+              (password-store   (:tools pass))
+              (flycheck         (:checkers syntax))
+              (flyspell         (:checkers spell)))
+    (:emacs   (electric-indent  (:emacs electric))
+              (hideshow         (:editor fold))
+              (eshell           (:term eshell))
+              (term             (:term term)))
+    (:ui      (doom-modeline    (:ui modeline))
+              (fci              (:ui fill-column))
+              (evil-goggles     (:ui ophints))
+              (tabbar           (:ui tabs)))
+    (:app     (email            (:email mu4e))
+              (notmuch          (:email notmuch))))
   "A tree alist that maps deprecated modules to their replacement(s).
 
 Each entry is a three-level tree. For example:
@@ -249,21 +249,67 @@ those directories. The first returned path is always `doom-private-dir'."
                      collect (plist-get plist :path)))
           nil))
 
+(defun doom-module-mplist-map (fn mplist)
+  "Apply FN to each module in MPLIST."
+  (let ((mplist (copy-sequence mplist))
+        (inhibit-message doom-inhibit-module-warnings)
+        obsolete
+        results
+        category m)
+    (while mplist
+      (setq m (pop mplist))
+      (cond ((keywordp m)
+             (setq category m
+                   obsolete (assq m doom-obsolete-modules)))
+            ((null category)
+             (error "No module category specified for %s" m))
+            ((and (listp m) (keywordp (car m)))
+             (pcase (car m)
+               (:cond
+                (cl-loop for (cond . mods) in (cdr m)
+                         if (eval cond t)
+                         return (prependq! mplist mods)))
+               (:if (if (eval (cadr m) t)
+                        (push (caddr m) mplist)
+                      (prependq! mplist (cdddr m))))
+               (test (if (or (eval (cadr m) t)
+                             (eq test :unless))
+                         (prependq! mplist (cddr m))))))
+            ((catch 'doom-modules
+               (let* ((module (if (listp m) (car m) m))
+                      (flags  (if (listp m) (cdr m))))
+                 (when-let (new (assq module obsolete))
+                   (let ((newkeys (cdr new)))
+                     (if (null newkeys)
+                         (message "WARNING %s module was removed" key)
+                       (if (cdr newkeys)
+                           (message "WARNING %s module was removed and split into the %s modules"
+                                    (list category module) (mapconcat #'prin1-to-string newkeys ", "))
+                         (message "WARNING %s module was moved to %s"
+                                  (list category module) (car newkeys)))
+                       (push category mplist)
+                       (dolist (key newkeys)
+                         (push (if flags
+                                   (nconc (cdr key) flags)
+                                 (cdr key))
+                               mplist)
+                         (push (car key) mplist))
+                       (throw 'doom-modules t))))
+                 (push (funcall fn category module
+                                :flags (if (listp m) (cdr m))
+                                :path (doom-module-locate-path category module))
+                       results))))))
+    (unless doom-interactive-p
+      (setq doom-inhibit-module-warnings t))
+    (nreverse results)))
+
 (defun doom-module-list (&optional all-p)
   "Minimally initialize `doom-modules' (a hash table) and return it.
 This value is cached. If REFRESH-P, then don't use the cached value."
   (if all-p
       (cl-loop for path in (cdr (doom-module-load-path 'all))
                collect (doom-module-from-path path))
-    (or doom-modules
-        (let (doom-interactive-p
-              doom-modules
-              doom-init-modules-p)
-          (load! "init" doom-private-dir t)
-          (or doom-modules
-              (make-hash-table :test 'equal
-                               :size 20
-                               :rehash-threshold 1.0))))))
+    doom-modules))
 
 
 ;;
@@ -402,62 +448,16 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  `(let ((modules
-          ,@(if (keywordp (car modules))
-                (list (list 'quote modules))
-              modules)))
-     (unless doom-modules
-       (setq doom-modules
-             (make-hash-table :test 'equal
-                              :size (if modules (length modules) 150)
-                              :rehash-threshold 1.0)))
-     (let ((inhibit-message doom-inhibit-module-warnings)
-           obsolete category m)
-       (while modules
-         (setq m (pop modules))
-         (cond ((keywordp m)
-                (setq category m
-                      obsolete (assq m doom-obsolete-modules)))
-               ((not category)
-                (error "No module category specified for %s" m))
-               ((and (listp m) (keywordp (car m)))
-                (pcase (car m)
-                  (:cond
-                   (cl-loop for (cond . mods) in (cdr m)
-                            if (eval cond t)
-                            return (prependq! modules mods)))
-                  (:if (if (eval (cadr m) t)
-                           (push (caddr m) modules)
-                         (prependq! modules (cdddr m))))
-                  (fn (if (or (eval (cadr m) t)
-                              (eq fn :unless))
-                          (prependq! modules (cddr m))))))
-               ((catch 'doom-modules
-                  (let* ((module (if (listp m) (car m) m))
-                         (flags  (if (listp m) (cdr m))))
-                    (when-let (new (assq module obsolete))
-                      (let ((newkeys (cdr new)))
-                        (if (null newkeys)
-                            (message "WARNING %s module was removed" key)
-                          (if (cdr newkeys)
-                              (message "WARNING %s module was removed and split into the %s modules"
-                                       (list category module) (mapconcat #'prin1-to-string newkeys ", "))
-                            (message "WARNING %s module was moved to %s"
-                                     (list category module) (car newkeys)))
-                          (push category modules)
-                          (dolist (key newkeys)
-                            (push (if flags
-                                      (nconc (cdr key) flags)
-                                    (cdr key))
-                                  modules)
-                            (push (car key) modules))
-                          (throw 'doom-modules t))))
-                    (if-let (path (doom-module-locate-path category module))
-                        (doom-module-set category module :flags flags :path path)
-                      (message "WARNING Couldn't find the %s %s module" category module)))))))
-       (unless doom-interactive-p
-         (setq doom-inhibit-module-warnings t))
-       doom-modules)))
+  `(unless doom-interactive-p
+     (doom-module-mplist-map
+      (lambda (category module &rest plist)
+        (if (plist-get plist :path)
+            (apply #'doom-module-set category module plist)
+          (message "WARNING Couldn't find the %s %s module" category module)))
+      ,@(if (keywordp (car modules))
+            (list (list 'quote modules))
+          modules))
+     doom-modules))
 
 (defvar doom-disabled-packages)
 (defmacro use-package! (name &rest plist)
