@@ -19,7 +19,8 @@
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
   (setq mu4e-attachment-dir
-        (lambda () (expand-file-name ".attachments" (mu4e-root-maildir))))
+        (lambda (&rest _)
+          (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
   (pcase +mu4e-backend
     (`mbsync
