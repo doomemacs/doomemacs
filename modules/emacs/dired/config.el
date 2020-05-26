@@ -30,7 +30,7 @@
       (if-let (gls (executable-find "gls"))
           (setq insert-directory-program gls)
         ;; BSD ls doesn't support -v or --group-directories-first
-        (setq args (car args))))
+        (setq args (list (car args)))))
     (setq dired-listing-switches (string-join args " "))
 
     (add-hook! 'dired-mode-hook
