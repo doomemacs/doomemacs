@@ -137,6 +137,10 @@ You should use `set-eshell-alias!' to change this.")
             :ni "C-j"    #'eshell-next-matching-input-from-input
             :ni "C-k"    #'eshell-previous-matching-input-from-input
             :ig "C-d"    #'+eshell/quit-or-delete-char
+            :i "C-c h"   #'evil-window-left
+            :i "C-c j"   #'evil-window-down
+            :i "C-c k"   #'evil-window-up
+            :i "C-c l"   #'evil-window-right
             "C-s"   #'+eshell/search-history
             ;; Emacs bindings
             "C-e"   #'end-of-line
@@ -144,10 +148,6 @@ You should use `set-eshell-alias!' to change this.")
             "C-c s" #'+eshell/split-below
             "C-c v" #'+eshell/split-right
             "C-c x" #'+eshell/kill-and-close
-            "C-c h" #'windmove-left
-            "C-c j" #'windmove-down
-            "C-c k" #'windmove-up
-            "C-c l" #'windmove-right
             [remap split-window-below]  #'+eshell/split-below
             [remap split-window-right]  #'+eshell/split-right
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
