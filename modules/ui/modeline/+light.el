@@ -231,12 +231,12 @@ LHS and RHS will accept."
           anzu--state
           anzu--cached-count
           anzu--cached-positions anzu--last-command
-          anzu--last-isearch-string anzu--overflow-p))
-  (global-anzu-mode +1))
+          anzu--last-isearch-string anzu--overflow-p)))
 
 (use-package! evil-anzu
   :when (featurep! :editor evil)
-  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight)
+  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight
+  :config (global-anzu-mode +1))
 
 (defun +modeline--anzu ()
   "Show the match index and total number thereof.

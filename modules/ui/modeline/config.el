@@ -71,4 +71,5 @@
 
   (use-package! evil-anzu
     :when (featurep! :editor evil)
-    :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))
+    :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight
+    :config (global-anzu-mode +1)))
