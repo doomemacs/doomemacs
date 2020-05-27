@@ -18,8 +18,8 @@ It is integrated into Helpful, in Doom.
     - [[#disable-packages][disable-packages!]]
     - [[#doom][doom!]]
     - [[#file-exists-p][file-exists-p!]]
-    - [[#lambda][lambda!]]
-    - [[#lambda-1][lambda!!]]
+    - [[#cmd][cmd!]]
+    - [[#cmd-1][cmd!!]]
     - [[#letenv][letenv!]]
     - [[#load][load!]]
     - [[#map][map!]]
@@ -238,38 +238,30 @@ It is integrated into Helpful, in Doom.
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
-*** lambda!
+*** cmd!
 #+BEGIN_SRC elisp :eval no
-(map! "C-j" (lambda! (newline) (indent-according-to-mode)))
-
-;; The `λ!' short-form alias exists. If you have the snippets module enabled and
-;; Doom's default snippets, the 'lam' snippet will expand into 'λ!'. Otherwise,
-;; you can use `lambda!'.
-(map! "C-j" (λ! (newline) (indent-according-to-mode)))
+(map! "C-j" (cmd! (newline) (indent-according-to-mode)))
 #+END_SRC
-*** lambda!!
+
+*** cmd!!
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
-inserts N newlines. We can use ~lambda!!~ to easily create a keybinds that bakes
-in the prefix arg into the command call:
+inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
+the prefix arg into the command call:
 
 #+BEGIN_SRC elisp :eval no
-(map! "C-j" (lambda!! #'newline 5))
-
-;; The `λ!!' short-form alias exists. If you have the snippets module enabled
-;; and Doom's default snippets, a 'lam' snippet is available to expand into
-;; 'λ!'. Otherwise, you can use `lambda!!'.
-(map! "C-j" (λ!! #'newline 5))
+(map! "C-j" (cmd!! #'newline 5))
 #+END_SRC
 
 Or to create aliases for functions that behave differently:
 
 #+BEGIN_SRC elisp :eval no
-(fset 'insert-5-newlines (lambda!! #'newline 5))
+(fset 'insert-5-newlines (cmd!! #'newline 5))
 
 ;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
 ;; its startup visibility settings.
-(fset 'org-reset-global-visibility (lambda!! #'org-global-cycle '(4))
+(fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
 #+END_SRC
+
 *** letenv!
 #+BEGIN_SRC elisp
 (letenv! (("SHELL" "/bin/sh"))

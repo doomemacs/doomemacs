@@ -18,7 +18,7 @@
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'doom/delete-backward-word
-    "C-z"    (λ! (ignore-errors (call-interactively #'undo))))
+    "C-z"    (cmd! (ignore-errors (call-interactively #'undo))))
 
   (when (featurep! :editor evil +everywhere)
     (define-key! :keymaps +default-minibuffer-maps
@@ -39,19 +39,17 @@
 ;;; Global keybindings
 
 ;; Smart tab, these will only work in GUI Emacs
-(map! :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
-                 (and (featurep! :editor snippets)
-                      (bound-and-true-p yas-minor-mode)
-                      (yas-maybe-expand-abbrev-key-filter 'yas-expand))
-                 #'yas-expand
-                 (and (featurep! :completion company +tng)
-                      (+company-has-completion-p))
-                 #'+company/complete)
-      :v [tab] (general-predicate-dispatch nil
-                 (and (bound-and-true-p yas-minor-mode)
-                      (or (eq evil-visual-selection 'line)
-                          (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
-                 #'yas-insert-snippet)
+(map! :i [tab] (cmds! (and (featurep! :editor snippets)
+                           (bound-and-true-p yas-minor-mode)
+                           (yas-maybe-expand-abbrev-key-filter 'yas-expand))
+                      #'yas-expand
+                      (and (featurep! :completion company +tng)
+                           (+company-has-completion-p))
+                      #'+company/complete)
+      :v [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                           (or (eq evil-visual-selection 'line)
+                               (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                      #'yas-insert-snippet)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
@@ -136,7 +134,7 @@
          "C-p"     #'company-select-previous-or-abort
          "C-j"     #'company-select-next-or-abort
          "C-k"     #'company-select-previous-or-abort
-         "C-s"     (λ! (company-search-abort) (company-filter-candidates))
+         "C-s"     (cmd! (company-search-abort) (company-filter-candidates))
          [escape]  #'company-search-abort))
        ;; TAB auto-completion in term buffers
        (:after comint :map comint-mode-map
@@ -456,8 +454,8 @@
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
        :desc "Current file name"             "f"   #'+default/insert-file-path
-       :desc "Current file path"             "F"   (λ!! #'+default/insert-file-path t)
-       :desc "Evil ex path"                  "p"   (λ! (evil-ex "R!echo "))
+       :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
+       :desc "Evil ex path"                  "p"   (cmd! (evil-ex "R!echo "))
        :desc "From evil register"            "r"   #'evil-ex-registers
        :desc "Snippet"                       "s"   #'yas-insert-snippet
        :desc "Unicode"                       "u"   #'unicode-chars-list-chars

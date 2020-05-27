@@ -341,10 +341,10 @@ Some items are not supported by the `nsm.el' module."
          (delete-file file)
          (signal (car e) (cdr e)))))))
 
-(fset 'doom--run-vanilla-emacs (lambda! (doom--run-sandbox 'vanilla)))
-(fset 'doom--run-vanilla-doom  (lambda! (doom--run-sandbox 'vanilla-doom)))
-(fset 'doom--run-vanilla-doom+ (lambda! (doom--run-sandbox 'vanilla-doom+)))
-(fset 'doom--run-full-doom     (lambda! (doom--run-sandbox 'doom)))
+(fset 'doom--run-vanilla-emacs (cmd! (doom--run-sandbox 'vanilla)))
+(fset 'doom--run-vanilla-doom  (cmd! (doom--run-sandbox 'vanilla-doom)))
+(fset 'doom--run-vanilla-doom+ (cmd! (doom--run-sandbox 'vanilla-doom+)))
+(fset 'doom--run-full-doom     (cmd! (doom--run-sandbox 'doom)))
 
 (defvar doom-sandbox-emacs-lisp-mode-map
   (let ((map (make-sparse-keymap)))

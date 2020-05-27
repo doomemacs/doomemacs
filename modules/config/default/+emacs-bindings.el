@@ -120,7 +120,7 @@
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
        :desc "Current file name"             "f"   #'+default/insert-file-path
-       :desc "Current file path"             "F"   (λ!! #'+default/insert-file-path t)
+       :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Snippet"                       "s"   #'yas-insert-snippet
        :desc "Unicode"                       "u"   #'unicode-chars-list-chars
        :desc "From clipboard"                "y"   #'+default/yank-pop)
@@ -412,7 +412,7 @@
       ;;; Text scaling
       [C-mouse-4] #'text-scale-increase
       [C-mouse-5] #'text-scale-decrease
-      [C-down-mouse-2] (λ! (text-scale-set 0))
+      [C-down-mouse-2] (cmd! (text-scale-set 0))
       "M-+" #'doom/reset-font-size
       "M-=" #'doom/increase-font-size
       "M--" #'doom/decrease-font-size
@@ -463,7 +463,7 @@
         :map company-search-map
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
-        "C-s"        (λ! (company-search-abort) (company-filter-candidates)))
+        "C-s"        (cmd! (company-search-abort) (company-filter-candidates)))
 
       ;;; ein notebooks
       (:after ein:notebook-multilang

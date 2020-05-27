@@ -139,24 +139,6 @@ at the values with which this function was called."
 ;;
 ;;; Sugars
 
-(defmacro λ! (&rest body)
-  "Expands to (lambda () (interactive) ,@body).
-A factory for quickly producing interaction commands, particularly for keybinds
-or aliases."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda (&rest _) (interactive) ,@body))
-(defalias 'lambda! 'λ!)
-
-(defun λ!! (command &optional arg)
-  "Expands to a command that interactively calls COMMAND with prefix ARG.
-A factory for quickly producing interactive, prefixed commands for keybinds or
-aliases."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  (lambda (&rest _) (interactive)
-     (let ((current-prefix-arg arg))
-       (call-interactively command))))
-(defalias 'lambda!! 'λ!!)
-
 (defun dir! ()
   "Returns the directory of the emacs lisp file this macro is called from."
   (when-let (path (file!))
@@ -255,6 +237,40 @@ See `if!' for details on this macro's purpose."
   "Expands to (cl-function (lambda ARGLIST BODY...))"
   (declare (indent defun) (doc-string 1) (pure t) (side-effect-free t))
   `(cl-function (lambda ,arglist ,@body)))
+
+(defmacro cmd! (&rest body)
+  "Expands to (lambda () (interactive) ,@body).
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (&rest _) (interactive) ,@body))
+
+(defmacro cmd!! (command &rest args)
+  "Expands to a closure that interactively calls COMMAND with ARGS.
+A factory for quickly producing interactive, prefixed commands for keybinds or
+aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (&rest _) (interactive)
+     (funcall-interactively ,command ,@args)))
+
+(defmacro cmds! (&rest branches)
+  "Expands to a `menu-item' dispatcher for keybinds."
+  (declare (doc-string 1))
+  (let ((docstring (if (stringp (car branches)) (pop branches) ""))
+        fallback)
+    (when (cl-oddp (length branches))
+      (setq fallback (car (last branches))
+            branches (butlast branches)))
+    `(general-predicate-dispatch ,fallback
+       :docstring ,docstring
+       ,@branches)))
+
+;; For backwards compatibility
+(defalias 'λ! 'cmd!)
+(defalias 'λ!! 'cmd!!)
+;; DEPRECATED These have been superseded by `cmd!' and `cmd!!'
+(define-obsolete-function-alias 'lambda! 'cmd! "3.0.0")
+(define-obsolete-function-alias 'lambda!! 'cmd!! "3.0.0")
 
 
 ;;; Mutation
