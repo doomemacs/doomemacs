@@ -112,7 +112,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (when (featurep! +icons)
     (cl-pushnew '(+ivy-rich-buffer-icon)
                 (cadr (plist-get ivy-rich-display-transformers-list
-                                 'ivy-switch-buffer))))
+                                 'ivy-switch-buffer))
+                :test #'equal))
 
   ;; Enahnce the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
