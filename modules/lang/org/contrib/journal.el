@@ -26,8 +26,9 @@
   ;;      treatment later, as well.
   (defadvice! +org--journal-resolve-symlinks-a (orig-fn)
     :around #'org-journal-is-journal
-    (let ((buffer-file-name (file-truename buffer-file-name)))
-      (funcall orig-fn)))
+    (when buffer-file-name
+      (let ((buffer-file-name (file-truename buffer-file-name)))
+        (funcall orig-fn))))
 
   ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
   ;; default, so we change it to {org-directory}/journal (we expand it after
