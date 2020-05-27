@@ -315,30 +315,30 @@ This value is cached. If REFRESH-P, then don't use the cached value."
 ;;
 ;;; Use-package modifications
 
-(eval-and-compile
-  (autoload 'use-package "use-package-core" nil nil t)
-
-  (setq use-package-compute-statistics doom-debug-p
-        use-package-verbose doom-debug-p
-        use-package-minimum-reported-time (if doom-debug-p 0 0.1)
-        use-package-expand-minimally doom-interactive-p))
-
 (defvar doom--deferred-packages-alist '(t))
 
-(with-eval-after-load 'use-package-core
-  ;; Macros are already fontified, no need for this
-  (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
+(autoload 'use-package "use-package-core" nil nil t)
 
-  ;; A common mistake for new users is that they inadvertantly try to install
-  ;; their packages with package.el, by copying over old `use-package'
-  ;; declarations with an :ensure t property. Doom doesn't use package.el, so
-  ;; this will throw an error that will confuse beginners.
-  (setq use-package-ensure-function #'ignore)
-  ;; ...On the other hand, if the user has loaded `package', then we should
-  ;; assume they know what they're doing and restore the old behavior:
-  (add-transient-hook! 'package-initialize
-    (when (eq use-package-ensure-function #'ignore)
-     (setq use-package-ensure-function #'use-package-ensure-elpa)))
+(setq use-package-compute-statistics doom-debug-p
+      use-package-verbose doom-debug-p
+      use-package-minimum-reported-time (if doom-debug-p 0 0.1)
+      use-package-expand-minimally doom-interactive-p)
+
+;; A common mistake for new users is that they inadvertantly install their
+;; packages with package.el, by copying over old `use-package' declarations with
+;; an :ensure t property. Doom doesn't use package.el, so this will throw an
+;; error that will confuse beginners, so we disable `:ensure'.
+(setq use-package-ensure-function #'ignore)
+;; ...On the other hand, if the user has loaded `package', then we should assume
+;; they know what they're doing and restore the old behavior:
+(add-transient-hook! 'package-initialize
+  (when (eq use-package-ensure-function #'ignore)
+    (setq use-package-ensure-function #'use-package-ensure-elpa)))
+
+(with-eval-after-load 'use-package-core
+  ;; `use-package' adds syntax highlighting for the `use-package' macro, but
+  ;; Emacs 26+ already highlights macros, so it's redundant.
+  (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
 
   ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
   ;; so we don't have to load `auto-minor-mode' so early.
@@ -531,7 +531,7 @@ If FLAG is provided, returns t if CATEGORY MODULE has FLAG enabled.
   (featurep! :config default)
 
 Module FLAGs are set in your config's `doom!' block, typically in
-~/.emacs.d/init.el. Like so:
+~/.doom.d/init.el. Like so:
 
   :config (default +flag1 -flag2)
 
@@ -540,11 +540,10 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
-             ((let ((module (doom-module-from-path)))
-                (unless module
-                  (error "(featurep! %s %s %s) couldn't figure out what module it was called from (in %s)"
-                         category module flag (file!)))
-                (memq category (doom-module-get (car module) (cdr module) :flags)))))
+             ((if-let (module (doom-module-from-path))
+                  (memq category (doom-module-get (car module) (cdr module) :flags))
+                (error "(featurep! %s %s %s) couldn't figure out what module it was called from (in %s)"
+                       category module flag (file!)))))
        t))
 
 (provide 'core-modules)
