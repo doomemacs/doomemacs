@@ -142,11 +142,10 @@ ensure it is built when we actually use Forge."
 (use-package! magit-delta
   :after magit
   :when (featurep! +delta)
-  :preface
+  :config
   (setq
     magit-delta-default-dark-theme "OneHalfDark"
     magit-delta-default-light-theme "OneHalfLight")
-  :config
   (magit-delta-mode))
 
 
