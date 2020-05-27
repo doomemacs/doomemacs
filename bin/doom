@@ -11,6 +11,11 @@
 :; [ -x "$_DOOMPOST" ] && PATH="$_DOOMBASE/bin:$PATH" "$_DOOMPOST" "$0" "$@"
 :; exit $CODE
 
+;; CLI ops tend to eat a lot of memory. To speed it up, stave off the GC, but
+;; not to `most-positive-fixnum' like we do in init.el; that's too high -- we
+;; don't want to intentionally leak memory.
+(setq gc-cons-threshold 134217728)   ; 128mb
+
 (let* ((loaddir (file-name-directory (file-truename load-file-name)))
        (emacsdir (getenv "EMACSDIR"))
        (user-emacs-directory
