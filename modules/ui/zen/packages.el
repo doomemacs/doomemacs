@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/zen/packages.el
 
-(package! writeroom-mode :pin "7f7acde5e8fc4ba74e511ca295e21f9ba7874730")
-(package! mixed-pitch :pin "734fbdf2d2c17beee151faf39bd10174a87eea5d")
+(package! writeroom-mode :pin "8a226a31a12a9203067094774ba6fd6175793e70")
+(package! mixed-pitch :pin "1cad46fddf741ed7ec5fc477d70e079e908e9ce6")

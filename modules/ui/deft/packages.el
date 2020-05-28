@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/deft/packages.el
 
-(package! deft :pin "f54e8a65a7e75a029657364055420374df45656d")
+(package! deft :pin "fca9ea05ef4fdac825e2ad3921baa7042f6b82c8")
