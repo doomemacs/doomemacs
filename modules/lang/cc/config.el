@@ -237,6 +237,12 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
       (lsp!))))
 
 (when (and (featurep! +lsp) (featurep! :tools lsp +eglot))
+  ;; Map eglot specific helper
+  (map! :localleader
+        :after cc-mode
+        :map c++-mode-map
+        :n :desc "Show type inheritance hierarchy" "ct" #'eglot-ccls-inheritance-hierarchy)
+
   ;; NOTE : This setting is untested yet
   (after! eglot
     ;; IS-MAC custom configuration
@@ -245,34 +251,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                    ((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                                            "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                                            "-isystem/usr/local/include"]
-                                               :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))))
-    ;; Eglot specific helper, courtesy of MaskRay
-    (defun eglot-ccls-inheritance-hierarchy (&optional derived)
-      "Show inheritance hierarchy for the thing at point.
-If DERIVED is non-nil (interactively, with prefix argument), show
-the children of class at point."
-      (interactive "P")
-      (if-let* ((res (jsonrpc-request
-                      (eglot--current-server-or-lose)
-                      :$ccls/inheritance
-                      (append (eglot--TextDocumentPositionParams)
-                              `(:derived ,(if derived t :json-false))
-                              '(:levels 100) '(:hierarchy t))))
-                (tree (list (cons 0 res))))
-          (with-help-window "*ccls inheritance*"
-            (with-current-buffer standard-output
-              (while tree
-                (pcase-let ((`(,depth . ,node) (pop tree)))
-                  (cl-destructuring-bind (&key uri range) (plist-get node :location)
-                    (insert (make-string depth ?\ ) (plist-get node :name) "\n")
-                    (make-text-button (+ (point-at-bol 0) depth) (point-at-eol 0)
-                                      'action (lambda (_arg)
-                                                (interactive)
-                                                (find-file (eglot--uri-to-path uri))
-                                                (goto-char (car (eglot--range-region range)))))
-                    (cl-loop for child across (plist-get node :children)
-                             do (push (cons (1+ depth) child) tree)))))))
-        (eglot--error "Hierarchy unavailable")))))
+                                               :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))))))
 
 (use-package! ccls
   :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
