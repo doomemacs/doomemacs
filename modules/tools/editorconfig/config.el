@@ -19,7 +19,7 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (use-package! editorconfig
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . editorconfig-mode)
   :config
   (when (require 'ws-butler nil t)
     (setq editorconfig-trim-whitespaces-mode 'ws-butler-mode))
@@ -44,7 +44,4 @@ extension, try to guess one."
 specified by editorconfig."
       (when (or (gethash 'indent_style props)
                 (gethash 'indent_size props))
-        (setq doom-inhibit-indent-detection 'editorconfig))))
-
-  ;;
-  (editorconfig-mode +1))
+        (setq doom-inhibit-indent-detection 'editorconfig)))))
