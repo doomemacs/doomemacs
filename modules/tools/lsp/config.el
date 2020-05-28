@@ -7,7 +7,10 @@ workspace buffer is closed.
 This delay prevents premature server shutdown when a user still intends on
 working on that project after closing the last buffer.")
 
-;; TODO : set eglot-events-buffer-size to nil in doom-debug-mode
+
+;;
+;;; Implementations
+
 (if (featurep! +eglot)
     (load! "+eglot")
   (load! "+lsp"))

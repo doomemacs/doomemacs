@@ -1,19 +1,23 @@
 ;;; tools/lsp/+eglot.el -*- lexical-binding: t; -*-
 
+;; TODO set eglot-events-buffer-size to nil in doom-debug-mode
+;; TODO Implement `+lsp-defer-shutdown'
+
 (use-package! eglot
-  :commands (eglot-ensure eglot)
+  :commands eglot eglot-ensure
   :init
   (setq eglot-sync-connect 1
         eglot-connect-timeout 10
         eglot-autoshutdown t
         eglot-send-changes-idle-time 0.5
-        ;; NOTE: Do NOT set eglot-auto-display-help-buffer to t.
-        ;; With popup-rule! :select t, eglot will steal focus from the source code very often.
+        ;; NOTE We disable eglot-auto-display-help-buffer because :select t in
+        ;;      its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
+
   :config
   (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
+  (set-lookup-handlers! 'eglot--managed-mode
+    :documentation #'+eglot/documentation-lookup-handler)
   (when (featurep! :checkers syntax)
     (after! flycheck
-      (load! "autoload/flycheck-eglot")))
-  (set-lookup-handlers! 'eglot--managed-mode
-    :documentation #'+eglot/documentation-lookup-handler))
+      (load! "autoload/flycheck-eglot"))))
