@@ -1,0 +1,43 @@
+#+TITLE:   config/literate
+#+DATE:    May 4, 2020
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+With this module you can organize your config file inside ~config.org~ file and export them automatically to ~config.el~.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ ~ob-tangle~ (builtin)
+
+** Hacks
+This is only for personal config from ~$HOME/.config/doom/config.org~ or ~$HOME/.doom.d/config.org~.
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
++ Automatically tangle ~config.org~ to ~config.el~ when saving.
+
+* Configuration
++ This module don't need by himself need any customization.
++ Source blocks needs to be in some language for example ~#+BEGIN_SRC elisp~ but currently it does not matter what language is used, it tangles all to ~config.el~. ~elisp~ gives correct syntax highlight. If you don't want to specify language in block you can also enforce tangling by adding ~#+BEGIN_SRC :tangle~
+
+* Troubleshooting
++ No known problems with this.
