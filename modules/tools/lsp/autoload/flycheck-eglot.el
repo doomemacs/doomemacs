@@ -1,7 +1,5 @@
 ;;; flycheck-eglot --- Hacky eglot support in flycheck -*- lexical-binding: t; -*-
 
-(require 'flycheck)
-
 ;;; Code:
 (defun flycheck-eglot--start (checker callback)
   "Clean up errors when done.
@@ -44,7 +42,7 @@ CALLBACK is the function that we need to call when we are done, on all the error
 
 (push 'eglot flycheck-checkers)
 
-(defun +doom/eglot-prefer-flycheck-h ()
+(defun +doom-eglot-prefer-flycheck-h ()
   (when eglot--managed-mode
     (when-let ((current-checker (flycheck-get-checker-for-buffer)))
       (unless (equal current-checker 'eglot)
@@ -53,8 +51,6 @@ CALLBACK is the function that we need to call when we are done, on all the error
     (flycheck-mode 1)
     (flymake-mode -1)))
 
-(add-hook 'eglot--managed-mode-hook #'+doom/eglot-prefer-flycheck-h)
+(add-hook 'eglot--managed-mode-hook #'+doom-eglot-prefer-flycheck-h)
 
-(provide 'flycheck-eglot)
 ;;; flycheck-eglot.el ends here
-

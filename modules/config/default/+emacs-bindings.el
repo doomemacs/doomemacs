@@ -58,7 +58,7 @@
         :desc "LSP Format buffer/region"             "F" #'eglot-format
         :desc "LSP Rename"                           "r" #'eglot-rename
         :desc "LSP Find declaration"                 "j" #'eglot-find-declaration
-        :desc "LSP Find implementation"              "J" #' eglot-find-implementation))
+        :desc "LSP Find implementation"              "J" #'eglot-find-implementation))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")

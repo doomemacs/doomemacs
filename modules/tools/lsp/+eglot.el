@@ -14,10 +14,7 @@
   :config
   (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
   (when (featurep! :checkers syntax)
-    ;; Eager loading which is okay-ish since we want eglot to feed flycheck as soon as possible.
-    (load! "flycheck-eglot.el")
-    (require 'flycheck-eglot))
+    (after! flycheck
+      (load! "flycheck-eglot.el")))
   (set-lookup-handlers! 'eglot--managed-mode
-    :documentation #'+eglot/documentation-lookup-handler
-    :definition '(xref-find-definitions :async t)
-    :references '(xref-find-references :async t)))
+    :documentation #'+eglot/documentation-lookup-handler))
