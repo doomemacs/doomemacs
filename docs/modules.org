@@ -169,7 +169,7 @@ Small modules that give Emacs access to external tools & services.
 + gist - TODO
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets +offline +xwidget= - Universal jump-to & documentation lookup
   backend
-+ [[file:../modules/tools/lsp/README.org][lsp]] =+peek= - TODO
++ [[file:../modules/tools/lsp/README.org][lsp]] =+peek +eglot= - Installation and configuration of language server protocol client (lsp-mode or eglot)
 + macos - TODO
 + [[file:../modules/tools/magit/README.org][magit]] =+forge= - TODO
 + make - TODO

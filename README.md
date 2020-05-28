@@ -73,7 +73,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 - Optional vim emulation powered by [evil-mode], including ports of popular vim
   plugins like [vim-sneak], [vim-easymotion], [vim-unimpaired] and
   [more][ported-vim-plugins]!
-- Opt-in LSP integration for many languages, using [lsp-mode].
+- Opt-in LSP integration for many languages, using [lsp-mode] or [eglot]
 - Support for *many* programming languages. Includes syntax highlighting,
   linters/checker integration, inline code evaluation, code completion (where
   possible), REPLs, documentation lookups, snippets, and more!
@@ -240,6 +240,7 @@ kind!
 [helm]: https://github.com/emacs-helm/helm
 [ivy]: https://github.com/abo-abo/swiper
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
+[eglot]: https://github.com/joaotavora/eglot
 [nix]: https://nixos.org
 [ported-vim-plugins]: modules/editor/evil/README.org#ported-vim-plugins
 [ripgrep]: https://github.com/BurntSushi/ripgrep

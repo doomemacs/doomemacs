@@ -16,6 +16,8 @@
 - [[#configure][Configure]]
   - [[#project-compile-settings][Project compile settings]]
     - [[#known-issues-with-bear-on-macos][Known issues with bear on macOS]]
+- [[#appendix][Appendix]]
+  - [[#eglot-specific-bindings][Eglot specific bindings]]
 
 * Description
 This module adds support for the C-family of languages: C, C++, and Objective-C.
@@ -42,7 +44,7 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + [[https://github.com/jimhourihan/glsl-mode][glsl-mode]]*
 + [[https://github.com/guidoschmidt/company-glsl][company-glsl]]*
 + =+lsp=
-  + [[https://github.com/MaskRay/emacs-ccls][ccls]]
+  + [[https://github.com/MaskRay/emacs-ccls][ccls]] if =:tools lsp= has *no* =+eglot= flag
 + =-lsp=
   + [[https://github.com/Sarcasm/irony-mode][irony]]
   + [[https://github.com/ikirill/irony-eldoc][irony-eldoc]]
@@ -173,3 +175,12 @@ bear gmake
 Additional info:
 + [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
 + [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]
+
+* Appendix
+** Eglot specific bindings
+When using =+lsp= and =:tools (lsp +eglot)=, lsp-mode is replaced with eglot,
+and an additional function to get inheritance type hierarchy is added
+| Binding                      | Description                                      |
+|------------------------------+--------------------------------------------------|
+| ~<localleader> c t~          | ~Display inheritance type hierarchy (upwards)~   |
+| ~<prefix> <localleader> c t~ | ~Display inheritance type hierarchy (downwards)~ |

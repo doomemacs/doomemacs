@@ -343,32 +343,38 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-       :desc "Compile"                               "c"   #'compile
-       :desc "Recompile"                             "C"   #'recompile
-       :desc "Jump to definition"                    "d"   #'+lookup/definition
-       :desc "Jump to references"                    "D"   #'+lookup/references
-       :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
-       :desc "Evaluate & replace region"             "E"   #'+eval:replace-region
-       :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
-       (:when (featurep! :completion ivy)
-        :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
-        :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
-       (:when (featurep! :completion helm)
-        :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
-        :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)
-       :desc "Jump to documentation"                 "k"   #'+lookup/documentation
-       (:when (featurep! :tools lsp)
-        :desc "LSP Execute code action"               "a"   #'lsp-execute-code-action
-        :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
-        :desc "LSP Rename"                            "r"   #'lsp-rename
-        (:after lsp-mode
-         :desc "LSP"                                   "l"   lsp-command-map))
-       :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
-       :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
-       :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
-       :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-       (:when (featurep! :checkers syntax)
-        :desc "List errors"                         "x"   #'flycheck-list-errors))
+        (:unless (featurep! :tools lsp +eglot)
+          :desc "LSP Execute code action" "a" #'lsp-execute-code-action
+          :desc "LSP Organize imports" "i" #'lsp-organize-imports
+          (:when (featurep! :completion ivy)
+            :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
+            :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
+          (:when (featurep! :completion helm)
+            :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
+            :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)
+          :desc "LSP Rename" "r" #'lsp-rename
+         (:after lsp-mode
+           :desc "LSP"                                   "l"   lsp-command-map))
+        (:when (featurep! :tools lsp +eglot)
+          :desc "LSP Execute code action" "a" #'eglot-code-actions
+          :desc "LSP Format buffer/region" "F" #'eglot-format
+          :desc "LSP Rename" "r" #'eglot-rename
+          :desc "LSP Find declaration" "j" #'eglot-find-declaration
+          :desc "LSP Find implementation" "J" #'eglot-find-implementation)
+        :desc "Compile"                               "c"   #'compile
+        :desc "Recompile"                             "C"   #'recompile
+        :desc "Jump to definition"                    "d"   #'+lookup/definition
+        :desc "Jump to references"                    "D"   #'+lookup/references
+        :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
+        :desc "Evaluate & replace region"             "E"   #'+eval:replace-region
+        :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
+        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
+        :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
+        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
+        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
+        :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
+        (:when (featurep! :checkers syntax)
+          :desc "List errors"                         "x"   #'flycheck-list-errors))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")

@@ -122,6 +122,34 @@ simpler."
        #'rtags-imenu
      #'imenu)))
 
+;; Eglot specific helper, courtesy of MaskRay
+;;;###autoload
+(defun +cc/eglot-ccls-inheritance-hierarchy (&optional derived)
+  "Show inheritance hierarchy for the thing at point.
+If DERIVED is non-nil (interactively, with prefix argument), show
+the children of class at point."
+  (interactive "P")
+  (if-let* ((res (jsonrpc-request
+                  (eglot--current-server-or-lose)
+                  :$ccls/inheritance
+                  (append (eglot--TextDocumentPositionParams)
+                          `(:derived ,(if derived t :json-false))
+                          '(:levels 100) '(:hierarchy t))))
+            (tree (list (cons 0 res))))
+      (with-help-window "*ccls inheritance*"
+        (with-current-buffer standard-output
+          (while tree
+            (pcase-let ((`(,depth . ,node) (pop tree)))
+              (cl-destructuring-bind (&key uri range) (plist-get node :location)
+                (insert (make-string depth ?\ ) (plist-get node :name) "\n")
+                (make-text-button (+ (point-at-bol 0) depth) (point-at-eol 0)
+                                  'action (lambda (_arg)
+                                            (interactive)
+                                            (find-file (eglot--uri-to-path uri))
+                                            (goto-char (car (eglot--range-region range)))))
+                (cl-loop for child across (plist-get node :children)
+                         do (push (cons (1+ depth) child) tree)))))))
+    (eglot--error "Hierarchy unavailable")))
 
 ;;
 ;; Hooks
