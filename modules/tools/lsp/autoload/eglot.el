@@ -6,7 +6,7 @@
   "Add SERVER-CALL list as a possible lsp server for given major MODE.
 
 Example : (set-eglot-client! 'python-mode `(,(concat doom-etc-dir \"lsp/mspyls/Microsoft.Python.LanguageServer\")))"
-  (when (featurep! +eglot)
+  (after! eglot
     (add-to-list 'eglot-server-programs `(,mode . ,server-call))))
 
 ;;;###autoload
