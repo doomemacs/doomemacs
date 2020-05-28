@@ -114,6 +114,13 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           "v" #'find-variable
           "l" #'find-library)))
 
+(use-package! ielm
+  :defer t
+  :config
+  (set-lookup-handlers! 'inferior-emacs-lisp-mode
+    :definition    #'+emacs-lisp-lookup-definition
+    :documentation #'+emacs-lisp-lookup-documentation))
+
 ;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
 ;; syntax highlighting to ielm REPLs.
 (add-hook! 'ielm-mode-hook
