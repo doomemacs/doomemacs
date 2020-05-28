@@ -233,11 +233,15 @@ directives. By default, this only recognizes C directives.")
          . +evil-embrace-lisp-mode-hook-h)
   :hook ((c++-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
          . +evil-embrace-angle-bracket-modes-hook-h)
+  :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
   :init
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
   :config
   (setq evil-embrace-show-help-p nil)
+
+  (defun +evil-embrace-scala-mode-hook-h ()
+    (embrace-add-pair ?$ "${" "}"))
 
   (defun +evil-embrace-latex-mode-hook-h ()
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
