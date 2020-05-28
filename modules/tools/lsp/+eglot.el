@@ -14,6 +14,6 @@
   (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
   (when (featurep! :checkers syntax)
     (after! flycheck
-      (load! "autoload/flycheck-eglot.el")))
+      (load! "autoload/flycheck-eglot")))
   (set-lookup-handlers! 'eglot--managed-mode
     :documentation #'+eglot/documentation-lookup-handler))

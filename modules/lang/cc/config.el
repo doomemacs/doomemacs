@@ -241,7 +241,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (map! :localleader
         :after cc-mode
         :map c++-mode-map
-        :n :desc "Show type inheritance hierarchy" "ct" #'eglot-ccls-inheritance-hierarchy)
+        :n :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
 
   ;; NOTE : This setting is untested yet
   (after! eglot

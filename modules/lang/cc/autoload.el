@@ -124,7 +124,7 @@ simpler."
 
 ;; Eglot specific helper, courtesy of MaskRay
 ;;;###autoload
-(defun eglot-ccls-inheritance-hierarchy (&optional derived)
+(defun +cc/eglot-ccls-inheritance-hierarchy (&optional derived)
   "Show inheritance hierarchy for the thing at point.
 If DERIVED is non-nil (interactively, with prefix argument), show
 the children of class at point."

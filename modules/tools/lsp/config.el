@@ -9,5 +9,5 @@ working on that project after closing the last buffer.")
 
 ;; TODO : set eglot-events-buffer-size to nil in doom-debug-mode
 (if (featurep! +eglot)
-    (load! "+eglot.el")
-  (load! "+lsp.el"))
+    (load! "+eglot")
+  (load! "+lsp"))
