@@ -2,7 +2,6 @@
 
 (use-package! eglot
   :commands (eglot-ensure eglot)
-  :when (featurep! +eglot)
   :init
   (setq eglot-sync-connect 1
         eglot-connect-timeout 10
