@@ -73,6 +73,7 @@ possible, or just one char if that's not possible."
           ;; Delete up to the nearest tab column IF only whitespace between
           ;; point and bol.
           ((and (not indent-tabs-mode)
+                (> tab-width 1)
                 (not (bolp))
                 (not (doom-point-in-string-p))
                 (save-excursion (>= (- (skip-chars-backward " \t")) tab-width)))
