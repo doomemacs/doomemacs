@@ -52,10 +52,13 @@ following shell commands:
         process-file-side-effects)
     (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
 
-    (let* ((branch
-            (string-trim-right
-             (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD"))
-             "~[0-9]$"))
+    (let* (;; git name-rev may return BRANCH~X for detached HEADs and fully
+           ;; qualified refs in some other cases, so an effort to strip out all
+           ;; but the branch name is necessary. git symbolic-ref (or
+           ;; `vc-git--symbolic-ref') won't work; it can't deal with submodules.
+           (branch (replace-regexp-in-string
+                    "^\\(?:[^/]+/[^/]+/\\)?\\(.+\\)\\(?:~[0-9]+\\)?$" "\\1"
+                    (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD"))))
            (target-remote (format "%s/%s" doom-repo-remote branch)))
       (unless branch
         (error! (if (file-exists-p! ".git" doom-emacs-dir)
