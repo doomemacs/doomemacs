@@ -17,6 +17,8 @@
   :config
   (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'eglot--managed-mode
+    :implementations #'eglot-find-implementation
+    :type-definition #'eglot-find-typeDefinition
     :documentation #'+eglot/documentation-lookup-handler)
   (when (featurep! :checkers syntax)
     (after! flycheck

@@ -34,6 +34,7 @@
        :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
        :desc "Evaluate & replace region"             "E"   #'+eval/region-and-replace
        :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
+       :desc "Find implementations"                  "J"   #'+lookup/implementations
        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
        :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
@@ -56,8 +57,7 @@
        (:when (featurep! :tools lsp +eglot)
         :desc "LSP Execute code action"              "a" #'eglot-code-actions
         :desc "LSP Rename"                           "r" #'eglot-rename
-        :desc "LSP Find declaration"                 "j" #'eglot-find-declaration
-        :desc "LSP Find implementation"              "J" #'eglot-find-implementation))
+        :desc "LSP Find declaration"                 "j" #'eglot-find-declaration))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
