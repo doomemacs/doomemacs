@@ -248,10 +248,10 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
     ;; IS-MAC custom configuration
     (when IS-MAC
       (add-to-list 'eglot-workspace-configuration
-                   ((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
-                                                           "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-                                                           "-isystem/usr/local/include"]
-                                               :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))))))
+                   `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
+                                                            "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+                                                            "-isystem/usr/local/include"]
+                                                :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))))))
 
 (use-package! ccls
   :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
