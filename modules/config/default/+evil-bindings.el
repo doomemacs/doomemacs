@@ -344,7 +344,7 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-        (:unless (featurep! :tools lsp +eglot)
+       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
           :desc "LSP Execute code action" "a" #'lsp-execute-code-action
           :desc "LSP Organize imports" "i" #'lsp-organize-imports
           (:when (featurep! :completion ivy)
