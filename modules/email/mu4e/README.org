@@ -113,7 +113,7 @@ This module uses =mbsync= by default. To use =offlineimap=, change ~+mu4e-backen
 #+END_SRC
 
 Next, you need to write a configuration file for =offlineimap=. Mine can be found
-[[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
+[[https://github.com/hlissner/dotfiles/blob/be0dce5dae8f3cbafaac0cc44269d84b4a742c46/shell/mu/][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
 use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials. You can find a *very*
 detailed configuration [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
 
