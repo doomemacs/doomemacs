@@ -206,11 +206,15 @@ See `+format/buffer' for the interactive version of this function, and
   "Reformat the current buffer using LSP or `format-all-buffer'."
   (interactive)
   (call-interactively
-   (if (and +format-with-lsp
-            (bound-and-true-p lsp-mode)
-            (lsp-feature? "textDocument/formatting"))
-       #'lsp-format-buffer
-     #'format-all-buffer)))
+   (cond ((and +format-with-lsp
+               (bound-and-true-p lsp-mode)
+               (lsp-feature? "textDocument/formatting"))
+          #'lsp-format-buffer)
+         ((and +format-with-lsp
+               (bound-and-true-p eglot--managed-mode)
+               (eglot--server-capable :documentFormattingProvider))
+          #'eglot-format-buffer)
+         (t #'format-all-buffer))))
 
 ;;;###autoload
 (defun +format/region (beg end)
@@ -220,14 +224,18 @@ WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "rP")
-  (if (and +format-with-lsp
-           (bound-and-true-p lsp-mode)
-           (lsp-feature? "textDocument/rangeFormatting"))
-      (call-interactively #'lsp-format-region)
-    (save-restriction
-      (narrow-to-region beg end)
-      (let ((+format-region-p t))
-        (+format/buffer)))))
+  (cond ((and +format-with-lsp
+              (bound-and-true-p lsp-mode)
+              (lsp-feature? "textDocument/rangeFormatting"))
+         (call-interactively #'lsp-format-region))
+        ((and +format-with-lsp
+              (bound-and-true-p eglot--managed-mode)
+              (eglot--server-capable :documentRangeFormattingProvider))
+         (call-interactively #'eglot-format))
+        (t (save-restriction
+             (narrow-to-region beg end)
+             (let ((+format-region-p t))
+               (+format/buffer))))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()

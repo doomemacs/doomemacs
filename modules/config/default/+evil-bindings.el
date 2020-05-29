@@ -358,7 +358,6 @@
            :desc "LSP"                                   "l"   lsp-command-map))
         (:when (featurep! :tools lsp +eglot)
           :desc "LSP Execute code action" "a" #'eglot-code-actions
-          :desc "LSP Format buffer/region" "F" #'eglot-format
           :desc "LSP Rename" "r" #'eglot-rename
           :desc "LSP Find declaration" "j" #'eglot-find-declaration
           :desc "LSP Find implementation" "J" #'eglot-find-implementation)
