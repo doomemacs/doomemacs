@@ -31,6 +31,7 @@
     (js2-mode        :lang javascript)
     (rjsx-mode       :lang javascript)
     (typescript-mode :lang javascript)
+    (typescript-tsx-mode :lang javascript)
     (coffee-mode     :lang javascript)
     (julia-mode      :lang julia)
     (kotlin-mode     :lang kotlin)

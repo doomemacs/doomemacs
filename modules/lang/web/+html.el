@@ -14,10 +14,6 @@
   :mode "\\.jinja2?\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
-  ;; REVIEW We associate TSX files with `web-mode' because `typescript-mode'
-  ;;        does not officially support JSX/TSX. See
-  ;;        https://github.com/emacs-typescript/typescript.el/issues/4
-  :mode "\\.tsx\\'"
   :init
   ;; If the user has installed `vue-mode' then, by appending this to
   ;; `auto-mode-alist' rather than prepending it, its autoload will have
