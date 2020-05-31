@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "3f3b2fea87172f155e5f91d75f0fb69d8648acf2")
+(package! evil :pin "25fc5c6647979357cf3e39f0667a9b7ae5266af9")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
@@ -15,12 +15,12 @@
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
   :pin "c2cfdd1eb1f193bea28ee79b191b78309677058a")
-(package! evil-snipe :pin "2ba6353bb9253dbbc4193f1d35403e7dcc1317b1")
-(package! evil-surround :pin "9b0b17f06cef9bac81ee4800d121265e54718a17")
+(package! evil-snipe :pin "6dcac7f2516c6137a2de532fc2c052f242559ee3")
+(package! evil-surround :pin "1c34944d8c98da4a2385d24ee89eef9cdf569a12")
 (package! evil-textobj-anyblock :pin "ff00980f0634f95bf2ad9956b615a155ea8743be")
 (package! evil-traces :pin "bc25cae9fa5ab0ba1507827f0944f52ce0ca7462")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
-(package! exato :pin "d5daea30176d48e74c9d063ac9bfc240ebeb97d0")
+(package! exato :pin "aee7af7b7a0e7551478f453d1de7d5b9cb2e06c4")
 (package! evil-quick-diff
   :recipe (:host github :repo "rgrinberg/evil-quick-diff")
   :pin "69c883720b30a892c63bc89f49d4f0e8b8028908")
@@ -33,4 +33,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "1237452e13d621e119c2fb2212958f5d2e80925a"))
+  (package! evil-collection :pin "e065da3732f015428bd0068481dadad9e0e6d09c"))
