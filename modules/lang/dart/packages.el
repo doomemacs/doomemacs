@@ -4,7 +4,7 @@
 (package! dart-mode :pin "04fcd649f1")
 
 (when (featurep! +lsp)
-  (package! lsp-dart :pin "80f8ecaf62"))
+  (package! lsp-dart :pin "afdcce3507"))
 
 (when (featurep! +flutter)
   (package! flutter :pin "293b7225b9")
