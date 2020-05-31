@@ -17,6 +17,9 @@ called.")
 
 (use-package! python
   :defer t
+  :mode
+  ("\\.flake8" . conf-mode)
+  ("Pipfile$" . conf-mode)
   :init
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil)
