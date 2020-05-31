@@ -119,12 +119,14 @@ This also logs the resolved project root, if found, so we know where we are."
         ((or :flymake 't)
          (lsp--flymake-setup))
         (:flycheck
-         (let ((old-checker flycheck-checker))
-           (lsp-flycheck-enable)
-           ;; Ensure file/dir local `flycheck-checker' is respected
-           (when old-checker
-             (setq-local flycheck-checker old-checker)
-             (kill-local-variable 'flycheck-check-syntax-automatically)))))))
+         ;; Ensure file/dir local `flycheck-checker' is respected
+         (unless flycheck-checker
+           (if (flycheck-checker-supports-major-mode-p 'lsp major-mode)
+               (lsp-flycheck-enable)
+             (let ((old-checker (flycheck-get-checker-for-buffer)))
+               (lsp-flycheck-enable)
+               (flycheck-add-next-checker 'lsp old-checker)))
+           (kill-local-variable 'flycheck-checker))))))
 
   (defvar +lsp--deferred-shutdown-timer nil)
   (defadvice! +lsp-defer-server-shutdown-a (orig-fn &optional restart)
