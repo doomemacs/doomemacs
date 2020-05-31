@@ -62,7 +62,7 @@ please refer to the official website at: https://dart.dev/get-dart
 + *On macOS*:
   #+BEGIN_SRC shell
   brew tap dart-lang/dart
-  brew install dart#+END_SRC
+  brew install dart
   #+END_SRC
 
 ** Installing Flutter SDK
