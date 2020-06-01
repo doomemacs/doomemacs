@@ -46,8 +46,15 @@ Emacs.")
                 ;; In case the user saves the file to a new location
                 after-save-hook
                 ;; ...or makes external changes then returns to Emacs
-                focus-in-hook)
+                focus-in-hook
+                ;; ...or when we change the current project!
+                projectile-after-switch-project-hook)
     projectile-project-root (if default-directory (doom-project-root)))
+
+  ;; However, it may become a problem when switching projects, so remove the
+  ;; cached value when switching projects.
+  (setq-hook! 'projectile-before-switch-project-hook
+    projectile-project-root nil)
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
