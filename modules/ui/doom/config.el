@@ -45,22 +45,29 @@
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
 
+  ;; DEPRECATED No longer needed in Emacs 27+
   (unless EMACS27+
-    ;; On Emacs <=26, when point is on the last line and solaire-mode is
-    ;; remapping the hl-line face, hl-line's highlight bleeds into the rest of
-    ;; the window after eob. On Emacs 27 this no longer happens.
+    ;; HACK On Emacs <=26, when point is on the last (or second to last) line
+    ;;      and solaire-mode is remapping the hl-line face, hl-line's highlight
+    ;;      bleeds into the rest of the window after eob. On Emacs 27 this no
+    ;;      longer happens. This tries to fix it for 26 users, but it imposes
+    ;;      another problem: the 2nd-to-last line will only be highlighted up to
+    ;;      the (n-1)th character, but I think that is the lesser evil.
     (defun +doom--line-range-fn ()
-      (let ((bol (line-beginning-position))
-            (eol (line-end-position))
-            (pmax (point-max)))
-        (cons bol
-              (cond ((and (=  eol pmax)
-                          (/= eol bol))
-                     (1- eol))
-                    ((or (eobp)
-                         (= eol pmax))
-                     eol)
-                    ((line-beginning-position 2))))))
+      (if solaire-mode
+          (let ((bol (line-beginning-position))
+                (eol (line-end-position))
+                (eob (point-max)))
+            (cond ((or (= bol eob)
+                       (= (1+ eol) eob))
+                   nil)
+                  ((= eol eob)
+                   (cons bol eol))
+                  ((eobp)
+                   (cons bol eol))
+                  ((cons bol (line-beginning-position 2)))))
+        (cons (line-beginning-position)
+              (line-beginning-position 2))))
     (setq hl-line-range-function #'+doom--line-range-fn)
 
     ;; HACK The fringe cannot have a buffer-local remapping on Emacs <= 26, so
