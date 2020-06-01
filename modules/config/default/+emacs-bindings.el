@@ -448,7 +448,7 @@
         "C-x 4 B"     #'switch-to-buffer-other-window
         (:when (featurep! :completion ivy)
           "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window))
-      "C-x C-b"     #'ibuffer-list-buffers
+      "C-x C-b"     #'ibuffer
       "C-x K"       #'doom/kill-this-buffer-in-all-windows
 
       ;;; company-mode
