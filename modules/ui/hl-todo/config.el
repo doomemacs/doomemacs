@@ -22,6 +22,13 @@
           ;; For things that just gotta go and will soon be gone.
           ("DEPRECATED" font-lock-doc-face bold)))
 
+  (defadvice! +hl-todo-clamp-font-lock-fontify-region-a (orig-fn &rest args)
+    "Fix an `args-out-of-range' error in some modes."
+    :around #'hl-todo-mode
+    (letf! (defun font-lock-fontify-region (beg end &optional loudly)
+             (funcall font-lock-fontify-region (max beg 1) end loudly))
+      (apply orig-fn args)))
+
   ;; Use a more primitive todo-keyword detection method in major modes that
   ;; don't use/have a valid syntax table entry for comments.
   (add-hook! '(pug-mode-hook haml-mode-hook)
