@@ -354,6 +354,19 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   (defun use-package-handler/:magic-minor (name _ arg rest state)
     (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
 
+  ;; HACK Fix `:load-path' so it resolves relative paths to the containing file,
+  ;;      rather than `user-emacs-directory'. This is a done as a convenience
+  ;;      for users, wanting to specify a local directory.
+  (defadvice! doom--resolve-load-path-from-containg-file-a (orig-fn _label arg &optional _recursed)
+    "Resolve :load-path from the current directory."
+    :around #'use-package-normalize-paths
+    (if (and (stringp arg) (not (file-name-absolute-p arg)))
+        ;; `use-package-normalize-paths' resolves relative paths from
+        ;; `user-emacs-directory', so just change that.
+        (let ((user-emacs-directory (dir!)))
+          (funcall orig-fn args))
+      (funcall orig-fn args)))
+
   ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
   ;;
   ;;   :after-call SYMBOL|LIST
