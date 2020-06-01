@@ -11,4 +11,15 @@
   (map! :after json-mode
         :map json-mode-map
         :localleader
-        "s" #'jsons-print-path))
+        "p" #'jsons-print-path))
+
+
+
+(use-package! counsel-jq
+  :when (featurep! :completion ivy)
+  :defer t
+  :init
+  (map! :after json-mode
+    :map json-mode-map
+    :localleader
+    "s" #'counsel-jq))
