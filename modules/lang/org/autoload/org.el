@@ -167,7 +167,9 @@ If on a:
             type (org-element-type context)))
     (pcase type
       (`headline
-       (cond ((and (fboundp 'toc-org-insert-toc)
+       (cond ((memq (bound-and-true-p org-goto-map) (current-active-maps))
+              (org-goto-ret))
+             ((and (fboundp 'toc-org-insert-toc)
                    (member "TOC" (org-get-tags)))
               (toc-org-insert-toc)
               (message "Updating table of contents"))
