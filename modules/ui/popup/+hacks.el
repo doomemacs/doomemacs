@@ -236,11 +236,27 @@ the command buffer."
               org-capture-place-template
               org-export--dispatch-ui
               org-agenda-get-restriction-and-command
+              org-goto-location
               org-fast-tag-selection
               org-fast-todo-selection)
     (if +popup-mode
         (letf! ((#'delete-other-windows #'ignore)
                 (#'delete-window        #'ignore))
+          (apply orig-fn args))
+      (apply orig-fn args)))
+
+  (defadvice! +popup--org-fix-goto-a (orig-fn &rest args)
+    "`org-goto' uses `with-output-to-temp-buffer' to display its help buffer,
+for some reason, which is very unconventional, and so requires these gymnastics
+to tame (i.e. to get the popup manager to handle it)."
+    :around #'org-goto-location
+    (if +popup-mode
+        (letf! (defun internal-temp-output-buffer-show (buffer)
+                 (let ((temp-buffer-show-function
+                        (doom-rpartial #'+popup-display-buffer-stacked-side-window-fn nil)))
+                   (with-current-buffer buffer
+                     (hide-mode-line-mode +1))
+                   (funcall internal-temp-output-buffer-show buffer)))
           (apply orig-fn args))
       (apply orig-fn args)))
 
