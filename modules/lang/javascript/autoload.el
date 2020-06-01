@@ -42,7 +42,9 @@ skewer-*-mode's are enabled, or `nodejs-repl' otherwise."
   (interactive)
   (call-interactively
    (if (and (featurep 'skewer-mode)
-            (or skewer-mode skewer-css-mode skewer-html-mode))
+            (or (bound-and-true-p skewer-mode)
+                (bound-and-true-p skewer-css-mode)
+                (bound-and-true-p skewer-html-mode)))
        #'skewer-repl
      #'nodejs-repl))
   (current-buffer))
@@ -62,13 +64,13 @@ Run this for any buffer you want to skewer."
     (run-skewer))
   (pcase major-mode
     ((or 'css-mode 'scss-mode 'less-css-mode)
-     (unless skewer-css-mode
+     (unless (bound-and-true-p skewer-css-mode)
        (skewer-css-mode +1)))
     ((or 'web-mode 'html-mode)
-     (unless skewer-html-mode
+     (unless (bound-and-true-p skewer-html-mode)
        (skewer-html-mode +1)))
     ('js2-mode
-     (unless skewer-mode
+     (unless (bound-and-true-p skewer-mode)
        (skewer-mode +1)))
     (_ (error "Invalid mode %s" major-mode))))
 
@@ -80,9 +82,12 @@ Run this for any buffer you want to skewer."
     (httpd-stop))
   (dolist (buf (buffer-list))
     (with-current-buffer buf
-      (if skewer-mode (skewer-mode -1))
-      (if skewer-css-mode (skewer-css-mode -1))
-      (if skewer-html-mode (skewer-html-mode -1)))))
+      (if (bound-and-true-p skewer-mode)
+          (skewer-mode -1))
+      (if (bound-and-true-p skewer-css-mode)
+          (skewer-css-mode -1))
+      (if (bound-and-true-p skewer-html-mode)
+          (skewer-html-mode -1)))))
 
 
 ;;
