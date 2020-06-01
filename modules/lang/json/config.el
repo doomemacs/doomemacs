@@ -15,11 +15,11 @@
 
 
 
-(when (featurep! :completion ivy)
-  (use-package! counsel-jq
-    :defer t
-    :init
-    (map! :after json-mode
-          :map json-mode-map
-          :localleader
-          "s" #'counsel-jq)))
+(use-package! counsel-jq
+  :when (featurep! :completion ivy)
+  :defer t
+  :init
+  (map! :after json-mode
+    :map json-mode-map
+    :localleader
+    "s" #'counsel-jq))
