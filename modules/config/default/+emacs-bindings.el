@@ -369,7 +369,7 @@
 
       ;;; <leader> m --- multiple cursors
       (:when (featurep! :editor multiple-cursors)
-       (:prefix-map ("m" . "multiple cursors")
+       (:prefix-map ("m" . "multiple-cursors")
         :desc "Edit lines"         "l"         #'mc/edit-lines
         :desc "Mark next"          "n"         #'mc/mark-next-like-this
         :desc "Unmark next"        "N"         #'mc/unmark-next-like-this
