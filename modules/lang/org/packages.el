@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "5454312dbfe1d6e3b338c324989d2441e890ddd1")
+  :pin "2ab68c7c35dcd8d74aec18a0e100506c18c1e03f")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -51,9 +51,9 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
 (when (featurep! +brain)
-  (package! org-brain :pin "3ce2a33b81ce611695ad74bf21cb911ef90d9a1a"))
+  (package! org-brain :pin "c9c6995854a59b0ddfdf8243860a4c5c821ad022"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "8e12cf05a2f529e4859d73dd956a33e7fba8d7ea"))
+  (package! org-download :pin "40c8a1db186a4ec79d87805018237234c0aad878"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "f0001c30010b2899e36d7d89046322467e923088")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "a3ff9ce81884bffbe121eba72c7b05589ac91448"))
+  (package! org-journal :pin "0bcefa5c371b2a344729c56efc012c08ff82c168"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -71,10 +71,10 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "7bf09a02bd2d8f1ccfcb5209bfb18fbe02d1f44e")
+  (package! org-tree-slide :pin "80cb1ac6f98d533c9efb1a4b402822b84410b1d1")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "ea6bd215fc52c93460c7a96b7c0a0f97d3f5c8f3")
+  (package! org-roam :pin "b2594b84aef131ab24dd477a4bd7b2d1a6ca7621")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
@@ -103,6 +103,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "01bc315d49f246d7ecc0bd37ea8ccb870b420a5b"))
+    :pin "94aec3f15ea76e9bb49832afa62b5ebf490db782"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))

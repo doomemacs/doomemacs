@@ -208,10 +208,6 @@ This forces it to read the background before rendering."
   ;; ipython, where the result could be an image)
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
-  ;; Fix 'require(...).print is not a function' error from `ob-js' when
-  ;; executing JS src blocks
-  (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));")
-
   (after! python
     (setq org-babel-python-command python-shell-interpreter)))
 
