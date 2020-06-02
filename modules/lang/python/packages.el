@@ -28,8 +28,11 @@
   (package! poetry :pin "6dcc9d22ca"))
 
 ;; Testing frameworks
-(package! nose :pin "f852829751")
-(package! python-pytest :pin "09ad688df2")
+(package! nose
+  ;; REVIEW Remove this when emacsmirror/epkgs updates its emacsattic index
+  :recipe (:host github :repo "emacsattic/nose")
+  :pin "f8528297519eba911696c4e68fa88892de9a7b72")
+(package! python-pytest :pin "09ad688df207ee9b02c990d3897a9e2841931d97")
 
 ;; Import managements
 (package! pyimport :pin "a6f63cf7ed")
