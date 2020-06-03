@@ -99,4 +99,8 @@ e.g. proselint and langtool."
 
 
 (use-package! flyspell-lazy
-  :after flyspell)
+  :after flyspell
+  :config
+  (setq flyspell-lazy-idle-seconds 1
+        flyspell-lazy-window-idle-seconds 3)
+  (flyspell-lazy-mode +1))
