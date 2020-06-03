@@ -565,3 +565,24 @@ than unwarranted characters.
 
 Alternatively, an updated version exists at
 [[https://github.com/amosbird/evil-terminal-cursor-changer][amosbird/evil-terminal-cursor-changer]], with support for urxvt and tmux.
+
+** Create a paste-transient-state to cycle through kill ring on paste
+Replaces the default evil-paste binding to paste then let you cycle through entries in your kill ring. Gives you more flexibility when copying to your clipboard, making edits, then deciding to paste after.
+
+You will need to enable the `hydra` module first.
+
+#+BEGIN_SRC elisp
+(defhydra hydra-paste (:color red
+                       :hint nil)
+  "\n[%s(length kill-ring-yank-pointer)/%s(length kill-ring)] \
+ [_C-j_/_C-k_] cycles through yanked text, [_p_/_P_] pastes the same text \
+ above or below. Anything else exits."
+  ("C-j" evil-paste-pop)
+  ("C-k" evil-paste-pop-next)
+  ("p" evil-paste-after)
+  ("P" evil-paste-before))
+
+(map! :nv "p" #'hydra-paste/evil-paste-after
+      :nv "P" #'hydra-paste/evil-paste-before)
+#+END_SRC
+
