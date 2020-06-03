@@ -582,8 +582,7 @@ You will need to enable the `hydra` module first.
   ("p" evil-paste-after)
   ("P" evil-paste-before))
 
-(evil-define-key* '(normal visual) 'global
-  (kbd "p") #'hydra-paste/evil-paste-after
-  (kbd "P") #'hydra-paste/evil-paste-before)
+(map! :nv "p" #'hydra-paste/evil-paste-after
+      :nv "P" #'hydra-paste/evil-paste-before)
 #+END_SRC
 
