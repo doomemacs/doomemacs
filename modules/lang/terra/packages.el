@@ -6,4 +6,6 @@
   :pin "1e5e82410d")
 
 (when (featurep! :completion company)
-  (package! company-lua :pin "29f6819de4"))
+  (package! company-terraform
+    :recipe (:host github :repo "rafalcieslak/emacs-company-terraform")
+    :pin "2d11a21"))

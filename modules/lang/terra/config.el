@@ -8,4 +8,4 @@
     :documentation #'terra-search-documentation)
   (set-electric! 'terra-mode :words '("else" "end"))
   (set-repl-handler! 'terra-mode #'+terra/open-repl)
-  (set-company-backend! 'terra-mode '(company-lua company-yasnippet)))
+  (set-company-backend! 'terra-mode '(company-terraform company-yasnippet)))
