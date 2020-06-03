@@ -1,0 +1,67 @@
+#+TITLE:   lang/lua
+#+DATE:    Jun 3, 2020
+#+SINCE:   v3.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#language-server-protocol-servers][Language Server Protocol servers]]
+    - [[#lsp-mode][LSP-mode]]
+    - [[#eglot][Eglot]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#install-lua-language-server][Install lua-language-server]]
+
+* Description
+Adds Lua support to Doom Emacs
+# A summary of what this module does.
+
++ REPL
++ Love2D specific functions
++ Moonscript support
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+moonscript= Moonscript language support
++ =+lsp= Language Server Protocol support
+
+** Plugins
+# A list of linked plugins
++ [[https://github.com/immerrr/lua-mode][lua-mode]]
++ [[https://github.com/k2052/moonscript-mode][moonscript-mode]] (=+moonscript=)
+
+* Prerequisites
+** Language Server Protocol servers
+Currently the servers supported depend on the =:tools lsp= flavor you are using
+*** LSP-mode
+This server is built in Java, so a ~java~ environment will be necessary
++ [[https://github.com/EmmyLua/EmmyLua-LanguageServer][EmmyLua-LanguageServer]] must be installed and configured to use the
+  configuration provided by emacs-lsp.
+
+[[https://emacs-lsp.github.io/lsp-mode/page/lsp-emmy-lua/][LSP-mode documentation]] has more information about setting up the server and the
+configuration variables correctly (use a bare ~(setq
+lsp-clients-emmy-lua-java-path value)~ in your =config.el=)
+*** Eglot
+This server is built in Lua, so a =lua= environment will be necessary
++ [[https://github.com/sumneko/lua-language-server][lua-language-server]] must be installed and built locally, with =lua-lsp-dir=
+  variable pointing to the root of the repository
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+- lua-lsp-dir :: This must be set when using =+lsp= and using
+  [[https://github.com/sumneko/lua-language-server][lua-language-server]]. This controls where the repository has been cloned and
+  built to finish the configuration of the server.
+
+* Troubleshooting
+** Install lua-language-server
+A [[https://github.com/sumneko/lua-language-server/issues/60][catch-all issue]] has been created to gather help for installing
+lua-language-server on non-VSCode platforms.
