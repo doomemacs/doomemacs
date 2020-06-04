@@ -23,7 +23,8 @@
 ;;;###autoload
 (defun +org-capture-cleanup-frame-h ()
   "Closes the org-capture frame once done adding an entry."
-  (when (+org-capture-frame-p)
+  (when (and (+org-capture-frame-p)
+             (not org-capture-is-refiling))
     (delete-frame nil t)))
 
 ;;;###autoload
