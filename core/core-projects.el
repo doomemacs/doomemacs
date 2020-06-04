@@ -39,23 +39,6 @@ Emacs.")
   :config
   (projectile-mode +1)
 
-  ;; REVIEW Resolve the project root once, when the file/buffer is opened. This
-  ;;        speeds up projectile's project root resolution by leaps, but does
-  ;;        put you at risk of having a stale project root.
-  (setq-hook! '(change-major-mode-after-body-hook
-                ;; In case the user saves the file to a new location
-                after-save-hook
-                ;; ...or makes external changes then returns to Emacs
-                focus-in-hook
-                ;; ...or when we change the current project!
-                projectile-after-switch-project-hook)
-    projectile-project-root (if default-directory (doom-project-root)))
-
-  ;; However, it may become a problem when switching projects, so remove the
-  ;; cached value when switching projects.
-  (setq-hook! 'projectile-before-switch-project-hook
-    projectile-project-root nil)
-
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
   ;; + `projectile-root-local' -> checks the `projectile-project-root' variable
