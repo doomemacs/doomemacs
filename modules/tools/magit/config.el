@@ -21,6 +21,7 @@
         ;; add up with each invokation, especially on Catalina (macOS) or
         ;; Windows, so we resolve it once.
         magit-git-executable (executable-find magit-git-executable))
+  (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
   (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
     :after '(magit-checkout magit-branch-and-checkout)
