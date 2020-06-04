@@ -54,7 +54,7 @@ Its design is guided by these mantras:
 + **Your system, your rules.** You know better. At least, Doom hopes so! It
   won't *automatically* install system dependencies (and will force plugins not
   to either). Rely on `doom doctor` to tell you what's missing.
-+ **Nix/Guix was a great idea!** The Emacs ecosystem is temperamental. Things
++ **Nix/Guix is a great idea!** The Emacs ecosystem is temperamental. Things
   break and they break often. Disaster recovery should be a priority! Doom's
   package management should be declarative and your private config reproducible,
   and comes with a means to roll back releases and updates (still a WIP).
