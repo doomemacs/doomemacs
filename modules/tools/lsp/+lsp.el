@@ -125,7 +125,8 @@ This also logs the resolved project root, if found, so we know where we are."
                (lsp-flycheck-enable)
              (let ((old-checker (flycheck-get-checker-for-buffer)))
                (lsp-flycheck-enable)
-               (flycheck-add-next-checker 'lsp old-checker)))
+               (when old-checker
+                 (flycheck-add-next-checker 'lsp old-checker))))
            (kill-local-variable 'flycheck-checker))))))
 
   (defvar +lsp--deferred-shutdown-timer nil)
