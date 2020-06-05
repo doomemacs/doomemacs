@@ -184,6 +184,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
     [remap load-theme]               #'counsel-load-theme
     [remap locate]                   #'counsel-locate
+    [remap org-goto]                 #'counsel-org-goto
     [remap org-set-tags-command]     #'counsel-org-tag
     [remap projectile-compile-project] #'+ivy/project-compile
     [remap recentf-open-files]       #'counsel-recentf

@@ -9,9 +9,9 @@
   (map! :map kotlin-mode-map
         :localleader
         :prefix ("b" . "build")
-        :desc "gradlew assemble" "a" (λ! (+kotlin/run-gradlew "assemble"))
-        :desc "gradlew build"    "b" (λ! (+kotlin/run-gradlew "build"))
-        :desc "gradlew test"     "t" (λ! (+kotlin/run-gradlew "test"))))
+        :desc "gradlew assemble" "a" (cmd! (+kotlin/run-gradlew "assemble"))
+        :desc "gradlew build"    "b" (cmd! (+kotlin/run-gradlew "build"))
+        :desc "gradlew test"     "t" (cmd! (+kotlin/run-gradlew "test"))))
 
 
 (use-package! flycheck-kotlin

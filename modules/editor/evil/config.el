@@ -552,18 +552,18 @@ To change these keys see `+evil-repeat-keys'."
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
         "s" #'evil-avy-goto-char-2
-        "SPC" (λ!! #'evil-avy-goto-char-timer t)
+        "SPC" (cmd!! #'evil-avy-goto-char-timer t)
         "/" #'evil-avy-goto-char-timer))
 
       ;; evil-snipe
       (:after evil-snipe
        :map evil-snipe-parent-transient-map
-       "C-;" (λ! (require 'evil-easymotion)
-                 (call-interactively
-                  (evilem-create #'evil-snipe-repeat
-                                 :bind ((evil-snipe-scope 'whole-buffer)
-                                        (evil-snipe-enable-highlight)
-                                        (evil-snipe-enable-incremental-highlight))))))
+       "C-;" (cmd! (require 'evil-easymotion)
+                   (call-interactively
+                    (evilem-create #'evil-snipe-repeat
+                                   :bind ((evil-snipe-scope 'whole-buffer)
+                                          (evil-snipe-enable-highlight)
+                                          (evil-snipe-enable-incremental-highlight))))))
 
       ;; evil-surround
       :v "S" #'evil-surround-region

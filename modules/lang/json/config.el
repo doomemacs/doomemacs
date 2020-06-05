@@ -20,6 +20,6 @@
   :defer t
   :init
   (map! :after json-mode
-    :map json-mode-map
-    :localleader
-    "s" #'counsel-jq))
+        :map json-mode-map
+        :localleader
+        "s" #'counsel-jq))

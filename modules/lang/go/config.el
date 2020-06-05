@@ -45,9 +45,9 @@
           "a" #'go-import-add
           "r" #'go-remove-unused-imports)
         (:prefix ("b" . "build")
-          :desc "go run ." "r" (λ! (compile "go run ."))
-          :desc "go build" "b" (λ! (compile "go build"))
-          :desc "go clean" "c" (λ! (compile "go clean")))
+          :desc "go run ." "r" (cmd! (compile "go run ."))
+          :desc "go build" "b" (cmd! (compile "go build"))
+          :desc "go clean" "c" (cmd! (compile "go clean")))
         (:prefix ("t" . "test")
           "t" #'+go/test-rerun
           "a" #'+go/test-all

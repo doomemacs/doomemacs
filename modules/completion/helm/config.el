@@ -128,7 +128,7 @@ be negative.")
         "C-c C-e" #'helm-rg--bounce)
   (map! :map helm-rg--bounce-mode-map
         "q" #'kill-current-buffer
-        "C-c C-c" (λ! (helm-rg--bounce-dump) (kill-current-buffer))
+        "C-c C-c" (cmd! (helm-rg--bounce-dump) (kill-current-buffer))
         "C-x C-c" #'helm-rg--bounce-dump-current-file
         "C-c C-k" #'kill-current-buffer))
 

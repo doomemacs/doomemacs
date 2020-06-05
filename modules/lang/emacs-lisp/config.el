@@ -7,6 +7,14 @@
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
+(defvar +emacs-lisp-disable-flycheck-in-dirs
+  (list doom-emacs-dir doom-private-dir)
+  "List of directories to disable `emacs-lisp-checkdoc' in.
+
+This checker tends to produce a lot of false positives in your .emacs.d and
+private config, so it is mostly useless there. However, special hacks are
+employed so that flycheck still does *some* helpful linting.")
+
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded

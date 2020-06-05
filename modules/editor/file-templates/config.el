@@ -107,7 +107,7 @@ information.")
 
 
 ;;
-;; Library
+;;; Library
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."

@@ -353,7 +353,7 @@ relative to `org-directory', unless it is an absolute path."
 (defun +org-init-capture-frame-h ()
   (add-hook 'org-capture-after-finalize-hook #'+org-capture-cleanup-frame-h)
 
-  (defadvice! +org-capture-refile-cleanup-frame (&rest _)
+  (defadvice! +org-capture-refile-cleanup-frame-a (&rest _)
     :after #'org-capture-refile
     (+org-capture-cleanup-frame-h))
 
@@ -972,14 +972,14 @@ compelling reason, so..."
         :n "zi"  #'org-toggle-inline-images
 
         :map org-read-date-minibuffer-local-map
-        "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
-        "C-l"   (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
-        "C-k"   (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
-        "C-j"   (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
-        "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
-        "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
-        "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
-        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
+        "C-h"   (cmd! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l"   (cmd! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k"   (cmd! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j"   (cmd! (org-eval-in-calendar '(calendar-forward-week 1)))
+        "C-S-h" (cmd! (org-eval-in-calendar '(calendar-backward-month 1)))
+        "C-S-l" (cmd! (org-eval-in-calendar '(calendar-forward-month 1)))
+        "C-S-k" (cmd! (org-eval-in-calendar '(calendar-backward-year 1)))
+        "C-S-j" (cmd! (org-eval-in-calendar '(calendar-forward-year 1)))))
 
 
 (use-package! evil-org-agenda

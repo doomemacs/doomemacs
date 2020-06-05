@@ -22,23 +22,20 @@ Returns (approximately):
 
 This is used by `file-exists-p!' and `project-file-exists-p!'."
   (declare (pure t) (side-effect-free t))
-  (let ((exists-fn (if (fboundp 'projectile-file-exists-p)
-                       #'projectile-file-exists-p
-                     #'file-exists-p)))
-    (if (and (listp spec)
-             (memq (car spec) '(or and)))
-        (cons (car spec)
-              (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
-                      (cdr spec)))
-      (let ((filevar (make-symbol "file")))
-        `(let* ((file-name-handler-alist nil)
-                (,filevar ,spec))
-           (and (stringp ,filevar)
-                ,(if directory
-                     `(let ((default-directory ,directory))
-                        (,exists-fn ,filevar))
-                   (list exists-fn filevar))
-                ,filevar))))))
+  (if (and (listp spec)
+           (memq (car spec) '(or and)))
+      (cons (car spec)
+            (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
+                    (cdr spec)))
+    (let ((filevar (make-symbol "file")))
+      `(let* ((file-name-handler-alist nil)
+              (,filevar ,spec))
+         (and (stringp ,filevar)
+              ,(if directory
+                   `(let ((default-directory ,directory))
+                      (file-exists-p ,filevar))
+                 `(file-exists-p ,filevar))
+              ,filevar)))))
 
 (defun doom--path (&rest segments)
   (let (file-name-handler-alist)

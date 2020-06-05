@@ -53,4 +53,4 @@
   (define-key! doc-view-mode-map
     "ESC" #'delete-window
     "q"   #'delete-window
-    "k"   (λ! (quit-window) (delete-window))))
+    "k"   (cmd! (quit-window) (delete-window))))

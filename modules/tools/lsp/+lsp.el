@@ -6,7 +6,8 @@
   (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
   ;; Auto-kill LSP server after last workspace buffer is killed.
   (setq lsp-keep-workspace-alive nil)
-  ;; Let `flycheck-check-syntax-automatically' determine this.
+  ;; Let `flycheck-check-syntax-automatically' determine this. Will be removed
+  ;; soon: https://github.com/emacs-lsp/lsp-mode/pull/1701/files
   (setq lsp-flycheck-live-reporting nil)
   ;; For `lsp-clients'
   (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")

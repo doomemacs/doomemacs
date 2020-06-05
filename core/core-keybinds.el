@@ -216,8 +216,8 @@ localleader prefix."
 
 For example, :nvi will map to (list 'normal 'visual 'insert). See
 `doom-evil-state-alist' to customize this."
-  (cl-loop for l across (substring (symbol-name keyword) 1)
-           if (cdr (assq l doom-evil-state-alist)) collect it
+  (cl-loop for l across (doom-keyword-name keyword)
+           if (assq l doom-evil-state-alist) collect (cdr it)
            else do (error "not a valid state: %s" l)))
 
 

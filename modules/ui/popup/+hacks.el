@@ -230,7 +230,7 @@ the command buffer."
 (after! org
   ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
   ;; kills all other windows just so it can monopolize the frame. No thanks. We
-  ;; can do better ourselves.
+  ;; can do better.
   (defadvice! +popup--suppress-delete-other-windows-a (orig-fn &rest args)
     :around '(org-add-log-note
               org-capture-place-template

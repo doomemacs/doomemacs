@@ -183,7 +183,7 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
           (rest (cdr binding)))
       (setq
        body (pcase type
-              (`defmacro `(cl-macrolet ((,(car rest) ,(cadr rest) ,@(cddr rest))) ,body))
+              (`defmacro `(cl-macrolet ((,@rest)) ,body))
               (`defun `(cl-letf* ((,(car rest) (symbol-function #',(car rest)))
                                   ((symbol-function #',(car rest))
                                    (lambda ,(cadr rest) ,@(cddr rest))))

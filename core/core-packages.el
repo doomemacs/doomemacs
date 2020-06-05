@@ -109,45 +109,43 @@ uses a straight or package.el command directly).")
 ;;
 ;;; Bootstrappers
 
-(defun doom--ensure-straight ()
-  (cl-destructuring-bind (&key pin recipe &allow-other-keys)
-      (doom-package-get 'straight)
-    (let ((repo-dir (doom-path straight-base-dir "straight/repos/straight.el"))
-          (repo-url (concat "http" (if gnutls-verify-error "s")
-                            "://github.com/"
-                            (or (plist-get recipe :repo) "raxod502/straight.el")))
-          (branch (or (plist-get recipe :branch) straight-repository-branch))
-          (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
-      (unless (file-directory-p repo-dir)
-        (message "Installing straight...")
-        (cond
-         ((eq straight-vc-git-default-clone-depth 'full)
-          (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
-         ((null pin)
-          (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir
-                   "--depth" (number-to-string straight-vc-git-default-clone-depth)
-                   "--branch" straight-repository-branch))
-         ((integerp straight-vc-git-default-clone-depth)
-          (make-directory repo-dir t)
-          (let ((default-directory repo-dir))
-            (funcall call "git" "init")
-            (funcall call "git" "checkout" "-b" straight-repository-branch)
-            (funcall call "git" "remote" "add" "origin" repo-url)
-            (funcall call "git" "fetch" "origin" pin
-                     "--depth" (number-to-string straight-vc-git-default-clone-depth))
-            (funcall call "git" "checkout" "--detach" pin)))))
-      (require 'straight (concat repo-dir "/straight.el"))
-      (doom-log "Initializing recipes")
-      (with-temp-buffer
-        (insert-file-contents (doom-path repo-dir "bootstrap.el"))
-        ;; Don't install straight for us -- we've already done that -- only set
-        ;; up its recipe repos for us.
-        (eval-region (search-forward "(require 'straight)")
-                     (point-max))))))
+(defun doom--ensure-straight (recipe pin)
+  (let ((repo-dir (doom-path straight-base-dir "straight/repos/straight.el"))
+        (repo-url (concat "http" (if gnutls-verify-error "s")
+                          "://github.com/"
+                          (or (plist-get recipe :repo) "raxod502/straight.el")))
+        (branch (or (plist-get recipe :branch) straight-repository-branch))
+        (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
+    (unless (file-directory-p repo-dir)
+      (message "Installing straight...")
+      (cond
+       ((eq straight-vc-git-default-clone-depth 'full)
+        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
+       ((null pin)
+        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir
+                 "--depth" (number-to-string straight-vc-git-default-clone-depth)
+                 "--branch" straight-repository-branch))
+       ((integerp straight-vc-git-default-clone-depth)
+        (make-directory repo-dir t)
+        (let ((default-directory repo-dir))
+          (funcall call "git" "init")
+          (funcall call "git" "checkout" "-b" straight-repository-branch)
+          (funcall call "git" "remote" "add" "origin" repo-url)
+          (funcall call "git" "fetch" "origin" pin
+                   "--depth" (number-to-string straight-vc-git-default-clone-depth))
+          (funcall call "git" "checkout" "--detach" pin)))))
+    (require 'straight (concat repo-dir "/straight.el"))
+    (doom-log "Initializing recipes")
+    (with-temp-buffer
+      (insert-file-contents (doom-path repo-dir "bootstrap.el"))
+      ;; Don't install straight for us -- we've already done that -- only set
+      ;; up its recipe repos for us.
+      (eval-region (search-forward "(require 'straight)")
+                   (point-max)))))
 
-(defun doom--ensure-core-packages ()
+(defun doom--ensure-core-packages (packages)
   (doom-log "Installing core packages")
-  (dolist (package doom-packages)
+  (dolist (package packages)
     (let ((name (car package)))
       (when-let (recipe (plist-get (cdr package) :recipe))
         (straight-override-recipe (cons name recipe)))
@@ -157,9 +155,11 @@ uses a straight or package.el command directly).")
   "Ensure `straight' is installed and was compiled with this version of Emacs."
   (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
     (doom-log "Initializing straight")
-    (let ((doom-packages (doom-package-list nil 'core-only)))
-      (doom--ensure-straight)
-      (doom--ensure-core-packages))))
+    (let ((packages (doom-package-list nil 'core)))
+      (cl-destructuring-bind (&key recipe pin &allow-other-keys)
+          (alist-get 'straight packages)
+        (doom--ensure-straight recipe pin))
+      (doom--ensure-core-packages packages))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Process all packages, essential and otherwise, if they haven't already been.

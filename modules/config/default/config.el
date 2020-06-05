@@ -209,7 +209,7 @@
       (map! :map markdown-mode-map
             :ig "*" (general-predicate-dispatch nil
                       (looking-at-p "\\*\\* *")
-                      (λ! (forward-char 2)))))))
+                      (cmd! (forward-char 2)))))))
 
 
 ;;
@@ -291,7 +291,7 @@ Continues comments if executed from a commented line. Consults
         "s--" #'doom/decrease-font-size
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
-        "s-/" (λ! (save-excursion (comment-line 1)))
+        "s-/" (cmd! (save-excursion (comment-line 1)))
         :n "s-/" #'evilnc-comment-or-uncomment-lines
         :v "s-/" #'evilnc-comment-operator
         :gi  [s-backspace] #'doom/backward-kill-to-bol-and-indent

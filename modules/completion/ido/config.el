@@ -40,9 +40,9 @@
         [up]   #'ido-prev-match
         :map ido-file-completion-map
         ;; Go to $HOME with ~
-        "~"    (λ! (if (looking-back "/" (point-min))
-                       (insert "~/")
-                     (call-interactively #'self-insert-command)))))
+        "~"    (cmd! (if (looking-back "/" (point-min))
+                         (insert "~/")
+                       (call-interactively #'self-insert-command)))))
 
 
 (use-package! ido-vertical-mode
