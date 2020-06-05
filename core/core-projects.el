@@ -138,7 +138,7 @@ c) are not valid projectile projects."
     (setq projectile-generic-command
           (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
                           doom-projectile-fd-binary)
-                  (if IS-WINDOWS " --path-separator=/"))
+                  (if IS-WINDOWS " --path-separator=//"))
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
           ;; ensure Windows users get fd's benefits
@@ -151,7 +151,7 @@ c) are not valid projectile projects."
                   (cl-loop for dir in projectile-globally-ignored-directories
                            concat " --glob "
                            concat (shell-quote-argument (concat "!" dir)))
-                  (if IS-WINDOWS " --path-separator /"))
+                  (if IS-WINDOWS " --path-separator //"))
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
           ;; ensure Windows users get rg's benefits

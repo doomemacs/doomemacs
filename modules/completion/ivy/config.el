@@ -207,6 +207,14 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; of its own, on top of the defaults.
   (setq ivy-initial-inputs-alist nil)
 
+  ;; REVIEW Fix #3215: prevents mingw throwing an error trying to expand / to an
+  ;;        absolute path. Remove this when it is fixed upstream in counsel.
+  (when (memq system-type '(windows-nt ms-dos))
+    (setq counsel-rg-base-command
+          (replace-regexp-in-string "--path-separator /"
+                                    "--path-separator //"
+                                    counsel-rg-base-command)))
+
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
