@@ -127,13 +127,13 @@ Modules that bring support for a language or group of languages to Emacs.
 + nix - TODO
 + [[file:../modules/lang/ocaml/README.org][ocaml]] =+lsp= - TODO
 + [[file:../modules/lang/org/README.org][org]] =+brain +dragndrop +gnuplot +hugo +ipython +journal +jupyter +noter +pandoc +pomodoro +present +roam= - TODO
-+ [[file:../modules/lang/perl/README.org][perl]] - TODO
 + [[file:../modules/lang/php/README.org][php]] =+hack +lsp= - TODO
 + plantuml - TODO
 + purescript =+lsp= - TODO
 + [[file:../modules/lang/python/README.org][python]] =+cython +lsp +pyenv +conda +poetry= - TODO
 + qt - TODO
 + racket - TODO
++ [[file:../modules/lang/raku/README.org][raku]] - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
 + rst - TODO
 + [[file:../modules/lang/ruby/README.org][ruby]] =+lsp +rvm +rbenv +rails +chruby=

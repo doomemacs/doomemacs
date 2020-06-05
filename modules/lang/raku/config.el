@@ -1,6 +1,5 @@
-;;; lang/perl/config.el -*- lexical-binding: t; -*-
+;;; lang/raku/config.el -*- lexical-binding: t; -*-
 
-;; There's also `perl-mode' for perl < 6, which is already set up.
 
 
 (use-package! raku-mode

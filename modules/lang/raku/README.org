@@ -1,0 +1,11 @@
+#+TITLE: :lang raku
+
+This module adds a major mode and flycheck for Raku.
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+
+* Install
+This module depends on raku itself.
+
+There are no other dependencies.
