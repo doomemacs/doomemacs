@@ -13,22 +13,12 @@
   (add-to-list 'magic-mode-alist '(+org-journal-p . org-journal-mode))
 
   (defun +org-journal-p ()
-    (when buffer-file-name
+    (when-let (buffer-file-name (buffer-file-name (buffer-base-buffer)))
       (and (file-in-directory-p
             buffer-file-name (expand-file-name org-journal-dir org-directory))
            (delq! '+org-journal-p magic-mode-alist 'assq)
            (require 'org-journal nil t)
            (org-journal-is-journal))))
-
-  ;; HACK `org-journal-is-journal' doesn't anticipate symlinks, and won't
-  ;;      correctly detect journal files in an unresolved `org-directory' or
-  ;;      `org-journal'. `org-journal-dir' must be given the `file-truename'
-  ;;      treatment later, as well.
-  (defadvice! +org--journal-resolve-symlinks-a (orig-fn)
-    :around #'org-journal-is-journal
-    (when buffer-file-name
-      (let ((buffer-file-name (file-truename buffer-file-name)))
-        (funcall orig-fn))))
 
   ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
   ;; default, so we change it to {org-directory}/journal (we expand it after
@@ -38,7 +28,7 @@
 
   :config
   ;; `org-journal' can't deal with symlinks, so resolve them here.
-  (setq org-journal-dir (file-truename (expand-file-name org-journal-dir org-directory))
+  (setq org-journal-dir (expand-file-name org-journal-dir org-directory)
         ;; Doom opts for an "open in a popup or here" strategy as a default.
         ;; Open in "other window" is less predictable, and can replace a window
         ;; we wanted to keep visible.
