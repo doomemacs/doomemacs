@@ -242,10 +242,31 @@ Uses faces in interactive sessions and ANSI codes otherwise."
   "Like `user-error', but with the power of `format!'."
   `(user-error (format! ,message ,@args)))
 
-;; ;;;###autoload
-;; (defmacro with-output-to-buffer! (dest &rest body)
-;;   "Send all output produced in BODY to DEST.
-;; DEST can be one or more of `standard-output', a buffer, a file
-
-
-;;   )
+;;;###autoload
+(defmacro with-output-to! (dest &rest body)
+  "Send all output produced in BODY to DEST.
+DEST can be one or more of `standard-output', a buffer, a file"
+  (declare (indent 1))
+  `(let* ((log-buffer (generate-new-buffer " *doom log*"))
+          (standard-output
+           (lambda (out)
+             (with-current-buffer log-buffer
+               (insert-char out))
+             (send-string-to-terminal (char-to-string out)))))
+     (letf! (defun message (msg &rest args)
+              (princ (apply #'format msg args))
+              (terpri))
+       (unwind-protect
+           ,(macroexp-progn body)
+         (with-current-buffer log-buffer
+           (require 'ansi-color)
+           (ansi-color-filter-region (point-min) (point-max)))
+         (let ((dest ,dest))
+           (cond ((bufferp dest)
+                  (with-current-buffer dest
+                    (insert-buffer-substring log-buffer)))
+                 ((stringp dest)
+                  (make-directory (file-name-directory dest) 'parents)
+                  (with-temp-file dest
+                    (insert-buffer-substring log-buffer))))
+           (kill-buffer log-buffer))))))
