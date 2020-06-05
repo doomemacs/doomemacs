@@ -46,6 +46,13 @@
         ;; messages for every word when checking the entire buffer
         flyspell-issue-message-flag nil)
 
+(use-package! flyspell ; built-in
+  :defer t
+  :preface
+  ;; `flyspell' is loaded at startup. In order to lazy load its config we need
+  ;; to pretend it isn't loaded.
+  (defer-feature! flyspell flyspell-mode flyspell-prog-mode)
+  :init
   (add-hook! '(org-mode-hook
                markdown-mode-hook
                TeX-mode-hook
@@ -60,6 +67,12 @@
                  conf-mode-hook
                  prog-mode-hook)
                #'flyspell-prog-mode))
+
+  :config
+  (setq flyspell-issue-welcome-flag nil
+        ;; Significantly speeds up flyspell, which would otherwise print
+        ;; messages for every word when checking the entire buffer
+        flyspell-issue-message-flag nil)
 
   (add-hook! 'flyspell-mode-hook
     (defun +spell-inhibit-duplicate-detection-maybe-h ()

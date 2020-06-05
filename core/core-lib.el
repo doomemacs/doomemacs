@@ -424,7 +424,7 @@ serve as a predicated alternative to `after!'."
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
 
-(defmacro defer-feature! (feature &optional fn)
+(defmacro defer-feature! (feature &rest fns)
   "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FN runs.
 
 Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
@@ -432,21 +432,20 @@ startup, which will prematurely trigger `after!' (and `with-eval-after-load')
 blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
 then wait until FEATURE-hook (or MODE-hook, if FN is provided) is triggered to
 reverse this and trigger `after!' blocks at a more reasonable time."
-  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
-        (fn (or fn feature)))
+  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature))))
     `(progn
-       (setq features (delq ',feature features))
-       (advice-add #',fn :before #',advice-fn)
-       (defun ,advice-fn (&rest _)
+       (delq! ',feature features)
+       (defadvice! ,advice-fn (&rest _)
+         :before ',fns
          ;; Some plugins (like yasnippet) will invoke a fn early to parse
          ;; code, which would prematurely trigger this. In those cases, well
          ;; behaved plugins will use `delay-mode-hooks', which we can check for:
-         (when (and ,(intern (format "%s-hook" fn))
-                    (not delay-mode-hooks))
+         (unless delay-mode-hooks
            ;; ...Otherwise, announce to the world this package has been loaded,
            ;; so `after!' handlers can react.
            (provide ',feature)
-           (advice-remove #',fn #',advice-fn))))))
+           (dolist (fn ',fns)
+             (advice-remove fn #',advice-fn)))))))
 
 
 ;;; Hooks
