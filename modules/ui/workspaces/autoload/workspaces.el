@@ -20,6 +20,7 @@
 (defun +workspace--protected-p (name)
   (equal name persp-nil-name))
 
+;;;###autoload
 (defun +workspace--generate-id ()
   (or (cl-loop for name in (+workspace-list-names)
                when (string-match-p "^#[0-9]+$" name)
