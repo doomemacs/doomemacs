@@ -49,7 +49,8 @@ run before `doom-init-modules-hook'. Relevant to `doom-module-init-file'.")
               (evil-goggles     (:ui ophints))
               (tabbar           (:ui tabs)))
     (:app     (email            (:email mu4e))
-              (notmuch          (:email notmuch))))
+              (notmuch          (:email notmuch)))
+    (:lang    (perl             (:lang raku)))))
   "A tree alist that maps deprecated modules to their replacement(s).
 
 Each entry is a three-level tree. For example:

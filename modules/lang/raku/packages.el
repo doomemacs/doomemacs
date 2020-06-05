@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; lang/perl/packages.el
+;;; lang/raku/packages.el
 
 (package! raku-mode :pin "d474216840251dc0efe4f4aa4f5c5f66ac26fa74")
 
