@@ -1,0 +1,31 @@
+#+TITLE:   tools/macos
+#+DATE:    February 19, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+- [[#features][Features]]
+
+* Description
+This module provides extra functionality for macOS.
+
+** Maintainers
+This module has no dedicated maintainers
+
+* Features
+
+This module adds various macOS specific launchers under the SPC o shortcuts.
+
+It also enables keychain as an auth-source. This is used by apps like [[file:../../../modules/app/irc/README.org][irc]] and
+[[file:../../../modules/tools/magit/README.org][magit]]'s forge module. For instance, to support GitHub Forge add an internet
+password like this to your keychain:
+
+ | Field    | Value                   |
+ |----------+-------------------------|
+ | Name     | api.github.com          |
+ | Kind     | Internet password       |
+ | Account  | <username>^forge        |
+ | Where    | https://api.github.com/ |
+ | Password | <token>                 |
