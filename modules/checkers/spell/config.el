@@ -39,13 +39,6 @@
     (_ (doom-log "Spell checker not found. Either install `aspell' or `hunspell'"))))
 
 
-;;;###package flyspell
-(progn ; built-in
-  (setq flyspell-issue-welcome-flag nil
-        ;; Significantly speeds up flyspell, which would otherwise print
-        ;; messages for every word when checking the entire buffer
-        flyspell-issue-message-flag nil)
-
 (use-package! flyspell ; built-in
   :defer t
   :preface
