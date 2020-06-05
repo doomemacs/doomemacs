@@ -13,8 +13,8 @@
       (message "evil-mc paused")
     (message "evil-mc resumed")))
 
-;;;###autoload (autoload '+multiple-cursors/evil-mc-make-cursor-here "editor/multiple-cursors/autoload/evil-mc" nil t)
-(evil-define-command +multiple-cursors/evil-mc-make-cursor-here ()
+;;;###autoload (autoload '+multiple-cursors/evil-mc-toggle-cursor-here "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors/evil-mc-toggle-cursor-here ()
   "Create a cursor at point. If in visual block or line mode, then create
 cursors on each line of the selection, on the column of the cursor. Otherwise
 pauses cursors."
@@ -22,7 +22,18 @@ pauses cursors."
   :keep-visual nil
   :evil-mc t
   (interactive)
-  (cond ((memq evil-this-type '(block line))
+  (cond ((and (evil-mc-has-cursors-p)
+              (evil-normal-state-p)
+              (let* ((pos (point))
+                     (cursor (cl-find-if (lambda (cursor)
+                                           (eq pos (evil-mc-get-cursor-start cursor)))
+                                         evil-mc-cursor-list)))
+                (when cursor
+                  (evil-mc-delete-cursor cursor)
+                  (setq evil-mc-cursor-list (delq cursor evil-mc-cursor-list))
+                  t))))
+
+        ((memq evil-this-type '(block line))
          (let ((col (evil-column))
                (line-at-pt (line-number-at-pos)))
            ;; Fix off-by-one error

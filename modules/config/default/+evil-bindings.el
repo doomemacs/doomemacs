@@ -89,7 +89,7 @@
        :nv "q" #'evil-mc-undo-all-cursors
        :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
        :nv "u" #'evil-mc-undo-last-added-cursor
-       :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here
+       :nv "z" #'+multiple-cursors/evil-mc-toggle-cursor-here
        :v  "I" #'evil-mc-make-cursor-in-visual-selection-beg
        :v  "A" #'evil-mc-make-cursor-in-visual-selection-end)
 
