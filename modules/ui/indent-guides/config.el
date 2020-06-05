@@ -4,6 +4,12 @@
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
   :init
   (setq highlight-indent-guides-method 'character)
+
+  ;; HACK The default \x2502 appears to be slow on macOS. This needs more
+  ;;      testing, but for now we use another bar unicode glyph, which is
+  ;;      reportedly faster.
+  (when IS-MAC
+    (setq highlight-indent-guides-character ?\xFFE8))
   :config
   (defun +indent-guides-init-faces-h ()
     (when (display-graphic-p)
