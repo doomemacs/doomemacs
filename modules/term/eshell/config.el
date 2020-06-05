@@ -118,10 +118,6 @@ You should use `set-eshell-alias!' to change this.")
             (append eshell-command-aliases-list
                     +eshell-aliases))))
 
-  (when (featurep! :editor evil +everywhere)
-    (advice-add #'evil-collection-eshell-next-prompt-on-insert
-                :override #'+eshell-goto-prompt-on-insert-a))
-
   (add-hook! 'eshell-first-time-mode-hook
     (defun +eshell-init-keymap-h ()
       ;; Keys must be bound in a hook because eshell resets its keymap every
