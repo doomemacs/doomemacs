@@ -87,6 +87,12 @@
         [remap yas-new-snippet]        #'+snippets/new
         [remap yas-visit-snippet-file] #'+snippets/edit)
 
+  ;; REVIEW Fix #2639: For some reason `yas--all-templates' returns duplicates
+  ;;        of some templates. Until I figure out the real cause this fixes it.
+  (defadvice! +snippets--remove-duplicates-a (templates)
+    :filter-return #'yas--all-templates
+    (cl-delete-duplicates templates :test #'equal))
+
   ;; If in a daemon session, front-load this expensive work:
   (if (daemonp) (yas-reload-all)))
 
