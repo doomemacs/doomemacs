@@ -211,8 +211,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;;        absolute path. Remove this when it is fixed upstream in counsel.
   (when (memq system-type '(windows-nt ms-dos))
     (setq counsel-rg-base-command
-          (replace-regexp-in-string "--path-separator /"
-                                    "--path-separator //"
+          (replace-regexp-in-string "--path-separator / "
+                                    "--path-separator // "
                                     counsel-rg-base-command)))
 
   ;; Integrate with `helpful'
