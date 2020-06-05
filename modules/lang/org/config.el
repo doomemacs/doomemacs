@@ -497,11 +497,13 @@ the exported output (i.e. formatters)."
   ;;      to be performant.
   (setq-hook! 'org-mode-hook gcmh-high-cons-threshold (* 2 gcmh-high-cons-threshold))
 
-  (add-hook! 'org-follow-link-hook
-    (defun +org-delayed-recenter-h ()
-      "`recenter', but after a tiny delay. Necessary to prevent certain race
-conditions where a window's buffer hasn't changed at the time this hook is run."
-      (run-at-time 0.1 nil #'recenter)))
+  (defadvice! +org--recenter-after-follow-link-a (&rest _args)
+    "Recenter after following a link, but only internal or file links."
+    :after '(org-footnote-action
+             org-follow-timestamp-link
+             org-link-open-as-file
+             org-link-search)
+    (recenter))
 
   (defadvice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
     "Remove link syntax and fix variable height text (e.g. org headings) in the
