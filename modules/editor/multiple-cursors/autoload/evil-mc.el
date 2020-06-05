@@ -101,3 +101,22 @@ FLAGS can be g and/or i; which mean the same thing they do in
     (if (evil-mc-has-cursors-p)
         (evil-mc-print-cursors-info "Created")
       (evil-mc-message "No cursors were created"))))
+
+;;;###autoload (autoload '+multiple-cursors/evil-mc-undo-cursor "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors/evil-mc-undo-cursor ()
+  "Undos last cursor, or all cursors in visual region."
+  :repeat nil
+  :evil-mc t
+  (interactive)
+  (if (evil-visual-state-p)
+      (or (mapc (lambda (c)
+                  (evil-mc-delete-cursor c)
+                  (setq evil-mc-cursor-list (delq c evil-mc-cursor-list)))
+                (cl-remove-if-not
+                 (lambda (pos)
+                   (and (>= pos evil-visual-beginning)
+                        (<  pos evil-visual-end)))
+                 evil-mc-cursor-list
+                 :key #'evil-mc-get-cursor-start))
+          (message "No cursors to undo in region"))
+    (evil-mc-undo-last-added-cursor)))
