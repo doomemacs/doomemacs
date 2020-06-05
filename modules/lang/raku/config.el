@@ -1,7 +1,5 @@
 ;;; lang/raku/config.el -*- lexical-binding: t; -*-
 
-
-
 (use-package! raku-mode
   :defer t
   :init
