@@ -444,6 +444,13 @@ relative to `org-directory', unless it is an absolute path."
             (mathjax . t)
             (variable . "revealjs-url=https://revealjs.com"))))
 
+  (defadvice! +org--dont-trigger-save-hooks-on-export-a (orig-fn &rest args)
+    "`org-export-to-file' triggers save hooks, which may inadvertantly change
+the exported output (i.e. formatters)."
+    :around #'org-export-to-file
+    (let (before-save-hook after-save-hook)
+      (apply orig-fn args)))
+
   (defadvice! +org--fix-async-export-a (orig-fn &rest args)
     :around #'org-export-to-file
     (if (not org-export-in-background)
