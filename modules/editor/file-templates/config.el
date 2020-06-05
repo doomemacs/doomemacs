@@ -73,7 +73,8 @@ don't have a :trigger property in `+file-templates-alist'.")
      :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-readme"
      :mode org-mode)
-    ("\\.org$" :trigger "__" :mode org-mode)
+    (org-journal-mode :ignore t)
+    (org-mode)
     ;; PHP
     ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
     (php-mode)
