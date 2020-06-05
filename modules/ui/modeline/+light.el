@@ -485,6 +485,24 @@ lines are selected, or the NxM dimensions of a block selection.")
   (add-hook 'deactivate-mark-hook #'+modeline-remove-selection-segment-h))
 
 
+;;; `+modeline-repl'
+(progn
+  (def-modeline-var! +modeline-repl nil
+    "Display REPL connection status icon."
+    :local t)
+
+  (add-hook! '(cider-connected-hook
+               cider-disconnected-hook
+               cider-mode-hook)
+    (defun +modeline-repl-cider-update ()
+      "Update repl connection to cider connection state."
+      (let* ((connected (cider-connected-p))
+             (face (if connected 'success 'warning))
+             (label (if connected "Cider connected" "Cider disconnected")))
+        (setq +modeline-repl
+              (+modeline-format-icon 'faicon "terminal" "" face label -0.0575))))))
+
+
 ;;; `+modeline-lsp'
 (progn
   (def-modeline-var! +modeline-lsp nil
@@ -537,6 +555,8 @@ lines are selected, or the NxM dimensions of a block selection.")
     +modeline-position)
   `(""
     mode-line-misc-info
+    "  "
+    +modeline-repl
     "  "
     +modeline-lsp
     "  "
