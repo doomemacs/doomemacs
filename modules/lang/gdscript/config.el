@@ -3,6 +3,10 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "project.godot"))
 
+
+;;
+;;; Packages
+
 (use-package! gdscript-mode
   :defer t
   :config
