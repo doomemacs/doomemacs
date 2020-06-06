@@ -104,6 +104,10 @@
 
   ;; evil-escape's escape key sequence leaves behind extraneous characters
   (cl-pushnew 'evil-escape-mode evil-mc-incompatible-minor-modes)
+  ;; Lispy commands don't register on more than 1 cursor. Lispyville is fine
+  ;; though.
+  (when (featurep! :editor lispy)
+    (cl-pushnew 'lispy-mode evil-mc-incompatible-minor-modes))
 
   (add-hook! 'doom-escape-hook
     (defun +multiple-cursors-escape-multiple-cursors-h ()
