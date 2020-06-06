@@ -503,7 +503,8 @@ the exported output (i.e. formatters)."
              org-follow-timestamp-link
              org-link-open-as-file
              org-link-search)
-    (recenter))
+    (when (get-buffer-window)
+      (recenter)))
 
   (defadvice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
     "Remove link syntax and fix variable height text (e.g. org headings) in the
