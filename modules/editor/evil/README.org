@@ -101,7 +101,8 @@ And these are text objects added by this module:
 + =B= any block delimited by braces, parentheses or brackets (provided by
   ~evil-textobj-anyblock~)
 + =c= Comments
-+ =f= For functions (but relies on the major mode to have defined a sane
++ =f= For functions (but relies on the major mode to have sane definitions for
+  ~beginning-of-defun-function~ and ~end-of-defun-function~)
 + =g= The entire buffer
 + =i j k= by indentation (=k= includes one line above; =j= includes one line
   above and below) (provided by ~evil-indent-plus~)
