@@ -208,8 +208,7 @@ See https://github.com/magit/ghub/issues/81"
         (setq xwidget-webkit-last-session-buffer +lookup--dash-docs-xwidget-webkit-last-session-buffer)
         (save-window-excursion
           (xwidget-webkit-browse-url url new-session))
-        (with-popup-rules!
-          '((set-popup-rule! "^\\*xwidget" :vslot -11 :size 0.35 :select nil))
+        (with-popup-rules! '(("^\\*xwidget" :vslot -11 :size 0.35 :select nil))
           (pop-to-buffer xwidget-webkit-last-session-buffer))
         (setq +lookup--dash-docs-xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
               xwidget-webkit-last-session-buffer nil)))
