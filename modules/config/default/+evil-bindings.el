@@ -20,19 +20,18 @@
     "C-w"    #'doom/delete-backward-word
     "C-z"    (cmd! (ignore-errors (call-interactively #'undo))))
 
-  (when (featurep! :editor evil +everywhere)
-    (define-key! :keymaps +default-minibuffer-maps
-      "C-j"    #'next-line
-      "C-k"    #'previous-line
-      "C-S-j"  #'scroll-up-command
-      "C-S-k"  #'scroll-down-command)
-    ;; For folks with `evil-collection-setup-minibuffer' enabled
-    (define-key! :states 'insert :keymaps +default-minibuffer-maps
-      "C-j"    #'next-line
-      "C-k"    #'previous-line)
-    (define-key! read-expression-map
-      "C-j" #'next-line-or-history-element
-      "C-k" #'previous-line-or-history-element)))
+  (define-key! :keymaps +default-minibuffer-maps
+    "C-j"    #'next-line
+    "C-k"    #'previous-line
+    "C-S-j"  #'scroll-up-command
+    "C-S-k"  #'scroll-down-command)
+  ;; For folks with `evil-collection-setup-minibuffer' enabled
+  (define-key! :states 'insert :keymaps +default-minibuffer-maps
+    "C-j"    #'next-line
+    "C-k"    #'previous-line)
+  (define-key! read-expression-map
+    "C-j" #'next-line-or-history-element
+    "C-k" #'previous-line-or-history-element))
 
 
 ;;
