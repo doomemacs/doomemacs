@@ -633,7 +633,7 @@ config blocks in your private config."
     (user-error "Can't find ripgrep on your system"))
   (if (fboundp 'counsel-rg)
       (let ((counsel-rg-base-command
-             (concat counsel-rg-base-command " "
+             (concat (s-join " " counsel-rg-base-command) " "
                      (mapconcat #'shell-quote-argument dirs " "))))
         (counsel-rg query nil "-Lz" prompt))
     ;; TODO Add helm support?
