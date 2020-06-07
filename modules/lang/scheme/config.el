@@ -9,7 +9,6 @@
   :hook (scheme-mode . geiser-mode)
   :init
   (setq geiser-active-implementations '(guile chicken mit chibi chez)
-        geiser-mode-start-repl-p t
         geiser-smart-tab-p t)
   (unless (featurep! :lang racket)
     (push 'racket geiser-active-implementations))
