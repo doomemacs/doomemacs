@@ -207,6 +207,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; of its own, on top of the defaults.
   (setq ivy-initial-inputs-alist nil)
 
+  ;; REVIEW Counsel allows `counsel-rg-base-command' to be a string or list.
+  ;;        This backwards compatibility complicates things for Doom. Simpler to
+  ;;        just force it to always be a list.
+  (when (stringp counsel-rg-base-command)
+    (setq counsel-rg-base-command (split-string counsel-rg-base-command)))
+
   ;; REVIEW Fix #3215: prevents mingw on Windows throwing an error trying to
   ;;        expand / to an absolute path. Remove this when it is fixed upstream
   ;;        in counsel.
