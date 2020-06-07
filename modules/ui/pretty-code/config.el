@@ -20,6 +20,7 @@
     :float         "ℝ"
     :str           "𝕊"
     :bool          "𝔹"
+    :list          "𝕃"
     ;; Flow
     :not           "￢"
     :in            "∈"
@@ -31,6 +32,9 @@
     :return        "⟼"
     :yield         "⟻"
     ;; Other
+    :union         "⋃"
+    :intersect     "∩"
+    :diff          "∖"
     :tuple         "⨂"
     :pipe          "" ;; FIXME: find a non-private char
     :dot           "•")
