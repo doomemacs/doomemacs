@@ -92,17 +92,9 @@
 
 (use-package! typescript-mode
   :hook (typescript-mode . rainbow-delimiters-mode)
-  :init
-  ;; REVIEW Fix #2252. This is overwritten if the :lang web module is enabled.
-  ;;        We associate TSX files with `web-mode' by default instead because
-  ;;        `typescript-mode' does not officially support JSX/TSX. See
-  ;;        https://github.com/emacs-typescript/typescript.el/issues/4
-  (unless (featurep! :lang web)
-    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
   :config
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
-  (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
@@ -123,6 +115,25 @@
   (setq-hook! 'typescript-mode-hook
     comment-line-break-function #'js2-line-break))
 
+;; REVIEW We associate TSX files with `typescript-tsx-mode' derived from
+;;        `web-mode' because `typescript-mode' does not officially support
+;;        JSX/TSX. See
+;;        https://github.com/emacs-typescript/typescript.el/issues/4
+(if (featurep! :lang web)
+    (progn
+      (define-derived-mode typescript-tsx-mode web-mode "TypeScript-tsx")
+      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-tsx-mode))
+
+      (add-hook 'typescript-tsx-mode-hook #'emmet-mode)
+
+      (after! flycheck
+        (flycheck-add-mode 'typescript-tslint 'typescript-tsx-mode)
+        (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
+
+(after! (:any typescript-mode web-mode)
+  (set-docsets! '(typescript-mode typescript-tsx-mode) "TypeScript" "AngularTS"))
+
 
 ;;;###package coffee-mode
 (setq coffee-indent-like-python-mode t)
@@ -135,6 +146,7 @@
 
 (add-hook! '(js2-mode-local-vars-hook
              typescript-mode-local-vars-hook
+             typescript-tsx-mode-local-vars-hook
              web-mode-local-vars-hook
              rjsx-mode-local-vars-hook)
   (defun +javascript-init-lsp-or-tide-maybe-h ()
@@ -146,10 +158,7 @@ current buffer represents a file in a project.
 If LSP fails to start (e.g. no available server or project), then we fall back
 to tide."
     (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-      (when (or (derived-mode-p 'js-mode 'typescript-mode)
-                (and buffer-file-name
-                     (eq major-mode 'web-mode)
-                     (string= "tsx" (file-name-extension buffer-file-name))))
+      (when (derived-mode-p 'js-mode 'typescript-mode 'typescript-tsx-mode)
         (if (not buffer-file-name)
             ;; necessary because `tide-setup' and `lsp' will error if not a
             ;; file-visiting buffer
@@ -290,6 +299,7 @@ to tide."
            js-mode
            json-mode
            typescript-mode
+           typescript-tsx-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
   :add-hooks '(add-node-modules-path npm-mode))
