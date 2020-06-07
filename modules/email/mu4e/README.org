@@ -113,18 +113,18 @@ This module uses =mbsync= by default. To use =offlineimap=, change ~+mu4e-backen
 #+END_SRC
 
 Next, you need to write a configuration file for =offlineimap=. Mine can be found
-[[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
+[[https://github.com/hlissner/dotfiles/blob/be0dce5dae8f3cbafaac0cc44269d84b4a742c46/shell/mu/][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
 use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials. You can find a *very*
 detailed configuration [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
 
 Next you can download your email with ~offlineimap -o~. This may take a while,
 especially if you have thousands of mails.
 
-You can now proceed with the [[*mu and mu4e][mu and mu4e]] section.
+You can now proceed with the [[#mu-and-mu4e][mu and mu4e]] section.
 
 ** mbsync
 The steps needed to set up =mu4e= with =mbsync= are very similar to the ones for
-[[*offlineimap][offlineimap]].
+[[#offlineimap][offlineimap]].
 
 Start with writing a ~\~/.mbsyncrc~. An example for GMAIL can be found on
 [[http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/][pragmaticemacs.com]]. A non-GMAIL example is available as a gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]]. The [[http://isync.sourceforge.net/mbsync.html][manual
@@ -133,7 +133,7 @@ page]] contains all needed information to set up your own.
 Next you can download your email with ~mbsync --all~. This may take a while, but
 should be quicker than =offlineimap= ;).
 
-You can now proceed with the [[*mu and mu4e][mu and mu4e]] section.
+You can now proceed with the [[#mu-and-mu4e][mu and mu4e]] section.
 
 ** mu and mu4e
 You should have your email downloaded already. If you have not, you need to set
