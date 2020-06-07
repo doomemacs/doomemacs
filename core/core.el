@@ -240,7 +240,6 @@ users).")
       desktop-base-lock-name       "autosave-lock"
       pcache-directory             (concat doom-cache-dir "pcache/")
       request-storage-directory    (concat doom-cache-dir "request")
-      server-auth-dir              (concat doom-cache-dir "server/")
       shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
       tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
       tramp-backup-directory-alist backup-directory-alist
