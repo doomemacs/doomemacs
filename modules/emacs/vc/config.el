@@ -68,9 +68,8 @@ info in the `header-line-format' is a good indication."
 
 
 (use-package! git-commit
-  :after-call after-find-file
+  :hook (doom-first-file . global-git-commit-mode)
   :config
-  (global-git-commit-mode +1)
   (set-yas-minor-mode! 'git-commit-mode)
 
   ;; Enforce git commit conventions.
