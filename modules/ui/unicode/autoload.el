@@ -7,7 +7,7 @@
 necessary."
     (setq-default bidi-display-reordering t
                   doom-unicode-font nil)
-    (if initial-window-system
+    (if (display-graphic-p)
         (+unicode-setup-fonts-h (selected-frame))
       (add-hook 'after-make-frame-functions #'+unicode-setup-fonts-h))))
 
