@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "b68090e0be889b7e797614b97db92bb2c70eadbe")
+  :pin "3cec17cde5ad7b26295b5bf919ea3e45cf9bbd40")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "1d8e8e6836c1dde437126bd76f622838f75858f3"))
+  (package! org-journal :pin "9f66bf44fac99954ce89639a31d7c65f00f7000f"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -71,10 +71,10 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "7151aaf4df27b9b7339e277cfa1f8341c3f11231")
+  (package! org-tree-slide :pin "0fc7d31d12e49a453efae337a2efc1e7e8b53a62")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "c46d153fd382c4ee5a91b694d1043a3a8c990597")
+  (package! org-roam :pin "f4376f39a92c1ef0c1d77b106a9869ac9eec29b7")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
