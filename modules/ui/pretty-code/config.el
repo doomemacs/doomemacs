@@ -183,7 +183,8 @@ Otherwise it sets the buffer-local composition table to a composition table enha
   (dolist (char-regexp +prog-ligatures-alist)
     (set-char-table-range composition-ligature-table (car char-regexp)
                           `([,(cdr char-regexp) 0 font-shape-gstring])))
-  (set-char-table-parent composition-ligature-table composition-function-table)
+  (unless doom-reloading-p
+    (set-char-table-parent composition-ligature-table composition-function-table))
 
   (add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h))
 
