@@ -50,8 +50,8 @@ lists properly and names starting with 'default'."
                (funcall method state indent-point normal-indent)))))))
 
 ;;;###autoload
-(defun +scheme/open-repl (&optional arg)
+(defun +scheme/open-repl ()
   "Open the Scheme REPL."
-  (interactive "P")
-  (switch-to-geiser arg)
+  (interactive)
+  (call-interactively #'switch-to-geiser)
   (current-buffer))
