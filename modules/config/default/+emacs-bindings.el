@@ -400,7 +400,7 @@
         :desc "Reconnect all"      "r" #'circe-reconnect-all
         :desc "Send message"       "s" #'+irc/send-message
         (:when (featurep! :completion ivy)
-         :desc "Jump to channel"  "j" #'irc/ivy-jump-to-channel)))
+         :desc "Jump to channel"  "j" #'+irc/ivy-jump-to-channel)))
 
       ;;; <leader> T --- twitter
       (:when (featurep! :app twitter)
