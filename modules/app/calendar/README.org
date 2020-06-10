@@ -62,5 +62,5 @@ To control what org files ~clfw:org-create-source~ will use, ~let~-bind
 The [[https://github.com/kiwanami/emacs-calfw][kiwanami/emacs-calfw]] project readme contains more examples.
 
 ** Synchronizing Org and Google Calendar
-The [[https://github.com/myuhe/org-gcal.el][myuhe/org-gcal.el]] project README contains more detailed instructions on how
+The [[https://github.com/kidd/org-gcal.el][kidd/org-gcal.el]] project README contains more detailed instructions on how
 to link your calendar with Google calendars.
