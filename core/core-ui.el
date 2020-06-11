@@ -451,8 +451,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (use-package! winner
   ;; undo/redo changes to Emacs' window layout
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+  :hook (doom-first-buffer . winner-mode)
   :config
-  (add-hook 'doom-first-buffer-hook #'winner-mode)
   (appendq! winner-boring-buffers
             '("*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
               "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*"
