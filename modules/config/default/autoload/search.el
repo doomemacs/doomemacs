@@ -27,6 +27,7 @@ If prefix ARG is set, prompt for a known project to search from."
   (interactive "P")
   (let* ((projectile-project-root nil)
          (disabled-command-function nil)
+         (current-prefix-arg nil)
          (default-directory
            (if arg
                (if-let (projects (projectile-relevant-known-projects))
