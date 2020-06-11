@@ -106,7 +106,9 @@ with a different private module."
                                            start-time))))))
         (user-error
          (print! (error "%s\n") (error-message-string e))
-         (print! (yellow "See 'doom help %s' for documentation on this command.") (car args))
+         (if (doom-cli-get command)
+             (print! (yellow "See 'doom help %s' for documentation on this command.") command)
+           (print! (yellow "See 'doom help' for documentation.")))
          (error "")) ; Ensure non-zero exit code
         ((debug error)
          (print! (error "There was an unexpected error:"))
