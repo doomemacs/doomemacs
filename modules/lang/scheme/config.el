@@ -19,9 +19,6 @@
     (set-lookup-handlers! 'scheme-mode
       :definition #'geiser-edit-symbol-at-point
       :documentation #'geiser-doc-symbol-at-point))
-  (when (featurep! :checkers syntax)
-    (after! flycheck
-      (load! "autoload/flycheck-guile")))
   :config
   (set-popup-rules!
     '(("^\\*geiser messages\\*$" :slot 1 :vslot -1)
@@ -60,3 +57,7 @@
           "r" #'geiser-restart-repl
           "R" #'geiser-reload
           "c" #'geiser-repl-clear-buffer)))
+
+(use-package! flycheck-guile
+  :when (featurep! :checkers syntax)
+  :after geiser)
