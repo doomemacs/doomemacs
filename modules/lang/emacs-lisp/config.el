@@ -29,7 +29,7 @@ employed so that flycheck still does *some* helpful linting.")
   :config
   (set-repl-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp/open-repl)
   (set-eval-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp-eval)
-  (set-lookup-handlers! '(emacs-lisp-mode helpful-mode)
+  (set-lookup-handlers! '(emacs-lisp-mode lisp-interaction-mode helpful-mode)
     :definition    #'+emacs-lisp-lookup-definition
     :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! '(emacs-lisp-mode lisp-interaction-mode) "Emacs Lisp")
