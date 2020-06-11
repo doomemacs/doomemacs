@@ -99,7 +99,7 @@ in."
           (when-let (size (ignore-errors (doom-file-size file doom-cache-dir)))
             (when (> size 1048576) ; larger than 1mb
               (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
-                     file (/ size 1024))
+                     file (/ size 1024 1024.0))
               (explain! "Consider deleting it from your system (manually)"))))
 
         (unless (executable-find "rg")
