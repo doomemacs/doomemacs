@@ -40,9 +40,6 @@
       ((help-p   ["-h" "--help"]    "Same as help command")
        (debug-p  ["-d" "--debug"]   "Turns on doom-debug-p (and debug-on-error)")
        (yes-p    ["-y" "--yes"]     "Auto-accept all confirmation prompts")
-       (emacsdir ["--emacsdir" dir] "Use the emacs config at DIR (e.g. ~/.emacs.d)")
-       (doomdir  ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
-       (localdir ["--localdir" dir] "Use DIR as your local storage directory")
        &optional command &rest args)
     "A command line interface for managing Doom Emacs.
 
@@ -51,15 +48,6 @@ Includes package management, diagnostics, unit tests, and byte-compilation.
 This tool also makes it trivial to launch Emacs out of a different folder or
 with a different private module."
     :bare t
-    (when emacsdir
-      (setq user-emacs-directory (file-name-as-directory emacsdir))
-      (print! (info "EMACSDIR=%s") emacsdir))
-    (when doomdir
-      (setenv "DOOMDIR" (file-name-as-directory doomdir))
-      (print! (info "DOOMDIR=%s") localdir))
-    (when localdir
-      (setenv "DOOMLOCALDIR" (file-name-as-directory localdir))
-      (print! (info "DOOMLOCALDIR=%s") localdir))
     (when debug-p
       (setenv "DEBUG" "1")
       (setq doom-debug-p t)
@@ -80,10 +68,6 @@ with a different private module."
                "later if you use this Doom installation on a non-root account.\n"))
       (unless (or doom-auto-accept (y-or-n-p "Continue anyway?"))
         (user-error "Aborted")))
-
-    ;; Reload core in case any of the directories were changed.
-    (when (or emacsdir doomdir localdir)
-      (load! "core/core.el" user-emacs-directory))
 
     ;; Load any the user's private init.el or any cli.el files in modules. This
     ;; gives the user (and modules) an opportunity to define their own CLI
