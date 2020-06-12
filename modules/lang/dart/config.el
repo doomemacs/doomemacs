@@ -6,7 +6,26 @@
   :config
   (when (and (featurep! +flutter) IS-LINUX)
     (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))
-      (setq flutter-sdk-path path))))
+      (setq flutter-sdk-path path)))
+  (set-pretty-symbols! '(dart-mode)
+    ;; Functional
+    :def "Function"
+    :lambda "() =>"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "int" :float "double"
+    :str "String"
+    :bool "bool"
+    :list "List"
+    ;; Flow
+    :not "!"
+    :in "in"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return"
+    ;; Other
+    :yield "yield"))
 
 
 (use-package! flutter
