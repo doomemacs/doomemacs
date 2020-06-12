@@ -1,13 +1,14 @@
-#+TITLE: :ui unicode
+#+TITLE:   ui/unicode
 #+DATE:    June 8, 2020
+#+SINCE:   v2.0
 #+STARTUP: inlineimages nofold
+
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
@@ -37,10 +38,7 @@ This module has no dedicated maintainers.
 This module provides no flags.
 
 ** Plugins
-# A list of linked plugins
-
-** Hacks
-# A list of internal modifications to included packages; omit if unneeded
++ [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]]
 
 * Prerequisites
 This module has no prerequisites.
