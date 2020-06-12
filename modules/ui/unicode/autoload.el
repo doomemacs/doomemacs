@@ -1,6 +1,14 @@
 ;;; ui/unicode/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +unicode--add-doom-unicode-font ()
+  "Include doom-unicode font as the top suggested font for unicode glyphs for all blocks"
+  (when doom-unicode-font
+    (let ((doom-unicode-font-family (plist-get (font-face-attributes doom-unicode-font) :family)))
+    (dolist (unicode-block unicode-fonts-block-font-mapping)
+      (push doom-unicode-font-family (cadr unicode-block))))))
+
+;;;###autoload
 (add-hook! 'doom-init-ui-hook
   (defun +unicode-init-fonts-h ()
     "Set up `unicode-fonts' to eventually run; accommodating the daemon, if
@@ -18,4 +26,5 @@ necessary."
     (with-selected-frame frame
       (require 'unicode-fonts)
       ;; NOTE will impact startup time on first run
+      (+unicode--add-doom-unicode-font)
       (unicode-fonts-setup))))
