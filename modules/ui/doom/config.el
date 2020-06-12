@@ -41,10 +41,6 @@
            (string-prefix-p "doom-" (symbol-name doom-theme))
            (solaire-mode-swap-bg))))
 
-  ;; org-capture takes an org buffer and narrows it. The result is erroneously
-  ;; considered an unreal buffer, so solaire-mode must be restored.
-  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
-
   ;; DEPRECATED No longer needed in Emacs 27+
   (unless EMACS27+
     ;; HACK On Emacs <=26, when point is on the last (or second to last) line
