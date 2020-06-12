@@ -404,6 +404,7 @@ relative to `org-directory', unless it is an absolute path."
             '("gimages"     . "https://google.com/images?q=%s")
             '("gmap"        . "https://maps.google.com/maps?q=%s")
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
+            '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
             '("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s"))
 
