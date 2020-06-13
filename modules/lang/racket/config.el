@@ -13,8 +13,8 @@
   :config
   (set-repl-handler! 'racket-mode #'+racket/open-repl)
   (set-lookup-handlers! 'racket-mode
-    :definition    #'racket-xp-visit-definition
-    :documentation #'racket-xp-describe)
+    :definition    #'+racket-definition
+    :documentation #'+racket-documentation)
   (set-docsets! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
     :lambda  "lambda"
@@ -26,6 +26,9 @@
   (add-hook! 'racket-mode-hook
              #'rainbow-delimiters-mode
              #'highlight-quoted-mode)
+
+  (when (featurep! +xp)
+    (add-hook! 'racket-mode-hook #'racket-xp-mode))
 
   (unless (or (featurep! :editor parinfer)
               (featurep! :editor lispy))
