@@ -26,7 +26,8 @@ Emacs.")
              projectile-locate-dominating-file)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
-        projectile-enable-caching doom-interactive-p
+        ;; fd is fast enough without caching
+        projectile-enable-caching (not (executable-find doom-projectile-fd-binary))
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
