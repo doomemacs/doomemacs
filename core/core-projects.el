@@ -138,6 +138,9 @@ c) are not valid projectile projects."
     (setq projectile-generic-command
           (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
                           doom-projectile-fd-binary)
+                  (cl-loop for dir in projectile-globally-ignored-directories
+                           concat " -E "
+                           concat (shell-quote-argument dir))
                   (if IS-WINDOWS " --path-separator=//"))
           projectile-git-command projectile-generic-command
           projectile-git-submodule-command nil
