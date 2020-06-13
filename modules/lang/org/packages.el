@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "3cec17cde5ad7b26295b5bf919ea3e45cf9bbd40")
+  :pin "c709187173ff2bb72c0f902c0299998c8c5a4260")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -51,7 +51,7 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
 (when (featurep! +brain)
-  (package! org-brain :pin "2c86ec8b9dc51bf15ab1a4e0eb7024ba627a1c99"))
+  (package! org-brain :pin "6b2ec93ec92b4a244af9d600433e0d0a02eb5f1e"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "40c8a1db186a4ec79d87805018237234c0aad878"))
 (when (featurep! +gnuplot)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "9f66bf44fac99954ce89639a31d7c65f00f7000f"))
+  (package! org-journal :pin "0d6d81234a20ac800d24373b89159ee33a69f6c3"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -71,10 +71,10 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "0fc7d31d12e49a453efae337a2efc1e7e8b53a62")
+  (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "f4376f39a92c1ef0c1d77b106a9869ac9eec29b7")
+  (package! org-roam :pin "9cf26494e86b1cc18267fd70abf942d2fb75c774")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
@@ -103,6 +103,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "f8e26aaee92491ca348c2b6f7fb49627642b3176"))
+    :pin "5de3da970f9ead05930781dd0b73b5011310b2ba"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))
