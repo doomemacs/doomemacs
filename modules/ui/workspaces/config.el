@@ -56,6 +56,7 @@ stored in `persp-save-dir'.")
         persp-save-dir (concat doom-etc-dir "workspaces/")
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
+        persp-kill-foreign-buffer-behaviour 'kill
         persp-remove-buffers-from-nil-persp-behaviour nil
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
