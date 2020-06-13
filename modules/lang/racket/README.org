@@ -21,7 +21,7 @@ This module provide integration for [[https://github.com/greghendershott/racket-
 This module has no dedicated maintainers.
 
 ** Module Flags
-This module provides no flags.
++ =+xp= Enables the explore mode, which "analyzes expanded code to explain and explore."
 
 ** Plugins
 + [[https://github.com/greghendershott/racket-mode][racket-mode]]
