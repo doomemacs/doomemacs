@@ -1,10 +1,11 @@
 ;;; term/vterm/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +vterm/toggle (arg)
+(defun +vterm/toggle (arg &optional force-toggle)
   "Toggles a terminal popup window at project root.
 
-If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
+If prefix ARG is non-nil, recreate vterm buffer in the current project's root.
+If FORCE-TOGGLE is non-nil and the vterm buffer is visible, hide it (default: select vterm window)"
   (interactive "P")
   (unless (fboundp 'module-load)
     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
@@ -23,12 +24,14 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
         (when (window-live-p window)
           (delete-window window))))
     (if-let (win (get-buffer-window buffer-name))
-        (if (eq (selected-window) win)
+        (if force-toggle
             (delete-window win)
-          (select-window win)
-          (when (bound-and-true-p evil-local-mode)
-            (evil-change-to-initial-state))
-          (goto-char (point-max)))
+          (if (eq (selected-window) win)
+              (delete-window win)
+            (select-window win)
+            (when (bound-and-true-p evil-local-mode)
+              (evil-change-to-initial-state))
+            (goto-char (point-max))))
       (setenv "PROOT" (or (doom-project-root) default-directory))
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
