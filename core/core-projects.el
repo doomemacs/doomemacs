@@ -133,10 +133,10 @@ c) are not valid projectile projects."
   ;; HACK Don't rely on VCS-specific commands to generate our file lists. That's
   ;;      7 commands to maintain, versus the more generic, reliable and
   ;;      performant `fd' or `ripgrep'.
-  (defadvice! doom--only-use-generic-command-a (orig-fn vcs)
+  (defadvice! doom--only-use-generic-command-a (vcs)
     "Only use `projectile-generic-command' for indexing project files.
 And if it's a function, evaluate it."
-    :around #'projectile-get-ext-command
+    :override #'projectile-get-ext-command
     (if (functionp projectile-generic-command)
         (funcall projectile-generic-command vcs)
       projectile-generic-command))
