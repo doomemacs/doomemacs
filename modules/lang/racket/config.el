@@ -32,7 +32,7 @@
 
   (unless (or (featurep! :editor parinfer)
               (featurep! :editor lispy))
-    (add-hook! 'racket-mode-hook #'racket-smart-open-bracket-mode))
+    (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 
   (map! :localleader
         :map racket-mode-map
