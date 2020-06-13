@@ -12,7 +12,7 @@
                 buf)))))
 
 ;;;###autoload
-(defun +racket-documentation (thing)
+(defun +racket-lookup-documentation (thing)
   "A `+lookup/documentation' handler for Racket."
   (let ((buf (if racket-xp-mode
                  (racket-xp-describe thing)
@@ -22,7 +22,7 @@
       t)))
 
 ;;;###autoload
-(defun +racket-definition (_thing)
+(defun +racket-lookup-definition (_thing)
   "A `+lookup/definition' handler for Racket."
   (if racket-xp-mode
       (call-interactively #'racket-xp-visit-definition)
