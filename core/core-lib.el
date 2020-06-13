@@ -113,10 +113,16 @@ unreadable. Returns the names of envvars that were changed."
                 env (split-string (buffer-substring (match-beginning 1) (point-max))
                                   "\0\n"
                                   'omit-nulls))))))
-      (setq process-environment (append (nreverse env) process-environment)
-            exec-path (append (split-string (getenv "PATH") path-separator t)
-                              (list exec-directory))
-            shell-file-name (or (getenv "SHELL") shell-file-name))
+      (setq-default
+       process-environment
+       (append (nreverse env)
+               (default-value 'process-environment))
+       exec-path
+       (append (split-string (getenv "PATH") path-separator t)
+               (list exec-directory))
+       shell-file-name
+       (or (getenv "SHELL")
+           (default-value 'shell-file-name)))
       env)))
 
 
