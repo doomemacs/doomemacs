@@ -110,7 +110,7 @@
                                      (+modeline-format-icon 'faicon "terminal" "" face label -0.0575)
                                      " "))
           (add-to-list 'global-mode-string
-                       'cider-modeline-icon
+                       '(t (:eval cider-modeline-icon))
                        'append)))))
 
   ;; The CIDER welcome message obscures error messages that the above code is
