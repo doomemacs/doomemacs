@@ -243,7 +243,7 @@ to least recommended for Doom (based on compatibility).
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]:
   #+BEGIN_SRC bash
   brew tap d12frosted/emacs-plus
-  brew install emacs-plus
+  brew install emacs-plus --with-modern-icon-cg433n
   ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
