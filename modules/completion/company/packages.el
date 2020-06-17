@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/company/packages.el
 
-(package! company :pin "6333fc4ebbbf4d28e834de8715561e984f149ecb")
+(package! company :pin "1f56bec0ba7ce336eb8661b4d34e4b024d7dd04c")
 (package! company-dict :pin "cd7b8394f6014c57897f65d335d6b2bd65dab1f4")
-(package! company-prescient :pin "0f4a89bdec61395138d968a38d375e63ccfbed63")
+(package! company-prescient :pin "3ab7605d997fb8337bf5ded2ad960b98ac0e1fd7")
 (when (featurep! +childframe)
-  (package! company-box :pin "3814fcb14e92f4b85b19e664e216a7c8d5c7144d"))
+  (package! company-box :pin "452f083f6c11793a3723224bce42898a2bedc0e1"))
