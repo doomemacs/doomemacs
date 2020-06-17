@@ -14,7 +14,7 @@
             :local-repo "straight.el"
             :files ("straight*.el")
             :no-build t)
-  :pin "09cfa1b344cbeeea7da2e075df7c19262fb2b9e6")
+  :pin "ffaad607ad18d107a6d15ccb923be88c6c80172e")
 
 ;; core-modules.el
 (package! use-package
@@ -54,7 +54,7 @@
     :pin "01b39044b9b65fa4ea7d3166f8b1ffab6f740362"))
 
 ;; core-projects.el
-(package! projectile :pin "7e552b6d876014ca5b4609318ca8a202b2a89014")
+(package! projectile :pin "95bcc7d805cbe7116f54e46480563452537b20ef")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
