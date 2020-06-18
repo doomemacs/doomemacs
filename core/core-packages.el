@@ -105,12 +105,6 @@ uses a straight or package.el command directly).")
   (append (apply orig-fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))
 
-(with-eval-after-load 'straight
-  ;; HACK Fix #3406: by installing some built-in packages, we get version
-  ;;      conflicts, so blacklist them. Revert once raxod502/straight.el#537 is
-  ;;      resolved.
-  (add-to-list 'straight-recipes-gnu-elpa-ignored-packages 'seq))
-
 
 ;;
 ;;; Bootstrappers

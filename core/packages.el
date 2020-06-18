@@ -14,12 +14,12 @@
             :local-repo "straight.el"
             :files ("straight*.el")
             :no-build t)
-  :pin "ffaad607ad18d107a6d15ccb923be88c6c80172e")
+  :pin "59c92dd45085b8f8fc44ea0039c205f4a3c43b62")
 
 ;; core-modules.el
 (package! use-package
   :type 'core
-  :pin "d2640fec376a8458a669e7526e63e5870d875118")
+  :pin "2b8f8a3f156e61ae6d8c7b7ce1deea3f0f6e1599")
 
 ;; core-ui.el
 (package! all-the-icons :pin "ed8e44de4fa601309d2bba902c3b37cb73e4daa0")
