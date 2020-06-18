@@ -105,9 +105,11 @@ in some cases."
           (doom-region-end)))
         (thing
          (thing-at-point thing t))
-        ((require 'xref nil t)
+        ((and (require 'xref nil t) (not (eq (xref-find-backend) 'eglot)))
          ;; A little smarter than using `symbol-at-point', though in most cases,
          ;; xref ends up using `symbol-at-point' anyway.
+         ;; "Most cases" doesn't cover 'eglot so we manually exclude it.
+         ;; See discussion in https://github.com/joaotavora/eglot/issues/503
          (xref-backend-identifier-at-point (xref-find-backend)))
         (prompt
          (read-string (if (stringp prompt) prompt "")))))
