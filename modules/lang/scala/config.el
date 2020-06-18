@@ -49,3 +49,6 @@
 (use-package! sbt-mode
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'+scala/open-repl :persist t))
+
+(use-package! lsp-metals
+  :if (featurep! +lsp))
