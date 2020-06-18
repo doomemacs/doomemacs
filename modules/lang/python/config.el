@@ -266,14 +266,15 @@ called.")
                                 "~/.anaconda"
                                 "~/.miniconda"
                                 "~/.miniconda3"
+                                "~/anaconda3"
                                 "~/miniconda3"
                                 "/usr/bin/anaconda3"
                                 "/usr/local/anaconda3"
                                 "/usr/local/miniconda3"
                                 "/usr/local/Caskroom/miniconda/base")
                if (file-directory-p dir)
-               return (setq conda-anaconda-home dir
-                            conda-env-home-directory dir))
+               return (setq conda-anaconda-home (expand-file-name dir)
+                            conda-env-home-directory (expand-file-name dir)))
       (message "Cannot find Anaconda installation"))
 
   ;; integration with term/eshell
