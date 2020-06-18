@@ -12,6 +12,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#enable-gravatars][Enable Gravatars]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -53,8 +54,13 @@ Forge will require [[https://magit.vc/manual/forge/Token-Creation.html#Token-Cre
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
 
-* TODO Configuration
-# How to configure this module, including common problems and how to address them.
+* Configuration
+Add these to =$DOOMDIR/config.el=.
+** Enable Gravatars
+This will enable gravatars when viewing commits. The service used by default is [[https://www.libravatar.org/][Libravatar]].
+#+BEGIN_SRC emacs-lisp
+(setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+#+END_SRC
 
 * TODO Troubleshooting
 # Common issues and their solution, or places to look for help.
