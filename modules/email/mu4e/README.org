@@ -36,6 +36,7 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 
 ** Module Flags
 + ~+gmail~ Enables gmail-specific configuration.
++ ~+org~ Use ~org-mu4e~ for composing mail.
 
 ** Plugins
 This module install no plugins.
