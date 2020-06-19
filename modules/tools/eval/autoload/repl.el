@@ -51,7 +51,7 @@
 (defun +eval-open-repl (prompt-p &optional displayfn)
   (cl-destructuring-bind (_mode fn . plist)
       (or (assq major-mode +eval-repls)
-          (list))
+          (list nil nil))
     (when (or (not fn) prompt-p)
       (let* ((choices (or (cl-loop for sym being the symbols
                                    for sym-name = (symbol-name sym)
