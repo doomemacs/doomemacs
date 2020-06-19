@@ -230,7 +230,7 @@ kind!
 [change-font]: docs/faq.org#how-do-i-change-the-fonts
 [modules]: docs/modules.org
 [popup-system]: modules/ui/popup/README.org
-[screenshots]: #screenshots
+[screenshots]: https://github.com/hlissner/doom-emacs/tree/screenshots#emacsd-screenshots
 
 [bindings]: modules/config/default/+evil-bindings.el
 [editorconfig]: http://editorconfig.org/
