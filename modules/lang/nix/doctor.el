@@ -4,6 +4,8 @@
 (unless (executable-find "nix")
   (warn! "Couldn't find the nix package manager. nix-mode won't work."))
 
-(unless (executable-find "nixfmt")
-  (warn! "Couldn't find nixfmt. nix-format-buffer won't work."))
-
+(if (featurep! +nixpkgs-fmt)
+  (unless (executable-find "nipkgs-fmt")
+    (warn! "Couldn't find nixpkgs-fmt. nixpkgs-fmt won't work."))
+  (unless (executable-find "nixfmt")
+    (warn! "Couldn't find nixfmt. nix-format-buffer won't work.")))

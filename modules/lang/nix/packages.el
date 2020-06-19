@@ -9,3 +9,6 @@
 
 (when (featurep! :completion helm)
   (package! helm-nixos-options :pin "977b9a505ffc8b33b70ec7742f90e469b3168297"))
+
+(when (featurep! +nixpkgs-fmt)
+  (package! nixpkgs-fmt :pin "cc8ee143d4ef45a8c540901852326ccdf6ff8482"))

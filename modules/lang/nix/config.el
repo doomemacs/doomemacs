@@ -32,7 +32,7 @@
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
-        "p" #'nix-format-buffer
+        "p" #'+nix/format-buffer
         "r" #'nix-repl-show
         "s" #'nix-shell
         "b" #'nix-build
@@ -47,3 +47,7 @@
 
 (use-package! nix-repl
   :commands nix-repl-show)
+
+(when (featurep! +nixpkgs-fmt)
+  (use-package! nixpkgs-fmt
+    :commands nixpkgs-fmt nixpkgs-fmt-buffer))
