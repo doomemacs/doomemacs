@@ -6,7 +6,7 @@
 
 
 (use-package! geiser
-  :hook (scheme-mode . geiser-mode)
+  :defer t
   :init
   (setq geiser-active-implementations '(guile chicken mit chibi chez)
         geiser-autodoc-identifier-format "%s → %s"
