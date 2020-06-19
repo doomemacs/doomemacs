@@ -69,6 +69,8 @@
        [escape]  #'View-quit-all)
       (:after man :map Man-mode-map
        :n "q"    #'kill-current-buffer)
+      (:after geiser-doc :map geiser-doc-mode-map
+       :n "o"    #'link-hint-open-link)
 
       (:after (evil-org evil-easymotion)
        :map evil-org-mode-map
