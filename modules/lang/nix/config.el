@@ -50,4 +50,8 @@
 
 (when (featurep! +nixpkgs-fmt)
   (use-package! nixpkgs-fmt
-    :commands nixpkgs-fmt nixpkgs-fmt-buffer))
+    :commands nixpkgs-fmt nixpkgs-fmt-buffer)
+
+    ;; Redefine formatter for nix-mode (nixfmt is default)
+    (set-formatter! 'nixpkgs-fmt #'nixpkgs-fmt
+      :modes '(nix-mode)))

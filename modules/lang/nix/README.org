@@ -41,7 +41,7 @@ This module has no dedicated maintainers.
 + ~nixpkgs-fmt~ can be used as alternative with =+nixpkgs-fmt=
   + Install it using your configured nixpkgs: ~nix-env -i nixpkgs-fmt~
   + Or directly from the repository: ~nix-env -f https://github.com/nix-community/nixpkgs-fmt/archive/master.tar.gz -i~
-+ ~:editor format~ ~format-all~ also supports ~nixfmt~ so you can use that also to format Nix code, default binding is ~SPC c f~ in evil.
++ ~:editor format~ integration for both formatters exists, so you can use that also to format Nix code, default binding is ~SPC c f~ in evil.
 
 * Features
 ** Keybindings
