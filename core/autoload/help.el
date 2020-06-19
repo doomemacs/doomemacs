@@ -214,7 +214,7 @@ selection of all minor-modes, active or not."
                    "*.org" doom-emacs-dir)
                   #'ignore))
            :query initial-input
-           :args '("-g" "*.org")
+           :args '("-t" "org")
            :in doom-emacs-dir
            :prompt "Search documentation for: "))
 
