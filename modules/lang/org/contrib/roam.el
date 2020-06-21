@@ -12,11 +12,6 @@
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
-             org-roam-find-file
-             org-roam-graph
-             org-roam-insert
-             org-roam-insert-immediate
-             org-roam-switch-to-buffer
              org-roam-dailies-date
              org-roam-dailies-today
              org-roam-dailies-tomorrow
