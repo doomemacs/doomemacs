@@ -9,7 +9,7 @@
 ;;; Packages
 
 (use-package! org-roam
-  :hook (org-load . org-roam-mode)
+  :hook (org-load-hook . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
              org-roam-find-file
