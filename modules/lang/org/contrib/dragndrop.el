@@ -29,8 +29,8 @@
               (IS-LINUX
                (cond ((executable-find "maim")  "maim -s %s")
                      ((executable-find "scrot") "scrot -s %s")
-                     ((executable-find "gnome-screenshot") "gnome-screenshot -a -f %s"))))
-
+                     ((executable-find "gnome-screenshot") "gnome-screenshot -a -f %s")))
+              (IS-WINDOWS "magick clipboard: %s"))
         org-download-heading-lvl nil
         org-download-link-format "[[download:%s]]\n"
         org-download-annotate-function (lambda (_link) "")
