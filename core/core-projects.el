@@ -190,16 +190,7 @@ when using many of projectile's command, e.g. `projectile-compile-command',
 This suppresses the error so these commands will still run, but prompt you for
 the command instead."
     :around #'projectile-default-generic-command
-    (ignore-errors (apply orig-fn args)))
-
-  ;; Projectile root-searching functions can cause an infinite loop on TRAMP
-  ;; connections, so disable them.
-  ;; TODO Is this still necessary?
-  (defadvice! doom--projectile-locate-dominating-file-a (file _name)
-    "Don't traverse the file system if on a remote connection."
-    :before-while #'projectile-locate-dominating-file
-    (and (stringp file)
-         (not (file-remote-p file nil t)))))
+    (ignore-errors (apply orig-fn args))))
 
 
 ;;
