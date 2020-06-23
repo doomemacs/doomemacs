@@ -34,9 +34,10 @@
        :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
        :desc "Evaluate & replace region"             "E"   #'+eval/region-and-replace
        :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
-       :desc "Find implementations"                  "J"   #'+lookup/implementations
+       :desc "Find implementations"                  "i"   #'+lookup/implementations
        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
        :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
+       :desc "Find type definition"                  "t"   #'+lookup/type-definition
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
        :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
@@ -44,7 +45,7 @@
         :desc "List errors"                         "x"   #'flycheck-list-errors)
        (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
-        :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
+        :desc "LSP Organize imports"                  "o"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
         (:after lsp-mode
          :desc "LSP"                                   "l"   lsp-command-map)
