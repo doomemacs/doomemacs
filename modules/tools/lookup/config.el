@@ -28,7 +28,7 @@
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
             ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
           (when (featurep! :lang rust)
-            '(("Rust Docs" "https://doc.rust-lang.org/edition-guide/?search=%s"))))
+            '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
 
   1. A search url (needs on '%s' to substitute with an url encoded query),
