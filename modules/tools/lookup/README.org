@@ -21,6 +21,7 @@
   - [[#associating-lookup-handlers-with-major-modes][Associating lookup handlers with major modes]]
   - [[#associating-dash-docsets-with-major-modes][Associating Dash docsets with major modes]]
   - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
+  - [[#open-in-xwidget-webkit-instead-of-browser][Open in Xwidget WebKit instead of browser]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
 
@@ -40,7 +41,6 @@ or synonyms.
 + ~+dictionary~ Enable word definition and thesaurus lookup functionality.
   + ~+offline~ Install and prefer offline dictionary/thesaurus.
 + ~+docsets~ Enable integration with Dash.app docsets.
-  + ~+xwidget~ Enable integration with [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Embedded-WebKit-Widgets.html][Embedded Webkit Widgets]].
 
 ** Plugins
 + [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
@@ -208,11 +208,21 @@ This determines what docsets to implicitly search for when you use
 docsets must be installed with ~+lookup/install-docset~.
 
 ** Open in eww instead of browser
-To open results from ~+lookup/online~ in EWW instead of your system browser,
-change ~+lookup-open-url-fn~ (default: ~#'browse-url~):
+To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in EWW instead
+of your system browser, change ~+lookup-open-url-fn~ (default:
+~#'browse-url~):
 
 #+BEGIN_SRC emacs-lisp
 (setq +lookup-open-url-fn #'eww)
+#+END_SRC
+
+** Open in Xwidget WebKit instead of browser
+To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in Xwidget
+WebKit instead of your system browser, set ~+lookup-open-url-fn~ to
+~+lookup-xwidget-webkit-open-url-fn~ (needs Emacs with Xwidgets support):
+
+#+BEGIN_SRC emacs-lisp
+(setq +lookup-open-url-fn #'+lookup-xwidget-webkit-open-url-fn)
 #+END_SRC
 
 * Appendix
