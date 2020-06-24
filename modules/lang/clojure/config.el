@@ -49,7 +49,7 @@
 
   (setq nrepl-hide-special-buffers t
         nrepl-log-messages nil
-        cider-font-lock-dynamically '(macro core function var)
+        cider-font-lock-dynamically '(macro core function var deprecated)
         cider-overlays-use-font-lock t
         cider-prompt-for-symbol nil
         cider-repl-history-display-duplicates nil
