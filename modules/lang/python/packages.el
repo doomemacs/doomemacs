@@ -11,7 +11,7 @@
 ;; LSP
 (when (and (featurep! +lsp)
            (not (featurep! :tools lsp +eglot)))
-  (package! lsp-python-ms :pin "db6f2636da1037bda06d5a2d992c4857ce3ad9b0"))
+  (package! lsp-python-ms :pin "7068cf04a0d0a1877afe56990cc577edd824a1e4"))
 
 ;; Programming environment
 (package! anaconda-mode :pin "10299bd9ff38c4f0da1d892905d02ef828e7fdce")
