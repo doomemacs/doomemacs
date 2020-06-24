@@ -74,7 +74,7 @@
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "fd73da94107dd3069379a9564be9ccf5712db084")
+  (package! org-roam :pin "c59d6c4f7c917cf8580df2797f331c53e404fdbe")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
