@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "945f495b942f60c3b15a38202847e49aaff757d5")
+  :pin "b76ed658f1d99e5f5781324d2115d35ed879fef1")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -49,7 +49,7 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "8cc15bb8014ed1f047eecc0abd8bf447f86c0505"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "e147f055772cc934fe1f1d8619059badeb647c93"))
+  (package! orgit :pin "9f09553c09e389f7e695afb8dd1aa5a52f18f107"))
 (when (featurep! +brain)
   (package! org-brain :pin "6b2ec93ec92b4a244af9d600433e0d0a02eb5f1e"))
 (when (featurep! +dragndrop)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "6671693a6f70cf9ce23471785e3c73b9489762bb"))
+  (package! org-journal :pin "24b587978241328fcad40f932602a0a4c1e7d403"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -74,7 +74,7 @@
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
   (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
 (when (featurep! +roam)
-  (package! org-roam :pin "fd73da94107dd3069379a9564be9ccf5712db084")
+  (package! org-roam :pin "c59d6c4f7c917cf8580df2797f331c53e404fdbe")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
 
@@ -103,6 +103,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "e8c14e2b73a882289db8143ea5f43b1ecf7df0b0"))
+    :pin "77050d256fc2cb58483284bc56617e25596e445b"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))
