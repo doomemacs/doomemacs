@@ -37,6 +37,10 @@
         ;; Open in "other window" is less predictable, and can replace a window
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
+  
+  ;; Setup carryover to include all configured TODO states.
+  (setq org-journal-carryover-items  "TODO=\"TODO\"|TODO=\"PROJ\"|TODO=\"STRT\"|TODO=\"WAIT\"|TODO=\"HOLD\"")
+
 
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
