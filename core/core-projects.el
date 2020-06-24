@@ -154,7 +154,9 @@ And if it's a function, evaluate it."
           ;; `projectile-globally-ignored-directories' are respected.
           (lambda (_)
             (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
-                            doom-projectile-fd-binary)
+                            (or (cl-find-if (doom-rpartial #'executable-find t)
+                                            '("fdfind" "fd"))
+                                "fd"))
                     (cl-loop for dir in projectile-globally-ignored-directories
                              concat " -E "
                              concat (shell-quote-argument dir))
