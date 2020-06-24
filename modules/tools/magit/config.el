@@ -15,11 +15,7 @@
         ;; Don't autosave repo buffers. This is too magical, and saving can
         ;; trigger a bunch of unwanted side-effects, like save hooks and
         ;; formatters. Trust us to know what we're doing.
-        magit-save-repository-buffers nil
-        ;; Magit runs git *a lot*. Having to scan your PATH so many times can
-        ;; add up with each invokation, especially on Catalina (macOS) or
-        ;; Windows, so we resolve it once.
-        magit-git-executable (executable-find magit-git-executable))
+        magit-save-repository-buffers nil)
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
 
   (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
