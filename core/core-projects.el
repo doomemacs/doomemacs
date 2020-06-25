@@ -28,7 +28,8 @@ Emacs.")
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-auto-discover nil
         projectile-enable-caching doom-interactive-p
-        projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
+        projectile-globally-ignored-files '(".DS_Store" "Icon
+" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
@@ -154,7 +155,7 @@ And if it's a function, evaluate it."
           ;; `projectile-globally-ignored-directories' are respected.
           (lambda (_)
             (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
-                            (or (cl-find-if (doom-rpartial #'executable-find t)
+                            (or (cl-find-if (doom-rpartial #'executable-find)
                                             '("fdfind" "fd"))
                                 "fd"))
                     (cl-loop for dir in projectile-globally-ignored-directories
