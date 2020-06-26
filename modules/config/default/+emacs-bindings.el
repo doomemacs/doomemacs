@@ -343,31 +343,32 @@
 
       ;;; <leader> w --- workspaces/windows
       (:prefix-map ("w" . "workspaces/windows")
+       (:when (featurep! :ui workspaces)
+        :desc "Display workspaces"           "d" #'+workspace/display
+        :desc "Rename workspace"             "r" #'+workspace/rename
+        :desc "Create workspace"             "c" #'+workspace/new
+        :desc "Delete workspace"             "k" #'+workspace/delete
+        :desc "Save workspace"               "S" #'+workspace/save
+        :desc "Switch to other workspace"    "o" #'+workspace/other
+        :desc "Switch to left workspace"     "p" #'+workspace/switch-left
+        :desc "Switch to right workspace"    "n" #'+workspace/switch-right
+        :desc "Switch to"                    "w" #'+workspace/switch-to
+        :desc "Switch to workspace 1"        "1" #'+workspace/switch-to-0
+        :desc "Switch to workspace 2"        "2" #'+workspace/switch-to-1
+        :desc "Switch to workspace 3"        "3" #'+workspace/switch-to-2
+        :desc "Switch to workspace 4"        "4" #'+workspace/switch-to-3
+        :desc "Switch to workspace 5"        "5" #'+workspace/switch-to-4
+        :desc "Switch to workspace 6"        "6" #'+workspace/switch-to-5
+        :desc "Switch to workspace 7"        "7" #'+workspace/switch-to-6
+        :desc "Switch to workspace 8"        "8" #'+workspace/switch-to-7
+        :desc "Switch to workspace 9"        "9" #'+workspace/switch-to-8
+        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-final)
        :desc "Autosave session"             "a" #'doom/quicksave-session
-       :desc "Display workspaces"           "d" #'+workspace/display
-       :desc "Rename workspace"             "r" #'+workspace/rename
-       :desc "Create workspace"             "c" #'+workspace/new
-       :desc "Delete workspace"             "k" #'+workspace/delete
        :desc "Save session"                 "s" #'doom/save-session
-       :desc "Save workspace"               "S" #'+workspace/save
        :desc "Load session"                 "l" #'doom/load-session
        :desc "Load last autosaved session"  "L" #'doom/quickload-session
-       :desc "Switch to other workspace"    "o" #'+workspace/other
        :desc "Undo window config"           "u" #'winner-undo
-       :desc "Redo window config"           "U" #'winner-redo
-       :desc "Switch to left workspace"     "p" #'+workspace/switch-left
-       :desc "Switch to right workspace"    "n" #'+workspace/switch-right
-       :desc "Switch to"                    "w" #'+workspace/switch-to
-       :desc "Switch to workspace 1"        "1" #'+workspace/switch-to-0
-       :desc "Switch to workspace 2"        "2" #'+workspace/switch-to-1
-       :desc "Switch to workspace 3"        "3" #'+workspace/switch-to-2
-       :desc "Switch to workspace 4"        "4" #'+workspace/switch-to-3
-       :desc "Switch to workspace 5"        "5" #'+workspace/switch-to-4
-       :desc "Switch to workspace 6"        "6" #'+workspace/switch-to-5
-       :desc "Switch to workspace 7"        "7" #'+workspace/switch-to-6
-       :desc "Switch to workspace 8"        "8" #'+workspace/switch-to-7
-       :desc "Switch to workspace 9"        "9" #'+workspace/switch-to-8
-       :desc "Switch to last workspace"     "0" #'+workspace/switch-to-final)
+       :desc "Redo window config"           "U" #'winner-redo)
 
       ;;; <leader> m --- multiple cursors
       (:when (featurep! :editor multiple-cursors)
