@@ -1002,6 +1002,10 @@ compelling reason, so..."
     (kbd doom-leader-key) nil))
 
 
+(use-package! org-autolist
+  :hook (org-mode . org-autolist-mode))
+
+
 ;;
 ;;; Bootstrap
 

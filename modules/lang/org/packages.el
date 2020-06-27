@@ -41,6 +41,7 @@
 (package! ox-clip :pin "bd36f9fb4e3b1b9e8686b993b02ccd780ff75a96")
 (package! toc-org :pin "5deaec41ed0e5c51715737d7f74c5ae1b3c00387")
 (package! org-cliplink :pin "82402cae7e118d67de7328417fd018a18f95fac2")
+(package! org-autolist :pin "c82d1e83e982b5f0c106b8800e5b0cfd5f73fdc1")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org
