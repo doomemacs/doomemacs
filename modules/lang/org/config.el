@@ -413,7 +413,9 @@ relative to `org-directory', unless it is an absolute path."
   (+org-define-basic-link "doom-docs" 'doom-docs-dir)
   (+org-define-basic-link "doom-modules" 'doom-modules-dir)
 
-  ;; Allow inline image previews of http(s)? urls or data uris
+  ;; Allow inline image previews of http(s)? urls or data uris.
+  ;; `+org-http-image-data-fn' will respect `org-display-remote-inline-images'.
+  (setq org-display-remote-inline-images 'download) ; TRAMP urls
   (org-link-set-parameters "http"  :image-data-fun #'+org-http-image-data-fn)
   (org-link-set-parameters "https" :image-data-fun #'+org-http-image-data-fn)
   (org-link-set-parameters "img"   :image-data-fun #'+org-inline-image-data-fn)

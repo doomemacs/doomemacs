@@ -74,8 +74,9 @@ exist, and `org-link' otherwise."
 ;;;###autoload
 (defun +org-http-image-data-fn (protocol link _description)
   "Interpret LINK as an URL to an image file."
-  (when (image-type-from-file-name link)
-    (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
+  (when (and (image-type-from-file-name link)
+             (not (eq org-display-remote-inline-images 'skip)))
+    (if-let (buf (url-retrieve-synchronously (concat protocol ":" link)))
         (with-current-buffer buf
           (goto-char (point-min))
           (re-search-forward "\r?\n\r?\n" nil t)
