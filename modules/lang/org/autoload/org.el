@@ -355,6 +355,25 @@ another level of headings on each invocation."
     (message "Folded to level %s" new-level)))
 
 
+;;; Format
+;;;###autoload
+(defun +org/format-src-block ()
+  (interactive)
+  (let ((element (org-element-at-point)))
+    (unless (eq (org-element-type element) 'src-block)
+      (error "Not in a source block"))
+    (save-excursion
+      (goto-char (org-babel-where-is-src-block-head element))
+      (let* ((beg (line-beginning-position 2))
+             (end (progn
+                    (goto-char (org-element-property :end element))
+                    (skip-chars-backward " \t\n")
+                    (line-beginning-position)))
+             (lang (org-element-property :language element))
+             (major-mode (org-src-get-lang-mode lang)))
+        (+format/region beg end)))))
+
+
 ;;
 ;;; Hooks
 

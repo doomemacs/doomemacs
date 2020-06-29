@@ -637,7 +637,9 @@ between the two."
          "/" #'helm-org-agenda-files-headings)
         "A" #'org-archive-subtree
         "e" #'org-export-dispatch
-        "f" #'org-footnote-new
+        (:when (featurep! :tools format)
+         "f" #'+org/format-src-block)
+        "F" #'org-footnote-new
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
         "I" #'org-toggle-inline-images
