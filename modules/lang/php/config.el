@@ -43,7 +43,27 @@
         :prefix ("t" . "test")
         "r" #'phpunit-current-project
         "a" #'phpunit-current-class
-        "s" #'phpunit-current-test))
+        "s" #'phpunit-current-test)
+
+  (set-pretty-symbols! 'php-mode
+    ;; Functional
+    :lambda "function()"
+    :def "function"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "int" :float "float"
+    :str "string"
+    :bool "list"
+    ;; Flow
+    :not "!"
+    :and "&&" :and "and"
+    :or "||" :or "or"
+    :for "for"
+    :return "return"
+    :yield "use"
+    ;; Other
+    :dot "."))
 
 
 (use-package! phpactor
