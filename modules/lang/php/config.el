@@ -61,9 +61,7 @@
     :or "||" :or "or"
     :for "for"
     :return "return"
-    :yield "use"
-    ;; Other
-    :dot "."))
+    :yield "use"))
 
 
 (use-package! phpactor
