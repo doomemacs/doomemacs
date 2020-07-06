@@ -14,3 +14,5 @@ working on that project after closing the last buffer.")
 (if (featurep! +eglot)
     (load! "+eglot")
   (load! "+lsp"))
+
+(use-package! dash)
