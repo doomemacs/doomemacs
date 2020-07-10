@@ -64,6 +64,7 @@
   :hook (coq-mode . company-coq-mode)
   :config
   (set-popup-rule! "^\\*\\(?:response\\|goals\\)\\*" :ignore t)
+  (set-company-backend! 'coq-mode 'company-coq-mode)
   (set-lookup-handlers! 'company-coq-mode
     :definition #'company-coq-jump-to-definition
     :references #'company-coq-grep-symbol
