@@ -50,7 +50,21 @@
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
-  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p)))
+  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
+
+  (set-pretty-symbols! 'sh-mode
+    ;; Functional
+    :def "function"
+    ;; Types
+    :true "true" :false "false"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :in "in"
+    :for "for"
+    :return "return"
+    ;; Other
+    :dot "." :dot "source"))
 
 
 (use-package! company-shell
