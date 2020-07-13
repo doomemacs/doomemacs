@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "b76ed658f1d99e5f5781324d2115d35ed879fef1")
+  :pin "95eaab7f446e7f29ef5263eeb86c70fbdd23f121")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -38,7 +38,7 @@
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
-(package! ox-clip :pin "bd36f9fb4e3b1b9e8686b993b02ccd780ff75a96")
+(package! ox-clip :pin "f5eac28734ea33d0b7a3dbe10b777907a91cf9f9")
 (package! toc-org :pin "5deaec41ed0e5c51715737d7f74c5ae1b3c00387")
 (package! org-cliplink :pin "82402cae7e118d67de7328417fd018a18f95fac2")
 
@@ -49,9 +49,9 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "8cc15bb8014ed1f047eecc0abd8bf447f86c0505"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "9f09553c09e389f7e695afb8dd1aa5a52f18f107"))
+  (package! orgit :pin "a4e689f009a19edf5475ec20f6d723b2ab375db6"))
 (when (featurep! +brain)
-  (package! org-brain :pin "6b2ec93ec92b4a244af9d600433e0d0a02eb5f1e"))
+  (package! org-brain :pin "671db0e08b91c7d2637d765a7afca8b2561275c8"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "768716b6fcc814b06360b99ad70bce44c0eb4a32"))
 (when (featurep! +gnuplot)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "24b587978241328fcad40f932602a0a4c1e7d403"))
+  (package! org-journal :pin "b4b3b2d9854ec9ba98c16098979d2b6b40f54180"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -72,11 +72,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
-  (package! org-re-reveal :pin "a9e9d4ef88417b3af7741a8d8f444ece820e7a3b"))
+  (package! org-re-reveal :pin "a786188f78515ac83626d5510e9bf578c2a152da"))
 (when (featurep! +roam)
-  (package! org-roam :pin "c59d6c4f7c917cf8580df2797f331c53e404fdbe")
+  (package! org-roam :pin "7a4b15fd368bc8ac55bfe96392f5a300f71f009c")
   (when (featurep! :completion company)
-    (package! company-org-roam :pin "674c2bd493f571c5323d69279557a6c18ccbd14e")))
+    (package! company-org-roam :pin "5d7ccd944519ae1d03f5e17ddfe33dcd8a0cc71e")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")
