@@ -63,6 +63,11 @@
   ;; set mail user agent
   (setq mail-user-agent 'mu4e-user-agent)
 
+  ;; evil masks most mu4e-view-mode key bindings. Switch to Emacs mode for
+  ;; this.
+  (when (featurep! :editor evil)
+    (add-hook 'mu4e-view-mode-hook #'evil-emacs-state))
+
   ;; Use fancy icons
   (setq mu4e-use-fancy-chars t
         mu4e-headers-draft-mark '("D" . "")
