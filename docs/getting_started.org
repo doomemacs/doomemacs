@@ -1049,7 +1049,7 @@ shouldn't produce side effects and should be deterministic. Because this file
 gets evaluated in an environment isolated from your interactive session, code
 within should make no assumptions about the current session.
 
-See the "[[*Package management][Package Management]]" section for details.
+See the "[[#package-management][Package Management]]" section for details.
 
 **** =autoload/*.el= OR =autoload.el=
 Functions marked with an autoload cookie (~;;;###autoload~) in these files will
@@ -1276,7 +1276,7 @@ provide tools to make this easier. Here are a few things you can try, first:
   issue may be documented.
 
 + If possible, see if the issue can be reproduced in vanilla Emacs (Emacs
-  without Doom) and/or vanilla Doom (Doom without your private config). [[*Use the sandbox][Doom's
+  without Doom) and/or vanilla Doom (Doom without your private config). [[#testing-in-dooms-sandbox][Doom's
   sandbox can help you check]].
 
 + Ask for help on [[https://discord.gg/qvGgnVx][our Discord server]]. It is the quickest way to get help,
