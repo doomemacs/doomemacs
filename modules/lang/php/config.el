@@ -21,6 +21,23 @@
   (set-repl-handler! 'php-mode #'php-boris)
   (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
   (set-formatter! 'php-mode #'php-cs-fixer-fix)
+  (set-pretty-symbols! 'php-mode
+    ;; Functional
+    :lambda "function()"
+    :def "function"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "int" :float "float"
+    :str "string"
+    :bool "list"
+    ;; Flow
+    :not "!"
+    :and "&&" :and "and"
+    :or "||" :or "or"
+    :for "for"
+    :return "return"
+    :yield "use")
 
   (if (featurep! +lsp)
       (add-hook 'php-mode-local-vars-hook #'lsp!)
