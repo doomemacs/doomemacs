@@ -25,8 +25,17 @@ This module gives Doom its signature look: powered by the =doom-one= theme
 + "Thin bar" fringe bitmaps for ~git-gutter-fringe~
 + File-visiting buffers are slightly brighter (thanks to solaire-mode)
 
+This module also enables some display enhancements for =org-mode= included with
+the =doom-themes= package, such as:
++ Changing the color of =TODO= items that are marked done.
++ Fontifying hashtags (=#=) and at-tags (=@=)
++ Hiding leading stars
+
+See doom-themes-org-config for more information.
+
 ** Module Flags
-This module provides no flags.
++ =+disable-org-config= Disables the additional syntax highlighting for org-mode
+  included in all doom themes.
 
 ** Plugins
 + [[https://github.com/hlissner/emacs-doom-themes][doom-themes]]

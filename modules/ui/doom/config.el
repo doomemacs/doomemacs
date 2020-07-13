@@ -11,7 +11,8 @@
   (unless doom-theme
     (setq doom-theme 'doom-one))
   ;; improve integration w/ org-mode
-  (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
+  (unless (featurep! +disable-org-config)
+    (add-hook 'doom-load-theme-hook #'doom-themes-org-config))
   ;; more Atom-esque file icons for neotree/treemacs
   (when (featurep! :ui neotree)
     (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
