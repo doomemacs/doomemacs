@@ -89,7 +89,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   (advice-add #'cdlatex-math-symbol :after #'+latex-fold-last-macro-a)
   (advice-add #'cdlatex-math-modify :after #'+latex-fold-last-macro-a)
   ;; Fold after saving
-  (add-hook! 'after-save-hook TeX-fold-buffer)
+  (add-hook 'after-save-hook #'TeX-fold-buffer)
   ;; Fold after snippets
   (when (featurep! :editor snippets)
     (add-hook! 'TeX-fold-mode-hook
