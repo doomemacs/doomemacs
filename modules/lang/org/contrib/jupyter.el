@@ -24,4 +24,6 @@
                (add-to-list 'org-src-lang-modes (cons lang-name (intern lang-tail)))))
         (with-demoted-errors "Jupyter: %s"
           (require lang nil t)
-          (require 'ob-jupyter nil t))))))
+          (require 'ob-jupyter nil t)))))
+  :config
+  (require 'tramp))
