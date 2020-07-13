@@ -42,7 +42,7 @@ This module has no dedicated maintainers.
 
 * Prerequisites
 This module requires either =aspell= or =hunspell= as backend. It will
-automatically pick =aspell= if both are install.
+automatically pick =aspell= if both are installed.
 
 You can specify the backend with the =+aspell= or =+hunspell= flag.
 
