@@ -12,6 +12,8 @@
             "hledger"
           "ledger"))
 
+  (set-company-backend! 'ledger-mode 'company-capf)
+
   (defadvice! +ledger--check-version-a (orig-fn)
     "Fail gracefully if ledger binary isn't available."
     :around #'ledger-check-version
