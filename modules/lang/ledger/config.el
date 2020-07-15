@@ -7,10 +7,9 @@
         ledger-mode-should-check-version nil)
 
   :config
-  (setq ledger-binary-path
-        (if (executable-find "hledger")
-            "hledger"
-          "ledger"))
+  ;; fallback to hledger in case ledger binary is not found
+  (when (and (not (executable-find ledger-binary-path)) (executable-find "hledger"))
+    (setq ledger-binary-path "hledger"))
 
   (set-company-backend! 'ledger-mode 'company-capf)
 
