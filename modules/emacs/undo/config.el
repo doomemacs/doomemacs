@@ -33,7 +33,7 @@
   :hook (undo-fu-mode . global-undo-fu-session-mode)
   :preface
   (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
-        undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+        undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
 
   ;; HACK We avoid `:config' here because `use-package's `:after' complicates
   ;;      the load order of a package's `:config' block and makes it impossible
