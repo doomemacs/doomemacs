@@ -17,7 +17,13 @@
   (set-evil-initial-state! '(ansible-doc-module-mode) 'emacs))
 
 (use-package! jinja2-mode
-  :mode "\\.j2$")
+  :mode "\\.j2$"
+  :config
+  ;; The default behavior is to reindent the whole buffer on save. This is
+  ;; disruptive and imposing. There are indentation commands available; the user
+  ;; can decide when they want their code reindented.
+  (add-hook! 'jinja2-mode-hook
+    (remove-hook 'after-save-hook 'jinja2-indent-buffer t)))
 
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)
