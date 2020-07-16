@@ -278,7 +278,7 @@
        (:when (featurep! :ui minimap)
         :desc "Minimap mode"               "m" #'minimap-mode)
        (:when (featurep! :lang org +present)
-        :desc "org-tree-slide mode"        "p" #'+org-present/start)
+        :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode
        (:when (featurep! :checkers spell)
         :desc "Flyspell"                   "s" #'flyspell-mode)
