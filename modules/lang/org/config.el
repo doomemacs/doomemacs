@@ -519,6 +519,7 @@ eldoc string."
     :around #'org-format-outline-path
     (funcall orig-fn
              (cl-loop for part in path
+                      when part
                       ;; Remove full link syntax
                       for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" part)
                       for n from 0
