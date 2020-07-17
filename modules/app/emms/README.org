@@ -1,0 +1,85 @@
+#+TITLE:   app/emms
+#+DATE:    June 1, 2020
+#+STARTUP: nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+- [[#prerequisites][Prerequisites]]
+  - [[#ubuntu][Ubuntu]]
+  - [[#arch-linux][Arch Linux]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#new-music-files-in-db-not-showing-up][new music files in db not showing up]]
+- [[#commands][Commands]]
+
+* Description
+
+Emms is a music player written in EMACS-lisp.
+It uses mpd as a backend server, and mpc for update the music db.
+
+* Prerequisites
+- mkdir a dir in either $HOME/.mpd or $HOME/.config/mpd
+- make a file in mpd dir named mpd.conf
+#+BEGIN_QUOTE
+# Change the .mpd/mpd.conf, Replace USER with your username
+music_directory "/home/USER/Music/"
+playlist_directory "/home/USER/Music/"
+db_file "/home/USER/.mpd/mpd.db"
+log_file "/home/USER/.mpd/mpd.log"
+pid_file "/home/USER/.mpd/mpd.pid"
+state_file "/home/USER/.mpd/mpdstate"
+
+audio_output {
+        type "pulse"
+        name "pulse audio"
+}
+
+audio_output {
+    type                    "fifo"
+    name                    "my_fifo"
+    path                    "/tmp/mpd.fifo"
+    format                  "44100:16:2"
+}
+
+bind_to_address "127.0.0.1"
+port "8501"
+#+END_QUOTE
+- make the following files in mpd dir
+  mpdstate
+  mpd.log
+
+
+** Ubuntu
+#+BEGIN_SRC bash :eval no
+sudo apt install mpd mpc
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC bash
+sudo pacman -S mpd mpc
+#+END_SRC
+
+* Troubleshooting
+** new music files in db not showing up
+Try =SPC e k=  =SPC e c= =SPC e r=.
+If that doesn't work restart emacs.
+* Commands
+These are the most important ones
+
+=SPC e c= Updates DB and start mpd daemon.
+=SPC e k= Stop the player and kill the daemon.
+=SPC e b= Opens the emms browser move to the right window and the emms-mode keys will work.
+=SPC m l= Toggles whether or not the player repeats the playlist.
+=SPC m m= Mixes the playlist.
+=SPC m i= Insert specific song
+=SPC m s= Save the current playlist to a file
+=SPC m p= Insert playlist save into current playlist
+
+=g a= Sort the browser by artists
+=g b= Sort the browser by genre
+=X= Stops the player
+=x= pauses the player
+=D= in the playlist window removes that item
+=C= clears the playlist
+=>= move five seconds forward in the current track
+=<= Opposite five back
+=RET= In browser adds the artist's songs to the playlist, in the playlist starts playlist.
