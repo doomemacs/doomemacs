@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "25fc5c6647979357cf3e39f0667a9b7ae5266af9")
+(package! evil :pin "017b4421e24786a2f593d5e5c9ea0525e4ff272d")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
