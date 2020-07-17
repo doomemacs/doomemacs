@@ -22,8 +22,9 @@
   ;; Keybinds for emms that only make sense to use in an emms buffer.
   (map! :map emms-playlist-mode-map
         :localleader
-	:n "l" #'emms-toggle-repeat-playlist
-        :n "i" #'emms-insert-playlist
+        :n "l" #'emms-toggle-repeat-playlist
+        :n "p" #'emms-insert-playlist
+        :n "i" #'emms-insert-file
         :n "t" #'emms-toggle-repeat-track
         :n "s" #'emms-playlist-save
         :n "m" #'emms-shuffle)
