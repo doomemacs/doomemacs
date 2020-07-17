@@ -1,6 +1,8 @@
 ;;; private/emms/config.el -*- lexical-binding: t; -*-
 
+
 (use-package emms
+  :init
   (setq mpc-host "localhost:8501")
   (require 'emms-setup)
   (require 'emms-player-mpd)
