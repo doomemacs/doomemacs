@@ -1,8 +1,20 @@
 ;;; private/emms/config.el -*- lexical-binding: t; -*-
 
 (use-package emms
+  (setq mpc-host "localhost:8501")
+  (require 'emms-setup)
+  (require 'emms-player-mpd)
+  (setq emms-directory (concat user-emacs-directory "/.local/emms"))
+  (setq emms-history-file (concat emms-directory "/history"))
+  (setq emms-cache-file (concat emms-directory "/cache"))
+  (setq emms-score-file (concat emms-directory "/score"))
+  (setq emms-seek-seconds 5)
+  (setq emms-player-list '(emms-player-mpd))
+  (setq emms-info-functions '(emms-info-mpd))
+  (setq emms-player-mpd-server-name "localhost")
+  (setq emms-player-mpd-server-port "8501")
   :config
-  (emms-all))
+  (emms-all)
   ;; Keys that make sense regardless of whether or not your in emms.
   (map! :prefix ("SPC e" . "emms")
         :n "p" #'emms-playlist-new
@@ -46,4 +58,4 @@
   (defun mpc/update-database ()
     (interactive)
     (call-process "mpc" nil nil nil "update")
-    (message "MPD Database Updated!"))
+    (message "MPD Database Updated!")))
