@@ -1309,15 +1309,15 @@ You can also evaluate code with ~eval-expression~ (=M-;= or =SPC ;=).
 *** TODO For Doom Modules, packages, autodefs, etc.
 + ~doom/open-news~ (=SPC h n=) ::
      ...
-+ ~doom/open-manual~ (=SPC h D=) ::
-     ...
-+ ~doom/describe-module~ (=SPC h d=) ::
++ ~doom/help~ (=SPC h d h=) ::
+     Open the index of Doom's manual.
++ ~doom/help-modules~ (=SPC h d m=) ::
      Jumps to a module's documentation.
-+ ~doom/describe-autodefs~ (=SPC h A=) ::
++ ~doom/help-autodefs~ (=SPC h u=) ::
      Jumps to the documentation for an autodef function/macro. These are special
      functions that are always defined, whether or not their containing modules
      are enabled.
-+ ~doom/describe-package~ (=SPC h p=) ::
++ ~doom/help-packages~ (=SPC h p=) ::
      Look up packages that are installed, by whom (what modules) and where jump
      to all the places it is being configured.
 + ~doom/info~ ::

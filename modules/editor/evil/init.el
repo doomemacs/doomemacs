@@ -111,6 +111,7 @@ variable for an explanation of the defaults (in comments). See
       edebug
       ediff
       eglot
+      explain-pause-mode
       elfeed
       elisp-mode
       elisp-refs
@@ -158,7 +159,6 @@ variable for an explanation of the defaults (in comments). See
       man
       magit
       magit-todos
-      ,@(if evil-collection-setup-minibuffer '(minibuffer))
       monky
       mu4e
       mu4e-conversation
@@ -174,7 +174,6 @@ variable for an explanation of the defaults (in comments). See
       (pdf pdf-tools)
       popup
       proced
-      process-menu
       prodigy
       profiler
       python
@@ -190,6 +189,7 @@ variable for an explanation of the defaults (in comments). See
       simple
       slime
       sly
+      speedbar
       tablist
       tar-mode
       (term term ansi-term multi-term)
@@ -210,7 +210,6 @@ variable for an explanation of the defaults (in comments). See
       which-key
       woman
       xref
-      xwidget
       youtube-dl
       (ztree ztree-diff)))
 
@@ -264,6 +263,10 @@ and complains if a module is loaded too early (during startup)."
     (when evil-collection-setup-minibuffer
       (+evil-collection-init 'minibuffer)
       (evil-collection-minibuffer-insert)))
+  (add-transient-hook! 'process-menu-mode
+    (+evil-collection-init '(process-menu simple)))
+  (add-transient-hook! 'xwidget-webkit-mode
+    (+evil-collection-init 'xwidget))
 
   ;; HACK Do this ourselves because evil-collection break's `eval-after-load'
   ;;      load order by loading their target plugin before applying keys. This

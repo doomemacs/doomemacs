@@ -520,7 +520,7 @@ eldoc string."
     (funcall orig-fn
              (cl-loop for part in path
                       ;; Remove full link syntax
-                      for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" part)
+                      for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" (or part ""))
                       for n from 0
                       for face = (nth (% n org-n-level-faces) org-level-faces)
                       collect
