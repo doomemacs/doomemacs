@@ -174,7 +174,6 @@ variable for an explanation of the defaults (in comments). See
       (pdf pdf-tools)
       popup
       proced
-      (process-menu simple)
       prodigy
       profiler
       python
@@ -264,6 +263,8 @@ and complains if a module is loaded too early (during startup)."
     (when evil-collection-setup-minibuffer
       (+evil-collection-init 'minibuffer)
       (evil-collection-minibuffer-insert)))
+  (add-transient-hook! 'process-menu-mode
+    (+evil-collection-init '(process-menu simple)))
   (add-transient-hook! 'xwidget-webkit-mode
     (+evil-collection-init 'xwidget))
 
