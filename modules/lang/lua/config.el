@@ -38,6 +38,8 @@ lua-language-server.")
          (doom-path lua-lsp-dir "main.lua")))
 
   (when (featurep! +lsp)
+    (unless (featurep! :tools lsp +eglot)
+      (load! "+lsp-mode"))
     (add-hook 'lua-mode-local-vars-hook #'lsp!)))
 
 
