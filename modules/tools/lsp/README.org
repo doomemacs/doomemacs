@@ -35,6 +35,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | Module           | Major modes                                             | Default language server                                       |
 |------------------+---------------------------------------------------------+---------------------------------------------------------------|
 | [[../../lang/cc/README.org][:lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls                                                          |
+| [[../../lang/clojure/README.org][:lang clojure]]    | clojure-mode                                            | clojure-lsp                                                   |
 | [[../../lang/csharp/README.org][:lang csharp]]     | csharp-mode                                             | omnisharp                                                     |
 | [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
 | [[../../lang/fsharp/README.org][:lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
