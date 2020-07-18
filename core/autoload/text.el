@@ -286,6 +286,7 @@ Respects `require-final-newline'."
   "Switch between tabs and spaces indentation style in the current buffer."
   (interactive)
   (setq indent-tabs-mode (not indent-tabs-mode))
+  (doom-highlight-non-default-indentation-h)
   (message "Indent style changed to %s" (if indent-tabs-mode "tabs" "spaces")))
 
 (defvar editorconfig-lisp-use-default-indent)
