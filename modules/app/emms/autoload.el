@@ -21,3 +21,10 @@
   (interactive)
   (call-process "mpc" nil nil nil "update")
   (message "MPD Database Updated!"))
+
+;;;###autoload
+(defun +emms/mpd-restart-music-daemon ()
+  (interactive)
+  (+emms/mpd-kill-music-daemon)
+  (+emms/mpd-start-music-daemon)
+  (message "MPD Restarted!"))
