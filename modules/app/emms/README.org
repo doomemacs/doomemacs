@@ -15,11 +15,11 @@
 * Description
 Emms is a music player written in EMACS-lisp.
 It uses mpd as a backend server, and mpc for update the music db.
+
 * Prerequisites
 - mkdir a dir in either $HOME/.mpd or $HOME/.config/mpd
 - make a file in mpd dir named mpd.conf
-
-Change the .mpd/mpd.conf, Replace USER with your username
+- Change the .mpd/mpd.conf, Replace USER with your username
 #+BEGIN_SRC conf
 music_directory "/home/USER/Music/"
 playlist_directory "/home/USER/Music/"
@@ -43,7 +43,6 @@ audio_output {
 bind_to_address "127.0.0.1"
 port "8501"
 #+END_SRC
-
 - make the following files in mpd dir
   - mpdstate
   - mpd.log
@@ -60,11 +59,10 @@ sudo pacman -S mpd mpc
 
 * Troubleshooting
 ** new music files in db not showing up
-Try =M-x +emms/mpd-kill-music-daemon= =M-x +emms/mpd-start-music-daemon=
-If that doesn't work restart emacs.
+Try =M-x +emms/mpd-restart-music-daemon=. If that doesn't work restart emacs.
+
 * Commands
 These are the most important ones
-
 + =SPC m l= Toggles whether or not the player repeats the playlist.
 + =SPC m m= Mixes the playlist.
 + =SPC m i= Insert specific song
