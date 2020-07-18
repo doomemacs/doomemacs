@@ -143,6 +143,9 @@
     (defvar +mc--compat-evil-prev-state nil)
     (defvar +mc--compat-mark-was-active nil)
 
+    (after! swiper
+      (add-to-list 'mc/cmds-to-run-once 'swiper-mc))
+
     (add-hook! 'multiple-cursors-mode-enabled-hook
       (defun +multiple-cursors-compat-switch-to-emacs-state-h ()
         (when (and (bound-and-true-p evil-mode)
