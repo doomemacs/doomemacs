@@ -168,7 +168,9 @@ ensure it is built when we actually use Forge."
     "M-1" "M-2" "M-3" "M-4"
     "1" "2" "3" "4"
     "0") ; moved to g=
-  (evil-define-key* 'normal magit-status-mode-map [escape] nil) ; q is enough
+  (evil-define-key* 'normal magit-status-mode-map
+    [escape] nil ; q is enough
+    "*" #'magit-worktree)
   (evil-define-key* '(normal visual) magit-mode-map
     "%"  #'magit-gitflow-popup
     "zt" #'evil-scroll-line-to-top
