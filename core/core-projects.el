@@ -165,7 +165,8 @@ And if it's a function, evaluate it."
             ;; it respects .gitignore. This is recommended in the projectile docs.
             (cond
              ((when-let
-                  (bin (if (file-remote-p buffer-file-name nil t)
+                  (bin (if (or (null default-directory)
+                               (file-remote-p default-directory nil t))
                            (cl-find-if find-exe-fn (list "fdfind" "fd"))
                          doom-projectile-fd-binary))
                 (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
