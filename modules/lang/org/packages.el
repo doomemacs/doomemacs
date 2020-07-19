@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "95eaab7f446e7f29ef5263eeb86c70fbdd23f121")
+  :pin "bb427f7bd685a9064053c4109c340307eb584daa")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -49,7 +49,7 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "8cc15bb8014ed1f047eecc0abd8bf447f86c0505"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "a4e689f009a19edf5475ec20f6d723b2ab375db6"))
+  (package! orgit :pin "ac9b1a42863a864fde9d225890ef5464bffdc646"))
 (when (featurep! +brain)
   (package! org-brain :pin "671db0e08b91c7d2637d765a7afca8b2561275c8"))
 (when (featurep! +dragndrop)
@@ -62,7 +62,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
 (when (featurep! +journal)
-  (package! org-journal :pin "b4b3b2d9854ec9ba98c16098979d2b6b40f54180"))
+  (package! org-journal :pin "01ea4bd387f32c1b18190e6bceb09f33d76e8273"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -74,7 +74,7 @@
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
   (package! org-re-reveal :pin "a786188f78515ac83626d5510e9bf578c2a152da"))
 (when (featurep! +roam)
-  (package! org-roam :pin "7a4b15fd368bc8ac55bfe96392f5a300f71f009c")
+  (package! org-roam :pin "fb5beeb14d8a4da9d5cbdb23eceba06c1be6de7c")
   (when (featurep! :completion company)
     (package! company-org-roam :pin "5d7ccd944519ae1d03f5e17ddfe33dcd8a0cc71e")))
 
