@@ -458,14 +458,17 @@ lines are selected, or the NxM dimensions of a block selection.")
 
 ;;; `+modeline-encoding'
 (def-modeline-var! +modeline-encoding
-  '(:eval
-    (concat (coding-system-eol-type-mnemonic buffer-file-coding-system)
-            " "
-            (let ((sys (coding-system-plist buffer-file-coding-system)))
+  `(:eval
+    (let ((sys (coding-system-plist buffer-file-coding-system))
+          (eol (coding-system-eol-type-mnemonic buffer-file-coding-system)))
+      (concat (unless (equal eol ,(if IS-WINDOWS "CRLF" "LF"))
+                (concat "  " eol " "))
               (if (memq (plist-get sys :category)
                         '(coding-category-undecided coding-category-utf-8))
-                  "UTF-8"
-                (upcase (symbol-name (plist-get sys :name))))))))
+                  (unless (string-match-p "utf-8" (symbol-name buffer-file-coding-system))
+                    "UTF-8  ")
+                (concat (upcase (symbol-name (plist-get sys :name)))
+                        "  "))))))
 
 ;; Clearer mnemonic labels for EOL styles
 (setq eol-mnemonic-dos "CRLF"
