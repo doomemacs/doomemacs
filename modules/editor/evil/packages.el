@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "017b4421e24786a2f593d5e5c9ea0525e4ff272d")
+(package! evil :pin "2bc6ca3587502fde67b93e411e329fc8224c916a")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
@@ -14,7 +14,7 @@
 (package! evil-nerd-commenter :pin "87734b9c7fcd047f73a072b9d03ec05f786eeb03")
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
-  :pin "c2cfdd1eb1f193bea28ee79b191b78309677058a")
+  :pin "006da406d175c05fedca4431cccd569e20bef92c")
 (package! evil-snipe :pin "6dcac7f2516c6137a2de532fc2c052f242559ee3")
 (package! evil-surround :pin "346d4d85fcf1f9517e9c4991c1efe68b4130f93a")
 (package! evil-textobj-anyblock :pin "ff00980f0634f95bf2ad9956b615a155ea8743be")
