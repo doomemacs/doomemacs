@@ -27,3 +27,7 @@
   (if racket-xp-mode
       (call-interactively #'racket-xp-visit-definition)
     (call-interactively #'racket-repl-visit-definition)))
+
+;;;###autoload
+(defun +racket--disable-flycheck ()
+  (add-to-list 'flycheck-disabled-checkers 'racket))

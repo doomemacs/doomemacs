@@ -30,6 +30,11 @@
   (when (featurep! +xp)
     (add-hook 'racket-mode-hook #'racket-xp-mode))
 
+  (add-hook 'racket-xp-mode-hook #'+racket--disable-flycheck)
+  (map! :map racket-xp-mode-map
+        :n "[e" #'racket-xp-previous-error
+        :n "]e" #'racket-xp-next-error)
+
   (unless (or (featurep! :editor parinfer)
               (featurep! :editor lispy))
     (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
