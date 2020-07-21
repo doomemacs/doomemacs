@@ -552,7 +552,7 @@ To change these keys see `+evil-repeat-keys'."
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
         "s" #'evil-avy-goto-char-2
-        "SPC" (cmd!! #'evil-avy-goto-char-timer t)
+        "SPC" (cmd! (let ((current-prefix-arg t)) (evil-avy-goto-char-timer)))
         "/" #'evil-avy-goto-char-timer))
 
       ;; evil-snipe
