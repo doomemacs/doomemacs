@@ -26,7 +26,8 @@ byte-compiled from.")
              ;; would load all of :lang org (very expensive!).
              (and (require 'ob-tangle)
                   (letf! (defun message (msg &rest args)
-                           (print! (info "%s") (apply #'format msg args)))
+                           (when msg
+                             (print! (info "%s") (apply #'format msg args))))
                     (org-babel-tangle-file org dest))
                   ;; Write the cache file to serve as our mtime cache
                   (with-temp-file +literate-config-cache-file))
