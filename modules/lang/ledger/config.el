@@ -6,12 +6,6 @@
   (setq ledger-clear-whole-transactions 1
         ledger-mode-should-check-version nil)
 
-  :config
-  (setq ledger-binary-path
-        (if (executable-find "hledger")
-            "hledger"
-          "ledger"))
-
   (set-company-backend! 'ledger-mode 'company-capf)
 
   (defadvice! +ledger--check-version-a (orig-fn)
