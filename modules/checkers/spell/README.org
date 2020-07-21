@@ -34,7 +34,7 @@ This module has no dedicated maintainers.
 + =+everywhere= Use spellcheck in every mode.
 
 ** Plugins
-+ [[https://github.com/d12frosted/flyspell-correct][flyspell-corret]]
++ [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]]
 + [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][flyspell-correct-ivy]] (=completion/ivy=)
 + [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-helm-interface][flyspell-correct-helm]] (=completion/helm=)
 + [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-popup-interface][flyspell-correct-popup]] (if *neither* =completion/ivy= or =completion/helm=)
