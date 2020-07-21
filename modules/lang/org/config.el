@@ -735,6 +735,12 @@ between the two."
          "s" #'org-store-link
          "S" #'org-insert-last-stored-link
          "t" #'org-toggle-link-display)
+        (:prefix ("P" . "publish")
+         "a" #'org-publish-all
+         "f" #'org-publish-current-file
+         "p" #'org-publish
+         "P" #'org-publish-current-project
+         "s" #'org-publish-sitemap)
         (:prefix ("r" . "refile")
          "." #'+org/refile-to-current-file
          "c" #'+org/refile-to-running-clock
