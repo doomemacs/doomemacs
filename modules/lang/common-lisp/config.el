@@ -14,7 +14,7 @@
 
 
 (use-package! sly
-  :defer t
+  :hook (lisp-mode-local-vars . sly-editing-mode)
   :init
   (after! lisp-mode
     (set-repl-handler! 'lisp-mode #'sly-mrepl)
