@@ -63,7 +63,7 @@ aren't working.
    or =+pragmata-pro=.
 2. Install the patched version of the associated font with ~M-x
    +pretty-code/install-patched-font~. Note: Pragmata Pro cannot be installed
-   this way because it isn't a non-free font and must be purchased and installed
+   this way because it is a non-free font and must be purchased and installed
    manually.
 
 * TODO Features
