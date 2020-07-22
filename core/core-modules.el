@@ -119,7 +119,8 @@ non-nil."
       (unless no-config-p
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
         (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-        (load! "config" doom-private-dir t)))))
+        (load! "config" doom-private-dir t)
+        (load custom-file 'noerror (not doom-debug-mode))))))
 
 
 ;;
