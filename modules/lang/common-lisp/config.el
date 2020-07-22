@@ -89,7 +89,10 @@
         (:localleader
          :map lisp-mode-map
          :desc "Sly"          "'" #'sly
-         :desc "Sly (ask)"    ";" (λ!! #'sly '-)
+         :desc "Sly (ask)"    ";" (lambda ()
+                                    (interactive)
+                                    (let ((current-prefix-arg '-))
+                                      (call-interactively #'sly)))
          :desc "Expand macro" "m" #'macrostep-expand
          (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file
