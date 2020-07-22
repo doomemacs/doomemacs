@@ -251,13 +251,14 @@ or aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda (&rest _) (interactive) ,@body))
 
-(defmacro cmd!! (command &rest args)
+(defmacro cmd!! (command &optional prefix-arg &rest args)
   "Expands to a closure that interactively calls COMMAND with ARGS.
 A factory for quickly producing interactive, prefixed commands for keybinds or
 aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda (&rest _) (interactive)
-     (funcall-interactively ,command ,@args)))
+  `(lambda (arg &rest _) (interactive "P")
+     (let ((current-prefix-arg (or ,prefix-arg arg)))
+       (funcall-interactively ,command ,@args))))
 
 (defmacro cmds! (&rest branches)
   "Expands to a `menu-item' dispatcher for keybinds."
