@@ -3,6 +3,14 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "mix.exs"))
 
+(after! highlight-numbers
+  (puthash 'elixir-mode
+    (rx (and symbol-start
+            (? "-")
+            (+ digit)
+            (0+ (and "_" (= 3 digit)))
+            symbol-end))
+    highlight-numbers-modelist))
 
 ;;
 ;;; Packages
