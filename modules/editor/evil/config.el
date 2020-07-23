@@ -325,7 +325,7 @@ directives. By default, this only recognizes C directives.")
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t)
   :config
-  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode)
+  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode)
   (evil-snipe-mode +1)
   (evil-snipe-override-mode +1))
 
