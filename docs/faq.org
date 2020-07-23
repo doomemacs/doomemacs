@@ -37,6 +37,7 @@
   - [[#which-terminal-should-i-use][Which terminal should I use?]]
   - [[#how-do-i-enable-lsp-support-for-insert-language-here][How do I enable LSP support for <insert language here>?]]
   - [[#how-to-disable-smartparensautomatic-parentheses-completion][How to disable smartparens/automatic parentheses completion?]]
+  - [[#how-do-i-maximizefullscreen-emacs-on-startup][How do I maximize/fullscreen Emacs on startup?]]
 - [[#package-management][Package Management]]
   - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
   - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
@@ -839,6 +840,13 @@ Instead, use the following:
 
 Note that the package itself cannot be disabled with ~package!~, because it is a
 core package. This may change one day, but not in the near future.
+** How do I maximize/fullscreen Emacs on startup?
+#+BEGIN_SRC elisp
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+#+END_SRC
+
+Some window managers may not understand/work with =maximized= (or may not
+produce the desired effect), in that case try ~fullboth~ or ~fullscreen~.
 
 * Package Management
 ** How do I install a package from ELPA?
