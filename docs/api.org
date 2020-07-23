@@ -36,6 +36,7 @@ It is integrated into Helpful, in Doom.
   - [[#center-emacs-initial-frame-with-a-fixed-size][Center Emacs' initial frame with a fixed size]]
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
   - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
+  - [[#create-a-paste-transient-state-to-cycle-through-kill-ring-on-paste][Create a paste-transient-state to cycle through kill ring on paste]]
 
 * Examples for Doom's library
 ** core-lib
