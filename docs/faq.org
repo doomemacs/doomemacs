@@ -1,5 +1,4 @@
 #+TITLE: Frequently Asked Questions
-#+STARTUP: nofold
 
 * Table of Contents :TOC:
 - [[#general][General]]
@@ -19,8 +18,8 @@
   - [[#is-discord-the-only-option-for-interacting-with-your-community][Is Discord the only option for interacting with your community?]]
   - [[#why-is-emacsdoom-slow][Why is Emacs/Doom slow?]]
 - [[#configuration][Configuration]]
-  - [[#does-doom-respect-xdg-conventions][Does Doom respect XDG conventions]]
   - [[#how-do-i-configure-doom-emacs][How do I configure Doom Emacs?]]
+  - [[#does-doom-respect-xdg-directory-conventions][Does Doom respect XDG directory conventions]]
   - [[#how-do-i-enable-or-disable-a-doom-module][How do I enable or disable a Doom module?]]
   - [[#how-do-i-change-the-theme][How do I change the theme?]]
   - [[#how-do-i-change-the-fonts][How do I change the fonts?]]
@@ -73,9 +72,11 @@
 
 * General
 ** Why is it called Doom?
-It's an homage to idsoftware's classic game, whose source code was Henrik's
-(Doom's maintainer) first exposure to programming, back in the Cretaceous period
-(1999).
+It's an homage to idsoftware's classic game, whose [[https://github.com/id-Software/DOOM][source code]] was my first
+exposure to programming, back in the Cretaceous period (1999).
+
+Also, Emacs is an all consuming black hole. Its users doom themselves,
+eternally.
 
 ** Is Doom a fork of Spacemacs/Prelude/etc?
 No. I started it from scratch in mid-2014. I hadn't heard of other distros until
@@ -90,33 +91,40 @@ and layers were adopted from Spacemacs or PRed from migrating users.
 As our userbase grows, more similarities (and differences) will no doubt emerge.
 
 ** Does Doom work on Windows?
-Windows support is weaker and will lag behind Linux/MacOS support, but your
-mileage will vary. Many have reported success using Doom Emacs on Windows (using
-WSL, WSL2 or scoop/chocolatey). You'll find install instructions in the [[file:getting_started.org::On Windows][Getting
-Starting guide]].
+It does, /but/ there are caveats:
 
-If you're a Windows user, help us improve our documentation!
++ Emacs is inherently slower on Windows.
++ There are more steps to setting up Emacs (and Doom) on Windows.
++ Windows support will always lag behind macOS/Linux support, because I (and
+  many of Doom's users) don't use Windows. That means fewer guinea p--I mean,
+  pioneers, willing to test Doom on Windows.
+
+That said, Doom does have Windows users who have reported success using Doom
+Emacs on Windows (using WSL or scoop/chocolatey). The [[file:getting_started.org::On Windows][Getting Starting guide]] will walk you through what we know.
+
+Help us improve our documentation if you managed to get Doom running on Windows!
 
 ** Is Doom only for vimmers?
-No, but its maintainer /is/ a dyed-in-the-wool vimmer with almost two decades of
-vim muscle memory, so the non-vim experience will be less polished. Still, Doom
-has a growing user base of non-vim users, who continue to improve the situation,
-and we welcome suggestions and contributions!
+No, *vim/evil emulation is optional*. However, but its maintainer /is/ a
+dyed-in-the-wool vimmer with almost two decades of vim muscle memory, so the
+non-vim experience will be less polished. Still, our growing user base of
+non-vim users continue to improve the situation, and we welcome suggestions and
+contributions!
 
-If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing evil-mode][removing evil-mode]] section in the
-[[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
+If you'd like a go at it, see the [[file:../modules/editor/evil/README.org::Removing evil-mode][removing evil-mode]] section in the [[file:../modules/editor/evil/README.org][:editor evil]]
+module's documentation.
 
 ** I am a beginner. Can I use Doom?
-This isn't a choice I can make for you. Generally, if you're new to the
-terminal, to programming, or Emacs and/or vim, then Doom (and Emacs, for that
-matter) will be a rough place to start. Neither Doom nor Emacs are particularly
-beginner friendly. Emacs' main draw is its unparalleled extensibility, but
-anything so extensible has a learning curve.
+This isn't a choice I can make for you. How new is "new"? Are you new to the
+shell? To programming in general? Or just Emacs/vim?
 
-That's not to say it's impossible, or that we won't help you if you ask, but
-expect a hefty commitment and a bumpy journey. And don't pass up on the
-[[file:index.org][Documentation]], which will walk you through setting up Doom, and includes links
-to external resources created by our community.
+If all of the above is true then Emacs is a rough place to start! Doom or not.
+
+Emacs' main draw is its unparalleled extensibility, but anything so extensible
+has a learning curve. Not to suggest it's impossible, and we'll try to help you
+[[https://discord.gg/qvGgnVx][if you ask]], but expect a hefty commitment and a bumpy journey. Don't pass up on
+the [[file:index.org][Documentation]]. It'll work you through setting Doom up and includes links to
+external resources created by myself or the community.
 
 ** How does Doom compare to Spacemacs?
 To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0oq/quickstart_tutorial_for_emacs_newbies_with_doom/dkp1bhd/][reddit answer]] to this question by [[https://github.com/gilbertw1][@gilbertw1]]:
@@ -142,8 +150,8 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   functionality externally, like org tangling or batch processing.
 + *Doom's package manager is declarative and rolling release is opt-in.* Doom
   takes a little after nix, striving for as much config reproducibility as Emacs
-  (and git) will permit. Spacemacs uses package.el, which is rolling release
-  only.
+  (and git) will permit. Spacemacs uses package.el, which is only rolling
+  release.
 
 ** Why such a complicated package management system?
 Doom had +four+ *five* goals for its package management system:
@@ -163,10 +171,10 @@ Doom had +four+ *five* goals for its package management system:
    installation) is easier to manage.
 5. *Reproducibility:* Emacs is a tumultuous ecosystem; packages break left and
    right, and we rely on hundreds of them. By pinning our packages we achieve a
-   degree of config reproducibility and significantly limit the damage upstream
-   changes can do. Better yet, we stave off having to deal with those issues
-   until we are ready to. Although technical limitations prevent us from
-   achieving true reproducibility, this is better than nothing.
+   degree of (optional) config reproducibility and significantly limit the
+   damage upstream changes can do. Better yet, we stave off having to deal with
+   those issues until we are ready to. Although technical limitations prevent us
+   from achieving true reproducibility, this is better than nothing.
 
 ** How does Doom start up so quickly?
 Doom employs a number of techniques to cut down startup time. Here are its most
@@ -361,12 +369,15 @@ find more about it in:
 + [[http://nullprogram.com/blog/2016/12/22/]["Some Performance Advantages of Lexical Scope."]]
 
 ** Why is startup time important? Why not use the daemon?
-The central motivation for a config that starts up fast (aside from the learning
-experience) was to have a viable alternative to vim for quick, one-shot editing
-in the terminal (without ~-Q~).
+It /isn't/ terribly important, but I believe a) faster software is a better user
+experience, b) Emacs doesn't have to be slower than it needs to be, and c) we
+shouldn't have to manage yet-another-tool simply to get sane startup times out
+of Emacs.
 
-Besides that, it happens to facilitate:
+A fast startup time also facilitates:
 
+- Emacs as a viable alternative to vim for quick, one-shot editing in the
+  terminal (without ~-Q~).
 - Running multiple, independent instances of Emacs (e.g. on a per-project basis,
   or for nix-shell users, or to isolate one instance for IRC from an instance
   for writing code, etc).
@@ -375,16 +386,16 @@ Besides that, it happens to facilitate:
 - Faster integration with "edit in Emacs" solutions (like [[https://github.com/alpha22jp/atomic-chrome][atomic-chrome]]), and
   without a daemon.
 
-What's more, I believe a daemon shouldn't be necessary to get a sane startup
-time out of Emacs.
+It's up to you to decide if these are good enough reasons not to use a daemon,
+but it's nice to have more options, isn't it?
 
 ** How do I use Doom alongside other Emacs configs?
 I recommend [[https://github.com/plexus/chemacs][Chemacs]]. You can think of it as a bootloader for Emacs. You'll [[file:getting_started.org::*Alongside other Emacs configs (with Chemacs)][find
 instructions on how to use it with Doom in the user manual]].
 
-You'll still need a separate folder for personal configuration (=~/.doom.d= or
-=~/.config/doom= by default), but the =--doomdir PATH= switch (or ~DOOMDIR~
-environment variable) will allow you to use a different location:
+You will need a separate folder for personal configuration (=~/.doom.d= or
+=~/.config/doom= by default). Use the ~DOOMDIR~ environment variable to use
+another location:
 
 #+BEGIN_SRC bash
 # First install Doom somewhere
@@ -404,8 +415,8 @@ bin/doom run
 
 #+begin_quote
 Warning: the way ~bin/doom run~ starts Doom bypasses many of its startup
-optimizations. Treat it as a convenience for testing Doom, rather than a
-permanent entry point.
+optimizations. Treat it as a convenience for testing rather than a permanent
+entry point.
 #+end_quote
 
 ** Why should I use Doom instead of rolling my own config?
@@ -419,11 +430,13 @@ Time you could otherwise spend attending your daughter's dance recitals, that
 baseball game your son's team almost won last Thursday, or answering the court
 summons to fight for custody of your kids.
 
+Also:
 + Doom has solved many problems big and small you'll likely run into at some
   point in your Emacs career. And the problems don't end there! Let someone else
   worry about the menial things.
-+ Doom will be faster than most hand-rolled configs. Startup is one thing, but
-  Doom invests a lot of effort to improve runtime performance as well.
++ Doom's fast yo. Faster than most hand-rolled configs of similar complexity.
+  Startup is one thing, but Doom invests just as much mind share into runtime
+  performance as well.
 + Doom's package manager (powered by straight.el) is declarative, non-rolling
   release and (nominally) reproducible; which is unique on the Emacs distro
   scene. Don't let upstream issues surprise you. Roll back or re-pin packages
@@ -431,21 +444,21 @@ summons to fight for custody of your kids.
 + It facilitates integration with the command line, which makes it easy to
   integrate external tools with Emacs via the =bin/doom= script.
 
-Also, Doom's fast yo.
-
 ** What is the meaning behind Doom's naming convention in its source code?
 You'll find [[file:contributing.org::*Conventions][an overview of Doom's code conventions]] in the [[file:contributing.org][contributing guide]].
 
 ** What version of Doom am I running?
-You'll find the current version displayed in the modeline on the dashboard. It
+The current version of Doom is displayed in the modeline on the dashboard. It
 can also be retrieved using ~M-x doom/version~ (bound to =SPC h d v= or =C-h d
 v= by default) or ~bin/doom version~ on the command line.
 
 ** Is Discord the only option for interacting with your community?
 Yes. Discord is already woven into my social and work life, and was selected to
-maximize my availability to the community. I have no plans to extend it to other
+maximize my availability to the community. I don't want to juggle multiple
 platforms (like Matrix, IRC or Slack), or add bridges for them, even if they are
 better suited to the task. I already have my hands full managing the one.
+
+I /am/ considering a [[https://www.discourse.org][discourse]], so we have a public knowledge base of workflows and inter-user support (since Discord isn't a great archive), but it will be some time until this is set up.
 
 Email is a possible alternative, but is constantly swamped; expect a long
 turn-around time.
@@ -503,12 +516,6 @@ What can you do about it?
    (=C-s=) or evil-search (=/=).
 
 * Configuration
-** Does Doom respect XDG conventions
-Yes. Your private config (normally in =~/.doom.d=) can be moved to
-=~/.config/doom=.
-
-And as of Emacs 27, you can move =~/.emacs.d= to =~/.config/emacs=.
-
 ** How do I configure Doom Emacs?
 Canonically, your private config is kept in =~/.doom.d/= (or =~/.config/doom/=).
 This directory is referred to as your ~$DOOMDIR~.
@@ -523,6 +530,12 @@ You shouldn't need to fork Doom or modify =~/.emacs.d=. If you have to do this
 to achieve something, it can be considered a bug.
 
 Check out the [[file:getting_started.org::Customize][Customize section]] in the [[file:getting_started.org][Getting Started]] guide for details.
+
+** Does Doom respect XDG directory conventions
+Yes. Your private config (normally in =~/.doom.d=) can be moved to
+=~/.config/doom=.
+
+And as of Emacs 27, =~/.emacs.d= can be moved to =~/.config/emacs=.
 
 ** How do I enable or disable a Doom module?
 Comment or uncomment the module in your ~doom!~ block, found in
@@ -576,7 +589,8 @@ Doom exposes five (optional) variables for controlling fonts in Doom, they are:
 + ~doom-font~
 + ~doom-variable-pitch-font~
 + ~doom-serif-font~
-+ ~doom-unicode-font~
++ ~doom-unicode-font~ (the fallback font for unicode symbols that your default
+  font doesn't support)
 + ~doom-big-font~ (used for ~doom-big-font-mode~)
 
 They all accept either a =font-spec=, font string (="Input Mono-12"=), or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd
@@ -592,15 +606,19 @@ e.g.
 #+END_SRC
 
 ** How do I bind my own keys (or change existing ones)?
-The ~map!~ macro is recommended; it is a convenience macro that wraps around
-Emacs' (and evil's) keybinding API, i.e. ~define-key~, ~global-set-key~,
-~local-set-key~ and ~evil-define-key~.
+There are many options. Emacs provides a number of keybind functions:
 
-You'll find comprehensive examples of ~map!~'s usage in its documentation (via
-=SPC h f map!= or =C-h f map!= -- also found [[file:api.org][in docs/api]]).
++ ~define-key KEYMAP KEY DEF~
++ ~global-set-key KEY DEF~
++ ~local-set-key KEY DEF~
++ ~evil-define-key STATES KEYMAP KEY DEF &rest ...~
 
-You'll find a more comprehensive example of ~map!~'s usage in
-[[file:../modules/config/default/+evil-bindings.el][config/default/+evil-bindings.el]].
+However, Doom provides a ~map!~ macro, which conveniently wraps up the above
+four into a more succinct syntax. Comprehensive examples of ~map!~'s usage can
+be found in its documentation (via =SPC h f map\!= or =C-h f map\!= -- or [[file:api.org][in
+docs/api]]).
+
+There are also live examples ~map!~'s usage in [[file:../modules/config/default/+evil-bindings.el][config/default/+evil-bindings.el]].
 
 ** How do I get motions to treat underscores as word delimiters?
 (This explanation comes from [[https://github.com/emacs-evil/evil#underscore-_-is-not-a-word-character][emacs-evil/evil]]'s readme)
@@ -900,7 +918,7 @@ comparing the two, but as far as I'm concerned they are equal in both respects
 (not all across the board, but on average).
 
 Instead, maintainability is most important for someone that frequently tinkers
-with their editor. When I have an issue, I spend a disproportionately more time
+with their editor. When I have an issue, I spend disproportionately more time
 dealing helm than I do ivy, for little or no gain. Though both frameworks are
 excellent, the difference in complexity is reflected in their plugin ecosystems;
 ivy plugins tend to be lighter, simpler, more consistent and significantly
@@ -1136,6 +1154,7 @@ known fix for this. To work around it, you must either:
    support it),
 
 3. Install Emacs via the =emacs-mac= homebrew formula.
+
 ** Doom crashes when...
 Here are a few common causes for random crashes:
 
