@@ -36,6 +36,7 @@
   - [[#how-to-suppress-confirmation-prompts-while-bindoom-is-running][How to suppress confirmation prompts while ~bin/doom~ is running]]
   - [[#which-terminal-should-i-use][Which terminal should I use?]]
   - [[#how-do-i-enable-lsp-support-for-insert-language-here][How do I enable LSP support for <insert language here>?]]
+  - [[#how-to-disable-smartparensautomatic-parentheses-completion][How to disable smartparens/automatic parentheses completion?]]
 - [[#package-management][Package Management]]
   - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
   - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
@@ -823,6 +824,21 @@ these languages, add this to =$DOOMDIR/config.el=:
 ;; Where =MAJOR-MODE= is the major mode you're targeting. e.g.
 ;; lisp-mode-local-vars-hook
 #+END_SRC
+** How to disable smartparens/automatic parentheses completion?
+Some outdated sources may tell you to do this, *but it is no longer correct*:
+
+#+BEGIN_SRC elisp
+(after! smartparens
+  (smartparens-global-mode -1))
+#+END_SRC
+
+Instead, use the following:
+#+BEGIN_SRC elisp
+(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode)
+#+END_SRC
+
+Note that the package itself cannot be disabled with ~package!~, because it is a
+core package. This may change one day, but not in the near future.
 
 * Package Management
 ** How do I install a package from ELPA?
