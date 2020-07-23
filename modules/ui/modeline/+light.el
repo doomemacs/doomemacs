@@ -494,7 +494,6 @@ lines are selected, or the NxM dimensions of a block selection.")
               vc-mode " "))
     "  "
     +modeline-encoding
-    "  "
     (+modeline-checker ("" +modeline-checker "   "))))
 
 (def-modeline! 'project
