@@ -4,6 +4,7 @@
 * Table of Contents :TOC:
 - [[#general][General]]
   - [[#why-is-it-called-doom][Why is it called Doom?]]
+  - [[#is-doom-a-fork-of-spacemacspreludeetc][Is Doom a fork of Spacemacs/Prelude/etc?]]
   - [[#does-doom-work-on-windows][Does Doom work on Windows?]]
   - [[#is-doom-only-for-vimmers][Is Doom only for vimmers?]]
   - [[#i-am-a-beginner-can-i-use-doom][I am a beginner. Can I use Doom?]]
@@ -76,8 +77,17 @@ It's an homage to idsoftware's classic game, whose source code was Henrik's
 (Doom's maintainer) first exposure to programming, back in the Cretaceous period
 (1999).
 
-And if you're obsessed enough with a text editor that you write a community
-config for it, you're doomed from the start.
+** Is Doom a fork of Spacemacs/Prelude/etc?
+No. I started it from scratch in mid-2014. I hadn't heard of other distros until
+some years later, when a Doom user suggested this was a Spacemacs fork. I still
+see this misconception pop up from time to time.
+
+However, that's not to say Doom hasn't taken any inspiration from these since.
+Early versions of Doom drew inspiration from prelude's project structure (until
+Doom introduced a module system) and some concepts (like SPC as a leader key)
+and layers were adopted from Spacemacs or PRed from migrating users.
+
+As our userbase grows, more similarities (and differences) will no doubt emerge.
 
 ** Does Doom work on Windows?
 Windows support is weaker and will lag behind Linux/MacOS support, but your
