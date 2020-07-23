@@ -344,9 +344,9 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-        (:unless (featurep! :tools lsp +eglot)
+       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
           :desc "LSP Execute code action" "a" #'lsp-execute-code-action
-          :desc "LSP Organize imports" "i" #'lsp-organize-imports
+          :desc "LSP Organize imports" "o" #'lsp-organize-imports
           (:when (featurep! :completion ivy)
             :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
             :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
@@ -358,10 +358,8 @@
            :desc "LSP"                                   "l"   lsp-command-map))
         (:when (featurep! :tools lsp +eglot)
           :desc "LSP Execute code action" "a" #'eglot-code-actions
-          :desc "LSP Format buffer/region" "F" #'eglot-format
           :desc "LSP Rename" "r" #'eglot-rename
-          :desc "LSP Find declaration" "j" #'eglot-find-declaration
-          :desc "LSP Find implementation" "J" #'eglot-find-implementation)
+          :desc "LSP Find declaration" "j" #'eglot-find-declaration)
         :desc "Compile"                               "c"   #'compile
         :desc "Recompile"                             "C"   #'recompile
         :desc "Jump to definition"                    "d"   #'+lookup/definition
@@ -369,8 +367,10 @@
         :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
         :desc "Evaluate & replace region"             "E"   #'+eval:replace-region
         :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
+        :desc "Find implementations"                  "i"   #'+lookup/implementations
         :desc "Jump to documentation"                 "k"   #'+lookup/documentation
         :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
+        :desc "Find type definition"                  "t"   #'+lookup/type-definition
         :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
