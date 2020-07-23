@@ -515,13 +515,15 @@ These are side-by-side comparisons, showing how to bind keys with and without
 * Interesting snippets
 ** Center Emacs' initial frame with a fixed size
 #+BEGIN_SRC elisp
-(let ((display-height   (display-pixel-height))
-      (display-width    (display-pixel-width)))
+(let ((width  500)
+      (height 250)
+      (display-height (display-pixel-height))
+      (display-width  (display-pixel-width)))
   (pushnew! initial-frame-alist
-            `(left . ,(/ display-width 2))
-            `(top . ,(/ display-height 2))
-            `(width . ,display-width)
-            `(height . ,display-height)))
+            `(left . ,(- (/ display-width 2) (/ width 2)))
+            `(top . ,(- (/ display-height 2) (/ height 2)))
+            `(width text-pixels ,width)
+            `(height text-pixels ,height)))
 #+END_SRC
 
 ** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions
