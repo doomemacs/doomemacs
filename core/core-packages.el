@@ -61,9 +61,9 @@ uses a straight or package.el command directly).")
       ;; than pulled, so packages are often out of date with upstream.
       package-archives
       (let ((proto (if gnutls-verify-error "https" "http")))
-        `(("gnu"   . ,(concat proto "://elpa.gnu.org/packages/"))
-          ("melpa" . ,(concat proto "://melpa.org/packages/"))
-          ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
+        (list (cons "gnu"   (concat proto "://elpa.gnu.org/packages/"))
+              (cons "melpa" (concat proto "://melpa.org/packages/"))
+              (cons "org"   (concat proto "://orgmode.org/elpa/")))))
 
 ;; package.el has no business modifying the user's init.el
 (advice-add #'package--ensure-init-file :override #'ignore)

@@ -214,7 +214,7 @@ See `+format/buffer' for the interactive version of this function, and
                (bound-and-true-p eglot--managed-mode)
                (eglot--server-capable :documentFormattingProvider))
           #'eglot-format-buffer)
-         (t #'format-all-buffer))))
+         (#'format-all-buffer))))
 
 ;;;###autoload
 (defun +format/region (beg end)
@@ -232,10 +232,10 @@ snippets or single lines."
               (bound-and-true-p eglot--managed-mode)
               (eglot--server-capable :documentRangeFormattingProvider))
          (call-interactively #'eglot-format))
-        (t (save-restriction
-             (narrow-to-region beg end)
-             (let ((+format-region-p t))
-               (+format/buffer))))))
+        ((save-restriction
+           (narrow-to-region beg end)
+           (let ((+format-region-p t))
+             (+format/buffer))))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()

@@ -422,6 +422,7 @@ relative to `org-directory', unless it is an absolute path."
 
   ;; Add support for youtube links + previews
   (require 'org-yt nil t)
+
   (defadvice! +org-dont-preview-if-disabled-a (&rest _)
     "Make `org-yt' respect `org-display-remote-inline-images'."
     :before-while #'org-yt-image-data-fun
@@ -768,7 +769,6 @@ between the two."
           "d" #'org-priority-down
           "p" #'org-priority
           "u" #'org-priority-up)))
-
 
   (map! :after org-agenda
         :map org-agenda-mode-map

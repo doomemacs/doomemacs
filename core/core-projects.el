@@ -26,6 +26,8 @@ debian, and derivatives). On most it's 'fd'.")
              projectile-locate-dominating-file)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
+        ;; Auto-discovery is slow to do by default. Better to update the list
+        ;; when you need to (`projectile-discover-projects-in-search-path').
         projectile-auto-discover nil
         projectile-enable-caching doom-interactive-p
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
@@ -165,8 +167,7 @@ And if it's a function, evaluate it."
             ;; it respects .gitignore. This is recommended in the projectile docs.
             (cond
              ((when-let
-                  (bin (if (or (null default-directory)
-                               (file-remote-p default-directory nil t))
+                  (bin (if (ignore-errors (file-remote-p default-directory nil t))
                            (cl-find-if find-exe-fn (list "fdfind" "fd"))
                          doom-projectile-fd-binary))
                 (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
