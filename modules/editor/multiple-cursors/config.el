@@ -132,6 +132,8 @@
 (after! multiple-cursors-core
   (setq mc/list-file (concat doom-etc-dir "mc-lists.el"))
 
+  (add-to-list 'mc/cmds-to-run-once 'swiper-mc)
+
   ;; TODO multiple-cursors config for Emacs users?
 
   ;; mc doesn't play well with evil, this attempts to assuage some of its
@@ -142,9 +144,6 @@
 
     (defvar +mc--compat-evil-prev-state nil)
     (defvar +mc--compat-mark-was-active nil)
-
-    (after! swiper
-      (add-to-list 'mc/cmds-to-run-once 'swiper-mc))
 
     (add-hook! 'multiple-cursors-mode-enabled-hook
       (defun +multiple-cursors-compat-switch-to-emacs-state-h ()
