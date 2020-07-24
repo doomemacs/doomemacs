@@ -24,8 +24,7 @@
   ;; The default behavior is to reindent the whole buffer on save. This is
   ;; disruptive and imposing. There are indentation commands available; the user
   ;; can decide when they want their code reindented.
-  (add-hook! 'jinja2-mode-hook
-    (remove-hook 'after-save-hook 'jinja2-indent-buffer t)))
+  (setq jinja2-enable-indent-on-save nil))
 
 
 (def-project-mode! +ansible-yaml-mode
