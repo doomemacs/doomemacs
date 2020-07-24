@@ -15,7 +15,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-With this module you can organize your config file inside ~config.org~ file and export them automatically to ~config.el~.
+With this module you can organize your config file inside ~config.org~ file and export them automatically to ~config.el~. Simply write your config within ~config.org~ within org-mode ~#+BEGIN_SRC~ and ~#+END_SRC~ blocks, and this module automatically creates those blocks in ~config.el~.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -33,11 +33,11 @@ This is only for personal config from ~$HOME/.config/doom/config.org~ or ~$HOME/
 This module has no prerequisites.
 
 * Features
-+ Automatically tangle ~config.org~ to ~config.el~ when saving.
++ Automatically tangles ~config.org~ to ~config.el~ when saving.
 
 * Configuration
-+ This module don't need by himself need any customization.
-+ Source blocks needs to be in some language for example ~#+BEGIN_SRC elisp~ but currently it does not matter what language is used, it tangles all to ~config.el~. ~elisp~ gives correct syntax highlight. If you don't want to specify language in block you can also enforce tangling by adding ~#+BEGIN_SRC :tangle~
++ This module doesn't have any customization.
++ Source blocks need to be in some language, for example ~#+BEGIN_SRC elisp~, but it does not matter which language is used, all blocks are tangled to ~config.el~. However, ~elisp~ gives the correct syntax highlighting. If you don't want to specify language in a block you can also enforce tangling by adding ~#+BEGIN_SRC :tangle~.
 
 * Troubleshooting
 + No known problems with this.
