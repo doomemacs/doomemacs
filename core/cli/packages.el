@@ -143,7 +143,16 @@ declaration) or dependency thereof that hasn't already been."
                                    (when-let (commit (cdr (assoc pkg pinned)))
                                      (print! (info "Checked out %s") commit)))
                                  straight-use-package-pre-build-functions)))
-                      (straight-use-package (intern package)))
+                      (straight-use-package (intern package))
+                      ;; HACK Line encoding issues can plague repos with dirty
+                      ;;      worktree prompts when updating packages or "Local
+                      ;;      variables entry is missing the suffix" errors when
+                      ;;      installing them (see hlissner/doom-emacs#2637), so
+                      ;;      have git handle conversion by force.
+                      (when (and IS-WINDOWS (stringp local-repo))
+                        (let ((default-directory (straight--repos-dir local-repo)))
+                          (when (file-in-directory-p default-directory straight-base-dir)
+                            (straight--call "git" "config" "core.autocrlf" "true")))))
                   (error
                    (signal 'doom-package-error (list package e))))))
          (print! (success "Installed %d packages")
