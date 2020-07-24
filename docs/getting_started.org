@@ -29,9 +29,9 @@ us know!
       - [[#with-homebrew][With Homebrew]]
       - [[#with-macports][With MacPorts]]
     - [[#on-windows][On Windows]]
-      - [[#chocolatey--scoop][chocolatey / scoop]]
-      - [[#wsl][WSL]]
-      - [[#wsl2][WSL2]]
+      - [[#with-chocolatey--scoop][With chocolatey / scoop]]
+      - [[#with-a-precompiled-binary--git-bash][With a precompiled binary + Git Bash]]
+      - [[#with-wsl--ubuntu-1804-lts][With WSL + Ubuntu 18.04 LTS]]
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
@@ -294,49 +294,118 @@ Or by replacing ~/usr/local/bin/emacs~ with a shim script containing:
 #+END_SRC
 
 *** On Windows
-*Support for Windows is immature* so your mileage there will vary. Some have
-reported success using Doom with WSL or WSL2. The maintainer has only (lightly)
-tested installing Doom with chocolatey through [[https://gitforwindows.org/][git-bash]].
+#+begin_quote
+*WARNING:* Emacs on Windows is much slower than its Linux or macOS counterparts.
+There are some suggestions on how to speed it up later in this section.
+#+end_quote
 
-#+BEGIN_QUOTE
-If you manage to get Doom running on Windows and found this guide wasn't enough
-or could be improved, please help us expand this section!
-#+END_QUOTE
+There are three methods for installing Emacs 26.x on Windows, each with their
+pros and cons:
 
-**** [[https://chocolatey.org/][chocolatey]] / scoop
-Chocolatey is the simplest to get Doom up and running with:
++ With chocolatey/scoop
++ With a precompiled binary + Git Bash
++ With WSL + Ubuntu
 
+If you don't know which to choose, I recommend WSL; it produces the fastest and
+most stable environment of the three, but has the most complex installation
+process.
+
+Before moving on to installing Emacs et co, a few steps to prepare Windows for
+Emacs are necessary:
+
+1. *Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].*
+  
+   Set it to =C:\Users\USERNAME\=, otherwise Emacs will treat
+   =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which will cause issues
+   later.
+
+2. *Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.*
+
+   This way, you don't have to type all of =C:\Users\USERNAME\.emacs.d\bin\doom=
+   every time you need to run this script (and you'll need to, often).
+
+   #+begin_quote
+   A pre-existing PATH variable should already exist among your system
+   variables. It contains a string of file paths separated by colons;
+   ~pathA:pathB:pathC~. Prepend the path to bin/doom to that string, like so:
+   ~C:\Users\username\.emacs.d\bin:pathA:pathB:pathC~
+   #+end_quote
+
+3. Restart your system so your new values for ~HOME~ and ~PATH~ take effect.
+
+Now we're ready to move on!
+
+**** With [[https://chocolatey.org/][chocolatey]] / scoop
+[[https://chocolatey.org/][Chocolatey]] is a package manager for Windows, and is the simplest way to install
+Emacs and Doom's dependencies:
 #+BEGIN_SRC sh
 choco install git emacs ripgrep fd llvm
 #+END_SRC
 
-#+begin_quote
-Scoop is also a viable way of installing Emacs. However, because Emacs is a GUI
-application, it is relegated to the 'extras' Scoop bucket and that will need to
-be enabled.
-#+end_quote
-
+Scoop will work too, but because Emacs is a GUI application you'll need to
+enable the 'extras' Scoop bucket:
 #+BEGIN_SRC sh
 scoop bucket add extras
 scoop install git emacs ripgrep fd llvm
 #+END_SRC
 
-You will need [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][the ~HOME~ system variable]] set to =C:\Users\USERNAME\=, otherwise
-Emacs will treat =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which
-causes issues.
+**** With a precompiled binary + Git Bash
+(Credit goes to @earvingad and [[https://earvingad.github.io/posts/doom_emacs_windows/][his fantastic tutorial]] for informing this guide)
 
-It's also a good idea to add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.
+1. Download and install Git from https://git-scm.com/download/win
+2. Download and extract Emacs, ripgrep and fd where you want them, but in
+   different folders:
+   - Emacs 26.3 from http://ftp.wayne.edu/gnu/emacs/windows/emacs-26/
+   - Ripgrep from https://github.com/BurntSushi/ripgrep/releases
+   - (optional) fd from https://github.com/sharkdp/fd/releases
+3. Add the three folders from step 2 to your ~PATH~
+   - Go to Control panel -> User Accounts -> Change my environment variables.
+   - Click "New", type HOME and set your C:\Users\USERNAME and OK.
+   - Select "Path", click "edit", prepend =C:\path\to\the\emacs\bin:= to it and
+     click OK.
+   - Select "Path", click "edit", prepend =C:\path\to\the\ripgrep:= to it and
+     click OK.
+   - Select "Path", click "edit", prepend =C:\path\to\the\fd:= to it and click
+     OK.
+   - Click Ok.
+
+And done! Keep git-bash.exe open, you'll need it for the rest of this guide.
 
 #+begin_quote
-A pre-existing PATH variable should already exist among your system variables.
-It contains a string of file paths separated by colons; ~pathA:pathB:pathC~.
-Prepend the path to bin/doom to that string:
-~C:\Users\username\.emacs.d\bin:pathA:pathB:pathC~
+*IMPORTANT:* you'll need to open git-bash.exe whenever you want to run a
+bin/doom command.
 #+end_quote
 
-**** TODO WSL
+**** With WSL + Ubuntu 18.04 LTS
+(Credit goes to @lunias and [[https://ethanaa.com/blog/switching-to-doom-emacs/#installing-on-windows-10
+][his fantastic tutorial]] for informing this guide)
 
-**** TODO WSL2
+1. Install Powershell as admin (Windows key + x) with:
+   #+BEGIN_SRC
+   Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+   #+END_SRC
+2. Restart your Computer
+3. Download and install Ubuntu 18.04 L>TS from the Microsoft Store
+4. Launch Ubuntu 18.04 LTS
+5. Update and upgrade Ubuntu
+   #+BEGIN_SRC
+   sudo apt update && sudo apt upgrade
+   #+END_SRC
+6. Then install Emacs:
+   #+BEGIN_SRC sh
+   sudo add-apt-repository ppa:kelleyk/emacs
+   sudo apt update
+   sudo apt install emacs26
+   #+END_SRC
+7. Then Doom's dependencies:
+   #+BEGIN_SRC sh
+   # required dependencies
+   sudo apt-get install git ripgrep
+   # optional dependencies
+   sudo apt-get install fd-find
+   #+END_SRC
+
+And done! Keep Ubuntu open, you'll need it for the rest of this guide.
 
 ** Doom Emacs
 With Emacs and Doom's dependencies installed, next is to install Doom Emacs
