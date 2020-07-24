@@ -3,6 +3,10 @@
 (after! projectile
   (add-to-list 'projectile-project-root-files "mix.exs"))
 
+(after! highlight-numbers
+  (puthash 'elixir-mode
+           "\\_<-?[[:digit:]]+\\(?:_[[:digit:]]\\{3\\}\\)*\\_>"
+           highlight-numbers-modelist))
 
 ;;
 ;;; Packages
