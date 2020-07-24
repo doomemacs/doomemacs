@@ -38,6 +38,7 @@
   - [[#how-do-i-enable-lsp-support-for-insert-language-here][How do I enable LSP support for <insert language here>?]]
   - [[#how-to-disable-smartparensautomatic-parentheses-completion][How to disable smartparens/automatic parentheses completion?]]
   - [[#how-do-i-maximizefullscreen-emacs-on-startup][How do I maximize/fullscreen Emacs on startup?]]
+  - [[#how-do-i-sharesync-my-config-between-multiple-computers][How do I share/sync my config between multiple computers?]]
 - [[#package-management][Package Management]]
   - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
   - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
@@ -886,6 +887,16 @@ core package. This may change one day, but not in the near future.
 
 Some window managers may not understand/work with =maximized= (or may not
 produce the desired effect), in that case try ~fullboth~ or ~fullscreen~.
+
+** How do I share/sync my config between multiple computers?
+TL;DR: it is perfectly safe to sync =~/.doom.d=, but not =~/.emacs.d=.
+
+Long answer: =~/.emacs.d/.local= can contain baked-in absolute paths and
+non-portable byte-code. It is never a good idea to sync it across multiple
+computers.
+
+If you must, for some reason, copy =~/.emacs.d= from one system to another,
+remember to run ~doom sync && doom build~ on the target machine.
 
 * Package Management
 ** How do I install a package from ELPA?
