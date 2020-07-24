@@ -34,19 +34,21 @@ byte-compiled from.")
            (kill-buffer output)))))))
 
 ;;;###autoload
-(after! org
-  ;; Recompile our literate config if we modify it
-  (add-hook 'after-save-hook #'+literate-recompile-maybe-h))
+(add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)
 
 ;;;###autoload
+(defun +literate-enable-recompile-h ()
+  "Enable literate-compiling-on-save in the current buffer."
+  (add-hook 'after-save-hook #'+literate-recompile-maybe-h nil 'local))
+
+;;;###autoload
 (defun +literate-recompile-maybe-h ()
-  "Recompile config.org if we're editing an org file in our DOOMDIR.
+  "Recompile literate config to `doom-private-dir'.
 
 We assume any org file in `doom-private-dir' is connected to your literate
 config, and should trigger a recompile if changed."
-  (when (and (eq major-mode 'org-mode)
-             (file-in-directory-p buffer-file-name doom-private-dir))
+  (when (file-in-directory-p buffer-file-name doom-private-dir)
     (+literate-tangle-h 'force)))
