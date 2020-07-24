@@ -69,6 +69,7 @@
   - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
   - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
   - [[#clipetty--emit-opening-output-file-permission-denied-devpts29-error]["clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error]]
+  - [[#the-directory-emacsdserver-is-unsafe-error-at-startup]["The directory ~/.emacs.d/server is unsafe" error at startup]]
 
 * General
 ** Why is it called Doom?
@@ -1261,3 +1262,16 @@ There are a couple ways to address this:
 ** "clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error
 This applies to tmux users, in particular. See
 https://github.com/spudlyo/clipetty/issues/15 for a solution.
+
+** "The directory ~/.emacs.d/server is unsafe" error at startup
+If you're getting this error you must reset the owner of
+=C:\Users\USERNAME\.emacs.d= to your own account:
+
+1. Right-click the =~/.emacs.d/server= directory in Windows Explorer,
+2. Click Properties,
+3. Select the "Security" tab,
+4. Click the "Advanced" button,
+5. Select the "Owner" tab
+6. Change the owner to your account name
+
+([[https://stackoverflow.com/questions/885793/emacs-error-when-calling-server-start][source]])
