@@ -3,18 +3,24 @@
 ;;
 ;;; Helpers
 
-(defun +org--refresh-inline-images-in-subtree ()
-  "Refresh image previews in the current heading/tree."
-  (if (> (length org-inline-image-overlays) 0)
-      (org-remove-inline-images)
-    (org-display-inline-images
-     t t
-     (if (org-before-first-heading-p)
-         (line-beginning-position)
-       (save-excursion (org-back-to-heading) (point)))
-     (if (org-before-first-heading-p)
-         (line-end-position)
-       (save-excursion (org-end-of-subtree) (point))))))
+(defun +org--toggle-inline-images-in-subtree (&optional beg end refresh)
+  "Refresh inline image previews in the current heading/tree."
+  (let ((beg (or beg
+                 (if (org-before-first-heading-p)
+                     (line-beginning-position)
+                   (save-excursion (org-back-to-heading) (point)))))
+        (end (or end
+                 (if (org-before-first-heading-p)
+                     (line-end-position)
+                   (save-excursion (org-end-of-subtree) (point)))))
+        (overlays (cl-remove-if-not (lambda (ov) (overlay-get ov 'org-image-overlay))
+                                    (ignore-errors (overlays-in beg end)))))
+    (dolist (ov overlays nil)
+      (delete-overlay ov)
+      (setq org-inline-image-overlays (delete ov org-inline-image-overlays)))
+    (when (or refresh (not overlays))
+      (org-display-inline-images t t beg end)
+      t)))
 
 (defun +org--insert-item (direction)
   (let* ((context
@@ -147,7 +153,8 @@ current file). Only scans first 2048 bytes of the document."
 If on a:
 - checkbox list item or todo heading: toggle it.
 - clock: update its time.
-- headline: toggle latex fragments and inline images underneath.
+- headline: cycle ARCHIVE subtrees, toggle latex fragments and inline images in
+  subtree; update statistics cookies/checkboxes and ToCs.
 - footnote reference: jump to the footnote's definition
 - footnote definition: jump to the first reference of this footnote
 - table-row or a TBLFM: recalculate the table's formulas
@@ -167,7 +174,8 @@ If on a:
             type (org-element-type context)))
     (pcase type
       (`headline
-       (cond ((memq (bound-and-true-p org-goto-map) (current-active-maps))
+       (cond ((memq (bound-and-true-p org-goto-map)
+                    (current-active-maps))
               (org-goto-ret))
              ((and (fboundp 'toc-org-insert-toc)
                    (member "TOC" (org-get-tags)))
@@ -181,11 +189,32 @@ If on a:
                (if (eq (org-element-property :todo-type context) 'done)
                    (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
                        'todo)
-                 'done)))
-             (t
-              (+org--refresh-inline-images-in-subtree)
-              (org-clear-latex-preview)
-              (org-latex-preview '(4)))))
+                 'done))))
+       ;; Update any metadata or inline previews in this subtree
+       (org-update-checkbox-count)
+       (let (org-hierarchical-todo-statistics)
+         (org-update-parent-todo-statistics))
+       (when (and (fboundp 'toc-org-insert-toc)
+                  (member "TOC" (org-get-tags)))
+         (toc-org-insert-toc)
+         (message "Updating table of contents"))
+       (let* ((beg (if (org-before-first-heading-p)
+                       (line-beginning-position)
+                     (save-excursion (org-back-to-heading) (point))))
+              (end (if (org-before-first-heading-p)
+                       (line-end-position)
+                     (save-excursion (org-end-of-subtree) (point))))
+              (overlays (ignore-errors (overlays-in beg end)))
+              (latex-overlays
+               (cl-find-if (lambda (o) (eq (overlay-get o 'org-overlay-type) 'org-latex-overlay))
+                           overlays))
+              (image-overlays
+               (cl-find-if (lambda (o) (overlay-get o 'org-image-overlay))
+                           overlays)))
+         (+org--toggle-inline-images-in-subtree beg end)
+         (if (or image-overlays latex-overlays)
+             (org-clear-latex-preview beg end)
+           (org--latex-preview-region beg end))))
 
       (`clock (org-clock-update-time-maybe))
 
@@ -230,7 +259,9 @@ If on a:
               (path (org-element-property :path lineage)))
          (if (or (equal (org-element-property :type lineage) "img")
                  (and path (image-type-from-file-name path)))
-             (+org--refresh-inline-images-in-subtree)
+             (+org--toggle-inline-images-in-subtree
+              (org-element-property :begin lineage)
+              (org-element-property :end lineage))
            (org-open-at-point arg))))
 
       ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
@@ -242,7 +273,9 @@ If on a:
                (org-in-regexp org-tsr-regexp-both nil  t)
                (org-in-regexp org-link-any-re nil t))
            (call-interactively #'org-open-at-point)
-         (+org--refresh-inline-images-in-subtree))))))
+         (+org--toggle-inline-images-in-subtree
+          (org-element-property :begin context)
+          (org-element-property :end context)))))))
 
 
 ;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
