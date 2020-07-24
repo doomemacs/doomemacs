@@ -543,7 +543,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
            (if visual-line-mode
                (* so-long-threshold
                   (if (derived-mode-p 'text-mode)
-                      3
+                      4
                     2))
              so-long-threshold)))
       (so-long-detected-long-line-p)))
