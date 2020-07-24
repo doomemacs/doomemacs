@@ -258,7 +258,10 @@ aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda (arg &rest _) (interactive "P")
      (let ((current-prefix-arg (or ,prefix-arg arg)))
-       (funcall-interactively ,command ,@args))))
+       (,(if args
+             'funcall-interactively
+           'call-interactively)
+        ,command ,@args))))
 
 (defmacro cmds! (&rest branches)
   "Expands to a `menu-item' dispatcher for keybinds."
