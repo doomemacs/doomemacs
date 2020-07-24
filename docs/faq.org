@@ -86,7 +86,7 @@ see this misconception pop up from time to time.
 However, that's not to say Doom hasn't taken any inspiration from these since.
 Early versions of Doom drew inspiration from prelude's project structure (until
 Doom introduced a module system) and some concepts (like SPC as a leader key)
-and layers were adopted from Spacemacs or PRed from migrating users.
+were adopted from Spacemacs or PRed from migrating users.
 
 As our userbase grows, more similarities (and differences) will no doubt emerge.
 
@@ -99,13 +99,13 @@ It does, /but/ there are caveats:
   many of Doom's users) don't use Windows. That means fewer guinea p--I mean,
   pioneers, willing to test Doom on Windows.
 
-That said, Doom does have Windows users who have reported success using Doom
-Emacs on Windows (using WSL or scoop/chocolatey). The [[file:getting_started.org::On Windows][Getting Starting guide]] will walk you through what we know.
+That said, Doom does have happy Windows users (using WSL or scoop/chocolatey).
+The [[file:getting_started.org::On Windows][Getting Starting guide]] will walk you through what we know.
 
 Help us improve our documentation if you managed to get Doom running on Windows!
 
 ** Is Doom only for vimmers?
-No, *vim/evil emulation is optional*. However, but its maintainer /is/ a
+No, *vim/evil emulation is optional*. However, its maintainer /is/ a
 dyed-in-the-wool vimmer with almost two decades of vim muscle memory, so the
 non-vim experience will be less polished. Still, our growing user base of
 non-vim users continue to improve the situation, and we welcome suggestions and
@@ -118,13 +118,13 @@ module's documentation.
 This isn't a choice I can make for you. How new is "new"? Are you new to the
 shell? To programming in general? Or just Emacs/vim?
 
-If all of the above is true then Emacs is a rough place to start! Doom or not.
+If all of the above is true then Emacs is a rough place to start. Doom or not.
 
 Emacs' main draw is its unparalleled extensibility, but anything so extensible
-has a learning curve. Not to suggest it's impossible, and we'll try to help you
-[[https://discord.gg/qvGgnVx][if you ask]], but expect a hefty commitment and a bumpy journey. Don't pass up on
-the [[file:index.org][Documentation]]. It'll work you through setting Doom up and includes links to
-external resources created by myself or the community.
+has a learning curve. Not to suggest it's impossible -- and we'll try to help
+you [[https://discord.gg/qvGgnVx][if you ask]] -- but expect a hefty commitment and a bumpy journey. Don't pass
+up on the [[file:index.org][Documentation]]: it'll work you through setting Doom up and includes
+links to external resources created by myself or the community.
 
 ** How does Doom compare to Spacemacs?
 To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0oq/quickstart_tutorial_for_emacs_newbies_with_doom/dkp1bhd/][reddit answer]] to this question by [[https://github.com/gilbertw1][@gilbertw1]]:
@@ -390,7 +390,7 @@ It's up to you to decide if these are good enough reasons not to use a daemon,
 but it's nice to have more options, isn't it?
 
 ** How do I use Doom alongside other Emacs configs?
-I recommend [[https://github.com/plexus/chemacs][Chemacs]]. You can think of it as a bootloader for Emacs. You'll [[file:getting_started.org::*Alongside other Emacs configs (with Chemacs)][find
+I recommend [[https://github.com/plexus/chemacs][Chemacs]]. Think of it as a bootloader for Emacs. You'll [[file:getting_started.org::*Alongside other Emacs configs (with Chemacs)][find
 instructions on how to use it with Doom in the user manual]].
 
 You will need a separate folder for personal configuration (=~/.doom.d= or
@@ -420,29 +420,28 @@ entry point.
 #+end_quote
 
 ** Why should I use Doom instead of rolling my own config?
-Time. If you care about personalizing the software you use on a daily basis,
-even half as much as I do, then you probably need professional help, but you
-also know it is time consuming. Emacs out-of-the-box is a barren wasteland with
-archaic defaults. Building anything out here and getting a feel for it will take
-/a lot/ of time. Time that I've already wasted and can never get back.
+Two reasons:
 
-Time you could otherwise spend attending your daughter's dance recitals, that
-baseball game your son's team almost won last Thursday, or answering the court
-summons to fight for custody of your kids.
+1. *Doom's package manager.* It's powered by straight.el, is declarative,
+   non-rolling release and (nominally) reproducible; which is unique on the Emacs
+   distro scene. Don't let upstream issues surprise you. Roll back or re-pin
+   packages when you don't have the time to deal with issues.
 
-Also:
-+ Doom has solved many problems big and small you'll likely run into at some
-  point in your Emacs career. And the problems don't end there! Let someone else
-  worry about the menial things.
-+ Doom's fast yo. Faster than most hand-rolled configs of similar complexity.
-  Startup is one thing, but Doom invests just as much mind share into runtime
-  performance as well.
-+ Doom's package manager (powered by straight.el) is declarative, non-rolling
-  release and (nominally) reproducible; which is unique on the Emacs distro
-  scene. Don't let upstream issues surprise you. Roll back or re-pin packages
-  when you don't have the time to deal with issues.
-+ It facilitates integration with the command line, which makes it easy to
-  integrate external tools with Emacs via the =bin/doom= script.
+   It also integrates with command line workflows, so automate to your heart's
+   content!
+
+2. *Time.* If you care about personalizing the software you use on a daily
+   basis, even half as much as I do, then you need professional help, but you
+   also know it is time consuming. Emacs out-of-the-box is a wasteland of
+   archaic defaults, full of plugins rife with gotchas and oddities that may or
+   may not be abandonware. It will be an uphill battle. Let Doom deal with all
+   that noise. Save yourself some time.
+
+   Time you could otherwise spend attending your daughter's dance recitals, that
+   baseball game your son's team almost won last Thursday, or answering the court
+   summons to fight for custody of your kids.
+
+Also, Doom's fast yo.
 
 ** What is the meaning behind Doom's naming convention in its source code?
 You'll find [[file:contributing.org::*Conventions][an overview of Doom's code conventions]] in the [[file:contributing.org][contributing guide]].
@@ -458,10 +457,12 @@ maximize my availability to the community. I don't want to juggle multiple
 platforms (like Matrix, IRC or Slack), or add bridges for them, even if they are
 better suited to the task. I already have my hands full managing the one.
 
-I /am/ considering a [[https://www.discourse.org][discourse]], so we have a public knowledge base of workflows and inter-user support (since Discord isn't a great archive), but it will be some time until this is set up.
+I /am/ considering a [[https://www.discourse.org][discourse]], so we have a public knowledge base of workflows
+and inter-user support (since Discord isn't a great archive), but it will be
+some time until this is set up.
 
-Email is a possible alternative, but is constantly swamped; expect a long
-turn-around time.
+Email is a possible alternative, but is constantly swamped; expect a turn-around
+time of weeks.
 
 ** Why is Emacs/Doom slow?
 This comes up often. The first thing folks fresh off the boat from other editors
@@ -496,7 +497,6 @@ What can you do about it?
    Emacs seems to struggle to display those characters with some fonts.
 
    Org uses can also turn off the rest of org's eye candy:
-
    #+BEGIN_SRC elisp
    (after! org
      (setq org-fontify-quote-and-verse-blocks nil
@@ -905,9 +905,9 @@ See the "[[file:getting_started.org::*Disabling packages][disabling packages]]" 
 See the "[[file:getting_started.org::*Configuring packages][configuring packages]]" section of the Getting Started guide.
 
 ** Where does straight clone/build packages to?
-Straight clones packages to =~/.emacs.d/.local/straight/repos/REPO-NAME=, then
-later symlinks and byte-compiles them to
-=~/.emacs.d/.local/straight/build/PACKAGE-NAME= when they are "built".
+Doom has configured straight to clone packages to
+=~/.emacs.d/.local/straight/repos/REPO-NAME=. It then builds (byte-compiles and
+symlinks) them to =~/.emacs.d/.local/straight/build/PACKAGE-NAME=.
 
 * Defaults
 ** Why Ivy over Helm?
@@ -1007,6 +1007,7 @@ yourself:
 (when (display-graphic-p)
   (exec-path-from-shell-initialize))
 #+END_SRC
+
 ** Why wsbutler over delete-trailing-whitespace or whitespace-cleanup?
 TL;DR: =ws-butler= is less imposing.
 
@@ -1027,6 +1028,7 @@ cleanup work.
 
 In any case, if you had used =ws-butler= from the beginning, trailing whitespace
 and newlines would never be a problem!
+
 * Emacs Lisp
 ** Why do you quote some symbols with ~#'symbol~?
 ~#'symbol~ is short for ~(function symbol)~, the same way ~'symbol~ is short for
@@ -1203,8 +1205,10 @@ Emacs will search for this file in ~custom-theme-load-path~ and
    suffix.
 3. Did you run ~doom sync~ after adding your third party theme plugin's
    ~package!~ declaration to =~/.doom.d/packages.el=?
+
 ** TRAMP connections hang forever when connecting
 You'll find solutions [[https://www.emacswiki.org/emacs/TrampMode#toc7][on the emacswiki]].
+
 ** An upstream package was broken and I can't update it
 Sometimes, if you've installed a [[https://github.com/hlissner/doom-emacs/issues/2213][broken package]] which was subsequently fixed
 upstream, you can't run ~doom update~ to get the latest fixes due to evaluation
@@ -1253,6 +1257,7 @@ There are a couple ways to address this:
    when you open a file (that isn't in a project with an editorconfig file).
    This isn't foolproof, and won't work for files that have no content in them,
    but it can help in one-off scenarios.
+
 ** "clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error
 This applies to tmux users, in particular. See
 https://github.com/spudlyo/clipetty/issues/15 for a solution.
