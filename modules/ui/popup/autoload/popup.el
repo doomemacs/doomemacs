@@ -181,7 +181,8 @@ and enables `+popup-buffer-mode'."
     (let ((window (or window (selected-window))))
       (and (windowp window)
            (window-live-p window)
-           (window-parameter window 'popup)
+           (or (window-parameter window 'popup)
+               (window-parameter window 'no-other-window))
            window))))
 
 ;;;###autoload
