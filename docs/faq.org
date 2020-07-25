@@ -29,6 +29,7 @@
   - [[#how-do-i-change-the-style-of-line-numbers-or-disable-them-altogether][How do I change the style of line-numbers (or disable them altogether)?]]
   - [[#how-do-i-change-the-behavior-and-appearance-of-popup-windows][How do I change the behavior and appearance of popup windows?]]
   - [[#how-do-i-customize-a-theme-or-faces][How do I customize a theme or face(s)?]]
+  - [[#how-do-i-make-a-new-theme][How do I make a new theme?]]
   - [[#can-doom-be-customized-without-restarting-emacs][Can Doom be customized without restarting Emacs?]]
   - [[#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][Can Vim/Evil be removed for a more vanilla Emacs experience?]]
   - [[#when-should-and-shouldnt-i-use-bindoom][When should and shouldn't I use ~bin/doom~?]]
@@ -740,6 +741,23 @@ Other sources may recommend ~M-x customize~, ~M-x customize-themes~ or ~M-x
 customize-face~. *Do not use these commands.* Doom does not support them and
 their settings could break any time.
 #+end_quote
+
+** How do I make a new theme?
+Doom will look for themes in =~/.doom.d/themes/= (determined by
+~custom-theme-directory~).
+
+Its filename must take the format =XYZ-theme.el=, where =XYZ= is the theme's
+name declared in that theme's ~deftheme~ or ~def-doom-theme~ call. The theme can
+then be loaded with:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq doom-theme 'XYZ)
+
+;; or
+
+(load-theme 'XYZ t)
+#+END_SRC
 
 ** Can Doom be customized without restarting Emacs?
 Short answer: You can, but you shouldn't.
