@@ -219,8 +219,8 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
   (when (and (bound-and-true-p flycheck-mode)
              (eq major-mode 'emacs-lisp-mode)
-             (or (not buffer-file-name)
-                 (cl-find-if (doom-partial #'file-in-directory-p buffer-file-name)
+             (or (not default-directory)
+                 (cl-find-if (doom-partial #'file-in-directory-p default-directory)
                              +emacs-lisp-disable-flycheck-in-dirs)))
     (add-to-list (make-local-variable 'flycheck-disabled-checkers)
                  'emacs-lisp-checkdoc)
