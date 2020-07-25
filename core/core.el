@@ -160,8 +160,8 @@ users).")
   (set-charset-priority 'unicode))       ; pretty
 (prefer-coding-system 'utf-8)            ; pretty
 (setq locale-coding-system 'utf-8)       ; please
-;; The clipboard's on Windows could be in an encoding that's wider (or thinner)
-;; than utf-8, so let Emacs/the OS decide what encoding to use there.
+;; The clipboard's on Windows could be in a wider (or thinner) encoding than
+;; utf-8 (likely UTF-16), so let Emacs/the OS decide what encoding to use there.
 (unless IS-WINDOWS
   (setq selection-coding-system 'utf-8)) ; with sugar on top
 
@@ -169,7 +169,7 @@ users).")
 ;; we do about them, besides changing packages upstream?
 (setq ad-redefinition-action 'accept)
 
-;; Make apropos omnipotent. It's more useful this way.
+;; Make `apropos' et co search more extensively. They're more useful this way.
 (setq apropos-do-all t)
 
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
@@ -177,17 +177,19 @@ users).")
 ;; insensitivity).
 (setq auto-mode-case-fold nil)
 
-;; Less noise at startup. The dashboard/empty scratch buffer is good enough.
+;; Reduce *Message* noise at startup. An empty scratch buffer (or the dashboard)
+;; is more than enough.
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init t
-      ;; Avoid pulling in many packages by starting the scratch buffer in
-      ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode'.
+      ;; Shave seconds off startup time by starting the scratch buffer in
+      ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
+      ;; pull in a ton of packages.
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
 ;; Get rid of "For information about GNU Emacs..." message at startup, unless
-;; we're in a daemon session, where it'll say "Starting Emacs daemon." instead,
+;; we're in a daemon session where it'll say "Starting Emacs daemon." instead,
 ;; which isn't so bad.
 (unless (daemonp)
   (advice-add #'display-startup-echo-area-message :override #'ignore))
@@ -294,10 +296,10 @@ config.el instead."
 ;; been determined, but we inhibit it there anyway.
 (setq inhibit-compacting-font-caches t)
 
-;; Performance on Windows is considerably worse than elsewhere, especially if
-;; WSL is involved. We'll need everything we can get.
+;; Performance on Windows is considerably worse than elsewhere. We'll need
+;; everything we can get.
 (when IS-WINDOWS
-  (setq w32-get-true-file-attributes nil   ; slightly faster IO
+  (setq w32-get-true-file-attributes nil   ; decrease file IO workload
         w32-pipe-read-delay 0              ; faster ipc
         w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
@@ -508,7 +510,7 @@ to least)."
 
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
-    ;; your shell environment there.
+    ;; your shell environment.
     (if (or (display-graphic-p)
             (daemonp))
         (doom-load-envvars-file doom-env-file 'noerror))
@@ -517,9 +519,9 @@ to least)."
     ;; to configure their packages.
     (require 'core-modules)
 
-    ;; There's a chance the user will want to use package.el or straight later
-    ;; on in this interactive session. If that's the case, make sure they're
-    ;; properly initialized when they do.
+    ;; There's a chance the user will later use package.el or straight in this
+    ;; interactive session. If they do, make sure they're properly initialized
+    ;; when they do.
     (autoload 'doom-initialize-packages "core-packages")
     (autoload 'doom-initialize-core-packages "core-packages")
     (with-eval-after-load 'package (require 'core-packages))
@@ -537,7 +539,7 @@ to least)."
     (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
     (if doom-debug-p (doom-debug-mode +1))
 
-    ;; Load core/core-*.el, the user's private init.el and their config.el
+    ;; Load core/core-*.el, the user's private init.el, then their config.el
     (doom-initialize-modules force-p))
 
   doom-init-p)
