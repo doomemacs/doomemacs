@@ -292,7 +292,9 @@ called.")
 
 
 (use-package! lsp-python-ms
-  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
+  :when (featurep! +lsp) 
+  :when (not (featurep! +pyright))
+  :when (not (featurep! :tools lsp +eglot)) 
   :after lsp-clients
   :preface
   (after! python
@@ -306,6 +308,12 @@ called.")
   (defadvice! +python--silence-errors-a (orig-fn &rest args)
     :around #'lsp-python-ms--extra-init-params
     (ignore-errors (apply orig-fn args))))
+
+(use-package!  lsp-pyright  
+  :when (featurep! +lsp) 
+  :when (featurep! +pyright) 
+  :when (not (featurep! :tools lsp +eglot))
+  :after lsp-clients)
 
 
 (use-package! cython-mode
