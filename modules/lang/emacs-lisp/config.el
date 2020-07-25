@@ -3,7 +3,7 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+(defvar +emacs-lisp-outline-regexp "\\([ \t]*;;;;* [^ \t\n]\\|\\((def\\)\\)"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
