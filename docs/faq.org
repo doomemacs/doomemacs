@@ -72,6 +72,7 @@
   - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
   - [[#clipetty--emit-opening-output-file-permission-denied-devpts29-error]["clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error]]
   - [[#the-directory-emacsdserver-is-unsafe-error-at-startup]["The directory ~/.emacs.d/server is unsafe" error at startup]]
+  - [[#my-new-keybinds-dont-work][My new keybinds don't work]]
 
 * General
 ** Why is it called Doom?
@@ -1304,3 +1305,30 @@ If you're getting this error you must reset the owner of
 6. Change the owner to your account name
 
 ([[https://stackoverflow.com/questions/885793/emacs-error-when-calling-server-start][source]])
+
+** My new keybinds don't work
+Emacs has a complex and hierarchical keybinding system. If a global keybind
+doesn't take effect, it's likely that another keymap is in effect with higher
+priority than the global keymap. For example, non-evil users may have tried
+something like this, to rebind =C-left= and =C-right=:
+#+BEGIN_SRC elisp
+(map! "<C-left>"  #'something
+      "<C-right>" #'something)
+#+END_SRC
+
+Just to find that the rebinding had no effect (i.e. ~C-h k C-left~ reports that
+it's still bound to ~sp-backward-slurp-sexp~). That's because these keys are
+bound in ~smartparens-mode-map~. They need to be unbound for your global
+keybinds to work:
+
+#+BEGIN_SRC elisp
+(map! :after smartparens
+      :map smartparens-mode-map
+      [C-right] nil
+      [C-left] nil)
+#+END_SRC
+
+#+begin_quote
+I use ~[C-left]~ because it is easier to type than ~"<C-left>"~, but are
+equivalent; two different ways to refer to the same key.
+#+end_quote
