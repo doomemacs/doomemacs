@@ -1030,7 +1030,9 @@ compelling reason, so..."
   (defvar org-attach-id-dir nil)
 
   (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
+        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
+        ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
+        org-list-allow-alphabetical t)
 
   ;; Make most of the default modules opt-in, because I sincerely doubt most
   ;; users use all of them.
