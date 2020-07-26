@@ -13,6 +13,14 @@
            (not (featurep! :tools lsp +eglot)))
   (package! lsp-python-ms :pin "7068cf04a0d0a1877afe56990cc577edd824a1e4"))
 
+(when (and (featurep! +lsp)
+           (featurep! +pyright)
+           (not (featurep! :tools lsp +eglot)))
+  (package! lsp-pyright
+    ;; REVIEW Remove this when added to melpa
+    :recipe (:host github :repo "emacs-lsp/lsp-pyright")
+    :pin "242d19b2dbaaccc5fb9cd1b1a9420ee6807ce77c"))
+
 ;; Programming environment
 (package! anaconda-mode :pin "10299bd9ff38c4f0da1d892905d02ef828e7fdce")
 (when (featurep! :completion company)
