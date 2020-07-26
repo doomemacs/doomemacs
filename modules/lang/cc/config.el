@@ -230,11 +230,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook)
-    (defun +cc-init-lsp-h ()
-      (setq-local company-transformers nil)
-      (setq-local company-lsp-async t)
-      (setq-local company-lsp-cache-candidates nil)
-      (lsp!)))
+    #'lsp!)
 
   (when (featurep! :tools lsp +eglot)
     ;; Map eglot specific helper
