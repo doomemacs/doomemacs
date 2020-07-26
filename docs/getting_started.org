@@ -1300,7 +1300,7 @@ plugins from loading if the =:completion company= module isn't enabled.
 Autoload cookies were mentioned [[*=autoload/*.el= OR =autoload.el=][earlier]]. A couple more exist that are specific
 to Doom Emacs. This section will go over what they do and how to use them.
 
-*** ~;;;###if~
+**** ~;;;###if~
 Any file in a module can have a ~;;;###if FORM~ cookie at or near the top of the
 file (must be within the first 256 bytes of the file). =FORM= is evaluated to
 determine whether or not to include this file for autoloads scanning (on ~doom
@@ -1329,7 +1329,7 @@ Keep in mind that =FORM= runs in a limited, non-interactive sub-session. I don't
 recommend doing anything expensive or especially complicated in them.
 #+end_quote
 
-*** ~;;;###package~
+**** ~;;;###package~
 This cookie exists solely to assist the ~doom/help-packages~ command. This
 command shows you documentation about packages in the Emacs ecosystem, including
 the ones that are installed. It also lists a) all the modules that install said
@@ -1345,7 +1345,7 @@ but it accomplishes B by scanning for:
 Use it to let ~doom/help-packages~ know where to find config for packages where
 no ~after!~ or ~use-package!~ call is involved.
 
-*** ~;;;###autodef~
+**** ~;;;###autodef~
 An autodef is a special kind of autoloaded function (or macro) which Doom
 guarantees will /always/ be defined, whether or not its containing module is
 enabled (but will no-op if it is disabled).
