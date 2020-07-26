@@ -723,7 +723,7 @@ between the two."
           "g" #'helm-org-in-buffer-headings
           "G" #'helm-org-agenda-files-headings)
          "c" #'org-clock-goto
-         "C" (λ! (org-clock-goto 'select))
+         "C" (cmd! (org-clock-goto 'select))
          "i" #'org-id-goto
          "r" #'org-refile-goto-last-stored
          "v" #'+org/goto-visible
@@ -967,8 +967,8 @@ compelling reason, so..."
         :ni "C-S-k" #'org-shiftup
         :ni "C-S-j" #'org-shiftdown
         ;; more intuitive RET keybinds
-        :i [return] (λ! (org-return t))
-        :i "RET"    (λ! (org-return t))
+        :i [return] (cmd! (org-return t))
+        :i "RET"    (cmd! (org-return t))
         :n [return] #'+org/dwim-at-point
         :n "RET"    #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
