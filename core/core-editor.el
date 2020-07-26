@@ -172,10 +172,12 @@ possible."
 ;;
 ;;; Extra file extensions to support
 
-(push '("/LICENSE\\'" . text-mode) auto-mode-alist)
-(push '("\\.log\\'" . text-mode) auto-mode-alist)
-(push '("rc\\'" . conf-mode) auto-mode-alist)
-(push '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode) auto-mode-alist)
+(nconc
+ auto-mode-alist
+ '(("/LICENSE\\'" . text-mode)
+   ("\\.log\\'" . text-mode)
+   ("rc\\'" . conf-mode)
+   ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
 
 
 ;;
