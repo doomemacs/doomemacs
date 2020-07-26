@@ -398,15 +398,15 @@ Made for `org-tab-first-hook' in evil-mode."
 
 ;;;###autoload
 (defun +org-update-cookies-h ()
-  "Update counts in headlines (aka \"cookies\")."
+  "Update statistics cookies/todo statistics in headlines."
   (when (and buffer-file-name (file-exists-p buffer-file-name))
     (let (org-hierarchical-todo-statistics)
       (org-update-parent-todo-statistics))))
 
 ;;;###autoload
 (defun +org-yas-expand-maybe-h ()
-  "Tries to expand a yasnippet snippet, if one is available. Made for
-`org-tab-first-hook'."
+  "Expand a yasnippet snippet, if trigger exists at point or region is active.
+Made for `org-tab-first-hook'."
   (when (bound-and-true-p yas-minor-mode)
     (and (let ((major-mode (if (org-in-src-block-p t)
                                (org-src-get-lang-mode (org-eldoc-get-src-lang))
@@ -430,8 +430,14 @@ Made for `org-tab-first-hook' in evil-mode."
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
-  "Toggle the local fold at the point (as opposed to cycling through all levels
-with `org-cycle')."
+  "Toggle the local fold at the point, and no deeper.
+`org-cycle's standard behavior is to cycle between three levels: collapsed,
+subtree and whole document. This is slow, especially in larger org buffer. Most
+of the time I just want to peek into the current subtree -- at most, expand
+*only* the current subtree.
+
+All my (performant) foldings needs are met between this and `org-show-subtree'
+(on zO for evil users), and `org-cycle' on shift-TAB if I need it."
   (interactive "P")
   (unless (eq this-command 'org-shifttab)
     (save-excursion
@@ -457,7 +463,7 @@ with `org-cycle')."
 
 ;;;###autoload
 (defun +org-make-last-point-visible-h ()
-  "Unfold subtree around point if saveplace places it to a folded region."
+  "Unfold subtree around point if saveplace places us in a folded region."
   (and (not org-agenda-inhibit-startup)
        (outline-invisible-p)
        (ignore-errors
