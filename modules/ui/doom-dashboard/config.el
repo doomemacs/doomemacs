@@ -182,6 +182,8 @@ PLIST can have the following properties:
   ;; Don't scroll to follow cursor
   (setq-local scroll-preserve-screen-position nil)
   (setq-local auto-hscroll-mode nil)
+  ;; Line numbers are ugly with large margins
+  (setq-local display-line-numbers-type nil)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist))
