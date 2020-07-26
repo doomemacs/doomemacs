@@ -636,7 +636,7 @@ testing advice (when combined with `rotate-text').
 ;;
 ;;; Backports
 
-(when! (not EMACS27+)
+(when! (version< emacs-version "27.0.90")
   ;; DEPRECATED Backported from Emacs 27
   (defmacro setq-local (&rest pairs)
     "Make variables in PAIRS buffer-local and assign them the corresponding values.
