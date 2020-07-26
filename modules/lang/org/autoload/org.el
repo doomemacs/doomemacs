@@ -283,37 +283,24 @@ If on a:
 
 
 ;;;###autoload
-(defun +org/dedent ()
-  "TODO"
-  (interactive)
-  (cond ((org-at-item-p)
-         (org-list-indent-item-generic
-          -1 nil
-          (save-excursion
-            (when (org-region-active-p)
-              (goto-char (region-beginning)))
-            (org-list-struct))))
-        ((org-at-heading-p)
-         (ignore-errors (org-promote)))
-        ((call-interactively #'self-insert-command))))
+(defun +org/toggle-last-clock (arg)
+  "Toggles last clocked item.
 
-;;;###autoload
-(defun +org/toggle-clock (arg)
-  "Toggles clock on the last clocked item.
+Clock out if an active clock is running (or cancel it if prefix ARG is non-nil).
 
-Clock out if an active clock is running. Clock in otherwise.
-
-If in an org file, clock in on the item at point. Otherwise clock into the last
-task you clocked into.
-
-See `org-clock-out', `org-clock-in' and `org-clock-in-last' for details on how
-the prefix ARG changes this command's behavior."
+If no clock is active, then clock into the last item. See `org-clock-in-last' to
+see how ARG affects this command."
   (interactive "P")
-  (if (org-clocking-p)
-      (if arg
-          (org-clock-cancel)
-        (org-clock-out))
-    (org-clock-in-last arg)))
+  (cond ((org-clocking-p)
+         (if arg
+             (org-clock-cancel)
+           (org-clock-out)))
+        ((and (null org-clock-history)
+              (or (org-on-heading-p)
+                  (org-at-item-p))
+              (y-or-n-p "No active clock. Clock in on current item?"))
+         (org-clock-in))
+        ((org-clock-in-last arg))))
 
 
 ;;; Folds

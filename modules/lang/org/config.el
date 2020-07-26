@@ -699,7 +699,8 @@ between the two."
          "e" #'org-clock-modify-effort-estimate
          "E" #'org-set-effort
          "g" #'org-clock-goto
-         "G" (λ! (org-clock-goto 'select))
+         "G" (cmd! (org-clock-goto 'select))
+         "l" #'+org/toggle-last-clock
          "i" #'org-clock-in
          "I" #'org-clock-in-last
          "o" #'org-clock-out
