@@ -75,14 +75,6 @@
   (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
 
 
-(use-package! company-prescient
-  :hook (company-mode . company-prescient-mode)
-  :config
-  ;; NOTE prescient config duplicated with `ivy'
-  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
-  (prescient-persist-mode +1))
-
-
 (use-package! company-box
   :when (featurep! +childframe)
   :hook (company-mode . company-box-mode)
