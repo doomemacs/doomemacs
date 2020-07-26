@@ -1096,6 +1096,10 @@ compelling reason, so..."
   :config
   (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
 
+  ;; Prevent modifications made in invisible sections of an org document, as
+  ;; unintended changes can easily go unseen otherwise.
+  (setq org-catch-invisible-edits 'smart)
+
   ;; Global ID state means we can have ID links anywhere. This is required for
   ;; `org-brain', however.
   (setq org-id-locations-file-relative t)
