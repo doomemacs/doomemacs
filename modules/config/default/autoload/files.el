@@ -63,7 +63,7 @@ If prefix ARG is non-nil, prompt for the search path."
   "Open a directory in dired.
 If prefix ARG is non-nil, prompt for a known project to open in dired."
   (interactive "P")
-  (dired
-   (if arg
-       (completing-read "Open dired in project: " projectile-known-projects)
-     (dired-read-dir-and-switches ""))))
+  (apply #'dired
+         (if arg
+             (list (completing-read "Open dired in project: " projectile-known-projects))
+           (dired-read-dir-and-switches ""))))
