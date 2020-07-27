@@ -101,6 +101,11 @@
   :preface
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
   :config
+  ;; Map Forge jumps in `evil-mode'
+  (when (featurep! :editor evil +everywhere)
+    (map! :map magit-mode-map
+      :n "gi" #'forge-jump-to-issues
+      :n "gm" #'forge-jump-to-pullreqs))
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
