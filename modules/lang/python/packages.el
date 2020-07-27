@@ -9,17 +9,14 @@
     (package! flycheck-cython :pin "ecc4454d35ab5317ab66a04406f36f0c1dbc0b76")))
 
 ;; LSP
-(when (and (featurep! +lsp)
-           (not (featurep! :tools lsp +eglot)))
-  (package! lsp-python-ms :pin "d42ffc2cc27ce36b5a7646ea922441f4c93b2678"))
-
-(when (and (featurep! +lsp)
-           (featurep! +pyright)
-           (not (featurep! :tools lsp +eglot)))
-  (package! lsp-pyright
-    ;; REVIEW Remove this when added to melpa
-    :recipe (:host github :repo "emacs-lsp/lsp-pyright")
-    :pin "f85ad03477db5cd948a82fb7c6a75ac2bc5f0220"))
+(when (featurep! +lsp)
+  (unless (featurep! :tools lsp +eglot)
+    (if (featurep! +pyright)
+        (package! lsp-pyright
+          ;; REVIEW Remove this when added to melpa
+          :recipe (:host github :repo "emacs-lsp/lsp-pyright")
+          :pin "f85ad03477db5cd948a82fb7c6a75ac2bc5f0220")
+      (package! lsp-python-ms :pin "d42ffc2cc27ce36b5a7646ea922441f4c93b2678"))))
 
 ;; Programming environment
 (package! anaconda-mode :pin "6094dedf77810a47e213738f7e39a077de575ce1")
