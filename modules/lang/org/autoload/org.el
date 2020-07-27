@@ -34,10 +34,16 @@
        ;; insert the new list item.
        (if (eq direction 'above)
            (org-beginning-of-item)
-         (org-end-of-item))
-       (if (org-element-property :checkbox context)
-           (org-insert-todo-heading nil)
-         (org-insert-item)))
+         (org-end-of-item)
+         (backward-char))
+       (org-insert-item (org-element-property :checkbox context))
+       ;; Handle edge case where current item is empty and bottom of list is
+       ;; flush against a new heading.
+       (when (and (eq direction 'below)
+                  (eq (org-element-property :contents-begin context)
+                      (org-element-property :contents-end context)))
+         (org-end-of-item)
+         (org-end-of-line)))
 
       ;; Add a new table row
       ((or `table `table-row)
