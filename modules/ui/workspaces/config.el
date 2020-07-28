@@ -200,6 +200,10 @@ stored in `persp-save-dir'.")
     (not (buffer-live-p buf)))
   (add-hook 'persp-filter-save-buffers-functions #'+workspaces-dead-buffer-p)
 
+  ;; Otherwise, buffers opened via bookmarks aren't treated as "real" and are
+  ;; excluded from the buffer list.
+  (add-hook 'bookmark-after-jump-hook #'+workspaces-add-current-buffer-h)
+
   ;;
   ;; eshell
   (persp-def-buffer-save/load
