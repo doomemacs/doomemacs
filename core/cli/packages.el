@@ -263,10 +263,12 @@ declaration) or dependency thereof that hasn't already been."
                              (file-exists-p (straight--modified-dir (or local-repo package)))
                              (cl-loop with want-byte   = (straight--byte-compile-package-p recipe)
                                       with want-native = (if (require 'comp nil t) (straight--native-compile-package-p recipe))
+                                      with outdated = nil
                                       for file in (doom-files-in build-dir :match "\\.el$" :full t)
                                       if (or (if want-byte   (doom--elc-file-outdated-p file))
                                              (if want-native (doom--eln-file-outdated-p file)))
-                                      return t))
+                                      do (setq outdated t)
+                                      finally return outdated))
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (progn
