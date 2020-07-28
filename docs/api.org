@@ -293,7 +293,7 @@ Or to create aliases for functions that behave differently:
 
       (:when IS-MAC
         :n "M-s" 'some-fn
-        :i "M-o" (lambda (interactive) (message "Hi"))))
+        :i "M-o" (cmd! (message "Hi"))))
 
 (map! (:when (featurep! :completion company) ; Conditional loading
         :i "C-@" #'+company/complete
