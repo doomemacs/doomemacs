@@ -32,7 +32,6 @@ directives. By default, this only recognizes C directives.")
   :preface
   (setq evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
-        evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-mode-line-format 'nil
         ;; more vim-like behavior
