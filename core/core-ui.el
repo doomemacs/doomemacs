@@ -391,6 +391,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq ansi-color-for-comint-mode t)
 
 
+(after! comint
+  (setq comint-prompt-read-only t))
+
+
 (after! compile
   (setq compilation-always-kill t       ; kill compilation process before starting another
         compilation-ask-about-save nil  ; save all buffers on `compile'
