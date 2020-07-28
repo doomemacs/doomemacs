@@ -174,7 +174,9 @@ ensure it is built when we actually use Forge."
     "zt" #'evil-scroll-line-to-top
     "zz" #'evil-scroll-line-to-center
     "zb" #'evil-scroll-line-to-bottom
-    "g=" #'magit-diff-default-context)
+    "g=" #'magit-diff-default-context
+    "gi" #'forge-jump-to-issues
+    "gm" #'forge-jump-to-pullreqs)
   (define-key! 'normal
     (magit-status-mode-map
      magit-stash-mode-map
