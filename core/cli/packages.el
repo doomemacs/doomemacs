@@ -134,8 +134,7 @@ list remains lean."
       t)))
 
 (defun doom--eln-file-outdated-p (file)
-  (when-let* (((require 'comp nil 'noerror))
-              (eln-file (comp-output-filename file))
+  (when-let* ((eln-file (comp-output-filename file))
               (error-file (concat eln-file ".error")))
     (push eln-file doom--expected-eln-files)
     (cond ((file-exists-p eln-file)
@@ -180,8 +179,8 @@ list remains lean."
            else do
            (let ((inhibit-message t))
              (sleep-for 0.1)))
-  ;; HACK Write .error files for any missing files which still don't
-  ;; exist. We'll just assume there was some kind of error...
+  ;; HACK Write .error files for any missing files which still don't exist.
+  ;;      We'll just assume there was some kind of error...
   (cl-loop for eln-file in doom--expected-eln-files
            for error-file = (concat eln-file ".error")
            unless (or (file-exists-p eln-file)
@@ -259,21 +258,15 @@ declaration) or dependency thereof that hasn't already been."
                   ;; Ensure packages with outdated files/bytecode are rebuilt
                   (let ((build-dir (straight--build-dir package))
                         (repo-dir  (straight--repos-dir local-repo)))
-                    (and (or (file-newer-than-file-p repo-dir build-dir)
+                    (and (not (plist-get recipe :no-build))
+                         (or (file-newer-than-file-p repo-dir build-dir)
                              (file-exists-p (straight--modified-dir (or local-repo package)))
-                             ;; Doesn't make sense to compare el and elc files
-                             ;; when the former isn't a symlink to their source.
-                             (when straight-use-symlinks
-                               (cl-loop for file in (doom-files-in build-dir :match "\\.el$" :full t)
-                                        with want-byte = (straight--byte-compile-package-p recipe)
-                                        with want-native = (straight--native-compile-package-p recipe)
-                                        with outdated = nil
-                                        if (and (file-symlink-p file)
-                                                (or (and want-byte (doom--elc-file-outdated-p file))
-                                                    (and want-native (doom--eln-file-outdated-p file))))
-                                        do (setq outdated t)
-                                        finally return outdated)))
-                         (not (plist-get recipe :no-build))
+                             (cl-loop with want-byte   = (straight--byte-compile-package-p recipe)
+                                      with want-native = (if (require 'comp nil t) (straight--native-compile-package-p recipe))
+                                      for file in (doom-files-in build-dir :match "\\.el$" :full t)
+                                      if (or (if want-byte   (doom--elc-file-outdated-p file))
+                                             (if want-native (doom--eln-file-outdated-p file)))
+                                      return t))
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (progn
@@ -281,6 +274,7 @@ declaration) or dependency thereof that hasn't already been."
            (print! (success "Rebuilt %d package(s)") (length built)))
        (print! (success "No packages need rebuilding"))
        nil))))
+
 
 
 (defun doom-cli-packages-update ()
