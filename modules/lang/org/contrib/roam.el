@@ -62,7 +62,16 @@
 
   ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
   ;; makes it easier to distinguish among other org buffers.
-  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
+  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode)
+
+  ;; REVIEW Fixes an unhelpful "wrong-type-argument: stringp" error which occurs
+  ;;        if sqlite3 isn't installed. Remove this once addressed upstream.
+  (defadvice! +org-fail-gracefully-when-sqlite-is-absent-a (orig-fn &rest args)
+    :around #'org-roam-mode
+    (let ((emacsql-sqlite3-executable
+           (or (bound-and-true-p emacsql-sqlite3-executable)
+               "sqlite3")))
+      (apply orig-fn args))))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
