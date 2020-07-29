@@ -36,6 +36,9 @@
              cfw:open-org-calendar-withkevin
              my-open-calendar))
 
+(use-package! calfw-cal
+  :commands (cfw:cal-create-source))
+
 (use-package! calfw-ical
   :commands (cfw:ical-create-source))
 
