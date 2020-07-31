@@ -4,7 +4,7 @@
 Functionality in Doom is divided into collections of code called modules (à la
 Spacemacs' layers). A module is a bundle of packages, configuration and
 commands, organized into a unit that can be enabled or disabled by adding or
-removing them from your ~doom!~ block (found in =$DOOMDIR/init.el=).
+removing them from your ~doom!~ block in =$DOOMDIR/init.el=.
 
 * Table of Contents :TOC:
 - [[#app][:app]]
@@ -22,8 +22,8 @@ removing them from your ~doom!~ block (found in =$DOOMDIR/init.el=).
 
 * :app
 Application modules are complex and opinionated modules that transform Emacs
-toward a specific purpose. They may have additional dependencies and should be
-loaded last, before =:config= modules.
+toward a specific purpose. They may have additional dependencies and *should be
+loaded last*, before =:config= modules.
 
 + [[file:../modules/app/calendar/README.org][calendar]] - TODO
 + [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
