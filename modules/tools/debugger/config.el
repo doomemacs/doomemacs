@@ -100,7 +100,7 @@
   (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
                     ((:lang . elixir) elixir-mode dap-elixir)
                     ((:lang . go) go-mode dap-go)
-                    ((:lang . java) lsp-java dap-java)
+                    ((:lang . java) lsp-java)
                     ((:lang . php) php-mode dap-php)
                     ((:lang . python) python dap-python)
                     ((:lang . ruby) ruby-mode dap-ruby)
