@@ -35,9 +35,10 @@
           (when solaire-global-mode
             (solaire-global-mode -1))))))
 
-  (add-hook! 'solaire-global-mode-hook
+  (add-hook! 'solaire-global-mode-hook :append
     (defun +doom-solaire-swap-bg-faces-maybe-h ()
-      (and solaire-global-mode
+      (and (bound-and-true-p solaire-global-mode)
+           (symbolp doom-theme)
            (string-prefix-p "doom-" (symbol-name doom-theme))
            (solaire-mode-swap-bg))))
 

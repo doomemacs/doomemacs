@@ -37,10 +37,14 @@
           :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
           :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))
   :config
-  (setq org-roam-directory (file-name-as-directory (expand-file-name (or org-roam-directory "roam")
-                                                                     org-directory))
-        org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
-        org-roam-buffer-window-parameters '((no-delete-other-windows . t)) ; make org-roam buffer sticky
+  (setq org-roam-directory
+        (file-name-as-directory
+         (expand-file-name (or org-roam-directory "roam")
+                           org-directory))
+        org-roam-verbose nil   ; https://youtu.be/fn4jIlFwuLU
+        ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
+        ;; file with an *-other-window command.
+        org-roam-buffer-window-parameters '((no-delete-other-windows . t))
         org-roam-completion-system
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)

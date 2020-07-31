@@ -15,8 +15,8 @@ byte-compiled from.")
   (print! (start "Compiling your literate config..."))
   (print-group!
    (let* ((default-directory doom-private-dir)
-          (org  (expand-file-name +literate-config-file))
-          (dest (concat (file-name-sans-extension +literate-config-file) ".el"))
+          (org    (expand-file-name +literate-config-file))
+          (dest   (concat (file-name-sans-extension +literate-config-file) ".el"))
           (backup (make-temp-file "config.org.backup")))
      (and (require 'ox)
           (require 'ob-tangle)
@@ -24,17 +24,16 @@ byte-compiled from.")
               (letf! ((defun message (msg &rest args)
                         (when msg
                           (print! (info "%s") (apply #'format msg args))))
-                      ;; Prevent infinite recursion due to
-                      ;; recompile-on-save hooks later.
+                      ;; Prevent infinite recursion due to recompile-on-save
+                      ;; hooks later.
                       (org-mode-hook nil))
-                ;; We do the ol' switcheroo because `org-babel-tangle'
-                ;; writes changes to the current file, which would be
-                ;; imposing on the user.
+                ;; Do the ol' switcheroo because `org-babel-tangle' writes
+                ;; changes to the user's literate config, which would impose on
+                ;; the user.
                 (copy-file org backup t)
                 (with-current-buffer (find-file-noselect org)
-                  ;; Tangling doesn't expand #+INCLUDE directives, so we
-                  ;; do it ourselves, since includes are so useful for
-                  ;; literate configs!
+                  ;; Tangling won't ordinarily expand #+INCLUDE directives, so
+                  ;; we do it ourselves.
                   (org-export-expand-include-keyword)
                   (org-babel-tangle nil dest))
                 t)

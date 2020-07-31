@@ -74,8 +74,12 @@ For example:
 (package! other-package)
 ,#+END_SRC
 
-,#+BEGIN_SRC sh :tangle ~/.dotfiles/bin/script.sh
+,#+BEGIN_SRC sh :tangle ~/.dotfiles/bin/script.sh :tangle-mode (identity #o755)
 #!/usr/bin/env bash
+echo Hello world
+,#+END_SRC
+
+,#+BEGIN_SRC sh :tangle ~/.dotfiles/bin/script.sh :shebang "#!/usr/bin/env bash"
 echo Hello world
 ,#+END_SRC
 #+END_SRC

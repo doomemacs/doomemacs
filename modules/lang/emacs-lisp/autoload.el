@@ -222,8 +222,7 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
              (or (not default-directory)
                  (cl-find-if (doom-partial #'file-in-directory-p default-directory)
                              +emacs-lisp-disable-flycheck-in-dirs)))
-    (add-to-list (make-local-variable 'flycheck-disabled-checkers)
-                 'emacs-lisp-checkdoc)
+    (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
     (set (make-local-variable 'flycheck-emacs-lisp-check-form)
          (concat "(progn "
                  (prin1-to-string
