@@ -87,7 +87,11 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
    ;; on, for example, a sunday
    org-agenda-span 10
    org-agenda-start-on-weekday nil
-   org-agenda-start-day "-3d"))
+   org-agenda-start-day "-3d"
+   ;; Optimize `org-agenda' by inhibiting extra work while opening agenda
+   ;; buffers in the background. They'll be "restarted" if the user switches to
+   ;; them anyway (see `+org-exclude-agenda-buffers-from-workspace-h')
+   org-agenda-inhibit-startup t))
 
 
 (defun +org-init-appearance-h ()
