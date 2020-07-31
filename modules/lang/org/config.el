@@ -460,7 +460,8 @@ relative to `org-directory', unless it is an absolute path."
 (defun +org-init-export-h ()
   "TODO"
   (setq org-export-with-smart-quotes t
-        org-html-validation-link nil)
+        org-html-validation-link nil
+        org-latex-prefer-user-labels t)
 
   (when (featurep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
