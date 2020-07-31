@@ -21,6 +21,13 @@ If prefix ARG is set, prompt for a directory to search from."
   (+default/search-cwd 'other))
 
 ;;;###autoload
+(defun +default/search-buffer (&optional arg)
+  (interactive "P")
+  (if (region-active-p)
+      (call-interactively #'swiper-isearch-thing-at-point)
+    (call-interactively #'swiper-isearch)))
+
+;;;autoload
 (defun +default/search-project (&optional arg)
   "Conduct a text search in the current project root.
 If prefix ARG is set, prompt for a known project to search from."
