@@ -463,7 +463,7 @@ provides, and ~doom help COMMAND~ to display documentation for a particular
 #+begin_quote
 I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
 directly and from anywhere. Accomplish this by adding this to your .bashrc or
-.zshrc file: ~export PATH=~/.emacs.d/bin:$PATH~
+.zshrc file: ~export PATH="$HOME/.emacs.d/bin:$PATH"~
 #+end_quote
 
 *** Install Doom Manually
