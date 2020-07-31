@@ -74,6 +74,11 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
   (setq-default
+   org-agenda-deadline-faces
+   '((1.001 . error)
+     (1.0 . org-warning)
+     (0.5 . org-upcoming-deadline)
+     (0.0 . org-upcoming-distant-deadline))
    ;; Don't monopolize the whole frame just for the agenda
    org-agenda-window-setup 'current-window
    org-agenda-skip-unavailable-files t
@@ -93,11 +98,13 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-entities-user
         '(("flat"  "\\flat" nil "" "" "266D" "♭")
           ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+        org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label 'plain
         org-hide-leading-stars t
         org-image-actual-width nil
+        org-imenu-depth 8
         org-priority-faces
         '((?A . error)
           (?B . warning)
