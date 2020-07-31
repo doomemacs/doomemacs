@@ -211,9 +211,26 @@ This forces it to read the background before rendering."
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
     :after #'org-return
-    (when (and indent (org-in-src-block-p t))
+    (when (and indent
+               org-src-tab-acts-natively
+               (org-in-src-block-p t))
       (org-babel-do-in-edit-buffer
        (call-interactively #'indent-for-tab-command))))
+
+  (defadvice! +org-inhibit-mode-hooks-a (orig-fn datum name &optional initialize &rest args)
+    "Prevent potentially expensive mode hooks in `org-babel-do-in-edit-buffer' ops."
+    :around #'org-src--edit-element
+    (apply orig-fn datum name
+           (if (and (eq org-src-window-setup 'switch-invisibly)
+                    (functionp initialize))
+               ;; org-babel-do-in-edit-buffer is used to execute quick, one-off
+               ;; logic in the context of another major mode. Initializing this
+               ;; major mode can be terribly expensive (particular its mode
+               ;; hooks), so we inhibit them.
+               (lambda ()
+                 (quiet! (delay-mode-hooks (funcall initialize))))
+             initialize)
+           args))
 
   ;; Refresh inline images after executing src blocks (useful for plantuml or
   ;; ipython, where the result could be an image)
