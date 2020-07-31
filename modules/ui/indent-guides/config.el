@@ -21,5 +21,6 @@
   ;; `highlight-indent-guides' breaks when `org-indent-mode' is active
   (add-hook! 'org-mode-local-vars-hook
     (defun +indent-guides-disable-maybe-h ()
-      (when (and highlight-indent-guides-mode org-indent-mode)
-        (highlight-indent-guides-mode -1)))))
+      (and highlight-indent-guides-mode
+           (bound-and-true-p org-indent-mode)
+           (highlight-indent-guides-mode -1)))))
