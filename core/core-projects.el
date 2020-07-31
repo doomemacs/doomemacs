@@ -42,6 +42,12 @@ debian, and derivatives). On most it's 'fd'.")
   :config
   (projectile-mode +1)
 
+  ;; Auto-discovery on `projectile-mode' is slow and premature. Let's defer it
+  ;; until it's actually needed. Also clean up non-existing projects too!
+  (add-transient-hook! 'projectile-relevant-known-projects
+    (projectile-cleanup-known-projects)
+    (projectile-discover-projects-in-search-path))
+
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
   ;; + `projectile-root-local' -> checks the `projectile-project-root' variable
@@ -107,6 +113,7 @@ c) are not valid projectile projects."
       (when (and (bound-and-true-p projectile-projects-cache)
                  projectile-enable-caching
                  doom-interactive-p)
+        (projectile-cleanup-known-projects)
         (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
                  for proot in (hash-table-keys projectile-projects-cache)
                  if (or (not (stringp proot))
