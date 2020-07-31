@@ -97,7 +97,9 @@ uses a straight or package.el command directly).")
       ;; we don't have to deal with them at all.
       autoload-compute-prefixes nil
       ;; We handle it ourselves
-      straight-fix-org nil)
+      straight-fix-org nil
+      ;; HACK Disable native-compilation for some troublesome files
+      comp-deferred-compilation-black-list '("/evil-collection-vterm\\.el$"))
 
 (defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
   "Read `:pin's in `doom-packages' on top of straight's lockfiles."
