@@ -184,20 +184,6 @@ Dictionary.app behind the scenes to get definitions.")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)
 
-  ;; Before `gnutls' is loaded, `gnutls-algorithm-priority' is treated as a
-  ;; lexical variable, which breaks `+lookup*fix-gnutls-error'
-  (defvar gnutls-algorithm-priority)
-  (defadvice! +lookup--fix-gnutls-error-a (orig-fn url)
-    "Fixes integer-or-marker-p errors emitted from Emacs' url library,
-particularly, the `url-retrieve-synchronously' call in
-`dash-docs-read-json-from-url'. This is part of a systemic issue with Emacs 26's
-networking library (fixed in Emacs 27+, apparently).
-
-See https://github.com/magit/ghub/issues/81"
-    :around #'dash-docs-read-json-from-url
-    (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
-      (funcall orig-fn url)))
-
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
         ((featurep! :completion ivy)
