@@ -16,6 +16,19 @@
     (realgud:trepanpl  :modes (perl-mode perl6-mode))
     (realgud:zshdb     :modes (sh-mode))))
 
+(defvar +debugger--dap-alist
+  `(((:lang cc +lsp)         :after ccls        :require (dap-lldb dap-gdb-lldb))
+    ((:lang elixir +lsp)     :after elixir-mode :require dap-elixir)
+    ((:lang go +lsp)         :after go-mode     :require dap-go)
+    ((:lang php +lsp)        :after php-mode    :require dap-php)
+    ((:lang python +lsp)     :after python      :require dap-python)
+    ((:lang ruby +lsp)       :after ruby-mode   :require dap-ruby)
+    ((:lang rust +lsp)       :after rust-mode   :require dap-lldb)
+    ((:lang javascript +lsp)
+     :after (js2-mode typescript-mode)
+     :require (dap-node dap-chrome dap-firefox ,@(if IS-WINDOWS '(dap-edge)))))
+  "TODO")
+
 
 ;;
 ;;; Packages
@@ -97,25 +110,12 @@
   (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
         dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
   :config
-  (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
-                    ((:lang . elixir) elixir-mode dap-elixir)
-                    ((:lang . go) go-mode dap-go)
-                    ((:lang . java) lsp-java)
-                    ((:lang . php) php-mode dap-php)
-                    ((:lang . python) python dap-python)
-                    ((:lang . ruby) ruby-mode dap-ruby)
-                    ((:lang . rust) rust-mode dap-lldb)))
-    (when (doom-module-p (caar module) (cdar module) '+lsp)
-      (with-eval-after-load (nth 1 module)
-        (mapc #'require (cddr module)))))
-
-  (when (featurep! :lang javascript +lsp)
-    (after! (:or js2-mode typescript-mode)
-      (require 'dap-node)
-      (require 'dap-chrome)
-      (require 'dap-firefox)
-      (when IS-WINDOWS
-        (require 'dap-edge))))
+  (pcase-dolist (`((,category . ,modules) :after ,after :require ,libs)
+                 +debugger--dap-alist)
+    (when (doom-module-p category (car modules) (cadr modules))
+      (dolist (lib (doom-enlist after))
+        (with-eval-after-load lib
+          (mapc #'require libs)))))
 
   (dap-mode 1))
 
