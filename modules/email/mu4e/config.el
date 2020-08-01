@@ -108,16 +108,13 @@
         :desc "attach"        "a" #'mail-add-attachment))
 
 
-(use-package! org-mu4e
-  :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
+(use-package! org-msg
+  :hook (org-load . org-msg-mode)
   :config
-  (setq org-mu4e-convert-to-html t)
-  (when (version< mu4e-mu-version "1.4")
-    (setq org-mu4e-link-query-in-headers-mode nil))
+  (setq org-msg-startup "inlineimages"
+        org-msg-greeting-name-limit 3
+        org-msg-text-plain-alternative t))
 
-  ;; Only render to html once. If the first send fails for whatever reason,
-  ;; org-mu4e would do so each time you try again.
-  (setq-hook! 'message-send-hook org-mu4e-convert-to-html nil))
 
 
 ;;
