@@ -1,5 +1,13 @@
 ;;; tools/lsp/+lsp.el -*- lexical-binding: t; -*-
 
+(defvar +lsp-company-backends 'company-capf
+  "The backends to prepend to `company-backends' in `lsp-mode' buffers.
+Can be a list of backends; accepts any value `company-backends' accepts.")
+
+
+;;
+;;; Packages
+
 (use-package! lsp-mode
   :commands lsp-install-server
   :init
@@ -104,8 +112,9 @@ This also logs the resolved project root, if found, so we know where we are."
           (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
         ;; Ensure `company-capf' is at the front of `company-backends'
         (setq-local company-backends
-                    (cons 'company-capf
-                          (remq 'company-capf company-backends)))
+                    (cons +lsp-company-backends
+                          (remove +lsp-company-backends
+                                  (remq 'company-capf company-backends))))
         (remove-hook 'company-mode-hook #'+lsp-init-company-h t)))
     (defun +lsp-init-flycheck-or-flymake-h ()
       "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
