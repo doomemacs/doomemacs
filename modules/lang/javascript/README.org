@@ -31,6 +31,8 @@ This module adds JavaScript and TypeScript support.
 + =+lsp= Enables LangServer support for this module. You must have =:tools lsp=
   enabled for this to work, as well as the langserver (e.g.
   typescript-language-server) installed on your system.
++ After installing the langserver on your system you have to add/install it in
+  doom with =M-x lsp-install-server=
 
 ** Packages
 + [[https://github.com/defunkt/coffee-mode][coffee-mode]]
