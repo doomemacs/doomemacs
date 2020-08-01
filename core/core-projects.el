@@ -1,6 +1,6 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
-(defvar doom-projectile-cache-limit 25000
+(defvar doom-projectile-cache-limit 10000
   "If any project cache surpasses this many files it is purged when quitting
 Emacs.")
 
