@@ -490,7 +490,10 @@ advised)."
 (defmacro add-hook-trigger! (hook-var &rest targets)
   "TODO"
   `(let ((fn (intern (format "%s-h" ,hook-var))))
-     (fset fn (lambda (&rest _) (run-hooks ,hook-var) (set ,hook-var nil)))
+     (fset
+      fn (lambda (&rest _)
+           (run-hook-wrapped ,hook-var #'doom-try-run-hook)
+           (set ,hook-var nil)))
      (put ,hook-var 'permanent-local t)
      (dolist (on (list ,@targets))
        (if (functionp on)
