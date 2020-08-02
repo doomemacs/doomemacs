@@ -341,10 +341,14 @@ config.el instead."
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
+(defvar doom--inhibit-local-var-hooks nil)
+
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
-  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
-                    #'doom-try-run-hook))
+  (unless doom--inhibit-local-var-hooks
+    (set (make-local-variable 'doom--inhibit-local-var-hooks) t)
+    (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                      #'doom-try-run-hook)))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
