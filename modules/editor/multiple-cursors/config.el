@@ -64,23 +64,26 @@
   ;; Whitelist more commands
   (dolist (fn '((delete-char)
                 (backward-kill-word)
+                (undo-fu-only-undo . evil-mc-execute-default-undo)
+                (undo-fu-only-redo . evil-mc-execute-default-redo)
                 (company-complete-common . evil-mc-execute-default-complete)
                 (doom/backward-to-bol-or-indent . evil-mc-execute-default-call)
                 (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
+                ;; :editor evil
                 (evil-delete-back-to-indentation . evil-mc-execute-default-call)
-                ;; Have evil-mc work with explicit `evil-escape' (on C-g)
-                (evil-escape . evil-mc-execute-default-evil-normal-state)
-                ;; Add `evil-org' support
+                (evil-escape . evil-mc-execute-default-evil-normal-state)  ; C-g
+                (evil-numbers/inc-at-pt-incremental)
+                (evil-numbers/dec-at-pt-incremental)
+                ;; :tools eval commands
+                (+eval:replace-region . +multiple-cursors-execute-default-operator-fn)
+                ;; :lang org
                 (evil-org-delete . evil-mc-execute-default-evil-delete)
                 (evil-org-delete-char . evil-mc-execute-default-evil-delete)
-                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)
-                ;; `evil-numbers'
-                (evil-numbers/inc-at-pt-incremental)
-                (evil-numbers/dec-at-pt-incremental)))
-    (cl-pushnew `(,(car fn) (:default . ,(or (cdr fn) #'evil-mc-execute-default-call-with-count)))
-                evil-mc-custom-known-commands
-                :test #'eq
-                :key #'car))
+                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)))
+    (setf (alist-get (car fn) evil-mc-custom-known-commands)
+          (list (cons :default
+                      (or (cdr fn)
+                          #'evil-mc-execute-default-call-with-count)))))
 
   ;; HACK Allow these commands to be repeated by prefixing them with a numerical
   ;;      argument. See gabesoft/evil-mc#110
