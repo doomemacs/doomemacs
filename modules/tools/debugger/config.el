@@ -115,7 +115,7 @@
     (when (doom-module-p category (car modules) (cadr modules))
       (dolist (lib (doom-enlist after))
         (with-eval-after-load lib
-          (mapc #'require libs)))))
+          (mapc #'require (doom-enlist libs))))))
 
   (dap-mode 1))
 
