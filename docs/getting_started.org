@@ -34,6 +34,7 @@ us know!
       - [[#with-wsl--ubuntu-1804-lts][With WSL + Ubuntu 18.04 LTS]]
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
+      - [[#add-doom-to-path][Add Doom to PATH]]
     - [[#install-doom-manually][Install Doom Manually]]
     - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
@@ -470,8 +471,8 @@ echo 'export PATH="$HOME/.emacs.d/bin:$PATH" #Add Doom to Path' >> ~/.profile
 source ~/.profile
 #+END_SRC
 
-/Note: Using .profile is recommended per [[https://help.ubuntu.com/
-community/EnvironmentVariables#A.2BAH4-.2F.profile][Ubuntu Documentation]]./
+/Note: Using .profile is recommended per 
+[[https://help.ubuntu.com/community/EnvironmentVariables#A.2BAH4-.2F.profile][Ubuntu Documentation]]./
 #+begin_quote
 Shell config files such as ~/.bashrc, ~/.bash_profile, and ~/.bash_login are 
 often suggested for setting environment variables. While this may work on Bash 
