@@ -90,7 +90,7 @@ This also logs the resolved project root, if found, so we know where we are."
          ;;        GC-induced slowdowns/freezes.
          (setq-local gcmh-high-cons-threshold (* 2 gcmh-high-cons-threshold))
          (prog1 (lsp-mode 1)
-           (setq-local lsp-buffer-uri (lsp--buffer-uri))
+           (setq lsp-buffer-uri (lsp--buffer-uri))
            ;; Announce what project root we're using, for diagnostic purposes
            (if-let (root (lsp--calculate-root (lsp-session) (buffer-file-name)))
                (lsp--info "Guessed project root is %s" (abbreviate-file-name root))

@@ -6,4 +6,5 @@
   (interactive)
   (if (featurep! +eglot)
       (eglot-ensure)
-    (lsp-deferred)))
+    (unless (bound-and-true-p lsp-mode)
+      (lsp-deferred))))
