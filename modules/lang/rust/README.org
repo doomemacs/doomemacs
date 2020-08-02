@@ -58,6 +58,8 @@ This module also supports LSP, if you have [[https://github.com/rust-lang/rls][t
 and the ~+lsp~ flag on this module.
 
 ** Keybinds
+Note that =<localleader>= is =SPC m= or =C-c l= by default.
+
 | Binding             | Description                 |
 |---------------------+-----------------------------|
 | ~<localleader> b a~ | ~cargo audit~               |

@@ -179,7 +179,9 @@ Additional info:
 * Appendix
 ** Eglot specific bindings
 When using =+lsp= and =:tools (lsp +eglot)=, lsp-mode is replaced with eglot,
-and an additional function to get inheritance type hierarchy is added
+and an additional function to get inheritance type hierarchy is added.
+
+In the table below, =localleader= by default is =SPC m= or =C-c l=.
 | Binding                      | Description                                      |
 |------------------------------+--------------------------------------------------|
 | ~<localleader> c t~          | ~Display inheritance type hierarchy (upwards)~   |

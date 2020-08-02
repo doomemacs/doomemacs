@@ -41,6 +41,8 @@ This module provides no flags.
 
 * Features
 ** Keybindings
+Note that =<localleader>= is =SPC m= or =C-c l= by default.
+
 | Binding           | Description          |
 |-------------------+----------------------|
 | ~<localleader> b~ | ~nix-build~          |

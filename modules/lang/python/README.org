@@ -102,6 +102,7 @@ To enable support for auto-formatting with black enable ~:editor format-all~ in
 ~init.el~ file.
 
 ** Keybindings
+Note that =<localleader>= is =SPC m= or =C-c l= by default.
 
 | Binding             | Description                      |
 |---------------------+----------------------------------|

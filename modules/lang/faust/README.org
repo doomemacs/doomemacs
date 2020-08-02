@@ -30,7 +30,9 @@ Add support to Faust language inside emacs.
 + [[https://bitbucket.org/yphil/faustine][faustine]]
 
 * Features
-Keybindings
+Here are the keybindings. Note that =<localleader>= is =SPC m= or =C-c l= by
+default.
+
 
 | Binding           | Description          |
 |-------------------+----------------------|

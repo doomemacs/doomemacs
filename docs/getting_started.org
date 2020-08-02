@@ -40,6 +40,11 @@ us know!
 - [[#update--rollback][Update & Rollback]]
   - [[#rollback][Rollback]]
   - [[#updowngrading-emacs][Up/Downgrading Emacs]]
+- [[#new-user-introduction][New User Introduction]]
+  - [[#editing-commands][Editing commands]]
+  - [[#menus--commands][Menus & Commands]]
+    - [[#context-specific-commands][Context-specific commands]]
+  - [[#getting-help][Getting Help]]
 - [[#migrate][Migrate]]
   - [[#from-vanilla-emacs][From vanilla Emacs]]
   - [[#from-spacemacs][From Spacemacs]]
@@ -562,7 +567,8 @@ Use ~M-x doom/help-modules~ (bound to =SPC h d m= or =C-h d m=) to jump to a
 module's documentation from within Doom, otherwise, place your cursor on a
 module in your ~doom!~ block (in =~/.doom.d/init.el=) and press =K= to jump to
 its documentation (or =gd= to jump to its source code). =C-c g k= and =C-c g d=
-for non-evil users, respectively.
+for non-evil users, respectively.  The equals signs you see here are typesetting
+hints and are not to be typed directly.
 #+end_quote
 
 * Update & Rollback
@@ -608,6 +614,66 @@ the major version (e.g. 26 -> 27 or vice versa) run ~doom build~ too.
   because Emacs bytecode not generally forward compatible across major releases
   (e.g. 26 -> 27). Alternatively, reinstall all your packages by deleting
   =~/.emacs.d/.local=, then run ~doom sync~.
+
+* New User Introduction
+
+Now, launch Emacs and you'll see Doom ready to run!
+
+** Editing commands
+
+If you're not familiar with vi-style (also known as vim) keybindings, which are
+provided by "Evil mode" in Emacs, you might want to look at [[https://raw.githubusercontent.com/syl20bnr/evil-tutor/master/tutor.txt][the Emacs Evil
+tutor]]. (You can also have more familiar key bindings; see [[file:faq.org][the FAQ]] for details.)
+
+In a nutshell, vim-style keybindings are *modal*; you are (generally) either in
+insert mode or command mode.  In insert mode, the letters on your keyboard
+insert text into a document like you might be used to.  In command mode, the
+letters on your keyboard activate commands and can even be used to move around
+the document, perform searches, and so forth.  In Doom, you can use the arrow
+keys, backspace keys, etc. that you are used to in insert mode as well.
+
+By default, you are in command mode.  Press =i= to enter insert mode and =ESC=
+to return to command mode.
+
+There are two systems for entering more complex commands in command mode: Doom's
+(which I'll describe below) and the vim system.  vim commands start with a colon
+and are things such as =:help= or =:q=.
+
+** Menus & Commands
+
+Doom Emacs provides a way to access a vast array of commands.  By default, you
+can press =SPC= to access these commands (non-Evil users use =C-c=).  This is
+both a shortcut system and a menu.  If you just press =SPC= and wait a moment,
+you will see a list of options for the next character you can press, leading you
+into submenus.  As you use Doom more, you'll remember the characters for these
+commands and can activate them very quickly.  If you ever get stuck, press =C-g=
+to abort your partially-entered command.
+
+Seasoned Emacs users will also recognize most of your familiar keybindings are
+also available simultaneously with the Evil and Doom ones.  For instance, to
+open a file, an Evil user could use three different options: =SPC .=, =:e=,
+and =C-x C-f=.
+
+Some parts of the Doom menus have so many options they require multiple screens.
+See the bottom of your screen for instructions on displaying subsequent screens
+of options; the =C-h= command while viewing menus will show you how.
+
+*** Context-specific commands
+
+While most commands in the Doom system are always available, there are some that
+are specific to context.  They vary depending on what kind of file you're
+editing or what kind of major mode you're in.  These are called "localleader"
+commands.  You can access the localleader menu with =SPC m= or =C-c l=.
+
+** Getting Help
+
+There are several ways you can get more assistance within Doom Emacs:
+
+  - Open the Doom documentation with =SPC h d h=
+  - For vim colon commands, type =:help :COMMAND= - for instance, =:help :q=.
+  - For Emacs commands, type =SPC k COMMAND= - for instance, =SPC k C-x C-c=.
+  - Some additional hints on actions in your current context, open the context
+    menu with the F10 key
 
 * TODO Migrate
 If you're here from another Emacs distribution (or your own), here are a few

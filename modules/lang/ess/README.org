@@ -29,6 +29,8 @@ This module has several optional dependencies:
 | "<up>"       | comint-next-input     |
 | "<down>"     | comint-previous-input |
 **** :localleader
+The localleader prefix, by default, is =SPC m= or =C-c l=.
+
 | state | key         | command                                           |
 |-------+-------------+---------------------------------------------------|
 | :nv   | ","         | ess-eval-region-or-function-or-paragraph-and-step |

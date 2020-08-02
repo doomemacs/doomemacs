@@ -62,6 +62,8 @@ common Terraform operations (see Keybindings below).
 * Appendix
 ** Keybindings
 *** :localleader
+These commands begin with =SPC m= or =C-c l= by default.
+
 | key | description           |
 |-----+-----------------------|
 | =i= | Run =terraform init=  |
