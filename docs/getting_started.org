@@ -460,11 +460,26 @@ Use ~doom help~ to see an overview of the available commands that =doom=
 provides, and ~doom help COMMAND~ to display documentation for a particular
 ~COMMAND~.
 
-#+begin_quote
+**** Add Doom to PATH
 I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
-directly and from anywhere. Accomplish this by adding this to your .bashrc or
-.zshrc file: ~export PATH="$HOME/.emacs.d/bin:$PATH"~
+directly and from anywhere. 
+To accomplish this: (For Debian-based distros. Mileage may vary in other distro 
+families.)
+#+BEGIN_SRC bash
+echo 'export PATH="$HOME/.emacs.d/bin:$PATH" #Add Doom to Path' >> ~/.profile
+source ~/.profile
+#+END_SRC
+
+/Note: Using .profile is recommended per [[https://help.ubuntu.com/
+community/EnvironmentVariables#A.2BAH4-.2F.profile][Ubuntu Documentation]]./
+#+begin_quote
+Shell config files such as ~/.bashrc, ~/.bash_profile, and ~/.bash_login are 
+often suggested for setting environment variables. While this may work on Bash 
+shells for programs started from the shell, variables set in those files are 
+not available by default to programs started from the graphical environment in 
+a desktop session. 
 #+end_quote
+/Methods may vary in other distro families./
 
 *** Install Doom Manually
 If you'd rather install Doom yourself, instead of rely on the magic of =doom
