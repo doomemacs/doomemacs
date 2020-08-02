@@ -47,6 +47,8 @@ us know!
   - [[#getting-help][Getting Help]]
 - [[#migrate][Migrate]]
   - [[#from-vanilla-emacs][From vanilla Emacs]]
+  - [[#keybindings-and-to-be-evil-or-not][Keybindings (and to be evil or not)]]
+  - [[#configuration][Configuration]]
   - [[#from-spacemacs][From Spacemacs]]
 - [[#configure][Configure]]
   - [[#modules][Modules]]
@@ -694,6 +696,39 @@ Have you migrated from your own config? Help me flesh out this section by
 letting me know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on
 our Discord server]].
 #+end_quote
+
+When migrating from vanilla Emacs, here are some general tips to consider:
+
+** Keybindings (and to be evil or not)
+
+One of the benefits of Doom is a predefined set of consistent Evil keybindings
+across many Emacs major modes.  This saves you the effort of having to do it
+yourself and makes the transition to evil-mode a lot less cumbersome.
+
+However, if vim keybindings are not for you, the FAQ describes how to disable
+evil-mode.  Doom Emacs is perfectly operational without it.  Note, however, that
+Doom without evil-mode will take over some of the =C-c= subcommands you may be
+used to, adding its own.  However, its context-sensitive help menus are
+pervasive across Emacs, not just in Doom, and you may find this discoverability
+very helpful.
+
+Either way, many Emacs keybindings will remain available to you.  For instance,
+=C-x C-f= still works in both evil mode and not, even though by default there
+are a myraid other ways to access this functionality: =SPC .=, =SPC f f=,
+=:e filename=, etc.
+
+I found it helpful to keep my previous Emacs around.  When I was trying to find
+the key for something in Doom, I could use the old Emacs, press =C-h C-k= to
+find out what function a key called, and then use =C-h f= in Doom to look up
+that function and see what keys were bound to it in Doom.
+
+** Configuration
+
+As you migrate your own configuration, grep for settings you may be using
+underneath Doom's =modules= directory.  You may find that quite a few things you
+have been setting are already defined in Doom, or may be defaulting to other
+things.  I suggest trying things Doom's way to start with and then adapting to
+your own preferences if needed.
 
 ** TODO From Spacemacs
 #+begin_quote
