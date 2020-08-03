@@ -45,6 +45,7 @@ us know!
   - [[#menus--commands][Menus & Commands]]
     - [[#context-specific-commands][Context-specific commands]]
   - [[#getting-help][Getting Help]]
+  - [[#tour-of-features][Tour of features]]
 - [[#migrate][Migrate]]
   - [[#from-vanilla-emacs][From vanilla Emacs]]
   - [[#keybindings-and-to-be-evil-or-not][Keybindings (and to be evil or not)]]
@@ -676,6 +677,40 @@ There are several ways you can get more assistance within Doom Emacs:
   - For Emacs commands, type =SPC k COMMAND= - for instance, =SPC k C-x C-c=.
   - Some additional hints on actions in your current context, open the context
     menu with the F10 key
+
+** Tour of features
+
+Here are some of the features you'll find enabled by default in Doom Emacs,
+along with links to documentation about them:
+
+- Universal autocomplete support is integrated throughout the editor.  By
+  default, it uses ivy.  See the [[file:../modules/completion/ivy/README.org][Doom documentation]] and this [[https://writequit.org/denver-emacs/presentations/2017-04-11-ivy.html][intro to ivy]] for
+  more details.
+- While ivy provides autocomplete for commands (things like opening files),
+  there is also autocomplete while you /type/.  That is provided by a package
+  called company.  See the [[file:../modules/completion/company/README.org][Doom documentation]] or [[http://company-mode.github.io/][homepage]] for more detail.  You
+  may find the =company-idle-delay= parameter relevant to your configuration.
+- Fantastic search is integrated throughout.  It can easily search and narrow
+  down within projects, directory trees, and so forth.  Try it out with =SPC
+  s=.  =SPC s d= will search your directory, =SPC s p= your project, etc.  And
+  it's FAST.
+- While we're at it, Doom has a notion of projects using [[https://github.com/bbatsov/projectile][projectile]].  Access the
+  project menu with =SPC p=.
+- There's even more along those lines: [[file:../modules/ui/workspaces/README.org][workspaces]].  Think of a workspace in
+  Emacs as like a virtual desktop on your computer.  It lets you group your
+  buffers by task (or whatever else you like).  It's based on [[https://github.com/Bad-ptr/persp-mode.el][persp-mode]] and you
+  can get to the workspace menu with =SPC TAB=.
+- Org-mode, the... how do you even describe it? ... thing that organizes your
+  task lists, your knowledge base, and is a markup language that can export to
+  LaTeX and HTML and all sorts of things.  See the
+  [[file:../modules/lang/org/README.org][Doom documentation]] and [[https://orgmode.org/][project homepage]].
+- Definition lookup and cross-referencing.  While editing code, look up the
+  documentation or definition for something, or all the users of it.  While
+  editing text, look up the dictionary definition of a word or see it in a
+  thesaurus.  See the [[file:../modules/tools/lookup/README.org][Doom documentation]] for details.  And try out
+  =g d= when you're curious!  With LSP language support, it will map directly to
+  LSP commands and give you quite a dose of awesomeness.
+- Native support for version control systems, and particularly Git.
 
 * TODO Migrate
 If you're here from another Emacs distribution (or your own), here are a few
