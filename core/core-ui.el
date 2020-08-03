@@ -139,7 +139,6 @@ spaces at the beginnings of lines if the usual indentation is with tabs.
 Does nothing if `whitespace-mode' or `global-whitespace-mode' is already active
 or if the current buffer is read-only or not file-visiting."
   (unless (or (eq major-mode 'fundamental-mode)
-              buffer-read-only
               (bound-and-true-p global-whitespace-mode)
               (null buffer-file-name))
     (require 'whitespace)
