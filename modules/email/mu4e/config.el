@@ -7,9 +7,6 @@
 ;;
 ;;; Packages
 
-(add-to-list 'auto-mode-alist '("\\.\\(?:offlineimap\\|mbsync\\)rc\\'" . conf-mode))
-
-
 (use-package! mu4e
   :commands mu4e mu4e-compose-new
   :init
