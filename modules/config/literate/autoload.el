@@ -29,12 +29,14 @@ byte-compiled from.")
                       ;; Prevent infinite recursion due to recompile-on-save
                       ;; hooks later.
                       (org-mode-hook nil))
-                (copy-file org backup t)
-                (with-current-buffer (find-file-noselect backup)
-                  ;; Tangling won't ordinarily expand #+INCLUDE directives
-                  (org-export-expand-include-keyword)
-                  (org-babel-tangle nil dest)
-                  (kill-buffer (current-buffer)))
+                ;; Tangling won't ordinarily expand #+INCLUDE directives, and it
+                ;; modifies the buffer so we must do it in a copy to prevent
+                ;; stepping on the user's toes.
+                (with-temp-file backup
+                  (let ((buffer-file-name backup))
+                    (insert-file-contents org)
+                    (org-export-expand-include-keyword)
+                    (org-babel-tangle nil dest)))
                 t)
               ;; Write an empty file to serve as our mtime cache
               (with-temp-file +literate-config-cache-file))
