@@ -16,20 +16,19 @@ byte-compiled from.")
   (print-group!
    (let* ((default-directory doom-private-dir)
           (org    (expand-file-name +literate-config-file))
-          (dest   (concat (file-name-sans-extension +literate-config-file) ".el")))
-     (and (require 'ox)
-          (require 'ob-tangle)
-          (unwind-protect
+          (dest   (concat (file-name-sans-extension +literate-config-file) ".el"))
+          ;; Operate on a copy because `org-babel-tangle' has side-effects we
+          ;; don't want to impose on the User's config permanently.
+          (backup (make-temp-file (concat (file-name-nondirectory org) "."))))
+     (unwind-protect
+         (and (require 'ox)
+              (require 'ob-tangle)
               (letf! ((defun message (msg &rest args)
                         (when msg
                           (print! (info "%s") (apply #'format msg args))))
                       ;; Prevent infinite recursion due to recompile-on-save
                       ;; hooks later.
-                      (org-mode-hook nil)
-                      ;; Operate on a copy because `org-babel-tangle' has
-                      ;; side-effects we don't want to impose on the User's
-                      ;; config permanently.
-                      (backup (make-temp-file (concat (file-name-nondirectory org) "."))))
+                      (org-mode-hook nil))
                 (copy-file org backup t)
                 (with-current-buffer (find-file-noselect backup)
                   ;; Tangling won't ordinarily expand #+INCLUDE directives
@@ -37,9 +36,9 @@ byte-compiled from.")
                   (org-babel-tangle nil dest)
                   (kill-buffer (current-buffer)))
                 t)
-            (ignore-errors (delete-file backup)))
-          ;; Write an empty file to serve as our mtime cache
-          (with-temp-file +literate-config-cache-file)))))
+              ;; Write an empty file to serve as our mtime cache
+              (with-temp-file +literate-config-cache-file))
+       (ignore-errors (delete-file backup))))))
 
 ;;;###autoload
 (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
