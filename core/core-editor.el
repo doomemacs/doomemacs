@@ -93,9 +93,7 @@ possible."
 (after! tramp
   ;; Backing up files on remotes can be incredibly slow and prone to a variety
   ;; of IO errors. Better to disable it altogether in tramp buffers:
-  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil))
-  ;; Add the remote's PATH to tramp's search path (why isn't this the default?)
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
