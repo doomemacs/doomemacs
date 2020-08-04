@@ -4,7 +4,9 @@
   "The keys to use for universal repeating motions.
 
 This is a cons cell whose CAR is the key for repeating a motion forward, and
-whose CDR is for repeating backward. They should both be `kbd'-able strings.")
+whose CDR is for repeating backward. They should both be `kbd'-able strings.
+
+Set this to `nil' to disable universal-repeating on these keys.")
 
 (defvar +evil-want-o/O-to-continue-comments t
   "If non-nil, the o/O keys will continue comment lines if the point is on a
