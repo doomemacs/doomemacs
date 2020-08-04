@@ -464,12 +464,15 @@ provides, and ~doom help COMMAND~ to display documentation for a particular
 **** Add Doom to PATH
 I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
 directly and from anywhere. 
-To accomplish this: (For Debian-based distros. Mileage may vary in other distro 
-families.)
+To accomplish this, add the following to your ~/.profile: 
+/(For Debian-based distros. Mileage may vary in other distro families.)/
 #+BEGIN_SRC bash
-echo 'export PATH="$HOME/.emacs.d/bin:$PATH" #Add Doom to Path' >> ~/.profile
-source ~/.profile
+# add doom emacs to path
+if [ -d "$HOME/.emacs.d/bin" ] ; then
+    PATH="$HOME/.emacs.d/bin:$PATH"
+fi
 #+END_SRC
+Then run =source ~/.profile= to apply the settings without restarting your system.
 
 /Note: Using .profile is recommended per 
 [[https://help.ubuntu.com/community/EnvironmentVariables#A.2BAH4-.2F.profile][Ubuntu Documentation]]./
