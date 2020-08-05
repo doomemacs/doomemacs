@@ -435,15 +435,22 @@ Continues comments if executed from a commented line. Consults
         ;; auto-indent on newline by default
         :gi [remap newline] #'newline-and-indent
         ;; insert literal newline
-        :gi "S-RET"        #'+default/newline
-        :gi [S-return]     #'+default/newline
-        :gi "C-j"          #'+default/newline
-        ;; add new item below
-        :gn [C-return]    #'+default/newline-below
-        :gn [C-S-return]  #'+default/newline-above
+        :gi "S-RET"         #'+default/newline
+        :gi [S-return]      #'+default/newline
+        :gi "C-j"           #'+default/newline
+
+        ;; Add new item below current (without splitting current line).
+        :gi "C-RET"         #'+default/newline-below
+        :gn [C-return]      #'+default/newline-below
+        ;; Add new item above current (without splitting current line)
+        :gi "C-S-RET"       #'+default/newline-above
+        :gn [C-S-return]    #'+default/newline-above
+
         (:when IS-MAC
-          :gn [s-return]    #'+default/newline-below
-          :gn [S-s-return]  #'+default/newline-above)))
+         :gn "s-RET"        #'+default/newline-below
+         :gn [s-return]     #'+default/newline-below
+         :gn "S-s-RET"      #'+default/newline-above
+         :gn [S-s-return]   #'+default/newline-above)))
 
 
 ;;
