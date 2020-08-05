@@ -34,7 +34,6 @@
 
 (package! avy)
 (package! htmlize :pin "86f22f211e9230857197c42a9823d3f05381deed")
-(package! org-superstar :pin "17481852c1bd09afea877635a3185261fc19fd64")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
@@ -67,6 +66,9 @@
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
+(when (featurep! +pretty)
+  (package! org-superstar :pin "17481852c1bd09afea877635a3185261fc19fd64")
+  (package! org-fancy-priorities :pin "819bb993b71e7253cefef7047306ab4e0f9d0a86"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")

@@ -70,13 +70,15 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+pomodoro= Enables a pomodoro timer for clocking time on tasks.
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
   Emacs can be used for presentations.
++ =+pretty= Enables pretty unicode symbols for bullets and priorities, and
+  better syntax highlighting for latex. Keep in mind: this can be expensive. If
+  org becomes too slow, it'd be wise to disable this flag.
 + =+roam= Enables org-roam integration. This requires ~sqlite3~ to be installed
   on your system.
 
 ** Plugins
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
 + [[https://github.com/astahlman/ob-async][ob-async]]
-+ [[https://github.com/integral-dw/org-superstar-mode][org-superstar]]
 + [[https://github.com/rexim/org-cliplink][org-cliplink]]
 + [[https://github.com/magit/orgit][orgit]]
 + [[https://orgmode.org/][org-plus-contrib]]
@@ -122,6 +124,9 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/anler/centered-window-mode][centered-window]]
   + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
   + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
++ =+pretty=
+  + [[https://github.com/integral-dw/org-superstar-mode][org-superstar]]
+  + [[https://github.com/harrybournis/org-fancy-priorities][org-fancy-priorities]]
 + =+roam=
   + [[https://github.com/org-roam/org-roam][org-roam]]
   + [[https://github.com/org-roam/company-org-roam][company-org-roam]]
