@@ -33,8 +33,11 @@ byte-compiled from.")
                 ;; modifies the buffer so we must do it in a copy to prevent
                 ;; stepping on the user's toes.
                 (with-temp-file backup
-                  (let ((buffer-file-name backup))
+                  (let ((buffer-file-name backup)
+                        (org-inhibit-startup t)
+                        org-mode-hook)
                     (insert-file-contents org)
+                    (org-mode)
                     (org-export-expand-include-keyword)
                     (org-babel-tangle nil dest)))
                 t)
