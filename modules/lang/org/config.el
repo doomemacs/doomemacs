@@ -195,6 +195,8 @@ This forces it to read the background before rendering."
 
 
 (defun +org-init-babel-h ()
+  (set-eval-handler! 'org-mode #'+org-eval-handler)
+
   (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t     ; we do this ourselves
         ;; You don't need my permission (just be careful, mkay?)
@@ -1009,8 +1011,6 @@ compelling reason, so..."
         :m "]c"  #'org-babel-next-src-block
         :m "[c"  #'org-babel-previous-src-block
         :n "gQ"  #'org-fill-paragraph
-        :n "gr"  #'org-ctrl-c-ctrl-c
-        :n "gR"  #'org-babel-execute-buffer
         ;; sensible vim-esque folding keybinds
         :n "za"  #'+org/toggle-fold
         :n "zA"  #'org-shifttab

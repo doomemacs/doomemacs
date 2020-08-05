@@ -469,14 +469,6 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
           t)))))
 
 ;;;###autoload
-(defun +org-clear-babel-results-h ()
-  "Remove the results block for the org babel block at point."
-  (when (and (org-in-src-block-p t)
-             (org-babel-where-is-src-block-result))
-    (org-babel-remove-result)
-    t))
-
-;;;###autoload
 (defun +org-make-last-point-visible-h ()
   "Unfold subtree around point if saveplace places us in a folded region."
   (and (not org-inhibit-startup)
