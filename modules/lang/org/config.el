@@ -998,8 +998,8 @@ compelling reason, so..."
         :ni "C-S-k" #'org-shiftup
         :ni "C-S-j" #'org-shiftdown
         ;; more intuitive RET keybinds
-        :i [return] (cmd! (org-return t))
-        :i "RET"    (cmd! (org-return t))
+        :i [return] (cmd! (org-return electric-indent-mode))
+        :i "RET"    (cmd! (org-return electric-indent-mode))
         :i [S-return] #'+org/shift-return
         :i "S-RET"    #'+org/shift-return
         :n [return] #'+org/dwim-at-point
