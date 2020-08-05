@@ -74,6 +74,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
   (setq-default
+   ;; Different colors for different priority levels
    org-agenda-deadline-faces
    '((1.001 . error)
      (1.0 . org-warning)
@@ -82,9 +83,8 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
    ;; Don't monopolize the whole frame just for the agenda
    org-agenda-window-setup 'current-window
    org-agenda-skip-unavailable-files t
-   ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
-   ;; better context instead of just the current week which is a bit confusing
-   ;; on, for example, a sunday
+   ;; Shift the agenda to show the previous 3 days and the next 7 days for
+   ;; better context on your week. The past is less important than the future.
    org-agenda-span 10
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-3d"
@@ -372,10 +372,7 @@ relative to `org-directory', unless it is an absolute path."
                     (propertize (abbreviate-file-name (buffer-file-name (buffer-base-buffer)))
                                 'face 'font-lock-string-face)
                     org-eldoc-breadcrumb-separator
-                    header-line-format))))
-
-  (when (featurep! :editor evil)
-    (add-hook 'org-capture-mode-hook #'evil-insert-state)))
+                    header-line-format)))))
 
 
 (defun +org-init-capture-frame-h ()
@@ -969,6 +966,7 @@ compelling reason, so..."
 (use-package! evil-org
   :when (featurep! :editor evil +everywhere)
   :hook (org-mode . evil-org-mode)
+  :hook (org-capture-mode . evil-insert-state)
   :init
   (defvar evil-org-retain-visual-state-on-shift t)
   (defvar evil-org-special-o/O '(table-row))
@@ -984,26 +982,25 @@ compelling reason, so..."
         :ni [C-return]   #'+org/insert-item-below
         :ni [C-S-return] #'+org/insert-item-above
         ;; navigate table cells (from insert-mode)
-        :i "C-l" (general-predicate-dispatch 'org-end-of-line
-                   (org-at-table-p) 'org-table-next-field)
-        :i "C-h" (general-predicate-dispatch 'org-beginning-of-line
-                   (org-at-table-p) 'org-table-previous-field)
-        :i "C-k" (general-predicate-dispatch 'org-up-element
-                   (org-at-table-p) '+org/table-previous-row)
-        :i "C-j" (general-predicate-dispatch 'org-down-element
-                   (org-at-table-p) 'org-table-next-row)
-        ;; moving/(de|pro)moting subtress & expanding tables (prepend/append columns/rows)
-        :ni "C-S-l" #'org-shiftright
-        :ni "C-S-h" #'org-shiftleft
-        :ni "C-S-k" #'org-shiftup
-        :ni "C-S-j" #'org-shiftdown
+        :i  "C-l"     (cmds! (org-at-table-p) #'org-table-next-field
+                             #'org-end-of-line)
+        :i  "C-h"     (cmds! (org-at-table-p) #'org-table-previous-field
+                             #'org-beginning-of-line)
+        :i  "C-k"     (cmds! (org-at-table-p) #'+org/table-previous-row
+                             #'org-up-element)
+        :i  "C-j"     (cmds! (org-at-table-p) #'org-table-next-row
+                             #'org-down-element)
+        :ni "C-S-l"   #'org-shiftright
+        :ni "C-S-h"   #'org-shiftleft
+        :ni "C-S-k"   #'org-shiftup
+        :ni "C-S-j"   #'org-shiftdown
         ;; more intuitive RET keybinds
-        :i [return] (cmd! (org-return electric-indent-mode))
-        :i "RET"    (cmd! (org-return electric-indent-mode))
+        :n [return]   #'+org/dwim-at-point
+        :n "RET"      #'+org/dwim-at-point
+        :i [return]   (cmd! (org-return electric-indent-mode))
+        :i "RET"      (cmd! (org-return electric-indent-mode))
         :i [S-return] #'+org/shift-return
         :i "S-RET"    #'+org/shift-return
-        :n [return] #'+org/dwim-at-point
-        :n "RET"    #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]h"  #'org-forward-heading-same-level
         :m "[h"  #'org-backward-heading-same-level
@@ -1057,8 +1054,8 @@ compelling reason, so..."
   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
   org-capture
   :preface
-  ;; Set these to nil now so we can detect user changes to them later (and fall
-  ;; back on defaults otherwise)
+  ;; Set to nil so we can detect user changes to them later (and fall back on
+  ;; defaults otherwise).
   (defvar org-directory nil)
   (defvar org-attach-id-dir nil)
 
@@ -1067,8 +1064,8 @@ compelling reason, so..."
         ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
         org-list-allow-alphabetical t)
 
-  ;; Make most of the default modules opt-in, because I sincerely doubt most
-  ;; users use all of them.
+  ;; Make most of the default modules opt-in to lighten its first-time load
+  ;; delay. I sincerely doubt most users use them all.
   (defvar org-modules
     '(;; ol-w3m
       ;; ol-bbdb
