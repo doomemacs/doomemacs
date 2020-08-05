@@ -427,6 +427,11 @@ Continues comments if executed from a commented line. Consults
         ;; which ctrl+RET will add a new "item" below the current one and
         ;; cmd+RET (Mac) / meta+RET (elsewhere) will add a new, blank line below
         ;; the current one.
+
+        ;; C-<mouse-scroll-up>   = text scale increase
+        ;; C-<mouse-scroll-down> = text scale decrease
+        [C-down-mouse-2] (cmd! (text-scale-set 0))
+
         ;; auto-indent on newline by default
         :gi [remap newline] #'newline-and-indent
         ;; insert literal newline
