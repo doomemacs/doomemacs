@@ -470,8 +470,11 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 ;;;###autoload
 (defun +org-make-last-point-visible-h ()
   "Unfold subtree around point if saveplace places us in a folded region."
-  (and (not org-agenda-inhibit-startup)
-       (outline-invisible-p)
+  (and (not org-inhibit-startup)
+       (not org-inhibit-startup-visibility-stuff)
+       (org-invisible-p nil 'folding-only)
+       (or (not (org-on-heading-p))
+           (not (member "ARCHIVE" (org-get-tags))))
        (ignore-errors
          (save-excursion
            (outline-previous-visible-heading 1)
