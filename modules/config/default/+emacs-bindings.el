@@ -425,10 +425,6 @@
       "M-=" #'doom/increase-font-size
       "M--" #'doom/decrease-font-size
 
-      ;;; newlines
-      [remap newline]  #'newline-and-indent
-      "C-j"            #'+default/newline
-
       ;;; search
       (:when (featurep! :completion ivy)
         "C-S-s"        #'swiper

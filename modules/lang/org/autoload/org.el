@@ -271,6 +271,15 @@ If on a:
           (org-element-property :begin context)
           (org-element-property :end context)))))))
 
+;;;###autoload
+(defun +org/shift-return (&optional arg)
+  "Insert a literal newline, or dwim in tables.
+Executes `org-table-copy-down' if in table."
+  (interactive "p")
+  (if (org-at-table-p)
+      (org-table-copy-down arg)
+    (org-return nil arg)))
+
 
 ;; I use these instead of `org-insert-item' or `org-insert-heading' because they
 ;; impose bizarre whitespace rules depending on cursor location and many

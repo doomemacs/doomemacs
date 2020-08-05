@@ -643,6 +643,7 @@ between the two."
         "C-c C-S-l"  #'+org/remove-link
         "C-c C-i"    #'org-toggle-inline-images
         ;; textmate-esque newline insertion
+        "S-RET"      #'+org/shift-return
         "C-RET"      #'+org/insert-item-below
         "C-S-RET"    #'+org/insert-item-above
         "C-M-RET"    #'org-insert-subheading
@@ -999,6 +1000,8 @@ compelling reason, so..."
         ;; more intuitive RET keybinds
         :i [return] (cmd! (org-return t))
         :i "RET"    (cmd! (org-return t))
+        :i [S-return] #'+org/shift-return
+        :i "S-RET"    #'+org/shift-return
         :n [return] #'+org/dwim-at-point
         :n "RET"    #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
