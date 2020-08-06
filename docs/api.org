@@ -317,8 +317,8 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (map! "C-x y" #'do-something)
 
 ;; bind a key on a keymap
-(define-key emacs-lisp-mode (kbd "C-c p") #'do-something)
-(map! :map emacs-lisp-mode "C-c p" #'do-something)
+(define-key emacs-lisp-mode-map (kbd "C-c p") #'do-something)
+(map! :map emacs-lisp-mode-map "C-c p" #'do-something)
 
 ;; unbind a key defined elsewhere
 (define-key lua-mode-map (kbd "SPC m b") nil)
