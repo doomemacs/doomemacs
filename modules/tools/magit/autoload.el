@@ -53,7 +53,29 @@
                                magit-diff-mode
                                magit-stash-mode
                                magit-status-mode))))
-              '(display-buffer-same-window))))))
+              '(display-buffer-same-window))
+
+             ('(+magit--display-buffer-in-direction))))))
+
+(defun +magit--display-buffer-in-direction (buffer alist)
+  "`display-buffer-alist' handler that opens BUFFER in a direction.
+
+This differs from `display-buffer-in-direction' in one way: it will try to use a
+window that already exists in that direction. It will split otherwise."
+  (let ((direction (or (alist-get 'direction alist)
+                       +magit-open-windows-in-direction)))
+    (if-let (window (window-in-direction direction))
+        (select-window window)
+      (if-let (window (window-in-direction
+                       (pcase direction
+                         (`right 'left)
+                         (`left 'right)
+                         ((or `up `above) 'down)
+                         ((or `down `below) 'up))))
+          (select-window window)
+        (split-window-horizontally)))
+    (switch-to-buffer buffer)
+    (selected-window)))
 
 
 ;;

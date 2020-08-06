@@ -1,5 +1,13 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
+(defvar +magit-open-windows-in-direction 'right
+  "What direction to open new windows from the status buffer.
+For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
+
+
+;;
+;;; Packages
+
 (use-package! magit
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
