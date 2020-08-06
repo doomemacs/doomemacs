@@ -121,7 +121,8 @@
   (dap-mode 1))
 
 
-(use-package! dap-ui-mode
+
+(use-package! dap-ui
   :when (featurep! +lsp)
   :hook (dap-mode . dap-ui-mode)
   :hook (dap-ui-mode . dap-ui-controls-mode))
