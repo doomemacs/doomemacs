@@ -469,7 +469,7 @@ directives. By default, this only recognizes C directives.")
       :nv "zn"    #'+evil:narrow-buffer
       :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
       :n  "zx"    #'kill-current-buffer
-      :n  "ZX"    #'bury-buffer
+      :n  "ZX"    #'doom/save-and-kill-buffer
       ;; don't leave visual mode after shifting
       :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
       :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv

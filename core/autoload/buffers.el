@@ -265,6 +265,13 @@ See `doom-real-buffer-p' for an explanation for real buffers."
 ;; Interactive commands
 
 ;;;###autoload
+(defun doom/save-and-kill-buffer ()
+  "Save the current buffer to file, then kill it."
+  (interactive)
+  (save-buffer)
+  (kill-current-buffer))
+
+;;;###autoload
 (defun doom/kill-this-buffer-in-all-windows (buffer &optional dont-save)
   "Kill BUFFER globally and ensure all windows previously showing this buffer
 have switched to a real buffer or the fallback buffer.
