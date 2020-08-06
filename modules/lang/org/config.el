@@ -195,8 +195,6 @@ This forces it to read the background before rendering."
 
 
 (defun +org-init-babel-h ()
-  (set-eval-handler! 'org-mode #'+org-eval-handler)
-
   (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t     ; we do this ourselves
         ;; You don't need my permission (just be careful, mkay?)
@@ -1107,7 +1105,11 @@ compelling reason, so..."
     (run-hooks 'org-load-hook))
 
   :config
-  (setq org-archive-subtree-save-file-p t) ; save target buffer after archiving
+  (set-company-backend! 'org-mode 'company-capf 'company-dabbrev)
+  (set-eval-handler! 'org-mode #'+org-eval-handler)
+
+  ;; Save target buffer after archiving a node.
+  (setq org-archive-subtree-save-file-p t)
 
   ;; Prevent modifications made in invisible sections of an org document, as
   ;; unintended changes can easily go unseen otherwise.
