@@ -34,7 +34,7 @@
     (when (featurep! :checkers syntax)
       (add-hook! 'racket-xp-mode-hook
         (defun +racket-disable-flycheck-h ()
-          (flycheck-disable-checker 'racket)))))
+          (cl-pushnew 'racket flycheck-disabled-checkers)))))
 
   (unless (or (featurep! :editor parinfer)
               (featurep! :editor lispy))
