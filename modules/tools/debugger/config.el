@@ -118,8 +118,11 @@
         (with-eval-after-load lib
           (mapc #'require (doom-enlist libs))))))
 
-  (dap-mode 1))
+  (dap-mode 1)
 
+  (map! :localleader
+        :map dap-mode-map
+        "d" #'dap-hydra))
 
 
 (use-package! dap-ui
