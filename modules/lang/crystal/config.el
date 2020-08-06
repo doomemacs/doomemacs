@@ -3,11 +3,7 @@
 (after! crystal-mode
   (set-lookup-handlers! 'crystal-mode
     :definition #'crystal-def-jump
-    :references #'crystal-tool-imp)
-  (set-eval-handler! 'crystal-mode
-    '((:command     . "crystal")
-      (:exec        . "%c %s")
-      (:description . "Run Crystal script"))))
+    :references #'crystal-tool-imp))
 
 
 (use-package! flycheck-crystal
