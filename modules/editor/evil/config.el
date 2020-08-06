@@ -46,7 +46,10 @@ directives. By default, this only recognizes C directives.")
         evil-visual-state-cursor 'hollow
         ;; Only do highlighting in selected window so that Emacs has less work
         ;; to do highlighting them all.
-        evil-ex-interactive-search-highlight 'selected-window)
+        evil-ex-interactive-search-highlight 'selected-window
+        ;; It's infuriating that innocuous "beginning of line" or "end of line"
+        ;; errors will abort macros, so suppress them:
+        evil-kbd-macro-suppress-motion-error t)
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
