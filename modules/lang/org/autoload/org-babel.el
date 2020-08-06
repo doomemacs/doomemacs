@@ -17,6 +17,45 @@
         (+eval/region beg end)))))
 
 
+;;;###autoload
+(defun +org-lookup-definition-handler (identifier)
+  "TODO"
+  (when (org-in-src-block-p t)
+    (let ((mode (org-src-get-lang-mode
+                 (or (org-eldoc-get-src-lang)
+                     (user-error "No lang specified for this src block")))))
+      (cond ((and (eq mode 'emacs-lisp-mode)
+                  (fboundp '+emacs-lisp-lookup-definition))
+             (+emacs-lisp-lookup-definition identifier)
+             'deferred)
+            ((user-error "Definition lookup in SRC blocks isn't supported yet"))))))
+
+;;;###autoload
+(defun +org-lookup-references-handler (identifier)
+  "TODO"
+  (when (org-in-src-block-p t)
+    (user-error "References lookup in SRC blocks isn't supported yet")))
+
+;;;###autoload
+(defun +org-lookup-documentation-handler (identifier)
+  "TODO"
+  (when (org-in-src-block-p t)
+    (let ((mode (org-src-get-lang-mode
+                 (or (org-eldoc-get-src-lang)
+                     (user-error "No lang specified for this src block"))))
+          (info (org-babel-get-src-block-info t)))
+      (cond ((string-prefix-p "jupyter-" (car info))
+             (and (require 'jupyter nil t)
+                  (call-interactively #'jupyter-inspect-at-point)
+                  (display-buffer (help-buffer))
+                  'deferred))
+            ((and (eq mode 'emacs-lisp-mode)
+                  (fboundp '+emacs-lisp-lookup-documentation))
+             (+emacs-lisp-lookup-documentation identifier)
+             'deferred)
+            ((user-error "Documentation lookup in SRC blocks isn't supported yet"))))))
+
+
 ;;
 ;;; Hooks
 

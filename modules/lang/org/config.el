@@ -1107,6 +1107,10 @@ compelling reason, so..."
   :config
   (set-company-backend! 'org-mode 'company-capf 'company-dabbrev)
   (set-eval-handler! 'org-mode #'+org-eval-handler)
+  (set-lookup-handlers! 'org-mode
+    :definition #'+org-lookup-definition-handler
+    :references #'+org-lookup-references-handler
+    :documentation #'+org-lookup-documentation-handler)
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)
