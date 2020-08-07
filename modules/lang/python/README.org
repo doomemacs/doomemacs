@@ -20,14 +20,17 @@ Adds Python support to Doom Emacs.
 + Snippets
 + Run tests (~nose~, ~pytest~)
 + Auto-format (~black~), requires ~:editor format~
++ LSP integration (mspyls, pyls, or pyright)
 
 ** Module Flags
 + ~+lsp~ Language Server Protocol support
++ ~+pyright~ Use the pyright LSP server instead of mspyls or pyls (requires
+  ~+lsp~).
 + ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
 + ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
 + ~+poetry~ Python packaging, dependency management, and virtual environment
   support via [[https://python-poetry.org/][Poetry]]
-+ ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
++ ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
 
 ** Plugins
 + [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
@@ -37,68 +40,55 @@ Adds Python support to Doom Emacs.
 + [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]*
 + [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]*
 + [[https://github.com/pwalsh/pipenv.el][pipenv]]*
-+ ~:editor format~
-  + [[https://github.com/lassik/emacs-format-all-the-code][format-all]]*
-+ ~+conda~
++ if ~+conda~
   + [[https://github.com/necaris/conda.el][conda]]*
-+ ~+pyenv~
++ if ~+pyenv~
   + [[https://github.com/pythonic-emacs/pyenv-mode][pyenv]]*
-+ ~+poetry~
++ if ~+poetry~
   + [[https://github.com/galaunay/poetry.el][poetry]]*
-+ ~+lsp~ and ~:tools lsp~
++ if ~+lsp~ and ~:tools lsp~
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
-  + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]*
-+ ~+cython~
-  + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
-  + ~:checkers syntax~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
+  + if ~+pyright~
+    + [[https://github.com/emacs-lsp/lsp-pyright][lsp-pyright]]
+  + else
+    + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]
++ if ~+cython~
+  + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
+  + if ~:checkers syntax~: [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][flycheck-cython]]
 
 * Prerequisites
-This module has no direct prerequisites. Here are some of its soft dependencies.
+This module has no hard prerequisites, but a few soft ones:
 
-+ To run tests inside of Emacs:
++ For this module's supported test runners:
   + ~pip install pytest~
   + ~pip install nose~
-
-+ The ~:editor format~ module uses [[https://github.com/psf/black][Black]] for python files
-  + ~pip install black~
-
-+ ~pyimport~ requires Python's module ~pyflakes~:
-  + ~pip install pyflakes~
-
-+ ~py-isort~ requires [[https://github.com/timothycrosley/isort][isort]] to be installed:
-  + ~pip install isort~
-
++ The ~:editor format~ module uses [[https://github.com/psf/black][Black]] for python files :: ~pip install black~
++ ~pyimport~ requires Python's module ~pyflakes~ :: ~pip install pyflakes~
++ ~py-isort~ requires [[https://github.com/timothycrosley/isort][isort]] to be installed :: ~pip install isort~
 + Python virtual environments install instructions at:
   + [[https://github.com/pyenv/pyenv][pyenv]]
   + [[https://conda.io/en/latest/][Conda]]
   + [[https://python-poetry.org/][Poetry]]
-
-+ ~pipenv~ requires [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
-
+  + [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
 + ~cython~ requires [[https://cython.org/][Cython]]
 
 ** Language Server Protocol Support
-This module must be enabled with the =+lsp= flag, and the =:tools lsp= module
-must be enabled. LSP will try pyls then mspyls; the first that is available.
+For LSP support the =:tools lsp= module must be enabled, along with this
+module's =+lsp= flag. By default, it supports =mspyls= and =pyls=, in that
+order. With the =+pyright= flag, it will try Pyright first.
 
-*To use [[https://pypi.org/project/python-language-server/][Python Language Server]] (pyls)* install it with ~pip install
-'python-language-server[all]'~
+Each of these servers must be installed on your system via your OS package
+manager or manually:
 
-*To use mspyls*, install it with ~M-x lsp-install-server~ and add this to your
-private config.el:
-
-#+BEGIN_SRC elisp
-(after! lsp-python-ms
-  (set-lsp-priority! 'mspyls 1))
-#+END_SRC
-
-*To use pyright*, install it from your shell with with ~npm i -g pyright~.
++ [[https://pypi.org/project/python-language-server/][*pyls*]] can be installed with ~pip install python-language-server[all]~.
++ *mspyls* can be installed by typing =M-x lsp-install-server RET mspyls=.
++ *pyright* can be installed with ~pip install pyright~ or ~npm i -g pyright~.
 
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
 Server]], [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
 
-To enable support for auto-formatting with black enable ~:editor format-all~ in
+To enable support for auto-formatting with black enable ~:editor format~ in
 ~init.el~ file.
 
 ** Keybindings
