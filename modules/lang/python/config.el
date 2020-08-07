@@ -319,16 +319,7 @@ called.")
     :after lsp-clients
     :preface
     (after! python
-      (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
-    :init
-    ;; HACK If you don't have python installed, then opening python buffers with
-    ;;      this on causes a "wrong number of arguments: nil 0" error, because of
-    ;;      careless usage of `cl-destructuring-bind'. This silences that error,
-    ;;      since we may still want to write some python on a system without
-    ;;      python installed!
-    (defadvice! +python--silence-errors-a (orig-fn &rest args)
-      :around #'lsp-python-ms--extra-init-params
-      (ignore-errors (apply orig-fn args))))
+      (setq lsp-python-ms-python-executable-cmd python-shell-interpreter)))
 
   (use-package! lsp-pyright
     :when (featurep! +pyright)
