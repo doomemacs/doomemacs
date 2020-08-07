@@ -1,0 +1,31 @@
+#+TITLE:   lang/windows-scripts
+#+DATE:    August 7, 2020
+#+SINCE:   <replace with next tagged release version>
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+
+* Description
+
+This module provides PowerShell and dos script support powered by LSP leveraging PowerShellEditorServices
+
+** Maintainers
+
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enables lsp-pwsh integration using PowerShellEditorServices
+
+** Plugins
++ [[github:jschaf/powershell.el][powershell-mode]]
++ [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/progmodes/bat-mode.el][dos-mode]]
+
+
+* Prerequisites
+This modeule needs:
+  + [[https:github.com/PowerShell/PowerShell][PowerShell Core]]
