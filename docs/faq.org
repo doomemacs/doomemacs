@@ -847,21 +847,27 @@ Looking for a terminal in Emacs? Doom offers four modules:
 
 But which do you choose?
 
-+ =eshell= is the Emacs Lisp shell. It's stable, works anywhere Emacs runs (on
-  any OS) and has no external dependencies, /but/ lacks features you'll expect
-  from mature shells and tends to be slower than them.
++ =eshell= is a shell completely implemented in Emacs Lisp. It's stable, works
+  anywhere Emacs runs (on any OS) and has no external dependencies, /but/ lacks
+  features you'll expect from mature shells, tends to be slower than them, and
+  does not support command line tools with TUIs (e.g. curses, ncdu, nmtui, top,
+  etc).
 + =shell= is a shell /for/ your shell. Think of it like a REPL for bash/zsh,
-  rather than terminal emulation. Due to its simplicity, you're less likely to
+  rather than a terminal emulator. Due to its simplicity, you're less likely to
   encounter edge cases (e.g. against your shell config), but it has the smallest
   feature set. It also won't work with TUI programs like htop or vim.
-+ =term= is Emacs' built-in terminal emulator. It's alright when it works, awful
-  when it doesn't. =vterm= is almost always a better option.
-+ =vterm= is as good as terminal emulation gets in Emacs atm, but has a few
-  extra steps to get going. a) Emacs must be built with dynamic modules support
-  and b) you'll need to compile vterm-module.so, which has external dependencies
-  (libvterm). It is automatically built when you first open =vterm=, but this
-  will fail on Windows, NixOS and Guix out of the box -- you're on your own
-  there!
++ =term= is Emacs' built-in terminal emulator. Term runs a shell and understand
+  many (but not all) terminal escape codes, so many TUI programs (like top or
+  vim) will work. However, term's performance is inferior to standalone
+  terminals, especially with large bursts of output.
++ =vterm= is as good as terminal emulation gets in Emacs (at the time of
+  writing), and is the most performant, as it is an external library written
+  in C. However, it requires extra steps to set up. a) Emacs must be built with
+  dynamic modules support and b) you'll need to compile vterm-module.so, which
+  has external dependencies (libvterm). It is automatically built when you first
+  open =vterm=, but this will fail on Windows, NixOS and Guix out of the box.
+  Except for Windows, you'll find install instructions for nix/guix in [[file:../modules/term/vterm/README.org][the :term
+  vterm module's documentation]].
 
 For a terminal in Emacs, =eshell= and =vterm= are generally the best options.
 
