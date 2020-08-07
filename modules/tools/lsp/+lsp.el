@@ -4,6 +4,13 @@
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
 
+(defvar +lsp-auto-install-servers nil
+  "If non-nil, automatically install LSP servers.
+
+`lsp-mode' will prompt you to install an LSP server when you enter a major mode
+with LSP support but no available server. I believe changes to your system
+should be a deliberate act (as is flipping this variable).")
+
 
 ;;
 ;;; Packages
@@ -64,14 +71,32 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
       (let ((lsp-keymap-prefix (concat leader-key " c l")))
         (lsp-enable-which-key-integration))))
 
+  (when lsp-auto-configure
+    (mapc (lambda (package) (require package nil t))
+          (cl-remove-if #'featurep lsp-client-packages)))
+
   (defadvice! +lsp--dont-auto-install-servers-a (orig-fn &rest args)
-    "Don't auto-install LSP servers. Only complain if there aren't available."
+    "Replace auto-install behavior with warning and support indirect buffers."
     :around #'lsp
-    ;; `lsp' is normally eager to automatically install LSP servers, or
-    ;; prompting to do so, but (in my opinion) server installation should be a
-    ;; deliberate act by the end-user:
-    (letf! (defun lsp--client-download-server-fn (&rest _))
-      (apply orig-fn args)))
+    (if +lsp-auto-install-servers
+        (apply-orig-fn args)
+      (letf! ((buffer-file-name
+               ;; Add support for indirect buffers (org src or capture buffers)
+               (or buffer-file-name
+                   (buffer-file-name (buffer-base-buffer))))
+              ;; Already loaded them. No need to do so again.
+              (lsp-client-packages nil)
+              ;; `lsp' is normally eager to automatically install LSP servers, or
+              ;; prompting to do so, but (in my opinion) server installation
+              ;; should be a deliberate act by the end-user:
+              (defun lsp--completing-read (msg clients &rest _)
+                (lsp--warn (concat msg "%s\n"
+                                   "  Use `M-x lsp-install-server' to install a supported server, or read "
+                                   "https://emacs-lsp.github.io/lsp-mode/page/languages for more.")
+                           (mapcar #'lsp--client-server-id clients))
+                (throw 'not-installed nil)))
+        (catch 'not-installed
+          (apply orig-fn args)))))
 
   (add-hook! 'lsp-mode-hook
     (defun +lsp-init-optimizations-h ()
@@ -127,7 +152,7 @@ server getting expensively restarted when reverting buffers."
 
 
 (use-package! lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
+  :defer t
   :config
   (setq lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
