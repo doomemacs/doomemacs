@@ -1,20 +1,13 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/cli/packages.el
 
-(defcli! (update u)
-    ((discard-p ["--discard"] "All local changes to packages are discarded"))
-  "Updates packages.
-
-This works by fetching all installed package repos and checking the distance
-between HEAD and FETCH_HEAD. This can take a while.
-
-This excludes packages whose `package!' declaration contains a non-nil :freeze
-or :ignore property."
-  (straight-check-all)
-  (let ((doom-auto-discard discard-p))
-    (when (doom-cli-packages-update)
-      (doom-autoloads-reload))
-    t))
+(defcli! (update u) (&rest _)
+  "This command was removed."
+  :hidden t
+  (print! (error "This command has been removed.\n"))
+  (print-group!
+   (print! "To update Doom run 'doom upgrade'. To only update packages run 'doom sync -u'."))
+  nil)
 
 (defcli! (build b)
     ((rebuild-p ["-r"] "Only rebuild packages that need rebuilding"))
