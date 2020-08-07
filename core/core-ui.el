@@ -171,8 +171,10 @@ or if the current buffer is read-only or not file-visiting."
 ;; middle-click paste at point, not at click
 (setq mouse-yank-at-point t)
 
-;; Enable mouse in terminal Emacs
-(add-hook 'tty-setup-hook #'xterm-mouse-mode)
+;; Larger column width for function name in profiler reports
+(after! profiler
+  (setf (caar profiler-report-cpu-line-format) 80
+        (caar profiler-report-memory-line-format) 80))
 
 
 ;;
