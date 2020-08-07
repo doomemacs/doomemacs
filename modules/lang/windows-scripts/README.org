@@ -22,7 +22,7 @@ This module has no dedicated maintainers.
 + =+lsp= Enables lsp-pwsh integration using PowerShellEditorServices
 
 ** Plugins
-+ [[github:jschaf/powershell.el][powershell-mode]]
++ [[https://github.com/jschaf/powershell.el][powershell-mode]]
 + [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/progmodes/bat-mode.el][dos-mode]]
 
 
