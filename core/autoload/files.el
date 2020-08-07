@@ -28,8 +28,7 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
             (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
                     (cdr spec)))
     (let ((filevar (make-symbol "file")))
-      `(let* ((file-name-handler-alist nil)
-              (,filevar ,spec))
+      `(let ((,filevar ,spec))
          (and (stringp ,filevar)
               ,(if directory
                    `(let ((default-directory ,directory))
@@ -38,21 +37,19 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
               ,filevar)))))
 
 (defun doom--path (&rest segments)
-  (let (file-name-handler-alist)
-    (let ((dir (pop segments)))
-      (unless segments
-        (setq dir (expand-file-name dir)))
-      (while segments
-        (setq dir (expand-file-name (car segments) dir)
-              segments (cdr segments)))
-      dir)))
+  (let ((dir (pop segments)))
+    (unless segments
+      (setq dir (expand-file-name dir)))
+    (while segments
+      (setq dir (expand-file-name (car segments) dir)
+            segments (cdr segments)))
+    dir))
 
 ;;;###autoload
 (defun doom-glob (&rest segments)
   "Construct a path from SEGMENTS and expand glob patterns.
 Returns nil if the path doesn't exist."
   (let* (case-fold-search
-         file-name-handler-alist
          (dir (apply #'doom--path segments)))
     (if (string-match-p "[[*?]" dir)
         (file-expand-wildcards dir t)
@@ -105,7 +102,7 @@ be relative to it.
 The search recurses up to DEPTH and no further. DEPTH is an integer.
 
 MATCH is a string regexp. Only entries that match it will be included."
-  (let (result file-name-handler-alist)
+  (let (result)
     (dolist (file (mapcan (doom-rpartial #'doom-glob "*") (doom-enlist paths)))
       (cond ((file-directory-p file)
              (appendq!

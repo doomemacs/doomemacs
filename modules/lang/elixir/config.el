@@ -37,7 +37,12 @@
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (when (featurep! +lsp)
-    (add-hook 'elixir-mode-local-vars-hook #'lsp!)))
+    (add-hook 'elixir-mode-local-vars-hook #'lsp!))
+
+  (after! highlight-numbers
+    (puthash 'elixir-mode
+             "\\_<-?[[:digit:]]+\\(?:_[[:digit:]]\\{3\\}\\)*\\_>"
+             highlight-numbers-modelist)))
 
 
 (use-package! flycheck-credo

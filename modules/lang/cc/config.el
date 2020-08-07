@@ -230,28 +230,26 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook)
-    (defun +cc-init-lsp-h ()
-      (setq-local company-transformers nil)
-      (setq-local company-lsp-async t)
-      (setq-local company-lsp-cache-candidates nil)
-      (lsp!))))
+    #'lsp!)
 
-(when (and (featurep! +lsp) (featurep! :tools lsp +eglot))
-  ;; Map eglot specific helper
-  (map! :localleader
-        :after cc-mode
-        :map c++-mode-map
-        :n :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
+  (when (featurep! :tools lsp +eglot)
+    ;; Map eglot specific helper
+    (map! :localleader
+          :after cc-mode
+          :map c++-mode-map
+          :n :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
 
-  ;; NOTE : This setting is untested yet
-  (after! eglot
-    ;; IS-MAC custom configuration
-    (when IS-MAC
-      (add-to-list 'eglot-workspace-configuration
-                   `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
-                                                            "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-                                                            "-isystem/usr/local/include"]
-                                                :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))))))
+    ;; NOTE : This setting is untested yet
+    (after! eglot
+      ;; IS-MAC custom configuration
+      (when IS-MAC
+        (add-to-list 'eglot-workspace-configuration
+                     `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
+                                                              "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+                                                              "-isystem/usr/local/include"]
+                                                  :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir"))))))))))))
+
+
 
 (use-package! ccls
   :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))

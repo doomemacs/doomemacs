@@ -13,11 +13,19 @@
         :desc "Encrypt buffer"          "e" #'ansible-encrypt-buffer
         :desc "Look up in Ansible docs" "h" #'ansible-doc))
 
+
 (after! ansible-doc
   (set-evil-initial-state! '(ansible-doc-module-mode) 'emacs))
 
+
 (use-package! jinja2-mode
-  :mode "\\.j2$")
+  :mode "\\.j2$"
+  :config
+  ;; The default behavior is to reindent the whole buffer on save. This is
+  ;; disruptive and imposing. There are indentation commands available; the user
+  ;; can decide when they want their code reindented.
+  (setq jinja2-enable-indent-on-save nil))
+
 
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)

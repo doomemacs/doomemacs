@@ -119,7 +119,8 @@ non-nil."
       (unless no-config-p
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
         (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-        (load! "config" doom-private-dir t)))))
+        (load! "config" doom-private-dir t)
+        (load custom-file 'noerror (not doom-debug-mode))))))
 
 
 ;;
@@ -329,7 +330,9 @@ This value is cached. If REFRESH-P, then don't use the cached value."
 ;; packages with package.el, by copying over old `use-package' declarations with
 ;; an :ensure t property. Doom doesn't use package.el, so this will throw an
 ;; error that will confuse beginners, so we disable `:ensure'.
-(setq use-package-ensure-function #'ignore)
+(setq use-package-ensure-function
+      (lambda (name &rest _)
+        (message "Ignoring ':ensure t' in '%s' config" name)))
 ;; ...On the other hand, if the user has loaded `package', then we should assume
 ;; they know what they're doing and restore the old behavior:
 (add-transient-hook! 'package-initialize

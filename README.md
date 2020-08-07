@@ -84,7 +84,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 - A rule-based [popup manager][popup-system] to control how temporary buffers
   are displayed (and disposed of).
 - Per-file indentation style detection and [editorconfig] integration. Let
-  someone else can argue about tabs vs **_spaces_**.
+  someone else argue about tabs vs **_spaces_**.
 - Project-management tools and framework-specific minor modes with their own
   snippets libraries.
 - Project search (and replace) utilities, powered by [ripgrep] and [ivy] or

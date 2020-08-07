@@ -14,6 +14,7 @@
 ;;; Bump commands
 
 (defun doom--package-full-recipe (package plist)
+  (require 'straight)
   (doom-plist-merge
    (plist-get plist :recipe)
    (or (cdr (straight-recipes-retrieve package))

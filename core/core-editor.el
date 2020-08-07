@@ -91,6 +91,8 @@ possible."
       backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
 
 (after! tramp
+  ;; Backing up files on remotes can be incredibly slow and prone to a variety
+  ;; of IO errors. Better to disable it altogether in tramp buffers:
   (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil)))
 
 (add-hook! 'after-save-hook
@@ -172,10 +174,12 @@ possible."
 ;;
 ;;; Extra file extensions to support
 
-(push '("/LICENSE\\'" . text-mode) auto-mode-alist)
-(push '("\\.log\\'" . text-mode) auto-mode-alist)
-(push '("rc\\'" . conf-mode) auto-mode-alist)
-(push '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode) auto-mode-alist)
+(nconc
+ auto-mode-alist
+ '(("/LICENSE\\'" . text-mode)
+   ("\\.log\\'" . text-mode)
+   ("rc\\'" . conf-mode)
+   ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
 
 
 ;;
@@ -258,9 +262,12 @@ possible."
   (setq savehist-file (concat doom-cache-dir "savehist"))
   :config
   (setq savehist-save-minibuffer-history t
-        savehist-autosave-interval nil ; save on kill only
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (add-hook! 'kill-emacs-hook
+        savehist-autosave-interval nil     ; save on kill only
+        savehist-additional-variables
+        '(kill-ring                        ; persist clipboard
+          mark-ring global-mark-ring       ; persist marks
+          search-ring regexp-search-ring)) ; persist searches
+  (add-hook! 'savehist-save-hook
     (defun doom-unpropertize-kill-ring-h ()
       "Remove text properties from `kill-ring' for a smaller savehist file."
       (setq kill-ring (cl-loop for item in kill-ring
@@ -312,6 +319,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! better-jumper
   :hook (doom-first-input . better-jumper-mode)
   :hook (better-jumper-post-jump . recenter)
+  :commands doom-set-jump-a doom-set-jump-maybe-a doom-set-jump-h
   :preface
   ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at
   ;; startup. This can be removed once gilbertw1/better-jumper#2 is merged.
@@ -542,7 +550,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
            (if visual-line-mode
                (* so-long-threshold
                   (if (derived-mode-p 'text-mode)
-                      3
+                      4
                     2))
              so-long-threshold)))
       (so-long-detected-long-line-p)))

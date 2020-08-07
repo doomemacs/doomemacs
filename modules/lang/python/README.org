@@ -92,9 +92,11 @@ private config.el:
   (set-lsp-priority! 'mspyls 1))
 #+END_SRC
 
+*To use pyright*, install it from your shell with with ~npm i -g pyright~.
+
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
-Server]] or [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], see [[Language Server Protocol Support][LSP Support]].
+Server]], [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
 
 To enable support for auto-formatting with black enable ~:editor format-all~ in
 ~init.el~ file.

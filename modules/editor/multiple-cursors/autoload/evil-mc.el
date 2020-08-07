@@ -120,3 +120,12 @@ FLAGS can be g and/or i; which mean the same thing they do in
                  :key #'evil-mc-get-cursor-start))
           (message "No cursors to undo in region"))
     (evil-mc-undo-last-added-cursor)))
+
+
+;;;###autoload (autoload '+multiple-cursors-execute-default-operator-fn "editor/multiple-cursors/autoload/evil-mc" nil t)
+
+(after! evil-mc
+  (evil-mc-define-handler +multiple-cursors-execute-default-operator-fn ()
+    :cursor-clear region
+    (evil-mc-with-region-or-execute-macro region t
+      (funcall (evil-mc-get-command-name) region-start region-end))))

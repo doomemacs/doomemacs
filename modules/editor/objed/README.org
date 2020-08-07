@@ -11,9 +11,10 @@ This modules adds [[https://github.com/clemera/objed][objed]], a global minor-mo
 text objects. It combines the ideas of versor-mode and other editors like Vim or
 Kakoune and tries to align them with regular Emacs conventions.
 
-Note that =objed= is intended as an *alternative* to =evil=, for people who
-prefer standard Emacs key-bindings and conventions. It's not recommended to use
-these modules together.
+#+begin_quote
+This module is incompatible with the =:editor evil=. Enabling them both will
+cause errors.
+#+end_quote
 
 [[https://github.com/clemera/objed][See the objed project README]] for information on keybinds and usage.
 

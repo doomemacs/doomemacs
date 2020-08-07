@@ -13,7 +13,7 @@ But before you doom yourself, here are some things you should know:
 3. Use 'doom upgrade' to update Doom. Doing it any other way will require
    additional steps. Run 'doom help upgrade' to understand those extra steps.
 
-4. Access Doom's documentation from within Emacs via 'SPC h D' or 'C-h D' (or
-   'M-x doom/help')
+4. Access Doom's documentation from within Emacs via 'SPC h d h' or 'C-h d h'
+   (or 'M-x doom/help')
 
 Have fun!

@@ -13,7 +13,7 @@ called.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! python
   :mode ("[./]flake8\\'" . conf-mode)
@@ -198,7 +198,7 @@ called.")
 
 
 ;;
-;; Environment management
+;;; Environment management
 
 (use-package! pipenv
   :commands pipenv-project-p
@@ -291,23 +291,6 @@ called.")
   :after python)
 
 
-(use-package! lsp-python-ms
-  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
-  :after lsp-clients
-  :preface
-  (after! python
-    (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
-  :init
-  ;; HACK If you don't have python installed, then opening python buffers with
-  ;;      this on causes a "wrong number of arguments: nil 0" error, because of
-  ;;      careless usage of `cl-destructuring-bind'. This silences that error,
-  ;;      since we may still want to write some python on a system without
-  ;;      python installed!
-  (defadvice! +python--silence-errors-a (orig-fn &rest args)
-    :around #'lsp-python-ms--extra-init-params
-    (ignore-errors (apply orig-fn args))))
-
-
 (use-package! cython-mode
   :when (featurep! +cython)
   :mode "\\.p\\(yx\\|x[di]\\)\\'"
@@ -323,3 +306,30 @@ called.")
   :when (featurep! +cython)
   :when (featurep! :checkers syntax)
   :after cython-mode)
+
+
+;;
+;;; LSP
+
+(when! (and (featurep! +lsp)
+            (not (featurep! :tools lsp +eglot)))
+
+  (use-package! lsp-python-ms
+    :unless (featurep! +pyright)
+    :after lsp-clients
+    :preface
+    (after! python
+      (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
+    :init
+    ;; HACK If you don't have python installed, then opening python buffers with
+    ;;      this on causes a "wrong number of arguments: nil 0" error, because of
+    ;;      careless usage of `cl-destructuring-bind'. This silences that error,
+    ;;      since we may still want to write some python on a system without
+    ;;      python installed!
+    (defadvice! +python--silence-errors-a (orig-fn &rest args)
+      :around #'lsp-python-ms--extra-init-params
+      (ignore-errors (apply orig-fn args))))
+
+  (use-package! lsp-pyright
+    :when (featurep! +pyright)
+    :after lsp-clients))

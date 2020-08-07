@@ -1,10 +1,12 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
 (defcli! env
-    ((allow      ["-a" "--allow" regexp]  "An envvar whitelist regexp")
-     (reject     ["-r" "--reject" regexp] "An envvar blacklist regexp")
-     (clear-p    ["-c" "--clear"] "Clear and delete your envvar file")
-     (outputfile ["-o" path]
+    ((allow       ["-a" "--allow" regexp]  "An additive envvar whitelist regexp")
+     (reject      ["-r" "--reject" regexp] "An additive envvar blacklist regexp")
+     (allow-only  ["-A" regexp] "Blacklist everything but REGEXP")
+     (reject-only ["-R" regexp] "Whitelist everything but REGEXP")
+     (clear-p     ["-c" "--clear"] "Clear and delete your envvar file")
+     (outputfile  ["-o" path]
     "Generate the envvar file at PATH. Envvar files that aren't in
 `doom-env-file' won't be loaded automatically at startup. You will need to load
 them manually from your private config with the `doom-load-envvars-file'
@@ -42,7 +44,11 @@ Why this over exec-path-from-shell?
   (let ((env-file (expand-file-name (or outputfile doom-env-file))))
     (if (null clear-p)
         (doom-cli-reload-env-file
-         'force env-file (list allow) (list reject))
+         'force env-file
+         (append (if reject-only (list "."))
+                 (delq nil (list allow allow-only)))
+         (append (if allow-only (list "."))
+                 (delq nil (list reject reject-only))))
       (unless (file-exists-p env-file)
         (user-error! "%S does not exist to be cleared"
                      (path env-file)))

@@ -93,14 +93,39 @@
     :filter-return #'yas--all-templates
     (cl-delete-duplicates templates :test #'equal))
 
+  ;; HACK Smartparens will interfere with snippets expanded by `hippie-expand`,
+  ;;      so temporarily disable smartparens during snippet expansion.
+  (after! hippie-exp
+    (defvar +snippets--smartparens-enabled-p t)
+    (defvar +snippets--expanding-p nil)
+
+    ;; Is called for all snippet expansions,
+    (add-hook! 'yas-before-expand-snippet-hook
+      (defun +snippets--disable-smartparens-before-expand-h ()
+        ;; Remember the initial smartparens state only once, when expanding a
+        ;; top-level snippet.
+        (unless +snippets--expanding-p
+          (setq +snippets--expanding-p t
+                +snippets--smartparens-enabled-p smartparens-mode))
+        (when smartparens-mode
+          (smartparens-mode -1))))
+
+    ;; Is called only for the top level snippet, but not for the nested ones.
+    ;; Hence `+snippets--expanding-p'.
+    (add-hook! 'yas-after-exit-snippet-hook
+      (defun +snippets--restore-smartparens-after-expand-h ()
+        (setq +snippets--expanding-p nil)
+        (when +snippets--smartparens-enabled-p
+          (smartparens-mode 1)))))
+
   ;; If in a daemon session, front-load this expensive work:
   (if (daemonp) (yas-reload-all)))
 
 
 (use-package! auto-yasnippet
   :defer t
-  :init (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
   :config
+  (setq aya-persist-snippets-dir +snippets-dir)
   (defadvice! +snippets--inhibit-yas-global-mode-a (orig-fn &rest args)
     "auto-yasnippet enables `yas-global-mode'. This is obnoxious for folks like
 us who use yas-minor-mode and enable yasnippet more selectively. This advice

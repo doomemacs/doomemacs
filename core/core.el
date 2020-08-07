@@ -48,6 +48,12 @@
     (setq file-name-handler-alist doom--initial-file-name-handler-alist))
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
+;; REVIEW Fixes 'void-variable tab-prefix-map' errors caused by packages that
+;;        prematurely use this variable before it was introduced. Remove this in
+;;        a year.
+(unless (boundp 'tab-prefix-map)
+  (defvar tab-prefix-map (make-sparse-keymap)))
+
 ;; Just the bare necessities
 (require 'subr-x)
 (require 'cl-lib)
@@ -160,8 +166,8 @@ users).")
   (set-charset-priority 'unicode))       ; pretty
 (prefer-coding-system 'utf-8)            ; pretty
 (setq locale-coding-system 'utf-8)       ; please
-;; The clipboard's on Windows could be in an encoding that's wider (or thinner)
-;; than utf-8, so let Emacs/the OS decide what encoding to use there.
+;; The clipboard's on Windows could be in a wider (or thinner) encoding than
+;; utf-8 (likely UTF-16), so let Emacs/the OS decide what encoding to use there.
 (unless IS-WINDOWS
   (setq selection-coding-system 'utf-8)) ; with sugar on top
 
@@ -169,7 +175,7 @@ users).")
 ;; we do about them, besides changing packages upstream?
 (setq ad-redefinition-action 'accept)
 
-;; Make apropos omnipotent. It's more useful this way.
+;; Make `apropos' et co search more extensively. They're more useful this way.
 (setq apropos-do-all t)
 
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
@@ -177,17 +183,19 @@ users).")
 ;; insensitivity).
 (setq auto-mode-case-fold nil)
 
-;; Less noise at startup. The dashboard/empty scratch buffer is good enough.
+;; Reduce *Message* noise at startup. An empty scratch buffer (or the dashboard)
+;; is more than enough.
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init t
-      ;; Avoid pulling in many packages by starting the scratch buffer in
-      ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode'.
+      ;; Shave seconds off startup time by starting the scratch buffer in
+      ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
+      ;; pull in a ton of packages.
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
 ;; Get rid of "For information about GNU Emacs..." message at startup, unless
-;; we're in a daemon session, where it'll say "Starting Emacs daemon." instead,
+;; we're in a daemon session where it'll say "Starting Emacs daemon." instead,
 ;; which isn't so bad.
 (unless (daemonp)
   (advice-add #'display-startup-echo-area-message :override #'ignore))
@@ -233,7 +241,7 @@ users).")
 (setq abbrev-file-name             (concat doom-local-dir "abbrev.el")
       async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
       bookmark-default-file        (concat doom-etc-dir "bookmarks")
-      custom-file                  (concat doom-private-dir "config.el")
+      custom-file                  (concat doom-private-dir "custom.el")
       custom-theme-directory       (concat doom-private-dir "themes/")
       desktop-dirname              (concat doom-etc-dir "desktop")
       desktop-base-file-name       "autosave"
@@ -271,6 +279,11 @@ config.el instead."
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
 
+;; Disabling the BPA makes redisplay faster, but might produce incorrect display
+;; reordering of bidirectional text with embedded parentheses and other bracket
+;; characters whose 'paired-bracket' Unicode property is non-nil.
+(setq bidi-inhibit-bpa t)  ; Emacs 27 only
+
 ;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
 ;; in non-focused windows.
 (setq-default cursor-in-non-selected-windows nil)
@@ -294,10 +307,10 @@ config.el instead."
 ;; been determined, but we inhibit it there anyway.
 (setq inhibit-compacting-font-caches t)
 
-;; Performance on Windows is considerably worse than elsewhere, especially if
-;; WSL is involved. We'll need everything we can get.
+;; Performance on Windows is considerably worse than elsewhere. We'll need
+;; everything we can get.
 (when IS-WINDOWS
-  (setq w32-get-true-file-attributes nil   ; slightly faster IO
+  (setq w32-get-true-file-attributes nil   ; decrease file IO workload
         w32-pipe-read-delay 0              ; faster ipc
         w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
@@ -333,10 +346,14 @@ config.el instead."
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
+(defvar doom--inhibit-local-var-hooks nil)
+
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
-  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
-                    #'doom-try-run-hook))
+  (unless doom--inhibit-local-var-hooks
+    (set (make-local-variable 'doom--inhibit-local-var-hooks) t)
+    (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                      #'doom-try-run-hook)))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
@@ -502,13 +519,17 @@ to least)."
       (file-missing
        ;; If the autoloads file fails to load then the user forgot to sync, or
        ;; aborted a doom command midway!
-       (signal 'doom-error
-               (list "Doom is in an incomplete state"
-                     "run 'bin/doom sync' on the command line to repair it"))))
+       (if (equal (nth 3 e) doom-autoload-file)
+           (signal 'doom-error
+                   (list "Doom is in an incomplete state"
+                         "run 'bin/doom sync' on the command line to repair it"))
+         ;; Otherwise, something inside the autoloads file is triggering this
+         ;; error; forward it!
+         (apply #'doom-autoload-error e))))
 
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
-    ;; your shell environment there.
+    ;; your shell environment.
     (if (or (display-graphic-p)
             (daemonp))
         (doom-load-envvars-file doom-env-file 'noerror))
@@ -517,9 +538,9 @@ to least)."
     ;; to configure their packages.
     (require 'core-modules)
 
-    ;; There's a chance the user will want to use package.el or straight later
-    ;; on in this interactive session. If that's the case, make sure they're
-    ;; properly initialized when they do.
+    ;; There's a chance the user will later use package.el or straight in this
+    ;; interactive session. If they do, make sure they're properly initialized
+    ;; when they do.
     (autoload 'doom-initialize-packages "core-packages")
     (autoload 'doom-initialize-core-packages "core-packages")
     (with-eval-after-load 'package (require 'core-packages))
@@ -537,7 +558,7 @@ to least)."
     (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
     (if doom-debug-p (doom-debug-mode +1))
 
-    ;; Load core/core-*.el, the user's private init.el and their config.el
+    ;; Load core/core-*.el, the user's private init.el, then their config.el
     (doom-initialize-modules force-p))
 
   doom-init-p)

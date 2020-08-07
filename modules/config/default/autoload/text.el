@@ -135,7 +135,7 @@ possible, or just one char if that's not possible."
                        (beg  (plist-get pair :beg))
                        (end  (plist-get pair :end)))
                   (cond ((and end beg (= end (+ beg (length op) (length cl))))
-                         (sp-backward-delete-char 1))
+                         (delete-char (- (length op))))
                         ((doom-surrounded-p pair 'inline 'balanced)
                          (delete-char -1 killflag)
                          (delete-char 1)

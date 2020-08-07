@@ -1,0 +1,86 @@
+#+TITLE:   checkers/spell
+#+DATE:    January 9, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This modules provides spellchecking powered by =aspell= or =hunspell=.
+
+Spellcheck is automatically loaded on the following modes:
++ org
++ markdown
++ TeX
++ rst
++ mu4e-compose
++ message
++ git-commit
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+aspell= Use =aspell= as a backend for spellchecking.
++ =+hunspell= Use =hunspell= as a backend for spellchecking.
++ =+everywhere= Use spellcheck in every mode.
+
+** Plugins
++ [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]]
++ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][flyspell-correct-ivy]] (=completion/ivy=)
++ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-helm-interface][flyspell-correct-helm]] (=completion/helm=)
++ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-popup-interface][flyspell-correct-popup]] (if *neither* =completion/ivy= or =completion/helm=)
++ [[https://github.com/rolandwalker/flyspell-lazy][flyspell-lazy]]
+
+* Prerequisites
+This module requires either =aspell= or =hunspell= as backend. It will
+automatically pick =aspell= if both are installed.
+
+You can specify the backend with the =+aspell= or =+hunspell= flag.
+
+* Features
++ Spellchecking and suggestions based on =aspell= or =hunspell=.
++ Choosing suggestions using completion interfaces (=ivy= or =helm=).
++ Lazily spellchecking recent changes only when idle.
++ Ignores source code inside org documents.
+
+When using =+everywhere=, =flyspell-prog-mode= will be automatically loaded for
+the following modes:
++ yaml-mode-hook
++ conf-mode-hook
++ prog-mode-hook
+
+=flyspell-prog-mode= will only spellcheck comments.
+
+* Configuration
+Dictionary is set by =ispell-dictionary= variable. Can be changed locally with
+the function =ispell-change-dictionary=.
+
+Lazy spellcheck is provided by =flyspell-lazy= package.
+
+=flyspell-lazy-idle-seconds= sets how many idle seconds until spellchecking
+recent changes (default as 1), while =flyspell-lazy-window-idle-seconds= sets
+how many seconds until the whole window is spellchecked (default as 3).
+
+If you want to add =flyspell-mode= or =flyspell-prog-mode= to a specific mode,
+use =add-hook!=. To remove from a mode, use =remove-hook!=:
+
+#+BEGIN_SRC elisp
+(add-hook! '(org-mode-hook markdown-mode-hook
+             git-commit-mode-hook) #'flyspell-mode)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(remove-hook! '(markdown-mode-hook git-commit-mode-hook)
+#'flyspell-mode)
+#+END_SRC
+
+* Troubleshooting

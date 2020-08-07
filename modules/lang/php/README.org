@@ -92,6 +92,7 @@ The features in this module optionally depend on the following php packages:
 + ~boris~ (REPL)
 + ~phpctags~ (better code completion)
 + ~phpunit~ (unit test commands)
++ ~php-cs-fixer~ (for code formatting)
 
 #+BEGIN_SRC sh
 composer global require \

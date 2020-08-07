@@ -427,11 +427,30 @@ Continues comments if executed from a commented line. Consults
         ;; which ctrl+RET will add a new "item" below the current one and
         ;; cmd+RET (Mac) / meta+RET (elsewhere) will add a new, blank line below
         ;; the current one.
-        :gn [C-return]    #'+default/newline-below
-        :gn [C-S-return]  #'+default/newline-above
+
+        ;; C-<mouse-scroll-up>   = text scale increase
+        ;; C-<mouse-scroll-down> = text scale decrease
+        [C-down-mouse-2] (cmd! (text-scale-set 0))
+
+        ;; auto-indent on newline by default
+        :gi [remap newline] #'newline-and-indent
+        ;; insert literal newline
+        :gi "S-RET"         #'+default/newline
+        :gi [S-return]      #'+default/newline
+        :gi "C-j"           #'+default/newline
+
+        ;; Add new item below current (without splitting current line).
+        :gi "C-RET"         #'+default/newline-below
+        :gn [C-return]      #'+default/newline-below
+        ;; Add new item above current (without splitting current line)
+        :gi "C-S-RET"       #'+default/newline-above
+        :gn [C-S-return]    #'+default/newline-above
+
         (:when IS-MAC
-          :gn [s-return]    #'+default/newline-below
-          :gn [S-s-return]  #'+default/newline-above)))
+         :gn "s-RET"        #'+default/newline-below
+         :gn [s-return]     #'+default/newline-below
+         :gn "S-s-RET"      #'+default/newline-above
+         :gn [S-s-return]   #'+default/newline-above)))
 
 
 ;;

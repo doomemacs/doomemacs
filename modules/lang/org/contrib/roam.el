@@ -12,11 +12,6 @@
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
-             org-roam-find-file
-             org-roam-graph
-             org-roam-insert
-             org-roam-insert-immediate
-             org-roam-switch-to-buffer
              org-roam-dailies-date
              org-roam-dailies-today
              org-roam-dailies-tomorrow
@@ -42,10 +37,14 @@
           :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
           :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))
   :config
-  (setq org-roam-directory (expand-file-name (or org-roam-directory "roam")
-                                             org-directory)
-        org-roam-verbose nil  ; https://youtu.be/fn4jIlFwuLU
-        org-roam-buffer-window-parameters '((no-delete-other-windows . t)) ; make org-roam buffer sticky
+  (setq org-roam-directory
+        (file-name-as-directory
+         (expand-file-name (or org-roam-directory "roam")
+                           org-directory))
+        org-roam-verbose nil   ; https://youtu.be/fn4jIlFwuLU
+        ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
+        ;; file with an *-other-window command.
+        org-roam-buffer-window-parameters '((no-delete-other-windows . t))
         org-roam-completion-system
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)
@@ -67,7 +66,16 @@
 
   ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
   ;; makes it easier to distinguish among other org buffers.
-  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
+  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode)
+
+  ;; REVIEW Fixes an unhelpful "wrong-type-argument: stringp" error which occurs
+  ;;        if sqlite3 isn't installed. Remove this once addressed upstream.
+  (defadvice! +org-fail-gracefully-when-sqlite-is-absent-a (orig-fn &rest args)
+    :around #'org-roam-mode
+    (let ((emacsql-sqlite3-executable
+           (or (bound-and-true-p emacsql-sqlite3-executable)
+               "sqlite3")))
+      (apply orig-fn args))))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is

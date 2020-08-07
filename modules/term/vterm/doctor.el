@@ -1,8 +1,5 @@
 ;;; term/vterm/doctor.el -*- lexical-binding: t; -*-
 
-(unless (executable-find "vterm-ctrl")
-  (warn! "Couldn't find libvterm. Vterm module won't compile"))
-
 (unless (executable-find "make")
   (warn! "Couldn't find make command. Vterm module won't compile"))
 

@@ -345,7 +345,13 @@ Any non-nil value besides the above will be used as the raw value for
 (defun +popup/other ()
   "Cycle through popup windows, like `other-window'. Ignores regular windows."
   (interactive)
-  (if-let (popups (+popup-windows))
+  (if-let (popups (cl-remove-if-not
+                   (lambda (w) (or (+popup-window-p w)
+                                   ;; This command should be able to hop between
+                                   ;; windows with a `no-other-window'
+                                   ;; parameter, since `other-window' won't.
+                                   (window-parameter w 'no-other-window)))
+                   (window-list)))
       (select-window (if (+popup-window-p)
                          (let ((window (selected-window)))
                            (or (car-safe (cdr (memq window popups)))

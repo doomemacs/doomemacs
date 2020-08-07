@@ -20,11 +20,9 @@
 ;;;###autoload
 (define-minor-mode doom-debug-mode
   "Toggle `debug-on-error' and `doom-debug-p' for verbose logging."
-  :init-value doom-debug-p
+  :init-value nil
   :global t
-  (let ((value
-         (cond ((eq arg 'toggle) (not doom-debug-mode))
-               ((> (prefix-numeric-value arg) 0)))))
+  (let ((value doom-debug-mode))
     (mapc (doom-rpartial #'set value) doom-debug-variables)
     (message "Debug mode %s" (if value "on" "off"))))
 

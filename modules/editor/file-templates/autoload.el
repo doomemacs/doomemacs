@@ -89,6 +89,8 @@ evil is loaded and enabled)."
              (match-string 1 path))
             ((file-in-directory-p path doom-emacs-dir)
              (file-relative-name path doom-emacs-dir))
+            ((file-in-directory-p path doom-private-dir)
+             (file-relative-name path doom-private-dir))
             ((abbreviate-file-name path))))))
 
 

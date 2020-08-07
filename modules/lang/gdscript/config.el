@@ -12,6 +12,10 @@
   :config
   (set-lookup-handlers! 'gdscript-mode
     :documentation #'gdscript-docs-browse-symbol-at-point)
+
+  (when (featurep! +lsp)
+    (add-hook 'gdscript-mode-local-vars-hook #'lsp!))
+
   (map! :localleader
         :map gdscript-mode-map
 
@@ -27,7 +31,4 @@
 
         (:prefix ("f" . "format")
          "b" #'gdscript-format-buffer
-         "r" #'gdscript-format-region))
-
-  (when (featurep! +lsp)
-    (add-hook 'gdscript-mode-local-vars-hook #'lsp!)))
+         "r" #'gdscript-format-region)))

@@ -10,6 +10,8 @@
   (alert-add-rule :category "org-pomodoro"
                   :style (cond (alert-growl-command
                                 'growl)
+                               (alert-notifier-command
+                                'notifier)
                                (alert-libnotify-command
                                 'libnotify)
                                (alert-default-style))))

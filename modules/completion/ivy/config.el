@@ -278,11 +278,11 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
-        (cond ((executable-find doom-projectile-fd-binary)
-               (append (list doom-projectile-fd-binary
-                             "--color=never" "-E" ".git"
-                             "--type" "file" "--type" "symlink" "--follow")
-                       (if IS-WINDOWS '("--path-separator=/"))))
+        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd")))
+                 (append (list fd
+                               "--color=never" "-E" ".git"
+                               "--type" "file" "--type" "symlink" "--follow")
+                         (if IS-WINDOWS '("--path-separator=/")))))
               ((executable-find "rg")
                (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
@@ -296,10 +296,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
        (cons find-program args)
        (lambda ()
          (goto-char (point-min))
-         (let ((offset (if (member find-program (list "rg" doom-projectile-fd-binary)) 0 2))
-               files)
+         (let (files)
            (while (< (point) (point-max))
-             (push (buffer-substring (+ offset (line-beginning-position)) (line-end-position))
+             (push (buffer-substring (line-beginning-position) (line-end-position))
                    files)
              (forward-line 1))
            (nreverse files)))))))

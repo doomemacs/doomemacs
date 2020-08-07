@@ -57,3 +57,13 @@ If prefix ARG is non-nil, prompt for the search path."
     (if projectile-project-search-path
         (mapc #'projectile-discover-projects-in-directory projectile-project-search-path)
       (user-error "`projectile-project-search-path' is empty; don't know where to search"))))
+
+;;;###autoload
+(defun +default/dired (arg)
+  "Open a directory in dired.
+If prefix ARG is non-nil, prompt for a known project to open in dired."
+  (interactive "P")
+  (apply #'dired
+         (if arg
+             (list (completing-read "Open dired in project: " projectile-known-projects))
+           (dired-read-dir-and-switches ""))))

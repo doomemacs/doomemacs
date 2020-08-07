@@ -4,7 +4,7 @@
 ;;; Variables
 
 (defvar doom-init-theme-p nil
-  "If non-nil, a theme as been loaded.")
+  "If non-nil, a theme has been loaded.")
 
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
@@ -13,9 +13,7 @@ This is changed by `load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
-
-Expects either a `font-spec', font object, an XFT font string or an XLFD font
-string.
+Must be a `font-spec', a font object, an XFT font string, or an XLFD string.
 
 This affects the `default' and `fixed-pitch' faces.
 
@@ -24,38 +22,33 @@ Examples:
   (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")")
 
 (defvar doom-variable-pitch-font nil
-  "The font to use for variable-pitch text.
-
-Expects either a `font-spec', font object, a XFT font string or XLFD string. See
+  "The default font to use for variable-pitch text.
+Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
-It is recommended you don't set specify a font-size, as to inherit `doom-font's
-size.")
+An omitted font size means to inherit `doom-font''s size.")
 
 (defvar doom-serif-font nil
   "The default font to use for the `fixed-pitch-serif' face.
-
-Expects either a `font-spec', font object, a XFT font string or XLFD string. See
+Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
-It is recommended you don't set specify a font-size, as to inherit `doom-font's
-size.")
+An omitted font size means to inherit `doom-font''s size.")
 
 (defvar doom-unicode-font
   (if IS-MAC
       (font-spec :family "Apple Color Emoji")
     (font-spec :family "Symbola"))
-  "Fallback font for unicode glyphs.
+  "Fallback font for Unicode glyphs.
+Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
+`doom-font' for examples.
 
-It defaults to Apple Color Emoji on MacOS and Symbola on Linux. Expects either a
-`font-spec', font object, a XFT font string or XLFD string. See `doom-font' for
-examples.
+The defaults on macOS and Linux are Apple Color Emoji and Symbola, respectively.
 
-It is recommended you don't set specify a font-size, as to inherit `doom-font's
-size.")
+An omitted font size means to inherit `doom-font''s size.")
 
 (defvar doom-unicode-extra-fonts nil
-  "Fonts to inject into the unicode charset before `doom-unicode-font'.")
+  "Fonts to inject into the Unicode charset before `doom-unicode-font'.")
 
 
 ;;
@@ -139,24 +132,24 @@ size.")
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
 (defun doom-highlight-non-default-indentation-h ()
-  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting.
+  "Highlight whitespace at odds with `indent-tabs-mode'.
+That is, highlight tabs if `indent-tabs-mode' is `nil', and highlight spaces at
+the beginnings of lines if `indent-tabs-mode' is `t'. The purpose is to make
+incorrect indentation in the current buffer obvious to you.
 
-e.g. If you indent with spaces by default, tabs will be highlighted. If you
-indent with tabs, spaces at BOL are highlighted.
-
-Does nothing if `whitespace-mode' or 'global-whitespace-mode' is already 
-active or if the current buffer is read-only or not file-visiting."
+Does nothing if `whitespace-mode' or `global-whitespace-mode' is already active
+or if the current buffer is read-only or not file-visiting."
   (unless (or (eq major-mode 'fundamental-mode)
-              buffer-read-only
               (bound-and-true-p global-whitespace-mode)
               (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
-         (let ((style (if indent-tabs-mode '(indentation) '(tabs tab-mark))))
-           (if whitespace-mode
-               (cl-union style whitespace-active-style)
-             style)))
-    (cl-pushnew 'face whitespace-style)
+         (cl-union (if indent-tabs-mode
+                       '(indentation)
+                     '(tabs tab-mark))
+                   (when whitespace-mode
+                     (remq 'face whitespace-active-style))))
+    (cl-pushnew 'face whitespace-style) ; must be first
     (whitespace-mode +1)))
 
 
@@ -397,6 +390,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;;;###package ansi-color
 (setq ansi-color-for-comint-mode t)
+
+
+(after! comint
+  (setq comint-prompt-read-only t))
 
 
 (after! compile

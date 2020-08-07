@@ -2,8 +2,9 @@
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;; bin/org-tangle
 
-;; Tangles source blocks from org files. Debug/info messages are directed to
-;; stderr and can be ignored.
+;; Tangles source blocks from org files. Also expands #+INCLUDE directives,
+;; unlike vanilla `ob-tangle'. Debug/info messages are directed to stderr and
+;; can be ignored.
 ;;
 ;;   -l/--lang LANG
 ;;     Only include blocks in the specified language (e.g. emacs-lisp).
@@ -25,6 +26,7 @@
 ;;   org-tangle --and tagA --and tagB my/literate/config.org
 
 (require 'cl-lib)
+(require 'ox)
 (require 'ob-tangle)
 
 (defun usage ()
@@ -140,5 +142,18 @@ trees with the :notangle: tag."
         (_ (error "Unknown option or file: %s" arg)))))
 
   (dolist (file srcs)
-    (org-babel-tangle-file file nil lang))
+    (let ((backup (make-temp-file (file-name-base file) nil ".backup.org")))
+      (unwind-protect
+          ;; Prevent slow hooks from interfering
+          (let (org-mode-hook)
+            ;; We do the ol' switcheroo because `org-babel-tangle' writes
+            ;; changes to the current file, which would be imposing on the user.
+            (copy-file file backup t)
+            (with-current-buffer (find-file-noselect file)
+              ;; Tangling doesn't expand #+INCLUDE directives, so we do it
+              ;; ourselves, since includes are so useful for literate configs!
+              (org-export-expand-include-keyword)
+              (org-babel-tangle nil nil lang)))
+        (ignore-errors (copy-file backup file t))
+        (ignore-errors (delete-file backup)))))
   (kill-emacs 0))

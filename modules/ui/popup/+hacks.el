@@ -364,8 +364,8 @@ Ugh, such an ugly hack."
 (defadvice! +popup--ignore-window-parameters-a (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   :around '(windmove-up windmove-down windmove-left windmove-right)
-  (letf! ((defun windmove-find-other-window (dir &optional arg window)
-            (window-in-direction
-             (pcase dir (`up 'above) (`down 'below) (_ dir))
-             window (bound-and-true-p +popup-mode) arg windmove-wrap-around t)))
+  (letf! (defun windmove-find-other-window (dir &optional arg window)
+           (window-in-direction
+            (pcase dir (`up 'above) (`down 'below) (_ dir))
+            window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))
     (apply orig-fn args)))

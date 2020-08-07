@@ -24,20 +24,27 @@ lua-language-server.")
   (set-repl-handler! 'lua-mode #'+lua/open-repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
-  (set-eglot-client!
-   'lua-mode
-   ;; The absolute path to lua-language-server binary is necessary because the
-   ;; bundled dependencies aren't found otherwise. The only reason this is a
-   ;; function is to dynamically change when/if lua-lsp-dir variable changed
-   (list (doom-path lua-lsp-dir
-                    (cond (IS-MAC     "bin/macOS")
-                          (IS-LINUX   "bin/Linux")
-                          (IS-WINDOWS "bin/Windows"))
-                    "lua-language-server")
-         "-E" "-e" "LANG=en"
-         (doom-path lua-lsp-dir "main.lua")))
-
   (when (featurep! +lsp)
+    (defun +lua-generate-lsp-server-command ()
+      ;; The absolute path to lua-language-server binary is necessary because
+      ;; the bundled dependencies aren't found otherwise. The only reason this
+      ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
+      (list (doom-path +lua-lsp-dir
+                       (cond (IS-MAC     "bin/macOS")
+                             (IS-LINUX   "bin/Linux")
+                             (IS-WINDOWS "bin/Windows"))
+                       "lua-language-server")
+            "-E" "-e" "LANG=en"
+            (doom-path +lua-lsp-dir "main.lua")))
+
+    (if (featurep! :tools lsp +eglot)
+        (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command))
+      (after! lsp-mode
+        (lsp-register-client
+         (make-lsp-client :new-connection (lsp-stdio-connection '+lua-generate-lsp-server-command)
+                          :major-modes '(lua-mode)
+                          :priority -1
+                          :server-id 'lua-langserver))))
     (add-hook 'lua-mode-local-vars-hook #'lsp!)))
 
 

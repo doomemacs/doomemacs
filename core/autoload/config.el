@@ -55,19 +55,18 @@ And jumps to your `doom!' block."
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  (let ((windowsym (make-symbol "doom-sync-window")))
-    `(with-current-buffer (compile ,command t)
-       (let ((,windowsym (get-buffer-window (current-buffer))))
-         (select-window ,windowsym)
-         (add-hook
-          'compilation-finish-functions
-          (lambda (_buf status)
-            (if (equal status "finished\n")
-                (progn
-                  (delete-window ,windowsym)
-                  ,on-success)
-              ,on-failure))
-          nil 'local)))))
+  `(with-current-buffer (compile ,command t)
+     (let ((w (get-buffer-window (current-buffer))))
+       (select-window w)
+       (add-hook
+        'compilation-finish-functions
+        (lambda (_buf status)
+          (if (equal status "finished\n")
+              (progn
+                (delete-window w)
+                ,on-success)
+            ,on-failure))
+        nil 'local))))
 
 ;;;###autoload
 (defun doom/reload ()

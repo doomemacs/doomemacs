@@ -21,6 +21,7 @@ ede-projects.el
 tramp
 smex-items
 network-security.data
+server/
 
 # compiled files
 *.elc

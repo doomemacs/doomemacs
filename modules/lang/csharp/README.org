@@ -20,6 +20,7 @@ LSP).
 
 ** Plugins
 + [[https://github.com/josteink/csharp-mode][csharp-mode]]
++ [[https://github.com/omajid/csproj-mode][csproj-mode]]
 + [[https://github.com/OmniSharp/omnisharp-emacs][omnisharp]]* (not =+lsp=)
 + [[https://github.com/midnightSuyama/shader-mode][shader-mode]]* (=+unity=)
 

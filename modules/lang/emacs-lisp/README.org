@@ -43,6 +43,8 @@ This module provides no flags.
   (in [[file:../../../docs/api.org][docs/api.org]]).
 + This module extends imenu support for Doom's API (e.g. ~package!~,
   ~use-package~, ~after!~)
++ Flycheck has been configured to tone down the false positives when you are
+  editing your Emacs or Doom config.
 
 * Prerequisites
 This module's sole dependency is Emacs. It's very obscure, you wouldn't know

@@ -36,6 +36,7 @@ It is integrated into Helpful, in Doom.
   - [[#center-emacs-initial-frame-with-a-fixed-size][Center Emacs' initial frame with a fixed size]]
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
   - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
+  - [[#create-a-paste-transient-state-to-cycle-through-kill-ring-on-paste][Create a paste-transient-state to cycle through kill ring on paste]]
 
 * Examples for Doom's library
 ** core-lib
@@ -292,7 +293,7 @@ Or to create aliases for functions that behave differently:
 
       (:when IS-MAC
         :n "M-s" 'some-fn
-        :i "M-o" (lambda (interactive) (message "Hi"))))
+        :i "M-o" (cmd! (message "Hi"))))
 
 (map! (:when (featurep! :completion company) ; Conditional loading
         :i "C-@" #'+company/complete
@@ -316,8 +317,8 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (map! "C-x y" #'do-something)
 
 ;; bind a key on a keymap
-(define-key emacs-lisp-mode (kbd "C-c p") #'do-something)
-(map! :map emacs-lisp-mode "C-c p" #'do-something)
+(define-key emacs-lisp-mode-map (kbd "C-c p") #'do-something)
+(map! :map emacs-lisp-mode-map "C-c p" #'do-something)
 
 ;; unbind a key defined elsewhere
 (define-key lua-mode-map (kbd "SPC m b") nil)
@@ -515,13 +516,15 @@ These are side-by-side comparisons, showing how to bind keys with and without
 * Interesting snippets
 ** Center Emacs' initial frame with a fixed size
 #+BEGIN_SRC elisp
-(let ((display-height   (display-pixel-height))
-      (display-width    (display-pixel-width)))
+(let ((width  500)
+      (height 250)
+      (display-height (display-pixel-height))
+      (display-width  (display-pixel-width)))
   (pushnew! initial-frame-alist
-            `(left . ,(/ display-width 2))
-            `(top . ,(/ display-height 2))
-            `(width . ,display-width)
-            `(height . ,display-height)))
+            `(left . ,(- (/ display-width 2) (/ width 2)))
+            `(top . ,(- (/ display-height 2) (/ height 2)))
+            `(width text-pixels ,width)
+            `(height text-pixels ,height)))
 #+END_SRC
 
 ** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions

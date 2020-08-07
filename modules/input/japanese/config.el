@@ -47,14 +47,9 @@ when exporting org-mode to html."
   :filter-args #'org-html-paragraph
   (cl-destructuring-bind (paragraph contents info) args
     (let* ((fix-regexp "[[:multibyte:]]")
-           (origin-contents
-            (replace-regexp-in-string
-             "<[Bb][Rr] */>"
-             ""
-             contents))
            (fixed-contents
             (replace-regexp-in-string
              (concat "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)")
              "\\1\\2"
-             origin-contents)))
+             contents)))
       (list paragraph fixed-contents info))))

@@ -14,7 +14,7 @@
 
 
 (use-package! sly
-  :defer t
+  :hook (lisp-mode-local-vars . sly-editing-mode)
   :init
   (after! lisp-mode
     (set-repl-handler! 'lisp-mode #'sly-mrepl)
@@ -89,7 +89,7 @@
         (:localleader
          :map lisp-mode-map
          :desc "Sly"          "'" #'sly
-         :desc "Sly (ask)"    ";" (λ!! #'sly '-)
+         :desc "Sly (ask)"    ";" (cmd!! #'sly '-)
          :desc "Expand macro" "m" #'macrostep-expand
          (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file

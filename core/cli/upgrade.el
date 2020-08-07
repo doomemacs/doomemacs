@@ -26,7 +26,7 @@ following shell commands:
       (print! (info "Reloading Doom Emacs"))
       (doom-cli-execute-after "doom" "upgrade" "-p" (if force-p "-f")))
 
-     ((print! "Nothing to do. Doom is up-to-date!")))))
+     ((print! "Doom is up-to-date!")))))
 
 
 ;;
@@ -47,7 +47,6 @@ following shell commands:
 
 (defun doom-cli-upgrade (&optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
-  (require 'vc-git)
   (let ((default-directory doom-emacs-dir)
         process-file-side-effects)
     (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
@@ -84,8 +83,8 @@ following shell commands:
             (or (zerop (car (setq result (doom-call-process "git" "fetch" "--tags" doom-repo-remote branch))))
                 (error "Failed to fetch from upstream"))
 
-            (let ((this-rev (vc-git--rev-parse "HEAD"))
-                  (new-rev  (vc-git--rev-parse target-remote)))
+            (let ((this-rev (cdr (doom-call-process "git" "rev-parse" "HEAD")))
+                  (new-rev  (cdr (doom-call-process "git" "rev-parse" target-remote))))
               (cond
                ((and (null this-rev)
                      (null new-rev))
@@ -114,9 +113,9 @@ following shell commands:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-clean-byte-compiled-files)
-                   (unless (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
-                                (equal (vc-git--rev-parse "HEAD") new-rev))
-                     (error "Failed to check out %s" (substring new-rev 0 10)))
+                   (or (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
+                            (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) new-rev))
+                       (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (info "%s") (cdr result))
                    t))))))
         (ignore-errors

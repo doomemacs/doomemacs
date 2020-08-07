@@ -192,6 +192,18 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
           'deferred
         t))))
 
+(defun +lookup-dictionary-definition-backend-fn (identifier)
+  "Look up dictionary definition for IDENTIFIER."
+  (when (derived-mode-p 'text-mode)
+    (+lookup/dictionary-definition identifier)
+    'deferred))
+
+(defun +lookup-thesaurus-definition-backend-fn (identifier)
+  "Look up synonyms for IDENTIFIER."
+  (when (derived-mode-p 'text-mode)
+    (+lookup/synonyms identifier)
+    'deferred))
+
 (defun +lookup-xref-definitions-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
   (+lookup--xref-show 'xref-backend-definitions identifier #'xref--show-defs))
@@ -343,7 +355,7 @@ Otherwise, falls back on `find-file-at-point'."
    (list (or (doom-thing-at-point-or-region 'word)
              (read-string "Look up in dictionary: "))
          current-prefix-arg))
-  (message "Looking up definition for %S" identifier)
+  (message "Looking up dictionary definition for %S" identifier)
   (cond ((and IS-MAC (require 'osx-dictionary nil t))
          (osx-dictionary--view-result identifier))
         ((and +lookup-dictionary-prefer-offline
