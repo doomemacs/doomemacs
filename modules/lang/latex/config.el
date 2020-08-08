@@ -205,6 +205,11 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   (auctex-latexmk-setup))
 
 
+(use-package! evil-tex
+  :when (featurep! :editor evil +everywhere)
+  :hook (LaTeX-mode . evil-tex-mode))
+
+
 (use-package! company-auctex
   :when (featurep! :completion company)
   :defer t
