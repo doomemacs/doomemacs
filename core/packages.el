@@ -48,10 +48,6 @@
   ;; optimizations (the original has been abandoned).
   :recipe (:host github :repo "hlissner/ws-butler")
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
-(unless IS-WINDOWS
-  (package! clipetty
-    :recipe (:host github :repo "spudlyo/clipetty")
-    :pin "01b39044b9b65fa4ea7d3166f8b1ffab6f740362"))
 
 ;; core-projects.el
 (package! projectile :pin "bbcf781d3fddb8e00d0dc10eb68bc2528fb409b3")

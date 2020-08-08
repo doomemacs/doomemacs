@@ -161,15 +161,6 @@ possible."
 ;; non-X systems (like Windows or macOS), where only `STRING' is used.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; Fixes the clipboard in tty Emacs by piping clipboard I/O through xclip, xsel,
-;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin); depending
-;; on what is available.
-(unless IS-WINDOWS
-  (add-hook! 'tty-setup-hook
-    (defun doom-init-clipboard-in-tty-emacs-h ()
-      (and (require 'clipetty nil t)
-           (global-clipetty-mode +1)))))
-
 
 ;;
 ;;; Extra file extensions to support

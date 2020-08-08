@@ -16,6 +16,7 @@ removing them from your ~doom!~ block in =$DOOMDIR/init.el=.
 - [[#email][:email]]
 - [[#input][:input]]
 - [[#lang][:lang]]
+- [[#os][:os]]
 - [[#term][:term]]
 - [[#tools][:tools]]
 - [[#ui][:ui]]
@@ -148,6 +149,12 @@ Modules that bring support for a language or group of languages to Emacs.
 + terra - TODO
 + web =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
 + [[file:../modules/lang/yaml/README.org][yaml]] =+lsp= - TODO
+
+
+* :os
+Modules to improve integration into your OS, system, or devices.
+
++ tty =+osc= - Improves the terminal Emacs experience.
 
 * :term
 Modules that offer terminal emulation.

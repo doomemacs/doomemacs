@@ -104,6 +104,9 @@
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
 
+       :os
+       ;;tty               ; improve the terminal Emacs experience
+
        :lang
        ;;agda              ; types of types of types of types...
        ;;cc                ; C/C++/Obj-C madness
