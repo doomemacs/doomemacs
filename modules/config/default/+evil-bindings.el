@@ -106,8 +106,8 @@
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
-       :i "C-@"      #'+company/complete
-       :i "C-SPC"    #'+company/complete
+       :i "C-@"      (cmds! (not (minibufferp)) #'+company/complete)
+       :i "C-SPC"    (cmds! (not (minibufferp)) #'+company/complete)
        (:after company
         (:map company-active-map
          "C-w"     nil  ; don't interfere with `evil-delete-backward-word'
