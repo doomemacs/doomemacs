@@ -1,7 +1,7 @@
 ;;; config/default/autoload/text.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defalias '+default/newline #'newline)
+(defalias '+default/newline #'electric-indent-just-newline)
 
 ;;;###autoload
 (defun +default/newline-above ()
