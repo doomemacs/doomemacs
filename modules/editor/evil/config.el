@@ -155,6 +155,9 @@ directives. By default, this only recognizes C directives.")
       (run-at-time 0.1 nil #'helpful-key key-sequence)
       (abort-recursive-edit)))
 
+  ;; Make J (evil-join) remove comment delimiters when joining lines.
+  (advice-add #'evil-join :override #'+evil-join-a)
+
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
 

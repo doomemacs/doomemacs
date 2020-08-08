@@ -176,6 +176,29 @@ more information on modifiers."
     (balance-windows (window-parent)))
   (if file (evil-edit file)))
 
+;;;###autoload (autoload '+evil-join-a "editor/evil/autoload/advice" nil nil)
+(evil-define-operator +evil-join-a (beg end)
+  "Join the selected lines.
+
+This advice improves on `evil-join' by removing comment delimiters when joining
+commented lines, by using `fill-region-as-paragraph'.
+
+From https://github.com/emacs-evil/evil/issues/606"
+  :motion evil-line
+  (let* ((count (count-lines beg end))
+         (count (if (> count 1) (1- count) count))
+         (fixup-mark (make-marker)))
+    (dotimes (var count)
+      (if (and (bolp) (eolp))
+          (join-line 1)
+        (let* ((end (line-beginning-position 3))
+               (fill-column (1+ (- end beg))))
+          (set-marker fixup-mark (line-end-position))
+          (fill-region-as-paragraph beg end nil t)
+          (goto-char fixup-mark)
+          (fixup-whitespace))))
+    (set-marker fixup-mark nil)))
+
 ;;;###autoload
 (defun +evil--fix-dabbrev-in-minibuffer-h ()
   "Make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
