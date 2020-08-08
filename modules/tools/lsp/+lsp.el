@@ -37,11 +37,6 @@ should be a deliberate act (as is flipping this variable).")
   ;; Disable features that have great potential to be slow.
   (setq lsp-enable-file-watchers nil
         lsp-enable-folding nil
-        ;; HACK Fix #2911, until it is resolved upstream. Links come in
-        ;;      asynchronously from the server, but lsp makes no effort to
-        ;;      "select" the original buffer before laying them down, so they
-        ;;      could be rendered in the wrong buffer (like the minibuffer).
-        lsp-enable-links t
         lsp-enable-text-document-color nil)
 
   ;; Disable features that modify our code without our permission.
