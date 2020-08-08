@@ -169,23 +169,42 @@ COMMAND, and passes ARGS to it."
                (doom--cli-process cli (remq nil args)))
     (user-error "Couldn't find any %S command" command)))
 
+(defun doom-cli--execute-after (lines)
+  (let ((post-script (concat doom-local-dir ".doom.sh"))
+        (coding-system-for-write 'utf-8)
+        (coding-system-for-read  'utf-8))
+    (with-temp-file post-script
+      (insert "#!/usr/bin/env sh\n"
+              "[ -x \"$0\" ] && rm -f \"$0\"\n"
+              (save-match-data
+                (cl-loop for env in process-environment
+                         if (string-match "^\\([^=]+\\)=\\(.+\\)$" env)
+                         concat (format "%s=%S\n"
+                                        (match-string 1 env)
+                                        (match-string 2 env))))
+              "\n"
+              (if (stringp lines)
+                  lines
+                (string-join
+                 (if (listp (car-safe lines))
+                     (cl-loop for line in (doom-enlist lines)
+                              collect (mapconcat #'shell-quote-argument (remq nil line) " "))
+                   (list (mapconcat #'shell-quote-argument (remq nil lines) " ")))
+                 "\n"))
+              "\n"))
+    (set-file-modes post-script #o700)))
+
+(defun doom-cli-execute-lines-after (&rest lines)
+  "TODO"
+  (doom-cli--execute-after (string-join lines "\n")))
+
 (defun doom-cli-execute-after (&rest args)
   "Execute shell command ARGS after this CLI session quits.
 
 This is particularly useful when the capabilities of Emacs' batch terminal are
 insufficient (like opening an instance of Emacs, or reloading Doom after a 'doom
 upgrade')."
-  (let ((post-script (concat doom-local-dir ".doom.sh")))
-    (with-temp-file post-script
-      (insert "#!/usr/bin/env sh\n"
-              "rm -f " (prin1-to-string post-script) "\n"
-              "exec " (mapconcat #'shell-quote-argument (remq nil args) " ")
-              "\n"))
-    (let* ((current-mode (file-modes post-script))
-           (add-mode (logand ?\111 (default-file-modes))))
-      (or (/= (logand ?\111 current-mode) 0)
-          (zerop add-mode)
-          (set-file-modes post-script (logior current-mode add-mode))))))
+  (doom-cli--execute-after args))
 
 (defmacro defcli! (name speclist &optional docstring &rest body)
   "Defines a CLI command.

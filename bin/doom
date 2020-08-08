@@ -5,7 +5,6 @@
 :; case "$_VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $_VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
 :; _DOOMBASE="${EMACSDIR:-$(dirname "$0")/..}"
 :; _DOOMPOST="$_DOOMBASE/.local/.doom.sh"
-:; rm -f "$_DOOMPOST"
 :; $EMACS --no-site-file --script "$0" -- "$@"
 :; CODE=$?
 :; [ -x "$_DOOMPOST" ] && PATH="$_DOOMBASE/bin:$PATH" "$_DOOMPOST" "$0" "$@"
