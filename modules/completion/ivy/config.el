@@ -69,7 +69,7 @@ results buffer.")
   ;; Highlight each ivy candidate including the following newline, so that it
   ;; extends to the right edge of the window
   (setf (alist-get 't ivy-format-functions-alist)
-        #'ivy-format-function-line)
+        #'+ivy-format-function-line-or-arrow)
 
   ;; Integrate `ivy' with `better-jumper'; ensure a jump point is registered
   ;; before jumping to new locations with ivy
