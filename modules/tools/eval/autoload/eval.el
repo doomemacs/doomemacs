@@ -77,7 +77,7 @@
                (get-buffer-window (or (+eval--ensure-in-repl-buffer)
                                       t))))
         (+eval/send-region-to-repl beg end)
-      (if-let (runner (cdr (assq major-mode +eval-runners)))
+      (if-let (runner (alist-get major-mode +eval-runners))
           (funcall runner beg end)
         (quickrun-region beg end)))))
 

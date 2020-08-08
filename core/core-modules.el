@@ -201,7 +201,7 @@ This doesn't require modules to be enabled. For enabled modules us
            for default-directory in doom-modules-dirs
            for path = (concat category "/" module "/" file)
            if (file-exists-p path)
-           return (expand-file-name path)))
+           return (file-truename path)))
 
 (defun doom-module-from-path (&optional path enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
@@ -466,7 +466,7 @@ to least)."
   `(unless doom-interactive-p
      (doom-module-mplist-map
       (lambda (category module &rest plist)
-        (if (plist-get plist :path)
+        (if (plist-member plist :path)
             (apply #'doom-module-set category module plist)
           (message "WARNING Couldn't find the %s %s module" category module)))
       ,@(if (keywordp (car modules))

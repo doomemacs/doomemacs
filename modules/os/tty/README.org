@@ -10,6 +10,7 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#configuration][Configuration]]
+  - [[#true-color-and-italic-support][True-color and italic support]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
