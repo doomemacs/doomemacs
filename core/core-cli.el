@@ -18,6 +18,9 @@
 (require 'core-packages)
 (doom-initialize-core-packages)
 
+;; Don't generate superfluous files when writing temp buffers
+(setq make-backup-files nil)
+
 
 ;;
 ;;; Variables
