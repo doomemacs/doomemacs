@@ -244,25 +244,30 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
            (message "Can't kill the fallback buffer.")
            t)
           ((doom-real-buffer-p buf)
-           (if (and buffer-file-name
-                    (buffer-modified-p buf)
-                    (not (y-or-n-p
-                          (format "Buffer %s is modified; kill anyway?" buf))))
-               (message "Aborted")
-             (set-buffer-modified-p nil)
-             (let (buffer-list-update-hook)
-               (when (or ;; if there aren't more real buffers than visible buffers,
-                      ;; then there are no real, non-visible buffers left.
-                      (not (cl-set-difference (doom-real-buffer-list)
-                                              (doom-visible-buffers)))
-                      ;; if we end up back where we start (or previous-buffer
-                      ;; returns nil), we have nowhere left to go
-                      (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
-                 (switch-to-buffer (doom-fallback-buffer)))
-               (unless (delq (selected-window) (get-buffer-window-list buf nil t))
-                 (kill-buffer buf)))
-             (run-hooks 'buffer-list-update-hook))
-           t))))
+           (let ((visible-p (delq (selected-window) (get-buffer-window-list buf nil t)))
+                 (doom-inhibit-switch-buffer-hooks t)
+                 (inhibit-redisplay t)
+                 buffer-list-update-hook)
+             (unless visible-p
+               (when (and (buffer-modified-p buf)
+                          (not (y-or-n-p
+                                (format "Buffer %s is modified; kill anyway?"
+                                        buf))))
+                 (user-error "Aborted")))
+             (when (or ;; if there aren't more real buffers than visible buffers,
+                    ;; then there are no real, non-visible buffers left.
+                    (not (cl-set-difference (doom-real-buffer-list)
+                                            (doom-visible-buffers)))
+                    ;; if we end up back where we start (or previous-buffer
+                    ;; returns nil), we have nowhere left to go
+                    (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
+               (switch-to-buffer (doom-fallback-buffer)))
+             (unless visible-p
+               (with-current-buffer buf
+                 (restore-buffer-modified-p nil))
+               (kill-buffer buf))
+             (run-hooks 'buffer-list-update-hook)
+             t)))))
 
 
 ;;
