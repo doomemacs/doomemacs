@@ -9,17 +9,18 @@
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
-        company-global-modes
-        '(not erc-mode message-mode help-mode gud-mode)
+        company-global-modes '(not erc-mode message-mode help-mode gud-mode)
         company-frontends '(company-pseudo-tooltip-frontend
                             company-echo-metadata-frontend)
 
         ;; Buffer-local backends will be computed when loading a major mode, so
         ;; only specify a global default here.
-        company-backends  '(company-capf)
+        company-backends '(company-capf)
 
-        ;; Company overrides `company-active-map' based on
-        ;; `company-auto-complete-chars'; no magic please!
+        ;; These auto-complete the current selection when
+        ;; `company-auto-complete-chars' is typed. This is too magical. We
+        ;; already have the much more explicit RET and TAB.
+        company-auto-complete nil
         company-auto-complete-chars nil
 
         ;; Only search the current buffer for `company-dabbrev' (a backend that
