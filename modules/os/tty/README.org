@@ -55,6 +55,11 @@ need
 
 * Configuration
 ** True-color and italic support
+#+begin_quote
+This advice only applies to Emacs 26.x. True color support is [[https://github.com/emacs-mirror/emacs/commit/7f6153d9563cfe7753083996f59eacc9f4c694df][built into 27.1+
+and newer]].
+#+end_quote
+
 (credit goes to [[https://github.com/syl20bnr/spacemacs/wiki/Terminal][the spacemacs wiki]] for this information)
 
 Create a =xterm-24bit.terminfo= file with the following contents:
