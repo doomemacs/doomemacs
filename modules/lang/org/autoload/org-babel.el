@@ -8,18 +8,23 @@
                       if (save-excursion (goto-char pos) (org-in-src-block-p t))
                       return (goto-char pos)))
         (message "Nothing to evaluate at point")
-      (let ((info (org-babel-get-src-block-info t))
-            (beg (max beg (match-beginning 5)))
-            (end (min end (match-end 5))))
-        (cond
-         ((and (string-prefix-p "jupyter-" (car info))
-               (require 'jupyter nil t))
-          (jupyter-eval-region beg end))
-         ((let ((major-mode
-                 (org-src-get-lang-mode
-                  (or (org-eldoc-get-src-lang)
-                      (user-error "No lang specified for this src block")))))
-            (+eval/region beg end))))))))
+      (let* ((element (org-element-at-point))
+             (block-beg (save-excursion
+                          (goto-char (org-babel-where-is-src-block-head element))
+                          (line-beginning-position 2)))
+             (block-end (save-excursion
+                          (goto-char (org-element-property :end element))
+                          (skip-chars-backward " \t\n")
+                          (line-beginning-position)))
+             (beg (if beg (max beg block-beg) block-beg))
+             (end (if end (min end block-end) block-end))
+             (lang (or (org-eldoc-get-src-lang)
+                       (user-error "No lang specified for this src block"))))
+        (cond ((and (string-prefix-p "jupyter-" lang)
+                    (require 'jupyter nil t))
+               (jupyter-eval-region beg end))
+              ((let ((major-mode (org-src-get-lang-mode lang)))
+                 (+eval/region beg end))))))))
 
 
 ;;;###autoload
