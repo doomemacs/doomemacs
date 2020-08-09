@@ -25,7 +25,7 @@ This module configures Emacs for terminal usage.
 This module has no dedicated maintainers.
 
 ** Module Flags
-+ =+osx= Instead of piping your kill ring through external programs, like xclip
++ =+osc= Instead of piping your kill ring through external programs, like xclip
   or pbcopy, have Emacs emit OSC-52 escape codes instead, allowing Emacs to
   communicate to your clipboard through your terminal. This allows for clipboard
   communication over SSH connections or tmux. However, this requires [[https://github.com/spudlyo/clipetty#terminals-that-support-osc-clipboard-operations][a supported
