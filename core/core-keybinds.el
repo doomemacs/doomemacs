@@ -28,7 +28,9 @@ and Emacs states, and for non-evil users.")
 
 (cond (IS-MAC
        (setq mac-command-modifier 'super
-             mac-option-modifier  'meta))
+             mac-option-modifier  'meta
+             ns-command-modifier  'super
+             ns-option-modifier   'meta))
       (IS-WINDOWS
        (setq w32-lwindow-modifier 'super
              w32-rwindow-modifier 'super)))
