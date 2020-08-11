@@ -2,6 +2,7 @@
 ;;;###if (featurep! +lsp)
 
 (use-package! lsp-java
+  :commands dap-java-run-test-class dap-java-debug-test-class
   :after lsp-clients
   :preface
   (setq lsp-java-workspace-dir (concat doom-etc-dir "java-workspace"))
