@@ -63,18 +63,26 @@
 This differs from `display-buffer-in-direction' in one way: it will try to use a
 window that already exists in that direction. It will split otherwise."
   (let ((direction (or (alist-get 'direction alist)
-                       +magit-open-windows-in-direction)))
+                       +magit-open-windows-in-direction))
+        (origin-window (selected-window)))
     (if-let (window (window-in-direction direction))
         (select-window window)
-      (if-let (window (window-in-direction
-                       (pcase direction
-                         (`right 'left)
-                         (`left 'right)
-                         ((or `up `above) 'down)
-                         ((or `down `below) 'up))))
+      (if-let (window (and (not (one-window-p))
+                           (window-in-direction
+                            (pcase direction
+                              (`right 'left)
+                              (`left 'right)
+                              ((or `up `above) 'down)
+                              ((or `down `below) 'up)))))
           (select-window window)
-        (split-window-horizontally)))
-    (switch-to-buffer buffer)
+        (let ((window (split-window nil nil direction)))
+          (when (memq direction '(right down below))
+            (select-window window))
+          (display-buffer-record-window 'reuse window buffer)
+          (set-window-buffer window buffer)
+          (set-window-parameter window 'quit-restore (list 'window 'window origin-window buffer))
+          (set-window-prev-buffers window nil))))
+    (switch-to-buffer buffer t t)
     (selected-window)))
 
 

@@ -75,7 +75,8 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
   (setq transient-display-buffer-action '(display-buffer-below-selected)
-        magit-display-buffer-function #'+magit-display-buffer-fn)
+        magit-display-buffer-function #'+magit-display-buffer-fn
+        magit-bury-buffer-function #'magit-mode-quit-window)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
 
