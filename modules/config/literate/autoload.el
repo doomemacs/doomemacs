@@ -48,7 +48,7 @@ byte-compiled from.")
                     (print! (info "%s") (apply #'format msg args)))))
           (unwind-protect
               (with-temp-file backup
-                (insert-file-contents file)
+                (insert-file-contents target)
                 (let ((buffer-file-name backup)
                       ;; Prevent unwanted entries in recentf, or formatters, or
                       ;; anything that could be on these hooks, really. Nothing
