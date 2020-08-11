@@ -175,14 +175,13 @@ COMMAND, and passes ARGS to it."
         (coding-system-for-read  'utf-8))
     (with-temp-file post-script
       (insert "#!/usr/bin/env sh\n"
-              "[ -x \"$0\" ] && rm -f \"$0\"\n"
               (save-match-data
                 (cl-loop for env in process-environment
-                         if (string-match "^\\([^=]+\\)=\\(.+\\)$" env)
+                         if (string-match "^\\([^ !@#$%^&*()=]+\\)=\\(.+\\)$" env)
                          concat (format "%s=%S\n"
                                         (match-string 1 env)
                                         (match-string 2 env))))
-              "\n"
+              "\n[ -x \"$0\" ] && rm -f \"$0\"\n"
               (if (stringp lines)
                   lines
                 (string-join
