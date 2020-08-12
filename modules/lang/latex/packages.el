@@ -4,6 +4,8 @@
 (package! auctex :pin "6abf890a485b2ff734d8f87f38393f9b8f6bbbf6")
 (package! adaptive-wrap :pin "1810c0ee8d827dd502ddeaae5bd759d4811fcbce")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
+(when (featurep! :editor evil +everywhere)
+  (package! evil-tex :pin "bb01576e4cf9cc10c529621ced3ef3a7eb5ab376"))
 
 ;; Optional module features:
 

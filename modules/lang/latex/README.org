@@ -41,6 +41,7 @@ Provide a helping hand when working with LaTeX documents.
 ** Plugins
 + [[http://www.gnu.org/software/auctex/][auctex]]
 + [[http://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
++ [[https://github.com/iyefrat/evil-tex][evil-tex]] (when =:editor evil +everywhere=)
 + [[https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
 + [[https://github.com/tom-tan/auctex-latexmk][auctex-latexmk]]*
 + [[https://github.com/alexeyr/company-auctex][company-auctex]]*
