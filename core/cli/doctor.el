@@ -51,6 +51,10 @@ in."
   (when EMACS28+
     (warn! "Emacs %s detected. Doom doesn't support Emacs 28/HEAD. It is unstable and may cause errors."
            emacs-version))
+  (unless (fboundp 'json-serialize)
+    (warn! "This version of Emacs has not been compiled with native JSON parsing. "
+           "Check your configure flags if built from source, "
+           "or with your distribution to get the support added in the package."))
 
   (print! (start "Checking for Emacs config conflicts..."))
   (when (file-exists-p "~/.emacs")
