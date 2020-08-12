@@ -13,29 +13,40 @@
 #
 # With a specific version of Emacs
 #
-#   nix-shell --arg emacs pkgs.emacs           # 26.3
-#   nix-shell --arg emacs pkgs.emacsUnstable   # 27.x
-#   nix-shell --arg emacs pkgs.emacs           # 28+
+#   nix-shell --arg emacs 26   # 26.3
+#   nix-shell --arg emacs 27   # 27.1
+#   nix-shell --arg emacs 28   # HEAD
 
-{ pkgs ? (import <nixpkgs> {})
-, emacs ? pkgs.emacs
+{ pkgs ?
+  import <nixpkgs> {
+    overlays = [
+      import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz)
+    ];
+  }
+, emacs ? 26
 , emacsdir ? "$(pwd)/.."
 , doomdir ? "$(pwd)"
 , doomlocaldir ? "$(pwd)/.local" }:
 
 pkgs.stdenv.mkDerivation {
   name = "doom-emacs";
+
   buildInputs = [
-    emacs
+    (if      emacs == 28 then pkgs.emacsGit
+     else if emacs == 27 then pkgs.emacsUnstable
+     else pkgs.emacs)
     pkgs.git
     (pkgs.ripgrep.override {withPCRE2 = true;})
   ];
+
   shellHook = ''
     export EMACSVERSION="$(emacs --no-site-file --batch --eval '(princ emacs-version)')"
     export EMACSDIR="$(readlink -f "${emacsdir}")/"
     export DOOMDIR="$(readlink -f "${doomdir}")/"
     export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
     export PATH="$EMACSDIR/bin:$PATH"
+
+    echo "Running Emacs $EMACSVERSION"
     echo "EMACSDIR=$EMACSDIR"
     echo "DOOMDIR=$DOOMDIR"
     echo "DOOMLOCALDIR=$DOOMLOCALDIR"
