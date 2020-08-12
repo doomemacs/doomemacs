@@ -104,25 +104,14 @@ should be a deliberate act (as is flipping this variable).")
       (apply orig-fn args)))
 
   (add-hook! 'lsp-mode-hook
-    (defun +lsp-init-optimizations-h ()
-      "Increase `read-process-output-max' and `gcmh-high-cons-threshold'."
-      ;; `read-process-output-max' is only available on recent development
-      ;; builds of Emacs 27 and above.
-      (unless (boundp 'read-process-output-max)
-        (setq-local read-process-output-max (* 1024 1024)))
-      ;; REVIEW LSP causes a lot of allocations, with or without Emacs 27+'s
-      ;;        native JSON library, so we up the GC threshold to stave off
-      ;;        GC-induced slowdowns/freezes. Doom uses `gcmh' to enforce its GC
-      ;;        strategy, so we modify its variables rather than
-      ;;        `gc-cons-threshold' directly.
-      (setq-local gcmh-high-cons-threshold (* 2 (default-value 'gcmh-high-cons-threshold))))
     (defun +lsp-display-guessed-project-root-h ()
       "Log what LSP things is the root of the current project."
       ;; Makes it easier to detect root resolution issues.
       (when-let (path (buffer-file-name (buffer-base-buffer)))
         (if-let (root (lsp--calculate-root (lsp-session) path))
             (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
-          (lsp--info "Could not guess project root.")))))
+          (lsp--info "Could not guess project root."))))
+    #'+lsp-init-optimizations-h)
 
   (add-hook! 'lsp-completion-mode-hook
     (defun +lsp-init-company-backends-h ()

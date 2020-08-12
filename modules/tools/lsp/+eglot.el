@@ -5,6 +5,7 @@
 
 (use-package! eglot
   :commands eglot eglot-ensure
+  :hook (eglot-managed-mode . +lsp-init-optimizations-h)
   :init
   (setq eglot-sync-connect 1
         eglot-connect-timeout 10
