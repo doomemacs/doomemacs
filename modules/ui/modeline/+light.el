@@ -400,9 +400,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                                                     warning
                                                     info))))
                (+modeline-format-icon "check" "" 'success)))
-            (`running     (+modeline-format-icon "access_time" "*" 'font-lock-comment-face "Running..."))
+            (`running     (+modeline-format-icon "access_time" "*" 'mode-line-inactive "Running..."))
             (`errored     (+modeline-format-icon "sim_card_alert" "!" 'error "Errored!"))
-            (`interrupted (+modeline-format-icon "pause" "!" 'font-lock-comment-face "Interrupted"))
+            (`interrupted (+modeline-format-icon "pause" "!" 'mode-line-inactive "Interrupted"))
             (`suspicious  (+modeline-format-icon "priority_high" "!" 'error "Suspicious"))))))
 
 
