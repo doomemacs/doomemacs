@@ -7,7 +7,7 @@
     "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
     "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS")
 
-  (set-pretty-symbols! '(js2-mode rjsx-mode web-mode)
+  (set-ligatures! '(js2-mode rjsx-mode web-mode)
     ;; Functional
     :def "function"
     :lambda "() =>"
@@ -95,7 +95,7 @@
   :config
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
-  (set-pretty-symbols! 'typescript-mode
+  (set-ligatures! 'typescript-mode
     ;; Functional
     :def "function"
     :lambda "() =>"

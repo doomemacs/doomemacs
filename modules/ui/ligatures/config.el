@@ -1,6 +1,6 @@
-;;; ui/pretty-code/config.el -*- lexical-binding: t; -*-
+;;; ui/ligatures/config.el -*- lexical-binding: t; -*-
 
-(defvar +pretty-code-symbols
+(defvar +ligatures-classes
   '(;; org
     :name          "»"
     :src_block     "»"
@@ -38,23 +38,13 @@
     :tuple         "⨂"
     :pipe          "" ;; FIXME: find a non-private char
     :dot           "•")
-  "Options plist for `set-pretty-symbols!'.
+  "Options plist for `set-ligatures!'.
 
 This should not contain any symbols from the Unicode Private Area! There is no
 universal way of getting the correct symbol as that area varies from font to
 font.")
 
-(defvar +pretty-code-enabled-modes t
-  "List of major modes in which `prettify-symbols-mode' should be enabled.
-If t, enable it everywhere. If the first element is 'not, enable it in any mode
-besides what is listed.")
-
-(defvar +pretty-code-symbols-alist '((t))
-  "An alist containing a mapping of major modes to its value for
-`prettify-symbols-alist'.")
-
-;;; Automatic font-specific ligatures
-(defvar +prog-ligatures-alist
+(defvar +ligatures-composition-alist
   '((?!  . "\\(?:!\\(?:==\\|[!=]\\)\\)")                                      ; (regexp-opt '("!!" "!=" "!=="))
     (?#  . "\\(?:#\\(?:###?\\|_(\\|[#(:=?[_{]\\)\\)")                         ; (regexp-opt '("##" "###" "####" "#(" "#:" "#=" "#?" "#[" "#_" "#_(" "#{"))
     (?$  . "\\(?:\\$>>?\\)")                                                  ; (regexp-opt '("$>" "$>>"))
@@ -83,27 +73,42 @@ besides what is listed.")
     (?_  . "\\(?:_\\(?:|?_\\)\\)")                                            ; (regexp-opt '("_|_" "__"))
     (?\( . "\\(?:(\\*\\)")                                                    ; (regexp-opt '("(*"))
     (?~  . "\\(?:~\\(?:~>\\|[=>@~-]\\)\\)"))                                  ; (regexp-opt '("~-" "~=" "~>" "~@" "~~" "~~>"))
-  "An alist of all ligatures used by `+prog-ligatures-modes'.
+  "An alist of all ligatures used by `+ligatures-extras-in-modes'.
 
 The car is the character ASCII number, cdr is a regex which will call
 `font-shape-gstring' when matched.
 
-Because of the underlying code in :ui pretty-code module, the regex should match
-a string starting with the character contained in car.
+Because of the underlying code in :ui ligatures module, the regex should match a
+string starting with the character contained in car.
 
 This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 
-(defvar +prog-ligatures-modes '(not org-mode)
-  "List of major modes in which ligatures should be enabled.
+(defvar +ligatures-extra-alist '((t))
+  "An alist mapping major modes to `prettify-symbols-alist' values.")
 
-If t, enable it everywhere. Fundamental mode, and modes derived from special-mode,
-comint-mode, eshell-mode and term-mode are *still* excluded.
+(defvar +ligatures-in-modes
+  '(not special-mode comint-mode eshell-mode term-mode vterm-mode)
+  "List of major modes where ligatures should be enabled.
 
-If the first element is 'not, enable it in any mode besides what is listed.
+  If t, enable it everywhere (except `fundamental-mode').
+  If the first element is 'not, enable it in any mode besides what is listed.
+  If nil, don't enable ligatures anywhere.")
 
-If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code).")
+(defvar +ligatures-extras-in-modes t
+  "List of major modes where extra ligatures should be enabled.
 
-(defun +pretty-code--correct-symbol-bounds (ligature-alist)
+Extra ligatures are mode-specific substituions, defined in `+ligatures-classes'
+and assigned with `set-ligatures!'. This variable controls where these are
+enabled.
+
+  If t, enable it everywhere (except `fundamental-mode').
+  If the first element is 'not, enable it in any mode besides what is listed.
+  If nil, don't enable these extra ligatures anywhere (though it's more
+efficient to remove the `+extra' flag from the :ui ligatures module instead).")
+
+(defvar +ligatures--init-font-hook nil)
+
+(defun +ligatures--correct-symbol-bounds (ligature-alist)
   "Prepend non-breaking spaces to a ligature.
 
 This way `compose-region' (called by `prettify-symbols-mode') will use the
@@ -115,86 +120,94 @@ correct width of the symbols instead of the width measured by `char-width'."
             len (1- len)))
     (cons (car ligature-alist) acc)))
 
-(defun +pretty-code-init-pretty-symbols-h ()
-  "Enable `prettify-symbols-mode'.
+(defun +ligatures--enable-p (modes)
+  "Return t if ligatures should be enabled in this buffer depending on MODES."
+  (unless (eq major-mode 'fundamental-mode)
+    (or (eq modes t)
+        (if (eq (car modes) 'not)
+            (not (apply #'derived-mode-p (cdr modes)))
+          (apply #'derived-mode-p modes)))))
 
-If in fundamental-mode, or a mode derived from special, comint, eshell or term
-modes, this function does nothing.
+(defun +ligatures-init-buffer-h ()
+  "Set up ligatures for the current buffer.
 
-Otherwise it builds `prettify-code-symbols-alist' according to
-`+pretty-code-symbols-alist' for the current major-mode."
-  (unless (or (eq major-mode 'fundamental-mode)
-              (eq (get major-mode 'mode-class) 'special)
-              (derived-mode-p 'comint-mode 'eshell-mode 'term-mode))
-    (when (or (eq +pretty-code-enabled-modes t)
-              (if (eq (car +pretty-code-enabled-modes) 'not)
-                  (not (memq major-mode (cdr +pretty-code-enabled-modes)))
-                (memq major-mode +pretty-code-enabled-modes)))
-      (setq prettify-symbols-alist
-            (append (cdr (assq major-mode +pretty-code-symbols-alist))
-                    (default-value 'prettify-symbols-alist)))
-      (when prettify-symbols-mode
-        (prettify-symbols-mode -1))
+Extra ligatures are mode-specific substituions, defined in
+`+ligatures-classes', assigned with `set-ligatures!', and made possible
+with `prettify-symbols-mode'. This variable controls where these are enabled.
+See `+ligatures-extras-in-modes' to control what major modes this function can
+and cannot run in."
+  (when after-init-time
+    (when (+ligatures--enable-p +ligatures-in-modes)
+      (if (boundp '+ligature--composition-table)
+          (setq-local composition-function-table +ligature--composition-table)
+        (run-hooks '+ligatures--init-font-hook)
+        (setq +ligatures--init-font-hook nil)))
+    (when (and (featurep! +extra)
+               (+ligatures--enable-p +ligatures-extras-in-modes))
+      (prependq! prettify-symbols-alist (alist-get major-mode +ligatures-extra-alist)))
+    (when prettify-symbols-alist
+      (if prettify-symbols-mode (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
-
-(defun +pretty-code-init-ligatures-h ()
-  "Enable ligatures.
-
-If in fundamental-mode, or a mode derived from special, comint, eshell or term
-modes, this function does nothing.
-
-Otherwise it sets the buffer-local composition table to a composition table enhanced with
-`+prog-ligatures-alist' ligatures regexes."
-  (unless (or (eq major-mode 'fundamental-mode)
-              (eq (get major-mode 'mode-class) 'special)
-              (derived-mode-p 'comint-mode 'eshell-mode 'term-mode))
-    (when (or (eq +prog-ligatures-modes t)
-              (if (eq (car +prog-ligatures-modes) 'not)
-                  (not (memq major-mode (cdr +prog-ligatures-modes)))
-                (memq major-mode +prog-ligatures-modes)))
-      (setq-local composition-function-table composition-ligature-table))))
 
 
 ;;
 ;;; Bootstrap
 
-(add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
-
 ;;;###package prettify-symbols
 ;; When you get to the right edge, it goes back to how it normally prints
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
+(add-hook! 'doom-init-ui-hook :append
+  (defun +ligatures-init-h ()
+    (add-hook 'after-change-major-mode-hook #'+ligatures-init-buffer-h)))
+
 (cond
- ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
+ ;; The emacs-mac build of Emacs appears to have built-in support for ligatures,
  ;; using the same composition-function-table method
  ;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
  ;; so use that instead if this module is enabled.
  ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
-  (mac-auto-operator-composition-mode))
+  (add-hook 'doom-init-ui-hook #'mac-auto-operator-composition-mode 'append))
 
  ;; Harfbuzz and Mac builds do not need font-specific ligature support
- ;; if they are above emacs-27
+ ;; if they are above emacs-27.
  ((and EMACS28+
        (or (featurep 'ns)
            (string-match-p "HARFBUZZ" system-configuration-features))
-       +prog-ligatures-modes
-       (require 'composite nil t))
-  (defvar composition-ligature-table (make-char-table nil))
+       (featurep 'composite))  ; Emacs loads `composite' at startup
+  (defvar +ligature--composition-table (make-char-table nil))
+  (add-hook! 'doom-init-ui-hook :append
+    (defun +ligature-init-composition-table-h ()
+      (dolist (char-regexp +ligatures-composition-alist)
+        (set-char-table-range
+         +ligature--composition-table
+         (car char-regexp) `([,(cdr char-regexp) 0 font-shape-gstring])))
+      (set-char-table-parent +ligature--composition-table composition-function-table)
+      (add-hook 'after-change-major-mode-hook #'+ligatures-init-buffer-composition-table-h))))
 
-  (dolist (char-regexp +prog-ligatures-alist)
-    (set-char-table-range composition-ligature-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring])))
-  (unless doom-reloading-p
-    (set-char-table-parent composition-ligature-table composition-function-table))
+ ;; Fallback ligature support for certain, patched fonts. Install them with
+ ;; `+ligatures/install-patched-font'
+ ((defmacro +ligatures--def-font (id font-plist &rest alist)
+    (declare (indent 2))
+    (let ((alist-var (intern (format "+ligatures-%s-font-alist" id)))
+          (setup-fn  (intern (format "+ligatures-init-%s-font-h" id))))
+      `(progn
+         (setf (alist-get ',id +ligatures--font-alist) (list ,@font-plist))
+         (defvar ,alist-var ',alist ,(format "Name of the %s ligature font." id))
+         (defun ,setup-fn (&rest _)
+           (cl-destructuring-bind (name &key _url files range)
+               (or (alist-get ',id +ligatures--font-alist)
+                   (error "No ligature font called %s" ',id))
+             (when range
+               (set-fontset-font t range name nil 'prepend))
+             (setq-default prettify-symbols-alist
+                           (append (default-value 'prettify-symbols-alist)
+                                   (mapcar #'+ligatures--correct-symbol-bounds ,alist-var)))))
+         (add-hook '+ligatures--init-font-hook #',setup-fn))))
 
-  (add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h))
+  (defvar +ligatures--font-alist ())
 
- ;; Font-specific ligature support
- ((featurep! +fira)
-  (load! "+fira"))
- ((featurep! +iosevka)
-  (load! "+iosevka"))
- ((featurep! +hasklig)
-  (load! "+hasklig"))
- ((featurep! +pragmata-pro)
-  (load! "+pragmata-pro")))
+  (cond ((featurep! +fira)         (load! "+fira"))
+        ((featurep! +iosevka)      (load! "+iosevka"))
+        ((featurep! +hasklig)      (load! "+hasklig"))
+        ((featurep! +pragmata-pro) (load! "+pragmata-pro")))))

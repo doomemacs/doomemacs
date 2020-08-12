@@ -492,7 +492,7 @@ What can you do about it?
    but can be a bit of a hassle to set up. There are packages available for
    [[https://aur.archlinux.org/packages/emacs-native-comp-git/][Arch Linux]], [[https://github.com/flatwhatson/guix-channel][Guix]] and [[https://github.com/nix-community/emacs-overlay][Nix users]]. [[https://www.emacswiki.org/emacs/GccEmacs][More information available on EmacsWiki]].
 3. Disable some of Doom's slowest modules. The biggest offenders tend to be:
-   =:ui tabs=, =:ui indent-guides=, =:ui pretty-code=, =:ui word-wrap= and =:ui
+   =:ui tabs=, =:ui indent-guides=, =:ui ligatures, =:ui word-wrap= and =:ui
    vc-gutter=.
 4. Turn off line numbers ~(setq display-line-numbers-type nil)~. It's known to
    slow down scrolling, in particular.
@@ -1213,7 +1213,7 @@ Here are a few common causes for random crashes:
 
   Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/hlissner/doom-emacs/issues/1170][#1170]]).
 + Ligatures and some fonts can cause Emacs to crash. You may want to try a
-  different font, or disable the =:ui pretty-code= module.
+  different font, or disable the =:ui ligatures module.
 
 ** Can't load my theme; ~unable to find theme file for X~ errors
 This means Emacs can't find the X-theme.el file for the theme you want to load.

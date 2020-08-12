@@ -18,7 +18,7 @@
   (when (featurep! +lsp)
     (add-hook 'scala-mode-local-vars-hook #'lsp!))
 
-  (set-pretty-symbols! 'scala-mode
+  (set-ligatures! 'scala-mode
     ;; Functional
     :def "def"
     :composition  "compose"

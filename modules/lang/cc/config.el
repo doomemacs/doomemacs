@@ -51,7 +51,7 @@ This is ignored by ccls.")
   (set-rotate-patterns! 'c++-mode
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
-  (set-pretty-symbols! '(c-mode c++-mode)
+  (set-ligatures! '(c-mode c++-mode)
     ;; Functional
     ;; :def "void "
     ;; Types

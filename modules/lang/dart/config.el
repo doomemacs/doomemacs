@@ -7,7 +7,7 @@
   (when (and (featurep! +flutter) IS-LINUX)
     (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))
       (setq flutter-sdk-path path)))
-  (set-pretty-symbols! '(dart-mode)
+  (set-ligatures! '(dart-mode)
     ;; Functional
     :def "Function"
     :lambda "() =>"

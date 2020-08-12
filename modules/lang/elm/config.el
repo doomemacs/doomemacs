@@ -6,7 +6,7 @@
     (set-company-backend! 'elm-mode 'company-elm))
  
   (set-repl-handler! 'elm-mode #'run-elm-interactive)
-  (set-pretty-symbols! 'elm-mode
+  (set-ligatures! 'elm-mode
     :null "null"
     :true "true" :false "false"
     :int "Int" :str "String"

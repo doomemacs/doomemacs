@@ -31,7 +31,7 @@ called.")
   (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
   (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy")
 
-  (set-pretty-symbols! 'python-mode
+  (set-ligatures! 'python-mode
     ;; Functional
     :def "def"
     :lambda "lambda"

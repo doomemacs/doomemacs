@@ -10,7 +10,7 @@
 
 (after! tuareg
   ;; tuareg-mode has the prettify symbols itself
-  (set-pretty-symbols! 'tuareg-mode :alist
+  (set-ligatures! 'tuareg-mode :alist
     (append tuareg-prettify-symbols-basic-alist
             tuareg-prettify-symbols-extra-alist))
   ;; harmless if `prettify-symbols-mode' isn't active

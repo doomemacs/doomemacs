@@ -87,7 +87,7 @@ tools.
   | =utop-eval-region=           | =SPC c e= | evaluate selected region in =utop=                        |
 
 ** Hacks
-+ =set-pretty-symbols!= is called with the full tuareg prettify symbol list, this
++ =set-ligatures!= is called with the full tuareg prettify symbol list, this
   can cause columns to change as certain keywords are shortened (e.g. =fun=
   becomes \lambda.
 + =tuareg-opam-update-env= is called the first time =tuareg= is loaded

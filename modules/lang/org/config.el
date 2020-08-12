@@ -183,7 +183,7 @@ This forces it to read the background before rendering."
   ;; Automatic indent detection in org files is meaningless
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
 
-  (set-pretty-symbols! 'org-mode
+  (set-ligatures! 'org-mode
     :name "#+NAME:"
     :name "#+name:"
     :src_block "#+BEGIN_SRC"

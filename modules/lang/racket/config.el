@@ -16,7 +16,7 @@
     :definition    #'+racket-lookup-definition
     :documentation #'+racket-lookup-documentation)
   (set-docsets! 'racket-mode "Racket")
-  (set-pretty-symbols! 'racket-mode
+  (set-ligatures! 'racket-mode
     :lambda  "lambda"
     :map     "map"
     :dot     ".")

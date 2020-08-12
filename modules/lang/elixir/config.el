@@ -14,7 +14,7 @@
   ;; a subset of them (defined below).
   (provide 'smartparens-elixir)
   :config
-  (set-pretty-symbols! 'elixir-mode
+  (set-ligatures! 'elixir-mode
     ;; Functional
     :def "def"
     :lambda "fn"
