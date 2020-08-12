@@ -35,13 +35,6 @@
           (when solaire-global-mode
             (solaire-global-mode -1))))))
 
-  (add-hook! 'solaire-global-mode-hook :append
-    (defun +doom-solaire-swap-bg-faces-maybe-h ()
-      (and (bound-and-true-p solaire-global-mode)
-           (symbolp doom-theme)
-           (string-prefix-p "doom-" (symbol-name doom-theme))
-           (solaire-mode-swap-bg))))
-
   ;; DEPRECATED No longer needed in Emacs 27+
   (unless EMACS27+
     ;; HACK On Emacs <=26, when point is on the last (or second to last) line
