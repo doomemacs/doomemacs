@@ -21,9 +21,8 @@
 * Description
 This module enables support for a literate config.
 
-A literate config consists of a =DOOMDIR/config.org=, which can be tangled to
-any file(s) you like. By default, elisp src blocks are tangled to =config.el=
-whenever ~doom sync~ is executed.
+A literate config consists of a =DOOMDIR/config.org=. All src blocks within are
+tangled =DOOMDIR/config.el=, by default, when ~doom sync~ is executed.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -54,13 +53,13 @@ highlighting. If you don't want to specify language in block you can also
 enforce tangling by adding ~#+BEGIN_SRC :tangle yes~
 
 ** Change where src blocks are tangled or prevent it entirely
-By default, this module tangles all src blocks (with a valid language) to
-config.org unless otherwise specified.
+By default, this module tangles all src emacs-lisp blocks to config.el unless
+otherwise specified.
 
 To specify otherwise use the =:tangle= parameter to:
 
-- Specify a destination other than config.el, like packages.el
-- Disable tangling of the block altogether
+- Specify a destination other than config.el: ~:tangle packages.el~
+- Disable tangling of the block altogether with ~:tangle no~
 - Or force non-elisp src blocks to tangle somewhere
 
 For example:
@@ -83,6 +82,9 @@ echo Hello world
 echo Hello world
 ,#+END_SRC
 #+END_SRC
+
+You'll find more information about babel src blocks and what parameters they
+support [[https://www.gnu.org/software/emacs/manual/html_node/org/Working-with-source-code.html#Working-with-source-code][in the manual]].
 
 ** Modularizing your literate config with ~#+INCLUDE~ directives
 Literate configs can be split up into separate files and imported into a central
