@@ -172,10 +172,11 @@ Otherwise it sets the buffer-local composition table to a composition table enha
  ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
   (mac-auto-operator-composition-mode))
 
- ;; Harfbuzz builds do not need font-specific ligature support
+ ;; Harfbuzz and Mac builds do not need font-specific ligature support
  ;; if they are above emacs-27
  ((and EMACS28+
-       (string-match-p "HARFBUZZ" system-configuration-features)
+       (or (featurep 'ns)
+           (string-match-p "HARFBUZZ" system-configuration-features))
        +prog-ligatures-modes
        (require 'composite nil t))
   (defvar composition-ligature-table (make-char-table nil))
