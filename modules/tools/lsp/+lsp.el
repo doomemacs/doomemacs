@@ -93,6 +93,16 @@ should be a deliberate act (as is flipping this variable).")
         (catch 'not-installed
           (apply orig-fn args)))))
 
+  (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
+    "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
+    :around #'lsp-diagnostics--flycheck-enable
+    (if flycheck-checker
+        ;; Respect file/dir/explicit user-defined `flycheck-checker'.
+        (let ((old-checker flycheck-checker))
+          (apply orig-fn args)
+          (setq-local flycheck-checker old-checker))
+      (apply orig-fn args)))
+
   (add-hook! 'lsp-mode-hook
     (defun +lsp-init-optimizations-h ()
       "Increase `read-process-output-max' and `gcmh-high-cons-threshold'."
