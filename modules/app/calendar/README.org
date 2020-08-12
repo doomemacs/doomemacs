@@ -21,7 +21,7 @@ This module provides no flags.
 ** Packages
 + [[https://github.com/kiwanami/emacs-calfw][calfw]]
 + [[https://github.com/kiwanami/emacs-calfw][calfw-org]]
-+ [[https://github.com/myuhe/org-gcal.el][org-gcal]]
++ [[https://github.com/kidd/org-gcal.el][org-gcal]]
 
 * Configuration
 ** Changing calendar sources
