@@ -2,4 +2,4 @@
 ;;; ui/doom/packages.el
 
 (package! doom-themes :pin "8a5538e7dce36e63474adc412e8aa56009cae4e2")
-(package! solaire-mode :pin "380e01c7519ca71259f7766669b0648e87f2c540")
+(package! solaire-mode :pin "cd63b675140232f399e7733d7ce95a0b931b1058")
