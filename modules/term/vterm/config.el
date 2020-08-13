@@ -6,18 +6,6 @@
   :preface (setq vterm-install t) ; compile the package when you load vterm
   :hook (vterm-mode . doom-mark-buffer-as-real-h)
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
-  :preface
-  (when! (fboundp 'native-compile)
-    ;; HACK Fix #3683: `vterm-module-compile' uses `locate-library' to determine
-    ;;      where vterm-module.so should be, but an eln file (for emacsGcc
-    ;;      users) reports a subdirectory that will never contain it; rendering
-    ;;      vterm unable to build itself.
-    ;; REVIEW Remove this when akermu/emacs-libvterm#363 is resolved.
-    (defadvice! +vterm--dont-resolve-to-eln-file-a (orig-fn &rest args)
-      :around #'vterm-module-compile
-      (let ((load-suffixes (remove ".eln" load-suffixes)))
-        (apply orig-fn args))))
-
   :config
   (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
