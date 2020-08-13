@@ -108,7 +108,12 @@ simpler."
       (rtags-call-rc :silent t "-J" (or (doom-project-root) default-directory))))
   ;; then irony
   (when (and (featurep 'irony) irony-mode)
-    (+cc-init-irony-compile-options-h)))
+    (+cc-init-irony-compile-options-h))
+  ;; Otherwise, LSP
+  (when (bound-and-true-p lsp-mode)
+    (lsp-workspace-restart))
+  (when (bound-and-true-p eglot-managed-mode)
+    (eglot-reconnect)))
 
 ;;;###autoload
 (defun +cc/imenu ()
