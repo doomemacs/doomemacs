@@ -26,8 +26,10 @@ This must be set before `treemacs' has loaded.")
         treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
         treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
   :config
-  ;; Allow ace-window to target treemacs windows, just not for
-  ;; treemacs-visit-node-ace-* commands.
+  ;; Allow ace-window to target treemacs windows elsewhere
+  (after! ace-window
+    (delq! 'treemacs-mode aw-ignored-buffers))
+  ;; ...but not from treemacs-visit-node-ace-* commands.
   (defadvice! +treemacs--ace-window-ignore-treemacs-buffer-a (orig-fn &rest args)
     :around '(treemacs-visit-node-ace
               treemacs-visit-node-ace-horizontal-split
