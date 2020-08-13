@@ -16,7 +16,15 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module improves Emacs' support for reading PDF files.
+This module improves support for reading and interacting with PDF files in Emacs.
+
+It uses =pdf-tools=, which is a replacement for the built-in ~doc-view-mode~ for
+PDF files. The key difference being pages are not pre-rendered, but instead
+rendered on-demand and stored in memory; a much faster approach, especially for
+larger PDFs.
+
+Displaying PDF files is just one function of =pdf-tools=. See [[https://github.com/politza/pdf-tools][its project
+website]] for details and videos.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -28,12 +36,12 @@ This module provides no flags.
 + [[https://github.com/politza/pdf-tools][pdf-tools]]
 
 ** Hacks
-+ Added basic support for HiDPI or Retina displays.
++ Added out-of-the-box support for HiDPI or Retina displays.
 
 * Prerequisites
-This module will build the =epdfinfo= program when you first open a pdf file.
-Linux and macOS don't need to do anything special. Windows users, however, must
-build it themselves.
+This module requires =epdfinfo=, a program the the =pdf-tools= plugin will build
+automatically when you open your first pdf file, unless you're on Windows.
+Windows users must build it themselves.
 
 ** Building =epdfinfo= on Windows
 1. [[https://www.msys2.org/][Install MSYS2]] and update the package database and core packages using the
