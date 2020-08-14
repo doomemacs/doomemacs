@@ -955,6 +955,7 @@ compelling reason, so..."
   (defvar evil-org-special-o/O '(table-row))
   (defvar evil-org-use-additional-insert t)
   :config
+  (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   (evil-org-set-key-theme)
   (add-hook! 'org-tab-first-hook :append
              ;; Only fold the current tree, rather than recursively
