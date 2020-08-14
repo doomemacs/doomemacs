@@ -186,8 +186,7 @@ If on a:
                  'done))))
        ;; Update any metadata or inline previews in this subtree
        (org-update-checkbox-count)
-       (let (org-hierarchical-todo-statistics)
-         (org-update-parent-todo-statistics))
+       (org-update-parent-todo-statistics)
        (when (and (fboundp 'toc-org-insert-toc)
                   (member "TOC" (org-get-tags)))
          (toc-org-insert-toc)
@@ -415,8 +414,7 @@ Made for `org-tab-first-hook' in evil-mode."
 (defun +org-update-cookies-h ()
   "Update statistics cookies/todo statistics in headlines."
   (when (and buffer-file-name (file-exists-p buffer-file-name))
-    (let (org-hierarchical-todo-statistics)
-      (org-update-parent-todo-statistics))))
+    (org-update-parent-todo-statistics)))
 
 ;;;###autoload
 (defun +org-yas-expand-maybe-h ()
