@@ -179,9 +179,11 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
   "Return a list of visible buffers (i.e. not buried)."
-  (if buffer-list
-      (cl-remove-if-not #'get-buffer-window buffer-list)
-    (delete-dups (mapcar #'window-buffer (window-list)))))
+  (let ((buffers (delete-dups (mapcar #'window-buffer (window-list)))))
+    (if buffer-list
+        (cl-delete-if (lambda (b) (memq b buffer-list))
+                      buffers)
+      (delete-dups buffers))))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
