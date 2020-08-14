@@ -70,11 +70,10 @@ byte-compiled from.")
             (ignore-errors (delete-file backup)))
           ;; Write an empty file to serve as our mtime cache
           (with-temp-file cache)
-          (unless doom-interactive-p
+          (if doom-interactive-p t
             (message "Restarting..." )
             (doom-cli-execute-lines-after "NOTANGLE=1 \"$@\"")
-            (kill-emacs 0))
-          t))))
+            (kill-emacs 0))))))
 
 ;;;###autoload
 (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
