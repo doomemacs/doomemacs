@@ -179,4 +179,8 @@
 
        :config
        ;;literate
-       (default +bindings +smartparens))
+       (default +bindings +smartparens)
+
+       :input
+       ;;layout            ; auie,ctsrnm is the superior home row
+       )

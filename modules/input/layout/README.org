@@ -1,0 +1,70 @@
+#+TITLE:   input/layout
+#+DATE:    Jun 29, 2020
+#+SINCE:   v3.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#bépo][Bépo]]
+- [[#configuration][Configuration]]
+  - [[#bépo-1][Bépo]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
+
+* Description
+This module provides barebones support for using Doom with evil-mode with non-qwerty layouts.
+
+** Maintainers
++ @gagbo (Author)
+
+** Module Flags
++ =+bepo= Enables modifications for the BÉPO layout (customized with version 1.1 in mind)
+
+** Plugins
+None
+
+* Prerequisites
+This module should only be active if evil is enabled. It uses a general.el utility function, and
+the hooks provided by evil-collection to make the necessary changes.
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+** Bépo
+Support for the bépo layout includes:
+- Setting Avy keys to the correct home row keys
+- Changing navigation keys to =ctsr=
+- Bind =<>= functions to =«»= keys when possible
+- Bind =[]= functions to =()= keys when possible
+- Bind =é= key to =w= functions when possible
+- Bind =è= key to useful functions when possible
+- Bind =`~= functions to =$#= keys when possible
+
+A nice addition in the future might be to have all the normal mode bindings that
+start with =g= start with =,= instead to avoid the curl on these common
+bindings. This is *not* implemented for the time being.
+
+* Configuration
+** Bépo
+=doom-bepo-cr-rotation-style= controls whether:
+- =qwerty-c= functions are mapped on =bépo-l= key, and =qwerty-r= functions on
+  =bépo-h= key (='ergodis=), or
+- =qwerty-c= functions are mapped on =bépo-h= key, and =qwerty-r= functions on
+  =bépo-l= key (='strict=)
+='strict= would be the logical choice but the =c= functions are used more often
+than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to actually put all the =c= functions on
+the key that does not need a curl.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
+** How to deactivate the new bindings and go back to the old ones ?
+If you are learning a new layout you might want to go back to tho old one to
+"get work done". Sadly the only way is to comment out the module, run =doom
+sync= and restart emacs.
+
+Restoring the session =SPC q l= by default helps to lower the impact of the
+restart.
