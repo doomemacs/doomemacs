@@ -11,6 +11,8 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#bépo][Bépo]]
+    - [[#leaving-mnemonics-alone-when-possible][Leaving mnemonics alone when possible]]
+    - [[#possible-contributions][Possible contributions]]
 - [[#configuration][Configuration]]
   - [[#bépo-1][Bépo]]
 - [[#troubleshooting][Troubleshooting]]
@@ -38,12 +40,30 @@ the hooks provided by evil-collection to make the necessary changes.
 Support for the bépo layout includes:
 - Setting Avy keys to the correct home row keys
 - Changing navigation keys to =ctsr=
+  + old =t= is mapped to =j=
+  + old =s= is mapped to =k= (i.e. staging in the magit status buffer is done with =k=)
+  + See [[*Configuration][Configuration]] to see where old =c= and =r= functions
+    are remapped
 - Bind =<>= functions to =«»= keys when possible
 - Bind =[]= functions to =()= keys when possible
 - Bind =é= key to =w= functions when possible
 - Bind =è= key to useful functions when possible
 - Bind =`~= functions to =$#= keys when possible
 
+*** Leaving mnemonics alone when possible
+Exchanging =hjkl= to =ctsr= has the effect of destroying a few mnemonics: the
+change operator becomes =l= for example, or the window split becomes =SPC é k=.
+
+The module tries to limit those changes to the minimum, especially in special
+buffers. A concrete example is magit.
+
+In the =magit: project= buffer (obtained with =magit-status=) does not need
+left-right navigation, so =c=, =r=, =h=, and =l= keep their "expected" bindings,
+while =t=, =s=, =j=, and =k= are flipped:
+- checking the log from a magit buffer is still on =l=
+- staging a file/region has been moved to =k=
+
+*** Possible contributions
 A nice addition in the future might be to have all the normal mode bindings that
 start with =g= start with =,= instead to avoid the curl on these common
 bindings. This is *not* implemented for the time being.
@@ -56,8 +76,8 @@ bindings. This is *not* implemented for the time being.
 - =qwerty-c= functions are mapped on =bépo-h= key, and =qwerty-r= functions on
   =bépo-l= key (='strict=)
 ='strict= would be the logical choice but the =c= functions are used more often
-than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to actually put all the =c= functions on
-the key that does not need a curl.
+than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to
+actually put all the =c= functions on the key that does not need a curl.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.

@@ -76,12 +76,12 @@
       "«" "<"
       "»" ">"))
   (after! (evil magit evil-magit)
-    (doom-bepo-rotate-bare-keymap
+    (doom-bepo-rotate-ts-bare-keymap
      '(magit-mode-map
        magit-diff-section-base-map
        magit-staged-section-map
        magit-unstaged-section-map
-       magit-untracked-section-map) doom-bepo-cr-rotation-style)
+       magit-untracked-section-map))
     ;; Without this, "s" is mapped to 'magit-delete-thing (the old "k" for "kill") and
     ;; takes precedence over the evil command to go up one line
     (map! :map magit-mode-map "s" nil)
