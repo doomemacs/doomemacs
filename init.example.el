@@ -17,6 +17,7 @@
 (doom! :input
        ;;chinese
        ;;japanese
+       ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
        company           ; the ultimate code completion backend
@@ -179,8 +180,4 @@
 
        :config
        ;;literate
-       (default +bindings +smartparens)
-
-       :input
-       ;;layout            ; auie,ctsrnm is the superior home row
-       )
+       (default +bindings +smartparens))
