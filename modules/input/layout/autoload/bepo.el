@@ -1,16 +1,6 @@
 ;;; input/keymaps/autoload/bepo.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom-bepo-highlight-hard-spaces ()
-  "Highlight hard (non-breaking) space characters (`?\u00a0').
-\(This is also ?\240.)
-This also sets `nobreak-char-display' to nil, to turn off its
-low-level, vanilla highlighting."
-  (interactive)
-  (when (boundp 'nobreak-char-display) (setq nobreak-char-display  nil))
-  (font-lock-add-keywords nil `(("[\u00a0]+" (0 'doom-bepo-hard-space 'prepend))) 'APPEND))
-
-;;;###autoload
 (defun doom-bepo-rotate-ts-bare-keymap (keymaps)
   "Rotate [jk] with [ts] in KEYMAP."
   (dolist (keymap keymaps)

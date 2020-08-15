@@ -8,6 +8,11 @@
       (doom-bepo-rotate-collection-keymaps-h-builder doom-bepo-cr-rotation-style))
 (add-hook 'evil-collection-setup-hook #'doom-bepo--evil-collection-hook)
 
+;; Highlight non breaking spaces as error in prog modes only
+;; TODO: this variable is defined in a file called xdisp.c Will that work in non-X builds ?
+(setq nobreak-char-display t)
+(set-face-attribute 'nobreak-space nil :underline t)
+
 (add-transient-hook! 'doom-init-modules-hook
   (setq avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n)
         lispy-avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n ?m ?b ?é ?p ?o ?è ?v ?d ?l ?j ?z))

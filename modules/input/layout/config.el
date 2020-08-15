@@ -1,10 +1,5 @@
 ;;; input/keymaps/config.el -*- lexical-binding: t; -*-
 
-(defface doom-bepo-hard-space '((t (:background "Aquamarine")))
-  "*Face for highlighting non-breaking spaces (`?\u00a0')in Font-Lock mode.
-\(This is also ?\240.)"
-  :group 'doom-bepo :group 'faces)
-
 (defvar doom-bepo-cr-rotation-style 'ergodis
   "Modify this variable in your $DOOMDIR/init.el
 Style of binding rotation for the cr keys.
