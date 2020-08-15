@@ -178,9 +178,9 @@ COMMAND, and passes ARGS to it."
               (save-match-data
                 (cl-loop for env in process-environment
                          if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
-                         concat (format "export %s=%S\n"
+                         concat (format "export %s=%s;\n"
                                         (match-string 1 env)
-                                        (match-string 2 env))))
+                                        (shell-quote-argument (match-string 2 env)))))
               (format "\nexport PATH=\"%s:$PATH\"\n" (concat doom-emacs-dir "bin/"))
               "\n[ -x \"$0\" ] && rm -f \"$0\"\n"
               (if (stringp lines)
