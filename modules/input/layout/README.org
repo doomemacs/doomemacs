@@ -57,8 +57,8 @@ change operator becomes =l= for example, or the window split becomes =SPC é k=.
 The module tries to limit those changes to the minimum, especially in special
 buffers. A concrete example is magit.
 
-In the =magit: project= buffer (obtained with =magit-status=) does not need
-left-right navigation, so =c=, =r=, =h=, and =l= keep their "expected" bindings,
+As the =magit: project= buffer (obtained with =magit-status=) does not need
+left-right navigation, keys =c=, =r=, =h=, and =l= keep their "expected" bindings,
 while =t=, =s=, =j=, and =k= are flipped:
 - checking the log from a magit buffer is still on =l=
 - staging a file/region has been moved to =k=
