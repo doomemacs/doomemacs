@@ -104,16 +104,14 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
   (define-key transient-map [escape] #'transient-quit-one)
 
   ;; An optimization that particularly affects macOS and Windows users: by
-  ;; resolving `magit-git-executable' (and others) Emacs does less work to find
-  ;; the executable in your PATH, which is great because it is called so
-  ;; frequently. However, absolute paths will break magit in TRAMP/remote
-  ;; projects if the git executable isn't in the exact same location.
+  ;; resolving `magit-git-executable' Emacs does less work to find the
+  ;; executable in your PATH, which is great because it is called so frequently.
+  ;; However, absolute paths will break magit in TRAMP/remote projects if the
+  ;; git executable isn't in the exact same location.
   (add-hook! 'magit-status-mode-hook
     (defun +magit-optimize-process-calls-h ()
-      (dolist (sym '(magit-git-executable magit-perl-executable magit-gitk-executable))
-        (when-let* ((exe (symbol-value sym))
-                    (path (executable-find exe)))
-          (set (make-local-variable sym) path))))))
+      (when-let (path (executable-find magit-git-executable))
+        (setq-local magit-git-executable path)))))
 
 
 (use-package! forge
