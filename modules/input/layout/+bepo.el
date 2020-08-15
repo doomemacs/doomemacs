@@ -14,6 +14,8 @@
 (set-face-attribute 'nobreak-space nil :underline t)
 
 (add-transient-hook! 'doom-init-modules-hook
+  ;; "ts" would be a little too common for an evil escape sequence
+  (setq evil-escape-key-sequence "gq")
   (setq avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n)
         lispy-avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n ?m ?b ?é ?p ?o ?è ?v ?d ?l ?j ?z))
   ;; :ui window-select settings, ignoring +numbers flag for now
@@ -65,7 +67,7 @@
   (after! treemacs
     (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
   (after! (:or helm ivy)
-    (doom-bepo-rotate-ts-bare-keymap +default-minibuffer-maps))
+    (doom-bepo-rotate-bare-keymap +default-minibuffer-maps doom-bepo-cr-rotation-style))
   (after! company
     (doom-bepo-rotate-bare-keymap '(company-active-map company-search-map) doom-bepo-cr-rotation-style))
   (after! helm
