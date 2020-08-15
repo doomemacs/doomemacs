@@ -24,7 +24,7 @@ This module provides no flags.
 + [[https://github.com/abo-abo/hydra][hydra]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Configuration
 Configuring this module is only setting bindings to the provided hydra, or
