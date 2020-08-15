@@ -110,10 +110,9 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
   ;; projects if the git executable isn't in the exact same location.
   (add-hook! 'magit-status-mode-hook
     (defun +magit-optimize-process-calls-h ()
-      (unless (file-remote-p default-directory)
-        (setq-local magit-git-executable  (executable-find magit-git-executable)
-                    magit-perl-executable (executable-find magit-perl-executable)
-                    magit-gitk-executable (executable-find magit-gitk-executable))))))
+      (setq-local magit-git-executable  (executable-find magit-git-executable)
+                  magit-perl-executable (executable-find magit-perl-executable)
+                  magit-gitk-executable (executable-find magit-gitk-executable)))))
 
 
 (use-package! forge
