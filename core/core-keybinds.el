@@ -27,10 +27,11 @@ and Emacs states, and for non-evil users.")
 ;;; Keybind settings
 
 (cond (IS-MAC
-       (setq mac-command-modifier 'super
-             mac-option-modifier  'meta
-             ns-command-modifier  'super
-             ns-option-modifier   'meta))
+       (setq mac-command-modifier     'super
+             mac-option-modifier      'meta
+             ns-command-modifier      'super
+             ns-option-modifier       'meta
+             ns-right-option-modifier 'none))
       (IS-WINDOWS
        (setq w32-lwindow-modifier 'super
              w32-rwindow-modifier 'super)))
