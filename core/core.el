@@ -288,7 +288,7 @@ config.el instead."
   (setq comp-async-env-modifier-form
         `(progn
            ,comp-async-env-modifier-form
-           (setq comp-eln-load-path ',comp-eln-load-path)))
+           (setq comp-eln-load-path ',(bound-and-true-p comp-eln-load-path))))
   ;; HACK Disable native-compilation for some troublesome packages
   (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
 
