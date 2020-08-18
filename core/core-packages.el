@@ -331,6 +331,7 @@ installed."
 If ALL-P, gather packages unconditionally across all modules, including disabled
 ones."
   (let ((packages-file (concat doom-packages-file ".el"))
+        doom-disabled-packages
         doom-packages)
     (doom--read-packages
      (doom-path doom-core-dir packages-file) all-p 'noerror)
@@ -342,10 +343,12 @@ ones."
                   (doom-files-in doom-modules-dir
                                  :depth 2
                                  :match "/packages\\.el$"))
-          ;; We load the private packages file twice to ensure disabled packages
-          ;; are seen ASAP, and a second time to ensure privately overridden
-          ;; packages are properly overwritten.
-          (doom--read-packages private-packages nil 'noerror)
+          ;; We load the private packages file twice to populate
+          ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
+          ;; second time to ensure privately overridden packages are properly
+          ;; overwritten.
+          (let (doom-packages)
+            (doom--read-packages private-packages nil 'noerror))
           (cl-loop for key being the hash-keys of doom-modules
                    for path = (doom-module-path (car key) (cdr key) packages-file)
                    for doom--current-module = key
@@ -473,9 +476,10 @@ elsewhere."
         (signal 'doom-package-error
                 (cons ,(symbol-name name)
                       (error-message-string e)))))
-     ;; This is the only side-effect of this macro!
+     ;; These are the only side-effects of this macro!
      (setf (alist-get name doom-packages) plist)
-     (unless (plist-get plist :disable)
+     (if (plist-get plist :disable)
+         (add-to-list 'doom-disabled-packages name)
        (with-no-warnings
          (cons name plist)))))
 
