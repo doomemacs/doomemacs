@@ -173,7 +173,7 @@ COMMAND, and passes ARGS to it."
   (let ((post-script (concat doom-local-dir ".doom.sh"))
         (coding-system-for-write 'utf-8)
         (coding-system-for-read  'utf-8)
-        (delimiter "--%EOF%--"))
+        (delimiter "__EOF__"))
     (with-temp-file post-script
       (insert (save-match-data
                 (cl-loop for env in process-environment
