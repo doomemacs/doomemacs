@@ -97,9 +97,7 @@ uses a straight or package.el command directly).")
       ;; we don't have to deal with them at all.
       autoload-compute-prefixes nil
       ;; We handle it ourselves
-      straight-fix-org nil
-      ;; HACK Disable native-compilation for some troublesome files
-      comp-deferred-compilation-black-list '("/evil-collection-vterm\\.el$"))
+      straight-fix-org nil)
 
 (with-eval-after-load 'straight
   ;; `let-alist' is built into Emacs 26 and onwards

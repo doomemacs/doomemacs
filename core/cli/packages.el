@@ -126,8 +126,14 @@ list remains lean."
       (doom-log "%s is newer than %s" file elc-file)
       t)))
 
+;; DEPRECATED Remove later
+(defun doom--comp-output-filename (file)
+  (if (fboundp 'comp-output-filename)
+      (comp-output-filename file)
+    (comp-el-to-eln-filename file)))
+
 (defun doom--eln-file-outdated-p (file)
-  (when-let* ((eln-file (comp-output-filename file))
+  (when-let* ((eln-file (doom--comp-output-filename file))
               (error-file (concat eln-file ".error")))
     (push eln-file doom--expected-eln-files)
     (cond ((file-exists-p eln-file)
@@ -144,7 +150,7 @@ list remains lean."
 
 (defun doom--native-compile-done-h (file)
   (when-let* ((file)
-              (eln-file (comp-output-filename file))
+              (eln-file (doom--comp-output-filename file))
               (error-file (concat eln-file ".error")))
     (if (file-exists-p eln-file)
         (doom-log "Compiled %s" eln-file)

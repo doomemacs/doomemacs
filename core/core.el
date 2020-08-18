@@ -269,6 +269,17 @@ config.el instead."
   (let ((user-init-file custom-file))
     (apply orig-fn args)))
 
+;; For gccemacs users: http://akrl.sdf.org/gccemacs.html
+(after! comp
+  ;; Prevent unwanted runtime builds; packages are compiled ahead-of-time when
+  ;; they are installed and site files are compiled when gccemacs is installed.
+  (setq comp-deferred-compilation nil)
+  ;; Don't store eln files in ~/.emacs.d; it's likely to be purged when
+  ;; upgrading Doom.
+  (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/"))
+  ;; HACK Disable native-compilation for some troublesome packages
+  (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
+
 
 ;;
 ;;; Optimizations
