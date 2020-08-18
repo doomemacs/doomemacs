@@ -276,7 +276,8 @@ config.el instead."
   (setq comp-deferred-compilation nil)
   ;; Don't store eln files in ~/.emacs.d; it's likely to be purged when
   ;; upgrading Doom.
-  (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/"))
+  (when (boundp 'comp-eln-load-path)
+    (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
   ;; HACK Disable native-compilation for some troublesome packages
   (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
 
