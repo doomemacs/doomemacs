@@ -269,15 +269,27 @@ config.el instead."
   (let ((user-init-file custom-file))
     (apply orig-fn args)))
 
-;; For gccemacs users: http://akrl.sdf.org/gccemacs.html
+
+;;
+;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
+
+;; Don't store eln files in ~/.emacs.d/eln-cache (they are likely to be purged
+;; when upgrading Doom).
+(when (boundp 'comp-eln-load-path)
+  (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
+
 (after! comp
   ;; Prevent unwanted runtime builds; packages are compiled ahead-of-time when
   ;; they are installed and site files are compiled when gccemacs is installed.
   (setq comp-deferred-compilation nil)
-  ;; Don't store eln files in ~/.emacs.d; it's likely to be purged when
-  ;; upgrading Doom.
-  (when (boundp 'comp-eln-load-path)
-    (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
+  ;; HACK `comp-eln-load-path' isn't fully respected yet, because native
+  ;;      compilation occurs in another emacs process that isn't seeded with our
+  ;;      value for `comp-eln-load-path', so we inject it ourselves:
+  (unless doom-reloading-p  ; only apply this once!
+    (setq comp-async-env-modifier-form
+          `(progn
+             ,comp-async-env-modifier-form
+             (setq comp-eln-load-path ',comp-eln-load-path))))
   ;; HACK Disable native-compilation for some troublesome packages
   (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
 
