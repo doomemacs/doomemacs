@@ -72,7 +72,7 @@ byte-compiled from.")
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (doom-cli-execute-lines-after "NOTANGLE=1 \"$@\"")
+            (doom-cli-execute-lines-after "NOTANGLE=1 \"$0\" \"$@\"")
             (kill-emacs 0))))))
 
 ;;;###autoload
