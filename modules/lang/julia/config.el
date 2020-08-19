@@ -12,6 +12,10 @@
      mode
      `((,(let ((OR "\\|"))
            (concat "\\("  ; stolen `matlab.el' operators first
+                   ;; `:` defines a symbol in Julia and must not be highlighted
+                   ;; as an operator. The only operators that start with `:` are
+                   ;; `:<` and `::`. This must be defined before `<`.
+                   "[:<]:" OR
                    "[<>]=?" OR
                    "\\.[/*^']" OR
                    "===" OR
@@ -20,10 +24,6 @@
                    "\\<xor\\>" OR
                    "[-+*\\/^&|$]=?" OR  ; this has to come before next (updating operators)
                    "[-^&|*+\\/~]" OR
-                   ;; `:` defines a symbol in Julia and must not be highlighted
-                   ;; as an operator. The only operators that start with `:` are
-                   ;; `:<` and `::`.
-                   "[:<]:" OR
                    ;; Julia variables and names can have `!`. Thus, `!` must be
                    ;; highlighted as a single operator only in some
                    ;; circumstances. However, full support can only be
