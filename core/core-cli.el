@@ -175,7 +175,8 @@ COMMAND, and passes ARGS to it."
         (coding-system-for-read  'utf-8)
         (delimiter "__EOF__"))
     (with-temp-file post-script
-      (insert (save-match-data
+      (insert "#!/usr/bin/env sh\n"
+              (save-match-data
                 (cl-loop for env in process-environment
                          if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
                          concat (format "%s=%s \\\n"

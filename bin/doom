@@ -7,7 +7,7 @@
 :; _DOOMPOST="$_DOOMBASE/.local/.doom.sh"
 :; $EMACS --no-site-file --script "$0" -- "$@"
 :; CODE=$?
-:; [ -x "$_DOOMPOST" ] && source "$_DOOMPOST"
+:; [ -x "$_DOOMPOST" ] && "$_DOOMPOST" "$0" "$@"
 :; exit $CODE
 
 ;; CLI ops tend to eat a lot of memory. To speed it up, stave off the GC, but
