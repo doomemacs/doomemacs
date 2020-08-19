@@ -279,9 +279,6 @@ config.el instead."
   (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
 
 (after! comp
-  ;; Prevent unwanted runtime builds; packages are compiled ahead-of-time when
-  ;; they are installed and site files are compiled when gccemacs is installed.
-  (setq comp-deferred-compilation nil)
   ;; HACK `comp-eln-load-path' isn't fully respected yet, because native
   ;;      compilation occurs in another emacs process that isn't seeded with our
   ;;      value for `comp-eln-load-path', so we inject it ourselves:
