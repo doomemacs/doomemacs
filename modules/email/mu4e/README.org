@@ -100,7 +100,7 @@ sudo apt-get install isync  # mbsync
 # or
 sudo apt-get install offlineimap
 # then
-sudo apt-get install maildir-utils # mu
+sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
 #+END_SRC
 * TODO Features
 
@@ -173,6 +173,26 @@ Then configure Emacs to use your email address:
 ** =No such file or directory, mu4e=
 You will get =No such file or directory, mu4e= errors if you don't run ~doom
 sync~ after installing =mu= through your package manager.
+
+Some times the the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*).
+if that's the case you will need to [[https://github.com/djcb/mu][install]] it and add it to your ~load-path~
+you can do that by...
+#+BEGIN_SRC emacs-lisp :tangle no
+(add-to-list 'load-path "your/path/to/mu4e")
+;; if you installed it using your package manager
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; if you built from source
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+#+END_SRC
+
+If you have completely lost your install then you can use this handy command!
+
+#+BEGIN_SRC  shell
+find / -type d -iname '*mu4e*'
+# I reccomend rerouting all of the error to /dev/null
+find / -type d -iname '*mu4e*' 2> /dev/null
+#+END_SRC
+
 ** ~(void-function org-time-add)~ error on Gentoo
 Gentoo users will see this error because [[https://gitweb.gentoo.org/repo/gentoo.git/tree/net-mail/mu/files/70mu-gentoo.el#n2][the =net-mail/mu= package eagerly loads
 =mu4e= (which pulls in =org=) much too early]]; before Emacs reads =~/.emacs.d=.
