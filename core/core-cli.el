@@ -192,7 +192,7 @@ COMMAND, and passes ARGS to it."
                          concat (format "%s=%s \\\n"
                                         (match-string 1 env)
                                         (shell-quote-argument (match-string 2 env)))))
-              (format "PATH=\"%s:$PATH\" \\\n" (concat doom-emacs-dir "bin/"))
+              (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
               "_postscript $@\n"))
     (set-file-modes post-script #o700)))
 
