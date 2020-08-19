@@ -682,6 +682,7 @@ between the two."
         "q" #'org-set-tags-command
         "t" #'org-todo
         "T" #'org-todo-list
+        "x" #'org-toggle-checkbox
         (:prefix ("a" . "attachments")
          "a" #'org-attach
          "d" #'org-attach-delete-one
