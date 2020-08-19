@@ -1,0 +1,90 @@
+#+TITLE:   input/layout
+#+DATE:    Jun 29, 2020
+#+SINCE:   v3.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#bépo][Bépo]]
+    - [[#leaving-mnemonics-alone-when-possible][Leaving mnemonics alone when possible]]
+    - [[#possible-contributions][Possible contributions]]
+- [[#configuration][Configuration]]
+  - [[#bépo-1][Bépo]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
+
+* Description
+This module provides barebones support for using Doom with evil-mode with non-qwerty layouts.
+
+** Maintainers
++ @gagbo (Author)
+
+** Module Flags
++ =+bepo= Enables modifications for the BÉPO layout (customized with version 1.1 in mind)
+
+** Plugins
+None
+
+* Prerequisites
+This module should only be active if evil is enabled. It uses a general.el utility function, and
+the hooks provided by evil-collection to make the necessary changes.
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+** Bépo
+Support for the bépo layout includes:
+- Setting Avy keys to the correct home row keys
+- Changing navigation keys to =ctsr=
+  + old =t= is mapped to =j=
+  + old =s= is mapped to =k= (i.e. staging in the magit status buffer is done with =k=)
+  + See [[*Configuration][Configuration]] to see where old =c= and =r= functions
+    are remapped
+- Bind =<>= functions to =«»= keys when possible
+- Bind =[]= functions to =()= keys when possible
+- Bind =é= key to =w= functions when possible
+- Bind =è= key to useful functions when possible
+- Bind =`~= functions to =$#= keys when possible
+
+*** Leaving mnemonics alone when possible
+Exchanging =hjkl= to =ctsr= has the effect of destroying a few mnemonics: the
+change operator becomes =l= for example, or the window split becomes =SPC é k=.
+
+The module tries to limit those changes to the minimum, especially in special
+buffers. A concrete example is magit.
+
+As the =magit: project= buffer (obtained with =magit-status=) does not need
+left-right navigation, keys =c=, =r=, =h=, and =l= keep their "expected" bindings,
+while =t=, =s=, =j=, and =k= are flipped:
+- checking the log from a magit buffer is still on =l=
+- staging a file/region has been moved to =k=
+
+*** Possible contributions
+A nice addition in the future might be to have all the normal mode bindings that
+start with =g= start with =,= instead to avoid the curl on these common
+bindings. This is *not* implemented for the time being.
+
+* Configuration
+** Bépo
+=doom-bepo-cr-rotation-style= controls whether:
+- =qwerty-c= functions are mapped on =bépo-l= key, and =qwerty-r= functions on
+  =bépo-h= key (='ergodis=), or
+- =qwerty-c= functions are mapped on =bépo-h= key, and =qwerty-r= functions on
+  =bépo-l= key (='strict=)
+='strict= would be the logical choice but the =c= functions are used more often
+than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to
+actually put all the =c= functions on the key that does not need a curl.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
+** How to deactivate the new bindings and go back to the old ones ?
+If you are learning a new layout you might want to go back to tho old one to
+"get work done". Sadly the only way is to comment out the module, run =doom
+sync= and restart emacs.
+
+Restoring the session =SPC q l= by default helps to lower the impact of the
+restart.
