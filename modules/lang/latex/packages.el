@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/latex/packages.el
 
-(package! auctex :pin "6abf890a485b2ff734d8f87f38393f9b8f6bbbf6")
-(package! adaptive-wrap :pin "1810c0ee8d827dd502ddeaae5bd759d4811fcbce")
+(package! auctex :pin "59e251c4c82d878e605a13aec3752e544a99f21a")
+(package! adaptive-wrap :pin "319db649fb083db3ad07b4c71ee6c9429497043b")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
 (when (featurep! :editor evil +everywhere)
-  (package! evil-tex :pin "bb01576e4cf9cc10c529621ced3ef3a7eb5ab376"))
+  (package! evil-tex :pin "06234c9ea4a7ffac91f7b4f3fd683014bb8137af"))
 
 ;; Optional module features:
 

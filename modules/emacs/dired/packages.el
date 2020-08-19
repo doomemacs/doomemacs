@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; emacs/dired/packages.el
 
-(package! diredfl :pin "83567d00affce66a4e501563eddd0bd436ac48d0")
+(package! diredfl :pin "cd052dfef602fe79d8dfbcf9f06e6da74412218b")
 (package! dired-git-info :pin "b47f2b0c3a6cb9b7a62a4ee2605a492e512d40a9")
 (package! diff-hl :pin "2281a89a3ddc6616073da6f190dda08d23b18ba6")
 (package! dired-rsync :pin "bfd5c155be1cb6b71c83e5f41116c81b6532b6d5")

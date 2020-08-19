@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "5d224cb889aea8f090c82c5ae572b8db276bcf80")
+(package! helm :pin "e9a1e53c57478389343ee23ebb962c8b9b4b4bba")
 (package! helm-rg :pin "ee0a3c09da0c843715344919400ab0a0190cc9dc")
 (package! helm-c-yasnippet :pin "89cc8561e7e57e9d1070ee3641df019c7f49c5dd")
 (package! helm-company :pin "6eb5c2d730a60e394e005b47c1db018697094dde")
@@ -13,7 +13,7 @@
 (when (featurep! +fuzzy)
   (package! helm-flx :pin "6640fac5cb16bee73c95b8ed1248a4e5e113690e"))
 (when (featurep! +childframe)
-  (package! posframe :pin "922e4d239f7a083213d856de67a9686a091b1e27"))
+  (package! posframe :pin "7b92a54e588889a74d36d51167e067676db7be8a"))
 (when (featurep! :lang org)
   (package! helm-org :pin "b7a18dfc17e8b933956d61d68c435eee03a96c24"))
 (package! helm-descbinds :pin "b72515982396b6e336ad7beb6767e95a80fca192")

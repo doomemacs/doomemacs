@@ -6,7 +6,7 @@
 (package! haml-mode :pin "bf5b6c11b1206759d2b28af48765e04882dd1fc4")
 (package! pug-mode :pin "685fd3414d89736bf232f5d1a6bed9e0353b98fe")
 (package! slim-mode :pin "3636d18ab1c8b316eea71c4732eb44743e2ded87")
-(when (package! web-mode :pin "a2badd04060f5f458f8f3def81cdaf81cfafb5a7")
+(when (package! web-mode :pin "60ffd878c4371644bd964f00fea38054645e3e47")
   (when (featurep! :completion company)
     (package! company-web :pin "f0cc9187c9c34f72ad71f5649a69c74f996bae9a")))
 

@@ -27,13 +27,13 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "a1e5bee5cb9c34ceb8226597605a49638bee7cec")
+  :pin "220f2b0d93a6927eb673978c0042a1d4673e86aa")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
 
 (package! avy)
-(package! htmlize :pin "86f22f211e9230857197c42a9823d3f05381deed")
+(package! htmlize :pin "49205105898ba8993b5253beec55d8bddd820a70")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
@@ -52,33 +52,33 @@
 (when (featurep! +brain)
   (package! org-brain :pin "671db0e08b91c7d2637d765a7afca8b2561275c8"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "768716b6fcc814b06360b99ad70bce44c0eb4a32"))
+  (package! org-download :pin "67b3c744f94cf0bf50f7052ce428e95af5a6ff3f"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "f0001c30010b2899e36d7d89046322467e923088")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "785edbbff65abb0c929dc2fbd8b8305c77fd529e"))
+  (package! jupyter :pin "360cae2c70ab28c7a7848c0c56473d984f0243e5"))
 (when (featurep! +journal)
-  (package! org-journal :pin "a6378dc484ed8df7d2d2f05ac70bd9196aa6f4c0"))
+  (package! org-journal :pin "a2728e25b854af21cea8e8d313714c993eb1c848"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
 (when (featurep! +pretty)
-  (package! org-superstar :pin "17481852c1bd09afea877635a3185261fc19fd64")
+  (package! org-superstar :pin "94f35c20f8b84a63defa145e3e6ae735fa33dd5d")
   (package! org-fancy-priorities :pin "819bb993b71e7253cefef7047306ab4e0f9d0a86"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
-  (package! org-re-reveal :pin "c548e239898e97e700f7c1d3f34a148ccbedb820"))
+  (package! org-re-reveal :pin "7fe39d5d03ccc75d2811445d25cbbb473b53de76"))
 (when (featurep! +roam)
-  (package! org-roam :pin "0aa0a7c05a78e9b29881570604c24381b658fe2a")
+  (package! org-roam :pin "c33867e6bc282ff0a69d4ef4a020db82604039bb")
   (when (featurep! :completion company)
-    (package! company-org-roam :pin "5d7ccd944519ae1d03f5e17ddfe33dcd8a0cc71e")))
+    (package! company-org-roam :pin "1132663bd68022aa7ea005ff53c7c7571890769d")))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")
@@ -107,4 +107,4 @@
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
     :pin "75b849e9561c4a6022babf6eaf0e037310ded7c1"))
 (when (featurep! :lang rst)
-  (package! ox-rst :pin "9158bfd18096c559e0a225ae62ab683f1c98a547"))
+  (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))

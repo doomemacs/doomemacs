@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/magit/packages.el
 
-(when (package! magit :pin "798aff56457aef4d1896db8129ab56d08ae12066")
+(when (package! magit :pin "321214c3a2dd10fdf672ba96bd00703a51094bbe")
   (when (featurep! +forge)
-    (package! forge :pin "2c487465d0b78ffe34252b47fcc06e27039330c4"))
+    (package! forge :pin "feee7e2fce3f87f7aa113c5edcb1896127ee9d12"))
   (package! magit-gitflow :pin "cc41b561ec6eea947fe9a176349fb4f771ed865b")
   (package! magit-todos :pin "a0e5d1f3c7dfcb4f18c1b0d57f1746a4872df5c6")
   (package! github-review :pin "fab440aeae4fbf6a8192fd11795052e9eb5d27d1")

@@ -2,7 +2,7 @@
 ;;; tools/pass/packages.el
 
 (package! pass :pin "919d8e3826d556433ab67d4ee21a509d209d1baa")
-(package! password-store :pin "07b169ec32ad6961ed8625a0b932a663abcb01d2")
+(package! password-store :pin "06f499994071bb6131244218b25d637103afe1d5")
 (package! password-store-otp :pin "04998c8578a060ab4a4e8f46f2ee0aafad4ab4d5")
 
 ;; an older version of `auto-source-pass' is built into Emacs 26+, so we must

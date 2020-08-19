@@ -5,7 +5,7 @@
 (package! groovy-mode :pin "26da902d1158c0312628d57578109be54eca2415")
 
 (when (featurep! +meghanada)
-  (package! meghanada :pin "e119c7b3271281d60892b80a0cc6488503baf38f"))
+  (package! meghanada :pin "1e41f7f2c7a172e9699f3557c97c3f39a149bfc2"))
 
 (when (featurep! +eclim)
   (package! eclim :pin "222ddd48fcf0ee01592dec77c58e0cf3f2ea1100")

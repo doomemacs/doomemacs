@@ -1,6 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/lispyville/packages.el
 
-(package! lispy :pin "cdaa9c70ca39a880163cbbce924bb46cc56b9fa4")
+(package! lispy :pin "0a9dcfdfbc20cadbb9cb29b224dc64b8efdd7b70")
 (when (featurep! :editor evil)
-  (package! lispyville :pin "25a70126ea807653e0a8c512d4128c90ed673d7a"))
+  (package! lispyville :pin "0f13f26cd6aa71f9fd852186ad4a00c4294661cd"))

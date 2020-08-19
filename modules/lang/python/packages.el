@@ -4,7 +4,7 @@
 ;; Major modes
 (package! pip-requirements :pin "216cd1690f80cc965d4ae47b8753fc185f778ff6")
 (when (featurep! +cython)
-  (package! cython-mode :pin "0208bf2b71f478779491bf4a63a6b61de3d7269e")
+  (package! cython-mode :pin "fcfd16c7467c31f255287a73f36cf66b32bc096c")
   (when (featurep! :checkers syntax)
     (package! flycheck-cython :pin "ecc4454d35ab5317ab66a04406f36f0c1dbc0b76")))
 
@@ -15,8 +15,8 @@
         (package! lsp-pyright
           ;; REVIEW Remove this when added to melpa
           :recipe (:host github :repo "emacs-lsp/lsp-pyright")
-          :pin "3cf2e8fc652e35270b1b39aeecc990d4a97de91f")
-      (package! lsp-python-ms :pin "7a502e6c09456cbe8b5f6c64883c79f5ce08e5a9"))))
+          :pin "9603dda12afaae9c82608c7d3762f98b24b8563f")
+      (package! lsp-python-ms :pin "a884a9a4eb1a3acd3d70c776aec5e968bbdc1731"))))
 
 ;; Programming environment
 (package! anaconda-mode :pin "73266a48fa964d44268c3f3478597e553b9843f1")
@@ -29,7 +29,7 @@
 (when (featurep! +pyenv)
   (package! pyenv-mode :pin "d191037fe62ed8d4fee5888845da3e2c386d8e89"))
 (when (featurep! +conda)
-  (package! conda :pin "9d0213020ff170b17e11b35cad40ac9a8bf30f4c"))
+  (package! conda :pin "9f7eea16e9ad3eb34fe3d1cbd9d6162b8046c2f8"))
 (when (featurep! +poetry)
   (package! poetry :pin "22a76cdcba180b4689a6b45c97669e3c76cd36ed"))
 
@@ -38,7 +38,7 @@
   ;; REVIEW Remove this when emacsmirror/epkgs updates its emacsattic index
   :recipe (:host github :repo "emacsattic/nose")
   :pin "f8528297519eba911696c4e68fa88892de9a7b72")
-(package! python-pytest :pin "6a3b4e560f26b5b8c9dca5699a3573f554592ac9")
+(package! python-pytest :pin "fc056faf2757c42641ed94d36a090e56eb13572f")
 
 ;; Import managements
 (package! pyimport :pin "a6f63cf7ed93f0c0f7c207e6595813966f8852b9")
