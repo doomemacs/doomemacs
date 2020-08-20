@@ -323,8 +323,9 @@ config.el instead."
 (setq ffap-machine-p-known 'reject)
 
 ;; Font compacting can be terribly expensive, especially for rendering icon
-;; fonts on Windows. Whether it has a notable affect on Linux and Mac hasn't
-;; been determined, but we inhibit it there anyway.
+;; fonts on Windows. Whether disabling it has a notable affect on Linux and Mac
+;; hasn't been determined, but we inhibit it there anyway. This increases memory
+;; usage, however!
 (setq inhibit-compacting-font-caches t)
 
 ;; Performance on Windows is considerably worse than elsewhere. We'll need
@@ -346,8 +347,10 @@ config.el instead."
       gcmh-verbose doom-debug-p)
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
-;;      reason. Disabling it completely could have many side-effects, so we
-;;      defer it until later, at which time it (somehow) runs very quickly.
+;;      reason; inexplicably doubling startup time for terminal Emacs. Keeping
+;;      it disabled will have nasty side-effects, so we simply delay it until
+;;      later in the startup process and, for some reason, it runs much faster
+;;      when it does.
 (unless (daemonp)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook! 'window-setup-hook
