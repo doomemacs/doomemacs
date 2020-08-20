@@ -16,11 +16,11 @@
         eglot-auto-display-help-buffer nil)
 
   :config
-  (set-popup-rule! "^\\*eglot-help" :size 0.35 :quit t :select t)
+  (set-popup-rule! "^\\*eglot-help" :size 0.15 :quit t :select t)
   (set-lookup-handlers! 'eglot--managed-mode
     :implementations #'eglot-find-implementation
     :type-definition #'eglot-find-typeDefinition
-    :documentation #'+eglot/documentation-lookup-handler)
+    :documentation #'+eglot-lookup-documentation)
   (when (featurep! :checkers syntax)
     (after! flycheck
       (load! "autoload/flycheck-eglot"))))
