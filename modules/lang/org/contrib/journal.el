@@ -13,12 +13,12 @@
 
   (defun +org-journal-p ()
     (when-let (buffer-file-name (buffer-file-name (buffer-base-buffer)))
-      (if (or (featurep 'org-journal)
-              (and (file-in-directory-p
-                    buffer-file-name (expand-file-name org-journal-dir org-directory))
-                   (delq! '+org-journal-p magic-mode-alist 'assq)
-                   (require 'org-journal nil t)))
-          (org-journal-is-journal))))
+      (when (or (featurep 'org-journal)
+                (and (file-in-directory-p
+                      buffer-file-name (expand-file-name org-journal-dir org-directory))
+                     (require 'org-journal nil t)))
+        (delq! '+org-journal-p magic-mode-alist 'assq)
+        (org-journal-is-journal))))
 
   ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
   ;; default, so we change it to {org-directory}/journal (we expand it after

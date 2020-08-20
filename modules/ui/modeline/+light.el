@@ -354,18 +354,18 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 ;;; `+modeline-buffer-identification'
 (def-modeline-var! +modeline-buffer-identification ; slightly more informative buffer id
   '((:eval
-     (propertize
-      (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-        (or (when (and buffer-file-name (not (file-remote-p buffer-file-name)))
-              (if-let (project (doom-project-root buffer-file-name))
-                  (let ((filename (or buffer-file-truename (file-truename buffer-file-name))))
-                    (file-relative-name filename (concat project "..")))))
-            "%b"))
-      'face (cond ((buffer-modified-p)
-                   '(error bold mode-line-buffer-id))
-                  ((+modeline-active)
-                   'mode-line-buffer-id))
-      'help-echo buffer-file-name))
+     (let ((file-name (buffer-file-name (buffer-base-buffer))))
+       (propertize
+        (or (when (and file-name (not (file-remote-p file-name)))
+              (when-let (project (doom-project-root file-name))
+                (file-relative-name (or buffer-file-truename (file-truename file-name))
+                                    (concat project ".."))))
+            "%b")
+        'face (cond ((buffer-modified-p)
+                     '(error bold mode-line-buffer-id))
+                    ((+modeline-active)
+                     'mode-line-buffer-id))
+        'help-echo file-name)))
     (buffer-read-only (:propertize " RO" face warning))))
 
 

@@ -411,12 +411,6 @@ Made for `org-tab-first-hook' in evil-mode."
          t)))
 
 ;;;###autoload
-(defun +org-update-cookies-h ()
-  "Update statistics cookies/todo statistics in headlines."
-  (when (and buffer-file-name (file-exists-p buffer-file-name))
-    (org-update-parent-todo-statistics)))
-
-;;;###autoload
 (defun +org-yas-expand-maybe-h ()
   "Expand a yasnippet snippet, if trigger exists at point or region is active.
 Made for `org-tab-first-hook'."
@@ -490,5 +484,5 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 (defun +org-enable-auto-update-cookies-h ()
   "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
   (when (bound-and-true-p evil-local-mode)
-    (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
-  (add-hook 'before-save-hook #'+org-update-cookies-h nil t))
+    (add-hook 'evil-insert-state-exit-hook #'org-update-parent-todo-statistics nil t))
+  (add-hook 'before-save-hook #'org-update-parent-todo-statistics nil t))
