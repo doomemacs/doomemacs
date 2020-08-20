@@ -154,6 +154,7 @@ Modules that bring support for a language or group of languages to Emacs.
 * :os
 Modules to improve integration into your OS, system, or devices.
 
++ [[file:/mnt/projects/conf/doom-emacs/modules/os/macos/README.org][macos]] - Improve Emacs' compatibility with macOS
 + tty =+osc= - Improves the terminal Emacs experience.
 
 * :term
@@ -178,7 +179,6 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets +offline= - Universal jump-to & documentation lookup
   backend
 + [[file:../modules/tools/lsp/README.org][lsp]] =+peek +eglot= - Installation and configuration of language server protocol client (lsp-mode or eglot)
-+ macos - TODO
 + [[file:../modules/tools/magit/README.org][magit]] =+forge= - TODO
 + make - TODO
 + pass =+auth= - TODO
