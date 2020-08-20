@@ -200,11 +200,6 @@ or if the current buffer is read-only or not file-visiting."
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
 
-(when IS-MAC
-  ;; sane trackpad/mouse scroll settings
-  (setq mac-redisplay-dont-reset-vscroll t
-        mac-mouse-wheel-smooth-scroll nil))
-
 
 ;;
 ;;; Cursor
@@ -306,33 +301,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
-
-(when! IS-MAC
-  ;; Curse Lion and its sudden but inevitable fullscreen mode!
-  ;; NOTE Meaningless to railwaycat's emacs-mac build
-  (setq ns-use-native-fullscreen nil)
-
-  ;; Visit files opened outside of Emacs in existing frame, not a new one
-  (setq ns-pop-up-frames nil)
-
-  ;; Sets `ns-transparent-titlebar' and `ns-appearance' frame parameters so
-  ;; window borders will match the enabled theme.
-  (and (or (daemonp)
-           (display-graphic-p))
-       (require 'ns-auto-titlebar nil t)
-       (ns-auto-titlebar-mode +1))
-
-  ;; HACK On MacOS, disabling the menu bar makes MacOS treat Emacs as a
-  ;;      non-application window -- which means it doesn't automatically capture
-  ;;      focus when it is started, among other things. We enable menu-bar-lines
-  ;;      there, but we still want it disabled in terminal frames because there
-  ;;      it activates an ugly menu bar.
-  (add-hook! '(window-setup-hook after-make-frame-functions)
-    (defun doom-init-menu-bar-in-gui-frames-h (&optional frame)
-      "Re-enable menu-bar-lines in GUI frames."
-      (when-let (frame (or frame (selected-frame)))
-        (when (display-graphic-p frame)
-          (set-frame-parameter frame 'menu-bar-lines 1))))))
 
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.

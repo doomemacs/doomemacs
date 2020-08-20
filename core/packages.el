@@ -32,8 +32,6 @@
 (package! better-jumper :pin "6d240032ca213ccb3347e25f26c29b6822bf03a7")
 (package! dtrt-indent :pin "50c440c80e0d15303d8ab543bce4c56e9c2bf407")
 (package! helpful :pin "c0662aa07266fe204f4e6d72ccaa6af089400556")
-(when IS-MAC
-  (package! ns-auto-titlebar :pin "60273e764bf8d95abc40dd2fdc23af87ea9ee33b"))
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "555626a43f9bb1985aa9a0eb675f2b88b29702c8")
 (package! so-long
