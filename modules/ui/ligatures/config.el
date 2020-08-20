@@ -182,8 +182,7 @@ and cannot run in."
         (set-char-table-range
          +ligature--composition-table
          (car char-regexp) `([,(cdr char-regexp) 0 font-shape-gstring])))
-      (set-char-table-parent +ligature--composition-table composition-function-table)
-      (add-hook 'after-change-major-mode-hook #'+ligatures-init-buffer-composition-table-h))))
+      (set-char-table-parent +ligature--composition-table composition-function-table))))
 
  ;; Fallback ligature support for certain, patched fonts. Install them with
  ;; `+ligatures/install-patched-font'
