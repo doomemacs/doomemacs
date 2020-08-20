@@ -247,7 +247,7 @@ called.")
   (pyenv-mode +1)
   (when (executable-find "pyenv")
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
-  (add-hook 'python-mode-hook #'+python-pyenv-mode-set-auto-h)
+  (add-hook 'python-mode-local-vars-hook #'+python-pyenv-mode-set-auto-h)
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
 
 

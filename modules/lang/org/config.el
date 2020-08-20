@@ -226,11 +226,13 @@ This forces it to read the background before rendering."
            (if (and (eq org-src-window-setup 'switch-invisibly)
                     (functionp initialize))
                ;; org-babel-do-in-edit-buffer is used to execute quick, one-off
-               ;; logic in the context of another major mode. Initializing this
-               ;; major mode can be terribly expensive (particular its mode
-               ;; hooks), so we inhibit them.
+               ;; logic in the context of another major mode, but initializing a
+               ;; major mode with expensive hooks can be terribly expensive.
+               ;; Since Doom adds its most expensive hooks to
+               ;; MAJOR-MODE-local-vars-hook, we can savely inhibit those.
                (lambda ()
-                 (quiet! (delay-mode-hooks (funcall initialize))))
+                 (let ((doom-inhibit-local-var-hooks t))
+                   (funcall initialize)))
              initialize)
            args))
 
