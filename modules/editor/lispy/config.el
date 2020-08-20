@@ -22,7 +22,7 @@
         '((operators normal)
           c-w
           (prettify insert)
-          (atom-movement normal visual)
+          (atom-movement t)
           slurp/barf-lispy
           additional
           additional-insert))
