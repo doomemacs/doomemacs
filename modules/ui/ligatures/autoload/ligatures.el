@@ -9,16 +9,16 @@
   "Associates string patterns with icons in certain major-modes.
 
   MODES is a major mode symbol or a list of them.
-  PLIST is a property list whose keys must match keys in `+ligatures-classes',
-and whose values are strings representing the text to be replaced with that
-symbol. If the car of PLIST is nil, then unset any pretty symbols previously
-defined for MODES.
+  PLIST is a property list whose keys must match keys in
+`+ligatures-extra-symbols', and whose values are strings representing the text
+to be replaced with that symbol. If the car of PLIST is nil, then unset any
+pretty symbols previously defined for MODES.
 
 This function accepts one special property:
 
   :alist ALIST
     Appends ALIST to `prettify-symbols-alist' literally, without mapping text to
-    `+ligatures-classes'.
+    `+ligatures-extra-symbols'.
 
 For example, the rule for emacs-lisp-mode is very simple:
 
@@ -26,7 +26,7 @@ For example, the rule for emacs-lisp-mode is very simple:
     :lambda \"lambda\")
 
 This will replace any instances of \"lambda\" in emacs-lisp-mode with the symbol
-assicated with :lambda in `+ligatures-classes'.
+assicated with :lambda in `+ligatures-extra-symbols'.
 
 Pretty symbols can be unset for emacs-lisp-mode with:
 
@@ -40,7 +40,7 @@ Pretty symbols can be unset for emacs-lisp-mode with:
         (let ((key (pop plist)))
           (if (eq key :alist)
               (prependq! results (pop plist))
-            (when-let (char (plist-get +ligatures-classes key))
+            (when-let (char (plist-get +ligatures-extra-symbols key))
               (push (cons (pop plist) char) results)))))
       (dolist (mode (doom-enlist modes))
         (setf (alist-get mode +ligatures-extra-alist)

@@ -1,6 +1,6 @@
 ;;; ui/ligatures/config.el -*- lexical-binding: t; -*-
 
-(defvar +ligatures-classes
+(defvar +ligatures-extra-symbols
   '(;; org
     :name          "»"
     :src_block     "»"
@@ -38,11 +38,14 @@
     :tuple         "⨂"
     :pipe          "" ;; FIXME: find a non-private char
     :dot           "•")
-  "Options plist for `set-ligatures!'.
+  "Maps identifiers to symbols, recognized by `set-ligatures'.
 
 This should not contain any symbols from the Unicode Private Area! There is no
 universal way of getting the correct symbol as that area varies from font to
 font.")
+
+(defvar +ligatures-extra-alist '((t))
+  "A map of major modes to symbol lists (for `prettify-symbols-alist').")
 
 (defvar +ligatures-composition-alist
   '((?!  . "\\(?:!\\(?:==\\|[!=]\\)\\)")                                      ; (regexp-opt '("!!" "!=" "!=="))
@@ -83,9 +86,6 @@ string starting with the character contained in car.
 
 This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 
-(defvar +ligatures-extra-alist '((t))
-  "An alist mapping major modes to `prettify-symbols-alist' values.")
-
 (defvar +ligatures-in-modes
   '(not special-mode comint-mode eshell-mode term-mode vterm-mode)
   "List of major modes where ligatures should be enabled.
@@ -97,9 +97,9 @@ This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 (defvar +ligatures-extras-in-modes t
   "List of major modes where extra ligatures should be enabled.
 
-Extra ligatures are mode-specific substituions, defined in `+ligatures-classes'
-and assigned with `set-ligatures!'. This variable controls where these are
-enabled.
+Extra ligatures are mode-specific substituions, defined in
+`+ligatures-extra-symbols' and assigned with `set-ligatures!'. This variable
+controls where these are enabled.
 
   If t, enable it everywhere (except `fundamental-mode').
   If the first element is 'not, enable it in any mode besides what is listed.
@@ -132,7 +132,7 @@ correct width of the symbols instead of the width measured by `char-width'."
   "Set up ligatures for the current buffer.
 
 Extra ligatures are mode-specific substituions, defined in
-`+ligatures-classes', assigned with `set-ligatures!', and made possible
+`+ligatures-extra-symbols', assigned with `set-ligatures!', and made possible
 with `prettify-symbols-mode'. This variable controls where these are enabled.
 See `+ligatures-extras-in-modes' to control what major modes this function can
 and cannot run in."
