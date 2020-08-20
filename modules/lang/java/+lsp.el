@@ -2,7 +2,7 @@
 ;;;###if (featurep! +lsp)
 
 (use-package! lsp-java
-  :after lsp-clients
+  :after lsp-mode
   :preface
   (setq lsp-java-workspace-dir (concat doom-etc-dir "java-workspace"))
   (add-hook 'java-mode-local-vars-hook #'lsp!)

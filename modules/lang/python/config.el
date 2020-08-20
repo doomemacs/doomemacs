@@ -316,11 +316,11 @@ called.")
 
   (use-package! lsp-python-ms
     :unless (featurep! +pyright)
-    :after lsp-clients
+    :after lsp-mode
     :preface
     (after! python
       (setq lsp-python-ms-python-executable-cmd python-shell-interpreter)))
 
   (use-package! lsp-pyright
     :when (featurep! +pyright)
-    :after lsp-clients))
+    :after lsp-mode))

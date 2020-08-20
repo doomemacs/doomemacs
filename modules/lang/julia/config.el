@@ -67,7 +67,7 @@
 
 (use-package! lsp-julia
   :when (featurep! +lsp)
-  :after lsp-clients
+  :after lsp-mode
   :preface
   (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
   (when (featurep! +lsp)
