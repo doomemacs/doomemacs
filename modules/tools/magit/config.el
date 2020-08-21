@@ -18,6 +18,8 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
         transient-values-file  (concat doom-etc-dir "transient/values")
         transient-history-file (concat doom-etc-dir "transient/history"))
   :config
+  (add-to-list 'doom-debug-variables 'magit-refresh-verbose)
+
   (setq transient-default-level 5
         magit-diff-refine-hunk t ; show granular diffs in selected hunk
         ;; Don't autosave repo buffers. This is too magical, and saving can

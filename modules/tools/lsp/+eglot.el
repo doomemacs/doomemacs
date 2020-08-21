@@ -1,7 +1,5 @@
 ;;; tools/lsp/+eglot.el -*- lexical-binding: t; -*-
 
-;; TODO set eglot-events-buffer-size to nil in doom-debug-mode
-
 (use-package! eglot
   :commands eglot eglot-ensure
   :hook (eglot-managed-mode . +lsp-init-optimizations-h)
@@ -20,6 +18,9 @@
     :implementations #'eglot-find-implementation
     :type-definition #'eglot-find-typeDefinition
     :documentation #'+eglot-lookup-documentation)
+
+  (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 0))
+
   (when (featurep! :checkers syntax)
     (after! flycheck
       (load! "autoload/flycheck-eglot")))

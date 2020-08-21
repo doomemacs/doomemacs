@@ -4,6 +4,10 @@
 ;; core.el
 (package! auto-minor-mode :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
 (package! gcmh :pin "b1bde5089169a74f62033d027e06e98cbeedd43f")
+(package! explain-pause-mode
+  :recipe (:host github
+           :repo "lastquestion/explain-pause-mode")
+  :pin "2356c8c3639cbeeb9751744dbe737267849b4b51")
 
 ;; core-packages.el
 (package! straight
