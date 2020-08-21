@@ -600,7 +600,8 @@ buffers."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
           (doom-large-file-p t)
-          find-file-hook)
+          find-file-hook
+          org-mode-hook)
       (funcall orig-fn file)))
 
   ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
