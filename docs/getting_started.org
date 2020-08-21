@@ -155,8 +155,7 @@ pacman -S git emacs ripgrep
 pacman -S fd
 #+END_SRC
 
-The above installs Emacs 26.3 (at the time of writing). To acquire Emacs 27
-[[https://aur.archlinux.org/packages/emacs27-git/][emacs27-git]] is available on the AUR.
+The above installs Emacs 27 (at the time of writing).
 
 **** NixOS
 On NixOS Emacs 26.3 can be installed via ~nix-env -Ai nixos.emacs~, or
