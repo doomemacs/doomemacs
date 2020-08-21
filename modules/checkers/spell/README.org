@@ -11,76 +11,79 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#changing-how-quickly-spell-fu-spellchecks-after-changes][Changing how quickly spell-fu spellchecks after changes]]
+  - [[#reducing-false-positives-by-disabling-spelling-on-certain-faces][Reducing false positives by disabling spelling on certain faces]]
+  - [[#adding-or-removing-words-to-your-personal-dictionary][Adding or removing words to your personal dictionary]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
 This modules provides spellchecking powered by =aspell= or =hunspell=.
 
-Spellcheck is automatically loaded on the following modes:
-+ org
-+ markdown
-+ TeX
-+ rst
-+ mu4e-compose
-+ message
-+ git-commit
+Spellcheck is automatically loaded in all ~text-mode~ derivatives, which
+includes ~org-mode~, ~markdown-mode~, the Git Commit buffer (from magit),
+~mu4e-compose-mode~, and others.
 
 ** Maintainers
 This module has no dedicated maintainers.
 
 ** Module Flags
-+ =+aspell= Use =aspell= as a backend for spellchecking.
-+ =+hunspell= Use =hunspell= as a backend for spellchecking.
-+ =+everywhere= Use spellcheck in every mode.
++ =+aspell= Use =aspell= as a backend for correcting words.
++ =+hunspell= Use =hunspell= as a backend for correcting words.
++ =+everywhere= Use spellcheck in prog-mode and conf-mode derivatives as well as
+  text-mode. Basically, enable =spell-fu-mode= everywhere.
 
 ** Plugins
-+ [[https://github.com/d12frosted/flyspell-correct][flyspell-correct]]
-+ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-ivy-interface][flyspell-correct-ivy]] (=completion/ivy=)
-+ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-helm-interface][flyspell-correct-helm]] (=completion/helm=)
-+ [[https://github.com/d12frosted/flyspell-correct#flyspell-correct-popup-interface][flyspell-correct-popup]] (if *neither* =completion/ivy= or =completion/helm=)
-+ [[https://github.com/rolandwalker/flyspell-lazy][flyspell-lazy]]
++ [[https://gitlab.com/ideasman42/emacs-spell-fu][spell-fu]]
 
 * Prerequisites
-This module requires either =aspell= or =hunspell= as backend. It will
-automatically pick =aspell= if both are installed.
+This module requires =aspell= to be installed, whether or not you intend to use
+=hunspell= as the word correction backend. =spell-fu= does not yet support
+generating the word list with a custom command or =hunspell=, but =hunspell= can
+still be used to provide correction suggestions when invoking ~ispell-word~.
 
-You can specify the backend with the =+aspell= or =+hunspell= flag.
+You will need =hunspell= installed (via your OS package manager) to use it as a
+correction backend.
 
 * Features
-+ Spellchecking and suggestions based on =aspell= or =hunspell=.
-+ Choosing suggestions using completion interfaces (=ivy= or =helm=).
-+ Lazily spellchecking recent changes only when idle.
-+ Ignores source code inside org documents.
++ Spellchecking based on =aspell=.
++ Spell correction using =aspell= or =hunspell= (through ~M-x ispell-word~).
++ Ignores source code inside org or markdown files.
 
-When using =+everywhere=, =flyspell-prog-mode= will be automatically loaded for
-the following modes:
-+ yaml-mode-hook
-+ conf-mode-hook
-+ prog-mode-hook
-
-=flyspell-prog-mode= will only spellcheck comments.
+When using =+everywhere=, ~spell-fu-mode~ is activated for as many major modes
+as possible, and not only ~text-mode~ derivatives. =spell-fu= will only spell
+check comments in programming major modes.
 
 * Configuration
 Dictionary is set by =ispell-dictionary= variable. Can be changed locally with
 the function =ispell-change-dictionary=.
 
-Lazy spellcheck is provided by =flyspell-lazy= package.
-
-=flyspell-lazy-idle-seconds= sets how many idle seconds until spellchecking
-recent changes (default as 1), while =flyspell-lazy-window-idle-seconds= sets
-how many seconds until the whole window is spellchecked (default as 3).
-
-If you want to add =flyspell-mode= or =flyspell-prog-mode= to a specific mode,
-use =add-hook!=. To remove from a mode, use =remove-hook!=:
+** Changing how quickly spell-fu spellchecks after changes
+Adjust ~spell-fu-idle-delay~ to change how long spell-fu waits to spellcheck
+after recent changes (its default value as ~0.25~).
 
 #+BEGIN_SRC elisp
-(add-hook! '(org-mode-hook markdown-mode-hook
-             git-commit-mode-hook) #'flyspell-mode)
+(after! spell-fu
+  (setq spell-fu-idle-delay 0.5))
 #+END_SRC
+
+** Reducing false positives by disabling spelling on certain faces
+Exclude what faces to not preform spellchecking on by setting
+~spell-fu-faces-exclude~ in a buffer-local hook:
 
 #+BEGIN_SRC elisp
-(remove-hook! '(markdown-mode-hook git-commit-mode-hook)
-#'flyspell-mode)
+(setq-hook! 'markdown-mode-hook
+  spell-fu-faces-exclude '(markdown-code-face
+                           markdown-reference-face
+                           markdown-link-face
+                           markdown-url-face
+                           markdown-markup-face
+                           markdown-html-attr-value-face
+                           markdown-html-attr-name-face
+                           markdown-html-tag-name-face))
 #+END_SRC
 
-* Troubleshooting
+** Adding or removing words to your personal dictionary
+Use ~M-x spell-fu-word-add~ and ~M-x spell-fu-word-remove~ to whitelist words
+that you know are not misspellings.
+
+* TODO Troubleshooting

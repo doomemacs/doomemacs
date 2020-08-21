@@ -1,7 +1,54 @@
 ;;; checkers/spell/config.el -*- lexical-binding: t; -*-
 
-(defvar ispell-dictionary "en_US")
+(defvar +spell-correct-interface
+  (cond ((featurep! :completion ivy)
+         #'+spell-correct-ivy-fn)
+        ((featurep! :completion helm)
+         #'+spell-correct-helm-fn)
+        (#'+spell-correct-generic-fn))
+  "Function to use to display corrections.")
 
+(defvar +spell-excluded-faces-alist
+  '((markdown-mode
+     . (markdown-code-face
+        markdown-html-attr-name-face
+        markdown-html-attr-value-face
+        markdown-html-tag-name-face
+        markdown-link-face
+        markdown-markup-face
+        markdown-reference-face
+        markdown-url-face))
+    (org-mode
+     . (org-block
+        org-block-begin-line
+        org-block-end-line
+        org-code
+        org-date
+        org-formula
+        org-latex-and-related
+        org-link
+        org-meta-line
+        org-property-value
+        org-ref-cite-face
+        org-special-keyword
+        org-tag
+        org-todo
+        org-todo-keyword-done
+        org-todo-keyword-habt
+        org-todo-keyword-kill
+        org-todo-keyword-outd
+        org-todo-keyword-todo
+        org-todo-keyword-wait
+        org-verbatim)))
+  "Faces in certain major modes that spell-fu will not spellcheck.")
+
+
+;;
+;;; Packages
+
+(global-set-key [remap ispell-word] #'+spell/correct)
+
+(defvar ispell-dictionary "en_US")
 (after! ispell
   ;; Don't spellcheck org blocks
   (pushnew! ispell-skip-region-alist
@@ -39,74 +86,21 @@
     (_ (doom-log "Spell checker not found. Either install `aspell' or `hunspell'"))))
 
 
-(use-package! flyspell ; built-in
-  :defer t
-  :preface
-  ;; `flyspell' is loaded at startup. In order to lazy load its config we need
-  ;; to pretend it isn't loaded.
-  (defer-feature! flyspell flyspell-mode flyspell-prog-mode)
+(use-package! spell-fu
+  :hook (text-mode . spell-fu-mode)
   :init
-  (add-hook! '(org-mode-hook
-               markdown-mode-hook
-               TeX-mode-hook
-               rst-mode-hook
-               mu4e-compose-mode-hook
-               message-mode-hook
-               git-commit-mode-hook)
-             #'flyspell-mode)
-
+  (setq spell-fu-directory (concat doom-etc-dir "spell-fu"))
   (when (featurep! +everywhere)
     (add-hook! '(yaml-mode-hook
                  conf-mode-hook
                  prog-mode-hook)
-               #'flyspell-prog-mode))
-
+               #'spell-fu-mode))
   :config
-  (setq flyspell-issue-welcome-flag nil
-        ;; Significantly speeds up flyspell, which would otherwise print
-        ;; messages for every word when checking the entire buffer
-        flyspell-issue-message-flag nil)
+  (add-hook! 'spell-fu-mode-hook
+    (defun +spell-init-excluded-faces-h ()
+      (when-let (excluded (alist-get major-mode +spell-excluded-faces-alist))
+        (setq-local spell-fu-faces-exclude excluded))))
 
-  (add-hook! 'flyspell-mode-hook
-    (defun +spell-inhibit-duplicate-detection-maybe-h ()
-      "Don't mark duplicates when style/grammar linters are present.
-e.g. proselint and langtool."
-      (and (or (and (bound-and-true-p flycheck-mode)
-                    (executable-find "proselint"))
-               (featurep 'langtool))
-           (setq-local flyspell-mark-duplications-flag nil))))
-
-  ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
-  ;; used in their respective major modes.
-  (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
-
-  (let ((flyspell-correct
-         (general-predicate-dispatch nil
-           (and (not (or mark-active (ignore-errors (evil-insert-state-p))))
-                (memq 'flyspell-incorrect (face-at-point nil t)))
-           #'flyspell-correct-at-point)))
-    (map! :map flyspell-mouse-map
-          "RET"    flyspell-correct
-          [return] flyspell-correct
-          [mouse-1] #'flyspell-correct-at-point)))
-
-
-(use-package! flyspell-correct
-  :commands flyspell-correct-previous
-  :general ([remap ispell-word] #'flyspell-correct-at-point)
-  :config
-  (cond ((and (featurep! :completion helm)
-              (require 'flyspell-correct-helm nil t)))
-        ((and (featurep! :completion ivy)
-              (require 'flyspell-correct-ivy nil t)))
-        ((require 'flyspell-correct-popup nil t)
-         (setq flyspell-popup-correct-delay 0.8)
-         (define-key popup-menu-keymap [escape] #'keyboard-quit))))
-
-
-(use-package! flyspell-lazy
-  :after flyspell
-  :config
-  (setq flyspell-lazy-idle-seconds 1
-        flyspell-lazy-window-idle-seconds 3)
-  (flyspell-lazy-mode +1))
+  ;; TODO custom `spell-fu-check-range' function to exclude URLs from links or
+  ;;      org-src blocks more intelligently.
+  )

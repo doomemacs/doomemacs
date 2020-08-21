@@ -1,27 +1,99 @@
-;;; checkers/spell/autoload.el -*- lexical-binding: t; -*-
+;;; checkers/spell/autoload/ivy.el -*- lexical-binding: t; -*-
 
-;;;###autodef
-(defalias 'flyspell-mode! #'flyspell-mode)
+(defun +spell--correct (replace poss word orig-pt start end)
+  (cond ((eq replace 'ignore)
+         (goto-char orig-pt)
+         nil)
+        ((eq replace 'save)
+         (goto-char orig-pt)
+         (ispell-send-string (concat "*" word "\n"))
+         (ispell-send-string "#\n")
+         (setq ispell-pdict-modified-p '(t)))
+        ((or (eq replace 'buffer) (eq replace 'session))
+         (ispell-send-string (concat "@" word "\n"))
+         (add-to-list 'ispell-buffer-session-localwords word)
+         (or ispell-buffer-local-name ; session localwords might conflict
+             (setq ispell-buffer-local-name (buffer-name)))
+         (if (null ispell-pdict-modified-p)
+             (setq ispell-pdict-modified-p
+                   (list ispell-pdict-modified-p)))
+         (goto-char orig-pt)
+         (if (eq replace 'buffer)
+             (ispell-add-per-file-word-list word)))
+        (replace
+         (let ((new-word (if (atom replace)
+                             replace
+                           (car replace)))
+               (orig-pt (+ (- (length word) (- end start))
+                           orig-pt)))
+           (unless (equal new-word (car poss))
+             (delete-region start end)
+             (goto-char start)
+             (insert new-word))))
+        ((goto-char orig-pt)
+         nil)))
 
-(defvar +spell--flyspell-predicate-alist nil
-  "TODO")
+(defun +spell-correct-ivy-fn (candidates word)
+  (ivy-read (format "Corrections for %S: " word) candidates))
 
-;;;###autodef
-(defun set-flyspell-predicate! (modes predicate)
-  "TODO"
-  (declare (indent defun))
-  (dolist (mode (doom-enlist modes) +spell--flyspell-predicate-alist)
-    (add-to-list '+spell--flyspell-predicate-alist (cons mode predicate))))
+(defun +spell-correct-helm-fn (candidates word)
+  (helm :sources (helm-build-sync-source
+                  "Ispell"
+                  :candidates candidates)
+        :prompt (format "Corrections for %S: " word)))
+
+(defun +spell-correct-generic-fn (candidates word)
+  (completing-read (format "Corrections for %S: " word) candidates))
 
 ;;;###autoload
-(defun +spell-init-flyspell-predicate-h ()
-  "TODO"
-  (when-let (pred (assq major-mode +spell--flyspell-predicate-alist))
-    (setq-local flyspell-generic-check-word-predicate (cdr pred))))
-
-;;;###autoload
-(defun +spell-correction-at-point-p (&optional point)
-  "TODO"
-  (cl-loop for ov in (overlays-at (or point (point)))
-           if (overlay-get ov 'flyspell-overlay)
-           return t))
+(defun +spell/correct ()
+  "Correct spelling of word at point."
+  (interactive)
+  (if (not (or (featurep! :completion ivy)
+               (featurep! :completion helm)))
+      (call-interactively #'ispell-word)
+    (cl-destructuring-bind (start . end)
+        (bounds-of-thing-at-point 'word)
+      (let ((word (thing-at-point 'word t))
+            (orig-pt (point))
+            poss ispell-filter)
+        (save-current-buffer
+          (ispell-accept-buffer-local-defs))
+        (ispell-send-string "%\n")
+        (ispell-send-string (concat "^" word "\n"))
+        (while (progn (accept-process-output ispell-process)
+                      (not (string= "" (car ispell-filter)))))
+        ;; Remove leading empty element
+        (setq ispell-filter (cdr ispell-filter))
+        ;; ispell process should return something after word is sent. Tag word as
+        ;; valid (i.e., skip) otherwise
+        (unless ispell-filter
+          (setq ispell-filter '(*)))
+        (when (consp ispell-filter)
+          (setq poss (ispell-parse-output (car ispell-filter))))
+        (cond
+         ((or (eq poss t) (stringp poss))
+          ;; don't correct word
+          (message "%s is correct" (funcall ispell-format-word-function word))
+          t)
+         ((null poss)
+          ;; ispell error
+          (error "Ispell: error in Ispell process"))
+         (t
+          ;; The word is incorrect, we have to propose a replacement.
+          (setq res (funcall +spell-correct-interface (nth 2 poss) word))
+          ;; Some interfaces actually eat 'C-g' so it's impossible to stop rapid
+          ;; mode. So when interface returns nil we treat it as a stop.
+          (unless res (setq res (cons 'break word)))
+          (cond
+           ((stringp res)
+            (+spell--correct res poss word orig-pt start end))
+           ((let ((cmd (car res))
+                  (wrd (cdr res)))
+              (unless (or (eq cmd 'skip)
+                          (eq cmd 'break)
+                          (eq cmd 'stop))
+                (+spell--correct cmd poss wrd orig-pt start end)
+                (unless (string-equal wrd word)
+                  (+spell--correct wrd poss word orig-pt start end))))))
+          (ispell-pdict-save t)))))))
