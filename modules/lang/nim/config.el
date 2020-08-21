@@ -29,6 +29,8 @@ windows."
   (map! :localleader
         :map nim-mode-map
         "b" #'nim-compile
+        (:prefix ("p" . "project")
+         :desc "nimble run" "r" #'nimble-run)
         "h" #'nimsuggest-show-doc
         "d" #'nimsuggest-find-definition))
 
