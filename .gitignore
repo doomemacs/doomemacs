@@ -8,6 +8,8 @@ modules/private
 cask/
 elpa/
 test/.local*/
+test/result
+result
 
 # emacs tempfiles that shouldn't be there
 .mc-lists.el
