@@ -5,30 +5,39 @@
     "join_args" "expand_path" "dotenv" "user_rel_path" "find_up" "source_env"
     "watch_file" "source_up" "direnv_load" "MANPATH_add" "load_prefix" "layout"
     "use" "rvm" "use_nix" "use_guix")
-  "TODO")
+  "A list of direnv keywords, which are fontified when in `+direnv-rc-mode'.")
 
 
 ;;
 ;;; Packages
 
-(use-package! direnv
-  :hook (before-hack-local-variables  . direnv--maybe-update-environment)
-  :hook (flycheck-before-syntax-check . direnv--maybe-update-environment)
-  :hook (direnv-envrc-mode . +direnv-envrc-fontify-keywords-h)
+(use-package! envrc
+  :when (executable-find "direnv")
+  :after-call doom-first-file
+  :mode ("\\.envrc\\'" . +direnv-rc-mode)
   :config
-  (add-to-list 'direnv-non-file-modes 'vterm-mode)
+  (add-to-list 'doom-debug-variables 'envrc-debug)
 
-  (defun +direnv-envrc-fontify-keywords-h ()
-    "Fontify special .envrc keywords; it's a good indication of whether or not
-we've typed them correctly."
+  ;; I'm avoiding `global-envrc-mode' intentionally, because it has the
+  ;; potential to run too late in the mode startup process (and after, say,
+  ;; server hooks that may rely on that local direnv environment).
+  (add-hook! 'change-major-mode-after-body-hook
+    (defun +direnv-init-h ()
+      (unless (or envrc-mode
+                  (minibufferp)
+                  (file-remote-p default-directory))
+        (envrc-mode 1))))
+
+  (define-derived-mode +direnv-rc-mode sh-mode "envrc"
+    "Major mode for .envrc files."
+    ;; Fontify .envrc keywords; it's a good indication of whether or not we've
+    ;; typed them correctly, and that we're in the correct major mode.
     (font-lock-add-keywords
      nil `((,(regexp-opt +direnv-keywords 'symbols)
             (0 font-lock-keyword-face)))))
 
   (defadvice! +direnv--fail-gracefully-a (&rest _)
     "Don't try to use direnv if the executable isn't present."
-    :before-while #'direnv-update-directory-environment
+    :before-while #'envrc-mode
     (or (executable-find "direnv")
-        (ignore (doom-log "Couldn't find direnv executable"))))
-
-  (direnv-mode +1))
+        (ignore (doom-log "Couldn't find direnv executable")))))

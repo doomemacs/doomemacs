@@ -34,7 +34,7 @@ direnv and then made available to the current shell.
 This module provides no flags.
 
 ** Plugins
-+ [[https://github.com/wbolster/emacs-direnv][direnv]]
++ [[https://github.com/purcell/envrc][envrc]]
 
 ** Hacks
 + Normally, the direnv environment is updated on ~post-command-hook~. We've
