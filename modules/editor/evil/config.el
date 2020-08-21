@@ -376,15 +376,16 @@ directives. By default, this only recognizes C directives.")
 ;;; Keybinds
 
 ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
-;;   zq - mark word at point as good word
-;;   zw - mark word at point as bad
 ;;   zu{q,w} - undo last marking
-;; Keybinds that evil define:
-;;   z= - correct flyspell word at point
-;;   ]s - jump to previous spelling error
-;;   [s - jump to next spelling error
 
 (map! :v  "@"     #'+evil:apply-macro
+
+      ;; implement dictionary keybinds
+      ;; evil already defines 'z=' to `ispell-word' = correct word at point
+      :n  "zq"    #'spell-fu-word-add
+      :n  "zw"    #'spell-fu-word-remove
+      :n  "[s"    #'spell-fu-goto-previous-error
+      :n  "]s"    #'spell-fu-goto-next-error
 
       ;; ported from vim-unimpaired
       :n  "] SPC" #'+evil/insert-newline-below
