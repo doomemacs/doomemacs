@@ -144,7 +144,7 @@
                                               (+dap-running-session-mode 1))))
 
   (map! :localleader
-        :map +dap-running-session-mode
+        :map +dap-running-session-mode-map
         "d" #'dap-hydra))
 
 
