@@ -1,6 +1,7 @@
 ;;; lang/nim/config.el -*- lexical-binding: t; -*-
 
 (use-package! nim-mode
+  :defer t
   :init
   (add-hook! 'nim-mode-hook
     (defun +nim-init-nimsuggest-mode-h ()
