@@ -598,7 +598,9 @@ buffers."
   (defadvice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
-    (let ((recentf-exclude (list (lambda (_file) t))))
+    (let ((recentf-exclude (list (lambda (_file) t)))
+          (doom-large-file-p t)
+          find-file-hook)
       (funcall orig-fn file)))
 
   ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
