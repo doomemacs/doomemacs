@@ -541,7 +541,7 @@
        (:when (featurep! :term eshell)
         :desc "Toggle eshell popup"   "e" #'+eshell/toggle
         :desc "Open eshell here"      "E" #'+eshell/here)
-       (:when (featurep! :tools macos)
+       (:when (featurep! :os macos)
         :desc "Reveal in Finder"           "o" #'+macos/reveal-in-finder
         :desc "Reveal project in Finder"   "O" #'+macos/reveal-project-in-finder
         :desc "Send to Transmit"           "u" #'+macos/send-to-transmit
