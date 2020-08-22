@@ -152,12 +152,12 @@ you can set these symbols out of the box
     :return        "return"
     :yield         "yeild"
     ;; Other
-    :union         "⋃"
-    :intersect     "∩"
-    :diff          "∖"
-    :tuple         "⨂"
-    :pipe          "" ;; FIXME: find a non-private char
-    :dot           "•")
+    :union         "Union keyword"
+    :intersect     "Intersect keyword"
+    :diff          "diff keyword"
+    :tuple         "Tuple Keyword "
+    :pipe          "Pipe Keyword" ;; FIXME: find a non-private char
+    :dot           "Dot operator")
 #+END_SRC
 
 
