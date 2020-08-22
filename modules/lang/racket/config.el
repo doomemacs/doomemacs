@@ -74,4 +74,18 @@
          (:prefix ("s" . "send")
           "d" #'racket-send-definition
           "e" #'racket-send-last-sexp
-          "r" #'racket-send-region))))
+          "r" #'racket-send-region)
+         :map racket-repl-mode-map
+         "l" #'racket-logger
+         "h" #'racket-repl-documentation
+         "y" #'racket-insert-lambda
+         "u" #'racket-backward-up-list
+         (:prefix ("m" . "macros")
+          "d" #'racket-expand-definition
+          "e" #'racket-expand-last-sexp
+          "f" #'racket-expand-file
+          "r" #'racket-expand-region)
+         (:prefix ("g" . "goto")
+          "b" #'racket-unvisit
+          "m" #'racket-visit-module
+          "d" #'racket-repl-visit-definition))))
