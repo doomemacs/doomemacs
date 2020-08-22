@@ -41,8 +41,10 @@
     (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 
   (map! (:map racket-xp-mode-map
-         [remap next-error]     #'racket-xp-next-error
-         [remap previous-error] #'racket-xp-previous-error)
+         [remap racket-doc]              #'racket-xp-documentation
+         [remap racket-visit-definition] #'racket-xp-visit-definition
+         [remap next-error]              #'racket-xp-next-error
+         [remap previous-error]          #'racket-xp-previous-error)
         (:localleader
          :map racket-mode-map
          "a" #'racket-align
