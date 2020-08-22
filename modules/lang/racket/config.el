@@ -12,7 +12,7 @@
   :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-repl-handler! 'racket-mode #'+racket/open-repl)
-  (set-lookup-handlers! 'racket-mode
+  (set-lookup-handlers! '(racket-mode racket-repl-mode)
     :definition    #'+racket-lookup-definition
     :documentation #'+racket-lookup-documentation)
   (set-docsets! 'racket-mode "Racket")
