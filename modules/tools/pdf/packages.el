@@ -6,4 +6,4 @@
   :recipe (:host github
            :repo "flatwhatson/pdf-tools"
            :branch "fix-macros")
-  :pin "86db180be75254072dee5ea1611a4e8b9c0648de")
+  :pin "eb6d40663069f2b7e6b52e907eeaa4e37375feb6")
