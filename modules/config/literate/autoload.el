@@ -12,6 +12,7 @@ byte-compiled from.")
 (defvar org-mode-hook)
 (defvar org-inhibit-startup)
 
+;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
 (defun +literate-tangle-h ()
@@ -74,9 +75,6 @@ byte-compiled from.")
             (message "Restarting..." )
             (doom-cli-execute-lines-after "__NOTANGLE=1 $@")
             (kill-emacs 0))))))
-
-;;;###autoload
-(add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)
