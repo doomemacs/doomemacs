@@ -8,8 +8,9 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#lsp-servers][LSP servers]]
   - [[#irony-server][irony-server]]
-    - [[#macos][MacOS]]
+    - [[#macos][macOS]]
     - [[#arch-linux][Arch Linux]]
     - [[#opensuse][openSUSE]]
   - [[#rtags][rtags]]
@@ -56,18 +57,36 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
   + [[https://github.com/Andersbakken/rtags][helm-rtags]]
 
 * Prerequisites
-This module requires
+This module's requirements change depending on how you use it.
 
-+ irony-server
-+ rtags
++ If =+lsp= is enabled, you need one of *clangd v9+* or *ccls*.
++ If =+lsp= is *not* enabled, you need *irony-server* and *rtags*.
++ Other features in this module depend on:
+  + (optional) glslangValidator, for GLSL completion in ~glsl-mode~
+  + (optional) cmake, for code completion in ~cmake-mode~
++ You will need a C/C++ compiler, like =gcc= or =clang=.
+
+** LSP servers
+=lsp-mode= and =eglot= support a few LSP servers, but =clangd= and =ccls= are
+recommended.
+
++ clangd (must be v9 or newer) :: Clangd is included with =llvm= which should be
+  available through your OS' package manager.
+  - Debian/Ubuntu: ~sudo apt-get install clangd-9~
+  - macOS: ~brew install llvm~
+  - Windows: install from [[https://releases.llvm.org/download.html][LLVM download page]]
+  - clangd is available on some Linux distros from a =clang-tools= package, if
+    you'd like to avoid the full =llvm=.
++ ccls :: Available in many OS' package managers as =ccls=. Otherwise, there are
+  alternative install methods listed [[https://github.com/MaskRay/ccls/wiki/Install][in the project's wiki]].
 
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
 
 After installing its dependencies, run ~M-x irony-install-server~ in Emacs.
 
-*** MacOS
-Due to linking issues, MacOS users must compile irony-server manually:
+*** macOS
+Due to linking issues, macOS users must compile irony-server manually:
 
 #+BEGIN_SRC sh
 brew install cmake
@@ -118,12 +137,11 @@ rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 ** Project compile settings
 By default, a set of default compile settings are defined in
 ~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
-flycheck will fall back to these.
+flycheck will fall back to these. *This variable does nothing for LSP users.*
 
-To make these tools aware of project specific build settings, you need a JSON
-[[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] present (i.e. a ~compile_commands.json~ file).
-
-There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to generate one]]. I use [[http://www.cmake.org/][CMake]] or [[https://github.com/rizsotto/Bear][bear]]:
+For a more universal solution: both LSP servers and irony will recognize a
+[[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] (a ~compile_commands.json~ file). There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to
+generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
 
 #+BEGIN_SRC sh
 # For CMake projects
