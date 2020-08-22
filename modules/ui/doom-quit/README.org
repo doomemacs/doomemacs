@@ -3,6 +3,37 @@
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configurations][Configurations]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
 A silly module that prompts you with messages when you try to quit, like DOOM
 did. Some quotes are from Doom's quit-message list. Others are random, nerdy
-references that no decent human being has any business recognizing.
+references that no decent human being has any business recognising.
+** Module Flags
+This module provides no flags
+** Plugins
+This module uses no Plugins
+* Prerequisites
+This module provides no prerequisite
+* Features
+This module only works when you run individual Emacs instances and not the
+daemon.
+* Configurations
+ you can configure the messages by adding to the variable ~+doom-quit-messages~
+ #+BEGIN_SRC emacs-lisp
+(setq +doom-quit-messages '(;;from doom 2
+                            "Don't go now, there's a dimensional shambler waiting at the dos prompt!"
+                            "Get outta here and go back to your boring programs."
+                            "If I were your boss, I'd deathmatch ya in a minute!"
+                            "Look, bud. You leave now and you forfeit your body count!"
+                            "You're lucky I don't smack you for thinking about leaving."))
+ #+END_SRC
+* Troubleshooting
+If you have any issues with this module do let me know
