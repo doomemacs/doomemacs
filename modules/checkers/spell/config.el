@@ -87,6 +87,7 @@
 
 
 (use-package! spell-fu
+  :when (executable-find "aspell")
   :hook (text-mode . spell-fu-mode)
   :init
   (setq spell-fu-directory (concat doom-etc-dir "spell-fu"))
