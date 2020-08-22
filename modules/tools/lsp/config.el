@@ -5,14 +5,15 @@
 workspace buffer is closed.
 
 This delay prevents premature server shutdown when a user still intends on
-working on that project after closing the last buffer.")
-
+working on that project after closing the last buffer, or when programmatically
+killing and opening many LSP/eglot-powered buffers.")
 
 
 ;;
 ;;; Common
 
 (defun +lsp-init-optimizations-h ()
+  "Deploys universal optimizations for `lsp-mode' and `eglot'."
   (when (or (bound-and-true-p eglot--managed-mode)
             (bound-and-true-p lsp-mode))
     ;; `read-process-output-max' is only available on recent development
