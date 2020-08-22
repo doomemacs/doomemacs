@@ -16,8 +16,8 @@
   - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
   - [[#coding-ligatures][Coding ligatures]]
 - [[#configuration][Configuration]]
-  - [[#setting-liagtures][Setting liagtures]]
-  - [[#changing-ligatures][changing ligatures]]
+  - [[#setting-ligatures][Setting ligatures]]
+  - [[#changing-ligatures][Changing ligatures]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -102,18 +102,18 @@ Even though harfbuzz has been included in emacs 27, there is currently a [[https
 (#40864)]] which prevents a safe usage of /composition-function-table/ method in
 emacs 27.
 
-* TODO Configuration
-** Setting liagtures
+* Configuration
+** Setting ligatures
 If you want to set ligatures for modules that don't have them by default you can
-use the ~set-ligatures!~ macro in your config.el file
+use the ~set-ligatures!~ macro in your config el file
 #+BEGIN_SRC emacs-lisp
-(after! major-mode
-  (set-ligatures! 'major-mode
+(after! PACKAGE
+  (set-ligatures! 'MAJOR-MODE
     :symbol "keyword"))
 #+END_SRC
 eg.
 #+BEGIN_SRC emacs-lisp
-(after! go-mode
+(after! go-mode ; in this case the major mode and package named the same thing
   (set-ligatures! 'go-mode
     :def "func" ; function keyword
     :true "true" :false "false"
@@ -126,7 +126,7 @@ eg.
 #+END_SRC
 you can set these symbols out of the box
 #+BEGIN_SRC emacs-lisp
-(set-ligatures! 'mode
+(set-ligatures! 'MAJOR-MODE
     ;; Functional
     :lambda        "lambda keyword"
     :def           "function keyword"
@@ -160,21 +160,19 @@ you can set these symbols out of the box
     :dot           "Dot operator")
 #+END_SRC
 
-
-if you have multiple versions of the same keyword you can set the symbol twice
+If you have multiple versions of the same keyword you can set the symbol twice
 
 #+BEGIN_SRC emacs-lisp
 (set-ligatures! scala-mode
   :null "none"
   :null "None")
-
 #+END_SRC
-** changing ligatures
+** Changing ligatures
 if you don't like the symbols chosen you can change them by using...
 
 #+BEGIN_SRC emacs-lisp
-; you don't need to include all of them you can pick and mix
-(setq +ligatures-extra-symbols
+;; you don't need to include all of them you can pick and mix
+(plist-put +ligatures-extra-symbols
   '(;; org
     :name          "»"
     :src_block     "»"
@@ -216,4 +214,4 @@ if you don't like the symbols chosen you can change them by using...
 #+END_SRC
 
 * TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+ If you have any problems with this module, do get in touch!

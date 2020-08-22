@@ -1,4 +1,7 @@
 #+TITLE: :ui hl-todo
+#+DATE:    February 19, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
@@ -7,7 +10,8 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#making-items][Making Items]]
-  - [[#using-items][Using Items]]
+  - [[#keybindings][Keybindings]]
+  - [[#adding-items][Adding items.]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
 
@@ -17,11 +21,15 @@ major-modes.
 
 ** Module Flags
 This module provides no flags
+
 ** Plugins
-[[https://github.com/tarius/hl-todo][hl-todo]]
++ [[https://github.com/tarius/hl-todo][hl-todo]]
+ 
 * Prerequisites
 This module has no prerequisites
+
 * Features
+
 ** Making Items
 You can make a TODO item by simply writing
 + =TODO=
@@ -43,37 +51,33 @@ You can make a TODO item by simply writing
   For a known bug that needs a workaround
 + =XXX=
   For warning about a problematic or misguiding code
-** Using Items
-To see all of the TODO items in a project you can use
-=SPC p t=
-This will bring up a buffer you can use to quickly jump to the item
+
+** Keybindings
+| keybind   | description                      |
+|-----------+----------------------------------|
+| =]t=      | go to next TODO item             |
+| =[t=      | go to previous TODO item         |
+| =SPC p t= | show all TODO items in a project |
+| =SPC s p= | search project for a string      |
+| =SPC s b= | search buffer for string         |
+
+** TODO Adding items.
+The way you would add a TODO item is to use a snippet but these have not been
+made. you can make them yourself by adding the snippet to
+=$DOOMDIR/snippets/MAJOR-MODE/name-of-snippet=. you will find more info on how
+to make them [[https://github.com/hlissner/doom-snippets][here]]
+
 * Configuration
 To add your own ITEMS you would need to configure them using
 ~hl-todo-keyword-faces~
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 ;; the default
-(setq hl-todo-keyword-faces
-      `(("FOO"  . ,(face-foreground "MY COLOUR HEX CODE"))
-        ("BAR" . ,(face-foreground 'my-colour-var))))
+(after! hl-todo
+  (setq hl-todo-keyword-faces
+        `(
+          ("FOO"  . ,(face-foreground "MY COLOUR HEX CODE"))
+          ("BAR" . ,(face-foreground 'my-colour-var)))))
 #+END_SRC
 
-You can also add keybindings to jump and configure the next TODO item in the buffer using
-| function           | description                       | proposed binding |
-|--------------------+-----------------------------------+------------------|
-| ~hl-todo-previous~ | move to the last TODO item        | =C-c t p=        |
-| ~hl-todo-next~     | move to the next TODO item        | =C-c t n=        |
-| ~hl-todo-occur~    | list all TODO items in the buffer | =C-c t o=        |
-| ~hl-todo-insert~   | make a new TODO item              | =C-c t i=        |
-
-this can be mapped like this
-#+BEGIN_SRC emacs-lisp :tangle no
-(map! :prefix "C-c t"
-    "p"#'hl-todo-previous
-    "n"#'hl-todo-next
-    "o"#'hl-todo-occur
-    "i"#'hl-todo-insert)
-
-#+END_SRC
-
-* Troubleshooting
+* TODO Troubleshooting
 If you have any problems with this module do get in touch!
