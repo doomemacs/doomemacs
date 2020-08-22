@@ -66,7 +66,7 @@ Why this over exec-path-from-shell?
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$"
     "^HOME$" "^PWD$" "^PS1$" "^R?PROMPT$" "^TERM$"
     ;; Doom envvars
-    "^DEBUG$" "^INSECURE$" "^YES$" "^__")
+    "^DEBUG$" "^INSECURE$" "^NOTANGLE$" "^YES$" "^__")
   "Environment variables to not save in `doom-env-file'.
 
 Each string is a regexp, matched against variable names to omit from
