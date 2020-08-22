@@ -17,7 +17,7 @@
     (package! flx :pin "17f5c9cb2af18aa6f52910ff4a5a63591261ced5")))
 
 (when (featurep! +childframe)
-  (package! ivy-posframe :pin "82a63ae0fe1976d042ae41e6400c037193cfed8e"))
+  (package! ivy-posframe :pin "44749562a9e68bd43ccaa225b31311476fab1251"))
 
 (when (featurep! +icons)
   (package! all-the-icons-ivy :pin "a70cbfa1effe36efc946a823a580cec686d5e88d"))

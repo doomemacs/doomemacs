@@ -321,7 +321,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! better-jumper
   :hook (doom-first-input . better-jumper-mode)
-  :hook (better-jumper-post-jump . recenter)
   :commands doom-set-jump-a doom-set-jump-maybe-a doom-set-jump-h
   :preface
   ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at

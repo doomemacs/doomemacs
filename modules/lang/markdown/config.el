@@ -53,8 +53,6 @@ capture, the end position, and the output buffer.")
     (add-to-list 'org-src-lang-modes '("md" . markdown)))
 
   :config
-  (set-flyspell-predicate! '(markdown-mode gfm-mode)
-    #'+markdown-flyspell-word-p)
   (set-lookup-handlers! '(markdown-mode gfm-mode)
     ;; `markdown-follow-thing-at-point' may open an external program or a
     ;; buffer. No good way to tell, so pretend it's async.

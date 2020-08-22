@@ -154,7 +154,7 @@ Modules that bring support for a language or group of languages to Emacs.
 * :os
 Modules to improve integration into your OS, system, or devices.
 
-+ [[file:/mnt/projects/conf/doom-emacs/modules/os/macos/README.org][macos]] - Improve Emacs' compatibility with macOS
++ [[file:../modules/os/macos/README.org][macos]] - Improve Emacs' compatibility with macOS
 + tty =+osc= - Improves the terminal Emacs experience.
 
 * :term
@@ -201,7 +201,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO
 + indent-guides - TODO
-+ [[file:/mnt/projects/conf/doom-emacs/modules/ui/ligatures/README.org][ligatures]] =+extra +fira +hasklig +iosevka +pragmata-pro= - Ligature support for Emacs
++ [[file:../modules/ui/ligatures/README.org][ligatures]] =+extra +fira +hasklig +iosevka +pragmata-pro= - Ligature support for Emacs
 + [[file:../modules/ui/minimap/README.org][minimap]] - TODO
 + [[file:../modules/ui/modeline/README.org][modeline]] =+light= - TODO
 + [[file:../modules/ui/nav-flash/README.org][nav-flash]] - TODO

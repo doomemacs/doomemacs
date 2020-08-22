@@ -12,10 +12,7 @@
 (when (featurep! +lsp)
   (unless (featurep! :tools lsp +eglot)
     (if (featurep! +pyright)
-        (package! lsp-pyright
-          ;; REVIEW Remove this when added to melpa
-          :recipe (:host github :repo "emacs-lsp/lsp-pyright")
-          :pin "9603dda12afaae9c82608c7d3762f98b24b8563f")
+        (package! lsp-pyright :pin "9603dda12afaae9c82608c7d3762f98b24b8563f")
       (package! lsp-python-ms :pin "a884a9a4eb1a3acd3d70c776aec5e968bbdc1731"))))
 
 ;; Programming environment

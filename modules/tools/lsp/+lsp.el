@@ -44,6 +44,8 @@ should be a deliberate act (as is flipping this variable).")
         lsp-enable-on-type-formatting nil)
 
   :config
+  (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
+
   (setq lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir (expand-file-name "vetur"
                                                         (or (bound-and-true-p +snippets-dir)

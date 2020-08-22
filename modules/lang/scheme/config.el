@@ -10,7 +10,7 @@
   :init
   (setq geiser-active-implementations '(guile chicken mit chibi chez)
         geiser-autodoc-identifier-format "%s → %s"
-        geiser-smart-tab-p t)
+        geiser-repl-current-project-function 'doom-project-root)
   (unless (featurep! :lang racket)
     (push 'racket geiser-active-implementations))
   (after! scheme                        ; built-in

@@ -5,26 +5,62 @@
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(doom-debug-p
-    init-file-debug
-    debug-on-error
+  '(debug-on-error
+    doom-debug-p
     garbage-collection-messages
-    use-package-verbose
-    jka-compr-verbose
-    lsp-log-io
     gcmh-verbose
-    magit-refresh-verbose
-    url-debug)
-  "A list of variable to toggle on `doom-debug-mode'.")
+    init-file-debug
+    jka-compr-verbose
+    url-debug
+    use-package-verbose)
+  "A list of variable to toggle on `doom-debug-mode'.
+
+Each entry can be a variable symbol or a cons cell whose CAR is the variable
+symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
+
+(defvar doom--debug-vars-old-values nil)
+(defvar doom--debug-vars-undefined nil)
+
+(defun doom--watch-debug-vars-h (&rest _)
+  (when-let (bound-vars (cl-remove-if-not #'boundp doom--debug-vars-undefined))
+    (doom-log "New variables available: %s" bound-vars)
+    (let ((message-log-max nil))
+      (doom-debug-mode -1)
+      (doom-debug-mode +1))))
 
 ;;;###autoload
 (define-minor-mode doom-debug-mode
   "Toggle `debug-on-error' and `doom-debug-p' for verbose logging."
   :init-value nil
   :global t
-  (let ((value doom-debug-mode))
-    (mapc (doom-rpartial #'set value) doom-debug-variables)
-    (message "Debug mode %s" (if value "on" "off"))))
+  (let ((enabled doom-debug-mode))
+    (setq doom--debug-vars-undefined nil)
+    (dolist (var doom-debug-variables)
+      (cond ((listp var)
+             (cl-destructuring-bind (var . val) var
+               (if (not (boundp var))
+                   (add-to-list 'doom--debug-vars-undefined var)
+                 (set-default
+                  var (if (not enabled)
+                          (alist-get var doom--debug-vars-old-values)
+                        (setf (alist-get var doom--debug-vars-old-values)
+                              (symbol-value var))
+                        val)))))
+            ((if (boundp var)
+                 (set-default var enabled)
+               (add-to-list 'doom--debug-vars-undefined var)))))
+    (when (fboundp 'explain-pause-mode)
+      (explain-pause-mode enabled))
+    ;; Watch for changes in `doom-debug-variables', or when packages load (and
+    ;; potentially define one of `doom-debug-variables'), in case some of them
+    ;; aren't defined when `doom-debug-mode' is first loaded.
+    (cond (enabled
+           (add-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
+           (add-hook 'after-load-functions #'doom--watch-debug-vars-h))
+          (t
+           (remove-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
+           (remove-hook 'after-load-functions #'doom--watch-debug-vars-h)))
+    (message "Debug mode %s" (if enabled "on" "off"))))
 
 
 ;;

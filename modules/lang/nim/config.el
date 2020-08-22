@@ -1,6 +1,8 @@
 ;;; lang/nim/config.el -*- lexical-binding: t; -*-
 
-(after! nim-mode
+(use-package! nim-mode
+  :defer t
+  :init
   (add-hook! 'nim-mode-hook
     (defun +nim-init-nimsuggest-mode-h ()
       "Conditionally load `nimsuggest-mode', instead of clumsily erroring out if
@@ -19,9 +21,16 @@ windows."
       :filter-return #'nimsuggest--get-temp-file-name
       (replace-regexp-in-string "[꞉* |<>\"?*]" "" path)))
 
+  :config
+  (set-lookup-handlers! '(nim-mode nimsuggest-mode)
+    :definition #'+nimsuggest-find-definition
+    :documentation #'nimsuggest-show-doc)
+
   (map! :localleader
         :map nim-mode-map
-        "b" #'nim-compile))
+        "b" #'nim-compile
+        "h" #'nimsuggest-show-doc
+        "d" #'nimsuggest-find-definition))
 
 
 (use-package! flycheck-nim
