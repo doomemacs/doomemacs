@@ -1,0 +1,79 @@
+#+TITLE:   ui/fill-column
+#+DATE:    August 23, 2020
+#+SINCE:   <replace with next tagged release version>
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#setting-fill-column-globally][Setting fill-column globally]]
+  - [[#setting-fill-column-on-a-mode-by-mode-basis][Setting fill-column on a mode by mode basis]]
+  - [[#configuring-the-look-of-the-indicator][Configuring the look of the indicator]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides a fill column indicator for when you hit the 80 column limit
+#+BEGIN_QUOTE
+This module is depreciated as this functionality is already baked into
+emacs 27 we will drop this module alongside dropping support for emacs 26.x
+#+END_QUOTE
+
+** Maintainers
++ @laishulu (Author)
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/laishulu/hl-fill-column][hl-fill-column]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+This module highlight's the characters that touch the 80th column of text in a
+buffer. This is mainly to remind people to keep lines short for accessibility
+and or convenience. For more info read this [[https://www.emacswiki.org/emacs/EightyColumnRule][emacs wiki page]]
+* Configuration
+** Setting fill-column globally
+If you want to change the limit then you would need to set ~fill-column~ to your
+desired column you would do this using
+#+BEGIN_SRC emacs-lisp
+(setq-default fill-column 100)
+#+END_SRC
+For it to take affect you need to do..
+1. =M-x hl-fill-column-mode RET=
+2. =SPC m e b= which ~eval-buffer~
+3. =M-x hl-fill-column-mode RET=
+** Setting fill-column on a mode by mode basis
+Setting on a mode by mode basis is quite simple
+
+#+BEGIN_SRC emacs-lisp
+(setq-hook! 'major-mode-hook fill-column 80)
+#+END_SRC
+eg.
+#+BEGIN_SRC emacs-lisp
+(setq-hook! 'org-mode-hook fill-column 80)
+#+END_SRC
+
+After you need to simply restart ~hl-fill-column-mode~ if you already have
+those types buffers open
+** Configuring the look of the indicator
+If you want to change the face use
+#+BEGIN_SRC emacs-lisp
+(after! hl-fill-column
+  (set-face-attribute 'hl-fill-column-face nil
+                      :background "YOUR-FONT-VALUE"
+                      :foreground "#YOUR-BACKGROUND-VALUE"
+                      :inverse-video t))
+#+END_SRC
+You can look at the documentation for ~set-face-attribute~ for the full list
+of customisation's
+
+* Troubleshooting
+If you have any problem with this module do ping us a message!

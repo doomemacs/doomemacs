@@ -1,18 +1,80 @@
-#+TITLE: :tools editorconfig
+#+TITLE:   tools/editorconfig
+#+DATE:    August 22, 2020
+#+SINCE:  
+#+STARTUP: inlineimages nofold
 
-Editorconfig integration for Doom.
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#adding-major-modes][Adding Major Modes]]
+  - [[#trimming-white-space][trimming white-space]]
+- [[#troubleshooting][Troubleshooting]]
 
-* Table of Contents :TOC:
-- [[Module Flags][Module Flags]]
-- [[Prerequisites][Prerequisites]]
-- [[Configuration][Configuration]]
+* Description
+Add EditorConfig integration for Doom
 
-* Module Flags
+#+BEGIN_QUOTE
+EditorConfig helps maintain consistent coding styles for multiple developers
+working on the same project across various editors and IDEs. The EditorConfig
+project consists of a file format for defining coding styles and a collection of
+text editor plugins that enable editors to read the file format and adhere to
+defined styles. EditorConfig files are easily readable and they work nicely with
+version control systems.
+#+END_QUOTE
+
+This module...
++ Adds support for editorconfig properties through the plugin
++ Provides a rudimentary back-end for editorconfig parsing
+
+** Maintainers
++ @editorconfig
+ 
+** Module Flags
 This module provides no flags.
 
+** Plugins
++ [[https://github.com/editorconfig/editorconfig-emacs][editorconfig-emacs]]
+
 * Prerequisites
-~editorconfig~ is an optional requirement of this package. The elisp-only
-implementation may be sufficient, but has fewer features.
+The ~editorconfig~ binary is an optional requirement of this module.
+the elisp only implementation may be sufficient, but has fewer features
+and is slower in most cases. You may get an advantage by installing
+[[https://github.com/editorconfig#contributing][one of the many]] EditorConfig core implementations either from your
+package manager or from source
+
+* Features
+You will need to write an ~.editorconfig~ file in your project
+(this is usually in the root of your project) you can find out about all the
+properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
+** Adding Major Modes
+EditorConfig already support for many major mode but not all are added
+by default if you need to add one you need to add the major mode symbol
+and its indentation variable
 
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'editorconfig-indentation-alist
+  ;; These are both included but are being used as an example
+  '(c-mode c-basic-offset)
+   (coffee-mode coffee-tab-width))
+#+END_SRC
+
+If you do not know the indentation variable/variables, (in the major mode in
+question use =SPC h v= to look for any variable that has =indent=, =offset=
+or =tab-width=  in its name
+** trimming white-space
+Editorconfig does not trim white space but defers that to a minor mode
+in Dooms case this would be ~ws-butler-mode~ If you want to change this use
+#+BEGIN_SRC emacs-lisp
+(setq editorconfig-trim-whitespaces-mode
+      'ws-butler-mode)
+#+END_SRC
+
+* Troubleshooting
+If you have a problem with this module do ping us a message
