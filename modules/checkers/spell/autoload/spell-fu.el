@@ -1,4 +1,5 @@
-;;; checkers/spell/autoload/ivy.el -*- lexical-binding: t; -*-
+;;; checkers/spell/autoload/spell-fu.el -*- lexical-binding: t; -*-
+;;;###if (not (featurep! +flyspell))
 
 (defun +spell--correct (replace poss word orig-pt start end)
   (cond ((eq replace 'ignore)
@@ -66,8 +67,6 @@
       (let ((word (thing-at-point 'word t))
             (orig-pt (point))
             poss ispell-filter)
-        (save-current-buffer
-          (ispell-accept-buffer-local-defs))
         (ispell-send-string "%\n")
         (ispell-send-string (concat "^" word "\n"))
         (while (progn (accept-process-output ispell-process)
