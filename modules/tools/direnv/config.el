@@ -13,7 +13,7 @@
 
 (use-package! envrc
   :when (executable-find "direnv")
-  :after-call doom-first-file
+  :after-call doom-first-file-hook
   :mode ("\\.envrc\\'" . +direnv-rc-mode)
   :config
   (add-to-list 'doom-debug-variables 'envrc-debug)

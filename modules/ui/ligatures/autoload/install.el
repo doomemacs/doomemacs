@@ -31,7 +31,7 @@ filename of each font. It is used as the source and destination filename."
     (when known-dest-p
       (message "Font downloaded, updating font cache... <fc-cache -f -v> ")
       (shell-command-to-string "fc-cache -f -v"))
-    (if IS-WINDOW
+    (if IS-WINDOWS
         (when (y-or-n-p "The %S font was downloaded, but Windows users must install them manually.\n\nShow files in windows explorer?")
           (call-process "explorer.exe" nil nil nil font-dest))
       (message "Successfully %s %S fonts to %S!"
@@ -52,7 +52,7 @@ If PREFIX is non-nil, don't ask for confirmation and install it."
                   :key #'cadr
                   :test #'equal))
     current-prefix-arg))
-  (cl-destructuring-bind (font-name &keys _range url files)
+  (cl-destructuring-bind (font-name &key _range url files)
       (or (alist-get font-id +ligatures--font-alist)
           (user-error "%S is not a valid font" font-id))
-    (+ligatures--install-font prefix font-name url files)))
+    (+ligatures--install-font arg font-name url files)))

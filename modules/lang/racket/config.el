@@ -12,7 +12,7 @@
   :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-repl-handler! 'racket-mode #'+racket/open-repl)
-  (set-lookup-handlers! 'racket-mode
+  (set-lookup-handlers! '(racket-mode racket-repl-mode)
     :definition    #'+racket-lookup-definition
     :documentation #'+racket-lookup-documentation)
   (set-docsets! 'racket-mode "Racket")
@@ -41,8 +41,10 @@
     (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 
   (map! (:map racket-xp-mode-map
-         [remap next-error]     #'racket-xp-next-error
-         [remap previous-error] #'racket-xp-previous-error)
+         [remap racket-doc]              #'racket-xp-documentation
+         [remap racket-visit-definition] #'racket-xp-visit-definition
+         [remap next-error]              #'racket-xp-next-error
+         [remap previous-error]          #'racket-xp-previous-error)
         (:localleader
          :map racket-mode-map
          "a" #'racket-align
@@ -72,4 +74,18 @@
          (:prefix ("s" . "send")
           "d" #'racket-send-definition
           "e" #'racket-send-last-sexp
-          "r" #'racket-send-region))))
+          "r" #'racket-send-region)
+         :map racket-repl-mode-map
+         "l" #'racket-logger
+         "h" #'racket-repl-documentation
+         "y" #'racket-insert-lambda
+         "u" #'racket-backward-up-list
+         (:prefix ("m" . "macros")
+          "d" #'racket-expand-definition
+          "e" #'racket-expand-last-sexp
+          "f" #'racket-expand-file
+          "r" #'racket-expand-region)
+         (:prefix ("g" . "goto")
+          "b" #'racket-unvisit
+          "m" #'racket-visit-module
+          "d" #'racket-repl-visit-definition))))

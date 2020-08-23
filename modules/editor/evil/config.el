@@ -384,8 +384,8 @@ directives. By default, this only recognizes C directives.")
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
       :n  "zq"    #'spell-fu-word-add
       :n  "zw"    #'spell-fu-word-remove
-      :n  "[s"    #'spell-fu-goto-previous-error
-      :n  "]s"    #'spell-fu-goto-next-error
+      :m  "[s"    #'spell-fu-goto-previous-error
+      :m  "]s"    #'spell-fu-goto-next-error
 
       ;; ported from vim-unimpaired
       :n  "] SPC" #'+evil/insert-newline-below

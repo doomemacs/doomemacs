@@ -12,13 +12,14 @@ byte-compiled from.")
 (defvar org-mode-hook)
 (defvar org-inhibit-startup)
 
+;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
 (defun +literate-tangle-h ()
   "Tangles `+literate-config-file' if it has changed."
   (print! (start "Compiling your literate config..."))
   (print-group!
-   (and (not (getenv "NOTANGLE"))
+   (and (not (getenv "__NOTANGLE"))
         (require 'ox nil t)
         (require 'ob-tangle nil t)
         (letf! ((default-directory doom-private-dir)
@@ -72,11 +73,8 @@ byte-compiled from.")
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (doom-cli-execute-lines-after "NOTANGLE=1 $@")
+            (doom-cli-execute-lines-after "__NOTANGLE=1 $@")
             (kill-emacs 0))))))
-
-;;;###autoload
-(add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)
