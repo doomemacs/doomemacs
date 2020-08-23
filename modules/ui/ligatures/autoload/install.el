@@ -52,7 +52,7 @@ If PREFIX is non-nil, don't ask for confirmation and install it."
                   :key #'cadr
                   :test #'equal))
     current-prefix-arg))
-  (cl-destructuring-bind (font-name &keys _range url files)
+  (cl-destructuring-bind (font-name &key _range url files)
       (or (alist-get font-id +ligatures--font-alist)
           (user-error "%S is not a valid font" font-id))
     (+ligatures--install-font prefix font-name url files)))
