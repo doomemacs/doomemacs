@@ -1,6 +1,6 @@
 #+TITLE:   tools/editorconfig
 #+DATE:    August 22, 2020
-#+SINCE:  
+#+SINCE:   2.0.9
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:

@@ -1,6 +1,6 @@
 #+TITLE:   ui/fill-column
 #+DATE:    August 23, 2020
-#+SINCE:   <replace with next tagged release version>
+#+SINCE:   2.0.9
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
