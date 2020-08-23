@@ -80,3 +80,5 @@
   (set-lookup-handlers! 'rustic-mode
     :definition '(racer-find-definition :async t)
     :documentation '+rust-racer-lookup-documentation))
+
+(use-package! ron-mode)
