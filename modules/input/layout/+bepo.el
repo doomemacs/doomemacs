@@ -83,6 +83,23 @@
     (general-translate-key '(normal motion) 'lispyville-mode-map
       "«" "<"
       "»" ">"))
+  (after! org
+    (defadvice! doom-bepo--org-completing-read (&rest args)
+      "Completing-read with SPACE being a normal character, and C-c mapping left alone."
+      :override #'org-completing-read
+      (let ((enable-recursive-minibuffers t)
+            (minibuffer-local-completion-map
+             (copy-keymap minibuffer-local-completion-map)))
+        (define-key minibuffer-local-completion-map " " 'self-insert-command)
+        (define-key minibuffer-local-completion-map "?" 'self-insert-command)
+        (define-key minibuffer-local-completion-map
+          (cond
+           ((eq doom-bepo-cr-rotation-style 'ergodis)
+            (kbd "C-l !"))
+           (t
+            (kbd "C-h !")))
+          'org-time-stamp-inactive)
+        (apply #'completing-read args))))
   (after! (evil magit evil-magit)
     (doom-bepo-rotate-ts-bare-keymap
      '(magit-mode-map
