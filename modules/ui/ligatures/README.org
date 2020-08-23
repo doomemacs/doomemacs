@@ -16,7 +16,8 @@
   - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
   - [[#coding-ligatures][Coding ligatures]]
 - [[#configuration][Configuration]]
-  - [[#set-ligatures][~set-ligatures!~]]
+  - [[#setting-ligatures][Setting ligatures]]
+  - [[#changing-ligatures][Changing ligatures]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -101,8 +102,116 @@ Even though harfbuzz has been included in emacs 27, there is currently a [[https
 (#40864)]] which prevents a safe usage of /composition-function-table/ method in
 emacs 27.
 
-* TODO Configuration
-** TODO ~set-ligatures!~
+* Configuration
+** Setting ligatures
+If you want to set ligatures for modules that don't have them by default you can
+use the ~set-ligatures!~ macro in your config el file
+#+BEGIN_SRC emacs-lisp
+(after! PACKAGE
+  (set-ligatures! 'MAJOR-MODE
+    :symbol "keyword"))
+#+END_SRC
+eg.
+#+BEGIN_SRC emacs-lisp
+(after! go-mode ; in this case the major mode and package named the same thing
+  (set-ligatures! 'go-mode
+    :def "func" ; function keyword
+    :true "true" :false "false"
+    ; this will replace not only definitions
+    ; but coresponding functions aswell
+    :int "int" :str "string"
+    :float "float" :bool "bool"
+    :for "for"
+    :return "return" :yeild "yeild"))
+#+END_SRC
+you can set these symbols out of the box
+#+BEGIN_SRC emacs-lisp
+(set-ligatures! 'MAJOR-MODE
+    ;; Functional
+    :lambda        "lambda keyword"
+    :def           "function keyword"
+    :composition   "composition"
+    :map           "map/dictionary keyword"
+    ;; Types
+    :null          "null type"
+    :true          "true keyword"
+    :false         "false keyword"
+    :int           "int keyword"
+    :float         "float keyword"
+    :str           "string keyword"
+    :bool          "boolean keywork"
+    :list          "list keyword"
+    ;; Flow
+    :not           "not operator"
+    :in            "in operator"
+    :not-in        "not in operator"
+    :and           "and keyword"
+    :or            "or keyword"
+    :for           "for keyword"
+    :some          "some keyword"
+    :return        "return"
+    :yield         "yeild"
+    ;; Other
+    :union         "Union keyword"
+    :intersect     "Intersect keyword"
+    :diff          "diff keyword"
+    :tuple         "Tuple Keyword "
+    :pipe          "Pipe Keyword" ;; FIXME: find a non-private char
+    :dot           "Dot operator")
+#+END_SRC
+
+If you have multiple versions of the same keyword you can set the symbol twice
+
+#+BEGIN_SRC emacs-lisp
+(set-ligatures! scala-mode
+  :null "none"
+  :null "None")
+#+END_SRC
+** Changing ligatures
+if you don't like the symbols chosen you can change them by using...
+
+#+BEGIN_SRC emacs-lisp
+;; you don't need to include all of them you can pick and mix
+(plist-put +ligatures-extra-symbols
+  '(;; org
+    :name          "»"
+    :src_block     "»"
+    :src_block_end "«"
+    :quote         "“"
+    :quote_end     "”"
+    ;; Functional
+    :lambda        "λ"
+    :def           "ƒ"
+    :composition   "∘"
+    :map           "↦"
+    ;; Types
+    :null          "∅"
+    :true          "𝕋"
+    :false         "𝔽"
+    :int           "ℤ"
+    :float         "ℝ"
+    :str           "𝕊"
+    :bool          "𝔹"
+    :list          "𝕃"
+    ;; Flow
+    :not           "￢"
+    :in            "∈"
+    :not-in        "∉"
+    :and           "∧"
+    :or            "∨"
+    :for           "∀"
+    :some          "∃"
+    :return        "⟼"
+    :yield         "⟻"
+    ;; Other
+    :union         "⋃"
+    :intersect     "∩"
+    :diff          "∖"
+    :tuple         "⨂"
+    :pipe          "" ;; FIXME: find a non-private char
+    :dot           "•"))
+  ;; you could also add your own if you want
+#+END_SRC
 
 * TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+ If you have any problems with this module, do get in touch!
