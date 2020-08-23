@@ -48,7 +48,6 @@
 
 (global-set-key [remap ispell-word] #'+spell/correct)
 
-(defvar ispell-dictionary "en_US")
 (after! ispell
   ;; Don't spellcheck org blocks
   (pushnew! ispell-skip-region-alist
@@ -67,7 +66,22 @@
                ((executable-find "hunspell") 'hunspell))
     (`aspell
      (setq ispell-program-name "aspell"
-           ispell-extra-args '("--sug-mode=ultra" "--run-together" "--dont-tex-check-comments"))
+           ispell-extra-args '("--sug-mode=ultra"
+                               "--run-together"
+                               "--dont-tex-check-comments"))
+
+     (unless ispell-dictionary
+       (setq ispell-dictionary "en"))
+     (unless ispell-aspell-dict-dir
+       (setq ispell-aspell-dict-dir
+             (ispell-get-aspell-config-value "dict-dir")))
+     (unless ispell-aspell-data-dir
+       (setq ispell-aspell-data-dir
+             (ispell-get-aspell-config-value "data-dir")))
+     (unless ispell-personal-dictionary
+       (setq ispell-personal-dictionary
+             (expand-file-name (concat "ispell/" ispell-dictionary ".pws")
+                               doom-etc-dir)))
 
      (add-hook! 'text-mode-hook
        (defun +spell-remove-run-together-switch-for-aspell-h ()
@@ -97,8 +111,16 @@
                  prog-mode-hook)
                #'spell-fu-mode))
   :config
+  (defadvice! +spell--create-word-dict-a (_word words-file _action)
+    :before #'spell-fu--word-add-or-remove
+    (unless (file-exists-p words-file)
+      (make-directory (file-name-directory words-file) t)
+      (with-temp-file words-file
+        (insert (format "personal_ws-1.1 %s 0\n" ispell-dictionary)))))
+
   (add-hook! 'spell-fu-mode-hook
     (defun +spell-init-excluded-faces-h ()
+      "Set `spell-fu-faces-exclude' according to `+spell-excluded-faces-alist'."
       (when-let (excluded (alist-get major-mode +spell-excluded-faces-alist))
         (setq-local spell-fu-faces-exclude excluded))))
 
