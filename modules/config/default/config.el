@@ -15,7 +15,7 @@
                    ivy-switch-buffer-map))
                 ((featurep! :completion helm)
                  '(helm-map
-                   helm-ag-map
+                   helm-rg-map
                    helm-read-file-map))))
   "A list of all the keymaps used for the minibuffer.")
 
