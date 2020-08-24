@@ -11,8 +11,11 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#lsp-powered-project-search][LSP-powered project search]]
+  - [[#differences-between-eglot-and-lsp-mode][Differences between eglot and lsp-mode]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#my-language-server-is-not-found][My language server is not found]]
+  - [[#lspeglot-is-not-started-automatically-in-my-buffer][LSP/Eglot is not started automatically in my buffer]]
 
 * Description
 This module integrates [[https://langserver.org/][language servers]] into Doom Emacs. They provide features
