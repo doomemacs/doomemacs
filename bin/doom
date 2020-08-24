@@ -1,126 +1,128 @@
 #!/usr/bin/env sh
-:; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
-:; command -v $EMACS >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
-:; _VERSION=$($EMACS --version | head -n1)
-:; case "$_VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $_VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
-:; _DOOMBASE="${EMACSDIR:-$(dirname "$0")/..}"
-:; _DOOMPOST="$_DOOMBASE/.local/.doom.sh"
-:; $EMACS --no-site-file --script "$0" -- "$@"
-:; CODE=$?
-:; [ -x "$_DOOMPOST" ] && "$_DOOMPOST" "$0" "$@"
-:; exit $CODE
+:; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
+:; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs}
+:; command -v "$EMACS" >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
+:; export EMACSDIR="${EMACSDIR:-`dirname "$0"`/..}"
+:; export __DOOMPOST="${TMPDIR:-/tmp}/doom.sh"
+:; __DOOMCODE=0
+:; "$EMACS" --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
+:; [ $__DOOMCODE -eq 128 ] && { "$__DOOMPOST" "$0" "$@"; __DOOMCODE=$?; }
+:; exit $__DOOMCODE
 
-;; CLI ops tend to eat a lot of memory. To speed it up, stave off the GC, but
-;; not to `most-positive-fixnum' like we do in init.el; that's too high -- we
-;; don't want to intentionally leak memory.
+;; The garbage collector isn't important during CLI ops. A higher threshold
+;; makes it 15-30% faster, but set it too high and we risk spiralling memory
+;; usage in longer sessions.
 (setq gc-cons-threshold 134217728)   ; 128mb
 
-(let* ((loaddir (file-name-directory (file-truename load-file-name)))
-       (emacsdir (getenv "EMACSDIR"))
-       (user-emacs-directory
-        (abbreviate-file-name
-         (if emacsdir
-             (file-name-as-directory emacsdir)
-           (expand-file-name "../" loaddir)))))
+;; Prioritize non-byte-compiled source files in non-interactive sessions to
+;; prevent loading stale byte-code.
+(setq load-prefer-newer t)
 
-  ;;
-  (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
+;; Ensure Doom runs out of this file's parent directory, where Doom is
+;; presumably installed. EMACSDIR is set in the shell script preamble earlier in
+;; this file.
+(setq user-emacs-directory
+      (file-name-as-directory  ; ensure the trailing slash...
+       (expand-file-name (or (getenv "EMACSDIR") ""))))
 
-  ;; HACK Load `cl' and site files manually so we can stop them from polluting
-  ;;      CLI logs with deprecation and file load messages.
-  (quiet! (when (> emacs-major-version 26)
-            (require 'cl))
-          (load "site-start" t t))
+;; Handle some potential issues early
+(when (version< emacs-version "26.1")
+  (error (concat "Detected Emacs %s (at %s).\n\n"
+                 "Doom only supports Emacs 26.1 and newer. 27.1 is highly recommended. A guide\n"
+                 "to install a newer version of Emacs can be found at:\n\n  "
+                 (cond ((eq system-type 'darwin)
+                        "https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#on-macos")
+                       ((memq system-type '(cygwin windows-nt ms-dos))
+                        "https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#on-windows")
+                       ("https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#on-linux"))
+                 "Aborting...")
+         emacs-version
+         (car command-line-args)))
 
-  (doom-log "Initializing Doom CLI")
-  (require 'core-cli)
+(unless (file-exists-p (expand-file-name "core/core.el" user-emacs-directory))
+  (error (concat "Couldn't find Doom Emacs in %S.\n\n"
+                 "This is likely because this script (or its parent directory) is a symlink.\n"
+                 "If you must use a symlink, you'll need to specify an EMACSDIR so Doom knows\n"
+                 "where to find itself. e.g.\n\n    "
+                 (if (string-match "/fish$" (getenv "SHELL"))
+                     "env EMACSDIR=~/.emacs.d doom"
+                   "EMACSDIR=~/.emacs.d doom sync")
+                 "\n\n"
+                 "Aborting...")
+         (abbreviate-file-name (file-truename user-emacs-directory))
+         (abbreviate-file-name load-file-name)))
 
-  (defcli! :main
-      ((help-p   ["-h" "--help"]    "Same as help command")
-       (debug-p  ["-d" "--debug"]   "Turns on doom-debug-p (and debug-on-error)")
-       (yes-p    ["-y" "--yes"]     "Auto-accept all confirmation prompts")
-       &optional command &rest args)
-    "A command line interface for managing Doom Emacs.
+(when (and (equal (user-real-uid) 0)
+           (not (file-in-directory-p user-emacs-directory "/root")))
+  (error (concat "This script is running as root. This likely wasn't intentional and\n"
+                 "will cause file permissions errors later if this Doom install is\n"
+                 "ever used on a non-root account.\n\n"
+                 "Aborting...")))
 
-Includes package management, diagnostics, unit tests, and byte-compilation.
+;; Load the heart of the beast and its CLI processing library
+(load (expand-file-name "core/core.el" user-emacs-directory) nil t)
+(require 'core-cli)
 
-This tool also makes it trivial to launch Emacs out of a different folder or
-with a different private module."
-    :bare t
-    (when debug-p
-      (setenv "DEBUG" "1")
-      (setq doom-debug-p t)
-      (print! (info "Debug mode on")))
-    (when yes-p
-      (setenv "YES" "1")
-      (setq doom-auto-accept t)
-      (print! (info "Auto-yes on")))
-    (when help-p
-      (when command
-        (push command args))
-      (setq command "help"))
+;; Use our own home-grown debugger to display and log errors + backtraces.
+;; Control over its formatting is important, because Emacs produces
+;; difficult-to-read debug information otherwise. By making its errors more
+;; presentable (and storing them somewhere users can access them later) we go a
+;; long way toward making it easier for users to write better bug reports.
+(setq debugger #'doom-cli--debugger
+      debug-on-error t
+      debug-ignored-errors nil)
 
-    (when (equal (user-real-uid) 0)
-      (print!
-       (concat "WARNING: This script is running as root. This likely wasn't intentional, and\n"
-               "is unnecessary to use this script. This will cause file permissions errors\n"
-               "later if you use this Doom installation on a non-root account.\n"))
-      (unless (or doom-auto-accept (y-or-n-p "Continue anyway?"))
-        (user-error "Aborted")))
+;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
+;;      with deprecation and/or file load messages.
+(quiet! (if EMACS27+ (require 'cl))
+        (load "site-start" t t))
 
-    ;; Load any the user's private init.el or any cli.el files in modules. This
-    ;; gives the user (and modules) an opportunity to define their own CLI
-    ;; commands, or to customize the CLI to better suit them.
-    (load! doom-module-init-file doom-private-dir t)
-    (maphash (doom-module-loader doom-cli-file) doom-modules)
-    (load! doom-cli-file doom-private-dir t)
-    (run-hooks 'doom-cli-pre-hook)
-
-    (let (print-level print-gensym print-length)
-      (condition-case e
-          (if (null command)
-              (doom-cli-execute "help")
-            (let ((start-time (current-time)))
-              (and (doom-cli-execute command args)
-                   (progn (run-hooks 'doom-cli-post-hook) t)
-                   (print! (success "Finished! (%.4fs)")
-                           (float-time
-                            (time-subtract (current-time)
-                                           start-time))))))
-        (user-error
-         (print! (error "%s\n") (error-message-string e))
-         (print! (yellow "See 'doom help %s' for documentation on this command.") (car args))
-         (error "")) ; Ensure non-zero exit code
-        ((debug error)
-         (print! (error "There was an unexpected error:"))
-         (print-group!
-          (print! "%s %s" (bold "Type:") (car e))
-          (print! (bold "Message:"))
-          (print-group!
-           (print! "%s" (get (car e) 'error-message)))
-          (print! (bold "Data:"))
-          (print-group!
-           (if (cdr e)
-               (dolist (item (cdr e))
-                 (print! "%S" item))
-             (print! "n/a")))
-          (when (and (bound-and-true-p straight-process-buffer)
-                     (string-match-p (regexp-quote straight-process-buffer)
-                                     (error-message-string e)))
-            (print! (bold "Straight output:"))
-            (print-group! (print! "%s" (straight--process-get-output)))))
-         (unless debug-on-error
-           (terpri)
-           (print!
-            (concat "Run the command again with the -d (or --debug) switch to enable debug\n"
-                    "mode and (hopefully) generate a backtrace from this error:\n"
-                    "\n  %s\n\n"
-                    "If you file a bug report, please include it!")
-            (string-join (append (list (file-name-nondirectory load-file-name) "-d" command)
-                                 args)
-                         " "))
-           ;; Ensure non-zero exit code
-           (error ""))))))
-
-  (doom-cli-execute :main (cdr (member "--" argv)))
-  (setq argv nil))
+(kill-emacs
+ (pcase
+     ;; Process the arguments passed to this script. `doom-cli-execute' should
+     ;; return a boolean, integer (error code) or throw an 'exit event, which we
+     ;; handle specially.
+     (apply #'doom-cli-execute :doom (cdr (member "--" argv)))
+   ;; Any non-zero integer is treated as an error code.
+   ((and (pred integerp) code) code)
+   ;; If, instead, we were given a list or string, copy these as shell script
+   ;; commands to a temp script file which this script will execute after this
+   ;; session finishes. Also accepts special keywords, like `:restart', to rerun
+   ;; the current command.
+   ((and (or (pred consp)
+             (pred stringp)
+             (pred keywordp))
+         command)
+    (let ((script (doom-path (getenv "__DOOMPOST")))
+          (coding-system-for-write 'utf-8-unix)
+          (coding-system-for-read  'utf-8-unix))
+      (with-temp-file script
+        (insert "#!/usr/bin/env sh\n"
+                "_postscript() {\n"
+                "  rm -f " (shell-quote-argument script) "\n  "
+                (cond ((eq command :restart)
+                       "$@")
+                      ((stringp command)
+                       command)
+                      ((string-join
+                        (if (listp (car-safe command))
+                            (cl-loop for line in (doom-enlist command)
+                                     collect (mapconcat #'shell-quote-argument (remq nil line) " "))
+                          (list (mapconcat #'shell-quote-argument (remq nil command) " ")))
+                        "\n  ")))
+                "\n}\n"
+                (save-match-data
+                  (cl-loop for env in process-environment
+                           if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
+                           concat (format "%s=%s \\\n"
+                                          (match-string 1 env)
+                                          (shell-quote-argument (match-string 2 env)))))
+                (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
+                "_postscript $@\n"))
+      (set-file-modes script #o700))
+    ;; Error code 128 is special: it means run the post-script after this
+    ;; session ends.
+    128)
+   ;; Anything else (e.g. booleans) is treated as a successful run. Yes, a `nil'
+   ;; indicates a successful run too!
+   (_ 0)))
