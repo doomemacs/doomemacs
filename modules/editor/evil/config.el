@@ -158,6 +158,14 @@ directives. By default, this only recognizes C directives.")
   ;; Make J (evil-join) remove comment delimiters when joining lines.
   (advice-add #'evil-join :override #'+evil-join-a)
 
+  ;; Prevent gw (`evil-fill') and gq (`evil-fill-and-move') from squeezing
+  ;; spaces. It doesn't in vim, so it shouldn't in evil.
+  (defadvice! +evil--no-squeeze-on-fill-a (orig-fn &rest args)
+    :around '(evil-fill evil-fill-and-move)
+    (letf! (defun fill-region (from to &optional justify nosqueeze to-eop)
+             (funcall fill-region from to justify t to-eop))
+      (apply orig-fn args)))
+
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
 
