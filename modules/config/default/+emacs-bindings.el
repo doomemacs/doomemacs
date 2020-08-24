@@ -279,8 +279,10 @@
        (:when (featurep! :lang org +present)
         :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode
-       (:when (featurep! :checkers spell)
+       (:when (and (featurep! :checkers spell) (not (featurep! :checkers spell +flyspell)))
         :desc "Spell checker"              "s" #'spell-fu-mode)
+       (:when (featurep! :checkers spell +flyspell)
+        :desc "Spell checker"              "s" #'flyspell-mode)
        (:when (featurep! :lang org +pomodoro)
         :desc "Pomodoro timer"             "t" #'org-pomodoro)
        (:when (featurep! :ui zen)
