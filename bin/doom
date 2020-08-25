@@ -2,7 +2,6 @@
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
 :; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs}
 :; command -v "$EMACS" >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
-:; export EMACSDIR="${EMACSDIR:-`dirname "$0"`/..}"
 :; export __DOOMPOST="${TMPDIR:-/tmp}/doom.sh"
 :; __DOOMCODE=0
 :; "$EMACS" --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
@@ -22,8 +21,10 @@
 ;; presumably installed. EMACSDIR is set in the shell script preamble earlier in
 ;; this file.
 (setq user-emacs-directory
-      (file-name-as-directory  ; ensure the trailing slash...
-       (expand-file-name (or (getenv "EMACSDIR") ""))))
+      (if (getenv "EMACSDIR")
+          (file-name-as-directory (expand-file-name (getenv "EMACSDIR")))
+        (expand-file-name
+         "../" (file-name-directory (file-truename load-file-name)))))
 
 ;; Handle some potential issues early
 (when (version< emacs-version "26.1")
