@@ -6,6 +6,7 @@
   org-download-dnd
   org-download-yank
   org-download-screenshot
+  org-download-clipboard
   org-download-dnd-base64
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
