@@ -4,7 +4,7 @@
 :; export __DOOMPOST="${TMPDIR:-/tmp}/doom.sh"
 :; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
 :; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
-:; [ "$__DOOMCODE" -eq 128 ] && { "$__DOOMPOST" "$0" "$@"; __DOOMCODE=$?; }
+:; [ "${__DOOMCODE:-0}" -eq 128 ] && exec "$__DOOMPOST" "$0" "$@"
 :; exit $__DOOMCODE
 
 ;; The garbage collector isn't important during CLI ops. A higher threshold
