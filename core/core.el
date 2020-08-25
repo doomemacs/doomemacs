@@ -369,7 +369,7 @@ config.el instead."
 
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
-  (unless (or doom-inhibit-local-var-hooks revert-buffer-in-progress-p)
+  (unless doom-inhibit-local-var-hooks
     (set (make-local-variable 'doom-inhibit-local-var-hooks) t)
     (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                       #'doom-try-run-hook)))
