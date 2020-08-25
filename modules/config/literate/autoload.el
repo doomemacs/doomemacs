@@ -17,36 +17,36 @@ byte-compiled from.")
 ;;;###autoload
 (defun +literate-tangle-h ()
   "Tangles `+literate-config-file' if it has changed."
-  (print! (start "Compiling your literate config..."))
-  (print-group!
-   (and (not (getenv "__NOTANGLE"))
-        (require 'ox nil t)
-        (require 'ob-tangle nil t)
-        (letf! ((default-directory doom-private-dir)
-                (target +literate-config-file)
-                (cache +literate-config-cache-file)
-                (dest (concat (file-name-sans-extension target) ".el"))
-                ;; Operate on a copy because `org-babel-tangle' has
-                ;; side-effects we need to undo immediately as not to
-                ;; overwrite the user's config; it's bad ettiquite.
-                (backup (make-temp-file (concat (file-name-nondirectory target) ".")))
+  (and (not (getenv "__NOTANGLE"))
+       (require 'ox nil t)
+       (require 'ob-tangle nil t)
+       (letf! ((default-directory doom-private-dir)
+               (target +literate-config-file)
+               (cache +literate-config-cache-file)
+               (dest (concat (file-name-sans-extension target) ".el"))
+               ;; Operate on a copy because `org-babel-tangle' has
+               ;; side-effects we need to undo immediately as not to
+               ;; overwrite the user's config; it's bad ettiquite.
+               (backup (make-temp-file (concat (file-name-nondirectory target) ".")))
 
-                ;; HACK A hack to prevent ob-tangle from operating relative to
-                ;;      the backup file and thus tangling to the wrong
-                ;;      destinations.
-                (defun org-babel-tangle-single-block (&rest args)
-                  (let* ((spec (apply org-babel-tangle-single-block args))
-                         (file (nth 1 spec))
-                         (file (if (file-equal-p file backup) target file))
-                         (file (if org-babel-tangle-use-relative-file-links
-                                   (file-relative-name file)
-                                 file)))
-                    (setf (nth 1 spec) file)
-                    spec))
-                ;; Ensure output conforms to the formatting of all doom CLIs
-                (defun message (msg &rest args)
-                  (when msg
-                    (print! (info "%s") (apply #'format msg args)))))
+               ;; HACK A hack to prevent ob-tangle from operating relative to
+               ;;      the backup file and thus tangling to the wrong
+               ;;      destinations.
+               (defun org-babel-tangle-single-block (&rest args)
+                 (let* ((spec (apply org-babel-tangle-single-block args))
+                        (file (nth 1 spec))
+                        (file (if (file-equal-p file backup) target file))
+                        (file (if org-babel-tangle-use-relative-file-links
+                                  (file-relative-name file)
+                                file)))
+                   (setf (nth 1 spec) file)
+                   spec))
+               ;; Ensure output conforms to the formatting of all doom CLIs
+               (defun message (msg &rest args)
+                 (when msg
+                   (print! (info "%s") (apply #'format msg args)))))
+         (print! (start "Compiling your literate config..."))
+         (print-group!
           (unwind-protect
               (with-temp-file backup
                 (insert-file-contents target)
@@ -73,8 +73,7 @@ byte-compiled from.")
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (doom-cli-execute-lines-after "__NOTANGLE=1 $@")
-            (kill-emacs 0))))))
+            (throw 'exit "__NOTANGLE=1 $@"))))))
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)

@@ -568,7 +568,7 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d."
             doom-cache-dir))
 
 (load! doom-module-init-file doom-private-dir t)
-;; (maphash (doom-module-loader doom-cli-file) (doom-current-modules))
+(maphash (doom-module-loader doom-cli-file) doom-modules)
 (load! doom-cli-file doom-private-dir t)
 
 (provide 'core-cli)

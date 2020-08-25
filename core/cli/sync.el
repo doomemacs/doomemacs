@@ -18,6 +18,7 @@ recompile. Run this whenever you:
 It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
+  (run-hooks 'doom-sync-pre-hook)
   (add-hook 'kill-emacs-hook #'doom--cli-abort-warning-h)
   (print! (start "Synchronizing your config with Doom Emacs..."))
   (unwind-protect
@@ -26,7 +27,6 @@ stale."
        (when (and (not no-envvar-p)
                   (file-exists-p doom-env-file))
          (doom-cli-reload-env-file 'force))
-       (run-hooks 'doom-sync-pre-hook)
        (doom-cli-packages-install)
        (doom-cli-packages-build)
        (when update-p
