@@ -110,7 +110,13 @@
               org-todo-keyword-outd
               org-todo-keyword-todo
               org-todo-keyword-wait
-              org-verbatim)))
+              org-verbatim))
+          (latex-mode
+           . (font-latex-math-face
+              font-latex-sedate-face
+              font-lock-function-name-face
+              font-lock-keyword-face
+              font-lock-variable-name-face)))
         "Faces in certain major modes that spell-fu will not spellcheck.")
 
       (setq spell-fu-directory (concat doom-etc-dir "spell-fu"))
