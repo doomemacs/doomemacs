@@ -465,7 +465,7 @@ with a different private module."
     (doom-cli-command-not-found-error
      (print! (error "Command 'doom %s' not recognized") (string-join (cdr e) " "))
      (print! "\nDid you mean one of these commands?")
-     (doom-cli-execute "help" "--similar" (string-join (cdr e) " "))
+     (apply #'doom-cli-execute "help" "--similar" (string-join (cdr e) " "))
      2)
     ;; TODO Not implemented yet
     (doom-cli-wrong-number-of-arguments-error

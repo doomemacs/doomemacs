@@ -17,7 +17,7 @@ following shell commands:
   (let ((doom-auto-discard force-p))
     (cond
      (packages-only-p
-      (doom-cli-execute "sync" '("-u"))
+      (doom-cli-execute "sync" "-u")
       (print! (success "Finished upgrading Doom Emacs")))
 
      ((doom-cli-upgrade doom-auto-accept doom-auto-discard)
