@@ -152,7 +152,7 @@ It is integrated into Helpful, in Doom.
 
 *** custom-theme-set-faces!
 #+BEGIN_SRC elisp :eval no
-(custom-theme-set-faces! 'doom-one-theme
+(custom-theme-set-faces! 'doom-one
  '(outline-1 :weight normal)
  '(outline-2 :weight normal)
  '(outline-3 :weight normal)
