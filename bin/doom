@@ -1,11 +1,10 @@
 #!/usr/bin/env sh
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
-:; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs}
-:; command -v "$EMACS" >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
+:; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; export __DOOMPOST="${TMPDIR:-/tmp}/doom.sh"
-:; __DOOMCODE=0
-:; "$EMACS" --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
-:; [ $__DOOMCODE -eq 128 ] && { "$__DOOMPOST" "$0" "$@"; __DOOMCODE=$?; }
+:; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
+:; $EMACS --no-site-file --script "$0" -- "$@"; __DOOMCODE=$?
+:; [ "$__DOOMCODE" -eq 128 ] && { "$__DOOMPOST" "$0" "$@"; __DOOMCODE=$?; }
 :; exit $__DOOMCODE
 
 ;; The garbage collector isn't important during CLI ops. A higher threshold
