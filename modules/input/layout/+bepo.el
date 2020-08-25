@@ -67,13 +67,26 @@
   (after! treemacs
     (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
   (after! (:or helm ivy)
-    (doom-bepo-rotate-bare-keymap +default-minibuffer-maps doom-bepo-cr-rotation-style))
-  (after! company
-    (doom-bepo-rotate-bare-keymap '(company-active-map company-search-map) doom-bepo-cr-rotation-style))
+    (doom-bepo-rotate-bare-keymap
+     '(minibuffer-local-map
+       minibuffer-local-ns-map
+       minibuffer-local-completion-map
+       minibuffer-local-must-match-map
+       minibuffer-local-isearch-map
+       read-expression-map)
+     doom-bepo-cr-rotation-style))
+  (after! ivy
+    (doom-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) doom-bepo-cr-rotation-style))
   (after! helm
     (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style))
+  (after! helm-rg
+    (doom-bepo-rotate-bare-keymap '(helm-rg-map) doom-bepo-cr-rotation-style))
+  (after! helm-files
+    (doom-bepo-rotate-bare-keymap '(helm-read-file-map) doom-bepo-cr-rotation-style))
   (after! general
     (doom-bepo-rotate-evil-keymap doom-bepo-cr-rotation-style))
+  (after! company
+    (doom-bepo-rotate-bare-keymap '(company-active-map company-search-map) doom-bepo-cr-rotation-style))
   (after! evil-snipe
     (doom-bepo--evil-collection-hook
      nil
