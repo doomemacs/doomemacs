@@ -28,7 +28,7 @@
           (spy-on 'doom-initialize-packages :and-return-value t))
 
         (it "initializes packages if core autoload file doesn't exist"
-          (let ((doom-autoload-file "doesnotexist"))
+          (let ((doom-autoloads-file "doesnotexist"))
             (expect (doom-initialize nil 'noerror))
           (expect 'doom-initialize-packages :to-have-been-called))
 
@@ -51,12 +51,12 @@
         (it "loads autoloads files"
           (ignore-errors (doom-initialize nil 'noerror))
           (expect 'doom-load-autoloads-file
-                  :to-have-been-called-with doom-autoload-file)
+                  :to-have-been-called-with doom-autoloads-file)
           (expect 'doom-load-autoloads-file
                   :to-have-been-called-with doom-package-autoload-file))
 
         (it "throws doom-autoload-error when autoload files don't exist"
-          (let ((doom-autoload-file "doesnotexist")
+          (let ((doom-autoloads-file "doesnotexist")
                 (doom-package-autoload-file "doesnotexist"))
             (expect (doom-initialize) :to-throw 'doom-autoload-error)))))
 
@@ -72,26 +72,26 @@
         (expect 'require :to-have-been-called-with 'core-editor))))
 
   (describe "doom-load-autoloads-file"
-    :var (doom-autoload-file doom-alt-autoload-file result)
+    :var (doom-autoloads-file doom-alt-autoload-file result)
     (before-each
-      (setq doom-autoload-file (make-temp-file "doom-autoload" nil ".el"))
-      (with-temp-file doom-autoload-file)
-      (byte-compile-file doom-autoload-file))
+      (setq doom-autoloads-file (make-temp-file "doom-autoload" nil ".el"))
+      (with-temp-file doom-autoloads-file)
+      (byte-compile-file doom-autoloads-file))
     (after-each
-      (delete-file doom-autoload-file)
-      (delete-file (byte-compile-dest-file doom-autoload-file)))
+      (delete-file doom-autoloads-file)
+      (delete-file (byte-compile-dest-file doom-autoloads-file)))
 
     (it "loads the byte-compiled autoloads file if available"
-      (doom-load-autoloads-file doom-autoload-file)
+      (doom-load-autoloads-file doom-autoloads-file)
       (expect (caar load-history) :to-equal-file
-              (byte-compile-dest-file doom-autoload-file))
+              (byte-compile-dest-file doom-autoloads-file))
 
-      (delete-file (byte-compile-dest-file doom-autoload-file))
-      (doom-load-autoloads-file doom-autoload-file)
-      (expect (caar load-history) :to-equal-file doom-autoload-file))
+      (delete-file (byte-compile-dest-file doom-autoloads-file))
+      (doom-load-autoloads-file doom-autoloads-file)
+      (expect (caar load-history) :to-equal-file doom-autoloads-file))
 
     (it "returns non-nil if successful"
-      (expect (doom-load-autoloads-file doom-autoload-file)))
+      (expect (doom-load-autoloads-file doom-autoloads-file)))
 
     (it "returns nil on failure or error, non-fatally"
       (expect (doom-load-autoloads-file "/does/not/exist") :to-be nil)))

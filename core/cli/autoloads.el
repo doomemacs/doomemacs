@@ -14,7 +14,7 @@ one wants that.")
     auto-mode-alist
     interpreter-mode-alist
     Info-directory-list)
-  "A list of variables to be cached in `doom-autoload-file'.")
+  "A list of variables to be cached in `doom-autoloads-file'.")
 
 (defvar doom-autoloads-files ()
   "A list of additional files or file globs to scan for autoloads.")
@@ -26,7 +26,7 @@ one wants that.")
 (defun doom-autoloads-reload (&optional file)
   "Regenerates Doom's autoloads and writes them to FILE."
   (unless file
-    (setq file doom-autoload-file))
+    (setq file doom-autoloads-file))
   (print! (start "(Re)generating autoloads file..."))
   (print-group!
    (cl-check-type file string)

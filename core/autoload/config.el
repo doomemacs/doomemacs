@@ -98,7 +98,7 @@ Runs `doom-reload-hook' afterwards."
 
 ;;;###autoload
 (defun doom/reload-autoloads ()
-  "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
+  "Reload only `doom-autoloads-file' and `doom-package-autoload-file'.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
 reloads your package and module visibility, but does not install new packages or

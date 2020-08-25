@@ -443,7 +443,7 @@ otherwise, MODULES is a multiple-property list (a plist where each key can have
 multiple, linear values).
 
 The bootstrap process involves making sure the essential directories exist, core
-packages are installed, `doom-autoload-file' is loaded, `doom-packages-file'
+packages are installed, `doom-autoloads-file' is loaded, `doom-packages-file'
 cache exists (and is loaded) and, finally, loads your private init.el (which
 should contain your `doom!' block).
 

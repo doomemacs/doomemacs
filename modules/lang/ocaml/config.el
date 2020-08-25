@@ -20,10 +20,6 @@
   (setq tuareg-opam-insinuate t)
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
 
-  ;; Spell-check comments
-  (when (featurep! :checkers spell)
-    (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
-
   (setq-hook! 'tuareg-mode-hook
     comment-line-break-function #'+ocaml/comment-indent-new-line)
 

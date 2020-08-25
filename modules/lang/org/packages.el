@@ -1,12 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/org/packages.el
 
-;; Prevent built-in Org from playing into the byte-compilation of
-;; `org-plus-contrib'.
-(when-let (orglib (locate-library "org" nil doom--initial-load-path))
-  (setq load-path (delete (substring (file-name-directory orglib) 0 -1)
-                          load-path)))
-
 ;; HACK A necessary hack because org requires a compilation step after being
 ;;      cloned, and during that compilation a org-version.el is generated with
 ;;      these two functions, which return the output of a 'git describe ...'
@@ -27,10 +21,11 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "220f2b0d93a6927eb673978c0042a1d4673e86aa")
-;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
-;; the dependency already: https://github.com/raxod502/straight.el/issues/352
-(package! org :recipe (:local-repo nil))
+  :pin "220f2b0d93a6927eb673978c0042a1d4673e86aa"
+  ;; Prevents built-in Org from sneaking into the byte-compilation of
+  ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
+  ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
+  :shadow 'org)
 
 (package! avy)
 (package! htmlize :pin "49205105898ba8993b5253beec55d8bddd820a70")

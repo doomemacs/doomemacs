@@ -704,7 +704,8 @@ between the two."
          "S" #'org-attach-sync
          (:when (featurep! +dragndrop)
           "c" #'org-download-screenshot
-          "y" #'org-download-yank))
+          "p" #'org-download-clipboard
+          "P" #'org-download-yank))
         (:prefix ("b" . "tables")
          "-" #'org-table-insert-hline
          "a" #'org-table-align

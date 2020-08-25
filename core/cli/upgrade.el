@@ -17,14 +17,14 @@ following shell commands:
   (let ((doom-auto-discard force-p))
     (cond
      (packages-only-p
-      (doom-cli-execute "sync" '("-u"))
+      (doom-cli-execute "sync" "-u")
       (print! (success "Finished upgrading Doom Emacs")))
 
      ((doom-cli-upgrade doom-auto-accept doom-auto-discard)
       ;; Reload Doom's CLI & libraries, in case there were any upstream changes.
       ;; Major changes will still break, however
       (print! (info "Reloading Doom Emacs"))
-      (doom-cli-execute-after "doom" "upgrade" "-p" (if force-p "-f")))
+      (throw 'exit (list "doom" "upgrade" "-p" (if force-p "-f"))))
 
      ((print! "Doom is up-to-date!")))))
 

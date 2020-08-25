@@ -1,17 +1,10 @@
-;;; -*- lexical-binding: t; no-byte-compile: t; -*-
-
-(require 'seq)
+;;; core/core-cli.el --- -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (load! "autoload/process")
 (load! "autoload/plist")
 (load! "autoload/files")
 (load! "autoload/output")
-
-;; Create all our core directories to quell file errors
-(mapc (doom-rpartial #'make-directory 'parents)
-      (list doom-local-dir
-            doom-etc-dir
-            doom-cache-dir))
+(require 'seq)
 
 ;; Ensure straight and the bare minimum is ready to go
 (require 'core-modules)
@@ -40,9 +33,25 @@ These are loaded when a Doom's CLI starts up. There users and modules can define
 additional CLI commands, or reconfigure existing ones to better suit their
 purpose.")
 
+(defvar doom-cli-log-file (concat doom-local-dir "doom.log")
+  "File to write the extended output to.")
+
+(defvar doom-cli-log-error-file (concat doom-local-dir "doom.error.log")
+  "File to write the last backtrace to.")
+
 (defvar doom--cli-commands (make-hash-table :test 'equal))
 (defvar doom--cli-groups (make-hash-table :test 'equal))
 (defvar doom--cli-group nil)
+
+(define-error 'doom-cli-error "There was an unexpected error" 'doom-error)
+(define-error 'doom-cli-command-not-found-error "Could not find that command" 'doom-cli-error)
+(define-error 'doom-cli-wrong-number-of-arguments-error "Wrong number of CLI arguments" 'doom-cli-error)
+(define-error 'doom-cli-unrecognized-option-error "Not a recognized option" 'doom-cli-error)
+(define-error 'doom-cli-deprecated-error "Command is deprecated" 'doom-cli-error)
+
+
+;;
+;;; CLI library
 
 (cl-defstruct
     (doom-cli
@@ -159,7 +168,7 @@ purpose.")
   "Return non-nil if CLI is an internal (non-public) command."
   (string-prefix-p ":" (doom-cli-name cli)))
 
-(defun doom-cli-execute (command &optional args)
+(defun doom-cli-execute (command &rest args)
   "Execute COMMAND (string) with ARGS (list of strings).
 
 Executes a cli defined with `defcli!' with the name or alias specified by
@@ -168,45 +177,6 @@ COMMAND, and passes ARGS to it."
       (funcall (doom-cli-fn cli)
                (doom--cli-process cli (remq nil args)))
     (user-error "Couldn't find any %S command" command)))
-
-(defun doom-cli--execute-after (lines)
-  (let ((post-script (concat doom-local-dir ".doom.sh"))
-        (coding-system-for-write 'utf-8-unix)
-        (coding-system-for-read  'utf-8-unix))
-    (with-temp-file post-script
-      (insert "#!/usr/bin/env sh\n"
-              "_postscript() {\n"
-              "rm -f " (shell-quote-argument post-script) "\n"
-              (if (stringp lines)
-                  lines
-                (string-join
-                 (if (listp (car-safe lines))
-                     (cl-loop for line in (doom-enlist lines)
-                              collect (mapconcat #'shell-quote-argument (remq nil line) " "))
-                   (list (mapconcat #'shell-quote-argument (remq nil lines) " ")))
-                 "\n"))
-              "\n}\n"
-              (save-match-data
-                (cl-loop for env in process-environment
-                         if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
-                         concat (format "%s=%s \\\n"
-                                        (match-string 1 env)
-                                        (shell-quote-argument (match-string 2 env)))))
-              (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
-              "_postscript $@\n"))
-    (set-file-modes post-script #o700)))
-
-(defun doom-cli-execute-lines-after (&rest lines)
-  "TODO"
-  (doom-cli--execute-after (string-join lines "\n")))
-
-(defun doom-cli-execute-after (&rest args)
-  "Execute shell command ARGS after this CLI session quits.
-
-This is particularly useful when the capabilities of Emacs' batch terminal are
-insufficient (like opening an instance of Emacs, or reloading Doom after a 'doom
-upgrade')."
-  (doom-cli--execute-after args))
 
 (defmacro defcli! (name speclist &optional docstring &rest body)
   "Defines a CLI command.
@@ -266,6 +236,63 @@ BODY will be run when this dispatcher is called."
   `(let ((doom--cli-group ,name))
      (puthash doom--cli-group ,docstring doom--cli-groups)
      ,@body))
+
+
+;;
+;;; Debugger
+
+(defun doom-cli--debugger (&rest args)
+  (cl-incf num-nonmacro-input-events)
+  (cl-destructuring-bind (error data backtrace)
+      (list (caadr args)
+            (cdadr args)
+            (doom-cli--backtrace))
+    (print! (error "There was an unexpected error"))
+    (print-group!
+     (print! "%s %s" (bold "Message:") (get error 'error-message))
+     (print! "%s %s" (bold "Data:") (cons error data))
+     (when (and (bound-and-true-p straight-process-buffer)
+                (string-match-p (regexp-quote straight-process-buffer)
+                                (get error 'error-message)))
+       (print! (bold "Straight output:"))
+       (let ((output (straight--process-get-output)))
+         (appendq! data (list (cons "STRAIGHT" output)))
+         (print-group! (print! "%s" output))))
+     (when backtrace
+       (print! (bold "Backtrace:"))
+       (print-group!
+        (dolist (frame (seq-take backtrace 10))
+          (print! "%0.76s" frame)))
+       (with-temp-file doom-cli-log-error-file
+         (insert "# -*- lisp-interaction -*-\n")
+         (insert "# vim: set ft=lisp:\n")
+         (let ((standard-output (current-buffer))
+               (print-quoted t)
+               (print-escape-newlines t)
+               (print-escape-control-characters t)
+               (print-level nil)
+               (print-circle nil))
+           (mapc #'print (cons (list error data) backtrace)))
+         (print! (warn "Extended backtrace logged to %s")
+                 (relpath doom-cli-log-error-file))))))
+  (throw 'exit 255))
+
+(defun doom-cli--backtrace ()
+  (let* ((n 0)
+         (frame (backtrace-frame n))
+         (frame-list nil)
+         (in-program-stack nil))
+    (while frame
+      (when in-program-stack
+        (push (cdr frame) frame-list))
+      (when (eq (elt frame 1) 'doom-cli--debugger)
+        (setq in-program-stack t))
+      (when (and (eq (elt frame 1) 'doom-cli-execute)
+                 (eq (elt frame 2) :doom))
+        (setq in-program-stack nil))
+      (setq n (1+ n)
+            frame (backtrace-frame n)))
+    (reverse frame-list)))
 
 
 ;;
@@ -388,51 +415,99 @@ everywhere we use it (and internally)."
 
 
 ;;
+;;; Entry point
+
+(defcli! :doom
+    ((help-p        ["-h" "--help"]  "Same as help command")
+     (auto-accept-p ["-y" "--yes"]   "Auto-accept all confirmation prompts")
+     (debug-p       ["-d" "--debug"] "Enables on verbose output")
+     (doomdir       ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
+     (localdir      ["--localdir" dir] "Use DIR as your local storage directory")
+     &optional command
+     &rest args)
+  "A command line interface for managing Doom Emacs.
+
+Includes package management, diagnostics, unit tests, and byte-compilation.
+
+This tool also makes it trivial to launch Emacs out of a different folder or
+with a different private module."
+  (condition-case e
+      (with-output-to! doom-cli-log-file
+        (catch 'exit
+          (when (and (not (getenv "__DOOMRESTART"))
+                     (or doomdir
+                         localdir
+                         debug-p
+                         auto-accept-p))
+            (when doomdir
+              (setenv "DOOMDIR" (file-name-as-directory doomdir))
+              (print! (info "DOOMDIR=%s") localdir))
+            (when localdir
+              (setenv "DOOMLOCALDIR" (file-name-as-directory localdir))
+              (print! (info "DOOMLOCALDIR=%s") localdir))
+            (when debug-p
+              (setenv "DEBUG" "1")
+              (print! (info "DEBUG=1")))
+            (when auto-accept-p
+              (setenv "YES" auto-accept-p)
+              (print! (info "Confirmations auto-accept enabled")))
+            (setenv "__DOOMRESTART" "1")
+            (throw 'exit :restart))
+          (when help-p
+            (when command
+              (push command args))
+            (setq command "help"))
+          (if (null command)
+              (doom-cli-execute "help")
+            (let ((start-time (current-time)))
+              (run-hooks 'doom-cli-pre-hook)
+              (when (apply #'doom-cli-execute command args)
+                (run-hooks 'doom-cli-post-hook)
+                (print! (success "Finished in %.4fs")
+                        (float-time (time-subtract (current-time) start-time))))))))
+    ;; TODO Not implemented yet
+    (doom-cli-command-not-found-error
+     (print! (error "Command 'doom %s' not recognized") (string-join (cdr e) " "))
+     (print! "\nDid you mean one of these commands?")
+     (apply #'doom-cli-execute "help" "--similar" (string-join (cdr e) " "))
+     2)
+    ;; TODO Not implemented yet
+    (doom-cli-wrong-number-of-arguments-error
+     (cl-destructuring-bind (route opt arg n d) (cdr e)
+       (print! (error "doom %s: %S requires %d arguments, but %d given\n")
+               (mapconcat #'symbol-name route " ") arg n d)
+       (print-group!
+        (apply #'doom-cli-execute "help" (mapcar #'symbol-name route))))
+     3)
+    ;; TODO Not implemented yet
+    (doom-cli-unrecognized-option-error
+     (let ((option (cadr e)))
+       (print! (error "Unrecognized option: %S") option)
+       (when (string-match "^--[^=]+=\\(.+\\)$" option)
+         (print! "The %S syntax isn't supported. Use '%s %s' instead."
+                 option (car (split-string option "="))
+                 (match-string 1 option))))
+     4)
+    ;; TODO Not implemented yet
+    (doom-cli-deprecated-error
+     (cl-destructuring-bind (route . commands) (cdr e)
+       (print! (warn "The 'doom %s' command was removed and replaced with:\n")
+               (mapconcat #'symbol-name route " "))
+       (print-group!
+        (dolist (command commands)
+          (print! (info "%s") command))))
+     5)
+    (user-error
+     (print! (warn "%s") (cadr e))
+     1)))
+
+
+;;
 ;;; CLI Commands
 
 (load! "cli/help")
 (load! "cli/install")
-
-(defcli! (refresh re) ()
-  "Deprecated for 'doom sync'"
-  :hidden t
-  (user-error "'doom refresh' has been replaced with 'doom sync'. Use that instead"))
-
-(defcli! (sync s)
-    ((inhibit-envvar-p ["-e"] "Don't regenerate the envvar file")
-     (inhibit-elc-p    ["-c"] "Don't recompile config")
-     (update-p         ["-u"] "Update installed packages after syncing")
-     (prune-p          ["-p" "--prune"] "Purge orphaned package repos & regraft them"))
-  "Synchronize your config with Doom Emacs.
-
-This is the equivalent of running autoremove, install, autoloads, then
-recompile. Run this whenever you:
-
-  1. Modify your `doom!' block,
-  2. Add or remove `package!' blocks to your config,
-  3. Add or remove autoloaded functions in module autoloaded files.
-  4. Update Doom outside of Doom (e.g. with git)
-
-It will ensure that unneeded packages are removed, all needed packages are
-installed, autoloads files are up-to-date and no byte-compiled files have gone
-stale."
-  (print! (start "Synchronizing your config with Doom Emacs..."))
-  (print-group!
-   (delete-file doom-autoload-file)
-   (when (and (not inhibit-envvar-p)
-              (file-exists-p doom-env-file))
-     (doom-cli-reload-env-file 'force))
-   (run-hooks 'doom-sync-pre-hook)
-   (doom-cli-packages-install)
-   (doom-cli-packages-build)
-   (when update-p
-     (doom-cli-packages-update))
-   (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
-   (run-hooks 'doom-sync-post-hook)
-   (when (doom-autoloads-reload)
-     (print! (info "Restart Emacs or use 'M-x doom/reload' for changes to take effect")))
-   t))
-
+(load! "cli/sync")
 (load! "cli/env")
 (load! "cli/upgrade")
 (load! "cli/packages")
@@ -448,11 +523,9 @@ stale."
   ;; (load! "cli/test")
   )
 
-
 (defcligroup! "Compilation"
   "For compiling Doom and your config"
   (load! "cli/byte-compile"))
-
 
 (defcligroup! "Utilities"
   "Conveniences for interacting with Doom externally"
@@ -467,8 +540,36 @@ All arguments are passed on to Emacs.
 WARNING: this command exists for convenience and testing. Doom will suffer
 additional overhead by being started this way. For the best performance, it is
 best to run Doom out of ~/.emacs.d and ~/.doom.d."
-    (apply #'doom-cli-execute-after invocation-name args)
-    nil))
+    (throw 'exit (cons invocation-name args))))
+
+
+;;
+;;; Bootstrap
+
+(doom-log "Initializing Doom CLI")
+
+;; Use our own home-grown debugger to display and log errors + backtraces.
+;; Control over its formatting is important, because Emacs produces
+;; difficult-to-read debug information otherwise. By making its errors more
+;; presentable (and storing them somewhere users can access them later) we go a
+;; long way toward making it easier for users to write better bug reports.
+(setq debugger #'doom-cli--debugger
+      debug-on-error t
+      debug-ignored-errors nil)
+
+;; Clean slate for the next invocation
+(delete-file doom-cli-log-file)
+(delete-file doom-cli-log-error-file)
+
+;; Create all our core directories to quell file errors
+(mapc (doom-rpartial #'make-directory 'parents)
+      (list doom-local-dir
+            doom-etc-dir
+            doom-cache-dir))
+
+(load! doom-module-init-file doom-private-dir t)
+(maphash (doom-module-loader doom-cli-file) doom-modules)
+(load! doom-cli-file doom-private-dir t)
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

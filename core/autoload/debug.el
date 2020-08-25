@@ -104,35 +104,44 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 ready to be pasted in a bug report on github."
   (require 'vc-git)
   (require 'core-packages)
-  (let ((default-directory doom-emacs-dir)
-        (doom-modules (doom-module-list)))
-    (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
-      `((emacs
-         (version . ,emacs-version)
-         (features ,@system-configuration-features)
-         (build . ,(format-time-string "%b %d, %Y" emacs-build-time))
-         (buildopts ,system-configuration-options)
-         (windowsys . ,(if doom-interactive-p window-system 'batch))
-         (daemonp . ,(cond ((daemonp) 'daemon)
-                           ((and (require 'server)
-                                 (server-running-p))
-                            'server-running))))
-        (doom
-         (version . ,doom-version)
-         (build . ,(sh "git" "log" "-1" "--format=%D %h %ci"))
-         (dir . ,(abbreviate-file-name (file-truename doom-private-dir))))
-        (system
-         (type . ,system-type)
+  (let ((default-directory doom-emacs-dir))
+    (letf! ((defun sh (&rest args) (cdr (apply #'doom-call-process args)))
+            (defun abbrev-path (path)
+              (replace-regexp-in-string
+               (regexp-quote (user-login-name)) "$USER"
+               (abbreviate-file-name path))))
+      `((system
+         (type   . ,system-type)
          (config . ,system-configuration)
-         (shell . ,shell-file-name)
-         (uname . ,(if IS-WINDOWS
-                       "n/a"
-                     (sh "uname" "-msrv")))
-         (path . ,(mapcar #'abbreviate-file-name exec-path)))
-        (config
-         (envfile
-          . ,(cond ((file-exists-p doom-env-file) 'envvar-file)
-                   ((featurep 'exec-path-from-shell) 'exec-path-from-shell)))
+         (shell  . ,(abbrev-path shell-file-name))
+         (uname  . ,(if IS-WINDOWS "n/a" (sh "uname" "-msrv")))
+         (path   . ,(mapcar #'abbrev-path exec-path)))
+        (emacs
+         (dir       . ,(abbrev-path (file-truename doom-emacs-dir)))
+         (version   . ,emacs-version)
+         (build     . ,(format-time-string "%b %d, %Y" emacs-build-time))
+         (buildopts . ,system-configuration-options)
+         (features  . ,system-configuration-features)
+         (traits . ,(delq
+                     nil (list (if (not doom-interactive-p) 'batch)
+                               (if (daemonp) 'daemon)
+                               (if (and (require 'server)
+                                        (server-running-p))
+                                   'server-running)
+                               (if (boundp 'chemacs-profiles-path)
+                                   'chemacs)
+                               (if (file-exists-p doom-env-file)
+                                   'envvar-file)
+                               (if (featurep 'exec-path-from-shell)
+                                   'exec-path-from-shell)
+                               (if (file-symlink-p user-emacs-directory)
+                                   'symlinked-emacsdir)
+                               (if (file-symlink-p doom-private-dir)
+                                   'symlinked-doomdir)))))
+        (doom
+         (dir     . ,(abbrev-path (file-truename doom-private-dir)))
+         (version . ,doom-version)
+         (build   . ,(sh "git" "log" "-1" "--format=%D %h %ci"))
          (elc-files
           . ,(length (doom-files-in `(,@doom-modules-dirs
                                       ,doom-core-dir
@@ -146,10 +155,16 @@ ready to be pasted in a bug report on github."
                          do (setq cat (car key))
                          and collect cat
                          collect
-                         (let ((flags (doom-module-get cat (cdr key) :flags)))
-                           (if flags
-                               `(,(cdr key) ,@flags)
-                             (cdr key))))
+                         (let* ((flags (doom-module-get cat (cdr key) :flags))
+                                (path  (doom-module-get cat (cdr key) :path))
+                                (module (append (if (file-in-directory-p path doom-private-dir)
+                                                    (list '&user))
+                                                (if flags
+                                                    `(,(cdr key) ,@flags)
+                                                  (list (cdr key))))))
+                           (if (= (length module) 1)
+                               (car module)
+                             module)))
                 '("n/a")))
          (packages
           ,@(or (condition-case e
@@ -186,16 +201,10 @@ ready to be pasted in a bug report on github."
   "Display the current version of Doom & Emacs, including the current Doom
 branch and commit."
   (interactive)
-  (require 'vc-git)
   (let ((default-directory doom-core-dir))
-    (print! "Doom v%s (%s)\nEmacs v%s\nBranch: %s\nBuild date: %s"
+    (print! "Doom v%s (%s)"
             doom-version
-            (or (vc-git-working-revision doom-core-dir)
-                "n/a")
-            emacs-version
-            (or (vc-git--symbolic-ref doom-core-dir)
-                "n/a")
-            (or (cdr (doom-call-process "git" "log" "-1" "--format=%ci"))
+            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
                 "n/a"))))
 
 ;;;###autoload
@@ -226,7 +235,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
         (insert "<details>\n\n```\n")
         (dolist (group info)
           (insert! "%-8s%-10s %s\n"
-                   ((car group)
+                   ((upcase (symbol-name (car group)))
                     (caadr group)
                     (cdadr group)))
           (dolist (spec (cddr group))
