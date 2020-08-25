@@ -74,7 +74,7 @@
   :bare t
   (if command
       (doom--cli-print (doom-cli-get (intern command)))
-    (doom--cli-print (doom-cli-get :main))
+    (doom--cli-print (doom-cli-get :doom))
     (terpri)
     (print! (bold "Commands:"))
     (print-group!

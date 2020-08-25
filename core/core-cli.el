@@ -164,6 +164,10 @@ purpose.")
                          (command))
                    doom--cli-commands)))))
 
+(defun doom-cli-internal-p (cli)
+  "Return non-nil if CLI is an internal (non-public) command."
+  (string-prefix-p ":" (doom-cli-name cli)))
+
 (defun doom-cli-execute (command &rest args)
   "Execute COMMAND (string) with ARGS (list of strings).
 
