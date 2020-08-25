@@ -548,6 +548,15 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d."
 
 (doom-log "Initializing Doom CLI")
 
+;; Use our own home-grown debugger to display and log errors + backtraces.
+;; Control over its formatting is important, because Emacs produces
+;; difficult-to-read debug information otherwise. By making its errors more
+;; presentable (and storing them somewhere users can access them later) we go a
+;; long way toward making it easier for users to write better bug reports.
+(setq debugger #'doom-cli--debugger
+      debug-on-error t
+      debug-ignored-errors nil)
+
 ;; Clean slate for the next invocation
 (delete-file doom-cli-log-file)
 (delete-file doom-cli-log-error-file)

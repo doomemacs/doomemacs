@@ -63,15 +63,6 @@
 (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
 (require 'core-cli)
 
-;; Use our own home-grown debugger to display and log errors + backtraces.
-;; Control over its formatting is important, because Emacs produces
-;; difficult-to-read debug information otherwise. By making its errors more
-;; presentable (and storing them somewhere users can access them later) we go a
-;; long way toward making it easier for users to write better bug reports.
-(setq debugger #'doom-cli--debugger
-      debug-on-error t
-      debug-ignored-errors nil)
-
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
 (quiet! (if EMACS27+ (require 'cl))
@@ -93,7 +84,7 @@
              (pred stringp)
              (pred keywordp))
          command)
-    (let ((script (doom-path (getenv "__DOOMPOST")))
+    (let ((script (getenv "__DOOMPOST"))
           (coding-system-for-write 'utf-8-unix)
           (coding-system-for-read  'utf-8-unix))
       (with-temp-file script
