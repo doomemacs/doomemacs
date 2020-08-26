@@ -13,7 +13,7 @@
 
 (use-package! org-re-reveal
   :after ox
-  :init
+  :config
   (setq org-re-reveal-root (expand-file-name "../../" (locate-library "dist/reveal.js" t))
         org-re-reveal-revealjs-version "4"))
 
