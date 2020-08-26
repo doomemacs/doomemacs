@@ -26,7 +26,8 @@ following shell commands:
       (print! (info "Reloading Doom Emacs"))
       (throw 'exit (list "doom" "upgrade" "-p" (if force-p "-f"))))
 
-     ((print! "Doom is up-to-date!")))))
+     ((print! "Doom is up-to-date!")
+      (doom-cli-execute "sync" "-u")))))
 
 
 ;;
@@ -92,7 +93,7 @@ following shell commands:
 
                ((equal this-rev new-rev)
                 (print! (success "Doom is already up-to-date!"))
-                t)
+                nil)
 
                ((print! (info "A new version of Doom Emacs is available!\n\n  Old revision: %s (%s)\n  New revision: %s (%s)\n"
                               (substring this-rev 0 10)
