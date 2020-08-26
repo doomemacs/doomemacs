@@ -17,7 +17,11 @@
   ;; "ts" would be a little too common for an evil escape sequence
   (setq evil-escape-key-sequence "gq")
   (setq avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n)
-        lispy-avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n ?m ?b ?é ?p ?o ?è ?v ?d ?l ?j ?z))
+        lispy-avy-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n ?m ?b ?é ?p ?o ?è ?v ?d ?l ?j ?z)
+        evil-markdown-movement-bindings '((up . "s")
+                                          (down . "t")
+                                          (left . "c")
+                                          (right . "r")))
   ;; :ui window-select settings, ignoring +numbers flag for now
   (after! ace-window
     (setq aw-keys '(?a ?u ?i ?e ?, ?c ?t ?s ?r ?n)))
