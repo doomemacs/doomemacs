@@ -152,13 +152,14 @@ LHS and RHS will accept."
         (lambda (&rest _) (set-modeline! name))))
 
 (defmacro def-modeline-var! (name body &optional docstring &rest plist)
-  "TODO"
+  "Define a modeline segment variable."
   (unless (stringp docstring)
     (push docstring plist)
     (setq docstring nil))
   `(progn
-     (,(if (plist-get plist :local) 'defvar-local 'defvar)
-      ,name ,body ,docstring)
+     (defvar ,name nil ,docstring)
+     ,@(if (plist-get plist :local) `((make-variable-buffer-local ',name)))
+     (setq-default ,name ,body)
      (put ',name 'risky-local-variable t)))
 
 
