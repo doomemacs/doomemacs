@@ -76,7 +76,7 @@ should be a deliberate act (as is flipping this variable).")
     "Replace auto-install behavior with warning and support indirect buffers."
     :around #'lsp
     (if +lsp-auto-install-servers
-        (apply-orig-fn args)
+        (apply orig-fn args)
       (letf! ((buffer-file-name
                ;; Add support for indirect buffers (org src or capture buffers)
                (or buffer-file-name
