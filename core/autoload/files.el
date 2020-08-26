@@ -202,7 +202,10 @@ single file or nested compound statement of `and' and `or' statements."
   (let (toplevels)
     (dolist (file files)
       (when (featurep 'vc)
-        (vc-file-clearprops file))
+        (vc-file-clearprops file)
+        (when-let (buffer (get-file-buffer file))
+          (with-current-buffer buffer
+            (vc-refresh-state))))
       (when (featurep 'magit)
         (when-let (default-directory (magit-toplevel (file-name-directory file)))
           (cl-pushnew default-directory toplevels)))
@@ -283,7 +286,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (make-directory (file-name-directory new-path) 't)
     (rename-file old-path new-path (or force-p 1))
     (set-visited-file-name new-path t t)
-    (revert-buffer t t)
     (doom--update-files old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
 

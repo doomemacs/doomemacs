@@ -366,6 +366,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                focus-in-hook
                ;; ...or when we change the current project!
                projectile-after-switch-project-hook
+               ;; ...when the visited file changes (e.g. it's renamed)
+               after-set-visited-file-name-hook
                ;; ...when the underlying file changes
                after-revert-hook)
     (defun +modeline--generate-buffer-id-cache-h ()
