@@ -564,6 +564,7 @@ eldoc string."
     ;;      'python' src blocks.
     ;; TODO Should be reported upstream!
     (puthash "org" #'ignore org-eldoc-local-functions-cache)
+    (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
     (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
 
   (defun +org--restart-mode-h ()
