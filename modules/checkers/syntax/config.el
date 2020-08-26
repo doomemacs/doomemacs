@@ -63,7 +63,7 @@
   :when (featurep! +childframe)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-posframe-warning-prefix "⚠ "
+  (setq flycheck-posframe-warning-prefix "! "
         flycheck-posframe-info-prefix "··· "
         flycheck-posframe-error-prefix "✕ ")
   (after! company
