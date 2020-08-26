@@ -69,7 +69,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
-  (package! org-re-reveal :pin "7fe39d5d03ccc75d2811445d25cbbb473b53de76"))
+  (package! org-re-reveal :pin "7fe39d5d03ccc75d2811445d25cbbb473b53de76")
+  (package! revealjs
+    :recipe (:host github :repo "hakimel/reveal.js"
+             :files ("css" "dist" "js" "plugin"))
+    :pin "15815efe05ca69c35ce66cfdbf93316e1db66ecb"))
 (when (featurep! +roam)
   (package! org-roam :pin "c33867e6bc282ff0a69d4ef4a020db82604039bb")
   (when (featurep! :completion company)
