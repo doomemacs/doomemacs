@@ -52,8 +52,6 @@ us know!
     - [[#disabling-packages][Disabling packages]]
     - [[#changing-a-recipe-for-a-included-package][Changing a recipe for a included package]]
     - [[#usingloading-local-packages][Using/loading local packages]]
-      - [[#adjust-your-load-path][Adjust your ~load-path~]]
-      - [[#local-repo][:local-repo]]
   - [[#configuring-doom][Configuring Doom]]
     - [[#configuring-packages][Configuring packages]]
     - [[#reloading-your-config][Reloading your config]]
@@ -914,40 +912,42 @@ changes.
 #+end_quote
 
 *** Using/loading local packages
-Say you have a local elisp package that you are developing, and want to
-"install" it for live testing. You have two options:
-
-**** Adjust your ~load-path~
-Emacs searches for packages in your ~load-path~. Add the path to your package
-and Emacs will find it when it tries to load it. e.g.
-
+Say you are developing an Emacs package locally and want to "install" it for
+live testing. To do this specify a ~:local-repo~ in that package's recipe:
 #+BEGIN_SRC elisp
-(add-load-path! "lisp/package")
+(package! my-package
+  :recipe (:local-repo "/path/to/my/package"))
+
+;; Relative paths are expanded to ~/.emacs.d/.local/straight/repos/{local-repo}
+;; or ~/.doom.d/{local-repo} -- the first that is found.
+(package! my-package
+  :recipe (:local-repo "my/package"))  ; looks for ~/.doom.d/my/package/my-package.el
+
+(package! my-package
+  :recipe (:local-repo "/path/to/my/package"
+
+           ;; By default, the package manager grabs all *.el files at the root
+           ;; of the project and nothing else. To include other files, or
+           ;; accommodate unconventional project structures, specify what :files
+           ;; you want:
+           :files ("*.el" "src/lisp/*.el")
+
+           ;; With ':no-byte-compile t' you can avoid having to run 'doom sync'
+           ;; every time you change the package.
+           :no-byte-compile t))
+#+END_SRC
+
+Alternatively, add the package's location to Emacs' ~load-path~. Do this if you
+don't need/care for autoload cookies or byte-compilation:
+#+BEGIN_SRC elisp
+;; Doom has modified `use-package's `:load-path' to expand relative paths from
+;; your DOOMDIR. e.g. ~/.doom.d/lisp/package
+(use-package my-package
+  :load-path "lisp/package")
 
 ;; or
 
-(use-package my-package
-  :load-path "/path/to/my/package")
-#+END_SRC
-
-**** :local-repo
-Alternatively, you can specify a ~:local-repo~ in a ~package!~'s ~:recipe~
-declaration:
-
-#+BEGIN_SRC elisp
-(package! my-package :recipe (:local-repo "/path/to/my/package"))
-
-;; Don't forget to use :files to include files in an unconventional project structure:
-(package! my-package
-  :recipe (:local-repo "/path/to/my/package"
-           :files ("*.el" "src/lisp/*.el")))
-
-;; It is recommended you use ':no-byte-compile t' as well, so you don't have to
-;; run `doom build -r` every time you make a change to your package.
-(package! my-package
-  :recipe (:local-repo "/path/to/my/package"
-           :files ("*.el" "src/lisp/*.el")
-           :no-byte-compile t))
+(add-load-path! "lisp/package")
 #+END_SRC
 
 #+begin_quote
