@@ -1,4 +1,4 @@
-;;; checkers/spell/autoload/spell-fu.el -*- lexical-binding: t; -*-
+;;; checkers/spell/autoload/+spell-fu.el -*- lexical-binding: t; -*-
 ;;;###if (not (featurep! +flyspell))
 
 (defun +spell--correct (replace poss word orig-pt start end)
@@ -50,10 +50,10 @@
 (defun +spell/correct ()
   "Correct spelling of word at point."
   (interactive)
-  ;; We fake awareness for our personal dictionary by stopping short if spell-fu
-  ;; hasn't highlighted the current word. This is necessary because
-  ;; ispell/aspell struggles to find our `ispell-personal-dictionary' if it's
-  ;; not in $HOME.
+  ;; HACK Fake awareness for our personal dictionary by stopping short if
+  ;;      spell-fu hasn't highlighted the current word. This is necessary
+  ;;      because ispell/aspell struggles to find our
+  ;;      `ispell-personal-dictionary' if it's not in $HOME.
   (unless (memq 'spell-fu-incorrect-face (face-at-point nil t))
     (user-error "%S is correct" (thing-at-point 'word t)))
   (ispell-set-spellchecker-params)

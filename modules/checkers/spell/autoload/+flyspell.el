@@ -1,4 +1,4 @@
-;;; checkers/spell/autoload/flyspell.el -*- lexical-binding: t; -*-
+;;; checkers/spell/autoload/+flyspell.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +flyspell)
 
 ;;;###autodef
