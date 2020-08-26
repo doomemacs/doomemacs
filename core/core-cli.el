@@ -262,7 +262,9 @@ BODY will be run when this dispatcher is called."
        (print! (bold "Backtrace:"))
        (print-group!
         (dolist (frame (seq-take backtrace 10))
-          (print! "%0.76s" frame)))
+          (print!
+           "%0.74s" (replace-regexp-in-string
+                     "[\n\r]" "\\\\n" (format "%S" frame)))))
        (with-temp-file doom-cli-log-error-file
          (insert "# -*- lisp-interaction -*-\n")
          (insert "# vim: set ft=lisp:\n")
