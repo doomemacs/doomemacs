@@ -256,14 +256,15 @@ BODY will be run when this dispatcher is called."
     (print! (error "There was an unexpected error"))
     (print-group!
      (print! "%s %s" (bold "Message:") (get error 'error-message))
-     (print! "%s %s" (bold "Data:") (cons error data))
+     (print! "%s %S" (bold "Data:") (cons error data))
      (when (and (bound-and-true-p straight-process-buffer)
-                (string-match-p (regexp-quote straight-process-buffer)
-                                (get error 'error-message)))
+                (ignore-errors
+                  (string-match-p "straight" (car data))))
        (print! (bold "Straight output:"))
        (let ((output (straight--process-get-output)))
          (appendq! data (list (cons "STRAIGHT" output)))
-         (print-group! (print! "%s" output))))
+         (print-group!
+          (print! "%s" (string-trim-right output)))))
      (when backtrace
        (print! (bold "Backtrace:"))
        (print-group!
