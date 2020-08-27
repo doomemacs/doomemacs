@@ -537,28 +537,6 @@ lines are selected, or the NxM dimensions of a block selection.")
 ;; TODO (def-modeline! helm ...)
 
 
-;;
-;;; Bootstrap
-
-(size-indication-mode +1) ; filesize in modeline
-
-(setq-default
- mode-line-format
- '(""
-   +modeline-bar
-   +modeline-format-left
-   (:eval
-    (propertize
-     " "
-     'display
-     `((space :align-to (- (+ right right-fringe right-margin)
-                           ,(string-width
-                             (format-mode-line '("" +modeline-format-right))))))))
-   +modeline-format-right))
-(with-current-buffer "*Messages*"
-  (setq mode-line-format (default-value 'mode-line-format)))
-
-
 ;; Other modes
 (set-modeline! :main 'default)
 (set-modeline-hook! '+doom-dashboard-mode-hook 'project)
@@ -573,3 +551,34 @@ lines are selected, or the NxM dimensions of a block selection.")
     (if (eq major-mode 'magit-status-mode)
         (set-modeline! 'project)
       (hide-mode-line-mode +1))))
+
+
+;;
+;;; Bootstrap
+
+(defvar +modeline--old-format (default-value 'mode-line-format))
+
+(define-minor-mode +modeline-mode
+  "TODO"
+  :init-value nil
+  :global nil
+  (cond
+   (+modeline-mode
+    (setq mode-line-format
+          (cons
+           "" '(+modeline-bar
+                +modeline-format-left
+                (:eval
+                 (propertize
+                  " "
+                  'display
+                  `((space :align-to (- (+ right right-fringe right-margin)
+                                        ,(string-width
+                                          (format-mode-line '("" +modeline-format-right))))))))
+                +modeline-format-right))))
+   ((setq mode-line-format +modeline--old-format))))
+
+(define-global-minor-mode +modeline-global-mode +modeline-mode +modeline-mode)
+
+(add-hook '+modeline-global-mode-hook #'size-indication-mode)
+(add-hook 'doom-init-ui-hook #'+modeline-global-mode)
