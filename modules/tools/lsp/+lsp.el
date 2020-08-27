@@ -62,12 +62,6 @@ should be a deliberate act (as is flipping this variable).")
     :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
 
-  ;; REVIEW The '<leader> c l' prefix is hardcoded here, unfortunately.
-  (when (featurep! :config default +bindings)
-    (dolist (leader-key (list doom-leader-key doom-leader-alt-key))
-      (let ((lsp-keymap-prefix (concat leader-key " c l")))
-        (lsp-enable-which-key-integration))))
-
   (when lsp-auto-configure
     (mapc (lambda (package) (require package nil t))
           (cl-remove-if #'featurep lsp-client-packages)))
