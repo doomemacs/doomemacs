@@ -1,10 +1,9 @@
 #!/usr/bin/env sh
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
-:; export __DOOMPOST="${TMPDIR:-/tmp}/doom.sh"
 :; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
 :; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
-:; [ "${__DOOMCODE:-0}" -eq 128 ] && { "$__DOOMPOST" "$0" "$@" && true; __DOOMCODE=$?; }
+:; [ "${__DOOMCODE:-0}" -eq 128 ] && "$(emacs -Q --batch --eval '(princ temporary-file-directory)')/doom.sh" "$0" "$@"
 :; exit $__DOOMCODE
 
 ;; The garbage collector isn't important during CLI ops. A higher threshold
@@ -94,7 +93,7 @@
              (pred stringp)
              (pred keywordp))
          command)
-    (let ((script (getenv "__DOOMPOST"))
+    (let ((script (expand-file-name "doom.sh" temporary-file-directory))
           (coding-system-for-write 'utf-8-unix)
           (coding-system-for-read  'utf-8-unix))
       (with-temp-file script
