@@ -220,19 +220,19 @@ writes to `standard-output'."
                    (funcall write-region start end filename append visit lockname mustbenew)))
            ,@forms))))
 
-(defmacro if! (cond then &rest body)
+(defmacro eval-if! (cond then &rest body)
   "Expands to THEN if COND is non-nil, to BODY otherwise.
-COND is checked at compile/expansion time, allowing BODY to be omitted
-entirely when the elisp is byte-compiled. Use this for forms that contain
-expensive macros that could safely be removed at compile time."
+COND is checked at compile/expansion time, allowing BODY to be omitted entirely
+when the elisp is byte-compiled. Use this for forms that contain expensive
+macros that could safely be removed at compile time."
   (declare (indent 2))
   (if (eval cond)
       then
     (macroexp-progn body)))
 
-(defmacro when! (cond &rest body)
+(defmacro eval-when! (cond &rest body)
   "Expands to BODY if CONDITION is non-nil at compile/expansion time.
-See `if!' for details on this macro's purpose."
+See `eval-if!' for details on this macro's purpose."
   (declare (indent 1))
   (when (eval cond)
     (macroexp-progn body)))
@@ -639,7 +639,7 @@ testing advice (when combined with `rotate-text').
 ;;
 ;;; Backports
 
-(when! (version< emacs-version "27.0.90")
+(eval-when! (version< emacs-version "27.0.90")
   ;; DEPRECATED Backported from Emacs 27
   (defmacro setq-local (&rest pairs)
     "Make variables in PAIRS buffer-local and assign them the corresponding values.

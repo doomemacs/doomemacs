@@ -309,8 +309,8 @@
 ;;
 ;;; LSP
 
-(when! (and (featurep! +lsp)
-            (not (featurep! :tools lsp +eglot)))
+(eval-when! (and (featurep! +lsp)
+                 (not (featurep! :tools lsp +eglot)))
 
   (use-package! lsp-python-ms
     :unless (featurep! +pyright)

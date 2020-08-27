@@ -64,7 +64,7 @@
 ;;
 ;;; Implementations
 
-(if! (not (featurep! +flyspell))
+(eval-if! (not (featurep! +flyspell))
 
     (use-package! spell-fu
       :when (executable-find "aspell")

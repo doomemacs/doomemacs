@@ -598,7 +598,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (run-hooks 'doom-load-theme-hook))
       result)))
 
-(when! (not EMACS27+)
+(eval-when! (not EMACS27+)
   ;; DEPRECATED `doom--load-theme-a' handles this for us after the theme is
   ;;            loaded, but this only works on Emacs 27+. Disabling old themes
   ;;            must be done *before* the theme is loaded in Emacs 26.
