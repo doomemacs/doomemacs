@@ -157,9 +157,8 @@ LHS and RHS will accept."
     (push docstring plist)
     (setq docstring nil))
   `(progn
-     (defvar ,name nil ,docstring)
+     (defconst ,name ,body ,docstring)
      ,@(if (plist-get plist :local) `((make-variable-buffer-local ',name)))
-     (setq-default ,name ,body)
      (put ',name 'risky-local-variable t)))
 
 
@@ -355,40 +354,37 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 ;;; `+modeline-buffer-identification'
 (defvar-local +modeline--buffer-id-cache nil)
 
-(add-transient-hook! 'doom-first-buffer-hook
-  ;; REVIEW Generating the buffer's file name can be relatively expensive.
-  ;;        Compounded with how often the modeline updates this can add up, so
-  ;;        we cache it ahead of time.
-  (add-hook! '(change-major-mode-after-body-hook
-               ;; In case the user saves the file to a new location
-               after-save-hook
-               ;; ...or makes external changes then returns to Emacs
-               focus-in-hook
-               ;; ...or when we change the current project!
-               projectile-after-switch-project-hook
-               ;; ...when the visited file changes (e.g. it's renamed)
-               after-set-visited-file-name-hook
-               ;; ...when the underlying file changes
-               after-revert-hook)
-    (defun +modeline--generate-buffer-id-cache-h ()
+;; REVIEW Generating the buffer's file name can be relatively expensive.
+;;        Compounded with how often the modeline updates this can add up, so
+;;        we cache it ahead of time.
+(add-hook! '(change-major-mode-after-body-hook
+             ;; In case the user saves the file to a new location
+             after-save-hook
+             ;; ...or makes external changes then returns to Emacs
+             focus-in-hook
+             ;; ...or when we change the current project!
+             projectile-after-switch-project-hook
+             ;; ...when the visited file changes (e.g. it's renamed)
+             after-set-visited-file-name-hook
+             ;; ...when the underlying file changes
+             after-revert-hook)
+  (defun +modeline--generate-buffer-id-cache-h ()
+    (when after-init-time
       (setq +modeline--buffer-id-cache
             (let ((file-name (buffer-file-name (buffer-base-buffer))))
               (unless (or (null default-directory)
                           (null file-name)
                           (file-remote-p file-name))
-                (when-let ((project-root (doom-project-root)))
-                  (file-relative-name
-                   (or buffer-file-truename (file-truename file-name))
-                   (concat project-root "..")))))))))
+                (when-let (project-root (doom-project-root))
+                  (file-relative-name (or buffer-file-truename (file-truename file-name))
+                                      (concat project-root "..")))))))))
 
 (def-modeline-var! +modeline-buffer-identification ; slightly more informative buffer id
   '((:eval
      (propertize
       (or +modeline--buffer-id-cache "%b")
-      'face (cond ((buffer-modified-p)
-                   '(error bold mode-line-buffer-id))
-                  ((+modeline-active)
-                   'mode-line-buffer-id))
+      'face (cond ((buffer-modified-p) '(error bold mode-line-buffer-id))
+                  ((+modeline-active)  'mode-line-buffer-id))
       'help-echo (or +modeline--buffer-id-cache (buffer-name))))
     (buffer-read-only (:propertize " RO" face warning))))
 
