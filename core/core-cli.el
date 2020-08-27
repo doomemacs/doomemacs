@@ -6,6 +6,12 @@
 (load! "autoload/output")
 (require 'seq)
 
+;; Create all our core directories to quell file errors.
+(mapc (doom-rpartial #'make-directory 'parents)
+      (list doom-local-dir
+            doom-etc-dir
+            doom-cache-dir))
+
 ;; Ensure straight and the bare minimum is ready to go
 (require 'core-modules)
 (require 'core-packages)
@@ -453,8 +459,10 @@ with a different private module."
             (when auto-accept-p
               (setenv "YES" auto-accept-p)
               (print! (info "Confirmations auto-accept enabled")))
-            (setenv "__DOOMRESTART" "1")
-            (throw 'exit :restart))
+            (throw 'exit "__DOOMRESTART=1 $@"))
+          ;; TODO Rotate logs out, instead of overwriting them?
+          (delete-file doom-cli-log-file)
+          (delete-file doom-cli-log-error-file)
           (when help-p
             (when command
               (push command args))
@@ -549,26 +557,6 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d."
 ;;; Bootstrap
 
 (doom-log "Initializing Doom CLI")
-
-;; Use our own home-grown debugger to display and log errors + backtraces.
-;; Control over its formatting is important, because Emacs produces
-;; difficult-to-read debug information otherwise. By making its errors more
-;; presentable (and storing them somewhere users can access them later) we go a
-;; long way toward making it easier for users to write better bug reports.
-(setq debugger #'doom-cli--debugger
-      debug-on-error t
-      debug-ignored-errors nil)
-
-;; Clean slate for the next invocation
-(delete-file doom-cli-log-file)
-(delete-file doom-cli-log-error-file)
-
-;; Create all our core directories to quell file errors
-(mapc (doom-rpartial #'make-directory 'parents)
-      (list doom-local-dir
-            doom-etc-dir
-            doom-cache-dir))
-
 (load! doom-module-init-file doom-private-dir t)
 (maphash (doom-module-loader doom-cli-file) doom-modules)
 (load! doom-cli-file doom-private-dir t)

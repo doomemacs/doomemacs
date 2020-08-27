@@ -44,7 +44,7 @@
                  "This is likely because this script (or its parent directory) is a symlink.\n"
                  "If you must use a symlink, you'll need to specify an EMACSDIR so Doom knows\n"
                  "where to find itself. e.g.\n\n    "
-                 (if (string-match "/fish$" (getenv "SHELL"))
+                 (if (string-match-p "/fish$" (getenv "SHELL"))
                      "env EMACSDIR=~/.emacs.d doom"
                    "EMACSDIR=~/.emacs.d doom sync")
                  "\n\n"
@@ -63,6 +63,15 @@
 (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
 (require 'core-cli)
 
+;; Use our own home-grown debugger to display and log errors + backtraces.
+;; Control over its formatting is important, because Emacs produces
+;; difficult-to-read debug information otherwise. By making its errors more
+;; presentable (and storing them somewhere users can access later) we go a long
+;; way toward making it easier for users to write better bug reports.
+(setq debugger #'doom-cli--debugger
+      debug-on-error t
+      debug-ignored-errors nil)
+
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
 (quiet! (if EMACS27+ (require 'cl))
@@ -70,10 +79,11 @@
 
 (kill-emacs
  (pcase
-     ;; Process the arguments passed to this script. `doom-cli-execute' should
-     ;; return a boolean, integer (error code) or throw an 'exit event, which we
-     ;; handle specially.
-     (apply #'doom-cli-execute :doom (cdr (member "--" argv)))
+     (catch 'exit
+       ;; Process the arguments passed to this script. `doom-cli-execute' should
+       ;; return a boolean, integer (error code) or throw an 'exit event, which
+       ;; we handle specially.
+       (apply #'doom-cli-execute :doom (cdr (member "--" argv))))
    ;; Any non-zero integer is treated as an error code.
    ((and (pred integerp) code) code)
    ;; If, instead, we were given a list or string, copy these as shell script
