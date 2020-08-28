@@ -89,5 +89,6 @@ byte-compiled from.")
 
 We assume any org file in `doom-private-dir' is connected to your literate
 config, and should trigger a recompile if changed."
-  (when (file-in-directory-p buffer-file-name doom-private-dir)
-    (+literate-tangle-h)))
+  (and (file-in-directory-p
+        buffer-file-name (file-name-directory +literate-config-file))
+       (+literate-tangle-h)))
