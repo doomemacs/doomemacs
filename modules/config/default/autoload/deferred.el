@@ -13,8 +13,7 @@
   (setq prefix-arg current-prefix-arg
         unread-command-events
         (mapcar (lambda (e) (cons t e))
-                (vconcat (when (and (fboundp 'evil-this-operator)
-                                    evil-this-operator)
+                (vconcat (when (bound-and-true-p evil-this-operator)
                            (where-is-internal evil-this-operator
                                               evil-normal-state-map
                                               t))
