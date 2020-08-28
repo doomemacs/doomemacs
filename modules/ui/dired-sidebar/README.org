@@ -14,12 +14,14 @@
   - [[#subtree-line-prefix][Subtree Line Prefix]]
   - [[#sidebar-theme][Sidebar Theme]]
   - [[#custom-font][Custom Font]]
+  - [[#sidebar-position][Sidebar position]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module enables =dired-sidebar=, which is a lighter alternative to treemacs
 and neotree. It is rather like having a sidebar with =dired-hide-details-mode=.
-This also integrates with =dired-subtree= and enables it for =dired=.
+This also integrates with and enables =dired-subtree= for =dired= (and consequently,
+for itself)
 
 It respects root directories set by =projectile= and =magit=.
 
@@ -80,6 +82,14 @@ If you wish to use =doom-variable-pitch-font=, add the following to =$DOOMDIR/co
 
 #+begin_src emacs-lisp
 (add-hook! 'dired-sidebar-mode-hook #'mixed-pitch-mode)
+#+end_src
+
+** Sidebar position
+
+To move it to the right, add the following to =$DOOMDIR/config.el=.
+
+#+begin_src emacs-lisp
+(setq dired-sidebar-display-alist '((side . right) (slot . -1))
 #+end_src
 
 * TODO Troubleshooting
