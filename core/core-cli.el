@@ -247,43 +247,42 @@ BODY will be run when this dispatcher is called."
 ;;
 ;;; Debugger
 
-(defun doom-cli--debugger (&rest args)
+(cl-defun doom-cli--debugger (error data)
   (cl-incf num-nonmacro-input-events)
-  (cl-destructuring-bind (error data backtrace)
-      (list (caadr args)
-            (cdadr args)
-            (doom-cli--backtrace))
-    (print! (error "There was an unexpected error"))
-    (print-group!
-     (print! "%s %s" (bold "Message:") (get error 'error-message))
-     (print! "%s %S" (bold "Data:") (cons error data))
-     (when (and (bound-and-true-p straight-process-buffer)
-                (ignore-errors
-                  (string-match-p "straight" (car data))))
-       (print! (bold "Straight output:"))
-       (let ((output (straight--process-get-output)))
-         (appendq! data (list (cons "STRAIGHT" output)))
+  (cl-destructuring-bind (backtrace &optional type data . _)
+      (cons (doom-cli--backtrace) data)
+    (cond
+     ((and (bound-and-true-p straight-process-buffer)
+           (stringp data)
+           (string-match-p (regexp-quote straight-process-buffer)
+                           data))
+      (print! (error "There was an unexpected package error"))
+      (print-group!
+       (print! "%s" (string-trim-right (straight--process-get-output)))))
+     ((print! (error "There was an unexpected error"))
+      (print-group!
+       (print! "%s %s" (bold "Message:") (get type 'error-message))
+       (print! "%s %S" (bold "Data:") (cons type data))
+       (when backtrace
+         (print! (bold "Backtrace:"))
          (print-group!
-          (print! "%s" (string-trim-right output)))))
-     (when backtrace
-       (print! (bold "Backtrace:"))
-       (print-group!
-        (dolist (frame (seq-take backtrace 10))
-          (print!
-           "%0.74s" (replace-regexp-in-string
-                     "[\n\r]" "\\\\n" (format "%S" frame)))))
-       (with-temp-file doom-cli-log-error-file
-         (insert "# -*- lisp-interaction -*-\n")
-         (insert "# vim: set ft=lisp:\n")
-         (let ((standard-output (current-buffer))
-               (print-quoted t)
-               (print-escape-newlines t)
-               (print-escape-control-characters t)
-               (print-level nil)
-               (print-circle nil))
-           (mapc #'print (cons (list error data) backtrace)))
-         (print! (warn "Extended backtrace logged to %s")
-                 (relpath doom-cli-log-error-file))))))
+          (dolist (frame (seq-take backtrace 10))
+            (print!
+             "%0.74s" (replace-regexp-in-string
+                       "[\n\r]" "\\\\n" (format "%S" frame)))))))))
+    (when backtrace
+      (with-temp-file doom-cli-log-error-file
+        (insert "# -*- lisp-interaction -*-\n")
+        (insert "# vim: set ft=lisp:\n")
+        (let ((standard-output (current-buffer))
+              (print-quoted t)
+              (print-escape-newlines t)
+              (print-escape-control-characters t)
+              (print-level nil)
+              (print-circle nil))
+          (mapc #'print (cons (list type data) backtrace)))
+        (print! (warn "Extended backtrace logged to %s")
+                (relpath doom-cli-log-error-file)))))
   (throw 'exit 255))
 
 (defun doom-cli--backtrace ()
