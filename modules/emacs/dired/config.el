@@ -169,6 +169,7 @@ we have to clean it up ourselves."
   (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
 
 (use-package! dired-aux
+  :defer t
   :config
   (setq dired-create-destination-dirs 'ask
         dired-vc-rename-file t))
