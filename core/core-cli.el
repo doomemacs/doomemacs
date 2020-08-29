@@ -20,6 +20,9 @@
 ;; Don't generate superfluous files when writing temp buffers
 (setq make-backup-files nil)
 
+;; Stop user configuration from interfering with Doom
+(setq enable-dir-local-variables nil)
+
 
 ;;
 ;;; Variables
