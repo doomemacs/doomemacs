@@ -109,7 +109,7 @@ in some cases."
          ;; Eglot defines a dummy for `xref-find-backend', so we need a special
          ;; case to avoid xref when using eglot. See
          ;; https://github.com/joaotavora/eglot/issues/503
-         (if (eq (xref-find-backend) 'eglot)
+         (if (or (eq (xref-find-backend) 'eglot) (eq (xref-find-backend) 'nox))
              (thing-at-point 'symbol t)
            ;; A little smarter than using `symbol-at-point', though in most
            ;; cases, xref ends up using `symbol-at-point' anyway.
