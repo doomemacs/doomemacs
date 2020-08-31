@@ -190,7 +190,7 @@ selection of all minor-modes, active or not."
          "troubleshooting.org"
          "tutorials.org"
          "faq.org")
-   2 t initial-input
+   3 t initial-input
    (mapcar (lambda (x)
              (setcar x (concat "Doom Modules > " (car x)))
              x)
