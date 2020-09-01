@@ -224,3 +224,93 @@ header files."
                                (`c-mode 'ffap-c-path)
                                (`c++-mode 'ffap-c++-path))
                              (expand-file-name dir project-root)))))
+
+
+;;
+;; CCLS specific helpers
+
+;; ccls/vars ccls/base ccls/derived ccls/members have a parameter while others are interactive.
+;; (ccls/base 1) direct bases
+;; (ccls/derived 1) direct derived
+;; (ccls/member 2) => 2 (Type) => nested classes / types in a namespace
+;; (ccls/member 3) => 3 (Func) => member functions / functions in a namespace
+;; (ccls/member 0) => member variables / variables in a namespace
+;; (ccls/vars 1) => field
+;; (ccls/vars 2) => local variable
+;; (ccls/vars 3) => field or local variable. 3 = 1 | 2
+;; (ccls/vars 4) => parameter
+
+;;;###autoload
+(defun +ccls/callee ()
+  "Show callees of symbol under point."
+  (interactive)
+  (lsp-ui-peek-find-custom "$ccls/call" '(:callee t)))
+
+;;;###autoload
+(defun +ccls/caller ()
+  "Show callers of symbol under point."
+  (interactive)
+  (lsp-ui-peek-find-custom "$ccls/call"))
+
+;;;###autoload
+(defun ccls/vars (kind)
+  "Show variables of type KIND as symbol under point.
+   1 -> field
+   2 -> local variable
+   3 -> field or local variables. 3 = 1 | 2.
+   4 -> parameter"
+  (lsp-ui-peek-find-custom "$ccls/vars" `(:kind ,kind)))
+
+;;;###autoload
+(defun ccls/base (levels)
+  "Show bases of class under point up to LEVELS levels (1 for direct bases)."
+  (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels)))
+
+;;;###autoload
+(defun ccls/derived (levels)
+  "Show derived classes from class under point down to LEVELS levels (1 for direct derived)."
+  (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels :derived t)))
+
+;;;###autoload
+(defun ccls/member (kind)
+  "Show member elements of kind KIND for class/namespace under point.
+   0 -> member variables/ variables in a namespace
+   2 -> nested classes / types in a namespace
+   3 -> member functions / functions in a namespace"
+  (lsp-ui-peek-find-custom "$ccls/member" `(:kind ,kind)))
+
+;; The meaning of :role corresponds to https://github.com/maskray/ccls/blob/master/src/symbol.h
+;;;###autoload
+(defun +ccls/references-address ()
+  "References w/ Role::Address bit (e.g. variables explicitly being taken addresses)"
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 128)))
+
+;;;###autoload
+(defun +ccls/references-macro ()
+  "References w/ Role::Dynamic bit (macro expansions)"
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 64)))
+
+;;;###autoload
+(defun +ccls/references-not-call ()
+  "References w/o Role::Call bit (e.g. where functions are taken addresses)"
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :excludeRole 32)))
+
+;;;###autoload
+(defun +ccls/references-read ()
+  "References w/ Role::Read"
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 8)))
+
+;;;###autoload
+(defun +ccls/references-write ()
+  "References w/ Role::Write"
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 16)))

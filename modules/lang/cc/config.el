@@ -230,7 +230,26 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook)
-    #'lsp!)
+             #'lsp!)
+  (map!
+   (:after ccls
+    :map (c-mode-map c++-mode-map)
+    :n "C-h" (λ! (ccls-navigate "U"))
+    :n "C-j" (λ! (ccls-navigate "R"))
+    :n "C-k" (λ! (ccls-navigate "L"))
+    :n "C-l" (λ! (ccls-navigate "D"))
+    (:localleader
+     :desc "Preprocess file" :n "lp" #'ccls-preprocess-file
+     :desc "Reset cache and reload CCLS" :n "lf" #'ccls-reload)
+    (:after lsp-ui-peek
+     (:localleader
+      :desc "Callers list" :n "c" #'+ccls/caller
+      :desc "Callees list" :n "C" #'+ccls/callee
+      :desc "References (address)" :n "a" #'+ccls/references-address
+      :desc "References (not call)" :n "f" #'+ccls/references-not-call
+      :desc "References (Macro)" :n "m" #'+ccls/references-macro
+      :desc "References (Read)" :n "r" #'+ccls/references-read
+      :desc "References (Write)" :n "w" #'+ccls/references-write))))
 
   (when (featurep! :tools lsp +eglot)
     ;; Map eglot specific helper
@@ -249,7 +268,6 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                                               "-isystem/usr/local/include"]
                                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))))))
 
-
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
@@ -260,9 +278,20 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
     (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
   :config
+  (add-hook 'lsp-after-open-hook #'ccls-code-lens-mode)
+  (set-evil-initial-state! 'ccls-tree-mode 'emacs)
+  (setq ccls-sem-highlight-method 'font-lock)
+  (when (or IS-MAC IS-LINUX)
+    (let ((cpu-count-command (cond (IS-MAC '("sysctl -n hw.ncpu"))
+                                   (IS-LINUX '("nproc"))
+                                   (t (error "unreachable code")))))
+      (setq ccls-initialization-options
+            `(:index (:trackDependency 1
+                      :threads ,(max 1 (/ (string-to-number (cdr (apply #'doom-call-process cpu-count-command))) 2)))))))
   (when IS-MAC
     (setq ccls-initialization-options
-          `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
-                                      "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-                                      "-isystem/usr/local/include"]
-                          :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir")))))))
+          (append ccls-initialization-options
+                  `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
+                                              "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+                                              "-isystem/usr/local/include"]
+                                  :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))
