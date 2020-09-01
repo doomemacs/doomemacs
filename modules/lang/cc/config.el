@@ -254,7 +254,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :after lsp
+  :after lsp-mode
   :init
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
