@@ -168,6 +168,11 @@ we have to clean it up ourselves."
   (global-set-key [remap find-dired] #'fd-dired)
   (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
 
+(use-package! dired-aux
+  :defer t
+  :config
+  (setq dired-create-destination-dirs 'ask
+        dired-vc-rename-file t))
 
 ;;;###package dired-git-info
 (map! :after dired
