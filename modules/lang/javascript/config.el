@@ -190,8 +190,7 @@ to tide."
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
   (set-lookup-handlers! 'tide-mode :async t
-    :definition #'tide-jump-to-definition
-    :references #'tide-references
+    :xref-backend #'xref-tide-xref-backend
     :documentation #'tide-documentation-at-point)
   (set-popup-rule! "^\\*tide-documentation" :quit t)
   ;; resolve to `doom-project-root' if `tide-project-root' fails
