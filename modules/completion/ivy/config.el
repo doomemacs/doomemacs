@@ -225,7 +225,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
              (listp counsel-rg-base-command)
              (member "--path-separator" counsel-rg-base-command))
     (setf (cadr (member "--path-separator" counsel-rg-base-command))
-          "//"))
+          "/"))
 
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
