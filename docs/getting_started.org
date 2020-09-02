@@ -119,12 +119,22 @@ In the unusual case that Emacs 26.x is unavailable through your package manager,
 you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]]. Otherwise:
 
 **** Ubuntu
+On Ubuntu 19.10 or 20.04 LTS, you can install emacs 26 directly from official repo.
+#+BEGIN_SRC bash
+apt install emacs git ripgrep
+#+END_SRC
+
 Since only Emacs 25.3 is available on Ubuntu 18.04 (and 24.3 on Ubuntu 14 or
 16), extra steps are necessary to acquire 26.3:
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs
 apt-get update
 apt-get install emacs26
+#+END_SRC
+
+To install Emacs 27 on Ubuntu, you'll need to build it from source or use snap package.
+#+BEGIN_SRC bash
+snap install emacs --classic
 #+END_SRC
 
 Then install the dependencies:
@@ -135,7 +145,6 @@ apt-get install git ripgrep
 apt-get install fd-find
 #+END_SRC
 
-To install Emacs 27 on Ubuntu, you'll need to build it from source.
 
 **** Fedora
 #+BEGIN_SRC bash
