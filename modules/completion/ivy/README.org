@@ -19,7 +19,7 @@
   - [[#in-buffer-searching][In-buffer searching]]
   - [[#ivy-integration-for-various-completing-commands][Ivy integration for various completing commands]]
     - [[#general][General]]
-    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects)]]
+    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
 - [[#configuration][Configuration]]
   - [[#enable-fuzzynon-fuzzy-search-for-specific-commands][Enable fuzzy/non-fuzzy search for specific commands]]
@@ -164,7 +164,7 @@ A wgrep buffer can be opened from swiper with =C-c C-e=.
 | =M-x=, =SPC := | Smarter, smex-powered M-x |
 | =SPC '=        | Resume last ivy session   |
 
-*** Jump to files, buffers or projects)
+*** Jump to files, buffers or projects
 | Keybind              | Description                           |
 |----------------------+---------------------------------------|
 | =SPC RET=            | Find bookmark                         |
