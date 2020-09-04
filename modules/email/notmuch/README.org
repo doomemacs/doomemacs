@@ -19,13 +19,14 @@
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
   - [[#notmuch][notmuch]]
+  - [[#notmuch-sync-backend][+notmuch-sync-backend]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module makes Emacs an email client, using ~notmuch~.
 
 ** Module Flags
-+ This module install no module flags.
++ =+afew=
 
 
 ** Plugins
@@ -105,6 +106,18 @@ Before you can use =notmuch=, you need to index your email initially.
 
 #+BEGIN_SRC sh
 notmuch new
+#+END_SRC
+
+** +notmuch-sync-backend
+
+Setting this variable to =`gmi=, =`mbsync=, =`mbsync-xdg=, or ='offlineimap= will run commands that sync your notmuch database using the supported tools.
+If you have a unique way of indexing notmuch emails or if you want to alter the commands that are run setting =+notmuch-sync-backend= to ='custom= will run the command stored in the =+notmuch-sync-command= variable.
+
+#+BEGIN_SRC emacs-lisp
+(use-package! notmuch
+  :init
+  (setq +notmuch-sync-backend 'custom
+        +notmuch-sync-command "my-notmuch-sync-cmd"))
 #+END_SRC
 
 * Troubleshooting
