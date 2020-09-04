@@ -12,7 +12,7 @@
         (if-let* ((buf (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
                                    (doom-visible-windows))))
             (select-window (get-buffer-window buf))
-          (notmuch-search "tag:inbox"))
+          (funcall +notmuch-home-function))
         (+workspace/display))
     ('error
      (+notmuch/quit)
