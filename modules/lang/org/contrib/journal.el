@@ -18,6 +18,7 @@
                       buffer-file-name (expand-file-name org-journal-dir org-directory))
                      (require 'org-journal nil t)))
         (delq! '+org-journal-p magic-mode-alist 'assq)
+        (add-to-list 'magic-mode-alist '(org-journal-is-journal . org-journal-mode))
         (org-journal-is-journal))))
 
   ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
