@@ -12,13 +12,13 @@
   (add-to-list 'magic-mode-alist '(+org-journal-p . org-journal-mode))
 
   (defun +org-journal-p ()
+    "Wrapper around `org-journal-is-journal' to lazy load `org-journal'."
     (when-let (buffer-file-name (buffer-file-name (buffer-base-buffer)))
-      (when (or (featurep 'org-journal)
-                (and (file-in-directory-p
-                      buffer-file-name (expand-file-name org-journal-dir org-directory))
-                     (require 'org-journal nil t)))
-        (delq! '+org-journal-p magic-mode-alist 'assq)
-        (org-journal-is-journal))))
+      (if (or (featurep 'org-journal)
+              (and (file-in-directory-p
+                    buffer-file-name (expand-file-name org-journal-dir org-directory))
+                   (require 'org-journal nil t)))
+          (org-journal-is-journal))))
 
   ;; `org-journal-dir' defaults to "~/Documents/journal/", which is an odd
   ;; default, so we change it to {org-directory}/journal (we expand it after
