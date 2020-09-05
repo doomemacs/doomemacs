@@ -27,10 +27,6 @@
         org-journal-cache-file (concat doom-cache-dir "org-journal"))
 
   :config
-  ;; Remove the orginal journal file detector and rely on `+org-journal-p'
-  ;; instead, to avoid loading org-journal until the last possible moment.
-  (setq magic-mode-alist (assq-delete-all 'org-journal-is-journal magic-mode-alist))
-
   ;; `org-journal' can't deal with symlinks, so resolve them here.
   (setq org-journal-dir (expand-file-name org-journal-dir org-directory)
         ;; Doom opts for an "open in a popup or here" strategy as a default.
