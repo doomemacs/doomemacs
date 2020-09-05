@@ -25,7 +25,7 @@ This module has no dependencies.
 
 * Configuration
 By default, ~nav-flash~ will be triggered whenever ~recenter~ is called or an
-entry is added to the jump-list (maanaged by better-jumper).
+entry is added to the jump-list (managed by better-jumper).
 
 ~recenter~ is called after many hooks and commands, such as:
 
