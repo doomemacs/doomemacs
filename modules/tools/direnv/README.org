@@ -53,8 +53,10 @@ brew install direnv
 #+END_SRC
 
 ** Arch Linux
+~direnv~ is available on the AUR
+
 #+BEGIN_SRC bash
-sudo pacman -S direnv
+yay -S direnv
 #+END_SRC
 
 ** NixOS
