@@ -160,8 +160,9 @@
        :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
        (:when (featurep! :lang org +journal)
         (:prefix ("j" . "journal")
-         :desc "New Entry"      "j" #'org-journal-new-entry
-         :desc "Search Forever" "s" #'org-journal-search-forever))
+         :desc "New Entry"           "j" #'org-journal-new-entry
+         :desc "New Scheduled Entry" "J" #'org-journal-new-scheduled-entry
+         :desc "Search Forever"      "s" #'org-journal-search-forever))
        (:when (featurep! :lang org +roam)
         (:prefix ("r" . "roam")
          :desc "Switch to buffer"              "b" #'org-roam-switch-to-buffer
