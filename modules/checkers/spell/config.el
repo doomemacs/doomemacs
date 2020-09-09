@@ -28,8 +28,7 @@
     (`aspell
      (setq ispell-program-name "aspell"
            ispell-extra-args '("--sug-mode=ultra"
-                               "--run-together"
-                               "--dont-tex-check-comments"))
+                               "--run-together"))
 
      (unless ispell-dictionary
        (setq ispell-dictionary "en"))
