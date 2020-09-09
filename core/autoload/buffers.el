@@ -89,8 +89,8 @@ If no project is active, return all buffers."
 
 ;;;###autoload
 (defun doom-special-buffer-p (buf)
-  "Returns non-nil if BUF's name starts and ends with an *."
-  (equal (substring (buffer-name buf) 0 1) "*"))
+  "Returns non-nil if BUF is derived from special-mode."
+  (with-current-buffer buf (derived-mode-p 'special-mode)))
 
 ;;;###autoload
 (defun doom-temp-buffer-p (buf)
