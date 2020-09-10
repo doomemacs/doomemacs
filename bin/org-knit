@@ -1,0 +1,113 @@
+#!/usr/bin/env sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; bin/org-knit
+
+;; Usage: org-knit [OPTIONS] [TARGETS...]
+;;
+;; A command line interface for weaving (exporting) and tangling org-mode files.
+;; TARGETS can be files of folders (which are searched for org files recursively).
+;;
+;; This is useful for automated generation of files,
+;; and integration with other scripts.
+;;
+;; Example:
+;;   org-knit some-file.org
+;;   org-knit -f pdf book/chapters/
+;;   org-knit -t -f ascii,md scripts.org
+;;
+;; Options:
+;;   -f --format FORMATS   Export formats (comma seperated, no space), html by default
+;;   -t --tangle           Also tangle the file(s).
+;;                         See org-tangle for more advanced functionallity
+;;   -e --exec             Execute src blocks in the file before exporting
+;;   -p --print            Print exported output to sdout rather than files
+;;   -c --clean            Delete all non-org files which share their basename
+;;   -l --load             Elisp files to load
+;;   -a --alias [FORMATS]  Give the org function called by a particlar alias.
+;;                         List all aliases when no format or other arguments are given
+
+(require 'cl-lib)
+(require 'ox)
+(require 'ob-tangle)
+
+(defun usage ()
+  (with-temp-buffer
+    (insert (format "%s %s [OPTIONS] [TARGETS...]\n"
+                    "[1mUsage:[0m"
+                    (file-name-nondirectory load-file-name))
+            "\n"
+            "A command line interface for weaving (exporting) and tangling org-mode files.\n"
+            "TARGETS can be files of folders (which are searched for org files recursively).\n"
+            "\n"
+            "This is useful for automated generation of files,\n"
+            "and integration with other scripts.\n"
+            "\n"
+            "[1mExample:[0m\n"
+            "  org-knit some-file.org\n"
+            "  org-knit -f pdf book/chapters/\n"
+            "  org-knit -t -f ascii,md scripts.org\n"
+            "\n"
+            "[1mOptions:[0m\n"
+            "  -f --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
+            "  -t --tangle\t\tAlso tangle the file(s).\n"
+            "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
+            "  -e --exec\t\tExecute src blocks in the file before exporting\n"
+            "  -p --print\t\tPrint exported output to sdout rather than files\n"
+            "  -c --clean\t\tDelete all non-org files which share their basename\n"
+            "  -l --load\t\tElisp files to load\n"
+            "  -a --alias [FORMATS]\tGive the org function called by a particlar alias.\n"
+            "  \t\t\tList all aliases when no format or other arguments are given\n"
+            )
+    (princ (buffer-string))))
+
+(defvar export-print nil)
+(defvar tangle nil)
+(defvar print nil)
+(defvar exec nil)
+(defvar async t)
+(defvar formats nil)
+(defvar clean nil)
+(defvar load-files nil)
+
+(let (files
+      (inhibit-message t))
+  (pop argv)
+  (while argv
+    (let ((arg (pop argv)))
+      (pcase arg
+        ((or "-h" "--help")
+         (usage)
+         (error ""))
+        ((or "-f" "--formats")
+         (setq formats
+               (mapcar #'intern (split-string (pop argv) ","))))
+        ((or "-t" "--tangle")
+         (setq tangle t))
+        ((or "-e" "--exec")
+         (setq exec t))
+        ((or "-s" "--sync")
+         (setq async nil))
+        ((or "-p" "--print")
+         (setq export-print t))
+        ((or "-a" "--alias")
+         (let ((aliases (pop argv)))
+           (when aliases
+             (setq aliases
+                   (mapcar #'intern (split-string aliases ","))))
+           (print-alias aliases))
+         (error ""))
+        ((or "-c" "--clean")
+         (setq clean t))
+        ((or "-l" "--load")
+         (let ((f (pop argv)))
+           (when (file-exists-p f)
+             (push f load-files))))
+        ((or "-d" "--debug")
+         (setq debug-on-error t))
+        ((guard (file-exists-p arg))
+         (push arg files))
+        (_ (error "Unknown option or file: %s" arg)))))
+
+  (error "Unimplemented")
+
+  (kill-emacs 0))
