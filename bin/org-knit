@@ -234,6 +234,13 @@
     (let ((backup (make-temp-file (file-name-base file) nil ".backup.org"))
           (file-basename (file-name-base file))
           (org-confirm-babel-evaluate nil))
+      (if clean
+          (dolist (child-file (directory-files (file-name-directory (expand-file-name file))))
+            (when (and
+                 (string= (file-name-base child-file) file-basename)
+                 (not (string= (file-name-extension child-file) "org")))
+                (princ (format "Deleting %s\n" child-file))
+                (delete-file child-file)))
       (unwind-protect
           ;; Prevent slow hooks from interfering
           (let (org-mode-hook)
