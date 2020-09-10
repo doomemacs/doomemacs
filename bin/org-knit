@@ -113,6 +113,44 @@
 
 (defvar export-progress nil
   "Structure: ((file . ((backend . status) (backend . status)...)...)")
+
+(defun export-file (file spec)
+  "FILE to export according to SPEC plist (from `export-specs')"
+  (let ((pandoc-p (eq (plist-get (cdr spec) :requires) 'ox-pandoc))
+        (requirement (plist-get (cdr spec) :requires))
+        (backend     (plist-get (cdr spec) :backend))
+        (ext         (plist-get (cdr spec) :extension))
+        (post-action (plist-get (cdr spec) :post-action)))
+
+    (when requirement
+      (require requirement))
+
+    (if print (error "unimplemented")
+      (let ((out-file (org-export-output-file-name ext nil)))
+        (if pandoc-p
+            (org-pandoc-export backend async nil nil nil nil nil)
+          (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))))))
+
+
+(defun +org-export-to-file (backend file &optional async subtreep visible-only body-only ext-plist post-process +format +infile)
+  (if (and +format (not (eq backend 'pandoc)))
+      (progn
+        (set-state +infile +format 'started)
+        (funcall #'org-export-to-file
+                 backend file async subtreep visible-only body-only ext-plist
+                 (lambda (file)
+                   (when post-process
+                       (funcall post-process file))
+                   (set-state +infile +format 'completed))))
+    (funcall #'org-export-to-file backend file async subtreep visible-only body-only ext-plist post-process)))
+
+(defun set-state (file format state)
+  (unless (listp format)
+    (setq format (list format)))
+  (dolist (fmt format)
+    (setf (cdr (assoc fmt (cdr (assoc file export-progress)))) state))
+  (export-progress-table)
+  (sleep-for 0.1))
 (defvar export-print nil)
 (defvar tangle nil)
 (defvar print nil)
@@ -161,6 +199,22 @@
          (push arg files))
         (_ (error "Unknown option or file: %s" arg)))))
 
-  (error "Unimplemented")
+  (dolist (file files)
+    (let ((backup (make-temp-file (file-name-base file) nil ".backup.org"))
+          (file-basename (file-name-base file))
+          (org-confirm-babel-evaluate nil))
+      (unwind-protect
+          ;; Prevent slow hooks from interfering
+          (let (org-mode-hook)
+            ;; We do the ol' switcheroo because `org-babel-tangle' writes
+            ;; changes to the current file, which would be imposing on the user.
+            (copy-file file backup t)
+            (with-current-buffer (find-file-noselect file)
 
+              (set-state file formats 'waiting)
+              (org-export-expand-include-keyword)
+              (dolist (fmt formats)
+                (export-file file (assoc fmt export-specs)))))
+        (ignore-errors (copy-file backup file t))
+        (ignore-errors (delete-file backup))))))
   (kill-emacs 0))
