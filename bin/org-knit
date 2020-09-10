@@ -60,6 +60,20 @@
             )
     (princ (buffer-string))))
 
+(defvar export-specs
+  '((html   :backend html   :extension ".html" :requires ox-html)
+    (md     :backend md     :extension ".md"   :requires ox-md)
+    (gfm    :backend gfm    :extension ".md"   :requires ox-gfm)
+    (rtf    :backend rtf    :extension ".rtf"  :requires ox-pandoc)
+    (ascii  :backend ascii  :extension ".txt"  :requires ox-ascii)
+    (pdf    :backend latex  :extension ".tex"  :requires ox-latex  :post-action org-latex-compile)
+    (beamer :backend beamer :extension ".tex"  :requires ox-beamer :post-action org-latex-compile)
+    (tex    :backend latex  :extension ".tex"  :requires ox-latex)
+    (latex  :backend latex  :extension ".tex"  :requires ox-latex)
+    (odt    :backend odt    :extension ".odt"  :requires ox-odt)
+    (org    :backend org    :extension ".org"  :requires ox-org)
+    (docx   :backend docx   :extension ".docx" :requires ox-pandoc)))
+
 (defun format-alias (alias)
   (let ((name        (car alias))
         (backend     (plist-get (cdr alias) :backend))
