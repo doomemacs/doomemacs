@@ -151,6 +151,48 @@
     (setf (cdr (assoc fmt (cdr (assoc file export-progress)))) state))
   (export-progress-table)
   (sleep-for 0.1))
+
+(defvar last-progress 0)
+(defvar export-progress-states
+  '((waiting . "[0;33m⠶[0m")
+    (progress-colour . "[0;36m")
+    (progress-progression . ("⠖" "⠲" "⠴" "⠦"))
+    (started . nil)
+    (executing . "[0m⠶[0m")
+    (tangling . "[0;35m⠶[0m")
+    (completed . "[0;32m✓[0m")
+    (error . "[0;31m![0m")))
+
+(defun export-progress-table ()
+  (setq last-progress (1+ last-progress))
+  (setf (cdr (assoc 'started export-progress-states))
+        (concat (cdr (assoc 'progress-colour export-progress-states))
+                (nth (% last-progress
+                        (length (cdr (assoc 'progress-progression export-progress-states))))
+                     (cdr (assoc 'progress-progression export-progress-states)))
+                "[0m"))
+  (with-temp-buffer
+    (insert
+     (if (> last-progress 1)
+         (apply #'concat (make-list (1+ (length export-progress)) "[1A[K"))
+       "")
+     "[1mFile\t\t"
+     (mapconcat (lambda (fmt) (format "%s\t" fmt)) formats "")
+     "[0m\n"
+     (mapconcat
+      (lambda (f)
+        (concat
+         (car f) "\t"
+         (mapconcat
+          (lambda (state)
+            (cdr (assoc (cdr state) export-progress-states)))
+          (cdr f) "\t")
+         ))
+      export-progress "\n")
+     "\n"
+     )
+    (princ (buffer-string))))
+
 (defvar export-print nil)
 (defvar tangle nil)
 (defvar print nil)
@@ -264,6 +306,7 @@
               (when tangle
                 (set-state file formats 'tangling)
                 (org-babel-tangle nil nil nil))
+
               (set-state file formats 'waiting)
               (org-export-expand-include-keyword)
               (dolist (fmt formats)
