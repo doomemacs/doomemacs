@@ -60,6 +60,45 @@
             )
     (princ (buffer-string))))
 
+(defun format-alias (alias)
+  (let ((name        (car alias))
+        (backend     (plist-get (cdr alias) :backend))
+        (ext         (plist-get (cdr alias) :extension))
+        (post-action (plist-get (cdr alias) :post-action))
+        (requirement (plist-get (cdr alias) :requires)))
+    (let ((requirement-avalible
+           (if requirement
+               (require requirement nil t)
+             t)))
+      (format "  [1m%-8s[0m\t%s%-16s\t[2m%s[0m%s\t%s"
+              name
+              (if requirement-avalible "" "[9m[2m")
+              (concat (symbol-name backend) "[0m")
+              ext
+              (if post-action
+                  (format "\t[0;34m+ %s[0m " (symbol-name post-action))
+                "")
+              (if requirement-avalible ""
+                (format "[0;33m(requires %s)[0m" (symbol-name requirement)))))))
+
+(defun print-alias (&optional aliases)
+  (with-temp-buffer
+    (insert
+     (format-alias '(Format :backend Backend :extension ".extension"))
+     "\n ──────────────────────────────────────────\n"
+     (replace-regexp-in-string
+      "\n--NONE--" ""
+      (mapconcat (lambda (alias)
+                   (if aliases
+                       (if (memq (car alias) aliases)
+                           (format-alias alias) "--NONE--")
+                     (format-alias alias)))
+                 export-specs "\n"))
+     "\n")
+    (princ (buffer-string))))
+
+(defvar export-progress nil
+  "Structure: ((file . ((backend . status) (backend . status)...)...)")
 (defvar export-print nil)
 (defvar tangle nil)
 (defvar print nil)
