@@ -199,6 +199,37 @@
          (push arg files))
         (_ (error "Unknown option or file: %s" arg)))))
 
+  (if (eq files nil)
+      (error "No target files provided"))
+  (setq files (reverse files))
+
+  (dolist (location files)
+    (when (file-directory-p location)
+      (setq files
+            (append (remove location files)
+                    (directory-files-recursively location "\\.org\\'" nil)))))
+
+  (dolist (file files)
+    (setq export-progress
+          (append export-progress
+                  (list (append (list file)
+                                (apply #'append
+                                       (mapcar
+                                        (lambda (f) (list (cons f 'waiting)))
+                                        formats)))))))
+
+  (unless clean
+    (export-progress-table)
+    (dolist (l load-files)
+      (load l nil t)))
+
+  (setq org-export-async-init-file (make-temp-file "org-async-export"))
+  (with-temp-file org-export-async-init-file
+    (prin1 `(progn (setq org-export-async-debug ,debug-on-error
+                         load-path ',load-path)
+                   (load ,user-init-file nil t))
+           (current-buffer)))
+
   (dolist (file files)
     (let ((backup (make-temp-file (file-name-base file) nil ".backup.org"))
           (file-basename (file-name-base file))
