@@ -249,6 +249,21 @@
             (copy-file file backup t)
             (with-current-buffer (find-file-noselect file)
 
+              (when exec
+                (set-state file formats 'executing)
+
+                (org-babel-eval-wipe-error-buffer)
+                (org-save-outline-visibility t
+                  (org-babel-map-executables nil
+                    (if (memq (org-element-type (org-element-context))
+                              '(babel-call inline-babel-call))
+                        (org-babel-lob-execute-maybe)
+                      (ignore-errors
+                        (org-babel-execute-src-block t))))))
+
+              (when tangle
+                (set-state file formats 'tangling)
+                (org-babel-tangle nil nil nil))
               (set-state file formats 'waiting)
               (org-export-expand-include-keyword)
               (dolist (fmt formats)
