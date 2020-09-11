@@ -5,7 +5,6 @@
   :mode "\\.nix\\'"
   :config
   (set-repl-handler! 'nix-mode #'+nix/open-repl)
-  (set-company-backend! 'nix-mode 'company-nixos-options)
   (set-lookup-handlers! 'nix-mode
     :documentation '(+nix/lookup-option :async t))
 
