@@ -490,9 +490,10 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
              (and (or repos-p regraft-repos-p)
                   (straight--directory-files (straight--repos-dir) nil nil 'sort))))
         (list (when builds-p
-                (seq-filter #'file-directory-p
-                            (seq-remove (doom-rpartial #'gethash straight--profile-cache)
-                                        (straight--directory-files (straight--build-dir) nil nil 'sort))))
+                (let ((default-directory (straight--build-dir)))
+                  (seq-filter #'file-directory-p
+                              (seq-remove (doom-rpartial #'gethash straight--profile-cache)
+                                          (straight--directory-files default-directory nil nil 'sort)))))
               (when repos-p
                 (seq-remove (doom-rpartial #'straight--checkhash straight--repo-cache)
                             rdirs))
