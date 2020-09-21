@@ -56,7 +56,11 @@
     (setq evil-markdown-movement-bindings '((up . "s")
                                             (down . "t")
                                             (left . "c")
-                                            (right . "r")))
+                                            (right . "r"))
+          evil-org-movement-bindings '((up . "s")
+                                       (down . "t")
+                                       (left . "c")
+                                       (right . "r")))
     (doom-bepo-rotate-ts-bare-keymap '(read-expression-map))
     (doom-bepo-rotate-bare-keymap '(evil-window-map) doom-bepo-cr-rotation-style)
     (doom-bepo-rotate-evil-keymap doom-bepo-cr-rotation-style)
@@ -120,6 +124,9 @@
               (kbd "C-h !")))
             'org-time-stamp-inactive)
           (apply #'completing-read args))))
+    (after! (evil org evil-org-agenda)
+      (doom-bepo-rotate-bare-keymap '(org-agenda-keymap) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(evil-org-agenda-mode-map)))
     (after! (evil magit evil-magit)
       (doom-bepo-rotate-ts-bare-keymap
        '(magit-mode-map
