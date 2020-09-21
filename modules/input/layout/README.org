@@ -19,7 +19,7 @@
   - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
 
 * Description
-This module provides barebones support for using Doom with evil-mode with non-qwerty layouts.
+This module provides barebones support for using Doom with non-qwerty layouts.
 
 ** Maintainers
 + @gagbo (Author)
@@ -31,8 +31,10 @@ This module provides barebones support for using Doom with evil-mode with non-qw
 None
 
 * Prerequisites
-This module should only be active if evil is enabled. It uses a general.el utility function, and
-the hooks provided by evil-collection to make the necessary changes.
+If you are using =:editor evil=, you should use =(evil +everywhere)=, as the
+module uses =evil-collection= utilities to do the remapping.
+
+If you are not using =:editor evil=, then you have nothing to do.
 
 * Features
 # An in-depth list of features, how to use them, and their dependencies.
@@ -67,6 +69,9 @@ while =t=, =s=, =j=, and =k= are flipped:
 A nice addition in the future might be to have all the normal mode bindings that
 start with =g= start with =,= instead to avoid the curl on these common
 bindings. This is *not* implemented for the time being.
+
+Also, implementing all those changes as a minor we could flip on and off would
+help with adoption
 
 * Configuration
 ** Bépo
