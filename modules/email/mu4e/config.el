@@ -284,7 +284,39 @@ is tomorrow.  With two prefixes, select the deadline."
           :v "*" #'mu4e-headers-mark-for-something
           :v "!" #'mu4e-headers-mark-for-read
           :v "?" #'mu4e-headers-mark-for-unread
-          :v "u" #'mu4e-headers-mark-for-unmark)))
+          :v "u" #'mu4e-headers-mark-for-unmark
+          :vn "l" #'mu4e-msg-to-agenda))
+
+  ;;----------------
+  ;; Prettifying mu4e:main
+  ;;----------------
+
+  (defadvice! mu4e~main-action-prettier-str (str &optional func-or-shortcut)
+    "Highlight the first occurrence of [.] in STR.
+If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
+when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
+a string, execute the corresponding keyboard action when it is
+clicked."
+  :override #'mu4e~main-action-str
+  (let ((newstr
+         (replace-regexp-in-string
+          "\\[\\(..?\\)\\]"
+          (lambda(m)
+            (format "%s"
+                    (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
+          (replace-regexp-in-string "\t\\*" "\t⚫" str)))
+        (map (make-sparse-keymap))
+        (func (if (functionp func-or-shortcut)
+                  func-or-shortcut
+                (if (stringp func-or-shortcut)
+                    (lambda()(interactive)
+                      (execute-kbd-macro func-or-shortcut))))))
+    (define-key map [mouse-2] func)
+    (define-key map (kbd "RET") func)
+    (put-text-property 0 (length newstr) 'keymap map newstr)
+    (put-text-property (string-match "[A-Za-z].+$" newstr)
+                       (- (length newstr) 1) 'mouse-face 'highlight newstr)
+    newstr)))
 
 (when (featurep! :lang org)
   (use-package! org-msg
