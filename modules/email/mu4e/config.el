@@ -120,6 +120,15 @@ will also be the width of all other printable characters."
           (mu4e~initialise-icons)
           (remove-hook #'mu4e~initialise-icons-hook)))))
 
+  (setq mu4e-headers-fields
+        '((:account . 12)
+          (:human-date . 8)
+          (:flags . 6) ; 3 icon flags
+          (:from . 25)
+          (:subject))
+
+        (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
+
   ;; Add a column to display what email account the email belongs to.
   (add-to-list 'mu4e-header-info-custom
                '(:account
