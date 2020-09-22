@@ -68,9 +68,10 @@
       (:after geiser-doc :map geiser-doc-mode-map
        :n "o"    #'link-hint-open-link)
 
-      (:after (evil-org evil-easymotion)
-       :map evil-org-mode-map
-       :m "gsh" #'+org/goto-visible)
+      (:unless (featurep! :input layout +bepo)
+        (:after (evil-org evil-easymotion)
+         :map evil-org-mode-map
+         :m "gsh" #'+org/goto-visible))
 
       (:when (featurep! :editor multiple-cursors)
        :prefix "gz"
