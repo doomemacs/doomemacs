@@ -120,6 +120,10 @@ will also be the width of all other printable characters."
           (mu4e~initialise-icons)
           (remove-hook #'mu4e~initialise-icons-hook)))))
 
+  ;;----------------
+  ;; Header view
+  ;;----------------
+
   (setq mu4e-headers-fields
         '((:account . 12)
           (:human-date . 8)
@@ -129,17 +133,50 @@ will also be the width of all other printable characters."
 
         (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
 
-  ;; Add a column to display what email account the email belongs to.
-  (add-to-list 'mu4e-header-info-custom
-               '(:account
-                 :name "Account"
-                 :shortname "Account"
-                 :help "Which account this email belongs to"
-                 :function
-                 (lambda (msg)
-                   (let ((maildir (mu4e-message-field msg :maildir)))
-                     (format "%s" (substring maildir 1 (string-match-p "/" maildir 1)))))))
+  ;; A header colourisation function/variable could be handy
+  (defun mu4e~header-colourise (str)
+    (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
+           (colour (nth (% str-sum (length mu4e-header-colourised-faces))
+                        mu4e-header-colourised-faces)))
+      (put-text-property 0 (length str) 'face colour str)
+      str))
 
+  (defvar mu4e~header-colourised-faces
+    '(all-the-icons-lblue
+      all-the-icons-purple
+      all-the-icons-blue-alt
+      all-the-icons-green
+      all-the-icons-maroon
+      all-the-icons-yellow
+      all-the-icons-orange))
+
+  ;; Add a column to display what email account the email belongs to.
+  (setq mu4e-header-info-custom
+        '((:account .
+           (:name "account"
+            :shortname "account"
+            :help "which account this email belongs to"
+            :function
+            (lambda (msg)
+              (let ((maildir
+                     (mu4e-message-field msg :maildir)))
+                (mu4e-header-colourise
+                 (replace-regexp-in-string
+                  "^gmail"
+                  (propertize "g" 'face 'bold-italic)
+                  (format "%s"
+                          (substring maildir 1
+                                     (string-match-p "/" maildir 1)))))))))
+          (:recipnum .
+           (:name "Number of recipients"
+            :shortname " ⭷"
+            :help "Number of recipients for this message"
+            :function
+            (lambda (msg)
+              (propertize (format "%2d"
+                                  (+ (length (mu4e-message-field msg :to))
+                                     (length (mu4e-message-field msg :cc))))
+                          'face 'mu4e-footer-face)))))))
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
     :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
 
