@@ -208,7 +208,16 @@ will also be the width of all other printable characters."
         :desc "send and exit" "s" #'message-send-and-exit
         :desc "kill buffer"   "d" #'message-kill-buffer
         :desc "save draft"    "S" #'message-dont-send
-        :desc "attach"        "a" #'mail-add-attachment))
+        :desc "attach"        "a" #'mail-add-attachment)
+  ;; Due to evil, none of the marking commands work when making a visual selection in
+  ;; the headers view of mu4e. Without overriding any evil commands we may actually
+  ;; want to use in and evil selection, this can be easily fixed.
+  (when (featurep! :editor evil)
+    (map! :map mu4e-headers-mode-map
+          :v "*" #'mu4e-headers-mark-for-something
+          :v "!" #'mu4e-headers-mark-for-read
+          :v "?" #'mu4e-headers-mark-for-unread
+          :v "u" #'mu4e-headers-mark-for-unmark)))
 
 (when (featurep! :lang org)
   (use-package! org-msg
