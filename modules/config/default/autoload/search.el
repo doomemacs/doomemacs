@@ -26,9 +26,11 @@ If prefix ARG is set, prompt for a directory to search from."
 If a selection is active, pre-fill the prompt with it."
   (interactive)
   (call-interactively
-   (if (region-active-p)
-       #'swiper-isearch-thing-at-point
-     #'swiper-isearch)))
+   (if (featurep! :completion helm)
+       #'swiper-helm
+     (if (region-active-p)
+         #'swiper-isearch-thing-at-point
+       #'swiper-isearch))))
 
 ;;;###autoload
 (defun +default/search-project (&optional arg)
