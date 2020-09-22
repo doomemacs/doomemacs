@@ -288,6 +288,26 @@ is tomorrow.  With two prefixes, select the deadline."
           :vn "l" #'mu4e-msg-to-agenda))
 
   ;;----------------
+  ;; Sending mail
+  ;;----------------
+
+  (defun my-mu4e-set-account ()
+    "Set the account for composing a message. If a 'To' header is present,
+and correspands to an email account, this account will be selected.
+Otherwise, the user is prompted for the accound they wish to use."
+    (unless (and mu4e-compose-parent-message
+                 (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
+                       (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
+                   (if (member to (plist-get mu4e~server-props :personal-addresses))
+                       (setq user-mail-address to)
+                     (if (member from (plist-get mu4e~server-props :personal-addresses))
+                         (setq user-mail-address from)
+                       nil))))
+      (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
+
+  (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+
+  ;;----------------
   ;; Prettifying mu4e:main
   ;;----------------
 
