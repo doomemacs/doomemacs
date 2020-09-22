@@ -14,7 +14,7 @@
 
 * Description
 This module provides a terminal emulator powered by libvterm. It is still in
-alpha and requires a component be compiled (=vterm-module.sh=).
+alpha and requires a component be compiled (=vterm-module.so=).
 
 The following commands are available to open it:
 
@@ -108,7 +108,7 @@ There are several ways to manually install the module:
    make
    #+END_SRC
 
-3. You can also compile =vterm-module.sh= elsewhere, but the module must be
+3. You can also compile =vterm-module.so= elsewhere, but the module must be
    moved/symlinked to
    =~/.emacs.d/.local/packages/elpa/vterm-<version>/vterm-module.so=
    =vterm-module.so=. Keep in mind that this folder will be deleted whenever the

@@ -247,14 +247,13 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                      `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                                               "-isystem/usr/local/include"]
-                                                  :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir"))))))))))))
-
+                                                  :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))))))
 
 
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :after lsp
+  :after lsp-mode
   :init
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
@@ -266,4 +265,4 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
           `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                       "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                       "-isystem/usr/local/include"]
-                          :resourceDir (string-trim (shell-command-to-string "clang -print-resource-dir")))))))
+                          :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir")))))))

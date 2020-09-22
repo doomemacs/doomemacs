@@ -115,7 +115,6 @@ how many seconds until the whole window is spellchecked (default as 3).
 *** Spell-fu users
 Users can exclude what faces to preform spellchecking on by adjusting
 ~+spell-excluded-faces-alist~ in a buffer-local hook:
-
 #+BEGIN_SRC elisp
 (setf (alist-get 'markdown-mode +spell-excluded-faces-alist)
       '(markdown-code-face
@@ -159,11 +158,10 @@ Return nil if on a link url, markup, html, or references."
 #+END_SRC
 
 ** Adding or removing words to your personal dictionary
-Spell-fu users can call ~M-x spell-fu-word-add~ and ~M-x spell-fu-word-remove~
-to whitelist words that you know are not misspellings. These are on =zq= and
-=zw=, respectively, for users with Evil enabled.
-
-Neither ispell nor =+flyspell= support managing personal dictionaries within
-Emacs.
+Use ~M-x +spell/add-word~ and ~M-x +spell/remove-word~ to whitelist words that
+you know are not misspellings. For evil users these are bound to =zq= and =zw=,
+respectively. =+flyspell= users can also add/remove words from the
+~flyspell-correct~ popup interface (there will be extra options on the list of
+corrections for "save word to dictionary").
 
 * TODO Troubleshooting

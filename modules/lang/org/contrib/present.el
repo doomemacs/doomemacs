@@ -13,9 +13,9 @@
 
 (use-package! org-re-reveal
   :after ox
-  :init
-  (setq org-re-reveal-root "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2"
-        org-re-reveal-revealjs-version "3.8"))
+  :config
+  (setq org-re-reveal-root (expand-file-name "../../" (locate-library "dist/reveal.js" t))
+        org-re-reveal-revealjs-version "4"))
 
 
 (use-package! org-tree-slide

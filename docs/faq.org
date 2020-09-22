@@ -492,7 +492,7 @@ What can you do about it?
    but can be a bit of a hassle to set up. There are packages available for
    [[https://aur.archlinux.org/packages/emacs-native-comp-git/][Arch Linux]], [[https://github.com/flatwhatson/guix-channel][Guix]] and [[https://github.com/nix-community/emacs-overlay][Nix users]]. [[https://www.emacswiki.org/emacs/GccEmacs][More information available on EmacsWiki]].
 3. Disable some of Doom's slowest modules. The biggest offenders tend to be:
-   =:ui tabs=, =:ui indent-guides=, =:ui ligatures=, =:ui word-wrap= and =:ui
+   =:ui tabs=, =:ui indent-guides=, =:ui ligatures=, =:editor word-wrap= and =:ui
    vc-gutter=.
 4. Turn off line numbers ~(setq display-line-numbers-type nil)~. It's known to
    slow down scrolling, in particular.

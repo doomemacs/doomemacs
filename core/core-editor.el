@@ -114,6 +114,10 @@ possible."
 (setq-default indent-tabs-mode nil
               tab-width 4)
 
+;; Only indent the line when at BOL or in a line's indentation. Anywhere else,
+;; insert literal indentation.
+(setq-default tab-always-indent nil)
+
 ;; Make `tabify' and `untabify' only affect indentation. Not tabs/spaces in the
 ;; middle of a line.
 (setq tabify-regexp "^\t* [ \t]+")

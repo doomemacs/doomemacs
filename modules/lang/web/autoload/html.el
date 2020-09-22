@@ -122,7 +122,9 @@ snippet, or `emmet-expand-yas'/`emmet-expand-line', depending on whether
 `yas-minor-mode' is enabled or not."
   (interactive)
   (call-interactively
-   (cond ((<= (current-column) (current-indentation))
+   (cond ((or (<= (current-column) (current-indentation))
+              (not (eolp))
+              (not (memq (char-after) (list ?\n ?\s ?\t))))
           #'indent-for-tab-command)
          ((bound-and-true-p yas-minor-mode)
           (if (yas--templates-for-key-at-point)

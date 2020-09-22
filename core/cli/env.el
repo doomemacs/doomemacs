@@ -61,11 +61,14 @@ Why this over exec-path-from-shell?
 ;; Helpers
 
 (defvar doom-env-blacklist
-  '("^DBUS_SESSION_BUS_ADDRESS$"
-    "^GPG_AGENT_INFO$" "^\\(SSH\\|GPG\\)_TTY$"
-    "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$"
-    "^HOME$" "^PWD$" "^PS1$" "^R?PROMPT$" "^TERM$"
-    ;; Doom envvars
+  '(;; State that may be problematic if overwritten
+    "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM$" "^USER$"
+    ;; X server or services' variables
+    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$"
+    ;; ssh and gpg variables (likely to become stale)
+    "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
+    "^GPG_AGENT_INFO$"
+    ;; Internal Doom envvars
     "^DEBUG$" "^INSECURE$" "^YES$" "^__")
   "Environment variables to not save in `doom-env-file'.
 

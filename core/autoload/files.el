@@ -146,9 +146,8 @@ If COOKIE doesn't exist, return NULL-VALUE."
     (insert-file-contents file nil 0 256)
     (if (re-search-forward (format "^;;;###%s " (regexp-quote (or cookie "if")))
                            nil t)
-        (or (let ((load-file-name file))
-              (eval (sexp-at-point) t))
-            null-value)
+        (let ((load-file-name file))
+          (eval (sexp-at-point) t))
       null-value)))
 
 ;;;###autoload

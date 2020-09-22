@@ -106,10 +106,11 @@ in some cases."
         (thing
          (thing-at-point thing t))
         ((require 'xref nil t)
-         ;; Eglot defines a dummy for `xref-find-backend', so we need a special
-         ;; case to avoid xref when using eglot. See
-         ;; https://github.com/joaotavora/eglot/issues/503
-         (if (eq (xref-find-backend) 'eglot)
+         ;; Eglot, nox (a fork of eglot), and elpy implementations for
+         ;; `xref-backend-identifier-at-point' betray the documented purpose of
+         ;; the interface. Eglot/nox return a hardcoded string and elpy prepends
+         ;; the line number to the symbol.
+         (if (memq (xref-find-backend) '(eglot elpy nox))
              (thing-at-point 'symbol t)
            ;; A little smarter than using `symbol-at-point', though in most
            ;; cases, xref ends up using `symbol-at-point' anyway.

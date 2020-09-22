@@ -47,8 +47,7 @@
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "o"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
-        (:after lsp-mode
-         :desc "LSP"                                   "l"   lsp-command-map)
+        :desc "LSP"                                   "l"   #'+default/lsp-command-map
         (:when (featurep! :completion ivy)
          :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
@@ -119,6 +118,7 @@
        :desc "Search project"               "p" #'+default/search-project
        :desc "Search other project"         "P" #'+default/search-other-project
        :desc "Search buffer"                "s" #'+default/search-buffer
+       :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point
        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
        :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 

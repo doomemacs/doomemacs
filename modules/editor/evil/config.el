@@ -390,12 +390,11 @@ directives. By default, this only recognizes C directives.")
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
-      (:when (not (featurep! :checkers spell +flyspell))
-       :n  "zq"    #'spell-fu-word-add
-       :n  "zw"    #'spell-fu-word-remove
-       :m  "[s"    #'spell-fu-goto-previous-error
-       :m  "]s"    #'spell-fu-goto-next-error
-       )
+      (:when (featurep! :checkers spell)
+       :n  "zq"   #'+spell/add-word
+       :n  "zw"   #'+spell/remove-word
+       :m  "[s"   #'+spell/previous-error
+       :m  "]s"   #'+spell/next-error)
 
       ;; ported from vim-unimpaired
       :n  "] SPC" #'+evil/insert-newline-below

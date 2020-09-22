@@ -6,7 +6,7 @@
 ;;      support symlinks as unix knows them, so `magit-version' can't resolve
 ;;      its own repo's path.
 ;;;###autoload
-(when! IS-WINDOWS
+(eval-when! IS-WINDOWS
   (defadvice! +magit--ignore-version-a (&optional print-dest)
     :override #'magit-version
     (when print-dest

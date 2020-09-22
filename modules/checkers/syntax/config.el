@@ -46,7 +46,7 @@
   :commands flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-popup-tip-error-prefix "✕ ")
+  (setq flycheck-popup-tip-error-prefix "X ")
   (after! evil
     ;; Don't display popups while in insert or replace mode, as it can affect
     ;; the cursor's position or cause disruptive input delays.
@@ -63,9 +63,9 @@
   :when (featurep! +childframe)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-posframe-warning-prefix "⚠ "
+  (setq flycheck-posframe-warning-prefix "! "
         flycheck-posframe-info-prefix "··· "
-        flycheck-posframe-error-prefix "✕ ")
+        flycheck-posframe-error-prefix "X ")
   (after! company
     ;; Don't display popups if company is open
     (add-hook 'flycheck-posframe-inhibit-functions #'company--active-p))

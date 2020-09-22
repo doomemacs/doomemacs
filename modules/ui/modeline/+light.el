@@ -152,13 +152,13 @@ LHS and RHS will accept."
         (lambda (&rest _) (set-modeline! name))))
 
 (defmacro def-modeline-var! (name body &optional docstring &rest plist)
-  "TODO"
+  "Define a modeline segment variable."
   (unless (stringp docstring)
     (push docstring plist)
     (setq docstring nil))
   `(progn
-     (,(if (plist-get plist :local) 'defvar-local 'defvar)
-      ,name ,body ,docstring)
+     (defconst ,name ,body ,docstring)
+     ,@(if (plist-get plist :local) `((make-variable-buffer-local ',name)))
      (put ',name 'risky-local-variable t)))
 
 
@@ -352,20 +352,40 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 
 ;;; `+modeline-buffer-identification'
+(defvar-local +modeline--buffer-id-cache nil)
+
+;; REVIEW Generating the buffer's file name can be relatively expensive.
+;;        Compounded with how often the modeline updates this can add up, so
+;;        we cache it ahead of time.
+(add-hook! '(change-major-mode-after-body-hook
+             ;; In case the user saves the file to a new location
+             after-save-hook
+             ;; ...or makes external changes then returns to Emacs
+             focus-in-hook
+             ;; ...or when we change the current project!
+             projectile-after-switch-project-hook
+             ;; ...when the visited file changes (e.g. it's renamed)
+             after-set-visited-file-name-hook
+             ;; ...when the underlying file changes
+             after-revert-hook)
+  (defun +modeline--generate-buffer-id-cache-h ()
+    (when after-init-time
+      (setq +modeline--buffer-id-cache
+            (let ((file-name (buffer-file-name (buffer-base-buffer))))
+              (unless (or (null default-directory)
+                          (null file-name)
+                          (file-remote-p file-name))
+                (when-let (project-root (doom-project-root))
+                  (file-relative-name (or buffer-file-truename (file-truename file-name))
+                                      (concat project-root "..")))))))))
+
 (def-modeline-var! +modeline-buffer-identification ; slightly more informative buffer id
   '((:eval
-     (let ((file-name (buffer-file-name (buffer-base-buffer))))
-       (propertize
-        (or (when (and file-name (not (file-remote-p file-name)))
-              (when-let (project (doom-project-root file-name))
-                (file-relative-name (or buffer-file-truename (file-truename file-name))
-                                    (concat project ".."))))
-            "%b")
-        'face (cond ((buffer-modified-p)
-                     '(error bold mode-line-buffer-id))
-                    ((+modeline-active)
-                     'mode-line-buffer-id))
-        'help-echo file-name)))
+     (propertize
+      (or +modeline--buffer-id-cache "%b")
+      'face (cond ((buffer-modified-p) '(error bold mode-line-buffer-id))
+                  ((+modeline-active)  'mode-line-buffer-id))
+      'help-echo (or +modeline--buffer-id-cache (buffer-name))))
     (buffer-read-only (:propertize " RO" face warning))))
 
 
@@ -517,28 +537,6 @@ lines are selected, or the NxM dimensions of a block selection.")
 ;; TODO (def-modeline! helm ...)
 
 
-;;
-;;; Bootstrap
-
-(size-indication-mode +1) ; filesize in modeline
-
-(setq-default
- mode-line-format
- '(""
-   +modeline-bar
-   +modeline-format-left
-   (:eval
-    (propertize
-     " "
-     'display
-     `((space :align-to (- (+ right right-fringe right-margin)
-                           ,(string-width
-                             (format-mode-line '("" +modeline-format-right))))))))
-   +modeline-format-right))
-(with-current-buffer "*Messages*"
-  (setq mode-line-format (default-value 'mode-line-format)))
-
-
 ;; Other modes
 (set-modeline! :main 'default)
 (set-modeline-hook! '+doom-dashboard-mode-hook 'project)
@@ -553,3 +551,34 @@ lines are selected, or the NxM dimensions of a block selection.")
     (if (eq major-mode 'magit-status-mode)
         (set-modeline! 'project)
       (hide-mode-line-mode +1))))
+
+
+;;
+;;; Bootstrap
+
+(defvar +modeline--old-format (default-value 'mode-line-format))
+
+(define-minor-mode +modeline-mode
+  "TODO"
+  :init-value nil
+  :global nil
+  (cond
+   (+modeline-mode
+    (setq mode-line-format
+          (cons
+           "" '(+modeline-bar
+                +modeline-format-left
+                (:eval
+                 (propertize
+                  " "
+                  'display
+                  `((space :align-to (- (+ right right-fringe right-margin)
+                                        ,(string-width
+                                          (format-mode-line '("" +modeline-format-right))))))))
+                +modeline-format-right))))
+   ((setq mode-line-format +modeline--old-format))))
+
+(define-global-minor-mode +modeline-global-mode +modeline-mode +modeline-mode)
+
+(add-hook '+modeline-global-mode-hook #'size-indication-mode)
+(add-hook 'doom-init-ui-hook #'+modeline-global-mode)

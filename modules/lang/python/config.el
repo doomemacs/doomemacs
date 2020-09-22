@@ -1,12 +1,10 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info")
-  "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
-called.")
+(defvar +python-ipython-command '("ipython" "-i" "--simple-prompt" "--no-color-info")
+  "Command to initialize the ipython REPL for `+python/open-ipython-repl'.")
 
-(defvar +python-jupyter-repl-args '("--simple-prompt")
-  "CLI arguments to initialize 'jupiter console %s' with when
-`+python/open-ipython-repl' is called.")
+(defvar +python-jupyter-command '("jupyter" "console" "--simple-prompt")
+  "Command to initialize the jupyter REPL for `+python/open-jupyter-repl'.")
 
 (after! projectile
   (pushnew! projectile-project-root-files "setup.py" "requirements.txt"))
@@ -311,8 +309,8 @@ called.")
 ;;
 ;;; LSP
 
-(when! (and (featurep! +lsp)
-            (not (featurep! :tools lsp +eglot)))
+(eval-when! (and (featurep! +lsp)
+                 (not (featurep! :tools lsp +eglot)))
 
   (use-package! lsp-python-ms
     :unless (featurep! +pyright)

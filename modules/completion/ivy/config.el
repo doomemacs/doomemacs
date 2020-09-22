@@ -225,7 +225,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
              (listp counsel-rg-base-command)
              (member "--path-separator" counsel-rg-base-command))
     (setf (cadr (member "--path-separator" counsel-rg-base-command))
-          "//"))
+          "/"))
 
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
@@ -381,9 +381,11 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
           '(literal regexp initialism)))
   :config
   (setq ivy-prescient-sort-commands
-        '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
-               counsel-git-grep counsel-ag counsel-rg counsel-imenu
-               counsel-yank-pop counsel-recentf counsel-buffer-or-recentf)
+        '(:not swiper swiper-isearch ivy-switch-buffer
+          lsp-ivy-workspace-symbol ivy-resume ivy--restore-session
+          counsel-grep counsel-git-grep counsel-rg counsel-ag
+          counsel-ack counsel-fzf counsel-pt counsel-imenu
+          counsel-yank-pop counsel-recentf counsel-buffer-or-recentf)
         ivy-prescient-retain-classic-highlighting t)
   (defun +ivy-prescient-non-fuzzy (str)
     (let ((prescient-filter-method '(literal regexp)))

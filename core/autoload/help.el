@@ -11,12 +11,9 @@
     (csharp-mode     :lang csharp)
     (clojure-mode    :lang clojure)
     (clojurescript-mode :lang clojure)
-    (graphql-mode    :lang data)
-    (toml-mode       :lang data)
-    (json-mode       :lang data)
-    (yaml-mode       :lang data)
+    (json-mode       :lang json)
+    (yaml-mode       :lang yaml)
     (csv-mode        :lang data)
-    (dhall-mode      :lang data)
     (erlang-mode     :lang erlang)
     (elixir-mode     :lang elixir)
     (elm-mode        :lang elm)
@@ -193,7 +190,7 @@ selection of all minor-modes, active or not."
          "troubleshooting.org"
          "tutorials.org"
          "faq.org")
-   2 t initial-input
+   3 t initial-input
    (mapcar (lambda (x)
              (setcar x (concat "Doom Modules > " (car x)))
              x)

@@ -69,7 +69,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+pandoc= Enables pandoc integration into the Org exporter.
 + =+pomodoro= Enables a pomodoro timer for clocking time on tasks.
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
-  Emacs can be used for presentations.
+  Emacs can be used for presentations. It automatically downloads [[https://github.com/hakimel/reveal.js][reveal.js]].
 + =+pretty= Enables pretty unicode symbols for bullets and priorities, and
   better syntax highlighting for latex. Keep in mind: this can be expensive. If
   org becomes too slow, it'd be wise to disable this flag.

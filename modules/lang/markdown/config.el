@@ -63,6 +63,10 @@ capture, the end position, and the output buffer.")
   (sp-local-pair '(markdown-mode gfm-mode) "`" "`"
                  :unless '(:add sp-point-before-word-p sp-point-before-same-p))
 
+  ;; Highly rust blocks correctly
+  (when (featurep! :lang rust)
+    (add-to-list 'markdown-code-lang-modes '("rust" . rustic-mode)))
+
   ;; Don't trigger autofill in code blocks (see `auto-fill-mode')
   (setq-hook! 'markdown-mode-hook
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p

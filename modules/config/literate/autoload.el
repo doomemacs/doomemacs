@@ -23,7 +23,7 @@ byte-compiled from.")
        (letf! ((default-directory doom-private-dir)
                (target +literate-config-file)
                (cache +literate-config-cache-file)
-               (dest (concat (file-name-sans-extension target) ".el"))
+               (dest (expand-file-name (concat (file-name-base target) ".el")))
                ;; Operate on a copy because `org-babel-tangle' has
                ;; side-effects we need to undo immediately as not to
                ;; overwrite the user's config; it's bad ettiquite.
@@ -89,5 +89,6 @@ byte-compiled from.")
 
 We assume any org file in `doom-private-dir' is connected to your literate
 config, and should trigger a recompile if changed."
-  (when (file-in-directory-p buffer-file-name doom-private-dir)
-    (+literate-tangle-h)))
+  (and (file-in-directory-p
+        buffer-file-name (file-name-directory +literate-config-file))
+       (+literate-tangle-h)))
