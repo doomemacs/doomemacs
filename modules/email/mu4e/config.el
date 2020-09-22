@@ -177,6 +177,8 @@ will also be the width of all other printable characters."
                                   (+ (length (mu4e-message-field msg :to))
                                      (length (mu4e-message-field msg :cc))))
                           'face 'mu4e-footer-face)))))))
+
+  ;; Marks usually affect the current view
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
     :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
 
@@ -185,6 +187,18 @@ will also be the width of all other printable characters."
 
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
+
+  ;; The header view needs a certain amount of horizontal space to
+  ;; actually show you all the information you want to see
+  ;; so if the header view is entered from a narrow frame,
+  ;; it's probably worth trying to expand it
+  (defvar mu4e-min-header-frame-width 120
+    "Minimum reasonable with for the header view.")
+  (defun mu4e-widen-frame-maybe ()
+    "Expand the frame with if it's less than `mu4e-min-header-frame-width'."
+    (when (< (frame-width) mu4e-min-header-frame-width)
+      (set-frame-width (selected-frame) mu4e-min-header-frame-width)))
+  (add-hook 'mu4e-headers-mode-hook #'mu4e-widen-frame-maybe)
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
