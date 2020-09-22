@@ -105,13 +105,13 @@
         :desc "save draft"    "S" #'message-dont-send
         :desc "attach"        "a" #'mail-add-attachment))
 
-
-(use-package! org-msg
-  :hook (mu4e-compose-pre . org-msg-mode)
-  :config
-  (setq org-msg-startup "inlineimages"
-        org-msg-greeting-name-limit 3
-        org-msg-text-plain-alternative t))
+(when (featurep! :lang org)
+  (use-package! org-msg
+    :hook (org-load . org-msg-mode)
+    :config
+    (setq org-msg-startup "inlineimages"
+          org-msg-greeting-name-limit 3
+          org-msg-text-plain-alternative t)))
 
 
 
