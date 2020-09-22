@@ -34,6 +34,7 @@
         ;; try to show images
         mu4e-view-show-images t
         mu4e-view-image-max-width 800
+        mu4e-view-use-gnus t ; the way of the future: https://github.com/djcb/mu/pull/1442#issuecomment-591695814
         ;; configuration for sending mail
         message-send-mail-function #'smtpmail-send-it
         smtpmail-stream-type 'starttls
