@@ -174,10 +174,128 @@
   (use-package! org-msg
     :hook (org-load . org-msg-mode)
     :config
-    (setq org-msg-startup "inlineimages"
+    (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+          org-msg-startup "hidestars indent inlineimages"
+          org-msg-greeting-fmt "\nHi %s,\n\n"
           org-msg-greeting-name-limit 3
-          org-msg-text-plain-alternative t)))
+          org-msg-text-plain-alternative t)
 
+    (defvar org-msg-currently-exporting nil
+      "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
+Usefull for affecting HTML export config.")
+    (defadvice! org-msg--now-exporting (&rest _)
+      :before #'org-msg-org-to-xml
+      (setq org-msg-currently-exporting t))
+    (defadvice! org-msg--not-exporting (&rest _)
+      :after #'org-msg-org-to-xml
+      (setq org-msg-currently-exporting nil))
+
+    (setq org-msg-enforce-css
+          (let* ((font-family '(font-family . "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell,\
+        \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";"))
+                 (monospace-font '(font-family . "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;"))
+                 (font-size '(font-size . "11pt"))
+                 (font `(,font-family ,font-size))
+                 (line-height '(line-height . "1.2"))
+                 (theme-color "#8a0400")
+                 (bold '(font-weight . "bold"))
+                 (color `(color . ,theme-color))
+                 (table `((margin-top . "6px") (margin-bottom . "6px")
+                          (border-left . "none") (border-right . "none")
+                          (border-top . "2px solid #222222") (border-bottom . "2px solid #222222")
+                          ))
+                 (ftl-number `(,color ,bold (text-align . "left")))
+                 (inline-modes '(asl c c++ conf cpp csv diff ditaa emacs-lisp
+                                     fundamental ini json makefile man org plantuml
+                                     python sh xml))
+                 (inline-src `((background-color . "rgba(27,31,35,.05)")
+                               (border-radius . "3px")
+                               (padding . ".2em .4em")
+                               (font-size . "90%") ,monospace-font
+                               (margin . 0)))
+                 (code-src
+                  (mapcar (lambda (mode)
+                            `(code ,(intern (concat "src src-" (symbol-name mode)))
+                                   ,inline-src))
+                          inline-modes)))
+            `((del nil ((color . "grey") (border-left . "none")
+                        (text-decoration . "line-through") (margin-bottom . "0px")
+                        (margin-top . "10px") (line-height . "11pt")))
+              (a nil (,color))
+              (a reply-header ((color . "black") (text-decoration . "none")))
+              (div reply-header ((padding . "3.0pt 0in 0in 0in")
+                                 (border-top . "solid #e1e1e1 1.0pt")
+                                 (margin-bottom . "20px")))
+              (span underline ((text-decoration . "underline")))
+              (li nil (,line-height (margin-bottom . "0px")
+                                    (margin-top . "2px")))
+              (nil org-ul ((list-style-type . "square")))
+              (nil org-ol (,@font ,line-height (margin-bottom . "0px")
+                                  (margin-top . "0px") (margin-left . "30px")
+                                  (padding-top . "0px") (padding-left . "5px")))
+              (nil signature (,@font (margin-bottom . "20px")))
+              (blockquote nil ((padding . "0px 10px") (margin-left . "10px")
+                               (margin-top . "20px") (margin-bottom . "0")
+                               (border-left . "3px solid #ccc") (font-style . "italic")
+                               (background . "#f9f9f9")))
+              (code nil (,font-size ,monospace-font (background . "#f9f9f9")))
+              ,@code-src
+              (nil linenr ((padding-right . "1em")
+                           (color . "black")
+                           (background-color . "#aaaaaa")))
+              (pre nil ((line-height . "1.2")
+                        (color . ,(doom-color 'fg))
+                        (background-color . ,(doom-color 'bg))
+                        (margin . "4px 0px 8px 0px")
+                        (padding . "8px 12px")
+                        (width . "95%")
+                        (border-radius . "5px")
+                        (font-weight . "500")
+                        ,monospace-font))
+              (div org-src-container ((margin-top . "10px")))
+              (nil figure-number ,ftl-number)
+              (nil table-number)
+              (caption nil ((text-align . "left")
+                            (background . ,theme-color)
+                            (color . "white")
+                            ,bold))
+              (nil t-above ((caption-side . "top")))
+              (nil t-bottom ((caption-side . "bottom")))
+              (nil listing-number ,ftl-number)
+              (nil figure ,ftl-number)
+              (nil org-src-name ,ftl-number)
+              (img nil ((vertical-align . "middle")
+                        (max-width . "100%")))
+              (img latex-fragment-inline ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                                                (/ 1.0 (if (boundp 'preview-scale)
+                                                                           preview-scale 1.4))))
+                                          (margin . "0 -0.35em")))
+              (table nil (,@table ,line-height (border-collapse . "collapse")))
+              (th nil ((border . "none") (border-bottom . "1px solid #222222")
+                       (background-color . "#EDEDED") (font-weight . "500")
+                       (padding . "3px 10px")))
+              (td nil (,@table (padding . "1px 10px")
+                               (background-color . "#f9f9f9") (border . "none")))
+              (td org-left ((text-align . "left")))
+              (td org-right ((text-align . "right")))
+              (td org-center ((text-align . "center")))
+              (kbd nil ((border . "1px solid #d1d5da") (border-radius . "3px")
+                        (box-shadow . "inset 0 -1px 0 #d1d5da") (background-color . "#fafbfc")
+                        (color . "#444d56") (padding . "3px 5px") (display . "inline-block")))
+              (div outline-text-4 ((margin-left . "15px")))
+              (div outline-4 ((margin-left . "10px")))
+              (h4 nil ((margin-bottom . "0px") (font-size . "11pt")))
+              (h3 nil ((margin-bottom . "0px")
+                       ,color (font-size . "14pt")))
+              (h2 nil ((margin-top . "20px") (margin-bottom . "20px")
+                       ,color (font-size . "18pt")))
+              (h1 nil ((margin-top . "20px")
+                       (margin-bottom . "0px") ,color (font-size . "24pt")))
+              (p nil ((text-decoration . "none") (margin-bottom . "0px")
+                      (margin-top . "10px") (line-height . "11pt") ,font-size
+                      (max-width . "100ch")))
+              (b nil ((font-weight . "500") (color . ,theme-color)))
+              (div nil (,@font (line-height . "12pt"))))))))
 
 
 ;;
