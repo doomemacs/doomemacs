@@ -71,6 +71,164 @@ default/fallback account."
   ;; TODO Interactively select email account
   (call-interactively #'mu4e-compose-new))
 
+;; Icons need a bit of work
+;; Spacing needs to be determined and adjucted
+;;;###autoload
+(defun +get-string-width (str)
+  "Return the width in pixels of a string in the current
+window's default font. If the font is mono-spaced, this
+will also be the width of all other printable characters."
+  (let ((window (selected-window))
+        (remapping face-remapping-alist))
+    (with-temp-buffer
+      (make-local-variable 'face-remapping-alist)
+      (setq face-remapping-alist remapping)
+      (set-window-buffer window (current-buffer))
+      (insert str)
+      (car (window-text-pixel-size)))))
+
+;;;###autoload
+(cl-defun mu4e~normalised-icon (name &key set colour height v-adjust)
+  "Convert :icon declaration to icon"
+  (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
+         (v-adjust (or v-adjust 0.02))
+         (height (or height 0.8))
+         (icon (if colour
+                   (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" colour)) :height ,height :v-adjust ,v-adjust))
+                 (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
+         (icon-width (+get-string-width icon))
+         (space-width (+get-string-width " "))
+         (space-factor (- 2 (/ (float icon-width) space-width))))
+    (concat (propertize " " 'display `(space . (:width ,space-factor))) icon)))
+
+;; Set up all the fancy icons
+;;;###autoload
+(defun mu4e~initialise-icons ()
+  (setq mu4e-use-fancy-chars t
+        mu4e-headers-draft-mark      (cons "D" (mu4e~normalised-icon "pencil"))
+        mu4e-headers-flagged-mark    (cons "F" (mu4e~normalised-icon "flag"))
+        mu4e-headers-new-mark        (cons "N" (mu4e~normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
+        mu4e-headers-passed-mark     (cons "P" (mu4e~normalised-icon "arrow-right"))
+        mu4e-headers-replied-mark    (cons "R" (mu4e~normalised-icon "arrow-right"))
+        mu4e-headers-seen-mark       (cons "S" "") ;(mu4e~normalised-icon "eye" :height 0.6 :v-adjust 0.07 :colour "dsilver"))
+        mu4e-headers-trashed-mark    (cons "T" (mu4e~normalised-icon "trash"))
+        mu4e-headers-attach-mark     (cons "a" (mu4e~normalised-icon "file-text-o" :colour "silver"))
+        mu4e-headers-encrypted-mark  (cons "x" (mu4e~normalised-icon "lock"))
+        mu4e-headers-signed-mark     (cons "s" (mu4e~normalised-icon "certificate" :height 0.7 :colour "dpurple"))
+        mu4e-headers-unread-mark     (cons "u" (mu4e~normalised-icon "eye-slash" :v-adjust 0.05))))
+
+;;;###autoload
+(defun mu4e~header-colourise (str)
+  (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
+         (colour (nth (% str-sum (length mu4e-header-colourised-faces))
+                      mu4e-header-colourised-faces)))
+    (put-text-property 0 (length str) 'face colour str)
+    str))
+
+;; Adding emails to the agenda
+;; Perfect for when you see an email you want to reply to
+;; later, but don't want to forget about
+;;;###autoload
+(defun mu4e-msg-to-agenda (arg)
+  "Refile a message and add a entry in the agenda file with a
+deadline.  Default deadline is today.  With one prefix, deadline
+is tomorrow.  With two prefixes, select the deadline."
+  (interactive "p")
+  (let ((file (car org-agenda-files))
+        (sec  "^* Email")
+        (msg  (mu4e-message-at-point)))
+    (when msg
+      ;; put the message in the agenda
+      (with-current-buffer (find-file-noselect file)
+        (save-excursion
+          ;; find header section
+          (goto-char (point-min))
+          (when (re-search-forward sec nil t)
+            (let (org-M-RET-may-split-line
+                  (lev (org-outline-level))
+                  (folded-p (invisible-p (point-at-eol))))
+              ;; place the subheader
+              (when folded-p (show-branches))    ; unfold if necessary
+              (org-end-of-meta-data) ; skip property drawer
+              (org-insert-todo-heading 1)        ; insert a todo heading
+              (when (= (org-outline-level) lev)  ; demote if necessary
+                (org-do-demote))
+              ;; insert message and add deadline
+              (insert (concat " Respond to "
+                              "[[mu4e:msgid:"
+                              (plist-get msg :message-id) "]["
+                              (truncate-string-to-width
+                               (caar (plist-get msg :from)) 25 nil nil t)
+                              " - "
+                              (truncate-string-to-width
+                               (plist-get msg :subject) 40 nil nil t)
+                              "]] "))
+              (org-deadline nil
+                            (cond ((= arg 1) (format-time-string "%Y-%m-%d"))
+                                  ((= arg 4) "+1d")))
+
+              (org-update-parent-todo-statistics)
+
+              ;; refold as necessary
+              (if folded-p
+                  (progn
+                    (org-up-heading-safe)
+                    (hide-subtree))
+                (hide-entry))))))
+      ;; refile the message and update
+      ;; (cond ((eq major-mode 'mu4e-view-mode)
+      ;;        (mu4e-view-mark-for-refile))
+      ;;       ((eq major-mode 'mu4e-headers-mode)
+      ;;        (mu4e-headers-mark-for-refile)))
+      (message "Refiled \"%s\" and added to the agenda for %s"
+               (truncate-string-to-width
+                (plist-get msg :subject) 40 nil nil t)
+               (cond ((= arg 1) "today")
+                     ((= arg 4) "tomorrow")
+                     (t         "later"))))))
+
+;;;###autoload
+(defun my-mu4e-set-account ()
+    "Set the account for composing a message. If a 'To' header is present,
+and correspands to an email account, this account will be selected.
+Otherwise, the user is prompted for the account they wish to use."
+    (unless (and mu4e-compose-parent-message
+                 (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
+                       (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
+                   (if (member to (plist-get mu4e~server-props :personal-addresses))
+                       (setq user-mail-address to)
+                     (if (member from (plist-get mu4e~server-props :personal-addresses))
+                         (setq user-mail-address from)
+                       nil))))
+      (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
+
+;;;###autoload
+(defun mu4e~main-action-prettier-str (str &optional func-or-shortcut)
+  "Highlight the first occurrence of [.] in STR.
+If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
+when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
+a string, execute the corresponding keyboard action when it is
+clicked."
+  :override #'mu4e~main-action-str
+  (let ((newstr
+         (replace-regexp-in-string
+          "\\[\\(..?\\)\\]"
+          (lambda(m)
+            (format "%s"
+                    (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
+          (replace-regexp-in-string "\t\\*" "\t⚫" str)))
+        (map (make-sparse-keymap))
+        (func (if (functionp func-or-shortcut)
+                  func-or-shortcut
+                (if (stringp func-or-shortcut)
+                    (lambda()(interactive)
+                      (execute-kbd-macro func-or-shortcut))))))
+    (define-key map [mouse-2] func)
+    (define-key map (kbd "RET") func)
+    (put-text-property 0 (length newstr) 'keymap map newstr)
+    (put-text-property (string-match "[A-Za-z].+$" newstr)
+                       (- (length newstr) 1) 'mouse-face 'highlight newstr)
+    newstr))
 
 ;;
 ;; Hooks
