@@ -10,7 +10,7 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#cabal][Cabal]]
-  - [[#lsp-haskell-ide-engine][LSP (haskell-ide-engine)]]
+  - [[#lsp-haskell-language-server][LSP (haskell-language-server)]]
   - [[#lsp-ghcide][LSP (ghcide)]]
   - [[#stack][Stack]]
   - [[#haskell-packages][Haskell packages]]
@@ -43,7 +43,7 @@ Here are a few resources I've found indispensable in my Haskell adventures:
   doesn't depend on =stack=, supports both ~cabal~-only and ~stack~ projects,
   but lacks eldoc support.
 + =+ghcide= Enables LSP support with ghcide (requires the ~:tools lsp~ module).
-+ =+lsp= Enables LSP support with haskell-ide-engine (requires the ~:tools lsp~
++ =+lsp= Enables LSP support with haskell-language-server (requires the ~:tools lsp~
   module).
 
 ** Plugins
@@ -59,7 +59,7 @@ Depending on whether you use Dante, haskell-language-server or ghcide, your
 dependencies will differ:
 
 + Dante users need =cabal=, =ghc= and =ghc-mod=
-+ LSP users need the =haskell-ide-engine= LSP server OR =ghcide=
++ LSP users need the =haskell-language-server= LSP server OR =ghcide=
 + All users will need the =hoogle= package
 
 ** Cabal
@@ -81,27 +81,15 @@ sudo pacman -S cabal-install ghc
 sudo zypper install cabal-install ghc
 #+END_SRC
 
-** LSP (haskell-ide-engine)
+** LSP (haskell-language-server)
 You will need =stack= and =git= installed.
 
-You will find a comprehensive [[https://github.com/haskell/haskell-ide-engine#installation][install guide for haskell-ide-engine on its
-project page]], but here's a TL;DR:
-
-*** MacOS
-haskell-ide-engine must be build and installed manually on MacOS, e.g.
+You will find a comprehensive [[https://github.com/haskell/haskell-language-server#installation][instructions for haskell-language-server on its project page]], but if you are using [[https://www.haskell.org/ghcup/][ghcup]]:
 
 #+BEGIN_SRC bash
-git clone https://github.com/haskell/haskell-ide-engine
-cd haskell-ide-engine
-make
+ghcup install hls
 #+END_SRC
 
-*** Arch Linux
-=haskell-ide-engine-git= is available on the AUR
-
-#+BEGIN_SRC bash
-yay -S haskell-ide-engine-git
-#+END_SRC
 ** LSP (ghcide)
 See https://github.com/digital-asset/ghcide for install instructions.
 
