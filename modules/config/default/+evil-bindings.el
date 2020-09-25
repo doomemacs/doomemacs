@@ -274,6 +274,7 @@
             ((featurep! :completion helm)  #'helm-resume))
 
       :desc "Search for symbol in project" "*" #'+default/search-project-for-symbol-at-point
+      :desc "Search project"               "/" #'+default/search-project
 
       :desc "Find file in project"  "SPC"  #'projectile-find-file
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
