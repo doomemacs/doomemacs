@@ -79,9 +79,9 @@
           (:human-date . 8)
           (:flags . 6) ; 3 icon flags
           (:from . 25)
-          (:subject))
+          (:subject)))
 
-        (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
+  (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
 
   (defvar mu4e~header-colourised-faces
     '(all-the-icons-lblue
@@ -118,7 +118,7 @@
               (propertize (format "%2d"
                                   (+ (length (mu4e-message-field msg :to))
                                      (length (mu4e-message-field msg :cc))))
-                          'face 'mu4e-footer-face)))))))
+                          'face 'mu4e-footer-face))))))
 
   ;; Marks usually affect the current view
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
