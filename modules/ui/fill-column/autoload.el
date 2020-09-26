@@ -5,7 +5,7 @@
 ;;;###autoload
 ;; Emacs 27 introduced `display-fill-column-indicator-mode' which should be
 ;; used instead of `hl-fill-column-mode'
-(if (>= emacs-major-version 27)
+(if EMACS27+
     (add-hook! '(text-mode-hook prog-mode-hook conf-mode-hook)
                #'display-fill-column-indicator-mode)
     (add-hook! '(text-mode-hook prog-mode-hook conf-mode-hook)
