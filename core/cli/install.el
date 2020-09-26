@@ -87,6 +87,8 @@ DOOMDIR environment variable. e.g.
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))
+    (when (file-exists-p "~/.emacs.elc")
+      (print! (warn "A ~/.emacs.elc file was detected. This conflicts with Doom and should be deleted!")))
 
     (print! (success "\nFinished! Doom is ready to go!\n"))
     (with-temp-buffer
