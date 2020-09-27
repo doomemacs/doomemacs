@@ -42,7 +42,6 @@ should be a deliberate act (as is flipping this variable).")
   ;; Disable features that modify our code without our permission.
   (setq lsp-enable-indentation nil
         lsp-enable-on-type-formatting nil)
-
   :config
   (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
 
@@ -62,10 +61,6 @@ should be a deliberate act (as is flipping this variable).")
     :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
 
-  (when lsp-auto-configure
-    (mapc (lambda (package) (require package nil t))
-          (cl-remove-if #'featurep lsp-client-packages)))
-
   (defadvice! +lsp--dont-auto-install-servers-a (orig-fn &rest args)
     "Replace auto-install behavior with warning and support indirect buffers."
     :around #'lsp
@@ -83,21 +78,11 @@ should be a deliberate act (as is flipping this variable).")
               (defun lsp--completing-read (msg clients &rest _)
                 (lsp--warn (concat msg "%s\n"
                                    "  Use `M-x lsp-install-server' to install a supported server, or read "
-                                   "https://emacs-lsp.github.io/lsp-mode/page/languages for more.")
+                                   "https://emacs-lsp.github.io/lsp-mode/page/languages for more details.")
                            (mapcar #'lsp--client-server-id clients))
                 (throw 'not-installed nil)))
         (catch 'not-installed
           (apply orig-fn args)))))
-
-  (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
-    "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
-    :around #'lsp-diagnostics--flycheck-enable
-    (if flycheck-checker
-        ;; Respect file/dir/explicit user-defined `flycheck-checker'.
-        (let ((old-checker flycheck-checker))
-          (apply orig-fn args)
-          (setq-local flycheck-checker old-checker))
-      (apply orig-fn args)))
 
   (add-hook! 'lsp-mode-hook
     (defun +lsp-display-guessed-project-root-h ()
