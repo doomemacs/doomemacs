@@ -172,7 +172,7 @@
 
 (when (featurep! :lang org)
   (use-package! org-msg
-    :hook (org-load . org-msg-mode)
+    :after (mu4e org)
     :config
     (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
           org-msg-startup "hidestars indent inlineimages"
@@ -190,6 +190,27 @@ Usefull for affecting HTML export config.")
       :after #'org-msg-org-to-xml
       (setq org-msg-currently-exporting nil))
 
+    (advice-add #'org-html-latex-fragment    :override #'org-html-latex-fragment-scaled)
+    (advice-add #'org-html-latex-environment :override #'org-html-latex-environment-scaled)
+
+    (defvar mu4e-compose--org-msg-toggle-next t ; t to initialise org-msg
+      "Whether to toggle ")
+    (defun mu4e-compose-org-msg-handle-toggle (toggle-p)
+      (when (xor toggle-p mu4e-compose--org-msg-toggle-next)
+        (org-msg-mode (if org-msg-mode -1 1))
+        (setq mu4e-compose--org-msg-toggle-next
+              (not mu4e-compose--org-msg-toggle-next))))
+
+    (defadvice! mu4e-maybe-toggle-org-msg (orig-fn toggle-p)
+      :around #'mu4e-compose-new
+      :around #'mu4e-compose-reply
+      (interactive "p")
+      (mu4e-compose-org-msg-handle-toggle (/= 1 toggle-p))
+      (funcall orig-fn))
+
+    (defvar +org-msg-accent-color "#c01c28"
+      "Accent color to use in org-msg's generated CSS.
+Must be set before org-msg is loaded to take effect.")
     (setq org-msg-enforce-css
           (let* ((font-family '(font-family . "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell,\
         \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";"))
@@ -197,12 +218,13 @@ Usefull for affecting HTML export config.")
                  (font-size '(font-size . "11pt"))
                  (font `(,font-family ,font-size))
                  (line-height '(line-height . "1.2"))
-                 (theme-color "#8a0400")
+                 (theme-color +org-msg-accent-color)
                  (bold '(font-weight . "bold"))
                  (color `(color . ,theme-color))
                  (table `((margin-top . "6px") (margin-bottom . "6px")
                           (border-left . "none") (border-right . "none")
-                          (border-top . "2px solid #222222") (border-bottom . "2px solid #222222")
+                          (border-top . "2px solid #222222")
+                          (border-bottom . "2px solid #222222")
                           ))
                  (ftl-number `(,color ,bold (text-align . "left")))
                  (inline-modes '(asl c c++ conf cpp csv diff ditaa emacs-lisp
@@ -234,10 +256,12 @@ Usefull for affecting HTML export config.")
                                   (margin-top . "0px") (margin-left . "30px")
                                   (padding-top . "0px") (padding-left . "5px")))
               (nil signature (,@font (margin-bottom . "20px")))
-              (blockquote nil ((padding . "0px 10px") (margin-left . "10px")
-                               (margin-top . "20px") (margin-bottom . "0")
-                               (border-left . "3px solid #ccc") (font-style . "italic")
+              (blockquote nil ((padding . "2px 12px") (margin-left . "10px")
+                               (margin-top . "10px") (margin-bottom . "0")
+                               (border-left . "3px solid #ccc")
+                               (font-style . "italic")
                                (background . "#f9f9f9")))
+              (p blockquote  ((margin . "0") (padding . "4px 0")))
               (code nil (,font-size ,monospace-font (background . "#f9f9f9")))
               ,@code-src
               (nil linenr ((padding-right . "1em")
@@ -266,10 +290,7 @@ Usefull for affecting HTML export config.")
               (nil org-src-name ,ftl-number)
               (img nil ((vertical-align . "middle")
                         (max-width . "100%")))
-              (img latex-fragment-inline ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                                                (/ 1.0 (if (boundp 'preview-scale)
-                                                                           preview-scale 1.4))))
-                                          (margin . "0 -0.35em")))
+              (img latex-fragment-inline ((margin . "0 0.1em")))
               (table nil (,@table ,line-height (border-collapse . "collapse")))
               (th nil ((border . "none") (border-bottom . "1px solid #222222")
                        (background-color . "#EDEDED") (font-weight . "500")
@@ -280,8 +301,9 @@ Usefull for affecting HTML export config.")
               (td org-right ((text-align . "right")))
               (td org-center ((text-align . "center")))
               (kbd nil ((border . "1px solid #d1d5da") (border-radius . "3px")
-                        (box-shadow . "inset 0 -1px 0 #d1d5da") (background-color . "#fafbfc")
-                        (color . "#444d56") (padding . "3px 5px") (display . "inline-block")))
+                        (box-shadow . "inset 0 -1px 0 #d1d5da")
+                        (background-color . "#fafbfc") (color . "#444d56")
+                        (padding . "3px 5px") (display . "inline-block")))
               (div outline-text-4 ((margin-left . "15px")))
               (div outline-4 ((margin-left . "10px")))
               (h4 nil ((margin-bottom . "0px") (font-size . "11pt")))
@@ -289,11 +311,11 @@ Usefull for affecting HTML export config.")
                        ,color (font-size . "14pt")))
               (h2 nil ((margin-top . "20px") (margin-bottom . "20px")
                        ,color (font-size . "18pt")))
-              (h1 nil ((margin-top . "20px")
-                       (margin-bottom . "0px") ,color (font-size . "24pt")))
-              (p nil ((text-decoration . "none") (margin-bottom . "0px")
-                      (margin-top . "10px") (line-height . "11pt") ,font-size
-                      (max-width . "100ch")))
+              (h1 nil ((margin-top . "20px") (margin-bottom . "0px")
+                       ,color (font-size . "24pt")))
+              (p nil ((text-decoration . "none") (line-height . "11pt")
+                      (margin-top . "10px") (margin-bottom . "0px")
+                      ,font-size (max-width . "100ch")))
               (b nil ((font-weight . "500") (color . ,theme-color)))
               (div nil (,@font (line-height . "12pt"))))))))
 

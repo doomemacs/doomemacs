@@ -189,18 +189,18 @@ is tomorrow.  With two prefixes, select the deadline."
 
 ;;;###autoload
 (defun my-mu4e-set-account ()
-    "Set the account for composing a message. If a 'To' header is present,
+  "Set the account for composing a message. If a 'To' header is present,
 and correspands to an email account, this account will be selected.
 Otherwise, the user is prompted for the account they wish to use."
-    (unless (and mu4e-compose-parent-message
-                 (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
-                       (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
-                   (if (member to (plist-get mu4e~server-props :personal-addresses))
-                       (setq user-mail-address to)
-                     (if (member from (plist-get mu4e~server-props :personal-addresses))
-                         (setq user-mail-address from)
-                       nil))))
-      (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
+  (unless (and mu4e-compose-parent-message
+               (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
+                     (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
+                 (if (member to (plist-get mu4e~server-props :personal-addresses))
+                     (setq user-mail-address to)
+                   (if (member from (plist-get mu4e~server-props :personal-addresses))
+                       (setq user-mail-address from)
+                     nil))))
+    (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
 
 ;;;###autoload
 (defun mu4e~main-action-prettier-str (str &optional func-or-shortcut)
@@ -245,3 +245,91 @@ clicked."
    (+mu4e--old-wconf
     (set-window-configuration +mu4e--old-wconf)
     (setq +mu4e--old-wconf nil))))
+
+;; org-msg hooks
+
+;;;###autoload
+(defun +org-msg-img-scale-css (img-uri)
+  "For a given IMG-URI, use imagemagik to find its width."
+  (if org-msg-currently-exporting
+      (list :width
+            (format "%.1fpx"
+                    (/ (string-to-number
+                        (shell-command-to-string
+                         (format "identify -format %%w %s"
+                                 (substring img-uri 7)))) ; 7=(length "file://")
+                       (plist-get org-format-latex-options :scale))))
+    (list :style (format "transform: scale(%.3f)"
+                         (/ 1.0 (plist-get org-format-latex-options :scale))))))
+
+(defun org-html-latex-fragment-scaled (latex-fragment _contents info)
+  "Transcode a LATEX-FRAGMENT object from Org to HTML.
+CONTENTS is nil.  INFO is a plist holding contextual information.
+
+This differs from `org-html-latex-fragment' in that it uses the LaTeX fragment
+as a meaningful alt value, applies a class to indicate what sort of fragment it is
+(latex-fragment-inline or latex-fragment-block), and (on Linux) scales the image to
+account for the value of :scale in `org-format-latex-options'."
+  (let ((latex-frag (org-element-property :value latex-fragment))
+        (processing-type (plist-get info :with-latex)))
+    (cond
+     ((memq processing-type '(t mathjax))
+      (org-html-format-latex latex-frag 'mathjax info))
+     ((memq processing-type '(t html))
+      (org-html-format-latex latex-frag 'html info))
+     ((assq processing-type org-preview-latex-process-alist)
+      (let ((formula-link
+             (org-html-format-latex latex-frag processing-type info)))
+        (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
+          (let ((source (org-export-file-uri (match-string 1 formula-link)))
+                (attributes (list :alt latex-frag
+                                  :class (concat "latex-fragment-"
+                                                 (if (equal "\\(" (substring latex-frag 0 2))
+                                                     "inline" "block")))))
+            (when (and (memq processing-type '(dvipng convert)) IS-LINUX)
+              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
+            (org-html--format-image source attributes info)))))
+     (t latex-frag))))
+
+(defun org-html-latex-environment-scaled (latex-environment _contents info)
+  "Transcode a LATEX-ENVIRONMENT element from Org to HTML.
+CONTENTS is nil.  INFO is a plist holding contextual information.
+
+This differs from `org-html-latex-environment' in that (on Linux) it
+scales the image to account for the value of :scale in `org-format-latex-options'."
+  (let ((processing-type (plist-get info :with-latex))
+        (latex-frag (org-remove-indentation
+                     (org-element-property :value latex-environment)))
+        (attributes (org-export-read-attribute :attr_html latex-environment))
+        (label (and (org-element-property :name latex-environment)
+                    (org-export-get-reference latex-environment info)))
+        (caption (and (org-html--latex-environment-numbered-p latex-environment)
+                      (number-to-string
+                       (org-export-get-ordinal
+                        latex-environment info nil
+                        (lambda (l _)
+                          (and (org-html--math-environment-p l)
+                               (org-html--latex-environment-numbered-p l))))))))
+    (plist-put attributes :class "latex-environment")
+    (cond
+     ((memq processing-type '(t mathjax))
+      (org-html-format-latex
+       (if (org-string-nw-p label)
+           (replace-regexp-in-string "\\`.*"
+                                     (format "\\&\n\\\\label{%s}" label)
+                                     latex-frag)
+         latex-frag)
+       'mathjax info))
+     ((assq processing-type org-preview-latex-process-alist)
+      (let ((formula-link
+             (org-html-format-latex
+              (org-html--unlabel-latex-environment latex-frag)
+              processing-type info)))
+        (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
+          (let ((source (org-export-file-uri (match-string 1 formula-link))))
+            (when (and (memq processing-type '(dvipng convert)) IS-LINUX)
+              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
+            (org-html--wrap-latex-environment
+             (org-html--format-image source attributes info)
+             info caption label)))))
+     (t (org-html--wrap-latex-environment latex-frag info caption label)))))

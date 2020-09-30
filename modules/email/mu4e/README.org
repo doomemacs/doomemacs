@@ -18,6 +18,7 @@
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
   - [[#mu-and-mu4e][mu and mu4e]]
+  - [[#orgmsg][OrgMsg]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#no-such-file-or-directory-mu4e][=No such file or directory, mu4e=]]
   - [[#void-function-org-time-add-error-on-gentoo][~(void-function org-time-add)~ error on Gentoo]]
@@ -168,6 +169,15 @@ Then configure Emacs to use your email address:
     (mu4e-compose-signature . "---\nHenrik Lissner"))
   t)
 #+END_SRC
+** OrgMsg
+By default, ~org-msg-mode~ is enabled before composing the first message.
+To disable ~org-msg-mode~ by default, simply
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq mu4e-compose--org-msg-toggle-next nil)
+#+END_SRC
+
+To toggle org-msg for a single message, just apply the universal argument to the
+compose or reply command (=SPC u= with ~evil~, =C-u= otherwise).
 
 * Troubleshooting
 ** =No such file or directory, mu4e=
