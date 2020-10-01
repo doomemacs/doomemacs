@@ -36,7 +36,8 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 #+end_quote
 
 ** Module Flags
-+ ~+gmail~ Enables gmail-specific configuration.
++ ~+gmail~ Enables gmail-specific configuration for mail ~To~ or ~From~ a gmail
+  address, or a maildir with ~gmail~ in the name.
 
 ** Plugins
 + [[https://github.com/jeremy-compostella/org-msg][org-msg]]
