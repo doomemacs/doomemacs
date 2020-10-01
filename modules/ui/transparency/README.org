@@ -1,0 +1,18 @@
+#+TITLE: ui/transparency
+#+DATE: October 1, 2020
+#+SINCE: 2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contenct :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+
+* Description
+  This module adds a transparency toggle to emacs.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
+This module uses no plugins
