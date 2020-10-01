@@ -69,22 +69,22 @@
   (display-time-mode +1)
   (display-battery-mode +1))
 
-;; Here we configure `exwm-firefox-*'.
+;; Configure `exwm-firefox-*'.
 (when (featurep! +firefox)
-  ;; Here we add the <ESC> key to the exwm input keys for firefox buffers.
+  ;; Add the <ESC> key to the exwm input keys for firefox buffers.
   (dolist (k `(escape))
     (cl-pushnew k exwm-input-prefix-keys))
 
-  ;; Here we configure further depending if the user has evil mode enabled
-  ;; in their modules.
-  (if (featurep! :editor evil)
-      (lambda ()
-        ;; The user has `evil-mode'.
-        (require 'exwm-firefox-evil)
-        (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox))
-    (lambda ()
-      ;; The user does NOT have `evil-mode'.
-      (require 'exwm-firefox-core))))
+  ;; Add the firefox wm class name.
+  (dolist (k `("firefox"))
+    (cl-pushnew k exwm-firefox-evil-firefox-class-name))
+
+  ;; Here we configure further depending if the user has evil mode enabled.
+  (require 'exwm-firefox-core)
+  (when (featurep! :editor evil)
+    (require 'exwm-firefox-evil)
+    (add-hook 'exwm-manage-finish-hook
+              'exwm-firefox-evil-activate-if-firefox)))
 
 ;; Here we enable `exwm' to launch when everything is ready:
 (exwm-enable)
