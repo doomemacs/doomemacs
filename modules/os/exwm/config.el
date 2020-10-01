@@ -75,14 +75,14 @@
   (dolist (k `(escape))
     (cl-pushnew k exwm-input-prefix-keys))
 
-  ;; Add the firefox wm class name.
-  (dolist (k `("firefox"))
-    (cl-pushnew k exwm-firefox-evil-firefox-class-name))
-
   ;; Here we configure further depending if the user has evil mode enabled.
   (require 'exwm-firefox-core)
   (when (featurep! :editor evil)
     (require 'exwm-firefox-evil)
+    ;; Add the firefox wm class name.
+    (dolist (k `("firefox"))
+      (cl-pushnew k exwm-firefox-evil-firefox-class-name))
+    ;; Add the firefox buffer hook
     (add-hook 'exwm-manage-finish-hook
               'exwm-firefox-evil-activate-if-firefox)))
 
