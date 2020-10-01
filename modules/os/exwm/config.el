@@ -63,32 +63,28 @@
                       (string= "gimp" exwm-instance-name))
               (exwm-workspace-rename-buffer exwm-title))))
 
-;; Here we configure some setup to run after `exwm' has loaded. Any configuration
-;; that is not critical before startup (such as monitor monitor configuration) should
-;; go here.
-(after! exwm-mode
-  ;; Here we configure our rudamentary status bar.
-  (when (featurep! +status)
-    (setq display-time-default-load-average nil)
-    (display-time-mode +1)
-    (display-battery-mode +1))
+;; Here we configure the rudamentary status bar.
+(when (featurep! +status)
+  (setq display-time-default-load-average nil)
+  (display-time-mode +1)
+  (display-battery-mode +1))
 
-  ;; Here we configure `exwm-firefox-*'.
-  (when (featurep! +firefox)
-    ;; Here we add the <ESC> key to the exwm input keys for firefox buffers.
-    (dolist (k `(escape))
-      (cl-pushnew k exwm-input-prefix-keys))
+;; Here we configure `exwm-firefox-*'.
+(when (featurep! +firefox)
+  ;; Here we add the <ESC> key to the exwm input keys for firefox buffers.
+  (dolist (k `(escape))
+    (cl-pushnew k exwm-input-prefix-keys))
 
-    ;; Here we configure further depending if the user has evil mode enabled
-    ;; in their modules.
-    (if (featurep! :editor evil)
-        (lambda ()
-          ;; The user has `evil-mode'.
-          (require 'exwm-firefox-evil)
-          (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox))
+  ;; Here we configure further depending if the user has evil mode enabled
+  ;; in their modules.
+  (if (featurep! :editor evil)
       (lambda ()
-        ;; The user does NOT have `evil-mode'.
-        (require 'exwm-firefox-core)))))
+        ;; The user has `evil-mode'.
+        (require 'exwm-firefox-evil)
+        (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox))
+    (lambda ()
+      ;; The user does NOT have `evil-mode'.
+      (require 'exwm-firefox-core))))
 
 ;; Here we enable `exwm' to launch when everything is ready:
 (exwm-enable)
