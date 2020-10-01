@@ -51,16 +51,22 @@
               (t #'ido-completing-read))
         ;; no need to ask
         mu4e-confirm-quit nil
+        mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
+        mu4e-headers-thread-orphan-prefix '("┬>" . "┬▶ ")
+        mu4e-headers-thread-last-child-prefix '("└>" . "╰▶")
+        mu4e-headers-thread-child-prefix '("├>" . "├▶")
+        mu4e-headers-thread-connection-prefix '("│" . "│ ")
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account . 12)
-          (:human-date . 12)
-          (:flags . 4)
+          (:human-date . 8)
+          (:flags . 6) ; 3 icon flags
           (:from . 25)
           (:subject)))
 
   ;; set mail user agent
-  (setq mail-user-agent 'mu4e-user-agent)
+  (setq mail-user-agent 'mu4e-user-agent
+        message-mail-user-agent 'mu4e-user-agent)
 
   ;; Set the icons only when a graphical frame has been created
   (if (display-graphic-p)
@@ -72,16 +78,9 @@
           (mu4e~initialise-icons)
           (remove-hook #'mu4e~initialise-icons-hook)))))
 
-  ;; Header view
-
-  (setq mu4e-headers-fields
-        '((:account . 12)
-          (:human-date . 8)
-          (:flags . 6) ; 3 icon flags
-          (:from . 25)
-          (:subject)))
-
   (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
+  (add-to-list 'mu4e-bookmarks
+               '(:name "Flagged messages" :query "flag:flagged" :key ?f))
 
   (defvar mu4e~header-colourised-faces
     '(all-the-icons-lblue
