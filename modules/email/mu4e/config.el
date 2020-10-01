@@ -171,7 +171,7 @@
   (advice-add #'mu4e~main-action-str :override #'mu4e~main-action-prettier-str))
 
 (use-package! org-msg
-  :after (mu4e org)
+  :after mu4e
   :when (featurep! :lang org)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"

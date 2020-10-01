@@ -256,6 +256,7 @@ clicked."
             (format "%.1fpx"
                     (/ (string-to-number
                         (shell-command-to-string
+                         ;; TODO change to use 'file'
                          (format "identify -format %%w %s"
                                  (substring img-uri 7)))) ; 7=(length "file://")
                        (plist-get org-format-latex-options :scale))))
@@ -286,7 +287,9 @@ account for the value of :scale in `org-format-latex-options'."
                                   :class (concat "latex-fragment-"
                                                  (if (equal "\\(" (substring latex-frag 0 2))
                                                      "inline" "block")))))
-            (when (and (memq processing-type '(dvipng convert)) IS-LINUX)
+            (when (and (memq processing-type '(dvipng convert))
+                       (not IS-WINDOWS) ; relies on posix path
+                       (executable-find "identify"))
               (apply #'plist-put attributes (+org-msg-img-scale-css source)))
             (org-html--format-image source attributes info)))))
      (t latex-frag))))
@@ -327,7 +330,9 @@ scales the image to account for the value of :scale in `org-format-latex-options
               processing-type info)))
         (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
           (let ((source (org-export-file-uri (match-string 1 formula-link))))
-            (when (and (memq processing-type '(dvipng convert)) IS-LINUX)
+            (when (and (memq processing-type '(dvipng convert))
+                       (not IS-WINDOWS) ; relies on posix path
+                       (executable-find "identify"))
               (apply #'plist-put attributes (+org-msg-img-scale-css source)))
             (org-html--wrap-latex-environment
              (org-html--format-image source attributes info)
