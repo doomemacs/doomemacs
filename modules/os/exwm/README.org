@@ -1,0 +1,94 @@
+#+TITLE:   os/exwm
+#+DATE:    September 25, 2020
+#+SINCE:   <replace with next tagged release version>
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#features][Features]]
+- [[#prerequisites][Prerequisites]]
+- [[#keybindings][Keybindings]]
+- [[#configuration][Configuration]]
+  - [[#step-1-enable-the-module][Step 1: Enable the module]]
+  - [[#step-2-the-xinitrc-file][Step 2: The =xinitrc= file]]
+  - [[#step-3-sync--reboot][Step 3: Sync & Reboot]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#issues][Issues]]
+
+* Description
+First class integration for EXWM (Emacs X Window Manager) allowing you to run Doom Emacs as your window manager.
+
+** Maintainers
++ @[[https:github.com/chayward1][chayward1]] (Author)
+
+** Module Flags
++ =+status= Enable a rudmentary statusbar via =doom/modeline=
++ =+firefox= Enable support for firefox integration with exwm.
+
+** Plugins
++ exwm
++ =+firefox=
+  + =:editor +evil=
+    + exwm-firefox-evil
+  + =else=
+    + exwm-firefox
+
+* Features
++ Multi-monitor support
++ Automatic pluggable HDMI handling
++ Evil/Non-evil Browser support (+firefox)
++ Rudamentary statubar via =doom/modeline=
+
+* Prerequisites
++ =xorg-xserver=
++ =xorg-xinit=
++ =xorg-randr=
+
+* Keybindings
+
+| Keys      | Description                      |
+|-----------+----------------------------------|
+| =s-r=     | Exit character / fullscreen mode |
+| =s-w=     | Switch workplaces interactively  |
+| =s-[0-9]= | Switch workplaces by index       |
+| =s-&=     | Launch application interactively |
+
+* Configuration
+** Step 1: Enable the module
+Enable the module in your =init.el= file:
+
+#+BEGIN_SRC emacs-lisp
+:os
+exwm             ; another doomed window manager
+#+END_SRC
+
+** Step 2: The =xinitrc= file
+*Create* or *Modify* your =xinitrc= file which should be located in yout =$HOME= directory in either the standard, or daemon configuration:
+
+#+BEGIN_SRC sh
+# ...
+exec emacs
+#+END_SRC
+
+If you prefer to use the emacs-daemon, you can use this =.xinitrc= file configuration instead:
+#+BEGIN_SRC sh
+# ...
+emacs --daemon -f exwm-enable
+exec emacsclient -c
+#+END_SRC
+
+** Step 3: Sync & Reboot
+Don't forget to run =doom/sync= to initialize the module! Reboot your machine and select the =xinitrc= session from your session manager. Your computer should now launch =xorg= with emacs as your window manager!
+
+* Troubleshooting
++ https://github.com/ch11ng/exwm
++ https://wiki.archlinux.org/index.php/EXWM
++ https://github.com/ieure/exwm-firefox
++ https://github.com/walseb/exwm-firefox-evil
++ https://github.com/ch11ng/exwm/wiki/Configuration-Example
+
+** Issues
++ [[https://github.ccom/walseb/exwm-firefox-evil/issues/1][Mouse clicks don't work in NORMAL mode]]
