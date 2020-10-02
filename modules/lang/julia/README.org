@@ -12,6 +12,7 @@
 - [[#features][Features]]
   - [[#language-server-1][Language Server]]
 - [[#configuration][Configuration]]
+  - [[#language-server-lsp][Language server (~+lsp~)]]
 
 * Description
 Adds Julia support to Doom Emacs
@@ -26,42 +27,48 @@ Adds Julia support to Doom Emacs
 + [[https://github.com/tpapp/julia-repl][julia-mode]]
 + [[https://github.com/JuliaEditorSupport/julia-emacs/][julia-repl]]
 + =+lsp= and =:tools lsp=
-  + [[https://github.com/non-jedi/lsp-julia][lsp-julia]]*
+  + [[https://github.com/non-jedi/lsp-julia][lsp-julia]]
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
 
 * Prerequisites
 This module has no direct prerequisites.
 
 ** Language Server
+~+lsp~ requires ~LanguageServer.jl~. To install this, execute the following in a
+Julia REPL.
 
-~+lsp~ requires the a manual installation of ~lsp-julia~ as it comes with a
-packaged version of ~LanguageServer.jl~ and its dependencies.
+#+BEGIN_SRC julia
+using Pkg
+Pkg.add("LanguageServer")
+#+END_SRC
+
+Alternatively, you can use the version of ~LanguageServer.jl~ and dependencies
+bundled by ~lsp-julia~. Try this if the former method doesn't work because
+~lsp-julia~ is not compatible with every version of ~LanguageServer.jl~. To
+use the bundled language server, put the following in your personal ~packages.el~
+and ~config.el~, respectively.
 
 #+BEGIN_SRC elisp
 ;; ~/.doom.d/packages.el
-(package! lsp-julia :recipe (:host github :repo "non-jedi/lsp-julia"))
+(package! lsp-julia)
+;; ~/.doom.d/config.el
+(after! straight
+  (setq lsp-julia-package-dir (concat straight-base-dir "straight/repos/lsp-julia/languageserver/")))
 #+END_SRC
 
 * Features
   # An in-depth list of features, how to use them, and their dependencies.
 ** Language Server
-   ~+lsp~ adds code completion, syntax checking, formatting and other ~lsp-mode~
-   features. This requires a manual installation of ~lsp-julia~ as it bundles
-   ~LanguageServer.jl~ and its dependencies.
-  
+~+lsp~ adds code completion, syntax checking, formatting and other ~lsp-mode~
+features. It requires ~LanguageServer.jl~, the installation of which is
+described above.
+
 * Configuration
+** Language server (~+lsp~)
 ~lsp-julia~ requires a variable be set for the Julia environment. This is set to
 v1.0 by default as it is the current LTS.
 
 #+BEGIN_SRC elisp
 ;; ~/.doom.d/config.el
 (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
-#+END_SRC
-
-If you would like to use your own installation of ~LanguageServer.jl~, put the
-following in your personal ~config.el~.
-
-#+BEGIN_SRC elisp
-;; ~/.doom.d/config.el
-(setq lsp-julia-package-dir nil)
 #+END_SRC
