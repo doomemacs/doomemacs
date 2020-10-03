@@ -80,7 +80,7 @@
 
   (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
   (add-to-list 'mu4e-bookmarks
-               '(:name "Flagged messages" :query "flag:flagged" :key ?f))
+               '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
 
   (defun mu4e-header-colourise (str)
     (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
@@ -151,6 +151,9 @@
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
+  (map! :map mu4e-main-mode-map
+        :ne "h" #'+workspace/other)
+
   (map! :map mu4e-headers-mode-map
         :e "l" #'mu4e-msg-to-agenda)
 
@@ -174,7 +177,10 @@
 
   (add-hook 'mu4e-compose-pre-hook '+mu4e-set-account)
 
-  (advice-add #'mu4e~main-action-str :override #'mu4e~main-action-prettier-str))
+  (advice-add #'mu4e~main-action-str :override #'mu4e~main-action-prettier-str)
+  (when (featurep! :editor evil)
+    ;; As mu4e~main-action-prettier-str replaces [k]ey with key q]uit should become quit
+    (setq evil-collection-mu4e-end-region-misc "quit")))
 
 (use-package! org-msg
   :after mu4e
