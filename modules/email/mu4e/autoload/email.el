@@ -193,7 +193,7 @@ is tomorrow.  With two prefixes, select the deadline."
                      (t         "later"))))))
 
 ;;;###autoload
-(defun my-mu4e-set-account ()
+(defun +mu4e-set-account ()
   "Set the account for composing a message. If a 'To' header is present,
 and correspands to an email account, this account will be selected.
 Otherwise, the user is prompted for the account they wish to use."

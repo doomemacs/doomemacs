@@ -172,7 +172,7 @@
           :v "u" #'mu4e-headers-mark-for-unmark
           :vn "l" #'mu4e-msg-to-agenda))
 
-  (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-account)
 
   (advice-add #'mu4e~main-action-str :override #'mu4e~main-action-prettier-str))
 
