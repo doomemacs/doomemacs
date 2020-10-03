@@ -1,11 +1,11 @@
 ;;; os/exwm/config.el -*- lexical-binding: t; -*-
 
 ;; Use the `ido' configuration for a few configuration fixes that alter
-;; 'C-x b' workplace switching behaviour
+;; 'C-x b' workplace switching behaviour. This also effects the functionality
+;; of 'SPC .' file searching in doom regardless of the users `ido' configuration.
 (require 'exwm)
 (require 'exwm-config)
-(exwm-config-ido)
-(ido-mode +1)
+(exwm-config--fix/ido-buffer-window-other-frame)
 
 ;; Configure `exwm-randr' to support multi-monitor setups as well as
 ;; hot-plugging HDMI outputs. Read more at
