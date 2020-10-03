@@ -82,7 +82,14 @@
   (add-to-list 'mu4e-bookmarks
                '(:name "Flagged messages" :query "flag:flagged" :key ?f))
 
-  (defvar mu4e~header-colourised-faces
+  (defun mu4e-header-colourise (str)
+    (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
+           (colour (nth (% str-sum (length mu4e-header-colourised-faces))
+                        mu4e-header-colourised-faces)))
+      (put-text-property 0 (length str) 'face colour str)
+      str))
+
+  (defvar mu4e-header-colourised-faces
     '(all-the-icons-lblue
       all-the-icons-purple
       all-the-icons-blue-alt
