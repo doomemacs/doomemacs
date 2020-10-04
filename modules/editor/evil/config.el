@@ -391,7 +391,7 @@ directives. By default, this only recognizes C directives.")
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
       (:when (featurep! :checkers spell)
-       :n  "zq"   #'+spell/add-word
+       :n  "zg"   #'+spell/add-word
        :n  "zw"   #'+spell/remove-word
        :m  "[s"   #'+spell/previous-error
        :m  "]s"   #'+spell/next-error)
