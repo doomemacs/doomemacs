@@ -340,8 +340,9 @@ Emacs consults this variable every time a file is read or library loaded, or
 when certain functions in the file API are used (like ~expand-file-name~ or
 ~file-truename~).
 
-Emacs does this to check if a special handler is needed to read that file, but none
-of them are (typically) necessary at startup, so we disable them (temporarily!):
+Emacs does this to check if a special handler is needed to read that file, but
+none of them are (typically) necessary at startup, so we disable them
+(temporarily!):
 
 #+BEGIN_SRC emacs-lisp
 (defvar doom--file-name-handler-alist file-name-handler-alist)
