@@ -1,10 +1,8 @@
-.local/
+.*
 var/
 modules/private
-.yas-compiled-snippets.el
 
 # folders created by Cask
-.cask/
 cask/
 elpa/
 test/.local*/
@@ -12,11 +10,6 @@ test/result
 result
 
 # emacs tempfiles that shouldn't be there
-.mc-lists.el
-.org-id-locations
-.tern-port
-.extension/
-.dap-breakpoints
 auto-save-list/
 semanticdb
 ede-projects.el
@@ -35,4 +28,3 @@ server/
 # transient/os temp files
 *.cache-*
 *.log
-.directory
