@@ -1068,8 +1068,7 @@ Of course, an empty module isn't terribly useful, but it goes to show that nothi
   loaded when they are used.
 
 These are a few exceptional examples of a well-rounded module:
-
-+ [[file:/mnt/projects/conf/doom-emacs/modules/completion/company/README.org][:completion company]]
++ [[file:../modules/completion/company/README.org][:completion company]]
 
 The remainder of this guide will go over the technical details of a Doom module.
 
