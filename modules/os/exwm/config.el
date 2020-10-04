@@ -32,6 +32,9 @@
                         (string= "gimp" exwm-instance-name))
                 (exwm-workspace-rename-buffer exwm-title))))
 
+  ;; Show `exwm' buffers in buffer switching prompts.
+  (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)
+
   ;; Enable the window manager.
   (exwm-enable))
 
