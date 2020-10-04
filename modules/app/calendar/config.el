@@ -22,7 +22,11 @@
         cfw:fchar-top-left-corner ?┏
         cfw:fchar-top-right-corner ?┓)
 
+  ;; Keybindings
   (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
+  (when (featurep! :editor evil +everywhere)
+    (evil-define-key 'normal cfw:details-mode-map
+      "q" #'cfw:details-kill-buffer-command))
 
   (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
   (add-hook 'cfw:calendar-mode-hook 'hide-mode-line-mode)
