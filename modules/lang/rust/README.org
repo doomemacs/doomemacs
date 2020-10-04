@@ -17,6 +17,7 @@
   - [[#enable-rls-by-default][Enable RLS by default]]
   - [[#enabling-elgot-support-for-rust][Enabling elgot support for Rust]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#errore0670-async-fn-is-not-permitted-in-the-2015-edition][error[E0670]: `async fn` is not permitted in the 2015 edition]]
 
 * Description
 This module adds support for the Rust language and integration for its tools,
@@ -100,4 +101,11 @@ selected by default. Modify ~rustic-lsp-server~ to change the default:
 Doom's =:tools lsp= module has an =+eglot= flag. Enable it and this module will
 use eglot instead.
 
-* TODO Troubleshooting
+* Troubleshooting
+** error[E0670]: `async fn` is not permitted in the 2015 edition
+You may be seeing this error, despite having ~edition = "2018"~ in your
+=Cargo.toml=. This error actually originates from ~rustfmt~, which the LSP
+server tries to invoke on save (if you have ~rustic-format-on-save~ or =:editor
+format= enabled).
+
+To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.
