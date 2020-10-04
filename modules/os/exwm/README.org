@@ -25,8 +25,9 @@ First class integration for EXWM (Emacs X Window Manager) allowing you to run Do
 + @[[https:github.com/chayward1][chayward1]] (Author)
 
 ** Module Flags
++ =+xim= Enable emacs input methods in all x windows
 + =+status= Enable a rudmentary statusbar via =doom/modeline=
-+ =+firefox= Enable support for firefox integration with exwm.
++ =+firefox= Enable support for firefox integration with exwm
 
 ** Plugins
 + exwm

@@ -1,5 +1,18 @@
 ;;; os/exwm/config.el -*- lexical-binding: t; -*-
 
+;; Define custom variables for the `exwm-update-class-hook' for users to
+;; configure which buffers names should NOT be modified.
+(defvar exwm/ignore-wm-prefix "sun-awt-X11-"
+  "Don't rename exwm buffers with this prefix.")
+(defvar exwm/ignore-wm-name "gimp"
+  "Don't rename exwm buffers with this name.")
+
+;; Make sure `exwm' windows can be restored when switching workspaces.
+(defun exwm--update-utf8-title-advice (oldfun id &optional force)
+  "Only update the window title when the buffer is visible."
+  (when (get-buffer-window (exwm--id->buffer id))
+    (funcall oldfun id force)))
+
 ;; Confgure `exwm' the X window manager for emacs.
 (use-package! exwm
   :config
@@ -22,18 +35,22 @@
   ;; which are run when a new X window class name or title is available.
   (add-hook 'exwm-update-class-hook
             (lambda ()
-              (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                          (string= "gimp" exwm-instance-name))
+              (unless (or (string-prefix-p exwm/ignore-wm-prefix exwm-instance-name)
+                          (string= exwm/ignore-wm-name exwm-instance-name))
                 (exwm-workspace-rename-buffer exwm-class-name))))
   (add-hook 'exwm-update-title-hook
             (lambda ()
               (when (or (not exwm-instance-name)
-                        (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                        (string= "gimp" exwm-instance-name))
+                        (string-prefix-p exwm/ignore-wm-prefix exwm-instance-name)
+                        (string= exwm/ignore-wm-name exwm-instance-name))
                 (exwm-workspace-rename-buffer exwm-title))))
 
   ;; Show `exwm' buffers in buffer switching prompts.
   (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)
+
+  ;; Restore window configurations involving exwm buffers by only changing names
+  ;; of visible buffers.
+  (advice-add #'exwm--update-utf8-title :around #'exwm--update-utf8-title-advice)
 
   ;; Enable the window manager.
   (exwm-enable))
@@ -75,6 +92,20 @@
                           (list 0 (match-string 1))))))))
   (exwm-randr-enable))
 
+;; Configure emacs input methods in all X windows.
+(when (featurep! +xim)
+  (use-package! exwm-xim
+    :after exwm
+    :config
+    ;; These variables are required for X programs to pick up Emacs IM.
+    (setenv "XMODIFIERS" "@im=exwm-xim")
+    (setenv "GTK_IM_MODULE" "xim")
+    (setenv "QT_IM_MODULE" "xim")
+    (setenv "CLUTTER_IM_MODULE" "xim")
+    (setenv "QT_QPA_PLATFORM" "xcb")
+    (setenv "SDL_VIDEODRIVER" "x11")
+    (exwm-xim-enable)))
+
 ;; Configure the rudamentary status bar.
 (when (featurep! +status)
   (setq display-time-default-load-average nil)
@@ -83,17 +114,21 @@
 
 ;; Configure `exwm-firefox-*'.
 (when (featurep! +firefox)
-  ;; Add the <ESC> key to the exwm input keys for firefox buffers.
-  (dolist (k `(escape))
-    (cl-pushnew k exwm-input-prefix-keys))
+  (use-package! exwm-firefox-core
+    :after exwm
+    :config
+    ;; Add the <ESC> key to the exwm input keys for firefox buffers.
+    (dolist (k `(escape))
+      (cl-pushnew k exwm-input-prefix-keys)))
 
   ;; Configure further depending if the user has evil mode enabled.
-  (require 'exwm-firefox-core)
   (when (featurep! :editor evil)
-    (require 'exwm-firefox-evil)
-    ;; Add the firefox wm class name.
-    (dolist (k `("firefox"))
-      (cl-pushnew k exwm-firefox-evil-firefox-class-name))
-    ;; Add the firefox buffer hook
-    (add-hook 'exwm-manage-finish-hook
-              'exwm-firefox-evil-activate-if-firefox)))
+    (use-package! exwm-firefox-evil
+      :after exwm
+      :config
+      ;; Add the firefox wm class name.
+      (dolist (k `("firefox"))
+        (cl-pushnew k exwm-firefox-evil-firefox-class-name))
+      ;; Add the firefox buffer hook
+      (add-hook 'exwm-manage-finish-hook
+              'exwm-firefox-evil-activate-if-firefox))))
