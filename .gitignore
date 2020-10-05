@@ -1,22 +1,22 @@
-.*
-var/
-modules/private
-
-# folders created by Cask
-cask/
-elpa/
+/.*
+*.cache*
+*.log
+/modules/private
 test/.local*/
 test/result
-result
 
 # emacs tempfiles that shouldn't be there
+.yas-compiled-snippets.el
 auto-save-list/
-semanticdb
+cask/
 ede-projects.el
-tramp
-smex-items
+elpa/
 network-security.data
+semanticdb
 server/
+smex-items
+tramp
+var/
 
 # compiled files
 *.elc
@@ -24,7 +24,3 @@ server/
 *.fas
 *.dat
 *.eld
-
-# transient/os temp files
-*.cache-*
-*.log
