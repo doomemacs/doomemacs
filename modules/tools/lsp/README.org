@@ -43,7 +43,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
 | [[../../lang/fsharp/README.org][:lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
 | [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
-| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-ide-engine                                            |
+| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
 | [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
 | [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
