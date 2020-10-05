@@ -650,10 +650,8 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
        :desc "Big mode"                     "b" #'doom-big-font-mode
-       (:when (and (featurep! :ui fill-column) EMACS27+)
-        :desc "Fill Column Indicator"       "c" #'display-fill-column-indicator-mode)
-       (:when (and (featurep! :ui fill-column) (not EMACS27+))
-        :desc "Fill Column Indicator"       "c" #'hl-fill-column-mode)
+       (:when (featurep! :ui fill-column)
+        :desc "Fill Column Indicator"       "c" #'+fill-column-enable-h)
        :desc "Flymake"                      "f" #'flymake-mode
        (:when (featurep! :checkers syntax)
         :desc "Flycheck"                   "f" #'flycheck-mode)
