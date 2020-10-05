@@ -33,7 +33,7 @@ loaded last*, before =:config= modules.
 
 * :checkers
 + syntax =+childframe= - Live error/warning highlights
-+ spell =+everywhere +aspell +hunspell= - Spell checking
++ spell =+everywhere +aspell +hunspell +enchant= - Spell checking
 + grammar - TODO
 
 * :completion
