@@ -8,6 +8,7 @@
   (set-company-backend! 'nix-mode 'company-nixos-options)
   (set-lookup-handlers! 'nix-mode
     :documentation '(+nix/lookup-option :async t))
+  (set-popup-rule! "^\\*nixos-options-doc\\*$" :ttl 0 :quit t)
 
   (map! :localleader
         :map nix-mode-map
