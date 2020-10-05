@@ -512,7 +512,8 @@ directives. By default, this only recognizes C directives.")
        "o"       #'doom/window-enlargen
        ;; Delete window
        "d"       #'evil-window-delete
-       "C-C"     #'ace-delete-window)
+       "C-C"     #'ace-delete-window
+       "T"       #'tear-off-window)
 
       ;; text objects
       :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
