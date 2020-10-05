@@ -142,7 +142,8 @@ This forces it to read the background before rendering."
                                         remap)
                                       'default)
                                   :background nil t))))
-  (+org-refresh-latex-background-h)
+  (when doom-init-theme-p
+    (+org-refresh-latex-background-h))
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own
