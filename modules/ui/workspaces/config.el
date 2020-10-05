@@ -46,7 +46,7 @@ stored in `persp-save-dir'.")
         (delq! 'buffer-predicate default-frame-alist 'assq)
         (require 'persp-mode)
         (if (daemonp)
-            (add-hook 'after-make-frame-functions #'persp-mode-start-and-remove-from-make-frame-hook)
+            (add-hook 'after-make-frame-functions #'persp-mode-restore-and-remove-from-make-frame-hook)
           (persp-mode +1)))))
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
