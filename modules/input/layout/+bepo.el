@@ -9,7 +9,8 @@
 (add-hook 'evil-collection-setup-hook #'doom-bepo--evil-collection-hook)
 
 ;; Highlight non breaking spaces as error in prog modes only
-;; TODO: this variable is defined in a file called xdisp.c Will that work in non-X builds ?
+;; FIXME: this variable is defined in a file called xdisp.c Will that work in non-X builds ?
+;; From early observations in sway running pgtk fork, it does not.
 (setq nobreak-char-display t)
 (set-face-attribute 'nobreak-space nil :underline t)
 
@@ -24,6 +25,7 @@
     (setq switch-window-shortcut-style 'qwerty
           switch-window-qwerty-shortcuts '("a" "u" "i" "e" "," "c" "t" "s" "r")))
 
+  (map! "C-é" 'evil-window-map)
   (map!
    :leader
    :desc "Window" "é" 'evil-window-map
