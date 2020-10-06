@@ -61,10 +61,15 @@ list remains lean."
   (if full commit (substring commit 0 7)))
 
 (defun doom--commit-log-between (start-ref end-ref)
-  (and (straight--call
-        "git" "log" "--oneline" "--no-merges"
-        "-n" "25" end-ref (concat "^" (regexp-quote start-ref)))
-       (straight--process-get-output)))
+  (when-let*
+      ((status (straight--call
+                "git" "log" "--oneline" "--no-merges"
+                "-n" "26" end-ref (concat "^" (regexp-quote start-ref))))
+       (output (string-trim-right (straight--process-get-output)))
+       (lines (split-string output "\n")))
+    (if (> (length lines) 25)
+        (concat (string-join (butlast lines 1) "\n") "\n[...]")
+      output)))
 
 (defun doom--barf-if-incomplete-packages ()
   (let ((straight-safe-mode t))
@@ -359,13 +364,12 @@ declaration) or dependency thereof that hasn't already been."
                      (cl-return)))
                (puthash local-repo t repos-to-rebuild)
                (puthash package t packages-to-rebuild)
-               (unless (string-empty-p output)
-                 (print! (start "\033[K(%d/%d) Updating %s...") i total local-repo)
-                 (print-group! (print! "%s" (indent 2 output))))
                (print! (success "\033[K(%d/%d) %s updated (%s -> %s)")
                        i total local-repo
                        (doom--abbrev-commit ref)
-                       (doom--abbrev-commit target-ref)))
+                       (doom--abbrev-commit target-ref))
+               (unless (string-empty-p output)
+                 (print-group! (print! "%s" (indent 2 output)))))
            (user-error
             (signal 'user-error (error-message-string e)))
            (error
