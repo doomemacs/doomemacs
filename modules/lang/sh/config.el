@@ -79,8 +79,7 @@
   :config (set-formatter! 'fish-mode #'fish_indent))
 
 (use-package! powershell
-  :when (featurep! +powershell)
-  :mode (("\\.ps1\\'" . powershell-mode)
-         ("\\.psm1\\'" . powershell-mode))
-  :config (when (featurep! +lsp)
-            (add-hook 'powershell-mode-hook #'lsp!)))
+	      :when (featurep! +powershell)
+	      :config
+	      (when (featurep! +lsp)
+		(add-hook 'powershell-mode-local-vars-hook #'lsp!)))
