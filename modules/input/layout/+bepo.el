@@ -27,8 +27,6 @@
   (map!
    :leader
    :desc "Window" "é" 'evil-window-map
-   (:prefix "é"
-    :desc "Ace window" "é" #'ace-window)
    (:when (featurep! :ui popup)
     :desc "Toggle last popup"     "#"    #'+popup/toggle)
    (:when (featurep! :ui workspaces)
