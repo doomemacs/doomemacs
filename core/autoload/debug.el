@@ -50,7 +50,7 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
                  (set-default var enabled)
                (add-to-list 'doom--debug-vars-undefined var)))))
     (when (fboundp 'explain-pause-mode)
-      (explain-pause-mode enabled))
+      (explain-pause-mode (if enabled +1 -1)))
     ;; Watch for changes in `doom-debug-variables', or when packages load (and
     ;; potentially define one of `doom-debug-variables'), in case some of them
     ;; aren't defined when `doom-debug-mode' is first loaded.
