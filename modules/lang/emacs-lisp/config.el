@@ -33,7 +33,25 @@ employed so that flycheck still does *some* helpful linting.")
     :definition    #'+emacs-lisp-lookup-definition
     :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! '(emacs-lisp-mode lisp-interaction-mode) "Emacs Lisp")
-  (set-ligatures! 'emacs-lisp-mode :lambda "lambda")
+  (set-ligatures! 'emacs-lisp-mode
+    ;; Functional
+    :lambda        "lambda"
+    :def           "defun"
+    :map           "map"
+    ;; Types
+    :null          "null"
+    :true          "t"
+    :true          "T"
+    :false         "nil"
+    ;; Flow
+    :not           "not"
+    :in            "in"
+    :and           "and"
+    :or            "or"
+    :for           "for"
+    :return        "write"
+    ;; Other
+    :dot           ".")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
