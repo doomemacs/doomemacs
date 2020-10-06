@@ -104,7 +104,7 @@ It does, /but/ there are caveats:
   pioneers, willing to test Doom on Windows.
 
 That said, Doom does have happy Windows users (using WSL or scoop/chocolatey).
-The [[file:getting_started.org::On Windows][Getting Starting guide]] will walk you through what we know.
+[[file:getting_started.org::On Windows][The Getting Starting guide]] will walk you through what we know.
 
 Help us improve our documentation if you managed to get Doom running on Windows!
 
