@@ -323,7 +323,11 @@ Some items are not supported by the `nsm.el' module."
                       package--init-file-ensured t
                       package-user-dir ,package-user-dir
                       package-archives ',package-archives
-                      user-emacs-directory ,doom-emacs-dir)
+                      user-emacs-directory ,doom-emacs-dir
+                      comp-deferred-compilation nil
+                      comp-eln-load-path ',(bound-and-true-p comp-eln-load-path)
+                      comp-async-env-modifier-form ',(bound-and-true-p comp-async-env-modifier-form)
+                      comp-deferred-compilation-black-list ',(bound-and-true-p comp-deferred-compilation-black-list))
                 (with-eval-after-load 'undo-tree
                   ;; undo-tree throws errors because `buffer-undo-tree' isn't
                   ;; correctly initialized
