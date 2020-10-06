@@ -75,9 +75,7 @@
              :files ("css" "dist" "js" "plugin"))
     :pin "15815efe05ca69c35ce66cfdbf93316e1db66ecb"))
 (when (featurep! +roam)
-  (package! org-roam :pin "c33867e6bc282ff0a69d4ef4a020db82604039bb")
-  (when (featurep! :completion company)
-    (package! company-org-roam :pin "1132663bd68022aa7ea005ff53c7c7571890769d")))
+  (package! org-roam :pin "0cce9d116580665d9eb9284d3317ae1beda56bc1"))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")

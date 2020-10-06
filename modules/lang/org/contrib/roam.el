@@ -51,6 +51,9 @@
               ((featurep! :completion ido) 'ido)
               ('default)))
 
+  (when (featurep! :completion company)
+    (set-company-backend! 'org-mode '(company-capf company-yasnippet company-dabbrev)))
+
   ;; Normally, the org-roam buffer doesn't open until you explicitly call
   ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
   ;; org-roam buffer will be opened for you when you use `org-roam-find-file'
@@ -82,10 +85,3 @@
 ;; detected), we can safely chain `org-roam-protocol' to it.
 (use-package! org-roam-protocol
   :after org-protocol)
-
-
-(use-package! company-org-roam
-  :when (featurep! :completion company)
-  :after org-roam
-  :config
-  (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
