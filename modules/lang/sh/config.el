@@ -79,7 +79,8 @@
   :config (set-formatter! 'fish-mode #'fish_indent))
 
 (use-package! powershell
-	      :when (featurep! +powershell)
-	      :config
-	      (when (featurep! +lsp)
-		(add-hook 'powershell-mode-local-vars-hook #'lsp!)))
+  :when (featurep! +powershell)
+  :defer t
+  :config
+  (when (featurep! +lsp)
+    (add-hook 'powershell-mode-local-vars-hook #'lsp!)))
