@@ -285,7 +285,9 @@ config.el instead."
 
 (after! comp
   ;; HACK Disable native-compilation for some troublesome packages
-  (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
+  (dolist (entry (list (concat "\\`" doom-local-dir ".*/evil-collection-vterm\\.el\\'")
+                       (concat "\\`" doom-local-dir "autoloads\\.el\\'")))
+    (add-to-list 'comp-deferred-compilation-black-list entry)))
 
 
 ;;

@@ -120,9 +120,34 @@ list remains lean."
     (setq straight--recipe-lookup-cache (make-hash-table :test #'eq)
           doom--cli-updated-recipes t)))
 
-(defvar doom--expected-eln-files nil)
+(defvar doom--eln-output-expected nil)
+
+(defvar doom--eln-output-path (car comp-eln-load-path))
+
+(defun doom--eln-file-name (file)
+  "Return the short .eln file name corresponding to `file'."
+  (concat comp-native-version-dir "/"
+          (file-name-nondirectory
+           (comp-el-to-eln-filename file))))
+
+(defun doom--eln-output-file (eln-name)
+  "Return the expected .eln file corresponding to `eln-name'."
+  (concat doom--eln-output-path eln-name))
+
+(defun doom--eln-error-file (eln-name)
+  "Return the expected .error file corresponding to `eln-name'."
+  (concat doom--eln-output-path eln-name ".error"))
+
+(defun doom--find-eln-file (eln-name)
+  "Find `eln-name' on the `comp-eln-load-path'."
+  (cl-some (lambda (eln-path)
+             (let ((file (concat eln-path eln-name)))
+               (when (file-exists-p file)
+                 file)))
+           comp-eln-load-path))
 
 (defun doom--elc-file-outdated-p (file)
+  "Check whether the corresponding .elc for `file' is outdated."
   (let ((elc-file (byte-compile-dest-file file)))
     ;; NOTE Ignore missing elc files, they could be missing due to
     ;; `no-byte-compile'. Rebuilding unnecessarily is expensive.
@@ -131,17 +156,12 @@ list remains lean."
       (doom-log "%s is newer than %s" file elc-file)
       t)))
 
-;; DEPRECATED Remove later
-(defun doom--comp-output-filename (file)
-  (if (fboundp 'comp-output-filename)
-      (comp-output-filename file)
-    (comp-el-to-eln-filename file)))
-
 (defun doom--eln-file-outdated-p (file)
-  (when-let* ((eln-file (doom--comp-output-filename file))
-              (error-file (concat eln-file ".error")))
-    (push eln-file doom--expected-eln-files)
-    (cond ((file-exists-p eln-file)
+  "Check whether the corresponding .eln for `file' is outdated."
+  (let* ((eln-name (doom--eln-file-name file))
+         (eln-file (doom--find-eln-file eln-name))
+         (error-file (doom--eln-error-file eln-name)))
+    (cond (eln-file
            (when (file-newer-than-file-p file eln-file)
              (doom-log "%s is newer than %s" file eln-file)
              t))
@@ -150,18 +170,20 @@ list remains lean."
              (doom-log "%s is newer than %s" file error-file)
              t))
           (t
-           (doom-log "%s doesn't exist" eln-file)
+           (doom-log "%s doesn't exist" eln-name)
            t))))
 
 (defun doom--native-compile-done-h (file)
-  (when-let* ((file)
-              (eln-file (doom--comp-output-filename file))
-              (error-file (concat eln-file ".error")))
-    (if (file-exists-p eln-file)
-        (doom-log "Compiled %s" eln-file)
-      (make-directory (file-name-directory error-file) 'parents)
-      (write-region "" nil error-file)
-      (doom-log "Compiled %s" error-file))))
+  "Callback fired when an item has finished async compilation."
+  (when file
+    (let* ((eln-name (doom--eln-file-name file))
+           (eln-file (doom--eln-output-file eln-name))
+           (error-file (doom--eln-error-file eln-name)))
+      (if (file-exists-p eln-file)
+          (doom-log "Compiled %s" eln-file)
+        (make-directory (file-name-directory error-file) 'parents)
+        (write-region "" nil error-file)
+        (doom-log "Wrote %s" error-file)))))
 
 (defun doom--native-compile-jobs ()
   "How many async native compilation jobs are queued or in-progress."
@@ -174,25 +196,39 @@ list remains lean."
 (defun doom--wait-for-compile-jobs ()
   "Wait for all pending async native compilation jobs."
   (cl-loop for pending = (doom--native-compile-jobs)
-           for tick = 0 then (% (1+ tick) 15)
            with previous = 0
            while (not (zerop pending))
-           if (and (zerop tick) (/= previous pending)) do
-           (print! "- Waiting for %d async jobs..." pending)
+           if (/= previous pending) do
+           (print! (info "\033[KWaiting for %d async jobs...\033[1A" pending))
            (setq previous pending)
            else do
            (let ((inhibit-message t))
-             (sleep-for 0.1)))
-  ;; HACK Write .error files for any missing files which still don't exist.
-  ;;      We'll just assume there was some kind of error...
-  (cl-loop for eln-file in doom--expected-eln-files
-           for error-file = (concat eln-file ".error")
+             (sleep-for 0.1))))
+
+(defun doom--write-missing-eln-errors ()
+  "Write .error files for any expected .eln files that are missing."
+  (cl-loop for file in doom--eln-output-expected
+           for eln-name = (doom--eln-file-name file)
+           for eln-file = (doom--eln-output-file eln-name)
+           for error-file = (doom--eln-error-file eln-name)
            unless (or (file-exists-p eln-file)
-                      (file-exists-p error-file)) do
-           (make-directory (file-name-directory error-file) 'parents)
-           (write-region "" nil error-file)
-           (doom-log "Compiled %s" error-file))
-  (setq doom--expected-eln-files nil))
+                      (file-newer-than-file-p error-file file))
+           do (make-directory (file-name-directory error-file) 'parents)
+              (write-region "" nil error-file)
+              (doom-log "Wrote %s" error-file))
+  (setq doom--eln-output-expected nil))
+
+(defun doom--compile-site-packages ()
+  "Queue async compilation for all non-doom Elisp files."
+  (when (fboundp 'native-compile-async)
+    (cl-loop with paths = (cl-loop for path in load-path
+                                   if (not (string-prefix-p doom-local-dir path))
+                                   collect path)
+             for file in (doom-files-in paths :match "\\.el\\(\\.gz\\)?$")
+             if (and (file-exists-p (byte-compile-dest-file file))
+                     (not (doom--find-eln-file (doom--eln-file-name file)))) do
+             (doom-log "Compiling %s" file)
+             (native-compile-async file nil 'late))))
 
 
 (defun doom-cli-packages-install ()
@@ -229,7 +265,9 @@ declaration) or dependency thereof that hasn't already been."
                   (error
                    (signal 'doom-package-error (list package e))))))
          (progn
+           (doom--compile-site-packages)
            (doom--wait-for-compile-jobs)
+           (doom--write-missing-eln-errors)
            (print! (success "Installed %d packages") (length built)))
        (print! (info "No packages need to be installed"))
        nil))))
@@ -272,12 +310,16 @@ declaration) or dependency thereof that hasn't already been."
                                       if (or (if want-byte   (doom--elc-file-outdated-p file))
                                              (if want-native (doom--eln-file-outdated-p file)))
                                       do (setq outdated t)
+                                         (when want-native
+                                           (push file doom--eln-output-expected))
                                       finally return outdated))
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (progn
+           (doom--compile-site-packages)
            (doom--wait-for-compile-jobs)
-           (print! (success "Rebuilt %d package(s)") (length built)))
+           (doom--write-missing-eln-errors)
+           (print! (success "\033[KRebuilt %d package(s)") (length built)))
        (print! (success "No packages need rebuilding"))
        nil))))
 
