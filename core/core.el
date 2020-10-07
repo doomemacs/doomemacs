@@ -284,13 +284,6 @@ config.el instead."
   (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
 
 (after! comp
-  ;; HACK `comp-eln-load-path' isn't fully respected yet, because native
-  ;;      compilation occurs in another emacs process that isn't seeded with our
-  ;;      value for `comp-eln-load-path', so we inject it ourselves:
-  (setq comp-async-env-modifier-form
-        `(progn
-           ,comp-async-env-modifier-form
-           (setq comp-eln-load-path ',(bound-and-true-p comp-eln-load-path))))
   ;; HACK Disable native-compilation for some troublesome packages
   (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
 
