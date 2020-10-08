@@ -53,20 +53,10 @@
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append))
+  (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
 
-
-(use-package! company-tng
-  :when (featurep! +tng)
-  :after-call post-self-insert-hook
-  :config
-  (add-to-list 'company-frontends 'company-tng-frontend)
-  (define-key! company-active-map
-    "RET"       nil
-    [return]    nil
-    "TAB"       #'company-select-next
-    [tab]       #'company-select-next
-    [backtab]   #'company-select-previous))
+  (when (featurep! +tng)
+    (company-tng-mode +1)))
 
 
 ;;

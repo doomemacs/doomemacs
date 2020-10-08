@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/ivy/packages.el
 
-(package! swiper :pin "9bb68419f1088ee4d8f2b76f84995fa02bceeed3")
+(package! swiper :pin "b65e401c22ec56a008b00f651cd9536caf593d43")
 (package! ivy)
 (package! ivy-hydra)
 (package! counsel)
@@ -12,12 +12,12 @@
 (package! wgrep :pin "f0ef9bfa44db503cdb2f83fcfbd2fa4e2382ef1f")
 
 (if (featurep! +prescient)
-    (package! ivy-prescient :pin "cc289ba3b0d89f251267ca2b669d01b3afecc530")
+    (package! ivy-prescient :pin "0c5d611d9fc6431dd049a71a6eda163c37617a33")
   (when (featurep! +fuzzy)
-    (package! flx :pin "17f5c9cb2af18aa6f52910ff4a5a63591261ced5")))
+    (package! flx :pin "05600ff855020515d1243cf919cba1a6e77e7a1c")))
 
 (when (featurep! +childframe)
-  (package! ivy-posframe :pin "44749562a9e68bd43ccaa225b31311476fab1251"))
+  (package! ivy-posframe :pin "1e602a7bf66a5d9c97069c48eec2a10aaef0b421"))
 
 (when (featurep! +icons)
   (package! all-the-icons-ivy :pin "a70cbfa1effe36efc946a823a580cec686d5e88d"))
