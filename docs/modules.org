@@ -142,7 +142,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
 + scala =+lsp= - TODO
 + [[file:../modules/lang/scheme/README.org][scheme]] - TODO
-+ [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp= - TODO
++ [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp +powershell= - TODO
 + [[file:../modules/lang/sml/README.org][sml]] - TODO
 + [[file:../modules/lang/solidity/README.org][solidity]] - TODO
 + swift =+lsp= - TODO

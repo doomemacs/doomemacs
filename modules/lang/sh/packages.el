@@ -6,3 +6,6 @@
 
 (when (featurep! +fish)
   (package! fish-mode :pin "db257db81058b0b12f788c324c264cc59b9a5bf4"))
+
+(when (featurep! +powershell)
+  (package! powershell :pin "87826777bd3ebd53740be99b4546bfc11ccc625d"))
