@@ -84,6 +84,8 @@ variable for an explanation of the defaults (in comments). See
       anaconda-mode
       apropos
       arc-mode
+      auto-package-update
+      bm
       bookmark
       (buff-menu "buff-menu")
       calc
@@ -123,6 +125,7 @@ variable for an explanation of the defaults (in comments). See
       eval-sexp-fu
       evil-mc
       eww
+      finder
       flycheck
       flymake
       free-keys
@@ -143,6 +146,7 @@ variable for an explanation of the defaults (in comments). See
       image
       image-dired
       image+
+      imenu
       imenu-list
       indium
       info
@@ -163,10 +167,13 @@ variable for an explanation of the defaults (in comments). See
       mu4e
       mu4e-conversation
       neotree
+      newsticker
       notmuch
       nov
       (occur replace)
       omnisharp
+      org-present
+      osx-dictionary
       outline
       p4
       (package-menu package)
@@ -182,6 +189,7 @@ variable for an explanation of the defaults (in comments). See
       realgud
       reftex
       restclient
+      rg
       rjsx-mode
       robe
       rtags
@@ -194,8 +202,11 @@ variable for an explanation of the defaults (in comments). See
       tar-mode
       (term term ansi-term multi-term)
       tetris
+      ,@(if EMACS27+ '(thread))
       tide
+      timer-list
       transmission
+      trashed
       typescript-mode
       vc-annotate
       vc-dir
@@ -231,8 +242,8 @@ and complains if a module is loaded too early (during startup)."
       (funcall-interactively orig-fn)))
 
   ;; These modes belong to packages that Emacs always loads at startup, causing
-  ;; evil-collection to load immediately. We avoid this by loading them after
-  ;; evil-collection has first loaded...
+  ;; evil-collection and it's co-packages to all load immediately. We avoid this
+  ;; by loading them after evil-collection has first loaded...
   (with-eval-after-load 'evil-collection
     ;; Don't let evil-collection interfere with certain keys
     (setq evil-collection-key-blacklist
@@ -268,6 +279,13 @@ and complains if a module is loaded too early (during startup)."
       (+evil-collection-init '(process-menu simple)))
     (add-transient-hook! 'xwidget-webkit-mode
       (+evil-collection-init 'xwidget))
+    (add-transient-hook! 'tabulated-list-mode
+      (+evil-collection-init 'tabulated-list))
+    (add-transient-hook! 'tab-bar-mode
+      (+evil-collection-init 'tabulated-list))
+    (when EMACS27+
+      (add-transient-hook! 'tab-bar-mode
+        (+evil-collection-init 'tab-bar)))
 
     ;; HACK Do this ourselves because evil-collection break's `eval-after-load'
     ;;      load order by loading their target plugin before applying keys. This

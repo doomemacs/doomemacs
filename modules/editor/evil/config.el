@@ -49,7 +49,11 @@ directives. By default, this only recognizes C directives.")
         evil-ex-interactive-search-highlight 'selected-window
         ;; It's infuriating that innocuous "beginning of line" or "end of line"
         ;; errors will abort macros, so suppress them:
-        evil-kbd-macro-suppress-motion-error t)
+        evil-kbd-macro-suppress-motion-error t
+        evil-undo-system
+        (cond ((featurep! :emacs undo +tree) 'undo-tree)
+              ((featurep! :emacs undo) 'undo-fu)
+              (EMACS28+ 'undo-redo)))
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.

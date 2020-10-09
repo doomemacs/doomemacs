@@ -153,8 +153,10 @@ Dictionary.app behind the scenes to get definitions.")
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
 
-  ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
+  ;; This integration is already built into evil
+  (unless (featurep! :editor evil)
+    ;; Use `better-jumper' instead of xref's marker stack
+    (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a))
 
   (use-package! ivy-xref
     :when (featurep! :completion ivy)

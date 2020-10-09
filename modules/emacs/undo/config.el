@@ -3,10 +3,6 @@
 (use-package! undo-fu
   :unless (featurep! +tree)
   :hook (doom-first-buffer . undo-fu-mode)
-  :init
-  ;; `evil' activates undo-tree, so we must pre-emptively disable it.
-  (after! undo-tree
-    (global-undo-tree-mode -1))
   :config
   ;; Store more undo history to prevent loss of data
   (setq undo-limit 400000
