@@ -24,7 +24,8 @@ killing and opening many LSP/eglot-powered buffers.")
     ;;        GC-induced slowdowns/freezes. Doom uses `gcmh' to enforce its GC
     ;;        strategy, so we modify its variables rather than
     ;;        `gc-cons-threshold' directly.
-    (setq-local gcmh-high-cons-threshold (* 2 (default-value 'gcmh-high-cons-threshold)))))
+    (setq-local gcmh-high-cons-threshold (* 2 (default-value 'gcmh-high-cons-threshold)))
+    (gcmh-set-high-threshold)))
 
 
 ;;
