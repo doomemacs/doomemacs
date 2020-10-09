@@ -172,7 +172,7 @@ if you don't like the symbols chosen you can change them by using...
 
 #+BEGIN_SRC emacs-lisp
 ;; you don't need to include all of them you can pick and mix
-(plist-put +ligatures-extra-symbols
+(plist-put! +ligatures-extra-symbols
   '(;; org
     :name          "»"
     :src_block     "»"
