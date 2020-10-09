@@ -428,3 +428,61 @@ Must be set before org-msg is loaded to take effect.")
             (`refile (mu4e-action-retag-message msg "-\\Inbox"))
             (`flag   (mu4e-action-retag-message msg "+\\Starred"))
             (`unflag (mu4e-action-retag-message msg "-\\Starred"))))))))
+
+;;
+;;; Alerts
+
+(use-package! mu4e-alert
+  :after mu4e
+  :config
+  (setq doom-modeline-mu4e t)
+
+  (mu4e-alert-enable-mode-line-display)
+  (mu4e-alert-enable-notifications)
+
+  (when IS-LINUX
+    (mu4e-alert-set-default-style 'libnotify)
+
+    (setq mu4e-alert-email-notification-types '(subjects))
+    (defun mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group all-mails)
+      "Default function to format MAIL-GROUP for notification.
+ALL-MAILS are the all the unread emails"
+      (shell-command "paplay /usr/share/sounds/freedesktop/stereo/message.oga")
+      (if (> (length mail-group) 1)
+          (let* ((mail-count (length mail-group))
+                 (total-mails (length all-mails))
+                 (first-mail (car mail-group))
+                 (title-prefix (format "You have %d unread emails"
+                                       mail-count))
+                 (field-value (mu4e-alert--get-group first-mail))
+                 (title-suffix (format (pcase mu4e-alert-group-by
+                                         (`:from "from %s:")
+                                         (`:to "to %s:")
+                                         (`:maildir "in %s:")
+                                         (`:priority "with %s priority:")
+                                         (`:flags "with %s flags:"))
+                                       field-value))
+                 (title (format "%s %s" title-prefix title-suffix)))
+            (list :title title
+                  :body (s-join "\n"
+                                (mapcar (lambda (mail)
+                                          (format "%s<b>%s</b> • %s"
+                                                  (cond
+                                                   ((plist-get mail :in-reply-to) "⮩ ")
+                                                   ((string-match-p "\\`Fwd:"
+                                                                    (plist-get mail :subject)) " ⮯ ")
+                                                   (t "  "))
+                                                  (truncate-string-to-width (caar (plist-get mail :from))
+                                                                            20 nil nil t)
+                                                  (truncate-string-to-width
+                                                   (replace-regexp-in-string "\\`Re: \\|\\`Fwd: " ""
+                                                                             (plist-get mail :subject))
+                                                   40 nil nil t)))
+                                        mail-group))))
+        (let* ((new-mail (car mail-group))
+               (subject (plist-get new-mail :subject))
+               (sender (caar (plist-get new-mail :from))))
+          (list :title sender :body subject))))
+    (setq mu4e-alert-grouped-mail-notification-formatter #'mu4e-alert-grouped-mail-notification-formatter-with-bell))
+
+  (mu4e-alert-enable-mode-line-display))
