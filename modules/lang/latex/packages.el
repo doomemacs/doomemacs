@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/latex/packages.el
 
-(package! auctex :pin "9e7406cddd87c1f318d943bd3f5edc73d82e349d")
+(package! auctex :pin "59e251c4c82d878e605a13aec3752e544a99f21a")
 (package! adaptive-wrap :pin "319db649fb083db3ad07b4c71ee6c9429497043b")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
 (when (featurep! :editor evil +everywhere)
