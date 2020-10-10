@@ -193,17 +193,68 @@
      )
     (princ (buffer-string))))
 
+(defvar recorded-errors nil
+  "Structure: ((file . ((stage . (msg1 msg2...))...)...)")
+(defun record-error (file stage message)
+  "Record error MESSAGE with FILE at STAGE to `recorded-errors'."
+  (if-let ((file-entry (assoc file recorded-errors)))
+      (if-let ((stage-entry (assoc stage (cdr file-entry))))
+          (push message (cdr stage-entry))
+        (push (cons stage (list message)) (cdr file-entry)))
+    (push (cons file (list (cons stage (list message)))) recorded-errors)))
+(defun print-errors ()
+  "Print all `recorded-errors'."
+  (with-temp-buffer
+    (insert
+     "\n[1;31mErrors:[0m\n"
+     (mapconcat
+      (lambda (file-errs)
+        (let* (errs-stages current-stages)
+          (dolist (stage (cdr file-errs))
+            (dolist (err (cdr stage))
+              (if (assoc err errs-stages)
+                  (progn
+                    (push (car stage) (cdr (assoc err errs-stages)))
+                    (sort (cdr (assoc err errs-stages))
+                          (lambda (a b)
+                            (< (cl-position (intern a) formats)
+                               (cl-position (intern b) formats)))))
+                (push (cons err (list (car stage))) errs-stages))))
+          (sort errs-stages
+                (lambda (a b)
+                  (or (< (cl-position (intern (cadr a)) formats)
+                         (cl-position (intern (cadr b)) formats)))
+                  (> (length a) (length b))))
+          (mapconcat
+           (lambda (err-stages)
+             (concat
+              (unless (string= (car err-stages) current-stages)
+                (format " [0;31m%s[0m ([0;33m%s[0m):\n"
+                        (car file-errs)
+                        (mapconcat 'identity (cdr err-stages) ",")))
+              "    "
+              (replace-regexp-in-string
+               "\\(\".*[^\\]\"\\)"
+               "[0;32m\\1[0m" (car err-stages))))
+           errs-stages "\n")))
+      (sort recorded-errors
+            (lambda (a b)
+              (< (cl-position a files :test #'string=)
+                 (cl-position b files :test #'string=))))
+      "\n") "\n")
+    (princ (buffer-string))))
+
 (defvar export-print nil)
 (defvar tangle nil)
 (defvar print nil)
 (defvar exec nil)
 (defvar async t)
 (defvar formats nil)
+(defvar files nil)
 (defvar clean nil)
 (defvar load-files nil)
 
-(let (files
-      (inhibit-message t))
+(let ((inhibit-message t))
   (pop argv)
   (while argv
     (let ((arg (pop argv)))
@@ -297,20 +348,34 @@
                   (org-babel-eval-wipe-error-buffer)
                   (org-save-outline-visibility t
                     (org-babel-map-executables nil
-                      (if (memq (org-element-type (org-element-context))
-                                '(babel-call inline-babel-call))
-                          (org-babel-lob-execute-maybe)
-                        (ignore-errors
-                          (org-babel-execute-src-block t))))))
+                      (condition-case err
+                          (if (memq (org-element-type (org-element-context))
+                                    '(babel-call inline-babel-call))
+                              (org-babel-lob-execute-maybe)
+                            (ignore-errors
+                              (org-babel-execute-src-block t)))
+                        (err
+                         (record-error file "exec" (error-message-string err)))))))
 
                 (when tangle
                   (set-state file formats 'tangling)
-                  (org-babel-tangle nil nil nil))
+                  (condition-case err
+                      (org-babel-tangle nil nil nil)
+                    (error (record-error file "tangle" (error-message-string err)))))
 
                 (set-state file formats 'waiting)
                 (org-export-expand-include-keyword)
                 (dolist (fmt formats)
-                  (export-file file (assoc fmt export-specs)))))
+                  (condition-case err
+                      (export-file file (assoc fmt export-specs))
+                    (error
+                     (record-error file (symbol-name fmt) (error-message-string err))
+                     (set-state file fmt 'error))))))
           (ignore-errors (copy-file backup file t))
           (ignore-errors (delete-file backup))))))
-  (kill-emacs 0))
+  (export-progress-table)
+
+  (if (not recorded-errors)
+      (kill-emacs 0)
+    (print-errors)
+    (kill-emacs 1)))
