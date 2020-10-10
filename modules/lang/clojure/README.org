@@ -11,6 +11,7 @@
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+  - [[#keybindings][Keybindings]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
 
@@ -52,6 +53,55 @@ This module requires:
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
+** Keybindings
+| Binding             | Description                                          |
+|---------------------+------------------------------------------------------|
+| =<localleader> '​=   | =cider-jack-in-clj=                                  |
+| =<localleader> C=   | =cider-connect-cljs=                                 |
+| =<localleader> M=   | =cider-macroexpand-all=                              |
+| =<localleader> R=   | =hydra-cljr-help-menu/body=                          |
+| =<localleader> c=   | =cider-connect-clj=                                  |
+| =<localleader> e D= | =cider-insert-defun-in-repl=                         |
+| =<localleader> e E= | =cider-insert-last-sexp-in-repl=                     |
+| =<localleader> e R= | =cider-insert-region-in-repl=                        |
+| =<localleader> e b= | =cider-eval-buffer=                                  |
+| =<localleader> e d= | =cider-eval-defun-at-point=                          |
+| =<localleader> e e= | =cider-eval-last-sexp=                               |
+| =<localleader> e r= | =cider-eval-region=                                  |
+| =<localleader> e u= | =cider-undef=                                        |
+| =<localleader> g b= | =cider-pop-back=                                     |
+| =<localleader> g g= | =cider-find-var=                                     |
+| =<localleader> g n= | =cider-find-ns=                                      |
+| =<localleader> h a= | =cider-apropos=                                      |
+| =<localleader> h c= | =cider-clojuredocs=                                  |
+| =<localleader> h d= | =cider-doc=                                          |
+| =<localleader> h j= | =cider-javadoc=                                      |
+| =<localleader> h n= | =cider-find-ns=                                      |
+| =<localleader> h w= | =cider-clojuredocs-web=                              |
+| =<localleader> i e= | =cider-enlighten-mode=                               |
+| =<localleader> i i= | =cider-inspect=                                      |
+| =<localleader> i r= | =cider-inspect-last-result=                          |
+| =<localleader> m "​= | =cider-jack-in-cljs=                                 |
+| =<localleader> m=   | =cider-macroexpand-1=                                |
+| =<localleader> n N= | =cider-browse-ns-all=                                |
+| =<localleader> n n= | =cider-browse-ns=                                    |
+| =<localleader> n r= | =cider-ns-refresh=                                   |
+| =<localleader> r B= | =+clojure/cider-switch-to-repl-buffer-and-switch-ns= |
+| =<localleader> r L= | =cider-load-buffer-and-switch-to-repl-buffer=        |
+| =<localleader> r R= | =cider-restart=                                      |
+| =<localleader> r b= | =cider-switch-to-repl-buffer=                        |
+| =<localleader> r c= | =cider-find-and-clear-repl-output=                   |
+| =<localleader> r l= | =cider-load-buffer=                                  |
+| =<localleader> r n= | =cider-repl-set-ns=                                  |
+| =<localleader> r q= | =cider-quit=                                         |
+| =<localleader> r r= | =cider-ns-refresh=                                   |
+| =<localleader> t a= | =cider-test-rerun-test=                              |
+| =<localleader> t l= | =cider-test-run-loaded-tests=                        |
+| =<localleader> t n= | =cider-test-run-ns-tests=                            |
+| =<localleader> t p= | =cider-test-run-project-tests=                       |
+| =<localleader> t r= | =cider-test-rerun-failed-tests=                      |
+| =<localleader> t s= | =cider-test-run-ns-tests-with-filters=               |
+| =<localleader> t t= | =cider-test-run-test=                                |
 
 * TODO Configuration
 # How to configure this module, including common problems and how to address them.
