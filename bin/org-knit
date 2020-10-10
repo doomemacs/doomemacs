@@ -210,7 +210,7 @@
       (pcase arg
         ((or "-h" "--help")
          (usage)
-         (error ""))
+         (kill-emacs 0))
         ((or "-f" "--formats")
          (setq formats
                (mapcar #'intern (split-string (pop argv) ","))))
@@ -228,7 +228,7 @@
              (setq aliases
                    (mapcar #'intern (split-string aliases ","))))
            (print-alias aliases))
-         (error ""))
+         (kill-emacs 0))
         ((or "-c" "--clean")
          (setq clean t))
         ((or "-l" "--load")
