@@ -140,7 +140,7 @@
                  backend file async subtreep visible-only body-only ext-plist
                  (lambda (file)
                    (when post-process
-                       (funcall post-process file))
+                     (funcall post-process file))
                    (set-state +infile +format 'completed))))
     (funcall #'org-export-to-file backend file async subtreep visible-only body-only ext-plist post-process)))
 
@@ -279,38 +279,38 @@
       (if clean
           (dolist (child-file (directory-files (file-name-directory (expand-file-name file))))
             (when (and
-                 (string= (file-name-base child-file) file-basename)
-                 (not (string= (file-name-extension child-file) "org")))
-                (princ (format "Deleting %s\n" child-file))
-                (delete-file child-file)))
-      (unwind-protect
-          ;; Prevent slow hooks from interfering
-          (let (org-mode-hook)
-            ;; We do the ol' switcheroo because `org-babel-tangle' writes
-            ;; changes to the current file, which would be imposing on the user.
-            (copy-file file backup t)
-            (with-current-buffer (find-file-noselect file)
+                   (string= (file-name-base child-file) file-basename)
+                   (not (string= (file-name-extension child-file) "org")))
+              (princ (format "Deleting %s\n" child-file))
+              (delete-file child-file)))
+        (unwind-protect
+            ;; Prevent slow hooks from interfering
+            (let (org-mode-hook)
+              ;; We do the ol' switcheroo because `org-babel-tangle' writes
+              ;; changes to the current file, which would be imposing on the user.
+              (copy-file file backup t)
+              (with-current-buffer (find-file-noselect file)
 
-              (when exec
-                (set-state file formats 'executing)
+                (when exec
+                  (set-state file formats 'executing)
 
-                (org-babel-eval-wipe-error-buffer)
-                (org-save-outline-visibility t
-                  (org-babel-map-executables nil
-                    (if (memq (org-element-type (org-element-context))
-                              '(babel-call inline-babel-call))
-                        (org-babel-lob-execute-maybe)
-                      (ignore-errors
-                        (org-babel-execute-src-block t))))))
+                  (org-babel-eval-wipe-error-buffer)
+                  (org-save-outline-visibility t
+                    (org-babel-map-executables nil
+                      (if (memq (org-element-type (org-element-context))
+                                '(babel-call inline-babel-call))
+                          (org-babel-lob-execute-maybe)
+                        (ignore-errors
+                          (org-babel-execute-src-block t))))))
 
-              (when tangle
-                (set-state file formats 'tangling)
-                (org-babel-tangle nil nil nil))
+                (when tangle
+                  (set-state file formats 'tangling)
+                  (org-babel-tangle nil nil nil))
 
-              (set-state file formats 'waiting)
-              (org-export-expand-include-keyword)
-              (dolist (fmt formats)
-                (export-file file (assoc fmt export-specs)))))
-        (ignore-errors (copy-file backup file t))
-        (ignore-errors (delete-file backup))))))
+                (set-state file formats 'waiting)
+                (org-export-expand-include-keyword)
+                (dolist (fmt formats)
+                  (export-file file (assoc fmt export-specs)))))
+          (ignore-errors (copy-file backup file t))
+          (ignore-errors (delete-file backup))))))
   (kill-emacs 0))
