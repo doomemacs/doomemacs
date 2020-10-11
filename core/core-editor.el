@@ -565,7 +565,13 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
-  :hook (doom-first-buffer . ws-butler-global-mode))
+  :hook (doom-first-buffer . ws-butler-global-mode)
+  :config
+  ;; ws-butler normally preserves whitespace in the buffer (but strips it from
+  ;; the written file). While sometimes convenient, this behavior is not
+  ;; intuitive. To the average user it looks like whitespace cleanup is failing,
+  ;; which causes folks to redundantly install their own.
+  (setq ws-butler-keep-whitespace-before-point nil))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
