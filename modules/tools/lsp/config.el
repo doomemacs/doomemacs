@@ -12,20 +12,31 @@ killing and opening many LSP/eglot-powered buffers.")
 ;;
 ;;; Common
 
-(defun +lsp-init-optimizations-h ()
-  "Deploys universal optimizations for `lsp-mode' and `eglot'."
-  (when (or (bound-and-true-p eglot--managed-mode)
-            (bound-and-true-p lsp-mode))
-    ;; `read-process-output-max' is only available on recent development
-    ;; builds of Emacs 27 and above.
-    (setq-local read-process-output-max (* 1024 1024))
-    ;; REVIEW LSP causes a lot of allocations, with or without Emacs 27+'s
-    ;;        native JSON library, so we up the GC threshold to stave off
-    ;;        GC-induced slowdowns/freezes. Doom uses `gcmh' to enforce its GC
-    ;;        strategy, so we modify its variables rather than
-    ;;        `gc-cons-threshold' directly.
-    (setq-local gcmh-high-cons-threshold (* 2 (default-value 'gcmh-high-cons-threshold)))
-    (gcmh-set-high-threshold)))
+(defvar +lsp--default-read-process-output-max nil)
+(defvar +lsp--default-gcmh-high-cons-threshold nil)
+
+(define-minor-mode +lsp-optimization-mode
+  "Deploys universal GC and IPC optimizations for `lsp-mode' and `eglot'."
+  :global t
+  :init-value nil
+  (if +lsp-optimization-mode
+      (progn
+        (setq +lsp--default-read-process-output-max
+              (default-value 'read-process-output-max)
+              +lsp--default-gcmh-high-cons-threshold
+              (default-value 'gcmh-high-cons-threshold))
+        ;; `read-process-output-max' is only available on recent development
+        ;; builds of Emacs 27 and above.
+        (setq-default read-process-output-max (* 1024 1024))
+        ;; REVIEW LSP causes a lot of allocations, with or without Emacs 27+'s
+        ;;        native JSON library, so we up the GC threshold to stave off
+        ;;        GC-induced slowdowns/freezes. Doom uses `gcmh' to enforce its
+        ;;        GC strategy, so we modify its variables rather than
+        ;;        `gc-cons-threshold' directly.
+        (setq-default gcmh-high-cons-threshold (* 2 +lsp--default-gcmh-high-cons-threshold)))
+    (setq-default read-process-output-max +lsp--default-read-process-output-max
+                  gcmh-high-cons-threshold +lsp--default-gcmh-high-cons-threshold))
+  (gcmh-set-high-threshold))
 
 
 ;;
