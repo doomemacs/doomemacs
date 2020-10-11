@@ -122,7 +122,7 @@ list remains lean."
 
 (defvar doom--eln-output-expected nil)
 
-(defvar doom--eln-output-path (car comp-eln-load-path))
+(defvar doom--eln-output-path (car (bound-and-true-p comp-eln-load-path)))
 
 (defun doom--eln-file-name (file)
   "Return the short .eln file name corresponding to `file'."
