@@ -18,7 +18,7 @@
             :local-repo "straight.el"
             :files ("straight*.el")
             :no-build t)
-  :pin "0c7c7571349b628d87acde474a754f05e86ca876")
+  :pin "728ea18ea590fcd8fb48f5bed30e135942d97221")
 
 ;; core-modules.el
 (package! use-package
