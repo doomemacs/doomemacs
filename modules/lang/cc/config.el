@@ -282,7 +282,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
   (setq ccls-sem-highlight-method 'font-lock)
   (when (or IS-MAC IS-LINUX)
-    (let ((cpu-count-command (cond (IS-MAC '("sysctl -n hw.ncpu"))
+    (let ((cpu-count-command (cond (IS-MAC '("sysctl" "-n" "hw.ncpu"))
                                    (IS-LINUX '("nproc"))
                                    (t (error "unreachable code")))))
       (setq ccls-initialization-options
