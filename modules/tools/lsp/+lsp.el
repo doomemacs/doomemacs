@@ -52,6 +52,15 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
 
+  (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
+    "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
+    :around #'lsp-diagnostics--flycheck-enable
+    (if flycheck-checker
+        (let ((old-checker flycheck-checker))
+          (apply orig-fn args)
+          (setq-local flycheck-checker old-checker))
+      (apply orig-fn args)))
+
   (add-hook! 'lsp-mode-hook
     (defun +lsp-display-guessed-project-root-h ()
       "Log what LSP things is the root of the current project."
