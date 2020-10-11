@@ -101,6 +101,7 @@ envvar will enable this at startup.")
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
+
 These files should not be shared across systems. By default, it is used by
 `doom-etc-dir' and `doom-cache-dir'. Must end with a slash.")
 
@@ -285,8 +286,8 @@ config.el instead."
 
 (after! comp
   ;; HACK Disable native-compilation for some troublesome packages
-  (dolist (entry (list (concat "\\`" doom-local-dir ".*/evil-collection-vterm\\.el\\'")
-                       (concat "\\`" doom-local-dir "autoloads\\.el\\'")))
+  (dolist (entry (list (concat "\\`" (regexp-quote doom-local-dir) ".*/evil-collection-vterm\\.el\\'")
+                       (concat "\\`" (regexp-quote doom-autoloads-file) "'")))
     (add-to-list 'comp-deferred-compilation-black-list entry)))
 
 
