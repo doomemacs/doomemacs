@@ -243,8 +243,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
          :desc "Reload cache & CCLS"    "lf" #'ccls-reload)
         (:after lsp-ui-peek
          (:localleader
-          :desc "Callers list"          "c" #'+cc/show-caller
-          :desc "Callees list"          "C" #'+cc/show-callee
+          :desc "Callers list"          "c" #'+cc/ccls-show-caller
+          :desc "Callees list"          "C" #'+cc/ccls-show-callee
           :desc "References (address)"  "a" #'+cc/ccls-show-references-address
           :desc "References (not call)" "f" #'+cc/ccls-show-references-not-call
           :desc "References (Macro)"    "m" #'+cc/ccls-show-references-macro
