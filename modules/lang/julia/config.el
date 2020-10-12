@@ -66,10 +66,24 @@
 
 
 (use-package! lsp-julia
-  :when (featurep! +lsp)
+  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
   :after lsp-mode
   :preface
   (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
   (when (featurep! +lsp)
     (add-hook 'julia-mode-local-vars-hook #'lsp!)
     (setq lsp-julia-package-dir nil)))
+
+(use-package! eglot-jl
+  :when (and (featurep! +lsp) (featurep! :tools lsp +eglot))
+  :after eglot
+  :preface
+  ;; Prevent auto-install of LanguageServer.jl
+  (setq eglot-jl-language-server-project "~/.julia/environments/v1.0")
+  ;; Prevent timeout while installing LanguageServer.jl
+  (add-hook! 'julia-mode-hook
+    (defun +julia-eglot-timeout-h ()
+      (when (< eglot-connect-timeout 60)
+        (setq eglot-connect-timeout 60))))
+  :config
+  (eglot-jl-init))

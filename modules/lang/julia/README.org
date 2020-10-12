@@ -9,6 +9,8 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#language-server][Language Server]]
+    - [[#lsp-julia][~lsp-julia~]]
+    - [[#eglot-jl][~eglot-jl~]]
 - [[#features][Features]]
   - [[#language-server-1][Language Server]]
 - [[#configuration][Configuration]]
@@ -29,6 +31,9 @@ Adds Julia support to Doom Emacs
 + =+lsp= and =:tools lsp=
   + [[https://github.com/non-jedi/lsp-julia][lsp-julia]]
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
++ =+lsp= and =:tools lsp +eglot=
+  + [[https://github.com/non-jedi/eglot-jl][eglot-jl]]
+  + [[https://github.com/joaotavora/eglot][eglot]]
 
 * Prerequisites
 This module has no direct prerequisites.
@@ -43,6 +48,10 @@ Pkg.add("LanguageServer")
 Pkg.add("SymbolServer")
 #+END_SRC
 
+More specific notes depend on whether you use ~lsp-julia~ (~:tools lsp~) or
+~eglot-jl~ (~:tools lsp +eglot~).
+
+*** ~lsp-julia~
 Alternatively, you can use the version of ~LanguageServer.jl~ and dependencies
 bundled by ~lsp-julia~. Try this if the former method doesn't work because
 ~lsp-julia~ is not compatible with every version of ~LanguageServer.jl~. To
@@ -57,12 +66,31 @@ and ~config.el~, respectively.
   (setq lsp-julia-package-dir (concat straight-base-dir "straight/repos/lsp-julia/languageserver/")))
 #+END_SRC
 
+*** ~eglot-jl~
+To find your installation of ~LanguageServer.jl~, ~eglot-jl~ needs to know the
+environment in which it is installed. This is set to v1.0 by default as it is
+the current LTS.
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/config.el
+(setq eglot-jl-language-server-project "~/.julia/environments/v1.0")
+#+END_SRC
+
+Alternatively, you can let ~eglot-jl~ handle the installation of
+~LanguageServer.jl~ and its dependencies by putting the following in your
+personal ~config.el~.
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/config.el
+(setq eglot-jl-language-server-project (eval (car (get 'eglot-jl-language-server-project 'standard-value))))
+#+END_SRC
+
 * Features
   # An in-depth list of features, how to use them, and their dependencies.
 ** Language Server
 ~+lsp~ adds code completion, syntax checking, formatting and other ~lsp-mode~
-features. It requires ~LanguageServer.jl~, the installation of which is
-described above.
+or ~eglot~ features. It requires ~LanguageServer.jl~, the installation of which
+is described above.
 
 * Configuration
 ** Language server (~+lsp~)
