@@ -100,7 +100,8 @@ server getting expensively restarted when reverting buffers."
              nil (lambda (workspace)
                    (let ((lsp--cur-workspace workspace))
                      (unless (lsp--workspace-buffers lsp--cur-workspace)
-                       (funcall orig-fn)
+                       (let ((lsp-restart 'ignore))
+                         (funcall orig-fn))
                        (+lsp-optimization-mode -1))))
              lsp--cur-workspace)))))
 
