@@ -309,7 +309,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
   (let ((a (plist-get doom--map-parent-state prop))
         (b (plist-get doom--map-state prop)))
     (if (and a b)
-        `(general--concat nil ,a ,b)
+        `(general--concat t ,a ,b)
       (or a b))))
 
 (defun doom--map-nested (wrapper rest)
