@@ -9,4 +9,4 @@
 (when (or (and (featurep! +lsp)
                (not (featurep! :tools lsp +eglot)))
           (featurep! +ghcide))
-  (package! lsp-haskell :pin "a56667b496e5370f1a50310589a2d2a4d3b9d11e"))
+  (package! lsp-haskell :pin "4d85cb3693d893ec34d8a0be9794d468a0a28b7b"))

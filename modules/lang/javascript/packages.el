@@ -3,9 +3,9 @@
 
 ;; Major modes
 (package! coffee-mode :pin "35a41c7d8233eac0b267d9593e67fb8b6235e134")
-(package! js2-mode :pin "40aab27581279d0fdbfeb9afeb85f39d401a927f")
+(package! js2-mode :pin "ffb70990c1a4d4616034cb810b4ce36953aecb47")
 (package! rjsx-mode :pin "0061587a06cdc2579a8d0e90863498d96bf982d8")
-(package! typescript-mode :pin "42a60e5c881082db2ec2c541a5c154308c4863e6")
+(package! typescript-mode :pin "e6f68ab2dd998af0b50ae89a781e1c04539d23d6")
 
 ;; Tools
 (package! js2-refactor :pin "d4c40b5fc86d3edd7c6a7d83ac86483ee1cb7a28")

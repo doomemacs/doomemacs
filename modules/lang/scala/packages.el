@@ -5,4 +5,4 @@
 (package! scala-mode :pin "1d08e885b1489313666c7f15a3962432a4f757ee")
 
 (when (featurep! +lsp)
-  (package! lsp-metals :pin "039aa72439e3c52cfef4bcde416ba49d88ac0991"))
+  (package! lsp-metals :pin "8f8471ca1b2a3d54bafce8949e6b13c9567d0405"))

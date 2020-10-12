@@ -8,4 +8,4 @@
 
 (when (featurep! +flutter)
   (package! flutter :pin "78b3c572584c95220a40934bd67fd5e3fb096f96")
-  (package! hover :pin "e213f2b29b7728edd42e834260c13fffd0c48edc"))
+  (package! hover :pin "3f07a181ec38531e01692e4073d6968363697cf8"))
