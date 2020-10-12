@@ -34,12 +34,13 @@ Adds Julia support to Doom Emacs
 This module has no direct prerequisites.
 
 ** Language Server
-~+lsp~ requires ~LanguageServer.jl~. To install this, execute the following in a
-Julia REPL.
+~+lsp~ requires ~LanguageServer.jl~ and ~SymbolServer.jl~. To install these,
+execute the following in a Julia REPL.
 
 #+BEGIN_SRC julia
 using Pkg
 Pkg.add("LanguageServer")
+Pkg.add("SymbolServer")
 #+END_SRC
 
 Alternatively, you can use the version of ~LanguageServer.jl~ and dependencies

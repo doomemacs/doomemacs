@@ -6,5 +6,5 @@
 
 (if (featurep! +lsp)
     (when (require 'lsp-julia nil t)
-      (unless (zerop (car (apply #'doom-call-process `(,lsp-julia-command ,@lsp-julia-flags "-e" "using LanguageServer"))))
-        (warn! "Couldn't find LanguageServer.jl"))))
+      (unless (zerop (car (apply #'doom-call-process `(,lsp-julia-command ,@lsp-julia-flags "-e" "using LanguageServer, SymbolServer"))))
+        (warn! "Couldn't find LanguageServer.jl and/or SymbolServer.jl"))))
