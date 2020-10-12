@@ -231,32 +231,32 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook)
              #'lsp!)
-  (map!
-   (:after ccls
-    :map (c-mode-map c++-mode-map)
-    :n "C-h" (λ! (ccls-navigate "U"))
-    :n "C-j" (λ! (ccls-navigate "R"))
-    :n "C-k" (λ! (ccls-navigate "L"))
-    :n "C-l" (λ! (ccls-navigate "D"))
-    (:localleader
-     :desc "Preprocess file" :n "lp" #'ccls-preprocess-file
-     :desc "Reset cache and reload CCLS" :n "lf" #'ccls-reload)
-    (:after lsp-ui-peek
-     (:localleader
-      :desc "Callers list" :n "c" #'+ccls/caller
-      :desc "Callees list" :n "C" #'+ccls/callee
-      :desc "References (address)" :n "a" #'+ccls/references-address
-      :desc "References (not call)" :n "f" #'+ccls/references-not-call
-      :desc "References (Macro)" :n "m" #'+ccls/references-macro
-      :desc "References (Read)" :n "r" #'+ccls/references-read
-      :desc "References (Write)" :n "w" #'+ccls/references-write))))
+
+  (map! :after ccls
+        :map (c-mode-map c++-mode-map)
+        :n "C-h" (cmd! (ccls-navigate "U"))
+        :n "C-j" (cmd! (ccls-navigate "R"))
+        :n "C-k" (cmd! (ccls-navigate "L"))
+        :n "C-l" (cmd! (ccls-navigate "D"))
+        (:localleader
+         :desc "Preprocess file"        "lp" #'ccls-preprocess-file
+         :desc "Reload cache & CCLS"    "lf" #'ccls-reload)
+        (:after lsp-ui-peek
+         (:localleader
+          :desc "Callers list"          "c" #'+cc/show-caller
+          :desc "Callees list"          "C" #'+cc/show-callee
+          :desc "References (address)"  "a" #'+cc/ccls-show-references-address
+          :desc "References (not call)" "f" #'+cc/ccls-show-references-not-call
+          :desc "References (Macro)"    "m" #'+cc/ccls-show-references-macro
+          :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
+          :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
 
   (when (featurep! :tools lsp +eglot)
     ;; Map eglot specific helper
     (map! :localleader
           :after cc-mode
           :map c++-mode-map
-          :n :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
+          :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
 
     ;; NOTE : This setting is untested yet
     (after! eglot
