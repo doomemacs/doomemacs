@@ -163,7 +163,7 @@
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (when (fboundp 'xwidget-webkit-browse-url)
+  (when (fboundp 'make-xwidget)
     (push '("view with xwidgets" . mu4e-action-view-with-xwidget)
           mu4e-view-actions))
 
