@@ -8,11 +8,7 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
   - [[#nixos][NixOS]]
-  - [[#opensuse][openSUSE]]
-  - [[#debianubuntu][Debian/Ubuntu]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
@@ -50,29 +46,16 @@ This module requires:
 + Either ~mbsync~ (default) or ~offlineimap~ (to sync mail with)
 + ~mu~, to index your downloaded messages and to provide the ~mu4e~ package.
 
-** MacOS
-#+BEGIN_SRC sh
-brew install mu
-# And one of the following
-brew install isync  # mbsync
-brew install offlineimap
-#+END_SRC
+#+name: Install Matrix
+| Platform      | Install command        | Base packages       |
+|---------------+------------------------+---------------------|
+| MacOS         | ~brew install <pkgs>~    | =mu=                  |
+| Arch          | ~pacman -S <pkgs>~       | (AUR, ~yay -S~) =mu=    |
+| openSUSE      | ~zypper install <pkgs>~  | =maildir-utils=, =mu4e= |
+| Fedora        | ~dnf install <pkgs>~     | =maildir-utils=       |
+| Debian/Ubuntu | ~apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
-** Arch Linux
-Run one of the following commands.
-
-#+BEGIN_SRC sh
-sudo pacman -S isync  # mbsync
-# OR
-sudo pacman -S offlineimap
-#+END_SRC
-
-Install ~mu~, which is not available in the main repositories but in the AUR, by
-using for example the AUR helper ~yay~.
-
-#+BEGIN_SRC sh
-yay -S mu
-#+END_SRC
+The install either the =isync= (=mbsync=) or =offlineimap= package.
 
 ** NixOS
 #+BEGIN_SRC nix
@@ -85,27 +68,6 @@ environment.systemPackages = with pkgs; [
 #+END_SRC
 
 [[https://github.com/Emiller88/dotfiles/blob/5eaabedf1b141c80a8d32e1b496055231476f65e/modules/shell/mail.nix][An example of setting up mbsync and mu with home-manager]]
-
-** openSUSE
-Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of
-~mbsync~.
-
-#+BEGIN_SRC sh :dir /sudo::
-sync_program=isync # mbsync
-#sync_program=offlineimap
-
-sudo zypper install maildir-utils $sync_program
-#+END_SRC
-
-** Debian/Ubuntu
-Run the command corresponding to the desired backend and the last one.
-#+BEGIN_SRC sh
-sudo apt-get install isync  # mbsync
-# or
-sudo apt-get install offlineimap
-# then
-sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
-#+END_SRC
 
 * Features
 + Tidied mu4e headers view, with flags from =all-the-icons=
