@@ -209,7 +209,9 @@ with the current context."
                    (if (member from (mu4e-personal-addresses))
                        (setq user-mail-address from)
                      nil))))
-    (ivy-read "From: " (if-let ((context-addresses (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current))))
+    (ivy-read "From: " (if-let ((context-addresses
+                                 (when mu4e~context-current
+                                   (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current)))))
                            context-addresses
                          (mu4e-personal-addresses))
               :action (lambda (candidate) (setq user-mail-address candidate)))))
