@@ -112,6 +112,7 @@ doctor` to check for any that you may have missed.
 ``` sh
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
+rm ~/.emacs (if this file exsists it will overwrite the doom emacs config)
 ```
 
 Then [read our Getting Started guide][getting-started] to be walked through
