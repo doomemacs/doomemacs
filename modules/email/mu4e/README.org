@@ -116,6 +116,8 @@ sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
 + Tidied mu4e headers view, with flags from =all-the-icons=
 + Consistent colouring of reply depths (across compose and gnus modes)
 + Prettified =mu4e:main= view
++ Cooperative locking of the =mu= process. Another Emacs instance may request
+  access, or grab the lock when it's available.
 + =org-msg= integration
   - can be toggled per-message by applying the
     universal argument (=SPC u=) to the compose/reply/forward action.

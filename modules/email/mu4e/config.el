@@ -193,7 +193,17 @@
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier)
   (when (featurep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
-    (setq evil-collection-mu4e-end-region-misc "quit")))
+    (setq evil-collection-mu4e-end-region-misc "quit"))
+
+  ;; process lock control
+  (when IS-WINDOWS
+    (setq ;; REVIEW untested
+     +mu4e-lock-file (expand-file-name "%userprofile%\\AppData\\Local\\Temp\\mu4e_lock")
+     +mu4e-lock-request-file (expand-file-name "%userprofile%\\AppData\\Local\\Temp\\mu4e_lock_request")))
+
+  (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
+  (advice-add 'mu4e~start :around #'+mu4e-lock-start)
+  (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
 (use-package! org-msg
   :after mu4e
