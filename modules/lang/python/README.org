@@ -120,11 +120,16 @@ To enable support for auto-formatting with black enable ~:editor format~ in
 | ~<localleader> g u~ | ~anaconda-mode-find-references~  |
 
 * Configuration
-This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
++ This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
 [[https://jupyter.org/][jupyter]] shells:
 
 #+BEGIN_SRC elisp
 ;; ~/.doom.d/config.el
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 (setq +python-jupyter-repl-args '("--simple-prompt"))
+#+END_SRC
+
++ After installing the virtual environments be sure to regenerate your doom env
+#+BEGIN_SRC sh
+~/.emacs.d/bin/doom env
 #+END_SRC
