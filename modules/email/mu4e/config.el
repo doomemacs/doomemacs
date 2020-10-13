@@ -214,7 +214,6 @@
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
-        org-msg-greeting-fmt "\nHi %s,\n\n"
         org-msg-greeting-name-limit 3
         org-msg-text-plain-alternative t)
 
