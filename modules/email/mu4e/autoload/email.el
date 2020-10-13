@@ -263,7 +263,7 @@ clicked."
 ;;;###autoload
 (defun +org-msg-img-scale-css (img-uri)
   "For a given IMG-URI, use imagemagik to find its width."
-  (if org-msg-currently-exporting
+  (if +org-msg-currently-exporting
       (list :width
             (format "%.1fpx"
                     (/ (string-to-number
