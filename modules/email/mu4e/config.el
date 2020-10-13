@@ -366,7 +366,7 @@ Must be set before org-msg is loaded to take effect.")
 
     (defun +mu4e-msg-gmail-p (msg)
       (or
-       (string-match-p "gmail"
+       (string-match-p "@gmail.com"
                        (cond
                         ((member (mu4e-message-field msg :to)
                                  (plist-get mu4e~server-props :personal-addresses))
