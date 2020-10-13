@@ -19,6 +19,7 @@
   - [[#mbsync][mbsync]]
   - [[#mu-and-mu4e][mu and mu4e]]
   - [[#orgmsg][OrgMsg]]
+  - [[#mu4e-alert][mu4e-alert]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#no-such-file-or-directory-mu4e][=No such file or directory, mu4e=]]
   - [[#void-function-org-time-add-error-on-gentoo][~(void-function org-time-add)~ error on Gentoo]]
@@ -42,12 +43,6 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 ** Plugins
 + [[https://github.com/jeremy-compostella/org-msg][org-msg]]
 + [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
-
-To disable either of these packages, simply add
-#+begin_src emacs-lisp
-(package! X :disable t)
-#+end_src
-to your [[elisp:(find-file (expand-file-name (concat "config." (if (featurep! :config literate) "org" "el")) doom-private-dir))][config]] (where =X= is the package in question) and it will not be used.
 
 * Prerequisites
 This module requires:
@@ -118,17 +113,9 @@ sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
 + Prettified =mu4e:main= view
 + Cooperative locking of the =mu= process. Another Emacs instance may request
   access, or grab the lock when it's available.
-+ =org-msg= integration
-  - can be toggled per-message by applying the
-    universal argument (=SPC u=) to the compose/reply/forward action.
-  - The initial value of ~+mu4e-compose-org-msg-toggle-next~ determines the default
-    composition mode (this can be toggled  with =M-x org-msg-mode= as usual).
-  - A revamped custom style, with an accent colour that can be customised by
-    setting ~+org-msg-accent-color~)
-+ Gmail integrations with the =+gmail= flag, which account for the different behaviour.
-  This is applied when using addresses which contain =@gmail.com= or have =gmail= in
-  the maildir name. You can use ~+mu4e-gmail-addresses~ when you want an address
-  to be treated as such but it meets neither conditions (e.g. with Gsuite).
++ =org-msg= integration, which can be toggled per-message, with revamped style and
+  an accent colour
++ Gmail integrations with the =+gmail= flag
 + Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
 
 * Configuration
@@ -173,7 +160,7 @@ If this is of interest, this approach can be seen [[https://tecosaur.github.io/e
 You should have your email downloaded already. If you have not, you need to set
 =offlineimap= or =mbsync= up before you proceed.
 
-Before you can use =mu4e= or the cli program =mu=, you need to index your email
+Before you can use =mu4e= or the CLI program =mu=, you need to index your email
 initially. How to do that differs a little depending on the version of =mu= you
 use. You can check your version with ~mu --version~.
 
@@ -202,6 +189,16 @@ Then configure Emacs to use your email address:
     (mu4e-compose-signature . "---\nHenrik Lissner"))
   t)
 #+END_SRC
+
+*** Gmail
+With the =+gmail= flag, integrations are applied which account for the different
+behaviour of Gmail.
+
+The integrations are applied when using addresses which contain =@gmail.com= or
+have =gmail= in the maildir name. You can use ~+mu4e-gmail-addresses~ when you want
+an address to be treated as such but it meets neither conditions (e.g. with
+Gsuite).
+
 ** OrgMsg
 By default, ~org-msg-mode~ is enabled before composing the first message.
 To disable ~org-msg-mode~ by default, simply
@@ -211,6 +208,19 @@ To disable ~org-msg-mode~ by default, simply
 
 To toggle org-msg for a single message, just apply the universal argument to the
 compose or reply command (=SPC u= with ~evil~, =C-u= otherwise).
+
+The accent colour that Doom uses can be customised by setting
+~+org-msg-accent-color~ to a CSS colour string.
+
+*** Disabling
+If you don't like OrgMsg, simply add
+#+begin_src emacs-lisp
+(package! org-msg :disable t)
+#+end_src
+to your [[elisp:(find-file (expand-file-name "packages.el" doom-private-dir))][packages.el]] and it will not be used.
+
+** mu4e-alert
+This is used by default. It can be disabled in the same manner as [[*OrgMsg][OrgMsg.]]
 
 * Troubleshooting
 ** =No such file or directory, mu4e=
