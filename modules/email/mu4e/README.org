@@ -111,7 +111,22 @@ sudo apt-get install offlineimap
 # then
 sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
 #+END_SRC
-* TODO Features
+
+* Features
++ Tidied mu4e headers view, with flags from =all-the-icons=
++ Consistent colouring of reply depths (across compose and gnus modes)
++ Prettified =mu4e:main= view
++ =org-msg= integration
+  - can be toggled per-message by applying the
+    universal argument (=SPC u=) to the compose/reply/forward action.
+  - The initial value of ~+mu4e-compose-org-msg-toggle-next~ determines the default
+    composition mode (this can be toggled  with =M-x org-msg-mode= as usual).
+  - A revamped custom style, with an accent colour that can be customised by
+    setting ~+org-msg-accent-color~)
++ Gmail integrations with the =+gmail= flag, which account for the different behaviour.
+  This is applied when using addresses which contain =@gmail.com= or have =gmail= in
+  the maildir name.
++ Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
 
 * Configuration
 ** offlineimap
