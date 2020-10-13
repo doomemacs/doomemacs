@@ -93,7 +93,7 @@ will also be the width of all other printable characters."
       (car (window-text-pixel-size)))))
 
 ;;;###autoload
-(cl-defun mu4e~normalised-icon (name &key set colour height v-adjust)
+(cl-defun +mu4e-normalised-icon (name &key set colour height v-adjust)
   "Convert :icon declaration to icon"
   (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
          (v-adjust (or v-adjust 0.02))
@@ -108,22 +108,22 @@ will also be the width of all other printable characters."
 
 ;; Set up all the fancy icons
 ;;;###autoload
-(defun mu4e~initialise-icons ()
+(defun +mu4e-initialise-icons ()
   (setq mu4e-use-fancy-chars t
-        mu4e-headers-draft-mark      (cons "D" (mu4e~normalised-icon "pencil"))
-        mu4e-headers-flagged-mark    (cons "F" (mu4e~normalised-icon "flag"))
-        mu4e-headers-new-mark        (cons "N" (mu4e~normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
-        mu4e-headers-passed-mark     (cons "P" (mu4e~normalised-icon "arrow-right"))
-        mu4e-headers-replied-mark    (cons "R" (mu4e~normalised-icon "arrow-right"))
-        mu4e-headers-seen-mark       (cons "S" "") ;(mu4e~normalised-icon "eye" :height 0.6 :v-adjust 0.07 :colour "dsilver"))
-        mu4e-headers-trashed-mark    (cons "T" (mu4e~normalised-icon "trash"))
-        mu4e-headers-attach-mark     (cons "a" (mu4e~normalised-icon "file-text-o" :colour "silver"))
-        mu4e-headers-encrypted-mark  (cons "x" (mu4e~normalised-icon "lock"))
-        mu4e-headers-signed-mark     (cons "s" (mu4e~normalised-icon "certificate" :height 0.7 :colour "dpurple"))
-        mu4e-headers-unread-mark     (cons "u" (mu4e~normalised-icon "eye-slash" :v-adjust 0.05))))
+        mu4e-headers-draft-mark      (cons "D" (+mu4e-normalised-icon "pencil"))
+        mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "flag"))
+        mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
+        mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "arrow-right"))
+        mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "arrow-right"))
+        mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :colour "dsilver"))
+        mu4e-headers-trashed-mark    (cons "T" (+mu4e-normalised-icon "trash"))
+        mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :colour "silver"))
+        mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "lock"))
+        mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :colour "dpurple"))
+        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
 
 ;;;###autoload
-(defun mu4e~header-colourise (str)
+(defun +mu4e-header-colourise (str)
   (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
          (colour (nth (% str-sum (length mu4e-header-colourised-faces))
                       mu4e-header-colourised-faces)))
@@ -134,7 +134,7 @@ will also be the width of all other printable characters."
 ;; Perfect for when you see an email you want to reply to
 ;; later, but don't want to forget about
 ;;;###autoload
-(defun mu4e-msg-to-agenda (arg)
+(defun +mu4e-msg-to-agenda (arg)
   "Refile a message and add a entry in the agenda file with a
 deadline.  Default deadline is today.  With one prefix, deadline
 is tomorrow.  With two prefixes, select the deadline."
@@ -208,7 +208,7 @@ Otherwise, the user is prompted for the account they wish to use."
     (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
 
 ;;;###autoload
-(defun mu4e~main-action-prettier-str (str &optional func-or-shortcut)
+(defun +mu4e~main-action-str-prettier (str &optional func-or-shortcut)
   "Highlight the first occurrence of [.] in STR.
 If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
 when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
@@ -268,7 +268,7 @@ clicked."
     (list :style (format "transform: scale(%.3f)"
                          (/ 1.0 (plist-get org-format-latex-options :scale))))))
 
-(defun org-html-latex-fragment-scaled (latex-fragment _contents info)
+(defun +org-html-latex-fragment-scaled (latex-fragment _contents info)
   "Transcode a LATEX-FRAGMENT object from Org to HTML.
 CONTENTS is nil.  INFO is a plist holding contextual information.
 
@@ -299,7 +299,7 @@ account for the value of :scale in `org-format-latex-options'."
             (org-html--format-image source attributes info)))))
      (t latex-frag))))
 
-(defun org-html-latex-environment-scaled (latex-environment _contents info)
+(defun +org-html-latex-environment-scaled (latex-environment _contents info)
   "Transcode a LATEX-ENVIRONMENT element from Org to HTML.
 CONTENTS is nil.  INFO is a plist holding contextual information.
 

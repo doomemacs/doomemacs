@@ -79,26 +79,26 @@
 
   ;; Set the icons only when a graphical frame has been created
   (if (display-graphic-p)
-      (mu4e~initialise-icons)
+      (+mu4e-initialise-icons)
     ;; When it's the server, wait till the first graphical frame
     (add-hook! 'server-after-make-frame-hook
-      (defun mu4e~initialise-icons-hook ()
+      (defun +mu4e-initialise-icons-hook ()
         (when (display-graphic-p)
-          (mu4e~initialise-icons)
-          (remove-hook #'mu4e~initialise-icons-hook)))))
+          (+mu4e-initialise-icons)
+          (remove-hook #'+mu4e-initialise-icons-hook)))))
 
   (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
   (add-to-list 'mu4e-bookmarks
                '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
 
-  (defun mu4e-header-colourise (str)
+  (defun +mu4e-header-colourise (str)
     (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-           (colour (nth (% str-sum (length mu4e-header-colourised-faces))
-                        mu4e-header-colourised-faces)))
+           (colour (nth (% str-sum (length ++mu4e-header-colourised-faces))
+                        ++mu4e-header-colourised-faces)))
       (put-text-property 0 (length str) 'face colour str)
       str))
 
-  (defvar mu4e-header-colourised-faces
+  (defvar ++mu4e-header-colourised-faces
     '(all-the-icons-lblue
       all-the-icons-purple
       all-the-icons-blue-alt
@@ -117,7 +117,7 @@
             (lambda (msg)
               (let ((maildir
                      (mu4e-message-field msg :maildir)))
-                (mu4e-header-colourise
+                (+mu4e-header-colourise
                  (replace-regexp-in-string
                   "^gmail"
                   (propertize "g" 'face 'bold-italic)
@@ -168,7 +168,7 @@
         :ne "h" #'+workspace/other)
 
   (map! :map mu4e-headers-mode-map
-        :e "l" #'mu4e-msg-to-agenda)
+        :e "l" #'+mu4e-msg-to-agenda)
 
   (map! :localleader
         :map mu4e-compose-mode-map
@@ -186,13 +186,13 @@
           :v "!" #'mu4e-headers-mark-for-read
           :v "?" #'mu4e-headers-mark-for-unread
           :v "u" #'mu4e-headers-mark-for-unmark
-          :vn "l" #'mu4e-msg-to-agenda))
+          :vn "l" #'+mu4e-msg-to-agenda))
 
   (add-hook 'mu4e-compose-pre-hook '+mu4e-set-account)
 
-  (advice-add #'mu4e~main-action-str :override #'mu4e~main-action-prettier-str)
+  (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier)
   (when (featurep! :editor evil)
-    ;; As mu4e~main-action-prettier-str replaces [k]ey with key q]uit should become quit
+    ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
     (setq evil-collection-mu4e-end-region-misc "quit")))
 
 (use-package! org-msg
@@ -205,26 +205,26 @@
         org-msg-greeting-name-limit 3
         org-msg-text-plain-alternative t)
 
-  (defvar org-msg-currently-exporting nil
+  (defvar +org-msg-currently-exporting nil
     "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
 Usefull for affecting HTML export config.")
-  (defadvice! org-msg--now-exporting (&rest _)
+  (defadvice! +org-msg--now-exporting (&rest _)
     :before #'org-msg-org-to-xml
-    (setq org-msg-currently-exporting t))
-  (defadvice! org-msg--not-exporting (&rest _)
+    (setq +org-msg-currently-exporting t))
+  (defadvice! +org-msg--not-exporting (&rest _)
     :after #'org-msg-org-to-xml
-    (setq org-msg-currently-exporting nil))
+    (setq +org-msg-currently-exporting nil))
 
-  (advice-add #'org-html-latex-fragment    :override #'org-html-latex-fragment-scaled)
-  (advice-add #'org-html-latex-environment :override #'org-html-latex-environment-scaled)
+  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled)
+  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled)
 
-  (defvar mu4e-compose--org-msg-toggle-next t ; t to initialise org-msg
+  (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
   (defun mu4e-compose-org-msg-handle-toggle (toggle-p)
-    (when (xor toggle-p mu4e-compose--org-msg-toggle-next)
+    (when (xor toggle-p +mu4e-compose-org-msg-toggle-next)
       (org-msg-mode (if org-msg-mode -1 1))
-      (setq mu4e-compose--org-msg-toggle-next
-            (not mu4e-compose--org-msg-toggle-next))))
+      (setq +mu4e-compose-org-msg-toggle-next
+            (not +mu4e-compose-org-msg-toggle-next))))
 
   (defadvice! mu4e-maybe-toggle-org-msg (orig-fn toggle-p)
     :around #'mu4e-compose-new
@@ -353,7 +353,7 @@ Must be set before org-msg is loaded to take effect.")
   (after! mu4e
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
-          (lambda ()
+          (lambda () ;; TODO make use +mu4e-msg-gmail-p
             (if (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
                 'delete 'sent))
 
@@ -449,7 +449,7 @@ Must be set before org-msg is loaded to take effect.")
     (mu4e-alert-set-default-style 'libnotify)
 
     (setq mu4e-alert-email-notification-types '(subjects))
-    (defun mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group all-mails)
+    (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group all-mails)
       "Default function to format MAIL-GROUP for notification.
 ALL-MAILS are the all the unread emails"
       (shell-command "paplay /usr/share/sounds/freedesktop/stereo/message.oga")
@@ -488,6 +488,6 @@ ALL-MAILS are the all the unread emails"
                (subject (plist-get new-mail :subject))
                (sender (caar (plist-get new-mail :from))))
           (list :title sender :body subject))))
-    (setq mu4e-alert-grouped-mail-notification-formatter #'mu4e-alert-grouped-mail-notification-formatter-with-bell))
+    (setq mu4e-alert-grouped-mail-notification-formatter #'+mu4e-alert-grouped-mail-notification-formatter-with-bell))
 
   (mu4e-alert-enable-mode-line-display))
