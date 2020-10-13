@@ -3,6 +3,9 @@
 (defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
 
+(defvar +mu4e-personal-adresses 'nil
+  "Alternative to mu4e-personal-adresses that can be set for each account (mu4e context).")
+
 
 ;;
 ;;; Packages
@@ -188,7 +191,7 @@
           :v "u" #'mu4e-headers-mark-for-unmark
           :vn "l" #'+mu4e-msg-to-agenda))
 
-  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-account)
+  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address)
 
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier)
   (when (featurep! :editor evil)

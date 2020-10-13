@@ -15,6 +15,7 @@ OPTIONAL:
  + `mu4e-trash-folder'
  + `mu4e-refile-folder'
  + `mu4e-compose-signature'
+ + `+mu4e-personal-adresses'
 
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
@@ -194,19 +195,24 @@ is tomorrow.  With two prefixes, select the deadline."
                      (t         "later"))))))
 
 ;;;###autoload
-(defun +mu4e-set-account ()
+(defun +mu4e-set-from-address ()
   "Set the account for composing a message. If a 'To' header is present,
-and correspands to an email account, this account will be selected.
-Otherwise, the user is prompted for the account they wish to use."
+and correspands to an email address, this address will be selected.
+Otherwise, the user is prompted for the address they wish to use. Possible
+selections come from the mu database or a list of email addresses associated
+with the current context."
   (unless (and mu4e-compose-parent-message
                (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
                      (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
-                 (if (member to (plist-get mu4e~server-props :personal-addresses))
+                 (if (member to (mu4e-personal-addresses))
                      (setq user-mail-address to)
-                   (if (member from (plist-get mu4e~server-props :personal-addresses))
+                   (if (member from (mu4e-personal-addresses))
                        (setq user-mail-address from)
                      nil))))
-    (ivy-read "Account: " (plist-get mu4e~server-props :personal-addresses) :action (lambda (candidate) (setq user-mail-address candidate)))))
+    (ivy-read "From: " (if-let ((context-addresses (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current))))
+                           context-addresses
+                         (mu4e-personal-addresses))
+              :action (lambda (candidate) (setq user-mail-address candidate)))))
 
 ;;;###autoload
 (defun +mu4e~main-action-str-prettier (str &optional func-or-shortcut)
