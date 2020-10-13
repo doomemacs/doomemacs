@@ -127,7 +127,8 @@ sudo apt-get install maildir-utils mu4e # mu and mu4e respectivly
     setting ~+org-msg-accent-color~)
 + Gmail integrations with the =+gmail= flag, which account for the different behaviour.
   This is applied when using addresses which contain =@gmail.com= or have =gmail= in
-  the maildir name.
+  the maildir name. You can use ~+mu4e-gmail-addresses~ when you want an address
+  to be treated as such but it meets neither conditions (e.g. with Gsuite).
 + Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
 
 * Configuration

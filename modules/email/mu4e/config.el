@@ -364,10 +364,18 @@ Must be set before org-msg is loaded to take effect.")
 
 (when (featurep! +gmail)
   (after! mu4e
+    (defvar +mu4e-gmail-addresses nil
+      "A list of email addresses which, despite not:
+- having '@gmail.com' in them, or
+- being in a maildir where the name includes 'gmail'
+
+Should be treated as a gmail address.")
+
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
           (lambda () ;; TODO make use +mu4e-msg-gmail-p
-            (if (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
+            (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
+                    (member (message-sendmail-envelope-from) +mu4e-gmail-addresses))
                 'delete 'sent))
 
           ;; don't need to run cleanup after indexing for gmail
@@ -382,10 +390,12 @@ Must be set before org-msg is loaded to take effect.")
        (string-match-p "@gmail.com"
                        (cond
                         ((member (mu4e-message-field msg :to)
-                                 (plist-get mu4e~server-props :personal-addresses))
+                                 (append (mu4e-personal-addresses)
+                                         +mu4e-gmail-addresses))
                          (mu4e-message-field msg :to))
                         ((member (mu4e-message-field msg :from)
-                                 (plist-get mu4e~server-props :personal-addresses))
+                                 (append (mu4e-personal-addresses)
+                                         +mu4e-gmail-addresses))
                          (mu4e-message-field msg :from))
                         (t "")))
        (string-match-p "gmail" (mu4e-message-field msg :maildir))))
