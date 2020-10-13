@@ -280,8 +280,6 @@ and complains if a module is loaded too early (during startup)."
       (+evil-collection-init '(process-menu simple)))
     (add-transient-hook! 'tabulated-list-mode
       (+evil-collection-init 'tabulated-list))
-    (add-transient-hook! 'tab-bar-mode
-      (+evil-collection-init 'tabulated-list))
     (when EMACS27+
       (add-transient-hook! 'tab-bar-mode
         (+evil-collection-init 'tab-bar)))
