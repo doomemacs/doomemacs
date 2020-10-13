@@ -41,6 +41,13 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 
 ** Plugins
 + [[https://github.com/jeremy-compostella/org-msg][org-msg]]
++ [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
+
+To disable either of these packages, simply add
+#+begin_src emacs-lisp
+(package! X :disable t)
+#+end_src
+to your [[elisp:(find-file (expand-file-name (concat "config." (if (featurep! :config literate) "org" "el")) doom-private-dir))][config]] (where =X= is the package in question) and it will not be used.
 
 * Prerequisites
 This module requires:
