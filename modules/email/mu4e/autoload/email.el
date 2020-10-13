@@ -363,7 +363,7 @@ scales the image to account for the value of :scale in `org-format-latex-options
 
 (defvar +mu4e-lock-greedy nil
   "Whether to 'grab' the `+mu4e-lock-file' if nobody else has it, i.e. start Mu4e")
-(defvar +mu4e-lock-relaxed nil
+(defvar +mu4e-lock-relaxed t
   "Whether if someone else wants the lock (signaled via `+mu4e-lock-request-file'), we should stop Mu4e and let go of it")
 
 ;;;###autoload
