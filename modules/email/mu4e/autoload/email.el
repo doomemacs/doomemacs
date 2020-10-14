@@ -43,9 +43,8 @@ default/fallback account."
       context)))
 
 
-
 (defvar +mu4e-workspace-name "*mu4e*"
-  "TODO")
+  "Name of the workspace created by `=mu4e', dedicated to mu4e.")
 (defvar +mu4e--old-wconf nil)
 
 (add-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
@@ -194,8 +193,24 @@ is tomorrow.  With two prefixes, select the deadline."
                      ((= arg 4) "tomorrow")
                      (t         "later"))))))
 
+;;
+;; Hooks
+
+(defun +mu4e-init-h ()
+  (add-hook 'kill-buffer-hook #'+mu4e-kill-mu4e-h nil t))
+
+(defun +mu4e-kill-mu4e-h ()
+  ;; (prolusion-mail-hide)
+  (cond
+   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
+    (+workspace/delete +mu4e-workspace-name))
+
+   (+mu4e--old-wconf
+    (set-window-configuration +mu4e--old-wconf)
+    (setq +mu4e--old-wconf nil))))
+
 ;;;###autoload
-(defun +mu4e-set-from-address ()
+(defun +mu4e-set-from-address-h ()
   "Set the account for composing a message. If a 'To' header is present,
 and correspands to an email address, this address will be selected.
 Otherwise, the user is prompted for the address they wish to use. Possible
@@ -217,238 +232,3 @@ with the current context."
                        (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current)))))
                context-addresses
              (mu4e-personal-addresses))))))
-
-;;;###autoload
-(defun +mu4e~main-action-str-prettier (str &optional func-or-shortcut)
-  "Highlight the first occurrence of [.] in STR.
-If FUNC-OR-SHORTCUT is non-nil and if it is a function, call it
-when STR is clicked (using RET or mouse-2); if FUNC-OR-SHORTCUT is
-a string, execute the corresponding keyboard action when it is
-clicked."
-  :override #'mu4e~main-action-str
-  (let ((newstr
-         (replace-regexp-in-string
-          "\\[\\(..?\\)\\]"
-          (lambda(m)
-            (format "%s"
-                    (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
-          (replace-regexp-in-string "\t\\*" "\t⚫" str)))
-        (map (make-sparse-keymap))
-        (func (if (functionp func-or-shortcut)
-                  func-or-shortcut
-                (if (stringp func-or-shortcut)
-                    (lambda()(interactive)
-                      (execute-kbd-macro func-or-shortcut))))))
-    (define-key map [mouse-2] func)
-    (define-key map (kbd "RET") func)
-    (put-text-property 0 (length newstr) 'keymap map newstr)
-    (put-text-property (string-match "[A-Za-z].+$" newstr)
-                       (- (length newstr) 1) 'mouse-face 'highlight newstr)
-    newstr))
-
-;;
-;; Hooks
-
-(defun +mu4e-init-h ()
-  (add-hook 'kill-buffer-hook #'+mu4e-kill-mu4e-h nil t))
-
-(defun +mu4e-kill-mu4e-h ()
-  ;; (prolusion-mail-hide)
-  (cond
-   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
-    (+workspace/delete +mu4e-workspace-name))
-
-   (+mu4e--old-wconf
-    (set-window-configuration +mu4e--old-wconf)
-    (setq +mu4e--old-wconf nil))))
-
-;; org-msg hooks
-
-;;;###autoload
-(defun +org-msg-img-scale-css (img-uri)
-  "For a given IMG-URI, use imagemagik to find its width."
-  (if +org-msg-currently-exporting
-      (list :width
-            (format "%.1fpx"
-                    (/ (string-to-number
-                        (shell-command-to-string
-                         ;; TODO change to use 'file'
-                         (format "identify -format %%w %s"
-                                 (substring img-uri 7)))) ; 7=(length "file://")
-                       (plist-get org-format-latex-options :scale))))
-    (list :style (format "transform: scale(%.3f)"
-                         (/ 1.0 (plist-get org-format-latex-options :scale))))))
-
-;;;###autoload
-(defun +org-html-latex-fragment-scaled (latex-fragment _contents info)
-  "Transcode a LATEX-FRAGMENT object from Org to HTML.
-CONTENTS is nil.  INFO is a plist holding contextual information.
-
-This differs from `org-html-latex-fragment' in that it uses the LaTeX fragment
-as a meaningful alt value, applies a class to indicate what sort of fragment it is
-(latex-fragment-inline or latex-fragment-block), and (on Linux) scales the image to
-account for the value of :scale in `org-format-latex-options'."
-  (let ((latex-frag (org-element-property :value latex-fragment))
-        (processing-type (plist-get info :with-latex)))
-    (cond
-     ((memq processing-type '(t mathjax))
-      (org-html-format-latex latex-frag 'mathjax info))
-     ((memq processing-type '(t html))
-      (org-html-format-latex latex-frag 'html info))
-     ((assq processing-type org-preview-latex-process-alist)
-      (let ((formula-link
-             (org-html-format-latex latex-frag processing-type info)))
-        (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
-          (let ((source (org-export-file-uri (match-string 1 formula-link)))
-                (attributes (list :alt latex-frag
-                                  :class (concat "latex-fragment-"
-                                                 (if (equal "\\(" (substring latex-frag 0 2))
-                                                     "inline" "block")))))
-            (when (and (memq processing-type '(dvipng convert))
-                       (not IS-WINDOWS) ; relies on posix path
-                       (executable-find "identify"))
-              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
-            (org-html--format-image source attributes info)))))
-     (t latex-frag))))
-
-;;;###autoload
-(defun +org-html-latex-environment-scaled (latex-environment _contents info)
-  "Transcode a LATEX-ENVIRONMENT element from Org to HTML.
-CONTENTS is nil.  INFO is a plist holding contextual information.
-
-This differs from `org-html-latex-environment' in that (on Linux) it
-scales the image to account for the value of :scale in `org-format-latex-options'."
-  (let ((processing-type (plist-get info :with-latex))
-        (latex-frag (org-remove-indentation
-                     (org-element-property :value latex-environment)))
-        (attributes (org-export-read-attribute :attr_html latex-environment))
-        (label (and (org-element-property :name latex-environment)
-                    (org-export-get-reference latex-environment info)))
-        (caption (and (org-html--latex-environment-numbered-p latex-environment)
-                      (number-to-string
-                       (org-export-get-ordinal
-                        latex-environment info nil
-                        (lambda (l _)
-                          (and (org-html--math-environment-p l)
-                               (org-html--latex-environment-numbered-p l))))))))
-    (plist-put attributes :class "latex-environment")
-    (cond
-     ((memq processing-type '(t mathjax))
-      (org-html-format-latex
-       (if (org-string-nw-p label)
-           (replace-regexp-in-string "\\`.*"
-                                     (format "\\&\n\\\\label{%s}" label)
-                                     latex-frag)
-         latex-frag)
-       'mathjax info))
-     ((assq processing-type org-preview-latex-process-alist)
-      (let ((formula-link
-             (org-html-format-latex
-              (org-html--unlabel-latex-environment latex-frag)
-              processing-type info)))
-        (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
-          (let ((source (org-export-file-uri (match-string 1 formula-link))))
-            (when (and (memq processing-type '(dvipng convert))
-                       (not IS-WINDOWS) ; relies on posix path
-                       (executable-find "identify"))
-              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
-            (org-html--wrap-latex-environment
-             (org-html--format-image source attributes info)
-             info caption label)))))
-     (t (org-html--wrap-latex-environment latex-frag info caption label)))))
-
-;;
-;; Cooperative locking
-
-(defvar +mu4e-lock-file "/tmp/mu4e_lock"
-  "Location of the lock file which stores the PID of the process currenty running mu4e")
-(defvar +mu4e-lock-request-file "/tmp/mu4e_lock_request"
-  "Location of the lock file for which creating indicated that another process wants the lock to be released")
-
-(defvar +mu4e-lock-greedy nil
-  "Whether to 'grab' the `+mu4e-lock-file' if nobody else has it, i.e. start Mu4e")
-(defvar +mu4e-lock-relaxed t
-  "Whether if someone else wants the lock (signaled via `+mu4e-lock-request-file'), we should stop Mu4e and let go of it")
-
-;;;###autoload
-(defun +mu4e-lock-pid-info ()
-  "Get info on the PID refered to in `+mu4e-lock-file' in the form (pid . process-attributes)
- If the file or process do not exist, the lock file is deleted an nil returned."
-  (when (file-exists-p +mu4e-lock-file)
-    (let* ((pid (string-to-number
-                 (with-temp-buffer
-                   (setq coding-system-for-read 'utf-8)
-                   (insert-file-contents +mu4e-lock-file)
-                   (buffer-string))))
-           (process (process-attributes pid)))
-      (if process (cons pid process)
-        (delete-file +mu4e-lock-file) nil))))
-
-;;;###autoload
-(defun +mu4e-lock-available (&optional strict)
-  "If the `+mu4e-lock-file' is available (unset or owned by this emacs) return t.
-If STRICT only accept an unset lock file."
-  (not (when-let* ((lock-info (+mu4e-lock-pid-info))
-                   (pid (car lock-info)))
-         (when (or strict (/= (emacs-pid) pid)) t))))
-
-;;;###autoload
-(defun +mu4e-lock-file-delete-maybe ()
-  "Check `+mu4e-lock-file', and delete it if this process is responsible for it."
-  (when (+mu4e-lock-available)
-    (delete-file +mu4e-lock-file)
-    (file-notify-rm-watch +mu4e-lock--request-watcher)))
-
-;;;###autoload
-(defun +mu4e-lock-start (orig-fun &optional callback)
-  "Check `+mu4e-lock-file', and if another process is responsible for it, abort starting.
-Else, write to this process' PID to the lock file"
-  (unless (+mu4e-lock-available)
-    (shell-command (format "touch %s" +mu4e-lock-request-file))
-    (message "Lock file exists, requesting that it be given up")
-    (sleep-for 0.1)
-    (delete-file +mu4e-lock-request-file))
-  (if (not (+mu4e-lock-available))
-      (user-error "Unfortunately another Emacs is already doing stuff with Mu4e, and you can only have one at a time")
-    (write-region (number-to-string (emacs-pid)) nil +mu4e-lock-file)
-    (delete-file +mu4e-lock-request-file)
-    (funcall orig-fun callback)
-    (setq +mu4e-lock--request-watcher
-          (file-notify-add-watch +mu4e-lock-request-file
-                                 '(change)
-                                 #'+mu4e-lock-request))))
-
-(defvar +mu4e-lock--file-watcher nil)
-(defvar +mu4e-lock--file-just-deleted nil)
-(defvar +mu4e-lock--request-watcher nil)
-
-;;;###autoload
-(defun +mu4e-lock-add-watcher ()
-  (setq +mu4e-lock--file-just-deleted nil)
-  (file-notify-rm-watch +mu4e-lock--file-watcher)
-  (setq +mu4e-lock--file-watcher
-        (file-notify-add-watch +mu4e-lock-file
-                               '(change)
-                               #'+mu4e-lock-file-updated)))
-
-;;;###autoload
-(defun +mu4e-lock-request (event)
-  "Handle another process requesting the Mu4e lock."
-  (when (equal (nth 1 event) 'created)
-    (when +mu4e-lock-relaxed
-      (mu4e~stop)
-      (file-notify-rm-watch +mu4e-lock--file-watcher)
-      (message "Someone else wants to use Mu4e, releasing lock")
-      (delete-file +mu4e-lock-file)
-      (run-at-time 0.2 nil #'+mu4e-lock-add-watcher))
-    (delete-file +mu4e-lock-request-file)))
-
-;;;###autoload
-(defun +mu4e-lock-file-updated (event)
-  (if +mu4e-lock--file-just-deleted
-      (+mu4e-lock-add-watcher)
-    (when (equal (nth 1 event) 'deleted)
-      (setq +mu4e-lock--file-just-deleted t)
-      (when (and +mu4e-lock-greedy (+mu4e-lock-available t))
-        (message "Noticed Mu4e lock was available, grabbed it")
-        (run-at-time 0.2 nil #'mu4e~start)))))

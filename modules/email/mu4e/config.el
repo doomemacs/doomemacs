@@ -190,9 +190,9 @@
           :v "?" #'mu4e-headers-mark-for-unread
           :v "u" #'mu4e-headers-mark-for-unmark))
 
-  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address)
+  (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address-h)
 
-  (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier)
+  (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
   (when (featurep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
     (setq evil-collection-mu4e-end-region-misc "quit"))
@@ -226,8 +226,8 @@ Usefull for affecting HTML export config.")
     :after #'org-msg-org-to-xml
     (setq +org-msg-currently-exporting nil))
 
-  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled)
-  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled)
+  (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
+  (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
