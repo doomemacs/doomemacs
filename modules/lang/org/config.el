@@ -519,6 +519,14 @@ the exported output (i.e. formatters)."
   ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
 
+  ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
+  ;; `org-auto-align-tags', such as in `org-self-insert-command' and
+  ;; `org-delete-backward-char'.
+  ;; TODO Should be reported/PR'ed upstream
+  (defadvice! +org--respect-org-auto-align-tags-a (&rest _)
+    :before-while #'org-fix-tags-on-the-fly
+    org-auto-align-tags)
+
   ;; HACK Org is known to use a lot of unicode symbols (and large org files tend
   ;;      to be especially memory hungry). Compounded with
   ;;      `inhibit-compacting-font-caches' being non-nil, org needs more memory
