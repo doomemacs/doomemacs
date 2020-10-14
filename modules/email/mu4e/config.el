@@ -210,7 +210,7 @@
 
 (use-package! org-msg
   :after mu4e
-  :when (featurep! :lang org)
+  :when (featurep! +org)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"

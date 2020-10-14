@@ -33,12 +33,15 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 #+end_quote
 
 ** Module Flags
-+ ~+gmail~ Enables gmail-specific configuration for mail ~To~ or ~From~ a gmail
++ =+gmail= Enables gmail-specific configuration for mail ~To~ or ~From~ a gmail
   address, or a maildir with ~gmail~ in the name.
++ =+org= Use =org-msg= for composing email in Org, then sending a multipart text
+  (ASCII export) and HTML message.
 
 ** Plugins
-+ [[https://github.com/jeremy-compostella/org-msg][org-msg]]
 + [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
++ =+org=
+  + [[https://github.com/jeremy-compostella/org-msg][org-msg]]
 
 * Prerequisites
 This module requires:
@@ -75,7 +78,7 @@ environment.systemPackages = with pkgs; [
 + Prettified =mu4e:main= view
 + Cooperative locking of the =mu= process. Another Emacs instance may request
   access, or grab the lock when it's available.
-+ =org-msg= integration, which can be toggled per-message, with revamped style and
++ =org-msg= integration with =+org=, which can be toggled per-message, with revamped style and
   an accent colour
 + Gmail integrations with the =+gmail= flag
 + Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
@@ -102,7 +105,7 @@ You can now proceed with the [[#mu-and-mu4e][mu and mu4e]] section.
 The steps needed to set up =mu4e= with =mbsync= are very similar to the ones for
 [[#offlineimap][offlineimap]].
 
-Start with writing a ~\~/.mbsyncrc~. An example for Gmail can be found on
+Start with writing a ~~/.mbsyncrc~. An example for Gmail can be found on
 [[http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/][pragmaticemacs.com]]. A non-Gmail example is available as a gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]]. The [[http://isync.sourceforge.net/mbsync.html][manual
 page]] contains all needed information to set up your own.
 
