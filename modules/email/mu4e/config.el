@@ -94,14 +94,14 @@
   (add-to-list 'mu4e-bookmarks
                '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
 
-  (defun +mu4e-header-colourise (str)
+  (defun +mu4e-header-colorize (str)
     (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-           (colour (nth (% str-sum (length +mu4e-header-colourised-faces))
-                        +mu4e-header-colourised-faces)))
+           (colour (nth (% str-sum (length +mu4e-header-colorized-faces))
+                        +mu4e-header-colorized-faces)))
       (put-text-property 0 (length str) 'face colour str)
       str))
 
-  (defvar +mu4e-header-colourised-faces
+  (defvar +mu4e-header-colorized-faces
     '(all-the-icons-lblue
       all-the-icons-purple
       all-the-icons-blue-alt
@@ -120,7 +120,7 @@
             (lambda (msg)
               (let ((maildir
                      (mu4e-message-field msg :maildir)))
-                (+mu4e-header-colourise
+                (+mu4e-header-colorize
                  (replace-regexp-in-string
                   "^gmail"
                   (propertize "g" 'face 'bold-italic)

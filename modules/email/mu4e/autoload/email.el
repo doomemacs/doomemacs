@@ -125,10 +125,10 @@ will also be the width of all other printable characters."
         mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
 
 ;;;###autoload
-(defun +mu4e-header-colourise (str)
+(defun +mu4e-header-colorize (str)
   (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-         (colour (nth (% str-sum (length mu4e-header-colourised-faces))
-                      mu4e-header-colourised-faces)))
+         (colour (nth (% str-sum (length mu4e-header-colorized-faces))
+                      mu4e-header-colorized-faces)))
     (put-text-property 0 (length str) 'face colour str)
     str))
 
