@@ -379,8 +379,8 @@ scales the image to account for the value of :scale in `org-format-latex-options
         (delete-file +mu4e-lock-file) nil))))
 
 ;;;###autoload
-(defun +mu4e-lock-avalible (&optional strict)
-  "If the `+mu4e-lock-file' is avalible (unset or owned by this emacs) return t.
+(defun +mu4e-lock-available (&optional strict)
+  "If the `+mu4e-lock-file' is available (unset or owned by this emacs) return t.
 If STRICT only accept an unset lock file."
   (not (when-let* ((lock-info (+mu4e-lock-pid-info))
                    (pid (car lock-info)))
@@ -389,7 +389,7 @@ If STRICT only accept an unset lock file."
 ;;;###autoload
 (defun +mu4e-lock-file-delete-maybe ()
   "Check `+mu4e-lock-file', and delete it if this process is responsible for it."
-  (when (+mu4e-lock-avalible)
+  (when (+mu4e-lock-available)
     (delete-file +mu4e-lock-file)
     (file-notify-rm-watch +mu4e-lock--request-watcher)))
 
@@ -397,12 +397,12 @@ If STRICT only accept an unset lock file."
 (defun +mu4e-lock-start (orig-fun &optional callback)
   "Check `+mu4e-lock-file', and if another process is responsible for it, abort starting.
 Else, write to this process' PID to the lock file"
-  (unless (+mu4e-lock-avalible)
+  (unless (+mu4e-lock-available)
     (shell-command (format "touch %s" +mu4e-lock-request-file))
     (message "Lock file exists, requesting that it be given up")
     (sleep-for 0.1)
     (delete-file +mu4e-lock-request-file))
-  (if (not (+mu4e-lock-avalible))
+  (if (not (+mu4e-lock-available))
       (user-error "Unfortunately another Emacs is already doing stuff with Mu4e, and you can only have one at a time")
     (f-write-text (number-to-string (emacs-pid)) 'utf-8 +mu4e-lock-file)
     (delete-file +mu4e-lock-request-file)
@@ -443,6 +443,6 @@ Else, write to this process' PID to the lock file"
       (+mu4e-lock-add-watcher)
     (when (equal (nth 1 event) 'deleted)
       (setq +mu4e-lock--file-just-deleted t)
-      (when (and +mu4e-lock-greedy (+mu4e-lock-avalible t))
-        (message "Noticed Mu4e lock was avalible, grabbed it")
+      (when (and +mu4e-lock-greedy (+mu4e-lock-available t))
+        (message "Noticed Mu4e lock was available, grabbed it")
         (run-at-time 0.2 nil #'mu4e~start)))))
