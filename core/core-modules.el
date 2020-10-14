@@ -249,8 +249,9 @@ those directories. The first returned path is always `doom-private-dir'."
                                       :type 'dirs
                                       :mindepth 1
                                       :depth 1)))
-            (cl-loop for plist being the hash-values of doom-modules
-                     collect (plist-get plist :path)))
+            (delq
+             nil (cl-loop for plist being the hash-values of doom-modules
+                          collect (plist-get plist :path)) ))
           nil))
 
 (defun doom-module-mplist-map (fn mplist)
