@@ -271,16 +271,22 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :after lsp-mode
+  :hook (lsp-lens-mode . ccls-code-lens-mode)
   :init
+  (defvar ccls-sem-highlight-method 'font-lock)
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
     (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
+  ;; Avoid using `:after' because it ties the :config below to when `lsp-mode'
+  ;; loads, rather than `ccls' loads.
+  (after! lsp-mode (require 'ccls))
   :config
-  (add-hook 'lsp-after-open-hook #'ccls-code-lens-mode)
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
-  (setq ccls-sem-highlight-method 'font-lock)
+  ;; Disable `ccls-sem-highlight-method' if `lsp-enable-semantic-highlighting'
+  ;; is nil. Otherwise, it appears ccls bypasses it.
+  (setq-hook! 'lsp-before-initialize-hook
+    ccls-sem-highlight-method (if lsp-enable-semantic-highlighting ccls-sem-highlight-method))
   (when (or IS-MAC IS-LINUX)
     (let ((cpu-count-command (cond (IS-MAC '("sysctl" "-n" "hw.ncpu"))
                                    (IS-LINUX '("nproc"))
