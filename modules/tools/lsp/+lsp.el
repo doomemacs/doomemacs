@@ -120,6 +120,12 @@ server getting expensively restarted when reverting buffers."
         ;; errors flash briefly and then disappear).
         lsp-ui-sideline-show-hover nil)
 
+  (map! :map lsp-ui-peek-mode-map
+        "j"   #'lsp-ui-peek--select-next
+        "k"   #'lsp-ui-peek--select-prev
+        "C-k" #'lsp-ui-peek--select-prev-file
+        "C-j" #'lsp-ui-peek--select-next-file)
+
   (when (featurep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode :async t
       :definition 'lsp-ui-peek-find-definitions
