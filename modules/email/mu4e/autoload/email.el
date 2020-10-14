@@ -81,7 +81,7 @@ default/fallback account."
 ;; Icons need a bit of work
 ;; Spacing needs to be determined and adjucted
 ;;;###autoload
-(defun +get-string-width (str)
+(defun +mu4e--get-string-width (str)
   "Return the width in pixels of a string in the current
 window's default font. If the font is mono-spaced, this
 will also be the width of all other printable characters."
@@ -103,8 +103,8 @@ will also be the width of all other printable characters."
          (icon (if colour
                    (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" colour)) :height ,height :v-adjust ,v-adjust))
                  (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
-         (icon-width (+get-string-width icon))
-         (space-width (+get-string-width " "))
+         (icon-width (+mu4e--get-string-width icon))
+         (space-width (+mu4e--get-string-width " "))
          (space-factor (- 2 (/ (float icon-width) space-width))))
     (concat (propertize " " 'display `(space . (:width ,space-factor))) icon)))
 
@@ -136,7 +136,7 @@ will also be the width of all other printable characters."
 ;; Perfect for when you see an email you want to reply to
 ;; later, but don't want to forget about
 ;;;###autoload
-(defun +mu4e-msg-to-agenda (arg)
+(defun +mu4e/refile-msg-to-agenda (arg)
   "Refile a message and add a entry in the agenda file with a
 deadline.  Default deadline is today.  With one prefix, deadline
 is tomorrow.  With two prefixes, select the deadline."

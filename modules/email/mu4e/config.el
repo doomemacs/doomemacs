@@ -171,7 +171,7 @@
         :ne "h" #'+workspace/other)
 
   (map! :map mu4e-headers-mode-map
-        :e "l" #'+mu4e-msg-to-agenda)
+        :vne "l" #'mu4e/refile-msg-to-agenda)
 
   (map! :localleader
         :map mu4e-compose-mode-map
@@ -188,8 +188,7 @@
           :v "*" #'mu4e-headers-mark-for-something
           :v "!" #'mu4e-headers-mark-for-read
           :v "?" #'mu4e-headers-mark-for-unread
-          :v "u" #'mu4e-headers-mark-for-unmark
-          :vn "l" #'+mu4e-msg-to-agenda))
+          :v "u" #'mu4e-headers-mark-for-unmark))
 
   (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address)
 
