@@ -61,10 +61,10 @@
         mu4e-headers-thread-connection-prefix '("│" . "│ ")
         ;; remove 'lists' column
         mu4e-headers-fields
-        '((:account . 12)
+        '((:account-stripe . 1)
           (:human-date . 8)
           (:flags . 6) ; 3 icon flags
-          (:from . 25)
+          (:from-or-to . 25)
           (:subject)))
 
   ;; set mail user agent
@@ -94,39 +94,48 @@
   (add-to-list 'mu4e-bookmarks
                '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
 
-  (defun +mu4e-header-colorize (str)
-    (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-           (colour (nth (% str-sum (length +mu4e-header-colorized-faces))
-                        +mu4e-header-colorized-faces)))
-      (put-text-property 0 (length str) 'face colour str)
-      str))
+  (setq +mu4e-header-colorized-faces
+        '(all-the-icons-green
+          all-the-icons-lblue
+          all-the-icons-purple-alt
+          all-the-icons-blue-alt
+          all-the-icons-purple
+          all-the-icons-yellow))
 
-  (defvar +mu4e-header-colorized-faces
-    '(all-the-icons-lblue
-      all-the-icons-purple
-      all-the-icons-blue-alt
-      all-the-icons-green
-      all-the-icons-maroon
-      all-the-icons-yellow
-      all-the-icons-orange))
-
-  ;; Add a column to display what email account the email belongs to.
+  ;; Add a column to display what email account the email belongs to,
+  ;; and an account color stripe column
+  (defvar +mu4e-header--maildir-colors nil)
   (setq mu4e-header-info-custom
         '((:account .
-           (:name "account"
-            :shortname "account"
+           (:name "Account"
+            :shortname "Account"
             :help "which account this email belongs to"
             :function
             (lambda (msg)
-              (let ((maildir
-                     (mu4e-message-field msg :maildir)))
-                (+mu4e-header-colorize
-                 (replace-regexp-in-string
-                  "^gmail"
-                  (propertize "g" 'face 'bold-italic)
-                  (format "%s"
-                          (substring maildir 1
-                                     (string-match-p "/" maildir 1)))))))))
+              (+mu4e-colorize-str
+               (replace-regexp-in-string
+                "^gmail"
+                (propertize "g" 'face 'bold-italic)
+                (format "%s"
+                        (substring maildir 1
+                                   (string-match-p "/" maildir 1))))
+               '+mu4e-header--maildir-colors
+               (replace-regexp-in-string
+                "\\`/\\([^/]+\\)/.*\\'" "\\1"
+                (mu4e-message-field msg :maildir))))))
+          (:account-stripe .
+           (:name "Account"
+            :shortname "▐"
+            :help "Which account this email belongs to"
+            :function
+            (lambda (msg)
+              (let ((account
+                     (replace-regexp-in-string
+                      "\\`/?\\([^/]+\\)/.*\\'" "\\1"
+                      (mu4e-message-field msg :maildir))))
+                (propertize
+                 (+mu4e-colorize-str "▌" '+mu4e-header--maildir-colors account)
+                 'help-echo account)))))
           (:recipnum .
            (:name "Number of recipients"
             :shortname " ⭷"

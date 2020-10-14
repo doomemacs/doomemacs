@@ -131,6 +131,48 @@ will also be the width of all other printable characters."
     (put-text-property 0 (length str) 'face color str)
     str))
 
+;;;###autoload
+(defun +mu4e-colorize-str (str &optional unique herring)
+  "Apply a face from `+mu4e-header-colorized-faces' to STR.
+If HERRING is set, it will be used to determine the face instead of STR.
+Will try to make unique when non-nil UNIQUE,
+a quoted symbol for a alist of current strings and faces provided."
+  (unless herring
+    (setq herring str))
+  (put-text-property
+   0 (length str)
+   'face
+   (if (not unique)
+       (+mu4e--str-color-face herring str)
+     (let ((unique-alist (eval unique)))
+       (unless (assoc herring unique-alist)
+         (if (> (length unique-alist) (length +mu4e-header-colorized-faces))
+             (push (cons herring (+mu4e--str-color-face herring)) unique-alist)
+           (let ((offset 0) color color?)
+             (while (not color)
+               (setq color? (+mu4e--str-color-face herring offset))
+               (if (not (rassoc color? unique-alist))
+                   (setq color color?)
+                 (setq offset (1+ offset))
+                 (when (> offset (length +mu4e-header-colorized-faces))
+                   (message "Warning: +mu4e-colorize-str was called with non-unique-alist UNIQUE-alist alist.")
+                   (setq color (+mu4e--str-color-face herring)))))
+             (push (cons herring color) unique-alist)))
+         (set unique unique-alist))
+       (cdr (assoc herring unique-alist))))
+   str)
+  str)
+
+;;;###autoload
+(defun +mu4e--str-color-face (str &optional offset)
+  "Select a face from `+mu4e-header-colorized-faces' based on
+STR and any integer OFFSET."
+  (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
+         (color (nth (% (+ str-sum (if offset offset 0))
+                        (length +mu4e-header-colorized-faces))
+                     +mu4e-header-colorized-faces)))
+    color))
+
 ;; Adding emails to the agenda
 ;; Perfect for when you see an email you want to reply to
 ;; later, but don't want to forget about
