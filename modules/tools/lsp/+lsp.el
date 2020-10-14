@@ -115,6 +115,8 @@ server getting expensively restarted when reverting buffers."
         ;; lsp-ui-doc is redundant with and more invasive than
         ;; `+lookup/documentation'
         lsp-ui-doc-enable nil
+        lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
+        lsp-ui-doc-position 'at-point
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
