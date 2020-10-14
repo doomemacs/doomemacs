@@ -423,7 +423,7 @@ Else, write to this process' PID to the lock file"
   (setq +mu4e-lock--file-watcher
         (file-notify-add-watch +mu4e-lock-file
                                '(change)
-                               #'++mu4e-lock-file-updated)))
+                               #'+mu4e-lock-file-updated)))
 
 ;;;###autoload
 (defun +mu4e-lock-request (event)
@@ -438,7 +438,7 @@ Else, write to this process' PID to the lock file"
     (delete-file +mu4e-lock-request-file)))
 
 ;;;###autoload
-(defun ++mu4e-lock-file-updated (event)
+(defun +mu4e-lock-file-updated (event)
   (if +mu4e-lock--file-just-deleted
       (+mu4e-lock-add-watcher)
     (when (equal (nth 1 event) 'deleted)
