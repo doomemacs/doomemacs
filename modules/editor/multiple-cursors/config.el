@@ -77,6 +77,8 @@
                 (evil-numbers/dec-at-pt-incremental)
                 ;; :tools eval
                 (+eval:replace-region . +multiple-cursors-execute-default-operator-fn)
+                ;; :lang ess
+                (ess-smart-comma . evil-mc-execute-call)
                 ;; :lang org
                 (evil-org-delete . evil-mc-execute-default-evil-delete)))
     (setf (alist-get (car fn) evil-mc-custom-known-commands)
