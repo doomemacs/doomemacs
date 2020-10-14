@@ -266,6 +266,7 @@
                                 "~/.miniconda3"
                                 "~/anaconda3"
                                 "~/miniconda3"
+                                "~/opt/miniconda3"
                                 "/usr/bin/anaconda3"
                                 "/usr/local/anaconda3"
                                 "/usr/local/miniconda3"
