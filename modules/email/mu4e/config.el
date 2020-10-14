@@ -71,7 +71,7 @@
   (setq mail-user-agent 'mu4e-user-agent
         message-mail-user-agent 'mu4e-user-agent)
 
-  ;; Make reply colouring consistant, and striped for readability
+  ;; Make reply coloring consistant, and striped for readability
   (custom-set-faces!
     '(gnus-cite-2 :foreground nil :inherit gnus-cite-10)
     '(gnus-cite-3 :foreground nil :inherit gnus-cite-7)

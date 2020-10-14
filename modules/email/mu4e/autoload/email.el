@@ -94,13 +94,13 @@ will also be the width of all other printable characters."
       (car (window-text-pixel-size)))))
 
 ;;;###autoload
-(cl-defun +mu4e-normalised-icon (name &key set colour height v-adjust)
+(cl-defun +mu4e-normalised-icon (name &key set color height v-adjust)
   "Convert :icon declaration to icon"
   (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
          (v-adjust (or v-adjust 0.02))
          (height (or height 0.8))
-         (icon (if colour
-                   (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" colour)) :height ,height :v-adjust ,v-adjust))
+         (icon (if color
+                   (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" color)) :height ,height :v-adjust ,v-adjust))
                  (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
          (icon-width (+mu4e--get-string-width icon))
          (space-width (+mu4e--get-string-width " "))
@@ -116,19 +116,19 @@ will also be the width of all other printable characters."
         mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
         mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "arrow-right"))
         mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "arrow-right"))
-        mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :colour "dsilver"))
+        mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :color "dsilver"))
         mu4e-headers-trashed-mark    (cons "T" (+mu4e-normalised-icon "trash"))
-        mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :colour "silver"))
+        mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :color "silver"))
         mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "lock"))
-        mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :colour "dpurple"))
+        mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :color "dpurple"))
         mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
 
 ;;;###autoload
 (defun +mu4e-header-colorize (str)
   (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-         (colour (nth (% str-sum (length mu4e-header-colorized-faces))
-                      mu4e-header-colorized-faces)))
-    (put-text-property 0 (length str) 'face colour str)
+         (color (nth (% str-sum (length +mu4e-header-colorized-faces))
+                     +mu4e-header-colorized-faces)))
+    (put-text-property 0 (length str) 'face color str)
     str))
 
 ;; Adding emails to the agenda

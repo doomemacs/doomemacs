@@ -74,12 +74,12 @@ environment.systemPackages = with pkgs; [
 
 * Features
 + Tidied mu4e headers view, with flags from =all-the-icons=
-+ Consistent colouring of reply depths (across compose and gnus modes)
++ Consistent coloring of reply depths (across compose and gnus modes)
 + Prettified =mu4e:main= view
 + Cooperative locking of the =mu= process. Another Emacs instance may request
   access, or grab the lock when it's available.
 + =org-msg= integration with =+org=, which can be toggled per-message, with revamped style and
-  an accent colour
+  an accent color
 + Gmail integrations with the =+gmail= flag
 + Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
 
@@ -174,8 +174,8 @@ To disable ~org-msg-mode~ by default, simply
 To toggle org-msg for a single message, just apply the universal argument to the
 compose or reply command (=SPC u= with ~evil~, =C-u= otherwise).
 
-The accent colour that Doom uses can be customised by setting
-~+org-msg-accent-color~ to a CSS colour string.
+The accent color that Doom uses can be customised by setting
+~+org-msg-accent-color~ to a CSS color string.
 
 *** Disabling
 If you don't like OrgMsg, simply add
