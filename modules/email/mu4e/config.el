@@ -199,9 +199,9 @@
 
   ;; process lock control
   (when IS-WINDOWS
-    (setq ;; REVIEW untested
-     +mu4e-lock-file (expand-file-name "%userprofile%\\AppData\\Local\\Temp\\mu4e_lock")
-     +mu4e-lock-request-file (expand-file-name "%userprofile%\\AppData\\Local\\Temp\\mu4e_lock_request")))
+    (setq
+     +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
+     +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
   (advice-add 'mu4e~start :around #'+mu4e-lock-start)
