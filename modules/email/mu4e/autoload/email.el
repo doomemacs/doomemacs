@@ -124,14 +124,6 @@ will also be the width of all other printable characters."
         mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
 
 ;;;###autoload
-(defun +mu4e-header-colorize (str)
-  (let* ((str-sum (apply #'+ (mapcar (lambda (c) (% c 3)) str)))
-         (color (nth (% str-sum (length +mu4e-header-colorized-faces))
-                     +mu4e-header-colorized-faces)))
-    (put-text-property 0 (length str) 'face color str)
-    str))
-
-;;;###autoload
 (defun +mu4e-colorize-str (str &optional unique herring)
   "Apply a face from `+mu4e-header-colorized-faces' to STR.
 If HERRING is set, it will be used to determine the face instead of STR.
