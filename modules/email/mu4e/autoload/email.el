@@ -373,7 +373,11 @@ scales the image to account for the value of :scale in `org-format-latex-options
   "Get info on the PID refered to in `+mu4e-lock-file' in the form (pid . process-attributes)
  If the file or process do not exist, the lock file is deleted an nil returned."
   (when (file-exists-p +mu4e-lock-file)
-    (let* ((pid (string-to-number (f-read-text +mu4e-lock-file 'utf-8)))
+    (let* ((pid (string-to-number
+                 (with-temp-buffer
+                   (setq coding-system-for-read 'utf-8)
+                   (insert-file-contents +mu4e-lock-file)
+                   (buffer-string))))
            (process (process-attributes pid)))
       (if process (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
@@ -404,7 +408,7 @@ Else, write to this process' PID to the lock file"
     (delete-file +mu4e-lock-request-file))
   (if (not (+mu4e-lock-available))
       (user-error "Unfortunately another Emacs is already doing stuff with Mu4e, and you can only have one at a time")
-    (f-write-text (number-to-string (emacs-pid)) 'utf-8 +mu4e-lock-file)
+    (write-region (number-to-string (emacs-pid)) nil +mu4e-lock-file)
     (delete-file +mu4e-lock-request-file)
     (funcall orig-fun callback)
     (setq +mu4e-lock--request-watcher
