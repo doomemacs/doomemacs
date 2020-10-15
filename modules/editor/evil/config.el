@@ -227,7 +227,7 @@ directives. By default, this only recognizes C directives.")
 ;;; Packages
 
 (use-package! evil-easymotion
-  :after-call pre-command-hook
+  :after-call doom-first-input-hook
   :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
@@ -238,7 +238,19 @@ directives. By default, this only recognizes C directives.")
   (evilem-make-motion evilem-motion-search-word-forward #'evil-ex-search-word-forward
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-word-backward #'evil-ex-search-word-backward
-                      :bind ((evil-ex-search-highlight-all nil))))
+                      :bind ((evil-ex-search-highlight-all nil)))
+
+  ;; Rebind scope of w/W/e/E/ge/gE evil-easymotion motions to the visible
+  ;; buffer, rather than just the current line.
+  (put 'visible 'bounds-of-thing-at-point (lambda () (cons (window-start) (window-end))))
+  (evilem-make-motion evilem-motion-forward-word-begin #'evil-forward-word-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-WORD-begin #'evil-forward-WORD-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-word-end #'evil-forward-word-end :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-WORD-end #'evil-forward-WORD-end :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-word-begin #'evil-backward-word-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-WORD-begin #'evil-backward-WORD-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-word-end #'evil-backward-word-end :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-WORD-end #'evil-backward-WORD-end :scope 'visible))
 
 
 (use-package! evil-embrace
