@@ -180,6 +180,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 ;;
 ;;; Lookup backends
 
+(autoload 'xref--show-defs "xref")
 (defun +lookup--xref-show (fn identifier &optional show-fn)
   (let ((xrefs (funcall fn
                         (xref-find-backend)
