@@ -34,7 +34,7 @@ Pretty symbols can be unset for emacs-lisp-mode with:
   (declare (indent defun))
   (if (null (car-safe plist))
       (dolist (mode (doom-enlist modes))
-        (assq-delete-all mode +ligatures-extra-alist))
+        (delq! mode +ligatures-extra-alist 'assq))
     (let (results)
       (while plist
         (let ((key (pop plist)))
