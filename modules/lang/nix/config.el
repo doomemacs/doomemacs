@@ -1,5 +1,12 @@
 ;;; lang/nix/config.el -*- lexical-binding: t; -*-
 
+(after! tramp
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+
+
+;;
+;;; Plugins
+
 (use-package! nix-mode
   :interpreter ("\\(?:cached-\\)?nix-shell" . +nix-shell-init-mode)
   :mode "\\.nix\\'"
