@@ -161,12 +161,12 @@
   ;; actually show you all the information you want to see
   ;; so if the header view is entered from a narrow frame,
   ;; it's probably worth trying to expand it
-  (defvar mu4e-min-header-frame-width 120
+  (defvar +mu4e-min-header-frame-width 120
     "Minimum reasonable with for the header view.")
   (defun mu4e-widen-frame-maybe ()
-    "Expand the frame with if it's less than `mu4e-min-header-frame-width'."
-    (when (< (frame-width) mu4e-min-header-frame-width)
-      (set-frame-width (selected-frame) mu4e-min-header-frame-width)))
+    "Expand the frame with if it's less than `+mu4e-min-header-frame-width'."
+    (when (< (frame-width) +mu4e-min-header-frame-width)
+      (set-frame-width (selected-frame) +mu4e-min-header-frame-width)))
   (add-hook 'mu4e-headers-mode-hook #'mu4e-widen-frame-maybe)
 
   (when (fboundp 'imagemagick-register-types)
