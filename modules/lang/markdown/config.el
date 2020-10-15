@@ -23,7 +23,6 @@ capture, the end position, and the output buffer.")
         markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-fontify-code-blocks-natively t
-        markdown-gfm-uppercase-checkbox t ; for compat with org-mode
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
 
