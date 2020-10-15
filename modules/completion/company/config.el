@@ -127,7 +127,20 @@
 https://github.com/sebastiencs/company-box/issues/44"
     :around #'company-box--update-scrollbar
     (letf! ((#'display-buffer-in-side-window #'ignore))
-      (apply orig-fn args))))
+      (apply orig-fn args)))
+
+  ;; `company-box' performs insufficient frame-live-p checks. Any command that
+  ;; "cleans up the session" will break company-box.
+  ;; TODO Fix this upstream.
+  (defadvice! +company-box-detect-deleted-frame-a (frame)
+    :filter-return #'company-box--get-frame
+    (if (frame-live-p frame) frame))
+  (defadvice! +company-box-detect-deleted-doc-frame-a (_selection frame)
+    :before #'company-box-doc
+    (and company-box-doc-enable
+         (frame-local-getq company-box-doc-frame frame)
+         (not (frame-live-p (frame-local-getq company-box-doc-frame frame)))
+         (frame-local-setq company-box-doc-frame nil frame))))
 
 
 (use-package! company-dict
