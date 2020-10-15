@@ -109,6 +109,8 @@
       (general-translate-key '(normal motion) 'lispyville-mode-map
         "«" "<"
         "»" ">"))
+    (after! lsp-ui
+      (doom-bepo-rotate-ts-bare-keymap '(lsp-ui-peek-mode-map)))
     (after! org
       (defadvice! doom-bepo--org-completing-read (&rest args)
         "Completing-read with SPACE being a normal character, and C-c mapping left alone."
