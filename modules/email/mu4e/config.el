@@ -84,11 +84,13 @@
   (if (display-graphic-p)
       (+mu4e-initialise-icons)
     ;; When it's the server, wait till the first graphical frame
-    (add-hook! 'server-after-make-frame-hook
-      (defun +mu4e-initialise-icons-hook ()
-        (when (display-graphic-p)
-          (+mu4e-initialise-icons)
-          (remove-hook #'+mu4e-initialise-icons-hook)))))
+    (add-hook
+     'server-after-make-frame-hook
+     (defun +mu4e-initialise-icons-hook ()
+       (when (display-graphic-p)
+         (+mu4e-initialise-icons)
+         (remove-hook 'server-after-make-frame-hook
+                      #'+mu4e-initialise-icons-hook)))))
 
   (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
   (add-to-list 'mu4e-bookmarks
