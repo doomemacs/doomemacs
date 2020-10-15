@@ -285,8 +285,9 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
   ;; Disable `ccls-sem-highlight-method' if `lsp-enable-semantic-highlighting'
   ;; is nil. Otherwise, it appears ccls bypasses it.
-  (setq-hook! 'lsp-before-initialize-hook
-    ccls-sem-highlight-method (if lsp-enable-semantic-highlighting ccls-sem-highlight-method))
+  (setq-hook! 'lsp-configure-hook
+    ccls-sem-highlight-method (if lsp-enable-semantic-highlighting
+                                  ccls-sem-highlight-method))
   (when (or IS-MAC IS-LINUX)
     (let ((cpu-count-command (cond (IS-MAC '("sysctl" "-n" "hw.ncpu"))
                                    (IS-LINUX '("nproc"))
