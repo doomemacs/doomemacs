@@ -40,7 +40,7 @@
     :yield "use")
 
   (if (featurep! +lsp)
-      (add-hook 'php-mode-local-vars-hook #'lsp!)
+      (add-hook 'php-mode-hook #'lsp!)
     ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
     ;; `company-dabbrev-code', in that order.
     (when +php--company-backends

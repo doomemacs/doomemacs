@@ -2,7 +2,7 @@
 
 (use-package! dart-mode
   :when (featurep! +lsp)
-  :hook (dart-mode-local-vars . lsp!)
+  :hook (dart-mode . lsp!)
   :config
   (when (and (featurep! +flutter) IS-LINUX)
     (when-let (path (doom-glob "/opt/flutter/bin/cache/dart-sdk"))

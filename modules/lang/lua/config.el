@@ -45,7 +45,7 @@ lua-language-server.")
                           :major-modes '(lua-mode)
                           :priority -1
                           :server-id 'lua-langserver))))
-    (add-hook 'lua-mode-local-vars-hook #'lsp!)))
+    (add-hook 'lua-mode-hook #'lsp!)))
 
 
 (use-package! moonscript

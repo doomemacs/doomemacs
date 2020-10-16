@@ -2,7 +2,7 @@
 
 (after! kotlin-mode
   (when (featurep! +lsp)
-    (add-hook 'kotlin-mode-local-vars-hook #'lsp!))
+    (add-hook 'kotlin-mode-hook #'lsp!))
   (set-docsets! 'kotlin-mode "Kotlin")
   (set-repl-handler! 'kotlin-mode #'kotlin-repl)
 

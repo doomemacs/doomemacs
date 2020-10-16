@@ -16,7 +16,7 @@
     comment-line-break-function #'+scala-comment-indent-new-line-fn)
 
   (when (featurep! +lsp)
-    (add-hook 'scala-mode-local-vars-hook #'lsp!))
+    (add-hook 'scala-mode-hook #'lsp!))
 
   (set-ligatures! 'scala-mode
     ;; Functional

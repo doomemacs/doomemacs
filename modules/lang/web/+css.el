@@ -60,8 +60,8 @@
 ;;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! '(css-mode-local-vars-hook
-               scss-mode-local-vars-hook
-               sass-mode-local-vars-hook
-               less-css-mode-local-vars-hook)
+  (add-hook! '(css-mode-hook
+               scss-mode-hook
+               sass-mode-hook
+               less-css-mode-hook)
              #'lsp!))

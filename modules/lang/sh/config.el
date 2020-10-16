@@ -31,7 +31,7 @@
     :dot "." :dot "source")
 
   (when (featurep! +lsp)
-    (add-hook 'sh-mode-local-vars-hook #'lsp!))
+    (add-hook 'sh-mode-hook #'lsp!))
 
   (setq sh-indent-after-continuation 'always)
 
@@ -83,4 +83,4 @@
   :defer t
   :config
   (when (featurep! +lsp)
-    (add-hook 'powershell-mode-local-vars-hook #'lsp!)))
+    (add-hook 'powershell-mode-hook #'lsp!)))

@@ -71,4 +71,4 @@
   :preface
   (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
   (when (featurep! +lsp)
-    (add-hook 'julia-mode-local-vars-hook #'lsp!)))
+    (add-hook 'julia-mode-hook #'lsp!)))

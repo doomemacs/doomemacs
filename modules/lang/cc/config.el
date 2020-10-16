@@ -227,9 +227,9 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 ;; LSP
 
 (when (featurep! +lsp)
-  (add-hook! '(c-mode-local-vars-hook
-               c++-mode-local-vars-hook
-               objc-mode-local-vars-hook)
+  (add-hook! '(c-mode-hook
+               c++-mode-hook
+               objc-mode-hook)
              #'lsp!)
 
   (map! :after ccls

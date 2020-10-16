@@ -163,6 +163,6 @@
 
 
 (when (featurep! +lsp)
-  (add-hook! '(html-mode-local-vars-hook
-               web-mode-local-vars-hook)
+  (add-hook! '(html-mode-hook
+               web-mode-hook)
              #'lsp!))

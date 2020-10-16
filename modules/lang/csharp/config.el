@@ -13,7 +13,7 @@
                  :post-handlers '(("| " "SPC")))
 
   (when (featurep! +lsp)
-    (add-hook 'csharp-mode-local-vars-hook #'lsp!))
+    (add-hook 'csharp-mode-hook #'lsp!))
 
   (defadvice! +csharp-disable-clear-string-fences-a (orig-fn &rest args)
     "This turns off `c-clear-string-fences' for `csharp-mode'. When

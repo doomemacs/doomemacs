@@ -2,7 +2,7 @@
 
 (use-package! lsp-haskell
   :after lsp-mode
-  :preface (add-hook 'haskell-mode-local-vars-hook #'lsp!)
+  :preface (add-hook 'haskell-mode-hook #'lsp!)
   :config
   (when (featurep! +ghcide)
     (setq lsp-haskell-server-path "ghcide"

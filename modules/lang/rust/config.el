@@ -23,7 +23,7 @@
         rustic-format-trigger nil)
 
   (if (featurep! +lsp)
-      (add-hook 'rustic-mode-local-vars-hook #'lsp!)
+      (add-hook 'rustic-mode-hook #'lsp!)
     (setq rustic-lsp-server nil)
     (after! rustic-flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))

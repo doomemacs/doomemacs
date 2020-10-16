@@ -73,8 +73,8 @@ If no viewers are found, `latex-preview-pane' is used.")
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p))))
   ;; Hook lsp if enabled
   (when (featurep! +lsp)
-    (add-hook! '(tex-mode-local-vars-hook
-                 latex-mode-local-vars-hook)
+    (add-hook! '(tex-mode-hook
+                 latex-mode-hook)
                #'lsp!)))
 
 

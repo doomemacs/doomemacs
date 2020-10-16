@@ -15,9 +15,9 @@
   :hook (clojure-mode . rainbow-delimiters-mode)
   :config
   (when (featurep! +lsp)
-    (add-hook! '(clojure-mode-local-vars-hook
-                 clojurec-mode-local-vars-hook
-                 clojurescript-mode-local-vars-hook)
+    (add-hook! '(clojure-mode-hook
+                 clojurec-mode-hook
+                 clojurescript-mode-hook)
       (defun +clojure-disable-lsp-indentation-h ()
         (setq-local lsp-enable-indentation nil))
       #'lsp!)

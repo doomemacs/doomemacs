@@ -4,7 +4,7 @@
 ;;; Packages
 
 (when (featurep! +lsp)
-  (add-hook! '(tuareg-mode-local-vars-hook reason-mode-local-vars-hook)
+  (add-hook! '(tuareg-mode-hook reason-mode-hook)
              #'lsp!))
 
 
