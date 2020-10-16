@@ -56,7 +56,18 @@
   (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
 
   (when (featurep! +tng)
-    (company-tng-mode +1)))
+    (company-tng-mode +1))
+
+  ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
+  ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
+  ;;      evil-mode. We raise the priority of company-mode keymaps
+  ;;      unconditionally even when completion is not activated. This should not
+  ;;      cause problems, because when completion is activated, the value of
+  ;;      `company-emulation-alist' is ((t . company-my-keymap)), when
+  ;;      completion is not activated, the value is ((t . nil)).
+  (add-hook! 'evil-local-mode-hook
+    (when (memq 'company-emulation-alist emulation-mode-map-alists)
+      (company-ensure-emulation-alist))))
 
 
 ;;
