@@ -15,7 +15,7 @@ OPTIONAL:
  + `mu4e-trash-folder'
  + `mu4e-refile-folder'
  + `mu4e-compose-signature'
- + `+mu4e-personal-adresses'
+ + `+mu4e-personal-addresses'
 
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."

@@ -5,7 +5,7 @@
 
 (unless (or (executable-find "mbsync")
             (executable-find "offlineimap"))
-  (wan! "Couldn't find mbsync or offlineimap command. \
+  (warn! "Couldn't find mbsync or offlineimap command. \
 You may not have a way of fetching mail."))
 
 (when (and (featurep! +org)

@@ -3,8 +3,8 @@
 (defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
 
-(defvar +mu4e-personal-adresses 'nil
-  "Alternative to mu4e-personal-adresses that can be set for each account (mu4e context).")
+(defvar +mu4e-personal-addresses 'nil
+  "Alternative to mu4e-personal-addresses that can be set for each account (mu4e context).")
 
 
 ;;
