@@ -483,13 +483,14 @@ the exported output (i.e. formatters)."
     :around #'org-export-to-file
     (if (not org-export-in-background)
         (apply orig-fn args)
-      (setq org-export-async-init-file (make-temp-file "doom-org-async-export"))
-      (with-temp-file org-export-async-init-file
-        (prin1 `(progn (setq org-export-async-debug ,debug-on-error
-                             load-path ',load-path)
-                       (load ,user-init-file nil t))
-               (current-buffer)))
-      (apply orig-fn args))))
+      (let ((user-init-file (or org-export-async-init-file user-init-file)))
+        (setq org-export-async-init-file (make-temp-file "doom-org-async-export"))
+        (with-temp-file org-export-async-init-file
+          (prin1 `(progn (setq org-export-async-debug ,debug-on-error
+                               load-path ',load-path)
+                         (load ,user-init-file nil t))
+                 (current-buffer)))
+        (apply orig-fn args)))))
 
 
 (defun +org-init-habit-h ()
