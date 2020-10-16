@@ -245,7 +245,7 @@ If FORCE-P, delete without confirmation."
       (user-error "Aborted"))
     (let ((buf (current-buffer)))
       (unwind-protect
-          (progn (delete-file path) t)
+          (progn (delete-file path t) t)
         (if (file-exists-p path)
             (error "Failed to delete %S" short-path)
           ;; Ensures that windows displaying this buffer will be switched to
