@@ -191,6 +191,10 @@ localleader prefix."
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
   :config
+  (defvar doom--initial-which-key-replacement-alist which-key-replacement-alist)
+  (add-hook! 'doom-before-reload-hook
+    (defun doom-reset-which-key-replacements-h ()
+      (setq which-key-replacement-alist doom--initial-which-key-replacement-alist)))
   ;; general improvements to which-key readability
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
