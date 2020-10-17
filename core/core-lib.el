@@ -492,8 +492,9 @@ advised)."
   `(let ((fn (intern (format "%s-h" ,hook-var))))
      (fset
       fn (lambda (&rest _)
-           (run-hook-wrapped ,hook-var #'doom-try-run-hook)
-           (set ,hook-var nil)))
+           (when after-init-time
+             (run-hook-wrapped ,hook-var #'doom-try-run-hook)
+             (set ,hook-var nil))))
      (put ,hook-var 'permanent-local t)
      (dolist (on (list ,@targets))
        (if (functionp on)
