@@ -99,7 +99,9 @@ following shell commands:
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" "HEAD"))
                               (substring new-rev 0 10)
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
-
+                (print! (format "Link to diff https://github.com/hlissner/doom-emacs/compare/%s...%s"
+                                this-rev
+                                new-rev))
                 (when (and (not auto-accept-p)
                            (y-or-n-p "View the comparison diff in your browser?"))
                   (print! (info "Opened github in your browser."))
