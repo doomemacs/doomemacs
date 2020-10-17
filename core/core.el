@@ -473,6 +473,12 @@ If this is a daemon session, load them all immediately instead."
 (defvar doom-first-buffer-hook nil
   "Transient hooks run before the first interactively opened buffer.")
 
+(defvar doom-after-reload-hook nil
+  "A list of hooks to run before `doom/reload' has reloaded Doom.")
+
+(defvar doom-before-reload-hook nil
+  "A list of hooks to run after `doom/reload' has reloaded Doom.")
+
 
 ;;
 ;;; Bootstrap helpers

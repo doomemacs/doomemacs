@@ -360,7 +360,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (setf (alist-get fn ivy-posframe-display-functions-alist)
           #'ivy-display-function-fallback))
 
-  (add-hook 'doom-reload-hook #'posframe-delete-all))
+  (add-hook 'doom-after-reload-hook #'posframe-delete-all))
 
 
 (use-package! flx
