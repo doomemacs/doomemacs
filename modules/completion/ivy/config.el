@@ -374,6 +374,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :when (featurep! +prescient)
   :hook (ivy-mode . ivy-prescient-mode)
   :hook (ivy-prescient-mode . prescient-persist-mode)
+  :commands +ivy-prescient-non-fuzzy
   :init
   (setq prescient-filter-method
         (if (featurep! +fuzzy)
