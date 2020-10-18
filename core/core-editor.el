@@ -78,17 +78,25 @@ possible."
              (progn (make-directory parent-directory 'parents)
                     t))))))
 
-;; Don't autosave files or create lock/history/backup files. We don't want
-;; copies of potentially sensitive material floating around or polluting our
-;; filesystem. We rely on git and our own good fortune instead. Fingers crossed!
-(setq auto-save-default nil
-      create-lockfiles nil
+;; Don't generate backups or lockfiles. While auto-save maintains a copy so long
+;; as a buffer is unsaved, backups create copies once, when the file is first
+;; written, and never again until it is killed and reopened. This is better
+;; suited to version control, and I don't want world-readable copies of
+;; potentially sensitive material floating around our filesystem.
+(setq create-lockfiles nil
       make-backup-files nil
       ;; But have a place to store them in case we do use them...
       ;; auto-save-list-file-name (concat doom-cache-dir "autosave")
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
       auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
       backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
+
+;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
+;; Use `recover-file' or `recover-session' to recover them.
+(setq auto-save-default t
+      ;; Don't auto-disable auto-save after deleting big chunks. Kind of
+      ;; defaults the purpose of a fallback in case of crashes.
+      auto-save-include-big-deletions t)
 
 (after! tramp
   ;; Backing up files on remotes can be incredibly slow and prone to a variety
