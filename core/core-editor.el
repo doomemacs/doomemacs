@@ -31,30 +31,30 @@ These thresholds are in MB, and is used by `doom--optimize-for-large-files-a'.")
 ;;
 ;;; File handling
 
-(defadvice! doom--optimize-for-large-files-a (orig-fn &rest args)
-  "Set `doom-large-file-p' if the file is too large.
+(defadvice! doom--prepare-for-large-files-a (size _ filename &rest _)
+  "Sets `doom-large-file-p' if the file is considered large.
 
 Uses `doom-large-file-size-alist' to determine when a file is too large. When
 `doom-large-file-p' is set, other plugins can detect this and reduce their
 runtime costs (or disable themselves) to ensure the buffer is as fast as
 possible."
-  :around #'after-find-file
-  (if (setq doom-large-file-p
-            (and buffer-file-name
-                 (not doom-large-file-p)
-                 (file-exists-p buffer-file-name)
-                 (ignore-errors
-                   (> (nth 7 (file-attributes buffer-file-name))
-                      (* 1024 1024
-                         (assoc-default buffer-file-name doom-large-file-size-alist
-                                        #'string-match-p))))))
-      (prog1 (apply orig-fn args)
-        (if (memq major-mode doom-large-file-excluded-modes)
-            (setq doom-large-file-p nil)
-          (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
-            (so-long-minor-mode +1))
-          (message "Large file detected! Cutting a few corners to improve performance...")))
-    (apply orig-fn args)))
+  :before #'abort-if-file-too-large
+  (and (numberp size)
+       (> size
+          (* 1024 1024
+             (assoc-default filename doom-large-file-size-alist
+                            #'string-match-p)))
+       (setq doom-large-file-p size)))
+
+(defadvice! doom--optimize-for-large-files-a (&rest _)
+  "Trigger `so-long-minor-mode' if the file is large."
+  :after #'after-find-file
+  (when (and doom-large-file-p buffer-file-name)
+    (if (memq major-mode doom-large-file-excluded-modes)
+        (setq doom-large-file-p nil)
+      (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
+        (so-long-minor-mode +1))
+      (message "Large file detected! Cutting a few corners to improve performance..."))))
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
