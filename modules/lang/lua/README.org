@@ -50,7 +50,7 @@ configuration variables correctly (use a bare ~(setq
 lsp-clients-emmy-lua-java-path value)~ in your =config.el=)
 *** Eglot
 This server is built in Lua, so a =lua= environment will be necessary
-+ [[https://github.com/sumneko/lua-language-server][lua-language-server]] must be installed and built locally, with =lua-lsp-dir=
++ [[https://github.com/sumneko/lua-language-server][lua-language-server]] must be installed and built locally, with =+lua-lsp-dir=
   variable pointing to the root of the repository
 
 * TODO Features
