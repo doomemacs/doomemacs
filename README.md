@@ -176,7 +176,7 @@ mysterious errors. When you do, here are some places you can look for help:
 + Run `bin/doom doctor` to detect common issues with your development
   environment and private config.
 + Check out the [FAQ], in case your question has already been answered.
-+ Search [Doom's issue tracker](/issues) in case your issue was already
++ Search [Doom's issue tracker](https://github.com/hlissner/doom-emacs/issues) in case your issue was already
   reported.
 + Hop on [our Discord server][discord]; it's active and friendly! Keep an eye on
   the #announcements channel, where I announce breaking updates and releases.
