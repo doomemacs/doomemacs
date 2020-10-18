@@ -42,7 +42,7 @@
          (file-truename
           (expand-file-name (or org-roam-directory "roam")
                             org-directory)))
-        org-roam-db-location (concat org-roam-directory ".org-roam.db")
+        org-roam-db-location (concat doom-etc-dir "org-roam.db")
         org-roam-verbose nil   ; https://youtu.be/fn4jIlFwuLU
         ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
         ;; file with an *-other-window command.
