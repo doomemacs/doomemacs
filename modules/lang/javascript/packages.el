@@ -17,6 +17,6 @@
 (package! skewer-mode :pin "e5bed351939c92a1f788f78398583c2f83f1bb3c")
 
 ;; Programming environment
-(package! tide :pin "fa617f54629dc53a3182251dd8076c9e7ac9effa")
+(package! tide :pin "ac5f070138fbc3657082412c3911d46a1107f39d")
 (when (featurep! :tools lookup)
   (package! xref-js2 :pin "6f1ed5dae0c2485416196a51f2fa92f32e4b8262"))
