@@ -197,6 +197,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/doom/README.org][doom]] - TODO
 + [[file:../modules/ui/doom-dashboard/README.org][doom-dashboard]] - TODO
 + [[file:../modules/ui/doom-quit/README.org][doom-quit]] - TODO
++ [[file:../modules/ui/emoji/README.org][emoji]] =+ascii +github +unicode= - Adds emoji support to Emacs
 + fill-column - TODO
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO
