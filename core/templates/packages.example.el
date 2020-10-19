@@ -32,6 +32,11 @@
 ;(package! builtin-package :recipe (:nonrecursive t))
 ;(package! builtin-package-2 :recipe (:repo "myfork/package"))
 
+;; Remember to run 'doom sync -u' after changing recipes for existing packages.
+;; At the time of writing, 'doom sync' alone will not pick up on recipe changes.
+;; And for existing packages remember to unpin the package if you need a
+;; different commit.
+
 ;; Specify a `:branch' to install a package from a particular branch or tag.
 ;; This is required for some packages whose default branch isn't 'master' (which
 ;; our package manager can't deal with; see raxod502/straight.el#279)
