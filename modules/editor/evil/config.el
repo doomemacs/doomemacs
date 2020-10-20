@@ -341,7 +341,8 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-nerd-commenter
   :commands (evilnc-comment-operator
              evilnc-inner-comment
-             evilnc-outer-commenter))
+             evilnc-outer-commenter)
+  :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines))
 
 
 (use-package! evil-snipe
