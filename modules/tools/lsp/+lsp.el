@@ -54,7 +54,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
 
   (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
-    :around #'lsp-diagnostics--flycheck-enable
+    :around #'lsp-diagnostics-flycheck-enable
     (if flycheck-checker
         (let ((old-checker flycheck-checker))
           (apply orig-fn args)
