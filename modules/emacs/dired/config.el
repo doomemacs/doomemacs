@@ -123,7 +123,14 @@ we have to clean it up ourselves."
 
     (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
       :after #'wdired-change-to-dired-mode
-      (all-the-icons-dired-mode +wdired-icons-enabled))))
+      (all-the-icons-dired-mode +wdired-icons-enabled)))
+
+  (defadvice! +dired-unlimited-icon-memoization-a (orig-fn &rest args)
+    "Make `memoize-default-timeout' temporarily unlimited so its
+expansive time checks would not be performed."
+    :around #'all-the-icons-dired--refresh
+    (let ((memoize-default-timeout nil))
+      (apply orig-fn args))))
 
 
 (use-package! dired-x
