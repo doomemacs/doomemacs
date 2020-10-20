@@ -38,9 +38,10 @@
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
   
-  ;; Setup carryover to include all configured TODO states.
+  ;; Setup carryover to include all configured TODO states. We cannot carry over
+  ;; [ ] keywords because `org-journal-carryover-items's syntax cannot correctly
+  ;; interpret it as anything other than a date.
   (setq org-journal-carryover-items  "TODO=\"TODO\"|TODO=\"PROJ\"|TODO=\"STRT\"|TODO=\"WAIT\"|TODO=\"HOLD\"")
-
 
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
