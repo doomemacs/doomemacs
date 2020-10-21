@@ -96,8 +96,9 @@ possible."
 ;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
 (setq auto-save-default t
-      ;; Don't auto-disable auto-save after deleting big chunks. Kind of
-      ;; defaults the purpose of a fallback in case of crashes.
+      ;; Don't auto-disable auto-save after deleting big chunks. This defeats
+      ;; the purpose of a failsafe. This adds the risk of losing the data we
+      ;; just deleted, but I believe that's VCS's jurisdiction, not ours.
       auto-save-include-big-deletions t
       ;; ...but have directories set up in case we use it.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
