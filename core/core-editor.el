@@ -85,23 +85,23 @@ possible."
 ;; potentially sensitive material floating around our filesystem.
 (setq create-lockfiles nil
       make-backup-files nil
-      ;; But have a place to store them in case we do use them...
-      ;; auto-save-list-file-name (concat doom-cache-dir "autosave")
-      auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
-      backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
+      ;; But in case the user does enable it, some sensible defaults:
+      version-control t     ; number each backup file
+      backup-by-copying t   ; instead of renaming current file (clobbers links)
+      delete-old-versions t ; clean up after itself
+      kept-old-versions 5
+      kept-new-versions 5
+      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/"))))
 
 ;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
 (setq auto-save-default t
       ;; Don't auto-disable auto-save after deleting big chunks. Kind of
       ;; defaults the purpose of a fallback in case of crashes.
-      auto-save-include-big-deletions t)
-
-(after! tramp
-  ;; Backing up files on remotes can be incredibly slow and prone to a variety
-  ;; of IO errors. Better to disable it altogether in tramp buffers:
-  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil)))
+      auto-save-include-big-deletions t
+      ;; ...but have directories set up in case we use it.
+      auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
+      auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
