@@ -111,24 +111,23 @@
         '((:account .
            (:name "Account"
             :shortname "Account"
-            :help "which account this email belongs to"
+            :help "which account/maildir this email belongs to"
             :function
             (lambda (msg)
+              (let ((maildir (replace-regexp-in-string
+                              "\\`/?\\([^/]+\\)/.*\\'" "\\1"
+                              (mu4e-message-field msg :maildir)))))
               (+mu4e-colorize-str
                (replace-regexp-in-string
                 "^gmail"
                 (propertize "g" 'face 'bold-italic)
-                (format "%s"
-                        (substring maildir 1
-                                   (string-match-p "/" maildir 1))))
+                maildir)
                '+mu4e-header--maildir-colors
-               (replace-regexp-in-string
-                "\\`/\\([^/]+\\)/.*\\'" "\\1"
-                (mu4e-message-field msg :maildir))))))
+               maildir))))
           (:account-stripe .
            (:name "Account"
             :shortname "▐"
-            :help "Which account this email belongs to"
+            :help "Which account/maildir this email belongs to"
             :function
             (lambda (msg)
               (let ((account
