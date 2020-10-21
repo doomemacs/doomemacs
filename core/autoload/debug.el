@@ -212,16 +212,12 @@ branch and commit."
 
 ;;;###autoload
 (defun doom/info (&optional raw)
-  "Collects some debug information about your Emacs session, formats it into
-markdown and copies it to your clipboard, ready to be pasted into bug reports!"
+  "Collects some debug information about your Emacs session, formats it and
+copies it to your clipboard, ready to be pasted into bug reports!"
   (interactive "P")
-  (let ((buffer (get-buffer-create "*doom-info*"))
+  (let ((buffer (get-buffer-create "*doom info*"))
         (info (doom-info)))
     (with-current-buffer buffer
-      (or (not doom-interactive-p)
-          (eq major-mode 'markdown-mode)
-          (not (fboundp 'markdown-mode))
-          (markdown-mode))
       (erase-buffer)
       (if raw
           (progn
@@ -235,7 +231,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                   (let ((sexp (prin1-to-string (sexp-at-point))))
                     (delete-region beg end)
                     (insert sexp))))))
-        (insert "<details>\n\n```\n")
+        (insert "```\n")
         (dolist (group info)
           (insert! "%-8s%-10s %s\n"
                    ((upcase (symbol-name (car group)))
@@ -244,12 +240,12 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
           (dolist (spec (cddr group))
             (insert! (indent 8 "%-10s %s\n")
                      ((car spec) (cdr spec)))))
-        (insert "```\n</details>"))
+        (insert "```\n"))
       (if (not doom-interactive-p)
           (print! (buffer-string))
-        (switch-to-buffer buffer)
+        (pop-to-buffer buffer)
         (kill-new (buffer-string))
-        (print! (green "Copied markdown to clipboard"))))))
+        (print! (green "Copied your doom info to clipboard"))))))
 
 ;;;###autoload
 (defun doom/am-i-secure ()
