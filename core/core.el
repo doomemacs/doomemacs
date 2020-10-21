@@ -39,7 +39,7 @@
 ;; path/io functions. You get a minor speed up by nooping this. However, this
 ;; may cause problems on builds of Emacs where its site lisp files aren't
 ;; byte-compiled and we're forced to load the *.el.gz files (e.g. on Alpine)
-(unless noninteractive
+(unless (or noninteractive (daemonp))
   (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
 
   (setq file-name-handler-alist nil)
