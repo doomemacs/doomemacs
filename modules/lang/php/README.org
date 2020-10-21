@@ -46,7 +46,7 @@ This module has no dedicated maintainers.
 ** Module Flags
 + =+hack= Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
 + =+lsp= Enable LSP support through phpactor. Requires the ~:tools lsp~ module
-  and the phpactor server to be installed on your system.
+  and the [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor server]] to be installed on your system.
 
 ** Plugins
 + [[https://github.com/tomterl/php-boris][async]]
@@ -65,7 +65,9 @@ This module has no dedicated maintainers.
 
 * Prerequisites
 ** PHP
-To get started with PHP, you'll need ~php~ (5.3+) and ~composer~:
+To get started with PHP, you'll need ~php~ (5.3+) and ~composer~.
+
+Note: in order to make full use of phpactor server, ~php~ (7.3+) is recommended.
 
 *** MacOS
 PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are provided for reference:
