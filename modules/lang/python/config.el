@@ -181,7 +181,7 @@
 
 
 (use-package! python-pytest
-  :defer t
+  :commands python-pytest-dispatch
   :init
   (map! :after python
         :localleader
@@ -192,7 +192,7 @@
         "t" #'python-pytest-function-dwim
         "T" #'python-pytest-function
         "r" #'python-pytest-repeat
-        "p" #'python-pytest-popup))
+        "p" #'python-pytest-dispatch))
 
 
 ;;
