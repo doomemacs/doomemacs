@@ -157,6 +157,8 @@
 
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
+  (when (fboundp 'make-xwidget)
+    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-with-xwidget)))
 
   ;; The header view needs a certain amount of horizontal space to
   ;; actually show you all the information you want to see
@@ -172,10 +174,6 @@
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
-
-  (when (fboundp 'make-xwidget)
-    (push '("view with xwidgets" . mu4e-action-view-with-xwidget)
-          mu4e-view-actions))
 
   (map! :map mu4e-main-mode-map
         :ne "h" #'+workspace/other)
