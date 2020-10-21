@@ -44,7 +44,7 @@ This is controlled by `+format-on-save-enabled-modes'."
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
               (not (require 'format-all nil t)))
-    (format-all-mode +1)))
+    (+format-enable-on-save-h)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
