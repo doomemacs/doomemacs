@@ -17,6 +17,10 @@
     :documentation '(+nix/lookup-option :async t))
   (set-popup-rule! "^\\*nixos-options-doc\\*$" :ttl 0 :quit t)
 
+  ;; Fix #3927: disable idle completion because `company-nixos-options' is
+  ;; dreadfully slow. It can still be invoked manually..
+  (setq-hook! 'nix-mode-hook company-idle-delay nil)
+
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
