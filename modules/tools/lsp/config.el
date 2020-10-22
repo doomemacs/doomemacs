@@ -27,7 +27,9 @@ killing and opening many LSP/eglot-powered buffers.")
     ;; Only apply these settings once!
     (unless +lsp--optimization-init-p
       (setq +lsp--default-read-process-output-max
-            (default-value 'read-process-output-max)
+            ;; DEPRECATED Remove check when 26 support is dropped
+            (if (boundp 'read-process-output-max)
+                (default-value 'read-process-output-max))
             +lsp--default-gcmh-high-cons-threshold
             (default-value 'gcmh-high-cons-threshold))
       ;; `read-process-output-max' is only available on recent development
