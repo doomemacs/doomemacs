@@ -102,7 +102,11 @@ possible."
       auto-save-include-big-deletions t
       ;; ...but have directories set up in case we use it.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms (list (list ".*" auto-save-list-file-prefix t)))
+      auto-save-file-name-transforms
+      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                  ;; Prefix tramp autosaves to prevent conflicts with local ones
+                  (concat auto-save-list-file-prefix "tramp-\\2") t)
+            (list ".*" auto-save-list-file-prefix t)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
