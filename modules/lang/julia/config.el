@@ -66,9 +66,20 @@
 
 
 (use-package! lsp-julia
-  :when (featurep! +lsp)
+  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
   :after lsp-mode
   :preface
   (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
-  (when (featurep! +lsp)
+  (when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
     (add-hook 'julia-mode-local-vars-hook #'lsp!)))
+
+
+(use-package! eglot-jl
+  :when (and (featurep! :lang julia +lsp) (featurep! :tools lsp +eglot))
+  :after eglot
+  :preface
+  (when (and (featurep! +lsp) (featurep! :tools lsp  +eglot))
+    (add-hook 'julia-mode-local-vars-hook #'lsp!))
+  :config
+  (after! eglot
+    (eglot-jl-init)))
