@@ -27,6 +27,7 @@ or [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 + [[https://github.com/elixir-editors/emacs-elixir][elixir-mode]]
 + [[https://github.com/tonini/alchemist.el][alchemist.el]]
 + [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]
++ [[https://github.com/ananthakumaran/exunit.el][exunit]]
 
 * Prerequisites
 You should have Elixir installed, for example, via your distribution's package
