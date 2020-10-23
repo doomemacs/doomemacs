@@ -32,6 +32,10 @@ Adds Julia support to Doom Emacs
 * Prerequisites
 This module has no direct prerequisites.
 
+Because ~lsp-julia~ and ~eglot-jl~ when first used install julia packages,
+temporarily setting the lsp timeout (~lsp-julia-timeout~ or ~eglot-connect-timeout~)
+to a large value is necessary.
+
 * Features
   # An in-depth list of features, how to use them, and their dependencies.
 ** Language Server
