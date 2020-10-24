@@ -16,8 +16,7 @@
             :repo "raxod502/straight.el"
             :branch ,straight-repository-branch
             :local-repo "straight.el"
-            :files ("straight*.el")
-            :no-build t)
+            :files ("straight*.el"))
   :pin "728ea18ea590fcd8fb48f5bed30e135942d97221")
 
 ;; core-modules.el
