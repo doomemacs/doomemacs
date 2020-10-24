@@ -35,7 +35,11 @@
 
 
 (use-package! ddskk
-  :general ("C-x j" #'skk-mode))
+  :general ("C-x j" #'skk-mode)
+  :config
+  (add-hook! 'doom-escape-hook
+    (defun +japanese-escape-skk-mode-h ()
+      (skk-mode -1))))
 
 
 ;;
