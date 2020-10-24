@@ -83,7 +83,8 @@
   ;; Prevent timeout while installing LanguageServer.jl
   (add-hook! 'julia-mode-hook
     (defun +julia-eglot-timeout-h ()
+      "Ensure that the `eglot-connect-timeout' is at least 60s in `julia-mode' buffers."
       (when (< eglot-connect-timeout 60)
-        (setq eglot-connect-timeout 60))))
+        (setq-local eglot-connect-timeout 60))))
   :config
   (eglot-jl-init))
