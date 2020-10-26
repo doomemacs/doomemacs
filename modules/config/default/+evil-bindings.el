@@ -316,6 +316,8 @@
         :desc "Switch buffer"           "B" #'switch-to-buffer)
        (:unless (featurep! :ui workspaces)
         :desc "Switch buffer"           "b" #'switch-to-buffer)
+       :desc "Clone buffer"                "c"   #'clone-indirect-buffer
+       :desc "Clone buffer other window"   "C"   #'clone-indirect-buffer-other-window
        :desc "Kill buffer"                 "d"   #'kill-current-buffer
        :desc "ibuffer"                     "i"   #'ibuffer
        :desc "Kill buffer"                 "k"   #'kill-current-buffer
