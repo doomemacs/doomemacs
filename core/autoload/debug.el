@@ -317,6 +317,7 @@ Some items are not supported by the `nsm.el' module."
                       process-environment ',doom--initial-process-environment
                       exec-path ',doom--initial-exec-path
                       init-file-debug t
+                      doom--initial-load-path load-path
                       load-path ',load-path
                       package--init-file-ensured t
                       package-user-dir ,package-user-dir
