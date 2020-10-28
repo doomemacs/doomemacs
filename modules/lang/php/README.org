@@ -68,7 +68,7 @@ To get started with PHP, you'll need ~php~ (5.3+) and ~composer~.
 
 Note for =+lsp=:
 1. In order to make full use of phpactor server, ~php~ (7.3+) is recommended.
-2. If you use intelephense, ~node~ and ~npm~ is needed.
+2. If you use intelephense, ~node~ and ~npm~ are needed.
 
 *** MacOS
 PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are provided for reference:
