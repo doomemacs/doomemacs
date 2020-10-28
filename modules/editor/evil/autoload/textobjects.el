@@ -50,6 +50,7 @@ This excludes the protocol and querystring."
          '(("'" . "'")
            ("\"" . "\"")
            ("`" . "`")
+           ("‘" . "’")
            ("“" . "”"))))
     (evil-textobj-anyblock-inner-block count beg end type)))
 
@@ -60,5 +61,6 @@ This excludes the protocol and querystring."
          '(("'" . "'")
            ("\"" . "\"")
            ("`" . "`")
+           ("‘" . "’")
            ("“" . "”"))))
     (evil-textobj-anyblock-a-block count beg end type)))
