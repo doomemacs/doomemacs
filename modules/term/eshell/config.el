@@ -118,39 +118,44 @@ You should use `set-eshell-alias!' to change this.")
             (append eshell-command-aliases-list
                     +eshell-aliases))))
 
-  (add-hook! 'eshell-first-time-mode-hook
-    (defun +eshell-init-keymap-h ()
-      ;; Keys must be bound in a hook because eshell resets its keymap every
-      ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
-      ;; grasp such wisdom.
-      (map! :map eshell-mode-map
-            :n "RET"     #'+eshell/goto-end-of-prompt
-            :n [return]  #'+eshell/goto-end-of-prompt
-            :ni "C-j"    #'eshell-next-matching-input-from-input
-            :ni "C-k"    #'eshell-previous-matching-input-from-input
-            :ig "C-d"    #'+eshell/quit-or-delete-char
-            :i "C-c h"   #'evil-window-left
-            :i "C-c j"   #'evil-window-down
-            :i "C-c k"   #'evil-window-up
-            :i "C-c l"   #'evil-window-right
-            "C-s"   #'+eshell/search-history
-            ;; Emacs bindings
-            "C-e"   #'end-of-line
-            ;; Tmux-esque prefix keybinds
-            "C-c s" #'+eshell/split-below
-            "C-c v" #'+eshell/split-right
-            "C-c x" #'+eshell/kill-and-close
-            [remap split-window-below]  #'+eshell/split-below
-            [remap split-window-right]  #'+eshell/split-right
-            [remap doom/backward-to-bol-or-indent] #'eshell-bol
-            [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-            [remap evil-delete-back-to-indentation] #'eshell-kill-input
-            [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right
-            (:localleader
-             "b" #'eshell-insert-buffer-name
-             "e" #'eshell-insert-envvar
-             "s" #'+eshell/search-history)))))
+  (map! :map eshell-mode-map
+        :n "RET"     #'+eshell/goto-end-of-prompt
+        :n [return]  #'+eshell/goto-end-of-prompt
+        :ni "C-j"    #'eshell-next-matching-input-from-input
+        :ni "C-k"    #'eshell-previous-matching-input-from-input
+        :ig "C-d"    #'+eshell/quit-or-delete-char
+        :i "C-c h"   #'evil-window-left
+        :i "C-c j"   #'evil-window-down
+        :i "C-c k"   #'evil-window-up
+        :i "C-c l"   #'evil-window-right
+        "C-s"   #'+eshell/search-history
+        ;; Emacs bindings
+        "C-e"   #'end-of-line
+        ;; Tmux-esque prefix keybinds
+        "C-c s" #'+eshell/split-below
+        "C-c v" #'+eshell/split-right
+        "C-c x" #'+eshell/kill-and-close
+        [remap split-window-below]  #'+eshell/split-below
+        [remap split-window-right]  #'+eshell/split-right
+        [remap doom/backward-to-bol-or-indent] #'eshell-bol
+        [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+        [remap evil-delete-back-to-indentation] #'eshell-kill-input
+        [remap evil-window-split]   #'+eshell/split-below
+        [remap evil-window-vsplit]  #'+eshell/split-right
+        (:localleader
+         "b" #'eshell-insert-buffer-name
+         "e" #'eshell-insert-envvar
+         "s" #'+eshell/search-history))
+
+  ;; HACK Eshell resets its keymap every time `eshell-mode' is enabled. Why? It
+  ;;      is not for us mere mortals to question! Fun fact: there's a "FIXME
+  ;;      What the hell?!" above the offending line in esh-mode.el.
+  ;; DEPRECATED As of Emacs 28, binding keys in a hook is no longer necessary.
+  (add-hook! 'eshell-mode-hook
+    (defun +eshell-fix-keymap-h ()
+      "Undo buffer-local `eshell-mode-map', so global keybinds work."
+      (kill-local-variable 'eshell-mode-map)
+      (use-local-map eshell-mode-map))))
 
 
 (use-package! eshell-up
