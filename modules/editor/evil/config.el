@@ -370,6 +370,16 @@ directives. By default, this only recognizes C directives.")
   :config (global-evil-surround-mode 1))
 
 
+(use-package! evil-textobj-anyblock
+  :defer t
+  :config
+  (setq evil-textobj-anyblock-blocks
+        '(("(" . ")")
+          ("{" . "}")
+          ("\\[" . "\\]")
+          ("<" . ">"))))
+
+
 (use-package! evil-traces
   :after evil-ex
   :config
