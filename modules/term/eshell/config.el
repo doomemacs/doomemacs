@@ -116,18 +116,20 @@ You should use `set-eshell-alias!' to change this.")
       (setq +eshell--default-aliases eshell-command-aliases-list
             eshell-command-aliases-list
             (append eshell-command-aliases-list
-                    +eshell-aliases))))
+                    +eshell-aliases)))))
 
+
+(after! esh-mode
   (map! :map eshell-mode-map
-        :n "RET"     #'+eshell/goto-end-of-prompt
-        :n [return]  #'+eshell/goto-end-of-prompt
+        :n  "RET"    #'+eshell/goto-end-of-prompt
+        :n  [return] #'+eshell/goto-end-of-prompt
         :ni "C-j"    #'eshell-next-matching-input-from-input
         :ni "C-k"    #'eshell-previous-matching-input-from-input
         :ig "C-d"    #'+eshell/quit-or-delete-char
-        :i "C-c h"   #'evil-window-left
-        :i "C-c j"   #'evil-window-down
-        :i "C-c k"   #'evil-window-up
-        :i "C-c l"   #'evil-window-right
+        :i  "C-c h"  #'evil-window-left
+        :i  "C-c j"  #'evil-window-down
+        :i  "C-c k"  #'evil-window-up
+        :i  "C-c l"  #'evil-window-right
         "C-s"   #'+eshell/search-history
         ;; Emacs bindings
         "C-e"   #'end-of-line
