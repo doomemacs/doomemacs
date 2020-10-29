@@ -35,11 +35,7 @@ one wants that.")
    (and (print! (start "Generating autoloads file..."))
         (doom-autoloads--write
          file
-         `((unless (equal emacs-major-version ,emacs-major-version)
-             (signal 'doom-error
-                     (list "The installed version of Emacs has changed since last 'doom sync' ran"
-                           "Run 'doom sync && doom build' to bring Doom up to speed")))
-           (unless (equal doom-version ,doom-version)
+         `((unless (equal doom-version ,doom-version)
              (signal 'doom-error
                      (list "The installed version of Doom has changed since last 'doom sync' ran"
                            "Run 'doom sync' to bring Doom up to speed"))))
