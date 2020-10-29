@@ -184,7 +184,7 @@ localleader prefix."
 (use-package! which-key
   :hook (doom-first-input . which-key-mode)
   :init
-  (setq which-key-sort-order #'which-key-prefix-then-key-order
+  (setq which-key-sort-order #'which-key-key-order-alpha
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
