@@ -1,12 +1,10 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
-(when (fboundp 'bug-reference-mode)
-  (add-hook! '(text-mode-hook conf-mode-hook) #'bug-reference-mode)
-  (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
-  (map! :map bug-reference-map
-        "RET" (cmds! (and (bound-and-true-p evil-mode)
-                          (evil-normal-state-p))
-                     #'bug-reference-push-button)))
+(map! :when (fboundp 'bug-reference-mode)
+      :map bug-reference-map
+      "RET" (cmds! (and (bound-and-true-p evil-mode)
+                        (evil-normal-state-p))
+                   #'bug-reference-push-button))
 
 
 (when IS-WINDOWS
