@@ -86,13 +86,6 @@
   :config
   (vimish-fold-global-mode +1))
 
-(when (not (featurep! :editor evil))
-  (use-package! vimish-fold
-    :init
-    (define-key! 'global
-      "C-c f v"   #'vimish-fold
-      "C-c f a v" #'vimish-fold-refold-all
-      "C-c u v"   #'vimish-fold-unfold
-      "C-c u a v" #'vimish-fold-unfold-all
-      "C-c d v"   #'vimish-fold-delete
-      "C-c d a v" #'vimish-fold-delete-all)))
+(use-package! vimish-fold
+  :unless (featurep! :editor evil)
+  :defer t)
