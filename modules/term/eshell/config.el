@@ -147,18 +147,7 @@ You should use `set-eshell-alias!' to change this.")
         (:localleader
          "b" #'eshell-insert-buffer-name
          "e" #'eshell-insert-envvar
-         "s" #'+eshell/search-history))
-
-  ;; HACK Eshell resets its keymap every time `eshell-mode' is enabled. Why? It
-  ;;      is not for us mere mortals to question! Fun fact: there's a "FIXME
-  ;;      What the hell?!" above the offending line in esh-mode.el.
-  ;; DEPRECATED As of Emacs 28, binding keys in a hook is no longer necessary.
-  (unless EMACS28+
-    (add-hook! 'eshell-mode-hook
-      (defun +eshell-fix-keymap-h ()
-        "Undo buffer-local `eshell-mode-map', so global keybinds work."
-        (kill-local-variable 'eshell-mode-map)
-        (use-local-map eshell-mode-map)))))
+         "s" #'+eshell/search-history)))
 
 
 (use-package! eshell-up
