@@ -222,7 +222,8 @@
         :n "gQ" #'+format:region)
 
       (:when (featurep! :editor rotate-text)
-        :n "!"  #'rotate-text)
+       :n "]r"  #'rotate-text
+       :n "[r"  #'rotate-text-backward)
 
       (:when (featurep! :editor multiple-cursors)
         ;; evil-multiedit
