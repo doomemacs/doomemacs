@@ -61,7 +61,7 @@
   - [[#strange-or-incorrect-icons-are-displayed-everywhere][Strange (or incorrect) icons are displayed everywhere]]
   - [[#void-variable-and-void-function-errors-on-startup][~void-variable~ and ~void-function~ errors on startup]]
   - [[#doom-cant-find-my-executablesdoesnt-inherit-the-correct-path][Doom can't find my executables/doesn't inherit the correct ~PATH~]]
-  - [[#theres-artefacting-on-my-icon-fonts-in-gui-emacs-956][There's artefacting on my icon fonts in GUI Emacs (#956)]]
+  - [[#theres-artifacting-on-my-icon-fonts-in-gui-emacs-956][There's artifacting on my icon fonts in GUI Emacs (#956)]]
   - [[#the-s-and-s-keys-dont-behave-like-they-do-in-vimevil-1307][The =s= and =S= keys don't behave like they do in vim/evil (#1307)]]
   - [[#changes-to-my-config-arent-taking-effect][Changes to my config aren't taking effect]]
   - [[#the-frame-goes-black-on-macos-while-in-full-screen-mode][The frame goes black on MacOS, while in full-screen mode]]
@@ -1154,7 +1154,7 @@ Check out ~doom help env~ for details on how this works.
 For issue #2, you'll need to investigate your launcher. [[https://discord.gg/qvGgnVx][Our Discord]] is a good
 place to ask about it.
 
-** There's artefacting on my icon fonts in GUI Emacs ([[https://github.com/hlissner/doom-emacs/issues/956][#956]])
+** There's artifacting on my icon fonts in GUI Emacs ([[https://github.com/hlissner/doom-emacs/issues/956][#956]])
 Check your font rendering settings. Changing the RGBA order to "rgba" will often
 fix this issue. See [[https://github.com/hlissner/doom-emacs/issues/956][#956]] for details.
 
