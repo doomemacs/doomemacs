@@ -29,16 +29,16 @@ This module has no prerequisites.
 * Features
 
 Emacs keybinds when evil +everywhere is disabled.
-| Keybind            | Description               |
-|--------------------+---------------------------|
-| =C-c f v=          | Fold region               |
-| =C-c f a v=        | Refold all regions        |
-| =C-c u v= or =C `= | Unfold region             |
-| =C-c u a v=        | Unfold all regions        |
-| =C-c d v=          | Delete folded region      |
-| =C-c d a v=        | Delete all folded regions |
+| Keybind                | Description               |
+|------------------------+---------------------------|
+| =C-c C-f C-f=          | Fold region               |
+| =C-c C-f C-u= or =C `= | Unfold region             |
+| =C-c C-f C-d=          | Delete folded region      |
+| =C-c C-a C-f=          | Refold all regions        |
+| =C-c C-a C-u=          | Unfold all regions        |
+| =C-c C-a C-d=          | Delete all folded regions |
 
 * TODO Configuration
 
 * Troubleshooting
-Sometimes an unfolded region does not fold back with =C-c f v=. To bypass this bug you must delete the folded region (=C-c d v=) and then fold it(=C-c f v=) again.
+Sometimes an unfolded region does not fold back with =C-c C-f C-f=. To bypass this bug you must delete the folded region (=C-c C-f C-d=) and then fold it(=C-c C-f C-f=) again.
