@@ -46,7 +46,7 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 * Prerequisites
 This module requires:
 
-+ Either ~mbsync~ (default) or ~offlineimap~ (to sync mail with)
++ Either ~mbsync~ (recommended, default) or ~offlineimap~ (to sync mail with)
 + ~mu~, to index your downloaded messages and to provide the ~mu4e~ package.
 
 #+name: Install Matrix
@@ -59,6 +59,20 @@ This module requires:
 | Debian/Ubuntu | ~apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
 The install either the =isync= (=mbsync=) or =offlineimap= package.
+
+To send mail, mu4e uses [[https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html][smtpmail]] (an Emacs library) by default.
+You can also run a local SMTP server like =sendmail= or =postfix=, or use an SMTP
+forwarder such as =msmtp= (recommended).
+
+If you use =msmtp=, you'll likely want to add the following to your
+=config.el=:
+#+begin_src emacs-lisp
+(setq sendmail-program "/usr/bin/msmtp"
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail)
+#+end_src
 
 ** NixOS
 #+BEGIN_SRC nix
