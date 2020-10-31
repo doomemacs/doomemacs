@@ -95,7 +95,10 @@ If no viewers are found, `latex-preview-pane' is used.")
   (when (featurep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
-               #'lsp!)))
+               #'lsp!))
+  (map! :map LaTeX-mode-map
+        :localleader
+        :desc "View" "v" #'TeX-view)))
 
 
 (use-package! tex-fold
