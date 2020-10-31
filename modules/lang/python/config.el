@@ -290,7 +290,7 @@
   :when (featurep! +poetry)
   :after python
   :init
-  (add-hook! 'python-mode-hook (poetry-tracking-mode +1)))
+  (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
 
 (use-package! cython-mode
