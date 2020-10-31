@@ -423,7 +423,7 @@ Should be treated as a gmail address.")
           (list
            :char '("D" . "✘")
            :prompt "Delete"
-           :show-target (lambda (target) "delete")
+           :show-target (lambda (_target) "delete")
            :action (lambda (docid msg target)
                      (if (+mu4e-msg-gmail-p msg)
                          (progn (message "The delete operation is invalid for Gmail accounts. Trashing instead.")
@@ -480,13 +480,12 @@ Should be treated as a gmail address.")
     (mu4e-alert-set-default-style 'libnotify)
 
     (setq mu4e-alert-email-notification-types '(subjects))
-    (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group all-mails)
+    (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group _all-mails)
       "Default function to format MAIL-GROUP for notification.
 ALL-MAILS are the all the unread emails"
       (shell-command "paplay /usr/share/sounds/freedesktop/stereo/message.oga")
       (if (> (length mail-group) 1)
           (let* ((mail-count (length mail-group))
-                 (total-mails (length all-mails))
                  (first-mail (car mail-group))
                  (title-prefix (format "You have %d unread emails"
                                        mail-count))
