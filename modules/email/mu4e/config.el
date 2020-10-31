@@ -215,6 +215,12 @@
   (advice-add 'mu4e~start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
+(unless (featurep! +org)
+  (after! mu4e
+    (defun org-msg-mode (&optional _)
+      "Dummy function."
+      (message "Enable the +org mu4e flag to use org-msg-mode."))))
+
 (use-package! org-msg
   :after mu4e
   :when (featurep! +org)
