@@ -248,6 +248,8 @@ Usefull for affecting HTML export config.")
   (defadvice! mu4e-maybe-toggle-org-msg (orig-fn &optional toggle-p)
     :around #'mu4e-compose-new
     :around #'mu4e-compose-reply
+    :around #'mu4e-compose-forward
+    :around #'mu4e-compose-resend
     (interactive "p")
     (mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
     (funcall orig-fn))
