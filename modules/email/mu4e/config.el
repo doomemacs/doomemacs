@@ -186,7 +186,7 @@
         :desc "send and exit" "s" #'message-send-and-exit
         :desc "kill buffer"   "d" #'message-kill-buffer
         :desc "save draft"    "S" #'message-dont-send
-        :desc "attach"        "a" #'mail-add-attachment)
+        :desc "attach"        "a" #'+mu4e/attach-files)
 
   ;; Due to evil, none of the marking commands work when making a visual selection in
   ;; the headers view of mu4e. Without overriding any evil commands we may actually
@@ -242,6 +242,11 @@ Usefull for affecting HTML export config.")
 
   (advice-add #'org-html-latex-fragment    :override #'+org-html-latex-fragment-scaled-a)
   (advice-add #'org-html-latex-environment :override #'+org-html-latex-environment-scaled-a)
+
+  (map! :map org-msg-edit-mode-map
+        :desc "attach" "C-c C-a" #'+mu4e/attach-files
+        :localleader
+        :desc "attach" "a" #'+mu4e/attach-files)
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
