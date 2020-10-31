@@ -98,7 +98,7 @@ If no viewers are found, `latex-preview-pane' is used.")
                #'lsp!))
   (map! :map LaTeX-mode-map
         :localleader
-        :desc "View" "v" #'TeX-view)))
+        :desc "View" "v" #'TeX-view))
 
 
 (use-package! tex-fold
