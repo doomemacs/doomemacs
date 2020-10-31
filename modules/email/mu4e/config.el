@@ -245,11 +245,11 @@ Usefull for affecting HTML export config.")
       (setq +mu4e-compose-org-msg-toggle-next
             (not +mu4e-compose-org-msg-toggle-next))))
 
-  (defadvice! mu4e-maybe-toggle-org-msg (orig-fn toggle-p)
+  (defadvice! mu4e-maybe-toggle-org-msg (orig-fn &optional toggle-p)
     :around #'mu4e-compose-new
     :around #'mu4e-compose-reply
     (interactive "p")
-    (mu4e-compose-org-msg-handle-toggle (/= 1 toggle-p))
+    (mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
     (funcall orig-fn))
 
   (defvar +org-msg-accent-color "#c01c28"
