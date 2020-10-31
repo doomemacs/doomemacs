@@ -12,6 +12,7 @@
   :mode "\\.svelte\\'"
   :mode "\\.twig\\'"
   :mode "\\.jinja2?\\'"
+  :mode "\\.eco\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   :init
