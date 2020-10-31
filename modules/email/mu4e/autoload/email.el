@@ -165,21 +165,25 @@ STR and any integer OFFSET."
                      +mu4e-header-colorized-faces)))
     color))
 
+(defvar +org-capture-emails-file "todo.org"
+  "Default target for storing mu4e emails captured from within mu4e.
+Requires a \"* Email\" heading be present in the file.")
+
 ;; Adding emails to the agenda
 ;; Perfect for when you see an email you want to reply to
 ;; later, but don't want to forget about
 ;;;###autoload
-(defun +mu4e/refile-msg-to-agenda (arg)
-  "Refile a message and add a entry in the agenda file with a
+(defun +mu4e/capture-msg-to-agenda (arg)
+  "Refile a message and add a entry in `+org-capture-emails-file' with a
 deadline.  Default deadline is today.  With one prefix, deadline
 is tomorrow.  With two prefixes, select the deadline."
   (interactive "p")
-  (let ((file (car org-agenda-files))
-        (sec  "^* Email")
-        (msg  (mu4e-message-at-point)))
+  (let ((sec "^* Email")
+        (msg (mu4e-message-at-point)))
     (when msg
       ;; put the message in the agenda
-      (with-current-buffer (find-file-noselect file)
+      (with-current-buffer (find-file-noselect
+                            (expand-file-name +org-capture-emails-file org-directory))
         (save-excursion
           ;; find header section
           (goto-char (point-min))
