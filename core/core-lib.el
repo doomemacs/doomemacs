@@ -672,5 +672,25 @@ set earlier in the ‘setq-local’.  The return value of the
         (setq pairs (cdr (cdr pairs))))
       (macroexp-progn (nreverse expr)))))
 
+(eval-when! (version< emacs-version "27.1")
+  ;; DEPRECATED Backported from Emacs 27; earlier verisons don't have REMOTE arg
+  (defun executable-find (command &optional remote)
+    "Search for COMMAND in `exec-path' and return the absolute file name.
+Return nil if COMMAND is not found anywhere in `exec-path'.  If
+REMOTE is non-nil, search on the remote host indicated by
+`default-directory' instead."
+    (if (and remote (file-remote-p default-directory))
+        (let ((res (locate-file
+                    command
+                    (mapcar
+                     (lambda (x) (concat (file-remote-p default-directory) x))
+                     (exec-path))
+                    exec-suffixes 'file-executable-p)))
+          (when (stringp res) (file-local-name res)))
+      ;; Use 1 rather than file-executable-p to better match the
+      ;; behavior of call-process.
+      (let ((default-directory (file-name-quote default-directory 'top)))
+        (locate-file command exec-path exec-suffixes 1)))))
+
 (provide 'core-lib)
 ;;; core-lib.el ends here
