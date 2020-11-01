@@ -62,3 +62,7 @@ This is controlled by `+format-on-save-enabled-modes'."
 ;;   2. Applies changes via RCS patch, line by line, to protect buffer markers
 ;;      and avoid any jarring cursor+window scrolling.
 (advice-add #'format-all-buffer--with :around #'+format-buffer-a)
+
+;; format-all-mode "helpfully" raises an error when it doesn't know how to
+;; format a buffer.
+(add-to-list 'debug-ignored-errors "^Don't know how to format ")
