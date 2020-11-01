@@ -648,14 +648,14 @@ between the two."
         "C-c C-i"    #'org-toggle-inline-images
         ;; textmate-esque newline insertion
         "S-RET"      #'+org/shift-return
-        "C-RET"      #'+org/insert-item-below
+        "C-RET"      #'org-insert-heading-respect-content
         "C-S-RET"    #'+org/insert-item-above
         "C-M-RET"    #'org-insert-subheading
-        [C-return]   #'+org/insert-item-below
+        [C-return]   #'org-insert-heading-respect-content
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
         (:when IS-MAC
-         [s-return]   #'+org/insert-item-below
+         [s-return]   #'org-insert-heading-respect-content
          [s-S-return] #'+org/insert-item-above
          [s-M-return] #'org-insert-subheading)
         ;; Org-aware C-a/C-e
