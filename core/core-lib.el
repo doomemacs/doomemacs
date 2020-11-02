@@ -689,7 +689,9 @@ REMOTE is non-nil, search on the remote host indicated by
           (when (stringp res) (file-local-name res)))
       ;; Use 1 rather than file-executable-p to better match the
       ;; behavior of call-process.
-      (let ((default-directory (file-name-quote default-directory 'top)))
+      (let ((default-directory
+              (let (file-name-handler-alist)
+                (file-name-quote default-directory))))
         (locate-file command exec-path exec-suffixes 1)))))
 
 (provide 'core-lib)
