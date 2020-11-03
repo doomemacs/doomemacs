@@ -314,6 +314,7 @@ Some items are not supported by the `nsm.el' module."
     (with-temp-file file
       (prin1 `(progn
                 (setq noninteractive nil
+                      user-init-file ,file
                       process-environment ',doom--initial-process-environment
                       exec-path ',doom--initial-exec-path
                       init-file-debug t
