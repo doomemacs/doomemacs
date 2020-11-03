@@ -4,8 +4,7 @@
   :commands company-complete-common company-manual-begin company-grab-line
   :hook (doom-first-input . global-company-mode)
   :init
-  (setq company-idle-delay 0.25
-        company-minimum-prefix-length 2
+  (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
