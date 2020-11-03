@@ -402,11 +402,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; serve much purpose when the selection is so much more visible.
   (defvar doom--hl-line-mode nil)
 
+  (add-hook! 'hl-line-mode-hook
+    (defun doom-truly-disable-hl-line-h ()
+      (unless hl-line-mode
+        (setq-local doom--hl-line-mode nil))))
+
   (add-hook! '(evil-visual-state-entry-hook activate-mark-hook)
     (defun doom-disable-hl-line-h ()
       (when hl-line-mode
-        (setq-local doom--hl-line-mode t)
-        (hl-line-mode -1))))
+        (hl-line-mode -1)
+        (setq-local doom--hl-line-mode t))))
 
   (add-hook! '(evil-visual-state-exit-hook deactivate-mark-hook)
     (defun doom-enable-hl-line-maybe-h ()
