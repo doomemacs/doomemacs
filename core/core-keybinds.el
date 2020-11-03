@@ -26,16 +26,18 @@ and Emacs states, and for non-evil users.")
 ;;
 ;;; Keybind settings
 
-(cond (IS-MAC
-       (setq mac-command-modifier      'super
-             ns-command-modifier       'super
-             mac-option-modifier       'meta
-             ns-option-modifier        'meta
-             mac-right-option-modifier 'none
-             ns-right-option-modifier  'none))
-      (IS-WINDOWS
-       (setq w32-lwindow-modifier 'super
-             w32-rwindow-modifier 'super)))
+(cond
+ (IS-MAC
+  (setq mac-command-modifier      'super
+        ns-command-modifier       'super
+        mac-option-modifier       'meta
+        ns-option-modifier        'meta
+        ;; Free up the right option for character composition
+        mac-right-option-modifier 'none
+        ns-right-option-modifier  'none))
+ (IS-WINDOWS
+  (setq w32-lwindow-modifier 'super
+        w32-rwindow-modifier 'super)))
 
 
 ;;
@@ -197,7 +199,6 @@ localleader prefix."
     (defun doom-reset-which-key-replacements-h ()
       (setq which-key-replacement-alist doom--initial-which-key-replacement-alist)))
   ;; general improvements to which-key readability
-  (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
 
