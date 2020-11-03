@@ -146,8 +146,10 @@ stored in `persp-save-dir'.")
   ;;      or on some buffer listing ops.
   (defadvice! +workspaces-remove-dead-buffers-a (persp)
     :before #'persp-buffers-to-savelist
-    (when (persp-p persp)
-      (setf (persp-buffers persp)
+    (when (perspective-p persp)
+      ;; HACK Can't use `persp-buffers' because of a race condition with its gv
+      ;;      getter/setter not being defined in time.
+      (setf (aref persp 2)
             (cl-delete-if-not #'persp-get-buffer-or-null (persp-buffers persp)))))
 
   ;; Delete the current workspace if closing the last open window
