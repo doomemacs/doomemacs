@@ -66,13 +66,13 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
 (defun +org-init-org-directory-h ()
   (unless org-directory
-    (setq org-directory "~/org"))
+    (setq-default org-directory "~/org"))
   (setq org-id-locations-file (expand-file-name ".orgids" org-directory)))
 
 
 (defun +org-init-agenda-h ()
   (unless org-agenda-files
-    (setq org-agenda-files (list org-directory)))
+    (setq-default org-agenda-files (list org-directory)))
   (setq-default
    ;; Different colors for different priority levels
    org-agenda-deadline-faces
@@ -397,7 +397,7 @@ relative to `org-directory', unless it is an absolute path."
     :config
     (unless org-attach-id-dir
       ;; Centralized attachments directory by default
-      (setq org-attach-id-dir (expand-file-name ".attach/" org-directory)))
+      (setq-default org-attach-id-dir (expand-file-name ".attach/" org-directory)))
     (after! projectile
       (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
 
