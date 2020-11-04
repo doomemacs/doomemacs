@@ -85,7 +85,3 @@
     "zE" #'vimish-fold-delete-all)
   :config
   (vimish-fold-global-mode +1))
-
-(use-package! vimish-fold
-  :unless (featurep! :editor evil)
-  :defer t)
