@@ -573,6 +573,8 @@ can easily change how Doom uses ~doom-theme~, but I can't (easily) control how
 you use the ~load-theme~ function.
 #+end_quote
 
+A list of built-in themes can be seen at [[https://github.com/hlissner/emacs-doom-themes][emacs-doom-themes]]
+
 *** Installing a third party theme
 To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], you need only
 install it, then load it:
