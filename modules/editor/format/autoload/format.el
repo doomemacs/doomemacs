@@ -104,7 +104,7 @@ Stolen shamelessly from go-mode"
 Prompts for a formatter if universal arg is set."
   (cond ((or (eq +format-with :none)
              (doom-temp-buffer-p (current-buffer))
-             (doom-special-buffer-p (current-buffer)))
+             (derived-mode-p 'special-mode))
          (list nil nil))
         (current-prefix-arg
          (list (or (+format-completing-read)
