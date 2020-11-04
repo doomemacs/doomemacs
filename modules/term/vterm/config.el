@@ -13,6 +13,9 @@
   ;; spawn another if want one.
   (setq vterm-kill-buffer-on-exit t)
 
+  ;; 5000 lines of scrollback, instead of 1000
+  (setq vterm-max-scrollback 5000)
+
   (setq-hook! 'vterm-mode-hook
     ;; Don't prompt about dying processes when killing vterm
     confirm-kill-processes nil
