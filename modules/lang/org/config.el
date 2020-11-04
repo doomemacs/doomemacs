@@ -411,6 +411,8 @@ relative to `org-directory', unless it is an absolute path."
    "file"
    :face (lambda (path)
            (if (or (file-remote-p path)
+                   ;; filter out network shares on windows (slow)
+                   (and IS-WINDOWS (string-prefix-p "//" path))
                    (file-exists-p path))
                'org-link
              'error)))
