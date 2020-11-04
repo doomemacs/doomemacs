@@ -219,7 +219,11 @@
   (after! mu4e
     (defun org-msg-mode (&optional _)
       "Dummy function."
-      (message "Enable the +org mu4e flag to use org-msg-mode."))))
+      (message "Enable the +org mu4e flag to use org-msg-mode."))
+    (defun mu4e-compose-org-msg-handle-toggle (&rest _)
+      "Placeholder to allow for the assumtion that this function is defined.
+Ignores all arguments and returns nil."
+      nil)))
 
 (use-package! org-msg
   :after mu4e
