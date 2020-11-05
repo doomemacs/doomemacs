@@ -450,6 +450,21 @@ will be automatically appended to the result."
   (interactive)
   (browse-url "https://github.com/hlissner/doom-emacs/issues/new/choose"))
 
+;;;###autoload
+(defun doom/copy-buffer-contents (buffer-name)
+  "Copy the contents of BUFFER-NAME to your clipboard."
+  (interactive
+   (list (if current-prefix-arg
+             (completing-read "Select buffer: " (mapcar #'buffer-name (buffer-list)))
+           (buffer-name (current-buffer)))))
+  (let ((buffer (get-buffer buffer-name)))
+    (unless (buffer-live-p buffer)
+      (user-error "Buffer isn't live"))
+    (kill-new
+     (with-current-buffer buffer
+       (substring-no-properties (buffer-string))))
+    (message "Contents of %S were copied to the clipboard" buffer-name)))
+
 
 ;;
 ;;; Profiling
