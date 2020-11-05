@@ -9,7 +9,7 @@
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
-This is changed by `load-theme'.")
+Set to `default' to load no theme at all. This is changed by `load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
@@ -581,7 +581,9 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
-  (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
+  (when (and doom-theme
+             (not (eq doom-theme 'default))
+             (not (memq doom-theme custom-enabled-themes)))
     (with-selected-frame (or frame (selected-frame))
       (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
         (load-theme doom-theme t)))))
