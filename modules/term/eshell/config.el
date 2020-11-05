@@ -61,7 +61,6 @@ You should use `set-eshell-alias!' to change this.")
                              'face 'font-lock-keyword-face))
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
-        eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
         ;; don't record command in history if prefixed with whitespace
