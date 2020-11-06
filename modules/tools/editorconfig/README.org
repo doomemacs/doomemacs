@@ -52,6 +52,7 @@ You will need to write an ~.editorconfig~ file in your project
 properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
+
 ** Adding Major Modes
 
 EditorConfig already support for many major mode but not all are added

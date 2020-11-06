@@ -37,6 +37,7 @@ buffer. This is mainly to remind people to keep lines short for accessibility
 and or convenience. For more info read this [[https://www.emacswiki.org/emacs/EightyColumnRule][emacs wiki page]]
 
 * Configuration
+
 ** Setting fill-column globally
 If you want to change the limit then you would need to set ~fill-column~ to your
 desired column you would do this using
@@ -58,6 +59,7 @@ eg.
 
 After you need to simply restart ~hl-fill-column-mode~ if you already have
 those types buffers open.
+
 ** Configuring the look of the indicator
 If you want to change the face use:
 #+BEGIN_SRC emacs-lisp
