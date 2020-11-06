@@ -79,6 +79,10 @@ uses a straight or package.el command directly).")
 
 (setq straight-base-dir doom-local-dir
       straight-repository-branch "develop"
+      ;; Since byte-code is rarely compatible across different versions of
+      ;; Emacs, it's best we build them in separate directories, per emacs
+      ;; version.
+      straight-build-dir (format "build-%s" emacs-version)
       straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom sync' instant (once everything set up), which is much nicer
@@ -474,8 +478,9 @@ elsewhere."
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
                (&key local-repo _files _flavor
-                     _no-build _no-byte-compile _no-native-compile _no-autoloads
-                     _type _repo _host _branch _remote _nonrecursive _fork _depth)
+                     _no-build _build _post-build _no-byte-compile
+                     _no-native-compile _no-autoloads _type _repo _host _branch
+                     _remote _nonrecursive _fork _depth)
                recipe
              ;; Expand :local-repo from current directory
              (when local-repo

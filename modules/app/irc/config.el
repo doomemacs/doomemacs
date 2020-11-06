@@ -173,12 +173,13 @@ playback.")
 (use-package! circe-notifications
   :commands enable-circe-notifications
   :init
-  (if +irc-defer-notifications
-      (add-hook! 'circe-server-connected-hook
-        (setq +irc--defer-timer
-              (run-at-time +irc-defer-notifications nil
-                           #'enable-circe-notifications)))
-    (add-hook 'circe-server-connected-hook #'enable-circe-notifications))
+  (add-hook! 'circe-server-connected-hook
+    (defun +irc-init-circe-notifications-h ()
+      (if (numberp +irc-defer-notifications)
+          (setq +irc--defer-timer
+                (run-at-time +irc-defer-notifications nil
+                             #'enable-circe-notifications))
+        (enable-circe-notifications))))
   :config
   (setq circe-notifications-watch-strings +irc-notifications-watch-strings
         circe-notifications-emacs-focused nil

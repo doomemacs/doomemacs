@@ -39,14 +39,16 @@
     :return "return"
     :yield "use")
 
-  (if (featurep! +lsp)
-      (add-hook 'php-mode-local-vars-hook #'lsp!)
-    ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
-    ;; `company-dabbrev-code', in that order.
-    (when +php--company-backends
-      (set-company-backend! 'php-mode
-        (cons :separate +php--company-backends)
-        'company-dabbrev-code)))
+  (if (not (featurep! +lsp))
+      ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
+      ;; `company-dabbrev-code', in that order.
+      (when +php--company-backends
+        (set-company-backend! 'php-mode
+          (cons :separate +php--company-backends)
+          'company-dabbrev-code))
+    (when (executable-find "php-language-server.php")
+      (setq lsp-clients-php-server-command "php-language-server.php"))
+    (add-hook 'php-mode-local-vars-hook #'lsp!))
 
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
   (setq-hook! 'php-mode-hook sp-max-pair-length 5)

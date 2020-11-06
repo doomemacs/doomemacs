@@ -11,8 +11,7 @@ following shell commands:
     cd ~/.emacs.d
     git pull --rebase
     bin/doom clean
-    bin/doom sync
-    bin/doom update"
+    bin/doom sync -u"
   :bare t
   (let ((doom-auto-discard force-p))
     (cond
@@ -100,13 +99,15 @@ following shell commands:
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" "HEAD"))
                               (substring new-rev 0 10)
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
-
-                (when (and (not auto-accept-p)
-                           (y-or-n-p "View the comparison diff in your browser?"))
-                  (print! (info "Opened github in your browser."))
-                  (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
-                                      this-rev
-                                      new-rev)))
+                (let ((diff-url
+                       (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
+                               this-rev
+                               new-rev)))
+                  (print! "Link to diff: %s" diff-url)
+                  (when (and (not auto-accept-p)
+                             (y-or-n-p "View the comparison diff in your browser?"))
+                    (print! (info "Opened github in your browser."))
+                    (browse-url diff-url)))
 
                 (if (not (or auto-accept-p
                              (y-or-n-p "Proceed with upgrade?")))

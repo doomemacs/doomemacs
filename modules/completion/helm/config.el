@@ -89,13 +89,18 @@ be negative.")
           helm-semantic-fuzzy-match fuzzy)
     ;; Make sure that we have helm-multi-matching or fuzzy matching,
     ;; (as prescribed by the fuzzy flag) also in the following cases:
+    ;;
     ;; - helmized commands that use `completion-at-point' and similar functions
     ;; - native commands that fall back to `completion-styles' like `helm-M-x'
-    (push (if EMACS27+
-              (if fuzzy 'flex 'helm)
-            (if fuzzy 'helm-flex 'helm))
-          completion-styles))
-
+    ;;
+    ;; However, do not add helm completion styles to the front of
+    ;; `completion-styles', since that would be overly intrusive. E.g., it
+    ;; results in `company-capf' returning far to many completion candidates.
+    ;; Instead, append those styles so that they act as a fallback.
+    (add-to-list 'completion-styles
+                 (if EMACS27+
+                     (if fuzzy 'flex 'helm)
+                   (if fuzzy 'helm-flex 'helm)) t))
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 

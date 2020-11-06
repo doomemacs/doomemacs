@@ -10,7 +10,7 @@
 ;; loaded, but after `early-init-file'. Doom handles package initialization, so
 ;; we must prevent Emacs from doing it early!
 (setq package-enable-at-startup nil)
-(advice-add #'package--ensure-init-file :override #'ignore)
+(fset #'package--ensure-init-file #'ignore)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 (push '(menu-bar-lines . 0) default-frame-alist)
@@ -22,11 +22,7 @@
 ;; larger than the system default.
 (setq frame-inhibit-implied-resize t)
 
-;; Ignore X resources; its settings would be redundant with the other settings
-;; in this file and can conflict with later config (particularly where the
-;; cursor color is concerned).
-(advice-add #'x-apply-session-resources :override #'ignore)
-
-;; Prevent unwanted runtime builds; packages are compiled ahead-of-time when
-;; they are installed and site files are compiled when gccemacs is installed.
+;; Prevent unwanted runtime builds in gccemacs (native-comp); packages are
+;; compiled ahead-of-time when they are installed and site files are compiled
+;; when gccemacs is installed.
 (setq comp-deferred-compilation nil)

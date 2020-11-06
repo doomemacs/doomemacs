@@ -1,43 +1,44 @@
 ;;; lang/latex/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +latex/LaTeX-indent-item ()
-  "Provide proper indentation for LaTeX \"itemize\",\"enumerate\", and
-\"description\" environments.
+(defun +latex-indent-item-fn ()
+  "Indent LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
 
 \"\\item\" is indented `LaTeX-indent-level' spaces relative to the the beginning
 of the environment.
 
-Continuation lines are indented either twice `LaTeX-indent-level', or
-`LaTeX-indent-level-item-continuation' if the latter is bound."
+See `LaTeX-indent-level-item-continuation' for the indentation strategy this
+function uses."
   (save-match-data
-    (let* ((offset LaTeX-indent-level)
-           (contin (or (and (boundp '+latex-indent-level-item-continuation)
-                            +latex-indent-level-item-continuation)
-                       (* 4 offset)))
-           (re-beg "\\\\begin{")
+    (let* ((re-beg "\\\\begin{")
            (re-end "\\\\end{")
-           (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+           (re-env "\\(?:itemize\\|\\enumerate\\|description\\)")
            (indent (save-excursion
                      (when (looking-at (concat re-beg re-env "}"))
                        (end-of-line))
                      (LaTeX-find-matching-begin)
-                     (current-column))))
+                     (current-column)))
+           (contin (pcase +latex-indent-item-continuation-offset
+                     (`auto LaTeX-indent-level)
+                     (`align 6)
+                     (`nil (- LaTeX-indent-level))
+                     (x x))))
       (cond ((looking-at (concat re-beg re-env "}"))
              (or (save-excursion
                    (beginning-of-line)
                    (ignore-errors
                      (LaTeX-find-matching-begin)
                      (+ (current-column)
+                        LaTeX-indent-level
                         (if (looking-at (concat re-beg re-env "}"))
                             contin
-                          offset))))
+                          0))))
                  indent))
             ((looking-at (concat re-end re-env "}"))
              indent)
             ((looking-at "\\\\item")
-             (+ offset indent))
-            ((+ contin indent))))))
+             (+ LaTeX-indent-level indent))
+            ((+ contin LaTeX-indent-level indent))))))
 
 ;;;###autoload
 (defun +latex-fold-last-macro-a (&rest _)

@@ -311,13 +311,13 @@ process.
 Before moving on to installing Emacs et co, a few steps to prepare Windows for
 Emacs are necessary:
 
-1. *Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].*
+1. Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].
   
    Set it to =C:\Users\USERNAME\=, otherwise Emacs will treat
    =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which will cause issues
    later.
 
-2. *Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.*
+2. Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.
 
    This way, you don't have to type all of =C:\Users\USERNAME\.emacs.d\bin\doom=
    every time you need to run this script (and you'll need to, often).
@@ -1068,8 +1068,7 @@ Of course, an empty module isn't terribly useful, but it goes to show that nothi
   loaded when they are used.
 
 These are a few exceptional examples of a well-rounded module:
-
-+ [[file:/mnt/projects/conf/doom-emacs/modules/completion/company/README.org][:completion company]]
++ [[file:../modules/completion/company/README.org][:completion company]]
 
 The remainder of this guide will go over the technical details of a Doom module.
 

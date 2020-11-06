@@ -23,7 +23,7 @@ major-modes.
 This module provides no flags
 
 ** Plugins
-+ [[https://github.com/tarius/hl-todo][hl-todo]]
++ [[https://github.com/tarsius/hl-todo][hl-todo]]
  
 * Prerequisites
 This module has no prerequisites

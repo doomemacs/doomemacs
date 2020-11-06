@@ -230,14 +230,33 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook)
-    #'lsp!)
+             #'lsp!)
+
+  (map! :after ccls
+        :map (c-mode-map c++-mode-map)
+        :n "C-h" (cmd! (ccls-navigate "U"))
+        :n "C-j" (cmd! (ccls-navigate "R"))
+        :n "C-k" (cmd! (ccls-navigate "L"))
+        :n "C-l" (cmd! (ccls-navigate "D"))
+        (:localleader
+         :desc "Preprocess file"        "lp" #'ccls-preprocess-file
+         :desc "Reload cache & CCLS"    "lf" #'ccls-reload)
+        (:after lsp-ui-peek
+         (:localleader
+          :desc "Callers list"          "c" #'+cc/ccls-show-caller
+          :desc "Callees list"          "C" #'+cc/ccls-show-callee
+          :desc "References (address)"  "a" #'+cc/ccls-show-references-address
+          :desc "References (not call)" "f" #'+cc/ccls-show-references-not-call
+          :desc "References (Macro)"    "m" #'+cc/ccls-show-references-macro
+          :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
+          :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
 
   (when (featurep! :tools lsp +eglot)
     ;; Map eglot specific helper
     (map! :localleader
           :after cc-mode
           :map c++-mode-map
-          :n :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
+          :desc "Show type inheritance hierarchy" "ct" #'+cc/eglot-ccls-inheritance-hierarchy)
 
     ;; NOTE : This setting is untested yet
     (after! eglot
@@ -249,20 +268,37 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                                               "-isystem/usr/local/include"]
                                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))))))
 
-
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :after lsp-mode
+  :hook (lsp-lens-mode . ccls-code-lens-mode)
   :init
+  (defvar ccls-sem-highlight-method 'font-lock)
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
     (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
+  ;; Avoid using `:after' because it ties the :config below to when `lsp-mode'
+  ;; loads, rather than `ccls' loads.
+  (after! lsp-mode (require 'ccls))
   :config
+  (set-evil-initial-state! 'ccls-tree-mode 'emacs)
+  ;; Disable `ccls-sem-highlight-method' if `lsp-enable-semantic-highlighting'
+  ;; is nil. Otherwise, it appears ccls bypasses it.
+  (setq-hook! 'lsp-configure-hook
+    ccls-sem-highlight-method (if lsp-enable-semantic-highlighting
+                                  ccls-sem-highlight-method))
+  (when (or IS-MAC IS-LINUX)
+    (let ((cpu-count-command (cond (IS-MAC '("sysctl" "-n" "hw.ncpu"))
+                                   (IS-LINUX '("nproc"))
+                                   (t (error "unreachable code")))))
+      (setq ccls-initialization-options
+            `(:index (:trackDependency 1
+                      :threads ,(max 1 (/ (string-to-number (cdr (apply #'doom-call-process cpu-count-command))) 2)))))))
   (when IS-MAC
     (setq ccls-initialization-options
-          `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
-                                      "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-                                      "-isystem/usr/local/include"]
-                          :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir")))))))
+          (append ccls-initialization-options
+                  `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
+                                              "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+                                              "-isystem/usr/local/include"]
+                                  :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))

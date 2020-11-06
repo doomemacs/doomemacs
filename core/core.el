@@ -1,5 +1,10 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
+;; Prevent unwanted runtime builds in gccemacs (native-comp); packages are
+;; compiled ahead-of-time when they are installed and site files are compiled
+;; when gccemacs is installed.
+(setq comp-deferred-compilation nil)
+
 (eval-when-compile
   (when (< emacs-major-version 26)
     (error "Detected Emacs v%s. Doom only supports Emacs 26 and newer"
@@ -34,7 +39,7 @@
 ;; path/io functions. You get a minor speed up by nooping this. However, this
 ;; may cause problems on builds of Emacs where its site lisp files aren't
 ;; byte-compiled and we're forced to load the *.el.gz files (e.g. on Alpine)
-(unless noninteractive
+(unless (or noninteractive (daemonp))
   (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
 
   (setq file-name-handler-alist nil)
@@ -96,6 +101,7 @@ envvar will enable this at startup.")
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
+
 These files should not be shared across systems. By default, it is used by
 `doom-etc-dir' and `doom-cache-dir'. Must end with a slash.")
 
@@ -127,7 +133,8 @@ Use this for files that change often, like cache files. Must end with a slash.")
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
-(defconst doom-autoloads-file (concat doom-local-dir "autoloads.el")
+(defconst doom-autoloads-file
+  (concat doom-local-dir "autoloads." emacs-version ".el")
   "Where `doom-reload-core-autoloads' stores its core autoloads.
 
 This file is responsible for informing Emacs where to find all of Doom's
@@ -154,7 +161,7 @@ users).")
 ;;; Emacs core configuration
 
 ;; lo', longer logs ahoy, so to reliably locate lapses in doom's logic later
-(setq message-log-max 8192)
+(setq message-log-max 4096)
 
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-p
@@ -279,15 +286,10 @@ config.el instead."
   (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
 
 (after! comp
-  ;; HACK `comp-eln-load-path' isn't fully respected yet, because native
-  ;;      compilation occurs in another emacs process that isn't seeded with our
-  ;;      value for `comp-eln-load-path', so we inject it ourselves:
-  (setq comp-async-env-modifier-form
-        `(progn
-           ,comp-async-env-modifier-form
-           (setq comp-eln-load-path ',(bound-and-true-p comp-eln-load-path))))
   ;; HACK Disable native-compilation for some troublesome packages
-  (add-to-list 'comp-deferred-compilation-black-list "/evil-collection-vterm\\.el\\'"))
+  (dolist (entry (list (concat "\\`" (regexp-quote doom-local-dir) ".*/evil-collection-vterm\\.el\\'")
+                       (concat "\\`" (regexp-quote doom-autoloads-file) "'")))
+    (add-to-list 'comp-deferred-compilation-black-list entry)))
 
 
 ;;
@@ -472,6 +474,12 @@ If this is a daemon session, load them all immediately instead."
 (defvar doom-first-buffer-hook nil
   "Transient hooks run before the first interactively opened buffer.")
 
+(defvar doom-after-reload-hook nil
+  "A list of hooks to run before `doom/reload' has reloaded Doom.")
+
+(defvar doom-before-reload-hook nil
+  "A list of hooks to run after `doom/reload' has reloaded Doom.")
+
 
 ;;
 ;;; Bootstrap helpers
@@ -565,16 +573,17 @@ to least)."
     (with-eval-after-load 'package (require 'core-packages))
     (with-eval-after-load 'straight (doom-initialize-packages))
 
+    ;; Bootstrap our GC manager
+    (add-hook 'doom-first-input-hook #'gcmh-mode)
+
     ;; Bootstrap the interactive session
-    (add-hook! 'window-setup-hook
-      (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
-      (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h 'append)
-      (add-hook 'doom-first-input-hook #'gcmh-mode)
-      (add-hook-trigger! 'doom-first-input-hook 'pre-command-hook)
-      (add-hook-trigger! 'doom-first-file-hook 'after-find-file 'dired-initial-position-hook)
-      (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook))
+    (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h)
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
-    (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
+    (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
+    (add-hook 'window-setup-hook #'doom-display-benchmark-h)
+    (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook)
+    (add-hook-trigger! 'doom-first-file-hook 'after-find-file 'dired-initial-position-hook)
+    (add-hook-trigger! 'doom-first-input-hook 'pre-command-hook)
     (if doom-debug-p (doom-debug-mode +1))
 
     ;; Load core/core-*.el, the user's private init.el, then their config.el

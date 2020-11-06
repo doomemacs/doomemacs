@@ -21,7 +21,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "220f2b0d93a6927eb673978c0042a1d4673e86aa"
+  :pin "a88806b554b15461a88a4e00c9e0e338fe59ac37"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
   ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
@@ -33,21 +33,21 @@
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
 (package! ox-clip :pin "f5eac28734ea33d0b7a3dbe10b777907a91cf9f9")
-(package! toc-org :pin "5deaec41ed0e5c51715737d7f74c5ae1b3c00387")
+(package! toc-org :pin "ff8d49c2c7daab0061250b581d3eebc7265ee267")
 (package! org-cliplink :pin "82402cae7e118d67de7328417fd018a18f95fac2")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org
     :recipe (:host github :repo "hlissner/evil-org-mode")
-    :pin "2e9c4a295ee6aea7c97c5b1f3892b1c6e28a32d9"))
+    :pin "658dadfe2700f08323ece3efb1af48657b9446df"))
 (when (featurep! :tools pdf)
-  (package! org-pdftools :pin "8cc15bb8014ed1f047eecc0abd8bf447f86c0505"))
+  (package! org-pdftools :pin "3c2b9a413eb841c781cfb49d8c343bf07aa0ad1f"))
 (when (featurep! :tools magit)
   (package! orgit :pin "ac9b1a42863a864fde9d225890ef5464bffdc646"))
 (when (featurep! +brain)
-  (package! org-brain :pin "671db0e08b91c7d2637d765a7afca8b2561275c8"))
+  (package! org-brain :pin "e703ae0f3fbdf488bf7442276a90fcb52e11cde7"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "67b3c744f94cf0bf50f7052ce428e95af5a6ff3f"))
+  (package! org-download :pin "42ac361ef5502017e6fc1bceb00333eba90402f4"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "f0001c30010b2899e36d7d89046322467e923088")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
@@ -56,31 +56,29 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "360cae2c70ab28c7a7848c0c56473d984f0243e5"))
 (when (featurep! +journal)
-  (package! org-journal :pin "a2728e25b854af21cea8e8d313714c993eb1c848"))
+  (package! org-journal :pin "fce4fa7e7286280ecd7b42c2f67f0d73048d2c7a"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
 (when (featurep! +pretty)
-  (package! org-superstar :pin "94f35c20f8b84a63defa145e3e6ae735fa33dd5d")
+  (package! org-superstar :pin "7f83636db215bf5a10edbfdf11d12a132864a914")
   (package! org-fancy-priorities :pin "819bb993b71e7253cefef7047306ab4e0f9d0a86"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "7126a4365072a32898f169ead8fb59265dabc605")
-  (package! org-re-reveal :pin "7fe39d5d03ccc75d2811445d25cbbb473b53de76")
+  (package! org-tree-slide :pin "18034c476038adcc1c4697168b8068f4d0ce62fe")
+  (package! org-re-reveal :pin "2035217ae9f9dbd20bf054daa8dabf7c6aa3938d")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "15815efe05ca69c35ce66cfdbf93316e1db66ecb"))
+    :pin "0582f57517c97a4c7bfeb58762138c78883f94c5"))
 (when (featurep! +roam)
-  (package! org-roam :pin "c33867e6bc282ff0a69d4ef4a020db82604039bb")
-  (when (featurep! :completion company)
-    (package! company-org-roam :pin "1132663bd68022aa7ea005ff53c7c7571890769d")))
+  (package! org-roam :pin "a7cf48ea895ee5aae93ad6d5b4550fb803f6ef8a"))
 
 ;;; Babel
-(package! ob-async :pin "80a30b96a007d419ece12c976a81804ede340311")
+(package! ob-async :pin "de1cd6c93242a4cb8773bbe115b7be3d4dd6b97e")
 (when (featurep! :lang crystal)
   (package! ob-crystal :pin "d84c1adee4b269cdba06a97caedb8071561a09af"))
 (when (featurep! :lang go)
@@ -104,6 +102,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "75b849e9561c4a6022babf6eaf0e037310ded7c1"))
+    :pin "1909c6effe578cf41fcf436da881f1cd430a498a"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))

@@ -68,9 +68,10 @@
       (:after geiser-doc :map geiser-doc-mode-map
        :n "o"    #'link-hint-open-link)
 
-      (:after (evil-org evil-easymotion)
-       :map evil-org-mode-map
-       :m "gsh" #'+org/goto-visible)
+      (:unless (featurep! :input layout +bepo)
+        (:after (evil-org evil-easymotion)
+         :map evil-org-mode-map
+         :m "gsh" #'+org/goto-visible))
 
       (:when (featurep! :editor multiple-cursors)
        :prefix "gz"
@@ -218,30 +219,31 @@
 
 ;;; :editor
 (map! (:when (featurep! :editor format)
-        :n "gQ" #'+format:region)
+       :n "gQ" #'+format:region)
 
       (:when (featurep! :editor rotate-text)
-        :n "!"  #'rotate-text)
+       :n "]r"  #'rotate-text
+       :n "[r"  #'rotate-text-backward)
 
       (:when (featurep! :editor multiple-cursors)
-        ;; evil-multiedit
-        :v  "R"     #'evil-multiedit-match-all
-        :n  "M-d"   #'evil-multiedit-match-symbol-and-next
-        :n  "M-D"   #'evil-multiedit-match-symbol-and-prev
-        :v  "M-d"   #'evil-multiedit-match-and-next
-        :v  "M-D"   #'evil-multiedit-match-and-prev
-        :nv "C-M-d" #'evil-multiedit-restore
-        (:after evil-multiedit
-          (:map evil-multiedit-state-map
-            "M-d"    #'evil-multiedit-match-and-next
-            "M-D"    #'evil-multiedit-match-and-prev
-            "RET"    #'evil-multiedit-toggle-or-restrict-region
-            [return] #'evil-multiedit-toggle-or-restrict-region)))
+       ;; evil-multiedit
+       :v  "R"     #'evil-multiedit-match-all
+       :n  "M-d"   #'evil-multiedit-match-symbol-and-next
+       :n  "M-D"   #'evil-multiedit-match-symbol-and-prev
+       :v  "M-d"   #'evil-multiedit-match-and-next
+       :v  "M-D"   #'evil-multiedit-match-and-prev
+       :nv "C-M-d" #'evil-multiedit-restore
+       (:after evil-multiedit
+        (:map evil-multiedit-state-map
+         "M-d"    #'evil-multiedit-match-and-next
+         "M-D"    #'evil-multiedit-match-and-prev
+         "RET"    #'evil-multiedit-toggle-or-restrict-region
+         [return] #'evil-multiedit-toggle-or-restrict-region)))
 
       (:when (featurep! :editor snippets)
-        ;; auto-yasnippet
-        :i  [C-tab] #'aya-expand
-        :nv [C-tab] #'aya-create))
+       ;; auto-yasnippet
+       :i  [C-tab] #'aya-expand
+       :nv [C-tab] #'aya-create))
 
 ;;; :tools
 (when (featurep! :tools eval)
@@ -274,6 +276,7 @@
             ((featurep! :completion helm)  #'helm-resume))
 
       :desc "Search for symbol in project" "*" #'+default/search-project-for-symbol-at-point
+      :desc "Search project"               "/" #'+default/search-project
 
       :desc "Find file in project"  "SPC"  #'projectile-find-file
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
@@ -314,6 +317,8 @@
         :desc "Switch buffer"           "B" #'switch-to-buffer)
        (:unless (featurep! :ui workspaces)
         :desc "Switch buffer"           "b" #'switch-to-buffer)
+       :desc "Clone buffer"                "c"   #'clone-indirect-buffer
+       :desc "Clone buffer other window"   "C"   #'clone-indirect-buffer-other-window
        :desc "Kill buffer"                 "d"   #'kill-current-buffer
        :desc "ibuffer"                     "i"   #'ibuffer
        :desc "Kill buffer"                 "k"   #'kill-current-buffer
@@ -451,6 +456,7 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
+       :desc "Emoji"                         "e"   #'emojify-insert-emoji
        :desc "Current file name"             "f"   #'+default/insert-file-path
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Evil ex path"                  "p"   (cmd! (evil-ex "R!echo "))
@@ -505,8 +511,9 @@
 
        (:when (featurep! :lang org +journal)
         (:prefix ("j" . "journal")
-         :desc "New Entry"      "j" #'org-journal-new-entry
-         :desc "Search Forever" "s" #'org-journal-search-forever)))
+         :desc "New Entry"           "j" #'org-journal-new-entry
+         :desc "New Scheduled Entry" "J" #'org-journal-new-scheduled-entry
+         :desc "Search Forever"      "s" #'org-journal-search-forever)))
 
       ;;; <leader> o --- open
       (:prefix-map ("o" . "open")
@@ -647,6 +654,8 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
        :desc "Big mode"                     "b" #'doom-big-font-mode
+       (:when (featurep! :ui fill-column)
+        :desc "Fill Column Indicator"       "c" #'+fill-column/toggle)
        :desc "Flymake"                      "f" #'flymake-mode
        (:when (featurep! :checkers syntax)
         :desc "Flycheck"                   "f" #'flycheck-mode)

@@ -1,5 +1,12 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
+(map! :when (fboundp 'bug-reference-mode)
+      :map bug-reference-map
+      "RET" (cmds! (and (bound-and-true-p evil-mode)
+                        (evil-normal-state-p))
+                   #'bug-reference-push-button))
+
+
 (when IS-WINDOWS
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 

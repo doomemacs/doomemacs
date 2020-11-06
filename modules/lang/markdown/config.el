@@ -23,7 +23,6 @@ capture, the end position, and the output buffer.")
         markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-fontify-code-blocks-natively t
-        markdown-gfm-uppercase-checkbox t ; for compat with org-mode
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
 
@@ -45,6 +44,7 @@ capture, the end position, and the output buffer.")
         markdown-xhtml-header-content
         (concat "<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>"
                 "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
+                "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>"
                 "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
                 "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
 

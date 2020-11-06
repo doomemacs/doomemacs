@@ -33,7 +33,7 @@ loaded last*, before =:config= modules.
 
 * :checkers
 + syntax =+childframe= - Live error/warning highlights
-+ spell =+everywhere +aspell +hunspell= - Spell checking
++ spell =+everywhere +aspell +hunspell +enchant= - Spell checking
 + grammar - TODO
 
 * :completion
@@ -142,7 +142,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
 + scala =+lsp= - TODO
 + [[file:../modules/lang/scheme/README.org][scheme]] - TODO
-+ [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp= - TODO
++ [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp +powershell= - TODO
 + [[file:../modules/lang/sml/README.org][sml]] - TODO
 + [[file:../modules/lang/solidity/README.org][solidity]] - TODO
 + swift =+lsp= - TODO
@@ -197,6 +197,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/doom/README.org][doom]] - TODO
 + [[file:../modules/ui/doom-dashboard/README.org][doom-dashboard]] - TODO
 + [[file:../modules/ui/doom-quit/README.org][doom-quit]] - TODO
++ [[file:../modules/ui/emoji/README.org][emoji]] =+ascii +github +unicode= - Adds emoji support to Emacs
 + fill-column - TODO
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO

@@ -2,7 +2,7 @@
 
 (use-package! eglot
   :commands eglot eglot-ensure
-  :hook (eglot-managed-mode . +lsp-init-optimizations-h)
+  :hook (eglot-managed-mode . +lsp-optimization-mode)
   :init
   (setq eglot-sync-connect 1
         eglot-connect-timeout 10
@@ -34,11 +34,13 @@ server getting expensively restarted when reverting buffers."
     (letf! (defun eglot-shutdown (server)
              (if (or (null +lsp-defer-shutdown)
                      (eq +lsp-defer-shutdown 0))
-                 (funcall eglot-shutdown server)
+                 (prog1 (funcall eglot-shutdown server)
+                   (+lsp-optimization-mode -1))
                (run-at-time
                 (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
                 nil (lambda (server)
                       (unless (eglot--managed-buffers server)
-                        (funcall eglot-shutdown server)))
+                        (prog1 (funcall eglot-shutdown server)
+                          (+lsp-optimization-mode -1))))
                 server)))
       (funcall orig-fn server))))

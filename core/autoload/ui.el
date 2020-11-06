@@ -172,7 +172,9 @@ windows (unlike `doom/window-maximize-buffer'). Activate again to undo."
            (let* ((window (selected-window))
                   (dedicated-p (window-dedicated-p window))
                   (preserved-p (window-parameter window 'window-preserved-size))
-                  (ignore-window-parameters t))
+                  (ignore-window-parameters t)
+                  (window-resize-pixelwise nil)
+                  (frame-resize-pixelwise nil))
              (unwind-protect
                  (progn
                    (when dedicated-p

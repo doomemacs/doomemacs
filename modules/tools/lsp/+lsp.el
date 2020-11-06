@@ -4,13 +4,6 @@
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
 
-(defvar +lsp-auto-install-servers nil
-  "If non-nil, automatically install LSP servers.
-
-`lsp-mode' will prompt you to install an LSP server when you enter a major mode
-with LSP support but no available server. I believe changes to your system
-should be a deliberate act (as is flipping this variable).")
-
 
 ;;
 ;;; Packages
@@ -18,16 +11,12 @@ should be a deliberate act (as is flipping this variable).")
 (use-package! lsp-mode
   :commands lsp-install-server
   :init
-  (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
-  ;; For `lsp-clients'
-  (setq lsp-server-install-dir (concat doom-etc-dir "lsp/"))
+  ;; Don't touch ~/.emacs.d, which could be purged without warning
+  (setq lsp-session-file (concat doom-etc-dir "lsp-session")
+        lsp-server-install-dir (concat doom-etc-dir "lsp/"))
   ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
   (setq lsp-keep-workspace-alive nil)
-
-  ;; Let doom bind the lsp keymap.
-  (when (featurep! :config default +bindings)
-    (setq lsp-keymap-prefix nil))
 
   ;; NOTE I tweak LSP's defaults in order to make its more expensive or imposing
   ;;      features opt-in. Some servers implement these poorly and, in most
@@ -35,13 +24,14 @@ should be a deliberate act (as is flipping this variable).")
   ;;      lsp-ui-doc, open in popup vs sideline, etc).
 
   ;; Disable features that have great potential to be slow.
-  (setq lsp-enable-file-watchers nil
-        lsp-enable-folding nil
+  (setq lsp-enable-folding nil
         lsp-enable-text-document-color nil)
+  ;; Reduce unexpected modifications to code
+  (setq lsp-enable-on-type-formatting nil)
 
-  ;; Disable features that modify our code without our permission.
-  (setq lsp-enable-indentation nil
-        lsp-enable-on-type-formatting nil)
+  ;; Let doom bind the lsp keymap.
+  (when (featurep! :config default +bindings)
+    (setq lsp-keymap-prefix nil))
 
   :config
   (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
@@ -62,38 +52,10 @@ should be a deliberate act (as is flipping this variable).")
     :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
 
-  (when lsp-auto-configure
-    (mapc (lambda (package) (require package nil t))
-          (cl-remove-if #'featurep lsp-client-packages)))
-
-  (defadvice! +lsp--dont-auto-install-servers-a (orig-fn &rest args)
-    "Replace auto-install behavior with warning and support indirect buffers."
-    :around #'lsp
-    (if +lsp-auto-install-servers
-        (apply orig-fn args)
-      (letf! ((buffer-file-name
-               ;; Add support for indirect buffers (org src or capture buffers)
-               (or buffer-file-name
-                   (buffer-file-name (buffer-base-buffer))))
-              ;; Already loaded them. No need to do so again.
-              (lsp-client-packages nil)
-              ;; `lsp' is normally eager to automatically install LSP servers, or
-              ;; prompting to do so, but (in my opinion) server installation
-              ;; should be a deliberate act by the end-user:
-              (defun lsp--completing-read (msg clients &rest _)
-                (lsp--warn (concat msg "%s\n"
-                                   "  Use `M-x lsp-install-server' to install a supported server, or read "
-                                   "https://emacs-lsp.github.io/lsp-mode/page/languages for more.")
-                           (mapcar #'lsp--client-server-id clients))
-                (throw 'not-installed nil)))
-        (catch 'not-installed
-          (apply orig-fn args)))))
-
   (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
-    "Set up flycheck-mode or flymake-mode, depending on `lsp-diagnostic-package'."
-    :around #'lsp-diagnostics--flycheck-enable
+    "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
+    :around #'lsp-diagnostics-flycheck-enable
     (if flycheck-checker
-        ;; Respect file/dir/explicit user-defined `flycheck-checker'.
         (let ((old-checker flycheck-checker))
           (apply orig-fn args)
           (setq-local flycheck-checker old-checker))
@@ -107,7 +69,7 @@ should be a deliberate act (as is flipping this variable).")
         (if-let (root (lsp--calculate-root (lsp-session) path))
             (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
           (lsp--info "Could not guess project root."))))
-    #'+lsp-init-optimizations-h)
+    #'+lsp-optimization-mode)
 
   (add-hook! 'lsp-completion-mode-hook
     (defun +lsp-init-company-backends-h ()
@@ -128,16 +90,19 @@ server getting expensively restarted when reverting buffers."
             restart
             (null +lsp-defer-shutdown)
             (= +lsp-defer-shutdown 0))
-        (funcall orig-fn restart)
+        (prog1 (funcall orig-fn restart)
+          (+lsp-optimization-mode -1))
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
       (setq +lsp--deferred-shutdown-timer
             (run-at-time
              (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
              nil (lambda (workspace)
-                   (let ((lsp--cur-workspace workspace))
-                     (unless (lsp--workspace-buffers lsp--cur-workspace)
-                       (funcall orig-fn))))
+                   (with-lsp-workspace workspace
+                     (unless (lsp--workspace-buffers workspace)
+                       (let ((lsp-restart 'ignore))
+                         (funcall orig-fn))
+                       (+lsp-optimization-mode -1))))
              lsp--cur-workspace)))))
 
 
@@ -150,10 +115,18 @@ server getting expensively restarted when reverting buffers."
         ;; lsp-ui-doc is redundant with and more invasive than
         ;; `+lookup/documentation'
         lsp-ui-doc-enable nil
+        lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
+        lsp-ui-doc-position 'at-point
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
         lsp-ui-sideline-show-hover nil)
+
+  (map! :map lsp-ui-peek-mode-map
+        "j"   #'lsp-ui-peek--select-next
+        "k"   #'lsp-ui-peek--select-prev
+        "C-k" #'lsp-ui-peek--select-prev-file
+        "C-j" #'lsp-ui-peek--select-next-file)
 
   (when (featurep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode :async t

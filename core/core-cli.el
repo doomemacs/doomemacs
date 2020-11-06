@@ -441,7 +441,12 @@ everywhere we use it (and internally)."
 Includes package management, diagnostics, unit tests, and byte-compilation.
 
 This tool also makes it trivial to launch Emacs out of a different folder or
-with a different private module."
+with a different private module.
+
+Environment variables:
+  EMACSDIR      Where to find the Doom Emacs repo (normally ~/.emacs.d)
+  DOOMDIR       Where to find your private Doom config (normally ~/.doom.d)
+  DOOMLOCALDIR  Where to store local files (normally ~/.emacs.d/.local)"
   (condition-case e
       (with-output-to! doom-cli-log-file
         (catch 'exit

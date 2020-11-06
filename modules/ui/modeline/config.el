@@ -32,6 +32,13 @@
   (when (daemonp)
     (setq doom-modeline-icon t))
   :config
+  ;; HACK Fix #4102 due to empty all-the-icons return value (caused by
+  ;;      `doom--disable-all-the-icons-in-tty-a' advice) in tty daemon frames.
+  (defadvice! +modeline-disable-icon-in-daemon-a (orig-fn &rest args)
+    :around #'doom-modeline-propertize-icon
+    (when (display-graphic-p)
+      (apply orig-fn args)))
+
   ;; Fix an issue where these two variables aren't defined in TTY Emacs on MacOS
   (defvar mouse-wheel-down-event nil)
   (defvar mouse-wheel-up-event nil)

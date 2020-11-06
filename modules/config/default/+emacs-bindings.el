@@ -124,6 +124,7 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
+       :desc "Emoji"                         "e"   #'emojify-insert-emoji
        :desc "Current file name"             "f"   #'+default/insert-file-path
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Snippet"                       "s"   #'yas-insert-snippet
@@ -160,8 +161,9 @@
        :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
        (:when (featurep! :lang org +journal)
         (:prefix ("j" . "journal")
-         :desc "New Entry"      "j" #'org-journal-new-entry
-         :desc "Search Forever" "s" #'org-journal-search-forever))
+         :desc "New Entry"           "j" #'org-journal-new-entry
+         :desc "New Scheduled Entry" "J" #'org-journal-new-scheduled-entry
+         :desc "Search Forever"      "s" #'org-journal-search-forever))
        (:when (featurep! :lang org +roam)
         (:prefix ("r" . "roam")
          :desc "Switch to buffer"              "b" #'org-roam-switch-to-buffer
@@ -265,6 +267,8 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
        :desc "Big mode"                     "b" #'doom-big-font-mode
+       (:when (featurep! :ui fill-column)
+        :desc "Fill Column Indicator"       "c" #'+fill-column/toggle)
        :desc "Flymake"                      "f" #'flymake-mode
        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
        :desc "Indent style"                 "I" #'doom/toggle-indent-style
@@ -554,13 +558,19 @@
         "C-M-b"     #'sp-backward-sexp
         "C-M-d"     #'sp-splice-sexp
         "C-M-k"     #'sp-kill-sexp
-        "C-M-t"     #'sp-transpose-sexp
-        "C-<right>" #'sp-forward-slurp-sexp
-        "M-<right>" #'sp-forward-barf-sexp
-        "C-<left>"  #'sp-backward-slurp-sexp
-        "M-<left>"  #'sp-backward-barf-sexp)
+        "C-M-t"     #'sp-transpose-sexp)
 
       ;;; treemacs
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
         "<C-f9>" #'treemacs-find-file))
+
+(map! :leader
+      (:when (featurep! :editor fold)
+       (:prefix ("C-f" . "fold")
+        "C-d"     #'vimish-fold-delete
+        "C-a C-d" #'vimish-fold-delete-all
+        "C-f"     #'+fold/toggle
+        "C-a C-f" #'+fold/close-all
+        "C-u"     #'+fold/open
+        "C-a C-u" #'+fold/open-all)))

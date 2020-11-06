@@ -12,7 +12,7 @@
 (when (featurep! +hack)
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
-    :pin "572c3b41bed91ea543434c04914a7a0c45fec7c7"))
+    :pin "9079bc333e715a13e57ab366522b15d0307e32cd"))
 
 (unless (featurep! +lsp)
   (package! phpactor :pin "62d2372ea55c0c5fb4e77076988472ebb5d85f24")
@@ -23,4 +23,4 @@
   (package! php-cs-fixer :pin "95eace9bc0ace128d5166e303c76df2b778c4ddb"))
 
 ;; For building php-extras
-(package! async :pin "36a10151e70e956e2f766ed9e65f4a9cfc8479b2")
+(package! async :pin "14f48de586b0977e3470f053b810d77b07ea427a")

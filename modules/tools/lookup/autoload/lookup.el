@@ -180,6 +180,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 ;;
 ;;; Lookup backends
 
+(autoload 'xref--show-defs "xref")
 (defun +lookup--xref-show (fn identifier &optional show-fn)
   (let ((xrefs (funcall fn
                         (xref-find-backend)
@@ -239,14 +240,39 @@ neither is available. These require ripgrep to be installed."
 (defun +lookup-evil-goto-definition-backend-fn (_identifier)
   "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
 current buffer."
-  (and (fboundp 'evil-goto-definition)
-       (ignore-errors
-         (cl-destructuring-bind (beg . end)
-             (bounds-of-thing-at-point 'symbol)
-           (evil-goto-definition)
-           (let ((pt (point)))
-             (not (and (>= pt beg)
-                       (<  pt end))))))))
+  (when (fboundp 'evil-goto-definition)
+    (ignore-errors
+      (cl-destructuring-bind (beg . end)
+          (bounds-of-thing-at-point 'symbol)
+        (evil-goto-definition)
+        (let ((pt (point)))
+          (not (and (>= pt beg)
+                    (<  pt end))))))))
+
+(defun +lookup-ffap-backend-fn (_identifier)
+  "Uses `find-file-at-point' to read file at point."
+  (require 'ffap)
+  (when (ffap-guesser)
+    (find-file-at-point)))
+
+(defun +lookup-bug-reference-backend-fn (_identifier)
+  "Searches for a bug reference in user/repo#123 or #123 format and opens it in
+the browser."
+  (require 'bug-reference)
+  (let ((bug-reference-url-format bug-reference-url-format)
+        (bug-reference-bug-regexp bug-reference-bug-regexp)
+        (bug-reference-mode (derived-mode-p 'text-mode 'conf-mode))
+        (bug-reference-prog-mode (derived-mode-p 'prog-mode)))
+    (bug-reference--run-auto-setup)
+    (unwind-protect
+        (catch 'found
+          (bug-reference-fontify (line-beginning-position) (line-end-position))
+          (dolist (o (overlays-at (point)))
+            ;; It should only be possible to have one URL overlay.
+            (when-let (url (overlay-get o 'bug-reference-url))
+              (browse-url url)
+              (throw 'found t))))
+      (bug-reference-unfontify (line-beginning-position) (line-end-position)))))
 
 
 ;;
@@ -317,22 +343,14 @@ for the current mode/buffer (if any), then falls back to the backends in
 
 (defvar ffap-file-finder)
 ;;;###autoload
-(defun +lookup/file (path)
+(defun +lookup/file (&optional path)
   "Figure out PATH from whatever is at point and open it.
 
 Each function in `+lookup-file-functions' is tried until one changes the point
 or the current buffer.
 
 Otherwise, falls back on `find-file-at-point'."
-  (interactive
-   (progn
-     (require 'ffap)
-     (list
-      (or (ffap-guesser)
-          (ffap-read-file-or-url
-           (if ffap-url-regexp "Find file or URL: " "Find file: ")
-           (doom-thing-at-point-or-region))))))
-  (require 'ffap)
+  (interactive)
   (cond ((and path
               buffer-file-name
               (file-equal-p path buffer-file-name)

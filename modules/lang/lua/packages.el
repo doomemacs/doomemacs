@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/lua/packages.el
 
-(package! lua-mode :pin "35b6e4c20b8b4eaf783ccc8e613d0dd06dbd165c")
+(package! lua-mode :pin "345ebfc1e236d9676e7e9f7364493785e7756348")
 
 (when (featurep! +moonscript)
   (package! moonscript :pin "56f90471e2ced2b0a177aed4d8c2f854797e9cc7")

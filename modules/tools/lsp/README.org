@@ -7,7 +7,6 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#lsp-powered-project-search][LSP-powered project search]]
@@ -43,7 +42,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
 | [[../../lang/fsharp/README.org][:lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
 | [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
-| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-ide-engine                                            |
+| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
 | [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
 | [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
@@ -70,23 +69,17 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 + [[https://github.com/emacs-lsp/helm-lsp][helm-lsp]]
 + [[https://github.com/joaotavora/eglot][eglot]]
 
-** Hacks
-+ ~lsp-mode~ has been modified not to automatically install missing LSP servers.
-  This is done to adhere to our "Your system, your rules" mantra, which insist
-  that it is better etiquette to let the user decide when their development
-  environment is modified. Use ~M-x lsp-install-server~ to install LSP servers
-  manually.
-
 * Prerequisites
-This module has no direct prerequisites, but major-modes require you to install
-language servers.
+This module has no direct prerequisites, but different languages will need
+different language servers, which =lsp-mode= will prompt you to auto-install.
+=eglot= will not.
 
-You'll find a table that lists available language servers and how to install
-them [[https://github.com/emacs-lsp/lsp-mode#supported-languages][in the lsp-mode project README]]. The documentation of the module for your
+A table that lists available language servers and how to install them can be
+found [[https://emacs-lsp.github.io/lsp-mode/page/languages/][on the lsp-mode project README]]. The documentation of the module for your
 targeted language will contain brief instructions as well.
 
-For eglot users, you can see the list of [[https://github.com/joaotavora/eglot/blob/master/README.md#connecting-to-a-server][default servers supported in the README]].
-There is also instructions to add another server easily.
+For eglot users, a list of [[https://github.com/joaotavora/eglot/blob/master/README.md#connecting-to-a-server][default servers supported is on Eglot's README]],
+including instructions to register your own.
 
 * TODO Features
 ** LSP-powered project search

@@ -35,7 +35,9 @@
 
 
 (use-package! ddskk
-  :general ("C-x j" #'skk-mode))
+  :general ("C-x j" #'skk-mode)
+  :init
+  (add-hook 'doom-escape-hook #'skk-mode-exit))
 
 
 ;;

@@ -1,5 +1,5 @@
 ;;; lang/java/+lsp.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +lsp)
+;;;###if (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
 
 (use-package! lsp-java
   :after lsp-mode

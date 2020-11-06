@@ -305,6 +305,7 @@ Clock out if an active clock is running (or cancel it if prefix ARG is non-nil).
 If no clock is active, then clock into the last item. See `org-clock-in-last' to
 see how ARG affects this command."
   (interactive "P")
+  (require 'org-clock)
   (cond ((org-clocking-p)
          (if arg
              (org-clock-cancel)

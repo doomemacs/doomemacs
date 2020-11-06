@@ -23,10 +23,12 @@ This module adds support for shell scripting languages.
 + =+lsp= Enables LSP support for sh-mode. This requires the =:tools lsp= module
   to be enabled and [[https://github.com/mads-hartmann/bash-language-server][bash-language-server]] to be installed on your system.
 + =+fish= Add syntax highlighting for fish script files.
++ =+powershell= Add syntax highlighting for Powershell script files .ps1 and .psm1
  
 ** Plugins
 + [[https://github.com/Alexander-Miller/company-shell][company-shell]]* (=:completion company=)
 + [[https://github.com/wwwjfy/emacs-fish][fish-mode]]* (=+fish=)
++ [[https://github.com/jschaf/powershell.el][powershell-mode]]* (=+powershell=)
 
 ** Hacks
 + Interpolated variables are fontified.

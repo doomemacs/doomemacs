@@ -28,6 +28,12 @@ DOOMDIR environment variable. e.g.
     ;; Create `doom-private-dir'
     (if noconfig-p
         (print! (warn "Not copying private config template, as requested"))
+      ;; Create DOOMDIR in ~/.config/doom if ~/.config/emacs exists.
+      (when (and (not (file-directory-p doom-private-dir))
+                 (not (getenv "DOOMDIR")))
+        (let ((xdg-config-dir (or (getenv "XDG_CONFIG_HOME") "~/.config")))
+          (when (file-in-directory-p doom-emacs-dir xdg-config-dir)
+            (setq doom-private-dir (expand-file-name "doom/" xdg-config-dir)))))
       (print! (start "Creating %s") (relpath doom-private-dir))
       (make-directory doom-private-dir 'parents)
       (print-group!

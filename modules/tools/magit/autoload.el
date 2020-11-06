@@ -66,7 +66,8 @@ window that already exists in that direction. It will split otherwise."
                        +magit-open-windows-in-direction))
         (origin-window (selected-window)))
     (if-let (window (window-in-direction direction))
-        (select-window window)
+        (unless magit-display-buffer-noselect
+          (select-window window))
       (if-let (window (and (not (one-window-p))
                            (window-in-direction
                             (pcase direction
@@ -74,16 +75,19 @@ window that already exists in that direction. It will split otherwise."
                               (`left 'right)
                               ((or `up `above) 'down)
                               ((or `down `below) 'up)))))
-          (select-window window)
+        (unless magit-display-buffer-noselect
+          (select-window window))
         (let ((window (split-window nil nil direction)))
-          (when (memq direction '(right down below))
+          (when (and (not magit-display-buffer-noselect)
+                     (memq direction '(right down below)))
             (select-window window))
           (display-buffer-record-window 'reuse window buffer)
           (set-window-buffer window buffer)
           (set-window-parameter window 'quit-restore (list 'window 'window origin-window buffer))
           (set-window-prev-buffers window nil))))
-    (switch-to-buffer buffer t t)
-    (selected-window)))
+    (unless magit-display-buffer-noselect
+      (switch-to-buffer buffer t t)
+      (selected-window))))
 
 
 ;;

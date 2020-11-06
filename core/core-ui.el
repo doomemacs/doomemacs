@@ -9,7 +9,7 @@
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
-This is changed by `load-theme'.")
+Set to `default' to load no theme at all. This is changed by `load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
@@ -402,11 +402,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; serve much purpose when the selection is so much more visible.
   (defvar doom--hl-line-mode nil)
 
+  (add-hook! 'hl-line-mode-hook
+    (defun doom-truly-disable-hl-line-h ()
+      (unless hl-line-mode
+        (setq-local doom--hl-line-mode nil))))
+
   (add-hook! '(evil-visual-state-entry-hook activate-mark-hook)
     (defun doom-disable-hl-line-h ()
       (when hl-line-mode
-        (setq-local doom--hl-line-mode t)
-        (hl-line-mode -1))))
+        (hl-line-mode -1)
+        (setq-local doom--hl-line-mode t))))
 
   (add-hook! '(evil-visual-state-exit-hook deactivate-mark-hook)
     (defun doom-enable-hl-line-maybe-h ()
@@ -516,6 +521,12 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (add-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
            #'display-line-numbers-mode)
 
+;; Fix #2742: cursor is off by 4 characters in `artist-mode'
+;; REVIEW Reported upstream https://debbugs.gnu.org/cgi/bugreport.cgi?bug=43811
+;; DEPRECATED Fixed in Emacs 28; remove when we drop 27 support
+(unless EMACS28+
+  (add-hook 'artist-mode-hook #'doom-disable-line-numbers-h))
+
 
 ;;
 ;;; Theme & font
@@ -570,7 +581,9 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
-  (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
+  (when (and doom-theme
+             (not (eq doom-theme 'default))
+             (not (memq doom-theme custom-enabled-themes)))
     (with-selected-frame (or frame (selected-frame))
       (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
         (load-theme doom-theme t)))))

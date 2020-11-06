@@ -1,0 +1,94 @@
+#+TITLE:   lang/scala
+#+DATE:    October 14, 2020
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+- [[#lsp-integration][=+lsp= Integration]]
+  - [[#prerequisites][Prerequisites]]
+    - [[#coursier][Coursier]]
+    - [[#metals][Metals]]
+  - [[#features][Features]]
+  - [[#notes][Notes]]
+
+* Description
+This module adds [[https://www.scala-lang.org][scala]] and [[https://www.scala-sbt.org/][sbt]] support to Doom Emacs.
+
+** Module Flags
++ =+lsp= Enables integration for the metals LSP server.
+
+
+* =+lsp= Integration
+
+** Prerequisites
+
+*** Coursier
+Note: Coursier is only required to install Metals. If system is running arch
+linux this step can be safely skipped.
+
+**** Ubuntu / Debian / Fedora
+#+BEGIN_SRC sh
+curl -fLo cs https://git.io/coursier-cli-linux &&
+    chmod +x cs &&
+    ./cs
+#+END_SRC
+
+**** MacOS
+#+BEGIN_SRC sh
+curl -fLo cs https://git.io/coursier-cli-macos &&
+    chmod +x cs &&
+    (xattr -d com.apple.quarantine cs || true) &&
+    ./cs
+#+END_SRC
+
+**** Arch
+#+BEGIN_SRC sh
+yay -S coursier
+#+END_SRC
+
+*** Metals
+
+**** Ubuntu / Debian / Fedora / MacOS
+Note: Update following command to latest version of metals [[https://scalameta.org/metals/docs/editors/emacs.html][found here]].
+
+#+begin_src sh
+coursier bootstrap \
+  --java-opt -Xss4m \
+  --java-opt -Xms100m \
+  --java-opt -Dmetals.client=emacs \
+  org.scalameta:metals_2.12:0.9.4 \
+  -r bintray:scalacenter/releases \
+  -r sonatype:snapshots \
+  -o /usr/local/bin/metals-emacs -f
+#+end_src
+
+**** Arch
+#+BEGIN_SRC sh
+yay -S metals
+#+END_SRC
+
+** Features
+According to [[https://scalameta.org/metals/docs/editors/overview.html]] it adds
+
++ Goto Definition
++ Completions
++ Hover
++ Paremeter Hints
++ Find References
++ Run/Debug
++ Find Implementations
++ Rename Symbol
++ Code Actions
++ Document Symbols
++ Formatting
++ Folding
++ Organize Imports
+
+** Notes
+
++ Projects are required to have scala version =2.11.12=, =2.12.8=, =2.13.0= or greater.
++ Latest version of sbt is recommended.
++ Running =M-x lsp-metals-doctor-run= helps diagnose problems.
++ Full reference here: https://scalameta.org/metals/docs/editors/emacs.html

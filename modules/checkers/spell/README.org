@@ -11,6 +11,7 @@
 - [[#prerequisites][Prerequisites]]
   - [[#aspell][Aspell]]
   - [[#hunspell][Hunspell]]
+  - [[#enchant][Enchant]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#changing-how-quickly-spell-fu-spellchecks-after-changes][Changing how quickly spell-fu spellchecks after changes]]
@@ -23,7 +24,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This modules provides spellchecking powered by =aspell= or =hunspell=.
+This modules provides spellchecking powered by =aspell=, =hunspell= or =enchant=.
 
 Spellcheck is automatically loaded in many ~text-mode~ derivatives, which
 includes ~org-mode~, ~markdown-mode~, the Git Commit buffer (from magit),
@@ -37,6 +38,7 @@ This module has no dedicated maintainers.
   but supports multiple languages and dictionaries.
 + =+aspell= Use =aspell= as a backend for correcting words.
 + =+hunspell= Use =hunspell= as a backend for correcting words.
++ =+enchant= Use =enchant-2= as a backend for correcting words.
 + =+everywhere= Spell check in programming modes as well (in comments).
 
 ** Plugins
@@ -50,14 +52,15 @@ This module has no dedicated maintainers.
   + [[https://gitlab.com/ideasman42/emacs-spell-fu][spell-fu]]
 
 * Prerequisites
-This module requires one of =aspell= or =hunspell= installed on your system and
-in your ~PATH~. They also need dictionaries for your language(s).
+This module requires one of =aspell=, =hunspell= or =enchant-2=
+installed on your system and in your ~PATH~.
+They also need dictionaries for your language(s).
 
 #+begin_quote
 If you *are not* using =+flyspell=, you will need aspell (and a dictionary)
-installed whether or not you have =+hunspell= enabled. This is because
-=spell-fu= does not support generating the word list with anything other than
-=aspell= yet.
+installed whether or not you have =+hunspell= or =+enchant= enabled.
+This is because =spell-fu= does not support generating the word list
+with anything other than =aspell= yet.
 #+end_quote
 
 ** Aspell
@@ -77,8 +80,23 @@ installed whether or not you have =+hunspell= enabled. This is because
 
 ** TODO Hunspell
 
+** Enchant
++ Ubuntu: ~apt-get install enchant-2~
++ Arch Linux: ~pacman -S enchant~
++ NixOS:
+  #+BEGIN_SRC nix
+  {
+    environment.systemPackages = with pkgs; [
+      enchant
+    ];
+  }
+  #+END_SRC
+
+  Enchant is just a wrapper for other spelling libraries
+  and you will need to have at least one of the supported backends installed as well.
+
 * Features
-+ Spell checking and correction using =aspell= or =hunspell=.
++ Spell checking and correction using =aspell=, =hunspell= or =enchant=.
 + Ignores source code inside org or markdown files.
 + Lazily spellchecking recent changes only when idle.
 + Choosing suggestions using completion interfaces (=ivy= or =helm=).
@@ -159,7 +177,7 @@ Return nil if on a link url, markup, html, or references."
 
 ** Adding or removing words to your personal dictionary
 Use ~M-x +spell/add-word~ and ~M-x +spell/remove-word~ to whitelist words that
-you know are not misspellings. For evil users these are bound to =zq= and =zw=,
+you know are not misspellings. For evil users these are bound to =zg= and =zw=,
 respectively. =+flyspell= users can also add/remove words from the
 ~flyspell-correct~ popup interface (there will be extra options on the list of
 corrections for "save word to dictionary").

@@ -61,7 +61,6 @@ You should use `set-eshell-alias!' to change this.")
                              'face 'font-lock-keyword-face))
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
-        eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
         ;; don't record command in history if prefixed with whitespace
@@ -116,41 +115,38 @@ You should use `set-eshell-alias!' to change this.")
       (setq +eshell--default-aliases eshell-command-aliases-list
             eshell-command-aliases-list
             (append eshell-command-aliases-list
-                    +eshell-aliases))))
+                    +eshell-aliases)))))
 
-  (add-hook! 'eshell-first-time-mode-hook
-    (defun +eshell-init-keymap-h ()
-      ;; Keys must be bound in a hook because eshell resets its keymap every
-      ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
-      ;; grasp such wisdom.
-      (map! :map eshell-mode-map
-            :n "RET"     #'+eshell/goto-end-of-prompt
-            :n [return]  #'+eshell/goto-end-of-prompt
-            :ni "C-j"    #'eshell-next-matching-input-from-input
-            :ni "C-k"    #'eshell-previous-matching-input-from-input
-            :ig "C-d"    #'+eshell/quit-or-delete-char
-            :i "C-c h"   #'evil-window-left
-            :i "C-c j"   #'evil-window-down
-            :i "C-c k"   #'evil-window-up
-            :i "C-c l"   #'evil-window-right
-            "C-s"   #'+eshell/search-history
-            ;; Emacs bindings
-            "C-e"   #'end-of-line
-            ;; Tmux-esque prefix keybinds
-            "C-c s" #'+eshell/split-below
-            "C-c v" #'+eshell/split-right
-            "C-c x" #'+eshell/kill-and-close
-            [remap split-window-below]  #'+eshell/split-below
-            [remap split-window-right]  #'+eshell/split-right
-            [remap doom/backward-to-bol-or-indent] #'eshell-bol
-            [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-            [remap evil-delete-back-to-indentation] #'eshell-kill-input
-            [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right
-            (:localleader
-             "b" #'eshell-insert-buffer-name
-             "e" #'eshell-insert-envvar
-             "s" #'+eshell/search-history)))))
+
+(after! esh-mode
+  (map! :map eshell-mode-map
+        :n  "RET"    #'+eshell/goto-end-of-prompt
+        :n  [return] #'+eshell/goto-end-of-prompt
+        :ni "C-j"    #'eshell-next-matching-input-from-input
+        :ni "C-k"    #'eshell-previous-matching-input-from-input
+        :ig "C-d"    #'+eshell/quit-or-delete-char
+        :i  "C-c h"  #'evil-window-left
+        :i  "C-c j"  #'evil-window-down
+        :i  "C-c k"  #'evil-window-up
+        :i  "C-c l"  #'evil-window-right
+        "C-s"   #'+eshell/search-history
+        ;; Emacs bindings
+        "C-e"   #'end-of-line
+        ;; Tmux-esque prefix keybinds
+        "C-c s" #'+eshell/split-below
+        "C-c v" #'+eshell/split-right
+        "C-c x" #'+eshell/kill-and-close
+        [remap split-window-below]  #'+eshell/split-below
+        [remap split-window-right]  #'+eshell/split-right
+        [remap doom/backward-to-bol-or-indent] #'eshell-bol
+        [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+        [remap evil-delete-back-to-indentation] #'eshell-kill-input
+        [remap evil-window-split]   #'+eshell/split-below
+        [remap evil-window-vsplit]  #'+eshell/split-right
+        (:localleader
+         "b" #'eshell-insert-buffer-name
+         "e" #'eshell-insert-envvar
+         "s" #'+eshell/search-history)))
 
 
 (use-package! eshell-up

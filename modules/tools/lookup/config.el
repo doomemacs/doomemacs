@@ -97,7 +97,9 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
-(defvar +lookup-file-functions ()
+(defvar +lookup-file-functions
+  '(+lookup-ffap-backend-fn
+    +lookup-bug-reference-backend-fn)
   "Function for `+lookup/file' to try, before restoring to `find-file-at-point'.
 Stops at the first function to return non-nil or change the current
 window/point.
@@ -153,8 +155,10 @@ Dictionary.app behind the scenes to get definitions.")
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
 
-  ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
+  ;; This integration is already built into evil
+  (unless (featurep! :editor evil)
+    ;; Use `better-jumper' instead of xref's marker stack
+    (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a))
 
   (use-package! ivy-xref
     :when (featurep! :completion ivy)

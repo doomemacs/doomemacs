@@ -15,7 +15,9 @@
              yas-lookup-snippet
              yas-insert-snippet
              yas-new-snippet
-             yas-visit-snippet-file)
+             yas-visit-snippet-file
+             yas-activate-extra-mode
+             yas-deactivate-extra-mode)
   :init
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)

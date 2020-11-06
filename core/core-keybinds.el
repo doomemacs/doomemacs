@@ -26,15 +26,18 @@ and Emacs states, and for non-evil users.")
 ;;
 ;;; Keybind settings
 
-(cond (IS-MAC
-       (setq mac-command-modifier     'super
-             mac-option-modifier      'meta
-             ns-command-modifier      'super
-             ns-option-modifier       'meta
-             ns-right-option-modifier 'none))
-      (IS-WINDOWS
-       (setq w32-lwindow-modifier 'super
-             w32-rwindow-modifier 'super)))
+(cond
+ (IS-MAC
+  (setq mac-command-modifier      'super
+        ns-command-modifier       'super
+        mac-option-modifier       'meta
+        ns-option-modifier        'meta
+        ;; Free up the right option for character composition
+        mac-right-option-modifier 'none
+        ns-right-option-modifier  'none))
+ (IS-WINDOWS
+  (setq w32-lwindow-modifier 'super
+        w32-rwindow-modifier 'super)))
 
 
 ;;
@@ -184,15 +187,18 @@ localleader prefix."
 (use-package! which-key
   :hook (doom-first-input . which-key-mode)
   :init
-  (setq which-key-sort-order #'which-key-prefix-then-key-order
+  (setq which-key-sort-order #'which-key-key-order-alpha
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
   :config
+  (defvar doom--initial-which-key-replacement-alist which-key-replacement-alist)
+  (add-hook! 'doom-before-reload-hook
+    (defun doom-reset-which-key-replacements-h ()
+      (setq which-key-replacement-alist doom--initial-which-key-replacement-alist)))
   ;; general improvements to which-key readability
-  (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
 
@@ -309,7 +315,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
   (let ((a (plist-get doom--map-parent-state prop))
         (b (plist-get doom--map-state prop)))
     (if (and a b)
-        `(general--concat nil ,a ,b)
+        `(general--concat t ,a ,b)
       (or a b))))
 
 (defun doom--map-nested (wrapper rest)

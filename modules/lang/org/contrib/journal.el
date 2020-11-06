@@ -38,17 +38,18 @@
         ;; we wanted to keep visible.
         org-journal-find-file #'find-file)
   
-  ;; Setup carryover to include all configured TODO states.
+  ;; Setup carryover to include all configured TODO states. We cannot carry over
+  ;; [ ] keywords because `org-journal-carryover-items's syntax cannot correctly
+  ;; interpret it as anything other than a date.
   (setq org-journal-carryover-items  "TODO=\"TODO\"|TODO=\"PROJ\"|TODO=\"STRT\"|TODO=\"WAIT\"|TODO=\"HOLD\"")
-
 
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
   (map! (:map org-journal-mode-map
-         :n "]f"  #'org-journal-open-next-entry
-         :n "[f"  #'org-journal-open-previous-entry
-         :n "C-n" #'org-journal-open-next-entry
-         :n "C-p" #'org-journal-open-previous-entry)
+         :n "]f"  #'org-journal-next-entry
+         :n "[f"  #'org-journal-previous-entry
+         :n "C-n" #'org-journal-next-entry
+         :n "C-p" #'org-journal-previous-entry)
         (:map org-journal-search-mode-map
          "C-n" #'org-journal-search-next
          "C-p" #'org-journal-search-previous)
@@ -56,8 +57,8 @@
         (:map org-journal-mode-map
          "c" #'org-journal-new-entry
          "d" #'org-journal-new-date-entry
-         "n" #'org-journal-open-next-entry
-         "p" #'org-journal-open-previous-entry
+         "n" #'org-journal-next-entry
+         "p" #'org-journal-previous-entry
          (:prefix "s"
           "s" #'org-journal-search
           "f" #'org-journal-search-forever

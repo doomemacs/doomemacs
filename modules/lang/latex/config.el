@@ -1,7 +1,27 @@
 ;;; lang/latex/config.el -*- lexical-binding: t; -*-
 
-(defvar +latex-indent-level-item-continuation 4
-  "Custom indentation level for items in enumeration-type environments")
+(defconst +latex-indent-item-continuation-offset 'align
+  "Level to indent continuation of enumeration-type environments.
+
+i.e. This affects \\item, \\enumerate, and \\description.
+
+Set this to `align' for:
+
+  \\item lines aligned
+         like this.
+
+Set to `auto' for continuation lines to be offset by `LaTeX-indent-line':
+
+  \\item lines aligned
+    like this, assuming LaTeX-indent-line == 2
+
+Any other fixed integer will be added to `LaTeX-item-indent' and the current
+indentation level.
+
+Set this to `nil' to disable all this behavior.
+
+You'll need to adjust `LaTeX-item-indent' to control indentation of \\item
+itself.")
 
 (defvar +latex-enable-unicode-math nil
   "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
@@ -75,7 +95,10 @@ If no viewers are found, `latex-preview-pane' is used.")
   (when (featurep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
-               #'lsp!)))
+               #'lsp!))
+  (map! :map LaTeX-mode-map
+        :localleader
+        :desc "View" "v" #'TeX-view))
 
 
 (use-package! tex-fold
@@ -130,16 +153,17 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   ;; Provide proper indentation for LaTeX "itemize","enumerate", and
   ;; "description" environments. See
   ;; http://emacs.stackexchange.com/questions/3083/how-to-indent-items-in-latex-auctex-itemize-environments
+  ;; Set `+latex-indent-item-continuation-offset' to 0 to disable this
   (dolist (env '("itemize" "enumerate" "description"))
-    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex-indent-item-fn)))
 
   ;; Fix #1849: allow fill-paragraph in itemize/enumerate
   (defadvice! +latex--re-indent-itemize-and-enumerate-a (orig-fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
-                   '(("itemize"   +latex/LaTeX-indent-item)
-                     ("enumerate" +latex/LaTeX-indent-item)))))
+                   '(("itemize"   +latex-indent-item-fn)
+                     ("enumerate" +latex-indent-item-fn)))))
       (apply orig-fn args)))
   (defadvice! +latex--dont-indent-itemize-and-enumerate-a (orig-fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph

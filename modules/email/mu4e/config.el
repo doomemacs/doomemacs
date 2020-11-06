@@ -106,7 +106,7 @@
 
 
 (use-package! org-msg
-  :hook (org-load . org-msg-mode)
+  :hook (mu4e-compose-pre . org-msg-mode)
   :config
   (setq org-msg-startup "inlineimages"
         org-msg-greeting-name-limit 3

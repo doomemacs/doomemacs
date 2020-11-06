@@ -294,7 +294,7 @@ workspace to delete."
 (defun +workspace/new (&optional name clone-p)
   "Create a new workspace named NAME. If CLONE-P is non-nil, clone the current
 workspace, otherwise the new workspace is blank."
-  (interactive "iP")
+  (interactive (list nil current-prefix-arg))
   (unless name
     (setq name (format "#%s" (+workspace--generate-id))))
   (condition-case e

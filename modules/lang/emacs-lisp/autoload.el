@@ -274,6 +274,7 @@ library/userland functions"
               ((let ((symbol (intern-soft (match-string-no-properties 0))))
                  (and (cond ((null symbol) nil)
                             ((eq symbol t) nil)
+                            ((keywordp symbol) nil)
                             ((special-variable-p symbol)
                              (setq +emacs-lisp--face 'font-lock-variable-name-face))
                             ((and (fboundp symbol)

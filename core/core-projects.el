@@ -166,29 +166,23 @@ And if it's a function, evaluate it."
         projectile-indexing-method 'hybrid
         projectile-generic-command
         (lambda (_)
-          (let ((find-exe-fn
-                 (if EMACS27+
-                     (doom-rpartial #'executable-find t)
-                   #'executable-find)))
-            ;; If fd exists, use it for git and generic projects. fd is a rust
-            ;; program that is significantly faster than git ls-files or find, and
-            ;; it respects .gitignore. This is recommended in the projectile docs.
-            (cond
-             ((when-let
-                  (bin (if (ignore-errors (file-remote-p default-directory nil t))
-                           (cl-find-if find-exe-fn (list "fdfind" "fd"))
-                         doom-projectile-fd-binary))
-                (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
-                                bin)
-                        (if IS-WINDOWS " --path-separator=/"))))
-             ;; Otherwise, resort to ripgrep, which is also faster than find
-             ((funcall find-exe-fn "rg")
-              (concat "rg -0 --files --follow --color=never --hidden"
-                      (cl-loop for dir in projectile-globally-ignored-directories
-                               concat " --glob "
-                               concat (shell-quote-argument (concat "!" dir)))
-                      (if IS-WINDOWS " --path-separator /")))
-             ("find . -type f -print0")))))
+          ;; If fd exists, use it for git and generic projects. fd is a rust
+          ;; program that is significantly faster than git ls-files or find, and
+          ;; it respects .gitignore. This is recommended in the projectile docs.
+          (cond
+           ((when-let
+                (bin (if (ignore-errors (file-remote-p default-directory nil t))
+                         (cl-find-if (doom-rpartial #'executable-find t)
+                                     (list "fdfind" "fd"))
+                       doom-projectile-fd-binary))
+              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow"
+                              bin)
+                      (if IS-WINDOWS " --path-separator=/"))))
+           ;; Otherwise, resort to ripgrep, which is also faster than find
+           ((executable-find "rg" t)
+            (concat "rg -0 --files --follow --color=never --hidden"
+                    (if IS-WINDOWS " --path-separator /")))
+           ("find . -type f -print0"))))
 
   (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error

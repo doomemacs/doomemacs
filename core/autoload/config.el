@@ -4,10 +4,6 @@
 (defvar doom-bin (concat doom-bin-dir "doom"))
 
 ;;;###autoload
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom/reload' is called.")
-
-;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 
@@ -76,7 +72,7 @@ This is experimental! It will try to do as `bin/doom sync' does, but from within
 this Emacs session. i.e. it reload autoloads files (if necessary), reloads your
 package list, and lastly, reloads your private config.el.
 
-Runs `doom-reload-hook' afterwards."
+Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
@@ -86,13 +82,14 @@ Runs `doom-reload-hook' afterwards."
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile (format "%s sync -e" doom-bin)
       (let ((doom-reloading-p t))
+        (run-hook-wrapped 'doom-before-reload-hook #'doom-try-run-hook)
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
               (doom-initialize-modules 'force)
             (general-auto-unbind-keys t)))
-        (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
+        (run-hook-wrapped 'doom-after-reload-hook #'doom-try-run-hook)
         (message "Config successfully reloaded!"))
     (user-error "Failed to reload your config")))
 

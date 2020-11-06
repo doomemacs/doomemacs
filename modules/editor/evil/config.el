@@ -49,7 +49,11 @@ directives. By default, this only recognizes C directives.")
         evil-ex-interactive-search-highlight 'selected-window
         ;; It's infuriating that innocuous "beginning of line" or "end of line"
         ;; errors will abort macros, so suppress them:
-        evil-kbd-macro-suppress-motion-error t)
+        evil-kbd-macro-suppress-motion-error t
+        evil-undo-system
+        (cond ((featurep! :emacs undo +tree) 'undo-tree)
+              ((featurep! :emacs undo) 'undo-fu)
+              (EMACS28+ 'undo-redo)))
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
@@ -223,7 +227,7 @@ directives. By default, this only recognizes C directives.")
 ;;; Packages
 
 (use-package! evil-easymotion
-  :after-call pre-command-hook
+  :after-call doom-first-input-hook
   :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
@@ -234,7 +238,19 @@ directives. By default, this only recognizes C directives.")
   (evilem-make-motion evilem-motion-search-word-forward #'evil-ex-search-word-forward
                       :bind ((evil-ex-search-highlight-all nil)))
   (evilem-make-motion evilem-motion-search-word-backward #'evil-ex-search-word-backward
-                      :bind ((evil-ex-search-highlight-all nil))))
+                      :bind ((evil-ex-search-highlight-all nil)))
+
+  ;; Rebind scope of w/W/e/E/ge/gE evil-easymotion motions to the visible
+  ;; buffer, rather than just the current line.
+  (put 'visible 'bounds-of-thing-at-point (lambda () (cons (window-start) (window-end))))
+  (evilem-make-motion evilem-motion-forward-word-begin #'evil-forward-word-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-WORD-begin #'evil-forward-WORD-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-word-end #'evil-forward-word-end :scope 'visible)
+  (evilem-make-motion evilem-motion-forward-WORD-end #'evil-forward-WORD-end :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-word-begin #'evil-backward-word-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-WORD-begin #'evil-backward-WORD-begin :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-word-end #'evil-backward-word-end :scope 'visible)
+  (evilem-make-motion evilem-motion-backward-WORD-end #'evil-backward-WORD-end :scope 'visible))
 
 
 (use-package! evil-embrace
@@ -325,7 +341,8 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-nerd-commenter
   :commands (evilnc-comment-operator
              evilnc-inner-comment
-             evilnc-outer-commenter))
+             evilnc-outer-commenter)
+  :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines))
 
 
 (use-package! evil-snipe
@@ -351,6 +368,16 @@ directives. By default, this only recognizes C directives.")
              evil-Surround-edit
              evil-surround-region)
   :config (global-evil-surround-mode 1))
+
+
+(use-package! evil-textobj-anyblock
+  :defer t
+  :config
+  (setq evil-textobj-anyblock-blocks
+        '(("(" . ")")
+          ("{" . "}")
+          ("\\[" . "\\]")
+          ("<" . ">"))))
 
 
 (use-package! evil-traces
@@ -391,7 +418,7 @@ directives. By default, this only recognizes C directives.")
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
       (:when (featurep! :checkers spell)
-       :n  "zq"   #'+spell/add-word
+       :n  "zg"   #'+spell/add-word
        :n  "zw"   #'+spell/remove-word
        :m  "[s"   #'+spell/previous-error
        :m  "]s"   #'+spell/next-error)
@@ -512,7 +539,8 @@ directives. By default, this only recognizes C directives.")
        "o"       #'doom/window-enlargen
        ;; Delete window
        "d"       #'evil-window-delete
-       "C-C"     #'ace-delete-window)
+       "C-C"     #'ace-delete-window
+       "T"       #'tear-off-window)
 
       ;; text objects
       :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
@@ -523,6 +551,7 @@ directives. By default, this only recognizes C directives.")
       :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
       :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
       :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+      :textobj "q" #'+evil:inner-any-quote             #'+evil:outer-any-quote
       :textobj "u" #'+evil:inner-url-txtobj            #'+evil:outer-url-txtobj
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
 

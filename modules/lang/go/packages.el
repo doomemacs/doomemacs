@@ -2,8 +2,8 @@
 ;;; lang/go/packages.el
 
 (package! go-eldoc :pin "cbbd2ea1e94a36004432a9ac61414cb5a95a39bd")
-(package! go-guru :pin "734d5232455ffde088021ea5908849ac570e890f")
-(package! go-mode :pin "734d5232455ffde088021ea5908849ac570e890f")
+(package! go-guru :pin "d17d21060b16a77f9ee28ff453e674225acbf1b1")
+(package! go-mode :pin "d17d21060b16a77f9ee28ff453e674225acbf1b1")
 (package! gorepl-mode :pin "6a73bf352e8d893f89cad36c958c4db2b5e35e07")
 (package! go-tag :pin "59b243f2fa079d9de9d56f6e2d94397e9560310a")
 (package! go-gen-test :pin "44c202ac97e728e93a35cee028a0ea8dd6e4292c")
