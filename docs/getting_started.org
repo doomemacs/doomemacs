@@ -514,6 +514,8 @@ the default config:
    git clone https://github.com/hlissner/doom-emacs ~/doom-emacs
    ~/doom-emacs/bin/doom install
    #+END_SRC
+   
+   Note that if doom was initially installed to some location and was then moved, =doom sync= needs to be run again
 
 2. Download [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
    #+BEGIN_SRC bash :eval no
