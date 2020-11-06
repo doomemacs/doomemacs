@@ -564,3 +564,13 @@
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
         "<C-f9>" #'treemacs-find-file))
+
+(map! :leader
+      (:when (featurep! :editor fold)
+       (:prefix ("C-f" . "fold")
+        "C-d"     #'vimish-fold-delete
+        "C-a C-d" #'vimish-fold-delete-all
+        "C-f"     #'+fold/toggle
+        "C-a C-f" #'+fold/close-all
+        "C-u"     #'+fold/open
+        "C-a C-u" #'+fold/open-all)))
