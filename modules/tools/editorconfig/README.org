@@ -12,7 +12,6 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#adding-major-modes][Adding Major Modes]]
-  - [[#trimming-white-space][trimming white-space]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -32,8 +31,8 @@ This module...
 + Provides a rudimentary back-end for editorconfig parsing
 
 ** Maintainers
-+ @editorconfig
- 
+This module has no dedicated maintainers
+
 ** Module Flags
 This module provides no flags.
 
@@ -54,27 +53,21 @@ properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
 ** Adding Major Modes
+
 EditorConfig already support for many major mode but not all are added
 by default if you need to add one you need to add the major mode symbol
 and its indentation variable
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'editorconfig-indentation-alist
-  ;; These are both included but are being used as an example
-  '(c-mode c-basic-offset)
-   (coffee-mode coffee-tab-width))
+(after! editorconfig
+  ;; This entry already exists in `editorconfig-indentation-alist'; it is being used
+  ;; as an example.
+  (add-to-list 'editorconfig-indentation-alist '(c-mode c-basic-offset))
+  (add-to-list 'editorconfig-indentation-alist '(coffee-mode coffee-tab-width)))
 #+END_SRC
 
 If you do not know the indentation variable/variables, (in the major mode in
 question use =SPC h v= to look for any variable that has =indent=, =offset=
-or =tab-width=  in its name
-** trimming white-space
-Editorconfig does not trim white space but defers that to a minor mode
-in Dooms case this would be ~ws-butler-mode~ If you want to change this use
-#+BEGIN_SRC emacs-lisp
-(setq editorconfig-trim-whitespaces-mode
-      'ws-butler-mode)
-#+END_SRC
+or =tab-width=  in its name.
 
-* Troubleshooting
-If you have a problem with this module do ping us a message
+* TODO Troubleshooting

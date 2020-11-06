@@ -18,13 +18,9 @@
 
 * Description
 This module provides a fill column indicator for when you hit the 80 column limit
-#+BEGIN_QUOTE
-This module is depreciated as this functionality is already baked into
-emacs 27 we will drop this module alongside dropping support for emacs 26.x
-#+END_QUOTE
 
 ** Maintainers
-+ @laishulu (Author)
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.
@@ -39,6 +35,7 @@ This module has no prerequisites.
 This module highlight's the characters that touch the 80th column of text in a
 buffer. This is mainly to remind people to keep lines short for accessibility
 and or convenience. For more info read this [[https://www.emacswiki.org/emacs/EightyColumnRule][emacs wiki page]]
+
 * Configuration
 ** Setting fill-column globally
 If you want to change the limit then you would need to set ~fill-column~ to your
@@ -46,10 +43,8 @@ desired column you would do this using
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 100)
 #+END_SRC
-For it to take affect you need to do..
-1. =M-x hl-fill-column-mode RET=
-2. =SPC m e b= which ~eval-buffer~
-3. =M-x hl-fill-column-mode RET=
+For this to take effect in the current session cycle
+
 ** Setting fill-column on a mode by mode basis
 Setting on a mode by mode basis is quite simple
 
@@ -62,18 +57,18 @@ eg.
 #+END_SRC
 
 After you need to simply restart ~hl-fill-column-mode~ if you already have
-those types buffers open
+those types buffers open.
 ** Configuring the look of the indicator
-If you want to change the face use
+If you want to change the face use:
 #+BEGIN_SRC emacs-lisp
 (after! hl-fill-column
-  (set-face-attribute 'hl-fill-column-face nil
-                      :background "YOUR-FONT-VALUE"
-                      :foreground "#YOUR-BACKGROUND-VALUE"
+  (custom-set-faces! 'hl-fill-column-face nil
+                      :background "red"
+                      :foreground "blue"
                       :inverse-video t))
 #+END_SRC
-You can look at the documentation for ~set-face-attribute~ for the full list
-of customisation's
+You can look at the documentation for ~custom-set-faces!~ for the full list
+of customizations. This can be accessed using =SPC h f=
 
 * Troubleshooting
 If you have any problem with this module do ping us a message!
