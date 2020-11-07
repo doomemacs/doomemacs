@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "728ea18ea590fcd8fb48f5bed30e135942d97221")
+  :pin "0f283e2f92c106d5bbb558862d433954fc8db179")
 
 ;; core-modules.el
 (package! use-package
@@ -34,7 +34,7 @@
 ;; core-editor.el
 (package! better-jumper :pin "fe548d22c9228b60d9c8a2a452a6c2e03dfdf238")
 (package! dtrt-indent :pin "50c440c80e0d15303d8ab543bce4c56e9c2bf407")
-(package! helpful :pin "1671e1dd08ca9543bf80e878135c6bbba84efe05")
+(package! helpful :pin "584ecc887bb92133119f93a6716cdf7af0b51dca")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "c59bfef7e8f1687ac77b0afaaaed86d8051d3de1")
 (package! so-long
@@ -51,8 +51,8 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "3670ebea092c7bae4973f5bcecf5ac3588a0ac60")
+(package! projectile :pin "d1daf274e8ca2eb0f20475b8f314bb955167c6a1")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
-(package! which-key :pin "ae59b7edb0d82aa0251803fdfbde6b865083c8b8")
+(package! which-key :pin "c011b268196b8356c70f668506a1133086bc9477")
