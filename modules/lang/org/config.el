@@ -231,7 +231,16 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
   (after! python
-    (setq org-babel-python-command python-shell-interpreter)))
+    (setq org-babel-python-command python-shell-interpreter))
+
+  ;; NOTE Backported from Emacs 27.1
+  ;; DEPRECATED Remove when 26.x support is dropped
+  (unless EMACS27+
+    (defadvice! +org--dont-suppress-window-changes-a (orig-fn &rest args)
+      :around #'org-babel-execute:emacs-lisp
+      (letf! ((#'current-window-configuration #'ignore)
+              (#'set-window-configuration #'ignore))
+        (apply orig-fn args)))))
 
 
 (defun +org-init-babel-lazy-loader-h ()
