@@ -162,16 +162,11 @@
                      "/*!" "*/"
                      :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
-    ;; Expand C-style doc comment blocks. Must be done manually because some of
-    ;; these languages use specialized (and deferred) parsers, whose state we
-    ;; can't access while smartparens is doing its thing.
-    (defun +default-expand-asterix-doc-comment-block (&rest _ignored)
-      (let ((indent (current-indentation)))
-        (newline-and-indent)
-        (save-excursion
-          (newline)
-          (insert (make-string indent 32) " */")
-          (delete-char 2))))
+    ;; Expand C-style comment blocks.
+    (defun +default-open-doc-comments-block (&rest _ignored)
+      (save-excursion
+        (newline)
+        (indent-according-to-mode)))
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
        csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
@@ -179,8 +174,8 @@
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(("| " "SPC")
-                      ("|\n[i]*/[d-2]" "RET")
-                      (+default-expand-asterix-doc-comment-block "*")))
+                      (" | " "*")
+                      ("|[i]\n[i]" "RET")))
 
     (after! smartparens-ml
       (sp-with-modes '(tuareg-mode fsharp-mode)
