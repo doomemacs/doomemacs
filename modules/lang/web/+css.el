@@ -24,7 +24,9 @@ If set to `nil', disable all the above behaviors.")
   ;; Correctly continue /* and // comments on newline-and-indent
   comment-line-break-function #'+css/comment-indent-new-line
   ;; Fix `fill-paragraph' not conjoining line comments in CSS modes correctly.
-  adaptive-fill-function #'+css-adaptive-fill-fn)
+  adaptive-fill-function #'+css-adaptive-fill-fn
+  ;; Fix filled lines not being auto-prefixed with a * when needed.
+  adaptive-fill-first-line-regexp "\\'[ \t]*\\(?:\\* *\\)?\\'")
 
 (after! (:any css-mode sass-mode)
   (set-docsets! '(css-mode scss-mode sass-mode)
