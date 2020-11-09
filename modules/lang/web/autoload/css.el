@@ -92,3 +92,14 @@ Meant for `comment-line-break-function' in `css-mode' and `scss-mode'."
                (save-excursion
                  (just-one-space)
                  (insert "\n" (make-string pre-indent indent-char)))))))))
+
+;;;###autoload
+(defun +css-adaptive-fill-fn ()
+  "An `adaptive-fill-function' that conjoins SCSS line comments correctly."
+  (when (looking-at "[ \t]*/[/*][ \t]*")
+    (let ((str (match-string 0)))
+      (when (string-match "/[/*]" str)
+        (replace-match (if (string= (match-string 0 str) "/*")
+                           " *"
+                         "//")
+                       t t str)))))

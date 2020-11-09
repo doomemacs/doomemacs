@@ -22,7 +22,9 @@ If set to `nil', disable all the above behaviors.")
 
 (setq-hook! 'css-mode-hook
   ;; Correctly continue /* and // comments on newline-and-indent
-  comment-line-break-function #'+css/comment-indent-new-line)
+  comment-line-break-function #'+css/comment-indent-new-line
+  ;; Fix `fill-paragraph' not conjoining line comments in CSS modes correctly.
+  adaptive-fill-function #'+css-adaptive-fill-fn)
 
 (after! (:any css-mode sass-mode)
   (set-docsets! '(css-mode scss-mode sass-mode)
