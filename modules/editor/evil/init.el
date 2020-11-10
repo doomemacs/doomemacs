@@ -39,6 +39,7 @@
       free-keys
       help
       helm
+      indent
       image
       kotlin-mode
       occur
@@ -148,6 +149,7 @@ variable for an explanation of the defaults (in comments). See
       image+
       imenu
       imenu-list
+      (indent "indent")
       indium
       info
       ivy
@@ -223,6 +225,7 @@ variable for an explanation of the defaults (in comments). See
       xref
       xwidget
       youtube-dl
+      zmusic
       (ztree ztree-diff)))
 
   (defun +evil-collection-init (module &optional disabled-list)
@@ -272,6 +275,8 @@ and complains if a module is loaded too early (during startup)."
       (+evil-collection-init 'elisp-mode))
     (add-transient-hook! 'occur-mode
       (+evil-collection-init '(occur replace)))
+    (add-transient-hook! 'indent-rigidly
+      (+evil-collection-init '(indent "indent")))
     (add-transient-hook! 'minibuffer-setup-hook
       (when evil-collection-setup-minibuffer
         (+evil-collection-init 'minibuffer)
