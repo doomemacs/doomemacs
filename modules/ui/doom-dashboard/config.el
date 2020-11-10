@@ -405,7 +405,7 @@ controlled by `+doom-dashboard-pwd-policy'."
             "||.=='    _-'                                                     `' |  /==.||"
             "=='    _-'                         E M A C S                          \\/   `=="
             "\\   _-'                                                                `-_   /"
-            " `''                                                                      ``'"))
+            "`''                                                                      ``'"))
     (when (and (display-graphic-p)
                (stringp fancy-splash-image)
                (file-readable-p fancy-splash-image))
