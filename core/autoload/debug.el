@@ -145,6 +145,9 @@ ready to be pasted in a bug report on github."
         (doom
          (dir     . ,(abbrev-path (file-truename doom-private-dir)))
          (version . ,doom-version)
+         ,@(when doom-interactive-p
+             `((font  . ,(bound-and-true-p doom-font))
+               (theme . ,(bound-and-true-p doom-theme))))
          (build   . ,(sh "git" "log" "-1" "--format=%D %h %ci"))
          (elc-files
           . ,(length (doom-files-in `(,@doom-modules-dirs
