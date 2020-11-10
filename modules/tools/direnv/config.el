@@ -28,6 +28,13 @@
                   (file-remote-p default-directory))
         (envrc-mode 1))))
 
+  ;; Ensure these local variables survive major mode changes, so envrc-mode is
+  ;; only "activated" once per buffer.
+  (put 'envrc-mode 'permanent-local t)
+  (put 'process-environment 'permanent-local t)
+  (put 'exec-path 'permanent-local t)
+  (put 'eshell-path-env 'permanent-local t)
+
   (define-derived-mode +direnv-rc-mode sh-mode "envrc"
     "Major mode for .envrc files."
     ;; Fontify .envrc keywords; it's a good indication of whether or not we've
