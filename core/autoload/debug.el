@@ -125,7 +125,9 @@ ready to be pasted in a bug report on github."
          (buildopts . ,system-configuration-options)
          (features  . ,system-configuration-features)
          (traits . ,(delq
-                     nil (list (if (not doom-interactive-p) 'batch)
+                     nil (list (cond ((not doom-interactive-p) 'batch)
+                                     ((display-graphic-p) 'gui)
+                                     ('tty))
                                (if (daemonp) 'daemon)
                                (if (and (require 'server)
                                         (server-running-p))
