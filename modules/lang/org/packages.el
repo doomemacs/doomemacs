@@ -1,31 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/org/packages.el
 
-;; HACK A necessary hack because org requires a compilation step after being
-;;      cloned, and during that compilation a org-version.el is generated with
-;;      these two functions, which return the output of a 'git describe ...'
-;;      call in the repo's root. Of course, this command won't work in a sparse
-;;      clone, and more than that, initiating these compilation step is a
-;;      hassle, so...
-(add-hook! 'straight-use-package-pre-build-functions
-  (defun +org-fix-package-h (package &rest _)
-    (when (equal package "org-mode")
-      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
-        (insert "(fset 'org-release (lambda () \"9.4\"))\n"
-                "(fset 'org-git-version #'ignore)\n"
-                "(provide 'org-version)\n")))))
-
-;; Install cutting-edge version of org-mode, and from a mirror, because
-;; code.orgmode.org runs on a potato.
-(package! org-mode
-  :recipe (:host github
-           :repo "emacs-straight/org-mode"
-           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "a88806b554b15461a88a4e00c9e0e338fe59ac37"
-  ;; Prevents built-in Org from sneaking into the byte-compilation of
-  ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
-  ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
-  :shadow 'org)
+(package! org-plus-contrib :pin "a88806b554b15461a88a4e00c9e0e338fe59ac37")
 
 (package! avy)
 (package! htmlize :pin "49205105898ba8993b5253beec55d8bddd820a70")

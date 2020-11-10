@@ -240,7 +240,8 @@ processed."
 
 (defun doom-package-recipe-repo (package)
   "Resolve and return PACKAGE's (symbol) local-repo property."
-  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
+  (if-let* ((retrieved (straight-recipes-retrieve package))
+            (recipe (cdr (if (straight--quoted-form-p retrieved) (eval retrieved) retrieved)))
             (repo (straight-vc-local-repo-name recipe)))
       repo
     (symbol-name package)))
