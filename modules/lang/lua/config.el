@@ -11,7 +11,7 @@ lua-language-server.")
 
 
 ;;
-;; Major modes
+;;; Major modes
 
 (use-package! lua-mode
   :defer t
@@ -59,6 +59,14 @@ lua-language-server.")
              #'+lua-moonscript-fontify-interpolation-h)
   (when (featurep! :checkers syntax)
     (require 'flycheck-moonscript nil t)))
+
+
+(use-package! fennel-mode
+  :when (featurep! +fennel)
+  :defer t
+  :config
+  (set-lookup-handlers! 'fennel-mode :definition #'fennel-find-definition)
+  (set-repl-handler! 'fennel-mode #'fennel-repl))
 
 
 ;;

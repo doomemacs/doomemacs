@@ -123,7 +123,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/latex/README.org][latex]] =+latexmk +cdlatex +fold +lsp= - TODO
 + lean - TODO
 + [[file:../modules/lang/ledger/README.org][ledger]] - TODO
-+ lua =+moonscript= - TODO
++ lua =+fennel +moonscript= - TODO
 + [[file:../modules/lang/markdown/README.org][markdown]] =+grip= - TODO
 + [[file:../modules/lang/nim/README.org][nim]] - TODO
 + nix - TODO
