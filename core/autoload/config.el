@@ -80,7 +80,7 @@ Runs `doom-after-reload-hook' afterwards."
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
   ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%s sync -e" doom-bin)
+  (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
         (run-hook-wrapped 'doom-before-reload-hook #'doom-try-run-hook)
         (doom-initialize 'force)
