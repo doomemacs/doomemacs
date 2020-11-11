@@ -17,9 +17,11 @@
              org-roam-dailies-find-tomorrow
              org-roam-dailies-find-yesterday)
   :preface
-  ;; Set this to nil so we can later detect whether the user has set a custom
-  ;; directory for it, and default to `org-directory' if they haven't.
+  ;; Set this to nil so we can later detect if the user has set custom values
+  ;; for these variables. If not, default values will be set in the :config
+  ;; section.
   (defvar org-roam-directory nil)
+  (defvar org-roam-db-location nil)
   :init
   (map! :after org
         :map org-mode-map
@@ -47,7 +49,8 @@
          (file-truename
           (expand-file-name (or org-roam-directory "roam")
                             org-directory)))
-        org-roam-db-location (concat doom-etc-dir "org-roam.db")
+        org-roam-db-location (or org-roam-db-location
+                                 (concat doom-etc-dir "org-roam.db"))
         org-roam-verbose nil   ; https://youtu.be/fn4jIlFwuLU
         ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
         ;; file with an *-other-window command.
