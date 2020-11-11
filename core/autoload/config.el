@@ -122,7 +122,7 @@ imported into Emacs."
   (when IS-WINDOWS
     (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
   (doom--if-compile
-      (format "%s -ic '%s env%s'"
+      (format "%s -ic '%S env%s'"
               (string-trim
                (shell-command-to-string
                 (format "getent passwd %S | cut -d: -f7"
@@ -137,6 +137,6 @@ imported into Emacs."
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%s -y upgrade" doom-bin)
+  (doom--if-compile (format "%S -y upgrade" doom-bin)
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))
