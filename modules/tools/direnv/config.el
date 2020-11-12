@@ -26,7 +26,9 @@
       (unless (or envrc-mode
                   (minibufferp)
                   (file-remote-p default-directory))
-        (envrc-mode 1))))
+        (condition-case _
+            (envrc-mode 1)
+          (quit)))))
 
   ;; Ensure these local variables survive major mode changes, so envrc-mode is
   ;; only "activated" once per buffer.
