@@ -17,7 +17,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module provides a fill column indicator for when you hit the 80 column limit
+This module provides a fill column indicator for when you hit the 80 column limit.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -32,22 +32,18 @@ This module provides no flags.
 This module has no prerequisites.
 
 * Features
-This module highlight's the characters that touch the 80th column of text in a
-buffer. This is mainly to remind people to keep lines short for accessibility
-and or convenience. For more info read this [[https://www.emacswiki.org/emacs/EightyColumnRule][emacs wiki page]]
-
+This module highlights the characters at the 80th column in the current buffer. This serves to remind users to keep lines short for accessibility and/or convenience. [[https://www.emacswiki.org/emacs/EightyColumnRule][Read more about this on the Emacs Wiki page]].
 * Configuration
 
 ** Setting fill-column globally
 If you want to change the limit then you would need to set ~fill-column~ to your
-desired column you would do this using
+desired column you would do this using:
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 100)
 #+END_SRC
-For this to take effect in the current session cycle
-
+For this to take effect in the current session restart hl-fill-column-mode.
 ** Setting fill-column on a mode by mode basis
-Setting on a mode by mode basis is quite simple
+Setting on a mode by mode basis is quite simple:
 
 #+BEGIN_SRC emacs-lisp
 (setq-hook! 'major-mode-hook fill-column 80)
@@ -70,7 +66,6 @@ If you want to change the face use:
                       :inverse-video t))
 #+END_SRC
 You can look at the documentation for ~custom-set-faces!~ for the full list
-of customizations. This can be accessed using =SPC h f=
+of customizations. This can be accessed using =SPC h f=.
 
-* Troubleshooting
-If you have any problem with this module do ping us a message!
+* TODO Troubleshooting

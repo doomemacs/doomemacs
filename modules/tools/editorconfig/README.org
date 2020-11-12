@@ -55,10 +55,7 @@ properties [[https://editorconfig.org/#example-file][here]]
 
 ** Adding Major Modes
 
-EditorConfig already support for many major mode but not all are added
-by default if you need to add one you need to add the major mode symbol
-and its indentation variable
-
+If you don't know the indentation variable(s), use =SPC h v= to search for variables that have =indent=, =offset= or =tab-width= in their name. Likely prefixed with the plugin they belong to. e.g. rustic-indent-offset).
 #+BEGIN_SRC emacs-lisp
 (after! editorconfig
   ;; This entry already exists in `editorconfig-indentation-alist'; it is being used
@@ -69,6 +66,6 @@ and its indentation variable
 
 If you do not know the indentation variable/variables, (in the major mode in
 question use =SPC h v= to look for any variable that has =indent=, =offset=
-or =tab-width=  in its name.
+or =tab-width=  in its name.)
 
 * TODO Troubleshooting
