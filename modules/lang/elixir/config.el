@@ -15,17 +15,17 @@
   (provide 'smartparens-elixir)
   :config
   (set-ligatures! 'elixir-mode
-                  ;; Functional
-                  :def "def"
-                  :lambda "fn"
-                  ;; :src_block "do"
-                  ;; :src_block_end "end"
-                  ;; Flow
-                  :not "!"
-                  :in "in" :not-in "not in"
-                  :and "and" :or "or"
-                  :for "for"
-                  :return "return" :yield "use")
+    ;; Functional
+    :def "def"
+    :lambda "fn"
+    ;; :src_block "do"
+    ;; :src_block_end "end"
+    ;; Flow
+    :not "!"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "use")
 
   ;; ...and only complete the basics
   (sp-with-modes 'elixir-mode
@@ -74,15 +74,14 @@
 
 (use-package! exunit
   :hook (elixir-mode . exunit-mode)
-  :defer t
-  :config
+  :init
   (map! :after elixir-mode
-        :localleader
-        :map elixir-mode-map
-        :prefix "t"
-        "a" #'exunit-verify-all
-        "r" #'exunit-rerun
-        "v" #'exunit-verify
-        "T" #'exunit-toggle-file-and-test
-        "t" #'exunit-toggle-file-and-test-other-window
-        "s" #'exunit-verify-single))
+    :localleader
+    :map elixir-mode-map
+    :prefix "t"
+    "a" #'exunit-verify-all
+    "r" #'exunit-rerun
+    "v" #'exunit-verify
+    "T" #'exunit-toggle-file-and-test
+    "t" #'exunit-toggle-file-and-test-other-window
+    "s" #'exunit-verify-single))
