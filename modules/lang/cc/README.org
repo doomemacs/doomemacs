@@ -17,6 +17,11 @@
 - [[#configure][Configure]]
   - [[#project-compile-settings][Project compile settings]]
     - [[#known-issues-with-bear-on-macos][Known issues with bear on macOS]]
+  - [[#configure-lsp-servers][Configure LSP servers]]
+    - [[#lsp-mode-with-clangd][LSP-mode with clangd]]
+    - [[#lsp-mode-with-ccls][LSP-mode with ccls]]
+    - [[#eglot-with-clangd][Eglot with clangd]]
+    - [[#eglot-with-ccls][Eglot with ccls]]
 - [[#appendix][Appendix]]
   - [[#eglot-specific-bindings][Eglot specific bindings]]
 
@@ -193,6 +198,55 @@ bear gmake
 Additional info:
 + [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
 + [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]
+
+** Configure LSP servers
+Search for your combination of =(LSP client package, LSP server)=. You are using
+=LSP-mode= by default, =eglot= if you have =:tools (lsp +eglot)= active in your
+=init.el= file.
+
+*** LSP-mode with clangd
+
+#+BEGIN_SRC elisp
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+#+END_SRC
+
+This will both set your clangd flags and choose =clangd= as the default LSP server everywhere clangd can be used.
+
+*** LSP-mode with ccls
+
+#+BEGIN_SRC elisp
+(after! ccls
+  (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
+  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
+#+END_SRC
+
+This will both set your ccls flags and choose ccls as the default server. [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
+documentation]] lists available options, use =t= for ~true~, =:json-false= for
+~false~, and =:json-null= for ~null~.
+
+*** Eglot with clangd
+
+#+BEGIN_SRC elisp
+(set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
+#+END_SRC
+
+This will both set your clangd flags and choose clangd as the default server (if
+it is the last =set-eglot-client! 'cc-mode= in your config).
+
+*** Eglot with ccls
+
+#+BEGIN_SRC elisp
+(set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}"))
+#+END_SRC
+
+This will both set your ccls flags and choose ccls as the default server (if it
+is the last =set-eglot-client! 'cc-mode= in your config). [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]]
+lists available options
 
 * Appendix
 ** Eglot specific bindings
