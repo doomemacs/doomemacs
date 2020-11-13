@@ -70,19 +70,21 @@
 
 (eval-if! (not (featurep! +flyspell))
 
-    (use-package! spell-fu
-      :when (executable-find "aspell")
-      :hook (text-mode . spell-fu-mode)
-      :general ([remap ispell-word] #'+spell/correct)
-      :init
+    (defun +spell-defun-correct-interface ()
       (defvar +spell-correct-interface
         (cond ((featurep! :completion ivy)
                #'+spell-correct-ivy-fn)
               ((featurep! :completion helm)
                #'+spell-correct-helm-fn)
               (#'+spell-correct-generic-fn))
-        "Function to use to display corrections.")
+        "Function to use to display corrections."))
 
+    (use-package! spell-fu
+      :when (executable-find "aspell")
+      :hook (text-mode . spell-fu-mode)
+      :general ([remap ispell-word] #'+spell/correct)
+      :init
+      (+spell-defun-correct-interface)
       (defvar +spell-excluded-faces-alist
         '((markdown-mode
            . (markdown-code-face
