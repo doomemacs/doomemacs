@@ -57,12 +57,6 @@
            or (and ispell-really-aspell ispell-program-name)
               (executable-find "aspell"))
     (user-error "Aspell is required for spell checking"))
-  ;; HACK When spell-fu fails to initialize correctly, the init form for the
-  ;;      spell-fu use-package! is not called. This leaves emacs to assume that
-  ;;      certain variables are initialized when they are not. We bind what we
-  ;;      need.
-  (unless (boundp '+spell-correct-interface)
-    (+spell-defun-correct-interface))
 
   (ispell-set-spellchecker-params)
   (save-current-buffer
