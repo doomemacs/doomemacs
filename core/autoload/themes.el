@@ -12,7 +12,7 @@
 ;;;###autoload
 (defconst doom-customize-theme-hook nil)
 
-(add-hook! 'doom-load-theme-hook :append
+(add-hook! 'doom-load-theme-hook
   (defun doom-apply-customized-faces-h ()
     (run-hooks 'doom-customize-theme-hook)))
 
