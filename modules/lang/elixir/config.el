@@ -76,12 +76,12 @@
   :hook (elixir-mode . exunit-mode)
   :init
   (map! :after elixir-mode
-    :localleader
-    :map elixir-mode-map
-    :prefix "t"
-    "a" #'exunit-verify-all
-    "r" #'exunit-rerun
-    "v" #'exunit-verify
-    "T" #'exunit-toggle-file-and-test
-    "t" #'exunit-toggle-file-and-test-other-window
-    "s" #'exunit-verify-single))
+             :localleader
+             :map elixir-mode-map
+             :prefix "t"
+             "a" #'exunit-verify-all
+             "r" #'exunit-rerun
+             "v" #'exunit-verify
+             "T" #'exunit-toggle-file-and-test
+             "t" #'exunit-toggle-file-and-test-other-window
+             "s" #'exunit-verify-single))
