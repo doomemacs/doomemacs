@@ -391,8 +391,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (use-package! hl-line
   ;; Highlights the current line
-  :hook ((prog-mode text-mode conf-mode special-mode) . hl-line-mode)
+  :hook (doom-first-buffer . global-hl-line-mode)
+  :init
+  (defvar global-hl-line-modes '(prog-mode text-mode conf-mode special-mode)
+    "What modes to enable `hl-line-mode' in.")
   :config
+  ;; HACK I reimplement `global-hl-line-mode' so we can white/blacklist modes in
+  ;;      `global-hl-line-modes' _and_ so we can use `global-hl-line-mode',
+  ;;      which users expect to control hl-line in Emacs.
+  (define-globalized-minor-mode global-hl-line-mode hl-line-mode
+    (lambda ()
+      (and (not hl-line-mode)
+           (cond ((null global-hl-line-modes) nil)
+                 ((eq global-hl-line-modes t))
+                 ((eq (car global-hl-line-modes) 'not)
+                  (not (derived-mode-p global-hl-line-modes)))
+                 ((apply #'derived-mode-p global-hl-line-modes)))
+           (hl-line-mode +1))))
+
   ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
   ;; performance boost. I also don't need to see it in other buffers.
   (setq hl-line-sticky-flag nil
