@@ -74,7 +74,7 @@
       :when (executable-find "aspell")
       :hook (text-mode . spell-fu-mode)
       :general ([remap ispell-word] #'+spell/correct)
-      :init
+      :preface
       (defvar +spell-correct-interface
         (cond ((featurep! :completion ivy)
                #'+spell-correct-ivy-fn)
@@ -83,6 +83,7 @@
               (#'+spell-correct-generic-fn))
         "Function to use to display corrections.")
 
+      :init
       (defvar +spell-excluded-faces-alist
         '((markdown-mode
            . (markdown-code-face
