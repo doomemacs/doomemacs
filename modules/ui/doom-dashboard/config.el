@@ -19,6 +19,9 @@ relative to `+doom-dashboard-banner-dir'. If nil, always use the ASCII banner.")
 (defvar +doom-dashboard-banner-dir (concat (dir!) "/banners/")
   "Where to look for `+doom-dashboard-banner-file'.")
 
+(defvar +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-banner-fn
+  "The function used to generate the ASCII banner on Doom's dashboard.")
+
 (defvar +doom-dashboard-banner-padding '(0 . 4)
   "Number of newlines to pad the banner with, above and below, respectively.")
 
@@ -381,31 +384,35 @@ controlled by `+doom-dashboard-pwd-policy'."
 ;;
 ;;; Widgets
 
+(defun doom-dashboard-draw-ascii-banner-fn ()
+  (mapc (lambda (line)
+          (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
+                              'face 'doom-dashboard-banner) " ")
+          (insert "\n"))
+        '("=================     ===============     ===============   ========  ========"
+          "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
+          "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
+          "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
+          "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
+          "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
+          "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
+          "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
+          "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
+          "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
+          "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
+          "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
+          "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
+          "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
+          "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
+          "||.=='    _-'                                                     `' |  /==.||"
+          "=='    _-'                         E M A C S                          \\/   `=="
+          "\\   _-'                                                                `-_   /"
+          "`''                                                                      ``'")))
+
 (defun doom-dashboard-widget-banner ()
   (let ((point (point)))
-    (mapc (lambda (line)
-            (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
-                                'face 'doom-dashboard-banner) " ")
-            (insert "\n"))
-          '("=================     ===============     ===============   ========  ========"
-            "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
-            "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
-            "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
-            "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
-            "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
-            "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
-            "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
-            "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
-            "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
-            "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
-            "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
-            "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
-            "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
-            "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
-            "||.=='    _-'                                                     `' |  /==.||"
-            "=='    _-'                         E M A C S                          \\/   `=="
-            "\\   _-'                                                                `-_   /"
-            "`''                                                                      ``'"))
+    (when (functionp +doom-dashboard-ascii-banner-fn)
+      (funcall +doom-dashboard-ascii-banner-fn))
     (when (and (display-graphic-p)
                (stringp fancy-splash-image)
                (file-readable-p fancy-splash-image))
