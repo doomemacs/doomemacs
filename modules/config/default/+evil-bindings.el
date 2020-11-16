@@ -132,7 +132,7 @@
          "C-p"     #'company-select-previous-or-abort
          "C-j"     #'company-select-next-or-abort
          "C-k"     #'company-select-previous-or-abort
-         "C-s"     (cmd! (company-search-abort) (company-filter-candidates))
+         "C-s"     #'company-filter-candidates
          [escape]  #'company-search-abort)))
 
       (:when (featurep! :completion ivy)
