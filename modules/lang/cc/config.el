@@ -161,6 +161,10 @@ This is ignored by ccls.")
   :after cmake-mode
   :config (set-company-backend! 'cmake-mode 'company-cmake))
 
+(map! :after cmake-mode
+      :map cmake-mode-map
+      :localleader
+      (:desc "CMake Help" :n "h" #'cmake-help))
 
 (use-package! demangle-mode
   :hook llvm-mode)
