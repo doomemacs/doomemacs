@@ -187,8 +187,7 @@ list remains lean."
 
 (defun doom--native-compile-jobs ()
   "How many async native compilation jobs are queued or in-progress."
-  (if (and (boundp 'comp-files-queue)
-           (fboundp 'comp-async-runnings))
+  (if (featurep 'comp)
       (+ (length comp-files-queue)
          (comp-async-runnings))
     0))
@@ -220,7 +219,7 @@ list remains lean."
 
 (defun doom--compile-site-packages ()
   "Queue async compilation for all non-doom Elisp files."
-  (when (fboundp 'native-compile-async)
+  (when (featurep 'comp)
     (cl-loop with paths = (cl-loop for path in load-path
                                    unless (string-prefix-p doom-local-dir path)
                                    collect path)
@@ -230,12 +229,45 @@ list remains lean."
              (doom-log "Compiling %s" file)
              (native-compile-async file nil 'late))))
 
+(defun doom--bootstrap-trampolines ()
+  "Build the trampolines we need to prevent hanging."
+  (when (featurep 'comp)
+    ;; HACK The following list was obtained by running 'doom build', waiting for
+    ;; it to hang, then checking the eln-cache for trampolines.  We simulate
+    ;; running 'doom build' twice by compiling the trampolines then restarting.
+    (let (restart)
+      (dolist (f '(abort-recursive-edit
+                   describe-buffer-bindings
+                   execute-kbd-macro
+                   handle-switch-frame
+                   load
+                   make-indirect-buffer
+                   make-process
+                   message
+                   read-char
+                   read-key-sequence
+                   select-window
+                   set-window-buffer
+                   top-level
+                   use-global-map
+                   use-local-map
+                   write-region))
+        (unless (doom--find-eln-file
+                 (concat comp-native-version-dir "/"
+                         (comp-trampoline-filename f)))
+          (print! "Compiling trampoline for %s" f)
+          (comp-trampoline-compile f)
+          (setq restart t)))
+      (when restart
+        (throw 'exit :restart)))))
+
 
 (defun doom-cli-packages-install ()
   "Installs missing packages.
 
 This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
+  (doom--bootstrap-trampolines)
   (doom-initialize-packages)
   (print! (start "Installing packages..."))
   (let ((pinned (doom-package-pinned-list)))
@@ -268,13 +300,14 @@ declaration) or dependency thereof that hasn't already been."
            (doom--compile-site-packages)
            (doom--wait-for-compile-jobs)
            (doom--write-missing-eln-errors)
-           (print! (success "Installed %d packages") (length built)))
+           (print! (success "\033[KInstalled %d packages") (length built)))
        (print! (info "No packages need to be installed"))
        nil))))
 
 
 (defun doom-cli-packages-build (&optional force-p)
   "(Re)build all packages."
+  (doom--bootstrap-trampolines)
   (doom-initialize-packages)
   (print! (start "(Re)building %spackages...") (if force-p "all " ""))
   (print-group!
