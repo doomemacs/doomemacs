@@ -116,14 +116,14 @@
             (lambda (msg)
               (let ((maildir (replace-regexp-in-string
                               "\\`/?\\([^/]+\\)/.*\\'" "\\1"
-                              (mu4e-message-field msg :maildir)))))
-              (+mu4e-colorize-str
-               (replace-regexp-in-string
-                "^gmail"
-                (propertize "g" 'face 'bold-italic)
-                maildir)
-               '+mu4e-header--maildir-colors
-               maildir))))
+                              (mu4e-message-field msg :maildir))))
+                (+mu4e-colorize-str
+                 (replace-regexp-in-string
+                  "^gmail"
+                  (propertize "g" 'face 'bold-italic)
+                  maildir)
+                 '+mu4e-header--maildir-colors
+                 maildir)))))
           (:account-stripe .
            (:name "Account"
             :shortname "▐"
