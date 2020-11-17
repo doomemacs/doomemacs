@@ -10,7 +10,7 @@
 ;; loaded, but after `early-init-file'. Doom handles package initialization, so
 ;; we must prevent Emacs from doing it early!
 (setq package-enable-at-startup nil)
-(fset #'package--ensure-init-file #'ignore)
+(fset #'package--ensure-init-file #'ignore)  ; DEPRECATED Removed in 28
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 (push '(menu-bar-lines . 0) default-frame-alist)

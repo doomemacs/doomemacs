@@ -9,8 +9,9 @@
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes '(not erc-mode message-mode help-mode gud-mode)
-        company-frontends '(company-pseudo-tooltip-frontend
-                            company-echo-metadata-frontend)
+        company-frontends
+        '(company-pseudo-tooltip-frontend  ; always show candidates in overlay tooltip
+          company-echo-metadata-frontend)  ; show selected candidate docs in echo area
 
         ;; Buffer-local backends will be computed when loading a major mode, so
         ;; only specify a global default here.
