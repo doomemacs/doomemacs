@@ -180,7 +180,7 @@ And if it's a function, evaluate it."
                       (if IS-WINDOWS " --path-separator=/"))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
            ((executable-find "rg" t)
-            (concat "rg -0 --files --follow --color=never --hidden"
+            (concat "rg -0 --files --follow --color=never --hidden -g!.git"
                     (if IS-WINDOWS " --path-separator /")))
            ("find . -type f -print0"))))
 
