@@ -349,7 +349,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       max-mini-window-height 0.15)
 
 ;; Typing yes/no is obnoxious when y/n will do
-(advice-add #'yes-or-no-p :override #'y-or-n-p)
+(fset #'yes-or-no-p #'y-or-n-p)
 
 ;; Try really hard to keep the cursor from getting stuck in the read-only prompt
 ;; portion of the minibuffer.
