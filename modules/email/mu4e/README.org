@@ -179,8 +179,8 @@ an address to be treated as such but it meets neither conditions (e.g. with
 Gsuite).
 
 ** OrgMsg
-By default, ~org-msg-mode~ is enabled before composing the first message.
-To disable ~org-msg-mode~ by default, simply
+With the =+org= flag, =org-msg= is installed, and ~org-msg-mode~ is enabled before
+composing the first message. To disable ~org-msg-mode~ by default, simply
 #+BEGIN_SRC emacs-lisp :tangle no
 (setq mu4e-compose--org-msg-toggle-next nil)
 #+END_SRC
@@ -191,15 +191,14 @@ compose or reply command (=SPC u= with ~evil~, =C-u= otherwise).
 The accent color that Doom uses can be customised by setting
 ~+org-msg-accent-color~ to a CSS color string.
 
-*** Disabling
-If you don't like OrgMsg, simply add
+** mu4e-alert
+This provides notifications through the [[https://github.com/jwiegley/alert][alert]] library.
+
+If you don't like this, simply add
 #+begin_src emacs-lisp
-(package! org-msg :disable t)
+(package! mu4e-alert :disable t)
 #+end_src
 to your [[elisp:(find-file (expand-file-name "packages.el" doom-private-dir))][packages.el]] and it will not be used.
-
-** mu4e-alert
-This is used by default. It can be disabled in the same manner as [[*OrgMsg][OrgMsg.]]
 
 * Troubleshooting
 ** =No such file or directory, mu4e=
