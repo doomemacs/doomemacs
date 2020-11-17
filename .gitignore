@@ -1,4 +1,6 @@
 /.*
+!.gitignore
+!.github
 *.cache*
 *.log
 /modules/private
