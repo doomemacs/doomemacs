@@ -110,12 +110,11 @@ You should use `set-eshell-alias!' to change this.")
   (after! em-term
     (pushnew! eshell-visual-commands "tmux" "htop" "vim" "nvim" "ncmpcpp"))
 
-  (add-hook! 'eshell-alias-load-hook
-    (defun +eshell-init-aliases-h ()
-      (setq +eshell--default-aliases eshell-command-aliases-list
-            eshell-command-aliases-list
-            (append eshell-command-aliases-list
-                    +eshell-aliases)))))
+  (after! em-alias
+    (setq +eshell--default-aliases eshell-command-aliases-list
+          eshell-command-aliases-list
+          (append eshell-command-aliases-list
+                  +eshell-aliases))))
 
 
 (after! esh-mode
