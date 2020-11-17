@@ -122,6 +122,11 @@
             (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
             (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink)))))
 
+  ;; HACK Fix oversized scrollbar in some odd cases
+  ;; REVIEW `resize-mode' is deprecated and may stop working in the future.
+  ;; TODO PR me upstream?
+  (setq x-gtk-resize-child-frames 'resize-mode)
+
   ;; Disable tab-bar in company-box child frames
   ;; TODO PR me upstream!
   (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
@@ -137,13 +142,6 @@
               ((boundp sym)   'ElispVariable)
               ((featurep sym) 'ElispFeature)
               ((facep sym)    'ElispFace)))))
-
-  (defadvice! +company-remove-scrollbar-a (orig-fn &rest args)
-    "This disables the company-box scrollbar, because:
-https://github.com/sebastiencs/company-box/issues/44"
-    :around #'company-box--update-scrollbar
-    (letf! ((#'display-buffer-in-side-window #'ignore))
-      (apply orig-fn args)))
 
   ;; `company-box' performs insufficient frame-live-p checks. Any command that
   ;; "cleans up the session" will break company-box.
