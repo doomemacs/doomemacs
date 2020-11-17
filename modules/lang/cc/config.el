@@ -154,7 +154,10 @@ This is ignored by ccls.")
 ;; Major modes
 
 (after! cmake-mode
-  (set-docsets! 'cmake-mode "CMake"))
+  (set-docsets! 'cmake-mode "CMake")
+  (set-popup-rule! "^\\*CMake Help\\*" :size 0.4 :ttl t)
+  (set-lookup-handlers! 'cmake-mode
+    :documentation '+cc-cmake-lookup-documentation-fn))
 
 (use-package! company-cmake  ; for `cmake-mode'
   :when (featurep! :completion company)

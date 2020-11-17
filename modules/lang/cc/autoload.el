@@ -156,6 +156,18 @@ the children of class at point."
                          do (push (cons (1+ depth) child) tree)))))))
     (eglot--error "Hierarchy unavailable")))
 
+;;;###autoload
+(defun +cc-cmake-lookup-documentation-fn (_)
+  "Look up the symbol at point in CMake's documentation."
+  (condition-case _
+      (progn
+        (save-window-excursion (cmake-help))
+        (when-let (buf (get-buffer "*CMake Help*"))
+          (pop-to-buffer buf)
+          t))
+    (error nil)))
+
+
 ;;
 ;; Hooks
 
