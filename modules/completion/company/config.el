@@ -122,6 +122,12 @@
             (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
             (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink)))))
 
+  ;; Disable tab-bar in company-box child frames
+  ;; TODO PR me upstream!
+  (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
+
+  ;; Don't show documentation in echo area, because company-box displays its own
+  ;; in a child frame.
   (delq! 'company-echo-metadata-frontend company-frontends)
 
   (defun +company-box-icons--elisp-fn (candidate)
