@@ -272,8 +272,8 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
          (directory (or in project-root))
          (args (concat (if all-files " -uu")
                        (unless recursive " --maxdepth 1")
-                       " --hidden"
-                       " " (mapconcat #'shell-quote-argument args " "))))
+                       " --hidden -g!.git "
+                       (mapconcat #'shell-quote-argument args " "))))
     (setq deactivate-mark t)
     (counsel-rg
      (or query

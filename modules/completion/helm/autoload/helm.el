@@ -57,7 +57,7 @@ workspace."
         (helm-rg-default-extra-args
          (delq nil (append (list (when all-files "-z -uu")
                                  (unless recursive "--maxdepth 1")
-                                 "--hidden")
+                                 "--hidden" "-g" "!.git")
                            args))))
     (setq deactivate-mark t)
     (helm-rg (or query
