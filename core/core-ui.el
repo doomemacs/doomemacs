@@ -281,10 +281,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq frame-title-format '("%b – Doom Emacs")
       icon-title-format frame-title-format)
 
-;; Don't resize windows & frames in steps; it's prohibitive to prevent the user
-;; from resizing it to exact dimensions, and looks weird.
-(setq window-resize-pixelwise t
-      frame-resize-pixelwise t)
+;; Don't resize the frames in steps; it looks weird, especially in tiling window
+;; managers, where it can leave unseemly gaps.
+(setq frame-resize-pixelwise t)
+
+;; But do not resize windows pixelwise, this can cause crashes in some cases
+;; where we resize windows too quickly.
+(setq window-resize-pixelwise nil)
 
 (unless (assq 'menu-bar-lines default-frame-alist)
   ;; We do this in early-init.el too, but in case the user is on Emacs 26 we do
