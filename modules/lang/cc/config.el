@@ -154,17 +154,13 @@ This is ignored by ccls.")
 ;; Major modes
 
 (after! cmake-mode
-  (set-docsets! 'cmake-mode "CMake"))
+  (set-docsets! 'cmake-mode "CMake")
+  (set-lookup-handlers! 'cmake-mode :documentation #'cmake-help))
 
 (use-package! company-cmake  ; for `cmake-mode'
   :when (featurep! :completion company)
   :after cmake-mode
   :config (set-company-backend! 'cmake-mode 'company-cmake))
-
-(map! :after cmake-mode
-      :map cmake-mode-map
-      :localleader
-      (:desc "CMake Help" :n "h" #'cmake-help))
 
 (use-package! demangle-mode
   :hook llvm-mode)
