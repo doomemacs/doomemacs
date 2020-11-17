@@ -561,18 +561,19 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse comment
     ;;      syntax, but in some buffers comment state isn't initialized,
     ;;      leading to a wrong-type-argument: stringp error.
-    (let ((so-long-skip-leading-comments (bound-and-true-p comment-use-syntax))
-          ;; HACK If visual-line-mode is on, then false positives are more
-          ;;      likely, so up the threshold. More so in text-mode, since long
-          ;;      paragraphs are the norm.
-          (so-long-threshold
-           (if visual-line-mode
-               (* so-long-threshold
-                  (if (derived-mode-p 'text-mode)
-                      4
-                    2))
-             so-long-threshold)))
-      (so-long-detected-long-line-p)))
+    (unless (bound-and-true-p visual-line-mode)
+      (let ((so-long-skip-leading-comments (bound-and-true-p comment-use-syntax))
+            ;; HACK If visual-line-mode is on, then false positives are more
+            ;;      likely, so up the threshold. More so in text-mode, since long
+            ;;      paragraphs are the norm.
+            (so-long-threshold
+             (if visual-line-mode
+                 (* so-long-threshold
+                    (if (derived-mode-p 'text-mode)
+                        4
+                      2))
+               so-long-threshold)))
+        (so-long-detected-long-line-p))))
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
