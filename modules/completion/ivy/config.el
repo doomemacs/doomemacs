@@ -60,8 +60,6 @@ results buffer.")
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         projectile-completion-system 'ivy
-        ;; disable magic slash on non-match
-        ivy-magic-slash-non-match-action nil
         ;; don't show recent files in switch-buffer
         ivy-use-virtual-buffers nil
         ;; ...but if that ever changes, show their full path
