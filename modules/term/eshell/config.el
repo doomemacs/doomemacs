@@ -177,6 +177,10 @@ You should use `set-eshell-alias!' to change this.")
   (eshell-did-you-mean-output-filter "catt: command not found"))
 
 
+(use-package eshell-syntax-highlighting
+  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+
+
 (use-package! fish-completion
   :unless IS-WINDOWS
   :hook (eshell-mode . fish-completion-mode)
