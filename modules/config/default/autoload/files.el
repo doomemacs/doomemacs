@@ -16,15 +16,6 @@
   (interactive) (doom-project-find-file +file-templates-dir))
 
 ;;;###autoload
-(defun +default/browse-emacsd ()
-  "Browse files from `doom-emacs-dir'."
-  (interactive) (doom-project-browse doom-emacs-dir))
-;;;###autoload
-(defun +default/find-in-emacsd ()
-  "Find a file under `doom-emacs-dir', recursively."
-  (interactive) (doom-project-find-file doom-emacs-dir))
-
-;;;###autoload
 (defun +default/browse-notes ()
   "Browse files from `org-directory'."
   (interactive)

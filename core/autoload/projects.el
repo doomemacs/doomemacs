@@ -56,6 +56,16 @@ they are absolute."
     (error "Project directory '%s' doesn't exist" project-root))
   (doom-project-browse project-root))
 
+;;;###autoload
+(defun doom/browse-in-emacsd ()
+  "Browse files from `doom-emacs-dir'."
+  (interactive) (doom-project-browse doom-emacs-dir))
+
+;;;###autoload
+(defun doom/find-file-in-emacsd ()
+  "Find a file under `doom-emacs-dir', recursively."
+  (interactive) (doom-project-find-file doom-emacs-dir))
+
 
 ;;
 ;;; Library

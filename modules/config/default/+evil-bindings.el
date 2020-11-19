@@ -379,8 +379,8 @@
        :desc "Copy this file"              "C"   #'doom/copy-this-file
        :desc "Find directory"              "d"   #'+default/dired
        :desc "Delete this file"            "D"   #'doom/delete-this-file
-       :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
-       :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
+       :desc "Find file in emacs.d"        "e"   #'doom/find-file-in-emacsd
+       :desc "Browse emacs.d"              "E"   #'doom/browse-in-emacsd
        :desc "Find file"                   "f"   #'find-file
        :desc "Find file from here"         "F"   #'+default/find-file-under-here
        :desc "Locate file"                 "l"   #'locate
