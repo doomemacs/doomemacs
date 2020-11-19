@@ -488,7 +488,12 @@ advised)."
               (add-hook sym #',fn ,append))))))
 
 (defmacro add-hook-trigger! (hook-var &rest targets)
-  "TODO"
+  "Configure HOOK-VAR to be invoked exactly once after init whenever any of the
+TARGETS are invoked. Once HOOK-VAR gets triggered, it resets to nil.
+
+HOOK-VAR is a quoted hook.
+
+TARGETS is a list of quoted hooks and/or sharp-quoted functions."
   `(let ((fn (intern (format "%s-h" ,hook-var))))
      (fset
       fn (lambda (&rest _)
