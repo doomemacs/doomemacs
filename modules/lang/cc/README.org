@@ -84,6 +84,7 @@ recommended.
     you'd like to avoid the full =llvm=.
 + ccls :: Available in many OS' package managers as =ccls=. Otherwise, there are
   alternative install methods listed [[https://github.com/MaskRay/ccls/wiki/Install][in the project's wiki]].
++ cmake-language-server :: available through ~pip~ on most distributions
 
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
