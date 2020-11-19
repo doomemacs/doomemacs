@@ -404,7 +404,7 @@ controlled by `+doom-dashboard-pwd-policy'."
             "||.=='    _-'                                                     `' |  /==.||"
             "=='    _-'                         E M A C S                          \\/   `=="
             "\\   _-'                                                                `-_   /"
-            "`''                                                                      ``'"))
+            " `''                                                                      ``'"))
          (longest-line (apply #'max (mapcar #'length banner))))
     (put-text-property
      (point)
