@@ -7,6 +7,10 @@
 ;; variants thereof), since it requires no additional setup.
 (setq locate-command "mdfind")
 
+;; When Emacs is launched from the dock the environment variables are not populated.
+;; Emacs does not try to figure out the HOME directory anymore,
+;; so we set the default directory to avoid having the root directory as the default. 
+(setq default-directory "~/")
 
 ;;
 ;;; Compatibilty fixes
