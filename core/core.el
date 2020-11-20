@@ -549,13 +549,13 @@ to least)."
       (file-missing
        ;; If the autoloads file fails to load then the user forgot to sync, or
        ;; aborted a doom command midway!
-       (if (equal (nth 3 e) doom-autoloads-file)
-           (signal 'doom-error
-                   (list "Doom is in an incomplete state"
-                         "run 'doom sync' on the command line to repair it"))
-         ;; Otherwise, something inside the autoloads file is triggering this
-         ;; error; forward it!
-         (signal 'doom-autoload-error e))))
+       (if (locate-file doom-autoloads-file load-path)
+           ;; Something inside the autoloads file is triggering this error;
+           ;; forward it to the caller!
+           (signal 'doom-autoload-error e)
+         (signal 'doom-error
+                 (list "Doom is in an incomplete state"
+                       "run 'doom sync' on the command line to repair it")))))
 
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
