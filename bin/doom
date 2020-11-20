@@ -71,6 +71,11 @@
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
 (quiet! (if EMACS27+ (require 'cl))
+        (let ((tail load-path))
+          (while tail
+            (let ((default-directory (car tail)))
+              (load (expand-file-name "subdirs.el") t t t)
+              (setq tail (cdr tail)))))
         (load "site-start" t t))
 
 (kill-emacs
