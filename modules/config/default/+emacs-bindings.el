@@ -310,7 +310,7 @@
         :desc "Magit status here"          "G"   #'magit-status-here
         :desc "Magit file delete"          "x"   #'magit-file-delete
         :desc "Magit blame"                "B"   #'magit-blame-addition
-        :desc "Magit clone"                "C"   #'magit-clone
+        :desc "Magit clone"                "C"   #'+magit/clone
         :desc "Magit fetch"                "F"   #'magit-fetch
         :desc "Magit buffer log"           "L"   #'magit-log
         :desc "Git stage file"             "S"   #'magit-stage-file
@@ -340,7 +340,7 @@
          :desc "List notifications"        "n"   #'forge-list-notifications)
         (:prefix ("c" . "create")
          :desc "Initialize repo"           "r"   #'magit-init
-         :desc "Clone repo"                "R"   #'magit-clone
+         :desc "Clone repo"                "R"   #'+magit/clone
          :desc "Commit"                    "c"   #'magit-commit-create
          :desc "Fixup"                     "f"   #'magit-commit-fixup
          :desc "Issue"                     "i"   #'forge-create-issue
