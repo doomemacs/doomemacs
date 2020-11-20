@@ -159,6 +159,7 @@ This is ignored by ccls.")
   (set-lookup-handlers! 'cmake-mode
     :documentation '+cc-cmake-lookup-documentation-fn))
 
+
 (use-package! company-cmake  ; for `cmake-mode'
   :when (featurep! :completion company)
   :after cmake-mode

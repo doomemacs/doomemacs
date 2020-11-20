@@ -25,7 +25,7 @@
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
 ;; Unix tools look for HOME, but this is normally not defined on Windows.
-(when (and IS-WINDOWS (null (getenv "HOME")))
+(when (and IS-WINDOWS (null (getenv-internal "HOME")))
   (setenv "HOME" (getenv "USERPROFILE")))
 
 ;; Ensure `doom-core-dir' is in `load-path'
@@ -74,7 +74,7 @@
 (defvar doom-init-time nil
   "The time it took, in seconds, for Doom Emacs to initialize.")
 
-(defvar doom-debug-p (or (getenv "DEBUG") init-file-debug)
+(defvar doom-debug-p (or (getenv-internal "DEBUG") init-file-debug)
   "If non-nil, Doom will log more.
 
 Use `doom-debug-mode' to toggle it. The --debug-init flag and setting the DEBUG
@@ -95,7 +95,7 @@ envvar will enable this at startup.")
   "The root directory for Doom's modules. Must end with a slash.")
 
 (defconst doom-local-dir
-  (if-let (localdir (getenv "DOOMLOCALDIR"))
+  (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
       (expand-file-name (file-name-as-directory localdir))
     (concat doom-emacs-dir ".local/"))
   "Root directory for local storage.
@@ -120,11 +120,11 @@ Use this for files that change often, like cache files. Must end with a slash.")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
 (defconst doom-private-dir
-  (if-let (doomdir (getenv "DOOMDIR"))
+  (if-let (doomdir (getenv-internal "DOOMDIR"))
       (expand-file-name (file-name-as-directory doomdir))
     (or (let ((xdgdir
                (expand-file-name "doom/"
-                                 (or (getenv "XDG_CONFIG_HOME")
+                                 (or (getenv-internal "XDG_CONFIG_HOME")
                                      "~/.config"))))
           (if (file-directory-p xdgdir) xdgdir))
         "~/.doom.d/"))
@@ -214,7 +214,7 @@ users).")
 ;; Emacs is essentially one huge security vulnerability, what with all the
 ;; dependencies it pulls in from all corners of the globe. Let's try to be at
 ;; least a little more discerning.
-(setq gnutls-verify-error (not (getenv "INSECURE"))
+(setq gnutls-verify-error (not (getenv-internal "INSECURE"))
       gnutls-algorithm-priority
       (when (boundp 'libgnutls-version)
         (concat "SECURE128:+SECURE192:-VERS-ALL"
