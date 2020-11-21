@@ -87,7 +87,7 @@ directives. By default, this only recognizes C directives.")
   (defvar +evil--default-cursor-color "#ffffff")
   (defvar +evil--emacs-cursor-color "#ff9999")
 
-  (add-hook! 'doom-load-theme-hook :append
+  (add-hook! 'doom-load-theme-hook
     (defun +evil-update-cursor-color-h ()
       (setq +evil--default-cursor-color (face-background 'cursor)
             +evil--emacs-cursor-color (face-foreground 'warning))))
