@@ -291,6 +291,7 @@ config.el instead."
                        ;; https://github.com/nnicandro/emacs-jupyter/issues/297
                        (concat "\\`" (regexp-quote doom-local-dir) ".*/jupyter-channel\\.el\\'")
                        (concat "\\`" (regexp-quote doom-local-dir) ".*/with-editor\\.el\\'")
+                       (concat "\\`" (regexp-quote doom-local-dir) ".*/rustic-flycheck\\.el\\'")
                        (concat "\\`" (regexp-quote doom-autoloads-file) "'")))
     (add-to-list 'comp-deferred-compilation-black-list entry)))
 
