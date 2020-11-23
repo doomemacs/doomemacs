@@ -19,7 +19,7 @@
   ;; Configure global key bindings.
   (setq exwm-input-global-keys
         `(([?\s-r] . exwm-reset)
-          ([?\s-w] . exwm-worksplace-switch)
+          ([?\s-w] . exwm-workspace-switch)
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
                        (start-process-shell-command command nil command)))
