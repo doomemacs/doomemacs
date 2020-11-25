@@ -39,4 +39,6 @@
 
   (require 'tramp)
 
-  (push #'+org--company-box-icons-jupyter-fn company-box-icons-functions))
+  (when (featurep! :completion company +childframe)
+    (after! company-box
+      (push #'+org--company-box-icons-jupyter-fn company-box-icons-functions))))
