@@ -286,25 +286,6 @@ config.el instead."
   (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
 
 (after! comp
-  ;; Support the deprecated name for comp-deferred-compilation-deny-list
-  ;; (changed in feature/native-comp@6104ab0f)
-  ;; DEPRECATED Remove months down the road.
-  (unless (boundp 'comp-deferred-compilation-deny-list)
-    (defvaralias 'comp-deferred-compilation-deny-list
-      'comp-deferred-compilation-black-list))
-
-  ;; Support native-compile-async lacking selector parameter
-  ;; (added in feature/native-comp@7a8370ed)
-  ;; DEPRECATED Remove months down the road.
-  (when (and (not (advice-member-p 'doom--native-compile-async-a
-                                   'native-compile-async))
-             (< (cdr (func-arity #'native-compile-async)) 4))
-    (defadvice! doom--native-compile-async-a (orig-fn paths &optional recursively load _selector)
-      :around #'native-compile-async
-      (if (fboundp 'native--compile-async)
-          (native--compile-async paths recursively load)
-        (funcall orig-fn paths recursively load))))
-
   ;; HACK Disable native-compilation for some troublesome packages
   (dolist (entry (list (concat "\\`" (regexp-quote doom-local-dir) ".*/evil-collection-vterm\\.el\\'")
                        ;; https://github.com/nnicandro/emacs-jupyter/issues/297
