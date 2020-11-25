@@ -79,8 +79,7 @@ Grabs the latest commit id of the package using 'git'."
       (or (doom--package-at-point)
           (user-error "Not on a `package!' call"))
     (let* ((recipe (doom--package-full-recipe package plist))
-           (branch (or (plist-get recipe :branch)
-                       straight-vc-git-default-branch))
+           (branch (plist-get recipe :branch))
            (oldid (or (plist-get plist :pin)
                       (doom-package-get package :pin)))
            (url (straight-vc-git--destructure recipe (upstream-repo upstream-host)
@@ -88,8 +87,7 @@ Grabs the latest commit id of the package using 'git'."
            (id (or (when url
                      (cdr (doom-call-process
                            "git" "ls-remote" url
-                           (unless select
-                             (or branch straight-vc-git-default-branch)))))
+                           (unless select branch))))
                    (user-error "Couldn't find a recipe for %s" package)))
            (id (car (split-string
                      (if select
