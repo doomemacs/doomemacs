@@ -2,8 +2,7 @@
 
 (use-package! vterm
   :when (bound-and-true-p module-file-suffix)
-  :commands vterm vterm-mode
-  :preface (setq vterm-install t) ; compile the package when you load vterm
+  :commands vterm-mode
   :hook (vterm-mode . doom-mark-buffer-as-real-h)
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
   :config
