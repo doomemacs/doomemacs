@@ -25,7 +25,18 @@
   (setq pdf-view-use-scaling t
         pdf-view-use-imagemagick nil)
 
-  ;; Persist current page for PDF files viewed in Emacs
+  ;; Handle PDF-tools related popups better
+  (set-popup-rules!
+    '(("^\\*Outline*" :side right :size 40 :select nil)
+      ("\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)))
+
+  ;; The mode-line does serve any useful purpose is annotation windows
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
+
+  ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
+  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
+
+  ;; Persist current page for PDFs opened in Emacs
   (defvar +pdf--page-restored-p nil)
   (add-hook! 'pdf-view-change-page-hook
     (defun +pdf-remember-page-number-h ()
@@ -38,17 +49,6 @@
              (<= page (or (pdf-cache-number-of-pages) 1))
              (pdf-view-goto-page page)
              (setq-local +pdf--page-restored-p t)))))
-
-  ;; Handle PDF-tools related popups better
-  (set-popup-rules!
-    '(("^\\*Outline*" :side right :size 40 :select nil)
-      ("\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)))
-
-  ;; The mode-line does serve any useful purpose is annotation windows
-  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
-
-  ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
-  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
   ;; Install epdfinfo binary if needed, blocking until it is finished
   (when doom-interactive-p
