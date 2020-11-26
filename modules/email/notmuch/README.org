@@ -42,13 +42,15 @@ This module requires:
 + ~afew~, optionally to initially tag your downloaded messages.
 ** TODO MacOS
 
-** TODO Arch Linux
+** Arch Linux
+Run one of the following commands.
+#+BEGIN_SRC sh
+#sudo pacman -S isync notmuch #mbsync
+## OR
+#sudo pacman -S offlineimap notmuch
+##+END_SRC
 
 See: [[https://wiki.archlinux.org/index.php/Notmuch][Arch Wiki - Notmuch]]
-
-#+BEGIN_SRC sh
-pacman -S notmuch
-#+END_SRC
 
 ** NixOS
 #+BEGIN_SRC nix
@@ -94,7 +96,7 @@ This module uses =Gmailier= by default. To use =mbsync=, change ~+notmuch-sync-b
 (setq +notmuch-sync-backend 'mbsync)
 #+END_SRC
 
-The steps needed to set up =mu4e= with =mbsync= are very similar to the ones for
+The steps needed to set up =notmuch= with =mbsync= are very similar to the ones for
 [[*offlineimap][offlineimap]].
 
 Start with writing a ~\~/.mbsyncrc~. An example for GMAIL can be found on
@@ -103,8 +105,6 @@ page]] contains all needed information to set up your own.
 
 Next you can download your email with ~mbsync --all~. This may take a while, but
 should be quicker than =offlineimap= ;).
-
-You can now proceed with the [[*mu and mu4e][mu and mu4e]] section.
 
 ** notmuch
 You should have your email downloaded already. If you have not, you need to set
