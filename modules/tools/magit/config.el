@@ -180,19 +180,21 @@ ensure it is built when we actually use Forge."
   :hook (magit-mode . turn-on-magit-gitflow))
 
 
-(use-package! evil-magit
+(use-package! evil-collection-magit
   :when (featurep! :editor evil +everywhere)
-  :after magit
-  :init
-  (setq evil-magit-state 'normal
-        evil-magit-use-z-for-folds t)
+  :defer t
+  :init (defvar evil-collection-magit-use-z-for-folds t)
   :config
-  (undefine-key! magit-mode-map
-    ;; Replaced by z1, z2, z3, etc
-    "M-1" "M-2" "M-3" "M-4"
-    "1" "2" "3" "4"
-    "0") ; moved to g=
-  (evil-define-key* 'normal magit-status-mode-map [escape] nil) ; q is enough
+  ;; These numbered keys mask the numerical prefix keys. Since they've already
+  ;; been replaced with z1, z2, z3, etc (and 0 with g=), there's no need to keep
+  ;; them around:
+  (undefine-key! magit-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
+
+  ;; q is enough; ESC is way too easy for a vimmer to accidentally press,
+  ;; especially when traversing modes in magit buffers.
+  (evil-define-key* 'normal magit-status-mode-map [escape] nil)
+
+  ;; Some extra vim-isms I thought were missing from upstream
   (evil-define-key* '(normal visual) magit-mode-map
     "%"  #'magit-gitflow-popup
     "zt" #'evil-scroll-line-to-top
@@ -201,17 +203,20 @@ ensure it is built when we actually use Forge."
     "g=" #'magit-diff-default-context
     "gi" #'forge-jump-to-issues
     "gm" #'forge-jump-to-pullreqs)
+
+  ;; A more intuitive behavior for TAB in magit buffers:
   (define-key! 'normal
     (magit-status-mode-map
      magit-stash-mode-map
      magit-revision-mode-map
      magit-diff-mode-map)
     [tab] #'magit-section-toggle)
+
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (when-let (desc (assoc (car key) evil-magit-rebase-commands-w-descriptions))
+      (when-let (desc (assoc (car key) evil-collection-magit-rebase-commands-w-descriptions))
         (setcar desc (cdr key))))
-    (evil-define-key* evil-magit-state git-rebase-mode-map
+    (evil-define-key* evil-collection-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up))
   (transient-replace-suffix 'magit-dispatch 'magit-worktree
