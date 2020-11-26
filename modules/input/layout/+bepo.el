@@ -51,6 +51,7 @@
    (:prefix-map ("p" . "project")
     :desc "Browse other project"         "»" #'doom/browse-in-other-project)))
 
+
 (when (featurep! :editor evil)
   (add-transient-hook! 'doom-init-modules-hook
     ;; "ts" would be a little too common for an evil escape sequence
@@ -131,7 +132,8 @@
     (after! (evil org evil-org-agenda)
       (doom-bepo-rotate-bare-keymap '(org-agenda-keymap) doom-bepo-cr-rotation-style)
       (doom-bepo--evil-collection-hook nil '(evil-org-agenda-mode-map)))
-    (after! (evil magit evil-magit)
+
+    (after! (evil magit evil-collection)
       (doom-bepo-rotate-ts-bare-keymap
        '(magit-mode-map
          magit-diff-section-base-map
