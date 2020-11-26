@@ -700,7 +700,7 @@ denoted by a plus prefix:
 
 #+BEGIN_SRC emacs-lisp
 (doom! :completion
-       (company +auto)
+       (company +childframe)
        :lang
        (csharp +unity)
        (org +brain +dragndrop +gnuplot +hugo +jupyter)
