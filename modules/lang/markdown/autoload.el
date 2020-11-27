@@ -2,23 +2,31 @@
 
 ;;;###autoload
 (defun +markdown-flyspell-word-p ()
-  "Return t if point is on a word that should be spell checked.
+  "Return t if `flyspell' should check work before point.
 
-Return nil if on a link url, markup, html, or references."
-  (let ((faces (doom-enlist (get-text-property (point) 'face))))
-    (or (and (memq 'font-lock-comment-face faces)
-             (memq 'markdown-code-face faces))
-        (not (cl-loop with unsafe-faces = '(markdown-reference-face
-                                            markdown-url-face
-                                            markdown-markup-face
-                                            markdown-comment-face
-                                            markdown-html-attr-name-face
-                                            markdown-html-attr-value-face
-                                            markdown-html-tag-name-face
-                                            markdown-code-face)
-                      for face in faces
-                      if (memq face unsafe-faces)
-                      return t)))))
+Used for `flyspell-generic-check-word-predicate'. Augments
+`markdown-flyspell-check-word-p' to:
+
+a) Do spell check in code comments and
+b) Inhibit spell check in html markup"
+  (and (markdown-flyspell-check-word-p)
+       (save-excursion
+         (goto-char (1- (point)))
+         (if (or
+              ;; Spell check in code comments
+              (not (and (markdown-code-block-at-point-p)
+                        (markdown--face-p (point) '(font-lock-comment-face))))
+              ;; Don't spell check in html markup
+              (markdown--face-p (point) '(markdown-html-attr-name-face
+                                          markdown-html-attr-value-face
+                                          markdown-html-tag-name-face)))
+             (prog1 nil
+               ;; If flyspell overlay is put, then remove it
+               (when-let (bounds (bounds-of-thing-at-point 'word))
+                 (cl-loop for ov in (overlays-in (car bounds) (cdr bounds))
+                          when (overlay-get ov 'flyspell-overlay)
+                          do (delete-overlay ov))))
+           t))))
 
 
 ;;
