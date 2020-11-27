@@ -36,20 +36,6 @@
   ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
-  ;; Persist current page for PDFs opened in Emacs
-  (defvar +pdf--page-restored-p nil)
-  (add-hook! 'pdf-view-change-page-hook
-    (defun +pdf-remember-page-number-h ()
-      (when-let (page (and buffer-file-name (pdf-view-current-page)))
-        (doom-store-put buffer-file-name page nil "pdf-view"))))
-  (add-hook! 'pdf-view-mode-hook
-    (defun +pdf-restore-page-number-h ()
-      (when-let (page (and buffer-file-name (doom-store-get buffer-file-name "pdf-view")))
-        (and (not +pdf--page-restored-p)
-             (<= page (or (pdf-cache-number-of-pages) 1))
-             (pdf-view-goto-page page)
-             (setq-local +pdf--page-restored-p t)))))
-
   ;; Install epdfinfo binary if needed, blocking until it is finished
   (when doom-interactive-p
     (require 'pdf-tools)
@@ -113,3 +99,7 @@
                       :width (car (pdf-view-image-size))
                       props))
         (apply orig-fn args)))))
+
+
+(use-package! saveplace-pdf-view
+  :after pdf-view)
