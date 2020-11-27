@@ -81,6 +81,10 @@ debian, and derivatives). On most it's 'fd'.")
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  ;; Per-project compilation buffers
+  (setq compilation-buffer-name-function #'projectile-compilation-buffer-name
+        compilation-save-buffers-predicate #'projectile-current-project-buffer-p)
+
   ;; Override projectile's dirconfig file '.projectile' with doom's project marker '.project'.
   (defadvice! doom--projectile-dirconfig-file-a ()
     :override #'projectile-dirconfig-file
