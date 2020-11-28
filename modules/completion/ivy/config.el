@@ -365,6 +365,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :defer t  ; is loaded by ivy
   :init (setq ivy-flx-limit 10000))
 
+(use-package! ivy-avy
+  :after ivy)
 
 (use-package! ivy-prescient
   :when (featurep! +prescient)
