@@ -71,3 +71,17 @@
   (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
     (remove-hook 'alchemist-mode-hook fn)
     (remove-hook 'alchemist-iex-mode-hook fn)))
+
+(use-package! exunit
+  :hook (elixir-mode . exunit-mode)
+  :init
+  (map! :after elixir-mode
+        :localleader
+        :map elixir-mode-map
+        :prefix "t"
+        "a" #'exunit-verify-all
+        "r" #'exunit-rerun
+        "v" #'exunit-verify
+        "T" #'exunit-toggle-file-and-test
+        "t" #'exunit-toggle-file-and-test-other-window
+        "s" #'exunit-verify-single))
