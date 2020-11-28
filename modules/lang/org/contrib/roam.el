@@ -33,6 +33,8 @@
         "i" #'org-roam-insert
         "I" #'org-roam-insert-immediate
         "m" #'org-roam
+        "t" #'org-roam-tag-add
+        "T" #'org-roam-tag-delete
         (:prefix ("d" . "by date")
          :desc "Find previous note" "b" #'org-roam-dailies-find-previous-note
          :desc "Find date"          "d" #'org-roam-dailies-find-date

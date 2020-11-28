@@ -173,6 +173,8 @@
          :desc "Insert"                        "i" #'org-roam-insert
          :desc "Insert (skipping org-capture)" "I" #'org-roam-insert-immediate
          :desc "Org Roam"                      "r" #'org-roam
+         :desc "Tag"                           "t" #'org-roam-tag-add
+         :desc "Un-tag"                        "T" #'org-roam-tag-delete
          (:prefix ("d" . "by date")
           :desc "Arbitrary date" "d" #'org-roam-dailies-date
           :desc "Today"          "t" #'org-roam-dailies-today
