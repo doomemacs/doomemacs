@@ -131,7 +131,7 @@
     (after! (evil org evil-org-agenda)
       (doom-bepo-rotate-bare-keymap '(org-agenda-keymap) doom-bepo-cr-rotation-style)
       (doom-bepo--evil-collection-hook nil '(evil-org-agenda-mode-map)))
-    (after! (evil magit evil-magit)
+    (after! (evil magit evil-collection-magit)
       (doom-bepo-rotate-ts-bare-keymap
        '(magit-mode-map
          magit-diff-section-base-map
