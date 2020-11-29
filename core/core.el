@@ -299,13 +299,7 @@ config.el instead."
   (defadvice! doom--comp-use-all-cores-a ()
     :override #'comp-effective-async-max-jobs
     (if (zerop comp-async-jobs-number)
-        (or comp-num-cpus
-            (setf comp-num-cpus
-                  (max 1 (cond ((eq 'windows-nt system-type)
-                                (string-to-number (getenv "NUMBER_OF_PROCESSORS")))
-                               ((executable-find "nproc")
-                                (string-to-number (cdr (doom-call-process "nproc"))))
-                               (t 1)))))
+        (setq comp-num-cpus (doom-num-cpus))
       comp-async-jobs-number)))
 
 
