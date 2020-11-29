@@ -215,7 +215,7 @@ ensure it is built when we actually use Forge."
         (:map magit-status-mode-map
          :nv "gz" #'magit-refresh)
         (:map magit-diff-mode-map
-         :nv "gd" #'magit-jump-to-diffstat-or-diff)))
+         :nv "gd" #'magit-jump-to-diffstat-or-diff))
 
   ;; A more intuitive behavior for TAB in magit buffers:
   (define-key! 'normal
