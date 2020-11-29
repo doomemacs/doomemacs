@@ -146,8 +146,13 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                       (pcase (if (not (doom-file-cookie-p target "if" t))
                                  'no-byte-compile
                                (unless (equal last-module (car module-files))
-                                 (print! (success "(% 3d/%d) Compiling %s %s module...")
-                                         i total-modules (caar module-files) (cdar module-files))
+                                 (print! (success "(% 3d/%d) Compiling %s")
+                                         i total-modules
+                                         (if-let (m (caar module-files))
+                                             (format "%s %s module..." m (cdar module-files))
+                                           (format "%d stand alone elisp files..."
+                                                   (length (cdr module-files))))
+                                         (caar module-files) (cdar module-files))
                                  (setq last-module (car module-files)))
                                (if verbose-p
                                    (byte-compile-file target)
