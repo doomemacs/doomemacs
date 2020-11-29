@@ -204,6 +204,19 @@ ensure it is built when we actually use Forge."
     "gi" #'forge-jump-to-issues
     "gm" #'forge-jump-to-pullreqs)
 
+  ;; Fix these keybinds because they are blacklisted
+  ;; REVIEW There must be a better way to exclude particular evil-collection
+  ;;        modules from the blacklist.
+  (map! (:map magit-mode-map
+         :nv "]" #'magit-section-forward-sibling
+         :nv "[" #'magit-section-backward-sibling
+         :nv "gr" #'magit-refresh
+         :nv "gR" #'magit-refresh-all)
+        (:map magit-status-mode-map
+         :nv "gz" #'magit-refresh)
+        (:map magit-diff-mode-map
+         :nv "gd" #'magit-jump-to-diffstat-or-diff)))
+
   ;; A more intuitive behavior for TAB in magit buffers:
   (define-key! 'normal
     (magit-status-mode-map
