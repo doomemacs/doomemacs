@@ -105,7 +105,7 @@ employed so that flycheck still does *some* helpful linting.")
                      (str (symbol-value sym))
                      (str (prin1-to-string str))
                      (limit (- (frame-width) (length ret) (length truncated) 1)))
-                (format (format "%%0.%ds%%s" limit)
+                (format (format "%%0.%ds%%s" (max limit 0))
                         (propertize str 'face 'warning)
                         (if (< (length str) limit) "" truncated))))))
 
