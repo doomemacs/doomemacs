@@ -53,12 +53,6 @@
     (setq file-name-handler-alist doom--initial-file-name-handler-alist))
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))
 
-;; REVIEW Fixes 'void-variable tab-prefix-map' errors caused by packages that
-;;        prematurely use this variable before it was introduced. Remove this in
-;;        a year.
-(unless (boundp 'tab-prefix-map)
-  (defvar tab-prefix-map (make-sparse-keymap)))
-
 ;; Just the bare necessities
 (require 'subr-x)
 (require 'cl-lib)
