@@ -292,7 +292,21 @@ config.el instead."
                        (concat "\\`" (regexp-quote doom-local-dir) ".*/jupyter-channel\\.el\\'")
                        (concat "\\`" (regexp-quote doom-local-dir) ".*/with-editor\\.el\\'")
                        (concat "\\`" (regexp-quote doom-autoloads-file) "'")))
-    (add-to-list 'comp-deferred-compilation-deny-list entry)))
+    (add-to-list 'comp-deferred-compilation-deny-list entry))
+
+  ;; Default to using all cores, rather than half of them, since we compile
+  ;; things ahead-of-time in a non-interactive session.
+  (defadvice! doom--comp-use-all-cores-a ()
+    :override #'comp-effective-async-max-jobs
+    (if (zerop comp-async-jobs-number)
+        (or comp-num-cpus
+            (setf comp-num-cpus
+                  (max 1 (cond ((eq 'windows-nt system-type)
+                                (string-to-number (getenv "NUMBER_OF_PROCESSORS")))
+                               ((executable-find "nproc")
+                                (string-to-number (cdr (doom-call-process "nproc"))))
+                               (t 1)))))
+      comp-async-jobs-number)))
 
 
 ;;
