@@ -37,9 +37,8 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
               ,filevar)))))
 
 (defun doom--path (&rest segments)
-  (let ((dir (pop segments)))
-    (unless segments
-      (setq dir (expand-file-name dir)))
+  (let ((segments (delq nil segments))
+        dir)
     (while segments
       (setq dir (expand-file-name (car segments) dir)
             segments (cdr segments)))
@@ -48,7 +47,8 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
 ;;;###autoload
 (defun doom-glob (&rest segments)
   "Construct a path from SEGMENTS and expand glob patterns.
-Returns nil if the path doesn't exist."
+Returns nil if the path doesn't exist.
+Ignores `nil' elements in SEGMENTS."
   (let* (case-fold-search
          (dir (apply #'doom--path segments)))
     (if (string-match-p "[[*?]" dir)
@@ -58,7 +58,8 @@ Returns nil if the path doesn't exist."
 
 ;;;###autoload
 (defun doom-path (&rest segments)
-  "Constructs a file path from SEGMENTS."
+  "Constructs a file path from SEGMENTS.
+Ignores `nil' elements in SEGMENTS."
   (if segments
       (apply #'doom--path segments)
     (file!)))
@@ -66,7 +67,8 @@ Returns nil if the path doesn't exist."
 ;;;###autoload
 (defun doom-dir (&rest segments)
   "Constructs a path from SEGMENTS.
-See `doom-path'."
+See `doom-path'.
+Ignores `nil' elements in SEGMENTS."
   (when-let (path (apply #'doom-path segments))
     (directory-file-name (file-name-directory path))))
 
@@ -137,7 +139,8 @@ MATCH is a string regexp. Only entries that match it will be included."
   "Returns the evaluated result of FORM in a ;;;###COOKIE FORM at the top of
 FILE.
 
-If COOKIE doesn't exist, return NULL-VALUE."
+If COOKIE doesn't exist, or cookie isn't within the first 256 bytes of FILE,
+return NULL-VALUE."
   (unless (file-exists-p file)
     (signal 'file-missing file))
   (unless (file-readable-p file)

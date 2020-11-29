@@ -285,7 +285,7 @@ config.el instead."
 (when (boundp 'comp-eln-load-path)
   (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
 
-(after! comp
+(with-eval-after-load 'comp
   ;; HACK Disable native-compilation for some troublesome packages
   (dolist (entry (list (concat "\\`" (regexp-quote doom-local-dir) ".*/evil-collection-vterm\\.el\\'")
                        ;; https://github.com/nnicandro/emacs-jupyter/issues/297

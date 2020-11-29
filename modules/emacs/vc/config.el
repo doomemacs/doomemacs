@@ -1,19 +1,18 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
+(when IS-WINDOWS
+  (setenv "GIT_ASKPASS" "git-gui--askpass"))
+
 ;; Don't complain when these variables are set in file/local vars
 (put 'git-commit-major-mode 'safe-local-variable 'symbolp)
 (put 'git-commit-summary-max-length 'safe-local-variable 'symbolp)
 
+;; In case the user is using `bug-reference-mode'
 (map! :when (fboundp 'bug-reference-mode)
       :map bug-reference-map
       "RET" (cmds! (and (bound-and-true-p evil-mode)
                         (evil-normal-state-p))
                    #'bug-reference-push-button))
-
-
-(when IS-WINDOWS
-  (setenv "GIT_ASKPASS" "git-gui--askpass"))
-
 
 (after! log-view
   (set-evil-initial-state!
@@ -52,7 +51,7 @@
     "Show revision details in the header-line, instead of the minibuffer.
 
 Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision
-info in the `header-line-format' is a good indication."
+info in the `header-line-format' is a more visible indicator."
     :override #'git-timemachine--show-minibuffer-details
     (let* ((date-relative (nth 3 revision))
            (date-full (nth 4 revision))
@@ -65,7 +64,7 @@ info in the `header-line-format' is a good indication."
                     date-full date-relative))))
 
   (after! evil
-    ;; rehash evil keybindings so they are recognized
+    ;; Rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)

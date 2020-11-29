@@ -18,8 +18,8 @@
 ;; Ensure Doom runs out of this file's parent directory, where Doom is
 ;; presumably installed. Use the EMACSDIR envvar to change this.
 (setq user-emacs-directory
-      (if (getenv "EMACSDIR")
-          (file-name-as-directory (expand-file-name (getenv "EMACSDIR")))
+      (if (getenv-internal "EMACSDIR")
+          (file-name-as-directory (expand-file-name (getenv-internal "EMACSDIR")))
         (expand-file-name
          "../" (file-name-directory (file-truename load-file-name)))))
 

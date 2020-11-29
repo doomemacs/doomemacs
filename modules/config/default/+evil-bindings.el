@@ -44,7 +44,7 @@
                       #'yas-expand
                       (and (featurep! :completion company +tng)
                            (+company-has-completion-p))
-                      #'+company/complete)
+                      #'company-complete-common)
       :v [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
                            (or (eq evil-visual-selection 'line)
                                (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
