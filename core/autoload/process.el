@@ -41,13 +41,13 @@ Warning: freezes indefinitely on any stdin prompt."
             (process-exit-status process))
           (string-trim (buffer-string)))))
 
-(defvar doom-num-cpus nil)
+(defvar doom--num-cpus nil)
 ;;;###autoload
 (defun doom-num-cpus ()
   "Return the max number of processing units on this system.
 Tries to be portable. Returns 1 if cannot be determined."
-  (or doom-num-cpus
-      (setq doom-num-cpus
+  (or doom--num-cpus
+      (setq doom--num-cpus
             (max
              1 (cond ((eq 'windows-nt system-type)
                       (or (ignore-errors
