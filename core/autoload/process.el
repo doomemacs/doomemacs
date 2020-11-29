@@ -48,13 +48,23 @@ Warning: freezes indefinitely on any stdin prompt."
 Tries to be portable. Returns 1 if cannot be determined."
   (or doom--num-cpus
       (setq doom--num-cpus
-            (max
-             1 (cond ((eq 'windows-nt system-type)
-                      (or (ignore-errors
-                            (string-to-number (getenv "NUMBER_OF_PROCESSORS")))
-                          1))
-                     ((executable-find "nproc")
-                      (string-to-number (cdr (doom-call-process "nproc"))))
-                     ((and IS-MAC (executable-find "sysctl"))
-                      (string-to-number (cdr (doom-call-process "sysctl" "-n" "hw.ncpu"))))
-                     (t 1))))))
+            (let ((cpus
+                   (cond ((getenv "NUMBER_OF_PROCESSORS"))
+                         ((executable-find "nproc")
+                          (doom-call-process "nproc"))
+                         ((executable-find "sysctl")
+                          (doom-call-process "sysctl" "-n" "hw.ncpu")))))
+              (max
+               1 (or (cl-typecase cpus
+                       (string
+                        (condition-case _
+                            (string-to-number cpus)
+                          (wrong-type-argument
+                           (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
+                                       cpus))))
+                       (consp
+                        (if (zerop (car cpus))
+                            (string-to-number (cdr cpus))
+                          (user-error "Failed to look up number of processors, because:\n\n%s"
+                                      (cdr cpus)))))
+                     1))))))
