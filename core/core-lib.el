@@ -689,7 +689,7 @@ REMOTE is non-nil, search on the remote host indicated by
                     command
                     (mapcar
                      (lambda (x) (concat (file-remote-p default-directory) x))
-                     (exec-path))
+                     exec-path)
                     exec-suffixes 'file-executable-p)))
           (when (stringp res) (file-local-name res)))
       ;; Use 1 rather than file-executable-p to better match the
