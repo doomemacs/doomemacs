@@ -381,14 +381,6 @@ config.el instead."
     (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                       #'doom-try-run-hook)))
 
-;; If the user has disabled `enable-local-variables', then
-;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
-;; of `after-change-major-mode-hook':
-(defun doom-run-local-var-hooks-maybe-h ()
-  "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
-  (unless enable-local-variables
-    (doom-run-local-var-hooks-h)))
-
 
 ;;
 ;;; Incremental lazy-loading
@@ -582,9 +574,8 @@ to least)."
     (add-hook 'doom-first-input-hook #'gcmh-mode)
 
     ;; Bootstrap the interactive session
-    (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-maybe-h)
+    (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
-    (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h)
     (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook)
     (add-hook-trigger! 'doom-first-file-hook 'after-find-file 'dired-initial-position-hook)
