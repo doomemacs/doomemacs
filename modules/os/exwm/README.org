@@ -67,7 +67,7 @@ exwm             ; another doomed window manager
 #+END_SRC
 
 ** Step 2: The =xinitrc= file
-*Create* or *Modify* your =xinitrc= file which should be located in yout =$HOME= directory in either the standard, or daemon configuration:
+*Create* or *Modify* your =xinitrc= file which should be located in your =$HOME= directory in either the standard, or daemon configuration:
 
 #+BEGIN_SRC sh
 # ...
