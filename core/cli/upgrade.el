@@ -100,7 +100,8 @@ following shell commands:
                               (substring new-rev 0 10)
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
                 (let ((diff-url
-                       (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
+                       (format "%s/compare/%s...%s"
+                               doom-repo-url
                                this-rev
                                new-rev)))
                   (print! "Link to diff: %s" diff-url)
