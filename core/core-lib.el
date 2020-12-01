@@ -125,6 +125,25 @@ unreadable. Returns the names of envvars that were changed."
            (default-value 'shell-file-name)))
       env)))
 
+(defun doom-run-hook-on (hook-var triggers)
+  "Configure HOOK-VAR to be invoked exactly once after init whenever any of the
+TRIGGERS are invoked. Once HOOK-VAR gets triggered, it resets to nil.
+
+HOOK-VAR is a quoted hook.
+
+TRIGGERS is a list of quoted hooks and/or sharp-quoted functions."
+  (let ((fn (intern (format "%s-h" hook-var))))
+    (fset
+     fn (lambda (&rest _)
+          (when after-init-time
+            (run-hook-wrapped hook-var #'doom-try-run-hook)
+            (set hook-var nil))))
+    (put hook-var 'permanent-local t)
+    (dolist (on triggers)
+      (if (functionp on)
+          (advice-add on :before fn)
+        (add-hook on fn)))))
+
 
 ;;
 ;;; Functional library
@@ -486,25 +505,6 @@ advised)."
              ((symbolp sym)
               (put ',fn 'permanent-local-hook t)
               (add-hook sym #',fn ,append))))))
-
-(defmacro add-hook-trigger! (hook-var &rest targets)
-  "Configure HOOK-VAR to be invoked exactly once after init whenever any of the
-TARGETS are invoked. Once HOOK-VAR gets triggered, it resets to nil.
-
-HOOK-VAR is a quoted hook.
-
-TARGETS is a list of quoted hooks and/or sharp-quoted functions."
-  `(let ((fn (intern (format "%s-h" ,hook-var))))
-     (fset
-      fn (lambda (&rest _)
-           (when after-init-time
-             (run-hook-wrapped ,hook-var #'doom-try-run-hook)
-             (set ,hook-var nil))))
-     (put ,hook-var 'permanent-local t)
-     (dolist (on (list ,@targets))
-       (if (functionp on)
-           (advice-add on :before fn)
-         (add-hook on fn)))))
 
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.

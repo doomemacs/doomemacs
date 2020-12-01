@@ -374,7 +374,7 @@ config.el instead."
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
   (unless doom-inhibit-local-var-hooks
-    (set (make-local-variable 'doom-inhibit-local-var-hooks) t)
+    (setq-local doom-inhibit-local-var-hooks t)
     (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                       #'doom-try-run-hook)))
 
@@ -563,9 +563,8 @@ to least)."
     ;; interactive session. If they do, make sure they're properly initialized
     ;; when they do.
     (autoload 'doom-initialize-packages "core-packages")
-    (autoload 'doom-initialize-core-packages "core-packages")
-    (with-eval-after-load 'package (require 'core-packages))
-    (with-eval-after-load 'straight (doom-initialize-packages))
+    (eval-after-load 'package '(require 'core-packages))
+    (eval-after-load 'straight '(doom-initialize-packages))
 
     ;; Bootstrap our GC manager
     (add-hook 'doom-first-input-hook #'gcmh-mode)
@@ -574,9 +573,9 @@ to least)."
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-    (add-hook-trigger! 'doom-first-buffer-hook 'after-find-file 'doom-switch-buffer-hook)
-    (add-hook-trigger! 'doom-first-file-hook 'after-find-file 'dired-initial-position-hook)
-    (add-hook-trigger! 'doom-first-input-hook 'pre-command-hook)
+    (doom-run-hook-on 'doom-first-buffer-hook '(after-find-file doom-switch-buffer-hook))
+    (doom-run-hook-on 'doom-first-file-hook   '(after-find-file dired-initial-position-hook))
+    (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
     (if doom-debug-p (doom-debug-mode +1))
 
     ;; Load core/core-*.el, the user's private init.el, then their config.el

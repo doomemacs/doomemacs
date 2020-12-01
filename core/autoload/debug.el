@@ -334,8 +334,8 @@ Some items are not supported by the `nsm.el' module."
                       comp-async-env-modifier-form ',(bound-and-true-p comp-async-env-modifier-form)
                       comp-deferred-compilation-black-list ',(bound-and-true-p comp-deferred-compilation-black-list))
                 (with-eval-after-load 'undo-tree
-                  ;; undo-tree throws errors because `buffer-undo-tree' isn't
-                  ;; correctly initialized
+                  ;; HACK `undo-tree' throws errors because `buffer-undo-tree'
+                  ;;      isn't correctly initialized
                   (setq-default buffer-undo-tree (make-undo-tree)))
                 (ignore-errors
                   (delete-directory ,(expand-file-name "auto-save-list" doom-emacs-dir) 'parents)))
