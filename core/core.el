@@ -237,11 +237,12 @@ users).")
 (setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
-;; Don't litter `doom-emacs-dir'. We don't use `no-littering' because it's a
-;; mote too opinionated for our needs.
-(setq abbrev-file-name             (concat doom-local-dir "abbrev.el")
-      async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
-      bookmark-default-file        (concat doom-etc-dir "bookmarks")
+
+;;
+;;; Don't litter `doom-emacs-dir'
+
+;; We avoid `no-littering' because it's a mote too opinionated for our needs.
+(setq async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
       custom-file                  (concat doom-private-dir "custom.el")
       custom-theme-directory       (concat doom-private-dir "themes/")
       desktop-dirname              (concat doom-etc-dir "desktop")
@@ -249,20 +250,16 @@ users).")
       desktop-base-lock-name       "autosave-lock"
       pcache-directory             (concat doom-cache-dir "pcache/")
       request-storage-directory    (concat doom-cache-dir "request")
-      shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
-      tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
-      tramp-backup-directory-alist backup-directory-alist
-      tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
-      url-cache-directory          (concat doom-cache-dir "url/")
-      url-configuration-directory  (concat doom-etc-dir "url/")
-      gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
+      shared-game-score-directory  (concat doom-etc-dir "shared-game-score/"))
 
-;; HACK Stop sessions from littering the user directory
-(defadvice! doom--use-cache-dir-a (session-id)
-  :override #'emacs-session-filename
-  (concat doom-cache-dir "emacs-session." session-id))
+(defadvice! doom--write-to-etc-dir-a (orig-fn &rest args)
+  "Resolve Emacs storage directory to `doom-etc-dir', to keep local files from
+polluting `doom-emacs-dir'."
+  :around #'locate-user-emacs-file
+  (let ((user-emacs-directory doom-etc-dir))
+    (apply orig-fn args)))
 
-(defadvice! doom--save-enabled-commands-to-doomdir-a (orig-fn &rest args)
+(defadvice! doom--write-enabled-commands-to-doomdir-a (orig-fn &rest args)
   "When enabling a disabled command, the `put' call is written to
 ~/.emacs.d/init.el, which causes issues for Doom, so write it to the user's
 config.el instead."
