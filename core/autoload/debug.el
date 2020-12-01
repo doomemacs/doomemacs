@@ -74,12 +74,15 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 -q or -Q, for example:
 
   emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
-  (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
   (setq after-init-time (current-time))
-  (mapc (doom-rpartial #'run-hook-wrapped #'doom-try-run-hook)
-        (list 'delayed-warnings-hook
-              'emacs-startup-hook 'tty-setup-hook
-              'window-setup-hook)))
+  (let ((inhibit-startup-hooks nil))
+    (mapc (lambda (hook)
+            (run-hook-wrapped hook #'doom-try-run-hook))
+          '(after-init-hook
+            delayed-warnings-hook
+            emacs-startup-hook
+            tty-setup-hook
+            window-setup-hook))))
 
 
 ;;
@@ -318,10 +321,13 @@ Some items are not supported by the `nsm.el' module."
     (require 'package)
     (with-temp-file file
       (prin1 `(progn
-                (setq noninteractive nil
+                (setq before-init-time (current-time)
+                      after-init-time nil
+                      noninteractive nil
                       user-init-file ,file
                       process-environment ',doom--initial-process-environment
                       exec-path ',doom--initial-exec-path
+                      doom-debug-p t
                       init-file-debug t
                       doom--initial-load-path load-path
                       load-path ',load-path
@@ -361,20 +367,25 @@ Some items are not supported by the `nsm.el' module."
                    (--run--)
                    (maphash (doom-module-loader doom-module-init-file) doom-modules)
                    (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                   (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-                   (doom-run-all-startup-hooks-h)))
+                   (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)))
                (`vanilla-doom  ; only Doom core
                 `(progn
                    (load-file ,(expand-file-name "core.el" doom-core-dir))
                    (let ((doom-init-modules-p t))
                      (doom-initialize)
                      (doom-initialize-core-modules))
-                   (--run--)
-                   (doom-run-all-startup-hooks-h)))
+                   (--run--)))
                (`vanilla       ; nothing loaded
                 `(progn
                    (package-initialize)
                    (--run--))))
+             (current-buffer))
+      ;; Redo all startup initialization, like running startup hooks and loading
+      ;; init files.
+      (prin1 `(progn
+                (fset 'doom-try-run-hook #',(symbol-function #'doom-try-run-hook))
+                (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
+                (doom-run-all-startup-hooks-h))
              (current-buffer)))
     (let ((args (if (eq mode 'doom)
                     (list "-l" file)
