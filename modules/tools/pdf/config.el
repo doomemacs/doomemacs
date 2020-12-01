@@ -1,7 +1,7 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
-(use-package! pdf-view
-  :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
+(use-package! pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :init
   (after! pdf-annot
@@ -18,6 +18,49 @@
       (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t)))
 
   :config
+  ;; HACK `pdf-tools-install-noverify' tries to "reset" open pdf-view-mode
+  ;;      buffers, but does so incorrectly, causing errors when pdf-tools is
+  ;;      loaded after opening a pdf file. We've done its job ourselves in
+  ;;      `+pdf--install-epdfinfo-a' instead.
+  (defadvice! +pdf--inhibit-pdf-view-mode-resets-a (orig-fn &rest args)
+    :around #'pdf-tools-install-noverify
+    (letf! ((#'pdf-tools-pdf-buffer-p #'ignore))
+      (apply orig-fn args)))
+
+  (defadvice! +pdf--install-epdfinfo-a (orig-fn &rest args)
+    "Install epdfinfo after the first PDF file, if needed."
+    :around #'pdf-view-mode
+    ;; Prevent "epdfinfo not an executable" error short-circuiting this advice
+    (prog1 (with-demoted-errors "%s" (apply orig-fn args))
+      ;; ...so we can go ahead and install it afterwards.
+      (if (not (y-or-n-p "To read PDFs in Emacs the epdfinfo program must be built. Build it now?"))
+          (message "Aborted")
+        (message nil) ; flush lingering prompt in echo-area
+        ;; Make sure this doesn't run more than once
+        (advice-remove #'pdf-view-mode #'+pdf--install-epdfinfo-a)
+        (if (or (pdf-info-running-p)
+                (ignore-errors (pdf-info-check-epdfinfo) t))
+            (pdf-tools-install-noverify)
+          ;; HACK On the first pdf you open (before pdf-tools loaded)
+          ;;      `pdf-tools-install' throws errors because it has hardcoded
+          ;;      opinions about what buffer should be focused when it is run.
+          ;;      These errors cause `compile' to position the compilation
+          ;;      window incorrectly or can interfere with the opening of the
+          ;;      original pdf--sometimes aborting/burying it altogether. A
+          ;;      timer works around this.
+          (run-at-time
+           0.1 nil
+           (lambda ()
+             (with-current-buffer (pdf-tools-install t)
+               (add-hook! 'compilation-finish-functions :local
+                 (dolist (buf (buffer-list))
+                   (with-current-buffer buf
+                     (and (buffer-file-name)
+                          (or (pdf-tools-pdf-buffer-p)
+                              (derived-mode-p 'pdf-view-mode))
+                          (revert-buffer t t))))))))))))
+
+  ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
   (setq-default pdf-view-display-size 'fit-page)
@@ -35,35 +78,6 @@
 
   ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
-
-  ;; Install epdfinfo binary if needed, blocking until it is finished
-  (when doom-interactive-p
-    (require 'pdf-tools)
-    (unless (file-executable-p pdf-info-epdfinfo-program)
-      (let ((wconf (current-window-configuration)))
-        (pdf-tools-install)
-        (message "Building epdfinfo, this will take a moment...")
-        ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
-        ;;      `pdf-tools-install' has a chance to reinitialize them as
-        ;;      `pdf-view-mode' buffers. This is necessary because
-        ;;      `pdf-tools-install' won't do this to buffers that are already in
-        ;;      pdf-view-mode.
-        (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
-          (with-current-buffer buffer (fundamental-mode)))
-        (while compilation-in-progress
-          ;; Block until `pdf-tools-install' is done
-          (redisplay)
-          (sleep-for 1))
-        ;; HACK If pdf-tools was loaded by you opening a pdf file, once
-        ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
-        ;;      because the compilation buffer is focused, not the pdf buffer.
-        ;;      Therefore, it is imperative that the window config is restored.
-        (when (file-executable-p pdf-info-epdfinfo-program)
-          (set-window-configuration wconf))))
-
-    ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
-    ;; `pdf-virtual-global-minor-mode'.
-    (pdf-tools-install-noverify))
 
   ;; Add retina support for MacOS users
   (eval-when! IS-MAC
