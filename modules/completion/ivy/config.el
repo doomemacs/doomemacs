@@ -118,6 +118,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                                  'ivy-switch-buffer))
                 :test #'equal))
 
+  (defun ivy-rich-bookmark-filename-or-empty (candidate)
+    (let ((filename (ivy-rich-bookmark-filename candidate)))
+      (if (not filename) "" filename)))
+
   ;; Enahnce the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
               'counsel-describe-variable
@@ -135,7 +139,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
               'counsel-bookmark
               '(:columns
                 ((ivy-rich-candidate (:width 0.5))
-                 (ivy-rich-bookmark-filename (:width 60)))))
+                 (ivy-rich-bookmark-filename-or-empty (:width 60)))))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
