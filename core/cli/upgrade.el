@@ -122,4 +122,5 @@ following shell commands:
                    (print! (info "%s") (cdr result))
                    t))))))
         (ignore-errors
+          (doom-call-process "git" "branch" "-D" target-remote)
           (doom-call-process "git" "remote" "remove" doom-repo-remote))))))
