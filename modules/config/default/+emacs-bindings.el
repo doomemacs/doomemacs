@@ -176,10 +176,10 @@
          :desc "Tag"                           "t" #'org-roam-tag-add
          :desc "Un-tag"                        "T" #'org-roam-tag-delete
          (:prefix ("d" . "by date")
-          :desc "Arbitrary date" "d" #'org-roam-dailies-date
-          :desc "Today"          "t" #'org-roam-dailies-today
-          :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
-          :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))))
+          :desc "Arbitrary date" "d" #'org-roam-dailies-find-date
+          :desc "Today"          "t" #'org-roam-dailies-find-today
+          :desc "Tomorrow"       "m" #'org-roam-dailies-find-tomorrow
+          :desc "Yesterday"      "y" #'org-roam-dailies-find-yesterday))))
 
       ;;; <leader> o --- open
       "o" nil ; we need to unbind it first as Org claims this prefix
