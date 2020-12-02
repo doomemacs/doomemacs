@@ -431,6 +431,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; a better *help* buffer
   :commands helpful--read-symbol
   :init
+  ;; Make `apropos' et co search more extensively. They're more useful this way.
+  (setq apropos-do-all t)
+
   (global-set-key [remap describe-function] #'helpful-callable)
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)

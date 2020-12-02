@@ -10,11 +10,9 @@
 ;; makes it 15-30% faster, but set it too high and we risk spiralling memory
 ;; usage in longer sessions.
 (setq gc-cons-threshold 134217728)   ; 128mb
-
 ;; Prioritize non-byte-compiled source files in non-interactive sessions to
 ;; prevent loading stale byte-code.
 (setq load-prefer-newer t)
-
 ;; Ensure Doom runs out of this file's parent directory, where Doom is
 ;; presumably installed. Use the EMACSDIR envvar to change this.
 (setq user-emacs-directory
@@ -47,7 +45,7 @@
                    "EMACSDIR=~/.emacs.d doom sync")
                  "\n\n"
                  "Aborting...")
-         (abbreviate-file-name (file-truename user-emacs-directory))
+         (abbreviate-file-name user-emacs-directory)
          (abbreviate-file-name load-file-name)))
 
 (when (and (equal (user-real-uid) 0)
@@ -56,6 +54,19 @@
                  "will cause file permissions errors later if this Doom install is\n"
                  "ever used on a non-root account.\n\n"
                  "Aborting...")))
+
+;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
+;;      with deprecation and/or file load messages.
+(let ((inhibit-message t))
+  (when (> emacs-major-version 26)
+    (require 'cl))
+  (unless site-run-file
+    (let ((tail load-path))
+      (while tail
+        (let ((default-directory (car tail)))
+          (load (expand-file-name "subdirs.el") t t t)
+          (setq tail (cdr tail)))))
+    (load "site-start" t t)))
 
 ;; Load the heart of the beast and its CLI processing library
 (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
@@ -67,16 +78,6 @@
 (setq debugger #'doom-cli--debugger
       debug-on-error t
       debug-ignored-errors nil)
-
-;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
-;;      with deprecation and/or file load messages.
-(quiet! (if EMACS27+ (require 'cl))
-        (let ((tail load-path))
-          (while tail
-            (let ((default-directory (car tail)))
-              (load (expand-file-name "subdirs.el") t t t)
-              (setq tail (cdr tail)))))
-        (load "site-start" t t))
 
 (kill-emacs
  (pcase
