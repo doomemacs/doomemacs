@@ -67,11 +67,17 @@
   ;;      completion is not activated, the value is ((t . nil)).
   (add-hook! 'evil-local-mode-hook
     (when (memq 'company-emulation-alist emulation-mode-map-alists)
-      (company-ensure-emulation-alist))))
+      (company-ensure-emulation-alist)))
+
+  ;; Fix #4355: allow eldoc to trigger after completions.
+  (after! eldoc
+    (eldoc-add-command 'company-complete-selection
+                       'company-complete-common
+                       'company-abort)))
 
 
 ;;
-;; Packages
+;;; Packages
 
 (after! company-files
   (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
