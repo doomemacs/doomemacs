@@ -78,6 +78,9 @@ all hooks after it are ignored.")
 
 (global-set-key [remap keyboard-quit] #'doom/escape)
 
+(with-eval-after-load 'eldoc
+  (eldoc-add-command 'doom/escape))
+
 
 ;;
 ;;; General + leader/localleader keys

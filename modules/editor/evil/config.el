@@ -115,6 +115,14 @@ directives. By default, this only recognizes C directives.")
 
 
   ;; --- evil hacks -------------------------
+  (after! eldoc
+    ;; Allow eldoc to trigger directly after changing modes
+    (eldoc-add-command 'evil-normal-state
+                       'evil-insert
+                       'evil-change
+                       'evil-delete
+                       'evil-replace))
+
   (unless noninteractive
     (setq save-silently t)
     (add-hook! 'after-save-hook
