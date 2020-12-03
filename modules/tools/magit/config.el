@@ -222,6 +222,7 @@ ensure it is built when we actually use Forge."
     (magit-status-mode-map
      magit-stash-mode-map
      magit-revision-mode-map
+     magit-process-mode-map
      magit-diff-mode-map)
     [tab] #'magit-section-toggle)
 
