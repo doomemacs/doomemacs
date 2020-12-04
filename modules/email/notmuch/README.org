@@ -41,7 +41,25 @@ This module requires:
 
 ** TODO MacOS
 
-** TODO Arch Linux
+** Arch Linux
+Run one of the following commands.
+#+begin_src sh
+yay -S gmailieer
+# OR
+sudo pacman -S isync  # mbsync
+# OR
+sudo pacman -S offlineimap
+#+end_src
+
+Then install ~notmuch~.
+#+begin_src sh
+sudo pacman -S notmuch
+#+end_src
+
+Optionally, install ~afew~.
+#+begin_src sh
+sudo pacman -S afew
+#+end_src
 ** NixOS
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
