@@ -8,4 +8,4 @@
 (package! flim :recipe (:branch "flim-1_14-wl") :pin "edb5982bdc24960798f6038db2c863d7c264cffb")
 (package! semi :recipe (:branch "semi-1_14-wl") :pin "939c80580101126c81a72f1643762fbc964f8b64")
 
-(package! wanderlust :pin "c7043e6446a302fee41b531d2daaa388c4d833a7")
+(package! wanderlust :pin "5db307a0441b6b7aa4ecfd34344842d78f15611b")
