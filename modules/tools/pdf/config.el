@@ -33,32 +33,33 @@
     ;; Prevent "epdfinfo not an executable" error short-circuiting this advice
     (prog1 (with-demoted-errors "%s" (apply orig-fn args))
       ;; ...so we can go ahead and install it afterwards.
-      (if (not (y-or-n-p "To read PDFs in Emacs the epdfinfo program must be built. Build it now?"))
-          (message "Aborted")
-        (message nil) ; flush lingering prompt in echo-area
-        ;; Make sure this doesn't run more than once
-        (advice-remove #'pdf-view-mode #'+pdf--install-epdfinfo-a)
-        (if (or (pdf-info-running-p)
-                (ignore-errors (pdf-info-check-epdfinfo) t))
-            (pdf-tools-install-noverify)
-          ;; HACK On the first pdf you open (before pdf-tools loaded)
-          ;;      `pdf-tools-install' throws errors because it has hardcoded
-          ;;      opinions about what buffer should be focused when it is run.
-          ;;      These errors cause `compile' to position the compilation
-          ;;      window incorrectly or can interfere with the opening of the
-          ;;      original pdf--sometimes aborting/burying it altogether. A
-          ;;      timer works around this.
-          (run-at-time
-           0.1 nil
-           (lambda ()
-             (with-current-buffer (pdf-tools-install t)
-               (add-hook! 'compilation-finish-functions :local
-                 (dolist (buf (buffer-list))
-                   (with-current-buffer buf
-                     (and (buffer-file-name)
-                          (or (pdf-tools-pdf-buffer-p)
-                              (derived-mode-p 'pdf-view-mode))
-                          (revert-buffer t t))))))))))))
+      (cond ((file-executable-p pdf-info-epdfinfo-program))
+            ((y-or-n-p "To read PDFs in Emacs the epdfinfo program must be built. Build it now?")
+             (message nil) ; flush lingering prompt in echo-area
+             ;; Make sure this doesn't run more than once
+             (advice-remove #'pdf-view-mode #'+pdf--install-epdfinfo-a)
+             (if (or (pdf-info-running-p)
+                     (ignore-errors (pdf-info-check-epdfinfo) t))
+                 (pdf-tools-install-noverify)
+               ;; HACK On the first pdf you open (before pdf-tools loaded)
+               ;;      `pdf-tools-install' throws errors because it has hardcoded
+               ;;      opinions about what buffer should be focused when it is run.
+               ;;      These errors cause `compile' to position the compilation
+               ;;      window incorrectly or can interfere with the opening of the
+               ;;      original pdf--sometimes aborting/burying it altogether. A
+               ;;      timer works around this.
+               (run-at-time
+                0.1 nil
+                (lambda ()
+                  (with-current-buffer (pdf-tools-install t)
+                    (add-hook! 'compilation-finish-functions :local
+                      (dolist (buf (buffer-list))
+                        (with-current-buffer buf
+                          (and (buffer-file-name)
+                               (or (pdf-tools-pdf-buffer-p)
+                                   (derived-mode-p 'pdf-view-mode))
+                               (revert-buffer t t))))))))))
+            ((message "Aborted")))))
 
   ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
