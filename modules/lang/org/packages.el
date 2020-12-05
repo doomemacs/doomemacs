@@ -18,7 +18,7 @@
                     (insert "(fset 'org-release (lambda () \"9.5\"))\n"
                             "(fset 'org-git-version #'ignore)\n"
                             "(provide 'org-version)\n")))
-  :pin "a88806b554b15461a88a4e00c9e0e338fe59ac37"
+  :pin "7c8dce72bd5d86157dd1dda2ba0a21ac86084426"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
   ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
@@ -31,18 +31,18 @@
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
 (package! ox-clip :pin "f5eac28734ea33d0b7a3dbe10b777907a91cf9f9")
 (package! toc-org :pin "aef220c266f53d36055f74f4a243c6483c563d2a")
-(package! org-cliplink :pin "82402cae7e118d67de7328417fd018a18f95fac2")
+(package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org
     :recipe (:host github :repo "hlissner/evil-org-mode")
-    :pin "658dadfe2700f08323ece3efb1af48657b9446df"))
+    :pin "a9706da260c45b98601bcd72b1d2c0a24a017700"))
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "3c2b9a413eb841c781cfb49d8c343bf07aa0ad1f"))
 (when (featurep! :tools magit)
   (package! orgit :pin "ac9b1a42863a864fde9d225890ef5464bffdc646"))
 (when (featurep! +brain)
-  (package! org-brain :pin "6e3d8618b0749742335289c32dea0b92966cf9c2"))
+  (package! org-brain :pin "1ae4fd46165fc56f34f36ce38cb2ae816b07e207"))
 (when (featurep! +dragndrop)
   (package! org-download :pin "42ac361ef5502017e6fc1bceb00333eba90402f4"))
 (when (featurep! +gnuplot)
@@ -66,13 +66,13 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "18034c476038adcc1c4697168b8068f4d0ce62fe")
-  (package! org-re-reveal :pin "2035217ae9f9dbd20bf054daa8dabf7c6aa3938d")
+  (package! org-re-reveal :pin "0062756e9a5b6ec96c7de5ca94372cc6495296a1")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
     :pin "0582f57517c97a4c7bfeb58762138c78883f94c5"))
 (when (featurep! +roam)
-  (package! org-roam :pin "d913447939baa0925eb4aeb719c31e6a84916e0f"))
+  (package! org-roam :pin "be95b42d32d9707309ab373f1d8182c84db41c5c"))
 
 ;;; Babel
 (package! ob-async :pin "de1cd6c93242a4cb8773bbe115b7be3d4dd6b97e")
@@ -99,6 +99,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "1909c6effe578cf41fcf436da881f1cd430a498a"))
+    :pin "f24c9bd522ae22bee2327c2b53858d0a5066707d"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))

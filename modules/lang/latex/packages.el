@@ -2,7 +2,7 @@
 ;;; lang/latex/packages.el
 
 (package! auctex :pin "fb062a364fbc7d791707ff574b0f0a7f4c7a7269")
-(package! adaptive-wrap :pin "319db649fb083db3ad07b4c71ee6c9429497043b")
+(package! adaptive-wrap :pin "8f60ee70d6eadb0ddae206a0310505195e7ba0d8")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
 (when (featurep! :editor evil +everywhere)
   (package! evil-tex :pin "ac313efb22d621c093d8d30233bd7dc8b4cc54b4"))

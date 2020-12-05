@@ -12,7 +12,7 @@
 
 ;; Programming environment
 (package! rubocop :pin "03bf15558a6eb65e4f74000cab29412efd46660e")
-(package! robe :pin "082da38797d247f9c64568ad712a345e041d5c84")
+(package! robe :pin "f04dcc7f8d4c14ad4761bd534bf58a49a5f2957f")
 
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
@@ -22,7 +22,7 @@
 (when (featurep! +rbenv)
   (package! rbenv :pin "2ea1a5bdc1266caef1dd77700f2c8f42429b03f1"))
 (when (featurep! +rvm)
-  (package! rvm :pin "6897576bb068b967347fabd7fb15f4ae7ec13462"))
+  (package! rvm :pin "b2498a4a6952a32301544e103b31dc3b8df271ee"))
 (when (featurep! +chruby)
   (package! chruby :pin "42bc6d521f832eca8e2ba210f30d03ad5529788f"))
 

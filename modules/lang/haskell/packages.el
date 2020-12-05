@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/haskell/packages.el
 
-(package! haskell-mode :pin "e72677668f5fc7cc148008e885a0f256e245dd43")
+(package! haskell-mode :pin "0d39c847fddddc5b76fe3c706e34ab45439760bc")
 
 (when (featurep! +dante)
   (package! dante :pin "e2acbf6dd37818cbf479c9c3503d8a59192e34af")

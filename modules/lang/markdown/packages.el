@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/markdown/packages.el
 
-(package! markdown-mode :pin "152eae2415258141043e559af97d37a72de6c4e5")
+(package! markdown-mode :pin "dcad5572a30fce51b97963d3c869cce227c223a1")
 (package! markdown-toc :pin "9565eeaa1d26bc0ab83eb65bd30470888f724044")
 (package! edit-indirect :pin "bdc8f542fe8430ba55f9a24a7910639d4c434422")
 

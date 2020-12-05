@@ -4,7 +4,7 @@
 (package! tuareg :pin "ccde45bbc292123ec20617f1af7f7e19f7481545")
 
 (unless (featurep! +lsp)
-  (package! merlin :pin "06833e9dab5d5bb5ece68f11eb15797b6cd00933")
+  (package! merlin :pin "28193d5ff238be44556e0344c1c0207b77c2bb55")
   (package! merlin-eldoc :pin "db7fab1eddfe34781b7e79694f8923b285698032")
   (when (featurep! :checkers syntax)
     (package! flycheck-ocaml :pin "8707a7bf545a8639a6a5c600a98d9a2ea1487dc9")))
@@ -17,8 +17,8 @@
 (when (featurep! :editor format)
   (package! ocamlformat
     :recipe (:host github :repo "ocaml-ppx/ocamlformat" :files ("emacs/*.el"))
-    :pin "1dec6c3ffb2572b21d43e99653cabdf0406e7eef"))
+    :pin "860266b706602e482b9dac8de74a3f8555b0e2fc"))
 
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
-  :pin "f967df6f51f690eab612cdeb458926a4bdd41e11")
+  :pin "4d097cdba97c9dca8f06edd0e948e154b39e68bc")

@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/hy/packages.el
 
-(package! hy-mode :pin "7256844f24a3b727e252a008d7a142fd3b3921da")
+(package! hy-mode :pin "5253533ddbd55f58168d00940352a82a66d38fec")
