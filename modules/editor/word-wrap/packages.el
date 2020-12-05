@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/word-wrap/packages.el
 
-(package! adaptive-wrap :pin "319db649fb083db3ad07b4c71ee6c9429497043b")
+(package! adaptive-wrap :pin "8f60ee70d6eadb0ddae206a0310505195e7ba0d8")

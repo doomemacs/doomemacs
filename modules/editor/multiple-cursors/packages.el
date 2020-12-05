@@ -7,6 +7,6 @@
   ;;        time of writing). Revisit later.
   (package! iedit :pin "77eb0a1e2e44b453e4ebf4c38409affa353f5139")
   (package! evil-multiedit :pin "9f271e0e6048297692f80ed6c5ae8994ac523abc")
-  (package! evil-mc :pin "4d4c0172e4c7f80acc1d0e73d5fb3e536929b262"))
+  (package! evil-mc :pin "7dfb2ca5ac00c249cb2f55cd6fa91fb2bfb1117e"))
 
- ((package! multiple-cursors :pin "b880554d04b8f61165afba7d4de19ac9e39bb7ab")))
+ ((package! multiple-cursors :pin "83abb0533a9d9635bc86d6d52a4e7641b0eaaf63")))

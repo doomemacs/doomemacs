@@ -44,7 +44,6 @@
       kotlin-mode
       occur
       package-menu
-      ruby-mode
       simple
       slime
       lispy)
@@ -196,6 +195,7 @@ variable for an explanation of the defaults (in comments). See
       robe
       rtags
       ruby-mode
+      sh-script
       simple
       slime
       sly

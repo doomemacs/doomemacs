@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/objed/packages.el
 
-(package! objed :pin "dea5a64a4da32e8947fe5b45de569e293aaa8a96")
+(package! objed :pin "70f9fb5e0aa1627b0afc7c6b3d0aea9bac70a210")
