@@ -22,8 +22,59 @@
     hscroll-margin 0)
 
   ;; Restore the point's location when leaving and re-entering insert mode.
+  ; (when (featurep! :editor evil)
+  ;   (add-hook! 'vterm-mode-hook
+  ;     (defun +vterm-init-remember-point-h ()
+  ;       (add-hook 'evil-insert-state-exit-hook #'+vterm-remember-insert-point-h nil t)
+  ;       (add-hook 'evil-insert-state-entry-hook #'+vterm-goto-insert-point-h nil t)))))
+
   (when (featurep! :editor evil)
+      (defun vterm-evil-insert ()
+        (interactive)
+        (vterm-goto-char (point))
+        (call-interactively #'evil-insert))
+
+      (defun vterm-evil-append ()
+        (interactive)
+        (vterm-goto-char (1+ (point)))
+        (call-interactively #'evil-append))
+
+      (defun vterm-evil-delete ()
+        "Provide similar behavior as `evil-delete'."
+        (interactive)
+        (let ((inhibit-read-only t)
+              )
+          (cl-letf (((symbol-function #'delete-region) #'vterm-delete-region))
+            (call-interactively 'evil-delete))))
+
+      (defun vterm-evil-delete-line ()
+        "Provide similar behavior as `evil-delete-line'."
+        (interactive)
+        (let ((inhibit-read-only t)
+              )
+          (cl-letf (((symbol-function #'delete-region) #'vterm-delete-region))
+            (call-interactively 'evil-delete-line))))
+
+      (defun vterm-evil-delete-char ()
+        "Provide similar behavior as `evil-delete-char'."
+        (interactive)
+        (let ((inhibit-read-only t)
+              )
+          (cl-letf (((symbol-function #'delete-region) #'vterm-delete-region))
+            (call-interactively 'evil-delete-char))))
+
+      (defun vterm-evil-change ()
+        "Provide similar behavior as `evil-change'."
+        (interactive)
+        (let ((inhibit-read-only t))
+          (cl-letf (((symbol-function #'delete-region) #'vterm-delete-region))
+            (call-interactively 'evil-change))))
+
     (add-hook! 'vterm-mode-hook
-      (defun +vterm-init-remember-point-h ()
-        (add-hook 'evil-insert-state-exit-hook #'+vterm-remember-insert-point-h nil t)
-        (add-hook 'evil-insert-state-entry-hook #'+vterm-goto-insert-point-h nil t)))))
+      (evil-local-mode +1)
+      (evil-define-key 'normal 'local "i" 'vterm-evil-insert)
+      (evil-define-key 'normal 'local "a" 'vterm-evil-append)
+      (evil-define-key 'normal 'local "d" 'vterm-evil-delete)
+      (evil-define-key 'normal 'local "D" 'vterm-evil-delete-line)
+      (evil-define-key 'normal 'local "x" 'vterm-evil-delete-char)
+      (evil-define-key 'normal 'local "c" 'vterm-evil-change))))
