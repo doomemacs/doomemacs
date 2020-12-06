@@ -64,8 +64,9 @@
   (if (not (or (featurep! :completion ivy)
                (featurep! :completion helm)))
       (call-interactively #'ispell-word)
-    (cl-destructuring-bind (start . end)
-        (bounds-of-thing-at-point 'word)
+    (let ((current-point (bounds-of-thing-at-point 'word)))
+      (if current-point
+    (cl-destructuring-bind (start . end) current-point
       (let ((word (thing-at-point 'word t))
             (orig-pt (point))
             poss ispell-filter)
@@ -106,7 +107,8 @@
                 (+spell--correct cmd poss wrd orig-pt start end)
                 (unless (string-equal wrd word)
                   (+spell--correct wrd poss word orig-pt start end))))))
-          (ispell-pdict-save t)))))))
+          (ispell-pdict-save t)))))
+    (user-error "No word at point")))))
 
 ;;;###autoload (defalias '+spell/add-word #'spell-fu-word-add)
 ;;;###autoload (defalias '+spell/remove-word #'spell-fu-word-remove)
