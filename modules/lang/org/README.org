@@ -173,7 +173,7 @@ esoteric features:
 + To execute babel code blocks, you need whatever dependencies those languages
   need. It is recommended you enable the associated =:lang= module and ensure
   its dependencies are met, e.g. install the =ruby= executable for ruby support.
-  To use ~jupyter kernels~ you need the =+jupyter= flag, the associatet kernel as 
+  To use ~jupyter kernels~ you need the =+jupyter= flag, the associated kernel as 
   well as the ~jupyter~ program.
 + =org-roam= (with the =+roam= flag) requires =sqlite3= to be installed.
 
@@ -187,8 +187,7 @@ brew install gnuplot
 #+BEGIN_SRC sh
 pacman -S texlive-core texlive-bin texlive-science
 pacman -S gnuplot
-# +jupyter needs jupyter
-pacman -S jupyter
+pacman -S jupyter # required by +jupyter
 #+END_SRC
 
 ** NixOS
@@ -196,7 +195,7 @@ pacman -S jupyter
 environment.systemPackages = with pkgs; [
   # any less than medium isn't guaranteed to work
   texlive.combined.scheme-medium
-  # +jupyter needs jupyter
+  # required by +jupyter
   (python38.withPackages(ps: with ps; [jupyter]))
 ];
 #+END_SRC
