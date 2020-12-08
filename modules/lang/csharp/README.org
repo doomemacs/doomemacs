@@ -15,17 +15,17 @@ LSP).
 
 ** Module Flags
 + =+lsp= Enables omnisharp through LSP support (requires omnisharp).
-+ =+dotnet= Enables Dotnet transient interface with Sharper 
 + =+unity= Enables special support for the [[https://unity.com/][Unity game engine]] (particularly,
   support for HLSL shaders).
++ =+dotnet= Enables Dotnet transient interface with Sharper 
 
 ** Plugins
 + [[https://github.com/josteink/csharp-mode][csharp-mode]]
 + [[https://github.com/omajid/csproj-mode][csproj-mode]]
-+ [[https://github.com/sebasmonia/sharper][sharper]]  (=+dotnet=)
 + [[https://github.com/OmniSharp/omnisharp-emacs][omnisharp]]* (not =+lsp=)
 + [[https://github.com/midnightSuyama/shader-mode][shader-mode]]* (=+unity=)
-
++ [[https://github.com/sebasmonia/sharper][sharper]]  (=+dotnet=)
+  
 * Prerequisites
 This module needs:
 
