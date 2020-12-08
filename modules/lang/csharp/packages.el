@@ -2,6 +2,8 @@
 ;;; lang/csharp/packages.el
 
 (package! csharp-mode :pin "49168293a28aaaf84b9655fe1b2abe402c5e2ee1")
+(when (featurep! +dotnet)
+  (package! sharper :pin "d610b839dbb907cc0a49b7edfe7fe39aa3f9dd6d"))
 (package! csproj-mode :pin "a7f0f4610c976a28c41b9b8299892f88b5d0336c")
 (unless (featurep! +lsp)
   (package! omnisharp :pin "e26ff8b8d34a247cd4a93be5d62a5f21859b7b57"))

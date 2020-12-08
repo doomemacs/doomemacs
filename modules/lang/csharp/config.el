@@ -23,6 +23,11 @@ or terminating simple string."
     (unless (eq major-mode 'csharp-mode)
       (apply orig-fn args))))
 
+(use-package! sharper
+  :when (featurep! +dotnet)
+  :bind
+  ("C-c n" . sharper-main-transient))
+
 
 (use-package! omnisharp
   :unless (featurep! +lsp)
