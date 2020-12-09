@@ -504,13 +504,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (dolist (key '(:unmatched-expression :no-matching-tag))
     (setf (alist-get key sp-message-alist) nil))
 
-  (add-hook! 'minibuffer-setup-hook
+  (add-hook! 'eval-expression-minibuffer-setup-hook
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()
-      "Enable `smartparens-mode' in the minibuffer, during `eval-expression',
-`pp-eval-expression' or `evil-ex'."
-      (and (memq this-command '(eval-expression pp-eval-expression evil-ex))
-           smartparens-global-mode
-           (smartparens-mode))))
+      "Enable `smartparens-mode' in the minibuffer for `eval-expression'.
+Only enable it if `smartparens-global-mode' is on."
+      (when smartparens-global-mode (smartparens-mode))))
 
   ;; You're likely writing lisp in the minibuffer, therefore, disable these
   ;; quote pairs, which lisps doesn't use for strings:
