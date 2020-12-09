@@ -170,7 +170,16 @@ Dictionary.app behind the scenes to get definitions.")
       (setq xref-show-definitions-function #'ivy-xref-show-defs))
     ;; Necessary in Emacs <27. In Emacs 27 it will affect all xref-based
     ;; commands other than xref-find-definitions too (eg project-find-regexp)
-    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+
+    ;; HACK Fix #4386: `ivy-xref-show-xrefs' calls `fetcher' twice, which has
+    ;; side effects that breaks in some cases (i.e. on `dired-do-find-regexp').
+    (defadvice! +lookup--fix-ivy-xrefs (orig-fn fetcher alist)
+      :around #'ivy-xref-show-xrefs
+      (when (functionp fetcher)
+        (setf (alist-get 'fetched-xrefs alist)
+              (funcall fetcher)))
+      (funcall orig-fn fetcher alist)))
 
   (use-package! helm-xref
     :when (featurep! :completion helm)))
