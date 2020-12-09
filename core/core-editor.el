@@ -331,6 +331,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
   :config
+  (setq server-auth-dir (concat doom-emacs-dir "server/"))
   (unless (server-running-p)
     (server-start)))
 
