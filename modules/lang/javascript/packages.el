@@ -3,7 +3,7 @@
 
 ;; Major modes
 (package! coffee-mode :pin "35a41c7d8233eac0b267d9593e67fb8b6235e134")
-(package! js2-mode :pin "ffb70990c1a4d4616034cb810b4ce36953aecb47")
+(package! js2-mode :pin "f7816bdd3e8e84ed1d64b6a13c9ba488363b7e91")
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
 (package! typescript-mode :pin "54f14c482701c4f937bf51469f70812624e07f87")
 
