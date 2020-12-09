@@ -26,7 +26,8 @@
             ("Github"            "https://github.com/search?ref=simplesearch&q=%s")
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
-            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
+            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
+            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
           (when (featurep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
