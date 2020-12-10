@@ -136,7 +136,7 @@ Otherwise return t on success, nil otherwise."
       (let ((ignore-window-parameters t)
             (+popup--inhibit-transient t))
         (persp-delete-other-windows))
-      (switch-to-buffer (doom-fallback-buffer))
+      (persp-add-buffer (doom-fallback-buffer))
       (setf (persp-window-conf persp)
             (funcall persp-window-state-get-function (selected-frame))))
     persp))
