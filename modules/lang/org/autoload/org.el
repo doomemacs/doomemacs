@@ -387,7 +387,8 @@ another level of headings on each invocation."
 Made for `org-tab-first-hook' in evil-mode."
   (interactive)
   (cond ((not (and (bound-and-true-p evil-local-mode)
-                   (evil-insert-state-p)))
+                   (or (evil-insert-state-p)
+                       (evil-emacs-state-p))))
          nil)
         ((org-at-item-p)
          (if (eq this-command 'org-shifttab)
@@ -424,7 +425,8 @@ Made for `org-tab-first-hook'."
                ;; in the few cases where it does.
                (yas-indent-line 'fixed))
            (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                           (evil-insert-state-p))
+                           (evil-insert-state-p)
+                           (evil-emacs-state-p))
                        (yas--templates-for-key-at-point))
                   (yas-expand)
                   t)

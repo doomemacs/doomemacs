@@ -199,7 +199,10 @@ e.g. proselint and langtool."
     (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
 
     (let ((flyspell-correct
-           (cmds! (and (not (or mark-active (ignore-errors (evil-insert-state-p))))
+           (cmds! (and (not mark-active)
+                       (not (and (bound-and-true-p evil-local-mode)
+                                 (or (evil-insert-state-p)
+                                     (evil-emacs-state-p))))
                        (memq 'flyspell-incorrect (face-at-point nil t)))
                   #'flyspell-correct-at-point)))
       (map! :map flyspell-mouse-map
