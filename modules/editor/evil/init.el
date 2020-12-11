@@ -37,7 +37,6 @@
       elisp-mode
       ert
       free-keys
-      help
       helm
       indent
       image
@@ -263,10 +262,15 @@ and complains if a module is loaded too early (during startup)."
       "q" #'kill-current-buffer
       "d" #'process-menu-delete-process)
 
-    (mapc #'+evil-collection-init '(comint custom help)))
+    (mapc #'+evil-collection-init '(comint custom)))
 
   ;; ...or on first invokation of their associated major/minor modes.
   (after! evil
+    ;; Emacs loads these two packages immediately, at startup, which needlessly
+    ;; convolutes load order for evil-collection-help.
+    (defer-feature! help help-mode)
+    (defer-feature! help-mode help-mode)
+
     (add-transient-hook! 'Buffer-menu-mode
       (+evil-collection-init '(buff-menu "buff-menu")))
     (add-transient-hook! 'image-mode
