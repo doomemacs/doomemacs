@@ -228,6 +228,8 @@ aliases."
        :docstring ,docstring
        ,@branches)))
 
+(defalias 'kbd! 'general-simulate-key)
+
 ;; For backwards compatibility
 (defalias 'λ! 'cmd!)
 (defalias 'λ!! 'cmd!!)
