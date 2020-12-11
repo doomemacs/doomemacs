@@ -20,6 +20,8 @@ It is integrated into Helpful, in Doom.
     - [[#file-exists-p][file-exists-p!]]
     - [[#cmd][cmd!]]
     - [[#cmd-1][cmd!!]]
+    - [[#cmds][cmds!]]
+    - [[#kbd][kbd!]]
     - [[#letenv][letenv!]]
     - [[#load][load!]]
     - [[#map][map!]]
@@ -261,6 +263,32 @@ Or to create aliases for functions that behave differently:
 ;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
 ;; its startup visibility settings.
 (fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
+#+END_SRC
+
+*** cmds!
+#+BEGIN_SRC elisp :eval no
+(map! :i [tab] (cmds! (and (featurep! :editor snippets)
+                           (bound-and-true-p yas-minor-mode)
+                           (yas-maybe-expand-abbrev-key-filter 'yas-expand))
+                      #'yas-expand
+                      (featurep! :completion company +tng)
+                      #'company-indent-or-complete-common)
+      :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                           (evil-visual-state-p)
+                           (or (eq evil-visual-selection 'line)
+                               (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                      #'yas-insert-snippet
+                      (and (featurep! :editor fold)
+                           (save-excursion (end-of-line) (invisible-p (point))))
+                      #'+fold/toggle
+                      (fboundp 'evil-jump-item)
+                      #'evil-jump-item))
+#+END_SRC
+
+*** kbd!
+#+BEGIN_SRC elisp :eval no
+(map! "," (kbd! "SPC")
+      ";" (kbd! ":"))
 #+END_SRC
 
 *** letenv!
