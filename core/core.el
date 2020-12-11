@@ -612,7 +612,7 @@ to least)."
     (eval-after-load 'straight '(doom-initialize-packages))
 
     ;; Bootstrap our GC manager
-    (add-hook 'doom-first-input-hook #'gcmh-mode)
+    (add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
     ;; Bootstrap the interactive session
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)
