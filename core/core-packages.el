@@ -187,28 +187,34 @@ processed."
       (error "Failed to initialize package.el")))
   (when (or force-p (null doom-packages))
     (doom-log "Initializing straight.el")
-    (or (setq doom-disabled-packages nil
-              doom-packages (doom-package-list))
-        (error "Failed to read any packages"))
-    (dolist (package doom-packages)
-      (cl-destructuring-bind
-          (name &key recipe disable ignore shadow &allow-other-keys) package
-        (unless ignore
-          (if disable
-              (cl-pushnew name doom-disabled-packages)
-            (when shadow
-              (straight-override-recipe (cons shadow '(:local-repo nil)))
-              (let ((site-load-path (copy-sequence doom--initial-load-path))
-                    lib)
-                (while (setq
-                        lib (locate-library (concat (symbol-name shadow) ".el")
-                                            nil site-load-path))
-                  (let ((lib (directory-file-name (file-name-directory lib))))
-                    (setq site-load-path (delete lib site-load-path)
-                          load-path (delete lib load-path))))))
-            (when recipe
-              (straight-override-recipe (cons name recipe)))
-            (straight-register-package name)))))))
+    (setq doom-disabled-packages nil
+          doom-packages (doom-package-list))
+    (let (loaded)
+      (dolist (package doom-packages)
+        (cl-destructuring-bind
+            (name &key recipe disable ignore shadow &allow-other-keys) package
+          (unless ignore
+            (if disable
+                (cl-pushnew name doom-disabled-packages)
+              (when shadow
+                (straight-override-recipe (cons shadow '(:local-repo nil)))
+                (let ((site-load-path (copy-sequence doom--initial-load-path))
+                      lib)
+                  (while (setq
+                          lib (locate-library (concat (symbol-name shadow) ".el")
+                                              nil site-load-path))
+                    (let ((lib (directory-file-name (file-name-directory lib))))
+                      (setq site-load-path (delete lib site-load-path)
+                            load-path (delete lib load-path))))))
+              (when recipe
+                (straight-override-recipe (cons name recipe)))
+              (dolist (pkg (cons name (straight--get-dependencies name)))
+                (unless (memq pkg loaded)
+                  (push pkg loaded)
+                  (straight-register-package pkg)
+                  (let ((pkg-name (symbol-name pkg)))
+                    (add-to-list 'load-path (directory-file-name (straight--build-dir pkg-name)))
+                    (straight--load-package-autoloads pkg-name)))))))))))
 
 
 ;;
