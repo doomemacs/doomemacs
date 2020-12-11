@@ -312,5 +312,7 @@ is."
             (defun region-end () evil-visual-end))
       (funcall orig-fn no-condition)))
   (when (and (bound-and-true-p evil-local-mode)
+             (not (or (evil-emacs-state-p)
+                      (evil-insert-state-p)))
              (yas-active-snippets))
     (evil-insert-state +1)))
