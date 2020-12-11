@@ -307,6 +307,7 @@
         :desc "Jump to previous hunk"      "p"   #'git-gutter:previous-hunk)
        (:when (featurep! :tools magit)
         :desc "Magit dispatch"             "/"   #'magit-dispatch
+        :desc "Magit file dispatch"        "."   #'magit-file-dispatch
         :desc "Forge dispatch"             "'"   #'forge-dispatch
         :desc "Magit status"               "g"   #'magit-status
         :desc "Magit status here"          "G"   #'magit-status-here
