@@ -203,7 +203,7 @@ This doesn't require modules to be enabled. For enabled modules us
            for default-directory in doom-modules-dirs
            for path = (concat category "/" module "/" file)
            if (file-exists-p path)
-           return (file-truename path)))
+           return (expand-file-name path)))
 
 (defun doom-module-from-path (&optional path enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
@@ -218,7 +218,7 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
         (ignore-errors
           (doom-module-from-path (file!))))
     (let* ((file-name-handler-alist nil)
-           (path (file-truename (or path (file!)))))
+           (path (expand-file-name (or path (file!)))))
       (save-match-data
         (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
                (when-let* ((category (doom-keyword-intern (match-string 1 path)))
@@ -226,9 +226,11 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
                  (and (or (null enabled-only)
                           (doom-module-p category module))
                       (cons category module))))
-              ((file-in-directory-p path doom-core-dir)
+              ((or (string-match-p (concat "^" (regexp-quote doom-core-dir)) path)
+                   (file-in-directory-p path doom-core-dir))
                (cons :core (intern (file-name-base path))))
-              ((file-in-directory-p path doom-private-dir)
+              ((or (string-match-p (concat "^" (regexp-quote doom-private-dir)) path)
+                   (file-in-directory-p path doom-private-dir))
                (cons :private (intern (file-name-base path)))))))))
 
 (defun doom-module-load-path (&optional module-dirs)
