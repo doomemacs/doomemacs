@@ -59,6 +59,7 @@ results buffer.")
   (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
+        ivy-read-action-format-function #'ivy-hydra-read-action
         projectile-completion-system 'ivy
         ;; don't show recent files in switch-buffer
         ivy-use-virtual-buffers nil
