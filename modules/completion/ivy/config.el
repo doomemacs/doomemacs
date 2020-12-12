@@ -95,13 +95,6 @@ results buffer.")
   (after! yasnippet
     (add-hook 'yas-prompt-functions #'+ivy-yas-prompt-fn))
 
-  (defadvice! +ivy--inhibit-completion-in-region-a (orig-fn &rest args)
-    "`ivy-completion-in-region' struggles with completing certain
-evil-ex-specific constructs, so we disable it solely in evil-ex."
-    :around #'evil-ex
-    (let ((completion-in-region-function #'completion--in-region))
-      (apply orig-fn args)))
-
   (define-key! ivy-minibuffer-map
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
     "C-c C-e" #'+ivy/woccur
