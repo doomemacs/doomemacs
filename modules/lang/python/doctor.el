@@ -4,10 +4,12 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(if (not (executable-find "python"))
+(if (not (or (executable-find "python")
+             (executable-find "python3")))
     (error! "Couldn't find python in your PATH")
   (unless (featurep! +lsp)
-    (unless (zerop (shell-command "python -c 'import setuptools'"))
+    (unless (or (zerop (shell-command "python -c 'import setuptools'"))
+                (zerop (shell-command "python3 -c 'import setuptools'")))
       (warn! "setuptools wasn't detected, which anaconda-mode requires"))))
 
 (when (featurep! +pyenv)
