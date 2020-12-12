@@ -1128,6 +1128,8 @@ compelling reason, so..."
     (run-hooks 'org-load-hook))
 
   :config
+  (add-to-list 'doom-debug-variables 'org-export-async-debug)
+
   (set-company-backend! 'org-mode 'company-capf 'company-dabbrev)
   (set-eval-handler! 'org-mode #'+org-eval-handler)
   (set-lookup-handlers! 'org-mode
