@@ -24,7 +24,9 @@
 
   ;; Don't commandeer input focus if the error message pops up (happens when
   ;; tooltips and childframes are disabled).
-  (set-popup-rule! "^\\*Flycheck error messages\\*" :select nil)
+  (set-popup-rules!
+    '(("^\\*Flycheck error messages\\*" :select nil)
+      ("^\\*Flycheck errors\\*" :size 0.25)))
 
   (add-hook! 'doom-escape-hook :append
     (defun +syntax-check-buffer-h ()
