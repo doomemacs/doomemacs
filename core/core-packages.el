@@ -189,7 +189,7 @@ processed."
     (doom-log "Initializing straight.el")
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
-    (let (loaded)
+    (let (packages)
       (dolist (package doom-packages)
         (cl-destructuring-bind
             (name &key recipe disable ignore shadow &allow-other-keys) package
@@ -208,13 +208,12 @@ processed."
                             load-path (delete lib load-path))))))
               (when recipe
                 (straight-override-recipe (cons name recipe)))
-              (dolist (pkg (cons name (straight--get-dependencies name)))
-                (unless (memq pkg loaded)
-                  (push pkg loaded)
-                  (straight-register-package pkg)
-                  (let ((pkg-name (symbol-name pkg)))
-                    (add-to-list 'load-path (directory-file-name (straight--build-dir pkg-name)))
-                    (straight--load-package-autoloads pkg-name)))))))))))
+              (appendq! packages (cons name (straight--get-dependencies name)))))))
+      (dolist (package (cl-delete-duplicates packages :test #'equal))
+        (straight-register-package package)
+        (let ((name (symbol-name package)))
+          (add-to-list 'load-path (directory-file-name (straight--build-dir name)))
+          (straight--load-package-autoloads name))))))
 
 
 ;;
