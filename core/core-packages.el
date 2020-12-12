@@ -99,9 +99,7 @@ uses a straight or package.el command directly).")
       straight-vc-git-default-clone-depth 1
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
       ;; we don't have to deal with them at all.
-      autoload-compute-prefixes nil
-      ;; We handle it ourselves
-      straight-fix-org nil)
+      autoload-compute-prefixes nil)
 
 (with-eval-after-load 'straight
   ;; `let-alist' is built into Emacs 26 and onwards
