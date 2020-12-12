@@ -3,7 +3,7 @@
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
 :; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
-:; [ "${__DOOMCODE:-0}" -eq 128 ] && { "`$EMACS -Q --batch --eval '(princ temporary-file-directory)'`/doom.sh" "$0" "$@" && true; __DOOMCODE=$?; }
+:; [ "${__DOOMCODE:-0}" -eq 128 ] && { sh "`$EMACS -Q --batch --eval '(princ temporary-file-directory)'`/doom.sh" "$0" "$@" && true; __DOOMCODE=$?; }
 :; exit $__DOOMCODE
 
 ;; The garbage collector isn't as important during CLI ops. A higher threshold
@@ -125,7 +125,7 @@
                                           (shell-quote-argument (match-string 2 env)))))
                 (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
                 "_postscript $@\n"))
-      (set-file-modes script #o700))
+      (set-file-modes script #o600))
     ;; Error code 128 is special: it means run the post-script after this
     ;; session ends.
     128)
