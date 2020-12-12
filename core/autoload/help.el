@@ -351,13 +351,15 @@ module derived from a `featurep!' or `require!' call, c) the module that the
 current file is in, or d) the module associated with the current major mode (see
 `doom--help-major-mode-module-alist')."
   (interactive
-   (mapcar #'intern
-           (split-string
-            (completing-read "Describe module: "
-                             (doom--help-modules-list)
-                             nil t nil nil
-                             (doom--help-current-module-str))
-            " " t)))
+   (nconc
+    (mapcar #'intern
+            (split-string
+             (completing-read "Describe module: "
+                              (doom--help-modules-list)
+                              nil t nil nil
+                              (doom--help-current-module-str))
+             " " t))
+    (list current-prefix-arg)))
   (cl-check-type category symbol)
   (cl-check-type module symbol)
   (cl-destructuring-bind (module-string path)
