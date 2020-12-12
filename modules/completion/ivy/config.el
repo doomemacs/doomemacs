@@ -89,6 +89,7 @@ results buffer.")
                        +ivy--origin))
            (with-current-buffer (marker-buffer +ivy--origin)
              (better-jumper-set-jump +ivy--origin)))
+      (set-marker +ivy--origin nil)
       (setq +ivy--origin nil)))
 
   (after! yasnippet
