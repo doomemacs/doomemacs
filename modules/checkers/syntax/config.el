@@ -9,10 +9,10 @@
   :config
   (setq flycheck-emacs-lisp-load-path 'inherit)
 
-  ;; Check only when saving or opening files. Newline & idle checks are a mote
-  ;; excessive and can catch code in an incomplete state, producing false
-  ;; positives, so we removed them.
-  (setq flycheck-check-syntax-automatically '(save mode-enabled idle-buffer-switch))
+  ;; Rerunning checks on every newline is a mote excessive.
+  (delq 'new-line flycheck-check-syntax-automatically)
+  ;; And don't recheck on idle as often
+  (setq flycheck-idle-change-delay 1.0)
 
   ;; For the above functionality, check syntax in a buffer that you switched to
   ;; only briefly. This allows "refreshing" the syntax check state for several
