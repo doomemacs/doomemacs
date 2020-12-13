@@ -32,8 +32,6 @@
            ispell-extra-args '("--sug-mode=ultra"
                                "--run-together"))
 
-     (unless ispell-dictionary
-       (setq ispell-dictionary "english"))
      (unless ispell-aspell-dict-dir
        (setq ispell-aspell-dict-dir
              (ispell-get-aspell-config-value "dict-dir")))
