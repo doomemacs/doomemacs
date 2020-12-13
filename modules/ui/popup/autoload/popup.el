@@ -45,7 +45,9 @@ the buffer is visible, then set another timer and try again later."
 + And finally deletes the window!"
   (let ((buffer (window-buffer window))
         (inhibit-quit t))
-    (and (buffer-file-name buffer)
+    (and (or (buffer-file-name buffer)
+             (if-let (base-buffer (buffer-base-buffer buffer))
+                 (buffer-file-name base-buffer)))
          (buffer-modified-p buffer)
          (let ((autosave (+popup-parameter 'autosave window)))
            (cond ((eq autosave 't))
