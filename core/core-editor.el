@@ -501,9 +501,6 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; No pair has any business being longer than 4 characters; if they must, set
   ;; it buffer-locally. It's less work for smartparens.
   (setq sp-max-pair-length 4)
-  ;; This isn't always smart enough to determine when we're in a string or not.
-  ;; See https://github.com/Fuco1/smartparens/issues/783.
-  (setq sp-escape-quotes-after-insert nil)
 
   ;; Silence some harmless but annoying echo-area spam
   (dolist (key '(:unmatched-expression :no-matching-tag))
