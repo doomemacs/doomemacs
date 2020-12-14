@@ -75,7 +75,8 @@ if it's callable, `apropos' otherwise."
                (re-search-forward
                 (if (caddr module)
                     "\\* Module Flags$"
-                  "\\* Description$"))
+                  "\\* Description$")
+                nil t)
                (when (caddr module)
                  (re-search-forward (format "=\\%s=" (caddr module))
                                     nil t))
