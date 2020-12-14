@@ -65,12 +65,9 @@
 
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
 
-  (let ((types '("javascript" "jsx")))
-    (setq web-mode-comment-formats
-          (cl-remove-if (lambda (item) (member (car item) types))
-                        web-mode-comment-formats))
-    (dolist (type types)
-      (push (cons type "//") web-mode-comment-formats)))
+  ;; Use // instead of /* as the default comment delimited in JS
+  (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal)
+        "//")
 
   (add-hook! 'web-mode-hook
     (defun +web--fix-js-comments-h ()
