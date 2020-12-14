@@ -487,7 +487,12 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     ;; correct this vile injustice.
     (setq sp-show-pair-from-inside t)
     ;; ...and stay highlighted until we've truly escaped the pair!
-    (setq sp-cancel-autoskip-on-backward-movement nil))
+    (setq sp-cancel-autoskip-on-backward-movement nil)
+    ;; Smartparens conditional binds a key to C-g when sp overlays are active
+    ;; (even if they're invisible). This disruptively changes the behavior of
+    ;; C-g in insert mode, requiring two presses of the key to exit insert mode.
+    ;; I don't see the point of this keybind, so...
+    (setq sp-pair-overlay-keymap (make-sparse-keymap)))
 
   ;; The default is 100, because smartparen's scans are relatively expensive
   ;; (especially with large pair lists for some modes), we reduce it, as a
