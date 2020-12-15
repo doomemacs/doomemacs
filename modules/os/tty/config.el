@@ -22,7 +22,7 @@
       ;; wl-copy, termux-clipboard-get, or getclip (cygwin); depending on what
       ;; is available.
       (and (require 'xclip nil t)
-           (xclip-mode +1)))))
+           (with-demoted-errors "%s" (xclip-mode +1))))))
 
 (when (featurep! :editor evil)
   ;; Fix cursor shape-changing in the terminal. Only supported in XTerm, Gnome
