@@ -59,6 +59,7 @@ results buffer.")
   (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
+        ivy-read-action-function #'ivy-hydra-read-action
         ivy-read-action-format-function #'ivy-read-action-format-columns
         projectile-completion-system 'ivy
         ;; don't show recent files in switch-buffer
@@ -94,6 +95,12 @@ results buffer.")
 
   (after! yasnippet
     (add-hook 'yas-prompt-functions #'+ivy-yas-prompt-fn))
+
+  (after! ivy-hydra
+    ;; Ensure `ivy-dispatching-done' and `hydra-ivy/body' hydras can be
+    ;; exited / toggled by the same key binding they were opened
+    (add-to-list 'ivy-dispatching-done-hydra-exit-keys '("C-o" nil))
+    (defhydra+ hydra-ivy () ("M-o" nil)))
 
   (define-key! ivy-minibuffer-map
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
