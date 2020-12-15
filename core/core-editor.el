@@ -555,8 +555,6 @@ on."
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
   ;; ...and insist that save-place not operate in large/long files
   (add-to-list 'so-long-variable-overrides '(save-place-alist . nil))
-  ;; Text files could possibly be too long too
-  (add-to-list 'so-long-target-modes 'text-mode)
   ;; But disable everything else that may be unnecessary/expensive for large or
   ;; wide buffers.
   (appendq! so-long-minor-modes
