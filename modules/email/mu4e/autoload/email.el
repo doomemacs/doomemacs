@@ -247,7 +247,13 @@ When otherwise called, open a dired buffer."
            (location (read-file-name "Attach: ")))
        (if (not (file-directory-p location))
            (pcase major-mode
-             ('mu4e-compose-mode (mail-add-attachment location))
+             ('mu4e-compose-mode
+              (save-excursion
+                (goto-char (point-max))
+                (unless (eq (current-column) 0)
+                  (insert "\n\n")
+                  (forward-line 2))
+                (mail-add-attachment location)))
              ('org-msg-edit-mode (org-msg-attach-attach location)))
          (split-window-sensibly)
          (with-current-buffer (dired location)
