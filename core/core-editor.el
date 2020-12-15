@@ -40,10 +40,11 @@ runtime costs (or disable themselves) to ensure the buffer is as fast as
 possible."
   :before #'abort-if-file-too-large
   (and (numberp size)
-       (> size
-          (* 1024 1024
-             (assoc-default filename doom-large-file-size-alist
-                            #'string-match-p)))
+       (ignore-errors
+         (> size
+            (* 1024 1024
+               (assoc-default filename doom-large-file-size-alist
+                              #'string-match-p))))
        (setq doom-large-file-p size)))
 
 (defadvice! doom--optimize-for-large-files-a (&rest _)
