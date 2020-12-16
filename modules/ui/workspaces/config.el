@@ -71,6 +71,11 @@ stored in `persp-save-dir'.")
                                     +workspaces-main)
                                 frame))))))
 
+  ;; Clear initial jump list when creating new perspective
+  (add-hook! 'persp-created-functions
+    (defun +worspaces-clear-initial-jump-list (&rest _)
+      (better-jumper-clear-jumps)))
+
   (add-hook! 'persp-mode-hook
     (defun +workspaces-init-first-workspace-h (&rest _)
       "Ensure a main workspace exists."
