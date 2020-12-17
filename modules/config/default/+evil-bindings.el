@@ -586,6 +586,8 @@
        :desc "Switch project"               "p" #'projectile-switch-project
        :desc "Find recent project files"    "r" #'projectile-recentf
        :desc "Run project"                  "R" #'projectile-run-project
+       :desc "Find and replace all"         "C-r" #'projectile-replace
+       :desc "Find and replace all regexp"  "C-R" #'projectile-replace-regexp
        :desc "Save project files"           "s" #'projectile-save-project-buffers
        :desc "List project todos"           "t" #'magit-todos-list
        :desc "Test project"                 "T" #'projectile-test-project
