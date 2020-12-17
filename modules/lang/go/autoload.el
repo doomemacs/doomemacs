@@ -32,13 +32,29 @@
   (interactive)
   (+go--run-tests "./..."))
 
+
+;;;###autoload
+(defun +go--extract-test-tag ()
+  (save-excursion
+    (if-let (tag (progn
+                   (re-search-backward "^//[ ]*\\+build[ ]*\\([[:alnum:]]+\\)"
+                                       nil
+                                       t)
+                   (match-string-no-properties 1)))
+        tag
+      "")))
+
 ;;;###autoload
 (defun +go/test-single ()
   (interactive)
   (if (string-match "_test\\.go" buffer-file-name)
-      (save-excursion
-        (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
-        (+go--run-tests (concat "-run" "='" (match-string-no-properties 2) "'")))
+      (let
+          ((test-func-name (save-excursion
+                             (re-search-backward
+                              "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+                             (match-string-no-properties 2)))
+           (test-tag (+go--extract-test-tag)))
+        (+go--run-tests (concat "-tags=" test-tag  " " "-run" "='" test-func-name "'")))
     (error "Must be in a _test.go file")))
 
 ;;;###autoload
