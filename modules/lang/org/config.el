@@ -582,8 +582,7 @@ eldoc string."
 
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
-      "Prevent temporary agenda buffers being associated with current
-workspace."
+      "Don't associate temporary agenda buffers with current workspace."
       (when (and org-agenda-new-buffers
                  (bound-and-true-p persp-mode)
                  (not org-agenda-sticky))
@@ -592,11 +591,12 @@ workspace."
                                (get-current-persp)
                                nil))))
     (defun +org-defer-mode-in-agenda-buffers-h ()
-      "Org agenda opens temporary agenda incomplete org-mode buffers.
-These are great for extracting agenda information from, but what if the user
-tries to visit one of these buffers? Then we remove it from the to-be-cleaned
-queue and restart `org-mode' so they can grow up to be full-fledged org-mode
-buffers."
+      "`org-agenda' opens temporary, incomplete org-mode buffers.
+I've disabled a lot of org-mode's startup processes for these invisible buffers
+to speed them up (in `+org--exclude-agenda-buffers-from-recentf-a'). However, if
+the user tries to visit one of these buffers they'll see a gimped, half-broken
+org buffer. To avoid that, restart `org-mode' when they're switched to so they
+can grow up to be fully-fledged org-mode buffers."
       (dolist (buffer org-agenda-new-buffers)
         (with-current-buffer buffer
           (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h

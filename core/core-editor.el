@@ -108,7 +108,7 @@ possible."
       ;; the purpose of a failsafe. This adds the risk of losing the data we
       ;; just deleted, but I believe that's VCS's jurisdiction, not ours.
       auto-save-include-big-deletions t
-      ;; ...but have directories set up in case we use it.
+      ;; Keep it out of `doom-emacs-dir' or the local directory.
       auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
       tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/")
       auto-save-file-name-transforms
@@ -119,7 +119,7 @@ possible."
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
-    "Guess mode when saving a file in `fundamental-mode'."
+    "Guess major mode when saving a file in `fundamental-mode'."
     (when (eq major-mode 'fundamental-mode)
       (let ((buffer (or (buffer-base-buffer) (current-buffer))))
         (and (buffer-file-name buffer)
