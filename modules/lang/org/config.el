@@ -606,7 +606,7 @@ buffers."
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
-          (doom-large-file-p t)
+          (doom-inhibit-large-file-detection t)
           find-file-hook
           org-mode-hook)
       (funcall orig-fn file)))
