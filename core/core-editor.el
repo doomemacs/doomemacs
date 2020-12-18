@@ -9,7 +9,10 @@ detected.")
 indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
-(defvar-local doom-large-file-p nil)
+(defvar doom-inhibit-large-file-detection nil
+  "If non-nil, inhibit large/long file detection when opening files.")
+
+(defvar doom-large-file-p nil)
 (put 'doom-large-file-p 'permanent-local t)
 
 (defvar doom-large-file-size-alist '(("." . 1.0))
@@ -40,22 +43,25 @@ runtime costs (or disable themselves) to ensure the buffer is as fast as
 possible."
   :before #'abort-if-file-too-large
   (and (numberp size)
+       (null doom-inhibit-large-file-detection)
        (ignore-errors
          (> size
             (* 1024 1024
                (assoc-default filename doom-large-file-size-alist
                               #'string-match-p))))
-       (setq doom-large-file-p size)))
+       (setq-local doom-large-file-p size)))
 
-(defadvice! doom--optimize-for-large-files-a (&rest _)
-  "Trigger `so-long-minor-mode' if the file is large."
-  :after #'after-find-file
-  (when (and doom-large-file-p buffer-file-name)
-    (if (memq major-mode doom-large-file-excluded-modes)
-        (setq doom-large-file-p nil)
-      (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
-        (so-long-minor-mode +1))
-      (message "Large file detected! Cutting a few corners to improve performance..."))))
+(add-hook! 'find-file-hook
+  (defun doom-optimize-for-large-files-h ()
+    "Trigger `so-long-minor-mode' if the file is large."
+    (when (and doom-large-file-p buffer-file-name)
+      (if (or doom-inhibit-large-file-detection
+              (memq major-mode doom-large-file-excluded-modes))
+          (kill-local-variable 'doom-large-file-p)
+        (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
+          (so-long-minor-mode +1))
+        (message "Large file detected! Cutting a few corners to improve performance...")))))
+
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
