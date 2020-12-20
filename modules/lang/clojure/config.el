@@ -90,6 +90,12 @@
   ;; supposed to be make visible.
   (setq cider-repl-display-help-banner nil)
 
+  ;; Make CIDER debug keybindings accessible in evil-mode  
+  (add-hook! 'cider--debug-mode-hook
+    (defun +clojure--cider-debug-setup ()
+      (evil-make-overriding-map cider--debug-mode-map 'normal)
+      (evil-normalize-keymaps)))
+              
   (map! (:localleader
           (:map (clojure-mode-map clojurescript-mode-map)
             "'"  #'cider-jack-in-clj
