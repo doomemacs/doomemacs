@@ -177,8 +177,8 @@ each package."
 (defun doom/bump-package (package)
   "Bump PACKAGE in all modules that install it."
   (interactive
-   (list (completing-read "Bump package: "
-                          (mapcar #'car (doom-package-list 'all)))))
+   (list (intern (completing-read "Bump package: "
+                          (mapcar #'car (doom-package-list 'all))))))
   (let* ((packages (doom-package-list 'all))
          (modules (plist-get (alist-get package packages) :modules)))
     (unless modules
