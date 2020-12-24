@@ -174,7 +174,7 @@ Return nil if on a link url, markup, html, or references."
 
 ** Adding or removing words to your personal dictionary
 Use ~M-x +spell/add-word~ and ~M-x +spell/remove-word~ to whitelist words that
-you know are not misspellings. For evil users these are bound to =zg= and =zw=,
+you know are not misspellings. For evil users these are bound to =zq= and =zw=,
 respectively. =+flyspell= users can also add/remove words from the
 ~flyspell-correct~ popup interface (there will be extra options on the list of
 corrections for "save word to dictionary").
