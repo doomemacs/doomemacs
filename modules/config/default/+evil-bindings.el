@@ -362,7 +362,8 @@
        :desc "Jump to references"                    "D"   #'+lookup/references
        :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
        :desc "Evaluate & replace region"             "E"   #'+eval:replace-region
-       :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
+       (:when (featurep! :editor format)
+        :desc "Format buffer/region"                 "f"   #'+format/region-or-buffer)
        :desc "Find implementations"                  "i"   #'+lookup/implementations
        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
        :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
