@@ -144,12 +144,12 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   vim-slanted tastes. Doom's defaults enforce very particular (albeit optional)
   workflows.
 + *Doom lacks manpower.* Bugs stick around longer, documentation is lighter and
-  development is at the mercy of it's maintainer's schedule, health and whims.
+  development is at the mercy of its maintainer's schedule, health and whims.
 + *Doom is not beginner friendly.* Doom lacks a large community to constantly
   improve and produce tutorials/guides for it. Spacemacs is more likely to work
   right out of the box. Doom also holds your hand less. A little elisp, shell
   and git-fu will go a long way to ease you into Doom.
-+ *Doom is managed through it's command line interface.* The ~bin/doom~ script
++ *Doom is managed through its command line interface.* The ~bin/doom~ script
   allows you to script package management, manage your config, or utilize elisp
   functionality externally, like org tangling or batch processing.
 + *Doom's package manager is declarative and rolling release is opt-in.* Doom
