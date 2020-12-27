@@ -73,6 +73,7 @@
   - [[#clipetty--emit-opening-output-file-permission-denied-devpts29-error]["clipetty--emit: Opening output file: Permission denied, /dev/pts/29" error]]
   - [[#the-directory-emacsdserver-is-unsafe-error-at-startup]["The directory ~/.emacs.d/server is unsafe" error at startup]]
   - [[#my-new-keybinds-dont-work][My new keybinds don't work]]
+  - [[#wrong-type-argument-commandp-errors][~wrong-type-argument commandp~ errors]]
 
 * General
 ** Why is it called Doom?
@@ -1339,3 +1340,22 @@ keybinds to work:
 I use ~[C-left]~ because it is easier to type than ~"<C-left>"~, but are
 equivalent; two different ways to refer to the same key.
 #+end_quote
+** ~wrong-type-argument commandp~ errors
+If you see an error like the following:
+
+#+begin_src
+Debugger entered--Lisp error: (wrong-type-argument commandp +format/region-or-buffer)
+  #<subr call-interactively>(+format/region-or-buffer nil nil)
+  apply(#<subr call-interactively> (+format/region-or-buffer nil nil))
+  explain-pause--wrap-call-interactively(#<subr call-interactively> +format/region-or-buffer nil nil)
+  apply(explain-pause--wrap-call-interactively #<subr call-interactively> (+format/region-or-buffer nil nil))
+  call-interactively(+format/region-or-buffer nil nil)
+  command-execute(+format/region-or-buffer)
+#+end_src
+
+the reason is that you've called a keybinding for a function that's not defined.
+This may be due to the module providing the function definition being disabled
+in your ~init.el~ (in the case above, the ~format~ module).
+Henrik has [[https://github.com/hlissner/doom-emacs/pull/2267][stated]] that these kinds of errors are preferable to gating each
+keybinding defined in the ~:config default~ module, so please don't send PRs
+fixing them.
