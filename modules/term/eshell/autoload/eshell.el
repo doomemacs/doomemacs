@@ -28,7 +28,7 @@
       (switch-to-buffer (doom-fallback-buffer)))
     (when +eshell-enable-new-shell-on-split
       (let ((default-directory directory))
-        (when-let (win (get-buffer-window (+eshell/here t)))
+        (when-let (win (get-buffer-window (+eshell/here)))
           (set-window-dedicated-p win dedicated-p))))))
 
 (defun +eshell--setup-window (window &optional flag)
