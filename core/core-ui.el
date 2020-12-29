@@ -548,6 +548,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
+;; Always prioritize the user's themes above the built-in/packaged ones.
+(setq custom-theme-load-path
+      (cons 'custom-theme-directory
+            (remq 'custom-theme-directory custom-theme-load-path)))
+
 ;; Underline looks a bit better when drawn lower
 (setq x-underline-at-descent-line t)
 
