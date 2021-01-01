@@ -76,7 +76,6 @@ tools.
 ** Commands
   | Command                      | Key       | Description                                               |
   |------------------------------+-----------+-----------------------------------------------------------|
-  | =merlin-locate=              | =gd=      | lookup definition                                         |
   | =merlin-occurences=          | =SPC c D= | lookup references                                         |
   | =merlin-document=            | =K=       | lookup documentation                                      |
   | =merlin-imenu=               | =SPC / i= | symbol lookup in file                                     |
@@ -85,6 +84,7 @@ tools.
   | =utop-eval-region=           | =SPC c e= | evaluate selected region in =utop=                        |
   | =merlin-type-enclosing=      | =<localleader> t= | display type under point                                  |
   | =tuareg-find-alternate-file= | =<localleader> a= | switch between =.ml= and =.mli=                           |
+  | =merlin-locate=              | =g d=             | lookup definition                                         |
 
 ** Hacks
 + =set-ligatures!= is called with the full tuareg prettify symbol list, this
