@@ -653,5 +653,18 @@ REMOTE is non-nil, search on the remote host indicated by
                 (file-name-quote default-directory))))
         (locate-file command exec-path exec-suffixes 1)))))
 
+(unless (fboundp 'exec-path)
+  ;; DEPRECATED Backported from Emacs 27.1
+  (defun exec-path ()
+    "Return list of directories to search programs to run in remote subprocesses.
+The remote host is identified by `default-directory'.  For remote
+hosts that do not support subprocesses, this returns `nil'.
+If `default-directory' is a local directory, this function returns
+the value of the variable `exec-path'."
+    (let ((handler (find-file-name-handler default-directory 'exec-path)))
+      (if handler
+          (funcall handler 'exec-path)
+        exec-path))))
+
 (provide 'core-lib)
 ;;; core-lib.el ends here
