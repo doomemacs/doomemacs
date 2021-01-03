@@ -191,7 +191,8 @@ processed."
       (dolist (package doom-packages)
         (cl-destructuring-bind
             (name &key recipe disable ignore shadow &allow-other-keys) package
-          (unless ignore
+          (if ignore
+              (straight-override-recipe (cons name '(:type built-in)))
             (if disable
                 (cl-pushnew name doom-disabled-packages)
               (when shadow
