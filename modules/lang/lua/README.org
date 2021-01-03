@@ -39,19 +39,28 @@ This module has no dedicated maintainers.
 
 * Prerequisites
 ** Language Server Protocol servers
-Currently the servers supported depend on the =:tools lsp= flavor you are using
+LSP server support depends on which flavor of the =:tools lsp= module you have
+installed (Eglot or LSP-mode).
+
 *** LSP-mode
-This server is built in Java, so a ~java~ environment will be necessary
-+ [[https://github.com/EmmyLua/EmmyLua-LanguageServer][EmmyLua-LanguageServer]] must be installed and configured to use the
-  configuration provided by emacs-lsp.
+Three servers are supported, ordered from highest to lowest priority:
+
++ [[https://github.com/EmmyLua/EmmyLua-LanguageServer][EmmyLua-LanguageServer]] :: Must be in =~/.emacs.d/.local/etc/lsp/EmmyLua-LS-all.jar=. See ~lsp-clients-emmy-lua-jar-path~ variable to change this.
++ [[https://github.com/sumneko/lua-language-server][Sumneko language server]] (lua-language-server) :: Must be in
+  =~/.config/emacs/.local/etc/lsp/lua-language-server/=. See
+  ~lsp-clients-lua-language-server-bin~ variable to change this.
++ [[https://github.com/Alloyed/lua-lsp][lua-lsp]] :: Must be available in =~/.luarocks/bin/lua-lsp=. See
+  ~lsp-clients-lua-lsp-server-install-dir~ variable to change this.
 
 [[https://emacs-lsp.github.io/lsp-mode/page/lsp-emmy-lua/][LSP-mode documentation]] has more information about setting up the server and the
-configuration variables correctly (use a bare ~(setq
-lsp-clients-emmy-lua-java-path value)~ in your =config.el=)
+configuration variables correctly.
+
 *** Eglot
-This server is built in Lua, so a =lua= environment will be necessary
-+ [[https://github.com/sumneko/lua-language-server][lua-language-server]] must be installed and built locally, with =+lua-lsp-dir=
-  variable pointing to the root of the repository
+Eglot currently only supports one of the above servers out of the box:
+
++ [[https://github.com/sumneko/lua-language-server][Sumneko language server]] (lua-language-server) :: Must be in
+  =~/.config/emacs/.local/etc/lsp/lua-language-server/=. See
+  ~+lua-lsp-dir~ variable to change this.
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
