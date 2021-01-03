@@ -131,8 +131,7 @@
               "P" #'cider-pprint-eval-last-sexp-to-comment
               "d" #'cider-pprint-eval-defun-at-point
               "D" #'cider-pprint-eval-defun-to-comment
-              "r" #'cider-pprint-eval-last-sexp-to-repl
-              )
+              "r" #'cider-pprint-eval-last-sexp-to-repl)
             (:prefix ("r" . "repl")
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
