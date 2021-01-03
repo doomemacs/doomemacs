@@ -15,18 +15,18 @@
 ;;; Interactive commands
 
 ;;;###autoload
-(defun +evil/visual-indent ()
+(defun +evil/shift-right ()
   "vnoremap < <gv"
   (interactive)
-  (evil-shift-right (region-beginning) (region-end))
+  (call-interactively #'evil-shift-right)
   (evil-normal-state)
   (evil-visual-restore))
 
 ;;;###autoload
-(defun +evil/visual-dedent ()
+(defun +evil/shift-left ()
   "vnoremap > >gv"
   (interactive)
-  (evil-shift-left (region-beginning) (region-end))
+  (call-interactively #'evil-shift-left)
   (evil-normal-state)
   (evil-visual-restore))
 

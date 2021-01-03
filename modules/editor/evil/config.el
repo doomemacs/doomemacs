@@ -518,8 +518,8 @@ directives. By default, this only recognizes C directives.")
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'doom/save-and-kill-buffer
       ;; don't leave visual mode after shifting
-      :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
-      :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv
+      :v  "<"     #'+evil/shift-left  ; vnoremap < <gv
+      :v  ">"     #'+evil/shift-right  ; vnoremap > >gv
 
       ;; window management (prefix "C-w")
       (:map evil-window-map
