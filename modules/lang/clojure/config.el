@@ -126,6 +126,12 @@
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all
               "r" #'cider-ns-refresh)
+            (:prefix ("p" . "print")
+              "p" #'cider-pprint-eval-last-sexp
+              "P" #'cider-pprint-eval-last-sexp-to-comment
+              "d" #'cider-pprint-eval-defun-at-point
+              "D" #'cider-pprint-eval-defun-to-comment
+              "r" #'cider-pprint-eval-last-sexp-to-repl)
             (:prefix ("r" . "repl")
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
