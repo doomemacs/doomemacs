@@ -192,6 +192,22 @@ e.g. proselint and langtool."
                  (featurep 'langtool))
              (setq-local flyspell-mark-duplications-flag nil))))
 
+    (defadvice! +flyspell-small-region-keep-cursor-a (old-fun &rest args)
+      "Make `flyspell-small-region' not move the cursor around.
+Due to calling `sit-for', `flyspell-small-region' visibly moves
+the cursor trough each word, which is very annoying when the
+buffer is checked automatically, as insertions happen at the
+wrong place.
+
+This is usually only an issue in commit messages, since normal
+editing buffers are usually quite large.
+
+A side effect of this `advice' is that `flyspell-small-region'
+should be faster."
+      :around #'flyspell-small-region
+      (cl-letf (((symbol-function #'sit-for) #'ignore))
+        (apply old-fun args)))
+
     ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
     ;; used in their respective major modes.
     (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
