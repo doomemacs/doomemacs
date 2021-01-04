@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/pass/packages.el
 
-(package! pass :pin "919d8e3826d556433ab67d4ee21a509d209d1baa")
+(package! pass :pin "a095d24cf06a7b0fbc3add480c101304a91cf788")
 (package! password-store :pin "f152064da9832d6d3d2b4e75f43f63bf2d50716f")
 (package! password-store-otp :pin "04998c8578a060ab4a4e8f46f2ee0aafad4ab4d5")
 
