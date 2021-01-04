@@ -289,14 +289,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; where we resize windows too quickly.
 (setq window-resize-pixelwise nil)
 
-(unless (assq 'menu-bar-lines default-frame-alist)
-  ;; We do this in early-init.el too, but in case the user is on Emacs 26 we do
-  ;; it here too: disable tool and scrollbars, as Doom encourages
-  ;; keyboard-centric workflows, so these are just clutter (the scrollbar also
-  ;; impacts performance).
-  (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-  (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-  (add-to-list 'default-frame-alist '(vertical-scroll-bars)))
+;; We do this in early-init.el too, but in case the user is on Emacs 26 we do it
+;; here too: disable tool and scrollbars, as Doom encourages keyboard-centric
+;; workflows, so these are just clutter (the scrollbar also impacts
+;; performance).
+(push '(menu-bar-lines . 0)   default-frame-alist)
+(push '(tool-bar-lines . 0)   default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
 
 ;; These are disabled directly through their frame parameters, to avoid the
 ;; extra work their minor modes do, but we have to unset these variables
@@ -592,8 +591,8 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
         (when (fboundp 'set-fontset-font)
-          (dolist (font (append doom-unicode-extra-fonts (doom-enlist doom-unicode-font)))
-            (set-fontset-font t 'unicode font nil 'prepend)))
+          (dolist (font (cons doom-unicode-font doom-unicode-extra-fonts))
+            (set-fontset-font t nil font nil 'prepend)))
         (run-hooks 'after-setting-font-hook))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
