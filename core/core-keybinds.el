@@ -41,12 +41,16 @@ and Emacs states, and for non-evil users.")
 
 ;; HACK Fixes Emacs' disturbing inability to distinguish C-i from TAB.
 (define-key key-translation-map [?\C-i]
-  (cmd! (if (and (not (cl-position 'tab    (this-single-command-raw-keys)))
-                 (not (cl-position 'kp-tab (this-single-command-raw-keys)))
-                 (display-graphic-p))
+  (cmd! (if (let ((keys (this-single-command-raw-keys)))
+              (and keys
+                   (not (cl-position 'tab    keys))
+                   (not (cl-position 'kp-tab keys))
+                   (display-graphic-p)
+                   (let ((key
+                          (doom-lookup-key
+                           (vconcat (cl-subseq keys 0 -1) [C-i]))))
+                     (not (or (numberp key) (null key))))))
             [C-i] [?\C-i])))
-;; However, ensure <C-i> falls back to the old keybind if it has no binding.
-(global-set-key [C-i] [?\C-i])
 
 
 ;;

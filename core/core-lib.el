@@ -94,6 +94,18 @@ at the values with which this function was called."
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
+(defun doom-lookup-key (keys &optional keymap)
+  "Like `lookup-key', but search active keymaps if KEYMAP is omitted."
+  (if keymap
+      (lookup-key keymap keys)
+    (cl-loop for keymap
+             in (append (mapcar #'cdr (mapcar #'symbol-value emulation-mode-map-alists))
+                        (list (current-local-map))
+                        (mapcar #'cdr minor-mode-alist)
+                        (list (current-global-map)))
+             if (lookup-key keymap keys)
+             return it)))
+
 
 ;;
 ;;; Sugars
