@@ -550,20 +550,14 @@ the exported output (i.e. formatters)."
     (when (get-buffer-window)
       (recenter)))
 
-  (defadvice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
-    "Remove link syntax and fix variable height text (e.g. org headings) in the
-eldoc string."
+  (defadvice! +org--strip-properties-from-outline-a (orig-fn &rest args)
+    "Fix variable height faces in eldoc breadcrumbs."
     :around #'org-format-outline-path
-    (funcall orig-fn
-             (cl-loop for part in path
-                      ;; Remove full link syntax
-                      for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" (or part ""))
-                      for n from 0
-                      for face = (nth (% n org-n-level-faces) org-level-faces)
-                      collect
-                      (org-add-props fixedpart
-                          nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
-             width prefix separator))
+    (let ((org-level-faces
+           (cl-loop for face in org-level-faces
+                    collect `(:foreground ,(face-foreground face nil t)
+                              :weight bold))))
+      (apply orig-fn args)))
 
   (after! org-eldoc
     ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
