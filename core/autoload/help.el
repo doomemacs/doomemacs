@@ -392,9 +392,7 @@ variables, this only lists variables that exist to be customized (defined with
           (helpful--variable-at-point)
           (lambda (sym)
             (and (helpful--variable-p sym)
-                 (or (get sym 'custom-type)
-                     (get sym 'custom-package-version)
-                     (get sym 'custom-set))
+                 (custom-variable-p sym)
                  ;; Exclude minor mode state variables, which aren't meant to be
                  ;; modified directly, but through their associated function.
                  (not (or (and (string-suffix-p "-mode" (symbol-name sym))
