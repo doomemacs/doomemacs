@@ -379,6 +379,29 @@ current file is in, or d) the module associated with the current major mode (see
            (doom-project-browse (file-name-directory path)))
           ((user-error "Aborted module lookup")))))
 
+;;;###autoload
+(defun doom/help-custom-variable (var)
+  "Look up documentation for a custom variable.
+
+Unlike `helpful-variable', which casts a wider net that includes internal
+variables, this only lists variables that exist to be customized (defined with
+`defcustom')."
+  (interactive
+   (list (helpful--read-symbol
+          "Custom variable: "
+          (helpful--variable-at-point)
+          (lambda (sym)
+            (and (helpful--variable-p sym)
+                 (or (get sym 'custom-type)
+                     (get sym 'custom-package-version)
+                     (get sym 'custom-set))
+                 ;; Exclude minor mode state variables, which aren't meant to be
+                 ;; modified directly, but through their associated function.
+                 (not (or (and (string-suffix-p "-mode" (symbol-name sym))
+                               (fboundp sym))
+                          (eq (get sym 'custom-set) 'custom-set-minor-mode))))))))
+  (helpful-variable var))
+
 
 ;;
 ;;; `doom/help-packages'
