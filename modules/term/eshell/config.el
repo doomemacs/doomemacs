@@ -73,6 +73,8 @@ You should use `set-eshell-alias!' to change this.")
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
 
+  (add-to-list 'eshell-modules-list 'eshell-tramp)
+
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
 
