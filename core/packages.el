@@ -51,7 +51,7 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "d1cfad008b1719a6bee17fbe9479db414c0dc5d9")
+(package! projectile :pin "c31bd41c0b9d6fba8837ebfd3a31dec0b3cd73c6")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
