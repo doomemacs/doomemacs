@@ -28,6 +28,8 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         lsp-enable-text-document-color nil)
   ;; Reduce unexpected modifications to code
   (setq lsp-enable-on-type-formatting nil)
+  ;; Make breadcrumbs opt-in; they're redundant with the modeline and imenu
+  (setq lsp-headerline-breadcrumb-enable nil)
 
   ;; Let doom bind the lsp keymap.
   (when (featurep! :config default +bindings)
