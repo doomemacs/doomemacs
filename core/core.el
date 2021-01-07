@@ -296,6 +296,10 @@ config.el instead."
 ;; usage, however!
 (setq inhibit-compacting-font-caches t)
 
+;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification while
+;; receiving input, which should help with performance while scrolling.
+(setq redisplay-skip-fontification-on-input t)
+
 ;; Performance on Windows is considerably worse than elsewhere. We'll need
 ;; everything we can get.
 (when IS-WINDOWS
