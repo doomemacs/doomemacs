@@ -33,23 +33,14 @@ ignored. This makes it easy to override built-in snippets with private ones."
         (make-directory dir t)
       (error "%S doesn't exist" (abbreviate-file-name dir)))))
 
-(defun +snippet--get-exact-template-by-uuid (mode uuid)
-  "Similar behavior to yas--get-template-by-uuid, but deal with empty tables better.
-Yas' behavior introduces a bug for this case (no table for mode)"
-  (when-let* ((table (gethash mode yas--tables))
-             (uuid-hash (yas--table-uuidhash table)))
-    (gethash uuid uuid-hash)))
-
 (defun +snippet--get-template-by-uuid (uuid &optional mode)
   "Look up the template by uuid in child-most to parent-most mode order.
 Finds correctly active snippets from parent modes (based on Yas' logic)."
-  (let* ((mode (or mode major-mode))
-         (active-modes (yas--modes-to-activate mode)))
-    (cl-loop
-     for active-mode in active-modes
-     for template = (+snippet--get-exact-template-by-uuid active-mode uuid)
-     if (not (null template))
-     return template)))
+  (cl-loop with mode = (or mode major-mode)
+           for active-mode in (yas--modes-to-activate mode)
+           if (gethash active-mode yas--tables)
+           if (gethash uuid (yas--table-uuidhash it))
+           return it))
 
 (defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
   (plist-get
