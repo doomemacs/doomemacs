@@ -33,6 +33,24 @@ ignored. This makes it easy to override built-in snippets with private ones."
         (make-directory dir t)
       (error "%S doesn't exist" (abbreviate-file-name dir)))))
 
+(defun +snippet--get-exact-template-by-uuid (mode uuid)
+  "Similar behavior to yas--get-template-by-uuid, but deal with empty tables better.
+Yas' behavior introduces a bug for this case (no table for mode)"
+  (when-let* ((table (gethash mode yas--tables))
+             (uuid-hash (yas--table-uuidhash table)))
+    (gethash uuid uuid-hash)))
+
+(defun +snippet--get-template-by-uuid (uuid &optional mode)
+  "Look up the template by uuid in child-most to parent-most mode order.
+Finds correctly active snippets from parent modes (based on Yas' logic)."
+  (let* ((mode (or mode major-mode))
+         (active-modes (yas--modes-to-activate mode)))
+    (cl-loop
+     for active-mode in active-modes
+     for template = (+snippet--get-exact-template-by-uuid active-mode uuid)
+     if (not (null template))
+     return template)))
+
 (defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
   (plist-get
    (text-properties-at
@@ -169,7 +187,7 @@ buggy behavior when <delete> is pressed in an empty field."
   (interactive
    (list
     (+snippet--completing-read-uuid "Visit snippet: " current-prefix-arg)))
-  (if-let* ((template (yas--get-template-by-uuid major-mode template-uuid))
+  (if-let* ((template (+snippet--get-template-by-uuid template-uuid major-mode))
             (template-path (yas--template-load-file template)))
       (progn
         (unless (file-readable-p template-path)
@@ -242,7 +260,7 @@ shadow the default snippet)."
   (if-let* ((major-mode (if (eq major-mode 'snippet-mode)
                             (intern (file-name-base (directory-file-name default-directory)))
                           major-mode))
-            (template (yas--get-template-by-uuid major-mode template-uuid))
+            (template (+snippet--get-template-by-uuid template-uuid major-mode))
             (template-path (yas--template-load-file template)))
       (if (file-in-directory-p template-path +snippets-dir)
           (find-file template-path)
