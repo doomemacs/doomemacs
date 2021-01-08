@@ -291,10 +291,10 @@ results buffer.")
     "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
-        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd")))
+        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd") t))
                  (append (list fd "-H" "--color=never" "--type" "file" "--type" "symlink" "--follow")
                          (if IS-WINDOWS '("--path-separator=/")))))
-              ((executable-find "rg")
+              ((executable-find "rg" t)
                (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "-g!.git" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
