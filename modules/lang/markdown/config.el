@@ -86,12 +86,35 @@ capture, the end position, and the output buffer.")
         "p" #'markdown-preview
         "e" #'markdown-export
         (:when (featurep! +grip)
-          "p" #'grip-mode)
+         "p" #'grip-mode)
         (:prefix ("i" . "insert")
-          "t" #'markdown-toc-generate-toc
-          "i" #'markdown-insert-image
-          "l" #'markdown-insert-link)))
-
+         :desc "Table Of Content" "T" #'markdown-toc-generate-toc
+         :desc "Image" "i" #'markdown-insert-image
+         :desc "Link" "l" #'markdown-insert-link
+         :desc "<hr>" "-" #'markdown-insert-hr
+         :desc "Heading 1" "1" #'markdown-insert-header-atx-1
+         :desc "Heading 2" "2" #'markdown-insert-header-atx-2
+         :desc "Heading 3" "3" #'markdown-insert-header-atx-3
+         :desc "Heading 4" "4" #'markdown-insert-header-atx-4
+         :desc "Heading 5" "5" #'markdown-insert-header-atx-5
+         :desc "Heading 6" "6" #'markdown-insert-header-atx-6
+         :desc "Code block" "C" #'markdown-insert-gfm-code-block
+         :desc "Pre region" "P" #'markdown-pre-region
+         :desc "Blockquote region" "Q" #'markdown-blockquote-region
+         :desc "Checkbox" "[" #'markdown-insert-gfm-checkbox
+         :desc "Bold" "b" #'markdown-insert-bold
+         :desc "Inline code" "c" #'markdown-insert-code
+         :desc "Italic" "e" #'markdown-insert-italic
+         :desc "Footnote" "f" #'markdown-insert-footnote
+         :desc "Header dwim" "h" #'markdown-insert-header-dwim
+         :desc "Italic" "i" #'markdown-insert-italic
+         :desc "Kbd" "k" #'markdown-insert-kbd
+         :desc "Link" "l" #'markdown-insert-link
+         :desc "Pre" "p" #'markdown-insert-pre
+         :desc "New blockquote" "q" #'markdown-insert-blockquote
+         :desc "Strike through" "s" #'markdown-insert-strike-through
+         :desc "Table" "t" #'markdown-insert-table
+         :desc "Wiki link" "w" #'markdown-insert-wiki-link)))
 
 (use-package! evil-markdown
   :when (featurep! :editor evil +everywhere)
