@@ -158,11 +158,10 @@ users).")
   ;; HACK Disable native-compilation for some troublesome packages
   (mapc (doom-partial #'add-to-list 'comp-deferred-compilation-deny-list)
         (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-          (list (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                ;; https://github.com/nnicandro/emacs-jupyter/issues/297
-                (concat local-dir-re ".*/jupyter-channel\\.el\\'")
+          (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
                 (concat local-dir-re ".*/with-editor\\.el\\'")
-                (concat "\\`" (regexp-quote doom-autoloads-file) "\\'"))))
+                ;; https://github.com/nnicandro/emacs-jupyter/issues/297
+                (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
   ;; Default to using all cores, rather than half of them, since we compile
   ;; things ahead-of-time in a non-interactive session.
   (defadvice! doom--comp-use-all-cores-a ()
