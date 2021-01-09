@@ -335,17 +335,26 @@ declaration) or dependency thereof that hasn't already been."
               (doom--with-package-recipes recipes (package local-repo recipe)
                 (unless force-p
                   ;; Ensure packages with outdated files/bytecode are rebuilt
-                  (let ((build-dir (straight--build-dir package))
-                        (repo-dir  (straight--repos-dir local-repo)))
-                    (and (not (plist-get recipe :no-build))
+                  (let* ((build-dir (straight--build-dir package))
+                         (repo-dir  (straight--repos-dir local-repo))
+                         (build (plist-get recipe :build))
+                         (want-byte-compile
+                          (or (eq build t)
+                              (memq 'compile build)))
+                         (want-native-compile
+                          (and (or (eq build t)
+                                   (memq 'native-compile build))
+                               (require 'comp nil t))))
+                    (when (eq (car build) :not)
+                      (setq want-byte-compile (not want-byte-compile)
+                            want-native-compile (not want-native-compile)))
+                    (and (or want-byte-compile want-native-compile)
                          (or (file-newer-than-file-p repo-dir build-dir)
                              (file-exists-p (straight--modified-dir (or local-repo package)))
-                             (cl-loop with want-byte   = (straight--byte-compile-package-p recipe)
-                                      with want-native = (if (require 'comp nil t) (straight--native-compile-package-p recipe))
-                                      with outdated = nil
+                             (cl-loop with outdated = nil
                                       for file in (doom-files-in build-dir :match "\\.el$" :full t)
-                                      if (or (if want-byte   (doom--elc-file-outdated-p file))
-                                             (if want-native (doom--eln-file-outdated-p file)))
+                                      if (or (if want-byte-compile   (doom--elc-file-outdated-p file))
+                                             (if want-native-compile (doom--eln-file-outdated-p file)))
                                       do (setq outdated t)
                                          (when want-native
                                            (push file doom--eln-output-expected))

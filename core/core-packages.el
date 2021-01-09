@@ -235,7 +235,12 @@ processed."
 
 (defun doom-package-recipe (package &optional prop nil-value)
   "Returns the `straight' recipe PACKAGE was registered with."
-  (let ((plist (gethash (symbol-name package) straight--recipe-cache)))
+  (let* ((recipe (straight-recipes-retrieve package))
+         (plist (doom-plist-merge
+                 (plist-get (alist-get package doom-packages) :recipe)
+                 (cdr (if (memq (car recipe) '(quote \`))
+                          (eval recipe t)
+                        recipe)))))
     (if prop
         (if (plist-member plist prop)
             (plist-get plist prop)
@@ -244,8 +249,14 @@ processed."
 
 (defun doom-package-recipe-repo (package)
   "Resolve and return PACKAGE's (symbol) local-repo property."
-  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
-            (repo (straight-vc-local-repo-name recipe)))
+  (if-let* ((recipe (copy-sequence (doom-package-recipe package)))
+            (recipe (if (and (not (plist-member recipe :type))
+                             (memq (plist-get recipe :host) '(github gitlab bitbucket)))
+                        (plist-put recipe :type 'git)
+                      recipe))
+            (repo (if-let (local-repo (plist-get recipe :local-repo))
+                      (file-name-nondirectory (directory-file-name local-repo))
+                    (ignore-errors (straight-vc-local-repo-name recipe)))))
       repo
     (symbol-name package)))
 
@@ -482,7 +493,7 @@ elsewhere."
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
                (&key local-repo _files _flavor
-                     _no-build _build _post-build _no-byte-compile
+                     _build _pre-build _post-build _no-byte-compile
                      _no-native-compile _no-autoloads _type _repo _host _branch
                      _remote _nonrecursive _fork _depth)
                recipe

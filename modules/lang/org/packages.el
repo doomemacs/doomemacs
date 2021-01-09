@@ -14,10 +14,11 @@
            ;;      root. Of course, this command won't work in a sparse clone,
            ;;      and more than that, initiating these compilation step is a
            ;;      hassle, so...
-           :build (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
-                    (insert "(fset 'org-release (lambda () \"9.5\"))\n"
-                            "(fset 'org-git-version #'ignore)\n"
-                            "(provide 'org-version)\n")))
+           :pre-build
+           (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
+             (insert "(fset 'org-release (lambda () \"9.5\"))\n"
+                     "(fset 'org-git-version #'ignore)\n"
+                     "(provide 'org-version)\n")))
   :pin "7c8dce72bd5d86157dd1dda2ba0a21ac86084426"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
