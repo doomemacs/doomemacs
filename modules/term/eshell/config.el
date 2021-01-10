@@ -73,8 +73,6 @@ You should use `set-eshell-alias!' to change this.")
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
 
-  (add-to-list 'eshell-modules-list 'eshell-tramp)
-
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
 
@@ -104,6 +102,10 @@ You should use `set-eshell-alias!' to change this.")
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
   ;; or configure `+eshell-aliases' via elisp.
   (advice-add #'eshell-write-aliases-list :override #'ignore)
+
+  ;; REVIEW In Emacs 27 and newer, waiting for esh-module is unnecessary.
+  (after! esh-module
+    (add-to-list 'eshell-modules-list 'eshell-tramp))
 
   ;; Visual commands require a proper terminal. Eshell can't handle that, so
   ;; it delegates these commands to a term buffer.
