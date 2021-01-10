@@ -78,12 +78,21 @@ while =t=, =s=, =j=, and =k= are flipped:
 - staging a file/region has been moved to =k=
 
 *** Possible contributions
+**** Avoid =g= and =z= to be used too often
 A nice addition in the future might be to have all the normal mode bindings that
 start with =g= start with =,= instead to avoid the curl on these common
 bindings. This is *not* implemented for the time being.
 
+The same thing could be done to =z=, potentially using =à= instead.
+
+**** Proper minor mode
 Also, implementing all those changes as a minor we could flip on and off would
 help with adoption
+
+**** Put "word" text objects to é instead of w
+"inside word" and "around word" are =iw= and =aw=, which use the very poorly
+rated =w= key in the bépo layout. Finding a way to use =é= or even =è= more for
+these would be a welcome change
 
 *** Org-mode
 =evil-org= allows to define =evil-org-movement-bindings= to automatically map
