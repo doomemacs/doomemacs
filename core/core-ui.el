@@ -547,6 +547,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
+;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
+(setq custom-theme-directory (concat doom-private-dir "themes/"))
+
 ;; Always prioritize the user's themes above the built-in/packaged ones.
 (setq custom-theme-load-path
       (cons 'custom-theme-directory

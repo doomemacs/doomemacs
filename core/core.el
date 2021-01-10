@@ -217,7 +217,6 @@ users).")
 ;; We avoid `no-littering' because it's a mote too opinionated for our needs.
 (setq async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
       custom-file                  (concat doom-private-dir "custom.el")
-      custom-theme-directory       (concat doom-private-dir "themes/")
       desktop-dirname              (concat doom-etc-dir "desktop")
       desktop-base-file-name       "autosave"
       desktop-base-lock-name       "autosave-lock"
