@@ -94,6 +94,7 @@ variable for an explanation of the defaults (in comments). See
       comint
       company
       compile
+      consult
       (custom cus-edit)
       cus-theme
       daemons
@@ -101,6 +102,7 @@ variable for an explanation of the defaults (in comments). See
       deadgrep
       debbugs
       debug
+      dictionary
       diff-mode
       dired
       dired-sidebar
@@ -190,6 +192,7 @@ variable for an explanation of the defaults (in comments). See
       reftex
       restclient
       rg
+      ripgrep
       rjsx-mode
       robe
       rtags

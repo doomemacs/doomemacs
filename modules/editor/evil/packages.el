@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "d6cf6680ec52733ea78dc530ed75fadc5171c758")
+(package! evil :pin "cc9d6886b418389752a0591b9fcb270e83234cf9")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
@@ -18,7 +18,7 @@
 (package! evil-snipe :pin "6dcac7f2516c6137a2de532fc2c052f242559ee3")
 (package! evil-surround :pin "346d4d85fcf1f9517e9c4991c1efe68b4130f93a")
 (package! evil-textobj-anyblock :pin "ff00980f0634f95bf2ad9956b615a155ea8743be")
-(package! evil-traces :pin "bc25cae9fa5ab0ba1507827f0944f52ce0ca7462")
+(package! evil-traces :pin "290b5323542c46af364ec485c8ec9000040acf90")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
 (package! exato :pin "aee7af7b7a0e7551478f453d1de7d5b9cb2e06c4")
 (package! evil-quick-diff
@@ -33,4 +33,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "ab5bb7c39199518d98035ef201096704a21a97ea"))
+  (package! evil-collection :pin "e7be9f53a05c81ef9e89c2f053ba62048e6afd69"))
