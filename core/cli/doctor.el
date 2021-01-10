@@ -48,9 +48,15 @@ in."
 
   ;; REVIEW Refactor me
   (print! (start "Checking your Emacs version..."))
-  (when EMACS28+
-    (warn! "Emacs %s detected. Doom doesn't support Emacs 28/HEAD. It is unstable and may cause errors."
+  (cond
+   (EMACS28+
+    (warn! (concat "Emacs %s detected. Doom should support this version, but be prepared for "
+                   "Emacs updates causing breakages.")
            emacs-version))
+   ((= emacs-major-version 26)
+    (warn! (concat "Emacs %s detected. Doom is dropping Emacs 26.x support very soon. Consider "
+                   "upgrading to Emacs 27.x.")
+           emacs-version)))
 
   (print! (start "Checking for Emacs config conflicts..."))
   (when (file-exists-p "~/.emacs")
