@@ -32,7 +32,7 @@
 (package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
 ;; core-editor.el
-(package! better-jumper :pin "e3a6546aa626b9a79ae451c88f44cf26f9d1a919")
+(package! better-jumper :pin "5ef53fcee4e74f397c8d275679e5596b52582b57")
 (package! dtrt-indent :pin "854b9a1ce93d9926018a0eb18e6e552769c5407d")
 (package! helpful :pin "584ecc887bb92133119f93a6716cdf7af0b51dca")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
