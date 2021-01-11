@@ -113,7 +113,7 @@ ready to be pasted in a bug report on github."
     (letf! ((defun sh (&rest args) (cdr (apply #'doom-call-process args)))
             (defun abbrev-path (path)
               (replace-regexp-in-string
-               (regexp-quote (user-login-name)) "$USER"
+               (concat "\\<" (regexp-quote (user-login-name)) "\\>") "$USER"
                (abbreviate-file-name path))))
       `((system
          (type   . ,system-type)
