@@ -289,17 +289,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; where we resize windows too quickly.
 (setq window-resize-pixelwise nil)
 
-;; We do this in early-init.el too, but in case the user is on Emacs 26 we do it
-;; here too: disable tool and scrollbars, as Doom encourages keyboard-centric
-;; workflows, so these are just clutter (the scrollbar also impacts
-;; performance).
+;; Disable tool, menu, and scrollbars. Doom is designed to be keyboard-centric,
+;; so these are just clutter (the scrollbar also impacts performance). Whats
+;; more, the menu bar exposes functionality that Doom doesn't endorse.
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 
-;; These are disabled directly through their frame parameters, to avoid the
-;; extra work their minor modes do, but we have to unset these variables
-;; ourselves, otherwise users will have to cycle them twice to re-enable them.
+;; These are disabled directly through their frame parameters to avoid the extra
+;; work their minor modes do, but their variables must be unset too, otherwise
+;; users will have to cycle them twice to re-enable them.
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
