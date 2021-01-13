@@ -61,7 +61,7 @@ If your font does not provide some glyphs, this package will try its best to fin
 A list of fonts with good unicode coverage can be found on the page of the [[https://github.com/rolandwalker/unicode-fonts#minimum-useful-fonts][unicode-fonts]] package.
 
 ** Advanced configuration
-Consult the [[https://github.com/rolandwalker/unicode-font][unicode-fonts]] package documentation for a description of more advanced configuration. The configuration should be placed, as usual, in your private =config.el= wrapped in an ~(after! unicode-fonts)~ block. The variable ~unicode-fonts-blocks~ contains a list of all unicode block names and their character ranges. The default fonts to search for glyphs are in the variable ~unicode-fonts-block-font-mapping~.
+Consult the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package documentation for a description of more advanced configuration. The configuration should be placed, as usual, in your private =config.el= wrapped in an ~(after! unicode-fonts)~ block. The variable ~unicode-fonts-blocks~ contains a list of all unicode block names and their character ranges. The default fonts to search for glyphs are in the variable ~unicode-fonts-block-font-mapping~.
 
 If you want to use the font =Symbola= for =Miscellaneous Symbols=  by default you could add
 #+BEGIN_SRC elisp
