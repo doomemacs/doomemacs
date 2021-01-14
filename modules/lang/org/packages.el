@@ -19,7 +19,7 @@
              (insert "(fset 'org-release (lambda () \"9.5\"))\n"
                      "(fset 'org-git-version #'ignore)\n"
                      "(provide 'org-version)\n")))
-  :pin "6b83c6e4eaec4af47a90d05c3410d4637d8cb8da"
+  :pin "2a4578b103a9f5e70f50523cf6b28655a56c2cbe"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
   ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
