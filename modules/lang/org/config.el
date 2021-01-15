@@ -823,6 +823,11 @@ between the two."
          "o" #'org-agenda-clock-out
          "r" #'org-agenda-clockreport-mode
          "s" #'org-agenda-show-clocking-issues)
+        (:prefix ("P" . "Org Priority")
+         "d" #'org-agenda-priority-down
+         "p" #'org-agenda-priority
+         "u" #'org-agenda-priority-up)
+        "p" #'org-agenda-priority
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "t" #'org-agenda-todo))
