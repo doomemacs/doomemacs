@@ -85,7 +85,7 @@ results buffer.")
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (and (markerp (bound-and-true-p +ivy--origin))
+      (and ((bound-and-true-p +ivy--origin))
            (not (equal (ignore-errors (with-ivy-window (point-marker)))
                        +ivy--origin))
            (with-current-buffer (marker-buffer +ivy--origin)
