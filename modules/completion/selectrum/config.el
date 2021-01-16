@@ -43,9 +43,11 @@
   :after (consult flycheck))
 
 (use-package! embark
+  :defer t
   :init
   (define-key!
     "C-S-a" #'embark-act)
+  ;; TODO need to figure out what keybindings to put here
   (define-key! selectrum-minibuffer-map
     "C-c C-o" #'embark-export
     "C-c C-c" #'embark-act-noexit))
