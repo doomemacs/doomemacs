@@ -159,6 +159,8 @@ users).")
   (mapc (doom-partial #'add-to-list 'comp-deferred-compilation-deny-list)
         (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
           (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
+                (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
+                (concat local-dir-re ".*/with-editor\\.el\\'")
                 ;; https://github.com/nnicandro/emacs-jupyter/issues/297
                 (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
   ;; Default to using all cores, rather than half of them, since we compile
