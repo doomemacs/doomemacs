@@ -10,8 +10,9 @@ If prefix ARG is set, prompt for a directory to search from."
               (read-directory-name "Search directory: ")
             default-directory)))
     (call-interactively
-     (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
-           ((featurep! :completion helm) #'+helm/project-search-from-cwd)
+     (cond ((featurep! :completion ivy)       #'+ivy/project-search-from-cwd)
+           ((featurep! :completion helm)      #'+helm/project-search-from-cwd)
+           ((featurep! :completion selectrum) #'+selectrum/project-search-from-cwd)
            (#'rgrep)))))
 
 ;;;###autoload
@@ -45,8 +46,9 @@ If prefix ARG is set, include ignored/hidden files."
                  (user-error "There are no known projects"))
              default-directory)))
     (call-interactively
-     (cond ((featurep! :completion ivy)  #'+ivy/project-search)
-           ((featurep! :completion helm) #'+helm/project-search)
+     (cond ((featurep! :completion ivy)       #'+ivy/project-search)
+           ((featurep! :completion helm)      #'+helm/project-search)
+           ((featurep! :completion selectrum) #'+selectrum/project-search)
            (#'projectile-ripgrep)))))
 
 ;;;###autoload
