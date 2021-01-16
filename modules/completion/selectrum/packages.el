@@ -4,9 +4,11 @@
 (package! selectrum)
 (when (featurep! +prescient)
   (package! selectrum-prescient))
-
+(when (featurep! +orderless)
+  (package! orderless))
 (package! consult)
-(package! consult-flycheck)
+(when (featurep! :checkers syntax)
+  (package! consult-flycheck))
 (package! embark)
 (package! embark-consult)
 (package! marginalia)
