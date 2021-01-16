@@ -11,8 +11,8 @@
 (when (featurep! +prescient)
   (use-package! selectrum-prescient
     :after selectrum
-    :hook ((doom-first-input . selectrum-prescient-mode)
-           (doom-first-input . prescient-persist-mode))))
+    :hook ((selectrum-mode . selectrum-prescient-mode)
+           (selectrum-mode . prescient-persist-mode))))
 
 (use-package! orderless
   :when (featurep! +orderless)
