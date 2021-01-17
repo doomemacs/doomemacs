@@ -648,7 +648,7 @@ set earlier in the ‘setq-local’.  The return value of the
       (macroexp-progn (nreverse expr)))))
 
 (eval-when! (version< emacs-version "27.1")
-  ;; DEPRECATED Backported from Emacs 27; earlier verisons don't have REMOTE arg
+  ;; DEPRECATED Backported from Emacs 27; earlier versions don't have REMOTE arg
   (defun executable-find (command &optional remote)
     "Search for COMMAND in `exec-path' and return the absolute file name.
 Return nil if COMMAND is not found anywhere in `exec-path'.  If
