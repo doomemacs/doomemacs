@@ -387,45 +387,32 @@ Must be set before org-msg is loaded to take effect.")
 
 (when (featurep! +gmail)
   (after! mu4e
-    (defvar +mu4e-gmail-addresses nil
-      "A list of email addresses which, despite not:
-- having '@gmail.com' in them, or
-- being in a maildir where the name includes 'gmail'
+    (defvar +mu4e-gmail-accounts nil
+      "Gmail accounts that do not contain \"gmail\" in address and maildir.
 
-Should be treated as a gmail address.")
+An alist of Gmail addresses of the format \((\"username@domain.com\" . \"account-maildir\"))
+to which Gmail integrations (behind the `+gmail' flag of the `mu4e' module) should be applied.
+
+See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
 
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
           (lambda () ;; TODO make use +mu4e-msg-gmail-p
             (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
-                    (member (message-sendmail-envelope-from) +mu4e-gmail-addresses))
-                'delete 'sent))
-
-          ;; don't need to run cleanup after indexing for gmail
-          mu4e-index-cleanup nil
-
-          ;; because gmail uses labels as folders we can use lazy check since
-          ;; messages don't really "move"
-          mu4e-index-lazy-check t)
+                    (member (message-sendmail-envelope-from)
+                            (mapcar #'car +mu4e-gmail-accounts)))
+                'delete 'sent)))
 
     (defun +mu4e-msg-gmail-p (msg)
-      (or
-       (string-match-p "@gmail.com"
-                       (cond
-                        ((member (mu4e-message-field msg :to)
-                                 (append (mu4e-personal-addresses)
-                                         +mu4e-gmail-addresses))
-                         (mu4e-message-field msg :to))
-                        ((member (mu4e-message-field msg :from)
-                                 (append (mu4e-personal-addresses)
-                                         +mu4e-gmail-addresses))
-                         (mu4e-message-field msg :from))
-                        (t "")))
-       (string-match-p "gmail" (mu4e-message-field msg :maildir))))
+      (let ((root-maildir
+             (replace-regexp-in-string "/.*" ""
+                                       (substring (mu4e-message-field msg :maildir) 1))))
+        (or (string-match-p "gmail" root-maildir)
+            (member root-maildir (mapcar #'cdr +mu4e-gmail-accounts)))))
 
     ;; In my workflow, emails won't be moved at all. Only their flags/labels are
     ;; changed. Se we redefine the trash and refile marks not to do any moving.
-    ;; However, the real magic happens in `+mu4e|gmail-fix-flags'.
+    ;; However, the real magic happens in `+mu4e-gmail-fix-flags-h'.
     ;;
     ;; Gmail will handle the rest.
     (defun +mu4e--mark-seen (docid _msg target)
