@@ -183,12 +183,12 @@ employed so that flycheck still does *some* helpful linting.")
     "Add Doom's own demos to help buffers."
     :around #'elisp-demos--search
     (or (funcall orig-fn symbol)
-        (when-let (demos-file (doom-glob doom-docs-dir "api.org"))
+        (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
           (with-temp-buffer
             (insert-file-contents demos-file)
             (goto-char (point-min))
             (when (re-search-forward
-                   (format "^\\*\\*\\* %s$" (regexp-quote (symbol-name symbol)))
+                   (format "^\\*\\* %s$" (regexp-quote (symbol-name symbol)))
                    nil t)
               (let (beg end)
                 (forward-line 1)

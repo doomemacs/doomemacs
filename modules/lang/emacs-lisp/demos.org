@@ -1,48 +1,42 @@
 #+TITLE: API Demos
 #+PROPERTY: header-args:elisp :results pp
 
-This appendix serves as a reference on how to use Doom Emacs' standard library.
-It is integrated into Helpful, in Doom.
+This file contains demos of Doom's public API; its core library, macros, and
+autodefs. It is used by the =elisp-demos= package to display examples of their
+usage from their documentation (e.g. =SPC h f add-hook\!=).
 
 * Table of Contents :TOC_3:
-- [[#examples-for-dooms-library][Examples for Doom's library]]
-  - [[#core-lib][core-lib]]
-    - [[#add-hook][add-hook!]]
-    - [[#add-transient-hook][add-transient-hook!]]
-    - [[#after][after!]]
-    - [[#appendq][appendq!]]
-    - [[#custom-set-faces][custom-set-faces!]]
-    - [[#custom-theme-set-faces][custom-theme-set-faces!]]
-    - [[#defer-feature][defer-feature!]]
-    - [[#defer-until][defer-until!]]
-    - [[#disable-packages][disable-packages!]]
-    - [[#doom][doom!]]
-    - [[#file-exists-p][file-exists-p!]]
-    - [[#cmd][cmd!]]
-    - [[#cmd-1][cmd!!]]
-    - [[#cmds][cmds!]]
-    - [[#kbd][kbd!]]
-    - [[#letenv][letenv!]]
-    - [[#load][load!]]
-    - [[#map][map!]]
-    - [[#package][package!]]
-    - [[#pushnew][pushnew!]]
-    - [[#prependq][prependq!]]
-    - [[#quiet][quiet!]]
-    - [[#remove-hook][remove-hook!]]
-    - [[#setq][setq!]]
-    - [[#setq-hook][setq-hook!]]
-    - [[#unsetq-hook][unsetq-hook!]]
-    - [[#use-package][use-package!]]
-- [[#interesting-snippets][Interesting snippets]]
-  - [[#center-emacs-initial-frame-with-a-fixed-size][Center Emacs' initial frame with a fixed size]]
-  - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
-  - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
-  - [[#create-a-paste-transient-state-to-cycle-through-kill-ring-on-paste][Create a paste-transient-state to cycle through kill ring on paste]]
+- [[#core-lib][core-lib]]
+  - [[#add-hook][add-hook!]]
+  - [[#add-transient-hook][add-transient-hook!]]
+  - [[#after][after!]]
+  - [[#appendq][appendq!]]
+  - [[#custom-set-faces][custom-set-faces!]]
+  - [[#custom-theme-set-faces][custom-theme-set-faces!]]
+  - [[#defer-feature][defer-feature!]]
+  - [[#defer-until][defer-until!]]
+  - [[#disable-packages][disable-packages!]]
+  - [[#doom][doom!]]
+  - [[#file-exists-p][file-exists-p!]]
+  - [[#cmd][cmd!]]
+  - [[#cmd-1][cmd!!]]
+  - [[#cmds][cmds!]]
+  - [[#kbd][kbd!]]
+  - [[#letenv][letenv!]]
+  - [[#load][load!]]
+  - [[#map][map!]]
+  - [[#package][package!]]
+  - [[#pushnew][pushnew!]]
+  - [[#prependq][prependq!]]
+  - [[#quiet][quiet!]]
+  - [[#remove-hook][remove-hook!]]
+  - [[#setq][setq!]]
+  - [[#setq-hook][setq-hook!]]
+  - [[#unsetq-hook][unsetq-hook!]]
+  - [[#use-package][use-package!]]
 
-* Examples for Doom's library
-** core-lib
-*** add-hook!
+* core-lib
+** add-hook!
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
@@ -70,8 +64,8 @@ It is integrated into Helpful, in Doom.
     ...))
 #+END_SRC
 
-*** TODO add-transient-hook!
-*** after!
+** TODO add-transient-hook!
+** after!
 #+BEGIN_SRC elisp :eval no
 ;;; `after!' will take:
 
@@ -97,7 +91,7 @@ It is integrated into Helpful, in Doom.
 (after! rustic ...)
 (after! python ...)
 #+END_SRC
-*** appendq!
+** appendq!
 #+BEGIN_SRC elisp
 (let ((x '(a b c)))
   (appendq! x '(c d e))
@@ -118,7 +112,7 @@ It is integrated into Helpful, in Doom.
 #+RESULTS:
 : (a b c c d e f g h)
 
-*** custom-set-faces!
+** custom-set-faces!
 #+BEGIN_SRC elisp :eval no
 (custom-set-faces!
  '(outline-1 :weight normal)
@@ -152,7 +146,7 @@ It is integrated into Helpful, in Doom.
  `(outline-2 :background ,(doom-color 'blue)))
 #+END_SRC
 
-*** custom-theme-set-faces!
+** custom-theme-set-faces!
 #+BEGIN_SRC elisp :eval no
 (custom-theme-set-faces! 'doom-one
  '(outline-1 :weight normal)
@@ -186,15 +180,15 @@ It is integrated into Helpful, in Doom.
  `(outline-2 :background ,(doom-color 'blue)))
 #+END_SRC
 
-*** TODO defer-feature!
-*** TODO defer-until!
-*** disable-packages!
+** TODO defer-feature!
+** TODO defer-until!
+** disable-packages!
 #+BEGIN_SRC elisp :eval no
 ;; Disable packages enabled by DOOM
 (disable-packages! some-package second-package)
 #+END_SRC
 
-*** doom!
+** doom!
 #+BEGIN_SRC elisp :eval no
 (doom! :completion
        company
@@ -224,7 +218,7 @@ It is integrated into Helpful, in Doom.
        (default +bindings +smartparens))
 #+END_SRC
 
-*** file-exists-p!
+** file-exists-p!
 #+BEGIN_SRC elisp
 (file-exists-p! "init.el" doom-emacs-dir)
 #+END_SRC
@@ -241,12 +235,12 @@ It is integrated into Helpful, in Doom.
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
-*** cmd!
+** cmd!
 #+BEGIN_SRC elisp :eval no
 (map! "C-j" (cmd! (newline) (indent-according-to-mode)))
 #+END_SRC
 
-*** cmd!!
+** cmd!!
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
 the prefix arg into the command call:
@@ -265,7 +259,7 @@ Or to create aliases for functions that behave differently:
 (fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
 #+END_SRC
 
-*** cmds!
+** cmds!
 #+BEGIN_SRC elisp :eval no
 (map! :i [tab] (cmds! (and (featurep! :editor snippets)
                            (bound-and-true-p yas-minor-mode)
@@ -285,13 +279,13 @@ Or to create aliases for functions that behave differently:
                       #'evil-jump-item))
 #+END_SRC
 
-*** kbd!
+** kbd!
 #+BEGIN_SRC elisp :eval no
 (map! "," (kbd! "SPC")
       ";" (kbd! ":"))
 #+END_SRC
 
-*** letenv!
+** letenv!
 #+BEGIN_SRC elisp
 (letenv! (("SHELL" "/bin/sh"))
   (shell-command-to-string "echo $SHELL"))
@@ -300,7 +294,7 @@ Or to create aliases for functions that behave differently:
 #+RESULTS:
 : "/bin/sh\n"
 
-*** load!
+** load!
 #+BEGIN_SRC elisp :eval no
 ;;; Lets say we're in ~/.doom.d/config.el
 (load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
@@ -311,7 +305,7 @@ Or to create aliases for functions that behave differently:
 (load! "~/.maynotexist" nil t)
 #+END_SRC
 
-*** map!
+** map!
 #+BEGIN_SRC elisp :eval no
 (map! :map magit-mode-map
       :m  "C-r" 'do-something           ; C-r in motion state
@@ -406,7 +400,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
       (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
 #+END_SRC
 
-*** package!
+** package!
 #+BEGIN_SRC elisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
 ;; specified in `straight-recipe-repositories':
@@ -438,7 +432,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (package! evil :ignore (not (equal system-name "my-desktop")))
 #+END_SRC
 
-*** pushnew!
+** pushnew!
 #+BEGIN_SRC elisp
 (let ((list '(a b c)))
   (pushnew! list 'c 'd 'e)
@@ -448,7 +442,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+RESULTS:
 : (e d a b c)
 
-*** prependq!
+** prependq!
 #+BEGIN_SRC elisp
 (let ((x '(a b c)))
   (prependq! x '(c d e))
@@ -469,12 +463,12 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+RESULTS:
 : (c d e f g h a b c)
 
-*** quiet!
+** quiet!
 #+BEGIN_SRC elisp :eval no
 ;; Enters recentf-mode without extra output
 (quiet! (recentf-mode +1))
 #+END_SRC
-*** remove-hook!
+** remove-hook!
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `remove-hook'. In
 ;; that case, use that instead.
@@ -492,7 +486,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; Removing arbitrary forms (must be exactly the same as the definition)
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
 #+END_SRC
-*** setq!
+** setq!
 #+BEGIN_SRC elisp
 ;; Each of these have a setter associated with them, which must be triggered in
 ;; order for their new values to have an effect.
@@ -500,7 +494,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
        evil-want-C-u-scroll nil
        evil-want-C-d-scroll nil)
 #+END_SRC
-*** setq-hook!
+** setq-hook!
 #+BEGIN_SRC elisp :eval no
 ;; Set multiple variables after a hook
 (setq-hook! 'markdown-mode-hook
@@ -512,7 +506,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
   hscroll-margin 0)
 #+END_SRC
 
-*** unsetq-hook!
+** unsetq-hook!
 #+BEGIN_SRC elisp :eval no
 (unsetq-hook! 'markdown-mode-hook line-spacing)
 
@@ -526,7 +520,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (unsetq-hook! (one-mode second-mode) enable-something)
 #+END_SRC
 
-*** use-package!
+** use-package!
 #+BEGIN_SRC elisp :eval no
 ;; Use after-call to load package before hook
 (use-package! projectile
@@ -541,79 +535,3 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (use-package! abc
   :defer-incrementally t)
 #+END_SRC
-* Interesting snippets
-** Center Emacs' initial frame with a fixed size
-#+BEGIN_SRC elisp
-(let ((width  500)
-      (height 250)
-      (display-height (display-pixel-height))
-      (display-width  (display-pixel-width)))
-  (pushnew! initial-frame-alist
-            `(left . ,(- (/ display-width 2) (/ width 2)))
-            `(top . ,(- (/ display-height 2) (/ height 2)))
-            `(width text-pixels ,width)
-            `(height text-pixels ,height)))
-#+END_SRC
-
-** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions
-#+BEGIN_SRC elisp
-;; add to ~/.doom.d/config.el
-(when-let (dims (doom-store-get 'last-frame-size))
-  (cl-destructuring-bind ((left . top) width height fullscreen) dims
-    (setq initial-frame-alist
-          (append initial-frame-alist
-                  `((left . ,left)
-                    (top . ,top)
-                    (width . ,width)
-                    (height . ,height)
-                    (fullscreen . ,fullscreen))))))
-
-(defun save-frame-dimensions ()
-  (doom-store-put 'last-frame-size
-                  (list (frame-position)
-                        (frame-width)
-                        (frame-height)
-                        (frame-parameter nil 'fullscreen))))
-
-(add-hook 'kill-emacs-hook #'save-frame-dimensions)
-#+END_SRC
-
-** Update cursor shape under terminal Emacs
-Install [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]. The package isn't included in Doom because
-it is not maintained, unreasonably buggy, and lacks support for a number of
-terminals. Where it fails, it inserts unexpected characters into the buffer. To
-uphold the principle of least surprise, an unchanging cursor is less surprising
-than unwarranted characters.
-
-#+BEGIN_SRC elisp
-;; ~/.doom.d/packages.el
-(package! evil-terminal-cursor-changer)
-
-;; ~/.doom.d/config.el
-(use-package! evil-terminal-cursor-changer
-  :hook (tty-setup . evil-terminal-cursor-changer-activate))
-#+END_SRC
-
-Alternatively, an updated version exists at
-[[https://github.com/amosbird/evil-terminal-cursor-changer][amosbird/evil-terminal-cursor-changer]], with support for urxvt and tmux.
-
-** Create a paste-transient-state to cycle through kill ring on paste
-Replaces the default evil-paste binding to paste then let you cycle through entries in your kill ring. Gives you more flexibility when copying to your clipboard, making edits, then deciding to paste after.
-
-You will need to enable the `hydra` module first.
-
-#+BEGIN_SRC elisp
-(defhydra hydra-paste (:color red
-                       :hint nil)
-  "\n[%s(length kill-ring-yank-pointer)/%s(length kill-ring)] \
- [_C-j_/_C-k_] cycles through yanked text, [_p_/_P_] pastes the same text \
- above or below. Anything else exits."
-  ("C-j" evil-paste-pop)
-  ("C-k" evil-paste-pop-next)
-  ("p" evil-paste-after)
-  ("P" evil-paste-before))
-
-(map! :nv "p" #'hydra-paste/evil-paste-after
-      :nv "P" #'hydra-paste/evil-paste-before)
-#+END_SRC
-
