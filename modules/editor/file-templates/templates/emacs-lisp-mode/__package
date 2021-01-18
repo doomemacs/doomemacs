@@ -1,4 +1,4 @@
-;;; `(file-name-nondirectory buffer-file-name)`${1: --- ${2:description}} -*- lexical-binding: t; -*-
+;;; `(file-name-nondirectory buffer-file-name)`${1: --- ${2:Description}} -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) `(format-time-string "%Y")` `user-full-name`
 ;;
@@ -7,9 +7,9 @@
 ;; Created: `(format-time-string "%B %d, %Y")`
 ;; Modified: `(format-time-string "%B %d, %Y")`
 ;; Version: 0.0.1
-;; Keywords:
+;; Keywords: `(mapconcat #'symbol-name (mapcar #'car finder-known-keywords) " ")`
 ;; Homepage: https://github.com/`user-login-name`/`(file-name-base buffer-file-name)`
-;; Package-Requires: ((emacs `emacs-version`) (cl-lib "0.5"))
+;; Package-Requires: ((emacs "24.3"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
