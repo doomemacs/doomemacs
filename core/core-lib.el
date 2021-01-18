@@ -100,7 +100,7 @@ at the values with which this function was called."
       (lookup-key keymap keys)
     (cl-loop for keymap
              in (append (cl-loop for alist in emulation-mode-map-alists
-                                 if (boundp alist)
+                                 if (and (symbolp alist)(boundp alist))
                                  append (mapcar #'cdr (symbol-value alist)))
                         (list (current-local-map))
                         (mapcar #'cdr minor-mode-overriding-map-alist)
