@@ -85,12 +85,12 @@ results buffer.")
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (and (markerp (bound-and-true-p +ivy--origin))
-           (not (equal (ignore-errors (with-ivy-window (point-marker)))
-                       +ivy--origin))
-           (with-current-buffer (marker-buffer +ivy--origin)
-             (better-jumper-set-jump +ivy--origin)))
-      (set-marker +ivy--origin nil)
+      (when (markerp (bound-and-true-p +ivy--origin))
+        (unless (equal (ignore-errors (with-ivy-window (point-marker)))
+                       +ivy--origin)
+          (with-current-buffer (marker-buffer +ivy--origin)
+            (better-jumper-set-jump +ivy--origin)))
+        (set-marker +ivy--origin nil))
       (setq +ivy--origin nil)))
 
   (after! yasnippet
