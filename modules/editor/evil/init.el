@@ -188,6 +188,7 @@ variable for an explanation of the defaults (in comments). See
       python
       quickrun
       racer
+      racket-describe
       realgud
       reftex
       restclient
