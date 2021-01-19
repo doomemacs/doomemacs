@@ -54,7 +54,7 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "360cae2c70ab28c7a7848c0c56473d984f0243e5"))
 (when (featurep! +journal)
-  (package! org-journal :pin "c0836483ae43e525bf7547b7a789d171eda84c84"))
+  (package! org-journal :pin "08d5fce95023c015372678d353388ad0dae8952b"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
