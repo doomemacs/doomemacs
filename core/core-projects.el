@@ -145,10 +145,10 @@ c) are not valid projectile projects."
                     projectile-project-root-files)
             projectile-project-root-files-bottom-up nil)))
 
-  ;; Some utilities have issues with windows-style paths in MSYS, so emit
-  ;; unix-style paths instead.
+  ;; Some MSYS utilities auto expanded the `/' path separator, so we need to prevent it.
   (when IS-WINDOWS
-    (setenv "MSYS_NO_PATHCONV" "1"))
+    (setenv "MSYS_NO_PATHCONV" "1") ; Fix path in Git Bash
+    (setenv "MSYS2_ARG_CONV_EXCL" "--path-separator")) ; Fix path in MSYS2
 
   ;; HACK Don't rely on VCS-specific commands to generate our file lists. That's
   ;;      7 commands to maintain, versus the more generic, reliable and
@@ -185,7 +185,7 @@ And if it's a function, evaluate it."
            ;; Otherwise, resort to ripgrep, which is also faster than find
            ((executable-find "rg" t)
             (concat "rg -0 --files --follow --color=never --hidden -g!.git"
-                    (if IS-WINDOWS " --path-separator /")))
+                    (if IS-WINDOWS " --path-separator=/")))
            ("find . -type f -print0"))))
 
   (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)

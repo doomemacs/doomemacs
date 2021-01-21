@@ -222,15 +222,6 @@ results buffer.")
   (when (stringp counsel-rg-base-command)
     (setq counsel-rg-base-command (split-string counsel-rg-base-command)))
 
-  ;; REVIEW Fix #3215: prevents mingw on Windows throwing an error trying to
-  ;;        expand / to an absolute path. Remove this when it is fixed upstream
-  ;;        in counsel.
-  (when (and (memq system-type '(windows-nt ms-dos))
-             (listp counsel-rg-base-command)
-             (member "--path-separator" counsel-rg-base-command))
-    (setf (cadr (member "--path-separator" counsel-rg-base-command))
-          "/"))
-
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
@@ -299,7 +290,7 @@ results buffer.")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
                                 collect (concat "!" dir))
-                       (if IS-WINDOWS (list "--path-separator" "/"))))
+                       (if IS-WINDOWS '("--path-separator=/"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
