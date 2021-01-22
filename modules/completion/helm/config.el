@@ -1,7 +1,7 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
 ;; Posframe (requires +childframe)
-(defvar +helm-posframe-handler #'+helm-poshandler-frame-center-near-bottom-fn
+(defvar +helm-posframe-handler #'posframe-poshandler-frame-center
   "The function that determines the location of the childframe. It should return
 a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
@@ -56,8 +56,8 @@ be negative.")
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Default helm window sizes
-        helm-display-buffer-default-width nil
-        helm-display-buffer-default-height 0.25
+        ;; helm-display-buffer-default-width nil
+        ;; helm-display-buffer-default-height 0.25
         ;; When calling `helm-semantic-or-imenu', don't immediately jump to
         ;; symbol at point
         helm-imenu-execute-action-at-once-if-one nil
@@ -71,8 +71,7 @@ be negative.")
   (when (featurep! +childframe)
     ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
     ;; helm completion.
-    (setq iconify-child-frame 'make-invisible)
-    (setq helm-display-function #'+helm-posframe-display-fn))
+    (setq iconify-child-frame 'make-invisible))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-apropos-fuzzy-match fuzzy
@@ -189,3 +188,19 @@ be negative.")
 
 (use-package! helm-descbinds
   :hook (helm-mode . helm-descbinds-mode))
+
+(use-package! helm-icons
+  :after helm
+  :when (featurep! +icons)
+  :init
+  (setq helm-icons-provider 'all-the-icons)
+  (helm-icons-enable))
+
+
+(use-package! helm-posframe
+  :after helm
+  :when (featurep! +childframe)
+  :init (setq helm-posframe-parameters +helm-posframe-parameters
+              helm-posframe-poshandler +helm-posframe-handler)
+  :config
+  (helm-posframe-enable))

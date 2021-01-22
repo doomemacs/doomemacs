@@ -1,0 +1,191 @@
+#+TITLE:   completion/helm
+#+DATE:    January 22, 2021
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#install][Install]]
+    - [[#macos][MacOS]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#opensuse][openSUSE]]
+- [[#features][Features]]
+  - [[#jump-to-navigation][Jump-to navigation]]
+  - [[#project-search--replace][Project search & replace]]
+    - [[#search][Search]]
+    - [[#replace][Replace]]
+  - [[#in-buffer-searching][In-buffer searching]]
+  - [[#helm-integration-for-various-completing-commands][Helm integration for various completing commands]]
+    - [[#general][General]]
+    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
+    - [[#search-1][Search]]
+- [[#configuration][Configuration]]
+  - [[#icons][Icons]]
+  - [[#posframe][Posframe]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides Helm integration for a variety of Emacs commands, as well as
+a unified interface for project search and replace, powered by ripgrep.
+
+#+begin_quote
+I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
+lighter, simpler and faster in many cases.
+#+end_quote
+
+Ivy is considered a first-class citizen in Doom, however it is still possible to use Helm if you so desire.
+
+** Module Flags
++ =+fuzzy= Enables fuzzy completion for Helm searches.
++ =+childframe= Causes Helm to display in a floating child frame, above Emacs.
++ =+icons= Enables icons (supports both =all-the-icons= and =treemacs= icons)
+
+** Plugins
++ [[https://github.com/emacs-helm/helm][helm]]
++ [[https://github.com/microamp/helm-rg][helm-rg]]
++ [[https://github.com/emacs-jp/helm-c-yasnippet][helm-c-yasnippet]]
++ [[https://github.com/tuhdo/helm-company][helm-company]]
++ [[https://github.com/emacs-helm/helm-describe-modes][helm-describe-modes]]
++ [[https://github.com/bbatsov/helm-projectile][helm-projectile]]
++ [[https://github.com/abo-abo/swiper-helm][helm-swiper]]
++ [[https://github.com/emacs-helm/helm-descbinds][helm-descbinds]]
++ [[https://github.com/PythonNut/helm-flx][helm-flx]]* (=+fuzzy=)
++ [[https://github.com/tumashu/helm-posframe][helm-posframe]]* (=+childframe=)
++ [[https://github.com/emacs-helm/helm-org][helm-org]]* (=:lang org=)
++ [[https://github.com/yyoncho/helm-icons][helm-icons]]* (=+icons=)
+
+* Prerequisites
+This module depends on:
+
++ [[https://github.com/BurntSushi/ripgrep][ripgrep]] (rg)
+
+** Install
+*** MacOS
+#+BEGIN_SRC sh
+brew install ripgrep
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo::
+sudo pacman --needed --noconfirm -S ripgrep
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install ripgrep
+#+END_SRC
+
+* Features
+Much like Ivy, Helm is a /large/ framework and as such
+covering everything is not in scope, however a number
+of Doom-specific features are shown below:
+
+** Jump-to navigation
+Similar to Ivy, this module provides an interface to
+navigate within a project using =projectile=:
+
+| Keybind          | Description                         |
+|------------------+-------------------------------------|
+| =SPC p f=, =SPC SPC= | Jump to file in project             |
+| =SPC f f=, =SPC .=   | Jump to file from current directory |
+| =SPC s i=          | Jump to symbol in file              |
+
+** Project search & replace
+This module also provides interacetive text search and replace using ripgrep
+
+*** Search
+
+| Keybind | Description              |
+|---------+--------------------------|
+| =SPC s p= | Search project           |
+| =SPC s P= | Search another project   |
+| =SPC s d= | Search this directory    |
+| =SPC s D= | Search another directory |
+Prefixing these keys with the universal argument (=SPC u= for evil users; =C-u=
+otherwise) changes the behavior of these commands, instructing the underlying
+search engine to include ignored files.
+
+This module also provides Ex Commands for evil users:
+
+| Ex command             | Description                                                      |
+|------------------------+------------------------------------------------------------------|
+| ~:pg[rep][!] [QUERY]~  | Search project (if ~!~, include hidden files)                    |
+| ~:pg[rep]d[!] [QUERY]~ | Search from current directory (if ~!~, don't search recursively) |
+
+The optional `!` is equivalent to the universal argument for the previous
+commands.
+
+*** Replace
+
+These keybindings are available while a search is active:
+
+| Keybind   | Description                                   |
+|-----------+-----------------------------------------------|
+| =C-c C-o= | Open a buffer with your search results        |
+| =C-c C-e= | Open a writable buffer of your search results |
+| =C-SPC=   | Preview the current candidate                 |
+| =C-RET=   | Open the selected candidate in other-window   |
+
+Changes to the resulting wgrep buffer (opened by =C-c C-e=) can be committed
+with =C-c C-c= and aborted with =C-c C-k= (alternatively =ZZ= and =ZQ=, for evil
+users).
+
+** In-buffer searching
+The =swiper= package provides an interactive buffer search powered by helm. It
+can be invoked with:
+
++ =SPC s s= (~swiper-isearch~)
++ =SPC s S= (~swiper-isearch-thing-at-point~)
++ =SPC s b= (~swiper~)
++ ~:sw[iper] [QUERY]~
+
+A wgrep buffer can be opened from swiper with =C-c C-e=.
+** Helm integration for various completing commands
+Helm also has a number of overrides for built-in functionality:
+
+*** General
+| Keybind    | Description               |
+|------------+---------------------------|
+| =M-x=, =SPC := | Smarter, smex-powered M-x |
+| =SPC '=      | Resume last ivy session   |
+
+*** Jump to files, buffers or projects
+| Keybind          | Description                           |
+|------------------+---------------------------------------|
+| =SPC RET=          | Find bookmark                         |
+| =SPC f f=, =SPC .=   | Browse from current directory         |
+| =SPC p f=, =SPC SPC= | Find file in project                  |
+| =SPC f r=          | Find recently opened file             |
+| =SPC p p=          | Open another project                  |
+| =SPC b b=, =SPC ,=   | Switch to buffer in current workspace |
+| =SPC b B=, =SPC <=   | Switch to buffer                      |
+
+*** Search
+| Keybind | Description                               |
+|---------+-------------------------------------------|
+| =SPC p t= | List all TODO/FIXMEs in project           |
+| =SPC s b= | Search the current buffer                 |
+| =SPC s d= | Search this directory                     |
+| =SPC s D= | Search another directory                  |
+| =SPC s i= | Search for symbol in current buffer       |
+| =SPC s p= | Search project                            |
+| =SPC s P= | Search another project                    |
+| =SPC s s= | Search the current buffer (incrementally) |
+
+* Configuration
+** Icons
+Icons are now included, and support 2 providers ([[https://github.com/domtronn/all-the-icons.el][all-the-icons]] and [[https://github.com/Alexander-Miller/treemacs][treemacs]]).
+By default, to maintain consistency we use =all-the-icons=; however if you wish
+to modify this you can do so using the below snippet:
+
+#+begin_src emacs-lisp
+(after! helm
+  (setq helm-icons-provider 'treemacs))
+#+end_src
+
+** Posframe
+
+* Troubleshooting
