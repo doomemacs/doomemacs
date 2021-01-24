@@ -73,6 +73,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defun +org-init-agenda-h ()
   (unless org-agenda-files
     (setq-default org-agenda-files (list org-directory)))
+  (pushnew! global-hl-line-modes 'org-agenda-mode)
   (setq-default
    ;; Different colors for different priority levels
    org-agenda-deadline-faces
