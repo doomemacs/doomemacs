@@ -167,7 +167,7 @@
       (interactive "*p")
       ;; `javascript-mode' uses `c-do-auto-fill'. For the other cases,
       ;; `c-literal-limits' only works in cc buffers, erroring otherwise.
-      (when (and (or c-buffer-is-cc-mode (derived-mode-p 'javascript-mode 'js2-mode)))
+      (when (or c-buffer-is-cc-mode (derived-mode-p 'javascript-mode 'js2-mode))
         (when-let ((bounds (c-literal-limits)))
           (when (and
                  (eq (c-literal-type bounds) 'c)
@@ -195,8 +195,8 @@ Useful in `smartparens' pairs."
       (save-excursion (insert " ")))
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
-       csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
-       stylus-mode scala-mode)
+                csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
+                stylus-mode scala-mode)
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(+default-comment-spacing
