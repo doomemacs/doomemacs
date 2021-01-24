@@ -392,7 +392,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Highlights the current line
   :hook (doom-first-buffer . global-hl-line-mode)
   :init
-  (defvar global-hl-line-modes '(prog-mode text-mode conf-mode special-mode)
+  (defvar global-hl-line-modes
+    '(prog-mode text-mode conf-mode special-mode
+      org-agenda-mode)
     "What modes to enable `hl-line-mode' in.")
   :config
   ;; HACK I reimplement `global-hl-line-mode' so we can white/blacklist modes in
