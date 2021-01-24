@@ -159,35 +159,6 @@
                      :post-handlers '(("| " "SPC"))))
 
     ;; Expand C-style comment blocks.
-    (defadvice! +default-open-doc-comment-block-a (&rest _)
-      :before #'newline-and-indent
-      ;; Needed so downstream `advice'
-      ;; (`+default--newline-indent-and-continue-comments-a') can receive the
-      ;; prefix ARG for some reaosn.
-      (interactive "*p")
-      ;; `javascript-mode' uses `c-do-auto-fill'. For the other cases,
-      ;; `c-literal-limits' only works in cc buffers, erroring otherwise.
-      (when (or c-buffer-is-cc-mode (derived-mode-p 'javascript-mode 'js2-mode))
-        (when-let ((bounds (c-literal-limits)))
-          (when (and
-                 (eq (c-literal-type bounds) 'c)
-                 (cl-destructuring-bind (beg . end) bounds
-                   (and (save-excursion
-                          (goto-char beg)
-                          (or (looking-at-p "/\\*\\*")
-                              ;; Qt-Style doxygen comments should work only for
-                              ;; C++/C, because Java has JavaDoc and JavaScript
-                              ;; doesn't use them.
-                              (and (derived-mode-p 'c-mode 'c++-mode)
-                                   (looking-at-p "/\\*!"))))
-                        ;; Only expand non-expanded literals, i.e. /** */
-                        (= (line-number-at-pos beg) (line-number-at-pos end)))))
-            ;; We can't use `newline-and-indent' because that would be a
-            ;; circular dependency, causing endless recursion.
-            (save-excursion
-              (newline)
-              (indent-according-to-mode))))))
-
     (defun +default-comment-spacing (&rest _)
       "Insert \" | \", but without changing `this-command'.
 Useful in `smartparens' pairs."
@@ -274,6 +245,12 @@ Continues comments if executed from a commented line. Consults
              (fboundp comment-line-break-function))
     (dotimes (_ (or arg 1))
       (funcall comment-line-break-function nil))
+    (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'rust-mode
+                               'java-mode 'javascript-mode 'js2-mode)
+               (looking-at-p "[[:space:]]*\\*+/"))
+      (save-excursion
+        (newline)
+        (indent-according-to-mode)))
     t))
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
