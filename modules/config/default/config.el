@@ -164,7 +164,7 @@
       ;; Needed so downstream `advice'
       ;; (`+default--newline-indent-and-continue-comments-a') can receive the
       ;; prefix ARG for some reaosn.
-      (interactive "*P")
+      (interactive "*p")
       ;; `javascript-mode' uses `c-do-auto-fill'. For the other cases,
       ;; `c-literal-limits' only works in cc buffers, erroring otherwise.
       (when (and (or c-buffer-is-cc-mode (derived-mode-p 'javascript-mode 'js2-mode)))
@@ -268,7 +268,7 @@ Useful in `smartparens' pairs."
 Continues comments if executed from a commented line. Consults
 `doom-point-in-comment-functions' to determine if in a comment."
   :before-until #'newline-and-indent
-  (interactive "*P")
+  (interactive "*p")
   (when (and +default-want-RET-continue-comments
              (doom-point-in-comment-p)
              (fboundp comment-line-break-function))
