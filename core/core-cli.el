@@ -425,7 +425,8 @@ everywhere we use it (and internally)."
           interactive)))
 
 (defadvice! doom--straight-inject-load-path-a (orig-fn &rest args)
-  "Straight builds packages in an isolated Emacs child process, which "
+  "Straight builds packages in an isolated Emacs child process, which means
+needed packages may not be accessible when a package is compiled."
   :override #'straight--build-compile
   (let* ((package (plist-get recipe :package))
          (dir (straight--build-dir package)))
