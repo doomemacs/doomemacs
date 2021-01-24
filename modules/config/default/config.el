@@ -156,26 +156,53 @@
                      "<" ">"
                      :when '(+default-cc-sp-point-is-template-p
                              +default-cc-sp-point-after-include-p)
-                     :post-handlers '(("| " "SPC")))
-
-      (sp-local-pair '(c-mode c++-mode objc-mode java-mode)
-                     "/*!" "*/"
-                     :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
+                     :post-handlers '(("| " "SPC"))))
 
     ;; Expand C-style comment blocks.
-    (defun +default-open-doc-comments-block (&rest _ignored)
-      (save-excursion
-        (newline)
-        (indent-according-to-mode)))
+    (defadvice! +default-open-doc-comment-block-a (&rest _)
+      :before #'newline-and-indent
+      ;; Needed so downstream `advice'
+      ;; (`+default--newline-indent-and-continue-comments-a') can receive the
+      ;; prefix ARG for some reaosn.
+      (interactive "*P")
+      ;; `javascript-mode' uses `c-do-auto-fill'. For the other cases,
+      ;; `c-literal-limits' only works in cc buffers, erroring otherwise.
+      (when (and (or c-buffer-is-cc-mode (derived-mode-p 'javascript-mode 'js2-mode)))
+        (when-let ((bounds (c-literal-limits)))
+          (when (and
+                 (eq (c-literal-type bounds) 'c)
+                 (cl-destructuring-bind (beg . end) bounds
+                   (and (save-excursion
+                          (goto-char beg)
+                          (or (looking-at-p "/\\*\\*")
+                              ;; Qt-Style doxygen comments should work only for
+                              ;; C++/C, because Java has JavaDoc and JavaScript
+                              ;; doesn't use them.
+                              (and (derived-mode-p 'c-mode 'c++-mode)
+                                   (looking-at-p "/\\*!"))))
+                        ;; Only expand non-expanded literals, i.e. /** */
+                        (= (line-number-at-pos beg) (line-number-at-pos end)))))
+            ;; We can't use `newline-and-indent' because that would be a
+            ;; circular dependency, causing endless recursion.
+            (save-excursion
+              (newline)
+              (indent-according-to-mode))))))
+
+    (defun +default-comment-spacing (&rest _)
+      "Insert \" | \", but without changing `this-command'.
+Useful in `smartparens' pairs."
+      (insert " ")
+      (save-excursion (insert " ")))
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
        csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
        stylus-mode scala-mode)
      "/*" "*/"
      :actions '(insert)
-     :post-handlers '(("| " "SPC")
-                      (" | " "*")
-                      ("|[i]\n[i]" "RET")))
+     :post-handlers '(+default-comment-spacing
+                      ("[d-2]* |" "*")
+                      ("[d-2]! |" "!")
+                      ("||\n" "RET")))
 
     (after! smartparens-ml
       (sp-with-modes '(tuareg-mode fsharp-mode)
@@ -235,17 +262,18 @@
 ;;      and remap to their own newline-and-indent commands, and tackling all
 ;;      those cases was judged to be more work than dealing with the edge cases
 ;;      on a case by case basis.
-(defadvice! +default--newline-indent-and-continue-comments-a (&rest _)
+(defadvice! +default--newline-indent-and-continue-comments-a (&optional arg &rest _)
   "A replacement for `newline-and-indent'.
 
 Continues comments if executed from a commented line. Consults
 `doom-point-in-comment-functions' to determine if in a comment."
   :before-until #'newline-and-indent
-  (interactive "*")
+  (interactive "*P")
   (when (and +default-want-RET-continue-comments
              (doom-point-in-comment-p)
              (fboundp comment-line-break-function))
-    (funcall comment-line-break-function nil)
+    (dotimes (_ (or arg 1))
+      (funcall comment-line-break-function nil))
     t))
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
