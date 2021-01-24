@@ -202,7 +202,7 @@ Useful in `smartparens' pairs."
      :post-handlers '(+default-comment-spacing
                       ("[d-2]* |" "*")
                       ("[d-2]! |" "!")
-                      ("||\n" "RET")))
+                      ("||\n[i]" "RET")))
 
     (after! smartparens-ml
       (sp-with-modes '(tuareg-mode fsharp-mode)
