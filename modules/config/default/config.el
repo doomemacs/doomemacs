@@ -3,6 +3,10 @@
 (defvar +default-want-RET-continue-comments t
   "If non-nil, RET will continue commented lines.")
 
+(defvar +default-want-comment-end-on-new-line t
+  "If non-nil, RET will put */ on its own line.
+/* | */ RET -> /* \n * |\n*/.")
+
 (defvar +default-minibuffer-maps
   (append '(minibuffer-local-map
             minibuffer-local-ns-map
@@ -245,7 +249,8 @@ Continues comments if executed from a commented line. Consults
              (fboundp comment-line-break-function))
     (dotimes (_ (or arg 1))
       (funcall comment-line-break-function nil))
-    (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'rust-mode
+    (when (and +default-want-comment-end-on-new-line
+               (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'rust-mode
                                'java-mode 'javascript-mode 'js2-mode)
                (looking-at-p "[[:space:]]*\\*+/"))
       (save-excursion
