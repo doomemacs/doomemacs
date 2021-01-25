@@ -424,6 +424,18 @@ everywhere we use it (and internally)."
             cause)
           interactive)))
 
+(defadvice! doom--straight-inject-load-path-a (orig-fn &rest args)
+  "Straight builds packages in an isolated Emacs child process, which means
+needed packages may not be accessible when a package is compiled."
+  :override #'straight--build-compile
+  (let* ((package (plist-get recipe :package))
+         (dir (straight--build-dir package)))
+    (call-process (concat invocation-directory invocation-name)
+                  nil straight-byte-compilation-buffer nil
+                  "-Q" "--batch"
+                  "--eval" (prin1-to-string `(setq load-path (cons ,dir ',load-path)))
+                  "--eval" (format "(byte-recompile-directory %S 0 'force)" dir))))
+
 
 ;;
 ;;; Entry point

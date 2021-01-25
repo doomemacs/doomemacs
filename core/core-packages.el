@@ -196,7 +196,7 @@ processed."
             (if disable
                 (cl-pushnew name doom-disabled-packages)
               (when shadow
-                (straight-override-recipe (cons shadow '(:local-repo nil)))
+                (straight-override-recipe (cons shadow `(:local-repo nil :package included :build nil :included-by ,name)))
                 (let ((site-load-path (copy-sequence doom--initial-load-path))
                       lib)
                   (while (setq
@@ -493,7 +493,7 @@ elsewhere."
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
                (&key local-repo _files _flavor
-                     _build _pre-build _post-build _no-byte-compile
+                     _build _pre-build _post-build _no-byte-compile _includes
                      _no-native-compile _no-autoloads _type _repo _host _branch
                      _remote _nonrecursive _fork _depth)
                recipe
