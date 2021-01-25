@@ -174,3 +174,7 @@
       (if (symbol-value mode)
           (add-to-list 'company-dict-minor-mode-list mode nil #'eq)
         (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))))
+
+(use-package! company-prescient
+  :after company
+  :config (company-prescient-mode +1))

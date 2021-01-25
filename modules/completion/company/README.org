@@ -30,11 +30,14 @@ https://assets.doomemacs.org/completion/company/overlay.png
 + =+tng= Enables completion using only ~TAB~. Pressing ~TAB~ will select the
   next completion suggestion, while ~S-TAB~ will select the previous one. *This
   is incompatible with the =+childframe= flag*
++ =+prescient+= Enable completion candidate sorting based on previous
+  completions using =company-prescient=.
 
 ** Plugins
 + [[https://github.com/company-mode/company-mode][company-mode]]
 + [[https://github.com/hlissner/emacs-company-dict][company-dict]]
 + [[https://github.com/sebastiencs/company-box][company-box]]* (=+childframe=)
++ [[https://github.com/raxod502/prescient.el][company-prescient]]* (=+prescient=)
 
 * Prerequisites
 This module has no direct prerequisites.
