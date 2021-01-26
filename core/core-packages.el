@@ -278,12 +278,15 @@ processed."
       (copy-sequence deps))))
 
 (defun doom-package-depending-on (package &optional noerror)
-  "Return a list of packages that depend on the package named NAME."
-  (cl-check-type name symbol)
+  "Return a list of packages that depend on PACKAGE.
+
+If PACKAGE (a symbol) isn't installed, throw an error, unless NOERROR is
+non-nil."
+  (cl-check-type package symbol)
   ;; can't get dependencies for built-in packages
-  (unless (or (doom-package-build-recipe name)
+  (unless (or (doom-package-build-recipe package)
               noerror)
-    (error "Couldn't find %s, is it installed?" name))
+    (error "Couldn't find %s, is it installed?" package))
   (cl-loop for pkg in (hash-table-keys straight--build-cache)
            for deps = (doom-package-dependencies pkg)
            if (memq package deps)
