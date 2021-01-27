@@ -381,7 +381,7 @@ config.el instead."
 
 (defvar doom-incremental-packages '(t)
   "A list of packages to load incrementally after startup. Any large packages
-here may cause noticable pauses, so it's recommended you break them up into
+here may cause noticeable pauses, so it's recommended you break them up into
 sub-packages. For example, `org' is comprised of many packages, and can be
 broken up into:
 

@@ -331,7 +331,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
       use-package-minimum-reported-time (if doom-debug-p 0 0.1)
       use-package-expand-minimally doom-interactive-p)
 
-;; A common mistake for new users is that they inadvertantly install their
+;; A common mistake for new users is that they inadvertently install their
 ;; packages with package.el, by copying over old `use-package' declarations with
 ;; an :ensure t property. Doom doesn't use package.el, so this will throw an
 ;; error that will confuse beginners, so we disable `:ensure'.
