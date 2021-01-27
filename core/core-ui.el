@@ -504,6 +504,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                        all-the-icons-wicon all-the-icons-alltheicon)
            ""))))
 
+;; Hide the mode line in completion popups and MAN pages because they serve
+;; little purpose there, and is better hidden.
 ;;;###package hide-mode-line-mode
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
            #'hide-mode-line-mode)
@@ -518,17 +520,19 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;;;###package rainbow-delimiters
 ;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
-;; languages like Lisp.
+;; languages like Lisp. I reduce it from it's default of 9 to reduce the
+;; complexity of the font-lock keyword and hopefully buy us a few ms of
+;; performance.
 (setq rainbow-delimiters-max-face-count 3)
 
 
 ;;
 ;;; Line numbers
 
-;; Explicitly define a width to reduce computation
+;; Explicitly define a width to reduce the cost of on-the-fly computation
 (setq-default display-line-numbers-width 3)
 
-;; Show absolute line numbers for narrowed regions makes it easier to tell the
+;; Show absolute line numbers for narrowed regions to make it easier to tell the
 ;; buffer is narrowed, and where you are, exactly.
 (setq-default display-line-numbers-widen t)
 

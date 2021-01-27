@@ -106,7 +106,10 @@ possible."
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
-    "Guess major mode when saving a file in `fundamental-mode'."
+    "Guess major mode when saving a file in `fundamental-mode'.
+
+Likely, something has changed since the buffer was opened. e.g. A shebang line
+or file path may exist now."
     (when (eq major-mode 'fundamental-mode)
       (let ((buffer (or (buffer-base-buffer) (current-buffer))))
         (and (buffer-file-name buffer)
@@ -155,7 +158,7 @@ possible."
 ;; The POSIX standard defines a line is "a sequence of zero or more non-newline
 ;; characters followed by a terminating newline", so files should end in a
 ;; newline. Windows doesn't respect this (because it's Windows), but we should,
-;; since programmers' tools tend to be POSIX compliant.
+;; since programmers' tools tend to be POSIX compliant (and no big deal if not).
 (setq require-final-newline t)
 
 ;; Default to soft line-wrapping in text modes. It is more sensibile for text

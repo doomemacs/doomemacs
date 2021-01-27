@@ -208,7 +208,8 @@ users).")
       inhibit-default-init t
       ;; Shave seconds off startup time by starting the scratch buffer in
       ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
-      ;; pull in a ton of packages.
+      ;; pull in a ton of packages. `doom/open-scratch-buffer' provides a better
+      ;; scratch buffer anyway.
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
@@ -246,8 +247,7 @@ config.el instead."
 ;;; Optimizations
 
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
-;; indicates misconfiguration (or that the user needs to stop relying on case
-;; insensitivity).
+;; indicates misconfiguration (don't rely on case insensitivity for file names).
 (setq auto-mode-case-fold nil)
 
 ;; Disable bidirectional text rendering for a modest performance boost. I've set
