@@ -356,7 +356,7 @@ declaration) or dependency thereof that hasn't already been."
                                       if (or (if want-byte-compile   (doom--elc-file-outdated-p file))
                                              (if want-native-compile (doom--eln-file-outdated-p file)))
                                       do (setq outdated t)
-                                         (when want-native
+                                         (when want-native-compile
                                            (push file doom--eln-output-expected))
                                       finally return outdated))
                          (puthash package t straight--packages-to-rebuild))))
