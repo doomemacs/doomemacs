@@ -106,7 +106,7 @@ more information on modifiers."
         (cond ((sp-point-in-comment pos)
                (setq evil-auto-indent nil)
                (if comment-line-break-function
-                   (funcall comment-line-break-function)
+                   (funcall comment-line-break-function nil)
                  (comment-indent-new-line)))
               ;; TODO Find a better way to do this
               ((and (eq major-mode 'haskell-mode)
