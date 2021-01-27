@@ -194,8 +194,7 @@ or if the current buffer is read-only or not file-visiting."
       ;; for tall lines.
       auto-window-vscroll nil
       ;; mouse
-      mouse-wheel-scroll-amount '(5 ((shift) . 2))
-      mouse-wheel-progressive-speed nil)  ; don't accelerate scrolling
+      mouse-wheel-scroll-amount '(2 ((shift) . hscroll)))
 
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
