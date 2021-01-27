@@ -66,7 +66,7 @@ directives. By default, this only recognizes C directives.")
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
   ;; stop copying each visual state move to the clipboard:
-  ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
+  ;; https://github.com/emacs-evil/evil/issues/336
   ;; grokked from:
   ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
   (advice-add #'evil-visual-update-x-selection :override #'ignore)
