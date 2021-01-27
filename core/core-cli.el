@@ -260,8 +260,9 @@ BODY will be run when this dispatcher is called."
            (string-match-p (regexp-quote straight-process-buffer)
                            data))
       (print! (error "There was an unexpected package error"))
-      (print-group!
-       (print! "%s" (string-trim-right (straight--process-get-output)))))
+      (when-let (output (straight--process-get-output))
+        (print-group!
+         (print! "%s" (string-trim-right output)))))
      ((print! (error "There was an unexpected error"))
       (print-group!
        (print! "%s %s" (bold "Message:") (get type 'error-message))
