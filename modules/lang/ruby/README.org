@@ -45,7 +45,7 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + [[https://github.com/pezra/rspec-mode][rspec-mode]]
 + [[https://github.com/arthurnn/minitest-emacs][minitest]]
 + [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
-+ [[https://github.com/eschulte/jump.el/tree/e4f1372cf22e811faca52fc86bdd5d817498a4d8][inflections]]
++ [[https://github.com/eschulte/jump.el/tree/55caa66a7cc6e0b1a76143fd40eff38416928941][inflections]]
 + [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
 
 ** Hacks

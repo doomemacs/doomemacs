@@ -33,4 +33,4 @@
 ;; Rails
 (when (featurep! +rails)
   (package! projectile-rails :pin "7a256b1b1444fe0001f97095d99252e946dd9777")
-  (package! inflections :pin "e4f1372cf22e811faca52fc86bdd5d817498a4d8"))
+  (package! inflections :pin "55caa66a7cc6e0b1a76143fd40eff38416928941"))
