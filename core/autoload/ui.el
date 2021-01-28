@@ -127,65 +127,32 @@ Activate again to undo this. If prefix ARG is non-nil, don't restore the last
 window configuration and re-maximize the current window. Alternatively, use
 `doom/window-enlargen'."
   (interactive "P")
-  (let ((param 'doom--maximize-last-wconf))
-    (cl-destructuring-bind (window . wconf)
-        (or (frame-parameter nil param)
-            (cons nil nil))
-      (set-frame-parameter
-       nil param
-       (if (and (equal window (selected-window))
-                (not arg)
-                (null (cdr (cl-remove-if #'window-dedicated-p (window-list))))
-                wconf)
-           (ignore
-            (let ((source-window (selected-window)))
-              (set-window-configuration wconf)
-              (when (window-live-p source-window)
-                (select-window source-window))))
-         (when (and (bound-and-true-p +popup-mode)
-                    (+popup-window-p))
-           (user-error "Cannot maximize a popup, use `+popup/raise' first or use `doom/window-enlargen' instead"))
-         (prog1 (cons (selected-window) (or wconf (current-window-configuration)))
-           (delete-other-windows)
-           (add-hook 'doom-switch-window-hook #'doom--enlargened-forget-last-wconf-h)))))))
+  (when (and (bound-and-true-p +popup-mode)
+             (+popup-window-p))
+    (+popup/raise (selected-window)))
+  (delete-other-windows))
 
 ;;;###autoload
 (defun doom/window-enlargen (&optional arg)
   "Enlargen the current window to focus on this one. Does not close other
 windows (unlike `doom/window-maximize-buffer'). Activate again to undo."
   (interactive "P")
-  (let ((param 'doom--enlargen-last-wconf))
-    (cl-destructuring-bind (window . wconf)
-        (or (frame-parameter nil param)
-            (cons nil nil))
-      (set-frame-parameter
-       nil param
-       (if (and (equal window (selected-window))
-                (not arg)
-                wconf)
-           (ignore
-            (let ((source-window (selected-window)))
-              (set-window-configuration wconf)
-              (when (window-live-p source-window)
-                (select-window source-window))))
-         (prog1 (cons (selected-window) (or wconf (current-window-configuration)))
-           (let* ((window (selected-window))
-                  (dedicated-p (window-dedicated-p window))
-                  (preserved-p (window-parameter window 'window-preserved-size))
-                  (ignore-window-parameters t)
-                  (window-resize-pixelwise nil)
-                  (frame-resize-pixelwise nil))
-             (unwind-protect
-                 (progn
-                   (when dedicated-p
-                     (set-window-dedicated-p window nil))
-                   (when preserved-p
-                     (set-window-parameter window 'window-preserved-size nil))
-                   (maximize-window window))
-               (set-window-dedicated-p window dedicated-p)
-               (when preserved-p
-                 (set-window-parameter window 'window-preserved-size preserved-p))
-               (add-hook 'doom-switch-window-hook #'doom--enlargened-forget-last-wconf-h)))))))))
+  (let* ((window (selected-window))
+         (dedicated-p (window-dedicated-p window))
+         (preserved-p (window-parameter window 'window-preserved-size))
+         (ignore-window-parameters t)
+         (window-resize-pixelwise nil)
+         (frame-resize-pixelwise nil))
+    (unwind-protect
+        (progn
+          (when dedicated-p
+            (set-window-dedicated-p window nil))
+          (when preserved-p
+            (set-window-parameter window 'window-preserved-size nil))
+          (maximize-window window))
+      (set-window-dedicated-p window dedicated-p)
+      (when preserved-p
+        (set-window-parameter window 'window-preserved-size preserved-p)))))
 
 ;;;###autoload
 (defun doom/window-maximize-horizontally ()
