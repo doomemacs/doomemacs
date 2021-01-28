@@ -576,9 +576,7 @@ If prefix arg is present, refresh the cache."
               (if (file-exists-p readme-path)
                   (doom--help-insert-button
                    "readme"
-                   (expand-file-name
-                    "README.org"
-                    readme-path))
+                   readme-path)
                 (insert "no readme"))
               (insert ")\n"))))
 
