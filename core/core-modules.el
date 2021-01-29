@@ -279,8 +279,8 @@ those directories. The first returned path is always `doom-private-dir'."
                (:if (if (eval (cadr m) t)
                         (push (caddr m) mplist)
                       (prependq! mplist (cdddr m))))
-               (test (if (or (eval (cadr m) t)
-                             (eq test :unless))
+               (test (if (xor (eval (cadr m) t)
+                              (eq test :unless))
                          (prependq! mplist (cddr m))))))
             ((catch 'doom-modules
                (let* ((module (if (listp m) (car m) m))
