@@ -50,11 +50,11 @@ If prefix ARG is non-nil, prompt for the search path."
       (letf! (defun projectile-add-known-project (project-root)
                (unless (projectile-ignored-project-p project-root)
                  (funcall projectile-add-known-project project-root)
-                 (message "Added %S to known project roots")))
+                 (message "Added %S to known project roots" project-root)))
         (dolist (dir projectile-project-search-path)
           (if (not (file-accessible-directory-p dir))
-              (message "%S was inaccessible and couldn't searched")
-            (projectile-discover-projects-in-directory projectile-project-search-path)))))))
+              (message "%S was inaccessible and couldn't searched" dir)
+            (projectile-discover-projects-in-directory dir)))))))
 
 ;;;###autoload
 (defun +default/dired (arg)
