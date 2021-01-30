@@ -184,6 +184,7 @@ results buffer.")
     [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
+    [remap describe-symbol]          #'counsel-describe-symbol
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
@@ -224,7 +225,8 @@ results buffer.")
 
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
+        counsel-describe-variable-function #'helpful-variable
+        counsel-describe-symbol-function #'helpful-symbol)
 
   ;; Decorate `doom/help-custom-variable' results the same way as
   ;; `counsel-describe-variable' (adds value and docstring columns).
