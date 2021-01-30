@@ -19,11 +19,4 @@
     ;; Don't prompt about dying processes when killing vterm
     confirm-kill-processes nil
     ;; Prevent premature horizontal scrolling
-    hscroll-margin 0)
-
-  ;; Restore the point's location when leaving and re-entering insert mode.
-  (when (featurep! :editor evil)
-    (add-hook! 'vterm-mode-hook
-      (defun +vterm-init-remember-point-h ()
-        (add-hook 'evil-insert-state-exit-hook #'+vterm-remember-insert-point-h nil t)
-        (add-hook 'evil-insert-state-entry-hook #'+vterm-goto-insert-point-h nil t)))))
+    hscroll-margin 0))
