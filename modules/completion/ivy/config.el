@@ -184,6 +184,7 @@ results buffer.")
     [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
+    [remap describe-symbol]          #'counsel-describe-symbol
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
