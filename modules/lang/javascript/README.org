@@ -31,6 +31,8 @@ This module adds JavaScript and TypeScript support.
 + =+lsp= Enables LangServer support for this module. You must have =:tools lsp=
   enabled for this to work, as well as the langserver (e.g.
   typescript-language-server) installed on your system.
++ =-lsp-or-tide= Disables auto-starting LangServer. Useful if you are editing
+  many projects simultaneously
 
 ** Packages
 + [[https://github.com/defunkt/coffee-mode][coffee-mode]]

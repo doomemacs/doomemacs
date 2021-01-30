@@ -144,34 +144,36 @@
 ;;
 ;;; Tools
 
-(add-hook! '(js2-mode-local-vars-hook
-             typescript-mode-local-vars-hook
-             typescript-tsx-mode-local-vars-hook
-             web-mode-local-vars-hook
-             rjsx-mode-local-vars-hook)
-  (defun +javascript-init-lsp-or-tide-maybe-h ()
-    "Start `lsp' or `tide' in the current buffer.
+(defun +javascript-init-lsp-or-tide-maybe-h ()
+  "Start `lsp' or `tide' in the current buffer.
 
 LSP will be used if the +lsp flag is enabled for :lang javascript AND if the
 current buffer represents a file in a project.
 
 If LSP fails to start (e.g. no available server or project), then we fall back
 to tide."
-    (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-      (when (derived-mode-p 'js-mode 'typescript-mode 'typescript-tsx-mode)
-        (if (not buffer-file-name)
-            ;; necessary because `tide-setup' and `lsp' will error if not a
-            ;; file-visiting buffer
-            (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h nil 'local)
-          (or (and (featurep! +lsp) (lsp!))
-              ;; fall back to tide
-              (if (executable-find "node")
-                  (and (require 'tide nil t)
-                       (progn (tide-setup) tide-mode))
-                (ignore
-                 (doom-log "Couldn't start tide because 'node' is missing"))))
-          (remove-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h 'local))))))
+  (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
+    (when (derived-mode-p 'js-mode 'typescript-mode 'typescript-tsx-mode)
+      (if (not buffer-file-name)
+          ;; necessary because `tide-setup' and `lsp' will error if not a
+          ;; file-visiting buffer
+          (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h nil 'local)
+        (or (and (featurep! +lsp) (lsp!))
+            ;; fall back to tide
+            (if (executable-find "node")
+                (and (require 'tide nil t)
+                     (progn (tide-setup) tide-mode))
+              (ignore
+               (doom-log "Couldn't start tide because 'node' is missing"))))
+        (remove-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h 'local)))))
 
+(unless (featurep! -lsp-or-tide)
+  (add-hook! '(js2-mode-local-vars-hook
+             typescript-mode-local-vars-hook
+             typescript-tsx-mode-local-vars-hook
+             web-mode-local-vars-hook
+             rjsx-mode-local-vars-hook)
+             #'+javascript-init-lsp-or-tide-maybe-h))
 
 (use-package! tide
   :defer t
