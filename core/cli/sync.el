@@ -31,7 +31,7 @@ stale."
        (doom-cli-packages-build)
        (when update-p
          (doom-cli-packages-update))
-       (doom-cli-packages-purge purge-p 'builds-p purge-p purge-p)
+       (doom-cli-packages-purge purge-p 'builds-p purge-p purge-p purge-p)
        (run-hooks 'doom-sync-post-hook)
        (when (doom-autoloads-reload)
          (print! (info "Restart Emacs or use 'M-x doom/reload' for changes to take effect")))

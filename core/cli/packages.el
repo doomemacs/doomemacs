@@ -24,6 +24,7 @@ Emacs (as byte-code is generally not forward-compatible)."
     ((nobuilds-p ["-b" "--no-builds"] "Don't purge unneeded (built) packages")
      (noelpa-p   ["-p" "--no-elpa"]   "Don't purge ELPA packages")
      (norepos-p  ["-r" "--no-repos"]  "Don't purge unused straight repos")
+     (noeln-p    ["-e" "--no-eln"]    "Don't purge old ELN bytecode")
      (regraft-p  ["-g" "--regraft"]   "Regraft git repos (ie. compact them)"))
   "Deletes orphaned packages & repos, and compacts them.
 
@@ -39,7 +40,8 @@ list remains lean."
          (not noelpa-p)
          (not norepos-p)
          (not nobuilds-p)
-         regraft-p)
+         regraft-p
+         (not noeln-p))
     (doom-autoloads-reload))
   t)
 
@@ -532,7 +534,23 @@ declaration) or dependency thereof that hasn't already been."
                    (filename path)
                    e)))))))
 
-(defun doom-cli-packages-purge (&optional elpa-p builds-p repos-p regraft-repos-p)
+(defun doom--cli-packages-purge-eln ()
+  (if-let (dirs
+           (cl-delete (expand-file-name comp-native-version-dir doom--eln-output-path)
+                      (directory-files doom--eln-output-path t "^[^.]" t)
+                      :test #'file-equal-p))
+      (progn
+        (print! (start "Purging old native bytecode..."))
+        (print-group!
+         (dolist (dir dirs)
+           (print! (info "Deleting %S") (relpath dir doom--eln-output-path))
+           (delete-directory dir 'recursive))
+         (print! (success "Purged %d directory(ies)" (length dirs))))
+        (length dirs))
+    (print! (info "No ELN directories to purge"))
+    0))
+
+(defun doom-cli-packages-purge (&optional elpa-p builds-p repos-p regraft-repos-p eln-p)
   "Auto-removes orphaned packages and repos.
 
 An orphaned package is a package that isn't a primary package (i.e. doesn't have
@@ -574,4 +592,9 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
              (/= 0 (doom--cli-packages-purge-repos repos-to-purge)))
            (if (not regraft-repos-p)
                (ignore (print! (info "Skipping regrafting")))
-             (doom--cli-packages-regraft-repos repos-to-regraft)))))))
+             (doom--cli-packages-regraft-repos repos-to-regraft))
+           (when (require 'comp nil t)
+             (if (not eln-p)
+                 (ignore (print! (info "Skipping native bytecode")))
+               (doom--cli-packages-purge-eln)))))
+     (print! (success "Finished purging")))))
