@@ -650,7 +650,7 @@ set earlier in the ‘setq-local’.  The return value of the
       (macroexp-progn (nreverse expr)))))
 
 (eval-when! (version< emacs-version "27.1")
-  ;; DEPRECATED Backported from Emacs 27; earlier versions don't have REMOTE arg
+  ;; DEPRECATED Backported from Emacs 27. Remove when 26.x support is dropped.
   (defun executable-find (command &optional remote)
     "Search for COMMAND in `exec-path' and return the absolute file name.
 Return nil if COMMAND is not found anywhere in `exec-path'.  If
@@ -672,7 +672,7 @@ REMOTE is non-nil, search on the remote host indicated by
         (locate-file command exec-path exec-suffixes 1)))))
 
 (eval-when! (not (fboundp 'exec-path))
-  ;; DEPRECATED Backported from Emacs 27.1
+  ;; DEPRECATED Backported from Emacs 27.1. Remove when 26.x support is dropped.
   (defun exec-path ()
     "Return list of directories to search programs to run in remote subprocesses.
 The remote host is identified by `default-directory'.  For remote
@@ -684,6 +684,7 @@ the value of the variable `exec-path'."
           (funcall handler 'exec-path)
         exec-path))))
 
+;; DEPRECATED Remove once enough packages have adapted to these breaking changes.
 (eval-when! EMACS28+
   (defmacro define-obsolete-variable-alias (obsolete-name current-name &optional when docstring)
     "Make OBSOLETE-NAME a variable alias for CURRENT-NAME and mark it obsolete.
