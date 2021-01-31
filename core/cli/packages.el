@@ -21,11 +21,11 @@ Emacs (as byte-code is generally not forward-compatible)."
   t)
 
 (defcli! (purge p)
-    ((nobuilds-p ["-b" "--no-builds"] "Don't purge unneeded (built) packages")
-     (noelpa-p   ["-p" "--no-elpa"]   "Don't purge ELPA packages")
-     (norepos-p  ["-r" "--no-repos"]  "Don't purge unused straight repos")
-     (noeln-p    ["-e" "--no-eln"]    "Don't purge old ELN bytecode")
-     (regraft-p  ["-g" "--regraft"]   "Regraft git repos (ie. compact them)"))
+    ((nobuilds-p  ["-b" "--no-builds"]  "Don't purge unneeded (built) packages")
+     (noelpa-p    ["-p" "--no-elpa"]    "Don't purge ELPA packages")
+     (norepos-p   ["-r" "--no-repos"]   "Don't purge unused straight repos")
+     (noeln-p     ["-e" "--no-eln"]     "Don't purge old ELN bytecode")
+     (noregraft-p ["-g" "--no-regraft"] "Regraft git repos (ie. compact them)"))
   "Deletes orphaned packages & repos, and compacts them.
 
 Purges all installed ELPA packages (as they are considered temporary). Purges
@@ -40,7 +40,7 @@ list remains lean."
          (not noelpa-p)
          (not norepos-p)
          (not nobuilds-p)
-         regraft-p
+         (not noregraft-p)
          (not noeln-p))
     (doom-autoloads-reload))
   t)
