@@ -335,7 +335,7 @@ declaration) or dependency thereof that hasn't already been."
            (doom--wait-for-compile-jobs)
            (doom--write-missing-eln-errors)
            (print! (success "\033[KRebuilt %d package(s)") (length built)))
-       (print! (success "No packages need rebuilding"))
+       (print! (info "No packages need rebuilding"))
        nil))))
 
 
@@ -596,5 +596,4 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (when (require 'comp nil t)
              (if (not eln-p)
                  (ignore (print! (info "Skipping native bytecode")))
-               (doom--cli-packages-purge-eln)))))
-     (print! (success "Finished purging")))))
+               (doom--cli-packages-purge-eln))))))))
