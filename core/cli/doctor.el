@@ -92,6 +92,19 @@ in."
   (print! (start "Checking for stale elc files..."))
   (elc-check-dir user-emacs-directory)
 
+  (print! (start "Checking for problematic git global settings..."))
+  (if (executable-find "git")
+      (unless (zerop (car (doom-call-process "git" "config" "--global" "--get-regexp" "^url\\.https://github.com")))
+        (warn! "Detected insteadOf rules in your global gitconfig.")
+        (explain! "Doom's package manager heavily relies on git. In particular, many of its packages "
+                  "are hosted on github. Rewrite rules like these will break it:\n\n"
+                  "  [url \"git://github.com\"]\n"
+                  "  insteadOf = https://github.com\n\n"
+                  "Please remove them from your gitconfig or use a conditional includeIf rule to "
+                  "only apply your rewrites to specific repositories. See "
+                  "'https://git-scm.com/docs/git-config#_includes' for more information."))
+    (error! "Couldn't find the `git' binary; this a hard dependecy for Doom!"))
+
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
