@@ -404,33 +404,31 @@ variables, this only lists variables that exist to be customized (defined with
 ;;
 ;;; `doom/help-packages'
 
-(defun doom--help-insert-button (label &optional path)
-  (cl-destructuring-bind (uri . qs)
-      (let ((parts (split-string label "::" t)))
-        (cons (string-trim (car parts))
-              (string-join (cdr parts) "::")))
-    (let ((path (or path label)))
-      (insert-text-button
-       uri
-       'face 'link
-       'follow-link t
-       'action
+(defun doom--help-insert-button (label &optional uri line)
+  "Helper function to insert a button at point.
+
+The button will have the text LABEL. If URI is given, the button will open it,
+otherwise the LABEL will be used. If the uri to open is a url it will be opened
+in a browser. If LINE is given (and the uri to open is not a url), then the file
+will open with point on that line."
+  (let ((uri (or uri label)))
+    (insert-text-button
+     label
+     'face 'link
+     'follow-link t
+     'action
+     (if (string-match-p "^https?://" uri)
+         (lambda (_) (browse-url uri))
+       (unless (file-exists-p uri)
+         (user-error "Path does not exist: %S" uri))
        (lambda (_)
          (when (window-dedicated-p)
            (other-window 1))
-         (pcase (cond ((string-match-p "^https?://" qs) 'url)
-                      ('file))
-           ((or `file `nil)
-            (unless (file-exists-p path)
-              (user-error "Path does not exist: %S" path))
-            (let ((buffer (or (get-file-buffer path)
-                              (find-file path))))
-              (when qs
-                (with-current-buffer buffer
-                  (goto-char (point-min))
-                  (re-search-forward qs)
-                  (recenter)))))
-           (`url (browse-url uri))))))))
+         (find-file uri)
+         (when line
+           (goto-char (point-min))
+           (forward-line (1- line))
+           (recenter)))))))
 
 (defun doom--help-package-configs (package)
   (let ((default-directory doom-emacs-dir))
@@ -584,19 +582,11 @@ If prefix arg is present, refresh the cache."
         (insert "This package is configured in the following locations:")
         (dolist (location (doom--help-package-configs package))
           (insert "\n" indent)
-          (insert-text-button
-           location
-           'face 'link
-           'follow-link t
-           'action
-           `(lambda (_)
-              (cl-destructuring-bind (file line _match)
-                  ',(split-string location ":")
-                (find-file (expand-file-name file doom-emacs-dir))
-                (goto-char (point-min))
-                (forward-line (1- (string-to-number line)))
-                (recenter)))))
-
+          (cl-destructuring-bind (file line _match)
+              (split-string location ":")
+            (doom--help-insert-button location
+                                      (expand-file-name file doom-emacs-dir)
+                                      (string-to-number line))))
         (insert "\n\n")))))
 
 (defvar doom--package-cache nil)
