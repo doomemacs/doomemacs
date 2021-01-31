@@ -100,29 +100,41 @@ sudo zypper install nodejs npm
 #+END_SRC
 
 ** Dependencies
-The features in this module optionally depend on the following php packages:
+This module has no required dependencies, but it has a couple optional ones.
 
 + ~boris~ (REPL)
 + ~phpctags~ (better code completion)
 + ~phpunit~ (unit test commands)
-+ ~php-cs-fixer~ (for code formatting)
++ ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
 
 #+BEGIN_SRC sh
 composer global require \
     d11wtq/boris \
     phpunit/phpunit \
-    techlivezheng/phpctags
+    techlivezheng/phpctags \
+    friendsofphp/php-cs-fixer
+
+# Needed by php-cs-fixer, otherwise you'll get "Couldn't resolve parser
+# 'php'" errors
+npm install -g @prettier/plugin-php
 #+END_SRC
 
-Ensure that ~\~/.composer/vendor/bin~ is in ~PATH~:
+You must ensure that ~\~/.composer/vendor/bin~ is in ~PATH~, so these
+executables are visible to Emacs:
 
 #+BEGIN_SRC sh
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
 #+END_SRC
 
-By the way, if you use intelephense, running =M-x lsp-install-server= and
-choose ~iph~ to install lsp-intelephense.
+You may also need to regenerate your envvar file by running ~doom env~ on the
+command line.
+
+#+begin_quote
+To use intelephense instead of , run =M-x lsp-install-server= and choose ~iph~ to
+install lsp-intelephense.
+#+end_quote
+
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
 
