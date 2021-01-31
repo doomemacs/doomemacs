@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "47dd03dc81207da598f007e0218e12a7cede0007")
+  :pin "ac4df5c689557f5434d6fc9f713e907e7b37a6bd")
 
 ;; core-modules.el
 (package! use-package
@@ -25,7 +25,7 @@
   :pin "365c73d2618dd0040a32c2601c5456ab5495b812")
 
 ;; core-ui.el
-(package! all-the-icons :pin "050d4c5a20f686c67ec1fc5eda30481d5a23383e")
+(package! all-the-icons :pin "c795d0f0a49b1823d167a252319ac32c59152d72")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f43d48a24602be3ec899345a3326ed0247b960c6")
@@ -51,8 +51,8 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "0e2620ad5cb236a64a2b4faa4c44a76a08a1cf08")
+(package! projectile :pin "793abfead25a7ef92ad3a443ad3067a82f4a2fb9")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
-(package! which-key :pin "428aedfce0157920814fbb2ae5d00b4aea89df88")
+(package! which-key :pin "c0608e812a8d1bc7aefeacdfaeb56a7272eabf44")
