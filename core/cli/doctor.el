@@ -94,7 +94,7 @@ in."
 
   (print! (start "Checking for problematic git global settings..."))
   (if (executable-find "git")
-      (unless (zerop (car (doom-call-process "git" "config" "--global" "--get-regexp" "^url\\.git://github\\.com")))
+      (when (zerop (car (doom-call-process "git" "config" "--global" "--get-regexp" "^url\\.git://github\\.com")))
         (warn! "Detected insteadOf rules in your global gitconfig.")
         (explain! "Doom's package manager heavily relies on git. In particular, many of its packages "
                   "are hosted on github. Rewrite rules like these will break it:\n\n"
