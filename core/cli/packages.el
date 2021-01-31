@@ -301,7 +301,9 @@ declaration) or dependency thereof that hasn't already been."
                   ;; Ensure packages with outdated files/bytecode are rebuilt
                   (let* ((build-dir (straight--build-dir package))
                          (repo-dir  (straight--repos-dir local-repo))
-                         (build (plist-get recipe :build))
+                         (build (if (plist-member recipe :build)
+                                    (plist-get recipe :build)
+                                  straight--build-default-steps))
                          (want-byte-compile
                           (or (eq build t)
                               (memq 'compile build)))
