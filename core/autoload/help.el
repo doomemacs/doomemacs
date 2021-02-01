@@ -513,11 +513,8 @@ If prefix arg is present, refresh the cache."
 
            (package--print-help-section "Build")
            (let ((default-directory (straight--repos-dir (symbol-name package))))
-             (if
-                 (file-exists-p default-directory)
-                 (insert
-                  (cdr
-                   (doom-call-process "git" "log" "-1" "--format=%D %h %ci")))
+             (if (file-exists-p default-directory)
+                 (insert (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci")))
                (insert "n/a")))
            (insert "\n" indent)
 
