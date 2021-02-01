@@ -312,7 +312,7 @@ declaration) or dependency thereof that hasn't already been."
                          (want-native-compile
                           (or (eq build t)
                               (memq 'native-compile build))))
-                    (when (eq (car build) :not)
+                    (when (eq (car-safe build) :not)
                       (setq want-byte-compile (not want-byte-compile)
                             want-native-compile (not want-native-compile)))
                     (unless (require 'comp nil t)
