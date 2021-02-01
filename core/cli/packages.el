@@ -305,7 +305,7 @@ declaration) or dependency thereof that hasn't already been."
                          (repo-dir  (straight--repos-dir local-repo))
                          (build (if (plist-member recipe :build)
                                     (plist-get recipe :build)
-                                  straight--build-default-steps))
+                                  t))
                          (want-byte-compile
                           (or (eq build t)
                               (memq 'compile build)))
