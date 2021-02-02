@@ -251,7 +251,7 @@ the value of `indent-tab-mode'.
 
 If ARG (universal argument) is non-nil, retab the current buffer using the
 opposite indentation style."
-  (interactive "Pr")
+  (interactive "P\nr")
   (unless (and beg end)
     (setq beg (point-min)
           end (point-max)))
