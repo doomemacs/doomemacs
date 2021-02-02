@@ -68,4 +68,8 @@
           (when mode
             (prog1 (set-auto-mode-0 mode)
               (when (eq major-mode 'sh-mode)
-                (sh-set-shell interp)))))))))
+                (sh-set-shell interp))
+              ;; HACK Without this, quickrun tries to evaluate code directly
+              ;;      with (cached)?nix-shell.
+              ;; TODO Use the nix-shell/cached-nix-shell-given interpreter
+              (setq-local quickrun-option-shebang nil))))))))
