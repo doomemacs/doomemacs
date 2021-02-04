@@ -190,7 +190,8 @@ is tomorrow.  With two prefixes, select the deadline."
           (when (re-search-forward sec nil t)
             (let (org-M-RET-may-split-line
                   (lev (org-outline-level))
-                  (folded-p (invisible-p (point-at-eol))))
+                  (folded-p (invisible-p (point-at-eol)))
+                  (from (plist-get msg :from)))
               ;; place the subheader
               (when folded-p (show-branches))    ; unfold if necessary
               (org-end-of-meta-data) ; skip property drawer
@@ -202,7 +203,7 @@ is tomorrow.  With two prefixes, select the deadline."
                               "[[mu4e:msgid:"
                               (plist-get msg :message-id) "]["
                               (truncate-string-to-width
-                               (caar (plist-get msg :from)) 25 nil nil t)
+                               (or (caar from) (cadr from)) 25 nil nil t)
                               " - "
                               (truncate-string-to-width
                                (plist-get msg :subject) 40 nil nil t)
