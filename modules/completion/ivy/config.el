@@ -153,7 +153,8 @@ results buffer.")
               (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (setcar switch-buffer-alist '+ivy-rich-buffer-name))
 
-  (ivy-rich-mode +1))
+  (ivy-rich-mode +1)
+  (ivy-rich-project-root-cache-mode +1))
 
 
 (use-package! all-the-icons-ivy
