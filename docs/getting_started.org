@@ -932,9 +932,9 @@ live testing. To do this specify a ~:local-repo~ in that package's recipe:
            ;; you want:
            :files ("*.el" "src/lisp/*.el")
 
-           ;; With ':no-byte-compile t' you can avoid having to run 'doom sync'
-           ;; every time you change the package.
-           :no-byte-compile t))
+           ;; With this you can avoid having to run 'doom sync' every time you
+           ;; change the package.
+           :build (:not compile)))
 #+END_SRC
 
 Alternatively, add the package's location to Emacs' ~load-path~. Do this if you

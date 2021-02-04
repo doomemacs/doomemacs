@@ -496,8 +496,8 @@ elsewhere."
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
                (&key local-repo _files _flavor
-                     _build _pre-build _post-build _no-byte-compile _includes
-                     _no-native-compile _no-autoloads _type _repo _host _branch
+                     _build _pre-build _post-build _includes
+                     _type _repo _host _branch
                      _remote _nonrecursive _fork _depth)
                recipe
              ;; Expand :local-repo from current directory
