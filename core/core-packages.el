@@ -99,9 +99,7 @@ uses a straight or package.el command directly).")
       straight-vc-git-default-clone-depth 1
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
       ;; we don't have to deal with them at all.
-      autoload-compute-prefixes nil
-      ;; We handle it ourselves
-      straight-fix-org nil)
+      autoload-compute-prefixes nil)
 
 (with-eval-after-load 'straight
   ;; `let-alist' is built into Emacs 26 and onwards
@@ -187,28 +185,34 @@ processed."
       (error "Failed to initialize package.el")))
   (when (or force-p (null doom-packages))
     (doom-log "Initializing straight.el")
-    (or (setq doom-disabled-packages nil
-              doom-packages (doom-package-list))
-        (error "Failed to read any packages"))
-    (dolist (package doom-packages)
-      (cl-destructuring-bind
-          (name &key recipe disable ignore shadow &allow-other-keys) package
-        (unless ignore
-          (if disable
-              (cl-pushnew name doom-disabled-packages)
-            (when shadow
-              (straight-override-recipe (cons shadow '(:local-repo nil)))
-              (let ((site-load-path (copy-sequence doom--initial-load-path))
-                    lib)
-                (while (setq
-                        lib (locate-library (concat (symbol-name shadow) ".el")
-                                            nil site-load-path))
-                  (let ((lib (directory-file-name (file-name-directory lib))))
-                    (setq site-load-path (delete lib site-load-path)
-                          load-path (delete lib load-path))))))
-            (when recipe
-              (straight-override-recipe (cons name recipe)))
-            (straight-register-package name)))))))
+    (setq doom-disabled-packages nil
+          doom-packages (doom-package-list))
+    (let (packages)
+      (dolist (package doom-packages)
+        (cl-destructuring-bind
+            (name &key recipe disable ignore shadow &allow-other-keys) package
+          (if ignore
+              (straight-override-recipe (cons name '(:type built-in)))
+            (if disable
+                (cl-pushnew name doom-disabled-packages)
+              (when shadow
+                (straight-override-recipe (cons shadow `(:local-repo nil :package included :build nil :included-by ,name)))
+                (let ((site-load-path (copy-sequence doom--initial-load-path))
+                      lib)
+                  (while (setq
+                          lib (locate-library (concat (symbol-name shadow) ".el")
+                                              nil site-load-path))
+                    (let ((lib (directory-file-name (file-name-directory lib))))
+                      (setq site-load-path (delete lib site-load-path)
+                            load-path (delete lib load-path))))))
+              (when recipe
+                (straight-override-recipe (cons name recipe)))
+              (appendq! packages (cons name (straight--get-dependencies name)))))))
+      (dolist (package (cl-delete-duplicates packages :test #'equal))
+        (straight-register-package package)
+        (let ((name (symbol-name package)))
+          (add-to-list 'load-path (directory-file-name (straight--build-dir name)))
+          (straight--load-package-autoloads name))))))
 
 
 ;;
@@ -231,7 +235,12 @@ processed."
 
 (defun doom-package-recipe (package &optional prop nil-value)
   "Returns the `straight' recipe PACKAGE was registered with."
-  (let ((plist (gethash (symbol-name package) straight--recipe-cache)))
+  (let* ((recipe (straight-recipes-retrieve package))
+         (plist (doom-plist-merge
+                 (plist-get (alist-get package doom-packages) :recipe)
+                 (cdr (if (memq (car recipe) '(quote \`))
+                          (eval recipe t)
+                        recipe)))))
     (if prop
         (if (plist-member plist prop)
             (plist-get plist prop)
@@ -240,8 +249,14 @@ processed."
 
 (defun doom-package-recipe-repo (package)
   "Resolve and return PACKAGE's (symbol) local-repo property."
-  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
-            (repo (straight-vc-local-repo-name recipe)))
+  (if-let* ((recipe (copy-sequence (doom-package-recipe package)))
+            (recipe (if (and (not (plist-member recipe :type))
+                             (memq (plist-get recipe :host) '(github gitlab bitbucket)))
+                        (plist-put recipe :type 'git)
+                      recipe))
+            (repo (if-let (local-repo (plist-get recipe :local-repo))
+                      (file-name-nondirectory (directory-file-name local-repo))
+                    (ignore-errors (straight-vc-local-repo-name recipe)))))
       repo
     (symbol-name package)))
 
@@ -263,12 +278,15 @@ processed."
       (copy-sequence deps))))
 
 (defun doom-package-depending-on (package &optional noerror)
-  "Return a list of packages that depend on the package named NAME."
-  (cl-check-type name symbol)
+  "Return a list of packages that depend on PACKAGE.
+
+If PACKAGE (a symbol) isn't installed, throw an error, unless NOERROR is
+non-nil."
+  (cl-check-type package symbol)
   ;; can't get dependencies for built-in packages
-  (unless (or (doom-package-build-recipe name)
+  (unless (or (doom-package-build-recipe package)
               noerror)
-    (error "Couldn't find %s, is it installed?" name))
+    (error "Couldn't find %s, is it installed?" package))
   (cl-loop for pkg in (hash-table-keys straight--build-cache)
            for deps = (doom-package-dependencies pkg)
            if (memq package deps)
@@ -478,8 +496,8 @@ elsewhere."
          (when-let (recipe (plist-get plist :recipe))
            (cl-destructuring-bind
                (&key local-repo _files _flavor
-                     _no-build _build _post-build _no-byte-compile
-                     _no-native-compile _no-autoloads _type _repo _host _branch
+                     _build _pre-build _post-build _includes
+                     _type _repo _host _branch
                      _remote _nonrecursive _fork _depth)
                recipe
              ;; Expand :local-repo from current directory

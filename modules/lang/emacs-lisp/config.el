@@ -99,15 +99,17 @@ employed so that flycheck still does *some* helpful linting.")
     "Display variable value next to documentation in eldoc."
     :around #'elisp-get-var-docstring
     (when-let (ret (funcall orig-fn sym))
-      (concat ret " "
-              (let* ((truncated " [...]")
-                     (print-escape-newlines t)
-                     (str (symbol-value sym))
-                     (str (prin1-to-string str))
-                     (limit (- (frame-width) (length ret) (length truncated) 1)))
-                (format (format "%%0.%ds%%s" (max limit 0))
-                        (propertize str 'face 'warning)
-                        (if (< (length str) limit) "" truncated))))))
+      (if (fboundp sym)
+          (concat ret " "
+                  (let* ((truncated " [...]")
+                         (print-escape-newlines t)
+                         (str (symbol-value sym))
+                         (str (prin1-to-string str))
+                         (limit (- (frame-width) (length ret) (length truncated) 1)))
+                    (format (format "%%0.%ds%%s" (max limit 0))
+                            (propertize str 'face 'warning)
+                            (if (< (length str) limit) "" truncated))))
+        ret)))
 
   (map! :localleader
         :map emacs-lisp-mode-map
@@ -181,12 +183,12 @@ employed so that flycheck still does *some* helpful linting.")
     "Add Doom's own demos to help buffers."
     :around #'elisp-demos--search
     (or (funcall orig-fn symbol)
-        (when-let (demos-file (doom-glob doom-docs-dir "api.org"))
+        (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
           (with-temp-buffer
             (insert-file-contents demos-file)
             (goto-char (point-min))
             (when (re-search-forward
-                   (format "^\\*\\*\\* %s$" (regexp-quote (symbol-name symbol)))
+                   (format "^\\*\\* %s$" (regexp-quote (symbol-name symbol)))
                    nil t)
               (let (beg end)
                 (forward-line 1)

@@ -20,7 +20,7 @@ directives. By default, this only recognizes C directives.")
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
 (defvar evil-want-C-g-bindings t)
-(defvar evil-want-C-i-jump (or (daemonp) (display-graphic-p)))
+(defvar evil-want-C-i-jump nil)  ; we do this ourselves
 (defvar evil-want-C-u-scroll t)  ; moved the universal arg to <leader> u
 (defvar evil-want-C-u-delete t)
 (defvar evil-want-C-w-scroll t)
@@ -66,7 +66,7 @@ directives. By default, this only recognizes C directives.")
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
   ;; stop copying each visual state move to the clipboard:
-  ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
+  ;; https://github.com/emacs-evil/evil/issues/336
   ;; grokked from:
   ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
   (advice-add #'evil-visual-update-x-selection :override #'ignore)
@@ -419,6 +419,8 @@ directives. By default, this only recognizes C directives.")
 ;;   zu{q,w} - undo last marking
 
 (map! :v  "@"     #'+evil:apply-macro
+      :m  [C-i]   #'evil-jump-forward
+      :m  [tab]   #'evil-jump-item
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
@@ -516,8 +518,8 @@ directives. By default, this only recognizes C directives.")
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'doom/save-and-kill-buffer
       ;; don't leave visual mode after shifting
-      :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
-      :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv
+      :v  "<"     #'+evil/shift-left  ; vnoremap < <gv
+      :v  ">"     #'+evil/shift-right  ; vnoremap > >gv
 
       ;; window management (prefix "C-w")
       (:map evil-window-map

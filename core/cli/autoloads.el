@@ -1,7 +1,7 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
-(defvar doom-autoloads-excluded-packages '("gh")
-  "What packages whose autoloads file we won't index.
+(defvar doom-autoloads-excluded-packages ()
+  "What packages whose autoloads files we won't index.
 
 These packages have silly or destructive autoload files that try to load
 everyone in the universe and their dog, causing errors that make babies cry. No
@@ -10,7 +10,7 @@ one wants that.")
 (defvar doom-autoloads-cached-vars
   '(doom-modules
     doom-disabled-packages
-    comp-deferred-compilation-black-list
+    comp-deferred-compilation-deny-list
     load-path
     auto-mode-alist
     interpreter-mode-alist

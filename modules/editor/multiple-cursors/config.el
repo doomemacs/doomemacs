@@ -168,7 +168,7 @@
       (defun +multiple-cursors-compat-back-to-previous-state-h ()
         (when +mc--compat-evil-prev-state
           (unwind-protect
-              (case +mc--compat-evil-prev-state
+              (cl-case +mc--compat-evil-prev-state
                 ((normal visual) (evil-force-normal-state))
                 (t (message "Don't know how to handle previous state: %S"
                             +mc--compat-evil-prev-state)))

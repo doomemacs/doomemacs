@@ -45,6 +45,8 @@
 
   (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
 
+  (set-company-backend! 'org-journal-mode 'company-capf 'company-dabbrev)
+
   (map! (:map org-journal-mode-map
          :n "]f"  #'org-journal-next-entry
          :n "[f"  #'org-journal-previous-entry

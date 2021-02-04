@@ -3,20 +3,20 @@ name: CI
 on:
   push:
     branches:
-      - master
       - develop
   pull_request:
     branches:
-      - master
       - develop
 
 jobs:
   build:
+    if: false
     runs-on: ubuntu-latest
     strategy:
       matrix:
         emacs_version:
           - 26.3
+          - 27.1
         include:
           - emacs_version: 26.3
             lint_ignore: 1

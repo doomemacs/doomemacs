@@ -33,6 +33,15 @@ ignored. This makes it easy to override built-in snippets with private ones."
         (make-directory dir t)
       (error "%S doesn't exist" (abbreviate-file-name dir)))))
 
+(defun +snippet--get-template-by-uuid (uuid &optional mode)
+  "Look up the template by uuid in child-most to parent-most mode order.
+Finds correctly active snippets from parent modes (based on Yas' logic)."
+  (cl-loop with mode = (or mode major-mode)
+           for active-mode in (yas--modes-to-activate mode)
+           if (gethash active-mode yas--tables)
+           if (gethash uuid (yas--table-uuidhash it))
+           return it))
+
 (defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
   (plist-get
    (text-properties-at
@@ -169,7 +178,7 @@ buggy behavior when <delete> is pressed in an empty field."
   (interactive
    (list
     (+snippet--completing-read-uuid "Visit snippet: " current-prefix-arg)))
-  (if-let* ((template (yas--get-template-by-uuid major-mode template-uuid))
+  (if-let* ((template (+snippet--get-template-by-uuid template-uuid major-mode))
             (template-path (yas--template-load-file template)))
       (progn
         (unless (file-readable-p template-path)
@@ -242,7 +251,7 @@ shadow the default snippet)."
   (if-let* ((major-mode (if (eq major-mode 'snippet-mode)
                             (intern (file-name-base (directory-file-name default-directory)))
                           major-mode))
-            (template (yas--get-template-by-uuid major-mode template-uuid))
+            (template (+snippet--get-template-by-uuid template-uuid major-mode))
             (template-path (yas--template-load-file template)))
       (if (file-in-directory-p template-path +snippets-dir)
           (find-file template-path)
@@ -312,5 +321,7 @@ is."
             (defun region-end () evil-visual-end))
       (funcall orig-fn no-condition)))
   (when (and (bound-and-true-p evil-local-mode)
+             (not (or (evil-emacs-state-p)
+                      (evil-insert-state-p)))
              (yas-active-snippets))
     (evil-insert-state +1)))

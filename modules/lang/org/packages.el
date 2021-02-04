@@ -14,11 +14,12 @@
            ;;      root. Of course, this command won't work in a sparse clone,
            ;;      and more than that, initiating these compilation step is a
            ;;      hassle, so...
-           :build (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
-                    (insert "(fset 'org-release (lambda () \"9.5\"))\n"
-                            "(fset 'org-git-version #'ignore)\n"
-                            "(provide 'org-version)\n")))
-  :pin "7c8dce72bd5d86157dd1dda2ba0a21ac86084426"
+           :pre-build
+           (with-temp-file (doom-path (straight--repos-dir "org-mode") "org-version.el")
+             (insert "(fset 'org-release (lambda () \"9.5\"))\n"
+                     "(fset 'org-git-version #'ignore)\n"
+                     "(provide 'org-version)\n")))
+  :pin "6b83c6e4eaec4af47a90d05c3410d4637d8cb8da"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
   ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
@@ -38,22 +39,22 @@
     :recipe (:host github :repo "hlissner/evil-org-mode")
     :pin "a9706da260c45b98601bcd72b1d2c0a24a017700"))
 (when (featurep! :tools pdf)
-  (package! org-pdftools :pin "3c2b9a413eb841c781cfb49d8c343bf07aa0ad1f"))
+  (package! org-pdftools :pin "bcf0084883ede36e91c72be73c0fbd7098439c99"))
 (when (featurep! :tools magit)
   (package! orgit :pin "ac9b1a42863a864fde9d225890ef5464bffdc646"))
 (when (featurep! +brain)
-  (package! org-brain :pin "1ae4fd46165fc56f34f36ce38cb2ae816b07e207"))
+  (package! org-brain :pin "f7939ef5071895930eebccf490ea7cb25cc54b2c"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "42ac361ef5502017e6fc1bceb00333eba90402f4"))
+  (package! org-download :pin "97bec7412e1a4d6e9031c7a0568d0f065cd9fd00"))
 (when (featurep! +gnuplot)
-  (package! gnuplot :pin "f0001c30010b2899e36d7d89046322467e923088")
+  (package! gnuplot :pin "116cad8e09024223f97e81b0a4503cef20de9bf5")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
   (package! jupyter :pin "360cae2c70ab28c7a7848c0c56473d984f0243e5"))
 (when (featurep! +journal)
-  (package! org-journal :pin "14ce0119fe2d89f2f2207788be2edce0b9372822"))
+  (package! org-journal :pin "c0836483ae43e525bf7547b7a789d171eda84c84"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
@@ -65,14 +66,14 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "18034c476038adcc1c4697168b8068f4d0ce62fe")
-  (package! org-re-reveal :pin "0062756e9a5b6ec96c7de5ca94372cc6495296a1")
+  (package! org-tree-slide :pin "d6e8e91433dfe4968f1343b483f2680f45a77d52")
+  (package! org-re-reveal :pin "47339ef6772c79849a9764716df8361649ea7bdc")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
     :pin "0582f57517c97a4c7bfeb58762138c78883f94c5"))
 (when (featurep! +roam)
-  (package! org-roam :pin "be95b42d32d9707309ab373f1d8182c84db41c5c"))
+  (package! org-roam :pin "15d864a500d90c9dc2e16d888e93343528ec3941"))
 
 ;;; Babel
 (package! ob-async :pin "de1cd6c93242a4cb8773bbe115b7be3d4dd6b97e")
@@ -89,7 +90,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient :pin "f7449b2068498fe9d8ab9589e0a638148861533f"))
+  (package! ob-restclient :pin "0ebfc7c5ebf96d2fe1a476439831363a5a43b9b6"))
 (when (featurep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
@@ -99,6 +100,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "f24c9bd522ae22bee2327c2b53858d0a5066707d"))
+    :pin "6bc8ee08023695fa167ac0ddf1fc61e1975fa1ce"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))

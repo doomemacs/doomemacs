@@ -20,8 +20,8 @@ marker, indent and syntax-based code folding for as many languages as possible.
 This module provides no flags.
 
 ** Plugins
-+[[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
-+[[https://github.com/matsievskiysv/vimish-fold][vimish-fold]]
++ [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
++ [[https://github.com/matsievskiysv/vimish-fold][vimish-fold]]
 
 * Prerequisites
 This module has no prerequisites.

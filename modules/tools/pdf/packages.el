@@ -8,4 +8,4 @@
            :branch "fix-macros")
   :pin "eb6d40663069f2b7e6b52e907eeaa4e37375feb6")
 
-(package! saveplace-pdf-view :pin "88e07be656544bcdfa332d25880abff168ca1423")
+(package! saveplace-pdf-view :pin "b0370912049222f3a4c943856de3d69d48d53a35")

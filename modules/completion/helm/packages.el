@@ -13,7 +13,7 @@
 (when (featurep! +fuzzy)
   (package! helm-flx :pin "6640fac5cb16bee73c95b8ed1248a4e5e113690e"))
 (when (featurep! +childframe)
-  (package! posframe :pin "e1552c82dffaadc5e7de09a44880a498197ffbee"))
+  (package! posframe :pin "efd7ea490defc53a5b78e7469a3a35d225b766cc"))
 (when (featurep! :lang org)
   (package! helm-org :pin "b7a18dfc17e8b933956d61d68c435eee03a96c24"))
 (package! helm-descbinds :pin "b72515982396b6e336ad7beb6767e95a80fca192")

@@ -27,7 +27,7 @@
 (when (featurep! +dictionary)
   (if IS-MAC
       (package! osx-dictionary :pin "1b79ff64c72485cb078db9ab7ee3256b11a99f4b")
-    (package! define-word :pin "3af6825c5f3bf4f6176a3f5b2e499616c65e2fe0")
+    (package! define-word :pin "6e4a427503aef096484f88332962c346cdd10847")
     (package! powerthesaurus :pin "93036d3b111925ebc34f747ff846cb0b8669b92e")
     (when (featurep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")

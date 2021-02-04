@@ -194,8 +194,8 @@ or if the current buffer is read-only or not file-visiting."
       ;; for tall lines.
       auto-window-vscroll nil
       ;; mouse
-      mouse-wheel-scroll-amount '(5 ((shift) . 2))
-      mouse-wheel-progressive-speed nil)  ; don't accelerate scrolling
+      mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
+      mouse-wheel-scroll-amount-horizontal 2)
 
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
@@ -289,18 +289,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; where we resize windows too quickly.
 (setq window-resize-pixelwise nil)
 
-(unless (assq 'menu-bar-lines default-frame-alist)
-  ;; We do this in early-init.el too, but in case the user is on Emacs 26 we do
-  ;; it here too: disable tool and scrollbars, as Doom encourages
-  ;; keyboard-centric workflows, so these are just clutter (the scrollbar also
-  ;; impacts performance).
-  (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-  (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-  (add-to-list 'default-frame-alist '(vertical-scroll-bars)))
+;; Disable tool, menu, and scrollbars. Doom is designed to be keyboard-centric,
+;; so these are just clutter (the scrollbar also impacts performance). Whats
+;; more, the menu bar exposes functionality that Doom doesn't endorse.
+(push '(menu-bar-lines . 0)   default-frame-alist)
+(push '(tool-bar-lines . 0)   default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
 
-;; These are disabled directly through their frame parameters, to avoid the
-;; extra work their minor modes do, but we have to unset these variables
-;; ourselves, otherwise users will have to cycle them twice to re-enable them.
+;; These are disabled directly through their frame parameters to avoid the extra
+;; work their minor modes do, but their variables must be unset too, otherwise
+;; users will have to cycle them twice to re-enable them.
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
@@ -344,9 +342,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; Expand the minibuffer to fit multi-line text displayed in the echo-area. This
 ;; doesn't look too great with direnv, however...
-(setq resize-mini-windows 'grow-only
-      ;; But don't let the minibuffer grow beyond this size
-      max-mini-window-height 0.15)
+(setq resize-mini-windows 'grow-only)
 
 ;; Typing yes/no is obnoxious when y/n will do
 (fset #'yes-or-no-p #'y-or-n-p)
@@ -396,7 +392,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Highlights the current line
   :hook (doom-first-buffer . global-hl-line-mode)
   :init
-  (defvar global-hl-line-modes '(prog-mode text-mode conf-mode special-mode)
+  (defvar global-hl-line-modes
+    '(prog-mode text-mode conf-mode special-mode
+      org-agenda-mode)
     "What modes to enable `hl-line-mode' in.")
   :config
   ;; HACK I reimplement `global-hl-line-mode' so we can white/blacklist modes in
@@ -506,6 +504,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                        all-the-icons-wicon all-the-icons-alltheicon)
            ""))))
 
+;; Hide the mode line in completion popups and MAN pages because they serve
+;; little purpose there, and is better hidden.
 ;;;###package hide-mode-line-mode
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
            #'hide-mode-line-mode)
@@ -520,17 +520,19 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;;;###package rainbow-delimiters
 ;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
-;; languages like Lisp.
+;; languages like Lisp. I reduce it from it's default of 9 to reduce the
+;; complexity of the font-lock keyword and hopefully buy us a few ms of
+;; performance.
 (setq rainbow-delimiters-max-face-count 3)
 
 
 ;;
 ;;; Line numbers
 
-;; Explicitly define a width to reduce computation
+;; Explicitly define a width to reduce the cost of on-the-fly computation
 (setq-default display-line-numbers-width 3)
 
-;; Show absolute line numbers for narrowed regions makes it easier to tell the
+;; Show absolute line numbers for narrowed regions to make it easier to tell the
 ;; buffer is narrowed, and where you are, exactly.
 (setq-default display-line-numbers-widen t)
 
@@ -549,6 +551,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;;
 ;;; Theme & font
+
+;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
+(setq custom-theme-directory (concat doom-private-dir "themes/"))
+
+;; Always prioritize the user's themes above the built-in/packaged ones.
+(setq custom-theme-load-path
+      (cons 'custom-theme-directory
+            (remq 'custom-theme-directory custom-theme-load-path)))
 
 ;; Underline looks a bit better when drawn lower
 (setq x-underline-at-descent-line t)
@@ -589,7 +599,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
         (when (fboundp 'set-fontset-font)
-          (dolist (font (append doom-unicode-extra-fonts (doom-enlist doom-unicode-font)))
+          (dolist (font (cons doom-unicode-font doom-unicode-extra-fonts))
             (set-fontset-font t 'unicode font nil 'prepend)))
         (run-hooks 'after-setting-font-hook))
     ((debug error)

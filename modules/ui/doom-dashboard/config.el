@@ -48,7 +48,7 @@ Possible values:
 (defvar +doom-dashboard-menu-sections
   '(("Reload last session"
      :icon (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
-     :when (cond ((require 'persp-mode nil t)
+     :when (cond ((featurep! :ui workspaces)
                   (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                  ((require 'desktop nil t)
                   (file-exists-p (desktop-full-file-name))))

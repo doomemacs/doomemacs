@@ -158,11 +158,11 @@ users).")
   ;; HACK Disable native-compilation for some troublesome packages
   (mapc (doom-partial #'add-to-list 'comp-deferred-compilation-deny-list)
         (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-          (list (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                ;; https://github.com/nnicandro/emacs-jupyter/issues/297
-                (concat local-dir-re ".*/jupyter-channel\\.el\\'")
+          (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
+                (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
                 (concat local-dir-re ".*/with-editor\\.el\\'")
-                (concat "\\`" (regexp-quote doom-autoloads-file) "\\'"))))
+                ;; https://github.com/nnicandro/emacs-jupyter/issues/297
+                (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
   ;; Default to using all cores, rather than half of them, since we compile
   ;; things ahead-of-time in a non-interactive session.
   (defadvice! doom--comp-use-all-cores-a ()
@@ -208,7 +208,8 @@ users).")
       inhibit-default-init t
       ;; Shave seconds off startup time by starting the scratch buffer in
       ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
-      ;; pull in a ton of packages.
+      ;; pull in a ton of packages. `doom/open-scratch-buffer' provides a better
+      ;; scratch buffer anyway.
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
@@ -219,7 +220,6 @@ users).")
 ;; We avoid `no-littering' because it's a mote too opinionated for our needs.
 (setq async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
       custom-file                  (concat doom-private-dir "custom.el")
-      custom-theme-directory       (concat doom-private-dir "themes/")
       desktop-dirname              (concat doom-etc-dir "desktop")
       desktop-base-file-name       "autosave"
       desktop-base-lock-name       "autosave-lock"
@@ -247,8 +247,7 @@ config.el instead."
 ;;; Optimizations
 
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
-;; indicates misconfiguration (or that the user needs to stop relying on case
-;; insensitivity).
+;; indicates misconfiguration (don't rely on case insensitivity for file names).
 (setq auto-mode-case-fold nil)
 
 ;; Disable bidirectional text rendering for a modest performance boost. I've set
@@ -295,6 +294,10 @@ config.el instead."
 ;; hasn't been determined, but we inhibit it there anyway. This increases memory
 ;; usage, however!
 (setq inhibit-compacting-font-caches t)
+
+;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification while
+;; receiving input, which should help with performance while scrolling.
+(setq redisplay-skip-fontification-on-input t)
 
 ;; Performance on Windows is considerably worse than elsewhere. We'll need
 ;; everything we can get.
@@ -378,7 +381,7 @@ config.el instead."
 
 (defvar doom-incremental-packages '(t)
   "A list of packages to load incrementally after startup. Any large packages
-here may cause noticable pauses, so it's recommended you break them up into
+here may cause noticeable pauses, so it's recommended you break them up into
 sub-packages. For example, `org' is comprised of many packages, and can be
 broken up into:
 
@@ -612,7 +615,7 @@ to least)."
     (eval-after-load 'straight '(doom-initialize-packages))
 
     ;; Bootstrap our GC manager
-    (add-hook 'doom-first-input-hook #'gcmh-mode)
+    (add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
     ;; Bootstrap the interactive session
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)

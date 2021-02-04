@@ -38,9 +38,8 @@
              (message nil) ; flush lingering prompt in echo-area
              ;; Make sure this doesn't run more than once
              (advice-remove #'pdf-view-mode #'+pdf--install-epdfinfo-a)
-             (if (or (pdf-info-running-p)
-                     (ignore-errors (pdf-info-check-epdfinfo) t))
-                 (pdf-tools-install-noverify)
+             (unless (or (pdf-info-running-p)
+                         (ignore-errors (pdf-info-check-epdfinfo) t))
                ;; HACK On the first pdf you open (before pdf-tools loaded)
                ;;      `pdf-tools-install' throws errors because it has hardcoded
                ;;      opinions about what buffer should be focused when it is run.
@@ -60,6 +59,8 @@
                                    (derived-mode-p 'pdf-view-mode))
                                (revert-buffer t t))))))))))
             ((message "Aborted")))))
+
+  (pdf-tools-install-noverify)
 
   ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)

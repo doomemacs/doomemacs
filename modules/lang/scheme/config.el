@@ -11,7 +11,9 @@
   (setq geiser-active-implementations '(guile chicken mit chibi chez)
         geiser-autodoc-identifier-format "%s → %s"
         geiser-repl-current-project-function 'doom-project-root)
-  (unless (featurep! :lang racket)
+  (if (featurep! :lang racket)
+      (setq auto-mode-alist
+            (remove '("\\.rkt\\'" . scheme-mode) auto-mode-alist))
     (push 'racket geiser-active-implementations))
   (after! scheme                        ; built-in
     (set-repl-handler! 'scheme-mode #'+scheme/open-repl)

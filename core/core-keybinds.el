@@ -39,6 +39,21 @@ and Emacs states, and for non-evil users.")
   (setq w32-lwindow-modifier 'super
         w32-rwindow-modifier 'super)))
 
+;; HACK Fixes Emacs' disturbing inability to distinguish C-i from TAB.
+(define-key key-translation-map [?\C-i]
+  (cmd! (if (let ((keys (this-single-command-raw-keys)))
+              (and keys
+                   (not (cl-position 'tab    keys))
+                   (not (cl-position 'kp-tab keys))
+                   (display-graphic-p)
+                   ;; Fall back if no <C-i> keybind can be found, otherwise
+                   ;; we've broken all pre-existing C-i keybinds.
+                   (let ((key
+                          (doom-lookup-key
+                           (vconcat (cl-subseq keys 0 -1) [C-i]))))
+                     (not (or (numberp key) (null key))))))
+            [C-i] [?\C-i])))
+
 
 ;;
 ;;; Universal, non-nuclear escape
@@ -63,18 +78,22 @@ and Emacs states, and for non-evil users.")
 More specifically, when `doom/escape' is pressed. If any hook returns non-nil,
 all hooks after it are ignored.")
 
-(defun doom/escape ()
+(defun doom/escape (&optional interactive)
   "Run `doom-escape-hook'."
-  (interactive)
+  (interactive (list 'interactive))
   (cond ((minibuffer-window-active-p (minibuffer-window))
          ;; quit the minibuffer if open.
+         (when interactive
+           (setq this-command 'abort-recursive-edit))
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
         ((run-hook-with-args-until-success 'doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
-        ((keyboard-quit))))
+        ((unwind-protect (keyboard-quit)
+           (when interactive
+             (setq this-command 'keyboard-quit))))))
 
 (global-set-key [remap keyboard-quit] #'doom/escape)
 

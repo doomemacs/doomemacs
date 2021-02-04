@@ -310,7 +310,7 @@ Continues comments if executed from a commented line. Consults
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
   "T"    #'doom/toggle-profiler
-  "V"    #'set-variable
+  "V"    #'doom/help-custom-variable
   "W"    #'+default/man-or-woman
   "C-k"  #'describe-key-briefly
   "C-l"  #'describe-language-environment

@@ -28,6 +28,8 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         lsp-enable-text-document-color nil)
   ;; Reduce unexpected modifications to code
   (setq lsp-enable-on-type-formatting nil)
+  ;; Make breadcrumbs opt-in; they're redundant with the modeline and imenu
+  (setq lsp-headerline-breadcrumb-enable nil)
 
   ;; Let doom bind the lsp keymap.
   (when (featurep! :config default +bindings)
@@ -40,7 +42,10 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
         lsp-vetur-global-snippets-dir (expand-file-name "vetur"
                                                         (or (bound-and-true-p +snippets-dir)
                                                             (concat doom-private-dir "snippets/")))
-        lsp-clients-emmy-lua-jar-path (concat lsp-server-install-dir "EmmyLua-LS-all.jar")
+        lsp-clients-lua-language-server-bin (concat lsp-server-install-dir "lua-language-server/"
+                                                    (cond (IS-MAC     "bin/macOS")
+                                                          (IS-LINUX   "bin/Linux")
+                                                          (IS-WINDOWS "bin/Windows")))
         lsp-xml-jar-file              (concat lsp-server-install-dir "org.eclipse.lsp4xml-0.3.0-uber.jar")
         lsp-groovy-server-file        (concat lsp-server-install-dir "groovy-language-server-all.jar"))
 

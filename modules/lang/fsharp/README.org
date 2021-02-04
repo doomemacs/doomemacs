@@ -31,9 +31,9 @@ This module adds [[https://fsharp.org/][F#]] support.
 ** Module Flags
 + =+lsp= Enables lsp-fsharp (this requires ~:tools lsp~ to be enabled).
 ** Plugins
-+ [[https://github.com/fsharp/emacs-fsharp-mod+e][fsharp-mode]]
++ [[https://github.com/fsharp/emacs-fsharp-mode][fsharp-mode]]
 + =+lsp=
-  + [[https://github.com/emacs-lsp/lsp-mode/blob/master/lsp-fsharp.el][lsp-fsharp]]
+  + [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]]
 ** Hacks
 None so far.
 
@@ -47,7 +47,7 @@ Do *NOT* install mono via brew. See this [[https://github.com/fsharp/FsAutoCompl
 sudo pacman -S mono
 #+END_SRC
 ** LSP
-The language server is automatically installed by [[https://github.com/emacs-lsp/lsp-mode/blob/master/lsp-fsharp.el][lsp-fsharp]].
+The language server is automatically installed by [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]].
 * Features
 An in-depth list of features, how to use them, and their dependencies.
 

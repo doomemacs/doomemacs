@@ -1,11 +1,5 @@
 ;;; lang/lua/config.el -*- lexical-binding: t; -*-
 
-(defvar +lua-lsp-dir (concat doom-etc-dir "lsp/lua-language-server/")
-  "Absolute path to the directory of sumneko's lua-language-server.
-
-This directory MUST contain the 'main.lua' file and be the in-source build of
-lua-language-server.")
-
 ;; sp's default rules are obnoxious, so disable them
 (provide 'smartparens-lua)
 
@@ -25,27 +19,29 @@ lua-language-server.")
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
   (when (featurep! +lsp)
-    (defun +lua-generate-lsp-server-command ()
-      ;; The absolute path to lua-language-server binary is necessary because
-      ;; the bundled dependencies aren't found otherwise. The only reason this
-      ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
-      (list (doom-path +lua-lsp-dir
-                       (cond (IS-MAC     "bin/macOS")
-                             (IS-LINUX   "bin/Linux")
-                             (IS-WINDOWS "bin/Windows"))
-                       "lua-language-server")
-            "-E" "-e" "LANG=en"
-            (doom-path +lua-lsp-dir "main.lua")))
+    (add-hook 'lua-mode-local-vars-hook #'lsp!)
 
-    (if (featurep! :tools lsp +eglot)
-        (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command))
-      (after! lsp-mode
-        (lsp-register-client
-         (make-lsp-client :new-connection (lsp-stdio-connection '+lua-generate-lsp-server-command)
-                          :major-modes '(lua-mode)
-                          :priority -1
-                          :server-id 'lua-langserver))))
-    (add-hook 'lua-mode-local-vars-hook #'lsp!)))
+    (when (featurep! :tools lsp +eglot)
+      (defvar +lua-lsp-dir (concat doom-etc-dir "lsp/lua-language-server/")
+        "Absolute path to the directory of sumneko's lua-language-server.
+
+This directory MUST contain the 'main.lua' file and be the in-source build of
+lua-language-server.")
+
+      (defun +lua-generate-lsp-server-command ()
+        ;; The absolute path to lua-language-server binary is necessary because
+        ;; the bundled dependencies aren't found otherwise. The only reason this
+        ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
+        (list (or (executable-find "lua-language-server")
+                  (doom-path +lua-lsp-dir
+                             (cond (IS-MAC     "bin/macOS")
+                                   (IS-LINUX   "bin/Linux")
+                                   (IS-WINDOWS "bin/Windows"))
+                             "lua-language-server"))
+              "-E" "-e" "LANG=en"
+              (doom-path +lua-lsp-dir "main.lua")))
+
+      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))))
 
 
 (use-package! moonscript

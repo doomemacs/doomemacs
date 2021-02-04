@@ -225,9 +225,9 @@ If nil, BEG and/or END will default to the boundaries of the src block at point.
 (defun +format/buffer ()
   "Reformat the current buffer using LSP or `format-all-buffer'."
   (interactive)
-  (if (and (eq major-mode 'org-mode)
-           (org-in-src-block-p t))
-      (+format--org-region nil nil)
+  (if (eq major-mode 'org-mode)
+      (when (org-in-src-block-p t)
+        (+format--org-region nil nil))
     (call-interactively
      (cond ((and +format-with-lsp
                  (bound-and-true-p lsp-mode)

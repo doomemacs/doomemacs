@@ -174,6 +174,6 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 
 ;;
-;; Hacks
+;;; Hacks
 
 (load! "+hacks")

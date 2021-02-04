@@ -17,33 +17,28 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "3277e1c9648b41dd5bfb239c067b8374ed2ec2bb")
+  :pin "f2cb888f088a790bac8731b95eeec3df068cac5f")
 
 ;; core-modules.el
 (package! use-package
   :type 'core
-  :pin "caa92f1d64fc25480551757d854b4b49981dfa6b")
+  :pin "317137b07687f16ea97a2493b0a6768c9df381a0")
 
 ;; core-ui.el
-(package! all-the-icons :pin "6917b08f64dd8487e23769433d6cb9ba11f4152f")
+(package! all-the-icons :pin "5fa728399bd6233a82bbfd4f7cb203a1d7ede708")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f43d48a24602be3ec899345a3326ed0247b960c6")
-(package! restart-emacs :pin "e5707491d7ac20879465bb52e282ad1416748378")
+(package! restart-emacs :pin "1607da2bc657fe05ae01f7fdf26f716eafead02c")
 
 ;; core-editor.el
-(package! better-jumper :pin "fe548d22c9228b60d9c8a2a452a6c2e03dfdf238")
-(package! dtrt-indent :pin "a7ade6d244eeeda2ada9f7eca565491cea4b622a")
+(package! better-jumper :pin "411ecdf6e7a3e1b4ced7605070d2309e5fc46556")
+(package! dtrt-indent :pin "854b9a1ce93d9926018a0eb18e6e552769c5407d")
 (package! helpful :pin "584ecc887bb92133119f93a6716cdf7af0b51dca")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
-(package! smartparens :pin "7f5825dd655942c3d56d14acabab1ffab1aa2ae2")
-(package! so-long
-  :built-in 'prefer ; included in Emacs 27+
-  ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
-  ;;        I've created my own mirror for it because git.savannah.gnu.org runs
-  ;;        on a potato.
-  :recipe (:host github :repo "hlissner/emacs-so-long")
-  :pin "ed666b0716f60e8988c455804de24b55919e71ca")
+(package! smartparens :pin "63695c64233d215a92bf08e762f643cdb595bdd9")
+;; DEPRECATED Built into Emacs 27+; remove when we drop 26 support
+(package! so-long :built-in 'prefer :pin "a5d445de4829b2327bd51dad2fb04291c7a0ec5f")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -51,8 +46,8 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "d1cfad008b1719a6bee17fbe9479db414c0dc5d9")
+(package! projectile :pin "fd5994762a90c2311e8aa40c37373f24e1743a55")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
-(package! which-key :pin "ca268fd313d3fb2bd03a8b5e4bdcca675ce58ca7")
+(package! which-key :pin "c0608e812a8d1bc7aefeacdfaeb56a7272eabf44")

@@ -541,12 +541,6 @@ the exported output (i.e. formatters)."
     :before-while #'org-fix-tags-on-the-fly
     org-auto-align-tags)
 
-  ;; HACK Org is known to use a lot of unicode symbols (and large org files tend
-  ;;      to be especially memory hungry). Compounded with
-  ;;      `inhibit-compacting-font-caches' being non-nil, org needs more memory
-  ;;      to be performant.
-  (setq-hook! 'org-mode-hook gcmh-high-cons-threshold (* 2 gcmh-high-cons-threshold))
-
   (defadvice! +org--recenter-after-follow-link-a (&rest _args)
     "Recenter after following a link, but only internal or file links."
     :after '(org-footnote-action
@@ -556,20 +550,14 @@ the exported output (i.e. formatters)."
     (when (get-buffer-window)
       (recenter)))
 
-  (defadvice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
-    "Remove link syntax and fix variable height text (e.g. org headings) in the
-eldoc string."
+  (defadvice! +org--strip-properties-from-outline-a (orig-fn &rest args)
+    "Fix variable height faces in eldoc breadcrumbs."
     :around #'org-format-outline-path
-    (funcall orig-fn
-             (cl-loop for part in path
-                      ;; Remove full link syntax
-                      for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" (or part ""))
-                      for n from 0
-                      for face = (nth (% n org-n-level-faces) org-level-faces)
-                      collect
-                      (org-add-props fixedpart
-                          nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
-             width prefix separator))
+    (let ((org-level-faces
+           (cl-loop for face in org-level-faces
+                    collect `(:foreground ,(face-foreground face nil t)
+                              :weight bold))))
+      (apply orig-fn args)))
 
   (after! org-eldoc
     ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
@@ -588,8 +576,7 @@ eldoc string."
 
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
-      "Prevent temporary agenda buffers being associated with current
-workspace."
+      "Don't associate temporary agenda buffers with current workspace."
       (when (and org-agenda-new-buffers
                  (bound-and-true-p persp-mode)
                  (not org-agenda-sticky))
@@ -598,11 +585,12 @@ workspace."
                                (get-current-persp)
                                nil))))
     (defun +org-defer-mode-in-agenda-buffers-h ()
-      "Org agenda opens temporary agenda incomplete org-mode buffers.
-These are great for extracting agenda information from, but what if the user
-tries to visit one of these buffers? Then we remove it from the to-be-cleaned
-queue and restart `org-mode' so they can grow up to be full-fledged org-mode
-buffers."
+      "`org-agenda' opens temporary, incomplete org-mode buffers.
+I've disabled a lot of org-mode's startup processes for these invisible buffers
+to speed them up (in `+org--exclude-agenda-buffers-from-recentf-a'). However, if
+the user tries to visit one of these buffers they'll see a gimped, half-broken
+org buffer. To avoid that, restart `org-mode' when they're switched to so they
+can grow up to be fully-fledged org-mode buffers."
       (dolist (buffer org-agenda-new-buffers)
         (with-current-buffer buffer
           (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
@@ -612,7 +600,7 @@ buffers."
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
-          (doom-large-file-p t)
+          (doom-inhibit-large-file-detection t)
           find-file-hook
           org-mode-hook)
       (funcall orig-fn file)))
@@ -1128,7 +1116,9 @@ compelling reason, so..."
     (run-hooks 'org-load-hook))
 
   :config
-  (set-company-backend! 'org-mode 'company-capf 'company-dabbrev)
+  (add-to-list 'doom-debug-variables 'org-export-async-debug)
+
+  (set-company-backend! 'org-mode 'company-capf)
   (set-eval-handler! 'org-mode #'+org-eval-handler)
   (set-lookup-handlers! 'org-mode
     :definition #'+org-lookup-definition-handler

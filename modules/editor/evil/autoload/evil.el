@@ -15,18 +15,18 @@
 ;;; Interactive commands
 
 ;;;###autoload
-(defun +evil/visual-indent ()
+(defun +evil/shift-right ()
   "vnoremap < <gv"
   (interactive)
-  (evil-shift-right (region-beginning) (region-end))
+  (call-interactively #'evil-shift-right)
   (evil-normal-state)
   (evil-visual-restore))
 
 ;;;###autoload
-(defun +evil/visual-dedent ()
+(defun +evil/shift-left ()
   "vnoremap > >gv"
   (interactive)
-  (evil-shift-left (region-beginning) (region-end))
+  (call-interactively #'evil-shift-left)
   (evil-normal-state)
   (evil-visual-restore))
 
@@ -123,7 +123,7 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   "Wrapper around `doom/retab'."
   :motion nil :move-point nil :type line
   (interactive "<r>")
-  (doom/retab beg end))
+  (doom/retab nil beg end))
 
 ;;;###autoload (autoload '+evil:narrow-buffer "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:narrow-buffer (beg end &optional bang)

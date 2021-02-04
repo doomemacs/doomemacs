@@ -20,7 +20,7 @@
 ;; Don't generate superfluous files when writing temp buffers
 (setq make-backup-files nil)
 
-;; Stop user configuration from interfering with Doom
+;; Stop user configuration from interfering with package management
 (setq enable-dir-local-variables nil)
 
 
@@ -260,8 +260,9 @@ BODY will be run when this dispatcher is called."
            (string-match-p (regexp-quote straight-process-buffer)
                            data))
       (print! (error "There was an unexpected package error"))
-      (print-group!
-       (print! "%s" (string-trim-right (straight--process-get-output)))))
+      (when-let (output (straight--process-get-output))
+        (print-group!
+         (print! "%s" (string-trim-right output)))))
      ((print! (error "There was an unexpected error"))
       (print-group!
        (print! "%s %s" (bold "Message:") (get type 'error-message))
@@ -423,6 +424,18 @@ everywhere we use it (and internally)."
               (make-string (1- (or doom-output-indent 1)) 32)
             cause)
           interactive)))
+
+(defadvice! doom--straight-inject-load-path-a (orig-fn &rest args)
+  "Straight builds packages in an isolated Emacs child process, which means
+needed packages may not be accessible when a package is compiled."
+  :override #'straight--build-compile
+  (let* ((package (plist-get recipe :package))
+         (dir (straight--build-dir package)))
+    (call-process (concat invocation-directory invocation-name)
+                  nil straight-byte-compilation-buffer nil
+                  "-Q" "--batch"
+                  "--eval" (prin1-to-string `(setq load-path (cons ,dir ',load-path)))
+                  "--eval" (format "(byte-recompile-directory %S 0 'force)" dir))))
 
 
 ;;

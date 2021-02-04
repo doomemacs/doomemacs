@@ -32,8 +32,6 @@
            ispell-extra-args '("--sug-mode=ultra"
                                "--run-together"))
 
-     (unless ispell-dictionary
-       (setq ispell-dictionary "english"))
      (unless ispell-aspell-dict-dir
        (setq ispell-aspell-dict-dir
              (ispell-get-aspell-config-value "dict-dir")))
@@ -147,7 +145,7 @@
       (add-hook! 'spell-fu-mode-hook
         (defun +spell-init-excluded-faces-h ()
           "Set `spell-fu-faces-exclude' according to `+spell-excluded-faces-alist'."
-          (when-let (excluded (alist-get major-mode +spell-excluded-faces-alist))
+          (when-let (excluded (cdr (cl-find-if #'derived-mode-p +spell-excluded-faces-alist :key #'car)))
             (setq-local spell-fu-faces-exclude excluded))))
 
       ;; TODO custom `spell-fu-check-range' function to reduce false positives
@@ -199,7 +197,10 @@ e.g. proselint and langtool."
     (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
 
     (let ((flyspell-correct
-           (cmds! (and (not (or mark-active (ignore-errors (evil-insert-state-p))))
+           (cmds! (and (not mark-active)
+                       (not (and (bound-and-true-p evil-local-mode)
+                                 (or (evil-insert-state-p)
+                                     (evil-emacs-state-p))))
                        (memq 'flyspell-incorrect (face-at-point nil t)))
                   #'flyspell-correct-at-point)))
       (map! :map flyspell-mouse-map

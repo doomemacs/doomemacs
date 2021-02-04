@@ -42,7 +42,7 @@ Although this module uses the ~doom-one~ theme by default, [[https://github.com/
 + *doom-one:* doom-themes' flagship theme, inspired by [[https://atom.io/][Atom's]] One Dark themes
 + *doom-vibrant:* a more vibrant version of doom-one
 + *doom-molokai:* based on Textmate's monokai
-+ *doom-nova:* adapted from [[https://trevordmiller.com/projects/nova][Nova]]
++ *doom-nova:* adapted from [[https://github.com/trevordmiller/nova-colors][Nova]]
 + *doom-one-light:* light version of doom-one
 + *doom-peacock:* based on Peacock from [[https://daylerees.github.io/][daylerees' themes]]
 + *doom-tomorrow-night:* by [[https://github.com/ChrisKempson/Tomorrow-Theme][Chris Kempson]]
