@@ -97,7 +97,7 @@ selected by default. Modify ~rustic-lsp-server~ to change the default:
   (setq rustic-lsp-server 'rls))
 #+END_SRC
 
-** Enabling elgot support for Rust
+** Enabling eglot support for Rust
 Doom's =:tools lsp= module has an =+eglot= flag. Enable it and this module will
 use eglot instead.
 
