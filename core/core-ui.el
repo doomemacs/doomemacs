@@ -637,7 +637,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         ;; `load-theme' doesn't disable previously enabled themes, which seems
         ;; like what you'd want. You could always use `enable-theme' to activate
         ;; multiple themes instead.
-        (mapc #'disable-theme (remq theme (remq 'use-package custom-enabled-themes)))
+        (mapc #'disable-theme (remq theme custom-enabled-themes))
         (run-hooks 'doom-load-theme-hook))
       result)))
 
@@ -649,7 +649,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
     "Disable other themes when loading a new one."
     :before #'load-theme
     (unless no-enable
-      (mapc #'disable-theme (remq 'use-package custom-enabled-themes))))
+      (mapc #'disable-theme custom-enabled-themes)))
 
   ;; DEPRECATED Not needed in Emacs 27
   (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)

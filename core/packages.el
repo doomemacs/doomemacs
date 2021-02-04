@@ -17,15 +17,15 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "ac4df5c689557f5434d6fc9f713e907e7b37a6bd")
+  :pin "f2cb888f088a790bac8731b95eeec3df068cac5f")
 
 ;; core-modules.el
 (package! use-package
   :type 'core
-  :pin "365c73d2618dd0040a32c2601c5456ab5495b812")
+  :pin "317137b07687f16ea97a2493b0a6768c9df381a0")
 
 ;; core-ui.el
-(package! all-the-icons :pin "c795d0f0a49b1823d167a252319ac32c59152d72")
+(package! all-the-icons :pin "5fa728399bd6233a82bbfd4f7cb203a1d7ede708")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f43d48a24602be3ec899345a3326ed0247b960c6")
@@ -37,13 +37,8 @@
 (package! helpful :pin "584ecc887bb92133119f93a6716cdf7af0b51dca")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "63695c64233d215a92bf08e762f643cdb595bdd9")
-(package! so-long
-  :built-in 'prefer ; included in Emacs 27+
-  ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
-  ;;        I've created my own mirror for it because git.savannah.gnu.org runs
-  ;;        on a potato.
-  :recipe (:host github :repo "hlissner/emacs-so-long")
-  :pin "ed666b0716f60e8988c455804de24b55919e71ca")
+;; DEPRECATED Built into Emacs 27+; remove when we drop 26 support
+(package! so-long :built-in 'prefer :pin "a5d445de4829b2327bd51dad2fb04291c7a0ec5f")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -51,7 +46,7 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "793abfead25a7ef92ad3a443ad3067a82f4a2fb9")
+(package! projectile :pin "fd5994762a90c2311e8aa40c37373f24e1743a55")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")

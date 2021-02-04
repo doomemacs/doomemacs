@@ -123,7 +123,7 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   "Wrapper around `doom/retab'."
   :motion nil :move-point nil :type line
   (interactive "<r>")
-  (doom/retab beg end))
+  (doom/retab nil beg end))
 
 ;;;###autoload (autoload '+evil:narrow-buffer "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:narrow-buffer (beg end &optional bang)
