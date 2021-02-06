@@ -749,26 +749,7 @@ made obsolete, for example a date or a release number.
 See the docstrings of `defalias' and `make-obsolete' for more details."
     (declare (doc-string 4))
     `(progn (defalias ,obsolete-name ,current-name ,docstring)
-            (make-obsolete ,obsolete-name ,current-name ,when)))
-
-  (defadvice! doom--byte-compile-in-same-session-a (recipe)
-    "Straight recompiles packages from an Emacs child process. This is sensible,
-but many packages don't properly load their macro dependencies, causing errors,
-which we can't possibly police, so I revert straight to its old strategy of
-compiling in the same session."
-    :override #'straight--build-compile
-    (straight--with-plist recipe (package)
-      ;; These two `let' forms try very, very hard to make byte-compilation an
-      ;; invisible process. Lots of packages have byte-compile warnings; I
-      ;; don't need to know about them and neither do straight.el users.
-      (letf! (;; Prevent Emacs from asking the user to save all their
-              ;; files before compiling.
-              (#'save-some-buffers #'ignore))
-        (quiet!
-         ;; Note that there is in fact no `byte-compile-directory' function.
-         (byte-recompile-directory
-          (straight--build-dir package)
-          0 'force))))))
+            (make-obsolete ,obsolete-name ,current-name ,when))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
