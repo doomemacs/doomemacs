@@ -94,10 +94,10 @@ at the values with which this function was called."
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
-(defun doom-lookup-key (keys &optional keymap)
+(defun doom-lookup-key (keys &rest keymaps)
   "Like `lookup-key', but search active keymaps if KEYMAP is omitted."
-  (if keymap
-      (lookup-key keymap keys)
+  (if keymaps
+      (cl-some (doom-rpartial #'lookup-key keys) keymaps)
     (cl-loop for keymap
              in (append (cl-loop for alist in emulation-mode-map-alists
                                  append (mapcar #'cdr
