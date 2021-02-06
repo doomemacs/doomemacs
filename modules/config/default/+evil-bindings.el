@@ -42,13 +42,24 @@
                            (bound-and-true-p yas-minor-mode)
                            (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                       #'yas-expand
-                      (and (featurep! :completion company +tng)
-                           (+company-has-completion-p))
-                      #'company-complete-common)
-      :v [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                      (featurep! :completion company +tng)
+                      #'company-indent-or-complete-common)
+      :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                           (evil-visual-state-p)
                            (or (eq evil-visual-selection 'line)
                                (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
-                      #'yas-insert-snippet)
+                      #'yas-insert-snippet
+                      (and (featurep! :editor fold)
+                           (save-excursion (end-of-line) (invisible-p (point))))
+                      #'+fold/toggle
+                      ;; Fixes #4548: without this, this tab keybind overrides
+                      ;; mode-local ones for modes that don't have an evil
+                      ;; keybinding scheme or users who don't have :editor (evil
+                      ;; +everywhere) enabled.
+                      (doom-lookup-key [tab] (list (current-local-map)))
+                      it
+                      (fboundp 'evil-jump-item)
+                      #'evil-jump-item)
 
       (:after help :map help-mode-map
        :n "o"       #'link-hint-open-link)
