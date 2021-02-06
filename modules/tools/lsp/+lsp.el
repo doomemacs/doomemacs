@@ -4,6 +4,9 @@
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
 
+(defvar +lsp-prompt-to-install-server t
+  "If non-nil, prompt to install a server if no server is present.")
+
 
 ;;
 ;;; Packages
@@ -108,7 +111,18 @@ server getting expensively restarted when reverting buffers."
                        (let ((lsp-restart 'ignore))
                          (funcall orig-fn))
                        (+lsp-optimization-mode -1))))
-             lsp--cur-workspace)))))
+             lsp--cur-workspace))))
+
+  (defadvice! +lsp-dont-prompt-to-install-servers-maybe-a (orig-fn &rest args)
+    :around #'lsp
+    (lsp--require-packages)
+    (when (buffer-file-name)
+      (if (or (lsp--filter-clients
+               (-andfn #'lsp--matching-clients?
+                       #'lsp--server-binary-present?))
+              +lsp-prompt-to-install-server)
+          (apply orig-fn args)
+        (lsp--info "No language server available for %S" major-mode)))))
 
 
 (use-package! lsp-ui

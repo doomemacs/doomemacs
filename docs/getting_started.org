@@ -97,7 +97,7 @@ us know!
 This is what you'll have installed by the end of this section:
 
 - Git 2.23+
-- Emacs 26.1+ *(27.x is recommended)*
+- Emacs 26.3+ *(27.1 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
 - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
 - GNU Find
 - (Optional) [[https://github.com/sharkdp/fd][fd]] 7.3.0+ (known as ~fd-find~ on Debian, Ubuntu & derivatives) --

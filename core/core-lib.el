@@ -749,47 +749,7 @@ made obsolete, for example a date or a release number.
 See the docstrings of `defalias' and `make-obsolete' for more details."
     (declare (doc-string 4))
     `(progn (defalias ,obsolete-name ,current-name ,docstring)
-            (make-obsolete ,obsolete-name ,current-name ,when)))
-
-  (defadvice! doom--fix-wrong-number-of-args-during-byte-compile (recipe)
-    :override #'straight--build-compile
-    (let* ((package (plist-get recipe :package))
-           (dir (straight--build-dir package))
-           (program (concat invocation-directory invocation-name))
-           (args
-            `("-Q" "-L" ,dir
-              ,@(apply #'append
-                       (mapcar (lambda (d)
-                                 (let ((d (straight--build-dir d)))
-                                   (when (file-exists-p d) (list "-L" d))))
-                               (straight--get-dependencies package)))
-              "--batch"
-              "--eval"
-              ,(prin1-to-string
-                '(progn
-                   (defmacro define-obsolete-face-alias (obsolete-face current-face &optional when)
-                     `(progn (put ,obsolete-face 'face-alias ,current-face)
-                             (put ,obsolete-face 'obsolete-face (or (purecopy ,when) t))))
-                   (defmacro define-obsolete-function-alias (obsolete-name current-name &optional when docstring)
-                     `(progn (defalias ,obsolete-name ,current-name ,docstring)
-                             (make-obsolete ,obsolete-name ,current-name ,when)))
-                   (defmacro define-obsolete-variable-alias (obsolete-name current-name &optional when docstring)
-                     `(progn (defvaralias ,obsolete-name ,current-name ,docstring)
-                             (dolist (prop '(saved-value saved-variable-comment))
-                               (and (get ,obsolete-name prop)
-                                    (null (get ,current-name prop))
-                                    (put ,current-name prop (get ,obsolete-name prop))))
-                             (make-obsolete-variable ,obsolete-name ,current-name ,when)))))
-              "--eval"
-              ,(format "(byte-recompile-directory %S 0 'force)" dir))))
-      (when straight-byte-compilation-buffer
-        (with-current-buffer (get-buffer-create straight-byte-compilation-buffer)
-          (insert "\n$ " (replace-regexp-in-string
-                          "\\(-L [^z-a]*? \\)"
-                          "\\1\\\\ \n  "
-                          (string-join `(,program ,@args) " "))
-                  "\n")))
-      (apply #'call-process program nil straight-byte-compilation-buffer nil args))))
+            (make-obsolete ,obsolete-name ,current-name ,when))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
