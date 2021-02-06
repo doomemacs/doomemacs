@@ -235,6 +235,11 @@ or file path may exist now."
   :defer-incrementally easymenu tree-widget timer
   :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
+  :init
+  (setq
+   recentf-auto-cleanup 'never
+   recentf-max-menu-items 0
+   recentf-max-saved-items 200)
   :config
   (defun doom--recent-file-truename (file)
     (if (or (file-remote-p file nil t)
@@ -251,10 +256,7 @@ or file path may exist now."
           ;; Replace $HOME with ~, which is more portable, and reduces how much
           ;; horizontal space the recentf listing uses to list recent files.
           abbreviate-file-name)
-        recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 'never
-        recentf-max-menu-items 0
-        recentf-max-saved-items 200)
+        recentf-save-file (concat doom-cache-dir "recentf"))
 
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
