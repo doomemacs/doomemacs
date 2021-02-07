@@ -420,7 +420,6 @@ directives. By default, this only recognizes C directives.")
 
 (map! :v  "@"     #'+evil:apply-macro
       :m  [C-i]   #'evil-jump-forward
-      :m  [tab]   #'evil-jump-item
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
