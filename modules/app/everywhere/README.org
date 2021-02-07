@@ -1,0 +1,58 @@
+#+title:   app/everywhere
+#+date:    February 7, 2021
+#+since:   v3.0
+#+startup: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds system-wide popup Emacs windows for quick edits.
+
+** Maintainers
++ [[https://github.com/tecosaur][@tecosaur]]
+
+** Module Flags
+
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/tecosaur/emacs-everywhere][emacs-everywhere]]
+
+* Prerequisites
+
+On Linux =xclip=, =xdotool=, =xprop=, and =xwininfo= are needed.
+
+On MacOS, Emacs must be allowed to "control your computer" under *Settings > Accessibility*.
+
+* Features
+
+To use this, invoke the =emacs-everywhere= executable. This can be done in two
+ways:
++ ~emacsclient --eval "(emacs-everywhere)"~
++ ~doom everywhere~
+
+It is recommended that you add a keybinding for this.
+
+From here, you can edit away to your hearts content in the created frame, then
+return to the original window and paste the content with =C-c C-c= or =SPC q f=.
+To exit without pasting, use =C-c C-k=.
+
+* Configuration
+
+=emacs-everywhere= likes to guess if you triggered it from an application which
+supports markdown. Configure ~emacs-everywhere-markdown-windows~ and
+~emacs-everywhere-markdown-apps~ to improve how accurate this is on your system.
+
+By default, when markdown is detected, ~markdown-mode~ is used. It is possible to
+instead use pandoc to convert the content to Org (and export to markdown when
+closing the frame) by setting ~emacs-everywhere-major-mode-function~ to
+=#'org-mode=.
+
+Most other behaviour is implemented as hooks on ~emacs-everywhere-init-hooks~.
