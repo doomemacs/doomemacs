@@ -1,7 +1,7 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
 ;; Posframe (requires +childframe)
-(defvar +helm-posframe-handler #'posframe-poshandler-frame-center
+(defvar +helm-posframe-handler
   "The function that determines the location of the childframe. It should return
 a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
@@ -11,11 +11,7 @@ a cons cell representing the X and Y coordinates. See
 be negative.")
 
 (defvar +helm-posframe-parameters
-  '((internal-border-width . 8)
-    (width . 0.5)
-    (height . 0.35)
-    (min-width . 80)
-    (min-height . 16))
+
   "TODO")
 
 
@@ -189,18 +185,25 @@ be negative.")
 (use-package! helm-descbinds
   :hook (helm-mode . helm-descbinds-mode))
 
+
 (use-package! helm-icons
   :after helm
   :when (featurep! +icons)
   :init
   (setq helm-icons-provider 'all-the-icons)
+  :config
   (helm-icons-enable))
 
 
 (use-package! helm-posframe
   :after helm
   :when (featurep! +childframe)
-  :init (setq helm-posframe-parameters +helm-posframe-parameters
-              helm-posframe-poshandler +helm-posframe-handler)
+  :init (setq helm-posframe-parameters '((internal-border-width . 8)
+                                         (width . 0.5)
+                                         (height . 0.35)
+                                         (min-width . 80)
+                                         (min-height . 16))
+              helm-posframe-poshandler #'posframe-poshandler-frame-center)
   :config
+  (add-hook 'doom-after-reload-hook #'posframe-delete-all)
   (helm-posframe-enable))
