@@ -95,13 +95,15 @@ After installing its dependencies (Clang and CMake), run ~M-x irony-install-serv
 *** macOS
 Due to linking issues, macOS users must compile irony-server manually:
 
-~$ brew install cmake~ \\
-~$ brew install llvm~
-
 #+BEGIN_SRC sh
+$ brew install cmake
+$ brew install llvm
+$ git clone https://github.com/Sarcasm/irony-mode irony-mode
+#+END_SRC
+
+#+BEGIN_SRC bash
 #!/bin/bash
 
-git clone https://github.com/Sarcasm/irony-mode irony-mode
 mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
