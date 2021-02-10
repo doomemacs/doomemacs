@@ -98,9 +98,9 @@ After installing its dependencies (Clang and CMake), run ~M-x irony-install-serv
 Due to linking issues, macOS users must compile irony-server manually:
 
 #+BEGIN_SRC sh
-$ brew install cmake
-$ brew install llvm
-$ git clone https://github.com/Sarcasm/irony-mode irony-mode
+brew install cmake
+brew install llvm
+git clone https://github.com/Sarcasm/irony-mode irony-mode
 #+END_SRC
 
 #+BEGIN_SRC bash
@@ -119,7 +119,7 @@ install_name_tool -change @rpath/libclang.dylib \
     /usr/local/opt/llvm/lib/libclang.dylib \
     "$DEST/bin/irony-server"
 
-# cleanup
+# Cleanup
 popd
 rm -rf irony-mode
 #+END_SRC
@@ -148,11 +148,11 @@ generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[
 
 #+BEGIN_SRC sh
 # For CMake projects
-$ cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
 
 # For non-CMake projects
-$ make clean
-$ bear make
+make clean
+bear make
 #+END_SRC
 
 Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
@@ -185,12 +185,12 @@ A workaround might be to install ~make~ via Homebrew which puts ~gmake~
 under ~/usr/local/~.
 
 #+BEGIN_SRC sh
-$ brew install make
+brew install make
 #+END_SRC
 
 #+BEGIN_SRC sh
-$ make clean
-$ bear gmake
+make clean
+bear gmake
 #+END_SRC
 
 Additional info:
