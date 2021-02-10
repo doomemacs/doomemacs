@@ -99,7 +99,7 @@ Due to linking issues, macOS users must compile irony-server manually:
 ~$ brew install llvm~
 
 #+BEGIN_SRC sh
-#!/bin/sh
+#!/bin/bash
 
 git clone https://github.com/Sarcasm/irony-mode irony-mode
 mkdir irony-mode/server/build
