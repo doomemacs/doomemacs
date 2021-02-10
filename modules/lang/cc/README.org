@@ -95,13 +95,15 @@ After installing its dependencies (Clang and CMake), run ~M-x irony-install-serv
 *** macOS
 Due to linking issues, macOS users must compile irony-server manually:
 
-#+BEGIN_SRC sh
-$ brew install cmake
-$ brew install llvm
+~$ brew install cmake~ \\
+~$ brew install llvm~
 
-$ git clone https://github.com/Sarcasm/irony-mode irony-mode
-$ mkdir irony-mode/server/build
-$ pushd irony-mode/server/build
+#+BEGIN_SRC sh
+#!/bin/sh
+
+git clone https://github.com/Sarcasm/irony-mode irony-mode
+mkdir irony-mode/server/build
+pushd irony-mode/server/build
 
 DEST="$HOME/.emacs.d/.local/etc/irony-server/"
 cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm \
@@ -114,8 +116,8 @@ install_name_tool -change @rpath/libclang.dylib \
     "$DEST/bin/irony-server"
 
 # cleanup
-$ popd
-$ rm -rf irony-mode
+popd
+rm -rf irony-mode
 #+END_SRC
 
 ** rtags
