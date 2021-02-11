@@ -16,6 +16,9 @@
       (pop-to-buffer (current-buffer))))
 
   (map! :map gist-list-menu-mode-map
+        :n "RET" #'gist-fetch-current
+        :n "TAB" #'gist-fetch-current
+        :n [tab] #'gist-fetch-current-noselect
         :n "go"  #'gist-browse-current-url
         :n "gr"  #'gist-list-reload
         :n "c"   #'gist-add-buffer
