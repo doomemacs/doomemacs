@@ -103,7 +103,7 @@ window that already exists in that direction. It will split otherwise."
           (when (bound-and-true-p vc-mode)
             (vc-refresh-state)
             (force-mode-line-update))
-        (revert-buffer t t)))))
+        (revert-buffer t t t)))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()
