@@ -72,6 +72,19 @@ possible."
 ;; warning as it will redirect you to the existing buffer anyway.
 (setq find-file-suppress-same-file-warnings t)
 
+;; Create missing directories when we open a file that doesn't exist under a
+;; directory tree that may not exist.
+(add-hook! 'find-file-not-found-functions
+  (defun doom-create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (unless (file-remote-p buffer-file-name)
+      (let ((parent-directory (file-name-directory buffer-file-name)))
+        (and (not (file-directory-p parent-directory))
+             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                               parent-directory))
+             (progn (make-directory parent-directory 'parents)
+                    t))))))
+
 ;; Don't generate backups or lockfiles. While auto-save maintains a copy so long
 ;; as a buffer is unsaved, backups create copies once, when the file is first
 ;; written, and never again until it is killed and reopened. This is better
