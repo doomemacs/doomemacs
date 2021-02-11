@@ -37,11 +37,10 @@ function uses."
                  indent))
             ((looking-at (concat re-end re-env "}"))
              (save-excursion
-                   (beginning-of-line)
-                   (ignore-errors
-                     (LaTeX-find-matching-begin)
-                     (current-column)
-                  )))
+               (beginning-of-line)
+               (ignore-errors
+                 (LaTeX-find-matching-begin)
+                 (current-column))))
             ((looking-at "\\\\item")
              (+ LaTeX-indent-level indent))
             ((+ contin LaTeX-indent-level indent))))))
