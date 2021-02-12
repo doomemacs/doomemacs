@@ -75,6 +75,9 @@
                 (evil-escape . evil-mc-execute-default-evil-normal-state)  ; C-g
                 (evil-numbers/inc-at-pt-incremental)
                 (evil-numbers/dec-at-pt-incremental)
+                (evil-digit-argument-or-evil-beginning-of-line
+                 (:default . evil-mc-execute-default-call)
+                 (visual . evil-mc-execute-visual-call))
                 ;; :tools eval
                 (+eval:replace-region . +multiple-cursors-execute-default-operator-fn)
                 ;; :lang ess
@@ -82,9 +85,11 @@
                 ;; :lang org
                 (evil-org-delete . evil-mc-execute-default-evil-delete)))
     (setf (alist-get (car fn) evil-mc-custom-known-commands)
-          (list (cons :default
-                      (or (cdr fn)
-                          #'evil-mc-execute-default-call-with-count)))))
+          (if (listp (cdr fn))
+              (cdr fn)
+            (list (cons :default
+                        (or (cdr fn)
+                            #'evil-mc-execute-default-call-with-count))))))
 
   ;; HACK Allow these commands to be repeated by prefixing them with a numerical
   ;;      argument. See gabesoft/evil-mc#110
