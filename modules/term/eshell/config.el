@@ -144,6 +144,8 @@ You should use `set-eshell-alias!' to change this.")
         [remap evil-delete-back-to-indentation] #'eshell-kill-input
         [remap evil-window-split]   #'+eshell/split-below
         [remap evil-window-vsplit]  #'+eshell/split-right
+        ;; To emulate terminal keybinds
+        "C-l"   #'eshell/clear
         (:localleader
          "b" #'eshell-insert-buffer-name
          "e" #'eshell-insert-envvar
