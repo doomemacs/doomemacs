@@ -161,6 +161,9 @@ users).")
           (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
                 (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
                 (concat local-dir-re ".*/with-editor\\.el\\'")
+                (concat local-dir-re ".*/magit.*\\.el\\'")
+                (concat local-dir-re ".*/git-commit\\.el\\'")
+                (concat local-dir-re ".*/orgit\\.el\\'")
                 ;; https://github.com/nnicandro/emacs-jupyter/issues/297
                 (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
   ;; Default to using all cores, rather than half of them, since we compile
