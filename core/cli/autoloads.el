@@ -205,6 +205,7 @@ one wants that.")
                                  exclude))
                  (file-readable-p file))
         (doom-log "Scanning %s" file)
+        (setq file (file-truename file))
         (with-temp-buffer
           (if literal
               (insert-file-contents file)
