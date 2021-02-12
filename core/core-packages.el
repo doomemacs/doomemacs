@@ -77,7 +77,7 @@ uses a straight or package.el command directly).")
 ;;
 ;;; Straight
 
-(setq straight-base-dir doom-local-dir
+(setq straight-base-dir (file-truename doom-local-dir)
       straight-repository-branch "develop"
       ;; Since byte-code is rarely compatible across different versions of
       ;; Emacs, it's best we build them in separate directories, per emacs
