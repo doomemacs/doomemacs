@@ -165,11 +165,11 @@ users).")
                 (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
   ;; Default to using all cores, rather than half of them, since we compile
   ;; things ahead-of-time in a non-interactive session.
-  (defadvice! doom--comp-use-all-cores-a ()
-    :override #'comp-effective-async-max-jobs
+  (defun doom--comp-use-all-cores-a ()
     (if (zerop comp-async-jobs-number)
         (setq comp-num-cpus (doom-num-cpus))
-      comp-async-jobs-number)))
+      comp-async-jobs-number))
+  (advice-add #'comp-effective-async-max-jobs :override #'doom--comp-use-all-cores-a))
 
 
 ;;
