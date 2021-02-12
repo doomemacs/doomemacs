@@ -62,8 +62,7 @@
                 (append vars sp--mc/cursor-specific-vars)))))
 
   ;; Whitelist more commands
-  (dolist (fn '((delete-char)
-                (backward-kill-word)
+  (dolist (fn '((backward-kill-word)
                 (company-complete-common . evil-mc-execute-default-complete)
                 (doom/backward-to-bol-or-indent . evil-mc-execute-default-call)
                 (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
