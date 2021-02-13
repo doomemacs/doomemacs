@@ -494,8 +494,17 @@ Environment variables:
               (run-hooks 'doom-cli-pre-hook)
               (when (apply #'doom-cli-execute command args)
                 (run-hooks 'doom-cli-post-hook)
-                (print! (success "Finished in %.4fs")
-                        (float-time (time-subtract (current-time) start-time))))))))
+                (print! (success "Finished in %s")
+                        (let* ((duration (float-time (time-subtract (current-time) before-init-time)))
+                               (hours   (/ (truncate duration) 60 60))
+                               (minutes (- (/ (truncate duration) 60) (* hours 60)))
+                               (seconds (- duration (* hours 60 60) (* minutes 60))))
+                          (string-join
+                           (delq
+                            nil (list (unless (zerop hours)   (format "%dh" hours))
+                                      (unless (zerop minutes) (format "%dm" minutes))
+                                      (format (if (> duration 60) "%ds" "%.4fs")
+                                              seconds)))))))))))
     ;; TODO Not implemented yet
     (doom-cli-command-not-found-error
      (print! (error "Command 'doom %s' not recognized") (string-join (cdr e) " "))
