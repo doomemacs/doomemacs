@@ -246,7 +246,7 @@ If the snippet isn't in `+snippets-dir', it will be copied there (where it will
 shadow the default snippet)."
   (interactive
    (list
-    (+snippet--completing-read-uuid "Select snippet to alias: "
+    (+snippet--completing-read-uuid "Select snippet to edit: "
                                     current-prefix-arg)))
   (if-let* ((major-mode (if (eq major-mode 'snippet-mode)
                             (intern (file-name-base (directory-file-name default-directory)))
