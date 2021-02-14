@@ -2,4 +2,4 @@
 ;;; ui/zen/packages.el
 
 (package! writeroom-mode :pin "b648b340172ce4e44307375697e190bc723203e0")
-(package! mixed-pitch :pin "beb22e85f6073a930f7338a78bd186e3090abdd7")
+(package! mixed-pitch :pin "d5f64b967d831ea776f07aa2c80cc5fa88a3e869")
