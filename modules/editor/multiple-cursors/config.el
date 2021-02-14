@@ -84,7 +84,7 @@
                 ;; :lang org
                 (evil-org-delete . evil-mc-execute-default-evil-delete)))
     (setf (alist-get (car fn) evil-mc-custom-known-commands)
-          (if (listp (cdr fn))
+          (if (and (cdr fn) (listp (cdr fn)))
               (cdr fn)
             (list (cons :default
                         (or (cdr fn)
