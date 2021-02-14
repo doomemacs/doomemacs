@@ -74,7 +74,7 @@
                 (evil-escape . evil-mc-execute-default-evil-normal-state)  ; C-g
                 (evil-numbers/inc-at-pt-incremental)
                 (evil-numbers/dec-at-pt-incremental)
-                (evil-digit-argument-or-evil-beginning-of-line
+                (evil-digit-argument-or-evil-beginning-of-visual-line
                  (:default . evil-mc-execute-default-call)
                  (visual . evil-mc-execute-visual-call))
                 ;; :tools eval
