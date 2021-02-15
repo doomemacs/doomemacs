@@ -66,7 +66,9 @@ If `buffer-file-name' isn't set, uses `default-directory'."
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((context (ignore-errors (sp-get-thing)))
+  (let* ((context
+          (if (bound-and-true-p smartparens-mode)
+              (ignore-errors (sp-get-thing))))
          (op (plist-get context :op))
          (cl (plist-get context :cl))
          open-len close-len)
