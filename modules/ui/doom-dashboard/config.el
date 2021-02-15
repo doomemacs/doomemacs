@@ -118,9 +118,7 @@ PLIST can have the following properties:
                               +doom-dashboard-banner-dir)))
     (when (equal (buffer-name) "*scratch*")
       (set-window-buffer nil (doom-fallback-buffer))
-      (if (daemonp)
-          (add-hook 'after-make-frame-functions #'+doom-dashboard-reload-frame-h)
-        (+doom-dashboard-reload)))
+      (+doom-dashboard-reload))
     ;; Ensure the dashboard is up-to-date whenever it is switched to or resized.
     (add-hook 'window-configuration-change-hook #'+doom-dashboard-resize-h)
     (add-hook 'window-size-change-functions #'+doom-dashboard-resize-h)
