@@ -238,20 +238,20 @@ xcode-select --install
 For Emacs itself, these three formulas are the best options, ordered from most
 to least recommended for Doom (based on compatibility).
 
-- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]:
-  #+BEGIN_SRC bash
-  brew tap d12frosted/emacs-plus
-  brew install emacs-plus
-  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
-  #+END_SRC
-
-- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is another acceptable option. It offers slightly better integration
-  with macOS, native emojis and better childframe support. However, at the time
-  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage):
+- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]]. It offers good integration
+  with macOS, native emojis and better childframe support. 
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  #+END_SRC
+
+- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
+  experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
+  #+BEGIN_SRC bash
+  brew tap d12frosted/emacs-plus
+  brew install emacs-plus
+  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
 - [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
