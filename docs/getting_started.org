@@ -708,7 +708,7 @@ denoted by a plus prefix:
 #+END_SRC
 
 Different modules support different flags. You'll find a comprehensive list of
-available modules and their supported flags in [[file:index.org::*Module list][the Module Index]]. Flags that a
+available modules and their supported flags in [[file:modules.org][Module Index]]. Flags that a
 module does not recognize will be silently ignored.
 
 #+begin_quote
