@@ -24,14 +24,14 @@ bottom, which is easier on the eyes on big displays."
        :position (point)
        :poshandler +helm-posframe-handler
        :respect-header-line helm-echo-input-in-header-line
-       :width
+       :min-width
        (max (cl-typecase .width
               (integer .width)
               (float (truncate (* (frame-width) .width)))
               (function (funcall .width))
               (t 0))
             .min-width)
-       :height
+       :min-height
        (max (cl-typecase .height
               (integer .height)
               (float (truncate (* (frame-height) .height)))

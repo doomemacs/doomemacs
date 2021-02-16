@@ -1,19 +1,23 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
 ;; Posframe (requires +childframe)
-(defvar +helm-posframe-handler
-  "The function that determines the location of the childframe. It should return
-a cons cell representing the X and Y coordinates. See
+(defvar +helm-posframe-handler #'posframe-poshandler-frame-center
+  "The function that determines the location of the childframe.
+It should return a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
 
 (defvar +helm-posframe-text-scale 1
-  "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
-be negative.")
+  "The text-scale to use in the helm childframe. Set to nil for no scaling.
+Can be negative.")
 
 (defvar +helm-posframe-parameters
-
-  "TODO")
-
+  '((internal-border-width . 8)
+    (width . 0.5)
+    (width . 0.65)
+    (height . 0.35)
+    (min-width . 80)
+    (min-height . 16))
+  "Default parameters for the helm childframe.")
 
 ;;
 ;;; Packages
@@ -52,8 +56,8 @@ be negative.")
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Default helm window sizes
-        ;; helm-display-buffer-default-width nil
-        ;; helm-display-buffer-default-height 0.25
+        helm-display-buffer-default-width nil
+        helm-display-buffer-default-height 0.25
         ;; When calling `helm-semantic-or-imenu', don't immediately jump to
         ;; symbol at point
         helm-imenu-execute-action-at-once-if-one nil
@@ -67,7 +71,8 @@ be negative.")
   (when (featurep! +childframe)
     ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
     ;; helm completion.
-    (setq iconify-child-frame 'make-invisible))
+    (setq iconify-child-frame 'make-invisible)
+    (setq helm-display-function #'+helm-posframe-display-fn))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-apropos-fuzzy-match fuzzy
@@ -193,17 +198,3 @@ be negative.")
   (setq helm-icons-provider 'all-the-icons)
   :config
   (helm-icons-enable))
-
-
-(use-package! helm-posframe
-  :after helm
-  :when (featurep! +childframe)
-  :init (setq helm-posframe-parameters '((internal-border-width . 8)
-                                         (width . 0.5)
-                                         (height . 0.35)
-                                         (min-width . 80)
-                                         (min-height . 16))
-              helm-posframe-poshandler #'posframe-poshandler-frame-center)
-  :config
-  (add-hook 'doom-after-reload-hook #'posframe-delete-all)
-  (helm-posframe-enable))
