@@ -1,0 +1,35 @@
+#+TITLE:   completion/selectrum
+#+DATE:    February 16, 2021
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_2:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+
+* Description
+This module provides Selectrum integration for a variety of Emacs commands, as
+well as a unified interface for project search and replace, powered by ripgrep.
+
+#+begin_quote
+TODO
+#+end_quote
+
+** Module Flags
++ ~+prescient~ Enables prescient filtering and sorting for Selectrum searches.
++ ~+orderless~ Enables orderless filtering for Selectrum searches.
+
+** Plugins
+[[https://github.com/raxod502/selectrum][selectrum]]
+[[https://github.com/minad/consult][consult]]
+[[https://github.com/oantolin/embark/][embark]]
+[[https://github.com/oantolin/embark/][embark-consult]]
+[[https://github.com/minad/marginalia][marginalia]]
+[[https://github.com/raxod502/prescient.el][prescient]]* (~+prescient~)
+[[https://github.com/oantolin/orderless][orderless]]* (~+orderless~)
+[[https://github.com/minad/consult/][consult-flycheck]] (~:checkers syntax~)
+
+* Prerequisites
+This module has no prerequisites.
