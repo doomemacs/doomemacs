@@ -12,7 +12,6 @@ Can be negative.")
 
 (defvar +helm-posframe-parameters
   '((internal-border-width . 8)
-    (width . 0.5)
     (width . 0.65)
     (height . 0.35)
     (min-width . 80)
