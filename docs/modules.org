@@ -1,4 +1,4 @@
-#+TITLE: Module Appendix
+#+TITLE: Module Index
 #+STARTUP: nofold
 
 Functionality in Doom is divided into collections of code called modules (à la
