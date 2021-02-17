@@ -74,9 +74,10 @@ brew install ripgrep wordnet
 # An older version of sqlite is included in MacOS. If it causes you problems (and
 # folks have reported it will), install it through homebrew:
 brew install sqlite
-# Note that it's keg-only, meaning it isn't symlinked to /usr/local/bin. You'll
+# Note that it's keg-only, meaning it isn't symlinked to $HOMEBREW_PREFIX/bin. You'll
 # have to add it to PATH yourself (or symlink it into your PATH somewhere). e.g.
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
+HOMEBREW_PREFIX=$(brew config | grep '^HOMEBREW_PREFIX:' | cut -f 2 -d' ')
+export PATH="$HOMEBREW_PREFIX/opt/sqlite/bin:$PATH"
 #+END_SRC
 
 ** Arch Linux

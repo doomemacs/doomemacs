@@ -102,14 +102,15 @@ git clone https://github.com/Sarcasm/irony-mode irony-mode
 mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
+HOMEBREW_PREFIX=$(brew config | grep '^HOMEBREW_PREFIX:' | cut -f 2 -d' ')
 DEST="$HOME/.emacs.d/.local/etc/irony-server/"
-cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm \
+cmake -DCMAKE_PREFIX_PATH="$HOMEBREW_PREFIX"/opt/llvm \
       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
       -DCMAKE_INSTALL_PREFIX="$DEST" ../
 cmake --build . --use-stderr --config Release --target install
 
 install_name_tool -change @rpath/libclang.dylib \
-    /usr/local/opt/llvm/lib/libclang.dylib \
+    "$HOMEBREW_PREFIX"/opt/llvm/lib/libclang.dylib \
     "$DEST/bin/irony-server"
 
 # cleanup
@@ -185,7 +186,7 @@ environment variables.
 #+end_quote
 
 A workaround might be to install ~make~ via Homebrew which puts ~gmake~
-under ~/usr/local/~.
+under ~/usr/local/~ by default.
 
 #+BEGIN_SRC sh
 brew install make

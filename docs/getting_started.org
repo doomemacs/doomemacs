@@ -240,18 +240,20 @@ to least recommended for Doom (based on compatibility).
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]:
   #+BEGIN_SRC bash
+  HOMEBREW_PREFIX=$(brew config | grep '^HOMEBREW_PREFIX:' | cut -f 2 -d' ')
   brew tap d12frosted/emacs-plus
   brew install emacs-plus
-  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
+  ln -s "$HOMEBREW_PREFIX/opt/Emacs.app" /Applications/Emacs.app
   #+END_SRC
 
 - [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is another acceptable option. It offers slightly better integration
   with macOS, native emojis and better childframe support. However, at the time
   of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage):
   #+BEGIN_SRC bash
+  HOMEBREW_PREFIX=$(brew config | grep '^HOMEBREW_PREFIX:' | cut -f 2 -d' ')
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
-  ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  ln -s "$HOMEBREW_PREFIX/opt/emacs-mac/Emacs.app" /Applications/Emacs.app
   #+END_SRC
 
 - [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
