@@ -302,10 +302,11 @@ those directories. The first returned path is always `doom-private-dir'."
                                mplist)
                          (push (car key) mplist))
                        (throw 'doom-modules t))))
-                 (push (funcall fn category module
-                                :flags (if (listp m) (cdr m))
-                                :path (doom-module-locate-path category module))
-                       results))))))
+                 (let ((path (doom-module-locate-path category module)))
+                   (push (funcall fn category module
+                                  :flags (if (listp m) (cdr m))
+                                  :path (if (stringp path) (file-truename path)))
+                         results)))))))
     (unless doom-interactive-p
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
