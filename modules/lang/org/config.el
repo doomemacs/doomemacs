@@ -118,11 +118,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
           (?C . success))
         org-startup-indented t
         org-tags-column 0
-        org-use-sub-superscripts '{}
-        ;; HACK Speed up regexp for priority faces by making it a little less
-        ;;      greedy than the default.
-        ;; REVIEW May be upstreamed at some point. Keep an eye out.
-        org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
+        org-use-sub-superscripts '{})
 
   (setq org-refile-targets
         '((nil :maxlevel . 3)
