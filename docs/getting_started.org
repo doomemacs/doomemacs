@@ -35,7 +35,7 @@ us know!
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
-    - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
+    - [[#install-doom-alongside-other-configs-with-chemacs2][Install Doom alongside other configs (with Chemacs2)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
 - [[#update--rollback][Update & Rollback]]
   - [[#rollback][Rollback]]
