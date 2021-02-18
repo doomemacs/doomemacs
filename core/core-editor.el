@@ -297,15 +297,29 @@ or file path may exist now."
         savehist-autosave-interval nil     ; save on kill only
         savehist-additional-variables
         '(kill-ring                        ; persist clipboard
+          register-alist                   ; persist macros
           mark-ring global-mark-ring       ; persist marks
           search-ring regexp-search-ring)) ; persist searches
   (add-hook! 'savehist-save-hook
-    (defun doom-unpropertize-kill-ring-h ()
+    (defun doom-savehist-unpropertize-variables-h ()
       "Remove text properties from `kill-ring' for a smaller savehist file."
-      (setq kill-ring (cl-loop for item in kill-ring
-                               if (stringp item)
-                               collect (substring-no-properties item)
-                               else if item collect it)))))
+      (setq kill-ring
+            (mapcar #'substring-no-properties
+                    (cl-remove-if-not #'stringp kill-ring))
+            register-alist
+            (cl-loop for (reg . item) in register-alist
+                     if (stringp item)
+                     collect (cons reg (substring-no-properties item))
+                     else collect (cons reg item))))
+    (defun doom-savehist-remove-unprintable-registers-h ()
+      "Remove unwriteable registers (e.g. containing window configurations).
+Otherwise, `savehist' would discard `register-alist' entirely if we don't omit
+the unwritable tidbits."
+      ;; Save new value in the temp buffer savehist is running
+      ;; `savehist-save-hook' in. We don't want to actually remove the
+      ;; unserializable registers in the current session!
+      (setq-local register-alist
+                  (cl-remove-if-not #'savehist-printable register-alist)))))
 
 
 (use-package! saveplace
