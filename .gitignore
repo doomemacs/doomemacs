@@ -1,6 +1,8 @@
-/.*
-!.gitignore
-!.github
+*~
+*.*~
+\#*
+.\#*
+.local/
 *.cache*
 *.log
 /modules/private
@@ -8,11 +10,15 @@ test/.local*/
 test/result
 
 # emacs tempfiles that shouldn't be there
+.dap-breakpoints
+.org-id-locations
+.tern-port
 .yas-compiled-snippets.el
 auto-save-list/
 cask/
 ede-projects.el
 elpa/
+eln-cache/
 network-security.data
 semanticdb
 server/
