@@ -94,3 +94,6 @@ or terminating simple string."
   (def-project-mode! +csharp-unity-mode
     :modes '(csharp-mode shader-mode)
     :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))
+
+
+(use-package! sln-mode :mode "\\.sln\\'")

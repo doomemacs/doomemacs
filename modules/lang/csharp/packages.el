@@ -3,6 +3,7 @@
 
 (package! csharp-mode :pin "49168293a28aaaf84b9655fe1b2abe402c5e2ee1")
 (package! csproj-mode :pin "a7f0f4610c976a28c41b9b8299892f88b5d0336c")
+(package! sln-mode :pin "0f91d1b957c7d2a7bab9278ec57b54d57f1dbd9c")
 (unless (featurep! +lsp)
   (package! omnisharp :pin "e26ff8b8d34a247cd4a93be5d62a5f21859b7b57"))
 (when (featurep! +unity)
