@@ -64,7 +64,7 @@ Why this over exec-path-from-shell?
   '(;; State that may be problematic if overwritten
     "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM$" "^USER$"
     ;; X server or services' variables
-    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$"
+    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
     ;; ssh and gpg variables (likely to become stale)
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
     "^GPG_AGENT_INFO$"
