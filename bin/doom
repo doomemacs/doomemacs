@@ -7,12 +7,14 @@
 :; exit $__DOOMCODE
 
 ;; The garbage collector isn't as important during CLI ops. A higher threshold
-;; makes it 15-30% faster, but set it too high and we risk spiralling memory
-;; usage in longer sessions.
+;; makes it 15-30% faster, but set it too high and we risk runaway memory usage
+;; in longer sessions.
 (setq gc-cons-threshold 134217728)   ; 128mb
+
 ;; Prioritize non-byte-compiled source files in non-interactive sessions to
 ;; prevent loading stale byte-code.
 (setq load-prefer-newer t)
+
 ;; Ensure Doom runs out of this file's parent directory, where Doom is
 ;; presumably installed. Use the EMACSDIR envvar to change this.
 (setq user-emacs-directory

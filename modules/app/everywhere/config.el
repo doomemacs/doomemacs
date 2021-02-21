@@ -1,7 +1,10 @@
 ;;; app/everywhere/config.el -*- lexical-binding: t; -*-
 
 (use-package! emacs-everywhere
-  :defer ; entry point is autoloaded
+  ;; Entry points into this package are autoloaded; i.e. the `emacs-everywhere'
+  ;; function, meant to be called directly via emacsclient. See this module's
+  ;; readme for details.
+  :defer t
   :config
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
