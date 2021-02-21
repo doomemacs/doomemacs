@@ -6,6 +6,8 @@
   ;; readme for details.
   :defer t
   :config
+  (set-yas-minor-mode! 'emacs-everywhere-mode)
+
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
       (concat (doom-modeline-spc)
