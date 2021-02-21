@@ -260,9 +260,18 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
     (when (cl-oddp (length branches))
       (setq fallback (car (last branches))
             branches (butlast branches)))
-    `(general-predicate-dispatch ,fallback
-       :docstring ,docstring
-       ,@branches)))
+    (let ((defs (cl-loop for (key value) on branches by 'cddr
+                         unless (keywordp key)
+                         collect (list key value))))
+      `'(menu-item
+         ,(or docstring "") nil
+         :filter (lambda (&optional _)
+                   (let (it)
+                     (cond ,@(mapcar (lambda (pred-def)
+                                       `((setq it ,(car pred-def))
+                                         ,(cadr pred-def)))
+                                     defs)
+                           (t ,fallback))))))))
 
 (defalias 'kbd! 'general-simulate-key)
 

@@ -62,8 +62,7 @@
                 (append vars sp--mc/cursor-specific-vars)))))
 
   ;; Whitelist more commands
-  (dolist (fn '((delete-char)
-                (backward-kill-word)
+  (dolist (fn '((backward-kill-word)
                 (company-complete-common . evil-mc-execute-default-complete)
                 (doom/backward-to-bol-or-indent . evil-mc-execute-default-call)
                 (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
@@ -75,6 +74,9 @@
                 (evil-escape . evil-mc-execute-default-evil-normal-state)  ; C-g
                 (evil-numbers/inc-at-pt-incremental)
                 (evil-numbers/dec-at-pt-incremental)
+                (evil-digit-argument-or-evil-beginning-of-visual-line
+                 (:default . evil-mc-execute-default-call)
+                 (visual . evil-mc-execute-visual-call))
                 ;; :tools eval
                 (+eval:replace-region . +multiple-cursors-execute-default-operator-fn)
                 ;; :lang ess
@@ -82,9 +84,11 @@
                 ;; :lang org
                 (evil-org-delete . evil-mc-execute-default-evil-delete)))
     (setf (alist-get (car fn) evil-mc-custom-known-commands)
-          (list (cons :default
-                      (or (cdr fn)
-                          #'evil-mc-execute-default-call-with-count)))))
+          (if (and (cdr fn) (listp (cdr fn)))
+              (cdr fn)
+            (list (cons :default
+                        (or (cdr fn)
+                            #'evil-mc-execute-default-call-with-count))))))
 
   ;; HACK Allow these commands to be repeated by prefixing them with a numerical
   ;;      argument. See gabesoft/evil-mc#110

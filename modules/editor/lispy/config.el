@@ -3,6 +3,7 @@
 (use-package! lispy
   :hook ((lisp-mode . lispy-mode)
          (emacs-lisp-mode . lispy-mode)
+         (ielm-mode . lispy-mode)
          (scheme-mode . lispy-mode)
          (racket-mode . lispy-mode)
          (hy-mode . lispy-mode)

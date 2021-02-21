@@ -599,7 +599,7 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
         (when (fboundp 'set-fontset-font)
-          (dolist (font (cons doom-unicode-font doom-unicode-extra-fonts))
+          (dolist (font (remq nil (cons doom-unicode-font doom-unicode-extra-fonts)))
             (set-fontset-font t 'unicode font nil 'prepend)))
         (run-hooks 'after-setting-font-hook))
     ((debug error)

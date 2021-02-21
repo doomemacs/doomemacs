@@ -137,10 +137,8 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
    `(,red-bg-faces
      :background "red" :weight bold)))
 
-;; If you want to make use of the `doom-themes' package API (e.g. `doom-color',
-;; `doom-lighten', `doom-darken', etc.), you must use `custom-set-faces!'
-;; *after* the theme has been loaded. e.g.
-(load-theme 'doom-one t)
+;; You may utilise `doom-themes's theme API to fetch or tweak colors from their
+;; palettes. No need to wait until the theme or package is loaded. e.g.
 (custom-set-faces!
  `(outline-1 :foreground ,(doom-color 'red))
  `(outline-2 :background ,(doom-color 'blue)))
@@ -171,10 +169,8 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
    `(,red-bg-faces
      :background "red" :weight bold)))
 
-;; If you want to make use of the `doom-themes' package API (e.g. `doom-color',
-;; `doom-lighten', `doom-darken', etc.), you must use `custom-set-faces!'
-;; *after* the theme has been loaded. e.g.
-(load-theme 'doom-one t)
+;; You may utilise `doom-themes's theme API to fetch or tweak colors from their
+;; palettes. No need to wait until the theme or package is loaded. e.g.
 (custom-theme-set-faces! 'doom-one
  `(outline-1 :foreground ,(doom-color 'red))
  `(outline-2 :background ,(doom-color 'blue)))

@@ -67,7 +67,8 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defun +org-init-org-directory-h ()
   (unless org-directory
     (setq-default org-directory "~/org"))
-  (setq org-id-locations-file (expand-file-name ".orgids" org-directory)))
+  (unless org-id-locations-file
+    (setq org-id-locations-file (expand-file-name ".orgids" org-directory))))
 
 
 (defun +org-init-agenda-h ()
@@ -117,7 +118,11 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
           (?C . success))
         org-startup-indented t
         org-tags-column 0
-        org-use-sub-superscripts '{})
+        org-use-sub-superscripts '{}
+        ;; HACK Speed up regexp for priority faces by making it a little less
+        ;;      greedy than the default.
+        ;; REVIEW May be upstreamed at some point. Keep an eye out.
+        org-priority-regexp "^\\*+.*\\(\\[#\\([A-Z0-9]+\\)\\] ?\\)")
 
   (setq org-refile-targets
         '((nil :maxlevel . 3)
@@ -1047,6 +1052,7 @@ compelling reason, so..."
   ;; Set to nil so we can detect user changes to them later (and fall back on
   ;; defaults otherwise).
   (defvar org-directory nil)
+  (defvar org-id-locations-file nil)
   (defvar org-attach-id-dir nil)
 
   (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")

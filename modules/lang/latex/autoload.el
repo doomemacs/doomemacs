@@ -17,7 +17,7 @@ function uses."
                      (when (looking-at (concat re-beg re-env "}"))
                        (end-of-line))
                      (LaTeX-find-matching-begin)
-                     (current-column)))
+                     (+ LaTeX-item-indent (current-column))))
            (contin (pcase +latex-indent-item-continuation-offset
                      (`auto LaTeX-indent-level)
                      (`align 6)
@@ -29,13 +29,18 @@ function uses."
                    (ignore-errors
                      (LaTeX-find-matching-begin)
                      (+ (current-column)
+                        LaTeX-item-indent
                         LaTeX-indent-level
                         (if (looking-at (concat re-beg re-env "}"))
                             contin
                           0))))
                  indent))
             ((looking-at (concat re-end re-env "}"))
-             indent)
+             (save-excursion
+               (beginning-of-line)
+               (ignore-errors
+                 (LaTeX-find-matching-begin)
+                 (current-column))))
             ((looking-at "\\\\item")
              (+ LaTeX-indent-level indent))
             ((+ contin LaTeX-indent-level indent))))))

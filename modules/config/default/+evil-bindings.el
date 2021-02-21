@@ -403,7 +403,8 @@
        :desc "Save file as..."             "S"   #'write-file
        :desc "Sudo find file"              "u"   #'doom/sudo-find-file
        :desc "Sudo this file"              "U"   #'doom/sudo-this-file
-       :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
+       :desc "Yank file path"              "y"   #'+default/yank-buffer-path
+       :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project)
 
       ;;; <leader> g --- git/version control
       (:prefix-map ("g" . "git")

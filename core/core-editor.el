@@ -72,6 +72,19 @@ possible."
 ;; warning as it will redirect you to the existing buffer anyway.
 (setq find-file-suppress-same-file-warnings t)
 
+;; Create missing directories when we open a file that doesn't exist under a
+;; directory tree that may not exist.
+(add-hook! 'find-file-not-found-functions
+  (defun doom-create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (unless (file-remote-p buffer-file-name)
+      (let ((parent-directory (file-name-directory buffer-file-name)))
+        (and (not (file-directory-p parent-directory))
+             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                               parent-directory))
+             (progn (make-directory parent-directory 'parents)
+                    t))))))
+
 ;; Don't generate backups or lockfiles. While auto-save maintains a copy so long
 ;; as a buffer is unsaved, backups create copies once, when the file is first
 ;; written, and never again until it is killed and reopened. This is better
@@ -284,15 +297,29 @@ or file path may exist now."
         savehist-autosave-interval nil     ; save on kill only
         savehist-additional-variables
         '(kill-ring                        ; persist clipboard
+          register-alist                   ; persist macros
           mark-ring global-mark-ring       ; persist marks
           search-ring regexp-search-ring)) ; persist searches
   (add-hook! 'savehist-save-hook
-    (defun doom-unpropertize-kill-ring-h ()
+    (defun doom-savehist-unpropertize-variables-h ()
       "Remove text properties from `kill-ring' for a smaller savehist file."
-      (setq kill-ring (cl-loop for item in kill-ring
-                               if (stringp item)
-                               collect (substring-no-properties item)
-                               else if item collect it)))))
+      (setq kill-ring
+            (mapcar #'substring-no-properties
+                    (cl-remove-if-not #'stringp kill-ring))
+            register-alist
+            (cl-loop for (reg . item) in register-alist
+                     if (stringp item)
+                     collect (cons reg (substring-no-properties item))
+                     else collect (cons reg item))))
+    (defun doom-savehist-remove-unprintable-registers-h ()
+      "Remove unwriteable registers (e.g. containing window configurations).
+Otherwise, `savehist' would discard `register-alist' entirely if we don't omit
+the unwritable tidbits."
+      ;; Save new value in the temp buffer savehist is running
+      ;; `savehist-save-hook' in. We don't want to actually remove the
+      ;; unserializable registers in the current session!
+      (setq-local register-alist
+                  (cl-remove-if-not #'savehist-printable register-alist)))))
 
 
 (use-package! saveplace
@@ -387,6 +414,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
   :when doom-interactive-p
+  ;; I'm not using `global-dtrt-indent-mode' because it has hard-coded and rigid
+  ;; major mode checks, so I implement it in `doom-detect-indentation-h'.
   :hook ((change-major-mode-after-body read-only-mode) . doom-detect-indentation-h)
   :config
   (defun doom-detect-indentation-h ()
@@ -406,23 +435,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (setq dtrt-indent-max-lines 2000)
 
   ;; always keep tab-width up-to-date
-  (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
-
-  (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (orig-fn arg)
-    "Some smie modes throw errors when trying to guess their indentation, like
-`nim-mode'. This prevents them from leaving Emacs in a broken state."
-    :around #'dtrt-indent-mode
-    (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
-      (letf! ((defun symbol-config--guess (beg end)
-                (funcall symbol-config--guess beg (min end 10000)))
-              (defun smie-config-guess ()
-                (condition-case e (funcall smie-config-guess)
-                  (error (setq dtrt-indent-run-after-smie t)
-                         (message "[WARNING] Indent detection: %s"
-                                  (error-message-string e))
-                         (message ""))))) ; warn silently
-        (funcall orig-fn arg)))))
+  (push '(t tab-width) dtrt-indent-hook-generic-mapping-list))
 
 
 (use-package! helpful

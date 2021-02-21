@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/pass/packages.el
 
-(package! pass :pin "a095d24cf06a7b0fbc3add480c101304a91cf788")
+(package! pass :pin "5651da53137db9adcb125b4897c2fe27eeb4368d")
 (package! password-store :pin "f152064da9832d6d3d2b4e75f43f63bf2d50716f")
 (package! password-store-otp :pin "04998c8578a060ab4a4e8f46f2ee0aafad4ab4d5")
 
@@ -9,7 +9,7 @@
 ;; install the new version directly from the source and with a psuedonym.
 (package! auth-source-pass
   :recipe (:host github :repo "DamienCassou/auth-password-store")
-  :pin "aa7f17116ec3f760eb414d655ba20016b11a4a0e")
+  :pin "468bba286fc20d739ed7724ec884357907ac8bda")
 
 (when (featurep! :completion ivy)
   (package! ivy-pass :pin "5b523de1151f2109fdd6a8114d0af12eef83d3c5"))
