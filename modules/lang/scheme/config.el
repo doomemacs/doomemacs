@@ -18,7 +18,7 @@
   (after! scheme                        ; built-in
     (set-repl-handler! 'scheme-mode #'+scheme/open-repl)
     (set-eval-handler! 'scheme-mode #'geiser-eval-region)
-    (set-lookup-handlers! 'scheme-mode
+    (set-lookup-handlers! '(scheme-mode geiser-repl-mode)
       :definition #'geiser-edit-symbol-at-point
       :documentation #'geiser-doc-symbol-at-point))
   :config
