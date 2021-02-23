@@ -22,20 +22,17 @@
          "s" #'psc-ide-server-start
          "S" #'psc-ide-server-quit))
 
-  (use-package! psci
-    :when (featurep :tools eval)
-    :init
-    (set-repl-handler! 'purescript-mode #'psci))
+  (set-repl-handler! 'purescript-mode #'psci)
 
   (set-lookup-handlers! 'purescript-mode
     :definition #'psc-ide-goto-definition
     :documentation #'purescript-pursuit))
 
 
-(use-package! flycheck-purescript
+(use-package! psc-ide
   :when (featurep! :checkers syntax)
-  :hook (purescript-mode . flycheck-purescript-setup))
-
+  :after purescript-mode
+  :config (psc-ide-flycheck-setup))
 
 (use-package! psc-ide
   :hook (purescript-mode . psc-ide-mode)
