@@ -17,7 +17,9 @@
   :pin "006da406d175c05fedca4431cccd569e20bef92c")
 (package! evil-snipe :pin "6dcac7f2516c6137a2de532fc2c052f242559ee3")
 (package! evil-surround :pin "346d4d85fcf1f9517e9c4991c1efe68b4130f93a")
-(package! evil-textobj-anyblock :pin "ff00980f0634f95bf2ad9956b615a155ea8743be")
+(package! evil-textobj-anyblock
+  :recipe (:host github :repo "willghatch/evil-textobj-anyblock" :branch "fix-inner-block")
+  :pin "29280cd71a05429364cdceef2ff595ae8afade4d")
 (package! evil-traces :pin "290b5323542c46af364ec485c8ec9000040acf90")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
 (package! exato :pin "aee7af7b7a0e7551478f453d1de7d5b9cb2e06c4")
