@@ -1,6 +1,7 @@
 ;;; lang/lean/config.el -*- lexical-binding: t; -*-
 
-(after! lean-mode
+(use-package! lean-mode
+  :config
   (set-lookup-handlers! 'lean-mode
     :definition #'lean-find-definition)
   (sp-with-modes 'lean-mode
