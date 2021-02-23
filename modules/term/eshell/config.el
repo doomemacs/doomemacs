@@ -71,7 +71,9 @@ You should use `set-eshell-alias!' to change this.")
         eshell-prompt-function #'+eshell-default-prompt-fn
         ;; em-glob
         eshell-glob-case-insensitive t
-        eshell-error-if-no-glob t)
+        eshell-error-if-no-glob t
+        ;; Shell config
+        eshell-term-name "xterm-256color")
 
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
@@ -90,7 +92,6 @@ You should use `set-eshell-alias!' to change this.")
 
   ;; UI enhancements
   (add-hook! 'eshell-mode-hook
-    (setenv "TERM" "xterm-256color")
     (defun +eshell-remove-fringes-h ()
       (set-window-fringes nil 0 0)
       (set-window-margins nil 1 nil))

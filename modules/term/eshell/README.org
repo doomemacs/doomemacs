@@ -12,6 +12,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#term-name][TERM name]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -54,8 +55,11 @@ found. If neither shell is found, completions may not be available.
 + [[https://github.com/rupa/z][=z=]]-like directory jumping
 + Command-not-found recommendations
 
-* TODO Configuration
-# How to configure this module, including common problems and how to address them.
+* Configuration
+** TERM name
+By default, =eshell= sets the =$TERM= variable to ="xterm-256color"=, which helps with
+rendering various colours. As eshell is /not/ a terminal emulator, these will not
+always work 100%. Modifying =eshell-term-name= to your liking may help.
 
 * TODO Troubleshooting
 # Common issues and their solution, or places to look for help.
