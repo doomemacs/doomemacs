@@ -35,7 +35,7 @@ us know!
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
-    - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
+    - [[#install-doom-alongside-other-configs-with-chemacs2][Install Doom alongside other configs (with Chemacs2)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
 - [[#update--rollback][Update & Rollback]]
   - [[#rollback][Rollback]]
@@ -504,8 +504,8 @@ emacs --batch -f all-the-icons-install-fonts
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
 file, see the [[#configure][Configure]] section further below.
 
-*** Install Doom alongside other configs (with Chemacs)
-[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs. It allows you to switch between multiple
+*** Install Doom alongside other configs (with Chemacs2)
+[[https://github.com/plexus/chemacs2][Chemacs2]] is a bootloader for Emacs. It allows you to switch between multiple
 Emacs configurations. Here is a quick guide for setting it up with Doom Emacs as
 the default config:
 
@@ -515,22 +515,20 @@ the default config:
    ~/doom-emacs/bin/doom install
    #+END_SRC
 
-2. Download [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
+2. Move aside any existing config and install Chemacs2 as your new =~/.emacs.d=:
    #+BEGIN_SRC bash :eval no
-   wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
+   [ -f ~/.emacs ] && mv ~/.emacs ~/.emacs.bak
+   [ -d ~/.emacs.d ] && mv ~/.emacs.d ~/.emacs.legacy
+   git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
    #+END_SRC
-
-   #+begin_quote
-   *WARNING:* the =~/.emacs.d= directory must not exist for this to work.
-   #+end_quote
 
 3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
    is structured like a =.dir-locals.el= file. Here is an example with Doom (as
    the default), Spacemacs, and Prelude:
    #+BEGIN_SRC emacs-lisp :eval no
    (("default"   . ((user-emacs-directory . "~/doom-emacs")))
-    ("spacemacs" . ((user-emacs-directory . "~/spacemacs")))
-    ("prelude"   . ((user-emacs-directory . "~/prelude"))))
+    ("legacy" . ((user-emacs-directory . "~/.emacs.legacy")))
+    ("spacemacs"   . ((user-emacs-directory . "~/spacemacs"))))
    #+END_SRC
 
 To start Emacs with a specific config, use the =--with-profile= option:
