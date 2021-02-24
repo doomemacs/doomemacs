@@ -361,13 +361,10 @@ This is a wrapper around `eval-after-load' that:
                       (require package nil 'noerror))
                   #'progn
                 #'with-no-warnings)
-              (let ((body (macroexp-progn body)))
-                `(if (featurep ',package)
-                     ,body
-                   ;; We intentionally avoid `with-eval-after-load' to prevent
-                   ;; eager macro expansion from pulling (or failing to pull) in
-                   ;; autoloaded macros/packages.
-                   (eval-after-load ',package ',body)))))
+              ;; We intentionally avoid `with-eval-after-load' to prevent eager
+              ;; macro expansion from pulling (or failing to pull) in autoloaded
+              ;; macros/packages.
+              `(eval-after-load ',package ',(macroexp-progn body))))
     (let ((p (car package)))
       (cond ((not (keywordp p))
              `(after! (:and ,@package) ,@body))
