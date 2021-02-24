@@ -30,12 +30,9 @@
 
 
 (use-package! psc-ide
-  :when (featurep! :checkers syntax)
-  :after purescript-mode
-  :config (psc-ide-flycheck-setup))
-
-(use-package! psc-ide
   :hook (purescript-mode . psc-ide-mode)
   :config
   (remove-hook 'company-backends 'company-psc-ide-backend)
+  (when (featurep! :checkers syntax)
+    (psc-ide-flycheck-setup))
   (set-company-backend! 'purescript-mode 'company-psc-ide-backend))
