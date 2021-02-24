@@ -199,3 +199,13 @@ You should use `set-eshell-alias!' to change this.")
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
     (unless (executable-find "fish") "")))
+
+
+(use-package! xterm-color
+  :after eshell
+  :init
+  (add-hook! 'eshell-before-prompt-hook
+    (defun +eshell-preserve-properties ()
+      (setq xterm-color-preserve-properties t)))
+  (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions)))
