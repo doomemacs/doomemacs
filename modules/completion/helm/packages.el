@@ -16,4 +16,6 @@
   (package! posframe :pin "efd7ea490defc53a5b78e7469a3a35d225b766cc"))
 (when (featurep! :lang org)
   (package! helm-org :pin "b7a18dfc17e8b933956d61d68c435eee03a96c24"))
+(when (featurep! +icons)
+  (package! helm-icons :pin "dbc5c41da07d5d182f0cd1ea46fab47085fe070d"))
 (package! helm-descbinds :pin "b72515982396b6e336ad7beb6767e95a80fca192")

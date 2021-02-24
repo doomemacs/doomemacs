@@ -1,14 +1,14 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
 ;; Posframe (requires +childframe)
-(defvar +helm-posframe-handler #'+helm-poshandler-frame-center-near-bottom-fn
-  "The function that determines the location of the childframe. It should return
-a cons cell representing the X and Y coordinates. See
+(defvar +helm-posframe-handler #'posframe-poshandler-frame-center
+  "The function that determines the location of the childframe.
+It should return a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
 
 (defvar +helm-posframe-text-scale 1
-  "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
-be negative.")
+  "The text-scale to use in the helm childframe. Set to nil for no scaling.
+Can be negative.")
 
 (defvar +helm-posframe-parameters
   '((internal-border-width . 8)
@@ -16,8 +16,7 @@ be negative.")
     (height . 0.35)
     (min-width . 80)
     (min-height . 16))
-  "TODO")
-
+  "Default parameters for the helm childframe.")
 
 ;;
 ;;; Packages
@@ -189,3 +188,12 @@ be negative.")
 
 (use-package! helm-descbinds
   :hook (helm-mode . helm-descbinds-mode))
+
+
+(use-package! helm-icons
+  :after helm
+  :when (featurep! +icons)
+  :init
+  (setq helm-icons-provider 'all-the-icons)
+  :config
+  (helm-icons-enable))
