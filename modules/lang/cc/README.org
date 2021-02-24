@@ -92,20 +92,19 @@ recommended.
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
 
-After installing its dependencies (Clang and CMake), run ~M-x irony-install-server~ in Emacs.
+After installing its dependencies (Clang and CMake), run ~M-x
+irony-install-server~ in Emacs.
 
 *** macOS
 Due to linking issues, macOS users must compile irony-server manually:
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 brew install cmake
 brew install llvm
 git clone https://github.com/Sarcasm/irony-mode irony-mode
 #+END_SRC
 
-#+BEGIN_SRC bash :results output raw
-#!/bin/bash
-
+#+BEGIN_SRC bash
 mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
@@ -131,7 +130,7 @@ available through your OS's package manager.
 This module will auto-start ~rdm~ when you open C/C++ buffers (so long as one
 isn't already running). If you prefer to run it yourself:
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 rdm &
 rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 #+END_SRC
@@ -146,12 +145,12 @@ For a more universal solution: both LSP servers and irony will recognize a
 [[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] (a ~compile_commands.json~ file). There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to
 generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 # For CMake projects
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
 #+END_SRC
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 # For non-CMake projects
 make clean
 bear make
@@ -186,11 +185,11 @@ environment variables.
 A workaround might be to install ~make~ via Homebrew which puts ~gmake~
 under ~/usr/local/~.
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 brew install make
 #+END_SRC
 
-#+BEGIN_SRC sh :results output raw
+#+BEGIN_SRC sh
 make clean
 bear gmake
 #+END_SRC
