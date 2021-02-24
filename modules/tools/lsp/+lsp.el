@@ -5,7 +5,10 @@
 Can be a list of backends; accepts any value `company-backends' accepts.")
 
 (defvar +lsp-prompt-to-install-server t
-  "If non-nil, prompt to install a server if no server is present.")
+  "If non-nil, prompt to install a server if no server is present.
+
+If set to `quiet', suppress the install prompt and don't visibly inform the user
+about it (it will be logged to *Messages* however).")
 
 
 ;;
@@ -120,9 +123,10 @@ server getting expensively restarted when reverting buffers."
       (if (or (lsp--filter-clients
                (-andfn #'lsp--matching-clients?
                        #'lsp--server-binary-present?))
-              +lsp-prompt-to-install-server)
+              (not (memq +lsp-prompt-to-install-server '(nil quiet))))
           (apply orig-fn args)
-        (lsp--info "No language server available for %S" major-mode)))))
+        (let ((inhibit-message (not (eq +lsp-prompt-to-install-server 'quiet))))
+          (lsp--info "No language server available for %S" major-mode))))))
 
 
 (use-package! lsp-ui
