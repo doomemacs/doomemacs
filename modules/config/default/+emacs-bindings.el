@@ -292,7 +292,8 @@
        (:when (featurep! :lang org +pomodoro)
         :desc "Pomodoro timer"             "t" #'org-pomodoro)
        (:when (featurep! :ui zen)
-        :desc "Zen mode"                   "z" #'writeroom-mode))
+        :desc "Zen mode"                   "z" #'+zen/toggle
+        :desc "Zen mode"                   "z" #'+zen/toggle-fullscreen))
 
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")
