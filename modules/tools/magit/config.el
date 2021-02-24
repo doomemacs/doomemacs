@@ -233,7 +233,10 @@ ensure it is built when we actually use Forge."
     (evil-define-key* evil-collection-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up))
-  (transient-replace-suffix 'magit-dispatch 'magit-worktree
-    '("%" "Gitflow" magit-gitflow-popup))
+
+  (after! magit-gitflow
+    (transient-replace-suffix 'magit-dispatch 'magit-worktree
+      '("%" "Gitflow" magit-gitflow-popup)))
+
   (transient-append-suffix 'magit-dispatch '(0 -1 -1)
     '("*" "Worktree" magit-worktree)))
