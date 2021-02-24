@@ -41,7 +41,7 @@ Meant to be used for `scala-mode's `comment-line-break-function'."
   (if (and (require 'sbt-mode nil t)
            (sbt:find-root))
       (let ((buffer-name (sbt:buffer-name)))
-        (unless (comint-check-proc buffer-name)
+        (when (and (get-buffer buffer-name) (not (comint-check-proc buffer-name)))
           (kill-buffer buffer-name))
         (run-scala)
         (get-buffer buffer-name))
