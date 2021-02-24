@@ -1,6 +1,6 @@
 #+TITLE:   ui/emoji
 #+DATE:    September 30, 2020
-#+SINCE:   v2.0.10
+#+SINCE:   v3.0
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
