@@ -11,8 +11,6 @@
   - [[#lsp-servers][LSP servers]]
   - [[#irony-server][irony-server]]
     - [[#macos][macOS]]
-    - [[#arch-linux][Arch Linux]]
-    - [[#opensuse][openSUSE]]
   - [[#rtags][rtags]]
 - [[#configure][Configure]]
   - [[#project-compile-settings][Project compile settings]]
@@ -75,13 +73,18 @@ This module's requirements change depending on how you use it.
 =lsp-mode= and =eglot= support a few LSP servers, but =clangd= and =ccls= are
 recommended.
 
-+ clangd (must be v9 or newer) :: Clangd is included with =llvm= which should be
++ clangd (must be v9 or newer) :: clangd is included with =llvm= which should be
   available through your OS' package manager.
-  - Debian/Ubuntu: ~sudo apt-get install clangd-9~
-  - macOS: ~brew install llvm~
-  - Windows: install from [[https://releases.llvm.org/download.html][LLVM download page]]
-  - clangd is available on some Linux distros from a =clang-tools= package, if
-    you'd like to avoid the full =llvm=.
+  - Linux:
+    - Debian 11 & Ubuntu 20.10: ~# apt-get install clangd-11~
+      - 20.04 LTS: [[https://pkgs.org/search/?q=clangd][clangd-10]]
+    - Fedora & CentOS/RHEL 8+: ~# dnf install clang-tools-extra~
+    - openSUSE: ~# zypper install clang~
+    - Arch: ~# pacman -S clang~
+  - BSDs:
+    - NetBSD & OpenBSD: ~# pkg_add clang-tools-extra~
+  - macOS: ~$ brew install llvm~ // 1GB+ installation! May take a while!
+  - Windows: use the win64 installer from [[https://releases.llvm.org/download.html][LLVM's GitHub release page]].
 + ccls :: Available in many OS' package managers as =ccls=. Otherwise, there are
   alternative install methods listed [[https://github.com/MaskRay/ccls/wiki/Install][in the project's wiki]].
 + cmake-language-server :: available through ~pip~ on most distributions
@@ -89,16 +92,19 @@ recommended.
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
 
-After installing its dependencies, run ~M-x irony-install-server~ in Emacs.
+After installing its dependencies (Clang and CMake), run ~M-x
+irony-install-server~ in Emacs.
 
 *** macOS
 Due to linking issues, macOS users must compile irony-server manually:
 
 #+BEGIN_SRC sh
 brew install cmake
-brew install llvm  # 1gb+ installation! May take a while!
-
+brew install llvm
 git clone https://github.com/Sarcasm/irony-mode irony-mode
+#+END_SRC
+
+#+BEGIN_SRC bash
 mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
@@ -112,19 +118,9 @@ install_name_tool -change @rpath/libclang.dylib \
     /usr/local/opt/llvm/lib/libclang.dylib \
     "$DEST/bin/irony-server"
 
-# cleanup
+# Cleanup
 popd
 rm -rf irony-mode
-#+END_SRC
-
-*** Arch Linux
-#+BEGIN_SRC sh
-pacman -S clang cmake
-#+END_SRC
-
-*** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
-sudo zypper install clang cmake
 #+END_SRC
 
 ** rtags
@@ -152,7 +148,9 @@ generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[
 #+BEGIN_SRC sh
 # For CMake projects
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+#+END_SRC
 
+#+BEGIN_SRC sh
 # For non-CMake projects
 make clean
 bear make
