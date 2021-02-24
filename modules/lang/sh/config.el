@@ -16,6 +16,7 @@
   :config
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
+  (set-lookup-handlers! 'sh-mode :documentation #'+sh-lookup-documentation-handler)
   (set-ligatures! 'sh-mode
     ;; Functional
     :def "function"

@@ -36,3 +36,13 @@
     (with-current-buffer "*shell*"
       (rename-buffer (format "*shell [%s]*" dest-sh))
       (current-buffer))))
+
+;;;###autoload
+(defun +sh-lookup-documentation-handler ()
+  "Look up documentation in `man' or `woman'."
+  (interactive)
+  (call-interactively
+   (if (executable-find "man")
+       #'man
+     #'woman))
+  (current-buffer))
