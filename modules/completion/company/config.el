@@ -73,6 +73,7 @@
   (after! eldoc
     (eldoc-add-command 'company-complete-selection
                        'company-complete-common
+                       'company-capf
                        'company-abort)))
 
 

@@ -24,12 +24,12 @@
     (doom-modeline-def-modeline 'emacs-everywhere
       '(bar modals emacs-everywhere buffer-position word-count parrot selection-info)
       '(input-method major-mode checker))
-    (defun emacs-everywhere-set-modeline ()
-      (doom-modeline-set-modeline 'emacs-everywhere))
-    (add-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-modeline))
-  (when (featurep! :ui workspaces)
-    (defun emacs-everywhere-clear-persp-info ()
-      (setq persp-emacsclient-init-frame-behaviour-override nil))
-    (add-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-clear-persp-info))
+    (add-hook! 'emacs-everywhere-init-hooks
+      (defun +everywhere-set-modeline ()
+        (doom-modeline-set-modeline 'emacs-everywhere))))
+  (add-hook! 'emacs-everywhere-init-hooks
+    (defun +everywhere-clear-persp-info-h ()
+      (when (bound-and-true-p persp-mode)
+        (setq persp-emacsclient-init-frame-behaviour-override nil))))
   (after! solaire-mode
     (add-hook 'emacs-everywhere-init-hooks #'solaire-mode)))

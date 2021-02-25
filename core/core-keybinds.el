@@ -28,6 +28,8 @@ and Emacs states, and for non-evil users.")
 
 (cond
  (IS-MAC
+  ;; mac-* variables are used by the special emacs-mac build of Emacs by
+  ;; Yamamoto Mitsuharu, while other builds use ns-*.
   (setq mac-command-modifier      'super
         ns-command-modifier       'super
         mac-option-modifier       'meta

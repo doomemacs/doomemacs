@@ -420,7 +420,7 @@ intervals."
       (let ((req (pop packages)))
         (unless (featurep req)
           (doom-log "Incrementally loading %s" req)
-          (condition-case e
+          (condition-case-unless-debug e
               (or (while-no-input
                     ;; If `default-directory' is a directory that doesn't exist
                     ;; or is unreadable, Emacs throws up file-missing errors, so

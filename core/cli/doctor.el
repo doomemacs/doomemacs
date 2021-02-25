@@ -55,7 +55,7 @@ in."
            emacs-version))
    ((= emacs-major-version 26)
     (warn! (concat "Emacs %s detected. Doom is dropping Emacs 26.x support very soon. Consider "
-                   "upgrading to Emacs 27.x.")
+                   "upgrading to Emacs 27.1.")
            emacs-version)))
 
   (print! (start "Checking for Emacs config conflicts..."))

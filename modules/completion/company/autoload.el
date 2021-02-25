@@ -81,8 +81,10 @@ Examples:
 ;;;###autoload
 (defun +company-has-completion-p ()
   "Return non-nil if a completion candidate exists at point."
-  (and (company-manual-begin)
-       (= company-candidates-length 1)))
+  (when company-mode
+    (unless company-candidates-length
+      (company-manual-begin))
+    (= company-candidates-length 1)))
 
 ;;;###autoload
 (defun +company/toggle-auto-completion ()
