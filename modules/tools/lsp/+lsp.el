@@ -125,8 +125,12 @@ server getting expensively restarted when reverting buffers."
                        #'lsp--server-binary-present?))
               (not (memq +lsp-prompt-to-install-server '(nil quiet))))
           (apply orig-fn args)
-        (let ((inhibit-message (not (eq +lsp-prompt-to-install-server 'quiet))))
-          (lsp--info "No language server available for %S" major-mode))))))
+        ;; HACK `lsp--message' overrides `inhibit-message', so use `quiet!'
+        (let ((doom-debug-p
+               (or doom-debug-p
+                   (not (eq +lsp-prompt-to-install-server 'quiet)))))
+          (doom-shut-up-a #'lsp--info "No language server available for %S"
+                          major-mode))))))
 
 
 (use-package! lsp-ui
