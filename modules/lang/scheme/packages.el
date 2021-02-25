@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(package! geiser :pin "cd00be69b26e6fd748b183d127d8b6f4c91ba622")
+(package! geiser :pin "26dd2f4ae0f44879b5273bf87cdd42b8ec4140a1")
 
 (when (featurep! :checkers syntax)
   (package! flycheck-guile

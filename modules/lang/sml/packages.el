@@ -5,4 +5,4 @@
 (when (featurep! :completion company)
   (package! company-mlton
     :recipe (:host github :repo "MatthewFluet/company-mlton" :files ("*.el" "*.basis"))
-    :pin "b87e36348fff9fa060b780c2019330ac5d5665ec"))
+    :pin "9b09d209b4767a2af24784fb5321390ed1d445bf"))

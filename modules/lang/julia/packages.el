@@ -2,4 +2,4 @@
 ;;; lang/julia/packages.el
 
 (package! julia-mode :pin "8ea90c7927f6d87a291cfb0216f34dacf43c722e")
-(package! julia-repl :pin "d073acb6339e99edf77833f82277afd9a076f16a")
+(package! julia-repl :pin "7ce38a9caf2a9c105afe66f464a2f30e816d69f3")

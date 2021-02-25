@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/factor/packages.el
 
-(package! fuel :pin "94a922af1f015da6c24ba6c81aeace0c7e6d80bf")
+(package! fuel :pin "1928e6094ea644b24e511e5c21036729b017f98d")

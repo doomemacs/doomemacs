@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/data/packages.el
 
-(package! csv-mode :pin "eb3ec003ea0dc6a9f50084f3070120d3373f7a9d")
+(package! csv-mode :pin "8da54e8b4ef9e5fe8a0afa147c625ced603dc0aa")

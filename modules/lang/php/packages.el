@@ -5,14 +5,14 @@
 (package! php-extras
   :recipe (:host github :repo "arnested/php-extras")
   :pin "d410c5af663c30c01d461ac476d1cbfbacb49367")
-(package! php-mode :pin "7e5722c8854d7465c93765653e6ec0897fb7cc7b")
+(package! php-mode :pin "8cdc727e6d4eef81655b90574784e9540f407cda")
 (package! php-refactor-mode :pin "7a794b0618df2882b1bd586fdd698dba0bc5130d")
 (package! phpunit :pin "fe6bc91c3bd8b329c6d26ad883a025f06b5121ee")
 
 (when (featurep! +hack)
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
-    :pin "9079bc333e715a13e57ab366522b15d0307e32cd"))
+    :pin "847fd910e9d0ac76e2cfeb87512e6923a39d7d5f"))
 
 (unless (featurep! +lsp)
   (package! phpactor :pin "62d2372ea55c0c5fb4e77076988472ebb5d85f24")
@@ -23,4 +23,4 @@
   (package! php-cs-fixer :pin "c5b5d8a4986b31bade5e2a57131469bf90630db8"))
 
 ;; For building php-extras
-(package! async :pin "14f48de586b0977e3470f053b810d77b07ea427a")
+(package! async :pin "d7e7f79ee42311a0187aa2ab4f4e2f8843fa28da")

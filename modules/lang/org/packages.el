@@ -19,7 +19,7 @@
              (insert "(fset 'org-release (lambda () \"9.5\"))\n"
                      "(fset 'org-git-version #'ignore)\n"
                      "(provide 'org-version)\n")))
-  :pin "9e98e9a731daf7bc11985edae29d01203027dcd0"
+  :pin "0b117f72a82143f544ef41cc82696337d496fe97"
   ;; Prevents built-in Org from sneaking into the byte-compilation of
   ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
   ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
@@ -66,7 +66,7 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "04b5a9dee1be7ecba8ada31685c3e11c668d10e6")
+  (package! org-tree-slide :pin "c9487e51b0efd2aa95d1c68fbc09833fcf5b75ea")
   (package! org-re-reveal :pin "18a2456befcfda5f681b2b4041f3262f93e52cba")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
@@ -100,6 +100,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "04f41ca1ef280e4fef67f5a91eb28f66d770f55d"))
+    :pin "a05667edc87ac1b11e8d94dd2ac5abe31e1104b4"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
