@@ -147,7 +147,9 @@ server getting expensively restarted when reverting buffers."
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
-        lsp-ui-sideline-show-hover nil)
+        lsp-ui-sideline-show-hover nil
+        ;; Some icons don't scale correctly on Emacs 26, so disable them there.
+        lsp-ui-sideline-actions-icon EMACS27+) ; DEPRECATED Remove later
 
   (map! :map lsp-ui-peek-mode-map
         "j"   #'lsp-ui-peek--select-next
