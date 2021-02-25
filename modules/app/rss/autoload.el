@@ -1,8 +1,21 @@
 ;;; app/rss/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +rss--wconf nil)
+
 ;;;###autoload
-(defalias '=rss #'elfeed
-  "Activate (or switch to) `elfeed' in its workspace.")
+(defun =rss ()
+  "Activate (or switch to) `elfeed' in its workspace."
+  (interactive)
+  (if (featurep! :ui workspaces)
+      (progn
+        (+workspace-switch "rss" t)
+        (doom/switch-to-scratch-buffer)
+        (elfeed)
+        (+workspace/display))
+    (setq +rss--wconf (current-window-configuration))
+    (delete-other-windows)
+    (switch-to-buffer (doom-fallback-buffer))
+    (elfeed)))
 
 ;;;###autoload
 (defun +rss/delete-pane ()
@@ -77,7 +90,12 @@
       (with-current-buffer b
         (remove-hook 'kill-buffer-hook #'+rss-cleanup-h :local)
         (kill-buffer b)))
-    (mapc #'kill-buffer show-buffers)))
+    (mapc #'kill-buffer show-buffers))
+  (if (featurep! :ui workspaces)
+      (+workspace/delete "rss")
+    (when (window-configuration-p +rss--wconf)
+      (set-window-configuration +rss--wconf))
+    (setq +rss--wconf nil)))
 
 
 ;;
