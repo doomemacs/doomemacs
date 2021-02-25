@@ -201,6 +201,25 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
+  ;; Don't process babel results asynchronously when exporting org, as they
+  ;; won't likely complete in time, and will instead output an ob-async hash
+  ;; instead of the wanted evaluation results.
+  (after! ob
+    (add-to-list 'org-babel-default-lob-header-args '(:async . nil)))
+
+  (defadvice! +org-inhibit-async-babel-blocks-on-export-a (orig-fn &optional fn arg info params)
+    "Exporting org documents with async blocks will sometimes substitute
+evaluation output with hashes in the exported document. This is because the
+block is executed asynchronously, but the exporter doesn't wait for it to
+finish. This advice forces babel blocks to not execute asychronously when being
+exported."
+    :around #'ob-async-org-babel-execute-src-block
+    (let ((async (or (assoc :async params)
+                     (assoc :async (nth 2 (or info (org-babel-get-src-block-info)))))))
+      (if (and async (null (cdr async)))
+          (funcall fn arg info params)
+        (funcall orig-fn fn arg info params))))
+
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
     :after #'org-return
