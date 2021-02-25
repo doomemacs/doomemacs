@@ -165,7 +165,7 @@ directives. By default, this only recognizes C directives.")
       (abort-recursive-edit)))
 
   ;; Make J (evil-join) remove comment delimiters when joining lines.
-  (advice-add #'evil-join :override #'+evil-join-a)
+  (advice-add #'evil-join :around #'+evil-join-a)
 
   ;; Prevent gw (`evil-fill') and gq (`evil-fill-and-move') from squeezing
   ;; spaces. It doesn't in vim, so it shouldn't in evil.
