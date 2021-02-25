@@ -3,10 +3,10 @@
 
 (if (not (featurep! +flyspell))
     (package! spell-fu :pin "a7db58747131dca2eee0e0757c3d254d391ddd1c")
-  (package! flyspell-correct :pin "6d603a1dc51918f7f8aaf99dd5443f74a0afc794")
+  (package! flyspell-correct :pin "d19a090b978a249fc8f6d8b14309a5705a6bb483")
   (cond ((featurep! :completion ivy)
          (package! flyspell-correct-ivy))
         ((featurep! :completion helm)
          (package! flyspell-correct-helm))
         ((package! flyspell-correct-popup)))
-  (package! flyspell-lazy :pin "3ebf68cc9eb10c972a2de8d7861cbabbbce69570"))
+  (package! flyspell-lazy :pin "d57382cf06462931cb354f5630469425fce56396"))
