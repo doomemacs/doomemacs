@@ -8,3 +8,5 @@
   (package! omnisharp :pin "8ec59296b2e2a12d8ea146fb7056091fbb7bdd10"))
 (when (featurep! +unity)
   (package! shader-mode :pin "d7dc8d0d6fe8914e8b6d5cf2081ad61e6952359c"))
+(when (featurep! +dotnet)
+  (package! sharper :pin "d610b839dbb907cc0a49b7edfe7fe39aa3f9dd6d"))
