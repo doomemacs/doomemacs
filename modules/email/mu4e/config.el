@@ -269,6 +269,9 @@ Usefull for affecting HTML export config.")
     (mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
     (funcall orig-fn))
 
+  (map! :map org-msg-edit-mode-map
+        "TAB" #'org-msg-tab) ; only <tab> bound by default
+
   (defvar +org-msg-accent-color "#c01c28"
     "Accent color to use in org-msg's generated CSS.
 Must be set before org-msg is loaded to take effect.")
