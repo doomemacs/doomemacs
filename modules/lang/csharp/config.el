@@ -94,9 +94,10 @@ or terminating simple string."
     :modes '(csharp-mode shader-mode)
     :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))
 
+
 (use-package! sharper
   :when (featurep! +dotnet)
-  :bind
-  ("C-c d" . sharper-main-transient))
+  :general ("C-c d" #'sharper-main-transient))
+
 
 (use-package! sln-mode :mode "\\.sln\\'")
