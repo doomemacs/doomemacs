@@ -1,10 +1,21 @@
 ;;; flycheck-eglot --- Hacky eglot support in flycheck -*- lexical-binding: t; -*-
-
+;;; Commentary:
+;; This file sets up flycheck so that, when eglot receives a publishDiagnostics method
+;; from the server, then eglot calls a report function that creates diagnostics for
+;; flycheck.
+;;
+;; It works by creating an eglot-specific callback function, and using this as 
+;; the REPORT-FN argument of `eglot-flymake-backend', which internally registers 
+;; that lambda as the function to use whenever there is a publishDiagnostics method.
+;; Calling `+lsp--flycheck-eglot-init' "too late" is not a problem, since if there
+;; are any unreported/missed diagnostics, eglot ensures that the
+;; REPORT-FN function is called immediately.
+;;
+;; Note: as long as joaotavora/eglot#596 isn't fixed/dealt with, this checker cannot
+;; work. Please check the issue on github for more context
 ;;; Code:
 (defun +lsp--flycheck-eglot-init (checker callback)
-  "Clean up errors when done.
-
-CHECKER is the checker (eglot).
+  "CHECKER is the checker (eglot).
 CALLBACK is the function that we need to call when we are done, on all the errors."
   (cl-labels
       ((flymake-diag->flycheck-err
@@ -23,13 +34,13 @@ CALLBACK is the function that we need to call when we are done, on all the error
            :buffer (current-buffer)
            :filename (buffer-file-name)))))
     ;; NOTE: Setting up eglot to automatically create flycheck errors for the buffer.
+    ;; Internally, this sets the lambda as the callback to be used by eglot
+    ;; when it receives a publishDiagnostics method from the server
     (eglot-flymake-backend
      (lambda (flymake-diags &rest _)
        (funcall callback
                 'finished
-                (mapcar #'flymake-diag->flycheck-err flymake-diags))))
-    ;; NOTE: Forcefully trigger a check in the buffer (function name is confusing)
-    (flycheck-buffer)))
+                (mapcar #'flymake-diag->flycheck-err flymake-diags))))))
 
 (defun +lsp--flycheck-eglot-available-p ()
   (bound-and-true-p eglot--managed-mode))
@@ -42,7 +53,7 @@ CALLBACK is the function that we need to call when we are done, on all the error
 
 (push 'eglot flycheck-checkers)
 
-(add-hook! 'eglot--managed-mode-hook
+(add-hook! 'eglot-managed-mode-hook
   (defun +lsp-eglot-prefer-flycheck-h ()
     (when eglot--managed-mode
       (when-let ((current-checker (flycheck-get-checker-for-buffer)))
