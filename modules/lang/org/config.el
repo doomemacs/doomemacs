@@ -990,60 +990,69 @@ compelling reason, so..."
              #'+org-cycle-only-current-subtree-h
              ;; Clear babel results if point is inside a src block
              #'+org-clear-babel-results-h)
-  (map! :map evil-org-mode-map
-        :ni [C-return]   #'+org/insert-item-below
-        :ni [C-S-return] #'+org/insert-item-above
-        ;; navigate table cells (from insert-mode)
-        :i  "C-l"     (cmds! (org-at-table-p) #'org-table-next-field
+  (let-alist evil-org-movement-bindings
+    (let ((Cright (concat "C-" .right))
+          (Cleft (concat "C-" .left))
+          (Cup (concat "C-" .up))
+          (Cdown (concat "C-" .down))
+          (CSright (concat "C-" (capitalize .right)))
+          (CSleft (concat "C-" (capitalize .left)))
+          (CSup (concat "C-" (capitalize .up)))
+          (CSdown (concat "C-" (capitalize .down))))
+      (map! :map evil-org-mode-map
+            :ni [C-return]   #'+org/insert-item-below
+            :ni [C-S-return] #'+org/insert-item-above
+            ;; navigate table cells (from insert-mode)
+            :i Cright (cmds! (org-at-table-p) #'org-table-next-field
                              #'org-end-of-line)
-        :i  "C-h"     (cmds! (org-at-table-p) #'org-table-previous-field
+            :i Cleft  (cmds! (org-at-table-p) #'org-table-previous-field
                              #'org-beginning-of-line)
-        :i  "C-k"     (cmds! (org-at-table-p) #'+org/table-previous-row
+            :i Cup    (cmds! (org-at-table-p) #'+org/table-previous-row
                              #'org-up-element)
-        :i  "C-j"     (cmds! (org-at-table-p) #'org-table-next-row
+            :i Cdown  (cmds! (org-at-table-p) #'org-table-next-row
                              #'org-down-element)
-        :ni "C-S-l"   #'org-shiftright
-        :ni "C-S-h"   #'org-shiftleft
-        :ni "C-S-k"   #'org-shiftup
-        :ni "C-S-j"   #'org-shiftdown
-        ;; more intuitive RET keybinds
-        :n [return]   #'+org/dwim-at-point
-        :n "RET"      #'+org/dwim-at-point
-        :i [return]   (cmd! (org-return electric-indent-mode))
-        :i "RET"      (cmd! (org-return electric-indent-mode))
-        :i [S-return] #'+org/shift-return
-        :i "S-RET"    #'+org/shift-return
-        ;; more vim-esque org motion keys (not covered by evil-org-mode)
-        :m "]h"  #'org-forward-heading-same-level
-        :m "[h"  #'org-backward-heading-same-level
-        :m "]l"  #'org-next-link
-        :m "[l"  #'org-previous-link
-        :m "]c"  #'org-babel-next-src-block
-        :m "[c"  #'org-babel-previous-src-block
-        :n "gQ"  #'org-fill-paragraph
-        ;; sensible vim-esque folding keybinds
-        :n "za"  #'+org/toggle-fold
-        :n "zA"  #'org-shifttab
-        :n "zc"  #'+org/close-fold
-        :n "zC"  #'outline-hide-subtree
-        :n "zm"  #'+org/hide-next-fold-level
-        :n "zM"  #'+org/close-all-folds
-        :n "zn"  #'org-tree-to-indirect-buffer
-        :n "zo"  #'+org/open-fold
-        :n "zO"  #'outline-show-subtree
-        :n "zr"  #'+org/show-next-fold-level
-        :n "zR"  #'+org/open-all-folds
-        :n "zi"  #'org-toggle-inline-images
+            :ni CSright   #'org-shiftright
+            :ni CSleft    #'org-shiftleft
+            :ni CSup      #'org-shiftup
+            :ni CSdown    #'org-shiftdown
+            ;; more intuitive RET keybinds
+            :n [return]   #'+org/dwim-at-point
+            :n "RET"      #'+org/dwim-at-point
+            :i [return]   (cmd! (org-return electric-indent-mode))
+            :i "RET"      (cmd! (org-return electric-indent-mode))
+            :i [S-return] #'+org/shift-return
+            :i "S-RET"    #'+org/shift-return
+            ;; more vim-esque org motion keys (not covered by evil-org-mode)
+            :m "]h"  #'org-forward-heading-same-level
+            :m "[h"  #'org-backward-heading-same-level
+            :m "]l"  #'org-next-link
+            :m "[l"  #'org-previous-link
+            :m "]c"  #'org-babel-next-src-block
+            :m "[c"  #'org-babel-previous-src-block
+            :n "gQ"  #'org-fill-paragraph
+            ;; sensible vim-esque folding keybinds
+            :n "za"  #'+org/toggle-fold
+            :n "zA"  #'org-shifttab
+            :n "zc"  #'+org/close-fold
+            :n "zC"  #'outline-hide-subtree
+            :n "zm"  #'+org/hide-next-fold-level
+            :n "zM"  #'+org/close-all-folds
+            :n "zn"  #'org-tree-to-indirect-buffer
+            :n "zo"  #'+org/open-fold
+            :n "zO"  #'outline-show-subtree
+            :n "zr"  #'+org/show-next-fold-level
+            :n "zR"  #'+org/open-all-folds
+            :n "zi"  #'org-toggle-inline-images
 
-        :map org-read-date-minibuffer-local-map
-        "C-h"   (cmd! (org-eval-in-calendar '(calendar-backward-day 1)))
-        "C-l"   (cmd! (org-eval-in-calendar '(calendar-forward-day 1)))
-        "C-k"   (cmd! (org-eval-in-calendar '(calendar-backward-week 1)))
-        "C-j"   (cmd! (org-eval-in-calendar '(calendar-forward-week 1)))
-        "C-S-h" (cmd! (org-eval-in-calendar '(calendar-backward-month 1)))
-        "C-S-l" (cmd! (org-eval-in-calendar '(calendar-forward-month 1)))
-        "C-S-k" (cmd! (org-eval-in-calendar '(calendar-backward-year 1)))
-        "C-S-j" (cmd! (org-eval-in-calendar '(calendar-forward-year 1)))))
+            :map org-read-date-minibuffer-local-map
+            Cleft  (cmd! (org-eval-in-calendar '(calendar-backward-day 1)))
+            Cright   (cmd! (org-eval-in-calendar '(calendar-forward-day 1)))
+            Cup       (cmd! (org-eval-in-calendar '(calendar-backward-week 1)))
+            Cdown    (cmd! (org-eval-in-calendar '(calendar-forward-week 1)))
+            CSleft   (cmd! (org-eval-in-calendar '(calendar-backward-month 1)))
+            CSright  (cmd! (org-eval-in-calendar '(calendar-forward-month 1)))
+            CSup     (cmd! (org-eval-in-calendar '(calendar-backward-year 1)))
+            CSdown   (cmd! (org-eval-in-calendar '(calendar-forward-year 1)))))))
 
 
 (use-package! evil-org-agenda

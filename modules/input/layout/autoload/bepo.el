@@ -117,7 +117,7 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE"
   "Remap evil-{normal,operator,motion,...}-state-map
   to be more natural with Bépo keyboard layout.
 See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
-  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map)
+  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map evil-operator-state-map)
     "c" "h"
     "C" "H"
     "t" "j"
@@ -131,13 +131,13 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
     "k" "s"
     "K" "S")
   (cond ((eq cr-style 'ergodis)
-         (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map)
+         (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map evil-operator-state-map)
            "h" "r"
            "H" "R"
            "l" "c"
            "L" "C"))
         (t
-         (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map)
+         (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-visual-state-map evil-operator-state-map)
            "h" "c"
            "H" "C"
            "l" "r"
@@ -171,18 +171,18 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
 
 
   ;; <> as direct access
-  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map)
+  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-operator-state-map)
     "«" "<"
     "»" ">")
 
   ;; " è replaces ^0 to go at BOL
-  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map)
+  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-operator-state-map)
     "è" "^"
     "È" "0")
 
   ;; [W] -> [É]
   ;; [C-W] -> [W]
-  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-operator-state-map)
+  (evil-collection-translate-key nil '(evil-normal-state-map evil-motion-state-map evil-operator-state-map evil-operator-state-map)
     "é" "w"
     "É" "W"
     "w" (kbd "C-w")
@@ -195,7 +195,7 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
   (let* ((cr-style (or cr-style 'ergodis))
          (doom-bepo-hook (lambda (_mode mode-keymaps &rest _rest)
                            (dolist (keymap mode-keymaps)
-                             (evil-collection-translate-key '(normal motion visual) keymap
+                             (evil-collection-translate-key '(normal motion visual operator) keymap
                                "c" "h"
                                "C" "H"
                                "t" "j"
@@ -207,19 +207,59 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
                                "j" "t"
                                "J" "T"
                                "k" "s"
-                               "K" "S")
+                               "K" "S"
+                               (kbd "C-c") (kbd "C-h")
+                               (kbd "C-C") (kbd "C-H")
+                               (kbd "C-t") (kbd "C-j")
+                               (kbd "C-T") (kbd "C-J")
+                               (kbd "C-s") (kbd "C-k")
+                               (kbd "C-S") (kbd "C-K")
+                               (kbd "C-r") (kbd "C-l")
+                               (kbd "C-R") (kbd "C-L")
+                               (kbd "C-j") (kbd "C-t")
+                               (kbd "C-J") (kbd "C-T")
+                               (kbd "C-k") (kbd "C-s")
+                               (kbd "C-K") (kbd "C-S")
+                               (kbd "M-c") (kbd "M-h")
+                               (kbd "M-C") (kbd "M-H")
+                               (kbd "M-t") (kbd "M-j")
+                               (kbd "M-T") (kbd "M-J")
+                               (kbd "M-s") (kbd "M-k")
+                               (kbd "M-S") (kbd "M-K")
+                               (kbd "M-r") (kbd "M-l")
+                               (kbd "M-R") (kbd "M-L")
+                               (kbd "M-j") (kbd "M-t")
+                               (kbd "M-J") (kbd "M-T")
+                               (kbd "M-k") (kbd "M-s")
+                               (kbd "M-K") (kbd "M-S"))
                              (cond ((eq cr-style 'ergodis)
-                                    (evil-collection-translate-key '(normal motion visual) keymap
+                                    (evil-collection-translate-key '(normal motion visual operator) keymap
                                       "h" "r"
                                       "H" "R"
                                       "l" "c"
-                                      "L" "C"))
+                                      "L" "C"
+                                      (kbd "C-h") (kbd "C-r")
+                                      (kbd "C-H") (kbd "C-R")
+                                      (kbd "C-l") (kbd "C-c")
+                                      (kbd "C-L") (kbd "C-C")
+                                      (kbd "M-h") (kbd "M-r")
+                                      (kbd "M-H") (kbd "M-R")
+                                      (kbd "M-l") (kbd "M-c")
+                                      (kbd "M-L") (kbd "M-C")))
                                    (t
-                                    (evil-collection-translate-key '(normal motion visual) keymap
+                                    (evil-collection-translate-key '(normal motion visual operator) keymap
                                       "h" "c"
                                       "H" "C"
                                       "l" "r"
-                                      "L" "R")))
+                                      "L" "R"
+                                      (kbd "C-h") (kbd "C-c")
+                                      (kbd "C-H") (kbd "C-C")
+                                      (kbd "C-l") (kbd "C-r")
+                                      (kbd "C-L") (kbd "C-R")
+                                      (kbd "M-h") (kbd "M-c")
+                                      (kbd "M-H") (kbd "M-C")
+                                      (kbd "M-l") (kbd "M-r")
+                                      (kbd "M-L") (kbd "M-R"))))
 
 
                              (evil-collection-translate-key '(insert) keymap
@@ -234,27 +274,48 @@ See `doom-bepo-cr-rotation-style' for the meaning of CR-STYLE."
                                (kbd "C-j") (kbd "C-t")
                                (kbd "C-J") (kbd "C-T")
                                (kbd "C-k") (kbd "C-s")
-                               (kbd "C-K") (kbd "C-S"))
+                               (kbd "C-K") (kbd "C-S")
+                               (kbd "M-c") (kbd "M-h")
+                               (kbd "M-C") (kbd "M-H")
+                               (kbd "M-t") (kbd "M-j")
+                               (kbd "M-T") (kbd "M-J")
+                               (kbd "M-s") (kbd "M-k")
+                               (kbd "M-S") (kbd "M-K")
+                               (kbd "M-r") (kbd "M-l")
+                               (kbd "M-R") (kbd "M-L")
+                               (kbd "M-j") (kbd "M-t")
+                               (kbd "M-J") (kbd "M-T")
+                               (kbd "M-k") (kbd "M-s")
+                               (kbd "M-K") (kbd "M-S"))
                              (cond ((eq cr-style 'ergodis)
                                     (evil-collection-translate-key '(insert) keymap
                                       (kbd "C-h") (kbd "C-r")
                                       (kbd "C-H") (kbd "C-R")
                                       (kbd "C-l") (kbd "C-c")
-                                      (kbd "C-L") (kbd "C-C")))
+                                      (kbd "C-L") (kbd "C-C")
+                                      (kbd "M-h") (kbd "M-r")
+                                      (kbd "M-H") (kbd "M-R")
+                                      (kbd "M-l") (kbd "M-c")
+                                      (kbd "M-L") (kbd "M-C")))
                                    (t
                                     (evil-collection-translate-key '(insert) keymap
                                       (kbd "C-h") (kbd "C-c")
                                       (kbd "C-H") (kbd "C-C")
                                       (kbd "C-l") (kbd "C-r")
-                                      (kbd "C-L") (kbd "C-R"))))
+                                      (kbd "C-L") (kbd "C-R")
+                                      (kbd "M-h") (kbd "M-c")
+                                      (kbd "M-H") (kbd "M-C")
+                                      (kbd "M-l") (kbd "M-r")
+                                      (kbd "M-L") (kbd "M-R")
+                                      )))
 
                              ;; <> en direct
-                             (evil-collection-translate-key '(normal motion visual) keymap
+                             (evil-collection-translate-key '(normal motion visual operator) keymap
                                "«" "<"
                                "»" ">")
 
                              ;; è pour aller au début de ligne
-                             (evil-collection-translate-key '(normal motion visual) keymap
+                             (evil-collection-translate-key '(normal motion visual operator) keymap
                                "è" "^"
                                "È" "0")
 

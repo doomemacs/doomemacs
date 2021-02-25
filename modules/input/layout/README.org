@@ -11,18 +11,21 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#bépo][Bépo]]
+    - [[#easymotion][Easymotion]]
     - [[#leaving-mnemonics-alone-when-possible][Leaving mnemonics alone when possible]]
     - [[#possible-contributions][Possible contributions]]
+    - [[#org-mode][Org-mode]]
 - [[#configuration][Configuration]]
   - [[#bépo-1][Bépo]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#how-to-investigate-an-issue-][How to investigate an issue ?]]
   - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
 
 * Description
 This module provides barebones support for using Doom with non-qwerty layouts.
 
 ** Maintainers
-+ @gagbo (Author)
++ @gagbo (Author, Bépo)
 
 ** Module Flags
 + =+bepo= Enables modifications for the BÉPO layout (customized with version 1.1 in mind)
@@ -43,14 +46,23 @@ Support for the bépo layout includes:
 - Setting Avy keys to the correct home row keys
 - Changing navigation keys to =ctsr=
   + old =t= is mapped to =j=
-  + old =s= is mapped to =k= (i.e. staging in the magit status buffer is done with =k=)
+  + old =s= is mapped to =k= (i.e. staging in the magit status buffer is done
+    with =k=)
   + See [[*Configuration][Configuration]] to see where old =c= and =r= functions
     are remapped
 - Bind =<>= functions to =«»= keys when possible
-- Bind =[]= functions to =()= keys when possible
+- Bind =[]= functions to =()= keys when possible (the "unimpaired-like"
+  bindings)
 - Bind =é= key to =w= functions when possible
 - Bind =è= key to useful functions when possible
 - Bind =`~= functions to =$#= keys when possible
+
+*** Easymotion
+
+If you use =evil-easymotion=, then all the bindings that were on =gs= have been
+moved to =gé=.
+
+In short : =g s j= -> =g é t= (evilem-motion-next-line). And so on.
 
 *** Leaving mnemonics alone when possible
 Exchanging =hjkl= to =ctsr= has the effect of destroying a few mnemonics: the
@@ -66,12 +78,31 @@ while =t=, =s=, =j=, and =k= are flipped:
 - staging a file/region has been moved to =k=
 
 *** Possible contributions
+**** Avoid =g= and =z= to be used too often
 A nice addition in the future might be to have all the normal mode bindings that
 start with =g= start with =,= instead to avoid the curl on these common
 bindings. This is *not* implemented for the time being.
 
+The same thing could be done to =z=, potentially using =à= instead.
+
+**** Proper minor mode
 Also, implementing all those changes as a minor we could flip on and off would
 help with adoption
+
+**** Put "word" text objects to é instead of w
+"inside word" and "around word" are =iw= and =aw=, which use the very poorly
+rated =w= key in the bépo layout. Finding a way to use =é= or even =è= more for
+these would be a welcome change
+
+*** Org-mode
+=evil-org= allows to define =evil-org-movement-bindings= to automatically map
+movement bindings on non-hjkl keys. It maps automatically keys to =C-c= and
+=C-r= in normal and insert states though, and it's not really user friendly in
+Emacs to remap those.
+
+Therefore, in org-mode:
+- =org-shiftright= is bound to =C-»=
+- =org-shiftleft= is bound to =C-«=
 
 * Configuration
 ** Bépo
@@ -86,6 +117,17 @@ actually put all the =c= functions on the key that does not need a curl.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.
+** How to investigate an issue ?
+If a key is misbehaving, use =describe-key= (=C-h k= or =SPC h k= or =F1 k=) to
+see the functions bound to the key, and more importantly in which map it is
+bound.
+
+You should ignore all =evil-collection-...-backup-map= keymaps, as they are
+artifacts from =evil-collection-translate-key= and those maps are actually not
+active.
+
+Most likely the solution is to call one of the "key rotation" functions on the
+relevant keymaps.
 ** How to deactivate the new bindings and go back to the old ones ?
 If you are learning a new layout you might want to go back to tho old one to
 "get work done". Sadly the only way is to comment out the module, run =doom

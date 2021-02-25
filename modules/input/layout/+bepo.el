@@ -81,7 +81,7 @@
            :n "C-#"   #'+popup/raise))
     (after! treemacs
       (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
-    (after! (:or helm ivy)
+    (after! (:or helm ivy selectrum icomplete)
       (doom-bepo-rotate-bare-keymap
        '(minibuffer-local-map
          minibuffer-local-ns-map
@@ -127,11 +127,44 @@
              (t
               (kbd "C-h !")))
             'org-time-stamp-inactive)
-          (apply #'completing-read args))))
+          (apply #'completing-read args)))
+      ;; Finalizing an Org-capture become `C-l C-c` (or `C-r C-c`) on top of `ZZ`
+      (doom-bepo-rotate-bare-keymap '(org-capture-mode-map) doom-bepo-cr-rotation-style))
+    (after! (evil org evil-org)
+      ;; FIXME: This map! call is being interpreted before the
+      ;;   map! call in (use-package! evil-org :config) in modules/lang/org/config.el
+      ;;   Therefore, this map! needs to be reevaluated to have effect.
+      ;;   Need to find a way to call the code below after the :config block
+      ;;   in :lang org code
+
+      ;; Direct access for "unimpaired" like improvements
+      (map! :map evil-org-mode-map
+            ;; evil-org-movement bindings having "c" and "r" means
+            ;; C-r gets mapped to `org-shiftright' in normal and insert state.
+            ;; C-c gets mapped to `org-shiftleft' in normal and insert state.
+            :ni "C-r" nil
+            :ni "C-c" nil
+            :ni "C-»" #'org-shiftright
+            :ni "C-«" #'org-shiftleft
+            :m ")" nil
+            :m "(" nil
+            :m "]" #'evil-org-forward-sentence
+            :m "[" #'evil-org-backward-sentence
+            :m ")h" #'org-forward-heading-same-level
+            :m "(h" #'org-backward-heading-same-level
+            :m ")l" #'org-next-link
+            :m "(l" #'org-previous-link
+            :m ")c" #'org-babel-next-src-block
+            :m "(c" #'org-babel-previous-src-block))
     (after! (evil org evil-org-agenda)
       (doom-bepo-rotate-bare-keymap '(org-agenda-keymap) doom-bepo-cr-rotation-style)
       (doom-bepo--evil-collection-hook nil '(evil-org-agenda-mode-map)))
-    (after! (evil magit evil-collection-magit)
+    (after! notmuch
+      ;; Without this, "s" is mapped to 'notmuch-search and
+      ;; takes precedence over the evil command to go up one line
+      (map! :map notmuch-common-keymap :n "s" nil)
+      (map! :map notmuch-common-keymap "s" nil))
+    (after! (evil magit)
       (doom-bepo-rotate-ts-bare-keymap
        '(magit-mode-map
          magit-diff-section-base-map
@@ -140,21 +173,40 @@
          magit-untracked-section-map))
       ;; Without this, "s" is mapped to 'magit-delete-thing (the old "k" for "kill") and
       ;; takes precedence over the evil command to go up one line
+      ;; :nv doesn't work on this, needs to be the bare map.
+      ;; This is the output of `describe-function 'magit-delete-thing` when we add :nv or :nvm
+      ;; Key Bindings
+      ;; evil-collection-magit-mode-map-backup-map <normal-state> x
+      ;; evil-collection-magit-mode-map-backup-map <visual-state> x
+      ;; evil-collection-magit-mode-map-backup-map k
+      ;; evil-collection-magit-mode-map-normal-state-backup-map x
+      ;; evil-collection-magit-mode-map-visual-state-backup-map x
+      ;; magit-mode-map <normal-state> x
+      ;; magit-mode-map <visual-state> x
+      ;; magit-mode-map s
       (map! :map magit-mode-map "s" nil)
+      ;; Even though magit bindings are part of evil-collection now,
+      ;; the hook only runs on `evil-collection-magit-maps`, which is
+      ;; way to short to cover all usages.
+      ;; The hook is run manually on other maps
+      ;; NOTE: magit-mode-map is last because other keymaps inherit from it.
+      ;; Therefore to prevent a "double rotation" issue, magit-mode-map is
+      ;; changed last
       (doom-bepo--evil-collection-hook
        nil
-       '(magit-mode-map
-         magit-cherry-mode-map
-         magit-mode-map
+       '(magit-cherry-mode-map
          magit-blob-mode-map
          magit-diff-mode-map
          magit-log-mode-map
          magit-log-select-mode-map
          magit-reflog-mode-map
          magit-status-mode-map
-         magit-file-mode-map
          magit-log-read-revs-map
          magit-process-mode-map
-         magit-refs-mode-map)))
+         magit-refs-mode-map
+         magit-mode-map)))
     (after! evil-easymotion
+      ;; instead of using gs as the evilem-map we use gé to avoid conflicts with org-mode
+      ;; down the road
+      (map! :nvm "gé" evilem-map)
       (doom-bepo-rotate-bare-keymap '(evilem-map) doom-bepo-cr-rotation-style))))
