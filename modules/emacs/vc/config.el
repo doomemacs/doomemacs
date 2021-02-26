@@ -1,5 +1,10 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
+;; Remove RCS, CVS, SCCS, SRC, and Bzr, because it's a lot less work for vc to
+;; check them all (especially in TRAMP buffers), and who uses any of these in
+;; 2021, amirite?
+(setq-default vc-handled-backends '(SVN Git Hg))
+
 (when IS-WINDOWS
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
