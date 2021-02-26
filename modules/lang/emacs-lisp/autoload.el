@@ -61,9 +61,7 @@ to a pop up buffer."
 (defun +emacs-lisp-lookup-definition (_thing)
   "Lookup definition of THING."
   (if-let (module (+emacs-lisp--module-at-point))
-      ;; FIXME: this is probably a bug in `counsel'. See
-      ;; https://github.com/abo-abo/swiper/pull/2752.
-      (progn (doom/help-modules (car module) (cadr module) 'visit-dir) 'deferred)
+      (doom/help-modules (car module) (cadr module) 'visit-dir)
     (call-interactively #'elisp-def)))
 
 ;;;###autoload
