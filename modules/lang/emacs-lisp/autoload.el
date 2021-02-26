@@ -61,7 +61,7 @@ to a pop up buffer."
 (defun +emacs-lisp-lookup-definition (_thing)
   "Lookup definition of THING."
   (if-let (module (+emacs-lisp--module-at-point))
-      (progn (doom/help-modules (car module) (cadr module) 'visit-dir) 'deferred)
+      (doom/help-modules (car module) (cadr module) 'visit-dir)
     (call-interactively #'elisp-def)))
 
 ;;;###autoload
