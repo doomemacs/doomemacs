@@ -289,13 +289,13 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
             (rxt-quote-pcre (doom-thing-at-point-or-region)))))
      directory args
      (or prompt
-         (format "rg%s [%s]: "
-                 args
+         (format "Search project [%s]: "
                  (cond ((equal directory default-directory)
                         "./")
                        ((equal directory project-root)
                         (projectile-project-name))
-                       ((file-relative-name directory project-root))))))))
+                       ((file-relative-name directory project-root)))
+                 (string-trim args))))))
 
 ;;;###autoload
 (defun +ivy/project-search (&optional arg initial-query directory)
