@@ -4,8 +4,7 @@
   (add-hook 'terraform-mode-local-vars-hook #'lsp!))
 
 
-(use-package! terraform-mode
-  :config
+(after! terraform-mode
   (set-docsets! 'terraform-mode "Terraform")
 
   (map! :map terraform-mode-map
