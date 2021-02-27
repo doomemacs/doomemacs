@@ -3,11 +3,11 @@
 (use-package! parinfer
   :unless (featurep! +rust)
   :hook ((emacs-lisp-mode
-            clojure-mode
-            scheme-mode
-            lisp-mode
-            racket-mode
-            hy-mode) . parinfer-mode)
+          clojure-mode
+          scheme-mode
+          lisp-mode
+          racket-mode
+          hy-mode) . parinfer-mode)
   :init
   (setq parinfer-extensions
         '(defaults
