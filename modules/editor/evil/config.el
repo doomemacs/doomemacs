@@ -492,7 +492,9 @@ directives. By default, this only recognizes C directives.")
        :nv "K"   #'+lookup/documentation
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
-       :nv "gf"  #'+lookup/file)
+       :nv "gf"  #'+lookup/file
+       :nv "gI"  #'+lookup/implementations
+       :nv "gA"  #'+lookup/assignments)
       (:when (featurep! :tools eval)
        :nv "gr"  #'+eval:region
        :n  "gR"  #'+eval/buffer
