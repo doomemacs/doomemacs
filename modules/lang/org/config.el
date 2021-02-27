@@ -106,7 +106,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
-        org-footnote-auto-label 'plain
         org-hide-leading-stars t
         org-image-actual-width nil
         org-imenu-depth 8
