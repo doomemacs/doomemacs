@@ -1006,10 +1006,10 @@ compelling reason, so..."
           (Cleft (concat "C-" .left))
           (Cup (concat "C-" .up))
           (Cdown (concat "C-" .down))
-          (CSright (concat "C-" (capitalize .right)))
-          (CSleft (concat "C-" (capitalize .left)))
-          (CSup (concat "C-" (capitalize .up)))
-          (CSdown (concat "C-" (capitalize .down))))
+          (CSright (concat "C-S-" .right))
+          (CSleft (concat "C-S-" .left))
+          (CSup (concat "C-S-" .up))
+          (CSdown (concat "C-S-" .down)))
       (map! :map evil-org-mode-map
             :ni [C-return]   #'+org/insert-item-below
             :ni [C-S-return] #'+org/insert-item-above
