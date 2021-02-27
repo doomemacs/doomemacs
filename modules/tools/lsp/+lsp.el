@@ -149,7 +149,8 @@ server getting expensively restarted when reverting buffers."
         ;; errors flash briefly and then disappear).
         lsp-ui-sideline-show-hover nil
         ;; Some icons don't scale correctly on Emacs 26, so disable them there.
-        lsp-ui-sideline-actions-icon EMACS27+) ; DEPRECATED Remove later
+        lsp-ui-sideline-actions-icon  ; DEPRECATED Remove later
+        (if EMACS27+ lsp-ui-sideline-actions-icon-default))
 
   (map! :map lsp-ui-peek-mode-map
         "j"   #'lsp-ui-peek--select-next
