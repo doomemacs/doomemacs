@@ -50,21 +50,24 @@ infromation."
                           (+debugger-list-for-dap)
                           (+debugger-list-for-realgud)))
          (result (--map (cons (cadr it) it) configurations))
-         (completion (completing-read "Start debugger: " (-map 'car result) nil t ))
-         (configuration (cdr (assoc completion result))))
-    (if (eq (car configuration) 'dap)
-        (let* ((debug-args (-> (cdr configuration)
-                               cl-rest
-                               copy-tree
-                               dap-variables-expand-in-launch-configuration))
-               (launch-args (or (-some-> (plist-get debug-args :type)
-                                  (gethash dap--debug-providers)
-                                  (funcall debug-args))
-                                (user-error "Have you loaded the `%s' specific dap package?"
-                                            (or (plist-get debug-args :type)
-                                                (user-error "%s does not specify :type" debug-args))))))
-          (cons 'dap launch-args))
-      (cons 'realgud (intern (cadr configuration))))))
+         (completion (completing-read "Start debugger: " (-map 'car result) nil t)))
+    (if (eq completion "")
+        (user-error "No debugging configuration specified.")
+      (let ((configuration (cdr (assoc completion result))))
+        (if (eq (car configuration) 'dap)
+            ;; get dap debugging arguments
+            (let* ((debug-args (-> (cdr configuration)
+                                   cl-rest
+                                   copy-tree
+                                   dap-variables-expand-in-launch-configuration))
+                   (launch-args (or (-some-> (plist-get debug-args :type)
+                                      (gethash dap--debug-providers)
+                                      (funcall debug-args))
+                                    (user-error "Have you loaded the `%s' specific dap package?"
+                                                (or (plist-get debug-args :type)
+                                                    (user-error "%s does not specify :type" debug-args))))))
+              (cons 'dap launch-args))
+          (cons 'realgud (intern (cadr configuration))))))))
 
 ;;
 ;;; Interactive commands
