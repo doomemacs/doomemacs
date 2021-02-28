@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/parinfer/packages.el
 
-(when (featurep! :editor evil)
+(when (and (not (featurep! +rust)) (featurep! :editor evil))
   ;; Parinfer uses `evil-define-key' without loading evil, so if evil is
   ;; installed *after* parinfer, parinfer will throw up void-function errors.
   ;; because evil-define-key (a macro) wasn't expanded at compile-time. So we
@@ -11,4 +11,8 @@
   ;; separate session:
   (autoload 'evil-define-key "evil-core" nil nil 'macro))
 
-(package! parinfer :pin "8659c99a9475ee34af683fdf8f272728c6bebb3a")
+(if (featurep! +rust)
+    (package! parinfer-rust-mode :pin "c825606e6aca4a2ed18c0af321df5f36a3c8c774")
+  (package! parinfer
+    :recipe (:host github :repo "emacsattic/parinfer")
+    :pin "8659c99a9475ee34af683fdf8f272728c6bebb3a"))

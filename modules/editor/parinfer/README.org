@@ -17,7 +17,9 @@ https://raw.githubusercontent.com/DogLooksGood/parinfer-mode/a7c041454e05ec2b883
 More information can be found about it [[https://shaunlebron.github.io/parinfer/][in the project's documentation]].
 
 ** Module Flags
-This module provides no flags.
++ =+rust= Use [[github:justinbarclay/parinfer-rust-mode][parinfer-rust-mode]] instead of the now deprecated [[github:DogLooksGood/parinfer-mode][parinfer-mode]].
+  This depends on Emacs being compiled with the option `--with-modules`. The
+  pre-built library is only available for Linux, Windows and MacOS.
 
 ** Packages
 + [[https://github.com/DogLooksGood/parinfer-mode][parinfer]]
