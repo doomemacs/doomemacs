@@ -1,28 +1,70 @@
 ;;; tools/debugger/autoload/debugger.el -*- lexical-binding: t; -*-
 
-(defvar +debugger--last nil)
+(defvar +debugger-last-configuration nil
+  "Configuration of the last debugging session of buffer.")
+(make-variable-buffer-local '+debugger-last-configuration)
+
+(defun +debugger-get-configuration ()
+  "Get last debugging configuration.
+
+If in a project, returns the configuration of the last debugging session in the
+project, if any. Else, returns the last debugging configuration of the current
+buffer, if any."
+  (if (projectile-project-p)
+      (projectile-variable-get '+debugger-last-configuration)
+    +debugger-last-configuration))
+
+(defun +debugger-set-configuration (configuration)
+  "Set the debugging configuration.
+
+If in a project, sets the project's debugging session configuration. Else, sets
+the debugging configuration of the current buffer."
+  (if (projectile-project-p)
+      (projectile-variable-put '+debugger-last-configuration configuration)
+    (setq-local +debugger-last-configuration configuration)))
 
 (defun +debugger-list-for-dap ()
   (when (and (bound-and-true-p lsp-mode)
              (bound-and-true-p lsp--buffer-deferred)
              (require 'dap-mode nil t)
              dap-mode)
-    (mapcar #'car dap-debug-template-configurations)))
+    (--map (cons 'dap it)
+           (-mapcat #'funcall dap-launch-configuration-providers))))
 
 (defun +debugger-list-for-realgud ()
-  (cl-loop for (sym . plist) in +debugger--realgud-alist
-           for sym-name = (symbol-name sym)
-           for modes = (plist-get plist :modes)
-           if (or (null modes) (apply #'derived-mode-p modes))
-           collect sym))
+  (--map (cons 'realgud (list (symbol-name it)))
+         (cl-loop for (sym . plist) in +debugger--realgud-alist
+                  for sym-name = (symbol-name sym)
+                  for modes = (plist-get plist :modes)
+                  if (or (null modes) (apply #'derived-mode-p modes))
+                  collect sym)))
 
+;; Based on dap--completing-read and dap-debug
+(defun +debugger-completing-read ()
+  "Completing read for debug configuration.
 
-(defun +debugger-list-available ()
-  "TODO"
-  (append (+debugger-list-for-dap)
-          (+debugger-list-for-realgud)
-          nil))
-
+Presents both dap and realgud configurations, and returns a list of the form
+('dap ...) or ('realgud ...) containing the corresponding debug configuration
+infromation."
+  (let* ((configurations (append
+                          (+debugger-list-for-dap)
+                          (+debugger-list-for-realgud)))
+         (result (--map (cons (cadr it) it) configurations))
+         (completion (completing-read "Start debugger: " (-map 'car result) nil t ))
+         (configuration (cdr (assoc completion result))))
+    (if (eq (car configuration) 'dap)
+        (let* ((debug-args (-> (cdr configuration)
+                               cl-rest
+                               copy-tree
+                               dap-variables-expand-in-launch-configuration))
+               (launch-args (or (-some-> (plist-get debug-args :type)
+                                  (gethash dap--debug-providers)
+                                  (funcall debug-args))
+                                (user-error "Have you loaded the `%s' specific dap package?"
+                                            (or (plist-get debug-args :type)
+                                                (user-error "%s does not specify :type" debug-args))))))
+          (cons 'dap launch-args))
+      (cons 'realgud (intern (cadr configuration))))))
 
 ;;
 ;;; Interactive commands
@@ -31,9 +73,20 @@
 (defun +debugger/start-last ()
   "Relaunch the last debugger session."
   (interactive)
-  (unless +debugger--last
-    (user-error "No last debugger to invoke"))
-  (call-interactively +debugger--last))
+  (let ((configuration (+debugger-get-configuration)))
+    (unless configuration
+      (user-error "No last debugger%s to invoke"
+                  (if (projectile-project-p)
+                      " of this project"
+                    "")))
+    (let ((launch-args (cdr configuration)))
+      (if (eq (car configuration) 'dap)
+          ;; start dap configuration
+          (if (functionp launch-args)
+              (funcall launch-args #'dap-start-debugging-noexpand)
+            (dap-start-debugging-noexpand launch-args))
+        ;; else start realgud configuration:
+        (call-interactively launch-args)))))
 
 ;;;###autoload
 (defun +debugger/start (arg)
@@ -42,17 +95,9 @@
 Launches the last used debugger, if one exists. Otherwise, you will be prompted
 for what debugger to use. If the prefix ARG is set, prompt anyway."
   (interactive "P")
-  (if (or arg (null +debugger--last))
-      (let ((debugger (intern-soft (completing-read "Start debugger: " (+debugger-list-available)))))
-        (unless debugger
-          (user-error "No debugging session to quit"))
-        (unless (fboundp debugger)
-          (user-error "Couldn't find debugger backend %S" debugger))
-        (setq-local +debugger--last debugger)
-        (if (assoc debugger dap-debug-template-configurations)
-            (dap-debug debugger)
-          (call-interactively debugger)))
-    (+debugger/start-last)))
+  (if (or arg (null (+debugger-get-configuration)))
+      (+debugger-set-configuration (+debugger-completing-read)))
+  (+debugger/start-last))
 
 ;;;###autoload
 (defun +debugger/quit ()
