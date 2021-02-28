@@ -1001,14 +1001,14 @@ compelling reason, so..."
              ;; Clear babel results if point is inside a src block
              #'+org-clear-babel-results-h)
   (let-alist evil-org-movement-bindings
-    (let ((Cright (concat "C-" .right))
-          (Cleft (concat "C-" .left))
-          (Cup (concat "C-" .up))
-          (Cdown (concat "C-" .down))
+    (let ((Cright  (concat "C-" .right))
+          (Cleft   (concat "C-" .left))
+          (Cup     (concat "C-" .up))
+          (Cdown   (concat "C-" .down))
           (CSright (concat "C-S-" .right))
-          (CSleft (concat "C-S-" .left))
-          (CSup (concat "C-S-" .up))
-          (CSdown (concat "C-S-" .down)))
+          (CSleft  (concat "C-S-" .left))
+          (CSup    (concat "C-S-" .up))
+          (CSdown  (concat "C-S-" .down)))
       (map! :map evil-org-mode-map
             :ni [C-return]   #'+org/insert-item-below
             :ni [C-S-return] #'+org/insert-item-above
@@ -1055,9 +1055,9 @@ compelling reason, so..."
             :n "zi"  #'org-toggle-inline-images
 
             :map org-read-date-minibuffer-local-map
-            Cleft  (cmd! (org-eval-in-calendar '(calendar-backward-day 1)))
+            Cleft    (cmd! (org-eval-in-calendar '(calendar-backward-day 1)))
             Cright   (cmd! (org-eval-in-calendar '(calendar-forward-day 1)))
-            Cup       (cmd! (org-eval-in-calendar '(calendar-backward-week 1)))
+            Cup      (cmd! (org-eval-in-calendar '(calendar-backward-week 1)))
             Cdown    (cmd! (org-eval-in-calendar '(calendar-forward-week 1)))
             CSleft   (cmd! (org-eval-in-calendar '(calendar-backward-month 1)))
             CSright  (cmd! (org-eval-in-calendar '(calendar-forward-month 1)))
