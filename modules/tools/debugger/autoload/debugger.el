@@ -28,16 +28,16 @@ the debugging configuration of the current buffer."
              (bound-and-true-p lsp--buffer-deferred)
              (require 'dap-mode nil t)
              dap-mode)
-    (--map (cons 'dap it)
-           (-mapcat #'funcall dap-launch-configuration-providers))))
+    (mapcar (lambda (c) (cons 'dap c))
+            (apply 'append (mapcar #'funcall dap-launch-configuration-providers)))))
 
 (defun +debugger-list-for-realgud ()
-  (--map (cons 'realgud (list (symbol-name it)))
-         (cl-loop for (sym . plist) in +debugger--realgud-alist
-                  for sym-name = (symbol-name sym)
-                  for modes = (plist-get plist :modes)
-                  if (or (null modes) (apply #'derived-mode-p modes))
-                  collect sym)))
+  (mapcar (lambda (c) (cons 'realgud (list (symbol-name c))))
+          (cl-loop for (sym . plist) in +debugger--realgud-alist
+                   for sym-name = (symbol-name sym)
+                   for modes = (plist-get plist :modes)
+                   if (or (null modes) (apply #'derived-mode-p modes))
+                   collect sym)))
 
 ;; Based on dap--completing-read and dap-debug
 (defun +debugger-completing-read ()
@@ -49,20 +49,21 @@ infromation."
   (let* ((configurations (append
                           (+debugger-list-for-dap)
                           (+debugger-list-for-realgud)))
-         (result (--map (cons (cadr it) it) configurations))
-         (completion (completing-read "Start debugger: " (-map 'car result) nil t)))
-    (if (eq completion "")
+         (result (mapcar (lambda (c) (cons (cadr c) c)) configurations))
+         (completion (completing-read "Start debugger: " (mapcar 'car result) nil t)))
+    (if (or (null completion) (eq completion ""))
         (user-error "No debugging configuration specified.")
       (let ((configuration (cdr (assoc completion result))))
         (if (eq (car configuration) 'dap)
             ;; get dap debugging arguments
-            (let* ((debug-args (-> (cdr configuration)
-                                   cl-rest
-                                   copy-tree
-                                   dap-variables-expand-in-launch-configuration))
-                   (launch-args (or (-some-> (plist-get debug-args :type)
-                                      (gethash dap--debug-providers)
-                                      (funcall debug-args))
+            (let* ((debug-args (dap-variables-expand-in-launch-configuration (copy-tree
+                                                                              (cl-rest
+                                                                               (cdr configuration)))))
+                   (launch-args (or (catch 'is-nil
+                                      (funcall (or (gethash
+                                                    (or (plist-get debug-args :type)
+                                                        (throw 'is-nil nil)) dap--debug-providers)
+                                                   (throw 'is-nil nil)) debug-args))
                                     (user-error "Have you loaded the `%s' specific dap package?"
                                                 (or (plist-get debug-args :type)
                                                     (user-error "%s does not specify :type" debug-args))))))
