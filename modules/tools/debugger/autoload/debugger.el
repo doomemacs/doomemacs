@@ -107,7 +107,7 @@ for what debugger to use. If the prefix ARG is set, prompt anyway."
   "Quit the active debugger, if any."
   (interactive)
   (cond ((and (fboundp 'dap--cur-session) (dap--cur-session))
-         (dap-disconnect))
+         (dap-disconnect (dap--cur-session)))
         ((and (fboundp 'realgud-get-cmdbuf) (realgud-get-cmdbuf))
          (let ((buf (realgud-get-cmdbuf)))
            (ignore-errors
