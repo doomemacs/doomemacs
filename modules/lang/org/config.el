@@ -214,20 +214,28 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   ;; won't likely complete in time, and will instead output an ob-async hash
   ;; instead of the wanted evaluation results.
   (after! ob
-    (add-to-list 'org-babel-default-lob-header-args '(:async . nil)))
+    (add-to-list 'org-babel-default-lob-header-args '(:sync)))
 
-  (defadvice! +org-inhibit-async-babel-blocks-on-export-a (orig-fn &optional fn arg info params)
-    "Exporting org documents with async blocks will sometimes substitute
-evaluation output with hashes in the exported document. This is because the
-block is executed asynchronously, but the exporter doesn't wait for it to
-finish. This advice forces babel blocks to not execute asychronously when being
-exported."
+  (defadvice! +org-babel-disable-async-if-needed-a (orig-fn &optional fn arg info params)
+    "Disable ob-async when leaving it on would cause errors or issues.
+
+Such as when exporting org documents or executing babel blocks with :session
+parameters (which ob-async does not support), in which case this advice forces
+these blocks to run synchronously.
+
+Also adds support for a `:sync' parameter to override `:async'."
     :around #'ob-async-org-babel-execute-src-block
-    (let ((async (or (assoc :async params)
-                     (assoc :async (nth 2 (or info (org-babel-get-src-block-info)))))))
-      (if (and async (null (cdr async)))
-          (funcall fn arg info params)
-        (funcall orig-fn fn arg info params))))
+    (if (null fn)
+        (funcall orig-fn fn arg info params)
+      (let* ((info (or info (org-babel-get-src-block-info)))
+             (params (org-babel-merge-params (nth 2 info) params)))
+        (cond ((or (assq :sync params)
+                   (not (assq :async params)))
+               (funcall fn arg info params))
+              ((not (member (cdr (assq :session params)) '("none" nil)))
+               (message "Org babel :: :session is incompatible with :async. Executing synchronously!")
+               nil)
+              ((funcall orig-fn fn arg info params))))))
 
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
@@ -306,7 +314,9 @@ exported."
                        ((stringp lang) (intern lang))))
            (lang (or (cdr (assq lang +org-babel-mode-alist))
                      lang)))
-      (+org--babel-lazy-load lang (assq :async (nth 2 info)))
+      (+org--babel-lazy-load
+       lang (and (not (assq :sync (nth 2 info)))
+                 (assq :async (nth 2 info))))
       t))
 
   (advice-add #'org-babel-do-load-languages :override #'ignore))
