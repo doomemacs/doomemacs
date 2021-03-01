@@ -40,31 +40,3 @@ Warning: freezes indefinitely on any stdin prompt."
               (sit-for 0.1))
             (process-exit-status process))
           (string-trim (buffer-string)))))
-
-(defvar doom--num-cpus nil)
-;;;###autoload
-(defun doom-num-cpus ()
-  "Return the max number of processing units on this system.
-Tries to be portable. Returns 1 if cannot be determined."
-  (or doom--num-cpus
-      (setq doom--num-cpus
-            (let ((cpus
-                   (cond ((getenv "NUMBER_OF_PROCESSORS"))
-                         ((executable-find "nproc")
-                          (doom-call-process "nproc"))
-                         ((executable-find "sysctl")
-                          (doom-call-process "sysctl" "-n" "hw.ncpu")))))
-              (max
-               1 (or (cl-typecase cpus
-                       (string
-                        (condition-case _
-                            (string-to-number cpus)
-                          (wrong-type-argument
-                           (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
-                                       cpus))))
-                       (consp
-                        (if (zerop (car cpus))
-                            (string-to-number (cdr cpus))
-                          (user-error "Failed to look up number of processors, because:\n\n%s"
-                                      (cdr cpus)))))
-                     1))))))

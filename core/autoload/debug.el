@@ -125,26 +125,7 @@ ready to be pasted in a bug report on github."
                           (concat " -> " (file-truename file))
                         ""))))
       `((system
-         (info . ,(cons
-                   (cond
-                    (IS-WINDOWS "Windows")
-                    (IS-MAC (format "MacOS "(sh "sw_vers" "-productVersion")))
-                    ((executable-find "lsb_release")
-                     (sh "lsb_release" "-s" "-d"))
-                    ((executable-find "nixos-version")
-                     (format "NixOS %s" (sh "nixos-version")))
-                    ((file-exists-p "/etc/os-release")
-                     (let ((release (cat "/etc/os-release")))
-                       (when (string-match "^PRETTY_NAME=\"\\([^\"]+\\)\"" release)
-                         (match-string 1 release))))
-                    ((file-exists-p "/etc/debian_version")
-                     (format "Debian %s" (car "/etc/debian_version")))
-                    ((when-let (files (doom-glob "/etc/*-release"))
-                       (truncate-string-to-width
-                        (replace-regexp-in-string "\n" " " (cat (car files) 73) nil t)
-                        64 nil nil "...")))
-                    ((concat "Unknown " (sh "uname" "-v"))))
-                   (sh "uname" "-msr")))
+         (info   . ,(cons (doom-system-distro-version) (sh "uname" "-msr")))
          (shell  . ,(abbrev-path shell-file-name))
          (path   . ,(mapcar #'abbrev-path exec-path)))
         (emacs

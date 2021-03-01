@@ -167,7 +167,7 @@ users).")
   ;; things ahead-of-time in a non-interactive session.
   (defun doom--comp-use-all-cores-a ()
     (if (zerop comp-async-jobs-number)
-        (setq comp-num-cpus (doom-num-cpus))
+        (setq comp-num-cpus (doom-system-cpus))
       comp-async-jobs-number))
   (advice-add #'comp-effective-async-max-jobs :override #'doom--comp-use-all-cores-a))
 
