@@ -4,6 +4,7 @@
 (load! "autoload/plist")
 (load! "autoload/files")
 (load! "autoload/output")
+(load! "autoload/system")
 (require 'seq)
 
 ;; Create all our core directories to quell file errors.
