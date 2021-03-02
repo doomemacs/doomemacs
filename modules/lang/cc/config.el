@@ -296,7 +296,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (when (or IS-MAC IS-LINUX)
     (setq ccls-initialization-options
           `(:index (:trackDependency 1
-                    :threads ,(max 1 (/ (doom-num-cpus) 2))))))
+                    :threads ,(max 1 (/ (doom-system-cpus) 2))))))
   (when IS-MAC
     (setq ccls-initialization-options
           (append ccls-initialization-options
