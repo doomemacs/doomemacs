@@ -13,18 +13,24 @@
 ;;
 ;;; Bump commands
 
-(defun doom--package-full-recipe (package plist)
+(defun doom--package-merge-recipes (package plist)
   (require 'straight)
   (doom-plist-merge
    (plist-get plist :recipe)
-   (or (cdr (straight-recipes-retrieve package))
-       (plist-get (cdr (assq package doom-packages))
-                  :recipe))))
+   (if-let (recipe (straight-recipes-retrieve package))
+       (cdr (if (memq (car recipe) '(quote \`))
+                (eval recipe t)
+              recipe))
+     (let ((recipe (plist-get (cdr (assq package doom-packages))
+                              :recipe)))
+       (if (keywordp (car recipe))
+           recipe
+         (cdr recipe))))))
 
 (defun doom--package-to-bump-string (package plist)
   "Return a PACKAGE and its PLIST in 'username/repo@commit' format."
   (format "%s@%s"
-          (plist-get (doom--package-full-recipe package plist) :repo)
+          (plist-get (doom--package-merge-recipes package plist) :repo)
           (substring-no-properties (plist-get plist :pin) 0 7)))
 
 (defun doom--package-at-point (&optional point)
@@ -78,9 +84,8 @@ Grabs the latest commit id of the package using 'git'."
   (cl-destructuring-bind (&key package plist beg end)
       (or (doom--package-at-point)
           (user-error "Not on a `package!' call"))
-    (let* ((recipe (doom--package-full-recipe package plist))
-           (branch (or (plist-get recipe :branch)
-                       straight-vc-git-default-branch))
+    (let* ((recipe (doom--package-merge-recipes package plist))
+           (branch (plist-get recipe :branch))
            (oldid (or (plist-get plist :pin)
                       (doom-package-get package :pin)))
            (url (straight-vc-git--destructure recipe (upstream-repo upstream-host)
@@ -88,8 +93,7 @@ Grabs the latest commit id of the package using 'git'."
            (id (or (when url
                      (cdr (doom-call-process
                            "git" "ls-remote" url
-                           (unless select
-                             (or branch straight-vc-git-default-branch)))))
+                           (unless select branch))))
                    (user-error "Couldn't find a recipe for %s" package)))
            (id (car (split-string
                      (if select
@@ -179,8 +183,8 @@ each package."
 (defun doom/bump-package (package)
   "Bump PACKAGE in all modules that install it."
   (interactive
-   (list (completing-read "Bump package: "
-                          (mapcar #'car (doom-package-list 'all)))))
+   (list (intern (completing-read "Bump package: "
+                          (mapcar #'car (doom-package-list 'all))))))
   (let* ((packages (doom-package-list 'all))
          (modules (plist-get (alist-get package packages) :modules)))
     (unless modules

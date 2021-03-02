@@ -34,8 +34,10 @@
         pangu-spacing-real-insert-separtor t))
 
 
-(use-package! ddskk
-  :general ("C-x j" #'skk-mode))
+(use-package! skk
+  :general ("C-x j" #'skk-mode)
+  :config
+  (add-hook 'doom-escape-hook #'skk-mode-exit))
 
 
 ;;

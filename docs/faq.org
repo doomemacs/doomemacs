@@ -104,7 +104,7 @@ It does, /but/ there are caveats:
   pioneers, willing to test Doom on Windows.
 
 That said, Doom does have happy Windows users (using WSL or scoop/chocolatey).
-The [[file:getting_started.org::On Windows][Getting Starting guide]] will walk you through what we know.
+[[file:getting_started.org::On Windows][The Getting Starting guide]] will walk you through what we know.
 
 Help us improve our documentation if you managed to get Doom running on Windows!
 
@@ -340,8 +340,9 @@ Emacs consults this variable every time a file is read or library loaded, or
 when certain functions in the file API are used (like ~expand-file-name~ or
 ~file-truename~).
 
-Emacs does to check if a special handler is needed to read that file, but none
-of them are (typically) necessary at startup, so we disable them (temporarily!):
+Emacs does this to check if a special handler is needed to read that file, but
+none of them are (typically) necessary at startup, so we disable them
+(temporarily!):
 
 #+BEGIN_SRC emacs-lisp
 (defvar doom--file-name-handler-alist file-name-handler-alist)
@@ -527,7 +528,7 @@ This directory is referred to as your ~$DOOMDIR~.
 Your private config is typically comprised of an =init.el=, =config.el= and
 =packages.el= file. Put all your config in =config.el=, install packages by
 adding ~package!~ declarations to =packages.el=, and enable/disable modules in
-you ~doom!~ block, which should have been created in your =init.el= when you
+your ~doom!~ block, which should have been created in your =init.el= when you
 first ran ~doom install~.
 
 You shouldn't need to fork Doom or modify =~/.emacs.d=. If you have to do this

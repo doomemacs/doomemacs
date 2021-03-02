@@ -106,6 +106,8 @@ And these are text objects added by this module:
 + =g= The entire buffer
 + =i j k= by indentation (=k= includes one line above; =j= includes one line
   above and below) (provided by ~evil-indent-plus~)
++ =q= For quotes (any kind)
++ =u= For URLs
 + =x= XML attributes (provided by ~exato~)
 
 ** Custom Ex Commands

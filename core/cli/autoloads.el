@@ -1,15 +1,20 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
-(defvar doom-autoloads-excluded-packages '("gh")
-  "What packages whose autoloads file we won't index.
+(defvar doom-autoloads-excluded-packages ()
+  "What packages whose autoloads files we won't index.
 
 These packages have silly or destructive autoload files that try to load
 everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
+(defvar doom-autoloads-excluded-files
+  '("/bufler/bufler-workspaces-tabs\\.el$")
+  "List of regexps whose matching files won't be indexed for autoloads.")
+
 (defvar doom-autoloads-cached-vars
   '(doom-modules
     doom-disabled-packages
+    comp-deferred-compilation-deny-list
     load-path
     auto-mode-alist
     interpreter-mode-alist
@@ -34,16 +39,13 @@ one wants that.")
    (and (print! (start "Generating autoloads file..."))
         (doom-autoloads--write
          file
-         `((unless (equal emacs-major-version ,emacs-major-version)
-             (signal 'doom-error
-                     (list "The installed version of Emacs has changed since last 'doom sync' ran"
-                           "Run 'doom sync && doom build' to bring Doom up to speed")))
-           (unless (equal doom-version ,doom-version)
+         `((unless (equal doom-version ,doom-version)
              (signal 'doom-error
                      (list "The installed version of Doom has changed since last 'doom sync' ran"
                            "Run 'doom sync' to bring Doom up to speed"))))
-         (mapcar (lambda (var) `(set ',var ',(symbol-value var)))
-                 doom-autoloads-cached-vars)
+         (cl-loop for var in doom-autoloads-cached-vars
+                  when (boundp var)
+                  collect `(set ',var ',(symbol-value var)))
          (doom-autoloads--scan
           (append (cl-loop for dir
                            in (append (list doom-core-dir)
@@ -51,11 +53,13 @@ one wants that.")
                                       (list doom-private-dir))
                            if (doom-glob dir "autoload.el") collect it
                            if (doom-glob dir "autoload/*.el") append it)
-                  (mapcan #'doom-glob doom-autoloads-files)))
+                  (mapcan #'doom-glob doom-autoloads-files))
+          nil)
          (doom-autoloads--scan
           (mapcar #'straight--autoloads-file
                   (seq-difference (hash-table-keys straight--build-cache)
                                   doom-autoloads-excluded-packages))
+          doom-autoloads-excluded-files
           'literal))
         (print! (start "Byte-compiling autoloads file..."))
         (doom-autoloads--compile-file file)
@@ -191,35 +195,39 @@ one wants that.")
       (doom-autoloads--scan-autodefs
        file target-buffer module module-enabled-p))))
 
-(defun doom-autoloads--scan (files &optional literal)
+(defun doom-autoloads--scan (files &optional exclude literal)
   (require 'autoload)
-  (let (autoloads)
-    (dolist (file
-             (seq-filter #'file-readable-p files)
-             (nreverse (delq nil autoloads)))
-      (with-temp-buffer
-        (print! (debug "- Scanning %s") (relpath file doom-emacs-dir))
-        (if literal
-            (insert-file-contents file)
-          (doom-autoloads--scan-file file))
-        (save-excursion
-          (let ((filestr (prin1-to-string file)))
-            (while (re-search-forward "\\_<load-file-name\\_>" nil t)
-              ;; `load-file-name' is meaningless in a concatenated
-              ;; mega-autoloads file, so we replace references to it with the
-              ;; file they came from.
-              (let ((ppss (save-excursion (syntax-ppss))))
-                (or (nth 3 ppss)
-                    (nth 4 ppss)
-                    (replace-match filestr t t))))))
-        (let ((load-file-name file)
-              (load-path
-               (append (list doom-private-dir)
-                       doom-modules-dirs
-                       load-path)))
-          (condition-case _
-              (while t
-                (push (doom-autoloads--cleanup-form (read (current-buffer))
-                                                    (not literal))
-                      autoloads))
-            (end-of-file)))))))
+  (let (case-fold-search  ; case-sensitive regexp from here on
+        autoloads)
+    (dolist (file files (nreverse (delq nil autoloads)))
+      (when (and (or (null exclude)
+                     (seq-remove (doom-rpartial #'string-match-p file)
+                                 exclude))
+                 (file-readable-p file))
+        (doom-log "Scanning %s" file)
+        (setq file (file-truename file))
+        (with-temp-buffer
+          (if literal
+              (insert-file-contents file)
+            (doom-autoloads--scan-file file))
+          (save-excursion
+            (let ((filestr (prin1-to-string file)))
+              (while (re-search-forward "\\_<load-file-name\\_>" nil t)
+                ;; `load-file-name' is meaningless in a concatenated
+                ;; mega-autoloads file, so we replace references to it with the
+                ;; file they came from.
+                (let ((ppss (save-excursion (syntax-ppss))))
+                  (or (nth 3 ppss)
+                      (nth 4 ppss)
+                      (replace-match filestr t t))))))
+          (let ((load-file-name file)
+                (load-path
+                 (append (list doom-private-dir)
+                         doom-modules-dirs
+                         load-path)))
+            (condition-case _
+                (while t
+                  (push (doom-autoloads--cleanup-form (read (current-buffer))
+                                                      (not literal))
+                        autoloads))
+              (end-of-file))))))))

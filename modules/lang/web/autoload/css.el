@@ -49,34 +49,57 @@
 
 Meant for `comment-line-break-function' in `css-mode' and `scss-mode'."
   (interactive)
-  (when (sp-point-in-comment)
-    (let ((at-end (looking-at-p ".+\\*/"))
-          type pre-indent post-indent)
-      (save-excursion
-        (let ((bol (line-beginning-position))
-              (eol (line-end-position)))
-          (if (not comment-use-syntax)
-              (progn
-                (goto-char bol)
-                (when (re-search-forward comment-start-skip eol t)
-                  (goto-char (or (match-end 1) (match-beginning 0)))))
-            (goto-char (comment-beginning))))
-        (save-match-data
-          (looking-at "\\(//\\|/?\\*\\)")
-          (setq type (match-string 0)
-                pre-indent (- (match-beginning 0) (line-beginning-position))
-                post-indent
-                (progn
-                  (goto-char (match-end 0))
-                  (max 1 (skip-chars-forward " " (line-end-position)))))
-          (if (eolp) (setq post-indent 1))))
-      (insert "\n"
-              (make-string pre-indent 32)
-              (if (string= "/*" type)
-                  " *"
-                type)
-              (make-string post-indent 32))
-      (when at-end
-        (save-excursion
-          (insert "\n" (make-string pre-indent 32))
-          (delete-char -1))))))
+  (cond ((or (not (doom-point-in-comment-p))
+             (and comment-use-syntax
+                  (not (save-excursion (comment-beginning)))))
+         (let (comment-line-break-function)
+           (newline-and-indent)))
+
+        ((save-match-data
+           (let ((at-end (looking-at-p ".+\\*/"))
+                 (indent-char (if indent-tabs-mode ?\t ?\s))
+                 (post-indent (save-excursion
+                                (move-to-column (1+ (current-indentation)))
+                                (skip-chars-forward " \t" (line-end-position))))
+                 (pre-indent (current-indentation))
+                 opener)
+             (save-excursion
+               (if comment-use-syntax
+                   (goto-char (comment-beginning))
+                 (goto-char (line-beginning-position))
+                 (when (re-search-forward comment-start-skip (line-end-position) t)
+                   (goto-char (or (match-end 1)
+                                  (match-beginning 0)))))
+               (buffer-substring-no-properties (point) (line-end-position))
+               (when (looking-at "\\(//\\|/?\\*\\**/?\\)\\(?:[^/]\\)")
+                 (list (match-string-no-properties 1)
+                       (- (match-beginning 1) (line-beginning-position))))
+               (if (looking-at "\\(//\\|/?\\*\\**/?\\)\\(?:[^/]\\)")
+                   (setq opener (match-string-no-properties 1)
+                         pre-indent (- (match-beginning 1) (line-beginning-position)))
+                 (setq opener ""
+                       pre-indent 0)))
+             (insert-and-inherit
+              "\n" (make-string pre-indent indent-char)
+              (if (string-prefix-p "/*" opener)
+                  (if (or (eq +web-continue-block-comments t)
+                          (string= "/**" opener))
+                      " *"
+                    "")
+                opener)
+              (make-string post-indent indent-char))
+             (when at-end
+               (save-excursion
+                 (just-one-space)
+                 (insert "\n" (make-string pre-indent indent-char)))))))))
+
+;;;###autoload
+(defun +css-adaptive-fill-fn ()
+  "An `adaptive-fill-function' that conjoins SCSS line comments correctly."
+  (when (looking-at "[ \t]*/[/*][ \t]*")
+    (let ((str (match-string 0)))
+      (when (string-match "/[/*]" str)
+        (replace-match (if (string= (match-string 0 str) "/*")
+                           " *"
+                         "//")
+                       t t str)))))

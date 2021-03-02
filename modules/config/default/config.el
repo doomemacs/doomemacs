@@ -100,7 +100,11 @@
     (dolist (brace '("(" "{" "["))
       (sp-pair brace nil
                :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))
-               ;; I likely don't want a new pair if adjacent to a word or opening brace
+               ;; Don't autopair opening braces if before a word character or
+               ;; other opening brace. The rationale: it interferes with manual
+               ;; balancing of braces, and is odd form to have s-exps with no
+               ;; whitespace in between, e.g. ()()(). Insert whitespace if
+               ;; genuinely want to start a new form in the middle of a word.
                :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
     ;; In lisps ( should open a new form if before another parenthesis
@@ -162,16 +166,11 @@
                      "/*!" "*/"
                      :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
-    ;; Expand C-style doc comment blocks. Must be done manually because some of
-    ;; these languages use specialized (and deferred) parsers, whose state we
-    ;; can't access while smartparens is doing its thing.
-    (defun +default-expand-asterix-doc-comment-block (&rest _ignored)
-      (let ((indent (current-indentation)))
-        (newline-and-indent)
-        (save-excursion
-          (newline)
-          (insert (make-string indent 32) " */")
-          (delete-char 2))))
+    ;; Expand C-style comment blocks.
+    (defun +default-open-doc-comments-block (&rest _ignored)
+      (save-excursion
+        (newline)
+        (indent-according-to-mode)))
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
        csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
@@ -179,8 +178,8 @@
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(("| " "SPC")
-                      ("|\n[i]*/[d-2]" "RET")
-                      (+default-expand-asterix-doc-comment-block "*")))
+                      (" | " "*")
+                      ("|[i]\n[i]" "RET")))
 
     (after! smartparens-ml
       (sp-with-modes '(tuareg-mode fsharp-mode)
@@ -315,7 +314,7 @@ Continues comments if executed from a commented line. Consults
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
   "T"    #'doom/toggle-profiler
-  "V"    #'set-variable
+  "V"    #'doom/help-custom-variable
   "W"    #'+default/man-or-woman
   "C-k"  #'describe-key-briefly
   "C-l"  #'describe-language-environment

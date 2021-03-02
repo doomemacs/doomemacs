@@ -7,6 +7,8 @@
   :config
   (setq ansible-section-face 'font-lock-variable-name-face
         ansible-task-label-face 'font-lock-doc-face)
+  (when (featurep! :completion company)
+    (set-company-backend! 'ansible 'company-ansible))
   (map! :map ansible-key-map
         :localleader
         :desc "Decrypt buffer"          "d" #'ansible-decrypt-buffer
@@ -30,4 +32,4 @@
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)
   :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
-  :files ("roles/"))
+  :files (or "roles/" "tasks/main.yml"))

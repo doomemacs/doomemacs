@@ -2,23 +2,37 @@
 
 ;;;###autoload
 (defun +markdown-flyspell-word-p ()
-  "Return t if point is on a word that should be spell checked.
+  "Return t if `flyspell' should check word before point.
 
-Return nil if on a link url, markup, html, or references."
-  (let ((faces (doom-enlist (get-text-property (point) 'face))))
-    (or (and (memq 'font-lock-comment-face faces)
-             (memq 'markdown-code-face faces))
-        (not (cl-loop with unsafe-faces = '(markdown-reference-face
-                                            markdown-url-face
-                                            markdown-markup-face
-                                            markdown-comment-face
-                                            markdown-html-attr-name-face
-                                            markdown-html-attr-value-face
-                                            markdown-html-tag-name-face
-                                            markdown-code-face)
-                      for face in faces
-                      if (memq face unsafe-faces)
-                      return t)))))
+Used for `flyspell-generic-check-word-predicate'. Like
+`markdown-flyspell-check-word-p', but also:
+
+a) Performs spell check in code comments and
+b) Inhibits spell check in html markup"
+  (save-excursion
+    (goto-char (1- (point)))
+    (if (or (and (markdown-code-block-at-point-p)
+                 (not (or (markdown-text-property-at-point 'markdown-yaml-metadata-section)
+                          (markdown--face-p (point) '(font-lock-comment-face)))))
+            (markdown-inline-code-at-point-p)
+            (markdown-in-comment-p)
+            (markdown--face-p (point) '(markdown-reference-face
+                                        markdown-markup-face
+                                        markdown-plain-url-face
+                                        markdown-inline-code-face
+                                        markdown-url-face
+                                        markdown-html-attr-name-face
+                                        markdown-html-attr-value-face
+                                        markdown-html-tag-name-face)))
+        (prog1 nil
+          ;; If flyspell overlay is put, then remove it
+          (let ((bounds (bounds-of-thing-at-point 'word)))
+            (when bounds
+              (cl-loop for ov in (overlays-in (car bounds) (cdr bounds))
+                       when (overlay-get ov 'flyspell-overlay)
+                       do
+                       (delete-overlay ov)))))
+      t)))
 
 
 ;;

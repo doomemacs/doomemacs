@@ -13,6 +13,8 @@
     - [[#gentoo-linux][Gentoo Linux]]
     - [[#opensuse][openSUSE]]
 - [[#features][Features]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
 
 * Description
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
@@ -25,6 +27,7 @@ or [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 + [[https://github.com/elixir-editors/emacs-elixir][elixir-mode]]
 + [[https://github.com/tonini/alchemist.el][alchemist.el]]
 + [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]
++ [[https://github.com/ananthakumaran/exunit.el][exunit]]
 
 * Prerequisites
 You should have Elixir installed, for example, via your distribution's package
@@ -60,3 +63,16 @@ sudo zypper install elixir
 - Phoenix support
 - ~iex~ integration (~:tools eval~)
 - Syntax checking (~:checkers syntax~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+* Appendix
+** Commands
+*** exunit-mode
+The exunit-mode prefix is =SPC m t=.  Here is some examples:
+|                                          |                  |                                                        |
+| command                                  | key / ex command | description                                            |
+|------------------------------------------+------------------+--------------------------------------------------------|
+| ~exunit-verify-all~                        | =SPC m t a=        | Runs exunit on all files                               |
+| ~exunit-rerun~                             | =SPC m t r=        | Re-runs last exunit command                            |
+| ~exunit-verify~                            | =SPC m t v=        | Runs exunit on current file                            |
+| ~exunit-verify-single~                     | =SPC m t s=        | Runs exunit for the item on cursor                     |
+| ~exunit-toggle-file-and-test~              | =SPC m t t=        | Switch between implementation and test                 |
+| ~exunit-toggle-file-and-test-other-window~ | =SPC m t T=        | Switch between implementation and test in other window |

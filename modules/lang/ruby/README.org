@@ -7,7 +7,6 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
-  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
   - [[#ubuntu][Ubuntu]]
   - [[#macos][MacOS]]
@@ -34,25 +33,19 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + =+rails= Enables rails navigational commands, plus server+console integration.
 
 ** Packages
-+ [[https://github.com/nonsequitur/inf-ruby][inf-ruby]]
++ [[https://github.com/endofunky/bundler.el][bundler]]
++ [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
 + [[https://github.com/company-mode/company-inf-ruby][company-inf-ruby]]
-+ [[https://github.com/rubocop-hq/rubocop-emacs][rubocop]]
-+ [[https://github.com/dgutov/robe][robe]]
-+ [[https://github.com/endofunky/bundler.el/tree/43efb6be4ed118b06d787ce7fbcffd68a31732a7][bundler]]
-+ [[https://github.com/asok/rake][rake]]
-+ [[https://github.com/senny/rbenv.el][rbenv]] (=+rbenv=)
-+ [[https://github.com/senny/rvm.el][rvm]] (=+rvm=)
-+ [[https://github.com/pezra/rspec-mode][rspec-mode]]
++ [[https://github.com/eschulte/jump.el][inflections]]
++ [[https://github.com/nonsequitur/inf-ruby][inf-ruby]]
 + [[https://github.com/arthurnn/minitest-emacs][minitest]]
 + [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
-+ [[https://github.com/eschulte/jump.el/tree/e4f1372cf22e811faca52fc86bdd5d817498a4d8][inflections]]
-+ [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
-
-** Hacks
-+ =projectile-rails-custom-server-command= were changed to suppress extraneous output logged
-  to console. This was done to prevent a memory leak where the underlying
-  process would continue logging to an Emacs buffer, which would grow forever.  You can change to default behaviour by
-  setting this variable to =nil=.
++ [[https://github.com/asok/rake][rake]]
++ [[https://github.com/senny/rbenv.el][rbenv]] (=+rbenv=)
++ [[https://github.com/dgutov/robe][robe]]
++ [[https://github.com/pezra/rspec-mode][rspec-mode]]
++ [[https://github.com/rubocop-hq/rubocop-emacs][rubocop]]
++ [[https://github.com/senny/rvm.el][rvm]] (=+rvm=)
 
 * Prerequisites
 Many of this modules plugins require ruby with some version manager (RVM or
@@ -96,4 +89,3 @@ The rspec-mode prefix is =SPC m t=.  Here is some examples:
 |-----------------------+------------------+-----------------------------------|
 | ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
 | ~rspec-verify-method~ | =SPC m t s=      | Runs rspec for the item on cursor |
-

@@ -1,10 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/swift/packages.el
 
-(package! swift-mode :pin "d266fbd300a1bf1592e1462ead4be093b8b68f98")
+(package! swift-mode :pin "95ff0041370660e839ed06aa92330694d8590d62")
 
 (if (featurep! +lsp)
-    (package! lsp-sourcekit :pin "130f7a8f7a37869515953aa7715b3b969c3d7a0b")
+    (package! lsp-sourcekit :pin "ff204ed820df8c3035ebdc4b5a583640d52caeeb")
   (when (featurep! :completion company)
     (package! company-sourcekit :pin "abf9bc5a0102eb666d3aa6d6bf22f6efcc852781"))
   (when (featurep! :checkers syntax)

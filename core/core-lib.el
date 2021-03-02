@@ -67,8 +67,8 @@ list is returned as-is."
 
 (defmacro doom-log (format-string &rest args)
   "Log to *Messages* if `doom-debug-p' is on.
-Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
-Accepts the same arguments as `message'."
+Does not display text in echo area, but still logs to *Messages*. Accepts the
+same arguments as `message'."
   `(when doom-debug-p
      (let ((inhibit-message (active-minibuffer-window)))
        (message
@@ -82,57 +82,10 @@ Accepts the same arguments as `message'."
                  format-string)
         ,@args))))
 
-(defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function) with better error handling.
-Meant to be used with `run-hook-wrapped'."
-  (doom-log "Running doom hook: %s" hook)
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'doom-hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
-
-(defun doom-load-envvars-file (file &optional noerror)
-  "Read and set envvars from FILE.
-If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
-unreadable. Returns the names of envvars that were changed."
-  (if (null (file-exists-p file))
-      (unless noerror
-        (signal 'file-error (list "No envvar file exists" file)))
-    (when-let
-        (env
-         (with-temp-buffer
-           (save-excursion
-             (setq-local coding-system-for-read 'utf-8)
-             (insert "\0\n") ; to prevent off-by-one
-             (insert-file-contents file))
-           (save-match-data
-             (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
-               (setq
-                env (split-string (buffer-substring (match-beginning 1) (point-max))
-                                  "\0\n"
-                                  'omit-nulls))))))
-      (setq-default
-       process-environment
-       (append (nreverse env)
-               (default-value 'process-environment))
-       exec-path
-       (append (split-string (getenv "PATH") path-separator t)
-               (list exec-directory))
-       shell-file-name
-       (or (getenv "SHELL")
-           (default-value 'shell-file-name)))
-      env)))
-
-
-;;
-;;; Functional library
-
 (defalias 'doom-partial #'apply-partially)
 
 (defun doom-rpartial (fn &rest args)
-  "Return a function that is a partial application of FUN to right-hand ARGS.
+  "Return a partial application of FUN to right-hand ARGS.
 
 ARGS is a list of the last N arguments to pass to FUN. The result is a new
 function which does the same as FUN, except that the last N arguments are fixed
@@ -140,6 +93,24 @@ at the values with which this function was called."
   (declare (side-effect-free t))
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
+
+(defun doom-lookup-key (keys &rest keymaps)
+  "Like `lookup-key', but search active keymaps if KEYMAP is omitted."
+  (if keymaps
+      (cl-some (doom-rpartial #'lookup-key keys) keymaps)
+    (cl-loop for keymap
+             in (append (cl-loop for alist in emulation-mode-map-alists
+                                 append (mapcar #'cdr
+                                                (if (symbolp alist)
+                                                    (if (boundp alist) (symbol-value alist))
+                                                  alist)))
+                        (list (current-local-map))
+                        (mapcar #'cdr minor-mode-overriding-map-alist)
+                        (mapcar #'cdr minor-mode-map-alist)
+                        (list (current-global-map)))
+             if (keymapp keymap)
+             if (lookup-key keymap keys)
+             return it)))
 
 
 ;;
@@ -170,6 +141,7 @@ at the values with which this function was called."
 
 (defmacro letf! (bindings &rest body)
   "Temporarily rebind function and macros in BODY.
+Intended as a simpler version of `cl-letf' and `cl-macrolet'.
 
 BINDINGS is either a) a list of, or a single, `defun' or `defmacro'-ish form, or
 b) a list of (PLACE VALUE) bindings as `cl-letf*' would accept.
@@ -204,7 +176,8 @@ the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
   "Run FORMS without generating any output.
 
 This silences calls to `message', `load', `write-region' and anything that
-writes to `standard-output'."
+writes to `standard-output'. In interactive sessions this won't suppress writing
+to *Messages*, only inhibit output in the echo area."
   `(if doom-debug-p
        (progn ,@forms)
      ,(if doom-interactive-p
@@ -240,21 +213,24 @@ See `eval-if!' for details on this macro's purpose."
 
 ;;; Closure factories
 (defmacro fn! (arglist &rest body)
-  "Expands to (cl-function (lambda ARGLIST BODY...))"
+  "Returns (cl-function (lambda ARGLIST BODY...))
+The closure is wrapped in `cl-function', meaning ARGLIST will accept anything
+`cl-defun' will. "
   (declare (indent defun) (doc-string 1) (pure t) (side-effect-free t))
   `(cl-function (lambda ,arglist ,@body)))
 
 (defmacro cmd! (&rest body)
-  "Expands to (lambda () (interactive) ,@body).
+  "Returns (lambda () (interactive) ,@body)
 A factory for quickly producing interaction commands, particularly for keybinds
 or aliases."
   (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda (&rest _) (interactive) ,@body))
 
 (defmacro cmd!! (command &optional prefix-arg &rest args)
-  "Expands to a closure that interactively calls COMMAND with ARGS.
-A factory for quickly producing interactive, prefixed commands for keybinds or
-aliases."
+  "Returns a closure that interactively calls COMMAND with ARGS and PREFIX-ARG.
+Like `cmd!', but allows you to change `current-prefix-arg' or pass arguments to
+COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
+`define-key' or `map!')."
   (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda (arg &rest _) (interactive "P")
      (let ((current-prefix-arg (or ,prefix-arg arg)))
@@ -264,16 +240,40 @@ aliases."
         ,command ,@args))))
 
 (defmacro cmds! (&rest branches)
-  "Expands to a `menu-item' dispatcher for keybinds."
+  "Returns a dispatcher that runs the a command in BRANCHES.
+Meant to be used as a target for keybinds (e.g. with `define-key' or `map!').
+
+BRANCHES is a flat list of CONDITION COMMAND pairs. CONDITION is a lisp form
+that is evaluated when (and each time) the dispatcher is invoked. If it returns
+non-nil, COMMAND is invoked, otherwise it falls through to the next pair.
+
+The last element of BRANCHES can be a COMMANd with no CONDITION. This acts as
+the fallback if all other conditions fail.
+
+Otherwise, Emacs will fall through the keybind and search the next keymap for a
+keybind (as if this keybind never existed).
+
+See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
   (declare (doc-string 1))
   (let ((docstring (if (stringp (car branches)) (pop branches) ""))
         fallback)
     (when (cl-oddp (length branches))
       (setq fallback (car (last branches))
             branches (butlast branches)))
-    `(general-predicate-dispatch ,fallback
-       :docstring ,docstring
-       ,@branches)))
+    (let ((defs (cl-loop for (key value) on branches by 'cddr
+                         unless (keywordp key)
+                         collect (list key value))))
+      `'(menu-item
+         ,(or docstring "") nil
+         :filter (lambda (&optional _)
+                   (let (it)
+                     (cond ,@(mapcar (lambda (pred-def)
+                                       `((setq it ,(car pred-def))
+                                         ,(cadr pred-def)))
+                                     defs)
+                           (t ,fallback))))))))
+
+(defalias 'kbd! 'general-simulate-key)
 
 ;; For backwards compatibility
 (defalias 'λ! 'cmd!)
@@ -361,13 +361,10 @@ This is a wrapper around `eval-after-load' that:
                       (require package nil 'noerror))
                   #'progn
                 #'with-no-warnings)
-              (let ((body (macroexp-progn body)))
-                `(if (featurep ',package)
-                     ,body
-                   ;; We intentionally avoid `with-eval-after-load' to prevent
-                   ;; eager macro expansion from pulling (or failing to pull) in
-                   ;; autoloaded macros/packages.
-                   (eval-after-load ',package ',body)))))
+              ;; We intentionally avoid `with-eval-after-load' to prevent eager
+              ;; macro expansion from pulling (or failing to pull) in autoloaded
+              ;; macros/packages.
+              `(eval-after-load ',package ',(macroexp-progn body))))
     (let ((p (car package)))
       (cond ((not (keywordp p))
              `(after! (:and ,@package) ,@body))
@@ -486,19 +483,6 @@ advised)."
              ((symbolp sym)
               (put ',fn 'permanent-local-hook t)
               (add-hook sym #',fn ,append))))))
-
-(defmacro add-hook-trigger! (hook-var &rest targets)
-  "TODO"
-  `(let ((fn (intern (format "%s-h" ,hook-var))))
-     (fset
-      fn (lambda (&rest _)
-           (run-hook-wrapped ,hook-var #'doom-try-run-hook)
-           (set ,hook-var nil)))
-     (put ,hook-var 'permanent-local t)
-     (dolist (on (list ,@targets))
-       (if (functionp on)
-           (advice-add on :before fn)
-         (add-hook on fn)))))
 
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
@@ -670,6 +654,108 @@ set earlier in the ‘setq-local’.  The return value of the
                expr))
         (setq pairs (cdr (cdr pairs))))
       (macroexp-progn (nreverse expr)))))
+
+(eval-when! (version< emacs-version "27.1")
+  ;; DEPRECATED Backported from Emacs 27. Remove when 26.x support is dropped.
+  (defun executable-find (command &optional remote)
+    "Search for COMMAND in `exec-path' and return the absolute file name.
+Return nil if COMMAND is not found anywhere in `exec-path'.  If
+REMOTE is non-nil, search on the remote host indicated by
+`default-directory' instead."
+    (if (and remote (file-remote-p default-directory))
+        (let ((res (locate-file
+                    command
+                    (mapcar
+                     (lambda (x) (concat (file-remote-p default-directory) x))
+                     (exec-path))
+                    exec-suffixes 'file-executable-p)))
+          (when (stringp res) (file-local-name res)))
+      ;; Use 1 rather than file-executable-p to better match the
+      ;; behavior of call-process.
+      (let ((default-directory
+              (let (file-name-handler-alist)
+                (file-name-quote default-directory))))
+        (locate-file command exec-path exec-suffixes 1)))))
+
+(eval-when! (not (fboundp 'exec-path))
+  ;; DEPRECATED Backported from Emacs 27.1. Remove when 26.x support is dropped.
+  (defun exec-path ()
+    "Return list of directories to search programs to run in remote subprocesses.
+The remote host is identified by `default-directory'.  For remote
+hosts that do not support subprocesses, this returns `nil'.
+If `default-directory' is a local directory, this function returns
+the value of the variable `exec-path'."
+    (let ((handler (find-file-name-handler default-directory 'exec-path)))
+      (if handler
+          (funcall handler 'exec-path)
+        exec-path))))
+
+;; DEPRECATED Remove once enough packages have adapted to these breaking changes.
+(eval-when! EMACS28+
+  (defmacro define-obsolete-variable-alias (obsolete-name current-name &optional when docstring)
+    "Make OBSOLETE-NAME a variable alias for CURRENT-NAME and mark it obsolete.
+
+WHEN should be a string indicating when the variable was first
+made obsolete, for example a date or a release number.
+
+This macro evaluates all its parameters, and both OBSOLETE-NAME
+and CURRENT-NAME should be symbols, so a typical usage would look like:
+
+  (define-obsolete-variable-alias 'foo-thing 'bar-thing \"27.1\")
+
+This macro uses `defvaralias' and `make-obsolete-variable' (which see).
+See the Info node `(elisp)Variable Aliases' for more details.
+
+If CURRENT-NAME is a defcustom or a defvar (more generally, any variable
+where OBSOLETE-NAME may be set, e.g. in an init file, before the
+alias is defined), then the define-obsolete-variable-alias
+statement should be evaluated before the defcustom, if user
+customizations are to be respected.  The simplest way to achieve
+this is to place the alias statement before the defcustom (this
+is not necessary for aliases that are autoloaded, or in files
+dumped with Emacs).  This is so that any user customizations are
+applied before the defcustom tries to initialize the
+variable (this is due to the way `defvaralias' works).
+
+For the benefit of Customize, if OBSOLETE-NAME has
+any of the following properties, they are copied to
+CURRENT-NAME, if it does not already have them:
+`saved-value', `saved-variable-comment'."
+    (declare (doc-string 4)
+             (advertised-calling-convention
+              (obsolete-name current-name when &optional docstring) "23.1"))
+    `(progn
+       (defvaralias ,obsolete-name ,current-name ,docstring)
+       (dolist (prop '(saved-value saved-variable-comment))
+         (and (get ,obsolete-name prop)
+              (null (get ,current-name prop))
+              (put ,current-name prop (get ,obsolete-name prop))))
+       (make-obsolete-variable ,obsolete-name ,current-name ,when)))
+
+  (defmacro define-obsolete-face-alias (obsolete-face current-face &optional when)
+    "Make OBSOLETE-FACE a face alias for CURRENT-FACE and mark it obsolete.
+WHEN should be a string indicating when the face was first made
+obsolete, for example a date or a release number."
+    `(progn (put ,obsolete-face 'face-alias ,current-face)
+            (put ,obsolete-face 'obsolete-face (or (purecopy ,when) t))))
+
+  (defmacro define-obsolete-function-alias (obsolete-name current-name &optional when docstring)
+    "Set OBSOLETE-NAME's function definition to CURRENT-NAME and mark it obsolete.
+
+\(define-obsolete-function-alias \\='old-fun \\='new-fun \"22.1\" \"old-fun's doc.\")
+
+is equivalent to the following two lines of code:
+
+\(defalias \\='old-fun \\='new-fun \"old-fun's doc.\")
+\(make-obsolete \\='old-fun \\='new-fun \"22.1\")
+
+WHEN should be a string indicating when the function was first
+made obsolete, for example a date or a release number.
+
+See the docstrings of `defalias' and `make-obsolete' for more details."
+    (declare (doc-string 4))
+    `(progn (defalias ,obsolete-name ,current-name ,docstring)
+            (make-obsolete ,obsolete-name ,current-name ,when))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

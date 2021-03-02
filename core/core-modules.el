@@ -203,7 +203,7 @@ This doesn't require modules to be enabled. For enabled modules us
            for default-directory in doom-modules-dirs
            for path = (concat category "/" module "/" file)
            if (file-exists-p path)
-           return (file-truename path)))
+           return (expand-file-name path)))
 
 (defun doom-module-from-path (&optional path enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
@@ -218,7 +218,7 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
         (ignore-errors
           (doom-module-from-path (file!))))
     (let* ((file-name-handler-alist nil)
-           (path (file-truename (or path (file!)))))
+           (path (expand-file-name (or path (file!)))))
       (save-match-data
         (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
                (when-let* ((category (doom-keyword-intern (match-string 1 path)))
@@ -226,9 +226,11 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
                  (and (or (null enabled-only)
                           (doom-module-p category module))
                       (cons category module))))
-              ((file-in-directory-p path doom-core-dir)
+              ((or (string-match-p (concat "^" (regexp-quote doom-core-dir)) path)
+                   (file-in-directory-p path doom-core-dir))
                (cons :core (intern (file-name-base path))))
-              ((file-in-directory-p path doom-private-dir)
+              ((or (string-match-p (concat "^" (regexp-quote doom-private-dir)) path)
+                   (file-in-directory-p path doom-private-dir))
                (cons :private (intern (file-name-base path)))))))))
 
 (defun doom-module-load-path (&optional module-dirs)
@@ -249,8 +251,9 @@ those directories. The first returned path is always `doom-private-dir'."
                                       :type 'dirs
                                       :mindepth 1
                                       :depth 1)))
-            (cl-loop for plist being the hash-values of doom-modules
-                     collect (plist-get plist :path)))
+            (delq
+             nil (cl-loop for plist being the hash-values of doom-modules
+                          collect (plist-get plist :path)) ))
           nil))
 
 (defun doom-module-mplist-map (fn mplist)
@@ -276,8 +279,8 @@ those directories. The first returned path is always `doom-private-dir'."
                (:if (if (eval (cadr m) t)
                         (push (caddr m) mplist)
                       (prependq! mplist (cdddr m))))
-               (test (if (or (eval (cadr m) t)
-                             (eq test :unless))
+               (test (if (xor (eval (cadr m) t)
+                              (eq test :unless))
                          (prependq! mplist (cddr m))))))
             ((catch 'doom-modules
                (let* ((module (if (listp m) (car m) m))
@@ -299,10 +302,11 @@ those directories. The first returned path is always `doom-private-dir'."
                                mplist)
                          (push (car key) mplist))
                        (throw 'doom-modules t))))
-                 (push (funcall fn category module
-                                :flags (if (listp m) (cdr m))
-                                :path (doom-module-locate-path category module))
-                       results))))))
+                 (let ((path (doom-module-locate-path category module)))
+                   (push (funcall fn category module
+                                  :flags (if (listp m) (cdr m))
+                                  :path (if (stringp path) (file-truename path)))
+                         results)))))))
     (unless doom-interactive-p
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
@@ -328,7 +332,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
       use-package-minimum-reported-time (if doom-debug-p 0 0.1)
       use-package-expand-minimally doom-interactive-p)
 
-;; A common mistake for new users is that they inadvertantly install their
+;; A common mistake for new users is that they inadvertently install their
 ;; packages with package.el, by copying over old `use-package' declarations with
 ;; an :ensure t property. Doom doesn't use package.el, so this will throw an
 ;; error that will confuse beginners, so we disable `:ensure'.

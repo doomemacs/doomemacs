@@ -12,14 +12,16 @@
   :hook (org-load . org-roam-mode)
   :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :commands (org-roam-buffer-toggle-display
-             org-roam-dailies-date
-             org-roam-dailies-today
-             org-roam-dailies-tomorrow
-             org-roam-dailies-yesterday)
+             org-roam-dailies-find-date
+             org-roam-dailies-find-today
+             org-roam-dailies-find-tomorrow
+             org-roam-dailies-find-yesterday)
   :preface
-  ;; Set this to nil so we can later detect whether the user has set a custom
-  ;; directory for it, and default to `org-directory' if they haven't.
+  ;; Set this to nil so we can later detect if the user has set custom values
+  ;; for these variables. If not, default values will be set in the :config
+  ;; section.
   (defvar org-roam-directory nil)
+  (defvar org-roam-db-location nil)
   :init
   (map! :after org
         :map org-mode-map
@@ -31,20 +33,31 @@
         "i" #'org-roam-insert
         "I" #'org-roam-insert-immediate
         "m" #'org-roam
+        "t" #'org-roam-tag-add
+        "T" #'org-roam-tag-delete
         (:prefix ("d" . "by date")
-          :desc "Arbitrary date" "d" #'org-roam-dailies-date
-          :desc "Today"          "t" #'org-roam-dailies-today
-          :desc "Tomorrow"       "m" #'org-roam-dailies-tomorrow
-          :desc "Yesterday"      "y" #'org-roam-dailies-yesterday))
+         :desc "Find previous note" "b" #'org-roam-dailies-find-previous-note
+         :desc "Find date"          "d" #'org-roam-dailies-find-date
+         :desc "Find next note"     "f" #'org-roam-dailies-find-next-note
+         :desc "Find tomorrow"      "m" #'org-roam-dailies-find-tomorrow
+         :desc "Capture today"      "n" #'org-roam-dailies-capture-today
+         :desc "Find today"         "t" #'org-roam-dailies-find-today
+         :desc "Capture Date"       "v" #'org-roam-dailies-capture-date
+         :desc "Find yesterday"     "y" #'org-roam-dailies-find-yesterday
+         :desc "Find directory"     "." #'org-roam-dailies-find-directory))
   :config
   (setq org-roam-directory
         (file-name-as-directory
-         (expand-file-name (or org-roam-directory "roam")
-                           org-directory))
+         (file-truename
+          (expand-file-name (or org-roam-directory "roam")
+                            org-directory)))
+        org-roam-db-location (or org-roam-db-location
+                                 (concat doom-etc-dir "org-roam.db"))
         org-roam-verbose nil   ; https://youtu.be/fn4jIlFwuLU
         ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
         ;; file with an *-other-window command.
         org-roam-buffer-window-parameters '((no-delete-other-windows . t))
+        org-roam-completion-everywhere t
         org-roam-completion-system
         (cond ((featurep! :completion helm) 'helm)
               ((featurep! :completion ivy) 'ivy)
@@ -65,27 +78,11 @@
              (org-roam-buffer--get-create)))))
 
   ;; Hide the mode line in the org-roam buffer, since it serves no purpose. This
-  ;; makes it easier to distinguish among other org buffers.
-  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode)
-
-  ;; REVIEW Fixes an unhelpful "wrong-type-argument: stringp" error which occurs
-  ;;        if sqlite3 isn't installed. Remove this once addressed upstream.
-  (defadvice! +org-fail-gracefully-when-sqlite-is-absent-a (orig-fn &rest args)
-    :around #'org-roam-mode
-    (let ((emacsql-sqlite3-executable
-           (or (bound-and-true-p emacsql-sqlite3-executable)
-               "sqlite3")))
-      (apply orig-fn args))))
+  ;; makes it easier to distinguish from other org buffers.
+  (add-hook 'org-roam-buffer-prepare-hook #'hide-mode-line-mode))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
 ;; detected), we can safely chain `org-roam-protocol' to it.
 (use-package! org-roam-protocol
   :after org-protocol)
-
-
-(use-package! company-org-roam
-  :when (featurep! :completion company)
-  :after org-roam
-  :config
-  (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))

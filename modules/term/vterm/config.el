@@ -2,8 +2,7 @@
 
 (use-package! vterm
   :when (bound-and-true-p module-file-suffix)
-  :commands vterm vterm-mode
-  :preface (setq vterm-install t) ; compile the package when you load vterm
+  :commands vterm-mode
   :hook (vterm-mode . doom-mark-buffer-as-real-h)
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
   :config
@@ -13,15 +12,11 @@
   ;; spawn another if want one.
   (setq vterm-kill-buffer-on-exit t)
 
+  ;; 5000 lines of scrollback, instead of 1000
+  (setq vterm-max-scrollback 5000)
+
   (setq-hook! 'vterm-mode-hook
     ;; Don't prompt about dying processes when killing vterm
     confirm-kill-processes nil
     ;; Prevent premature horizontal scrolling
-    hscroll-margin 0)
-
-  ;; Restore the point's location when leaving and re-entering insert mode.
-  (when (featurep! :editor evil)
-    (add-hook! 'vterm-mode-hook
-      (defun +vterm-init-remember-point-h ()
-        (add-hook 'evil-insert-state-exit-hook #'+vterm-remember-insert-point-h nil t)
-        (add-hook 'evil-insert-state-entry-hook #'+vterm-goto-insert-point-h nil t)))))
+    hscroll-margin 0))

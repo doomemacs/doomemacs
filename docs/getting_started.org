@@ -35,7 +35,7 @@ us know!
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
-    - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
+    - [[#install-doom-alongside-other-configs-with-chemacs2][Install Doom alongside other configs (with Chemacs2)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
 - [[#update--rollback][Update & Rollback]]
   - [[#rollback][Rollback]]
@@ -50,7 +50,7 @@ us know!
     - [[#installing-packages-from-external-sources][Installing packages from external sources]]
     - [[#pinning-packages-to-specific-commits][Pinning packages to specific commits]]
     - [[#disabling-packages][Disabling packages]]
-    - [[#changing-a-recipe-for-a-included-package][Changing a recipe for a included package]]
+    - [[#changing-a-recipe-for-an-included-package][Changing a recipe for an included package]]
     - [[#usingloading-local-packages][Using/loading local packages]]
   - [[#configuring-doom][Configuring Doom]]
     - [[#configuring-packages][Configuring packages]]
@@ -97,7 +97,7 @@ us know!
 This is what you'll have installed by the end of this section:
 
 - Git 2.23+
-- Emacs 26.1+ *(27.x is recommended)*
+- Emacs 26.3+ *(27.1 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
 - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
 - GNU Find
 - (Optional) [[https://github.com/sharkdp/fd][fd]] 7.3.0+ (known as ~fd-find~ on Debian, Ubuntu & derivatives) --
@@ -238,20 +238,20 @@ xcode-select --install
 For Emacs itself, these three formulas are the best options, ordered from most
 to least recommended for Doom (based on compatibility).
 
-- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]:
-  #+BEGIN_SRC bash
-  brew tap d12frosted/emacs-plus
-  brew install emacs-plus
-  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
-  #+END_SRC
-
-- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is another acceptable option. It offers slightly better integration
-  with macOS, native emojis and better childframe support. However, at the time
-  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage):
+- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]]. It offers good integration
+  with macOS, native emojis and better childframe support. 
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
+  #+END_SRC
+
+- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
+  experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
+  #+BEGIN_SRC bash
+  brew tap d12frosted/emacs-plus
+  brew install emacs-plus
+  ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
 - [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
@@ -311,13 +311,13 @@ process.
 Before moving on to installing Emacs et co, a few steps to prepare Windows for
 Emacs are necessary:
 
-1. *Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].*
+1. Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].
   
    Set it to =C:\Users\USERNAME\=, otherwise Emacs will treat
    =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which will cause issues
    later.
 
-2. *Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.*
+2. Add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.
 
    This way, you don't have to type all of =C:\Users\USERNAME\.emacs.d\bin\doom=
    every time you need to run this script (and you'll need to, often).
@@ -504,8 +504,8 @@ emacs --batch -f all-the-icons-install-fonts
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
 file, see the [[#configure][Configure]] section further below.
 
-*** Install Doom alongside other configs (with Chemacs)
-[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs. It allows you to switch between multiple
+*** Install Doom alongside other configs (with Chemacs2)
+[[https://github.com/plexus/chemacs2][Chemacs2]] is a bootloader for Emacs. It allows you to switch between multiple
 Emacs configurations. Here is a quick guide for setting it up with Doom Emacs as
 the default config:
 
@@ -515,22 +515,20 @@ the default config:
    ~/doom-emacs/bin/doom install
    #+END_SRC
 
-2. Download [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
+2. Move aside any existing config and install Chemacs2 as your new =~/.emacs.d=:
    #+BEGIN_SRC bash :eval no
-   wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
+   [ -f ~/.emacs ] && mv ~/.emacs ~/.emacs.bak
+   [ -d ~/.emacs.d ] && mv ~/.emacs.d ~/.emacs.legacy
+   git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
    #+END_SRC
-
-   #+begin_quote
-   *WARNING:* the =~/.emacs.d= directory must not exist for this to work.
-   #+end_quote
 
 3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
    is structured like a =.dir-locals.el= file. Here is an example with Doom (as
    the default), Spacemacs, and Prelude:
    #+BEGIN_SRC emacs-lisp :eval no
    (("default"   . ((user-emacs-directory . "~/doom-emacs")))
-    ("spacemacs" . ((user-emacs-directory . "~/spacemacs")))
-    ("prelude"   . ((user-emacs-directory . "~/prelude"))))
+    ("legacy" . ((user-emacs-directory . "~/.emacs.legacy")))
+    ("spacemacs"   . ((user-emacs-directory . "~/spacemacs"))))
    #+END_SRC
 
 To start Emacs with a specific config, use the =--with-profile= option:
@@ -700,7 +698,7 @@ denoted by a plus prefix:
 
 #+BEGIN_SRC emacs-lisp
 (doom! :completion
-       (company +auto)
+       (company +childframe)
        :lang
        (csharp +unity)
        (org +brain +dragndrop +gnuplot +hugo +jupyter)
@@ -708,7 +706,7 @@ denoted by a plus prefix:
 #+END_SRC
 
 Different modules support different flags. You'll find a comprehensive list of
-available modules and their supported flags in [[file:index.org::*Module list][the Module Index]]. Flags that a
+available modules and their supported flags in [[file:modules.org][Module Index]]. Flags that a
 module does not recognize will be silently ignored.
 
 #+begin_quote
@@ -886,7 +884,7 @@ packages:
 ensure your changes take effect.
 #+end_quote
 
-*** Changing a recipe for a included package
+*** Changing a recipe for an included package
 If a Doom module installs package X from one place, but you'd like to install it
 from another (say, a superior fork), add a ~package!~ declaration for it in your
 =DOOMDIR/packages.el=. Your private declarations always have precedence over
@@ -932,9 +930,9 @@ live testing. To do this specify a ~:local-repo~ in that package's recipe:
            ;; you want:
            :files ("*.el" "src/lisp/*.el")
 
-           ;; With ':no-byte-compile t' you can avoid having to run 'doom sync'
-           ;; every time you change the package.
-           :no-byte-compile t))
+           ;; With this you can avoid having to run 'doom sync' every time you
+           ;; change the package.
+           :build (:not compile)))
 #+END_SRC
 
 Alternatively, add the package's location to Emacs' ~load-path~. Do this if you
@@ -1068,8 +1066,7 @@ Of course, an empty module isn't terribly useful, but it goes to show that nothi
   loaded when they are used.
 
 These are a few exceptional examples of a well-rounded module:
-
-+ [[file:/mnt/projects/conf/doom-emacs/modules/completion/company/README.org][:completion company]]
++ [[file:../modules/completion/company/README.org][:completion company]]
 
 The remainder of this guide will go over the technical details of a Doom module.
 
@@ -1177,7 +1174,7 @@ Placing this on top of a lisp form will do one of two things:
    =~/.emacs.d/.local/autoloads.el=, which is read very early in the startup
    process).
 2. Or copy that lisp form to Doom's autoload file verbatim (usually the case for
-   anything other then ~def*~ forms, like ~defun~ or ~defmacro~).
+   anything other than ~def*~ forms, like ~defun~ or ~defmacro~).
 
 Doom's autoload file is generated by scanning these files when you execute ~doom
 sync~.
@@ -1415,9 +1412,9 @@ org module documentation]] for details on how to add support for it.
 #+END_SRC
 
 These two lines are a common sight in Emacs configs, but they are unnecessary
-for Doom Emacs. We already use the more sophisticated =wsbutler= to manage
+for Doom Emacs. We already use the more sophisticated =ws-butler= to manage
 extraneous whitespace. However, you might have the impression that it isn't
-working. That's because =wsbutler= works in two unusual ways, meant to be less
+working. That's because =ws-butler= works in two unusual ways, meant to be less
 imposing than its alternatives:
 
 1. It only cleans up trailing whitespace /on lines that you've touched/ (but
@@ -1432,7 +1429,7 @@ imposing than its alternatives:
    However, if it's truly deliberate, ~M-x delete-trailing-whitespaces~ and ~M-x
    whitespace-cleanup~ are available to be called =deliberately=, instead.
 
-2. =wsbutler= replaces trailing whitespace and newlines with *virtual*
+2. =ws-butler= replaces trailing whitespace and newlines with *virtual*
    whitespace. This is whitespace that only exists in the Emacs buffer, but
    isn't actually written to the file.
 
@@ -1471,7 +1468,7 @@ provide tools to make this easier. Here are a few things you can try, first:
   issues that originate from upstream.
 
 + If you happen to know what module(s) are relevant to your issue, check their
-  documentation (press =<leader> h m= to jump to a module's documentation). Your
+  documentation (press =<leader> h d m= to jump to a module's documentation). Your
   issue may be documented.
 
 + If possible, see if the issue can be reproduced in vanilla Emacs (Emacs
@@ -1560,9 +1557,9 @@ and before the subcommand. This will be fixed eventually.
 Often, you may find it helpful for debugging to evaluate some Emacs Lisp. Here
 are couple things you can do:
 
-+ Use =M-;= (bound to ~eval-expression~),
++ Use =M-:= (bound to ~eval-expression~),
 + =SPC x= will open a scratch buffer. ~M-x emacs-lisp-mode~ will change it to
-  the appropriate major mode, then use ~+eval:region~ (=gr=) and ~+eval:buffer~
+  the appropriate major mode, then use ~+eval:region~ (=gr=) and ~+eval/buffer~
   (=gR=) to evaluate code,
 
 ** How to determine the origin of a bug
@@ -1572,7 +1569,7 @@ in a fresh instance of Emacs with varying amounts of Doom loaded (none at all,
 all of it, or somewhere in between). This can be helpful for isolating bugs to
 determine who you should report a bug to.
 
-If you can recreate a bug in vanilla Emacs than it should be reported to the
+If you can recreate a bug in vanilla Emacs then it should be reported to the
 developers of the relevant packages or, perhaps, the Emacs devs themselves.
 
 Otherwise, it is best to bring it up on the Doom Emacs issue list, rather than

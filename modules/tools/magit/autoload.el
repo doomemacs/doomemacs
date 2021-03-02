@@ -66,7 +66,8 @@ window that already exists in that direction. It will split otherwise."
                        +magit-open-windows-in-direction))
         (origin-window (selected-window)))
     (if-let (window (window-in-direction direction))
-        (select-window window)
+        (unless magit-display-buffer-noselect
+          (select-window window))
       (if-let (window (and (not (one-window-p))
                            (window-in-direction
                             (pcase direction
@@ -74,16 +75,19 @@ window that already exists in that direction. It will split otherwise."
                               (`left 'right)
                               ((or `up `above) 'down)
                               ((or `down `below) 'up)))))
-          (select-window window)
+        (unless magit-display-buffer-noselect
+          (select-window window))
         (let ((window (split-window nil nil direction)))
-          (when (memq direction '(right down below))
+          (when (and (not magit-display-buffer-noselect)
+                     (memq direction '(right down below)))
             (select-window window))
           (display-buffer-record-window 'reuse window buffer)
           (set-window-buffer window buffer)
           (set-window-parameter window 'quit-restore (list 'window 'window origin-window buffer))
           (set-window-prev-buffers window nil))))
-    (switch-to-buffer buffer t t)
-    (selected-window)))
+    (unless magit-display-buffer-noselect
+      (switch-to-buffer buffer t t)
+      (selected-window))))
 
 
 ;;
@@ -99,7 +103,7 @@ window that already exists in that direction. It will split otherwise."
           (when (bound-and-true-p vc-mode)
             (vc-refresh-state)
             (force-mode-line-update))
-        (revert-buffer t t)))))
+        (revert-buffer t t t)))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()
@@ -157,36 +161,3 @@ control in buffers."
     (if (or arg (not (featurep 'forge)))
         #'github-review-start
       #'github-review-forge-pr-at-point)))
-
-(defvar +magit-clone-history nil
-  "History for `+magit/clone' prompt.")
-;;;###autoload
-(defun +magit/clone (url-or-repo dir)
-  "Like `magit-clone', but supports additional formats on top of absolute URLs:
-
-+ USER/REPO: assumes {`+magit-default-clone-url'}/USER/REPO
-+ REPO: assumes {`+magit-default-clone-url'}/{USER}/REPO, where {USER} is
-  ascertained from your global gitconfig."
-  (interactive
-   (progn
-     (require 'ghub)
-     (let* ((user (ghub--username (ghub--host)))
-            (repo (read-from-minibuffer
-                   "Clone repository (user/repo or url): "
-                   (if user (concat user "/"))
-                   nil nil '+magit-clone-history))
-            (name (car (last (split-string repo "/" t)))))
-       (list repo
-             (read-directory-name
-              "Destination: "
-              magit-clone-default-directory
-              name nil name)))))
-  (magit-clone-regular
-   (cond ((string-match-p "^[^/]+$" url-or-repo)
-          (require 'ghub)
-          (format +magit-default-clone-url (ghub--username (ghub--host)) url-or-repo))
-         ((string-match-p "^\\([^/]+\\)/\\([^/]+\\)/?$" url-or-repo)
-          (apply #'format +magit-default-clone-url (split-string url-or-repo "/" t)))
-         (url-or-repo))
-   dir
-   nil))

@@ -86,6 +86,14 @@
            (with-current-buffer nrepl-server-buffer
              (buffer-string)))))))
 
+  ;; When in cider-debug-mode, override evil keys to not interfere with debug keys
+  (after! evil
+    (add-hook! cider--debug-mode
+      (defun +clojure--cider-setup-debug ()
+        "Setup cider debug to override evil keys cleanly"
+        (evil-make-overriding-map cider--debug-mode-map 'normal)
+        (evil-normalize-keymaps))))
+
   ;; The CIDER welcome message obscures error messages that the above code is
   ;; supposed to be make visible.
   (setq cider-repl-display-help-banner nil)
@@ -98,6 +106,8 @@
             "C"  #'cider-connect-cljs
             "m"  #'cider-macroexpand-1
             "M"  #'cider-macroexpand-all
+            (:prefix ("d" . "debug")
+             "d" #'cider-debug-defun-at-point)
             (:prefix ("e" . "eval")
               "b" #'cider-eval-buffer
               "d" #'cider-eval-defun-at-point
@@ -126,6 +136,12 @@
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all
               "r" #'cider-ns-refresh)
+            (:prefix ("p" . "print")
+              "p" #'cider-pprint-eval-last-sexp
+              "P" #'cider-pprint-eval-last-sexp-to-comment
+              "d" #'cider-pprint-eval-defun-at-point
+              "D" #'cider-pprint-eval-defun-to-comment
+              "r" #'cider-pprint-eval-last-sexp-to-repl)
             (:prefix ("r" . "repl")
               "n" #'cider-repl-set-ns
               "q" #'cider-quit

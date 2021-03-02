@@ -7,6 +7,26 @@
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
+  (set-ligatures! 'csharp-mode
+    ;; Functional
+    :lambda        "() =>"
+    ;; Types
+    :null          "null"
+    :true          "true"
+    :false         "false"
+    :int           "int"
+    :float         "float"
+    :str           "string"
+    :bool          "bool"
+    :list          "List"
+    ;; Flow
+    :not           "!"
+    :in            "in"
+    :and           "&&"
+    :or            "||"
+    :for           "for"
+    :return        "return"
+    :yield         "yield")
 
   (sp-local-pair 'csharp-mode "<" ">"
                  :when '(+csharp-sp-point-in-type-p)
@@ -22,7 +42,6 @@ or terminating simple string."
     :around #'csharp-disable-clear-string-fences
     (unless (eq major-mode 'csharp-mode)
       (apply orig-fn args))))
-
 
 (use-package! omnisharp
   :unless (featurep! +lsp)
@@ -74,3 +93,11 @@ or terminating simple string."
   (def-project-mode! +csharp-unity-mode
     :modes '(csharp-mode shader-mode)
     :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))
+
+
+(use-package! sharper
+  :when (featurep! +dotnet)
+  :general ("C-c d" #'sharper-main-transient))
+
+
+(use-package! sln-mode :mode "\\.sln\\'")

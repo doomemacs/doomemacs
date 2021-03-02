@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; checkers/syntax/packages.el
 
-(package! flycheck :pin "c02cd773dded0215f9417ec04dfe8dabda63ef43")
+(package! flycheck :pin "01396a5eff9fa494285e0d3139838231c05e3948")
 (package! flycheck-popup-tip :pin "ef86aad907f27ca076859d8d9416f4f7727619c6")
 (when (featurep! +childframe)
-  (package! flycheck-posframe :pin "c928b5b5424fe84a0b346e28bd7d461c80b27482"))
+  (package! flycheck-posframe :pin "24fd9b3d81eab8dd850c504ae46a5c5f11a46ee0"))
 
 ;; TODO flymake?

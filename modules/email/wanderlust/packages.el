@@ -4,8 +4,8 @@
 ;; HACK These are wanderlust's dependencies (wanderlust depends on semi, semi
 ;;      depends on flim, flim on apel), but they all have non-standard default
 ;;      branches which straight cannot detect without our help.
-(package! apel :recipe (:branch "apel-wl") :pin "d146ddbf8818e81d3577d5eee7825d377bec0c73")
-(package! flim :recipe (:branch "flim-1_14-wl") :pin "f303f2f6c124bc8635add96d3326a2209749437b")
-(package! semi :recipe (:branch "semi-1_14-wl") :pin "10897f024fd9282c73385d24514cc4b57fe193db")
+(package! apel :recipe (:branch "apel-wl") :pin "4e3269b6e702db2dba48cf560563ac883e81e3bf")
+(package! flim :recipe (:branch "flim-1_14-wl") :pin "068b35e863be9245e717e79def55f93580188bc8")
+(package! semi :recipe (:branch "semi-1_14-wl") :pin "f279ebe1c1f9c14bdd5d3da01af24277a6167b69")
 
-(package! wanderlust :pin "7af0d582cd48a37469e0606ea35887740d78c8b5")
+(package! wanderlust :pin "5db307a0441b6b7aa4ecfd34344842d78f15611b")

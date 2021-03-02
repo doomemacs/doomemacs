@@ -4,10 +4,6 @@
 (defvar doom-bin (concat doom-bin-dir "doom"))
 
 ;;;###autoload
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom/reload' is called.")
-
-;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 
@@ -76,7 +72,7 @@ This is experimental! It will try to do as `bin/doom sync' does, but from within
 this Emacs session. i.e. it reload autoloads files (if necessary), reloads your
 package list, and lastly, reloads your private config.el.
 
-Runs `doom-reload-hook' afterwards."
+Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
@@ -84,15 +80,16 @@ Runs `doom-reload-hook' afterwards."
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
   ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%s sync -e" doom-bin)
+  (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
+        (run-hook-wrapped 'doom-before-reload-hook #'doom-try-run-hook)
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
               (doom-initialize-modules 'force)
             (general-auto-unbind-keys t)))
-        (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
+        (run-hook-wrapped 'doom-after-reload-hook #'doom-try-run-hook)
         (message "Config successfully reloaded!"))
     (user-error "Failed to reload your config")))
 
@@ -125,7 +122,7 @@ imported into Emacs."
   (when IS-WINDOWS
     (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
   (doom--if-compile
-      (format "%s -ic '%s env%s'"
+      (format "%s -ic '%S env%s'"
               (string-trim
                (shell-command-to-string
                 (format "getent passwd %S | cut -d: -f7"
@@ -140,6 +137,6 @@ imported into Emacs."
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%s -y upgrade" doom-bin)
+  (doom--if-compile (format "%S -y upgrade" doom-bin)
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))

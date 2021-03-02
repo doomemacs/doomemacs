@@ -59,9 +59,9 @@ results buffer.")
   (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
+        ivy-read-action-function #'ivy-hydra-read-action
+        ivy-read-action-format-function #'ivy-read-action-format-columns
         projectile-completion-system 'ivy
-        ;; disable magic slash on non-match
-        ivy-magic-slash-non-match-action nil
         ;; don't show recent files in switch-buffer
         ivy-use-virtual-buffers nil
         ;; ...but if that ever changes, show their full path
@@ -85,22 +85,22 @@ results buffer.")
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (and (markerp (bound-and-true-p +ivy--origin))
-           (not (equal (ignore-errors (with-ivy-window (point-marker)))
-                       +ivy--origin))
-           (with-current-buffer (marker-buffer +ivy--origin)
-             (better-jumper-set-jump +ivy--origin)))
+      (when (markerp (bound-and-true-p +ivy--origin))
+        (unless (equal (ignore-errors (with-ivy-window (point-marker)))
+                       +ivy--origin)
+          (with-current-buffer (marker-buffer +ivy--origin)
+            (better-jumper-set-jump +ivy--origin)))
+        (set-marker +ivy--origin nil))
       (setq +ivy--origin nil)))
 
   (after! yasnippet
     (add-hook 'yas-prompt-functions #'+ivy-yas-prompt-fn))
 
-  (defadvice! +ivy--inhibit-completion-in-region-a (orig-fn &rest args)
-    "`ivy-completion-in-region' struggles with completing certain
-evil-ex-specific constructs, so we disable it solely in evil-ex."
-    :around #'evil-ex
-    (let ((completion-in-region-function #'completion--in-region))
-      (apply orig-fn args)))
+  (after! ivy-hydra
+    ;; Ensure `ivy-dispatching-done' and `hydra-ivy/body' hydras can be
+    ;; exited / toggled by the same key binding they were opened
+    (add-to-list 'ivy-dispatching-done-hydra-exit-keys '("C-o" nil))
+    (defhydra+ hydra-ivy () ("M-o" nil)))
 
   (define-key! ivy-minibuffer-map
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
@@ -120,6 +120,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                                  'ivy-switch-buffer))
                 :test #'equal))
 
+  (defun ivy-rich-bookmark-filename-or-empty (candidate)
+    (let ((filename (ivy-rich-bookmark-filename candidate)))
+      (if (not filename) "" filename)))
+
   ;; Enahnce the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
               'counsel-describe-variable
@@ -137,7 +141,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
               'counsel-bookmark
               '(:columns
                 ((ivy-rich-candidate (:width 0.5))
-                 (ivy-rich-bookmark-filename (:width 60)))))
+                 (ivy-rich-bookmark-filename-or-empty (:width 60)))))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
@@ -149,7 +153,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
               (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (setcar switch-buffer-alist '+ivy-rich-buffer-name))
 
-  (ivy-rich-mode +1))
+  (ivy-rich-mode +1)
+  (ivy-rich-project-root-cache-mode +1))
 
 
 (use-package! all-the-icons-ivy
@@ -180,6 +185,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
+    [remap describe-symbol]          #'counsel-describe-symbol
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
@@ -218,18 +224,13 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (when (stringp counsel-rg-base-command)
     (setq counsel-rg-base-command (split-string counsel-rg-base-command)))
 
-  ;; REVIEW Fix #3215: prevents mingw on Windows throwing an error trying to
-  ;;        expand / to an absolute path. Remove this when it is fixed upstream
-  ;;        in counsel.
-  (when (and (memq system-type '(windows-nt ms-dos))
-             (listp counsel-rg-base-command)
-             (member "--path-separator" counsel-rg-base-command))
-    (setf (cadr (member "--path-separator" counsel-rg-base-command))
-          "/"))
-
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
+
+  ;; Decorate `doom/help-custom-variable' results the same way as
+  ;; `counsel-describe-variable' (adds value and docstring columns).
+  (ivy-configure 'doom/help-custom-variable :parent 'counsel-describe-variable)
 
   ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
   (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
@@ -283,17 +284,15 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
-        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd")))
-                 (append (list fd
-                               "--color=never" "-E" ".git"
-                               "--type" "file" "--type" "symlink" "--follow")
+        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd") t))
+                 (append (list fd "-H" "--color=never" "--type" "file" "--type" "symlink" "--follow")
                          (if IS-WINDOWS '("--path-separator=/")))))
-              ((executable-find "rg")
-               (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "--no-messages")
+              ((executable-find "rg" t)
+               (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "-g!.git" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
                                 collect (concat "!" dir))
-                       (if IS-WINDOWS (list "--path-separator" "/"))))
+                       (if IS-WINDOWS '("--path-separator=/"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
@@ -360,7 +359,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (setf (alist-get fn ivy-posframe-display-functions-alist)
           #'ivy-display-function-fallback))
 
-  (add-hook 'doom-reload-hook #'posframe-delete-all))
+  (add-hook 'doom-after-reload-hook #'posframe-delete-all))
 
 
 (use-package! flx
@@ -369,11 +368,14 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :defer t  ; is loaded by ivy
   :init (setq ivy-flx-limit 10000))
 
+(use-package! ivy-avy
+  :after ivy)
 
 (use-package! ivy-prescient
   :when (featurep! +prescient)
   :hook (ivy-mode . ivy-prescient-mode)
   :hook (ivy-prescient-mode . prescient-persist-mode)
+  :commands +ivy-prescient-non-fuzzy
   :init
   (setq prescient-filter-method
         (if (featurep! +fuzzy)

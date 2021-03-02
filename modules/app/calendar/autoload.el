@@ -31,7 +31,8 @@
   (if (featurep! :ui workspaces)
       (+workspace/delete "Calendar")
     (doom-kill-matching-buffers "^\\*cfw:")
-    (set-window-configuration +calendar--wconf)
+    (when (window-configuration-p +calendar--wconf)
+      (set-window-configuration +calendar--wconf))
     (setq +calendar--wconf nil)))
 
 ;;;###autoload

@@ -6,7 +6,7 @@
   (set-repl-handler! 'julia-mode #'+julia/open-repl)
 
   ;; Borrow matlab.el's fontification of math operators. From
-  ;; <https://ogbe.net/emacsconfig.html>
+  ;; <https://web.archive.org/web/20170326183805/https://ogbe.net/emacsconfig.html>
   (dolist (mode '(julia-mode ess-julia-mode))
     (font-lock-add-keywords
      mode

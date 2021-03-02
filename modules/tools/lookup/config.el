@@ -26,7 +26,8 @@
             ("Github"            "https://github.com/search?ref=simplesearch&q=%s")
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
-            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
+            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
+            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
           (when (featurep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
@@ -97,7 +98,9 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
-(defvar +lookup-file-functions ()
+(defvar +lookup-file-functions
+  '(+lookup-ffap-backend-fn
+    +lookup-bug-reference-backend-fn)
   "Function for `+lookup/file' to try, before restoring to `find-file-at-point'.
 Stops at the first function to return non-nil or change the current
 window/point.
@@ -153,8 +156,10 @@ Dictionary.app behind the scenes to get definitions.")
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
 
-  ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
+  ;; This integration is already built into evil
+  (unless (featurep! :editor evil)
+    ;; Use `better-jumper' instead of xref's marker stack
+    (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a))
 
   (use-package! ivy-xref
     :when (featurep! :completion ivy)
@@ -166,7 +171,16 @@ Dictionary.app behind the scenes to get definitions.")
       (setq xref-show-definitions-function #'ivy-xref-show-defs))
     ;; Necessary in Emacs <27. In Emacs 27 it will affect all xref-based
     ;; commands other than xref-find-definitions too (eg project-find-regexp)
-    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+
+    ;; HACK Fix #4386: `ivy-xref-show-xrefs' calls `fetcher' twice, which has
+    ;; side effects that breaks in some cases (i.e. on `dired-do-find-regexp').
+    (defadvice! +lookup--fix-ivy-xrefs (orig-fn fetcher alist)
+      :around #'ivy-xref-show-xrefs
+      (when (functionp fetcher)
+        (setf (alist-get 'fetched-xrefs alist)
+              (funcall fetcher)))
+      (funcall orig-fn fetcher alist)))
 
   (use-package! helm-xref
     :when (featurep! :completion helm)))

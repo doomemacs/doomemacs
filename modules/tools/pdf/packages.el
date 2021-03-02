@@ -7,3 +7,5 @@
            :repo "flatwhatson/pdf-tools"
            :branch "fix-macros")
   :pin "eb6d40663069f2b7e6b52e907eeaa4e37375feb6")
+
+(package! saveplace-pdf-view :pin "54ed966b842501c3c092dbf57b372e37b033c578")

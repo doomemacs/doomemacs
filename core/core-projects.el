@@ -81,6 +81,10 @@ debian, and derivatives). On most it's 'fd'.")
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  ;; Per-project compilation buffers
+  (setq compilation-buffer-name-function #'projectile-compilation-buffer-name
+        compilation-save-buffers-predicate #'projectile-current-project-buffer-p)
+
   ;; Override projectile's dirconfig file '.projectile' with doom's project marker '.project'.
   (defadvice! doom--projectile-dirconfig-file-a ()
     :override #'projectile-dirconfig-file
@@ -141,10 +145,10 @@ c) are not valid projectile projects."
                     projectile-project-root-files)
             projectile-project-root-files-bottom-up nil)))
 
-  ;; Some utilities have issues with windows-style paths in MSYS, so emit
-  ;; unix-style paths instead.
+  ;; Some MSYS utilities auto expanded the `/' path separator, so we need to prevent it.
   (when IS-WINDOWS
-    (setenv "MSYS_NO_PATHCONV" "1"))
+    (setenv "MSYS_NO_PATHCONV" "1") ; Fix path in Git Bash
+    (setenv "MSYS2_ARG_CONV_EXCL" "--path-separator")) ; Fix path in MSYS2
 
   ;; HACK Don't rely on VCS-specific commands to generate our file lists. That's
   ;;      7 commands to maintain, versus the more generic, reliable and
@@ -166,29 +170,23 @@ And if it's a function, evaluate it."
         projectile-indexing-method 'hybrid
         projectile-generic-command
         (lambda (_)
-          (let ((find-exe-fn
-                 (if EMACS27+
-                     (doom-rpartial #'executable-find t)
-                   #'executable-find)))
-            ;; If fd exists, use it for git and generic projects. fd is a rust
-            ;; program that is significantly faster than git ls-files or find, and
-            ;; it respects .gitignore. This is recommended in the projectile docs.
-            (cond
-             ((when-let
-                  (bin (if (ignore-errors (file-remote-p default-directory nil t))
-                           (cl-find-if find-exe-fn (list "fdfind" "fd"))
-                         doom-projectile-fd-binary))
-                (concat (format "%s . -0 -H -E .git --color=never --type file --type symlink --follow"
-                                bin)
-                        (if IS-WINDOWS " --path-separator=/"))))
-             ;; Otherwise, resort to ripgrep, which is also faster than find
-             ((funcall find-exe-fn "rg")
-              (concat "rg -0 --files --follow --color=never --hidden"
-                      (cl-loop for dir in projectile-globally-ignored-directories
-                               concat " --glob "
-                               concat (shell-quote-argument (concat "!" dir)))
-                      (if IS-WINDOWS " --path-separator /")))
-             ("find . -type f -print0")))))
+          ;; If fd exists, use it for git and generic projects. fd is a rust
+          ;; program that is significantly faster than git ls-files or find, and
+          ;; it respects .gitignore. This is recommended in the projectile docs.
+          (cond
+           ((when-let
+                (bin (if (ignore-errors (file-remote-p default-directory nil t))
+                         (cl-find-if (doom-rpartial #'executable-find t)
+                                     (list "fdfind" "fd"))
+                       doom-projectile-fd-binary))
+              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git"
+                              bin)
+                      (if IS-WINDOWS " --path-separator=/"))))
+           ;; Otherwise, resort to ripgrep, which is also faster than find
+           ((executable-find "rg" t)
+            (concat "rg -0 --files --follow --color=never --hidden -g!.git"
+                    (if IS-WINDOWS " --path-separator=/")))
+           ("find . -type f -print0"))))
 
   (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error

@@ -12,6 +12,7 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#racket-smart-open-bracket-mode][racket-smart-open-bracket-mode]]
+  - [[#unicode-input][Unicode Input]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -41,5 +42,15 @@ or check your package manger.
   (add-hook! racket-mode
              #'racket-smart-open-bracket-mode))
 #+END_SRC
+** Unicode Input
+The optional ~racket-unicode~ input method lets you type unicode characters such as λ or π.
+To enable unicode input for a single buffer, run ~racket-unicode-input-method-enable~.
+To enable unicode input by default on all racket buffers, add the following hooks
+to your ~config.el~:
+#+BEGIN_SRC elisp
+(add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
+(add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
+#+END_SRC
+Once enabled, unicode input can be toggled by pressing C-\ or running ~toggle-input-method~.
 
 * TODO Troubleshooting

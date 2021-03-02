@@ -2,7 +2,7 @@
 ;;;###if (featurep! +meghanada)
 
 (use-package! meghanada
-  :hook (java-mode . meghanada-mode)
+  :hook (java-mode-local-vars . meghanada-mode)
   :init
   (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
         meghanada-use-company (featurep! :completion company)

@@ -23,7 +23,6 @@ This module has no dedicated maintainers.
 This module provides no flags.
 
 ** Plugins
-# A list of linked plugins
 + [[https://elpa.gnu.org/packages/rainbow-mode.html][rainbow-mode]]
 + [[https://github.com/alphapapa/kurecolor][kurecolor]]
 
@@ -31,7 +30,6 @@ This module provides no flags.
 This module has no prerequisites.
 
 * Features
-# An in-depth list of features, how to use them, and their dependencies.
 =rainbow-mode= provides automatic highlighting to hex color codes, and in
 relevant modes, color names (e.g. html color names in =css-mode= or LaTeX color
 names in =latex-mode=)
@@ -41,10 +39,9 @@ hue of hex colors (and a useful hydra for this, if =:ui hydra= is enabled), as
 well as conversion between hex and css colors
 
 * Configuration
-# How to configure this module, including common problems and how to address them.
-=hl-line-mode= overrides the color highlighting of =rainbow-mode=, which limits
-the use of that plugin and on site color changes using =kurecolor=. To
-automatically disable it only  when =rainbow-mode= is active, you can add the
+=hl-line-mode= overrides the color highlighting of =rainbow-mode=, limiting 
+the use of that plugin and on-site color changes using =kurecolor=. To
+automatically disable it only when =rainbow-mode= is active, you can add the
 following hook:
 
 #+BEGIN_SRC elisp

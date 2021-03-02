@@ -8,14 +8,14 @@
   (package! helm))
 
 ;;
-(package! dumb-jump :pin "0d74b2f2aa834b602e91d99e9cb23197a389f042")
+(package! dumb-jump :pin "f6a1165daf92ca77a8a58801ec387064193ffd86")
 (when (featurep! :completion ivy)
   (package! ivy-xref :pin "3d4c35fe2b243d948d8fe02a1f0d76a249d63de9"))
 (when (featurep! :completion helm)
-  (package! helm-xref :pin "6b4a8bd91f5eaf82f51bd31b03f6587387fe6983"))
+  (package! helm-xref :pin "23f1174cfca7667d95828dcd388c655a4a9c877d"))
 
 ;; For dictionary and online lookup
-(package! request :pin "d02d1347ffdf138cffd380cbeac62ac8732036ef")
+(package! request :pin "accd430ee706f5b10fb20003b06bd8209bcdaa82")
 
 (when (featurep! +docsets)
   (package! dash-docs :pin "dafc8fc9f1ddb2e4e39e0b8d066c42d5d7ce8d06")
@@ -27,7 +27,7 @@
 (when (featurep! +dictionary)
   (if IS-MAC
       (package! osx-dictionary :pin "1b79ff64c72485cb078db9ab7ee3256b11a99f4b")
-    (package! define-word :pin "08c71b1ff4fd07bf0c78d1fcf77efeaafc8f7443")
+    (package! define-word :pin "6e4a427503aef096484f88332962c346cdd10847")
     (package! powerthesaurus :pin "93036d3b111925ebc34f747ff846cb0b8669b92e")
     (when (featurep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")

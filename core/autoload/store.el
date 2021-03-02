@@ -108,9 +108,10 @@ If it doesn't exist or has expired, DEFAULT_VALUE is returned."
 ;;;###autoload
 (defun doom-store-put (key value &optional ttl location)
   "Set KEY to VALUE in the store at LOCATION.
-KEY can be any lisp object that is comparable with `equal'. TTL is the time (in
-seconds) until this cache entry expires. LOCATION is the super-key to store this
-cache item under. It defaults to `doom-store-location'."
+KEY can be any lisp object that is comparable with `equal'. TTL is the duration
+(in seconds) after which this cache entry expires; if nil, no cache expiration.
+LOCATION is the super-key to store this cache item under. It defaults to
+`doom-store-location'."
   (doom--store-put key value (or location doom-store-location) ttl))
 
 ;;;###autoload

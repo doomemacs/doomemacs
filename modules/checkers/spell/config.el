@@ -16,23 +16,22 @@
             '("#\\+BEGIN_SRC" . "#\\+END_SRC")
             '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
 
-  ;; Enable either aspell or hunspell.
-  ;;   If no module flags are given, enable either aspell or hunspell if their
-  ;;     binary is found.
-  ;;   If one of the flags `+aspell' or `+hunspell' is given, only enable that
-  ;;     spell checker.
+  ;; Enable either aspell, hunspell or enchant.
+  ;;   If no module flags are given, enable either aspell, hunspell or enchant
+  ;;     if their binary is found.
+  ;;   If one of the flags `+aspell', `+hunspell' or `+enchant' is given,
+  ;;     only enable that spell checker.
   (pcase (cond ((featurep! +aspell)   'aspell)
                ((featurep! +hunspell) 'hunspell)
-               ((executable-find "aspell")   'aspell)
-               ((executable-find "hunspell") 'hunspell))
+               ((featurep! +enchant)  'enchant)
+               ((executable-find "aspell")    'aspell)
+               ((executable-find "hunspell")  'hunspell)
+               ((executable-find "enchant-2") 'enchant))
     (`aspell
      (setq ispell-program-name "aspell"
            ispell-extra-args '("--sug-mode=ultra"
-                               "--run-together"
-                               "--dont-tex-check-comments"))
+                               "--run-together"))
 
-     (unless ispell-dictionary
-       (setq ispell-dictionary "en"))
      (unless ispell-aspell-dict-dir
        (setq ispell-aspell-dict-dir
              (ispell-get-aspell-config-value "dict-dir")))
@@ -58,7 +57,10 @@
     (`hunspell
      (setq ispell-program-name "hunspell"))
 
-    (_ (doom-log "Spell checker not found. Either install `aspell' or `hunspell'"))))
+    (`enchant
+     (setq ispell-program-name "enchant-2"))
+
+    (_ (doom-log "Spell checker not found. Either install `aspell', `hunspell' or `enchant'"))))
 
 
 ;;
@@ -70,7 +72,7 @@
       :when (executable-find "aspell")
       :hook (text-mode . spell-fu-mode)
       :general ([remap ispell-word] #'+spell/correct)
-      :init
+      :preface
       (defvar +spell-correct-interface
         (cond ((featurep! :completion ivy)
                #'+spell-correct-ivy-fn)
@@ -79,6 +81,7 @@
               (#'+spell-correct-generic-fn))
         "Function to use to display corrections.")
 
+      :init
       (defvar +spell-excluded-faces-alist
         '((markdown-mode
            . (markdown-code-face
@@ -142,7 +145,7 @@
       (add-hook! 'spell-fu-mode-hook
         (defun +spell-init-excluded-faces-h ()
           "Set `spell-fu-faces-exclude' according to `+spell-excluded-faces-alist'."
-          (when-let (excluded (alist-get major-mode +spell-excluded-faces-alist))
+          (when-let (excluded (cdr (cl-find-if #'derived-mode-p +spell-excluded-faces-alist :key #'car)))
             (setq-local spell-fu-faces-exclude excluded))))
 
       ;; TODO custom `spell-fu-check-range' function to reduce false positives
@@ -194,7 +197,10 @@ e.g. proselint and langtool."
     (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
 
     (let ((flyspell-correct
-           (cmds! (and (not (or mark-active (ignore-errors (evil-insert-state-p))))
+           (cmds! (and (not mark-active)
+                       (not (and (bound-and-true-p evil-local-mode)
+                                 (or (evil-insert-state-p)
+                                     (evil-emacs-state-p))))
                        (memq 'flyspell-incorrect (face-at-point nil t)))
                   #'flyspell-correct-at-point)))
       (map! :map flyspell-mouse-map

@@ -50,12 +50,14 @@
 (defun +spell/correct ()
   "Correct spelling of word at point."
   (interactive)
-  ;; HACK Fake awareness for our personal dictionary by stopping short if
-  ;;      spell-fu hasn't highlighted the current word. This is necessary
-  ;;      because ispell/aspell struggles to find our
-  ;;      `ispell-personal-dictionary' if it's not in $HOME.
-  (unless (memq 'spell-fu-incorrect-face (face-at-point nil t))
-    (user-error "%S is correct" (thing-at-point 'word t)))
+  ;; spell-fu fails to initialize correctly if it can't find aspell or a similar
+  ;; program. We want to signal the error, not tell the user that every word is
+  ;; spelled correctly.
+  (unless (;; This is what spell-fu uses to check for the aspell executable
+           or (and ispell-really-aspell ispell-program-name)
+              (executable-find "aspell"))
+    (user-error "Aspell is required for spell checking"))
+
   (ispell-set-spellchecker-params)
   (save-current-buffer
     (ispell-accept-buffer-local-defs))
@@ -63,7 +65,8 @@
                (featurep! :completion helm)))
       (call-interactively #'ispell-word)
     (cl-destructuring-bind (start . end)
-        (bounds-of-thing-at-point 'word)
+        (or (bounds-of-thing-at-point 'word)
+            (user-error "No word at point"))
       (let ((word (thing-at-point 'word t))
             (orig-pt (point))
             poss ispell-filter)

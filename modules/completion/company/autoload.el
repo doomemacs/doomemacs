@@ -2,7 +2,7 @@
 
 ;;;###autoload
 (defvar +company-backend-alist
-  '((text-mode company-dabbrev company-yasnippet company-ispell)
+  '((text-mode (:separate company-dabbrev company-yasnippet company-ispell))
     (prog-mode company-capf company-yasnippet)
     (conf-mode company-capf company-dabbrev-code company-yasnippet))
   "An alist matching modes to company backends. The backends for any mode is
@@ -81,8 +81,10 @@ Examples:
 ;;;###autoload
 (defun +company-has-completion-p ()
   "Return non-nil if a completion candidate exists at point."
-  (and (company-manual-begin)
-       (= company-candidates-length 1)))
+  (when company-mode
+    (unless company-candidates-length
+      (company-manual-begin))
+    (= company-candidates-length 1)))
 
 ;;;###autoload
 (defun +company/toggle-auto-completion ()

@@ -1,8 +1,23 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
+;; Remove RCS, CVS, SCCS, SRC, and Bzr, because it's a lot less work for vc to
+;; check them all (especially in TRAMP buffers), and who uses any of these in
+;; 2021, amirite?
+(setq-default vc-handled-backends '(SVN Git Hg))
+
 (when IS-WINDOWS
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
+;; Don't complain when these variables are set in file/local vars
+(put 'git-commit-major-mode 'safe-local-variable 'symbolp)
+(put 'git-commit-summary-max-length 'safe-local-variable 'symbolp)
+
+;; In case the user is using `bug-reference-mode'
+(map! :when (fboundp 'bug-reference-mode)
+      :map bug-reference-map
+      "RET" (cmds! (and (bound-and-true-p evil-mode)
+                        (evil-normal-state-p))
+                   #'bug-reference-push-button))
 
 (after! log-view
   (set-evil-initial-state!
@@ -41,7 +56,7 @@
     "Show revision details in the header-line, instead of the minibuffer.
 
 Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision
-info in the `header-line-format' is a good indication."
+info in the `header-line-format' is a more visible indicator."
     :override #'git-timemachine--show-minibuffer-details
     (let* ((date-relative (nth 3 revision))
            (date-full (nth 4 revision))
@@ -54,7 +69,7 @@ info in the `header-line-format' is a good indication."
                     date-full date-relative))))
 
   (after! evil
-    ;; rehash evil keybindings so they are recognized
+    ;; Rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)
@@ -83,6 +98,7 @@ info in the `header-line-format' is a good indication."
       "Start git-commit-mode in insert state if in a blank commit message,
 otherwise in default state."
       (when (and (bound-and-true-p evil-mode)
+                 (not (evil-emacs-state-p))
                  (bobp) (eolp))
         (evil-insert-state)))))
 

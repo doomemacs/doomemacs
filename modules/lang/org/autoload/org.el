@@ -305,6 +305,7 @@ Clock out if an active clock is running (or cancel it if prefix ARG is non-nil).
 If no clock is active, then clock into the last item. See `org-clock-in-last' to
 see how ARG affects this command."
   (interactive "P")
+  (require 'org-clock)
   (cond ((org-clocking-p)
          (if arg
              (org-clock-cancel)
@@ -386,7 +387,8 @@ another level of headings on each invocation."
 Made for `org-tab-first-hook' in evil-mode."
   (interactive)
   (cond ((not (and (bound-and-true-p evil-local-mode)
-                   (evil-insert-state-p)))
+                   (or (evil-insert-state-p)
+                       (evil-emacs-state-p))))
          nil)
         ((org-at-item-p)
          (if (eq this-command 'org-shifttab)
@@ -423,7 +425,8 @@ Made for `org-tab-first-hook'."
                ;; in the few cases where it does.
                (yas-indent-line 'fixed))
            (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                           (evil-insert-state-p))
+                           (evil-insert-state-p)
+                           (evil-emacs-state-p))
                        (yas--templates-for-key-at-point))
                   (yas-expand)
                   t)

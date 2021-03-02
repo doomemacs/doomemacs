@@ -73,3 +73,21 @@ list, the pair is destructured into (CAR . CDR)."
           (plist-put! p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
+
+;;;###autoload
+(defun doom-plist-keys (plist)
+  "Return the keys in PLIST."
+  (let (keys)
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    keys))
+
+;;;###autoload
+(defun doom-plist-values (plist)
+  "Return the values in PLIST."
+  (let (keys)
+    (while plist
+      (push (cadr plist) keys)
+      (setq plist (cddr plist)))
+    keys))

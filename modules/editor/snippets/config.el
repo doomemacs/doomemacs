@@ -15,7 +15,9 @@
              yas-lookup-snippet
              yas-insert-snippet
              yas-new-snippet
-             yas-visit-snippet-file)
+             yas-visit-snippet-file
+             yas-activate-extra-mode
+             yas-deactivate-extra-mode)
   :init
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)
@@ -76,18 +78,20 @@
   ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
   (add-hook 'snippet-mode-hook #'+snippets-read-only-maybe-h)
 
-  (map! :map yas-keymap
-        "C-e"         #'+snippets/goto-end-of-field
-        "C-a"         #'+snippets/goto-start-of-field
-        [M-right]     #'+snippets/goto-end-of-field
-        [M-left]      #'+snippets/goto-start-of-field
-        [M-backspace] #'+snippets/delete-to-start-of-field
-        [backspace]   #'+snippets/delete-backward-char
-        [delete]      #'+snippets/delete-forward-char-or-field
-        ;; Replace commands with superior alternatives
-        :map yas-minor-mode-map
-        [remap yas-new-snippet]        #'+snippets/new
-        [remap yas-visit-snippet-file] #'+snippets/edit)
+  (map! (:map yas-keymap
+         "C-e"         #'+snippets/goto-end-of-field
+         "C-a"         #'+snippets/goto-start-of-field
+         [M-right]     #'+snippets/goto-end-of-field
+         [M-left]      #'+snippets/goto-start-of-field
+         [M-backspace] #'+snippets/delete-to-start-of-field
+         [backspace]   #'+snippets/delete-backward-char
+         [delete]      #'+snippets/delete-forward-char-or-field
+         ;; Replace commands with superior alternatives
+         :map yas-minor-mode-map
+         [remap yas-new-snippet]        #'+snippets/new
+         [remap yas-visit-snippet-file] #'+snippets/edit)
+        (:map snippet-mode-map
+         "C-c C-k" #'+snippet--abort))
 
   ;; REVIEW Fix #2639: For some reason `yas--all-templates' returns duplicates
   ;;        of some templates. Until I figure out the real cause this fixes it.

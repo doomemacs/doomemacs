@@ -7,7 +7,6 @@
   :config
   (set-popup-rule! "^\\*HTTP Response" :size 0.4 :quit 'other)
 
-  ;; TODO PR this upstream! This adds imenu support to `restclient-mode'
   (setq-hook! 'restclient-mode-hook
     imenu-generic-expression '((nil "^[A-Z]+\s+.+" 0)))
 

@@ -106,7 +106,7 @@ more information on modifiers."
         (cond ((sp-point-in-comment pos)
                (setq evil-auto-indent nil)
                (if comment-line-break-function
-                   (funcall comment-line-break-function)
+                   (funcall comment-line-break-function nil)
                  (comment-indent-new-line)))
               ;; TODO Find a better way to do this
               ((and (eq major-mode 'haskell-mode)
@@ -121,7 +121,8 @@ more information on modifiers."
 (defun +evil--insert-newline-below-and-respect-comments-a (orig-fn count)
   (if (or (not +evil-want-o/O-to-continue-comments)
           (not (eq this-command 'evil-open-below))
-          (evil-insert-state-p))
+          (evil-insert-state-p)
+          (evil-emacs-state-p))
       (funcall orig-fn count)
     (letf! (defun evil-insert-newline-below () (+evil--insert-newline))
       (let ((evil-auto-indent evil-auto-indent))
@@ -131,7 +132,8 @@ more information on modifiers."
 (defun +evil--insert-newline-above-and-respect-comments-a (orig-fn count)
   (if (or (not +evil-want-o/O-to-continue-comments)
           (not (eq this-command 'evil-open-above))
-          (evil-insert-state-p))
+          (evil-insert-state-p)
+          (evil-emacs-state-p))
       (funcall orig-fn count)
     (letf! (defun evil-insert-newline-above () (+evil--insert-newline 'above))
       (let ((evil-auto-indent evil-auto-indent))
@@ -177,27 +179,31 @@ more information on modifiers."
   (if file (evil-edit file)))
 
 ;;;###autoload (autoload '+evil-join-a "editor/evil/autoload/advice" nil nil)
-(evil-define-operator +evil-join-a (beg end)
+(defun +evil-join-a (orig-fn beg end)
   "Join the selected lines.
 
 This advice improves on `evil-join' by removing comment delimiters when joining
 commented lines, by using `fill-region-as-paragraph'.
 
 From https://github.com/emacs-evil/evil/issues/606"
-  :motion evil-line
-  (let* ((count (count-lines beg end))
-         (count (if (> count 1) (1- count) count))
-         (fixup-mark (make-marker)))
-    (dotimes (var count)
-      (if (and (bolp) (eolp))
-          (join-line 1)
-        (let* ((end (line-beginning-position 3))
-               (fill-column (1+ (- end beg))))
-          (set-marker fixup-mark (line-end-position))
-          (fill-region-as-paragraph beg end nil t)
-          (goto-char fixup-mark)
-          (fixup-whitespace))))
-    (set-marker fixup-mark nil)))
+  ;; But revert to the default we're not in a comment, where
+  ;; `fill-region-as-paragraph' is too greedy.
+  (if (not (doom-point-in-comment-p (min (max beg (1+ (point))) end)))
+      (funcall orig-fn beg end)
+    (let* ((count (count-lines beg end))
+           (count (if (> count 1) (1- count) count))
+           (fixup-mark (make-marker)))
+      (unwind-protect
+          (dotimes (var count)
+            (if (and (bolp) (eolp))
+                (join-line 1)
+              (let* ((end (line-beginning-position 3))
+                     (fill-column (1+ (- end beg))))
+                (set-marker fixup-mark (line-end-position))
+                (fill-region-as-paragraph beg end nil t)
+                (goto-char fixup-mark)
+                (fixup-whitespace))))
+        (set-marker fixup-mark nil)))))
 
 ;;;###autoload
 (defun +evil--fix-dabbrev-in-minibuffer-h ()

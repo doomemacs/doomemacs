@@ -23,7 +23,7 @@ byte-compiled from.")
        (letf! ((default-directory doom-private-dir)
                (target +literate-config-file)
                (cache +literate-config-cache-file)
-               (dest (expand-file-name (concat (file-name-base target) ".el")))
+               (dest (expand-file-name (concat doom-module-config-file ".el")))
                ;; Operate on a copy because `org-babel-tangle' has
                ;; side-effects we need to undo immediately as not to
                ;; overwrite the user's config; it's bad ettiquite.

@@ -14,7 +14,7 @@
     "Emacs will remember that."
     "Emacs, Emacs never changes."
     "Hey! Hey, M-x listen!"
-    "I'm the man who's going to burn your house down! With lemons!"
+    "I'm the man who's going to burn your house down! With the lemons!"
     "It's not like I'll miss you or anything, b-baka!"
     "Okay, look. We've both said a lot of things you're going to regret..."
     "Wake up, Mr. Stallman. Wake up and smell the ashes."

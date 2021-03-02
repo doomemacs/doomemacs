@@ -84,7 +84,7 @@ echo Hello world
 #+END_SRC
 
 You'll find more information about babel src blocks and what parameters they
-support [[https://www.gnu.org/software/emacs/manual/html_node/org/Working-with-source-code.html#Working-with-source-code][in the manual]].
+support [[https://orgmode.org/manual/Working-with-Source-Code.html][in the manual]].
 
 ** Modularizing your literate config with ~#+INCLUDE~ directives
 Literate configs can be split up into separate files and imported into a central

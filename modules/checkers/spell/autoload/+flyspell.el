@@ -35,7 +35,7 @@ SCOPE can be `buffer' or `session' to exclude words only from the current buffer
 or session. Otherwise, the addition is permanent."
   (interactive
    (list (progn (require 'flyspell)
-                (flyspell-get-word))
+                (car (flyspell-get-word)))
          (cond ((equal current-prefix-arg '(16))
                 'session)
                ((equal current-prefix-arg '(4))
