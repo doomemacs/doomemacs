@@ -34,8 +34,9 @@
     (dolist (win (delq (selected-window) (window-list)))
       (with-selected-window win
         (and (eq major-mode 'org-mode)
-             buffer-file-name
-             (cl-pushnew (cons buffer-file-name (cons :maxlevel 10))
+             (buffer-file-name (buffer-base-buffer))
+             (cl-pushnew (cons (buffer-file-name (buffer-base-buffer))
+                               (cons :maxlevel 10))
                          org-refile-targets))))
     (call-interactively #'org-refile)))
 
