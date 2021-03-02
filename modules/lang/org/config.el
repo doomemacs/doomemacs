@@ -789,7 +789,7 @@ between the two."
          "O" #'+org/refile-to-other-buffer
          "v" #'+org/refile-to-visible
          "r" #'org-refile) ; to all `org-refile-targets'
-        (:prefix ("s" . "Tree/Subtree")
+        (:prefix ("s" . "tree/subtree")
          "a" #'org-toggle-archive-tag
          "b" #'org-tree-to-indirect-buffer
          "d" #'org-cut-subtree
@@ -803,10 +803,10 @@ between the two."
          "A" #'org-archive-subtree
          "N" #'widen
          "S" #'org-sort)
-        (:prefix ("p" . "Org Priority")
-         "d" #'org-agenda-priority-down
-         "p" #'org-agenda-priority
-         "u" #'org-agenda-priority-up))
+        (:prefix ("p" . "priority")
+         "d" #'org-priority-down
+         "p" #'org-priority
+         "u" #'org-priority-up))
 
   (map! :after org-agenda
         :map org-agenda-mode-map
@@ -822,7 +822,7 @@ between the two."
          "o" #'org-agenda-clock-out
          "r" #'org-agenda-clockreport-mode
          "s" #'org-agenda-show-clocking-issues)
-        (:prefix ("p" . "Org Priority")
+        (:prefix ("p" . "priority")
          "d" #'org-agenda-priority-down
          "p" #'org-agenda-priority
          "u" #'org-agenda-priority-up)
