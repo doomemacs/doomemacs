@@ -234,6 +234,7 @@ Also adds support for a `:sync' parameter to override `:async'."
                    (member (car info) org-babel-async-language-blacklist))
                (funcall fn arg info params))
               ((not (member (cdr (assq :session params)) '("none" nil)))
+               (message "Org babel :: :session is incompatible with :async. Executing synchronously!")
                nil)
               ((funcall orig-fn fn arg info params))))))
 
