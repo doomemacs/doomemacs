@@ -5,11 +5,11 @@
   "Return a symbol representing the installed distro."
   (cond (IS-WINDOWS 'windows)
         (IS-MAC     'macos)
-        ((file-exists-p "/etc/os-release")
-         (with-temp-buffer
-           (insert-file-contents "/etc/os-release")
-           (when (re-search-forward "^ID=\\([^\"$]+\\)" nil t)
-             (intern (downcase (match-string 1))))))
+        ((and (file-exists-p "/etc/os-release")
+              (with-temp-buffer
+                (insert-file-contents "/etc/os-release")
+                (when (re-search-forward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)
+                  (intern (downcase (match-string 1)))))))
         ;; A few redundancies in case os-release fails us
         ((file-exists-p "/etc/debian_version")
          'debian)
@@ -35,11 +35,11 @@
         (sh "lsb_release" "-s" "-d"))
        ((executable-find "nixos-version")
         (format "NixOS %s" (sh "nixos-version")))
-       ((file-exists-p "/etc/os-release")
-        (with-temp-buffer
-          (insert-file-contents "/etc/os-release")
-          (when (re-search-forward "^PRETTY_NAME=\"\\([^\"]+\\)\"" nil t)
-            (intern (downcase (match-string 1))))))
+       ((and (file-exists-p "/etc/os-release")
+             (with-temp-buffer
+               (insert-file-contents "/etc/os-release")
+               (when (re-search-forward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
+                 (match-string 1)))))
        ((when-let (files (doom-glob "/etc/*-release"))
           (truncate-string-to-width
            (replace-regexp-in-string "\n" " " (cat (car files) 73) nil t)
