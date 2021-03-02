@@ -684,7 +684,6 @@ between the two."
         "I" #'org-toggle-inline-images
         "n" #'org-store-link
         "o" #'org-set-property
-        "p" #'org-priority
         "q" #'org-set-tags-command
         "t" #'org-todo
         "T" #'org-todo-list
@@ -803,11 +802,11 @@ between the two."
          "s" #'org-sparse-tree
          "A" #'org-archive-subtree
          "N" #'widen
-         "S" #'org-sort
-         (:prefix ("p" . "Org Priority")
-          "d" #'org-priority-down
-          "p" #'org-priority
-          "u" #'org-priority-up)))
+         "S" #'org-sort)
+        (:prefix ("p" . "Org Priority")
+         "d" #'org-agenda-priority-down
+         "p" #'org-agenda-priority
+         "u" #'org-agenda-priority-up))
 
   (map! :after org-agenda
         :map org-agenda-mode-map
@@ -823,11 +822,10 @@ between the two."
          "o" #'org-agenda-clock-out
          "r" #'org-agenda-clockreport-mode
          "s" #'org-agenda-show-clocking-issues)
-        (:prefix ("P" . "Org Priority")
+        (:prefix ("p" . "Org Priority")
          "d" #'org-agenda-priority-down
          "p" #'org-agenda-priority
          "u" #'org-agenda-priority-up)
-        "p" #'org-agenda-priority
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "t" #'org-agenda-todo))
