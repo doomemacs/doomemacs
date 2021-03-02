@@ -45,6 +45,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
 | [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
 | [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
+| [[../../lang/julia/README.org][:lang julia]]      | julia-mode                                              | LanguageServer.jl                                             |
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
 | [[../../lang/php/README.org][:lang php]]        | php-mode                                                | php-language-server                                           |
 | [[../../lang/python/README.org][:lang python]]     | python-mode                                             | lsp-python-ms                                                 |
