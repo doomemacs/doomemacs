@@ -118,7 +118,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + java =+meghanada +eclim +lsp= - TODO
 + [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypeScript, and CoffeeScript support
 + [[file:../modules/lang/json/README.org][json]] =+lsp= - TODO
-+ julia =+lsp= - TODO
++ [[file:../modules/lang/julia/README.org][julia]] =+lsp= - TODO
 + kotlin =+lsp+= - TODO
 + [[file:../modules/lang/latex/README.org][latex]] =+latexmk +cdlatex +fold +lsp= - TODO
 + lean - TODO

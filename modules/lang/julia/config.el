@@ -65,26 +65,26 @@
     (term-set-escape-char ?\C-c)))
 
 
+(when (featurep! +lsp)
+  (add-hook 'julia-mode-local-vars-hook #'lsp!))
+
+
 (use-package! lsp-julia
-  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
+  :when (featurep! +lsp)
+  :unless (featurep! :tools lsp +eglot)
   :after lsp-mode
   :preface
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
-  (when (featurep! +lsp)
-    (add-hook 'julia-mode-local-vars-hook #'lsp!)
-    (setq lsp-julia-package-dir nil)))
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.0"))
+
 
 (use-package! eglot-jl
-  :when (and (featurep! +lsp) (featurep! :tools lsp +eglot))
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp +eglot)
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl
   (setq eglot-jl-language-server-project "~/.julia/environments/v1.0")
+  :init
   ;; Prevent timeout while installing LanguageServer.jl
-  (add-hook! 'julia-mode-hook
-    (defun +julia-eglot-timeout-h ()
-      "Ensure that the `eglot-connect-timeout' is at least 60s in `julia-mode' buffers."
-      (when (< eglot-connect-timeout 60)
-        (setq-local eglot-connect-timeout 60))))
-  :config
-  (eglot-jl-init))
+  (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
+  :config (eglot-jl-init))
