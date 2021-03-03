@@ -3,4 +3,4 @@
 
 (package! emacs-everywhere
   :recipe (:host github :repo "tecosaur/emacs-everywhere")
-  :pin "d84b397c9a82c2fea1b0c87740c395a2c7af3be8")
+  :pin "01e031e6643ada701e3e904560b7172e00bb0e9a")
