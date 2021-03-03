@@ -122,10 +122,7 @@ See `display-line-numbers' for what these values mean."
 ;;;###autoload
 (defun doom/window-maximize-buffer (&optional arg)
   "Close other windows to focus on this one.
-
-Activate again to undo this. If prefix ARG is non-nil, don't restore the last
-window configuration and re-maximize the current window. Alternatively, use
-`doom/window-enlargen'."
+Use `winner-undo' to undo this. Alternatively, use `doom/window-enlargen'."
   (interactive "P")
   (when (and (bound-and-true-p +popup-mode)
              (+popup-window-p))
@@ -134,8 +131,9 @@ window configuration and re-maximize the current window. Alternatively, use
 
 ;;;###autoload
 (defun doom/window-enlargen (&optional arg)
-  "Enlargen the current window to focus on this one. Does not close other
-windows (unlike `doom/window-maximize-buffer'). Activate again to undo."
+  "Enlargen the current window (i.e. shrinks others) so you can focus on it.
+Use `winner-undo' to undo this. Alternatively, use
+`doom/window-maximize-buffer'."
   (interactive "P")
   (let* ((window (selected-window))
          (dedicated-p (window-dedicated-p window))
