@@ -19,7 +19,7 @@
    (list current-prefix-arg
          (read-file-name "Select file to refile to: "
                          default-directory
-                         buffer-file-name
+                         (buffer-file-name (buffer-base-buffer))
                          t nil
                          (lambda (f) (string-match-p "\\.org$" f)))))
   (+org/refile-to-current-file arg file))
@@ -33,11 +33,11 @@
         current-prefix-arg)
     (dolist (win (delq (selected-window) (window-list)))
       (with-selected-window win
-        (and (eq major-mode 'org-mode)
-             (buffer-file-name (buffer-base-buffer))
-             (cl-pushnew (cons (buffer-file-name (buffer-base-buffer))
-                               (cons :maxlevel 10))
-                         org-refile-targets))))
+        (let ((file (buffer-file-name (buffer-base-buffer))))
+          (and (eq major-mode 'org-mode)
+               file
+               (cl-pushnew (cons file (cons :maxlevel 10))
+                           org-refile-targets)))))
     (call-interactively #'org-refile)))
 
 ;;;###autoload
@@ -48,10 +48,9 @@
         org-refile-targets
         current-prefix-arg)
     (dolist (buf (delq (current-buffer) (doom-buffers-in-mode 'org-mode)))
-      (with-current-buffer buf
-        (and buffer-file-name
-             (cl-pushnew (cons buffer-file-name (cons :maxlevel 10))
-                         org-refile-targets))))
+      (when-let (file (buffer-file-name (buffer-base-buffer buf)))
+        (cl-pushnew (cons file (cons :maxlevel 10))
+                    org-refile-targets)))
     (call-interactively #'org-refile)))
 
 ;;;###autoload
