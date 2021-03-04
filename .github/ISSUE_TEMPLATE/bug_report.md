@@ -1,8 +1,12 @@
 ---
 name: Bug report
 about: Doom might be misbehaving
-labels: is:bug
 ---
+<!-- 
+  Please take the time to write a detailed bug report. Your issue will be 
+  automatically deleted if it is too vague or fails to adhere to this template 
+  without good reason.
+-->
 
 **What did you expect to happen?**
 ...
@@ -32,7 +36,10 @@ https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#how
 1. Select these example steps,
 2. Delete them,
 3. And replace them with precise steps to reproduce your issue.
-4. Fill in "system information" below.
+4. Include code samples and keybinds.
+5. Please don't skimp on details.
+6. And remember to fill in "system information" below or this issue will be
+   immediately deleted.
 
 
 **System information:**
