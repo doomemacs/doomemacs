@@ -274,7 +274,7 @@ processed."
                         (plist-put recipe :type 'git)
                       recipe))
             (repo (if-let (local-repo (plist-get recipe :local-repo))
-                      (file-name-nondirectory (directory-file-name local-repo))
+                      (directory-file-name local-repo)
                     (ignore-errors (straight-vc-local-repo-name recipe)))))
       repo
     (symbol-name package)))
@@ -420,8 +420,8 @@ ones."
         (when (and (not ignore)
                    (not disable)
                    (or pin unpin))
-          (setf (alist-get (doom-package-recipe-repo name) alist
-                           nil 'remove #'equal)
+          (setf (alist-get (file-name-nondirectory (doom-package-recipe-repo name))
+                           alist nil 'remove #'equal)
                 (unless unpin pin)))))))
 
 (defun doom-package-recipe-list ()

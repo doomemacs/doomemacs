@@ -526,7 +526,8 @@ If prefix arg is present, refresh the cache."
            (insert "\n" indent)
 
            (package--print-help-section "Repo location")
-           (let ((repo-dir (straight--repos-dir (symbol-name package))))
+           (let* ((local-repo (doom-package-recipe-repo package))
+                  (repo-dir (straight--repos-dir local-repo)))
              (if (file-exists-p repo-dir)
                  (doom--help-insert-button (abbreviate-file-name repo-dir))
                (insert "n/a"))
