@@ -78,7 +78,8 @@
        :desc "Recent project files"        "R"   #'projectile-recentf
        :desc "Sudo this file"              "u"   #'doom/sudo-this-file
        :desc "Sudo find file"              "U"   #'doom/sudo-find-file
-       :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
+       :desc "Yank file path"              "y"   #'+default/yank-buffer-path
+       :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project
        :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
        :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer)
 
