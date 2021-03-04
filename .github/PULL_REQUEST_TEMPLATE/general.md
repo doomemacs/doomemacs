@@ -4,6 +4,7 @@ about: A general code or documentation PR
 ---
 > Please follow these steps before submitting your PR:
 >
+> - [ ] Make sure yours is the only PR for your issue!
 > - [ ] This PR targets the `develop` branch and not `master`
 > - [ ] If your PR is a work in progress, include [WIP] in its title
 > - [ ] Its commits' summaries are reasonably descriptive
