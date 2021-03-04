@@ -51,6 +51,7 @@ welcome to [[https://discord.gg/qvGgnVx][join us on our Discord server]].
 
 * TODO Day 1 in Doom Emacs
 * TODO An introduction to modal editing with Evil
+[[https://github.com/vim/vim/blob/master/runtime/tutor/tutor][vim tutor]] is an excellent introduction to modal editing. Everything, or at least nearly everything, you learn there will be applicable here. To start vim tutor type ~vimtutor~ in your terminal
 ** TODO An introduction to Vim
 ** TODO Getting around the buffer
 ** TODO Operating with operators
