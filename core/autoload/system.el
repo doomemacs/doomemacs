@@ -25,7 +25,7 @@
 (defun doom-system-distro-version ()
   "Return a distro name and version string."
   (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
-    (let ((disto (doom-system-distro)))
+    (let ((distro (doom-system-distro)))
       (cond
        ((eq distro 'windows)
         (format "Windows %s" "Unknown")) ; TODO
