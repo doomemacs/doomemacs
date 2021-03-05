@@ -10,6 +10,14 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
 If set to `quiet', suppress the install prompt and don't visibly inform the user
 about it (it will be logged to *Messages* however).")
 
+(cl-defun +lsp-find-definition-or-dumb-jump ()
+  "Find definition using LSP, falling back to dumb-jump when necessary."
+  (interactive)
+  (let ((loc (lsp-request "textDocument/definition"
+                          (lsp--text-document-position-params))))
+    (if (seq-empty-p loc)
+        (dumb-jump-go) ;; todo: this is technically deprecated
+      (lsp-show-xrefs (lsp--locations-to-xref-items loc) nil nil))))
 
 ;;
 ;;; Packages
@@ -58,7 +66,7 @@ about it (it will be logged to *Messages* however).")
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation #'lsp-describe-thing-at-point
-    :definition #'lsp-find-definition
+    :definition #'lsp-find-definition-or-dumb-jump
     :implementations #'lsp-find-implementation
     :type-definition #'lsp-find-type-definition
     :references #'lsp-find-references)
