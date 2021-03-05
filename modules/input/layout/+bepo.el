@@ -82,6 +82,14 @@
     (after! treemacs
       (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
     (after! (:or helm ivy selectrum icomplete)
+      (doom-bepo--evil-collection-hook
+        nil
+       '(minibuffer-local-map
+         minibuffer-local-ns-map
+         minibuffer-local-completion-map
+         minibuffer-local-must-match-map
+         minibuffer-local-isearch-map
+         read-expression-map))
       (doom-bepo-rotate-bare-keymap
        '(minibuffer-local-map
          minibuffer-local-ns-map
@@ -91,7 +99,10 @@
          read-expression-map)
        doom-bepo-cr-rotation-style))
     (after! ivy
-      (doom-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(ivy-minibuffer-map ivy-switch-buffer-map)))
+    (after! swiper
+      (map! :map swiper-map "C-s" nil))
     (after! helm
       (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style))
     (after! helm-rg
