@@ -42,6 +42,7 @@
       image
       kotlin-mode
       occur
+      outline
       package-menu
       simple
       slime
