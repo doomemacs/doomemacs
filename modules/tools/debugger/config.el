@@ -13,7 +13,7 @@
     (realgud:trepan2   :modes (python-mode))
     (realgud:trepan3k  :modes (python-mode))
     (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
-    (realgud:trepanpl  :modes (perl-mode perl6-mode))
+    (realgud:trepanpl  :modes (perl-mode perl6-mode raku-mode))
     (realgud:zshdb     :modes (sh-mode))))
 
 (defvar +debugger--dap-alist
