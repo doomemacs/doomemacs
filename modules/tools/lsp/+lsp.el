@@ -118,8 +118,9 @@ server getting expensively restarted when reverting buffers."
 
   (defadvice! +lsp-dont-prompt-to-install-servers-maybe-a (orig-fn &rest args)
     :around #'lsp
-    (lsp--require-packages)
     (when (buffer-file-name)
+      (require 'lsp-mode)
+      (lsp--require-packages)
       (if (or (lsp--filter-clients
                (-andfn #'lsp--matching-clients?
                        #'lsp--server-binary-present?))
