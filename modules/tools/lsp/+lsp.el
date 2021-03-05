@@ -57,11 +57,11 @@ about it (it will be logged to *Messages* however).")
 
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode :async t
+    ;; NOTE :definitions and :references aren't needed. LSP is integrated into
+    ;;      xref, which the lookup module has first class support for.
     :documentation #'lsp-describe-thing-at-point
-    :definition #'lsp-find-definition
     :implementations #'lsp-find-implementation
-    :type-definition #'lsp-find-type-definition
-    :references #'lsp-find-references)
+    :type-definition #'lsp-find-type-definition)
 
   (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
