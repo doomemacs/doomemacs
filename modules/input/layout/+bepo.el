@@ -104,11 +104,17 @@
     (after! swiper
       (map! :map swiper-map "C-s" nil))
     (after! helm
-      (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-map)))
     (after! helm-rg
-      (doom-bepo-rotate-bare-keymap '(helm-rg-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-rg-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-rg-map)))
     (after! helm-files
-      (doom-bepo-rotate-bare-keymap '(helm-read-file-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-read-file-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-read-file-map)))
+    (after! selectrum
+      (doom-bepo-rotate-bare-keymap '(selectrum-minibuffer-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(selectrum-minibuffer-map)))
     (after! company
       (doom-bepo-rotate-bare-keymap '(company-active-map company-search-map) doom-bepo-cr-rotation-style))
     (after! evil-snipe
