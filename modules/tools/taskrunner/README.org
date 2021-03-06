@@ -25,7 +25,7 @@ This module provides no flags.
 + [[https://github.com/emacs-taskrunner/helm-taskrunner][helm-taskrunner]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Features
 Keybindings

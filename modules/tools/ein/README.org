@@ -20,7 +20,7 @@ This module provides no flags.
 + [[https://github.com/millejoh/emacs-ipython-notebook][ein]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Features
 Please refer [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].

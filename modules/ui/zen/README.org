@@ -35,7 +35,7 @@ This module provides no flags.
   well; See https://gitlab.com/jabranham/mixed-pitch/issues/6#note_79691741.
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Features
 ** Distractions-free mode

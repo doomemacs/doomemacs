@@ -33,7 +33,7 @@ This module provides no flags.
 + [[https://github.com/hlissner/emacs-solaire-mode][solaire-mode]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Configuration
 ** Changing theme

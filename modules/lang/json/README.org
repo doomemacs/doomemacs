@@ -28,7 +28,7 @@ This module has no dedicated maintainers.
 + [[https://github.com/Sterlingg/json-snatcher][json-snatcher]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
