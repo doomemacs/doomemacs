@@ -186,6 +186,7 @@ stored in `persp-save-dir'.")
         persp-interactive-init-frame-behaviour-override #'+workspaces-associate-frame-fn
         persp-emacsclient-init-frame-behaviour-override #'+workspaces-associate-frame-fn)
   (add-hook 'delete-frame-functions #'+workspaces-delete-associated-workspace-h)
+  (add-hook 'server-done-hook #'+workspaces-delete-associated-workspace-h)
 
   ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces-set-project-action-fn
