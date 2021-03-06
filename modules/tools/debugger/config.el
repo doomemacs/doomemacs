@@ -38,6 +38,12 @@
 (setq gdb-show-main t
       gdb-many-windows t)
 
+(use-package! projectile-variable
+  :defer t
+  :commands (projectile-variable-put
+             projectile-variable-get
+             projectile-variable-alist
+             projectile-variable-plist))
 
 (use-package! realgud
   :defer t
