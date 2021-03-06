@@ -142,3 +142,10 @@ If DIR is not a project, it will be indexed (but not cached)."
            ((doom-module-p :completion 'helm)
             #'helm-find-files)
            (#'find-file)))))
+
+;;;###autoload
+(defun doom-project-ignored-p (project-root)
+  "Return non-nil if remote or temporary file, or a straight package."
+  (or (file-remote-p project-root)
+      (file-in-directory-p project-root temporary-file-directory)
+      (file-in-directory-p project-root doom-local-dir)))
