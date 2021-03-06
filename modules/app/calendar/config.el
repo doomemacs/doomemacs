@@ -62,9 +62,9 @@
            :m [backtab] #'cfw:details-navi-next-item-command
            :m "q"   #'cfw:details-kill-buffer-command
            :m "C-h" #'cfw:details-navi-prev-command
-           :m "C-l" #'cfw:details-navi-prev-command
-           :m "C-j" #'cfw:details-navi-next-command
-           :m "C-k" #'cfw:details-navi-prev-command)))
+           :m "C-l" #'cfw:details-navi-next-command
+           :m "C-k" #'cfw:details-navi-prev-item-command
+           :m "C-j" #'cfw:details-navi-next-item-command)))
 
   (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
   (add-hook 'cfw:calendar-mode-hook #'hide-mode-line-mode)
