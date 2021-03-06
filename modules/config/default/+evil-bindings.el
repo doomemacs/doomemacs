@@ -56,7 +56,9 @@
                       ;; mode-local ones for modes that don't have an evil
                       ;; keybinding scheme or users who don't have :editor (evil
                       ;; +everywhere) enabled.
-                      (doom-lookup-key [tab] (list (current-local-map)))
+                      (doom-lookup-key
+                       [tab] (list (current-local-map)
+                                   (evil-get-auxiliary-keymap (current-local-map) evil-state)))
                       it
                       (fboundp 'evil-jump-item)
                       #'evil-jump-item)
