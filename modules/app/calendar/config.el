@@ -22,6 +22,8 @@
         cfw:fchar-top-left-corner ?┏
         cfw:fchar-top-right-corner ?┓)
 
+  (set-popup-rule! "^\\*cfw:details" :quit t :ttl 0 :select t :size 0.4)
+
   (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
 
   (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
