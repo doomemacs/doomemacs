@@ -27,8 +27,10 @@ toward a specific purpose. They may have additional dependencies and *should be
 loaded last*, before =:config= modules.
 
 + [[file:../modules/app/calendar/README.org][calendar]] - TODO
++ [[file:../modules/app/emms/README.org][emms]] - TODO
++ [[file:../modules/app/everywhere/README.org][everywhere]] - TODO
 + [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
-+ rss =+org= - an RSS client in Emacs
++ [[file:../modules/app/rss/README.org][rss]] =+org= - an RSS client in Emacs
 + [[file:../modules/app/twitter/README.org][twitter]] - A twitter client for Emacs
 
 * :checkers
@@ -155,12 +157,12 @@ Modules that bring support for a language or group of languages to Emacs.
 Modules to improve integration into your OS, system, or devices.
 
 + [[file:../modules/os/macos/README.org][macos]] - Improve Emacs' compatibility with macOS
-+ tty =+osc= - Improves the terminal Emacs experience.
++ [[file:../modules/os/tty/README.org][tty]] =+osc= - Improves the terminal Emacs experience.
 
 * :term
 Modules that offer terminal emulation.
 
-+ eshell - TODO
++ [[file:../modules/term/eshell/README.org][eshell]] - TODO
 + shell - TODO
 + term - TODO
 + [[file:../modules/term/vterm/README.org][vterm]] - TODO
@@ -198,7 +200,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/doom-dashboard/README.org][doom-dashboard]] - TODO
 + [[file:../modules/ui/doom-quit/README.org][doom-quit]] - TODO
 + [[file:../modules/ui/emoji/README.org][emoji]] =+ascii +github +unicode= - Adds emoji support to Emacs
-+ fill-column - TODO
++ [[file:../modules/ui/fill-column/README.org][fill-column]] - TODO
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
 + [[file:../modules/ui/hydra/README.org][hydra]] - TODO
 + indent-guides - TODO
