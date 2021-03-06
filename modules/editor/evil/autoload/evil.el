@@ -93,15 +93,15 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   (interactive) (+evil--window-swap 'down))
 
 ;;;###autoload
-(defun +evil-window-split-and-follow ()
+(defun +evil/window-split-and-follow ()
   "Split current window horizontally, then focus new window.
-If `evil-split-window-right' is non-nil, the new window isn't focused."
+If `evil-vsplit-window-right' is non-nil, the new window isn't focused."
   (interactive)
-  (let ((evil-vsplit-window-right (notevil-vsplit-window-right )))
+  (let ((evil-vsplit-window-right (not evil-vsplit-window-right)))
     (call-interactively #'evil-window-split)))
 
 ;;;###autoload
-(defun +evil-window-vsplit-and-follow ()
+(defun +evil/window-vsplit-and-follow ()
   "Split current window vertically, then focus new window.
 If `evil-split-window-below' is non-nil, the new window isn't focused."
   (interactive)

@@ -531,8 +531,8 @@ directives. By default, this only recognizes C directives.")
        "C-l"     #'evil-window-right
        "C-w"     #'other-window
        ;; Extra split commands
-       "S"       #'+evil-window-split-and-follow
-       "V"       #'+evil-window-vsplit-and-follow
+       "S"       #'+evil/window-split-and-follow
+       "V"       #'+evil/window-vsplit-and-follow
        ;; Swapping windows
        "H"       #'+evil/window-move-left
        "J"       #'+evil/window-move-down
