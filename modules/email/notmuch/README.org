@@ -44,11 +44,13 @@ This module requires:
 
 ** Arch Linux
 Run one of the following commands.
+
 #+BEGIN_SRC sh
-#sudo pacman -S isync notmuch #mbsync
-## OR
-#sudo pacman -S offlineimap notmuch
-##+END_SRC
+pacman -S isync notmuch #mbsync
+#+END_SRC
+#+BEGIN_SRC sh
+pacman -S offlineimap notmuch
+#+END_SRC
 
 See: [[https://wiki.archlinux.org/index.php/Notmuch][Arch Wiki - Notmuch]]
 
@@ -117,12 +119,10 @@ notmuch new
 #+END_SRC
 
 ** Customize =*notmuch-hello*= buffer
-
 It is possible to change the =*notmuch-hello*= buffer if you want to.
 
 #+BEGIN_SRC emacs-lisp
-(use-package! notmuch
-  :config
+(after! notmuch
   (setq notmuch-show-log nil
         notmuch-hello-sections `(notmuch-hello-insert-saved-searches
                                  notmuch-hello-insert-alltags)
@@ -132,9 +132,13 @@ It is possible to change the =*notmuch-hello*= buffer if you want to.
 
 ** Changing the =notmuch= landing page
 
-You may want to forego the =*notmuch-hello*= buffer by having ~M-x =notmuch~ or ~SPC o m~ take you straight to a search page.
+You may want to forego the =*notmuch-hello*= buffer by having ~M-x =notmuch~ or
+~SPC o m~ take you straight to a search page.
 
-When using ~SPC o m~ the =+notmuch-home-function= is called. By default it uses the =notmuch= function and so has the same familiar behavior of running a vanilla install of notmuch-emacs. But, by overwriting this function you can run a custom search as your landing page.
+When using ~SPC o m~ the =+notmuch-home-function= is called. By default it uses
+the =notmuch= function and so has the same familiar behavior of running a
+vanilla install of notmuch-emacs. But, by overwriting this function you can run
+a custom search as your landing page.
 
 #+BEGIN_SRC emacs-lisp
 (setq +notmuch-home-function (lambda () (notmuch-search "tag:inbox")))
