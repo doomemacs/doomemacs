@@ -8,27 +8,17 @@
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
-  - [[#adding-major-modes][Adding Major Modes]]
+  - [[#adding-support-for-more-major-modes][Adding support for more major modes]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-Add EditorConfig integration for Doom
-
-#+BEGIN_QUOTE
-EditorConfig helps maintain consistent coding styles for multiple developers
-working on the same project across various editors and IDEs. The EditorConfig
-project consists of a file format for defining coding styles and a collection of
-text editor plugins that enable editors to read the file format and adhere to
-defined styles. EditorConfig files are easily readable and they work nicely with
-version control systems.
-#+END_QUOTE
-
-This module...
-+ Adds support for editorconfig properties through the plugin
-+ Provides a rudimentary back-end for editorconfig parsing
+This module integrates [[https://editorconfig.org/][EditorConfig]] into Emacs, allowing users to dictate code
+style on a per-project basis with an =.editorconfig= file ([[https://editorconfig-specification.readthedocs.io/][formal
+specification]]).
 
 ** Maintainers
 This module has no dedicated maintainers
@@ -38,34 +28,51 @@ This module provides no flags.
 
 ** Plugins
 + [[https://github.com/editorconfig/editorconfig-emacs][editorconfig-emacs]]
+ 
+** Hacks
++ Added logic to guess an extension-less file's type from its shebang line. For
+  example, editorconfig rules for =*.py= files will apply to =bin/myscript=
+  assuming its first line is ~#!/usr/bin/env python~. See
+  ~+editorconfig-mode-alist~ for adding support for more languages.
++ *Special integration for =dtrt-indent=:* If the local editorconfig file
+  specifies ~indent_style~ or ~indent_size~, the =dtrt-indent= (which tries to
+  guess your indent settings by analyzing your text file) will bow out.
++ *Special integration for =ws-butler=:* this module will use =ws-butler= to
+  enforce ~trim_trailing_whitespace~.
 
 * Prerequisites
-The ~editorconfig~ binary is an optional requirement of this module.
-the elisp only implementation may be sufficient, but has fewer features
-and is slower in most cases. You may get an advantage by installing
-[[https://github.com/editorconfig#contributing][one of the many]] EditorConfig core implementations either from your
-package manager or from source
+This module has one optional dependency: the ~editorconfig~ native binary.
+Without it, a built-in elisp implementation will be used, but it has fewer
+features and can be a bit slower.
+
+The editorconfig binary has [[https://github.com/editorconfig#contributing][many implementations]] you can choose from, typically
+available through your OS package manager (or build it yourself).
 
 * Features
-You will need to write an ~.editorconfig~ file in your project
-(this is usually in the root of your project) you can find out about all the
-properties [[https://editorconfig.org/#example-file][here]]
+You will need to write an ~.editorconfig~ file in your project (this is usually
+in the root of your project) you can find out about all the properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
+** Adding support for more major modes
+Out the box, the editorconfig plugin supports many Emacs major modes, but it's
+possible you'll find one it doesn't support. Adding support is easy so long as
+you know that mode's indentation variables. For example, ~coffee-mode~ has a
+~coffee-tab-width~ variable that controls indentation width in CoffeeScript
+files. Editorconfig already supports this language, but let's pretend it
+doesn't:
 
-** Adding Major Modes
+The ~editorconfig-indentation-alist~ variable contains a list of major modes and
+their indentation variables. To add coffee-mode to it:
 
-If you don't know the indentation variable(s), use =SPC h v= to search for variables that have =indent=, =offset= or =tab-width= in their name. Likely prefixed with the plugin they belong to. e.g. rustic-indent-offset).
 #+BEGIN_SRC emacs-lisp
 (after! editorconfig
-  ;; This entry already exists in `editorconfig-indentation-alist'; it is being used
-  ;; as an example.
-  (add-to-list 'editorconfig-indentation-alist '(c-mode c-basic-offset))
   (add-to-list 'editorconfig-indentation-alist '(coffee-mode coffee-tab-width)))
 #+END_SRC
 
-If you do not know the indentation variable/variables, (in the major mode in
-question use =SPC h v= to look for any variable that has =indent=, =offset=
-or =tab-width=  in its name.)
+But what if you don't know the correct indentation variable(s). Use =SPC h v=
+(=C-h v= for non-evil users) to peruse all the available variables in your
+current session of Emacs. Look for variables that have the words =indent=,
+=offset= or =tab-width= in them. They will be prefixed with the plugin they
+belong to (e.g. ~rustic-indent-offset~).
 
 * TODO Troubleshooting
