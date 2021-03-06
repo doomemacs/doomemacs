@@ -73,12 +73,12 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (defun +vc-gutter-update-h (&rest _)
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."
-      (unless (or (memq this-command '(git-gutter:stage-hunk
+      (ignore (or (memq this-command '(git-gutter:stage-hunk
                                        git-gutter:revert-hunk))
-                  inhibit-redisplay)
-        (ignore (if git-gutter-mode
-                    (git-gutter)
-                  (+vc-gutter-init-maybe-h))))))
+                  inhibit-redisplay
+                  (if git-gutter-mode
+                      (git-gutter)
+                    (+vc-gutter-init-maybe-h))))))
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
   (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
@@ -87,9 +87,9 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     "Fixes `git-gutter:next-hunk' and `git-gutter:previous-hunk' sometimes
   jumping to random hunks."
     :override #'git-gutter:search-near-diff-index
-    (cl-position-if (let ((lineno (line-number-at-pos)))
-                      (lambda (line)
-                        (funcall (if is-reverse #'> #'<) lineno line)))
+    (cl-position-if (let ((lineno (line-number-at-pos))
+                          (fn (if is-reverse #'> #'<)))
+                      (lambda (line) (funcall fn lineno line)))
                     diffinfos
                     :key #'git-gutter-hunk-start-line
                     :from-end is-reverse)))
