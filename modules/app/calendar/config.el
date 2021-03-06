@@ -67,7 +67,7 @@
            :m "C-k" #'cfw:details-navi-prev-command)))
 
   (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
-  (add-hook 'cfw:calendar-mode-hook 'hide-mode-line-mode)
+  (add-hook 'cfw:calendar-mode-hook #'hide-mode-line-mode)
 
   (advice-add #'cfw:render-button :override #'+calendar-cfw:render-button-a))
 
@@ -79,18 +79,17 @@
              cfw:open-org-calendar-withkevin
              my-open-calendar))
 
+
 (use-package! calfw-cal
   :commands (cfw:cal-create-source))
+
 
 (use-package! calfw-ical
   :commands (cfw:ical-create-source))
 
 
 (use-package! org-gcal
-  :commands (org-gcal-sync
-             org-gcal-fetch
-             org-gcal-post-at-point
-             org-gcal-delete-at-point)
+  :defer t
   :init
   (defvar org-gcal-dir (concat doom-cache-dir "org-gcal/"))
   (defvar org-gcal-token-file (concat org-gcal-dir "token.gpg"))
