@@ -1,18 +1,71 @@
-#+TITLE: :tools editorconfig
+#+TITLE:   tools/editorconfig
+#+DATE:    August 22, 2020
+#+SINCE:   2.0.9
+#+STARTUP: inlineimages nofold
 
-Editorconfig integration for Doom.
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#adding-major-modes][Adding Major Modes]]
+- [[#troubleshooting][Troubleshooting]]
 
-* Table of Contents :TOC:
-- [[Module Flags][Module Flags]]
-- [[Prerequisites][Prerequisites]]
-- [[Configuration][Configuration]]
+* Description
+Add EditorConfig integration for Doom
 
-* Module Flags
+#+BEGIN_QUOTE
+EditorConfig helps maintain consistent coding styles for multiple developers
+working on the same project across various editors and IDEs. The EditorConfig
+project consists of a file format for defining coding styles and a collection of
+text editor plugins that enable editors to read the file format and adhere to
+defined styles. EditorConfig files are easily readable and they work nicely with
+version control systems.
+#+END_QUOTE
+
+This module...
++ Adds support for editorconfig properties through the plugin
++ Provides a rudimentary back-end for editorconfig parsing
+
+** Maintainers
+This module has no dedicated maintainers
+
+** Module Flags
 This module provides no flags.
 
+** Plugins
++ [[https://github.com/editorconfig/editorconfig-emacs][editorconfig-emacs]]
+
 * Prerequisites
-~editorconfig~ is an optional requirement of this package. The elisp-only
-implementation may be sufficient, but has fewer features.
+The ~editorconfig~ binary is an optional requirement of this module.
+the elisp only implementation may be sufficient, but has fewer features
+and is slower in most cases. You may get an advantage by installing
+[[https://github.com/editorconfig#contributing][one of the many]] EditorConfig core implementations either from your
+package manager or from source
+
+* Features
+You will need to write an ~.editorconfig~ file in your project
+(this is usually in the root of your project) you can find out about all the
+properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
 
+** Adding Major Modes
+
+If you don't know the indentation variable(s), use =SPC h v= to search for variables that have =indent=, =offset= or =tab-width= in their name. Likely prefixed with the plugin they belong to. e.g. rustic-indent-offset).
+#+BEGIN_SRC emacs-lisp
+(after! editorconfig
+  ;; This entry already exists in `editorconfig-indentation-alist'; it is being used
+  ;; as an example.
+  (add-to-list 'editorconfig-indentation-alist '(c-mode c-basic-offset))
+  (add-to-list 'editorconfig-indentation-alist '(coffee-mode coffee-tab-width)))
+#+END_SRC
+
+If you do not know the indentation variable/variables, (in the major mode in
+question use =SPC h v= to look for any variable that has =indent=, =offset=
+or =tab-width=  in its name.)
+
+* TODO Troubleshooting
