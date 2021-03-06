@@ -15,24 +15,22 @@
   - [[#debianubuntu][Debian/Ubuntu]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
-  - [[#gmailier][Gmailier]]
-  - [[#offlineimap][offlineimap]]
-  - [[#mbsync][mbsync]]
-  - [[#notmuch][notmuch]]
+  - [[#downloading-your-email][Downloading your email]]
   - [[#customize-notmuch-hello-buffer][Customize =*notmuch-hello*= buffer]]
   - [[#changing-the-notmuch-landing-page][Changing the =notmuch= landing page]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module makes Emacs an email client, using ~notmuch~.
+This module turns Emacs into email client using ~notmuch~.
 
 ** Module Flags
-+ This module install no module flags.
-
++ =+afew= Enables integration with =afew=.
 
 ** Plugins
 + [[https://notmuchmail.org/][notmuch]]
 + [[https://github.com/org-mime/org-mime][org-mime]]
++ [[https://github.com/fuxialexander/counsel-notmuch][counsel-notmuch]]*
++ [[https://github.com/emacs-helm/helm-notmuch][helm-notmuch]]*
 
 * Prerequisites
 This module requires:
@@ -73,49 +71,68 @@ environment.systemPackages = with pkgs; [
 * TODO Features
 
 * Configuration
-** TODO Gmailier
-** offlineimap
-This module uses =Gmailier= by default. To use =offlineimap=, change ~+notmuch-sync-backend~:
+** Downloading your email
+To download your email you need a sync backend. Out of the box, this module
+supports =Gmailier= (the default), =mbsync=, and =offlineimap= (ordered by
+speed). You may define a custom one as well. The guides below will walk you
+through setting them up with notmuch.
 
-#+BEGIN_SRC emacs-lisp
-(setq +notmuch-sync-backend 'offlineimap)
-#+END_SRC
-
-Next, you need to write a configuration file for =offlineimap=. Mine can be found
-[[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
-use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials. You can find a *very*
-detailed configuration [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
-
-Next you can download your email with ~offlineimap -o~. This may take a while,
-especially if you have thousands of mails.
-
-You can now proceed with the [[*mu and mu4e][mu and mu4e]] section.
-
-** mbsync
-This module uses =Gmailier= by default. To use =mbsync=, change ~+notmuch-sync-backend~:
-
-#+BEGIN_SRC emacs-lisp
-(setq +notmuch-sync-backend 'mbsync)
-#+END_SRC
-
-The steps needed to set up =notmuch= with =mbsync= are very similar to the ones for
-[[*offlineimap][offlineimap]].
-
-Start with writing a ~\~/.mbsyncrc~. An example for GMAIL can be found on
-[[http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/][pragmaticemacs.com]]. A non-GMAIL example is available as a gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]]. The [[http://isync.sourceforge.net/mbsync.html][manual
-page]] contains all needed information to set up your own.
-
-Next you can download your email with ~mbsync --all~. This may take a while, but
-should be quicker than =offlineimap= ;).
-
-** notmuch
-You should have your email downloaded already. If you have not, you need to set
-=Gmailier=, =offlineimap= or =mbsync= up before you proceed.
-
-Before you can use =notmuch=, you need to index your email initially.
+Later, once you've set up a sync backend and downloaded your email, you must
+index your email for the first time:
 
 #+BEGIN_SRC sh
 notmuch new
+#+END_SRC
+
+*** TODO Gmailier
+
+*** offlineimap
+To use [[https://www.offlineimap.org/][offlineimap]], change ~+notmuch-sync-backend~:
+
+#+BEGIN_SRC emacs-lisp
+;; add to ~/.doom.d/config.el
+(setq +notmuch-sync-backend 'offlineimap)
+#+END_SRC
+
+Next, write a configuration file for =offlineimap=. [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][Here is a comprehensive
+example]] and [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf.minimal][another minimal one]].
+
+As a real world example, [[https://github.com/hlissner/dotfiles/blob/5f146b6c39552c0cf38025406f5dba7389542b0a/shell/mu/.offlineimaprc][here is my old config]], where it is configured to
+download mail to ~\~/.mail~. I used [[https://www.passwordstore.org/][unix pass]] to securely store my login
+credentials.
+
+Finally, download your email with ~offlineimap -o~. This may take a while,
+especially if you have thousands of emails.
+
+*** mbsync
+To use [[https://isync.sourceforge.io/][mbsync]], change ~+notmuch-sync-backend~:
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-sync-backend 'mbsync)
+
+;; Use `mbsync-xdg' if your mbsync config lives in $XDG_CONFIG_HOME/isync:
+(setq +notmuch-sync-backend 'mbsync-xdg)
+#+END_SRC
+
+The steps needed to set up =notmuch= with =mbsync= are similar to the ones for
+[[*offlineimap][offlineimap]].
+
+Start with writing a ~\~/.mbsyncrc~ to store your configuration. An example for
+GMAIL can be found on the [[https://wiki.archlinux.org/index.php/isync#Configuring][ArchWiki]] which will also explain how its integration
+with notmuch for auto synchronization. A non-GMAIL example is available as a
+gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]].
+
+Finally, download your email with ~mbsync --all~. This may take a while, but
+will be quicker than =offlineimap=.
+
+*** Custom method
+If you have a unique method for synchronizing your email, you can define your
+own backend:
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-sync-backend 'custom
+      ;; Set this to an arbitrary shell command
+      +notmuch-sync-command "my-notmuch-sync-cmd")
 #+END_SRC
 
 ** Customize =*notmuch-hello*= buffer
@@ -126,12 +143,11 @@ It is possible to change the =*notmuch-hello*= buffer if you want to.
   (setq notmuch-show-log nil
         notmuch-hello-sections `(notmuch-hello-insert-saved-searches
                                  notmuch-hello-insert-alltags)
-        ;; Maybe you don't like seeing email headers when you write email either.
+        ;; To hide headers while composing an email
         notmuch-message-headers-visible nil))
 #+END_SRC
 
 ** Changing the =notmuch= landing page
-
 You may want to forego the =*notmuch-hello*= buffer by having ~M-x =notmuch~ or
 ~SPC o m~ take you straight to a search page.
 
@@ -144,4 +160,4 @@ a custom search as your landing page.
 (setq +notmuch-home-function (lambda () (notmuch-search "tag:inbox")))
 #+END_SRC
 
-* Troubleshooting
+* TODO Troubleshooting
