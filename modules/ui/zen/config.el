@@ -9,7 +9,6 @@
 (defvar +zen-window-divider-size 4
   "Pixel size of window dividers when `writeroom-mode' is active.")
 
-
 (defvar +zen--old-window-divider-size nil)
 
 
@@ -39,8 +38,9 @@
                         window-divider-default-right-width)
                   window-divider-default-bottom-width +zen-window-divider-size
                   window-divider-default-right-width +zen-window-divider-size)
-          (setq window-divider-default-bottom-width (car +zen--old-window-divider-size)
-                window-divider-default-right-width (cdr +zen--old-window-divider-size)))
+          (when +zen--old-window-divider-size
+            (setq window-divider-default-bottom-width (car +zen--old-window-divider-size)
+                  window-divider-default-right-width (cdr +zen--old-window-divider-size))))
         (window-divider-mode +1))))
 
   ;; Adjust margins when text size is changed
