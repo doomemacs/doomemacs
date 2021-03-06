@@ -24,10 +24,9 @@
 
 ;; Sets `ns-transparent-titlebar' and `ns-appearance' frame parameters so window
 ;; borders will match the enabled theme.
-(and (or (daemonp)
-         (display-graphic-p))
-     (require 'ns-auto-titlebar nil t)
-     (ns-auto-titlebar-mode +1))
+(when (or (daemonp)
+          (display-graphic-p))
+  (add-hook 'doom-load-theme-hook #'ns-auto-titlebar-mode))
 
 ;; HACK On MacOS, disabling the menu bar makes MacOS treat Emacs as a
 ;;      non-application window -- which means it doesn't automatically capture
