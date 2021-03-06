@@ -19,6 +19,8 @@
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
   - [[#notmuch][notmuch]]
+  - [[#customize-notmuch-hello-buffer][Customize =*notmuch-hello*= buffer]]
+  - [[#changing-the-notmuch-landing-page][Changing the =notmuch= landing page]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -35,13 +37,23 @@ This module makes Emacs an email client, using ~notmuch~.
 * Prerequisites
 This module requires:
 
-+ Either ~gmailieer~ (default), ~mbsync~ or ~offlineimap~ (to sync mail with)
-+ ~notmuch~, to index and tag your downloaded messages.
++ Either ~[[https://github.com/gauteh/lieer][gmailieer]]~ (default), ~mbsync~ or ~offlineimap~ (to sync mail with)
++ ~[[https://notmuchmail.org/][notmuch]]~, to index and tag your downloaded messages.
 + ~afew~, optionally to initially tag your downloaded messages.
-
 ** TODO MacOS
 
-** TODO Arch Linux
+** Arch Linux
+Run one of the following commands.
+
+#+BEGIN_SRC sh
+pacman -S isync notmuch #mbsync
+#+END_SRC
+#+BEGIN_SRC sh
+pacman -S offlineimap notmuch
+#+END_SRC
+
+See: [[https://wiki.archlinux.org/index.php/Notmuch][Arch Wiki - Notmuch]]
+
 ** NixOS
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
@@ -57,6 +69,7 @@ environment.systemPackages = with pkgs; [
 
 ** TODO openSUSE
 ** TODO Debian/Ubuntu
+
 * TODO Features
 
 * Configuration
@@ -85,7 +98,7 @@ This module uses =Gmailier= by default. To use =mbsync=, change ~+notmuch-sync-b
 (setq +notmuch-sync-backend 'mbsync)
 #+END_SRC
 
-The steps needed to set up =mu4e= with =mbsync= are very similar to the ones for
+The steps needed to set up =notmuch= with =mbsync= are very similar to the ones for
 [[*offlineimap][offlineimap]].
 
 Start with writing a ~\~/.mbsyncrc~. An example for GMAIL can be found on
@@ -95,8 +108,6 @@ page]] contains all needed information to set up your own.
 Next you can download your email with ~mbsync --all~. This may take a while, but
 should be quicker than =offlineimap= ;).
 
-You can now proceed with the [[*mu and mu4e][mu and mu4e]] section.
-
 ** notmuch
 You should have your email downloaded already. If you have not, you need to set
 =Gmailier=, =offlineimap= or =mbsync= up before you proceed.
@@ -105,6 +116,32 @@ Before you can use =notmuch=, you need to index your email initially.
 
 #+BEGIN_SRC sh
 notmuch new
+#+END_SRC
+
+** Customize =*notmuch-hello*= buffer
+It is possible to change the =*notmuch-hello*= buffer if you want to.
+
+#+BEGIN_SRC emacs-lisp
+(after! notmuch
+  (setq notmuch-show-log nil
+        notmuch-hello-sections `(notmuch-hello-insert-saved-searches
+                                 notmuch-hello-insert-alltags)
+        ;; Maybe you don't like seeing email headers when you write email either.
+        notmuch-message-headers-visible nil))
+#+END_SRC
+
+** Changing the =notmuch= landing page
+
+You may want to forego the =*notmuch-hello*= buffer by having ~M-x =notmuch~ or
+~SPC o m~ take you straight to a search page.
+
+When using ~SPC o m~ the =+notmuch-home-function= is called. By default it uses
+the =notmuch= function and so has the same familiar behavior of running a
+vanilla install of notmuch-emacs. But, by overwriting this function you can run
+a custom search as your landing page.
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-home-function (lambda () (notmuch-search "tag:inbox")))
 #+END_SRC
 
 * Troubleshooting

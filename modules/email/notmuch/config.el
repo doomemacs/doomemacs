@@ -2,6 +2,9 @@
 
 ;; FIXME This module is a WIP!
 
+(defvar +notmuch-home-function #'notmuch
+  "Function for customizing the landing page for doom-emacs =notmuch.")
+
 (defvar +notmuch-sync-backend 'gmi
   "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
 
@@ -27,8 +30,6 @@
   (set-popup-rule! "^\\*notmuch-hello" :side 'left :size 30 :ttl 0)
 
   (setq notmuch-fcc-dirs nil
-        notmuch-show-logo nil
-        notmuch-message-headers-visible nil
         message-kill-buffer-on-exit t
         message-send-mail-function 'message-send-mail-with-sendmail
         notmuch-search-oldest-first nil
@@ -42,17 +43,12 @@
           ("tags" . "(%s)"))
         notmuch-tag-formats
         '(("unread" (propertize tag 'face 'notmuch-tag-unread)))
-        notmuch-hello-sections
-        '(notmuch-hello-insert-saved-searches
-          notmuch-hello-insert-alltags)
         notmuch-saved-searches
         '((:name "inbox"   :query "tag:inbox not tag:trash" :key "i")
           (:name "flagged" :query "tag:flagged"             :key "f")
           (:name "sent"    :query "tag:sent"                :key "s")
           (:name "drafts"  :query "tag:draft"               :key "d"))
         notmuch-archive-tags '("-inbox" "-unread"))
-
-  ;; (setq-hook! 'notmuch-show-mode-hook line-spacing 0)
 
   ;; only unfold unread messages in thread by default
   (add-hook 'notmuch-show-hook #'+notmuch-show-expand-only-unread-h)
