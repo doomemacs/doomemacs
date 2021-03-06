@@ -14,11 +14,12 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module configures Emacs for terminal usage.
+This module configures Emacs for use in the terminal, by providing:
 
 + System clipboard integration (through an external clipboard program or OSC-52
   escape codes in supported terminals).
-+ Fixes cursor-shape changing across evil states in terminal that support it.
++ Cursor-shape changing across evil states (requires a terminal that supports
+  it).
 + Mouse support in the terminal.
 
 ** Maintainers
@@ -27,31 +28,31 @@ This module has no dedicated maintainers.
 ** Module Flags
 + =+osc= Instead of piping your kill ring through external programs, like xclip
   or pbcopy, have Emacs emit OSC-52 escape codes instead, allowing Emacs to
-  communicate to your clipboard through your terminal. This allows for clipboard
-  communication over SSH connections or tmux. However, this requires [[https://github.com/spudlyo/clipetty#terminals-that-support-osc-clipboard-operations][a supported
-  terminal]].
+  communicate with your clipboard through your terminal, even across SSH
+  connections or Tmux. However, this requires [[https://github.com/spudlyo/clipetty#terminals-that-support-osc-clipboard-operations][a supported terminal]].
 
 ** Plugins
-+ clipetty
-+ evil-terminal-cursor-changer
-+ xclip
++ [[https://github.com/spudlyo/clipetty][clipetty]]* (if =+osc=)
++ [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]* (if =:editor evil=)
++ [[https://github.com/emacs-straight/xclip][xclip]]* (unless =+osc=)
 
 * Prerequisites
 This module has no hard prerequisites, but in order for its features to work you
-need
+need:
 
 + For system clipboard integration:
   + A supported clipboard program, such as:
     + Linux: =xclip=, =xsel=, or =wl-clibpoard= (Wayland)
     + macOS: =pbcopy= and =pbpaste= (included with macOS)
     + Windows: =getclip= and =putclip= (cygwin)
-  + A terminal that supports OSC 52 escape codes, such as:
-    xterm (unix), iTerm2 (macOS), alacritty (cross platform), kitty (macOS, linux), mintty (Windows), hterm (javascript), st (unix), mlterm (cross platform)
-+ For cursor shape changing:
-  + A terminal that supports VT's DECSCUSR sequence, such as:
-    Gnome Terminal, xterm, iTerm (macOS), Konsole, or mintty (Windows).
-    Terminal.app (macOS) is supported to, but requires [[http://www.culater.net/software/SIMBL/SIMBL.php][SIMBL]] and [[https://github.com/saitoha/mouseterm-plus/releases][MouseTerm]] Plus
-    to work.
+  + (If =+osc= is enabled) A terminal that supports OSC 52 escape codes, such
+    as: xterm (unix), iTerm2 (macOS), alacritty (cross platform), kitty (macOS,
+    linux), mintty (Windows), hterm (javascript), st (unix), mlterm (cross
+    platform)
++ For cursor shape changing in the terminal you need A terminal that supports
+  VT's DECSCUSR sequence, such as: Gnome Terminal, xterm, iTerm (macOS),
+  Konsole, or mintty (Windows). Terminal.app (macOS) is supported too, but
+  requires [[http://www.culater.net/software/SIMBL/SIMBL.php][SIMBL]] and [[https://github.com/saitoha/mouseterm-plus/releases][MouseTerm]] Plus to work.
 
 * Configuration
 ** True-color and italic support
