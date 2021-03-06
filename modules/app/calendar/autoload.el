@@ -29,11 +29,12 @@
   "TODO"
   (interactive)
   (if (featurep! :ui workspaces)
-      (+workspace/delete "Calendar")
-    (doom-kill-matching-buffers "^\\*cfw:")
+      (when (+workspace-exists-p "Calendar")
+        (+workspace/delete "Calendar"))
     (when (window-configuration-p +calendar--wconf)
       (set-window-configuration +calendar--wconf))
-    (setq +calendar--wconf nil)))
+    (setq +calendar--wconf nil))
+  (doom-kill-matching-buffers "^\\*cfw[:-]"))
 
 ;;;###autoload
 (defun +calendar/open-calendar ()
