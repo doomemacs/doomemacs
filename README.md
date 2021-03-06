@@ -204,15 +204,6 @@ kind!
   [liberapay] or [paypal]. My work contends with studies, adventures in indie
   gamedev and freelance work. Donations help me allocate more time to my Emacs
   and OSS capers.
-  
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/0)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/0)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/1)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/1)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/2)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/2)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/3)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/3)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/4)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/4)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/5)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/5)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/6)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/6)
-[![](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/images/7)](https://sourcerer.io/fame/hlissner/hlissner/doom-emacs/links/7)
 
 
 [contribute]: docs/contributing.org
