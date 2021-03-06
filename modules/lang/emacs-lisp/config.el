@@ -99,7 +99,7 @@ employed so that flycheck still does *some* helpful linting.")
     "Display variable value next to documentation in eldoc."
     :around #'elisp-get-var-docstring
     (when-let (ret (funcall orig-fn sym))
-      (if (fboundp sym)
+      (if (boundp sym)
           (concat ret " "
                   (let* ((truncated " [...]")
                          (print-escape-newlines t)
