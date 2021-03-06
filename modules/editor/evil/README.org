@@ -1,4 +1,4 @@
-#+TITLE:   feature/evil
+#+TITLE:   editor/evil
 #+DATE:    February 2, 2017
 #+SINCE:   v2.0
 #+STARTUP: inlineimages nofold

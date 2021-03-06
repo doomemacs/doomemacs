@@ -1,4 +1,4 @@
-;;; feature/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
+;;; ui/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
 
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
