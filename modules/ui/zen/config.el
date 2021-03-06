@@ -69,6 +69,4 @@
             'org-todo-keyword-outd
             'org-todo
             'org-done
-            'font-lock-comment-face
-            'line-number
-            'line-number-current-line))
+            'font-lock-comment-face))
