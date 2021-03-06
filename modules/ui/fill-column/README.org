@@ -12,12 +12,22 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#setting-fill-column-globally][Setting fill-column globally]]
-  - [[#setting-fill-column-on-a-mode-by-mode-basis][Setting fill-column on a mode by mode basis]]
-  - [[#configuring-the-look-of-the-indicator][Configuring the look of the indicator]]
+  - [[#setting-fill-column-for-the-current-buffer-or-mode][Setting fill-column for the current buffer or mode]]
+  - [[#hl-fill-column-only-configuring-the-look-of-the-indicator][(hl-fill-column only) Configuring the look of the indicator]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module provides a fill column indicator for when you hit the 80 column limit.
+This module provides a fill column indicator to make it obvious when a line
+reaches or surpasses the 80th column. This serves as a reminder to keep lines
+short for accessibility and/or convenience. [[https://www.emacswiki.org/emacs/EightyColumnRule][Read more about this on the Emacs
+Wiki page]].
+
+#+begin_quote
+This module is deprecated and will be removed once Doom drops Emacs 26.x
+support. This is because the built-in ~display-fill-column-indicator-mode~ (in
+27 and newer) replaces it, and enabling it is a trivial one-liner, which doesn't
+warrant a module: ~(global-display-fill-column-indicator-mode +1)~
+#+end_quote
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -26,46 +36,57 @@ This module has no dedicated maintainers.
 This module provides no flags.
 
 ** Plugins
-+ [[https://github.com/laishulu/hl-fill-column][hl-fill-column]]
++ [[https://github.com/laishulu/hl-fill-column][hl-fill-column]]* (unless Emacs >=27)
 
 * Prerequisites
 This module has no prerequisites.
 
 * Features
-This module highlights the characters at the 80th column in the current buffer. This serves to remind users to keep lines short for accessibility and/or convenience. [[https://www.emacswiki.org/emacs/EightyColumnRule][Read more about this on the Emacs Wiki page]].
-* Configuration
+The behavior of this module varies slightly depending on your version of Emacs:
 
++ In Emacs 26.x, text beyond ~fill-column~ will be highlighted.
++ In Emacs 27 and newer, a line is drawn down the right side at column 80.
+
+* Configuration
 ** Setting fill-column globally
-If you want to change the limit then you would need to set ~fill-column~ to your
-desired column you would do this using:
+This column limit is controlled by the ~fill-column~ variable (default: ~80~).
+
+This variable is buffer-local, therefore, to change this globally, you must use
+~setq-default~:
+
 #+BEGIN_SRC emacs-lisp
 (setq-default fill-column 100)
 #+END_SRC
-For this to take effect in the current session restart hl-fill-column-mode.
-** Setting fill-column on a mode by mode basis
-Setting on a mode by mode basis is quite simple:
+
+~hl-fill-column-mode~ (or ~display-fill-column-indicator-mode~ on Emacs 27+)
+must be restarted to see the change.
+
+** Setting fill-column for the current buffer or mode
+The ~setq-hook!~ convenience macro makes settings ~fill-column~ for a particular
+mode (or modes) easy:
 
 #+BEGIN_SRC emacs-lisp
-(setq-hook! 'major-mode-hook fill-column 80)
-#+END_SRC
-eg.
-#+BEGIN_SRC emacs-lisp
-(setq-hook! 'org-mode-hook fill-column 80)
+(setq-hook! 'org-mode-hook fill-column 100)
+(setq-hook! 'python-mode-hook fill-column 72)
+(setq-hook! js2-mode fill-column 72)
+(setq-hook! '(ruby-mode rustic-mode python-mode-hook) fill-column 80)
 #+END_SRC
 
-After you need to simply restart ~hl-fill-column-mode~ if you already have
-those types buffers open.
+Any open buffers in these modes must be restarted to see the change.
 
-** Configuring the look of the indicator
-If you want to change the face use:
+** (hl-fill-column only) Configuring the look of the indicator
+To change the appears of hl-fill-column's highlight, change the
+~hl-fill-column-face~ face. Doom provides the ~custom-set-faces!~ macro to help
+you do this:
+
 #+BEGIN_SRC emacs-lisp
-(after! hl-fill-column
-  (custom-set-faces! 'hl-fill-column-face nil
-                      :background "red"
-                      :foreground "blue"
-                      :inverse-video t))
+(custom-set-faces!
+  '(hl-fill-column-face :background "red"
+                        :foreground "blue"
+                        :inverse-video t))
 #+END_SRC
-You can look at the documentation for ~custom-set-faces!~ for the full list
-of customizations. This can be accessed using =SPC h f=.
+
+See =M-x helpful-function RET custom-set-faces\!= for demos and documentation
+for this macro.
 
 * TODO Troubleshooting
