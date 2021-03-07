@@ -28,7 +28,11 @@ while getopts "hk:" opt; do
 done
 shift $((OPTIND-1))
 
-[ -t 0 ] && str="$*" || str=$(cat)
+# use remaining args, else try stdin
+str="$*"
+if [ -z $str ]; then
+  str=$(cat)
+fi
 
 # Fix incompatible terminals that cause odd 'not a valid terminal' errors
 [ "$TERM" = "alacritty" ] && export TERM=xterm-256color
