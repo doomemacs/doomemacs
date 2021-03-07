@@ -28,7 +28,7 @@ This must be set before `treemacs' has loaded.")
   :config
   ;; Allow ace-window to target treemacs windows elsewhere
   (after! ace-window
-    (delq! 'treemacs-mode aw-ignored-buffers))
+    (setq aw-ignored-buffers (cl-remove 'treemacs-mode aw-ignored-buffers :count 1)))
   ;; ...but not from treemacs-visit-node-ace-* commands.
   (defadvice! +treemacs--ace-window-ignore-treemacs-buffer-a (orig-fn &rest args)
     :around '(treemacs-visit-node-ace
