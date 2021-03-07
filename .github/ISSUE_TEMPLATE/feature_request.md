@@ -1,7 +1,6 @@
 ---
 name: Feature request
 about: It'd be cool if Doom did/had/would...
-labels: is:new
 ---
 
 **Describe the feature**
@@ -15,6 +14,7 @@ labels: is:new
 
 
 **System information**
-<details><pre>
-Place the output of `M-x doom/info` or `~/.emacs.d/bin/doom info` here.
-</pre></details>
+<!--
+  Post the output of `M-x doom/info` or `~/.emacs.d/bin/doom info` to
+  pastebin.com and paste the link here.
+<!--
