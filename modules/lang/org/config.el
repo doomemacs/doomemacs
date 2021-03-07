@@ -637,6 +637,7 @@ can grow up to be fully-fledged org-mode buffers."
           (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
                     nil 'local)))))
 
+  (defvar recentf-exclude)
   (defadvice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
