@@ -67,8 +67,7 @@ in."
 
   (when EMACS27+
     (print! (start "Checking for great Emacs features..."))
-    (unless (and (functionp 'json-serialize)
-                 (string-match-p "\\_<JSON\\_>" system-configuration-features))
+    (unless (functionp 'json-serialize)
       (warn! "Emacs was not built with native JSON support")
       (explain! "Users will see a substantial performance gain by building Emacs with "
                 "jansson support (i.e. a native JSON library), particularly LSP users. "
