@@ -10,7 +10,8 @@ jumping to another part of the file)."
   (unless (minibufferp)
     (nav-flash-show)
     ;; only show in the current window
-    (overlay-put compilation-highlight-overlay 'window (selected-window))))
+    (when (overlayp compilation-highlight-overlay)
+      (overlay-put compilation-highlight-overlay 'window (selected-window)))))
 
 ;;;###autoload
 (defun +nav-flash-blink-cursor-maybe (&rest _)
