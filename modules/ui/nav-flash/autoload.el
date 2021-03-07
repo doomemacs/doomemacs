@@ -19,12 +19,13 @@ jumping to another part of the file)."
 vterm-mode, or triggered from one of `+nav-flash-exclude-commands'."
   (unless (or (memq this-command +nav-flash-exclude-commands)
               (bound-and-true-p so-long-minor-mode)
-              (derived-mode-p 'so-long-mode 'special-mode 'term-mode
-                              'vterm-mode)
-              (and (equal (point-marker) (car +nav-flash--last-point))
-                   (equal (selected-window) (cdr +nav-flash--last-point))))
+              (apply #'derived-mode-p +nav-flash-exclude-modes)
+              (equal +nav-flash--last-point
+                     (list (selected-window)
+                           (current-buffer)
+                           (point))))
     (+nav-flash-blink-cursor)
-    (setq +nav-flash--last-point (cons (point-marker) (selected-window)))))
+    (setq +nav-flash--last-point (list (selected-window) (current-buffer) (point)))))
 
 ;;;###autoload
 (defun +nav-flash-delayed-blink-cursor-h (&rest _)

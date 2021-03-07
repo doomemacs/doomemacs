@@ -5,6 +5,10 @@
     org-find-file org-find-file-at-mouse)
   "A list of commands that should not trigger nav-flash.")
 
+(defvar +nav-flash-exclude-modes
+  '(so-long-mode special-mode comint-mode term-mode vterm-mode)
+  "List of major modes where nav-flash won't automatically trigger.")
+
 
 ;;
 ;;; Packages
