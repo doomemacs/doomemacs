@@ -30,7 +30,7 @@ shift $((OPTIND-1))
 
 # use remaining args, else try stdin
 str="$*"
-if [ -z $str ]; then
+if [ -z "$str" ]; then
   str=$(cat)
 fi
 
