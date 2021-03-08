@@ -129,7 +129,8 @@ ready to be pasted in a bug report on github."
         (emacs . ,(delq
                    nil (list emacs-version
                              emacs-repository-branch
-                             (substring (or emacs-repository-version "") 0 9)
+                             (and (stringp emacs-repository-version)
+                                  (substring emacs-repository-version 0 9))
                              (symlink-path doom-emacs-dir))))
         (doom . ,(list doom-version
                        (sh "git" "log" "-1" "--format=%D %h %ci")
