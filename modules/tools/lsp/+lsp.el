@@ -1,7 +1,7 @@
 ;;; tools/lsp/+lsp.el -*- lexical-binding: t; -*-
 
 (defvar +lsp-company-backends (if (featurep! :editor snippets)
-                                  '(:separate company-yasnippet company-capf)
+                                  '(:separate company-capf company-yasnippet)
                                 'company-capf)
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
