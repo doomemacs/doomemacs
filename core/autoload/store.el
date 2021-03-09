@@ -104,7 +104,8 @@ the actual variables themselves or their values."
 If it doesn't exist or has expired, DEFAULT_VALUE is returned."
   (let ((location (or location doom-store-location))
         (data (gethash key (doom--store-init location) default-value)))
-    (if (not (doom--store-expired-p key data))
+    (if (not (or (eq data default-value)
+                 (doom--store-expired-p key data)))
         (cdr data)
       (doom-store-rem key location noflush)
       default-value)))
