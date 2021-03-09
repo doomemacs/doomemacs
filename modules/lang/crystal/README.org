@@ -20,7 +20,6 @@
 * Description
 # A summary of what this module does.
 This modules adds [[https://crystal-lang.org/][crystal]] support.
-It comes with..
 
 + Syntax-checking (~flycheck~)
 + REPL (~inf-crystal~)
@@ -40,7 +39,7 @@ This module provides no flags.
 
 * Prerequisites
 ** Crystal
-you need to install [[https://crystal-lang.org/install/][the crystal compiler]]
+you need to install [[https://crystal-lang.org/install/][the crystal compiler]].
 
 *** MacOS
 #+begin_src shell
@@ -53,7 +52,7 @@ sudo pacman -S crystal shards
 #+end_src
 
 ** ICR (REPL)
-you need to install [[https://github.com/crystal-community/icr][ICR]]
+you need to install [[https://github.com/crystal-community/icr][ICR]].
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
