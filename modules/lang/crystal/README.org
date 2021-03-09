@@ -18,7 +18,6 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-# A summary of what this module does.
 This modules adds [[https://crystal-lang.org/][crystal]] support.
 
 + Syntax-checking (~flycheck~)
@@ -31,11 +30,11 @@ This module has no dedicated maintainers.
 This module provides no flags.
 
 ** Plugins
-+ [[https://github.com/crystal-lang-tools/emacs-crystal-mode/tree/15998140b0a4172cd4b4d14d0377fba96a8917fc][crystal-mode]]
++ [[https://github.com/crystal-lang-tools/emacs-crystal-mode/][crystal-mode]]
 + [[https://github.com/brantou/inf-crystal.el/][inf-crystal]]
 + if ~:checkers syntax~ is enabled
-  - [[https://github.com/crystal-lang-tools/emacs-crystal-mode/tree/15998140b0a4172cd4b4d14d0377fba96a8917fc][flycheck-crystal]]
-  - [[https://github.com/crystal-ameba/ameba.el/tree/0c4925ae0e998818326adcb47ed27ddf9761c7dc][flycheck-ameba]]
+  - [[https://github.com/crystal-lang-tools/emacs-crystal-mode/][flycheck-crystal]]
+  - [[https://github.com/crystal-ameba/ameba.el/][flycheck-ameba]]
 
 * Prerequisites
 ** Crystal
