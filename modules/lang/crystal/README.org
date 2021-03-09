@@ -1,0 +1,64 @@
+#+TITLE:   lang/crystal
+#+DATE:    March 9, 2021
+#+SINCE:   <replace with next tagged release version>
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#crystal][Crystal]]
+    - [[#macos][MacOS]]
+    - [[#arch][Arch]]
+  - [[#icr-repl][ICR (REPL)]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+# A summary of what this module does.
+This modules adds [[https://crystal-lang.org/][crystal]] support.
+It comes with..
+
++ Syntax-checking (~flycheck~)
++ REPL (~inf-crystal~)
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/crystal-lang-tools/emacs-crystal-mode/tree/15998140b0a4172cd4b4d14d0377fba96a8917fc][crystal-mode]]
++ [[https://github.com/brantou/inf-crystal.el/][inf-crystal]]
++ if ~:checkers syntax~ is enabled
+  - [[https://github.com/crystal-lang-tools/emacs-crystal-mode/tree/15998140b0a4172cd4b4d14d0377fba96a8917fc][flycheck-crystal]]
+  - [[https://github.com/crystal-ameba/ameba.el/tree/0c4925ae0e998818326adcb47ed27ddf9761c7dc][flycheck-ameba]]
+
+* Prerequisites
+** Crystal
+you need to install [[https://crystal-lang.org/install/][the crystal compiler]]
+
+*** MacOS
+#+begin_src shell
+brew install crystal
+#+end_src
+
+*** Arch
+#+begin_src shell
+sudo pacman -S crystal shards
+#+end_src
+
+** ICR (REPL)
+you need to install [[https://github.com/crystal-community/icr][ICR]]
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.
