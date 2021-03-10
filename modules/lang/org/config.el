@@ -539,9 +539,10 @@ the exported output (i.e. formatters)."
                              ,(or org-export-async-debug
                                   debug-on-error)
                              load-path ',load-path)
-                       (load ,(or old-async-init-file user-init-file)
-                             nil t)
-                       (delete-file ,org-export-async-init-file))
+                       (unwind-protect
+                           (load ,(or old-async-init-file user-init-file)
+                                 nil t)
+                         (delete-file load-file-name)))
                (current-buffer)))
       (apply orig-fn args))))
 
