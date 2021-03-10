@@ -382,6 +382,8 @@ results buffer.")
             '(literal regexp initialism fuzzy)
           '(literal regexp initialism)))
   :config
+  ;; REVIEW Remove when raxod502/prescient.el#102 is resolved
+  (add-to-list 'ivy-sort-functions-alist '(ivy-resume))
   (setq ivy-prescient-sort-commands
         '(:not swiper swiper-isearch ivy-switch-buffer
           lsp-ivy-workspace-symbol ivy-resume ivy--restore-session
