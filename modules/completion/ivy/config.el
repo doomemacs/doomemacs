@@ -393,6 +393,10 @@ results buffer.")
     (let ((prescient-filter-method '(literal regexp)))
       (ivy-prescient-re-builder str)))
 
+  ;; Fix `ivy-resume' when invoked with an argument
+  ;; see https://github.com/raxod502/prescient.el/issues/102
+  (add-to-list 'ivy-sort-functions-alist (list 'ivy-resume))
+
   ;; NOTE prescient config duplicated with `company'
   (setq prescient-save-file (concat doom-cache-dir "prescient-save.el")))
 
