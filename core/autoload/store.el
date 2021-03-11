@@ -85,7 +85,7 @@ the actual variables themselves or their values."
   (let ((ttl (car data)))
     (cond ((functionp ttl)
            (not (funcall ttl key data)))
-          ((integerp ttl)
+          ((consp ttl)
            (time-less-p ttl (current-time))))))
 
 (defun doom--store-flush (location)
