@@ -192,14 +192,14 @@ ready to be pasted in a bug report on github."
                            "package!"))
                  (error (format "<%S>" e)))
                '("n/a")))
-        ,@(when-let (unpins (condition-case e
-                                (mapcan #'identity
-                                        (mapcar
-                                         #'cdr (doom--collect-forms-in
-                                                (doom-path doom-private-dir "packages.el")
-                                                "unpin!")))
-                              (error (format "<%S>" e))))
-            (cons 'unpin unpins))
+        ,(when-let (unpins (condition-case e
+                               (mapcan #'identity
+                                       (mapcar
+                                        #'cdr (doom--collect-forms-in
+                                               (doom-path doom-private-dir "packages.el")
+                                               "unpin!")))
+                             (error (format "<%S>" e))))
+           (cons 'unpin unpins))
         (elpa
          ,@(or (condition-case e
                    (progn
