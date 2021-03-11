@@ -48,10 +48,10 @@ the debugging configuration of the current buffer."
 Presents both dap and realgud configurations, and returns a list of the form
 \('dap ...) or ('realgud ...) containing the corresponding debug configuration
 infromation."
-  (let ((result (mapcar (lambda (c) (cons (cadr c) c))
-                        (append (+debugger--list-for-dap)
-                                (+debugger--list-for-realgud))))
-        (completion (completing-read "Start debugger: " (mapcar #'car result) nil t)))
+  (let* ((result (mapcar (lambda (c) (cons (cadr c) c))
+                         (append (+debugger--list-for-dap)
+                                 (+debugger--list-for-realgud))))
+         (completion (completing-read "Start debugger: " (mapcar #'car result) nil t)))
     (if (or (null completion) (string-empty-p completion))
         (user-error "No debugging configuration specified.")
       (let ((configuration (cdr (assoc completion result))))
