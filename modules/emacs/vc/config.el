@@ -100,7 +100,13 @@ otherwise in default state."
 
 
 (after! browse-at-remote
+  ;; It's more sensible that the user have more options. If they want line
+  ;; numbers, users can request them by making a selection first. Otherwise
+  ;; omitting them.
   (setq browse-at-remote-add-line-number-if-no-region-selected nil)
+  ;; Opt to produce permanent links with `browse-at-remote' by default,
+  ;; using commit hashes rather than branch names.
+  (setq browse-at-remote-prefer-symbolic nil)
 
   ;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo is
   ;;      detached. This creates broken links. I think it is more sensible to

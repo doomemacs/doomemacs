@@ -411,7 +411,7 @@
       ;;; <leader> g --- git/version control
       (:prefix-map ("g" . "git")
        :desc "Revert file"                 "R"   #'vc-revert
-       :desc "Copy link to remote"         "y"   #'browse-at-remote-kill
+       :desc "Copy link to remote"         "y"   #'+vc/browse-at-remote-kill
        :desc "Copy link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
        (:when (featurep! :ui hydra)
         :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body)
@@ -444,7 +444,7 @@
          :desc "Find issue"                "i"   #'forge-visit-issue
          :desc "Find pull request"         "p"   #'forge-visit-pullreq)
         (:prefix ("o" . "open in browser")
-         :desc "Browse file or region"     "o"   #'browse-at-remote
+         :desc "Browse file or region"     "o"   #'+vc/browse-at-remote
          :desc "Browse homepage"           "h"   #'+vc/browse-at-remote-homepage
          :desc "Browse remote"             "r"   #'forge-browse-remote
          :desc "Browse commit"             "c"   #'forge-browse-commit
