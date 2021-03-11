@@ -11,7 +11,7 @@
 (package! evil-exchange :pin "3030e21ee16a42dfce7f7cf86147b778b3f5d8c1")
 (package! evil-indent-plus :pin "0c7501e6efed661242c3a20e0a6c79a6455c2c40")
 (package! evil-lion :pin "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
-(package! evil-nerd-commenter :pin "2730820b9ccedf758c8a0428ee2c994c9fc415dd")
+(package! evil-nerd-commenter :pin "b8ac35fe019df5602c31912f65303a3d8ad0066c")
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
   :pin "006da406d175c05fedca4431cccd569e20bef92c")
