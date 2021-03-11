@@ -38,13 +38,14 @@ name under `pcache-directory' (by default a subdirectory under
 
 
 ;;
-;; Library
+;;; Library
 
 ;;;###autoload
 (defun doom-store-persist (location variables)
   "Persist VARIABLES (list of symbols) in LOCATION (symbol).
 This populates these variables with cached values, if one exists, and saves them
 to file when Emacs quits. This cannot persist buffer-local variables."
+  (cl-check-type location string)
   (dolist (var variables)
     (when (doom-store-member-p var location)
       (set var (doom-store-get var location))))
@@ -56,27 +57,29 @@ to file when Emacs quits. This cannot persist buffer-local variables."
   "Unregisters VARIABLES (list of symbols) in LOCATION (symbol).
 Variables to persist are recorded in `doom-store-persist-alist'. Does not affect
 the actual variables themselves or their values."
+  (cl-check-type location string)
   (if variables
       (setf (alist-get location doom-store-persist-alist)
             (cl-set-difference (cdr (assq location doom-store-persist-alist))
                                variables))
     (delq! location doom-store-persist-alist 'assoc)))
 
-(defun doom--store-init (location)
+(defun doom--store-init (&optional location)
   (cl-check-type location (or null string))
-  (or (gethash location doom--store-table)
-      (let* ((file-name-handler-alist nil)
-             (location-path (expand-file-name location doom-store-dir)))
-        (if (file-exists-p location-path)
-            (puthash location
-                     (with-temp-buffer
-                       (set-buffer-multibyte nil)
-                       (setq buffer-file-coding-system 'binary)
-                       (insert-file-contents-literally location-path)
-                       (read (current-buffer)))
-                     doom--store-table)
-          (puthash location (make-hash-table :test 'equal)
-                   doom--store-table)))))
+  (let ((location (or location doom-store-location)))
+    (or (gethash location doom--store-table)
+        (let* ((file-name-handler-alist nil)
+               (location-path (expand-file-name location doom-store-dir)))
+          (if (file-exists-p location-path)
+              (puthash location
+                       (with-temp-buffer
+                         (set-buffer-multibyte nil)
+                         (setq buffer-file-coding-system 'binary)
+                         (insert-file-contents-literally location-path)
+                         (read (current-buffer)))
+                       doom--store-table)
+            (puthash location (make-hash-table :test 'equal)
+                     doom--store-table))))))
 
 (defun doom--store-expired-p (key data)
   (let ((ttl (car data)))
@@ -90,20 +93,20 @@ the actual variables themselves or their values."
   (let ((file-name-handler-alist nil)
         (coding-system-for-write 'binary)
         (write-region-annotate-functions nil)
-        (write-region-post-annotation-function nil)
-        (data (doom--store-init location)))
-    (make-directory doom-store-dir 'parents)
-    (with-temp-file (expand-file-name location doom-store-dir)
-      (prin1 data (current-buffer)))
-    data))
+        (write-region-post-annotation-function nil))
+    (let* ((location (or location doom-store-location))
+           (data (doom--store-init location)))
+      (make-directory doom-store-dir 'parents)
+      (with-temp-file (expand-file-name location doom-store-dir)
+        (prin1 data (current-buffer)))
+      data)))
 
 
 ;;;###autoload
 (defun doom-store-get (key &optional location default-value noflush)
   "Retrieve KEY from LOCATION (defaults to `doom-store-location').
 If it doesn't exist or has expired, DEFAULT_VALUE is returned."
-  (let ((location (or location doom-store-location))
-        (data (gethash key (doom--store-init location) default-value)))
+  (let ((data (gethash key (doom--store-init location) default-value)))
     (if (not (or (eq data default-value)
                  (doom--store-expired-p key data)))
         (cdr data)
@@ -118,22 +121,20 @@ KEY can be any lisp object that is comparable with `equal'. TTL is the duration
 LOCATION is the super-key to store this cache item under. It defaults to
 `doom-store-location'."
   (cl-check-type ttl (or null integer function))
-  (let ((location (or location doom-store-location)))
-    (puthash key (cons (if (integerp ttl)
-                           (time-add (current-time) ttl)
-                         ttl)
-                       value)
-             (doom--store-init location))
-    (unless noflush
-      (doom--store-flush location))))
+  (puthash key (cons (if (integerp ttl)
+                         (time-add (current-time) ttl)
+                       ttl)
+                     value)
+           (doom--store-init location))
+  (unless noflush
+    (doom--store-flush location)))
 
 ;;;###autoload
 (defun doom-store-rem (key &optional location noflush)
   "Clear a cache LOCATION (defaults to `doom-store-location')."
-  (let ((location (or location doom-store-location)))
-    (remhash key (doom--store-init location))
-    (unless noflush
-      (doom--store-flush location))))
+  (remhash key (doom--store-init location))
+  (unless noflush
+    (doom--store-flush location)))
 
 ;;;###autoload
 (defun doom-store-member-p (key &optional location)
@@ -146,7 +147,6 @@ LOCATION defaults to `doom-store-location'."
 ;;;###autoload
 (defun doom-store-clear (&optional location)
   "Clear the store at LOCATION (defaults to `doom-store-location')."
-  (cl-check-type location (or null string))
   (let* ((location (or location doom-store-location))
          (path (expand-file-name location doom-store-dir)))
     (remhash location doom--store-table)
