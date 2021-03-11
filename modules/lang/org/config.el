@@ -611,10 +611,13 @@ mutating hooks on exported output, like formatters."
 
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
-    (quiet! (org-mode-restart))
-    (delq! (current-buffer) org-agenda-new-buffers)
     (remove-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
-                 'local))
+                 'local)
+    (delq! (current-buffer) org-agenda-new-buffers)
+    (let ((file buffer-file-name)
+          (inhibit-redisplay t))
+      (kill-buffer)
+      (find-file file)))
 
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
@@ -644,8 +647,9 @@ can grow up to be fully-fledged org-mode buffers."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
           (doom-inhibit-large-file-detection t)
-          find-file-hook
-          org-mode-hook)
+          doom-first-file-hook
+          org-mode-hook
+          find-file-hook)
       (funcall orig-fn file)))
 
   ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
