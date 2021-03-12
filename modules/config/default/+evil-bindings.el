@@ -107,6 +107,7 @@
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
       :n "C-+"    #'doom/reset-font-size
+      :n "]<"     #'smerge-vc-next-conflict
       ;; Buffer-local font resizing
       :n "C-="    #'text-scale-increase
       :n "C--"    #'text-scale-decrease
