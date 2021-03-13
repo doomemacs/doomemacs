@@ -11,6 +11,7 @@
   "Open URL to current file (and line if selection is active) in browser.
 If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
   (interactive "P")
+  (require 'browse-at-remote)
   (let ((browse-at-remote-prefer-symbolic
          (if arg
              (not browse-at-remote-prefer-symbolic)
@@ -22,6 +23,7 @@ If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
   "Copy URL to current file (and line if selection is active) to clipboard.
 If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
   (interactive "P")
+  (require 'browse-at-remote)
   (let ((browse-at-remote-prefer-symbolic
          (if arg
              (not browse-at-remote-prefer-symbolic)
