@@ -27,8 +27,8 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 + =+lsp= Enable LSP server support.
 
 ** Plugins
-+ [[https://github.com/tpapp/julia-repl][julia-mode]]
-+ [[https://github.com/JuliaEditorSupport/julia-emacs/][julia-repl]]
++ [[https://github.com/JuliaEditorSupport/julia-emacs/][julia-mode]]
++ [[https://github.com/tpapp/julia-repl][julia-repl]]
 + =+lsp= and =:tools lsp=
   + [[https://github.com/non-jedi/lsp-julia][lsp-julia]]
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
