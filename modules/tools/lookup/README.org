@@ -147,9 +147,9 @@ You can perform a documentation lookup on any backends directly:
   o=), or ~:lo[okup] QUERY~ for evil users.
 
 ** Dash.app Docset integration
-You can install dash docsets with ~M-x +lookup/install-docset~ and search them
-offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in modes
-that don't have a specialized :documentation lookup handler.
+You can install dash docsets with ~M-x dash-docset-install-docset~ and search
+them offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in
+modes that don't have a specialized :documentation lookup handler.
 
 * Configuration
 ** Associating lookup handlers with major modes
@@ -205,7 +205,7 @@ e.g.
 
 This determines what docsets to implicitly search for when you use
 ~+lookup/documentation~ in a mode with no ~:documentation~ handler. Those
-docsets must be installed with ~+lookup/install-docset~.
+docsets must be installed with ~dash-docset-install-docset~.
 
 ** Open in eww instead of browser
 To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in EWW instead
