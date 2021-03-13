@@ -5,7 +5,8 @@
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(debug-on-error
+  '(async-debug
+    debug-on-error
     doom-debug-p
     garbage-collection-messages
     gcmh-verbose
