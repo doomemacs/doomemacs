@@ -71,7 +71,7 @@
                (format "+%s/open-%srepl" module
                        (if (string= repl "default")
                            ""
-                         repl))))))
+                         (concat repl "-")))))))
     (let ((region (if (use-region-p)
                       (buffer-substring-no-properties (region-beginning)
                                                       (region-end)))))
