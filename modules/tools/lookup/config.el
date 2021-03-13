@@ -197,8 +197,7 @@ Dictionary.app behind the scenes to get definitions.")
   :config
   (setq dash-docs-enable-debugging doom-debug-p
         dash-docs-docsets-path (concat doom-etc-dir "docsets/")
-        dash-docs-min-length 2
-        dash-docs-browser-func #'eww)
+        dash-docs-min-length 2)
 
   (cond ((featurep! :completion helm)
          (require 'helm-dash nil t))
