@@ -27,7 +27,7 @@
       (set-eglot-client! 'python-mode '("Microsoft.Python.LanguageServer"))))
   :config
   (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
-  (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy")
+  (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy" "Pandas")
 
   (set-ligatures! 'python-mode
     ;; Functional
