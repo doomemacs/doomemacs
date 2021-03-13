@@ -318,159 +318,22 @@ Some items are not supported by the `nsm.el' module."
 
 
 ;;
-;;; Vanilla sandbox
-
-(defun doom--run-sandbox (&optional mode)
-  (interactive)
-  (let ((contents (buffer-string))
-        (file (make-temp-file "doom-sandbox-")))
-    (require 'package)
-    (with-temp-file file
-      (prin1 `(progn
-                (setq before-init-time (current-time)
-                      after-init-time nil
-                      noninteractive nil
-                      user-init-file ,file
-                      process-environment ',doom--initial-process-environment
-                      exec-path ',doom--initial-exec-path
-                      doom-debug-p t
-                      init-file-debug t
-                      doom--initial-load-path load-path
-                      load-path ',load-path
-                      package--init-file-ensured t
-                      package-user-dir ,package-user-dir
-                      package-archives ',package-archives
-                      user-emacs-directory ,doom-emacs-dir
-                      comp-deferred-compilation nil
-                      comp-eln-load-path ',(bound-and-true-p comp-eln-load-path)
-                      comp-async-env-modifier-form ',(bound-and-true-p comp-async-env-modifier-form)
-                      comp-deferred-compilation-black-list ',(bound-and-true-p comp-deferred-compilation-black-list))
-                (with-eval-after-load 'undo-tree
-                  ;; HACK `undo-tree' throws errors because `buffer-undo-tree'
-                  ;;      isn't correctly initialized
-                  (setq-default buffer-undo-tree (make-undo-tree)))
-                (ignore-errors
-                  (delete-directory ,(expand-file-name "auto-save-list" doom-emacs-dir) 'parents)))
-             (current-buffer))
-      (prin1 `(unwind-protect
-                  (defun --run-- () ,(read (concat "(progn\n" contents "\n)")))
-                (delete-file ,file))
-             (current-buffer))
-      (prin1 (pcase mode
-               (`vanilla-doom+ ; Doom core + modules - private config
-                `(progn
-                   (load-file ,(expand-file-name "core.el" doom-core-dir))
-                   (setq doom-modules-dirs (list doom-modules-dir))
-                   (let ((doom-init-modules-p t))
-                     (doom-initialize)
-                     (doom-initialize-core-modules))
-                   (setq doom-modules ',doom-modules)
-                   (maphash (lambda (key plist)
-                              (doom-module-put
-                               (car key) (cdr key)
-                               :path (doom-module-locate-path (car key) (cdr key))))
-                            doom-modules)
-                   (--run--)
-                   (maphash (doom-module-loader doom-module-init-file) doom-modules)
-                   (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                   (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)))
-               (`vanilla-doom  ; only Doom core
-                `(progn
-                   (load-file ,(expand-file-name "core.el" doom-core-dir))
-                   (let ((doom-init-modules-p t))
-                     (doom-initialize)
-                     (doom-initialize-core-modules))
-                   (--run--)))
-               (`vanilla       ; nothing loaded
-                `(progn
-                   (package-initialize)
-                   (--run--))))
-             (current-buffer))
-      ;; Redo all startup initialization, like running startup hooks and loading
-      ;; init files.
-      (prin1 `(progn
-                (fset 'doom-try-run-hook #',(symbol-function #'doom-try-run-hook))
-                (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
-                (doom-run-all-startup-hooks-h))
-             (current-buffer)))
-    (let ((args (if (eq mode 'doom)
-                    (list "-l" file)
-                  (list "-Q" "-l" file))))
-      (require 'restart-emacs)
-      (condition-case e
-          (cond ((display-graphic-p)
-                 (if (memq system-type '(windows-nt ms-dos))
-                     (restart-emacs--start-gui-on-windows args)
-                   (restart-emacs--start-gui-using-sh args)))
-                ((memq system-type '(windows-nt ms-dos))
-                 (user-error "Cannot start another Emacs from Windows shell."))
-                ((suspend-emacs
-                  (format "%s %s -nw; fg"
-                          (shell-quote-argument (restart-emacs--get-emacs-binary))
-                          (mapconcat #'shell-quote-argument args " ")))))
-        (error
-         (delete-file file)
-         (signal (car e) (cdr e)))))))
-
-(fset 'doom--run-vanilla-emacs (cmd! (doom--run-sandbox 'vanilla)))
-(fset 'doom--run-vanilla-doom  (cmd! (doom--run-sandbox 'vanilla-doom)))
-(fset 'doom--run-vanilla-doom+ (cmd! (doom--run-sandbox 'vanilla-doom+)))
-(fset 'doom--run-full-doom     (cmd! (doom--run-sandbox 'doom)))
-
-(defvar doom-sandbox-emacs-lisp-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") #'doom--run-vanilla-emacs)
-    (define-key map (kbd "C-c C-d") #'doom--run-vanilla-doom)
-    (define-key map (kbd "C-c C-p") #'doom--run-vanilla-doom+)
-    (define-key map (kbd "C-c C-f") #'doom--run-full-doom)
-    (define-key map (kbd "C-c C-k") #'kill-current-buffer)
-    map))
-
-(define-derived-mode doom-sandbox-emacs-lisp-mode emacs-lisp-mode "Sandbox Elisp"
-  "TODO")
-
-;;;###autoload
-(defun doom/sandbox ()
-  "Open the Emacs Lisp sandbox.
-
-This is a test bed for running Emacs Lisp in another instance of Emacs with
-varying amounts of Doom loaded, including:
-
-  a) vanilla Emacs (nothing loaded),
-  b) vanilla Doom (only Doom core),
-  c) Doom + modules - your private config or
-  c) Doom + modules + your private config (a complete Doom session)
-
-This is done without sacrificing access to installed packages. Use the sandbox
-to reproduce bugs and determine if Doom is to blame."
-  (interactive)
-  (let* ((buffer-name "*doom:sandbox*")
-         (exists (get-buffer buffer-name))
-         (buf (get-buffer-create buffer-name)))
-    (with-current-buffer buf
-      (doom-sandbox-emacs-lisp-mode)
-      (setq-local default-directory doom-emacs-dir)
-      (unless (buffer-live-p exists)
-        (insert-file-contents (doom-glob doom-core-dir "templates/VANILLA_SANDBOX"))
-        (let ((contents (substitute-command-keys (buffer-string))))
-          (erase-buffer)
-          (insert contents "\n")))
-      (goto-char (point-max)))
-    (pop-to-buffer buf)))
-
-
-;;
 ;;; Reporting bugs
 
 ;;;###autoload
+(defun doom/issue-tracker ()
+  "Open Doom Emacs' issue tracker on Discourse."
+  (interactive)
+  (browse-url "https://discourse.doomemacs.org/c/support"))
+
+;;;###autoload
 (defun doom/report-bug ()
-  "Open a markdown buffer destinated to populate the New Issue page on Doom
-Emacs' issue tracker.
+  "Open the browser on our Discourse.
 
 If called when a backtrace buffer is present, it and the output of `doom-info'
 will be automatically appended to the result."
   (interactive)
-  (browse-url "https://github.com/hlissner/doom-emacs/issues/new/choose"))
+  (browse-url "https://discourse.doomemacs.org/how2report"))
 
 ;;;###autoload
 (defun doom/copy-buffer-contents (buffer-name)
