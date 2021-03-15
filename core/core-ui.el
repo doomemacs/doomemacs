@@ -746,7 +746,7 @@ disable it to fix all that visual noise."
          (ignore-errors (call-interactively ',command)))
        (define-key minibuffer-local-map (kbd ,key) #',key-command))))
 (doom-silence-motion-key backward-delete-char "<backspace>")
-(doom-silence-motion-key delete-char "<delete>")
+(doom-silence-motion-key delete-forward-char "<delete>")
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
