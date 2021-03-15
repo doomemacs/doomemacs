@@ -2,7 +2,7 @@
 ;;; checkers/spell/packages.el
 
 (if (not (featurep! +flyspell))
-    (package! spell-fu :pin "a7db58747131dca2eee0e0757c3d254d391ddd1c")
+    (package! spell-fu :pin "5c101b69ec7f3d8f68c204d20a4292aa6e04048a")
   (package! flyspell-correct :pin "d19a090b978a249fc8f6d8b14309a5705a6bb483")
   (cond ((featurep! :completion ivy)
          (package! flyspell-correct-ivy))
