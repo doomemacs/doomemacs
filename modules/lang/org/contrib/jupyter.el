@@ -11,9 +11,10 @@
               "jupyter-R"))
 
   (after! org-src
-    (dolist (lang '(python julia R))
+    (dolist (lang '(python julia))
       (cl-pushnew (cons (format "jupyter-%s" lang) lang)
-                  org-src-lang-modes :key #'car)))
+                  org-src-lang-modes :key #'car))
+    (cl-pushnew '("jupyter-R" . ess-r) org-src-lang-modes :key #'car))
 
   (add-hook! '+org-babel-load-functions
     (defun +org-babel-load-jupyter-h (lang)
