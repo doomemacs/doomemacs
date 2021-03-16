@@ -1,0 +1,134 @@
+#+TITLE:   tools/debugger
+#+DATE:    March 16, 2021
+#+SINCE:   <replace with next tagged release version>
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#when-lsp][When +LSP]]
+    - [[#python][Python]]
+    - [[#c-c-rust-golang][C, C++, Rust, Golang]]
+- [[#features][Features]]
+  - [[#dap-mode-with-lsp][dap-mode with ~+lsp~]]
+- [[#configuration][Configuration]]
+  - [[#with-lsp][With +LSP]]
+    - [[#python-1][Python]]
+    - [[#keybindings][Keybindings]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+Integrates debugging in emacs.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enables ~dap-mode~ for other ~:lang~ modules that also enables ~+lsp~.
+
+** Plugins
++ [[https://github.com/realgud/realgud][realgud]]
++ if ~:lang javascript~
+  + [[https://github.com/realgud/realgud-trepan-ni][realgud-trespan-ni]]
++ if ~+lsp~ and ~:tools lsp~
+  + [[https://github.com/emacs-lsp/dap-mode][dap-mode]]
+  + [[https://github.com/tumashu/posframe][posframe]]
+
+* Prerequisites
+
+You'll have to install a debugger that works with the language you wish to
+debug.
+
+** When +LSP
+
+*** Python
+
+DAP expects [[https://github.com/Microsoft/ptvsd][ptvsd]] by default as the Python debugger, however [[https://github.com/microsoft/debugpy][debugpy]] is
+recommended. See [[file:README.org::*Configuration][Configuration]].
+
+*installing ptvsd:*
+#+begin_src bash
+pip3 install ptvsd --user
+#+end_src
+
+*install debugpy:*
+#+begin_src bash
+pip3 install debugpy --user
+#+end_src
+
+*** C, C++, Rust, Golang
+
+Needs [[https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode][lldb-vscode]].
+
+Install LLDB from you package manager.
+
+*Fedora:*
+#+begin_src bash
+dnf install lldb
+#+end_src
+
+
+* Features
+
+** dap-mode with ~+lsp~
+
+Intuitive and powerful debugging.
+
++ breakpoints
++ REPL
++ local variable view
+  Allows you to browse variables in the current stack frame.
++ expressions
+  Add expressions to either watch variables or generic expressions.
+
+* Configuration
+
+** With +LSP
+
+*** Python
+Recommended to use ~debugpy~ over ~ptvsd~.
+#+begin_src emacs-lisp
+(after! dap-mode
+  (setq dap-python-debugger 'debugpy))
+#+end_src
+
+*** Keybindings
+
+#+begin_src emacs-lisp
+(after! dap-mode
+  (map! :map dap-mode-map
+        :leader
+        :prefix ("d" . "dap")
+        ;; basics
+        :desc "dap next"          "n" #'dap-next
+        :desc "dap step in"       "i" #'dap-step-in
+        :desc "dap step out"      "o" #'dap-step-out
+        :desc "dap continue"      "c" #'dap-continue
+        :desc "dap hydra"         "h" #'dap-hydra
+        :desc "dap debug restart" "r" #'dap-debug-restart
+        :desc "dap debug"         "s" #'dap-debug
+
+        ;; debug
+        :prefix ("dd" . "Debug")
+        :desc "dap debug recent"  "r" #'dap-debug-recent
+        :desc "dap debug last"    "l" #'dap-debug-last
+
+        ;; eval
+        :prefix ("de" . "Eval")
+        :desc "eval"                "e" #'dap-eval
+        :desc "eval region"         "r" #'dap-eval-region
+        :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+        :desc "add expression"      "a" #'dap-ui-expressions-add
+        :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+        :prefix ("db" . "Breakpoint")
+        :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+        :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+        :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+        :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message))
+#+end_src
+
+* Troubleshooting
