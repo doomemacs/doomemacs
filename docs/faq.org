@@ -610,6 +610,8 @@ e.g.
       doom-big-font (font-spec :family "Fira Mono" :size 19))
 #+END_SRC
 
+You may need to run `M-x doom/reload-font` after setting the variable.
+
 ** How do I bind my own keys (or change existing ones)?
 There are many options. Emacs provides a number of keybind functions:
 
