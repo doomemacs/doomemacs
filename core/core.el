@@ -475,30 +475,19 @@ unreadable. Returns the names of envvars that were changed."
   (if (null (file-exists-p file))
       (unless noerror
         (signal 'file-error (list "No envvar file exists" file)))
-    (when-let
-        (env
-         (with-temp-buffer
-           (save-excursion
-             (setq-local coding-system-for-read 'utf-8)
-             (insert "\0\n") ; to prevent off-by-one
-             (insert-file-contents file))
-           (save-match-data
-             (when (re-search-forward "\0\n *\\([^#= \n]*\\)=" nil t)
-               (setq
-                env (split-string (buffer-substring (match-beginning 1) (point-max))
-                                  "\0\n"
-                                  'omit-nulls))))))
-      (setq-default
-       process-environment
-       (append (nreverse env)
-               (default-value 'process-environment))
-       exec-path
-       (append (split-string (getenv "PATH") path-separator t)
-               (list exec-directory))
-       shell-file-name
-       (or (getenv "SHELL")
-           (default-value 'shell-file-name)))
-      env)))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (when-let (env (read (current-buffer)))
+        (setq-default
+         process-environment
+         (append env (default-value 'process-environment))
+         exec-path
+         (append (split-string (getenv "PATH") path-separator t)
+                 (list exec-directory))
+         shell-file-name
+         (or (getenv "SHELL")
+             (default-value 'shell-file-name)))
+        env))))
 
 (defun doom-try-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
