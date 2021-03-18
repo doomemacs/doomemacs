@@ -48,8 +48,9 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
                         git-gutter:view-diff-function #'git-gutter:view-diff-infos
                         git-gutter:clear-function     #'git-gutter:clear-diff-infos
                         git-gutter:window-width 1))
-          (git-gutter-mode +1)
-          (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local))))))
+          (unless (memq major-mode git-gutter:disabled-modes)
+            (git-gutter-mode +1)
+            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
   ;; Disable in Org mode, as per syl20bnr/spacemacs#10555 and
   ;; syohex/emacs-git-gutter#24. Apparently, the mode-enabling function for
