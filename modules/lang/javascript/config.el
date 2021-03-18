@@ -32,7 +32,7 @@
 ;; Major modes
 
 (use-package! js2-mode
-  :mode "\\.m?js\\'"
+  :mode "\\.[mc]?js\\'"
   :mode "\\.es6\\'"
   :interpreter "node"
   :commands js2-line-break
