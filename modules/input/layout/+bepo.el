@@ -83,7 +83,7 @@
       (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
     (after! (:or helm ivy selectrum icomplete)
       (doom-bepo--evil-collection-hook
-        nil
+       nil
        '(minibuffer-local-map
          minibuffer-local-ns-map
          minibuffer-local-completion-map
@@ -225,5 +225,5 @@
     (after! evil-easymotion
       ;; instead of using gs as the evilem-map we use gé to avoid conflicts with org-mode
       ;; down the road
-      (map! :nvm "gé" evilem-map)
+      (evilem-default-keybindings "gé")
       (doom-bepo-rotate-bare-keymap '(evilem-map) doom-bepo-cr-rotation-style))))
