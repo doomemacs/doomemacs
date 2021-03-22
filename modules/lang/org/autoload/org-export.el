@@ -44,4 +44,13 @@ properties and font-locking et all)."
   (pcase major-mode
     ((or `markdown-mode `gfm-mode)
      (+org--yank-html-buffer (markdown)))
-    (_ (ox-clip-formatted-copy beg end))))
+    (_
+     ;; Omit after/before-string overlay properties in htmlized regions, so we
+     ;; don't get fringe characters for things like flycheck or git-gutter.
+     (letf! (defun htmlize-get-text-with-display (beg end)
+              (let ((text (buffer-substring-no-properties beg end)))
+                (htmlize-copy-prop 'display beg end text)
+                (htmlize-copy-prop 'htmlize-link beg end text)
+                ;; (setq text (htmlize-add-before-after-strings beg end text))
+                text))
+       (ox-clip-formatted-copy beg end)))))
