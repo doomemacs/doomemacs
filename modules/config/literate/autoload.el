@@ -61,7 +61,11 @@ byte-compiled from.")
                       ;; Prevent infinite recursion due to recompile-on-save
                       ;; hooks later, and speed up `org-mode' init.
                       (org-mode-hook nil)
-                      (org-inhibit-startup t))
+                      (org-inhibit-startup t)
+                      ;; Allow evaluation of src blocks at tangle-time (would
+                      ;; abort them otherwise). This is a security hazard, but
+                      ;; Doom will trust that you know what you're doing!
+                      (org-confirm-babel-evaluate nil))
                   (org-mode)
                   (with-silent-modifications
                     ;; Tangling won't ordinarily expand #+INCLUDE directives,

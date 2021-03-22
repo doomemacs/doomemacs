@@ -145,7 +145,7 @@ trees with the :notangle: tag."
     (let ((backup (make-temp-file (file-name-base file) nil ".backup.org")))
       (unwind-protect
           ;; Prevent slow hooks from interfering
-          (let (org-mode-hook)
+          (let (org-mode-hook org-confirm-babel-evaluate)
             ;; We do the ol' switcheroo because `org-babel-tangle' writes
             ;; changes to the current file, which would be imposing on the user.
             (copy-file file backup t)
