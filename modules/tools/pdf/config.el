@@ -81,6 +81,29 @@
   ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
+  ;; HACK Refresh FG/BG for pdfs when `pdf-view-midnight-colors' is changed by a
+  ;;      theme or with `setq!'.
+  ;; TODO PR this upstream?
+  (defun +pdf-reload-midnight-minor-mode-h ()
+    (when pdf-view-midnight-minor-mode
+      (pdf-info-setoptions
+       :render/foreground (car pdf-view-midnight-colors)
+       :render/background (cdr pdf-view-midnight-colors)
+       :render/usecolors t)
+      (pdf-cache-clear-images)
+      (pdf-view-redisplay t)))
+  (put 'pdf-view-midnight-colors 'custom-set
+       (lambda (sym value)
+         (set-default sym value)
+         (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+           (with-current-buffer buffer
+             (if (get-buffer-window buffer)
+                 (+pdf-reload-midnight-minor-mode-h)
+               ;; Defer refresh for buffers that aren't visible, to avoid
+               ;; blocking Emacs for too long while changing themes.
+               (add-hook 'doom-switch-buffer-hook #'+pdf-reload-midnight-minor-mode-h
+                         nil 'local))))))
+
   ;; Add retina support for MacOS users
   (eval-when! IS-MAC
     (defvar +pdf--scaled-p nil)
