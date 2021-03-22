@@ -47,10 +47,5 @@ properties and font-locking et all)."
     (_
      ;; Omit after/before-string overlay properties in htmlized regions, so we
      ;; don't get fringe characters for things like flycheck or git-gutter.
-     (letf! (defun htmlize-get-text-with-display (beg end)
-              (let ((text (buffer-substring-no-properties beg end)))
-                (htmlize-copy-prop 'display beg end text)
-                (htmlize-copy-prop 'htmlize-link beg end text)
-                ;; (setq text (htmlize-add-before-after-strings beg end text))
-                text))
+     (letf! (defun htmlize-add-before-after-strings (_beg _end text) text)
        (ox-clip-formatted-copy beg end)))))
