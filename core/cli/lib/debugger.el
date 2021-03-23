@@ -5,15 +5,15 @@
   (cl-destructuring-bind (backtrace &optional type data . _)
       (cons (doom-cli--backtrace) data)
     (with-output-to! doom--cli-log-buffer
-      (let ((straight-error-p
+      (let ((straight-error
              (and (bound-and-true-p straight-process-buffer)
+                  (stringp data)
                   (string-match-p (regexp-quote straight-process-buffer)
-                                  (or (get type 'error-message) "")))))
-        (cond (straight-error-p
-               (print! (error "There was an unexpected package error"))
-               (when-let (output (straight--process-get-output))
-                 (print-group!
-                  (print! "%s" (string-trim output)))))
+                                  data)
+                  (straight--process-get-output))))
+        (cond (straight-error
+               (print! (error "The package manager threw an error"))
+               (print-group! (print! "%s" (string-trim straight-error))))
               ((print! (error "There was an unexpected error"))
                (print-group!
                 (print! "%s %s" (bold "Message:") (get type 'error-message))
@@ -30,14 +30,14 @@
           (with-temp-file doom-cli-log-error-file
             (insert "# -*- lisp-interaction -*-\n")
             (insert "# vim: set ft=lisp:\n")
-            (let ((standard-output doom--cli-log-error-buffer)
+            (let ((standard-output (current-buffer))
                   (print-quoted t)
                   (print-escape-newlines t)
                   (print-escape-control-characters t)
                   (print-level nil)
                   (print-circle nil))
-              (when straight-error-p
-                (print (string-trim (or (straight--process-get-output) ""))))
+              (when straight-error
+                (print (string-trim straight-error)))
               (mapc #'print (cons (list type data) backtrace)))
             (print! (warn "Extended backtrace logged to %s")
                     (relpath doom-cli-log-error-file)))))))

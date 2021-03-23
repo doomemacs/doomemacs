@@ -22,7 +22,6 @@ purpose.")
   "Where to write the last backtrace to.")
 
 (defvar doom--cli-log-buffer (generate-new-buffer " *doom log*"))
-(defvar doom--cli-log-error-buffer (generate-new-buffer " *doom error log*"))
 (defvar doom--cli-commands (make-hash-table :test 'equal))
 (defvar doom--cli-groups (make-hash-table :test 'equal))
 (defvar doom--cli-group nil)
