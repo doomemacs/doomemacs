@@ -105,6 +105,7 @@
       (:prefix-map ("s" . "search")
        :desc "Search project for symbol"    "." #'+default/search-project-for-symbol-at-point
        :desc "Search buffer"                "b" #'swiper
+       :desc "Search all open buffers"      "B" #'swiper-all
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
        :desc "Locate file"                  "f" #'+lookup/file
