@@ -6,6 +6,8 @@
   (setq ledger-clear-whole-transactions 1
         ledger-mode-should-check-version nil)
 
+  (add-hook 'ledger-mode-hook #'outline-minor-mode)
+
   (set-company-backend! 'ledger-mode 'company-capf)
 
   (defadvice! +ledger--check-version-a (orig-fn)
