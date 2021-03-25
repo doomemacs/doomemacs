@@ -17,6 +17,15 @@
         (funcall orig-fn)
       (message "Couldn't find '%s' executable" ledger-binary-path)))
 
+  ;; `ledger-mode' lacks imenu support out of the box, so we gie it some. At
+  ;; least to make jumping to outline headings or transactions easier.
+  (setq-hook! 'ledger-mode-hook
+    imenu-generic-expression
+    `((nil ,(concat
+             "^[\\*]+[ \t]+\\([^\n\r]+\\)\\|"                              ; outline headings
+             "^[0-9]\\{4\\}[-/.][0-9]\\{2\\}[-/.][0-9]\\{2\\}[ \t]+[^\n]+")  ; transactions
+           0)))
+
   (map! :map ledger-report-mode-map
         "C-c C-c" #'ledger-report-edit-report
         "C-c C-r" #'ledger-report-redo
