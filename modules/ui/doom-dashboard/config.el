@@ -190,7 +190,9 @@ PLIST can have the following properties:
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist))
   ;; Ensure point is always on a button
-  (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil t))
+  (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
+  ;; Never show hl-line, because the margin cut-off looks ugly!
+  (face-remap-add-relative 'hl-line '(:background nil)))
 
 (define-key! +doom-dashboard-mode-map
   [left-margin mouse-1]   #'ignore
