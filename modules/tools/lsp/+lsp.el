@@ -46,7 +46,7 @@ about it (it will be logged to *Messages* however).")
   :config
   (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
 
-  (setq lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/")
+  (setq lsp-intelephense-storage-path (concat doom-etc-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir (expand-file-name "vetur"
                                                         (or (bound-and-true-p +snippets-dir)
                                                             (concat doom-private-dir "snippets/")))
