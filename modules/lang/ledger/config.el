@@ -13,7 +13,7 @@
     '(("^\\*Ledger Report" :size 0.5 :quit 'other :ttl 0)
       ("^\\*Ledger Error"  :quit t :ttl 0)))
 
-  (defadvice! +ledger--check-version-a (orig-fn)
+  (defadvice! +ledger--fail-gracefully-if-absent-a (orig-fn)
     "Fail gracefully if ledger binary isn't available."
     :around #'ledger-check-version
     (if (executable-find ledger-binary-path)
@@ -59,6 +59,7 @@
         :localleader
         :map ledger-mode-map
         "a" #'ledger-add-transaction
+        "e" #'ledger-post-edit-amount
         "t" #'ledger-toggle-current
         "d" #'ledger-delete-current-transaction
         "r" #'ledger-report
