@@ -9,6 +9,9 @@
   (add-hook 'ledger-mode-hook #'outline-minor-mode)
 
   (set-company-backend! 'ledger-mode 'company-capf)
+  (set-popup-rules!
+    '(("^\\*Ledger Report" :size 0.5 :quit 'other :ttl 0)
+      ("^\\*Ledger Error"  :quit t :ttl 0)))
 
   (defadvice! +ledger--check-version-a (orig-fn)
     "Fail gracefully if ledger binary isn't available."
