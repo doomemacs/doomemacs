@@ -6,4 +6,4 @@
 (when (featurep! :checkers syntax)
   (package! flycheck-raku
     :recipe (:host github :repo "widefox/flycheck-raku")
-    :pin "046f35abe0c61967157e151126e4dd7ec5d1c004"))
+    :pin "b1acccd6e9d9753022571ee96d18b8e9f3227c65"))

@@ -25,7 +25,7 @@
   :pin "a7422fb8ab1baee19adb2717b5b47b9c3812a84c")
 
 ;; core-ui.el
-(package! all-the-icons :pin "2f5ea7259ed104a0ef8727f640ee2525108038d5")
+(package! all-the-icons :pin "a8c84176af7f3b97019423ebf3e02f983f4ebdf9")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f43d48a24602be3ec899345a3326ed0247b960c6")
@@ -33,8 +33,8 @@
 
 ;; core-editor.el
 (package! better-jumper :pin "411ecdf6e7a3e1b4ced7605070d2309e5fc46556")
-(package! dtrt-indent :pin "4a30d8edac7fbc5936fc07050e3ebfb94f97c1e7")
-(package! helpful :pin "584ecc887bb92133119f93a6716cdf7af0b51dca")
+(package! dtrt-indent :pin "37529fc7a98564164c87103e5107a6dca32b0e44")
+(package! helpful :pin "7e4b1f0d5572a4e2b8ee7a9b084ef863d0315a73")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "63695c64233d215a92bf08e762f643cdb595bdd9")
 ;; DEPRECATED Built into Emacs 27+; remove when we drop 26 support
@@ -46,8 +46,8 @@
   :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
 
 ;; core-projects.el
-(package! projectile :pin "fd5994762a90c2311e8aa40c37373f24e1743a55")
+(package! projectile :pin "1528ed4f082e7aaca19f22394eb4bed879645b7c")
 
 ;; core-keybinds.el
 (package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
-(package! which-key :pin "c0608e812a8d1bc7aefeacdfaeb56a7272eabf44")
+(package! which-key :pin "c632dbf27a77c1c73ce559041b3a78ec5f78b187")

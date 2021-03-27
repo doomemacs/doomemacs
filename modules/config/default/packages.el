@@ -6,4 +6,4 @@
 (package! link-hint :pin "09ba5727d8ba4a2e5d4f5ce924aaebbc7478ff13")
 
 (unless (featurep! :editor evil)
-  (package! expand-region :pin "ea6b4cbb9985ddae532bd2faf9bb00570c9f2781"))
+  (package! expand-region :pin "4b8322774d9c1d8b64a0049d1dbbc1e7ce80c1a0"))

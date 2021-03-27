@@ -4,7 +4,7 @@
 ;; Major modes
 (package! pip-requirements :pin "216cd1690f80cc965d4ae47b8753fc185f778ff6")
 (when (featurep! +cython)
-  (package! cython-mode :pin "9a761a637fce6a7b70735ae2248963d63e569e14")
+  (package! cython-mode :pin "9decfca1b7c836247c80ea94aca8c7cacf70327c")
   (when (featurep! :checkers syntax)
     (package! flycheck-cython :pin "ecc4454d35ab5317ab66a04406f36f0c1dbc0b76")))
 
@@ -31,10 +31,7 @@
   (package! poetry :pin "d5163fe065239bb7b46ed8b3ff3b85b1f3229af3"))
 
 ;; Testing frameworks
-(package! nose
-  ;; REVIEW Remove this when emacsmirror/epkgs updates its emacsattic index
-  :recipe (:host github :repo "emacsattic/nose")
-  :pin "f8528297519eba911696c4e68fa88892de9a7b72")
+(package! nose :pin "f8528297519eba911696c4e68fa88892de9a7b72")
 (package! python-pytest :pin "31ae5e0e6813de8d889103f7b8dde252b04b1ae4")
 
 ;; Import managements

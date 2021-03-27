@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/racket/packages.el
 
-(package! racket-mode :pin "75ea8f6dc9ace762dcaf02f834725750fa4abaf2")
+(package! racket-mode :pin "5115c4786075b39525008755a5fb843c397ca743")
