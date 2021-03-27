@@ -1,6 +1,6 @@
 ;;; core/autoload/projects.el -*- lexical-binding: t; -*-
 
-(defvar projectile-project-root nil)
+(defvar projectile-project-root)
 (defvar projectile-enable-caching)
 (defvar projectile-require-project-root)
 
@@ -80,7 +80,8 @@ they are absolute."
 (defun doom-project-root (&optional dir)
   "Return the project root of DIR (defaults to `default-directory').
 Returns nil if not in a project."
-  (let ((projectile-project-root (unless dir projectile-project-root))
+  (let ((projectile-project-root
+         (unless dir (bound-and-true-p projectile-project-root)))
         projectile-require-project-root)
     (projectile-project-root dir)))
 

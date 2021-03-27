@@ -186,29 +186,27 @@ ready to be pasted in a bug report on github."
                             module)))
                '("n/a")))
         (packages
-         ,@(or (condition-case e
-                   (mapcar
-                    #'cdr (doom--collect-forms-in
-                           (doom-path doom-private-dir "packages.el")
-                           "package!"))
-                 (error (format "<%S>" e)))
-               '("n/a")))
-        ,(when-let (unpins (condition-case e
-                               (mapcan #'identity
-                                       (mapcar
-                                        #'cdr (doom--collect-forms-in
-                                               (doom-path doom-private-dir "packages.el")
-                                               "unpin!")))
-                             (error (format "<%S>" e))))
-           (cons 'unpin unpins))
+         ,@(condition-case e
+               (mapcar
+                #'cdr (doom--collect-forms-in
+                       (doom-path doom-private-dir "packages.el")
+                       "package!"))
+             (error (format "<%S>" e))))
+        (unpin
+         ,@(condition-case e
+               (mapcan #'identity
+                       (mapcar
+                        #'cdr (doom--collect-forms-in
+                               (doom-path doom-private-dir "packages.el")
+                               "unpin!")))
+             (error (list (format "<%S>" e)))))
         (elpa
-         ,@(or (condition-case e
-                   (progn
-                     (package-initialize)
-                     (cl-loop for (name . _) in package-alist
-                              collect (format "%s" name)))
-                 (error (format "<%S>" e)))
-               '("n/a")))))))
+         ,@(condition-case e
+               (progn
+                 (package-initialize)
+                 (cl-loop for (name . _) in package-alist
+                          collect (format "%s" name)))
+             (error (format "<%S>" e))))))))
 
 
 ;;
@@ -247,12 +245,13 @@ copies it to your clipboard, ready to be pasted into bug reports!"
                     (delete-region beg end)
                     (insert sexp))))))
         (dolist (spec info)
-          (insert! "%11s  %s\n"
-                   ((car spec)
-                    (if (listp (cdr spec))
-                        (mapconcat (lambda (x) (format "%s" x))
-                                   (cdr spec) " ")
-                      (cdr spec))))))
+          (when (cdr spec)
+            (insert! "%11s  %s\n"
+                     ((car spec)
+                      (if (listp (cdr spec))
+                          (mapconcat (lambda (x) (format "%s" x))
+                                     (cdr spec) " ")
+                        (cdr spec)))))))
       (if (not doom-interactive-p)
           (print! (buffer-string))
         (with-current-buffer (pop-to-buffer buffer)

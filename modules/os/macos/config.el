@@ -31,9 +31,9 @@
 
 ;; HACK On MacOS, disabling the menu bar makes MacOS treat Emacs as a
 ;;      non-application window -- which means it doesn't automatically capture
-;;      focus when it is started, among other things. We enable menu-bar-lines
-;;      there, but we still want it disabled in terminal frames because there it
-;;      activates an ugly menu bar.
+;;      focus when it is started, among other things, so enable the menu-bar for
+;;      GUI frames, but keep it disabled in terminal frames because there it
+;;      activates an ugly, in-frame menu bar.
 (add-hook! '(window-setup-hook after-make-frame-functions)
   (defun doom-init-menu-bar-in-gui-frames-h (&optional frame)
     "Re-enable menu-bar-lines in GUI frames."

@@ -567,7 +567,7 @@ directives. By default, this only recognizes C directives.")
       :textobj "u" #'+evil:inner-url-txtobj            #'+evil:outer-url-txtobj
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
 
-      ;; evil-easymotion (see `+evil/easymotion')
+      ;; evil-easymotion
       (:after evil-easymotion
        :m "gs" evilem-map
        (:map evilem-map
