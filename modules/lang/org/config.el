@@ -887,7 +887,7 @@ between the two."
       ("^\\*Org Agenda"     :ignore t)
       ("^\\*Org Src"        :size 0.4  :quit nil :select t :autosave t :modeline t :ttl nil)
       ("^\\*Org-Babel")
-      ("^CAPTURE-.*\\.org$" :size 0.25 :quit nil :select t :autosave ignore))))
+      ("^\\*Capture\\*$\\|CAPTURE-.*$" :size 0.25 :quit nil :select t :autosave ignore))))
 
 
 (defun +org-init-protocol-lazy-loader-h ()
