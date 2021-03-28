@@ -50,27 +50,26 @@
   :after elixir-mode
   :config (flycheck-credo-setup))
 
+(eval-when! (featurep! +alchemist)
+  (use-package! alchemist
+    :hook (elixir-mode . alchemist-mode)
+    :config
+    (set-lookup-handlers! 'alchemist-mode
+      :definition #'alchemist-goto-definition-at-point
+      :documentation #'alchemist-help-search-at-point)
+    (set-eval-handler! 'alchemist-mode #'alchemist-eval-region)
+    (set-repl-handler! 'alchemist-mode #'alchemist-iex-project-run))
 
-(use-package! alchemist
-  :hook (elixir-mode . alchemist-mode)
-  :config
-  (set-lookup-handlers! 'alchemist-mode
-    :definition #'alchemist-goto-definition-at-point
-    :documentation #'alchemist-help-search-at-point)
-  (set-eval-handler! 'alchemist-mode #'alchemist-eval-region)
-  (set-repl-handler! 'alchemist-mode #'alchemist-iex-project-run))
-
-
-(use-package! alchemist-company
-  :when (featurep! :completion company)
-  :commands alchemist-company
-  :config
-  (set-company-backend! 'alchemist-mode '(alchemist-company company-yasnippet))
-  ;; Alchemist doesn't use hook symbols to add these backends, so we have to use
-  ;; the entire closure to get rid of it.
-  (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
-    (remove-hook 'alchemist-mode-hook fn)
-    (remove-hook 'alchemist-iex-mode-hook fn)))
+  (use-package! alchemist-company
+    :when (featurep! :completion company)
+    :commands alchemist-company
+    :config
+    (set-company-backend! 'alchemist-mode '(alchemist-company company-yasnippet))
+    ;; Alchemist doesn't use hook symbols to add these backends, so we have to use
+    ;; the entire closure to get rid of it.
+    (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
+      (remove-hook 'alchemist-mode-hook fn)
+      (remove-hook 'alchemist-iex-mode-hook fn))))
 
 (use-package! exunit
   :hook (elixir-mode . exunit-mode)
