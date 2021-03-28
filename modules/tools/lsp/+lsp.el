@@ -58,9 +58,9 @@ about it (it will be logged to *Messages* however).")
         lsp-groovy-server-file        (concat lsp-server-install-dir "groovy-language-server-all.jar"))
 
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
-  (set-lookup-handlers! 'lsp-mode :async t
-    ;; NOTE :definitions and :references aren't needed. LSP is integrated into
-    ;;      xref, which the lookup module has first class support for.
+  (set-lookup-handlers! 'lsp-mode
+    :definition #'+lsp-lookup-definition-handler
+    :references #'+lsp-lookup-references-handler
     :documentation #'lsp-describe-thing-at-point
     :implementations #'lsp-find-implementation
     :type-definition #'lsp-find-type-definition)
