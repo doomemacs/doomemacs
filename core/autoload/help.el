@@ -594,7 +594,7 @@ If prefix arg is present, refresh the cache."
               (insert "This package is configured in the following locations:")
               (dolist (location configs)
                 (insert "\n" indent)
-                (cl-destructuring-bind (file line _match)
+                (cl-destructuring-bind (file line _match &rest)
                     (split-string location ":")
                   (doom--help-insert-button location
                                             (expand-file-name file doom-emacs-dir)
