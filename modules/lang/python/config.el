@@ -290,6 +290,7 @@
   :when (featurep! +poetry)
   :after python
   :init
+  (setq poetry-tracking-strategy 'switch-buffer)
   (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
 
