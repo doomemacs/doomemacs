@@ -31,7 +31,7 @@ Prompts for what BACKEND to use. See `org-export-backends' for options."
     (unwind-protect
         (with-current-buffer buffer
           (kill-new (buffer-string)))
-      (kill-buffer (current-buffer)))))
+      (kill-buffer-and-window))))
 
 ;;;###autoload
 (defun +org/export-to-clipboard-as-rich-text (beg end)
