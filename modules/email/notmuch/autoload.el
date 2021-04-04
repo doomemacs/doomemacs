@@ -29,31 +29,41 @@
   (doom-kill-matching-buffers "^\\*notmuch")
   (+workspace/delete "*MAIL*"))
 
+(defun notmuch-get-sync-command ()
+  (let ((afew-cmd "afew -a -t")
+        (sync-cmd (pcase +notmuch-sync-backend
+                    (`gmi
+                     (concat "cd " +notmuch-mail-folder " && gmi sync && notmuch new"))
+                    (`mbsync
+                     "mbsync -a && notmuch new")
+                    (`mbsync-xdg
+                     "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new")
+                    (`offlineimap
+                     "offlineimap && notmuch new")
+                    (`custom +notmuch-sync-command))))
+    (if (featurep! +afew)
+        (format "%s && %s" sync-cmd afew-cmd)
+      sync-cmd)))
+
 ;;;###autoload
 (defun +notmuch/update ()
+  "Sync notmuch emails with server."
   (interactive)
-  ;; create output buffer and jump to beginning
-  (let ((buf (get-buffer-create "*notmuch update*")))
-    (with-current-buffer buf
-      (erase-buffer))
-    (pop-to-buffer buf nil t)
-    (set-process-sentinel
-     (start-process-shell-command
-      "notmuch update" buf
-      (pcase +notmuch-sync-backend
-        (`gmi
-         (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
-        (`mbsync
-         "mbsync -a && notmuch new && afew -a -t")
-        (`mbsync-xdg
-         "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
-        (`offlineimap
-         "offlineimap && notmuch new && afew -a -t")
-        (`custom +notmuch-sync-command)))
-     ;; refresh notmuch buffers if sync was successful
-     (lambda (_process event)
-       (if (string= event "finished\n")
-           (notmuch-refresh-all-buffers))))))
+  (with-current-buffer (compile (notmuch-get-sync-command))
+    (let ((w (get-buffer-window (current-buffer))))
+      (select-window w)
+      (add-hook
+       'compilation-finish-functions
+       (lambda (buf status)
+         (if (equal status "finished\n")
+             (progn
+               (delete-window w)
+               (kill-buffer buf)
+               (notmuch-refresh-all-buffers)
+               (message "Notmuch sync successful"))
+           (user-error "Failed to sync notmuch data")))
+       nil
+       'local))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
