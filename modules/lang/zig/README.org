@@ -58,10 +58,9 @@ This module supports LSP integration. For it to work you'll need:
 
 * Configuration
 ** Customize zls path
-To customize the path of the =zls= executable, modify
-~lsp-clients-zls-executable~.
+To customize the path of the =zls= executable, modify ~lsp-zig-zls-executable~.
 
 #+BEGIN_SRC elisp
 ;; in $DOOMDIR/config.el
-(setq lsp-clients-zls-executable "~/path/to/zls")
+(setq lsp-zig-zls-executable "~/path/to/zls")
 #+END_SRC
