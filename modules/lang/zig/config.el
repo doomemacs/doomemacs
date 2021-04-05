@@ -8,7 +8,6 @@
 ;; zig-mode
 
 (use-package! zig-mode
-  :mode "\\.zig$"
   :hook (zig-mode . rainbow-delimiters-mode)
   :config
   ;; Disable zig-mode's default format on save behaviour.
