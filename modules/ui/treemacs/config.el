@@ -76,3 +76,7 @@ This must be set before `treemacs' has loaded.")
   :when (featurep! :ui workspaces)
   :after treemacs
   :config (treemacs-set-scope-type 'Perspectives))
+
+(use-package! lsp-treemacs
+  :when (featurep! +lsp)
+  :after (treemacs lsp))

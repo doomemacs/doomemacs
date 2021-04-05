@@ -212,7 +212,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/ophints/README.org][ophints]] - TODO
 + [[file:../modules/ui/popup/README.org][popup]] =+all +defaults= - Makes temporary/disposable windows less intrusive
 + [[file:../modules/ui/tabs/README.org][tabs]] - TODO
-+ treemacs - TODO
++ [[file:../modules/ui/treemacs/README.org][treemacs]] - =+lsp= - A tree layout file explorer for Emacs
 + [[file:../modules/ui/unicode/README.org][unicode]] - TODO
 + vc-gutter - TODO
 + vi-tilde-fringe - TODO
