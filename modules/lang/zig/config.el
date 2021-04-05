@@ -12,14 +12,15 @@
   :config
   ;; Disable zig-mode's default format on save behaviour.
   (setq zig-format-on-save nil)
-  (when (featurep! +lsp)
-    (add-hook 'zig-mode-local-vars-hook #'lsp!))
   (map! :localleader
         :map zig-mode-map
         "b" #'zig-compile
         "f" #'zig-format-buffer
         "r" #'zig-run
         "t" #'zig-test-buffer))
+
+(when (featurep! +lsp)
+  (add-hook 'zig-mode-local-vars-hook #'lsp!))
 
 (when (featurep! :checkers syntax)
   (flycheck-define-checker zig
