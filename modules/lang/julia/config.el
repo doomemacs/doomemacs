@@ -42,6 +42,7 @@
 
 (use-package! julia-vterm
   :preface (defvar +julia-repl-start-hook nil)
+  :when (featurep! :term vterm)
   :hook (julia-mode . julia-vterm-mode)
   :config
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
