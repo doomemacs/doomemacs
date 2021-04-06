@@ -2,8 +2,11 @@
 ;;; lang/julia/packages.el
 
 (package! julia-mode :pin "fe6f6f7a80f8d60ecffa5b2cb43667bb9dc11705")
-(package! julia-repl :pin "7ce38a9caf2a9c105afe66f464a2f30e816d69f3")
 
+(when (not (featurep! :term vterm))
+  (package! julia-repl :pin "7ce38a9caf2a9c105afe66f464a2f30e816d69f3"))
+(when (featurep! :term vterm)
+  (package! julia-vterm :pin "1d70c7f9fb91654e38fc868baf0ef72399f75ded"))
 (when (featurep! +lsp)
   (if (featurep! :tools lsp +eglot)
       (package! eglot-jl :pin "84cff9d6ef1643f3eac6c9d620cc1e380a9847d9")

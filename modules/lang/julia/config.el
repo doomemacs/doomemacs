@@ -40,8 +40,22 @@
         1 font-lock-type-face)))))
 
 
+(use-package! julia-vterm
+  :preface (defvar +julia-repl-start-hook nil)
+  :hook (julia-mode . julia-vterm-mode)
+  :config
+  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
+
+  (when (featurep! :ui workspaces)
+    (defadvice! +julia--namespace-repl-buffer (&optional session-name restart)
+      :override #'julia-vterm-repl-buffer
+      (julia-vterm-repl-buffer-with-session-name (+workspace-current-name) restart))
+    )
+  )
+
 (use-package! julia-repl
   :preface (defvar +julia-repl-start-hook nil)
+  :when (not (featurep! :term vterm))
   :hook (julia-mode . julia-repl-mode)
   :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
   :hook (+julia-repl-start . julia-repl-use-emacsclient)
