@@ -257,55 +257,54 @@ If this is the dashboard buffer, reload it completely."
         ((and (not (file-remote-p default-directory))
               (doom-real-buffer-p (current-buffer)))
          (setq +doom-dashboard--last-cwd default-directory)
-         (+doom-dashboard-update-pwd))))
+         (+doom-dashboard-update-pwd-h))))
 
 (defun +doom-dashboard-reload-frame-h (_frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
   (when (timerp +doom-dashboard--reload-timer)
     (cancel-timer +doom-dashboard--reload-timer)) ; in case this function is run rapidly
-  (setq +doom-dashboard--reload-timer (run-with-timer 0.1 nil #'+doom-dashboard-reload t)))
+  (setq +doom-dashboard--reload-timer
+        (run-with-timer 0.1 nil #'+doom-dashboard-reload t)))
 
 (defun +doom-dashboard-resize-h (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
   (let (buffer-list-update-hook
         window-configuration-change-hook
         window-size-change-functions)
-    (let ((windows (get-buffer-window-list (doom-fallback-buffer) nil t)))
+    (when-let (windows (get-buffer-window-list (doom-fallback-buffer) nil t))
       (dolist (win windows)
         (set-window-start win 0)
         (set-window-fringes win 0 0)
         (set-window-margins
          win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2))))
-      (when windows
-        (with-current-buffer (doom-fallback-buffer)
-          (save-excursion
-            (with-silent-modifications
-              (goto-char (point-min))
-              (delete-region (line-beginning-position)
-                             (save-excursion (skip-chars-forward "\n")
-                                             (point)))
-              (insert (make-string
-                       (+ (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                    (round (/ (count-lines (point-min) (point-max))
-                                              2))))
-                          (car +doom-dashboard-banner-padding))
-                       ?\n)))))))))
+      (with-current-buffer (doom-fallback-buffer)
+        (save-excursion
+          (with-silent-modifications
+            (goto-char (point-min))
+            (delete-region (line-beginning-position)
+                           (save-excursion (skip-chars-forward "\n")
+                                           (point)))
+            (insert (make-string
+                     (+ (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                                  (round (/ (count-lines (point-min) (point-max))
+                                            2))))
+                        (car +doom-dashboard-banner-padding))
+                     ?\n))))))))
 
 (defun +doom-dashboard--persp-detect-project-h (&rest _)
-  "Check for a `last-project-root' parameter in the perspective, and set the
-dashboard's `default-directory' to it if it exists.
+  "Set dashboard's PWD to current persp's `last-project-root', if it exists.
 
-This and `+doom-dashboard--persp-record-project-h' provides `persp-mode' integration with
-the Doom dashboard. It ensures that the dashboard is always in the correct
-project (which may be different across perspective)."
+This and `+doom-dashboard--persp-record-project-h' provides `persp-mode'
+integration with the Doom dashboard. It ensures that the dashboard is always in
+the correct project (which may be different across perspective)."
   (when (bound-and-true-p persp-mode)
     (when-let (pwd (persp-parameter 'last-project-root))
-      (+doom-dashboard-update-pwd pwd))))
+      (+doom-dashboard-update-pwd-h pwd))))
 
 (defun +doom-dashboard--persp-record-project-h (&optional persp &rest _)
-  "Record the last `doom-project-root' for the current perspective. See
-`+doom-dashboard--persp-detect-project-h' for more information."
+  "Record the last `doom-project-root' for the current persp.
+See `+doom-dashboard--persp-detect-project-h' for more information."
   (when (bound-and-true-p persp-mode)
     (set-persp-parameter
      'last-project-root (doom-project-root)
@@ -321,16 +320,16 @@ project (which may be different across perspective)."
   "Returns t if BUFFER is the dashboard buffer."
   (eq buffer (get-buffer +doom-dashboard-name)))
 
-(defun +doom-dashboard-update-pwd (&optional pwd)
-  "Update `default-directory' in the Doom dashboard buffer. What it is set to is
-controlled by `+doom-dashboard-pwd-policy'."
+(defun +doom-dashboard-update-pwd-h (&optional pwd)
+  "Update `default-directory' in the Doom dashboard buffer.
+What it is set to is controlled by `+doom-dashboard-pwd-policy'."
   (if pwd
       (with-current-buffer (doom-fallback-buffer)
         (doom-log "Changed dashboard's PWD to %s" pwd)
         (setq-local default-directory pwd))
     (let ((new-pwd (+doom-dashboard--get-pwd)))
       (when (and new-pwd (file-accessible-directory-p new-pwd))
-        (+doom-dashboard-update-pwd
+        (+doom-dashboard-update-pwd-h
          (concat (directory-file-name new-pwd)
                  "/"))))))
 
@@ -353,7 +352,7 @@ controlled by `+doom-dashboard-pwd-policy'."
           (+doom-dashboard-reposition-point-h))
         (+doom-dashboard-resize-h)
         (+doom-dashboard--persp-detect-project-h)
-        (+doom-dashboard-update-pwd)
+        (+doom-dashboard-update-pwd-h)
         (current-buffer)))))
 
 ;; helpers
