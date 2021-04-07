@@ -5,6 +5,7 @@
 
 (defvar +doom-dashboard-functions
   '(doom-dashboard-widget-banner
+    doom-dashboard-widget-header
     doom-dashboard-widget-shortmenu
     doom-dashboard-widget-loaded
     doom-dashboard-widget-footer)
@@ -402,7 +403,7 @@ controlled by `+doom-dashboard-pwd-policy'."
             "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
             "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
             "||.=='    _-'                                                     `' |  /==.||"
-            "=='    _-'                         E M A C S                          \\/   `=="
+            "=='    _-'                                                            \\/   `=="
             "\\   _-'                                                                `-_   /"
             " `''                                                                      ``'"))
          (longest-line (apply #'max (mapcar #'length banner))))
@@ -437,6 +438,16 @@ controlled by `+doom-dashboard-pwd-policy'."
                    ? ))))
       (insert (make-string (or (cdr +doom-dashboard-banner-padding) 0)
                            ?\n)))))
+
+(defun doom-dashboard-widget-header ()
+  (insert
+   "\n"
+   (propertize
+    (+doom-dashboard--center
+     +doom-dashboard--width
+     (concat "E M A C S"))
+    'face 'doom-dashboard-banner)
+   "\n\n"))
 
 (defun doom-dashboard-widget-loaded ()
   (insert
