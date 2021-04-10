@@ -6,7 +6,6 @@
 * PROJ List of things needed for Ivy parity
 ** TODO Icons
 https://github.com/minad/marginalia/issues/59
-** TODO display extra information in =SPC b b=
 ** TODO make backspace work in filepath searching
 In ivy, backspace on =/foo/bar/!= (where =!= is the cursor) leads to =/foo/!=
 In selectrum, it leads to =/foo/bar!=
