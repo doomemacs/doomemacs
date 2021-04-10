@@ -8,6 +8,11 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#jump-to-navigation][Jump-to navigation]]
+  - [[#project-search--replace][Project search & replace]]
+  - [[#in-buffer-searching][In-buffer searching]]
+  - [[#selectrum-integration-for-various-completing-commands][Selectrum integration for various completing commands]]
 
 * Description
 This module provides Selectrum integration for a variety of Emacs commands, as
@@ -33,3 +38,108 @@ TODO
 
 * Prerequisites
 This module has no prerequisites.
+
+* Features
+
+Selectrum and friends modify and use the built-in ~completing-read~ function,
+used by any function that requires completion. Due to this the full scope of
+these packages is too large to cover here, so we will detail Doom-specific
+additions:
+
+** Jump-to navigation
+This module provides an interface to navigate within a project using
+=projectile=:
+
+https://assets.doomemacs.org/completion/selectrum/projectile.png
+
+| Keybind              | Description                         |
+|----------------------+-------------------------------------|
+| =SPC p f=, =SPC SPC= | Jump to file in project             |
+| =SPC f f=, =SPC .=   | Jump to file from current directory |
+| =SPC s i=            | Jump to symbol in file              |
+
+** Project search & replace
+This module provides interactive text search and replace using ripgrep.
+
+| Keybind   | Description              |
+|-----------+--------------------------|
+| =SPC s p= | Search project           |
+| =SPC s P= | Search another project   |
+| =SPC s d= | Search this directory    |
+| =SPC s D= | Search another directory |
+
+https://assets.doomemacs.org/completion/selectrum/search.png
+
+Prefixing these keys with the universal argument (=SPC u= for evil users; =C-u=
+otherwise) changes the behavior of these commands, instructing the underlying
+search engine to include ignored files.
+
+This module also provides Ex Commands for evil users:
+
+| Ex command             | Description                                                      |
+|------------------------+------------------------------------------------------------------|
+| ~:pg[rep][!] [QUERY]~  | Search project (if ~!~, include hidden files)                    |
+| ~:pg[rep]d[!] [QUERY]~ | Search from current directory (if ~!~, don't search recursively) |
+
+The optional `!` is equivalent to the universal argument for the previous
+commands.
+
+-----
+
+These keybindings are available while a search is active:
+
+| Keybind   | Description                                   |
+|-----------+-----------------------------------------------|
+| =C-c C-o= | Open a buffer with your search results        |
+| =C-c C-e= | Open a writable buffer of your search results |
+| =C-SPC=   | Preview the current candidate                 |
+| =C-RET=   | Open the selected candidate in other-window   |
+
+Changes to the resulting wgrep buffer (opened by =C-c C-e=) can be committed
+with =C-c C-c= and aborted with =C-c C-k= (alternatively =ZZ= and =ZQ=, for evil
+users).
+
+https://assets.doomemacs.org/completion/selectrum/search-replace.png
+
+** TODO In-buffer searching
+The =swiper= package provides an interactive buffer search powered by ivy. It
+can be invoked with:
+
++ =SPC s s= (~swiper-isearch~)
++ =SPC s S= (~swiper-isearch-thing-at-point~)
++ =SPC s b= (~consult-line~)
++ ~:sw[iper] [QUERY]~
+
+https://assets.doomemacs.org/completion/selectrum/buffer-search.png
+
+A wgrep buffer can be opened from swiper with =C-c C-e=.
+
+** Selectrum integration for various completing commands
+*** General
+| Keybind        | Description                   |
+|----------------+-------------------------------|
+| =M-x=, =SPC := | Enhanced M-x                  |
+| =SPC '=        | Resume last Selectrum session |
+
+*** Jump to files, buffers or projects
+| Keybind              | Description                           |
+|----------------------+---------------------------------------|
+| =SPC RET=            | Find bookmark                         |
+| =SPC f f=, =SPC .=   | Browse from current directory         |
+| =SPC p f=, =SPC SPC= | Find file in project                  |
+| =SPC f r=            | Find recently opened file             |
+| =SPC p p=            | Open another project                  |
+| =SPC b b=, =SPC ,=   | Switch to buffer in current workspace |
+| =SPC b B=, =SPC <=   | Switch to buffer                      |
+
+*** Search
+| Keybind   | Description                               |
+|-----------+-------------------------------------------|
+| =SPC p t= | List all TODO/FIXMEs in project           |
+| =SPC s b= | Search the current buffer                 |
+| =SPC s d= | Search this directory                     |
+| =SPC s D= | Search another directory                  |
+| =SPC s i= | Search for symbol in current buffer       |
+| =SPC s p= | Search project                            |
+| =SPC s P= | Search another project                    |
+| =SPC s s= | Search the current buffer (incrementally) |
