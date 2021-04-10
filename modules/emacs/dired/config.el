@@ -25,6 +25,9 @@
   (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
 
   (let ((args (list "-ahl" "-v" "--group-directories-first")))
+    (when IS-WINDOWS
+      ;; the windows emulated ls does not support --group-directories-first
+      (setq args (nbutlast args 1)))
     (when IS-BSD
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
