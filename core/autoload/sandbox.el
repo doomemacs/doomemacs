@@ -162,7 +162,7 @@ varying amounts of Doom loaded, including:
   a) vanilla Emacs (nothing loaded),
   b) vanilla Doom (only Doom core),
   c) Doom + modules - your private config or
-  c) Doom + modules + your private config (a complete Doom session)
+  d) Doom + modules + your private config (a complete Doom session)
 
 This is done without sacrificing access to installed packages. Use the sandbox
 to reproduce bugs and determine if Doom is to blame."
