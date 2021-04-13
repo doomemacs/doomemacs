@@ -23,7 +23,7 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 + Eldoc support (~go-eldoc~)
 + REPL (~gore~)
 + Syntax-checking (~flycheck~)
-+ Auto-formatting on save (~gofmt~)
++ Auto-formatting on save (~gofmt~) (requires =:editor (format +onsave)=)
 + Code navigation & refactoring (~go-guru~)
 + [[../../editor/file-templates/templates/go-mode][File templates]]
 + [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
@@ -89,7 +89,7 @@ go get -u github.com/fatih/gomodifytags
 #+END_SRC
 
 + ~golangci-lint~ (optional: for flycheck to integrate golangci-lint results)
-  it is recommended to *not* use go get to install this one, check the
+  it is recommended to *not* use ~go get~ to install this one, check the
   [[https://github.com/golangci/golangci-lint#binary-release][documentation]].
 
 * TODO Features
