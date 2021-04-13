@@ -38,7 +38,7 @@ and enable ~:tools lsp~ in your ~init.el~.
 
 To support linting with [[https://github.com/rrrene/credo][credo]], add ~:checkers syntax~ to your ~init.el~
 ** Install Elixir
-*** With ~asdf~ (recommended)
+*** With ~asdf~
 #+BEGIN_SRC sh
 asdf plugin-add elixir
 asdf install elixir 1.9.1
