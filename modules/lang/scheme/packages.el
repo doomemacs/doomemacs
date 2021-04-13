@@ -1,7 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(package! geiser :pin "8e61c27b628373523b7c467d5f71aac8c873258b")
+(package! geiser
+  :recipe (:host gitlab :repo "emacs-geiser/geiser")
+  :pin "aa26163aa81b5af3bc5bbf23bec8b5776de3a8bc")
 
 (when (featurep! :checkers syntax)
   (package! flycheck-guile
