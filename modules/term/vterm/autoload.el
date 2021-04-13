@@ -56,7 +56,7 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
              project-root))
          display-buffer-alist)
     (setenv "PROOT" project-root)
-    (vterm)
+    (vterm vterm-buffer-name)
     (+vterm--change-directory-if-remote)))
 
 (defun +vterm--change-directory-if-remote ()
