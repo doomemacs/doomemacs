@@ -9,6 +9,7 @@
 ![Latest commit](https://img.shields.io/github/last-commit/hlissner/doom-emacs/develop?style=flat-square)
 ![Build status: develop](https://img.shields.io/github/workflow/status/hlissner/doom-emacs/CI/develop?style=flat-square)
 [![Discord Server](https://img.shields.io/discord/406534637242810369?color=blue&label=Discord%20Chat&logo=discord&logoColor=white&style=flat-square)][Discord]
+[![Discourse server](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.doomemacs.org)][Discourse]
 
 ![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
 
@@ -208,6 +209,7 @@ kind!
 
 [contribute]: docs/contributing.org
 [discord]: https://discord.gg/qvGgnVx
+[discourse]: https://discourse.doomemacs.org
 [documentation]: docs/index.org
 [faq]: docs/faq.org
 [getting-started]: docs/getting_started.org
