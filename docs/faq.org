@@ -1,5 +1,8 @@
 #+TITLE: Frequently Asked Questions
 
+> **Doom's FAQs have [[https://discourse.doomemacs.org/faq][moved to Discourse]].**
+> This file will be removed soon.
+
 * Table of Contents :TOC:
 - [[#general][General]]
   - [[#why-is-it-called-doom][Why is it called Doom?]]
