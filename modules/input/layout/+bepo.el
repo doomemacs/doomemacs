@@ -82,6 +82,14 @@
     (after! treemacs
       (doom-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
     (after! (:or helm ivy selectrum icomplete)
+      (doom-bepo--evil-collection-hook
+       nil
+       '(minibuffer-local-map
+         minibuffer-local-ns-map
+         minibuffer-local-completion-map
+         minibuffer-local-must-match-map
+         minibuffer-local-isearch-map
+         read-expression-map))
       (doom-bepo-rotate-bare-keymap
        '(minibuffer-local-map
          minibuffer-local-ns-map
@@ -91,13 +99,22 @@
          read-expression-map)
        doom-bepo-cr-rotation-style))
     (after! ivy
-      (doom-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(ivy-minibuffer-map ivy-switch-buffer-map)))
+    (after! swiper
+      (map! :map swiper-map "C-s" nil))
     (after! helm
-      (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-map)))
     (after! helm-rg
-      (doom-bepo-rotate-bare-keymap '(helm-rg-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-rg-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-rg-map)))
     (after! helm-files
-      (doom-bepo-rotate-bare-keymap '(helm-read-file-map) doom-bepo-cr-rotation-style))
+      (doom-bepo-rotate-bare-keymap '(helm-read-file-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(helm-read-file-map)))
+    (after! selectrum
+      (doom-bepo-rotate-bare-keymap '(selectrum-minibuffer-map) doom-bepo-cr-rotation-style)
+      (doom-bepo--evil-collection-hook nil '(selectrum-minibuffer-map)))
     (after! company
       (doom-bepo-rotate-bare-keymap '(company-active-map company-search-map) doom-bepo-cr-rotation-style))
     (after! evil-snipe
@@ -208,5 +225,5 @@
     (after! evil-easymotion
       ;; instead of using gs as the evilem-map we use gé to avoid conflicts with org-mode
       ;; down the road
-      (map! :nvm "gé" evilem-map)
+      (evilem-default-keybindings "gé")
       (doom-bepo-rotate-bare-keymap '(evilem-map) doom-bepo-cr-rotation-style))))

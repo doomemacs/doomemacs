@@ -117,6 +117,10 @@ actually put all the =c= functions on the key that does not need a curl.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.
+** Outstanding issues (contributions welcome)
+*** Bépo
+- in eshell, the key `c` is still bound to
+  `evil-collection-eshell-evil-change` in normal mode
 ** How to investigate an issue ?
 If a key is misbehaving, use =describe-key= (=C-h k= or =SPC h k= or =F1 k=) to
 see the functions bound to the key, and more importantly in which map it is
