@@ -24,23 +24,33 @@
 
 ;;;###autoload
 (defun +notmuch/quit ()
+  "TODO"
   (interactive)
   ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
   (doom-kill-matching-buffers "^\\*notmuch")
   (+workspace/delete "*MAIL*"))
 
-(defun notmuch-get-sync-command ()
-  (let ((afew-cmd "afew -a -t")
-        (sync-cmd (pcase +notmuch-sync-backend
-                    (`gmi
-                     (concat "cd " +notmuch-mail-folder " && gmi sync && notmuch new"))
-                    (`mbsync
-                     "mbsync -a && notmuch new")
-                    (`mbsync-xdg
-                     "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new")
-                    (`offlineimap
-                     "offlineimap && notmuch new")
-                    (`custom +notmuch-sync-command))))
+(defun +notmuch-get-sync-command ()
+  "Return a shell command string to synchronize your notmuch mmail with."
+  (let* ((afew-cmd "afew -a -t")
+         (sync-cmd
+          (pcase +notmuch-sync-backend
+            (`gmi
+             (concat "cd " +notmuch-mail-folder " && gmi sync && notmuch new"))
+            ((or `mbsync
+                 `mbsync-xdg) ; DEPRECATED `mbsync-xdg' is now just `mbsync'
+             (format "mbsync %s -a && notmuch new"
+                     (if-let (config-file
+                              (doom-glob (or (getenv "XDG_CONFIG_HOME")
+                                             "~/.config")
+                                         "isync/mbsyncrc"))
+                         (format "-c %S" config-file)
+                       "")))
+            (`offlineimap
+             "offlineimap && notmuch new")
+            ((and (pred stringp) it) it)
+            (_ (user-error "Invalid notmuch backend specified: %S"
+                           +notmuch-sync-backend)))))
     (if (featurep! +afew)
         (format "%s && %s" sync-cmd afew-cmd)
       sync-cmd)))
@@ -49,7 +59,7 @@
 (defun +notmuch/update ()
   "Sync notmuch emails with server."
   (interactive)
-  (with-current-buffer (compile (notmuch-get-sync-command))
+  (with-current-buffer (compile (+notmuch-get-sync-command))
     (let ((w (get-buffer-window (current-buffer))))
       (select-window w)
       (add-hook

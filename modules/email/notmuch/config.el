@@ -6,10 +6,21 @@
   "Function for customizing the landing page for doom-emacs =notmuch.")
 
 (defvar +notmuch-sync-backend 'gmi
-  "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
+  "Which backend to use to synchrone email.
+Accepts a symbol or a shell command string.
 
-(defvar +notmuch-sync-command nil
-  "Command for custom notmuch sync")
+More specifically, this accepts one of the following symbols (see
+`+notmuch-get-sync-command' definition for details):
+
+  `gmi'         Use gmailieer (https://github.com/gauteh/lieer)
+  `mbsync'      Use isync (https://isync.sourceforge.io)
+  `offlineimap' Use offlineimap (https://www.offlineimap.org)
+
+OR a shell command string such as
+
+  \"path/to/some/shell-script.sh\"
+  \"offlineimap && notmuch new && afew -a -t\"
+  \"mbsync %s -a && notmuch new && afew -a -t\"")
 
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
