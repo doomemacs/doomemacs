@@ -44,7 +44,7 @@ If STRICT only accept an unset lock file."
   "Check `+mu4e-lock-file', and if another process is responsible for it, abort starting.
 Else, write to this process' PID to the lock file"
   (unless (+mu4e-lock-available)
-    (shell-command (format "touch %s" +mu4e-lock-request-file))
+    (call-process "touch" nil nil nil +mu4e-lock-request-file)
     (message "Lock file exists, requesting that it be given up")
     (sleep-for 0.1)
     (delete-file +mu4e-lock-request-file))

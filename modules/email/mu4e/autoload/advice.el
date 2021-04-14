@@ -36,10 +36,9 @@ clicked."
       (list :width
             (format "%.1fpx"
                     (/ (string-to-number
-                        (shell-command-to-string
-                         ;; TODO change to use 'file'
-                         (format "identify -format %%w %s"
-                                 (substring img-uri 7)))) ; 7=(length "file://")
+                        ;; TODO change to use 'file'
+                        (doom-call-process "identify" "-format" "%w"
+                                           (substring img-uri 7))) ; 7=(length "file://")
                        (plist-get org-format-latex-options :scale))))
     (list :style (format "transform: scale(%.3f)"
                          (/ 1.0 (plist-get org-format-latex-options :scale))))))
