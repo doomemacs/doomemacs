@@ -64,9 +64,9 @@
              #'hide-mode-line-mode)
  
   (map! :localleader
-        :map (notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
+        :map (notmuch-hello-mode-map notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
         :desc "Compose email"   "c" #'+notmuch/compose
-        :desc "Fetch new email" "u" #'+notmuch/update
+        :desc "Sync email"      "u" #'+notmuch/update
         :desc "Quit notmuch"    "q" #'+notmuch/quit
         :map notmuch-search-mode-map
         :desc "Mark as deleted" "d" #'+notmuch/search-delete
