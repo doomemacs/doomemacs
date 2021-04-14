@@ -530,11 +530,16 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
   (when IS-LINUX
     (mu4e-alert-set-default-style 'libnotify)
 
+    (defvar +mu4e-alert-bell-cmd '("paplay" . "/usr/share/sounds/freedesktop/stereo/message.oga")
+      "Cons list with command to play a sound, and the sound file to play.
+Disabled when set to nil.")
+
     (setq mu4e-alert-email-notification-types '(subjects))
     (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group _all-mails)
       "Default function to format MAIL-GROUP for notification.
 ALL-MAILS are the all the unread emails"
-      (shell-command "paplay /usr/share/sounds/freedesktop/stereo/message.oga")
+      (when +mu4e-alert-bell-cmd
+        (start-process (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd)))
       (if (> (length mail-group) 1)
           (let* ((mail-count (length mail-group))
                  (first-mail (car mail-group))
