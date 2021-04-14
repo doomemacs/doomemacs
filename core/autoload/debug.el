@@ -246,7 +246,7 @@ copies it to your clipboard, ready to be pasted into bug reports!"
                     (insert sexp))))))
         (dolist (spec info)
           (when (cdr spec)
-            (insert! "%11s  %s\n"
+            (insert! "%-11s  %s\n"
                      ((car spec)
                       (if (listp (cdr spec))
                           (mapconcat (lambda (x) (format "%s" x))
