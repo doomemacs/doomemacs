@@ -127,12 +127,15 @@ users).")
 
 (defvar doom-first-input-hook nil
   "Transient hooks run before the first user input.")
+(put doom-first-input-hook 'permanent-local t)
 
 (defvar doom-first-file-hook nil
   "Transient hooks run before the first interactively opened file.")
+(put 'doom-first-file-hook 'permanent-local t)
 
 (defvar doom-first-buffer-hook nil
   "Transient hooks run before the first interactively opened buffer.")
+(put 'doom-first-buffer-hook 'permanent-local t)
 
 (defvar doom-after-reload-hook nil
   "A list of hooks to run after `doom/reload' has reloaded Doom.")
@@ -500,24 +503,33 @@ Meant to be used with `run-hook-wrapped'."
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 
-(defun doom-run-hook-on (hook-var triggers)
-  "Configure HOOK-VAR to be invoked exactly once after init whenever any of the
-TRIGGERS are invoked. Once HOOK-VAR gets triggered, it resets to nil.
+(defun doom-run-hook-on (hook-var trigger-hooks)
+  "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
+are invoked. Once HOOK-VAR is triggered, it is reset to nil.
 
 HOOK-VAR is a quoted hook.
 
-TRIGGERS is a list of quoted hooks and/or sharp-quoted functions."
-  (let ((fn (intern (format "%s-h" hook-var))))
-    (fset
-     fn (lambda (&rest _)
-          (when after-init-time
-            (run-hook-wrapped hook-var #'doom-try-run-hook)
-            (set hook-var nil))))
-    (put hook-var 'permanent-local t)
-    (dolist (on triggers)
-      (if (functionp on)
-          (advice-add on :before fn)
-        (add-hook on fn)))))
+TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
+  (dolist (hook trigger-hooks)
+    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
+      (fset
+       fn (lambda (&rest _)
+            (when (and after-init-time
+                       ;; In some cases, hooks may be lexically unset to inhibit
+                       ;; them during expensive batch operations on buffers
+                       ;; (such as when processing buffers internally). In these
+                       ;; cases we should assume this hook wasn't invoked
+                       ;; interactively.
+                       (boundp hook)
+                       (symbol-value hook))
+              (run-hook-wrapped hook-var #'doom-try-run-hook)
+              (set hook-var nil))))
+      ;; DEPRECATED This target switcheroo won't be necessary when 26 support is
+      ;;            dropped; `add-hook''s DEPTH argument was added in 27.1.
+      (let ((target (if (eq hook 'find-file-hook) 'after-find-file hook)))
+        (if (functionp target)
+            (advice-add target :before fn '((depth . -101)))
+          (add-hook target fn (if EMACS27+ -101)))))))
 
 
 ;;
@@ -610,8 +622,8 @@ to least)."
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
     (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-    (doom-run-hook-on 'doom-first-buffer-hook '(after-find-file doom-switch-buffer-hook))
-    (doom-run-hook-on 'doom-first-file-hook   '(after-find-file dired-initial-position-hook))
+    (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
+    (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
     (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
     (if doom-debug-p (doom-debug-mode +1))
 
