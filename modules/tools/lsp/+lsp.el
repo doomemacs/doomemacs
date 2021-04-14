@@ -50,10 +50,6 @@ about it (it will be logged to *Messages* however).")
         lsp-vetur-global-snippets-dir (expand-file-name "vetur"
                                                         (or (bound-and-true-p +snippets-dir)
                                                             (concat doom-private-dir "snippets/")))
-        lsp-clients-lua-language-server-bin (concat lsp-server-install-dir "lua-language-server/"
-                                                    (cond (IS-MAC     "bin/macOS")
-                                                          (IS-LINUX   "bin/Linux")
-                                                          (IS-WINDOWS "bin/Windows")))
         lsp-xml-jar-file              (concat lsp-server-install-dir "org.eclipse.lsp4xml-0.3.0-uber.jar")
         lsp-groovy-server-file        (concat lsp-server-install-dir "groovy-language-server-all.jar"))
 
