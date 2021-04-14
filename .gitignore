@@ -3,6 +3,7 @@
 \#*
 .\#*
 .local/
+.extension/
 *.cache*
 *.log
 /modules/private

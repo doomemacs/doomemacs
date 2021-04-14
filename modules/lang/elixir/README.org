@@ -56,6 +56,7 @@ sudo emerge -v dev-lang/elixir
 #+BEGIN_SRC sh :dir /sudo::
 sudo zypper install elixir
 #+END_SRC
+See [[https://elixir-lang.org/install.html]] for other operating systems
 * Features
 - Code completion (~:completion company~)
 - Documentation lookup (~:tools lookup~)
