@@ -1,5 +1,20 @@
 ;;; lang/scheme/autoload.el -*- lexical-binding: t; -*-
 
+;; HACK geiser-* plugins will try to add to `geiser-active-implementations', so
+;;      it must be defined before their autoloads are evaluated. Fortunately,
+;;      Doom modules' autoloads run earlier than package autoloads.
+;;;###autoload
+(defvar geiser-active-implementations ())
+
+;; HACK `geiser-impl--add-to-alist' isn't autoloaded or inlined, so you get
+;;      void-function errors when it is called in the autoloads files of other
+;;      geiser-* packages.
+;;;###autoload
+(defun geiser-impl--add-to-alist (kind what impl &optional append)
+  (add-to-list 'geiser-implementations-alist
+               (list (list kind what) impl) append))
+
+
 (defvar calculate-lisp-indent-last-sexp)
 
 ;; Adapted from https://github.com/alezost/emacs-config/blob/master/utils/al-scheme.el#L76-L123

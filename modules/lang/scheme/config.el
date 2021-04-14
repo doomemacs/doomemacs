@@ -8,14 +8,10 @@
 (use-package! geiser
   :defer t
   :init
-  (setq geiser-active-implementations '(guile chicken mit chibi chez)
-        geiser-autodoc-identifier-format "%s → %s"
-        geiser-repl-current-project-function 'doom-project-root)
-  (if (featurep! :lang racket)
-      (setq auto-mode-alist
-            (remove '("\\.rkt\\'" . scheme-mode) auto-mode-alist))
-    (push 'racket geiser-active-implementations))
-  (after! scheme                        ; built-in
+  (setq geiser-autodoc-identifier-format "%s → %s"
+        geiser-repl-current-project-function #'doom-project-root)
+
+  (after! scheme  ; built-in
     (set-repl-handler! 'scheme-mode #'+scheme/open-repl)
     (set-eval-handler! 'scheme-mode #'geiser-eval-region)
     (set-lookup-handlers! '(scheme-mode geiser-repl-mode)
@@ -23,11 +19,10 @@
       :documentation #'geiser-doc-symbol-at-point))
   :config
   (set-popup-rules!
-    '(("^\\*geiser messages\\*$" :slot 1 :vslot -1)
-      ("^\\*Geiser dbg\\*$"      :slot 1 :vslot -1)
-      ("^\\*Geiser xref\\*$"     :slot 1 :vslot -1)
+    '(("^\\*[gG]eiser \\(dbg\\|xref\\|messages\\)\\*$" :slot 1 :vslot -1)
       ("^\\*Geiser documentation\\*$" :slot 2 :vslot 2 :select t :size 0.35)
       ("^\\* [A-Za-z0-9_-]+ REPL \\*" :size 0.3 :quit nil :ttl nil)))
+
   (map! :localleader
         :map scheme-mode-map
         "'"  #'geiser-mode-switch-to-repl
@@ -48,10 +43,6 @@
           "<" #'geiser-xref-callers
           ">" #'geiser-xref-callees
           "i" #'geiser-doc-look-up-manual)
-        (:prefix ("m" . "macro")
-          "r" #'geiser-expand-region
-          "d" #'geiser-expand-definition
-          "e" #'geiser-expand-last-sexp)
         (:prefix ("r" . "repl")
           "b" #'geiser-switch-to-repl
           "q" #'geiser-repl-exit
@@ -60,6 +51,19 @@
           "R" #'geiser-reload
           "c" #'geiser-repl-clear-buffer)))
 
+
+(use-package! macrostep-geiser
+  :hook (geiser-mode . macrostep-geiser-setup)
+  :hook (geiser-repl-mode . macrostep-geiser-setup)
+  :init
+  (map! :after geiser
+        :localleader
+        :map scheme-mode-map
+        :desc "Expand macro" "m" #'macrostep-geiser
+        :desc "Expand all macros recursively" "M" #'macrostep-geiser-all))
+
+
 (use-package! flycheck-guile
+  :when (featurep! +guile)
   :when (featurep! :checkers syntax)
   :after geiser)
