@@ -8,8 +8,8 @@
 ![Minimum Emacs version supported: 26.3 ](https://img.shields.io/badge/Supports-Emacs_26.3+-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
 ![Latest commit](https://img.shields.io/github/last-commit/hlissner/doom-emacs/develop?style=flat-square)
 ![Build status: develop](https://img.shields.io/github/workflow/status/hlissner/doom-emacs/CI/develop?style=flat-square)
-[![Discord Server](https://img.shields.io/discord/406534637242810369?color=blue&label=Discord%20Chat&logo=discord&logoColor=white&style=flat-square)][Discord]
-[![Discourse server](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.doomemacs.org)][Discourse]
+[![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord%20Chat&logo=discord&logoColor=white&style=flat-square)][Discord]
+[![Discourse server](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.doomemacs.org&logo=discourse&label=Discourse&style=flat-square&color=9cf)][Discourse]
 
 ![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
 
