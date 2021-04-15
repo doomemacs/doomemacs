@@ -137,7 +137,13 @@
                (apply create-image file-or-data type data-p
                       :width (car (pdf-view-image-size))
                       props))
-        (apply orig-fn args)))))
+        (apply orig-fn args))))
+
+  ;; Silence "File *.pdf is large (X MiB), really open?" prompts for pdfs
+  (defadvice! +pdf-suppress-large-file-prompts-a (orig-fn size op-type filename &optional offer-raw)
+    :around #'abort-if-file-too-large
+    (unless (string-match-p "\\.pdf\\'" filename)
+      (funcall orig-fn size op-type filename offer-raw))))
 
 
 (use-package! saveplace-pdf-view
