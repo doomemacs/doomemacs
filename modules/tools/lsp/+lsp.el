@@ -21,7 +21,7 @@ about it (it will be logged to *Messages* however).")
   :init
   ;; Don't touch ~/.emacs.d, which could be purged without warning
   (setq lsp-session-file (concat doom-etc-dir "lsp-session")
-        lsp-server-install-dir (concat doom-etc-dir "lsp/"))
+        lsp-server-install-dir (concat doom-etc-dir "lsp"))
   ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
   (setq lsp-keep-workspace-alive nil)
@@ -47,11 +47,12 @@ about it (it will be logged to *Messages* however).")
   (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
 
   (setq lsp-intelephense-storage-path (concat doom-etc-dir "lsp-intelephense/")
-        lsp-vetur-global-snippets-dir (expand-file-name "vetur"
-                                                        (or (bound-and-true-p +snippets-dir)
-                                                            (concat doom-private-dir "snippets/")))
-        lsp-xml-jar-file              (concat lsp-server-install-dir "org.eclipse.lsp4xml-0.3.0-uber.jar")
-        lsp-groovy-server-file        (concat lsp-server-install-dir "groovy-language-server-all.jar"))
+        lsp-vetur-global-snippets-dir
+        (expand-file-name
+         "vetur" (or (bound-and-true-p +snippets-dir)
+                     (concat doom-private-dir "snippets/")))
+        lsp-xml-jar-file (expand-file-name "org.eclipse.lsp4xml-0.3.0-uber.jar" lsp-server-install-dir)
+        lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
 
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode
