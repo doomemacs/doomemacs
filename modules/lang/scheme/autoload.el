@@ -1,10 +1,10 @@
 ;;; lang/scheme/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK geiser-* plugins will try to add to `geiser-active-implementations', so
-;;      it must be defined before their autoloads are evaluated. Fortunately,
-;;      Doom modules' autoloads run earlier than package autoloads.
-;;;###autoload
-(defvar geiser-active-implementations ())
+;; HACK geiser-* plugins will try to add to these two variables, so it must be
+;;      defined before their autoloads are evaluated. Fortunately, Doom modules'
+;;      autoloads run earlier than package autoloads.
+;;;###autoload (defvar geiser-active-implementations ())
+;;;###autoload (defvar geiser-implementations-alist ())
 
 ;; HACK `geiser-impl--add-to-alist' isn't autoloaded or inlined, so you get
 ;;      void-function errors when it is called in the autoloads files of other
