@@ -9,10 +9,7 @@
 ;; HACK `geiser-impl--add-to-alist' isn't autoloaded or inlined, so you get
 ;;      void-function errors when it is called in the autoloads files of other
 ;;      geiser-* packages.
-;;;###autoload
-(defun geiser-impl--add-to-alist (kind what impl &optional append)
-  (add-to-list 'geiser-implementations-alist
-               (list (list kind what) impl) append))
+;;;###autoload (defun geiser-impl--add-to-alist (kind what impl &optional append) (add-to-list 'geiser-implementations-alist (list (list kind what) impl) append))
 
 
 (defvar calculate-lisp-indent-last-sexp)
