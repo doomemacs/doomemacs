@@ -127,9 +127,10 @@
 
   (define-minor-mode +dap-running-session-mode
     "A mode for adding keybindings to running sessions"
-    nil nil (make-sparse-keymap)
+    :init-value nil
+    :keymap (make-sparse-keymap)
     (when (bound-and-true-p evil-mode)
-    (evil-normalize-keymaps))  ; if you use evil, this is necessary to update the keymaps
+      (evil-normalize-keymaps))  ; if you use evil, this is necessary to update the keymaps
     ;; The following code adds to the dap-terminated-hook so that this minor
     ;; mode will be deactivated when the debugger finishes
     (when +dap-running-session-mode
