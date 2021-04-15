@@ -181,6 +181,14 @@
       ;; takes precedence over the evil command to go up one line
       (map! :map notmuch-common-keymap :n "s" nil)
       (map! :map notmuch-common-keymap "s" nil))
+    (after! (evil info)
+      ;; Without this, "s" stays mapped to 'Info-search (in the "global"
+      ;; Info-mode-map) and takes precedence over the evil command to go up one
+      ;; line (remapped in Info-mode-normal-state-map).
+      ;; Same for "t" that is 'Info-top-node in the "global" Info-mode-map
+      (map! :map Info-mode-map
+            "s" nil
+            "t" nil))
     (after! (evil magit)
       (doom-bepo-rotate-ts-bare-keymap
        '(magit-mode-map
