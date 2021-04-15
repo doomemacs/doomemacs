@@ -1,0 +1,66 @@
+#+TITLE:   lang/zig
+#+DATE:    March 18, 2021
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#lsp-support][LSP support]]
+  - [[#keybinds][Keybinds]]
+- [[#configuration][Configuration]]
+  - [[#customize-zls-path][Customize zls path]]
+
+* Description
+This module adds [[https://ziglang.org/][Zig]] support, with optional (but recommended) LSP support via
+[[https://github.com/zigtools/zls][zls]].
+
++ Syntax highlighting
++ Syntax-checking (~flycheck~)
++ Code completion and LSP integration (~zls~)
+
+** Maintainers
++ [[https://github.com/bnjmnt4n][@bnjmnt4n]] (Author)
+
+** Module Flags
++ =+lsp= Enables integration for the zls LSP server. It is highly recommended
+  you use this.
+
+** Plugins
++ [[https://github.com/ziglang/zig-mode][zig-mode]]
+
+* Prerequisites
+To get started with Zig, you need the ~zig~ tool. Pre-built binaries for most
+systems are available for download from [[https://ziglang.org/download/]] or from
+[[https://github.com/ziglang/zig/wiki/Install-Zig-from-a-Package-Manager][system package managers]].
+
+zls is a language server for Zig, which provides code completion,
+
+* Features
+** LSP support
+This module supports LSP integration. For it to work you'll need:
+
+1. zls installed.
+2. The =:tools lsp= module enabled. Only =lsp-mode= is supported for now.
+3. The ~+lsp~ flag on this module enabled.
+
+** Keybinds
+| Binding           | Description         |
+|-------------------+---------------------|
+| ~<localleader> b~ | ~zig-compile~       |
+| ~<localleader> f~ | ~zig-format-buffer~ |
+| ~<localleader> r~ | ~zig-run~           |
+| ~<localleader> t~ | ~zig-test-buffer~   |
+
+* Configuration
+** Customize zls path
+To customize the path of the =zls= executable, modify ~lsp-zig-zls-executable~.
+
+#+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
+(setq lsp-zig-zls-executable "~/path/to/zls")
+#+END_SRC
