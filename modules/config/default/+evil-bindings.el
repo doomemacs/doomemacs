@@ -60,10 +60,10 @@
                            [tab]
                            (list (evil-get-auxiliary-keymap (current-local-map) evil-state)
                                  (current-local-map)))
-                          (and (not (doom-lookup-key
-                                     (kbd "TAB")
-                                     (list (evil-get-auxiliary-keymap (current-local-map) evil-state))))
-                               (doom-lookup-key (kbd "TAB") (list (current-local-map)))))
+                          (doom-lookup-key
+                           (kbd "TAB")
+                           (list (evil-get-auxiliary-keymap (current-local-map) evil-state)))
+                          (doom-lookup-key (kbd "TAB") (list (current-local-map))))
                       it
                       (fboundp 'evil-jump-item)
                       #'evil-jump-item)
