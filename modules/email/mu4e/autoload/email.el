@@ -346,10 +346,12 @@ with the current context."
                        (setq user-mail-address from)
                      nil))))
     (setq user-mail-address
-          (completing-read
-           "From: "
-           (if-let ((context-addresses
-                     (when mu4e~context-current
-                       (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current)))))
-               context-addresses
-             (mu4e-personal-addresses))))))
+          (if (= (length +mu4e-personal-addresses) 1)
+              (car +mu4e-personal-addresses)
+            (completing-read
+             "From: "
+             (if-let ((context-addresses
+                       (when mu4e~context-current
+                         (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current)))))
+                 context-addresses
+               (mu4e-personal-addresses)))))))
