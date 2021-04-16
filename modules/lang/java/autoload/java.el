@@ -73,7 +73,7 @@ root)."
       "ClassName"))
 
 ;;;###autoload
-(defun +java/groovy-open-repl ()
+(defun +java/open-groovy-repl ()
   "Open a Groovy REPL."
   (interactive)
   (call-interactively #'run-groovy)
