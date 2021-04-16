@@ -1,8 +1,8 @@
 ;;; email/mu4e/autoload/mu-lock.el -*- lexical-binding: t; -*-
 
-(defvar +mu4e-lock-file "/tmp/mu4e_lock"
+(defvar +mu4e-lock-file (expand-file-name "mu4e_lock" temporary-file-directory)
   "Location of the lock file which stores the PID of the process currenty running mu4e")
-(defvar +mu4e-lock-request-file "/tmp/mu4e_lock_request"
+(defvar +mu4e-lock-request-file (expand-file-name "mu4e_lock_request" temporary-file-directory)
   "Location of the lock file for which creating indicated that another process wants the lock to be released")
 
 (defvar +mu4e-lock-greedy nil
