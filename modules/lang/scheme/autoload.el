@@ -3,17 +3,22 @@
 ;; HACK geiser-* plugins will try to add to these two variables, so it must be
 ;;      defined before their autoloads are evaluated. Fortunately, Doom modules'
 ;;      autoloads run earlier than package autoloads.
+;; TODO PR this upstream
 ;;;###autoload (defvar geiser-active-implementations ())
 ;;;###autoload (defvar geiser-implementations-alist ())
 
-;; HACK `geiser-impl--add-to-alist' isn't autoloaded or inlined, so you get
-;;      void-function errors when it is called in the autoloads files of other
-;;      geiser-* packages.
-;;;###autoload (defun geiser-impl--add-to-alist (kind what impl &optional append) (add-to-list 'geiser-implementations-alist (list (list kind what) impl) append))
+;; HACK `geiser-impl--add-to-alist' is autoloaded, but not inlined. This means
+;;      `geiser-impl' is needlessly pulled in immediately at startup when
+;;      geiser-X's autoloads are loaded. Since Doom byte-compiles its autoloads
+;;      file we can avoid this by forcibly inlining the function (by redefining
+;;      it with `defsubst').
+;; TODO PR this upstream
+;;;###autoload
+(defsubst geiser-impl--add-to-alist (kind what impl &optional append)
+  (add-to-list 'geiser-implementations-alist (list (list kind what) impl) append))
 
 
 (defvar calculate-lisp-indent-last-sexp)
-
 ;; Adapted from https://github.com/alezost/emacs-config/blob/master/utils/al-scheme.el#L76-L123
 ;;;###autoload
 (defun +scheme-scheme-indent-function-a (indent-point state)
@@ -36,9 +41,9 @@ lists properly and names starting with 'default'."
             (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t))
           (backward-prefix-chars)
           (current-column))
+      ;; NOTE let -> let* & moved `method' def into let bindings
       (let* ((function (buffer-substring
                         (point) (progn (forward-sexp 1) (point))))
-             ;; NOTE let -> let* & moved `method' def into let bindings
              (method (or (get (intern-soft function) 'scheme-indent-function)
                          (get (intern-soft function) 'scheme-indent-hook))))
         (cond ((or (eq method 'defun)
@@ -46,7 +51,7 @@ lists properly and names starting with 'default'."
                         (> (length function) 3)
                         ;; NOTE string-match -> string-match-p
                         ;; NOTE The original regexp is "\\`def" but it will mess
-                        ;;      indentation with such names as 'default-...'.
+                        ;;      up indentation with such names as 'default-...'.
                         (string-match-p "\\`def" function)))
                (lisp-indent-defform state indent-point))
               ;; NOTE Added this clause to handle alignment of keyword symbols

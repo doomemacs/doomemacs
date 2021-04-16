@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(when (package! geiser :pin "aa26163aa81b5af3bc5bbf23bec8b5776de3a8bc")
+(when (package! geiser :pin "c5a9aae4d30ea6dbf2d8af4dd1cc35a839686a00")
   (package! macrostep-geiser :pin "8600fca05fd12a2e0ffe63238ddbfcb37c285dac")
   (when (featurep! +chez)
     (package! geiser-chez :pin "4cb7f2667ea1c53da53f0144910fbbd67bccbf4d"))
