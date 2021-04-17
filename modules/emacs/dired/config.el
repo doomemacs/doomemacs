@@ -43,7 +43,8 @@ uncertain that they are supported (e.g. over TRAMP or on Windows).
 Fixes #1703: dired over TRAMP displays a blank screen.
 Fixes #3939: unsortable dired entries on Windows."
         (when (or (file-remote-p default-directory)
-                  (not (bound-and-true-p ls-lisp-use-insert-directory-program)))
+                  (and (boundp 'ls-lisp-use-insert-directory-program)
+                       (not ls-lisp-use-insert-directory-program)))
           (setq-local dired-actual-switches (car args))))))
 
   ;; Don't complain about this command being disabled when we use it
