@@ -121,10 +121,9 @@ ready to be pasted in a bug report on github."
                (regexp-opt (list (user-login-name)) 'words) "$USER"
                (abbreviate-file-name path)))
             (defun symlink-path (file)
-              (let ((truefile (file-truename file)))
-                (format "%s%s" (abbrev-path file)
-                        (if (equal file truefile) ""
-                          (concat " -> " (abbrev-path truefile)))))))
+              (format "%s%s" (abbrev-path file)
+                      (if (file-symlink-p file) ""
+                        (concat " -> " (abbrev-path (file-truename file)))))))
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
         (distro . ,(list (doom-system-distro-version) (sh "uname" "-msr")))
         (emacs . ,(delq
