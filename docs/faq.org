@@ -878,7 +878,7 @@ For a terminal in Emacs, =eshell= and =vterm= are generally the best options.
 ** How do I enable LSP support for <insert language here>?
 Doom supports LSP, but it is not enabled by default. To enable it, you must:
 
-1. Enable the =:tools lsp= module,
+1. [Enable](https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-do-i-enable-or-disable-a-doom-module) the =:tools lsp= module,
 2. Enable the =+lsp= flag for the appropriate modules you want LSP support for
    (e.g. =:lang (python +lsp)= or =:lang (rust +lsp)=),
 3. Install the prerequisite LSP servers through your package manager or other
