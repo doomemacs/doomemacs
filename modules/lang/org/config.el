@@ -1,7 +1,8 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
 (defvar +org-babel-mode-alist
-  '((cpp . C)
+  '((c . C)
+    (cpp . C)
     (C++ . C)
     (D . C)
     (elisp . emacs-lisp)
