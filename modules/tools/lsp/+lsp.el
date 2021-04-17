@@ -59,7 +59,7 @@ about it (it will be logged to *Messages* however).")
     :definition #'+lsp-lookup-definition-handler
     :references #'+lsp-lookup-references-handler
     :documentation '(lsp-describe-thing-at-point :async t)
-    :implementations #'lsp-find-implementation
+    :implementations '(lsp-find-implementation :async t)
     :type-definition #'lsp-find-type-definition)
 
   (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
