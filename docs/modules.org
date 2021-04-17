@@ -193,6 +193,7 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/terraform/README.org][terraform]] - TODO
 + tmux - TODO
 + upload - TODO
++ [[file:../modules/tools/cloudformation/README.org][cloudformation]]
 
 * :ui
 Aesthetic modules that affect the Emacs interface or user experience.

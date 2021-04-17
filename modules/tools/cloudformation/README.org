@@ -1,0 +1,63 @@
+#+TITLE:   tools/cloudformation
+#+DATE:    April 17, 2021
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#installing-with-pip][Installing with Pip]]
+  - [[#installing-with-homebrew][Installing with Homebrew]]
+- [[#features][Features]]
+  - [[#syntax-highlighting][Syntax highlighting]]
+  - [[#aws-snippets][AWS snippets]]
+  - [[#syntax-checking][Syntax checking]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds support for working with AWS CloudFormation files in Doom Emacs. This includes syntax highlighting, snippets and syntax checking
+
+** Maintainers
++ @xlarsx
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://www.emacswiki.org/emacs/CfnLint][CfnLint]]
++ [[https://github.com/baron42bba/aws-snippets][aws-snippets]]
+
+* Prerequisites
+
++ =:lang yaml= for syntax highlighting with YAML files
++ =:lang javascript= for syntax highlighting with JSON files
++ This module requires =cfn-lint= using =Python 2.7+= or =Python 3.4+= to provide syntax checking.
+
+** Installing with Pip
+
+#+BEGIN_SRC sh
+pip install cfn-lint
+#+END_SRC
+
+** Installing with Homebrew
+
+#+BEGIN_SRC sh
+brew install cfn-lint
+#+END_SRC
+
+* Features
+** Syntax highlighting
+Syntax highlighting is provided from =yaml-mode= and =js-mode=.
+
+** AWS snippets
+Snippets provided from =aws-snippets=.
+
+** Syntax checking
+Syntax checking provided from =CfnLint=.
+
+* Configuration
+* Troubleshooting
