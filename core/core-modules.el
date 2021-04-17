@@ -288,7 +288,7 @@ those directories. The first returned path is always `doom-private-dir'."
                  (when-let (new (assq module obsolete))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
-                         (message "WARNING %s module was removed" key)
+                         (message "WARNING %s module was removed" (list category module))
                        (if (cdr newkeys)
                            (message "WARNING %s module was removed and split into the %s modules"
                                     (list category module) (mapconcat #'prin1-to-string newkeys ", "))
