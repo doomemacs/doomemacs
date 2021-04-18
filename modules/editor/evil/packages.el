@@ -1,10 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "d998a8195e404b01e2ea62a455c3dec74d0823c3")
+(package! evil :pin "1b3db6349d04adfc68f707b0edd800f5ab3cb374")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
-(package! evil-embrace :pin "4379adea032b25e359d01a36301b4a5afdd0d1b7")
+(package! evil-embrace :pin "464e8ec52ff78edf3c9060143fc375f6ce5f275f")
 (package! evil-escape
   :recipe (:host github :repo "hlissner/evil-escape")
   :pin "819f1ee1cf3f69a1ae920e6004f2c0baeebbe077")
