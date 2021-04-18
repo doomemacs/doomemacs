@@ -55,11 +55,11 @@ about it (it will be logged to *Messages* however).")
         lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
 
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
-  (set-lookup-handlers! 'lsp-mode
+  (set-lookup-handlers! 'lsp-mode :async t
     :definition #'+lsp-lookup-definition-handler
     :references #'+lsp-lookup-references-handler
-    :documentation '(lsp-describe-thing-at-point :async t)
-    :implementations '(lsp-find-implementation :async t)
+    :documentation #'lsp-describe-thing-at-point
+    :implementations #'lsp-find-implementation
     :type-definition #'lsp-find-type-definition)
 
   (defadvice! +lsp--respect-user-defined-checkers-a (orig-fn &rest args)
