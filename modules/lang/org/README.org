@@ -1,0 +1,255 @@
+#+TITLE:   lang/org
+#+DATE:    February 19, 2017
+#+SINCE:   2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+  - [[#windows][Windows]]
+- [[#features][Features]]
+  - [[#invoking-the-org-capture-frame-from-outside-emacs][Invoking the org-capture frame from outside Emacs]]
+  - [[#built-in-custom-link-types][Built-in custom link types]]
+- [[#configuration][Configuration]]
+  - [[#changing-org-directory][Changing ~org-directory~]]
+  - [[#changing-org-noter-notes-search-path][Changing ~org-noter-notes-search-path~]]
+
+* Description
+This module adds org-mode support to Doom Emacs, along with a number of
+adjustments, extensions and reasonable defaults to make it more performant and
+intuitive out of the box:
+
++ A custom, centralized attachment system that stores files in one place, rather
+  than in the same directory as the input file(s) (only applies to attachments
+  from files in/under =org-directory=).
++ Executable code blocks with support for a variety of languages and tools
+  (depending on what :lang modules are enabled).
++ Supports an external org-capture workflow through the =bin/org-capture= shell
+  script and ~+org-capture/open-frame~.
++ A configuration for using org-mode for slide-show presentations or exporting
+  org files to reveal.js slideshows.
++ Drag-and-drop support for images (with inline preview) and media files (drops
+  a file icon and a short link) (requires =+dragndrop= flag).
++ Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
+  (requires flags).
++ Export-to-clipboard functionality, for copying text into formatted html,
+  markdown or rich text to the clipboard (see ~+org/export-to-clipboard~ and
+  ~+org/export-to-clipboard-as-rich-text~).
+
+#+begin_quote
+Org is a system for writing plain text notes with syntax highlighting, code
+execution, task scheduling, agenda management, and many more. The whole idea is
+that you can write notes and mix them with references to things like articles,
+images, and example code combined with the output of that code after it is
+executed.
+
+https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode/
+#+end_quote
+
+** Module Flags
++ =+brain= Enables [[https://github.com/Kungsgeten/org-brain][org-brain]] integration.
++ =+dragndrop= Enables drag-and-drop support for images and files; inserts
+  inline previews for images and an icon+link for other media types.
++ =+gnuplot= Installs gnuplot & gnuplot-mode, which enables rendering images
+  from gnuplot src blocks or plotting tables with ~org-plot/gnuplot~ (bound to
+  =SPC m b p=, by default).
++ =+hugo= Enables integration with [[https://gohugo.io][hugo]] to export from Emacs well-formed
+  ([[https://github.com/russross/blackfriday][blackfriday]]) markdown.
++ =+ipython= (**DEPRECATED**) Enables ipython integration for babel.
++ =+journal= Enables [[https://github.com/bastibe/org-journal][org-journal]] integration.
++ =+jupyter= Enables Jupyter integration for babel.
++ =+noter= Enables org-noter integration. Keeps notes in sync with a document.
+  Requires [[https://github.com/politza/pdf-tools][pdf-tools]] (=:tools pdf=) or [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
++ =+pandoc= Enables pandoc integration into the Org exporter.
++ =+pomodoro= Enables a pomodoro timer for clocking time on tasks.
++ =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
+  Emacs can be used for presentations. It automatically downloads [[https://github.com/hakimel/reveal.js][reveal.js]].
++ =+pretty= Enables pretty unicode symbols for bullets and priorities, and
+  better syntax highlighting for latex. Keep in mind: this can be expensive. If
+  org becomes too slow, it'd be wise to disable this flag.
++ =+roam= Enables org-roam integration. This requires ~sqlite3~ to be installed
+  on your system.
+
+** Plugins
++ [[https://github.com/hniksic/emacs-htmlize][htmlize]]
++ [[https://github.com/astahlman/ob-async][ob-async]]
++ [[https://github.com/rexim/org-cliplink][org-cliplink]]
++ [[https://github.com/magit/orgit][orgit]]
++ [[https://orgmode.org/][org-plus-contrib]]
++ [[https://github.com/TobiasZawada/org-yt][org-yt]]
++ [[https://github.com/jkitchin/ox-clip][ox-clip]]
++ [[https://github.com/snosov1/toc-org][toc-org]]
++ =:lang crystal=
+  + [[https://github.com/brantou/ob-crystal][ob-crystal]]
++ =:lang go=
+  + [[https://github.com/pope/ob-go][ob-go]]
++ =:lang nim=
+  + [[https://github.com/Lompik/ob-nim][ob-nim]]
++ =:lang racket=
+  + [[https://github.com/DEADB17/ob-racket][ob-racket]]
++ =:lang rest=
+  + [[https://github.com/alf/ob-restclient.el][ob-restclient]]
++ =:lang rst=
+  + [[https://github.com/msnoigrs/ox-rst][ox-rst]]
++ =:lang rust=
+  + [[https://github.com/micanzhang/ob-rust][ob-rust]]
++ =:lang scala=
+  + [[https://github.com/zwild/ob-ammonite][ob-ammonite]]
++ =:editor evil=
+  + [[https://github.com/Somelauw/evil-org-mode][evil-org]]
++ =:tools pdf=
+  + [[https://github.com/fuxialexander/org-pdftools][org-pdftools]]
++ =+dragndrop=
+  + [[https://github.com/abo-abo/org-download][org-download]]
++ =+gnuplot=
+  + [[https://github.com/mkmcc/gnuplot-mode][gnuplot]]
+  + [[https://github.com/bruceravel/gnuplot-mode][gnuplot-mode]]
++ =+hugo=
+  + [[https://github.com/kaushalmodi/ox-hugo][ox-hugo]]
++ =+ipython=
+  + [[https://github.com/gregsexton/ob-ipython][ob-ipython]]
++ =+jupyter=
+  + [[https://github.com/dzop/emacs-jupyter][jupyter]]
++ =+pandoc=
+  + [[https://github.com/kawabata/ox-pandoc][ox-pandoc]]
++ =+pomodoro=
+  + [[https://github.com/marcinkoziej/org-pomodoro][org-pomodoro]]
++ =+present=
+  + [[https://github.com/anler/centered-window-mode][centered-window]]
+  + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
+  + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
++ =+pretty=
+  + [[https://github.com/integral-dw/org-superstar-mode][org-superstar]]
+  + [[https://github.com/harrybournis/org-fancy-priorities][org-fancy-priorities]]
++ =+roam=
+  + [[https://github.com/org-roam/org-roam][org-roam]]
++ =+noter=
+  + [[https://github.com/weirdNox/org-noter][org-noter]]
+
+
+** Hacks
++ Adds support for a ~:sync~ parameter for org src blocks. This overrides
+  ~:async~.
++ Gracefully degrades ~:async~ babel blocks to ~:sync~ when =ob-async= would
+  cause errors or issues (such as with a ~:session~ parameter, which =ob-async=
+  does not support, or when exporting org documents).
++ The window is recentered when following links.
++ The breadcrumbs displayed in eldoc when hovering over an org headline has been
+  reworked to strip out link syntax and normalize font-size disparities.
++ If =:ui workspaces= is enabled, persp-mode won't register org agenda buffers that
+  are temporarily opened in the background.
++ Temporary org agenda files aren't added to recentf.
++ =file:= links are highlighted with the ~error~ face if they are broken.
++ TAB was changed to toggle only the visibility state of the current subtree,
+  rather than cycle through it recursively. This can be reversed with:
+
+  #+BEGIN_SRC emacs-lisp
+  (after! evil-org
+    (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
+  #+END_SRC
++ (Evil users) Nearby tables are formatted when exiting insert or replace mode
+  (see ~+org-enable-auto-reformat-tables-h~).
++ Statistics cookies are updated when saving the buffer of exiting insert mode
+  (see ~+org-enable-auto-update-cookies-h~).
++ Org-protocol has been lazy loaded (see ~+org-init-protocol-lazy-loader-h~);
+  loaded when the server receives a request for an org-protocol:// url.
++ Babel and babel plugins are now lazy loaded (see
+  ~+org-init-babel-lazy-loader-h~); loaded when a src block is executed. No need
+  to use ~org-babel-do-load-languages~ in your config, just install your babel
+  packages to extend language support (and ensure its ~org-babel-execute:*~
+  function is autoloaded).
++ If a variable is used as a file path in ~org-capture-template~, it will be
+  resolved relative to ~org-directory~, instead of ~default-directory~ (see
+  ~+org-capture-expand-variable-file-a~).
+
+* Prerequisites
+Org has a few soft dependencies that you will need to make use of Org's more
+esoteric features:
+
++ For inline LaTeX previews, ~latex~ and ~dvipng~ is needed.
++ To render GNUPlot images (with =+gnuplot= flag) the ~gnuplot~ program is
+  needed.
++ To execute babel code blocks, you need whatever dependencies those languages
+  need. It is recommended you enable the associated =:lang= module and ensure
+  its dependencies are met, e.g. install the =ruby= executable for ruby support.
+  To use ~jupyter kernels~ you need the =+jupyter= flag, the associated kernel as 
+  well as the ~jupyter~ program.
++ =org-roam= (with the =+roam= flag) requires =sqlite3= to be installed.
+
+** MacOS
+#+BEGIN_SRC sh
+brew cask install mactex
+brew install gnuplot
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+pacman -S texlive-core texlive-bin texlive-science
+pacman -S gnuplot
+pacman -S jupyter # required by +jupyter
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = with pkgs; [
+  # any less than medium isn't guaranteed to work
+  texlive.combined.scheme-medium
+  # required by +jupyter
+  (python38.withPackages(ps: with ps; [jupyter]))
+];
+#+END_SRC
+
+** TODO Windows
+
+* Features
+** Invoking the org-capture frame from outside Emacs
+The simplest way to use the org-capture frame is through the ~bin/org-capture~
+script. I'd recommend binding a shortcut key to it. If Emacs isn't running, it
+will spawn a temporary daemon for you.
+
+Alternatively, you can call ~+org-capture/open-frame~ directly, e.g.
+
+#+BEGIN_SRC sh
+emacsclient --eval '(+org-capture/open-frame INTIAL-INPUT KEY)'
+#+END_SRC
+
+** Built-in custom link types
+This module defines a number of custom link types in ~+org-init-custom-links-h~.
+They are (with examples):
+
++ ~doom-docs:news/2.1.0~ (=~/.emacs.d/docs/%s=)
++ ~doom-modules:editor/evil/README.org~ (=~/.emacs.d/modules/%s=)
++ ~doom-repo:issues~ (=https://github.com/hlissner/doom-emacs/%s=)
++ ~doom:core/core.el~ (=~/.emacs.d/%s=)
++ ~duckduckgo:search terms~
++ ~gimages:search terms~ (Google Images)
++ ~github:hlissner/doom-emacs~
++ ~gmap:Toronto, Ontario~ (Google Maps)
++ ~google:search terms~
++ ~org:todo.org~ (={org-directory}/%s=)
++ ~wolfram:sin(x^3)~
++ ~wikipedia:Emacs~
++ ~youtube:P196hEuA_Xc~ (link only)
++ ~yt:P196hEuA_Xc~ (like =youtube=, but includes an inline preview of the video)
+
+* Configuration
+** Changing ~org-directory~
+To modify ~org-directory~ it must be set /before/ =org= has loaded:
+
+#+BEGIN_SRC emacs-lisp
+;; ~/.doom.d/config.el
+(setq org-directory "~/new/org/location/")
+#+END_SRC
+** Changing ~org-noter-notes-search-path~
+To modify ~org-noter-notes-search-path~ set:
+
+#+BEGIN_SRC emacs-lisp
+;; ~/.doom.d/config.el
+(setq org-noter-notes-search-path '("~/notes/path/"))
+#+END_SRC

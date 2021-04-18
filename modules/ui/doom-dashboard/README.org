@@ -1,0 +1,88 @@
+#+TITLE:   ui/doom-dashboard
+#+DATE:    October 9, 2019
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+  - [[#a-custom-banner][A custom banner]]
+  - [[#adding-text-to-the-dashboard][Adding text to the dashboard]]
+  - [[#customizing-faces][Customizing Faces]]
+
+* Description
+This module adds a minimalistic, Atom-inspired dashboard to Emacs.
+
+Besides eye candy, the dashboard serves two other purposes:
+
+1. To improve Doom's startup times (the dashboard is lighter than the scratch
+   buffer in many cases).
+
+2. And to preserve the "last open directory" you were in. Occasionally, I kill
+   the last buffer in my project and I end up who-knows-where (in the working
+   directory of another buffer/project). It can take some work to find my way
+   back to where I was. Not with the Dashboard.
+
+   Since the dashboard cannot be killed, and it remembers the working directory
+   of the last open buffer, ~M-x find-file~ will work from the directory I
+   expect.
+
+** Module Flags
+This module provides no flags.
+
+* Prerequisites
+This module only requires that ~all-the-icons~'s icon fonts are installed.
+
+It should've been installed when you first installed Doom, but ~M-x
+all-the-icons-install-fonts~ will install them again.
+
+* Configuration
+** A custom banner
+To use a custom image as your banner, change ~fancy-splash-image~:
+
+#+BEGIN_SRC elisp
+(setq fancy-splash-image "~/my/banners/image.png")
+#+END_SRC
+
+#+begin_quote
+Doom will fall back to its ASCII banner in Terminal Emacs. To replace the ASCII
+banner, replace the ~doom-dashboard-widget-banner~ function in
+~+doom-dashboard-functions~ with a function that inserts your new banner into
+the current file.
+#+end_quote
+
+** Adding text to the dashboard
+Doom's dashboard iterates over ~+doom-dashboard-functions~ when it is told to
+redraw. Add your own functions to operate on the buffer and potentially add
+whatever you like to Doom's splash screen.
+
+#+begin_quote
+Keep in mind that inserting text from expensive sources, e.g. your org agenda,
+will negate most of Doom's startup benefits.
+#+end_quote
+
+** Customizing Faces
+Doom's dashboard defaults to inheriting faces set by the current theme. If you wish
+to customize it independently of the theme (or just inherit a different color
+from the theme) you can make use of ~custom-set-faces!~ or  ~custom-theme-set-faces!~
+#+BEGIN_SRC elisp
+(custom-set-faces!
+  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(doom-dashboard-footer :inherit font-lock-constant-face)
+  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-loaded :inherit font-lock-warning-face)
+  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
+  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+#+END_SRC
+or for a per-theme setting
+#+BEGIN_SRC elisp
+(custom-theme-set-faces! 'doom-tomorrow-night
+  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(doom-dashboard-footer :inherit font-lock-constant-face)
+  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-loaded :inherit font-lock-warning-face)
+  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
+  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+#+END_SRC

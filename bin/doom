@@ -1,0 +1,122 @@
+#!/usr/bin/env sh
+:; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
+:; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
+:; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
+:; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
+:; [ "${__DOOMCODE:-0}" -eq 128 ] && { sh "`$EMACS -Q --batch --eval '(princ temporary-file-directory)'`/doom.sh" "$0" "$@" && true; __DOOMCODE=$?; }
+:; exit $__DOOMCODE
+
+;; The garbage collector isn't as important during CLI ops. A higher threshold
+;; makes it 15-30% faster, but set it too high and we risk runaway memory usage
+;; in longer sessions.
+(setq gc-cons-threshold 134217728)   ; 128mb
+
+;; Prioritize non-byte-compiled source files in non-interactive sessions to
+;; prevent loading stale byte-code.
+(setq load-prefer-newer t)
+
+;; Ensure Doom runs out of this file's parent directory, where Doom is
+;; presumably installed. Use the EMACSDIR envvar to change this.
+(setq user-emacs-directory
+      (if (getenv-internal "EMACSDIR")
+          (file-name-as-directory (expand-file-name (getenv-internal "EMACSDIR")))
+        (expand-file-name
+         "../" (file-name-directory (file-truename load-file-name)))))
+
+(kill-emacs
+ (pcase
+     (catch 'exit
+       ;; Catch some potential issues early
+       (cond
+        ((version< emacs-version "26.3")
+         (princ (concat "Detected Emacs " emacs-version " (at " (car command-line-args) ").\n\n"))
+         (princ "Doom only supports Emacs 26.3 and newer. 27.1 is highly recommended. A guide\n")
+         (princ "to install a newer version of Emacs can be found at:\n\n  ")
+         (princ (format "https://doomemacs.org/docs/getting_started.org#%s"
+                        (cond ((eq system-type 'darwin) "on-macos")
+                              ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")
+                              ("on-linux"))))
+         (princ "Aborting...")
+         1)
+
+        ((not (file-readable-p (expand-file-name "core/core.el" user-emacs-directory)))
+         (princ (concat "Couldn't find or read '"
+                        (abbreviate-file-name
+                         (expand-file-name "core/core.el" user-emacs-directory))
+                        "'.\n\n"))
+         (princ "Are you sure Doom Emacs is correctly installed?\n\n")
+         (when (file-symlink-p load-file-name)
+           (princ "This error can occur if you've symlinked the 'doom' script, which Doom does not\n")
+           (princ "support. Consider symlinking its parent directory instead or explicitly set the\n")
+           (princ "EMACSDIR environment variable, e.g.\n\n  ")
+           (princ (if (string-match-p "/fish$" (getenv "SHELL"))
+                      "env EMACSDIR=~/.emacs.d doom"
+                    "EMACSDIR=~/.emacs.d doom sync"))
+           (princ "\n\n")
+           (princ "Aborting..."))
+         2)
+
+        ((and (equal (user-real-uid) 0)
+              (/= 0 (file-attribute-user-id (file-attributes user-emacs-directory))))
+         (princ "Do not run this script as root. It will cause file permissions errors later.\n\n")
+         (princ "To carry on anyway, change the owner of your Emacs config to root:\n\n")
+         (princ (concat "  chown root:root -R " (abbreviate-file-name user-emacs-directory) "\n\n"))
+         (princ "Aborting...")
+         3)
+
+        ;; Load the heart of the beast and its CLI processing library
+        ((load (expand-file-name "core/core.el" user-emacs-directory) nil t)
+         (require 'core-cli)
+
+         ;; Process the arguments passed to this script. `doom-cli-execute'
+         ;; should return a boolean, integer (error code) or throw an 'exit
+         ;; event, which is handled specially.
+         (apply #'doom-cli-execute :doom (cdr (member "--" argv))))))
+
+   ;; Any non-zero integer is treated as an explicit exit code.
+   ((and (pred integerp) code)
+    code)
+
+   ;; If, instead, we were given a string or list of strings, copy these as
+   ;; shell script commands to a temporary script file which this script will
+   ;; execute after this session finishes. Also accepts special keywords, like
+   ;; `:restart', to rerun the current command with the same arguments.
+   ((and (or (pred consp)
+             (pred stringp)
+             (pred keywordp))
+         command)
+    (let ((script (expand-file-name "doom.sh" temporary-file-directory))
+          (coding-system-for-write 'utf-8-unix)
+          (coding-system-for-read  'utf-8-unix))
+      (with-temp-file script
+        (insert "#!/usr/bin/env sh\n"
+                "_postscript() {\n"
+                "  rm -f " (shell-quote-argument script) "\n  "
+                (cond ((eq command :restart) "$@")
+                      ((stringp command) command)
+                      ((string-join
+                        (if (listp (car-safe command))
+                            (cl-loop for line in (doom-enlist command)
+                                     collect (mapconcat #'shell-quote-argument (remq nil line) " "))
+                          (list (mapconcat #'shell-quote-argument (remq nil command) " ")))
+                        "\n  ")))
+                "\n}\n"
+                (save-match-data
+                  (cl-loop for env
+                           in (cl-set-difference process-environment
+                                                 doom--initial-process-environment
+                                                 :test #'equal)
+                           if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
+                           concat (format "%s=%s \\\n"
+                                          (match-string 1 env)
+                                          (shell-quote-argument (match-string 2 env)))))
+                (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
+                "_postscript $@\n"))
+      (set-file-modes script #o600))
+    ;; Error code 128 is special: it means run the post-script after this
+    ;; session ends.
+    128)
+
+   ;; Anything else (e.g. booleans) is treated as a successful run. Yes, a `nil'
+   ;; indicates a successful run too!
+   (_ 0)))

@@ -1,0 +1,174 @@
+#+TITLE:   editor/format
+#+DATE:    July 25, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+#+begin_quote
+This module has been scheduled for a rewrite. Its documentation will remain
+incomplete and edge cases left unpatched in the meantime. A preview of this
+rewrite can be found [[https://github.com/hlissner/doom-emacs-private/tree/master/modules/editor/format][in my private config]].
+#+end_quote
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#automatic-reformatting-when-saving-buffers][Automatic reformatting when saving buffers]]
+  - [[#disabling-the-lsp-formatter][Disabling the LSP formatter]]
+  - [[#defining-your-own-formatters][Defining your own formatters]]
+  - [[#selecting-a-specific-formatter-for-a-particular-buffer][Selecting a specific formatter for a particular buffer]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module integrates code formatters into Emacs. Here are some of the
+formatters that it currently supports:
+
+#+begin_quote
+asmfmt, black, brittany, cabal-fmt, clang-format, cmake-format, dartfmt, dfmt,
+dhall format, dockfmt, elm-format, emacs, fish_indent, fprettify, gleam format,
+gofmt, iStyle, jsonnetfmt, ktlint, latexindent, ledger-mode, lua-fmt, mix
+format, nixfmt, node-cljfmt, ocp-indent, perltidy, prettier, purty, rufo,
+rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
+#+end_quote
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+onsave= Preform buffer-wide reformatting of a buffer when you save it. See
+  ~+format-on-save-enabled-modes~ to control what major modes to (or not to)
+  format on save.
+
+** Plugins
++ [[https://github.com/lassik/emacs-format-all-the-code][format-all]]
+
+** Hacks
++ format-all has been heavily modified to suit Doom's goals for this module:
+  + Reformatted text is applied to the buffer by RCS patch, as to reduce its
+    affect on cursor position.
+  + Adds partial formatting, i.e. you can now reformat a subset of the buffer.
+  + Adds the ability to use any arbitrary formatter on the current buffer if you
+    pass the universal argument to ~+format/buffer~ or ~+format/region~ (i.e.
+    removes the major-mode lock on formatters).
+
+* Prerequisites
+This module depends on external programs to perform the actual formatting. These
+will need to be installed for them to work. In their absence, =format-all= will
+fail silently.
+
++ Angular/Vue (prettier)
++ Assembly (asmfmt)
++ Bazel Starlark (buildifier)
++ BibTeX (emacs)
++ C/C++/Objective-C (clang-format)
++ Cabal (cabal-fmt)
++ Clojure/ClojureScript (node-cljfmt)
++ CMake (cmake-format)
++ Crystal (crystal tool format)
++ CSS/Less/SCSS (prettier)
++ D (dfmt)
++ Dart (dartfmt)
++ Dhall (dhall format)
++ Dockerfile (dockfmt)
++ Elixir (mix format)
++ Elm (elm-format)
++ Emacs Lisp (emacs)
++ Fish Shell (fish_indent)
++ Fortran 90 (fprettify)
++ Gleam (gleam format)
++ Go (gofmt)
++ GraphQL (prettier)
++ Haskell (brittany)
++ HTML/XHTML/XML (tidy)
++ Java (clang-format)
++ JavaScript/JSON/JSX (prettier)
++ Jsonnet (jsonnetfmt)
++ Kotlin (ktlint)
++ LaTeX (latexindent)
++ Ledger (ledger-mode)
++ Lua (lua-fmt)
++ Markdown (prettier)
++ Nix (nixfmt)
++ OCaml (ocp-indent)
++ Perl (perltidy)
++ PHP (prettier plugin-php)
++ Protocol Buffers (clang-format)
++ PureScript (purty)
++ Python (black)
++ R (styler)
++ Ruby (rufo)
++ Rust (rustfmt)
++ Scala (scalafmt)
++ Shell script (shfmt)
++ Snakemake (snakefmt)
++ Solidity (prettier-plugin-solidity)
++ SQL (sqlformat)
++ Swift (swiftformat)
++ Terraform (terraform fmt)
++ TOML (prettier-plugin-toml)
++ TypeScript/TSX (prettier)
++ Verilog (iStyle)
++ YAML (prettier)
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+** Automatic reformatting when saving buffers
+There are two ways to achieve this. Either through the =+onsave= flag, or by
+adding ~format-all-mode~ to the hook of each major mode you want this behavior
+enabled in.
+
+If you choose the former, what modes it applies to can be changed by modifying
+~+format-on-save-enabled-modes~, which contains a list of major modes. If the
+first item in the list is the symbol ~not~, the list is negated. This is its
+default value:
+#+BEGIN_SRC elisp
+(setq +format-on-save-enabled-modes
+      '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
+            sql-mode         ; sqlformat is currently broken
+            tex-mode         ; latexindent is broken
+            latex-mode))
+#+END_SRC
+
+If you want to format code when you save a buffer, but want more granular
+control over which major modes this behavior is enabled in, there is an
+alternative. Make sure =+onsave= is disabled before you try this:
+
+#+BEGIN_SRC elisp
+(add-hook 'python-mode-hook #'format-all-mode)
+(add-hook 'js2-mode-hook #'format-all-mode)
+#+END_SRC
+
+** Disabling the LSP formatter
+If you are in a buffer with ~lsp-mode~ enabled and a server that supports
+=textDocument/formatting=, it will be used instead of =format-all='s formatter.
+
++ To disable this behavior universally use: ~(setq +format-with-lsp nil)~
++ To disable this behavior in one mode: ~(setq-hook! 'python-mode-hook +format-with-lsp nil)~
+
+** TODO Defining your own formatters
+See the ~set-formatter!~ function.
+
+** TODO Selecting a specific formatter for a particular buffer
+Set the buffer-local variable ~+format-with~ to the name of the formatter to
+use. e.g.
+
+#+BEGIN_SRC elisp
+(setq-hook! 'python-mode-hook +format-with 'html-tidy)
+
+;; Or set it to `:none' to disable formatting
+(setq-hook! 'python-mode-hook +format-with :none)
+#+END_SRC
+
+Formatters are referred to by the name they were defined with. They can be
+looked up in the ~format-all-mode-table~ hash table or in format-all's [[https://github.com/lassik/emacs-format-all-the-code/blob/master/format-all.el#L512][source
+code]].
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.

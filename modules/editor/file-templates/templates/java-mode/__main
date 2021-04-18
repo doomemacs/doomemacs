@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Java MAIN file template
+# --
+package `(+java-current-package)`;
+
+public class `(+java-current-class)` $1
+{
+    public static void main(String[] args) {
+        $0
+    }
+}

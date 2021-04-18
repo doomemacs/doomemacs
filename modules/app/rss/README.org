@@ -1,0 +1,112 @@
+#+TITLE:   app/rss
+#+DATE:    May 12, 2020
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#without-org][Without +org]]
+  - [[#with-org][With +org]]
+  - [[#keybindings][Keybindings]]
+  - [[#news-filtering][News filtering]]
+  - [[#automatically-updating-feed-when-opening-elfeed][Automatically updating feed when opening elfeed]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
++ Read RSS feeds in the comfort of DOOM (Emacs)
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+org= to enable ~elfeed-org~ to use ~org-directory/elfeed.org~
+
+** Plugins
++ [[https://github.com/skeeto/elfeed][elfeed]]
++ =+org=
+  + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
+
+** Hacks
++ By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last 2 weeks of entries visible. This needs to be set after elfeed has loaded like so in your ~config.el~
+  #+begin_src elisp
+(after! elfeed
+  (setq elfeed-search-filter "@1-month-ago +unread"))
+  #+end_src
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
++ As there isn't currently binding for ~elfeed-update~ you can run it with ~M-x elfeed-update~
+
+* Configuration
+** Without +org
+When you don't want to use org mode to manage your elfeed feeds you can put your subscriptions to personal ~config.el~ file, ex:
+#+BEGIN_SRC elisp
+(setq elfeed-feeds
+      '("https://this-week-in-rust.org/rss.xml"
+        "http://feeds.bbci.co.uk/news/rss.xml"))
+#+END_SRC
+
+** With +org
+When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to configure feeds to follow.
+#+BEGIN_SRC org
+,* root :elfeed:
+,** Programming :programming:
+,*** [[https://this-week-in-rust.org/rss.xml][This Week in Rust]] :rust:
+,** News :news:
+,*** Top news :tops:
+,**** http://feeds.bbci.co.uk/news/rss.xml
+#+END_SRC
++ Root of ~elfeed-org~ needs to have ~:elfeed:~ tag. This is where ~elfeed-org~ starts to read.
++ You can have subheaders as in example ~:programming:~, and ~elfeed-org~ applies that tag to all subheader feeds, in example it adds it to ~This Week in Rust~.
++ You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ (~C-c C-l~) and put name as you want into ~description~.
++ If you don't want to use ~org-directory/elfeed.org~ file you can specify it with ~(setq rmh-elfeed-org-files ("path/to/your/elfeed/file.org))~
+
+** Keybindings
++ General
+  | Key     | Mode               | Description            |
+  |---------+--------------------+------------------------|
+  | =S-RET= | Elfeed-search-mode | Open link into browser |
+  | =RET=   | Elfeed-search-mode | Open item              |
+  | =s=     | Elfeed-search-mode | Filter                 |
+  | =C-j=   | Elfeed-show-mode   | Move to next item      |
+  | =C-k=   | Elfeed-show-mode   | Move to previous item  |
+
++ If ~:editor evil +everywhere~
+  | Key | Description                 |
+  |-----+-----------------------------|
+  | q   | elfeed-kill-buffer          |
+  | r   | elfeed-search-update--force |
+ 
+** News filtering
++ Time filtering
+  + ~@2-days-ago~ Past two days
+  + ~@2-weeks-ago~ Past two weeks
+  + ~@2-years-ago~ Past two years
+  + ~@2020-06-19~ To show specific day
+  + ~@2020-06-19--2020-03-10~ Span of time
++ Tag filtering
+  + Include ~+news~
+  + Exclude ~-rust~
+  + Both ~+news -rust~
++ String filtering, this is case insensitive
+  + Include
+    + ~DOOM~
+    + ~Linu[sx]~ Search for both ~Linus~ and ~Linux~
+  + Exclude ~!something~
+
+** Automatically updating feed when opening elfeed
+Hook ~elfeed-update~ to ~elfeed-search-mode-hook~
+#+BEGIN_SRC elisp
+(add-hook! 'elfeed-search-mode-hook 'elfeed-update)
+#+END_SRC
+
+* TODO Troubleshooting

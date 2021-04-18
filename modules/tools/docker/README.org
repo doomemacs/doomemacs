@@ -1,0 +1,139 @@
+#+TITLE:   tools/docker
+#+DATE:    April 30, 2019
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#docker-control][Docker control]]
+    - [[#supported-commands][Supported commands]]
+  - [[#tramp][TRAMP]]
+- [[#configuration][Configuration]]
+  - [[#popups][Popups]]
+    - [[#other-useful-variables][Other useful variables]]
+  - [[#completion-in-dockerfiles][Completion in Dockerfiles]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#tramp-hangs-on-alpine-container][Tramp hangs on Alpine container]]
+
+* Description
+This module allows you to manipulate Docker images, containers & more from
+Emacs.
+
+Provides a major =dockerfile-mode= to edit =Dockerfiles=. Additional
+convenience functions allow images to be built easily.
+
+=docker-tramp.el= offers a [[https://www.gnu.org/software/tramp/][TRAMP]] method for Docker containers.
+
+** Module Flags
++ =+lsp= Enables integration for the Dockerfile Language Server.
+
+** Plugins
+ + [[https://github.com/Silex/docker.el][docker]]
+ + [[https://github.com/emacs-pe/docker-tramp.el][docker-tramp]]
+ + [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]]
+
+* Prerequisites
+This module assumes =docker=, =docker-compose= and =docker-machine= binaries
+are installed and accessible from your PATH.
+
+Optionally, this module also uses the following programs:
+
++ =docker-langserver= (for LSP users): ~npm install -g dockerfile-language-server-nodejs~
+
+* Features
+** Docker control
+Use =M-x docker=, select a resource, and then mark or unmark items using the
+following keybindings (for more marking possibilities, check out
+https://github.com/politza/tablist):
+
+| Binding   | Description          |
+|-----------+----------------------|
+| =?=       | List actions         |
+| =l=       | Configure listing    |
+| =m=       | Mark item            |
+| =u=       | Unmark item          |
+| =t=       | Toggle marks         |
+| =U=       | Unmark all           |
+| =s=       | Sort                 |
+| =* r=     | Mark items by regexp |
+| =<=       | Shrink column        |
+| =>=       | Enlarge column       |
+| =C-c C-e= | Export to csv        |
+
+*** Supported commands
+- =docker container=: =attach=, =cp=, =diff=, =inspect=, =kill=, =logs=,
+  =pause=, =rename=, =restart=, =rm=, =start=, =stop=, =unpause=
+- =docker image=: =inspect=, =pull=, =push=, =rm=, =run=, =tag=
+- =docker network=: =rm=
+- =docker volume=: =rm=
+- =docker-machine=: =create=, =env=, =restart=, =rm=, =start=, =stop=
+- =docker-compose=: =build=, =config=, =create=, =down=, =exec=, =logs=,
+  =pull=, =push=, =remove=, =restart=, =run=, =start=, =stop=, =up=
+
+  You can also enter =dired= or open a file inside a container or volume.
+
+** TRAMP
+Offers the [[https://www.gnu.org/software/tramp/][TRAMP]] method =docker= to access running containers.
+
+#+BEGIN_EXAMPLE
+C-x C-f /docker:user@container:/path/to/file
+#+END_EXAMPLE
+
+| =user=      | the user that you want to use (optional) |
+| =container= | the id or name of the container          |
+
+* Configuration
+** Popups
+Thanks to [[https://github.com/magit/magit-popup][magit-popup]], all the popups default arguments can be customized. For
+example, here is how to customize the arguments for =docker-image-run-popup=:
+
+#+BEGIN_SRC emacs-lisp
+(setq docker-image-run-arguments '("-i" "-t" "--rm"))
+#+END_SRC
+
+or inside a =use-package= declaration:
+
+#+BEGIN_SRC emacs-lisp
+(use-package! docker
+  :bind ("C-c d" . docker)
+  :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
+#+END_SRC
+
+You can also customize these using =M-x customize-variable=.
+
+*** Other useful variables
+| Variable                            | Description                           | Default          |
+|-------------------------------------+---------------------------------------+------------------|
+| =docker-command=                    | The docker binary to use              | =docker=         |
+| =docker-container-default-sort-key= | Sort key for docker containers        | =("Image")=      |
+| =docker-container-shell-file-name=  | Shell to use when entering containers | =/bin/bash=      |
+| =docker-image-default-sort-key=     | Sort key for docker images            | =("Repository")= |
+| =docker-machine-default-sort-key=   | Sort key for docker machines          | =("Name")=       |
+| =docker-network-default-sort-key=   | Sort key for docker networks          | =("Name")=       |
+| =docker-run-as-root=                | Run docker as root                    | =nil=            |
+| =docker-volume-default-sort-key=    | Sort key for docker volumes           | =("Driver")=     |
+
+** Completion in Dockerfiles
+By default, the keyword completion function detects the =docker-compose=
+version of the current buffer and suggests the appropriate keywords.
+
+You can change the candidates offered by the backend by customizing
+=docker-compose-keywords=.
+
+* Troubleshooting
+** Tramp hangs on Alpine container
+Busyboxes built with the =ENABLE_FEATURE_EDITING_ASK_TERMINAL= config option
+also send escape sequences, which =tramp-wait-for-output= doesn't ignore
+correctly. This was [[http://git.savannah.gnu.org/cgit/tramp.git/commit/?id=98a511248a9405848ed44de48a565b0b725af82c][fixed in TRAMP upstream]] and is available since TRAMP 2.3.
+
+For older versions of TRAMP you can dump [[https://github.com/emacs-pe/docker-tramp.el/blob/master/docker-tramp-compat.el][docker-tramp-compat.el]] in your
+=load-path= somewhere and add the following to your =init.el= to overwrite
+=tramp-wait-for-output= with the patch applied:
+
+#+BEGIN_SRC emacs-lisp
+(require 'docker-tramp-compat)
+#+END_SRC

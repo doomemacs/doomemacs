@@ -1,0 +1,60 @@
+#+TITLE:   lang/emacs-lisp
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module extends support for Emacs Lisp in Doom Emacs.
+
++ Macro expansion
++ Go-to-definitions or references functionality
+
+** Maintainers
++ @hlissner (author)
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]]
++ [[https://github.com/Wilfred/elisp-def][elisp-def]]
++ [[https://github.com/xuchunyang/elisp-demos][elisp-demos]]
++ [[https://github.com/flycheck/flycheck-cask][flycheck-cask]] (=:checkers syntax=)
++ [[https://github.com/Fanael/highlight-quoted][highlight-quoted]]
++ [[https://github.com/joddie/macrostep][macrostep]]
++ [[https://github.com/tonini/overseer.el][overseer]]
+
+** Hacks
++ Symbols that are defined in the current session are highlighted with
+  ~font-lock-variable-face~.
++ Eldoc will display the values of variables next to its documentation.
++ ~elisp-demos~ was modified to display API demos for Doom's standard library
+  (in [[file:../../../docs/api.org][docs/api.org]]).
++ This module extends imenu support for Doom's API (e.g. ~package!~,
+  ~use-package~, ~after!~)
++ Flycheck has been configured to tone down the false positives when you are
+  editing your Emacs or Doom config.
+
+* Prerequisites
+This module's sole dependency is Emacs. It's very obscure, you wouldn't know
+about it.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

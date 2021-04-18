@@ -1,0 +1,159 @@
+#+TITLE:   lang/markdown
+#+DATE:    February 19, 2017
+#+SINCE:   2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#linters][Linters]]
+  - [[#markdown-preview][Markdown preview]]
+    - [[#markedjs][MarkedJS]]
+    - [[#pandoc][Pandoc]]
+    - [[#markdown][Markdown]]
+    - [[#multimarkdown][MultiMarkdown]]
+- [[#features][Features]]
+  - [[#markdown-preview-1][Markdown preview]]
+- [[#configuration][Configuration]]
+  - [[#changing-how-markdown-is-compiled][Changing how markdown is compiled]]
+
+* Description
+This module provides Markdown support for Emacs.
+
+#+begin_quote
+Markdown is a text-to-HTML conversion tool for web writers. Markdown allows you
+to write using an easy-to-read, easy-to-write plain text format, then convert it
+to structurally valid XHTML (or HTML).
+
+Thus, “Markdown” is two things: (1) a plain text formatting syntax; and (2) a
+software tool, written in Perl, that converts the plain text formatting to HTML.
+See the Syntax page for details pertaining to Markdown’s formatting syntax. You
+can try it out, right now, using the online Dingus.
+
+The overriding design goal for Markdown’s formatting syntax is to make it as
+readable as possible. The idea is that a Markdown-formatted document should be
+publishable as-is, as plain text, without looking like it’s been marked up with
+tags or formatting instructions. While Markdown’s syntax has been influenced by
+several existing text-to-HTML filters, the single biggest source of inspiration
+for Markdown’s syntax is the format of plain text email. -- John Gruber
+#+end_quote
+
+** Module Flags
++ =+grip= Enables [[https://github.com/seagle0128/grip-mode][grip support]] (on =<localleader> p=), to provide live
+  github-style previews of your markdown (or org) files.
+
+** Plugins
++ markdown-mode
++ markdown-toc
+
+** Hacks
++ Flyspell has been configured not to spell check in code blocks, links, HTML
+  tags or references.
+
+* Prerequisites
+This module has two soft dependencies: a linter and a compiler (for previewing
+markdown).
+
+** Linters
+Out of the box, flycheck recognizes these checkers for markdown-mode and
+gfm-mode:
+
++ Markdown-specific
+  + [[https://github.com/DavidAnson/markdownlint][markdownlint]] (~npm install markdownlint~)
+  + [[https://github.com/markdownlint/markdownlint][mdl]] (~gem install mdl~)
++ General (natural language)
+  + [[http://proselint.com/][proselint]]
+    - ~pip install proselint~
+    - Or through your OS package manager
+      - MacOS: ~brew install proselint~
+      - Arch Linux: ~pacman -S proselint~
+  + [[https://github.com/textlint/textlint][textlint]] (~npm install textlint~)
+
+** Markdown preview
+This module requires a markdown compiler in order for ~markdown-preview~ to
+work. It will recognize and use one of the following executables, in this order
+(you only need one):
+
++ [[https://github.com/markedjs/marked][markedjs]]: a markdown compiler "built for speed"
++ [[https://github.com/jgm/pandoc][pandoc]]: the universal markup transpiler
++ [[http://pell.portland.or.us/~orc/Code/discount/][markdown]]: there are various flavors of this compiler. This module will look
+  for these two:
+  + John Gruber's [[https://daringfireball.net/projects/markdown/][original perl script]]
+  + The C implementation called [[http://pell.portland.or.us/~orc/Code/discount/][discount]], by David Parsons
++ [[https://fletcher.github.io/MultiMarkdown-6/][multimarkdown]]: a compiler for a language that is a superset of Markdown, with
+  additional output formats and features.
+
+*** MarkedJS
+Not to be confused with [[https://marked2app.com/][the Marked 2 app]], marked is an npm package:
+
+#+BEGIN_SRC sh
+npm install -g marked
+#+END_SRC
+
+*** Pandoc
+Pandoc is the universal markup transpiler. It should be available through your
+system package manager. For example:
+
++ MacOS: ~brew install pandoc~
++ Arch Linux: ~pacman -S pandoc~
+
+*** Markdown
+The C implementation of Markdown.pl, called =discount=, is available through
+your OS's package manager:
+
++ MacOS: ~brew install discount~
++ Arch Linux: ~pacman -S discount~
+
+The original perl script that discount is inspired from can be found on [[https://daringfireball.net/projects/markdown/][John
+Gruber's website]].
+
+*** MultiMarkdown
+See [[https://fletcher.github.io/MultiMarkdown-6/introduction.html][its documentation]] for details on what MultiMarkdown is. The compiler can be
+installed through your OS's package manager:
+
++ MacOS: ~brew install multimarkdown~
++ Arch Linux: [[https://aur.archlinux.org/packages/multimarkdown/][multimarkdown]] is available on the AUR
+
+* Features
+** Markdown preview
+~markdown-preview~ is bound to =<localleader> p=. This will open a preview of
+your compiled markdown document in your browser.
+
+Alternatively, you can use ~grip-mode~ through =+grip=.
+
+* Configuration
+** Changing how markdown is compiled
+When ~markdown-preview~ is invoked (=<localleader> p=) it consults
+~markdown-command~. Its default value (~#'+markdown-compile~) will consult
+~+markdown-compile-functions~: a list of functions that take three arguments: the
+start and end point in the current buffer to use as input, and an output buffer
+to insert the result in.
+
+By default, the value of ~+markdown-compile-functions~ is:
+
+#+BEGIN_SRC lisp
+'(+markdown-compile-marked
+  +markdown-compile-pandoc
+  +markdown-compile-markdown
+  +markdown-compile-multimarkdown)
+#+END_SRC
+
+These functions will attempt to use the marked, pandoc and markdown executables,
+if available. Changing this variable will control how markdown is compiled.
+
+#+BEGIN_SRC elisp
+;; Add a new one
+(add-hook '+markdown-compile-functions #'my-compile-function)
+
+;; Or remove an existing one
+(remove-hook '+markdown-compile-functions #'+markdown-compile-markdown)
+#+END_SRC
+
+Otherwise, you can change ~markdown-command~ directly:
+
+#+BEGIN_SRC elisp
+(setq markdown-command "markdown | smartypants")
+#+END_SRC

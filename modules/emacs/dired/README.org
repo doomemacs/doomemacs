@@ -1,0 +1,43 @@
+#+TITLE:   emacs/dired
+#+DATE:    May 27, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#keybindings][Keybindings]]
+
+* Description
+This module provides configuration for dired.
+
+** Module Flags
++ =+ranger= Enables dired to be more like [[https://github.com/ranger/ranger][ranger]].
++ =+icons= Enables the display of fancy icons depending on file types in dired
+  buffers.
+
+** Plugins
++ [[https://github.com/purcell/diredfl][diredfl]]
++ [[https://github.com/stsquad/dired-rsync][dired-rsync]]
++ [[https://github.com/dgutov/diff-hl/][diff-hl]]
++ [[https://github.com/yqrashawn/fd-dired][fd-dired]]
++ =+ranger=
+  + [[https://github.com/ralesi/ranger.el][ranger]]
++ =+icons=
+  + [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]]
+
+* Prerequisites
+This module has no prerequisites *except on BSDs* where =GNU ls= (~gls~) is
+needed for it to work properly (Doom doctor will notify you if it is missing).
+
+* Keybindings
+| Keybind   | Description                  |
+|-----------+------------------------------|
+| =SPC f d= | Find directory with dired    |
+| =q=       | Exit dired buffer            |
+| =C-c C-r= | Run =dired-rsync=            |
+| =C-c C-e= | Rename entries with =wdired= |
+
+Other keybindings can be found on the official [[https://www.gnu.org/software/emacs/refcards/pdf/dired-ref.pdf][Dired reference card]].

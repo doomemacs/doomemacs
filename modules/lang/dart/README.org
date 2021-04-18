@@ -1,0 +1,118 @@
+#+TITLE:   lang/dart
+#+DATE:    February 16, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#installing-dart-sdk][Installing Dart SDK]]
+  - [[#installing-flutter-sdk][Installing Flutter SDK]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#dart--flutter][Dart & Flutter]]
+  - [[#android][Android]]
+  - [[#flutter-mobile-development-on-desktop][Flutter mobile development on desktop]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+[[https://dart.dev/][Dart]] is a client-optimized language by Google for fast apps on any platform.
+It is fast and optimized for UI, famous for the [[https://flutter.io/][Flutter]] framework, also
+made by Google. Both Flutter and Dart are free and open-source.
+
+This module wraps ~dart-mode~, with [[https://microsoft.github.io/language-server-protocol/][LSP]] features like code completion for =.dart= files,
+syntax highlighting, debugging, closing labels, etc.
+
+** Maintainers
++ [[https://github.com/ericdallo][@ericdallo]]
+
+** Module Flags
++ =+lsp= Enable LSP server integration.
++ =+flutter= Adds ~flutter~ integration and some sane defaults for Flutter
+  development along with ~hover~ for desktop development.
+
+** Plugins
++ [[https://github.com/bradyt/dart-mode][dart-mode]]
++ [[https://github.com/amake/flutter.el][flutter.el]]
++ [[https://github.com/ericdallo/hover.el][hover.el]]
+
+* Prerequisites
+Make sure that the Dart SDK is on your ~PATH~, and if using Flutter, make sure
+the Flutter binary is on your ~PATH~ as well.
+
+** Installing Dart SDK
+Before starting note that Flutter SDK will have a version of Dart. Therefore,
+there is no need to install Dart. If you want to use Flutter just see
+the next part.
+
+The stable version of the SDK is in most major distributions repositories.
+If you find it necessary to install any other version or build from source,
+please refer to the official website at: https://dart.dev/get-dart
+
++ *On Debian (also Ubuntu and its derivations):*
+  #+BEGIN_SRC shell
+  sudo apt-get install dart
+  #+END_SRC
++ *On Arch Linux (and derivations like Manjaro):*
+  #+BEGIN_SRC shell
+  sudo pacman -S dart
+  #+END_SRC
++ *On macOS*:
+  #+BEGIN_SRC shell
+  brew tap dart-lang/dart
+  brew install dart
+  #+END_SRC
++ *On NixOS*:
+  #+BEGIN_SRC shell
+  nix-env -iA nixpkgs.dart
+  #+END_SRC
+
+** Installing Flutter SDK
+Due to complications with permissions, it is suggested not to use AUR or any
+automatic installation tools for Flutter SDK.
+
+On any system just run the following commands to install Flutter, once you have
+met dependencies named on [[https://flutter.dev/docs/get-started/install/][the site]]:
+
+#+BEGIN_SRC shell
+git clone https://github.com/flutter/flutter --branch stable # to download Flutter
+export PATH="$PATH:$(pwd)/flutter/bin" # to add it to PATH
+flutter doctor # for Dependency check and further instructions
+#+END_SRC
+
+* Features
++ Syntax highlighting and formatting for ~.dart~ files provided by LSP
++ Auto import
++ Widget guide lines for Flutter
++ Closing labels for constructors
++ Run tests interactively
++ Outline support via ~lsp-treemacs~
++ Emacs functions for running and debugging Flutter projects
+
+* Configuration
+** Dart & Flutter
+On Linux, the installers for Dart and Flutter use the ~/opt~ directory, and this
+module assumes that. However, you may set ~lsp-dart-sdk-dir~ to your Dart
+install directory and ~flutter-sdk-path~ to you flutter SDK folder, to make sure
+LSP can find the language server included with the Dart SDK.
+
+Alternatively, these variables shouldn't be necessary if you just include Dart
+and Flutter on your ~PATH~ variable.
+** Android
+You will also need to setup your system for Android development if you intend to
+use Flutter to develop mobile applications. Refer to your distributions package
+manager for details. In most distributions the ~/opt/android-sdk~ directory is
+used, and you might have to change some permissions in this directory since it's
+owned by root. The [[https://wiki.archlinux.org/index.php/Android][Arch Linux wiki has a great guide on this here.]]
+** Flutter mobile development on desktop
+[[https://github.com/go-flutter-desktop/go-flutter][Hover]] is an application that can run Flutter mobile apps on your desktop, this
+makes the mobile development a lot easier without the need to setup an Android emulator.
+
+* Troubleshooting
+See the configuration section for information on the binaries for Dart and
+Flutter. On new installs to the ~/opt~ directory, you will likely need to edit
+the permissions of the ~/opt/dart-sdk~ and ~/opt/flutter~ directories (not to
+mention the Android SDK, as discussed above).

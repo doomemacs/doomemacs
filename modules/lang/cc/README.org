@@ -1,0 +1,257 @@
+#+TITLE:   lang/cc
+#+DATE:    January 16, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#lsp-servers][LSP servers]]
+  - [[#irony-server][irony-server]]
+    - [[#macos][macOS]]
+  - [[#rtags][rtags]]
+- [[#configure][Configure]]
+  - [[#project-compile-settings][Project compile settings]]
+    - [[#known-issues-with-bear-on-macos][Known issues with bear on macOS]]
+  - [[#configure-lsp-servers][Configure LSP servers]]
+    - [[#lsp-mode-with-clangd][LSP-mode with clangd]]
+    - [[#lsp-mode-with-ccls][LSP-mode with ccls]]
+    - [[#eglot-with-clangd][Eglot with clangd]]
+    - [[#eglot-with-ccls][Eglot with ccls]]
+- [[#appendix][Appendix]]
+  - [[#eglot-specific-bindings][Eglot specific bindings]]
+
+* Description
+This module adds support for the C-family of languages: C, C++, and Objective-C.
+
++ Code completion (~company-irony~)
++ eldoc support (~irony-eldoc~)
++ Syntax-checking (~flycheck-irony~)
++ Code navigation (~rtags~)
++ File Templates ([[../../editor/file-templates/templates/c-mode][c-mode]], [[../../editor/file-templates/templates/c++-mode][c++-mode]])
++ Snippets ([[https://github.com/hlissner/doom-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c++-mode][c++-mode]])
++ Several improvements to C++11 indentation and syntax highlighting.
+
+** Module Flags
++ ~+lsp~ Disables irony+rtags and replaces them with LSP (ccls by default). This
+  requires the =:tools lsp= module.
+
+** Plugins
++ [[https://github.com/Kitware/CMake][cmake-mode]]
++ [[https://github.com/chachi/cuda-mode][cuda-mode]]
++ [[https://github.com/liblit/demangle-mode][demangle-mode]]
++ [[https://github.com/jart/disaster][disaster]]
++ [[https://github.com/ludwigpacifici/modern-cpp-font-lock][modern-cpp-font-lock]]
++ [[https://github.com/salmanebah/opencl-mode][opencl-mode]]
++ [[https://github.com/jimhourihan/glsl-mode][glsl-mode]]*
++ [[https://github.com/guidoschmidt/company-glsl][company-glsl]]*
++ =+lsp=
+  + [[https://github.com/MaskRay/emacs-ccls][ccls]] if =:tools lsp= has *no* =+eglot= flag
++ =-lsp=
+  + [[https://github.com/Sarcasm/irony-mode][irony]]
+  + [[https://github.com/ikirill/irony-eldoc][irony-eldoc]]
+  + [[https://github.com/Sarcasm/flycheck-irony][flycheck-irony]]
+  + [[https://github.com/Sarcasm/company-irony][company-irony]]
+  + [[https://github.com/hotpxl/company-irony-c-headers][company-irony-c-headers]]
+  + [[https://github.com/Andersbakken/rtags][rtags]]
+  + [[https://github.com/Andersbakken/rtags][ivy-rtags]]
+  + [[https://github.com/Andersbakken/rtags][helm-rtags]]
+
+* Prerequisites
+This module's requirements change depending on how you use it.
+
++ If =+lsp= is enabled, you need one of *clangd v9+* or *ccls*.
++ If =+lsp= is *not* enabled, you need *irony-server* and *rtags*.
++ Other features in this module depend on:
+  + (optional) glslangValidator, for GLSL completion in ~glsl-mode~
+  + (optional) cmake, for code completion in ~cmake-mode~
++ You will need a C/C++ compiler, like =gcc= or =clang=.
+
+** LSP servers
+=lsp-mode= and =eglot= support a few LSP servers, but =clangd= and =ccls= are
+recommended.
+
++ clangd (must be v9 or newer) :: clangd is included with =llvm= which should be
+  available through your OS' package manager.
+  - Linux:
+    - Debian 11 & Ubuntu 20.10: ~# apt-get install clangd-11~
+      - 20.04 LTS: [[https://pkgs.org/search/?q=clangd][clangd-10]]
+    - Fedora & CentOS/RHEL 8+: ~# dnf install clang-tools-extra~
+    - openSUSE: ~# zypper install clang~
+    - Arch: ~# pacman -S clang~
+  - BSDs:
+    - NetBSD & OpenBSD: ~# pkg_add clang-tools-extra~
+  - macOS: ~$ brew install llvm~ // 1GB+ installation! May take a while!
+  - Windows: use the win64 installer from [[https://releases.llvm.org/download.html][LLVM's GitHub release page]].
++ ccls :: Available in many OS' package managers as =ccls=. Otherwise, there are
+  alternative install methods listed [[https://github.com/MaskRay/ccls/wiki/Install][in the project's wiki]].
++ cmake-language-server :: available through ~pip~ on most distributions
+
+** irony-server
+Irony powers the code completion, eldoc and syntax checking systems.
+
+After installing its dependencies (Clang and CMake), run ~M-x
+irony-install-server~ in Emacs.
+
+*** macOS
+Due to linking issues, macOS users must compile irony-server manually:
+
+#+BEGIN_SRC sh
+brew install cmake
+brew install llvm
+git clone https://github.com/Sarcasm/irony-mode irony-mode
+#+END_SRC
+
+#+BEGIN_SRC bash
+mkdir irony-mode/server/build
+pushd irony-mode/server/build
+
+DEST="$HOME/.emacs.d/.local/etc/irony-server/"
+cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm \
+      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+      -DCMAKE_INSTALL_PREFIX="$DEST" ../
+cmake --build . --use-stderr --config Release --target install
+
+install_name_tool -change @rpath/libclang.dylib \
+    /usr/local/opt/llvm/lib/libclang.dylib \
+    "$DEST/bin/irony-server"
+
+# Cleanup
+popd
+rm -rf irony-mode
+#+END_SRC
+
+** rtags
+Code navigation requires an [[https://github.com/Andersbakken/rtags][rtags]] server (~rdm~) installed. This should be
+available through your OS's package manager.
+
+This module will auto-start ~rdm~ when you open C/C++ buffers (so long as one
+isn't already running). If you prefer to run it yourself:
+
+#+BEGIN_SRC sh
+rdm &
+rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
+#+END_SRC
+
+* Configure
+** Project compile settings
+By default, a set of default compile settings are defined in
+~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
+flycheck will fall back to these. *This variable does nothing for LSP users.*
+
+For a more universal solution: both LSP servers and irony will recognize a
+[[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] (a ~compile_commands.json~ file). There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to
+generate one]]. Here is an example using [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
+
+#+BEGIN_SRC sh
+# For CMake projects
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+#+END_SRC
+
+#+BEGIN_SRC sh
+# For non-CMake projects
+make clean
+bear make
+#+END_SRC
+
+Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
+C/C++/ObjC buffer.
+
+*** Known issues with bear on macOS
+MacOS' [[https://support.apple.com/en-us/HT204899][System Integrity Protection (SIP)]] might interfere with bear if ~make~ is
+under ~/usr/bin/~ which results in an empty compilation database.
+
+From the bear [[https://github.com/rizsotto/Bear#empty-compilation-database-on-os-x-captain-or-fedora][readme]]:
+
+#+begin_quote
+Security extension/modes on different operating systems might disable library
+preloads. This case Bear behaves normally, but the result compilation database
+will be empty. (Please make sure it's not the case when reporting bugs.) Notable
+examples for enabled security modes are: OS X 10.11 (check with csrutil status |
+grep 'System Integrity Protection'), and Fedora, CentOS, RHEL (check with
+sestatus | grep 'SELinux status').
+
+Workaround could be to disable the security feature while running Bear. (This
+might involve reboot of your computer, so might be heavy workaround.) Another
+option if the build tool is not installed under certain directories. Or use
+tools which are using compiler wrappers. (It injects a fake compiler which does
+record the compiler invocation and calls the real compiler too.) An example for
+such tool might be scan-build. The build system shall respect CC and CXX
+environment variables.
+#+end_quote
+
+A workaround might be to install ~make~ via Homebrew which puts ~gmake~
+under ~/usr/local/~.
+
+#+BEGIN_SRC sh
+brew install make
+#+END_SRC
+
+#+BEGIN_SRC sh
+make clean
+bear gmake
+#+END_SRC
+
+Additional info:
++ [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
++ [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]
+
+** Configure LSP servers
+Search for your combination of =(LSP client package, LSP server)=. You are using
+=LSP-mode= by default, =eglot= if you have =:tools (lsp +eglot)= active in your
+=init.el= file.
+
+*** LSP-mode with clangd
+
+#+BEGIN_SRC elisp
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+#+END_SRC
+
+This will both set your clangd flags and choose =clangd= as the default LSP server everywhere clangd can be used.
+
+*** LSP-mode with ccls
+
+#+BEGIN_SRC elisp
+(after! ccls
+  (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
+  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
+#+END_SRC
+
+This will both set your ccls flags and choose ccls as the default server. [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS
+documentation]] lists available options, use =t= for ~true~, =:json-false= for
+~false~, and =:json-null= for ~null~.
+
+*** Eglot with clangd
+
+#+BEGIN_SRC elisp
+(set-eglot-client! 'cc-mode '("clangd" "-j=3" "--clang-tidy"))
+#+END_SRC
+
+This will both set your clangd flags and choose clangd as the default server (if
+it is the last =set-eglot-client! 'cc-mode= in your config).
+
+*** Eglot with ccls
+
+#+BEGIN_SRC elisp
+(set-eglot-client! 'cc-mode '("ccls" "--init={\"index\": {\"threads\": 3}}"))
+#+END_SRC
+
+This will both set your ccls flags and choose ccls as the default server (if it
+is the last =set-eglot-client! 'cc-mode= in your config). [[https://github.com/MaskRay/ccls/wiki/Customization#--initjson][CCLS documentation]]
+lists available options
+
+* Appendix
+** Eglot specific bindings
+When using =+lsp= and =:tools (lsp +eglot)=, lsp-mode is replaced with eglot,
+and an additional function to get inheritance type hierarchy is added
+| Binding                      | Description                                      |
+|------------------------------+--------------------------------------------------|
+| ~<localleader> c t~          | ~Display inheritance type hierarchy (upwards)~   |
+| ~<prefix> <localleader> c t~ | ~Display inheritance type hierarchy (downwards)~ |

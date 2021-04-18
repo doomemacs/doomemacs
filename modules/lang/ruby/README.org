@@ -1,0 +1,91 @@
+#+TITLE:   lang/ruby
+#+DATE:    January 16, 2007
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+  - [[#ubuntu][Ubuntu]]
+  - [[#macos][MacOS]]
+  - [[#windows][Windows]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
+This module add Ruby and optional Ruby on Rails support to Emacs.
+
++ Code completion (robe)
++ Syntax checking (flycheck)
++ Jump-to-definitions (robe)
++ Bundler
++ Rubocop integration (flycheck)
+
+** Module Flags
++ =+lsp= Enables LangServer support for ruby. You must have =:tools lsp= enabled
+  for this to work, as well as the langserver (solargraph) installed on your
+  system.
++ =+rvm= Enables RVM (Ruby Version Manager) integration.
++ =+rbenv= Enables rbenv integration.
++ =+chruby= Enables chruby integration.
++ =+rails= Enables rails navigational commands, plus server+console integration.
+
+** Packages
++ [[https://github.com/endofunky/bundler.el][bundler]]
++ [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
++ [[https://github.com/company-mode/company-inf-ruby][company-inf-ruby]]
++ [[https://github.com/eschulte/jump.el][inflections]]
++ [[https://github.com/nonsequitur/inf-ruby][inf-ruby]]
++ [[https://github.com/arthurnn/minitest-emacs][minitest]]
++ [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
++ [[https://github.com/asok/rake][rake]]
++ [[https://github.com/senny/rbenv.el][rbenv]] (=+rbenv=)
++ [[https://github.com/dgutov/robe][robe]]
++ [[https://github.com/pezra/rspec-mode][rspec-mode]]
++ [[https://github.com/rubocop-hq/rubocop-emacs][rubocop]]
++ [[https://github.com/senny/rvm.el][rvm]] (=+rvm=)
+
+* Prerequisites
+Many of this modules plugins require ruby with some version manager (RVM or
+Rbenv) and the rubocop gem.
+
+** Ubuntu
+You can follow [[https://gorails.com/setup/ubuntu/18.04][this guide]]. After ruby installation, run ~gem install rubocop~.
+** MacOS
+You can follow [[https://gorails.com/setup/osx/10.15-catalina][this guide]]. After ruby installation, run ~gem install rubocop~.
+** Windows
+You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby installation, run ~gem install rubocop~.
+
+* Appendix
+** Commands
+*** robe
+| command              | key / ex command | description                                                        |
+|----------------------+------------------+--------------------------------------------------------------------|
+| ~robe-start~         | =SPC m \'=       | Open ruby lang server for auto-completions and jump to definitions |
+| ~robe-rails-refresh~ | =SPC m R=        | Refresh the lang server.                                           |
+
+*** projectile-rails
+The projectile-rails prefix is =SPC m r=.  Here is some examples:
+
+| command                       | key / ex command | description                                       |
+|-------------------------------+------------------+---------------------------------------------------|
+| ~projectile-rails-console~    | =SPC m r r=      | Open Rails console                                |
+| ~projectile-rails-server~     | =SPC m r R=      | Open Rails server                                 |
+| ~projectile-rails-find-model~ | =SPC m r m=      | Find any model of the project                     |
+| ~projectile-rails-find-model~ | =SPC m r M=      | Find the model related of currently open resource |
+*** bundler
+The bundler prefix is =SPC m b=.  Here is some examples:
+
+| command          | key / ex command | description         |
+|------------------+------------------+---------------------|
+| ~bundle-install~ | =SPC m b i=      | Runs bundle install |
+| ~bundle-update~  | =SPC m b u=      | Runs bundle update  |
+*** rspec-mode
+The rspec-mode prefix is =SPC m t=.  Here is some examples:
+|                       |                  |                                   |
+| command               | key / ex command | description                       |
+|-----------------------+------------------+-----------------------------------|
+| ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
+| ~rspec-verify-method~ | =SPC m t s=      | Runs rspec for the item on cursor |

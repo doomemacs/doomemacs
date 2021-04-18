@@ -1,0 +1,69 @@
+#+TITLE:   tools/terraform
+#+DATE:    November 21, 2019
+#+SINCE:   v2.1.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#syntax-highlighting][Syntax highlighting]]
+  - [[#code-formatting][Code formatting]]
+  - [[#code-navigation][Code navigation]]
+  - [[#code-completion][Code completion]]
+  - [[#documentation][Documentation]]
+  - [[#executing-terraform-commands][Executing Terraform commands]]
+- [[#appendix][Appendix]]
+  - [[#keybindings][Keybindings]]
+    - [[#localleader][:localleader]]
+
+* Description
+This module adds support for working with [[https://www.terraform.io][Terraform]] files in Doom Emacs. This
+includes syntax highlighting, intelligent code completion, and the ability to run
+Terraform commands directly from Emacs.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/syohex/emacs-terraform-mode][terraform-mode]]
++ [[https://github.com/rafalcieslak/emacs-company-terraform][company-terraform*]]
+
+* Prerequisites
+The =terraform= executable must be installed and accessible from your PATH.
+
+* Features
+** Syntax highlighting
+Syntax highlighting is provided from =terraform-mode= and =hcl-mode=.
+
+** Code formatting
+=:tools terraform= does not provide code formatting directly, but =:editor
+format= works with Terraform files.
+
+** Code navigation
+Code navigation is supported through =imenu= from =terraform-mode=.
+
+** Code completion
+Code completion of Terraform builtins is provided from =company-terraform= and
+generally works well despite being generated through a [[https://github.com/rafalcieslak/emacs-company-terraform/blob/master/company-terraform-data.el][static (outdated) file]].
+
+=company-terraform= also provides code completion of resources within your project.
+
+** Documentation
+Documentation is accessible through the normal =company-mode= show documentation
+functionality, thanks to =company-terraform=.
+
+** Executing Terraform commands
+=:tools terraform= provides commands under the =localleader= to run the most
+common Terraform operations (see Keybindings below).
+
+* Appendix
+** Keybindings
+*** :localleader
+| key | description           |
+|-----+-----------------------|
+| =i= | Run =terraform init=  |
+| =p= | Run =terraform plan=  |
+| =a= | Run =terraform apply= |

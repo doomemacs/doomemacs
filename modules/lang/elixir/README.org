@@ -1,0 +1,79 @@
+#+TITLE: lang/elixir
+#+DATE:  June 24, 2019
+#+SINCE: v2.0.9
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#install-elixir][Install Elixir]]
+    - [[#with-asdf][With ~asdf~]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#gentoo-linux][Gentoo Linux]]
+    - [[#opensuse][openSUSE]]
+- [[#features][Features]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
+This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
+or [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
+
+** Module flags
++ ~+lsp~ Enable LSP support. Requires [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
+
+** Plugins
++ [[https://github.com/elixir-editors/emacs-elixir][elixir-mode]]
++ [[https://github.com/tonini/alchemist.el][alchemist.el]]
++ [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]
++ [[https://github.com/ananthakumaran/exunit.el][exunit]]
+
+* Prerequisites
+You should have Elixir installed, for example, via your distribution's package
+manager or a version management tool such as [[https://github.com/asdf-vm/asdf-elixir][asdf]].
+
+If you want to add support for LSP ([[modules/tools/lsp][:tools lsp]]), be sure to install [[https://github.com/JakeBecker/elixir-ls/][elixir-ls]]
+and enable ~:tools lsp~ in your ~init.el~.
+
+To support linting with [[https://github.com/rrrene/credo][credo]], add ~:checkers syntax~ to your ~init.el~
+** Install Elixir
+*** With ~asdf~
+#+BEGIN_SRC sh
+asdf plugin-add elixir
+asdf install elixir 1.9.1
+#+END_SRC
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo::
+sudo pacman -S elixir
+#+END_SRC
+*** Gentoo Linux
+#+BEGIN_SRC sh :dir /sudo::
+sudo emerge -v dev-lang/elixir
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install elixir
+#+END_SRC
+See [[https://elixir-lang.org/install.html]] for other operating systems
+* Features
+- Code completion (~:completion company~)
+- Documentation lookup (~:tools lookup~)
+- Mix integration
+- Phoenix support
+- ~iex~ integration (~:tools eval~)
+- Syntax checking (~:checkers syntax~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+* Appendix
+** Commands
+*** exunit-mode
+The exunit-mode prefix is =SPC m t=.  Here is some examples:
+|                                          |                  |                                                        |
+| command                                  | key / ex command | description                                            |
+|------------------------------------------+------------------+--------------------------------------------------------|
+| ~exunit-verify-all~                        | =SPC m t a=        | Runs exunit on all files                               |
+| ~exunit-rerun~                             | =SPC m t r=        | Re-runs last exunit command                            |
+| ~exunit-verify~                            | =SPC m t v=        | Runs exunit on current file                            |
+| ~exunit-verify-single~                     | =SPC m t s=        | Runs exunit for the item on cursor                     |
+| ~exunit-toggle-file-and-test~              | =SPC m t t=        | Switch between implementation and test                 |
+| ~exunit-toggle-file-and-test-other-window~ | =SPC m t T=        | Switch between implementation and test in other window |

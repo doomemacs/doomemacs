@@ -1,0 +1,50 @@
+#+TITLE:   app/calendar
+#+DATE:    January 13, 2018
+#+SINCE:   v2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#configuration][Configuration]]
+  - [[#changing-calendar-sources][Changing calendar sources]]
+  - [[#synchronizing-org-and-google-calendar][Synchronizing Org and Google Calendar]]
+
+* Description
+This module adds a calendar view for Emacs, with org and google calendar sync
+support.
+
+** Module Flags
+This module provides no flags.
+
+** Packages
++ [[https://github.com/kiwanami/emacs-calfw][calfw]]
++ [[https://github.com/kiwanami/emacs-calfw][calfw-org]]
++ [[https://github.com/kidd/org-gcal.el][org-gcal]]
+
+* Configuration
+** Changing calendar sources
+By defining your own calendar commands, you can control what sources to pull
+calendar data from:
+
+#+BEGIN_SRC emacs-lisp
+(defun my-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "Green")  ; org-agenda source
+    (cfw:org-create-file-source "cal" "/path/to/cal.org" "Cyan")  ; other org source
+    (cfw:howm-create-source "Blue")  ; howm source
+    (cfw:cal-create-source "Orange") ; diary source
+    (cfw:ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
+    (cfw:ical-create-source "gcal" "https://..../basic.ics" "IndianRed") ; google calendar ICS
+   )))
+#+END_SRC
+
+The [[https://github.com/kiwanami/emacs-calfw][kiwanami/emacs-calfw]] project readme contains more examples.
+
+** Synchronizing Org and Google Calendar
+The [[https://github.com/kidd/org-gcal.el][kidd/org-gcal.el]] project README contains more detailed instructions on how
+to link your calendar with Google calendars.

@@ -1,0 +1,140 @@
+#+TITLE:   ui/popup
+#+DATE:    January 6, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+  - [[#set-popup-rule-and-set-popup-rules][~set-popup-rule!~ and ~set-popup-rules!~]]
+  - [[#disabling-hidden-mode-line-in-popups][Disabling hidden mode-line in popups]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+  - [[#library][Library]]
+  - [[#hacks][Hacks]]
+
+* Description
+This module provides a customizable popup window management system.
+
+Not all windows are created equally. Some are less important. Some I want gone
+once they have served their purpose, like code output or a help buffer. Others I
+want to stick around, like a scratch buffer or org-capture popup.
+
+More than that, popups ought to be the second class citizens of my editor;
+spawned off to the side, discarded with the push of a button (e.g. =ESC= or
+=C-g=), and easily restored if I want to see them again. Of course, this system
+should clean up after itself and kill off buffers I mark as transient.
+
+** Module Flags
++ =+all= Enables fallback rules to ensure all temporary/special buffers (whose
+  name begins with a space or asterix) are treated as popups.
++ =+defaults= Enables reasonable default popup rules for a variety of buffers.
+
+* Prerequisites
+This module has no external prerequisites.
+
+* Configuration
+** ~set-popup-rule!~ and ~set-popup-rules!~
+This module has two functions for defining your own rules for popups:
+
+#+BEGIN_SRC emacs-lisp
+(set-popup-rule! PREDICATE &key IGNORE ACTIONS SIDE SIZE WIDTH HEIGHT SLOT VSLOT TTL QUIT SELECT MODELINE AUTOSAVE PARAMETERS)
+(set-popup-rules! &rest RULESETS)
+#+END_SRC
+
+~PREDICATE~ is a predicate function or regexp string to match against the
+buffer's name. You'll find comprehensive documentation on the other keywords in
+~set-popup-rule!~'s docstring (=SPC h f set-popup-rule!=).
+
+#+begin_quote
+Popup rules end up in ~display-buffer-alist~, which instructs ~display-buffer~
+calls on how to set up windows for buffers that meet certain conditions.
+However, some plugins can avoid it entirely if they use ~set-buffer~ or
+~switch-to-buffer~, which don't obey ~display-buffer-alist~.
+#+end_quote
+
+Multiple popup rules can be defined with ~set-popup-rules!~:
+
+#+BEGIN_SRC emacs-lisp
+(set-popup-rules!
+ '(("^ \\*" :slot -1) ; fallback rule for special buffers
+   ("^\\*" :select t)
+   ("^\\*Completions" :slot -1 :ttl 0)
+   ("^\\*\\(?:scratch\\|Messages\\)" :ttl t)
+   ("^\\*Help" :slot -1 :size 0.2 :select t)
+   ("^\\*doom:"
+    :size 0.35 :select t :modeline t :quit t :ttl t)))
+#+END_SRC
+
+Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
+~+popup-defaults~.
+
+** Disabling hidden mode-line in popups
+By default, the mode-line is hidden in popups. To disable this, you can either:
+
+1. Change the default ~:modeline~ property in ~+popup-defaults~:
+
+   #+BEGIN_SRC emacs-lisp
+   ;; add to $DOOMDIR/config.el
+   (plist-put +popup-defaults :modeline t)
+   #+END_SRC
+
+   A value of ~t~ will instruct popups to use the default mode-line. Any
+   popup rule with a ~:modeline~ property can still override this.
+
+2. Completely disable management of the mode-line in popups:
+
+   #+BEGIN_SRC emacs-lisp
+   ;; add to ~/.doom.d/config.el
+   (remove-hook '+popup-buffer-mode-hook #'+popup-set-modeline-on-enable-h)
+   #+END_SRC
+
+* Appendix
+** Commands
++ ~+popup/other~ (aliased to ~other-popup~, bound to ~C-x p~)
++ ~+popup/toggle~
++ ~+popup/close~
++ ~+popup/close-all~
++ ~+popup/toggle~
++ ~+popup/restore~
++ ~+popup/raise~
+** Library
++ Functions
+  + ~+popup-window-p WINDOW~
+  + ~+popup-buffer-p BUFFER~
+  + ~+popup-buffer BUFFER &optional ALIST~
+  + ~+popup-parameter PARAMETER &optional WINDOW~
+  + ~+popup-parameter-fn PARAMETER &optional WINDOW~
+  + ~+popup-windows~
++ Macros
+  + ~without-popups!~
+  + ~save-popups!~
++ Hooks
+  + ~+popup-adjust-fringes-h~
+  + ~+popup|set-modeline~
+  + ~+popup-close-on-escape-h~
+  + ~+popup-cleanup-rules-h~
++ Minor modes
+  + ~+popup-mode~
+  + ~+popup-buffer-mode~
+** Hacks
++ =help-mode= has been advised to follow file links in the buffer you were in
+  before entering the popup, rather than in a new window.
++ =wgrep= buffers are advised to close themselves when aborting or committing
+  changes.
++ =persp-mode= is advised to restore popup windows when loading a session from
+  file.
++ Interactive calls to ~windmove-*~ commands (used by ~evil-window-*~ commands)
+  will ignore the ~no-other-window~ window parameter, allowing you to switch to
+  popup windows as if they're ordinary windows.
++ ~balance-windows~ has been advised to close popups while it does its business,
+  then restore them afterwards.
++ =neotree= advises ~balance-windows~, which causes major slow-downs when paired
+  with our ~balance-window~ advice, so we removes neotree's advice.
++ =org-mode= is an ongoing (and huge) effort. It has a scorched-earth window
+  management system I'm not fond of. ie. it kills all windows and monopolizes
+  the frame. On top of that, it /really/ likes to use ~switch-to-buffer~ for
+  most of its buffer management, which completely bypasses
+  ~display-buffer-alist~. Some work has gone into reversing this.

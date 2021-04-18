@@ -1,0 +1,43 @@
+#+TITLE:   ui/treemacs
+#+DATE:    April 5, 2021
+#+SINCE:   v2.0.4
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+
+** Maintainers
++ This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enable ~lsp-treemacs~ integration and add shortcuts for common commands.
+
+** Plugins
++ [[https://github.com/Alexander-Miller/treemacs][treemacs]]
++ [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-evil.el][treemacs-evil]]
++ [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-projectile.el][treemacs-projectile]]
++ [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-magit.el][treemacs-magit]]
++ [[https://github.com/Alexander-Miller/treemacs/blob/master/src/extra/treemacs-persp.el][treemacs-persp]]
++ [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+# TODO
+
+* Configuration
+# TODO
+
+* Troubleshooting
+# TODO

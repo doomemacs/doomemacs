@@ -1,0 +1,131 @@
+#+TITLE:   lang/latex
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#ubuntu][Ubuntu]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#macos][macOS]]
+  - [[#nixos][NixOS]]
+- [[#features][Features]]
+- [[#customization][Customization]]
+  - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
+  - [[#changing-the-pdfs-viewer][Changing the PDFs viewer]]
+  - [[#using-cdlatexs-snippets-despite-having-yasnippet][Using cdlatex's snippets despite having yasnippet]]
+
+* Description
+Provide a helping hand when working with LaTeX documents.
+
++ Sane defaults
++ Fontification of many popular commands
++ Pretty indentation of wrapped lines using the ~adaptive-wrap~ package
++ Spell checking with ~flycheck~
++ Change PDF viewer to Okular or ~latex-preview-pane~
++ Bibtex editor
++ Autocompletion using ~company-mode~
++ Compile your .tex code only once using LatexMk
+
+** Module Flags
++ =+latexmk= Use LatexMk instead of LaTeX to compile documents.
++ =+cdlatex= Enable [[https://github.com/cdominik/cdlatex][cdlatex]] for fast math insertion.
++ =+lsp= Start LSP automatically in `tex-mode-hook`. This requires the =:tools
+  lsp= module. Supported servers are `digestif` and `TexLab`.
++ =+fold= Use TeX-fold (from auctex) to fold LaTeX macros to unicode, and make
+  folding hook-based and less manual.
+
+** Plugins
++ [[http://www.gnu.org/software/auctex/][auctex]]
++ [[http://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
++ [[https://github.com/iyefrat/evil-tex][evil-tex]] (when =:editor evil +everywhere=)
++ [[https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
++ [[https://github.com/tom-tan/auctex-latexmk][auctex-latexmk]]*
++ [[https://github.com/alexeyr/company-auctex][company-auctex]]*
++ [[https://github.com/TheBB/company-reftex][company-reftex]]*
++ [[https://github.com/vspinu/company-math][company-math]]*
++ [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
+
+* Prerequisites
+You will need ghostscript and a latex compiler. All this is provided by
+the =texlive= bundle, available through many OS package managers.
+
+Ghostscript <= 9.27 is [[https://www.gnu.org/software/auctex/manual/preview-latex/No-images-are-displayed-with-gs-9_002e27-and-earlier.html][reported buggy]] and doesn't work with auctex's math
+previews. (You can check you ghostscript version with ~gs --version~.) Most
+package managers already have newer versions, but if not you might have to build
+gs from source.
+** Ubuntu
+#+BEGIN_SRC sh
+apt-get install texlive
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+pacman -S texlive-core
+#+END_SRC
+
+** TODO macOS
+#+BEGIN_SRC sh
+brew cask install basictex
+# If the above doesn't work, then
+brew cask install mactex  # WARNING: large 4gb download!
+#+END_SRC
+
+#+begin_quote
+This has not been verified.
+#+end_quote
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.texlive.combined.scheme-medium ];
+#+END_SRC
+
+* TODO Features
+
+* Customization
+** Specifying the location of a bibtex file & corresponding PDFs
+Reftex has a variable that allow you to
+specify where it should find your bibliography file(s):
+
+#+BEGIN_SRC emacs-lisp
+(setq reftex-default-bibliography "/your/bib/file.bib")
+#+END_SRC
+
+** Changing the PDFs viewer
+This module provides integration for four supported pdf viewers. They are
+
++ [[https://skim-app.sourceforge.io/][Skim.app]] (MacOS only)
++ Evince
++ Sumatra PDF
++ Zathura
++ Okular
++ pdf-tools (requires =:tools pdf= module)
+
+They are searched for in this order. See ~+latex-viewers~ to change the order,
+or remove tools from the search altogether. If you want to exclusively use one
+tool, for instance:
+
+#+BEGIN_SRC emacs-lisp
+(setq +latex-viewers '(zathura))
+#+END_SRC
+
+If none of these tools are found, ~latex-preview-pane~ (uses ~DocView~ in Emacs)
+is used as a fallback. You can use this exclusively by setting ~+latex-viewers~
+to ~nil~.
+
+** Using cdlatex's snippets despite having yasnippet
+cdlatex has a snippet insertion capability which is disabled in favor of
+yasnippet when using ~:editor snippets~. If you still wanna use it, simply rebind
+the ~TAB~ key for cdlatex, which takes care of snippet-related stuff:
+
+#+BEGIN_SRC emacs-lisp
+(map! :map cdlatex-mode-map
+    :i "TAB" #'cdlatex-tab)
+#+END_SRC
+
+This would favor yasnippet's expansion and cursor movement over cdlatex's
+expansion and movement, but that shouldn't matter if you're not using yasnippet
+in latex buffers.

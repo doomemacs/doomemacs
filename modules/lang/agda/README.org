@@ -1,0 +1,4 @@
+#+TITLE: :lang agda
+
+This module adds support for the [[http://wiki.portal.chalmers.se/agda/pmwiki.php][agda]] programming language. The Emacs support
+exists directly in the agda repository but not in melpa.

@@ -1,0 +1,56 @@
+#+TITLE:   lang/ledger
+#+DATE:    October 13, 2019
+#+SINCE:   v2.0.4
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds support for [[https://www.ledger-cli.org/][ledger]] files. Ledger is a command line double-entry
+accounting system that works with simple text files holding transactions in the
+following format:
+
+#+BEGIN_SRC ledger
+2015/10/12 Exxon
+    Expenses:Auto:Gas                         $10.00
+    Liabilities:MasterCard                   $-10.00
+#+END_SRC
+
+This modules enables the following features:
++ Syntax and indentation support for ledger files
++ Add, edit, and delete transactions
++ Generate reports
++ Schedule transactions
++ Sort transactions
++ Display statistics about transactions
++ Display balance up to a point
+ 
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/purcell/flycheck-ledger][flycheck-ledger]]
++ [[https://github.com/atheriel/evil-ledger][evil-ledger]]
+
+** Hacks
+This module sets ~ledger-clear-whole-transactions~ to ~t~ (default value is
+~nil~). This results in ~ledger-toggle-current~ toggling the clear status of the
+whole transaction instead of toggling just the current posting.
+
+* Prerequisites
+In order for ~flycheck-ledger~ to work and to be able to generate reports you
+will need to install [[https://www.ledger-cli.org/][ledger]].
+
+* TODO Features
+An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+Please refer to ~ledger-mode~'s documentation for information on how to
+configure it. You can do so within emacs with =C-h i=

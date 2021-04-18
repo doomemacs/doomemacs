@@ -1,0 +1,118 @@
+#+TITLE:   tools/lsp
+#+DATE:    March 05, 2019
+#+SINCE:   v2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#lsp-powered-project-search][LSP-powered project search]]
+  - [[#differences-between-eglot-and-lsp-mode][Differences between eglot and lsp-mode]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#my-language-server-is-not-found][My language server is not found]]
+  - [[#lspeglot-is-not-started-automatically-in-my-buffer][LSP/Eglot is not started automatically in my buffer]]
+
+* Description
+This module integrates [[https://langserver.org/][language servers]] into Doom Emacs. They provide features
+you'd expect from IDEs, like code completion, realtime linting, language-aware
+imenu/xref integration, jump-to-definition/references support, and more.
+
+To get LSP working, you'll need to do three things:
+
+1. Enable this module,
+2. Install a language server appropriate for your targeted language(s) (you'll
+   find a table mapping languages to available servers [[https://github.com/emacs-lsp/lsp-mode#supported-languages][in the lsp-mode project
+   README]]).
+3. Enable the =+lsp= flag on the =:lang= modules you want to enable LSP support
+   for. If your language's module doesn't have LSP support, and you know it can
+   (or should), please let us know! In the meantime, you must configure it
+   yourself (described in the Configuration section).
+
+As of this writing, this is the state of LSP support in Doom Emacs:
+
+| Module           | Major modes                                             | Default language server                                       |
+|------------------+---------------------------------------------------------+---------------------------------------------------------------|
+| [[../../lang/cc/README.org][:lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls                                                          |
+| [[../../lang/clojure/README.org][:lang clojure]]    | clojure-mode                                            | clojure-lsp                                                   |
+| [[../../lang/csharp/README.org][:lang csharp]]     | csharp-mode                                             | omnisharp                                                     |
+| [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
+| [[../../lang/fsharp/README.org][:lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
+| [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
+| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
+| [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
+| [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
+| [[../../lang/julia/README.org][:lang julia]]      | julia-mode                                              | LanguageServer.jl                                             |
+| [[../../lang/ocaml/README.org][:lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
+| [[../../lang/php/README.org][:lang php]]        | php-mode                                                | php-language-server                                           |
+| [[../../lang/python/README.org][:lang python]]     | python-mode                                             | lsp-python-ms                                                 |
+| [[../../lang/ruby/README.org][:lang ruby]]       | ruby-mode                                               | solargraph                                                    |
+| [[../../lang/rust/README.org][:lang rust]]       | rust-mode                                               | rls                                                           |
+| [[../../lang/scala/README.org][:lang scala]]      | scala-mode                                              | metals                                                        |
+| [[../../lang/sh/README.org][:lang sh]]         | sh-mode                                                 | bash-language-server                                          |
+| [[../../lang/swift/README.org][:lang swift]]      | swift-mode                                              | sourcekit                                                     |
+| [[../../lang/web/README.org][:lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
+| [[../../lang/purescript/README.org][:lang purescript]] | purescript-mode                                         | purescript-language-server                                    |
+| [[../../lang/zig/README.org][:lang zig]]        | zig-mode                                                | zls                                                           |
+
+** Module Flags
++ =+peek= Use =lsp-ui-peek= when looking up definitions and references with
+  functionality from the =:tools lookup= module.
++ =+eglot= Use [[https://elpa.gnu.org/packages/eglot.html][Eglot]] instead of [[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] to implement the LSP client in
+  Emacs.
+
+** Plugins
++ [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]
++ [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]]
++ [[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]]
++ [[https://github.com/emacs-lsp/helm-lsp][helm-lsp]]
++ [[https://github.com/joaotavora/eglot][eglot]]
+
+* Prerequisites
+This module has no direct prerequisites, but different languages will need
+different language servers, which =lsp-mode= will prompt you to auto-install.
+=eglot= will not.
+
+A table that lists available language servers and how to install them can be
+found [[https://emacs-lsp.github.io/lsp-mode/page/languages/][on the lsp-mode project README]]. The documentation of the module for your
+targeted language will contain brief instructions as well.
+
+For eglot users, a list of [[https://github.com/joaotavora/eglot/blob/master/README.md#connecting-to-a-server][default servers supported is on Eglot's README]],
+including instructions to register your own.
+
+* TODO Features
+** LSP-powered project search
+Without the =+eglot= flag, and when =:completion ivy= or =:completion helm= is
+active, LSP is used to search a symbol indexed by the LSP server :
+| Keybind   | Description                         |
+|-----------+-------------------------------------|
+| =SPC c j= | Jump to symbol in current workspace |
+| =SPC c J= | Jump to symbol in any workspace     |
+
+** Differences between eglot and lsp-mode
+Entering the debate about which one to use would be useless. Doom provides an
+easy way to switch out lsp client implementations so you can test for yourself
+which one you prefer.
+
+Mainly, from a code point of view, lsp-mode has a lot of custom code for UI
+(=lsp-ui-peek=, =lsp-ui-sideline=, ...), while eglot is more barebones with a
+closer integration with "more basic" emacs packages (=eldoc=, =xref=, ...).
+
+* TODO Configuration
+
+* TODO Troubleshooting
+** My language server is not found
+Check the entry in the [[../../../docs/faq.org][FAQ]] about "Doom can't find my executables/doesn't inherit
+the correct ~PATH~"
+
+** LSP/Eglot is not started automatically in my buffer
+Make sure that you added the =+lsp= flag to the language you're using too in
+your init.el :
+#+BEGIN_SRC diff
+:lang
+-python
++(python +lsp)
+#+END_SRC

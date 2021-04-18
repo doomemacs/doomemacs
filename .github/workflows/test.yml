@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    if: false
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs_version:
+          - 26.3
+          - 27.1
+        include:
+          - emacs_version: 26.3
+            lint_ignore: 1
+    env:
+      EMACS_LINT_IGNORE: ${{ matrix.lint_ignore }}
+    steps:
+      - uses: purcell/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs_version }}
+
+      - uses: actions/checkout@v2
+      - name: Doom version
+        run: "bin/doom version"
+      - name: Run tests
+        run: "bin/doom test"
+      # FIXME
+      # name: Compile
+      #   run: "bin/doom -y compile"

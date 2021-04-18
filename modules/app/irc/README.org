@@ -1,0 +1,164 @@
+#+TITLE:   app/irc
+#+DATE:    June 11, 2017
+#+SINCE:   v2.0.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][macOS]]
+  - [[#debian--ubuntu][Debian / Ubuntu]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+- [[#features][Features]]
+  - [[#an-irc-client-in-emacs][An IRC Client in Emacs]]
+- [[#configuration][Configuration]]
+  - [[#pass-the-unix-password-manager][Pass: the unix password manager]]
+  - [[#emacs-auth-source-api][Emacs' auth-source API]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module turns Emacs into an IRC client, capable of OS notifications.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/jorgenschaefer/circe][circe]]
++ [[https://github.com/eqyiel/circe-notifications][circe-notifications]]
+
+* Prerequisites
+This module requires =gnutls= for secure IRC connections to work.
+
+** macOS
+#+BEGIN_SRC sh
+brew install gnutls
+#+END_SRC
+
+** Debian / Ubuntu
+#+BEGIN_SRC sh
+apt install gnutls-bin
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+pacman -S gnutls
+#+END_SRC
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.gnutls ];
+#+END_SRC
+
+* Features
+** An IRC Client in Emacs
+To connect to IRC you can invoke the ~=irc~ function using =M-x= or your own
+custom keybinding.
+
+| command | description                               |
+|---------+-------------------------------------------|
+| ~=irc~  | Connect to IRC and all configured servers |
+
+When in a circe buffer these keybindings will be available.
+
+| command                     | key       | description                                  |
+|-----------------------------+-----------+----------------------------------------------|
+| ~+irc/tracking-next-buffer~ | =SPC m a= | Switch to the next active buffer             |
+| ~circe-command-JOIN~        | =SPC m j= | Join a channel                               |
+| ~+irc/send-message~         | =SPC m m= | Send a private message                       |
+| ~circe-command-NAMES~       | =SPC m n= | List the names of the current channel        |
+| ~circe-command-PART~        | =SPC m p= | Part the current channel                     |
+| ~+irc/quit~                 | =SPC m Q= | Kill the current circe session and workgroup |
+| ~circe-reconnect~           | =SPC m R= | Reconnect the current server                 |
+
+* Configuration
+Use ~set-irc-server! SERVER PLIST~ to configure IRC servers. Its second argument (a plist)
+takes the same arguments as ~circe-network-options~.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; if you omit =:host=, ~SERVER~ will be used instead.
+(after! circe
+  (set-irc-server! "chat.freenode.net"
+    `(:tls t
+      :port 6697
+      :nick "doom"
+      :sasl-username "myusername"
+      :sasl-password "mypassword"
+      :channels ("#emacs"))))
+#+END_SRC
+
+However, *it is a obviously a bad idea to store your password in plaintext,* so
+here are ways to avoid that:
+
+** Pass: the unix password manager
+[[https://www.passwordstore.org/][Pass]] is my tool of choice. I use it to manage my passwords. If you activate the
+[[../../../modules/tools/pass/README.org][:tools pass]] module you get an elisp API through which to access your
+password store.
+
+~set-irc-server!~ accepts a plist can use functions instead of strings.
+~+pass-get-user~ and ~+pass-get-secret~ can help here:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(set-irc-server! "chat.freenode.net"
+  `(:tls t
+    :port 6697
+    :nick "doom"
+    :sasl-username ,(+pass-get-user   "irc/freenode.net")
+    :sasl-password ,(+pass-get-secret "irc/freenode.net")
+    :channels ("#emacs")))
+#+END_SRC
+
+But wait, there's more! This stores your password in a public variable which
+could be accessed or appear in backtraces. Not good! So we go a step further:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(set-irc-server! "chat.freenode.net"
+  `(:tls t
+    :port 6697
+    :nick "doom"
+    :sasl-username ,(+pass-get-user "irc/freenode.net")
+    :sasl-password (lambda (&rest _) (+pass-get-secret "irc/freenode.net"))
+    :channels ("#emacs")))
+#+END_SRC
+
+And you're good to go!
+
+Note that =+pass-get-user= tries to find your username by looking for the fields
+listed in =+pass-user-fields= (by default =login=, =user==, =username== and
+=email=)=). An example configuration looks like
+
+#+begin_example
+mysecretpassword
+username: myusername
+#+end_example
+
+** Emacs' auth-source API
+~auth-source~ is built into Emacs. As suggested [[https://github.com/jorgenschaefer/circe/wiki/Configuration#safer-password-management][in the circe wiki]], you can store
+(and retrieve) encrypted passwords with it.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq auth-sources '("~/.authinfo.gpg"))
+
+(defun my-fetch-password (&rest params)
+  (require 'auth-source)
+  (let ((match (car (apply #'auth-source-search params))))
+    (if match
+        (let ((secret (plist-get match :secret)))
+          (if (functionp secret)
+              (funcall secret)
+            secret))
+      (error "Password not found for %S" params))))
+
+(defun my-nickserv-password (server)
+  (my-fetch-password :user "forcer" :host "irc.freenode.net"))
+
+(set-irc-server! "chat.freenode.net"
+  '(:tls t
+    :port 6697
+    :nick "doom"
+    :sasl-password my-nickserver-password
+    :channels ("#emacs")))
+#+END_SRC
+
+* TODO Troubleshooting

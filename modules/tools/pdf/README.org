@@ -1,0 +1,109 @@
+#+TITLE:   tools/pdf
+#+DATE:    February 6, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#building-epdfinfo-on-windows][Building =epdfinfo= on Windows]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module improves support for reading and interacting with PDF files in Emacs.
+
+It uses =pdf-tools=, which is a replacement for the built-in ~doc-view-mode~ for
+PDF files. The key difference being pages are not pre-rendered, but instead
+rendered on-demand and stored in memory; a much faster approach, especially for
+larger PDFs.
+
+Displaying PDF files is just one function of =pdf-tools=. See [[https://github.com/politza/pdf-tools][its project
+website]] for details and videos.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/politza/pdf-tools][pdf-tools]]
+
+** Hacks
++ Added out-of-the-box support for HiDPI or Retina displays.
+
+* Prerequisites
+This module requires =epdfinfo=, a program the the =pdf-tools= plugin will build
+automatically when you open your first pdf file, unless you're on Windows.
+Windows users must build it themselves.
+
+** Building =epdfinfo= on Windows
+1. [[https://www.msys2.org/][Install MSYS2]] and update the package database and core packages using the
+   instructions provided.
+
+2. Update and install dependencies, skipping any you already have
+
+   #+BEGIN_SRC sh
+   pacman -Syu
+   pacman -S base-devel
+   pacman -S mingw-w64-x86_64-toolchain
+   pacman -S mingw-w64-x86_64-zlib
+   pacman -S mingw-w64-x86_64-libpng
+   pacman -S mingw-w64-x86_64-poppler
+   pacman -S mingw-w64-x86_64-imagemagick
+   #+END_SRC
+
+3. Install PDF tools in Emacs, but do not try to compile the server. Instead, get a separate copy of the source somewhere else.
+
+   #+BEGIN_SRC sh
+   git clone https://github.com/politza/pdf-tools
+   #+END_SRC
+
+4. Open mingw64 shell (Note: You must use mingw64.exe and not msys2.exe)
+
+5. Compile pdf-tools:
+   #+BEGIN_SRC sh
+   # Cask requires python2 (important: not 3!)
+   pacman -S python2
+
+   # Make the mingw-shell aware of your python installation. Adjust the path if
+   # Emacs is installed elsewhere!
+   export PATH="/c/Program Files (x86)/Emacs/bin/:$PATH"
+
+   # Cask needs to know where git.exe is; change this path if git is installed
+   # elsewhere!
+   export PATH="/c/Program Files/Git/bin:$PATH"
+
+   # Install cask. Certificate errors can be ignored with (unsafe) -k option.
+   curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
+
+   # Make sure the build process can see cask
+   export PATH="$HOME/.cask/bin:$PATH"
+
+   cd /path/to/pdf-tools
+   make -s
+   #+END_SRC
+
+6. This should produce a file =server/epdfinfo.exe=. Copy this file into the
+   =~/.emacs.d/.local/straight/build/pdf-tools/=.
+
+7. Start Emacs.
+
+8. Open a pdf file (or run ~M-x pdf-tools-install~)
+
+9. Test it out: ~M-x pdf-info-check-epdfinfo~
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

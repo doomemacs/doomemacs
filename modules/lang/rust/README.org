@@ -1,0 +1,111 @@
+#+TITLE:   lang/rust
+#+DATE:    June 5, 2019
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#lsp-support-rls-or-rust-analyzer][LSP support (rls or rust-analyzer)]]
+  - [[#format-on-save][Format on save]]
+  - [[#keybinds][Keybinds]]
+- [[#configuration][Configuration]]
+  - [[#enable-rls-by-default][Enable RLS by default]]
+  - [[#enabling-elgot-support-for-rust][Enabling elgot support for Rust]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#errore0670-async-fn-is-not-permitted-in-the-2015-edition][error[E0670]: `async fn` is not permitted in the 2015 edition]]
+
+* Description
+This module adds support for the Rust language and integration for its tools,
+e.g. ~cargo~.
+
++ Code completion (=racer= or an LSP server)
++ Syntax checking (=flycheck=)
++ LSP support (for rust-analyzer and rls) (=rustic=)
++ Snippets
+
+** Module Flags
++ ~+lsp~ to add support Language server protocol. Will use the first of
+  =rust-analyzer= or =rls= (in that order).
+
+** Plugins
++ [[https://github.com/brotzeit/rustic][rustic]]
++ [[https://github.com/racer-rust/emacs-racer][racer]]* (unless =+lsp=)
+
+** Hacks
++ rustic has been modified /not/ to automatically install lsp-mode or elgot if
+  they're missing. Doom expects you to have enabled the =:tools lsp= module
+  yourself.
+
+* Prerequisites
+This module requires ~rust~, which can be acquired through =rustup=:
+
+~curl https://sh.rustup.rs -sSf | sh~
+
+Additional requirements depend on the module's configuration:
+
++ If =:editor format= is enabled, you'll need =rustfmt=: ~rustup component add
+  rustfmt-preview~.
++ Users without =+lsp= enabled will need =racer=: ~cargo +nightly install racer~
+  (with requires rust nightly edition).
++ Users with =+lsp= enabled will need:
+  + =rust-analyzer= or =rls=
++ To use The following commands require:
+  + ~cargo-process-check~: ~cargo install cargo-check~
+  + ~cargo-process-clippy~: ~rustup component add clippy-preview~
+
+* Features
+** LSP support (rls or rust-analyzer)
+This module supports LSP integration. For it to work you'll need:
+
+1. Either [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] or [[https://github.com/rust-lang/rls][the Rust Language Server]] installed (e.g. through your
+   OS package manager).
+2. The =:tools lsp= module enabled.
+3. The ~+lsp~ flag on this module enabled.
+
+** Format on save
+Enable the [[file:../../../modules/editor/format/README.org][:editor format]] module's =+onsave= flag to get formatting on save with
+rustfmt. No additional configuration is necessary.
+
+** Keybinds
+| Binding             | Description                 |
+|---------------------+-----------------------------|
+| ~<localleader> b a~ | ~cargo audit~               |
+| ~<localleader> b b~ | ~cargo build~               |
+| ~<localleader> b B~ | ~cargo bench~               |
+| ~<localleader> b c~ | ~cargo check~               |
+| ~<localleader> b C~ | ~cargo clippy~              |
+| ~<localleader> b d~ | ~cargo doc~                 |
+| ~<localleader> b n~ | ~cargo update~              |
+| ~<localleader> b o~ | ~cargo outdated~            |
+| ~<localleader> b r~ | ~cargo run~                 |
+| ~<localleader> t a~ | ~cargo test~                |
+| ~<localleader> t t~ | ~run current test~          |
+
+* TODO Configuration
+** Enable RLS by default
+If both =rls= and =rust-analyzer= are present on your system, =rust-analyzer= is
+selected by default. Modify ~rustic-lsp-server~ to change the default:
+
+#+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
+(after! rustic
+  (setq rustic-lsp-server 'rls))
+#+END_SRC
+
+** Enabling eglot support for Rust
+Doom's =:tools lsp= module has an =+eglot= flag. Enable it and this module will
+use eglot instead.
+
+* Troubleshooting
+** error[E0670]: `async fn` is not permitted in the 2015 edition
+You may be seeing this error, despite having ~edition = "2018"~ in your
+=Cargo.toml=. This error actually originates from ~rustfmt~, which the LSP
+server tries to invoke on save (if you have ~rustic-format-on-save~ or =:editor
+format= enabled).
+
+To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.

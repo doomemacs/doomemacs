@@ -1,0 +1,93 @@
+#+TITLE:   ui/doom
+#+DATE:    October 9, 2019
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+  - [[#changing-theme][Changing theme]]
+  - [[#changing-fonts][Changing fonts]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#strange-font-symbols][Strange font symbols]]
+  - [[#ugly-background-colors-in-tty-emacs-for-daemon-users][Ugly background colors in tty Emacs for daemon users]]
+
+* Description
+This module gives Doom its signature look: powered by the =doom-one= theme
+(inspired by Atom's One Dark theme) and =solaire-mode=.
+
++ A colorscheme inspired by Atom's One Dark theme (now available in a separate
+  plugin: [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]])
++ A custom folded-region indicator for ~hideshow~
++ "Thin bar" fringe bitmaps for ~git-gutter-fringe~
++ File-visiting buffers are slightly brighter (thanks to solaire-mode)
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/hlissner/emacs-doom-themes][doom-themes]]
++ [[https://github.com/hlissner/emacs-solaire-mode][solaire-mode]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Configuration
+** Changing theme
+Although this module uses the ~doom-one~ theme by default, [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]] offers a number of alternatives:
+
++ *doom-one:* doom-themes' flagship theme, inspired by [[https://atom.io/][Atom's]] One Dark themes
++ *doom-vibrant:* a more vibrant version of doom-one
++ *doom-molokai:* based on Textmate's monokai
++ *doom-nova:* adapted from [[https://github.com/trevordmiller/nova-colors][Nova]]
++ *doom-one-light:* light version of doom-one
++ *doom-peacock:* based on Peacock from [[https://daylerees.github.io/][daylerees' themes]]
++ *doom-tomorrow-night:* by [[https://github.com/ChrisKempson/Tomorrow-Theme][Chris Kempson]]
+
+This can be changed by changing the ~doom-theme~ variable, e.g.
+
+#+BEGIN_SRC emacs-lisp
+(setq doom-theme 'doom-molokai)
+#+END_SRC
+
+** Changing fonts
+core/core-ui.el has four relevant variables:
+
++ ~doom-font~ :: the default font to use in Doom Emacs.
++ ~doom-big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
++ ~doom-variable-font~ :: the font to use when ~variable-pitch-mode~ is active (or where the ~variable-pitch~ face is used).
++ ~doom-unicode-font~ :: the font used to display unicode symbols. This is ignored if the =:ui unicode= module is enabled.
+
+#+BEGIN_SRC emacs-lisp
+(setq doom-font (font-spec :family "Fira Mono" :size 12)
+      doom-variable-pitch-font (font-spec :family "Fira Sans")
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono")
+      doom-big-font (font-spec :family "Fira Mono" :size 19))
+#+END_SRC
+
+* Troubleshooting
+** Strange font symbols
+If you're seeing strange unicode symbols, this is likely because you don't have
+~all-the-icons~'s font icon installed. You can install them with ~M-x
+all-the-icons-install-fonts~.
+
+** Ugly background colors in tty Emacs for daemon users
+=solaire-mode= is an aesthetic plugin that makes file-visiting buffers brighter
+than the rest of the Emacs' frame (to visually differentiate temporary windows
+or sidebars from editing windows). This looks great in GUI Emacs, but can look
+questionable in the terminal.
+
+It disables itself if you start tty Emacs with ~emacs -nw~, but if you create a
+tty frame from a daemon (which solaire-mode cannot anticipate), you'll get an
+ugly background instead.
+
+If you only use Emacs in the terminal, your best bet is to disable the
+solaire-mode package:
+
+#+BEGIN_SRC elisp
+;; in ~/.doom.d/packages.el
+(package! solaire-mode :disable t)
+#+END_SRC

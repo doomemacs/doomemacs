@@ -1,0 +1,31 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js"))))
+    (string-join
+       (cond ((string= type-ignore "python")
+              '("*.py[cod]"
+                "*.egg"
+                "build"
+                "htmlcov"))
+             ((string= type-ignore "ruby")
+             '(".ruby-version"
+               ".bundle"
+               "vendor"
+               "Gemfile.lock"
+               "coverage"))
+             ((string= type-ignore "java")
+             '("*.class"
+               "build"))
+             ((string= type-ignore "js")
+             '("*.tern-port"
+               "node_modules/"
+               "npm-debug.log*"
+               "yarn-debug.log*"
+               "yarn-error.log*"
+               "*.tsbuildinfo"
+               ".npm"
+               ".eslintcache")))
+       "\n"))`

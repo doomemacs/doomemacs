@@ -1,0 +1,78 @@
+#+TITLE:   ui/zen
+#+DATE:    December 20, 2019
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#usage][Usage]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#distractions-free-mode][Distractions-free mode]]
+- [[#configuration][Configuration]]
+  - [[#enable-fullscreen-on-activation][Enable fullscreen on activation]]
+
+* Description
+This module provides two minor modes that make Emacs into a more comfortable
+writing or coding environment. Folks familiar with "distraction-free" or "zen"
+modes from other editors -- or [[https://github.com/rnkn/olivetti][olivetti]], [[https://github.com/zk-phi/sublimity][sublimity]], and [[https://github.com/IdoMagal/Tabula-Rasa][tabula-rasa]] (Emacs
+plugins) -- will feel right at home.
+
+These modes are:
+
++ ~mixed-pitch-mode~ :: Which renders (most) text in a variable pitch font (see
+  ~doom-variable-pitch-font~). Unlike ~variable-pitch-mode~, this will not
+  affect segments of text that are intended to remain in a fixed pitch font,
+  such as code blocks or ASCII tables.
++ ~writeroom-mode~ :: Our all-in-one "zen" mode that will:
+  1. Center the current buffer.
+  2. Remove superfluous UI elements (like the modeline).
+  3. Activate ~mixed-pitch-mode~.
+  4. Scale up the buffer's text slightly (see ~+zen-text-scale~).
+  5. And make the window's borders slightly thicker (see
+     ~+zen-window-divider-size~).
+     
+** Usage
+This module provides two entry points:
+
++ ~M-x +zen/toggle~ :: toggles ~writeroom-mode~ (restricted to the current
+  buffer).
++ ~M-x +zen/toggle-fullscreen~ :: toggles zen mode in full-screen mode (deletes
+  other windows and full screens the Emacs frame).
+
+Invoke either command again to undo the change.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/joostkremers/writeroom-mode][writeroom-mode]]
++ [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]]
+
+** Hacks
++ Doom has disabled all of writeroom-mode's "global" effects
+  (~writeroom-global-effects~ and ~writeroom-maximize-window~ are set to ~nil~),
+  and encapsulated them into the ~+zen/toggle-fullscreen~ command, whereas
+  ~+zen/toggle~ will only operate on the current buffer. This way, the user may
+  choose how far-reaching they want its effect to be.
++ ~text-scale~ has been advised to adjust ~visual-fill-column~'s margins, so its
+  text won't "squeeze" as you scale it up (or "spill" when scaled down).
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+** Distractions-free mode
+This can be activated with =SPC t z= for evil users. There is no keybinding for
+non-evil users yet, so use 'M-x writeroom-mode'.
+
+* Configuration
+** Enable fullscreen on activation
+#+BEGIN_SRC elisp
+(setq writeroom-fullscreen-effect t)
+#+END_SRC
+
+Or fullscreen manually with =SPC t F= (or =F11= for non-evil users).

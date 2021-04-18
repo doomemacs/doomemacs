@@ -1,0 +1,6 @@
+#+TITLE: :lang coq
+
+This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://proofgeneral.github.io][Proof General]].
+
++ Code completion ([[https://github.com/cpitclaudel/company-coq][company-coq]])
++ [[https://github.com/hlissner/doom-snippets/tree/master/coq-mode][Snippets]]

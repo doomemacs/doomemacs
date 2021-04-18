@@ -1,0 +1,76 @@
+#+TITLE:   tools/direnv
+#+DATE:    July 10, 2019
+#+SINCE:   v2.1.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#direnv--nix-is-slow][direnv + nix is slow]]
+
+* Description
+This module integrates direnv into Emacs.
+
+#+begin_quote
+direnv is an environment switcher for the shell. It knows how to hook into bash,
+zsh, tcsh, fish shell and elvish to load or unload environment variables
+depending on the current directory. This allows project-specific environment
+variables without cluttering the ~/.profile file.
+
+Before each prompt, direnv checks for the existence of a ".envrc" file in the
+current and parent directories. If the file exists (and is authorized), it is
+loaded into a bash sub-shell and all exported variables are then captured by
+direnv and then made available to the current shell.
+#+end_quote
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/purcell/envrc][envrc]]
+
+** Hacks
++ Normally, the direnv environment is updated on ~post-command-hook~. We've
+  changed it to update on ~doom-switch-buffer-hook~, ~doom-switch-window-hook~
+  and ~doom-switch-frame-hook~ instead.
++ Special direnv keywords/commands are highlighted in direnv-envrc-mode.
++ A fix has been applied to ensure flycheck searches for executables from within
+  the direnv environment, if any.
+
+* Prerequisites
+This module requires the ~direnv~ utility.
+
+** MacOS
+#+BEGIN_SRC bash
+brew install direnv
+#+END_SRC
+
+** Arch Linux
+~direnv~ is available on the AUR
+
+#+BEGIN_SRC bash
+yay -S direnv
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.direnv ];
+#+END_SRC
+
+Or ~nix-env -i direnv~
+
+* Troubleshooting
+** direnv + nix is slow
+Consider augmenting direnv with [[https://github.com/target/lorri][lorri]], which will cache nix builds and speed up
+direnv tremendously:
+
+#+BEGIN_SRC nix
+services.lorri.enable = true;
+#+END_SRC

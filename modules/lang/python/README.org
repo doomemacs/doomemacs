@@ -1,0 +1,130 @@
+#+TITLE:   lang/python
+#+DATE:    Oct, 2019
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#language-server-protocol-support][Language Server Protocol Support]]
+- [[#features][Features]]
+  - [[#keybindings][Keybindings]]
+- [[#configuration][Configuration]]
+
+* Description
+Adds Python support to Doom Emacs.
+
++ Syntax checking (~flycheck~)
++ Snippets
++ Run tests (~nose~, ~pytest~)
++ Auto-format (~black~), requires ~:editor format~
++ LSP integration (mspyls, pyls, or pyright)
+
+** Module Flags
++ ~+lsp~ Language Server Protocol support
++ ~+pyright~ Use the pyright LSP server instead of mspyls or pyls (requires
+  ~+lsp~).
++ ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
++ ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
++ ~+poetry~ Python packaging, dependency management, and virtual environment
+  support via [[https://python-poetry.org/][Poetry]]
++ ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
+
+** Plugins
++ [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
++ [[https://github.com/Wilfred/pyimport][pyimport]]*
++ [[https://github.com/paetzke/py-isort.el][py-isort]]*
++ [[https://github.com/emacsattic/nose/][nose]]*
++ [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]*
++ [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]*
++ [[https://github.com/pwalsh/pipenv.el][pipenv]]*
++ if ~+conda~
+  + [[https://github.com/necaris/conda.el][conda]]*
++ if ~+pyenv~
+  + [[https://github.com/pythonic-emacs/pyenv-mode][pyenv]]*
++ if ~+poetry~
+  + [[https://github.com/galaunay/poetry.el][poetry]]*
++ if ~+lsp~ and ~:tools lsp~
+  + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
+  + if ~+pyright~
+    + [[https://github.com/emacs-lsp/lsp-pyright][lsp-pyright]]
+  + else
+    + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]
++ if ~+cython~
+  + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
+  + if ~:checkers syntax~: [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][flycheck-cython]]
+
+* Prerequisites
+This module has no hard prerequisites, but a few soft ones:
+
++ For this module's supported test runners:
+  + ~pip install pytest~
+  + ~pip install nose~
++ The ~:editor format~ module uses [[https://github.com/psf/black][Black]] for python files :: ~pip install black~
++ ~pyimport~ requires Python's module ~pyflakes~ :: ~pip install pyflakes~
++ ~py-isort~ requires [[https://github.com/timothycrosley/isort][isort]] to be installed :: ~pip install isort~
++ Python virtual environments install instructions at:
+  + [[https://github.com/pyenv/pyenv][pyenv]]
+  + [[https://conda.io/en/latest/][Conda]]
+  + [[https://python-poetry.org/][Poetry]]
+  + [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
++ ~cython~ requires [[https://cython.org/][Cython]]
+
+** Language Server Protocol Support
+For LSP support the =:tools lsp= module must be enabled, along with this
+module's =+lsp= flag. By default, it supports =mspyls= and =pyls=, in that
+order. With the =+pyright= flag, it will try Pyright first.
+
+Each of these servers must be installed on your system via your OS package
+manager or manually:
+
++ [[https://pypi.org/project/python-language-server/][*pyls*]] can be installed with ~pip install python-language-server[all]~.
++ *mspyls* can be installed by typing =M-x lsp-install-server RET mspyls=.
++ *pyright* can be installed with ~pip install pyright~ or ~npm i -g pyright~.
+
+* Features
+This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
+Server]], [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
+
+To enable support for auto-formatting with black enable ~:editor format~ in
+~init.el~ file.
+
+** Keybindings
+
+| Binding             | Description                      |
+|---------------------+----------------------------------|
+| ~<localleader> c c~ | ~Compile Cython buffer~          |
+| ~<localleader> i i~ | ~Insert mising imports~          |
+| ~<localleader> i r~ | ~Remove unused imports~          |
+| ~<localleader> i s~ | ~Sort imports~                   |
+| ~<localleader> i o~ | ~Optimize imports~               |
+| ~<localleader> t r~ | ~nosetests-again~                |
+| ~<localleader> t a~ | ~nosetests-all~                  |
+| ~<localleader> t s~ | ~nosetests-one~                  |
+| ~<localleader> t v~ | ~nosetests-module~               |
+| ~<localleader> t A~ | ~nosetests-pdb-all~              |
+| ~<localleader> t O~ | ~nosetests-pdb-one~              |
+| ~<localleader> t V~ | ~nosetests-pdb-module~           |
+| ~<localleader> t f~ | ~python-pytest-file~             |
+| ~<localleader> t k~ | ~python-pytest-file-dwim~        |
+| ~<localleader> t t~ | ~python-pytest-function~         |
+| ~<localleader> t m~ | ~python-pytest-function-dwim~    |
+| ~<localleader> t r~ | ~python-pytest-repeat~           |
+| ~<localleader> t p~ | ~python-pytest-popup~            |
+| ~<localleader> g d~ | ~anaconda-mode-find-definitions~ |
+| ~<localleader> g h~ | ~anaconda-mode-show-doc~         |
+| ~<localleader> g a~ | ~anaconda-mode-find-assignments~ |
+| ~<localleader> g f~ | ~anaconda-mode-find-file~        |
+| ~<localleader> g u~ | ~anaconda-mode-find-references~  |
+
+* Configuration
+This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
+[[https://jupyter.org/][jupyter]] shells:
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/config.el
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
+#+END_SRC

@@ -1,0 +1,56 @@
+#+TITLE:   lang/fstar
+#+DATE:    February 2, 2020
+#+SINCE:   2.0.10
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#f][F*]]
+    - [[#macos][macOS]]
+    - [[#arch-linux][Arch Linux]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds [[https://fstar-lang.org/][F*]] support, powered by [[https://github.com/FStarLang/fstar-mode.el][fstar-mode.el]].
+
++ Syntax highlighting
++ Interactively process F* files one definition at a time
++ Query the running F* process to look up definitions, documentation, and
+  theorems
+
+** Maintainers
++ [[https://github.com/tchajed][@tchajed]] (Author)
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/FStarLang/fstar-mode.el][fstar-mode]]
+
+* Prerequisites
+** F*
+While fstar-mode supports the latest release of F*, you may have a better
+experience installing a more recent version from source. See F*'s [[https://github.com/FStarLang/FStar/blob/master/INSTALL.md][INSTALL.md]].
+*** macOS
+#+BEGIN_SRC sh
+brew install fstar
+#+END_SRC
+*** Arch Linux
+Install ~fstar~ from the AUR:
+#+BEGIN_SRC sh
+yaourt -S fstar
+#+END_SRC
+
+* Features
+
+* Configuration
+
+* Troubleshooting
+If you're having trouble getting F* to start correctly, you may need to
+configure a few variables in fstar-mode; see its [[https://github.com/FStarLang/fstar-mode.el][README]] for more details.

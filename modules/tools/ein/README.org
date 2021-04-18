@@ -1,0 +1,26 @@
+#+TITLE:   tools/ein
+#+DATE:    April 11, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+
+* Description
+Adds Jupyter notebook integration into emacs.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/millejoh/emacs-ipython-notebook][ein]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+Please refer [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].

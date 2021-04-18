@@ -1,0 +1,9 @@
+#+TITLE: :evil neotree
+
+This module brings a side panel for browsing project files, inspired by vim's
+NERDTree.
+
+#+begin_quote
+Sure, there's dired and projectile, but sometimes I'd like a bird's eye view of
+a project.
+#+end_quote

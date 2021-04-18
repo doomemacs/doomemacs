@@ -1,0 +1,62 @@
+#+TITLE:   lang/crystal
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#crystal][Crystal]]
+    - [[#macos][MacOS]]
+    - [[#arch][Arch]]
+  - [[#icr-repl][ICR (REPL)]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This modules adds [[https://crystal-lang.org/][crystal]] support.
+
++ Syntax-checking (~flycheck~)
++ REPL (~inf-crystal~)
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/crystal-lang-tools/emacs-crystal-mode/][crystal-mode]]
++ [[https://github.com/brantou/inf-crystal.el/][inf-crystal]]
++ if ~:checkers syntax~ is enabled
+  - [[https://github.com/crystal-lang-tools/emacs-crystal-mode/][flycheck-crystal]]
+  - [[https://github.com/crystal-ameba/ameba.el/][flycheck-ameba]]
+
+* Prerequisites
+** Crystal
+you need to install [[https://crystal-lang.org/install/][the crystal compiler]].
+
+*** MacOS
+#+begin_src shell
+brew install crystal
+#+end_src
+
+*** Arch
+#+begin_src shell
+sudo pacman -S crystal shards
+#+end_src
+
+** ICR (REPL)
+you need to install [[https://github.com/crystal-community/icr][ICR]].
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

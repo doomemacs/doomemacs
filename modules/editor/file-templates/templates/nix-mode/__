@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# group: file templates
+# contributor: Henrik Lissner
+# --
+{ config, lib, pkgs, ... }:
+
+{
+  $0
+}

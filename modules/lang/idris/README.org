@@ -1,0 +1,30 @@
+#+TITLE:   lang/idris
+#+DATE:    October 6, 2020
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+
+* Description
+This module adds rudimentary Idris support.
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
+# A list of linked plugins
++ [[https://github.com/idris-hackers/idris-mode/][idris-mode]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+In addition to =idris-mode= goodness, adds frequently used functions under the localleader key.

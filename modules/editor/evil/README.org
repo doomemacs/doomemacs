@@ -1,0 +1,200 @@
+#+TITLE:   editor/evil
+#+DATE:    February 2, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#ported-vim-plugins][Ported vim plugins]]
+  - [[#custom-text-objects][Custom Text Objects]]
+  - [[#custom-ex-commands][Custom Ex Commands]]
+- [[#configuration][Configuration]]
+  - [[#removing-evil-mode][Removing evil-mode]]
+  - [[#restoring-old-substitution-behavior-on-ss][Restoring old substitution behavior on s/S]]
+  - [[#restoring-old-y-behavior-yank-the-whole-line][Restoring old Y behavior (yank the whole line)]]
+  - [[#disabling-cursor-movement-when-exiting-insert-mode][Disabling cursor movement when exiting insert mode]]
+
+* Description
+This holy module brings the vim experience to Emacs.
+
+** Module Flags
++ =+everywhere= Enables evilified keybinds everywhere possible. Uses the
+  [[https://github.com/emacs-evil/evil-collection][evil-collection]] plugin as a foundation.
+
+** Plugins
++ [[https://github.com/emacs-evil/evil][evil]]
++ [[https://github.com/wcsmith/evil-args][evil-args]]
++ [[https://github.com/PythonNut/evil-easymotion][evil-easymotion]]
++ [[https://github.com/cute-jumper/evil-embrace.el][evil-embrace]]
++ [[https://github.com/syl20bnr/evil-escape][evil-escape]]
++ [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
++ [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
++ [[https://github.com/edkolev/evil-lion][evil-lion]]
++ [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
++ [[https://github.com/cofi/evil-numbers][evil-numbers]]
++ [[https://github.com/noctuid/evil-textobj-anyblock][evil-textobj-anyblock]]
++ [[https://github.com/hlissner/evil-snipe][evil-snipe]]
++ [[https://github.com/emacs-evil/evil-surround][evil-surround]]
++ [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
++ [[https://github.com/bling/evil-visualstar][evil-visualstar]]
++ [[https://github.com/ninrod/exato][exato]]
++ [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
++ [[https://www.github.com/rgrinberg/evil-quick-diff][evil-quick-diff]]
+
+** Hacks
++ The o/O keys will respect and continue commented lines (can be disabled by
+  setting ~+evil-want-o/O-to-continue-comments~ to ~nil~).
++ In visual mode, =*= and =#= will search for the current selection instead of
+  the word-at-point.
++ The ~:g[lobal]~ ex command has been modified to highlight matches.
++ More of vim's filename modifiers are supported in ex commands (like ~:p~,
+  ~:p:h~ or ~:t~) than vanilla evil-mode offers.
++ A custom filename modifier is available in Doom: ~:P~, which expands to the
+  project root (throws an error if not in a project).
+
+* Prerequisites
+This module has no external prerequisites.
+
+* Features
+** Ported vim plugins
+The following vim plugins have been ported to evil:
+
+| Vim Plugin            | Emacs Plugin                   | Keybind(s)                                 |
+|-----------------------+--------------------------------+--------------------------------------------|
+| vim-commentary        | evil-nerd-commenter            | omap =gc=                                  |
+| vim-easymotion        | evil-easymotion                | omap =gs=                                  |
+| vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
+| vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
+| vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
+| vim-unimpaired        | (provided by Doom)             | [[https://github.com/hlissner/doom-emacs/blob/develop/modules/editor/evil/config.el#L413-L460][see the list]]                               |
+
+This module has also ported vim-unimpaired keybinds to Emacs.
+
+In other modules:
++ The tools/neotree & tools/treemacs modules provide a =NERDTree= equivalent.
++ The editor/multiple-cursors module contains functionality equal to the
+  following vim plugins:
+  + evil-multiedit => vim-multiedit
+  + evil-mc => vim-multiple-cursors
+
+** Custom Text Objects
+This module provides a couple extra text objects, along with the built-in ones.
+For posterity, here are the built-in ones:
+
++ =w W= words
++ =s= sentences
++ =p= paragraphs
++ =b= parenthesized blocks
++ =b ( ) { } [ ] < >= braces, parentheses and brackets
++ =' " `= quotes
++ =t= tags
++ =o= symbols
+
+And these are text objects added by this module:
+
++ =a= C-style function arguments (provided by ~evil-args~)
++ =B= any block delimited by braces, parentheses or brackets (provided by
+  ~evil-textobj-anyblock~)
++ =c= Comments
++ =f= For functions (but relies on the major mode to have sane definitions for
+  ~beginning-of-defun-function~ and ~end-of-defun-function~)
++ =g= The entire buffer
++ =i j k= by indentation (=k= includes one line above; =j= includes one line
+  above and below) (provided by ~evil-indent-plus~)
++ =q= For quotes (any kind)
++ =u= For URLs
++ =x= XML attributes (provided by ~exato~)
+
+** Custom Ex Commands
+| Ex Command            | Description                                                                          |
+|-----------------------+--------------------------------------------------------------------------------------|
+| ~:@~                  | Apply macro on selected lines                                                        |
+| ~:al[ign][!] REGEXP~  | Align text to the first match of REGEXP. If BANG, align all matches on each line     |
+| ~:cp[!] NEWPATH~      | Copy the current file to NEWPATH                                                     |
+| ~:dash QUERY~         | Look up QUERY (or the symbol at point) in dash docsets                               |
+| ~:dehtml [INPUT]~     | HTML decode selected text / inserts result if INPUT is given                         |
+| ~:enhtml [INPUT]~     | HTML encode selected text / inserts result if INPUT is given                         |
+| ~:iedit REGEXP~       | Invoke iedit on all matches for REGEXP                                               |
+| ~:k[ill]all[!]~       | Kill all buffers (if BANG, affect buffer across workspaces)                          |
+| ~:k[ill]b~            | Kill all buried buffers                                                              |
+| ~:k[ill]m[!] REGEXP~  | Kill buffers whose name matches REGEXP (if BANG, affect buffers across workspaces)   |
+| ~:k[ill]o~            | Kill all other buffers besides the selected one                                      |
+| ~:k[ill]~             | Kill the current buffer                                                              |
+| ~:lo[okup] QUERY~     | Look up QUERY on an online search engine                                             |
+| ~:mc REGEXP~          | Invoke multiple cursors on all matches for REGEXP                                    |
+| ~:mv[!] NEWPATH~      | Move the current file to NEWPATH                                                     |
+| ~:na[rrow]~           | Narrow the buffer to the selection                                                   |
+| ~:pad~                | Open a scratch pad for running code quickly                                          |
+| ~:ral[ign][!] REGEXP~ | Right-Align text that matches REGEXP. If BANG, align all matches on each line        |
+| ~:repl~               | Open a REPL and/or copy the current selection to it                                  |
+| ~:retab~              | Convert indentation to the default within the selection                              |
+| ~:rev[erse]~          | Reverse the selected lines                                                           |
+| ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
+| ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
+
+* Configuration
+** Removing evil-mode
+You must do two things to remove Evil:
+
+1. Remove =:editor evil= from =~/.doom.d/init.el=,
+2. Run ~doom sync~ to clean up lingering dependencies and regenerate your
+   autoloads files.
+3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
+   ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.
+
+#+begin_quote
+Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
+non-evil sessions.
+#+end_quote
+
+Evil-specific configuration and keybindings (defined with ~map!~) will be
+ignored without =:editor evil= present (and omitted when byte-compiling).
+
+Keep in mind that, at the time of this writing, Doom was designed by a vimmer,
+for vimmers. Little consideration has been put into designing a keybind scheme
+for vanilla Emacs users (though it's being worked on!).
+
+That means that much of Doom's functionality will be orphaned in an evil-less
+setup. You'll have to set your own keybinds.
+
+I suggest studying [[file:../../config/default/+emacs-bindings.el][config/default/+emacs-bindings.el]] to see what keybinds are
+available for non-evil users. Otherwise, you may find inspiration [[file:../../../docs/example_configs.org][on the example
+Doom configurations page]].
+
+** Restoring old substitution behavior on s/S
+Doom replaces the =s= and =S= keys with the =evil-snipe= package (a port of
+vim-seek/vim-sneak for 2-character versions of f/F/t/T).
+
+To disable evil-snipe on s/S, you can either:
+
+1. Disable ~evil-snipe-mode~ by adding ~(after! evil-snipe (evil-snipe-mode
+   -1))~ to =$DOOMDIR/config.el=,
+2. Or disable =evil-snipe= completely with ~(package! evil-snipe :disable t)~
+   added to =$DOOMDIR/packages.el=, but this will also disable incremental
+   highlighting for the f/F/t/T motions keys.
+3. Or use =cl= and =cc=, respectively; they do the same thing.
+** Restoring old Y behavior (yank the whole line)
+Doom changes the behavior of the =Y= key in normal mode to yank-to-EOL
+(equivalent to =y$=). This was to make it consistent with the =C= and =D=
+capital operators, and because it was redundant with =yy=, which is easier to
+type than =y$=.
+
+If you prefer the old behavior, it can be reversed with:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq! evil-want-Y-yank-to-eol nil)
+#+END_SRC
+** Disabling cursor movement when exiting insert mode
+Vim (and evil) move the cursor one character back when exiting insert mode. If
+you prefer that it didn't, set:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq evil-move-cursor-back nil)
+#+END_SRC

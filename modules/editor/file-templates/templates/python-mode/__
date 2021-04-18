@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# --
+#!/usr/bin/env `(file-name-nondirectory python-shell-interpreter)`
+
+$0

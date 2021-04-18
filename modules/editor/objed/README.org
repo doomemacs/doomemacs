@@ -1,0 +1,23 @@
+#+TITLE:   editor/objed
+#+DATE:    May 30, 2019
+#+SINCE:   v2.1
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+
+* Description
+This modules adds [[https://github.com/clemera/objed][objed]], a global minor-mode for navigating and manipulating
+text objects. It combines the ideas of versor-mode and other editors like Vim or
+Kakoune and tries to align them with regular Emacs conventions.
+
+#+begin_quote
+This module is incompatible with the =:editor evil=. Enabling them both will
+cause errors.
+#+end_quote
+
+[[https://github.com/clemera/objed][See the objed project README]] for information on keybinds and usage.
+
+** Module Flags
++ ~+manual~ Do not turn =objed= automatically. The user is responsible for calling
+  `objed-activate` (bound to `M-SPC` if using the default Emacs bindings.)

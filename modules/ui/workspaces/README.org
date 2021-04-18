@@ -1,0 +1,104 @@
+#+TITLE:   ui/workspaces
+#+DATE:    February 4, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#isolated-buffer-list][Isolated buffer-list]]
+  - [[#automatic-workspaces][Automatic workspaces]]
+  - [[#session-persistence][Session persistence]]
+  - [[#workspace-persistence][Workspace persistence]]
+- [[#appendix][Appendix]]
+  - [[#commands--keybindings][Commands & Keybindings]]
+  - [[#api][API]]
+
+* Description
+This module adds support for workspaces, powered by persp_mode, as well as a API
+for manipulating them.
+
+#+begin_quote
+There are many ways to use workspaces. I spawn a workspace per task. Say I'm
+working in the main workspace, when I realize there is a bug in another part of
+my project. I open a new workspace and deal with it in there. In the meantime, I
+need to check my email, so mu4e gets its own workspace.
+
+Once I've completed the task, I close the workspace and return to main.
+#+end_quote
+
+** Module Flags
+This module provides no flags.
+
+** Packages
++ [[https://github.com/Bad-ptr/persp-mode.el][persp-mode]]
+
+* Prerequisites
+This module has no additional dependencies.
+
+* Features
+** Isolated buffer-list
+When persp-mode is active, ~doom-buffer-list~ becomes workspace-restricted. You
+can overcome this by using ~buffer-list~.
+
+** Automatic workspaces
+A workspace is automatically created (and switched to) when you:
+
++ Create a new frame (with =make-frame=; bound to =M-N= by default).
++ Switch to a project using ~projectile-switch-project~.
+
+** Session persistence
+By default, your session is autosaved when you quit Emacs (or disable
+~persp-mode~). You can load a previous session with ~M-x
++workspace/load-session~ or ~:sl[oad]~ (ex command).
+
+You can supply either a name to load a specific session to replace your current
+one.
+
+** Workspace persistence
+If you'd like to save a specific workspace, use ~M-x +workspace/save~, which can
+be loaded into the current session (as another workspace) with ~M-x
++workspace/load~.
+
+* Appendix
+** Commands & Keybindings
+Here is a list of available commands, their default keybindings (defined in
+[[../../config/default/+evil-bindings.el][private/default/+bindings.el]]), and corresponding ex commands (if any -- defined
+in [[../../editor/evil/+commands.el][private/default/+evil-commands.el]]).
+
+| command                           | key / ex command           | description                                                |
+|-----------------------------------+----------------------------+------------------------------------------------------------|
+| ~+workspace/new~                  | =SPC TAB n=                | Create a new, blank workspace                              |
+| ~+workspace/display~              | =SPC TAB TAB=              | Display open workspaces in the mode-line                   |
+| ~+workspace/load~                 | =SPC TAB l=                | Load a saved workspace into the current session            |
+| ~+workspace/restore-last-session~ | =SPC TAB R=                | Restore last session                                       |
+| ~+workspace/rename~               | =SPC TAB r=                | Rename the current workspace                               |
+| ~+workspace/save~                 | =SPC TAB s=                | Save the current workspace to a file                       |
+| ~+workspace/switch-to~            | =SPC TAB .=                | Switch to an open workspace                                |
+| ~+workspace/other~                | =SPC TAB `=                | Switch to last workspace                                   |
+| ~+workspace/switch-left~          | =SPC TAB [= / =[ w= / =gT= | Switch to previous workspace                               |
+| ~+workspace/switch-right~         | =SPC TAB ]= / =] w= / =gt= | Switch to next workspace                                   |
+| ~+workspace/delete~               | =SPC TAB d=                | Delete the current workspace                               |
+| ~+workspace/kill-session~         | =SPC TAB x= / =:sclear=    | Clears the current session (kills all windows and buffers) |
+
+** API
++ ~+workspace-list~ -> list<Struct>
++ ~+workspace-list-names~ -> list<string>
++ ~+workspace-buffer-list &optional PERSP~ -> bool
++ ~+workspace-p OBJ~ -> bool
++ ~+workspace-exists-p NAME~ -> bool
++ ~+workspace-get NAME &optional NOERROR~ -> Struct
++ ~+workspace-current &optional FRAME WINDOW~ -> Struct
++ ~+workspace-current-name~ -> string
++ ~+workspace-load NAME~
++ ~+workspace-load-session NAME~
++ ~+workspace-save NAME~
++ ~+workspace-save-session NAME~
++ ~+workspace-new NAME~
++ ~+workspace-rename NAME NEW-NAME~
++ ~+workspace-delete NAME &optional INHIBIT-KILL-P~
++ ~+workspace-switch NAME &optional AUTO-CREATE-P~
++ ~+workspace-protected-p NAME~ -> bool

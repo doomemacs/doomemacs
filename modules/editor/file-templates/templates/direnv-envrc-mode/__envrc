@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# group: file templates
+# contributor: Henrik Lissner
+# condition: (executable-find "nix-env")
+# --
+if type lorri &>/dev/null; then
+    echo "direnv: using lorri"
+    eval "$(lorri direnv)"
+else
+    # fall back to using direnv's builtin nix support
+    # to prevent bootstrapping problems.
+    use nix
+fi
+
+`%`$0

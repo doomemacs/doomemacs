@@ -1,0 +1,4 @@
+FROM ${1:phusion/baseimage:latest}
+MAINTAINER ${2:`user-full-name` <`user-mail-address`>}
+
+$0

@@ -1,0 +1,23 @@
+#+TITLE:   ui/ophints
+#+DATE:    June 4, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+
+* Description
+This module provides op-hints (operation hinting), i.e. visual feedback for
+certain operations. It highlights regions of text that the last operation (like
+yank) acted on.
+
+Uses ~evil-goggles~ for evil users and ~volatile-highlights~ otherwise.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/edkolev/evil-goggles/][evil-goggles]]*
++ [[https://github.com/k-talo/volatile-highlights.el][volatile-highlights]]*

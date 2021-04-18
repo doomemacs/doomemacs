@@ -1,0 +1,78 @@
+#+TITLE:   tools/magit
+#+DATE:    March 14, 2018
+#+SINCE:   v2.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#enable-gravatars][Enable Gravatars]]
+  - [[#enable-granular-diff-highlights-for-all-hunks][Enable granular diff-highlights for all hunks]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides Magit, an interface to the Git version control system.
+
+If you are new to Magit, see the [[https://github.com/magit/magit#getting-started][Getting Started]] section of its project readme.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+forge= Enable Forge; a porcelain for managing issues and PRs from within
+  Emacs. Will take a while on first run to build emacsql-sqlite.
+
+** Plugins
++ [[https://github.com/magit/magit][magit]]
++ [[https://github.com/magit/forge][forge]]* (=+forge=)
++ [[https://github.com/jtatarik/magit-gitflow][magit-gitflow]]
++ [[https://github.com/alphapapa/magit-todos][magit-todos]]
++ [[https://github.com/charignon/github-review][github-review]]
++ [[https://github.com/emacs-evil/evil-magit][evil-magit]]* (=:editor evil +everywhere=)
+
+** Hacks
++ =forge= was modified to defer compilation of emacsql-sqlite until you try to
+  use forge, rather than when magit first loads (which could be as soon as
+  startup).
++ =magit= has been modified to recognize
+  =$XDG_CACHE_HOME/git/credential/socket=.
++ =magit= has been modified to invalidate the projectile cache when you check
+  out a new branch or commit.
++ =magit= has been modified to revert repo buffers (e.g. after changing
+  branches) when you later switch to them, rather than all at once.
+
+* Prerequisites
+This module requires ~git~.
+
+Forge will require [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]] the first time you run =forge-pull=.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+Add these to =$DOOMDIR/config.el=.
+** Enable Gravatars
+This will enable gravatars when viewing commits. The service used by default is [[https://www.libravatar.org/][Libravatar]].
+#+BEGIN_SRC emacs-lisp
+(setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+#+END_SRC
+
+** Enable granular diff-highlights for all hunks
+
+By default, changes are highlighted *linewise* for all but the selected hunk. This
+has [[https://magit.vc/manual/magit/Performance.html][performance reasons]]. You can enable character-wise highlights for all
+visible hunks with:
+
+#+BEGIN_SRC emacs-lisp
+(after! magit
+  (setq magit-diff-refine-hunk 'all))
+#+END_SRC
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

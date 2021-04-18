@@ -1,0 +1,244 @@
+#+TITLE:   tools/lookup
+#+DATE:    January 4, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+- [[#features][Features]]
+  - [[#jump-to-definition][Jump to definition]]
+  - [[#find-references][Find references]]
+  - [[#look-up-documentation][Look up documentation]]
+  - [[#search-a-specific-documentation-backend][Search a specific documentation backend]]
+  - [[#dashapp-docset-integration][Dash.app Docset integration]]
+- [[#configuration][Configuration]]
+  - [[#associating-lookup-handlers-with-major-modes][Associating lookup handlers with major modes]]
+  - [[#associating-dash-docsets-with-major-modes][Associating Dash docsets with major modes]]
+  - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
+  - [[#open-in-xwidget-webkit-instead-of-browser][Open in Xwidget WebKit instead of browser]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
+This module adds code navigation and documentation lookup tools to help you
+quickly look up definitions, references, documentation, dictionary definitions
+or synonyms.
+
++ Jump-to-definition and find-references implementations that just work.
++ Powerful xref integration for languages that support it.
++ Search online providers like devdocs.io, stackoverflow, google, duckduckgo or
+  youtube (duckduckgo and google have live suggestions).
++ Integration with Dash.app docsets.
++ Support for online (and offline) dictionaries and thesauruses.
+
+** Module Flags
++ ~+dictionary~ Enable word definition and thesaurus lookup functionality.
+  + ~+offline~ Install and prefer offline dictionary/thesaurus.
++ ~+docsets~ Enable integration with Dash.app docsets.
+
+** Plugins
++ [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
++ [[https://github.com/alexmurray/ivy-xref][ivy-xref]] or [[https://github.com/brotzeit/helm-xref][helm-xref]]
++ [[https://github.com/tkf/emacs-request][request]]
++ =+docsets=
+  + [[https://github.com/dash-docs-el/dash-docs][dash-docs]]
+  + [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
++ =+dictionary=
+  + if macOS
+    + [[https://github.com/xuchunyang/osx-dictionary.el][osx-dictionary]]* (on macOS)
+  + else
+    + [[https://github.com/abo-abo/define-word][define-word]]
+    + [[https://github.com/maxchaos/emacs-powerthesaurus][powerthesaurus]]
+    + =+offline=
+      + [[https://github.com/gromnitsky/wordnut][wordnut]]
+      + [[https://github.com/hpdeifel/synosaurus][synosaurus]]
+
+* Prerequisites
+This module has several soft dependencies:
+
++ ~ripgrep~ as a last-resort fallback for jump-to-definition/find-references.
++ ~sqlite3~ for Dash docset support (if you have =+docsets= enabled)
++ ~wordnet~ for offline dictionary and thesaurus support (if you have
+  =+dictionary +offline= enabled).
+
+** MacOS
+#+BEGIN_SRC sh
+brew install ripgrep wordnet
+
+# An older version of sqlite is included in MacOS. If it causes you problems (and
+# folks have reported it will), install it through homebrew:
+brew install sqlite
+# Note that it's keg-only, meaning it isn't symlinked to /usr/local/bin. You'll
+# have to add it to PATH yourself (or symlink it into your PATH somewhere). e.g.
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+sudo pacman -S sqlite ripgrep
+yay -S wordnet-cli
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = with pkgs; [
+  ripgrep
+  sqlite
+  wordnet
+];
+#+END_SRC
+
+* Features
+** Jump to definition
+Use ~+lookup/definition~ (bound to =gd= in normal mode) to jump to the
+definition of the symbol at point
+
+This module provides a goto-definition implementation that will try the
+following sources before giving up:
+
+1. Whatever ~:definition~ function is registered for the current buffer with the
+   ~:lookup~ setting (see "Configuration" section).
+2. Any available xref backends.
+3. ~dumb-jump~ (a text search with aides to reduce false positives).
+3. An ordinary project-wide text search with ripgrep.
+5. If ~evil-mode~ is active, use ~evil-goto-definition~, which preforms a simple
+   text search within the current buffer.
+
+If there are multiple results, you will be prompted to select one.
+
+** Find references
+Use ~+lookup/references~ (bound to =gD= in normal mode) to see a list of
+references for the symbol at point from throughout your project.
+
+Like ~+lookup/definition~, this tries a number of sources before giving up. It
+will try:
+
+1. Whatever ~:references~ function is registered for the current buffer with the
+   ~:lookup~ setting (see "Configuration" section).
+2. Any available xref backends.
+3. An ordinary project-wide text search with ripgrep.
+
+If there are multiple results, you will be prompted to select one.
+
+** Look up documentation
+~+lookup/documentation~ (bound to =K= in normal mode) will open documentation
+for the symbol at point.
+
+Depending on your configuration, this will try a list of sources:
+
+1. Whatever ~:documentation~ function is registered for the current buffer with
+   the ~:lookup~ setting (see "Configuration" section).
+2. Any Dash.app docsets, if any are installed for the current major mode.
+3. devdocs.io, if it has a docset for the current mode.
+4. An online search; using the last engine used (it will prompt you the first
+   time, or if ~current-prefix-arg~ is non-nil).
+
+** Search a specific documentation backend
+You can perform a documentation lookup on any backends directly:
+
++ Dash Docsets: ~+lookup/in-docsets~, or ~:dash QUERY~ for evil users.
++ Online (generic): ~+lookup/online~ or ~+lookup/online-select~ (bound to =SPC /
+  o=), or ~:lo[okup] QUERY~ for evil users.
+
+** Dash.app Docset integration
+You can install dash docsets with ~M-x dash-docset-install-docset~ and search
+them offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in
+modes that don't have a specialized :documentation lookup handler.
+
+* Configuration
+** Associating lookup handlers with major modes
+~set-lookup-handlers! MODES &key DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC~
+
+Use ~set-lookup-handlers!~ to register lookup targets for MODES (a major or
+minor mode symbol or list thereof). PLIST accepts the following optional
+properties:
+
++ ~:definition FN~ :: Run when jumping to a symbol's definition. Used by
+     ~+lookup/definition~.
++ ~:references FN~ :: Run when looking for usage references of a symbol in the
+     current project. Used by ~+lookup/references~.
++ ~:documentation FN~ :: Run when looking up documentation for a symbol. Used by
+     ~+lookup/documentation~.
++ ~:file FN~ :: Run when looking up the file for a symbol/string. Typically a
+     file path. Used by ~+lookup/file~.
++ ~:xref-backend FN~ :: Defines an xref backend, which implicitly provides
+     :definition and :references handlers. If you specify them anyway, they will
+     take precedence over the xref backend, however.
+
+e.g.
+#+BEGIN_SRC emacs-lisp
+;; For python-mode, anaconda-mode offers a backend for all three lookup
+;; functions. We can register them like so:
+(set-lookup-handlers! 'python-mode
+  :definition #'anaconda-mode-find-definitions
+  :references #'anaconda-mode-find-references
+  :documentation #'anaconda-mode-show-doc)
+
+;; If a language or plugin provides a custom xref backend available for it, use
+;; that instead. It will provide the best jump-to-definition and find-references
+;; experience. You can specify custom xref backends with:
+(set-lookup-handlers! 'js2-mode :xref-backend #'xref-js2-xref-backend)
+;; NOTE: xref doesn't provide a :documentation backend.
+#+END_SRC
+
+** Associating Dash docsets with major modes
+~set-docsets! MODES &rest DOCSETS...~
+
+Use ~set-docsets!~ to register DOCSETS (one string or list of strings) for MODES
+(one major mode symbol or a list of them). It is used by ~+lookup/in-docsets~
+and ~+lookup/documentation~.
+
+e.g.
+#+BEGIN_SRC emacs-lisp
+(set-docsets! 'js2-mode "JavaScript" "JQuery")
+;; Add docsets to minor modes by starting DOCSETS with :add
+(set-docsets! 'rjsx-mode :add "React")
+;; Or remove docsets from minor modes
+(set-docsets! 'nodejs-mode :remove "JQuery")
+#+END_SRC
+
+This determines what docsets to implicitly search for when you use
+~+lookup/documentation~ in a mode with no ~:documentation~ handler. Those
+docsets must be installed with ~dash-docset-install-docset~.
+
+** Open in eww instead of browser
+~+lookup/online~ opens the search results with in ~+lookup-open-url-fn~
+(default: ~#'browse-url~). Here is how to change this to EWW (so it opens inside
+Emacs):
+
+#+BEGIN_SRC emacs-lisp
+(setq +lookup-open-url-fn #'eww)
+#+END_SRC
+
+#+begin_quote
+~+lookup/in-docsets~ consults ~dash-docs-browser-func~ instead, which is already
+set to ~#'eww~ by default.
+#+end_quote
+
+** Open in Xwidget WebKit instead of browser
+To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in Xwidget WebKit
+instead of your system browser, set ~+lookup-open-url-fn~ and/or
+~dash-docs-browser-func~ to ~+lookup-xwidget-webkit-open-url-fn~ (needs Emacs
+with Xwidgets support):
+
+#+BEGIN_SRC emacs-lisp
+(setq +lookup-open-url-fn #'+lookup-xwidget-webkit-open-url-fn)
+(after! dash-docs
+  (setq dash-docs-browser-func #'+lookup-xwidget-webkit-open-url-fn))
+#+END_SRC
+
+* Appendix
+** Commands
++ ~+lookup/definition~
++ ~+lookup/references~
++ ~+lookup/documentation~
++ ~+lookup/online~
++ ~+lookup/online-select~
++ ~+lookup/in-devdocs~
++ ~+lookup/in-docsets~

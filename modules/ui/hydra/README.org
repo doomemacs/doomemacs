@@ -1,0 +1,31 @@
+#+TITLE:   ui/hydra
+#+DATE:    october 29, 2019
+#+SINCE:   2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds hydra to Doom Emacs, as well as a few custom built hydras to
+start with :
+
++ A hydra to control windows ~+hydra/window-nav/body~
++ A hydra to control text zoom level ~+hydra/text-zoom/body~
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/abo-abo/hydra][hydra]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Configuration
+Configuring this module is only setting bindings to the provided hydra, or
+creating your own ones !

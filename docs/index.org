@@ -1,0 +1,106 @@
+#+TITLE: Doom Emacs Documentation
+#+STARTUP: nofold
+
+Doom is a configuration framework for [[https://www.gnu.org/software/emacs/][GNU Emacs 26.3+]] tailored for Emacs
+bankruptcy veterans who want less framework in their frameworks and the
+performance of a hand rolled config (or better). It can be a foundation for your
+own config or a resource for Emacs enthusiasts to learn more about our favorite
+OS.
+
+Doom is an opinionated collection of reasonable (and optional) defaults with a
+focus on performance (both runtime and startup) and on abstraction-light,
+readable code design, so that there is less between you and Emacs.
+
+#+begin_quote
+The documentation is designed to be viewed within Doom Emacs. Access it by
+pressing =SPC h d h= (or =C-h d h= for non-evil users), or search it with =SPC h
+d s= (or =C-h d s=).
+#+end_quote
+
+* Table of Contents :TOC:
+- [[#release-notes][Release Notes]]
+- [[#documentation][Documentation]]
+  - [[#getting-started][Getting Started]]
+  - [[#frequently-asked-questions][Frequently Asked Questions]]
+  - [[#contributing][Contributing]]
+  - [[#workflow-tips-tricks--tutorials][Workflow Tips, Tricks & Tutorials]]
+  - [[#module-appendix][Module Appendix]]
+- [[#community-resources][Community Resources]]
+  - [[#asking-for-help][Asking for help]]
+  - [[#project-roadmap][Project roadmap]]
+  - [[#tutorials--guides][Tutorials & guides]]
+  - [[#projects-that-supportcomplement-doom][Projects that support/complement Doom]]
+  - [[#similar-projects][Similar projects]]
+
+* TODO Release Notes
+
+* Documentation
+** [[file:getting_started.org][Getting Started]]
+- [[file:getting_started.org::*Install][Install]]
+- [[file:getting_started.org::*Update & Rollback][Update & Rollback]]
+- [[file:getting_started.org::*Configure][Configure]]
+- [[file:getting_started.org::*Migrate][Migrate]]
+- [[file:getting_started.org::*Troubleshoot][Troubleshoot]]
+
+** [[file:faq.org][Frequently Asked Questions]]
+- [[file:faq.org::*General][General]]
+- [[file:faq.org::*Configuration][Configuration]]
+- [[file:faq.org::*Package Management][Package Management]]
+- [[file:faq.org::*Defaults][Defaults]]
+- [[file:faq.org::Common Issues][Common Issues]]
+- [[file:faq.org::Contributing][Contributing]]
+
+** TODO [[file:contributing.org][Contributing]]
+- [[file:contributing.org::*Where can I help?][Where to get help?]]
+- Reporting issues
+- Suggesting features, keybinds and enhancements
+- Contributing code or documentation
+- Other ways to support Doom Emacs
+- Special thanks
+
+** TODO [[file:workflow.org][Workflow Tips, Tricks & Tutorials]]
+
+** [[file:modules.org][Module Appendix]]
+
+* Community Resources
+** Asking for help
+- [[https://discord.gg/qvGgnVx][Our Discord server]]
+- [[https://github.com/hlissner/doom-emacs/issues][Our issue tracker]]
+
+** Project roadmap
+- [[https://github.com/hlissner/doom-emacs/projects/3][Development roadmap]] - A timeline outlining what's being worked on and when it
+  is expected to be done.
+- [[https://github.com/hlissner/doom-emacs/projects/2][Plugins under review]] - A sitrep on third party plugins that we've considered,
+  rejected, or awaiting integration into Doom.
+- [[https://github.com/hlissner/doom-emacs/projects/5][Upstream bugs]] - Tracks issues originating from plugins and external programs
+  that Doom relies on.
+
+** Tutorials & guides
++ *Doom Emacs*
+  - (videos) [[https://www.youtube.com/playlist?list=PLyy8KUDC8P7X6YkegqrnEnymzMWCNB4bN][Doom Emacs Tutorials]] by [[https://www.youtube.com/channel/UCVls1GmFKf6WlTraIb_IaJg][DistroTube]]
+  - (videos) [[https://www.youtube.com/playlist?list=PLhXZp00uXBk4np17N39WvB80zgxlZfVwj][DoomCasts]] by @zaiste
+  - [[https://noelwelsh.com/posts/2019-01-10-doom-emacs.html][Noel's crash course on Doom Emacs]]
+  - [[https://medium.com/@aria_39488/getting-started-with-doom-emacs-a-great-transition-from-vim-to-emacs-9bab8e0d8458][Getting Started with Doom Emacs -- a great transition from Vim to Emacs]]
+  - [[https://medium.com/@aria_39488/the-niceties-of-evil-in-doom-emacs-cabb46a9446b][The Niceties of evil in Doom Emacs]]
+  - (video) [[https://www.youtube.com/watch?v=GK3fij-D1G8][Org-mode, literate programming in (Doom) Emacs]]
++ *Emacs & Emacs Lisp*
+  - [[https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html][The Official Emacs manual]]
+  - A variety of Emacs resources - https://github.com/ema2159/awesome-emacs
+  - Quick crash courses on Emacs Lisp's syntax for programmers:
+    - https://learnxinyminutes.com/docs/elisp/
+    - http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
+  - Workflows for customizing Emacs and its packages (and its C/C++ modes):
+    - https://david.rothlis.net/emacs/customize_c.html
+  - *Tools in Emacs*
+    - [[https://www.emacswiki.org/emacs/Calc_Tutorials_by_Andrew_Hyatt][How to use M-x calc]]
++ *Vim & Evil*
+  - [[https://gist.github.com/dmsul/8bb08c686b70d5a68da0e2cb81cd857f][A crash course on modal editing and Ex commands]]
+
+** Projects that support/complement Doom
++ [[https://github.com/plexus/chemacs][plexus/chemacs]]
++ [[https://github.com/r-darwish/topgrade][r-darwish/topgrade]]
+
+** Similar projects
++ [[https://github.com/purcell/emacs.d][purcell/emacs.d]]
++ [[https://github.com/seagle0128/.emacs.d][seagle0128/.emacs.d]]
++ [[https://github.com/syl20bnr/spacemacs][syl20bnr/spacemacs]]

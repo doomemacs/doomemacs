@@ -1,0 +1,146 @@
+#+TITLE:   lang/javascript
+#+DATE:    January 16, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#opensuse][openSUSE]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#tide-sort-completions-by-kind-isnt-respected][~tide-sort-completions-by-kind~ isn't respected]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
+This module adds JavaScript and TypeScript support.
+
++ Code completion (tide)
++ REPL support (nodejs-repl)
++ Refactoring commands (js2-refactor)
++ Syntax checking (flycheck)
++ Browser code injection with skewer-mode
++ Coffeescript & JSX support
++ Jump-to-definitions and references support (xref)
+
+** Module Flags
++ =+lsp= Enables LangServer support for this module. You must have =:tools lsp=
+  enabled for this to work, as well as the langserver (e.g.
+  typescript-language-server) installed on your system.
+
+** Packages
++ [[https://github.com/defunkt/coffee-mode][coffee-mode]]
++ [[https://github.com/mooz/js2-mode][js2-mode]]
++ [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]]
++ [[https://github.com/emacs-typescript/typescript.el][typescript-mode]]
++ [[https://github.com/magnars/js2-refactor.el][js2-refactor]]
++ [[https://github.com/mojochao/npm-mode][npm-mode]]
++ [[https://github.com/abicky/nodejs-repl.el][nodejs-repl]]
++ [[https://github.com/skeeto/skewer-mode][skewer-mode]]
++ [[https://github.com/ananthakumaran/tide][tide]]
++ [[https://github.com/NicolasPetton/xref-js2][xref-js2]]*
+
+* Prerequisites
+Many of this modules' plugins require ~node~ and either ~npm~ or ~yarn~
+installed.
+
+** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install node
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S nodejs npm
+#+END_SRC
+
+** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install nodejs npm
+#+END_SRC
+
+* Troubleshooting
+** ~tide-sort-completions-by-kind~ isn't respected
+The =:completion company= module uses =company-prescient= to sort completion by
+[[https://developer.mozilla.org/en-US/docs/Mozilla/Tech/Places/Frecency_algorithm][frecency]], which overrules specialized sorting provided by some company backends
+(like ~company-tide~).
+
+* Appendix
+** Commands
+*** JS2-mode
+| command                          | key / ex command | description                                                |
+|----------------------------------+------------------+------------------------------------------------------------|
+| ~+javascript/open-repl~          | =:repl=          | Open the NodeJS REPL (or send the current selection to it) |
+| ~+javascript/skewer-this-buffer~ | =SPC m S=        | Attaches a browser to the current buffer                   |
+*** Tide
+| command                 | key / ex command | description            |
+|-------------------------+------------------+------------------------|
+| ~tide-restart-server~   | =SPC m R=        | Restart tide server    |
+| ~tide-reformat~         | =SPC m f=        | Reformat region        |
+| ~tide-rename-symbol~    | =SPC m r s=      | Rename symbol at point |
+| ~tide-organize-imports~ | =SPC m r o i=    | Organize imports       |
+*** Refactoring (js2-refactor-mode)
+| command                                           | key / ex command | description                                                                                                        |
+|---------------------------------------------------+------------------+--------------------------------------------------------------------------------------------------------------------|
+| ~js2r-expand-node-at-point~                       | =SPC m r e e=    | Expand bracketed list according to node type at point                                                              |
+| ~js2r-contract-node-at-point~                     | =SPC m r c c=    | Contract bracketed list according to node type at point                                                            |
+| ~js2r-extract-function~                           | =SPC m r e f=    | Extracts the marked expressions out into a new named function.                                                     |
+| ~js2r-extract-method~                             | =SPC m r e m=    | Extracts the marked expressions out into a new named method in an object literal.                                  |
+| ~js2r-toggle-function-expression-and-declaration~ | =SPC m r t f=    | Toggle between function name() {} and var name = function ();                                                      |
+| ~js2r-toggle-arrow-function-and-expression~       | =SPC m r t a=    | Toggle between function expression to arrow function.                                                              |
+| ~js2r-toggle-function-async~                      | =SPC m r t s=    | Toggle between an async and a regular function.                                                                    |
+| ~js2r-introduce-parameter~                        | =SPC m r i p=    | Changes the marked expression to a parameter in a local function.                                                  |
+| ~js2r-localize-parameter~                         | =SPC m r l p=    | Changes a parameter to a local var in a local function.                                                            |
+| ~js2r-wrap-buffer-in-iife~                        | =SPC m r w i=    | Wraps the entire buffer in an immediately invoked function expression                                              |
+| ~js2r-inject-global-in-iife~                      | =SPC m r i g=    | Creates a shortcut for a marked global by injecting it in the wrapping immediately invoked function expression     |
+| ~js2r-add-to-globals-annotation~                  | =SPC m r a g=    | Creates a /*global */ annotation if it is missing, and adds the var at point to it.                                |
+| ~js2r-extract-var~                                | =SPC m r e v=    | Takes a marked expression and replaces it with a var.                                                              |
+| ~js2r-extract-let~                                | =SPC m r e l=    | Similar to extract-var but uses a let-statement.                                                                   |
+| ~js2r-extract-const~                              | =SPC m r e c=    | Similar to extract-var but uses a const-statement.                                                                 |
+| ~js2r-inline-var~                                 | =SPC m r i v=    | Replaces all instances of a variable with its initial value.                                                       |
+| ~js2r-rename-var~                                 | =SPC m r r v=    | Renames the variable on point and all occurrences in its lexical scope.                                            |
+| ~js2r-var-to-this~                                | =SPC m r v t=    | Changes local var a to be this.a instead.                                                                          |
+| ~js2r-arguments-to-object~                        | =SPC m r a o=    | Replaces arguments to a function call with an object literal of named arguments.                                   |
+| ~js2r-ternary-to-if~                              | =SPC m r 3 i=    | Converts ternary operator to if-statement.                                                                         |
+| ~js2r-split-var-declaration~                      | =SPC m r s v=    | Splits a var with multiple vars declared, into several var statements.                                             |
+| ~js2r-split-string~                               | =SPC m r s s=    | Splits a string.                                                                                                   |
+| ~js2r-string-to-template~                         | =SPC m r s t=    | Converts a string into a template string.                                                                          |
+| ~js2r-unwrap~                                     | =SPC m r u w=    | Replaces the parent statement with the selected region.                                                            |
+| ~js2r-log-this~                                   | =SPC m r l t=    | Adds a console.log() statement for what is at point (or region). With a prefix argument, use JSON pretty-printing. |
+| ~js2r-debug-this~                                 | =SPC m r d t=    | Adds a debug() statement for what is at point (or region).                                                         |
+| ~js2r-forward-slurp~                              | =SPC m r s l=    | Moves the next statement into current function, if-statement, for-loop or while-loop.                              |
+| ~js2r-forward-barf~                               | =SPC m r b a=    | Moves the last child out of current function, if-statement, for-loop or while-loop.                                |
+| ~js2r-kill~                                       | =SPC m r k=      | Kills to the end of the line, but does not cross semantic boundaries.                                              |
+*** skewer-mode
+**** general
+| command                       | key / ex command | description                           |
+|-------------------------------+------------------+---------------------------------------|
+| ~skewer-eval-last-expression~ | =SPC m s E=      | Evaluate last expression              |
+| ~skewer-eval-defun~           | =SPC m s e=      | Evaluate function definition at point |
+| ~skewer-load-buffer~          | =SPC m s f=      | Load buffer into REPL                 |
+**** css
+| command                               | key / ex command | description                   |
+|---------------------------------------+------------------+-------------------------------|
+| ~skewer-css-eval-current-declaration~ | =SPC m s e=      | Evaluate declaration at point |
+| ~skewer-css-eval-current-rule~        | =SPC m s r=      | Evaluate rule at point        |
+| ~skewer-css-eval-buffer~              | =SPC m s b=      | Evaluate buffer               |
+| ~skewer-css-clear-all~                | =SPC m s c=      | Clear all rules               |
+**** html
+| command                | key / ex command | description           |
+|------------------------+------------------+-----------------------|
+| ~skewer-html-eval-tag~ | =SPC m s e=      | Evaluate tag at point |
+*** npm-mode
+| command                         | key / ex command | description                                                      |
+|---------------------------------+------------------+------------------------------------------------------------------|
+| ~npm-mode-npm-init~             | =SPC m n n=      | Initialize npm project                                           |
+| ~npm-mode-npm-install~          | =SPC m n i=      | Install npm package                                              |
+| ~npm-mode-npm-install-save~     | =SPC m n s=      | Install npm package and save to package.json                     |
+| ~npm-mode-npm-install-save-dev~ | =SPC m n d=      | Install npm package and save to package.json as a dev dependency |
+| ~npm-mode-npm-uninstall~        | =SPC m n u=      | Uninstall npm package                                            |
+| ~npm-mode-npm-list~             | =SPC m n l=      | List npm packages                                                |
+| ~npm-mode-npm-run~              | =SPC m n r=      | Run npm task                                                     |
+| ~npm-mode-visit-project-file~   | =SPC m n v=      | Find file in npm project                                         |

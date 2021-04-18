@@ -1,0 +1,115 @@
+#+TITLE:   term/vterm
+#+DATE:    January 16, 2019
+#+SINCE:   2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#dynamic-module-support][Dynamic Module support]]
+  - [[#libvterm][libvterm]]
+  - [[#compilation-tools-for-vterm-moduleso][Compilation tools for vterm-module.so]]
+
+* Description
+This module provides a terminal emulator powered by libvterm. It is still in
+alpha and requires a component be compiled (=vterm-module.so=).
+
+The following commands are available to open it:
+
++ ~+vterm/toggle~ (=SPC o t=): Toggle vterm pop up window in the current project
++ ~+vterm/here~ (=SPC o T=): Opens vterm in the current window
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/akermu/emacs-libvterm][vterm]]
+
+* Prerequisites
++ Emacs must be built with dynamic module support, i.e. compiled with the
+  =--with-modules= option.
++ You need =libvterm= installed on your system.
++ You need =make=, =cmake= and a C compiler such as =gcc= so that vterm can
+  build =vterm-module.so=.
+
+** Dynamic Module support
+To check if your build of Emacs was built with dynamic module support, check
+~bin/doom info~ for ~MODULES~ next to "System features". If it's there, you're
+good to go.
+
+You can also check for =--with-modules= in the ~system-configuration-options~
+variable (=SPC h v system-configuration-options=).
+
+- Archlinux or Manjaro users who installed Emacs through pacman will have
+  support baked in.
+- MacOS users:
+  - If you use [[https://emacsformacosx.com/][Emacs For Mac OS X]], this option is enabled.
+  - If you use [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]], this option is enabled by default.
+  - If you use [[https://github.com/railwaycat/homebrew-emacsmacport][emacs-mac]], this options is *not* enabled by default. You may have
+    to reinstall emacs with the option: ~brew install emacs-mac --with-modules~
+
+** libvterm
++ Ubuntu or Debian users: ~apt-get install libvterm-dev~
++ ArchLinux or Manjaro: ~pacman -S libvterm~
++ MacOS: ~libvterm~
++ NixOS:
+
+  #+BEGIN_SRC nix
+  systemPackages = with pkgs; [
+    # emacs    # no need for this, the next line includes emacs
+    ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
+      epkgs.emacs-libvterm
+    ]))
+  ];
+  #+END_SRC
+
+  Or for home-manager users:
+
+  #+BEGIN_SRC nix
+  programs.emacs = {
+    enable = true;
+    extraPackages = epkgs: [ epkgs.emacs-libvterm ];
+  };
+  #+END_SRC
+
+** Compilation tools for vterm-module.so
+When you first load vterm, it will compile =vterm-module.so= for you. For this
+to succeed, you need the following:
+
++ =make=
++ =cmake=
++ A C compiler like =gcc=
++ An internet connection (=cmake= will download needed libraries)
+
+There are several ways to manually install the module:
+
+1. You can use =M-x vterm-module-compile= to let emacs automatically compile and
+   install the module.
+
+   Modify ~vterm-module-cmake-args~ to pass arguments to the cmake build script.
+   e.g. To use a local build of libvterm instead of the included one.
+
+   #+BEGIN_SRC elisp
+   (setq vterm-module-cmake-args "-DUSE_SYSTEM_LIBVTERM=yes")
+   #+END_SRC
+
+   *WARNING*: Emacs will hang during the compilation. It may take a while.
+
+2. You can compile and install the module yourself. Go to the vterm installation
+   directory (usually =~/.emacs.d/.local/packages/elpa/vterm-<version>=) and run
+   the following:
+
+   #+BEGIN_SRC sh
+   mkdir -p build
+   cd build
+   cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+   make
+   #+END_SRC
+
+3. You can also compile =vterm-module.so= elsewhere, but the module must be
+   moved/symlinked to
+   =~/.emacs.d/.local/packages/elpa/vterm-<version>/vterm-module.so=
+   =vterm-module.so=. Keep in mind that this folder will be deleted whenever the
+   vterm package is updated.

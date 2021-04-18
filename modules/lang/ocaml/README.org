@@ -1,0 +1,93 @@
+#+TITLE:   lang/ocaml
+#+DATE:    June 27, 2017
+#+SINCE:   v2.0.3
+
+* Table of Contents                                                     :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+  - [[#hacks][Hacks]]
+
+* Description
+This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[https://github.com/ocaml/tuareg][tuareg-mode]].
+
++ Code completion, documentation look-up, code navigation and refactoring
+  ([[https://github.com/ocaml/merlin/wiki/emacs-from-scratch][merlin]])
++ Type, documentation and function argument display on idle ([[https://github.com/Khady/merlin-eldoc][merlin-eldoc]])
++ REPL ([[https://github.com/ocaml-community/utop][utop]])
++ Syntax-checking (~merlin~ with [[https://github.com/flycheck/flycheck-ocaml][flycheck-ocaml]])
++ Auto-indentation ([[https://github.com/OCamlPro/ocp-indent][ocp-indent]])
++ Code formatting ([[https://github.com/ocaml-ppx/ocamlformat][ocamlformat]])
++ Dune file format ([[http://dune.build/][dune]])
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/ocaml/tuareg][tuareg]]
++ [[https://github.com/ocaml/merlin][merlin]]
++ [[https://github.com/Khady/merlin-eldoc][merlin-eldoc]]
++ [[https://github.com/OCamlPro/ocp-indent][ocp-indent]]
++ [[https://github.com/flycheck/flycheck-ocaml][flycheck-ocaml]]*
++ [[https://github.com/ocaml-community/utop][utop]]*
++ [[https://github.com/ocaml-ppx/ocamlformat][ocamlformat]]*
++ [[https://github.com/ocaml/dune][dune]]
+
+* Prerequisites
+This module has no hard dependencies, but it is recommanded that you install
+[[http://opam.ocaml.org/][opam]] and the following opam (optional) packages:
+
+#+BEGIN_SRC shell
+opam install merlin utop ocp-indent dune ocamlformat
+#+END_SRC
+
+* Features
++ The following files should have syntax highlighting support: ~.ml{i,p,y,}~,
+  ~.eliom{i,}~, ~jbuild~, ~dune~, ~opam~
++ =merlin-mode= is activated whenever a =.merlin= file is found (including in a
+  parent directory) and =ocamlmerlin= executable is present
++ Line-based auto-indentation is provided by =ocp-indent=, if it is available.
+
+* Configuration
++ If =:completion company= is enabled then autocomplete is provided by =merlin=
++ When =:checkers syntax= is enabled then =flycheck-ocaml= is activated to do
+  on-the-fly syntax/type checking via =merlin=, otherwise this is only done when
+  the file is saved.
++ Spell checking is activated in comments if =:checkers spell= is active
++ A REPL is provided if =utop= is installed and =:tools eval= is active
++ If =:editor format= is enabled, the =ocamlformat= executable is available and
+  there is an =.ocamlformat= file present then =format-all-buffer= is bound to
+  =ocamlformat=, otherwise to =ocp-indent=
++ If =:editor multiple-cursors= is enabled then identifiers can be refactored
+  with =v R= and multiple cursors (this correctly matches identifier occurrences
+  according to scope, it is not purely a textual match)
++ If =:emacs imenu= is enabled then top level symbols (modules, type, functions,
+  etc.) can be looked up using =SPC / i=
+
+Run =doom sync= to install all packages and =doom doctor= to diagnose missing
+tools.
+
+* Appendix
+** Commands
+  | Command                      | Key               | Description                                               |
+  |------------------------------+-------------------+-----------------------------------------------------------|
+  | =merlin-type-enclosing=      | =<localleader> t= | display type under point                                  |
+  | =tuareg-find-alternate-file= | =<localleader> a= | switch between =.ml= and =.mli=                           |
+  | =merlin-locate=              | =g d=             | lookup definition                                         |
+  | =merlin-occurences=          | =SPC c D=         | lookup references                                         |
+  | =merlin-document=            | =K=               | lookup documentation                                      |
+  | =merlin-imenu=               | =SPC s i=         | symbol lookup in file                                     |
+  | =merlin-iedit-occurrences=   | =v R=             | visual refactor identifier under point (multiple cursors) |
+  | =utop=                       | =SPC o r=         | open =utop= as REPL                                       |
+  | =utop-eval-region=           | =SPC c e=         | evaluate selected region in =utop=                        |
+
+** Hacks
++ =set-ligatures!= is called with the full tuareg prettify symbol list, this
+  can cause columns to change as certain keywords are shortened (e.g. =fun=
+  becomes \lambda.
++ =tuareg-opam-update-env= is called the first time =tuareg= is loaded

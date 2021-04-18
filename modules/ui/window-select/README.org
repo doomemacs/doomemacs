@@ -1,0 +1,66 @@
+#+TITLE:   ui/window-select
+#+DATE:    October 8, 2017
+#+SINCE:   v2.0.7
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#ace-window][ace-window]]
+  - [[#switch-window][switch-window]]
+
+* Description
+This module provides several methods for selecting windows without the use of
+the mouse or spatial navigation (e.g. =C-w {h,j,k,l}=).
+
+The command ~other-window~ is remapped to either ~switch-window~ or
+~ace-window~, depending on which backend you've enabled. It is bound to ~C-x o~
+(and ~C-w C-w~ for evil users).
+
+It also provides numbered windows and selection with the ~winum~ package, if
+desired. Evil users can jump to window N in =C-w <N>= (where N is a number
+between 0 and 9). Non evil users have =C-x w <N>= instead.
+
+** Module Flags
++ =+switch-window= Use the switch-window package as the backend, instead of
+  ace-window (avy).
++ =+numbers= Enable numbered windows and window selection (using winum).
+
+** Packages
++ [[https://github.com/dimitri/switch-window][switch-window]] (if =+switch-window=)
++ [[https://github.com/abo-abo/ace-window][ace-window]] (if =+switch-window= isn't enabled)
++ [[https://github.com/deb0ch/emacs-winum][winum]] (if =+numbers=)
+
+* Prerequisites
+This module has no additional dependencies.
+
+* TODO Features
+* Configuration
+This module provides two backends, both providing the same functionality, but
+with different visual cues. They are =ace-window= and =switch-window=.
+
+** ace-window
+The first character of the buffers changes to a highlighted, user-selectable
+character.
+
+ + Pros: the content of the buffers are always visible.
+ + Cons: The display characters are small and difficult to see (see below for a way to enlarge them).
+ 
+**** Custom font-face example
+This changes the ace-window display to show a white letter with a red background. The box attribute adds some padding.
+#+BEGIN_SRC elisp
+(custom-set-faces!
+  '(aw-leading-char-face
+    :foreground "white" :background "red"
+    :weight bold :height 2.5 :box (:line-width 10 :color "red")))
+#+END_SRC 
+
+** switch-window
+Replaces the entire buffer with large letters.
+
+ + Pros: The displayed characters are /really/ easy to see.
+ + Cons: You can't see the contents of the buffers.

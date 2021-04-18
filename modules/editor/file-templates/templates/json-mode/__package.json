@@ -1,0 +1,13 @@
+{
+  "name": "${1:package-name}",
+  "description": "${2:description}",
+  "version": "1.0.0",
+  "author": "`user-full-name` <`user-mail-address`>",
+  "license": "MIT",
+  "main": "${3:app/${4:main.js}}",
+  "scripts": {
+    $0
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

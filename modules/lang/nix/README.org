@@ -1,0 +1,57 @@
+#+TITLE:   lang/nix
+#+DATE:    May 4, 2020
+#+SINCE:   v2.0.7
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#keybindings][Keybindings]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+Adds many tools for [[https://nixos.org/][Nix(OS)]] users in nice package for Doom users.
+
++ Syntax highlighting
++ Completion through ~company~ / ~helm~
++ Nix option lookup
++ Formatting (~nixfmt~)
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/NixOS/nix-mode][nix-mode]]
++ [[https://github.com/jwiegley/nix-update-el][nix-update]]
+
+* Prerequisites
++ ~nixfmt~ is required to use formatting
+  + If you have Nix(OS) installed it can be installed through Nix configuration ~environment.systemPackages = with pkgs; [ nixfmt ];~ (recommended)
+  + Or through nix-env ~nix-env -iA nixpkgs.nixfmt~
+  + Or through nix-shell ~nix-shell -f https://github.com/serokell/nixfmt/archive/master.tar.gz -i~
++ ~:editor format~ ~format-all~ also supports ~nixfmt~ so you can use that also to format Nix code, default binding is ~SPC c f~ in evil.
+
+* Features
+** Keybindings
+| Binding           | Description          |
+|-------------------+----------------------|
+| ~<localleader> b~ | ~nix-build~          |
+| ~<localleader> f~ | ~nix-update-fetch~   |
+| ~<localleader> o~ | ~+nix/lookup-option~ |
+| ~<localleader> p~ | ~nix-format-buffer~  |
+| ~<localleader> r~ | ~nix-repl-show~      |
+| ~<localleader> s~ | ~nix-repl-shell~     |
+| ~<localleader> u~ | ~nix-unpack~         |
+
+* Configuration
+
+* Troubleshooting
++ There aren't any known problems.
