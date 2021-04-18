@@ -45,6 +45,9 @@ results buffer.")
     [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
     [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
     [remap evil-show-jumps]               #'+ivy/jump-list)
+
+  ;; Fix #4886: otherwise our remaps are overwritten
+  (setq ivy-mode-map (make-sparse-keymap))
   :config
   ;; The default sorter is much to slow and the default for `ivy-sort-max-size'
   ;; is way too big (30,000). Turn it down so big repos affect project
