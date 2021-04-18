@@ -277,6 +277,16 @@ directives. By default, this only recognizes C directives.")
   :config
   (setq evil-embrace-show-help-p nil)
 
+  ;; REVIEW Remove when cute-jumper/evil-embrace.el#7 is merged
+  (pushnew! evil-embrace-evil-surround-keys ?w ?W ?p ?s)
+  (defadvice! +evil-embrace-evil-surround-change-a (orig-fn char &optional outer inner)
+    "Fix csw, csW, css & csp text objects too eagerly deleting regions."
+    :around #'evil-embrace-evil-surround-change
+    (letf! (defun evil-surround-delete (char &optional outer inner)
+             (unless (evil-surround-delete-char-noop-p char)
+               (funcall evil-surround-delete char outer inner)))
+      (funcall orig-fn char outer inner)))
+
   (defun +evil-embrace-scala-mode-hook-h ()
     (embrace-add-pair ?$ "${" "}"))
 
