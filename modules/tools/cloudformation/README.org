@@ -9,8 +9,12 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#installing-with-pip][Installing with Pip]]
-  - [[#installing-with-homebrew][Installing with Homebrew]]
+  - [[#installing-cfn-nag][Installing =cfn-nag=]]
+    - [[#installing-with-gem][Installing with Gem]]
+    - [[#installing-with-hombrew][Installing with Hombrew]]
+  - [[#installing-cfn-lint][Installing =cfn-lint=]]
+    - [[#installing-with-pip][Installing with Pip]]
+    - [[#installing-with-homebrew][Installing with Homebrew]]
 - [[#features][Features]]
   - [[#syntax-highlighting][Syntax highlighting]]
   - [[#aws-snippets][AWS snippets]]
@@ -19,7 +23,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds support for working with AWS CloudFormation files in Doom Emacs. This includes syntax highlighting, snippets and syntax checking
+This module adds support for working with AWS Cloudformation files in Doom Emacs. This includes syntax highlighting, snippets and syntax checking
 
 ** Maintainers
 + @xlarsx
@@ -28,36 +32,52 @@ This module adds support for working with AWS CloudFormation files in Doom Emacs
 This module provides no flags.
 
 ** Plugins
-+ [[https://www.emacswiki.org/emacs/CfnLint][CfnLint]]
++ [[https://gitlab.com/worr/cfn-mode/-/tree/master][cfn-mode]]
 + [[https://github.com/baron42bba/aws-snippets][aws-snippets]]
 
 * Prerequisites
 
 + =:lang yaml= for syntax highlighting with YAML files
-+ =:lang javascript= for syntax highlighting with JSON files
++ this module requires =cfn-nag= using =Ruby 2.5.x+= to provide to provide syntax checking.
 + This module requires =cfn-lint= using =Python 2.7+= or =Python 3.4+= to provide syntax checking.
 
-** Installing with Pip
+** Installing =cfn-nag=
+*** Installing with Gem
+
+#+BEGIN_SRC sh
+gem install cfn-nag
+#+END_SRC
+
+*** Installing with Hombrew
+
+#+BEGIN_SRC sh
+brew install ruby brew-gem
+brew gem install cfn-nag
+#+END_SRC
+
+** Installing =cfn-lint=
+*** Installing with Pip
 
 #+BEGIN_SRC sh
 pip install cfn-lint
 #+END_SRC
 
-** Installing with Homebrew
+*** Installing with Homebrew
 
 #+BEGIN_SRC sh
 brew install cfn-lint
 #+END_SRC
 
+
 * Features
 ** Syntax highlighting
-Syntax highlighting is provided from =yaml-mode= and =js-mode=.
+Syntax highlighting is provided from =yaml-mode= and =cfn-mode=.
 
 ** AWS snippets
 Snippets provided from =aws-snippets=.
 
 ** Syntax checking
-Syntax checking provided from =CfnLint=.
+Syntax checking provided from =cfn-mode=.
 
 * Configuration
 * Troubleshooting
