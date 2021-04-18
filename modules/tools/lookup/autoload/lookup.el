@@ -262,7 +262,8 @@ current buffer."
   "Uses `find-file-at-point' to read file at point."
   (require 'ffap)
   (when (ffap-guesser)
-    (find-file-at-point)))
+    (find-file-at-point)
+    t))
 
 (defun +lookup-bug-reference-backend-fn (_identifier)
   "Searches for a bug reference in user/repo#123 or #123 format and opens it in
@@ -369,7 +370,11 @@ Otherwise, falls back on `find-file-at-point'."
 
         ((stringp path) (find-file-at-point path))
 
-        ((call-interactively #'find-file-at-point))))
+        ((featurep! :completion ivy)
+         (counsel-file-jump (thing-at-point 'filename t)
+                            (doom-project-root)))
+
+        ((ffap-prompter (thing-at-point 'filename t)))))
 
 
 ;;
