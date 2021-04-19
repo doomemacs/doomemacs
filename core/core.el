@@ -285,7 +285,6 @@ config.el instead."
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect; staving off the collector while the user is working.
 (setq gcmh-idle-delay 5
-      gcmh-high-cons-threshold (* 16 1024 1024)  ; 16mb
       gcmh-verbose doom-debug-p)
 
 ;; Emacs "updates" its ui more often than it needs to, so we slow it down
