@@ -298,6 +298,10 @@ config.el instead."
 ;; usage, however!
 (setq inhibit-compacting-font-caches t)
 
+;; Increase how much is read from processes in a single chunk (default is 4kb).
+;; This is further increased by our more expensive LSP module, and where needed.
+(setq read-process-output-max (* 64 1024))  ; 64kb
+
 ;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification while
 ;; receiving input, which should help with performance while scrolling.
 (setq redisplay-skip-fontification-on-input t)
