@@ -69,9 +69,9 @@ pacman -S texlive-core
 
 ** TODO macOS
 #+BEGIN_SRC sh
-brew cask install basictex
+brew install --cask basictex
 # If the above doesn't work, then
-brew cask install mactex  # WARNING: large 4gb download!
+brew install --cask mactex  # WARNING: large 4gb download!
 #+END_SRC
 
 #+begin_quote
