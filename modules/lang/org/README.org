@@ -184,7 +184,7 @@ esoteric features:
 
 ** MacOS
 #+BEGIN_SRC sh
-brew cask install mactex
+brew install --cask mactex
 brew install gnuplot
 #+END_SRC
 
