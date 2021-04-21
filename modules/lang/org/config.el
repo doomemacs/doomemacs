@@ -272,6 +272,12 @@ Also adds support for a `:sync' parameter to override `:async'."
   (after! python
     (setq org-babel-python-command python-shell-interpreter))
 
+  (after! ob-ditaa
+    ;; TODO Should be fixed upstream
+    (let ((default-directory (org-find-library-dir "org-contribdir")))
+      (setq org-ditaa-jar-path     (expand-file-name "scripts/ditaa.jar")
+            org-ditaa-eps-jar-path (expand-file-name "scripts/DitaaEps.jar"))))
+
   ;; NOTE Backported from Emacs 27.1
   ;; DEPRECATED Remove when 26.x support is dropped
   (unless EMACS27+

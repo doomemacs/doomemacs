@@ -6,7 +6,7 @@
 (package! org-mode
   :recipe (:host github
            :repo "emacs-straight/org-mode"
-           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el")
+           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el" "contrib/scripts")
            ;; HACK A necessary hack because org requires a compilation step
            ;;      after being cloned, and during that compilation a
            ;;      org-version.el is generated with these two functions, which
