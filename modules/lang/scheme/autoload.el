@@ -1,31 +1,30 @@
 ;;; lang/scheme/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK geiser-* plugins will try to add to these two variables, so it must be
-;;      defined before their autoloads are evaluated. Fortunately, Doom modules'
-;;      autoloads run earlier than package autoloads.
-;; TODO PR this upstream
+;; HACK `geiser' has poor autoload ettiquette. It calls
+;;      `geiser-activate-implementation' and `geiser-implementation-extension'
+;;      in their autoloads files. Sure, these functions are autoloaded, but this
+;;      needlessly (and unavoidably) pulls in the `geiser-impl' package (et co)
+;;      when geiser-X's autoloads are read (i.e. at startup).
+;;
+;;      I rectify this by inlining calls to these two functions (and the
+;;      `geiser-impl--add-to-alist' sub-call in
+;;      `geiser-implementation-extension'), and autoloading the two variables
+;;      they operate on. I do this from our autoloads file (which is read right
+;;      before package autoloads are).
+;; TODO At some point, PR this behavior upstream (but not verbatim!)
 ;;;###autoload (defvar geiser-active-implementations ())
 ;;;###autoload (defvar geiser-implementations-alist ())
-
-;; HACK `geiser-impl--add-to-alist' is autoloaded, but not inlined. This means
-;;      `geiser-impl' is needlessly pulled in immediately at startup when
-;;      geiser-X's autoloads are loaded. Since Doom byte-compiles its autoloads
-;;      file we can avoid this by forcibly inlining the function (by redefining
-;;      it with `defsubst').
-;; TODO PR this upstream
-;;;###autoload
-(defsubst geiser-impl--add-to-alist (kind what impl &optional append)
-  (add-to-list 'geiser-implementations-alist (list (list kind what) impl) append))
+;;;###autoload (eval-and-compile (dolist (sym '(geiser-impl--add-to-alist geiser-activate-implementation geiser-implementation-extension)) (put sym 'byte-optimizer 'byte-compile-inline-expand)))
 
 
 (defvar calculate-lisp-indent-last-sexp)
 ;; Adapted from https://github.com/alezost/emacs-config/blob/master/utils/al-scheme.el#L76-L123
 ;;;###autoload
-(defun +scheme-scheme-indent-function-a (indent-point state)
+(defun +scheme-indent-function-a (indent-point state)
   "Advice to replace `scheme-indent-function'.
 
-This function is the same as `scheme-indent-function' except it indents property
-lists properly and names starting with 'default'."
+This function is the same as `scheme-indent-function' except it properly indents
+property lists and names starting with 'default'."
   (let ((normal-indent (current-column)))
     (goto-char (1+ (elt state 1)))
     (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)

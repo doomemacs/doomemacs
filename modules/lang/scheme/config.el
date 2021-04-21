@@ -2,7 +2,7 @@
 
 (use-package! scheme
   :hook (scheme-mode . rainbow-delimiters-mode)
-  :config (advice-add #'scheme-indent-function :override #'+scheme-scheme-indent-function-a))
+  :config (advice-add #'scheme-indent-function :override #'+scheme-indent-function-a))
 
 
 (use-package! geiser

@@ -1,20 +1,20 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(when (package! geiser :pin "c5a9aae4d30ea6dbf2d8af4dd1cc35a839686a00")
+(when (package! geiser :pin "2b45bd368b4acbcef53c3c761725241fb6846102")
   (package! macrostep-geiser :pin "8600fca05fd12a2e0ffe63238ddbfcb37c285dac")
   (when (featurep! +chez)
-    (package! geiser-chez :pin "4cb7f2667ea1c53da53f0144910fbbd67bccbf4d"))
+    (package! geiser-chez :pin "03da1c17253856d8713bc5a25140cb5002c9c188"))
   (when (featurep! +chibi)
-    (package! geiser-chibi :pin "54e7f384618c73d8fb675b5289d443a8ee3e4dc8"))
+    (package! geiser-chibi :pin "6f59291d8d1dc92ffd3f53f919d8cab4bf50b7d3"))
   (when (featurep! +chicken)
-    (package! geiser-chicken :pin "47be5b43b35d3bf35b0f668b4c08715ea41fb97d"))
+    (package! geiser-chicken :pin "ceab39c89607f55cba88e5606ba5eb37c7df5260"))
   (when (featurep! +gambit)
-    (package! geiser-gambit :pin "0ee4156640988497779345452c3aa0417356e606"))
+    (package! geiser-gambit :pin "3294c944d1c3b79db44ed14b133129fec454bd60"))
   (when (featurep! +gauche)
     (package! geiser-gauche :pin "66e51430bded0f0e2037f474818a7bbaafb2906c"))
   (when (featurep! +guile)
-    (package! geiser-guile :pin "93ef7101fdfcc7eac6f465b4b9788c384a323c14")
+    (package! geiser-guile :pin "700ac985c1c729ba1005a0a076c683e9f781526f")
     (when (featurep! :checkers syntax)
       (package! flycheck-guile
         :recipe (:host github :repo "flatwhatson/flycheck-guile")
@@ -24,4 +24,4 @@
   (when (featurep! +mit)
     (package! geiser-mit :pin "d17394f577aaa2854a74a1a0039cb8f73378b400"))
   (when (featurep! +racket)
-    (package! geiser-racket :pin "a87fd449cc6c7b0b17a0b08268e78d3f038f3351")))
+    (package! geiser-racket :pin "22e56ce80389544d3872cf4beb4008fb514b2218")))
