@@ -113,7 +113,15 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
   (add-hook! 'magit-status-mode-hook
     (defun +magit-optimize-process-calls-h ()
       (when-let (path (executable-find magit-git-executable t))
-        (setq-local magit-git-executable path)))))
+        (setq-local magit-git-executable path))))
+
+  (add-hook! 'magit-diff-visit-file-hook
+    (defun +magit-reveal-point-if-invisible-h ()
+      "Reveal the point if in an invisible region."
+      (if (derived-mode-p 'org-mode)
+          (org-reveal '(4))
+        (require 'reveal)
+        (reveal-post-command)))))
 
 
 (use-package! forge
