@@ -51,7 +51,6 @@
                      (when (org-before-first-heading-p)
                        (org-next-visible-heading 1))
                      (ignore-errors (org-up-heading-all 99))
-                     (forward-line 1)
                      (point))
                    (progn (org-end-of-subtree t t)
                           (when (and (org-at-heading-p) (not (eobp)))
