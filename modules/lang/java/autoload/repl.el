@@ -1,11 +1,5 @@
 ;;; lang/java/autoload/repl.el -*- lexical-binding: t; -*-
 
-(defvar +java/inferior-java-program "jshell"
-  "Default Java interactive shell command.")
-
-(defvar +java/inferior-java-buffer-name-sans* +java/inferior-java-program
-  "Default Java REPL buffer name, sans \"*\".")
-
 (defvar +java/java-buffer nil)
 
 ;;;###autoload
@@ -15,15 +9,20 @@
 With argument, allows you to edit the command line (default is
 value of `+java/inferior-java-program')."
   (interactive
-   (list (if current-prefix-arg
-             (read-shell-command "Run java: " +java/inferior-java-program)
-           +java/inferior-java-program)))
-  (let ((buffer (make-comint +java/inferior-java-buffer-name-sans*
-                             (or cmd +java/inferior-java-program))))
+   (list
+    (if current-prefix-arg
+        (read-shell-command "Run java: " +java/inferior-java-program)
+      +java/inferior-java-program)))
+  (let ((buffer
+         (if (comint-check-proc +java/java-buffer)
+             +java/java-buffer
+           (make-comint +java/inferior-java-buffer-name-sans*
+                        (or cmd +java/inferior-java-program)))))
     (with-current-buffer buffer
       (+java/inferior-java-mode)
       (setq +java/java-buffer (buffer-name)))
-    (pop-to-buffer buffer)))
+    (pop-to-buffer buffer)
+    (get-buffer-process buffer)))
 
 ;;;###autoload
 (defun +java/open-repl ()
@@ -41,6 +40,3 @@ controls which Java interpreter is run.
 The following commands are available:
 \\{+java/inferior-java-mode-map}."
   (compilation-shell-minor-mode 1))
-
-(set-popup-rule! (concat "^\\*" +java/inferior-java-buffer-name-sans* "\\*$"))
-(set-repl-handler! 'java-mode #'+java/open-repl)

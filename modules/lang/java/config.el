@@ -30,6 +30,13 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
       ((featurep! :tools lsp +eglot))
       ((featurep! +lsp)       (load! "+lsp")))
 
+(defvar +java/inferior-java-program "jshell"
+  "Default Java interactive shell command.")
+(defvar +java/inferior-java-buffer-name-sans* +java/inferior-java-program
+  "Default Java REPL buffer name, sans \"*\".")
+(after! cc-mode
+  (set-popup-rule! (concat "^\\*" +java/inferior-java-buffer-name-sans* "\\*$"))
+  (set-repl-handler! 'java-mode #'+java/open-repl))
 
 ;;
 ;;; Common packages
