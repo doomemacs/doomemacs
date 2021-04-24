@@ -95,5 +95,13 @@
   (defvar org-gcal-token-file (concat org-gcal-dir "token.gpg"))
   :config
   ;; hack to avoid the deferred.el error
-  (defun org-gcal--notify (title mes)
-    (message "org-gcal::%s - %s" title mes)))
+  (defun org-gcal--notify (title message &optional silent)
+    "Send alert with TITLE and MESSAGE.
+
+When SILENT is non-nil, silence messages even when ‘org-gcal-notify-p’ is
+non-nil."
+    (when (and org-gcal-notify-p (not silent))
+      (if org-gcal-logo-file
+          (alert message :title title :icon org-gcal-logo-file)
+        (alert message :title title))
+      (message "%s\n%s" title message))))
