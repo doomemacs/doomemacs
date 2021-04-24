@@ -4,17 +4,25 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
+- [[#maintainers][Maintainers]]
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+- [[#instructions][Instructions]]
 - [[#configuration][Configuration]]
+- [[#notes-on-different-types-of-input][Notes on different types of input]]
 - [[#troubleshooting][Troubleshooting]]
+
+* Maintainers
+Brandon Pollack <https://github.com/brandonpollack23>
 
 * Description
 This module adds support for Japanese script.
+
+Emacs でも日本語で入力！
 
 #+begin_quote
 Because I am unable to personally test this module, help to improve this module
@@ -29,6 +37,7 @@ This module provides no flags.
 + [[https://github.com/momomo5717/avy-migemo][avy-migemo]]
 + [[https://github.com/hsaito/ddskk][ddskk]]
 + [[https://github.com/coldnew/pangu-spacing][pangu-spacing]]
++ [[https://github.com/google/mozc/blob/master/src/unix/emacs/mozc.el][mozc]]
 
 ** Hacks
 + ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
@@ -38,6 +47,42 @@ This module provides no flags.
 + For incremental search with Migemo, one of the following is required:
   + [[https://github.com/koron/cmigemo][cmigemo]], which is recommended, or
   + [[http://0xcc.net/migemo/][CVS Head Migemo]]
++ For Mozc input, install emacs-mozc-bin on your system, which should also
+  install mozc if you don't have it already. On debian based systems this is as
+  easy as:
+  #+begin_src bash
+sudo apt install emacs-mozc-bin -y
+  #+end_src
 * TODO Features
+* TODO Instructions
++ Just switch your input mode (default bound to "C-\") and select ddskk or japanese-mozc.
 * TODO Configuration
++ Mozc
+  * The module configures it to use overlay, as discussed in the [[https://wiki.archlinux.org/index.php/Mozc#Mozc_for_Emacs][Arch
+    Wiki]].
+  * There is a bit of conflict when using Mozc with org mode keybindings, you can
+    fix this problem with
+    #+begin_src elisp
+(use-package! evil-org
+  :when (featurep! :editor evil +everywhere)
+  :config
+  (map! :map evil-org-mode-map
+        :i "RET" (cmds! mozc-mode (cmd! (mozc-handle-event last-command-event))
+                        (cmd! (org-return electric-indent-mode)))
+        :i [return] (cmds! mozc-mode (cmd! (mozc-handle-event last-command-event))
+                           (cmd! (org-return
+                           electric-indent-mode)))))
+    #+end_src
+    in your configuration, this will allow mozc to handle the return key before
+    =electric-indent-mode=
+  * There is an option for a popup in your input buffer area, but this has less than ideal performance, so selection candidates in your echo area are the configured default, you can change this like so:
+    #+begin_src elisp
+(after! mozc
+  (setq-default mozc-candidate-style 'overlay))
+    #+end_src
+
+* TODO Notes on different types of input
++ For an experience similar to what you get in windows IMI or Google Japanese Input on linux, use mozc
++ ddskk is older and different than most English speakers are used to. It's also
+  [[https://www.reddit.com/r/emacs/comments/7qszxl/help_with_typing_japanese_in_emacs/][not easy to find documentation in english]], but there is [[https://gist.github.com/akirak/e93876855f8b1d295c2cd0ff2370af8d][this gist]].
 * TODO Troubleshooting

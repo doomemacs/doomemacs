@@ -39,6 +39,8 @@
   :config
   (add-hook 'doom-escape-hook #'skk-mode-exit))
 
+(after! mozc
+  (setq-default mozc-candidate-style 'echo-area))
 
 ;;
 ;;; Hacks
