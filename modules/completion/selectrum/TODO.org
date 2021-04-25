@@ -2,7 +2,6 @@
 ** TODO Start-up with recent files
 ** TODO Add vanilla keybindings
 *** TODO Add keybinding for embark-act
-** TODO ~+orderless~ doesn't work
 * PROJ List of things needed for Ivy parity
 ** TODO Icons
 https://github.com/minad/marginalia/issues/59
