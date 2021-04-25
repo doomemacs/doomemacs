@@ -282,34 +282,34 @@ config.el instead."
 ;; fonts that are larger than the system default (which would resize the frame).
 (setq frame-inhibit-implied-resize t)
 
-;; Adopt a sneaky garbage collection strategy of waiting until idle time to
-;; collect; staving off the collector while the user is working.
-(setq gcmh-idle-delay 5
+;; The GC introduces annoying pauses and stuttering into our Emacs experience,
+;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
+;; when it's idle.
+(setq gcmh-idle-delay 5  ; default is 15s
       gcmh-verbose doom-debug-p)
 
-;; Emacs "updates" its ui more often than it needs to, so we slow it down
-;; slightly from 0.5s:
-(setq idle-update-delay 1.0)
+;; Emacs "updates" its ui more often than it needs to, so slow it down slightly
+(setq idle-update-delay 1.0)  ; default is 0.5
 
 ;; Font compacting can be terribly expensive, especially for rendering icon
 ;; fonts on Windows. Whether disabling it has a notable affect on Linux and Mac
-;; hasn't been determined, but we inhibit it there anyway. This increases memory
-;; usage, however!
+;; hasn't been determined, but do it there anyway, just in case. This increases
+;; memory usage, however!
 (setq inhibit-compacting-font-caches t)
 
 ;; Increase how much is read from processes in a single chunk (default is 4kb).
-;; This is further increased by our more expensive LSP module, and where needed.
+;; This is further increased elsewhere, where needed (like our LSP module).
 (setq read-process-output-max (* 64 1024))  ; 64kb
 
 ;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification while
-;; receiving input, which should help with performance while scrolling.
+;; receiving input, which should help a little with scrolling performance.
 (setq redisplay-skip-fontification-on-input t)
 
 ;; Performance on Windows is considerably worse than elsewhere. We'll need
 ;; everything we can get.
 (when IS-WINDOWS
   (setq w32-get-true-file-attributes nil   ; decrease file IO workload
-        w32-pipe-read-delay 0              ; faster ipc
+        w32-pipe-read-delay 0              ; faster IPC
         w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
 ;; Remove command line options that aren't relevant to our current OS; means
@@ -319,9 +319,8 @@ config.el instead."
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason; inexplicably doubling startup time for terminal Emacs. Keeping
-;;      it disabled will have nasty side-effects, so we simply delay it until
-;;      later in the startup process and, for some reason, it runs much faster
-;;      when it does.
+;;      it disabled will have nasty side-effects, so we simply delay it instead,
+;;      and invoke it later, at which point it runs quickly; how mysterious!
 (unless (daemonp)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook! 'window-setup-hook

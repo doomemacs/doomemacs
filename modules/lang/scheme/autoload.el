@@ -1,6 +1,6 @@
 ;;; lang/scheme/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK `geiser' has poor autoload ettiquette. It calls
+;; HACK `geiser' has poor autoload etiquette. It calls
 ;;      `geiser-activate-implementation' and `geiser-implementation-extension'
 ;;      in their autoloads files. Sure, these functions are autoloaded, but this
 ;;      needlessly (and unavoidably) pulls in the `geiser-impl' package (et co)
@@ -9,8 +9,8 @@
 ;;      I rectify this by inlining calls to these two functions (and the
 ;;      `geiser-impl--add-to-alist' sub-call in
 ;;      `geiser-implementation-extension'), and autoloading the two variables
-;;      they operate on. I do this from our autoloads file (which is read right
-;;      before package autoloads are).
+;;      they operate on. I do this from our autoloads file (which is
+;;      byte-compiled and read at startup before package autoloads).
 ;; TODO At some point, PR this behavior upstream (but not verbatim!)
 ;;;###autoload (defvar geiser-active-implementations ())
 ;;;###autoload (defvar geiser-implementations-alist ())
