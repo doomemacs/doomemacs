@@ -29,35 +29,54 @@ to a pop up buffer."
 ;;; Handlers
 
 (defun +emacs-lisp--module-at-point ()
-  (let ((origin (point)))
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "(doom! " nil 'noerror)
-        (goto-char (match-beginning 0))
-        (cl-destructuring-bind (beg . end)
-            (bounds-of-thing-at-point 'sexp)
-          (when (and (>= origin beg)
-                     (<= origin end))
+  "Return (CATEGORY MODULE FLAG) at point inside a `doom!' block."
+  (let ((origin (point))
+        (syntax (syntax-ppss)))
+    (when (and (> (ppss-depth syntax) 0) (not (ppss-string-terminator syntax)))
+      (save-excursion
+        (let ((parens (ppss-open-parens syntax))
+              (doom-depth 1))
+          (while (and parens (progn (goto-char (car parens))
+                                    (not (looking-at "(doom!\\_>"))))
+            (setq parens (cdr parens)
+                  doom-depth (1+ doom-depth)))
+          (when parens ;; Are we inside a `doom!' block?
             (goto-char origin)
-            (while (not (sexp-at-point))
-              (forward-symbol -1))
-            (let (category module flag)
-              (cond ((keywordp (setq category (sexp-at-point)))
-                     (while (keywordp (sexp-at-point))
-                       (forward-sexp 1))
-                     (setq module (car (doom-enlist (sexp-at-point)))))
-                    ((and (symbolp (setq module (sexp-at-point)))
-                          (string-prefix-p "+" (symbol-name module)))
-                     (while (symbolp (sexp-at-point))
-                       (thing-at-point--beginning-of-sexp))
-                     (setq flag module
-                           module (car (sexp-at-point)))
-                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
-                       (setq category (sexp-at-point))))
-                    ((symbolp module)
-                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
-                       (setq category (sexp-at-point)))))
-              (list category module flag))))))))
+            (let* ((doom-start (car parens))
+                   (bare-symbol
+                    (if (ppss-comment-depth syntax)
+                        (= (save-excursion (beginning-of-thing 'list)) doom-start)
+                      (null (cdr parens))))
+                   (sexp-start (if bare-symbol
+                                   (beginning-of-thing 'symbol)
+                                 (or (cadr parens) (beginning-of-thing 'list))))
+                   (match-start nil))
+              (goto-char sexp-start)
+              (while (and (not match-start)
+                          (re-search-backward
+                           "\\_<:\\(?:\\sw\\|\\s_\\)+\\_>" ;; Find a keyword.
+                           doom-start 'noerror))
+                (unless (looking-back "(")
+                  (let ((kw-syntax (syntax-ppss)))
+                    (when (and (= (ppss-depth kw-syntax) doom-depth)
+                               (not (ppss-string-terminator kw-syntax))
+                               (not (ppss-comment-depth kw-syntax)))
+                      (setq match-start (point))))))
+              (when match-start
+                (let (category module flag)
+                  ;; `point' is already at `match-start'.
+                  (setq category (symbol-at-point))
+                  (goto-char origin)
+                  (if bare-symbol
+                      (setq module (symbol-at-point))
+                    (let ((symbol (symbol-at-point))
+                          (head (car (list-at-point))))
+                      (if (and (symbolp head) (not (keywordp head))
+                               (not (eq head symbol)))
+                          (setq module head
+                                flag symbol)
+                        (setq module symbol))))
+                  (list category module flag))))))))))
 
 ;;;###autoload
 (defun +emacs-lisp-lookup-definition (_thing)
