@@ -171,7 +171,10 @@ we have to clean it up ourselves."
   :defer t
   :init
   (global-set-key [remap find-dired] #'fd-dired)
-  (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
+  (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t)
+  :config
+  (when IS-BSD
+    (setq fd-dired-ls-option `(,(concat "| xargs -0 " insert-directory-program " -ld | uniq") . "-ld"))))
 
 (use-package! dired-aux
   :defer t
