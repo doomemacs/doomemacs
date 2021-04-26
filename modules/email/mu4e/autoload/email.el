@@ -300,7 +300,11 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
   :lighter "attach"
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "C-c C-c") '+mu4e/attach-files)
-            map))
+            map)
+  (setq header-line-format
+        (when dired-mu4e-attach-ctrl-c-ctrl-c
+          (substitute-command-keys
+           "Mu4e attach active. `\\[+mu4e/attach-files]' to attach the marked files."))))
 
 ;;;###autoload
 (defun +mu4e-current-buffers ()
