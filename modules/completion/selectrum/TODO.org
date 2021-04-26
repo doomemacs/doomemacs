@@ -2,7 +2,7 @@
 ** TODO Functions very slow on startup:
 - =consult-recent-files=
 - =consult-bookmark=
-Probably due to live preview, but gets much faster on subsequent calls.
+preview deactivated for now (see consult use-package)
 ** TODO Add vanilla keybindings
 *** TODO Add keybinding for embark-act
 ** TODO =SPC s s= and =SPC s S= ~:sw~
