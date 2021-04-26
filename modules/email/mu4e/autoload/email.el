@@ -235,10 +235,11 @@ is tomorrow.  With two prefixes, select the deadline."
 ;;;###autoload
 (defun +mu4e/attach-files (&optional files-to-attach)
   "When called in a dired buffer, ask for a message to attach the marked files to.
-When called in a mu4e:compose or org-msg buffer, open a dired window to select file attachments in,
-and enable `dired-mu4e-attach-ctrl-c-ctrl-c' which adds C-c C-c as a keybinding to attach the files.
+When called in a mu4e:compose or org-msg buffer, `read-file-name'to either
+attach a file, or select a folder to open dired in and select file attachments
+(using `dired-mu4e-attach-ctrl-c-ctrl-c').
 
-When otherwise called, open a dired buffer."
+When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-ctrl-c'."
   ;; TODO add ability to attach files (+dirs) as a single (named) archive
   (interactive "p")
   (mu4e-compose-org-msg-handle-toggle (/= 1 files-to-attach))
