@@ -87,7 +87,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     (python-mode)
     ;; Ruby
     ("/lib/.+\\.rb$"      :trigger "__module"    :mode ruby-mode  :project t)
-    ("/app/.+\\.rb$"      :trigger "__app_class" :mode ruby-mode  :project t)
+    ("/app/.+/.*\\.rb$"   :trigger "__app_class" :mode ruby-mode  :project t)
     ("/spec_helper\\.rb$" :trigger "__helper"    :mode rspec-mode :project t)
     ("_spec\\.rb$"                               :mode rspec-mode :project t)
     ("/\\.rspec$"         :trigger "__.rspec"    :mode rspec-mode :project t)
