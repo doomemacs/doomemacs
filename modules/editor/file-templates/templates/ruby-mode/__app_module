@@ -4,6 +4,6 @@
    (setq-local pkgs-count 0)
    "# frozen_string: literal")`
 `(if (not pkgs-p) (concat "\n" (string-join (mapcar (lambda (x) (setq pkgs-count (1+ pkgs-count)) (concat (make-string (- pkgs-count 1) ? ) "module " (replace-regexp-in-string "_" "" (capitalize x)))) (butlast pkgs 1)) "\n")) nil)`
-class `(replace-regexp-in-string "_" "" (capitalize (nth 0 (last pkgs))))`${2: < ${3:Base}}
+class `(replace-regexp-in-string "_" "" (capitalize (nth 0 (last pkgs))))`
   `%`${0:}
 `(string-join (mapcar (lambda (x) (setq pkgs-count (- pkgs-count 1)) (concat (make-string (+ 1 pkgs-count) ? )) "end") pkgs) "\n")`
