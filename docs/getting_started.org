@@ -22,6 +22,7 @@ us know!
     - [[#on-linux][On Linux]]
       - [[#ubuntu][Ubuntu]]
       - [[#fedora][Fedora]]
+      - [[#void-linux][Void Linux]]
       - [[#arch-linux][Arch Linux]]
       - [[#nixos][NixOS]]
       - [[#opensuse][openSUSE]]
@@ -143,6 +144,14 @@ To install Emacs 27 on Ubuntu, you'll need to build it from source.
 dnf install emacs git ripgrep
 # optional dependencies
 dnf install fd-find    # is 'fd' in Fedora <28
+#+END_SRC
+
+**** Void Linux
+#+BEGIN_SRC bash
+# required dependencies
+xbps-install git ripgrep emacs-gtk3 emacs-common # the regular emacs package installs emacs for terminal use. you have to install emacs-gtk3 for the.you can still use emacs in the terminal with emacs -nw.
+# optional dependencies
+xbps-install fd
 #+END_SRC
 
 **** Arch Linux
