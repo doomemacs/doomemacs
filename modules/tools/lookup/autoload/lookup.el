@@ -259,11 +259,16 @@ current buffer."
                     (<  pt end))))))))
 
 (defun +lookup-ffap-backend-fn (_identifier)
-  "Uses `find-file-at-point' to read file at point."
+  "Uses `find-file-at-point' to read file in region or at point."
   (require 'ffap)
-  (when (ffap-guesser)
-    (find-file-at-point)
-    t))
+  (or (and (region-active-p)
+           (let ((region (buffer-substring (region-beginning) (region-end))))
+             (when (file-exists-p region)
+               (find-file-at-point region)
+               t)))
+      (when (ffap-guesser)
+        (find-file-at-point)
+        t)))
 
 (defun +lookup-bug-reference-backend-fn (_identifier)
   "Searches for a bug reference in user/repo#123 or #123 format and opens it in
