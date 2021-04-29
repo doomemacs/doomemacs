@@ -8,5 +8,6 @@
          (package! flyspell-correct-ivy))
         ((featurep! :completion helm)
          (package! flyspell-correct-helm))
-        ((package! flyspell-correct-popup)))
+        ((not (featurep! :completion selectrum))
+         (package! flyspell-correct-popup)))
   (package! flyspell-lazy :pin "0fc5996bcee20b46cbd227ae948d343c3bef7339"))
