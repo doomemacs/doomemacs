@@ -128,7 +128,7 @@ ready to be pasted in a bug report on github."
         (distro . ,(list (doom-system-distro-version) (sh "uname" "-msr")))
         (emacs . ,(delq
                    nil (list emacs-version
-                             emacs-repository-branch
+                             (bound-and-true-p emacs-repository-branch)
                              (and (stringp emacs-repository-version)
                                   (substring emacs-repository-version 0 9))
                              (symlink-path doom-emacs-dir))))
