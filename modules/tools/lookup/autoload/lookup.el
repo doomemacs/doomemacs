@@ -258,11 +258,25 @@ current buffer."
           (not (and (>= pt beg)
                     (<  pt end))))))))
 
-(defun +lookup-ffap-backend-fn (_identifier)
-  "Uses `find-file-at-point' to read file at point."
-  (require 'ffap)
-  (when (ffap-guesser)
-    (find-file-at-point)
+(defun +lookup-ffap-backend-fn (identifier)
+  "Tries to locate the file at point (or in active selection).
+Uses find-in-project functionality (provided by ivy, helm, or project),
+otherwise falling back to ffap.el (find-file-at-point)."
+  (let ((guess
+         (cond (identifier)
+               ((doom-region-active-p)
+                (buffer-substring-no-properties
+                 (doom-region-beginning)
+                 (doom-region-end)))
+               ((if (require 'ffap) (ffap-guesser)))
+               ((thing-at-point 'filename t)))))
+    (cond ((and (stringp guess)
+                (file-exists-p guess))
+           (find-file-at-point guess))
+          ((and (featurep! :completion ivy)
+                (doom-project-p))
+           (counsel-file-jump guess (doom-project-root)))
+          ((find-file-at-point (ffap-prompter guess))))
     t))
 
 (defun +lookup-bug-reference-backend-fn (_identifier)
@@ -351,7 +365,6 @@ for the current mode/buffer (if any), then falls back to the backends in
   (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer arg))
         ((user-error "Couldn't find documentation for %S" identifier))))
 
-(defvar ffap-file-finder)
 ;;;###autoload
 (defun +lookup/file (&optional path)
   "Figure out PATH from whatever is at point and open it.
@@ -368,13 +381,7 @@ Otherwise, falls back on `find-file-at-point'."
 
         ((+lookup--jump-to :file path))
 
-        ((stringp path) (find-file-at-point path))
-
-        ((featurep! :completion ivy)
-         (counsel-file-jump (thing-at-point 'filename t)
-                            (doom-project-root)))
-
-        ((ffap-prompter (thing-at-point 'filename t)))))
+        ((user-error "Couldn't find any files here"))))
 
 
 ;;
