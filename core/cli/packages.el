@@ -63,15 +63,34 @@ list remains lean."
   (if full commit (substring commit 0 7)))
 
 (defun doom--commit-log-between (start-ref end-ref)
-  (when-let*
-      ((status (straight--call
-                "git" "log" "--oneline" "--no-merges"
-                "-n" "26" end-ref (concat "^" (regexp-quote start-ref))))
-       (output (string-trim-right (straight--process-get-output)))
-       (lines (split-string output "\n")))
-    (if (> (length lines) 25)
-        (concat (string-join (butlast lines 1) "\n") "\n[...]")
-      output)))
+  (straight--process-with-result
+   (straight--process-run
+    "git" "log" "--oneline" "--no-merges"
+    "-n" "26" end-ref (concat "^" (regexp-quote start-ref)))
+   (if success
+       (let* ((output (string-trim-right stdout))
+              (lines (split-string output "\n")))
+         (if (> (length lines) 25)
+             (concat (string-join (butlast lines 1) "\n") "\n[...]")
+           output))
+     (format "ERROR: Couldn't collect commit list because: %s" stderr))))
+
+(defmacro doom--straight-with (form &rest body)
+  (declare (indent 1))
+  `(let-alist
+       (let* ((buffer (straight--process-buffer))
+              (start  (with-current-buffer buffer (point-max)))
+              (retval ,form)
+              (output (with-current-buffer buffer (buffer-substring start (point-max)))))
+         (save-match-data
+           (list (cons 'it      retval)
+                 (cons 'stdout  (substring-no-properties output))
+                 (cons 'success (if (string-match "\n+\\[Return code: \\([0-9-]+\\)\\]\n+" output)
+                                    (string-to-number (match-string 1 output))))
+                 (cons 'output  (string-trim output
+                                             "^\\(\\$ [^\n]+\n\\)*\n+"
+                                             "\n+\\[Return code: [0-9-]+\\]\n+")))))
+     ,@body))
 
 (defun doom--barf-if-incomplete-packages ()
   (let ((straight-safe-mode t))
@@ -101,24 +120,25 @@ list remains lean."
     (print! (start "Updating recipe repos..."))
     (print-group!
      (doom--with-package-recipes
-         (delq
-          nil (mapcar (doom-rpartial #'gethash straight--repo-cache)
-                      (mapcar #'symbol-name straight-recipe-repositories)))
-         (recipe package type local-repo)
-       (let ((esc (unless doom-debug-p "\033[1A"))
-             (ref (straight-vc-get-commit type local-repo))
-             newref output)
-         (print! (start "\033[KUpdating recipes for %s...%s") package esc)
-         (when (straight-vc-fetch-from-remote recipe)
-           (setq output (straight--process-get-output))
-           (straight-merge-package package)
-           (unless (equal ref (setq newref (straight-vc-get-commit type local-repo)))
-             (print! (success "\033[K%s updated (%s -> %s)")
-                     package
-                     (doom--abbrev-commit ref)
-                     (doom--abbrev-commit newref))
-             (unless (string-empty-p output)
-               (print-group! (print! (info "%s" output)))))))))
+      (delq
+       nil (mapcar (doom-rpartial #'gethash straight--repo-cache)
+                   (mapcar #'symbol-name straight-recipe-repositories)))
+      (recipe package type local-repo)
+      (let ((esc (unless doom-debug-p "\033[1A"))
+            (ref (straight-vc-get-commit type local-repo))
+            newref output)
+        (print! (start "\033[KUpdating recipes for %s...%s") package esc)
+        (doom--straight-with (straight-vc-fetch-from-remote recipe)
+          (when .it
+            (setq output .output)
+            (straight-merge-package package)
+            (unless (equal ref (setq newref (straight-vc-get-commit type local-repo)))
+              (print! (success "\033[K%s updated (%s -> %s)")
+                      package
+                      (doom--abbrev-commit ref)
+                      (doom--abbrev-commit newref))
+              (unless (string-empty-p output)
+                (print-group! (print! (info "%s" output))))))))))
     (setq straight--recipe-lookup-cache (make-hash-table :test #'eq)
           doom--cli-updated-recipes t)))
 
@@ -384,12 +404,13 @@ declaration) or dependency thereof that hasn't already been."
                (or (cond
                     ((not (stringp target-ref))
                      (print! (start "\033[K(%d/%d) Fetching %s...%s") i total package esc)
-                     (when (straight-vc-fetch-from-remote recipe)
-                       (setq output (straight--process-get-output))
-                       (straight-merge-package package)
-                       (setq target-ref (straight-vc-get-commit type local-repo))
-                       (or (not (doom--same-commit-p target-ref ref))
-                           (cl-return))))
+                     (doom--straight-with (straight-vc-fetch-from-remote recipe)
+                       (when .it
+                         (setq output .output)
+                         (straight-merge-package package)
+                         (setq target-ref (straight-vc-get-commit type local-repo))
+                         (or (not (doom--same-commit-p target-ref ref))
+                             (cl-return)))))
 
                     ((doom--same-commit-p target-ref ref)
                      (print! (info "\033[K(%d/%d) %s is up-to-date...%s") i total package esc)
@@ -474,16 +495,18 @@ declaration) or dependency thereof that hasn't already been."
       (print! (warn "\033[KSkipping repos/%s because it is local" repo))
       (cl-return))
     (let ((before-size (doom-directory-size default-directory)))
-      (straight--call "git" "reset" "--hard")
-      (straight--call "git" "clean" "-ffd")
-      (if (not (car (straight--call "git" "replace" "--graft" "HEAD")))
+      (doom-call-process "git" "reset" "--hard")
+      (doom-call-process "git" "clean" "-ffd")
+      (if (not (zerop (car (doom-call-process "git" "replace" "--graft" "HEAD"))))
           (print! (info "\033[Krepos/%s is already compact\033[1A" repo))
-        (straight--call "git" "reflog" "expire" "--expire=all" "--all")
-        (straight--call "git" "gc" "--prune=now")
-        (print! (success "\033[KRegrafted repos/%s (from %0.1fKB to %0.1fKB)")
-                repo before-size (doom-directory-size default-directory))
-        (print-group! (print! "%s" (straight--process-get-output))))
-      t)))
+        (doom-call-process "git" "reflog" "expire" "--expire=all" "--all")
+        (doom-call-process "git" "gc" "--prune=now")
+        (let ((after-size (doom-directory-size default-directory)))
+          (if (equal after-size before-size)
+              (print! (success "\033[Krepos/%s cannot be compacted further" repo))
+            (print! (success "\033[KRegrafted repos/%s (from %0.1fKB to %0.1fKB)")
+                    repo before-size after-size)))))
+    t))
 
 (defun doom--cli-packages-regraft-repos (repos)
   (if (not repos)

@@ -31,7 +31,7 @@ Warning: freezes indefinitely on any stdin prompt."
             (set-process-filter
              process (lambda (_process output)
                        (princ output (current-buffer))
-                       (princ output)))
+                       (princ (doom--format output))))
             (set-process-sentinel
              process (lambda (process _event)
                        (when (memq (process-status process) '(exit stop))
