@@ -79,6 +79,8 @@
 (package! ob-async :pin "de1cd6c93242a4cb8773bbe115b7be3d4dd6b97e")
 (when (featurep! :lang crystal)
   (package! ob-crystal :pin "d84c1adee4b269cdba06a97caedb8071561a09af"))
+(when (featurep! :lang elixir)
+  (package! ob-elixir :pin "8990a8178b2f7bd93504a9ab136622aab6e82e32"))
 (when (featurep! :lang go)
   (package! ob-go :pin "2067ed55f4c1d33a43cb3f6948609d240a8915f5"))
 (when (featurep! :lang hy)
