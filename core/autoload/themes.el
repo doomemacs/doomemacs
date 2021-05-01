@@ -47,13 +47,15 @@ doom-themes' API without worry."
   (declare (indent defun))
   `(custom-theme-set-faces! 'user ,@specs))
 
-(defvar doom--prefer-theme-elc)
 ;;;###autoload
 (defun doom/reload-theme ()
   "Reload the current color theme."
   (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (load-theme doom-theme 'noconfirm)
+  (let ((themes (copy-sequence custom-enabled-themes)))
+    (mapc #'disable-theme custom-enabled-themes)
+    (dolist (theme themes)
+      (if (get theme 'theme-feature)
+          (load-theme theme t)
+        (enable-theme theme)))
+    (message "Reloaded themes: %s" (mapconcat #'prin1-to-string themes ", "))
     (doom/reload-font)))
