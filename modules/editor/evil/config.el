@@ -113,6 +113,19 @@ directives. By default, this only recognizes C directives.")
         (evil-ex-nohighlight)
         t)))
 
+  (when (and (featurep! :lang org) (featurep! +everywhere)
+             evil-want-integration evil-respect-visual-line-mode)
+    ;; If evil is respecting visual-line-mode, but we expect evil-org to also be
+    ;; installed, move evil's backup regular-line-movement bindings, so they
+    ;; won't conflict with evil-org's bindings when visual-line mode is enabled.
+    (general-define-key
+     :definer 'minor-mode
+     :states  'motion
+     :keymaps 'visual-line-mode
+     "gj"     nil
+     "gk"     nil
+     "gs M-j" #'evil-next-line
+     "gs M-k" #'evil-previous-line))
 
   ;; --- evil hacks -------------------------
   (after! eldoc
@@ -592,10 +605,18 @@ directives. By default, this only recognizes C directives.")
       :o "S" #'evil-Surround-edit
 
       ;; evil-lion
-      :n "gl" #'evil-lion-left
-      :n "gL" #'evil-lion-right
-      :v "gl" #'evil-lion-left
-      :v "gL" #'evil-lion-right
+      (:unless (and (featurep! :lang org) (featurep! +everywhere))
+       :n "gl" #'evil-lion-left
+       :n "gL" #'evil-lion-right
+       :v "gl" #'evil-lion-left
+       :v "gL" #'evil-lion-right)
+      ;; If we expect evil-org to be installed, move evil-lion's bindings out of
+      ;; its way.
+      (:when (and (featurep! :lang org) (featurep! +everywhere))
+       :n "gzl"  #'evil-lion-left
+       :n "gzL"  #'evil-lion-right
+       :v "gzl"  #'evil-lion-left
+       :v "gzL"  #'evil-lion-right)
 
       ;; Omni-completion
       (:when (featurep! :completion company)
