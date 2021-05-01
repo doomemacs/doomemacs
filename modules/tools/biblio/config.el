@@ -16,6 +16,7 @@
 
 (use-package! bibtex-actions
   :when (featurep! :completion selectrum)
+  :after embark
   :defer t
   :config
   (add-to-list 'embark-keymap-alist '(bibtex . bibtex-actions-map)))
