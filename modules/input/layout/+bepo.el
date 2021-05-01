@@ -90,7 +90,6 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     (+layout-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
   (after! (:or helm ivy selectrum icomplete)
     (+layout-bepo-rotate-keymaps
-     nil
      '(minibuffer-local-map
        minibuffer-local-ns-map
        minibuffer-local-completion-map
@@ -107,26 +106,25 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
      +layout-bepo-cr-rotation-style))
   (after! ivy
     (+layout-bepo-rotate-bare-keymap '(ivy-minibuffer-map ivy-switch-buffer-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(ivy-minibuffer-map ivy-switch-buffer-map)))
+    (+layout-bepo-rotate-keymaps '(ivy-minibuffer-map ivy-switch-buffer-map)))
   (after! swiper
     (map! :map swiper-map "C-s" nil))
   (after! helm
     (+layout-bepo-rotate-bare-keymap '(helm-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(helm-map)))
+    (+layout-bepo-rotate-keymaps '(helm-map)))
   (after! helm-rg
     (+layout-bepo-rotate-bare-keymap '(helm-rg-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(helm-rg-map)))
+    (+layout-bepo-rotate-keymaps '(helm-rg-map)))
   (after! helm-files
     (+layout-bepo-rotate-bare-keymap '(helm-read-file-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(helm-read-file-map)))
+    (+layout-bepo-rotate-keymaps '(helm-read-file-map)))
   (after! selectrum
     (+layout-bepo-rotate-bare-keymap '(selectrum-minibuffer-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(selectrum-minibuffer-map)))
+    (+layout-bepo-rotate-keymaps '(selectrum-minibuffer-map)))
   (after! company
     (+layout-bepo-rotate-bare-keymap '(company-active-map company-search-map) +layout-bepo-cr-rotation-style))
   (after! evil-snipe
     (+layout-bepo-rotate-keymaps
-     nil
      '(evil-snipe-local-mode-map evil-snipe-override-local-mode-map)))
   (after! lispyville
     ;; <> en direct
