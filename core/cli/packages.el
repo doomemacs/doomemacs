@@ -284,7 +284,7 @@ declaration) or dependency thereof that hasn't already been."
                       (when (and IS-WINDOWS (stringp local-repo))
                         (let ((default-directory (straight--repos-dir local-repo)))
                           (when (file-in-directory-p default-directory straight-base-dir)
-                            (straight--call "git" "config" "core.autocrlf" "true")))))
+                            (straight--process-run "git" "config" "core.autocrlf" "true")))))
                   (error
                    (signal 'doom-package-error (list package e))))))
          (progn
