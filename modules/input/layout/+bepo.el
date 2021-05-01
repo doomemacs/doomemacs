@@ -70,24 +70,22 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
                                      (down . "t")
                                      (left . "c")
                                      (right . "r")))
-  (after! evil
-    (+layout-bepo-rotate-ts-bare-keymap '(read-expression-map))
-    (+layout-bepo-rotate-bare-keymap '(evil-window-map) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-evil-keymap +layout-bepo-cr-rotation-style)
+  (+layout-bepo-rotate-ts-bare-keymap '(read-expression-map))
+  (+layout-bepo-rotate-bare-keymap '(evil-window-map) +layout-bepo-cr-rotation-style)
+  (+layout-bepo-rotate-evil-keymap +layout-bepo-cr-rotation-style)
 
-    (evil-define-key* 'insert 'global (kbd "C-t") #'+default-newline)
-    (map! :i "C-t" #'+default-newline
-          (:when (featurep! :editor multiple-cursors)
-           :prefix "gz"
-           :nv "t"   #'evil-mc-make-cursor-move-next-line
-           :nv "s"   #'evil-mc-make-cursor-move-prev-line
-           ;; The old toggle mapping (t) is made available both on "T" for
-           ;; mnemonics and "j" as a "classic" rotation
-           :nv "T"   #'+multiple-cursors/evil-mc-toggle-cursors
-           :nv "j"   #'+multiple-cursors/evil-mc-toggle-cursors)
-          (:when (featurep! :ui popup)
-           :n "C-$"  #'+popup/toggle
-           :n "C-#"  #'+popup/raise)))
+  (map! :i "C-t" #'+default-newline
+        (:when (featurep! :editor multiple-cursors)
+         :prefix "gz"
+         :nv "t"   #'evil-mc-make-cursor-move-next-line
+         :nv "s"   #'evil-mc-make-cursor-move-prev-line
+         ;; The old toggle mapping (t) is made available both on "T" for
+         ;; mnemonics and "j" as a "classic" rotation
+         :nv "T"   #'+multiple-cursors/evil-mc-toggle-cursors
+         :nv "j"   #'+multiple-cursors/evil-mc-toggle-cursors)
+        (:when (featurep! :ui popup)
+         :n "C-$"  #'+popup/toggle
+         :n "C-#"  #'+popup/raise))
   (after! treemacs
     (+layout-bepo-rotate-ts-bare-keymap '(evil-treemacs-state-map)))
   (after! (:or helm ivy selectrum icomplete)
