@@ -158,3 +158,7 @@
   :when (featurep! +lsp)
   :hook (dap-mode . dap-ui-mode)
   :hook (dap-ui-mode . dap-ui-controls-mode))
+
+(when (and (featurep! +lsp) (featurep! :ui vc-gutter))
+  (add-hook 'dap-ui-mode-hook (lambda ()
+                                (setq-local left-fringe-width 10))))
