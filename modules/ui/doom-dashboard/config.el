@@ -188,7 +188,7 @@ PLIST can have the following properties:
   (setq-local display-line-numbers-type nil)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
-           finally do (setq fringe-indicator-alist alist))
+           finally do (setq-local fringe-indicator-alist alist))
   ;; Ensure point is always on a button
   (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
   ;; Never show hl-line, because the margin cut-off looks ugly!
