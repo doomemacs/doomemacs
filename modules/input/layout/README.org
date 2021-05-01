@@ -30,7 +30,11 @@ This module provides barebones support for using Doom with non-qwerty layouts.
 + @gagbo (Author, Bépo)
 
 ** Module Flags
-+ =+bepo= Enables modifications for the BÉPO layout (customized with version 1.1 in mind)
++ =+azerty= Remaps keybinds to accommodate the
+  [[https://en.wikipedia.org/wiki/AZERTY][Azerty keyboard layout]].
++ =+bepo= Remaps keybinds to accommodate the
+  [[https://en.wikipedia.org/wiki/B%C3%89PO][BÉPO keyboard layout]] (version
+  1.1, in particualr).
 
 ** Plugins
 None

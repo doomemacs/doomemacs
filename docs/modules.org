@@ -90,6 +90,7 @@ Modules that reconfigure or augment packages or features built into Emacs.
 * :input
 + [[file:../modules/input/chinese/README.org][chinese]] - TODO
 + [[file:../modules/input/japanese/README.org][japanese]] - TODO
++ [[file:../modules/input/layout/README.org][layout]] =+azerty +bepo= - TODO
 
 * :lang
 Modules that bring support for a language or group of languages to Emacs.
