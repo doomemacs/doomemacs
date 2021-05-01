@@ -160,5 +160,7 @@
   :hook (dap-ui-mode . dap-ui-controls-mode))
 
 (when (and (featurep! +lsp) (featurep! :ui vc-gutter))
-  (add-hook 'dap-ui-mode-hook (lambda ()
-                                (setq-local left-fringe-width 10))))
+  (defadvice! +debugger--restore-fringe-width-a (&rest _)
+    "Ensure the fringe is wide enough to display breakpoints."
+    :after #'dap-ui--refresh-breakpoints
+    (set-fringe-style)))
