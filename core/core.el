@@ -127,7 +127,7 @@ users).")
 
 (defvar doom-first-input-hook nil
   "Transient hooks run before the first user input.")
-(put doom-first-input-hook 'permanent-local t)
+(put 'doom-first-input-hook 'permanent-local t)
 
 (defvar doom-first-file-hook nil
   "Transient hooks run before the first interactively opened file.")
