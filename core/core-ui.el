@@ -738,15 +738,17 @@ disable it to fix all that visual noise."
   (add-function :around whitespace-enable-predicate #'doom-disable-whitespace-mode-in-childframes-a))
 
 ;; Don't display messages in the minibuffer when using the minibuffer
-(defmacro doom-silence-motion-key (command key)
-  (let ((key-command (intern (format "doom/silent-%s" command))))
-    `(progn
-       (defun ,key-command ()
-         (interactive)
-         (ignore-errors (call-interactively ',command)))
-       (define-key minibuffer-local-map (kbd ,key) #',key-command))))
-(doom-silence-motion-key backward-delete-char "<backspace>")
-(doom-silence-motion-key delete-char "<delete>")
+;; DEPRECATED Remove when Emacs 26.x support is dropped.
+(eval-when! (not EMACS27+)
+  (defmacro doom-silence-motion-key (command key)
+    (let ((key-command (intern (format "doom/silent-%s" command))))
+      `(progn
+         (defun ,key-command ()
+           (interactive)
+           (ignore-errors (call-interactively ',command)))
+         (define-key minibuffer-local-map (kbd ,key) #',key-command))))
+  (doom-silence-motion-key backward-delete-char "<backspace>")
+  (doom-silence-motion-key delete-char "<delete>"))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
