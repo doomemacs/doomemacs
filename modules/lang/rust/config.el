@@ -12,8 +12,7 @@
   :init
   (after! org-src
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
-    (add-to-list 'org-src-lang-modes '("rust" . rustic))
-    (add-to-list 'org-babel-tangle-lang-exts '("rustic" . "rs")))
+    (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
   (setq rustic-indent-method-chain t)
 
