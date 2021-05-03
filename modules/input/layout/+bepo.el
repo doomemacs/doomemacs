@@ -180,7 +180,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
           :m "(c" #'org-babel-previous-src-block))
   (after! (evil org evil-org-agenda)
     (+layout-bepo-rotate-bare-keymap '(org-agenda-keymap) +layout-bepo-cr-rotation-style)
-    (+layout-bepo-rotate-keymaps nil '(evil-org-agenda-mode-map)))
+    (+layout-bepo-rotate-keymaps '(evil-org-agenda-mode-map)))
   (after! notmuch
     ;; Without this, "s" is mapped to `notmuch-search' and takes precedence over
     ;; the evil command to go up one line
@@ -222,7 +222,6 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     ;;      Therefore to prevent a "double rotation" issue, `magit-mode-map' is
     ;;      changed last.
     (+layout-bepo-rotate-keymaps
-     nil
      '(magit-cherry-mode-map
        magit-blob-mode-map
        magit-diff-mode-map
