@@ -222,7 +222,6 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     ;;      Therefore to prevent a "double rotation" issue, `magit-mode-map' is
     ;;      changed last.
     (+layout-bepo-rotate-keymaps
-     nil
      '(magit-cherry-mode-map
        magit-blob-mode-map
        magit-diff-mode-map
