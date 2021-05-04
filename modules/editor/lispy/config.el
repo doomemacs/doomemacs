@@ -9,7 +9,8 @@
          (hy-mode . lispy-mode)
          (lfe-mode . lispy-mode)
          (dune-mode . lispy-mode)
-         (clojure-mode . lispy-mode))
+         (clojure-mode . lispy-mode)
+         (fennel-mode . lispy-mode))
   :init
   (add-hook! 'eval-expression-minibuffer-setup-hook
     (defun doom-init-lispy-in-eval-expression-h ()
