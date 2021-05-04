@@ -1,10 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/org/packages.el
 
-;; Install cutting-edge version of org-mode, and from a mirror, because
-;; code.orgmode.org runs on a potato.
 (package! org-mode
   :recipe (:host github
+           ;; Install cutting-edge version of org-mode, and from a mirror,
+           ;; because code.orgmode.org runs on a potato.
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el" "contrib/scripts")
            ;; HACK A necessary hack because org requires a compilation step
@@ -18,12 +18,12 @@
            (with-temp-file (doom-path (straight--repos-dir "org-mode") "org-version.el")
              (insert "(fset 'org-release (lambda () \"9.5\"))\n"
                      "(fset 'org-git-version #'ignore)\n"
-                     "(provide 'org-version)\n")))
-  :pin "7a62a4d3251a512069aa06b0082529d61d22de26"
-  ;; Prevents built-in Org from sneaking into the byte-compilation of
-  ;; `org-plus-contrib', and inform other packages that `org-mode' satisfies the
-  ;; `org' dependency: https://github.com/raxod502/straight.el/issues/352
-  :shadow 'org)
+                     "(provide 'org-version)\n"))
+           ;; Prevents built-in Org from sneaking into the byte-compilation of
+           ;; `org-plus-contrib', and inform other packages that `org-mode'
+           ;; satisfies the `org' dependency: raxod502/straight.el#352
+           :includes (org org-plus-contrib))
+  :pin "7a62a4d3251a512069aa06b0082529d61d22de26")
 
 (package! avy)
 (package! htmlize :pin "49205105898ba8993b5253beec55d8bddd820a70")

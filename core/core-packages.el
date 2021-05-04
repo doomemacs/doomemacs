@@ -209,21 +209,11 @@ processed."
     (let (packages)
       (dolist (package doom-packages)
         (cl-destructuring-bind
-            (name &key recipe disable ignore shadow &allow-other-keys) package
+            (name &key recipe disable ignore &allow-other-keys) package
           (if ignore
               (straight-override-recipe (cons name '(:type built-in)))
             (if disable
                 (cl-pushnew name doom-disabled-packages)
-              (when shadow
-                (straight-override-recipe (cons shadow `(:local-repo nil :package included :build nil :included-by ,name)))
-                (let ((site-load-path (copy-sequence doom--initial-load-path))
-                      lib)
-                  (while (setq
-                          lib (locate-library (concat (symbol-name shadow) ".el")
-                                              nil site-load-path))
-                    (let ((lib (directory-file-name (file-name-directory lib))))
-                      (setq site-load-path (delete lib site-load-path)
-                            load-path (delete lib load-path))))))
               (when recipe
                 (straight-override-recipe (cons name recipe)))
               (appendq! packages (cons name (straight--get-dependencies name)))))))
@@ -440,7 +430,7 @@ ones."
 ;;; Module package macros
 
 (cl-defmacro package!
-    (name &rest plist &key built-in recipe ignore _type _pin _disable _shadow)
+    (name &rest plist &key built-in recipe ignore _type _pin _disable)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -477,10 +467,6 @@ Accepts the following properties:
    inform help commands like `doom/help-packages' that this is a built-in
    package. If set to 'prefer, the package will not be installed if it is
    already provided by Emacs.
- :shadow PACKAGE
-   Informs Doom that this package is shadowing a built-in PACKAGE; the original
-   package will be removed from `load-path' to mitigate conflicts, and this new
-   package will satisfy any dependencies on PACKAGE in the future.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
