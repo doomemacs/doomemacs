@@ -586,7 +586,6 @@ on."
   ;; wide buffers.
   (appendq! so-long-minor-modes
             '(flycheck-mode
-              flyspell-mode
               spell-fu-mode
               eldoc-mode
               smartparens-mode
