@@ -139,9 +139,9 @@ Doom is an active and ongoing project. To make that development more
 transparent, its roadmap (and other concerns) are published across three github
 project boards and a newsletter:
 
-+ [Development Roadmap](https://github.com/hlissner/doom-emacs/projects/3):
++ [Development Roadmap](https://discourse.doomemacs.org/roadmap):
   roughly outlines our goals between release milestones and their progress.
-+ [Plugins under review](https://github.com/hlissner/doom-emacs/projects/2):
++ [Plugins under review](https://discourse.doomemacs.org/plugins):
   lists plugins we are watching and considering for inclusion, and what their
   status for inclusion is. Please consult this list before requesting new
   packages/features.
