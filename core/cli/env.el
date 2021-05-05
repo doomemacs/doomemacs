@@ -123,7 +123,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
          (let ((blacklist (remq nil (append blacklist doom-env-blacklist)))
                (whitelist (remq nil (append whitelist doom-env-whitelist))))
            (insert "(")
-           (dolist (env doom--initial-process-environment)
+           (dolist (env (get 'process-environment 'initial-value))
              (catch 'skip
                (let* ((var  (car (split-string env "=")))
                       (pred (doom-rpartial #'string-match-p var)))

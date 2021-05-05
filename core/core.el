@@ -28,6 +28,15 @@ envvar will enable this at startup.")
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
+;; Ensure Doom's core libraries are visible for loading
+(add-to-list 'load-path (file-name-directory load-file-name))
+
+;; Remember these variables' initial values, so we can safely reset them at a
+;; later time, or consult them without fear of contamination.
+(dolist (var '(exec-path load-path process-environment))
+  (unless (get var 'initial-value)
+    (put var 'initial-value (default-value var))))
+
 ;; Unix tools look for HOME, but this is normally not defined on Windows.
 (when (and IS-WINDOWS (null (getenv-internal "HOME")))
   (setenv "HOME" (getenv "USERPROFILE"))
@@ -177,9 +186,6 @@ users).")
 
 ;;
 ;;; Core libraries
-
-;; Ensure Doom's core libraries are visible for loading
-(add-to-list 'load-path doom-core-dir)
 
 ;; Just the... bear necessities~
 (require 'subr-x)
@@ -467,7 +473,7 @@ If this is a daemon session, load them all immediately instead."
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
            "Doom loaded %d packages across %d modules in %.03fs"
-           (- (length load-path) (length doom--initial-load-path))
+           (- (length load-path) (length (get 'load-path 'initial-value)))
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
                (setq doom-init-time
@@ -537,10 +543,6 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 ;;
 ;;; Bootstrapper
 
-(defvar doom--initial-exec-path exec-path)
-(defvar doom--initial-load-path load-path)
-(defvar doom--initial-process-environment process-environment)
-
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
@@ -573,9 +575,8 @@ to least)."
 
     ;; Reset as much state as possible, so `doom-initialize' can be treated like
     ;; a reset function. e.g. when reloading the config.
-    (setq-default exec-path doom--initial-exec-path
-                  load-path doom--initial-load-path
-                  process-environment doom--initial-process-environment)
+    (dolist (var '(exec-path load-path process-environment))
+      (set-default var (get var 'initial-value)))
 
     ;; Doom caches a lot of information in `doom-autoloads-file'. Module and
     ;; package autoloads, autodefs like `set-company-backend!', and variables

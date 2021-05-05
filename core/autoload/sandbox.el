@@ -60,8 +60,7 @@
          forms
        `(progn
           ;; doom variables
-          (setq doom--initial-load-path load-path
-                doom-debug-p t
+          (setq doom-debug-p t
                 doom-emacs-dir ,doom-emacs-dir
                 doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
                 doom-etc-dir   ,(expand-file-name "etc/" doom-sandbox-dir))
@@ -74,8 +73,8 @@
                 after-init-time nil
                 init-file-debug doom-debug-p
                 noninteractive nil
-                process-environment ',doom--initial-process-environment
-                exec-path ',doom--initial-exec-path
+                process-environment (get 'process-environment 'initial-value)
+                exec-path (get 'exec-path 'initial-value)
                 load-path ',load-path
                 user-init-file load-file-name)
           ;; package.el

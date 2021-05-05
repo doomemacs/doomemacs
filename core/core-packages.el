@@ -477,7 +477,7 @@ elsewhere."
   (when built-in
     (when (and (not ignore)
                (equal built-in '(quote prefer)))
-      (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path)))
+      (setq built-in `(locate-library ,(symbol-name name) nil (get 'load-path 'initial-value))))
     (plist-delete! plist :built-in)
     (plist-put! plist :ignore built-in))
   `(let* ((name ',name)

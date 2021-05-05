@@ -104,7 +104,7 @@
                 (save-match-data
                   (cl-loop for env
                            in (cl-set-difference process-environment
-                                                 doom--initial-process-environment
+                                                 (get 'process-environment 'initial-value)
                                                  :test #'equal)
                            if (string-match "^\\([a-zA-Z0-9_]+\\)=\\(.+\\)$" env)
                            concat (format "%s=%s \\\n"
