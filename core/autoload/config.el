@@ -82,14 +82,14 @@ Runs `doom-after-reload-hook' afterwards."
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
-        (run-hook-wrapped 'doom-before-reload-hook #'doom-try-run-hook)
+        (doom-run-hooks 'doom-before-reload-hook)
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
               (doom-initialize-modules 'force)
             (general-auto-unbind-keys t)))
-        (run-hook-wrapped 'doom-after-reload-hook #'doom-try-run-hook)
+        (doom-run-hooks 'doom-after-reload-hook)
         (message "Config successfully reloaded!"))
     (user-error "Failed to reload your config")))
 

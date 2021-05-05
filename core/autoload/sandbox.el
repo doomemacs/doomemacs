@@ -116,7 +116,7 @@
                  (--run--)
                  (maphash (doom-module-loader doom-module-init-file) doom-modules)
                  (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                 (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)))
+                 (doom-run-hooks 'doom-init-modules-hook)))
              (`vanilla-doom  ; only Doom core
               `(progn
                  (load-file ,(expand-file-name "core.el" doom-core-dir))
@@ -130,7 +130,8 @@
                  (--run--))))
           ;; Then rerun Emacs' startup hooks to simulate a fresh Emacs session,
           ;; because they've already fired.
-          (fset 'doom-try-run-hook #',(symbol-function #'doom-try-run-hook))
+          (fset 'doom-run-hook  #',(symbol-function #'doom-run-hook))
+          (fset 'doom-run-hooks #',(symbol-function #'doom-run-hooks))
           (fset 'doom-run-all-startup-hooks-h #',(symbol-function #'doom-run-all-startup-hooks-h))
           (doom-run-all-startup-hooks-h))))))
 

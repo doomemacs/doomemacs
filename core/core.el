@@ -383,8 +383,7 @@ config.el instead."
   "Run MODE-local-vars-hook after local variables are initialized."
   (unless doom-inhibit-local-var-hooks
     (setq-local doom-inhibit-local-var-hooks t)
-    (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
-                      #'doom-try-run-hook)))
+    (doom-run-hooks (intern-soft (format "%s-local-vars-hook" major-mode)))))
 
 
 ;;
@@ -500,16 +499,29 @@ unreadable. Returns the names of envvars that were changed."
              (default-value 'shell-file-name)))
         env))))
 
-(defun doom-try-run-hook (hook)
+(defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
   (doom-log "Running doom hook: %s" hook)
-  (condition-case e
+  (condition-case-unless-debug e
       (funcall hook)
-    ((debug error)
+    (user-error
+     (warn "Warning: %s" (error-message-string e)))
+    (error
      (signal 'doom-hook-error (list hook e))))
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
+
+(defun doom-run-hooks (&rest hooks)
+  "Run HOOKS (a list of hook variable symbols) with better error handling.
+Is used as advice to replace `run-hooks'."
+  (dolist (hook hooks)
+    (condition-case-unless-debug e
+        (run-hook-wrapped hook #'doom-run-hook)
+      (doom-hook-error
+       (unless debug-on-error
+         (lwarn hook :error "Error running hook %S because: %s" (cadr e) (caddr e)))
+       (signal 'doom-hook-error (cons hook (cdr e)))))))
 
 (defun doom-run-hook-on (hook-var trigger-hooks)
   "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
@@ -530,7 +542,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
                        ;; interactively.
                        (boundp hook)
                        (symbol-value hook))
-              (run-hook-wrapped hook-var #'doom-try-run-hook)
+              (doom-run-hooks hook-var)
               (set hook-var nil))))
       ;; DEPRECATED This target switcheroo won't be necessary when 26 support is
       ;;            dropped; `add-hook''s DEPTH argument was added in 27.1.

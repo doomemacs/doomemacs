@@ -77,13 +77,11 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
   emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
   (setq after-init-time (current-time))
   (let ((inhibit-startup-hooks nil))
-    (mapc (lambda (hook)
-            (run-hook-wrapped hook #'doom-try-run-hook))
-          '(after-init-hook
-            delayed-warnings-hook
-            emacs-startup-hook
-            tty-setup-hook
-            window-setup-hook))))
+    (doom-run-hooks 'after-init-hook
+                    'delayed-warnings-hook
+                    'emacs-startup-hook
+                    'tty-setup-hook
+                    'window-setup-hook)))
 
 
 ;;

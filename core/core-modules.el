@@ -117,10 +117,10 @@ non-nil."
     (when-let (init-p (load! doom-module-init-file doom-private-dir t))
       (doom-log "Initializing user config")
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
-      (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
+      (run-hook-wrapped 'doom-before-init-modules-hook #'doom-run-hook)
       (unless no-config-p
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
-        (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
+        (run-hook-wrapped 'doom-init-modules-hook #'doom-run-hook)
         (load! "config" doom-private-dir t)
         (load custom-file 'noerror (not doom-debug-mode))))))
 

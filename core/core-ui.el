@@ -675,7 +675,11 @@ This offers a moderate boost in startup (or theme switch) time, so long as
 
 (defun doom-init-ui-h ()
   "Initialize Doom's user interface by applying all its advice and hooks."
-  (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook)
+  ;; Produce more helpful (and visible) error messages from errors emitted from
+  ;; hooks (particularly mode hooks, that usually go unnoticed otherwise.
+  (advice-add #'run-hooks :override #'doom-run-hooks)
+
+  (doom-run-hooks 'doom-init-ui-hook)
 
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
   (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
