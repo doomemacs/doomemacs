@@ -110,7 +110,6 @@
   :after (consult flycheck))
 
 (use-package! embark
-  :defer t
   :init
   (setq embark-action-indicator
         (lambda (map)
