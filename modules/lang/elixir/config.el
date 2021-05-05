@@ -38,7 +38,8 @@
 
   (when (featurep! +lsp)
     (add-hook 'elixir-mode-local-vars-hook #'lsp!)
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\_build\\'"))
+    (after! lsp-mode
+      (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\_build\\'")))
 
   (after! highlight-numbers
     (puthash 'elixir-mode
