@@ -1375,13 +1375,16 @@ that I will list here, in the hopes that it will help you avoid the same
 mistakes:
 
 *** Packages are eagerly loaded
-Using ~use-package!~ without a deferring keyword (one of: ~:defer :after
-:commands :defer-incrementally :after-call~) will load the package immediately.
-This causes other packages to be pulled in and loaded, which will compromise
-many of Doom's startup optimizations.
+Using [~use-package!~](https://github.com/jwiegley/use-package)
+without a [deferring keyword](https://github.com/jwiegley/use-package#notes-about-lazy-loading)
+(one of: ~:defer :after:commands :defer-incrementally :after-call~)
+will load the package immediately.
+This causes other packages to be pulled in and loaded,
+which will compromise many of Doom's startup optimizations.
 
-This is usually by accident. Choosing which keyword to use depends on the
-needs of the package, so there is no simple answer to this.
+This is usually by accident.
+Choosing which keyword to use depends on the needs of the package,
+so there is no simple answer to this.
 
 *** Manual package management
 A lot of Emacs documentation and help will contain advice to install packages
