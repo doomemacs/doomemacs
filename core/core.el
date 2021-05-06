@@ -542,21 +542,26 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (fset
        fn (lambda (&rest _)
             (when (and after-init-time
-                       ;; In some cases, hooks may be lexically unset to inhibit
-                       ;; them during expensive batch operations on buffers
-                       ;; (such as when processing buffers internally). In these
-                       ;; cases we should assume this hook wasn't invoked
-                       ;; interactively.
-                       (boundp hook)
-                       (symbol-value hook))
+                       (or (daemonp)
+                           ;; In some cases, hooks may be lexically unset to
+                           ;; inhibit them during expensive batch operations on
+                           ;; buffers (such as when processing buffers
+                           ;; internally). In these cases we should assume this
+                           ;; hook wasn't invoked interactively.
+                           (and (boundp hook)
+                                (symbol-value hook))))
               (doom-run-hooks hook-var)
               (set hook-var nil))))
-      ;; DEPRECATED This target switcheroo won't be necessary when 26 support is
-      ;;            dropped; `add-hook''s DEPTH argument was added in 27.1.
-      (let ((target (if (eq hook 'find-file-hook) 'after-find-file hook)))
-        (if (functionp target)
-            (advice-add target :before fn '((depth . -101)))
-          (add-hook target fn (if EMACS27+ -101)))))))
+      (cond ((daemonp)
+             ;; In a daemon session we don't need all these lazy loading
+             ;; shenanigans. Just load everything immediately.
+             (add-hook 'after-init-hook fn 'append))
+            ((eq hook 'find-file-hook)
+             ;; Advise `after-find-file' instead of use `find-file-hook' because
+             ;; the latter isn't triggered late enough.
+             (advice-add 'after-find-file :before fn '((depth . -101))))
+            ((add-hook hook fn (if EMACS27+ -101))))
+      fn)))
 
 
 ;;
