@@ -30,6 +30,7 @@
   (defvar +evil-collection-disabled-list
     '(anaconda-mode
       buff-menu
+      calc
       comint
       company
       custom
@@ -280,6 +281,8 @@ and complains if a module is loaded too early (during startup)."
 
     (add-transient-hook! 'Buffer-menu-mode
       (+evil-collection-init '(buff-menu "buff-menu")))
+    (add-transient-hook! 'calc-mode
+      (+evil-collection-init 'calc))
     (add-transient-hook! 'image-mode
       (+evil-collection-init 'image))
     (add-transient-hook! 'emacs-lisp-mode
