@@ -20,7 +20,6 @@
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
 symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
-(defvar doom--debug-vars-old-values nil)
 (defvar doom--debug-vars-undefined nil)
 
 (defun doom--watch-debug-vars-h (&rest _)
@@ -40,14 +39,14 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     (dolist (var doom-debug-variables)
       (cond ((listp var)
              (cl-destructuring-bind (var . val) var
-               (if (not (boundp var))
-                   (add-to-list 'doom--debug-vars-undefined var)
-                 (set-default
-                  var (if (not enabled)
-                          (alist-get var doom--debug-vars-old-values)
-                        (setf (alist-get var doom--debug-vars-old-values)
-                              (symbol-value var))
-                        val)))))
+               (if (boundp var)
+                   (set-default
+                    var (if (not enabled)
+                            (prog1 (get var 'initial-value)
+                              (put 'x 'initial-value nil))
+                          (put var 'initial-value (symbol-value var))
+                          val))
+                 (add-to-list 'doom--debug-vars-undefined var))))
             ((if (boundp var)
                  (set-default var enabled)
                (add-to-list 'doom--debug-vars-undefined var)))))
@@ -92,7 +91,7 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     (let (forms)
       (with-temp-buffer
         (insert-file-contents file)
-        (let (emacs-lisp-mode) (emacs-lisp-mode))
+        (let (emacs-lisp-mode-hook) (emacs-lisp-mode))
         (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
           (let ((ppss (syntax-ppss)))
             (unless (or (nth 4 ppss)
