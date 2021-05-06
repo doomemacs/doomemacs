@@ -44,7 +44,7 @@ employed so that flycheck still does *some* helpful linting.")
                     (message "Ignoring unsafe form in file local variable: %S" val)))
               ((not (safe-local-variable-p var val))
                (message "Ignoring unsafe file local variable: %S" var))
-              ((get sym 'risky-local-variable)
+              ((get var 'risky-local-variable)
                (message "Ignoring risky file local variable: %S" var))))))
   :config
   (set-repl-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp/open-repl)
