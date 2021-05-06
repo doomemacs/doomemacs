@@ -492,13 +492,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   :preface
   (add-hook! 'after-setting-font-hook
     (defun doom-init-all-the-icons-fonts-h ()
-      (dolist (font (list "Weather Icons"
-                          "github-octicons"
-                          "FontAwesome"
-                          "all-the-icons"
-                          "file-icons"
-                          "Material Icons"))
-        (set-fontset-font t 'unicode font nil 'append))))
+      (when (fboundp 'set-fontset-font)
+        (dolist (font (list "Weather Icons"
+                            "github-octicons"
+                            "FontAwesome"
+                            "all-the-icons"
+                            "file-icons"
+                            "Material Icons"))
+          (set-fontset-font t 'unicode font nil 'append)))))
   :config
   (cond ((daemonp)
          (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
