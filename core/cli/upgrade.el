@@ -44,6 +44,16 @@ following shell commands:
         (split-string stdout "\n" t)
       (error "Failed to check working tree in %s" dir))))
 
+(defun doom--get-straight-recipe ()
+  (with-temp-buffer
+    (insert-file-contents (doom-path doom-core-dir "packages.el"))
+    (when (re-search-forward "(package! straight" nil t)
+      (goto-char (match-beginning 0))
+      (let ((sexp (sexp-at-point)))
+        (plist-put sexp :recipe
+                   (eval (plist-get sexp :recipe)
+                         t))))))
+
 
 (defun doom-cli-upgrade (&optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
@@ -116,9 +126,22 @@ following shell commands:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-clean-byte-compiled-files)
-                   (or (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
-                            (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) new-rev))
-                       (error "Failed to check out %s" (substring new-rev 0 10)))
+                   (let ((straight-recipe (doom--get-straight-recipe)))
+                     (or (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
+                              (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) new-rev))
+                         (error "Failed to check out %s" (substring new-rev 0 10)))
+                     ;; HACK It's messy to use straight to upgrade straight, due
+                     ;;      to the potential for backwards incompatibility, so
+                     ;;      we staticly check if Doom's `package!' declaration
+                     ;;      for straight has changed. If it has, delete
+                     ;;      straight so 'doom upgrade's second stage will
+                     ;;      install the new version for us.
+                     ;;
+                     ;;      Clumsy, but a better solution is in the works.
+                     (unless (equal straight-recipe (doom--get-straight-recipe))
+                       (print! (info "Preparing straight for an update"))
+                       (delete-directory (doom-path straight-base-dir "straight/repos/straight.el")
+                                         'recursive)))
                    (print! (info "%s") (cdr result))
                    t))))))
         (ignore-errors
