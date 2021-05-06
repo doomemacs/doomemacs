@@ -130,6 +130,36 @@ or file path may exist now."
              (eq buffer (window-buffer (selected-window))) ; only visible buffers
              (set-auto-mode))))))
 
+;; HACK Emacs generates long file paths for its auto-save files; long =
+;;      `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
+;;      filesystem will murder your family. To appease it, I compress
+;;      `buffer-file-name' to a stable 40 characters.
+;; TODO PR this upstream; should be a universal issue!
+(defadvice! doom-make-hashed-auto-save-file-name-a (orig-fn)
+  "Compress the auto-save file name so paths don't get too long."
+  :around #'make-auto-save-file-name
+  (let ((buffer-file-name
+         (if (or
+              ;; Don't do anything for non-file-visiting buffers. Names
+              ;; generated for those are short enough already.
+              (null buffer-file-name)
+              ;; If an alternate handler exists for this path, bow out.  Most of
+              ;; them end up calling `make-auto-save-file-name' again anyway, so
+              ;; we still achieve this advice's ultimate goal.
+              (find-file-name-handler buffer-file-name
+                                      'make-auto-save-file-name))
+             buffer-file-name
+           (sha1 buffer-file-name))))
+    (funcall orig-fn)))
+
+;; HACK Does the same for Emacs backup files, but also packages that use
+;;      `make-backup-file-name-1' directly (like undo-tree).
+(defadvice! doom-make-hashed-backup-file-name-a (args)
+  "A few places use the backup file name so paths don't get too long."
+  :filter-args #'make-backup-file-name-1
+  (setcar args (sha1 (car args)))
+  args)
+
 
 ;;
 ;;; Formatting

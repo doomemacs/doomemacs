@@ -31,6 +31,11 @@
   (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
         undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
 
+  ;; HACK Fix #4993: prevent file names that are too long for the filesystem.
+  ;; TODO PR this upstream; should be a universal issue
+  (advice-add #'undo-fu-session--make-file-name
+              :filter-args #'doom-make-hashed-backup-file-name-a)
+
   ;; HACK We avoid `:config' here because `use-package's `:after' complicates
   ;;      the load order of a package's `:config' block and makes it impossible
   ;;      for the user to override its settings with merely `after!' (or
