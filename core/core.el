@@ -434,7 +434,8 @@ intervals."
   (if (not now)
       (appendq! doom-incremental-packages packages)
     (while packages
-      (let ((req (pop packages)))
+      (let* ((gc-cons-threshold most-positive-fixnum)
+             (req (pop packages)))
         (unless (featurep req)
           (doom-log "Incrementally loading %s" req)
           (condition-case-unless-debug e
@@ -443,12 +444,11 @@ intervals."
                     ;; or is unreadable, Emacs throws up file-missing errors, so
                     ;; we set it to a directory we know exists and is readable.
                     (let ((default-directory doom-emacs-dir)
-                          (gc-cons-threshold most-positive-fixnum)
                           file-name-handler-alist)
                       (require req nil t))
                     t)
                   (push req packages))
-            ((error debug)
+            (error
              (message "Failed to load %S package incrementally, because: %s"
                       req e)))
           (if (not packages)
@@ -473,6 +473,11 @@ If this is a daemon session, load them all immediately instead."
 ;;
 ;;; Bootstrap helpers
 
+(defun doom-finish-init-h ()
+  "Set `doom-init-time'."
+  (setq doom-init-time
+        (float-time (time-subtract (current-time) before-init-time))))
+
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark including number of packages and modules loaded.
 
@@ -481,9 +486,7 @@ If RETURN-P, return the message as a string instead of displaying it."
            "Doom loaded %d packages across %d modules in %.03fs"
            (- (length load-path) (length (get 'load-path 'initial-value)))
            (if doom-modules (hash-table-count doom-modules) 0)
-           (or doom-init-time
-               (setq doom-init-time
-                     (float-time (time-subtract (current-time) before-init-time))))))
+           (or doom-init-time (doom-finish-init-h))))
 
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE.
@@ -607,12 +610,11 @@ to least)."
     ;; like `doom-modules', `doom-disabled-packages', `load-path',
     ;; `auto-mode-alist', and `Info-directory-list'. etc. Compiling them into
     ;; one place is a big reduction in startup time.
-    (condition-case e
+    (condition-case-unless-debug e
         ;; Avoid `file-name-sans-extension' for premature optimization reasons.
         ;; `string-remove-suffix' is cheaper because it performs no file sanity
         ;; checks; just plain ol' string manipulation.
-        (load (string-remove-suffix ".el" doom-autoloads-file)
-              nil 'nomessage)
+        (load (string-remove-suffix ".el" doom-autoloads-file) nil 'nomessage)
       (file-missing
        ;; If the autoloads file fails to load then the user forgot to sync, or
        ;; aborted a doom command midway!
@@ -623,6 +625,8 @@ to least)."
          (signal 'doom-error
                  (list "Doom is in an incomplete state"
                        "run 'doom sync' on the command line to repair it")))))
+
+    (if doom-debug-p (doom-debug-mode +1))
 
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
@@ -642,9 +646,6 @@ to least)."
     (eval-after-load 'package '(require 'core-packages))
     (eval-after-load 'straight '(doom-initialize-packages))
 
-    ;; Bootstrap our GC manager
-    (add-hook 'doom-first-buffer-hook #'gcmh-mode)
-
     ;; Bootstrap the interactive session
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h)
     (add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
@@ -652,10 +653,9 @@ to least)."
     (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
     (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
     (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
-    (if doom-debug-p (doom-debug-mode +1))
 
-    ;; Load core/core-*.el, the user's private init.el, then their config.el
-    (doom-initialize-modules force-p))
+    ;; Bootstrap our GC manager
+    (add-hook 'doom-first-buffer-hook #'gcmh-mode))
 
   doom-init-p)
 

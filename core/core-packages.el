@@ -361,6 +361,8 @@ installed."
                                  plist :modules
                                  (list (doom-module-from-path file))))
                           doom-packages))))))))
+    (user-error
+     (user-error (error-message-string e)))
     (error
      (signal 'doom-package-error
              (list (doom-module-from-path file)

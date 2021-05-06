@@ -1,5 +1,13 @@
 ;;; core/autoload/themes.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defconst doom-customize-theme-hook nil)
+
+(add-hook! 'doom-load-theme-hook
+  (defun doom-apply-customized-faces-h ()
+    "Run `doom-customize-theme-hook'."
+    (run-hooks 'doom-customize-theme-hook)))
+
 (defun doom--custom-theme-set-face (spec)
   (cond ((listp (car spec))
          (cl-loop for face in (car spec)
@@ -8,13 +16,6 @@
         ((keywordp (cadr spec))
          `((,(car spec) ((t ,(cdr spec))))))
         (`((,(car spec) ,(cdr spec))))))
-
-;;;###autoload
-(defconst doom-customize-theme-hook nil)
-
-(add-hook! 'doom-load-theme-hook
-  (defun doom-apply-customized-faces-h ()
-    (run-hooks 'doom-customize-theme-hook)))
 
 ;;;###autoload
 (defmacro custom-theme-set-faces! (theme &rest specs)

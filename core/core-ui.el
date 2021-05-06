@@ -162,8 +162,12 @@ or if the current buffer is read-only or not file-visiting."
 ;;
 ;;; General UX
 
-;; Simpler confirmation prompt when killing Emacs
+;; A simple confirmation prompt when killing Emacs. But only prompt when there
+;; are real buffers open.
 (setq confirm-kill-emacs #'doom-quit-p)
+;; Prompt for confirmation when deleting a non-empty frame; a last line of
+;; defense against accidental loss of work.
+(global-set-key [remap delete-frame] #'doom/delete-frame-with-prompt)
 
 ;; Don't prompt for confirmation when we create a new file or buffer (assume the
 ;; user knows what they're doing).
@@ -292,12 +296,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq frame-resize-pixelwise t)
 
 ;; But do not resize windows pixelwise, this can cause crashes in some cases
-;; where we resize windows too quickly.
+;; when resizing too many windows at once or rapidly.
 (setq window-resize-pixelwise nil)
 
 ;; Disable tool, menu, and scrollbars. Doom is designed to be keyboard-centric,
 ;; so these are just clutter (the scrollbar also impacts performance). Whats
 ;; more, the menu bar exposes functionality that Doom doesn't endorse.
+;;
+;; I am intentionally avoid using `menu-bar-mode', `tool-bar-mode', and
+;; `scroll-bar-mode' because they do extra and unnecessary work that can be more
+;; concisely, and efficiently, expressed with these six lines:
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -316,21 +324,18 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
-;; Prompt for confirmation when deleting a non-empty frame; a last line of
-;; defense against accidental loss of work.
-(global-set-key [remap delete-frame] #'doom/delete-frame-with-prompt)
-
-;; always avoid GUI
+;; GUIs are inconsistent across systems and themes (and will rarely match our
+;; active Emacs theme). They impose inconsistent shortcut key paradigms too.
+;; It's best to avoid GUIs altogether and have Emacs handle the prompting, since
+;; its promtps are governed by the same rules and keybinds as the rest of Emacs.
 (setq use-dialog-box nil)
-;; Don't display floating tooltips; display their contents in the echo-area,
-;; because native tooltips are ugly.
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
-;; ...especially on linux
 (when IS-LINUX
   (setq x-gtk-use-system-tooltips nil))
 
- ;; Favor vertical splits over horizontal ones. Screens are usually wide.
+ ;; Favor vertical splits over horizontal ones. Monitors are trending toward
+ ;; wide, rather than tall.
 (setq split-width-threshold 160
       split-height-threshold nil)
 
@@ -353,8 +358,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; Typing yes/no is obnoxious when y/n will do
 (fset #'yes-or-no-p #'y-or-n-p)
 
-;; Try really hard to keep the cursor from getting stuck in the read-only prompt
-;; portion of the minibuffer.
+;; Try to keep the cursor out of the read-only portions of the minibuffer.
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
@@ -726,8 +730,9 @@ This offers a moderate boost in startup (or theme switch) time, so long as
   (put sym 'disabled "Doom doesn't support `customize', configure Emacs from $DOOMDIR/config.el instead"))
 (put 'customize-themes 'disabled "Set `doom-theme' or use `load-theme' in $DOOMDIR/config.el instead")
 
-;; Doesn't exist in terminal Emacs, so we define it to prevent void-function
-;; errors emitted from packages that blindly try to use it.
+;; Doesn't exist in terminal Emacs, but some Emacs packages (internal and
+;; external) use it anyway, leading to a void-function error, so define a no-op
+;; substitute to suppress them.
 (unless (fboundp 'define-fringe-bitmap)
   (fset 'define-fringe-bitmap #'ignore))
 

@@ -330,8 +330,7 @@ or file path may exist now."
   ;; persist variables across sessions
   :defer-incrementally custom
   :hook (doom-first-input . savehist-mode)
-  :init
-  (setq savehist-file (concat doom-cache-dir "savehist"))
+  :custom (savehist-file (concat doom-cache-dir "savehist"))
   :config
   (setq savehist-save-minibuffer-history t
         savehist-autosave-interval nil     ; save on kill only
@@ -342,7 +341,7 @@ or file path may exist now."
           search-ring regexp-search-ring)) ; persist searches
   (add-hook! 'savehist-save-hook
     (defun doom-savehist-unpropertize-variables-h ()
-      "Remove text properties from `kill-ring' for a smaller savehist file."
+      "Remove text properties from `kill-ring' to reduce savehist cache size."
       (setq kill-ring
             (mapcar #'substring-no-properties
                     (cl-remove-if-not #'stringp kill-ring))
@@ -365,9 +364,7 @@ the unwritable tidbits."
 (use-package! saveplace
   ;; persistent point location in buffers
   :hook (doom-first-file . save-place-mode)
-  :init
-  (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place-limit 100)
+  :custom (save-place-file (concat doom-cache-dir "saveplace"))
   :config
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
@@ -382,20 +379,20 @@ the unwritable tidbits."
   (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
-files, so we replace calls to `pp' with the much faster `prin1'."
+files, so this replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
     (letf! ((#'pp #'prin1)) (funcall orig-fn))))
 
 
 (use-package! server
   :when (display-graphic-p)
-  :after-call pre-command-hook after-find-file focus-out-hook
+  :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
+  :custom (server-auth-dir (concat doom-emacs-dir "server/"))
   :defer 1
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
   :config
-  (setq server-auth-dir (concat doom-emacs-dir "server/"))
   (unless (server-running-p)
     (server-start)))
 

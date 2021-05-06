@@ -48,7 +48,7 @@ are open."
 In interactive Emacs, this just inhibits messages from appearing in the
 minibuffer. They are still logged to *Messages*.
 
-In tty Emacs, messages suppressed completely."
+In tty Emacs, messages are suppressed completely."
   (quiet! (apply orig-fn args)))
 
 

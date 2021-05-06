@@ -117,12 +117,13 @@ non-nil."
     (when-let (init-p (load! doom-module-init-file doom-private-dir t))
       (doom-log "Initializing user config")
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
-      (run-hook-wrapped 'doom-before-init-modules-hook #'doom-run-hook)
+      (doom-run-hooks 'doom-before-init-modules-hook)
       (unless no-config-p
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
-        (run-hook-wrapped 'doom-init-modules-hook #'doom-run-hook)
+        (doom-run-hooks 'doom-init-modules-hook)
         (load! "config" doom-private-dir t)
-        (load custom-file 'noerror (not doom-debug-mode))))))
+        (when custom-file
+          (load custom-file 'noerror (not doom-debug-mode)))))))
 
 
 ;;
@@ -315,8 +316,7 @@ those directories. The first returned path is always `doom-private-dir'."
   "Minimally initialize `doom-modules' (a hash table) and return it.
 This value is cached. If REFRESH-P, then don't use the cached value."
   (if all-p
-      (cl-loop for path in (cdr (doom-module-load-path 'all))
-               collect (doom-module-from-path path))
+      (mapcar #'doom-module-from-path (cdr (doom-module-load-path 'all)))
     doom-modules))
 
 
