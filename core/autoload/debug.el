@@ -122,7 +122,10 @@ ready to be pasted in a bug report on github."
                       (if (file-symlink-p file) ""
                         (concat " -> " (abbrev-path (file-truename file)))))))
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
-        (distro . ,(list (doom-system-distro-version) (sh "uname" "-msr")))
+        (system . ,(delq
+                    nil (list (doom-system-distro-version)
+                              (sh "uname" "-msr")
+                              (window-system))))
         (emacs . ,(delq
                    nil (list emacs-version
                              (bound-and-true-p emacs-repository-branch)
