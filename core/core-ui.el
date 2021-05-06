@@ -35,10 +35,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-unicode-font
-  (if IS-MAC
-      (font-spec :family "Apple Color Emoji")
-    (font-spec :family "Symbola"))
+(defvar doom-unicode-font nil
   "Fallback font for Unicode glyphs.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
@@ -47,8 +44,17 @@ The defaults on macOS and Linux are Apple Color Emoji and Symbola, respectively.
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-unicode-extra-fonts nil
-  "Fonts to inject into the Unicode charset before `doom-unicode-font'.")
+(defvar doom-emoji-fallback-font-families
+  '("Apple Color Emoji"
+    "Segoe UI Emoji"
+    "Noto Color Emoji"
+    "Noto Emoji")
+  "A list of fallback font families to use for emojis.")
+
+(defvar doom-symbol-fallback-font-families
+  '("Segoe UI Symbol"
+    "Apple Symbols")
+  "A list of fallback font families for general symbol glyphs.")
 
 
 ;;
@@ -484,13 +490,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
              all-the-icons-material
              all-the-icons-alltheicon)
   :preface
-  (setq doom-unicode-extra-fonts
-        (list "Weather Icons"
-              "github-octicons"
-              "FontAwesome"
-              "all-the-icons"
-              "file-icons"
-              "Material Icons"))
+  (add-hook! 'after-setting-font-hook
+    (defun doom-init-all-the-icons-fonts-h ()
+      (dolist (font (list "Weather Icons"
+                          "github-octicons"
+                          "FontAwesome"
+                          "all-the-icons"
+                          "file-icons"
+                          "Material Icons"))
+        (set-fontset-font t 'unicode font nil 'append))))
   :config
   (cond ((daemonp)
          (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
@@ -575,44 +583,34 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-fonts-h ()
   "Loads `doom-font'."
+  (when (fboundp 'set-fontset-font)
+    (let ((fn (doom-rpartial #'member (font-family-list))))
+      (when-let (font (cl-find-if fn doom-symbol-fallback-font-families))
+        (set-fontset-font t 'symbol font))
+      (when-let (font (cl-find-if fn doom-emoji-fallback-font-families))
+        (set-fontset-font t 'unicode font))
+      (when doom-unicode-font
+        (set-fontset-font t 'unicode doom-unicode-font))))
+  (apply #'custom-theme-set-faces 'doom
+         (append (when doom-font
+                   `((fixed-pitch ((t (:font ,doom-font))))))
+                 (when doom-serif-font
+                   `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
+                 (when doom-variable-pitch-font
+                   `((variable-pitch ((t (:font ,doom-variable-pitch-font))))))))
   (cond
    (doom-font
-    (cl-pushnew
-     ;; Avoiding `set-frame-font' because it does a lot of extra, expensive
-     ;; work we can avoid by setting the font frame parameter instead.
-     (cons 'font
-           (cond ((stringp doom-font) doom-font)
-                 ((fontp doom-font) (font-xlfd-name doom-font))
-                 ((signal 'wrong-type-argument (list '(fontp stringp)
-                                                     doom-font)))))
-     default-frame-alist
-     :key #'car :test #'eq))
+    ;; I avoid `set-frame-font' because it does a lot of extra, expensive work
+    ;; we can avoid by setting the font frame parameter directly.
+    (setf (alist-get 'font default-frame-alist)
+          (cond ((stringp doom-font) doom-font)
+                ((fontp doom-font) (font-xlfd-name doom-font))
+                ((signal 'wrong-type-argument (list '(fontp stringp)
+                                                    doom-font))))))
    ((display-graphic-p)
-    ;; We try our best to record your system font, so `doom-big-font-mode'
-    ;; can still use it to compute a larger font size with.
-    (setq font-use-system-font t
-          doom-font (face-attribute 'default :font)))))
-
-(defun doom-init-extra-fonts-h (&optional frame)
-  "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."
-  (condition-case e
-      (with-selected-frame (or frame (selected-frame))
-        (when doom-font
-          (set-face-attribute 'fixed-pitch nil :font doom-font))
-        (when doom-serif-font
-          (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
-        (when doom-variable-pitch-font
-          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
-        (when (fboundp 'set-fontset-font)
-          (dolist (font (remq nil (cons doom-unicode-font doom-unicode-extra-fonts)))
-            (set-fontset-font t 'unicode font nil 'prepend)))
-        (run-hooks 'after-setting-font-hook))
-    ((debug error)
-     (if (string-prefix-p "Font not available: " (error-message-string e))
-         (lwarn 'doom-ui :warning
-                "Could not find the '%s' font on your system, falling back to system font"
-                (font-get (caddr e) :family))
-       (signal 'doom-error e)))))
+    (setq font-use-system-font t)))
+  ;; Give users a chance to inject their own font logic.
+  (run-hooks 'after-setting-font-hook))
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
@@ -701,7 +699,6 @@ This offers a moderate boost in startup (or theme switch) time, so long as
 
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
-(add-hook 'doom-load-theme-hook #'doom-init-extra-fonts-h)
 
 ;; Apply `doom-theme'
 (add-hook (if (daemonp)
