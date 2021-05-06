@@ -280,26 +280,29 @@ or file path may exist now."
   :defer-incrementally easymenu tree-widget timer
   :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
+  :custom (recentf-save-file (concat doom-cache-dir "recentf"))
   :config
-  (defun doom--recent-file-truename (file)
-    (if (or (file-remote-p file nil t)
-            (not (file-remote-p file)))
-        (file-truename file)
-      file))
-  (setq recentf-filename-handlers
-        '(;; Text properties inflate the size of recentf's files, and there is
-          ;; no purpose in persisting them, so we strip them out.
-          substring-no-properties
-          ;; Resolve symlinks of local files. Otherwise we get duplicate
-          ;; entries opening symlinks.
-          doom--recent-file-truename
-          ;; Replace $HOME with ~, which is more portable, and reduces how much
-          ;; horizontal space the recentf listing uses to list recent files.
-          abbreviate-file-name)
-        recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 'never
-        recentf-max-menu-items 0
-        recentf-max-saved-items 200)
+  (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
+        recentf-max-saved-items 200) ; default is 20
+
+  (defun doom--recentf-file-truename-fn (file)
+    (if (file-remote-p file)
+        (if-let* ((tfile (and (bound-and-true-p tramp-mode)
+                              (tramp-tramp-file-p file)
+                              (tramp-dissect-file-name file)))
+                  ((string= (tramp-file-name-method tfile) "sudo")))
+            (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
+          file)
+      (abbreviate-file-name (file-truename file))))
+
+  ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
+  ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
+  ;; space)
+  (add-to-list 'recentf-filename-handlers 'doom--recentf-file-truename-fn)
+
+  ;; Text properties inflate the size of recentf's files, and there is
+  ;; no purpose in persisting them (Must be first in the list!)
+  (add-to-list 'recentf-filename-handlers 'substring-no-properties)
 
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
@@ -311,10 +314,15 @@ or file path may exist now."
 
   (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
-      "Add dired directory to recentf file list."
+      "Add dired directories to recentf file list."
       (recentf-add-file default-directory)))
 
+  ;; The most sensible time to clean up your recent files list is when you quit
+  ;; Emacs (unless this is a long-running daemon session).
+  (setq recentf-auto-cleanup (if (daemonp) 300))
   (add-hook 'kill-emacs-hook #'recentf-cleanup)
+
+  ;; Otherwise `load-file' calls in `recentf-load-list' pollute *Messages*
   (advice-add #'recentf-load-list :around #'doom-shut-up-a))
 
 
