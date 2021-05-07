@@ -4,7 +4,8 @@
   '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
         sql-mode         ; sqlformat is currently broken
         tex-mode         ; latexindent is broken
-        latex-mode)
+        latex-mode
+        rustic-mode)     ; handled by `rustic-rustfmt'
   "A list of major modes in which to reformat the buffer upon saving.
 
 If this list begins with `not', then it negates the list.
