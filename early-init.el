@@ -40,7 +40,7 @@
             ;; `file-name-handler-alist' since startup we want to preserve.
             (delete-dups (append file-name-handler-alist
                                  old-file-name-handler-alist))))
-    (add-hook 'window-setup-hook #'doom-reset-file-handler-alist-h 101)))
+    (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101)))
 
 ;; Ensure Doom is running out of this file's directory
 (setq user-emacs-directory (file-name-directory load-file-name))
