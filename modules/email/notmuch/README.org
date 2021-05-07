@@ -21,7 +21,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module turns Emacs into email client using ~notmuch~.
+This module turns Emacs into an email client using ~notmuch~.
 
 ** Module Flags
 + =+afew= Enables integration with =afew=.
