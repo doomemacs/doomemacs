@@ -3,9 +3,6 @@
 ;;
 ;;; Variables
 
-(defvar doom-init-theme-p nil
-  "If non-nil, a theme has been loaded.")
-
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
@@ -570,23 +567,22 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
+;; Use a psuedo theme to store internal and user faces + custom.el settings
+;; without risk of them being written to `custom-file'.
+(custom-declare-theme 'doom nil)
+
 ;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
 (setq custom-theme-directory (concat doom-private-dir "themes/"))
 
 ;; Always prioritize the user's themes above the built-in/packaged ones.
 (setq custom-theme-load-path
       (cons 'custom-theme-directory
-            (remq 'custom-theme-directory custom-theme-load-path)))
+            (delq 'custom-theme-directory custom-theme-load-path)))
 
 ;; Underline looks a bit better when drawn lower
 (setq x-underline-at-descent-line t)
 
-;; DEPRECATED In Emacs 27
-(defvar doom--prefer-theme-elc nil
-  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
-behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
-
-(defun doom-init-fonts-h ()
+(defun doom-init-fonts-h (&optional reload)
   "Loads `doom-font'."
   (when (fboundp 'set-fontset-font)
     (let ((fn (doom-rpartial #'member (font-family-list))))
@@ -596,22 +592,27 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
         (set-fontset-font t 'unicode font))
       (when doom-unicode-font
         (set-fontset-font t 'unicode doom-unicode-font))))
-  (apply #'custom-theme-set-faces 'doom
-         (append (when doom-font
-                   `((fixed-pitch ((t (:font ,doom-font))))))
-                 (when doom-serif-font
-                   `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
-                 (when doom-variable-pitch-font
-                   `((variable-pitch ((t (:font ,doom-variable-pitch-font))))))))
+  ;; Changes to a theme don't take effect immediately if the theme isn't `user',
+  ;; so we must force it to.
+  (let (custom--inhibit-theme-enable)
+    (apply #'custom-theme-set-faces 'doom
+           (append (when doom-font
+                     `((fixed-pitch ((t (:font ,doom-font))))))
+                   (when doom-serif-font
+                     `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
+                   (when doom-variable-pitch-font
+                     `((variable-pitch ((t (:font ,doom-variable-pitch-font)))))))))
   (cond
    (doom-font
-    ;; I avoid `set-frame-font' because it does a lot of extra, expensive work
-    ;; we can avoid by setting the font frame parameter directly.
+    ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
+    ;; unnecessary work we can avoid by setting the frame parameter directly.
     (setf (alist-get 'font default-frame-alist)
           (cond ((stringp doom-font) doom-font)
                 ((fontp doom-font) (font-xlfd-name doom-font))
-                ((signal 'wrong-type-argument (list '(fontp stringp)
-                                                    doom-font))))))
+                ((signal 'wrong-type-argument
+                         (list '(fontp stringp) doom-font)))))
+    (when reload
+      (set-frame-font doom-font t)))
    ((display-graphic-p)
     (setq font-use-system-font t)))
   ;; Give users a chance to inject their own font logic.
@@ -619,58 +620,27 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
-  (when (and doom-theme
-             (not (eq doom-theme 'default))
-             (not (memq doom-theme custom-enabled-themes)))
+  (when (and doom-theme (not (custom-theme-enabled-p doom-theme)))
+    ;; Fix #1397: if `doom-init-theme-h' is used on `after-make-frame-functions'
+    ;; (for daemon sessions), the new frame must be focused to ensure the theme
+    ;; loads correctly.
     (with-selected-frame (or frame (selected-frame))
-      (let ((doom--prefer-theme-elc t)) ; DEPRECATED in Emacs 27
-        (load-theme doom-theme t)))))
+      (load-theme doom-theme t))))
 
 (defadvice! doom--load-theme-a (orig-fn theme &optional no-confirm no-enable)
-  "Run `doom-load-theme-hook' on `load-theme' and fix its issues.
-
-1. Disable previously enabled themes.
-2. Don't let face-remapping screw up loading the new theme
-   (*cough*`mixed-pitch-mode').
-3. Record the current theme in `doom-theme'."
+  "Record `doom-theme', disable old themes, and trigger `doom-load-theme-hook'."
   :around #'load-theme
-  ;; HACK Run `load-theme' from an estranged buffer, where we can be assured
-  ;;      that buffer-local face remaps (by `mixed-pitch-mode', for instance)
-  ;;      won't interfere with changing themes.
+  ;; Run `load-theme' from an estranged buffer, where we can ensure that
+  ;; buffer-local face remaps (by `mixed-pitch-mode', for instance) won't
+  ;; interfere with recalculating faces in new themes.
   (with-temp-buffer
-    (when-let (result (funcall orig-fn theme no-confirm no-enable))
-      (unless no-enable
-        (setq doom-theme theme
-              doom-init-theme-p t)
-        ;; `load-theme' doesn't disable previously enabled themes, which seems
-        ;; like what you'd want. You could always use `enable-theme' to activate
-        ;; multiple themes instead.
-        (mapc #'disable-theme (remq theme custom-enabled-themes))
-        (run-hooks 'doom-load-theme-hook))
-      result)))
-
-(eval-when! (not EMACS27+)
-  ;; DEPRECATED `doom--load-theme-a' handles this for us after the theme is
-  ;;            loaded, but this only works on Emacs 27+. Disabling old themes
-  ;;            must be done *before* the theme is loaded in Emacs 26.
-  (defadvice! doom--disable-previous-themes-a (theme &optional _no-confirm no-enable)
-    "Disable other themes when loading a new one."
-    :before #'load-theme
-    (unless no-enable
-      (mapc #'disable-theme custom-enabled-themes)))
-
-  ;; DEPRECATED Not needed in Emacs 27
-  (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
-    "Have `load-theme' prioritize the byte-compiled theme.
-This offers a moderate boost in startup (or theme switch) time, so long as
-`doom--prefer-theme-elc' is non-nil."
-    :around #'load-theme
-    (if (or (null after-init-time)
-            doom--prefer-theme-elc)
-        (letf! (defun locate-file (filename path &optional _suffixes predicate)
-                 (funcall locate-file filename path '("c" "") predicate))
-          (apply orig-fn args))
-      (apply orig-fn args))))
+    ;; Disable previous themes so there are no conflicts. If you truly want
+    ;; multiple themes enabled, then use `enable-theme' instead.
+    (mapc #'disable-theme custom-enabled-themes)
+    (prog1 (funcall orig-fn theme no-confirm no-enable)
+      (when (and (not no-enable) (custom-theme-enabled-p theme))
+        (setq doom-theme theme)
+        (doom-run-hooks 'doom-load-theme-hook)))))
 
 
 ;;

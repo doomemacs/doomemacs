@@ -71,9 +71,7 @@ FRAME parameter defaults to current frame."
   "Reload your fonts, if they're set.
 See `doom-init-fonts-h'."
   (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom-init-fonts-h))
+  (doom-init-fonts-h 'reload))
 
 ;;;###autoload
 (defun doom/increase-font-size (count)

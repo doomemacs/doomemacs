@@ -58,13 +58,6 @@ envvar will enable this at startup.")
 (define-error 'doom-private-error "Error in private config" 'doom-error)
 (define-error 'doom-package-error "Error with packages" 'doom-error)
 
-;;; Declare a psuedo theme to store faces and variables in, with no risk of it
-;;; getting saved to `custom-file', or accidentally overwritten by user config.
-(custom-declare-theme 'doom nil)
-(enable-theme 'doom)
-;; But immediately hide it, because it's not a real theme.
-(setq custom-enabled-themes (remq 'doom custom-enabled-themes))
-
 
 ;;
 ;;; Directory variables

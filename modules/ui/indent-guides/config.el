@@ -15,7 +15,7 @@
   ;;      access to 256 colors. So if the user uses a daemon we must wait for
   ;;      the first graphical frame to be available to do.
   (add-hook 'doom-load-theme-hook #'+indent-guides-init-faces-h)
-  (when doom-init-theme-p
+  (when doom-theme
     (+indent-guides-init-faces-h))
 
   ;; `highlight-indent-guides' breaks when `org-indent-mode' is active

@@ -28,14 +28,15 @@ all themes. It will apply to all themes once they are loaded."
     `(progn
        (defun ,fn ()
          (let (custom--inhibit-theme-enable)
-           (dolist (theme (doom-enlist (or ,theme 'user)))
+           (dolist (theme (doom-enlist (or ,theme 'doom)))
              (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
                               (list ,@specs)))))))
-       (when (or doom-init-theme-p (null doom-theme))
-         (funcall #',fn))
+       (unless doom-theme (funcall #',fn))
+       ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs
+       ;;      26.x support is dropped.
        (add-hook 'doom-customize-theme-hook #',fn 'append))))
 
 ;;;###autoload
@@ -46,17 +47,15 @@ This is a convenience macro alternative to `custom-set-face' which allows for a
 simplified face format, and takes care of load order issues, so you can use
 doom-themes' API without worry."
   (declare (indent defun))
-  `(custom-theme-set-faces! 'user ,@specs))
+  `(custom-theme-set-faces! 'doom ,@specs))
 
 ;;;###autoload
 (defun doom/reload-theme ()
   "Reload the current color theme."
   (interactive)
   (let ((themes (copy-sequence custom-enabled-themes)))
-    (mapc #'disable-theme custom-enabled-themes)
-    (dolist (theme themes)
-      (if (get theme 'theme-feature)
-          (load-theme theme t)
-        (enable-theme theme)))
-    (message "Reloaded themes: %s" (mapconcat #'prin1-to-string themes ", "))
-    (doom/reload-font)))
+    (load-theme doom-theme t)
+    (doom/reload-font)
+    (message "%s %s"
+             (propertize "Reloaded themes:" 'face 'bold)
+             (mapconcat #'prin1-to-string themes ", "))))
