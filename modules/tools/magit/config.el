@@ -100,7 +100,8 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
 
   ;; Clean up after magit by killing leftover magit buffers and reverting
   ;; affected buffers (or at least marking them as need-to-be-reverted).
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+  (define-key magit-mode-map "q" #'+magit/quit)
+  (define-key magit-mode-map "Q" #'+magit/quit-all)
 
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
@@ -216,6 +217,8 @@ ensure it is built when we actually use Forge."
   ;; REVIEW There must be a better way to exclude particular evil-collection
   ;;        modules from the blacklist.
   (map! (:map magit-mode-map
+         :nv "q" #'+magit/quit
+         :nv "Q" #'+magit/quit-all
          :nv "]" #'magit-section-forward-sibling
          :nv "[" #'magit-section-backward-sibling
          :nv "gr" #'magit-refresh
