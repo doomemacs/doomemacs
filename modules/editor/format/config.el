@@ -1,11 +1,12 @@
 ;;; editor/format/config.el -*- lexical-binding: t; -*-
 
 (defvar +format-on-save-enabled-modes
-  '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
-        sql-mode         ; sqlformat is currently broken
-        tex-mode         ; latexindent is broken
+  '(not emacs-lisp-mode    ; elisp's mechanisms are good enough
+        sql-mode           ; sqlformat is currently broken
+        tex-mode           ; latexindent is broken
         latex-mode
-        rustic-mode)     ; handled by `rustic-rustfmt'
+        rustic-mode        ; handled by `rustic-rustfmt'
+        org-msg-edit-mode) ; doesn't need a formatter
   "A list of major modes in which to reformat the buffer upon saving.
 
 If this list begins with `not', then it negates the list.
