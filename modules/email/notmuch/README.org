@@ -88,7 +88,9 @@ index your email for the first time:
 notmuch new
 #+END_SRC
 
-*** TODO Gmailier
+*** lieer
+
+[[https://github.com/gauteh/lieer][Lieer]], formerly called Gmailieer, is the indexing tool used by default. To install lieer, see the [[https://github.com/gauteh/lieer#installation][installation docs]].
 
 *** offlineimap
 To use [[https://www.offlineimap.org/][offlineimap]], change ~+notmuch-sync-backend~:
