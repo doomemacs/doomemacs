@@ -68,7 +68,11 @@ environment.systemPackages = with pkgs; [
 ** TODO openSUSE
 ** TODO Debian/Ubuntu
 
-* TODO Features
+* Features
+
+| Keymap    | Command            | Description                                   |
+| ~SPC m u~ | =+notmuch/update=  | Download, sync, and index emails with notmuch |
+| ~SPC m c~ | =+notmuch/compose= | Compose new email                             |
 
 * Configuration
 ** Downloading your email
