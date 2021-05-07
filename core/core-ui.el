@@ -702,16 +702,16 @@ This offers a moderate boost in startup (or theme switch) time, so long as
   (dolist (fn '(switch-to-buffer display-buffer))
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
-;; Apply `doom-font' et co
-(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
-
 ;; Apply `doom-theme'
 (add-hook (if (daemonp)
               'after-make-frame-functions
-            'doom-init-ui-hook)
+            'doom-after-init-modules-hook)
           #'doom-init-theme-h)
 
-(add-hook 'window-setup-hook #'doom-init-ui-h)
+;; Apply `doom-font' et co
+(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
+
+(add-hook 'window-setup-hook #'doom-init-ui-h 'append)
 
 
 ;;
