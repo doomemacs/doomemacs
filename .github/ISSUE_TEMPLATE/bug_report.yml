@@ -3,27 +3,28 @@ name: 📝 Report a bug, error, or misbehavior
 labels: ["1. bug", "2. status:unread"]
 body:
 - type: markdown
-  value: |
-    **Thank you for reporting an issue to our issue tracker!**
+  attributes:
+    value: |
+      **Thank you for reporting an issue to our issue tracker!**
 
-    > **Tip:** If you are seeking support or usage advice, head over [our Discord](https://doomemacs.org/discord) or [our Discourse](https://discourse.doomemacs.org) instead.
+      > **Tip:** If you are seeking support or usage advice, head over [our Discord](https://doomemacs.org/discord) or [our Discourse](https://discourse.doomemacs.org) instead.
 
-    Before you fill out the form, please consult our available resources and collect as much information about your issue as possible:
+      Before you fill out the form, please consult our available resources and collect as much information about your issue as possible:
 - type: checkboxes
   attributes:
-  options:
-    # - label: I have read the [contributing guide](https://discourse.doomemacs.org/how2contribute).
-    #   required: true
-    - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
-      required: true
-    - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
-      required: true
-    - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
-      required: true
-    # - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
-    #   required: true
-    # - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
-    #   required: true
+    options:
+      # - label: I have read the [contributing guide](https://discourse.doomemacs.org/how2contribute).
+      #   required: true
+      - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
+        required: true
+      - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
+        required: true
+      - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
+        required: true
+      # - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
+      #   required: true
+      # - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
+      #   required: true
 - type: textarea
   attributes:
     label: What did you expect to happen?
