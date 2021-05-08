@@ -34,7 +34,12 @@ all themes. It will apply to all themes once they are loaded."
                (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
                               (list ,@specs)))))))
-       (unless doom-theme (funcall #',fn))
+       ;; Apply the changes immediately if the user is using the default theme
+       ;; or the theme has already loaded. This allows you to evaluate these
+       ;; macros on the fly and customize your faces iteratively.
+       (when (or (get 'doom-theme 'previous-themes)
+                 (null doom-theme))
+         (funcall #',fn))
        ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs
        ;;      26.x support is dropped.
        (add-hook 'doom-customize-theme-hook #',fn 'append))))

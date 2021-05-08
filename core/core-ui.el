@@ -634,13 +634,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; buffer-local face remaps (by `mixed-pitch-mode', for instance) won't
   ;; interfere with recalculating faces in new themes.
   (with-temp-buffer
-    ;; Disable previous themes so there are no conflicts. If you truly want
-    ;; multiple themes enabled, then use `enable-theme' instead.
-    (mapc #'disable-theme custom-enabled-themes)
-    (prog1 (funcall orig-fn theme no-confirm no-enable)
-      (when (and (not no-enable) (custom-theme-enabled-p theme))
-        (setq doom-theme theme)
-        (doom-run-hooks 'doom-load-theme-hook)))))
+    (let ((last-themes (copy-sequence custom-enabled-themes)))
+      ;; Disable previous themes so there are no conflicts. If you truly want
+      ;; multiple themes enabled, then use `enable-theme' instead.
+      (mapc #'disable-theme custom-enabled-themes)
+      (prog1 (funcall orig-fn theme no-confirm no-enable)
+        (when (and (not no-enable) (custom-theme-enabled-p theme))
+          (setq doom-theme theme)
+          (put 'doom-theme 'previous-themes last-themes)
+          (doom-run-hooks 'doom-load-theme-hook))))))
 
 
 ;;
