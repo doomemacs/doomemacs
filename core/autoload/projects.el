@@ -125,7 +125,7 @@ If DIR is not a project, it will be indexed (but not cached)."
             ;; Intentionally avoid `helm-projectile-find-file', because it runs
             ;; asynchronously, and thus doesn't see the lexical
             ;; `default-directory'
-            (if (doom-module-p :completion 'ivy)
+            (if (featurep! :completion ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
           ((featurep! :completion ivy)
@@ -141,9 +141,9 @@ If DIR is not a project, it will be indexed (but not cached)."
   "Traverse a file structure starting linearly from DIR."
   (let ((default-directory (file-truename (expand-file-name dir))))
     (call-interactively
-     (cond ((doom-module-p :completion 'ivy)
+     (cond ((featurep! :completion ivy)
             #'counsel-find-file)
-           ((doom-module-p :completion 'helm)
+           ((featurep! :completion helm)
             #'helm-find-files)
            (#'find-file)))))
 
