@@ -153,10 +153,29 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
+;; REVIEW Remove me after a couple weeks.
+(when (boundp 'comp-eln-load-path)
+  (defvaralias 'native-comp-eln-load-path 'comp-eln-load-path)
+  (defvaralias 'native-comp-warning-on-missing-source 'comp-warning-on-missing-source)
+  (defvaralias 'native-comp-driver-options 'comp-native-driver-options)
+  (defvaralias 'native-comp-async-query-on-exit 'comp-async-query-on-exit)
+  (defvaralias 'native-comp-async-report-warnings-errors 'comp-async-report-warnings-errors)
+  (defvaralias 'native-comp-async-env-modifier-form 'comp-async-env-modifier-form)
+  (defvaralias 'native-comp-async-all-done-hook 'comp-async-all-done-hook)
+  (defvaralias 'native-comp-async-cu-done-functions 'comp-async-cu-done-functions)
+  (defvaralias 'native-comp-async-jobs-number 'comp-async-jobs-number)
+  (defvaralias 'native-comp-never-optimize-functions 'comp-never-optimize-functions)
+  (defvaralias 'native-comp-bootstrap-deny-list 'comp-bootstrap-deny-list)
+  (defvaralias 'native-comp-always-compile 'comp-always-compile)
+  (defvaralias 'native-comp-verbose 'comp-verbose)
+  (defvaralias 'native-comp-debug 'comp-debug)
+  (defvaralias 'native-comp-speed 'comp-speed)
+  (defalias 'native-comp-limple-mode #'comp-limple-mode))
+
 ;; Don't store eln files in ~/.emacs.d/eln-cache (they are likely to be purged
 ;; when upgrading Doom).
-(when (boundp 'comp-eln-load-path)
-  (add-to-list 'comp-eln-load-path (concat doom-cache-dir "eln/")))
+(when (boundp 'native-comp-eln-load-path)
+  (add-to-list 'native-comp-eln-load-path (concat doom-cache-dir "eln/")))
 
 (with-eval-after-load 'comp
   ;; HACK Disable native-compilation for some troublesome packages
@@ -170,9 +189,9 @@ users).")
   ;; Default to using all cores, rather than half of them, since we compile
   ;; things ahead-of-time in a non-interactive session.
   (defun doom--comp-use-all-cores-a ()
-    (if (zerop comp-async-jobs-number)
+    (if (zerop native-comp-async-jobs-number)
         (setq comp-num-cpus (doom-system-cpus))
-      comp-async-jobs-number))
+      native-comp-async-jobs-number))
   (advice-add #'comp-effective-async-max-jobs :override #'doom--comp-use-all-cores-a))
 
 

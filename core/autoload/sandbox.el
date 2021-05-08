@@ -83,9 +83,11 @@
                 package-archives ',package-archives)
           ;; comp.el
           (setq comp-deferred-compilation nil
-                comp-eln-load-path ',(bound-and-true-p comp-eln-load-path)
-                comp-async-env-modifier-form ',(bound-and-true-p comp-async-env-modifier-form)
-                comp-deferred-compilation-black-list ',(bound-and-true-p comp-deferred-compilation-black-list))
+                native-comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path)
+                native-comp-async-env-modifier-form ',(bound-and-true-p comp-async-env-modifier-form)
+                comp-deferred-compilation-black-list ',(bound-and-true-p comp-deferred-compilation-black-list)
+                ;; REVIEW Remove me after a couple weeks
+                comp-eln-load-path ',(bound-and-true-p native-comp-eln-load-path))
           ;; (add-hook 'kill-emacs-hook
           ;;           (lambda ()
           ;;             (delete-file user-init-file)
