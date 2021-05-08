@@ -1,17 +1,14 @@
 blank_issues_enabled: false
 contact_links:
-  # bug_report.yml:      Report a bug, error, or misbehavior
-  # feature_request.yml: Propose a new idea or feature
-  # bump_request.yml:    Request a package be bumped
   - name: Official Documentation
     url: https://doomemacs.org/docs/index.org
-    about: Our in-repo manual documents. Also available from within Doom: `M-x doom/help`
+    about: "Our in-repo manual documents. Also available from within Doom: `M-x doom/help`"
   - name: Visit our Discourse (work in progress)
     url: https://discourse.doomemacs.org
-    about: A repository of official learning resources and discussion forum for Emacs and Doom
+    about: "A repository of official learning resources and discussion forum for Emacs and Doom"
   - name: Visit our Discord
     url: https://doomemacs.org/discord
-    about: A place to chat, get to know the community, and get help quick
+    about: "A place to chat, get to know the community, and get help quick"
   - name: See third-party resources
     url: https://discourse.doomemacs.org/resources
-    about: A curated collection of non-official resources to help you learn Emacs and Doom
+    about: "A curated collection of non-official resources to help you learn Emacs and Doom"
