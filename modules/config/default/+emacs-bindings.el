@@ -486,8 +486,12 @@
         [C-tab]      #'company-complete-common-or-cycle
         [tab]        #'company-complete-common-or-cycle
         [backtab]    #'company-select-previous
-        "C-RET"      #'counsel-company
-        "C-<return>" #'counsel-company
+        "C-RET"      (cond ((featurep! :completion helm)       #'helm-company)
+                           ((featurep! :completion ivy)        #'counsel-company)
+                           ((featurep! :completion selectrum)  #'completion-at-point))
+        "C-<return>" (cond ((featurep! :completion helm)       #'helm-company)
+                           ((featurep! :completion ivy)        #'counsel-company)
+                           ((featurep! :completion selectrum)  #'completion-at-point))
         :map company-search-map
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
