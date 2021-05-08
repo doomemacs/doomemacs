@@ -144,7 +144,7 @@ list remains lean."
 
 (defvar doom--eln-output-expected nil)
 
-(defvar doom--eln-output-path (car (bound-and-true-p comp-eln-load-path)))
+(defvar doom--eln-output-path (car (bound-and-true-p native-comp-eln-load-path)))
 
 (defun doom--eln-file-name (file)
   "Return the short .eln file name corresponding to `file'."
@@ -161,12 +161,12 @@ list remains lean."
   (concat doom--eln-output-path eln-name ".error"))
 
 (defun doom--find-eln-file (eln-name)
-  "Find `eln-name' on the `comp-eln-load-path'."
+  "Find `eln-name' on the `native-comp-eln-load-path'."
   (cl-some (lambda (eln-path)
              (let ((file (concat eln-path eln-name)))
                (when (file-exists-p file)
                  file)))
-           comp-eln-load-path))
+           native-comp-eln-load-path))
 
 (defun doom--elc-file-outdated-p (file)
   "Check whether the corresponding .elc for `file' is outdated."
