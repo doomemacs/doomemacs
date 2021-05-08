@@ -141,6 +141,10 @@ playback.")
   ;; Fail gracefully if not in a circe buffer
   (global-set-key [remap tracking-next-buffer] #'+irc/tracking-next-buffer)
 
+  (after! marginalia
+    (when (featurep! :completion selectrum)
+      (add-to-list 'marginalia-command-categories '(+irc/selectrum-jump-to-channel . buffer))))
+
   (map! :localleader
         (:map circe-mode-map
           "a" #'tracking-next-buffer
