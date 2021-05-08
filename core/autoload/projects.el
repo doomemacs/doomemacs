@@ -128,11 +128,11 @@ If DIR is not a project, it will be indexed (but not cached)."
             (if (doom-module-p :completion 'ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
-          ((fboundp 'counsel-file-jump) ; ivy only
+          ((featurep! :completion ivy)
            (call-interactively #'counsel-file-jump))
           ((project-current nil dir)
            (project-find-file-in nil nil dir))
-          ((fboundp 'helm-find-files)
+          ((featurep! :completion helm)
            (call-interactively #'helm-find-files))
           ((call-interactively #'find-file)))))
 

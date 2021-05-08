@@ -200,9 +200,9 @@ selection of all minor-modes, active or not."
 (defun doom/help-search (&optional initial-input)
   "Preform a text search on all of Doom's documentation."
   (interactive)
-  (funcall (cond ((fboundp '+ivy-file-search)
+  (funcall (cond ((featurep! :completion ivy)
                   #'+ivy-file-search)
-                 ((fboundp '+helm-file-search)
+                 ((featurep! :completion helm)
                   #'+helm-file-search)
                  ((rgrep
                    (read-regexp

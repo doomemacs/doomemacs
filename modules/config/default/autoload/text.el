@@ -27,8 +27,8 @@
   "Interactively select what text to insert from the kill ring."
   (interactive)
   (call-interactively
-   (cond ((fboundp 'counsel-yank-pop)    #'counsel-yank-pop)
-         ((fboundp 'helm-show-kill-ring) #'helm-show-kill-ring)
+   (cond ((featurep! :completion ivy)  #'counsel-yank-pop)
+         ((featurep! :completion helm) #'helm-show-kill-ring)
          ((error "No kill-ring search backend available. Enable ivy or helm!")))))
 
 ;;;###autoload
