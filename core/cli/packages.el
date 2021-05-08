@@ -263,7 +263,7 @@ declaration) or dependency thereof that hasn't already been."
   (print! (start "Installing packages..."))
   (let ((pinned (doom-package-pinned-list)))
     (print-group!
-     (add-hook 'comp-async-cu-done-hook #'doom--native-compile-done-h)
+     (add-hook 'native-comp-async-cu-done-functions #'doom--native-compile-done-h)
      (if-let (built
               (doom--with-package-recipes (doom-package-recipe-list)
                   (recipe package type local-repo)
@@ -314,7 +314,7 @@ declaration) or dependency thereof that hasn't already been."
           (or (if force-p :all straight--packages-to-rebuild)
               (make-hash-table :test #'equal)))
          (recipes (doom-package-recipe-list)))
-     (add-hook 'comp-async-cu-done-hook #'doom--native-compile-done-h)
+     (add-hook 'native-comp-async-cu-done-functions #'doom--native-compile-done-h)
      (unless force-p
        (straight--make-build-cache-available))
      (if-let (built
