@@ -1,5 +1,6 @@
 ---
-name: 📝 Report a bug, error, or misbehavior
+name: 📝 Bug Report
+description: Report a bug, error, or misbehavior
 labels: ["1. bug", "2. status:unread"]
 body:
 - type: markdown
