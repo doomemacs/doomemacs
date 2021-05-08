@@ -29,7 +29,7 @@ all themes. It will apply to all themes once they are loaded."
        (defun ,fn ()
          (let (custom--inhibit-theme-enable)
            (dolist (theme (doom-enlist (or ,theme 'doom)))
-             (when (or (eq theme 'user)
+             (when (or (memq theme '(user doom))
                        (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
