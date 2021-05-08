@@ -13,6 +13,7 @@
   - [[#project-search--replace][Project search & replace]]
   - [[#in-buffer-searching][In-buffer searching]]
   - [[#selectrum-integration-for-various-completing-commands][Selectrum integration for various completing commands]]
+  - [[#orderless-filtering][Orderless filtering]]
 
 * Description
 This module provides Selectrum integration for a variety of Emacs commands, as
@@ -145,3 +146,14 @@ A wgrep buffer can be opened from swiper with =C-c C-e=.
 | =SPC s p= | Search project                            |
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
+
+** Orderless filtering
+When using orderless to filter through candidates, the default behaviour is for
+each space separated inputs to match the candidate as a regular expression or
+literally. You can further specify each space separated input in the following
+ways:
+| Input  | Description                                |
+|--------+--------------------------------------------|
+| =!foo= | match without literal input =foo=          |
+| =bar== | match only with literal input =foo=        |
+| =baz~= | match input =foo= with fuzzy/flex matching |
