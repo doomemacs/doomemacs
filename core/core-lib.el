@@ -510,10 +510,12 @@ This macro accepts, in order:
          append-p
          local-p
          remove-p
+         depth
          forms)
     (while (keywordp (car rest))
       (pcase (pop rest)
         (:append (setq append-p t))
+        (:depth  (setq depth (pop rest)))
         (:local  (setq local-p t))
         (:remove (setq remove-p t))))
     (let ((first (car-safe (car rest))))
@@ -535,7 +537,7 @@ This macro accepts, in order:
         (dolist (func func-forms)
           (push (if remove-p
                     `(remove-hook ',hook #',func ,local-p)
-                  `(add-hook ',hook #',func ,append-p ,local-p))
+                  `(add-hook ',hook #',func ,(or depth append-p) ,local-p))
                 forms)))
       (macroexp-progn
        (append defn-forms
