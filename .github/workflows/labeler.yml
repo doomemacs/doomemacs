@@ -15,10 +15,6 @@ jobs:
       #   uses: actions/checkout@v2
       - uses: actions/labeler@main
         description: "Auto-label PRs by target files (see ../labeler.yml)"
-      - uses: JasonEtco/is-sponsor-label-action@v1
-        description: "Label issues/PRs created by sponsors"
-        with:
-          label: ':heart:'
       # - name: Synchronize labels
       #   uses: julb/action-manage-label@v1
       #   with:
