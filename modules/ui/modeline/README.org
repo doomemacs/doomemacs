@@ -72,12 +72,12 @@ I believe the consensus is: this is due to oversized icons, i.e. a font issue. S
 
 2. Add some padding to the modeline definition:
 
-    #+BEGIN_SRC elisp
+    #+begin_src elisp
     (after! doom-modeline
       (doom-modeline-def-modeline 'main
         '(bar matches buffer-info remote-host buffer-position parrot selection-info)
         '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
-    #+END_SRC
+    #+end_src
 
 3. Use another font for the mode line (or a different ~:height~) (source)
 
@@ -89,6 +89,33 @@ I believe the consensus is: this is due to oversized icons, i.e. a font issue. S
 
 (Mentioned in #1680, #278 and seagle0128/doom-modeline#334)
 
+4. If the previous suggestions don't fix the issue, try the following code:
+   
+    #+BEGIN_SRC elisp
+    (defun doom-modeline--set-char-widths (alist)
+     "Set correct widths of icons characters in ALIST."
+     (while (char-table-parent char-width-table)
+       (setq char-width-table (char-table-parent char-width-table)))
+     (dolist (pair alist)
+       (let ((width 2)
+             (chars (cdr pair))
+             (table (make-char-table nil)))
+         (dolist (char chars)
+           (set-char-table-range table char width))
+         (optimize-char-table table)
+         (set-char-table-parent table char-width-table)
+         (setq char-width-table table))))
+
+     (defun set-modeline-icon-width ()
+       (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
+
+     (after! doom-modeline
+       (add-hook 'doom-modeline-mode-hook #'set-modeline-icon-width))
+    #+END_SRC
+
+   If this doesn't help, try different values for ~width~ such as ~width 1~ or ~width 3~. 
+
+5. Finally, if none of this helps, try starting Emacs without the server.
 
 * Appendix
 ** Autodefs
