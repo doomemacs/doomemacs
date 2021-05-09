@@ -18,41 +18,41 @@
         (`((,(car spec) ,(cdr spec))))))
 
 ;;;###autoload
-(defun custom-theme-set-faces! (theme &rest specs)
+(defmacro custom-theme-set-faces! (theme &rest specs)
   "Apply a list of face SPECS as user customizations for THEME.
 
 THEME can be a single symbol or list thereof. If nil, apply these settings to
 all themes. It will apply to all themes once they are loaded."
   (declare (indent defun))
   (let ((fn (gensym "doom--customize-themes-h-")))
-    (fset
-     fn (lambda ()
-          (let (custom--inhibit-theme-enable)
-            (dolist (theme (doom-enlist (or ,theme 'doom)))
-              (when (or (memq theme '(user doom))
-                        (custom-theme-enabled-p theme))
-                (apply #'custom-theme-set-faces theme
-                       (mapcan #'doom--custom-theme-set-face
-                               (list ,@specs))))))))
-    ;; Apply the changes immediately if the user is using the default theme or
-    ;; the theme has already loaded. This allows you to evaluate these macros on
-    ;; the fly and customize your faces iteratively.
-    (when (or (get 'doom-theme 'previous-themes)
-              (null doom-theme))
-      (funcall fn))
-    ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs 26.x
-    ;;      support is dropped.
-    (add-hook 'doom-customize-theme-hook fn 'append)))
+    `(progn
+       (defun ,fn ()
+         (let (custom--inhibit-theme-enable)
+           (dolist (theme (doom-enlist (or ,theme 'doom)))
+             (when (or (memq theme '(user doom))
+                       (custom-theme-enabled-p theme))
+               (apply #'custom-theme-set-faces theme
+                      (mapcan #'doom--custom-theme-set-face
+                              (list ,@specs)))))))
+       ;; Apply the changes immediately if the user is using the default theme
+       ;; or the theme has already loaded. This allows you to evaluate these
+       ;; macros on the fly and customize your faces iteratively.
+       (when (or (get 'doom-theme 'previous-themes)
+                 (null doom-theme))
+         (funcall #',fn))
+       ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs
+       ;;      26.x support is dropped.
+       (add-hook 'doom-customize-theme-hook #',fn 'append))))
 
 ;;;###autoload
-(defun custom-set-faces! (&rest specs)
+(defmacro custom-set-faces! (&rest specs)
   "Apply a list of face SPECS as user customizations.
 
 This is a convenience macro alternative to `custom-set-face' which allows for a
 simplified face format, and takes care of load order issues, so you can use
 doom-themes' API without worry."
   (declare (indent defun))
-  (apply #'custom-theme-set-faces! 'doom specs))
+  `(custom-theme-set-faces! 'doom ,@specs))
 
 ;;;###autoload
 (defun doom/reload-theme ()
