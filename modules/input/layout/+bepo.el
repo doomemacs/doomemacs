@@ -73,6 +73,12 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
   (+layout-bepo-rotate-ts-bare-keymap '(read-expression-map))
   (+layout-bepo-rotate-bare-keymap '(evil-window-map) +layout-bepo-cr-rotation-style)
   (+layout-bepo-rotate-evil-keymap +layout-bepo-cr-rotation-style)
+  ;; Remap the visual-mode-map bindings if necessary
+  ;; See https://github.com/emacs-evil/evil/blob/7d00c23496c25a66f90ac7a6a354b1c7f9498162/evil-integration.el#L478-L501
+  (after! evil-integration
+    (when evil-respect-visual-line-mode
+      (+layout-bepo-rotate-keymaps '(visual-line-mode-map))))
+
 
   (map! :i "C-t" #'+default-newline
         (:when (featurep! :editor multiple-cursors)
