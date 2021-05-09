@@ -8,9 +8,10 @@ body:
     value: |
       **Thank you for reporting an issue to our issue tracker!**
 
-      > **Tip:** If you are seeking support or usage advice, head over [our Discord](https://doomemacs.org/discord) or [our Discourse](https://discourse.doomemacs.org) instead.
+      > **Tip:** If you are seeking support or usage advice, head over to [our Discord](https://doomemacs.org/discord) or [our Discourse](https://discourse.doomemacs.org) instead.
 
-      Before you fill out the form, please consult our available resources and collect as much information about your issue as possible:
+      Before you proceed, please consult our available resources and collect as much information about your issue as possible:
+
 - type: checkboxes
   attributes:
     options:
@@ -29,8 +30,6 @@ body:
 - type: textarea
   attributes:
     label: What did you expect to happen?
-    description: |
-      _Please use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces._
     placeholder: When I do X, it should do Y.
   validations:
     required: true
@@ -40,9 +39,18 @@ body:
     description: |
       Include screenshots/casts, logs, and [backtraces for errors](https://discourse.doomemacs.org/how2backtrace), if possible.
 
-      _Please use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces._
+      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
     placeholder: |
-      When I do X, Z happened! Here are the details...
+      When I do X, Z happened. Here is the backtrace:
+
+      ```
+      Debugger entered--Lisp error: (error "Beep Boop")
+        error("Beep Boop")
+        pp-eval-expression((error "Beep Boop"))
+        \#<subr funcall-interactively>(pp-eval-expression (error "Beep Boop"))
+        apply(#<subr funcall-interactively> (pp-eval-expression (error "Beep Boop")))
+        funcall-interactively(pp-eval-expression (error "Beep Boop"))
+      ```
   validations:
     required: true
 - type: textarea
@@ -51,7 +59,7 @@ body:
     description: |
       Describe resources you consulted or code you tried to fix your problem, and their result.
 
-      _Please use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces._
+      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
     placeholder: |
       I tried setting X to Y, then I tried Z. Here's what else I tried...
 
