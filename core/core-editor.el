@@ -286,14 +286,10 @@ or file path may exist now."
         recentf-max-saved-items 200) ; default is 20
 
   (defun doom--recentf-file-truename-fn (file)
-    (if (file-remote-p file)
-        (if-let* ((tfile (and (bound-and-true-p tramp-mode)
-                              (tramp-tramp-file-p file)
-                              (tramp-dissect-file-name file)))
-                  ((string= (tramp-file-name-method tfile) "sudo")))
-            (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
-          file)
-      (abbreviate-file-name (file-truename file))))
+    (if (or (not (file-remote-p file))
+            (equal "sudo" (file-remote-p file 'method)))
+        (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
+      file))
 
   ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
   ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
