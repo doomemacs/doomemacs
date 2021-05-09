@@ -81,15 +81,15 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
   (after! evil-integration
     (when evil-respect-visual-line-mode
       (map! :map visual-line-mode-map
-            :m "t" 'evil-next-visual-line
+            :m "t"  #'evil-next-visual-line
             ;; _Not_ remapping gj and gk because they aren't remapped
             ;; consistently across all Emacs.
-            :m "s" 'evil-previous-visual-line
-            :m "È" 'evil-beginning-of-visual-line
-            :m "gÈ" 'evil-beginning-of-line
-            :m "$" 'evil-end-of-visual-line
-            :m "g$" 'evil-end-of-line
-            :m "V" 'evil-visual-screen-line)))
+            :m "s"  #'evil-previous-visual-line
+            :m "È"  #'evil-beginning-of-visual-line
+            :m "gÈ" #'evil-beginning-of-line
+            :m "$"  #'evil-end-of-visual-line
+            :m "g$" #'evil-end-of-line
+            :m "V"  #'evil-visual-screen-line)))
 
   (map! :i "C-t" #'+default-newline
         (:when (featurep! :editor multiple-cursors)
