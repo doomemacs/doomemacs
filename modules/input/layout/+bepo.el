@@ -75,10 +75,21 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
   (+layout-bepo-rotate-evil-keymap +layout-bepo-cr-rotation-style)
   ;; Remap the visual-mode-map bindings if necessary
   ;; See https://github.com/emacs-evil/evil/blob/7d00c23496c25a66f90ac7a6a354b1c7f9498162/evil-integration.el#L478-L501
+  ;; Using +layout-bepo-rotate-keymaps is impossible because `evil-define-minor-mode-key' doesn't
+  ;; provide an actual symbol to design the new keymap with, and instead stuff the keymap in
+  ;; an auxiliary-auxiliary `minor-mode-map-alist'-like variable.
   (after! evil-integration
     (when evil-respect-visual-line-mode
-      (+layout-bepo-rotate-keymaps '(visual-line-mode-map))))
-
+      (map! :map visual-line-mode-map
+            :m "t" 'evil-next-visual-line
+            ;; _Not_ remapping gj and gk because they aren't remapped
+            ;; consistently across all Emacs.
+            :m "s" 'evil-previous-visual-line
+            :m "È" 'evil-beginning-of-visual-line
+            :m "gÈ" 'evil-beginning-of-line
+            :m "$" 'evil-end-of-visual-line
+            :m "g$" 'evil-end-of-line
+            :m "V" 'evil-visual-screen-line)))
 
   (map! :i "C-t" #'+default-newline
         (:when (featurep! :editor multiple-cursors)
