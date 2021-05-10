@@ -422,11 +422,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                  ((apply #'derived-mode-p global-hl-line-modes)))
            (hl-line-mode +1))))
 
-  ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
-  ;; performance boost. I also don't need to see it in other buffers.
-  (setq hl-line-sticky-flag nil
-        global-hl-line-sticky-flag nil)
-
   ;; Temporarily disable `hl-line' when selection is active, since it doesn't
   ;; serve much purpose when the selection is so much more visible.
   (defvar doom--hl-line-mode nil)
