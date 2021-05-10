@@ -9,11 +9,11 @@
 ;;
 (describe "editor/format"
   :var (format-all--format-table
-        format-all--mode-table)
+        format-all--language-table)
 
   (before-each
     (setq format-all--format-table (make-hash-table)
-          format-all--mode-table (make-hash-table)))
+          format-all--language-table (make-hash-table)))
 
   (describe "set-formatter!"
     (before-each
@@ -21,15 +21,15 @@
 
     (it "defines a formatter"
       (set-formatter! 'new (lambda () (interactive)))
-      (expect (gethash 'new format-all--mode-table) :to-equal nil)
+      (expect (gethash 'new format-all--language-table) :to-equal nil)
       (expect (functionp (gethash 'new format-all--format-table))))
 
     (it "defines a formatter with modes"
       (set-formatter! 'new (lambda () (interactive))
         :modes '(a-mode (b-mode "x")))
-      (expect (gethash 'a-mode format-all--mode-table)
+      (expect (gethash 'a-mode format-all--language-table)
               :to-equal '((new)))
-      (expect (gethash 'b-mode format-all--mode-table)
+      (expect (gethash 'b-mode format-all--language-table)
               :to-equal '((new . (lambda () "x")))))
 
     (it "replaces a pre-existing formatter"

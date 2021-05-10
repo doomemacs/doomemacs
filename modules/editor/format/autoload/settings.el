@@ -84,7 +84,7 @@
                    format-all-mode-table)
         (format-all--pushhash
          m (cons name (if probe `(lambda () ,probe)))
-         format-all--mode-table)))))
+         format-all--language-table)))))
 
 ;;;###autodef
 (cl-defun set-formatter!
