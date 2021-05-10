@@ -43,7 +43,6 @@ OR a shell command string such as
   (setq notmuch-fcc-dirs nil
         message-kill-buffer-on-exit t
         message-send-mail-function 'message-send-mail-with-sendmail
-        notmuch-search-oldest-first nil
         send-mail-function 'sendmail-send-it
         ;; sendmail-program "/usr/local/bin/msmtp"
         notmuch-search-result-format
@@ -60,6 +59,7 @@ OR a shell command string such as
           (:name "sent"    :query "tag:sent"                :key "s")
           (:name "drafts"  :query "tag:draft"               :key "d"))
         notmuch-archive-tags '("-inbox" "-unread"))
+  (setq-default notmuch-search-oldest-first nil)
 
   ;; only unfold unread messages in thread by default
   (add-hook 'notmuch-show-hook #'+notmuch-show-expand-only-unread-h)
