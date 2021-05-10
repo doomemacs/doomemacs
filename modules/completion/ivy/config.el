@@ -392,7 +392,7 @@ results buffer.")
           lsp-ivy-workspace-symbol ivy-resume ivy--restore-session
           counsel-grep counsel-git-grep counsel-rg counsel-ag counsel-ack
           counsel-fzf counsel-pt counsel-imenu counsel-yank-pop counsel-recentf
-          counsel-buffer-or-recentf counsel-outline)
+          counsel-buffer-or-recentf counsel-outline counsel-jq)
         ivy-prescient-retain-classic-highlighting t)
   (defun +ivy-prescient-non-fuzzy (str)
     (let ((prescient-filter-method '(literal regexp)))
