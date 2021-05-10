@@ -539,15 +539,16 @@ Is used as advice to replace `run-hooks'."
 
 (defun doom-run-hook-on (hook-var trigger-hooks)
   "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
-are invoked. Once HOOK-VAR is triggered, it is reset to nil.
+are invoked *after* Emacs has initialized (to reduce false positives). Once
+HOOK-VAR is triggered, it is reset to nil.
 
 HOOK-VAR is a quoted hook.
-
 TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (dolist (hook trigger-hooks)
     (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
+            ;; Only trigger this after Emacs has initialized.
             (when (and after-init-time
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
@@ -564,8 +565,9 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
              ;; shenanigans. Just load everything immediately.
              (add-hook 'after-init-hook fn 'append))
             ((eq hook 'find-file-hook)
-             ;; Advise `after-find-file' instead of use `find-file-hook' because
-             ;; the latter isn't triggered late enough.
+             ;; Advise `after-find-file' instead of using `find-file-hook'
+             ;; because the latter is triggered too late (after the file has
+             ;; opened and modes are all set up).
              (advice-add 'after-find-file :before fn '((depth . -101))))
             ((add-hook hook fn (if EMACS27+ -101))))
       fn)))
