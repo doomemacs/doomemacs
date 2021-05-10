@@ -126,6 +126,8 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
   (after! evil-snipe
     (+layout-bepo-rotate-keymaps
      '(evil-snipe-local-mode-map evil-snipe-override-local-mode-map)))
+  (after! eshell
+    (add-hook 'eshell-first-time-mode-hook (lambda () (+layout-bepo-rotate-keymaps '(eshell-mode-map))) 99))
   (after! lispyville
     ;; <> en direct
     (general-translate-key '(normal motion) 'lispyville-mode-map
