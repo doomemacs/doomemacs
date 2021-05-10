@@ -1,0 +1,10 @@
+# -*- mode: conf -*-
+# Each line is a file pattern followed by one or more owners.
+
+# I will be the default owner for everything in the repo unless a later match
+# takes precedence.
+*  @hlissner
+
+# Module maintainers
+modules/app/everywhere/*     @hlissner @tecosaur
+modules/input/layout/*       @hlissner @gagbo
