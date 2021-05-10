@@ -124,7 +124,8 @@ ready to be pasted in a bug report on github."
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
         (system . ,(delq
                     nil (list (doom-system-distro-version)
-                              (sh "uname" "-msr")
+                              (when (executable-find "uname")
+                                (sh "uname" "-msr"))
                               (window-system))))
         (emacs . ,(delq
                    nil (list emacs-version
