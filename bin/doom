@@ -23,6 +23,26 @@
         (expand-file-name
          "../" (file-name-directory (file-truename load-file-name)))))
 
+;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
+;;      with deprecation and/or file load messages.
+(let ((inhibit-message t))
+  (require 'cl)
+  (unless site-run-file
+    (setq site-run-file "site-start")
+    (let ((verbose (or (getenv "DEBUG") init-file-debug))
+          (tail load-path)
+          (lispdir (expand-file-name "../lisp" data-directory))
+          dir)
+      (while tail
+        (setq dir (car tail))
+        (let ((default-directory dir))
+          (load (expand-file-name "subdirs.el") t (not verbose) t))
+        (or (string-prefix-p lispdir dir)
+            (let ((default-directory dir))
+              (load (expand-file-name "leim-list.el") t (not verbose) t)))
+        (setq tail (cdr tail)))
+      (load site-run-file t (not verbose)))))
+
 (kill-emacs
  (pcase
      (catch 'exit
