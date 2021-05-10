@@ -629,7 +629,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (prog1 (funcall orig-fn theme no-confirm no-enable)
         (when (and (not no-enable) (custom-theme-enabled-p theme))
           (setq doom-theme theme)
-          (put 'doom-theme 'previous-themes last-themes)
+          (put 'doom-theme 'previous-themes (or last-themes 'none))
           (doom-run-hooks 'doom-load-theme-hook))))))
 
 
