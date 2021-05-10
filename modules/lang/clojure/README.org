@@ -19,11 +19,11 @@
 This module adds support for the Clojure(Script) language.
 
 + Interactive development environment (~cider~): REPL, compilation, debugging,
-  running tests, definitions & documentation lookup, code completion, and many
+  running tests, definitions & documentation lookup, code completion, and much
   more
 + Refactoring (~clj-refactor~)
 + Linting (~clj-kondo~), requires ~:checkers syntax~
-+ LSP support
++ LSP support (~clojure-lsp~)
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -44,12 +44,12 @@ This module has no dedicated maintainers.
 * Prerequisites
 This module requires:
 
-+ clojure
++ [[https://clojure.org/][clojure]]
++ [[https://leiningen.org/][leiningen]] (REPL)
++ [[https://github.com/borkdude/clj-kondo][clj-kondo]] (linter)
 + With =+lsp=
-  + clojure-lsp
-+ Without =+lsp=
-  + [[https://leiningen.org/][leiningen]] (REPL)
-  + [[https://github.com/borkdude/clj-kondo][clj-kondo]] (linter)
+  + [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]]
+
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
