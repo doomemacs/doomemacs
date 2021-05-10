@@ -567,10 +567,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
-;; Use a pseudo theme to store internal and user faces + custom.el settings
-;; without risk of them being written to `custom-file'.
-(custom-declare-theme 'doom nil)
-
 ;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
 (setq custom-theme-directory (concat doom-private-dir "themes/"))
 
@@ -592,16 +588,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (set-fontset-font t 'unicode font))
       (when doom-unicode-font
         (set-fontset-font t 'unicode doom-unicode-font))))
-  ;; Changes to a theme don't take effect immediately if the theme isn't `user',
-  ;; so we must force it to.
-  (let (custom--inhibit-theme-enable)
-    (apply #'custom-theme-set-faces 'doom
-           (append (when doom-font
-                     `((fixed-pitch ((t (:font ,doom-font))))))
-                   (when doom-serif-font
-                     `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
-                   (when doom-variable-pitch-font
-                     `((variable-pitch ((t (:font ,doom-variable-pitch-font)))))))))
+  (apply #'custom-set-faces
+         (append (when doom-font
+                   `((fixed-pitch ((t (:font ,doom-font))))))
+                 (when doom-serif-font
+                   `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
+                 (when doom-variable-pitch-font
+                   `((variable-pitch ((t (:font ,doom-variable-pitch-font))))))))
   (cond
    (doom-font
     ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
@@ -620,15 +613,12 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
-  (if doom-theme
-      (unless (custom-theme-enabled-p doom-theme)
-        ;; Fix #1397: if `doom-init-theme-h' is used on `after-make-frame-functions'
-        ;; (for daemon sessions), the new frame must be focused to ensure the theme
-        ;; loads correctly.
-        (with-selected-frame (or frame (selected-frame))
-          (load-theme doom-theme t)))
-    ;; Ensure custom faces apply and have highest precendence
-    (enable-theme 'doom)))
+  (when (and doom-theme (not (custom-theme-enabled-p doom-theme)))
+    ;; Fix #1397: if `doom-init-theme-h' is used on `after-make-frame-functions'
+    ;; (for daemon sessions), the new frame must be focused to ensure the theme
+    ;; loads correctly.
+    (with-selected-frame (or frame (selected-frame))
+      (load-theme doom-theme t))))
 
 (defadvice! doom--load-theme-a (orig-fn theme &optional no-confirm no-enable)
   "Record `doom-theme', disable old themes, and trigger `doom-load-theme-hook'."
@@ -645,9 +635,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (when (and (not no-enable) (custom-theme-enabled-p theme))
           (setq doom-theme theme)
           (put 'doom-theme 'previous-themes last-themes)
-          (doom-run-hooks 'doom-load-theme-hook)
-          ;; `doom' must have precedence
-          (enable-theme 'doom))))))
+          (doom-run-hooks 'doom-load-theme-hook))))))
 
 
 ;;

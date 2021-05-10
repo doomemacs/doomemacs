@@ -28,8 +28,8 @@ all themes. It will apply to all themes once they are loaded."
     `(progn
        (defun ,fn ()
          (let (custom--inhibit-theme-enable)
-           (dolist (theme (doom-enlist (or ,theme 'doom)))
-             (when (or (memq theme '(user doom))
+           (dolist (theme (doom-enlist (or ,theme 'user)))
+             (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
@@ -52,7 +52,7 @@ This is a convenience macro alternative to `custom-set-face' which allows for a
 simplified face format, and takes care of load order issues, so you can use
 doom-themes' API without worry."
   (declare (indent defun))
-  `(custom-theme-set-faces! 'doom ,@specs))
+  `(custom-theme-set-faces! 'user ,@specs))
 
 ;;;###autoload
 (defun doom/reload-theme ()
