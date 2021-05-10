@@ -37,7 +37,9 @@
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (when (featurep! +lsp)
-    (add-hook 'elixir-mode-local-vars-hook #'lsp!))
+    (add-hook 'elixir-mode-local-vars-hook #'lsp!)
+    (after! lsp-mode
+      (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\_build\\'")))
 
   (after! highlight-numbers
     (puthash 'elixir-mode
@@ -58,7 +60,19 @@
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)
   (set-eval-handler! 'alchemist-mode #'alchemist-eval-region)
-  (set-repl-handler! 'alchemist-mode #'alchemist-iex-project-run))
+  (set-repl-handler! 'alchemist-mode #'alchemist-iex-project-run)
+  (map! :after elixir-mode
+        :localleader
+        :map elixir-mode-map
+        "m" #'alchemist-mix
+        "c" #'alchemist-mix-compile
+        "i" #'alchemist-iex-project-run
+        "f" #'elixir-format
+        (:prefix ("e" . "eval")
+         "e" #'alchemist-iex-send-last-sexp
+         "r" #'alchemist-iex-send-region
+         "l" #'alchemist-iex-send-current-line
+         "R" #'alchemist-iex-reload-module)))
 
 
 (use-package! alchemist-company
@@ -78,7 +92,7 @@
   (map! :after elixir-mode
         :localleader
         :map elixir-mode-map
-        :prefix "t"
+        :prefix ("t" . "test")
         "a" #'exunit-verify-all
         "r" #'exunit-rerun
         "v" #'exunit-verify
