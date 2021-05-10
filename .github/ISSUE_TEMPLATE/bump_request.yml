@@ -1,0 +1,39 @@
+---
+name: 📝 Bump Package
+description: Request a pinned package be updated
+title: "[BUMP] package1, package2, ..."
+labels: ["1. update", "needs-triage"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Doom pins its packages to certain commits to avoid breaking updates and to help its maintainer keep up with changes. These pins are updated (bumped) frequently, usually every other week, but some may warrant an early bump, due to critical bug fixes or to adapt to external events.
+
+      Use this form to let us know about these packages. Alternatively, [file a bump PR](https://discourse.doomemacs.org/how2bump).
+
+      -----
+- type: checkboxes
+  attributes:
+    options:
+      - label: There are no other bump requests for this package [on the issue tracker](https://github.com/hlissner/doom-emacs/pulls?q=is%3Apr+is%3Aopen+label%3A%221.+update%29%22+).
+        required: true
+      - label: The package(s) I want bumped are not in [the do-not-PR list](https://discourse.doomemacs.org/do-not-pr) list.
+        required: true
+      - label: These packages still need to be bumped on the [latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
+        required: true
+      - label: I've tested the new versions of these packages myself and can report on its issues (if any).
+        required: true
+- type: textarea
+  attributes:
+    label: What package(s) should be bumped?
+    placeholder: |
+      lsp-mode, lsp-python-ms, lsp-pyright, ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Why should Doom bump these packages early?
+    description: |
+      Briefly describe what has changed, and why they warrant an early bump. Link any relevant commits or issues, if possible. Mention anything Doom may have to change to accommodate it.
+    placeholder: |
+      Recent changes to X have fixed several open issues in Y and Z, but have broken A and B in Doom.

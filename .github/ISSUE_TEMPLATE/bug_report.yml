@@ -1,32 +1,30 @@
 ---
 name: 📝 Bug Report
 description: Report a bug, error, or misbehavior
-labels: ["1. bug", "2. status:unread"]
+title: "Briefly summarize your issue here"
+labels: ["1. bug", "needs-triage"]
 body:
 - type: markdown
   attributes:
     value: |
       **Thank you for reporting an issue to our issue tracker!**
 
-      > **Tip:** If you are seeking support or usage advice, head over to [our Discord](https://doomemacs.org/discord) or [our Discourse](https://discourse.doomemacs.org) instead.
-
       Before you proceed, please consult our available resources and collect as much information about your issue as possible:
 
+      -----
 - type: checkboxes
   attributes:
     options:
-      # - label: I have read the [contributing guide](https://discourse.doomemacs.org/how2contribute).
-      #   required: true
       - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
         required: true
       - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
         required: true
       - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
         required: true
-      # - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
-      #   required: true
-      # - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
-      #   required: true
+      - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
+        required: true
+      - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
+        required: true
 - type: textarea
   attributes:
     label: What did you expect to happen?
@@ -37,9 +35,9 @@ body:
   attributes:
     label: What actually happened?
     description: |
-      Include screenshots/casts, logs, and [backtraces for errors](https://discourse.doomemacs.org/how2backtrace), if possible.
-
-      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
+      + Include screenshots/casts, if possible
+      + If you include log dumps, please use [pastebin.com](https://pastebin.com)
+      + If you're reporting an error, [include a backtrace](https://discourse.doomemacs.org/how2backtrace) in [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks)**
     placeholder: |
       When I do X, Z happened. Here is the backtrace:
 
@@ -51,6 +49,8 @@ body:
         apply(#<subr funcall-interactively> (pp-eval-expression (error "Beep Boop")))
         funcall-interactively(pp-eval-expression (error "Beep Boop"))
       ```
+
+      And here is the log: https://pastebin.com/fakeurl
   validations:
     required: true
 - type: textarea
