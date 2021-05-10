@@ -16,12 +16,13 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#downloading-your-email][Downloading your email]]
+  - [[#sending-mail][Sending mail]]
   - [[#customize-notmuch-hello-buffer][Customize =*notmuch-hello*= buffer]]
   - [[#changing-the-notmuch-landing-page][Changing the =notmuch= landing page]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module turns Emacs into email client using ~notmuch~.
+This module turns Emacs into an email client using ~notmuch~.
 
 ** Module Flags
 + =+afew= Enables integration with =afew=.
@@ -68,7 +69,11 @@ environment.systemPackages = with pkgs; [
 ** TODO openSUSE
 ** TODO Debian/Ubuntu
 
-* TODO Features
+* Features
+
+| Keymap    | Command            | Description                                   |
+| ~SPC m u~ | =+notmuch/update=  | Download, sync, and index emails with notmuch |
+| ~SPC m c~ | =+notmuch/compose= | Compose new email                             |
 
 * Configuration
 ** Downloading your email
@@ -84,7 +89,9 @@ index your email for the first time:
 notmuch new
 #+END_SRC
 
-*** TODO Gmailier
+*** lieer
+
+[[https://github.com/gauteh/lieer][Lieer]], formerly called Gmailieer, is the indexing tool used by default. To install lieer, see the [[https://github.com/gauteh/lieer#installation][installation docs]].
 
 *** offlineimap
 To use [[https://www.offlineimap.org/][offlineimap]], change ~+notmuch-sync-backend~:
@@ -134,7 +141,10 @@ own backend:
       ;; Set this to an arbitrary shell command
       +notmuch-sync-command "my-notmuch-sync-cmd")
 #+END_SRC
-
+** Sending mail
+- [[https://notmuchmail.org/notmuch-emacs/#index6h2][notmuch docs: Sending mail]]
+- [[https://notmuchmail.org/emacstips/#index11h2][notmuch docs: msmtp, message mode and multiple accounts]]
+- [[https://notmuchmail.org/emacstips/#index12h2][notmuch docs: sending mail using smtpmail]]
 ** Customize =*notmuch-hello*= buffer
 It is possible to change the =*notmuch-hello*= buffer if you want to.
 
