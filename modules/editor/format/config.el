@@ -39,14 +39,15 @@ select buffers.")
   "Enable formatting on save in certain major modes.
 
 This is controlled by `+format-on-save-enabled-modes'."
-  (unless (or (eq major-mode 'fundamental-mode)
-              (cond ((booleanp +format-on-save-enabled-modes)
-                     (null +format-on-save-enabled-modes))
-                    ((eq (car +format-on-save-enabled-modes) 'not)
-                     (memq major-mode (cdr +format-on-save-enabled-modes)))
-                    ((not (memq major-mode +format-on-save-enabled-modes))))
-              (not (require 'format-all nil t)))
-    (+format-enable-on-save-h)))
+  (or (eq major-mode 'fundamental-mode)
+      (cond ((booleanp +format-on-save-enabled-modes)
+             (null +format-on-save-enabled-modes))
+            ((eq (car +format-on-save-enabled-modes) 'not)
+             (memq major-mode (cdr +format-on-save-enabled-modes)))
+            ((not (memq major-mode +format-on-save-enabled-modes))))
+      (not (require 'format-all nil t))
+      (null (car (format-all--probe)))
+      (+format-enable-on-save-h)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
