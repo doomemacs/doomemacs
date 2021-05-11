@@ -74,7 +74,12 @@
   :unless (featurep! :tools lsp +eglot)
   :after lsp-mode
   :preface
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.0"))
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
+  :config
+  ;; See non-Jedi/lsp-julia#35
+  (setq-hook! 'julia-mode-hook
+    lsp-enable-folding t
+    lsp-folding-range-limit 100))
 
 
 (use-package! eglot-jl
