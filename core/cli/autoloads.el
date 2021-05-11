@@ -15,6 +15,7 @@ one wants that.")
   '(doom-modules
     doom-disabled-packages
     comp-deferred-compilation-deny-list
+    native-comp-deferred-compilation-deny-list
     load-path
     auto-mode-alist
     interpreter-mode-alist

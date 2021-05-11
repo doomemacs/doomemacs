@@ -153,8 +153,10 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
-;; REVIEW Remove me after a couple weeks.
-(when (boundp 'comp-eln-load-path)
+;; REVIEW Remove after a couple months
+(when (boundp 'comp-deferred-compilation)
+  (defvaralias 'native-comp-deferred-compilation 'comp-deferred-compilation)
+  (defvaralias 'native-comp-deferred-compilation-deny-list 'comp-deferred-compilation-deny-list)
   (defvaralias 'native-comp-eln-load-path 'comp-eln-load-path)
   (defvaralias 'native-comp-warning-on-missing-source 'comp-warning-on-missing-source)
   (defvaralias 'native-comp-driver-options 'comp-native-driver-options)
