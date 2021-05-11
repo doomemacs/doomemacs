@@ -29,6 +29,9 @@ This msut be advised *before* beancount-mode loads, because
 
   :config
   (when (featurep! +lsp)
+    (after! lsp-mode
+      ;; TODO PR this upstream
+      (add-to-list 'lsp-language-id-configuration '(beancount-mode . "beancount")))
     (add-hook 'beancount-mode-local-vars-hook #'lsp!))
 
   (setq beancount-electric-currency t)
