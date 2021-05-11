@@ -2,12 +2,10 @@
 ;;; tools/lsp/packages.el
 
 (if (featurep! +eglot)
-    (progn
-      (package! eglot :pin "f930a096ebe37212949593feeb420170f52d944a")
-      (package! project :pin "388ffdfc5cdd075fa868d472c57369fd955d1e6a"))
-  (package! lsp-mode :pin "eda51c21662253fd05b4f3f20ad7b029d9c2aff7")
-  (package! lsp-ui :pin "1dbea9ff206a626d5c2d735e3f8fcdac59827963")
+    (package! eglot :pin "b06589b393844c31c17962497e621a72e0e78e01")
+  (package! lsp-mode :pin "3dc87f6111ea2439a8d974a8954dcbb683144b92")
+  (package! lsp-ui :pin "efae00eb6a733d5271cb33e9d92c3d8c2fa98dde")
   (when (featurep! :completion ivy)
-    (package! lsp-ivy :pin "515e5977b3d1f6cb521984f084868f28efd47e72"))
+    (package! lsp-ivy :pin "4dcb63533558a83de4a1b830835687e69474cd88"))
   (when (featurep! :completion helm)
-    (package! helm-lsp :pin "74a02f89088484c42ffc184ece338b73abd4d6f6")))
+    (package! helm-lsp :pin "c2c6974dadfac459b1a69a1217441283874cea92")))
