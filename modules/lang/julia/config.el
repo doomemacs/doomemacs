@@ -73,8 +73,14 @@
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
   :after lsp-mode
-  :preface
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.0")
+  :preface (setq lsp-julia-default-environment nil)
+  :init
+  ;; If no environment is set, then auto-detect one in ~/.julia/environments/,
+  ;; falling back to `lsp-julia-default-environment's default.
+  (unless lsp-julia-default-environment
+    (setq lsp-julia-default-environment
+          (or (car (last (doom-glob "~/.julia/environments/v*")))
+              "~/.julia/environments/v1.0")))
   :config
   ;; See non-Jedi/lsp-julia#35
   (setq-hook! 'julia-mode-hook
