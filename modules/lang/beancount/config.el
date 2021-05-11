@@ -1,7 +1,7 @@
 ;;; lang/beancount/config.el -*- lexical-binding: t; -*-
 
 (use-package! beancount
-  :mode "\\.beancount\\'"
+  :mode ("\\.beancount\\'" . beancount-mode)
   :init
   (add-hook 'beancount-mode-hook #'outline-minor-mode)
 
