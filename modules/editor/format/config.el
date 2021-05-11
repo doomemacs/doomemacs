@@ -5,7 +5,6 @@
         sql-mode           ; sqlformat is currently broken
         tex-mode           ; latexindent is broken
         latex-mode
-        rustic-mode        ; handled by `rustic-rustfmt'
         org-msg-edit-mode) ; doesn't need a formatter
   "A list of major modes in which to reformat the buffer upon saving.
 

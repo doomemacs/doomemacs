@@ -20,8 +20,7 @@
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
   ;; Leave automatic reformatting to the :editor format module.
-  (set-formatter! 'rustfmt #'rustic-format-buffer :modes '(rustic-mode))
-  (setq rustic-babel-format-src-block (featurep! :editor format +onsave)
+  (setq rustic-babel-format-src-block nil
         rustic-format-trigger nil)
 
   ;; HACK `rustic-flycheck' adds all these hooks in disruptive places. Instead,
