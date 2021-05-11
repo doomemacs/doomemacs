@@ -3,7 +3,8 @@
 (use-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
   :init
-  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-method 'character
+        highlight-indent-guides-suppress-auto-error t)
   :config
   (defun +indent-guides-init-faces-h (&rest _)
     (when (display-graphic-p)
@@ -14,7 +15,7 @@
   ;;      access to 256 colors. So if the user uses a daemon we must wait for
   ;;      the first graphical frame to be available to do.
   (add-hook 'doom-load-theme-hook #'+indent-guides-init-faces-h)
-  (when doom-init-theme-p
+  (when doom-theme
     (+indent-guides-init-faces-h))
 
   ;; `highlight-indent-guides' breaks when `org-indent-mode' is active

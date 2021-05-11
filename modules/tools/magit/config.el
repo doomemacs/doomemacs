@@ -56,9 +56,9 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
                          "~/.cache/")
                      "git/credential/socket")))
 
-  ;; Prevent scrolling when manipulating magit-status hunks. Otherwise you must
-  ;; reorient yourself every time you stage/unstage/discard/etc a hunk.
-  ;; Especially so on larger projects."
+  ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
+  ;; hunks in `magit-status-mode' buffers. It's disorienting, especially on
+  ;; larger projects.
   (defvar +magit--pos nil)
   (add-hook! 'magit-pre-refresh-hook
     (defun +magit--set-window-state-h ()
@@ -100,7 +100,8 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
 
   ;; Clean up after magit by killing leftover magit buffers and reverting
   ;; affected buffers (or at least marking them as need-to-be-reverted).
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+  (define-key magit-mode-map "q" #'+magit/quit)
+  (define-key magit-mode-map "Q" #'+magit/quit-all)
 
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
@@ -113,7 +114,15 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
   (add-hook! 'magit-status-mode-hook
     (defun +magit-optimize-process-calls-h ()
       (when-let (path (executable-find magit-git-executable t))
-        (setq-local magit-git-executable path)))))
+        (setq-local magit-git-executable path))))
+
+  (add-hook! 'magit-diff-visit-file-hook
+    (defun +magit-reveal-point-if-invisible-h ()
+      "Reveal the point if in an invisible region."
+      (if (derived-mode-p 'org-mode)
+          (org-reveal '(4))
+        (require 'reveal)
+        (reveal-post-command)))))
 
 
 (use-package! forge
@@ -208,6 +217,8 @@ ensure it is built when we actually use Forge."
   ;; REVIEW There must be a better way to exclude particular evil-collection
   ;;        modules from the blacklist.
   (map! (:map magit-mode-map
+         :nv "q" #'+magit/quit
+         :nv "Q" #'+magit/quit-all
          :nv "]" #'magit-section-forward-sibling
          :nv "[" #'magit-section-backward-sibling
          :nv "gr" #'magit-refresh

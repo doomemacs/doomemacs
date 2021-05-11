@@ -2,20 +2,16 @@
 
 (use-package! scheme
   :hook (scheme-mode . rainbow-delimiters-mode)
-  :config (advice-add #'scheme-indent-function :override #'+scheme-scheme-indent-function-a))
+  :config (advice-add #'scheme-indent-function :override #'+scheme-indent-function-a))
 
 
 (use-package! geiser
   :defer t
   :init
-  (setq geiser-active-implementations '(guile chicken mit chibi chez)
-        geiser-autodoc-identifier-format "%s → %s"
-        geiser-repl-current-project-function 'doom-project-root)
-  (if (featurep! :lang racket)
-      (setq auto-mode-alist
-            (remove '("\\.rkt\\'" . scheme-mode) auto-mode-alist))
-    (push 'racket geiser-active-implementations))
-  (after! scheme                        ; built-in
+  (setq geiser-autodoc-identifier-format "%s → %s"
+        geiser-repl-current-project-function #'doom-project-root)
+  
+  (after! scheme  ; built-in
     (set-repl-handler! 'scheme-mode #'+scheme/open-repl)
     (set-eval-handler! 'scheme-mode #'geiser-eval-region)
     (set-lookup-handlers! '(scheme-mode geiser-repl-mode)
@@ -23,43 +19,56 @@
       :documentation #'geiser-doc-symbol-at-point))
   :config
   (set-popup-rules!
-    '(("^\\*geiser messages\\*$" :slot 1 :vslot -1)
-      ("^\\*Geiser dbg\\*$"      :slot 1 :vslot -1)
-      ("^\\*Geiser xref\\*$"     :slot 1 :vslot -1)
+    '(("^\\*[gG]eiser \\(dbg\\|xref\\|messages\\)\\*$" :slot 1 :vslot -1)
       ("^\\*Geiser documentation\\*$" :slot 2 :vslot 2 :select t :size 0.35)
       ("^\\* [A-Za-z0-9_-]+ REPL \\*" :size 0.3 :quit nil :ttl nil)))
+  
   (map! :localleader
-        :map scheme-mode-map
-        "'"  #'geiser-mode-switch-to-repl
-        "\"" #'geiser-connect
-        "["  #'geiser-squarify
-        "\\" #'geiser-insert-lambda
-        "s"  #'geiser-set-scheme
-        (:prefix ("e" . "eval")
-          "b" #'geiser-eval-buffer
-          "B" #'geiser-eval-buffer-and-go
-          "e" #'geiser-eval-last-sexp
-          "d" #'geiser-eval-definition
-          "D" #'geiser-eval-definition-and-go
-          "r" #'geiser-eval-region
-          "R" #'geiser-eval-region-and-go)
-        (:prefix ("h" . "help")
-          "d" #'geiser-autodoc
-          "<" #'geiser-xref-callers
-          ">" #'geiser-xref-callees
-          "i" #'geiser-doc-look-up-manual)
-        (:prefix ("m" . "macro")
-          "r" #'geiser-expand-region
-          "d" #'geiser-expand-definition
-          "e" #'geiser-expand-last-sexp)
-        (:prefix ("r" . "repl")
-          "b" #'geiser-switch-to-repl
-          "q" #'geiser-repl-exit
-          "l" #'geiser-load-current-buffer
-          "r" #'geiser-restart-repl
-          "R" #'geiser-reload
-          "c" #'geiser-repl-clear-buffer)))
+        (:map (scheme-mode-map geiser-repl-mode-map)
+         :desc "Toggle REPL"                  "'"  #'switch-to-geiser
+         :desc "Connect to external Scheme"   "\"" #'geiser-connect
+         :desc "Toggle type of brackets"      "["  #'geiser-squarify
+         :desc "Insert lambda"                "\\" #'geiser-insert-lambda
+         :desc "Set Scheme implementation"    "s"  #'geiser-set-scheme
+         :desc "Reload Geiser buffers+REPLs"  "R" #'geiser-reload
+         (:prefix ("h" . "help")
+          :desc "Show callers of <point>"     "<" #'geiser-xref-callers
+          :desc "Show callees of <point>"     ">" #'geiser-xref-callees
+          :desc "Toggle autodoc mode"         "a" #'geiser-autodoc-mode
+          :desc "Show autodoc of <point>"     "s" #'geiser-autodoc-show
+          :desc "Search manual for <point>"   "m" #'geiser-doc-look-up-manual
+          :desc "Show docstring of <point>"   "." #'geiser-doc-symbol-at-point)
+         (:prefix ("r" . "repl")
+          :desc "Load file into REPL"         "f" #'geiser-load-file
+          :desc "Restart REPL"                "r" #'geiser-restart-repl))
+        (:map scheme-mode-map
+         (:prefix ("e" . "eval")
+          :desc "Eval buffer"                 "b" #'geiser-eval-buffer
+          :desc "Eval buffer and go to REPL"  "B" #'geiser-eval-buffer-and-go
+          :desc "Eval last sexp"              "e" #'geiser-eval-last-sexp
+          :desc "Eval definition"             "d" #'geiser-eval-definition
+          :desc "Eval defn. and go to REPL"   "D" #'geiser-eval-definition-and-go
+          :desc "Eval region"                 "r" #'geiser-eval-region
+          :desc "Eval region and go to REPL"  "R" #'geiser-eval-region-and-go)
+         (:prefix ("r" . "repl")
+          :desc "Load current buffer in REPL" "b" #'geiser-load-current-buffer))
+        (:map geiser-repl-mode-map
+         :desc "Clear REPL buffer"            "c" #'geiser-repl-clear-buffer
+         :desc "Quit REPL"                    "q" #'geiser-repl-exit)))
+
+
+(use-package! macrostep-geiser
+  :hook (geiser-mode . macrostep-geiser-setup)
+  :hook (geiser-repl-mode . macrostep-geiser-setup)
+  :init
+  (map! :after geiser
+        :localleader
+        :map (scheme-mode-map geiser-repl-mode-map)
+        :desc "Expand macro by one step" "m" #'macrostep-expand
+        :desc "Recursively expand macro" "M" #'macrostep-geiser-expand-all))
+
 
 (use-package! flycheck-guile
+  :when (featurep! +guile)
   :when (featurep! :checkers syntax)
   :after geiser)

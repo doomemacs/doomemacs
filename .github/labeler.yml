@@ -1,0 +1,15 @@
+# For workflows/labeler.yml
+
+"re:docs": '*.+(md|org)'
+
+":core":       ['core/*.el', 'docs/*']
+":core lib":   'core/autoload/**/*.el'
+"re:packages": '**/packages.el'
+
+"re:bin":             ['bin/**/*', '!bin/doom']
+"re:bin/doom":        ['core/core-cli.el', 'core/cli/*', 'bin/doom']
+"re:bin/doom:doctor": '**/doctor.el'
+"re:bin/doom:env":    'core/cli/env.el'
+
+
+# TODO automate generation of labels for modules

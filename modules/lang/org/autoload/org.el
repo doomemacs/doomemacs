@@ -470,13 +470,10 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
   "Unfold subtree around point if saveplace places us in a folded region."
   (and (not org-inhibit-startup)
        (not org-inhibit-startup-visibility-stuff)
-       (org-invisible-p nil 'folding-only)
-       (or (not (org-on-heading-p))
-           (not (member "ARCHIVE" (org-get-tags))))
-       (ignore-errors
-         (save-excursion
-           (outline-previous-visible-heading 1)
-           (org-show-subtree)))))
+       ;; Must be done on a timer because `org-show-set-visibility' (used by
+       ;; `org-reveal') relies on overlays that aren't immediately available
+       ;; when `org-mode' first initializes.
+       (run-at-time 0.1 nil #'org-reveal '(4))))
 
 ;;;###autoload
 (defun +org-remove-occur-highlights-h ()

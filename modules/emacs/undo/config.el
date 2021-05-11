@@ -27,28 +27,29 @@
 (use-package! undo-fu-session
   :unless (featurep! +tree)
   :hook (undo-fu-mode . global-undo-fu-session-mode)
-  :preface
-  (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
-        undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  :custom (undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/"))
+  :config
+  (setq undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
 
-  ;; HACK We avoid `:config' here because `use-package's `:after' complicates
-  ;;      the load order of a package's `:config' block and makes it impossible
-  ;;      for the user to override its settings with merely `after!' (or
-  ;;      `eval-after-load'). See jwiegley/use-package#829.
-  (after! undo-fu-session
-    ;; HACK Use the faster zstd to compress undo files instead of gzip
-    (when (executable-find "zstd")
-      (defadvice! doom--undo-fu-session-use-zstd-a (filename)
-        :filter-return #'undo-fu-session--make-file-name
-        (if undo-fu-session-compression
-            (concat (file-name-sans-extension filename) ".zst")
-          filename)))))
+  ;; HACK Fix #4993: prevent file names that are too long for the filesystem.
+  ;; TODO PR this upstream; should be a universal issue
+  (advice-add #'undo-fu-session--make-file-name
+              :filter-args #'doom-make-hashed-backup-file-name-a)
+
+  ;; HACK Use the faster zstd to compress undo files instead of gzip
+  (when (executable-find "zstd")
+    (defadvice! +undo--append-zst-extension-to-file-name-a (filename)
+      :filter-return #'undo-fu-session--make-file-name
+      (if undo-fu-session-compression
+          (concat (file-name-sans-extension filename) ".zst")
+        filename))))
 
 
 (use-package! undo-tree
   :when (featurep! +tree)
   ;; Branching & persistent undo
   :hook (doom-first-buffer . global-undo-tree-mode)
+  :custom (undo-tree-history-directory-alist `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
   :config
   (setq undo-tree-visualizer-diff t
         undo-tree-auto-save-history t
@@ -58,9 +59,7 @@
         ;; https://github.com/syl20bnr/spacemacs/issues/12110
         undo-limit 800000
         undo-strong-limit 12000000
-        undo-outer-limit 120000000
-        undo-tree-history-directory-alist
-        `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
+        undo-outer-limit 120000000)
 
   ;; Compress undo-tree history files with zstd, if available. File size isn't
   ;; the (only) concern here: the file IO barrier is slow for Emacs to cross;
@@ -69,14 +68,14 @@
   ;; SSDs). Whether or not that's true in practice, we still enjoy zstd's ~80%
   ;; file savings (these files add up over time and zstd is so incredibly fast).
   (when (executable-find "zstd")
-    (defadvice! doom--undo-tree-make-history-save-file-name-a (file)
+    (defadvice! +undo--append-zst-extension-to-file-name-a (file)
       :filter-return #'undo-tree-make-history-save-file-name
       (concat file ".zst")))
 
   ;; Strip text properties from undo-tree data to stave off bloat. File size
   ;; isn't the concern here; undo cache files bloat easily, which can cause
   ;; freezing, crashes, GC-induced stuttering or delays when opening files.
-  (defadvice! doom--undo-tree-strip-text-properties-a (&rest _)
+  (defadvice! +undo--strip-text-properties-a (&rest _)
     :before #'undo-list-transfer-to-tree
     (dolist (item buffer-undo-list)
       (and (consp item)

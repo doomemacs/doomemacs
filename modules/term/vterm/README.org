@@ -60,7 +60,7 @@ variable (=SPC h v system-configuration-options=).
   systemPackages = with pkgs; [
     # emacs    # no need for this, the next line includes emacs
     ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
-      epkgs.emacs-libvterm
+      epkgs.vterm
     ]))
   ];
   #+END_SRC
@@ -70,9 +70,17 @@ variable (=SPC h v system-configuration-options=).
   #+BEGIN_SRC nix
   programs.emacs = {
     enable = true;
-    extraPackages = epkgs: [ epkgs.emacs-libvterm ];
+    extraPackages = epkgs: [ epkgs.vterm ];
   };
   #+END_SRC
+  
+  This already contains a version of =vterm-module.so=, so NixOS users need
+  not compile the module themselves as described below.
+  
+  Note: The =nixpkgs=-version that is used needs to be compatible with the rest
+  of the plugins installed in =doom=. Therefore it might be necessary to pull in
+  =emacs= and/or =emacsPackagesNgGen= from =unstable= or another channel. Otherwise
+  arbitrary functionality of =vterm= might not work.
 
 ** Compilation tools for vterm-module.so
 When you first load vterm, it will compile =vterm-module.so= for you. For this

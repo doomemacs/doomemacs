@@ -20,7 +20,6 @@
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
 symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
-(defvar doom--debug-vars-old-values nil)
 (defvar doom--debug-vars-undefined nil)
 
 (defun doom--watch-debug-vars-h (&rest _)
@@ -40,14 +39,14 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     (dolist (var doom-debug-variables)
       (cond ((listp var)
              (cl-destructuring-bind (var . val) var
-               (if (not (boundp var))
-                   (add-to-list 'doom--debug-vars-undefined var)
-                 (set-default
-                  var (if (not enabled)
-                          (alist-get var doom--debug-vars-old-values)
-                        (setf (alist-get var doom--debug-vars-old-values)
-                              (symbol-value var))
-                        val)))))
+               (if (boundp var)
+                   (set-default
+                    var (if (not enabled)
+                            (prog1 (get var 'initial-value)
+                              (put 'x 'initial-value nil))
+                          (put var 'initial-value (symbol-value var))
+                          val))
+                 (add-to-list 'doom--debug-vars-undefined var))))
             ((if (boundp var)
                  (set-default var enabled)
                (add-to-list 'doom--debug-vars-undefined var)))))
@@ -77,13 +76,11 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
   emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
   (setq after-init-time (current-time))
   (let ((inhibit-startup-hooks nil))
-    (mapc (lambda (hook)
-            (run-hook-wrapped hook #'doom-try-run-hook))
-          '(after-init-hook
-            delayed-warnings-hook
-            emacs-startup-hook
-            tty-setup-hook
-            window-setup-hook))))
+    (doom-run-hooks 'after-init-hook
+                    'delayed-warnings-hook
+                    'emacs-startup-hook
+                    'tty-setup-hook
+                    'window-setup-hook)))
 
 
 ;;
@@ -94,7 +91,7 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     (let (forms)
       (with-temp-buffer
         (insert-file-contents file)
-        (let (emacs-lisp-mode) (emacs-lisp-mode))
+        (let (emacs-lisp-mode-hook) (emacs-lisp-mode))
         (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
           (let ((ppss (syntax-ppss)))
             (unless (or (nth 4 ppss)
@@ -121,15 +118,18 @@ ready to be pasted in a bug report on github."
                (regexp-opt (list (user-login-name)) 'words) "$USER"
                (abbreviate-file-name path)))
             (defun symlink-path (file)
-              (let ((truefile (file-truename file)))
-                (format "%s%s" (abbrev-path file)
-                        (if (equal file truefile) ""
-                          (concat " -> " (abbrev-path truefile)))))))
+              (format "%s%s" (abbrev-path file)
+                      (if (file-symlink-p file) ""
+                        (concat " -> " (abbrev-path (file-truename file)))))))
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
-        (distro . ,(list (doom-system-distro-version) (sh "uname" "-msr")))
+        (system . ,(delq
+                    nil (list (doom-system-distro-version)
+                              (when (executable-find "uname")
+                                (sh "uname" "-msr"))
+                              (window-system))))
         (emacs . ,(delq
                    nil (list emacs-version
-                             emacs-repository-branch
+                             (bound-and-true-p emacs-repository-branch)
                              (and (stringp emacs-repository-version)
                                   (substring emacs-repository-version 0 9))
                              (symlink-path doom-emacs-dir))))
@@ -159,11 +159,19 @@ ready to be pasted in a bug report on github."
                             'symlinked-emacsdir)
                         (if (file-symlink-p doom-private-dir)
                             'symlinked-doomdir)
+                        (if (and (stringp custom-file) (file-exists-p custom-file))
+                            'custom-file)
                         (if (doom-files-in `(,@doom-modules-dirs
                                              ,doom-core-dir
                                              ,doom-private-dir)
                                            :type 'files :match "\\.elc$")
                             'byte-compiled-config)))))
+        (custom
+         ,@(when (and (stringp custom-file)
+                      (file-exists-p custom-file))
+             (cl-loop for (type var _) in (get 'user 'theme-settings)
+                      if (eq type 'theme-value)
+                      collect var)))
         (modules
          ,@(or (cl-loop with cat = nil
                         for key being the hash-keys of doom-modules
@@ -186,29 +194,27 @@ ready to be pasted in a bug report on github."
                             module)))
                '("n/a")))
         (packages
-         ,@(or (condition-case e
-                   (mapcar
-                    #'cdr (doom--collect-forms-in
-                           (doom-path doom-private-dir "packages.el")
-                           "package!"))
-                 (error (format "<%S>" e)))
-               '("n/a")))
-        ,(when-let (unpins (condition-case e
-                               (mapcan #'identity
-                                       (mapcar
-                                        #'cdr (doom--collect-forms-in
-                                               (doom-path doom-private-dir "packages.el")
-                                               "unpin!")))
-                             (error (format "<%S>" e))))
-           (cons 'unpin unpins))
+         ,@(condition-case e
+               (mapcar
+                #'cdr (doom--collect-forms-in
+                       (doom-path doom-private-dir "packages.el")
+                       "package!"))
+             (error (format "<%S>" e))))
+        (unpin
+         ,@(condition-case e
+               (mapcan #'identity
+                       (mapcar
+                        #'cdr (doom--collect-forms-in
+                               (doom-path doom-private-dir "packages.el")
+                               "unpin!")))
+             (error (list (format "<%S>" e)))))
         (elpa
-         ,@(or (condition-case e
-                   (progn
-                     (package-initialize)
-                     (cl-loop for (name . _) in package-alist
-                              collect (format "%s" name)))
-                 (error (format "<%S>" e)))
-               '("n/a")))))))
+         ,@(condition-case e
+               (progn
+                 (package-initialize)
+                 (cl-loop for (name . _) in package-alist
+                          collect (format "%s" name)))
+             (error (format "<%S>" e))))))))
 
 
 ;;
@@ -247,12 +253,13 @@ copies it to your clipboard, ready to be pasted into bug reports!"
                     (delete-region beg end)
                     (insert sexp))))))
         (dolist (spec info)
-          (insert! "%11s  %s\n"
-                   ((car spec)
-                    (if (listp (cdr spec))
-                        (mapconcat (lambda (x) (format "%s" x))
-                                   (cdr spec) " ")
-                      (cdr spec))))))
+          (when (cdr spec)
+            (insert! "%-11s  %s\n"
+                     ((car spec)
+                      (if (listp (cdr spec))
+                          (mapconcat (lambda (x) (format "%s" x))
+                                     (cdr spec) " ")
+                        (cdr spec)))))))
       (if (not doom-interactive-p)
           (print! (buffer-string))
         (with-current-buffer (pop-to-buffer buffer)

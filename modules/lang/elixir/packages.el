@@ -2,7 +2,7 @@
 ;;; lang/elixir/packages.el
 
 ;; +elixir.el
-(package! elixir-mode :pin "9de08c17d54e190d220aa03cca58bd41497f44b6")
+(package! elixir-mode :pin "0212b06f079f4965b6032bbbe7f86876575770de")
 (when (featurep! +alchemist)
   (package! alchemist :pin "6f99367511ae209f8fe2c990779764bbb4ccb6ed")
 )

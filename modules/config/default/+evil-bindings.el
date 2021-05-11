@@ -56,9 +56,14 @@
                       ;; mode-local ones for modes that don't have an evil
                       ;; keybinding scheme or users who don't have :editor (evil
                       ;; +everywhere) enabled.
-                      (doom-lookup-key
-                       [tab] (list (current-local-map)
-                                   (evil-get-auxiliary-keymap (current-local-map) evil-state)))
+                      (or (doom-lookup-key
+                           [tab]
+                           (list (evil-get-auxiliary-keymap (current-local-map) evil-state)
+                                 (current-local-map)))
+                          (doom-lookup-key
+                           (kbd "TAB")
+                           (list (evil-get-auxiliary-keymap (current-local-map) evil-state)))
+                          (doom-lookup-key (kbd "TAB") (list (current-local-map))))
                       it
                       (fboundp 'evil-jump-item)
                       #'evil-jump-item)
@@ -363,6 +368,12 @@
         (:when (featurep! :completion helm)
          :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
          :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)
+        (:when (featurep! :ui treemacs +lsp)
+         :desc "Errors list"                         "X"   #'lsp-treemacs-errors-list
+         :desc "Incoming call hierarchy"             "y"   #'lsp-treemacs-call-hierarchy
+         :desc "Outgoing call hierarchy"             "Y"   (cmd!! #'lsp-treemacs-call-hierarchy t)
+         :desc "References tree"                     "R"   (cmd!! #'lsp-treemacs-references t)
+         :desc "Symbols"                             "S"   #'lsp-treemacs-symbols)
         :desc "LSP"                                  "l"   #'+default/lsp-command-map
         :desc "LSP Rename"                           "r"   #'lsp-rename)
        (:when (featurep! :tools lsp +eglot)
@@ -647,6 +658,7 @@
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
        :desc "Search buffer"                "b" #'swiper
+       :desc "Search all open buffers"      "B" #'swiper-all
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
        :desc "Locate file"                  "f" #'locate

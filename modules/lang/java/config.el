@@ -48,4 +48,4 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
   :config
   (set-docsets! 'groovy-mode "Groovy" "Groovy_JDK")
   (set-eval-handler! 'groovy-mode "groovy")
-  (set-repl-handler! 'groovy-mode #'+java/groovy-open-repl))
+  (set-repl-handler! 'groovy-mode #'+java/open-groovy-repl))

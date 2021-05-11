@@ -6,13 +6,13 @@
 (package! yard-mode :pin "ba74a47463b0320ae152bd42a7dd7aeecd7b5748")
 
 ;; REPL
-(package! inf-ruby :pin "1fc972ecda6a2155806d75d202481327703a0681")
+(package! inf-ruby :pin "c6990a60c740b2d69495e34e95b29f13014b3cde")
 (when (featurep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
 ;; Programming environment
-(package! rubocop :pin "1372ee3fc1daf7dc8d96741b03e4aff5f7ae3906")
-(package! robe :pin "3ef165c5c99aebfd811a0f18ea7f8c983d4ab152")
+(package! rubocop :pin "f5fd18aa810c3d3269188cbbd731ddc09006f8f5")
+(package! robe :pin "126650a06224f1a616b10c02bd9ad8a763a512ef")
 
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
@@ -32,5 +32,5 @@
 
 ;; Rails
 (when (featurep! +rails)
-  (package! projectile-rails :pin "8d6b3734958f5dc7a620dc1b44754986d3726f3d")
+  (package! projectile-rails :pin "f1fe6e8eff485dc560e6ffe7f0b9c46a61509a58")
   (package! inflections :pin "55caa66a7cc6e0b1a76143fd40eff38416928941"))

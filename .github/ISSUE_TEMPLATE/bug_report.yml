@@ -1,0 +1,92 @@
+---
+name: 📝 Bug Report
+description: Report a bug, error, or misbehavior
+title: "Briefly summarize your issue here"
+labels: ["1. bug", "needs-triage"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      **Thank you for reporting an issue to our issue tracker!**
+
+      Before you proceed, please consult our available resources and collect as much information about your issue as possible:
+
+      -----
+- type: checkboxes
+  attributes:
+    options:
+      - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
+        required: true
+      - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
+        required: true
+      - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
+        required: true
+      - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
+        required: true
+      - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
+        required: true
+- type: textarea
+  attributes:
+    label: What did you expect to happen?
+    placeholder: When I do X, it should do Y.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: What actually happened?
+    description: |
+      + Include screenshots/casts, if possible
+      + If you include log dumps, please use [pastebin.com](https://pastebin.com)
+      + If you're reporting an error, [include a backtrace](https://discourse.doomemacs.org/how2backtrace) in [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks)**
+    placeholder: |
+      When I do X, Z happened. Here is the backtrace:
+
+      ```
+      Debugger entered--Lisp error: (error "Beep Boop")
+        error("Beep Boop")
+        pp-eval-expression((error "Beep Boop"))
+        \#<subr funcall-interactively>(pp-eval-expression (error "Beep Boop"))
+        apply(#<subr funcall-interactively> (pp-eval-expression (error "Beep Boop")))
+        funcall-interactively(pp-eval-expression (error "Beep Boop"))
+      ```
+
+      And here is the log: https://pastebin.com/fakeurl
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Describe your attempts to resolve the issue
+    description: |
+      Describe resources you consulted or code you tried to fix your problem, and their result.
+
+      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
+    placeholder: |
+      I tried setting X to Y, then I tried Z. Here's what else I tried...
+
+      ```elisp
+      (setq variable value)
+      ```
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: How do we reproduce your issue? Please walk us through a minimal test case.
+    placeholder: |
+      1. Open Emacs
+      2. `M-x doom/info` and be prompted to visit pastebin.com
+      3. Press `y` to open pastebin.com in browser
+      4. Paste the contents of my clipboard into text box
+      5. Click "Create New Paste"
+      6. My wife leaves me
+  validations:
+    required: true
+- type: input
+  id: doominfo
+  attributes:
+    label: System Information
+    description: |
+      Upload the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info` **to [pastebin.com](https://pastebin.com)**, then paste its URL here.
+
+      The use of pastebin (or a similar service) is necessary to reduce search result pollution in our issue tracker.
+    placeholder: https://pastebin.com/fakeurl
+  validations:
+    required: true

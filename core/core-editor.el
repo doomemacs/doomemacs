@@ -130,6 +130,36 @@ or file path may exist now."
              (eq buffer (window-buffer (selected-window))) ; only visible buffers
              (set-auto-mode))))))
 
+;; HACK Emacs generates long file paths for its auto-save files; long =
+;;      `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
+;;      filesystem will murder your family. To appease it, I compress
+;;      `buffer-file-name' to a stable 40 characters.
+;; TODO PR this upstream; should be a universal issue!
+(defadvice! doom-make-hashed-auto-save-file-name-a (orig-fn)
+  "Compress the auto-save file name so paths don't get too long."
+  :around #'make-auto-save-file-name
+  (let ((buffer-file-name
+         (if (or
+              ;; Don't do anything for non-file-visiting buffers. Names
+              ;; generated for those are short enough already.
+              (null buffer-file-name)
+              ;; If an alternate handler exists for this path, bow out.  Most of
+              ;; them end up calling `make-auto-save-file-name' again anyway, so
+              ;; we still achieve this advice's ultimate goal.
+              (find-file-name-handler buffer-file-name
+                                      'make-auto-save-file-name))
+             buffer-file-name
+           (sha1 buffer-file-name))))
+    (funcall orig-fn)))
+
+;; HACK Does the same for Emacs backup files, but also packages that use
+;;      `make-backup-file-name-1' directly (like undo-tree).
+(defadvice! doom-make-hashed-backup-file-name-a (args)
+  "A few places use the backup file name so paths don't get too long."
+  :filter-args #'make-backup-file-name-1
+  (setcar args (sha1 (car args)))
+  args)
+
 
 ;;
 ;;; Formatting
@@ -220,17 +250,18 @@ or file path may exist now."
         revert-without-query (list "."))
 
   ;; `auto-revert-mode' and `global-auto-revert-mode' would, normally, abuse the
-  ;; heck out of inotify handles _or_ aggresively poll your buffer list every X
-  ;; seconds. Too many inotify handles can grind Emacs to a halt if you preform
+  ;; heck out of file watchers _or_ aggressively poll your buffer list every X
+  ;; seconds. Too many watchers can grind Emacs to a halt if you preform
   ;; expensive or batch processes on files outside of Emacs (e.g. their mtime
   ;; changes), and polling your buffer list is terribly inefficient as your
-  ;; buffer list grows into the tens or hundreds.
+  ;; buffer list grows into the hundreds.
   ;;
-  ;; So Doom uses a different strategy: we lazily auto revert buffers when the
-  ;; user a) saves a file, b) switches to a buffer (or its window), or c) you
-  ;; focus Emacs (after using another program). This way, Emacs only ever has to
-  ;; operate on, at minimum, a single buffer and, at maximum, X buffers, where X
-  ;; is the number of open windows (which is rarely, if ever, over 10).
+  ;; Doom does this lazily instead. i.e. All visible buffers are reverted
+  ;; immediately when a) a file is saved or b) Emacs is refocused (after using
+  ;; another app). Meanwhile, buried buffers are reverted only when they are
+  ;; switched to. This way, Emacs only ever has to operate on, at minimum, a
+  ;; single buffer and, at maximum, ~10 buffers (after all, when do you ever
+  ;; have more than 10 windows in any single frame?).
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
@@ -249,26 +280,25 @@ or file path may exist now."
   :defer-incrementally easymenu tree-widget timer
   :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
+  :custom (recentf-save-file (concat doom-cache-dir "recentf"))
   :config
-  (defun doom--recent-file-truename (file)
-    (if (or (file-remote-p file nil t)
-            (not (file-remote-p file)))
-        (file-truename file)
+  (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
+        recentf-max-saved-items 200) ; default is 20
+
+  (defun doom--recentf-file-truename-fn (file)
+    (if (or (not (file-remote-p file))
+            (equal "sudo" (file-remote-p file 'method)))
+        (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
       file))
-  (setq recentf-filename-handlers
-        '(;; Text properties inflate the size of recentf's files, and there is
-          ;; no purpose in persisting them, so we strip them out.
-          substring-no-properties
-          ;; Resolve symlinks of local files. Otherwise we get duplicate
-          ;; entries opening symlinks.
-          doom--recent-file-truename
-          ;; Replace $HOME with ~, which is more portable, and reduces how much
-          ;; horizontal space the recentf listing uses to list recent files.
-          abbreviate-file-name)
-        recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 'never
-        recentf-max-menu-items 0
-        recentf-max-saved-items 200)
+
+  ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
+  ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
+  ;; space)
+  (add-to-list 'recentf-filename-handlers 'doom--recentf-file-truename-fn)
+
+  ;; Text properties inflate the size of recentf's files, and there is
+  ;; no purpose in persisting them (Must be first in the list!)
+  (add-to-list 'recentf-filename-handlers 'substring-no-properties)
 
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
@@ -280,10 +310,15 @@ or file path may exist now."
 
   (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
-      "Add dired directory to recentf file list."
+      "Add dired directories to recentf file list."
       (recentf-add-file default-directory)))
 
+  ;; The most sensible time to clean up your recent files list is when you quit
+  ;; Emacs (unless this is a long-running daemon session).
+  (setq recentf-auto-cleanup (if (daemonp) 300))
   (add-hook 'kill-emacs-hook #'recentf-cleanup)
+
+  ;; Otherwise `load-file' calls in `recentf-load-list' pollute *Messages*
   (advice-add #'recentf-load-list :around #'doom-shut-up-a))
 
 
@@ -291,8 +326,7 @@ or file path may exist now."
   ;; persist variables across sessions
   :defer-incrementally custom
   :hook (doom-first-input . savehist-mode)
-  :init
-  (setq savehist-file (concat doom-cache-dir "savehist"))
+  :custom (savehist-file (concat doom-cache-dir "savehist"))
   :config
   (setq savehist-save-minibuffer-history t
         savehist-autosave-interval nil     ; save on kill only
@@ -303,7 +337,7 @@ or file path may exist now."
           search-ring regexp-search-ring)) ; persist searches
   (add-hook! 'savehist-save-hook
     (defun doom-savehist-unpropertize-variables-h ()
-      "Remove text properties from `kill-ring' for a smaller savehist file."
+      "Remove text properties from `kill-ring' to reduce savehist cache size."
       (setq kill-ring
             (mapcar #'substring-no-properties
                     (cl-remove-if-not #'stringp kill-ring))
@@ -326,9 +360,7 @@ the unwritable tidbits."
 (use-package! saveplace
   ;; persistent point location in buffers
   :hook (doom-first-file . save-place-mode)
-  :init
-  (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place-limit 100)
+  :custom (save-place-file (concat doom-cache-dir "saveplace"))
   :config
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
@@ -343,20 +375,20 @@ the unwritable tidbits."
   (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
-files, so we replace calls to `pp' with the much faster `prin1'."
+files, so this replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
     (letf! ((#'pp #'prin1)) (funcall orig-fn))))
 
 
 (use-package! server
   :when (display-graphic-p)
-  :after-call pre-command-hook after-find-file focus-out-hook
+  :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
+  :custom (server-auth-dir (concat doom-emacs-dir "server/"))
   :defer 1
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
   :config
-  (setq server-auth-dir (concat doom-emacs-dir "server/"))
   (unless (server-running-p)
     (server-start)))
 
@@ -549,8 +581,8 @@ on."
 
   ;; You're likely writing lisp in the minibuffer, therefore, disable these
   ;; quote pairs, which lisps doesn't use for strings:
-  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
+  (sp-local-pair '(minibuffer-mode minibuffer-inactive-mode) "'" nil :actions nil)
+  (sp-local-pair '(minibuffer-mode minibuffer-inactive-mode) "`" nil :actions nil)
 
   ;; Smartparens breaks evil-mode's replace state
   (defvar doom-buffer-smartparens-mode nil)
@@ -585,7 +617,6 @@ on."
   ;; wide buffers.
   (appendq! so-long-minor-modes
             '(flycheck-mode
-              flyspell-mode
               spell-fu-mode
               eldoc-mode
               smartparens-mode

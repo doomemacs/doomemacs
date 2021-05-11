@@ -1,0 +1,22 @@
+name: 'Auto-label Issues/PRs'
+on:
+  pull_request:
+    types: [opened]
+  issues:
+    types: [opened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: is-sponsor-label
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      # - name: Checkout
+      #   uses: actions/checkout@v2
+      - uses: actions/labeler@main
+        description: "Auto-label PRs by target files (see ../labeler.yml)"
+      # - name: Synchronize labels
+      #   uses: julb/action-manage-label@v1
+      #   with:
+      #     from: .github/labels.yml
+      #     skip_delete: false

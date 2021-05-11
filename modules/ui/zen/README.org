@@ -66,8 +66,8 @@ This module has no prerequisites.
 
 * Features
 ** Distractions-free mode
-This can be activated with =SPC t z= for evil users. There is no keybinding for
-non-evil users yet, so use 'M-x writeroom-mode'.
+This can be activated with =SPC t z= for evil users.
+Non-evil users can use =C-c t z= or 'M-x writeroom-mode'.
 
 * Configuration
 ** Enable fullscreen on activation

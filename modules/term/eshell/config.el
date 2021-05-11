@@ -32,6 +32,7 @@ buffer.")
     ("rg" "rg --color=always $*")
     ("l"  "ls -lh $*")
     ("ll" "ls -lah $*")
+    ("git" "git --no-pager $*")
     ("gg" "magit-status")
     ("cdp" "cd-to-project")
     ("clear" "clear-scrollback")) ; more sensible than default

@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; email/notmuch/packages.el
 
-(package! notmuch :pin "45193bab16c728ba892a5d45fc62ef59e2a6ef85")
-(package! org-mime :pin "9bb6351b25c62835c7881fc64096028eb8ef83ef")
+(package! notmuch :pin "63413a5563450bdedee4c077f2f998578e75083a")
+(package! org-mime :pin "eb21c02ba8f97fe69c14dc657a7883b982664649")
 (when (featurep! :completion ivy)
   (package! counsel-notmuch :pin "a4a1562935e4180c42524c51609d1283e9be0688"))
 (when (featurep! :completion helm)

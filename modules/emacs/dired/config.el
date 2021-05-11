@@ -36,12 +36,15 @@
     (setq dired-listing-switches (string-join args " "))
 
     (add-hook! 'dired-mode-hook
-      (defun +dired-disable-gnu-ls-flags-in-tramp-buffers-h ()
-        "Fix #1703: dired over TRAMP displays a blank screen.
+      (defun +dired-disable-gnu-ls-flags-maybe-h ()
+        "Remove extraneous switches from `dired-actual-switches' when it's
+uncertain that they are supported (e.g. over TRAMP or on Windows).
 
-This is because there's no guarantee the remote system has GNU ls, which is the
-only variant that supports --group-directories-first."
-        (when (file-remote-p default-directory)
+Fixes #1703: dired over TRAMP displays a blank screen.
+Fixes #3939: unsortable dired entries on Windows."
+        (when (or (file-remote-p default-directory)
+                  (and (boundp 'ls-lisp-use-insert-directory-program)
+                       (not ls-lisp-use-insert-directory-program)))
           (setq-local dired-actual-switches (car args))))))
 
   ;; Don't complain about this command being disabled when we use it

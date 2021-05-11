@@ -24,11 +24,10 @@
   :after swift-mode
   :init (add-hook 'swift-mode-local-vars-hook #'lsp!)
   :config
-  (unless (getenv "SOURCEKIT_TOOLCHAIN_PATH")
-    (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/swift-latest.xctoolchain"))
   (setq lsp-sourcekit-executable
         (cl-find-if #'executable-find
-                    (list lsp-sourcekit-executable ; 'sourcekit' by default
-                          "sourcekit-lsp"
-                          "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit"
-                          "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit-lsp"))))
+                    (list lsp-sourcekit-executable ; 'sourcekit-lsp' by default
+                          "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"
+                          "sourcekit"
+                          "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit-lsp"
+                          "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit"))))

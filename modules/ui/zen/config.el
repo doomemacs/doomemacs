@@ -23,12 +23,14 @@
   (setq writeroom-global-effects nil)
   (setq writeroom-maximize-window nil)
 
-  (add-hook! 'writeroom-mode-hook
+  (add-hook! 'writeroom-mode-hook :append
     (defun +zen-enable-text-scaling-mode-h ()
       "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
       (when (/= +zen-text-scale 0)
         (text-scale-set (if writeroom-mode +zen-text-scale 0))
-        (visual-fill-column-adjust)))
+        (visual-fill-column-adjust))))
+
+  (add-hook! 'global-writeroom-mode-hook
     (defun +zen-toggle-large-window-dividers-h ()
       "Make window dividers larger and easier to see."
       (when (bound-and-true-p window-divider-mode)

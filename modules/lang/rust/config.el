@@ -9,29 +9,38 @@
 
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
-  :commands rustic-run-cargo-command rustic-cargo-outdated
   :init
   (after! org-src
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
     (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
+  (setq rustic-indent-method-chain t)
+
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
-  (setq rustic-indent-method-chain t
-        ;; use :editor format instead
+  ;; Leave automatic reformatting to the :editor format module.
+  (set-formatter! 'rustfmt #'rustic-format-buffer :modes '(rustic-mode))
+  (setq rustic-babel-format-src-block (featurep! :editor format +onsave)
         rustic-format-trigger nil)
 
-  (if (featurep! +lsp)
-      (add-hook 'rustic-mode-local-vars-hook #'lsp!)
-    (setq rustic-lsp-server nil)
-    (after! rustic-flycheck
-      (add-to-list 'flycheck-checkers 'rustic-clippy)))
+  ;; HACK `rustic-flycheck' adds all these hooks in disruptive places. Instead,
+  ;;      leave it to our :checkers syntax module to do all the set up properly.
+  (remove-hook 'rustic-mode-hook #'flycheck-mode)
+  (remove-hook 'rustic-mode-hook #'flymake-mode-off)
+  (unless (featurep! +lsp)
+    (add-to-list 'flycheck-checkers 'rustic-clippy))
 
+  ;; HACK `rustic-lsp' sets up lsp-mode/eglot too early. We move it to
+  ;;      `rustic-mode-local-vars-hook' so file/dir local variables can be used
+  ;;      to reconfigure them.
   (when (featurep! +lsp)
-    (if (featurep! :tools lsp +eglot)
-        (setq rustic-lsp-client 'eglot)
-      (setq rustic-lsp-client 'lsp-mode)))
+    (remove-hook 'rustic-mode-hook #'rustic-setup-lsp)
+    (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp)
+    (setq rustic-lsp-client
+          (if (featurep! :tools lsp +eglot)
+              'eglot
+            'lsp-mode)))
 
   (map! :map rustic-mode-map
         :localleader
@@ -49,15 +58,6 @@
         (:prefix ("t" . "cargo test")
           :desc "all"          "a" #'rustic-cargo-test
           :desc "current test" "t" #'rustic-cargo-current-test))
-
-  ;; HACK Fixes #2541: RLS doesn't appear to support documentSymbol, but
-  ;;      lsp-rust thinks it does, and so yields imenu population to the server.
-  ;;      The result is an empty imenu list. Until RLS supports documentSymbol,
-  ;;      we disable `lsp-enable-imenu' is rust+RLS buffers.
-  (defadvice! +rust--disable-imenu-for-lsp-mode-a (&rest _)
-    :before #'rustic-lsp-mode-setup
-    (when (eq rustic-lsp-server 'rls)
-      (setq-local lsp-enable-imenu nil)))
 
   ;; If lsp/elgot isn't available, it attempts to install lsp-mode via
   ;; package.el. Doom manages its own dependencies through straight so disable

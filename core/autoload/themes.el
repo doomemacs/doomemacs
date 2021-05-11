@@ -1,5 +1,13 @@
 ;;; core/autoload/themes.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defconst doom-customize-theme-hook nil)
+
+(add-hook! 'doom-load-theme-hook
+  (defun doom-apply-customized-faces-h ()
+    "Run `doom-customize-theme-hook'."
+    (run-hooks 'doom-customize-theme-hook)))
+
 (defun doom--custom-theme-set-face (spec)
   (cond ((listp (car spec))
          (cl-loop for face in (car spec)
@@ -8,13 +16,6 @@
         ((keywordp (cadr spec))
          `((,(car spec) ((t ,(cdr spec))))))
         (`((,(car spec) ,(cdr spec))))))
-
-;;;###autoload
-(defconst doom-customize-theme-hook nil)
-
-(add-hook! 'doom-load-theme-hook
-  (defun doom-apply-customized-faces-h ()
-    (run-hooks 'doom-customize-theme-hook)))
 
 ;;;###autoload
 (defmacro custom-theme-set-faces! (theme &rest specs)
@@ -33,8 +34,14 @@ all themes. It will apply to all themes once they are loaded."
                (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
                               (list ,@specs)))))))
-       (when (or doom-init-theme-p (null doom-theme))
+       ;; Apply the changes immediately if the user is using the default theme
+       ;; or the theme has already loaded. This allows you to evaluate these
+       ;; macros on the fly and customize your faces iteratively.
+       (when (or (get 'doom-theme 'previous-themes)
+                 (null doom-theme))
          (funcall #',fn))
+       ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs
+       ;;      26.x support is dropped.
        (add-hook 'doom-customize-theme-hook #',fn 'append))))
 
 ;;;###autoload
@@ -47,13 +54,13 @@ doom-themes' API without worry."
   (declare (indent defun))
   `(custom-theme-set-faces! 'user ,@specs))
 
-(defvar doom--prefer-theme-elc)
 ;;;###autoload
 (defun doom/reload-theme ()
   "Reload the current color theme."
   (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (load-theme doom-theme 'noconfirm)
-    (doom/reload-font)))
+  (let ((themes (copy-sequence custom-enabled-themes)))
+    (load-theme doom-theme t)
+    (doom/reload-font)
+    (message "%s %s"
+             (propertize "Reloaded themes:" 'face 'bold)
+             (mapconcat #'prin1-to-string themes ", "))))

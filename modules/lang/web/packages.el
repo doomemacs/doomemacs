@@ -19,6 +19,6 @@
 (package! sws-mode :pin "4dbde92542fc7ad61df38776980905a4721d642e")
 (package! rainbow-mode :pin "949166cc0146bc9fabf74ce70c1c4a097f4cffd4")
 (when (featurep! :completion ivy)
-  (package! counsel-css :pin "6427dfcbda0d2bbd81db03f9d6b56b06c260ac02"))
+  (package! counsel-css :pin "f7647b4195b9b4e97f1ee1acede6054ae38df630"))
 (when (featurep! :completion helm)
   (package! helm-css-scss :pin "48b996f73af1fef8d6e88a1c545d98f8c50b0cf3"))

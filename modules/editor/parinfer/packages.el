@@ -12,7 +12,7 @@
   (autoload 'evil-define-key "evil-core" nil nil 'macro))
 
 (if (featurep! +rust)
-    (package! parinfer-rust-mode :pin "c825606e6aca4a2ed18c0af321df5f36a3c8c774")
+    (package! parinfer-rust-mode :pin "f130fa04ec75131686872f24a253d0a1d5522fa4")
   (package! parinfer
     :recipe (:host github :repo "emacsattic/parinfer")
     :pin "8659c99a9475ee34af683fdf8f272728c6bebb3a"))

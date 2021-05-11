@@ -27,7 +27,7 @@
       (set-eglot-client! 'python-mode '("Microsoft.Python.LanguageServer"))))
   :config
   (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
-  (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy" "Pandas")
+  (set-docsets! '(python-mode inferior-python-mode) "Python 3" "NumPy" "SciPy" "Pandas")
 
   (set-ligatures! 'python-mode
     ;; Functional
@@ -243,8 +243,8 @@
   :when (featurep! +pyenv)
   :after python
   :config
-  (pyenv-mode +1)
   (when (executable-find "pyenv")
+    (pyenv-mode +1)
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
   (add-hook 'python-mode-local-vars-hook #'+python-pyenv-mode-set-auto-h)
   (add-hook 'doom-switch-buffer-hook #'+python-pyenv-mode-set-auto-h))
@@ -290,6 +290,7 @@
   :when (featurep! +poetry)
   :after python
   :init
+  (setq poetry-tracking-strategy 'switch-buffer)
   (add-hook 'python-mode-hook #'poetry-tracking-mode))
 
 

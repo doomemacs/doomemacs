@@ -86,7 +86,6 @@ installed with `dash-docs-install-docset'."
   (interactive "P")
   (require 'dash-docs)
   (let ((dash-docs-common-docsets)
-        (dash-docs-browser-func +lookup-open-url-fn)
         (dash-docs-docsets
          (if arg
              (dash-docs-installed-docsets)

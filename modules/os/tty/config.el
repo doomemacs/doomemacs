@@ -1,5 +1,13 @@
 ;;; os/tty/config.el -*- lexical-binding: t; -*-
 
+;; Keep window title up-to-date; should fail gracefully in non-xterm terminals.
+;; Only works in Emacs 27+.
+(setq xterm-set-window-title t)
+(defadvice! +tty--only-set-window-title-in-tty-a (&optional terminal)
+  "`xterm-set-window-title' fails in GUI Emacs. Stop that. Get some help."
+  :before-until #'xterm-set-window-title
+  (not (display-graphic-p terminal)))
+
 ;; Some terminals offer two different cursors: a "visible" static cursor and a
 ;; "very visible" blinking one. By default, Emacs uses the very visible cursor
 ;; and will switch back to it when Emacs is started or resumed. A nil

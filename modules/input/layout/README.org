@@ -18,6 +18,8 @@
 - [[#configuration][Configuration]]
   - [[#bépo-1][Bépo]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#outstanding-issues-contributions-welcome][Outstanding issues (contributions welcome)]]
+    - [[#bépo-2][Bépo]]
   - [[#how-to-investigate-an-issue-][How to investigate an issue ?]]
   - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
 
@@ -28,7 +30,11 @@ This module provides barebones support for using Doom with non-qwerty layouts.
 + @gagbo (Author, Bépo)
 
 ** Module Flags
-+ =+bepo= Enables modifications for the BÉPO layout (customized with version 1.1 in mind)
++ =+azerty= Remaps keybinds to accommodate the
+  [[https://en.wikipedia.org/wiki/AZERTY][Azerty keyboard layout]].
++ =+bepo= Remaps keybinds to accommodate the
+  [[https://en.wikipedia.org/wiki/B%C3%89PO][BÉPO keyboard layout]] (version
+  1.1, in particualr).
 
 ** Plugins
 None
@@ -58,7 +64,6 @@ Support for the bépo layout includes:
 - Bind =`~= functions to =$#= keys when possible
 
 *** Easymotion
-
 If you use =evil-easymotion=, then all the bindings that were on =gs= have been
 moved to =gé=.
 
@@ -106,17 +111,23 @@ Therefore, in org-mode:
 
 * Configuration
 ** Bépo
-=doom-bepo-cr-rotation-style= controls whether:
+=+layout-bepo-cr-rotation-style= controls whether:
 - =qwerty-c= functions are mapped on =bépo-l= key, and =qwerty-r= functions on
   =bépo-h= key (='ergodis=), or
 - =qwerty-c= functions are mapped on =bépo-h= key, and =qwerty-r= functions on
   =bépo-l= key (='strict=)
+ 
 ='strict= would be the logical choice but the =c= functions are used more often
-than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to
-actually put all the =c= functions on the key that does not need a curl.
+than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to actually put all the =c= functions on
+the key that does not need a curl.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.
+** Outstanding issues (contributions welcome)
+*** Bépo
+- in eshell, the key `c` is still bound to
+  `evil-collection-eshell-evil-change` in normal mode
+  
 ** How to investigate an issue ?
 If a key is misbehaving, use =describe-key= (=C-h k= or =SPC h k= or =F1 k=) to
 see the functions bound to the key, and more importantly in which map it is
@@ -128,6 +139,7 @@ active.
 
 Most likely the solution is to call one of the "key rotation" functions on the
 relevant keymaps.
+
 ** How to deactivate the new bindings and go back to the old ones ?
 If you are learning a new layout you might want to go back to tho old one to
 "get work done". Sadly the only way is to comment out the module, run =doom

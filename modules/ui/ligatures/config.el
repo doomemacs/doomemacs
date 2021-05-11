@@ -87,7 +87,7 @@ string starting with the character contained in car.
 This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
 
 (defvar +ligatures-in-modes
-  '(not special-mode comint-mode eshell-mode term-mode vterm-mode)
+  '(not special-mode comint-mode eshell-mode term-mode vterm-mode Info-mode)
   "List of major modes where ligatures should be enabled.
 
   If t, enable it everywhere (except `fundamental-mode').

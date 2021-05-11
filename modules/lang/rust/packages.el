@@ -1,6 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/rust/packages.el
 
-(package! rustic :pin "61d600e5598a37034b8b539bd50966c3eb557f10")
+(package! rustic :pin "ed68fd3bb410869e1a4ce3943b5913ea88d9b509")
 (unless (featurep! +lsp)
-  (package! racer :pin "f17f9d73c74ac86001a19d08735e6b966d6c5609"))
+  (package! racer :pin "1e63e98626737ea9b662d4a9b1ffd6842b1c648c"))

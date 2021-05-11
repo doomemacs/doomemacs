@@ -208,21 +208,29 @@ This determines what docsets to implicitly search for when you use
 docsets must be installed with ~dash-docset-install-docset~.
 
 ** Open in eww instead of browser
-To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in EWW instead
-of your system browser, change ~+lookup-open-url-fn~ (default:
-~#'browse-url~):
+~+lookup/online~ opens the search results with in ~+lookup-open-url-fn~
+(default: ~#'browse-url~). Here is how to change this to EWW (so it opens inside
+Emacs):
 
 #+BEGIN_SRC emacs-lisp
 (setq +lookup-open-url-fn #'eww)
 #+END_SRC
 
+#+begin_quote
+~+lookup/in-docsets~ consults ~dash-docs-browser-func~ instead, which is already
+set to ~#'eww~ by default.
+#+end_quote
+
 ** Open in Xwidget WebKit instead of browser
-To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in Xwidget
-WebKit instead of your system browser, set ~+lookup-open-url-fn~ to
-~+lookup-xwidget-webkit-open-url-fn~ (needs Emacs with Xwidgets support):
+To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in Xwidget WebKit
+instead of your system browser, set ~+lookup-open-url-fn~ and/or
+~dash-docs-browser-func~ to ~+lookup-xwidget-webkit-open-url-fn~ (needs Emacs
+with Xwidgets support):
 
 #+BEGIN_SRC emacs-lisp
 (setq +lookup-open-url-fn #'+lookup-xwidget-webkit-open-url-fn)
+(after! dash-docs
+  (setq dash-docs-browser-func #'+lookup-xwidget-webkit-open-url-fn))
 #+END_SRC
 
 * Appendix

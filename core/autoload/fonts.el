@@ -71,10 +71,7 @@ FRAME parameter defaults to current frame."
   "Reload your fonts, if they're set.
 See `doom-init-fonts-h'."
   (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom-init-fonts-h)
-  (mapc #'doom-init-extra-fonts-h (frame-list)))
+  (doom-init-fonts-h 'reload))
 
 ;;;###autoload
 (defun doom/increase-font-size (count)
@@ -116,7 +113,8 @@ This uses `doom/increase-font-size' under the hood, and enlargens the font by
   :lighter " BIG"
   :global t
   (unless doom-font
-    (user-error "`doom-font' must be set to a valid font"))
+    (or (setq doom-font (face-attribute 'default :font))
+        (user-error "`doom-font' must be set to a valid font")))
   (if doom-big-font
       (let ((font (if doom-big-font-mode doom-big-font doom-font)))
         (set-frame-font font 'keep-size t)

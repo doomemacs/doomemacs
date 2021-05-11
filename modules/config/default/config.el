@@ -248,7 +248,7 @@ Continues comments if executed from a commented line. Consults
   (interactive "*")
   (when (and +default-want-RET-continue-comments
              (doom-point-in-comment-p)
-             (fboundp comment-line-break-function))
+             (functionp comment-line-break-function))
     (funcall comment-line-break-function nil)
     t))
 

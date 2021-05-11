@@ -130,17 +130,27 @@ modified."
 
 ;;;###autoload
 (defun +magit/quit (&optional kill-buffer)
-  "Clean up magit buffers after quitting `magit-status' and refresh version
-control in buffers."
+  "Bury the current magit buffer.
+
+If KILL-BUFFER, kill this buffer instead of burying it.
+If the buried/killed magit buffer was the last magit buffer open for this repo,
+kill all magit buffers for this repo."
   (interactive "P")
-  (funcall magit-bury-buffer-function kill-buffer)
-  (unless (delq nil
-                (mapcar (lambda (win)
-                          (with-selected-window win
-                            (eq major-mode 'magit-status-mode)))
-                        (window-list)))
-    (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (+magit-mark-stale-buffers-h)))
+  (let ((topdir (magit-toplevel)))
+    (funcall magit-bury-buffer-function kill-buffer)
+    (or (cl-find-if (lambda (win)
+                      (with-selected-window win
+                        (and (derived-mode-p 'magit-mode)
+                             (equal magit--default-directory topdir))))
+                    (window-list))
+        (+magit/quit-all))))
+
+;;;###autoload
+(defun +magit/quit-all ()
+  "Kill all magit buffers for the current repository."
+  (interactive)
+  (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
+  (+magit-mark-stale-buffers-h))
 
 (defun +magit--kill-buffer (buf)
   "TODO"

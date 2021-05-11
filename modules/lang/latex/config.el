@@ -54,7 +54,9 @@ If no viewers are found, `latex-preview-pane' is used.")
       ;; don't start the emacs server when correlating sources
       TeX-source-correlate-start-server nil
       ;; automatically insert braces after sub/superscript in math mode
-      TeX-electric-sub-and-superscript t)
+      TeX-electric-sub-and-superscript t
+      ;; just save, dont ask me before each compilation
+      TeX-save-query nil)
 
 
 (after! tex
@@ -76,7 +78,9 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
-  (set-popup-rule! " output\\*$" :size 15)
+  (set-popup-rules! '((" output\\*$" :size 15)
+                      ("^\\*TeX \\(?:Help\\|errors\\)"
+                       :size 0.3 :select t :ttl nil)))
   (after! smartparens-latex
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
       ;; All these excess pairs dramatically slow down typing in latex buffers,
@@ -178,7 +182,14 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
   :config
   (setq-default preview-scale 1.4
                 preview-scale-function
-                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
+                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
+  ;; Don't cache preamble, it creates issues with synctex. Let users enable
+  ;; caching if they have compilation times that long.
+  (setq preview-auto-cache-preamble nil)
+  (map! :map LaTeX-mode-map
+        :localleader
+        :desc "Preview" "p" #'preview-at-point
+        :desc "Unpreview" "P" #'preview-clearout-at-point))
 
 
 (use-package! cdlatex

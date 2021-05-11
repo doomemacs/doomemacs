@@ -1,7 +1,8 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
 (defvar +org-babel-mode-alist
-  '((cpp . C)
+  '((c . C)
+    (cpp . C)
     (C++ . C)
     (D . C)
     (elisp . emacs-lisp)
@@ -270,6 +271,12 @@ Also adds support for a `:sync' parameter to override `:async'."
 
   (after! python
     (setq org-babel-python-command python-shell-interpreter))
+
+  (after! ob-ditaa
+    ;; TODO Should be fixed upstream
+    (let ((default-directory (org-find-library-dir "org-contribdir")))
+      (setq org-ditaa-jar-path     (expand-file-name "scripts/ditaa.jar")
+            org-ditaa-eps-jar-path (expand-file-name "scripts/DitaaEps.jar"))))
 
   ;; NOTE Backported from Emacs 27.1
   ;; DEPRECATED Remove when 26.x support is dropped
@@ -647,7 +654,6 @@ can grow up to be fully-fledged org-mode buffers."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
           (doom-inhibit-large-file-detection t)
-          doom-first-file-hook
           org-mode-hook
           find-file-hook)
       (funcall orig-fn file)))
@@ -887,7 +893,7 @@ between the two."
       ("^\\*Org Agenda"     :ignore t)
       ("^\\*Org Src"        :size 0.4  :quit nil :select t :autosave t :modeline t :ttl nil)
       ("^\\*Org-Babel")
-      ("^CAPTURE-.*\\.org$" :size 0.25 :quit nil :select t :autosave ignore))))
+      ("^\\*Capture\\*$\\|CAPTURE-.*$" :size 0.25 :quit nil :select t :autosave ignore))))
 
 
 (defun +org-init-protocol-lazy-loader-h ()

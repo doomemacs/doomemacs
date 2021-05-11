@@ -1,8 +1,6 @@
 ;;; tools/prodigy/config.el -*- lexical-binding: t; -*-
 
 (after! prodigy
-  (set-evil-initial-state! 'prodigy-mode 'emacs)
-
   (defadvice! +prodigy--add-project-property-a (orig-fn &rest args)
     "Adds a new :project property to prodigy services, which hides the service
 unless invoked from the relevant project."

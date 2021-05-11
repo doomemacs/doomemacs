@@ -23,7 +23,8 @@ debian, and derivatives). On most it's 'fd'.")
   :commands (projectile-project-root
              projectile-project-name
              projectile-project-p
-             projectile-locate-dominating-file)
+             projectile-locate-dominating-file
+             projectile-relevant-known-projects)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         ;; Auto-discovery is slow to do by default. Better to update the list

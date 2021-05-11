@@ -1,0 +1,38 @@
+---
+name: 📝 Feature Request
+description: Propose a new idea or feature
+title: "Briefly summarize your request here"
+labels: ["1. request", "needs-triage"]
+body:
+- type: checkboxes
+  attributes:
+    options:
+      - label: I have read the [contributing guide](https://discourse.doomemacs.org/how2contribute).
+        required: true
+      - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues?q=label%3A%221.+request%22+) for similar requests.
+        required: true
+      - label: I have searched [the module list](https://doomemacs.org/docs/modules.org) in case my feature was already implemented.
+        required: true
+- type: textarea
+  attributes:
+    label: Describe your request
+    placeholder: |
+      I'd like Doom to incorporate the game, Doom Eternal, into Doom Emacs, [found here](https://store.steampowered.com/app/379720/DOOM/).
+
+      It replaces `M-x doctor` with a superior alternative: a distraction from your personal problems.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Briefly explain its use-case
+    description: |
+      A screencast is ideal, but a list of steps and effects showing off how it would work is acceptable.
+    placeholder: |
+      1. Install Linux
+      2. Install Emacs
+      3. Install Doom
+      4. Install Doom Eternal
+      5. Speed run Doom Eternal
+      6. Ponder why your wife left you
+  validations:
+    required: true

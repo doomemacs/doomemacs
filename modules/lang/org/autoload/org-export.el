@@ -26,12 +26,14 @@
 
 Prompts for what BACKEND to use. See `org-export-backends' for options."
   (interactive
-   (list (intern (completing-read "Export to: " org-export-backends))))
-  (let ((buffer (org-export-to-buffer backend "*Formatted Copy*" nil nil t t)))
+   (list (intern (completing-read "Export to: " (progn (require 'ox) org-export-backends)))))
+  (require 'ox)
+  (let* ((org-export-show-temporary-export-buffer nil)
+         (buffer (org-export-to-buffer backend "*Formatted Copy*" nil nil t t)))
     (unwind-protect
         (with-current-buffer buffer
           (kill-new (buffer-string)))
-      (kill-buffer (current-buffer)))))
+      (kill-buffer buffer))))
 
 ;;;###autoload
 (defun +org/export-to-clipboard-as-rich-text (beg end)

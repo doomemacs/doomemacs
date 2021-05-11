@@ -14,7 +14,7 @@
                                    "~/Applications/Skim.app"))))
        (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
        (add-to-list 'TeX-view-program-list
-                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -b -g %%n %%o %%b"
+                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -b %%n %%o %%b"
                                          app-path)))))
 
     (`sumatrapdf
@@ -26,7 +26,7 @@
      (when (executable-find "okular")
        ;; Configure Okular as viewer. Including a bug fix
        ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
-       (add-to-list 'TeX-view-program-list '("Okular" ("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
+       (add-to-list 'TeX-view-program-list '("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a"))))
        (add-to-list 'TeX-view-program-selection '(output-pdf "Okular"))))
 
     (`zathura
