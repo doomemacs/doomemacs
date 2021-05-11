@@ -13,6 +13,8 @@ body:
         required: true
       - label: I have searched [the module list](https://doomemacs.org/docs/modules.org) in case my feature was already implemented.
         required: true
+      - label: I have confirmed that updating Doom won't fulfill my request.
+        required: true
 - type: textarea
   attributes:
     label: Describe your request

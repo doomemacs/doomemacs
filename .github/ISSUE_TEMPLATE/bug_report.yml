@@ -11,7 +11,7 @@ body:
 
       Before you proceed, please consult our available resources and collect as much information about your issue as possible:
 
-      -----
+      <br />
 - type: checkboxes
   attributes:
     options:
@@ -19,9 +19,9 @@ body:
         required: true
       - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
         required: true
-      - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
+      - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for any errors and solutions.
         required: true
-      - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for solutions.
+      - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
         required: true
       - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
         required: true
@@ -37,7 +37,8 @@ body:
     description: |
       + Include screenshots/casts, if possible
       + If you include log dumps, please use [pastebin.com](https://pastebin.com)
-      + If you're reporting an error, [include a backtrace](https://discourse.doomemacs.org/how2backtrace) in [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks)**
+      + List *all* error messages and **[include backtraces for each of them](https://discourse.doomemacs.org/how2backtrace)
+      + **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, error messages, and backtraces.**
     placeholder: |
       When I do X, Z happened. Here is the backtrace:
 
