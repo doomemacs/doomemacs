@@ -23,6 +23,8 @@
         :i "<backtab>" #'parinfer-smart-tab:dwim-left
         :localleader
         "m" #'parinfer-toggle-mode))
+
+
 (use-package! parinfer-rust-mode
   :when (featurep! +rust)
   :when (bound-and-true-p module-file-suffix)
@@ -34,13 +36,12 @@
           hy-mode) . parinfer-rust-mode)
   :init
   (setq parinfer-rust-library
-        (concat user-emacs-directory
-                ".local/etc/parinfer-rust/"
-                (cond ((eq system-type 'darwin) "parinfer-rust-darwin.so")
-                      ((eq system-type 'gnu/linux) "parinfer-rust-linux.so")
-                      ((eq system-type 'windows-nt) "parinfer-rust-windows.dll")
-                      ((eq system-type 'berkeley-unix) "libparinfer_rust.so"))))
-  (setq parinfer-rust-auto-download (if (eq system-type 'berkeley-unix) nil t))
+        (concat doom-etc-dir "parinfer-rust/"
+                (cond (IS-MAC "parinfer-rust-darwin.so")
+                      (IS-LINUX "parinfer-rust-linux.so")
+                      (IS-WINDOWS "parinfer-rust-windows.dll")
+                      (IS-BSD "libparinfer_rust.so")))
+        parinfer-rust-auto-download (not IS-BSD))
   :config
   (map! :map parinfer-rust-mode-map
         :localleader
