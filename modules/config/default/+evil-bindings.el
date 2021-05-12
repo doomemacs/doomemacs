@@ -42,7 +42,8 @@
                            (bound-and-true-p yas-minor-mode)
                            (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                       #'yas-expand
-                      (featurep! :completion company +tng)
+                      (and (bound-and-true-p company-mode)
+                           (featurep! :completion company +tng))
                       #'company-indent-or-complete-common)
       :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
                            (evil-visual-state-p)
