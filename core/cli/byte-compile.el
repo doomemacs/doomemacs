@@ -101,7 +101,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
             (noninteractive t)
             doom-interactive-p)
         (doom-initialize 'force)
-        (quiet! (doom-initialize-packages))))
+        (quiet! (doom-initialize-packages))
+        (quiet! (doom-initialize-modules))))
 
     (if (null targets)
         (print! (info "No targets to %scompile" (if recompile-p "re" "")))
