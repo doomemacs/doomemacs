@@ -250,7 +250,7 @@ list remains lean."
                      (not (doom--find-eln-file (doom--eln-file-name file)))
                      (not (cl-some (lambda (re)
                                      (string-match-p re file))
-                                   comp-deferred-compilation-deny-list))) do
+                                   native-comp-deferred-compilation-deny-list))) do
              (doom-log "Compiling %s" file)
              (native-compile-async file))))
 
