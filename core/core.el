@@ -154,7 +154,7 @@ users).")
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
 ;; REVIEW Remove after a month
-(when (boundp 'comp-deferred-compilation)
+(when EMACS28+
   (mapc (lambda (varset)
           (unless (boundp (car varset))
             (defvaralias (car varset) (cdr varset))))
