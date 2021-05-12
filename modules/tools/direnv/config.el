@@ -6,6 +6,8 @@
   :config
   (add-to-list 'doom-debug-variables 'envrc-debug)
 
+  (set-popup-rule! "^\\*envrc\\*" :quit t :ttl 0)
+
   ;; I'm avoiding `global-envrc-mode' intentionally, because it has the
   ;; potential to run too late in the mode startup process (and after, say,
   ;; server hooks that may rely on that local direnv environment).
