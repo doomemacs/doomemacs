@@ -36,7 +36,7 @@ headings as titles, and you have more freedom to place them wherever you like.")
         org-tree-slide-modeline-display nil
         org-tree-slide-heading-emphasis t)
 
-  (add-hook 'org-tree-slide-mode-after-narrow-hook #'org-display-inline-images)
+  (add-hook 'org-tree-slide-after-narrow-hook #'org-display-inline-images)
   (add-hook! 'org-tree-slide-mode-hook
              #'+org-present-hide-blocks-h
              #'+org-present-prettify-slide-h)
