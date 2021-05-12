@@ -28,11 +28,11 @@ while getopts "hk:" opt; do
 done
 shift $((OPTIND-1))
 
-# use remaining args, else try stdin
+# use remaining args, else read from stdin if passed a single dash
 str="$*"
-if [ -z "$str" ]; then
-  str=$(cat)
-fi
+case "$str" in
+  -) str=$(cat) ;;
+esac
 
 # Fix incompatible terminals that cause odd 'not a valid terminal' errors
 [ "$TERM" = "alacritty" ] && export TERM=xterm-256color
