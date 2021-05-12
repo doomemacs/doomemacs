@@ -77,30 +77,31 @@
    'face '(:height 1)
    'display '(raise 0)))
 
-(defvar doom--system-cpus nil)
 ;;;###autoload
 (defun doom-system-cpus ()
   "Return the max number of processing units on this system.
 Tries to be portable. Returns 1 if cannot be determined."
-  (or doom--system-cpus
-      (setq doom--system-cpus
-            (let ((cpus
-                   (cond ((getenv "NUMBER_OF_PROCESSORS"))
-                         ((executable-find "nproc")
-                          (doom-call-process "nproc"))
-                         ((executable-find "sysctl")
-                          (doom-call-process "sysctl" "-n" "hw.ncpu")))))
-              (max
-               1 (or (cl-typecase cpus
-                       (string
-                        (condition-case _
-                            (string-to-number cpus)
-                          (wrong-type-argument
-                           (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
-                                       cpus))))
-                       (consp
-                        (if (zerop (car cpus))
-                            (string-to-number (cdr cpus))
-                          (user-error "Failed to look up number of processors, because:\n\n%s"
-                                      (cdr cpus)))))
-                     1))))))
+  (or (get 'doom-system-cpus 'cached-value)
+      (put 'doom-system-cpus 'cached-value
+           (let ((cpus
+                  (cond ((eq 'windows-nt system-type)
+                         (w32-get-nproc))
+                        ((getenv "NUMBER_OF_PROCESSORS"))
+                        ((executable-find "nproc")
+                         (doom-call-process "nproc"))
+                        ((executable-find "sysctl")
+                         (doom-call-process "sysctl" "-n" "hw.ncpu")))))
+             (max
+              1 (or (cl-typecase cpus
+                      (string
+                       (condition-case _
+                           (string-to-number cpus)
+                         (wrong-type-argument
+                          (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
+                                      cpus))))
+                      (consp
+                       (if (zerop (car cpus))
+                           (string-to-number (cdr cpus))
+                         (user-error "Failed to look up number of processors, because:\n\n%s"
+                                     (cdr cpus)))))
+                    1))))))

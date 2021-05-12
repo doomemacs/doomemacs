@@ -70,6 +70,12 @@ purpose.")
 ;; Stop user configuration from interfering with package management
 (setq enable-dir-local-variables nil)
 
+;; Default to using all cores, rather than half of them, since we compile things
+;; ahead-of-time in a non-interactive session.
+(defadvice! doom--comp-use-all-cores-a (&rest _)
+  :before #'comp-effective-async-max-jobs
+  (setq comp-num-cpus (doom-system-cpus)))
+
 
 ;;
 ;;; Entry point

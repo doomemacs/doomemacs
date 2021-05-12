@@ -189,14 +189,7 @@ users).")
                 (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
                 (concat local-dir-re ".*/with-editor\\.el\\'")
                 ;; https://github.com/nnicandro/emacs-jupyter/issues/297
-                (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))
-  ;; Default to using all cores, rather than half of them, since we compile
-  ;; things ahead-of-time in a non-interactive session.
-  (defun doom--comp-use-all-cores-a ()
-    (if (zerop native-comp-async-jobs-number)
-        (setq comp-num-cpus (doom-system-cpus))
-      native-comp-async-jobs-number))
-  (advice-add #'comp-effective-async-max-jobs :override #'doom--comp-use-all-cores-a))
+                (concat local-dir-re ".*/jupyter-channel\\.el\\'")))))
 
 
 ;;
