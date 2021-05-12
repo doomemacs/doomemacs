@@ -153,7 +153,7 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
-;; REVIEW Remove after a couple months
+;; REVIEW Remove after a month
 (when (boundp 'comp-deferred-compilation)
   (defvaralias 'native-comp-deferred-compilation 'comp-deferred-compilation)
   (defvaralias 'native-comp-deferred-compilation-deny-list 'comp-deferred-compilation-deny-list)
@@ -181,7 +181,7 @@ users).")
 
 (with-eval-after-load 'comp
   ;; HACK Disable native-compilation for some troublesome packages
-  (mapc (apply-partially #'add-to-list 'comp-deferred-compilation-deny-list)
+  (mapc (apply-partially #'add-to-list 'native-comp-deferred-compilation-deny-list)
         (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
           (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
                 (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
