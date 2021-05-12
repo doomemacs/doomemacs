@@ -8,7 +8,12 @@
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
-        company-global-modes '(not erc-mode message-mode help-mode gud-mode)
+        company-global-modes
+        '(not erc-mode
+              message-mode
+              help-mode
+              gud-mode
+              vterm-mode)
         company-frontends
         '(company-pseudo-tooltip-frontend  ; always show candidates in overlay tooltip
           company-echo-metadata-frontend)  ; show selected candidate docs in echo area
