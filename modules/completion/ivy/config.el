@@ -204,7 +204,7 @@ results buffer.")
     [remap recentf-open-files]       #'counsel-recentf
     [remap set-variable]             #'counsel-set-variable
     [remap swiper]                   #'counsel-grep-or-swiper
-    [remap unicode-chars-list-chars] #'counsel-unicode-char
+    [remap insert-char]              #'counsel-unicode-char
     [remap yank-pop]                 #'counsel-yank-pop)
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
