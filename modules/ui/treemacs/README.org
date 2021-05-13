@@ -31,13 +31,25 @@
 + [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]]
 
 * Prerequisites
-This module has no prerequisites.
+If ~+treemacs-git-mode~ is set to ~extended~ or ~deferred~ you will need to have
+python3 installed
 
 * Features
-# TODO
+# An in-depth list of features, how to use them, and their dependencies.
 
 * Configuration
-# TODO
+the variable ~+treemacs-git-mode~ sets the type of git integration for treemacs
 
-* Troubleshooting
-# TODO
+There are 3 possible values:
+
+  1) simple, which highlights only files based on their git status, and is
+     slightly faster,
+  2) extended, which highlights both files and directories, but requires
+     python,
+  3) deferred, same as extended, but highlights asynchronously.
+
+the default being simple
+
+This must be set before treemacs has loaded.
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.
