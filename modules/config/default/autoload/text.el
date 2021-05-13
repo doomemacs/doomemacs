@@ -91,10 +91,7 @@ possible, or just one char if that's not possible."
                 (not (doom-point-in-string-p))
                 (>= (abs (save-excursion (skip-chars-backward " \t")))
                     (setq current-column (current-column))))
-           (let ((movement (% current-column tab-width)))
-             (when (= movement 0)
-               (setq movement tab-width))
-             (delete-char (- movement))))
+           (delete-char (- (1+ (% (1- current-column) tab-width)))))
 
           ;; Otherwise do a regular delete
           ((delete-char -1)))))
