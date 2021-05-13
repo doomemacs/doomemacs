@@ -41,10 +41,10 @@ It includes:
 
 * Prerequisites
 If ~+treemacs-git-mode~ is set to ~extended~ or ~deferred~ you will need to have
-~python3~ installed
+~python3~ installed.
 
 * Features
-The project bar can be opened using =SPC o p=
+The project bar can be opened using =SPC o p=.
 
 | Keybind | Description                                                     |
 |---------+-----------------------------------------------------------------|
@@ -52,7 +52,8 @@ The project bar can be opened using =SPC o p=
 | =o v=     | Open a vertical dired buffer on the currently highlighted node  |
 
 * Configuration
-the variable ~+treemacs-git-mode~ sets the type of git integration for treemacs
+The variable ~+treemacs-git-mode~ sets the type of git integration that treemacs
+has.
 
 There are 3 possible values:
 
