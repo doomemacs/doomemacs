@@ -14,12 +14,8 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds the treemacs project sidebar
-
-#+begin_quote
-It is a little more powerful
-a little cooler than neotree
-#+end_quote
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+It includes:
 
 + Integration with Git  (when =:tools magit= is enabled)
 + Integration with Evil (when =:editor evil +everywhere= is enabled)
@@ -45,10 +41,10 @@ a little cooler than neotree
 
 * Prerequisites
 If ~+treemacs-git-mode~ is set to ~extended~ or ~deferred~ you will need to have
-~python3~ installed
+~python3~ installed.
 
 * Features
-The project bar can be opened using =SPC o p=
+The project bar can be opened using =SPC o p=.
 
 | Keybind | Description                                                     |
 |---------+-----------------------------------------------------------------|
@@ -56,7 +52,8 @@ The project bar can be opened using =SPC o p=
 | =o v=     | Open a vertical dired buffer on the currently highlighted node  |
 
 * Configuration
-the variable ~+treemacs-git-mode~ sets the type of git integration for treemacs
+The variable ~+treemacs-git-mode~ sets the type of git integration that treemacs
+has.
 
 There are 3 possible values:
 
