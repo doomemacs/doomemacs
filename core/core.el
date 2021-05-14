@@ -516,8 +516,6 @@ Meant to be used with `run-hook-wrapped'."
   (doom-log "Running doom hook: %s" hook)
   (condition-case-unless-debug e
       (funcall hook)
-    (user-error
-     (warn "Warning: %s" (error-message-string e)))
     (error
      (signal 'doom-hook-error (list hook e))))
   ;; return nil so `run-hook-wrapped' won't short circuit
@@ -531,7 +529,11 @@ Is used as advice to replace `run-hooks'."
         (run-hook-wrapped hook #'doom-run-hook)
       (doom-hook-error
        (unless debug-on-error
-         (lwarn hook :error "Error running hook %S because: %s" (cadr e) (caddr e)))
+         (lwarn hook :error "Error running hook %S because: %s"
+                (if (symbolp (cadr e))
+                    (symbol-name (cadr e))
+                  (cadr e))
+                (caddr e)))
        (signal 'doom-hook-error (cons hook (cdr e)))))))
 
 (defun doom-run-hook-on (hook-var trigger-hooks)
