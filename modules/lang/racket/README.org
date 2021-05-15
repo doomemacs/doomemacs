@@ -9,6 +9,7 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#arch-linux][Arch Linux]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#racket-smart-open-bracket-mode][racket-smart-open-bracket-mode]]
@@ -16,7 +17,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module provide integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
+This module provides integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -28,8 +29,20 @@ This module has no dedicated maintainers.
 + [[https://github.com/greghendershott/racket-mode][racket-mode]]
 
 * Prerequisites
-This module only require `racket`. Install it directly from the [[https://download.racket-lang.org/][racket website]],
+This module only requires ~racket~. Install it directly from the [[https://download.racket-lang.org/][racket website]],
 or check your package manger.
+
+** Arch Linux
+
+#+begin_src bash
+pacman -S racket
+#+end_src
+
+Or, for fewer dependencies:
+
+#+begin_src bash
+pacman -S racket-minimal
+#+end_src
 
 * TODO Features
 
