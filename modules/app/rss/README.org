@@ -68,7 +68,7 @@ When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to c
 + Root of ~elfeed-org~ needs to have ~:elfeed:~ tag. This is where ~elfeed-org~ starts to read.
 + You can have subheaders as in example ~:programming:~, and ~elfeed-org~ applies that tag to all subheader feeds, in example it adds it to ~This Week in Rust~.
 + You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ (~C-c C-l~) and put name as you want into ~description~.
-+ If you don't want to use ~org-directory/elfeed.org~ file you can specify it with ~(setq rmh-elfeed-org-files ("path/to/your/elfeed/file.org))~
++ If you don't want to use ~org-directory/elfeed.org~ file you can specify it with ~(setq rmh-elfeed-org-files '("path/to/your/elfeed/file.org))~
 
 ** Keybindings
 + General
