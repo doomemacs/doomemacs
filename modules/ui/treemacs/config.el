@@ -60,7 +60,12 @@ This must be set before `treemacs' has loaded.")
     ;; REVIEW Fix #1875 to be consistent with C-w {v,s}, but this should really
     ;;        be considered upstream.
     "o v"    #'treemacs-visit-node-horizontal-split
-    "o s"    #'treemacs-visit-node-vertical-split))
+    "o s"    #'treemacs-visit-node-vertical-split
+    ;; REVIEW Fix #5056: treemacs-evil changed h/l to close/open folds, which is
+    ;;        substantially less useful than traversing up/down the tree,
+    ;;        especially when TAB already exists for toggle folds.
+    "h"      #'treemacs-root-up
+    "l"      #'treemacs-root-down))
 
 
 (use-package! treemacs-projectile
