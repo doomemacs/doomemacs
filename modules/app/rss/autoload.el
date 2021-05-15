@@ -1,6 +1,13 @@
 ;;; app/rss/autoload.el -*- lexical-binding: t; -*-
 
+(require 'cl-lib)
+
 (defvar +rss--wconf nil)
+
+(defvar +rss-youtube-feed-format
+  '(("^UC" . "https://www.youtube.com/feeds/videos.xml?channel_id=%s")
+    ("^PL" . "https://www.youtube.com/feeds/videos.xml?playlist_id=%s")
+    (""    . "https://www.youtube.com/feeds/videos.xml?user=%s")))
 
 ;;;###autoload
 (defun =rss ()
@@ -62,6 +69,31 @@
     (when link
       (kill-new link)
       (message "Copied %s to clipboard" link))))
+
+;;;###autoload
+(defun +rss/show-youtube-dl ()
+  "Download the current entry with youtube-dl."
+  (interactive)
+  (if (youtube-dl (elfeed-entry-link elfeed-show-entry))
+      (message "Downloading %s" (elfeed-entry-title elfeed-show-entry))
+    (message "Entry is not a YouTube link!"))
+  (funcall elfeed-show-entry-delete)
+  (youtube-dl-list))
+
+;;;###autoload
+(defun +rss/search-youtube-dl ()
+  "Download the current entry with youtube-dl."
+  (interactive)
+  (let ((entries (elfeed-search-selected)))
+    (dolist (entry entries)
+      (if (null (youtube-dl (elfeed-entry-link entry)
+                            :title (elfeed-entry-title entry)))
+          (message "Entry is not a YouTube link!")
+        (message "Downloading %s" (elfeed-entry-title entry)))
+      (elfeed-untag entry 'unread)
+      (elfeed-search-update-entry entry)
+      (unless (use-region-p) (forward-line)))))
+
 ;;
 ;; Hooks
 
@@ -104,6 +136,10 @@
       (set-window-configuration +rss--wconf))
     (setq +rss--wconf nil)))
 
+;;;###autoload
+(defun +rss-podcast-tagger (entry)
+  (when (elfeed-entry-enclosures entry)
+    (elfeed-tag entry 'podcast)))
 
 ;;
 ;; Functions
@@ -139,3 +175,20 @@
     ;; And remove underlines in case images are links, otherwise we get an
     ;; underline beneath every slice.
     (put-text-property start (point) 'face '(:underline nil))))
+
+(defun +rss--elfeed-expand (listing)
+  "Expand feed LISTING urls depending on their tags."
+  (cl-destructuring-bind (url . tags) listing
+    (cond
+     ((member 'youtube tags)
+      (let* ((case-fold-search nil)
+             (test (lambda (s r) (string-match-p r s)))
+             (format (cl-assoc url +rss-youtube-feed-format :test test)))
+        (cons (format (cdr format) url) tags)))
+     (listing))))
+
+;;;###autoload
+(defmacro +rss-elfeed-config! (&rest feeds)
+  "Minimizes FEEDS listings."
+  (declare (indent 0))
+  `(setf elfeed-feeds (mapcar #'+rss--elfeed-expand ',feeds)))

@@ -49,6 +49,9 @@ easier to scroll through.")
       shr-put-image-function #'+rss-put-sliced-image-fn
       shr-external-rendering-functions '((img . +rss-render-image-tag-without-underline-fn))))
 
+  (when (featurep! +media)
+    (add-hook! 'elfeed-new-entry-hook #'+rss-podcast-tagger))
+
   ;; Keybindings
   (after! elfeed-show
     (define-key! elfeed-show-mode-map
@@ -85,3 +88,6 @@ easier to scroll through.")
   :after elfeed
   :config
   (elfeed-goodies/setup))
+
+(use-package! youtube-dl
+  :when (featurep! +media))

@@ -17,6 +17,7 @@
   - [[#keybindings][Keybindings]]
   - [[#news-filtering][News filtering]]
   - [[#automatically-updating-feed-when-opening-elfeed][Automatically updating feed when opening elfeed]]
+  - [[#youtube-videos][YouTube Videos]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -27,12 +28,15 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 + =+org= to enable ~elfeed-org~ to use ~org-directory/elfeed.org~
++ =+media= to enable using ~youtube-dl~
 
 ** Plugins
 + [[https://github.com/skeeto/elfeed][elfeed]]
 + [[https://github.com/algernon/elfeed-goodies][elfeed-goodies]] 
 + =+org=
   + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
++ =+media=
+  - [[https://github.com/skeeto/youtube-dl-emacs][youtube-dl-emacs]]
 
 ** Hacks
 + By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last 2 weeks of entries visible. This needs to be set after elfeed has loaded like so in your ~config.el~
@@ -54,6 +58,16 @@ When you don't want to use org mode to manage your elfeed feeds you can put your
 (setq elfeed-feeds
       '("https://this-week-in-rust.org/rss.xml"
         "http://feeds.bbci.co.uk/news/rss.xml"))
+#+END_SRC
+
+You can also use the =+rss-elfeed-config=. If you're using the =+media= tag you should use this macro because it will allow you to enter youtube channel ids, user ids, and playlist ids without defining full urls as long as they are tagged with the ~youtube~ tag. You can use this macro without the =+media= flag too if you want.
+
+#+BEGIN_SRC elisp
+(+rss-elfeed-config!
+    ("https://this-week-in-rust.org/rss.xml" rust)
+    ("http://feeds.bbci.co.uk/news/rss.xml" news bbc)
+    ;; Systemcrafters - Learning Emacs Lisp Playlist
+    ("PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7" youtube system-crafters emacs))
 #+END_SRC
 
 ** With +org
@@ -110,5 +124,14 @@ Hook ~elfeed-update~ to ~elfeed-search-mode-hook~
 #+BEGIN_SRC elisp
 (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
 #+END_SRC
+
+** YouTube Videos
+
+When using the =+media= tag, you can download items in your feed originating from youtube.
+
+| Key | Mode                                 | Description                                            |
+|-----+--------------------------------------+--------------------------------------------------------|
+| =y= | Elfeed-show-mode, Elfeed-search-mode | Download youtube media and open youtube-dl-list buffer |
+| =L= | Elfeed-search-mode                   | Open youtube-dl-list buffer                            |
 
 * TODO Troubleshooting

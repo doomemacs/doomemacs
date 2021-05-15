@@ -5,3 +5,5 @@
 (package! elfeed-goodies :pin "95b4ea632fbd5960927952ec8f3394eb88da4752")
 (when (featurep! +org)
   (package! elfeed-org :pin "268efdd0121fa61f63b722c30e0951c5d31224a4"))
+(when (featurep! +media)
+  (package! youtube-dl))
