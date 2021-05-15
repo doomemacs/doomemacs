@@ -19,17 +19,19 @@
   - [[#sending-mail][Sending mail]]
   - [[#customize-notmuch-hello-buffer][Customize =*notmuch-hello*= buffer]]
   - [[#changing-the-notmuch-landing-page][Changing the =notmuch= landing page]]
+  - [[#writing-html-emails][Writing HTML Emails]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module turns Emacs into an email client using ~notmuch~.
 
 ** Module Flags
++ =+org= Enables org-mime for writing HTML emails using org-mode.
 + =+afew= Enables integration with =afew=.
 
 ** Plugins
 + [[https://notmuchmail.org/][notmuch]]
-+ [[https://github.com/org-mime/org-mime][org-mime]]
++ [[https://github.com/org-mime/org-mime][org-mime]]* (with =+org= flag)
 + [[https://github.com/fuxialexander/counsel-notmuch][counsel-notmuch]]*
 + [[https://github.com/emacs-helm/helm-notmuch][helm-notmuch]]*
 
@@ -169,5 +171,24 @@ a custom search as your landing page.
 #+BEGIN_SRC emacs-lisp
 (setq +notmuch-home-function (lambda () (notmuch-search "tag:inbox")))
 #+END_SRC
+** Writing HTML Emails
+The [[https://github.com/org-mime/org-mime][org-mime]] package provides functionality for composing emails in org-mode and transforming them to HTML. This feature is enabled using the =+org= flag.
+
+Example use cases:
+
+- To convert an email to an HTML email use ~M-x org-mime-htmlize~
+- To compose email using an org-mode editor buffer, use ~M-x org-mime-edit-mail-in-org-mode~
+
+If you'd like to make configuration changes to =org-mime=, you may do so normally. By default the output of =org-mime-htmlize= includes section numbers, a byline, and a table of contents. That's probably more formal than the emails you're used to sending, so here's some example configuration that turns those features off.
+
+/config.el/
+
+#+begin_src emacs-lisp
+(after! org-mime
+  (setq org-mime-export-options '(:section-numbers nil
+                                  :with-author nil
+                                  :with-toc nil)))
+#+end_src
+
 
 * TODO Troubleshooting

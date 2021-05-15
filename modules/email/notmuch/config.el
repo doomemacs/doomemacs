@@ -88,6 +88,7 @@ OR a shell command string such as
 
 
 (use-package! org-mime
+  :when (featurep! +org)
   :after (org notmuch)
   :config (setq org-mime-library 'mml))
 
