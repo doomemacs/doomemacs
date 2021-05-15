@@ -130,7 +130,28 @@ server getting expensively restarted when reverting buffers."
                (or doom-debug-p
                    (not (eq +lsp-prompt-to-install-server 'quiet)))))
           (doom-shut-up-a #'lsp--info "No language server available for %S"
-                          major-mode))))))
+                          major-mode)))))
+
+  (when (featurep! :ui modeline +light)
+    (defvar-local lsp-modeline-icon nil)
+
+    (add-hook! '(lsp-before-initialize-hook
+                 lsp-after-initialize-hook
+                 lsp-after-uninitialized-functions
+                 lsp-before-open-hook
+                 lsp-after-open-hook)
+      (defun +lsp-update-modeline (&rest _)
+        "Update modeline with lsp state."
+        (let* ((workspaces (lsp-workspaces))
+               (face (if workspaces 'success 'warning))
+               (label (if workspaces "LSP Connected" "LSP Disconnected")))
+          (setq lsp-modeline-icon (concat
+                                   " "
+                                   (+modeline-format-icon 'faicon "rocket" "" face label -0.0575)
+                                   " "))
+          (add-to-list 'global-mode-string
+                       '(t (:eval lsp-modeline-icon))
+                       'append))))))
 
 
 (use-package! lsp-ui

@@ -94,6 +94,25 @@
         (evil-make-overriding-map cider--debug-mode-map 'normal)
         (evil-normalize-keymaps))))
 
+  (when (featurep! :ui modeline +light)
+    (defvar-local cider-modeline-icon nil)
+
+    (add-hook! '(cider-connected-hook
+                 cider-disconnected-hook
+                 cider-mode-hook)
+      (defun +clojure--cider-update-modeline ()
+        "Update modeline with cider connection state."
+        (let* ((connected (cider-connected-p))
+               (face (if connected 'success 'warning))
+               (label (if connected "Cider connected" "Cider disconnected")))
+          (setq cider-modeline-icon (concat
+                                     " "
+                                     (+modeline-format-icon 'faicon "terminal" "" face label -0.0575)
+                                     " "))
+          (add-to-list 'global-mode-string
+                       '(t (:eval cider-modeline-icon))
+                       'append)))))
+
   ;; The CIDER welcome message obscures error messages that the above code is
   ;; supposed to be make visible.
   (setq cider-repl-display-help-banner nil)
