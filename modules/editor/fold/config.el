@@ -9,9 +9,10 @@
     [remap evil-open-fold-rec] #'+fold/open
     [remap evil-close-folds]   #'+fold/close-all
     [remap evil-open-folds]    #'+fold/open-all)
-  (evil-define-key* 'motion 'global
-    "zj" #'+fold/next
-    "zk" #'+fold/previous))
+  (after! evil
+    (evil-define-key* 'motion 'global
+      "zj" #'+fold/next
+      "zk" #'+fold/previous)))
 
 
 ;;
