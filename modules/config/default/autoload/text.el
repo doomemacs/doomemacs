@@ -71,7 +71,7 @@ possible, or just one char if that's not possible."
               (ignore-errors (sp-get-thing))))
          (op (plist-get context :op))
          (cl (plist-get context :cl))
-         open-len close-len)
+         open-len close-len current-column)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
           ;; Also, skip closing delimiters
           ((and op cl
@@ -89,13 +89,9 @@ possible, or just one char if that's not possible."
                 (> tab-width 1)
                 (not (bolp))
                 (not (doom-point-in-string-p))
-                (save-excursion (>= (- (skip-chars-backward " \t")) tab-width)))
-           (let ((movement (% (current-column) tab-width)))
-             (when (= movement 0)
-               (setq movement tab-width))
-             (delete-char (- movement)))
-           (unless (memq (char-before) (list ?\n ?\ ))
-             (insert " ")))
+                (>= (abs (save-excursion (skip-chars-backward " \t")))
+                    (setq current-column (current-column))))
+           (delete-char (- (1+ (% (1- current-column) tab-width)))))
 
           ;; Otherwise do a regular delete
           ((delete-char -1)))))
