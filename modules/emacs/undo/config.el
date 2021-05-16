@@ -31,10 +31,16 @@
   :config
   (setq undo-fu-session-incompatible-files '("\\.gpg$" "/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
 
-  ;; HACK Fix #4993: prevent file names that are too long for the filesystem.
+  ;; HACK Fix #4993: we've advised `make-backup-file-name-1' to produced SHA1'ed
+  ;;      filenames to prevent file paths that are too long, so we force
+  ;;      `undo-fu-session--make-file-name' to use it instead of its own
+  ;;      home-grown overly-long-filename generator.
   ;; TODO PR this upstream; should be a universal issue
-  (advice-add #'undo-fu-session--make-file-name
-              :filter-args #'doom-make-hashed-backup-file-name-a)
+  (defadvice! +undo-fu-make-hashed-session-file-name-a (file)
+    :override #'undo-fu-session--make-file-name
+    (let ((backup-directory-alist `(("." . ,undo-fu-session-directory))))
+      (concat (make-backup-file-name-1 file)
+              (if undo-fu-session-compression ".gz" ".el"))))
 
   ;; HACK Use the faster zstd to compress undo files instead of gzip
   (when (executable-find "zstd")

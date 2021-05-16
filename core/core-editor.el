@@ -154,11 +154,22 @@ or file path may exist now."
 
 ;; HACK Does the same for Emacs backup files, but also packages that use
 ;;      `make-backup-file-name-1' directly (like undo-tree).
-(defadvice! doom-make-hashed-backup-file-name-a (args)
+(defadvice! doom-make-hashed-backup-file-name-a (orig-fn file)
   "A few places use the backup file name so paths don't get too long."
-  :filter-args #'make-backup-file-name-1
-  (setcar args (sha1 (car args)))
-  args)
+  :around #'make-backup-file-name-1
+  (let ((alist backup-directory-alist)
+        backup-directory)
+    (while alist
+      (let ((elt (pop alist)))
+        (if (string-match (car elt) file)
+            (setq backup-directory (cdr elt)
+                  alist nil))))
+    (let ((file (funcall orig-fn file)))
+      (if (or (null backup-directory)
+              (not (file-name-absolute-p backup-directory)))
+          file
+        (expand-file-name (sha1 (file-name-nondirectory file))
+                          (file-name-directory file))))))
 
 
 ;;
