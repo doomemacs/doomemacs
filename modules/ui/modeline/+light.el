@@ -427,11 +427,11 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                                                     error
                                                     warning
                                                     info))))
-               (+modeline-format-icon "check" "" 'success)))
-            (`running     (+modeline-format-icon'material "access_time" "*" 'mode-line-inactive "Running..."))
-            (`errored     (+modeline-format-icon'material "sim_card_alert" "!" 'error "Errored!"))
-            (`interrupted (+modeline-format-icon'material "pause" "!" 'mode-line-inactive "Interrupted"))
-            (`suspicious  (+modeline-format-icon'material "priority_high" "!" 'error "Suspicious"))))))
+               (+modeline-format-icon 'material "check" "" 'success)))
+            (`running     (+modeline-format-icon 'material "access_time" "*" 'mode-line-inactive "Running..."))
+            (`errored     (+modeline-format-icon 'material "sim_card_alert" "!" 'error "Errored!"))
+            (`interrupted (+modeline-format-icon 'material "pause" "!" 'mode-line-inactive "Interrupted"))
+            (`suspicious  (+modeline-format-icon 'material "priority_high" "!" 'error "Suspicious"))))))
 
 
 
