@@ -108,7 +108,7 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
   (unless (string-empty-p output)
     (princ output)
     (terpri)
-    output))
+    t))
 
 ;;;###autoload
 (defun doom--output-indent (width text &optional prefix)
