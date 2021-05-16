@@ -28,7 +28,8 @@
   (remove-hook 'rustic-mode-hook #'flycheck-mode)
   (remove-hook 'rustic-mode-hook #'flymake-mode-off)
   (unless (featurep! +lsp)
-    (add-to-list 'flycheck-checkers 'rustic-clippy))
+    (after! flycheck
+      (add-to-list 'flycheck-checkers 'rustic-clippy)))
 
   ;; HACK `rustic-lsp' sets up lsp-mode/eglot too early. We move it to
   ;;      `rustic-mode-local-vars-hook' so file/dir local variables can be used
