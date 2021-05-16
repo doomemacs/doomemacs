@@ -24,6 +24,12 @@
   (when (require 'ws-butler nil t)
     (setq editorconfig-trim-whitespaces-mode 'ws-butler-mode))
 
+  ;; Fix #5057 archives don't need editorconfig settings, and they may otherwise
+  ;; interfere with the process of opening them (office formats are zipped XML
+  ;; formats).
+  (add-to-list 'editorconfig-exclude-regexps
+               "\\.\\(zip\\|\\(doc\\|xls\\|ppt\\)x\\)\\'")
+
   (defadvice! +editorconfig--smart-detection-a (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
