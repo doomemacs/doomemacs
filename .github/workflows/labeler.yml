@@ -7,13 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: is-sponsor-label
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
+    name: labeler
     steps:
       # - name: Checkout
       #   uses: actions/checkout@v2
       - uses: actions/labeler@main
+        with:
+          repo-token: ${{ github.token }}
       # - name: Synchronize labels
       #   uses: julb/action-manage-label@v1
       #   with:
