@@ -56,6 +56,15 @@ and Emacs states, and for non-evil users.")
                      (not (or (numberp key) (null key))))))
             [C-i] [?\C-i])))
 
+;; HACK Fixes Emacs' disturbing inability to distinguish C-m from RET. We don't
+;;      need the same hacks as C-i because *nobody* binds keys to C-m otherwise.
+(define-key key-translation-map [?\C-m]
+  (cmd! (if (let ((keys (this-single-command-raw-keys)))
+              (and keys
+                   (not (cl-position 'return keys))
+                   (display-graphic-p)))
+            [C-m] [?\C-m])))
+
 
 ;;
 ;;; Universal, non-nuclear escape
