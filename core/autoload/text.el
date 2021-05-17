@@ -1,11 +1,13 @@
 ;;; core/autoload/text.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defvar doom-point-in-comment-functions ()
   "List of functions to run to determine if point is in a comment.
 
 Each function takes one argument: the position of the point. Stops on the first
 function to return non-nil. Used by `doom-point-in-comment-p'.")
 
+;;;###autoload
 (defvar doom-point-in-string-functions ()
   "List of functions to run to determine if point is in a string.
 
@@ -42,16 +44,18 @@ lines, above and below, with only whitespace in between."
   "Return non-nil if POS is in a comment.
 POS defaults to the current position."
   (let ((pos (or pos (point))))
-    (or (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
-        (sp-point-in-comment pos))))
+    (if doom-point-in-comment-functions
+        (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
 
 ;;;###autoload
 (defun doom-point-in-string-p (&optional pos)
   "Return non-nil if POS is in a string."
   ;; REVIEW Should we cache `syntax-ppss'?
   (let ((pos (or pos (point))))
-    (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
-        (sp-point-in-string pos))))
+    (if doom-point-in-string-functions
+        (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
+      (nth 3 (syntax-ppss pos)))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
