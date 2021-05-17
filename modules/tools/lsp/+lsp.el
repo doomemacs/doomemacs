@@ -1,8 +1,9 @@
 ;;; tools/lsp/+lsp.el -*- lexical-binding: t; -*-
 
-(defvar +lsp-company-backends (if (featurep! :editor snippets)
-                                  '(:separate company-capf company-yasnippet)
-                                'company-capf)
+(defvar +lsp-company-backends
+  (if (featurep! :editor snippets)
+      '(:separate company-capf company-yasnippet)
+    'company-capf)
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
 
@@ -44,7 +45,7 @@ about it (it will be logged to *Messages* however).")
     (setq lsp-keymap-prefix nil))
 
   :config
-  (pushnew! doom-debug-variables 'lsp-log-io 'lsp-print-performance)
+  (add-to-list 'doom-debug-variables 'lsp-log-io)
 
   (setq lsp-intelephense-storage-path (concat doom-etc-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir
@@ -155,16 +156,31 @@ server getting expensively restarted when reverting buffers."
 
 
 (use-package! lsp-ui
-  :defer t
+  :hook (lsp-mode . lsp-ui-mode)
+  :hook (lsp-ui . lsp-ui-sideline-mode)
+  :hook (lsp-ui . lsp-ui-doc-mode)
   :config
+  ;; For some reason `lsp-ui' doesn't actually use the `lsp-ui-doc-enable' and
+  ;; `lsp-ui-sideline-enable' variables, so we fix that.
+  (defadvice! +lsp--ui-doc-only-if-enabled-a (&rest _)
+    :before-while #'lsp-ui-doc-mode
+    lsp-ui-doc-enable)
+
+  (defadvice! +lsp--ui-sideline-only-if-enabled-a (&rest _)
+    :before-while 'lsp-ui-sideline-mode
+    lsp-ui-sideline-enable)
+
+  (when (featurep! +peek)
+    (set-lookup-handlers! 'lsp-ui-mode
+      :definition 'lsp-ui-peek-find-definitions
+      :implementations 'lsp-ui-peek-find-implementation
+      :references 'lsp-ui-peek-find-references))
+
   (setq lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
-        lsp-ui-sideline-ignore-duplicate t
-        ;; lsp-ui-doc is redundant with and more invasive than
-        ;; `+lookup/documentation'
-        lsp-ui-doc-enable nil
         lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
         lsp-ui-doc-position 'at-point
+        lsp-ui-sideline-ignore-duplicate t
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
@@ -177,13 +193,7 @@ server getting expensively restarted when reverting buffers."
         "j"   #'lsp-ui-peek--select-next
         "k"   #'lsp-ui-peek--select-prev
         "C-k" #'lsp-ui-peek--select-prev-file
-        "C-j" #'lsp-ui-peek--select-next-file)
-
-  (when (featurep! +peek)
-    (set-lookup-handlers! 'lsp-ui-mode :async t
-      :definition 'lsp-ui-peek-find-definitions
-      :implementations 'lsp-ui-peek-find-implementation
-      :references 'lsp-ui-peek-find-references)))
+        "C-j" #'lsp-ui-peek--select-next-file))
 
 
 (use-package! helm-lsp
