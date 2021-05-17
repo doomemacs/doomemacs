@@ -584,6 +584,4 @@ ALL-MAILS are the all the unread emails"
                (subject (plist-get new-mail :subject))
                (sender (caar (plist-get new-mail :from))))
           (list :title sender :body subject))))
-    (setq mu4e-alert-grouped-mail-notification-formatter #'+mu4e-alert-grouped-mail-notification-formatter-with-bell))
-
-  (mu4e-alert-enable-mode-line-display))
+    (setq mu4e-alert-grouped-mail-notification-formatter #'+mu4e-alert-grouped-mail-notification-formatter-with-bell)))
