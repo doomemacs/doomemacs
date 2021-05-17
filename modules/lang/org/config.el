@@ -647,11 +647,14 @@ can grow up to be fully-fledged org-mode buffers."
                     nil 'local)))))
 
   (defvar recentf-exclude)
-  (defadvice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
+  (defadvice! +org--optimize-backgrounded-agenda-buffers-a (orig-fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
           (doom-inhibit-large-file-detection t)
+          org-startup-indented
+          org-startup-folded
+          vc-handled-backends
           org-mode-hook
           find-file-hook)
       (funcall orig-fn file)))
