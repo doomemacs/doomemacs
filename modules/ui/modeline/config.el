@@ -22,7 +22,14 @@
         doom-modeline-persp-name nil
         doom-modeline-minor-modes nil
         doom-modeline-major-mode-icon nil
-        doom-modeline-buffer-file-name-style 'relative-from-project)
+        doom-modeline-buffer-file-name-style 'relative-from-project
+        ;; Only show file encoding if it's non-UTF-8 and different line endings
+        ;; than the current OSes preference
+        doom-modeline-buffer-encoding 'nondefault
+        doom-modeline-default-eol-type
+        (cond (IS-MAC 2)
+              (IS-WINDOWS 1)
+              (0)))
 
   ;; Fix modeline icons in daemon-spawned graphical frames. We have our own
   ;; mechanism for disabling all-the-icons, so we don't need doom-modeline to do
