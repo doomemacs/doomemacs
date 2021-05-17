@@ -492,8 +492,8 @@ This macro accepts, in order:
   1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
      unquoted list of modes, a quoted hook variable or a quoted list of hook
      variables.
-  2. Optional properties :local and/or :append, which will make the hook
-     buffer-local or append to the list of hooks (respectively),
+  2. Optional properties :local, :append, and/or :depth [N], which will make the
+     hook buffer-local or append to the list of hooks (respectively),
   3. The function(s) to be added: this can be one function, a quoted list
      thereof, a list of `defun's, or body forms (implicitly wrapped in a
      lambda).
