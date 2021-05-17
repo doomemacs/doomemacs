@@ -284,20 +284,28 @@ otherwise falling back to ffap.el (find-file-at-point)."
   "Searches for a bug reference in user/repo#123 or #123 format and opens it in
 the browser."
   (require 'bug-reference)
-  (let ((bug-reference-url-format bug-reference-url-format)
-        (bug-reference-bug-regexp bug-reference-bug-regexp)
-        (bug-reference-mode (derived-mode-p 'text-mode 'conf-mode))
-        (bug-reference-prog-mode (derived-mode-p 'prog-mode)))
-    (bug-reference--run-auto-setup)
-    (unwind-protect
-        (catch 'found
-          (bug-reference-fontify (line-beginning-position) (line-end-position))
-          (dolist (o (overlays-at (point)))
-            ;; It should only be possible to have one URL overlay.
-            (when-let (url (overlay-get o 'bug-reference-url))
-              (browse-url url)
-              (throw 'found t))))
-      (bug-reference-unfontify (line-beginning-position) (line-end-position)))))
+  (when (fboundp 'bug-reference-try-setup-from-vc)
+    (let ((old-bug-reference-mode bug-reference-mode)
+          (old-bug-reference-prog-mode bug-reference-prog-mode)
+          (bug-reference-url-format bug-reference-url-format)
+          (bug-reference-bug-regexp bug-reference-bug-regexp))
+      (bug-reference-try-setup-from-vc)
+      (unwind-protect
+          (let ((bug-reference-mode t)
+                (bug-reference-prog-mode nil))
+            (catch 'found
+              (bug-reference-fontify (line-beginning-position) (line-end-position))
+              (dolist (o (overlays-at (point)))
+                ;; It should only be possible to have one URL overlay.
+                (when-let (url (overlay-get o 'bug-reference-url))
+                  (browse-url url)
+
+                  (throw 'found t)))))
+        ;; Restore any messed up fontification as a result of this.
+        (bug-reference-unfontify (line-beginning-position) (line-end-position))
+        (if (or old-bug-reference-mode
+                old-bug-reference-prog-mode)
+            (bug-reference-fontify (line-beginning-position) (line-end-position)))))))
 
 
 ;;
