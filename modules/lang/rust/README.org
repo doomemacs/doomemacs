@@ -41,7 +41,7 @@ e.g. ~cargo~.
 + [[https://github.com/racer-rust/emacs-racer][racer]]* (unless =+lsp=)
 
 ** Hacks
-+ rustic has been modified /not/ to automatically install lsp-mode or elgot if
++ rustic has been modified /not/ to automatically install lsp-mode or eglot if
   they're missing. Doom expects you to have enabled the =:tools lsp= module
   yourself.
 
