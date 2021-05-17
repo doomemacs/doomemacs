@@ -62,6 +62,7 @@ and Emacs states, and for non-evil users.")
   (cmd! (if (let ((keys (this-single-command-raw-keys)))
               (and keys
                    (not (cl-position 'return keys))
+                   (not (cl-position 'kp-return keys))
                    (display-graphic-p)))
             [C-m] [?\C-m])))
 
