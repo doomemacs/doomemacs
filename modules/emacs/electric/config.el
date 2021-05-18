@@ -15,4 +15,7 @@ current line.")
       (when (and (eolp) +electric-indent-words)
         (save-excursion
           (backward-word)
-          (looking-at-p (concat "\\<" (regexp-opt +electric-indent-words))))))))
+          (looking-at-p (concat "\\<" (regexp-opt +electric-indent-words)))))))
+
+;; Prevent electric-quotes in org src-blocks.
+  (add-hook 'electric-quote-inhibit-functions (lambda () (org-in-block-p '("src")))))
