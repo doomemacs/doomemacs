@@ -157,6 +157,14 @@ server getting expensively restarted when reverting buffers."
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
+  :init
+  (defadvice! +lsp--use-hook-instead-a (orig-fn &rest args)
+    "Change `lsp--auto-configure' to not force `lsp-ui-mode' on us. Using a hook
+instead is more sensible."
+    :around #'lsp--auto-configure
+    (letf! ((#'lsp-ui-mode #'ignore))
+      (apply orig-fn args)))
+
   :config
   (when (featurep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode
