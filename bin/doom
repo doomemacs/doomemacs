@@ -76,8 +76,8 @@
 (let ((inhibit-message t))
   (require 'cl)
   (unless site-run-file
-    (setq site-run-file "site-start")
-    (let ((verbose (or (getenv "DEBUG") init-file-debug))
+    (let ((site-run-file "site-start")
+          (verbose (or (getenv "DEBUG") init-file-debug))
           (tail load-path)
           (lispdir (expand-file-name "../lisp" data-directory))
           dir)
@@ -141,7 +141,8 @@
                   "  rm -f " (shell-quote-argument script) "\n  "
                   (cond ((eq command :restart) "$@")
                         ((stringp command) command)
-                        ((string-join
+                        ((listp command)
+                         (string-join
                           (if (listp (car-safe command))
                               (cl-loop for line in (doom-enlist command)
                                        collect (mapconcat #'shell-quote-argument (remq nil line) " "))
@@ -159,9 +160,7 @@
                                             (shell-quote-argument (match-string 2 env)))))
                   (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
                   "_postscript $@\n"))
-        (set-file-modes script #o600))))
-
-      ;; Error code 128 is special: it means run the post-script after this
-      ;; session ends.
-      128)
-   ))
+        (set-file-modes script #o600)t
+        ;; Error code 128 is special: it means run the post-script after this
+        ;; session ends.
+        128))))))
