@@ -445,6 +445,7 @@ intervals."
                     ;; or is unreadable, Emacs throws up file-missing errors, so
                     ;; we set it to a directory we know exists and is readable.
                     (let ((default-directory doom-emacs-dir)
+                          (inhibit-message t)
                           file-name-handler-alist)
                       (require req nil t))
                     t)
