@@ -170,7 +170,8 @@ instead is more sensible."
     (set-lookup-handlers! 'lsp-ui-mode
       :definition 'lsp-ui-peek-find-definitions
       :implementations 'lsp-ui-peek-find-implementation
-      :references 'lsp-ui-peek-find-references))
+      :references 'lsp-ui-peek-find-references
+      :async t))
 
   (setq lsp-ui-peek-enable (featurep! +peek)
         lsp-ui-doc-max-height 8
