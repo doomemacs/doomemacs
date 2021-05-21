@@ -6,7 +6,7 @@
 ;; Example:
 ;;   (setq ssh-deploy-root-local  "/home/hlissner/work/site/"
 ;;         ssh-deploy-root-remote "/ssh:hlissner@myserver.com:/var/www/site/"
-;;         ssh-deploy-on-explicity-save t)
+;;         ssh-deploy-on-explicit-save t)
 ;;
 ;; Note: `ssh-deploy-root-local' is optional, and will resort to
 ;; `doom-project-root' if unspecified.
