@@ -1,7 +1,7 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
 (after! (:any js2-mode rjsx-mode web-mode)
-  (set-docsets! '(js2-mode rjsx-mode) "JavaScript"
+  (set-docsets! '(js2-mode rjsx-mode nodejs-repl-mode) "JavaScript"
     "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
     "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
     "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
