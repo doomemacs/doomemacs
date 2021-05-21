@@ -9,13 +9,17 @@
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
+  - [[#install][Install]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#general][General]]
+  - [[#other-requirements][Other Requirements]]
 - [[#features][Features]]
   - [[#lsp-support-rls-or-rust-analyzer][LSP support (rls or rust-analyzer)]]
   - [[#format-on-save][Format on save]]
   - [[#keybinds][Keybinds]]
 - [[#configuration][Configuration]]
   - [[#enable-rls-by-default][Enable RLS by default]]
-  - [[#enabling-elgot-support-for-rust][Enabling elgot support for Rust]]
+  - [[#enabling-eglot-support-for-rust][Enabling eglot support for Rust]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#errore0670-async-fn-is-not-permitted-in-the-2015-edition][error[E0670]: `async fn` is not permitted in the 2015 edition]]
 
@@ -37,14 +41,38 @@ e.g. ~cargo~.
 + [[https://github.com/racer-rust/emacs-racer][racer]]* (unless =+lsp=)
 
 ** Hacks
-+ rustic has been modified /not/ to automatically install lsp-mode or elgot if
++ rustic has been modified /not/ to automatically install lsp-mode or eglot if
   they're missing. Doom expects you to have enabled the =:tools lsp= module
   yourself.
 
 * Prerequisites
-This module requires ~rust~, which can be acquired through =rustup=:
 
-~curl https://sh.rustup.rs -sSf | sh~
+** Install
+
+This module requires ~rust~, which can be acquired through =rustup=.
+
+*** Arch Linux
+
+#+begin_src sh
+sudo pacman -S rustup
+#+end_src
+
+See also the Rust article [[https://wiki.archlinux.org/title/Rust#Rustup][on the Arch Wiki]].
+
+Note that when the Rust /language/ has updates, you are to run =rustup= such that
+it doesn't upgrade itself:
+
+#+begin_src sh
+rustup update --no-self-update
+#+end_src
+
+*** General
+
+#+begin_src sh
+curl https://sh.rustup.rs -sSf | sh
+#+end_src
+
+** Other Requirements
 
 Additional requirements depend on the module's configuration:
 
@@ -54,7 +82,7 @@ Additional requirements depend on the module's configuration:
   (with requires rust nightly edition).
 + Users with =+lsp= enabled will need:
   + =rust-analyzer= or =rls=
-+ To use The following commands require:
++ Using the following commands requires:
   + ~cargo-process-check~: ~cargo install cargo-check~
   + ~cargo-process-clippy~: ~rustup component add clippy-preview~
 

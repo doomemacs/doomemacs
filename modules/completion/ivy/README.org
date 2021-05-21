@@ -28,7 +28,7 @@
 
 * Description
 This module provides Ivy integration for a variety of Emacs commands, as well as
-a unified interface for project search and replace, powered by ripgrep.
+a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
 
 #+begin_quote
 I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
@@ -76,7 +76,7 @@ brew install ripgrep
 
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo::
-sudo pacman --needed --noconfirm -S ripgrep
+sudo pacman -S ripgrep
 #+END_SRC
 
 *** openSUSE
