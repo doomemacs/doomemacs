@@ -71,6 +71,14 @@ argument) is non-nil only show channels in current server."
    (cond ((featurep! :completion ivy)  #'+irc/ivy-jump-to-channel)
          ((user-error "No jump-to-channel backend is enabled. Enable ivy!")))))
 
+;;;###autoload
+(defun +irc/tracking-next-buffer ()
+  "Disables switching to an unread buffer unless in the irc workspace."
+  (interactive)
+  (when (derived-mode-p 'circe-mode)
+    (tracking-next-buffer)))
+
+
 ;;
 ;;; Hooks/fns
 
