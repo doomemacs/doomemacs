@@ -675,7 +675,16 @@ can grow up to be fully-fledged org-mode buffers."
     :filter-return #'org-id-new
     (if (eq org-id-method 'uuid)
         (downcase uuid)
-      uuid)))
+      uuid))
+
+  ;; Disable electric-quote-mode when inside of org-mode src-blocks.
+  (add-hook! 'org-mode-hook
+    (add-hook
+     'electric-quote-inhibit-functions
+     (lambda () (unless (eobp)
+                  (or
+                   (eq (get-char-property (+ (point) 1) 'src-block) t)
+                   (eq (get-char-property (- (point) 1) 'src-block) t)))) nil t)))
 
 
 (defun +org-init-keybinds-h ()
