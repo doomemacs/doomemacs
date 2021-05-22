@@ -38,9 +38,6 @@
   (when (featurep! :ui popup)
     (setq twittering-pop-to-buffer-function #'+twitter-display-buffer-fn))
 
-  (after! solaire-mode
-    (add-hook 'twittering-mode-hook #'solaire-mode))
-
   ;; Custom header-line for twitter buffers
   (add-hook! 'twittering-mode-hook
     (defun +twitter-switch-mode-and-header-line-h ()
