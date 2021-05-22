@@ -130,9 +130,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
-  ;; Previews are rendered with the incorrect background
   (plist-put org-format-latex-options :scale 1.5) ; larger previews
-  (plist-put org-format-latex-options :background 'default) ; match the background
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own

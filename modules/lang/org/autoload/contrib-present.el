@@ -78,9 +78,6 @@
     (+org-pretty-mode arg)
     (cond (org-tree-slide-mode
            (set-window-fringes nil 0 0)
-           (when (bound-and-true-p solaire-mode)
-             (solaire-mode -1)
-             (fringe-mode 0))
            (when (bound-and-true-p flyspell-mode)
              (flyspell-mode -1))
            (add-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode
