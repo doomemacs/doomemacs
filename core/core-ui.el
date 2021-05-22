@@ -590,6 +590,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                    `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
                  (when doom-variable-pitch-font
                    `((variable-pitch ((t (:font ,doom-variable-pitch-font))))))))
+  ;; Never save these settings to `custom-file'
+  (dolist (sym '(fixed-pitch fixed-pitch-serif variable-pitch))
+    (put sym 'saved-face nil))
   (cond
    (doom-font
     ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
