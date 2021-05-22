@@ -119,6 +119,7 @@ PLIST can have the following properties:
     (when (equal (buffer-name) "*scratch*")
       (set-window-buffer nil (doom-fallback-buffer))
       (+doom-dashboard-reload))
+    (add-hook 'doom-load-theme-hook #'+doom-dashboard-reload-on-theme-change-h)
     ;; Ensure the dashboard is up-to-date whenever it is switched to or resized.
     (add-hook 'window-configuration-change-hook #'+doom-dashboard-resize-h)
     (add-hook 'window-size-change-functions #'+doom-dashboard-resize-h)
@@ -332,6 +333,11 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
         (+doom-dashboard-update-pwd-h
          (concat (directory-file-name new-pwd)
                  "/"))))))
+
+(defun +doom-dashboard-reload-on-theme-change-h ()
+  "Forcibly reload the Doom dashboard when theme changes post-startup."
+  (when after-init-time
+    (+doom-dashboard-reload 'force)))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
