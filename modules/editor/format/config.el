@@ -45,7 +45,8 @@ This is controlled by `+format-on-save-enabled-modes'."
              (memq major-mode (cdr +format-on-save-enabled-modes)))
             ((not (memq major-mode +format-on-save-enabled-modes))))
       (not (require 'format-all nil t))
-      (null (car (format-all--probe)))
+      (let (current-prefix-arg) ; never prompt
+        (null (car (format-all--probe))))
       (+format-enable-on-save-h)))
 
 (when (featurep! +onsave)
