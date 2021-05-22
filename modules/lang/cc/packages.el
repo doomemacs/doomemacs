@@ -7,7 +7,7 @@
 (package! cuda-mode :pin "7f593518fd135fc6af994024bcb47986dfa502d2")
 (package! demangle-mode :pin "aaef0bd77a3ea9ce9132e9a53ac021b0f5d33e12")
 (package! disaster :pin "10a785facc60d89d78e0d5177985ab1af1741bb4")
-(package! modern-cpp-font-lock :pin "865955d0035382a17a7f03add0d00d0bd812b103")
+(package! modern-cpp-font-lock :pin "43c6b68ff58fccdf9deef11674a172e4eaa8455c")
 (package! opencl-mode :pin "15091eff92c33ee0d1ece40eb99299ef79fee92d")
 
 (when (package! glsl-mode :pin "b07112016436d9634cd4ef747f9af6b01366d136")
@@ -27,7 +27,7 @@
     (when (featurep! :completion company)
       (package! company-irony :pin "b44711dfce445610c1ffaec4951c6ff3882b216a")
       (package! company-irony-c-headers :pin "72c386aeb079fb261d9ec02e39211272f76bbd97")))
-  (when (package! rtags :pin "aa4c827b417f5448c12401c33acdab1325917c13")
+  (when (package! rtags :pin "63f18acb21e664fd92fbc19465f0b5df085b5e93")
     (when (featurep! :completion ivy)
       (package! ivy-rtags))
     (when (featurep! :completion helm)

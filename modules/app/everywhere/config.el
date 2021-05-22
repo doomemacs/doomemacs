@@ -32,6 +32,4 @@
   (add-hook! 'emacs-everywhere-init-hooks
     (defun +everywhere-clear-persp-info-h ()
       (when (bound-and-true-p persp-mode)
-        (setq persp-emacsclient-init-frame-behaviour-override nil))))
-  (after! solaire-mode
-    (add-hook 'emacs-everywhere-init-hooks #'solaire-mode)))
+        (setq persp-emacsclient-init-frame-behaviour-override nil)))))

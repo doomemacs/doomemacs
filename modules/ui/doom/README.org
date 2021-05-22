@@ -75,10 +75,10 @@ If you're seeing strange unicode symbols, this is likely because you don't have
 all-the-icons-install-fonts~.
 
 ** Ugly background colors in tty Emacs for daemon users
-=solaire-mode= is an aesthetic plugin that makes file-visiting buffers brighter
-than the rest of the Emacs' frame (to visually differentiate temporary windows
-or sidebars from editing windows). This looks great in GUI Emacs, but can look
-questionable in the terminal.
+=solaire-mode= is an aesthetic plugin that makes non-file-visiting buffers
+darker than the rest of the Emacs' frame (to visually differentiate temporary
+windows or sidebars from editing windows). This looks great in GUI Emacs, but
+can look questionable in the terminal.
 
 It disables itself if you start tty Emacs with ~emacs -nw~, but if you create a
 tty frame from a daemon (which solaire-mode cannot anticipate), you'll get an

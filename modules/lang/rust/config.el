@@ -59,7 +59,7 @@
           :desc "all"          "a" #'rustic-cargo-test
           :desc "current test" "t" #'rustic-cargo-current-test))
 
-  ;; If lsp/elgot isn't available, it attempts to install lsp-mode via
+  ;; If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;; package.el. Doom manages its own dependencies through straight so disable
   ;; this behavior to avoid package-not-initialized errors.
   (defadvice! +rust--dont-install-packages-a (&rest _)

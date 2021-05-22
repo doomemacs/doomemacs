@@ -1,4 +1,4 @@
-;;; tools/pass/autoload.el -*- lexical-binding: t; -*-
+;;; tools/pass/autoload/pass.el -*- lexical-binding: t; -*-
 
 (defun +pass--open-url (entry)
   (if-let* ((url (+pass-get-field entry +pass-url-fields)))
@@ -106,35 +106,3 @@ fields in `+pass-url-fields' is used to find the url field."
   (interactive
    (list (password-store--completing-read)))
   (+pass--open-url entry))
-
-
-;;
-;; Ivy interface
-
-;;;###autoload
-(defun +pass/ivy (arg)
-  "TODO"
-  (interactive "P")
-  (ivy-read "Pass: " (password-store-list)
-            :action (if arg
-                        #'password-store-url
-                      #'password-store-copy)
-            :caller '+pass/ivy))
-
-(after! ivy
-  (ivy-add-actions
-   '+pass/ivy
-   '(("o" password-store-copy "copy password")
-     ("e" +pass/edit-entry "edit entry")
-     ("u" +pass/copy-user "copy username")
-     ("b" +pass/copy-url "open url in browser")
-     ("f" +pass/copy-field "get field"))))
-
-
-;;
-;; TODO Helm interface
-
-;; (defun +pass/helm ()
-;;   (interactive)
-;;   )
-

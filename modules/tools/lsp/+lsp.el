@@ -157,26 +157,24 @@ server getting expensively restarted when reverting buffers."
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
-  :hook (lsp-ui . lsp-ui-sideline-mode)
-  :hook (lsp-ui . lsp-ui-doc-mode)
+  :init
+  (defadvice! +lsp--use-hook-instead-a (orig-fn &rest args)
+    "Change `lsp--auto-configure' to not force `lsp-ui-mode' on us. Using a hook
+instead is more sensible."
+    :around #'lsp--auto-configure
+    (letf! ((#'lsp-ui-mode #'ignore))
+      (apply orig-fn args)))
+
   :config
-  ;; For some reason `lsp-ui' doesn't actually use the `lsp-ui-doc-enable' and
-  ;; `lsp-ui-sideline-enable' variables, so we fix that.
-  (defadvice! +lsp--ui-doc-only-if-enabled-a (&rest _)
-    :before-while #'lsp-ui-doc-mode
-    lsp-ui-doc-enable)
-
-  (defadvice! +lsp--ui-sideline-only-if-enabled-a (&rest _)
-    :before-while 'lsp-ui-sideline-mode
-    lsp-ui-sideline-enable)
-
   (when (featurep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode
       :definition 'lsp-ui-peek-find-definitions
       :implementations 'lsp-ui-peek-find-implementation
-      :references 'lsp-ui-peek-find-references))
+      :references 'lsp-ui-peek-find-references
+      :async t))
 
-  (setq lsp-ui-doc-max-height 8
+  (setq lsp-ui-peek-enable (featurep! +peek)
+        lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
         lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
         lsp-ui-doc-position 'at-point

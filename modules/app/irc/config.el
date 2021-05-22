@@ -149,8 +149,7 @@ playback.")
           "p" #'circe-command-PART
           "Q" #'+irc/quit
           "R" #'circe-reconnect
-          (:when (featurep! :completion ivy)
-            "c" #'+irc/ivy-jump-to-channel))
+          "c" #'+irc/jump-to-channel)
         (:map circe-channel-mode-map
           "n" #'circe-command-NAMES)))
 
