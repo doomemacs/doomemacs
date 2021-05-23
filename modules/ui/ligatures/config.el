@@ -47,44 +47,25 @@ font.")
 (defvar +ligatures-extra-alist '((t))
   "A map of major modes to symbol lists (for `prettify-symbols-alist').")
 
-(defvar +ligatures-composition-alist
-  '((?!  . "\\(?:!\\(?:==\\|[!=]\\)\\)")                                      ; (regexp-opt '("!!" "!=" "!=="))
-    (?#  . "\\(?:#\\(?:###?\\|_(\\|[#(:=?[_{]\\)\\)")                         ; (regexp-opt '("##" "###" "####" "#(" "#:" "#=" "#?" "#[" "#_" "#_(" "#{"))
-    (?$  . "\\(?:\\$>>?\\)")                                                  ; (regexp-opt '("$>" "$>>"))
-    (?%  . "\\(?:%%%?\\)")                                                    ; (regexp-opt '("%%" "%%%"))
-    (?&  . "\\(?:&&&?\\)")                                                    ; (regexp-opt '("&&" "&&&"))
-    (?*  . "\\(?:\\*\\(?:\\*[*/]\\|[)*/>]\\)?\\)")                            ; (regexp-opt '("*" "**" "***" "**/" "*/" "*>" "*)"))
-    (?+  . "\\(?:\\+\\(?:\\+\\+\\|[+:>]\\)?\\)")                              ; (regexp-opt '("+" "++" "+++" "+>" "+:"))
-    (?-  . "\\(?:-\\(?:-\\(?:->\\|[>-]\\)\\|<[<-]\\|>[>-]\\|[:<>|}~-]\\)\\)") ; (regexp-opt '("--" "---" "-->" "--->" "->-" "-<" "-<-" "-<<" "->" "->>" "-}" "-~" "-:" "-|"))
-    (?.  . "\\(?:\\.\\(?:\\.[.<]\\|[.=>-]\\)\\)")                             ; (regexp-opt '(".-" ".." "..." "..<" ".=" ".>"))
-    (?/  . "\\(?:/\\(?:\\*\\*\\|//\\|==\\|[*/=>]\\)\\)")                      ; (regexp-opt '("/*" "/**" "//" "///" "/=" "/==" "/>"))
-    (?:  . "\\(?::\\(?:::\\|[+:<=>]\\)?\\)")                                  ; (regexp-opt '(":" "::" ":::" ":=" ":<" ":=" ":>" ":+"))
-    (?\; . ";;")                                                              ; (regexp-opt '(";;"))
-    (?0  . "0\\(?:\\(x[a-fA-F0-9]\\).?\\)") ; Tries to match the x in 0xDEADBEEF
-    ;; (?x . "x") ; Also tries to match the x in 0xDEADBEEF
-    ;; (regexp-opt '("<!--" "<$" "<$>" "<*" "<*>" "<**>" "<+" "<+>" "<-" "<--" "<---" "<->" "<-->" "<--->" "</" "</>" "<<" "<<-" "<<<" "<<=" "<=" "<=<" "<==" "<=>" "<===>" "<>" "<|" "<|>" "<~" "<~~" "<." "<.>" "<..>"))
-    (?<  . "\\(?:<\\(?:!--\\|\\$>\\|\\*\\(?:\\*?>\\)\\|\\+>\\|-\\(?:-\\(?:->\\|[>-]\\)\\|[>-]\\)\\|\\.\\(?:\\.?>\\)\\|/>\\|<[<=-]\\|=\\(?:==>\\|[<=>]\\)\\||>\\|~~\\|[$*+./<=>|~-]\\)\\)")
-    (?=  . "\\(?:=\\(?:/=\\|:=\\|<[<=]\\|=[=>]\\|>[=>]\\|[=>]\\)\\)")         ; (regexp-opt '("=/=" "=:=" "=<<" "==" "===" "==>" "=>" "=>>" "=>=" "=<="))
-    (?>  . "\\(?:>\\(?:->\\|=>\\|>[=>-]\\|[:=>-]\\)\\)")                      ; (regexp-opt '(">-" ">->" ">:" ">=" ">=>" ">>" ">>-" ">>=" ">>>"))
-    (??  . "\\(?:\\?[.:=?]\\)")                                               ; (regexp-opt '("??" "?." "?:" "?="))
-    (?\[ . "\\(?:\\[\\(?:|]\\|[]|]\\)\\)")                                    ; (regexp-opt '("[]" "[|]" "[|"))
-    (?\\ . "\\(?:\\\\\\\\[\\n]?\\)")                                          ; (regexp-opt '("\\\\" "\\\\\\" "\\\\n"))
-    (?^  . "\\(?:\\^==?\\)")                                                  ; (regexp-opt '("^=" "^=="))
-    (?w  . "\\(?:wwww?\\)")                                                   ; (regexp-opt '("www" "wwww"))
-    (?{  . "\\(?:{\\(?:|\\(?:|}\\|[|}]\\)\\|[|-]\\)\\)")                      ; (regexp-opt '("{-" "{|" "{||" "{|}" "{||}"))
-    (?|  . "\\(?:|\\(?:->\\|=>\\||=\\|[]=>|}-]\\)\\)")                        ; (regexp-opt '("|=" "|>" "||" "||=" "|->" "|=>" "|]" "|}" "|-"))
-    (?_  . "\\(?:_\\(?:|?_\\)\\)")                                            ; (regexp-opt '("_|_" "__"))
-    (?\( . "\\(?:(\\*\\)")                                                    ; (regexp-opt '("(*"))
-    (?~  . "\\(?:~\\(?:~>\\|[=>@~-]\\)\\)"))                                  ; (regexp-opt '("~-" "~=" "~>" "~@" "~~" "~~>"))
-  "An alist of all ligatures used by `+ligatures-extras-in-modes'.
+(defvar +ligatures-prog-mode-list
+  '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+    ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+    "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+    "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+    "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+    "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+    "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+    "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+    ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+    "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+    "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+    "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+    "\\\\" "://")
+  "A list of ligatures to enable in all `prog-mode' buffers.")
 
-The car is the character ASCII number, cdr is a regex which will call
-`font-shape-gstring' when matched.
-
-Because of the underlying code in :ui ligatures module, the regex should match a
-string starting with the character contained in car.
-
-This variable is used only if you built Emacs with Harfbuzz on a version >= 28")
+(defvar +ligatures-all-modes-list
+  '()
+  "A list of ligatures to enable in all buffers.")
 
 (defvar +ligatures-in-modes
   '(not special-mode comint-mode eshell-mode term-mode vterm-mode Info-mode
@@ -144,8 +125,10 @@ and cannot run in."
            (and (modulep! +extra)
                 (+ligatures--enable-p +ligatures-extras-in-modes))))
       (when in-mode-p
-        (if (boundp '+ligature--composition-table)
-            (setq-local composition-function-table +ligature--composition-table)
+        ;; If ligature-mode has been installed, there's no
+        ;; need to do anything, we activate global-ligature-mode
+        ;; later and handle all settings from `set-ligatures!' later.
+        (unless (fboundp #'ligature-mode-turn-on)
           (run-hooks '+ligatures--init-font-hook)
           (setq +ligatures--init-font-hook nil)))
       (when in-mode-extras-p
@@ -177,44 +160,21 @@ and cannot run in."
  ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
   (add-hook 'doom-init-ui-hook #'mac-auto-operator-composition-mode 'append))
 
- ;; Harfbuzz and Mac builds do not need font-specific ligature support
- ;; if they are above emacs-27.
+ ;; NOTE: the module does not support Emacs 27 and less, but if we still try to enable ligatures,
+ ;; it will end up in catastrophic work-loss errors, so we leave the check here for safety.
  ((and (> emacs-major-version 27)
        (or (featurep 'ns)
            (string-match-p "HARFBUZZ" system-configuration-features))
-       (featurep 'composite))  ; Emacs loads `composite' at startup
-  (defvar +ligature--composition-table (make-char-table nil))
+       (featurep 'composite))           ; Emacs loads `composite' at startup
+
+  (use-package! ligature
+    :config
+    ;; Enable all `+ligatures-prog-mode-list' ligatures in programming modes
+    (ligature-set-ligatures 'prog-mode +ligatures-prog-mode-list)
+    (ligature-set-ligatures 't +ligatures-all-modes-list))
+
   (add-hook! 'doom-init-ui-hook :append
-    (defun +ligature-init-composition-table-h ()
-      (dolist (char-regexp +ligatures-composition-alist)
-        (set-char-table-range
-         +ligature--composition-table
-         (car char-regexp) `([,(cdr char-regexp) 0 font-shape-gstring])))
-      (set-char-table-parent +ligature--composition-table composition-function-table))))
-
- ;; Fallback ligature support for certain, patched fonts. Install them with
- ;; `+ligatures/install-patched-font'
- ((defmacro +ligatures--def-font (id font-plist &rest alist)
-    (declare (indent 2))
-    (let ((alist-var (intern (format "+ligatures-%s-font-alist" id)))
-          (setup-fn  (intern (format "+ligatures-init-%s-font-h" id))))
-      `(progn
-         (setf (alist-get ',id +ligatures--font-alist) (list ,@font-plist))
-         (defvar ,alist-var ',alist ,(format "Name of the %s ligature font." id))
-         (defun ,setup-fn (&rest _)
-           (cl-destructuring-bind (name &key _url files range)
-               (or (alist-get ',id +ligatures--font-alist)
-                   (error "No ligature font called %s" ',id))
-             (when range
-               (set-fontset-font t range name nil 'prepend))
-             (setq-default prettify-symbols-alist
-                           (append (default-value 'prettify-symbols-alist)
-                                   (mapcar #'+ligatures--correct-symbol-bounds ,alist-var)))))
-         (add-hook '+ligatures--init-font-hook #',setup-fn))))
-
-  (defvar +ligatures--font-alist ())
-
-  (cond ((modulep! +fira)         (load! "+fira"))
-        ((modulep! +iosevka)      (load! "+iosevka"))
-        ((modulep! +hasklig)      (load! "+hasklig"))
-        ((modulep! +pragmata-pro) (load! "+pragmata-pro")))))
+    (defun +ligature-enable-globally-h ()
+      "Enables ligature checks globally in all buffers.
+You can also do it per mode with `ligature-mode'."
+      (global-ligature-mode t)))))

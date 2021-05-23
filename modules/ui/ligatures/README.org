@@ -4,39 +4,40 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This module enables ligatures and arbitrary symbol substitutions with
-~mac-auto-operator-composition-mode~ (on supported macOS systems) or composition
-tables (harfbuzz on Emacs 28), falling back on ~prettify-symbols-mode~
-otherwise.
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module flags]]
+  - [[#packages][Packages]]
+  - [[#hacks][Hacks]]
+  - [[#changelog][Changelog]]
+- [[#installation][Installation]]
+- [[#usage][Usage]]
+  - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
+  - [[#coding-ligatures][Coding ligatures]]
+    - [[#details][Details]]
+- [[#configuration][Configuration]]
+  - [[#symbol-replacements-λ-for-lambda][Symbol replacements (λ for "lambda"...)]]
+  - [[#font-ligatures-turning--into-an-arrow][Font ligatures (turning "=>" into an arrow...)]]
+    - [[#setting-ligatures-for-specific-font-or-major-mode][Setting ligatures for specific font or major mode]]
+    - [[#overwriting-all-default-ligatures][Overwriting all default ligatures]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#some-symbols-are-not-rendering-correctly][Some symbols are not rendering correctly]]
+- [[#frequently-asked-questions][Frequently asked questions]]
+- [[#appendix][Appendix]]
 
 ** Maintainers
-/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+- [[doom-user:][@gagbo]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +extra ::
   Enables extra symbol substitutions in certain modes, for example ~lambda~ in
   lisps are replaced with ~λ~.
-- +fira ::
-  Enable =Fira Code= ligatures. This requires Fira Code Symbol and [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched
-  version of Fira Code]].
-- +hasklig ::
-  Enable =Hasklig= ligatures. This requires [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched version of the HaskLig
-  font]].
-- +iosevka ::
-  Enable =Iosevka= ligatures. This requires [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched version of the Iosevka
-  font]].
-- +pragmata-pro ::
-  Enable =Pragmata Pro= ligatures. This requires the [[https://www.fsd.it/shop/fonts/pragmatapro/][Pragmata Pro font]].
-
-#+begin_quote
- 🚧 Font flags are ignored _if_ you're sporting either a) Emacs 28+ with
-    Harfbuzz support (which can compose ligatures natively), or b) Mitsuharu's
-    =emacs-mac= build on macOS (which uses
-    ~mac-auto-operator-composition-mode~).
-#+end_quote
 
 ** Packages
-/This module doesn't install any packages./
+- [[https://github.com/mickeynp/ligature.el][ligature.el]] (on Emacs 28+ with Harfbuzz)
 
 ** Hacks
 /No hacks documented for this module./
@@ -55,63 +56,20 @@ This module requires one of three setups for ligatures to work:
 - Mitsuharu's =emacs-mac= build on macOS (available on Homebrew), or
 - A patched font for Doom's fallback ligature support.
 
-** Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support
-Ligatures should be handled without any additional configuration.
+  /This module does not have specific installation instructions/
 
-** Not Emacs-mac and Emacs <= 27
-:PROPERTIES:
-:ID:       a7e7402b-e202-4860-878b-d1933cff1d16
-:END:
-1. Enable one of the four ligature font flags: =+fira=, =+hasklig=, =+iosevka=
-   or =+pragmata-pro=.
-2. Install the patched version of the associated font with ~M-x
-   +ligatures/install-patched-font~. Note: Pragmata Pro cannot be installed this
-   way because it is a non-free font and must be purchased and installed
-   manually.
+  ~doom doctor~ will tell you if the module is incompatible with your current
+  Emacs version, and what you can do to remediate.
 
-* TODO Usage
+* Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-** TODO Mathematical symbols replacement
-
-** Coding ligatures
-This module includes configuration to compose combinations like =->= or =::=
-into prettier glyphs (called a ligature). Depending on the current version of
-emacs, this is implemented in two different ways :
-
-- prettify-symbols-mode method :: this is the "legacy" method. It uses a font
-  which haves the ligatures as separate unicode symbols, and using
-  prettify-symbols-mode, =->=-like combinations are manually listed and replaced
-  with the correct symbol. The mapping between =->=-like sequences and unicode
-  values in the font are font-specific ; therefore [[doom-module:+fira]], [[doom-module:+iosevka]]... files and
-  specific fonts are necessary for it to work.
-- composition-function-table method :: regexps are used to match all the usual
-  sequences which are composed into ligatures. These regexps are passed to emacs
-  directly, which asks Harfbuzz to shape it. Ligatures are obtained
-  automatically depending on the capabilities of the font, and no font-specific
-  configuration is necessary.
-
-Emacs-mac port implements the /composition-function-table/ method in [[https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805][its code]],
-nothing is necessary on Doom side; otherwise, Doom implements the
-/composition-function-table/ for emacs 28+ built with Harfbuzz support, and the
-/prettify-symbols-mode/ method otherwise.
-
-Even though harfbuzz has been included in emacs 27, there is currently a [[https://lists.gnu.org/archive/html/bug-gnu-emacs/2020-04/msg01121.html][bug
-(#40864)]] which prevents a safe usage of /composition-function-table/ method in
-emacs 27.
-
-* TODO Configuration
-#+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
-
-** Setting ligatures
-If you want to set ligatures for modules that don't have them by default you can
-use the ~set-ligatures!~ macro:
-#+begin_src emacs-lisp
-;; in $DOOMDIR/config.el
+** Mathematical symbols replacement
+If you want to set symbol replacements for modules that don't have them by
+default you can use the ~set-ligatures!~ function in your config.el file
+#+BEGIN_SRC emacs-lisp
 (after! PACKAGE
   (set-ligatures! 'MAJOR-MODE
     :symbol "keyword"))
@@ -128,7 +86,7 @@ E.g.
     :int "int" :str "string"
     :float "float" :bool "bool"
     :for "for"
-    :return "return" :yeild "yeild"))
+    :return "return" :yield "yield"))
 #+end_src
 
 You can set these symbols out of the box:
@@ -146,7 +104,7 @@ You can set these symbols out of the box:
     :int           "int keyword"
     :float         "float keyword"
     :str           "string keyword"
-    :bool          "boolean keywork"
+    :bool          "boolean keyword"
     :list          "list keyword"
     ;; Flow
     :not           "not operator"
@@ -163,7 +121,7 @@ You can set these symbols out of the box:
     :intersect     "Intersect keyword"
     :diff          "diff keyword"
     :tuple         "Tuple Keyword "
-    :pipe          "Pipe Keyword" ;; FIXME: find a non-private char
+    :pipe          "Pipe Keyword"
     :dot           "Dot operator")
 #+end_src
 
@@ -174,7 +132,38 @@ If you have multiple versions of the same keyword you can set the symbol twice:
   :null "None")
 #+end_src
 
-** Changing ligatures
+
+** Coding ligatures
+This module includes configuration to compose combinations like =->= or =::=
+into prettier glyphs (called a ligature), specific for your font, or specific
+for the major modes that you want to use.
+
+As these ligatures come from the font itself instead of elisp symbols, we use
+=set-font-ligatures!=
+
+#+begin_src elisp
+(set-font-ligatures! '(haskell-mode clojure-mode) ">>=" ">>-")
+#+end_src
+
+*** Details
+Ligatures are implemented using a **composition-function-table** method: regexps are
+used to match all the usual sequences which are composed into ligatures. These
+regexps are passed to emacs directly, which asks Harfbuzz to shape it. Ligatures
+are obtained automatically depending on the capabilities of the font, and no
+font-specific configuration is necessary.
+
+Emacs-mac port implements the same method natively in [[https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805][its code]], nothing is
+necessary on Doom side; otherwise, Doom uses the [[https://github.com/mickeynp/ligature.el][ligature.el]] package that
+implements this method for Emacs 28+ built with Harfbuzz support. Therefore, the
+module will not work with Emacs 27 or previous.
+
+Even though harfbuzz has been included in emacs 27, there is currently a
+[[https://lists.gnu.org/archive/html/bug-gnu-emacs/2020-04/msg01121.html][bug
+(#40864)]] which prevents a safe usage of the /composition-function-table/ method in
+Emacs 27.
+
+* Configuration
+** Symbol replacements (λ for "lambda"...)
 if you don't like the symbols chosen you can change them by using:
 #+begin_src emacs-lisp
 ;; you don't need to include all of them you can pick and mix
@@ -214,8 +203,42 @@ if you don't like the symbols chosen you can change them by using:
   :intersect     "∩"
   :diff          "∖"
   :tuple         "⨂"
-  :pipe          "" ;; FIXME: find a non-private char
+  :pipe          ""
   :dot           "•")  ;; you could also add your own if you want
+#+end_src
+
+** Font ligatures (turning "=>" into an arrow...)
+*** Setting ligatures for specific font or major mode
+As the [[https://github.com/mickeynp/ligature.el][README]] for ligature.el states, you can manipulate the ligatures that you
+want to enable, specific for your font, or specific for the major modes that you
+want to use. =set-font-ligatures!= is a thin wrapper around =ligature.el= to control these.
+
+#+begin_src elisp
+(set-font-ligatures! '(haskell-mode clojure-mode) ">>=" ">>-")
+#+end_src
+
+This call will:
+- overwrite all preceding calls to =set-font-ligatures!=
+  for =haskell-mode= and =clojure-mode= specifically, but
+- keep the inheritance to ligatures set for all modes, or parent modes like =prog-mode=
+
+*** Overwriting all default ligatures
+If you want to "start from scratch" and get control over all ligatures that
+happen in all modes, you can use
+
+#+begin_src elisp
+;; Set all your custom ligatures for all prog-modes here
+;; This section is *out of* the after! block
+;; Example: only get ligatures for "==" and "===" in programming modes
+;; by default, and get only "www" in all buffers by default.
+(setq +ligatures-prog-mode-list '("==" "===")
+      +ligatures-all-modes-list '("www"))
+;; Set any of those variables to nil to wipe all defaults.
+
+  ;; Set all your additional custom ligatures for other major modes here.
+  ;; Example: enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+(set-font-ligatures! 'eww-mode "ff" "fi" "ffi")
 #+end_src
 
 * Troubleshooting
