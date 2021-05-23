@@ -8,6 +8,7 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+- [[#ranger][Ranger]]
 - [[#keybindings][Keybindings]]
 
 * Description
