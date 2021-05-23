@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/yaml/packages.el
 
-(package! yaml-mode :pin "fc5e1c58f94472944c4aa838f00f6adcac6fa992")
+(package! yaml-mode :pin "3a57058468211f3cb18e71aecc630dcacb87636b")

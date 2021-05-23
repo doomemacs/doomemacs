@@ -8,14 +8,14 @@
   (package! helm))
 
 ;;
-(package! dumb-jump :pin "8bc195000e17ce6c72755a8fb55ca0fcd36add76")
+(package! dumb-jump :pin "8f70acbe164553b225476fed55019ecddcf0bbd6")
 (when (featurep! :completion ivy)
   (package! ivy-xref :pin "3d4c35fe2b243d948d8fe02a1f0d76a249d63de9"))
 (when (featurep! :completion helm)
   (package! helm-xref :pin "23f1174cfca7667d95828dcd388c655a4a9c877d"))
 
 ;; For dictionary and online lookup
-(package! request :pin "accd430ee706f5b10fb20003b06bd8209bcdaa82")
+(package! request :pin "f3a5b4352e9f444ace2a332939abff504b573887")
 
 (when (featurep! +docsets)
   (package! dash-docs :pin "dafc8fc9f1ddb2e4e39e0b8d066c42d5d7ce8d06")
