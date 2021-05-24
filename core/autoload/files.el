@@ -55,7 +55,7 @@ Ignores `nil' elements in SEGMENTS."
 ;;;###autoload
 (defun doom-glob (&rest segments)
   "Construct a path from SEGMENTS and expand glob patterns.
-Returns nil if the path doesn't exist.
+Returns `nil' if the path doesn't exist.
 Ignores `nil' elements in SEGMENTS."
   (let (case-fold-search)
     (file-expand-wildcards (apply #'doom-path segments) t)))
@@ -67,6 +67,22 @@ See `doom-path'.
 Ignores `nil' elements in SEGMENTS."
   (when-let (path (doom-path segments))
     (directory-file-name path)))
+
+;;;###autoload
+(defun doom-file-set-extension (file extension)
+  "Change the extension of a FILE to EXTENSION.
+
+Sanitizes the input to consolidate leading/trailing dots.
+
+Returns `nil' if either of the file or extension are `nil' before
+sanitizing, or empty afterwards."
+  (when (and file extension)
+    (let* ((patt "[ \\t\\n\\r.]+") ; Borrowed from `string-trim'.
+           (file (string-trim-right file patt))
+           (extension (string-trim-left extension patt)))
+      (unless (or (string-empty-p file)
+                  (string-empty-p extension))
+        (concat (file-name-sans-extension file) "." extension)))))
 
 ;;;###autoload
 (cl-defun doom-files-in
