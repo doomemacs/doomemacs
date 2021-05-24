@@ -106,7 +106,9 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 ;;;###autoload
 (defun doom--print (output)
   (unless (string-empty-p output)
-    (princ output)
+    (if noninteractive
+        (send-string-to-terminal output)
+      (princ output))
     (terpri)
     output))
 
@@ -254,12 +256,12 @@ DEST can be one or more of `standard-output', a buffer, a file"
                (insert-char out))
              (send-string-to-terminal (char-to-string out)))))
      (letf! (defun message (msg &rest args)
-              (with-current-buffer log-buffer
-                (print-group!
-                 (insert (doom--format (apply #'format msg args)) "\n")))
-              (if doom-debug-p
-                  (doom--print (doom--format (apply #'format msg args)))
-                (apply message msg args)))
+              (print-group!
+               (with-current-buffer log-buffer
+                 (insert (doom--format (apply #'format msg args)) "\n"))
+               (when (or doom-debug-p (not inhibit-message))
+                 (doom--print (doom--format (apply #'format msg args)))))
+              message)
        (unwind-protect
            ,(macroexp-progn body)
          (with-current-buffer log-buffer

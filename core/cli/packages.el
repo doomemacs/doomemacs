@@ -220,7 +220,7 @@ list remains lean."
            with previous = 0
            while (not (zerop pending))
            if (/= previous pending) do
-           (print! (info "\033[KWaiting for %d async jobs...\033[1A" pending))
+           (print! (start "\033[KNatively compiling %d files...\033[1A" pending))
            (setq previous pending)
            else do
            (let ((inhibit-message t))

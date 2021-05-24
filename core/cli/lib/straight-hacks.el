@@ -106,18 +106,15 @@ original state.")
                        answer))
              (funcall (nth answer options)))))))))
 
-(defadvice! doom--straight-respect-print-indent-a (args)
-  "Indent straight progress messages to respect `doom-output-indent', so we
-don't have to pass whitespace to `straight-use-package's fourth argument
-everywhere we use it (and internally)."
-  :filter-args #'straight-use-package
-  (cl-destructuring-bind
-      (melpa-style-recipe &optional no-clone no-build cause interactive)
-      args
-    (list melpa-style-recipe no-clone no-build
-          (if (and (not cause)
-                   (boundp 'doom-output-indent)
-                   (> doom-output-indent 0))
-              (make-string (1- (or doom-output-indent 1)) 32)
-            cause)
-          interactive)))
+(setq straight-arrow " > ")
+(defadvice! doom--straight-respect-print-indent-a (string &rest objects)
+  "Same as `message' (which see for STRING and OBJECTS) normally.
+However, in batch mode, print to stdout instead of stderr."
+  :override #'straight--output
+  (let ((msg (apply #'format string objects)))
+    (save-match-data
+      (when (string-match (format "^%s\\(.+\\)$" (regexp-quote straight-arrow)) msg)
+        (setq msg (match-string 1 msg))))
+    (and (string-match-p "^\\(Cloning\\|\\(Reb\\|B\\)uilding\\) " msg)
+         (not (string-suffix-p "...done" msg))
+         (doom--print (doom--format (concat "> " msg))))))
