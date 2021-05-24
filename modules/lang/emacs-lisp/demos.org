@@ -34,6 +34,7 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
   - [[#setq-hook][setq-hook!]]
   - [[#unsetq-hook][unsetq-hook!]]
   - [[#use-package][use-package!]]
+  - [[#doom-file-set-extension][doom-file-set-extension]]
 
 * core-lib
 ** add-hook!
@@ -531,3 +532,27 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (use-package! abc
   :defer-incrementally t)
 #+END_SRC
+
+** doom-file-set-extension
+#+begin_src elisp
+(doom-file-set-extension "jack.scss" "css")
+#+end_src
+
+#+RESULTS:
+: "jack.css"
+
+#+begin_src elisp
+;; Works even if the extension started with a dot already.
+(doom-file-set-extension "jack.scss" ".css")
+#+end_src
+
+#+RESULTS:
+: "jack.css"
+
+#+begin_src elisp
+;; Just don't get any funny ideas.
+(doom-file-set-extension "jack.scss" "..........")
+#+end_src
+
+#+RESULTS:
+: nil
