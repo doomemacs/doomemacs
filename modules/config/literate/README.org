@@ -86,21 +86,6 @@ echo Hello world
 You'll find more information about babel src blocks and what parameters they
 support [[https://orgmode.org/manual/Working-with-Source-Code.html][in the manual]].
 
-** Modularizing your literate config with ~#+INCLUDE~ directives
-Literate configs can be split up into separate files and imported into a central
-=config.org= using the ~#+INCLUDE~ org directive. Here are some examples:
-#+BEGIN_SRC org
-,#+INCLUDE other-file.org
-,#+INCLUDE: "~/my-book/chapter2.org" :minlevel 1
-,#+INCLUDE: "~/.emacs" :lines "5-10"
-,#+INCLUDE: "~/.emacs" :lines "-10"
-,#+INCLUDE: "~/.emacs" :lines "10-"
-,#+INCLUDE: "./paper.org::*conclusion" :lines 1-20
-,#+INCLUDE: "./paper.org::#theory" :only-contents t
-#+END_SRC
-
-See [[https://orgmode.org/manual/Include-Files.html][this entry in the Emacs manual]] for more on this directive.
-
 * Troubleshooting
 ** How to tangle to =DOOMDIR/init.el=
 If your literate needs are more complex (e.g. you want to make your init.el
