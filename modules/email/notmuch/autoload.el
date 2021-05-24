@@ -44,7 +44,7 @@
                               (doom-glob (or (getenv "XDG_CONFIG_HOME")
                                              "~/.config")
                                          "isync/mbsyncrc"))
-                         (format "-c %S" config-file)
+                         (format "-c %S" (car config-file))
                        "")))
             (`offlineimap
              "offlineimap && notmuch new")

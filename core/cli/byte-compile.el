@@ -16,11 +16,9 @@ and your private config files, respectively. To recompile your packages, use
 'doom build' instead."
   (doom-cli-byte-compile
    (if (or core-p private-p)
-       (append (when core-p
-                 (list (doom-glob doom-emacs-dir "init.el")
-                       doom-core-dir))
-               (when private-p
-                 (list doom-private-dir)))
+       (append (if core-p    (doom-glob doom-emacs-dir "init.el"))
+               (if core-p    (list doom-core-dir))
+               (if private-p (list doom-private-dir)))
      (or (y-or-n-p
           (concat "WARNING: Changes made to your config after compiling it won't take effect until\n"
                   "this command is rerun or you run 'doom clean'! It will also make error backtraces\n"
@@ -28,11 +26,11 @@ and your private config files, respectively. To recompile your packages, use
                   "If you intend to use it anyway, remember this or it will come back to bite you!\n\n"
                   "Continue anyway?"))
          (user-error "Aborted"))
-     (append (list (doom-glob doom-emacs-dir "init.el")
-                   doom-core-dir)
-             (cl-remove-if-not
+     (append (doom-glob doom-emacs-dir "init.el")
+             (list doom-core-dir)
+             (seq-filter
               ;; Only compile Doom's modules
-              (lambda (path) (file-in-directory-p path doom-emacs-dir))
+              (doom-rpartial #'file-in-directory-p doom-emacs-dir)
               ;; Omit `doom-private-dir', which is always first
               (cdr (doom-module-load-path)))))
    recompile-p
