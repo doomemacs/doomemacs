@@ -139,8 +139,12 @@ in."
         (require 'projectile)
         (when (projectile-project-root "~")
           (warn! "Your $HOME is recognized as a project root")
-          (explain! "Doom will disable bottom-up root search, which may reduce the accuracy of project\n"
-                    "detection."))
+          (explain! "Emacs will assume $HOME is the root of any project living under $HOME. If this isn't\n"
+                    "desired, you will need to remove \".git\" from `projectile-project-root-files-bottom-up'\n"
+                    "(a variable), e.g.\n\n"
+                    "  (after! projectile\n"
+                    "    (setq projectile-project-root-files-bottom-up\n"
+                    "          (remove \".git\" projectile-project-root-files-bottom-up)))"))
 
         ;; There should only be one
         (when (and (file-equal-p doom-private-dir "~/.config/doom")
