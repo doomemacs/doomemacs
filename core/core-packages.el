@@ -118,27 +118,44 @@ uses a straight or package.el command directly).")
                           "://github.com/"
                           (or (plist-get recipe :repo) "raxod502/straight.el")))
         (branch (or (plist-get recipe :branch) straight-repository-branch))
-        (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
+        (call (if doom-debug-p
+                  (lambda (&rest args)
+                    (print! "%s" (cdr (apply #'doom-call-process args))))
+                (lambda (&rest args)
+                  (message "%s" (cdr (apply #'doom-call-process args)))))))
     (unless (file-directory-p repo-dir)
-      (message "Installing straight...")
-      (cond
-       ((eq straight-vc-git-default-clone-depth 'full)
-        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
-       ((null pin)
-        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir
-                 "--depth" (number-to-string straight-vc-git-default-clone-depth)
-                 "--branch" straight-repository-branch
-                 "--single-branch" "--no-tags"))
-       ((integerp straight-vc-git-default-clone-depth)
-        (make-directory repo-dir t)
-        (let ((default-directory repo-dir))
-          (funcall call "git" "init")
-          (funcall call "git" "checkout" "-b" straight-repository-branch)
-          (funcall call "git" "remote" "add" "origin" repo-url)
-          (funcall call "git" "fetch" "origin" pin
-                   "--depth" (number-to-string straight-vc-git-default-clone-depth)
-                   "--no-tags")
-          (funcall call "git" "checkout" "--detach" pin)))))
+      (print! (start "Installing straight..."))
+      (print-group!
+       (cl-destructuring-bind (depth . options)
+           (doom-enlist straight-vc-git-default-clone-depth)
+         (let ((branch-switch (if (memq 'single-branch options)
+                                  "--single-branch"
+                                "--no-single-branch")))
+           (cond
+            ((eq 'full depth)
+             (funcall call "git" "clone" "--origin" "origin"
+                      branch-switch repo-url repo-dir))
+            ((integerp depth)
+             (if (null pin)
+                 (progn
+                   (when (file-directory-p repo-dir)
+                     (delete-directory repo-dir 'recursive))
+                   (funcall call "git" "clone" "--origin" "origin" repo-url
+                            "--no-checkout" repo-dir
+                            "--depth" (number-to-string depth)
+                            branch-switch
+                            "--no-tags"
+                            "--branch" straight-repository-branch))
+               (make-directory repo-dir 'recursive)
+               (let ((default-directory repo-dir))
+                 (funcall call "git" "init" "-b" straight-repository-branch)
+                 (funcall call "git" "remote" "add" "origin" repo-url
+                          "--master" straight-repository-branch)
+                 (funcall call "git" "fetch" "origin" pin
+                          "--depth" (number-to-string depth)
+                          "--no-tags")
+                 (funcall call "git" "reset" "--hard" pin)))))))
+       (print! (success "Done!"))))
     (require 'straight (concat repo-dir "/straight.el"))
     (doom-log "Initializing recipes")
     (with-temp-buffer
