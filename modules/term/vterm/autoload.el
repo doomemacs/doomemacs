@@ -4,7 +4,9 @@
 (defun +vterm/toggle (arg)
   "Toggles a terminal popup window at project root.
 
-If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
+If prefix ARG is non-nil, recreate vterm buffer in the current project's root.
+
+Returns the vterm buffer."
   (interactive "P")
   (+vterm--configure-project-root-and-display
    arg
@@ -35,19 +37,22 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
              (unless (eq major-mode 'vterm-mode)
                (vterm-mode))
              (+vterm--change-directory-if-remote))
-           (pop-to-buffer buffer)))))))
+           (pop-to-buffer buffer)))
+       (get-buffer buffer-name)))))
 
 ;;;###autoload
 (defun +vterm/here (arg)
   "Open a terminal buffer in the current window at project root.
 
-If prefix ARG is non-nil, cd into `default-directory' instead of project root."
+If prefix ARG is non-nil, cd into `default-directory' instead of project root.
+
+Returns the vterm buffer."
   (interactive "P")
   (+vterm--configure-project-root-and-display
    arg
    (lambda()
      (require 'vterm)
-     ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
+     ;; HACK forces vterm to redraw, fixing strange artefacting in the tty.
      (save-window-excursion
        (pop-to-buffer "*scratch*"))
      (let (display-buffer-alist)
@@ -56,7 +61,9 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
 (defun +vterm--configure-project-root-and-display (arg display-fn)
   "Sets the environment variable PROOT and displays a terminal using `display-fn`.
 
-If prefix ARG is non-nil, cd into `default-directory' instead of project root."
+If prefix ARG is non-nil, cd into `default-directory' instead of project root.
+
+Returns the vterm buffer."
   (unless (fboundp 'module-load)
     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
   (let* ((project-root (or (doom-project-root) default-directory))
@@ -65,8 +72,8 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
                default-directory
              project-root)))
     (setenv "PROOT" project-root)
-    (funcall display-fn)
-    (+vterm--change-directory-if-remote)))
+    (prog1 (funcall display-fn)
+      (+vterm--change-directory-if-remote))))
 
 (defun +vterm--change-directory-if-remote ()
   "When `default-directory` is remote, use the corresponding
