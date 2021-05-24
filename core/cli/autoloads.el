@@ -14,7 +14,6 @@ one wants that.")
 (defvar doom-autoloads-cached-vars
   '(doom-modules
     doom-disabled-packages
-    comp-deferred-compilation-deny-list
     native-comp-deferred-compilation-deny-list
     load-path
     auto-mode-alist

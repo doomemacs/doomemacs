@@ -38,7 +38,8 @@ directives. By default, this only recognizes C directives.")
         evil-mode-line-format 'nil
         ;; more vim-like behavior
         evil-symbol-word-search t
-        ;; cursor appearance
+        ;; if the current state is obvious from the cursor's color/shape, then
+        ;; we won't need superfluous indicators to do it instead.
         evil-default-cursor '+evil-default-cursor-fn
         evil-normal-state-cursor 'box
         evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn)
@@ -310,7 +311,7 @@ directives. By default, this only recognizes C directives.")
 
 (use-package! evil-escape
   :commands evil-escape
-  :after-call pre-command-hook
+  :hook (doom-first-input . evil-escape-mode)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
@@ -318,15 +319,14 @@ directives. By default, this only recognizes C directives.")
         evil-escape-delay 0.15)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; no `evil-escape' in minibuffer, unless `evil-collection-setup-minibuffer'
-  ;; is enabled, where we could be in insert mode in the minibuffer.
+  ;; `evil-escape' in the minibuffer is more disruptive than helpful. That is,
+  ;; unless we have `evil-collection-setup-minibuffer' enabled, in which case we
+  ;; want the same behavior in insert mode as we do in normal buffers.
   (add-hook! 'evil-escape-inhibit-functions
     (defun +evil-inhibit-escape-in-minibuffer-fn ()
       (and (minibufferp)
            (or (not (bound-and-true-p evil-collection-setup-minibuffer))
-               (evil-normal-state-p)))))
-  ;; so that evil-escape-mode-hook runs, and can be toggled by evil-mc
-  (evil-escape-mode +1))
+               (evil-normal-state-p))))))
 
 
 (use-package! evil-exchange
@@ -351,20 +351,16 @@ directives. By default, this only recognizes C directives.")
 
 
 (use-package! evil-snipe
-  :commands (evil-snipe-mode
-             evil-snipe-override-mode
-             evil-snipe-local-mode
-             evil-snipe-override-local-mode)
-  :after-call pre-command-hook
+  :commands evil-snipe-local-mode evil-snipe-override-local-mode
+  :hook (doom-first-input . evil-snipe-override-mode)
+  :hook (doom-first-input . evil-snipe-mode)
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t)
   :config
-  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode)
-  (evil-snipe-mode +1)
-  (evil-snipe-override-mode +1))
+  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode))
 
 
 (use-package! evil-surround

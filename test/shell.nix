@@ -14,7 +14,10 @@
 # With a specific version of Emacs
 #
 #   nix-shell --argstr emacs 26        # 26.3
+#   nix-shell --argstr emacs 26.3      # 26.3
 #   nix-shell --argstr emacs 27        # 27.1
+#   nix-shell --argstr emacs 27.1      # 27.1
+#   nix-shell --argstr emacs 27.2      # 27.2
 #   nix-shell --argstr emacs 28        # 28.0.50
 #   nix-shell --argstr emacs gcc       # 28.0.50 + native-comp
 #   nix-shell --argstr emacs pgtk+gcc  # 28.0.50 + pgtk + native-comp
@@ -41,6 +44,7 @@
 , doomlocaldir ? "$(pwd)/.local" }:
 
 let emacsPkg = (if      emacs == "26"       then pkgs.emacs26
+                else if emacs == "26.3"     then pkgs.emacs26
                 else if emacs == "27"       then pkgs.emacs27-2
                 else if emacs == "27.1"     then pkgs.emacs27
                 else if emacs == "27.2"     then pkgs.emacs27-2

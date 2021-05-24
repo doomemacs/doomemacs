@@ -68,7 +68,7 @@ list remains lean."
     "git" "log" "--oneline" "--no-merges"
     "-n" "26" end-ref (concat "^" (regexp-quote start-ref)))
    (if success
-       (let* ((output (string-trim-right stdout))
+       (let* ((output (string-trim-right (or stdout "")))
               (lines (split-string output "\n")))
          (if (> (length lines) 25)
              (concat (string-join (butlast lines 1) "\n") "\n[...]")

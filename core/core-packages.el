@@ -154,10 +154,19 @@ uses a straight or package.el command directly).")
 (defun doom--ensure-core-packages (packages)
   (doom-log "Installing core packages")
   (dolist (package packages)
-    (let ((name (car package)))
+    (let* ((name (car package))
+           (repo (symbol-name name)))
       (when-let (recipe (plist-get (cdr package) :recipe))
-        (straight-override-recipe (cons name recipe)))
-      (straight-use-package name))))
+        (straight-override-recipe (cons name recipe))
+        (when-let (local-repo (plist-get recipe :local-repo))
+          (setq repo local-repo)))
+      ;; Only clone the package, don't build them. Straight hasn't been fully
+      ;; configured by this point.
+      (straight-use-package name nil t)
+      ;; In case the package hasn't been built yet.
+      (or (member (directory-file-name (straight--build-dir "straight"))
+                  load-path)
+          (add-to-list 'load-path (directory-file-name (straight--repos-dir repo)))))))
 
 (defun doom-initialize-core-packages (&optional force-p)
   "Ensure `straight' is installed and was compiled with this version of Emacs."

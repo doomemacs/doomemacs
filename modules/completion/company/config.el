@@ -1,7 +1,10 @@
 ;;; completion/company/config.el -*- lexical-binding: t; -*-
 
 (use-package! company
-  :commands company-complete-common company-manual-begin company-grab-line
+  :commands (company-complete-common
+             company-complete-common-or-cycle
+             company-manual-begin
+             company-grab-line)
   :hook (doom-first-input . global-company-mode)
   :init
   (setq company-minimum-prefix-length 2
@@ -37,6 +40,9 @@
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil)
 
+  (when (featurep! +tng)
+    (add-hook 'global-company-mode-hook #'company-tng-mode))
+
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
@@ -60,8 +66,6 @@
 
   (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
 
-  (when (featurep! +tng)
-    (company-tng-mode +1))
 
   ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
   ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
