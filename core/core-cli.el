@@ -132,14 +132,15 @@ Environment variables:
                  (doom-cli-execute "help")
                (let ((start-time (current-time)))
                  (run-hooks 'doom-cli-pre-hook)
-                 (print! (start "Executing 'doom %s' %s")
-                         (string-join
-                          (cons (or (ignore-errors
-                                      (doom-cli-name (doom-cli-get command)))
-                                    command)
-                                args)
-                          " ")
-                         (format-time-string "%Y-%m-%d %H:%M:%S"))
+                 (unless (getenv "__DOOMRESTART")
+                   (print! (start "Executing 'doom %s' %s")
+                           (string-join
+                            (cons (or (ignore-errors
+                                        (doom-cli-name (doom-cli-get command)))
+                                      command)
+                                  args)
+                            " ")
+                           (format-time-string "%Y-%m-%d %H:%M:%S")))
                  (print-group!
                   (when-let (result (apply #'doom-cli-execute command args))
                     (run-hooks 'doom-cli-post-hook)

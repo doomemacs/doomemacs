@@ -77,7 +77,7 @@ byte-compiled from.")
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (throw 'exit "__NOTANGLE=1 $@"))))))
+            (throw 'exit "__DOOMRESTART=1 __NOTANGLE=1 $@"))))))
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)
