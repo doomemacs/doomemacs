@@ -185,7 +185,10 @@ instead is more sensible."
         lsp-ui-sideline-show-hover nil
         ;; Some icons don't scale correctly on Emacs 26, so disable them there.
         lsp-ui-sideline-actions-icon  ; DEPRECATED Remove later
-        (if EMACS27+ lsp-ui-sideline-actions-icon-default))
+        (if EMACS27+ lsp-ui-sideline-actions-icon-default)
+        ;; REVIEW Temporarily disabled, due to immense slowness on every
+        ;;        keypress. See emacs-lsp/lsp-ui#613
+        lsp-ui-doc-enable nil)
 
   (map! :map lsp-ui-peek-mode-map
         "j"   #'lsp-ui-peek--select-next
