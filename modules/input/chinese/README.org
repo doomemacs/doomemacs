@@ -11,6 +11,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#using-fcitx5][Using fcitx5]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -39,4 +40,12 @@ This module provides no flags.
 * TODO Prerequisites
 * TODO Features
 * TODO Configuration
+** Using fcitx5
+Modify ~fcitx-remote-command~ to change the default:
+
+#+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
+(setq fcitx-remote-command "fcitx5-remote")
+#+END_SRC
+
 * TODO Troubleshooting
