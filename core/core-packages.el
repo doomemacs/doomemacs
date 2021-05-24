@@ -96,10 +96,7 @@ uses a straight or package.el command directly).")
       ;; no affect on packages that are pinned, however (run 'doom purge' to
       ;; compact those after-the-fact). Some packages break when shallow cloned
       ;; (like magit and org), but we'll deal with that elsewhere.
-      straight-vc-git-default-clone-depth 1
-      ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
-      ;; we don't have to deal with them at all.
-      autoload-compute-prefixes nil)
+      straight-vc-git-default-clone-depth '(1 single-branch))
 
 (with-eval-after-load 'straight
   ;; `let-alist' is built into Emacs 26 and onwards
