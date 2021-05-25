@@ -122,7 +122,7 @@ uses a straight or package.el command directly).")
                   (lambda (&rest args)
                     (print! "%s" (cdr (apply #'doom-call-process args))))
                 (lambda (&rest args)
-                  (message "%s" (cdr (apply #'doom-call-process args)))))))
+                  (apply #'doom-call-process args)))))
     (unless (file-directory-p repo-dir)
       (save-match-data
         (unless (executable-find "git")
@@ -159,14 +159,16 @@ uses a straight or package.el command directly).")
                             "--branch" straight-repository-branch))
                (make-directory repo-dir 'recursive)
                (let ((default-directory repo-dir))
+                 ;; git init's -b switch was introduced in 2.28. As much as I'd
+                 ;; like to, the dependency is unavoidable because straight.el
+                 ;; uses it internally.
                  (funcall call "git" "init" "-b" straight-repository-branch)
                  (funcall call "git" "remote" "add" "origin" repo-url
                           "--master" straight-repository-branch)
                  (funcall call "git" "fetch" "origin" pin
                           "--depth" (number-to-string depth)
                           "--no-tags")
-                 (funcall call "git" "reset" "--hard" pin)))))))
-       (print! (success "Done!"))))
+                 (funcall call "git" "reset" "--hard" pin)))))))))
     (require 'straight (concat repo-dir "/straight.el"))
     (doom-log "Initializing recipes")
     (with-temp-buffer
@@ -185,11 +187,12 @@ uses a straight or package.el command directly).")
         (straight-override-recipe (cons name recipe))
         (when-let (local-repo (plist-get recipe :local-repo))
           (setq repo local-repo)))
-      ;; Only clone the package, don't build them. Straight hasn't been fully
-      ;; configured by this point.
-      (straight-use-package name nil t)
+      (print-group!
+       ;; Only clone the package, don't build them. Straight hasn't been fully
+       ;; configured by this point.
+       (straight-use-package name nil t))
       ;; In case the package hasn't been built yet.
-      (or (member (directory-file-name (straight--build-dir "straight"))
+      (or (member (directory-file-name (straight--build-dir (symbol-name name)))
                   load-path)
           (add-to-list 'load-path (directory-file-name (straight--repos-dir repo)))))))
 
