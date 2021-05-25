@@ -28,11 +28,7 @@
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (when (memq 'pdf-occur-global-minor-mode pdf-tools-enabled-modes)
-    (pdf-occur-global-minor-mode 1))
-  (when (memq 'pdf-virtual-global-minor-mode pdf-tools-enabled-modes)
-    (pdf-virtual-global-minor-mode 1))
-  (add-hook 'pdf-view-mode-hook 'pdf-tools-enable-minor-modes)
+  (pdf-tools-install-noverify)
 
   ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)

@@ -48,15 +48,17 @@ in."
 
   ;; REVIEW Refactor me
   (print! (start "Checking your Emacs version..."))
-  (cond
-   (EMACS28+
-    (warn! (concat "Emacs %s detected. Doom support this version, but you are living on "
-                   "edge! Be prepared for breakages in future versions of Emacs.")
-           emacs-version))
-   ((= emacs-major-version 26)
-    (warn! (concat "Emacs %s detected. Doom is dropping Emacs 26.x support in June 2021. "
-                   "Consider upgrading to Emacs 27.1 (or better: 27.2) soon!")
-           emacs-version)))
+  (print-group!
+   (cond
+    (EMACS28+
+     (warn! "Emacs %s detected" emacs-version)
+     (explain! "Doom supports this version, but you are living on the edge! "
+               "Be prepared for breakages in future versions of Emacs."))
+    ((= emacs-major-version 26)
+     (warn! "Emacs %s detected" emacs-version)
+     (explain! "Doom is dropping Emacs 26.x support in June 2021. Consider "
+               "upgrading to Emacs 27.1 (or better: 27.2) soon!"
+               emacs-version))))
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!

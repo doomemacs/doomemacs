@@ -39,7 +39,6 @@ and `format!' into colored output, where COLOR is any car of this list.")
     (class . doom--output-class)
     (indent . doom--output-indent)
     (autofill . doom--output-autofill)
-
     (success . (lambda (str &rest args)
                  (apply #'doom--output-color 'green (format "✓ %s" str) args)))
     (warn    . (lambda (str &rest args)

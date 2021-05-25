@@ -13,7 +13,6 @@
 - [[#configuration][Configuration]]
   - [[#change-the-location-of-configorg][Change the location of config.org]]
   - [[#change-where-src-blocks-are-tangled-or-prevent-it-entirely][Change where src blocks are tangled or prevent it entirely]]
-  - [[#modularizing-your-literate-config-with-include-directives][Modularizing your literate config with ~#+INCLUDE~ directives]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-to-tangle-to-doomdirinitel][How to tangle to =DOOMDIR/init.el=]]
   - [[#how-to-disable-tangle-on-save][How to disable tangle-on-save]]
