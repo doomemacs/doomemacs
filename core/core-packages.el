@@ -124,6 +124,17 @@ uses a straight or package.el command directly).")
                 (lambda (&rest args)
                   (message "%s" (cdr (apply #'doom-call-process args)))))))
     (unless (file-directory-p repo-dir)
+      (save-match-data
+        (unless (executable-find "git")
+          (user-error "Git isn't present on your system. Cannot proceed."))
+        (let* ((version (cdr (doom-call-process "git" "version")))
+               (version
+                (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
+                     (match-string 0 version))))
+          (if version
+              (when (version< version "2.28")
+                (user-error "Git %s detected! Doom requires git 2.28 or newer!"
+                            version)))))
       (print! (start "Installing straight..."))
       (print-group!
        (cl-destructuring-bind (depth . options)
