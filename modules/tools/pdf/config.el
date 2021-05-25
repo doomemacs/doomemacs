@@ -18,16 +18,21 @@
       (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t)))
 
   :config
-  ;; HACK `pdf-tools-install-noverify' tries to "reset" open pdf-view-mode
-  ;;      buffers, but does so incorrectly, causing errors when pdf-tools is
-  ;;      loaded after opening a pdf file. We've done its job ourselves in
-  ;;      `+pdf--install-epdfinfo-a' instead.
-  (defadvice! +pdf--inhibit-pdf-view-mode-resets-a (orig-fn &rest args)
-    :around #'pdf-tools-install-noverify
-    (letf! ((#'pdf-tools-pdf-buffer-p #'ignore))
-      (apply orig-fn args)))
+  (defadvice! +pdf--install-epdfinfo-a (orig-fn &rest args)
+    "Install epdfinfo after the first PDF file, if needed."
+    :around #'pdf-view-mode
+    (if (file-executable-p pdf-info-epdfinfo-program)
+        (apply orig-fn args)
+      ;; If we remain in pdf-view-mode, it'll spit out cryptic errors. This
+      ;; graceful failure is better UX.
+      (fundamental-mode)
+      (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (pdf-tools-install-noverify)
+  (when (memq 'pdf-occur-global-minor-mode pdf-tools-enabled-modes)
+    (pdf-occur-global-minor-mode 1))
+  (when (memq 'pdf-virtual-global-minor-mode pdf-tools-enabled-modes)
+    (pdf-virtual-global-minor-mode 1))
+  (add-hook 'pdf-view-mode-hook 'pdf-tools-enable-minor-modes)
 
   ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
