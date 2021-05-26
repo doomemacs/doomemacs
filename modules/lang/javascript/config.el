@@ -111,8 +111,9 @@
       (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
       (flycheck-add-mode 'typescript-tslint 'typescript-tsx-mode)
       (unless (featurep! +lsp)
-        (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint) 'append)
-        (flycheck-add-mode 'typescript-tide 'typescript-tsx-mode))
+        (after! tide
+          (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint) 'append)
+          (flycheck-add-mode 'typescript-tide 'typescript-tsx-mode)))
       (add-hook! 'typescript-tsx-mode-hook
         (defun +javascript-disable-tide-checkers-h ()
           (pushnew! flycheck-disabled-checkers
