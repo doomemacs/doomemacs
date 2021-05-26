@@ -4,13 +4,15 @@ description: Propose a new idea or feature
 title: "{{{ Briefly summarize your request here }}}"
 labels: ["1. request", "needs-triage"]
 body:
+- type: markdown
+  attributes:
+    value: |
+      **Before you proceed...**
+
+      To rule out the possibility that your request has already been made (or fulfilled), please follow these guidelines:
+      <br/>
 - type: checkboxes
   attributes:
-    label: Before you proceed...
-    description: |
-      We depend on you to ensure your issue hasn't already been addressed elsewhere, isn't resolvable by reading existing documentation, and isn't caused by personal configuration.
-
-      These guidelines will help you rule out these possibilities:
     options:
       - label: I have read the [contributing guidelines](https://discourse.doomemacs.org/how2contribute).
         required: true

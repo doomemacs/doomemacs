@@ -8,13 +8,13 @@ body:
   attributes:
     value: |
       > :warning: Our issue tracker is not for how-to or configuration questions. Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
+
+      **Before you proceed...**
+
+      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration. To help us rule out these possibilities please follow these guidelines:
+      <br />
 - type: checkboxes
   attributes:
-    label: Before you proceed...
-    description: |
-      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration.
-
-      These guidelines will help you rule out these possibilities:
     options:
       - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
         required: true
