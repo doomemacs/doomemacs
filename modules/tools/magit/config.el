@@ -187,6 +187,10 @@ ensure it is built when we actually use Forge."
             (add-hook hook #'forge-bug-reference-setup)))))))
 
 
+(use-package! orgit-forge
+  :after org)
+
+
 (use-package! github-review
   :after magit
   :config
