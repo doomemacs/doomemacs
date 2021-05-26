@@ -1,7 +1,7 @@
 ---
 name: 📝 Bug Report
 description: Report a bug, error, or misbehavior
-title: "{{{ Briefly summarize your issue here }}}"
+title: Briefly summarize your issue here
 labels: ["1. bug", "needs-triage"]
 body:
 - type: markdown

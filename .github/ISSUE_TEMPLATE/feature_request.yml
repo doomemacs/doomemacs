@@ -1,7 +1,7 @@
 ---
 name: 📝 Feature Request
 description: Propose a new idea or feature
-title: "{{{ Briefly summarize your request here }}}"
+title: Briefly summarize your request here
 labels: ["1. request", "needs-triage"]
 body:
 - type: markdown
