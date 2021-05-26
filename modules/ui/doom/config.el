@@ -21,4 +21,7 @@
 
 (use-package! solaire-mode
   :when (or (daemonp) (display-graphic-p))
-  :hook (doom-load-theme . solaire-global-mode))
+  :hook (doom-load-theme . solaire-global-mode)
+  :hook (+popup-buffer-mode . solaire-mode)
+  :hook (which-key-init-buffer . solaire-mode)
+  :config (advice-add #'transient--insert-groups :before #'solaire-mode))
