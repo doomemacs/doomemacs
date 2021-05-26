@@ -533,7 +533,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; languages like Lisp. I reduce it from it's default of 9 to reduce the
 ;; complexity of the font-lock keyword and hopefully buy us a few ms of
 ;; performance.
-(setq rainbow-delimiters-max-face-count 3)
+(setq rainbow-delimiters-max-face-count 4)
 
 
 ;;
