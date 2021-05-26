@@ -9,19 +9,19 @@ body:
     value: |
       > :warning: Our issue tracker is not for how-to or configuration questions. Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
 - type: checkboxes
-  label: Before you proceed...
-  description: |
-    We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration.
-
-    These guidelines will help you rule out these possibilities:
   attributes:
+    label: Before you proceed...
+    description: |
+      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration.
+
+      These guidelines will help you rule out these possibilities:
     options:
       - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
         required: true
       - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
         required: true
       - label: I have searched [the Discourse](https://doomemacs.org/d/docs) for any errors and solutions.
-        required: true.
+        required: true
       - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
         required: true
       - label: I have read [How to Debug Issues](https://doomemacs.org/d/how2debug) and found no solution.
