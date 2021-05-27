@@ -36,19 +36,18 @@ select buffers.")
 
 (defun +format-enable-for-lsp-on-save-maybe-h ()
   "Enable LSP formatter when LSP client is available."
+  (remove-hook 'lsp-mode-hook #'+format-enable-for-lsp-on-save-maybe-h 'local)
   (cond ((not +format-with-lsp) nil)
         ((bound-and-true-p lsp-mode)
-         (remove-hook 'lsp-mode-hook #'+format-lsp-enable-on-save-maybe-h 'local)
          (when (lsp-feature? "textDocument/formatting")
            (+format-enable-on-save-h))
          t)
         ((bound-and-true-p eglot--managed-mode)
-         (remove-hook 'eglot-managed-mode-hook #'+format-lsp-enable-on-save-maybe-h 'local)
          (when (eglot--server-capable :documentRangeFormattingProvider)
            (+format-enable-on-save-h))
          t)
         ((bound-and-true-p lsp--buffer-deferred)
-         (add-hook 'lsp-mode-hook #'+format-lsp-enable-on-save-maybe-h
+         (add-hook 'lsp-mode-hook #'+format-enable-for-lsp-on-save-maybe-h
                    nil 'local)
          t)))
 
