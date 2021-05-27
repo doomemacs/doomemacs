@@ -62,7 +62,7 @@ This is controlled by `+format-on-save-enabled-modes'."
               (not (memq major-mode (cdr +format-on-save-enabled-modes))))
              ((memq major-mode +format-on-save-enabled-modes))
              ((not (require 'format-all nil t))))
-       (not (+format-lsp-enable-on-save-maybe-h))
+       (not (+format-enable-for-lsp-on-save-maybe-h))
        (let (current-prefix-arg) ; never prompt
          (not (car (format-all--probe))))
        (+format-enable-on-save-h)))
