@@ -31,7 +31,7 @@
       (let (keys)
         (map-keymap (lambda (event function)
                       (push function keys)
-                      (push event keys))
+                      (push (vector event) keys))
                     map)
         (apply #'evil-define-key* 'normal map keys)))
 
