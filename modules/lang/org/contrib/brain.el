@@ -38,4 +38,5 @@
     (+org--evilify-map org-brain-visualize-mode-map)
     (+org--evilify-map org-brain-select-map)
     (+org--evilify-map org-brain-move-map)
-    (+org--evilify-map org-brain-polymode-map)))
+    (after! polymode
+      (+org--evilify-map org-brain-polymode-map))))
