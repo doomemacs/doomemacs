@@ -64,7 +64,7 @@ This is controlled by `+format-on-save-enabled-modes'."
              ((not (require 'format-all nil t))))
        (not (+format-enable-for-lsp-on-save-maybe-h))
        (let (current-prefix-arg) ; never prompt
-         (not (car (format-all--probe))))
+         (car (format-all--probe)))
        (+format-enable-on-save-h)))
 
 (when (featurep! +onsave)
