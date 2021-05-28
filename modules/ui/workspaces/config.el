@@ -134,12 +134,8 @@ stored in `persp-save-dir'.")
                 winner-ring-alist alist
                 winner-pending-undo-ring pending-undo-ring)))))
 
-  ;; We don't rely on the built-in mechanism for auto-registering a buffer to
-  ;; the current workspace; some buffers slip through the cracks. Instead, we
-  ;; add buffers when they are switched to.
-  (setq persp-add-buffer-on-find-file nil
-        persp-add-buffer-on-after-change-major-mode nil)
-  (add-hook! '(doom-switch-buffer-hook server-visit-hook)
+  ;;;; Registering buffers to perspectives
+  (add-hook! 'doom-switch-buffer-hook
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
       (or (not persp-mode)
