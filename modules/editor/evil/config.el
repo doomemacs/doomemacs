@@ -83,20 +83,11 @@ directives. By default, this only recognizes C directives.")
           ("^\\*Command Line"   :size 8)))))
 
   ;; Change the cursor color in emacs state. We do it this roundabout way
-  ;; instead of changing `evil-default-cursor' (or `evil-emacs-state-cursor') so
-  ;; it won't interfere with users who have changed these variables.
-  (defvar +evil--default-cursor-color "#ffffff")
-  (defvar +evil--emacs-cursor-color "#ff9999")
-
-  (add-hook! 'doom-load-theme-hook
-    (defun +evil-update-cursor-color-h ()
-      (setq +evil--default-cursor-color (face-background 'cursor)
-            +evil--emacs-cursor-color (face-foreground 'warning))))
-
+  ;; to ensure changes in theme doesn't break these colors.
   (defun +evil-default-cursor-fn ()
-    (evil-set-cursor-color +evil--default-cursor-color))
+    (evil-set-cursor-color (face-background 'cursor)))
   (defun +evil-emacs-cursor-fn ()
-    (evil-set-cursor-color +evil--emacs-cursor-color))
+    (evil-set-cursor-color (face-foreground 'warning)))
 
   (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
