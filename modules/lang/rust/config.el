@@ -45,16 +45,17 @@
   (map! :map rustic-mode-map
         :localleader
         (:prefix ("b" . "build")
-          :desc "cargo audit"    "a" #'+rust/cargo-audit
-          :desc "cargo build"    "b" #'rustic-cargo-build
-          :desc "cargo bench"    "B" #'rustic-cargo-bench
-          :desc "cargo check"    "c" #'rustic-cargo-check
-          :desc "cargo clippy"   "C" #'rustic-cargo-clippy
-          :desc "cargo doc"      "d" #'rustic-cargo-doc
-          :desc "cargo fmt"      "f" #'rustic-cargo-fmt
-          :desc "cargo new"      "n" #'rustic-cargo-new
-          :desc "cargo outdated" "o" #'rustic-cargo-outdated
-          :desc "cargo run"      "r" #'rustic-cargo-run)
+          :desc "cargo audit"      "a" #'+rust/cargo-audit
+          :desc "cargo build"      "b" #'rustic-cargo-build
+          :desc "cargo bench"      "B" #'rustic-cargo-bench
+          :desc "cargo check"      "c" #'rustic-cargo-check
+          :desc "cargo clippy"     "C" #'rustic-cargo-clippy
+          :desc "cargo doc"        "d" #'rustic-cargo-build-doc
+          :desc "cargo doc --open" "D" #'rustic-cargo-doc
+          :desc "cargo fmt"        "f" #'rustic-cargo-fmt
+          :desc "cargo new"        "n" #'rustic-cargo-new
+          :desc "cargo outdated"   "o" #'rustic-cargo-outdated
+          :desc "cargo run"        "r" #'rustic-cargo-run)
         (:prefix ("t" . "cargo test")
           :desc "all"          "a" #'rustic-cargo-test
           :desc "current test" "t" #'rustic-cargo-current-test))
