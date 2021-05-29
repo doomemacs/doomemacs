@@ -1,6 +1,6 @@
 #+TITLE:   checkers/syntax
-#+DATE:    May 28, 2021
-#+SINCE:   ???
+#+DATE:    February 20, 2017
+#+SINCE:   v2.0
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
