@@ -64,8 +64,6 @@ directives. By default, this only recognizes C directives.")
   :config
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (put 'evil-define-key* 'lisp-indent-function 'defun)
-
   ;; stop copying each visual state move to the clipboard:
   ;; https://github.com/emacs-evil/evil/issues/336
   ;; grokked from:
@@ -94,6 +92,8 @@ directives. By default, this only recognizes C directives.")
   (defun +evil-emacs-cursor-fn ()
     (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
+  ;; Ensure `evil-shift-width' always matches `tab-width'; evil does not police
+  ;; this itself, so we must.
   (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
 
