@@ -66,13 +66,9 @@ list remains lean."
   (straight--process-with-result
    (straight--process-run
     "git" "log" "--oneline" "--no-merges"
-    "-n" "26" end-ref (concat "^" (regexp-quote start-ref)))
+    end-ref (concat "^" (regexp-quote start-ref)))
    (if success
-       (let* ((output (string-trim-right (or stdout "")))
-              (lines (split-string output "\n")))
-         (if (> (length lines) 25)
-             (concat (string-join (butlast lines 1) "\n") "\n[...]")
-           output))
+       (string-trim-right (or stdout ""))
      (format "ERROR: Couldn't collect commit list because: %s" stderr))))
 
 (defmacro doom--straight-with (form &rest body)
@@ -399,6 +395,7 @@ declaration) or dependency thereof that hasn't already been."
                    (target-ref
                     (cdr (or (assoc local-repo pinned)
                              (assoc package pinned))))
+                   commits
                    output)
                (or (cond
                     ((not (stringp target-ref))
@@ -423,7 +420,8 @@ declaration) or dependency thereof that hasn't already been."
                             (straight-vc-commit-present-p recipe target-ref)))
                      (straight-vc-check-out-commit recipe target-ref)
                      (or (not (eq type 'git))
-                         (setq output (doom--commit-log-between ref target-ref)))
+                         (setq output (doom--commit-log-between ref target-ref)
+                               commits (length (split-string output "\n" t))))
                      (doom--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
 
                     ((print! (start "\033[K(%d/%d) Re-cloning %s...") i total local-repo esc)
@@ -434,7 +432,8 @@ declaration) or dependency thereof that hasn't already been."
                         (straight-use-package (intern package) nil 'no-build))
                        (prog1 (file-directory-p repo)
                          (or (not (eq type 'git))
-                             (setq output (doom--commit-log-between ref target-ref)))))))
+                             (setq output (doom--commit-log-between ref target-ref)
+                                   commits (length (split-string output "\n" t))))))))
                    (progn
                      (print! (warn "\033[K(%d/%d) Failed to fetch %s")
                              i total local-repo)
@@ -443,11 +442,19 @@ declaration) or dependency thereof that hasn't already been."
                      (cl-return)))
                (puthash local-repo t repos-to-rebuild)
                (puthash package t packages-to-rebuild)
-               (print! (success "\033[K(%d/%d) %s updated (%s -> %s)")
+               (print! (success "\033[K(%d/%d) %s: %s -> %s%s")
                        i total local-repo
                        (doom--abbrev-commit ref)
-                       (doom--abbrev-commit target-ref))
+                       (doom--abbrev-commit target-ref)
+                       (if (and (integerp commits) (> commits 0))
+                           (format " [%d commit(s)]" commits)))
                (unless (string-empty-p output)
+                 (let ((lines (split-string output "\n")))
+                   (setq output
+                         (if (> (length lines) 20)
+                             (concat (string-join (cl-subseq (butlast lines 1) 0 20) "\n")
+                                     "\n[...]")
+                           output)))
                  (print-group! (print! "%s" (indent 2 output)))))
            (user-error
             (signal 'user-error (error-message-string e)))
