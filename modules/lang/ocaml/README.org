@@ -26,7 +26,11 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 + Dune file format ([[http://dune.build/][dune]])
 
 ** Module Flags
-This module provides no flags.
++ ~-pretty~ Disable =tuareg-mode='s default ligature configuration. This is
+  useful when you would prefer to use the ligature support provided by a font
+  like =iosevka= or =fira= via the [[file:~/.emacs.d/modules/ui/ligatures/README.org][=ligatures=]] module, instead of tuareg
+  prettify symbol list. Otherwise, tuareg's symbol list will override the font
+  ligatures.
 
 ** Plugins
 + [[https://github.com/ocaml/tuareg][tuareg]]
@@ -87,7 +91,7 @@ tools.
   | =utop-eval-region=           | =SPC c e=         | evaluate selected region in =utop=                        |
 
 ** Hacks
-+ =set-ligatures!= is called with the full tuareg prettify symbol list, this
-  can cause columns to change as certain keywords are shortened (e.g. =fun=
-  becomes \lambda.
++ Unless the feature =-pretty= is set, =set-ligatures!= is called with the full
+  tuareg prettify symbol list, this can cause columns to change as certain
+  keywords are shortened (e.g. =fun= becomes \lambda.
 + =tuareg-opam-update-env= is called the first time =tuareg= is loaded

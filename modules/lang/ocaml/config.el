@@ -9,12 +9,14 @@
 
 
 (after! tuareg
-  ;; tuareg-mode has the prettify symbols itself
-  (set-ligatures! 'tuareg-mode :alist
-    (append tuareg-prettify-symbols-basic-alist
-            tuareg-prettify-symbols-extra-alist))
-  ;; harmless if `prettify-symbols-mode' isn't active
-  (setq tuareg-prettify-symbols-full t)
+
+  (unless (featurep! -pretty)
+    ;; Use tuareg-mode's own prettify symbols set
+    (set-ligatures! 'tuareg-mode :alist
+      (append tuareg-prettify-symbols-basic-alist
+              tuareg-prettify-symbols-extra-alist))
+    ;; harmless if `prettify-symbols-mode' isn't active
+    (setq tuareg-prettify-symbols-full t))
 
   ;; Use opam to set environment
   (setq tuareg-opam-insinuate t)
