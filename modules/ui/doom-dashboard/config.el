@@ -192,8 +192,9 @@ PLIST can have the following properties:
            finally do (setq-local fringe-indicator-alist alist))
   ;; Ensure point is always on a button
   (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
-  ;; Never show hl-line, because the margin cut-off looks ugly!
-  (face-remap-add-relative 'hl-line '(:background nil)))
+  ;; hl-line produces an ugly cut-off line highlight in the dashboard, so don't
+  ;; activate it there (by pretending it's already active).
+  (setq-local hl-line-mode t))
 
 (define-key! +doom-dashboard-mode-map
   [left-margin mouse-1]   #'ignore
