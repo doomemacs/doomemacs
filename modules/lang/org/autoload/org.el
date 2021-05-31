@@ -389,8 +389,7 @@ another level of headings on each invocation."
 Made for `org-tab-first-hook' in evil-mode."
   (interactive)
   (cond ((not (and (bound-and-true-p evil-local-mode)
-                   (or (evil-insert-state-p)
-                       (evil-emacs-state-p))))
+                   (evil-insert-state-p)))
          nil)
         ((org-at-item-p)
          (if (eq this-command 'org-shifttab)
