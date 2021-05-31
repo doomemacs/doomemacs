@@ -7,6 +7,8 @@ body:
 - type: markdown
   attributes:
     value: |
+      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
+
       **Before you proceed...**
 
       To rule out the possibility that your request has already been made (or fulfilled), please follow these guidelines:
