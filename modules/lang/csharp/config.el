@@ -97,7 +97,19 @@ or terminating simple string."
 
 (use-package! sharper
   :when (featurep! +dotnet)
-  :general ("C-c d" #'sharper-main-transient))
+  :general ("C-c d" #'sharper-main-transient)
+  :config
+  (map! (:map sharper--solution-management-mode-map
+         :nv "RET" #'sharper-transient-solution
+         :nv "gr" #'sharper--solution-management-refresh)
+        (:map sharper--project-references-mode-map
+         :nv "RET" #'sharper-transient-project-references
+         :nv "gr" #'sharper--project-references-refresh)
+        (:map sharper--project-packages-mode-map
+         :nv "RET" #'sharper-transient-project-packages
+         :nv "gr" #'sharper--project-packages-refresh)
+        (:map sharper--nuget-results-mode-map
+         :nv "RET" #'sharper--nuget-search-install)))
 
 
 (use-package! sln-mode :mode "\\.sln\\'")
