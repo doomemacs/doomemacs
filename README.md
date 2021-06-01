@@ -98,7 +98,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 
 # Prerequisites
-+ Git 2.28+
++ Git 2.23+
 + Emacs 26.3+ (*27.2 is recommended*, or [native-comp](https://www.emacswiki.org/emacs/GccEmacs)).
 + [ripgrep] 11.0+
 + GNU `find`

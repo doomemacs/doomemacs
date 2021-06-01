@@ -132,8 +132,8 @@ uses a straight or package.el command directly).")
                 (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
                      (match-string 0 version))))
           (if version
-              (when (version< version "2.28")
-                (user-error "Git %s detected! Doom requires git 2.28 or newer!"
+              (when (version< version "2.23")
+                (user-error "Git %s detected! Doom requires git 2.23 or newer!"
                             version)))))
       (print! (start "Installing straight..."))
       (print-group!
@@ -159,10 +159,8 @@ uses a straight or package.el command directly).")
                             "--branch" straight-repository-branch))
                (make-directory repo-dir 'recursive)
                (let ((default-directory repo-dir))
-                 ;; git init's -b switch was introduced in 2.28. As much as I'd
-                 ;; like to, the dependency is unavoidable because straight.el
-                 ;; uses it internally.
-                 (funcall call "git" "init" "-b" straight-repository-branch)
+                 (funcall call "git" "init")
+                 (funcall call "git" "branch" "-m" straight-repository-branch)
                  (funcall call "git" "remote" "add" "origin" repo-url
                           "--master" straight-repository-branch)
                  (funcall call "git" "fetch" "origin" pin

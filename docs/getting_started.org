@@ -96,7 +96,7 @@ us know!
 * Install
 This is what you'll have installed by the end of this section:
 
-- Git 2.28+
+- Git 2.23+
 - Emacs 26.3+ *(27.2 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
 - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
 - GNU Find
@@ -119,24 +119,8 @@ In the unusual case that Emacs 26.x is unavailable through your package manager,
 you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]], but here are installation instructions for many popular Linux distributions:
 
 **** Ubuntu
-There are two challenges for Ubuntu users:
-
-+ Ubuntu <= 18.04 only provide Emacs <= 25.3 (Doom requires 26.3+)
-+ Ubuntu <= 20.04 only provide git <= 2.25.1 (Doom requires 2.28+)
-
-  To get around these:
-
-***** Git
-To install Git 2.28:
-
-#+BEGIN_SRC bash
-add-apt-repository ppa:git-core/ppa
-apt update
-apt install git
-#+END_SRC
-
-***** Emacs
-To install Emacs 27, you'll need either a PPA or Snap:
+Emacs 27.x is not available through Ubuntu's package manager out-of-the-box. To
+get around this you'll need to install Emacs through a PPA:
 
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs

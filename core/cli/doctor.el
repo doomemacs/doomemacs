@@ -71,10 +71,10 @@ in."
                (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
                     (match-string 0 version))))
          (if version
-             (when (version< version "2.28")
-               (error! "Git %s detected! Doom requires git 2.28 or newer!"
+             (when (version< version "2.23")
+               (error! "Git %s detected! Doom requires git 2.23 or newer!"
                        version))
-           (warn! "Cannot determine Git version. Doom requires git 2.28 or newer!")))))
+           (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!")))))
 
    (unless (executable-find "rg")
      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
