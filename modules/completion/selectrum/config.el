@@ -166,7 +166,10 @@
         :desc "Cycle marginalia views"
         "M-A" #'marginalia-cycle)
   :config
-  (add-to-list 'marginalia-command-categories '(persp-switch-to-buffer . buffer)))
+  (nconc marginalia-command-categories
+         '((persp-switch-to-buffer . buffer)
+           (projectile-find-file . project-file)
+           (doom/describe-active-minor-mode . minor-mode))))
 
 (use-package! embark-consult
   :after (embark consult)
