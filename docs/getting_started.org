@@ -559,7 +559,7 @@ needs and how to install them in that module's README.org file or by running
 ~bin/doom doctor~.
 
 The [[file:modules.org][Module Index]] lists all Doom's available modules, with links to their
-documentation. Documentation is a work-in-progrees; some modules may not have
+documentation. Documentation is a work-in-progress; some modules may not have
 README.org files yet!
 
 #+begin_quote
