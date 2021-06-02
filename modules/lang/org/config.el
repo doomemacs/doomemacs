@@ -469,7 +469,7 @@ relative to `org-directory', unless it is an absolute path."
                    (and IS-WINDOWS (string-prefix-p "\\\\" path))
                    (file-exists-p path))
                'org-link
-             'error)))
+             '(warning org-link))))
 
   ;; Add custom link types
   (pushnew! org-link-abbrev-alist
