@@ -169,12 +169,22 @@ uses a straight or package.el command directly).")
                  (funcall call "git" "reset" "--hard" pin)))))))))
     (require 'straight (concat repo-dir "/straight.el"))
     (doom-log "Initializing recipes")
-    (with-temp-buffer
-      (insert-file-contents (doom-path repo-dir "bootstrap.el"))
-      ;; Don't install straight for us -- we've already done that -- only set
-      ;; up its recipe repos for us.
-      (eval-region (search-forward "(require 'straight)")
-                   (point-max)))))
+    (mapc #'straight-use-recipes
+          '((org-elpa :local-repo nil)
+            ;; Give emacs-mirror higher priority than MELPA, because who knows
+            ;; where MELPA packages come from.
+            (emacsmirror-mirror :type git :host github
+                                :repo "emacs-straight/emacsmirror-mirror"
+                                :build nil)
+            (melpa              :type git :host github
+                                :repo "melpa/melpa"
+                                :build nil)
+            (gnu-elpa-mirror    :type git :host github
+                                :repo "emacs-straight/gnu-elpa-mirror"
+                                :build nil)
+            (el-get             :type git :host github
+                                :repo "dimitri/el-get"
+                                :build nil)))))
 
 (defun doom--ensure-core-packages (packages)
   (doom-log "Installing core packages")
