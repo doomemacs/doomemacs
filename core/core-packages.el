@@ -171,11 +171,6 @@ uses a straight or package.el command directly).")
     (doom-log "Initializing recipes")
     (mapc #'straight-use-recipes
           '((org-elpa :local-repo nil)
-            ;; Give emacs-mirror higher priority than MELPA, because who knows
-            ;; where MELPA packages come from.
-            (emacsmirror-mirror :type git :host github
-                                :repo "emacs-straight/emacsmirror-mirror"
-                                :build nil)
             (melpa              :type git :host github
                                 :repo "melpa/melpa"
                                 :build nil)
@@ -184,6 +179,9 @@ uses a straight or package.el command directly).")
                                 :build nil)
             (el-get             :type git :host github
                                 :repo "dimitri/el-get"
+                                :build nil)
+            (emacsmirror-mirror :type git :host github
+                                :repo "emacs-straight/emacsmirror-mirror"
                                 :build nil)))))
 
 (defun doom--ensure-core-packages (packages)
