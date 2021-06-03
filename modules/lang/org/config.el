@@ -682,8 +682,8 @@ can grow up to be fully-fledged org-mode buffers."
      (lambda () (unless (eobp)
                   (or
                    (eq (get-char-property (+ (point) 1) 'src-block) t)
-                   (eq (get-char-property (- (point) 1) 'src-block) t)))) nil t)))
-
+                   (eq (get-char-property (- (point) 1) 'src-block) t)))
+       (looking-back ".*src_[-+a-zA-Z]*{[^}]*" (line-beginning-position))) nil t)))
 
 (defun +org-init-keybinds-h ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
