@@ -23,7 +23,7 @@
 ;;   condition. It ensures all unneeded packages are removed, all needed ones
 ;;   are installed, and all metadata associated with them is generated.
 ;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest
-;;   versions. There's also 'bin/doom update' for updating only your packages.
+;;   versions. There's also 'bin/doom sync -u' for updating only your packages.
 ;;
 ;; How this works is: the system reads packages.el files located in each
 ;; activated module, your private directory (`doom-private-dir'), and one in
