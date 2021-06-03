@@ -14,7 +14,6 @@ one wants that.")
 (defvar doom-autoloads-cached-vars
   '(doom-modules
     doom-disabled-packages
-    comp-deferred-compilation-deny-list
     native-comp-deferred-compilation-deny-list
     load-path
     auto-mode-alist
@@ -52,7 +51,7 @@ one wants that.")
                            in (append (list doom-core-dir)
                                       (cdr (doom-module-load-path 'all-p))
                                       (list doom-private-dir))
-                           if (doom-glob dir "autoload.el") collect it
+                           if (doom-glob dir "autoload.el") collect (car it)
                            if (doom-glob dir "autoload/*.el") append it)
                   (mapcan #'doom-glob doom-autoloads-files))
           nil)

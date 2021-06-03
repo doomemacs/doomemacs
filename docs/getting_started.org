@@ -97,7 +97,7 @@ us know!
 This is what you'll have installed by the end of this section:
 
 - Git 2.23+
-- Emacs 26.3+ *(27.1 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
+- Emacs 26.3+ *(27.2 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
 - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
 - GNU Find
 - (Optional) [[https://github.com/sharkdp/fd][fd]] 7.3.0+ (known as ~fd-find~ on Debian, Ubuntu & derivatives) --
@@ -116,26 +116,34 @@ especially for LSP users. The installation guides below will touch on installing
 ** Emacs & dependencies
 *** On Linux
 In the unusual case that Emacs 26.x is unavailable through your package manager,
-you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]]. Otherwise:
+you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]], but here are installation instructions for many popular Linux distributions:
 
 **** Ubuntu
-Since only Emacs 25.3 is available on Ubuntu 18.04 (and 24.3 on Ubuntu 14 or
-16), extra steps are necessary to acquire 26.3:
+Emacs 27.x is not available through Ubuntu's package manager out-of-the-box. To
+get around this you'll need to install Emacs through a PPA:
+
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs
 apt-get update
-apt-get install emacs26
+apt-get install emacs27
 #+END_SRC
 
-Then install the dependencies:
+Or through snap:
+
 #+BEGIN_SRC bash
-# required dependencies
-apt-get install git ripgrep
-# optional dependencies
-apt-get install fd-find
+snap install emacs --classic
 #+END_SRC
 
-To install Emacs 27 on Ubuntu, you'll need to build it from source.
+***** Other dependencies
+Then install Doom's other dependencies:
+#+BEGIN_SRC bash
+apt-get install ripgrep fd-find
+
+# On 18.04 or older, ripgrep and fd-find won't be available in
+# official repos. You'll need to install them another way, e.g.
+sudo dpkg -i fd_8.2.1_amd64.deb  # adapt version number and architecture
+sudo dpkg -i fd_8.2.1_amd64.deb  # adapt version number and architecture
+#+END_SRC
 
 **** Fedora
 #+BEGIN_SRC bash
@@ -162,7 +170,7 @@ permanently with the following added to ~etc/nixos/configuration.nix~:
 environment.systemPackages = with pkgs; [
   # required dependencies
   git
-  emacs    # Emacs 26.3
+  emacs    # Emacs 27.2
   ripgrep
   # optional dependencies
   coreutils # basic GNU utilities
@@ -171,14 +179,14 @@ environment.systemPackages = with pkgs; [
 ];
 #+END_SRC
 
-Installing Emacs 27 will require [[https://github.com/nix-community/emacs-overlay/issues][nix-community/emacs-overlay]]:
+Installing Emacs 28+ will require [[https://github.com/nix-community/emacs-overlay/issues][nix-community/emacs-overlay]]:
 #+BEGIN_SRC nix
 nixpkgs.overlays = [
   (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
 ];
 
-environment.systemPackages = with pkgs; [
-  emacsUnstable # Installs Emacs 27
+environment.systemPackages = [
+  pkgs.emacsGcc  # Installs Emacs 28 + native-comp
 ];
 #+END_SRC
 
@@ -272,9 +280,9 @@ likely* to cause issues later on. They are not recommended:
 There are four ports (at time of writing) available through MacPorts, and they
 are all acceptable options:
 
-+ [[https://ports.macports.org/port/emacs/summary][emacs]] (26.3) and [[https://ports.macports.org/port/emacs-devel/summary][emacs-devel]] (27) -- Installs terminal-only Emacs
-+ [[https://ports.macports.org/port/emacs-app/summary][emacs-app]] (26.3), [[https://ports.macports.org/port/emacs-app-devel/summary][emacs-app-devel]] (27) -- Installs GUI Emacs
-+ [[https://ports.macports.org/port/emacs-mac-app/summary][emacs-mac-app]] (26.3) -- the [[https://bitbucket.org/mituharu/emacs-mac][Mitsuharu Yamamoto mac port]]
++ [[https://ports.macports.org/port/emacs/summary][emacs]] (27.2) and [[https://ports.macports.org/port/emacs-devel/summary][emacs-devel]] (28) -- Installs terminal-only Emacs
++ [[https://ports.macports.org/port/emacs-app/summary][emacs-app]] (27.2), [[https://ports.macports.org/port/emacs-app-devel/summary][emacs-app-devel]] (28) -- Installs GUI Emacs
++ [[https://ports.macports.org/port/emacs-mac-app/summary][emacs-mac-app]] (27.2) -- the [[https://bitbucket.org/mituharu/emacs-mac][Mitsuharu Yamamoto mac port]]
 
 Some of these ports do not add an =emacs= binary to your ~PATH~, which is
 necessary for Doom's installation process. You'll have to do so yourself by
@@ -337,14 +345,18 @@ Now we're ready to move on!
 [[https://chocolatey.org/][Chocolatey]] is a package manager for Windows, and is the simplest way to install
 Emacs and Doom's dependencies:
 #+BEGIN_SRC sh
-choco install git emacs ripgrep fd llvm
+choco install git emacs ripgrep
+# Optional dependencies
+choco install fd llvm
 #+END_SRC
 
 Scoop will work too, but because Emacs is a GUI application you'll need to
 enable the 'extras' Scoop bucket:
 #+BEGIN_SRC sh
 scoop bucket add extras
-scoop install git emacs ripgrep fd llvm
+scoop install git emacs ripgrep
+# Optional dependencies
+scoop install fd llvm
 #+END_SRC
 
 **** With a precompiled binary + Git Bash
@@ -353,7 +365,7 @@ scoop install git emacs ripgrep fd llvm
 1. Download and install Git from https://git-scm.com/download/win
 2. Download and extract Emacs, ripgrep and fd where you want them, but in
    different folders:
-   - Emacs 26.3 from http://ftp.wayne.edu/gnu/emacs/windows/emacs-26/
+   - Emacs 27.2 from http://ftp.wayne.edu/gnu/emacs/windows/emacs-27/
    - Ripgrep from https://github.com/BurntSushi/ripgrep/releases
    - (optional) fd from https://github.com/sharkdp/fd/releases
 3. Add the three folders from step 2 to your ~PATH~
@@ -593,13 +605,13 @@ packages (yet).
 ** Up/Downgrading Emacs
 *You may encounter errors after up/downgrading Emacs.* Run ~doom sync~ on the
 command line after changing the installed version of Emacs. If you've changed
-the major version (e.g. 26 -> 27 or vice versa) run ~doom build~ too.
+the major version (e.g. 27 -> 28 or vice versa) run ~doom build~ too.
 
 + ~doom sync~ will re-index any built-in/site loaddef files. This is especially
   necessary if paths to built-in libraries have changed.
 + ~doom build~ will recompile all your installed packages, which is necessary
   because Emacs bytecode not generally forward compatible across major releases
-  (e.g. 26 -> 27). Alternatively, reinstall all your packages by deleting
+  (e.g. 27 -> 28). Alternatively, reinstall all your packages by deleting
   =~/.emacs.d/.local=, then run ~doom sync~.
 
 * TODO Migrate

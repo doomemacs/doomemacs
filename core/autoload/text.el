@@ -77,9 +77,10 @@ Detects evil visual mode as well."
   "Return beginning position of selection.
 Uses `evil-visual-beginning' if available."
   (declare (side-effect-free t))
-  (if (bound-and-true-p evil-local-mode)
-      evil-visual-beginning
-    (region-beginning)))
+  (or (and (bound-and-true-p evil-local-mode)
+           (markerp evil-visual-beginning)
+           (marker-position evil-visual-beginning))
+      (region-beginning)))
 
 ;;;###autoload
 (defun doom-region-end ()

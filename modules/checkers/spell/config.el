@@ -88,8 +88,10 @@
               markdown-html-attr-name-face
               markdown-html-attr-value-face
               markdown-html-tag-name-face
+              markdown-inline-code-face
               markdown-link-face
               markdown-markup-face
+              markdown-plain-url-face
               markdown-reference-face
               markdown-url-face))
           (org-mode

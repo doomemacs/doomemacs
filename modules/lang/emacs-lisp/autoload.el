@@ -172,10 +172,12 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 (defun +emacs-lisp/buttercup-run-file ()
   "Run all buttercup tests in the focused buffer."
   (interactive)
-  (let ((load-path (append (list (doom-path (dir!) "..")
-                                 (or (doom-project-root)
-                                     default-directory))
-                           load-path)))
+  (let ((load-path
+         (append (list (doom-path (dir!) "..")
+                       (or (doom-project-root)
+                           default-directory))
+                 load-path))
+        (buttercup-suites nil))
     (save-selected-window
       (eval-buffer)
       (buttercup-run))
@@ -188,7 +190,8 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
   (let* ((default-directory (doom-project-root))
          (load-path (append (list (doom-path "test")
                                   default-directory)
-                            load-path)))
+                            load-path))
+         (buttercup-suites nil))
     (buttercup-run-discover)))
 
 ;;;###autoload

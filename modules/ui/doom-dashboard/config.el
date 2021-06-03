@@ -119,6 +119,7 @@ PLIST can have the following properties:
     (when (equal (buffer-name) "*scratch*")
       (set-window-buffer nil (doom-fallback-buffer))
       (+doom-dashboard-reload))
+    (add-hook 'doom-load-theme-hook #'+doom-dashboard-reload-on-theme-change-h)
     ;; Ensure the dashboard is up-to-date whenever it is switched to or resized.
     (add-hook 'window-configuration-change-hook #'+doom-dashboard-resize-h)
     (add-hook 'window-size-change-functions #'+doom-dashboard-resize-h)
@@ -191,8 +192,9 @@ PLIST can have the following properties:
            finally do (setq-local fringe-indicator-alist alist))
   ;; Ensure point is always on a button
   (add-hook 'post-command-hook #'+doom-dashboard-reposition-point-h nil 'local)
-  ;; Never show hl-line, because the margin cut-off looks ugly!
-  (face-remap-add-relative 'hl-line '(:background nil)))
+  ;; hl-line produces an ugly cut-off line highlight in the dashboard, so don't
+  ;; activate it there (by pretending it's already active).
+  (setq-local hl-line-mode t))
 
 (define-key! +doom-dashboard-mode-map
   [left-margin mouse-1]   #'ignore
@@ -332,6 +334,11 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
         (+doom-dashboard-update-pwd-h
          (concat (directory-file-name new-pwd)
                  "/"))))))
+
+(defun +doom-dashboard-reload-on-theme-change-h ()
+  "Forcibly reload the Doom dashboard when theme changes post-startup."
+  (when after-init-time
+    (+doom-dashboard-reload 'force)))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."

@@ -2,8 +2,6 @@ name: 'Auto-label Issues/PRs'
 on:
   pull_request:
     types: [opened]
-  issues:
-    types: [opened]
 jobs:
   build:
     runs-on: ubuntu-latest

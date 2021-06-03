@@ -1,43 +1,62 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
-(after! (:any js2-mode rjsx-mode web-mode)
-  (set-docsets! '(js2-mode rjsx-mode) "JavaScript"
-    "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
-    "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
-    "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
-    "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS")
-
-  (set-ligatures! '(js2-mode rjsx-mode web-mode)
-    ;; Functional
-    :def "function"
-    :lambda "() =>"
-    :composition "compose"
-    ;; Types
-    :null "null"
-    :true "true" :false "false"
-    ;; Flow
-    :not "!"
-    :and "&&" :or "||"
-    :for "for"
-    :return "return"
-    ;; Other
-    :yield "import"))
-
 (after! projectile
   (pushnew! projectile-project-root-files "package.json")
   (pushnew! projectile-globally-ignored-directories "node_modules" "flow-typed"))
 
 
 ;;
-;; Major modes
+;;; Major modes
 
-(use-package! js2-mode
+(dolist (feature '(rjsx-mode
+                   typescript-mode
+                   web-mode
+                   (nodejs-repl-mode . nodejs-repl)))
+  (let ((pkg  (or (cdr-safe feature) feature))
+        (mode (or (car-safe feature) feature)))
+    (with-eval-after-load pkg
+      (set-docsets! mode "JavaScript"
+        "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
+        "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
+        "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
+        "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS")
+      (set-ligatures! mode
+        ;; Functional
+        :def "function"
+        :lambda "() =>"
+        :composition "compose"
+        ;; Types
+        :null "null"
+        :true "true" :false "false"
+        ;; Flow
+        :not "!"
+        :and "&&" :or "||"
+        :for "for"
+        :return "return"
+        ;; Other
+        :yield "import"))))
+
+
+(use-package! rjsx-mode
   :mode "\\.[mc]?js\\'"
   :mode "\\.es6\\'"
+  :mode "\\.pac\\'"
   :interpreter "node"
-  :commands js2-line-break
+  :hook (rjsx-mode . rainbow-delimiters-mode)
+  :init
+  ;; Parse node stack traces in the compilation buffer
+  (after! compilation
+    (add-to-list 'compilation-error-regexp-alist 'node)
+    (add-to-list 'compilation-error-regexp-alist-alist
+                 '(node "^[[:blank:]]*at \\(.*(\\|\\)\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)"
+                        2 3 4)))
   :config
+  (set-repl-handler! 'rjsx-mode #'+javascript/open-repl)
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?:))
+
   (setq js-chain-indent t
+        ;; These have become standard in the JS community
+        js2-basic-offset 2
         ;; Don't mishighlight shebang lines
         js2-skip-preprocessor-directives t
         ;; let flycheck handle this
@@ -45,41 +64,21 @@
         js2-mode-show-strict-warnings nil
         ;; Flycheck provides these features, so disable them: conflicting with
         ;; the eslint settings.
-        js2-strict-trailing-comma-warning nil
         js2-strict-missing-semi-warning nil
         ;; maximum fontification
         js2-highlight-level 3
-        js2-highlight-external-variables t
-        js2-idle-timer-delay 0.1)
+        js2-idle-timer-delay 0.15)
 
-  (add-hook 'js2-mode-hook #'rainbow-delimiters-mode)
-  ;; Indent switch-case another step
-  (setq-hook! 'js2-mode-hook
-    js-switch-indent-offset js2-basic-offset
-    mode-name "JS2")
+  (setq-hook! 'rjsx-mode-hook
+    ;; Indent switch-case another step
+    js-switch-indent-offset js2-basic-offset)
 
-  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
-  (set-repl-handler! 'js2-mode #'+javascript/open-repl))
-
-
-(use-package! rjsx-mode
-  :mode "components/.+\\.js$"
-  :init
-  (defun +javascript-jsx-file-p ()
-    "Detect React or preact imports early in the file."
-    (and buffer-file-name
-         (string= (file-name-extension buffer-file-name) "js")
-         (re-search-forward "\\(^\\s-*import +React\\|\\( from \\|require(\\)[\"']p?react\\)"
-                            magic-mode-regexp-match-limit t)
-         (progn (goto-char (match-beginning 1))
-                (not (sp-point-in-string-or-comment)))))
-  (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
-  :config
-  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
-  (when (featurep! :checkers syntax)
-    (add-hook! 'rjsx-mode-hook
-      ;; jshint doesn't know how to deal with jsx
-      (push 'javascript-jshint flycheck-disabled-checkers)))
+  (use-package! xref-js2
+    :when (featurep! :tools lookup)
+    :init
+    (setq xref-js2-search-program 'rg)
+    (set-lookup-handlers! 'rjsx-mode
+      :xref-backend #'xref-js2-xref-backend))
 
   ;; HACK `rjsx-electric-gt' relies on js2's parser to tell it when the cursor
   ;;      is in a self-closing tag, so that it can insert a matching ending tag
@@ -93,60 +92,63 @@
 
 (use-package! typescript-mode
   :hook (typescript-mode . rainbow-delimiters-mode)
+  :hook (typescript-tsx-mode . rainbow-delimiters-mode)
+  :commands typescript-tsx-mode
+  :init
+  ;; REVIEW We associate TSX files with `typescript-tsx-mode' derived from
+  ;;        `web-mode' because `typescript-mode' does not officially support
+  ;;        JSX/TSX. See emacs-typescript/typescript.el#4
+  (add-to-list 'auto-mode-alist
+               (cons "\\.tsx\\'"
+                     (if (featurep! :lang web)
+                         #'typescript-tsx-mode
+                       #'typescript-mode)))
+
+  (when (featurep! :checkers syntax)
+    (after! flycheck
+      (flycheck-add-mode 'javascript-eslint 'web-mode)
+      (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+      (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
+      (flycheck-add-mode 'typescript-tslint 'typescript-tsx-mode)
+      (unless (featurep! +lsp)
+        (after! tide
+          (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint) 'append)
+          (flycheck-add-mode 'typescript-tide 'typescript-tsx-mode)))
+      (add-hook! 'typescript-tsx-mode-hook
+        (defun +javascript-disable-tide-checkers-h ()
+          (pushnew! flycheck-disabled-checkers
+                    'javascript-jshint
+                    'tsx-tide
+                    'jsx-tide)))))
   :config
-  (set-electric! 'typescript-mode
-    :chars '(?\} ?\)) :words '("||" "&&"))
-  (set-ligatures! 'typescript-mode
-    ;; Functional
-    :def "function"
-    :lambda "() =>"
-    :composition "compose"
-    ;; Types
-    :null "null"
-    :true "true" :false "false"
-    :int "number"
-    :str "string"
-    :bool "boolean"
-    ;; Flow
-    :not "!"
-    :and "&&" :or "||"
-    :for "for"
-    :return "return" :yield "import")
+  (when (fboundp 'web-mode)
+    (define-derived-mode typescript-tsx-mode web-mode "TypeScript-TSX"))
+
+  (set-docsets! '(typescript-mode typescript-tsx-mode)
+    :add "TypeScript" "AngularTS")
+  (set-electric! '(typescript-mode typescript-tsx-mode)
+    :chars '(?\} ?\))
+    :words '("||" "&&"))
   ;; HACK Fixes comment continuation on newline
+  (autoload 'js2-line-break "js2-mode" nil t)
   (setq-hook! 'typescript-mode-hook
-    comment-line-break-function #'js2-line-break))
+    comment-line-break-function #'js2-line-break
 
-;; REVIEW We associate TSX files with `typescript-tsx-mode' derived from
-;;        `web-mode' because `typescript-mode' does not officially support
-;;        JSX/TSX. See
-;;        https://github.com/emacs-typescript/typescript.el/issues/4
-(if (featurep! :lang web)
-    (progn
-      (define-derived-mode typescript-tsx-mode web-mode "TypeScript-tsx")
-      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-tsx-mode))
-
-      (add-hook 'typescript-tsx-mode-hook #'emmet-mode)
-
-      (after! flycheck
-        (flycheck-add-mode 'typescript-tslint 'typescript-tsx-mode)
-        (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)))
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
-
-(after! (:any typescript-mode web-mode)
-  (set-docsets! '(typescript-mode typescript-tsx-mode) "TypeScript" "AngularTS"))
-
-
-;;;###package coffee-mode
-(setq coffee-indent-like-python-mode t)
-(after! coffee-mode
-  (set-docsets! 'coffee-mode "CoffeeScript"))
+    ;; Most projects use either eslint, prettier, .editorconfig, or tsf in order
+    ;; to specify indent level and formatting. In the event that no
+    ;; project-level config is specified (very rarely these days), the community
+    ;; default is 2, not 4. However, respect what is in tsfmt.json if it is
+    ;; present in the project
+    typescript-indent-level
+    (or (and (bound-and-true-p tide-mode)
+             (plist-get (tide-tsfmt-options) :indentSize))
+        typescript-indent-level)))
 
 
 ;;
 ;;; Tools
 
-(add-hook! '(js2-mode-local-vars-hook
-             typescript-mode-local-vars-hook
+(add-hook! '(typescript-mode-local-vars-hook
              typescript-tsx-mode-local-vars-hook
              web-mode-local-vars-hook
              rjsx-mode-local-vars-hook)
@@ -160,45 +162,48 @@ If LSP fails to start (e.g. no available server or project), then we fall back
 to tide."
     (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
       (when (derived-mode-p 'js-mode 'typescript-mode 'typescript-tsx-mode)
-        (if (not buffer-file-name)
+        (if (null buffer-file-name)
             ;; necessary because `tide-setup' and `lsp' will error if not a
             ;; file-visiting buffer
-            (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h nil 'local)
-          (or (and (featurep! +lsp) (lsp!))
+            (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h
+                      nil 'local)
+          (or (if (featurep! +lsp) (lsp!))
               ;; fall back to tide
               (if (executable-find "node")
                   (and (require 'tide nil t)
                        (progn (tide-setup) tide-mode))
                 (ignore
                  (doom-log "Couldn't start tide because 'node' is missing"))))
-          (remove-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h 'local))))))
+          (remove-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h
+                       'local))))))
 
 
 (use-package! tide
-  :defer t
+  :hook (tide-mode . tide-hl-identifier-mode)
   :config
-  (setq tide-completion-detailed t
-        tide-always-show-documentation t
-        ;; Fix #1792: by default, tide ignores payloads larger than 100kb. This
-        ;; is too small for larger projects that produce long completion lists,
-        ;; so we up it to 512kb.
-        tide-server-max-response-length 524288)
-  ;; code completion
-  (after! company
-    ;; tide affects the global `company-backends', undo this so doom can handle
-    ;; it buffer-locally
-    (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
   (set-lookup-handlers! 'tide-mode :async t
     :xref-backend #'xref-tide-xref-backend
     :documentation #'tide-documentation-at-point)
   (set-popup-rule! "^\\*tide-documentation" :quit t)
-  ;; resolve to `doom-project-root' if `tide-project-root' fails
+
+  (setq tide-completion-detailed t
+        tide-always-show-documentation t
+        ;; Fix #1792: by default, tide ignores payloads larger than 100kb. This
+        ;; is too small for larger projects that produce long completion lists,
+        ;; so we up it to 512kb.
+        tide-server-max-response-length 524288
+        ;; We'll handle it
+        tide-completion-setup-company-backend nil)
+
+  ;; Resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript-tide-project-root-a)
-  ;; cleanup tsserver when no tide buffers are left
+
+  ;; Cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
-    (add-hook 'kill-buffer-hook #'+javascript-cleanup-tide-processes-h nil t))
+    (add-hook 'kill-buffer-hook #'+javascript-cleanup-tide-processes-h
+              nil 'local))
 
   ;; Eldoc is activated too soon and disables itself, thinking there is no eldoc
   ;; support in the current buffer, so we must re-enable it later once eldoc
@@ -212,14 +217,6 @@ to tide."
         "f"   #'tide-format
         "rrs" #'tide-rename-symbol
         "roi" #'tide-organize-imports))
-
-
-(use-package! xref-js2
-  :when (featurep! :tools lookup)
-  :after (:or js2-mode rjsx-mode)
-  :config
-  (set-lookup-handlers! '(js2-mode rjsx-mode)
-    :xref-backend #'xref-js2-xref-backend))
 
 
 (use-package! js2-refactor
@@ -296,10 +293,9 @@ to tide."
            css-mode
            web-mode
            markdown-mode
-           js-mode
+           js-mode  ; includes js2-mode and rjsx-mode
            json-mode
            typescript-mode
-           typescript-tsx-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
   :add-hooks '(add-node-modules-path npm-mode))

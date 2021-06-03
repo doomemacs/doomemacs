@@ -24,60 +24,37 @@ byte-compiled from.")
                (target +literate-config-file)
                (cache +literate-config-cache-file)
                (dest (expand-file-name (concat doom-module-config-file ".el")))
-               ;; Operate on a copy because `org-babel-tangle' has
-               ;; side-effects we need to undo immediately as not to
-               ;; overwrite the user's config; it's bad ettiquite.
-               (backup (make-temp-file (concat (file-name-nondirectory target) ".")))
-
-               ;; HACK A hack to prevent ob-tangle from operating relative to
-               ;;      the backup file and thus tangling to the wrong
-               ;;      destinations.
-               (defun org-babel-tangle-single-block (&rest args)
-                 (let* ((spec (apply org-babel-tangle-single-block args))
-                        (file (nth 1 spec))
-                        (file (if (file-equal-p file backup) target file))
-                        (file (if org-babel-tangle-use-relative-file-links
-                                  (file-relative-name file)
-                                file)))
-                   (setf (nth 1 spec) file)
-                   spec))
                ;; Ensure output conforms to the formatting of all doom CLIs
                (defun message (msg &rest args)
                  (when msg
                    (print! (info "%s") (apply #'format msg args)))))
          (print! (start "Compiling your literate config..."))
          (print-group!
-          (unwind-protect
-              (with-temp-file backup
-                (insert-file-contents target)
-                (let ((buffer-file-name backup)
-                      ;; Prevent unwanted entries in recentf, or formatters, or
-                      ;; anything that could be on these hooks, really. Nothing
-                      ;; else should be touching these files (particularly in
-                      ;; interactive sessions).
-                      (write-file-functions nil)
-                      (before-save-hook nil)
-                      (after-save-hook nil)
-                      ;; Prevent infinite recursion due to recompile-on-save
-                      ;; hooks later, and speed up `org-mode' init.
-                      (org-mode-hook nil)
-                      (org-inhibit-startup t)
-                      ;; Allow evaluation of src blocks at tangle-time (would
-                      ;; abort them otherwise). This is a security hazard, but
-                      ;; Doom will trust that you know what you're doing!
-                      (org-confirm-babel-evaluate nil))
-                  (org-mode)
-                  (with-silent-modifications
-                    ;; Tangling won't ordinarily expand #+INCLUDE directives,
-                    ;; so I do it myself.
-                    (org-export-expand-include-keyword)
-                    (org-babel-tangle nil dest))))
-            (ignore-errors (delete-file backup)))
+          (let (;; Do as little unnecessary work as possible in these org files.
+                (org-startup-indented nil)
+                (org-startup-folded nil)
+                (vc-handled-backends nil)
+                ;; Prevent unwanted entries in recentf, or formatters, or
+                ;; anything that could be on these hooks, really. Nothing else
+                ;; should be touching these files (particularly in interactive
+                ;; sessions).
+                (write-file-functions nil)
+                (before-save-hook nil)
+                (after-save-hook nil)
+                ;; Prevent infinite recursion due to recompile-on-save hooks
+                ;; later, and speed up `org-mode' init.
+                (org-mode-hook nil)
+                (org-inhibit-startup t)
+                ;; Allow evaluation of src blocks at tangle-time (would abort
+                ;; them otherwise). This is a security hazard, but Doom will
+                ;; trust that you know what you're doing!
+                (org-confirm-babel-evaluate nil))
+            (org-babel-tangle-file target dest))
           ;; Write an empty file to serve as our mtime cache
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (throw 'exit "__NOTANGLE=1 $@"))))))
+            (throw 'exit "__DOOMRESTART=1 __NOTANGLE=1 $@"))))))
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)

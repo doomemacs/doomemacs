@@ -1,0 +1,42 @@
+#+TITLE:   ui/vi-tilde-fringe
+#+DATE:    May 22, 2021
+#+SINCE:   v2.0.5
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+
+* Description
+Displays a tilde(~) in the left fringe to indicate an empty line, similar to Vi. 
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Configuration
+By default, doom activates ~vi-tilde-fringe-mode~ for ~prog-mode~, ~text-mode~ and ~conf-mode~. To change this to your liking, you can remove any of the modes from the list
+
+#+begin_src emacs-lisp
+;; in ~/.doom.d/config.el
+(remove-hook 'text-mode-hook #'vi-tilde-fringe-mode)
+#+end_src
+
+or add new modes where you would like ~vi-tilde-fringe-mode~ enabled.
+
+#+begin_src emacs-lisp
+;; in ~/.doom.d/config.el
+(add-hook 'org-mode-hook #'vi-tilde-fringe-mode)
+#+end_src

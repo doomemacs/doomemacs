@@ -4,6 +4,14 @@
   "What direction to open new windows from the status buffer.
 For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
 
+(defvar +magit-fringe-size 14
+  "Size of the fringe in magit-mode buffers.
+
+Can be an integer or a cons cell whose CAR and CDR are integer widths for the
+left and right fringe.
+
+Only has an effect in GUI Emacs.")
+
 
 ;;
 ;;; Packages
@@ -105,6 +113,17 @@ For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
 
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
+
+  (add-hook! 'magit-mode-hook
+    (add-hook! 'window-configuration-change-hook :local
+      (defun +magit-enlargen-fringe-h ()
+        "Make fringe larger in magit."
+        (and (display-graphic-p)
+             (derived-mode-p 'magit-mode)
+             +magit-fringe-size
+             (let ((left  (or (car-safe +magit-fringe-size) +magit-fringe-size))
+                   (right (or (cdr-safe +magit-fringe-size) +magit-fringe-size)))
+               (set-window-fringes nil left right))))))
 
   ;; An optimization that particularly affects macOS and Windows users: by
   ;; resolving `magit-git-executable' Emacs does less work to find the

@@ -38,7 +38,8 @@ directives. By default, this only recognizes C directives.")
         evil-mode-line-format 'nil
         ;; more vim-like behavior
         evil-symbol-word-search t
-        ;; cursor appearance
+        ;; if the current state is obvious from the cursor's color/shape, then
+        ;; we won't need superfluous indicators to do it instead.
         evil-default-cursor '+evil-default-cursor-fn
         evil-normal-state-cursor 'box
         evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn)
@@ -63,8 +64,6 @@ directives. By default, this only recognizes C directives.")
   :config
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (put 'evil-define-key* 'lisp-indent-function 'defun)
-
   ;; stop copying each visual state move to the clipboard:
   ;; https://github.com/emacs-evil/evil/issues/336
   ;; grokked from:
@@ -82,21 +81,19 @@ directives. By default, this only recognizes C directives.")
           ("^\\*Command Line"   :size 8)))))
 
   ;; Change the cursor color in emacs state. We do it this roundabout way
-  ;; instead of changing `evil-default-cursor' (or `evil-emacs-state-cursor') so
-  ;; it won't interfere with users who have changed these variables.
-  (defvar +evil--default-cursor-color "#ffffff")
-  (defvar +evil--emacs-cursor-color "#ff9999")
-
-  (add-hook! 'doom-load-theme-hook
+  ;; to ensure changes in theme doesn't break these colors.
+  (add-hook! '(doom-load-theme-hook doom-init-modules-hook)
     (defun +evil-update-cursor-color-h ()
-      (setq +evil--default-cursor-color (face-background 'cursor)
-            +evil--emacs-cursor-color (face-foreground 'warning))))
+      (put 'cursor 'evil-emacs-color  (face-foreground 'warning))
+      (put 'cursor 'evil-normal-color (face-background 'cursor))))
 
   (defun +evil-default-cursor-fn ()
-    (evil-set-cursor-color +evil--default-cursor-color))
+    (evil-set-cursor-color (get 'cursor 'evil-normal-color)))
   (defun +evil-emacs-cursor-fn ()
-    (evil-set-cursor-color +evil--emacs-cursor-color))
+    (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
+  ;; Ensure `evil-shift-width' always matches `tab-width'; evil does not police
+  ;; this itself, so we must.
   (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
 
@@ -310,7 +307,7 @@ directives. By default, this only recognizes C directives.")
 
 (use-package! evil-escape
   :commands evil-escape
-  :after-call pre-command-hook
+  :hook (doom-first-input . evil-escape-mode)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
@@ -318,15 +315,14 @@ directives. By default, this only recognizes C directives.")
         evil-escape-delay 0.15)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; no `evil-escape' in minibuffer, unless `evil-collection-setup-minibuffer'
-  ;; is enabled, where we could be in insert mode in the minibuffer.
+  ;; `evil-escape' in the minibuffer is more disruptive than helpful. That is,
+  ;; unless we have `evil-collection-setup-minibuffer' enabled, in which case we
+  ;; want the same behavior in insert mode as we do in normal buffers.
   (add-hook! 'evil-escape-inhibit-functions
     (defun +evil-inhibit-escape-in-minibuffer-fn ()
       (and (minibufferp)
            (or (not (bound-and-true-p evil-collection-setup-minibuffer))
-               (evil-normal-state-p)))))
-  ;; so that evil-escape-mode-hook runs, and can be toggled by evil-mc
-  (evil-escape-mode +1))
+               (evil-normal-state-p))))))
 
 
 (use-package! evil-exchange
@@ -351,20 +347,16 @@ directives. By default, this only recognizes C directives.")
 
 
 (use-package! evil-snipe
-  :commands (evil-snipe-mode
-             evil-snipe-override-mode
-             evil-snipe-local-mode
-             evil-snipe-override-local-mode)
-  :after-call pre-command-hook
+  :commands evil-snipe-local-mode evil-snipe-override-local-mode
+  :hook (doom-first-input . evil-snipe-override-mode)
+  :hook (doom-first-input . evil-snipe-mode)
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t)
   :config
-  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode)
-  (evil-snipe-mode +1)
-  (evil-snipe-override-mode +1))
+  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode))
 
 
 (use-package! evil-surround

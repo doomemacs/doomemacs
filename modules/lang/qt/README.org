@@ -1,0 +1,31 @@
+#+TITLE:   lang/qt
+#+DATE:    May 22, 2021
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+
+* Description
+# A summary of what this module does.
+This module provides language functionality for [[https://qt.io][Qt]] specific files.
+
++ Syntax highlighting for [[https:://en.wikipedia.org/wiki/QML][qml]] files
++ Syntax highlighting for .pro and .pri files used by [[https://doc.qt.io/qt-5/qmake-project-files.html][qmake]]
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/coldnew/qml-mode/tree/master][qml-mode]]
++ [[https://github.com/EricCrosson/qt-pro-mode][qt-pro-mode]]
+
+* Prerequisites
+This module has no prerequisites.

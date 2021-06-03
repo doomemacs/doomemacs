@@ -1,16 +1,17 @@
 ---
 name: 📝 Bug Report
 description: Report a bug, error, or misbehavior
-title: "Briefly summarize your issue here"
+title: Briefly summarize your issue here
 labels: ["1. bug", "needs-triage"]
 body:
 - type: markdown
   attributes:
     value: |
-      **Thank you for reporting an issue to our issue tracker!**
+      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
 
-      Before you proceed, please consult our available resources and collect as much information about your issue as possible:
+      **Before you proceed...**
 
+      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration. To help us rule out these possibilities please follow these guidelines:
       <br />
 - type: checkboxes
   attributes:
@@ -19,11 +20,11 @@ body:
         required: true
       - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
         required: true
-      - label: I have searched [the Discourse](https://discourse.doomemacs.org/docs) for any errors and solutions.
+      - label: I have searched [the Discourse](https://doomemacs.org/d/docs) for any errors and solutions.
         required: true
       - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
         required: true
-      - label: I have read [How to Debug Issues](https://discourse.doomemacs.org/how2debug) and found no solution.
+      - label: I have read [How to Debug Issues](https://doomemacs.org/d/how2debug) and found no solution.
         required: true
 - type: textarea
   attributes:
@@ -36,9 +37,11 @@ body:
     label: What actually happened?
     description: |
       + Include screenshots/casts, if possible
+      + List *all* error messages and **[include backtraces for each of them](https://doomemacs.org/d/how2backtrace)
+      + Include any suspicious logs in the **[\*Messages\*](https://doomemacs.org/d/t/55) buffer.
       + If you include log dumps, please use [pastebin.com](https://pastebin.com)
-      + List *all* error messages and **[include backtraces for each of them](https://discourse.doomemacs.org/how2backtrace)
       + **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, error messages, and backtraces.**
+      + Avoid phrases like "X does not work" or "X stopped working" without explaining what "working" means.
     placeholder: |
       When I do X, Z happened. Here is the backtrace:
 
@@ -70,7 +73,7 @@ body:
 - type: textarea
   attributes:
     label: Steps to reproduce
-    description: How do we reproduce your issue? Please walk us through a minimal test case.
+    description: How do we reproduce your issue? Walk us through a minimal test case.
     placeholder: |
       1. Open Emacs
       2. `M-x doom/info` and be prompted to visit pastebin.com
@@ -91,3 +94,9 @@ body:
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
+- type: markdown
+  attributes:
+    value: |
+      Before you go, please make sure your report's title is descriptive and specific. Avoid phrases like "X doesn't work" or "X stopped working". Error messages are best, but failing that, try to describe what "working" means to you.
+
+      **Thank you for taking the time to fill out a bug report!**

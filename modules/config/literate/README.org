@@ -13,7 +13,6 @@
 - [[#configuration][Configuration]]
   - [[#change-the-location-of-configorg][Change the location of config.org]]
   - [[#change-where-src-blocks-are-tangled-or-prevent-it-entirely][Change where src blocks are tangled or prevent it entirely]]
-  - [[#modularizing-your-literate-config-with-include-directives][Modularizing your literate config with ~#+INCLUDE~ directives]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-to-tangle-to-doomdirinitel][How to tangle to =DOOMDIR/init.el=]]
   - [[#how-to-disable-tangle-on-save][How to disable tangle-on-save]]
@@ -85,21 +84,6 @@ echo Hello world
 
 You'll find more information about babel src blocks and what parameters they
 support [[https://orgmode.org/manual/Working-with-Source-Code.html][in the manual]].
-
-** Modularizing your literate config with ~#+INCLUDE~ directives
-Literate configs can be split up into separate files and imported into a central
-=config.org= using the ~#+INCLUDE~ org directive. Here are some examples:
-#+BEGIN_SRC org
-,#+INCLUDE other-file.org
-,#+INCLUDE: "~/my-book/chapter2.org" :minlevel 1
-,#+INCLUDE: "~/.emacs" :lines "5-10"
-,#+INCLUDE: "~/.emacs" :lines "-10"
-,#+INCLUDE: "~/.emacs" :lines "10-"
-,#+INCLUDE: "./paper.org::*conclusion" :lines 1-20
-,#+INCLUDE: "./paper.org::#theory" :only-contents t
-#+END_SRC
-
-See [[https://orgmode.org/manual/Include-Files.html][this entry in the Emacs manual]] for more on this directive.
 
 * Troubleshooting
 ** How to tangle to =DOOMDIR/init.el=

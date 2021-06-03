@@ -6,11 +6,9 @@
 
 
 (use-package! doom-themes
-  :defer t
-  :init
-  (setq doom-theme 'doom-one)
   ;; improve integration w/ org-mode
-  (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
+  :hook (doom-load-theme . doom-themes-org-config)
+  :init (setq doom-theme 'doom-one)
   ;; more Atom-esque file icons for neotree/treemacs
   (when (featurep! :ui neotree)
     (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
@@ -23,4 +21,7 @@
 
 (use-package! solaire-mode
   :when (or (daemonp) (display-graphic-p))
-  :hook (doom-load-theme . solaire-global-mode))
+  :hook (doom-load-theme . solaire-global-mode)
+  :hook (+popup-buffer-mode . solaire-mode)
+  :hook (which-key-init-buffer . solaire-mode)
+  :config (advice-add #'transient--insert-groups :before #'solaire-mode))

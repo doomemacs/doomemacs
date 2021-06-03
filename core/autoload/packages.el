@@ -164,8 +164,8 @@ each package."
   (mapc (fn! ((cat . mod))
           (if-let (packages-file
                    (pcase cat
-                     (:private (doom-glob doom-private-dir "packages.el"))
-                     (:core    (doom-glob doom-core-dir "packages.el"))
+                     (:private (car (doom-glob doom-private-dir "packages.el")))
+                     (:core    (car (doom-glob doom-core-dir "packages.el")))
                      (_ (doom-module-locate-path cat mod "packages.el"))))
               (with-current-buffer
                   (or (get-file-buffer packages-file)

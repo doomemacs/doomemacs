@@ -31,7 +31,7 @@ powered by [[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
 + [[https://gitlab.com/jaor/geiser][geiser]]
 + [[https://github.com/nbfalcon/macrostep-geiser][macrostep-geiser]]
 + [[https://gitlab.com/emacs-geiser/chez][geiser-chez]] (if =+chez=)
-+ [[https://gitlab.com/emacs-geiser/chez][geiser-chibi]] (if =+chibi=)
++ [[https://gitlab.com/emacs-geiser/chibi][geiser-chibi]] (if =+chibi=)
 + [[https://gitlab.com/emacs-geiser/chicken][geiser-chicken]] (if =+chicken=)
 + [[https://gitlab.com/emacs-geiser/gambit][geiser-gambit]] (if =+gambit=)
 + [[https://gitlab.com/emacs-geiser/gauche][geiser-gauche]] (if =+gauche=)

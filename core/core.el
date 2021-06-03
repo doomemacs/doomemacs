@@ -300,6 +300,7 @@ config.el instead."
 ;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
 ;; when it's idle.
 (setq gcmh-idle-delay 5  ; default is 15s
+      gcmh-high-cons-threshold (* 16 1024 1024)  ; 16mb
       gcmh-verbose doom-debug-p)
 
 ;; Emacs "updates" its ui more often than it needs to, so slow it down slightly

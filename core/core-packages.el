@@ -96,10 +96,7 @@ uses a straight or package.el command directly).")
       ;; no affect on packages that are pinned, however (run 'doom purge' to
       ;; compact those after-the-fact). Some packages break when shallow cloned
       ;; (like magit and org), but we'll deal with that elsewhere.
-      straight-vc-git-default-clone-depth 1
-      ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
-      ;; we don't have to deal with them at all.
-      autoload-compute-prefixes nil)
+      straight-vc-git-default-clone-depth '(1 single-branch))
 
 (with-eval-after-load 'straight
   ;; `let-alist' is built into Emacs 26 and onwards
@@ -121,43 +118,89 @@ uses a straight or package.el command directly).")
                           "://github.com/"
                           (or (plist-get recipe :repo) "raxod502/straight.el")))
         (branch (or (plist-get recipe :branch) straight-repository-branch))
-        (call (if doom-debug-p #'doom-exec-process #'doom-call-process)))
+        (call (if doom-debug-p
+                  (lambda (&rest args)
+                    (print! "%s" (cdr (apply #'doom-call-process args))))
+                (lambda (&rest args)
+                  (apply #'doom-call-process args)))))
     (unless (file-directory-p repo-dir)
-      (message "Installing straight...")
-      (cond
-       ((eq straight-vc-git-default-clone-depth 'full)
-        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir))
-       ((null pin)
-        (funcall call "git" "clone" "--origin" "origin" repo-url repo-dir
-                 "--depth" (number-to-string straight-vc-git-default-clone-depth)
-                 "--branch" straight-repository-branch
-                 "--single-branch" "--no-tags"))
-       ((integerp straight-vc-git-default-clone-depth)
-        (make-directory repo-dir t)
-        (let ((default-directory repo-dir))
-          (funcall call "git" "init")
-          (funcall call "git" "checkout" "-b" straight-repository-branch)
-          (funcall call "git" "remote" "add" "origin" repo-url)
-          (funcall call "git" "fetch" "origin" pin
-                   "--depth" (number-to-string straight-vc-git-default-clone-depth)
-                   "--no-tags")
-          (funcall call "git" "checkout" "--detach" pin)))))
+      (save-match-data
+        (unless (executable-find "git")
+          (user-error "Git isn't present on your system. Cannot proceed."))
+        (let* ((version (cdr (doom-call-process "git" "version")))
+               (version
+                (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
+                     (match-string 0 version))))
+          (if version
+              (when (version< version "2.23")
+                (user-error "Git %s detected! Doom requires git 2.23 or newer!"
+                            version)))))
+      (print! (start "Installing straight..."))
+      (print-group!
+       (cl-destructuring-bind (depth . options)
+           (doom-enlist straight-vc-git-default-clone-depth)
+         (let ((branch-switch (if (memq 'single-branch options)
+                                  "--single-branch"
+                                "--no-single-branch")))
+           (cond
+            ((eq 'full depth)
+             (funcall call "git" "clone" "--origin" "origin"
+                      branch-switch repo-url repo-dir))
+            ((integerp depth)
+             (if (null pin)
+                 (progn
+                   (when (file-directory-p repo-dir)
+                     (delete-directory repo-dir 'recursive))
+                   (funcall call "git" "clone" "--origin" "origin" repo-url
+                            "--no-checkout" repo-dir
+                            "--depth" (number-to-string depth)
+                            branch-switch
+                            "--no-tags"
+                            "--branch" straight-repository-branch))
+               (make-directory repo-dir 'recursive)
+               (let ((default-directory repo-dir))
+                 (funcall call "git" "init")
+                 (funcall call "git" "branch" "-m" straight-repository-branch)
+                 (funcall call "git" "remote" "add" "origin" repo-url
+                          "--master" straight-repository-branch)
+                 (funcall call "git" "fetch" "origin" pin
+                          "--depth" (number-to-string depth)
+                          "--no-tags")
+                 (funcall call "git" "reset" "--hard" pin)))))))))
     (require 'straight (concat repo-dir "/straight.el"))
     (doom-log "Initializing recipes")
-    (with-temp-buffer
-      (insert-file-contents (doom-path repo-dir "bootstrap.el"))
-      ;; Don't install straight for us -- we've already done that -- only set
-      ;; up its recipe repos for us.
-      (eval-region (search-forward "(require 'straight)")
-                   (point-max)))))
+    (mapc #'straight-use-recipes
+          '((org-elpa :local-repo nil)
+            (melpa              :type git :host github
+                                :repo "melpa/melpa"
+                                :build nil)
+            (gnu-elpa-mirror    :type git :host github
+                                :repo "emacs-straight/gnu-elpa-mirror"
+                                :build nil)
+            (el-get             :type git :host github
+                                :repo "dimitri/el-get"
+                                :build nil)
+            (emacsmirror-mirror :type git :host github
+                                :repo "emacs-straight/emacsmirror-mirror"
+                                :build nil)))))
 
 (defun doom--ensure-core-packages (packages)
   (doom-log "Installing core packages")
   (dolist (package packages)
-    (let ((name (car package)))
+    (let* ((name (car package))
+           (repo (symbol-name name)))
       (when-let (recipe (plist-get (cdr package) :recipe))
-        (straight-override-recipe (cons name recipe)))
-      (straight-use-package name))))
+        (straight-override-recipe (cons name recipe))
+        (when-let (local-repo (plist-get recipe :local-repo))
+          (setq repo local-repo)))
+      (print-group!
+       ;; Only clone the package, don't build them. Straight hasn't been fully
+       ;; configured by this point.
+       (straight-use-package name nil t))
+      ;; In case the package hasn't been built yet.
+      (or (member (directory-file-name (straight--build-dir (symbol-name name)))
+                  load-path)
+          (add-to-list 'load-path (directory-file-name (straight--repos-dir repo)))))))
 
 (defun doom-initialize-core-packages (&optional force-p)
   "Ensure `straight' is installed and was compiled with this version of Emacs."

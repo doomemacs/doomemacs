@@ -74,7 +74,7 @@ capture, the end position, and the output buffer.")
 
   ;; HACK Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
   ;;      which occurs when the first line contains a colon in it. See
-  ;;      https://github.com/jrblevin/markdown-mode/issues/328.
+  ;;      jrblevin/markdown-mode#328.
   (defadvice! +markdown-disable-front-matter-fontification-a (&rest _)
     :override #'markdown-match-generic-metadata
     (ignore (goto-char (point-max))))

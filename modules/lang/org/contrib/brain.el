@@ -31,11 +31,12 @@
       (let (keys)
         (map-keymap (lambda (event function)
                       (push function keys)
-                      (push event keys))
+                      (push (vector event) keys))
                     map)
         (apply #'evil-define-key* 'normal map keys)))
 
     (+org--evilify-map org-brain-visualize-mode-map)
     (+org--evilify-map org-brain-select-map)
     (+org--evilify-map org-brain-move-map)
-    (+org--evilify-map org-brain-polymode-map)))
+    (after! polymode
+      (+org--evilify-map org-brain-polymode-map))))

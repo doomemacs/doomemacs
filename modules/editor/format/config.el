@@ -34,19 +34,38 @@ select buffers.")
 ;;
 ;;; Bootstrap
 
+(defun +format-enable-for-lsp-on-save-maybe-h ()
+  "Enable LSP formatter when LSP client is available."
+  (remove-hook 'lsp-mode-hook #'+format-enable-for-lsp-on-save-maybe-h 'local)
+  (cond ((not +format-with-lsp) nil)
+        ((bound-and-true-p lsp-mode)
+         (when (lsp-feature? "textDocument/formatting")
+           (+format-enable-on-save-h))
+         t)
+        ((bound-and-true-p eglot--managed-mode)
+         (when (eglot--server-capable :documentRangeFormattingProvider)
+           (+format-enable-on-save-h))
+         t)
+        ((bound-and-true-p lsp--buffer-deferred)
+         (add-hook 'lsp-mode-hook #'+format-enable-for-lsp-on-save-maybe-h
+                   nil 'local)
+         t)))
+
 (defun +format-enable-on-save-maybe-h ()
   "Enable formatting on save in certain major modes.
 
 This is controlled by `+format-on-save-enabled-modes'."
-  (or (eq major-mode 'fundamental-mode)
-      (cond ((booleanp +format-on-save-enabled-modes)
-             (null +format-on-save-enabled-modes))
-            ((eq (car +format-on-save-enabled-modes) 'not)
-             (memq major-mode (cdr +format-on-save-enabled-modes)))
-            ((not (memq major-mode +format-on-save-enabled-modes))))
-      (not (require 'format-all nil t))
-      (null (car (format-all--probe)))
-      (+format-enable-on-save-h)))
+  (and (not (eq major-mode 'fundamental-mode))
+       (cond ((booleanp +format-on-save-enabled-modes)
+              +format-on-save-enabled-modes)
+             ((eq (car-safe +format-on-save-enabled-modes) 'not)
+              (not (memq major-mode (cdr +format-on-save-enabled-modes))))
+             ((memq major-mode +format-on-save-enabled-modes))
+             ((not (require 'format-all nil t))))
+       (not (+format-enable-for-lsp-on-save-maybe-h))
+       (let (current-prefix-arg) ; never prompt
+         (car (format-all--probe)))
+       (+format-enable-on-save-h)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))

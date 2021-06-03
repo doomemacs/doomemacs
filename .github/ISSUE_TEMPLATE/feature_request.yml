@@ -1,19 +1,28 @@
 ---
 name: 📝 Feature Request
 description: Propose a new idea or feature
-title: "Briefly summarize your request here"
+title: Briefly summarize your request here
 labels: ["1. request", "needs-triage"]
 body:
+- type: markdown
+  attributes:
+    value: |
+      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
+
+      **Before you proceed...**
+
+      To rule out the possibility that your request has already been made (or fulfilled), please follow these guidelines:
+      <br/>
 - type: checkboxes
   attributes:
     options:
-      - label: I have read the [contributing guide](https://discourse.doomemacs.org/how2contribute).
+      - label: I have read the [contributing guidelines](https://discourse.doomemacs.org/how2contribute).
         required: true
       - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues?q=label%3A%221.+request%22+) for similar requests.
         required: true
       - label: I have searched [the module list](https://doomemacs.org/docs/modules.org) in case my feature was already implemented.
         required: true
-      - label: I have confirmed that updating Doom won't fulfill my request.
+      - label: I have confirmed that my request remains unfulfilled on [the latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
         required: true
 - type: textarea
   attributes:
@@ -38,3 +47,7 @@ body:
       6. Ponder why your wife left you
   validations:
     required: true
+- type: markdown
+  attributes:
+    value: |
+      **Thank you for taking the time to fill out a feature request!**
