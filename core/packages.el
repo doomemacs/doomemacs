@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "7ca94a77983c35f7dca4bc082bd5dd779ced60b0")
+  :pin "0d9813ab078bd5bcd333345d75fb9e85f70bbfa6")
 
 ;; core-modules.el
 (package! use-package
@@ -25,7 +25,7 @@
   :pin "a7422fb8ab1baee19adb2717b5b47b9c3812a84c")
 
 ;; core-ui.el
-(package! all-the-icons :pin "d3f994916cd0bc7ff1ace52fe275cca1c6f75d18")
+(package! all-the-icons :pin "facbde4a7be292bf9490932cbe403b443273f45d")
 (package! hide-mode-line :pin "88888825b5b27b300683e662fa3be88d954b1cea")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "d576e6694ad3a3e88b2bb1363305b38fa364c149")
