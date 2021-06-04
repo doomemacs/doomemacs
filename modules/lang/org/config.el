@@ -986,7 +986,9 @@ compelling reason, so..."
   :config
   (setq org-clock-persist 'history
         ;; Resume when clocking into task with open clock
-        org-clock-in-resume t)
+        org-clock-in-resume t
+        ;; Remove log if task was clocked for 0:00 (accidental clocking)
+        org-clock-out-remove-zero-time-clocks t)
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
 
