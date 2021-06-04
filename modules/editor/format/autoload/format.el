@@ -102,9 +102,7 @@ Stolen shamelessly from go-mode"
 (defun +format-probe-a (orig-fn)
   "Use `+format-with' instead, if it is set.
 Prompts for a formatter if universal arg is set."
-  (cond ((or (eq +format-with :none)
-             (doom-temp-buffer-p (current-buffer))
-             (derived-mode-p 'special-mode))
+  (cond ((or buffer-read-only (eq +format-with :none))
          (list nil nil))
         (current-prefix-arg
          (list (or (+format-completing-read)
@@ -112,10 +110,18 @@ Prompts for a formatter if universal arg is set."
                t))
         (+format-with
          (list +format-with t))
+        ((and +format-with-lsp
+              (bound-and-true-p lsp-managed-mode)
+              (lsp-feature? "textDocument/rangeFormatting"))
+         (list 'lsp nil))
+        ((and +format-with-lsp
+              (bound-and-true-p eglot--managed-mode)
+              (eglot--server-capable :documentFormattingProvider))
+         (list 'eglot nil))
         ((funcall orig-fn))))
 
 ;;;###autoload
-(defun +format-buffer-a (orig-fn formatter mode-result)
+(defun +format-buffer-a (formatter mode-result)
   "Advice that extends `format-all-buffer--with' to:
 
 1. Enable partial/region reformatting, while preserving leading indentation,
@@ -124,78 +130,85 @@ Prompts for a formatter if universal arg is set."
 
 See `+format/buffer' for the interactive version of this function, and
 `+format-buffer-h' to use as a `before-save-hook' hook."
-  (let ((f-function (gethash formatter format-all--format-table))
-        (executable (format-all--formatter-executable formatter))
-        (indent 0)
-        (old-line-number (line-number-at-pos))
-        (old-column (current-column)))
-    (pcase-let*
-        ((`(,output ,errput)
-          ;; To reliably format regions, rather than the whole buffer, and
-          ;; `format-all' (and various formatting functions, like `gofmt') widen
-          ;; the buffer, we must copy the region first.
-          (let ((output (buffer-substring-no-properties (point-min) (point-max)))
-                (origin-buffer (or (buffer-base-buffer) (current-buffer))))
-            (with-temp-buffer
-              (with-silent-modifications
-                (insert output)
-                ;; Ensure this temp buffer seems as much like the origin
-                ;; buffer as possible, in case the formatter is an elisp
-                ;; function, like `gofmt'.
-                (cl-loop for (var . val)
-                         in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
-                         ;; Making enable-multibyte-characters buffer-local
-                         ;; causes an error.
-                         unless (eq var 'enable-multibyte-characters)
-                         ;; Using setq-local would quote var.
-                         do (set (make-local-variable var) val))
-                ;; Since we're piping a region of text to the formatter, remove
-                ;; any leading indentation to make it look like a file.
-                (setq indent (+format--current-indentation))
-                (when (> indent 0)
-                  (indent-rigidly (point-min) (point-max) (- indent)))
-                (funcall f-function executable mode-result)))))
-         (`,status
-          (cond ((null output) :error)
-                ((eq output t) :already-formatted)
-                (t :reformatted))))
-      (unwind-protect
-          (when (eq status :reformatted)
-            (let ((tmpfile (make-temp-file "doom-format"))
-                  (patchbuf (get-buffer-create " *doom format patch*"))
-                  (coding-system-for-read coding-system-for-read)
-                  (coding-system-for-write coding-system-for-write))
-              (unless IS-WINDOWS
-                (setq coding-system-for-read 'utf-8
-                      coding-system-for-write 'utf-8))
-              (unwind-protect
-                  (progn
-                    (with-current-buffer patchbuf
-                      (erase-buffer))
-                    (with-temp-file tmpfile
-                      (erase-buffer)
-                      (insert output)
-                      (when (> indent 0)
-                        ;; restore indentation without affecting new
-                        ;; indentation
-                        (indent-rigidly (point-min) (point-max)
-                                        (max 0 (- indent (+format--current-indentation))))))
-                    (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
-                        (setq status :already-formatted)
-                      (+format--apply-rcs-patch patchbuf)
-                      (list output errput)))
-                (kill-buffer patchbuf)
-                (delete-file tmpfile))))
-        (format-all--show-or-hide-errors errput)
-        (goto-char (point-min))
-        (forward-line (1- old-line-number))
-        (let ((line-length (- (point-at-eol) (point-at-bol))))
-          (goto-char (+ (point) (min old-column line-length))))
-        (run-hook-with-args 'format-all-after-format-functions formatter status)
-        (message (pcase status
-                   (:error "Formatting error")
-                   (:already-formatted "Already formatted")
-                   (:reformatted (format "Reformatted with %s" formatter))))))))
+  (cond
+   ((eq formatter 'lsp)
+    (call-interactively
+     (if +format-region-p #'lsp-format-region #'lsp-format-buffer)))
+   ((eq formatter 'eglot)
+    (call-interactively
+     (if +format-region-p #'eglot-format #'eglot-format-buffer)))
+   ((let ((f-function (gethash formatter format-all--format-table))
+          (executable (format-all--formatter-executable formatter))
+          (indent 0)
+          (old-line-number (line-number-at-pos))
+          (old-column (current-column)))
+      (pcase-let*
+          ((`(,output ,errput)
+            ;; To reliably format regions, rather than the whole buffer, and
+            ;; `format-all' (and various formatting functions, like `gofmt') widen
+            ;; the buffer, we must copy the region first.
+            (let ((output (buffer-substring-no-properties (point-min) (point-max)))
+                  (origin-buffer (or (buffer-base-buffer) (current-buffer))))
+              (with-temp-buffer
+                (with-silent-modifications
+                  (insert output)
+                  ;; Ensure this temp buffer seems as much like the origin
+                  ;; buffer as possible, in case the formatter is an elisp
+                  ;; function, like `gofmt'.
+                  (cl-loop for (var . val)
+                           in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
+                           ;; Making enable-multibyte-characters buffer-local
+                           ;; causes an error.
+                           unless (eq var 'enable-multibyte-characters)
+                           ;; Using setq-local would quote var.
+                           do (set (make-local-variable var) val))
+                  ;; Since we're piping a region of text to the formatter, remove
+                  ;; any leading indentation to make it look like a file.
+                  (setq indent (+format--current-indentation))
+                  (when (> indent 0)
+                    (indent-rigidly (point-min) (point-max) (- indent)))
+                  (funcall f-function executable mode-result)))))
+           (`,status
+            (cond ((null output) :error)
+                  ((eq output t) :already-formatted)
+                  (t :reformatted))))
+        (unwind-protect
+            (when (eq status :reformatted)
+              (let ((tmpfile (make-temp-file "doom-format"))
+                    (patchbuf (get-buffer-create " *doom format patch*"))
+                    (coding-system-for-read coding-system-for-read)
+                    (coding-system-for-write coding-system-for-write))
+                (unless IS-WINDOWS
+                  (setq coding-system-for-read 'utf-8
+                        coding-system-for-write 'utf-8))
+                (unwind-protect
+                    (progn
+                      (with-current-buffer patchbuf
+                        (erase-buffer))
+                      (with-temp-file tmpfile
+                        (erase-buffer)
+                        (insert output)
+                        (when (> indent 0)
+                          ;; restore indentation without affecting new
+                          ;; indentation
+                          (indent-rigidly (point-min) (point-max)
+                                          (max 0 (- indent (+format--current-indentation))))))
+                      (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
+                          (setq status :already-formatted)
+                        (+format--apply-rcs-patch patchbuf)
+                        (list output errput)))
+                  (kill-buffer patchbuf)
+                  (delete-file tmpfile))))
+          (format-all--show-or-hide-errors errput)
+          (goto-char (point-min))
+          (forward-line (1- old-line-number))
+          (let ((line-length (- (point-at-eol) (point-at-bol))))
+            (goto-char (+ (point) (min old-column line-length))))
+          (run-hook-with-args 'format-all-after-format-functions formatter status)
+          (message (pcase status
+                     (:error "Formatting error")
+                     (:already-formatted "Already formatted")
+                     (:reformatted (format "Reformatted with %s" formatter))))))))))
 
 
 ;;
@@ -221,23 +234,19 @@ If nil, BEG and/or END will default to the boundaries of the src block at point.
             (user-error "Cannot reformat an org src block in org-mode")
           (+format/region beg end))))))
 
+(defun +format--buffer ()
+  (if (and (eq major-mode 'org-mode)
+           (org-in-src-block-p t))
+      (+format--org-region (point-min) (point-max))
+    (if (called-interactively-p 'any)
+        (format-all-buffer)
+      (ignore-errors (format-all-buffer)))))
+
 ;;;###autoload
 (defun +format/buffer ()
   "Reformat the current buffer using LSP or `format-all-buffer'."
   (interactive)
-  (if (eq major-mode 'org-mode)
-      (when (org-in-src-block-p t)
-        (+format--org-region nil nil))
-    (call-interactively
-     (cond ((and +format-with-lsp
-                 (bound-and-true-p lsp-mode)
-                 (lsp-feature? "textDocument/formatting"))
-            #'lsp-format-buffer)
-           ((and +format-with-lsp
-                 (bound-and-true-p eglot--managed-mode)
-                 (eglot--server-capable :documentFormattingProvider))
-            #'eglot-format-buffer)
-           (#'format-all-buffer)))))
+  (+format--buffer))
 
 ;;;###autoload
 (defun +format/region (beg end)
@@ -247,21 +256,10 @@ WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "rP")
-  (if (and (eq major-mode 'org-mode)
-           (org-in-src-block-p t))
-      (+format--org-region beg end)
-    (cond ((and +format-with-lsp
-                (bound-and-true-p lsp-mode)
-                (lsp-feature? "textDocument/rangeFormatting"))
-           (call-interactively #'lsp-format-region))
-          ((and +format-with-lsp
-                (bound-and-true-p eglot--managed-mode)
-                (eglot--server-capable :documentRangeFormattingProvider))
-           (call-interactively #'eglot-format))
-          ((save-restriction
-             (narrow-to-region beg end)
-             (let ((+format-region-p t))
-               (+format/buffer)))))))
+  (let ((+format-region-p t))
+    (save-restriction
+      (narrow-to-region beg end)
+      (+format--buffer))))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
@@ -276,11 +274,6 @@ is selected)."
 
 ;;
 ;; Hooks
-
-;;;###autoload
-(defun +format-enable-on-save-h ()
-  "Enables formatting on save."
-  (add-hook 'before-save-hook #'+format-buffer-h nil t))
 
 ;;;###autoload
 (defalias '+format-buffer-h #'+format/buffer
