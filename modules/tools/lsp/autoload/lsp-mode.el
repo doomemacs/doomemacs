@@ -57,7 +57,7 @@
   (when-let (loc (lsp-request "textDocument/definition"
                               (lsp--text-document-position-params)))
     (lsp-show-xrefs (lsp--locations-to-xref-items loc) nil nil)
-    t))
+    'deferred))
 
 ;;;###autoload
 (defun +lsp-lookup-references-handler (&optional include-declaration)
@@ -70,4 +70,4 @@
                                  :context `(:includeDeclaration
                                             ,(lsp-json-bool include-declaration))))))
     (lsp-show-xrefs (lsp--locations-to-xref-items loc) nil t)
-    t))
+    'deferred))
