@@ -402,9 +402,10 @@ declaration) or dependency thereof that hasn't already been."
                      (print! (start "\033[K(%d/%d) Fetching %s...%s") i total package esc)
                      (doom--straight-with (straight-vc-fetch-from-remote recipe)
                        (when .it
-                         (setq output .output)
                          (straight-merge-package package)
                          (setq target-ref (straight-vc-get-commit type local-repo))
+                         (setq output (doom--commit-log-between ref target-ref)
+                               commits (length (split-string output "\n" t)))
                          (or (not (doom--same-commit-p target-ref ref))
                              (cl-return)))))
 
@@ -447,7 +448,8 @@ declaration) or dependency thereof that hasn't already been."
                        (doom--abbrev-commit ref)
                        (doom--abbrev-commit target-ref)
                        (if (and (integerp commits) (> commits 0))
-                           (format " [%d commit(s)]" commits)))
+                           (format " [%d commit(s)]" commits)
+                         ""))
                (unless (string-empty-p output)
                  (let ((lines (split-string output "\n")))
                    (setq output
