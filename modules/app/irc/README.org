@@ -79,7 +79,7 @@ takes the same arguments as ~circe-network-options~.
 #+BEGIN_SRC emacs-lisp :tangle no
 ;; if you omit =:host=, ~SERVER~ will be used instead.
 (after! circe
-  (set-irc-server! "chat.freenode.net"
+  (set-irc-server! "irc.libera.chat"
     `(:tls t
       :port 6697
       :nick "doom"
@@ -100,12 +100,12 @@ password store.
 ~+pass-get-user~ and ~+pass-get-secret~ can help here:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(set-irc-server! "chat.freenode.net"
+(set-irc-server! "irc.libera.chat"
   `(:tls t
     :port 6697
     :nick "doom"
-    :sasl-username ,(+pass-get-user   "irc/freenode.net")
-    :sasl-password ,(+pass-get-secret "irc/freenode.net")
+    :sasl-username ,(+pass-get-user   "irc/libera.chat")
+    :sasl-password ,(+pass-get-secret "irc/libera.chat")
     :channels ("#emacs")))
 #+END_SRC
 
@@ -113,12 +113,12 @@ But wait, there's more! This stores your password in a public variable which
 could be accessed or appear in backtraces. Not good! So we go a step further:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(set-irc-server! "chat.freenode.net"
+(set-irc-server! "irc.libera.chat"
   `(:tls t
     :port 6697
     :nick "doom"
-    :sasl-username ,(+pass-get-user "irc/freenode.net")
-    :sasl-password (lambda (&rest _) (+pass-get-secret "irc/freenode.net"))
+    :sasl-username ,(+pass-get-user "irc/libera.chat")
+    :sasl-password (lambda (&rest _) (+pass-get-secret "irc/libera.chat"))
     :channels ("#emacs")))
 #+END_SRC
 
@@ -151,9 +151,9 @@ username: myusername
       (error "Password not found for %S" params))))
 
 (defun my-nickserv-password (server)
-  (my-fetch-password :user "forcer" :host "irc.freenode.net"))
+  (my-fetch-password :user "forcer" :host "irc.libera.chat"))
 
-(set-irc-server! "chat.freenode.net"
+(set-irc-server! "irc.libera.chat"
   '(:tls t
     :port 6697
     :nick "doom"
