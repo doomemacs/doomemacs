@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "0d9813ab078bd5bcd333345d75fb9e85f70bbfa6")
+  :pin "915707ff5139cbfaf5f1aecd881ce0abaaddcecc")
 
 ;; core-modules.el
 (package! use-package
