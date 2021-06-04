@@ -447,7 +447,8 @@ declaration) or dependency thereof that hasn't already been."
                        (doom--abbrev-commit ref)
                        (doom--abbrev-commit target-ref)
                        (if (and (integerp commits) (> commits 0))
-                           (format " [%d commit(s)]" commits)))
+                           (format " [%d commit(s)]" commits)
+                         ""))
                (unless (string-empty-p output)
                  (let ((lines (split-string output "\n")))
                    (setq output
