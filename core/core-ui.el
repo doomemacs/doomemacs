@@ -584,12 +584,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (when doom-unicode-font
         (set-fontset-font t 'unicode doom-unicode-font))))
   (apply #'custom-set-faces
-         (append (when doom-font
-                   `((fixed-pitch ((t (:font ,doom-font))))))
-                 (when doom-serif-font
-                   `((fixed-pitch-serif ((t (:font ,doom-serif-font))))))
-                 (when doom-variable-pitch-font
-                   `((variable-pitch ((t (:font ,doom-variable-pitch-font))))))))
+         (let ((attrs '(:weight unspecified :slant unspecified :width unspecified)))
+           (append (when doom-font
+                     `((fixed-pitch ((t (:font ,doom-font ,@attrs))))))
+                   (when doom-serif-font
+                     `((fixed-pitch-serif ((t (:font ,doom-serif-font ,@attrs))))))
+                   (when doom-variable-pitch-font
+                     `((variable-pitch ((t (:font ,doom-variable-pitch-font ,@attrs)))))))))
   ;; Never save these settings to `custom-file'
   (dolist (sym '(fixed-pitch fixed-pitch-serif variable-pitch))
     (put sym 'saved-face nil))
