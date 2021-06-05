@@ -39,13 +39,12 @@
 
 ;; Smart tab, these will only work in GUI Emacs
 (map! :i [tab] (cmds! (and (featurep! :editor snippets)
-                           (bound-and-true-p yas-minor-mode)
                            (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                       #'yas-expand
                       (and (bound-and-true-p company-mode)
                            (featurep! :completion company +tng))
                       #'company-indent-or-complete-common)
-      :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+      :m [tab] (cmds! (and (featurep! :editor snippets)
                            (evil-visual-state-p)
                            (or (eq evil-visual-selection 'line)
                                (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))

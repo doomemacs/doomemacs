@@ -17,22 +17,14 @@
              yas-new-snippet
              yas-visit-snippet-file
              yas-activate-extra-mode
-             yas-deactivate-extra-mode)
+             yas-deactivate-extra-mode
+             yas-maybe-expand-abbrev-key-filter)
   :init
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)
 
-  (unless (daemonp)
-    ;; Ensure `yas-reload-all' is called as late as possible. Other modules
-    ;; could have additional configuration for yasnippet. For example,
-    ;; file-templates.
-    (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all)))
-
-  (add-hook! '(text-mode-hook
-               prog-mode-hook
-               conf-mode-hook
-               snippet-mode-hook)
-             #'yas-minor-mode-on)
+  ;; Lazy load yasnippet until it is needed
+  (add-transient-hook! #'company-yasnippet (require 'yasnippet))
 
   :config
   (add-to-list 'doom-debug-variables '(yas-verbosity . 3))
@@ -125,7 +117,7 @@
           (smartparens-mode 1)))))
 
   ;; If in a daemon session, front-load this expensive work:
-  (if (daemonp) (yas-reload-all)))
+  (yas-global-mode +1))
 
 
 (use-package! auto-yasnippet

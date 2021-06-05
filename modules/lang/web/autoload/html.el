@@ -127,7 +127,8 @@ snippet, or `emmet-expand-yas'/`emmet-expand-line', depending on whether
               (not (or (memq (char-after) (list ?\n ?\s ?\t))
                        (eobp))))
           #'indent-for-tab-command)
-         ((bound-and-true-p yas-minor-mode)
+         ((featurep! :editor snippets)
+          (require 'yasnippet)
           (if (yas--templates-for-key-at-point)
               #'yas-expand
             #'emmet-expand-yas))
