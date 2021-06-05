@@ -2,6 +2,7 @@
 
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
+  :hook(beancount-mode . yas-minor-mode-on)
   :init
   (add-hook 'beancount-mode-hook #'outline-minor-mode)
 
