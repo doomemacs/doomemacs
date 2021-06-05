@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: Java enum file template
+# --
+package `(+java-current-package)`;
+
+public enum `(+java-current-class)`
+{
+    $0
+}
