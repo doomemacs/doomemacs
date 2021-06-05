@@ -167,7 +167,7 @@ See `+format/buffer' for the interactive version of this function, and
                            in (cl-remove-if-not #'listp (buffer-local-variables (current-buffer)))
                            ;; Making enable-multibyte-characters buffer-local
                            ;; causes an error.
-                           unless (eq var enable-multibyte-characters)
+                           unless (eq var 'enable-multibyte-characters)
                            ;; Fixes #5133: don't deal with complicated hook
                            ;; functionality! This isn't a real buffer anyway.
                            unless (string-match-p (symbol-name var) "-\\(hook\\|functions\\)$")
