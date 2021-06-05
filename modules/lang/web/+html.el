@@ -36,6 +36,13 @@
       ("-xml" (memq major-mode '(nxml-mode xml-mode))))
     :ok-statuses '(0 1))
 
+  (set-formatter! '+web-go-template
+    #'(format-all--buffer-native 'web-mode
+                                 (lambda ()
+                                   (indent-region (point-min) (point-max))))
+    :modes '((web-mode (or (bound-and-true-p +web-go-template-mode)
+                           (bound-and-true-p +web-hugo-mode)))))
+
   (setq web-mode-enable-html-entities-fontification t
         web-mode-auto-close-style 1)
 
