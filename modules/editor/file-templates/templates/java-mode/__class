@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: Java file template
+# name: Java class file template
 # --
 package `(+java-current-package)`;
 
