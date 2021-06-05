@@ -148,7 +148,15 @@ See `+format/buffer' for the interactive version of this function, and
             ;; `format-all' (and various formatting functions, like `gofmt') widen
             ;; the buffer, we must copy the region first.
             (let ((output (buffer-substring-no-properties (point-min) (point-max)))
-                  (origin-buffer (or (buffer-base-buffer) (current-buffer))))
+                  (origin-buffer (or (buffer-base-buffer) (current-buffer)))
+                  ;; Fixes #5133: some packages (like lsp-mode) can do a bunch
+                  ;; of complicated stuff in these hooks. Better to not have to
+                  ;; deal with any of them at all.
+                  write-file-functions
+                  before-save-hook
+                  after-save-hook
+                  kill-buffer-query-functions
+                  kill-buffer-hook)
               (with-temp-buffer
                 (with-silent-modifications
                   (insert output)
@@ -156,10 +164,13 @@ See `+format/buffer' for the interactive version of this function, and
                   ;; buffer as possible, in case the formatter is an elisp
                   ;; function, like `gofmt'.
                   (cl-loop for (var . val)
-                           in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
+                           in (cl-remove-if-not #'listp (buffer-local-variables (current-buffer)))
                            ;; Making enable-multibyte-characters buffer-local
                            ;; causes an error.
-                           unless (eq var 'enable-multibyte-characters)
+                           unless (eq var enable-multibyte-characters)
+                           ;; Fixes #5133: don't deal with complicated hook
+                           ;; functionality! This isn't a real buffer anyway.
+                           unless (string-match-p (symbol-name var) "-\\(hook\\|functions\\)$")
                            ;; Using setq-local would quote var.
                            do (set (make-local-variable var) val))
                   ;; Since we're piping a region of text to the formatter, remove
