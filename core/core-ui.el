@@ -39,7 +39,8 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 The defaults on macOS and Linux are Apple Color Emoji and Symbola, respectively.
 
-An omitted font size means to inherit `doom-font''s size.")
+WARNING: if you specify a size for this font it will hard-lock any usage of this
+font to that size. It's rarely a good idea to do so!")
 
 (defvar doom-emoji-fallback-font-families
   '("Apple Color Emoji"
