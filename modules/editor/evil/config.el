@@ -448,7 +448,7 @@ directives. By default, this only recognizes C directives.")
        :n "[w"   #'+workspace/switch-left)
       (:when (featurep! :ui tabs)
        :n "gt"   #'+tabs:next-or-goto
-       :n "gT"   #'+tabs:previous-or-got)
+       :n "gT"   #'+tabs:previous-or-goto)
 
       ;; custom vim-unmpaired-esque keys
       :m  "]#"    #'+evil/next-preproc-directive
