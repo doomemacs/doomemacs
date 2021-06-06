@@ -80,8 +80,9 @@ Runs `doom-after-reload-hook' afterwards."
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
   ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%S sync -e" doom-bin)
-      (let ((doom-reloading-p t))
+  (doom--if-compile (format "%S sync -E" doom-bin)
+      (let ((doom-reloading-p t)
+            doom-env-file)
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"

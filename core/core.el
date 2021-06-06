@@ -646,8 +646,9 @@ to least)."
     ;; Load shell environment, optionally generated from 'doom env'. No need
     ;; to do so if we're in terminal Emacs, where Emacs correctly inherits
     ;; your shell environment.
-    (if (or (display-graphic-p)
-            (daemonp))
+    (if (and (or (display-graphic-p)
+                 (daemonp))
+             doom-env-file)
         (doom-load-envvars-file doom-env-file 'noerror))
 
     ;; Loads `use-package' and all the helper macros modules (and users) can use
