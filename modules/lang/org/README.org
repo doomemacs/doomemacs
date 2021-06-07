@@ -73,6 +73,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+pretty= Enables pretty unicode symbols for bullets and priorities, and
   better syntax highlighting for latex. Keep in mind: this can be expensive. If
   org becomes too slow, it'd be wise to disable this flag.
++ =+strike= Enables strikes-through for finished tasks.
 + =+roam= Enables org-roam integration. This requires ~sqlite3~ to be installed
   on your system.
 
