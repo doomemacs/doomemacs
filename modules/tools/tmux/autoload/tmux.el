@@ -65,11 +65,11 @@ but do not execute them."
   (apply #'+tmux +tmux-last-command))
 
 ;;;###autoload
-(defun +tmux/cd (&optional arg directory)
+(defun +tmux/cd (&optional directory)
   "Change the pwd of the currently active tmux pane to DIRECTORY (defaults to
 `default-directory', or to `doom-project-root' with the universal argument)."
   (interactive "PD")
-  (+tmux/run (format "cd %s" (or directory default-directory)) arg))
+  (+tmux/run (format "cd %s" (or directory default-directory))))
 
 ;;;###autoload
 (defun +tmux/cd-to-here ()
