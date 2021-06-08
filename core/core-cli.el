@@ -133,13 +133,14 @@ Environment variables:
                (let ((start-time (current-time)))
                  (run-hooks 'doom-cli-pre-hook)
                  (unless (getenv "__DOOMRESTART")
-                   (print! (start "Executing 'doom %s' %s")
+                   (print! (start "Executing 'doom %s' with Emacs %s at %s")
                            (string-join
                             (cons (or (ignore-errors
                                         (doom-cli-name (doom-cli-get command)))
                                       command)
                                   args)
                             " ")
+                           emacs-version
                            (format-time-string "%Y-%m-%d %H:%M:%S")))
                  (print-group!
                   (when-let (result (apply #'doom-cli-execute command args))
