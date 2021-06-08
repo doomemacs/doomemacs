@@ -7,6 +7,7 @@
   :mode "\\.l?eex\\'"
   :mode "\\.jsp\\'"
   :mode "\\.as[cp]x\\'"
+  :mode "\\.ejs\\'"
   :mode "\\.hbs\\'"
   :mode "\\.mustache\\'"
   :mode "\\.svelte\\'"
