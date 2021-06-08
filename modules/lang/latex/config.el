@@ -120,7 +120,8 @@ If no viewers are found, `latex-preview-pane' is used.")
     (add-hook! 'TeX-fold-mode-hook
       (defun +latex-fold-snippet-contents-h ()
         (add-hook! 'yas-after-exit-snippet-hook :local
-          (TeX-fold-region yas-snippet-beg yas-snippet-end)))))
+          (when (and yas-snippet-beg yas-snippet-end)
+            (TeX-fold-region yas-snippet-beg yas-snippet-end))))))
 
   (add-hook! 'mixed-pitch-mode-hook
     (defun +latex-fold-set-variable-pitch-h ()
