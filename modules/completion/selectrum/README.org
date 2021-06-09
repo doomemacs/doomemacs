@@ -43,10 +43,11 @@ This module has no prerequisites.
 
 * Features
 
-Selectrum and friends modify and use the built-in ~completing-read~ function,
-used by any function that requires completion. Due to this the full scope of
-these packages is too large to cover here, so we will detail Doom-specific
-additions:
+The packages in this module modify and use the built-in ~completing-read~
+function, which is used by any function that requires completion. Due to this
+the full scope of these packages is too large to cover here and you are
+encouraged to go and read their excellent documentation. We will detail
+Doom-specific additions:
 
 ** Jump-to navigation
 This module provides an interface to navigate within a project using
@@ -106,7 +107,7 @@ users).
 
 https://assets.doomemacs.org/completion/selectrum/search-replace.png
 
-** TODO In-buffer searching
+** In-buffer searching
 This module provides some in buffer searching bindings:
 
 + =SPC s s= (~isearch~)
@@ -158,6 +159,15 @@ or the last workspace by typing =0 SPC=.
 When using orderless to filter through candidates, the default behaviour is for
 each space separated input to match the candidate as a regular expression or
 literally.
+
+Note that due to this style of matching, pressing tab does not expand the input
+to the longest matching prefix (like shell completion), but rather uses the
+first matched candidate as input. Filtering further is instead achieved by
+pressing space and entering another input. In essence, when trying to match
+=foobar.org=, instead of option 1., use option 2.:
+
+1. (BAD) Enter =foo TAB=, completes to =foobar.=, enter =org RET=
+2. (GOOD) Enter =foo SPC org RET=
 
 Doom has some builtin [[https://github.com/oantolin/orderless#style-dispatchers][style dispatchers]] for more finegrained filtering, which
 you can use to further specify each space separated input in the following ways:
