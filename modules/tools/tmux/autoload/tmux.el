@@ -69,7 +69,7 @@ but do not execute them."
   "Change the pwd of the currently active tmux pane to DIRECTORY (defaults to
 `default-directory', or to `doom-project-root' with the universal argument)."
   (interactive "PD")
-  (+tmux/run (format "cd %s" (or directory default-directory))))
+  (+tmux/run (format "cd '%s'" (or directory default-directory))))
 
 ;;;###autoload
 (defun +tmux/cd-to-here ()
