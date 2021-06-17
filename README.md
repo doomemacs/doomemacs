@@ -211,7 +211,7 @@ kind!
 [discord]: https://discord.gg/qvGgnVx
 [discourse]: https://discourse.doomemacs.org
 [documentation]: docs/index.org
-[faq]: https://discourse.doomemacs.org/t/doom-emacs-faq/45
+[faq]: docs/faq.org
 [getting-started]: docs/getting_started.org
 [install]: docs/getting_started.org#install
 [backtrace]: docs/getting_started.org#how-to-extract-a-backtrace-from-an-error
