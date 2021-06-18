@@ -62,8 +62,9 @@ common Terraform operations (see Keybindings below).
 * Appendix
 ** Keybindings
 *** :localleader
-| key | description           |
-|-----+-----------------------|
-| =i= | Run =terraform init=  |
-| =p= | Run =terraform plan=  |
-| =a= | Run =terraform apply= |
+| key | description                   |
+|-----+-------------------------------|
+| =i= | Run =terraform init=          |
+| =f= | Run =terraform-format-buffer= |
+| =p= | Run =terraform plan=          |
+| =a= | Run =terraform apply=         |
