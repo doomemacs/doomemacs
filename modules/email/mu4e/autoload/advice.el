@@ -27,6 +27,11 @@ clicked."
                        (- (length newstr) 1) 'mouse-face 'highlight newstr)
     newstr))
 
+;;;###autoload
+(defun +mu4e~main-keyval-str-prettier-a (str)
+  "Replace '*' with '⚫' in STR."
+  (replace-regexp-in-string "\t\\*" "\t⚫" str))
+
 ;; Org msg LaTeX image scaling
 
 ;;;###autoload

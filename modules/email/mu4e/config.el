@@ -203,6 +203,7 @@
 
   (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address-h)
 
+  (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
   (when (featurep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
