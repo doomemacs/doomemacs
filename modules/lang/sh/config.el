@@ -11,6 +11,7 @@
 ;;; Packages
 
 (use-package! sh-script ; built-in
+  :mode ("\\.bats\\'" . sh-mode)
   :mode ("\\.\\(?:zunit\\|env\\)\\'" . sh-mode)
   :mode ("/bspwmrc\\'" . sh-mode)
   :config
