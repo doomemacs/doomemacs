@@ -168,7 +168,7 @@
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
        ;;yaml              ; JSON, but readable
-       ;;zig               ; C, but simpler
+       ;;zig               ; zag
 
        :email
        ;;(mu4e +gmail)
