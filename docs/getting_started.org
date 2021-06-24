@@ -229,7 +229,13 @@ See the [[https://github.com/BurntSushi/ripgrep#building][ripgrep documentation]
 Everything you need is in Gentoo's official =::gentoo= repository.
 
 ***** Emacs
-For the latest unmasked version compatible with Doom:
+To use Emacs graphically, enable the =gui= USE flag. And enable the =xft= USE flag to render fonts correctly (see
+[[https://github.com/hlissner/doom-emacs/issues/4876][issue #4876]])
+#+begin_src sh
+echo "app-editors/emacs gui xft" >> /etc/portage/package.use/emacs
+#+end_src
+
+To install the latest unmasked version compatible with Doom:
 #+begin_src sh
 emerge '>=app-editors/emacs-26.3'
 #+end_src
