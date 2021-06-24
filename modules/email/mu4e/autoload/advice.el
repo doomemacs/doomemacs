@@ -38,13 +38,14 @@ clicked."
 (defun +org-msg-img-scale-css (img-uri)
   "For a given IMG-URI, use imagemagik to find its width."
   (if +org-msg-currently-exporting
-      (list :width
-            (format "%.1fpx"
-                    (/ (string-to-number
-                        ;; TODO change to use 'file'
-                        (doom-call-process "identify" "-format" "%w"
-                                           (substring img-uri 7))) ; 7=(length "file://")
-                       (plist-get org-format-latex-options :scale))))
+      ;; TODO change to use 'file' (NB: would only work for PNG though, apparently)
+      (let ((width-call (doom-call-process "identify" "-format" "%w"
+                                           (substring img-uri 7)))) ; 7=(length "file://")
+        (when (= (car width-call) 0)
+          (list :width
+                (format "%.1fpx"
+                        (/ (string-to-number (cdr width-call))
+                           (plist-get org-format-latex-options :scale))))))
     (list :style (format "transform: scale(%.3f)"
                          (/ 1.0 (plist-get org-format-latex-options :scale))))))
 
