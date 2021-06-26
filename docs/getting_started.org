@@ -405,7 +405,7 @@ bin/doom command.
    #+BEGIN_SRC sh
    sudo add-apt-repository ppa:kelleyk/emacs
    sudo apt update
-   sudo apt install emacs26
+   sudo apt install emacs27
    #+END_SRC
 7. Then Doom's dependencies:
    #+BEGIN_SRC sh
