@@ -172,7 +172,6 @@ Can be negative.")
              helm-projectile-switch-project
              helm-projectile-switch-to-buffer)
   :init
-  (setq projectile-completion-system 'helm)
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   :config
   (set-keymap-parent helm-projectile-find-file-map helm-map))
