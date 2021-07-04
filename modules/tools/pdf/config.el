@@ -126,7 +126,9 @@
   (defadvice! +pdf-suppress-large-file-prompts-a (orig-fn size op-type filename &optional offer-raw)
     :around #'abort-if-file-too-large
     (unless (string-match-p "\\.pdf\\'" filename)
-      (funcall orig-fn size op-type filename offer-raw))))
+      (if offer-raw
+          (funcall orig-fn size op-type filename offer-raw)
+        (funcall orig-fn size op-type filename)))))
 
 
 (use-package! saveplace-pdf-view
