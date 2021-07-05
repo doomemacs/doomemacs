@@ -31,7 +31,8 @@
 (use-package! flutter
   :when (featurep! +flutter)
   :defer t
-  :config
+  :init
+  :after dart
   (map! :map dart-mode-map
         :localleader
         "r" #'flutter-run-or-hot-reload))
