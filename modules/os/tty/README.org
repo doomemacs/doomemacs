@@ -56,59 +56,11 @@ need:
 
 * Configuration
 ** True-color and italic support
-#+begin_quote
-This advice only applies to Emacs 26.x. True color support is [[https://github.com/emacs-mirror/emacs/commit/7f6153d9563cfe7753083996f59eacc9f4c694df][built into 27.1+
-and newer]].
-#+end_quote
+Emacs 26.3 users should consult [[https://github.com/syl20bnr/spacemacs/wiki/Terminal][the spacemacs wiki]] for details on achieving true
+color support in terminal Emacs.
 
-(credit goes to [[https://github.com/syl20bnr/spacemacs/wiki/Terminal][the spacemacs wiki]] for this information)
-
-Create a =xterm-24bit.terminfo= file with the following contents:
-
-#+BEGIN_SRC text
-xterm-24bit|xterm with 24-bit direct color mode,
-   use=xterm-256color,
-   sitm=\E[3m,
-   ritm=\E[23m,
-   setb24=\E[48;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
-   setf24=\E[38;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
-#+END_SRC
-
-#+begin_quote
-WARNING: Make sure you have a newline at end of file otherwise you will get
-errors!
-#+end_quote
-
-Execute the following command on the command line:
-#+BEGIN_SRC sh
-tic -x -o ~/.terminfo xterm-24bit.terminfo
-#+END_SRC
-
-Now set your ~$TERM~ variable to ~xterm-24bit~:
-#+BEGIN_SRC sh
-export TERM=xterm-24bit
-#+END_SRC
-
-SSH might break if your remote machine does not have the same setup, you can
-work around this with the following alias.
-#+BEGIN_SRC sh
-alias ssh="TERM=xterm-256color ssh"
-#+END_SRC
-
-If you use tmux, you need to make sure you installed a version with truecolor
-support, then add the following lines to your `.tmux.conf`:
-#+BEGIN_SRC conf
-set -g default-terminal "xterm-24bit"
-set -g terminal-overrides ',xterm-24bit:Tc'
-#+END_SRC
-
-Also, make sure you have utf8 language variables if you want all characters to
-display correctly. For example:
-#+BEGIN_SRC bash
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-#+END_SRC
+Emacs 27.x users don't need todo anything, as true color support is [[https://github.com/emacs-mirror/emacs/commit/7f6153d9563cfe7753083996f59eacc9f4c694df][built into
+27.1+ and newer]].
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.

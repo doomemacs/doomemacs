@@ -37,8 +37,6 @@
 (package! helpful :pin "7e4b1f0d5572a4e2b8ee7a9b084ef863d0315a73")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "911cc896a0f2eb8b5fbdd6fc8331523ad9889a3a")
-;; DEPRECATED Built into Emacs 27+; remove when we drop 26 support
-(package! so-long :built-in 'prefer :pin "1da43ed63b5f9a8188eb8107bbad842d10831537")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).

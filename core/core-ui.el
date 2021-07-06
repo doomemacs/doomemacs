@@ -667,16 +667,17 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (dolist (fn '(switch-to-buffer display-buffer))
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
+;; Apply `doom-font' et co
+(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h -100)
+
 ;; Apply `doom-theme'
 (add-hook (if (daemonp)
               'after-make-frame-functions
             'doom-after-init-modules-hook)
-          #'doom-init-theme-h)
+          #'doom-init-theme-h
+          -90)
 
-;; Apply `doom-font' et co
-(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
-
-(add-hook 'window-setup-hook #'doom-init-ui-h 'append)
+(add-hook 'window-setup-hook #'doom-init-ui-h 100)
 
 
 ;;
@@ -702,25 +703,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (fset 'define-fringe-bitmap #'ignore))
 
 (after! whitespace
-  (defun doom-disable-whitespace-mode-in-childframes-a (orig-fn)
+  (defun doom-is-childframes-p ()
     "`whitespace-mode' inundates child frames with whitespace markers, so
 disable it to fix all that visual noise."
-    (unless (frame-parameter nil 'parent-frame)
-      (funcall orig-fn)))
-  (add-function :around whitespace-enable-predicate #'doom-disable-whitespace-mode-in-childframes-a))
-
-;; Don't display messages in the minibuffer when using the minibuffer
-;; DEPRECATED Remove when Emacs 26.x support is dropped.
-(eval-when! (not EMACS27+)
-  (defmacro doom-silence-motion-key (command key)
-    (let ((key-command (intern (format "doom/silent-%s" command))))
-      `(progn
-         (defun ,key-command ()
-           (interactive)
-           (ignore-errors (call-interactively ',command)))
-         (define-key minibuffer-local-map (kbd ,key) #',key-command))))
-  (doom-silence-motion-key backward-delete-char "<backspace>")
-  (doom-silence-motion-key delete-char "<delete>"))
+    (frame-parameter nil 'parent-frame))
+  (add-function :before-while whitespace-enable-predicate #'doom-is-childframes-p))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
