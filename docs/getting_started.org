@@ -97,7 +97,7 @@ us know!
 This is what you'll have installed by the end of this section:
 
 - Git 2.23+
-- Emacs 26.3+ *(27.2 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
+- Emacs 27.1+ *(27.2 is recommended, or [[https://www.emacswiki.org/emacs/GccEmacs][native-comp]])*
 - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
 - GNU Find
 - (Optional) [[https://github.com/sharkdp/fd][fd]] 7.3.0+ (known as ~fd-find~ on Debian, Ubuntu & derivatives) --
@@ -107,20 +107,15 @@ These packages ought to be available through the package managers of your
 operating system; i.e. homebrew & macports on macOS, scoop/chocolatey on
 Windows, or pacman/aptitude/etc on the various Linux distributions.
 
-#+begin_quote
-While Doom does claim to support 26.x, 27.x is recommended because it is faster,
-especially for LSP users. The installation guides below will touch on installing
-27 if there is a simple way to do so on that particular operating system.
-#+end_quote
-
 ** Emacs & dependencies
 *** On Linux
-In the unusual case that Emacs 26.x is unavailable through your package manager,
-you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]], but here are installation instructions for many popular Linux distributions:
+Installation instructions for Emacs 27.1+ are listed below for many popular
+Linux distributions. In the unusual case that 27.1 or newer is unavailable on
+your system, you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]] instead.
 
 **** Ubuntu
-Emacs 27.x is not available through Ubuntu's package manager out-of-the-box. To
-get around this you'll need to install Emacs through a PPA:
+Emacs 27.x is not available through Ubuntu's package manager out-of-the-box, but
+is available through a PPA:
 
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs
@@ -164,8 +159,9 @@ pacman -S fd
 The above installs Emacs 27 (at the time of writing).
 
 **** NixOS
-On NixOS Emacs 26.3 can be installed via ~nix-env -Ai nixos.emacs~, or
+On NixOS Emacs 27.2 can be installed via ~nix-env -Ai nixos.emacs~, or
 permanently with the following added to ~etc/nixos/configuration.nix~:
+
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
   # required dependencies
@@ -191,7 +187,7 @@ environment.systemPackages = [
 #+END_SRC
 
 **** openSUSE
-***** Emacs 26.3
+***** Emacs 27.1
 Emacs can be installed from the [[https://software.opensuse.org/download.html?project=editors&package=emacs][package list]], or manually via zypper.
 
 For example, to install on openSUSE Leap 15.1 (requires root):
@@ -202,7 +198,7 @@ zypper install emacs
 #+END_SRC
 
 If you already have an older version of Emacs installed, you will be prompted to
-install the update candidate (Emacs 26.3).
+install the update candidate (Emacs 27.1).
 
 ***** ripgrep
 Download ripgrep 11.0.2 from [[https://software.opensuse.org/download/package?package=ripgrep&project=openSUSE%3AFactory][the package list]] or installed manually (requires
@@ -305,16 +301,16 @@ Or by replacing ~/usr/local/bin/emacs~ with a shim script containing:
 There are some suggestions on how to speed it up later in this section.
 #+end_quote
 
-There are three methods for installing Emacs 26.x on Windows, each with their
+There are three methods for installing Emacs 27.x on Windows, each with their
 pros and cons:
 
 + With chocolatey/scoop
 + With a precompiled binary + Git Bash
-+ With WSL + Ubuntu
++ With WSL2 + Ubuntu
 
-If you don't know which to choose, I recommend WSL; it produces the fastest and
-most stable environment of the three, but has the most complex installation
-process.
+If you don't know which to choose, I highly recommend WSL; it produces the
+fastest and most stable environment of the three, but has the most complex
+installation process.
 
 Before moving on to installing Emacs et co, a few steps to prepare Windows for
 Emacs are necessary:
@@ -405,7 +401,7 @@ bin/doom command.
    #+BEGIN_SRC sh
    sudo add-apt-repository ppa:kelleyk/emacs
    sudo apt update
-   sudo apt install emacs26
+   sudo apt install emacs27
    #+END_SRC
 7. Then Doom's dependencies:
    #+BEGIN_SRC sh

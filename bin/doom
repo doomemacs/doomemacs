@@ -27,11 +27,11 @@
 ;;
 ;;; Sanity checks
 
-(when (version< emacs-version "26.3")
+(when (version< emacs-version "27.1")
   (error
    (concat "Detected Emacs " emacs-version " (at " (car command-line-args) ").\n\n"
-           "Doom only supports Emacs 26.3 and newer. 27.1 is highly recommended. A guide\n"
-           "to install a newer version of Emacs can be found at:\n\n  "
+           "Doom only supports Emacs 27.1 and newer. A guide to install a newer version\n"
+           "of Emacs can be found at:\n\n  "
            (format "https://doomemacs.org/docs/getting_started.org#%s"
                    (cond ((eq system-type 'darwin) "on-macos")
                          ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")

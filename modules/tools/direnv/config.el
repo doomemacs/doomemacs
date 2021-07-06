@@ -8,25 +8,20 @@
 
   (set-popup-rule! "^\\*envrc\\*" :quit t :ttl 0)
 
-  ;; I'm avoiding `global-envrc-mode' intentionally, because it has the
-  ;; potential to run too late in the mode startup process (and after, say,
-  ;; server hooks that may rely on that local direnv environment).
-  (add-hook! 'change-major-mode-after-body-hook
-    (defun +direnv-init-h ()
-      (unless (or envrc-mode
-                  (minibufferp)
-                  (file-remote-p default-directory))
-        (condition-case _
-            (envrc-mode 1)
-          (quit)))))
-
-  ;; Ensure these local variables survive major mode changes, so envrc-mode is
-  ;; only "activated" once per buffer.
-  (put 'envrc-mode 'permanent-local t)
-  (put 'envrc--status 'permanent-local t)
-  (put 'process-environment 'permanent-local t)
-  (put 'exec-path 'permanent-local t)
-  (put 'eshell-path-env 'permanent-local t)
+  ;; A globalized minor mode triggers on `after-change-major-mode-hook'
+  ;; normally, which runs after a major mode's body and hooks. If those hooks do
+  ;; any initialization work that's sensitive to environmental state set up by
+  ;; direnv, then you're gonna have a bad time, so I move the trigger to
+  ;; `change-major-mode-after-body-hook' instead. This runs before said hooks
+  ;; (but not the body; fingers crossed that no major mode does important env
+  ;; initialization there).
+  (add-hook! 'envrc-global-mode-hook
+    (defun +direnv-init-global-mode-earlier-h ()
+      (let ((fn #'envrc-global-mode-enable-in-buffers))
+        (if (not envrc-global-mode)
+            (remove-hook 'change-major-mode-after-body-hook fn)
+          (remove-hook 'after-change-major-mode-hook fn)
+          (add-hook 'change-major-mode-after-body-hook fn 100)))))
 
   (defadvice! +direnv--fail-gracefully-a (&rest _)
     "Don't try to use direnv if the executable isn't present."

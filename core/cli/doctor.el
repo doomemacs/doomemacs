@@ -54,11 +54,9 @@ in."
      (warn! "Emacs %s detected" emacs-version)
      (explain! "Doom supports this version, but you are living on the edge! "
                "Be prepared for breakages in future versions of Emacs."))
-    ((= emacs-major-version 26)
-     (warn! "Emacs %s detected" emacs-version)
-     (explain! "Doom is dropping Emacs 26.x support in June 2021. Consider "
-               "upgrading to Emacs 27.1 (or better: 27.2) soon!"
-               emacs-version))))
+    ((< emacs-major-version 27)
+     (error! "Emacs %s detected, Doom only supports 27.1 and newer"
+             emacs-version))))
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!
