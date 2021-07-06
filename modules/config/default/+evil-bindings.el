@@ -445,7 +445,7 @@
         :desc "Magit blame"               "B"   #'magit-blame-addition
         :desc "Magit clone"               "C"   #'magit-clone
         :desc "Magit fetch"               "F"   #'magit-fetch
-        :desc "Magit buffer log"          "L"   #'magit-log
+        :desc "Magit buffer log"          "L"   #'magit-log-buffer-file
         :desc "Git stage file"            "S"   #'magit-stage-file
         :desc "Git unstage file"          "U"   #'magit-unstage-file
         (:prefix ("f" . "find")
