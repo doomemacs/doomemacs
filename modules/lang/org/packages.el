@@ -54,7 +54,7 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "6ce8d01e3a550a3268b415bf9d9b635d4dba5940"))
+  (package! jupyter :pin "1f0612eb936d36abab0f27b09cca691e81fc6e74"))
 (when (featurep! +journal)
   (package! org-journal :pin "043bb9e26f75066dc1787cdc9265daca7a14dd4e"))
 (when (featurep! +noter)
