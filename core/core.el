@@ -3,7 +3,7 @@
 ;;
 ;;; Initialize internal state
 
-(defconst doom-version "2.0.9"
+(defconst doom-version "3.0.0-alpha"
   "Current version of Doom Emacs.")
 
 (defvar doom-init-p nil
