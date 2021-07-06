@@ -2,10 +2,11 @@
 
 ;;;###autoload
 (defadvice! +selectrum--company-capf--candidates-a (fn &rest args)
-  "Function to help company to highlight all candidates with just
-one face."
+  "Highlight company matches correctly, and try default completion styles before
+orderless."
   :around 'company-capf--candidates
-  (let ((orderless-match-faces [completions-common-part]))
+  (let ((orderless-match-faces [completions-common-part])
+        (completion-styles '(basic partial-completion orderless)))
     (apply fn args)))
 
 ;;;###autoload
