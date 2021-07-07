@@ -172,8 +172,8 @@ vim-seek/vim-sneak for 2-character versions of f/F/t/T).
 
 To disable evil-snipe on s/S, you can either:
 
-1. Disable ~evil-snipe-mode~ by adding ~(after! evil-snipe (evil-snipe-mode
-   -1))~ to =$DOOMDIR/config.el=,
+1. Disable ~evil-snipe-mode~ by adding ~(remove-hook 'doom-first-input-hook
+   #'evil-snipe-mode)~ to =$DOOMDIR/config.el=,
 2. Or disable =evil-snipe= completely with ~(package! evil-snipe :disable t)~
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
