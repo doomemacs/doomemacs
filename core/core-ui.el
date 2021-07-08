@@ -571,9 +571,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-;; Underline looks a bit better when drawn lower
-(setq x-underline-at-descent-line t)
-
 (defun doom-init-fonts-h (&optional reload)
   "Loads `doom-font'."
   (when (fboundp 'set-fontset-font)
