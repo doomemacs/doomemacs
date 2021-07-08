@@ -32,8 +32,8 @@
   :when (featurep! +flutter)
   :defer t
   :init
-  :after dart
-  (map! :map dart-mode-map
+  (map! :after dart-mode
+        :map dart-mode-map
         :localleader
         "r" #'flutter-run-or-hot-reload))
 
