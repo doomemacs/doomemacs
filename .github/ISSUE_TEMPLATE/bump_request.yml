@@ -12,17 +12,13 @@ body:
       Use this form to let us know about these packages. Alternatively, [file a bump PR](https://discourse.doomemacs.org/how2bump).
 
       -----
-- type: checkboxes
-  attributes:
-    options:
-      - label: There are no other bump requests for this package [on the issue tracker](https://github.com/hlissner/doom-emacs/pulls?q=is%3Apr+is%3Aopen+label%3A%221.+update%29%22+).
-        required: true
-      - label: The package(s) I want bumped are not in [the do-not-PR list](https://discourse.doomemacs.org/do-not-pr) list.
-        required: true
-      - label: These packages still need to be bumped on the [latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
-        required: true
-      - label: I've tested the new versions of these packages myself and can report on its issues (if any).
-        required: true
+
+      **Before you submit this bump request, make sure...**
+
+      + [ ] To search for any open (or closed) [bump requests for this package](https://github.com/hlissner/doom-emacs/pulls?q=is%3Apr+is%3Aopen+label%3A%221.+update%29%22+).
+      + [ ] The target package(s) **are not** in [the do-not-PR list](https://discourse.doomemacs.org/do-not-pr) list.
+      + [ ] These packages haven't already been bumped on the [latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
+      + [ ] The new versions of these packages work without issue.
 - type: textarea
   attributes:
     label: What package(s) should be bumped?
