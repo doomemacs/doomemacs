@@ -74,11 +74,13 @@ This is controlled by `+format-on-save-enabled-modes'."
 (defadvice! +format--all-buffer-from-hook-a (orig-fn &rest args)
   :around #'format-all-buffer--from-hook
   (letf! (defun format-all-buffer--with (formatter mode-result)
-           (and (condition-case-unless-debug e
-                    (format-all--formatter-executable formatter)
-                  (error
-                   (message "Warning: cannot reformat buffer because %S isn't installed"
-                            (gethash formatter format-all--executable-table))
-                   nil))
-                (funcall format-all-buffer--with formatter mode-result)))
+           (when (or (eq formatter 'lsp)
+                     (eq formatter 'eglot)
+                     (condition-case-unless-debug e
+                         (format-all--formatter-executable formatter)
+                       (error
+                        (message "Warning: cannot reformat buffer because %S isn't installed"
+                                 (gethash formatter format-all--executable-table))
+                        nil)))
+             (funcall format-all-buffer--with formatter mode-result)))
     (apply orig-fn args)))
