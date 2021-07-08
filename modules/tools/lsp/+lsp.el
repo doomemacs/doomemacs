@@ -183,9 +183,9 @@ instead is more sensible."
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
         lsp-ui-sideline-show-hover nil
-        ;; Some icons don't scale correctly on Emacs 26, so disable them there.
-        lsp-ui-sideline-actions-icon  ; DEPRECATED Remove later
-        (if EMACS27+ lsp-ui-sideline-actions-icon-default)
+        ;; Re-enable icon scaling (it's disabled by default upstream for Emacs
+        ;; 26.x compatibility; see emacs-lsp/lsp-ui#573)
+        lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default
         ;; REVIEW Temporarily disabled, due to immense slowness on every
         ;;        keypress. See emacs-lsp/lsp-ui#613
         lsp-ui-doc-enable nil)

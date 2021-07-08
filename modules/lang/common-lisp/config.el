@@ -16,6 +16,13 @@
 (use-package! sly
   :hook (lisp-mode-local-vars . sly-editing-mode)
   :init
+  ;; I moved this hook to `lisp-mode-local-vars', so it only affects
+  ;; `lisp-mode', and not every other derived lisp mode (like `fennel-mode').
+  ;; We run it twice because the hook is both autoloaded and evaluated at
+  ;; load-time, so it must be removed twice.
+  (after! (:or emacs sly)
+    (remove-hook 'lisp-mode-hook #'sly-editing-mode))
+
   (after! lisp-mode
     (set-repl-handler! 'lisp-mode #'sly-mrepl)
     (set-eval-handler! 'lisp-mode #'sly-eval-region)

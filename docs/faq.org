@@ -1174,8 +1174,7 @@ If you still want to restore the old behavior, simply disable evil-snipe-mode:
 
 #+BEGIN_SRC emacs-lisp
 ;; in ~/.doom.d/config.el
-(after! evil-snipe
-  (evil-snipe-mode -1))
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 #+END_SRC
 
 ** Changes to my config aren't taking effect

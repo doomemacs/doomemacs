@@ -274,16 +274,7 @@ Also adds support for a `:sync' parameter to override `:async'."
     ;; TODO Should be fixed upstream
     (let ((default-directory (org-find-library-dir "org-contribdir")))
       (setq org-ditaa-jar-path     (expand-file-name "scripts/ditaa.jar")
-            org-ditaa-eps-jar-path (expand-file-name "scripts/DitaaEps.jar"))))
-
-  ;; NOTE Backported from Emacs 27.1
-  ;; DEPRECATED Remove when 26.x support is dropped
-  (unless EMACS27+
-    (defadvice! +org--dont-suppress-window-changes-a (orig-fn &rest args)
-      :around #'org-babel-execute:emacs-lisp
-      (letf! ((#'current-window-configuration #'ignore)
-              (#'set-window-configuration #'ignore))
-        (apply orig-fn args)))))
+            org-ditaa-eps-jar-path (expand-file-name "scripts/DitaaEps.jar")))))
 
 
 (defun +org-init-babel-lazy-loader-h ()
