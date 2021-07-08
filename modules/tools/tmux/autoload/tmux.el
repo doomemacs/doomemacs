@@ -52,7 +52,9 @@ but do not execute them."
 ;;;###autoload
 (defun +tmux/send-region (beg end &optional noreturn)
   "Send region to tmux."
-  (interactive "rP")
+  (interactive (list (region-beginning)
+                     (region-end)
+                     current-prefix-arg))
   (+tmux/run (string-trim (buffer-substring-no-properties beg end))
              noreturn))
 
@@ -65,11 +67,19 @@ but do not execute them."
   (apply #'+tmux +tmux-last-command))
 
 ;;;###autoload
-(defun +tmux/cd (&optional arg directory)
-  "Change the pwd of the currently active tmux pane to DIRECTORY (defaults to
-`default-directory', or to `doom-project-root' with the universal argument)."
-  (interactive "PD")
-  (+tmux/run (format "cd %s" (or directory default-directory)) arg))
+(defun +tmux/cd (&optional directory noreturn)
+  "Change the pwd of the currently active tmux pane to DIRECTORY.
+
+DIRECTORY defaults to `default-directory' if omitted, or to `doom-project-root'
+if prefix arg is non-nil.
+
+If NORETURN is non-nil, send the cd command to tmux, but do not execute the
+command."
+  (interactive "D")
+  (+tmux/run (format "cd %S" (or directory (if current-prefix-arg
+                                               (doom-project-root)
+                                             default-directory)))
+             noreturn))
 
 ;;;###autoload
 (defun +tmux/cd-to-here ()
