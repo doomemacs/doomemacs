@@ -49,7 +49,8 @@
                                          nil t)
                  (car workspaces)))
             (lsp-mode +1))
-        (setf (lsp--client-priority match) old-priority)))))
+       (add-transient-hook! 'lsp-after-initialize-hook
+          (setf (lsp--client-priority match) old-priority))))))
 
 ;;;###autoload
 (defun +lsp-lookup-definition-handler ()
