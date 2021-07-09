@@ -189,8 +189,7 @@ See `+layout-bepo-cr-rotation-style' for the meaning of CR-STYLE."
       '(evil-normal-state-map evil-motion-state-map evil-operator-state-map)
       "é" "w"
       "É" "W"
-      "w" (kbd "C-w")
-      "W" (kbd "C-w C-w"))))
+      "w" (kbd "C-w"))))
 
 ;;;###autoload
 (defun +layout-bepo-rotate-keymaps (keymaps &optional cr-style)
@@ -324,5 +323,4 @@ Remappings are done according to CR-STYLE (see
     (evil-collection-translate-key '(normal motion operator visual) keymaps
       "é" "w"
       "É" "W"
-      "w" (kbd "C-w")
-      "W" (kbd "C-w C-w"))))
+      "w" (kbd "C-w"))))

@@ -64,7 +64,6 @@ results buffer.")
         ivy-fixed-height-minibuffer t
         ivy-read-action-function #'ivy-hydra-read-action
         ivy-read-action-format-function #'ivy-read-action-format-columns
-        projectile-completion-system 'ivy
         ;; don't show recent files in switch-buffer
         ivy-use-virtual-buffers nil
         ;; ...but if that ever changes, show their full path

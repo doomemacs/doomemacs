@@ -12,20 +12,12 @@ body:
       **Before you proceed...**
 
       We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration. To help us rule out these possibilities please follow these guidelines:
-      <br />
-- type: checkboxes
-  attributes:
-    options:
-      - label: I have searched [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
-        required: true
-      - label: I have searched [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
-        required: true
-      - label: I have searched [the Discourse](https://doomemacs.org/d/docs) for any errors and solutions.
-        required: true
-      - label: I can reproduce my issue on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
-        required: true
-      - label: I have read [How to Debug Issues](https://doomemacs.org/d/how2debug) and found no solution.
-        required: true
+
+      + [ ] Search [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
+      + [ ] Search [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
+      + [ ] Search [the Discourse](https://doomemacs.org/d/docs) for any errors and solutions.
+      + [ ] Ensure the issue can be reproduced on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
+      + [ ] Consult "[How to Debug Issues](https://doomemacs.org/d/how2debug)" on techniques to get more information and, possibly, solve the issue yourself.
 - type: textarea
   attributes:
     label: What did you expect to happen?

@@ -9,6 +9,5 @@
 (package! eshell-syntax-highlighting :pin "32d2568ebeb42553a30dda77e03c0e2ec8854199")
 
 (unless IS-WINDOWS
-  (when (featurep! :completion company)
-    (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
-    (package! bash-completion :pin "65e54c6f9c0ffebf94f7c505694bd249b9b53d32")))
+  (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
+  (package! bash-completion :pin "65e54c6f9c0ffebf94f7c505694bd249b9b53d32"))

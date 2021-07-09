@@ -26,7 +26,7 @@ buffer.")
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
-    ("ff" "find-file $1")
+    ("ff" "find-file-other-window $1")
     ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")

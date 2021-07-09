@@ -30,12 +30,14 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 + =+moonscript= Moonscript language support
++ =+fennel= Fennel language support
 + =+lsp= Language Server Protocol support
 
 ** Plugins
 # A list of linked plugins
 + [[https://github.com/immerrr/lua-mode][lua-mode]]
 + [[https://github.com/k2052/moonscript-mode][moonscript-mode]] (=+moonscript=)
++ [[https://gitlab.com/technomancy/fennel-mode][fennel-mode]] (=+fennel=)
 
 * Prerequisites
 ** Language Server Protocol servers
