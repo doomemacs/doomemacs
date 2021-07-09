@@ -20,10 +20,32 @@ If nil, `doom-font' will be used, scaled up by `doom-big-font-increment'. See
 ;;
 ;;; Library
 
-(defun doom--normalize-font (font)
-  (let* ((font (cond ((stringp font) (aref (font-info font) 0))
-                     ((fontp font)   (font-xlfd-name font))
-                     ((vectorp font) (x-compose-font-name font))))
+;;;###autoload
+(defun doom-normalize-font (font)
+  "Return FONT as a normalized font spec.
+
+The font will be normalized (i.e. :weight, :slant, and :width will set to
+'normal if not specified) before it is converted.
+
+FONT can be a `font-spec', a font object, an XFT font string, or an XLFD font
+string."
+  (cl-check-type font (or font string vector))
+  (when (and (stringp font)
+             (string-prefix-p "-" font))
+    (setq font (x-decompose-font-name font)))
+  (let* ((font
+          (cond ((stringp font)
+                 (dolist (prop '("weight" "slant" "width") (aref (font-info font) 0))
+                   (unless (string-match-p (format ":%s=" prop) font)
+                     (setq font (concat font ":" prop "=normal")))))
+                ((fontp font)
+                 (dolist (prop '(:weight :slant :width) (font-xlfd-name font))
+                   (unless (font-get font prop)
+                     (font-put font prop 'normal))))
+                ((vectorp font)
+                 (dolist (i '(1 2 3) (x-compose-font-name font))
+                   (unless (aref font i)
+                     (aset font i "normal"))))))
          (font (x-resolve-font-name font))
          (font (font-spec :name font)))
     (unless (font-get font :size)
@@ -64,15 +86,15 @@ Doesn't work in terminal Emacs."
               (let* ((original-font (or (symbol-value var)
                                         (face-font face t)
                                         (with-temp-buffer (face-font face))))
-                     (font (doom--normalize-font original-font))
+                     (font (doom-normalize-font original-font))
                      (dfont
                       (or (if-let* ((remap-font (alist-get var font-alist))
-                                    (remap-xlfd (doom--normalize-font remap-font)))
+                                    (remap-xlfd (doom-normalize-font remap-font)))
                               remap-xlfd
                             (purecopy font))
                           (error "Could not decompose %s font" var))))
                 (let* ((step      (if fixed-size-p 0 (* increment doom-font-increment)))
-                       (orig-size (font-get dfont :size))
+                       (orig-size (font-get font :size))
                        (new-size  (if fixed-size-p increment (+ orig-size step))))
                   (cond ((<= new-size 0)
                          (error "`%s' font is too small to be resized (%d)" var new-size))
@@ -145,8 +167,8 @@ Also resizees `doom-variable-pitch-font' and `doom-serif-font'."
   (if doom-big-font
       ;; Use `doom-big-font' in lieu of `doom-font'
       (doom-adjust-font-size
-       (if doom-big-font-mode
-           (font-get (doom--normalize-font doom-big-font) :size))
+       (when doom-big-font-mode
+         (font-get (doom-normalize-font doom-big-font) :size))
        t `((doom-font . ,doom-big-font)))
     ;; Resize the current font
     (doom-adjust-font-size (if doom-big-font-mode doom-big-font-increment))))
