@@ -307,6 +307,12 @@ workspace, otherwise the new workspace is blank."
     ((debug error) (+workspace-error (cadr e) t))))
 
 ;;;###autoload
+(defun +workspace/new-named (name)
+  "Create a new workspace with a given NAME."
+  (interactive "sWorkspace Name: ")
+  (+workspace/new name))
+
+;;;###autoload
 (defun +workspace/switch-to (index)
   "Switch to a workspace at a given INDEX. A negative number will start from the
 end of the workspace list."
