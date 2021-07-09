@@ -8,10 +8,6 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#install][Install]]
-    - [[#macos][MacOS]]
-    - [[#arch-linux][Arch Linux]]
-    - [[#opensuse][openSUSE]]
 - [[#features][Features]]
   - [[#jump-to-navigation][Jump-to navigation]]
   - [[#project-search--replace][Project search & replace]]
@@ -58,25 +54,7 @@ Ivy is considered a first-class citizen in Doom, however it is still possible to
 + [[https://github.com/yyoncho/helm-icons][helm-icons]]* (=+icons=)
 
 * Prerequisites
-This module depends on:
-
-+ [[https://github.com/BurntSushi/ripgrep][ripgrep]] (rg)
-
-** Install
-*** MacOS
-#+BEGIN_SRC sh
-brew install ripgrep
-#+END_SRC
-
-*** Arch Linux
-#+BEGIN_SRC sh :dir /sudo::
-sudo pacman --needed --noconfirm -S ripgrep
-#+END_SRC
-
-*** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
-sudo zypper install ripgrep
-#+END_SRC
+This module has no prerequisites.
 
 * Features
 Much like Ivy, Helm is a /large/ framework and as such
