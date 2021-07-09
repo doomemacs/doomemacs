@@ -15,7 +15,7 @@
 
 
 (use-package! bibtex-actions
-  :when (featurep! :completion selectrum)
+  :when (featurep! :completion vertico)
   :after embark
   :defer t
   :config

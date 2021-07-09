@@ -1,4 +1,4 @@
-;;; completion/selectrum/autoload/selectrum.el -*- lexical-binding: t; -*-
+;;; completion/vertico/autoload/vertico.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defadvice! +selectrum--company-capf--candidates-a (fn &rest args)
@@ -77,7 +77,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 
 ;;;###autoload
 (defun +selectrum/backward-updir ()
-  "Delete char before or go up directory for file cagetory selectrum buffers."
+  "Delete char before or go up directory for file cagetory vertico buffers."
   (interactive)
   (let ((metadata (completion-metadata (minibuffer-contents)
                                        minibuffer-completion-table
@@ -95,7 +95,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 
 ;;;###autoload
 (defun +selectrum/embark-export-write ()
-  "Export the current selectrum results to a writable buffer if possible.
+  "Export the current vertico results to a writable buffer if possible.
 
 Supports exporting consult-grep to wgrep, file to wdeired, and consult-location to occur-edit"
   (interactive)
@@ -113,7 +113,7 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
 
 ;;;###autoload
 (defun +selectrum/embark-preview ()
-  "Previews candidate in selectrum buffer, unless it's a consult command"
+  "Previews candidate in vertico buffer, unless it's a consult command"
   (interactive)
   (unless (bound-and-true-p consult--preview-function)
     (save-selected-window
