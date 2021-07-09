@@ -490,7 +490,7 @@ the next."
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively
 created."
-  (when persp-mode
+  (when (and persp-mode (not (bound-and-true-p with-editor-mode)))
     (unless frame
       (setq frame (selected-frame)))
     (let ((frame-persp (frame-parameter frame 'workspace)))
