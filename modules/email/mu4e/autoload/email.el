@@ -23,6 +23,7 @@ default/fallback account."
     (when (version< mu4e-mu-version "1.4")
       (when-let (address (cdr (assq 'user-mail-address letvars)))
         (add-to-list 'mu4e-user-mail-address-list address)))
+    ;; remove existing context with same label
     (setq mu4e-contexts
           (cl-loop for context in mu4e-contexts
                    unless (string= (mu4e-context-name context) label)
@@ -37,9 +38,7 @@ default/fallback account."
                         (string-prefix-p (format "/%s" label)
                                          (mu4e-message-field msg :maildir))))
                     :vars letvars)))
-      (push context mu4e-contexts)
-      (when default-p
-        (setq-default mu4e-context-current context))
+      (add-to-list 'mu4e-contexts context (not default-p))
       context)))
 
 
