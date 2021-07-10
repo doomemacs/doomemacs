@@ -21,7 +21,6 @@ envvar will enable this at startup.")
 (defconst doom-interactive-p (not noninteractive)
   "If non-nil, Emacs is in interactive mode.")
 
-(defconst EMACS27+   (> emacs-major-version 26))
 (defconst EMACS28+   (> emacs-major-version 27))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -577,7 +576,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
              ;; because the latter is triggered too late (after the file has
              ;; opened and modes are all set up).
              (advice-add 'after-find-file :before fn '((depth . -101))))
-            ((add-hook hook fn (if EMACS27+ -101))))
+            ((add-hook hook fn -101)))
       fn)))
 
 

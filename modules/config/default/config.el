@@ -34,10 +34,7 @@
 (after! epa
   ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
   ;; for the key passphrase.
-  (set (if EMACS27+
-           'epg-pinentry-mode
-         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       'loopback)
+  (set 'epg-pinentry-mode 'loopback)
   ;; Default to the first secret key available in your keyring.
   (setq-default
    epa-file-encrypt-to

@@ -84,14 +84,13 @@ in."
               "typically installed. If you're seeing a vanilla Emacs splash screen, this "
               "may explain why. If you use Chemacs, you may ignore this warning."))
 
-  (when EMACS27+
-    (print! (start "Checking for great Emacs features..."))
-    (unless (functionp 'json-serialize)
-      (warn! "Emacs was not built with native JSON support")
-      (explain! "Users will see a substantial performance gain by building Emacs with "
-                "jansson support (i.e. a native JSON library), particularly LSP users. "
-                "You must install a prebuilt Emacs binary with this included, or compile "
-                "Emacs with the --with-json option.")))
+  (print! (start "Checking for great Emacs features..."))
+  (unless (functionp 'json-serialize)
+    (warn! "Emacs was not built with native JSON support")
+    (explain! "Users will see a substantial performance gain by building Emacs with "
+              "jansson support (i.e. a native JSON library), particularly LSP users. "
+              "You must install a prebuilt Emacs binary with this included, or compile "
+              "Emacs with the --with-json option."))
 
   (print! (start "Checking for private config conflicts..."))
   (let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
