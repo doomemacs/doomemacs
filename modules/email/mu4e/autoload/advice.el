@@ -36,7 +36,7 @@ clicked."
 
 ;;;###autoload
 (defun +org-msg-img-scale-css (img-uri)
-  "For a given IMG-URI, use imagemagik to find its width."
+  "For a given IMG-URI, use imagemagick to find its width."
   (if +org-msg-currently-exporting
       (when (and (not IS-WINDOWS)) ; relies on posix path
         (let ((with-call (and (executable-find "identify")

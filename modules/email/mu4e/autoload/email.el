@@ -313,8 +313,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
           (push (buffer-name buffer) buffers))))
     (nreverse buffers)))
 
-;;
-;; Hooks
+;;; Hooks
 
 (defun +mu4e-init-h ()
   (add-hook 'kill-buffer-hook #'+mu4e-kill-mu4e-h nil t))

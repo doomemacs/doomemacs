@@ -11,5 +11,5 @@ You may not have a way of fetching mail."))
 (when (and (featurep! +org)
            (not IS-WINDOWS))
   (unless (executable-find "identify")
-    (warn! "Couldn't find the identify command from imagemagik. \
+    (warn! "Couldn't find the identify command from imagemagick. \
 LaTeX fragment re-scaling with org-msg will not work.")))
