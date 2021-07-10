@@ -255,11 +255,12 @@ DEST can be one or more of `standard-output', a buffer, a file"
                (insert-char out))
              (send-string-to-terminal (char-to-string out)))))
      (letf! (defun message (msg &rest args)
-              (print-group!
-               (with-current-buffer log-buffer
-                 (insert (doom--format (apply #'format msg args)) "\n"))
-               (when (or doom-debug-p (not inhibit-message))
-                 (doom--print (doom--format (apply #'format msg args)))))
+              (when msg
+                (print-group!
+                 (with-current-buffer log-buffer
+                   (insert (doom--format (apply #'format msg args)) "\n"))
+                 (when (or doom-debug-p (not inhibit-message))
+                   (doom--print (doom--format (apply #'format msg args))))))
               message)
        (unwind-protect
            ,(macroexp-progn body)
