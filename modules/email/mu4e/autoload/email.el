@@ -36,7 +36,7 @@ default/fallback account."
                     (lambda (msg)
                       (when msg
                         (string-prefix-p (format "/%s" label)
-                                         (mu4e-message-field msg :maildir))))
+                                         (mu4e-message-field msg :maildir) t)))
                     :vars letvars)))
       (add-to-list 'mu4e-contexts context (not default-p))
       context)))
