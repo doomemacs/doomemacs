@@ -169,6 +169,22 @@ Then configure Emacs to use your email address:
   t)
 #+END_SRC
 
+If you use multiple email accounts, defining them with ~set-email-account!~ will
+automatically set the appropriate account context when replying to emails in
+that account's maildir. ~mu4e-context-policy~ and ~mu4e-compose-context-policy~
+can be modified to change context behavior when opening mu4e and composing
+email:
+
+#+begin_src emacs-lisp
+(setq mu4e-context-policy 'ask-if-none
+      mu4e-compose-context-policy 'always-ask)
+#+end_src
+
+If you send mail from various email aliases for different services,
+~+mu4e-personal-addresses~ can be set per-context with ~set-email-account!~. If
+you are not replying to an email to or from one of the specified aliases, you
+will be prompted for an alias to send from.
+
 *** Gmail
 With the =+gmail= flag, integrations are applied which account for the different
 behaviour of Gmail.

@@ -30,8 +30,11 @@ default/fallback account."
                    collect context))
     (let ((context (make-mu4e-context
                     :name label
-                    :enter-func (lambda () (mu4e-message "Switched to %s" label))
-                    :leave-func #'mu4e-clear-caches
+                    :enter-func
+                    (lambda () (mu4e-message "Switched to %s" label))
+                    :leave-func
+                    (lambda () (progn (setq +mu4e-personal-addresses nil)
+                                      (mu4e-clear-caches)))
                     :match-func
                     (lambda (msg)
                       (when msg
@@ -328,26 +331,20 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
 
 ;;;###autoload
 (defun +mu4e-set-from-address-h ()
-  "Set the account for composing a message. If a 'To' header is present,
-and correspands to an email address, this address will be selected.
-Otherwise, the user is prompted for the address they wish to use. Possible
-selections come from the mu database or a list of email addresses associated
-with the current context."
-  (unless (and mu4e-compose-parent-message
-               (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
-                     (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
-                 (if (member to (mu4e-personal-addresses))
-                     (setq user-mail-address to)
-                   (if (member from (mu4e-personal-addresses))
-                       (setq user-mail-address from)
-                     nil))))
+  "If the user defines multiple `+mu4e-personal-addresses' for email aliases
+within a context, set `user-mail-address' to an alias found in the 'To' or
+'From' headers of the parent message if present, or prompt the user for a
+preferred alias"
+  (when-let ((addresses (if (or mu4e-contexts+mu4e-personal-addresses)
+                            (and (> (length +mu4e-personal-addresses) 1)
+                                 +mu4e-personal-addresses)
+                          (mu4e-personal-addresses))))
     (setq user-mail-address
-          (if (= (length +mu4e-personal-addresses) 1)
-              (car +mu4e-personal-addresses)
-            (completing-read
-             "From: "
-             (if-let ((context-addresses
-                       (when mu4e~context-current
-                         (alist-get '+mu4e-personal-addresses (mu4e-context-vars mu4e~context-current)))))
-                 context-addresses
-               (mu4e-personal-addresses)))))))
+          (if mu4e-compose-parent-message
+              (let ((to (cdr (car (mu4e-message-field mu4e-compose-parent-message :to))))
+                    (from (cdr (car (mu4e-message-field mu4e-compose-parent-message :from)))))
+                (cond
+                 ((member to addresses) to)
+                 ((member from addresses) from)
+                 (t (completing-read "From: " addresses))))
+            (completing-read "From: " addresses)))))
