@@ -211,7 +211,7 @@ variable for an explanation of the defaults (in comments). See
       tar-mode
       (term term ansi-term multi-term)
       tetris
-      ,@(if EMACS27+ '(thread))
+      thread
       tide
       timer-list
       transmission
@@ -299,9 +299,8 @@ and complains if a module is loaded too early (during startup)."
       (+evil-collection-init '(process-menu simple)))
     (add-transient-hook! 'tabulated-list-mode
       (+evil-collection-init 'tabulated-list))
-    (when EMACS27+
-      (add-transient-hook! 'tab-bar-mode
-        (+evil-collection-init 'tab-bar)))
+    (add-transient-hook! 'tab-bar-mode
+      (+evil-collection-init 'tab-bar))
 
     ;; HACK Do this ourselves because evil-collection break's `eval-after-load'
     ;;      load order by loading their target plugin before applying keys. This

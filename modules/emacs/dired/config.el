@@ -117,18 +117,17 @@ we have to clean it up ourselves."
   ;; HACK Fixes #1929: icons break file renaming in Emacs 27+, because the icon
   ;;      is considered part of the filename, so we disable icons while we're in
   ;;      wdired-mode.
-  (when EMACS27+
-    (defvar +wdired-icons-enabled -1)
+  (defvar +wdired-icons-enabled -1)
 
-    (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
-      :before #'wdired-change-to-wdired-mode
-      (setq-local +wdired-icons-enabled (if all-the-icons-dired-mode 1 -1))
-      (when all-the-icons-dired-mode
-        (all-the-icons-dired-mode -1)))
+  (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
+    :before #'wdired-change-to-wdired-mode
+    (setq-local +wdired-icons-enabled (if all-the-icons-dired-mode 1 -1))
+    (when all-the-icons-dired-mode
+      (all-the-icons-dired-mode -1)))
 
-    (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
-      :after #'wdired-change-to-dired-mode
-      (all-the-icons-dired-mode +wdired-icons-enabled))))
+  (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
+    :after #'wdired-change-to-dired-mode
+    (all-the-icons-dired-mode +wdired-icons-enabled)))
 
 
 (use-package! dired-x
