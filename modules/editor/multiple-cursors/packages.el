@@ -9,4 +9,4 @@
   (package! evil-multiedit :pin "9f271e0e6048297692f80ed6c5ae8994ac523abc")
   (package! evil-mc :pin "f04fb17f35f2722f2ac93c862b4450bb8e5b739a"))
 
- ((package! multiple-cursors :pin "7b13b03c995e13ad86e499d40ec49c4dc281f889")))
+ ((package! multiple-cursors :pin "616fbdd3696f99d85660ad57ebbb0c44d6c7f426")))

@@ -2,7 +2,7 @@
 ;;; editor/parinfer/packages.el
 
 (if (featurep! +rust)
-    (package! parinfer-rust-mode :pin "f130fa04ec75131686872f24a253d0a1d5522fa4")
+    (package! parinfer-rust-mode :pin "c2c1bbec6cc7dad4f546868aa07609b8d58a78f8")
   (when (featurep! :editor evil)
     ;; Parinfer uses `evil-define-key' without loading evil, so if evil is
     ;; installed *after* parinfer, parinfer will throw up void-function errors.

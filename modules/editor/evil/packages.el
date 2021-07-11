@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "1b3db6349d04adfc68f707b0edd800f5ab3cb374")
+(package! evil :pin "b237462feed177cc74a48f462bc9356681a60ff8")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "464e8ec52ff78edf3c9060143fc375f6ce5f275f")
@@ -11,14 +11,14 @@
 (package! evil-exchange :pin "ac50f21b29b6e3a111e10a9e88ae61c907ac5ee8")
 (package! evil-indent-plus :pin "0c7501e6efed661242c3a20e0a6c79a6455c2c40")
 (package! evil-lion :pin "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
-(package! evil-nerd-commenter :pin "b8ac35fe019df5602c31912f65303a3d8ad0066c")
-(package! evil-numbers
-  :recipe (:host github :repo "janpath/evil-numbers")
-  :pin "006da406d175c05fedca4431cccd569e20bef92c")
-(package! evil-snipe :pin "6dcac7f2516c6137a2de532fc2c052f242559ee3")
-(package! evil-surround :pin "346d4d85fcf1f9517e9c4991c1efe68b4130f93a")
+(package! evil-nerd-commenter :pin "118bebd02a489ddf5eee3ab6fb55b3ef37ebe6d4")
+(package! evil-numbers :pin "cd23a7b458d73dc49434a3cf90d3d0caceb5811d")
+(package! evil-snipe :pin "a9b9b39a7915e66b7d5da9cecfaf002c72d08196")
+(package! evil-surround :pin "3bd73794ee5a760118042584ef74e2b6fb2a1e06")
 (package! evil-textobj-anyblock
-  :recipe (:host github :repo "willghatch/evil-textobj-anyblock" :branch "fix-inner-block")
+  :recipe (:host github
+           :repo "willghatch/evil-textobj-anyblock"
+           :branch "fix-inner-block")
   :pin "29280cd71a05429364cdceef2ff595ae8afade4d")
 (package! evil-traces :pin "290b5323542c46af364ec485c8ec9000040acf90")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "b6025cf9eaf7b4659db918548fd6d96ed17fddc6"))
+  (package! evil-collection :pin "9be3805b60d03fc6e0d45cb3decb5c6703395cf4"))

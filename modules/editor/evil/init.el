@@ -106,6 +106,7 @@ variable for an explanation of the defaults (in comments). See
       deadgrep
       debbugs
       debug
+      devdocs
       dictionary
       diff-mode
       dired
@@ -123,6 +124,7 @@ variable for an explanation of the defaults (in comments). See
       elisp-mode
       elisp-refs
       elisp-slime-nav
+      embark
       emms
       epa
       ert
@@ -209,6 +211,7 @@ variable for an explanation of the defaults (in comments). See
       speedbar
       tablist
       tar-mode
+      telega
       (term term ansi-term multi-term)
       tetris
       thread
@@ -216,6 +219,7 @@ variable for an explanation of the defaults (in comments). See
       timer-list
       transmission
       trashed
+      tuaref
       typescript-mode
       vc-annotate
       vc-dir
