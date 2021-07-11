@@ -521,7 +521,6 @@ unreadable. Returns the names of envvars that were changed."
 (defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
-  (doom-log "Running doom hook: %s" hook)
   (condition-case-unless-debug e
       (funcall hook)
     (error
