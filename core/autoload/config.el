@@ -74,7 +74,6 @@ package list, and lastly, reloads your private config.el.
 
 Runs `doom-after-reload-hook' afterwards."
   (interactive)
-  (require 'core-cli)
   (when (and IS-WINDOWS (file-exists-p doom-env-file))
     (message "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
   ;; In case doom/reload is run before incrementally loaded packages are loaded,
