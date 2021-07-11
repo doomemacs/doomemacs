@@ -27,7 +27,7 @@
     (when (featurep! :completion company)
       (package! company-irony :pin "b44711dfce445610c1ffaec4951c6ff3882b216a")
       (package! company-irony-c-headers :pin "72c386aeb079fb261d9ec02e39211272f76bbd97")))
-  (when (package! rtags :pin "63f18acb21e664fd92fbc19465f0b5df085b5e93")
+  (when (package! rtags :pin "65113e2a137baa9f85dc2157b893291470788dc4")
     (when (featurep! :completion ivy)
       (package! ivy-rtags))
     (when (featurep! :completion helm)

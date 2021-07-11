@@ -1,6 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/solidity/packages.el
 
-(package! solidity-mode :pin "b4fd719715be098921b6cbfb2ff9da31f3bd0d05")
+(package! solidity-mode :pin "5f6ef3156fadae5af6f381d674d20535529a20e4")
 (package! company-solidity)
 (package! solidity-flycheck)
