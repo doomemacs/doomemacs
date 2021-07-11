@@ -26,10 +26,9 @@
         company-backends '(company-capf)
 
         ;; These auto-complete the current selection when
-        ;; `company-auto-complete-chars' is typed. This is too magical. We
+        ;; `company-auto-commit-chars' is typed. This is too magical. We
         ;; already have the much more explicit RET and TAB.
-        company-auto-complete nil
-        company-auto-complete-chars nil
+        company-auto-commit nil
 
         ;; Only search the current buffer for `company-dabbrev' (a backend that
         ;; suggests text your open buffers). This prevents Company from causing
