@@ -2,8 +2,6 @@
 ;;; lang/javascript/packages.el
 
 ;; Major modes
-(package! coffee-mode :pin "35a41c7d8233eac0b267d9593e67fb8b6235e134")
-(package! js2-mode :pin "29979e5f3301796ba606759e39ee0b1b6a2a24f3")
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
 (package! typescript-mode :pin "1043025d42602d560949955410d3afa2562130ee")
 
