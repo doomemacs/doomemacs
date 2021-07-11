@@ -35,15 +35,13 @@ case for why this should be an exception:
   installed independently, so if you find it sufficiently useful you could also
   have a stripped down version of the config in doom core that is just used for
   on-buffer actions.
+*** We also might want to add keybinidngs for =embark-dwim=
 ** TODO =SPC s s= and =SPC s S= ~:sw~ ?
 There isn't really a vertico/consult analogue to ~swiper-isearch~, ~consult-isearch~
 does something else (give you previously used isearch search terms). Bound to
 regular isearch for now.
 ** TODO =SPC s B=
 Vertico/Consult don't have a ~swiper-all~ analogue either. Unbound for now.
-** TODO Orderless style dispatchers
-Currently the =!= style dispatcher is only as a prefix, due to the abundance of
-=!= final macros. In my opinion this is useful enough to break consistency.
 ** TODO =C-c C-e=
 On ~consult-line~ this opens a ~occur-edit~ buffer, which is a more natural fit
 but breaks slightly from the =C-c C-e= = =wgrep= convention.
@@ -53,12 +51,51 @@ I like having them around but I can always just add them to my private config.
 ** TODO Annotation Customization
 Do we want to have the annotations be more like ivy? e.g.
 - Have a project column in the buffer annotations and a relative path? This has
-  some overlap with project narrowing =SPC b B p SPC.
+  some overlap with project narrowing =SPC b B p SPC=.
 - Mark the modified/remote status of the buffer with color, on top of the
   modification column?
 - Change colors in general?
+** TODO Orderless
+*** TODO Style dispatchers
+ Currently the =!= style dispatcher is only as a prefix, due to the abundance of
+ =!= final macros. In my opinion this is useful enough to break consistency.
+*** TODO Completion Style on file paths
+Currently we have the following completion style override for files:
+#+begin_src emacs-lisp
+(setq completion-category-overrides '((file (styles . (orderless partial-completion)))))
+#+end_src
+This means that =parital-completion= matches (basically completing word
+prefixes + globbing) only get considered if there are no =orderless= matches. I
+find this to be the useful order, since I only really want =partial-completion=
+for the globbing, but it does mean that you lose the ability to type the first
+few letters of a file and only get the files that start with that, since you get
+broader orderless matching. Ivy doesn't have this distinction with prescient on,
+but does seem to only show hidden files only after there are no visible ones
+left, which we don't have here.
 
-* PROJ HACKs to be addressed
+This also relates to the [[https://github.com/minad/vertico#tramp-hostname-completion][recommended settings in the vertico readme]] for remote
+hostname completion somewhat. It's hard for me to figure out what's best here
+because I don't have any remotes to try this out on.
+*** TODO Initialisms by default/
+Do we want to use =orderless+initialism= by default for some of the completion
+categories? see [[https://github.com/hlissner/doom-emacs/pull/4664#discussion_r667368998
+][here]]
+** TODO Decide what Vertico extensions to use
+Currently we only use =vertico-repeat=, and after the next bump I'll replace
+~+vertico/backward-updir~ with the =vertico-directory= implementation. Do we
+want to use any other ones or leave that to users?
+** TODO Decide what to do with ~embark-package-map~
+** TODO =SPC b B= currently displays recent files and bookmarks by default
+We can have it only display buffers by setting an initial narrowing
+** TODO Company completion style
+Currently we advise ~company-capf--candidates~ to try the default emacs
+completion styles before orderless, since trying orderless first leads to a
+bunch of junk candidates. We could let the company completion style here be a
+variable for mildly easy customization, and we could also use orderless but use
+a custom sorting function like ~vertico-sort-length-alpha~ which has decent
+results ([[https://github.com/hlissner/doom-emacs/pull/4664#discussion_r668897763][see here]]).
+
+* PROJ HACKs that need looking over
 ** TODO ~fboundp~ issues
 Even if the =ivy= module isn't loaded, it's packages can still get loaded by
 other means, such as =lispy= requiring =counsel=. This means that the ~fboundp~
@@ -68,29 +105,33 @@ first, which is what we do for now.
 Without [[file:~/.emacs.d/modules/ui/workspaces/config.el::;; HACK?? needs review][this]] change new projects don't get opened in a new tab, but the exact
 working of this whole set up are a bit opaque to me.
 
-* PROJ Review blocking Issues
-** TODO Embark export window buffer switching logic
-*** DONE ~grep~
-The clicking links exported grep buffers used to open in a new window, but now
-  open in another window. Caused by the ~set-popup-rule!~ entries for the embark
-  export/collect buffers. These don't seem to serve much of a purpose at this
-  point so they have been removed.
-*** TODO Open upstream Embark issue for ~bookmark~ and ~file~
-~bookmark~ or ~file~ export buffers open the links in the same window rather than
-the other one. This can be reproduces on emacs -Q.
-This is due to orderless adding a bunch of other matches.
+* PROJ Things I'd like help with
+** TODO Fix ~(defadvice! +orderless-match-with-one-face..~ lexical error
+[[https://github.com/oantolin/orderless/issues/41][Probably caused by some doomism]]
+** TODO Embark Export/Correct popup logic
+Currently when e.g. exporting a ~consult-grep~ search to a grep buffer, it just
+gets exported to a new window without any special configuration with
+~set-popup-rule!~. This is because using ~set-popup-rule!~ causes the links in
+the grep buffer to be opened in a new window rather than the other window, which
+is undesirable. However, the default window opening logic leads to the exported
+buffer being opened in a right split if the emacs frame is wide, which is also
+undesirable. I have not been able to figure out what about the doom popup
+mechanism is causing this, I don't think it's something in ~set-popup-rule!~
+directly, but something deeper in the =:ui popup=
 
-* PROJ Review non-blocking Issues
+
+* PROJ Things to do before the merge
 ** TODO Profile vertico =SPC /= vs ivy =SPC /=
 Check if there are other places where optimisations can be made. Perhaps the
-~command-input-async~ variables can tolorate lower values.
-** TODO ~(defadvice! +orderless-match-with-one-face..~ causes lexical error
-Probably caused by some doomism
-
-https://github.com/oantolin/orderless/issues/41
+~command-input-async~ variables can tolerate lower values.
+** TODO Better Marginalia annotations for Projectile commands (maybe upstream)
+** TODO after the next bump, replace ~+vertico/backward-updir~ with ~vertico-directory~ version
+** TODO bump =bibtex-actions=
+** TODO Fix the duplicate candidate issue
+[[https://github.com/minad/vertico/issues/69][See here.]] If this doesn't get fixed upstream by the time of the merge we should
+add an override for ~read-library-name~ at least.
 
 * PROJ Extra credit
-** ~vertico-repeat~ doesn't reselect the candidate
 ** TODO =bibtex-actions= improvements?
 Currently =SPC n b= is bound to a function, but =bibtex-actions= doesn't have a
 main dispatch function like =ivy-bibtex=, rather it has a bunch of different

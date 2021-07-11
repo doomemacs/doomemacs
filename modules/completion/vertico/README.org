@@ -3,39 +3,55 @@
 #+SINCE:   v3.0.0
 #+STARTUP: inlineimages
 
-* Table of Contents :TOC_2:noexport:
+* Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+  - [[#vertico-keybindings][Vertico keybindings]]
   - [[#jump-to-navigation][Jump-to navigation]]
   - [[#project-search--replace][Project search & replace]]
   - [[#in-buffer-searching][In-buffer searching]]
   - [[#vertico-integration-for-various-completing-commands][Vertico integration for various completing commands]]
+    - [[#general][General]]
+    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
+    - [[#search][Search]]
+  - [[#marginalia][Marginalia]]
   - [[#orderless-filtering][Orderless filtering]]
+- [[#configuration][Configuration]]
 
 * Description
-This module provides Vertico integration for a variety of Emacs commands, as
-well as a unified interface for project search and replace, powered by ripgrep.
+This module enhances the Emacs search and completion experience, and also
+provides a united interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
 
-#+begin_quote
-TODO
-#+end_quote
+It does this with several modular packages focused on enhancing the built-in
+~completing-read~ interface, rather than replacing it with a parallel ecosystem
+like =ivy= and =helm= do. The primary packages are:
+
++ Vertico, which provides the vertical completion user interface
++ Consult, which provides a suite of useful commands using ~completing-read~
++ Embark, which provides a set of minibuffer actions
++ Marginalia, which provides annotations to completion candidates
++ Orderless, which provides better filtering methods
+
+** Maintainers
+This module has no dedicated maintainers.
 
 ** Module Flags
-+ ~+icons~ Adds icons to ~file~ and ~buffer~ category completion selections.
++ =+icons= Adds icons to =file= and =buffer= category completion selections.
 
 ** Plugins
-[[https://github.com/minad/vertico][vertico]]
-[[https://github.com/minad/consult][consult]]
-[[https://github.com/oantolin/embark/][embark]]
-[[https://github.com/oantolin/embark/][embark-consult]]
-[[https://github.com/minad/marginalia][marginalia]]
-[[https://github.com/oantolin/orderless][orderless]]
-[[https://github.com/mhayashi1120/Emacs-wgrep][wgrep]]
-[[https://github.com/minad/consult/][consult-flycheck]] (~:checkers syntax~)
-[[https://github.com/iyefrat/all-the-icons-completion][all-the-icons-completion]] (~+icons~)
++ [[https://github.com/minad/vertico][vertico]]
++ [[https://github.com/minad/consult][consult]]
++ [[https://github.com/oantolin/embark/][embark]]
++ [[https://github.com/oantolin/embark/][embark-consult]]
++ [[https://github.com/minad/marginalia][marginalia]]
++ [[https://github.com/oantolin/orderless][orderless]]
++ [[https://github.com/mhayashi1120/Emacs-wgrep][wgrep]]
++ [[https://github.com/minad/consult/][consult-flycheck]] (=:checkers syntax=)
++ [[https://github.com/iyefrat/all-the-icons-completion][all-the-icons-completion]] (=+icons=)
 
 * Prerequisites
 This module has no prerequisites.
@@ -47,6 +63,28 @@ function, which is used by any function that requires completion. Due to this
 the full scope of these packages is too large to cover here and you are
 encouraged to go and read their excellent documentation. We will detail
 Doom-specific additions:
+
+** Vertico keybindings
+When in an active Vertico completion session, the following doom added
+keybindings are available:
+
+| Keybind               | Description                                        |
+|-----------------------+----------------------------------------------------|
+| =C-p=                 | Go to previous candidate                           |
+| =C-n=                 | Go to next candidate                               |
+| =C-k=                 | (evil) Go to previous candidate                    |
+| =C-j=                 | (evil) Go to next candidate                        |
+| =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action |
+| =C-c C-;=             | export the current candidate list to a buffer      |
+| =C-SPC=               | Preview the current candidate                      |
+| =C-M-k=               | (evil) Go to previous candidate and preview.       |
+| =C-M-j=               | (evil) Go to next candidate and preview.           |
+
+~embark-act~ will prompt you with a =which-key= menu with useful commands on the
+selected candidate or candidate list, depending on the completion category. Note
+that you can press =C-h= instead of choosing a command to filter through the
+options with a Vertico buffer, that also has slightly more detailed descriptions
+due to Marginalia annotations.
 
 ** Jump-to navigation
 This module provides an interface to navigate within a project using
@@ -88,21 +126,11 @@ commands.
 
 -----
 
-These keybindings are available while a search is active:
-
-| Keybind             | Description                                        |
-|---------------------+----------------------------------------------------|
-| =C-;=, =<leader> a= | Open an ~embark-act~ menu to chose a useful action |
-| =C-c C-;=           | Open a buffer with your search results             |
-| =C-c C-e=           | Open a writable buffer of your search results      |
-| =C-SPC=             | Preview the current candidate                      |
-| =C-M-j=             | Scroll down and preview.                           |
-| =C-M-k=             | Scroll up and preview.                             |
-| =C-RET=             | Open the selected candidate in other-window        |
-
-Changes to the resulting wgrep buffer (opened by =C-c C-e=) can be committed
-with =C-c C-c= and aborted with =C-c C-k= (alternatively =ZZ= and =ZQ=, for evil
-users).
+On top of the usual Vertico keybindings, search commands also offer support for
+exporting the current candidate list to an editable buffer =C-c C-e=. After
+editing the changes can be committed with =C-c C-c= and aborted with =C-c C-k=
+(alternatively =ZZ= and =ZQ=, for evil users). It uses =wgrep= for grep
+searches, =wdired= for file searches, and =occur= for buffer searches.
 
 https://assets.doomemacs.org/completion/vertico/search-replace.png
 
@@ -154,6 +182,11 @@ or the last workspace by typing =0 SPC=.
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
 
+** Marginalia
+| Keybind | Description                     |
+|---------+---------------------------------|
+| =M-A=   | Cycle between annotation levels |
+
 ** Orderless filtering
 When using orderless to filter through candidates, the default behaviour is for
 each space separated input to match the candidate as a regular expression or
@@ -176,3 +209,13 @@ you can use to further specify each space separated input in the following ways:
 | =`bar= or =bar`= | match input =bar= as an initialism         |
 | ==baz= or =baz== | match only with literal input =baz=        |
 | =~qux= or =qux~= | match input =qux= with fuzzy/flex matching |
+
+* Configuration
+If you want to further configure this module, here are some good places to start:
+
++ Vertico provides several [[https://github.com/minad/vertico#extensions][extentions]] that can be used to extend it's interface
++ You can add more Marginalia annotation levels and change the existing ones by
+  editing ~marginalia-annotator-registry~
++ You can change the available commands in Embark for category ~$cat~ by editing
+  ~embark-$cat-map~, and even add new categories. Note that you add categories
+  by defining them [[https://github.com/minad/marginalia/#adding-custom-annotators-or-classifiers][through marginalia]], and embark picks up on them.
