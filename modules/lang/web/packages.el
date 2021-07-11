@@ -4,7 +4,7 @@
 ;; +html.el
 (package! emmet-mode :pin "1acb821e0142136344ccf40c1e5fb664d7db2e70")
 (package! haml-mode :pin "bf5b6c11b1206759d2b28af48765e04882dd1fc4")
-(package! pug-mode :pin "685fd3414d89736bf232f5d1a6bed9e0353b98fe")
+(package! pug-mode :pin "d08090485eb8c0488a7d2fbf63680dc0880c7d2f")
 (package! slim-mode :pin "3636d18ab1c8b316eea71c4732eb44743e2ded87")
 (when (package! web-mode :pin "8ef47935d638902ba35a557cae5edd6ab6ab1346")
   (when (featurep! :completion company)
