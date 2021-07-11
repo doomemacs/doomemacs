@@ -1,6 +1,6 @@
 #+TITLE:   checkers/spell
-#+DATE:    January 9, 2020
-#+SINCE:   v3.0.0
+#+DATE:    February 20, 2017
+#+SINCE:   v2.0
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:

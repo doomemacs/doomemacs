@@ -266,7 +266,7 @@ config.el instead."
 ;; indicates misconfiguration (don't rely on case insensitivity for file names).
 (setq auto-mode-case-fold nil)
 
-;; Disable bidirectional text rendering for a modest performance boost. I've set
+;; Disable bidirectional text scanning for a modest performance boost. I've set
 ;; this to `nil' in the past, but the `bidi-display-reordering's docs say that
 ;; is an undefined state and suggest this to be just as good:
 (setq-default bidi-display-reordering 'left-to-right
