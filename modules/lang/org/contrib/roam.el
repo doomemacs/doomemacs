@@ -64,6 +64,7 @@
         ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
         ;; file with an *-other-window command.
         org-roam-buffer-window-parameters '((no-delete-other-windows . t))
+        org-roam-link-use-custom-faces 'everywhere
         org-roam-completion-everywhere t
         org-roam-completion-system
         (cond ((featurep! :completion helm) 'helm)
