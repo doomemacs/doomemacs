@@ -219,7 +219,7 @@ variable for an explanation of the defaults (in comments). See
       timer-list
       transmission
       trashed
-      tuaref
+      tuareg
       typescript-mode
       vc-annotate
       vc-dir
