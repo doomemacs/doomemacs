@@ -69,7 +69,7 @@
 ;;;###autoload
 (defun doom-restore-session-handler (&rest _)
   "TODO"
-  (add-hook 'window-setup-hook #'doom-load-session 'append))
+  (add-hook 'window-setup-hook #'doom-load-session 100))
 
 ;;;###autoload
 (add-to-list 'command-switch-alist (cons "--restore" #'doom-restore-session-handler))
