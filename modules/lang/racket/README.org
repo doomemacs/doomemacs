@@ -23,6 +23,7 @@ This module provides integration for [[https://github.com/greghendershott/racket
 This module has no dedicated maintainers.
 
 ** Module Flags
++ =+lsp= Enables LSP support. Requires jeapostrophe/racket-langserver.
 + =+xp= Enables the explore mode, which "analyzes expanded code to explain and explore."
 
 ** Plugins

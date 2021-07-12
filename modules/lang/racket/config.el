@@ -26,6 +26,9 @@
              #'rainbow-delimiters-mode
              #'highlight-quoted-mode)
 
+  (when (featurep! +lsp)
+    (add-hook 'racket-mode-local-vars-hook #'lsp!))
+
   (when (featurep! +xp)
     (add-hook 'racket-mode-local-vars-hook #'racket-xp-mode)
     ;; Both flycheck and racket-xp produce error popups, but racket-xp's are
