@@ -81,7 +81,16 @@
    consult-theme
    :preview-key
    (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")
-         :debounce 0.5 'any)))
+         :debounce 0.5 'any))
+  (after! org
+    (defvar +vertico--consult-org-source
+      `(:name     "Org"
+        :narrow   ?o
+        :hidden t
+        :category buffer
+        :state    ,#'consult--buffer-state
+        :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
+    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
 
 (use-package! consult-flycheck
   :when (featurep! :checkers syntax)
