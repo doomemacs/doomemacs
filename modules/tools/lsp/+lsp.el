@@ -55,6 +55,9 @@ about it (it will be logged to *Messages* however).")
         lsp-xml-jar-file (expand-file-name "org.eclipse.lsp4xml-0.3.0-uber.jar" lsp-server-install-dir)
         lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
 
+  ;; REVIEW Remove this once this is fixed upstream.
+  (add-to-list 'lsp-client-packages 'lsp-racket)
+
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode
     :definition #'+lsp-lookup-definition-handler
