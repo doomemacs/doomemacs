@@ -1,5 +1,5 @@
 #+TITLE:   ui/deft
-#+DATE:    July 11, 2021
+#+DATE:    August 27, 2018
 #+SINCE:   v2.0.9
 #+STARTUP: inlineimages nofold
 
@@ -10,11 +10,10 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#configuration][Configuration]]
-  - [[#note][Note]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
-[[https://jblevins.org/projects/deft/][Deft]] is a major mode for creating, browsing, and filtering notes written in plain text
-formats, such as org-mode, markdown, and LaTeX. It enables you to quickly jot down thoughts and easily retrieve them later.
+[[https://jblevins.org/projects/deft/][Deft]] is a major mode for creating, browsing, and filtering notes written in plain text formats, such as org-mode, markdown, and LaTeX. It enables you to quickly jot down thoughts and easily retrieve them later.
 
 ** Maintainers
 This module has no dedicated maintainers.
@@ -44,10 +43,9 @@ will change the default note format to markdown:
 (setq deft-default-extension "md")
 #+end_src
 
-You may also want to alter the way titles and file names are automatically
-created by editing ~deft-use-filename-as-title~ and/or ~deft-use-filter-string-for-filename~.
+You may also want to alter the way titles and file names are automatically created by editing ~deft-use-filename-as-title~ and/or ~deft-use-filter-string-for-filename~.
 
 Further customization options can be found here: https://github.com/jrblevin/deft#other-customizations
 
-** Note
+* Troubleshooting
 It is [[https://github.com/hlissner/doom-emacs/pull/2845/commits/dce80a3c8032f5390f4e763e18a108d5f3f08772][not recommended]] to re-enable deft's buffer auto-save.
