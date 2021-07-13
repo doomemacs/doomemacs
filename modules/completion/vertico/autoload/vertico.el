@@ -121,15 +121,15 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
         (embark-default-action)))))
 
 ;;;###autoload
-(defun +vertico/next-candidate-preview ()
-  "Move to next candidate and preivew it"
+(defun +vertico/next-candidate-preview (&optional n)
+  "Go forward N candidates and preivew"
   (interactive)
-  (vertico-next)
+  (vertico-next (or n 1))
   (+vertico/embark-preview))
 
 ;;;###autoload
-(defun +vertico/previous-candidate-preview ()
-  "Move to previous candidate and preview it"
+(defun +vertico/previous-candidate-preview (&optional n)
+  "Go backward N candidates and preivew"
   (interactive)
-  (vertico-previous)
+  (vertico-previous (or n 1))
   (+vertico/embark-preview))
