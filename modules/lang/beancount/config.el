@@ -29,22 +29,6 @@ This msut be advised *before* beancount-mode loads, because
 
   :config
   (when (featurep! +lsp)
-    (after! lsp-mode
-      ;; TODO PR this upstream
-      (add-to-list 'lsp-language-id-configuration '(beancount-mode . "beancount"))
-      (defvar lsp-beancount-langserver-executable "beancount-langserver")
-      (defvar lsp-beancount-journal-file nil)
-      (defvar lsp-beancount-python-interpreter
-        (or (executable-find "python3")
-            (executable-find "python")))
-      (lsp-register-client
-       (make-lsp-client :new-connection
-                        (lsp-stdio-connection `(,lsp-beancount-langserver-executable "--stdio"))
-                        :major-modes '(beancount-mode)
-                        :initialization-options
-                        `((journalFile . ,lsp-beancount-journal-file)
-                          (pythonPath . ,lsp-beancount-python-interpreter))
-                        :server-id 'beancount-ls)))
     (add-hook 'beancount-mode-local-vars-hook #'lsp!))
 
   (setq beancount-electric-currency t)
