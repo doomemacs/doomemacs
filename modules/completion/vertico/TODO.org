@@ -85,8 +85,6 @@ Currently we only use =vertico-repeat=, and after the next bump I'll replace
 ~+vertico/backward-updir~ with the =vertico-directory= implementation. Do we
 want to use any other ones or leave that to users?
 ** TODO Decide what to do with ~embark-package-map~
-** TODO =SPC b B= currently displays recent files and bookmarks by default
-We can have it only display buffers by setting an initial narrowing
 ** TODO Company completion style
 Currently we advise ~company-capf--candidates~ to try the default emacs
 completion styles before orderless, since trying orderless first leads to a
@@ -94,6 +92,25 @@ bunch of junk candidates. We could let the company completion style here be a
 variable for mildly easy customization, and we could also use orderless but use
 a custom sorting function like ~vertico-sort-length-alpha~ which has decent
 results ([[https://github.com/hlissner/doom-emacs/pull/4664#discussion_r668897763][see here]]).
+** TODO ~consult-buffer~ considerations
+~consult-buffer~ is what the vertico module uses on =SPC b B=.
+*** What should be shown by default?
+Currently it just uses the default settings of showing open buffers, recent
+files, and bookmarks by default. It's possible to have it only show buffers by
+setting the recent files and bookmarks sources to be hidden, or pre-narrowing
+the command.
+*** Org buffer source
+I've added a [[https://github.com/minad/consult#narrowing-and-grouping][consult source]] that lets you narrow for org-mode buffers. Originally
+I did this by autoloading ~org-buffers-list~, but beyond potential snappiness
+considerations regarding loading org too early, I would also occasionally get
+nondeterministic void variable errors on ~org-buffers-list~, which I suspect are
+caused by the use of ~:defer-incrementally~ in the org ~use-package!~ statement.
+
+This is currently implemented by only adding the buffer source in an ~after!
+org~ statement, but per minad every additional buffer source slows
+~consult-buffer~ down, so it is worth consideration if this option is desired at
+all. I haven't noticed a difference, but it might be noticible on slower
+machines.
 
 * PROJ HACKs that need looking over
 ** TODO ~fboundp~ issues
