@@ -1076,7 +1076,7 @@ Of course, an empty module isn't terribly useful, but it goes to show that nothi
 These are a few exceptional examples of a well-rounded module:
 + [[file:../modules/completion/company/README.org][:completion company]]
 
-The remainder of this guide will go over the technical details of a Doom module.
+The remainder of this section will go over the technical details of a Doom module.
 
 *** File structure
 Doom recognizes a handful of special file names, none of which are required for
@@ -1110,7 +1110,7 @@ Do:
 
 Don't:
 + Configure packages with ~use-package!~ or ~after!~ from here
-+ Preform expensive or error-prone operations; these files are evaluated
++ Perform expensive or error-prone operations; these files are evaluated
   whenever =bin/doom= is used; a fatal error in this file can make Doom
   unbootable (but not irreversibly).
 + Define new =bin/doom= commands here. That's what =cli.el= is for.
