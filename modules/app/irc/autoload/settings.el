@@ -9,6 +9,7 @@ SERVER can either be a name for the network (in which case you must specify a
 :host.
 
 See `circe-network-options' for details."
+  (declare (indent 1))
   (after! circe
     (unless (plist-member plist :host)
       (plist-put! plist :host server))
