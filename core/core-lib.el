@@ -286,6 +286,7 @@ aliases."
 ;;; Mutation
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
+  (declare (indent 1))
   `(setq ,sym (append ,sym ,@lists)))
 
 (defmacro setq! (&rest settings)
@@ -312,12 +313,14 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."
+  (declare (indent 1))
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
        (cl-pushnew ,var ,place :test #'equal))))
 
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
+  (declare (indent 1))
   `(setq ,sym (append ,@lists ,sym)))
 
 
