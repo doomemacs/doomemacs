@@ -71,9 +71,12 @@
   (setq wl-message-id-domain wl-local-domain)
 
   (when (featurep! :editor evil)
-    ;; Neither wl-folder-mode or wl-summary-mode are correctly defined as major
-    ;; modes, so `evil-set-initial-state' won't work here.
-    (add-hook! '(wl-folder-mode-hook wl-summary-mode-hook)
-               #'evil-emacs-state))
+    ;; Neither `wl-folder-mode' nor `wl-summary-mode' are correctly defined as
+    ;; major modes, so we cannot use `set-evil-initial-state!' here.
+    ;; In addition, `wl-folder-mode' won't start in `evil-emacs-state' through
+    ;; `evil-emacs-state-modes', and `wl-summary-mode' won't start in
+    ;; `evil-emacs-state' through `wl-summary-mode-hook'.
+    (add-hook! 'wl-folder-mode-hook #'evil-emacs-state)
+    (pushnew! evil-emacs-state-modes 'wl-summary-mode))
 
   (add-hook 'mime-edit-mode-hook #'auto-fill-mode))
