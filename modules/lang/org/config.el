@@ -724,7 +724,7 @@ between the two."
         "f" #'org-footnote-new
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
-        "I" #'org-toggle-inline-images
+        "I" #'org-id-get-create
         "n" #'org-store-link
         "o" #'org-set-property
         "q" #'org-set-tags-command
