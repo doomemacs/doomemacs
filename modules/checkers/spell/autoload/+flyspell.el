@@ -56,7 +56,7 @@ or session. Otherwise, the addition is permanent."
     (if (null ispell-pdict-modified-p)
         (setq ispell-pdict-modified-p
               (list ispell-pdict-modified-p)))
-    (if (eq replace 'buffer)
+    (if (eq scope 'buffer)
         (ispell-add-per-file-word-list word))))
   (ispell-pdict-save t))
 
