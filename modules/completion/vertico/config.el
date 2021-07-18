@@ -148,8 +148,7 @@
   :hook (doom-first-input . marginalia-mode)
   :init
   (when (featurep! +icons)
-    (add-hook 'marginalia-mode-hook
-              (lambda () (all-the-icons-completion-mode (if marginalia-mode 1 -1)))))
+    (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
   (map! :map minibuffer-local-map
         :desc "Cycle marginalia views"
         "M-A" #'marginalia-cycle)
