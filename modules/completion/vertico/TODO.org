@@ -111,6 +111,9 @@ org~ statement, but per minad every additional buffer source slows
 ~consult-buffer~ down, so it is worth consideration if this option is desired at
 all. I haven't noticed a difference, but it might be noticible on slower
 machines.
+** TODO Should we use ~vertico-directory-delete-char~ instead of ~+vertico/backward-updir~
+Pro: use builtin upstream thing
+Con: lose ability to backspace through =~/=
 
 * PROJ HACKs that need looking over
 ** TODO ~fboundp~ issues
@@ -142,7 +145,6 @@ directly, but something deeper in the =:ui popup=
 Check if there are other places where optimisations can be made. Perhaps the
 ~command-input-async~ variables can tolerate lower values.
 ** TODO Better Marginalia annotations for Projectile commands (maybe upstream)
-** TODO after the next bump, replace ~+vertico/backward-updir~ with ~vertico-directory~ version
 ** TODO bump =bibtex-actions=
 ** TODO Fix the duplicate candidate issue
 [[https://github.com/minad/vertico/issues/69][See here.]] If this doesn't get fixed upstream by the time of the merge we should

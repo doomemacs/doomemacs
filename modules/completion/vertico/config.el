@@ -12,6 +12,7 @@
                                            #'consult-completion-in-region
                                          #'completion--in-region))))
   :config
+  (add-hook 'rfn-eshadow-update-overlay-hook  #'vertico-directory-tidy)
   (map! :map vertico-map
         [backspace] #'+vertico/backward-updir))
 
