@@ -10,7 +10,6 @@
 (defvar +mu4e-lock-relaxed t
   "Whether if someone else wants the lock (signaled via `+mu4e-lock-request-file'), we should stop Mu4e and let go of it")
 
-;;;###autoload
 (defun +mu4e-lock-pid-info ()
   "Get info on the PID refered to in `+mu4e-lock-file' in the form (pid . process-attributes)
  If the file or process do not exist, the lock file is deleted an nil returned."
@@ -24,7 +23,6 @@
       (if process (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
 
-;;;###autoload
 (defun +mu4e-lock-available (&optional strict)
   "If the `+mu4e-lock-file' is available (unset or owned by this emacs) return t.
 If STRICT only accept an unset lock file."
@@ -63,7 +61,6 @@ Else, write to this process' PID to the lock file"
 (defvar +mu4e-lock--file-just-deleted nil)
 (defvar +mu4e-lock--request-watcher nil)
 
-;;;###autoload
 (defun +mu4e-lock-add-watcher ()
   (setq +mu4e-lock--file-just-deleted nil)
   (file-notify-rm-watch +mu4e-lock--file-watcher)
@@ -72,7 +69,6 @@ Else, write to this process' PID to the lock file"
                                '(change)
                                #'+mu4e-lock-file-updated)))
 
-;;;###autoload
 (defun +mu4e-lock-request (event)
   "Handle another process requesting the Mu4e lock."
   (when (equal (nth 1 event) 'created)
@@ -84,7 +80,6 @@ Else, write to this process' PID to the lock file"
       (run-at-time 0.2 nil #'+mu4e-lock-add-watcher))
     (delete-file +mu4e-lock-request-file)))
 
-;;;###autoload
 (defun +mu4e-lock-file-updated (event)
   (if +mu4e-lock--file-just-deleted
       (+mu4e-lock-add-watcher)

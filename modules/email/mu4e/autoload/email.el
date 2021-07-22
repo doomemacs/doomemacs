@@ -77,9 +77,6 @@ default/fallback account."
   ;; TODO Interactively select email account
   (call-interactively #'mu4e-compose-new))
 
-;; Icons need a bit of work
-;; Spacing needs to be determined and adjucted
-;;;###autoload
 (defun +mu4e--get-string-width (str)
   "Return the width in pixels of a string in the current
 window's default font. If the font is mono-spaced, this
@@ -93,7 +90,6 @@ will also be the width of all other printable characters."
       (insert str)
       (car (window-text-pixel-size)))))
 
-;;;###autoload
 (cl-defun +mu4e-normalised-icon (name &key set color height v-adjust)
   "Convert :icon declaration to icon"
   (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
@@ -123,7 +119,6 @@ will also be the width of all other printable characters."
         mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :color "dpurple"))
         mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
 
-;;;###autoload
 (defun +mu4e-colorize-str (str &optional unique herring)
   "Apply a face from `+mu4e-header-colorized-faces' to STR.
 If HERRING is set, it will be used to determine the face instead of STR.
@@ -155,7 +150,6 @@ a quoted symbol for a alist of current strings and faces provided."
    str)
   str)
 
-;;;###autoload
 (defun +mu4e--str-color-face (str &optional offset)
   "Select a face from `+mu4e-header-colorized-faces' based on
 STR and any integer OFFSET."
@@ -294,7 +288,6 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
      (with-current-buffer (call-interactively #'find-file)
        (dired-mu4e-attach-ctrl-c-ctrl-c 1)))))
 
-;;;###autoload
 (define-minor-mode dired-mu4e-attach-ctrl-c-ctrl-c
   "Adds C-c C-c as an keybinding to attach files to a message."
   :lighter "attach"
@@ -306,7 +299,6 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
           (substitute-command-keys
            "Mu4e attach active. `\\[+mu4e/attach-files]' to attach the marked files."))))
 
-;;;###autoload
 (defun +mu4e-current-buffers ()
   "Return a list of active message buffers."
   (let (buffers)
