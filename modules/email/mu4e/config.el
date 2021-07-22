@@ -99,13 +99,15 @@
   (add-to-list 'mu4e-bookmarks
                '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
 
-  (setq +mu4e-header-colorized-faces
-        '(all-the-icons-green
-          all-the-icons-lblue
-          all-the-icons-purple-alt
-          all-the-icons-blue-alt
-          all-the-icons-purple
-          all-the-icons-yellow))
+  ;; TODO avoid assuming that all-the-icons is present
+  (defvar +mu4e-header-colorized-faces
+    '(all-the-icons-green
+      all-the-icons-lblue
+      all-the-icons-purple-alt
+      all-the-icons-blue-alt
+      all-the-icons-purple
+      all-the-icons-yellow)
+    "Faces to use when coloring folders and account stripes.")
 
   ;; Add a column to display what email account the email belongs to,
   ;; and an account color stripe column
