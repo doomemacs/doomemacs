@@ -20,7 +20,8 @@
                    (insert-file-contents +mu4e-lock-file)
                    (buffer-string))))
            (process (process-attributes pid)))
-      (if process (cons pid process)
+      (if (and process (string-match-p "emacs" (alist-get 'args process)))
+          (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
 
 (defun +mu4e-lock-available (&optional strict)
