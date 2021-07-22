@@ -63,7 +63,7 @@ account for the value of :scale in `org-format-latex-options'."
     (cond
      ((memq processing-type '(t mathjax))
       (org-html-format-latex latex-frag 'mathjax info))
-     ((memq processing-type '(t html))
+     ((eq processing-type 'html)
       (org-html-format-latex latex-frag 'html info))
      ((assq processing-type org-preview-latex-process-alist)
       (let ((formula-link
