@@ -51,6 +51,20 @@
   (+default/yank-buffer-path (doom-project-root)))
 
 ;;;###autoload
+(defun +default/yank-buffer ()
+  "Copy entire buffer to the kill ring"
+  (interactive)
+  (clipboard-kill-ring-save (point-min) (point-max)))
+
+;;;###autoload
+(defun +default/paste-buffer ()
+  "Copy from kill ring and replace buffer"
+  (interactive)
+  (delete-region (point-min) (point-max))
+  (clipboard-yank)
+  (deactivate-mark))
+
+;;;###autoload
 (defun +default/insert-file-path (arg)
   "Insert the file name (absolute path if prefix ARG).
 If `buffer-file-name' isn't set, uses `default-directory'."
