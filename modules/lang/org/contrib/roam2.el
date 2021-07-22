@@ -26,42 +26,6 @@ of org-mode to properly utilize ID links.")
   (doom-load-packages-incrementally
    '(ansi-color dash f rx seq magit-section emacsql emacsql-sqlite))
 
-  (map! :after org
-        :map org-mode-map
-        :localleader
-        :prefix ("m" . "org-roam")
-        "D" #'org-roam-demote-entire-buffer
-        "f" #'org-roam-node-find
-        "F" #'org-roam-ref-find
-        "g" #'org-roam-graph
-        "i" #'org-roam-node-insert
-        "I" #'org-id-get-create
-        "m" #'org-roam-buffer-toggle
-        "M" #'org-roam-buffer
-        "n" #'org-roam-capture
-        "r" #'org-roam-refile
-        "R" #'org-roam-link-replace-all
-        (:prefix ("d" . "by date")
-         :desc "Goto previous note" "b" #'org-roam-dailies-goto-previous-note
-         :desc "Goto date"          "d" #'org-roam-dailies-goto-date
-         :desc "Capture date"       "D" #'org-roam-dailies-capture-date
-         :desc "Goto next note"     "f" #'org-roam-dailies-goto-next-note
-         :desc "Goto tomorrow"      "m" #'org-roam-dailies-goto-tomorrow
-         :desc "Capture tomorrow"   "M" #'org-roam-dailies-capture-tomorrow
-         :desc "Capture today"      "n" #'org-roam-dailies-capture-today
-         :desc "Goto today"         "t" #'org-roam-dailies-goto-today
-         :desc "Capture today"      "T" #'org-roam-dailies-capture-today
-         :desc "Goto yesterday"     "y" #'org-roam-dailies-goto-yesterday
-         :desc "Capture yesterday"  "Y" #'org-roam-dailies-capture-yesterday
-         :desc "Find directory"     "-" #'org-roam-dailies-find-directory)
-        (:prefix ("o" . "node properties")
-         "a" #'org-roam-alias-add
-         "A" #'org-roam-alias-remove
-         "t" #'org-roam-tag-add
-         "T" #'org-roam-tag-remove
-         "r" #'org-roam-ref-add
-         "R" #'org-roam-ref-remove))
-
   ;; Don't display warning message dedicated for v1 users. Need to be set early.
   (setq org-roam-v2-ack t)
 
@@ -137,7 +101,62 @@ In case of failure, fail gracefully."
       ("^org-roam:" ; node dedicated org-roam buffer
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
 
-  (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode))
+  (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
+
+  (map! (:map org-mode-map
+         :localleader
+         :prefix ("m" . "org-roam")
+         "D" #'org-roam-demote-entire-buffer
+         "f" #'org-roam-node-find
+         "F" #'org-roam-ref-find
+         "g" #'org-roam-graph
+         "i" #'org-roam-node-insert
+         "I" #'org-id-get-create
+         "m" #'org-roam-buffer-toggle
+         "M" #'org-roam-buffer
+         "n" #'org-roam-capture
+         "r" #'org-roam-refile
+         "R" #'org-roam-link-replace-all
+         (:prefix ("d" . "by date")
+          :desc "Goto previous note" "b" #'org-roam-dailies-goto-previous-note
+          :desc "Goto date"          "d" #'org-roam-dailies-goto-date
+          :desc "Capture date"       "D" #'org-roam-dailies-capture-date
+          :desc "Goto next note"     "f" #'org-roam-dailies-goto-next-note
+          :desc "Goto tomorrow"      "m" #'org-roam-dailies-goto-tomorrow
+          :desc "Capture tomorrow"   "M" #'org-roam-dailies-capture-tomorrow
+          :desc "Capture today"      "n" #'org-roam-dailies-capture-today
+          :desc "Goto today"         "t" #'org-roam-dailies-goto-today
+          :desc "Capture today"      "T" #'org-roam-dailies-capture-today
+          :desc "Goto yesterday"     "y" #'org-roam-dailies-goto-yesterday
+          :desc "Capture yesterday"  "Y" #'org-roam-dailies-capture-yesterday
+          :desc "Find directory"     "-" #'org-roam-dailies-find-directory)
+         (:prefix ("o" . "node properties")
+          "a" #'org-roam-alias-add
+          "A" #'org-roam-alias-remove
+          "t" #'org-roam-tag-add
+          "T" #'org-roam-tag-remove
+          "r" #'org-roam-ref-add
+          "R" #'org-roam-ref-remove))
+        (:map org-roam-mode-map
+         :when (featurep! :editor evil +everywhere)
+         :nv "]"   #'magit-section-forward-sibling
+         :nv "["   #'magit-section-backward-sibling
+         :nv "gj"  #'magit-section-forward-sibling
+         :nv "gk"  #'magit-section-backward-sibling
+         :nv "gr"  #'revert-buffer
+         :nv "gR"  #'revert-buffer
+         :nv "z1"  #'magit-section-show-level-1
+         :nv "z2"  #'magit-section-show-level-2
+         :nv "z3"  #'magit-section-show-level-3
+         :nv "z4"  #'magit-section-show-level-4
+         :nv "za"  #'magit-section-toggle
+         :nv "zc"  #'magit-section-hide
+         :nv "zC"  #'magit-section-hide-children
+         :nv "zo"  #'magit-section-show
+         :nv "zO"  #'magit-section-show-children
+         :nv "zr"  #'magit-section-show-level-4-all
+         :nv "C-j" #'magit-section-forward
+         :nv "C-k" #'magit-section-backward)))
 
 
 ;; Since the org module lazy loads org-protocol (waits until an org URL is
