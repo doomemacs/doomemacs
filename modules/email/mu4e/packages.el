@@ -7,4 +7,4 @@
 (package! mu4e-alert :pin "91f0657c5b245a9de57aa38391221fb5d141d9bd")
 
 (package! mu4e-thread-folding :recipe (:host github :repo "rougier/mu4e-thread-folding")
-  :pin "56bb25a1addba4c6ed79c4e5d1a580d80cc698f2")
+  :pin "c6915585263a744b4da4a0e334393150603136dc")
