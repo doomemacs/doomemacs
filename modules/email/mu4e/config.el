@@ -87,7 +87,7 @@
   (if (display-graphic-p)
       (+mu4e-initialise-icons)
     ;; When it's the server, wait till the first graphical frame
-    (add-hook
+    (add-hook!
      'server-after-make-frame-hook
      (defun +mu4e-initialise-icons-hook ()
        (when (display-graphic-p)
