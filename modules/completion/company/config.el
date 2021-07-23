@@ -26,10 +26,9 @@
         company-backends '(company-capf)
 
         ;; These auto-complete the current selection when
-        ;; `company-auto-complete-chars' is typed. This is too magical. We
+        ;; `company-auto-commit-chars' is typed. This is too magical. We
         ;; already have the much more explicit RET and TAB.
-        company-auto-complete nil
-        company-auto-complete-chars nil
+        company-auto-commit nil
 
         ;; Only search the current buffer for `company-dabbrev' (a backend that
         ;; suggests text your open buffers). This prevents Company from causing
@@ -90,6 +89,7 @@
 ;;; Packages
 
 (after! company-files
+  ;; Fix `company-files' completion for org file:* links
   (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
 
 
@@ -101,6 +101,8 @@
         company-box-backends-colors nil
         company-box-max-candidates 50
         company-box-icons-alist 'company-box-icons-all-the-icons
+        ;; Move company-box-icons--elisp to the end, because it has a catch-all
+        ;; clause that ruins icons from other backends in elisp buffers.
         company-box-icons-functions
         (cons #'+company-box-icons--elisp-fn
               (delq 'company-box-icons--elisp

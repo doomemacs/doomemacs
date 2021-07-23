@@ -198,5 +198,63 @@ each package."
 ;;; Bump commits
 
 ;;;###autoload
+(defun doom/bumpify-diff (&optional interactive)
+  "Copy user/repo@hash -> user/repo@hash's of changed packages to clipboard.
+
+Must be run from a magit diff buffer."
+  (interactive (list 'interactive))
+  (save-window-excursion
+    (magit-diff-staged)
+    (unless (eq major-mode 'magit-diff-mode)
+      (user-error "Not in a magit diff buffer"))
+    (let (targets lines)
+      (save-excursion
+        (while (re-search-forward "^modified +\\(.+\\)$" nil t)
+          (cl-pushnew (doom-module-from-path (match-string 1)) targets
+                      :test #'equal)))
+      (while (re-search-forward "^-" nil t)
+        (let ((file (magit-file-at-point))
+              before after)
+          (save-window-excursion
+            (call-interactively #'magit-diff-visit-file)
+            (or (looking-at-p "(package!")
+                (re-search-forward "(package! " (line-end-position) t)
+                (re-search-backward "(package! "))
+            (let ((buffer-file-name file))
+              (cl-destructuring-bind (&key package plist _beg _end)
+                  (doom--package-at-point)
+                (setq before (doom--package-to-bump-string package plist)))))
+          (re-search-forward "^+")
+          (save-window-excursion
+            (call-interactively #'magit-diff-visit-file)
+            (or (looking-at-p "(package!")
+                (re-search-forward "(package! " (line-end-position) t)
+                (re-search-backward "(package! "))
+            (let ((buffer-file-name file))
+              (cl-destructuring-bind (&key package plist _beg _end)
+                  (doom--package-at-point)
+                (setq after (doom--package-to-bump-string package plist)))))
+          (cl-pushnew (format "%s -> %s" before after) lines)))
+      (if (null lines)
+          (user-error "No bumps to bumpify")
+        (prog1 (funcall (if interactive #'kill-new #'identity)
+                        (format "Bump %s\n\n%s"
+                                (mapconcat (lambda (x)
+                                             (mapconcat #'symbol-name x " "))
+                                           (cl-loop with alist = ()
+                                                    for (category . module) in targets
+                                                    do (setf (alist-get category alist)
+                                                             (append (alist-get category alist) (list module)))
+                                                    finally return alist)
+                                           " ")
+                                (string-join (sort (reverse lines) #'string-lessp)
+                                             "\n")))
+          (when interactive
+            (message "Copied to clipboard")))))))
+
+;;;###autoload
 (defun doom/commit-bumps ()
-  (interactive))
+  "Create a pre-filled magit commit for currently bumped packages."
+  (interactive)
+  (magit-commit-create
+   (list "-e" "-m" (doom/bumpify-diff))))

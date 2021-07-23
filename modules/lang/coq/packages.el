@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/coq/packages.el
 
-(package! proof-general :pin "f0f0476d07401aba2cf428a71f7ee960cd1b3154")
-(package! company-coq :pin "7423ee253951a439b2491e1cd2ea8bb876d25cb7")
+(package! proof-general :pin "bc86736abb728ec0d28abc90ef0adae21d29a66a")
+(package! company-coq :pin "382db93374380e5db56f02934ee32bbe39159019")

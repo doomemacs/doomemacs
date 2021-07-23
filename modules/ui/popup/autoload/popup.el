@@ -612,18 +612,3 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                           (setq window--sides-shown t))
                         (window--display-buffer
                          buffer best-window 'reuse alist)))))))))
-
-
-;;
-;; Emacs backwards compatibility
-
-(unless EMACS27+
-  (defadvice! +popup--set-window-dedicated-a (window)
-    "Ensure `window--display-buffer' respects `display-buffer-mark-dedicated'.
-
-This was not so until recent Emacs 27 builds, where it causes breaking errors.
-This advice ensures backwards compatibility for Emacs <= 26 users."
-    :filter-return #'window--display-buffer
-    (when (and (windowp window) display-buffer-mark-dedicated)
-      (set-window-dedicated-p window display-buffer-mark-dedicated))
-    window))

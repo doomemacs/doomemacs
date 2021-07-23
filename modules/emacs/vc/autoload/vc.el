@@ -1,6 +1,7 @@
 ;;; emacs/vc/autoload/vc.el -*- lexical-binding: t; -*-
 
 (defun +vc--remote-homepage ()
+  (require 'browse-at-remote)
   (or (let ((url (browse-at-remote--remote-ref)))
         (cdr (browse-at-remote--get-url-from-remote (car url))))
       (user-error "Can't find homepage for current project")))

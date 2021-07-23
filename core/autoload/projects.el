@@ -149,7 +149,7 @@ If DIR is not a project, it will be indexed (but not cached)."
 
 ;;;###autoload
 (defun doom-project-ignored-p (project-root)
-  "Return non-nil if remote or temporary file, or a straight package."
-  (and (not (file-remote-p project-root))
-       (or (file-in-directory-p project-root temporary-file-directory)
-           (file-in-directory-p project-root doom-local-dir))))
+  "Return non-nil if temporary file or a straight package."
+  (unless (file-remote-p project-root)
+    (or (file-in-directory-p project-root temporary-file-directory)
+        (file-in-directory-p project-root doom-local-dir))))

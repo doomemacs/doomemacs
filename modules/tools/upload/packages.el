@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/upload/packages.el
 
-(package! ssh-deploy :pin "fce4ea35f09ed5899c1a2dfa3527bc2dd5ca3ba5")
+(package! ssh-deploy :pin "7c5fe8af2d62d8f6d32ebe2d3bfc53051a9432d1")

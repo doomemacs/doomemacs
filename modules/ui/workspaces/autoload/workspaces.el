@@ -307,6 +307,12 @@ workspace, otherwise the new workspace is blank."
     ((debug error) (+workspace-error (cadr e) t))))
 
 ;;;###autoload
+(defun +workspace/new-named (name)
+  "Create a new workspace with a given NAME."
+  (interactive "sWorkspace Name: ")
+  (+workspace/new name))
+
+;;;###autoload
 (defun +workspace/switch-to (index)
   "Switch to a workspace at a given INDEX. A negative number will start from the
 end of the workspace list."
@@ -484,7 +490,7 @@ the next."
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively
 created."
-  (when persp-mode
+  (when (and persp-mode (not (bound-and-true-p with-editor-mode)))
     (unless frame
       (setq frame (selected-frame)))
     (let ((frame-persp (frame-parameter frame 'workspace)))

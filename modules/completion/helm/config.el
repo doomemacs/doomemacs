@@ -96,10 +96,7 @@ Can be negative.")
     ;; `completion-styles', since that would be overly intrusive. E.g., it
     ;; results in `company-capf' returning far to many completion candidates.
     ;; Instead, append those styles so that they act as a fallback.
-    (add-to-list 'completion-styles
-                 (if EMACS27+
-                     (if fuzzy 'flex 'helm)
-                   (if fuzzy 'helm-flex 'helm)) t))
+    (add-to-list 'completion-styles (if fuzzy 'flex 'helm) t))
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
@@ -172,7 +169,6 @@ Can be negative.")
              helm-projectile-switch-project
              helm-projectile-switch-to-buffer)
   :init
-  (setq projectile-completion-system 'helm)
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   :config
   (set-keymap-parent helm-projectile-find-file-map helm-map))

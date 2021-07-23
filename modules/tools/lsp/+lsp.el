@@ -2,7 +2,7 @@
 
 (defvar +lsp-company-backends
   (if (featurep! :editor snippets)
-      '(:separate company-capf company-yasnippet)
+      '(company-capf :with company-yasnippet)
     'company-capf)
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")
@@ -54,6 +54,9 @@ about it (it will be logged to *Messages* however).")
                      (concat doom-private-dir "snippets/")))
         lsp-xml-jar-file (expand-file-name "org.eclipse.lsp4xml-0.3.0-uber.jar" lsp-server-install-dir)
         lsp-groovy-server-file (expand-file-name "groovy-language-server-all.jar" lsp-server-install-dir))
+
+  ;; REVIEW Remove this once this is fixed upstream.
+  (add-to-list 'lsp-client-packages 'lsp-racket)
 
   (set-popup-rule! "^\\*lsp-help" :size 0.35 :quit t :select t)
   (set-lookup-handlers! 'lsp-mode
@@ -183,9 +186,9 @@ instead is more sensible."
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
         lsp-ui-sideline-show-hover nil
-        ;; Some icons don't scale correctly on Emacs 26, so disable them there.
-        lsp-ui-sideline-actions-icon  ; DEPRECATED Remove later
-        (if EMACS27+ lsp-ui-sideline-actions-icon-default)
+        ;; Re-enable icon scaling (it's disabled by default upstream for Emacs
+        ;; 26.x compatibility; see emacs-lsp/lsp-ui#573)
+        lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default
         ;; REVIEW Temporarily disabled, due to immense slowness on every
         ;;        keypress. See emacs-lsp/lsp-ui#613
         lsp-ui-doc-enable nil)

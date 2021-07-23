@@ -40,9 +40,7 @@ all themes. It will apply to all themes once they are loaded."
        (when (or (get 'doom-theme 'previous-themes)
                  (null doom-theme))
          (funcall #',fn))
-       ;; TODO Append to `doom-load-theme-hook' with DEPTH instead when Emacs
-       ;;      26.x support is dropped.
-       (add-hook 'doom-customize-theme-hook #',fn 'append))))
+       (add-hook 'doom-customize-theme-hook #',fn 100))))
 
 ;;;###autoload
 (defmacro custom-set-faces! (&rest specs)

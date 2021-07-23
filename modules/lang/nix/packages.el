@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/nix/packages.el
 
-(package! nix-mode :pin "0023fc5b100ec0c939ffe699d1a7d1afcf1f417a")
+(package! nix-mode :pin "3cca5b6527a69c4701394f424726282a1462ede3")
 (package! nix-update :pin "fc6c39c2da3fcfa62f4796816c084a6389c8b6e7")
 
 (when (featurep! :completion company)

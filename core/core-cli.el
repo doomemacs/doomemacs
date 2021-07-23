@@ -109,7 +109,7 @@ Environment variables:
                          auto-accept-p))
             (when doomdir
               (setenv "DOOMDIR" (file-name-as-directory doomdir))
-              (print! (info "DOOMDIR=%s") localdir))
+              (print! (info "DOOMDIR=%s") doomdir))
             (when localdir
               (setenv "DOOMLOCALDIR" (file-name-as-directory localdir))
               (print! (info "DOOMLOCALDIR=%s") localdir))

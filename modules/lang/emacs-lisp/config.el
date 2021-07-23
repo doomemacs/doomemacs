@@ -153,27 +153,31 @@ employed so that flycheck still does *some* helpful linting.")
   :config
   (set-lookup-handlers! 'inferior-emacs-lisp-mode
     :definition    #'+emacs-lisp-lookup-definition
-    :documentation #'+emacs-lisp-lookup-documentation))
+    :documentation #'+emacs-lisp-lookup-documentation)
 
-;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
-;; syntax highlighting to ielm REPLs.
-(add-hook! 'ielm-mode-hook
-  (defun +emacs-lisp-init-syntax-highlighting-h ()
-    (font-lock-add-keywords
-     nil (cl-loop for (matcher . match-highlights)
-                  in (append lisp-el-font-lock-keywords-2 lisp-cl-font-lock-keywords-2)
-                  collect
-                  `((lambda (limit)
-                      (and ,(if (symbolp matcher)
-                                `(,matcher limit)
-                              `(re-search-forward ,matcher limit t))
-                           ;; Only highlight matches after the prompt
-                           (> (match-beginning 0) (car comint-last-prompt))
-                           ;; Make sure we're not in a comment or string
-                           (let ((state (sp--syntax-ppss)))
-                             (not (or (nth 3 state)
-                                      (nth 4 state))))))
-                    ,@match-highlights)))))
+  ;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
+  ;; syntax highlighting to ielm REPLs.
+  (setq ielm-font-lock-keywords
+        (append '(("\\(^\\*\\*\\*[^*]+\\*\\*\\*\\)\\(.*$\\)"
+                   (1 font-lock-comment-face)
+                   (2 font-lock-constant-face)))
+                (when (require 'highlight-numbers nil t)
+                  (highlight-numbers--get-regexp-for-mode 'emacs-lisp-mode))
+                (cl-loop for (matcher . match-highlights)
+                         in (append lisp-el-font-lock-keywords-2
+                                    lisp-cl-font-lock-keywords-2)
+                         collect
+                         `((lambda (limit)
+                             (when ,(if (symbolp matcher)
+                                        `(,matcher limit)
+                                      `(re-search-forward ,matcher limit t))
+                               ;; Only highlight matches after the prompt
+                               (> (match-beginning 0) (car comint-last-prompt))
+                               ;; Make sure we're not in a comment or string
+                               (let ((state (syntax-ppss)))
+                                 (not (or (nth 3 state)
+                                          (nth 4 state))))))
+                           ,@match-highlights)))))
 
 
 ;;
