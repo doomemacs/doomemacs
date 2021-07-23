@@ -82,7 +82,7 @@
     :recipe (:host github :repo "org-roam/org-roam-v1")
     :pin "946a879a4a18756a0508afba1e0b0fe070c6a8b4"))
  ((featurep! +roam2)
-  (package! org-roam :pin "e997c017deab234a0a067914d7bb6e81e3fa9d88")))
+  (package! org-roam :pin "028c95a011395d01ff9b5217dc365f23187bc26c")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")

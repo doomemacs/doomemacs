@@ -98,7 +98,7 @@ In case of failure, fail gracefully."
   (set-popup-rules!
     `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 1)
-      ("^org-roam:" ; node dedicated org-roam buffer
+      ("^\\*org-roam: " ; node dedicated org-roam buffer
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
 
   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
@@ -113,7 +113,7 @@ In case of failure, fail gracefully."
          "i" #'org-roam-node-insert
          "I" #'org-id-get-create
          "m" #'org-roam-buffer-toggle
-         "M" #'org-roam-buffer
+         "M" #'org-roam-buffer-display-dedicated
          "n" #'org-roam-capture
          "r" #'org-roam-refile
          "R" #'org-roam-link-replace-all
