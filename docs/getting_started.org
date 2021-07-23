@@ -233,7 +233,7 @@ echo "app-editors/emacs gui xft" >> /etc/portage/package.use/emacs
 
 To install the latest unmasked version compatible with Doom:
 #+begin_src sh
-emerge '>=app-editors/emacs-26.3'
+emerge '>=app-editors/emacs-27.0'
 #+end_src
 
 Or, for GCCEmacs/Native Compilation, use the live ebuild for version 28.0 with the =jit= USE flag:
