@@ -173,7 +173,10 @@
         (when +mc--compat-evil-prev-state
           (unwind-protect
               (cl-case +mc--compat-evil-prev-state
-                ((normal visual) (evil-force-normal-state))
+                ;; For `evil-multiedit', marked occurrences aren't saved after
+                ;; exiting mc, so we should return to normal state anyway
+                ((normal visual multiedit multiedit-insert)
+                 (evil-force-normal-state))
                 (t (message "Don't know how to handle previous state: %S"
                             +mc--compat-evil-prev-state)))
             (setq +mc--compat-evil-prev-state nil)
