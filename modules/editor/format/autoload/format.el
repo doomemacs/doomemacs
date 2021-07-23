@@ -164,7 +164,7 @@ See `+format/buffer' for the interactive version of this function, and
                   ;; buffer as possible, in case the formatter is an elisp
                   ;; function, like `gofmt'.
                   (cl-loop for (var . val)
-                           in (cl-remove-if-not #'listp (buffer-local-variables (current-buffer)))
+                           in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
                            ;; Making enable-multibyte-characters buffer-local
                            ;; causes an error.
                            unless (eq var 'enable-multibyte-characters)
