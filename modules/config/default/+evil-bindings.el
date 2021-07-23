@@ -545,6 +545,7 @@
          :desc "Insert node"                "i" #'org-roam-node-insert
          :desc "Capture to node"            "n" #'org-roam-capture
          :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
+         :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
          :desc "Sync database"              "s" #'org-roam-db-sync
          (:prefix ("d" . "by date")
           :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
