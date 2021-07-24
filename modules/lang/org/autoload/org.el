@@ -417,11 +417,14 @@ Made for `org-tab-first-hook' in evil-mode."
 (defun +org-yas-expand-maybe-h ()
   "Expand a yasnippet snippet, if trigger exists at point or region is active.
 Made for `org-tab-first-hook'."
-  (when (featurep! :editor snippets)
-    (require 'yasnippet)
-    (and (let ((major-mode (if (org-in-src-block-p t)
-                               (org-src-get-lang-mode (org-eldoc-get-src-lang))
-                             major-mode))
+  (when (and (featurep! :editor snippets)
+             (require 'yasnippet nil t)
+             (bound-and-true-p yas-minor-mode))
+    (and (let ((major-mode (cond ((org-in-src-block-p t)
+                                  (org-src-get-lang-mode (org-eldoc-get-src-lang)))
+                                 ((org-inside-LaTeX-fragment-p)
+                                  'latex-mode)
+                                 (major-mode)))
                (org-src-tab-acts-natively nil) ; causes breakages
                ;; Smart indentation doesn't work with yasnippet, and painfully slow
                ;; in the few cases where it does.
@@ -429,6 +432,9 @@ Made for `org-tab-first-hook'."
            (cond ((and (or (not (bound-and-true-p evil-local-mode))
                            (evil-insert-state-p)
                            (evil-emacs-state-p))
+                       (or (and (bound-and-true-p yas--tables)
+                                (gethash major-mode yas--tables))
+                           (progn (yas-reload-all) t))
                        (yas--templates-for-key-at-point))
                   (yas-expand)
                   t)
