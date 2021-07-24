@@ -283,7 +283,9 @@
        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
        :desc "Indent style"                 "I" #'doom/toggle-indent-style
        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
-       :desc "Word-wrap mode"               "w" #'+word-wrap-mode
+       :desc "Soft line wrapping"           "w" #'visual-line-mode
+       (:when (featurep! :editor word-wrap)
+        :desc "Soft line wrapping"          "w" #'+word-wrap-mode)
        (:when (featurep! :checkers syntax)
         :desc "Flycheck"                   "f" #'flycheck-mode)
        (:when (featurep! :ui indent-guides)
