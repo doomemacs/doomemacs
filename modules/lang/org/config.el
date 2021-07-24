@@ -688,6 +688,11 @@ between the two."
             #'+org-delete-backward-char-and-realign-table-maybe-h)
 
   (map! :map org-mode-map
+        ;; Recently, a [tab] keybind in `outline-mode-cycle-map' has begun
+        ;; overriding org's [tab] keybind in GUI Emacs. This is needed to undo
+        ;; that, and should probably be PRed to org.
+        [tab]        #'org-cycle
+
         "C-c C-S-l"  #'+org/remove-link
         "C-c C-i"    #'org-toggle-inline-images
         ;; textmate-esque newline insertion
