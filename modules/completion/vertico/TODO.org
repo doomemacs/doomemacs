@@ -126,8 +126,6 @@ Without [[file:~/.emacs.d/modules/ui/workspaces/config.el::;; HACK?? needs revie
 working of this whole set up are a bit opaque to me.
 
 * PROJ Things I'd like help with
-** TODO Fix ~(defadvice! +orderless-match-with-one-face..~ lexical error
-[[https://github.com/oantolin/orderless/issues/41][Probably caused by some doomism]]
 ** TODO Embark Export/Correct popup logic
 Currently when e.g. exporting a ~consult-grep~ search to a grep buffer, it just
 gets exported to a new window without any special configuration with
