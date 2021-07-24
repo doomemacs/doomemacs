@@ -35,7 +35,7 @@ This is a blocking operation that can take a while to complete
 and better be deferred when there will be an actual demand for
 the database. See `+org-init-roam-h' for the launch process."
     :around #'emacsql-sqlite-ensure-binary
-    (if (not (boundp 'org-roam-db-location))
+    (if (not (boundp 'org-roam-db-version))
         (apply orig-fn args)
       (advice-remove #'emacsql-sqlite-ensure-binary #'+org-roam-suppress-sqlite-build-a)
       nil))
