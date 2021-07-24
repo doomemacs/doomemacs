@@ -19,6 +19,8 @@
         [backspace] #'+vertico/backward-updir))
 
 (use-package! orderless
+  :defer t
+  :after-call doom-first-input-hook
   :config
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
@@ -100,6 +102,7 @@
   :after (consult flycheck))
 
 (use-package! embark
+  :defer t
   :init
   (map! "C-;"               #'embark-act  ; to be moved to :config default if accepted
         :map minibuffer-local-map
