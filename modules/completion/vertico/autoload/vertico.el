@@ -1,5 +1,9 @@
 ;;; completion/vertico/autoload/vertico.el -*- lexical-binding: t; -*-
 
+;; To prevent "Unused lexical variable" warning from +vertico--company-capf--candidates-a
+;;;###autoload
+(defvar orderless-match-faces)
+
 ;;;###autoload
 (defadvice! +vertico--company-capf--candidates-a (fn &rest args)
   "Highlight company matches correctly, and try default completion styles before
