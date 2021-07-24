@@ -31,7 +31,7 @@ If a selection is active, pre-fill the prompt with it."
           (if (region-active-p)
               #'swiper-isearch-thing-at-point
             #'swiper-isearch))
-         ((featurep! :completion vertico) #'isearch-forward))))
+         ((featurep! :completion vertico) #'consult-line))))
 
 ;;;###autoload
 (defun +default/search-project (&optional arg)
