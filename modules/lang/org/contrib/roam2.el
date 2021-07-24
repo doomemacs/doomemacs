@@ -75,7 +75,7 @@ In case of failure, fail gracefully."
         (or org-roam-db-location
             (concat doom-etc-dir "org-roam.db"))
         org-roam-node-display-template
-        "${doom-hierarchy:*} ${doom-tags:35} ${doom-subdirs}"
+        "${doom-hierarchy:*} ${doom-tags:45}"
         org-roam-completion-everywhere t
         org-roam-mode-section-functions
         #'(org-roam-backlinks-section
