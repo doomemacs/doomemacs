@@ -1,5 +1,12 @@
 ;;; completion/vertico/config.el -*- lexical-binding: t; -*-
 
+(defvar +vertico-company-completion-styles '(basic partial-completion orderless)
+  "Completion styles for company to use.
+
+The completion/vertico module uses the orderless completion style by default,
+but this returns too broad a candidate set for company completion. This
+variable overrides `completion-styles' during company completion sessions.")
+
 (use-package! vertico
   :hook (doom-first-input . vertico-mode)
   :config
