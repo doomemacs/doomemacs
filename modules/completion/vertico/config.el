@@ -2,16 +2,18 @@
 
 (use-package! vertico
   :hook (doom-first-input . vertico-mode)
-  :init
+  :config
   (setq vertico-resize nil
         vertico-count 17
         vertico-cycle t)
-  (add-hook 'vertico-mode-hook (lambda ()
-                                 (setq completion-in-region-function
-                                       (if vertico-mode
-                                           #'consult-completion-in-region
-                                         #'completion--in-region))))
-  :config
+  (setq completion-in-region-function
+      (lambda (&rest args)
+        (apply (if vertico-mode
+                   #'consult-completion-in-region
+                 #'completion--in-region)
+               args)))
+  ;; cleans up path when moving directories with shadowed paths syntax,
+  ;; e.g. cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
   (add-hook 'rfn-eshadow-update-overlay-hook  #'vertico-directory-tidy)
   (map! :map vertico-map
         [backspace] #'+vertico/backward-updir))
@@ -47,7 +49,7 @@
 (use-package! consult
   :defer t
   :init
-  (fset 'multi-occur #'consult-multi-occur)
+  (advice-add #'multi-occur :override #'consult-multi-occur)
   (define-key!
     [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
@@ -99,31 +101,22 @@
 
 (use-package! embark
   :init
+  (map! "C-;"               #'embark-act  ; to be moved to :config default if accepted
+        :map minibuffer-local-map
+        "C-;"               #'embark-act
+        "C-c C-;"           #'embark-export
+        :desc "Export to writable buffer"
+        "C-c C-e"           #'+vertico/embark-export-write
+        :leader
+        :desc "Actions" "a" #'embark-act) ; to be moved to :config default if accepted
+  (define-key!
+    [remap describe-bindings] #'embark-bindings)
+  :config
   (setq embark-action-indicator
         (lambda (map _target)
           (which-key--show-keymap "Embark" map nil nil 'no-paging)
           #'which-key--hide-popup-ignore-command)
         embark-become-indicator embark-action-indicator)
-  (map! "C-;"               #'embark-act  ; to be moved to :config default if accepted
-        :leader
-        :desc "Actions" "a" #'embark-act) ; to be moved to :config default if accepted
-  (map! :map minibuffer-local-map
-        "C-;"               #'embark-act
-        "C-c C-;"           #'embark-export
-        :desc "Export to writable buffer"
-        "C-c C-e"           #'+vertico/embark-export-write)
-  (define-key!
-    [remap describe-bindings] #'embark-bindings)
-  (defun +vertico--embark-target-package! ()
-    "Targets Doom's package! statements and returns the package name"
-    (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
-      (save-excursion
-        (search-backward "(")
-        (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
-          (let ((pkg (match-string 1)))
-            (set-text-properties 0 (length pkg) nil pkg)
-            `(package . ,pkg))))))
-  :config
   ;; add the package! target finder before the file target finder,
   ;; so we don't get a false positive match.
   (let ((pos (or (cl-position
@@ -132,28 +125,28 @@
                  (length embark-target-finders))))
     (cl-callf2
         cons
-        '+vertico--embark-target-package!
+        '+vertico--embark-target-package
         (nthcdr pos embark-target-finders)))
+  (setq embark-package-map (make-sparse-keymap))
   (map!
    :map embark-file-map
    :desc "Open target with sudo" "s" #'doom/sudo-find-file
-   :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace)
-  (setq embark-package-map (make-sparse-keymap))
-  (map! :map embark-package-map
-        "h" #'doom/help-packages
-        "b" #'doom/bump-package
-        "c" #'doom/help-package-config
-        "u" #'doom/help-package-homepage))
+   :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace
+   :map embark-package-map
+   "h" #'doom/help-packages
+   "b" #'doom/bump-package
+   "c" #'doom/help-package-config
+   "u" #'doom/help-package-homepage))
 
 (use-package! marginalia
   :hook (doom-first-input . marginalia-mode)
   :init
-  (when (featurep! +icons)
-    (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
   (map! :map minibuffer-local-map
         :desc "Cycle marginalia views"
         "M-A" #'marginalia-cycle)
   :config
+  (when (featurep! +icons)
+    (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
   (nconc marginalia-command-categories
          '((persp-switch-to-buffer . buffer)
            (projectile-find-file . project-file)
