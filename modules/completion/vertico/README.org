@@ -1,5 +1,5 @@
 #+TITLE:   completion/vertico
-#+DATE:    February 16, 2021
+#+DATE:    July 25, 2021
 #+SINCE:   v3.0.0
 #+STARTUP: inlineimages
 
@@ -37,7 +37,7 @@ like =ivy= and =helm= do. The primary packages are:
 + Orderless, which provides better filtering methods
 
 ** Maintainers
-This module has no dedicated maintainers.
++ @iyefrat
 
 ** Module Flags
 + =+icons= Adds icons to =file= and =buffer= category completion selections.
