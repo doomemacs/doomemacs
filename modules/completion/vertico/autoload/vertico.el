@@ -10,7 +10,7 @@
 orderless."
   :around 'company-capf--candidates
   (let ((orderless-match-faces [completions-common-part])
-        (completion-styles '(basic partial-completion orderless)))
+        (completion-styles +vertico-company-completion-styles))
     (apply fn args)))
 
 ;;;###autoload
