@@ -51,6 +51,8 @@ This is controlled by `+format-on-save-enabled-modes'."
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
 
+;; set default formatter for languages the user has not set any formatters
+(add-hook 'prog-mode-hook 'format-all-ensure-formatter)
 
 ;;
 ;;; Hacks
