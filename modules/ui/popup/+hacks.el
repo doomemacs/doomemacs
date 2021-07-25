@@ -65,6 +65,17 @@ to this commmand."
     (apply orig-fn args)))
 
 
+;;;###package compile
+(defadvice! +popup--compilation-goto-locus-a (orig-fn &rest args)
+  "Fix links in popup compilation buffers creating a new window each time they
+were followed."
+  :around #'compilation-goto-locus
+  (letf! (defun pop-to-buffer (buffer &optional action norecord)
+           (let ((pop-up-windows (not (+popup-buffer-p (current-buffer)))))
+             (funcall pop-to-buffer buffer action norecord)))
+    (apply orig-fn args)))
+
+
 ;;;###package eshell
 (progn
   (setq eshell-destroy-buffer-when-process-dies t)

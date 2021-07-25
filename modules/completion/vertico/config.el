@@ -122,6 +122,8 @@ variable overrides `completion-styles' during company completion sessions.")
   (define-key!
     [remap describe-bindings] #'embark-bindings)
   :config
+  (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
+
   (setq embark-action-indicator
         (lambda (map _target)
           (which-key--show-keymap "Embark" map nil nil 'no-paging)
