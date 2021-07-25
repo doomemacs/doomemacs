@@ -49,11 +49,8 @@ orderless."
                     (when (doom-region-active-p)
                       (replace-regexp-in-string
                        "[! |]" (lambda (substr)
-                                 (cond ((and (string= substr " ")
-                                             (not (featurep! +fuzzy)))
-                                        "  ")
-                                       ((string= substr "|")
-                                        "\\\\\\\\|")
+                                 (cond ((string= substr " ") "  ")
+                                       ((string= substr "|") "\\\\\\\\|")
                                        ((concat "\\\\" substr))))
                        (rxt-quote-pcre (doom-thing-at-point-or-region))))))
          (ripgrep-command (mapconcat #'identity `("rg" ,@args "." "-e ARG OPTS" ) " ")))
