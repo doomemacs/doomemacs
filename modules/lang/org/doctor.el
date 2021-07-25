@@ -7,7 +7,9 @@
 
 (when (featurep! +roam)
   (unless (executable-find "sqlite3")
-    (warn! "Couldn't find the sqlite3 executable. org-roam will not work."))
+    (warn! "Couldn't find the sqlite3 executable. org-roam will not work.")))
+(when (or (featurep! +roam)
+          (featurep! +roam2))
   (unless (executable-find "dot")
     (warn! "Couldn't find the dot executable (from graphviz). org-roam will not be able to generate graph visualizations.")))
 

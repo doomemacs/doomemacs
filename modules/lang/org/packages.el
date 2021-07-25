@@ -76,8 +76,13 @@
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
     :pin "b18f12d964ef80bd9ffb061aae48ff4c15fb43ad"))
-(when (featurep! +roam)
-  (package! org-roam :pin "756f6215b672e267f986a3d6e494f5309825b91a"))
+(cond
+ ((featurep! +roam)
+  (package! org-roam
+    :recipe (:host github :repo "org-roam/org-roam-v1")
+    :pin "946a879a4a18756a0508afba1e0b0fe070c6a8b4"))
+ ((featurep! +roam2)
+  (package! org-roam :pin "028c95a011395d01ff9b5217dc365f23187bc26c")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
