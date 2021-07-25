@@ -85,6 +85,15 @@ overrides `completion-styles' during company completion sessions.")
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t)
+
+  (when doom-projectile-fd-binary
+    (setq consult-async-refresh-delay  0.2
+          consult-async-input-throttle 0.3)
+    (setq consult-find-command
+          (format "%s -i -H -E .git --regex %s ARG OPTS"
+                  doom-projectile-fd-binary
+                  (if IS-WINDOWS "--path-separator=/" ""))))
+
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file
