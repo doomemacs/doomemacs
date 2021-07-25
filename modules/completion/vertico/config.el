@@ -72,7 +72,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap locate]                        #'consult-locate
     [remap load-theme]                    #'consult-theme
     [remap man]                           #'consult-man
-    [remap recentf-open-files]            #'consult-recent-file
+    [remap recentf-open-files]            (cmd! (recentf-mode +1) (consult-recent-file))
     [remap switch-to-buffer]              #'consult-buffer
     [remap switch-to-buffer-other-window] #'consult-buffer-other-window
     [remap switch-to-buffer-other-frame]  #'consult-buffer-other-frame
@@ -81,7 +81,6 @@ overrides `completion-styles' during company completion sessions.")
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   (advice-add #'multi-occur :override #'consult-multi-occur)
   :config
-  (recentf-mode)
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t)
