@@ -128,6 +128,9 @@ If DIR is not a project, it will be indexed (but not cached)."
             (if (doom-module-p :completion 'ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
+          ((and (bound-and-true-p vertico-mode)
+                (fboundp 'consult-find))
+           (consult-find default-directory))
           ((and (bound-and-true-p ivy-mode)
                 (fboundp 'counsel-file-jump))
            (call-interactively #'counsel-file-jump))

@@ -36,7 +36,7 @@
   (interactive)
   (if (featurep! :completion ivy)
       (call-interactively #'counsel-file-jump)
-    (cmd! (doom-project-find-file default-directory))))
+    (doom-project-find-file default-directory)))
 
 ;;;###autoload
 (defun +default/discover-projects (arg)
