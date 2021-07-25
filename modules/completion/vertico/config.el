@@ -80,20 +80,23 @@ variable overrides `completion-styles' during company completion sessions.")
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t)
-  (consult-customize
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file
-   +default/search-project +default/search-project-for-symbol-at-point
-   +default/search-other-project +vertico/search-symbol-at-point
-   +default/search-cwd +default/search-other-cwd
-   +default/search-notes-for-symbol-at-point
-   consult--source-file consult--source-project-file consult--source-bookmark
-   :preview-key (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")))
-  (consult-customize
-   consult-theme
-   :preview-key
-   (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")
-         :debounce 0.5 'any))
+  ;; Customize `consult-preview-key' for some commands unless users set it to
+  ;; anything other than the default
+  (when (equal consult-preview-key 'any)
+    (consult-customize
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file
+     +default/search-project +default/search-project-for-symbol-at-point
+     +default/search-other-project +vertico/search-symbol-at-point
+     +default/search-cwd +default/search-other-cwd
+     +default/search-notes-for-symbol-at-point
+     consult--source-file consult--source-project-file consult--source-bookmark
+     :preview-key (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")))
+    (consult-customize
+     consult-theme
+     :preview-key
+     (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")
+           :debounce 0.5 'any)))
   (after! org
     (defvar +vertico--consult-org-source
       `(:name     "Org"
