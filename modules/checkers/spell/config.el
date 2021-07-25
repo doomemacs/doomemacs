@@ -234,7 +234,8 @@ e.g. proselint and langtool."
                 (require 'flyspell-correct-helm nil t)))
           ((and (featurep! :completion ivy)
                 (require 'flyspell-correct-ivy nil t)))
-          ((require 'flyspell-correct-popup nil t)
+          ((featurep! :completion vertico)) ; vertico doesn't need any extra configuration
+          ((require 'flyspell-correct-popup nil t) ; only use popup if no compatible completion UI is enabled
            (setq flyspell-popup-correct-delay 0.8)
            (define-key popup-menu-keymap [escape] #'keyboard-quit))))
 
