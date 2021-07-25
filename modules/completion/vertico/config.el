@@ -4,35 +4,39 @@
   "Completion styles for company to use.
 
 The completion/vertico module uses the orderless completion style by default,
-but this returns too broad a candidate set for company completion. This
-variable overrides `completion-styles' during company completion sessions.")
+but this returns too broad a candidate set for company completion. This variable
+overrides `completion-styles' during company completion sessions.")
+
+
+;;
+;;; Packages
 
 (use-package! vertico
   :hook (doom-first-input . vertico-mode)
   :config
   (setq vertico-resize nil
         vertico-count 17
-        vertico-cycle t)
-  (setq completion-in-region-function
-      (lambda (&rest args)
-        (apply (if vertico-mode
-                   #'consult-completion-in-region
-                 #'completion--in-region)
-               args)))
-  ;; cleans up path when moving directories with shadowed paths syntax,
-  ;; e.g. cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
-  (add-hook 'rfn-eshadow-update-overlay-hook  #'vertico-directory-tidy)
-  (map! :map vertico-map
-        [backspace] #'+vertico/backward-updir))
+        vertico-cycle t
+        completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args)))
+  ;; Cleans up path when moving directories with shadowed paths syntax, e.g.
+  ;; cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+  (map! :map vertico-map [backspace] #'+vertico/backward-updir))
+
 
 (use-package! orderless
-  :defer t
   :after-call doom-first-input-hook
   :config
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
      ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
-     ((string-suffix-p "$" pattern) `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x100000-\x10FFFD]*$")))
+     ((string-suffix-p "$" pattern)
+      `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x100000-\x10FFFD]*$")))
      ;; Ignore single !
      ((string= "!" pattern) `(orderless-literal . ""))
      ;; Without literal
@@ -55,10 +59,10 @@ variable overrides `completion-styles' during company completion sessions.")
   ;; otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
 
+
 (use-package! consult
   :defer t
   :init
-  (advice-add #'multi-occur :override #'consult-multi-occur)
   (define-key!
     [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
@@ -75,6 +79,7 @@ variable overrides `completion-styles' during company completion sessions.")
     [remap yank-pop]                      #'consult-yank-pop
     [remap persp-switch-to-buffer]        #'+vertico/switch-workspace-buffer)
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+  (advice-add #'multi-occur :override #'consult-multi-occur)
   :config
   (recentf-mode)
   (setq consult-project-root-function #'doom-project-root
@@ -104,23 +109,23 @@ variable overrides `completion-styles' during company completion sessions.")
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
     (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
 
+
 (use-package! consult-flycheck
   :when (featurep! :checkers syntax)
   :after (consult flycheck))
 
+
 (use-package! embark
   :defer t
   :init
-  (map! "C-;"               #'embark-act  ; to be moved to :config default if accepted
-        :map minibuffer-local-map
-        "C-;"               #'embark-act
-        "C-c C-;"           #'embark-export
-        :desc "Export to writable buffer"
-        "C-c C-e"           #'+vertico/embark-export-write
-        :leader
-        :desc "Actions" "a" #'embark-act) ; to be moved to :config default if accepted
-  (define-key!
-    [remap describe-bindings] #'embark-bindings)
+  (map! [remap describe-bindings] #'embark-bindings
+        "C-;"               #'embark-act  ; to be moved to :config default if accepted
+        (:map minibuffer-local-map
+         "C-;"               #'embark-act
+         "C-c C-;"           #'embark-export
+         :desc "Export to writable buffer" "C-c C-e" #'+vertico/embark-export-write)
+        (:leader
+         :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
   :config
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
 
@@ -140,35 +145,36 @@ variable overrides `completion-styles' during company completion sessions.")
         '+vertico--embark-target-package
         (nthcdr pos embark-target-finders)))
   (setq embark-package-map (make-sparse-keymap))
-  (map!
-   :map embark-file-map
-   :desc "Open target with sudo" "s" #'doom/sudo-find-file
-   :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace
-   :map embark-package-map
-   "h" #'doom/help-packages
-   "b" #'doom/bump-package
-   "c" #'doom/help-package-config
-   "u" #'doom/help-package-homepage))
+  (map! (:map embark-file-map
+         :desc "Open target with sudo" "s"   #'doom/sudo-find-file
+         :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace)
+        (:map embark-package-map
+         "h" #'doom/help-packages
+         "b" #'doom/bump-package
+         "c" #'doom/help-package-config
+         "u" #'doom/help-package-homepage)))
+
 
 (use-package! marginalia
   :hook (doom-first-input . marginalia-mode)
   :init
   (map! :map minibuffer-local-map
-        :desc "Cycle marginalia views"
-        "M-A" #'marginalia-cycle)
+        :desc "Cycle marginalia views" "M-A" #'marginalia-cycle)
   :config
   (when (featurep! +icons)
     (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
-  (nconc marginalia-command-categories
-         '((persp-switch-to-buffer . buffer)
-           (projectile-find-file . project-file)
-           (doom/describe-active-minor-mode . minor-mode)
-           (flycheck-error-list-set-filter . builtin))))
+  (pushnew! marginalia-command-categories
+            '(persp-switch-to-buffer . buffer)
+            '(projectile-find-file . project-file)
+            '(doom/describe-active-minor-mode . minor-mode)
+            '(flycheck-error-list-set-filter . builtin)))
+
 
 (use-package! embark-consult
   :after (embark consult)
   :config
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+
 
 (use-package! wgrep
   :commands wgrep-change-to-wgrep-mode
