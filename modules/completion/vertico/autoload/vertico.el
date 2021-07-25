@@ -109,6 +109,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 
 Supports exporting consult-grep to wgrep, file to wdeired, and consult-location to occur-edit"
   (interactive)
+  (require 'embark)
   (require 'wgrep)
   (pcase-let ((`(,type . ,candidates)
                (run-hook-with-args-until-success 'embark-candidate-collectors)))
