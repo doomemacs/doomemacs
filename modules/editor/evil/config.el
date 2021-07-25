@@ -494,6 +494,9 @@ directives. By default, this only recognizes C directives.")
        :v  "gR"  #'+eval:replace-region
        ;; Restore these keybinds, since the blacklisted/overwritten gr/gR will
        ;; undo them:
+       (:after helpful
+        :map helpful-mode-map
+        :n "gr" #'helpful-update)
        (:after compile
         :map (compilation-mode-map compilation-minor-mode-map)
         :n "gr" #'recompile)
