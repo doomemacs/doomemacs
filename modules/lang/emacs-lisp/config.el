@@ -197,6 +197,12 @@ employed so that flycheck still does *some* helpful linting.")
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
+(use-package! flycheck-package
+  :when (featurep! :checkers syntax)
+  :after flycheck
+  :config (flycheck-package-setup))
+
+
 (use-package! elisp-demos
   :defer t
   :init
