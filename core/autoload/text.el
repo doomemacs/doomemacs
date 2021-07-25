@@ -222,7 +222,7 @@ line to beginning of line. Same as `evil-delete-back-to-indentation'."
   "Like `backward-kill-word', but doesn't affect the kill-ring."
   (interactive "p")
   (let (kill-ring)
-    (backward-kill-word arg)))
+    (ignore-errors (backward-kill-word arg))))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
