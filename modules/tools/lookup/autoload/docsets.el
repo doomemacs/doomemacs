@@ -92,11 +92,15 @@ installed with `dash-docs-install-docset'."
            (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
+    ;; NOTE: Use `counsel-dash' (when available) temporarily for `vertico' users
+    ;; until another suitable backend is developed
     (cond ((featurep! :completion helm)
            (helm-dash query))
-          ((featurep! :completion ivy)
+          ((or (featurep! :completion ivy)
+               (commandp 'counsel-dash))
            (counsel-dash query))
-          ((user-error "No dash backend is installed, enable ivy or helm.")))))
+          ((user-error
+            "No dash backend is installed, enable ivy or helm, or install `counsel-dash'.")))))
 
 ;;;###autoload
 (defun +lookup/in-all-docsets (&optional query)
