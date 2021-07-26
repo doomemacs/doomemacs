@@ -126,11 +126,12 @@ selection of all minor-modes, active or not."
                              (<= level depth))
                          (or (null tags)
                              (not (string-match-p ":TOC" tags))))
-                (let ((path (org-get-outline-path)))
+                (let ((path  (org-get-outline-path))
+                      (title (org-collect-keywords '("TITLE") '("TITLE"))))
                   (list (string-join
                          (list (string-join
                                 (append (when include-files
-                                          (list (or (+org-get-global-property "TITLE")
+                                          (list (or (cdr (assoc "TITLE" title))
                                                     (file-relative-name (buffer-file-name)))))
                                         path
                                         (when text
