@@ -83,7 +83,8 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
-        consult-line-numbers-widen t)
+        consult-line-numbers-widen t
+        consult-async-min-input 2)
 
   (when doom-projectile-fd-binary
     (setq consult-async-refresh-delay  0.2
