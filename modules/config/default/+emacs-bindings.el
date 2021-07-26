@@ -114,12 +114,12 @@
       (:prefix-map ("s" . "search")
        :desc "Search project for symbol"    "." #'+default/search-project-for-symbol-at-point
        :desc "Search buffer"                "b"
-       (cond ((featurep! :completion helm)      #'swiper)
+       (cond ((featurep! :completion vertico)   #'consult-line)
              ((featurep! :completion ivy)       #'swiper)
-             ((featurep! :completion vertico)   #'consult-line))
+             ((featurep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
-       (cond ((featurep! :completion helm)      #'swiper-all)
-             ((featurep! :completion ivy)       #'swiper-all))
+       (cond ((featurep! :completion ivy)       #'swiper-all)
+             ((featurep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
        :desc "Locate file"                  "f" #'+lookup/file
@@ -135,9 +135,9 @@
        :desc "Search other project"         "P" #'+default/search-other-project
        :desc "Search buffer"                "s" #'+default/search-buffer
        :desc "Search buffer for thing at point" "S"
-       (cond ((featurep! :completion helm)      #'swiper-isearch-thing-at-point)
+       (cond ((featurep! :completion vertico)   #'+vertico/search-symbol-at-point)
              ((featurep! :completion ivy)       #'swiper-isearch-thing-at-point)
-             ((featurep! :completion vertico)   #'+vertico/search-symbol-at-point))
+             ((featurep! :completion helm)      #'swiper-isearch-thing-at-point))
        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
        :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 
@@ -156,9 +156,9 @@
        :desc "Org agenda"                     "a" #'org-agenda
        (:when (featurep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion ivy)       #'ivy-bibtex)
-              ((featurep! :completion helm)      #'helm-bibtex)
-              ((featurep! :completion vertico)   #'bibtex-actions-open-entry)))
+        (cond ((featurep! :completion vertico)   #'bibtex-actions-open-entry)
+              ((featurep! :completion ivy)       #'ivy-bibtex)
+              ((featurep! :completion helm)      #'helm-bibtex)))
 
        :desc "Toggle last org-clock"          "c" #'+org/toggle-last-clock
        :desc "Cancel current org-clock"       "C" #'org-clock-cancel
@@ -520,12 +520,12 @@
         [C-tab]      #'company-complete-common-or-cycle
         [tab]        #'company-complete-common-or-cycle
         [backtab]    #'company-select-previous
-        "C-RET"      (cond ((featurep! :completion helm)     #'helm-company)
+        "C-RET"      (cond ((featurep! :completion vertico)  #'completion-at-point)
                            ((featurep! :completion ivy)      #'counsel-company)
-                           ((featurep! :completion vertico)  #'completion-at-point))
-        "C-<return>" (cond ((featurep! :completion helm)     #'helm-company)
+                           ((featurep! :completion helm)     #'helm-company))
+        "C-<return>" (cond ((featurep! :completion vertico)  #'completion-at-point)
                            ((featurep! :completion ivy)      #'counsel-company)
-                           ((featurep! :completion vertico)  #'completion-at-point))
+                           ((featurep! :completion helm)     #'helm-company))
         :map company-search-map
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
