@@ -30,30 +30,40 @@ orderless."
   (setq deactivate-mark t)
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
-         (args (split-string
-                (string-trim
-                 (concat (if all-files "-uu")
-                         (unless recursive "--maxdepth 1")
-                         "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
-                         " --hidden -g !.git "
-                         (mapconcat #'shell-quote-argument args " ")))
-                " "))
-         (prompt (or prompt
-                     (format "rg [%s]: "
-                             (cond ((equal directory default-directory)
-                                    "./")
-                                   ((equal directory project-root)
-                                    (projectile-project-name))
-                                   ((file-relative-name directory project-root))))))
+         (args
+          (split-string
+           (string-trim
+            (concat (if all-files "-uu")
+                    (unless recursive "--maxdepth 1")
+                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
+                    " --hidden -g !.git "
+                    (mapconcat #'shell-quote-argument args " ")))
+           " "))
+         (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
-                      (replace-regexp-in-string
-                       "[! |]" (lambda (substr)
-                                 (cond ((string= substr " ") "  ")
-                                       ((string= substr "|") "\\\\\\\\|")
-                                       ((concat "\\\\" substr))))
-                       (rxt-quote-pcre (doom-thing-at-point-or-region))))))
-         (ripgrep-command (mapconcat #'identity `("rg" ,@args "." "-e ARG OPTS" ) " ")))
+                      (rxt-quote-pcre (doom-thing-at-point-or-region)))))
+         (ripgrep-command (string-join `("rg" ,@args "." "-e ARG OPTS" ) " "))
+         (consult-async-split-style consult-async-split-style)
+         (consult-async-split-styles-alist consult-async-split-styles-alist))
+    ;; Change the split style if the initial query contains the separator.
+    (when query
+      (cl-destructuring-bind (&key type separator initial)
+          (consult--async-split-style)
+        (pcase type
+          (`separator
+           (replace-regexp-in-string (regexp-quote (char-to-string separator))
+                                     (concat "\\" separator)
+                                     query t t))
+          (`perl
+           (when (string-match-p initial query)
+             (setf (alist-get 'perlalt consult-async-split-styles-alist)
+                   `(:initial ,(or (cl-loop for char in (list "%" "@" "!" "&" "/" ";")
+                                            unless (string-match-p char query)
+                                            return char)
+                                   "%")
+                     :type perl)
+                   consult-async-split-style 'perlalt))))))
     (consult--grep prompt ripgrep-command directory query)))
 
 ;;;###autoload
