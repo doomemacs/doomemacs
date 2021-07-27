@@ -32,7 +32,7 @@
    (concat "Detected Emacs " emacs-version " (at " (car command-line-args) ").\n\n"
            "Doom only supports Emacs 27.1 and newer. A guide to install a newer version\n"
            "of Emacs can be found at:\n\n  "
-           (format "https://doomemacs.org/docs/getting_started.org#%s"
+           (format "https://doomemacs.org/docs/getting_started.org#%s\n"
                    (cond ((eq system-type 'darwin) "on-macos")
                          ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")
                          ("on-linux")))
