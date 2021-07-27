@@ -112,7 +112,7 @@ Prompts for a formatter if universal arg is set."
          (list +format-with t))
         ((and +format-with-lsp
               (bound-and-true-p lsp-managed-mode)
-              (lsp-feature? "textDocument/rangeFormatting"))
+              (lsp-feature? "textDocument/formatting"))
          (list 'lsp nil))
         ((and +format-with-lsp
               (bound-and-true-p eglot--managed-mode)
