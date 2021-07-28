@@ -59,6 +59,7 @@
 
   (pushnew! mixed-pitch-fixed-pitch-faces
             'org-date
+            'org-footnote
             'org-special-keyword
             'org-property-value
             'org-ref-cite-face
