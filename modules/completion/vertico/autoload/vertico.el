@@ -155,3 +155,25 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   (interactive)
   (vertico-previous (or n 1))
   (+vertico/embark-preview))
+
+(defvar +vertico/find-file-in--history nil)
+;;;###autoload
+(defun +vertico/find-file-in (&optional dir initial)
+  "Jump to file under DIR (recursive).
+If INITIAL is non-nil, use as initial input."
+  (interactive)
+  (let* ((default-directory (or dir default-directory))
+         (prompt-dir (consult--directory-prompt "Find" default-directory))
+         (cmd (split-string-and-unquote consult-find-command " "))
+         (cmd (remove "OPTS" cmd))
+         (cmd (remove "ARG" cmd)))
+    (find-file
+     (consult--read
+      (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
+      :prompt default-directory
+      :sort nil
+      :require-match t
+      :initial (if initial (shell-quote-argument initial))
+      :add-history (thing-at-point 'filename)
+      :category '+vertico
+      :history '(:input +vertico/find-file-in--history)))))

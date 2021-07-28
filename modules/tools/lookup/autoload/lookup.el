@@ -280,6 +280,9 @@ otherwise falling back to ffap.el (find-file-at-point)."
           ((and (featurep! :completion ivy)
                 (doom-project-p))
            (counsel-file-jump guess (doom-project-root)))
+          ((and (featurep! :completion vertico)
+                (doom-project-p))
+           (+vertico/find-file-in (doom-project-root) guess))
           ((find-file-at-point (ffap-prompter guess))))
     t))
 
