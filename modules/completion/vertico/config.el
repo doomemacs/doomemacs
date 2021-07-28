@@ -67,6 +67,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
     [remap evil-show-marks]               #'consult-mark
+    [remap evil-show-jumps]               #'+vertico/jump-list
     [remap goto-line]                     #'consult-goto-line
     [remap imenu]                         #'consult-imenu
     [remap locate]                        #'consult-locate
