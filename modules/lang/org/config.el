@@ -1197,6 +1197,10 @@ compelling reason, so..."
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)
 
+  ;; Don't number headings with these tags
+  (setq org-num-face '(:inherit org-special-keyword :underline nil :weight bold)
+        org-num-skip-tags '("noexport" "nonum"))
+
   ;; Prevent modifications made in invisible sections of an org document, as
   ;; unintended changes can easily go unseen otherwise.
   (setq org-catch-invisible-edits 'smart)
