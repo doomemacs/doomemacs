@@ -50,6 +50,16 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
+(defadvice! +popup-override-display-buffer-alist-a (orig-fn buffer-or-name &optional action norecord)
+  "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
+override `display-buffer-alist'."
+  :around #'pop-to-buffer
+  (let ((display-buffer-overriding-action
+         (if (eq action t)
+             display-buffer-overriding-action
+           action)))
+    (funcall orig-fn buffer-or-name action norecord)))
+
 
 ;;
 ;;; External functions
@@ -295,17 +305,7 @@ Ugh, such an ugly hack."
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord)))
-
-  ;; HACK `pop-to-buffer-same-window' consults `display-buffer-alist', which is
-  ;;      what our popup manager uses to manage popup windows. However,
-  ;;      `org-src-switch-to-buffer' already does its own window management
-  ;;      prior to calling `pop-to-buffer-same-window', so there's no need to
-  ;;      _then_ hand off the buffer to the pop up manager.
-  (defadvice! +popup--org-src-switch-to-buffer-a (orig-fn &rest args)
-    :around #'org-src-switch-to-buffer
-    (letf! ((#'pop-to-buffer-same-window #'switch-to-buffer))
-      (apply orig-fn args))))
+      (funcall orig-fn buf norecord))))
 
 
 ;;;###package org-journal
