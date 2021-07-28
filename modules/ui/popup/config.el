@@ -57,12 +57,14 @@ adjustment.")
          (add-hook 'doom-escape-hook #'+popup-close-on-escape-h 'append)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
+               switch-to-buffer-obey-display-actions t
                window--sides-inhibit-check t)
          (dolist (prop +popup-window-parameters)
            (push (cons prop 'writable) window-persistent-parameters)))
         (t
          (remove-hook 'doom-escape-hook #'+popup-close-on-escape-h)
          (setq display-buffer-alist +popup--old-display-buffer-alist
+               switch-to-buffer-obey-display-actions nil
                window--sides-inhibit-check nil)
          (+popup-cleanup-rules-h)
          (dolist (prop +popup-window-parameters)
