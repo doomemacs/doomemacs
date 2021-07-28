@@ -152,7 +152,7 @@ overrides `completion-styles' during company completion sessions.")
                  (length embark-target-finders))))
     (cl-callf2
         cons
-        '+vertico--embark-target-package
+        '+vertico-embark-target-package-fn
         (nthcdr pos embark-target-finders)))
   (setq embark-package-map (make-sparse-keymap))
   (map! (:map embark-file-map

@@ -103,15 +103,16 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
                      (expand-file-name new-path))))))
       (call-interactively 'backward-delete-char))))
 
-(defun +vertico--embark-target-package ()
-    "Targets Doom's package! statements and returns the package name"
-    (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
-      (save-excursion
-        (search-backward "(")
-        (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
-          (let ((pkg (match-string 1)))
-            (set-text-properties 0 (length pkg) nil pkg)
-            `(package . ,pkg))))))
+;;;###autoload
+(defun +vertico-embark-target-package-fn ()
+  "Targets Doom's package! statements and returns the package name"
+  (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
+    (save-excursion
+      (search-backward "(")
+      (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
+        (let ((pkg (match-string 1)))
+          (set-text-properties 0 (length pkg) nil pkg)
+          `(package . ,pkg))))))
 
 ;;;###autoload
 (defun +vertico/embark-export-write ()
