@@ -588,6 +588,24 @@ mutating hooks on exported output, like formatters."
   (add-to-list 'org-file-apps '(directory . emacs))
   (add-to-list 'org-file-apps '(remote . emacs))
 
+  (defadvice! +org--show-parents-a (&optional arg)
+    "Show all headlines in the buffer, like a table of contents.
+With numerical argument N, show content up to level N."
+    :override #'org-content
+    (interactive "p")
+    (org-show-all '(headings drawers))
+    (save-excursion
+      (goto-char (point-max))
+      (let ((regexp (if (and (wholenump arg) (> arg 0))
+                        (format "^\\*\\{%d,%d\\} " (1- arg) arg)
+                      "^\\*+ "))
+            (last (point)))
+        (while (re-search-backward regexp nil t)
+          (when (or (not (wholenump arg))
+                    (= (org-current-level) arg))
+            (org-flag-region (line-end-position) last t 'outline))
+          (setq last (line-end-position 0))))))
+
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and
   ;; `org-delete-backward-char'.
