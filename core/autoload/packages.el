@@ -238,7 +238,7 @@ Must be run from a magit diff buffer."
       (if (null lines)
           (user-error "No bumps to bumpify")
         (prog1 (funcall (if interactive #'kill-new #'identity)
-                        (format "Bump %s\n\n%s"
+                        (format "bump: %s\n\n%s"
                                 (mapconcat (lambda (x)
                                              (mapconcat #'symbol-name x " "))
                                            (cl-loop with alist = ()
