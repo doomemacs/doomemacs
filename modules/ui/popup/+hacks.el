@@ -276,7 +276,7 @@ to tame (i.e. to get the popup manager to handle it)."
                  (let ((temp-buffer-show-function
                         (doom-rpartial #'+popup-display-buffer-stacked-side-window-fn nil)))
                    (with-current-buffer buffer
-                     (hide-mode-line-mode +1))
+                     (+popup-buffer-mode +1))
                    (funcall internal-temp-output-buffer-show buffer)))
           (apply orig-fn args))
       (apply orig-fn args)))
@@ -285,17 +285,21 @@ to tame (i.e. to get the popup manager to handle it)."
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
-    :around '(org-fast-tag-selection
-              org-fast-todo-selection)
+    :around #'org-fast-tag-selection
+    :around #'org-fast-todo-selection
     (if +popup-mode
-        (letf! ((defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
+        (letf! ((defun read-char-exclusive (&rest args)
+                  (message nil)
+                  (apply read-char-exclusive args))
+                (defun split-window-vertically (&optional _size)
+                  (funcall split-window-vertically (- 0 window-min-height 1)))
+                (defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
                   (when-let (buf (window-buffer window))
-                    (delete-window window)
-                    (select-window
-                     (setq window (display-buffer-at-bottom buf nil)))
                     (with-current-buffer buf
-                      (setq mode-line-format nil)))
-                  (funcall org-fit-window-to-buffer window max-height min-height shrink-only)))
+                      (+popup-buffer-mode)))
+                  (when (> (window-buffer-height window)
+                           (window-height window))
+                    (fit-window-to-buffer window (window-buffer-height window)))))
           (apply orig-fn args))
       (apply orig-fn args)))
 
