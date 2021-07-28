@@ -158,7 +158,7 @@ overrides `completion-styles' during company completion sessions.")
   (setq embark-package-map (make-sparse-keymap))
   (map! (:map embark-file-map
          :desc "Open target with sudo" "s"   #'doom/sudo-find-file
-         :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace)
+         :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace)
         (:map embark-package-map
          "h" #'doom/help-packages
          "b" #'doom/bump-package
