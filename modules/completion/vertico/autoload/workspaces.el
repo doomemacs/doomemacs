@@ -47,7 +47,8 @@ Use consult narrowing with another workspace number to open a buffer from that w
       (funcall consult--buffer-display (car buffer)))))
 
 ;;;###autoload
-(defun +vertico-embark-open-in-new-workspace (x)
+(defun +vertico/embark-open-in-new-workspace (x)
   "Open X (a file) in a new workspace."
+  (interactive)
   (+workspace/new)
   (find-file x))

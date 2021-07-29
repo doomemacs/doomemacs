@@ -100,6 +100,7 @@
               org-block-end-line
               org-code
               org-date
+              org-footnote
               org-formula
               org-latex-and-related
               org-link

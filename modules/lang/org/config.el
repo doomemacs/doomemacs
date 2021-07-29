@@ -1,5 +1,8 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
+(defvar +org-babel-native-async-langs '(python)
+  "Languages that will use `ob-comint' instead of `ob-async' for `:async'.")
+
 (defvar +org-babel-mode-alist
   '((c . C)
     (cpp . C)
@@ -215,12 +218,16 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (after! ob
     (add-to-list 'org-babel-default-lob-header-args '(:sync)))
 
-  (defadvice! +org-babel-disable-async-if-needed-a (orig-fn &optional fn arg info params)
-    "Disable ob-async when leaving it on would cause errors or issues.
+  (defadvice! +org-babel-disable-async-maybe-a (orig-fn &optional fn arg info params)
+    "Use ob-comint where supported, disable async altogether where it isn't.
 
-Such as when exporting org documents or executing babel blocks with :session
-parameters (which ob-async does not support), in which case this advice forces
-these blocks to run synchronously.
+We have access to two async backends: ob-comint or ob-async, which have
+different requirements. This advice tries to pick the best option between them,
+falling back to synchronous execution otherwise. Without this advice, they die
+with an error; terrible UX!
+
+Note: ob-comint support will only kick in for languages listed in
+`+org-babel-native-async-langs'.
 
 Also adds support for a `:sync' parameter to override `:async'."
     :around #'ob-async-org-babel-execute-src-block
@@ -228,14 +235,24 @@ Also adds support for a `:sync' parameter to override `:async'."
         (funcall orig-fn fn arg info params)
       (let* ((info (or info (org-babel-get-src-block-info)))
              (params (org-babel-merge-params (nth 2 info) params)))
-        (cond ((or (assq :sync params)
-                   (not (assq :async params))
-                   (member (car info) ob-async-no-async-languages-alist))
-               (funcall fn arg info params))
-              ((not (member (cdr (assq :session params)) '("none" nil)))
-               (message "Org babel :: :session is incompatible with :async. Executing synchronously!")
-               nil)
-              ((funcall orig-fn fn arg info params))))))
+        (if (or (assq :sync params)
+                (not (assq :async params))
+                (member (car info) ob-async-no-async-languages-alist)
+                ;; ob-comint requires a :session, ob-async does not, so fall
+                ;; back to ob-async if no :session is provided.
+                (unless (member (alist-get :session params) '("none" nil))
+                  (unless (memq (let* ((lang (nth 0 info))
+                                       (lang (cond ((symbolp lang) lang)
+                                                   ((stringp lang) (intern lang)))))
+                                  (or (alist-get lang +org-babel-mode-alist)
+                                      lang))
+                                +org-babel-native-async-langs)
+                    (message "Org babel: %s :session is incompatible with :async. Executing synchronously!"
+                             (car info))
+                    (sleep-for 0.2))
+                  t))
+            (funcall fn arg info params)
+          (funcall orig-fn fn arg info params)))))
 
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
@@ -570,6 +587,24 @@ mutating hooks on exported output, like formatters."
   ;; Open directory links in dired
   (add-to-list 'org-file-apps '(directory . emacs))
   (add-to-list 'org-file-apps '(remote . emacs))
+
+  (defadvice! +org--show-parents-a (&optional arg)
+    "Show all headlines in the buffer, like a table of contents.
+With numerical argument N, show content up to level N."
+    :override #'org-content
+    (interactive "p")
+    (org-show-all '(headings drawers))
+    (save-excursion
+      (goto-char (point-max))
+      (let ((regexp (if (and (wholenump arg) (> arg 0))
+                        (format "^\\*\\{%d,%d\\} " (1- arg) arg)
+                      "^\\*+ "))
+            (last (point)))
+        (while (re-search-backward regexp nil t)
+          (when (or (not (wholenump arg))
+                    (= (org-current-level) arg))
+            (org-flag-region (line-end-position) last t 'outline))
+          (setq last (line-end-position 0))))))
 
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and
@@ -1196,6 +1231,10 @@ compelling reason, so..."
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)
+
+  ;; Don't number headings with these tags
+  (setq org-num-face '(:inherit org-special-keyword :underline nil :weight bold)
+        org-num-skip-tags '("noexport" "nonum"))
 
   ;; Prevent modifications made in invisible sections of an org document, as
   ;; unintended changes can easily go unseen otherwise.

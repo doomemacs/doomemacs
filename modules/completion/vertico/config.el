@@ -67,6 +67,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
     [remap evil-show-marks]               #'consult-mark
+    [remap evil-show-jumps]               #'+vertico/jump-list
     [remap goto-line]                     #'consult-goto-line
     [remap imenu]                         #'consult-imenu
     [remap locate]                        #'consult-locate
@@ -84,11 +85,12 @@ overrides `completion-styles' during company completion sessions.")
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t
-        consult-async-min-input 2)
+        consult-async-min-input 2
+        consult-async-refresh-delay  0.15
+        consult-async-input-throttle 0.2
+        consult-async-input-debounce 0.1)
 
   (when doom-projectile-fd-binary
-    (setq consult-async-refresh-delay  0.2
-          consult-async-input-throttle 0.3)
     (setq consult-find-command
           (format "%s -i -H -E .git --regex %s ARG OPTS"
                   doom-projectile-fd-binary
@@ -151,12 +153,12 @@ overrides `completion-styles' during company completion sessions.")
                  (length embark-target-finders))))
     (cl-callf2
         cons
-        '+vertico--embark-target-package
+        '+vertico-embark-target-package-fn
         (nthcdr pos embark-target-finders)))
   (setq embark-package-map (make-sparse-keymap))
   (map! (:map embark-file-map
          :desc "Open target with sudo" "s"   #'doom/sudo-find-file
-         :desc "Open in new workspace" "TAB" #'+vertico-embark-open-in-new-workspace)
+         :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace)
         (:map embark-package-map
          "h" #'doom/help-packages
          "b" #'doom/bump-package

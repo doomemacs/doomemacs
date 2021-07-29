@@ -61,8 +61,17 @@ lua-language-server.")
   :when (featurep! +fennel)
   :defer t
   :config
-  (set-lookup-handlers! 'fennel-mode :definition #'fennel-find-definition)
-  (set-repl-handler! 'fennel-mode #'fennel-repl))
+  (set-lookup-handlers! 'fennel-mode
+    :definition #'fennel-find-definition
+    :documentation #'fennel-show-documentation)
+  (set-repl-handler! 'fennel-mode #'fennel-repl)
+
+  (setq-hook! 'fennel-mode-hook
+    ;; To match the `tab-width' default for other lisp modes
+    tab-width 2
+    ;; Don't treat autoloads or sexp openers as outline headers, we have
+    ;; hideshow for that.
+    outline-regexp "[ \t]*;;;;* [^ \t\n]"))
 
 
 ;;

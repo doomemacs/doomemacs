@@ -50,6 +50,16 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
+(defadvice! +popup-override-display-buffer-alist-a (orig-fn buffer-or-name &optional action norecord)
+  "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
+override `display-buffer-alist'."
+  :around #'pop-to-buffer
+  (let ((display-buffer-overriding-action
+         (if (eq action t)
+             display-buffer-overriding-action
+           action)))
+    (funcall orig-fn buffer-or-name action norecord)))
+
 
 ;;
 ;;; External functions
@@ -266,7 +276,7 @@ to tame (i.e. to get the popup manager to handle it)."
                  (let ((temp-buffer-show-function
                         (doom-rpartial #'+popup-display-buffer-stacked-side-window-fn nil)))
                    (with-current-buffer buffer
-                     (hide-mode-line-mode +1))
+                     (+popup-buffer-mode +1))
                    (funcall internal-temp-output-buffer-show buffer)))
           (apply orig-fn args))
       (apply orig-fn args)))
@@ -275,19 +285,32 @@ to tame (i.e. to get the popup manager to handle it)."
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
-    :around '(org-fast-tag-selection
-              org-fast-todo-selection)
+    :around #'org-fast-tag-selection
+    :around #'org-fast-todo-selection
     (if +popup-mode
-        (letf! ((defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
+        (letf! ((defun read-char-exclusive (&rest args)
+                  (message nil)
+                  (apply read-char-exclusive args))
+                (defun split-window-vertically (&optional _size)
+                  (funcall split-window-vertically (- 0 window-min-height 1)))
+                (defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
                   (when-let (buf (window-buffer window))
-                    (delete-window window)
-                    (select-window
-                     (setq window (display-buffer-at-bottom buf nil)))
                     (with-current-buffer buf
-                      (setq mode-line-format nil)))
-                  (funcall org-fit-window-to-buffer window max-height min-height shrink-only)))
+                      (+popup-buffer-mode)))
+                  (when (> (window-buffer-height window)
+                           (window-height window))
+                    (fit-window-to-buffer window (window-buffer-height window)))))
           (apply orig-fn args))
       (apply orig-fn args)))
+
+  (defadvice! +popup--org-edit-src-exit-a (orig-fn &rest args)
+    "If you switch workspaces or the src window is recreated..."
+    :around #'org-edit-src-exit
+    (let* ((window (selected-window))
+           (popup-p (+popup-window-p window)))
+      (prog1 (apply orig-fn args)
+        (when (and popup-p (window-live-p window))
+          (delete-window window)))))
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
   (defadvice! +popup--org-pop-to-buffer-a (orig-fn buf &optional norecord)
@@ -295,17 +318,7 @@ Ugh, such an ugly hack."
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord)))
-
-  ;; HACK `pop-to-buffer-same-window' consults `display-buffer-alist', which is
-  ;;      what our popup manager uses to manage popup windows. However,
-  ;;      `org-src-switch-to-buffer' already does its own window management
-  ;;      prior to calling `pop-to-buffer-same-window', so there's no need to
-  ;;      _then_ hand off the buffer to the pop up manager.
-  (defadvice! +popup--org-src-switch-to-buffer-a (orig-fn &rest args)
-    :around #'org-src-switch-to-buffer
-    (letf! ((#'pop-to-buffer-same-window #'switch-to-buffer))
-      (apply orig-fn args))))
+      (funcall orig-fn buf norecord))))
 
 
 ;;;###package org-journal

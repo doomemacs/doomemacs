@@ -30,30 +30,40 @@ orderless."
   (setq deactivate-mark t)
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
-         (args (split-string
-                (string-trim
-                 (concat (if all-files "-uu")
-                         (unless recursive "--maxdepth 1")
-                         "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
-                         " --hidden -g !.git "
-                         (mapconcat #'shell-quote-argument args " ")))
-                " "))
-         (prompt (or prompt
-                     (format "rg [%s]: "
-                             (cond ((equal directory default-directory)
-                                    "./")
-                                   ((equal directory project-root)
-                                    (projectile-project-name))
-                                   ((file-relative-name directory project-root))))))
+         (args
+          (split-string
+           (string-trim
+            (concat (if all-files "-uu")
+                    (unless recursive "--maxdepth 1")
+                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
+                    " --hidden -g !.git "
+                    (mapconcat #'shell-quote-argument args " ")))
+           " "))
+         (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
-                      (replace-regexp-in-string
-                       "[! |]" (lambda (substr)
-                                 (cond ((string= substr " ") "  ")
-                                       ((string= substr "|") "\\\\\\\\|")
-                                       ((concat "\\\\" substr))))
-                       (rxt-quote-pcre (doom-thing-at-point-or-region))))))
-         (ripgrep-command (mapconcat #'identity `("rg" ,@args "." "-e ARG OPTS" ) " ")))
+                      (rxt-quote-pcre (doom-thing-at-point-or-region)))))
+         (ripgrep-command (string-join `("rg" ,@args "." "-e ARG OPTS" ) " "))
+         (consult-async-split-style consult-async-split-style)
+         (consult-async-split-styles-alist consult-async-split-styles-alist))
+    ;; Change the split style if the initial query contains the separator.
+    (when query
+      (cl-destructuring-bind (&key type separator initial)
+          (consult--async-split-style)
+        (pcase type
+          (`separator
+           (replace-regexp-in-string (regexp-quote (char-to-string separator))
+                                     (concat "\\" (char-to-string separator))
+                                     query t t))
+          (`perl
+           (when (string-match-p initial query)
+             (setf (alist-get 'perlalt consult-async-split-styles-alist)
+                   `(:initial ,(or (cl-loop for char in (list "%" "@" "!" "&" "/" ";")
+                                            unless (string-match-p char query)
+                                            return char)
+                                   "%")
+                     :type perl)
+                   consult-async-split-style 'perlalt))))))
     (consult--grep prompt ripgrep-command directory query)))
 
 ;;;###autoload
@@ -93,15 +103,16 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
                      (expand-file-name new-path))))))
       (call-interactively 'backward-delete-char))))
 
-(defun +vertico--embark-target-package ()
-    "Targets Doom's package! statements and returns the package name"
-    (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
-      (save-excursion
-        (search-backward "(")
-        (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
-          (let ((pkg (match-string 1)))
-            (set-text-properties 0 (length pkg) nil pkg)
-            `(package . ,pkg))))))
+;;;###autoload
+(defun +vertico-embark-target-package-fn ()
+  "Targets Doom's package! statements and returns the package name"
+  (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
+    (save-excursion
+      (search-backward "(")
+      (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
+        (let ((pkg (match-string 1)))
+          (set-text-properties 0 (length pkg) nil pkg)
+          `(package . ,pkg))))))
 
 ;;;###autoload
 (defun +vertico/embark-export-write ()
@@ -144,3 +155,66 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   (interactive)
   (vertico-previous (or n 1))
   (+vertico/embark-preview))
+
+(defvar +vertico/find-file-in--history nil)
+;;;###autoload
+(defun +vertico/find-file-in (&optional dir initial)
+  "Jump to file under DIR (recursive).
+If INITIAL is non-nil, use as initial input."
+  (interactive)
+  (let* ((default-directory (or dir default-directory))
+         (prompt-dir (consult--directory-prompt "Find" default-directory))
+         (cmd (split-string-and-unquote consult-find-command " "))
+         (cmd (remove "OPTS" cmd))
+         (cmd (remove "ARG" cmd)))
+    (find-file
+     (consult--read
+      (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
+      :prompt default-directory
+      :sort nil
+      :require-match t
+      :initial (if initial (shell-quote-argument initial))
+      :add-history (thing-at-point 'filename)
+      :category '+vertico
+      :history '(:input +vertico/find-file-in--history)))))
+
+;;;###autoload
+(defun +vertico/jump-list (jump)
+  "Go to an entry in evil's (or better-jumper's) jumplist."
+  (interactive
+   (let (buffers)
+     (unwind-protect
+         (list
+          (consult--read
+           ;; REVIEW Refactor me
+           (nreverse
+            (delete-dups
+             (delq
+              nil (mapcar (lambda (mark)
+                            (when mark
+                              (cl-destructuring-bind (path pt _id) mark
+                                (let ((buf (get-file-buffer path)))
+                                  (unless buf
+                                    (push (setq buf (find-file-noselect path t))
+                                          buffers))
+                                  (with-current-buffer buf
+                                    (goto-char pt)
+                                    (font-lock-fontify-region (line-beginning-position) (line-end-position))
+                                    (cons (format "%s:%d: %s"
+                                                  (buffer-name)
+                                                  (line-number-at-pos)
+                                                  (string-trim-right (or (thing-at-point 'line) "")))
+                                          (point-marker)))))))
+                          (cddr (better-jumper-jump-list-struct-ring
+                                 (better-jumper-get-jumps (better-jumper--get-current-context))))))))
+           :prompt "jumplist: "
+           :sort nil
+           :require-match t
+           :category 'jump-list))
+       (mapc #'kill-buffer buffers))))
+  (let ((mark (cdr jump)))
+    (delq! (marker-buffer mark) buffers)
+    (mapc #'kill-buffer buffers)
+    (setq buffers nil)
+    (with-current-buffer (switch-to-buffer (marker-buffer mark))
+      (goto-char (marker-position mark)))))

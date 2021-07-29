@@ -74,6 +74,16 @@ Docsets can be searched directly via `+lookup/in-docsets'."
 ;;
 ;;; Commands
 
+(defun +lookup--consult-search (sync cb)
+  (lambda (action)
+    (pcase action
+      ((pred stringp)
+       (when-let (cands (with-current-buffer cb
+                          (dash-docs-search action)))
+         (funcall sync 'flush)
+         (funcall sync cands)))
+      (_ (funcall sync action)))))
+
 ;;;###autoload
 (defun +lookup/in-docsets (arg &optional query docsets)
   "Lookup QUERY in dash DOCSETS.
@@ -92,10 +102,26 @@ installed with `dash-docs-install-docset'."
            (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
-    (cond ((featurep! :completion helm)
-           (helm-dash query))
+    (cond ((featurep! :completion vertico)
+           (dash-docs-initialize-debugging-buffer)
+           (dash-docs-create-buffer-connections)
+           (dash-docs-create-common-connections)
+           (let* ((sink
+                   (thread-first (consult--async-sink)
+                     (consult--async-refresh-immediate)
+                     (+lookup--consult-search (current-buffer))
+                     (consult--async-throttle)))
+                  (result
+                   (or (consult--read sink
+                                      :prompt "Documentation for: "
+                                      :category 'dash
+                                      :initial query)
+                       (user-error "Aborted"))))
+             (dash-docs-browse-url (cdr (assoc result (funcall sink nil))))))
           ((featurep! :completion ivy)
            (counsel-dash query))
+          ((featurep! :completion helm)
+           (helm-dash query))
           ((user-error "No dash backend is installed, enable ivy or helm.")))))
 
 ;;;###autoload

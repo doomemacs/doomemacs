@@ -138,9 +138,9 @@
          "C-u"     #'company-previous-page
          "C-d"     #'company-next-page
          "C-s"     #'company-filter-candidates
-         "C-S-s"   (cond ((featurep! :completion helm)     #'helm-company)
+         "C-S-s"   (cond ((featurep! :completion vertico)  #'completion-at-point)
                          ((featurep! :completion ivy)      #'counsel-company)
-                         ((featurep! :completion vertico)  #'completion-at-point))
+                         ((featurep! :completion helm)     #'helm-company))
          "C-SPC"   #'company-complete-common
          "TAB"     #'company-complete-common-or-cycle
          [tab]     #'company-complete-common-or-cycle
@@ -304,9 +304,9 @@
        :desc "Switch buffer"           "<" #'switch-to-buffer)
       :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
-      (cond ((featurep! :completion ivy)        #'ivy-resume)
-            ((featurep! :completion helm)       #'helm-resume)
-            ((featurep! :completion vertico)    #'vertico-repeat))
+      (cond ((featurep! :completion vertico)    #'vertico-repeat)
+            ((featurep! :completion ivy)        #'ivy-resume)
+            ((featurep! :completion helm)       #'helm-resume))
 
       :desc "Search for symbol in project" "*" #'+default/search-project-for-symbol-at-point
       :desc "Search project"               "/" #'+default/search-project
@@ -516,9 +516,9 @@
        :desc "Org agenda"                   "a" #'org-agenda
        (:when (featurep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion ivy)      #'ivy-bibtex)
-              ((featurep! :completion helm)     #'helm-bibtex)
-              ((featurep! :completion vertico)  #'bibtex-actions-open-entry)))
+        (cond ((featurep! :completion vertico)  #'bibtex-actions-open-entry)
+              ((featurep! :completion ivy)      #'ivy-bibtex)
+              ((featurep! :completion helm)     #'helm-bibtex)))
 
        :desc "Toggle last org-clock"        "c" #'+org/toggle-last-clock
        :desc "Cancel current org-clock"     "C" #'org-clock-cancel
@@ -641,6 +641,7 @@
        :desc "Browse project"               "." #'+default/browse-project
        :desc "Browse other project"         ">" #'doom/browse-in-other-project
        :desc "Run cmd in project root"      "!" #'projectile-run-shell-command-in-root
+       :desc "Async cmd in project root"    "&" #'projectile-run-async-shell-command-in-root
        :desc "Add new project"              "a" #'projectile-add-known-project
        :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
        :desc "Compile in project"           "c" #'projectile-compile-project
@@ -703,12 +704,12 @@
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
        :desc "Search buffer"                "b"
-       (cond ((featurep! :completion helm)      #'swiper)
+       (cond ((featurep! :completion vertico)   #'consult-line)
              ((featurep! :completion ivy)       #'swiper)
-             ((featurep! :completion vertico)   #'consult-line))
+             ((featurep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
-       (cond ((featurep! :completion helm)      #'swiper-all)
-             ((featurep! :completion ivy)       #'swiper-all))
+       (cond ((featurep! :completion ivy)       #'swiper-all)
+             ((featurep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
        :desc "Locate file"                  "f" #'locate
@@ -726,9 +727,9 @@
        :desc "Jump to mark"                 "r" #'evil-show-marks
        :desc "Search buffer"                "s" #'+default/search-buffer
        :desc "Search buffer for thing at point" "S"
-       (cond ((featurep! :completion helm)      #'swiper-isearch-thing-at-point)
+       (cond ((featurep! :completion vertico)   #'+vertico/search-symbol-at-point)
              ((featurep! :completion ivy)       #'swiper-isearch-thing-at-point)
-             ((featurep! :completion vertico)   #'+vertico/search-symbol-at-point))
+             ((featurep! :completion helm)      #'swiper-isearch-thing-at-point))
        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
        :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 
