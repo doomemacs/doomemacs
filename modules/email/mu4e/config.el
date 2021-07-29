@@ -74,15 +74,6 @@
   (setq mail-user-agent 'mu4e-user-agent
         message-mail-user-agent 'mu4e-user-agent)
 
-  ;; Make reply coloring consistant, and striped for readability
-  (custom-set-faces!
-    '(gnus-cite-2 :foreground nil :inherit gnus-cite-10)
-    '(gnus-cite-3 :foreground nil :inherit gnus-cite-7)
-    '(message-cited-text-1 :foreground nil :inherit gnus-cite-1)
-    '(message-cited-text-2 :foreground nil :inherit gnus-cite-2)
-    '(message-cited-text-3 :foreground nil :inherit gnus-cite-3)
-    '(message-cited-text-4 :foreground nil :inherit gnus-cite-4))
-
   ;; Set the icons only when a graphical frame has been created
   (if (display-graphic-p)
       (+mu4e-initialise-icons)
