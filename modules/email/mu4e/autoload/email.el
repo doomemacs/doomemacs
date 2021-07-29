@@ -289,7 +289,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
        (dired-mu4e-attach-ctrl-c-ctrl-c 1)))))
 
 (define-minor-mode dired-mu4e-attach-ctrl-c-ctrl-c
-  "Adds C-c C-c as an keybinding to attach files to a message."
+  "Adds C-c C-c as a keybinding to attach files to a message."
   :lighter "attach"
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "C-c C-c") '+mu4e/attach-files)
