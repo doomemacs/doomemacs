@@ -106,17 +106,17 @@ installed with `dash-docs-install-docset'."
            (dash-docs-initialize-debugging-buffer)
            (dash-docs-create-buffer-connections)
            (dash-docs-create-common-connections)
-           (let ((sink
-                  (thread-first (consult--async-sink)
-                    (consult--async-refresh-immediate)
-                    (+lookup--consult-search (current-buffer))
-                    (consult--async-throttle)))
-                 (result
-                  (or (consult--read sink
-                                     :prompt "Documentation for: "
-                                     :category 'dash
-                                     :initial query)
-                      (user-error "Aborted"))))
+           (let* ((sink
+                   (thread-first (consult--async-sink)
+                     (consult--async-refresh-immediate)
+                     (+lookup--consult-search (current-buffer))
+                     (consult--async-throttle)))
+                  (result
+                   (or (consult--read sink
+                                      :prompt "Documentation for: "
+                                      :category 'dash
+                                      :initial query)
+                       (user-error "Aborted"))))
              (dash-docs-browse-url (cdr (assoc result (funcall sink nil))))))
           ((featurep! :completion ivy)
            (counsel-dash query))
