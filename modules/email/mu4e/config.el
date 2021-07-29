@@ -259,7 +259,9 @@ Ignores all arguments and returns nil."
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
         org-msg-greeting-name-limit 3
-        org-msg-default-alternatives '(text html)
+        org-msg-default-alternatives '((new . (utf-8 html))
+                                       (reply-to-text . (utf-8))
+                                       (reply-to-html . (utf-8 html)))
         org-msg-convert-citation t)
 
   (defvar +org-msg-currently-exporting nil
