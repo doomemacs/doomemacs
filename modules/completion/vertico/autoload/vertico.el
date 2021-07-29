@@ -53,7 +53,7 @@ orderless."
         (pcase type
           (`separator
            (replace-regexp-in-string (regexp-quote (char-to-string separator))
-                                     (concat "\\" separator)
+                                     (concat "\\" (char-to-string separator))
                                      query t t))
           (`perl
            (when (string-match-p initial query)
