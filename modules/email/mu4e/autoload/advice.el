@@ -38,14 +38,19 @@ clicked."
 (defun +org-msg-img-scale-css (img-uri)
   "For a given IMG-URI, use imagemagik to find its width."
   (if +org-msg-currently-exporting
-      ;; TODO change to use 'file' (NB: would only work for PNG though, apparently)
-      (let ((width-call (doom-call-process "identify" "-format" "%w"
-                                           (substring img-uri 7)))) ; 7=(length "file://")
-        (when (= (car width-call) 0)
-          (list :width
-                (format "%.1fpx"
-                        (/ (string-to-number (cdr width-call))
-                           (plist-get org-format-latex-options :scale))))))
+      (when (and (not IS-WINDOWS)) ; relies on posix path
+        (let ((with-call (and (executable-find "identify")
+                              (doom-call-process "identify" "-format" "%w"
+                                                 (substring img-uri 7))))) ; 7=(length "file://")
+          (unless width-call
+            (setq width-call (doom-call-process "file" (substring img-uri 7)))
+            (setcdr width-call (replace-regexp-in-string "^.*image data, \\([0-9]+\\).*$" "\\1" (cdr width-call)))
+            (setcar width-call (if (< 0 (string-to-number (cdr width-call))) 0 1)))
+          (when (= (car width-call) 0)
+            (list :width
+                  (format "%.1fpx"
+                          (/ (string-to-number (cdr width-call))
+                             (plist-get org-format-latex-options :scale)))))))
     (list :style (format "transform: scale(%.3f)"
                          (/ 1.0 (plist-get org-format-latex-options :scale))))))
 
@@ -70,14 +75,13 @@ account for the value of :scale in `org-format-latex-options'."
              (org-html-format-latex latex-frag processing-type info)))
         (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
           (let ((source (org-export-file-uri (match-string 1 formula-link)))
-                (attributes (list :alt latex-frag
-                                  :class (concat "latex-fragment-"
-                                                 (if (equal "\\(" (substring latex-frag 0 2))
-                                                     "inline" "block")))))
-            (when (and (memq processing-type '(dvipng convert))
-                       (not IS-WINDOWS) ; relies on posix path
-                       (executable-find "identify"))
-              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
+                (attributes (append (list :alt latex-frag
+                                          :class
+                                          (concat "latex-fragment-"
+                                                  (if (equal "\\(" (substring latex-frag 0 2))
+                                                      "inline" "block")))
+                                    (when (memq processing-type '(dvipng convert))
+                                    (+org-msg-img-scale-css source)))))
             (org-html--format-image source attributes info)))))
      (t latex-frag))))
 
@@ -118,11 +122,11 @@ scales the image to account for the value of :scale in `org-format-latex-options
               processing-type info)))
         (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
           (let ((source (org-export-file-uri (match-string 1 formula-link))))
-            (when (and (memq processing-type '(dvipng convert))
-                       (not IS-WINDOWS) ; relies on posix path
-                       (executable-find "identify"))
-              (apply #'plist-put attributes (+org-msg-img-scale-css source)))
             (org-html--wrap-latex-environment
-             (org-html--format-image source attributes info)
+             (org-html--format-image source
+                                     (append attributes
+                                             (when (memq processing-type '(dvipng convert))
+                                                          (+org-msg-img-scale-css source)))
+                                     info)
              info caption label)))))
      (t (org-html--wrap-latex-environment latex-frag info caption label)))))
