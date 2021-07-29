@@ -34,8 +34,8 @@ Emacs keybinds when evil +everywhere is disabled.
 | =C-c C-f C-f=          | Fold region               |
 | =C-c C-f C-u= or =C `= | Unfold region             |
 | =C-c C-f C-d=          | Delete folded region      |
-| =C-c C-a C-f=          | Refold all regions        |
-| =C-c C-a C-u=          | Unfold all regions        |
+| =C-c C-f C-a C-f=      | Fold all regions          |
+| =C-c C-f C-a C-u=      | Unfold all regions        |
 | =C-c C-a C-d=          | Delete all folded regions |
 
 * TODO Configuration
