@@ -61,7 +61,7 @@ Why this over exec-path-from-shell?
     "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM\\(CAP\\)?$"
     "^USER$"
     ;; X server or services' variables that shouldn't be persisted
-    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
+    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$" "^XDG_SESSION_TYPE$"
     ;; Windows+WSL envvars that shouldn't be persisted
     "^WSL_INTEROP$"
     ;; ssh and gpg variables (likely to become stale)
