@@ -200,6 +200,15 @@
 
   (add-hook 'mu4e-compose-pre-hook '+mu4e-set-from-address-h)
 
+  (defadvice! +mu4e-ensure-compose-writeable-a (&rest _)
+    "Ensure that compose buffers are writable.
+This should already be the case yet it does not always seem to be."
+    :before #'mu4e-compose-new
+    :before #'mu4e-compose-reply
+    :before #'mu4e-compose-forward
+    :before #'mu4e-compose-resend
+    (read-only-mode -1))
+
   (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
   (when (featurep! :editor evil)
