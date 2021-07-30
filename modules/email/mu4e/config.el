@@ -166,11 +166,11 @@
   ;; actually show you all the information you want to see
   ;; so if the header view is entered from a narrow frame,
   ;; it's probably worth trying to expand it
-  (defun mu4e-widen-frame-maybe ()
+  (defun +mu4e-widen-frame-maybe ()
     "Expand the frame with if it's less than `+mu4e-min-header-frame-width'."
     (when (< (frame-width) +mu4e-min-header-frame-width)
       (set-frame-width (selected-frame) +mu4e-min-header-frame-width)))
-  (add-hook 'mu4e-headers-mode-hook #'mu4e-widen-frame-maybe)
+  (add-hook 'mu4e-headers-mode-hook #'+mu4e-widen-frame-maybe)
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
@@ -221,7 +221,7 @@
     (defun org-msg-mode (&optional _)
       "Dummy function."
       (message "Enable the +org mu4e flag to use org-msg-mode."))
-    (defun mu4e-compose-org-msg-handle-toggle (&rest _)
+    (defun +mu4e-compose-org-msg-handle-toggle (&rest _)
       "Placeholder to allow for the assumtion that this function is defined.
 Ignores all arguments and returns nil."
       nil)))
@@ -241,10 +241,10 @@ Ignores all arguments and returns nil."
   (defvar +org-msg-currently-exporting nil
     "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
 Usefull for affecting HTML export config.")
-  (defadvice! +org-msg--now-exporting (&rest _)
+  (defadvice! +org-msg--now-exporting-a (&rest _)
     :before #'org-msg-org-to-xml
     (setq +org-msg-currently-exporting t))
-  (defadvice! +org-msg--not-exporting (&rest _)
+  (defadvice! +org-msg--not-exporting-a (&rest _)
     :after #'org-msg-org-to-xml
     (setq +org-msg-currently-exporting nil))
 
@@ -258,22 +258,22 @@ Usefull for affecting HTML export config.")
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
-  (defun mu4e-compose-org-msg-handle-toggle (toggle-p)
+  (defun +mu4e-compose-org-msg-handle-toggle (toggle-p)
     (when (xor toggle-p +mu4e-compose-org-msg-toggle-next)
       (org-msg-mode (if org-msg-mode -1 1))
       (setq +mu4e-compose-org-msg-toggle-next
             (not +mu4e-compose-org-msg-toggle-next))))
 
-  (defadvice! mu4e-maybe-toggle-org-msg (orig-fn &optional toggle-p)
+  (defadvice! +mu4e-maybe-toggle-org-msg-a (orig-fn &optional toggle-p)
     :around #'mu4e-compose-new
     :around #'mu4e-compose-reply
     :around #'mu4e-compose-forward
     :around #'mu4e-compose-resend
     (interactive "p")
-    (mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
+    (+mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
     (funcall orig-fn))
 
-  (defadvice! mu4e-draft-open-signature-a (orig-fn compose-type &optional msg)
+  (defadvice! +mu4e-draft-open-signature-a (orig-fn compose-type &optional msg)
     "Prevent `mu4e-compose-signature' from being used with `org-msg-mode'."
     :around #'mu4e-draft-open
     (let ((mu4e-compose-signature (unless org-msg-mode mu4e-compose-signature)))
