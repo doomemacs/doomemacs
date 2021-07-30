@@ -3,8 +3,9 @@
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
 
-* Table of Contents :TOC:
+* Table of Contents :TOC:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -31,6 +32,9 @@ combined with org-mode for writing emails? /Yes please./
 It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email
 via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 #+end_quote
+
+** Maintainers
++ [[https://github.com/tecosaur][@tecosaur]]
 
 ** Module Flags
 + =+gmail= Enables gmail-specific configuration for mail ~To~ or ~From~ a gmail
