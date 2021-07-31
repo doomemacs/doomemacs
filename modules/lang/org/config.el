@@ -182,8 +182,25 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (defadvice! +org-display-link-in-eldoc-a (&rest _)
     "Display full link in minibuffer when cursor/mouse is over it."
     :before-until #'org-eldoc-documentation-function
-    (when-let (link (org-element-property :raw-link (org-element-context)))
-      (format "Link: %s" link)))
+    (when-let* ((context (org-element-context))
+                (path (org-element-property :path context)))
+      (pcase (org-element-property :type context)
+        ("kbd"
+         (format "%s %s"
+                 (propertize "Key sequence:" 'face 'bold)
+                 (propertize (+org-read-kbd-at-point path context)
+                             'face 'help-key-binding)))
+        ("doom-module"
+         (format "%s %s"
+                 (propertize "Doom module:" 'face 'bold)
+                 (propertize (+org-read-link-description-at-point path)
+                             'face 'org-priority)))
+        ("doom-package"
+         (format "%s %s"
+                 (propertize "Doom package:" 'face 'bold)
+                 (propertize (+org-read-link-description-at-point path)
+                             'face 'org-priority)))
+        (type (format "Link: %s" (org-element-property :raw-link context))))))
 
   ;; Automatic indent detection in org files is meaningless
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
@@ -471,7 +488,7 @@ relative to `org-directory', unless it is an absolute path."
 
 
 (defun +org-init-custom-links-h ()
-  ;; Highlight broken file links
+  ;; Modify default file: links to colorize broken file links red
   (org-link-set-parameters
    "file"
    :face (lambda (path)
@@ -482,7 +499,7 @@ relative to `org-directory', unless it is an absolute path."
                'org-link
              '(warning org-link))))
 
-  ;; Add custom link types
+  ;; Additional custom links for convenience
   (pushnew! org-link-abbrev-alist
             '("github"      . "https://github.com/%s")
             '("youtube"     . "https://youtube.com/watch?v=%s")
@@ -498,6 +515,22 @@ relative to `org-directory', unless it is an absolute path."
   (+org-define-basic-link "doom" 'doom-emacs-dir)
   (+org-define-basic-link "doom-docs" 'doom-docs-dir)
   (+org-define-basic-link "doom-modules" 'doom-modules-dir)
+
+  ;; Add "lookup" links for packages and keystrings; useful for Emacs
+  ;; documentation -- especially Doom's!
+  (org-link-set-parameters
+   "kbd"
+   :follow (lambda (_) (minibuffer-message "%s" (+org-display-link-in-eldoc-a)))
+   :help-echo #'+org-read-kbd-at-point
+   :face 'help-key-binding)
+  (org-link-set-parameters
+   "doom-package"
+   :follow #'+org-link--doom-package-follow-fn
+   :face (lambda (_) '(:inherit org-priority :slant italic)))
+  (org-link-set-parameters
+   "doom-module"
+   :follow #'+org-link--doom-module-follow-fn
+   :face #'+org-link--doom-module-face-fn)
 
   ;; Allow inline image previews of http(s)? urls or data uris.
   ;; `+org-http-image-data-fn' will respect `org-display-remote-inline-images'.
