@@ -137,6 +137,82 @@
   (unless async (sleep-for 0.1)))
 
 ;;
+;;; Process the input
+
+;; Store flags and arguments
+(defvar export-print nil)
+(defvar tangle nil)
+(defvar print nil)
+(defvar exec nil)
+(defvar async t)
+(defvar formats nil)
+(defvar files nil)
+(defvar clean nil)
+(defvar load-files nil)
+
+;; Be less noisy
+(setq inhibit-message t)
+
+;; Parse flags and arguments
+(pop argv)
+(while argv
+  (let ((arg (pop argv)))
+    (pcase arg
+      ((or "-h" "--help")
+       (usage)
+       (kill-emacs 0))
+      ((or "-f" "--formats")
+       (setq formats
+             (mapcar #'intern (split-string (pop argv) ","))))
+      ((or "-t" "--tangle")
+       (setq tangle t))
+      ((or "-e" "--exec")
+       (setq exec t))
+      ((or "-s" "--sync")
+       (setq async nil))
+      ((or "-p" "--print")
+       (setq export-print t))
+      ((or "-a" "--alias")
+       (let ((aliases (pop argv)))
+         (when aliases
+           (setq aliases
+                 (mapcar #'intern (split-string aliases ","))))
+         (print-alias aliases))
+       (kill-emacs 0))
+      ((or "-c" "--clean")
+       (setq clean t))
+      ((or "-l" "--load")
+       (let ((f (pop argv)))
+         (when (file-exists-p f)
+           (push f load-files))))
+      ((or "-d" "--debug")
+       (setq debug-on-error t))
+      ((guard (file-exists-p arg))
+       (push arg files))
+      (_ (error "Unknown option or file: %s" arg)))))
+
+;; Validate/expand the arguments
+
+(if (eq files nil)
+    (error "No target files provided"))
+(setq files (reverse files))
+
+(dolist (location files)
+  (when (file-directory-p location)
+    (setq files
+          (append (remove location files)
+                  (directory-files-recursively location "\\.org\\'" nil)))))
+
+(dolist (file files)
+  (setq export-progress
+        (append export-progress
+                (list (append (list file)
+                              (apply #'append
+                                     (mapcar
+                                      (lambda (f) (list (cons f 'waiting)))
+                                      formats)))))))
+
+;;
 ;;; Export state visuals
 
 (defvar last-progress 0)
@@ -306,82 +382,6 @@
                  (cl-position b files :test #'string=))))
       "\n") "\n")
     (princ (buffer-string))))
-
-;;
-;;; Process the input
-
-;; Store flags and arguments
-(defvar export-print nil)
-(defvar tangle nil)
-(defvar print nil)
-(defvar exec nil)
-(defvar async t)
-(defvar formats nil)
-(defvar files nil)
-(defvar clean nil)
-(defvar load-files nil)
-
-;; Be less noisy
-(setq inhibit-message t)
-
-;; Parse flags and arguments
-(pop argv)
-(while argv
-  (let ((arg (pop argv)))
-    (pcase arg
-      ((or "-h" "--help")
-       (usage)
-       (kill-emacs 0))
-      ((or "-f" "--formats")
-       (setq formats
-             (mapcar #'intern (split-string (pop argv) ","))))
-      ((or "-t" "--tangle")
-       (setq tangle t))
-      ((or "-e" "--exec")
-       (setq exec t))
-      ((or "-s" "--sync")
-       (setq async nil))
-      ((or "-p" "--print")
-       (setq export-print t))
-      ((or "-a" "--alias")
-       (let ((aliases (pop argv)))
-         (when aliases
-           (setq aliases
-                 (mapcar #'intern (split-string aliases ","))))
-         (print-alias aliases))
-       (kill-emacs 0))
-      ((or "-c" "--clean")
-       (setq clean t))
-      ((or "-l" "--load")
-       (let ((f (pop argv)))
-         (when (file-exists-p f)
-           (push f load-files))))
-      ((or "-d" "--debug")
-       (setq debug-on-error t))
-      ((guard (file-exists-p arg))
-       (push arg files))
-      (_ (error "Unknown option or file: %s" arg)))))
-
-;; Validate/expand the arguments
-
-(if (eq files nil)
-    (error "No target files provided"))
-(setq files (reverse files))
-
-(dolist (location files)
-  (when (file-directory-p location)
-    (setq files
-          (append (remove location files)
-                  (directory-files-recursively location "\\.org\\'" nil)))))
-
-(dolist (file files)
-  (setq export-progress
-        (append export-progress
-                (list (append (list file)
-                              (apply #'append
-                                     (mapcar
-                                      (lambda (f) (list (cons f 'waiting)))
-                                      formats)))))))
 
 ;;
 ;;; Prepare for execution
