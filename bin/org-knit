@@ -30,6 +30,27 @@
 (require 'ox)
 (require 'ob-tangle)
 
+;;
+;;; Capabilities
+
+(defvar export-specs
+  '((html   :backend html   :extension ".html" :requires ox-html)
+    (md     :backend md     :extension ".md"   :requires ox-md)
+    (gfm    :backend gfm    :extension ".md"   :requires ox-gfm)
+    (rtf    :backend rtf    :extension ".rtf"  :requires ox-pandoc)
+    (ascii  :backend ascii  :extension ".txt"  :requires ox-ascii)
+    (pdf    :backend latex  :extension ".tex"  :requires ox-latex  :post-action org-latex-compile)
+    (beamer :backend beamer :extension ".tex"  :requires ox-beamer :post-action org-latex-compile)
+    (tex    :backend latex  :extension ".tex"  :requires ox-latex)
+    (latex  :backend latex  :extension ".tex"  :requires ox-latex)
+    (odt    :backend odt    :extension ".odt"  :requires ox-odt)
+    (org    :backend org    :extension ".org"  :requires ox-org)
+    (docx   :backend docx   :extension ".docx" :requires ox-pandoc)))
+
+;;
+;;; Help
+
+;; Info page
 (defun usage ()
   (with-temp-buffer
     (insert (format "%s %s [OPTIONS] [TARGETS...]\n"
@@ -48,31 +69,19 @@
             "  org-knit -t -f ascii,md scripts.org\n"
             "\n"
             "[1mOptions:[0m\n"
-            "  -f --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
-            "  -t --tangle\t\tAlso tangle the file(s).\n"
+            "  -f, --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
+            "  -t, --tangle\t\tAlso tangle the file(s).\n"
             "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
-            "  -e --exec\t\tExecute src blocks in the file before exporting\n"
-            "  -p --print\t\tPrint exported output to sdout rather than files\n"
-            "  -c --clean\t\tDelete all non-org files which share their basename\n"
-            "  -l --load\t\tElisp files to load\n"
-            "  -a --alias [FORMATS]\tGive the org function called by a particlar alias.\n"
+            "  -e, --exec\t\tExecute src blocks in the file before exporting\n"
+            "  -p, --print\t\tPrint exported output to sdout rather than files\n"
+            "  -c, --clean\t\tDelete all non-org files which share their basename\n"
+            "  -l, --load\t\tElisp files to load\n"
+            "  -a, --alias [FORMATS]\tGive the org function called by a particlar alias.\n"
             "  \t\t\tList all aliases when no format or other arguments are given\n"
             )
     (princ (buffer-string))))
 
-(defvar export-specs
-  '((html   :backend html   :extension ".html" :requires ox-html)
-    (md     :backend md     :extension ".md"   :requires ox-md)
-    (gfm    :backend gfm    :extension ".md"   :requires ox-gfm)
-    (rtf    :backend rtf    :extension ".rtf"  :requires ox-pandoc)
-    (ascii  :backend ascii  :extension ".txt"  :requires ox-ascii)
-    (pdf    :backend latex  :extension ".tex"  :requires ox-latex  :post-action org-latex-compile)
-    (beamer :backend beamer :extension ".tex"  :requires ox-beamer :post-action org-latex-compile)
-    (tex    :backend latex  :extension ".tex"  :requires ox-latex)
-    (latex  :backend latex  :extension ".tex"  :requires ox-latex)
-    (odt    :backend odt    :extension ".odt"  :requires ox-odt)
-    (org    :backend org    :extension ".org"  :requires ox-org)
-    (docx   :backend docx   :extension ".docx" :requires ox-pandoc)))
+;; Format alias page
 
 (defun format-alias (alias)
   (let ((name        (car alias))
@@ -111,38 +120,11 @@
      "\n")
     (princ (buffer-string))))
 
+;;
+;;; Export state tracking
+
 (defvar export-progress nil
   "Structure: ((file . ((backend . status) (backend . status)...)...)")
-
-(defun export-file (file spec)
-  "FILE to export according to SPEC plist (from `export-specs')"
-  (let ((pandoc-p (eq (plist-get (cdr spec) :requires) 'ox-pandoc))
-        (requirement (plist-get (cdr spec) :requires))
-        (backend     (plist-get (cdr spec) :backend))
-        (ext         (plist-get (cdr spec) :extension))
-        (post-action (plist-get (cdr spec) :post-action)))
-
-    (when requirement
-      (require requirement))
-
-    (if print (error "unimplemented")
-      (let ((out-file (org-export-output-file-name ext nil)))
-        (if pandoc-p
-            (org-pandoc-export backend async nil nil nil nil nil)
-          (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))))))
-
-
-(defun +org-export-to-file (backend file &optional async subtreep visible-only body-only ext-plist post-process +format +infile)
-  (if (and +format (not (eq backend 'pandoc)))
-      (progn
-        (set-state +infile +format 'started)
-        (funcall #'org-export-to-file
-                 backend file async subtreep visible-only body-only ext-plist
-                 (lambda (file)
-                   (when post-process
-                     (funcall post-process file))
-                   (set-state +infile +format 'completed))))
-    (funcall #'org-export-to-file backend file async subtreep visible-only body-only ext-plist post-process)))
 
 (defun set-state (file format state)
   (unless (listp format)
@@ -151,6 +133,9 @@
     (setf (cdr (assoc fmt (cdr (assoc file export-progress)))) state))
   (export-progress-table)
   (sleep-for 0.1))
+
+;;
+;;; Export state visuals
 
 (defvar last-progress 0)
 (defvar export-progress-states
@@ -193,8 +178,45 @@
      )
     (princ (buffer-string))))
 
+;;
+;;; Export dispatching
+
+(defun export-file (file spec)
+  "FILE to export according to SPEC plist (from `export-specs')"
+  (let ((pandoc-p (eq (plist-get (cdr spec) :requires) 'ox-pandoc))
+        (requirement (plist-get (cdr spec) :requires))
+        (backend     (plist-get (cdr spec) :backend))
+        (ext         (plist-get (cdr spec) :extension))
+        (post-action (plist-get (cdr spec) :post-action)))
+
+    (when requirement
+      (require requirement))
+
+    (if print (error "unimplemented")
+      (let ((out-file (org-export-output-file-name ext nil)))
+        (if pandoc-p
+            (org-pandoc-export backend async nil nil nil nil nil)
+          (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))))))
+
+
+(defun +org-export-to-file (backend file &optional async subtreep visible-only body-only ext-plist post-process +format +infile)
+  (if (and +format (not (eq backend 'pandoc)))
+      (progn
+        (set-state +infile +format 'started)
+        (funcall #'org-export-to-file
+                 backend file async subtreep visible-only body-only ext-plist
+                 (lambda (file)
+                   (when post-process
+                     (funcall post-process file))
+                   (set-state +infile +format 'completed))))
+    (funcall #'org-export-to-file backend file async subtreep visible-only body-only ext-plist post-process)))
+
+;;
+;;; Error management
+
 (defvar recorded-errors nil
   "Structure: ((file . ((stage . (msg1 msg2...))...)...)")
+
 (defun record-error (file stage message)
   "Record error MESSAGE with FILE at STAGE to `recorded-errors'."
   (if-let ((file-entry (assoc file recorded-errors)))
@@ -244,6 +266,10 @@
       "\n") "\n")
     (princ (buffer-string))))
 
+;;
+;;; Process the input
+
+;; Store flags and arguments
 (defvar export-print nil)
 (defvar tangle nil)
 (defvar print nil)
@@ -254,128 +280,149 @@
 (defvar clean nil)
 (defvar load-files nil)
 
-(let ((inhibit-message t))
-  (pop argv)
-  (while argv
-    (let ((arg (pop argv)))
-      (pcase arg
-        ((or "-h" "--help")
-         (usage)
-         (kill-emacs 0))
-        ((or "-f" "--formats")
-         (setq formats
-               (mapcar #'intern (split-string (pop argv) ","))))
-        ((or "-t" "--tangle")
-         (setq tangle t))
-        ((or "-e" "--exec")
-         (setq exec t))
-        ((or "-s" "--sync")
-         (setq async nil))
-        ((or "-p" "--print")
-         (setq export-print t))
-        ((or "-a" "--alias")
-         (let ((aliases (pop argv)))
-           (when aliases
-             (setq aliases
-                   (mapcar #'intern (split-string aliases ","))))
-           (print-alias aliases))
-         (kill-emacs 0))
-        ((or "-c" "--clean")
-         (setq clean t))
-        ((or "-l" "--load")
-         (let ((f (pop argv)))
-           (when (file-exists-p f)
-             (push f load-files))))
-        ((or "-d" "--debug")
-         (setq debug-on-error t))
-        ((guard (file-exists-p arg))
-         (push arg files))
-        (_ (error "Unknown option or file: %s" arg)))))
+;; Be less noisy
+(setq inhibit-message t)
 
-  (if (eq files nil)
-      (error "No target files provided"))
-  (setq files (reverse files))
+;; Parse flags and arguments
+(pop argv)
+(while argv
+  (let ((arg (pop argv)))
+    (pcase arg
+      ((or "-h" "--help")
+       (usage)
+       (kill-emacs 0))
+      ((or "-f" "--formats")
+       (setq formats
+             (mapcar #'intern (split-string (pop argv) ","))))
+      ((or "-t" "--tangle")
+       (setq tangle t))
+      ((or "-e" "--exec")
+       (setq exec t))
+      ((or "-s" "--sync")
+       (setq async nil))
+      ((or "-p" "--print")
+       (setq export-print t))
+      ((or "-a" "--alias")
+       (let ((aliases (pop argv)))
+         (when aliases
+           (setq aliases
+                 (mapcar #'intern (split-string aliases ","))))
+         (print-alias aliases))
+       (kill-emacs 0))
+      ((or "-c" "--clean")
+       (setq clean t))
+      ((or "-l" "--load")
+       (let ((f (pop argv)))
+         (when (file-exists-p f)
+           (push f load-files))))
+      ((or "-d" "--debug")
+       (setq debug-on-error t))
+      ((guard (file-exists-p arg))
+       (push arg files))
+      (_ (error "Unknown option or file: %s" arg)))))
 
-  (dolist (location files)
-    (when (file-directory-p location)
-      (setq files
-            (append (remove location files)
-                    (directory-files-recursively location "\\.org\\'" nil)))))
+;; Validate/expand the arguments
 
-  (dolist (file files)
-    (setq export-progress
-          (append export-progress
-                  (list (append (list file)
-                                (apply #'append
-                                       (mapcar
-                                        (lambda (f) (list (cons f 'waiting)))
-                                        formats)))))))
+(if (eq files nil)
+    (error "No target files provided"))
+(setq files (reverse files))
 
-  (unless clean
-    (export-progress-table)
-    (dolist (l load-files)
-      (load l nil t)))
+(dolist (location files)
+  (when (file-directory-p location)
+    (setq files
+          (append (remove location files)
+                  (directory-files-recursively location "\\.org\\'" nil)))))
 
-  (setq org-export-async-init-file (make-temp-file "org-async-export"))
-  (with-temp-file org-export-async-init-file
-    (prin1 `(progn (setq org-export-async-debug ,debug-on-error
-                         load-path ',load-path)
-                   (load ,user-init-file nil t))
-           (current-buffer)))
+(dolist (file files)
+  (setq export-progress
+        (append export-progress
+                (list (append (list file)
+                              (apply #'append
+                                     (mapcar
+                                      (lambda (f) (list (cons f 'waiting)))
+                                      formats)))))))
 
-  (dolist (file files)
-    (let ((backup (make-temp-file (file-name-base file) nil ".backup.org"))
-          (file-basename (file-name-base file))
-          (org-confirm-babel-evaluate nil))
-      (if clean
-          (dolist (child-file (directory-files (file-name-directory (expand-file-name file))))
-            (when (and
-                   (string= (file-name-base child-file) file-basename)
-                   (not (string= (file-name-extension child-file) "org")))
-              (princ (format "Deleting %s\n" child-file))
-              (delete-file child-file)))
-        (unwind-protect
-            ;; Prevent slow hooks from interfering
-            (let (org-mode-hook)
-              ;; We do the ol' switcheroo because `org-babel-tangle' writes
-              ;; changes to the current file, which would be imposing on the user.
-              (copy-file file backup t)
-              (with-current-buffer (find-file-noselect file)
+;;
+;;; Execute
 
-                (when exec
-                  (set-state file formats 'executing)
-
-                  (org-babel-eval-wipe-error-buffer)
-                  (org-save-outline-visibility t
-                    (org-babel-map-executables nil
-                      (condition-case err
-                          (if (memq (org-element-type (org-element-context))
-                                    '(babel-call inline-babel-call))
-                              (org-babel-lob-execute-maybe)
-                            (ignore-errors
-                              (org-babel-execute-src-block t)))
-                        (err
-                         (record-error file "exec" (error-message-string err)))))))
-
-                (when tangle
-                  (set-state file formats 'tangling)
-                  (condition-case err
-                      (org-babel-tangle nil nil nil)
-                    (error (record-error file "tangle" (error-message-string err)))))
-
-                (set-state file formats 'waiting)
-                (org-export-expand-include-keyword)
-                (dolist (fmt formats)
-                  (condition-case err
-                      (export-file file (assoc fmt export-specs))
-                    (error
-                     (record-error file (symbol-name fmt) (error-message-string err))
-                     (set-state file fmt 'error))))))
-          (ignore-errors (copy-file backup file t))
-          (ignore-errors (delete-file backup))))))
+(unless clean
   (export-progress-table)
+  (dolist (l load-files)
+    (load l nil t)))
 
-  (if (not recorded-errors)
-      (kill-emacs 0)
-    (print-errors)
-    (kill-emacs 1)))
+(setq org-export-async-init-file (make-temp-file "org-async-export"))
+(with-temp-file org-export-async-init-file
+  (prin1 `(progn (setq org-export-async-debug ,debug-on-error
+                       load-path ',load-path)
+                 (load ,user-init-file nil t))
+         (current-buffer)))
+
+;; Execution helper functions
+
+(defun process-org-file (file)
+  (let ((backup (make-temp-file (file-name-base file) nil ".backup.org"))
+        (file-basename (file-name-base file)))
+    (if clean
+        (dolist (child-file (directory-files (file-name-directory (expand-file-name file))))
+          (when (and
+                 (string= (file-name-base child-file) file-basename)
+                 (not (string= (file-name-extension child-file) "org")))
+            (princ (format "Deleting %s\n" child-file))
+            (delete-file child-file)))
+      (unwind-protect
+          (progn
+            ;; We do the ol' switcheroo because `org-babel-tangle' writes
+            ;; changes to the current file, which would be imposing on the user.
+            (copy-file file backup t)
+            (process-org-file-1 file))
+        (ignore-errors (copy-file backup file t))
+        (ignore-errors (delete-file backup))))))
+
+(defun process-org-file-1 (file)
+  ;; Prevent slow hooks from interfering
+  (let (org-mode-hook org-confirm-babel-evaluate)
+    (with-current-buffer (find-file-noselect file)
+      (when exec
+        (set-state file formats 'executing)
+        (org-babel-eval-wipe-error-buffer)
+        (org-save-outline-visibility t
+          (org-babel-map-executables nil
+            (condition-case err
+                (if (memq (org-element-type (org-element-context))
+                          '(babel-call inline-babel-call))
+                    (org-babel-lob-execute-maybe)
+                  (ignore-errors
+                    (org-babel-execute-src-block t)))
+              (err
+               (record-error file "exec" (error-message-string err)))))))
+
+      (when tangle
+        (set-state file formats 'tangling)
+        (condition-case err
+            (org-babel-tangle nil nil nil)
+          (error (record-error file "tangle" (error-message-string err)))))
+
+      (set-state file formats 'waiting)
+      (org-export-expand-include-keyword)
+      (dolist (fmt formats)
+        (condition-case err
+            (export-file file (assoc fmt export-specs))
+          (error
+           (record-error file (symbol-name fmt) (error-message-string err))
+           (set-state file fmt 'error)))))))
+
+;; Do the exporting
+(dolist (file files)
+  (process-org-file file))
+
+;; Refresh the export table one more time to ensure it
+;; reflects the final state
+(export-progress-table)
+
+;; Set the right exit code
+(if (not recorded-errors)
+    (kill-emacs 0)
+  (print-errors)
+  (kill-emacs 1))
+
+;;; org-knit ends here
