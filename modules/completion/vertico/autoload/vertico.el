@@ -237,3 +237,20 @@ targets."
                  (if (cdr targets) "…" "")))
        (if prefix (lookup-key keymap prefix) keymap)
        nil nil t))))
+
+;;;###autoload
+(defun +vertico/crm-select ()
+  "Enter candidate in `consult-completing-read-multiple'"
+  (interactive)
+  (let ((idx vertico--index))
+    (unless (get-text-property 0 'consult--crm-selected (nth vertico--index vertico--candidates))
+      (setq idx (1+ idx)))
+  (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
+  (vertico-exit))
+
+;;;###autoload
+(defun +vertico/crm-exit ()
+  "Enter candidate in `consult-completing-read-multiple'"
+  (interactive)
+  (run-at-time 0 nil #'vertico-exit)
+  (vertico-exit))

@@ -118,7 +118,10 @@ overrides `completion-styles' during company completion sessions.")
         :category buffer
         :state    ,#'consult--buffer-state
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
-    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
+    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
+  (map! :map consult-crm-map
+        :desc "Select candidate" "TAB" #'+vertico/crm-select
+        :desc "Enter candidates" "RET" #'+vertico/crm-exit))
 
 
 (use-package! consult-flycheck
