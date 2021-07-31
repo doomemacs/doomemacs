@@ -246,7 +246,12 @@
      " [1m"
      (string-pad "File" longest-file-str) "  "
      (mapconcat (lambda (fmt) (string-pad (symbol-name fmt) longest-format-str)) formats " ")
-     "[0m\n"
+     "[0m\n "
+     (make-string
+      (+ longest-file-str
+         (* (length formats) (1+ longest-format-str)))
+      ?─)
+     "\n"
      (mapconcat
       (lambda (f)
         (concat
