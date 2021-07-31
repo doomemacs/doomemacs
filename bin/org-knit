@@ -21,6 +21,7 @@
 ;;   -c, --clean           Delete all non-org files which share their basename
 ;;   -e, --exec            Execute src blocks in the file before exporting
 ;;   -f, --format FORMATS  Export formats (comma seperated, no space), html by default
+;;   -j, --jobs            Number of jobs executed in parallel
 ;;   -l, --load            Elisp files to load
 ;;   -p, --print           Print exported output to sdout rather than files
 ;;   -s, --sync            Perform the exporting/tangling synchronously
@@ -47,6 +48,39 @@
     (odt    :backend odt    :extension ".odt"  :requires ox-odt)
     (org    :backend org    :extension ".org"  :requires ox-org)
     (docx   :backend docx   :extension ".docx" :requires ox-pandoc)))
+
+;; Fetch number of CPU threads
+;; This is needed early on as it is referenced in the help string
+
+(defun num-cpus ()
+  (let ((cpus
+         (cond ((eq 'windows-nt system-type)
+                (w32-get-nproc))
+               ((getenv "NUMBER_OF_PROCESSORS"))
+               ((executable-find "nproc")
+                (shell-command-to-string "nproc"))
+               ((executable-find "sysctl")
+                (shell-command-to-string "sysctl -n hw.ncpu")))))
+    (max
+     1 (or (cl-typecase cpus
+             (string
+              (condition-case _
+                  (string-to-number cpus)
+                (wrong-type-argument
+                 (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
+                             cpus))))
+             (consp
+              (if (zerop (car cpus))
+                  (string-to-number (cdr cpus))
+                (user-error "Failed to look up number of processors, because:\n\n%s"
+                            (cdr cpus)))))
+           1))))
+
+(defun num-jobs-default ()
+  (let ((cpus (num-cpus)))
+    (if (> cpus 4)
+        (- cpus 2)
+      cpus)))
 
 ;;
 ;;; Help
@@ -75,6 +109,7 @@
             "  -c, --clean\t\tDelete all non-org files which share their basename\n"
             "  -e, --exec\t\tExecute src blocks in the file before exporting\n"
             "  -f, --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
+            "  -j, --jobs\t\tNumber of jobs executed in parallel (" (number-to-string (num-jobs-default)) " by default)\n"
             "  -l, --load\t\tElisp files to load\n"
             "  -p, --print\t\tPrint exported output to sdout rather than files\n"
             "  -s, --sync\t\tPerform the exporting/tangling synchronously\n"
@@ -145,6 +180,7 @@
 (defvar print nil)
 (defvar exec nil)
 (defvar async t)
+(defvar jobs nil)
 (defvar formats nil)
 (defvar files nil)
 (defvar clean nil)
@@ -161,17 +197,6 @@
       ((or "-h" "--help")
        (usage)
        (kill-emacs 0))
-      ((or "-f" "--formats")
-       (setq formats
-             (mapcar #'intern (split-string (pop argv) ","))))
-      ((or "-t" "--tangle")
-       (setq tangle t))
-      ((or "-e" "--exec")
-       (setq exec t))
-      ((or "-s" "--sync")
-       (setq async nil))
-      ((or "-p" "--print")
-       (setq export-print t))
       ((or "-a" "--alias")
        (let ((aliases (pop argv)))
          (when aliases
@@ -181,10 +206,23 @@
        (kill-emacs 0))
       ((or "-c" "--clean")
        (setq clean t))
+      ((or "-e" "--exec")
+       (setq exec t))
+      ((or "-f" "--formats")
+       (setq formats
+             (mapcar #'intern (split-string (pop argv) ","))))
+      ((or "-j" "--jobs")
+       (setq jobs (string-to-number (pop argv))))
       ((or "-l" "--load")
        (let ((f (pop argv)))
          (when (file-exists-p f)
            (push f load-files))))
+      ((or "-p" "--print")
+       (setq export-print t))
+      ((or "-s" "--sync")
+       (setq async nil))
+      ((or "-t" "--tangle")
+       (setq tangle t))
       ((or "-d" "--debug")
        (setq debug-on-error t))
       ((guard (file-exists-p arg))
@@ -211,6 +249,9 @@
                                      (mapcar
                                       (lambda (f) (list (cons f 'waiting)))
                                       formats)))))))
+
+(when (and async (not jobs))
+  (setq jobs (num-jobs-default)))
 
 ;;
 ;;; Export state visuals
@@ -271,7 +312,7 @@
 ;;
 ;;; Export dispatching
 
-(defun export-file (file spec)
+(defun export-file (file spec &optional out-file)
   "FILE to export according to SPEC plist (from `export-specs')"
   (let ((pandoc-p (eq (plist-get (cdr spec) :requires) 'ox-pandoc))
         (requirement (plist-get (cdr spec) :requires))
@@ -283,13 +324,13 @@
       (require requirement))
 
     (if print (error "unimplemented")
-      (let ((out-file (org-export-output-file-name ext nil)))
-        (if pandoc-p
-            (org-pandoc-export backend async nil nil nil nil nil)
-          (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))
-        (when async
-          (export-register-async-process file (car spec) (caddar org-export-stack-contents)))))))
-
+      (unless out-file
+        (setq out-file (org-export-output-file-name ext nil)))
+      (if pandoc-p
+          (org-pandoc-export backend async nil nil nil nil nil)
+        (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))
+      (when async
+        (export-register-async-process file (car spec) (caddar org-export-stack-contents))))))
 
 (defun +org-export-to-file (backend file &optional async subtreep visible-only body-only ext-plist post-process +format +infile)
   (if (and +format (not (eq backend 'pandoc)))
@@ -307,6 +348,9 @@
 
 ;;
 ;;; Async process management
+
+(defvar export-async-job-queue nil
+  "Queue of (file format) specs to be exported.")
 
 (defvar export-async-processes nil
   "Structure: ((#<process> . (file . format))...)")
@@ -337,7 +381,17 @@
                                           (buffer-string)))))
                        nil)))
                  export-async-processes)))
+    (export-async-maybe-pop-queue)
     t))
+
+(defun export-async-maybe-pop-queue ()
+  (when (and export-async-job-queue
+             (< (length export-async-processes) jobs))
+    (dotimes (_ (- jobs (length export-async-processes)))
+      (when-let ((task (pop export-async-job-queue)))
+        (let (org-mode-hook org-confirm-babel-evaluate)
+          (with-current-buffer (find-file-noselect (car task))
+            (apply #'export-file task)))))))
 
 ;;
 ;;; Error management
@@ -466,16 +520,21 @@
         (set-state file formats 'tangling)
         (condition-case err
             (org-babel-tangle nil nil nil)
-          (error (record-error file "tangle" (error-message-string err)))))
+          (error (record-error file "tangle" (error-message-string err))))
+        (when async (sleep-for 0.04)))
 
       (set-state file formats 'waiting)
-      (org-export-expand-include-keyword)
+      (unless async (org-export-expand-include-keyword))
       (dolist (fmt formats)
-        (condition-case err
-            (export-file file (assoc fmt export-specs))
-          (error
-           (record-error file (symbol-name fmt) (error-message-string err))
-           (set-state file fmt 'error)))))))
+        (let ((spec (assoc fmt export-specs)))
+          (if async
+              (push (list file spec (org-export-output-file-name (plist-get (cdr spec) :extension)))
+                    export-async-job-queue)
+            (condition-case err
+                (export-file file spec)
+              (error
+               (record-error file (symbol-name fmt) (error-message-string err))
+               (set-state file fmt 'error)))))))))
 
 ;; Do the exporting
 (dolist (file files)
@@ -483,6 +542,7 @@
 
 ;; Wait for async processes
 (when async
+  (export-async-maybe-pop-queue)
   (while export-async-processes
     (export-check-async-processes)
     (export-progress-table)
