@@ -14,6 +14,12 @@ orderless."
     (apply fn args)))
 
 ;;;###autoload
+(defadvice! +vertico--consult-recent-file-a (&rest _args)
+  "`consult-recent-file' needs to have `recentf-mode' on to work correctly"
+  :before #'consult-recent-file
+  (recentf-mode +1))
+
+;;;###autoload
 (cl-defun +vertico-file-search (&key query in all-files (recursive t) prompt args)
   "Conduct a file search using ripgrep.
 

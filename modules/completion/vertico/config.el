@@ -73,7 +73,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap locate]                        #'consult-locate
     [remap load-theme]                    #'consult-theme
     [remap man]                           #'consult-man
-    [remap recentf-open-files]            (cmd! (recentf-mode +1) (consult-recent-file))
+    [remap recentf-open-files]            #'consult-recent-file
     [remap switch-to-buffer]              #'consult-buffer
     [remap switch-to-buffer-other-window] #'consult-buffer-other-window
     [remap switch-to-buffer-other-frame]  #'consult-buffer-other-frame
