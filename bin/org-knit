@@ -130,13 +130,14 @@
            (if requirement
                (require requirement nil t)
              t)))
-      (format "  [1m%-8s[0m\t%s%-16s\t[2m%s[0m%s\t%s"
+      (format "  %s%-8s[0m\t%s%-16s\t[2m%s[0m%s\t%s"
+              (if requirement-avalible "[1m" "[1;90m")
               name
               (if requirement-avalible "" "[9m[2m")
               (concat (symbol-name backend) "[0m")
               ext
               (if post-action
-                  (format "\t[0;34m+ %s[0m " (symbol-name post-action))
+                  (format "\t[0;90m+ %s[0m " (symbol-name post-action))
                 "")
               (if requirement-avalible ""
                 (format "[0;33m(requires %s)[0m" (symbol-name requirement)))))))
