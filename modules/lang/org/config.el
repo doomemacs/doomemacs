@@ -591,6 +591,9 @@ mutating hooks on exported output, like formatters."
   (add-to-list 'org-file-apps '(directory . emacs))
   (add-to-list 'org-file-apps '(remote . emacs))
 
+  ;; Open help:* links with helpful-* instead of describe-*
+  (advice-add #'org-link--open-help :around #'doom-use-helpful-a)
+
   (defadvice! +org--show-parents-a (&optional arg)
     "Show all headlines in the buffer, like a table of contents.
 With numerical argument N, show content up to level N."
