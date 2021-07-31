@@ -50,15 +50,14 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
-(defadvice! +popup-override-display-buffer-alist-a (orig-fn buffer-or-name &optional action norecord)
+(defadvice! +popup-override-display-buffer-alist-a (orig-fn &rest args)
   "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
 override `display-buffer-alist'."
-  :around #'pop-to-buffer
-  (let ((display-buffer-overriding-action
-         (if (eq action t)
-             display-buffer-overriding-action
-           action)))
-    (funcall orig-fn buffer-or-name action norecord)))
+  :around #'switch-to-buffer-other-tab
+  :around #'switch-to-buffer-other-window
+  :around #'switch-to-buffer-other-frame
+  (let ((display-buffer-alist nil))
+    (apply orig-fn args)))
 
 
 ;;
