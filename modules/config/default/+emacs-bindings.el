@@ -118,7 +118,8 @@
              ((featurep! :completion ivy)       #'swiper)
              ((featurep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
-       (cond ((featurep! :completion ivy)       #'swiper-all)
+       (cond ((featurep! :completion vertico)   (cmd!! #'consult-line-multi 'all-buffers))
+             ((featurep! :completion ivy)       #'swiper-all)
              ((featurep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
