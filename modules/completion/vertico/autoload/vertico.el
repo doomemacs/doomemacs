@@ -168,6 +168,7 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   "Jump to file under DIR (recursive).
 If INITIAL is non-nil, use as initial input."
   (interactive)
+  (require 'consult)
   (let* ((default-directory (or dir default-directory))
          (prompt-dir (consult--directory-prompt "Find" default-directory))
          (cmd (split-string-and-unquote consult-find-command " "))
@@ -181,7 +182,7 @@ If INITIAL is non-nil, use as initial input."
       :require-match t
       :initial (if initial (shell-quote-argument initial))
       :add-history (thing-at-point 'filename)
-      :category '+vertico
+      :category 'file
       :history '(:input +vertico/find-file-in--history)))))
 
 ;;;###autoload
