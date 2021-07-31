@@ -226,6 +226,9 @@
     (completed . "[0;32m✓[0m")
     (error . "[0;31m![0m")))
 
+(defvar longest-file-str (apply #'max (mapcar #'length files)))
+(defvar longest-format-str (apply #'max (mapcar (lambda (f) (length (symbol-name f))) formats)))
+
 (defun export-progress-table (&optional no-progress-rotation)
   (unless no-progress-rotation
     (setq last-progress (1+ last-progress)))
@@ -238,23 +241,26 @@
   (with-temp-buffer
     (insert
      (if (> last-progress 1)
-         (apply #'concat (make-list (1+ (length export-progress)) "[1A[K"))
+         (apply #'concat (make-list (+ 2 (length export-progress)) "[1A[K"))
        "")
-     "[1mFile\t\t"
-     (mapconcat (lambda (fmt) (format "%s\t" fmt)) formats "")
+     " [1m"
+     (string-pad "File" longest-file-str) "  "
+     (mapconcat (lambda (fmt) (string-pad (symbol-name fmt) longest-format-str)) formats " ")
      "[0m\n"
      (mapconcat
       (lambda (f)
         (concat
-         (car f) "\t"
+         " "
+         (string-pad (car f) longest-file-str)
+         "  "
          (mapconcat
           (lambda (state)
-            (cdr (assoc (cdr state) export-progress-states)))
-          (cdr f) "\t")
+            (string-pad (cdr (assoc (cdr state) export-progress-states))
+                        (+ 11 longest-format-str)))
+          (cdr f) " ")
          ))
       export-progress "\n")
-     "\n"
-     )
+     "\n")
     (princ (buffer-string))))
 
 ;;
