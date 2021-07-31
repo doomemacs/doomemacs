@@ -239,6 +239,13 @@
 
 ;; Validate/expand the arguments
 
+(when tangle
+  (push 'tang formats))
+
+(when (null formats)
+  (princ (format " [1;33m![0m No actions to perform\n"))
+  (kill-emacs 0))
+
 (if (not (null files))
     (setq files (reverse files))
   (princ " [1;31m![0m No target files provided\n")
@@ -295,7 +302,11 @@
        "")
      " [1m"
      (string-pad "File" longest-file-str) "  "
-     (mapconcat (lambda (fmt) (string-pad (symbol-name fmt) longest-format-str)) formats " ")
+     (mapconcat (lambda (fmt)
+                  (if (eq fmt 'tang)
+                      (concat "[0m[2m[3m" (string-pad "t" longest-format-str) "[0m[1m")
+                    (string-pad (symbol-name fmt) longest-format-str)))
+                formats " ")
      "[0m\n "
      (make-string
       (+ longest-file-str
@@ -525,16 +536,16 @@
               (err
                (record-error file "exec" (error-message-string err)))))))
 
-      (when tangle
+      (when (memq 'tang formats)
         (set-state file formats 'tangling)
         (condition-case err
             (org-babel-tangle nil nil nil)
           (error (record-error file "tangle" (error-message-string err))))
-        (when async (sleep-for 0.04)))
+        (set-state file 'tang 'completed))
 
-      (set-state file formats 'waiting)
+      (set-state file (remove 'tang formats) 'waiting)
       (unless async (org-export-expand-include-keyword))
-      (dolist (fmt formats)
+      (dolist (fmt (remove 'tang formats))
         (let ((spec (assoc fmt export-specs)))
           (if async
               (push (list file spec (org-export-output-file-name (plist-get (cdr spec) :extension)))
