@@ -8,7 +8,7 @@
 (defadvice! +vertico--company-capf--candidates-a (fn &rest args)
   "Highlight company matches correctly, and try default completion styles before
 orderless."
-  :around 'company-capf--candidates
+  :around #'company-capf--candidates
   (let ((orderless-match-faces [completions-common-part])
         (completion-styles +vertico-company-completion-styles))
     (apply fn args)))
