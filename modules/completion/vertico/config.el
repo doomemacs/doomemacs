@@ -173,11 +173,19 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (when (featurep! +icons)
     (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
+  (advice-add #'marginalia--project-root :override #'doom-project-root)
   (pushnew! marginalia-command-categories
+            '(+default/find-file-under-here. file)
+            '(doom/find-file-in-emacsd . project-file)
+            '(doom/find-file-in-other-project . project-file)
+            '(doom/find-file-in-private-config . file)
+            '(doom/describe-active-minor-mode . minor-mode)
+            '(flycheck-error-list-set-filter . builtin)
             '(persp-switch-to-buffer . buffer)
             '(projectile-find-file . project-file)
-            '(doom/describe-active-minor-mode . minor-mode)
-            '(flycheck-error-list-set-filter . builtin)))
+            '(projectile-recentf . project-file)
+            '(projectile-switch-to-buffer . buffer)
+            '(projectile-switch-project . project-file)))
 
 
 (use-package! embark-consult
