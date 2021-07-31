@@ -210,7 +210,13 @@
        (setq exec t))
       ((or "-f" "--formats")
        (setq formats
-             (mapcar #'intern (split-string (pop argv) ","))))
+             (mapcar #'intern (split-string (pop argv) ",")))
+       (mapcar
+        (lambda (f)
+          (unless (assoc f export-specs)
+            (princ (format " [1;31m![0m Format '%s' is not recognised\n" f))
+            (kill-emacs 1)))
+        formats))
       ((or "-j" "--jobs")
        (setq jobs (string-to-number (pop argv))))
       ((or "-l" "--load")
@@ -227,13 +233,15 @@
        (setq debug-on-error t))
       ((guard (file-exists-p arg))
        (push arg files))
-      (_ (error "Unknown option or file: %s" arg)))))
+      (_
+       (princ (format " [1;33m![0m Ignoring unknown option or file: %s\n" arg))))))
 
 ;; Validate/expand the arguments
 
-(if (eq files nil)
-    (error "No target files provided"))
-(setq files (reverse files))
+(if (not (null files))
+    (setq files (reverse files))
+  (princ " [1;31m![0m No target files provided\n")
+  (kill-emacs 1))
 
 (dolist (location files)
   (when (file-directory-p location)
