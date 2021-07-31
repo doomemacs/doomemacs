@@ -84,7 +84,7 @@ Modules that reconfigure or augment packages or features built into Emacs.
 + [[file:../modules/emacs/vc/README.org][vc]] - TODO
 
 * :email
-+ [[file:../modules/email/mu4e/README.org][mu4e]] =+gmail= - TODO
++ [[file:../modules/email/mu4e/README.org][mu4e]] =+org +gmail= - TODO
 + [[file:../modules/email/notmuch/README.org][notmuch]] - TODO
 + wanderlust =+gmail= - TODO
 
