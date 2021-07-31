@@ -56,7 +56,7 @@
          :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)
         (:when (featurep! :completion vertico)
          :desc "Jump to symbol in current workspace" "j"   #'consult-lsp-symbols
-         :desc "Jump to symbol in any workspace"     "J"   (cmd! #'consult-lsp-symbols '(4)))
+         :desc "Jump to symbol in any workspace"     "J"   (cmd!! #'consult-lsp-symbols 'all-workspaces))
         (:when (featurep! :ui treemacs +lsp)
          :desc "Errors list"                         "X"   #'lsp-treemacs-errors-list
          :desc "Incoming call hierarchy"             "y"   #'lsp-treemacs-call-hierarchy
