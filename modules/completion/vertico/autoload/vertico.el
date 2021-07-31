@@ -4,6 +4,10 @@
 ;;;###autoload
 (defvar orderless-match-faces)
 
+;; To prevent "Defining as dynamic an already lexical var" from +vertico/embark-preview
+;;;###autoload
+(defvar embark-quit-after-action)
+
 ;;;###autoload
 (defadvice! +vertico--company-capf--candidates-a (fn &rest args)
   "Highlight company matches correctly, and try default completion styles before
@@ -146,7 +150,7 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   (unless (bound-and-true-p consult--preview-function)
     (save-selected-window
       (let ((embark-quit-after-action nil))
-        (embark-default-action)))))
+        (embark-dwim)))))
 
 ;;;###autoload
 (defun +vertico/next-candidate-preview (&optional n)
