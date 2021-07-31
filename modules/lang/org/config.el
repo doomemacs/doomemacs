@@ -64,6 +64,9 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defvar +org-habit-graph-window-ratio 0.3
   "The ratio of the consistency graphs relative to the window width")
 
+(defvar +org-startup-with-animated-gifs nil
+  "If non-nil, and the cursor is over a gif inline-image preview, animate it!")
+
 
 ;;
 ;;; `org-load' hooks
@@ -1250,4 +1253,17 @@ compelling reason, so..."
     :before-while '(org-id-locations-save org-id-locations-load)
     (file-writable-p org-id-locations-file))
 
-  (add-hook 'org-open-at-point-functions #'doom-set-jump-h))
+  (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
+
+  ;; Add the ability to play gifs, at point or throughout the buffer. However,
+  ;; 'playgifs' is stupid slow and there's not much I can do to fix it; use at
+  ;; your own risk.
+  (add-to-list 'org-startup-options '("inlinegifs" +org-startup-with-animated-gifs at-point))
+  (add-to-list 'org-startup-options '("playgifs"   +org-startup-with-animated-gifs t))
+  (add-hook! 'org-mode-local-vars-hook
+    (defun +org-init-gifs-h ()
+      (remove-hook 'post-command-hook #'+org-play-gif-at-point-h t)
+      (remove-hook 'post-command-hook #'+org-play-all-gifs-h t)
+      (pcase +org-startup-with-animated-gifs
+        (`at-point (add-hook 'post-command-hook #'+org-play-gif-at-point-h nil t))
+        (`t (add-hook 'post-command-hook #'+org-play-all-gifs-h nil t))))))
