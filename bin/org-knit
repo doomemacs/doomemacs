@@ -16,15 +16,15 @@
 ;;   org-knit -t -f ascii,md scripts.org
 ;;
 ;; Options:
-;;   -f --format FORMATS   Export formats (comma seperated, no space), html by default
-;;   -t --tangle           Also tangle the file(s).
-;;                         See org-tangle for more advanced functionallity
-;;   -e --exec             Execute src blocks in the file before exporting
-;;   -p --print            Print exported output to sdout rather than files
-;;   -c --clean            Delete all non-org files which share their basename
-;;   -l --load             Elisp files to load
-;;   -a --alias [FORMATS]  Give the org function called by a particlar alias.
+;;   -a, --alias [FORMATS] Give the org function called by a particlar alias.
 ;;                         List all aliases when no format or other arguments are given
+;;   -c, --clean           Delete all non-org files which share their basename
+;;   -e, --exec            Execute src blocks in the file before exporting
+;;   -f, --format FORMATS  Export formats (comma seperated, no space), html by default
+;;   -l, --load            Elisp files to load
+;;   -p, --print           Print exported output to sdout rather than files
+;;   -t, --tangle          Also tangle the file(s).
+;;                         See org-tangle for more advanced functionallity
 
 (require 'cl-lib)
 (require 'ox)
@@ -69,15 +69,15 @@
             "  org-knit -t -f ascii,md scripts.org\n"
             "\n"
             "[1mOptions:[0m\n"
-            "  -f, --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
-            "  -t, --tangle\t\tAlso tangle the file(s).\n"
-            "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
-            "  -e, --exec\t\tExecute src blocks in the file before exporting\n"
-            "  -p, --print\t\tPrint exported output to sdout rather than files\n"
-            "  -c, --clean\t\tDelete all non-org files which share their basename\n"
-            "  -l, --load\t\tElisp files to load\n"
             "  -a, --alias [FORMATS]\tGive the org function called by a particlar alias.\n"
             "  \t\t\tList all aliases when no format or other arguments are given\n"
+            "  -c, --clean\t\tDelete all non-org files which share their basename\n"
+            "  -e, --exec\t\tExecute src blocks in the file before exporting\n"
+            "  -f, --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
+            "  -l, --load\t\tElisp files to load\n"
+            "  -p, --print\t\tPrint exported output to sdout rather than files\n"
+            "  -t, --tangle\t\tAlso tangle the file(s).\n"
+            "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
             )
     (princ (buffer-string))))
 
