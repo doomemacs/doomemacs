@@ -32,11 +32,11 @@
 ;;; Git hooks
 
 (defvar doom-cli-commit-rules
-  (list (cons "^[^\n]\\{10,\\}\n"
-              "Commit summary is too short (<10) and should be more descriptive")
+  (list (cons "^[^\n]\\{10,\\}$"
+              "Subject is too short (<10) and should be more descriptive")
 
-        (cons "^\\(revert!?:[^\n]\\{,72\\}\\|[^\n]\\{,80\\}\\)\n"
-              "Commit summary too long; <=72 is ideal, 80 is max")
+        (cons "^\\(\\(revert\\|bump\\)!?: \\|[^\n]\\{,80\\}\\)$"
+              "Subject too long; <=72 is ideal, 80 is max")
 
         (cons (concat
                "^\\("
@@ -54,23 +54,24 @@
 
         (cons (lambda ()
                 (looking-at "^\\(bump\\|revert\\|release\\|merge\\|module\\)!?([^)]+):"))
-              "This commit type's scope goes after the colon, not before")
+              "This type's scope goes after the colon, not before")
 
         (cons (lambda ()
                 (when (looking-at "[^ :!(]+!?(\\([^)]+\\)): ")
                   (not
-                   (string-match
-                    (string-join
-                     (cons (concat
-                            "^" (regexp-opt
-                                 (cl-loop for path
-                                          in (cdr (doom-module-load-path (list doom-modules-dir)))
-                                          for (_category . module)
-                                          = (doom-module-from-path path)
-                                          collect (symbol-name module))) "$")
-                           '("^&" "^cli$"))
-                     "\\|")
-                    (match-string 1)))))
+                   (cl-loop with scopes =
+                            (cl-loop for path
+                                     in (cdr (doom-module-load-path (list doom-modules-dir)))
+                                     for (_category . module)
+                                     = (doom-module-from-path path)
+                                     collect (symbol-name module))
+                            with scopes-re =
+                            (string-join (cons (concat "^" (regexp-opt scopes) "$")
+                                               '("^&" "^cli$"))
+                                         "\\|")
+                            for scope in (split-string (match-string 1) ",")
+                            if (string-match scopes-re scope)
+                            return t))))
               "Invalid scope")
 
         (cons (lambda ()
@@ -102,7 +103,7 @@
                                    nil t))
               "Use present tense/imperative voice for footer references, without a colon")
 
-        ;; TODO Check that bump/revert SUMMARY list: 1) valid modules and 2)
+        ;; TODO Check that bump/revert SUBJECT list: 1) valid modules and 2)
         ;;      modules whose files are actually being touched.
 
         ;; TODO Ensure your diff corraborates your SCOPE
@@ -136,45 +137,51 @@
 ;;;
 
 (defun doom-cli--ci-lint-commits (from &optional to)
-  (with-temp-buffer
-    (save-excursion
+  (let ((errors? 0)
+        commits
+        case-fold-search)
+    (with-temp-buffer
       (insert
        (cdr (doom-call-process
              "git" "log"
-             (format "%s...%s" from (or to "HEAD"))))))
-    (while (re-search-forward "^commit \\([a-z0-9]\\{40\\}\\)" nil t)
-      (let ((commit (match-string 1))
-            errors)
-        (forward-line 4)
-        (save-restriction
-          (save-match-data
-            (narrow-to-region
-             (point) (save-excursion
-                       (if (re-search-forward "^commit \\([a-z0-9]\\{40\\}\\)" nil t)
-                           (match-beginning 0)
-                         (point-max))))
-            (indent-rigidly (point-min) (point-max) -4))
-          (save-excursion
-            (print! (start "Commit %s") commit)
-            (dolist (rule doom-cli-commit-rules)
-              (cl-destructuring-bind (pred . msg) rule
-                (goto-char (point-min))
-                (save-match-data
-                  (when (if (functionp pred)
-                            (funcall pred)
-                          (if (stringp pred)
-                              (not (re-search-forward pred nil t))
-                            (error "Invalid predicate: %S" pred)))
-                    (push msg (alist-get commit errors nil nil #'equal)))))))
-          (when errors
-            (dolist (error (reverse errors))
-              (print! (error "Commit %s") (car error))
-              (print-group!
-               (dolist (e (reverse (cdr error)))
-                 (print! (info e)))))
-            (terpri)
-            (print! "%d commit(s) failed the linter" (length errors))
-            (terpri)
-            (print! "See https://doomemacs.org/project.org#commit-message-formatting for details")
-            (throw 'exit 1)))))
-    t))
+             (format "%s...%s" from (or to "HEAD")))))
+      (while (re-search-backward "^commit \\([a-z0-9]\\{40\\}\\)" nil t)
+        (push (cons (match-string 1)
+                    (replace-regexp-in-string
+                     "^    " ""
+                     (save-excursion
+                       (buffer-substring-no-properties
+                        (search-forward "\n\n")
+                        (if (re-search-forward "\ncommit \\([a-z0-9]\\{40\\}\\)" nil t)
+                            (match-beginning 0)
+                          (point-max))))))
+              commits)))
+    (dolist (commit commits)
+      (let (errors)
+        (with-temp-buffer
+          (save-excursion (insert (cdr commit)))
+          (dolist (rule doom-cli-commit-rules)
+            (save-excursion
+              (save-match-data
+                (cl-destructuring-bind (pred . msg) rule
+                  (and (cond ((functionp pred)
+                              (funcall pred))
+                             ((stringp pred)
+                              (not (re-search-forward pred nil t)))
+                             ((error "Invalid predicate: %S" pred)))
+                       (push msg errors))))))
+          (if (not errors)
+              (print! (success "Commit %s") (car commit))
+            (cl-incf errors?)
+            (print! (error "Commit %s") (car commit))
+            (print-group!
+             (print! "%S" (cdr commit))
+             (dolist (e (reverse errors))
+               (print! (error "%s" e))))))))
+    (when (> errors? 0)
+      (terpri)
+      (print! "%d commit(s) failed the linter" errors?)
+      (terpri)
+      (print! "See https://doomemacs.org/project.org#commit-message-formatting for details")
+      (throw 'exit 1)))
+  t)
