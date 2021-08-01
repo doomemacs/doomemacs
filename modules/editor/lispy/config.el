@@ -39,16 +39,6 @@
           additional-insert))
   :config
   (lispyville-set-key-theme)
-
-  (let ((lisp-family '(lisp-mode
-                       emacs-lisp-mode
-                       ielm-mode
-                       scheme-mode
-                       racket-mode
-                       hy-mode
-                       lfe-mode
-                       dune-mode
-                       clojure-mode
-                       fennel-mode)))
-    (setq evil-escape-excluded-major-modes
-          (nconc lisp-family evil-escape-excluded-major-modes))))
+  (add-hook! 'evil-escape-inhibit-functions
+    (defun +lispy-inhibit-evil-escape-fn ()
+      (and lispy-mode (evil-insert-state-p)))))
