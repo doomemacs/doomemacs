@@ -47,6 +47,12 @@
               "Invalid type")
 
         (cons (lambda ()
+                (when (re-search-forward "^[^ :]+: " nil t)
+                  (and (looking-at "[A-Z][^-]")
+                       (not (looking-at "\\(SPC\\|TAB\\|ESC\\|LFD\\|DEL\\|RET\\)")))))
+              "Do not capitalize the first word of the subject")
+
+        (cons (lambda ()
                 (looking-at "^\\(bump\\|revert\\|release\\|merge\\|module\\)!?([^)]+):"))
               "This commit type's scope goes after the colon, not before")
 
