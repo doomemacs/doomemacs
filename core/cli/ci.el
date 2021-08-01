@@ -92,9 +92,9 @@
         ;; TODO Add bump validations for revert: type.
 
         (cons (lambda ()
-                (re-search-forward "^\\(\\(Fix\\|Clos\\|Revert\\)ed\\|Reference[sd]\\): "
+                (re-search-forward "^\\(\\(Fix\\|Clos\\|Revert\\)ed\\|Reference[sd]\\|Refs\\): "
                                    nil t))
-              "Use present tense/imperative voice for references, without a colon")
+              "Use present tense/imperative voice for footer references, without a colon")
 
         ;; TODO Check that bump/revert SUMMARY list: 1) valid modules and 2)
         ;;      modules whose files are actually being touched.
