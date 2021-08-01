@@ -1,4 +1,4 @@
-name: Lock resolved or closed threads after 90 days
+name: Mark stale issues and lock closed threads
 on:
   schedule:
     - cron: '0 * * * *'  # hourly
