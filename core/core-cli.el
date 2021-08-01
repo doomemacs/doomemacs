@@ -86,6 +86,7 @@ purpose.")
      (debug-p       ["-d" "--debug"] "Enables on verbose output")
      (doomdir       ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
      (localdir      ["--localdir" dir] "Use DIR as your local storage directory")
+     (nocolor       ["-C" "--nocolor"] "Disable colored output")
      &optional command
      &rest args)
   "A command line interface for managing Doom Emacs.
@@ -101,6 +102,8 @@ Environment variables:
   DOOMLOCALDIR  Where to store local files (normally ~/.emacs.d/.local)"
   (condition-case e
       (with-output-to! doom--cli-log-buffer
+        (when nocolor
+          (setq doom-output-backend nil))
         (catch 'exit
           (when (and (not (getenv "__DOOMRESTART"))
                      (or doomdir
@@ -204,6 +207,7 @@ Environment variables:
 (load! "cli/upgrade")
 (load! "cli/packages")
 (load! "cli/autoloads")
+(load! "cli/ci")
 
 (defcligroup! "Diagnostics"
   "For troubleshooting and diagnostics"
