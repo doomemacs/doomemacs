@@ -72,4 +72,6 @@
             'org-todo-keyword-outd
             'org-todo
             'org-done
-            'font-lock-comment-face))
+            'font-lock-comment-face)
+
+  (setq mixed-pitch-set-height 't))
