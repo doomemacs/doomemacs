@@ -119,7 +119,7 @@
         (dolist (error (reverse errors))
           (print-group! (print! (info error))))
         (terpri)
-        (print! "See https://doomemacs.org/project.org#commit-message-formatting for details")
+        (print! "See https://gist.github.com/hlissner/4d78e396acb897d9b2d8be07a103a854 for details")
         (throw 'exit 0))
       t)))
 
