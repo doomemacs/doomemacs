@@ -38,4 +38,7 @@
           additional
           additional-insert))
   :config
-  (lispyville-set-key-theme))
+  (lispyville-set-key-theme)
+  (add-hook! 'evil-escape-inhibit-functions
+    (defun +lispy-inhibit-evil-escape-fn ()
+      (and lispy-mode (evil-insert-state-p)))))
