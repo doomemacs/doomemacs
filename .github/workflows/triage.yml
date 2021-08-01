@@ -1,0 +1,31 @@
+name: Lock resolved or closed threads after 90 days
+on:
+  schedule:
+    - cron: '0 * * * *'  # hourly
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v3
+        with:
+          stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Remove the label or reply or this will be auto-closed in 7 days.'
+          exempt-issue-labels:
+            - "needs-triage"
+            - "backlog"
+            - "2. status:confirmed"
+          exempt-pr-labels:
+            - "needs-triage"
+            - "backlog"
+            - "2. status:confirmed"
+            - "2. status:archived"
+            - "2. status:resolved-temporarily"
+            - "2. status:waiting"
+          stale-issue-label: stale
+          stale-pr-label:    stale
+          exempt-milestones: true
+          exempt-assignees:  true
+      - uses: dessant/lock-threads@v2
+        with:
+          github-token: ${{ github.token }}
+          issue-lock-inactive-days: '90'
+          pr-lock-inactive-days: '90'
