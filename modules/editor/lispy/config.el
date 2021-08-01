@@ -38,4 +38,17 @@
           additional
           additional-insert))
   :config
-  (lispyville-set-key-theme))
+  (lispyville-set-key-theme)
+
+  (let ((lisp-family '(lisp-mode
+                       emacs-lisp-mode
+                       ielm-mode
+                       scheme-mode
+                       racket-mode
+                       hy-mode
+                       lfe-mode
+                       dune-mode
+                       clojure-mode
+                       fennel-mode)))
+    (setq evil-escape-excluded-major-modes
+          (nconc lisp-family evil-escape-excluded-major-modes))))
