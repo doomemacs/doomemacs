@@ -45,7 +45,7 @@ orderless."
            (string-trim
             (concat (if all-files "-uu")
                     (unless recursive "--maxdepth 1")
-                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
+                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number --smart-case"
                     " --hidden -g !.git "
                     (mapconcat #'shell-quote-argument args " ")))
            " "))
