@@ -41,13 +41,13 @@
         (cons (concat
                "^\\("
                (regexp-opt
-                '("bump" "dev" "docs" "feat" "fix" "merge" "nit" "perf"
+                '("bump" "dev" "docs" "feat" "fix" "merge" "module" "nit" "perf"
                   "refactor" "release" "revert" "test" "tweak"))
                "\\)!?[^ :]*: ")
               "Invalid type")
 
         (cons (lambda ()
-                (looking-at "^\\(bump\\|revert\\|release\\|merge\\)!?([^)]+):"))
+                (looking-at "^\\(bump\\|revert\\|release\\|merge\\|module\\)!?([^)]+):"))
               "This commit type's scope goes after the colon, not before")
 
         (cons (lambda ()
@@ -88,6 +88,8 @@
                     (re-search-forward (concat "^" bump-re " -> " bump-re "$")
                                        nil t))))
               "Bump commit doesn't contain commit diff")
+
+        ;; TODO Add bump validations for revert: type.
 
         (cons (lambda ()
                 (re-search-forward "^\\(\\(Fix\\|Clos\\|Revert\\)ed\\|Reference[sd]\\): "
