@@ -176,6 +176,14 @@
          (frame-local-setq company-box-doc-frame nil frame))))
 
 
+(use-package! company-prescient
+  :when (featurep! +prescient)
+  :hook (company-mode . company-prescient-mode)
+  :hook (company-prescient-mode . prescient-persist-mode)
+  :config
+  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el")))
+
+
 (use-package! company-dict
   :defer t
   :config
