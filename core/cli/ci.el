@@ -144,7 +144,7 @@
       (insert
        (cdr (doom-call-process
              "git" "log"
-             (format "%s...%s" from (or to "HEAD")))))
+             (format "%s..%s" from (or to "HEAD")))))
       (while (re-search-backward "^commit \\([a-z0-9]\\{40\\}\\)" nil t)
         (push (cons (match-string 1)
                     (replace-regexp-in-string
