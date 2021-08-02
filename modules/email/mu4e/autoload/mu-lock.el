@@ -1,6 +1,6 @@
 ;;; email/mu4e/autoload/mu-lock.el -*- lexical-binding: t; -*-
-;;;###autoload (autoload 'file-notify-rm-watch "filenotify")
-;;;###autoload (autoload 'file-notify-add-watch "filenotify")
+(autoload 'file-notify-rm-watch "filenotify")
+(autoload 'file-notify-add-watch "filenotify")
 
 (defvar +mu4e-lock-file (expand-file-name "mu4e_lock" temporary-file-directory)
   "Location of the lock file which stores the PID of the process currenty running mu4e")
