@@ -17,9 +17,11 @@
   :config
   (set-popup-rule! "^\\*eglot-help" :size 0.15 :quit t :select t)
   (set-lookup-handlers! 'eglot--managed-mode
+    :definition      #'xref-find-definitions
+    :references      #'xref-find-references
     :implementations #'eglot-find-implementation
     :type-definition #'eglot-find-typeDefinition
-    :documentation #'+eglot-lookup-documentation)
+    :documentation   #'+eglot-lookup-documentation)
 
   (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 0))
 
