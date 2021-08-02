@@ -187,11 +187,12 @@ exist, and `org-link' otherwise."
   (cl-destructuring-bind (&key category module flag)
       (+org-link--doom-module--read-link link)
     (when category
-      (if-let* ((path (doom-module-locate-path category module))
-                (path (or (car (doom-glob path "README.org"))
-                          path)))
-          (find-file path)
-        (user-error "Can't find Doom module '%s'" link)))
+      (let ((doom-modules-dirs (list doom-modules-dir)))
+        (if-let* ((path (doom-module-locate-path category module))
+                  (path (or (car (doom-glob path "README.org"))
+                            path)))
+            (find-file path)
+          (user-error "Can't find Doom module '%s'" link))))
     (when flag
       (goto-char (point-min))
       (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module Flags")
