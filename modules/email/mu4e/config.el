@@ -282,11 +282,11 @@ Usefull for affecting HTML export config.")
     (+mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
     (funcall orig-fn))
 
-  (defadvice! +mu4e-draft-open-signature-a (orig-fn compose-type &optional msg)
+  (defadvice! +mu4e-draft-open-signature-a (orig-fn &rest args)
     "Prevent `mu4e-compose-signature' from being used with `org-msg-mode'."
     :around #'mu4e-draft-open
     (let ((mu4e-compose-signature (unless org-msg-mode mu4e-compose-signature)))
-      (funcall orig-fn compose-type msg)))
+      (apply orig-fn args)))
 
   (map! :map org-msg-edit-mode-map
         "TAB" #'org-msg-tab) ; only <tab> bound by default
