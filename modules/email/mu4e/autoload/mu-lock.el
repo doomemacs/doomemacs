@@ -22,7 +22,7 @@
                    (insert-file-contents +mu4e-lock-file)
                    (buffer-string))))
            (process (process-attributes pid)))
-      (if (and process (string-match-p "emacs" (alist-get 'args process)))
+      (if (and process (string-match-p "[Ee]macs" (alist-get 'comm process)))
           (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
 
