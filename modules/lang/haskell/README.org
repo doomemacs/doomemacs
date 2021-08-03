@@ -11,7 +11,6 @@
 - [[#prerequisites][Prerequisites]]
   - [[#cabal][Cabal]]
   - [[#lsp-haskell-language-server][LSP (haskell-language-server)]]
-  - [[#lsp-ghcide][LSP (ghcide)]]
   - [[#stack][Stack]]
   - [[#haskell-packages][Haskell packages]]
 - [[#configuration][Configuration]]
@@ -20,7 +19,7 @@
 
 * Description
 This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default) or LSP
-(haskell-language-server or ghcide).
+(haskell-language-server).
 
 + Code completion (~company-ghc~)
 + Look up documentation (~hoogle~)
@@ -42,9 +41,7 @@ Here are a few resources I've found indispensable in my Haskell adventures:
 + =+dante= Enables dante; a fork of intero aimed at lightweightedness. It
   doesn't depend on =stack=, supports both ~cabal~-only and ~stack~ projects,
   but lacks eldoc support.
-+ =+ghcide= Enables LSP support with ghcide (requires the ~:tools lsp~ module).
-+ =+lsp= Enables LSP support with haskell-language-server (requires the ~:tools lsp~
-  module).
++ =+lsp= Enables LSP support with haskell-language-server (requires the ~:tools lsp~ module).
 
 ** Plugins
 + [[https://github.com/haskell/haskell-mode][haskell-mode]]
@@ -55,11 +52,11 @@ Here are a few resources I've found indispensable in my Haskell adventures:
   + [[https://github.com/emacs-lsp/lsp-haskell][lsp-haskell]]
 
 * Prerequisites
-Depending on whether you use Dante, haskell-language-server or ghcide, your
+Depending on whether you use Dante or haskell-language-server, your
 dependencies will differ:
 
 + Dante users need =cabal=, =ghc= and =ghc-mod=
-+ LSP users need the =haskell-language-server= LSP server OR =ghcide=
++ LSP users need the =haskell-language-server= LSP server
 + All users will need the =hoogle= package
 
 ** Cabal
@@ -89,9 +86,6 @@ You will find a comprehensive [[https://github.com/haskell/haskell-language-serv
 #+BEGIN_SRC bash
 ghcup install hls
 #+END_SRC
-
-** LSP (ghcide)
-See https://github.com/digital-asset/ghcide for install instructions.
 
 ** Stack
 To use LSP, you need =stack=:

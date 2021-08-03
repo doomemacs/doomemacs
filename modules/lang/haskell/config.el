@@ -47,6 +47,4 @@
 ;;; Backends
 
 (cond ((featurep! +dante)  (load! "+dante"))
-      ((or (featurep! +lsp)
-           (featurep! +ghcide))
-       (load! "+lsp")))
+      ((featurep! +lsp)    (load! "+lsp")))
