@@ -68,7 +68,7 @@ Or ~nix-env -i direnv~
 
 * Troubleshooting
 ** direnv + nix is slow
-Consider augmenting direnv with [[https://github.com/target/lorri][lorri]], which will cache nix builds and speed up
+Consider augmenting direnv with [[https://github.com/nix-community/lorri][lorri]], which will cache nix builds and speed up
 direnv tremendously:
 
 #+BEGIN_SRC nix
