@@ -1,7 +1,7 @@
 name: Mark stale issues and lock closed threads
 on:
   schedule:
-    - cron: '0 * * * *'  # hourly
+    - cron: '0 */12 * * *'  # twice, daily
 jobs:
   lock:
     runs-on: ubuntu-latest
