@@ -260,7 +260,7 @@ If you have completely lost your install then you can use this handy command!
 
 #+BEGIN_SRC  shell
 find / -type d -iname '*mu4e*'
-# I reccomend rerouting all of the error to /dev/null
+# I recommend rerouting all of the errors to /dev/null
 find / -type d -iname '*mu4e*' 2> /dev/null
 #+END_SRC
 
