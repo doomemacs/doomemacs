@@ -35,8 +35,8 @@
   (list (cons "^[^\n]\\{10,\\}$"
               "Subject is too short (<10) and should be more descriptive")
 
-        (cons "^\\(\\(revert\\|bump\\)!?: \\|[^\n]\\{,80\\}\\)$"
-              "Subject too long; <=72 is ideal, 80 is max")
+        (cons "^\\(\\(revert\\|bump\\)!?: \\|[^\n]\\{,72\\}\\)$"
+              "Subject too long; <=50 is ideal, 72 is max")
 
         (cons (concat
                "^\\("
@@ -57,22 +57,53 @@
               "This type's scope goes after the colon, not before")
 
         (cons (lambda ()
-                (when (looking-at "[^ :!(]+!?(\\([^)]+\\)): ")
-                  (not
-                   (cl-loop with scopes =
-                            (cl-loop for path
-                                     in (cdr (doom-module-load-path (list doom-modules-dir)))
-                                     for (_category . module)
-                                     = (doom-module-from-path path)
-                                     collect (symbol-name module))
-                            with scopes-re =
-                            (string-join (cons (concat "^" (regexp-opt scopes) "$")
-                                               '("^&" "^cli$"))
-                                         "\\|")
-                            for scope in (split-string (match-string 1) ",")
-                            if (string-match scopes-re scope)
-                            return t))))
+                (when (looking-at "\\([^ :!(]\\)+!?(\\([^)]+\\)): ")
+                  (let ((type (match-string 1)))
+                    (or (member type '("bump" "revert" "merge" "module" "release"))
+                        (not
+                         (cl-loop
+                          with scopes =
+                          (cl-loop for path
+                                   in (cdr (doom-module-load-path (list doom-modules-dir)))
+                                   for (_category . module)
+                                   = (doom-module-from-path path)
+                                   collect (symbol-name module))
+                          with extra-scopes  = '("cli")
+                          with regexp-scopes = '("^&")
+                          with type-scopes =
+                          (pcase type
+                            ("docs"
+                             (cons "install"
+                                   (mapcar #'file-name-base
+                                           (doom-glob doom-docs-dir "[a-z]*.org")))))
+                          with scopes-re =
+                          (concat (string-join regexp-scopes "\\|")
+                                  "\\|"
+                                  (regexp-opt (append type-scopes extra-scopes scopes)))
+                          for scope in (split-string (match-string 2) ",")
+                          if (or (not (stringp scope))
+                                 (string-match scopes-re scope))
+                          return t))))))
               "Invalid scope")
+
+        (cons (lambda ()
+                (when (looking-at "\\([^ :!(]\\)+!?(\\([^)]+\\)): ")
+                  (let ((scopes (split-string (match-string 1) ",")))
+                    (not (equal scopes (sort scopes #'string-lessp))))))
+              "Scopes not in lexical order")
+
+        (cons (lambda ()
+                (catch 'found
+                  (unless (looking-at "\\(bump\\|revert\\|merge\\)")
+                    (while (re-search-forward "^[^\n]\\{72,\\}" nil t)
+                      ;; Exclude ref lines, bump lines, or lines with URLs
+                      (save-excursion
+                        (or (re-search-backward "^\\(Ref\\|Close\\|Fix\\|Revert\\) " nil t)
+                            (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
+                              (re-search-backward (format "^%s -> %s$" bump-re bump-re) nil t))
+                            (re-search-backward "https?://[^ ]+\\{72,\\}" nil t)
+                            (throw 'found t)))))))
+              "Body line length exceeds 72 characters")
 
         (cons (lambda ()
                 (when (looking-at "[^ :!(]+![(:]")
@@ -91,7 +122,7 @@
 
         (cons (lambda ()
                 (when (looking-at "bump: ")
-                  (let ((bump-re "^\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{7\\}"))
+                  (let ((bump-re "^\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
                     (re-search-forward (concat "^" bump-re " -> " bump-re "$")
                                        nil t))))
               "Bump commit doesn't contain commit diff")
@@ -101,7 +132,20 @@
         (cons (lambda ()
                 (re-search-forward "^\\(\\(Fix\\|Clos\\|Revert\\)ed\\|Reference[sd]\\|Refs\\): "
                                    nil t))
-              "Use present tense/imperative voice for footer references, without a colon")
+              "Use present tense & imperative mood for references, and without a colon")
+
+        (cons (lambda ()
+                (catch 'found
+                  (while (re-search-forward "^\\(?:Fix\\|Close\\|Revert\\|Ref\\) \\([^\n]+\\)$"
+                                            nil t)
+                    (let ((ref (match-string 1)))
+                      (or (string-match "^\\(https?://.+\\|[^/]+/[^/]+\\)?\\(#[0-9]+\\|@[a-z0-9]+\\)" ref)
+                          (string-match "^https?://" ref)
+                          (and (string-match "^[a-z0-9]\\{12\\}$" ref)
+                               (= (car (doom-call-process "git" "show" ref))
+                                  0))
+                          (throw 'found t))))))
+              "Invalid footer reference (should be an issue, PR, URL, or commit)")
 
         ;; TODO Check that bump/revert SUBJECT list: 1) valid modules and 2)
         ;;      modules whose files are actually being touched.
