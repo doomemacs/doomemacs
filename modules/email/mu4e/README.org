@@ -158,10 +158,12 @@ mu index
 mu index --maildir ~/.mail
 #+END_SRC
 
+Be sure to replace ~~/.mail~ with the directory containing your mail.
+
 Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+;; Each path is relative to the path of the maildir you passed to mu
 (set-email-account! "Lissner.net"
   '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
     (mu4e-drafts-folder     . "/Lissner.net/Drafts")
