@@ -5,7 +5,7 @@
   "Registers an email address for mu4e. The LABEL is a string. LETVARS are a
 list of cons cells (VARIABLE . VALUE) -- you may want to modify:
 
- + `user-full-name' (this or the global `user-full-name' is required)
+ + `user-full-name' (used to populate the FROM field when composing mail)
  + `user-mail-address' (required in mu4e < 1.4)
  + `smtpmail-smtp-user' (required for sending mail from Emacs)
 
