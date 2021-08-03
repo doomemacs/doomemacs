@@ -14,6 +14,7 @@
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
+  - [[#fetching-your-mail-in-other-ways][Fetching your mail in other ways]]
   - [[#mu-and-mu4e][mu and mu4e]]
   - [[#orgmsg][OrgMsg]]
   - [[#mu4e-alert][mu4e-alert]]
@@ -50,8 +51,10 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 * Prerequisites
 This module requires:
 
-+ Either ~mbsync~ (recommended, default) or ~offlineimap~ (to sync mail with)
 + ~mu~, to index your downloaded messages and to provide the ~mu4e~ package.
++ A program to sync your mail. This module comes with builtin support for
+  ~mbsync~ (recommended, default) or ~offlineimap~ but you can sync mail in
+  other ways too.
 
 #+name: Install Matrix
 | Platform      | Install command        | Base packages       |
@@ -62,7 +65,7 @@ This module requires:
 | Fedora        | ~dnf install <pkgs>~     | =maildir-utils=       |
 | Debian/Ubuntu | ~apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
-The install either the =isync= (=mbsync=) or =offlineimap= package.
+Then install either the =isync= (=mbsync=) or =offlineimap= package.
 
 To send mail, mu4e uses [[https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html][smtpmail]] (an Emacs library) by default.
 You can also run a local SMTP server like =sendmail= or =postfix=, or use an SMTP
@@ -138,6 +141,19 @@ tailored =mbsync= command to just fetch the new changes.
 
 If this is of interest, this approach can be seen [[https://tecosaur.github.io/emacs-config/config.html#fetching][in @tecosaur's config]] where
 [[https://gitlab.com/shackra/goimapnotify][goimapnotify]] is used for this.
+** Fetching your mail in other ways
+You also have the possiblity to invoke an arbitary shell command to fetch your
+mail by disabling this module's backend selection and setting the value of the
+~mu4e-get-mail-command~ to the command you want to execute.
+#+BEGIN_SRC emacs-lisp
+(setq +mu4e-backend nil)
+(after! mu4e
+  (setq mu4e-get-mail-command "your_command"))
+#+END_SRC
+
+If your command prompts you for a passphrase, you might want to change the value
+of the ~mu4e~get-mail-password-regexp~ such that =mu4e= will recognize the
+prompt and let you provide the passphrase from within Emacs.
 
 ** mu and mu4e
 You should have your email downloaded already. If you have not, you need to set
