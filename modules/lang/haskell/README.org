@@ -18,15 +18,13 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://github.com/jyp/dante][dante]] (the default) or LSP
+This module adds [[https://www.haskell.org/][Haskell]] support, powered by LSP
 (haskell-language-server).
 
 + Code completion (~company-ghc~)
 + Look up documentation (~hoogle~)
-+ eldoc support (~dante~)
 + REPL (~ghci~)
 + Syntax-checking (~flycheck~)
-+ Code navigation (~dante~)
 + [[https://github.com/hlissner/doom-snippets/tree/master/haskell-mode][Snippets]]
 
 ** External resources
@@ -38,31 +36,19 @@ Here are a few resources I've found indispensable in my Haskell adventures:
 + [[https://docs.haskellstack.org/en/stable/README/][The Haskell Tool Stack docs]]
  
 ** Module Flags
-+ =+dante= Enables dante; a fork of intero aimed at lightweightedness. It
-  doesn't depend on =stack=, supports both ~cabal~-only and ~stack~ projects,
-  but lacks eldoc support.
 + =+lsp= Enables LSP support with haskell-language-server (requires the ~:tools lsp~ module).
 
 ** Plugins
 + [[https://github.com/haskell/haskell-mode][haskell-mode]]
-+ =+dante=
-  + [[https://github.com/jyp/dante][dante]]
-  + [[https://github.com/jyp/attrap][attrap]]
 + =+lsp=
   + [[https://github.com/emacs-lsp/lsp-haskell][lsp-haskell]]
 
 * Prerequisites
-Depending on whether you use Dante or haskell-language-server, your
-dependencies will differ:
 
-+ Dante users need =cabal=, =ghc= and =ghc-mod=
 + LSP users need the =haskell-language-server= LSP server
 + All users will need the =hoogle= package
 
 ** Cabal
-To use Dante, you need =cabal= (the haskell package builder) and =ghci= (the
-compiler, syntax checker & repl):
-
 *** MacOS
 #+BEGIN_SRC sh
 brew install cabal-install ghc
@@ -112,12 +98,6 @@ stack setup
 ** Haskell packages
 You'll need to install the following packages using ~stack~ or ~cabal~:
 
-+ (Dante users) =ghc-mod=
-  #+BEGIN_SRC sh
-  stack install ghc-mod
-  # or
-  cabal install ghc-mod
-  #+END_SRC
 + =hoogle=
   #+BEGIN_SRC sh
   cabal update
