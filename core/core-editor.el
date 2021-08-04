@@ -456,6 +456,9 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   ;; Creates a jump point before killing a buffer. This allows you to undo
   ;; killing a buffer easily (only works with file buffers though; it's not
   ;; possible to resurrect special buffers).
+  ;;
+  ;; I'm not advising `kill-buffer' because I only want this to affect
+  ;; interactively killed buffers.
   (advice-add #'kill-current-buffer :around #'doom-set-jump-a)
 
   ;; Create a jump point before jumping with imenu.

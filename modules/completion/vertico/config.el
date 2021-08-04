@@ -34,7 +34,7 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
-     ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+     ;; Ensure $ works with Consult commands, which add disambiguation suffixes
      ((string-suffix-p "$" pattern)
       `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x100000-\x10FFFD]*$")))
      ;; Ignore single !
@@ -52,11 +52,12 @@ overrides `completion-styles' during company completion sessions.")
      ((string-suffix-p "~" pattern) `(orderless-flex . ,(substring pattern 0 -1)))))
   (setq completion-styles '(orderless)
         completion-category-defaults nil
-        ;; note that despite override in the name orderless can still be used in find-file etc.
+        ;; note that despite override in the name orderless can still be used in
+        ;; find-file etc.
         completion-category-overrides '((file (styles . (orderless partial-completion))))
         orderless-style-dispatchers '(+vertico-orderless-dispatch)
         orderless-component-separator "[ &]")
-  ;; otherwise find-file gets different highlighting than other commands
+  ;; ...otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
 
 
