@@ -130,6 +130,13 @@ or file path may exist now."
              (eq buffer (window-buffer (selected-window))) ; only visible buffers
              (set-auto-mode))))))
 
+(defadvice! doom--shut-up-autosave-a (fn &rest args)
+  "If a file has autosaved data, `after-find-file' will pause for 1 second to
+tell you about it. Very annoying. This prevents that."
+  :around #'after-find-file
+  (letf! ((#'sit-for #'ignore))
+    (apply fn args)))
+
 ;; HACK Emacs generates long file paths for its auto-save files; long =
 ;;      `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
 ;;      filesystem will murder your family. To appease it, I compress
