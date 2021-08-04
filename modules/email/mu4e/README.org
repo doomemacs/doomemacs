@@ -23,7 +23,7 @@
   - [[#void-function-org-time-add-error-on-gentoo][~(void-function org-time-add)~ error on Gentoo]]
 
 * Description
-This module makes Emacs an email client, using ~mu4e~.
+This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
 #+begin_quote
 I want to live in Emacs, but as we all know, living is incomplete without email.
@@ -51,18 +51,18 @@ via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 * Prerequisites
 This module requires:
 
-+ ~mu~, to index your downloaded messages and to provide the ~mu4e~ package.
++ [[https://www.djcbsoftware.nl/code/mu/][mu]], to index your downloaded messages and to provide the [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] package.
 + A program to sync your mail. This module comes with builtin support for
-  ~mbsync~ (recommended, default) or ~offlineimap~ but you can sync mail in
+  [[https://isync.sourceforge.io/][mbsync]] (recommended, default) or [[http://www.offlineimap.org/][offlineimap]] but you can sync mail in
   other ways too.
 
 #+name: Install Matrix
-| Platform      | Install command        | Base packages       |
-|---------------+------------------------+---------------------|
-| MacOS         | ~brew install <pkgs>~    | =mu=                  |
+| Platform      | Install command          | Base packages           |
+|---------------+--------------------------+-------------------------|
+| MacOS         | ~brew install <pkgs>~    | =mu=                    |
 | Arch          | ~pacman -S <pkgs>~       | (AUR, ~yay -S~) =mu=    |
 | openSUSE      | ~zypper install <pkgs>~  | =maildir-utils=, =mu4e= |
-| Fedora        | ~dnf install <pkgs>~     | =maildir-utils=       |
+| Fedora        | ~dnf install <pkgs>~     | =maildir-utils=         |
 | Debian/Ubuntu | ~apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
 Then install either the =isync= (=mbsync=) or =offlineimap= package.
