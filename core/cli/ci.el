@@ -182,8 +182,7 @@
 
 (defun doom-cli--ci-lint-commits (from &optional to)
   (let ((errors? 0)
-        commits
-        case-fold-search)
+        commits)
     (with-temp-buffer
       (insert
        (cdr (doom-call-process
@@ -201,8 +200,8 @@
                           (point-max))))))
               commits)))
     (dolist (commit commits)
-      (let (errors)
-        (with-temp-buffer
+      (with-temp-buffer
+        (let (errors)
           (save-excursion (insert (cdr commit)))
           (dolist (rule doom-cli-commit-rules)
             (save-excursion
