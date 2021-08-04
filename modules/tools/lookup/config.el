@@ -151,10 +151,10 @@ Dictionary.app behind the scenes to get definitions.")
   ;; xref to be one too.
   (remove-hook 'xref-backend-functions #'etags--xref-backend)
   ;; ...however, it breaks `projectile-find-tag', unless we put it back.
-  (defadvice! +lookup--projectile-find-tag-a (orig-fn)
+  (defadvice! +lookup--projectile-find-tag-a (fn)
     :around #'projectile-find-tag
     (let ((xref-backend-functions '(etags--xref-backend t)))
-      (funcall orig-fn)))
+      (funcall fn)))
 
   ;; This integration is already built into evil
   (unless (featurep! :editor evil)
@@ -170,12 +170,12 @@ Dictionary.app behind the scenes to get definitions.")
 
     ;; HACK Fix #4386: `ivy-xref-show-xrefs' calls `fetcher' twice, which has
     ;; side effects that breaks in some cases (i.e. on `dired-do-find-regexp').
-    (defadvice! +lookup--fix-ivy-xrefs (orig-fn fetcher alist)
+    (defadvice! +lookup--fix-ivy-xrefs (fn fetcher alist)
       :around #'ivy-xref-show-xrefs
       (when (functionp fetcher)
         (setf (alist-get 'fetched-xrefs alist)
               (funcall fetcher)))
-      (funcall orig-fn fetcher alist)))
+      (funcall fn fetcher alist)))
 
   (use-package! helm-xref
     :when (featurep! :completion helm))

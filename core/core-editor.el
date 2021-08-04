@@ -142,7 +142,7 @@ tell you about it. Very annoying. This prevents that."
 ;;      filesystem will murder your family. To appease it, I compress
 ;;      `buffer-file-name' to a stable 40 characters.
 ;; TODO PR this upstream; should be a universal issue!
-(defadvice! doom-make-hashed-auto-save-file-name-a (orig-fn)
+(defadvice! doom-make-hashed-auto-save-file-name-a (fn)
   "Compress the auto-save file name so paths don't get too long."
   :around #'make-auto-save-file-name
   (let ((buffer-file-name
@@ -157,11 +157,11 @@ tell you about it. Very annoying. This prevents that."
                                       'make-auto-save-file-name))
              buffer-file-name
            (sha1 buffer-file-name))))
-    (funcall orig-fn)))
+    (funcall fn)))
 
 ;; HACK Does the same for Emacs backup files, but also packages that use
 ;;      `make-backup-file-name-1' directly (like undo-tree).
-(defadvice! doom-make-hashed-backup-file-name-a (orig-fn file)
+(defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
   :around #'make-backup-file-name-1
   (let ((alist backup-directory-alist)
@@ -171,7 +171,7 @@ tell you about it. Very annoying. This prevents that."
         (if (string-match (car elt) file)
             (setq backup-directory (cdr elt)
                   alist nil))))
-    (let ((file (funcall orig-fn file)))
+    (let ((file (funcall fn file)))
       (if (or (null backup-directory)
               (not (file-name-absolute-p backup-directory)))
           file
@@ -385,17 +385,17 @@ the unwritable tidbits."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
 
-  (defadvice! doom--inhibit-saveplace-in-long-files-a (orig-fn &rest args)
+  (defadvice! doom--inhibit-saveplace-in-long-files-a (fn &rest args)
     :around #'save-place-to-alist
     (unless doom-large-file-p
-      (apply orig-fn args)))
+      (apply fn args)))
 
-  (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
+  (defadvice! doom--dont-prettify-saveplace-cache-a (fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
 files, so this replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (letf! ((#'pp #'prin1)) (funcall orig-fn))))
+    (letf! ((#'pp #'prin1)) (funcall fn))))
 
 
 (use-package! server
@@ -426,20 +426,20 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
   (global-set-key [remap xref-pop-marker-stack] #'better-jumper-jump-backward)
   :config
-  (defun doom-set-jump-a (orig-fn &rest args)
-    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
+  (defun doom-set-jump-a (fn &rest args)
+    "Set a jump point and ensure fn doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
     (let ((evil--jumps-jumping t)
           (better-jumper--jumping t))
-      (apply orig-fn args)))
+      (apply fn args)))
 
-  (defun doom-set-jump-maybe-a (orig-fn &rest args)
-    "Set a jump point if ORIG-FN returns non-nil."
+  (defun doom-set-jump-maybe-a (fn &rest args)
+    "Set a jump point if fn returns non-nil."
     (let ((origin (point-marker))
           (result
            (let* ((evil--jumps-jumping t)
                   (better-jumper--jumping t))
-             (apply orig-fn args))))
+             (apply fn args))))
       (unless result
         (with-current-buffer (marker-buffer origin)
           (better-jumper-set-jump
@@ -489,7 +489,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (orig-fn arg)
+  (defadvice! doom--fix-broken-smie-modes-a (fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode
@@ -502,7 +502,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
                          (message "[WARNING] Indent detection: %s"
                                   (error-message-string e))
                          (message ""))))) ; warn silently
-        (funcall orig-fn arg)))))
+        (funcall fn arg)))))
 
 (use-package! helpful
   ;; a better *help* buffer
@@ -517,11 +517,11 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap describe-key]      #'helpful-key)
   (global-set-key [remap describe-symbol]   #'helpful-symbol)
 
-  (defun doom-use-helpful-a (orig-fn &rest args)
-    "Force ORIG-FN to use helpful instead of the old describe-* commands."
+  (defun doom-use-helpful-a (fn &rest args)
+    "Force FN to use helpful instead of the old describe-* commands."
     (letf! ((#'describe-function #'helpful-function)
             (#'describe-variable #'helpful-variable))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (after! apropos
     ;; patch apropos buttons to call helpful instead of help

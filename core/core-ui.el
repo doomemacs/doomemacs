@@ -103,30 +103,30 @@ font to that size. It's rarely a good idea to do so!")
       (run-hooks 'doom-switch-frame-hook)
       (setq doom--last-frame (selected-frame)))))
 
-(defun doom-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
+(defun doom-run-switch-buffer-hooks-a (fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
           (and buffer-or-name
                (eq (current-buffer)
                    (get-buffer buffer-or-name)))
-          (and (eq orig-fn #'switch-to-buffer) (car args)))
-      (apply orig-fn buffer-or-name args)
+          (and (eq fn #'switch-to-buffer) (car args)))
+      (apply fn buffer-or-name args)
     (let ((gc-cons-threshold most-positive-fixnum)
           (doom-inhibit-switch-buffer-hooks t)
           (inhibit-redisplay t))
-      (when-let (buffer (apply orig-fn buffer-or-name args))
+      (when-let (buffer (apply fn buffer-or-name args))
         (with-current-buffer (if (windowp buffer)
                                  (window-buffer buffer)
                                buffer)
           (run-hooks 'doom-switch-buffer-hook))
         buffer))))
 
-(defun doom-run-switch-to-next-prev-buffer-hooks-a (orig-fn &rest args)
+(defun doom-run-switch-to-next-prev-buffer-hooks-a (fn &rest args)
   (if doom-inhibit-switch-buffer-hooks
-      (apply orig-fn args)
+      (apply fn args)
     (let ((gc-cons-threshold most-positive-fixnum)
           (doom-inhibit-switch-buffer-hooks t)
           (inhibit-redisplay t))
-      (when-let (buffer (apply orig-fn args))
+      (when-let (buffer (apply fn args))
         (with-current-buffer buffer
           (run-hooks 'doom-switch-buffer-hook))
         buffer))))
@@ -499,13 +499,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           (set-fontset-font t 'unicode font nil 'append)))))
   :config
   (cond ((daemonp)
-         (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
+         (defadvice! doom--disable-all-the-icons-in-tty-a (fn &rest args)
            "Return a blank string in tty Emacs, which doesn't support multiple fonts."
            :around '(all-the-icons-octicon all-the-icons-material
                      all-the-icons-faicon all-the-icons-fileicon
                      all-the-icons-wicon all-the-icons-alltheicon)
            (if (or (not after-init-time) (display-multi-font-p))
-               (apply orig-fn args)
+               (apply fn args)
              "")))
         ((not (display-graphic-p))
          (defadvice! doom--disable-all-the-icons-in-tty-a (&rest _)
@@ -617,7 +617,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (with-selected-frame (or frame (selected-frame))
       (load-theme doom-theme t))))
 
-(defadvice! doom--load-theme-a (orig-fn theme &optional no-confirm no-enable)
+(defadvice! doom--load-theme-a (fn theme &optional no-confirm no-enable)
   "Record `doom-theme', disable old themes, and trigger `doom-load-theme-hook'."
   :around #'load-theme
   ;; Run `load-theme' from an estranged buffer, where we can ensure that
@@ -628,7 +628,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       ;; Disable previous themes so there are no conflicts. If you truly want
       ;; multiple themes enabled, then use `enable-theme' instead.
       (mapc #'disable-theme custom-enabled-themes)
-      (prog1 (funcall orig-fn theme no-confirm no-enable)
+      (prog1 (funcall fn theme no-confirm no-enable)
         (when (and (not no-enable) (custom-theme-enabled-p theme))
           (setq doom-theme theme)
           (put 'doom-theme 'previous-themes (or last-themes 'none))

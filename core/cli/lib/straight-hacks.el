@@ -36,11 +36,11 @@ original state.")
 
 ;; HACK Replace GUI popup prompts (which hang indefinitely in tty Emacs) with
 ;;      simple prompts.
-(defadvice! doom--straight-fallback-to-y-or-n-prompt-a (orig-fn &optional prompt)
+(defadvice! doom--straight-fallback-to-y-or-n-prompt-a (fn &optional prompt)
   :around #'straight-are-you-sure
   (or doom-auto-accept
       (if doom-interactive-p
-          (funcall orig-fn prompt)
+          (funcall fn prompt)
         (y-or-n-p (format! "%s" (or prompt ""))))))
 
 (defun doom--straight-recommended-option-p (prompt option)
@@ -48,11 +48,11 @@ original state.")
            if (string-match-p prompt-re prompt)
            return (string-match-p opt-re option)))
 
-(defadvice! doom--straight-fallback-to-tty-prompt-a (orig-fn prompt actions)
+(defadvice! doom--straight-fallback-to-tty-prompt-a (fn prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
   :around #'straight--popup-raw
   (if doom-interactive-p
-      (funcall orig-fn prompt actions)
+      (funcall fn prompt actions)
     (let ((doom--straight-auto-options doom--straight-auto-options))
       ;; We can't intercept C-g, so no point displaying any options for this key
       ;; when C-c is the proper way to abort batch Emacs.

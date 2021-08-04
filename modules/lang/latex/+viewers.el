@@ -51,7 +51,7 @@
   (setq latex-preview-pane-multifile-mode 'auctex)
 
   ;; TODO PR this to maintained fork. Original project appears abandoned
-  (defadvice! +latex--dont-reopen-preview-pane-a (orig-fn &rest args)
+  (defadvice! +latex--dont-reopen-preview-pane-a (fn &rest args)
     "Once the preview pane has been closed it should not be reopened."
     :around #'latex-preview-pane-update
     (letf! (defun init-latex-preview-pane (&rest _)
@@ -59,7 +59,7 @@
              ;;      window, but it's already gone, so it ends up deleting the
              ;;      wrong window.
              (setq-local latex-preview-pane-mode nil))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (define-key! doc-view-mode-map
     "ESC" #'delete-window

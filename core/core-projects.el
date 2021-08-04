@@ -181,7 +181,7 @@ And if it's a function, evaluate it."
                     (if IS-WINDOWS " --path-separator=/")))
            ("find . -type f -print0"))))
 
-  (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)
+  (defadvice! doom--projectile-default-generic-command-a (fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error
 when using many of projectile's command, e.g. `projectile-compile-command',
 `projectile-run-project', `projectile-test-project', and
@@ -190,7 +190,7 @@ when using many of projectile's command, e.g. `projectile-compile-command',
 This suppresses the error so these commands will still run, but prompt you for
 the command instead."
     :around #'projectile-default-generic-command
-    (ignore-errors (apply orig-fn args))))
+    (ignore-errors (apply fn args))))
 
 
 ;;

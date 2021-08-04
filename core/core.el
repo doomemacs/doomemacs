@@ -243,20 +243,15 @@ users).")
       request-storage-directory    (concat doom-cache-dir "request")
       shared-game-score-directory  (concat doom-etc-dir "shared-game-score/"))
 
-(defadvice! doom--write-to-etc-dir-a (orig-fn &rest args)
-  "Resolve Emacs storage directory to `doom-etc-dir', to keep local files from
-polluting `doom-emacs-dir'."
-  :around #'locate-user-emacs-file
-  (let ((user-emacs-directory doom-etc-dir))
-    (apply orig-fn args)))
-
-(defadvice! doom--write-enabled-commands-to-doomdir-a (orig-fn &rest args)
+(defadvice! doom--write-to-sane-paths-a (fn &rest args)
   "When enabling a disabled command, the `put' call is written to
 ~/.emacs.d/init.el, which causes issues for Doom, so write it to the user's
 config.el instead."
   :around #'en/disable-command
-  (let ((user-init-file custom-file))
-    (apply orig-fn args)))
+  :around #'locate-user-emacs-file
+  (let ((user-emacs-directory doom-etc-dir)
+        (user-init-file custom-file))
+    (apply fn args)))
 
 
 ;;

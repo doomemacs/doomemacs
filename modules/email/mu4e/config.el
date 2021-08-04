@@ -273,20 +273,20 @@ Usefull for affecting HTML export config.")
       (setq +mu4e-compose-org-msg-toggle-next
             (not +mu4e-compose-org-msg-toggle-next))))
 
-  (defadvice! +mu4e-maybe-toggle-org-msg-a (orig-fn &optional toggle-p)
+  (defadvice! +mu4e-maybe-toggle-org-msg-a (fn &optional toggle-p)
     :around #'mu4e-compose-new
     :around #'mu4e-compose-reply
     :around #'mu4e-compose-forward
     :around #'mu4e-compose-resend
     (interactive "p")
     (+mu4e-compose-org-msg-handle-toggle (/= 1 (or toggle-p 0)))
-    (funcall orig-fn))
+    (funcall fn))
 
-  (defadvice! +mu4e-draft-open-signature-a (orig-fn &rest args)
+  (defadvice! +mu4e-draft-open-signature-a (fn &rest args)
     "Prevent `mu4e-compose-signature' from being used with `org-msg-mode'."
     :around #'mu4e-draft-open
     (let ((mu4e-compose-signature (unless org-msg-mode mu4e-compose-signature)))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (map! :map org-msg-edit-mode-map
         "TAB" #'org-msg-tab) ; only <tab> bound by default

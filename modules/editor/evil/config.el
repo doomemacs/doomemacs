@@ -134,9 +134,9 @@ directives. By default, this only recognizes C directives.")
 
   ;; HACK '=' moves the cursor to the beginning of selection. Disable this,
   ;;      since it's more disruptive than helpful.
-  (defadvice! +evil--dont-move-cursor-a (orig-fn &rest args)
+  (defadvice! +evil--dont-move-cursor-a (fn &rest args)
     :around #'evil-indent
-    (save-excursion (apply orig-fn args)))
+    (save-excursion (apply fn args)))
 
   ;; REVIEW In evil, registers 2-9 are buffer-local. In vim, they're global,
   ;;        so... Perhaps this should be PRed upstream?
@@ -166,11 +166,11 @@ directives. By default, this only recognizes C directives.")
 
   ;; Prevent gw (`evil-fill') and gq (`evil-fill-and-move') from squeezing
   ;; spaces. It doesn't in vim, so it shouldn't in evil.
-  (defadvice! +evil--no-squeeze-on-fill-a (orig-fn &rest args)
+  (defadvice! +evil--no-squeeze-on-fill-a (fn &rest args)
     :around '(evil-fill evil-fill-and-move)
     (letf! (defun fill-region (from to &optional justify nosqueeze to-eop)
              (funcall fill-region from to justify t to-eop))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)

@@ -367,13 +367,13 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   ;; HACK Fix `:load-path' so it resolves relative paths to the containing file,
   ;;      rather than `user-emacs-directory'. This is a done as a convenience
   ;;      for users, wanting to specify a local directory.
-  (defadvice! doom--resolve-load-path-from-containg-file-a (orig-fn label arg &optional recursed)
+  (defadvice! doom--resolve-load-path-from-containg-file-a (fn label arg &optional recursed)
     "Resolve :load-path from the current directory."
     :around #'use-package-normalize-paths
     ;; `use-package-normalize-paths' resolves paths relative to
     ;; `user-emacs-directory', so we change that.
     (let ((user-emacs-directory (if (stringp arg) (dir!))))
-      (funcall orig-fn label arg recursed)))
+      (funcall fn label arg recursed)))
 
   ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
   ;;

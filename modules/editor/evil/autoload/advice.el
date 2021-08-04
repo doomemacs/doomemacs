@@ -118,26 +118,26 @@ more information on modifiers."
                (back-to-indentation)))))))
 
 ;;;###autoload
-(defun +evil--insert-newline-below-and-respect-comments-a (orig-fn count)
+(defun +evil--insert-newline-below-and-respect-comments-a (fn count)
   (if (or (not +evil-want-o/O-to-continue-comments)
           (not (eq this-command 'evil-open-below))
           (evil-insert-state-p)
           (evil-emacs-state-p))
-      (funcall orig-fn count)
+      (funcall fn count)
     (letf! (defun evil-insert-newline-below () (+evil--insert-newline))
       (let ((evil-auto-indent evil-auto-indent))
-        (funcall orig-fn count)))))
+        (funcall fn count)))))
 
 ;;;###autoload
-(defun +evil--insert-newline-above-and-respect-comments-a (orig-fn count)
+(defun +evil--insert-newline-above-and-respect-comments-a (fn count)
   (if (or (not +evil-want-o/O-to-continue-comments)
           (not (eq this-command 'evil-open-above))
           (evil-insert-state-p)
           (evil-emacs-state-p))
-      (funcall orig-fn count)
+      (funcall fn count)
     (letf! (defun evil-insert-newline-above () (+evil--insert-newline 'above))
       (let ((evil-auto-indent evil-auto-indent))
-        (funcall orig-fn count)))))
+        (funcall fn count)))))
 
 ;;;###autoload (autoload '+evil-window-split-a "editor/evil/autoload/advice" nil t)
 (evil-define-command +evil-window-split-a (&optional count file)
@@ -179,7 +179,7 @@ more information on modifiers."
   (if file (evil-edit file)))
 
 ;;;###autoload (autoload '+evil-join-a "editor/evil/autoload/advice" nil nil)
-(defun +evil-join-a (orig-fn beg end)
+(defun +evil-join-a (fn beg end)
   "Join the selected lines.
 
 This advice improves on `evil-join' by removing comment delimiters when joining
@@ -189,7 +189,7 @@ From https://github.com/emacs-evil/evil/issues/606"
   ;; But revert to the default we're not in a comment, where
   ;; `fill-region-as-paragraph' is too greedy.
   (if (not (doom-point-in-comment-p (min (max beg (1+ (point))) end)))
-      (funcall orig-fn beg end)
+      (funcall fn beg end)
     (let* ((count (count-lines beg end))
            (count (if (> count 1) (1- count) count))
            (fixup-mark (make-marker)))

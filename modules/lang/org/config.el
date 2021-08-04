@@ -238,7 +238,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (after! ob
     (add-to-list 'org-babel-default-lob-header-args '(:sync)))
 
-  (defadvice! +org-babel-disable-async-maybe-a (orig-fn &optional fn arg info params)
+  (defadvice! +org-babel-disable-async-maybe-a (fn &optional orig-fn arg info params)
     "Use ob-comint where supported, disable async altogether where it isn't.
 
 We have access to two async backends: ob-comint or ob-async, which have
@@ -251,8 +251,8 @@ Note: ob-comint support will only kick in for languages listed in
 
 Also adds support for a `:sync' parameter to override `:async'."
     :around #'ob-async-org-babel-execute-src-block
-    (if (null fn)
-        (funcall orig-fn fn arg info params)
+    (if (null orig-fn)
+        (funcall fn orig-fn arg info params)
       (let* ((info (or info (org-babel-get-src-block-info)))
              (params (org-babel-merge-params (nth 2 info) params)))
         (if (or (assq :sync params)
@@ -271,8 +271,8 @@ Also adds support for a `:sync' parameter to override `:async'."
                              (car info))
                     (sleep-for 0.2))
                   t))
-            (funcall fn arg info params)
-          (funcall orig-fn fn arg info params)))))
+            (funcall orig-fn arg info params)
+          (funcall fn orig-fn arg info params)))))
 
   (defadvice! +org-fix-newline-and-indent-in-src-blocks-a (&optional indent _arg _interactive)
     "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
@@ -283,10 +283,10 @@ Also adds support for a `:sync' parameter to override `:async'."
       (org-babel-do-in-edit-buffer
        (call-interactively #'indent-for-tab-command))))
 
-  (defadvice! +org-inhibit-mode-hooks-a (orig-fn datum name &optional initialize &rest args)
+  (defadvice! +org-inhibit-mode-hooks-a (fn datum name &optional initialize &rest args)
     "Prevent potentially expensive mode hooks in `org-babel-do-in-edit-buffer' ops."
     :around #'org-src--edit-element
-    (apply orig-fn datum name
+    (apply fn datum name
            (if (and (eq org-src-window-setup 'switch-invisibly)
                     (functionp initialize))
                ;; org-babel-do-in-edit-buffer is used to execute quick, one-off
@@ -426,9 +426,9 @@ I like:
 
   ;; HACK Doom doesn't support `customize'. Best not to advertise it as an
   ;;      option in `org-capture's menu.
-  (defadvice! +org--remove-customize-option-a (orig-fn table title &optional prompt specials)
+  (defadvice! +org--remove-customize-option-a (fn table title &optional prompt specials)
     :around #'org-mks
-    (funcall orig-fn table title prompt
+    (funcall fn table title prompt
              (remove '("C" "Customize org-capture-templates")
                      specials)))
 
@@ -572,14 +572,14 @@ relative to `org-directory', unless it is an absolute path."
             (mathjax . t)
             (variable . "revealjs-url=https://revealjs.com"))))
 
-  (defadvice! +org--dont-trigger-save-hooks-a (orig-fn &rest args)
+  (defadvice! +org--dont-trigger-save-hooks-a (fn &rest args)
     "Exporting and tangling trigger save hooks; inadvertantly triggering
 mutating hooks on exported output, like formatters."
     :around '(org-export-to-file org-babel-tangle)
     (let (before-save-hook after-save-hook)
-      (apply orig-fn args)))
+      (apply fn args)))
 
-  (defadvice! +org--fix-async-export-a (orig-fn &rest args)
+  (defadvice! +org--fix-async-export-a (fn &rest args)
     :around '(org-export-to-file org-export-as)
     (let ((old-async-init-file org-export-async-init-file)
           (org-export-async-init-file (make-temp-file "doom-org-async-export")))
@@ -593,7 +593,7 @@ mutating hooks on exported output, like formatters."
                                  nil t)
                          (delete-file load-file-name)))
                (current-buffer)))
-      (apply orig-fn args))))
+      (apply fn args))))
 
 
 (defun +org-init-habit-h ()
@@ -662,14 +662,14 @@ With numerical argument N, show content up to level N."
     (when (get-buffer-window)
       (recenter)))
 
-  (defadvice! +org--strip-properties-from-outline-a (orig-fn &rest args)
+  (defadvice! +org--strip-properties-from-outline-a (fn &rest args)
     "Fix variable height faces in eldoc breadcrumbs."
     :around #'org-format-outline-path
     (let ((org-level-faces
            (cl-loop for face in org-level-faces
                     collect `(:foreground ,(face-foreground face nil t)
                               :weight bold))))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (after! org-eldoc
     ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
@@ -710,7 +710,7 @@ can grow up to be fully-fledged org-mode buffers."
                     nil 'local)))))
 
   (defvar recentf-exclude)
-  (defadvice! +org--optimize-backgrounded-agenda-buffers-a (orig-fn file)
+  (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t)))
@@ -720,18 +720,18 @@ can grow up to be fully-fledged org-mode buffers."
           vc-handled-backends
           org-mode-hook
           find-file-hook)
-      (funcall orig-fn file)))
+      (funcall fn file)))
 
   ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
   ;;      image previews broke for users with imagemagick support built in. This
   ;;      reverses the problem, but should be removed once it is addressed
   ;;      upstream (if ever).
-  (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
+  (defadvice! +org--fix-inline-images-for-imagemagick-users-a (fn &rest args)
     :around #'org-display-inline-images
     (letf! (defun create-image (file-or-data &optional type data-p &rest props)
              (let ((type (if (plist-get props :width) type)))
                (apply create-image file-or-data type data-p props)))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (defadvice! +org--fix-inconsistent-uuidgen-case-a (uuid)
     "Ensure uuidgen always produces lowercase output regardless of system."
@@ -1023,12 +1023,12 @@ compelling reason, so..."
   :config
   (setq toc-org-hrefify-default "gh")
 
-  (defadvice! +org-inhibit-scrolling-a (orig-fn &rest args)
+  (defadvice! +org-inhibit-scrolling-a (fn &rest args)
     "Prevent the jarring scrolling that occurs when the-ToC is regenerated."
     :around #'toc-org-insert-toc
     (let ((p (set-marker (make-marker) (point)))
           (s (window-start)))
-      (prog1 (apply orig-fn args)
+      (prog1 (apply fn args)
         (goto-char p)
         (set-window-start nil s t)
         (set-marker p nil)))))

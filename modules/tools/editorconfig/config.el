@@ -30,7 +30,7 @@
   (add-to-list 'editorconfig-exclude-regexps
                "\\.\\(zip\\|\\(doc\\|xls\\|ppt\\)x\\)\\'")
 
-  (defadvice! +editorconfig--smart-detection-a (orig-fn)
+  (defadvice! +editorconfig--smart-detection-a (fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
     :around #'editorconfig-call-editorconfig-exec
@@ -42,7 +42,7 @@ extension, try to guess one."
                      (if-let (ext (alist-get major-mode +editorconfig-mode-alist))
                          (concat "." ext)
                        "")))))
-      (funcall orig-fn)))
+      (funcall fn)))
 
   (add-hook! 'editorconfig-after-apply-functions
     (defun +editorconfig-disable-indent-detection-h (props)

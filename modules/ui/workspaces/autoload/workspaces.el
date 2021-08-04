@@ -577,8 +577,8 @@ This be hooked to `projectile-after-switch-project-hook'."
 ;;; Advice
 
 ;;;###autoload
-(defun +workspaces-autosave-real-buffers-a (orig-fn &rest args)
+(defun +workspaces-autosave-real-buffers-a (fn &rest args)
   "Don't autosave if no real buffers are open."
   (when (doom-real-buffer-list)
-    (apply orig-fn args))
+    (apply fn args))
   t)

@@ -139,7 +139,7 @@
                    #'+spell/correct))
 
       ;; TODO PR this fix upstream!
-      (defadvice! +spell--fix-face-detection-a (orig-fn &rest args)
+      (defadvice! +spell--fix-face-detection-a (fn &rest args)
         "`spell-fu--faces-at-point' uses face detection that won't penetrary
 overlays (like `hl-line'). This makes `spell-fu-faces-exclude' demonstrably less
 useful when it'll still spellcheck excluded faces on any line that `hl-line' is
@@ -148,7 +148,7 @@ displayed on, even momentarily."
         (letf! (defun get-char-property (pos prop &optional obj)
                  (or (plist-get (text-properties-at pos) prop)
                      (funcall get-char-property pos prop obj)))
-          (apply orig-fn args)))
+          (apply fn args)))
 
       (defadvice! +spell--create-word-dict-a (_word words-file _action)
         "Prevent `spell-fu--word-add-or-remove' from throwing non-existant

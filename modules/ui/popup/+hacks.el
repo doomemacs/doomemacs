@@ -26,14 +26,14 @@
 ;;
 ;;; Core functions
 
-(defadvice! +popup--make-case-sensitive-a (orig-fn &rest args)
+(defadvice! +popup--make-case-sensitive-a (fn &rest args)
   "Make regexps in `display-buffer-alist' case-sensitive.
 
 To reduce fewer edge cases and improve performance when `display-buffer-alist'
 grows larger."
   :around #'display-buffer-assq-regexp
   (let (case-fold-search)
-    (apply orig-fn args)))
+    (apply fn args)))
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
@@ -50,14 +50,14 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
-(defadvice! +popup-override-display-buffer-alist-a (orig-fn &rest args)
+(defadvice! +popup-override-display-buffer-alist-a (fn &rest args)
   "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
 override `display-buffer-alist'."
   :around #'switch-to-buffer-other-tab
   :around #'switch-to-buffer-other-window
   :around #'switch-to-buffer-other-frame
   (let ((display-buffer-alist nil))
-    (apply orig-fn args)))
+    (apply fn args)))
 
 
 ;;
@@ -68,21 +68,21 @@ override `display-buffer-alist'."
 
 
 ;;;###package company
-(defadvice! +popup--dont-select-me-a (orig-fn &rest args)
+(defadvice! +popup--dont-select-me-a (fn &rest args)
   :around #'company-show-doc-buffer
   (let ((+popup--inhibit-select t))
-    (apply orig-fn args)))
+    (apply fn args)))
 
 
 ;;;###package compile
-(defadvice! +popup--compilation-goto-locus-a (orig-fn &rest args)
+(defadvice! +popup--compilation-goto-locus-a (fn &rest args)
   "Fix links in popup compilation buffers creating a new window each time they
 were followed."
   :around #'compilation-goto-locus
   (letf! (defun pop-to-buffer (buffer &optional action norecord)
            (let ((pop-up-windows (not (+popup-buffer-p (current-buffer)))))
              (funcall pop-to-buffer buffer action norecord)))
-    (apply orig-fn args)))
+    (apply fn args)))
 
 
 ;;;###package eshell
@@ -213,7 +213,7 @@ the command buffer."
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window-fn))
 
   ;; Fix #897: "cannot open side window" error when TAB-completing file links
-  (defadvice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
+  (defadvice! +popup--helm-hide-org-links-popup-a (fn &rest args)
     :around #'org-insert-link
     (letf! ((defun org-completing-read (&rest args)
               (when-let (win (get-buffer-window "*Org Links*"))
@@ -227,7 +227,7 @@ the command buffer."
                 ;; ...but it must exist for org to clean up later.
                 (get-buffer-create "*Org Links*"))
               (apply org-completing-read args)))
-      (apply #'funcall-interactively orig-fn args)))
+      (apply #'funcall-interactively fn args)))
 
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
   (defadvice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
@@ -248,24 +248,24 @@ the command buffer."
 
 ;;;###package org
 (after! org
-  ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
-  ;; kills all other windows just so it can monopolize the frame. No thanks. We
-  ;; can do better.
-  (defadvice! +popup--suppress-delete-other-windows-a (orig-fn &rest args)
-    :around '(org-add-log-note
-              org-capture-place-template
-              org-export--dispatch-ui
-              org-agenda-get-restriction-and-command
-              org-goto-location
-              org-fast-tag-selection
-              org-fast-todo-selection)
+  (defadvice! +popup--suppress-delete-other-windows-a (fn &rest args)
+    "Org has a scorched-earth window management policy I'm not fond of. i.e. it
+kills all other windows just so it can monopolize the frame. No thanks. We can
+do better."
+    :around #'org-add-log-note
+    :around #'org-capture-place-template
+    :around #'org-export--dispatch-ui
+    :around #'org-agenda-get-restriction-and-command
+    :around #'org-goto-location
+    :around #'org-fast-tag-selection
+    :around #'org-fast-todo-selection
     (if +popup-mode
         (letf! ((#'delete-other-windows #'ignore)
                 (#'delete-window        #'ignore))
-          (apply orig-fn args))
-      (apply orig-fn args)))
+          (apply fn args))
+      (apply fn args)))
 
-  (defadvice! +popup--org-fix-goto-a (orig-fn &rest args)
+  (defadvice! +popup--org-fix-goto-a (fn &rest args)
     "`org-goto' uses `with-output-to-temp-buffer' to display its help buffer,
 for some reason, which is very unconventional, and so requires these gymnastics
 to tame (i.e. to get the popup manager to handle it)."
@@ -277,10 +277,10 @@ to tame (i.e. to get the popup manager to handle it)."
                    (with-current-buffer buffer
                      (+popup-buffer-mode +1))
                    (funcall internal-temp-output-buffer-show buffer)))
-          (apply orig-fn args))
-      (apply orig-fn args)))
+          (apply fn args))
+      (apply fn args)))
 
-  (defadvice! +popup--org-fix-popup-window-shrinking-a (orig-fn &rest args)
+  (defadvice! +popup--org-fix-popup-window-shrinking-a (fn &rest args)
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
@@ -299,32 +299,32 @@ Ugh, such an ugly hack."
                   (when (> (window-buffer-height window)
                            (window-height window))
                     (fit-window-to-buffer window (window-buffer-height window)))))
-          (apply orig-fn args))
-      (apply orig-fn args)))
+          (apply fn args))
+      (apply fn args)))
 
-  (defadvice! +popup--org-edit-src-exit-a (orig-fn &rest args)
+  (defadvice! +popup--org-edit-src-exit-a (fn &rest args)
     "If you switch workspaces or the src window is recreated..."
     :around #'org-edit-src-exit
     (let* ((window (selected-window))
            (popup-p (+popup-window-p window)))
-      (prog1 (apply orig-fn args)
+      (prog1 (apply fn args)
         (when (and popup-p (window-live-p window))
           (delete-window window)))))
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
-  (defadvice! +popup--org-pop-to-buffer-a (orig-fn buf &optional norecord)
+  (defadvice! +popup--org-pop-to-buffer-a (fn buf &optional norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord))))
+      (funcall fn buf norecord))))
 
 
 ;;;###package org-journal
-(defadvice! +popup--use-popup-window-a (orig-fn &rest args)
+(defadvice! +popup--use-popup-window-a (fn &rest args)
   :around #'org-journal-search-by-string
   (letf! ((#'switch-to-buffer #'pop-to-buffer))
-    (apply orig-fn args)))
+    (apply fn args)))
 
 
 ;;;###package persp-mode
@@ -352,10 +352,10 @@ Ugh, such an ugly hack."
 
 
 ;;;###package profiler
-(defadvice! +popup--profiler-report-find-entry-in-other-window-a (orig-fn function)
+(defadvice! +popup--profiler-report-find-entry-in-other-window-a (fn function)
   :around #'profiler-report-find-entry
   (letf! ((#'find-function #'find-function-other-window))
-    (funcall orig-fn function)))
+    (funcall fn function)))
 
 
 ;;;###package wgrep
@@ -384,11 +384,11 @@ Ugh, such an ugly hack."
 
 ;;;###package windmove
 ;; Users should be able to hop into popups easily, but Elisp shouldn't.
-(defadvice! +popup--ignore-window-parameters-a (orig-fn &rest args)
+(defadvice! +popup--ignore-window-parameters-a (fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   :around '(windmove-up windmove-down windmove-left windmove-right)
   (letf! (defun windmove-find-other-window (dir &optional arg window)
            (window-in-direction
             (pcase dir (`up 'above) (`down 'below) (_ dir))
             window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))
-    (apply orig-fn args)))
+    (apply fn args)))

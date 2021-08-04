@@ -64,9 +64,9 @@
                 doom-emacs-dir ,doom-emacs-dir
                 doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
                 doom-etc-dir   ,(expand-file-name "etc/" doom-sandbox-dir))
-          (defun doom--write-to-etc-dir-a (orig-fn &rest args)
+          (defun doom--write-to-etc-dir-a (fn &rest args)
             (let ((user-emacs-directory doom-etc-dir))
-              (apply orig-fn args)))
+              (apply fn args)))
           (advice-add #'locate-user-emacs-file :around #'doom--write-to-etc-dir-a)
           ;; emacs essential variables
           (setq before-init-time (current-time)

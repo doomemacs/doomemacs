@@ -27,12 +27,12 @@ This must be set before `treemacs' has loaded.")
         treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
   :config
   ;; ...but not from treemacs-visit-node-ace-* commands.
-  (defadvice! +treemacs--ace-window-ignore-treemacs-buffer-a (orig-fn &rest args)
+  (defadvice! +treemacs--ace-window-ignore-treemacs-buffer-a (fn &rest args)
     :around '(treemacs-visit-node-ace
               treemacs-visit-node-ace-horizontal-split
               treemacs-visit-node-ace-vertical-split)
     (let ((aw-ignored-buffers (cons 'treemacs-mode aw-ignored-buffers)))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   ;; Don't follow the cursor
   (treemacs-follow-mode -1)

@@ -115,10 +115,10 @@ employed so that flycheck still does *some* helpful linting.")
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom-recenter-a)
 
-  (defadvice! +emacs-lisp-append-value-to-eldoc-a (orig-fn sym)
+  (defadvice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
     "Display variable value next to documentation in eldoc."
     :around #'elisp-get-var-docstring
-    (when-let (ret (funcall orig-fn sym))
+    (when-let (ret (funcall fn sym))
       (if (boundp sym)
           (concat ret " "
                   (let* ((truncated " [...]")
@@ -209,10 +209,10 @@ employed so that flycheck still does *some* helpful linting.")
   (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (orig-fn symbol)
+  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
     "Add Doom's own demos to help buffers."
     :around #'elisp-demos--search
-    (or (funcall orig-fn symbol)
+    (or (funcall fn symbol)
         (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
           (with-temp-buffer
             (insert-file-contents demos-file)

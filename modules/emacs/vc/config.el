@@ -49,7 +49,7 @@
   (setq git-timemachine-show-minibuffer-details t)
 
   ;; TODO PR this to `git-timemachine'
-  (defadvice! +vc-support-git-timemachine-a (orig-fn)
+  (defadvice! +vc-support-git-timemachine-a (fn)
     "Allow `browse-at-remote' commands in git-timemachine buffers to open that
 file in your browser at the visited revision."
     :around #'browse-at-remote-get-url
@@ -71,7 +71,7 @@ file in your browser at the visited revision."
           (funcall url-formatter repo-url ref relname
                    (if start-line start-line)
                    (if (and end-line (not (equal start-line end-line))) end-line)))
-      (funcall orig-fn)))
+      (funcall fn)))
 
   (defadvice! +vc-update-header-line-a (revision)
     "Show revision details in the header-line, instead of the minibuffer.
