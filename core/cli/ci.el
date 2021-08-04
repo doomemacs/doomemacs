@@ -95,13 +95,13 @@
         (cons (lambda ()
                 (catch 'found
                   (unless (looking-at "\\(bump\\|revert\\|merge\\)")
-                    (while (re-search-forward "^[^\n]\\{72,\\}" nil t)
+                    (while (re-search-forward "^[^\n]\\{73,\\}" nil t)
                       ;; Exclude ref lines, bump lines, or lines with URLs
                       (save-excursion
                         (or (re-search-backward "^\\(Ref\\|Close\\|Fix\\|Revert\\) " nil t)
                             (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
                               (re-search-backward (format "^%s -> %s$" bump-re bump-re) nil t))
-                            (re-search-backward "https?://[^ ]+\\{72,\\}" nil t)
+                            (re-search-backward "https?://[^ ]+\\{73,\\}" nil t)
                             (throw 'found t)))))))
               "Body line length exceeds 72 characters")
 
