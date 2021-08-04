@@ -23,7 +23,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module turns Emacs into an email client using ~notmuch~.
+This module turns Emacs into an email client using [[https://notmuchmail.org/][notmuch]].
 
 ** Module Flags
 + =+org= Enables org-mime for writing HTML emails using org-mode.
@@ -38,9 +38,9 @@ This module turns Emacs into an email client using ~notmuch~.
 * Prerequisites
 This module requires:
 
-+ Either ~[[https://github.com/gauteh/lieer][gmailieer]]~ (default), ~mbsync~ or ~offlineimap~ (to sync mail with)
-+ ~[[https://notmuchmail.org/][notmuch]]~, to index and tag your downloaded messages.
-+ ~afew~, optionally to initially tag your downloaded messages.
++ Either [[https://github.com/gauteh/lieer][gmailieer]] (default), [[https://isync.sourceforge.io/][mbsync]] or [[http://www.offlineimap.org/][offlineimap]] (to sync mail with)
++ [[https://notmuchmail.org/][notmuch]], to index and tag your downloaded messages.
++ [[https://github.com/afewmail/afew][afew]] , optionally to initially tag your downloaded messages.
 ** TODO MacOS
 
 ** Arch Linux
