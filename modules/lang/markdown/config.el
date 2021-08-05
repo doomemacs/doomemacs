@@ -22,7 +22,6 @@ capture, the end position, and the output buffer.")
         markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-asymmetric-header t
-        markdown-fontify-code-blocks-natively t
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
 
