@@ -82,6 +82,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap persp-switch-to-buffer]        #'+vertico/switch-workspace-buffer)
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   (advice-add #'multi-occur :override #'consult-multi-occur)
+  (setq prefix-help-command #'embark-prefix-help-command)
   :config
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
