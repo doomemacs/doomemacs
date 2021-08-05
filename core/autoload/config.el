@@ -83,12 +83,12 @@ Runs `doom-after-reload-hook' afterwards."
               (message "Can't regenerate envvar file from within Emacs in Windows. Skipping...")
             (let (process-environment)
               (doom--if-compile
-                  (format "%s -ic '%S env%s'"
+                  (format "%s -ic '%S env'"
                           (string-trim
                            (shell-command-to-string
                             (format "getent passwd %S | cut -d: -f7"
                                     (user-login-name))))
-                          doom-bin (if arg " -c" ""))
+                          doom-bin)
                   (message "Successfully regenerated envvar file")
                 (error "Failed to generate env file")))))
         (doom-initialize 'force)
