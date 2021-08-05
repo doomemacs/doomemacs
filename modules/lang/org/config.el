@@ -705,9 +705,10 @@ the user tries to visit one of these buffers they'll see a gimped, half-broken
 org buffer. To avoid that, restart `org-mode' when they're switched to so they
 can grow up to be fully-fledged org-mode buffers."
       (dolist (buffer org-agenda-new-buffers)
-        (with-current-buffer buffer
-          (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
-                    nil 'local)))))
+        (when (buffer-live-p buffer)      ; Ensure buffer is not killed
+          (with-current-buffer buffer
+            (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
+                      nil 'local))))))
 
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
