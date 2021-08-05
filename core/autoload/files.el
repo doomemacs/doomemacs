@@ -282,6 +282,8 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (user-error "Buffer is not visiting any file"))
   (let ((old-path (buffer-file-name (buffer-base-buffer)))
         (new-path (expand-file-name new-path)))
+    (when (directory-name-p new-path)
+      (setq new-path (concat new-path (file-name-nondirectory old-path))))
     (make-directory (file-name-directory new-path) 't)
     (rename-file old-path new-path (or force-p 1))
     (set-visited-file-name new-path t t)

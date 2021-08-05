@@ -99,7 +99,7 @@ Stolen shamelessly from go-mode"
     (if fmt (intern fmt))))
 
 ;;;###autoload
-(defun +format-probe-a (orig-fn)
+(defun +format-probe-a (fn)
   "Use `+format-with' instead, if it is set.
 Prompts for a formatter if universal arg is set."
   (cond ((or buffer-read-only (eq +format-with :none))
@@ -118,7 +118,7 @@ Prompts for a formatter if universal arg is set."
               (bound-and-true-p eglot--managed-mode)
               (eglot--server-capable :documentFormattingProvider))
          (list 'eglot nil))
-        ((funcall orig-fn))))
+        ((funcall fn))))
 
 ;;;###autoload
 (defun +format-buffer-a (formatter mode-result)

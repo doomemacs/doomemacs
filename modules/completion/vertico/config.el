@@ -34,7 +34,7 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
-     ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+     ;; Ensure $ works with Consult commands, which add disambiguation suffixes
      ((string-suffix-p "$" pattern)
       `(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x100000-\x10FFFD]*$")))
      ;; Ignore single !
@@ -52,11 +52,12 @@ overrides `completion-styles' during company completion sessions.")
      ((string-suffix-p "~" pattern) `(orderless-flex . ,(substring pattern 0 -1)))))
   (setq completion-styles '(orderless)
         completion-category-defaults nil
-        ;; note that despite override in the name orderless can still be used in find-file etc.
+        ;; note that despite override in the name orderless can still be used in
+        ;; find-file etc.
         completion-category-overrides '((file (styles . (orderless partial-completion))))
         orderless-style-dispatchers '(+vertico-orderless-dispatch)
         orderless-component-separator "[ &]")
-  ;; otherwise find-file gets different highlighting than other commands
+  ;; ...otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
 
 
@@ -73,7 +74,7 @@ overrides `completion-styles' during company completion sessions.")
     [remap locate]                        #'consult-locate
     [remap load-theme]                    #'consult-theme
     [remap man]                           #'consult-man
-    [remap recentf-open-files]            (cmd! (recentf-mode +1) (consult-recent-file))
+    [remap recentf-open-files]            #'consult-recent-file
     [remap switch-to-buffer]              #'consult-buffer
     [remap switch-to-buffer-other-window] #'consult-buffer-other-window
     [remap switch-to-buffer-other-frame]  #'consult-buffer-other-frame
@@ -118,7 +119,10 @@ overrides `completion-styles' during company completion sessions.")
         :category buffer
         :state    ,#'consult--buffer-state
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
-    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
+    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
+  (map! :map consult-crm-map
+        :desc "Select candidate" "TAB" #'+vertico/crm-select
+        :desc "Enter candidates" "RET" #'+vertico/crm-exit))
 
 
 (use-package! consult-flycheck
@@ -140,11 +144,7 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
 
-  (setq embark-action-indicator
-        (lambda (map _target)
-          (which-key--show-keymap "Embark" map nil nil 'no-paging)
-          #'which-key--hide-popup-ignore-command)
-        embark-become-indicator embark-action-indicator)
+  (setq embark-indicator #'+vertico/embark-which-key-indicator)
   ;; add the package! target finder before the file target finder,
   ;; so we don't get a false positive match.
   (let ((pos (or (cl-position
@@ -174,11 +174,19 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (when (featurep! +icons)
     (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
+  (advice-add #'marginalia--project-root :override #'doom-project-root)
   (pushnew! marginalia-command-categories
+            '(+default/find-file-under-here. file)
+            '(doom/find-file-in-emacsd . project-file)
+            '(doom/find-file-in-other-project . project-file)
+            '(doom/find-file-in-private-config . file)
+            '(doom/describe-active-minor-mode . minor-mode)
+            '(flycheck-error-list-set-filter . builtin)
             '(persp-switch-to-buffer . buffer)
             '(projectile-find-file . project-file)
-            '(doom/describe-active-minor-mode . minor-mode)
-            '(flycheck-error-list-set-filter . builtin)))
+            '(projectile-recentf . project-file)
+            '(projectile-switch-to-buffer . buffer)
+            '(projectile-switch-project . project-file)))
 
 
 (use-package! embark-consult

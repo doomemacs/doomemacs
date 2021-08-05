@@ -21,8 +21,8 @@
 
 
 (after! ob-plantuml
-  ;; HACK We force ob-plantuml to use `plantuml-mode''s building mechanism,
-  ;; which is more sophisticated.
+  ;; HACK Force ob-plantuml to use `plantuml-mode''s building mechanism, which
+  ;;      is more sophisticated.
   (advice-add #'org-babel-execute:plantuml
               :override #'+plantuml-org-babel-execute:plantuml-a)
   (add-to-list 'org-babel-default-header-args:plantuml

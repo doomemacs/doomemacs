@@ -15,11 +15,11 @@
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
 
-  (defadvice! +java-meghanada-fail-gracefully-a (orig-fn &rest args)
+  (defadvice! +java-meghanada-fail-gracefully-a (fn &rest args)
     "Toggle `meghanada-mode'. Fail gracefully if java is unavailable."
     :around #'meghanada-mode
     (if (executable-find meghanada-java-path)
-        (apply orig-fn args)
+        (apply fn args)
       (message "Can't find %S binary. Is java installed? Aborting `meghanada-mode'."
                meghanada-java-path)))
 

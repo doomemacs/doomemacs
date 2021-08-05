@@ -45,7 +45,7 @@ headings as titles, and you have more freedom to place them wherever you like.")
           :n [C-left]  #'org-tree-slide-move-previous-tree)
     (add-hook 'org-tree-slide-mode-hook #'evil-normalize-keymaps))
 
-  (defadvice! +org-present--hide-first-heading-maybe-a (orig-fn &rest args)
+  (defadvice! +org-present--hide-first-heading-maybe-a (fn &rest args)
     "Omit the first heading if `+org-present-hide-first-heading' is non-nil."
     :around #'org-tree-slide--display-tree-with-narrow
     (letf! (defun org-narrow-to-subtree ()
@@ -64,4 +64,4 @@ headings as titles, and you have more freedom to place them wherever you like.")
                           (when (and (org-at-heading-p) (not (eobp)))
                             (backward-char 1))
                           (point)))))))
-      (apply orig-fn args))))
+      (apply fn args))))

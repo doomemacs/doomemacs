@@ -71,7 +71,7 @@ This is controlled by `+format-on-save-enabled-modes'."
 
 ;; Don't pop up imposing warnings about missing formatters, but still log it in
 ;; to *Messages*.
-(defadvice! +format--all-buffer-from-hook-a (orig-fn &rest args)
+(defadvice! +format--all-buffer-from-hook-a (fn &rest args)
   :around #'format-all-buffer--from-hook
   (letf! (defun format-all-buffer--with (formatter mode-result)
            (when (or (eq formatter 'lsp)
@@ -83,4 +83,4 @@ This is controlled by `+format-on-save-enabled-modes'."
                                  (gethash formatter format-all--executable-table))
                         nil)))
              (funcall format-all-buffer--with formatter mode-result)))
-    (apply orig-fn args)))
+    (apply fn args)))

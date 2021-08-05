@@ -74,15 +74,23 @@ package list, and lastly, reloads your private config.el.
 
 Runs `doom-after-reload-hook' afterwards."
   (interactive)
-  (when (and IS-WINDOWS (file-exists-p doom-env-file))
-    (message "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
-  ;; In case doom/reload is run before incrementally loaded packages are loaded,
-  ;; which could cause odd load order issues.
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%S sync -e" doom-bin)
-      (let ((doom-reloading-p t)
-            doom-env-file)
+  (doom--if-compile (format "%S sync" doom-bin)
+      (let ((doom-reloading-p t))
         (doom-run-hooks 'doom-before-reload-hook)
+        (when (file-readable-p doom-env-file)
+          (if IS-WINDOWS
+              (message "Can't regenerate envvar file from within Emacs in Windows. Skipping...")
+            (let (process-environment)
+              (doom--if-compile
+                  (format "%s -ic '%S env%s'"
+                          (string-trim
+                           (shell-command-to-string
+                            (format "getent passwd %S | cut -d: -f7"
+                                    (user-login-name))))
+                          doom-bin (if arg " -c" ""))
+                  (message "Successfully regenerated envvar file")
+                (error "Failed to generate env file")))))
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
@@ -108,30 +116,6 @@ line."
   (require 'core-packages)
   (doom-initialize-packages)
   (doom-autoloads-reload))
-
-;;;###autoload
-(defun doom/reload-env (&optional arg)
-  "Regenerates and/or reloads your envvar file.
-
-If passed the prefix ARG, clear the envvar file. Uses the same mechanism as
-'bin/doom env'.
-
-An envvar file contains a snapshot of your shell environment, which can be
-imported into Emacs."
-  (interactive "P")
-  (when IS-WINDOWS
-    (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
-  (doom--if-compile
-      (format "%s -ic '%S env%s'"
-              (string-trim
-               (shell-command-to-string
-                (format "getent passwd %S | cut -d: -f7"
-                        (user-login-name))))
-              doom-bin (if arg " -c" ""))
-      (let ((doom-reloading-p t))
-        (unless arg
-          (doom-load-envvars-file doom-env-file)))
-    (error "Failed to generate env file")))
 
 ;;;###autoload
 (defun doom/upgrade ()

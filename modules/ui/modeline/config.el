@@ -41,10 +41,10 @@
   :config
   ;; HACK Fix #4102 due to empty all-the-icons return value (caused by
   ;;      `doom--disable-all-the-icons-in-tty-a' advice) in tty daemon frames.
-  (defadvice! +modeline-disable-icon-in-daemon-a (orig-fn &rest args)
+  (defadvice! +modeline-disable-icon-in-daemon-a (fn &rest args)
     :around #'doom-modeline-propertize-icon
     (when (display-graphic-p)
-      (apply orig-fn args)))
+      (apply fn args)))
 
   ;; Fix an issue where these two variables aren't defined in TTY Emacs on MacOS
   (defvar mouse-wheel-down-event nil)
@@ -64,9 +64,9 @@
 
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so force them to behave.
-  (defadvice! +modeline--inhibit-modification-hooks-a (orig-fn &rest args)
+  (defadvice! +modeline--inhibit-modification-hooks-a (fn &rest args)
     :around #'ws-butler-after-save
-    (with-silent-modifications (apply orig-fn args)))
+    (with-silent-modifications (apply fn args)))
 
 
   ;;

@@ -32,24 +32,24 @@ are open."
   (recenter))
 
 ;;;###autoload
-(defun doom-preserve-window-position-a (orig-fn &rest args)
+(defun doom-preserve-window-position-a (fn &rest args)
   "Generic advice for preserving cursor position on screen after scrolling."
   (let ((row (cdr (posn-col-row (posn-at-point)))))
-    (prog1 (apply orig-fn args)
+    (prog1 (apply fn args)
       (save-excursion
         (let ((target-row (- (line-number-at-pos) row)))
           (unless (< target-row 0)
             (evil-scroll-line-to-top target-row)))))))
 
 ;;;###autoload
-(defun doom-shut-up-a (orig-fn &rest args)
+(defun doom-shut-up-a (fn &rest args)
   "Generic advisor for silencing noisy functions.
 
 In interactive Emacs, this just inhibits messages from appearing in the
 minibuffer. They are still logged to *Messages*.
 
 In tty Emacs, messages are suppressed completely."
-  (quiet! (apply orig-fn args)))
+  (quiet! (apply fn args)))
 
 
 ;;

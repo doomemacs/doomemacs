@@ -130,6 +130,12 @@ Or through snap:
 snap install emacs --classic
 #+END_SRC
 
+In some cases, you may need to delete old version of emacs and it's dependencies first, before installing emacs27:
+#+BEGIN_SRC bash
+sudo apt remove emacs
+sudo apt autoremove
+#+END_SRC
+
 ***** Other dependencies
 Then install Doom's other dependencies:
 #+BEGIN_SRC bash

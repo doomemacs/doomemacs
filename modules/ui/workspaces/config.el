@@ -59,8 +59,11 @@ stored in `persp-save-dir'.")
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
-  (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
+  ;;;; Create main workspace
+  ;; The default perspective persp-mode creates is special and doesn't represent
+  ;; a real persp object, so buffers can't really be assigned to it, among other
+  ;; quirks, so I replace it with a "main" perspective.
   (add-hook! '(persp-mode-hook persp-after-load-state-functions)
     (defun +workspaces-ensure-no-nil-workspaces-h (&rest _)
       (when persp-mode
@@ -76,9 +79,7 @@ stored in `persp-save-dir'.")
       "Ensure a main workspace exists."
       (when persp-mode
         (let (persp-before-switch-functions)
-          ;; The default perspective persp-mode creates is special and doesn't
-          ;; represent a real persp object, so buffers can't really be assigned
-          ;; to it, among other quirks, so we get rid of it...
+          ;; Try our best to hide the nil perspective.
           (when (equal (car persp-names-cache) persp-nil-name)
             (pop persp-names-cache))
           ;; ...and create a *real* main workspace to fill this role.
@@ -216,6 +217,9 @@ stored in `persp-save-dir'.")
       (setcar helm-source-projectile-projects-actions
               '("Switch to Project" . +workspaces-switch-to-project-h))))
 
+  ;; Don't bother auto-saving the session if no real buffers are open.
+  (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
+
   ;; Fix #1973: visual selection surviving workspace changes
   (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
 
@@ -225,7 +229,7 @@ stored in `persp-save-dir'.")
       (defun +workspaces-delete-all-posframes-h (&rest _)
         (posframe-delete-all))))
 
-
+  ;; Don't try to persist dead/remote buffers. They cause errors.
   (add-hook! 'persp-filter-save-buffers-functions
     (defun +workspaces-dead-buffer-p (buf)
       ;; Fix #1525: Ignore dead buffers in PERSP's buffer list
@@ -239,16 +243,15 @@ stored in `persp-save-dir'.")
   ;; excluded from the buffer list.
   (add-hook 'bookmark-after-jump-hook #'+workspaces-add-current-buffer-h)
 
-  ;;
-  ;; eshell
+  ;;; eshell
   (persp-def-buffer-save/load
    :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
    :save-vars '(major-mode default-directory))
   ;; compile
   (persp-def-buffer-save/load
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
-   :save-vars
-   '(major-mode default-directory compilation-directory compilation-environment compilation-arguments))
+   :save-vars '(major-mode default-directory compilation-directory
+                compilation-environment compilation-arguments))
   ;; Restore indirect buffers
   (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load

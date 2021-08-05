@@ -160,7 +160,7 @@
                                             (shell-quote-argument (match-string 2 env)))))
                   (format "PATH=\"%s%s$PATH\" \\\n" (concat doom-emacs-dir "bin/") path-separator)
                   "_postscript $@\n"))
-        (set-file-modes script #o600)t
+        (set-file-modes script #o600)
         ;; Error code 128 is special: it means run the post-script after this
         ;; session ends.
         128))))))

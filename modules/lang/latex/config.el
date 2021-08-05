@@ -100,7 +100,11 @@ If no viewers are found, `latex-preview-pane' is used.")
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
                #'lsp!))
-  (map! :map latex-mode-map
+  (map! :localleader
+        :map latex-mode-map
+        :desc "View" "v" #'TeX-view)
+  (map! :after latex
+        :map LaTeX-mode-map
         :localleader
         :desc "View" "v" #'TeX-view))
 
@@ -163,19 +167,19 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex-indent-item-fn)))
 
   ;; Fix #1849: allow fill-paragraph in itemize/enumerate
-  (defadvice! +latex--re-indent-itemize-and-enumerate-a (orig-fn &rest args)
+  (defadvice! +latex--re-indent-itemize-and-enumerate-a (fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
                    '(("itemize"   +latex-indent-item-fn)
                      ("enumerate" +latex-indent-item-fn)))))
-      (apply orig-fn args)))
-  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (orig-fn &rest args)
+      (apply fn args)))
+  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (delq! "itemize" LaTeX-indent-environment-list 'assoc)
       (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
-      (apply orig-fn args))))
+      (apply fn args))))
 
 
 (use-package! preview

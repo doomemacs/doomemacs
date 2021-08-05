@@ -4,14 +4,24 @@
 ;;;###autoload
 (defvar orderless-match-faces)
 
+;; To prevent "Defining as dynamic an already lexical var" from +vertico/embark-preview
+;;;###autoload
+(defvar embark-quit-after-action)
+
 ;;;###autoload
 (defadvice! +vertico--company-capf--candidates-a (fn &rest args)
   "Highlight company matches correctly, and try default completion styles before
 orderless."
-  :around 'company-capf--candidates
+  :around #'company-capf--candidates
   (let ((orderless-match-faces [completions-common-part])
         (completion-styles +vertico-company-completion-styles))
     (apply fn args)))
+
+;;;###autoload
+(defadvice! +vertico--consult-recent-file-a (&rest _args)
+  "`consult-recent-file' needs to have `recentf-mode' on to work correctly"
+  :before #'consult-recent-file
+  (recentf-mode +1))
 
 ;;;###autoload
 (cl-defun +vertico-file-search (&key query in all-files (recursive t) prompt args)
@@ -35,7 +45,7 @@ orderless."
            (string-trim
             (concat (if all-files "-uu")
                     (unless recursive "--maxdepth 1")
-                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number"
+                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number --smart-case"
                     " --hidden -g !.git "
                     (mapconcat #'shell-quote-argument args " ")))
            " "))
@@ -140,7 +150,7 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   (unless (bound-and-true-p consult--preview-function)
     (save-selected-window
       (let ((embark-quit-after-action nil))
-        (embark-default-action)))))
+        (embark-dwim)))))
 
 ;;;###autoload
 (defun +vertico/next-candidate-preview (&optional n)
@@ -162,6 +172,7 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   "Jump to file under DIR (recursive).
 If INITIAL is non-nil, use as initial input."
   (interactive)
+  (require 'consult)
   (let* ((default-directory (or dir default-directory))
          (prompt-dir (consult--directory-prompt "Find" default-directory))
          (cmd (split-string-and-unquote consult-find-command " "))
@@ -175,7 +186,7 @@ If INITIAL is non-nil, use as initial input."
       :require-match t
       :initial (if initial (shell-quote-argument initial))
       :add-history (thing-at-point 'filename)
-      :category '+vertico
+      :category 'file
       :history '(:input +vertico/find-file-in--history)))))
 
 ;;;###autoload
@@ -218,3 +229,39 @@ If INITIAL is non-nil, use as initial input."
     (setq buffers nil)
     (with-current-buffer (switch-to-buffer (marker-buffer mark))
       (goto-char (marker-position mark)))))
+
+;;;###autoload
+(defun +vertico/embark-which-key-indicator ()
+  "An embark indicator that displays keymaps using which-key.
+The which-key help message will show the type and value of the
+current target followed by an ellipsis if there are further
+targets."
+  (lambda (&optional keymap targets prefix)
+    (if (null keymap)
+        (kill-buffer which-key--buffer)
+      (which-key--show-keymap
+       (if (eq (caar targets) 'embark-become)
+           "Become"
+         (format "Act on %s '%s'%s"
+                 (caar targets)
+                 (embark--truncate-target (cdar targets))
+                 (if (cdr targets) "…" "")))
+       (if prefix (lookup-key keymap prefix) keymap)
+       nil nil t))))
+
+;;;###autoload
+(defun +vertico/crm-select ()
+  "Enter candidate in `consult-completing-read-multiple'"
+  (interactive)
+  (let ((idx vertico--index))
+    (unless (get-text-property 0 'consult--crm-selected (nth vertico--index vertico--candidates))
+      (setq idx (1+ idx)))
+  (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
+  (vertico-exit))
+
+;;;###autoload
+(defun +vertico/crm-exit ()
+  "Enter candidate in `consult-completing-read-multiple'"
+  (interactive)
+  (run-at-time 0 nil #'vertico-exit)
+  (vertico-exit))

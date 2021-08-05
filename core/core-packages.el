@@ -102,10 +102,10 @@ uses a straight or package.el command directly).")
   ;; `let-alist' is built into Emacs 26 and onwards
   (add-to-list 'straight-built-in-pseudo-packages 'let-alist))
 
-(defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
+(defadvice! doom--read-pinned-packages-a (fn &rest args)
   "Read `:pin's in `doom-packages' on top of straight's lockfiles."
   :around #'straight--lockfile-read-all
-  (append (apply orig-fn args) ; lockfiles still take priority
+  (append (apply fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))
 
 

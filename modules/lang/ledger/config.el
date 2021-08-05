@@ -13,11 +13,11 @@
     '(("^\\*Ledger Report" :size 0.5 :quit 'other :ttl 0)
       ("^\\*Ledger Error"  :quit t :ttl 0)))
 
-  (defadvice! +ledger--fail-gracefully-if-absent-a (orig-fn)
+  (defadvice! +ledger--fail-gracefully-if-absent-a (fn)
     "Fail gracefully if ledger binary isn't available."
     :around #'ledger-check-version
     (if (executable-find ledger-binary-path)
-        (funcall orig-fn)
+        (funcall fn)
       (message "Couldn't find '%s' executable" ledger-binary-path)))
 
   ;; `ledger-mode' lacks imenu support out of the box, so we gie it some. At
@@ -74,10 +74,10 @@
           "s" #'ledger-display-ledger-stats
           "b" #'ledger-display-balance-at-point)))
 
-  (defadvice! +ledger--fix-key-help-a (orig-fn &rest args)
+  (defadvice! +ledger--fix-key-help-a (fn &rest args)
     "Fix inaccurate keybind message."
     :around #'ledger-report
-    (quiet! (apply orig-fn args))
+    (quiet! (apply fn args))
     (with-current-buffer (get-buffer ledger-report-buffer-name)
       (setq header-line-format
             (substitute-command-keys

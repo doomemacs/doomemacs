@@ -155,7 +155,7 @@
 ;; Advice
 
 ;;;###autoload
-(defun +notmuch-dont-confirm-on-kill-process-a (orig-fn &rest args)
+(defun +notmuch-dont-confirm-on-kill-process-a (fn &rest args)
   "Don't prompt for confirmation when killing notmuch sentinel."
   (let (confirm-kill-processes)
-    (apply orig-fn args)))
+    (apply fn args)))

@@ -58,12 +58,12 @@
             "    of these options.\n")
     (princ (buffer-string))))
 
-(defun *org-babel-tangle (orig-fn &rest args)
+(defun *org-babel-tangle (fn &rest args)
   "Don't write tangled blocks to files, print them to stdout."
   (cl-letf (((symbol-function 'write-region)
              (lambda (start end filename &optional append visit lockname mustbenew)
                (princ (buffer-string)))))
-    (apply orig-fn args)))
+    (apply fn args)))
 
 (defun *org-babel-tangle-collect-blocks (&optional language tangle-file)
   "Like `org-babel-tangle-collect-blocks', but will ignore blocks that are in

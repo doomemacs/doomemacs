@@ -31,7 +31,7 @@
   "Return a PACKAGE and its PLIST in 'username/repo@commit' format."
   (format "%s@%s"
           (plist-get (doom--package-merge-recipes package plist) :repo)
-          (substring-no-properties (plist-get plist :pin) 0 7)))
+          (substring-no-properties (plist-get plist :pin) 0 12)))
 
 (defun doom--package-at-point (&optional point)
   "Return the package and plist from the (package! PACKAGE PLIST...) at point."
