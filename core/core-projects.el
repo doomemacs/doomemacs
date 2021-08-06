@@ -126,6 +126,7 @@ c) are not valid projectile projects."
         (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
                  for proot in (hash-table-keys projectile-projects-cache)
                  if (or (not (stringp proot))
+                        (string-empty-p proot)
                         (>= (length (gethash proot projectile-projects-cache))
                             doom-projectile-cache-limit)
                         (member (substring proot 0 -1) blacklist)
