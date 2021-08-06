@@ -84,7 +84,7 @@ Tries to be portable. Returns 1 if cannot be determined."
   (or (get 'doom-system-cpus 'cached-value)
       (put 'doom-system-cpus 'cached-value
            (let ((cpus
-                  (cond ((eq 'windows-nt system-type)
+                  (cond ((fboundp 'w32-get-nproc)
                          (w32-get-nproc))
                         ((getenv "NUMBER_OF_PROCESSORS"))
                         ((executable-find "nproc")
