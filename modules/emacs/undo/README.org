@@ -36,8 +36,8 @@ This module has no dedicated maintainers.
   history if it is available.
 + undo-tree only
   + Text properties are stripped from undo history to shrink it.
-  + Undo-tree is too chatty about saving its history files. This has be
-    "silenced". i.e. It's visible in \*Messages\*, but won't appear in your
+  + Undo-tree is too chatty about saving its history files. This has been
+    "silenced", i.e. it's visible in \*Messages\*, but won't appear in your
     minibuffer.
 + unfo-fu only
   + Doom defines =undo-fu-mode= to make it easier to add hooks/mode-local
