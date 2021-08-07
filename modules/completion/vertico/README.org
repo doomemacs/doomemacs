@@ -19,9 +19,14 @@
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
   - [[#consult-modifications][Consult modifications]]
+    - [[#async-search-commands][Async Search commands]]
   - [[#marginalia][Marginalia]]
   - [[#orderless-filtering][Orderless filtering]]
 - [[#configuration][Configuration]]
+  - [[#vertico][Vertico]]
+  - [[#consult][Consult]]
+  - [[#marginalia-1][Marginalia]]
+  - [[#embark][Embark]]
 
 * Description
 This module enhances the Emacs search and completion experience, and also
@@ -191,6 +196,17 @@ This module modifies the default keybindings used in
 | =TAB=   | Select or deselect current candidate                        |
 | =RET=   | Enters selected candidates (also toggles current candidate) |
 
+*** Async Search commands
+Consult async commands (e.g. ~consult-ripgrep~) will have a preceding separator
+character (usually =#=) before the search input. This is known as the =perl=
+splitting style. Input typed after the separator will be fed to the async
+command until you type a second seperator, afterwhich the candidate list will be
+filtered with Emacs instead (and can be filtered using =orderless=, for
+example). The specific seperator character can be changed by editing it, and
+might be different if the initial input already contains =#=.
+
+For more information [[https://github.com/minad/consult#asynchronous-search][see here]].
+
 ** Marginalia
 | Keybind | Description                     |
 |---------+---------------------------------|
@@ -221,10 +237,25 @@ you can use to further specify each space separated input in the following ways:
 
 * Configuration
 If you want to further configure this module, here are some good places to start:
-
-+ Vertico provides several [[https://github.com/minad/vertico#extensions][extentions]] that can be used to extend it's interface
-+ You can add more Marginalia annotation levels and change the existing ones by
+** Vertico
+ Vertico provides several [[https://github.com/minad/vertico#extensions][extentions]] that can be used to extend it's interface
+** Consult
+Much of the behaviour of Consult commands can be changed with
+~consult-customize~. The =vertico= module already does this, if you want to
+override the module's modifications, do:
+#+begin_src emacs-lisp
+(setq consult--read-config nil)
+(consult-customize
+;...
+)
+#+end_src
+If you are changing the preview keys (set to =C-SPC=, =C-M-j=, and =C-M-k=),
+remember to change their bindings on ~vertico-map~ as well, as the bindings
+there get previews to work to an extent on non-consult commands as well.
+** Marginalia
+You can add more Marginalia annotation levels and change the existing ones by
   editing ~marginalia-annotator-registry~
-+ You can change the available commands in Embark for category ~$cat~ by editing
+** Embark
+You can change the available commands in Embark for category ~$cat~ by editing
   ~embark-$cat-map~, and even add new categories. Note that you add categories
   by defining them [[https://github.com/minad/marginalia/#adding-custom-annotators-or-classifiers][through marginalia]], and embark picks up on them.
