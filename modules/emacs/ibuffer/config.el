@@ -54,7 +54,17 @@
     (defun +ibuffer/open-for-current-workspace ()
       "Open an ibuffer window for the current workspace"
       (interactive)
-      (+ibuffer-workspace (+workspace-current-name))))
+      (+ibuffer-workspace (+workspace-current-name)))
+
+    (defun +ibuffer/visit-buffer-in-its-workspace ()
+      "Visit buffer, but switch to its workspace if it exists."
+      (interactive)
+      (if-let* ((buf (ibuffer-current-buffer t)))
+          (progn
+            (+workspaces/switch-to-buffer buf)
+            (ibuffer-visit-buffer))))
+
+    (define-key ibuffer-mode-map [remap ibuffer-visit-buffer] #'+ibuffer/visit-buffer-in-its-workspace))
 
   (when (featurep! :completion ivy)
     (defadvice! +ibuffer-use-counsel-maybe-a (_file &optional _wildcards)

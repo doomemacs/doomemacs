@@ -106,6 +106,18 @@ stored in `persp-save-dir'.")
                (setq uniquify-buffer-name-style +workspace--old-uniquify-style))
              (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))))
 
+  (defun +workspaces/switch-to-buffer (buf)
+    "Switch to buffer's workspace"
+    (when (bound-and-true-p persp-mode)
+      (if-let* ((workspace-name (cl-find-if (lambda (worksp-name)
+                                               (+workspace-contains-buffer-p buf (persp-get-by-name worksp-name)))
+                                             (+workspace-list-names))))
+          (+workspace-switch workspace-name)
+        ;; REVIEW do we need this user-facing message or is defaulting to this
+        ;; behaviour enough?
+        ;; should we maybe create a new workspace?
+        (message "%s doesn't belong to any workspace" buf))))
+
   ;; Per-workspace `winner-mode' history
   (add-to-list 'window-persistent-parameters '(winner-ring . t))
 
