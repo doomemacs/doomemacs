@@ -215,7 +215,7 @@
        (mapcar
         (lambda (f)
           (unless (assoc f export-specs)
-            (princ (format " [1;31m![0m Format '%s' is not recognised\n" f))
+            (princ (format " [1;31m![0m Format '%s' is not recognised\n" f) #'external-debugging-output)
             (kill-emacs 1)))
         formats))
       ((or "-j" "--jobs")
@@ -235,7 +235,7 @@
       ((guard (file-exists-p arg))
        (push arg files))
       (_
-       (princ (format " [1;33m![0m Ignoring unknown option or file: %s\n" arg))))))
+       (princ (format " [1;33m![0m Ignoring unknown option or file: %s\n" arg) #'external-debugging-output)))))
 
 ;; Validate/expand the arguments
 
@@ -243,12 +243,12 @@
   (push 'tang formats))
 
 (when (null formats)
-  (princ (format " [1;33m![0m No actions to perform\n"))
+  (princ (format " [1;33m![0m No actions to perform\n") #'external-debugging-output)
   (kill-emacs 0))
 
 (if (not (null files))
     (setq files (reverse files))
-  (princ " [1;31m![0m No target files provided\n")
+  (princ " [1;31m![0m No target files provided\n" #'external-debugging-output)
   (kill-emacs 1))
 
 (dolist (location files)
@@ -327,7 +327,7 @@
          ))
       export-progress "\n")
      "\n")
-    (princ (buffer-string))))
+    (princ (buffer-string) #'external-debugging-output)))
 
 ;;
 ;;; Export dispatching
@@ -466,7 +466,7 @@
               (< (cl-position a files :test #'string=)
                  (cl-position b files :test #'string=))))
       "\n") "\n")
-    (princ (buffer-string))))
+    (princ (buffer-string) #'external-debugging-output)))
 
 ;;
 ;;; Prepare for execution
@@ -507,7 +507,7 @@
           (when (and
                  (string= (file-name-base child-file) file-basename)
                  (not (string= (file-name-extension child-file) "org")))
-            (princ (format "Deleting %s\n" child-file))
+            (princ (format "Deleting %s\n" child-file) #'external-debugging-output)
             (delete-file child-file)))
       (unwind-protect
           (progn
