@@ -23,10 +23,10 @@
 ;;   -f, --format FORMATS  Export formats (comma seperated, no space), html by default
 ;;   -j, --jobs            Number of jobs executed in parallel
 ;;   -l, --load            Elisp files to load
-;;   -p, --print           Print exported output to sdout rather than files
 ;;   -s, --sync            Perform the exporting/tangling synchronously
 ;;   -t, --tangle          Also tangle the file(s).
 ;;                         See org-tangle for more advanced functionallity
+;;    -                    Output to stdout instead of writing to files
 
 (require 'cl-lib)
 (require 'ox)
@@ -111,10 +111,10 @@
             "  -f, --format FORMATS\tExport formats (comma seperated, no space), [2mhtml[0m by default\n"
             "  -j, --jobs\t\tNumber of jobs executed in parallel (" (number-to-string (num-jobs-default)) " by default)\n"
             "  -l, --load\t\tElisp files to load\n"
-            "  -p, --print\t\tPrint exported output to sdout rather than files\n"
             "  -s, --sync\t\tPerform the exporting/tangling synchronously\n"
             "  -t, --tangle\t\tAlso tangle the file(s).\n"
             "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
+            "  -   \t\t\tOutput to stdout instead of writing to files\n"
             )
     (princ (buffer-string))))
 
@@ -176,9 +176,7 @@
 ;;; Process the input
 
 ;; Store flags and arguments
-(defvar export-print nil)
 (defvar tangle nil)
-(defvar print nil)
 (defvar exec nil)
 (defvar async t)
 (defvar jobs nil)
@@ -186,6 +184,7 @@
 (defvar files nil)
 (defvar clean nil)
 (defvar load-files nil)
+(defvar stdout nil)
 
 ;; Be less noisy
 (setq inhibit-message t)
@@ -224,14 +223,15 @@
        (let ((f (pop argv)))
          (when (file-exists-p f)
            (push f load-files))))
-      ((or "-p" "--print")
-       (setq export-print t))
       ((or "-s" "--sync")
        (setq async nil))
       ((or "-t" "--tangle")
        (setq tangle t))
       ((or "-d" "--debug")
        (setq debug-on-error t))
+      ("-"
+       (princ " [1;33m![0m Outputting to stdout\n" #'external-debugging-output)
+       (setq stdout t))
       ((guard (file-exists-p arg))
        (push arg files))
       (_
@@ -330,6 +330,33 @@
     (princ (buffer-string) #'external-debugging-output)))
 
 ;;
+;;; Stdout utilities
+
+(defvar stdout-tmp-files nil)
+(defvar stdout-tmp-dir temporary-file-directory)
+
+(defun stdoutify-file (file outfile)
+  (if stdout
+      (cdar (push
+             (cons file
+                   (expand-file-name (file-name-nondirectory outfile) temporary-file-directory))
+             stdout-tmp-files))
+    outfile))
+
+;; Tangling & stdout
+
+(when (and stdout tangle)
+  (setq tangle-buffer (get-buffer-create "tangle-buff"))
+  (defun *org-babel-tangle (fn &rest args)
+    "Don't write tangled blocks to files, print them to stdout."
+    (cl-letf (((symbol-function 'write-region)
+               (lambda (start end filename &optional append visit lockname mustbenew)
+                 (insert "\n")
+                 (append-to-buffer tangle-buffer (point-min) (point-max)))))
+      (apply fn args)))
+  (advice-add #'org-babel-tangle :around #'*org-babel-tangle))
+
+;;
 ;;; Export dispatching
 
 (defun export-file (file spec &optional out-file)
@@ -343,14 +370,13 @@
     (when (and requirement (not async))
       (require requirement))
 
-    (if print (error "unimplemented")
-      (unless out-file
-        (setq out-file (org-export-output-file-name ext nil)))
-      (if pandoc-p
-          (org-pandoc-export backend async nil nil nil nil nil)
-        (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))
-      (when async
-        (export-register-async-process file (car spec) (caddar org-export-stack-contents))))))
+    (unless out-file
+      (setq out-file (stdoutify-file file (org-export-output-file-name ext nil))))
+    (if pandoc-p
+        (org-pandoc-export backend async nil nil nil nil nil)
+      (+org-export-to-file backend out-file async nil nil nil nil post-action (car spec) file))
+    (when async
+      (export-register-async-process file (car spec) (caddar org-export-stack-contents)))))
 
 (defun +org-export-to-file (backend file &optional async subtreep visible-only body-only ext-plist post-process +format +infile)
   (if (and +format (not (eq backend 'pandoc)))
@@ -358,12 +384,13 @@
         (set-state +infile +format 'started)
         (funcall #'org-export-to-file
                  backend file async subtreep visible-only body-only ext-plist
-                 `(lambda (file)
-                    (when post-process
-                      (funcall post-process file))
-                    (when ,(eq +format 'pdf)
-                      (org-latex-compile file))
-                    (set-state +infile +format 'completed))))
+                 (cond
+                  ((and post-process async) `#',post-process)
+                  (post-process
+                   `(lambda (file)
+                      (funcall #',post-process file)
+                      (set-state ,+infile ',+format 'completed)))
+                  (t `(lambda (file) (set-state ,+infile ',+format 'completed))))))
     (funcall #'org-export-to-file backend file async subtreep visible-only body-only ext-plist post-process)))
 
 ;;
@@ -548,8 +575,10 @@
       (dolist (fmt (remove 'tang formats))
         (let ((spec (assoc fmt export-specs)))
           (if async
-              (push (list file spec (org-export-output-file-name (plist-get (cdr spec) :extension)))
-                    export-async-job-queue)
+              (let ((outfile (org-export-output-file-name (plist-get (cdr spec) :extension))))
+                (push (list file spec
+                            (if stdout (stdoutify-file file outfile) outfile))
+                      export-async-job-queue))
             (condition-case err
                 (export-file file spec)
               (error
@@ -571,6 +600,14 @@
 ;; Refresh the export table one more time to ensure it
 ;; reflects the final state
 (export-progress-table)
+
+;; Do stdout
+(dolist (stdout-file stdout-tmp-files)
+  (princ (with-temp-buffer (insert-file-contents-literally (cdr stdout-file)) (buffer-string)))
+  (delete-file (cdr stdout-file)))
+(when (and stdout tangle)
+  (with-current-buffer tangle-buffer
+    (princ (buffer-string))))
 
 ;; Set the right exit code
 (if (not recorded-errors)
