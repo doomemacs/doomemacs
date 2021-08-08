@@ -3,7 +3,7 @@
 *.log
 tmp/
 
-`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js" "haskell"))))
+`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js" "haskell" "clojure"))))
     (string-join
        (cond ((string= type-ignore "python")
               '("*.py[cod]"
@@ -51,5 +51,18 @@ tmp/
                "cabal.project.local"
                "cabal.project.local~"
                ".HTF/"
-               ".ghc.environment.*")))
+               ".ghc.environment.*"))
+             ((string= type-ignore "clojure")
+              '("/target"
+                "/classes"
+                "/checkouts"
+                "profiles.clj"
+                "pom.xml"
+                "pom.xml.asc"
+                "*.jar"
+                "*.class"
+                "/.lein-*"
+                "/.nrepl-port"
+                "/.prepl-port"
+                "/.cpcache")))
        "\n"))`
