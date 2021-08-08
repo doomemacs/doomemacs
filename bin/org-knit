@@ -26,6 +26,7 @@
 ;;   -s, --sync            Perform the exporting/tangling synchronously
 ;;   -t, --tangle          Also tangle the file(s).
 ;;                         See org-tangle for more advanced functionallity
+;;    -q, --quiet          Suppress the output of status information
 ;;    -                    Output to stdout instead of writing to files
 
 (require 'cl-lib)
@@ -114,6 +115,7 @@
             "  -s, --sync\t\tPerform the exporting/tangling synchronously\n"
             "  -t, --tangle\t\tAlso tangle the file(s).\n"
             "  \t\t\tSee [4morg-tangle[0m for more advanced functionallity\n"
+            "  -q, --quiet\t\tSuppress the output of status information\n"
             "  -   \t\t\tOutput to stdout instead of writing to files\n"
             )
     (princ (buffer-string))))
@@ -184,6 +186,7 @@
 (defvar files nil)
 (defvar clean nil)
 (defvar load-files nil)
+(defvar quiet nil)
 (defvar stdout nil)
 
 ;; Be less noisy
@@ -229,8 +232,9 @@
        (setq tangle t))
       ((or "-d" "--debug")
        (setq debug-on-error t))
+      ((or "-q" "--quiet")
+       (setq quiet t))
       ("-"
-       (princ " [1;33m![0m Outputting to stdout\n" #'external-debugging-output)
        (setq stdout t))
       ((guard (file-exists-p arg))
        (push arg files))
@@ -268,6 +272,13 @@
 
 (when (and async (not jobs))
   (setq jobs (num-jobs-default)))
+
+(defun +info (fmt &rest args)
+  (unless quiet
+    (princ (if args (apply fmt args) fmt) #'external-debugging-output)))
+
+(when stdout
+  (+info " [1;33m![0m Outputting to stdout\n"))
 
 ;;
 ;;; Export state visuals
@@ -327,7 +338,7 @@
          ))
       export-progress "\n")
      "\n")
-    (princ (buffer-string) #'external-debugging-output)))
+    (+info (buffer-string))))
 
 ;;
 ;;; Stdout utilities
@@ -493,7 +504,7 @@
               (< (cl-position a files :test #'string=)
                  (cl-position b files :test #'string=))))
       "\n") "\n")
-    (princ (buffer-string) #'external-debugging-output)))
+    (+info (buffer-string))))
 
 ;;
 ;;; Prepare for execution
@@ -534,7 +545,7 @@
           (when (and
                  (string= (file-name-base child-file) file-basename)
                  (not (string= (file-name-extension child-file) "org")))
-            (princ (format "Deleting %s\n" child-file) #'external-debugging-output)
+            (+info "Deleting %s\n" child-file)
             (delete-file child-file)))
       (unwind-protect
           (progn
