@@ -20,6 +20,4 @@
 (package! wgrep :pin "f9687c28bbc2e84f87a479b6ce04407bb97cfb23")
 
 (when (featurep! +icons)
-  (package! all-the-icons-completion
-    :recipe (:host github :repo "iyefrat/all-the-icons-completion")
-    :pin "96500418541b7376cd0b3e4583b9509c0dd92b27"))
+  (package! all-the-icons-completion :pin "96500418541b7376cd0b3e4583b9509c0dd92b27"))
