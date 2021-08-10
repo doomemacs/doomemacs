@@ -149,7 +149,7 @@ overrides `completion-styles' during company completion sessions.")
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
   :config
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
-  (cl-nsubstitute #'+vertico/embark-which-key-indicator #'embark-mixed-indicator embark-indicators)
+  (cl-nsubstitute #'+vertico-embark-which-key-indicator #'embark-mixed-indicator embark-indicators)
   (add-to-list 'embark-indicators #'+vertico-embark-vertico-indicator)
   ;; add the package! target finder before the file target finder,
   ;; so we don't get a false positive match.

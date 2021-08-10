@@ -233,7 +233,7 @@ If INITIAL is non-nil, use as initial input."
       (forward-line (string-to-number line)))))
 
 ;;;###autoload
-(defun +vertico/embark-which-key-indicator ()
+(defun +vertico-embark-which-key-indicator ()
   "An embark indicator that displays keymaps using which-key.
 The which-key help message will show the type and value of the
 current target followed by an ellipsis if there are further
