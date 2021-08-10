@@ -228,12 +228,13 @@ pressing space and entering another input. In essence, when trying to match
 
 Doom has some builtin [[https://github.com/oantolin/orderless#style-dispatchers][style dispatchers]] for more finegrained filtering, which
 you can use to further specify each space separated input in the following ways:
-| Input            | Description                                |
-|------------------+--------------------------------------------|
-| =!foo=           | match without literal input =foo=          |
-| =`bar= or =bar`= | match input =bar= as an initialism         |
-| ==baz= or =baz== | match only with literal input =baz=        |
-| =~qux= or =qux~= | match input =qux= with fuzzy/flex matching |
+| Input            | Description                                  |
+|------------------+----------------------------------------------|
+| =!foo=           | match without literal input =foo=            |
+| =%foo= or =foo%= | perform ~char-fold-to-regexp~ on input =foo= |
+| =`foo= or =foo`= | match input =foo= as an initialism           |
+| ==foo= or =foo== | match only with literal input =foo=          |
+| =~foo= or =foo~= | match input =foo= with fuzzy/flex matching   |
 
 * Configuration
 If you want to further configure this module, here are some good places to start:
