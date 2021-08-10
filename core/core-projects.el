@@ -42,9 +42,8 @@ debian, and derivatives). On most it's 'fd'.")
         ;; TRAMP, so we gimp it in remote buffers.
         projectile-mode-line-function
         (lambda ()
-          (if (file-remote-p default-directory)
-              (projectile-default-mode-line)
-            "")))
+          (if (file-remote-p default-directory) ""
+            (projectile-default-mode-line))))
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
@@ -162,13 +161,16 @@ And if it's a function, evaluate it."
     (if (and (functionp projectile-generic-command)
              (not (file-remote-p default-directory)))
         (funcall projectile-generic-command vcs)
-      (funcall fn vcs)))
+      (let ((projectile-git-submodule-command
+             (get 'projectile-git-submodule-command 'initial-value)))
+        (funcall fn vcs))))
 
   ;; `projectile-generic-command' doesn't typically support a function, but my
   ;; `doom--only-use-generic-command-a' advice allows this. I do it this way so
   ;; that projectile can adapt to remote systems (over TRAMP), rather then look
   ;; for fd/ripgrep on the remote system simply because it exists on the host.
   ;; It's faster too.
+  (put 'projectile-git-submodule-command 'initial-value projectile-git-submodule-command)
   (setq projectile-git-submodule-command nil
         projectile-indexing-method 'hybrid
         projectile-generic-command
