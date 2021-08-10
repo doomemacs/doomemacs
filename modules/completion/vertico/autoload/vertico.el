@@ -40,20 +40,19 @@ orderless."
   (setq deactivate-mark t)
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
-         (args
-          (split-string
-           (string-trim
-            (concat (if all-files "-uu")
-                    (unless recursive "--maxdepth 1")
-                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number --smart-case"
-                    " --hidden -g !.git "
-                    (mapconcat #'shell-quote-argument args " ")))
-           " "))
+         (consult-ripgrep-args
+            (concat "rg "
+                    (if all-files "-uu ")
+                    (unless recursive "--maxdepth 1 ")
+                    "--line-buffered --color=never --max-columns=1000 "
+                    "--path-separator /   --smart-case --no-heading --line-number "
+                    "--hidden -g !.git "
+                    (mapconcat #'shell-quote-argument args " ")
+                    "."))
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
-                      (rxt-quote-pcre (doom-thing-at-point-or-region)))))
-         (ripgrep-command (string-join `("rg" ,@args "." "-e ARG OPTS" ) " "))
+                      (regexp-quote (doom-thing-at-point-or-region)))))
          (consult-async-split-style consult-async-split-style)
          (consult-async-split-styles-alist consult-async-split-styles-alist))
     ;; Change the split style if the initial query contains the separator.
@@ -74,7 +73,7 @@ orderless."
                                    "%")
                      :type perl)
                    consult-async-split-style 'perlalt))))))
-    (consult--grep prompt ripgrep-command directory query)))
+    (consult--grep prompt #'consult--ripgrep-builder directory query)))
 
 ;;;###autoload
 (defun +vertico/project-search (&optional arg initial-query directory)
@@ -175,9 +174,7 @@ If INITIAL is non-nil, use as initial input."
   (require 'consult)
   (let* ((default-directory (or dir default-directory))
          (prompt-dir (consult--directory-prompt "Find" default-directory))
-         (cmd (split-string-and-unquote consult-find-command " "))
-         (cmd (remove "OPTS" cmd))
-         (cmd (remove "ARG" cmd)))
+         (cmd (split-string-and-unquote +vertico-consult-fd-args " ")))
     (find-file
      (consult--read
       (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
@@ -270,3 +267,25 @@ targets."
   (interactive)
   (run-at-time 0 nil #'vertico-exit)
   (vertico-exit))
+
+;;;###autoload
+(defun +vertico--consult--fd-builder (input)
+  (pcase-let* ((cmd (split-string-and-unquote +vertico-consult-fd-args))
+               (`(,arg . ,opts) (consult--command-split input))
+               (`(,re . ,hl) (funcall consult--regexp-compiler
+                                      arg 'extended)))
+    (when re
+      (list :command (append cmd
+                             (list (consult--join-regexps re 'extended))
+                             opts)
+            :highlight hl))))
+
+(autoload #'consult--directory-prompt "consult")
+;;;###autoload
+(defun +vertico/consult-fd (&optional dir initial)
+  (interactive "P")
+  (if doom-projectile-fd-binary
+  (let* ((prompt-dir (consult--directory-prompt "Fd" dir))
+         (default-directory (cdr prompt-dir)))
+    (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
+  (consult-find dir initial)))

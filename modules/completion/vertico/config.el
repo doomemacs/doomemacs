@@ -91,11 +91,12 @@ overrides `completion-styles' during company completion sessions.")
         consult-async-input-throttle 0.2
         consult-async-input-debounce 0.1)
 
-  (when doom-projectile-fd-binary
-    (setq consult-find-command
-          (format "%s -i -H -E .git --regex %s ARG OPTS"
-                  doom-projectile-fd-binary
-                  (if IS-WINDOWS "--path-separator=/" ""))))
+  (setq +vertico-consult-fd-args
+        (if doom-projectile-fd-binary
+            (format "%s --color=never -i -H -E .git --regex %s"
+                    doom-projectile-fd-binary
+                    (if IS-WINDOWS "--path-separator=/" ""))
+        consult-find-args))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
@@ -145,8 +146,7 @@ overrides `completion-styles' during company completion sessions.")
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
   :config
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
-
-  (setq embark-indicator #'+vertico/embark-which-key-indicator)
+  (cl-nsubstitute #'+vertico/embark-which-key-indicator #'embark-mixed-indicator embark-indicators)
   ;; add the package! target finder before the file target finder,
   ;; so we don't get a false positive match.
   (let ((pos (or (cl-position
