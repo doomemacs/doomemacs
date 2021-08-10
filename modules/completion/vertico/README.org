@@ -18,13 +18,14 @@
     - [[#general][General]]
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
-  - [[#consult-modifications][Consult modifications]]
-    - [[#async-search-commands][Async Search commands]]
+  - [[#consult][Consult]]
+    - [[#multiple-candidate-search][Multiple candidate search]]
+    - [[#async-search-commands][Async search commands]]
   - [[#marginalia][Marginalia]]
   - [[#orderless-filtering][Orderless filtering]]
 - [[#configuration][Configuration]]
   - [[#vertico][Vertico]]
-  - [[#consult][Consult]]
+  - [[#consult-1][Consult]]
   - [[#marginalia-1][Marginalia]]
   - [[#embark][Embark]]
 
@@ -60,7 +61,10 @@ like =ivy= and =helm= do. The primary packages are:
 + [[https://github.com/iyefrat/all-the-icons-completion][all-the-icons-completion]] (=+icons=)
 
 * Prerequisites
-This module has no prerequisites.
+Some of the advanced filtering features in async =consult= commands require
+=grep= and =ripgrep= to be built with support for [[https://www.pcre.org/][PCRE]] lookahead, see [[#async-search-commands][Async
+search commands]] for more information. You can check if this is true for your
+machine by running ~doom doctor~.
 
 * Features
 
@@ -188,7 +192,8 @@ or the last workspace by typing =0 SPC=.
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
 
-** Consult modifications
+** Consult
+*** Multiple candidate search
 This module modifies the default keybindings used in
 ~consult-completing-read-multiple~:
 | Keybind | Description                                                 |
@@ -196,7 +201,7 @@ This module modifies the default keybindings used in
 | =TAB=   | Select or deselect current candidate                        |
 | =RET=   | Enters selected candidates (also toggles current candidate) |
 
-*** Async Search commands
+*** Async search commands
 Consult async commands (e.g. ~consult-ripgrep~) will have a preceding separator
 character (usually =#=) before the search input. This is known as the =perl=
 splitting style. Input typed after the separator will be fed to the async
@@ -204,6 +209,12 @@ command until you type a second seperator, afterwhich the candidate list will be
 filtered with Emacs instead (and can be filtered using =orderless=, for
 example). The specific seperator character can be changed by editing it, and
 might be different if the initial input already contains =#=.
+
+Note that grep-like async commands translate the input (between the first and
+second =#=) to an Orderless-light expression: space separated inputs are all
+matched in any order. If the grep backend does not support PCRE lookahead, it'll
+only accept 3 space separated inputs to prevent long lookup times, and further
+filtering should be done after a second =#=.
 
 For more information [[https://github.com/minad/consult#asynchronous-search][see here]].
 
