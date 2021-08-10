@@ -289,3 +289,14 @@ targets."
          (default-directory (cdr prompt-dir)))
     (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
   (consult-find dir initial)))
+
+;;;###autoload
+(defun +vertico-embark-vertico-indicator ()
+  "An embark indicator that colorizes the vertico candidate differently on act"
+  (let ((fr face-remapping-alist))
+    (lambda (&optional keymap _targets prefix)
+      (when (bound-and-true-p vertico--input)
+        (setq-local face-remapping-alist
+                    (if keymap
+                        (cons '(vertico-current . embark-target) fr)
+                      fr))))))
