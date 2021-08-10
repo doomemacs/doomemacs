@@ -180,7 +180,6 @@ If INITIAL is non-nil, use as initial input."
       (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
       :prompt default-directory
       :sort nil
-      :require-match t
       :initial (if initial (shell-quote-argument initial))
       :add-history (thing-at-point 'filename)
       :category 'file
