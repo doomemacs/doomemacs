@@ -39,6 +39,7 @@
       ert
       free-keys
       helm
+      help
       indent
       image
       kotlin-mode
@@ -280,9 +281,8 @@ and complains if a module is loaded too early (during startup)."
   (after! evil
     ;; Emacs loads these two packages immediately, at startup, which needlessly
     ;; convolutes load order for evil-collection-help.
-    (defer-feature! help help-mode)
-    (defer-feature! help-mode help-mode)
-
+    (add-transient-hook! 'help-mode
+      (+evil-collection-init 'help))
     (add-transient-hook! 'Buffer-menu-mode
       (+evil-collection-init '(buff-menu "buff-menu")))
     (add-transient-hook! 'calc-mode

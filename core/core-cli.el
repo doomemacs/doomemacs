@@ -69,6 +69,8 @@ purpose.")
 (setq make-backup-files nil)
 ;; Stop user configuration from interfering with package management
 (setq enable-dir-local-variables nil)
+;; Reduce ambiguity, embrace specificity. It's more predictable.
+(setq-default case-fold-search nil)
 
 ;; Default to using all cores, rather than half of them, since we compile things
 ;; ahead-of-time in a non-interactive session.

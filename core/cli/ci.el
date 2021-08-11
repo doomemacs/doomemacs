@@ -95,13 +95,13 @@
         (cons (lambda ()
                 (catch 'found
                   (unless (looking-at "\\(bump\\|revert\\|merge\\)")
-                    (while (re-search-forward "^[^\n]\\{72,\\}" nil t)
+                    (while (re-search-forward "^[^\n]\\{73,\\}" nil t)
                       ;; Exclude ref lines, bump lines, or lines with URLs
                       (save-excursion
                         (or (re-search-backward "^\\(Ref\\|Close\\|Fix\\|Revert\\) " nil t)
                             (let ((bump-re "\\(https?://.+\\|[^/]+\\)/[^/]+@[a-z0-9]\\{12\\}"))
                               (re-search-backward (format "^%s -> %s$" bump-re bump-re) nil t))
-                            (re-search-backward "https?://[^ ]+\\{72,\\}" nil t)
+                            (re-search-backward "https?://[^ ]+\\{73,\\}" nil t)
                             (throw 'found t)))))))
               "Body line length exceeds 72 characters")
 
@@ -182,8 +182,7 @@
 
 (defun doom-cli--ci-lint-commits (from &optional to)
   (let ((errors? 0)
-        commits
-        case-fold-search)
+        commits)
     (with-temp-buffer
       (insert
        (cdr (doom-call-process
@@ -201,8 +200,8 @@
                           (point-max))))))
               commits)))
     (dolist (commit commits)
-      (let (errors)
-        (with-temp-buffer
+      (with-temp-buffer
+        (let (errors)
           (save-excursion (insert (cdr commit)))
           (dolist (rule doom-cli-commit-rules)
             (save-excursion

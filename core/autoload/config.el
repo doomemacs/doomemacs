@@ -76,21 +76,9 @@ Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile (format "%S sync" doom-bin)
-      (let ((doom-reloading-p t))
+      (let ((doom-reloading-p t)
+            doom-env-file)
         (doom-run-hooks 'doom-before-reload-hook)
-        (when (file-readable-p doom-env-file)
-          (if IS-WINDOWS
-              (message "Can't regenerate envvar file from within Emacs in Windows. Skipping...")
-            (let (process-environment)
-              (doom--if-compile
-                  (format "%s -ic '%S env%s'"
-                          (string-trim
-                           (shell-command-to-string
-                            (format "getent passwd %S | cut -d: -f7"
-                                    (user-login-name))))
-                          doom-bin (if arg " -c" ""))
-                  (message "Successfully regenerated envvar file")
-                (error "Failed to generate env file")))))
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
@@ -116,6 +104,19 @@ line."
   (require 'core-packages)
   (doom-initialize-packages)
   (doom-autoloads-reload))
+
+;;;###autoload
+(defun doom/reload-env ()
+  "Reloads your envvar file.
+
+DOES NOT REGENERATE IT. You must run 'doom env' in your shell OUTSIDE of Emacs.
+Doing so from within Emacs will taint your shell environment.
+
+An envvar file contains a snapshot of your shell environment, which can be
+imported into Emacs."
+  (interactive "P")
+  (doom-load-envvars-file doom-env-file)
+  (message "Reloaded %S" (abbreviate-file-name doom-env-file)))
 
 ;;;###autoload
 (defun doom/upgrade ()

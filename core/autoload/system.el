@@ -84,7 +84,7 @@ Tries to be portable. Returns 1 if cannot be determined."
   (or (get 'doom-system-cpus 'cached-value)
       (put 'doom-system-cpus 'cached-value
            (let ((cpus
-                  (cond ((eq 'windows-nt system-type)
+                  (cond ((fboundp 'w32-get-nproc)
                          (w32-get-nproc))
                         ((getenv "NUMBER_OF_PROCESSORS"))
                         ((executable-find "nproc")
@@ -93,6 +93,7 @@ Tries to be portable. Returns 1 if cannot be determined."
                          (doom-call-process "sysctl" "-n" "hw.ncpu")))))
              (max
               1 (or (cl-typecase cpus
+                      (integer cpus)
                       (string
                        (condition-case _
                            (string-to-number cpus)

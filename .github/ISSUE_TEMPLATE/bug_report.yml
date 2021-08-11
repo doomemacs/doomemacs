@@ -80,7 +80,7 @@ body:
   attributes:
     label: System Information
     description: |
-      Upload the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info` **to [pastebin.com](https://pastebin.com)**, then paste its URL here.
+      Upload the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info` **to [pastebin.com](https://pastebin.com)**, then paste its URL here. **Please do not omit or modify your doom/info.**
 
       The use of pastebin (or a similar service) is necessary to reduce search result pollution in our issue tracker.
     placeholder: https://pastebin.com/fakeurl

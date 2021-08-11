@@ -197,8 +197,7 @@ one wants that.")
 
 (defun doom-autoloads--scan (files &optional exclude literal)
   (require 'autoload)
-  (let (case-fold-search  ; case-sensitive regexp from here on
-        autoloads)
+  (let (autoloads)
     (dolist (file files (nreverse (delq nil autoloads)))
       (when (and (or (null exclude)
                      (seq-remove (doom-rpartial #'string-match-p file)

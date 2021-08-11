@@ -411,6 +411,16 @@ files, so this replace calls to `pp' with the much faster `prin1'."
     (server-start)))
 
 
+(after! tramp
+  (setq remote-file-name-inhibit-cache 60
+        tramp-completion-reread-directory-timeout 60
+        tramp-verbose 1
+        vc-ignore-dir-regexp (format "%s\\|%s\\|%s"
+                                     vc-ignore-dir-regexp
+                                     tramp-file-name-regexp
+                                     "[/\\\\]node_modules")))
+
+
 ;;
 ;;; Packages
 
