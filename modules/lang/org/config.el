@@ -804,7 +804,7 @@ between the two."
          "/" #'consult-org-agenda)
         "A" #'org-archive-subtree
         "e" #'org-export-dispatch
-        "f" #'org-footnote-new
+        "f" #'org-footnote-action
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
         "I" #'org-id-get-create
