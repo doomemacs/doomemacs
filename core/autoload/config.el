@@ -114,7 +114,7 @@ Doing so from within Emacs will taint your shell environment.
 
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
-  (interactive "P")
+  (interactive)
   (doom-load-envvars-file doom-env-file)
   (message "Reloaded %S" (abbreviate-file-name doom-env-file)))
 
