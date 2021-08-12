@@ -299,3 +299,13 @@ targets."
                     (if keymap
                         (cons '(vertico-current . embark-target) fr)
                       fr))))))
+
+;;;###autoload
+(defun +vertico-basic-remote-try-completion (string table pred point)
+  (and (vertico--remote-p string)
+       (completion-basic-try-completion string table pred point)))
+
+;;;###autoload
+(defun +vertico-basic-remote-all-completions (string table pred point)
+  (and (vertico--remote-p string)
+       (completion-basic-all-completions string table pred point)))
