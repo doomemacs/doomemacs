@@ -78,7 +78,7 @@
 (evil-ex-define-cmd "make"        #'+evil:make)
 (evil-ex-define-cmd "mk"          #'+evil:make) ; convenience alias
 (evil-ex-define-cmd "debug"       #'+debugger/start)
-(evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
+(evil-ex-define-cmd "er[rors]"    #'+default/diagnostics)
 
 ;;; File operations
 (evil-ex-define-cmd "cp"          #'+evil:copy-this-file)

@@ -44,3 +44,22 @@ If ARG (universal argument), runs `compile' from the current directory."
   (while (server-running-p)
     (sleep-for 1))
   (server-start))
+
+;;;###autoload
+(defun +default/diagnostics (&rest arg)
+  "List diagnostics for the current buffer/project.
+If the the vertico and lsp modules are active, list lsp diagnostics for the
+current project. Otherwise list them for the current buffer"
+  (interactive)
+  (cond ((and (featurep! :completion vertico)
+              (featurep! :tools lsp)
+              (bound-and-true-p lsp-mode))
+         (consult-lsp-diagnostics arg))
+        ((and (featurep! :checkers syntax)
+              (bound-and-true-p flycheck-mode))
+         (flycheck-list-errors))
+        ((bound-and-true-p flymake-mode)
+         (flymake-show-diagnostics-buffer))
+        (t
+         (user-error "No diagnostics backend detected. Enable flycheck or \
+flymake, or set up lsp-mode if applicable (see :lang lsp)"))))
