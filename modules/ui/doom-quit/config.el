@@ -18,7 +18,8 @@
     "It's not like I'll miss you or anything, b-baka!"
     "Okay, look. We've both said a lot of things you're going to regret..."
     "Wake up, Mr. Stallman. Wake up and smell the ashes."
-    "You are *not* prepared!")
+    "You are *not* prepared!"
+    "Please don't go. The drones need you. They look up to you.")
   "A list of quit messages, picked randomly by `+doom-quit'. Taken from
 http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
