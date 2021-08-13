@@ -10,7 +10,7 @@
     - [[#font-ligatures-module-flags][Font ligatures module flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#mutsuharus-emacs-mac-port-or-emacs-28-with-harfbuzz-support][Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support]]
+  - [[#mitsuharus-emacs-mac-port-or-emacs-28-with-harfbuzz-support][Mitsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support]]
   - [[#not-emacs-mac-and-emacs--27][Not Emacs-mac and Emacs <= 27]]
 - [[#features][Features]]
   - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
@@ -63,7 +63,7 @@ This module requires one of three setups for ligatures to work:
 - Mitsuharu's =emacs-mac= build on macOS (available on homebrew), or
 - A patched font for Doom's fallback ligature support.
 
-** Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support
+** Mitsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support
 Ligatures should be handled without any additional configuration.
 
 ** Not Emacs-mac and Emacs <= 27
