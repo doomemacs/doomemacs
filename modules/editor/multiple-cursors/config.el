@@ -19,6 +19,14 @@
         "C-p" #'evil-multiedit-prev))
 
 
+(use-package! iedit
+  :when (featurep! :completion vertico)
+  :defer t
+  :init
+  ;; Fix conflict with embark.
+  (setq iedit-toggle-key-default nil))
+
+
 (use-package! evil-mc
   :when (featurep! :editor evil)
   :commands (evil-mc-make-cursor-here
