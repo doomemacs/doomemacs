@@ -51,18 +51,19 @@ And jumps to your `doom!' block."
 
 (defmacro doom--if-compile (command on-success &optional on-failure)
   (declare (indent 2))
-  `(with-current-buffer (compile ,command t)
-     (let ((w (get-buffer-window (current-buffer))))
-       (select-window w)
-       (add-hook
-        'compilation-finish-functions
-        (lambda (_buf status)
-          (if (equal status "finished\n")
-              (progn
-                (delete-window w)
-                ,on-success)
-            ,on-failure))
-        nil 'local))))
+  `(let ((default-directory doom-emacs-dir))
+     (with-current-buffer (compile ,command t)
+       (let ((w (get-buffer-window (current-buffer))))
+         (select-window w)
+         (add-hook
+          'compilation-finish-functions
+          (lambda (_buf status)
+            (if (equal status "finished\n")
+                (progn
+                  (delete-window w)
+                  ,on-success)
+              ,on-failure))
+          nil 'local)))))
 
 ;;;###autoload
 (defun doom/reload ()
@@ -115,8 +116,10 @@ Doing so from within Emacs will taint your shell environment.
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive)
-  (doom-load-envvars-file doom-env-file)
-  (message "Reloaded %S" (abbreviate-file-name doom-env-file)))
+  (let ((default-directory doom-emacs-dir))
+    (with-temp-buffer
+      (doom-load-envvars-file doom-env-file)
+      (message "Reloaded %S" (abbreviate-file-name doom-env-file)))))
 
 ;;;###autoload
 (defun doom/upgrade ()
