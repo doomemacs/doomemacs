@@ -79,9 +79,11 @@ body:
   attributes:
     label: System Information
     description: |
-      Upload the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info` **to [pastebin.com](https://pastebin.com)**, then paste its URL here. **Please do not omit or modify your doom/info.**
+      Paste a link to a [pastebin](https://pastebin.com) where you've uploaded the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info`.
 
-      The use of pastebin (or a similar service) is necessary to reduce search result pollution in our issue tracker.
+      > :warning: **Do not paste your M-x doom/info directly into this box!** Use pastebin to minimize search result pollution in our issue tracker.
+
+      > :warning: **Do not omit any part of or modify your doom/info.**
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
