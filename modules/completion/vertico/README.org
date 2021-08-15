@@ -223,6 +223,10 @@ For more information [[https://github.com/minad/consult#asynchronous-search][see
 |---------+---------------------------------|
 | =M-A=   | Cycle between annotation levels |
 
+Marginalia annotations for symbols (e.g. =SPC h f= and =SPC h v=) come with
+extra information the nature of the symbol. For the meaning of the annotations
+see ~marginalia--symbol-class~.
+
 ** Orderless filtering
 When using orderless to filter through candidates, the default behaviour is for
 each space separated input to match the candidate as a regular expression or
