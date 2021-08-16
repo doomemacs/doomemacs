@@ -25,9 +25,11 @@ http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
 (defun +doom-quit-fn (&rest _)
   (doom-quit-p
-   (format "%s  Quit?"
-           (nth (random (length +doom-quit-messages))
-                +doom-quit-messages))))
+   (format "%s  %s"
+           (propertize (nth (random (length +doom-quit-messages))
+                            +doom-quit-messages)
+                       'face '(italic default))
+           "Really quit Emacs?")))
 
 ;;
 (setq confirm-kill-emacs #'+doom-quit-fn)
