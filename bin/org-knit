@@ -559,6 +559,8 @@ the string."
                      (require req)))
            (current-buffer))))
 
+(setq backup-inhibited t) ; we do this ourself
+
 ;; Execution helper functions
 
 (defun process-org-file (file)
