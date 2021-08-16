@@ -280,6 +280,30 @@
 (when stdout
   (+info " [1;33m![0m Outputting to stdout\n"))
 
+;; Backported from Emacs 28
+
+(defun string-pad (string length &optional padding start)
+  "Pad STRING to LENGTH using PADDING.
+If PADDING is nil, the space character is used.  If not nil, it
+should be a character.
+
+If STRING is longer than the absolute value of LENGTH, no padding
+is done.
+
+If START is nil (or not present), the padding is done to the end
+of the string, and if non-nil, padding is done to the start of
+the string."
+  (unless (natnump length)
+    (signal 'wrong-type-argument (list 'natnump length)))
+  (let ((pad-length (- length (length string))))
+    (if (< pad-length 0)
+        string
+      (concat (and start
+                   (make-string pad-length (or padding ?\s)))
+              string
+              (and (not start)
+                   (make-string pad-length (or padding ?\s)))))))
+
 ;;
 ;;; Export state visuals
 
