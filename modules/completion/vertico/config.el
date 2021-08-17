@@ -170,6 +170,8 @@ overrides `completion-styles' during company completion sessions.")
   (setq embark-package-map (make-sparse-keymap))
   (map! (:map embark-file-map
          :desc "Open target with sudo" "s" #'doom/sudo-find-file
+         (:when (featurep! :tools magit)
+          :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (featurep! :ui workspaces)
           :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace))
         (:map embark-package-map
