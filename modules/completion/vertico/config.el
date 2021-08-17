@@ -105,7 +105,7 @@ overrides `completion-styles' during company completion sessions.")
             (format "%s --color=never -i -H -E .git --regex %s"
                     doom-projectile-fd-binary
                     (if IS-WINDOWS "--path-separator=/" ""))
-        consult-find-args))
+          consult-find-args))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep

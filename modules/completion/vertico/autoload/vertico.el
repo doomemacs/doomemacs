@@ -41,14 +41,14 @@ orderless."
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (consult-ripgrep-args
-            (concat "rg "
-                    (if all-files "-uu ")
-                    (unless recursive "--maxdepth 1 ")
-                    "--line-buffered --color=never --max-columns=1000 "
-                    "--path-separator /   --smart-case --no-heading --line-number "
-                    "--hidden -g !.git "
-                    (mapconcat #'shell-quote-argument args " ")
-                    "."))
+          (concat "rg "
+                  (if all-files "-uu ")
+                  (unless recursive "--maxdepth 1 ")
+                  "--line-buffered --color=never --max-columns=1000 "
+                  "--path-separator /   --smart-case --no-heading --line-number "
+                  "--hidden -g !.git "
+                  (mapconcat #'shell-quote-argument args " ")
+                  "."))
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
@@ -257,7 +257,7 @@ targets."
   (let ((idx vertico--index))
     (unless (get-text-property 0 'consult--crm-selected (nth vertico--index vertico--candidates))
       (setq idx (1+ idx)))
-  (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
+    (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
   (vertico-exit))
 
 ;;;###autoload
@@ -284,10 +284,10 @@ targets."
 (defun +vertico/consult-fd (&optional dir initial)
   (interactive "P")
   (if doom-projectile-fd-binary
-  (let* ((prompt-dir (consult--directory-prompt "Fd" dir))
-         (default-directory (cdr prompt-dir)))
-    (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
-  (consult-find dir initial)))
+      (let* ((prompt-dir (consult--directory-prompt "Fd" dir))
+             (default-directory (cdr prompt-dir)))
+        (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
+    (consult-find dir initial)))
 
 ;;;###autoload
 (defun +vertico-embark-vertico-indicator ()
