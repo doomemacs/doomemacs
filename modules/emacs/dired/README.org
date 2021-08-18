@@ -27,7 +27,7 @@ This module provides configuration for dired.
 + =+ranger=
   + [[https://github.com/ralesi/ranger.el][ranger]]
 + =+icons=
-  + [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]]
+  + [[https://github.com/wyuenho/all-the-icons-dired][all-the-icons-dired]]
 
 * Prerequisites
 This module has no prerequisites *except on BSDs* where =GNU ls= (~gls~) is
