@@ -26,8 +26,16 @@
     :after tree-sitter
     :config
     (map!
+     :textobj "f" nil nil
      :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
+
      :textobj "C" (evil-textobj-tree-sitter-get-textobj "class.inner") (evil-textobj-tree-sitter-get-textobj "class.outer")
+
+     :textobj "c" nil nil
      :textobj "c" nil (evil-textobj-tree-sitter-get-textobj "comment.outer")
+
+     :textobj "i" nil nil
      :textobj "i" (evil-textobj-tree-sitter-get-textobj "conditional.inner") (evil-textobj-tree-sitter-get-textobj "conditional.outer")
+
+     :textobj "l" nil nil
      :textobj "l" (evil-textobj-tree-sitter-get-textobj "loop.inner") (evil-textobj-tree-sitter-get-textobj "loop.outer"))))
