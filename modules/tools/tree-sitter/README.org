@@ -26,7 +26,7 @@ syntax tree as the source file is edited.
 
 + include better syntax highlighting of supported code
 + add structural text objects to manipulate functions statements and other code
-  structures
+  structures like any other text object
 
 ** Maintainers
 - @jeetelongname
