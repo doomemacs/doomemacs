@@ -11,6 +11,8 @@
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+  - [[#language-support][Language support]]
+  - [[#text-objects][Text Objects]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
 
@@ -24,8 +26,8 @@ syntax tree as the source file is edited.
 #+end_quote
 
 
-+ include better syntax highlighting of supported code
-+ add structural text objects to manipulate functions statements and other code
++ Include better syntax highlighting of supported code
++ Add structural text objects to manipulate functions statements and other code
   structures like any other text object
 
 ** Maintainers
@@ -45,8 +47,15 @@ This module provides no flags.
 * Prerequisites
 This module has no prerequisites.
 
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
+* Features
+** Language support
+Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
+highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]].
+
+** Text Objects
+Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
+objects languages support]]
+Note: only languages with parsers in emacs have text object support currently
 
 * TODO Configuration
 # How to configure this module, including common problems and how to address them.
