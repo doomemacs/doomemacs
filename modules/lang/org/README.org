@@ -136,7 +136,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+roam=
   + [[https://github.com/org-roam/org-roam-v1][org-roam]] (v1)
 + =+roam2=
-  - [[https://github.com/org-roam/org-roam/tree/v2][org-roam]] (v2)
+  - [[https://github.com/org-roam/org-roam][org-roam]] (v2)
 + =+noter=
   + [[https://github.com/weirdNox/org-noter][org-noter]]
 
