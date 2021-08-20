@@ -21,12 +21,13 @@
                                (error-message-string e))
          (signal (car e) (cadr e)))))))
 
-(use-package! evil-textobj-tree-sitter
-  :after tree-sitter
-  :config
-  (map!
-   :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
-   :textobj "C" (evil-textobj-tree-sitter-get-textobj "class.inner") (evil-textobj-tree-sitter-get-textobj "class.outer")
-   :textobj "c" nil (evil-textobj-tree-sitter-get-textobj "comment.outer")
-   :textobj "i" (evil-textobj-tree-sitter-get-textobj "conditional.inner") (evil-textobj-tree-sitter-get-textobj "conditional.outer")
-   :textobj "l" (evil-textobj-tree-sitter-get-textobj "loop.inner") (evil-textobj-tree-sitter-get-textobj "loop.outer")))
+(when (featurep! :editor evil +everywhere)
+  (use-package! evil-textobj-tree-sitter
+    :after tree-sitter
+    :config
+    (map!
+     :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
+     :textobj "C" (evil-textobj-tree-sitter-get-textobj "class.inner") (evil-textobj-tree-sitter-get-textobj "class.outer")
+     :textobj "c" nil (evil-textobj-tree-sitter-get-textobj "comment.outer")
+     :textobj "i" (evil-textobj-tree-sitter-get-textobj "conditional.inner") (evil-textobj-tree-sitter-get-textobj "conditional.outer")
+     :textobj "l" (evil-textobj-tree-sitter-get-textobj "loop.inner") (evil-textobj-tree-sitter-get-textobj "loop.outer"))))
