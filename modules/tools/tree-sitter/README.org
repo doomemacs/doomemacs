@@ -1,0 +1,55 @@
+#+TITLE:   tools/tree-sitter
+#+DATE:    August 17, 2021
+#+SINCE:   3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+Add [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
+
+#+begin_quote
+Tree sitter is a parser generator tool and an incremental parsing library. It
+can build a concrete syntax tree for a source file and efficiently update the
+syntax tree as the source file is edited.
+#+end_quote
+
+
++ include better syntax highlighting of supported code
++ add structural text objects to manipulate functions statements and other code
+  structures
+
+** Maintainers
+- @jeetelongname
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/emacs-tree-sitter/elisp-tree-sitter][tree-sitter]]
++ [[https://github.com/emacs-tree-sitter/tree-sitter-langs][tree-sitter-langs]]
++ [[https://github.com/meain/evil-textobj-tree-sitter][evil-textobj-tree-sitter]]* (=:editor evil +everywhere=)
+
+** TODO Hacks
+# A list of internal modifications to included packages; omit if unneeded
+
+* Prerequisites
+This module has no prerequisites.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.
