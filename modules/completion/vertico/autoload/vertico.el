@@ -190,6 +190,7 @@ If INITIAL is non-nil, use as initial input."
   "Go to an entry in evil's (or better-jumper's) jumplist."
   (interactive
    (let (buffers)
+     (require 'consult)
      (unwind-protect
          (list
           (consult--read
