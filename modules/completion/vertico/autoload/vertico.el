@@ -201,34 +201,39 @@ If INITIAL is non-nil, use as initial input."
            (nreverse
             (delete-dups
              (delq
-              nil (mapcar (lambda (mark)
-                            (when mark
-                              (cl-destructuring-bind (path pt _id) mark
-                                (let ((buf (get-file-buffer path)))
-                                  (unless buf
-                                    (push (setq buf (find-file-noselect path t))
-                                          buffers))
-                                  (with-current-buffer buf
-                                    (goto-char pt)
-                                    (font-lock-fontify-region (line-beginning-position) (line-end-position))
-                                    (cons (format "%s:%d: %s"
-                                                  (buffer-name)
-                                                  (line-number-at-pos)
-                                                  (string-trim-right (or (thing-at-point 'line) "")))
-                                          (point-marker)))))))
-                          (cddr (better-jumper-jump-list-struct-ring
-                                 (better-jumper-get-jumps (better-jumper--get-current-context))))))))
+              nil (mapcar
+                   (lambda (mark)
+                     (when mark
+                       (cl-destructuring-bind (path pt _id) mark
+                         (let* ((visiting (find-buffer-visiting path))
+                                (buf (or visiting (find-file-noselect path t)))
+                                (dir default-directory))
+                           (unless visiting
+                             (push buf buffers))
+                           (with-current-buffer buf
+                             (goto-char pt)
+                             (font-lock-fontify-region
+                              (line-beginning-position) (line-end-position))
+                             (format "%s:%d: %s"
+                                     (car (cl-sort (list (abbreviate-file-name (buffer-file-name buf))
+                                                         (file-relative-name (buffer-file-name buf) dir))
+                                                   #'< :key #'length))
+                                     (line-number-at-pos)
+                                     (string-trim-right (or (thing-at-point 'line) ""))))))))
+                   (cddr (better-jumper-jump-list-struct-ring
+                          (better-jumper-get-jumps (better-jumper--get-current-context))))))))
            :prompt "jumplist: "
            :sort nil
            :require-match t
            :category 'jump-list))
        (mapc #'kill-buffer buffers))))
-  (let ((mark (cdr jump)))
-    (delq! (marker-buffer mark) buffers)
-    (mapc #'kill-buffer buffers)
-    (setq buffers nil)
-    (with-current-buffer (switch-to-buffer (marker-buffer mark))
-      (goto-char (marker-position mark)))))
+  (if (not (string-match "^\\([^:]+\\):\\([0-9]+\\): " jump))
+      (user-error "No match")
+    (let ((file (match-string-no-properties 1 jump))
+          (line (match-string-no-properties 2 jump)))
+      (find-file file)
+      (goto-char (point-min))
+      (forward-line (string-to-number line)))))
 
 ;;;###autoload
 (defun +vertico/embark-which-key-indicator ()
