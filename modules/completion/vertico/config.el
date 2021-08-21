@@ -167,18 +167,19 @@ overrides `completion-styles' during company completion sessions.")
         cons
         '+vertico-embark-target-package-fn
         (nthcdr pos embark-target-finders)))
-  (setq embark-package-map (make-sparse-keymap))
+  (embark-define-keymap +vertico/embark-doom-package-map
+    "Keymap for Embark package actions for packages installed by Doom."
+    ("h" doom/help-packages)
+    ("b" doom/bump-package)
+    ("c" doom/help-package-config)
+    ("u" doom/help-package-homepage))
+  (setf (alist-get 'package embark-keymap-alist) #'+vertico/embark-doom-package-map)
   (map! (:map embark-file-map
          :desc "Open target with sudo" "s" #'doom/sudo-find-file
          (:when (featurep! :tools magit)
           :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (featurep! :ui workspaces)
-          :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace))
-        (:map embark-package-map
-         "h" #'doom/help-packages
-         "b" #'doom/bump-package
-         "c" #'doom/help-package-config
-         "u" #'doom/help-package-homepage)))
+          :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia
