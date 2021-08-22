@@ -26,7 +26,7 @@ overrides `completion-styles' during company completion sessions.")
   ;; Cleans up path when moving directories with shadowed paths syntax, e.g.
   ;; cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
-  (map! :map vertico-map [backspace] #'+vertico/backward-updir))
+  (map! :map vertico-map [backspace] #'vertico-directory-delete-char))
 
 
 (use-package! orderless

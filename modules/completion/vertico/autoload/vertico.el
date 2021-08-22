@@ -96,23 +96,6 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
   (consult-line (thing-at-point 'symbol)))
 
 ;;;###autoload
-(defun +vertico/backward-updir ()
-  "Delete char before or go up directory for file cagetory vertico buffers."
-  (interactive)
-  (let ((metadata (completion-metadata (minibuffer-contents)
-                                       minibuffer-completion-table
-                                       minibuffer-completion-predicate)))
-    (if (and (eq (char-before) ?/)
-             (eq (completion-metadata-get metadata 'category) 'file))
-        (let ((new-path (minibuffer-contents)))
-          (delete-region (minibuffer-prompt-end) (point-max))
-          (insert (abbreviate-file-name
-                   (file-name-directory
-                    (directory-file-name
-                     (expand-file-name new-path))))))
-      (call-interactively 'backward-delete-char))))
-
-;;;###autoload
 (defun +vertico-embark-target-package-fn ()
   "Targets Doom's package! statements and returns the package name"
   (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
