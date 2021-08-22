@@ -17,7 +17,7 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-Add [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
+This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
 
 #+begin_quote
 Tree sitter is a parser generator tool and an incremental parsing library. It
@@ -25,9 +25,9 @@ can build a concrete syntax tree for a source file and efficiently update the
 syntax tree as the source file is edited.
 #+end_quote
 
-
-+ Include better syntax highlighting of supported code
-+ Add structural text objects to manipulate functions statements and other code
+It includes:
++ Better syntax highlighting of supported languages
++ Structural text objects to manipulate functions statements and other code
   structures like any other text object
 
 ** Maintainers
@@ -55,9 +55,8 @@ highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighti
 ** Text Objects
 Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
 objects languages support]]
-Note: only languages with parsers in emacs have text object support currently
-
-currently text objects are bound to:
+Note: only languages with parsers in emacs have text object support currently.
+Currently text objects are bound to:
 | key | text object |
 |-----+-------------|
 | =f=   | function    |
