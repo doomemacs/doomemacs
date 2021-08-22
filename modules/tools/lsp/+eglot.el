@@ -48,3 +48,10 @@ server getting expensively restarted when reverting buffers."
                           (+lsp-optimization-mode -1))))
                 server)))
       (funcall fn server))))
+
+
+(use-package! consult-eglot
+  :defer t
+  :when (featurep! :completion vertico)
+  :init
+  (map! :map eglot-mode-map [remap xref-find-apropos] #'consult-eglot-symbols))
