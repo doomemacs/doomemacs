@@ -18,6 +18,7 @@
     - [[#general][General]]
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
+    - [[#file-path-completion][File Path Completion]]
   - [[#consult][Consult]]
     - [[#multiple-candidate-search][Multiple candidate search]]
     - [[#async-search-commands][Async search commands]]
@@ -191,6 +192,14 @@ or the last workspace by typing =0 SPC=.
 | =SPC s p= | Search project                            |
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
+
+*** File Path Completion
+Note that Emacs allows you to switch directories with shadow paths, for example
+starting at =/foo/bar/baz=, typing =/foo/bar/baz/~/= will switch the searched
+path to the home directory. For more information see ~substitute-in-file-name~
+and ~file-name-shadow-mode~. This module will erase the "shadowed" portion of
+the path from the minibuffer, so in the previous example the path will be reset
+to =~/=.
 
 ** Consult
 *** Multiple candidate search
