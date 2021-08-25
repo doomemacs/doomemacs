@@ -1,8 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/julia/packages.el
 
-(package! julia-mode :pin "fe6f6f7a80f8d60ecffa5b2cb43667bb9dc11705")
-(package! julia-repl :pin "79e686e3ebf164bd39fc2ea5cf09d38d0e1d763a")
+(if (featurep! +snail)
+    ; Snail has its own dependency on julia-modde
+    (package! julia-snail :pin "5b95b278772de8339ac198fe6eaadb0427d680fb")
+  (progn
+    (package! julia-mode :pin "fe6f6f7a80f8d60ecffa5b2cb43667bb9dc11705")
+    (package! julia-repl :pin "79e686e3ebf164bd39fc2ea5cf09d38d0e1d763a")))
 
 (when (featurep! +lsp)
   (if (featurep! :tools lsp +eglot)

@@ -42,8 +42,8 @@
                    "\\)"))
         1 font-lock-type-face)))))
 
-
 (use-package! julia-repl
+  :unless (featurep! +snail)
   :preface (defvar +julia-repl-start-hook nil)
   :hook (julia-mode . julia-repl-mode)
   :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
@@ -66,6 +66,22 @@
   (defun +julia-override-repl-escape-char-h ()
     "Use C-c instead of C-x for escaping."
     (term-set-escape-char ?\C-c)))
+
+(use-package! julia-snail
+  :when (featurep! +snail)
+  :hook (julia-mode . julia-snail-mode)
+  :config
+  (set-lookup-handlers! '(julia-mode julia-snail-repl-mode)
+    :documentation #'julia-snail-doc-lookup)
+  (map! :map julia-snail-mode-map
+        (:localleader
+         ("'" #'julia-snail
+          "R" #'julia-snail-update-module-cache
+          "h" #'julia-snail-doc-lookup
+          (:prefix ("e" . "eval")
+           "b" #'julia-snail-send-buffer-file
+           "d" #'julia-snail-send-dwim
+           "D" #'julia-snail-send-line)))))
 
 
 (when (featurep! +lsp)

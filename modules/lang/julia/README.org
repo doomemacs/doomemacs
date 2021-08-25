@@ -8,27 +8,34 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#julia-snail][Julia Snail]]
   - [[#language-server][Language Server]]
     - [[#lsp-julia][~lsp-julia~]]
     - [[#eglot-jl][~eglot-jl~]]
 - [[#features][Features]]
+  - [[#julia-snail-1][Julia Snail]]
+    - [[#keybindings][Keybindings]]
   - [[#language-server-1][Language Server]]
 - [[#configuration][Configuration]]
+  - [[#julia-snail-multimedia-support][Julia Snail multimedia support]]
   - [[#change-the-default-environment-for-the-julia-language-server][Change the default environment for the Julia language server]]
 
 * Description
 This module adds support for [[https://julialang.org/][the Julia language]] to Doom Emacs.
 
 + Syntax highlighting and latex symbols from ~julia-mode~
-+ REPL integration from ~julia-repl~
++ REPL integration from ~julia-repl~ or ~julia-snail~
 + Code completion and syntax checking, requires ~:tools lsp~ and ~+lsp~
 
 ** Module Flags
 + =+lsp= Enable LSP server support.
++ =+snail= Enables [[http://github.com/gcv/julia-snail][Julia Snail]] integration
 
 ** Plugins
 + [[https://github.com/JuliaEditorSupport/julia-emacs/][julia-mode]]
 + [[https://github.com/tpapp/julia-repl][julia-repl]]
++ =+snail=
+  + [[https://github.com/gcv/julia-snail][julia-snail]]
 + =+lsp= and =:tools lsp=
   + [[https://github.com/non-jedi/lsp-julia][lsp-julia]]
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
@@ -38,6 +45,10 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 
 * Prerequisites
 This module requires =julia= and an language server if =+lsp= is enabled.
+
+** Julia Snail
+~+snail~ requires =:term vterm= to be enabled. Optionally, =:lang markdown= can
+be enabled to support nice rendering of docstrings.
 
 ** Language Server
 ~+lsp~ requires ~LanguageServer.jl~ and ~SymbolServer.jl~. The =lsp-julia= and
@@ -93,12 +104,34 @@ But to let ~eglot-jl~ use the environment bundled with it, set it to
 #+END_SRC
 
 * Features
+** Julia Snail
+~+snail~ adds an alternate (CIDER/SLIME inspired) REPL experience on top of =julia-mode=.
+It supports completion with =completion-at-point=, cross referencing via =xref=,
+remote REPLs with =tramp=, and multimedia buffers (i.e. from Plots).
+
+*** Keybindings
+| Binding             | Description                       |
+|---------------------+-----------------------------------|
+| =<localleader> '​=   | =julia-snail=                     |
+| =<localleader> R=   | =julia-snail-update-module-cache= |
+| =<localleader> h=   | =julia-snail-doc-lookup=          |
+| =<localleader> e b= | =julia-snail-send-buffer-file=    |
+| =<localleader> e d= | =julia-snail-send-dwim=           |
+| =<localleader> e D= | =julia-snail-send-line=           |
+
+
 ** Language Server
 ~+lsp~ adds code completion, syntax checking, formatting and other ~lsp-mode~ or
 ~eglot~ features. It requires ~LanguageServer.jl~, the installation of which is
 described above.
 
 * Configuration
+** Julia Snail multimedia support
+For multimedia buffers within ~julia-snail~ to work, Emacs must support images.
+To enable multimedia, set ~julia-snail-multimedia-display~ to ~t~ before
+starting the REPL. Additional configuration for the multimedia window can be
+found in the [[https://github.com/gcv/julia-snail#multimedia-and-plotting][julia snail docs]].
+
 ** Change the default environment for the Julia language server
 ~lsp-julia~ requires a variable be set for the Julia environment. This is set to
 v1.0 by default as it is the current LTS.

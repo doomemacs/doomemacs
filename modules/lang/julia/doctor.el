@@ -4,6 +4,10 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(when (featurep! +snail)
+  (assert! (not (featurep! +lsp)) "Julia Snail and LSP are mutually exclusive")
+  (assert! (featurep! :term vterm) "Julia Snail requires vterm"))
+
 (when (featurep! +lsp)
   (let ((args
          (cond ((require 'eglot-jl nil t)
