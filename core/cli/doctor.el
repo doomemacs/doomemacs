@@ -66,8 +66,8 @@ in."
        (let* ((version
                (cdr (doom-call-process "git" "version")))
               (version
-               (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
-                    (match-string 0 version))))
+               (and (string-match "git version \\([0-9]+\\(?:\\.[0-9]+\\)\\{2\\}\\)" version)
+                    (match-string 1 version))))
          (if version
              (when (version< version "2.23")
                (error! "Git %s detected! Doom requires git 2.23 or newer!"
