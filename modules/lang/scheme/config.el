@@ -72,3 +72,9 @@
   :when (featurep! +guile)
   :when (featurep! :checkers syntax)
   :after geiser)
+
+;; Add Guix channels to Guile load path
+(when (and (featurep! +guile) (executable-find "guix"))
+  (after! geiser-guile
+    (add-to-list 'geiser-guile-load-path
+                 (expand-file-name "~/.config/guix/current/share/guile/site/3.0"))))
