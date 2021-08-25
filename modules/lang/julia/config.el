@@ -1,5 +1,8 @@
 ;;; lang/julia/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (pushnew! projectile-project-root-files "Project.toml"))
+
 (use-package! julia-mode
   :interpreter "julia"
   :config
