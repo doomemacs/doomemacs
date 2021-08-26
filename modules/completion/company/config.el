@@ -95,7 +95,7 @@
 
 (use-package! company-box
   :when (featurep! +childframe)
-  :hook (company-mode . company-box-mode)
+  :hook (doom-init-ui . company-box-mode)
   :config
   (setq company-box-show-single-candidate t
         company-box-backends-colors nil
