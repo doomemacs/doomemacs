@@ -268,6 +268,7 @@ directives. By default, this only recognizes C directives.")
          . +evil-embrace-angle-bracket-modes-hook-h)
   :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
   :init
+  (defvar embrace--pairs-list '((?\\ . nil)))
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
   :config
