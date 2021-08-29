@@ -21,10 +21,12 @@ ede-projects.el
 elpa/
 eln-cache/
 network-security.data
+places
 semanticdb
 server/
 smex-items
 tramp
+transient/
 var/
 
 # compiled files
