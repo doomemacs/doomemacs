@@ -276,7 +276,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :hook (lsp-lens-mode . ccls-code-lens-mode)
+  :defer t
   :init
   (defvar ccls-sem-highlight-method 'font-lock)
   (after! projectile
