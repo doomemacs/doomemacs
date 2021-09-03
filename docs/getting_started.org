@@ -298,7 +298,7 @@ to least recommended for Doom (based on compatibility).
   #+END_SRC
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
-  experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
+  experienced [[https://github.com/d12frosted/homebrew-emacs-plus/issues/314][flashing artifacts when scrolling]]:
   #+BEGIN_SRC bash
   brew tap d12frosted/emacs-plus
   brew install emacs-plus
