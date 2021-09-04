@@ -207,6 +207,17 @@
                       (looking-at-p "\\*\\* *")
                       (cmd! (forward-char 2)))))))
 
+    ;; Removes haskell-mode trailing braces
+
+    (after! haskell-mode
+      (sp-with-modes '(haskell-mode haskell-interactive-mode)
+        (sp-local-pair "{-" "-}" :actions :rem)
+        (sp-local-pair "{-#" "#-}" :actions :rem)
+        (sp-local-pair "{-@" "@-}" :actions :rem)
+        (sp-local-pair "{-" "-")
+        (sp-local-pair "{-#" "#-")
+        (sp-local-pair "{-@" "@-")))
+
 
 ;;
 ;;; Keybinding fixes
