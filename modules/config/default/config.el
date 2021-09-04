@@ -205,7 +205,7 @@
       (map! :map markdown-mode-map
             :ig "*" (general-predicate-dispatch nil
                       (looking-at-p "\\*\\* *")
-                      (cmd! (forward-char 2)))))))
+                      (cmd! (forward-char 2)))))
 
     ;; Removes haskell-mode trailing braces
 
@@ -216,7 +216,7 @@
         (sp-local-pair "{-@" "@-}" :actions :rem)
         (sp-local-pair "{-" "-")
         (sp-local-pair "{-#" "#-")
-        (sp-local-pair "{-@" "@-")))
+        (sp-local-pair "{-@" "@-")))))
 
 
 ;;
