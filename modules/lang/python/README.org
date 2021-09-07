@@ -84,6 +84,11 @@ manager or manually:
 + *mspyls* can be installed by typing =M-x lsp-install-server RET mspyls=.
 + *pyright* can be installed with ~pip install pyright~ or ~npm i -g pyright~.
 
+Take a note that if you had installed LSP in the virtual env, you have to add
+it to your path (use ~config.el~ for this). For example:
+
+~(add-to-list 'exec-path "/home/ac/_work/venvs/doom/bin")~
+
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
 Server]], [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
