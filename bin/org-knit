@@ -584,8 +584,11 @@ the string."
 
 (defun process-org-file-1 (file)
   ;; Prevent slow hooks from interfering
-  (let (org-mode-hook org-confirm-babel-evaluate)
-    (with-current-buffer (find-file-noselect file)
+  (let (org-mode-hook org-confirm-babel-evaluate org-babel-pre-tangle-hook)
+    (with-current-buffer (create-file-buffer (expand-file-name file))
+      (setq buffer-file-name (expand-file-name file))
+      (insert-file-contents file)
+      (org-mode)
       (when exec
         (set-state file formats 'executing)
         (org-babel-eval-wipe-error-buffer)
