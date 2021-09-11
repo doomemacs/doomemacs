@@ -181,6 +181,12 @@
   (map! :map mu4e-headers-mode-map
         :vne "l" #'+mu4e/capture-msg-to-agenda)
 
+  ;; Functionality otherwise obscured in mu4e 1.6
+  (when (version<= "1.6" mu4e-mu-version)
+    (map! :map mu4e-view-mode-map
+          :ne "A" #'mu4e-view-mime-part-action
+          :ne "p" #'mu4e-view-save-attachments))
+
   (map! :localleader
         :map mu4e-compose-mode-map
         :desc "send and exit" "s" #'message-send-and-exit
