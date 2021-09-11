@@ -52,12 +52,14 @@
               ((featurep! :completion vertico) #'completing-read)
               (t #'ido-completing-read))
         mu4e-attachment-dir
-        (if (executable-find "xdg-user-dir")
-            ;; remove trailing newline
-            (substring (shell-command-to-string "xdg-user-dir DOWNLOAD") 0 -1)
-          (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
-                                "Downloads")
-                            "~"))
+        (concat
+         (if (executable-find "xdg-user-dir")
+             ;; remove trailing newline
+             (substring (shell-command-to-string "xdg-user-dir DOWNLOAD") 0 -1)
+           (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
+                                 "Downloads")
+                             "~"))
+         "/")
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
