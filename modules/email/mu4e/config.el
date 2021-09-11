@@ -279,6 +279,11 @@ This should already be the case yet it does not always seem to be."
     :before #'mu4e-compose-resend
     (read-only-mode -1))
 
+  (defvar +mu4e-main-bullet "⚫"
+    "Prefix to use instead of \"	*\" in the mu4e main view.
+This is enacted by `+mu4e~main-action-str-prettier-a' and
+`+mu4e~main-keyval-str-prettier-a'.")
+
   (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
   (when (featurep! :editor evil)
