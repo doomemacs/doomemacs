@@ -589,6 +589,7 @@ the string."
       (when exec
         (set-state file formats 'executing)
         (org-babel-eval-wipe-error-buffer)
+        (setq pre-exec-hash (buffer-hash))
         (org-save-outline-visibility t
           (org-babel-map-executables nil
             (condition-case err
@@ -598,7 +599,10 @@ the string."
                   (ignore-errors
                     (org-babel-execute-src-block t)))
               (err
-               (record-error file "exec" (error-message-string err)))))))
+               (record-error file "exec" (error-message-string err))))))
+        (setq post-exec-hash (buffer-hash))
+        (unless (string= pre-exec-hash post-exec-hash)
+          (save-buffer)))
 
       (when (memq 'tang formats)
         (set-state file formats 'tangling)
