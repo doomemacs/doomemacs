@@ -183,7 +183,7 @@
 
   ;; Functionality otherwise obscured in mu4e 1.6
   (when (version<= "1.6" mu4e-mu-version)
-    (defun +mu4e-select-attachment ()
+    (defun +mu4e-view-select-attachment ()
       "Use completing-read to select a single attachment.
 Acts like a singular `mu4e-view-save-attachments', without the saving."
       (let ((parts (mu4e~view-gather-mime-parts)) files)
@@ -196,13 +196,13 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
                         files))
           (user-error (mu4e-format "No attached files found")))))
 
-    (defun +mu4e-open-attachment ()
+    (defun +mu4e-view-open-attachment ()
       "Select an attachment, and open it."
       (interactive)
       (mu4e~view-open-file
-       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-select-attachment)))))
+       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
 
-    (defun +mu4e-select-part ()
+    (defun +mu4e-view-select-part ()
       (let ((parts (mu4e~view-gather-mime-parts)) labeledparts)
         (dolist (part parts)
           (push (cons (concat (propertize (format "%-2s " (car part)) 'face '(bold font-lock-type-face))
@@ -217,12 +217,12 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
     (defun +mu4e-view-select-mime-part-action ()
       "Select a MIME part, and perform an action on it."
       (interactive)
-      (mu4e-view-mime-part-action (car (+mu4e-select-part))))
+      (mu4e-view-mime-part-action (car (+mu4e-view-select-part))))
 
     (map! :map mu4e-view-mode-map
           :ne "A" #'+mu4e-view-select-mime-part-action
           :ne "p" #'mu4e-view-save-attachments
-          :ne "o" #'+mu4e-open-attachment))
+          :ne "o" #'+mu4e-view-open-attachment))
 
   (map! :localleader
         :map mu4e-compose-mode-map
