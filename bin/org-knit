@@ -611,8 +611,9 @@ the string."
         (set-state file formats 'tangling)
         (condition-case err
             (org-babel-tangle nil nil nil)
-          (error (record-error file "tangle" (error-message-string err))))
-        (set-state file 'tang 'completed))
+          (error (record-error file "tangle" (error-message-string err))
+                 (set-state file 'tang 'error))
+          (t (set-state file 'tang 'completed))))
 
       (set-state file (remove 'tang formats) 'waiting)
       (unless async (org-export-expand-include-keyword))
