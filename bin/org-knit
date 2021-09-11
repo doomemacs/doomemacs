@@ -255,6 +255,10 @@
   (princ " [1;31m![0m No target files provided\n" #'external-debugging-output)
   (kill-emacs 1))
 
+;; When it's only one file and format there's no benefit in async
+(when (= 1 (length files) (length formats))
+  (setq async nil))
+
 (dolist (location files)
   (when (file-directory-p location)
     (setq files
