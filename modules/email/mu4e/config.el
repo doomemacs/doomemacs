@@ -183,9 +183,29 @@
 
   ;; Functionality otherwise obscured in mu4e 1.6
   (when (version<= "1.6" mu4e-mu-version)
+    (defun +mu4e-select-attachment ()
+      "Use completing-read to select a single attachment.
+Acts like a singular `mu4e-view-save-attachments', without the saving."
+      (let ((parts (mu4e~view-gather-mime-parts)) files)
+        (dolist (part parts)
+          (let ((fname (cdr (assoc 'filename (assoc "attachment" (cdr part))))))
+            (when fname
+              (push (cons fname part) files))))
+        (if files
+            (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files))
+                        files))
+          (user-error (mu4e-format "No attached files found")))))
+
+    (defun +mu4e-open-attachment ()
+      "Select an attachment, and open it."
+      (interactive)
+      (mu4e~view-open-file
+       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-select-attachment)))))
+
     (map! :map mu4e-view-mode-map
           :ne "A" #'mu4e-view-mime-part-action
-          :ne "p" #'mu4e-view-save-attachments))
+          :ne "p" #'mu4e-view-save-attachments
+          :ne "o" #'+mu4e-open-attachment))
 
   (map! :localleader
         :map mu4e-compose-mode-map
