@@ -188,20 +188,14 @@
     (defun +mu4e-view-select-attachment ()
       "Use completing-read to select a single attachment.
 Acts like a singular `mu4e-view-save-attachments', without the saving."
-      (let ((parts (mu4e~view-gather-mime-parts)) files)
-        (dolist (part parts)
-          (let ((fname (cdr (assoc 'filename (assoc "attachment" (cdr part))))))
-            (when fname
-              (push (cons (concat (format "%-2s " (car part))
-                                  (when (featurep 'all-the-icons) (all-the-icons-icon-for-file fname))
-                                  (format " %s " fname)
-                                  (format "(%s)" (file-size-human-readable (with-current-buffer (cadr part) (buffer-size)))))
-                          part)
-                    files))))
-        (if files
-            (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files))
-                        files))
-          (user-error (mu4e-format "No attached files found")))))
+      (if-let ((parts (delq nil (mapcar
+                                 (lambda (part)
+                                   (when (assoc "attachment" (cdr part))
+                                     part))
+                                 (mu4e~view-gather-mime-parts))))
+               (files (+mu4e-part-selectors parts)))
+          (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
+        (user-error (mu4e-format "No attached files found"))))
 
     (defun +mu4e-view-open-attachment ()
       "Select an attachment, and open it."
@@ -209,47 +203,53 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
       (mu4e~view-open-file
        (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
 
-    (defun +mu4e-view-select-part ()
-      (let ((parts (mu4e~view-gather-mime-parts)) partinfo labeledparts
-            maxfnamelen fnamefmt maxsizelen sizefmt)
-        (dolist (part parts)
-          (push (list :index (car part)
-                      :mimetype (if (string= "text/plain" (caaddr part))
-                                    (format "%s (%s)"
-                                            (caaddr part)
-                                            (alist-get 'charset (cdaddr part)))
-                                  (caaddr part))
-                      :type (car (nth 5 part))
-                      :filename (cdr (assoc 'filename (assoc "attachment" (cdr part))))
-                      :size (file-size-human-readable (with-current-buffer (cadr part) (buffer-size)))
-                      :part part)
-                partinfo))
-        (setq maxfnamelen (apply #'max 7 (mapcar (lambda (i) (length (plist-get i :filename))) partinfo))
-              fnamefmt (format " %%-%ds  " maxfnamelen)
-              maxsizelen (apply #'max (mapcar (lambda (i) (length (plist-get i :size))) partinfo))
-              sizefmt (format "%%-%ds " maxsizelen))
-        (dolist (pinfo partinfo)
-          (push (cons (concat (propertize (format "%-2s " (plist-get pinfo :index)) 'face '(bold font-lock-type-face))
-                              (when (featurep 'all-the-icons)
-                                (all-the-icons-icon-for-file (or (plist-get pinfo :filename) "")))
-                              (format fnamefmt (or (plist-get pinfo :filename)
-                                                   (propertize (plist-get pinfo :type) 'face '(italic font-lock-doc-face))))
-                              (format sizefmt (propertize (plist-get pinfo :size) 'face 'font-lock-builtin-face))
-                              (propertize (plist-get pinfo :mimetype) 'face 'font-lock-constant-face))
-                      (plist-get pinfo :part))
-                labeledparts))
-        (cdr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
-                    labeledparts))))
-
     (defun +mu4e-view-select-mime-part-action ()
       "Select a MIME part, and perform an action on it."
       (interactive)
-      (mu4e-view-mime-part-action (car (+mu4e-view-select-part))))
+      (let ((labeledparts (+mu4e-part-selectors (mu4e~view-gather-mime-parts))))
+        (if labeledparts
+            (mu4e-view-mime-part-action
+             (cadr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
+                          labeledparts)))
+          (user-error (mu4e-format "No parts found")))))
 
     (map! :map mu4e-view-mode-map
           :ne "A" #'+mu4e-view-select-mime-part-action
           :ne "p" #'mu4e-view-save-attachments
-          :ne "o" #'+mu4e-view-open-attachment))
+          :ne "o" #'+mu4e-view-open-attachment)
+
+    (defun +mu4e-part-selectors (parts)
+      "Generate selection strings for PARTS."
+      (if parts
+          (let (partinfo labeledparts maxfnamelen fnamefmt maxsizelen sizefmt)
+            (dolist (part parts)
+              (push (list :index (car part)
+                          :mimetype (if (and (string= "text/plain" (caaddr part))
+                                             (alist-get 'charset (cdaddr part)))
+                                        (format "%s (%s)"
+                                                (caaddr part)
+                                                (alist-get 'charset (cdaddr part)))
+                                      (caaddr part))
+                          :type (car (nth 5 part))
+                          :filename (cdr (assoc 'filename (assoc "attachment" (cdr part))))
+                          :size (file-size-human-readable (with-current-buffer (cadr part) (buffer-size)))
+                          :part part)
+                    partinfo))
+            (setq maxfnamelen (apply #'max 7 (mapcar (lambda (i) (length (plist-get i :filename))) partinfo))
+                  fnamefmt (format " %%-%ds  " maxfnamelen)
+                  maxsizelen (apply #'max (mapcar (lambda (i) (length (plist-get i :size))) partinfo))
+                  sizefmt (format "%%-%ds " maxsizelen))
+            (dolist (pinfo partinfo)
+              (push (cons (concat (propertize (format "%-2s " (plist-get pinfo :index)) 'face '(bold font-lock-type-face))
+                                  (when (featurep 'all-the-icons)
+                                    (all-the-icons-icon-for-file (or (plist-get pinfo :filename) "")))
+                                  (format fnamefmt (or (plist-get pinfo :filename)
+                                                       (propertize (plist-get pinfo :type) 'face '(italic font-lock-doc-face))))
+                                  (format sizefmt (propertize (plist-get pinfo :size) 'face 'font-lock-builtin-face))
+                                  (propertize (plist-get pinfo :mimetype) 'face 'font-lock-constant-face))
+                          (plist-get pinfo :part))
+                    labeledparts))
+            labeledparts))))
 
   (map! :localleader
         :map mu4e-compose-mode-map
