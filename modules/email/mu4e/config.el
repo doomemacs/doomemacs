@@ -202,8 +202,25 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
       (mu4e~view-open-file
        (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-select-attachment)))))
 
+    (defun +mu4e-select-part ()
+      (let ((parts (mu4e~view-gather-mime-parts)) labeledparts)
+        (dolist (part parts)
+          (push (cons (concat (propertize (format "%-2s " (car part)) 'face '(bold font-lock-type-face))
+                              (or (cdr (assoc 'filename (assoc "attachment" (cdr part))))
+                                  (propertize "unnamed" 'face '(italic font-lock-doc-face)))
+                              (propertize (format " [%s]" (caaddr part)) 'face 'font-lock-constant-face))
+                      part)
+                labeledparts))
+        (cdr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
+                    labeledparts))))
+
+    (defun +mu4e-view-select-mime-part-action ()
+      "Select a MIME part, and perform an action on it."
+      (interactive)
+      (mu4e-view-mime-part-action (car (+mu4e-select-part))))
+
     (map! :map mu4e-view-mode-map
-          :ne "A" #'mu4e-view-mime-part-action
+          :ne "A" #'+mu4e-view-select-mime-part-action
           :ne "p" #'mu4e-view-save-attachments
           :ne "o" #'+mu4e-open-attachment))
 
