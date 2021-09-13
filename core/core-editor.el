@@ -235,10 +235,6 @@ tell you about it. Very annoying. This prevents that."
 ;; easier to peruse (with `counsel-yank-pop' or `helm-show-kill-ring'.
 (setq kill-do-not-save-duplicates t)
 
-;; Allow UTF or composed text from the clipboard, even in the terminal or on
-;; non-X systems (like Windows or macOS), where only `STRING' is used.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-
 
 ;;
 ;;; Extra file extensions to support
