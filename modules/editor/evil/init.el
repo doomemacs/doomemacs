@@ -58,6 +58,9 @@ variable for an explanation of the defaults (in comments). See
   (defvar evil-collection-want-unimpaired-p nil)
   ;; Doom binds goto-reference on gD and goto-assignments on gA ourselves
   (defvar evil-collection-want-find-usages-bindings-p nil)
+  ;; Reduces keybind conflicts between outline-mode and org-mode (which is
+  ;; derived from outline-mode).
+  (defvar evil-collection-outline-enable-in-minor-mode-p nil)
 
   ;; We handle loading evil-collection ourselves
   (defvar evil-collection--supported-modes nil)
