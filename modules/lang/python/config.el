@@ -327,3 +327,8 @@
   (use-package! lsp-pyright
     :when (featurep! +pyright)
     :after lsp-mode))
+
+(eval-when! (and (featurep! +pyright)
+                 (featurep! :tools lsp +eglot))
+  (after! eglot
+    (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))))
