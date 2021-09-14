@@ -12,7 +12,7 @@
 
 ;; Programming environment
 (package! rubocop :pin "f5fd18aa810c3d3269188cbbd731ddc09006f8f5")
-(package! robe :pin "e1304d123d729aa063671d0ca526b01e72f0f5ed")
+(package! robe :pin "fd972e912d0c6c310acb2d057da1be1149937d0e")
 
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
@@ -32,5 +32,5 @@
 
 ;; Rails
 (when (featurep! +rails)
-  (package! projectile-rails :pin "6a18ada3566ab2cb795129e3dfca2a32cc413fb8")
+  (package! projectile-rails :pin "30828afbfa7b0e07970e3e668e975e7916b824c4")
   (package! inflections :pin "55caa66a7cc6e0b1a76143fd40eff38416928941"))

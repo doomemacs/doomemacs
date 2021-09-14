@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(when (package! geiser :pin "4099dce8f5f17cce8f292cdf0bc1bf2e5cb6975c")
-  (package! macrostep-geiser :pin "8600fca05fd12a2e0ffe63238ddbfcb37c285dac")
+(when (package! geiser :pin "327ff01e5b9c6e019fdd0cb710a4c19082249345")
+  (package! macrostep-geiser :pin "f6a2d5bb96ade4f23df557649af87ebd0cc45125")
   (when (featurep! +chez)
     (package! geiser-chez :pin "03da1c17253856d8713bc5a25140cb5002c9c188"))
   (when (featurep! +chibi)
@@ -12,7 +12,7 @@
   (when (featurep! +gambit)
     (package! geiser-gambit :pin "3294c944d1c3b79db44ed14b133129fec454bd60"))
   (when (featurep! +gauche)
-    (package! geiser-gauche :pin "66e51430bded0f0e2037f474818a7bbaafb2906c"))
+    (package! geiser-gauche :pin "fd52cbaed9b0a0d0f10e87674b5747e5ee44ebc9"))
   (when (featurep! +guile)
     (package! geiser-guile :pin "8dda28f4f1758221f84f5cb5dc5b5ca5fd56caa9")
     (when (featurep! :checkers syntax)

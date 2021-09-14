@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/haskell/packages.el
 
-(package! haskell-mode :pin "98ba3922360199d5260d47f417f096730ad057c5")
+(package! haskell-mode :pin "8402caa341d90b4236f5c0a802751f9023ccfbe7")
 
 (when (and (featurep! +lsp)
            (not (featurep! :tools lsp +eglot)))

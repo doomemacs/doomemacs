@@ -1,12 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/ocaml/packages.el
 
-(package! tuareg :pin "b59c422759506402f990b089dbaa91c0578e2c2e")
+(package! tuareg :pin "00faf47a7c65e4cdcf040f38add1c6a08cd2ee2f")
 
 (unless (featurep! +lsp)
-  (package! merlin :pin "5731826810ef8caa2201d8e1f4385ce83f99c909")
+  (package! merlin :pin "e4791e22986993c36c3f5c91e8dff93494cc232e")
   (package! merlin-eldoc :pin "db7fab1eddfe34781b7e79694f8923b285698032")
-  (package! merlin-company :pin "5731826810ef8caa2201d8e1f4385ce83f99c909")
+  (package! merlin-company :pin "e4791e22986993c36c3f5c91e8dff93494cc232e")
   (when (featurep! :checkers syntax)
     (package! flycheck-ocaml :pin "8707a7bf545a8639a6a5c600a98d9a2ea1487dc9")))
 
@@ -18,8 +18,8 @@
 (when (featurep! :editor format)
   (package! ocamlformat
     :recipe (:host github :repo "ocaml-ppx/ocamlformat" :files ("emacs/*.el"))
-    :pin "5dd6574d8fed4f7c6b76aab2d8dea9886c3642ee"))
+    :pin "22a3707da387f9ab82b42a87c358133b829f2222"))
 
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
-  :pin "75ecfe34216dd07b339d2b9027f7b6a507151418")
+  :pin "4d0a47edd53dc2141059cbf99bfec858a08e9fe0")

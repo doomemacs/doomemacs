@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/julia/packages.el
 
-(package! julia-mode :pin "fe6f6f7a80f8d60ecffa5b2cb43667bb9dc11705")
-(package! julia-repl :pin "79e686e3ebf164bd39fc2ea5cf09d38d0e1d763a")
+(package! julia-mode :pin "06f6fdb94cdd88db7bb40b8f511a386605711408")
+(package! julia-repl :pin "3f888ecd30f613ed50f67c614be0b42b7546c693")
 
 (when (featurep! +lsp)
   (if (featurep! :tools lsp +eglot)

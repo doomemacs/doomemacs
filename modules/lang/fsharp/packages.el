@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/fsharp/packages.el
 
-(package! fsharp-mode :pin "93b1fbc31d73286a18640a36fc2be87d1736e0f2")
+(package! fsharp-mode :pin "c90d762c0692cc43032291d37b8ca3201c3d49bd")
