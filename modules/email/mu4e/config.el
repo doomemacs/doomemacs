@@ -53,13 +53,14 @@
               (t #'ido-completing-read))
         mu4e-attachment-dir
         (concat
-         (if (executable-find "xdg-user-dir")
-             ;; remove trailing newline
-             (substring (shell-command-to-string "xdg-user-dir DOWNLOAD") 0 -1)
+         (if-let ((xdg-download-query (and (executable-find "xdg-user-dir")
+                                           (doom-call-process "xdg-user-dir" "DOWNLOAD")))
+                  (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
+             xdg-download-dir
            (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
                                  "Downloads")
                              "~"))
-         "/")
+         "/") ; a trailing / makes it easier to change directory in `read-file-name'
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
