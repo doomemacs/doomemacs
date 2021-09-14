@@ -81,8 +81,6 @@ keybindings are available:
 
 | Keybind               | Description                                        |
 |-----------------------+----------------------------------------------------|
-| =C-p=                 | Go to previous candidate                           |
-| =C-n=                 | Go to next candidate                               |
 | =C-k=                 | (evil) Go to previous candidate                    |
 | =C-j=                 | (evil) Go to next candidate                        |
 | =C-M-k=               | (evil) Go to previous group                        |
