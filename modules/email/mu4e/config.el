@@ -52,12 +52,15 @@
               ((featurep! :completion vertico) #'completing-read)
               (t #'ido-completing-read))
         mu4e-attachment-dir
-        (if (executable-find "xdg-user-dir")
-            ;; remove trailing newline
-            (substring (shell-command-to-string "xdg-user-dir DOWNLOAD") 0 -1)
-          (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
-                                "Downloads")
-                            "~"))
+        (concat
+         (if-let ((xdg-download-query (and (executable-find "xdg-user-dir")
+                                           (doom-call-process "xdg-user-dir" "DOWNLOAD")))
+                  (xdg-download-dir (and (= 0 (car xdg-download-query)) (cdr xdg-download-query))))
+             xdg-download-dir
+           (expand-file-name (or (getenv "XDG_DOWNLOAD_DIR")
+                                 "Downloads")
+                             "~"))
+         "/") ; a trailing / makes it easier to change directory in `read-file-name'
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
@@ -181,6 +184,74 @@
   (map! :map mu4e-headers-mode-map
         :vne "l" #'+mu4e/capture-msg-to-agenda)
 
+  ;; Functionality otherwise obscured in mu4e 1.6
+  (when (version<= "1.6" mu4e-mu-version)
+    (defun +mu4e-view-select-attachment ()
+      "Use completing-read to select a single attachment.
+Acts like a singular `mu4e-view-save-attachments', without the saving."
+      (if-let ((parts (delq nil (mapcar
+                                 (lambda (part)
+                                   (when (assoc "attachment" (cdr part))
+                                     part))
+                                 (mu4e~view-gather-mime-parts))))
+               (files (+mu4e-part-selectors parts)))
+          (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
+        (user-error (mu4e-format "No attached files found"))))
+
+    (defun +mu4e-view-open-attachment ()
+      "Select an attachment, and open it."
+      (interactive)
+      (mu4e~view-open-file
+       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
+
+    (defun +mu4e-view-select-mime-part-action ()
+      "Select a MIME part, and perform an action on it."
+      (interactive)
+      (let ((labeledparts (+mu4e-part-selectors (mu4e~view-gather-mime-parts))))
+        (if labeledparts
+            (mu4e-view-mime-part-action
+             (cadr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
+                          labeledparts)))
+          (user-error (mu4e-format "No parts found")))))
+
+    (map! :map mu4e-view-mode-map
+          :ne "A" #'+mu4e-view-select-mime-part-action
+          :ne "p" #'mu4e-view-save-attachments
+          :ne "o" #'+mu4e-view-open-attachment)
+
+    (defun +mu4e-part-selectors (parts)
+      "Generate selection strings for PARTS."
+      (if parts
+          (let (partinfo labeledparts maxfnamelen fnamefmt maxsizelen sizefmt)
+            (dolist (part parts)
+              (push (list :index (car part)
+                          :mimetype (if (and (string= "text/plain" (caaddr part))
+                                             (alist-get 'charset (cdaddr part)))
+                                        (format "%s (%s)"
+                                                (caaddr part)
+                                                (alist-get 'charset (cdaddr part)))
+                                      (caaddr part))
+                          :type (car (nth 5 part))
+                          :filename (cdr (assoc 'filename (assoc "attachment" (cdr part))))
+                          :size (file-size-human-readable (with-current-buffer (cadr part) (buffer-size)))
+                          :part part)
+                    partinfo))
+            (setq maxfnamelen (apply #'max 7 (mapcar (lambda (i) (length (plist-get i :filename))) partinfo))
+                  fnamefmt (format " %%-%ds  " maxfnamelen)
+                  maxsizelen (apply #'max (mapcar (lambda (i) (length (plist-get i :size))) partinfo))
+                  sizefmt (format "%%-%ds " maxsizelen))
+            (dolist (pinfo partinfo)
+              (push (cons (concat (propertize (format "%-2s " (plist-get pinfo :index)) 'face '(bold font-lock-type-face))
+                                  (when (featurep 'all-the-icons)
+                                    (all-the-icons-icon-for-file (or (plist-get pinfo :filename) "")))
+                                  (format fnamefmt (or (plist-get pinfo :filename)
+                                                       (propertize (plist-get pinfo :type) 'face '(italic font-lock-doc-face))))
+                                  (format sizefmt (propertize (plist-get pinfo :size) 'face 'font-lock-builtin-face))
+                                  (propertize (plist-get pinfo :mimetype) 'face 'font-lock-constant-face))
+                          (plist-get pinfo :part))
+                    labeledparts))
+            labeledparts))))
+
   (map! :localleader
         :map mu4e-compose-mode-map
         :desc "send and exit" "s" #'message-send-and-exit
@@ -208,6 +279,11 @@ This should already be the case yet it does not always seem to be."
     :before #'mu4e-compose-forward
     :before #'mu4e-compose-resend
     (read-only-mode -1))
+
+  (defvar +mu4e-main-bullet "⚫"
+    "Prefix to use instead of \"	*\" in the mu4e main view.
+This is enacted by `+mu4e~main-action-str-prettier-a' and
+`+mu4e~main-keyval-str-prettier-a'.")
 
   (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
   (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)

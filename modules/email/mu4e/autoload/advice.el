@@ -13,7 +13,7 @@ clicked."
           (lambda(m)
             (format "%s"
                     (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
-          (replace-regexp-in-string "\t\\*" "\t⚫" str)))
+          (replace-regexp-in-string "\t\\*" (format "\t%s" +mu4e-main-bullet) str)))
         (map (make-sparse-keymap))
         (func (if (functionp func-or-shortcut)
                   func-or-shortcut
@@ -29,8 +29,8 @@ clicked."
 
 ;;;###autoload
 (defun +mu4e~main-keyval-str-prettier-a (str)
-  "Replace '*' with '⚫' in STR."
-  (replace-regexp-in-string "\t\\*" "\t⚫" str))
+  "Replace '*' with `+mu4e-main-bullet' in STR."
+  (replace-regexp-in-string "\t\\*" (format "\t%s" +mu4e-main-bullet) str))
 
 ;; Org msg LaTeX image scaling
 
