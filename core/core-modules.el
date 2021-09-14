@@ -172,7 +172,7 @@ following properties:
   :path  [STRING]       path to category root directory
 
 Example:
-  (doom-module-set :lang 'haskell :flags '(+dante))"
+  (doom-module-set :lang 'haskell :flags '(+lsp))"
   (puthash (cons category module) plist doom-modules))
 
 (defun doom-module-path (category module &optional file)
