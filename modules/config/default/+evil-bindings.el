@@ -209,11 +209,9 @@
          "M-RET" #'vertico-exit-input
          "C-SPC" #'+vertico/embark-preview
          "C-j"   #'vertico-next
-         "C-M-j" #'+vertico/next-candidate-preview
-         "C-S-j" #'vertico-next-group
+         "C-M-j" #'vertico-next-group
          "C-k"   #'vertico-previous
-         "C-M-k" #'+vertico/previous-candidate-preview
-         "C-S-k" #'vertico-previous-group)))
+         "C-M-k" #'vertico-previous-group)))
 
 
 ;;; :ui
@@ -398,7 +396,9 @@
        (:when (featurep! :tools lsp +eglot)
         :desc "LSP Execute code action" "a" #'eglot-code-actions
         :desc "LSP Rename" "r" #'eglot-rename
-        :desc "LSP Find declaration" "j" #'eglot-find-declaration)
+        :desc "LSP Find declaration"                 "j"   #'eglot-find-declaration
+        (:when (featurep! :completion vertico)
+         :desc "Jump to symbol in current workspace" "j"   #'consult-eglot-symbols))
        :desc "Compile"                               "c"   #'compile
        :desc "Recompile"                             "C"   #'recompile
        :desc "Jump to definition"                    "d"   #'+lookup/definition
@@ -412,9 +412,7 @@
        :desc "Find type definition"                  "t"   #'+lookup/type-definition
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
-       :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-       (:when (featurep! :checkers syntax)
-        :desc "List errors"                         "x"   #'flycheck-list-errors))
+       :desc "List errors"                           "x"   #'+default/diagnostics)
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")

@@ -40,20 +40,19 @@ orderless."
   (setq deactivate-mark t)
   (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
-         (args
-          (split-string
-           (string-trim
-            (concat (if all-files "-uu")
-                    (unless recursive "--maxdepth 1")
-                    "--null --line-buffered --color=always --max-columns=500 --no-heading --line-number --smart-case"
-                    " --hidden -g !.git "
-                    (mapconcat #'shell-quote-argument args " ")))
-           " "))
+         (consult-ripgrep-args
+          (concat "rg "
+                  (if all-files "-uu ")
+                  (unless recursive "--maxdepth 1 ")
+                  "--line-buffered --color=never --max-columns=1000 "
+                  "--path-separator /   --smart-case --no-heading --line-number "
+                  "--hidden -g !.git "
+                  (mapconcat #'shell-quote-argument args " ")
+                  "."))
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
-                      (rxt-quote-pcre (doom-thing-at-point-or-region)))))
-         (ripgrep-command (string-join `("rg" ,@args "." "-e ARG OPTS" ) " "))
+                      (regexp-quote (doom-thing-at-point-or-region)))))
          (consult-async-split-style consult-async-split-style)
          (consult-async-split-styles-alist consult-async-split-styles-alist))
     ;; Change the split style if the initial query contains the separator.
@@ -74,7 +73,7 @@ orderless."
                                    "%")
                      :type perl)
                    consult-async-split-style 'perlalt))))))
-    (consult--grep prompt ripgrep-command directory query)))
+    (consult--grep prompt #'consult--ripgrep-builder directory query)))
 
 ;;;###autoload
 (defun +vertico/project-search (&optional arg initial-query directory)
@@ -97,29 +96,12 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
   (consult-line (thing-at-point 'symbol)))
 
 ;;;###autoload
-(defun +vertico/backward-updir ()
-  "Delete char before or go up directory for file cagetory vertico buffers."
-  (interactive)
-  (let ((metadata (completion-metadata (minibuffer-contents)
-                                       minibuffer-completion-table
-                                       minibuffer-completion-predicate)))
-    (if (and (eq (char-before) ?/)
-             (eq (completion-metadata-get metadata 'category) 'file))
-        (let ((new-path (minibuffer-contents)))
-          (delete-region (minibuffer-prompt-end) (point-max))
-          (insert (abbreviate-file-name
-                   (file-name-directory
-                    (directory-file-name
-                     (expand-file-name new-path))))))
-      (call-interactively 'backward-delete-char))))
-
-;;;###autoload
 (defun +vertico-embark-target-package-fn ()
   "Targets Doom's package! statements and returns the package name"
   (when (or (derived-mode-p 'emacs-lisp-mode) (derived-mode-p 'org-mode))
     (save-excursion
-      (search-backward "(")
-      (when (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*")
+      (when (and (search-backward "(" nil t)
+                 (looking-at "(\\s-*package!\\s-*\\(\\(\\sw\\|\\s_\\)+\\)\\s-*"))
         (let ((pkg (match-string 1)))
           (set-text-properties 0 (length pkg) nil pkg)
           `(package . ,pkg))))))
@@ -152,20 +134,6 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
       (let ((embark-quit-after-action nil))
         (embark-dwim)))))
 
-;;;###autoload
-(defun +vertico/next-candidate-preview (&optional n)
-  "Go forward N candidates and preivew"
-  (interactive)
-  (vertico-next (or n 1))
-  (+vertico/embark-preview))
-
-;;;###autoload
-(defun +vertico/previous-candidate-preview (&optional n)
-  "Go backward N candidates and preivew"
-  (interactive)
-  (vertico-previous (or n 1))
-  (+vertico/embark-preview))
-
 (defvar +vertico/find-file-in--history nil)
 ;;;###autoload
 (defun +vertico/find-file-in (&optional dir initial)
@@ -175,15 +143,12 @@ If INITIAL is non-nil, use as initial input."
   (require 'consult)
   (let* ((default-directory (or dir default-directory))
          (prompt-dir (consult--directory-prompt "Find" default-directory))
-         (cmd (split-string-and-unquote consult-find-command " "))
-         (cmd (remove "OPTS" cmd))
-         (cmd (remove "ARG" cmd)))
+         (cmd (split-string-and-unquote +vertico-consult-fd-args " ")))
     (find-file
      (consult--read
       (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
       :prompt default-directory
       :sort nil
-      :require-match t
       :initial (if initial (shell-quote-argument initial))
       :add-history (thing-at-point 'filename)
       :category 'file
@@ -194,6 +159,7 @@ If INITIAL is non-nil, use as initial input."
   "Go to an entry in evil's (or better-jumper's) jumplist."
   (interactive
    (let (buffers)
+     (require 'consult)
      (unwind-protect
          (list
           (consult--read
@@ -236,7 +202,7 @@ If INITIAL is non-nil, use as initial input."
       (forward-line (string-to-number line)))))
 
 ;;;###autoload
-(defun +vertico/embark-which-key-indicator ()
+(defun +vertico-embark-which-key-indicator ()
   "An embark indicator that displays keymaps using which-key.
 The which-key help message will show the type and value of the
 current target followed by an ellipsis if there are further
@@ -261,7 +227,7 @@ targets."
   (let ((idx vertico--index))
     (unless (get-text-property 0 'consult--crm-selected (nth vertico--index vertico--candidates))
       (setq idx (1+ idx)))
-  (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
+    (run-at-time 0 nil (cmd! (vertico--goto idx) (vertico--exhibit))))
   (vertico-exit))
 
 ;;;###autoload
@@ -270,3 +236,46 @@ targets."
   (interactive)
   (run-at-time 0 nil #'vertico-exit)
   (vertico-exit))
+
+;;;###autoload
+(defun +vertico--consult--fd-builder (input)
+  (pcase-let* ((cmd (split-string-and-unquote +vertico-consult-fd-args))
+               (`(,arg . ,opts) (consult--command-split input))
+               (`(,re . ,hl) (funcall consult--regexp-compiler
+                                      arg 'extended)))
+    (when re
+      (list :command (append cmd
+                             (list (consult--join-regexps re 'extended))
+                             opts)
+            :highlight hl))))
+
+(autoload #'consult--directory-prompt "consult")
+;;;###autoload
+(defun +vertico/consult-fd (&optional dir initial)
+  (interactive "P")
+  (if doom-projectile-fd-binary
+      (let* ((prompt-dir (consult--directory-prompt "Fd" dir))
+             (default-directory (cdr prompt-dir)))
+        (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
+    (consult-find dir initial)))
+
+;;;###autoload
+(defun +vertico-embark-vertico-indicator ()
+  "An embark indicator that colorizes the vertico candidate differently on act"
+  (let ((fr face-remapping-alist))
+    (lambda (&optional keymap _targets prefix)
+      (when (bound-and-true-p vertico--input)
+        (setq-local face-remapping-alist
+                    (if keymap
+                        (cons '(vertico-current . embark-target) fr)
+                      fr))))))
+
+;;;###autoload
+(defun +vertico-basic-remote-try-completion (string table pred point)
+  (and (vertico--remote-p string)
+       (completion-basic-try-completion string table pred point)))
+
+;;;###autoload
+(defun +vertico-basic-remote-all-completions (string table pred point)
+  (and (vertico--remote-p string)
+       (completion-basic-all-completions string table pred point)))

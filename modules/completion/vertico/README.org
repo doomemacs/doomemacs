@@ -18,10 +18,17 @@
     - [[#general][General]]
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
-  - [[#consult-modifications][Consult modifications]]
+    - [[#file-path-completion][File Path Completion]]
+  - [[#consult][Consult]]
+    - [[#multiple-candidate-search][Multiple candidate search]]
+    - [[#async-search-commands][Async search commands]]
   - [[#marginalia][Marginalia]]
   - [[#orderless-filtering][Orderless filtering]]
 - [[#configuration][Configuration]]
+  - [[#vertico][Vertico]]
+  - [[#consult-1][Consult]]
+  - [[#marginalia-1][Marginalia]]
+  - [[#embark][Embark]]
 
 * Description
 This module enhances the Emacs search and completion experience, and also
@@ -55,7 +62,10 @@ like =ivy= and =helm= do. The primary packages are:
 + [[https://github.com/iyefrat/all-the-icons-completion][all-the-icons-completion]] (=+icons=)
 
 * Prerequisites
-This module has no prerequisites.
+Some of the advanced filtering features in async =consult= commands require
+=grep= and =ripgrep= to be built with support for [[https://www.pcre.org/][PCRE]] lookahead, see [[#async-search-commands][Async
+search commands]] for more information. You can check if this is true for your
+machine by running ~doom doctor~.
 
 * Features
 
@@ -71,15 +81,13 @@ keybindings are available:
 
 | Keybind               | Description                                        |
 |-----------------------+----------------------------------------------------|
-| =C-p=                 | Go to previous candidate                           |
-| =C-n=                 | Go to next candidate                               |
 | =C-k=                 | (evil) Go to previous candidate                    |
 | =C-j=                 | (evil) Go to next candidate                        |
+| =C-M-k=               | (evil) Go to previous group                        |
+| =C-M-j=               | (evil) Go to next group                            |
 | =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action |
 | =C-c C-;=             | export the current candidate list to a buffer      |
 | =C-SPC=               | Preview the current candidate                      |
-| =C-M-k=               | (evil) Go to previous candidate and preview.       |
-| =C-M-j=               | (evil) Go to next candidate and preview.           |
 
 ~embark-act~ will prompt you with a =which-key= menu with useful commands on the
 selected candidate or candidate list, depending on the completion category. Note
@@ -183,7 +191,16 @@ or the last workspace by typing =0 SPC=.
 | =SPC s P= | Search another project                    |
 | =SPC s s= | Search the current buffer (incrementally) |
 
-** Consult modifications
+*** File Path Completion
+Note that Emacs allows you to switch directories with shadow paths, for example
+starting at =/foo/bar/baz=, typing =/foo/bar/baz/~/= will switch the searched
+path to the home directory. For more information see ~substitute-in-file-name~
+and ~file-name-shadow-mode~. This module will erase the "shadowed" portion of
+the path from the minibuffer, so in the previous example the path will be reset
+to =~/=.
+
+** Consult
+*** Multiple candidate search
 This module modifies the default keybindings used in
 ~consult-completing-read-multiple~:
 | Keybind | Description                                                 |
@@ -191,10 +208,31 @@ This module modifies the default keybindings used in
 | =TAB=   | Select or deselect current candidate                        |
 | =RET=   | Enters selected candidates (also toggles current candidate) |
 
+*** Async search commands
+Consult async commands (e.g. ~consult-ripgrep~) will have a preceding separator
+character (usually =#=) before the search input. This is known as the =perl=
+splitting style. Input typed after the separator will be fed to the async
+command until you type a second seperator, afterwhich the candidate list will be
+filtered with Emacs instead (and can be filtered using =orderless=, for
+example). The specific seperator character can be changed by editing it, and
+might be different if the initial input already contains =#=.
+
+Note that grep-like async commands translate the input (between the first and
+second =#=) to an Orderless-light expression: space separated inputs are all
+matched in any order. If the grep backend does not support PCRE lookahead, it'll
+only accept 3 space separated inputs to prevent long lookup times, and further
+filtering should be done after a second =#=.
+
+For more information [[https://github.com/minad/consult#asynchronous-search][see here]].
+
 ** Marginalia
 | Keybind | Description                     |
 |---------+---------------------------------|
 | =M-A=   | Cycle between annotation levels |
+
+Marginalia annotations for symbols (e.g. =SPC h f= and =SPC h v=) come with
+extra information the nature of the symbol. For the meaning of the annotations
+see ~marginalia--symbol-class~.
 
 ** Orderless filtering
 When using orderless to filter through candidates, the default behaviour is for
@@ -212,19 +250,35 @@ pressing space and entering another input. In essence, when trying to match
 
 Doom has some builtin [[https://github.com/oantolin/orderless#style-dispatchers][style dispatchers]] for more finegrained filtering, which
 you can use to further specify each space separated input in the following ways:
-| Input            | Description                                |
-|------------------+--------------------------------------------|
-| =!foo=           | match without literal input =foo=          |
-| =`bar= or =bar`= | match input =bar= as an initialism         |
-| ==baz= or =baz== | match only with literal input =baz=        |
-| =~qux= or =qux~= | match input =qux= with fuzzy/flex matching |
+| Input            | Description                                  |
+|------------------+----------------------------------------------|
+| =!foo=           | match without literal input =foo=            |
+| =%foo= or =foo%= | perform ~char-fold-to-regexp~ on input =foo= |
+| =`foo= or =foo`= | match input =foo= as an initialism           |
+| ==foo= or =foo== | match only with literal input =foo=          |
+| =~foo= or =foo~= | match input =foo= with fuzzy/flex matching   |
 
 * Configuration
 If you want to further configure this module, here are some good places to start:
-
-+ Vertico provides several [[https://github.com/minad/vertico#extensions][extentions]] that can be used to extend it's interface
-+ You can add more Marginalia annotation levels and change the existing ones by
+** Vertico
+ Vertico provides several [[https://github.com/minad/vertico#extensions][extentions]] that can be used to extend it's interface
+** Consult
+Much of the behaviour of Consult commands can be changed with
+~consult-customize~. The =vertico= module already does this, if you want to
+override the module's modifications, do:
+#+begin_src emacs-lisp
+(setq consult--read-config nil)
+(consult-customize
+;...
+)
+#+end_src
+If you are changing the preview key (set to =C-SPC=), remember to change the
+binding on ~vertico-map~ as well, as the binding there gets previews to work to
+an extent on non-consult commands as well.
+** Marginalia
+You can add more Marginalia annotation levels and change the existing ones by
   editing ~marginalia-annotator-registry~
-+ You can change the available commands in Embark for category ~$cat~ by editing
+** Embark
+You can change the available commands in Embark for category ~$cat~ by editing
   ~embark-$cat-map~, and even add new categories. Note that you add categories
   by defining them [[https://github.com/minad/marginalia/#adding-custom-annotators-or-classifiers][through marginalia]], and embark picks up on them.
