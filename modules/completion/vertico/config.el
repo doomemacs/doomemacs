@@ -7,6 +7,8 @@ The completion/vertico module uses the orderless completion style by default,
 but this returns too broad a candidate set for company completion. This variable
 overrides `completion-styles' during company completion sessions.")
 
+(defvar +vertico-consult-fd-args nil
+  "Shell command and arguments the vertico module uses for fd.")
 
 ;;
 ;;; Packages
@@ -99,13 +101,13 @@ overrides `completion-styles' during company completion sessions.")
         consult-async-refresh-delay  0.15
         consult-async-input-throttle 0.2
         consult-async-input-debounce 0.1)
-
-  (setq +vertico-consult-fd-args
-        (if doom-projectile-fd-binary
-            (format "%s --color=never -i -H -E .git --regex %s"
-                    doom-projectile-fd-binary
-                    (if IS-WINDOWS "--path-separator=/" ""))
-          consult-find-args))
+  (unless +vertico-consult-fd-args
+    (setq +vertico-consult-fd-args
+          (if doom-projectile-fd-binary
+              (format "%s --color=never -i -H -E .git --regex %s"
+                      doom-projectile-fd-binary
+                      (if IS-WINDOWS "--path-separator=/" ""))
+            consult-find-args)))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
