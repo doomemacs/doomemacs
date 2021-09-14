@@ -21,13 +21,13 @@
                      (format "(defun org-git-version (&rest _) \"9.5-%s\")\n"
                              (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                      "(provide 'org-version)\n")))
-  :pin "b83ae593473810354504f0f182bfba4537d3c284")
+  :pin "888aaa97c0ce331097787333d0d712dd6e4d078f")
 (package! org-contrib
   :recipe (:host nil :repo "https://git.sr.ht/~bzg/org-contrib")
   :pin "fc81309cf6756607a836f93049a9393c2967c4e0")
 
 (package! avy)
-(package! htmlize :pin "49205105898ba8993b5253beec55d8bddd820a70")
+(package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
@@ -57,32 +57,32 @@
 (when (featurep! +jupyter)
   (package! jupyter :pin "1f0612eb936d36abab0f27b09cca691e81fc6e74"))
 (when (featurep! +journal)
-  (package! org-journal :pin "6c3a2fdb6c85253a32992a29edb976407bad4d77"))
+  (package! org-journal :pin "9757996ca058029800c4801fba315b1d1614dcb2"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
 (when (featurep! +pretty)
-  (package! org-appear :pin "148aa124901ae598f69320e3dcada6325cdc2cf0")
-  (package! org-superstar :pin "9d64c42e5029910153ec74cb9b5747b074281140")
-  (package! org-fancy-priorities :pin "44532ab8c25eb2c0028eecca7acd9e8ea8e2ff30"))
+  (package! org-appear :pin "a1aa8496f2fd61305e43e03e6eeee2ff92aa9e24")
+  (package! org-superstar :pin "2cd3f1e74b88a846901da3249edb3a71d8e58c55")
+  (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
   (package! org-tree-slide :pin "9d2ba1df456d8d7c6372c8c294dbe3ee81540b33")
-  (package! org-re-reveal :pin "cf000894f6e5d0627151e2bec5b1a54a311ad53e")
+  (package! org-re-reveal :pin "ee712db65782ddc2bffe19c60cdc40b72ce56769")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "b18f12d964ef80bd9ffb061aae48ff4c15fb43ad"))
+    :pin "abe9abbed7c68d1e73f5befb6cf256b71d77e769"))
 (cond
  ((featurep! +roam)
   (package! org-roam
     :recipe (:host github :repo "org-roam/org-roam-v1")
     :pin "946a879a4a18756a0508afba1e0b0fe070c6a8b4"))
  ((featurep! +roam2)
-  (package! org-roam :pin "028c95a011395d01ff9b5217dc365f23187bc26c")))
+  (package! org-roam :pin "946a879a4a18756a0508afba1e0b0fe070c6a8b4")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -101,7 +101,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient :pin "0ebfc7c5ebf96d2fe1a476439831363a5a43b9b6"))
+  (package! ob-restclient :pin "bfbc4d8e8a348c140f9328542daf5d979f0993e2"))
 (when (featurep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
@@ -111,6 +111,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "290b5d6b659addf99cb96a316fb24caa90ad0e77"))
+    :pin "1b8f2627cd63ac21b84c5abe3d5b607bc778670a"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
