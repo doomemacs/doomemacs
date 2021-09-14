@@ -6,7 +6,7 @@
 (package! smerge-mode :built-in t)
 
 (package! browse-at-remote :pin "cef26f2c063f2473af42d0e126c8613fe2f709e4")
-(package! git-commit :pin "b68a760c9e7694c687adedec7dffab0a5609ea93")
-(package! git-timemachine :pin "8d675750e921a047707fcdc36d84f8439b19a907")
-(package! gitconfig-mode :pin "7678ead3cdbb1692c9728b9730c016283ed97af1")
-(package! gitignore-mode :pin "7678ead3cdbb1692c9728b9730c016283ed97af1")
+(package! git-commit :pin "1e40d0021790707f6e88debda04f6b14d9429586")
+(package! git-timemachine :pin "3381797bcbf906b18dff654a2361032d2d01b4a3")
+(package! gitconfig-mode :pin "433e1c57a63c88855fc41a942e29d7bc8c9c16c7")
+(package! gitignore-mode :pin "433e1c57a63c88855fc41a942e29d7bc8c9c16c7")
