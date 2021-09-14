@@ -1,26 +1,14 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
 ;; HACK Magit complains loudly (but harmlessly) when it can't determine its own
-;;      version in a sparse clone. This was fixed upstream in
-;;      magit/magit@b1b2683, but only for macOS and Linux users. Windows doesn't
-;;      support symlinks as unix knows them, so `magit-version' can't resolve
-;;      its own repo's path.
+;;      version in a sparse clone. Since I'd rather not compromise on shallow
+;;      clones, I've gimped `magit-version' so it doesn't complain (unless
+;;      called interactively).
 ;;;###autoload
-(eval-when! IS-WINDOWS
-  (defadvice! +magit--ignore-version-a (&optional print-dest)
-    :override #'magit-version
-    (when print-dest
-      (defvar magit-git-debug)
-      (princ (format "Magit (unknown), Git %s, Emacs %s, %s"
-                     (or (let ((magit-git-debug
-                                (lambda (err)
-                                  (display-warning '(magit git) err :error))))
-                           (magit-git-version t))
-                         "(unknown)")
-                     emacs-version
-                     system-type)
-             print-dest))
-    nil))
+(defadvice! +magit--ignore-version-a (fn &rest args)
+  :around #'magit-version
+  (let ((inhibit-message (not (called-interactively-p 'any))))
+    (apply fn args)))
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
