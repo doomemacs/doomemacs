@@ -43,47 +43,6 @@ or terminating simple string."
     (unless (eq major-mode 'csharp-mode)
       (apply fn args))))
 
-(use-package! omnisharp
-  :unless (featurep! +lsp)
-  :commands omnisharp-install-server
-  :hook (csharp-mode-local-vars . omnisharp-mode)
-  :preface
-  (setq omnisharp-auto-complete-want-documentation nil
-        omnisharp-cache-directory (concat doom-etc-dir "omnisharp"))
-  :config
-  (set-company-backend! 'omnisharp-mode 'company-omnisharp)
-  (set-lookup-handlers! 'omnisharp-mode
-    :definition #'omnisharp-go-to-definition
-    :references #'omnisharp-find-usages
-    :documentation #'omnisharp-current-type-documentation)
-
-  ;; Kill the omnisharp server once the last csharp-mode buffer is killed
-  (add-hook! 'omnisharp-mode-hook
-    (add-hook 'kill-buffer-hook #'+csharp-kill-omnisharp-server-h nil t))
-
-  (map! :localleader
-        :map omnisharp-mode-map
-        "b" #'omnisharp-recompile
-        (:prefix "r"
-          "u"  #'omnisharp-fix-usings
-          "r"  #'omnisharp-rename
-          "a"  #'omnisharp-show-last-auto-complete-result
-          "o"  #'omnisharp-show-overloads-at-point)
-        (:prefix "g"
-          "u"  #'omnisharp-find-usages
-          "i"  #'omnisharp-find-implementations
-          "f"  #'omnisharp-navigate-to-current-file-member
-          "m"  #'omnisharp-navigate-to-solution-member
-          "M"  #'omnisharp-navigate-to-solution-file-then-file-member
-          "F"  #'omnisharp-navigate-to-solution-file
-          "r"  #'omnisharp-navigate-to-region
-          "ti" #'omnisharp-current-type-information
-          "td" #'omnisharp-current-type-documentation)
-        (:prefix "t"
-          "s" #'omnisharp-unit-test-at-point
-          "l" #'omnisharp-unit-test-last
-          "b" #'omnisharp-unit-test-buffer)))
-
 
 ;; Unity shaders
 (use-package! shader-mode
