@@ -15,6 +15,7 @@
 
 (use-package! php-mode
   :mode "\\.inc\\'"
+  :hook (php-mode . rainbow-delimiters-mode)
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml extension instead.
