@@ -117,12 +117,10 @@ overrides `completion-styles' during company completion sessions.")
    +default/search-cwd +default/search-other-cwd
    +default/search-notes-for-symbol-at-point
    consult--source-file consult--source-project-file consult--source-bookmark
-   :preview-key (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")))
+   :preview-key (kbd "C-SPC"))
   (consult-customize
    consult-theme
-   :preview-key
-   (list (kbd "C-SPC") (kbd "C-M-j") (kbd "C-M-k")
-         :debounce 0.5 'any))
+   :preview-key (list (kbd "C-SPC") :debounce 0.5 'any))
   (after! org
     (defvar +vertico--consult-org-source
       `(:name     "Org"

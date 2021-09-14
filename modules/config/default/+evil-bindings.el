@@ -209,11 +209,9 @@
          "M-RET" #'vertico-exit-input
          "C-SPC" #'+vertico/embark-preview
          "C-j"   #'vertico-next
-         "C-M-j" #'+vertico/next-candidate-preview
-         "C-S-j" #'vertico-next-group
+         "C-M-j" #'vertico-next-group
          "C-k"   #'vertico-previous
-         "C-M-k" #'+vertico/previous-candidate-preview
-         "C-S-k" #'vertico-previous-group)))
+         "C-M-k" #'vertico-previous-group)))
 
 
 ;;; :ui

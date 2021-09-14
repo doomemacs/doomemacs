@@ -134,20 +134,6 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
       (let ((embark-quit-after-action nil))
         (embark-dwim)))))
 
-;;;###autoload
-(defun +vertico/next-candidate-preview (&optional n)
-  "Go forward N candidates and preivew"
-  (interactive)
-  (vertico-next (or n 1))
-  (+vertico/embark-preview))
-
-;;;###autoload
-(defun +vertico/previous-candidate-preview (&optional n)
-  "Go backward N candidates and preivew"
-  (interactive)
-  (vertico-previous (or n 1))
-  (+vertico/embark-preview))
-
 (defvar +vertico/find-file-in--history nil)
 ;;;###autoload
 (defun +vertico/find-file-in (&optional dir initial)

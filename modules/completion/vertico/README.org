@@ -85,11 +85,11 @@ keybindings are available:
 | =C-n=                 | Go to next candidate                               |
 | =C-k=                 | (evil) Go to previous candidate                    |
 | =C-j=                 | (evil) Go to next candidate                        |
+| =C-M-k=               | (evil) Go to previous group                        |
+| =C-M-j=               | (evil) Go to next group                            |
 | =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action |
 | =C-c C-;=             | export the current candidate list to a buffer      |
 | =C-SPC=               | Preview the current candidate                      |
-| =C-M-k=               | (evil) Go to previous candidate and preview.       |
-| =C-M-j=               | (evil) Go to next candidate and preview.           |
 
 ~embark-act~ will prompt you with a =which-key= menu with useful commands on the
 selected candidate or candidate list, depending on the completion category. Note
@@ -274,9 +274,9 @@ override the module's modifications, do:
 ;...
 )
 #+end_src
-If you are changing the preview keys (set to =C-SPC=, =C-M-j=, and =C-M-k=),
-remember to change their bindings on ~vertico-map~ as well, as the bindings
-there get previews to work to an extent on non-consult commands as well.
+If you are changing the preview key (set to =C-SPC=), remember to change the
+binding on ~vertico-map~ as well, as the binding there gets previews to work to
+an extent on non-consult commands as well.
 ** Marginalia
 You can add more Marginalia annotation levels and change the existing ones by
   editing ~marginalia-annotator-registry~
