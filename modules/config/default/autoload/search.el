@@ -26,12 +26,18 @@ If prefix ARG is set, prompt for a directory to search from."
   "Conduct a text search on the current buffer.
 If a selection is active, pre-fill the prompt with it."
   (interactive)
-  (call-interactively
-   (cond ((or (featurep! :completion helm) (featurep! :completion ivy))
+  (cond ((or (featurep! :completion helm) (featurep! :completion ivy))
+         (call-interactively
           (if (region-active-p)
               #'swiper-isearch-thing-at-point
-            #'swiper-isearch))
-         ((featurep! :completion vertico) #'consult-line))))
+            #'swiper-isearch)))
+        ((featurep! :completion vertico)
+         (if (region-active-p)
+             (let ((start (region-beginning))
+                   (end   (region-end)))
+               (deactivate-mark)
+               (consult-line (buffer-substring-no-properties start end)))
+           (call-interactively #'consult-line)))))
 
 ;;;###autoload
 (defun +default/search-project (&optional arg)

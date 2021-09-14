@@ -704,7 +704,7 @@
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
        :desc "Search buffer"                "b"
-       (cond ((featurep! :completion vertico)   #'consult-line)
+       (cond ((featurep! :completion vertico)   #'+default/search-buffer)
              ((featurep! :completion ivy)       #'swiper)
              ((featurep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
