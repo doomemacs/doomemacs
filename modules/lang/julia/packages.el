@@ -7,4 +7,4 @@
 (when (featurep! +lsp)
   (if (featurep! :tools lsp +eglot)
       (package! eglot-jl :pin "49f170e01c5a107c2cb662c00544d827eaa2c4d8")
-    (package! lsp-julia :pin "d4a7a27d6ac7c6831b4f493dd89f82fa0c75bdf5")))
+    (package! lsp-julia :pin "809da95c05fe668acbae5a35e03082d9b9577728")))
