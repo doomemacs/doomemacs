@@ -6,16 +6,16 @@
            :files ("*.el" "extensions/*.el"))
   :pin "81a4b35f8d11dfad56de1727ee9bdd3b4461d07c")
 
-(package! orderless :pin "1a7011ac9c476dbb083c5ead88462a5f520ef8aa")
+(package! orderless :pin "62f71c34baca0b7d0adeab4a1c07d85ffcee80d9")
 
-(package! consult :pin "105a1ac50169382368a36ed53d7af908d02ffa07")
+(package! consult :pin "a07ca383318cdce6935a370f1d17687ba9f225c3")
 (when (featurep! :checkers syntax)
   (package! consult-flycheck :pin "92b259e6a8ebe6439f67d3d7ffa44b7e64b76478"))
 
-(package! embark :pin "19145d5a3367038f0a9a114b7387c8a896037aec")
-(package! embark-consult :pin "19145d5a3367038f0a9a114b7387c8a896037aec")
+(package! embark :pin "3a90a3e3c6cd035503d0c9de5c22875028e6da00")
+(package! embark-consult :pin "3a90a3e3c6cd035503d0c9de5c22875028e6da00")
 
-(package! marginalia :pin "c6ca58bea819c3b5e4b3295ad693c5cd0ae5db31")
+(package! marginalia :pin "cb1d3ba604dda17d8d44e7355ad76a1651830a30")
 
 (package! wgrep :pin "f9687c28bbc2e84f87a479b6ce04407bb97cfb23")
 
