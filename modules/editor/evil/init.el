@@ -91,6 +91,7 @@ variable for an explanation of the defaults (in comments). See
       apropos
       arc-mode
       auto-package-update
+      beginend
       bm
       bookmark
       (buff-menu "buff-menu")
@@ -135,6 +136,7 @@ variable for an explanation of the defaults (in comments). See
       eval-sexp-fu
       evil-mc
       eww
+      fanyi
       finder
       flycheck
       flymake
@@ -174,6 +176,7 @@ variable for an explanation of the defaults (in comments). See
       man
       magit
       magit-todos
+      markdown-mode
       monky
       mu4e
       mu4e-conversation
@@ -207,7 +210,10 @@ variable for an explanation of the defaults (in comments). See
       robe
       rtags
       ruby-mode
+      scroll-lock
+      selectrum
       sh-script
+      ,@(when EMACS28+ '(shortdoc))
       simple
       slime
       sly
