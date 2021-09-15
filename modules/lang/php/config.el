@@ -3,8 +3,11 @@
 (defvar +php--company-backends nil
   "List of company backends to use in `php-mode'.")
 
-(defvar +php/default-docker-container "php-fpm"
-  "The default docker container to run commands in")
+(defvar +php-default-docker-container "php-fpm"
+  "The default docker container to run commands in.")
+
+(defvar +php-default-docker-compose "docker-compose.yml"
+  "Path to docker-compose file.")
 
 (after! projectile
   (add-to-list 'projectile-project-root-files "composer.json"))
@@ -162,7 +165,7 @@
 
 (def-project-mode! +phpunit-docker-compose-mode
   :modes '(php-mode docker-compose-mode)
-  :files (and "phpunit.xml" "docker-compose.yml")
+  :files (and "phpunit.xml" (or +php-default-docker-compose  "docker-compose.yml"))
   :on-enter
-  (setq phpunit-args `("exec" ,+php/default-docker-container "php" "vendor/bin/phpunit")
+  (setq phpunit-args `("exec" ,+php-default-docker-container "php" "vendor/bin/phpunit")
         phpunit-executable (executable-find "docker-compose")))
