@@ -5,8 +5,8 @@
     (progn
       (package! eglot :pin "c17bdf6c98d6bf0f1a85f1175556e1038654402f")
       (when (featurep! :completion vertico)
-        (package! consult-eglot :pin "a6aeb6fa078cc7ea6537793868f606b55ac63088")))
-  (package! lsp-mode :pin "82fa7743602e9a6366ecd128efcd620ecc97fcf4")
+        (package! consult-eglot :pin "28a09cc839a9010df1a00a55528697ab34e1b259")))
+  (package! lsp-mode :pin "d5d7a54dee2622d3fd884638617f4957e1876018")
   (package! lsp-ui :pin "b625f3cb5e88559ab99bec58f7a14272edb296bc")
   (when (featurep! :completion ivy)
     (package! lsp-ivy :pin "3e87441a625d65ced5a208a0b0442d573596ffa3"))

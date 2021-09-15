@@ -15,10 +15,10 @@
   (package! helm-xref :pin "23f1174cfca7667d95828dcd388c655a4a9c877d"))
 
 ;; For dictionary and online lookup
-(package! request :pin "f3a5b4352e9f444ace2a332939abff504b573887")
+(package! request :pin "2b68b3ca543f1dfbebb43a44f20601c3947bd729")
 
 (when (featurep! +docsets)
-  (package! dash-docs :pin "dafc8fc9f1ddb2e4e39e0b8d066c42d5d7ce8d06")
+  (package! dash-docs :pin "29848b6b347ac520f7646c200ed2ec36cea3feda")
   (when (featurep! :completion helm)
     (package! helm-dash :pin "7f853bd34da666f0e9a883011c80f451b06f6c59"))
   (when (featurep! :completion ivy)
