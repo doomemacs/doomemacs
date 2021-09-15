@@ -127,6 +127,24 @@
   :mode "\\.hh$")
 
 
+(use-package! composer
+  :defer t
+  :init
+  (map! :after php-mode
+        :localleader
+        :map php-mode-map
+        :prefix ("c" . "composer")
+        "c" #'composer
+        "i" #'composer-install
+        "r" #'composer-require
+        "u" #'composer-update
+        "d" #'composer-dump-autoload
+        "s" #'composer-run-script
+        "v" #'composer-run-vendor-bin-command
+        "o" #'composer-find-json-file
+        "l" #'composer-view-lock-file))
+
+
 ;;
 ;; Projects
 
