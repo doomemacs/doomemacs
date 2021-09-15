@@ -8,6 +8,7 @@
 (package! php-mode :pin "535aec81739e8e766e0420fda616efc8846f2911")
 (package! php-refactor-mode :pin "7a794b0618df2882b1bd586fdd698dba0bc5130d")
 (package! phpunit :pin "fe6bc91c3bd8b329c6d26ad883a025f06b5121ee")
+(package! composer :pin "7c7f89df226cac69664d7eca5e913b544dc475c5")
 
 (when (featurep! +hack)
   (package! hack-mode
