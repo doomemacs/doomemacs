@@ -6,11 +6,13 @@
   "TODO"
   (interactive
    (list current-prefix-arg
-         (consult--read (password-store-list)
-                        :prompt "Pass: "
-                        :sort nil
-                        :require-match t
-                        :category 'pass)))
+         (progn
+           (require 'consult)
+           (consult--read (password-store-list)
+                          :prompt "Pass: "
+                          :sort nil
+                          :require-match t
+                          :category 'pass))))
   (funcall (if arg
                #'password-store-url
              #'password-store-copy)
