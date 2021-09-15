@@ -46,7 +46,7 @@
         (window-divider-mode +1))))
 
   ;; Adjust margins when text size is changed
-  (advice-add #'text-scale-adjust :after #'visual-fill-column-adjust))
+  (add-hook 'text-scale-mode-hook #'visual-fill-column-adjust))
 
 
 (use-package! mixed-pitch
