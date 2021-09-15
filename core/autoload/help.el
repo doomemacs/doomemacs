@@ -724,20 +724,37 @@ config blocks in your private config."
   ;; REVIEW Replace with deadgrep
   (unless (executable-find "rg")
     (user-error "Can't find ripgrep on your system"))
-  (if (fboundp 'counsel-rg)
-      (let ((counsel-rg-base-command
-             (if (stringp counsel-rg-base-command)
-                 (format counsel-rg-base-command
-                         (concat "%s " (mapconcat #'shell-quote-argument dirs " ")))
-               (append counsel-rg-base-command dirs))))
-        (counsel-rg query nil "-Lz" prompt))
-    ;; TODO Add helm support?
-    (grep-find
-     (string-join
-      (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never"
-                    (shell-quote-argument query))
-              (mapcar #'shell-quote-argument dirs))
-      " "))))
+  (cond ((fboundp 'consult--grep)
+         (consult--grep
+          prompt
+          (lambda (input)
+            (pcase-let* ((cmd (split-string-and-unquote consult-ripgrep-args))
+                         (type (consult--ripgrep-regexp-type (car cmd)))
+                         (`(,arg . ,opts) (consult--command-split input))
+                         (`(,re . ,hl) (funcall consult--regexp-compiler arg type)))
+              (when re
+                (list :command
+                      (append cmd
+                              (and (eq type 'pcre) '("-P"))
+                              (list  "-e" (consult--join-regexps re type))
+                              opts
+                              dirs)
+                      :highlight hl))))
+          data-directory query))
+        ((fboundp 'counsel-rg)
+         (let ((counsel-rg-base-command
+                (if (stringp counsel-rg-base-command)
+                    (format counsel-rg-base-command
+                            (concat "%s " (mapconcat #'shell-quote-argument dirs " ")))
+                  (append counsel-rg-base-command dirs))))
+           (counsel-rg query nil "-Lz" (concat prompt ": "))))
+        ;; () TODO Helm support?
+        ((grep-find
+          (string-join
+           (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never"
+                         (shell-quote-argument query))
+                   (mapcar #'shell-quote-argument dirs))
+           " ")))))
 
 ;;;###autoload
 (defun doom/help-search-load-path (query)
