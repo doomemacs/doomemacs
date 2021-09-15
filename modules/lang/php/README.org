@@ -81,7 +81,7 @@ Note for =+lsp=:
 PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are
 provided for reference:
 
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+#+begin_src sh :tangle (if (doom-system-os 'macos) "yes")
 brew tap homebrew/homebrew-php
 brew install php71  # or php53, php54, php55
 brew install composer
@@ -89,23 +89,23 @@ brew install composer
 # If you use intelephense:
 brew install node
 brew install npm
-#+END_SRC
+#+end_src
 
 *** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+#+begin_src sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
 
 # If you use intelephense:
 sudo pacman -S nodejs npm
-#+END_SRC
+#+end_src
 
 *** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
+#+begin_src sh :dir /sudo::
 sudo zypper install php-composer
 
 # If you use intelephense:
 sudo zypper install nodejs npm
-#+END_SRC
+#+end_src
 
 ** Dependencies
 This module has no required dependencies, but it has a couple optional ones.
@@ -116,7 +116,7 @@ This module has no required dependencies, but it has a couple optional ones.
 + ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
 + ~phpactor~ (for LSP if intelephense isn't desired)
 
-#+BEGIN_SRC sh
+#+begin_src sh
 composer global require \
     d11wtq/boris \
     phpunit/phpunit \
@@ -127,15 +127,15 @@ composer global require \
 # Needed by php-cs-fixer, otherwise you'll get "Couldn't resolve parser
 # 'php'" errors
 npm install -g @prettier/plugin-php
-#+END_SRC
+#+end_src
 
 You must ensure that ~~/.composer/vendor/bin~ is in ~PATH~, so these executables are
 visible to Emacs:
 
-#+BEGIN_SRC sh
+#+begin_src sh
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
-#+END_SRC
+#+end_src
 
 You may also need to regenerate your envvar file by running ~doom env~ on the
 command line.
@@ -227,7 +227,7 @@ machine * login intelephense password <key>
 
 And add the following to your config
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun my-fetch-password (&rest params)
   (require 'auth-source)
   (let ((match (car (apply #'auth-source-search params))))
@@ -239,4 +239,4 @@ And add the following to your config
       (error "Password not found for %S" params))))
 
 (setq lsp-intelephense-license-key (my-fetch-password :user intelephense))
-#+END_SRC
+#+end_src
