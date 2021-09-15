@@ -3,6 +3,9 @@
 (defvar +php--company-backends nil
   "List of company backends to use in `php-mode'.")
 
+(defvar +php/default-docker-container "php-fpm"
+  "The default docker container to run commands in")
+
 (after! projectile
   (add-to-list 'projectile-project-root-files "composer.json"))
 
@@ -15,7 +18,7 @@
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml extension instead.
-  (setq php-template-compatibility nil)
+  (setq php-mode-template-compatibility nil)
 
   (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
   (set-repl-handler! 'php-mode #'php-boris)
@@ -23,7 +26,7 @@
   (set-formatter! 'php-mode #'php-cs-fixer-fix)
   (set-ligatures! 'php-mode
     ;; Functional
-    :lambda "function()"
+    :lambda "function()" :lambda "fn"
     :def "function"
     ;; Types
     :null "null"
@@ -155,3 +158,10 @@
 (def-project-mode! +php-composer-mode
   :modes '(web-mode php-mode)
   :files ("composer.json"))
+
+(def-project-mode! +phpunit-docker-compose-mode
+  :modes '(php-mode docker-compose-mode)
+  :files (and "phpunit.xml" "docker-compose.yml")
+  :on-enter
+  (setq phpunit-args `("exec" ,+php/default-docker-container "php" "vendor/bin/phpunit")
+        phpunit-executable (executable-find "docker-compose")))
