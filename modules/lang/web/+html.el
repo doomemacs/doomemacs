@@ -4,7 +4,7 @@
   :mode "\\.[px]?html?\\'"
   :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
   :mode "\\.erb\\'"
-  :mode "\\.l?eex\\'"
+  :mode "\\.[lh]?eex\\'"
   :mode "\\.sface\\'"
   :mode "\\.jsp\\'"
   :mode "\\.as[cp]x\\'"
