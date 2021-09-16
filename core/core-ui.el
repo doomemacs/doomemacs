@@ -666,6 +666,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h -100)
+(add-transient-hook! 'after-make-frame-functions
+  (when doom-unicode-font
+    (set-fontset-font t 'unicode doom-unicode-font)))
 
 ;; Apply `doom-theme'
 (add-hook (if (daemonp)
