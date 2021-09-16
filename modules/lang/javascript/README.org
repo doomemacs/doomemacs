@@ -81,7 +81,7 @@ The =:completion company= module uses =company-prescient= to sort completion by
 |-------------------------+------------------+------------------------|
 | ~tide-restart-server~   | =SPC m R=        | Restart tide server    |
 | ~tide-reformat~         | =SPC m f=        | Reformat region        |
-| ~tide-rename-symbol~    | =SPC m r s=      | Rename symbol at point |
+| ~tide-rename-symbol~    | =SPC m r r s=    | Rename symbol at point |
 | ~tide-organize-imports~ | =SPC m r o i=    | Organize imports       |
 *** Refactoring (js2-refactor-mode)
 | command                                           | key / ex command | description                                                                                                        |
