@@ -378,16 +378,14 @@ This is a wrapper around `eval-after-load' that:
               ;; macros/packages.
               `(eval-after-load ',package ',(macroexp-progn body))))
     (let ((p (car package)))
-      (cond ((not (keywordp p))
-             `(after! (:and ,@package) ,@body))
-            ((memq p '(:or :any))
+      (cond ((memq p '(:or :any))
              (macroexp-progn
               (cl-loop for next in (cdr package)
                        collect `(after! ,next ,@body))))
             ((memq p '(:and :all))
-             (dolist (next (cdr package))
-               (setq body `((after! ,next ,@body))))
-             (car body))))))
+             (dolist (next (reverse (cdr package)) (car body))
+               (setq body `((after! ,next ,@body)))))
+            (`(after! (:and ,@package) ,@body))))))
 
 (defun doom--handle-load-error (e target path)
   (let* ((source (file-name-sans-extension target))
