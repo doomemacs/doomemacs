@@ -15,13 +15,14 @@
 - [[#features][Features]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
+    - [[#exunit-mode][exunit-mode]]
 
 * Description
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
 or [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 
 ** Module flags
-+ ~+lsp~ Enable LSP support. Requires [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
++ ~+lsp~ Enable LSP support. Requires [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]], also disables alchemist.
 
 ** Plugins
 + [[https://github.com/elixir-editors/emacs-elixir][elixir-mode]]
