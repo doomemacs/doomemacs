@@ -2,10 +2,11 @@
 ;;; tools/tree-sitter/packages.el
 
 (package! tree-sitter
-  :pin "588170ffbdbf02175cdb97547f7efd7e933a5a5f")
+  :pin "4d9871d23999fe5f8de821e23c9ec576df2b2738")
+
 (package! tree-sitter-langs
-  :pin "81adcdc06a9700ecf9659171da275b1c9dcfdfb6")
+  :pin "fa47b55f7bd11bd2b17ab48deb03ed23000bb974")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-textobj-tree-sitter
-    :pin "fe4d738486c4a267d799057409748063e036736e"))
+    :pin "eedc1f54611e4403ea228b33056388a8539a2b3e"))
