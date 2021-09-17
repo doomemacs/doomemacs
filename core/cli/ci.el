@@ -31,6 +31,10 @@
 ;;
 ;;; Git hooks
 
+(defvar doom-cli-commit-ref-types '("Fix" "Ref" "Close" "Revert"))
+
+(defvar doom-cli-commit-ref-git-types '("Co-authored-by:" "Signed-off-by:"))
+
 (defvar doom-cli-commit-rules
   (list (fn! (&key subject)
           (when (<= (length subject) 10)
@@ -162,7 +166,7 @@
           (catch 'found
             (dolist (line refs)
               (cl-destructuring-bind (type . ref) (split-string line " +")
-                (unless (member type '("Co-authored-by:" "Signed-off-by:"))
+                (unless (member type doom-cli-commit-ref-git-types)
                   (setq ref (string-join ref " "))
                   (or (string-match "^\\(https?://.+\\|[^/]+/[^/]+\\)?\\(#[0-9]+\\|@[a-z0-9]+\\)" ref)
                       (string-match "^https?://" ref)
@@ -205,27 +209,19 @@
        (let (subject body refs summary type scopes bang refs errors warnings)
          (with-temp-buffer
            (save-excursion (insert (cdr commit)))
-           (setq subject (buffer-substring (point-min) (line-end-position))
-                 body (buffer-substring
-                       (line-beginning-position 3)
-                       (save-excursion
-                         (or (and (re-search-forward (format "\n\n%s "
-                                                             (regexp-opt '("Co-authored-by:" "Signed-off-by:" "Fix" "Ref" "Close" "Revert")
-                                                                         t))
-                                                     nil t)
-                                  (match-beginning 1))
-                             (point-max))))
-                 refs (split-string
-                       (save-excursion
-                         (buffer-substring
-                          (or (and (re-search-forward (format "\n\n%s "
-                                                              (regexp-opt '("Co-authored-by:" "Signed-off-by:" "Fix" "Ref" "Close" "Revert")
-                                                                          t))
-                                                      nil t)
-                                   (match-beginning 1))
-                              (point-max))
-                          (point-max)))
-                       "\n" t))
+           (let ((end (save-excursion
+                        (or (and (re-search-forward
+                                  (format "\n\n%s "
+                                          (regexp-opt (append doom-cli-commit-ref-types
+                                                              doom-cli-commit-ref-git-types)
+                                                      t))
+                                  nil t)
+                                 (match-beginning 1))
+                            (point-max)))))
+             (setq subject (buffer-substring (point-min) (line-end-position))
+                   body (buffer-substring (line-beginning-position 3) end)
+                   refs (split-string (buffer-substring end (point-max))
+                                      "\n" t)))
            (save-match-data
              (when (looking-at "^\\([a-zA-Z0-9_-]+\\)\\(!?\\)\\(?:(\\([^)]+\\))\\)?: \\([^\n]+\\)")
                (setq type (intern (match-string 1))
