@@ -162,16 +162,17 @@
           (catch 'found
             (dolist (line refs)
               (cl-destructuring-bind (type . ref) (split-string line " +")
-                (setq ref (string-join ref " "))
-                (or (string-match "^\\(https?://.+\\|[^/]+/[^/]+\\)?\\(#[0-9]+\\|@[a-z0-9]+\\)" ref)
-                    (string-match "^https?://" ref)
-                    (and (string-match "^[a-z0-9]\\{12\\}$" ref)
-                         (= (car (doom-call-process "git" "show" ref))
-                            0))
-                    (throw 'found
-                           (cons 'error
-                                 (format "%S is not a valid issue/PR, URL, or 12-char commit hash"
-                                         line))))))))
+                (unless (member type '("Co-authored-by:" "Signed-off-by:"))
+                  (setq ref (string-join ref " "))
+                  (or (string-match "^\\(https?://.+\\|[^/]+/[^/]+\\)?\\(#[0-9]+\\|@[a-z0-9]+\\)" ref)
+                      (string-match "^https?://" ref)
+                      (and (string-match "^[a-z0-9]\\{12\\}$" ref)
+                           (= (car (doom-call-process "git" "show" ref))
+                              0))
+                      (throw 'found
+                             (cons 'error
+                                   (format "%S is not a valid issue/PR, URL, or 12-char commit hash"
+                                           line)))))))))
 
         ;; TODO Check that bump/revert SUBJECT list: 1) valid modules and 2)
         ;;      modules whose files are actually being touched.
