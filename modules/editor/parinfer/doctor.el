@@ -3,8 +3,5 @@
 (unless (fboundp 'module-load)
   (warn! "Your emacs wasn't built with dynamic modules support. `parinfer-rust-mode' won't work"))
 (when (and (eq system-type 'berkeley-unix)
-           (not (file-readable-p (concat user-emacs-directory
-                                         ".local/etc/parinfer-rust/libparinfer_rust.so"))))
-  (warn! (concat "Could not read " user-emacs-directory
-                 ".local/etc/parinfer-rust/libparinfer_rust.so. "
-                 "`parinfer-rust-mode' won't work")))
+           (not (file-readable-p parinfer-rust-library)))
+  (warn! (concat "Could not read " parinfer-rust-library ". `parinfer-rust-mode' won't work")))
