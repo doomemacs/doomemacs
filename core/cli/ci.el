@@ -187,8 +187,9 @@
      (list (cons
             "CURRENT"
             (buffer-substring (point-min)
-                              (and (re-search-forward "^# Please enter the commit message" nil t)
-                                   (match-beginning 0))))))))
+                              (if (re-search-forward "^# Please enter the commit message" nil t)
+                                  (match-beginning 0)
+                                (point-max))))))))
 
 
 ;;
