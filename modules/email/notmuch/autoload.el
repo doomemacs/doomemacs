@@ -60,20 +60,17 @@
   "Sync notmuch emails with server."
   (interactive)
   (with-current-buffer (compile (+notmuch-get-sync-command))
-    (let ((w (get-buffer-window (current-buffer))))
-      (select-window w)
-      (add-hook
-       'compilation-finish-functions
-       (lambda (buf status)
-         (if (equal status "finished\n")
-             (progn
-               (delete-window w)
-               (kill-buffer buf)
-               (notmuch-refresh-all-buffers)
-               (message "Notmuch sync successful"))
-           (user-error "Failed to sync notmuch data")))
-       nil
-       'local))))
+    (add-hook
+     'compilation-finish-functions
+     (lambda (buf status)
+       (if (equal status "finished\n")
+           (progn
+             (kill-buffer buf)
+             (notmuch-refresh-all-buffers)
+             (message "Notmuch sync successful"))
+         (user-error "Failed to sync notmuch data")))
+     nil
+     'local)))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
