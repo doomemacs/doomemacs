@@ -254,7 +254,7 @@
             (dolist (e (reverse warnings))
               (print! (warn "%s" e))))))))
     (when (> warnings? 0)
-      (print! (warn "Warnings: %d") errors?))
+      (print! (warn "Warnings: %d") warnings?))
     (when (> errors? 0)
       (print! (error "Failures: %d") errors?))
     (if (not (or (> errors? 0) (> warnings? 0)))
