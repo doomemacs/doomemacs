@@ -1,0 +1,71 @@
+#+TITLE:   lang/common-lisp
+#+DATE:    June 13, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#sly][Sly]]
+  - [[#org-mode][org-mode]]
+- [[#configuration][Configuration]]
+
+* Description
+
+This module provides support for [[https://lisp-lang.org/][Common Lisp]] and the [[https://github.com/joaotavora/sly][Sly]] development
+environment. Common Lisp is not a single language but a specification, with many
+competing compiler implementations. By default, [[http://www.sbcl.org/][Steel Bank Common Lisp]] (SBCL) is
+assumed to be installed, but this can be configured.
+
+Common Lisp benefits from a mature specification and rich standard library.
+Thanks to its powerful REPL and debugger, it boasts an "interactive programming"
+style often unseen in other languages. Compiled Common Lisp programs are trusted
+to run unmodified for a long time.
+
+** Maintainers
+
+This module has no dedicated maintainers.
+
+** Module Flags
+
+This module provides no flags.
+
+** Plugins
+
++ [[https://github.com/joaotavora/sly][sly]]
++ [[https://github.com/joaotavora/sly-macrostep][sly-macrostep]]
++ [[https://github.com/PuercoPop/sly-repl-ansi-color][sly-repl-ansi-color]]
+
+* Prerequisites
+
+This module requires the [[http://www.sbcl.org/][SBCL]] compiler to be installed.
+
+* Features
+
+This module does not integrate with the =lsp= module. Sly (and SLIME before it) is
+considered the defacto development environment for Common Lisp and provides much
+of what is normally expected of an LSP, plus tight integration with the REPL and
+Emacs.
+
+** Sly
+
+Using this module is mostly a matter of using Sly. Please consider reading
+through [[http://joaotavora.github.io/sly/#A-SLY-tour-for-SLIME-users][the Sly Tour]].
+
+A Sly session will be started when you open a =.lisp= file. Use =SPC m '= to switch
+to the REPL minibuffer.
+
+** org-mode
+
+This module also enables the evaluation of =lisp= source blocks in Org Mode.
+However, you will need a running Sly session for this to work. =M-x sly= starts
+such a session if you didn't have one open already.
+
+* Configuration
+
+If you don't want Sly to use SBCL, you can configure the variable
+~inferior-lisp-program~ to some other binary on your PATH.
