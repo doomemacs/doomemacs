@@ -214,8 +214,8 @@ targets."
        (if (eq (caar targets) 'embark-become)
            "Become"
          (format "Act on %s '%s'%s"
-                 (caar targets)
-                 (embark--truncate-target (cdar targets))
+                 (plist-get (car targets) :type)
+                 (embark--truncate-target (plist-get (car targets) :target))
                  (if (cdr targets) "…" "")))
        (if prefix (lookup-key keymap prefix) keymap)
        nil nil t))))
