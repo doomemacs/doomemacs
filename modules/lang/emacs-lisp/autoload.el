@@ -244,6 +244,7 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
   (when (and (bound-and-true-p flycheck-mode)
              (eq major-mode 'emacs-lisp-mode)
              (or (not default-directory)
+                 (null (buffer-file-name (buffer-base-buffer)))
                  (cl-find-if (doom-partial #'file-in-directory-p default-directory)
                              +emacs-lisp-disable-flycheck-in-dirs)))
     (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
