@@ -257,7 +257,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
          (with-current-buffer (dired location)
            (setq-local dired-mail-buffer mail-buffer)
            (dired-mu4e-attach-ctrl-c-ctrl-c 1)))))
-    ('dired-mode
+    ((or 'dired-mode 'ranger-mode 'deer-mode)
      (unless (and files-to-attach (/= 1 files-to-attach))
        (setq files-to-attach
              (delq nil
