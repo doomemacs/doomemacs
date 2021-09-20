@@ -165,6 +165,21 @@
   (when (fboundp 'make-xwidget)
     (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-with-xwidget)))
 
+  ;; Detect empty subjects, and give users an opotunity to fill something in
+  (defun +mu4e-check-for-subject ()
+    "Check that a subject is present, and prompt for a subject if not."
+    (save-excursion
+      (goto-char (point-min))
+      (search-forward "--text follows this line--")
+      (re-search-backward "^Subject:") ; this should be present no matter what
+      (let ((subject (string-trim (substring (thing-at-point 'line) 8))))
+        (when (string-empty-p subject)
+          (end-of-line)
+          (insert (read-string "Subject (optional): "))
+          (message "Sending...")))))
+
+  (add-hook 'message-send-hook #'+mu4e-check-for-subject)
+
   ;; The header view needs a certain amount of horizontal space to
   ;; actually show you all the information you want to see
   ;; so if the header view is entered from a narrow frame,
