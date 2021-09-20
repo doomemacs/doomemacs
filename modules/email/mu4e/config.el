@@ -321,7 +321,13 @@ Ignores all arguments and returns nil."
         org-msg-default-alternatives '((new . (utf-8 html))
                                        (reply-to-text . (utf-8))
                                        (reply-to-html . (utf-8 html)))
-        org-msg-convert-citation t)
+        org-msg-convert-citation t
+        ;; The default attachment matcher gives too many false positives,
+        ;; it's better to be more conservative. See https://regex101.com/r/EtaiSP/4.
+        org-msg-attached-file-reference
+        "see[ \t\n]\\(?:the[ \t\n]\\)?\\(?:\\w+[ \t\n]\\)\\{0,3\\}\\(?:attached\\|enclosed\\)\\|\
+(\\(?:attached\\|enclosed\\))\\|\
+\\(?:attached\\|enclosed\\)[ \t\n]\\(?:for\\|is\\)[ \t\n]")
 
   (defvar +org-msg-currently-exporting nil
     "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
