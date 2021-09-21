@@ -57,13 +57,14 @@ Not all language support all text objects (yet). [[https://github.com/nvim-trees
 objects languages support]]
 Note: only languages with parsers in emacs have text object support currently.
 Currently text objects are bound to:
-| key | text object |
-|-----+-------------|
-| =f=   | function    |
-| =C=   | class       |
-| =c=   | comment     |
-| =i=   | conditional |
-| =l=   | loop        |
+| key | text object         |
+|-----+---------------------|
+| =f= | function definition |
+| =F= | function call       |
+| =C= | class               |
+| =c= | comment             |
+| =i= | conditional         |
+| =l= | loop                |
 
 They are used in a container context (not =vf= but =vaf= or =vif=)
 

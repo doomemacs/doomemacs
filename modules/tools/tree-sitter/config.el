@@ -1,7 +1,6 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
 (use-package! tree-sitter
-  :when (bound-and-true-p module-file-suffix)
   :hook (prog-mode . turn-on-tree-sitter-mode)
   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
   :config
@@ -16,9 +15,12 @@
   (use-package! evil-textobj-tree-sitter
     :after tree-sitter
     :config
+    ;; FIXME: only bind when using a supported major mode
     (map!
      :textobj "f" nil nil
      :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
+
+     :textobj "F" (evil-textobj-tree-sitter-get-textobj "call.inner") (evil-textobj-tree-sitter-get-textobj "call.outer")
 
      :textobj "C" (evil-textobj-tree-sitter-get-textobj "class.inner") (evil-textobj-tree-sitter-get-textobj "class.outer")
 
