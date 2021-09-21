@@ -68,6 +68,10 @@ OR a shell command string such as
 
   (advice-add #'notmuch-start-notmuch-sentinel :around #'+notmuch-dont-confirm-on-kill-process-a)
 
+  ;;HACK temporary fix until notmuch stops abusing the completing-read-multiple api upstream
+  (when (featurep! :completion vertico)
+    (advice-add #'notmuch-read-tag-changes :filter-return (lambda (x) (mapcar #'string-trim x))))
+
   ;; modeline doesn't have much use in these modes
   (add-hook! '(notmuch-show-mode-hook
                notmuch-tree-mode-hook
