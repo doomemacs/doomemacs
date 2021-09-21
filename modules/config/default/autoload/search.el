@@ -22,6 +22,17 @@ If prefix ARG is set, prompt for a directory to search from."
   (+default/search-cwd 'other))
 
 ;;;###autoload
+(defun +default/search-emacsd ()
+  "Conduct a text search in files under `user-emacs-directory'."
+  (interactive)
+  (let ((default-directory user-emacs-directory))
+    (call-interactively
+     (cond ((featurep! :completion ivy)     #'+ivy/project-search-from-cwd)
+           ((featurep! :completion helm)    #'+helm/project-search-from-cwd)
+           ((featurep! :completion vertico) #'+vertico/project-search-from-cwd)
+           (#'rgrep)))))
+
+;;;###autoload
 (defun +default/search-buffer ()
   "Conduct a text search on the current buffer.
 
