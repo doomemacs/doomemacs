@@ -26,12 +26,7 @@ Returns the vterm buffer."
            (when (window-live-p window)
              (delete-window window))))
        (if-let (win (get-buffer-window buffer-name))
-           (if (eq (selected-window) win)
-               (delete-window win)
-             (select-window win)
-             (when (bound-and-true-p evil-local-mode)
-               (evil-change-to-initial-state))
-             (goto-char (point-max)))
+           (delete-window win)
          (let ((buffer (get-buffer-create buffer-name)))
            (with-current-buffer buffer
              (unless (eq major-mode 'vterm-mode)
