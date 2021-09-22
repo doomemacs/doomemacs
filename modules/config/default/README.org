@@ -12,8 +12,8 @@ The defaults module is intended as a "reasonable-defaults" module, but also as a
 reference for your own private modules. You'll find [[https://github.com/hlissner/doom-emacs-private][my private module in a
 separate repo]].
 
-Refer to the [[https://github.com/hlissner/doom-emacs/wiki/Customization][Customization page]] on the wiki for details on starting your own
-private module.
+Refer to the "Configure → Writing your own modules" section of the [[file:../../../docs/getting_started.org][Getting
+Started]] documentation for details on starting your own private module.
 #+end_quote
 
 * Table of Contents :TOC:
