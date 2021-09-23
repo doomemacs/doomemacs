@@ -20,7 +20,7 @@
     (package! company-phpactor :pin "272217fbb6b7e7f70615fc518d77c6d75f33a44f")))
 
 (when (featurep! :editor format)
-  (package! php-cs-fixer :pin "cc9a3624dcdc72d748d91e3d7cdb8544a1d85a51"))
+  (package! php-cs-fixer :pin "7e12a1af5d65cd8a801eeb5564c6268a4e190c0c"))
 
 ;; For building php-extras
 (package! async :pin "5d365ffc6a2c2041657eaa5d762c395ea748c8d7")
