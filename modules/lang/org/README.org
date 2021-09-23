@@ -104,7 +104,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =:lang rst=
   + [[https://github.com/msnoigrs/ox-rst][ox-rst]]
 + =:lang rust=
-  + [[https://github.com/micanzhang/ob-rust][ob-rust]]
+  + [[https://github.com/brotzeit/rustic#org-babel][ob-rustic]]
 + =:lang scala=
   + [[https://github.com/zwild/ob-ammonite][ob-ammonite]]
 + =:editor evil=

@@ -1452,7 +1452,7 @@ running ~doom sync~ to sync your config).
 You don't need ~org-babel-do-load-languages~. Doom lazy loads babel packages
 based on the language name in ~#+BEGIN_SRC~ blocks needed. As long as the babel
 plugin is installed and the plugin is named after its language (e.g.
-~#+BEGIN_SRC rust~ will load ~ob-rust~), you don't need to do anything else.
+~#+BEGIN_SRC rust~ will load ~ob-rustic~), you don't need to do anything else.
 
 There may be some special cases, however. Doom tries to handle a couple of them
 (e.g. with ob-jupyter, ob-ipython and ob-async). If you are experiencing errors
