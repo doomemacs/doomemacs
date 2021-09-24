@@ -115,7 +115,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-fontify-whole-heading-line t
         org-hide-leading-stars t
         org-image-actual-width nil
-        org-imenu-depth 8
+        org-imenu-depth 6
         ;; Sub-lists should have different bullets
         org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a."))
         org-priority-faces
