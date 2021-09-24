@@ -78,13 +78,11 @@
 
         (fn! (&key type scopes)
           (unless (memq type '(bump revert merge module release))
-            (cl-loop with scopes =
-                     (cl-loop for path
-                              in (cdr (doom-module-load-path (list doom-modules-dir)))
-                              for (_category . module)
-                              = (doom-module-from-path path)
-                              collect (symbol-name module))
-                     with extra-scopes  = '("cli")
+            (cl-loop with valid-scopes =
+                     (let ((modules (mapcar #'doom-module-from-path (cdr (doom-module-load-path (list doom-modules-dir))))))
+                       (append (seq-uniq (mapcar #'car modules))
+                               (mapcar #'cdr modules)))
+                     with extra-scopes  = '("cli" "ci" "lib")
                      with regexp-scopes = '("^&")
                      with type-scopes =
                      (pcase type
@@ -94,15 +92,20 @@
                                       (doom-glob doom-docs-dir "[a-z]*.org")))))
                      with scopes-re =
                      (concat (string-join regexp-scopes "\\|")
-                             "\\|"
-                             (regexp-opt (append type-scopes extra-scopes scopes)))
+                             "\\|^\\("
+                             (regexp-opt (append type-scopes
+                                                 extra-scopes
+                                                 (mapcar #'symbol-name valid-scopes)))
+                             "\\)$")
                      for scope in scopes
                      if (not (string-match scopes-re scope))
                      collect scope into error-scopes
                      finally return
                      (when error-scopes
-                       (cons 'error (format "Commit has invalid scope(s): %s"
-                                            error-scopes))))))
+                       (cons 'error
+                             (format "Commit has invalid scope%s: %s"
+                                     (if (cdr error-scopes) "s" "")
+                                     (string-join (nreverse error-scopes) ", ")))))))
 
         (fn! (&key scopes)
           (unless (equal scopes (sort scopes #'string-lessp))
