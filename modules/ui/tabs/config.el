@@ -15,8 +15,11 @@
         centaur-tabs-cycle-scope 'tabs)
 
   :config
-  (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
-  (add-hook '+popup-buffer-mode-hook #'centaur-tabs-local-mode))
+  (add-hook! '(+doom-dashboard-mode-hook +popup-buffer-mode-hook)
+    (defun +tabs-disable-centaur-tabs-mode-maybe-h ()
+      "Disable `centaur-tabs-mode' in current buffer."
+      (when (centaur-tabs-mode-on-p)
+        (centaur-tabs-local-mode)))))
 
 
 ;; TODO tab-bar-mode (emacs 27)
