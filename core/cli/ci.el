@@ -231,29 +231,30 @@
                      bang (equal (match-string 2) "!")
                      scopes (ignore-errors (split-string (match-string 3) ","))
                      summary (match-string 4)))))
-         (dolist (fn doom-cli-commit-rules)
-           (pcase (funcall fn
-                           :bang bang
-                           :body body
-                           :refs refs
-                           :scopes scopes
-                           :subject subject
-                           :summary summary
-                           :type type)
-             (`(,type . ,msg)
-              (push msg (if (eq type 'error) errors warnings)))))
-         (if (and (null errors) (null warnings))
-             (print! (success "%s %s") (substring (car commit) 0 7) subject)
-           (print! (start "%s %s") (substring (car commit) 0 7) subject))
-         (print-group!
-          (when errors
-            (cl-incf errors?)
-            (dolist (e (reverse errors))
-              (print! (error "%s" e))))
-          (when warnings
-            (cl-incf warnings?)
-            (dolist (e (reverse warnings))
-              (print! (warn "%s" e))))))))
+         (unless (string-match-p "^\\(?:\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
+           (dolist (fn doom-cli-commit-rules)
+             (pcase (funcall fn
+                             :bang bang
+                             :body body
+                             :refs refs
+                             :scopes scopes
+                             :subject subject
+                             :summary summary
+                             :type type)
+               (`(,type . ,msg)
+                (push msg (if (eq type 'error) errors warnings)))))
+           (if (and (null errors) (null warnings))
+               (print! (success "%s %s") (substring (car commit) 0 7) subject)
+             (print! (start "%s %s") (substring (car commit) 0 7) subject))
+           (print-group!
+            (when errors
+              (cl-incf errors?)
+              (dolist (e (reverse errors))
+                (print! (error "%s" e))))
+            (when warnings
+              (cl-incf warnings?)
+              (dolist (e (reverse warnings))
+                (print! (warn "%s" e)))))))))
     (when (> warnings? 0)
       (print! (warn "Warnings: %d") warnings?))
     (when (> errors? 0)
