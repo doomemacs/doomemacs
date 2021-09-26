@@ -17,7 +17,7 @@
   (let ((dir (doom-path doom-emacs-dir ".git/hooks"))
         (default-directory doom-emacs-dir))
     (make-directory dir 'parents)
-    (dolist (hook '("commit-msg"))
+    (dolist (hook '("commit-msg" "pre-push"))
       (let ((file (doom-path dir hook)))
         (with-temp-file file
           (insert "#!/usr/bin/env sh\n"
@@ -198,6 +198,39 @@
                               (if (re-search-forward "^# Please enter the commit message" nil t)
                                   (match-beginning 0)
                                 (point-max))))))))
+
+(defun doom-cli--ci-hook-pre-push (_remote _url)
+  (with-temp-buffer
+      (let ((z40 "0000000000000000000000000000000000000000")
+            line range errors)
+        (while (setq line (ignore-errors (read-from-minibuffer "")))
+          (catch 'continue
+            (cl-destructuring-bind (local-ref local-sha remote-ref remote-sha)
+                (split-string line " ")
+              (unless (or (string-match-p "^refs/heads/\\(master\\|main\\)$" remote-ref)
+                          (equal local-sha z40))
+                (throw 'continue t))
+              (setq
+               range (if (equal remote-sha z40)
+                         local-sha
+                       (format "%s..%s" remote-sha local-sha)))
+
+              (dolist (type '("WIP" "squash!" "fixup!" "FIXUP"))
+                (let ((commits
+                       (split-string
+                        (cdr (doom-call-process
+                              "git" "rev-list" "--grep" (concat "^" type) range))
+                        "\n" t)))
+                  (dolist (commit commits)
+                    (push (cons type commit) errors))))
+
+              (if (null errors)
+                  (print! (success "No errors during push"))
+                (print! (error "Aborting push due to lingering WIP, squash!, or fixup! commits"))
+                (print-group!
+                 (dolist (error errors)
+                   (print! (info "%s commit in %s" (car error) (cdr error)))))
+                (throw 'exit 1))))))))
 
 
 ;;
