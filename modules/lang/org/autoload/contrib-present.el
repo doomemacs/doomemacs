@@ -1,9 +1,6 @@
 ;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +present)
 
-(defvar +org-present--overlays nil)
-
-
 ;;
 ;;; Helpers
 
@@ -40,12 +37,6 @@
                        (match-end 1)
                        org-tree-slide-mode
                        t))))
-
-;;;###autoload
-(defun +org-present-remove-overlays-h ()
-  "TODO"
-  (mapc #'delete-overlay +org-present--overlays)
-  (remove-from-invisibility-spec '(+org-present)))
 
 ;;;###autoload
 (defun +org-present-detect-slide-h ()
@@ -89,7 +80,6 @@
            (text-scale-set 0)
            (set-window-fringes nil fringe-mode fringe-mode)
            (org-clear-latex-preview)
-           (+org-present-remove-overlays-h)
            (org-remove-inline-images)
            (org-mode)))
     (redraw-display)))
