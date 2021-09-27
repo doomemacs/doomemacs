@@ -62,12 +62,16 @@
 (defvar cwm-frame-internal-border)
 (defvar cwm-left-fringe-ratio)
 (defvar cwm-centered-window-width)
+(defvar +org-present--last-wconf nil)
 ;;;###autoload
 (defun +org-present-prettify-slide-h ()
-  "TODO"
   "Set up the org window for presentation."
-  (doom/window-maximize-buffer)
   (let ((arg (if org-tree-slide-mode +1 -1)))
+    (if (not org-tree-slide-mode)
+        (when +org-present--last-wconf
+          (set-window-configuration +org-present--last-wconf))
+      (setq +org-present--last-wconf (current-window-configuration))
+      (doom/window-maximize-buffer))
     (when (fboundp 'centered-window-mode)
       (setq-local cwm-use-vertical-padding t)
       (setq-local cwm-frame-internal-border 100)
