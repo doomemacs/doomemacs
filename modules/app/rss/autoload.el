@@ -54,7 +54,14 @@
     (forward-line -1)
     (call-interactively '+rss/open)))
 
-
+;;;###autoload
+(defun +rss/copy-link ()
+  "Copy current link to clipboard."
+  (interactive)
+  (let ((link (elfeed-entry-link elfeed-show-entry)))
+    (when link
+      (kill-new link)
+      (message "Copied %s to clipboard" link))))
 ;;
 ;; Hooks
 
