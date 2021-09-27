@@ -30,6 +30,7 @@ This module has no dedicated maintainers.
 
 ** Plugins
 + [[https://github.com/skeeto/elfeed][elfeed]]
++ [[https://github.com/algernon/elfeed-goodies][elfeed-goodies]] 
 + =+org=
   + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
 
@@ -72,20 +73,21 @@ When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to c
 
 ** Keybindings
 + General
-  | Key     | Mode               | Description            |
-  |---------+--------------------+------------------------|
-  | =S-RET= | Elfeed-search-mode | Open link into browser |
-  | =RET=   | Elfeed-search-mode | Open item              |
-  | =s=     | Elfeed-search-mode | Filter                 |
-  | =C-j=   | Elfeed-show-mode   | Move to next item      |
-  | =C-k=   | Elfeed-show-mode   | Move to previous item  |
+  | Key     | Mode               | Description                    |
+  |---------+--------------------+--------------------------------|
+  | =S-RET= | Elfeed-search-mode | Open link into browser         |
+  | =RET=   | Elfeed-search-mode | Open item                      |
+  | =s=     | Elfeed-search-mode | Filter                         |
+  | =C-j=   | Elfeed-show-mode   | Move to next item              |
+  | =C-k=   | Elfeed-show-mode   | Move to previous item          |
 
 + If ~:editor evil +everywhere~
   | Key | Description                 |
   |-----+-----------------------------|
   | q   | elfeed-kill-buffer          |
   | r   | elfeed-search-update--force |
- 
+  | g c | Copy link of current entry  |
+
 ** News filtering
 + Time filtering
   + ~@2-days-ago~ Past two days
