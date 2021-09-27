@@ -15,13 +15,6 @@
     (remove-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode
                  'local)))
 
-(defun +org-present--make-invisible (beg end)
-  (unless (assq '+org-present buffer-invisibility-spec)
-    (add-to-invisibility-spec '(+org-present)))
-  (let ((overlay (make-overlay beg (1+ end))))
-    (push overlay +org-present--overlays)
-    (overlay-put overlay 'invisible '+org-present)))
-
 
 ;;
 ;;; Hooks
@@ -32,9 +25,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^[[:space:]]*\\(#\\+\\)\\(\\(?:BEGIN\\|END\\|ATTR\\)[^[:space:]]+\\).*" nil t)
-      (+org-present--make-invisible
-       (match-beginning 1)
-       (match-end 0)))))
+      (org-flag-region (match-beginning 1)
+                       (match-end 0)
+                       org-tree-slide-mode
+                       t))))
 
 ;;;###autoload
 (defun +org-present-hide-leading-stars-h ()
@@ -42,7 +36,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^\\(\\*+\\)" nil t)
-      (+org-present--make-invisible (match-beginning 1) (match-end 1)))))
+      (org-flag-region (match-beginning 1)
+                       (match-end 1)
+                       org-tree-slide-mode
+                       t))))
 
 ;;;###autoload
 (defun +org-present-remove-overlays-h ()
