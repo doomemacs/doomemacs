@@ -215,6 +215,15 @@ Dictionary.app behind the scenes to get definitions.")
   :unless IS-MAC
   :defer t
   :config
+  ;; REVIEW Temporarily fix abo-abo/define-word#31
+  (defadvice! +lookup--fix-define-word-a (fn &rest args)
+    "Fix `define-word' backends that require a user agent (like wordnik)."
+    :around #'define-word
+    (let ((url-request-extra-headers
+           '(("User-Agent" .
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36"))))
+      (apply fn args)))
+
   (setq define-word-displayfn-alist
         (cl-loop for (service . _) in define-word-services
                  collect (cons service #'+eval-display-results-in-popup))))
