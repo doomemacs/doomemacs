@@ -4,21 +4,25 @@
   :mode "\\.[px]?html?\\'"
   :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
   :mode "\\.erb\\'"
-  :mode "\\.eex\\'"
+  :mode "\\.[lh]?eex\\'"
+  :mode "\\.sface\\'"
   :mode "\\.jsp\\'"
   :mode "\\.as[cp]x\\'"
+  :mode "\\.ejs\\'"
   :mode "\\.hbs\\'"
   :mode "\\.mustache\\'"
   :mode "\\.svelte\\'"
-  :mode "\\.vue\\'"
   :mode "\\.twig\\'"
-  :mode "\\.jinja\\'"
+  :mode "\\.jinja2?\\'"
+  :mode "\\.eco\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
-  ;; REVIEW We associate TSX files with `web-mode' because `typescript-mode'
-  ;;        does not officially support JSX/TSX. See
-  ;;        https://github.com/emacs-typescript/typescript.el/issues/4
-  :mode "\\.tsx\\'"
+  :init
+  ;; If the user has installed `vue-mode' then, by appending this to
+  ;; `auto-mode-alist' rather than prepending it, its autoload will have
+  ;; priority over this one.
+  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
+  :mode "\\.vue\\'"
   :config
   (set-docsets! 'web-mode "HTML" "CSS" "Twig" "WordPress")
 
@@ -62,13 +66,11 @@
     (delq! nil web-mode-engines-auto-pairs))
 
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
+  (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'"))
 
-  (let ((types '("javascript" "jsx")))
-    (setq web-mode-comment-formats
-          (cl-remove-if (lambda (item) (member (car item) types))
-                        web-mode-comment-formats))
-    (dolist (type types)
-      (push (cons type "//") web-mode-comment-formats)))
+  ;; Use // instead of /* as the default comment delimited in JS
+  (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal)
+        "//")
 
   (add-hook! 'web-mode-hook
     (defun +web--fix-js-comments-h ()
@@ -162,4 +164,7 @@
 
 
 (when (featurep! +lsp)
-  (add-hook! '(html-mode-hook web-mode-hook) #'lsp!))
+  (add-hook! '(html-mode-local-vars-hook
+               web-mode-local-vars-hook
+               nxml-mode-local-vars-hook)
+             #'lsp!))

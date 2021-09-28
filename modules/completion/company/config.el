@@ -1,26 +1,61 @@
 ;;; completion/company/config.el -*- lexical-binding: t; -*-
 
 (use-package! company
-  :commands company-complete-common company-manual-begin company-grab-line
-  :after-call pre-command-hook after-find-file
+  :commands (company-complete-common
+             company-complete-common-or-cycle
+             company-manual-begin
+             company-grab-line)
+  :hook (doom-first-input . global-company-mode)
   :init
-  (setq company-idle-delay 0.25
-        company-minimum-prefix-length 2
+  (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes
-        '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-        company-backends  '(company-capf)
-        company-frontends '(company-pseudo-tooltip-frontend
-                            company-echo-metadata-frontend))
+        '(not erc-mode
+              message-mode
+              help-mode
+              gud-mode
+              vterm-mode)
+        company-frontends
+        '(company-pseudo-tooltip-frontend  ; always show candidates in overlay tooltip
+          company-echo-metadata-frontend)  ; show selected candidate docs in echo area
+
+        ;; Buffer-local backends will be computed when loading a major mode, so
+        ;; only specify a global default here.
+        company-backends '(company-capf)
+
+        ;; These auto-complete the current selection when
+        ;; `company-auto-commit-chars' is typed. This is too magical. We
+        ;; already have the much more explicit RET and TAB.
+        company-auto-commit nil
+
+        ;; Only search the current buffer for `company-dabbrev' (a backend that
+        ;; suggests text your open buffers). This prevents Company from causing
+        ;; lag once you have a lot of buffers open.
+        company-dabbrev-other-buffers nil
+        ;; Make `company-dabbrev' fully case-sensitive, to improve UX with
+        ;; domain-specific words with particular casing.
+        company-dabbrev-ignore-case nil
+        company-dabbrev-downcase nil)
+
+  (when (featurep! +tng)
+    (add-hook 'global-company-mode-hook #'company-tng-mode))
+
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
     (unless (featurep! +childframe)
       ;; Don't persist company popups when switching back to normal mode.
       ;; `company-box' aborts on mode switch so it doesn't need this.
-      (add-hook 'evil-normal-state-entry-hook #'company-abort))
+      (add-hook! 'evil-normal-state-entry-hook
+        (defun +company-abort-h ()
+          ;; HACK `company-abort' doesn't no-op if company isn't active; causing
+          ;;      unwanted side-effects, like the suppression of messages in the
+          ;;      echo-area.
+          ;; REVIEW Revisit this to refactor; shouldn't be necessary!
+          (when company-candidates
+            (company-abort)))))
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.
@@ -29,35 +64,33 @@
       (company-abort)))
 
   (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
-  (global-company-mode +1))
 
 
-(use-package! company-tng
-  :when (featurep! +tng)
-  :after-call post-self-insert-hook
-  :config
-  (add-to-list 'company-frontends 'company-tng-frontend)
-  (define-key! company-active-map
-    "RET"       nil
-    [return]    nil
-    "TAB"       #'company-select-next
-    [tab]       #'company-select-next
-    [backtab]   #'company-select-previous))
+  ;; NOTE Fix #1335: ensure `company-emulation-alist' is the first item of
+  ;;      `emulation-mode-map-alists', thus higher priority than keymaps of
+  ;;      evil-mode. We raise the priority of company-mode keymaps
+  ;;      unconditionally even when completion is not activated. This should not
+  ;;      cause problems, because when completion is activated, the value of
+  ;;      `company-emulation-alist' is ((t . company-my-keymap)), when
+  ;;      completion is not activated, the value is ((t . nil)).
+  (add-hook! 'evil-local-mode-hook
+    (when (memq 'company-emulation-alist emulation-mode-map-alists)
+      (company-ensure-emulation-alist)))
+
+  ;; Fix #4355: allow eldoc to trigger after completions.
+  (after! eldoc
+    (eldoc-add-command 'company-complete-selection
+                       'company-complete-common
+                       'company-capf
+                       'company-abort)))
 
 
 ;;
-;; Packages
+;;; Packages
 
 (after! company-files
+  ;; Fix `company-files' completion for org file:* links
   (add-to-list 'company-files--regexps "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
-
-
-(use-package! company-prescient
-  :hook (company-mode . company-prescient-mode)
-  :config
-  ;; NOTE prescient config duplicated with `ivy'
-  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
-  (prescient-persist-mode +1))
 
 
 (use-package! company-box
@@ -68,6 +101,8 @@
         company-box-backends-colors nil
         company-box-max-candidates 50
         company-box-icons-alist 'company-box-icons-all-the-icons
+        ;; Move company-box-icons--elisp to the end, because it has a catch-all
+        ;; clause that ruins icons from other backends in elisp buffers.
         company-box-icons-functions
         (cons #'+company-box-icons--elisp-fn
               (delq 'company-box-icons--elisp
@@ -106,6 +141,19 @@
             (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
             (ElispFace     . ,(all-the-icons-material "format_paint"             :face 'all-the-icons-pink)))))
 
+  ;; HACK Fix oversized scrollbar in some odd cases
+  ;; REVIEW `resize-mode' is deprecated and may stop working in the future.
+  ;; TODO PR me upstream?
+  (setq x-gtk-resize-child-frames 'resize-mode)
+
+  ;; Disable tab-bar in company-box child frames
+  ;; TODO PR me upstream!
+  (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
+
+  ;; Don't show documentation in echo area, because company-box displays its own
+  ;; in a child frame.
+  (delq! 'company-echo-metadata-frontend company-frontends)
+
   (defun +company-box-icons--elisp-fn (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)
       (let ((sym (intern candidate)))
@@ -114,13 +162,18 @@
               ((featurep sym) 'ElispFeature)
               ((facep sym)    'ElispFace)))))
 
-  (defadvice! +company-remove-scrollbar-a (orig-fn &rest args)
-    "This disables the company-box scrollbar, because:
-https://github.com/sebastiencs/company-box/issues/44"
-    :around #'company-box--update-scrollbar
-    (cl-letf (((symbol-function #'display-buffer-in-side-window)
-               (symbol-function #'ignore)))
-      (apply orig-fn args))))
+  ;; `company-box' performs insufficient frame-live-p checks. Any command that
+  ;; "cleans up the session" will break company-box.
+  ;; TODO Fix this upstream.
+  (defadvice! +company-box-detect-deleted-frame-a (frame)
+    :filter-return #'company-box--get-frame
+    (if (frame-live-p frame) frame))
+  (defadvice! +company-box-detect-deleted-doc-frame-a (_selection frame)
+    :before #'company-box-doc
+    (and company-box-doc-enable
+         (frame-local-getq company-box-doc-frame frame)
+         (not (frame-live-p (frame-local-getq company-box-doc-frame frame)))
+         (frame-local-setq company-box-doc-frame nil frame))))
 
 
 (use-package! company-dict

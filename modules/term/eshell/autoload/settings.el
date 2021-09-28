@@ -11,7 +11,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
     \"bye\" \"echo goodbye world\")"
   (or (cl-evenp (length aliases))
       (signal 'wrong-number-of-arguments (list 'even (length aliases))))
-  (after! eshell
+  (after! em-alias
     (while aliases
       (let ((alias (pop aliases))
             (command (pop aliases)))

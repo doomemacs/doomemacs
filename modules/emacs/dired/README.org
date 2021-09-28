@@ -9,6 +9,7 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#keybindings][Keybindings]]
+  - [[#ranger][Ranger]]
 
 * Description
 This module provides configuration for dired.
@@ -41,3 +42,8 @@ needed for it to work properly (Doom doctor will notify you if it is missing).
 | =C-c C-e= | Rename entries with =wdired= |
 
 Other keybindings can be found on the official [[https://www.gnu.org/software/emacs/refcards/pdf/dired-ref.pdf][Dired reference card]].
+
+** Ranger
+If =+ranger= is enabled often a buffer will be opened in minimal ranger mode
+(deer-mode). In this case =z P= can be used to toggle between full ranger and
+deer-mode.

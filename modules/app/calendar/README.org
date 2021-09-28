@@ -21,7 +21,7 @@ This module provides no flags.
 ** Packages
 + [[https://github.com/kiwanami/emacs-calfw][calfw]]
 + [[https://github.com/kiwanami/emacs-calfw][calfw-org]]
-+ [[https://github.com/myuhe/org-gcal.el][org-gcal]]
++ [[https://github.com/kidd/org-gcal.el][org-gcal]]
 
 * Configuration
 ** Changing calendar sources
@@ -34,7 +34,8 @@ calendar data from:
   (cfw:open-calendar-buffer
    :contents-sources
    (list
-    (cfw:org-create-source "Green")  ; orgmode source
+    (cfw:org-create-source "Green")  ; org-agenda source
+    (cfw:org-create-file-source "cal" "/path/to/cal.org" "Cyan")  ; other org source
     (cfw:howm-create-source "Blue")  ; howm source
     (cfw:cal-create-source "Orange") ; diary source
     (cfw:ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
@@ -42,25 +43,8 @@ calendar data from:
    )))
 #+END_SRC
 
-To control what org files ~clfw:org-create-source~ will use, ~let~-bind
-~org-agenda-files~ around a call to ~+calendar/open-calendar~ like so:
-
-#+BEGIN_SRC emacs-lisp
-;;;###autoload
-(defun cfw:open-org-calendar-with-cal1 ()
-  (interactive)
-  (let ((org-agenda-files '("/path/to/org/" "/path/to/cal1.org")))
-    (call-interactively #'+calendar/open-calendar)))
-
-;;;###autoload
-(defun cfw:open-org-calendar-with-cal2 ()
-  (interactive)
-  (let ((org-agenda-files '("/path/to/org/" "/path/to/cal2.org")))
-    (call-interactively #'+calendar/open-calendar)))
-#+END_SRC
-
 The [[https://github.com/kiwanami/emacs-calfw][kiwanami/emacs-calfw]] project readme contains more examples.
 
 ** Synchronizing Org and Google Calendar
-The [[https://github.com/myuhe/org-gcal.el][myuhe/org-gcal.el]] project README contains more detailed instructions on how
+The [[https://github.com/kidd/org-gcal.el][kidd/org-gcal.el]] project README contains more detailed instructions on how
 to link your calendar with Google calendars.

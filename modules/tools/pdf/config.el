@@ -1,7 +1,7 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
 (use-package! pdf-tools
-  :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :init
   (after! pdf-annot
@@ -18,31 +18,30 @@
       (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t)))
 
   :config
+  (defadvice! +pdf--install-epdfinfo-a (fn &rest args)
+    "Install epdfinfo after the first PDF file, if needed."
+    :around #'pdf-view-mode
+    (if (file-executable-p pdf-info-epdfinfo-program)
+        (apply fn args)
+      ;; If we remain in pdf-view-mode, it'll spit out cryptic errors. This
+      ;; graceful failure is better UX.
+      (fundamental-mode)
+      (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
+
+  (pdf-tools-install-noverify)
+
+  ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
-  (setq-default pdf-view-display-size 'fit-page
-                pdf-view-use-scaling t
-                pdf-view-use-imagemagick nil)
-
-  ;; Add retina support for MacOS users
-  (when IS-MAC
-    (advice-add #'pdf-util-frame-scale-factor :around #'+pdf--util-frame-scale-factor-a)
-    (advice-add #'pdf-view-use-scaling-p :before-until #'+pdf--view-use-scaling-p-a)
-    (defadvice! +pdf--supply-width-to-create-image-calls-a (orig-fn &rest args)
-      :around '(pdf-annot-show-annotation
-                pdf-isearch-hl-matches
-                pdf-view-display-region)
-      (cl-letf* ((old-create-image (symbol-function #'create-image))
-                 ((symbol-function #'create-image)
-                  (lambda (file-or-data &optional type data-p &rest props)
-                    (apply old-create-image file-or-data type data-p
-                           :width (car (pdf-view-image-size))
-                           props))))
-        (apply orig-fn args))))
+  (setq-default pdf-view-display-size 'fit-page)
+  ;; Enable hiDPI support, but at the cost of memory! See politza/pdf-tools#51
+  (setq pdf-view-use-scaling t
+        pdf-view-use-imagemagick nil)
 
   ;; Handle PDF-tools related popups better
   (set-popup-rules!
     '(("^\\*Outline*" :side right :size 40 :select nil)
+      ("^\\*Edit Annotation " :quit nil)
       ("\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)))
 
   ;; The mode-line does serve any useful purpose is annotation windows
@@ -51,29 +50,35 @@
   ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
-  ;; Install epdfinfo binary if needed, blocking until it is finished
-  (unless (file-executable-p pdf-info-epdfinfo-program)
-    (let ((wconf (current-window-configuration)))
-      (pdf-tools-install)
-      (message "Building epdfinfo, this will take a moment...")
-      ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
-      ;;      `pdf-tools-install' has a chance to reinitialize them as
-      ;;      `pdf-view-mode' buffers. This is necessary because
-      ;;      `pdf-tools-install' won't do this to buffers that are already in
-      ;;      pdf-view-mode.
-      (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
-        (with-current-buffer buffer (fundamental-mode)))
-      (while compilation-in-progress
-        ;; Block until `pdf-tools-install' is done
-        (redisplay)
-        (sleep-for 1))
-      ;; HACK If pdf-tools was loaded by you opening a pdf file, once
-      ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
-      ;;      because the compilation buffer is focused, not the pdf buffer.
-      ;;      Therefore, it is imperative that the window config is restored.
-      (when (file-executable-p pdf-info-epdfinfo-program)
-        (set-window-configuration wconf))))
+  ;; HACK Refresh FG/BG for pdfs when `pdf-view-midnight-colors' is changed by a
+  ;;      theme or with `setq!'.
+  ;; TODO PR this upstream?
+  (defun +pdf-reload-midnight-minor-mode-h ()
+    (when pdf-view-midnight-minor-mode
+      (pdf-info-setoptions
+       :render/foreground (car pdf-view-midnight-colors)
+       :render/background (cdr pdf-view-midnight-colors)
+       :render/usecolors t)
+      (pdf-cache-clear-images)
+      (pdf-view-redisplay t)))
+  (put 'pdf-view-midnight-colors 'custom-set
+       (lambda (sym value)
+         (set-default sym value)
+         (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+           (with-current-buffer buffer
+             (if (get-buffer-window buffer)
+                 (+pdf-reload-midnight-minor-mode-h)
+               ;; Defer refresh for buffers that aren't visible, to avoid
+               ;; blocking Emacs for too long while changing themes.
+               (add-hook 'doom-switch-buffer-hook #'+pdf-reload-midnight-minor-mode-h
+                         nil 'local))))))
 
-  ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
-  ;; `pdf-virtual-global-minor-mode'.
-  (pdf-tools-install-noverify))
+  ;; Silence "File *.pdf is large (X MiB), really open?" prompts for pdfs
+  (defadvice! +pdf-suppress-large-file-prompts-a (fn size op-type filename &optional offer-raw)
+    :around #'abort-if-file-too-large
+    (unless (string-match-p "\\.pdf\\'" filename)
+      (funcall fn size op-type filename offer-raw))))
+
+
+(use-package! saveplace-pdf-view
+  :after pdf-view)

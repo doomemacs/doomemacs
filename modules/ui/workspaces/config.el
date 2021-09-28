@@ -45,22 +45,25 @@ stored in `persp-save-dir'.")
         ;; Remove default buffer predicate so persp-mode can put in its own
         (delq! 'buffer-predicate default-frame-alist 'assq)
         (require 'persp-mode)
-        (if (daemonp)
-            (add-hook 'after-make-frame-functions #'persp-mode-start-and-remove-from-make-frame-hook)
-          (persp-mode +1)))))
+        (persp-mode +1))))
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
+        persp-reset-windows-on-nil-window-conf nil
         persp-nil-hidden t
         persp-auto-save-fname "autosave"
         persp-save-dir (concat doom-etc-dir "workspaces/")
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
+        persp-kill-foreign-buffer-behaviour 'kill
         persp-remove-buffers-from-nil-persp-behaviour nil
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
-  (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
+  ;;;; Create main workspace
+  ;; The default perspective persp-mode creates is special and doesn't represent
+  ;; a real persp object, so buffers can't really be assigned to it, among other
+  ;; quirks, so I replace it with a "main" perspective.
   (add-hook! '(persp-mode-hook persp-after-load-state-functions)
     (defun +workspaces-ensure-no-nil-workspaces-h (&rest _)
       (when persp-mode
@@ -76,9 +79,7 @@ stored in `persp-save-dir'.")
       "Ensure a main workspace exists."
       (when persp-mode
         (let (persp-before-switch-functions)
-          ;; The default perspective persp-mode creates is special and doesn't
-          ;; represent a real persp object, so buffers can't really be assigned
-          ;; to it, among other quirks, so we get rid of it...
+          ;; Try our best to hide the nil perspective.
           (when (equal (car persp-names-cache) persp-nil-name)
             (pop persp-names-cache))
           ;; ...and create a *real* main workspace to fill this role.
@@ -111,12 +112,31 @@ stored in `persp-save-dir'.")
                (setq uniquify-buffer-name-style +workspace--old-uniquify-style))
              (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))))
 
-  ;; We don't rely on the built-in mechanism for auto-registering a buffer to
-  ;; the current workspace; some buffers slip through the cracks. Instead, we
-  ;; add buffers when they are switched to.
-  (setq persp-add-buffer-on-find-file nil
-        persp-add-buffer-on-after-change-major-mode nil)
-  (add-hook! '(doom-switch-buffer-hook server-visit-hook)
+  ;; Per-workspace `winner-mode' history
+  (add-to-list 'window-persistent-parameters '(winner-ring . t))
+
+  (add-hook! 'persp-before-deactivate-functions
+    (defun +workspaces-save-winner-data-h (_)
+      (when (and (bound-and-true-p winner-mode)
+                 (get-current-persp))
+        (set-persp-parameter
+         'winner-ring (list winner-currents
+                            winner-ring-alist
+                            winner-pending-undo-ring)))))
+
+  (add-hook! 'persp-activated-functions
+    (defun +workspaces-load-winner-data-h (_)
+      (when (bound-and-true-p winner-mode)
+        (cl-destructuring-bind
+            (currents alist pending-undo-ring)
+            (or (persp-parameter 'winner-ring) (list nil nil nil))
+          (setq winner-undo-frame nil
+                winner-currents currents
+                winner-ring-alist alist
+                winner-pending-undo-ring pending-undo-ring)))))
+
+  ;;;; Registering buffers to perspectives
+  (add-hook! 'doom-switch-buffer-hook
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
       (or (not persp-mode)
@@ -142,6 +162,16 @@ stored in `persp-save-dir'.")
           (cadr prev-buffers)
         head)))
 
+  ;; HACK Fixes #4196, #1525: selecting deleted buffer error when quitting Emacs
+  ;;      or on some buffer listing ops.
+  (defadvice! +workspaces-remove-dead-buffers-a (persp)
+    :before #'persp-buffers-to-savelist
+    (when (perspective-p persp)
+      ;; HACK Can't use `persp-buffers' because of a race condition with its gv
+      ;;      getter/setter not being defined in time.
+      (setf (aref persp 2)
+            (cl-delete-if-not #'persp-get-buffer-or-null (persp-buffers persp)))))
+
   ;; Delete the current workspace if closing the last open window
   (define-key! persp-mode-map
     [remap delete-window] #'+workspace/close-window-or-workspace
@@ -153,14 +183,17 @@ stored in `persp-save-dir'.")
         persp-interactive-init-frame-behaviour-override #'+workspaces-associate-frame-fn
         persp-emacsclient-init-frame-behaviour-override #'+workspaces-associate-frame-fn)
   (add-hook 'delete-frame-functions #'+workspaces-delete-associated-workspace-h)
+  (add-hook 'server-done-hook #'+workspaces-delete-associated-workspace-h)
 
   ;; per-project workspaces, but reuse current workspace if empty
-  (setq projectile-switch-project-action #'+workspaces-set-project-action-fn
+  ;; HACK?? needs review
+  (setq projectile-switch-project-action (lambda () (+workspaces-set-project-action-fn) (+workspaces-switch-to-project-h))
         counsel-projectile-switch-project-action
         '(1 ("o" +workspaces-switch-to-project-h "open project in new workspace")
             ("O" counsel-projectile-switch-project-action "jump to a project buffer or file")
             ("f" counsel-projectile-switch-project-action-find-file "jump to a project file")
             ("d" counsel-projectile-switch-project-action-find-dir "jump to a project directory")
+            ("D" counsel-projectile-switch-project-action-dired "open project in dired")
             ("b" counsel-projectile-switch-project-action-switch-to-buffer "jump to a project buffer")
             ("m" counsel-projectile-switch-project-action-find-file-manually "find file manually from project root")
             ("w" counsel-projectile-switch-project-action-save-all-buffers "save all project buffers")
@@ -184,6 +217,9 @@ stored in `persp-save-dir'.")
       (setcar helm-source-projectile-projects-actions
               '("Switch to Project" . +workspaces-switch-to-project-h))))
 
+  ;; Don't bother auto-saving the session if no real buffers are open.
+  (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
+
   ;; Fix #1973: visual selection surviving workspace changes
   (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
 
@@ -193,21 +229,29 @@ stored in `persp-save-dir'.")
       (defun +workspaces-delete-all-posframes-h (&rest _)
         (posframe-delete-all))))
 
-  ;; Fix #1525: Ignore dead buffers in PERSP's buffer list
-  (defun +workspaces-dead-buffer-p (buf)
-    (not (buffer-live-p buf)))
-  (add-hook 'persp-filter-save-buffers-functions #'+workspaces-dead-buffer-p)
+  ;; Don't try to persist dead/remote buffers. They cause errors.
+  (add-hook! 'persp-filter-save-buffers-functions
+    (defun +workspaces-dead-buffer-p (buf)
+      ;; Fix #1525: Ignore dead buffers in PERSP's buffer list
+      (not (buffer-live-p buf)))
+    (defun +workspaces-remote-buffer-p (buf)
+      ;; And don't save TRAMP buffers; they're super slow to restore
+      (let ((dir (buffer-local-value 'default-directory buf)))
+        (ignore-errors (file-remote-p dir)))))
 
-  ;;
-  ;; eshell
+  ;; Otherwise, buffers opened via bookmarks aren't treated as "real" and are
+  ;; excluded from the buffer list.
+  (add-hook 'bookmark-after-jump-hook #'+workspaces-add-current-buffer-h)
+
+  ;;; eshell
   (persp-def-buffer-save/load
    :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
    :save-vars '(major-mode default-directory))
   ;; compile
   (persp-def-buffer-save/load
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
-   :save-vars
-   '(major-mode default-directory compilation-directory compilation-environment compilation-arguments))
+   :save-vars '(major-mode default-directory compilation-directory
+                compilation-environment compilation-arguments))
   ;; Restore indirect buffers
   (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load
@@ -226,8 +270,9 @@ stored in `persp-save-dir'.")
     (defun +workspaces-reload-indirect-buffers-h (&rest _)
       (dolist (ibc +workspaces--indirect-buffers-to-restore)
         (cl-destructuring-bind (buffer-name . base-buffer-name) ibc
-          (when (buffer-live-p (get-buffer base-buffer-name))
-            (when (get-buffer buffer-name)
-              (setq buffer-name (generate-new-buffer-name buffer-name)))
-            (make-indirect-buffer bb buffer-name t))))
+          (let ((base-buffer (get-buffer base-buffer-name)))
+            (when (buffer-live-p base-buffer)
+              (when (get-buffer buffer-name)
+                (setq buffer-name (generate-new-buffer-name buffer-name)))
+              (make-indirect-buffer base-buffer buffer-name t)))))
       (setq +workspaces--indirect-buffers-to-restore nil))))

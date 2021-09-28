@@ -1,0 +1,71 @@
+#+TITLE:   ui/treemacs
+#+DATE:    April 5, 2021
+#+SINCE:   v2.0.4
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+[[https://github.com/Alexander-Miller/treemacs][Treemacs]] is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+It includes:
+
++ Integration with Git  (when =:tools magit= is enabled)
++ Integration with Evil (when =:editor evil +everywhere= is enabled)
++ Workspace awareness (when =:ui workspaces= is enabled)
+
+** Maintainers
++ This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enable ~lsp-treemacs~ integration and add shortcuts for common commands.
+
+** Plugins
++ [[https://github.com/Alexander-Miller/treemacs/][treemacs]]
++ [[https://github.com/Alexander-Miller/treemacs/#treemacs-projectile][treemacs-projectile]]
++ =:editor evil +everywhere=
+  + [[https://github.com/Alexander-Miller/treemacs/#treemacs-evil][treemacs-evil]]
++ =:tools magit=
+  + [[https://github.com/Alexander-Miller/treemacs/#treemacs-magit][treemacs-magit]]
++ =:ui workspaces=
+  + [[https://github.com/Alexander-Miller/treemacs/#treemacs-persptreemacs-perspective][treemacs-persp]]
++ =+lsp=
+  + [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]]
+
+* Prerequisites
+If ~+treemacs-git-mode~ is set to ~extended~ or ~deferred~ you will need to have
+~python3~ installed.
+
+* Features
+The project bar can be opened using =SPC o p=.
+
+| Keybind | Description                                                     |
+|---------+-----------------------------------------------------------------|
+| =o s=     | Open a horizontal dired buffer on the currently highlighted node |
+| =o v=     | Open a vertical dired buffer on the currently highlighted node  |
+
+* Configuration
+The variable ~+treemacs-git-mode~ sets the type of git integration that treemacs
+has.
+
+There are 3 possible values:
+
+  1. simple, which highlights only files based on their git status, and is
+     slightly faster,
+  2. extended, which highlights both files and directories, but requires
+     python,
+  3. deferred, same as extended, but highlights asynchronously.
+
+the default being simple
+
+This must be set before treemacs has loaded.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

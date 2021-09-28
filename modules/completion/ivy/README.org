@@ -9,17 +9,13 @@
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
-  - [[#install][Install]]
-    - [[#macos][MacOS]]
-    - [[#arch-linux][Arch Linux]]
-    - [[#opensuse][openSUSE]]
 - [[#features][Features]]
   - [[#jump-to-navigation][Jump-to navigation]]
   - [[#project-search--replace][Project search & replace]]
   - [[#in-buffer-searching][In-buffer searching]]
   - [[#ivy-integration-for-various-completing-commands][Ivy integration for various completing commands]]
     - [[#general][General]]
-    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects)]]
+    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects]]
     - [[#search][Search]]
 - [[#configuration][Configuration]]
   - [[#enable-fuzzynon-fuzzy-search-for-specific-commands][Enable fuzzy/non-fuzzy search for specific commands]]
@@ -28,7 +24,7 @@
 
 * Description
 This module provides Ivy integration for a variety of Emacs commands, as well as
-a unified interface for project search and replace, powered by ripgrep.
+a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
 
 #+begin_quote
 I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
@@ -64,25 +60,7 @@ lighter, simpler and faster in many cases.
   command)
 
 * Prerequisites
-This module depends on:
-
-+ [[https://github.com/BurntSushi/ripgrep][ripgrep]] (rg)
-
-** Install
-*** MacOS
-#+BEGIN_SRC sh
-brew install ripgrep
-#+END_SRC
-
-*** Arch Linux
-#+BEGIN_SRC sh :dir /sudo::
-sudo pacman --needed --noconfirm -S ripgrep
-#+END_SRC
-
-*** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
-sudo zypper install ripgrep
-#+END_SRC
+This module has no prerequisites.
 
 * Features
 Ivy and its ilk are large plugins. Covering everything about them is outside of
@@ -136,7 +114,7 @@ These keybindings are available while a search is active:
 | =C-c C-o= | Open a buffer with your search results        |
 | =C-c C-e= | Open a writable buffer of your search results |
 | =C-SPC=   | Preview the current candidate                 |
-| =M-RET=   | Open the selected candidate in other-window   |
+| =C-RET=   | Open the selected candidate in other-window   |
 
 Changes to the resulting wgrep buffer (opened by =C-c C-e=) can be committed
 with =C-c C-c= and aborted with =C-c C-k= (alternatively =ZZ= and =ZQ=, for evil
@@ -164,7 +142,7 @@ A wgrep buffer can be opened from swiper with =C-c C-e=.
 | =M-x=, =SPC := | Smarter, smex-powered M-x |
 | =SPC '=        | Resume last ivy session   |
 
-*** Jump to files, buffers or projects)
+*** Jump to files, buffers or projects
 | Keybind              | Description                           |
 |----------------------+---------------------------------------|
 | =SPC RET=            | Find bookmark                         |

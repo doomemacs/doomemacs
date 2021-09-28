@@ -4,13 +4,13 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-- [[Configuration][Configuration]]
-- [[Troubleshooting][Troubleshooting]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module marries hideshow, vimish-fold and outline-minor-mode to bring you
@@ -20,13 +20,25 @@ marker, indent and syntax-based code folding for as many languages as possible.
 This module provides no flags.
 
 ** Plugins
-+ evil-vimish-fold*
++ [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
++ [[https://github.com/matsievskiysv/vimish-fold][vimish-fold]]
 
 * Prerequisites
 This module has no prerequisites.
 
-* TODO Features
+* Features
+
+Emacs keybinds when evil +everywhere is disabled.
+| Keybind                | Description               |
+|------------------------+---------------------------|
+| =C-c C-f C-f=          | Fold region               |
+| =C-c C-f C-u= or =C `= | Unfold region             |
+| =C-c C-f C-d=          | Delete folded region      |
+| =C-c C-f C-a C-f=      | Fold all regions          |
+| =C-c C-f C-a C-u=      | Unfold all regions        |
+| =C-c C-a C-d=          | Delete all folded regions |
 
 * TODO Configuration
 
-* TODO Troubleshooting
+* Troubleshooting
+Sometimes an unfolded region does not fold back with =C-c C-f C-f=. To bypass this bug you must delete the folded region (=C-c C-f C-d=) and then fold it(=C-c C-f C-f=) again.

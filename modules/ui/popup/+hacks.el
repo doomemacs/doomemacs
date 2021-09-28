@@ -26,14 +26,14 @@
 ;;
 ;;; Core functions
 
-(defadvice! +popup--make-case-sensitive-a (orig-fn &rest args)
+(defadvice! +popup--make-case-sensitive-a (fn &rest args)
   "Make regexps in `display-buffer-alist' case-sensitive.
 
 To reduce fewer edge cases and improve performance when `display-buffer-alist'
 grows larger."
   :around #'display-buffer-assq-regexp
   (let (case-fold-search)
-    (apply orig-fn args)))
+    (apply fn args)))
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
@@ -50,6 +50,15 @@ to this commmand."
       (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
+(defadvice! +popup-override-display-buffer-alist-a (fn &rest args)
+  "When `pop-to-buffer' is called with non-nil ACTION, that ACTION should
+override `display-buffer-alist'."
+  :around #'switch-to-buffer-other-tab
+  :around #'switch-to-buffer-other-window
+  :around #'switch-to-buffer-other-frame
+  (let ((display-buffer-alist nil))
+    (apply fn args)))
+
 
 ;;
 ;;; External functions
@@ -59,10 +68,21 @@ to this commmand."
 
 
 ;;;###package company
-(defadvice! +popup--dont-select-me-a (orig-fn &rest args)
+(defadvice! +popup--dont-select-me-a (fn &rest args)
   :around #'company-show-doc-buffer
   (let ((+popup--inhibit-select t))
-    (apply orig-fn args)))
+    (apply fn args)))
+
+
+;;;###package compile
+(defadvice! +popup--compilation-goto-locus-a (fn &rest args)
+  "Fix links in popup compilation buffers creating a new window each time they
+were followed."
+  :around #'compilation-goto-locus
+  (letf! (defun pop-to-buffer (buffer &optional action norecord)
+           (let ((pop-up-windows (not (+popup-buffer-p (current-buffer)))))
+             (funcall pop-to-buffer buffer action norecord)))
+    (apply fn args)))
 
 
 ;;;###package eshell
@@ -193,23 +213,21 @@ the command buffer."
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window-fn))
 
   ;; Fix #897: "cannot open side window" error when TAB-completing file links
-  (defadvice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
+  (defadvice! +popup--helm-hide-org-links-popup-a (fn &rest args)
     :around #'org-insert-link
-    (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
-               ((symbol-function 'org-completing-read)
-                (lambda (&rest args)
-                  (when-let (win (get-buffer-window "*Org Links*"))
-                    ;; While helm is opened as a popup, it will mistaken the
-                    ;; *Org Links* popup for the "originated window", and will
-                    ;; target it for actions invoked by the user. However, since
-                    ;; *Org Links* is a popup too (they're dedicated side
-                    ;; windows), Emacs complains about being unable to split a
-                    ;; side window. The simple fix: get rid of *Org Links*!
-                    (delete-window win)
-                    ;; But it must exist for org to clean up later.
-                    (get-buffer-create "*Org Links*"))
-                  (apply old-org-completing-read args))))
-      (apply #'funcall-interactively orig-fn args)))
+    (letf! ((defun org-completing-read (&rest args)
+              (when-let (win (get-buffer-window "*Org Links*"))
+                ;; While helm is opened as a popup, it will mistaken the *Org
+                ;; Links* popup for the "originated window", and will target it
+                ;; for actions invoked by the user. However, since *Org Links*
+                ;; is a popup too (they're dedicated side windows), Emacs
+                ;; complains about being unable to split a side window. The
+                ;; simple fix: get rid of *Org Links*!
+                (delete-window win)
+                ;; ...but it must exist for org to clean up later.
+                (get-buffer-create "*Org Links*"))
+              (apply org-completing-read args)))
+      (apply #'funcall-interactively fn args)))
 
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
   (defadvice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
@@ -228,65 +246,85 @@ the command buffer."
     (when (+popup-window-p win)
       (select-window win))))
 
-
 ;;;###package org
 (after! org
-  ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
-  ;; kills all other windows just so it can monopolize the frame. No thanks. We
-  ;; can do better ourselves.
-  (defadvice! +popup--suppress-delete-other-windows-a (orig-fn &rest args)
-    :around '(org-add-log-note
-              org-capture-place-template
-              org-export--dispatch-ui
-              org-agenda-get-restriction-and-command
-              org-fast-tag-selection
-              org-fast-todo-selection)
+  (defadvice! +popup--suppress-delete-other-windows-a (fn &rest args)
+    "Org has a scorched-earth window management policy I'm not fond of. i.e. it
+kills all other windows just so it can monopolize the frame. No thanks. We can
+do better."
+    :around #'org-add-log-note
+    :around #'org-capture-place-template
+    :around #'org-export--dispatch-ui
+    :around #'org-agenda-get-restriction-and-command
+    :around #'org-goto-location
+    :around #'org-fast-tag-selection
+    :around #'org-fast-todo-selection
     (if +popup-mode
-        (cl-letf (((symbol-function #'delete-other-windows)
-                   (symbol-function #'ignore))
-                  ((symbol-function #'delete-window)
-                   (symbol-function #'ignore)))
-          (apply orig-fn args))
-      (apply orig-fn args)))
+        (letf! ((#'delete-other-windows #'ignore)
+                (#'delete-window        #'ignore))
+          (apply fn args))
+      (apply fn args)))
 
-  (defadvice! +popup--org-fix-popup-window-shrinking-a (orig-fn &rest args)
+  (defadvice! +popup--org-fix-goto-a (fn &rest args)
+    "`org-goto' uses `with-output-to-temp-buffer' to display its help buffer,
+for some reason, which is very unconventional, and so requires these gymnastics
+to tame (i.e. to get the popup manager to handle it)."
+    :around #'org-goto-location
+    (if +popup-mode
+        (letf! (defun internal-temp-output-buffer-show (buffer)
+                 (let ((temp-buffer-show-function
+                        (doom-rpartial #'+popup-display-buffer-stacked-side-window-fn nil)))
+                   (with-current-buffer buffer
+                     (+popup-buffer-mode +1))
+                   (funcall internal-temp-output-buffer-show buffer)))
+          (apply fn args))
+      (apply fn args)))
+
+  (defadvice! +popup--org-fix-popup-window-shrinking-a (fn &rest args)
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
-    :around '(org-fast-tag-selection
-              org-fast-todo-selection)
+    :around #'org-fast-tag-selection
+    :around #'org-fast-todo-selection
     (if +popup-mode
-        (cl-letf* ((old-fit-buffer-fn (symbol-function #'org-fit-window-to-buffer))
-                   ((symbol-function #'org-fit-window-to-buffer)
-                    (lambda (&optional window max-height min-height shrink-only)
-                      (when-let (buf (window-buffer window))
-                        (delete-window window)
-                        (select-window
-                         (setq window (display-buffer-at-bottom buf nil)))
-                        (with-current-buffer buf
-                          (setq mode-line-format nil)))
-                      (funcall old-fit-buffer-fn window max-height min-height shrink-only))))
-          (apply orig-fn args))
-      (apply orig-fn args)))
+        (letf! ((defun read-char-exclusive (&rest args)
+                  (message nil)
+                  (apply read-char-exclusive args))
+                (defun split-window-vertically (&optional _size)
+                  (funcall split-window-vertically (- 0 window-min-height 1)))
+                (defun org-fit-window-to-buffer (&optional window max-height min-height shrink-only)
+                  (when-let (buf (window-buffer window))
+                    (with-current-buffer buf
+                      (+popup-buffer-mode)))
+                  (when (> (window-buffer-height window)
+                           (window-height window))
+                    (fit-window-to-buffer window (window-buffer-height window)))))
+          (apply fn args))
+      (apply fn args)))
+
+  (defadvice! +popup--org-edit-src-exit-a (fn &rest args)
+    "If you switch workspaces or the src window is recreated..."
+    :around #'org-edit-src-exit
+    (let* ((window (selected-window))
+           (popup-p (+popup-window-p window)))
+      (prog1 (apply fn args)
+        (when (and popup-p (window-live-p window))
+          (delete-window window)))))
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
-  (defadvice! +popup--org-pop-to-buffer-a (orig-fn buf &optional norecord)
+  (defadvice! +popup--org-pop-to-buffer-a (fn buf &optional norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord)))
+      (funcall fn buf norecord))))
 
-  ;; HACK `pop-to-buffer-same-window' consults `display-buffer-alist', which is
-  ;;      what our popup manager uses to manage popup windows. However,
-  ;;      `org-src-switch-to-buffer' already does its own window management
-  ;;      prior to calling `pop-to-buffer-same-window', so there's no need to
-  ;;      _then_ hand off the buffer to the pop up manager.
-  (defadvice! +popup--org-src-switch-to-buffer-a (orig-fn &rest args)
-    :around #'org-src-switch-to-buffer
-    (cl-letf (((symbol-function #'pop-to-buffer-same-window)
-               (symbol-function #'switch-to-buffer)))
-      (apply orig-fn args))))
+
+;;;###package org-journal
+(defadvice! +popup--use-popup-window-a (fn &rest args)
+  :around #'org-journal-search-by-string
+  (letf! ((#'switch-to-buffer #'pop-to-buffer))
+    (apply fn args)))
 
 
 ;;;###package persp-mode
@@ -314,11 +352,10 @@ Ugh, such an ugly hack."
 
 
 ;;;###package profiler
-(defadvice! +popup--profiler-report-find-entry-in-other-window-a (orig-fn function)
+(defadvice! +popup--profiler-report-find-entry-in-other-window-a (fn function)
   :around #'profiler-report-find-entry
-  (cl-letf (((symbol-function 'find-function)
-             (symbol-function 'find-function-other-window)))
-    (funcall orig-fn function)))
+  (letf! ((#'find-function #'find-function-other-window))
+    (funcall fn function)))
 
 
 ;;;###package wgrep
@@ -337,10 +374,9 @@ Ugh, such an ugly hack."
           which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
           which-key-custom-show-popup-function
           (lambda (act-popup-dim)
-            (cl-letf (((symbol-function 'display-buffer-in-side-window)
-                       (lambda (buffer alist)
-                         (+popup-display-buffer-stacked-side-window-fn
-                          buffer (append '((vslot . -9999)) alist)))))
+            (letf! ((defun display-buffer-in-side-window (buffer alist)
+                      (+popup-display-buffer-stacked-side-window-fn
+                       buffer (append '((vslot . -9999)) alist))))
               ;; HACK Fix #2219 where the which-key popup would get cut off.
               (setcar act-popup-dim (1+ (car act-popup-dim)))
               (which-key--show-buffer-side-window act-popup-dim))))))
@@ -348,12 +384,11 @@ Ugh, such an ugly hack."
 
 ;;;###package windmove
 ;; Users should be able to hop into popups easily, but Elisp shouldn't.
-(defadvice! +popup--ignore-window-parameters-a (orig-fn &rest args)
+(defadvice! +popup--ignore-window-parameters-a (fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   :around '(windmove-up windmove-down windmove-left windmove-right)
-  (cl-letf (((symbol-function #'windmove-find-other-window)
-             (lambda (dir &optional arg window)
-               (window-in-direction
-                (pcase dir (`up 'above) (`down 'below) (_ dir))
-                window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))))
-    (apply orig-fn args)))
+  (letf! (defun windmove-find-other-window (dir &optional arg window)
+           (window-in-direction
+            (pcase dir (`up 'above) (`down 'below) (_ dir))
+            window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))
+    (apply fn args)))

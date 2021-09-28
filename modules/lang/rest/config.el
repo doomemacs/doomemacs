@@ -7,16 +7,15 @@
   :config
   (set-popup-rule! "^\\*HTTP Response" :size 0.4 :quit 'other)
 
-  ;; TODO PR this upstream! This adds imenu support to `restclient-mode'
   (setq-hook! 'restclient-mode-hook
     imenu-generic-expression '((nil "^[A-Z]+\s+.+" 0)))
 
-  (defadvice! +rest--permit-self-signed-ssl-a (orig-fn &rest args)
+  (defadvice! +rest--permit-self-signed-ssl-a (fn &rest args)
     "Forces underlying SSL verification to prompt for self-signed or invalid
 certs, rather than reject them silently."
     :around #'restclient-http-do
     (let (gnutls-verify-error tls-checktrust)
-      (apply orig-fn args)))
+      (apply fn args)))
 
   (map! :map restclient-mode-map
         :n [return] #'+rest/dwim-at-point

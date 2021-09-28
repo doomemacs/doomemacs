@@ -42,3 +42,27 @@ This excludes the protocol and querystring."
     (evil-range
      beg (- end (if (evil-visual-state-p) 1 0))
      type)))
+
+;;;###autoload (autoload '+evil:inner-any-quote "editor/evil/autoload/textobjects" nil nil)
+(evil-define-text-object +evil:inner-any-quote (count &optional beg end type)
+  "Select the closest inner quote."
+  (require 'evil-textobj-anyblock)
+  (let ((evil-textobj-anyblock-blocks
+         '(("'" . "'")
+           ("\"" . "\"")
+           ("`" . "`")
+           ("‘" . "’")
+           ("“" . "”"))))
+    (evil-textobj-anyblock-inner-block count beg end type)))
+
+;;;###autoload (autoload '+evil:outer-any-quote "editor/evil/autoload/textobjects" nil nil)
+(evil-define-text-object +evil:outer-any-quote (count &optional beg end type)
+  "Select the closest outer quote."
+  (require 'evil-textobj-anyblock)
+  (let ((evil-textobj-anyblock-blocks
+         '(("'" . "'")
+           ("\"" . "\"")
+           ("`" . "`")
+           ("‘" . "’")
+           ("“" . "”"))))
+    (evil-textobj-anyblock-a-block count beg end type)))

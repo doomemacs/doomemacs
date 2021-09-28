@@ -79,7 +79,7 @@ d s= (or =C-h d s=).
 + *Doom Emacs*
   - (videos) [[https://www.youtube.com/playlist?list=PLyy8KUDC8P7X6YkegqrnEnymzMWCNB4bN][Doom Emacs Tutorials]] by [[https://www.youtube.com/channel/UCVls1GmFKf6WlTraIb_IaJg][DistroTube]]
   - (videos) [[https://www.youtube.com/playlist?list=PLhXZp00uXBk4np17N39WvB80zgxlZfVwj][DoomCasts]] by @zaiste
-  - [[https://noelwelsh.com/posts/2019-01-10-doom-emacs.html][Noel's crash course on Doom Emacs]]
+  - [[https://noelwelsh.com/posts/doom-emacs][Noel's crash course on Doom Emacs]]
   - [[https://medium.com/@aria_39488/getting-started-with-doom-emacs-a-great-transition-from-vim-to-emacs-9bab8e0d8458][Getting Started with Doom Emacs -- a great transition from Vim to Emacs]]
   - [[https://medium.com/@aria_39488/the-niceties-of-evil-in-doom-emacs-cabb46a9446b][The Niceties of evil in Doom Emacs]]
   - (video) [[https://www.youtube.com/watch?v=GK3fij-D1G8][Org-mode, literate programming in (Doom) Emacs]]

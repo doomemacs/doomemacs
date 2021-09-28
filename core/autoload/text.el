@@ -1,11 +1,13 @@
 ;;; core/autoload/text.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defvar doom-point-in-comment-functions ()
   "List of functions to run to determine if point is in a comment.
 
 Each function takes one argument: the position of the point. Stops on the first
 function to return non-nil. Used by `doom-point-in-comment-p'.")
 
+;;;###autoload
 (defvar doom-point-in-string-functions ()
   "List of functions to run to determine if point is in a string.
 
@@ -42,16 +44,18 @@ lines, above and below, with only whitespace in between."
   "Return non-nil if POS is in a comment.
 POS defaults to the current position."
   (let ((pos (or pos (point))))
-    (or (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
-        (sp-point-in-comment pos))))
+    (if doom-point-in-comment-functions
+        (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
 
 ;;;###autoload
 (defun doom-point-in-string-p (&optional pos)
   "Return non-nil if POS is in a string."
   ;; REVIEW Should we cache `syntax-ppss'?
   (let ((pos (or pos (point))))
-    (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
-        (sp-point-in-string pos))))
+    (if doom-point-in-string-functions
+        (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
+      (nth 3 (syntax-ppss pos)))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
@@ -73,9 +77,10 @@ Detects evil visual mode as well."
   "Return beginning position of selection.
 Uses `evil-visual-beginning' if available."
   (declare (side-effect-free t))
-  (if (bound-and-true-p evil-local-mode)
-      evil-visual-beginning
-    (region-beginning)))
+  (or (and (bound-and-true-p evil-local-mode)
+           (markerp evil-visual-beginning)
+           (marker-position evil-visual-beginning))
+      (region-beginning)))
 
 ;;;###autoload
 (defun doom-region-end ()
@@ -106,9 +111,15 @@ in some cases."
         (thing
          (thing-at-point thing t))
         ((require 'xref nil t)
-         ;; A little smarter than using `symbol-at-point', though in most cases,
-         ;; xref ends up using `symbol-at-point' anyway.
-         (xref-backend-identifier-at-point (xref-find-backend)))
+         ;; Eglot, nox (a fork of eglot), and elpy implementations for
+         ;; `xref-backend-identifier-at-point' betray the documented purpose of
+         ;; the interface. Eglot/nox return a hardcoded string and elpy prepends
+         ;; the line number to the symbol.
+         (if (memq (xref-find-backend) '(eglot elpy nox))
+             (thing-at-point 'symbol t)
+           ;; A little smarter than using `symbol-at-point', though in most
+           ;; cases, xref ends up using `symbol-at-point' anyway.
+           (xref-backend-identifier-at-point (xref-find-backend))))
         (prompt
          (read-string (if (stringp prompt) prompt "")))))
 
@@ -143,8 +154,10 @@ in some cases."
                                     (> (point) bol))
                           (backward-char))
                         (skip-chars-backward " " bol)
-                        (unless (or (eq (char-after) 32) (eolp))
-                          (forward-char))
+                        (or (eq (char-after) 32)
+                            (eolp)
+                            (bolp)
+                            (forward-char))
                         (point)))
                     eol)))
       (list bol bot eot eol))))
@@ -209,7 +222,7 @@ line to beginning of line. Same as `evil-delete-back-to-indentation'."
   "Like `backward-kill-word', but doesn't affect the kill-ring."
   (interactive "p")
   (let (kill-ring)
-    (backward-kill-word arg)))
+    (ignore-errors (backward-kill-word arg))))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
@@ -245,7 +258,7 @@ the value of `indent-tab-mode'.
 
 If ARG (universal argument) is non-nil, retab the current buffer using the
 opposite indentation style."
-  (interactive "Pr")
+  (interactive "P\nr")
   (unless (and beg end)
     (setq beg (point-min)
           end (point-max)))

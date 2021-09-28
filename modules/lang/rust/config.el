@@ -9,51 +9,58 @@
 
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
-  :commands rustic-run-cargo-command rustic-cargo-outdated
   :init
   (after! org-src
+    (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
     (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
+  (setq rustic-indent-method-chain t)
+
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
-  (setq rustic-indent-method-chain t
-        ;; use :editor format instead
+  ;; Leave automatic reformatting to the :editor format module.
+  (setq rustic-babel-format-src-block nil
         rustic-format-trigger nil)
 
-  (if (featurep! +lsp)
-      (add-hook 'rustic-mode-local-vars-hook #'lsp!)
-    (setq rustic-lsp-server nil)
-    (after! rustic-flycheck
+  ;; HACK `rustic-flycheck' adds all these hooks in disruptive places. Instead,
+  ;;      leave it to our :checkers syntax module to do all the set up properly.
+  (remove-hook 'rustic-mode-hook #'flycheck-mode)
+  (remove-hook 'rustic-mode-hook #'flymake-mode-off)
+  (unless (featurep! +lsp)
+    (after! flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))
+
+  ;; HACK `rustic-lsp' sets up lsp-mode/eglot too early. We move it to
+  ;;      `rustic-mode-local-vars-hook' so file/dir local variables can be used
+  ;;      to reconfigure them.
+  (when (featurep! +lsp)
+    (remove-hook 'rustic-mode-hook #'rustic-setup-lsp)
+    (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp)
+    (setq rustic-lsp-client
+          (if (featurep! :tools lsp +eglot)
+              'eglot
+            'lsp-mode)))
 
   (map! :map rustic-mode-map
         :localleader
         (:prefix ("b" . "build")
-          :desc "cargo audit"    "a" #'+rust/cargo-audit
-          :desc "cargo build"    "b" #'rustic-cargo-build
-          :desc "cargo bench"    "B" #'rustic-cargo-bench
-          :desc "cargo check"    "c" #'rustic-cargo-check
-          :desc "cargo clippy"   "C" #'rustic-cargo-clippy
-          :desc "cargo doc"      "d" #'rustic-cargo-doc
-          :desc "cargo fmt"      "f" #'rustic-cargo-fmt
-          :desc "cargo new"      "n" #'rustic-cargo-new
-          :desc "cargo outdated" "o" #'rustic-cargo-outdated
-          :desc "cargo run"      "r" #'rustic-cargo-run)
+          :desc "cargo audit"      "a" #'+rust/cargo-audit
+          :desc "cargo build"      "b" #'rustic-cargo-build
+          :desc "cargo bench"      "B" #'rustic-cargo-bench
+          :desc "cargo check"      "c" #'rustic-cargo-check
+          :desc "cargo clippy"     "C" #'rustic-cargo-clippy
+          :desc "cargo doc"        "d" #'rustic-cargo-build-doc
+          :desc "cargo doc --open" "D" #'rustic-cargo-doc
+          :desc "cargo fmt"        "f" #'rustic-cargo-fmt
+          :desc "cargo new"        "n" #'rustic-cargo-new
+          :desc "cargo outdated"   "o" #'rustic-cargo-outdated
+          :desc "cargo run"        "r" #'rustic-cargo-run)
         (:prefix ("t" . "cargo test")
           :desc "all"          "a" #'rustic-cargo-test
           :desc "current test" "t" #'rustic-cargo-current-test))
 
-  ;; HACK Fixes #2541: RLS doesn't appear to support documentSymbol, but
-  ;;      lsp-rust thinks it does, and so yields imenu population to the server.
-  ;;      The result is an empty imenu list. Until RLS supports documentSymbol,
-  ;;      we disable `lsp-enable-imenu' is rust+RLS buffers.
-  (defadvice! +rust--disable-imenu-for-lsp-mode-a (&rest _)
-    :before #'rustic-lsp-mode-setup
-    (when (eq rustic-lsp-server 'rls)
-      (setq-local lsp-enable-imenu nil)))
-
-  ;; If lsp/elgot isn't available, it attempts to install lsp-mode via
+  ;; If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;; package.el. Doom manages its own dependencies through straight so disable
   ;; this behavior to avoid package-not-initialized errors.
   (defadvice! +rust--dont-install-packages-a (&rest _)
@@ -63,11 +70,11 @@
 
 (use-package! racer
   :unless (featurep! +lsp)
-  :hook (rustic-mode . racer-mode)
+  :hook (rustic-mode-local-vars . racer-mode)
   :init
   ;; HACK Fix #2132: `racer' depends on `rust-mode', which tries to modify
   ;;      `auto-mode-alist'. We make extra sure that doesn't stick, especially
-  ;;      when a buffer is reverted, as it is after rustfmt is done wiht it.
+  ;;      when a buffer is reverted, as it is after rustfmt is done with it.
   (after! rust-mode
     (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
   :config

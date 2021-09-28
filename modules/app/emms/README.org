@@ -1,0 +1,71 @@
+#+TITLE:   app/emms
+#+DATE:    March 6, 2021
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+  - [[#ubuntu][Ubuntu]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#new-music-files-not-showing-up-in-database][New music files not showing up in database]]
+- [[#appendix][Appendix]]
+  - [[#keybinds][Keybinds]]
+
+* Description
+This module enables Emacs to be used as a music player. It uses [[https://www.musicpd.org/][mpd]] as a backend
+server and [[https://musicpd.org/clients/mpc/][mpc]] to update your music database.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://git.savannah.gnu.org/git/emms.git/][emms]]
+
+* Prerequisites
+This module requires an active MPD server, the MPC utility, and a music library.
+
+** Arch Linux
+#+BEGIN_SRC bash
+pacman -S mpd mpc
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+services.mpd.enable = true;
+environment.systemPackages = [ pkgs.mpc_cli ];
+#+END_SRC
+
+** Ubuntu
+#+BEGIN_SRC bash
+apt install mpd mpc
+#+END_SRC
+
+* Troubleshooting
+** New music files not showing up in database
+Try =M-x +emms/mpd-restart-music-daemon=. If that doesn't work restart emacs.
+
+* Appendix
+** Keybinds
++ =SPC m l= Toggles whether or not the player repeats the playlist.
++ =SPC m m= Mixes the playlist.
++ =SPC m i= Insert specific song
++ =SPC m s= Save the current playlist to a file
++ =SPC m p= Insert playlist save into current playlist
++ =g a= Sort the browser by artists
++ =g b= Sort the browser by genre
++ =X= Stops the player
++ =x= pauses the player
++ =D= in the playlist window removes that item
++ =C= clears the playlist
++ =>= move five seconds forward in the current track
++ =<= Opposite five back
++ =RET= In browser adds the artist's songs to the playlist, in the playlist starts playlist.

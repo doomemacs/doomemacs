@@ -1,0 +1,43 @@
+#+TITLE:   :ui minimap
+#+DATE:    May 8, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#scrolling-is-slowlaggy][Scrolling is slow/laggy]]
+  - [[#minimap-doesnt-close-when-disabled][Minimap doesn't close when disabled]]
+
+* Description
+This module adds a minimap to the right side of Emacs, similar to the feature
+found in many other editors.
+
+** Maintainers
++ [[https://github.com/rushsteve1][@rushsteve1]] (Author)
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://elpa.gnu.org/packages/minimap.html][minimap.el]]
+
+* Features
+A minimap which provides an overview of the current buffer to the side,
+displaying the currently visible region and the current line. You can left-click
+and drag to scroll along the buffer, or right-click anywhere to jump to there.
+
+* Configuration
+There are a number of options provided by the =minimap.el= package this module
+is based on. The easiest way to see all of them is =SPC h v minimap=.
+
+* Troubleshooting
+** Scrolling is slow/laggy
+Disable the minimap using =SPC t m=
+
+** TODO Minimap doesn't close when disabled

@@ -119,15 +119,14 @@ installed through your OS's package manager:
 
 * Features
 ** Markdown preview
-~markdown-preview~ is bound to =SPC m p= (for Evil users) and =C-c l p= (for
-non-evil users). This will open a preview of your compiled markdown document in
-your browser.
+~markdown-preview~ is bound to =<localleader> p=. This will open a preview of
+your compiled markdown document in your browser.
 
 Alternatively, you can use ~grip-mode~ through =+grip=.
 
 * Configuration
 ** Changing how markdown is compiled
-When ~markdown-preview~ is invoked (=SPC m b= or =C-c l b=), it consults
+When ~markdown-preview~ is invoked (=<localleader> p=) it consults
 ~markdown-command~. Its default value (~#'+markdown-compile~) will consult
 ~+markdown-compile-functions~: a list of functions that take three arguments: the
 start and end point in the current buffer to use as input, and an output buffer
@@ -138,7 +137,8 @@ By default, the value of ~+markdown-compile-functions~ is:
 #+BEGIN_SRC lisp
 '(+markdown-compile-marked
   +markdown-compile-pandoc
-  +markdown-compile-markdown)
+  +markdown-compile-markdown
+  +markdown-compile-multimarkdown)
 #+END_SRC
 
 These functions will attempt to use the marked, pandoc and markdown executables,

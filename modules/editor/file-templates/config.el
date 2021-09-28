@@ -8,6 +8,9 @@
   "The default yasnippet trigger key (a string) for file template rules that
 don't have a :trigger property in `+file-templates-alist'.")
 
+(defvar +file-templates-inhibit nil
+  "If non-nil, inhibit file template expansion.")
+
 (defvar +file-templates-alist
   '(;; General
     (gitignore-mode)
@@ -73,7 +76,8 @@ don't have a :trigger property in `+file-templates-alist'.")
      :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-readme"
      :mode org-mode)
-    ("\\.org$" :trigger "__" :mode org-mode)
+    (org-journal-mode :ignore t)
+    (org-mode)
     ;; PHP
     ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
     (php-mode)
@@ -107,7 +111,7 @@ information.")
 
 
 ;;
-;; Library
+;;; Library
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
@@ -132,7 +136,8 @@ information.")
   "Check if the current buffer is a candidate for file template expansion. It
 must be non-read-only, empty, and there must be a rule in
 `+file-templates-alist' that applies to it."
-  (and buffer-file-name
+  (and (not +file-templates-inhibit)
+       buffer-file-name
        (not buffer-read-only)
        (bobp) (eobp)
        (not (member (substring (buffer-name) 0 1) '("*" " ")))
@@ -140,6 +145,11 @@ must be non-read-only, empty, and there must be a rule in
        (not (buffer-modified-p))
        (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
          (apply #'+file-templates--expand rule))))
+
+(defadvice! +file-templates-inhibit-in-org-capture-a (fn &rest args)
+  :around #'org-capture
+  (let ((+file-templates-inhibit t))
+    (apply fn args)))
 
 
 ;;

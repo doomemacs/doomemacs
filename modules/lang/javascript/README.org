@@ -37,7 +37,6 @@ This module adds JavaScript and TypeScript support.
 + [[https://github.com/mooz/js2-mode][js2-mode]]
 + [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]]
 + [[https://github.com/emacs-typescript/typescript.el][typescript-mode]]
-+ [[https://github.com/aaronjensen/eslintd-fix][eslintd-fix]]
 + [[https://github.com/magnars/js2-refactor.el][js2-refactor]]
 + [[https://github.com/mojochao/npm-mode][npm-mode]]
 + [[https://github.com/abicky/nodejs-repl.el][nodejs-repl]]

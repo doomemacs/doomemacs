@@ -8,12 +8,12 @@
 ;;; Packages
 
 (use-package! ido
-  :after-call pre-command-hook
+  :hook (doom-first-input . ido-mode)
   :hook (ido-mode . ido-everywhere)
   :hook (ido-mode . ido-ubiquitous-mode)
   :preface
   ;; HACK `ido' is a really old package. It defines `ido-mode' manually and
-  ;;      doesn't define a hook, so we define one for it.")
+  ;;      doesn't define a hook, so we define one for it, so we can use it!
   (defadvice! +ido-run-hooks-a (&rest _)
     :after #'ido-mode
     (run-hooks 'ido-mode-hook))
@@ -33,18 +33,16 @@
 
   (map! :map (ido-common-completion-map ido-file-completion-map)
         "C-w"  #'ido-delete-backward-word-updir
-        :map ido-common-completion-map
+        :map (ido-common-completion-map ido-file-dir-completion-map)
         "C-n"  #'ido-next-match
         "C-p"  #'ido-prev-match
         [down] #'ido-next-match
         [up]   #'ido-prev-match
         :map ido-file-completion-map
         ;; Go to $HOME with ~
-        "~"    (λ! (if (looking-back "/" (point-min))
-                       (insert "~/")
-                     (call-interactively #'self-insert-command))))
-
-  (ido-mode +1))
+        "~"    (cmd! (if (looking-back "/" (point-min))
+                         (insert "~/")
+                       (call-interactively #'self-insert-command)))))
 
 
 (use-package! ido-vertical-mode

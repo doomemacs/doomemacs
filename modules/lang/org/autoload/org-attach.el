@@ -42,7 +42,7 @@ PATH (a string) can be an url, a local file path, or a base64 encoded datauri."
   (unless (eq major-mode 'org-mode)
     (user-error "Not in an org buffer"))
   (require 'org-download)
-  (condition-case ex
+  (condition-case-unless-debug e
       (let ((raw-uri (url-unhex-string path)))
         (cond ((string-match-p "^data:image/png;base64," path)
                (org-download-dnd-base64 path nil))
@@ -56,4 +56,4 @@ PATH (a string) can be an url, a local file path, or a base64 encoded datauri."
                  ;; insert the link
                  (org-download-insert-link raw-uri new-path)))))
     (error
-     (user-error "Failed to attach file: %s" (error-message-string ex)))))
+     (user-error "Failed to attach file: %s" (error-message-string e)))))

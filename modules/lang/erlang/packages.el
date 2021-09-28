@@ -1,9 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
-;;; private/erlang/packages.el
+;;; lang/erlang/packages.el
 
-(package! erlang :pin "3065fbf434")
-(when (featurep! :checkers syntax)
-  (package! flycheck-rebar3 :pin "3cca1268c5"))
+(package! erlang :pin "118cb37bd5b9e9cb792f0463e46fdb04f151dcd5")
 (unless (featurep! +lsp)
   (when (featurep! :completion company)
-    (package! company-erlang :pin "bc0524a16f")))
+    (package! company-erlang :pin "bc0524a16f17b66c7397690e4ca0e004f09ea6c5")))

@@ -36,8 +36,6 @@ That's fine. All evil configuration is ignored if =:editor evil= is disabled.
 + ~+default/browse-project~
 + ~+default/browse-templates~
 + ~+default/find-in-templates~
-+ ~+default/browse-emacsd~
-+ ~+default/find-in-emacsd~
 + ~+default/browse-notes~
 + ~+default/find-in-notes~
 + ~+default/find-in-snippets~

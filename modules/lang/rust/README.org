@@ -9,53 +9,95 @@
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
+  - [[#install][Install]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#general][General]]
+  - [[#other-requirements][Other Requirements]]
 - [[#features][Features]]
+  - [[#lsp-support-rls-or-rust-analyzer][LSP support (rls or rust-analyzer)]]
+  - [[#format-on-save][Format on save]]
   - [[#keybinds][Keybinds]]
 - [[#configuration][Configuration]]
-  - [[#enable-rust-analyzer][Enable rust-analyzer]]
-  - [[#enabling-elgot-support-for-rust][Enabling elgot support for Rust]]
+  - [[#enable-rls-by-default][Enable RLS by default]]
+  - [[#enabling-eglot-support-for-rust][Enabling eglot support for Rust]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#errore0670-async-fn-is-not-permitted-in-the-2015-edition][error[E0670]: `async fn` is not permitted in the 2015 edition]]
 
 * Description
 This module adds support for the Rust language and integration for its tools,
 e.g. ~cargo~.
 
-+ Code completion (~racer~)
-+ Syntax checking (~flycheck~)
-+ LSP support (for rls and rust-analyzer) (~rustic~)
++ Code completion (=racer= or an LSP server)
++ Syntax checking (=flycheck=)
++ LSP support (for rust-analyzer and rls) (=rustic=)
 + Snippets
 
 ** Module Flags
-+ ~+lsp~ to add support Language server protocol.
++ ~+lsp~ to add support Language server protocol. Will use the first of
+  =rust-analyzer= or =rls= (in that order).
 
 ** Plugins
 + [[https://github.com/brotzeit/rustic][rustic]]
 + [[https://github.com/racer-rust/emacs-racer][racer]]* (unless =+lsp=)
 
 ** Hacks
-+ rustic has been modified /not/ to automatically install lsp-mode or elgot if
-  they're missing. Doom expects you to enable the =:tools lsp= module yourself.
-+ rustic's LSP integration has been disabled in favor of the rls/rust-analyzer
-  support provider by the lsp-mode package.
++ rustic has been modified /not/ to automatically install lsp-mode or eglot if
+  they're missing. Doom expects you to have enabled the =:tools lsp= module
+  yourself.
 
 * Prerequisites
-This module only requires ~rust~, which can be acquired through =rustup=:
 
-~curl https://sh.rustup.rs -sSf | sh~
+** Install
 
-Optionally, this module also uses the following programs:
+This module requires ~rust~, which can be acquired through =rustup=.
 
-+ =racer= (if not using LSP): ~cargo +nightly install racer~ (requires rust nightly)
-+ =RLS= or =rust-analyzer= (for LSP users)
-+ =rustfmt= for ~:editor format~: ~rustup component add rustfmt-preview~
-+ The following commands require:
+*** Arch Linux
+
+#+begin_src sh
+sudo pacman -S rustup
+#+end_src
+
+See also the Rust article [[https://wiki.archlinux.org/title/Rust#Rustup][on the Arch Wiki]].
+
+Note that when the Rust /language/ has updates, you are to run =rustup= such that
+it doesn't upgrade itself:
+
+#+begin_src sh
+rustup update --no-self-update
+#+end_src
+
+*** General
+
+#+begin_src sh
+curl https://sh.rustup.rs -sSf | sh
+#+end_src
+
+** Other Requirements
+
+Additional requirements depend on the module's configuration:
+
++ If =:editor format= is enabled, you'll need =rustfmt=: ~rustup component add
+  rustfmt-preview~.
++ Users without =+lsp= enabled will need =racer=: ~cargo +nightly install racer~
+  (with requires rust nightly edition).
++ Users with =+lsp= enabled will need:
+  + =rust-analyzer= or =rls=
++ Using the following commands requires:
   + ~cargo-process-check~: ~cargo install cargo-check~
   + ~cargo-process-clippy~: ~rustup component add clippy-preview~
 
 * Features
-This module also supports LSP, if you have [[https://github.com/rust-lang/rls][the Rust Language Server]] or
-[[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed. To enable it, you must enable the =:tools lsp= module
-and the ~+lsp~ flag on this module.
+** LSP support (rls or rust-analyzer)
+This module supports LSP integration. For it to work you'll need:
+
+1. Either [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] or [[https://github.com/rust-lang/rls][the Rust Language Server]] installed (e.g. through your
+   OS package manager).
+2. The =:tools lsp= module enabled.
+3. The ~+lsp~ flag on this module enabled.
+
+** Format on save
+Enable the [[file:../../../modules/editor/format/README.org][:editor format]] module's =+onsave= flag to get formatting on save with
+rustfmt. No additional configuration is necessary.
 
 ** Keybinds
 | Binding             | Description                 |
@@ -73,23 +115,25 @@ and the ~+lsp~ flag on this module.
 | ~<localleader> t t~ | ~run current test~          |
 
 * TODO Configuration
-** Enable rust-analyzer
-You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed on your system, then use the following:
-
-#+BEGIN_SRC elisp
-;; in $DOOMDIR/config.el
-(setq rustic-lsp-server 'rust-analyzer)
-#+END_SRC
-
-** Enabling elgot support for Rust
-Doom doesn't have eglot support (yet), but if you've installed it yourself and
-want rust to use eglot instead of LSP, use the following:
+** Enable RLS by default
+If both =rls= and =rust-analyzer= are present on your system, =rust-analyzer= is
+selected by default. Modify ~rustic-lsp-server~ to change the default:
 
 #+BEGIN_SRC elisp
 ;; in $DOOMDIR/config.el
 (after! rustic
-  (setq rustic-lsp-server 'rust-analyzer ; optional
-        rustic-lsp-client 'eglot))
+  (setq rustic-lsp-server 'rls))
 #+END_SRC
 
-* TODO Troubleshooting
+** Enabling eglot support for Rust
+Doom's =:tools lsp= module has an =+eglot= flag. Enable it and this module will
+use eglot instead.
+
+* Troubleshooting
+** error[E0670]: `async fn` is not permitted in the 2015 edition
+You may be seeing this error, despite having ~edition = "2018"~ in your
+=Cargo.toml=. This error actually originates from ~rustfmt~, which the LSP
+server tries to invoke on save (if you have ~rustic-format-on-save~ or =:editor
+format= enabled).
+
+To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.

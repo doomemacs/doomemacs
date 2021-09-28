@@ -47,9 +47,9 @@
 (evil-ex-define-cmd "k[ill]m"     #'+evil:kill-matching-buffers)
 (evil-ex-define-cmd "k[ill]o"     #'doom/kill-other-buffers)
 (evil-ex-define-cmd "k[ill]b"     #'doom/kill-buried-buffers)
-(evil-ex-define-cmd "l[ast]"      #'doom/popup-restore)
+(evil-ex-define-cmd "l[ast]"      #'+popup/restore)
 (evil-ex-define-cmd "messages"    #'view-echo-area-messages)
-(evil-ex-define-cmd "pop[up]"     #'doom/popup-this-buffer)
+(evil-ex-define-cmd "pop[up]"     #'+popup/buffer)
 
 ;;; Project navigation
 (evil-ex-define-cmd "a"           #'projectile-find-other-file)
@@ -68,14 +68,17 @@
 
       ((featurep! :completion helm)
        (evil-ex-define-cmd "pg[rep]"   #'+helm:project-search)
-       (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd)))
+       (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd))
+      ((featurep! :completion vertico)
+       (evil-ex-define-cmd "pg[rep]"   #'+vertico:project-search)
+       (evil-ex-define-cmd "pg[grep]d" #'+vertico:project-search-from-cwd)))
 
 ;;; Project tools
 (evil-ex-define-cmd "com[pile]"   #'+evil:compile)
 (evil-ex-define-cmd "make"        #'+evil:make)
 (evil-ex-define-cmd "mk"          #'+evil:make) ; convenience alias
 (evil-ex-define-cmd "debug"       #'+debugger/start)
-(evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
+(evil-ex-define-cmd "er[rors]"    #'+default/diagnostics)
 
 ;;; File operations
 (evil-ex-define-cmd "cp"          #'+evil:copy-this-file)
@@ -91,11 +94,15 @@
 (evil-ex-define-cmd "tabl[ast]"   #'+workspace/switch-to-last)
 (evil-ex-define-cmd "tabload"     #'+workspace:load)
 (evil-ex-define-cmd "tabn[ew]"    #'+workspace:new)
-(evil-ex-define-cmd "tabn[ext]"   #'+workspace:switch-next)
-(evil-ex-define-cmd "tabp[rev]"   #'+workspace:switch-previous)
+(evil-ex-define-cmd "tabnext"     #'+workspace:switch-next)
+(evil-ex-define-cmd "tabprev"     #'+workspace:switch-previous)
 (evil-ex-define-cmd "tabr[ename]" #'+workspace:rename)
 (evil-ex-define-cmd "tabs"        #'+workspace/display)
 (evil-ex-define-cmd "tabsave"     #'+workspace:save)
 
 ;;; Org-mode
-(evil-ex-define-cmd "cap"         #'org-capture)
+(evil-ex-define-cmd "cap[ture]"   #'org-capture)
+
+;;; ibuffer
+(when (featurep! :emacs ibuffer)
+  (evil-ex-define-cmd "buffers" #'ibuffer))

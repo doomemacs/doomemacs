@@ -5,7 +5,10 @@
   :defer t
   :init
   (after! ob-async
-    (pushnew! ob-async-no-async-languages-alist "jupyter-python" "jupyter-julia"))
+    (pushnew! ob-async-no-async-languages-alist
+              "jupyter-python"
+              "jupyter-julia"
+              "jupyter-R"))
 
   (after! org-src
     (dolist (lang '(python julia R))
@@ -24,4 +27,14 @@
                (add-to-list 'org-src-lang-modes (cons lang-name (intern lang-tail)))))
         (with-demoted-errors "Jupyter: %s"
           (require lang nil t)
-          (require 'ob-jupyter nil t))))))
+          (require 'ob-jupyter nil t)))))
+  :config
+  (defadvice! +org--ob-jupyter-initiate-session-a (&rest _)
+    :after #'org-babel-jupyter-initiate-session
+    (unless (bound-and-true-p jupyter-org-interaction-mode)
+      (jupyter-org-interaction-mode)))
+
+  ;; Remove text/html since it's not human readable
+  (delq! :text/html jupyter-org-mime-types)
+
+  (require 'tramp))

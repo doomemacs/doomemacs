@@ -1,7 +1,27 @@
 ;;; lang/latex/config.el -*- lexical-binding: t; -*-
 
-(defvar +latex-indent-level-item-continuation 4
-  "Custom indentation level for items in enumeration-type environments")
+(defconst +latex-indent-item-continuation-offset 'align
+  "Level to indent continuation of enumeration-type environments.
+
+i.e. This affects \\item, \\enumerate, and \\description.
+
+Set this to `align' for:
+
+  \\item lines aligned
+         like this.
+
+Set to `auto' for continuation lines to be offset by `LaTeX-indent-line':
+
+  \\item lines aligned
+    like this, assuming LaTeX-indent-line == 2
+
+Any other fixed integer will be added to `LaTeX-item-indent' and the current
+indentation level.
+
+Set this to `nil' to disable all this behavior.
+
+You'll need to adjust `LaTeX-item-indent' to control indentation of \\item
+itself.")
 
 (defvar +latex-enable-unicode-math nil
   "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
@@ -34,7 +54,9 @@ If no viewers are found, `latex-preview-pane' is used.")
       ;; don't start the emacs server when correlating sources
       TeX-source-correlate-start-server nil
       ;; automatically insert braces after sub/superscript in math mode
-      TeX-electric-sub-and-superscript t)
+      TeX-electric-sub-and-superscript t
+      ;; just save, dont ask me before each compilation
+      TeX-save-query nil)
 
 
 (after! tex
@@ -56,7 +78,9 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
-  (set-popup-rule! " output\\*$" :size 15)
+  (set-popup-rules! '((" output\\*$" :size 15)
+                      ("^\\*TeX \\(?:Help\\|errors\\)"
+                       :size 0.3 :select t :ttl nil)))
   (after! smartparens-latex
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
       ;; All these excess pairs dramatically slow down typing in latex buffers,
@@ -70,14 +94,25 @@ If no viewers are found, `latex-preview-pane' is used.")
         (sp-local-pair modes open nil :actions :rem))
       ;; And tweak these so that users can decide whether they want use latex
       ;; quotes or not, via `+latex-enable-plain-double-quotes'
-      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
+      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p))))
+  ;; Hook lsp if enabled
+  (when (featurep! +lsp)
+    (add-hook! '(tex-mode-local-vars-hook
+                 latex-mode-local-vars-hook)
+               #'lsp!))
+  (map! :localleader
+        :map latex-mode-map
+        :desc "View" "v" #'TeX-view)
+  (map! :after latex
+        :map LaTeX-mode-map
+        :localleader
+        :desc "View" "v" #'TeX-view))
 
 
 (use-package! tex-fold
   :when (featurep! +fold)
   :hook (TeX-mode . TeX-fold-buffer)
   :hook (TeX-mode . TeX-fold-mode)
-
   :config
   ;; Fold after all auctex macro insertions
   (advice-add #'TeX-insert-macro :after #'+latex-fold-last-macro-a)
@@ -86,24 +121,24 @@ If no viewers are found, `latex-preview-pane' is used.")
   (advice-add #'cdlatex-math-modify :after #'+latex-fold-last-macro-a)
   ;; Fold after snippets
   (when (featurep! :editor snippets)
-    (add-hook 'TeX-fold-mode-hook
-              (defun +latex-fold-set-yas-hook-h ()
-                "Set a local after-snippet-hook to fold the snippet contents."
-                (add-hook! 'yas-after-exit-snippet-hook :local
-                  (TeX-fold-region yas-snippet-beg yas-snippet-end)))))
+    (add-hook! 'TeX-fold-mode-hook
+      (defun +latex-fold-snippet-contents-h ()
+        (add-hook! 'yas-after-exit-snippet-hook :local
+          (when (and yas-snippet-beg yas-snippet-end)
+            (TeX-fold-region yas-snippet-beg yas-snippet-end))))))
 
-  (add-hook 'mixed-pitch-mode-hook
-            (defun +latex-fold-set-variable-pitch-h ()
-              "Fix folded things invariably getting fixed pitch when using mixed-pitch.
-Math faces should stay fixed by the mixed-pitch blacklist, this
-is mostly for \\section etc."
-              (when mixed-pitch-mode
-                ;; Adding to this list makes mixed-pitch clean the face remaps after us
-                (add-to-list 'mixed-pitch-fixed-cookie
-                             (face-remap-add-relative
-                              'TeX-fold-folded-face
-                              :family (face-attribute 'variable-pitch :family)
-                              :height (face-attribute 'variable-pitch :height))))))
+  (add-hook! 'mixed-pitch-mode-hook
+    (defun +latex-fold-set-variable-pitch-h ()
+      "Fix folded things invariably getting fixed pitch when using mixed-pitch.
+Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
+\\section etc."
+      (when mixed-pitch-mode
+        ;; Adding to this list makes mixed-pitch clean the face remaps after us
+        (add-to-list 'mixed-pitch-fixed-cookie
+                     (face-remap-add-relative
+                      'TeX-fold-folded-face
+                      :family (face-attribute 'variable-pitch :family)
+                      :height (face-attribute 'variable-pitch :height))))))
 
   (map! :map TeX-fold-mode-map
         :localleader
@@ -127,23 +162,24 @@ is mostly for \\section etc."
   ;; Provide proper indentation for LaTeX "itemize","enumerate", and
   ;; "description" environments. See
   ;; http://emacs.stackexchange.com/questions/3083/how-to-indent-items-in-latex-auctex-itemize-environments
+  ;; Set `+latex-indent-item-continuation-offset' to 0 to disable this
   (dolist (env '("itemize" "enumerate" "description"))
-    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex-indent-item-fn)))
 
   ;; Fix #1849: allow fill-paragraph in itemize/enumerate
-  (defadvice! +latex--re-indent-itemize-and-enumerate-a (orig-fn &rest args)
+  (defadvice! +latex--re-indent-itemize-and-enumerate-a (fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
-                   '(("itemize"   +latex/LaTeX-indent-item)
-                     ("enumerate" +latex/LaTeX-indent-item)))))
-      (apply orig-fn args)))
-  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (orig-fn &rest args)
+                   '(("itemize"   +latex-indent-item-fn)
+                     ("enumerate" +latex-indent-item-fn)))))
+      (apply fn args)))
+  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (fn &rest args)
     :around #'LaTeX-fill-region-as-paragraph
     (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
       (delq! "itemize" LaTeX-indent-environment-list 'assoc)
       (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
-      (apply orig-fn args))))
+      (apply fn args))))
 
 
 (use-package! preview
@@ -151,7 +187,14 @@ is mostly for \\section etc."
   :config
   (setq-default preview-scale 1.4
                 preview-scale-function
-                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
+                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
+  ;; Don't cache preamble, it creates issues with synctex. Let users enable
+  ;; caching if they have compilation times that long.
+  (setq preview-auto-cache-preamble nil)
+  (map! :map LaTeX-mode-map
+        :localleader
+        :desc "Preview" "p" #'preview-at-point
+        :desc "Unpreview" "P" #'preview-clearout-at-point))
 
 
 (use-package! cdlatex
@@ -202,12 +245,18 @@ is mostly for \\section etc."
   (auctex-latexmk-setup))
 
 
+(use-package! evil-tex
+  :when (featurep! :editor evil +everywhere)
+  :hook (LaTeX-mode . evil-tex-mode))
+
+
 (use-package! company-auctex
   :when (featurep! :completion company)
   :defer t
   :init
   (add-to-list '+latex--company-backends #'company-auctex-environments nil #'eq)
   (add-to-list '+latex--company-backends #'company-auctex-macros nil #'eq))
+
 
 (use-package! company-math
   :when (featurep! :completion company)

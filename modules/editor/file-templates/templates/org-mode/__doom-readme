@@ -7,7 +7,7 @@
                             (match-string 2 buffer-file-name))
                   "")`}
 #+DATE:    `(format (format-time-string "%B %%s, %Y") (string-to-number (format-time-string "%d")))`
-#+SINCE:   ${2:{replace with next tagged release version}}
+#+SINCE:   ${2:<replace with next tagged release version>}
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:

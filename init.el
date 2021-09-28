@@ -27,27 +27,31 @@
 ;;
 ;;; License: MIT
 
-;; A big contributor to startup times is garbage collection. We up the gc
-;; threshold to temporarily prevent it from running, then reset it later by
-;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
-(setq gc-cons-threshold most-positive-fixnum)
+;; In the strange case that early-init.el wasn't loaded (e.g. you're using
+;; Chemacs 1? Or you're loading this file directly?), we do it explicitly:
+(unless (boundp 'doom-version)
+  (load (concat (file-name-directory load-file-name) "early-init")
+        nil t))
 
-;; In noninteractive sessions, prioritize non-byte-compiled source files to
-;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
-;; to skip the mtime checks on every *.elc file.
-(setq load-prefer-newer noninteractive)
-
-(let (file-name-handler-alist)
-  ;; Ensure Doom is running out of this file's directory
-  (setq user-emacs-directory (file-name-directory load-file-name)))
-
-;; Load the heart of Doom Emacs
-(load (concat user-emacs-directory "core/core")
-      nil 'nomessage)
-
-;; And let 'er rip!
+;; Ensure Doom's core libraries are properly initialized, autoloads file is
+;; loaded, and hooks set up for an interactive session.
 (doom-initialize)
-(if noninteractive
-    (doom-initialize-packages)
-  (doom-initialize-core)
-  (doom-initialize-modules))
+
+;; Now we load all enabled modules in the order dictated by your `doom!' block
+;; in $DOOMDIR/init.el. `doom-initialize-modules' loads them (and hooks) in the
+;; given order:
+;;
+;;   $DOOMDIR/init.el
+;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
+;;   `doom-before-init-modules-hook'
+;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
+;;   `doom-init-modules-hook'
+;;   $DOOMDIR/config.el
+;;   `doom-after-init-modules-hook'
+;;   `after-init-hook'
+;;   `emacs-startup-hook'
+;;   `doom-init-ui-hook'
+;;   `window-setup-hook'
+;;
+;; And then we're good to go!
+(doom-initialize-modules)

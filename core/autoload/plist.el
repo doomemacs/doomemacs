@@ -35,24 +35,6 @@ list, the pair is destructured into (CAR . CDR)."
   "Delete PROP from PLIST in-place."
   `(setq ,plist (doom-plist-delete ,plist ,prop)))
 
-;;;###autoload
-(defmacro with-plist! (plist props &rest body)
-  "With props bound from PLIST to PROPS, evaluate BODY.
-
-PROPS is a list of symbols. Each one is converted to a keyword and then its
-value is looked up in the PLIST and bound to the symbol for the duration of
-BODY."
-  (declare (indent 2))
-  (let ((plist-sym (make-symbol "plist")))
-    `(let* ((,plist-sym ,plist)
-            ,@(cl-loop for prop in props
-                       collect
-                       `(,prop
-                         (plist-get
-                          ,plist-sym
-                          ,(doom-keyword-intern (symbol-name prop))))))
-       ,@body)))
-
 
 ;;
 ;;; Library
@@ -91,3 +73,21 @@ BODY."
           (plist-put! p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
+
+;;;###autoload
+(defun doom-plist-keys (plist)
+  "Return the keys in PLIST."
+  (let (keys)
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    keys))
+
+;;;###autoload
+(defun doom-plist-values (plist)
+  "Return the values in PLIST."
+  (let (keys)
+    (while plist
+      (push (cadr plist) keys)
+      (setq plist (cddr plist)))
+    keys))

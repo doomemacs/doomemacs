@@ -1,0 +1,53 @@
+#+TITLE:   lang/beancount
+#+DATE:    April 13, 2021
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds support for [[https://beancount.github.io/][Beancount]] to Emacs. Beancount, like ledger, lets
+you [[https://plaintextaccounting.org/][manage your money in plain text]].
+
++ Supports [[https://github.com/polarmutex/beancount-language-server][beancount-language-server]] (if module is enabled with the =+lsp=
+  flag).
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enable support for [beancount-language-server]. Requires Doom's =:tools
+  lsp= module.
+
+** Plugins
++ [[https://github.com/beancount/beancount-mode][beancount]]
+
+** Hacks
++ Associates the material =attach_money= icon with *.beancount files in the
+  =all-the-icons= package.
+
+* Prerequisites
+This module has no hard prerequisites, but assumes you have [[https://github.com/beancount/beancount][beancount]] installed
+in order to generate reports with ~bean-report~.
+
+#+begin_quote
+Also: the ~beancount-fava~ command requires [[https://beancount.github.io/fava/][fava]].
+#+end_quote
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

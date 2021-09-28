@@ -22,16 +22,17 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 
 ;;
-;; java-mode
+;;; java-mode
 
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
-(cond ((featurep! +lsp)       (load! "+lsp"))
-      ((featurep! +meghanada) (load! "+meghanada")))
+(cond ((featurep! +meghanada) (load! "+meghanada"))
+      ((featurep! :tools lsp +eglot))
+      ((featurep! +lsp)       (load! "+lsp")))
 
 
 ;;
-;; Common packages
+;;; Common packages
 
 (use-package! android-mode
   :commands android-mode
@@ -45,4 +46,6 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 (use-package! groovy-mode
   :mode "\\.g\\(?:radle\\|roovy\\)$"
   :config
-  (set-eval-handler! 'groovy-mode "groovy"))
+  (set-docsets! 'groovy-mode "Groovy" "Groovy_JDK")
+  (set-eval-handler! 'groovy-mode "groovy")
+  (set-repl-handler! 'groovy-mode #'+java/open-groovy-repl))

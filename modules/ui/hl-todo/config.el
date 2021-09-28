@@ -2,6 +2,7 @@
 
 (use-package! hl-todo
   :hook (prog-mode . hl-todo-mode)
+  :hook (yaml-mode . hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
         hl-todo-keyword-faces
@@ -20,7 +21,19 @@
           ;; directed at another user other than the author.
           ("NOTE" success bold)
           ;; For things that just gotta go and will soon be gone.
-          ("DEPRECATED" font-lock-doc-face bold)))
+          ("DEPRECATED" font-lock-doc-face bold)
+          ;; For a known bug that needs a workaround
+          ("BUG" error bold)
+          ;; For warning about a problematic or misguiding code
+          ("XXX" font-lock-constant-face bold)))
+
+
+  (defadvice! +hl-todo-clamp-font-lock-fontify-region-a (fn &rest args)
+    "Fix an `args-out-of-range' error in some modes."
+    :around #'hl-todo-mode
+    (letf! (defun font-lock-fontify-region (beg end &optional loudly)
+             (funcall font-lock-fontify-region (max beg 1) end loudly))
+      (apply fn args)))
 
   ;; Use a more primitive todo-keyword detection method in major modes that
   ;; don't use/have a valid syntax table entry for comments.

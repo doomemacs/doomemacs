@@ -3,9 +3,9 @@
 
 (describe "core/autoload/format"
   (describe "format!"
-    :var (doom-format-backend)
+    :var (doom-output-backend)
     (before-all
-      (setq doom-format-backend 'ansi))
+      (setq doom-output-backend 'ansi))
 
     (it "should be a drop-in replacement for `format'"
       (expect (format! "Hello %s" "World")
@@ -16,7 +16,7 @@
               :to-equal "[31mHello World[0m"))
 
     (it "supports text properties in interactive sessions"
-      (let ((doom-format-backend 'text-properties))
+      (let ((doom-output-backend 'text-properties))
         (expect (get-text-property 0 'face (format! (red "Hello %s") "World"))
                 :to-equal (list :foreground (face-foreground 'term-color-red)))))
 

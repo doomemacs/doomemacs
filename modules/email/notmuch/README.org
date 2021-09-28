@@ -1,0 +1,194 @@
+#+TITLE:   email/notmuch
+#+DATE:    May 5, 2019
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+  - [[#opensuse][openSUSE]]
+  - [[#debianubuntu][Debian/Ubuntu]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#downloading-your-email][Downloading your email]]
+  - [[#sending-mail][Sending mail]]
+  - [[#customize-notmuch-hello-buffer][Customize =*notmuch-hello*= buffer]]
+  - [[#changing-the-notmuch-landing-page][Changing the =notmuch= landing page]]
+  - [[#writing-html-emails][Writing HTML Emails]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module turns Emacs into an email client using [[https://notmuchmail.org/][notmuch]].
+
+** Module Flags
++ =+org= Enables org-mime for writing HTML emails using org-mode.
++ =+afew= Enables integration with =afew=.
+
+** Plugins
++ [[https://notmuchmail.org/][notmuch]]
++ [[https://github.com/org-mime/org-mime][org-mime]]* (with =+org= flag)
++ [[https://github.com/fuxialexander/counsel-notmuch][counsel-notmuch]]*
++ [[https://github.com/emacs-helm/helm-notmuch][helm-notmuch]]*
+
+* Prerequisites
+This module requires:
+
++ Either [[https://github.com/gauteh/lieer][gmailieer]] (default), [[https://isync.sourceforge.io/][mbsync]] or [[http://www.offlineimap.org/][offlineimap]] (to sync mail with)
++ [[https://notmuchmail.org/][notmuch]], to index and tag your downloaded messages.
++ [[https://github.com/afewmail/afew][afew]] , optionally to initially tag your downloaded messages.
+** TODO MacOS
+
+** Arch Linux
+Run one of the following commands.
+
+#+BEGIN_SRC sh
+pacman -S isync notmuch #mbsync
+#+END_SRC
+#+BEGIN_SRC sh
+pacman -S offlineimap notmuch
+#+END_SRC
+
+See: [[https://wiki.archlinux.org/index.php/Notmuch][Arch Wiki - Notmuch]]
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = with pkgs; [
+    notmuch
+    # And one of the following
+    gmailieer
+    isync
+    offlineimap
+];
+#+END_SRC
+
+[[https://github.com/Emiller88/dotfiles/blob/319841bd3b89e59b01d169137cceee3183aba4fc/modules/shell/mail.nix][An example of setting up mbsync and notmuch with home-manager]]
+
+** TODO openSUSE
+** TODO Debian/Ubuntu
+
+* Features
+
+| Keymap    | Command            | Description                                   |
+| ~SPC m u~ | =+notmuch/update=  | Download, sync, and index emails with notmuch |
+| ~SPC m c~ | =+notmuch/compose= | Compose new email                             |
+
+* Configuration
+** Downloading your email
+To download your email you need a sync backend. Out of the box, this module
+supports =Gmailier= (the default), =mbsync=, and =offlineimap= (ordered by
+speed). You may define a custom one as well. The guides below will walk you
+through setting them up with notmuch.
+
+Later, once you've set up a sync backend and downloaded your email, you must
+index your email for the first time:
+
+#+BEGIN_SRC sh
+notmuch new
+#+END_SRC
+
+*** lieer
+
+[[https://github.com/gauteh/lieer][Lieer]], formerly called Gmailieer, is the indexing tool used by default. To install lieer, see the [[https://github.com/gauteh/lieer#installation][installation docs]].
+
+*** offlineimap
+To use [[https://www.offlineimap.org/][offlineimap]], change ~+notmuch-sync-backend~:
+
+#+BEGIN_SRC emacs-lisp
+;; add to ~/.doom.d/config.el
+(setq +notmuch-sync-backend 'offlineimap)
+#+END_SRC
+
+Next, write a configuration file for =offlineimap=. [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][Here is a comprehensive
+example]] and [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf.minimal][another minimal one]].
+
+As a real world example, [[https://github.com/hlissner/dotfiles/blob/5f146b6c39552c0cf38025406f5dba7389542b0a/shell/mu/.offlineimaprc][here is my old config]], where it is configured to
+download mail to ~\~/.mail~. I used [[https://www.passwordstore.org/][unix pass]] to securely store my login
+credentials.
+
+Finally, download your email with ~offlineimap -o~. This may take a while,
+especially if you have thousands of emails.
+
+*** mbsync
+To use [[https://isync.sourceforge.io/][mbsync]], change ~+notmuch-sync-backend~:
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-sync-backend 'mbsync)
+
+;; Use `mbsync-xdg' if your mbsync config lives in $XDG_CONFIG_HOME/isync:
+(setq +notmuch-sync-backend 'mbsync-xdg)
+#+END_SRC
+
+The steps needed to set up =notmuch= with =mbsync= are similar to the ones for
+[[*offlineimap][offlineimap]].
+
+Start with writing a ~\~/.mbsyncrc~ to store your configuration. An example for
+GMAIL can be found on the [[https://wiki.archlinux.org/index.php/isync#Configuring][ArchWiki]] which will also explain how its integration
+with notmuch for auto synchronization. A non-GMAIL example is available as a
+gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]].
+
+Finally, download your email with ~mbsync --all~. This may take a while, but
+will be quicker than =offlineimap=.
+
+*** Custom method
+If you have a unique method for synchronizing your email, you can define your
+own backend:
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-sync-backend 'custom
+      ;; Set this to an arbitrary shell command
+      +notmuch-sync-command "my-notmuch-sync-cmd")
+#+END_SRC
+** Sending mail
+- [[https://notmuchmail.org/notmuch-emacs/#index6h2][notmuch docs: Sending mail]]
+- [[https://notmuchmail.org/emacstips/#index11h2][notmuch docs: msmtp, message mode and multiple accounts]]
+- [[https://notmuchmail.org/emacstips/#index12h2][notmuch docs: sending mail using smtpmail]]
+** Customize =*notmuch-hello*= buffer
+It is possible to change the =*notmuch-hello*= buffer if you want to.
+
+#+BEGIN_SRC emacs-lisp
+(after! notmuch
+  (setq notmuch-show-log nil
+        notmuch-hello-sections `(notmuch-hello-insert-saved-searches
+                                 notmuch-hello-insert-alltags)
+        ;; To hide headers while composing an email
+        notmuch-message-headers-visible nil))
+#+END_SRC
+
+** Changing the =notmuch= landing page
+You may want to forego the =*notmuch-hello*= buffer by having ~M-x =notmuch~ or
+~SPC o m~ take you straight to a search page.
+
+When using ~SPC o m~ the =+notmuch-home-function= is called. By default it uses
+the =notmuch= function and so has the same familiar behavior of running a
+vanilla install of notmuch-emacs. But, by overwriting this function you can run
+a custom search as your landing page.
+
+#+BEGIN_SRC emacs-lisp
+(setq +notmuch-home-function (lambda () (notmuch-search "tag:inbox")))
+#+END_SRC
+** Writing HTML Emails
+The [[https://github.com/org-mime/org-mime][org-mime]] package provides functionality for composing emails in org-mode and transforming them to HTML. This feature is enabled using the =+org= flag.
+
+Example use cases:
+
+- To convert an email to an HTML email use ~M-x org-mime-htmlize~
+- To compose email using an org-mode editor buffer, use ~M-x org-mime-edit-mail-in-org-mode~
+
+If you'd like to make configuration changes to =org-mime=, you may do so normally. By default the output of =org-mime-htmlize= includes section numbers, a byline, and a table of contents. That's probably more formal than the emails you're used to sending, so here's some example configuration that turns those features off.
+
+/config.el/
+
+#+begin_src emacs-lisp
+(after! org-mime
+  (setq org-mime-export-options '(:section-numbers nil
+                                  :with-author nil
+                                  :with-toc nil)))
+#+end_src
+
+
+* TODO Troubleshooting

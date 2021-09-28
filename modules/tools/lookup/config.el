@@ -3,6 +3,8 @@
 ;; "What am I looking at?" This module helps you answer this question.
 ;;
 ;;   + `+lookup/definition': a jump-to-definition that should 'just work'
+;;   + `+lookup/implementations': find a symbol's implementations in the current
+;;                                project
 ;;   + `+lookup/references': find a symbol's references in the current project
 ;;   + `+lookup/file': open the file referenced at point
 ;;   + `+lookup/online'; look up a symbol on online resources
@@ -24,9 +26,10 @@
             ("Github"            "https://github.com/search?ref=simplesearch&q=%s")
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
-            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
+            ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
+            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
           (when (featurep! :lang rust)
-            '(("Rust Docs" "https://doc.rust-lang.org/edition-guide/?search=%s"))))
+            '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
 
   1. A search url (needs on '%s' to substitute with an url encoded query),
@@ -39,7 +42,8 @@ Used by `+lookup/online'.")
   "Function to use to open search urls.")
 
 (defvar +lookup-definition-functions
-  '(+lookup-xref-definitions-backend-fn
+  '(+lookup-dictionary-definition-backend-fn
+    +lookup-xref-definitions-backend-fn
     +lookup-dumb-jump-backend-fn
     +lookup-project-search-backend-fn
     +lookup-evil-goto-definition-backend-fn)
@@ -52,8 +56,27 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
+(defvar +lookup-implementations-functions ()
+  "Function for `+lookup/implementations' to try. Stops at the first function to
+return non-nil or change the current window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
+
+(defvar +lookup-type-definition-functions ()
+  "Functions for `+lookup/type-definition' to try. Stops at the first function to
+return non-nil or change the current window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
+
 (defvar +lookup-references-functions
-  '(+lookup-xref-references-backend-fn
+  '(+lookup-thesaurus-definition-backend-fn
+    +lookup-xref-references-backend-fn
     +lookup-project-search-backend-fn)
   "Functions for `+lookup/references' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
@@ -75,7 +98,9 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
-(defvar +lookup-file-functions ()
+(defvar +lookup-file-functions
+  '(+lookup-bug-reference-backend-fn
+    +lookup-ffap-backend-fn)
   "Function for `+lookup/file' to try, before restoring to `find-file-at-point'.
 Stops at the first function to return non-nil or change the current
 window/point.
@@ -104,6 +129,7 @@ Dictionary.app behind the scenes to get definitions.")
   :commands dumb-jump-result-follow
   :config
   (setq dumb-jump-default-project doom-emacs-dir
+        dumb-jump-prefer-searcher 'rg
         dumb-jump-aggressive nil
         dumb-jump-selector
         (cond ((featurep! :completion ivy)  'ivy)
@@ -125,23 +151,40 @@ Dictionary.app behind the scenes to get definitions.")
   ;; xref to be one too.
   (remove-hook 'xref-backend-functions #'etags--xref-backend)
   ;; ...however, it breaks `projectile-find-tag', unless we put it back.
-  (defadvice! +lookup--projectile-find-tag-a (orig-fn)
+  (defadvice! +lookup--projectile-find-tag-a (fn)
     :around #'projectile-find-tag
     (let ((xref-backend-functions '(etags--xref-backend t)))
-      (funcall orig-fn)))
+      (funcall fn)))
 
-  ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
+  ;; This integration is already built into evil
+  (unless (featurep! :editor evil)
+    ;; Use `better-jumper' instead of xref's marker stack
+    (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a))
 
   (use-package! ivy-xref
     :when (featurep! :completion ivy)
     :config
-    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-    (set-popup-rule! "^\\*xref\\*$" :ignore t))
+    (set-popup-rule! "^\\*xref\\*$" :ignore t)
+    (setq xref-show-definitions-function #'ivy-xref-show-defs
+          xref-show-xrefs-function       #'ivy-xref-show-xrefs)
+
+    ;; HACK Fix #4386: `ivy-xref-show-xrefs' calls `fetcher' twice, which has
+    ;; side effects that breaks in some cases (i.e. on `dired-do-find-regexp').
+    (defadvice! +lookup--fix-ivy-xrefs (fn fetcher alist)
+      :around #'ivy-xref-show-xrefs
+      (when (functionp fetcher)
+        (setf (alist-get 'fetched-xrefs alist)
+              (funcall fetcher)))
+      (funcall fn fetcher alist)))
 
   (use-package! helm-xref
-    :when (featurep! :completion helm)
-    :config (setq xref-show-xrefs-function (if EMACS27+ #'helm-xref-show-xrefs-27 #'helm-xref-show-xrefs))))
+    :when (featurep! :completion helm))
+
+  (use-package! consult-xref
+    :when (featurep! :completion vertico)
+    :init
+    (setq xref-show-xrefs-function       #'consult-xref
+          xref-show-definitions-function #'consult-xref)))
 
 
 ;;
@@ -153,30 +196,15 @@ Dictionary.app behind the scenes to get definitions.")
   :init
   (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend-fn)
   :config
-  (setq dash-docs-enable-debugging doom-debug-mode
+  (setq dash-docs-enable-debugging doom-debug-p
         dash-docs-docsets-path (concat doom-etc-dir "docsets/")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)
 
-  ;; Before `gnutls' is loaded, `gnutls-algorithm-priority' is treated as a
-  ;; lexical variable, which breaks `+lookup*fix-gnutls-error'
-  (defvar gnutls-algorithm-priority)
-  (defadvice! +lookup--fix-gnutls-error-a (orig-fn url)
-    "Fixes integer-or-marker-p errors emitted from Emacs' url library,
-particularly, the `url-retrieve-synchronously' call in
-`dash-docs-read-json-from-url'. This is part of a systemic issue with Emacs 26's
-networking library (fixed in Emacs 27+, apparently).
-
-See https://github.com/magit/ghub/issues/81"
-    :around #'dash-docs-read-json-from-url
-    (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
-      (funcall orig-fn url)))
-
-  (use-package! helm-dash
-    :when (featurep! :completion helm))
-
-  (use-package! counsel-dash
-    :when (featurep! :completion ivy)))
+  (cond ((featurep! :completion helm)
+         (require 'helm-dash nil t))
+        ((featurep! :completion ivy)
+         (require 'counsel-dash nil t))))
 
 
 ;;
@@ -187,15 +215,18 @@ See https://github.com/magit/ghub/issues/81"
   :unless IS-MAC
   :defer t
   :config
+  ;; REVIEW Temporarily fix abo-abo/define-word#31
+  (defadvice! +lookup--fix-define-word-a (fn &rest args)
+    "Fix `define-word' backends that require a user agent (like wordnik)."
+    :around #'define-word
+    (let ((url-request-extra-headers
+           '(("User-Agent" .
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36"))))
+      (apply fn args)))
+
   (setq define-word-displayfn-alist
         (cl-loop for (service . _) in define-word-services
                  collect (cons service #'+eval-display-results-in-popup))))
-
-
-(when (featurep! +dictionary)
-  (define-key! text-mode-map
-    [remap +lookup/definition] #'+lookup/dictionary-definition
-    [remap +lookup/references] #'+lookup/synonyms))
 
 
 ;;;###package synosaurus

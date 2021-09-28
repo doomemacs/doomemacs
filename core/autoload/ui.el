@@ -19,7 +19,7 @@ If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
 Returns t if it is safe to kill this session. Does not prompt if no real buffers
 are open."
   (or (not (ignore-errors (doom-real-buffer-list)))
-      (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
+      (yes-or-no-p (format "%s" (or prompt "Really quit Emacs?")))
       (ignore (message "Aborted"))))
 
 
@@ -32,24 +32,24 @@ are open."
   (recenter))
 
 ;;;###autoload
-(defun doom-preserve-window-position-a (orig-fn &rest args)
+(defun doom-preserve-window-position-a (fn &rest args)
   "Generic advice for preserving cursor position on screen after scrolling."
   (let ((row (cdr (posn-col-row (posn-at-point)))))
-    (prog1 (apply orig-fn args)
+    (prog1 (apply fn args)
       (save-excursion
         (let ((target-row (- (line-number-at-pos) row)))
           (unless (< target-row 0)
             (evil-scroll-line-to-top target-row)))))))
 
 ;;;###autoload
-(defun doom-shut-up-a (orig-fn &rest args)
+(defun doom-shut-up-a (fn &rest args)
   "Generic advisor for silencing noisy functions.
 
 In interactive Emacs, this just inhibits messages from appearing in the
 minibuffer. They are still logged to *Messages*.
 
-In tty Emacs, messages suppressed completely."
-  (quiet! (apply orig-fn args)))
+In tty Emacs, messages are suppressed completely."
+  (quiet! (apply fn args)))
 
 
 ;;
@@ -113,48 +113,44 @@ See `display-line-numbers' for what these values mean."
         (delete-frame))
     (save-buffers-kill-emacs)))
 
-(defvar doom--maximize-last-wconf nil)
-;;;###autoload
-(defun doom/window-maximize-buffer ()
-  "Close other windows to focus on this one. Activate again to undo this. If the
-window changes before then, the undo expires.
 
-Alternatively, use `doom/window-enlargen'."
-  (interactive)
-  (setq doom--maximize-last-wconf
-        (if (and (null (cdr (cl-remove-if #'window-dedicated-p (window-list))))
-                 doom--maximize-last-wconf)
-            (ignore (set-window-configuration doom--maximize-last-wconf))
-          (when (and (bound-and-true-p +popup-mode)
-                     (+popup-window-p))
-            (user-error "Cannot maximize a popup, use `+popup/raise' first or use `doom/window-enlargen' instead"))
-          (prog1 (current-window-configuration)
-            (delete-other-windows)))))
+(defun doom--enlargened-forget-last-wconf-h ()
+  (set-frame-parameter nil 'doom--maximize-last-wconf nil)
+  (set-frame-parameter nil 'doom--enlargen-last-wconf nil)
+  (remove-hook 'doom-switch-window-hook #'doom--enlargened-forget-last-wconf-h))
 
-(defvar doom--enlargen-last-wconf nil)
 ;;;###autoload
-(defun doom/window-enlargen ()
-  "Enlargen the current window to focus on this one. Does not close other
-windows (unlike `doom/window-maximize-buffer'). Activate again to undo."
-  (interactive)
-  (setq doom--enlargen-last-wconf
-        (if doom--enlargen-last-wconf
-            (ignore (set-window-configuration doom--enlargen-last-wconf))
-          (prog1 (current-window-configuration)
-            (let* ((window (selected-window))
-                   (dedicated-p (window-dedicated-p window))
-                   (preserved-p (window-parameter window 'window-preserved-size))
-                   (ignore-window-parameters t))
-              (unwind-protect
-                  (progn
-                    (when dedicated-p
-                      (set-window-dedicated-p window nil))
-                    (when preserved-p
-                      (set-window-parameter window 'window-preserved-size nil))
-                    (maximize-window window))
-                (set-window-dedicated-p window dedicated-p)
-                (when preserved-p
-                  (set-window-parameter window 'window-preserved-size preserved-p))))))))
+(defun doom/window-maximize-buffer (&optional arg)
+  "Close other windows to focus on this one.
+Use `winner-undo' to undo this. Alternatively, use `doom/window-enlargen'."
+  (interactive "P")
+  (when (and (bound-and-true-p +popup-mode)
+             (+popup-window-p))
+    (+popup/raise (selected-window)))
+  (delete-other-windows))
+
+;;;###autoload
+(defun doom/window-enlargen (&optional arg)
+  "Enlargen the current window (i.e. shrinks others) so you can focus on it.
+Use `winner-undo' to undo this. Alternatively, use
+`doom/window-maximize-buffer'."
+  (interactive "P")
+  (let* ((window (selected-window))
+         (dedicated-p (window-dedicated-p window))
+         (preserved-p (window-parameter window 'window-preserved-size))
+         (ignore-window-parameters t)
+         (window-resize-pixelwise nil)
+         (frame-resize-pixelwise nil))
+    (unwind-protect
+        (progn
+          (when dedicated-p
+            (set-window-dedicated-p window nil))
+          (when preserved-p
+            (set-window-parameter window 'window-preserved-size nil))
+          (maximize-window window))
+      (set-window-dedicated-p window dedicated-p)
+      (when preserved-p
+        (set-window-parameter window 'window-preserved-size preserved-p)))))
 
 ;;;###autoload
 (defun doom/window-maximize-horizontally ()

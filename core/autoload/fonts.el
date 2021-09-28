@@ -7,9 +7,9 @@ or `doom/decrease-font-size' are invoked.")
 
 ;;;###autoload
 (defvar doom-big-font nil
-  "The font to use for `doom-big-font-mode'. If nil, `doom-font' will be used,
-scaled up by `doom-big-font-increment'. See `doom-font' for details on
-acceptable values for this variable.")
+  "The font to use for `doom-big-font-mode'.
+If nil, `doom-font' will be used, scaled up by `doom-big-font-increment'. See
+`doom-font' for details on acceptable values for this variable.")
 
 ;;;###autoload
 (defvar doom-big-font-increment 4
@@ -20,47 +20,94 @@ acceptable values for this variable.")
 ;;
 ;;; Library
 
-(defun doom--font-name (fontname)
-  (when (query-fontset fontname)
-    (when-let (ascii (assq 'ascii (aref (fontset-info fontname) 2)))
-      (setq fontname (nth 2 ascii))))
-  (or (x-decompose-font-name fontname)
-      (error "Cannot decompose font name")))
-
-(defvar doom--font-scale nil)
 ;;;###autoload
-(defun doom-adjust-font-size (increment)
+(defun doom-normalize-font (font)
+  "Return FONT as a normalized font spec.
+
+The font will be normalized (i.e. :weight, :slant, and :width will set to
+'normal if not specified) before it is converted.
+
+FONT can be a `font-spec', a font object, an XFT font string, or an XLFD font
+string."
+  (cl-check-type font (or font string vector))
+  (when (and (stringp font)
+             (string-prefix-p "-" font))
+    (setq font (x-decompose-font-name font)))
+  (let* ((font
+          (cond ((stringp font)
+                 (dolist (prop '("weight" "slant" "width") (aref (font-info font) 0))
+                   (unless (string-match-p (format ":%s=" prop) font)
+                     (setq font (concat font ":" prop "=normal")))))
+                ((fontp font)
+                 (dolist (prop '(:weight :slant :width) (font-xlfd-name font))
+                   (unless (font-get font prop)
+                     (font-put font prop 'normal))))
+                ((vectorp font)
+                 (dolist (i '(1 2 3) (x-compose-font-name font))
+                   (unless (aref font i)
+                     (aset font i "normal"))))))
+         (font (x-resolve-font-name font))
+         (font (font-spec :name font)))
+    (unless (font-get font :size)
+      (font-put font :size
+                (font-get (font-spec :name (face-font 'default))
+                          :size)))
+    font))
+
+;;;###autoload
+(defun doom-adjust-font-size (increment &optional fixed-size-p font-alist)
   "Increase size of font in FRAME by INCREMENT.
-FRAME parameter defaults to current frame."
-  (if (null increment)
-      (progn
-        (set-frame-font doom-font 'keep-size t)
-        (setf (alist-get 'font default-frame-alist)
-              (cond ((stringp doom-font) doom-font)
-                    ((fontp doom-font) (font-xlfd-name doom-font))
-                    ((signal 'wrong-type-argument (list '(fontp stringp)
-                                                        doom-font)))))
-        t)
-    (let* ((font (frame-parameter nil 'font))
-           (font (doom--font-name font))
-           (increment (* increment doom-font-increment))
-           (zoom-factor (or doom--font-scale 0)))
-      (let ((new-size (+ (string-to-number (aref font xlfd-regexp-pixelsize-subnum))
-                         increment)))
-        (unless (> new-size 0)
-          (error "Font is too small at %d" new-size))
-        (aset font xlfd-regexp-pixelsize-subnum (number-to-string new-size)))
-      ;; Set point size & width to "*", so frame width will adjust to new font size
-      (aset font xlfd-regexp-pointsize-subnum "*")
-      (aset font xlfd-regexp-avgwidth-subnum "*")
-      (setq font (x-compose-font-name font))
-      (unless (x-list-fonts font)
-        (error "Cannot change font size"))
-      (set-frame-font font 'keep-size t)
-      (setf (alist-get 'font default-frame-alist) font)
-      (setq doom--font-scale (+ zoom-factor increment))
-      ;; Unlike `set-frame-font', `set-frame-parameter' won't trigger this
-      (run-hooks 'after-setting-font-hook))))
+
+If FIXED-SIZE-P is non-nil, treat INCREMENT as a font size, rather than a
+scaling factor.
+
+FONT-ALIST is an alist give temporary values to certain Doom font variables,
+like `doom-font' or `doom-variable-pitch-font'. e.g.
+
+  `((doom-font . ,(font-spec :family \"Sans Serif\" :size 12)))
+
+Doesn't work in terminal Emacs."
+  (unless (display-multi-font-p)
+    (user-error "Cannot resize fonts in terminal Emacs"))
+  (condition-case-unless-debug e
+      (let (changed)
+        (dolist (sym '((doom-font . default)
+                       (doom-serif-font . fixed-pitch-serif)
+                       (doom-variable-pitch-font . variable-pitch))
+                     (when changed
+                       (doom-init-fonts-h 'reload)
+                       t))
+          (cl-destructuring-bind (var . face) sym
+            (if (null increment)
+                (when (get var 'initial-value)
+                  (set var (get var 'initial-value))
+                  (put var 'initial-value nil)
+                  (setq changed t))
+              (let* ((original-font (or (symbol-value var)
+                                        (face-font face t)
+                                        (with-temp-buffer (face-font face))))
+                     (font (doom-normalize-font original-font))
+                     (dfont
+                      (or (if-let* ((remap-font (alist-get var font-alist))
+                                    (remap-xlfd (doom-normalize-font remap-font)))
+                              remap-xlfd
+                            (purecopy font))
+                          (error "Could not decompose %s font" var))))
+                (let* ((step      (if fixed-size-p 0 (* increment doom-font-increment)))
+                       (orig-size (font-get font :size))
+                       (new-size  (if fixed-size-p increment (+ orig-size step))))
+                  (cond ((<= new-size 0)
+                         (error "`%s' font is too small to be resized (%d)" var new-size))
+                        ((= orig-size new-size)
+                         (user-error "Could not resize `%s' for some reason" var))
+                        ((setq changed t)
+                         (unless (get var 'initial-value)
+                           (put var 'initial-value original-font))
+                         (font-put dfont :size new-size)
+                         (set var dfont)))))))))
+    (error
+     (ignore-errors (doom-adjust-font-size nil))
+     (signal (car e) (cdr e)))))
 
 
 ;;
@@ -71,22 +118,19 @@ FRAME parameter defaults to current frame."
   "Reload your fonts, if they're set.
 See `doom-init-fonts-h'."
   (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom-init-fonts-h)
-  (mapc #'doom-init-extra-fonts-h (frame-list)))
+  (doom-init-fonts-h 'reload))
 
 ;;;###autoload
-(defun doom/increase-font-size (count)
+(defun doom/increase-font-size (count &optional increment)
   "Enlargens the font size across the current and child frames."
   (interactive "p")
-  (doom-adjust-font-size count))
+  (doom-adjust-font-size (* count (or increment doom-font-increment))))
 
 ;;;###autoload
-(defun doom/decrease-font-size (count)
+(defun doom/decrease-font-size (count &optional increment)
   "Shrinks the font size across the current and child frames."
   (interactive "p")
-  (doom-adjust-font-size (- count)))
+  (doom-adjust-font-size (* (- count) (or increment doom-font-increment))))
 
 ;;;###autoload
 (defun doom/reset-font-size ()
@@ -100,33 +144,31 @@ Assuming it has been adjusted via `doom/increase-font-size' and
                (/= text-scale-mode-amount 0))
       (text-scale-set 0)
       (setq success t))
-    (when (doom-adjust-font-size nil)
-      (setq success t))
+    (cond (doom-big-font-mode
+           (message "Disabling `doom-big-font-mode'")
+           (doom-big-font-mode -1)
+           (setq success t))
+          ((doom-adjust-font-size nil)
+           (setq success t)))
     (unless success
       (user-error "The font hasn't been resized"))))
 
 ;;;###autoload
 (define-minor-mode doom-big-font-mode
-  "A global mode that resizes the font, for streams, screen-sharing and
-presentations.
+  "Globally resizes your fonts for streams, screen-sharing or presentations.
 
-This uses `doom/increase-font-size' under the hood, and enlargens the font by
-`doom-big-font-increment'."
+Uses `doom-big-font' if its set, otherwise uses `doom-font' (falling back to
+your system font).
+
+Also resizees `doom-variable-pitch-font' and `doom-serif-font'."
   :init-value nil
   :lighter " BIG"
   :global t
-  (unless doom-font
-    (user-error "`doom-font' must be set to a valid font"))
   (if doom-big-font
-      (let ((font (if doom-big-font-mode doom-big-font doom-font)))
-        (set-frame-font font 'keep-size t)
-        (setf (alist-get 'font default-frame-alist)
-              (cond ((stringp doom-font) font)
-                    ((fontp font) (font-xlfd-name font))
-                    ((signal 'wrong-type-argument (list '(fontp stringp)
-                                                        font))))))
-    (doom-adjust-font-size
-     (and doom-big-font-mode
-          (integerp doom-big-font-increment)
-          (/= doom-big-font-increment 0)
-          doom-big-font-increment))))
+      ;; Use `doom-big-font' in lieu of `doom-font'
+      (doom-adjust-font-size
+       (when doom-big-font-mode
+         (font-get (doom-normalize-font doom-big-font) :size))
+       t `((doom-font . ,doom-big-font)))
+    ;; Resize the current font
+    (doom-adjust-font-size (if doom-big-font-mode doom-big-font-increment))))

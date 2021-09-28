@@ -77,6 +77,26 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
            ((format "%s" val)))
      t)))
 
+;;;###autoload
+(defun +ivy-format-function-line-or-arrow (cands)
+  "Transform CANDS into a string for minibuffer.
+
+If in terminal, prefix candidates with a chevron to make it more obvious which
+one you're selecting, especially in themes that can't set a good background for
+`ivy-current-match'. This is a combination of `ivy-format-function-line' and
+`ivy-format-function-arrow'.
+
+In the GUI, this is the same as `ivy-format-function-line'."
+  (if (display-graphic-p)
+      (ivy-format-function-line cands)
+    (ivy--format-function-generic
+     (lambda (str)
+       (ivy--add-face (concat "> " str "\n") 'ivy-current-match))
+     (lambda (str)
+       (concat "  " str "\n"))
+     cands
+     "")))
+
 
 ;;
 ;; Library
@@ -178,7 +198,7 @@ If ARG (universal argument), open selection in other-window."
         (user-error "%S doesn't support wgrep" caller)))))
 
 ;;;###autoload
-(defun +ivy-yas-prompt (prompt choices &optional display-fn)
+(defun +ivy-yas-prompt-fn (prompt choices &optional display-fn)
   (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))
 
 ;;;###autoload
@@ -252,7 +272,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
          (directory (or in project-root))
          (args (concat (if all-files " -uu")
                        (unless recursive " --maxdepth 1")
-                       " "
+                       " --hidden -g!.git "
                        (mapconcat #'shell-quote-argument args " "))))
     (setq deactivate-mark t)
     (counsel-rg
@@ -269,13 +289,13 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
             (rxt-quote-pcre (doom-thing-at-point-or-region)))))
      directory args
      (or prompt
-         (format "rg%s [%s]: "
-                 args
+         (format "Search project [%s]: "
                  (cond ((equal directory default-directory)
                         "./")
                        ((equal directory project-root)
                         (projectile-project-name))
-                       ((file-relative-name directory project-root))))))))
+                       ((file-relative-name directory project-root)))
+                 (string-trim args))))))
 
 ;;;###autoload
 (defun +ivy/project-search (&optional arg initial-query directory)
@@ -302,7 +322,11 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 (defun +ivy/compile ()
   "Execute a compile command from the current buffer's directory."
   (interactive)
-  (counsel-compile default-directory))
+  ;; Fix unhelpful 'Couldn't find project root' error
+  (letf! (defun counsel--compile-root ()
+           (ignore-errors
+             (funcall counsel--compile-root)))
+    (counsel-compile default-directory)))
 
 ;;;###autoload
 (defun +ivy/project-compile ()

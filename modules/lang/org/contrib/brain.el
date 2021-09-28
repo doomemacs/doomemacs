@@ -10,10 +10,33 @@
         org-brain-file-entries-use-title nil)
 
   :config
-  (set-evil-initial-state! 'org-brain-visualize-mode 'emacs)
-  (set-popup-rule! "^\\*org-brain" :side 'right :size 1.00 :select t :ttl nil)
+  (set-popup-rule! "^\\*org-brain"
+    :side 'right :size 1.00 :select t :quit nil :ttl nil)
 
   (cl-pushnew '("b" "Brain" plain (function org-brain-goto-end)
                 "* %i%?" :empty-lines 1)
               org-capture-templates
-              :key #'car :test #'equal))
+              :key #'car :test #'equal)
+
+  (when (featurep! :editor evil +everywhere)
+    ;; TODO Make a proper evil keybind scheme for org-brain
+    ;; REVIEW This should be handled upstream by evil-collection
+    (set-evil-initial-state!
+      '(org-brain-visualize-mode
+        org-brain-select-map
+        org-brain-move-map
+        org-brain-polymode-map)
+      'normal)
+    (defun +org--evilify-map (map)
+      (let (keys)
+        (map-keymap (lambda (event function)
+                      (push function keys)
+                      (push (vector event) keys))
+                    map)
+        (apply #'evil-define-key* 'normal map keys)))
+
+    (+org--evilify-map org-brain-visualize-mode-map)
+    (+org--evilify-map org-brain-select-map)
+    (+org--evilify-map org-brain-move-map)
+    (after! polymode
+      (+org--evilify-map org-brain-polymode-map))))

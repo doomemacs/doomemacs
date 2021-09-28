@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Java record file template
+# --
+package `(+java-current-package)`;
+
+public record `(+java-current-class)`($0) $1
+{
+}

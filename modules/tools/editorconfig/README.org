@@ -1,18 +1,78 @@
-#+TITLE: :tools editorconfig
+#+TITLE:   tools/editorconfig
+#+DATE:    August 22, 2020
+#+SINCE:   2.0.9
+#+STARTUP: inlineimages nofold
 
-Editorconfig integration for Doom.
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#adding-support-for-more-major-modes][Adding support for more major modes]]
+- [[#troubleshooting][Troubleshooting]]
 
-* Table of Contents :TOC:
-- [[Module Flags][Module Flags]]
-- [[Prerequisites][Prerequisites]]
-- [[Configuration][Configuration]]
+* Description
+This module integrates [[https://editorconfig.org/][EditorConfig]] into Emacs, allowing users to dictate code
+style on a per-project basis with an =.editorconfig= file ([[https://editorconfig-specification.readthedocs.io/][formal
+specification]]).
 
-* Module Flags
+** Maintainers
+This module has no dedicated maintainers
+
+** Module Flags
 This module provides no flags.
 
+** Plugins
++ [[https://github.com/editorconfig/editorconfig-emacs][editorconfig-emacs]]
+ 
+** Hacks
++ Added logic to guess an extension-less file's type from its shebang line. For
+  example, editorconfig rules for =*.py= files will apply to =bin/myscript=
+  assuming its first line is ~#!/usr/bin/env python~. See
+  ~+editorconfig-mode-alist~ for adding support for more languages.
++ *Special integration for =dtrt-indent=:* If the local editorconfig file
+  specifies ~indent_style~ or ~indent_size~, the =dtrt-indent= (which tries to
+  guess your indent settings by analyzing your text file) will bow out.
++ *Special integration for =ws-butler=:* this module will use =ws-butler= to
+  enforce ~trim_trailing_whitespace~.
+
 * Prerequisites
-~editorconfig~ is an optional requirement of this package. The elisp-only
-implementation may be sufficient, but has fewer features.
+This module has one optional dependency: the ~editorconfig~ native binary.
+Without it, a built-in elisp implementation will be used, but it has fewer
+features and can be a bit slower.
+
+The editorconfig binary has [[https://github.com/editorconfig#contributing][many implementations]] you can choose from, typically
+available through your OS package manager (or build it yourself).
+
+* Features
+You will need to write an ~.editorconfig~ file in your project (this is usually
+in the root of your project) you can find out about all the properties [[https://editorconfig.org/#example-file][here]]
 
 * Configuration
+** Adding support for more major modes
+Out the box, the editorconfig plugin supports many Emacs major modes, but it's
+possible you'll find one it doesn't support. Adding support is easy so long as
+you know that mode's indentation variables. For example, ~coffee-mode~ has a
+~coffee-tab-width~ variable that controls indentation width in CoffeeScript
+files. Editorconfig already supports this language, but let's pretend it
+doesn't:
 
+The ~editorconfig-indentation-alist~ variable contains a list of major modes and
+their indentation variables. To add coffee-mode to it:
+
+#+BEGIN_SRC emacs-lisp
+(after! editorconfig
+  (add-to-list 'editorconfig-indentation-alist '(coffee-mode coffee-tab-width)))
+#+END_SRC
+
+But what if you don't know the correct indentation variable(s). Use =SPC h v=
+(=C-h v= for non-evil users) to peruse all the available variables in your
+current session of Emacs. Look for variables that have the words =indent=,
+=offset= or =tab-width= in them. They will be prefixed with the plugin they
+belong to (e.g. ~rustic-indent-offset~).
+
+* TODO Troubleshooting

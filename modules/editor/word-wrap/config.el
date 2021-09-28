@@ -24,3 +24,7 @@ Otherwise no extra indentation will be used.")
   '(text-mode markdown-mode markdown-view-mode gfm-mode gfm-view-mode rst-mode
     latex-mode LaTeX-mode)
   "Major-modes where `+word-wrap-mode' should not provide extra indentation.")
+
+(when (memq 'visual-line-mode text-mode-hook)
+  (remove-hook 'text-mode-hook #'visual-line-mode)
+  (add-hook 'text-mode-hook #'+word-wrap-mode))

@@ -23,41 +23,31 @@ the first, fresh scratch buffer you create. This accepts:
 
 (defvar doom-scratch-current-project nil
   "The name of the project associated with the current scratch buffer.")
+(put 'doom-scratch-current-project 'permanent-local t)
 
 (defvar doom-scratch-buffer-hook ()
   "The hooks to run after a scratch buffer is created.")
 
 
-(defun doom--load-persistent-scratch-buffer (name)
+(defun doom--load-persistent-scratch-buffer (project-name)
   (setq-local doom-scratch-current-project
-              (or name
+              (or project-name
                   doom-scratch-default-file))
   (let ((smart-scratch-file
          (expand-file-name (concat doom-scratch-current-project ".el")
-                           doom-scratch-dir))
-        (scratch-file
-         (expand-file-name doom-scratch-current-project
                            doom-scratch-dir)))
     (make-directory doom-scratch-dir t)
-    (cond ((file-readable-p smart-scratch-file)
-           (message "Reading %s" smart-scratch-file)
-           (cl-destructuring-bind (content point mode)
-               (with-temp-buffer
-                 (save-excursion (insert-file-contents smart-scratch-file))
-                 (read (current-buffer)))
-             (erase-buffer)
-             (funcall mode)
-             (insert content)
-             (goto-char point)
-             t))
-          ((file-readable-p scratch-file) ; DEPRECATED
-           (when (file-readable-p scratch-file)
-             (let ((pt (point)))
-               (erase-buffer)
-               (insert-file-contents scratch-file)
-               (set-auto-mode)
-               (goto-char pt))
-             t)))))
+    (when (file-readable-p smart-scratch-file)
+      (message "Reading %s" smart-scratch-file)
+      (cl-destructuring-bind (content point mode)
+          (with-temp-buffer
+            (save-excursion (insert-file-contents smart-scratch-file))
+            (read (current-buffer)))
+        (erase-buffer)
+        (funcall mode)
+        (insert content)
+        (goto-char point)
+        t))))
 
 ;;;###autoload
 (defun doom-scratch-buffer (&optional dont-restore-p mode directory project-name)
@@ -121,7 +111,7 @@ the first, fresh scratch buffer you create. This accepts:
     (remove-hook 'doom-switch-buffer-hook #'doom-persist-scratch-buffers-after-switch-h)))
 
 ;;;###autoload
-(unless noninteractive
+(when doom-interactive-p
   (add-hook 'kill-emacs-hook #'doom-persist-scratch-buffers-h))
 
 

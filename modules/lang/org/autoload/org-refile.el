@@ -4,7 +4,8 @@
 
 ;;;###autoload
 (defun +org/refile-to-current-file (arg &optional file)
-  "TODO"
+  "Refile current heading to elsewhere in the current buffer.
+If prefix ARG, copy instead of move."
   (interactive "P")
   (let ((org-refile-targets `((,file :maxlevel . 10)))
         (org-refile-use-outline-path nil)
@@ -14,48 +15,52 @@
 
 ;;;###autoload
 (defun +org/refile-to-file (arg file)
-  "Refile current heading to a particular org file."
+  "Refile current heading to a particular org file.
+If prefix ARG, copy instead of move."
   (interactive
    (list current-prefix-arg
          (read-file-name "Select file to refile to: "
                          default-directory
-                         buffer-file-name
+                         (buffer-file-name (buffer-base-buffer))
                          t nil
                          (lambda (f) (string-match-p "\\.org$" f)))))
   (+org/refile-to-current-file arg file))
 
 ;;;###autoload
 (defun +org/refile-to-other-window (arg)
-  "TODO"
+  "Refile current heading to an org buffer visible in another window.
+If prefix ARG, copy instead of move."
   (interactive "P")
   (let ((org-refile-keep arg)
         org-refile-targets
         current-prefix-arg)
     (dolist (win (delq (selected-window) (window-list)))
       (with-selected-window win
-        (and (eq major-mode 'org-mode)
-             buffer-file-name
-             (cl-pushnew (cons buffer-file-name (cons :maxlevel 10))
-                         org-refile-targets))))
+        (let ((file (buffer-file-name (buffer-base-buffer))))
+          (and (eq major-mode 'org-mode)
+               file
+               (cl-pushnew (cons file (cons :maxlevel 10))
+                           org-refile-targets)))))
     (call-interactively #'org-refile)))
 
 ;;;###autoload
 (defun +org/refile-to-other-buffer (arg)
-  "TODO"
+  "Refile current heading to another, living org buffer.
+If prefix ARG, copy instead of move."
   (interactive "P")
   (let ((org-refile-keep arg)
         org-refile-targets
         current-prefix-arg)
     (dolist (buf (delq (current-buffer) (doom-buffers-in-mode 'org-mode)))
-      (with-current-buffer buf
-        (and buffer-file-name
-             (cl-pushnew (cons buffer-file-name (cons :maxlevel 10))
-                         org-refile-targets))))
+      (when-let (file (buffer-file-name (buffer-base-buffer buf)))
+        (cl-pushnew (cons file (cons :maxlevel 10))
+                    org-refile-targets)))
     (call-interactively #'org-refile)))
 
 ;;;###autoload
 (defun +org/refile-to-running-clock (arg)
-  "TODO"
+  "Refile current heading to the currently clocked in task.
+If prefix ARG, copy instead of move."
   (interactive "P")
   (unless (bound-and-true-p org-clock-current-task)
     (user-error "No active clock to refile to"))
@@ -64,7 +69,8 @@
 
 ;;;###autoload
 (defun +org/refile-to-last-location (arg)
-  "TODO"
+  "Refile current heading to the last node you refiled to.
+If prefix ARG, copy instead of move."
   (interactive "P")
   (or (assoc (plist-get org-bookmark-names-plist :last-refile)
              bookmark-alist)

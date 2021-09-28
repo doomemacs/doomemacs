@@ -42,7 +42,9 @@ skewer-*-mode's are enabled, or `nodejs-repl' otherwise."
   (interactive)
   (call-interactively
    (if (and (featurep 'skewer-mode)
-            (or skewer-mode skewer-css-mode skewer-html-mode))
+            (or (bound-and-true-p skewer-mode)
+                (bound-and-true-p skewer-css-mode)
+                (bound-and-true-p skewer-html-mode)))
        #'skewer-repl
      #'nodejs-repl))
   (current-buffer))
@@ -60,12 +62,17 @@ Run this for any buffer you want to skewer."
   (require 'skewer-mode)
   (unless (process-status "httpd")
     (run-skewer))
-  (unless (and skewer-mode skewer-css-mode skewer-html-mode)
-    (pcase major-mode
-      ((or 'css-mode 'scss-mode 'less-css-mode) (skewer-css-mode +1))
-      ((or 'web-mode 'html-mode) (skewer-html-mode +1))
-      ('js2-mode (skewer-mode +1))
-      (_ (error "Invalid mode %s" major-mode)))))
+  (pcase major-mode
+    ((or 'css-mode 'scss-mode 'less-css-mode)
+     (unless (bound-and-true-p skewer-css-mode)
+       (skewer-css-mode +1)))
+    ((or 'web-mode 'html-mode)
+     (unless (bound-and-true-p skewer-html-mode)
+       (skewer-html-mode +1)))
+    ('js2-mode
+     (unless (bound-and-true-p skewer-mode)
+       (skewer-mode +1)))
+    (_ (error "Invalid mode %s" major-mode))))
 
 ;;;###autoload
 (defun +javascript/skewer-cleanup ()
@@ -75,25 +82,16 @@ Run this for any buffer you want to skewer."
     (httpd-stop))
   (dolist (buf (buffer-list))
     (with-current-buffer buf
-      (if skewer-mode (skewer-mode -1))
-      (if skewer-css-mode (skewer-css-mode -1))
-      (if skewer-html-mode (skewer-html-mode -1)))))
+      (if (bound-and-true-p skewer-mode)
+          (skewer-mode -1))
+      (if (bound-and-true-p skewer-css-mode)
+          (skewer-css-mode -1))
+      (if (bound-and-true-p skewer-html-mode)
+          (skewer-html-mode -1)))))
 
 
 ;;
 ;; Hooks
-
-;;;###autoload
-(defun +javascript-add-node-modules-path-h ()
-  "Add current project's `node_modules/.bin` to `exec-path', so js tools
-prioritize project-local packages over global ones."
-  (make-local-variable 'exec-path)
-  (cl-pushnew (expand-file-name "node_modules/.bin/"
-                                (or (locate-dominating-file
-                                     (or (buffer-file-name) default-directory)
-                                     "node_modules")
-                                    (doom-project-root)))
-              exec-path :test #'string=))
 
 ;;;###autoload
 (defun +javascript-cleanup-tide-processes-h ()

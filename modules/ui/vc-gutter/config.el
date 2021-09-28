@@ -17,7 +17,7 @@ flycheck indicators moved to the right fringe.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! git-gutter
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
@@ -25,49 +25,47 @@ flycheck indicators moved to the right fringe.")
   (add-hook! 'find-file-hook
     (defun +vc-gutter-init-maybe-h ()
       "Enable `git-gutter-mode' in the current buffer.
-
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
 is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
       (let ((file-name (buffer-file-name (buffer-base-buffer))))
-        (when (or +vc-gutter-in-remote-files
-                  (not (file-remote-p (or file-name default-directory))))
-          (if (null file-name)
-              (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local)
-            (when (and (vc-backend file-name)
-                       (progn
-                         (require 'git-gutter)
-                         (not (memq major-mode git-gutter:disabled-modes))))
-              (if (and (display-graphic-p)
-                       (require 'git-gutter-fringe nil t))
-                  (progn
-                    (setq-local git-gutter:init-function      #'git-gutter-fr:init)
-                    (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-                    (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
-                    (setq-local git-gutter:window-width -1))
-                (setq-local git-gutter:init-function      'nil)
-                (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
-                (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
-                (setq-local git-gutter:window-width 1))
-              (git-gutter-mode +1)
-              (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
+        (cond
+         ((and (file-remote-p (or file-name default-directory))
+               (not +vc-gutter-in-remote-files)))
+         ;; If not a valid file, wait until it is written/saved to activate
+         ;; git-gutter.
+         ((not (and file-name (vc-backend file-name)))
+          (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local))
+         ;; Allow git-gutter or git-gutter-fringe to activate based on the type
+         ;; of frame we're in. This allows git-gutter to work for silly geese
+         ;; who open both tty and gui frames from the daemon.
+         ((if (and (display-graphic-p)
+                   (require 'git-gutter-fringe nil t))
+              (setq-local git-gutter:init-function      #'git-gutter-fr:init
+                          git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos
+                          git-gutter:clear-function     #'git-gutter-fr:clear
+                          git-gutter:window-width -1)
+            (setq-local git-gutter:init-function      'nil
+                        git-gutter:view-diff-function #'git-gutter:view-diff-infos
+                        git-gutter:clear-function     #'git-gutter:clear-diff-infos
+                        git-gutter:window-width 1))
+          (unless (memq major-mode git-gutter:disabled-modes)
+            (git-gutter-mode +1)
+            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
-  ;; Disable in Org mode, as per
-  ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
-  ;; <https://github.com/syohex/emacs-git-gutter/issues/24>. Apparently, the
-  ;; mode-enabling function for global minor modes gets called for new buffers
-  ;; while they are still in `fundamental-mode', before a major mode has been
-  ;; assigned. I don't know why this is the case, but adding `fundamental-mode'
-  ;; here fixes the issue.
+  ;; Disable in Org mode, as per syl20bnr/spacemacs#10555 and
+  ;; syohex/emacs-git-gutter#24. Apparently, the mode-enabling function for
+  ;; global minor modes gets called for new buffers while they are still in
+  ;; `fundamental-mode', before a major mode has been assigned. I don't know why
+  ;; this is the case, but adding `fundamental-mode' here fixes the issue.
   (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
   :config
+  (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
+
   ;; Only enable the backends that are available, so it doesn't have to check
   ;; when opening each buffer.
-  (setq git-gutter:handled-backends '(git))
-  (dolist (backend '(hg svn bzr))
-    (when (executable-find (symbol-name backend))
-      (add-to-list 'git-gutter:handled-backends backend)))
-
-  (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
+  (setq git-gutter:handled-backends
+        (cons 'git (cl-remove-if-not #'executable-find (list 'hg 'svn 'bzr)
+                                     :key #'symbol-name)))
 
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
@@ -76,11 +74,12 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (defun +vc-gutter-update-h (&rest _)
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."
-      (when (and git-gutter-mode
-                 (not (memq this-command '(git-gutter:stage-hunk
-                                           git-gutter:revert-hunk)))
-                 (not inhibit-redisplay))
-        (ignore (git-gutter)))))
+      (ignore (or (memq this-command '(git-gutter:stage-hunk
+                                       git-gutter:revert-hunk))
+                  inhibit-redisplay
+                  (if git-gutter-mode
+                      (git-gutter)
+                    (+vc-gutter-init-maybe-h))))))
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
   (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
@@ -89,9 +88,9 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     "Fixes `git-gutter:next-hunk' and `git-gutter:previous-hunk' sometimes
   jumping to random hunks."
     :override #'git-gutter:search-near-diff-index
-    (cl-position-if (let ((lineno (line-number-at-pos)))
-                      (lambda (line)
-                        (funcall (if is-reverse #'> #'<) lineno line)))
+    (cl-position-if (let ((lineno (line-number-at-pos))
+                          (fn (if is-reverse #'> #'<)))
+                      (lambda (line) (funcall fn lineno line)))
                     diffinfos
                     :key #'git-gutter-hunk-start-line
                     :from-end is-reverse)))

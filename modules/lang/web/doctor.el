@@ -10,3 +10,5 @@
 (unless (executable-find "stylelint")
   (warn! "Couldn't find stylelint. Linting for CSS modes will not work."))
 
+(unless (executable-find "tidy")
+  (warn! "Couldn't find tidy. Code formatting in HTML modes will not work."))

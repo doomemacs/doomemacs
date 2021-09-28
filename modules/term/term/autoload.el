@@ -28,12 +28,7 @@ If prefix ARG, recreate the term buffer."
         (setq buffer (multi-term-get-buffer nil t))) ; recreates buffer
       (if (and (window-live-p window)
                (buffer-live-p buffer))
-          (if (eq (selected-window) window)
-              (delete-window window)
-            (select-window window)
-            (when (bound-and-true-p evil-local-mode)
-              (evil-change-to-initial-state))
-            (goto-char (point-max)))
+          (delete-window window)
         (setenv "PROOT" (or (doom-project-root) default-directory))
         (with-current-buffer buffer
           (doom-mark-buffer-as-real-h)

@@ -1,7 +1,7 @@
 ;;; config/default/autoload/text.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defalias '+default/newline #'newline)
+(defalias '+default/newline #'electric-indent-just-newline)
 
 ;;;###autoload
 (defun +default/newline-above ()
@@ -27,17 +27,33 @@
   "Interactively select what text to insert from the kill ring."
   (interactive)
   (call-interactively
-   (cond ((fboundp 'counsel-yank-pop)    #'counsel-yank-pop)
+   (cond ((fboundp 'consult-yank-pop)    #'consult-yank-pop) ;HACK see @ymarco's comment on #5013 and TODO.org in the selecturm module.
+         ((fboundp 'counsel-yank-pop)    #'counsel-yank-pop)
          ((fboundp 'helm-show-kill-ring) #'helm-show-kill-ring)
-         ((error "No kill-ring search backend available. Enable ivy or helm!")))))
+         ((error "No kill-ring search backend available. Enable ivy, helm or vertico!")))))
 
 ;;;###autoload
-(defun +default/yank-buffer-filename ()
+(defun +default/yank-buffer-path (&optional root)
   "Copy the current buffer's path to the kill ring."
   (interactive)
-  (if-let (filename (or buffer-file-name (bound-and-true-p list-buffers-directory)))
-      (message (kill-new (abbreviate-file-name filename)))
+  (if-let (filename (or (buffer-file-name (buffer-base-buffer))
+                        (bound-and-true-p list-buffers-directory)))
+      (message "Copied path to clipboard: %s"
+               (kill-new (abbreviate-file-name
+                          (if root
+                              (file-relative-name filename root)
+                            filename))))
     (error "Couldn't find filename in current buffer")))
+
+;;;###autoload
+(defun +default/yank-buffer-path-relative-to-project (&optional include-root)
+  "Copy the current buffer's path to the kill ring.
+With non-nil prefix INCLUDE-ROOT, also include the project's root."
+  (interactive "P")
+  (+default/yank-buffer-path
+   (if include-root
+       (file-name-directory (directory-file-name (doom-project-root)))
+     (doom-project-root))))
 
 ;;;###autoload
 (defun +default/insert-file-path (arg)
@@ -51,29 +67,16 @@ If `buffer-file-name' isn't set, uses `default-directory'."
        (file-name-nondirectory path)))))
 
 ;;;###autoload
-(defun +default--newline-indent-and-continue-comments-a ()
-  "A replacement for `newline-and-indent'.
-
-Continues comments if executed from a commented line, with special support for
-languages with weak native comment continuation support (like C-family
-languages)."
-  (interactive)
-  (if (and (sp-point-in-comment)
-           comment-line-break-function)
-      (funcall comment-line-break-function nil)
-    (delete-horizontal-space t)
-    (newline nil t)
-    (indent-according-to-mode)))
-
-
-(defun doom--backward-delete-whitespace-to-column ()
+(defun doom/backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((context (ignore-errors (sp-get-thing)))
+  (let* ((context
+          (if (bound-and-true-p smartparens-mode)
+              (ignore-errors (sp-get-thing))))
          (op (plist-get context :op))
          (cl (plist-get context :cl))
-         open-len close-len)
+         open-len close-len current-column)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
           ;; Also, skip closing delimiters
           ((and op cl
@@ -88,15 +91,12 @@ possible, or just one char if that's not possible."
           ;; Delete up to the nearest tab column IF only whitespace between
           ;; point and bol.
           ((and (not indent-tabs-mode)
+                (> tab-width 1)
                 (not (bolp))
-                (not (sp-point-in-string))
-                (save-excursion (>= (- (skip-chars-backward " \t")) tab-width)))
-           (let ((movement (% (current-column) tab-width)))
-             (when (= movement 0)
-               (setq movement tab-width))
-             (delete-char (- movement)))
-           (unless (memq (char-before) (list ?\n ?\ ))
-             (insert " ")))
+                (not (doom-point-in-string-p))
+                (>= (abs (save-excursion (skip-chars-backward " \t")))
+                    (setq current-column (current-column))))
+           (delete-char (- (1+ (% (1- current-column) tab-width)))))
 
           ;; Otherwise do a regular delete
           ((delete-char -1)))))
@@ -112,7 +112,7 @@ possible, or just one char if that's not possible."
   {
   |
   } => {|}
-+ Otherwise, resort to `doom--backward-delete-whitespace-to-column'.
++ Otherwise, resort to `doom/backward-delete-whitespace-to-column'.
 + Resorts to `delete-char' if n > 1"
   (interactive "p\nP")
   (or (integerp n)
@@ -135,19 +135,21 @@ possible, or just one char if that's not possible."
            (save-excursion
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
-        ((and (= n 1) (bound-and-true-p smartparens-mode))
-         (cond ((and (memq (char-before) (list ?\  ?\t))
-                     (save-excursion
-                       (and (/= (skip-chars-backward " \t" (line-beginning-position)) 0)
-                            (bolp))))
-                (doom--backward-delete-whitespace-to-column))
+        ((= n 1)
+         (cond ((or (not (featurep! +smartparens))
+                    (not (bound-and-true-p smartparens-mode))
+                    (and (memq (char-before) (list ?\  ?\t))
+                         (save-excursion
+                           (and (/= (skip-chars-backward " \t" (line-beginning-position)) 0)
+                                (bolp)))))
+                (doom/backward-delete-whitespace-to-column))
                ((let* ((pair (ignore-errors (sp-get-thing)))
                        (op   (plist-get pair :op))
                        (cl   (plist-get pair :cl))
                        (beg  (plist-get pair :beg))
                        (end  (plist-get pair :end)))
                   (cond ((and end beg (= end (+ beg (length op) (length cl))))
-                         (sp-backward-delete-char 1))
+                         (delete-char (- (length op))))
                         ((doom-surrounded-p pair 'inline 'balanced)
                          (delete-char -1 killflag)
                          (delete-char 1)
@@ -159,6 +161,6 @@ possible, or just one char if that's not possible."
                          (sp-insert-pair op)
                          t)
                         ((run-hook-with-args-until-success 'doom-delete-backward-functions))
-                        ((doom--backward-delete-whitespace-to-column)))))))
+                        ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
         ((delete-char (- n) killflag))))

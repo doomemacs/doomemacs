@@ -1,0 +1,66 @@
+#+TITLE:   checkers/syntax
+#+DATE:    February 20, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides syntax checking and error highlighting, powered by [[https://github.com/flycheck/flycheck][flycheck]]
+
++ If possible, include a brief list of feature highlights here
++ Like code completion, syntax checking or available snippets
++ Include links to packages & external things where possible
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+childframe= Enables displaying completion candidates in a child frame, rather than an overlay or tooltip (among with other UI enhancements).
+
+
+** Plugins
++ [[https://github.com/flycheck/flycheck][flycheck]]
++ [[https://github.com/flycheck/flycheck-popup-tip][flycheck-popup-tip]]
++ =+childframe=
+  + [[https://github.com/alexmurray/flycheck-posframe][flycheck-posframe]]
+
+** Hacks
+If =lsp-ui-mode= is active, most of the aesthetic functionality of this module is turned off, as they show the same information.
+
+* Prerequisites
+This module has no direct prerequisites.
+
+However, some major modes may require a specific linter or program to work, and some major modes may not work at all. The best way to find these dependencies is by either reading the documentation for that module, or running =doom doctor=.
+
+* Features
+Most of flycheck's features are under =C-c !=, regardless of whether evil mode is used.
+| Keybind | Description                 |
+| C-c ! ? | Describe Checker ]          |
+| C-c ! c | Check syntax in buffer      |
+| C-c ! l | List errors                 |
+| C-c ! n | Next Error                  |
+| C-c ! p | Previous error              |
+| C-c ! C | Clear all errors in buffer  |
+| C-c ! e | Explain error at point      |
+| C-c ! h | Display all errors at point |
+
+Evil Specific
+| Keybind | Description     |
+| SPC t f | Toggle Flycheck |
+| SPC c x | List errors     |
+| ] e     | Next error      |
+| [ e     | Prevous error   |
+
+* TODO Configuration
+
+* TODO Troubleshooting

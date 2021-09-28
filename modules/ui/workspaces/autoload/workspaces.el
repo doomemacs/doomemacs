@@ -1,4 +1,4 @@
-;;; feature/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
+;;; ui/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
 
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
@@ -294,7 +294,7 @@ workspace to delete."
 (defun +workspace/new (&optional name clone-p)
   "Create a new workspace named NAME. If CLONE-P is non-nil, clone the current
 workspace, otherwise the new workspace is blank."
-  (interactive "iP")
+  (interactive (list nil current-prefix-arg))
   (unless name
     (setq name (format "#%s" (+workspace--generate-id))))
   (condition-case e
@@ -305,6 +305,12 @@ workspace, otherwise the new workspace is blank."
              (+workspace-switch name t)
              (+workspace/display)))
     ((debug error) (+workspace-error (cadr e) t))))
+
+;;;###autoload
+(defun +workspace/new-named (name)
+  "Create a new workspace with a given NAME."
+  (interactive "sWorkspace Name: ")
+  (+workspace/new name))
 
 ;;;###autoload
 (defun +workspace/switch-to (index)
@@ -484,7 +490,7 @@ the next."
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively
 created."
-  (when persp-mode
+  (when (and persp-mode (not (bound-and-true-p with-editor-mode)))
     (unless frame
       (setq frame (selected-frame)))
     (let ((frame-persp (frame-parameter frame 'workspace)))
@@ -525,50 +531,54 @@ the user to open a file in the new project.
 This be hooked to `projectile-after-switch-project-hook'."
   (when dir
     (setq +workspaces--project-dir dir))
-  (when (and persp-mode +workspaces--project-dir)
-    (when projectile-before-switch-project-hook
-      (with-temp-buffer
-        ;; Load the project dir-local variables into the switch buffer, so the
-        ;; action can make use of them
-        (setq default-directory +workspaces--project-dir)
-        (hack-dir-local-variables-non-file-buffer)
-        (run-hooks 'projectile-before-switch-project-hook)))
-    (unwind-protect
-        (if (and (not (null +workspaces-on-switch-project-behavior))
-                 (or (eq +workspaces-on-switch-project-behavior t)
-                     (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                     (+workspace-buffer-list)))
-            (let* ((persp
-                    (let ((project-name (doom-project-name +workspaces--project-dir)))
-                      (or (+workspace-get project-name t)
-                          (+workspace-new project-name))))
-                   (new-name (persp-name persp)))
-              (+workspace-switch new-name)
-              (with-current-buffer (doom-fallback-buffer)
-                (setq default-directory +workspaces--project-dir))
-              (unless current-prefix-arg
-                (funcall +workspaces-switch-project-function +workspaces--project-dir))
-              (+workspace-message
-               (format "Switched to '%s' in new workspace" new-name)
-               'success))
-          (with-current-buffer (doom-fallback-buffer)
-            (setq default-directory +workspaces--project-dir)
-            (hack-dir-local-variables-non-file-buffer)
-            (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
-          (with-demoted-errors "Workspace error: %s"
-            (+workspace-rename (+workspace-current-name) (doom-project-name +workspaces--project-dir)))
-          (unless current-prefix-arg
-            (funcall +workspaces-switch-project-function +workspaces--project-dir)))
-      (run-hooks 'projectile-after-switch-project-hook)
-      (setq +workspaces--project-dir nil))))
+  ;; HACK Clear projectile-project-root, otherwise cached roots may interfere
+  ;;      with project switch (see #3166)
+  (let (projectile-project-root)
+    (when (and persp-mode +workspaces--project-dir)
+      (when projectile-before-switch-project-hook
+        (with-temp-buffer
+          ;; Load the project dir-local variables into the switch buffer, so the
+          ;; action can make use of them
+          (setq default-directory +workspaces--project-dir)
+          (hack-dir-local-variables-non-file-buffer)
+          (run-hooks 'projectile-before-switch-project-hook)))
+      (unwind-protect
+          (if (and (not (null +workspaces-on-switch-project-behavior))
+                   (or (eq +workspaces-on-switch-project-behavior t)
+                       (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                       (+workspace-buffer-list)))
+              (let* ((persp
+                      (let ((project-name (doom-project-name +workspaces--project-dir)))
+                        (or (+workspace-get project-name t)
+                            (+workspace-new project-name))))
+                     (new-name (persp-name persp)))
+                (+workspace-switch new-name)
+                (with-current-buffer (doom-fallback-buffer)
+                  (setq default-directory +workspaces--project-dir)
+                  (hack-dir-local-variables-non-file-buffer))
+                (unless current-prefix-arg
+                  (funcall +workspaces-switch-project-function +workspaces--project-dir))
+                (+workspace-message
+                 (format "Switched to '%s' in new workspace" new-name)
+                 'success))
+            (with-current-buffer (doom-fallback-buffer)
+              (setq default-directory +workspaces--project-dir)
+              (hack-dir-local-variables-non-file-buffer)
+              (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
+            (with-demoted-errors "Workspace error: %s"
+              (+workspace-rename (+workspace-current-name) (doom-project-name +workspaces--project-dir)))
+            (unless current-prefix-arg
+              (funcall +workspaces-switch-project-function +workspaces--project-dir)))
+        (run-hooks 'projectile-after-switch-project-hook)
+        (setq +workspaces--project-dir nil)))))
 
 
 ;;
 ;;; Advice
 
 ;;;###autoload
-(defun +workspaces-autosave-real-buffers-a (orig-fn &rest args)
+(defun +workspaces-autosave-real-buffers-a (fn &rest args)
   "Don't autosave if no real buffers are open."
   (when (doom-real-buffer-list)
-    (apply orig-fn args))
+    (apply fn args))
   t)

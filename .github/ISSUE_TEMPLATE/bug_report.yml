@@ -1,0 +1,95 @@
+---
+name: 📝 Bug Report
+description: Report a bug, error, or misbehavior
+labels: ["1. bug", "needs-triage"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
+
+      **Before you proceed...**
+
+      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration. To help us rule out these possibilities please follow these guidelines:
+
+      + [ ] Search [the FAQ](https://doomemacs.org/docs/faq.org) and [the documentation](https://doomemacs.org/docs/getting_started.org) for solutions.
+      + [ ] Search [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
+      + [ ] Search [the Discourse](https://doomemacs.org/d/docs) for any errors and solutions.
+      + [ ] Ensure the issue can be reproduced on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
+      + [ ] Consult "[How to Debug Issues](https://doomemacs.org/d/how2debug)" on techniques to get more information and, possibly, solve the issue yourself.
+- type: textarea
+  attributes:
+    label: What did you expect to happen?
+    placeholder: When I do X, it should do Y.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: What actually happened?
+    description: |
+      + Include screenshots/casts, if possible
+      + List *all* error messages and **[include backtraces for each of them](https://doomemacs.org/d/how2backtrace)
+      + Include any suspicious logs in the **[\*Messages\*](https://doomemacs.org/d/t/55) buffer.
+      + If you include log dumps, please use [pastebin.com](https://pastebin.com)
+      + **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, error messages, and backtraces.**
+      + Avoid phrases like "X does not work" or "X stopped working" without explaining what "working" means.
+    placeholder: |
+      When I do X, Z happened. Here is the backtrace:
+
+      ```
+      Debugger entered--Lisp error: (error "Beep Boop")
+        error("Beep Boop")
+        pp-eval-expression((error "Beep Boop"))
+        \#<subr funcall-interactively>(pp-eval-expression (error "Beep Boop"))
+        apply(#<subr funcall-interactively> (pp-eval-expression (error "Beep Boop")))
+        funcall-interactively(pp-eval-expression (error "Beep Boop"))
+      ```
+
+      And here is the log: https://pastebin.com/fakeurl
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Describe your attempts to resolve the issue
+    description: |
+      Describe resources you consulted or code you tried to fix your problem, and their result.
+
+      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
+    placeholder: |
+      I tried setting X to Y, then I tried Z. Here's what else I tried...
+
+      ```elisp
+      (setq variable value)
+      ```
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: How do we reproduce your issue? Walk us through a minimal test case.
+    placeholder: |
+      1. Open Emacs
+      2. `M-x doom/info` and be prompted to visit pastebin.com
+      3. Press `y` to open pastebin.com in browser
+      4. Paste the contents of my clipboard into text box
+      5. Click "Create New Paste"
+      6. My wife leaves me
+  validations:
+    required: true
+- type: input
+  id: doominfo
+  attributes:
+    label: System Information
+    description: |
+      Paste a link to a [pastebin](https://pastebin.com) where you've uploaded the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info`.
+
+      > :warning: **Do not paste your M-x doom/info directly into this box!** Use pastebin to minimize search result pollution in our issue tracker.
+
+      > :warning: **Do not omit any part of or modify your doom/info.**
+    placeholder: https://pastebin.com/fakeurl
+  validations:
+    required: true
+- type: markdown
+  attributes:
+    value: |
+      Before you go, please make sure your report's title is descriptive and specific. Avoid phrases like "X doesn't work" or "X stopped working". Error messages are best, but failing that, try to describe what "working" means to you.
+
+      **Thank you for taking the time to fill out a bug report!**

@@ -7,6 +7,14 @@
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
+(defvar +emacs-lisp-disable-flycheck-in-dirs
+  (list doom-emacs-dir doom-private-dir)
+  "List of directories to disable `emacs-lisp-checkdoc' in.
+
+This checker tends to produce a lot of false positives in your .emacs.d and
+private config, so it is mostly useless there. However, special hacks are
+employed so that flycheck still does *some* helpful linting.")
+
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
@@ -18,14 +26,34 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 (use-package! elisp-mode
   :mode ("\\.Cask\\'" . emacs-lisp-mode)
+  :init
+  ;; Instead of pestering the user about accepting unsafe file local variables,
+  ;; I'd rather it quietly ignore them...
+  (setq-default enable-local-variables :safe)
+  ;; ...but still log them, so we can discover them if we're looking for it.
+  (defadvice! +emacs-lisp-log-unsafe-local-variables-a (variables dir-name)
+    :before #'hack-local-variables-filter
+    (when (eq enable-local-variables :safe)
+      (pcase-dolist (`(,var . ,val) variables)
+        (cond ((memq var ignored-local-variables))
+              ((memq var '(mode unibyte coding)))
+              ((eq var 'eval)
+               (and enable-local-eval
+                    (not (or (hack-one-local-variable-eval-safep val)
+                             (safe-local-variable-p var val)))
+                    (message "Ignoring unsafe form in file local variable: %S" val)))
+              ((not (safe-local-variable-p var val))
+               (message "Ignoring unsafe file local variable: %S" var))
+              ((get var 'risky-local-variable)
+               (message "Ignoring risky file local variable: %S" var))))))
   :config
   (set-repl-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp/open-repl)
   (set-eval-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp-eval)
-  (set-lookup-handlers! '(emacs-lisp-mode helpful-mode)
+  (set-lookup-handlers! '(emacs-lisp-mode lisp-interaction-mode helpful-mode)
     :definition    #'+emacs-lisp-lookup-definition
     :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! '(emacs-lisp-mode lisp-interaction-mode) "Emacs Lisp")
-  (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
+  (set-ligatures! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
@@ -38,47 +66,70 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
                ("describe" "xdescribe")))
 
   (setq-hook! 'emacs-lisp-mode-hook
-    tab-width (or lisp-indent-offset 2)
+    ;; Emacs' built-in elisp files use a hybrid tab->space indentation scheme
+    ;; with a tab width of 8. Any smaller and the indentation will be
+    ;; unreadable. Since Emacs' lisp indenter doesn't respect this variable it's
+    ;; safe to ignore this setting otherwise.
+    tab-width 8
     ;; shorter name in modeline
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp +emacs-lisp-outline-regexp)
+    outline-regexp +emacs-lisp-outline-regexp
+    ;; Fixed indenter that intends plists sensibly.
+    lisp-indent-function #'+emacs-lisp-indent-function)
 
-  ;; variable-width indentation is superior in elisp
-  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
+  ;; variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
+  ;; and `editorconfig' would force fixed indentation on elisp.
+  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode)
 
   (add-hook! 'emacs-lisp-mode-hook
+             ;; Allow folding of outlines in comments
              #'outline-minor-mode
-             ;; fontificiation
+             ;; Make parenthesis depth easier to distinguish at a glance
              #'rainbow-delimiters-mode
+             ;; Make quoted symbols easier to distinguish from free variables
              #'highlight-quoted-mode
-             ;; initialization
-             #'+emacs-lisp-extend-imenu-h)
-
-  (autoload 'straight-register-file-modification "straight")
-  (add-hook! 'emacs-lisp-mode-hook
-    (defun +emacs-lisp-init-straight-h ()
-      (when (file-in-directory-p (or buffer-file-name default-directory) doom-local-dir)
-        (add-hook 'after-save-hook #'straight-register-file-modification
-                  nil 'local))))
+             ;; Extend imenu support to Doom constructs
+             #'+emacs-lisp-extend-imenu-h
+             ;; Ensure straight sees modifications to installed packages
+             #'+emacs-lisp-init-straight-maybe-h)
 
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
   ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
   ;; `emacs-lisp' checker's verbosity.
   (add-hook 'flycheck-mode-hook #'+emacs-lisp-reduce-flycheck-errors-in-emacs-config-h)
 
-  ;; Special syntax highlighting for elisp...
+  ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
+  ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
   (font-lock-add-keywords
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
              ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
+           ;; Shorten the :pin of `package!' statements to 10 characters
+           `(("(package!\\_>" (0 (+emacs-lisp-truncate-pin))))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
-
+ 
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom-recenter-a)
+
+  (defadvice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
+    "Display variable value next to documentation in eldoc."
+    :around #'elisp-get-var-docstring
+    (when-let (ret (funcall fn sym))
+      (if (boundp sym)
+          (concat ret " "
+                  (let* ((truncated " [...]")
+                         (print-escape-newlines t)
+                         (str (symbol-value sym))
+                         (str (prin1-to-string str))
+                         (limit (- (frame-width) (length ret) (length truncated) 1)))
+                    (format (format "%%0.%ds%%s" (max limit 0))
+                            (propertize str 'face 'warning)
+                            (if (< (length str) limit) "" truncated))))
+        ret)))
 
   (map! :localleader
         :map emacs-lisp-mode-map
@@ -97,25 +148,36 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           "v" #'find-variable
           "l" #'find-library)))
 
-;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
-;; syntax highlighting to ielm REPLs.
-(add-hook! 'ielm-mode-hook
-  (defun +emacs-lisp-init-syntax-highlighting-h ()
-    (font-lock-add-keywords
-     nil (cl-loop for (matcher . match-highlights)
-                  in (append lisp-el-font-lock-keywords-2 lisp-cl-font-lock-keywords-2)
-                  collect
-                  `((lambda (limit)
-                      (and ,(if (symbolp matcher)
-                                `(,matcher limit)
-                              `(re-search-forward ,matcher limit t))
-                           ;; Only highlight matches after the prompt
-                           (> (match-beginning 0) (car comint-last-prompt))
-                           ;; Make sure we're not in a comment or string
-                           (let ((state (sp--syntax-ppss)))
-                             (not (or (nth 3 state)
-                                      (nth 4 state))))))
-                    ,@match-highlights)))))
+(use-package! ielm
+  :defer t
+  :config
+  (set-lookup-handlers! 'inferior-emacs-lisp-mode
+    :definition    #'+emacs-lisp-lookup-definition
+    :documentation #'+emacs-lisp-lookup-documentation)
+
+  ;; Adapted from http://www.modernemacs.com/post/comint-highlighting/ to add
+  ;; syntax highlighting to ielm REPLs.
+  (setq ielm-font-lock-keywords
+        (append '(("\\(^\\*\\*\\*[^*]+\\*\\*\\*\\)\\(.*$\\)"
+                   (1 font-lock-comment-face)
+                   (2 font-lock-constant-face)))
+                (when (require 'highlight-numbers nil t)
+                  (highlight-numbers--get-regexp-for-mode 'emacs-lisp-mode))
+                (cl-loop for (matcher . match-highlights)
+                         in (append lisp-el-font-lock-keywords-2
+                                    lisp-cl-font-lock-keywords-2)
+                         collect
+                         `((lambda (limit)
+                             (when ,(if (symbolp matcher)
+                                        `(,matcher limit)
+                                      `(re-search-forward ,matcher limit t))
+                               ;; Only highlight matches after the prompt
+                               (> (match-beginning 0) (car comint-last-prompt))
+                               ;; Make sure we're not in a comment or string
+                               (let ((state (syntax-ppss)))
+                                 (not (or (nth 3 state)
+                                          (nth 4 state))))))
+                           ,@match-highlights)))))
 
 
 ;;
@@ -123,6 +185,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 ;;;###package overseer
 (autoload 'overseer-test "overseer" nil t)
+;; Properly lazy load overseer by not loading it so early:
 (remove-hook 'emacs-lisp-mode-hook #'overseer-enable-mode)
 
 
@@ -134,22 +197,28 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
+(use-package! flycheck-package
+  :when (featurep! :checkers syntax)
+  :after flycheck
+  :config (flycheck-package-setup))
+
+
 (use-package! elisp-demos
   :defer t
   :init
   (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (orig-fn symbol)
+  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
     "Add Doom's own demos to help buffers."
     :around #'elisp-demos--search
-    (or (funcall orig-fn symbol)
-        (when-let (demos-file (doom-glob doom-docs-dir "api.org"))
+    (or (funcall fn symbol)
+        (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
           (with-temp-buffer
             (insert-file-contents demos-file)
             (goto-char (point-min))
             (when (re-search-forward
-                   (format "^\\*\\*\\* %s$" (regexp-quote (symbol-name symbol)))
+                   (format "^\\*\\* %s$" (regexp-quote (symbol-name symbol)))
                    nil t)
               (let (beg end)
                 (forward-line 1)

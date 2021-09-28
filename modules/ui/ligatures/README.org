@@ -1,0 +1,216 @@
+#+TITLE:   ui/ligatures
+#+DATE:    June 16, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+    - [[#font-ligatures-module-flags][Font ligatures module flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#mutsuharus-emacs-mac-port-or-emacs-28-with-harfbuzz-support][Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support]]
+  - [[#not-emacs-mac-and-emacs--27][Not Emacs-mac and Emacs <= 27]]
+- [[#features][Features]]
+  - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
+  - [[#coding-ligatures][Coding ligatures]]
+- [[#configuration][Configuration]]
+  - [[#setting-ligatures][Setting ligatures]]
+  - [[#changing-ligatures][Changing ligatures]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module enables ligatures and arbitrary symbol substitutions with
+~mac-auto-operator-composition-mode~ (on supported macOS systems) or composition
+tables (harfbuzz on Emacs 28), falling back on ~prettify-symbols-mode~
+otherwise.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+extra= Enables extra symbol substitutions in certain modes, for example
+  ~lambda~ in lisps are replaced with ~λ~.
+
+*** Font ligatures module flags
+This module provides four flags for enabling fall-back ligature support for a
+particular font. They are:
+
++ =+fira= Enables =Fira Code= ligatures. This requires Fira Code Symbol and a
+  patched version of Fira Code (see below).
++ =+hasklig= Enable =Hasklig= ligatures. This requires a patched version of the
+  HaskLig font (see below).
++ =+iosevka= Enable =Iosevka= ligatures. This requires a patched version of the
+  Iosevka font (see below).
++ =+pragmata-pro= Enable =Pragmata Pro= ligatures. This requires the [[https://www.fsd.it/shop/fonts/pragmatapro/][Pragmata
+  Pro font]].
+
+#+begin_quote
+All these flags are ignored _if_ you're sporting either a) Emacs 28+ with
+Harfbuzz support (which can compose ligatures natively), or b) Mitsuharu's
+=emacs-mac= build on macOS (which uses ~mac-auto-operator-composition-mode~).
+#+end_quote
+
+** Plugins
+This module installs no packages.
+
+* Prerequisites
+This module requires one of three setups for ligatures to work:
+
+- A recent enough version of Emacs which will compose ligatures automatically
+  (Emacs 28 with Harfbuzz support), or
+- Mitsuharu's =emacs-mac= build on macOS (available on homebrew), or
+- A patched font for Doom's fallback ligature support.
+
+** Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support
+Ligatures should be handled without any additional configuration.
+
+** Not Emacs-mac and Emacs <= 27
+1. Enable one of the four ligature font flags: =+fira=, =+hasklig=, =+iosevka=
+   or =+pragmata-pro=.
+2. Install the patched version of the associated font with ~M-x
+   +ligatures/install-patched-font~. Note: Pragmata Pro cannot be installed this
+   way because it is a non-free font and must be purchased and installed
+   manually.
+
+* TODO Features
+** TODO Mathematical symbols replacement
+** Coding ligatures
+This module includes configuration to compose combinations like =->= or =::=
+into prettier glyphs (called a ligature). Depending on the current version of
+emacs, this is implemented in two different ways :
+
+- prettify-symbols-mode method :: this is the "legacy" method. It uses a font
+  which haves the ligatures as separate unicode symbols, and using
+  prettify-symbols-mode, =->=-like combinations are manually listed and replaced
+  with the correct symbol. The mapping between =->=-like sequences and unicode
+  values in the font are font-specific ; therefore =+fira=, =+iosevka=... files
+  and specific fonts are necessary for it to work.
+- composition-function-table method :: regexps are used to match all the usual
+  sequences which are composed into ligatures. These regexps are passed to emacs
+  directly, which asks Harfbuzz to shape it. Ligatures are obtained
+  automatically depending on the capabilities of the font, and no font-specific
+  configuration is necessary.
+
+Emacs-mac port implements the /composition-function-table/ method in [[https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805][its code]],
+nothing is necessary on Doom side; otherwise, Doom implements the
+/composition-function-table/ for emacs 28+ built with Harfbuzz support, and the
+/prettify-symbols-mode/ method otherwise.
+
+Even though harfbuzz has been included in emacs 27, there is currently a [[https://lists.gnu.org/archive/html/bug-gnu-emacs/2020-04/msg01121.html][bug
+(#40864)]] which prevents a safe usage of /composition-function-table/ method in
+emacs 27.
+
+* Configuration
+** Setting ligatures
+If you want to set ligatures for modules that don't have them by default you can
+use the ~set-ligatures!~ macro in your config el file
+#+BEGIN_SRC emacs-lisp
+(after! PACKAGE
+  (set-ligatures! 'MAJOR-MODE
+    :symbol "keyword"))
+#+END_SRC
+eg.
+#+BEGIN_SRC emacs-lisp
+(after! go-mode ; in this case the major mode and package named the same thing
+  (set-ligatures! 'go-mode
+    :def "func" ; function keyword
+    :true "true" :false "false"
+    ; this will replace not only definitions
+    ; but coresponding functions aswell
+    :int "int" :str "string"
+    :float "float" :bool "bool"
+    :for "for"
+    :return "return" :yeild "yeild"))
+#+END_SRC
+you can set these symbols out of the box
+#+BEGIN_SRC emacs-lisp
+(set-ligatures! 'MAJOR-MODE
+    ;; Functional
+    :lambda        "lambda keyword"
+    :def           "function keyword"
+    :composition   "composition"
+    :map           "map/dictionary keyword"
+    ;; Types
+    :null          "null type"
+    :true          "true keyword"
+    :false         "false keyword"
+    :int           "int keyword"
+    :float         "float keyword"
+    :str           "string keyword"
+    :bool          "boolean keywork"
+    :list          "list keyword"
+    ;; Flow
+    :not           "not operator"
+    :in            "in operator"
+    :not-in        "not in operator"
+    :and           "and keyword"
+    :or            "or keyword"
+    :for           "for keyword"
+    :some          "some keyword"
+    :return        "return"
+    :yield         "yeild"
+    ;; Other
+    :union         "Union keyword"
+    :intersect     "Intersect keyword"
+    :diff          "diff keyword"
+    :tuple         "Tuple Keyword "
+    :pipe          "Pipe Keyword" ;; FIXME: find a non-private char
+    :dot           "Dot operator")
+#+END_SRC
+
+If you have multiple versions of the same keyword you can set the symbol twice
+
+#+BEGIN_SRC emacs-lisp
+(set-ligatures! scala-mode
+  :null "none"
+  :null "None")
+#+END_SRC
+** Changing ligatures
+if you don't like the symbols chosen you can change them by using...
+
+#+BEGIN_SRC emacs-lisp
+;; you don't need to include all of them you can pick and mix
+(plist-put! +ligatures-extra-symbols
+  ;; org
+  :name          "»"
+  :src_block     "»"
+  :src_block_end "«"
+  :quote         "“"
+  :quote_end     "”"
+  ;; Functional
+  :lambda        "λ"
+  :def           "ƒ"
+  :composition   "∘"
+  :map           "↦"
+  ;; Types
+  :null          "∅"
+  :true          "𝕋"
+  :false         "𝔽"
+  :int           "ℤ"
+  :float         "ℝ"
+  :str           "𝕊"
+  :bool          "𝔹"
+  :list          "𝕃"
+  ;; Flow
+  :not           "￢"
+  :in            "∈"
+  :not-in        "∉"
+  :and           "∧"
+  :or            "∨"
+  :for           "∀"
+  :some          "∃"
+  :return        "⟼"
+  :yield         "⟻"
+  ;; Other
+  :union         "⋃"
+  :intersect     "∩"
+  :diff          "∖"
+  :tuple         "⨂"
+  :pipe          "" ;; FIXME: find a non-private char
+  :dot           "•")  ;; you could also add your own if you want
+#+END_SRC
+
+* TODO Troubleshooting
+ If you have any problems with this module, do get in touch!

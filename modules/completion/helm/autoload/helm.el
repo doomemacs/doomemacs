@@ -56,7 +56,8 @@ workspace."
         (helm-rg-default-directory (or in (doom-project-root) default-directory))
         (helm-rg-default-extra-args
          (delq nil (append (list (when all-files "-z -uu")
-                                 (unless recursive "--maxdepth 1"))
+                                 (unless recursive "--maxdepth 1")
+                                 "--hidden" "-g" "!.git")
                            args))))
     (setq deactivate-mark t)
     (helm-rg (or query

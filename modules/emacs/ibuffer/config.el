@@ -42,19 +42,19 @@
   (when (featurep! :ui workspaces)
     (define-ibuffer-filter workspace-buffers
         "Filter for workspace buffers"
-      (:reader
-       (+workspace-get (read-string "workspace name: ")) :description "workspace")
+      (:reader (+workspace-get (read-string "workspace name: "))
+       :description "workspace")
       (memq buf (+workspace-buffer-list qualifier)))
 
-    (defun +ibuffer/workspace (workspace-name)
+    (defun +ibuffer-workspace (workspace-name)
       "Open an ibuffer window for a workspace"
       (ibuffer nil (format "%s buffers" workspace-name)
                (list (cons 'workspace-buffers (+workspace-get workspace-name)))))
 
-    (defun +ibuffer-current-workspace ()
+    (defun +ibuffer/open-for-current-workspace ()
       "Open an ibuffer window for the current workspace"
       (interactive)
-      (+ibuffer/workspace (+workspace-current-name))))
+      (+ibuffer-workspace (+workspace-current-name))))
 
   (when (featurep! :completion ivy)
     (defadvice! +ibuffer-use-counsel-maybe-a (_file &optional _wildcards)

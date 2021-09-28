@@ -2,7 +2,7 @@
 
 (use-package! evil-goggles
   :when (featurep! :editor evil)
-  :after-call pre-command-hook
+  :hook (doom-first-input . evil-goggles-mode)
   :init
   (setq evil-goggles-duration 0.1
         evil-goggles-pulse nil ; too slow
@@ -24,12 +24,49 @@
               :face evil-goggles-yank-face
               :switch evil-goggles-enable-yank
               :advice evil-goggles--generic-async-advice))
-  (evil-goggles-mode +1))
+  (when (featurep! :editor lispy)
+    (pushnew! evil-goggles--commands
+              '(lispyville-delete
+                :face evil-goggles-delete-face
+                :switch evil-goggles-enable-delete
+                :advice evil-goggles--generic-blocking-advice)
+              '(lispyville-delete-line
+                :face evil-goggles-delete-face
+                :switch evil-goggles-enable-delete
+                :advice evil-goggles--delete-line-advice)
+              '(lispyville-yank
+                :face evil-goggles-yank-face
+                :switch evil-goggles-enable-yank
+                :advice evil-goggles--generic-async-advice)
+              '(lispyville-yank-line
+                :face evil-goggles-yank-face
+                :switch evil-goggles-enable-yank
+                :advice evil-goggles--generic-async-advice)
+              '(lispyville-change
+                :face evil-goggles-change-face
+                :switch evil-goggles-enable-change
+                :advice evil-goggles--generic-blocking-advice)
+              '(lispyville-change-line
+                :face evil-goggles-change-face
+                :switch evil-goggles-enable-change
+                :advice evil-goggles--generic-blocking-advice)
+              '(lispyville-change-whole-line
+                :face evil-goggles-change-face
+                :switch evil-goggles-enable-change
+                :advice evil-goggles--generic-blocking-advice)
+              '(lispyville-indent
+                :face evil-goggles-indent-face
+                :switch evil-goggles-enable-indent
+                :advice evil-goggles--generic-async-advice)
+              '(lispyville-join
+                :face evil-goggles-join-face
+                :switch evil-goggles-enable-join
+                :advice evil-goggles--join-advice))))
 
 
 (use-package! volatile-highlights
   :unless (featurep! :editor evil)
-  :after-call pre-command-hook
+  :hook (doom-first-input . volatile-highlights-mode)
   :config
   (after! undo-fu
     (vhl/define-extension 'undo-fu 'undo-fu-only-undo 'undo-fu-only-redo)

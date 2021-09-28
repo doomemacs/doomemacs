@@ -21,17 +21,19 @@
   - [[#associating-lookup-handlers-with-major-modes][Associating lookup handlers with major modes]]
   - [[#associating-dash-docsets-with-major-modes][Associating Dash docsets with major modes]]
   - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
+  - [[#open-in-xwidget-webkit-instead-of-browser][Open in Xwidget WebKit instead of browser]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
 
 * Description
-Integrates with code navigation and documentation tools to help you quickly look
-up definitions, references and documentation.
+This module adds code navigation and documentation lookup tools to help you
+quickly look up definitions, references, documentation, dictionary definitions
+or synonyms.
 
 + Jump-to-definition and find-references implementations that just work.
 + Powerful xref integration for languages that support it.
-+ Documentation lookup for a variety of online sources (like devdocs.io,
-  stackoverflow or youtube).
++ Search online providers like devdocs.io, stackoverflow, google, duckduckgo or
+  youtube (duckduckgo and google have live suggestions).
 + Integration with Dash.app docsets.
 + Support for online (and offline) dictionaries and thesauruses.
 
@@ -43,14 +45,27 @@ up definitions, references and documentation.
 ** Plugins
 + [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
 + [[https://github.com/alexmurray/ivy-xref][ivy-xref]] or [[https://github.com/brotzeit/helm-xref][helm-xref]]
-+ [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
++ [[https://github.com/tkf/emacs-request][request]]
++ =+docsets=
+  + [[https://github.com/dash-docs-el/dash-docs][dash-docs]]
+  + [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
++ =+dictionary=
+  + if macOS
+    + [[https://github.com/xuchunyang/osx-dictionary.el][osx-dictionary]]* (on macOS)
+  + else
+    + [[https://github.com/abo-abo/define-word][define-word]]
+    + [[https://github.com/maxchaos/emacs-powerthesaurus][powerthesaurus]]
+    + =+offline=
+      + [[https://github.com/gromnitsky/wordnut][wordnut]]
+      + [[https://github.com/hpdeifel/synosaurus][synosaurus]]
 
 * Prerequisites
 This module has several soft dependencies:
 
 + ~ripgrep~ as a last-resort fallback for jump-to-definition/find-references.
-+ ~sqlite3~ for Dash docset support.
-+ ~wordnet~ for offline dictionary and thesaurus support.
++ ~sqlite3~ for Dash docset support (if you have =+docsets= enabled)
++ ~wordnet~ for offline dictionary and thesaurus support (if you have
+  =+dictionary +offline= enabled).
 
 ** MacOS
 #+BEGIN_SRC sh
@@ -67,7 +82,7 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 ** Arch Linux
 #+BEGIN_SRC sh
 sudo pacman -S sqlite ripgrep
-sudo yay -S wordnet-cli
+yay -S wordnet-cli
 #+END_SRC
 
 ** NixOS
@@ -132,9 +147,9 @@ You can perform a documentation lookup on any backends directly:
   o=), or ~:lo[okup] QUERY~ for evil users.
 
 ** Dash.app Docset integration
-You can install dash docsets with ~M-x +lookup/install-docset~ and search them
-offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in modes
-that don't have a specialized :documentation lookup handler.
+You can install dash docsets with ~M-x dash-docset-install-docset~ and search
+them offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in
+modes that don't have a specialized :documentation lookup handler.
 
 * Configuration
 ** Associating lookup handlers with major modes
@@ -190,14 +205,32 @@ e.g.
 
 This determines what docsets to implicitly search for when you use
 ~+lookup/documentation~ in a mode with no ~:documentation~ handler. Those
-docsets must be installed with ~+lookup/install-docset~.
+docsets must be installed with ~dash-docset-install-docset~.
 
 ** Open in eww instead of browser
-To open results from ~+lookup/online~ in EWW instead of your system browser,
-change ~+lookup-open-url-fn~ (default: ~#'browse-url~):
+~+lookup/online~ opens the search results with in ~+lookup-open-url-fn~
+(default: ~#'browse-url~). Here is how to change this to EWW (so it opens inside
+Emacs):
 
 #+BEGIN_SRC emacs-lisp
 (setq +lookup-open-url-fn #'eww)
+#+END_SRC
+
+#+begin_quote
+~+lookup/in-docsets~ consults ~dash-docs-browser-func~ instead, which is already
+set to ~#'eww~ by default.
+#+end_quote
+
+** Open in Xwidget WebKit instead of browser
+To open results from ~+lookup/online~ or ~+lookup/in-docsets~ in Xwidget WebKit
+instead of your system browser, set ~+lookup-open-url-fn~ and/or
+~dash-docs-browser-func~ to ~+lookup-xwidget-webkit-open-url-fn~ (needs Emacs
+with Xwidgets support):
+
+#+BEGIN_SRC emacs-lisp
+(setq +lookup-open-url-fn #'+lookup-xwidget-webkit-open-url-fn)
+(after! dash-docs
+  (setq dash-docs-browser-func #'+lookup-xwidget-webkit-open-url-fn))
 #+END_SRC
 
 * Appendix

@@ -13,8 +13,8 @@
       (message "evil-mc paused")
     (message "evil-mc resumed")))
 
-;;;###autoload (autoload '+multiple-cursors/evil-mc-make-cursor-here "editor/multiple-cursors/autoload/evil-mc" nil t)
-(evil-define-command +multiple-cursors/evil-mc-make-cursor-here ()
+;;;###autoload (autoload '+multiple-cursors/evil-mc-toggle-cursor-here "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors/evil-mc-toggle-cursor-here ()
   "Create a cursor at point. If in visual block or line mode, then create
 cursors on each line of the selection, on the column of the cursor. Otherwise
 pauses cursors."
@@ -22,7 +22,18 @@ pauses cursors."
   :keep-visual nil
   :evil-mc t
   (interactive)
-  (cond ((memq evil-this-type '(block line))
+  (cond ((and (evil-mc-has-cursors-p)
+              (evil-normal-state-p)
+              (let* ((pos (point))
+                     (cursor (cl-find-if (lambda (cursor)
+                                           (eq pos (evil-mc-get-cursor-start cursor)))
+                                         evil-mc-cursor-list)))
+                (when cursor
+                  (evil-mc-delete-cursor cursor)
+                  (setq evil-mc-cursor-list (delq cursor evil-mc-cursor-list))
+                  t))))
+
+        ((memq evil-this-type '(block line))
          (let ((col (evil-column))
                (line-at-pt (line-number-at-pos)))
            ;; Fix off-by-one error
@@ -56,6 +67,7 @@ PATTERN as literal. PATTERN is a delimited regexp (the same that :g or :s uses).
 FLAGS can be g and/or i; which mean the same thing they do in
 `evil-ex-substitute'."
   :evil-mc t
+  :keep-visual t
   (interactive "<R><//!><!>")
   (unless (and (stringp pattern)
                (not (string-empty-p pattern)))
@@ -89,3 +101,31 @@ FLAGS can be g and/or i; which mean the same thing they do in
     (if (evil-mc-has-cursors-p)
         (evil-mc-print-cursors-info "Created")
       (evil-mc-message "No cursors were created"))))
+
+;;;###autoload (autoload '+multiple-cursors/evil-mc-undo-cursor "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors/evil-mc-undo-cursor ()
+  "Undos last cursor, or all cursors in visual region."
+  :repeat nil
+  :evil-mc t
+  (interactive)
+  (if (evil-visual-state-p)
+      (or (mapc (lambda (c)
+                  (evil-mc-delete-cursor c)
+                  (setq evil-mc-cursor-list (delq c evil-mc-cursor-list)))
+                (cl-remove-if-not
+                 (lambda (pos)
+                   (and (>= pos evil-visual-beginning)
+                        (<  pos evil-visual-end)))
+                 evil-mc-cursor-list
+                 :key #'evil-mc-get-cursor-start))
+          (message "No cursors to undo in region"))
+    (evil-mc-undo-last-added-cursor)))
+
+
+;;;###autoload (autoload '+multiple-cursors-execute-default-operator-fn "editor/multiple-cursors/autoload/evil-mc" nil t)
+
+(after! evil-mc
+  (evil-mc-define-handler +multiple-cursors-execute-default-operator-fn ()
+    :cursor-clear region
+    (evil-mc-with-region-or-execute-macro region t
+      (funcall (evil-mc-get-command-name) region-start region-end))))

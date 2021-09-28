@@ -8,4 +8,4 @@
 ;;;###package multi-term
 (setq multi-term-dedicated-window-height 20
       multi-term-switch-after-close 'PREVIOUS
-      multi-term-buffer-name "doom terminal")
+      multi-term-buffer-name "doom:terminal")

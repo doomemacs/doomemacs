@@ -74,20 +74,20 @@ tools.
 
 * Appendix
 ** Commands
-  | Command                      | Key       | Description                                               |
-  |------------------------------+-----------+-----------------------------------------------------------|
-  | =merlin-type-enclosing=      | =SPC m t= | display type under point                                  |
-  | =tuareg-find-alternate-file= | =SPC m a= | switch between =.ml= and =.mli=                           |
-  | =merlin-locate=              | =gd=      | lookup definition                                         |
-  | =merlin-occurences=          | =SPC c D= | lookup references                                         |
-  | =merlin-document=            | =K=       | lookup documentation                                      |
-  | =merlin-imenu=               | =SPC / i= | symbol lookup in file                                     |
-  | =merlin-iedit-occurrences=   | =v R=     | visual refactor identifier under point (multiple cursors) |
-  | =utop=                       | =SPC o r= | open =utop= as REPL                                       |
-  | =utop-eval-region=           | =SPC c e= | evaluate selected region in =utop=                        |
+  | Command                      | Key               | Description                                               |
+  |------------------------------+-------------------+-----------------------------------------------------------|
+  | =merlin-type-enclosing=      | =<localleader> t= | display type under point                                  |
+  | =tuareg-find-alternate-file= | =<localleader> a= | switch between =.ml= and =.mli=                           |
+  | =merlin-locate=              | =g d=             | lookup definition                                         |
+  | =merlin-occurences=          | =SPC c D=         | lookup references                                         |
+  | =merlin-document=            | =K=               | lookup documentation                                      |
+  | =merlin-imenu=               | =SPC s i=         | symbol lookup in file                                     |
+  | =merlin-iedit-occurrences=   | =v R=             | visual refactor identifier under point (multiple cursors) |
+  | =utop=                       | =SPC o r=         | open =utop= as REPL                                       |
+  | =utop-eval-region=           | =SPC c e=         | evaluate selected region in =utop=                        |
 
 ** Hacks
-+ =set-pretty-symbols!= is called with the full tuareg prettify symbol list, this
++ =set-ligatures!= is called with the full tuareg prettify symbol list, this
   can cause columns to change as certain keywords are shortened (e.g. =fun=
   becomes \lambda.
 + =tuareg-opam-update-env= is called the first time =tuareg= is loaded

@@ -13,7 +13,7 @@ to contribute to our fine corner of the interwebs.
 * Table of Contents :TOC_3:
 - [[#where-can-i-help][Where can I help?]]
 - [[#reporting-issues][Reporting issues]]
-  - [[#collect-backtraces-of-any-error-messages][Collect backtraces of any error messages]]
+  - [[#acquire-a-backtrace-from-errors][Acquire a backtrace from errors]]
   - [[#create-a-step-by-step-reproduction-guide][Create a step-by-step reproduction guide]]
   - [[#include-information-about-your-doom-install][Include information about your Doom install]]
   - [[#debugging-crashes-with-gdb][Debugging crashes with gdb]]

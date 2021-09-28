@@ -1,4 +1,4 @@
-#+TITLE:   feature/evil
+#+TITLE:   editor/evil
 #+DATE:    February 2, 2017
 #+SINCE:   v2.0
 #+STARTUP: inlineimages nofold
@@ -71,6 +71,7 @@ The following vim plugins have been ported to evil:
 | vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
+| vim-unimpaired        | (provided by Doom)             | [[https://github.com/hlissner/doom-emacs/blob/develop/modules/editor/evil/config.el#L413-L460][see the list]]                               |
 
 This module has also ported vim-unimpaired keybinds to Emacs.
 
@@ -100,10 +101,13 @@ And these are text objects added by this module:
 + =B= any block delimited by braces, parentheses or brackets (provided by
   ~evil-textobj-anyblock~)
 + =c= Comments
-+ =f= For functions (but relies on the major mode to have defined a sane
++ =f= For functions (but relies on the major mode to have sane definitions for
+  ~beginning-of-defun-function~ and ~end-of-defun-function~)
 + =g= The entire buffer
 + =i j k= by indentation (=k= includes one line above; =j= includes one line
   above and below) (provided by ~evil-indent-plus~)
++ =q= For quotes (any kind)
++ =u= For URLs
 + =x= XML attributes (provided by ~exato~)
 
 ** Custom Ex Commands
@@ -168,8 +172,8 @@ vim-seek/vim-sneak for 2-character versions of f/F/t/T).
 
 To disable evil-snipe on s/S, you can either:
 
-1. Disable ~evil-snipe-mode~ by adding ~(after! evil-snipe (evil-snipe-mode
-   -1))~ to =$DOOMDIR/config.el=,
+1. Disable ~evil-snipe-mode~ by adding ~(remove-hook 'doom-first-input-hook
+   #'evil-snipe-mode)~ to =$DOOMDIR/config.el=,
 2. Or disable =evil-snipe= completely with ~(package! evil-snipe :disable t)~
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.

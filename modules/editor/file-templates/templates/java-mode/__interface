@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: Java interface file template
+# --
+package `(+java-current-package)`;
+
+public interface `(+java-current-class)`
+{
+    $0
+}

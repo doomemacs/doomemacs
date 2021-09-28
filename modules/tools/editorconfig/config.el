@@ -19,12 +19,18 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (use-package! editorconfig
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . editorconfig-mode)
   :config
   (when (require 'ws-butler nil t)
     (setq editorconfig-trim-whitespaces-mode 'ws-butler-mode))
 
-  (defadvice! +editorconfig--smart-detection-a (orig-fn)
+  ;; Fix #5057 archives don't need editorconfig settings, and they may otherwise
+  ;; interfere with the process of opening them (office formats are zipped XML
+  ;; formats).
+  (add-to-list 'editorconfig-exclude-regexps
+               "\\.\\(zip\\|\\(doc\\|xls\\|ppt\\)x\\)\\'")
+
+  (defadvice! +editorconfig--smart-detection-a (fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
     :around #'editorconfig-call-editorconfig-exec
@@ -36,7 +42,7 @@ extension, try to guess one."
                      (if-let (ext (alist-get major-mode +editorconfig-mode-alist))
                          (concat "." ext)
                        "")))))
-      (funcall orig-fn)))
+      (funcall fn)))
 
   (add-hook! 'editorconfig-after-apply-functions
     (defun +editorconfig-disable-indent-detection-h (props)
@@ -44,7 +50,4 @@ extension, try to guess one."
 specified by editorconfig."
       (when (or (gethash 'indent_style props)
                 (gethash 'indent_size props))
-        (setq doom-inhibit-indent-detection 'editorconfig))))
-
-  ;;
-  (editorconfig-mode +1))
+        (setq doom-inhibit-indent-detection 'editorconfig)))))

@@ -1,8 +1,19 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
+;; Remove RCS, CVS, SCCS, SRC, and Bzr, because it's a lot less work for vc to
+;; check them all (especially in TRAMP buffers), and who uses any of these in
+;; 2021, amirite?
+(setq-default vc-handled-backends '(SVN Git Hg))
+
 (when IS-WINDOWS
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
+;; In case the user is using `bug-reference-mode'
+(map! :when (fboundp 'bug-reference-mode)
+      :map bug-reference-map
+      "RET" (cmds! (and (bound-and-true-p evil-mode)
+                        (evil-normal-state-p))
+                   #'bug-reference-push-button))
 
 (after! log-view
   (set-evil-initial-state!
@@ -37,11 +48,36 @@
   ;; `header-line-format', which has better visibility.
   (setq git-timemachine-show-minibuffer-details t)
 
+  ;; TODO PR this to `git-timemachine'
+  (defadvice! +vc-support-git-timemachine-a (fn)
+    "Allow `browse-at-remote' commands in git-timemachine buffers to open that
+file in your browser at the visited revision."
+    :around #'browse-at-remote-get-url
+    (if git-timemachine-mode
+        (let* ((start-line (line-number-at-pos (min (region-beginning) (region-end))))
+               (end-line (line-number-at-pos (max (region-beginning) (region-end))))
+               (remote-ref (browse-at-remote--remote-ref buffer-file-name))
+               (remote (car remote-ref))
+               (ref (car git-timemachine-revision))
+               (relname
+                (file-relative-name
+                 buffer-file-name (expand-file-name (vc-git-root buffer-file-name))))
+               (target-repo (browse-at-remote--get-url-from-remote remote))
+               (remote-type (browse-at-remote--get-remote-type target-repo))
+               (repo-url (cdr target-repo))
+               (url-formatter (browse-at-remote--get-formatter 'region-url remote-type)))
+          (unless url-formatter
+            (error (format "Origin repo parsing failed: %s" repo-url)))
+          (funcall url-formatter repo-url ref relname
+                   (if start-line start-line)
+                   (if (and end-line (not (equal start-line end-line))) end-line)))
+      (funcall fn)))
+
   (defadvice! +vc-update-header-line-a (revision)
     "Show revision details in the header-line, instead of the minibuffer.
 
 Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision
-info in the `header-line-format' is a good indication."
+info in the `header-line-format' is a more visible indicator."
     :override #'git-timemachine--show-minibuffer-details
     (let* ((date-relative (nth 3 revision))
            (date-full (nth 4 revision))
@@ -54,7 +90,7 @@ info in the `header-line-format' is a good indication."
                     date-full date-relative))))
 
   (after! evil
-    ;; rehash evil keybindings so they are recognized
+    ;; Rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)
@@ -68,9 +104,8 @@ info in the `header-line-format' is a good indication."
 
 
 (use-package! git-commit
-  :after-call after-find-file
+  :hook (doom-first-file . global-git-commit-mode)
   :config
-  (global-git-commit-mode +1)
   (set-yas-minor-mode! 'git-commit-mode)
 
   ;; Enforce git commit conventions.
@@ -84,12 +119,19 @@ info in the `header-line-format' is a good indication."
       "Start git-commit-mode in insert state if in a blank commit message,
 otherwise in default state."
       (when (and (bound-and-true-p evil-mode)
+                 (not (evil-emacs-state-p))
                  (bobp) (eolp))
         (evil-insert-state)))))
 
 
 (after! browse-at-remote
+  ;; It's more sensible that the user have more options. If they want line
+  ;; numbers, users can request them by making a selection first. Otherwise
+  ;; omitting them.
   (setq browse-at-remote-add-line-number-if-no-region-selected nil)
+  ;; Opt to produce permanent links with `browse-at-remote' by default,
+  ;; using commit hashes rather than branch names.
+  (setq browse-at-remote-prefer-symbolic nil)
 
   ;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo is
   ;;      detached. This creates broken links. I think it is more sensible to

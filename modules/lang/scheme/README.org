@@ -17,10 +17,29 @@ This module provides an environment for hacking and having fun in scheme. It is
 powered by [[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
 
 ** Module Flags
-This module provides no flags.
++ =+chez=
++ =+chibi=
++ =+chicken=
++ =+gambit=
++ =+gauche=
++ =+guile=
++ =+kawa=
++ =+mit=
++ =+racket=
 
 ** Plugins
 + [[https://gitlab.com/jaor/geiser][geiser]]
++ [[https://github.com/nbfalcon/macrostep-geiser][macrostep-geiser]]
++ [[https://gitlab.com/emacs-geiser/chez][geiser-chez]] (if =+chez=)
++ [[https://gitlab.com/emacs-geiser/chibi][geiser-chibi]] (if =+chibi=)
++ [[https://gitlab.com/emacs-geiser/chicken][geiser-chicken]] (if =+chicken=)
++ [[https://gitlab.com/emacs-geiser/gambit][geiser-gambit]] (if =+gambit=)
++ [[https://gitlab.com/emacs-geiser/gauche][geiser-gauche]] (if =+gauche=)
++ [[https://gitlab.com/emacs-geiser/guile][geiser-guile]] (if =+guile=)
++ [[https://github.com/flatwhatson/flycheck-guile][flycheck-guile]] (if =+guile= and =:checkers syntax=)
++ [[https://gitlab.com/emacs-geiser/kawa][geiser-kawa]] (if =+kawa=)
++ [[https://gitlab.com/emacs-geiser/mit][geiser-mit]] (if =+mit=)
++ [[https://gitlab.com/emacs-geiser/racket][geiser-racket]] (if =+racket=)
 
 * Prerequisites
 This module requires you to have at least one of the supported schemes, namely:

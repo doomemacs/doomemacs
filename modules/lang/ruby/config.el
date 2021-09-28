@@ -22,6 +22,7 @@
     (add-hook 'ruby-mode-local-vars-hook #'lsp!))
 
   (after! inf-ruby
+    (add-hook 'inf-ruby-mode-hook #'doom-mark-buffer-as-real-h)
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
     (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
@@ -49,6 +50,11 @@
   (set-lookup-handlers! 'ruby-mode
     :definition #'robe-jump
     :documentation #'robe-doc)
+  (when (boundp 'read-process-output-max)
+    ;; Robe can over saturate IPC, making interacting with it slow/clobbering
+    ;; the GC, so increase the amount of data Emacs reads from it at a time.
+    (setq-hook! '(robe-mode-hook inf-ruby-mode-hook)
+      read-process-output-max (* 1024 1024)))
   (when (featurep! :editor evil)
     (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
@@ -88,10 +94,11 @@
   :defer t
   :init
   (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
+  (setq rake-completion-system 'default)
   (map! :after ruby-mode
         :localleader
-        :map ruby-mode-map 
-        :prefix "k"
+        :map ruby-mode-map
+        :prefix ("k" . "rake")
         "k" #'rake
         "r" #'rake-rerun
         "R" #'rake-regenerate-cache
@@ -103,7 +110,7 @@
   (map! :after ruby-mode
         :localleader
         :map ruby-mode-map
-        :prefix "b"
+        :prefix ("b" . "bundle")
         "c" #'bundle-check
         "C" #'bundle-console
         "i" #'bundle-install
@@ -133,6 +140,7 @@
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
+  (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.3 :ttl nil :select t)
   (setq rspec-use-rvm (executable-find "rvm"))
   (map! :localleader
         :prefix "t"
@@ -173,7 +181,10 @@
 (use-package! projectile-rails
   :when (featurep! +rails)
   :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
+  :hook (projectile-rails-server-mode . doom-mark-buffer-as-real-h)
+  :hook (projectile-rails-mode . auto-insert-mode)
   :init
+  (setq auto-insert-query nil)
   (setq inf-ruby-console-environment "development")
   (when (featurep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))

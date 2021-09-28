@@ -27,7 +27,7 @@ This module augments ibuffer.
 + [[https://github.com/purcell/ibuffer-vc][ibuffer-vc]]
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * TODO Features
 

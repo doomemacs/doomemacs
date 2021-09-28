@@ -26,9 +26,35 @@ and Emacs states, and for non-evil users.")
 ;;
 ;;; Keybind settings
 
-(when IS-MAC
-  (setq mac-command-modifier 'super
-        mac-option-modifier 'meta))
+(cond
+ (IS-MAC
+  ;; mac-* variables are used by the special emacs-mac build of Emacs by
+  ;; Yamamoto Mitsuharu, while other builds use ns-*.
+  (setq mac-command-modifier      'super
+        ns-command-modifier       'super
+        mac-option-modifier       'meta
+        ns-option-modifier        'meta
+        ;; Free up the right option for character composition
+        mac-right-option-modifier 'none
+        ns-right-option-modifier  'none))
+ (IS-WINDOWS
+  (setq w32-lwindow-modifier 'super
+        w32-rwindow-modifier 'super)))
+
+;; HACK Fixes Emacs' disturbing inability to distinguish C-i from TAB.
+(define-key key-translation-map [?\C-i]
+  (cmd! (if (let ((keys (this-single-command-raw-keys)))
+              (and keys
+                   (not (cl-position 'tab    keys))
+                   (not (cl-position 'kp-tab keys))
+                   (display-graphic-p)
+                   ;; Fall back if no <C-i> keybind can be found, otherwise
+                   ;; we've broken all pre-existing C-i keybinds.
+                   (let ((key
+                          (doom-lookup-key
+                           (vconcat (cl-subseq keys 0 -1) [C-i]))))
+                     (not (or (numberp key) (null key))))))
+            [C-i] [?\C-i])))
 
 
 ;;
@@ -54,20 +80,27 @@ and Emacs states, and for non-evil users.")
 More specifically, when `doom/escape' is pressed. If any hook returns non-nil,
 all hooks after it are ignored.")
 
-(defun doom/escape ()
+(defun doom/escape (&optional interactive)
   "Run `doom-escape-hook'."
-  (interactive)
+  (interactive (list 'interactive))
   (cond ((minibuffer-window-active-p (minibuffer-window))
          ;; quit the minibuffer if open.
+         (when interactive
+           (setq this-command 'abort-recursive-edit))
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
         ((run-hook-with-args-until-success 'doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
-        ((keyboard-quit))))
+        ((unwind-protect (keyboard-quit)
+           (when interactive
+             (setq this-command 'keyboard-quit))))))
 
 (global-set-key [remap keyboard-quit] #'doom/escape)
+
+(with-eval-after-load 'eldoc
+  (eldoc-add-command 'doom/escape))
 
 
 ;;
@@ -77,7 +110,11 @@ all hooks after it are ignored.")
   :init
   ;; Convenience aliases
   (defalias 'define-key! #'general-def)
-  (defalias 'unmap! #'general-unbind))
+  (defalias 'undefine-key! #'general-unbind)
+  :config
+  ;; Prevent "X starts with non-prefix key Y" errors except at startup.
+  (add-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys))
+
 
 ;; HACK `map!' uses this instead of `define-leader-key!' because it consumes
 ;; 20-30% more startup time, so we reimplement it ourselves.
@@ -108,8 +145,8 @@ all hooks after it are ignored.")
                            (general--concat t doom-leader-key ,key)
                            ,desc))))))))
     (macroexp-progn
-     (cons `(after! which-key ,@(nreverse wkforms))
-           (nreverse forms)))))
+     (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+             (nreverse forms)))))
 
 (defmacro define-leader-key! (&rest args)
   "Define <leader> keys.
@@ -133,7 +170,7 @@ interface.
 
 See `doom-localleader-key' and `doom-localleader-alt-key' to change the
 localleader prefix."
-  (if (featurep 'evil)
+  (if (featurep! :editor evil)
       ;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's
       ;; emacs state)
       `(general-define-key
@@ -175,25 +212,25 @@ localleader prefix."
 ;;; Packages
 
 (use-package! which-key
-  :defer 1
-  :after-call pre-command-hook
+  :hook (doom-first-input . which-key-mode)
   :init
-  (setq which-key-sort-order #'which-key-prefix-then-key-order
+  (setq which-key-sort-order #'which-key-key-order-alpha
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
   :config
+  (defvar doom--initial-which-key-replacement-alist which-key-replacement-alist)
+  (add-hook! 'doom-before-reload-hook
+    (defun doom-reset-which-key-replacements-h ()
+      (setq which-key-replacement-alist doom--initial-which-key-replacement-alist)))
   ;; general improvements to which-key readability
-  (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
 
   (which-key-add-key-based-replacements doom-leader-key "<leader>")
-  (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
-
-  (which-key-mode +1))
+  (which-key-add-key-based-replacements doom-localleader-key "<localleader>"))
 
 
 ;;
@@ -215,20 +252,10 @@ localleader prefix."
 
 For example, :nvi will map to (list 'normal 'visual 'insert). See
 `doom-evil-state-alist' to customize this."
-  (cl-loop for l across (substring (symbol-name keyword) 1)
-           if (cdr (assq l doom-evil-state-alist)) collect it
+  (cl-loop for l across (doom-keyword-name keyword)
+           if (assq l doom-evil-state-alist) collect (cdr it)
            else do (error "not a valid state: %s" l)))
 
-
-;; Register keywords for proper indentation (see `map!')
-(put :after        'lisp-indent-function 'defun)
-(put :desc         'lisp-indent-function 'defun)
-(put :leader       'lisp-indent-function 'defun)
-(put :localleader  'lisp-indent-function 'defun)
-(put :map          'lisp-indent-function 'defun)
-(put :mode         'lisp-indent-function 'defun)
-(put :prefix       'lisp-indent-function 'defun)
-(put :prefix-map   'lisp-indent-function 'defun)
 
 ;; specials
 (defvar doom--map-forms nil)
@@ -315,7 +342,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
   (let ((a (plist-get doom--map-parent-state prop))
         (b (plist-get doom--map-state prop)))
     (if (and a b)
-        `(general--concat nil ,a ,b)
+        `(general--concat t ,a ,b)
       (or a b))))
 
 (defun doom--map-nested (wrapper rest)
@@ -387,21 +414,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 If evil isn't loaded, evil-specific bindings are ignored.
 
-States
-  :n  normal
-  :v  visual
-  :i  insert
-  :e  emacs
-  :o  operator
-  :m  motion
-  :r  replace
-  :g  global  (binds the key without evil `current-global-map')
-
-  These can be combined in any order, e.g. :nvi will apply to normal, visual and
-  insert mode. The state resets after the following key=>def pair. If states are
-  omitted the keybind will be global (no emacs state; this is different from
-  evil's Emacs state and will work in the absence of `evil-mode').
-
 Properties
   :leader [...]                   an alias for (:prefix doom-leader-key ...)
   :localleader [...]              bind to localleader; requires a keymap
@@ -418,7 +430,30 @@ Properties
   :unless [CONDITION] [...]
 
   Any of the above properties may be nested, so that they only apply to a
-  certain group of keybinds."
+  certain group of keybinds.
+
+States
+  :n  normal
+  :v  visual
+  :i  insert
+  :e  emacs
+  :o  operator
+  :m  motion
+  :r  replace
+  :g  global  (binds the key without evil `current-global-map')
+
+  These can be combined in any order, e.g. :nvi will apply to normal, visual and
+  insert mode. The state resets after the following key=>def pair. If states are
+  omitted the keybind will be global (no emacs state; this is different from
+  evil's Emacs state and will work in the absence of `evil-mode').
+
+  These must be placed right before the key string.
+
+  Do
+    (map! :leader :desc \"Description\" :n \"C-c\" #'dosomething)
+  Don't
+    (map! :n :leader :desc \"Description\" \"C-c\" #'dosomething)
+    (map! :leader :n :desc \"Description\" \"C-c\" #'dosomething)"
   (doom--map-process rest))
 
 (provide 'core-keybinds)

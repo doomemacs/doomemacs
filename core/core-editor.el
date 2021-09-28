@@ -1,6 +1,7 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
-(defvar doom-detect-indentation-excluded-modes '(fundamental-mode so-long-mode)
+(defvar doom-detect-indentation-excluded-modes
+  '(fundamental-mode pascal-mode so-long-mode)
   "A list of major modes in which indentation should be automatically
 detected.")
 
@@ -9,7 +10,10 @@ detected.")
 indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
-(defvar-local doom-large-file-p nil)
+(defvar doom-inhibit-large-file-detection nil
+  "If non-nil, inhibit large/long file detection when opening files.")
+
+(defvar doom-large-file-p nil)
 (put 'doom-large-file-p 'permanent-local t)
 
 (defvar doom-large-file-size-alist '(("." . 1.0))
@@ -31,30 +35,34 @@ These thresholds are in MB, and is used by `doom--optimize-for-large-files-a'.")
 ;;
 ;;; File handling
 
-(defadvice! doom--optimize-for-large-files-a (orig-fn &rest args)
-  "Set `doom-large-file-p' if the file is too large.
+(defadvice! doom--prepare-for-large-files-a (size _ filename &rest _)
+  "Sets `doom-large-file-p' if the file is considered large.
 
 Uses `doom-large-file-size-alist' to determine when a file is too large. When
 `doom-large-file-p' is set, other plugins can detect this and reduce their
 runtime costs (or disable themselves) to ensure the buffer is as fast as
 possible."
-  :around #'after-find-file
-  (if (setq doom-large-file-p
-            (and buffer-file-name
-                 (not doom-large-file-p)
-                 (file-exists-p buffer-file-name)
-                 (ignore-errors
-                   (> (nth 7 (file-attributes buffer-file-name))
-                      (* 1024 1024
-                         (assoc-default buffer-file-name doom-large-file-size-alist
-                                        #'string-match-p))))))
-      (prog1 (apply orig-fn args)
-        (if (memq major-mode doom-large-file-excluded-modes)
-            (setq doom-large-file-p nil)
-          (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
-            (so-long-minor-mode +1))
-          (message "Large file detected! Cutting a few corners to improve performance...")))
-    (apply orig-fn args)))
+  :before #'abort-if-file-too-large
+  (and (numberp size)
+       (null doom-inhibit-large-file-detection)
+       (ignore-errors
+         (> size
+            (* 1024 1024
+               (assoc-default filename doom-large-file-size-alist
+                              #'string-match-p))))
+       (setq-local doom-large-file-p size)))
+
+(add-hook! 'find-file-hook
+  (defun doom-optimize-for-large-files-h ()
+    "Trigger `so-long-minor-mode' if the file is large."
+    (when (and doom-large-file-p buffer-file-name)
+      (if (or doom-inhibit-large-file-detection
+              (memq major-mode doom-large-file-excluded-modes))
+          (kill-local-variable 'doom-large-file-p)
+        (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
+          (so-long-minor-mode +1))
+        (message "Large file detected! Cutting a few corners to improve performance...")))))
+
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
@@ -78,29 +86,97 @@ possible."
              (progn (make-directory parent-directory 'parents)
                     t))))))
 
-;; Don't autosave files or create lock/history/backup files. We don't want
-;; copies of potentially sensitive material floating around, and we'll rely on
-;; git and our own good fortune instead. Fingers crossed!
-(setq auto-save-default nil
-      create-lockfiles nil
+;; Don't generate backups or lockfiles. While auto-save maintains a copy so long
+;; as a buffer is unsaved, backups create copies once, when the file is first
+;; written, and never again until it is killed and reopened. This is better
+;; suited to version control, and I don't want world-readable copies of
+;; potentially sensitive material floating around our filesystem.
+(setq create-lockfiles nil
       make-backup-files nil
-      ;; But have a place to store them in case we do use them...
-      ;; auto-save-list-file-name (concat doom-cache-dir "autosave")
-      auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
-      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t))
-      backup-directory-alist `((".*" . ,(concat doom-cache-dir "backup/"))))
+      ;; But in case the user does enable it, some sensible defaults:
+      version-control t     ; number each backup file
+      backup-by-copying t   ; instead of renaming current file (clobbers links)
+      delete-old-versions t ; clean up after itself
+      kept-old-versions 5
+      kept-new-versions 5
+      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
+      tramp-backup-directory-alist backup-directory-alist)
 
-(after! tramp
-  (add-to-list 'backup-directory-alist (cons tramp-file-name-regexp nil)))
+;; But turn on auto-save, so we have a fallback in case of crashes or lost data.
+;; Use `recover-file' or `recover-session' to recover them.
+(setq auto-save-default t
+      ;; Don't auto-disable auto-save after deleting big chunks. This defeats
+      ;; the purpose of a failsafe. This adds the risk of losing the data we
+      ;; just deleted, but I believe that's VCS's jurisdiction, not ours.
+      auto-save-include-big-deletions t
+      ;; Keep it out of `doom-emacs-dir' or the local directory.
+      auto-save-list-file-prefix (concat doom-cache-dir "autosave/")
+      tramp-auto-save-directory  (concat doom-cache-dir "tramp-autosave/")
+      auto-save-file-name-transforms
+      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                  ;; Prefix tramp autosaves to prevent conflicts with local ones
+                  (concat auto-save-list-file-prefix "tramp-\\2") t)
+            (list ".*" auto-save-list-file-prefix t)))
 
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
-    "Guess mode when saving a file in `fundamental-mode'."
+    "Guess major mode when saving a file in `fundamental-mode'.
+
+Likely, something has changed since the buffer was opened. e.g. A shebang line
+or file path may exist now."
     (when (eq major-mode 'fundamental-mode)
       (let ((buffer (or (buffer-base-buffer) (current-buffer))))
         (and (buffer-file-name buffer)
              (eq buffer (window-buffer (selected-window))) ; only visible buffers
              (set-auto-mode))))))
+
+(defadvice! doom--shut-up-autosave-a (fn &rest args)
+  "If a file has autosaved data, `after-find-file' will pause for 1 second to
+tell you about it. Very annoying. This prevents that."
+  :around #'after-find-file
+  (letf! ((#'sit-for #'ignore))
+    (apply fn args)))
+
+;; HACK Emacs generates long file paths for its auto-save files; long =
+;;      `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
+;;      filesystem will murder your family. To appease it, I compress
+;;      `buffer-file-name' to a stable 40 characters.
+;; TODO PR this upstream; should be a universal issue!
+(defadvice! doom-make-hashed-auto-save-file-name-a (fn)
+  "Compress the auto-save file name so paths don't get too long."
+  :around #'make-auto-save-file-name
+  (let ((buffer-file-name
+         (if (or
+              ;; Don't do anything for non-file-visiting buffers. Names
+              ;; generated for those are short enough already.
+              (null buffer-file-name)
+              ;; If an alternate handler exists for this path, bow out.  Most of
+              ;; them end up calling `make-auto-save-file-name' again anyway, so
+              ;; we still achieve this advice's ultimate goal.
+              (find-file-name-handler buffer-file-name
+                                      'make-auto-save-file-name))
+             buffer-file-name
+           (sha1 buffer-file-name))))
+    (funcall fn)))
+
+;; HACK Does the same for Emacs backup files, but also packages that use
+;;      `make-backup-file-name-1' directly (like undo-tree).
+(defadvice! doom-make-hashed-backup-file-name-a (fn file)
+  "A few places use the backup file name so paths don't get too long."
+  :around #'make-backup-file-name-1
+  (let ((alist backup-directory-alist)
+        backup-directory)
+    (while alist
+      (let ((elt (pop alist)))
+        (if (string-match (car elt) file)
+            (setq backup-directory (cdr elt)
+                  alist nil))))
+    (let ((file (funcall fn file)))
+      (if (or (null backup-directory)
+              (not (file-name-absolute-p backup-directory)))
+          file
+        (expand-file-name (sha1 (file-name-nondirectory file))
+                          (file-name-directory file))))))
 
 
 ;;
@@ -111,6 +187,10 @@ possible."
 ;; basis anyway (and is, where tabs are the canonical style, like go-mode).
 (setq-default indent-tabs-mode nil
               tab-width 4)
+
+;; Only indent the line when at BOL or in a line's indentation. Anywhere else,
+;; insert literal indentation.
+(setq-default tab-always-indent nil)
 
 ;; Make `tabify' and `untabify' only affect indentation. Not tabs/spaces in the
 ;; middle of a line.
@@ -140,7 +220,7 @@ possible."
 ;; The POSIX standard defines a line is "a sequence of zero or more non-newline
 ;; characters followed by a terminating newline", so files should end in a
 ;; newline. Windows doesn't respect this (because it's Windows), but we should,
-;; since programmers' tools tend to be POSIX compliant.
+;; since programmers' tools tend to be POSIX compliant (and no big deal if not).
 (setq require-final-newline t)
 
 ;; Default to soft line-wrapping in text modes. It is more sensibile for text
@@ -155,25 +235,16 @@ possible."
 ;; easier to peruse (with `counsel-yank-pop' or `helm-show-kill-ring'.
 (setq kill-do-not-save-duplicates t)
 
-;; Allow UTF or composed text from the clipboard, even in the terminal or on
-;; non-X systems (like Windows or macOS), where only `STRING' is used.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-
-;; Fixes the clipboard in tty Emacs by piping clipboard I/O through xclip, xsel,
-;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin); depending
-;; on what is available.
-(unless IS-WINDOWS
-  (add-hook! 'tty-setup-hook
-    (defun doom-init-clipboard-in-tty-emacs-h ()
-      (and (require 'clipetty nil t)
-           (global-clipetty-mode +1)))))
-
 
 ;;
 ;;; Extra file extensions to support
 
-(push '("/LICENSE\\'" . text-mode) auto-mode-alist)
-(push '("\\.log\\'" . text-mode) auto-mode-alist)
+(nconc
+ auto-mode-alist
+ '(("/LICENSE\\'" . text-mode)
+   ("\\.log\\'" . text-mode)
+   ("rc\\'" . conf-mode)
+   ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
 
 
 ;;
@@ -192,17 +263,24 @@ possible."
         ;; Only prompts for confirmation when buffer is unsaved.
         revert-without-query (list "."))
 
-  ;; Instead of `auto-revert-mode' or `global-auto-revert-mode', we lazily auto
-  ;; revert; when we save a file or switch buffers/windows (or focus on Emacs).
+  ;; `auto-revert-mode' and `global-auto-revert-mode' would, normally, abuse the
+  ;; heck out of file watchers _or_ aggressively poll your buffer list every X
+  ;; seconds. Too many watchers can grind Emacs to a halt if you preform
+  ;; expensive or batch processes on files outside of Emacs (e.g. their mtime
+  ;; changes), and polling your buffer list is terribly inefficient as your
+  ;; buffer list grows into the hundreds.
   ;;
-  ;; Autorevert normally abuses the heck out of inotify handles which can grind
-  ;; Emacs to a halt if you do expensive IO (outside of Emacs) on the files you
-  ;; have open (like compression). The only alternative is aggressive polling,
-  ;; which is unreliable and expensive with a lot of buffers open.
+  ;; Doom does this lazily instead. i.e. All visible buffers are reverted
+  ;; immediately when a) a file is saved or b) Emacs is refocused (after using
+  ;; another app). Meanwhile, buried buffers are reverted only when they are
+  ;; switched to. This way, Emacs only ever has to operate on, at minimum, a
+  ;; single buffer and, at maximum, ~10 buffers (after all, when do you ever
+  ;; have more than 10 windows in any single frame?).
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
-      (auto-revert-handler)))
+      (let ((auto-revert-mode t))
+        (auto-revert-handler))))
 
   (defun doom-auto-revert-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
@@ -214,22 +292,27 @@ possible."
 (use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
-  :after-call after-find-file
+  :hook (doom-first-file . recentf-mode)
   :commands recentf-open-files
+  :custom (recentf-save-file (concat doom-cache-dir "recentf"))
   :config
-  (defun doom--recent-file-truename (file)
-    (if (or (file-remote-p file nil t)
-            (not (file-remote-p file)))
-        (file-truename file)
+  (setq recentf-auto-cleanup nil     ; Don't. We'll auto-cleanup on shutdown
+        recentf-max-saved-items 200) ; default is 20
+
+  (defun doom--recentf-file-truename-fn (file)
+    (if (or (not (file-remote-p file))
+            (equal "sudo" (file-remote-p file 'method)))
+        (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
       file))
-  (setq recentf-filename-handlers
-        '(substring-no-properties    ; strip out lingering text properties
-          doom--recent-file-truename ; resolve symlinks of local files
-          abbreviate-file-name)      ; replace $HOME with ~
-        recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 'never
-        recentf-max-menu-items 0
-        recentf-max-saved-items 200)
+
+  ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
+  ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
+  ;; space)
+  (add-to-list 'recentf-filename-handlers #'doom--recentf-file-truename-fn)
+
+  ;; Text properties inflate the size of recentf's files, and there is
+  ;; no purpose in persisting them (Must be first in the list!)
+  (add-to-list 'recentf-filename-handlers #'substring-no-properties)
 
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()
@@ -241,65 +324,80 @@ possible."
 
   (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
-      "Add dired directory to recentf file list."
+      "Add dired directories to recentf file list."
       (recentf-add-file default-directory)))
 
-  (when doom-interactive-mode
-    (add-hook 'kill-emacs-hook #'recentf-cleanup)
-    (quiet! (recentf-mode +1))))
+  ;; The most sensible time to clean up your recent files list is when you quit
+  ;; Emacs (unless this is a long-running daemon session).
+  (setq recentf-auto-cleanup (if (daemonp) 300))
+  (add-hook 'kill-emacs-hook #'recentf-cleanup)
+
+  ;; Otherwise `load-file' calls in `recentf-load-list' pollute *Messages*
+  (advice-add #'recentf-load-list :around #'doom-shut-up-a))
 
 
 (use-package! savehist
   ;; persist variables across sessions
   :defer-incrementally custom
-  :after-call post-command-hook
+  :hook (doom-first-input . savehist-mode)
+  :custom (savehist-file (concat doom-cache-dir "savehist"))
   :config
-  (setq savehist-file (concat doom-cache-dir "savehist")
-        savehist-save-minibuffer-history t
-        savehist-autosave-interval nil ; save on kill only
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (savehist-mode +1)
-
-  (add-hook! 'kill-emacs-hook
-    (defun doom-unpropertize-kill-ring-h ()
-      "Remove text properties from `kill-ring' for a smaller savehist file."
-      (setq kill-ring (cl-loop for item in kill-ring
-                               if (stringp item)
-                               collect (substring-no-properties item)
-                               else if item collect it)))))
+  (setq savehist-save-minibuffer-history t
+        savehist-autosave-interval nil     ; save on kill only
+        savehist-additional-variables
+        '(kill-ring                        ; persist clipboard
+          register-alist                   ; persist macros
+          mark-ring global-mark-ring       ; persist marks
+          search-ring regexp-search-ring)) ; persist searches
+  (add-hook! 'savehist-save-hook
+    (defun doom-savehist-unpropertize-variables-h ()
+      "Remove text properties from `kill-ring' to reduce savehist cache size."
+      (setq kill-ring
+            (mapcar #'substring-no-properties
+                    (cl-remove-if-not #'stringp kill-ring))
+            register-alist
+            (cl-loop for (reg . item) in register-alist
+                     if (stringp item)
+                     collect (cons reg (substring-no-properties item))
+                     else collect (cons reg item))))
+    (defun doom-savehist-remove-unprintable-registers-h ()
+      "Remove unwriteable registers (e.g. containing window configurations).
+Otherwise, `savehist' would discard `register-alist' entirely if we don't omit
+the unwritable tidbits."
+      ;; Save new value in the temp buffer savehist is running
+      ;; `savehist-save-hook' in. We don't want to actually remove the
+      ;; unserializable registers in the current session!
+      (setq-local register-alist
+                  (cl-remove-if-not #'savehist-printable register-alist)))))
 
 
 (use-package! saveplace
   ;; persistent point location in buffers
-  :after-call after-find-file dired-initial-position-hook
+  :hook (doom-first-file . save-place-mode)
+  :custom (save-place-file (concat doom-cache-dir "saveplace"))
   :config
-  (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place-limit 100)
-
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
 
-  (defadvice! doom--inhibit-saveplace-in-long-files-a (orig-fn &rest args)
+  (defadvice! doom--inhibit-saveplace-in-long-files-a (fn &rest args)
     :around #'save-place-to-alist
     (unless doom-large-file-p
-      (apply orig-fn args)))
+      (apply fn args)))
 
-  (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
+  (defadvice! doom--dont-prettify-saveplace-cache-a (fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
-files, so we replace calls to `pp' with the much faster `prin1'."
+files, so this replace calls to `pp' with the much faster `prin1'."
     :around #'save-place-alist-to-file
-    (cl-letf (((symbol-function #'pp) #'prin1))
-      (funcall orig-fn)))
-
-  (save-place-mode +1))
+    (letf! ((#'pp #'prin1)) (funcall fn))))
 
 
 (use-package! server
   :when (display-graphic-p)
-  :after-call pre-command-hook after-find-file focus-out-hook
+  :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
+  :custom (server-auth-dir (concat doom-emacs-dir "server/"))
   :defer 1
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
@@ -309,11 +407,22 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (server-start)))
 
 
+(after! tramp
+  (setq remote-file-name-inhibit-cache 60
+        tramp-completion-reread-directory-timeout 60
+        tramp-verbose 1
+        vc-ignore-dir-regexp (format "%s\\|%s\\|%s"
+                                     vc-ignore-dir-regexp
+                                     tramp-file-name-regexp
+                                     "[/\\\\]node_modules")))
+
+
 ;;
 ;;; Packages
 
 (use-package! better-jumper
-  :after-call pre-command-hook
+  :hook (doom-first-input . better-jumper-mode)
+  :commands doom-set-jump-a doom-set-jump-maybe-a doom-set-jump-h
   :preface
   ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at
   ;; startup. This can be removed once gilbertw1/better-jumper#2 is merged.
@@ -323,23 +432,20 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
   (global-set-key [remap xref-pop-marker-stack] #'better-jumper-jump-backward)
   :config
-  (better-jumper-mode +1)
-  (add-hook 'better-jumper-post-jump-hook #'recenter)
-
-  (defadvice! doom-set-jump-a (orig-fn &rest args)
-    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
+  (defun doom-set-jump-a (fn &rest args)
+    "Set a jump point and ensure fn doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
     (let ((evil--jumps-jumping t)
           (better-jumper--jumping t))
-      (apply orig-fn args)))
+      (apply fn args)))
 
-  (defadvice! doom-set-jump-maybe-a (orig-fn &rest args)
-    "Set a jump point if ORIG-FN returns non-nil."
+  (defun doom-set-jump-maybe-a (fn &rest args)
+    "Set a jump point if fn returns non-nil."
     (let ((origin (point-marker))
           (result
            (let* ((evil--jumps-jumping t)
                   (better-jumper--jumping t))
-             (apply orig-fn args))))
+             (apply fn args))))
       (unless result
         (with-current-buffer (marker-buffer origin)
           (better-jumper-set-jump
@@ -356,6 +462,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Creates a jump point before killing a buffer. This allows you to undo
   ;; killing a buffer easily (only works with file buffers though; it's not
   ;; possible to resurrect special buffers).
+  ;;
+  ;; I'm not advising `kill-buffer' because I only want this to affect
+  ;; interactively killed buffers.
   (advice-add #'kill-current-buffer :around #'doom-set-jump-a)
 
   ;; Create a jump point before jumping with imenu.
@@ -364,7 +473,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
-  :when doom-interactive-mode
+  :when doom-interactive-p
+  ;; I'm not using `global-dtrt-indent-mode' because it has hard-coded and rigid
+  ;; major mode checks, so I implement it in `doom-detect-indentation-h'.
   :hook ((change-major-mode-after-body read-only-mode) . doom-detect-indentation-h)
   :config
   (defun doom-detect-indentation-h ()
@@ -374,7 +485,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
                 (memq major-mode doom-detect-indentation-excluded-modes)
                 (member (substring (buffer-name) 0 1) '(" " "*")))
       ;; Don't display messages in the echo area, but still log them
-      (let ((inhibit-message (not doom-debug-mode)))
+      (let ((inhibit-message (not doom-debug-p)))
         (dtrt-indent-mode +1))))
 
   ;; Enable dtrt-indent even in smie modes so that it can update `tab-width',
@@ -383,47 +494,43 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Reduced from the default of 5000 for slightly faster analysis
   (setq dtrt-indent-max-lines 2000)
 
-  ;; Add support for more languages
-  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level))
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (orig-fn arg)
+  (defadvice! doom--fix-broken-smie-modes-a (fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode
     (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
-      (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
-                 (old-smie-config--guess (symbol-function 'symbol-config--guess))
-                 ((symbol-function 'symbol-config--guess)
-                  (lambda (beg end)
-                    (funcall old-smie-config--guess beg (min end 10000))))
-                 ((symbol-function 'smie-config-guess)
-                  (lambda ()
-                    (condition-case e (funcall old-smie-config-guess)
-                      (error (setq dtrt-indent-run-after-smie t)
-                             (message "[WARNING] Indent detection: %s"
-                                      (error-message-string e))
-                             (message "")))))) ; warn silently
-        (funcall orig-fn arg)))))
-
+      (letf! ((defun symbol-config--guess (beg end)
+                (funcall symbol-config--guess beg (min end 10000)))
+              (defun smie-config-guess ()
+                (condition-case e (funcall smie-config-guess)
+                  (error (setq dtrt-indent-run-after-smie t)
+                         (message "[WARNING] Indent detection: %s"
+                                  (error-message-string e))
+                         (message ""))))) ; warn silently
+        (funcall fn arg)))))
 
 (use-package! helpful
   ;; a better *help* buffer
   :commands helpful--read-symbol
   :init
+  ;; Make `apropos' et co search more extensively. They're more useful this way.
+  (setq apropos-do-all t)
+
   (global-set-key [remap describe-function] #'helpful-callable)
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
   (global-set-key [remap describe-key]      #'helpful-key)
   (global-set-key [remap describe-symbol]   #'helpful-symbol)
 
-  (defun doom-use-helpful-a (orig-fn &rest args)
-    "Force ORIG-FN to use helpful instead of the old describe-* commands."
-    (cl-letf (((symbol-function #'describe-function) #'helpful-function)
-              ((symbol-function #'describe-variable) #'helpful-variable))
-      (apply orig-fn args)))
+  (defun doom-use-helpful-a (fn &rest args)
+    "Force FN to use helpful instead of the old describe-* commands."
+    (letf! ((#'describe-function #'helpful-function)
+            (#'describe-variable #'helpful-variable))
+      (apply fn args)))
 
   (after! apropos
     ;; patch apropos buttons to call helpful instead of help
@@ -446,9 +553,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call doom-switch-buffer-hook after-find-file
+  :hook (doom-first-buffer . smartparens-global-mode)
   :commands sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string
   :config
+  (add-to-list 'doom-point-in-string-functions 'sp-point-in-string)
+  (add-to-list 'doom-point-in-comment-functions 'sp-point-in-comment)
   ;; smartparens recognizes `slime-mrepl-mode', but not `sly-mrepl-mode', so...
   (add-to-list 'sp-lisp-modes 'sly-mrepl-mode)
   ;; Load default smartparens rules for various languages
@@ -465,7 +574,12 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     ;; correct this vile injustice.
     (setq sp-show-pair-from-inside t)
     ;; ...and stay highlighted until we've truly escaped the pair!
-    (setq sp-cancel-autoskip-on-backward-movement nil))
+    (setq sp-cancel-autoskip-on-backward-movement nil)
+    ;; Smartparens conditional binds a key to C-g when sp overlays are active
+    ;; (even if they're invisible). This disruptively changes the behavior of
+    ;; C-g in insert mode, requiring two presses of the key to exit insert mode.
+    ;; I don't see the point of this keybind, so...
+    (setq sp-pair-overlay-keymap (make-sparse-keymap)))
 
   ;; The default is 100, because smartparen's scans are relatively expensive
   ;; (especially with large pair lists for some modes), we reduce it, as a
@@ -474,25 +588,30 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; No pair has any business being longer than 4 characters; if they must, set
   ;; it buffer-locally. It's less work for smartparens.
   (setq sp-max-pair-length 4)
-  ;; This isn't always smart enough to determine when we're in a string or not.
-  ;; See https://github.com/Fuco1/smartparens/issues/783.
-  (setq sp-escape-quotes-after-insert nil)
 
   ;; Silence some harmless but annoying echo-area spam
   (dolist (key '(:unmatched-expression :no-matching-tag))
     (setf (alist-get key sp-message-alist) nil))
 
+  (add-hook! 'eval-expression-minibuffer-setup-hook
+    (defun doom-init-smartparens-in-eval-expression-h ()
+      "Enable `smartparens-mode' in the minibuffer for `eval-expression'.
+This includes everything that calls `read--expression', e.g.
+`edebug-eval-expression' Only enable it if
+`smartparens-global-mode' is on."
+      (when smartparens-global-mode (smartparens-mode +1))))
   (add-hook! 'minibuffer-setup-hook
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()
-      "Enable `smartparens-mode' in the minibuffer, during `eval-expression',
-`pp-eval-expression' or `evil-ex'."
-      (when (memq this-command '(eval-expression pp-eval-expression evil-ex))
-        (smartparens-mode))))
+      "Enable `smartparens' for non-`eval-expression' commands.
+Only enable `smartparens-mode' if `smartparens-global-mode' is
+on."
+      (when (and smartparens-global-mode (memq this-command '(evil-ex)))
+        (smartparens-mode +1))))
 
   ;; You're likely writing lisp in the minibuffer, therefore, disable these
   ;; quote pairs, which lisps doesn't use for strings:
-  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
+  (sp-local-pair '(minibuffer-mode minibuffer-inactive-mode) "'" nil :actions nil)
+  (sp-local-pair '(minibuffer-mode minibuffer-inactive-mode) "`" nil :actions nil)
 
   ;; Smartparens breaks evil-mode's replace state
   (defvar doom-buffer-smartparens-mode nil)
@@ -505,16 +624,12 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (defun doom-disable-smartparens-mode-maybe-h ()
       (when smartparens-mode
         (setq-local doom-buffer-smartparens-mode t)
-        (turn-off-smartparens-mode))))
-
-  (smartparens-global-mode +1))
+        (turn-off-smartparens-mode)))))
 
 
 (use-package! so-long
-  :after-call after-find-file
+  :hook (doom-first-file . global-so-long-mode)
   :config
-  (when doom-interactive-mode
-    (global-so-long-mode +1))
   (setq so-long-threshold 400) ; reduce false positives w/ larger threshold
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
@@ -527,13 +642,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
   ;; ...and insist that save-place not operate in large/long files
   (add-to-list 'so-long-variable-overrides '(save-place-alist . nil))
-  ;; Text files could possibly be too long too
-  (add-to-list 'so-long-target-modes 'text-mode)
-  ;; But disable everything else that may be unnecessary/expensive for large
-  ;; or wide buffers.
+  ;; But disable everything else that may be unnecessary/expensive for large or
+  ;; wide buffers.
   (appendq! so-long-minor-modes
             '(flycheck-mode
-              flyspell-mode
+              spell-fu-mode
               eldoc-mode
               smartparens-mode
               highlight-numbers-mode
@@ -544,28 +657,25 @@ files, so we replace calls to `pp' with the much faster `prin1'."
               highlight-indent-guides-mode
               hl-fill-column-mode))
   (defun doom-buffer-has-long-lines-p ()
-    ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse comment
-    ;;      syntax, but in some buffers comment state isn't initialized,
-    ;;      leading to a wrong-type-argument: stringp error.
-    (let ((so-long-skip-leading-comments (bound-and-true-p comment-use-syntax))
-          ;; HACK If visual-line-mode is on, then false positives are more
-          ;;      likely, so up the threshold. More so in text-mode, since long
-          ;;      paragraphs are the norm.
-          (so-long-threshold
-           (if visual-line-mode
-               (* so-long-threshold
-                  (if (derived-mode-p 'text-mode)
-                      3
-                    2))
-             so-long-threshold)))
-      (so-long-detected-long-line-p)))
+    (unless (bound-and-true-p visual-line-mode)
+      (let ((so-long-skip-leading-comments
+             ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse
+             ;;      comment syntax, but comment state may not be initialized,
+             ;;      leading to a wrong-type-argument: stringp error.
+             (bound-and-true-p comment-use-syntax)))
+        (so-long-detected-long-line-p))))
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
 (use-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
-  :after-call after-find-file
-  :config (ws-butler-global-mode +1))
+  :hook (doom-first-buffer . ws-butler-global-mode)
+  :config
+  ;; ws-butler normally preserves whitespace in the buffer (but strips it from
+  ;; the written file). While sometimes convenient, this behavior is not
+  ;; intuitive. To the average user it looks like whitespace cleanup is failing,
+  ;; which causes folks to redundantly install their own.
+  (setq ws-butler-keep-whitespace-before-point nil))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

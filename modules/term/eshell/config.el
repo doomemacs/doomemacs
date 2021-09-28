@@ -12,6 +12,10 @@
   "Where to store eshell configuration files, as opposed to
 `eshell-directory-name', which is where Doom will store temporary/data files.")
 
+(defvar eshell-directory-name (concat doom-etc-dir "eshell")
+  "Where to store temporary/data files, as opposed to `eshell-config-dir',
+which is where Doom will store eshell configuration files.")
+
 (defvar +eshell-enable-new-shell-on-split t
   "If non-nil, spawn a new eshell session after splitting from an eshell
 buffer.")
@@ -22,11 +26,15 @@ buffer.")
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
+    ("ff" "find-file-other-window $1")
     ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
     ("l"  "ls -lh $*")
     ("ll" "ls -lah $*")
+    ("git" "git --no-pager $*")
+    ("gg" "magit-status")
+    ("cdp" "cd-to-project")
     ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
@@ -35,20 +43,16 @@ to define your aliases.
 
 You should use `set-eshell-alias!' to change this.")
 
-;;
-(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
-
 ;; These files are exceptions, because they may contain configuration
 (defvar eshell-aliases-file (concat +eshell-config-dir "aliases"))
 (defvar eshell-rc-script    (concat +eshell-config-dir "profile"))
 (defvar eshell-login-script (concat +eshell-config-dir "login"))
 
-
 (defvar +eshell--default-aliases nil)
 
 
 ;;
-;; Packages
+;;; Packages
 
 (after! eshell ; built-in
   (setq eshell-banner-message
@@ -59,7 +63,6 @@ You should use `set-eshell-alias!' to change this.")
                              'face 'font-lock-keyword-face))
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
-        eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
         ;; don't record command in history if prefixed with whitespace
@@ -91,9 +94,7 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook! 'eshell-mode-hook
     (defun +eshell-remove-fringes-h ()
       (set-window-fringes nil 0 0)
-      (set-window-margins nil 1 nil)))
-
-  (add-hook! 'eshell-mode-hook
+      (set-window-margins nil 1 nil))
     (defun +eshell-enable-text-wrapping-h ()
       (visual-line-mode +1)
       (set-display-table-slot standard-display-table 0 ?\ )))
@@ -104,55 +105,53 @@ You should use `set-eshell-alias!' to change this.")
   ;; or configure `+eshell-aliases' via elisp.
   (advice-add #'eshell-write-aliases-list :override #'ignore)
 
+  ;; REVIEW In Emacs 27 and newer, waiting for esh-module is unnecessary.
+  (after! esh-module
+    (add-to-list 'eshell-modules-list 'eshell-tramp))
+
   ;; Visual commands require a proper terminal. Eshell can't handle that, so
   ;; it delegates these commands to a term buffer.
   (after! em-term
     (pushnew! eshell-visual-commands "tmux" "htop" "vim" "nvim" "ncmpcpp"))
 
-  (add-hook! 'eshell-alias-load-hook
-    (defun +eshell-init-aliases-h ()
-      (setq +eshell--default-aliases eshell-command-aliases-list
-            eshell-command-aliases-list
-            (append eshell-command-aliases-list
-                    +eshell-aliases))))
+  (after! em-alias
+    (setq +eshell--default-aliases eshell-command-aliases-list
+          eshell-command-aliases-list
+          (append eshell-command-aliases-list
+                  +eshell-aliases))))
 
-  (when (featurep! :editor evil +everywhere)
-    (advice-add #'evil-collection-eshell-next-prompt-on-insert
-                :override #'+eshell-goto-prompt-on-insert-a))
 
-  (add-hook! 'eshell-first-time-mode-hook
-    (defun +eshell-init-keymap-h ()
-      ;; Keys must be bound in a hook because eshell resets its keymap every
-      ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
-      ;; grasp such wisdom.
-      (map! :map eshell-mode-map
-            :n "RET"     #'+eshell/goto-end-of-prompt
-            :n [return]  #'+eshell/goto-end-of-prompt
-            :n "c"       #'+eshell/evil-change
-            :n "C"       #'+eshell/evil-change-line
-            :n "d"       #'+eshell/evil-delete
-            :n "D"       #'+eshell/evil-delete-line
-            :ni "C-j"    #'eshell-next-matching-input-from-input
-            :ni "C-k"    #'eshell-previous-matching-input-from-input
-            :ig "C-d"    #'+eshell/quit-or-delete-char
-            "C-s"   #'+eshell/search-history
-            ;; Emacs bindings
-            "C-e"   #'end-of-line
-            ;; Tmux-esque prefix keybinds
-            "C-c s" #'+eshell/split-below
-            "C-c v" #'+eshell/split-right
-            "C-c x" #'+eshell/kill-and-close
-            "C-c h" #'windmove-left
-            "C-c j" #'windmove-down
-            "C-c k" #'windmove-up
-            "C-c l" #'windmove-right
-            [remap split-window-below]  #'+eshell/split-below
-            [remap split-window-right]  #'+eshell/split-right
-            [remap doom/backward-to-bol-or-indent] #'eshell-bol
-            [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-            [remap evil-delete-back-to-indentation] #'eshell-kill-input
-            [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right))))
+(after! esh-mode
+  (map! :map eshell-mode-map
+        :n  "RET"    #'+eshell/goto-end-of-prompt
+        :n  [return] #'+eshell/goto-end-of-prompt
+        :ni "C-j"    #'eshell-next-matching-input-from-input
+        :ni "C-k"    #'eshell-previous-matching-input-from-input
+        :ig "C-d"    #'+eshell/quit-or-delete-char
+        :i  "C-c h"  #'evil-window-left
+        :i  "C-c j"  #'evil-window-down
+        :i  "C-c k"  #'evil-window-up
+        :i  "C-c l"  #'evil-window-right
+        "C-s"   #'+eshell/search-history
+        ;; Emacs bindings
+        "C-e"   #'end-of-line
+        ;; Tmux-esque prefix keybinds
+        "C-c s" #'+eshell/split-below
+        "C-c v" #'+eshell/split-right
+        "C-c x" #'+eshell/kill-and-close
+        [remap split-window-below]  #'+eshell/split-below
+        [remap split-window-right]  #'+eshell/split-right
+        [remap doom/backward-to-bol-or-indent] #'eshell-bol
+        [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+        [remap evil-delete-back-to-indentation] #'eshell-kill-input
+        [remap evil-window-split]   #'+eshell/split-below
+        [remap evil-window-vsplit]  #'+eshell/split-right
+        ;; To emulate terminal keybinds
+        "C-l"   #'eshell/clear
+        (:localleader
+         "b" #'eshell-insert-buffer-name
+         "e" #'eshell-insert-envvar
+         "s" #'+eshell/search-history)))
 
 
 (use-package! eshell-up
@@ -173,13 +172,30 @@ You should use `set-eshell-alias!' to change this.")
   :config (setup-esh-help-eldoc))
 
 
+(use-package! eshell-did-you-mean
+  :after esh-mode ; Specifically esh-mode, not eshell
+  :config
+  (eshell-did-you-mean-setup)
+  ;; HACK There is a known issue with `eshell-did-you-mean' where it does not
+  ;;      work on first invocation, so we invoke it once manually by setting the
+  ;;      last command and then calling the output filter.
+  (setq eshell-last-command-name "catt")
+  (eshell-did-you-mean-output-filter "catt: command not found"))
+
+
+(use-package eshell-syntax-highlighting
+  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+
+
 (use-package! fish-completion
+  :unless IS-WINDOWS
   :hook (eshell-mode . fish-completion-mode)
   :init (setq fish-completion-fallback-on-bash-p t)
   :config
-  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil, fish must be
-  ;;      installed for bash completion to work. How frustrating. This way we
-  ;;      can at least get bash completion whether or not fish is present.
+  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil,
+  ;;      `fish-completion--list-completions-with-desc' will throw an error if
+  ;;      fish isn't installed (and so, will fail to fall back to bash), so we
+  ;;      advise it to fail silently.
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
-    :before-while #'fish-completion--list-completions-with-desc
-    (executable-find "fish")))
+    :before-until #'fish-completion--list-completions-with-desc
+    (unless (executable-find "fish") "")))

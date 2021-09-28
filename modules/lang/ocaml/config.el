@@ -10,7 +10,7 @@
 
 (after! tuareg
   ;; tuareg-mode has the prettify symbols itself
-  (set-pretty-symbols! 'tuareg-mode :alist
+  (set-ligatures! 'tuareg-mode :alist
     (append tuareg-prettify-symbols-basic-alist
             tuareg-prettify-symbols-extra-alist))
   ;; harmless if `prettify-symbols-mode' isn't active
@@ -19,10 +19,6 @@
   ;; Use opam to set environment
   (setq tuareg-opam-insinuate t)
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
-
-  ;; Spell-check comments
-  (when (featurep! :checkers spell)
-    (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
   (setq-hook! 'tuareg-mode-hook
     comment-line-break-function #'+ocaml/comment-indent-new-line)
@@ -115,9 +111,10 @@
     (setq +format-with 'ocp-indent)
     (when (and (executable-find "ocamlformat")
                (locate-dominating-file default-directory ".ocamlformat"))
-      (let ((ext (file-name-extension buffer-file-name t)))
-        (cond ((equal ext ".eliom")
-               (setq-local ocamlformat-file-kind 'implementation))
-              ((equal ext ".eliomi")
-               (setq-local ocamlformat-file-kind 'interface))))
+      (when buffer-file-name
+        (let ((ext (file-name-extension buffer-file-name t)))
+          (cond ((equal ext ".eliom")
+                 (setq-local ocamlformat-file-kind 'implementation))
+                ((equal ext ".eliomi")
+                 (setq-local ocamlformat-file-kind 'interface)))))
       (setq +format-with 'ocamlformat))))

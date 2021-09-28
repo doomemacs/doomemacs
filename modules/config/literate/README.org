@@ -1,0 +1,106 @@
+#+TITLE:   config/literate
+#+DATE:    May 4, 2020
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#change-the-location-of-configorg][Change the location of config.org]]
+  - [[#change-where-src-blocks-are-tangled-or-prevent-it-entirely][Change where src blocks are tangled or prevent it entirely]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#how-to-tangle-to-doomdirinitel][How to tangle to =DOOMDIR/init.el=]]
+  - [[#how-to-disable-tangle-on-save][How to disable tangle-on-save]]
+
+* Description
+This module enables support for a literate config.
+
+A literate config consists of a =DOOMDIR/config.org=. All src blocks within are
+tangled =DOOMDIR/config.el=, by default, when ~doom sync~ is executed.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
+This module installs no plugins.
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
++ Automatically tangles ~config.org~ to ~config.el~ when saving. See
+  Troubleshooting section belong on how to disable it.
+
+* Configuration
+** Change the location of config.org
+The ~+literate-config-file~ variable controls where to look for your config.org.
+To change this it must be modified early -- in =DOOMDIR/init.el= or
+=DOOMDIR/cli.el=.
+
+Source blocks needs to be in some language to be automatically tangled, for
+example ~#+BEGIN_SRC elisp~, but it doesn't matter what language is used. All
+blocks are tangled to ~config.el~, but ~elisp~ gives correct syntax
+highlighting. If you don't want to specify language in block you can also
+enforce tangling by adding ~#+BEGIN_SRC :tangle yes~
+
+** Change where src blocks are tangled or prevent it entirely
+By default, this module tangles all src emacs-lisp blocks to config.el unless
+otherwise specified.
+
+To specify otherwise use the =:tangle= parameter to:
+
+- Specify a destination other than config.el: ~:tangle packages.el~
+- Disable tangling of the block altogether with ~:tangle no~
+- Or force non-elisp src blocks to tangle somewhere
+
+For example:
+#+BEGIN_SRC org
+,#+BEGIN_SRC elisp :tangle no
+(message "Don't tangle me")
+,#+END_SRC
+
+,#+BEGIN_SRC elisp :tangle packages.el
+(package! my-package)
+(package! other-package)
+,#+END_SRC
+
+,#+BEGIN_SRC sh :tangle ~/.dotfiles/bin/script.sh :tangle-mode (identity #o755)
+#!/usr/bin/env bash
+echo Hello world
+,#+END_SRC
+
+,#+BEGIN_SRC sh :tangle ~/.dotfiles/bin/script.sh :shebang "#!/usr/bin/env bash"
+echo Hello world
+,#+END_SRC
+#+END_SRC
+
+You'll find more information about babel src blocks and what parameters they
+support [[https://orgmode.org/manual/Working-with-Source-Code.html][in the manual]].
+
+* Troubleshooting
+** How to tangle to =DOOMDIR/init.el=
+If your literate needs are more complex (e.g. you want to make your init.el
+literate), this module won't cut it. =init.el= is loaded long before
+=config.org= is tangled in the ~doom sync~ process.
+
+However, Doom comes with a [[file:../../../bin/org-tangle][bin/org-tangle]] script which can be used to tangle
+arbitrary org files from the command line. Use it to create your own compilation
+workflows. This is /much/ faster than using ~org-babel-load-file~ directly to
+load your literate config every time Doom is started.
+
+** How to disable tangle-on-save
+There are occasions where tangling on save may be undesirable. Maybe it's too
+slow, produces too much noise, or happens too often (on unrelated org files in
+your =DOOMDIR=). This behavior can be disabled with:
+#+BEGIN_SRC elisp
+;; add to DOOMDIR/config.el
+(remove-hook 'org-mode-hook #'+literate-enable-recompile-h)
+#+END_SRC

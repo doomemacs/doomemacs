@@ -45,9 +45,8 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 + =+hack= Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
-+ =+lsp= Enable LSP support through phpactor. Requires the ~:tools lsp~ module
-  and the phpactor server to be installed on your system.
-
++ =+lsp= Enable LSP support through phpactor or intelephense. Requires the
+  ~:tools lsp~ module and the [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor server]] to be installed on your system.
 ** Plugins
 + [[https://github.com/tomterl/php-boris][async]]
 + [[https://github.com/tomterl/php-boris][php-boris]]
@@ -65,7 +64,11 @@ This module has no dedicated maintainers.
 
 * Prerequisites
 ** PHP
-To get started with PHP, you'll need ~php~ (5.3+) and ~composer~:
+To get started with PHP, you'll need ~php~ (5.3+) and ~composer~.
+
+Note for =+lsp=:
+1. In order to make full use of phpactor server, ~php~ (7.3+) is recommended.
+2. If you use intelephense, ~node~ and ~npm~ are needed.
 
 *** MacOS
 PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are provided for reference:
@@ -74,38 +77,63 @@ PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are p
 brew tap homebrew/homebrew-php
 brew install php71  # or php53, php54, php55
 brew install composer
+
+# If you use intelephense:
+brew install node
+brew install npm
 #+END_SRC
 
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
+
+# If you use intelephense:
+sudo pacman -S nodejs npm
 #+END_SRC
 
 *** openSUSE
 #+BEGIN_SRC sh :dir /sudo::
 sudo zypper install php-composer
+
+# If you use intelephense:
+sudo zypper install nodejs npm
 #+END_SRC
 
 ** Dependencies
-The features in this module optionally depend on the following php packages:
+This module has no required dependencies, but it has a couple optional ones.
 
 + ~boris~ (REPL)
 + ~phpctags~ (better code completion)
 + ~phpunit~ (unit test commands)
++ ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
 
 #+BEGIN_SRC sh
 composer global require \
     d11wtq/boris \
     phpunit/phpunit \
-    techlivezheng/phpctags
+    techlivezheng/phpctags \
+    friendsofphp/php-cs-fixer
+
+# Needed by php-cs-fixer, otherwise you'll get "Couldn't resolve parser
+# 'php'" errors
+npm install -g @prettier/plugin-php
 #+END_SRC
 
-Ensure that ~\~/.composer/vendor/bin~ is in ~PATH~:
+You must ensure that ~\~/.composer/vendor/bin~ is in ~PATH~, so these
+executables are visible to Emacs:
 
 #+BEGIN_SRC sh
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
 #+END_SRC
+
+You may also need to regenerate your envvar file by running ~doom env~ on the
+command line.
+
+#+begin_quote
+To use intelephense instead of , run =M-x lsp-install-server= and choose ~iph~ to
+install lsp-intelephense.
+#+end_quote
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.

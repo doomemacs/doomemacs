@@ -3,7 +3,7 @@
 *.log
 tmp/
 
-`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js"))))
+`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js" "haskell" "clojure"))))
     (string-join
        (cond ((string= type-ignore "python")
               '("*.py[cod]"
@@ -27,5 +27,42 @@ tmp/
                "yarn-error.log*"
                "*.tsbuildinfo"
                ".npm"
-               ".eslintcache")))
+               ".eslintcache"))
+             ((string= type-ignore "haskell")
+             '("dist"
+               "dist-*"
+               "cabal-dev"
+               "*.o"
+               "*.hi"
+               "*.hie"
+               "*.chi"
+               "*.chs.h"
+               "*.dyn_o"
+               "*.dyn_hi"
+               ".hpc"
+               ".hsenv"
+               ".cabal-sandbox/"
+               "cabal.sandbox.config"
+               "*.prof"
+               "*.aux"
+               "*.hp"
+               "*.eventlog"
+               ".stack-work/"
+               "cabal.project.local"
+               "cabal.project.local~"
+               ".HTF/"
+               ".ghc.environment.*"))
+             ((string= type-ignore "clojure")
+              '("/target"
+                "/classes"
+                "/checkouts"
+                "profiles.clj"
+                "pom.xml"
+                "pom.xml.asc"
+                "*.jar"
+                "*.class"
+                "/.lein-*"
+                "/.nrepl-port"
+                "/.prepl-port"
+                "/.cpcache")))
        "\n"))`

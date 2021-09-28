@@ -63,32 +63,24 @@ workspace for it."
         (+workspace/delete +irc--workspace-name)))))
 
 ;;;###autoload
-(defun +irc/ivy-jump-to-channel (&optional this-server)
-  "Jump to an open channel or server buffer with ivy. If THIS-SERVER (universal
+(defun +irc/jump-to-channel (&optional this-server)
+  "Jump to an open channel or server buffer. If THIS-SERVER (universal
 argument) is non-nil only show channels in current server."
   (interactive "P")
-  (if (not (circe-server-buffers))
-      (message "No circe buffers available")
-    (when (and this-server (not circe-server-buffer))
-      (setq this-server nil))
-    (ivy-read (format "Jump to%s: " (if this-server (format " (%s)" (buffer-name circe-server-buffer)) ""))
-              (cl-loop with servers = (if this-server (list circe-server-buffer) (circe-server-buffers))
-                       with current-buffer = (current-buffer)
-                       for server in servers
-                       collect (buffer-name server)
-                       nconc
-                       (with-current-buffer server
-                         (cl-loop for buf in (circe-server-chat-buffers)
-                                  unless (eq buf current-buffer)
-                                  collect (format "  %s" (buffer-name buf)))))
-              :action #'+irc--ivy-switch-to-buffer-action
-              :preselect (buffer-name (current-buffer))
-              :keymap ivy-switch-buffer-map
-              :caller '+irc/ivy-jump-to-channel)))
+  (call-interactively
+   (cond ((featurep! :completion ivy)       #'+irc/ivy-jump-to-channel)
+         ((featurep! :completion vertico)   #'+irc/vertico-jump-to-channel)
+         ((user-error "No jump-to-channel backend is enabled. Enable vertico or ivy!")))))
 
-(defun +irc--ivy-switch-to-buffer-action (buffer)
-  (when (stringp buffer)
-    (ivy--switch-buffer-action (string-trim-left buffer))))
+;;;###autoload
+(defun +irc--circe-all-buffers ()
+  (cl-loop with servers = (circe-server-buffers)
+           for server in servers
+           collect server
+           nconc
+           (with-current-buffer server
+             (cl-loop for buf in (circe-server-chat-buffers)
+                      collect buf))))
 
 ;;;###autoload
 (defun +irc/tracking-next-buffer ()

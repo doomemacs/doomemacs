@@ -3,7 +3,10 @@
 
 (cond
  ((featurep! :editor evil)
-  (package! evil-multiedit :pin "9f271e0e60")
-  (package! evil-mc :pin "4d4c0172e4"))
+  ;; REVIEW Broken in 8abf2c1f4f0ade64cbb06c8f47055f04ab83e8d6 (latest commit at
+  ;;        time of writing). Revisit later.
+  (package! iedit :pin "77eb0a1e2e44b453e4ebf4c38409affa353f5139")
+  (package! evil-multiedit :pin "9f271e0e6048297692f80ed6c5ae8994ac523abc")
+  (package! evil-mc :pin "f04fb17f35f2722f2ac93c862b4450bb8e5b739a"))
 
- ((package! multiple-cursors :pin "b880554d04")))
+ ((package! multiple-cursors :pin "616fbdd3696f99d85660ad57ebbb0c44d6c7f426")))

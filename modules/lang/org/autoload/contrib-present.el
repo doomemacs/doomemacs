@@ -1,9 +1,6 @@
 ;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +present)
 
-(defvar +org-present--overlays nil)
-
-
 ;;
 ;;; Helpers
 
@@ -15,13 +12,6 @@
     (remove-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode
                  'local)))
 
-(defun +org-present--make-invisible (beg end)
-  (unless (assq '+org-present buffer-invisibility-spec)
-    (add-to-invisibility-spec '(+org-present)))
-  (let ((overlay (make-overlay beg (1+ end))))
-    (push overlay +org-present--overlays)
-    (overlay-put overlay 'invisible '+org-present)))
-
 
 ;;
 ;;; Hooks
@@ -32,9 +22,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^[[:space:]]*\\(#\\+\\)\\(\\(?:BEGIN\\|END\\|ATTR\\)[^[:space:]]+\\).*" nil t)
-      (+org-present--make-invisible
-       (match-beginning 1)
-       (match-end 0)))))
+      (org-flag-region (match-beginning 1)
+                       (match-end 0)
+                       org-tree-slide-mode
+                       t))))
 
 ;;;###autoload
 (defun +org-present-hide-leading-stars-h ()
@@ -42,13 +33,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^\\(\\*+\\)" nil t)
-      (+org-present--make-invisible (match-beginning 1) (match-end 1)))))
-
-;;;###autoload
-(defun +org-present-remove-overlays-h ()
-  "TODO"
-  (mapc #'delete-overlay +org-present--overlays)
-  (remove-from-invisibility-spec '(+org-present)))
+      (org-flag-region (match-beginning 1)
+                       (match-end 1)
+                       org-tree-slide-mode
+                       t))))
 
 ;;;###autoload
 (defun +org-present-detect-slide-h ()
@@ -62,12 +50,16 @@
 (defvar cwm-frame-internal-border)
 (defvar cwm-left-fringe-ratio)
 (defvar cwm-centered-window-width)
+(defvar +org-present--last-wconf nil)
 ;;;###autoload
 (defun +org-present-prettify-slide-h ()
-  "TODO"
   "Set up the org window for presentation."
-  (doom/window-maximize-buffer)
   (let ((arg (if org-tree-slide-mode +1 -1)))
+    (if (not org-tree-slide-mode)
+        (when +org-present--last-wconf
+          (set-window-configuration +org-present--last-wconf))
+      (setq +org-present--last-wconf (current-window-configuration))
+      (doom/window-maximize-buffer))
     (when (fboundp 'centered-window-mode)
       (setq-local cwm-use-vertical-padding t)
       (setq-local cwm-frame-internal-border 100)
@@ -78,9 +70,6 @@
     (+org-pretty-mode arg)
     (cond (org-tree-slide-mode
            (set-window-fringes nil 0 0)
-           (when (bound-and-true-p solaire-mode)
-             (solaire-mode -1)
-             (fringe-mode 0))
            (when (bound-and-true-p flyspell-mode)
              (flyspell-mode -1))
            (add-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode
@@ -91,7 +80,6 @@
            (text-scale-set 0)
            (set-window-fringes nil fringe-mode fringe-mode)
            (org-clear-latex-preview)
-           (+org-present-remove-overlays-h)
            (org-remove-inline-images)
            (org-mode)))
     (redraw-display)))

@@ -34,7 +34,6 @@ https://assets.doomemacs.org/completion/company/overlay.png
 ** Plugins
 + [[https://github.com/company-mode/company-mode][company-mode]]
 + [[https://github.com/hlissner/emacs-company-dict][company-dict]]
-+ [[https://github.com/raxod502/prescient.el][company-prescient]]
 + [[https://github.com/sebastiencs/company-box][company-box]]* (=+childframe=)
 
 * Prerequisites

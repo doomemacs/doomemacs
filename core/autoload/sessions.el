@@ -64,15 +64,6 @@
 
 
 ;;
-;;; Command line switch
-
-;;;###autoload
-(defun doom-restore-session-handler (&rest _)
-  "TODO"
-  (add-hook 'window-setup-hook #'doom-load-session 'append))
-
-
-;;
 ;;; Commands
 
 ;;;###autoload
@@ -130,8 +121,11 @@
   (interactive "P")
   (setq doom-autosave-session nil)
   (doom/quicksave-session)
-  (restart-emacs
-   (append (if debug (list "--debug-init"))
-           (when (boundp 'chemacs-current-emacs-profile)
-             (list "--with-profile" chemacs-current-emacs-profile))
-           (list "--restore"))))
+  (save-some-buffers nil t)
+  (letf! ((#'save-buffers-kill-emacs #'kill-emacs)
+          (confirm-kill-emacs))
+    (restart-emacs
+     (append (if debug (list "--debug-init"))
+             (when (boundp 'chemacs-current-emacs-profile)
+               (list "--with-profile" chemacs-current-emacs-profile))
+             (list "--eval" "(add-hook 'window-setup-hook #'doom-load-session 100)")))))

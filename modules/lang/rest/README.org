@@ -46,7 +46,7 @@ This module provides no flags.
 + Adds imenu support to ~restclient-mode~.
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Features
 # An in-depth list of features, how to use them, and their dependencies.

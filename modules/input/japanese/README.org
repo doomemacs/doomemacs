@@ -35,6 +35,9 @@ This module provides no flags.
   a single long line without wanted spaced (when exporting org-mode to html).
 
 * TODO Prerequisites
++ For incremental search with Migemo, one of the following is required:
+  + [[https://github.com/koron/cmigemo][cmigemo]], which is recommended, or
+  + [[http://0xcc.net/migemo/][CVS Head Migemo]]
 * TODO Features
 * TODO Configuration
 * TODO Troubleshooting

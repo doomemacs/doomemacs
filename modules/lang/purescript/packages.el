@@ -1,11 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/purescript/packages.el
 
-;; As far as I can tell, at the moment, flycheck-purescript does not work well
-;; due to expecting the compiler to be psc rather than purs. However, one of
-;; purescript-mode or psc-ide seems to handle flycheck, so it might be
-;; unnecessary altogether.
-;;(package! flycheck-purescript :pin "30f0435d5e")
-
-(package! psc-ide :pin "7fc2b841be")
-(package! purescript-mode :pin "8db1d0243c")
+(package! psc-ide :pin "ce97d719458ea099b40c02f05b6609601c727e66")
+(package! purescript-mode :pin "0acd1af446424ba855153161fe07a20f67dc0a89")
+(package! psci :pin "95fb5d14033add8fe9c8c6b4379758beb88af1d0")

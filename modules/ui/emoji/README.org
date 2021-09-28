@@ -1,0 +1,56 @@
+#+TITLE:   ui/emoji
+#+DATE:    September 30, 2020
+#+SINCE:   v3.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+Displays and inserts emojis (ASCII, Github style, unicode).
+
++ Converts recognized text to emojis.
++ Enables inserting emojis.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+ascii= Include plain text emojis like =:)=.
++ =+github= Include Github-style emojis like =:smile:=.
++ =+unicode= Include unicode emojis like 🙂.
+
+** Plugins
++ [[https://github.com/iqbalansari/emacs-emojify][emojify]] by @iqbalansari
+ 
+* Prerequisites
+
+See the [[https://github.com/iqbalansari/emacs-emojify/blob/master/README.org#requirements][emojify requirements]] docs:
+
+#+BEGIN_QUOTE
+The [[https://github.com/iqbalansari/emacs-emojify][emojify]] package requires Emacs *v24.3* and above. Emacs should be compiled
+with support for *PNG* images to display emojis as images. It is *recommended*
+that Emacs is compiled with *ImageMagick* support. ~emojify~ will use it to
+resize emojis if needed, additionally imagemagick is used to set background
+color for emojis to workaround the bug described in [[https://github.com/iqbalansari/emacs-emojify/issues/7][issue 7]]. However these are
+*completely optional*.
+
+PNG support might require some additional steps to on Windows, you might find
+[[http://stackoverflow.com/questions/2650041/emacs-under-windows-and-png-files][this]] stackoverflow answer helpful.
+#+END_QUOTE
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

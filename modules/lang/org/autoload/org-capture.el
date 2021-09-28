@@ -15,14 +15,16 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    ,(if IS-LINUX '(display . ":0"))
+    ,(when (and IS-LINUX (not (getenv "DISPLAY")))
+       `(display . ":0"))
     ,(if IS-MAC '(menu-bar-lines . 1)))
   "TODO")
 
 ;;;###autoload
 (defun +org-capture-cleanup-frame-h ()
   "Closes the org-capture frame once done adding an entry."
-  (when (+org-capture-frame-p)
+  (when (and (+org-capture-frame-p)
+             (not org-capture-is-refiling))
     (delete-frame nil t)))
 
 ;;;###autoload
@@ -50,7 +52,7 @@ you're done. This can be called from an external shell script."
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
-          (cl-letf (((symbol-function #'pop-to-buffer) #'switch-to-buffer))
+          (letf! ((#'pop-to-buffer #'switch-to-buffer))
             (switch-to-buffer (doom-fallback-buffer))
             (let ((org-capture-initial initial-input)
                   org-capture-entry)

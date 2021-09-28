@@ -1,0 +1,40 @@
+#+TITLE:   lang/json
+#+DATE:    April 23, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides JSON support.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enable integration with LSP servers, if one is available. Requires the
+  =:tools lsp= module to be enabled.
+
+** Plugins
++ [[https://github.com/joshwnj/json-mode][json-mode]]
++ [[https://github.com/Sterlingg/json-snatcher][json-snatcher]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.

@@ -89,6 +89,8 @@ evil is loaded and enabled)."
              (match-string 1 path))
             ((file-in-directory-p path doom-emacs-dir)
              (file-relative-name path doom-emacs-dir))
+            ((file-in-directory-p path doom-private-dir)
+             (file-relative-name path doom-private-dir))
             ((abbreviate-file-name path))))))
 
 
@@ -117,4 +119,10 @@ evil is loaded and enabled)."
   "Tests the current buffer and outputs the file template rule most appropriate
 for it. This is used for testing."
   (interactive)
-  (message "Found %s" (cl-find-if #'+file-template-p +file-templates-alist)))
+  (let ((template (cl-find-if #'+file-template-p +file-templates-alist)))
+    (if (cl-find trigger (yas--all-templates
+                          (yas--get-snippet-tables
+                           (plist-get template :mode)))
+                 :key #'yas--template-key :test #'equal)
+        (message "Found %s" template)
+      (message "Found rule, but can't find associated snippet: %s" template))))

@@ -1,0 +1,66 @@
+#+TITLE:   os/tty
+#+DATE:    August 7, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+  - [[#true-color-and-italic-support][True-color and italic support]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module configures Emacs for use in the terminal, by providing:
+
++ System clipboard integration (through an external clipboard program or OSC-52
+  escape codes in supported terminals).
++ Cursor-shape changing across evil states (requires a terminal that supports
+  it).
++ Mouse support in the terminal.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+osc= Instead of piping your kill ring through external programs, like xclip
+  or pbcopy, have Emacs emit OSC-52 escape codes instead, allowing Emacs to
+  communicate with your clipboard through your terminal, even across SSH
+  connections or Tmux. However, this requires [[https://github.com/spudlyo/clipetty#terminals-that-support-osc-clipboard-operations][a supported terminal]].
+
+** Plugins
++ [[https://github.com/spudlyo/clipetty][clipetty]]* (if =+osc=)
++ [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]* (if =:editor evil=)
++ [[https://github.com/emacs-straight/xclip][xclip]]* (unless =+osc=)
+
+* Prerequisites
+This module has no hard prerequisites, but in order for its features to work you
+need:
+
++ For system clipboard integration:
+  + A supported clipboard program, such as:
+    + Linux: =xclip=, =xsel=, or =wl-clibpoard= (Wayland)
+    + macOS: =pbcopy= and =pbpaste= (included with macOS)
+    + Windows: =getclip= and =putclip= (cygwin)
+  + (If =+osc= is enabled) A terminal that supports OSC 52 escape codes, such
+    as: xterm (unix), iTerm2 (macOS), alacritty (cross platform), kitty (macOS,
+    linux), mintty (Windows), hterm (javascript), st (unix), mlterm (cross
+    platform)
++ For cursor shape changing in the terminal you need A terminal that supports
+  VT's DECSCUSR sequence, such as: Gnome Terminal, xterm, iTerm (macOS),
+  Konsole, or mintty (Windows). Terminal.app (macOS) is supported too, but
+  requires [[http://www.culater.net/software/SIMBL/SIMBL.php][SIMBL]] and [[https://github.com/saitoha/mouseterm-plus/releases][MouseTerm]] Plus to work.
+
+* Configuration
+** True-color and italic support
+Emacs 26.3 users should consult [[https://github.com/syl20bnr/spacemacs/wiki/Terminal][the spacemacs wiki]] for details on achieving true
+color support in terminal Emacs.
+
+Emacs 27.x users don't need todo anything, as true color support is [[https://github.com/emacs-mirror/emacs/commit/7f6153d9563cfe7753083996f59eacc9f4c694df][built into
+27.1+ and newer]].
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.

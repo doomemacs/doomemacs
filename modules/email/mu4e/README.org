@@ -3,25 +3,27 @@
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
 
-* Table of Contents :TOC:
+* Table of Contents :TOC:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
   - [[#nixos][NixOS]]
-  - [[#opensuse][openSUSE]]
-  - [[Debian/Ubuntu]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#offlineimap][offlineimap]]
   - [[#mbsync][mbsync]]
+  - [[#fetching-your-mail-in-other-ways][Fetching your mail in other ways]]
+  - [[#mu-and-mu4e][mu and mu4e]]
+  - [[#orgmsg][OrgMsg]]
+  - [[#mu4e-alert][mu4e-alert]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#no-such-file-or-directory-mu4e][=No such file or directory, mu4e=]]
+  - [[#void-function-org-time-add-error-on-gentoo][~(void-function org-time-add)~ error on Gentoo]]
 
 * Description
-This module makes Emacs an email client, using ~mu4e~.
+This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
 #+begin_quote
 I want to live in Emacs, but as we all know, living is incomplete without email.
@@ -32,41 +34,53 @@ It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email
 via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 #+end_quote
 
+** Maintainers
++ [[https://github.com/tecosaur][@tecosaur]]
+
 ** Module Flags
-+ ~+gmail~ Enables gmail-specific configuration.
++ =+gmail= Enables gmail-specific configuration for mail ~To~ or ~From~ a gmail
+  address, or a maildir with ~gmail~ in the name.
++ =+org= Use =org-msg= for composing email in Org, then sending a multipart text
+  (ASCII export) and HTML message.
 
 ** Plugins
-+ [[https://github.com/agpchil/mu4e-maildirs-extension][mu4e-maildirs-extension]]
++ [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]]
++ =+org=
+  + [[https://github.com/jeremy-compostella/org-msg][org-msg]]
 
 * Prerequisites
 This module requires:
 
-+ Either ~mbsync~ (default) or ~offlineimap~ (to sync mail with)
-+ ~mu~ (to index your downloaded messages)
++ [[https://www.djcbsoftware.nl/code/mu/][mu]], to index your downloaded messages and to provide the [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] package.
++ A program to sync your mail. This module comes with builtin support for
+  [[https://isync.sourceforge.io/][mbsync]] (recommended, default) or [[http://www.offlineimap.org/][offlineimap]] but you can sync mail in
+  other ways too.
 
-** MacOS
-#+BEGIN_SRC sh
-brew install mu
-# And one of the following
-brew install isync  # mbsync
-brew install offlineimap
-#+END_SRC
+#+name: Install Matrix
+| Platform      | Install command          | Base packages           |
+|---------------+--------------------------+-------------------------|
+| MacOS         | ~brew install <pkgs>~    | =mu=                    |
+| Arch          | ~pacman -S <pkgs>~       | (AUR, ~yay -S~) =mu=    |
+| openSUSE      | ~zypper install <pkgs>~  | =maildir-utils=, =mu4e= |
+| Fedora        | ~dnf install <pkgs>~     | =maildir-utils=         |
+| Debian/Ubuntu | ~apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
-** Arch Linux
-Run one of the following commands.
+Then install either the =isync= (=mbsync=) or =offlineimap= package.
 
-#+BEGIN_SRC sh
-sudo pacman -S isync  # mbsync
-# OR
-sudo pacman -S offlineimap
-#+END_SRC
+To send mail, mu4e uses [[https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html][smtpmail]] (an Emacs library) by default.
+You can also run a local SMTP server like =sendmail= or =postfix=, or use an SMTP
+forwarder such as =msmtp= (recommended).
 
-Install ~mu~, which is not available in the main repositories but in the AUR, by
-using for example the AUR helper ~yay~.
-
-#+BEGIN_SRC sh
-yay -S mu
-#+END_SRC
+If you use =msmtp=, you'll likely want to add the following to your
+=config.el=:
+#+begin_src emacs-lisp
+(after! mu4e
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail))
+#+end_src
 
 ** NixOS
 #+BEGIN_SRC nix
@@ -78,64 +92,202 @@ environment.systemPackages = with pkgs; [
 ];
 #+END_SRC
 
-[[https://github.com/Emiller88/dotfiles/blob/master/modules/shell/mail.nix][An example of setting up mbsync with home-manager]]
+[[https://github.com/Emiller88/dotfiles/blob/5eaabedf1b141c80a8d32e1b496055231476f65e/modules/shell/mail.nix][An example of setting up mbsync and mu with home-manager]]
 
-** openSUSE
-Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of
-~mbsync~.
-
-#+BEGIN_SRC sh :dir /sudo::
-sync_program=isync # mbsync
-#sync_program=offlineimap
-
-sudo zypper install maildir-utils $sync_program
-#+END_SRC
-
-** Debian/Ubuntu
-Run the command corresponding to the desired backend and the last one.
-#+BEGIN_SRC sh
-sudo apt-get install isync  # mbsync
-# or
-sudo apt-get install offlineimap
-# then
-sudo apt-get install maildir-utils # mu
-#+END_SRC
-* TODO Features
+* Features
++ Tidied mu4e headers view, with flags from =all-the-icons=
++ Consistent coloring of reply depths (across compose and gnus modes)
++ Prettified =mu4e:main= view
++ Cooperative locking of the =mu= process. Another Emacs instance may request
+  access, or grab the lock when it's available.
++ =org-msg= integration with =+org=, which can be toggled per-message, with revamped style and
+  an accent color
++ Gmail integrations with the =+gmail= flag
++ Email notifications with =mu4e-alert=, and (on Linux) a customised notification style
 
 * Configuration
 ** offlineimap
-This module uses =mbsync= by default. To change this, change ~+mu4e-backend~:
+This module uses =mbsync= by default. To use =offlineimap=, change ~+mu4e-backend~:
 
 #+BEGIN_SRC emacs-lisp
 (setq +mu4e-backend 'offlineimap)
 #+END_SRC
 
-Then you must set up offlineimap and index your mail:
+Next, you need to write a configuration file for =offlineimap=. Mine can be found
+[[https://github.com/hlissner/dotfiles/blob/be0dce5dae8f3cbafaac0cc44269d84b4a742c46/shell/mu/][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I
+use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials. You can find a *very*
+detailed configuration [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
 
-1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It
-   is configured to download mail to ~\~/.mail~. I use [[https://www.passwordstore.org/][unix pass]] to securely
-   store my login credentials. You can find a *very* detailed configuration
-   [[https://github.com/OfflineIMAP/offlineimap/blob/master/offlineimap.conf][here]].
-2. Download your email: ~offlineimap -o~ (may take a while)
-3. Index it with mu: ~mu index --maildir ~/.mail~
+Next you can download your email with ~offlineimap -o~. This may take a while,
+especially if you have thousands of mails.
+
+You can now proceed with the [[#mu-and-mu4e][mu and mu4e]] section.
+
+** mbsync
+The steps needed to set up =mu4e= with =mbsync= are very similar to the ones for
+[[#offlineimap][offlineimap]].
+
+Start with writing a ~~/.mbsyncrc~. An example for Gmail can be found on
+[[http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/][pragmaticemacs.com]]. A non-Gmail example is available as a gist [[https://gist.github.com/agraul/60977cc497c3aec44e10591f94f49ef0][here]]. The [[http://isync.sourceforge.net/mbsync.html][manual
+page]] contains all needed information to set up your own.
+
+Next you can download your email with ~mbsync --all~. This may take a while, but
+should be quicker than =offlineimap= ;).
+
+You can now proceed with the [[#mu-and-mu4e][mu and mu4e]] section.
+
+*** Faster syncing
+It's possible to use IMAP IDLE to be quickly notified of updates, then use a
+tailored =mbsync= command to just fetch the new changes.
+
+If this is of interest, this approach can be seen [[https://tecosaur.github.io/emacs-config/config.html#fetching][in @tecosaur's config]] where
+[[https://gitlab.com/shackra/goimapnotify][goimapnotify]] is used for this.
+** Fetching your mail in other ways
+You also have the possiblity to invoke an arbitary shell command to fetch your
+mail by disabling this module's backend selection and setting the value of the
+~mu4e-get-mail-command~ to the command you want to execute.
+#+BEGIN_SRC emacs-lisp
+(setq +mu4e-backend nil)
+(after! mu4e
+  (setq mu4e-get-mail-command "your_command"))
+#+END_SRC
+
+If your command prompts you for a passphrase, you might want to change the value
+of the ~mu4e~get-mail-password-regexp~ such that =mu4e= will recognize the
+prompt and let you provide the passphrase from within Emacs.
+
+** mu and mu4e
+You should have your email downloaded already. If you have not, you need to set
+=offlineimap= or =mbsync= up before you proceed.
+
+Before you can use =mu4e= or the CLI program =mu=, you need to index your email
+initially. How to do that differs a little depending on the version of =mu= you
+use. You can check your version with ~mu --version~.
+
+For =mu= *>=1.4* you need to run two commands:
+#+BEGIN_SRC sh
+mu init --maildir ~/.mail --my-address email@example.com
+mu index
+#+END_SRC
+
+=mu= *<1.4* only requires one command:
+#+BEGIN_SRC sh
+mu index --maildir ~/.mail
+#+END_SRC
+
+Be sure to replace ~~/.mail~ with the directory containing your mail.
 
 Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+;; Each path is relative to the path of the maildir you passed to mu
 (set-email-account! "Lissner.net"
   '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
     (mu4e-drafts-folder     . "/Lissner.net/Drafts")
     (mu4e-trash-folder      . "/Lissner.net/Trash")
     (mu4e-refile-folder     . "/Lissner.net/All Mail")
     (smtpmail-smtp-user     . "henrik@lissner.net")
-    (user-mail-address      . "henrik@lissner.net")
+    (user-mail-address      . "henrik@lissner.net")    ;; only needed for mu < 1.4
     (mu4e-compose-signature . "---\nHenrik Lissner"))
   t)
 #+END_SRC
 
-** TODO mbsync
+If you use multiple email accounts, defining them with ~set-email-account!~ will
+automatically set the appropriate account context when replying to emails in
+that account's maildir. ~mu4e-context-policy~ and ~mu4e-compose-context-policy~
+can be modified to change context behavior when opening mu4e and composing
+email:
+
+#+begin_src emacs-lisp
+(setq mu4e-context-policy 'ask-if-none
+      mu4e-compose-context-policy 'always-ask)
+#+end_src
+
+If you send mail from various email aliases for different services,
+~+mu4e-personal-addresses~ can be set per-context with ~set-email-account!~. If
+you are not replying to an email to or from one of the specified aliases, you
+will be prompted for an alias to send from.
+
+*** Gmail
+With the =+gmail= flag, integrations are applied which account for the different
+behaviour of Gmail.
+
+The integrations are applied to addresses with /both/ "@gmail.com" in the
+account address and "gmail" in the account maildir, as well as accounts listed
+in ~+mu4e-gmail-accounts~. Any domain can be specified, so G Suite accounts can
+benefit from the integrations:
+#+begin_src emacs-lisp
+;; if "gmail" is missing from the address or maildir, the account must be listed here
+(setq +mu4e-gmail-accounts '(("hlissner@gmail.com" . "/hlissner")
+                             ("example@example.com" . "/example")))
+#+end_src
+
+If you only use Gmail, you can improve performance due to the way Gmail
+presents messages over IMAP:
+#+begin_src emacs-lisp
+;; don't need to run cleanup after indexing for gmail
+(setq mu4e-index-cleanup nil
+      ;; because gmail uses labels as folders we can use lazy check since
+      ;; messages don't really "move"
+      mu4e-index-lazy-check t)
+#+end_src
+
+Also, note that Gmail's IMAP settings must have "When I mark a message in IMAP
+as deleted: Auto-Expunge off - Wait for the client to update the server." and
+"When a message is marked as deleted and expunged from the last visible IMAP
+folder: Move the message to the trash" for the integrations to work as expected.
+
+** OrgMsg
+With the =+org= flag, =org-msg= is installed, and ~org-msg-mode~ is enabled before
+composing the first message. To disable ~org-msg-mode~ by default, simply
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq mu4e-compose--org-msg-toggle-next nil)
+#+END_SRC
+
+To toggle org-msg for a single message, just apply the universal argument to the
+compose or reply command (=SPC u= with ~evil~, =C-u= otherwise).
+
+The accent color that Doom uses can be customised by setting
+~+org-msg-accent-color~ to a CSS color string.
+
+** mu4e-alert
+This provides notifications through the [[https://github.com/jwiegley/alert][alert]] library.
+
+If you don't like this, simply add
+#+begin_src emacs-lisp
+(package! mu4e-alert :disable t)
+#+end_src
+to your [[elisp:(find-file (expand-file-name "packages.el" doom-private-dir))][packages.el]] and it will not be used.
+
 * Troubleshooting
 ** =No such file or directory, mu4e=
 You will get =No such file or directory, mu4e= errors if you don't run ~doom
 sync~ after installing =mu= through your package manager.
+
+Some times the the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*).
+if that's the case you will need to [[https://github.com/djcb/mu][install]] it and add it to your ~load-path~
+you can do that by...
+#+BEGIN_SRC emacs-lisp :tangle no
+(add-to-list 'load-path "your/path/to/mu4e")
+;; if you installed it using your package manager
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; if you built from source
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+#+END_SRC
+
+If you have completely lost your install then you can use this handy command!
+
+#+BEGIN_SRC  shell
+find / -type d -iname '*mu4e*'
+# I recommend rerouting all of the errors to /dev/null
+find / -type d -iname '*mu4e*' 2> /dev/null
+#+END_SRC
+
+** ~(void-function org-time-add)~ error on Gentoo
+Gentoo users will see this error because [[https://gitweb.gentoo.org/repo/gentoo.git/tree/net-mail/mu/files/70mu-gentoo.el#n2][the =net-mail/mu= package eagerly loads
+=mu4e= (which pulls in =org=) much too early]]; before Emacs reads =~/.emacs.d=.
+So early, that it loads the built-in version of org-mode, rather than the newer
+version that Doom installs.
+
+Later versions of the =net-mail/mu= package have [[https://gitweb.gentoo.org/repo/gentoo.git/commit/net-mail/mu?id=770e1fccb119fbce8ba6d16021a3598123f212ff][fixed this issue]], but you may
+need to switch to the unstable build of =net-mail/mu= to see it.

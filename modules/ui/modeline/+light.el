@@ -50,17 +50,17 @@ side of the modeline, and whose CDR is the right-hand side.")
 ;;
 ;;; Faces
 
-(defface +modeline-bar-active '((t (:inherit highlight)))
+(defface doom-modeline-bar '((t (:inherit highlight)))
   "Face used for left-most bar on the mode-line of an active window.")
 
-(defface +modeline-bar-inactive '((t (:inherit mode-line-inactive)))
+(defface doom-modeline-bar-inactive '((t (:inherit mode-line-inactive)))
   "Face used for left-most bar on the mode-line of an inactive window.")
 
-(defface +modeline-highlight
+(defface doom-modeline-highlight
   '((t (:inherit mode-line-highlight)))
   "Face used for highlighted modeline panels (like search counts).")
 
-(defface +modeline-alternate-highlight
+(defface doom-modeline-alternate-highlight
   '((t (:inherit mode-line-highlight)))
   "Alternative face used for highlighted modeline panels (like search counts).")
 
@@ -109,14 +109,22 @@ side of the modeline, and whose CDR is the right-hand side.")
                                  (if (eq idx len) "\"};" "\",\n")))))
         'xpm t :ascent 'center)))))
 
-(defun +modeline-format-icon (icon label &optional face help-echo voffset)
-  (propertize (concat (all-the-icons-material
-                       icon
-                       :face face
-                       :height 1.1
-                       :v-adjust (or voffset -0.225))
-                      (propertize label 'face face))
-              'help-echo help-echo))
+(defun +modeline-format-icon (icon-set icon label &optional face help-echo voffset)
+  "Build from ICON-SET the ICON with LABEL.
+Using optionals attributes FACE, HELP-ECHO and VOFFSET."
+  (let ((icon-set-fn (pcase icon-set
+                       ('octicon #'all-the-icons-octicon)
+                       ('faicon #'all-the-icons-faicon)
+                       ('material #'all-the-icons-material)
+                       ('alltheicon #'all-the-icons-alltheicon)
+                       ('fileicon #'all-the-icons-fileicon))))
+    (propertize (concat (funcall icon-set-fn
+                                 icon
+                                 :face face
+                                 :height 1.1
+                                 :v-adjust (or voffset -0.225))
+                        (propertize label 'face face))
+                'help-echo help-echo)))
 
 (defun set-modeline! (name &optional default)
   "Set the modeline to NAME.
@@ -152,13 +160,13 @@ LHS and RHS will accept."
         (lambda (&rest _) (set-modeline! name))))
 
 (defmacro def-modeline-var! (name body &optional docstring &rest plist)
-  "TODO"
+  "Define a modeline segment variable."
   (unless (stringp docstring)
     (push docstring plist)
     (setq docstring nil))
   `(progn
-     (,(if (plist-get plist :local) 'defvar-local 'defvar)
-      ,name ,body ,docstring)
+     (defconst ,name ,body ,docstring)
+     ,@(if (plist-get plist :local) `((make-variable-buffer-local ',name)))
      (put ',name 'risky-local-variable t)))
 
 
@@ -175,198 +183,217 @@ LHS and RHS will accept."
 
 
 ;;; `+modeline-bar'
-(progn
-  (def-modeline-var! +modeline-bar "")
-  (def-modeline-var! +modeline-inactive-bar "")
+(def-modeline-var! +modeline-bar "")
 
-  (add-hook! '(doom-init-ui-hook doom-load-theme-hook) :append
-    (defun +modeline-refresh-bars-h ()
-      (let ((width (or +modeline-bar-width 1))
-            (height (max +modeline-height 0)))
-        (setq +modeline-bar
-              (+modeline--make-xpm
-               (and +modeline-bar-width
-                    (face-background '+modeline-bar-active nil t))
-               width height)
-              +modeline-inactive-bar
-              (+modeline--make-xpm
-               (and +modeline-bar-width
-                    (face-background '+modeline-bar-inactive nil t))
-               width height)))))
+(defvar +modeline-active-bar "")
+(defvar +modeline-inactive-bar "")
 
-  (add-hook! 'doom-change-font-size-hook
-    (defun +modeline-adjust-height-h ()
-      (defvar +modeline--old-height +modeline-height)
-      (let ((default-height +modeline--old-height)
-            (scale (or (frame-parameter nil 'font-scale) 0)))
-        (setq +modeline-height
-              (if (> scale 0)
-                  (+ default-height (* (or (frame-parameter nil 'font-scale) 1)
-                                       doom-font-increment))
-                default-height))
-        (when doom-init-time
-          (+modeline-refresh-bars-h))))))
+(add-hook! '(doom-init-ui-hook doom-load-theme-hook) :append
+  (defun +modeline-refresh-bars-h ()
+    (let ((width (or +modeline-bar-width 1))
+          (height (max +modeline-height 0))
+          (active-bg (face-background 'doom-modeline-bar nil t))
+          (inactive-bg (face-background 'doom-modeline-bar-inactive nil t)))
+      (when (or (null +modeline-bar-width)
+                (= +modeline-bar-width 0))
+        (setq active-bg nil
+              inactive-bg nil))
+      (setq +modeline-active-bar
+            (+modeline--make-xpm (and +modeline-bar-width active-bg)
+                                 width height)
+            +modeline-inactive-bar
+            (+modeline--make-xpm (and +modeline-bar-width inactive-bg)
+                                 width height)
+            +modeline-bar
+            '(:eval (if (+modeline-active)
+                        +modeline-active-bar
+                      +modeline-inactive-bar))))))
+
+(add-hook! 'doom-change-font-size-hook
+  (defun +modeline-adjust-height-h ()
+    (defvar +modeline--old-height +modeline-height)
+    (let ((default-height +modeline--old-height)
+          (scale (or (frame-parameter nil 'font-scale) 0)))
+      (setq +modeline-height
+            (if (> scale 0)
+                (+ default-height (* (or (frame-parameter nil 'font-scale) 1)
+                                     doom-font-increment))
+              default-height))
+      (when doom-init-time
+        (+modeline-refresh-bars-h)))))
 
 
 ;;; `+modeline-matches'
-(progn
-  (use-package! anzu
-    :after-call isearch-mode
-    :config
-    ;; anzu and evil-anzu expose current/total state that can be displayed in the
-    ;; mode-line.
-    (defadvice! +modeline-fix-anzu-count-a (positions here)
-      "Calulate anzu counts via POSITIONS and HERE."
-      :override #'anzu--where-is-here
-      (cl-loop for (start . end) in positions
-               collect t into before
-               when (and (>= here start) (<= here end))
-               return (length before)
-               finally return 0))
+(use-package! anzu
+  :after-call isearch-mode
+  :config
+  ;; We manage our own modeline segments
+  (setq anzu-cons-mode-line-p nil)
+  ;; Ensure anzu state is cleared when searches & iedit are done
+  (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
+  (advice-add #'evil-force-normal-state :before #'anzu--reset-status)
+  ;; Fix matches segment mirroring across all buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched
+          anzu--current-position
+          anzu--state
+          anzu--cached-count
+          anzu--cached-positions anzu--last-command
+          anzu--last-isearch-string anzu--overflow-p)))
 
-    (setq anzu-cons-mode-line-p nil) ; manage modeline segment ourselves
-    ;; Ensure anzu state is cleared when searches & iedit are done
-    (add-hook 'isearch-mode-end-hook #'anzu--reset-status 'append)
-    (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
-    (advice-add #'evil-force-normal-state :before #'anzu--reset-status)
-    ;; Fix matches segment mirroring across all buffers
-    (mapc #'make-variable-buffer-local
-          '(anzu--total-matched anzu--current-position anzu--state
-                                anzu--cached-count anzu--cached-positions anzu--last-command
-                                anzu--last-isearch-string anzu--overflow-p)))
+(use-package! evil-anzu
+  :when (featurep! :editor evil)
+  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight
+  :config (global-anzu-mode +1))
 
-  (use-package! evil-anzu
-    :when (featurep! :editor evil)
-    :after-call (evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))
-
-  (defun +modeline--anzu ()
-    "Show the match index and total number thereof.
+(defun +modeline--anzu ()
+  "Show the match index and total number thereof.
 Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 `evil-search'."
-    (when (and (bound-and-true-p anzu--state)
-               (not (bound-and-true-p iedit-mode)))
-      (propertize
-       (let ((here anzu--current-position)
-             (total anzu--total-matched))
-         (cond ((eq anzu--state 'replace-query)
-                (format " %d replace " anzu--cached-count))
-               ((eq anzu--state 'replace)
-                (format " %d/%d " here total))
-               (anzu--overflow-p
-                (format " %s+ " total))
-               (t
-                (format " %s/%d " here total))))
-       'face (if (+modeline-active) '+modeline-highlight))))
+  (when (and (bound-and-true-p anzu--state)
+             (not (bound-and-true-p iedit-mode)))
+    (propertize
+     (let ((here anzu--current-position)
+           (total anzu--total-matched))
+       (cond ((eq anzu--state 'replace-query)
+              (format " %d replace " anzu--cached-count))
+             ((eq anzu--state 'replace)
+              (format " %d/%d " (1+ here) total))
+             (anzu--overflow-p
+              (format " %s+ " total))
+             (t
+              (format " %s/%d " here total))))
+     'face (if (+modeline-active) 'doom-modeline-highlight))))
 
-  (defun +modeline--evil-substitute ()
-    "Show number of matches for evil-ex substitutions and highlights in real time."
-    (when (and (bound-and-true-p evil-local-mode)
-               (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
-                   (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
-                   (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
-      (propertize
-       (let ((range (if evil-ex-range
-                        (cons (car evil-ex-range) (cadr evil-ex-range))
-                      (cons (line-beginning-position) (line-end-position))))
-             (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
-         (if pattern
-             (format " %s matches " (how-many pattern (car range) (cdr range)))
-           " - "))
-       'face (if (+modeline-active) '+modeline-highlight))))
+(defun +modeline--evil-substitute ()
+  "Show number of matches for evil-ex substitutions and highlights in real time."
+  (when (and (bound-and-true-p evil-local-mode)
+             (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
+                 (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
+                 (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
+    (propertize
+     (let ((range (if evil-ex-range
+                      (cons (car evil-ex-range) (cadr evil-ex-range))
+                    (cons (line-beginning-position) (line-end-position))))
+           (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
+       (if pattern
+           (format " %s matches " (how-many pattern (car range) (cdr range)))
+         " - "))
+     'face (if (+modeline-active) 'doom-modeline-highlight))))
 
-  (defun +modeline--multiple-cursors ()
-    "Show the number of multiple cursors."
-    (when (bound-and-true-p evil-mc-cursor-list)
-      (let ((count (length evil-mc-cursor-list)))
-        (when (> count 0)
-          (let ((face (cond ((not (+modeline-active)) 'mode-line-inactive)
-                            (evil-mc-frozen '+modeline-highlight)
-                            ('+modeline-alternate-highlight))))
-            (concat (propertize " " 'face face)
-                    (all-the-icons-faicon "i-cursor" :face face :v-adjust -0.0575)
-                    (propertize " " 'face `(:inherit (variable-pitch ,face)))
-                    (propertize (format "%d " count)
-                                'face face)))))))
+(defun +modeline--multiple-cursors ()
+  "Show the number of multiple cursors."
+  (when (bound-and-true-p evil-mc-cursor-list)
+    (let ((count (length evil-mc-cursor-list)))
+      (when (> count 0)
+        (let ((face (cond ((not (+modeline-active)) 'mode-line-inactive)
+                          (evil-mc-frozen 'doom-modeline-highlight)
+                          ('doom-modeline-alternate-highlight))))
+          (concat (propertize " " 'face face)
+                  (all-the-icons-faicon "i-cursor" :face face :v-adjust -0.0575)
+                  (propertize " " 'face `(:inherit (variable-pitch ,face)))
+                  (propertize (format "%d " count)
+                              'face face)))))))
 
-  (defun +modeline--overlay< (a b)
-    "Sort overlay A and B."
-    (< (overlay-start a) (overlay-start b)))
+(defun +modeline--overlay< (a b)
+  "Sort overlay A and B."
+  (< (overlay-start a) (overlay-start b)))
 
-  (defun +modeline--iedit ()
-    "Show the number of iedit regions matches + what match you're on."
-    (when (and (bound-and-true-p iedit-mode)
-               (bound-and-true-p iedit-occurrences-overlays))
-      (propertize
-       (let ((this-oc (or (let ((inhibit-message t))
-                            (iedit-find-current-occurrence-overlay))
-                          (save-excursion
-                            (iedit-prev-occurrence)
-                            (iedit-find-current-occurrence-overlay))))
-             (length (length iedit-occurrences-overlays)))
-         (format " %s/%d "
-                 (if this-oc
-                     (- length
-                        (length (memq this-oc (sort (append iedit-occurrences-overlays nil)
-                                                    #'+modeline--overlay<)))
-                        -1)
-                   "-")
-                 length))
-       'face (if (+modeline-active) '+modeline-highlight))))
+(defun +modeline--iedit ()
+  "Show the number of iedit regions matches + what match you're on."
+  (when (and (bound-and-true-p iedit-mode)
+             (bound-and-true-p iedit-occurrences-overlays))
+    (propertize
+     (let ((this-oc (or (let ((inhibit-message t))
+                          (iedit-find-current-occurrence-overlay))
+                        (save-excursion
+                          (iedit-prev-occurrence)
+                          (iedit-find-current-occurrence-overlay))))
+           (length (length iedit-occurrences-overlays)))
+       (format " %s/%d "
+               (if this-oc
+                   (- length
+                      (length (memq this-oc (sort (append iedit-occurrences-overlays nil)
+                                                  #'+modeline--overlay<)))
+                      -1)
+                 "-")
+               length))
+     'face (if (+modeline-active) 'doom-modeline-highlight))))
 
-  (defun +modeline--macro-recording ()
-    "Display current Emacs or evil macro being recorded."
-    (when (and (+modeline-active)
-               (or defining-kbd-macro
-                   executing-kbd-macro))
-      (let ((sep (propertize " " 'face '+modeline-highlight)))
-        (concat sep
-                (propertize (if (bound-and-true-p evil-this-macro)
-                                (char-to-string evil-this-macro)
-                              "Macro")
-                            'face '+modeline-highlight)
-                sep
-                (all-the-icons-octicon "triangle-right"
-                                       :face '+modeline-highlight
-                                       :v-adjust -0.05)
-                sep))))
+(defun +modeline--macro-recording ()
+  "Display current Emacs or evil macro being recorded."
+  (when (and (+modeline-active)
+             (or defining-kbd-macro
+                 executing-kbd-macro))
+    (let ((sep (propertize " " 'face 'doom-modeline-highlight)))
+      (concat sep
+              (propertize (if (bound-and-true-p evil-this-macro)
+                              (char-to-string evil-this-macro)
+                            "Macro")
+                          'face 'doom-modeline-highlight)
+              sep
+              (all-the-icons-octicon "triangle-right"
+                                     :face 'doom-modeline-highlight
+                                     :v-adjust -0.05)
+              sep))))
 
-  (def-modeline-var! +modeline-matches
-    '(:eval
-      (let ((meta (concat (+modeline--macro-recording)
-                          (+modeline--anzu)
-                          (+modeline--evil-substitute)
-                          (+modeline--iedit)
-                          (+modeline--multiple-cursors))))
-        (or (and (not (equal meta "")) meta)
-            " %I ")))))
+(def-modeline-var! +modeline-matches
+  '(:eval
+    (let ((meta (concat (+modeline--macro-recording)
+                        (+modeline--anzu)
+                        (+modeline--evil-substitute)
+                        (+modeline--iedit)
+                        (+modeline--multiple-cursors))))
+      (or (and (not (equal meta "")) meta)
+          " %I "))))
 
 
 ;;; `+modeline-modes'
 (def-modeline-var! +modeline-modes ; remove minor modes
   '(""
     (:propertize mode-name
-                 face bold
-                 mouse-face +modeline-highlight)
+     face bold
+     mouse-face doom-modeline-highlight)
     mode-line-process
     "%n"
     " "))
 
 
 ;;; `+modeline-buffer-identification'
+(defvar-local +modeline--buffer-id-cache nil)
+
+;; REVIEW Generating the buffer's file name can be relatively expensive.
+;;        Compounded with how often the modeline updates this can add up, so
+;;        we cache it ahead of time.
+(add-hook! '(change-major-mode-after-body-hook
+             ;; In case the user saves the file to a new location
+             after-save-hook
+             ;; ...or makes external changes then returns to Emacs
+             focus-in-hook
+             ;; ...or when we change the current project!
+             projectile-after-switch-project-hook
+             ;; ...when the visited file changes (e.g. it's renamed)
+             after-set-visited-file-name-hook
+             ;; ...when the underlying file changes
+             after-revert-hook)
+  (defun +modeline--generate-buffer-id-cache-h ()
+    (when after-init-time
+      (setq +modeline--buffer-id-cache
+            (let ((file-name (buffer-file-name (buffer-base-buffer))))
+              (unless (or (null default-directory)
+                          (null file-name)
+                          (file-remote-p file-name))
+                (when-let (project-root (doom-project-root))
+                  (file-relative-name (or buffer-file-truename (file-truename file-name))
+                                      (concat project-root "..")))))))))
+
 (def-modeline-var! +modeline-buffer-identification ; slightly more informative buffer id
   '((:eval
      (propertize
-      (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-        (or (when buffer-file-name
-              (if-let (project (doom-project-root buffer-file-name))
-                  (let ((filename (or buffer-file-truename (file-truename buffer-file-name))))
-                    (file-relative-name filename (concat project "..")))))
-            "%b"))
-      'face (cond ((buffer-modified-p)
-                   '(error bold mode-line-buffer-id))
-                  ((+modeline-active)
-                   'mode-line-buffer-id))
-      'help-echo buffer-file-name))
+      (or +modeline--buffer-id-cache "%b")
+      'face (cond ((buffer-modified-p) '(error bold mode-line-buffer-id))
+                  ((+modeline-active)  'mode-line-buffer-id))
+      'help-echo (or +modeline--buffer-id-cache (buffer-name))))
     (buffer-read-only (:propertize " RO" face warning))))
 
 
@@ -375,100 +402,115 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 
 ;;; `+modeline-checker'
-(progn
-  (def-modeline-var! +modeline-checker nil
-    "Displays color-coded error status & icon for the current buffer."
-    :local t)
+(def-modeline-var! +modeline-checker nil
+  "Displays color-coded error status & icon for the current buffer."
+  :local t)
 
-  (add-hook! '(flycheck-status-changed-functions
-               flycheck-mode-hook)
-    (defun +modeline-checker-update (&optional status)
-      "Update flycheck text via STATUS."
-      (setq +modeline-checker
-            (pcase status
-              (`finished
-               (if flycheck-current-errors
-                   (let-alist (flycheck-count-errors flycheck-current-errors)
-                     (let ((error (or .error 0))
-                           (warning (or .warning 0))
-                           (info (or .info 0)))
-                       (+modeline-format-icon "do_not_disturb_alt"
-                                              (number-to-string (+ error warning info))
-                                              (cond ((> error 0)   'error)
-                                                    ((> warning 0) 'warning)
-                                                    ('success))
-                                              (format "Errors: %d, Warnings: %d, Debug: %d"
-                                                      error
-                                                      warning
-                                                      info))))
-                 (+modeline-format-icon "check" "" 'success)))
-              (`running     (+modeline-format-icon "access_time" "*" 'font-lock-comment-face "Running..."))
-              (`errored     (+modeline-format-icon "sim_card_alert" "!" 'error "Errored!"))
-              (`interrupted (+modeline-format-icon "pause" "!" 'font-lock-comment-face "Interrupted"))
-              (`suspicious  (+modeline-format-icon "priority_high" "!" 'error "Suspicious")))))))
+(add-hook! '(flycheck-status-changed-functions
+             flycheck-mode-hook)
+  (defun +modeline-checker-update (&optional status)
+    "Update flycheck text via STATUS."
+    (setq +modeline-checker
+          (pcase status
+            (`finished
+             (if flycheck-current-errors
+                 (let-alist (flycheck-count-errors flycheck-current-errors)
+                   (let ((error (or .error 0))
+                         (warning (or .warning 0))
+                         (info (or .info 0)))
+                     (+modeline-format-icon 'material "do_not_disturb_alt"
+                                            (number-to-string (+ error warning info))
+                                            (cond ((> error 0)   'error)
+                                                  ((> warning 0) 'warning)
+                                                  ('success))
+                                            (format "Errors: %d, Warnings: %d, Debug: %d"
+                                                    error
+                                                    warning
+                                                    info))))
+               (+modeline-format-icon 'material "check" "" 'success)))
+            (`running     (+modeline-format-icon 'material "access_time" "*" 'mode-line-inactive "Running..."))
+            (`errored     (+modeline-format-icon 'material "sim_card_alert" "!" 'error "Errored!"))
+            (`interrupted (+modeline-format-icon 'material "pause" "!" 'mode-line-inactive "Interrupted"))
+            (`suspicious  (+modeline-format-icon 'material "priority_high" "!" 'error "Suspicious"))))))
+
 
 
 ;;; `+modeline-selection-info'
-(progn
-  (defsubst +modeline--column (pos)
-    "Get the column of the position `POS'."
-    (save-excursion (goto-char pos)
-                    (current-column)))
+(defsubst +modeline--column (pos)
+  "Get the column of the position `POS'."
+  (save-excursion (goto-char pos)
+                  (current-column)))
 
-  (def-modeline-var! +modeline-selection-info
-    '(:eval
-      (when (or mark-active
-                (and (bound-and-true-p evil-local-mode)
-                     (eq evil-state 'visual)))
-        (cl-destructuring-bind (beg . end)
-            (if (boundp 'evil-local-mode)
-                (cons evil-visual-beginning evil-visual-end)
-              (cons (region-beginning) (region-end)))
-          (propertize
-           (let ((lines (count-lines beg (min end (point-max)))))
-             (concat " "
-                     (cond ((or (bound-and-true-p rectangle-mark-mode)
-                                (and (bound-and-true-p evil-visual-selection)
-                                     (eq 'block evil-visual-selection)))
-                            (let ((cols (abs (- (+modeline--column end)
-                                                (+modeline--column beg)))))
-                              (format "%dx%dB" lines cols)))
-                           ((and (bound-and-true-p evil-visual-selection)
-                                 (eq evil-visual-selection 'line))
-                            (format "%dL" lines))
-                           ((> lines 1)
-                            (format "%dC %dL" (- end beg) lines))
-                           ((format "%dC" (- end beg))))
-                     (when (derived-mode-p 'text-mode)
-                       (format " %dW" (count-words beg end)))
-                     " "))
-           'face (if (+modeline-active) 'success)))))
-    "Information about the current selection, such as how many characters and
+(def-modeline-var! +modeline-selection-info
+  '(:eval
+    (when (or (and (bound-and-true-p evil-local-mode)
+                   (eq evil-state 'visual))
+              mark-active)
+      (cl-destructuring-bind (beg . end)
+          (if (bound-and-true-p evil-visual-selection)
+              (cons evil-visual-beginning evil-visual-end)
+            (cons (region-beginning) (region-end)))
+        (propertize
+         (let ((lines (count-lines beg (min end (point-max)))))
+           (concat " "
+                   (cond ((or (bound-and-true-p rectangle-mark-mode)
+                              (and (bound-and-true-p evil-visual-selection)
+                                   (eq 'block evil-visual-selection)))
+                          (let ((cols (abs (- (+modeline--column end)
+                                              (+modeline--column beg)))))
+                            (format "%dx%dB" lines cols)))
+                         ((and (bound-and-true-p evil-visual-selection)
+                               (eq evil-visual-selection 'line))
+                          (format "%dL" lines))
+                         ((> lines 1)
+                          (format "%dC %dL" (- end beg) lines))
+                         ((format "%dC" (- end beg))))
+                   (when (derived-mode-p 'text-mode)
+                     (format " %dW" (count-words beg end)))
+                   " "))
+         'face (if (+modeline-active) 'success)))))
+  "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection.")
 
-  (defun +modeline-add-selection-segment-h ()
-    (add-to-list '+modeline-format-left '+modeline-selection-info 'append))
-  (defun +modeline-remove-selection-segment-h ()
-    (delq! '+modeline-selection-info +modeline-format-left))
+(defun +modeline-add-selection-segment-h ()
+  (add-to-list '+modeline-format-left '+modeline-selection-info 'append))
+(defun +modeline-remove-selection-segment-h ()
+  (delq! '+modeline-selection-info +modeline-format-left))
 
-  (if (featurep 'evil)
-      (progn
-        (add-hook 'evil-visual-state-entry-hook #'+modeline-add-selection-segment-h)
-        (add-hook 'evil-visual-state-exit-hook #'+modeline-remove-selection-segment-h))
-    (add-hook 'activate-mark-hook #'+modeline-add-selection-segment-h)
-    (add-hook 'deactivate-mark-hook #'+modeline-remove-selection-segment-h)))
+(if (featurep 'evil)
+    (progn
+      (add-hook 'evil-visual-state-entry-hook #'+modeline-add-selection-segment-h)
+      (add-hook 'evil-visual-state-exit-hook #'+modeline-remove-selection-segment-h))
+  (add-hook 'activate-mark-hook #'+modeline-add-selection-segment-h)
+  (add-hook 'deactivate-mark-hook #'+modeline-remove-selection-segment-h))
 
 
 ;;; `+modeline-encoding'
 (def-modeline-var! +modeline-encoding
-  '(:eval
-    (concat (coding-system-eol-type-mnemonic buffer-file-coding-system)
-            " "
-            (let ((sys (coding-system-plist buffer-file-coding-system)))
+  `(:eval
+    (let ((sys (coding-system-plist buffer-file-coding-system))
+          (eol (coding-system-eol-type-mnemonic buffer-file-coding-system)))
+      (concat (unless (equal eol ,(if IS-WINDOWS "CRLF" "LF"))
+                (concat "  " eol " "))
               (if (memq (plist-get sys :category)
                         '(coding-category-undecided coding-category-utf-8))
-                  "UTF-8"
-                (upcase (symbol-name (plist-get sys :name))))))))
+                  (unless (string-match-p "utf-8" (symbol-name buffer-file-coding-system))
+                    "UTF-8  ")
+                (concat (upcase (symbol-name (plist-get sys :name)))
+                        "  "))))))
+
+(def-modeline-var! +modeline-pdf-page nil
+  "Display page number of pdf"
+  :local t)
+
+(defun +modeline-update-pdf-pages ()
+  "Update PDF pages."
+  (setq +modeline-pdf-page
+        (format "  P%d/%d "
+                (eval `(pdf-view-current-page))
+                (pdf-cache-number-of-pages))))
+
+(add-hook 'pdf-view-change-page-hook #'+modeline-update-pdf-pages)
 
 ;; Clearer mnemonic labels for EOL styles
 (setq eol-mnemonic-dos "CRLF"
@@ -494,7 +536,6 @@ lines are selected, or the NxM dimensions of a block selection.")
               vc-mode " "))
     "  "
     +modeline-encoding
-    "  "
     (+modeline-checker ("" +modeline-checker "   "))))
 
 (def-modeline! 'project
@@ -502,8 +543,8 @@ lines are selected, or the NxM dimensions of a block selection.")
     ,(all-the-icons-octicon
       "file-directory"
       :face 'bold
-      :v-adjust -0.05
-      :height 1.25)
+      :v-adjust -0.06
+      :height 1.1)
     (:propertize (" " (:eval (abbreviate-file-name default-directory)))
                  face bold))
   '("" mode-line-misc-info +modeline-modes))
@@ -513,36 +554,22 @@ lines are selected, or the NxM dimensions of a block selection.")
     " " +modeline-buffer-identification)
   '("" +modeline-modes))
 
-;; TODO (def-modeline! pdf ...)
+(def-modeline! 'pdf
+  '(""
+    +modeline-matches
+    " "
+    +modeline-buffer-identification
+    +modeline-pdf-page)
+  `(""
+    +modeline-modes
+    "  "))
 ;; TODO (def-modeline! helm ...)
-
-
-;;
-;;; Bootstrap
-
-(size-indication-mode +1) ; filesize in modeline
-
-(setq-default
- mode-line-format
- '(""
-   +modeline-bar
-   +modeline-format-left
-   (:eval
-    (propertize
-     " "
-     'display
-     `((space :align-to (- (+ right right-fringe right-margin)
-                           ,(string-width
-                             (format-mode-line '("" +modeline-format-right))))))))
-   +modeline-format-right))
-(with-current-buffer "*Messages*"
-  (setq mode-line-format (default-value 'mode-line-format)))
 
 
 ;; Other modes
 (set-modeline! :main 'default)
 (set-modeline-hook! '+doom-dashboard-mode-hook 'project)
-;; (set-modeline-hook! 'pdf-tools-enabled-hook 'pdf)
+(set-modeline-hook! 'pdf-tools-enabled-hook 'pdf)
 (set-modeline-hook! '(special-mode-hook
                       image-mode-hook
                       circe-mode-hook)
@@ -553,3 +580,34 @@ lines are selected, or the NxM dimensions of a block selection.")
     (if (eq major-mode 'magit-status-mode)
         (set-modeline! 'project)
       (hide-mode-line-mode +1))))
+
+
+;;
+;;; Bootstrap
+
+(defvar +modeline--old-format (default-value 'mode-line-format))
+
+(define-minor-mode +modeline-mode
+  "TODO"
+  :init-value nil
+  :global nil
+  (cond
+   (+modeline-mode
+    (setq mode-line-format
+          (cons
+           "" '(+modeline-bar
+                +modeline-format-left
+                (:eval
+                 (propertize
+                  " "
+                  'display
+                  `((space :align-to (- (+ right right-fringe right-margin)
+                                        ,(string-width
+                                          (format-mode-line '("" +modeline-format-right))))))))
+                +modeline-format-right))))
+   ((setq mode-line-format +modeline--old-format))))
+
+(define-global-minor-mode +modeline-global-mode +modeline-mode +modeline-mode)
+
+(add-hook '+modeline-global-mode-hook #'size-indication-mode)
+(add-hook 'doom-init-ui-hook #'+modeline-global-mode)

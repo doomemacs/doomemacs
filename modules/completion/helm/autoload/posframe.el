@@ -15,8 +15,7 @@ bottom, which is easier on the eyes on big displays."
 (defun +helm-posframe-display-fn (buffer &optional _resume)
   "TODO"
   (setq helm--buffer-in-new-frame-p t)
-  (let ((solaire-p (bound-and-true-p solaire-mode))
-        (params (copy-sequence +helm-posframe-parameters)))
+  (let ((params (copy-sequence +helm-posframe-parameters)))
     (let-alist params
       (require 'posframe)
       (posframe-show
@@ -24,14 +23,14 @@ bottom, which is easier on the eyes on big displays."
        :position (point)
        :poshandler +helm-posframe-handler
        :respect-header-line helm-echo-input-in-header-line
-       :width
+       :min-width
        (max (cl-typecase .width
               (integer .width)
               (float (truncate (* (frame-width) .width)))
               (function (funcall .width))
               (t 0))
             .min-width)
-       :height
+       :min-height
        (max (cl-typecase .height
               (integer .height)
               (float (truncate (* (frame-height) .height)))
@@ -45,9 +44,6 @@ bottom, which is easier on the eyes on big displays."
     (unless (or (null +helm-posframe-text-scale)
                 (= +helm-posframe-text-scale 0))
       (with-current-buffer buffer
-        (when (and (featurep 'solaire-mode)
-                   (not solaire-p))
-          (solaire-mode +1))
         (text-scale-set +helm-posframe-text-scale)))))
 
 ;;;###autoload

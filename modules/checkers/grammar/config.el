@@ -8,15 +8,22 @@
   :init (setq langtool-default-language "en-US")
   :config
   (unless (or langtool-bin
-              langtool-language-tool-jar)
-    (setq langtool-language-tool-jar
-          (cond (IS-MAC
-                 (locate-file "libexec/languagetool-commandline.jar"
-                              (doom-files-in "/usr/local/Cellar/languagetool"
-                                             :type 'dirs
-                                             :depth 2)))
-                (IS-LINUX
-                 "/usr/share/java/languagetool/languagetool-commandline.jar")))))
+              langtool-language-tool-jar
+              langtool-java-classpath)
+    (cond (IS-MAC
+           (cond
+            ;; is user using home brew?
+            ((file-directory-p "/usr/local/Cellar/languagetool")
+             (setq langtool-language-tool-jar
+                   (locate-file "libexec/languagetool-commandline.jar"
+                                (doom-files-in "/usr/local/Cellar/languagetool"
+                                               :type 'dirs
+                                               :depth 2))))
+            ;; macports compatibility
+            ((file-directory-p "/opt/local/share/java/LanguageTool")
+             (setq langtool-java-classpath "/opt/local/share/java/LanguageTool/*"))))
+          (IS-LINUX
+           (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")))))
 
 
 ;; Detects weasel words, passive voice and duplicates. Proselint would be a

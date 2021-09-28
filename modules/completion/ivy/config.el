@@ -19,7 +19,7 @@ results buffer.")
 ;;; Packages
 
 (use-package! ivy
-  :after-call pre-command-hook
+  :hook (doom-first-input . ivy-mode)
   :init
   (let ((standard-search-fn
          (if (featurep! +prescient)
@@ -45,7 +45,15 @@ results buffer.")
     [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
     [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
     [remap evil-show-jumps]               #'+ivy/jump-list)
+
+  ;; Fix #4886: otherwise our remaps are overwritten
+  (setq ivy-mode-map (make-sparse-keymap))
   :config
+  ;; The default sorter is much to slow and the default for `ivy-sort-max-size'
+  ;; is way too big (30,000). Turn it down so big repos affect project
+  ;; navigation less.
+  (setq ivy-sort-max-size 7500)
+
   ;; Counsel changes a lot of ivy's state at startup; to control for that, we
   ;; need to load it as early as possible. Some packages (like `ivy-prescient')
   ;; require this.
@@ -54,9 +62,8 @@ results buffer.")
   (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
-        projectile-completion-system 'ivy
-        ;; disable magic slash on non-match
-        ivy-magic-slash-non-match-action nil
+        ivy-read-action-function #'ivy-hydra-read-action
+        ivy-read-action-format-function #'ivy-read-action-format-columns
         ;; don't show recent files in switch-buffer
         ivy-use-virtual-buffers nil
         ;; ...but if that ever changes, show their full path
@@ -69,7 +76,7 @@ results buffer.")
   ;; Highlight each ivy candidate including the following newline, so that it
   ;; extends to the right edge of the window
   (setf (alist-get 't ivy-format-functions-alist)
-        #'ivy-format-function-line)
+        #'+ivy-format-function-line-or-arrow)
 
   ;; Integrate `ivy' with `better-jumper'; ensure a jump point is registered
   ;; before jumping to new locations with ivy
@@ -80,30 +87,28 @@ results buffer.")
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (and (markerp (bound-and-true-p +ivy--origin))
-           (not (equal (ignore-errors (with-ivy-window (point-marker)))
-                       +ivy--origin))
-           (with-current-buffer (marker-buffer +ivy--origin)
-             (better-jumper-set-jump +ivy--origin)))
+      (when (markerp (bound-and-true-p +ivy--origin))
+        (unless (equal (ignore-errors (with-ivy-window (point-marker)))
+                       +ivy--origin)
+          (with-current-buffer (marker-buffer +ivy--origin)
+            (better-jumper-set-jump +ivy--origin)))
+        (set-marker +ivy--origin nil))
       (setq +ivy--origin nil)))
 
   (after! yasnippet
-    (add-hook 'yas-prompt-functions #'+ivy-yas-prompt))
+    (add-hook 'yas-prompt-functions #'+ivy-yas-prompt-fn))
 
-  (defadvice! +ivy--inhibit-completion-in-region-a (orig-fn &rest args)
-    "`ivy-completion-in-region' struggles with completing certain
-evil-ex-specific constructs, so we disable it solely in evil-ex."
-    :around #'evil-ex
-    (let ((completion-in-region-function #'completion--in-region))
-      (apply orig-fn args)))
+  (after! ivy-hydra
+    ;; Ensure `ivy-dispatching-done' and `hydra-ivy/body' hydras can be
+    ;; exited / toggled by the same key binding they were opened
+    (add-to-list 'ivy-dispatching-done-hydra-exit-keys '("C-o" nil))
+    (defhydra+ hydra-ivy () ("M-o" nil)))
 
   (define-key! ivy-minibuffer-map
-    "C-c C-e" #'+ivy/woccur
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
+    "C-c C-e" #'+ivy/woccur
     "C-o" #'ivy-dispatching-done
-    "M-o" #'hydra-ivy/body)
-
-  (ivy-mode +1))
+    "M-o" #'hydra-ivy/body))
 
 
 (use-package! ivy-rich
@@ -114,14 +119,19 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (when (featurep! +icons)
     (cl-pushnew '(+ivy-rich-buffer-icon)
                 (cadr (plist-get ivy-rich-display-transformers-list
-                                 'ivy-switch-buffer))))
+                                 'ivy-switch-buffer))
+                :test #'equal))
 
-  ;; Include variable value in `counsel-describe-variable'
+  (defun ivy-rich-bookmark-filename-or-empty (candidate)
+    (let ((filename (ivy-rich-bookmark-filename candidate)))
+      (if (not filename) "" filename)))
+
+  ;; Enahnce the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
               'counsel-describe-variable
               '(:columns
                 ((counsel-describe-variable-transformer (:width 40)) ; the original transformer
-                 (+ivy-rich-describe-variable-transformer (:width 50))
+                 (+ivy-rich-describe-variable-transformer (:width 50)) ; display variable value
                  (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face))))
               'counsel-M-x
               '(:columns
@@ -129,7 +139,11 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
                  (ivy-rich-counsel-function-docstring (:face font-lock-doc-face))))
               ;; Apply switch buffer transformers to `counsel-projectile-switch-to-buffer' as well
               'counsel-projectile-switch-to-buffer
-              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
+              (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer)
+              'counsel-bookmark
+              '(:columns
+                ((ivy-rich-candidate (:width 0.5))
+                 (ivy-rich-bookmark-filename-or-empty (:width 60)))))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
@@ -137,12 +151,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   ;; Highlight buffers differently based on whether they're in the same project
   ;; as the current project or not.
-  (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
-         (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
-    (when switch-buffer-alist
-      (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
+  (when-let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
+              (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
+    (setcar switch-buffer-alist '+ivy-rich-buffer-name))
 
-  (ivy-rich-mode +1))
+  (ivy-rich-mode +1)
+  (ivy-rich-project-root-cache-mode +1))
 
 
 (use-package! all-the-icons-ivy
@@ -173,6 +187,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
+    [remap describe-symbol]          #'counsel-describe-symbol
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
@@ -182,12 +197,13 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
     [remap load-theme]               #'counsel-load-theme
     [remap locate]                   #'counsel-locate
+    [remap org-goto]                 #'counsel-org-goto
     [remap org-set-tags-command]     #'counsel-org-tag
     [remap projectile-compile-project] #'+ivy/project-compile
     [remap recentf-open-files]       #'counsel-recentf
     [remap set-variable]             #'counsel-set-variable
     [remap swiper]                   #'counsel-grep-or-swiper
-    [remap unicode-chars-list-chars] #'counsel-unicode-char
+    [remap insert-char]              #'counsel-unicode-char
     [remap yank-pop]                 #'counsel-yank-pop)
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
@@ -195,21 +211,32 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; HACK Fix an issue where `counsel-projectile-find-file-action' would try to
   ;;      open a candidate in an occur buffer relative to the wrong buffer,
   ;;      causing it to fail to find the file we want.
-  (defadvice! +ivy--run-from-ivy-directory-a (orig-fn &rest args)
+  (defadvice! +ivy--run-from-ivy-directory-a (fn &rest args)
     :around #'counsel-projectile-find-file-action
     (let ((default-directory (ivy-state-directory ivy-last)))
-      (apply orig-fn args)))
+      (apply fn args)))
 
   ;; Don't use ^ as initial input. Set this here because `counsel' defines more
   ;; of its own, on top of the defaults.
   (setq ivy-initial-inputs-alist nil)
 
+  ;; REVIEW Counsel allows `counsel-rg-base-command' to be a string or list.
+  ;;        This backwards compatibility complicates things for Doom. Simpler to
+  ;;        just force it to always be a list.
+  (when (stringp counsel-rg-base-command)
+    (setq counsel-rg-base-command (split-string counsel-rg-base-command)))
+
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
 
+  ;; Decorate `doom/help-custom-variable' results the same way as
+  ;; `counsel-describe-variable' (adds value and docstring columns).
+  (ivy-configure 'doom/help-custom-variable :parent 'counsel-describe-variable)
+
   ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
   (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
+  (add-hook 'counsel-grep-post-action-hook #'recenter)
   (ivy-add-actions
    'counsel-rg ; also applies to `counsel-rg'
    '(("O" +ivy-git-grep-other-window-action "open in other window")))
@@ -259,10 +286,15 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
-        (cond ((executable-find doom-projectile-fd-binary)
-               (cons doom-projectile-fd-binary (list "-t" "f" "-E" ".git")))
-              ((executable-find "rg")
-               (split-string (format counsel-rg-base-command "--files --no-messages") " " t))
+        (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd") t))
+                 (append (list fd "-H" "--color=never" "--type" "file" "--type" "symlink" "--follow")
+                         (if IS-WINDOWS '("--path-separator=/")))))
+              ((executable-find "rg" t)
+               (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "-g!.git" "--no-messages")
+                       (cl-loop for dir in projectile-globally-ignored-directories
+                                collect "--glob"
+                                collect (concat "!" dir))
+                       (if IS-WINDOWS '("--path-separator=/"))))
               ((cons find-program args)))
       (unless (listp args)
         (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
@@ -270,11 +302,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
        (cons find-program args)
        (lambda ()
          (goto-char (point-min))
-         (let ((offset (if (member find-program (list "rg" doom-projectile-fd-binary)) 0 2))
-               files)
+         (let (files)
            (while (< (point) (point-max))
-             (push (buffer-substring
-                    (+ offset (line-beginning-position)) (line-end-position)) files)
+             (push (buffer-substring (line-beginning-position) (line-end-position))
+                   files)
              (forward-line 1))
            (nreverse files)))))))
 
@@ -328,7 +359,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; posframe.
   (dolist (fn '(swiper counsel-rg counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-posframe-display-functions-alist)
-          #'ivy-display-function-fallback)))
+          #'ivy-display-function-fallback))
+
+  (add-hook 'doom-after-reload-hook #'posframe-delete-all))
 
 
 (use-package! flx
@@ -337,21 +370,28 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :defer t  ; is loaded by ivy
   :init (setq ivy-flx-limit 10000))
 
+(use-package! ivy-avy
+  :after ivy)
 
 (use-package! ivy-prescient
   :when (featurep! +prescient)
   :hook (ivy-mode . ivy-prescient-mode)
   :hook (ivy-prescient-mode . prescient-persist-mode)
+  :commands +ivy-prescient-non-fuzzy
   :init
   (setq prescient-filter-method
         (if (featurep! +fuzzy)
             '(literal regexp initialism fuzzy)
           '(literal regexp initialism)))
   :config
+  ;; REVIEW Remove when raxod502/prescient.el#102 is resolved
+  (add-to-list 'ivy-sort-functions-alist '(ivy-resume))
   (setq ivy-prescient-sort-commands
-        '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
-               counsel-git-grep counsel-ag counsel-rg counsel-imenu
-               counsel-yank-pop counsel-recentf counsel-buffer-or-recentf)
+        '(:not swiper swiper-isearch ivy-switch-buffer lsp-ivy-workspace-symbol
+          ivy-resume ivy--restore-session counsel-grep counsel-git-grep
+          counsel-rg counsel-ag counsel-ack counsel-fzf counsel-pt counsel-imenu
+          counsel-yank-pop counsel-recentf counsel-buffer-or-recentf
+          counsel-outline counsel-org-goto counsel-jq)
         ivy-prescient-retain-classic-highlighting t)
   (defun +ivy-prescient-non-fuzzy (str)
     (let ((prescient-filter-method '(literal regexp)))

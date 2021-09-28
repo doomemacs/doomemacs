@@ -1,0 +1,55 @@
+#+TITLE:   tools/pass
+#+DATE:    May 4, 2020
+#+SINCE:   V2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
++ Manage passwords on ~pass~ with power of ~doom~.
++ You can open ~pass~ by =M-x pass=
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ ~+auth~ to enable ~auth-source-pass~
+
+** Plugins
+# A list of linked plugins
++ [[https://github.com/NicolasPetton/pass][pass]]
++ [[https://github.com/zx2c4/password-store][password-store]]
++ [[https://github.com/volrath/password-store-otp.el][password-store-otp]]
++ [[https://github.com/DamienCassou/auth-password-store][auth-source-pass (auth-password-store)]]
++ =:completion ivy=
+  + [[https://github.com/ecraven/ivy-pass][ivy-pass]]
++ =:completion helm=
+  + [[https://github.com/emacs-helm/helm-pass][helm-pass]]
+
+** Hacks
+In ~pass-mode~ ~evil~ is put into ~emacs~ state so shown keybindings works correctly, but some keybindings is more ~evil~.
+| keybinding | action                  |
+|------------+-------------------------|
+| j          | pass-next-entry         |
+| k          | pass-previous-entry     |
+| d          | pass-kill               |
+| C-j        | pass-next-directory     |
+| C-k        | pass-previous-directory |
+* Prerequisites
++ This module requires that [[https://www.passwordstore.org/][pass]] is installed and setup correctly.
+
+* TODO Features
+
+* TODO Configuration
+
+* Troubleshooting
+No known issues.

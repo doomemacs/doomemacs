@@ -29,25 +29,25 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (let ((action (if (keywordp (car docsets)) (pop docsets))))
     (dolist (mode (doom-enlist modes))
       (let ((hook (intern (format "%s-hook" mode)))
-            (fn (intern (format "+lookup|init--%s-%s" (or action "set") mode))))
+            (fn (intern (format "+lookup-init--%s-%s" (or action "set") mode))))
         (if (null docsets)
             (remove-hook hook fn)
-          (fset fn
-                (lambda ()
-                  (make-local-variable 'dash-docs-docsets)
-                  (unless (memq action '(:add :remove))
-                    (setq dash-docs-docset nil))
-                  (dolist (spec docsets)
-                    (cl-destructuring-bind (docset . pred)
-                        (cl-typecase spec
-                          (string (cons spec nil))
-                          (vector (cons (aref spec 0) (aref spec 1)))
-                          (otherwise (signal 'wrong-type-arguments (list spec '(vector string)))))
-                      (when (or (null pred)
-                                (eval pred t))
-                        (if (eq action :remove)
-                            (setq dash-docs-docsets (delete docset dash-docs-docsets))
-                          (cl-pushnew docset dash-docs-docsets)))))))
+          (fset
+           fn (lambda ()
+                (make-local-variable 'dash-docs-docsets)
+                (unless (memq action '(:add :remove))
+                  (setq dash-docs-docset nil))
+                (dolist (spec docsets)
+                  (cl-destructuring-bind (docset . pred)
+                      (cl-typecase spec
+                        (string (cons spec nil))
+                        (vector (cons (aref spec 0) (aref spec 1)))
+                        (otherwise (signal 'wrong-type-arguments (list spec '(vector string)))))
+                    (when (or (null pred)
+                              (eval pred t))
+                      (if (eq action :remove)
+                          (setq dash-docs-docsets (delete docset dash-docs-docsets))
+                        (cl-pushnew docset dash-docs-docsets)))))))
           (add-hook hook fn 'append))))))
 
 ;;;###autoload
@@ -74,6 +74,16 @@ Docsets can be searched directly via `+lookup/in-docsets'."
 ;;
 ;;; Commands
 
+(defun +lookup--consult-search (sync cb)
+  (lambda (action)
+    (pcase action
+      ((pred stringp)
+       (when-let (cands (with-current-buffer cb
+                          (dash-docs-search action)))
+         (funcall sync 'flush)
+         (funcall sync cands)))
+      (_ (funcall sync action)))))
+
 ;;;###autoload
 (defun +lookup/in-docsets (arg &optional query docsets)
   "Lookup QUERY in dash DOCSETS.
@@ -92,10 +102,26 @@ installed with `dash-docs-install-docset'."
            (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
-    (cond ((featurep! :completion helm)
-           (helm-dash query))
+    (cond ((featurep! :completion vertico)
+           (dash-docs-initialize-debugging-buffer)
+           (dash-docs-create-buffer-connections)
+           (dash-docs-create-common-connections)
+           (let* ((sink
+                   (thread-first (consult--async-sink)
+                     (consult--async-refresh-immediate)
+                     (+lookup--consult-search (current-buffer))
+                     (consult--async-throttle)))
+                  (result
+                   (or (consult--read sink
+                                      :prompt "Documentation for: "
+                                      :category 'dash
+                                      :initial query)
+                       (user-error "Aborted"))))
+             (dash-docs-browse-url (cdr (assoc result (funcall sink nil))))))
           ((featurep! :completion ivy)
            (counsel-dash query))
+          ((featurep! :completion helm)
+           (helm-dash query))
           ((user-error "No dash backend is installed, enable ivy or helm.")))))
 
 ;;;###autoload

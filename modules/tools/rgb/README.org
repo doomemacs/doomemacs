@@ -1,0 +1,51 @@
+#+TITLE:   tools/rgb
+#+DATE:    May 6, 2020
+#+SINCE:   3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+Highlights color hex values and names with the color itself, and provides tools
+to easily modify color values or formats.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://elpa.gnu.org/packages/rainbow-mode.html][rainbow-mode]]
++ [[https://github.com/alphapapa/kurecolor][kurecolor]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+=rainbow-mode= provides automatic highlighting to hex color codes, and in
+relevant modes, color names (e.g. html color names in =css-mode= or LaTeX color
+names in =latex-mode=)
+
+=kurecolor= provides commands to easily change the brightness, saturation, and
+hue of hex colors (and a useful hydra for this, if =:ui hydra= is enabled), as
+well as conversion between hex and css colors
+
+* Configuration
+=hl-line-mode= overrides the color highlighting of =rainbow-mode=, limiting 
+the use of that plugin and on-site color changes using =kurecolor=. To
+automatically disable it only when =rainbow-mode= is active, you can add the
+following hook:
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/config.el
+(add-hook! 'rainbow-mode-hook
+  (hl-line-mode (if rainbow-mode -1 +1)))
+#+END_SRC

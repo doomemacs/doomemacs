@@ -1,8 +1,5 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(require 'cl-lib)
-(require 'subr-x)
-
 ;;
 ;;; Helpers
 
@@ -69,10 +66,10 @@ list is returned as-is."
   (substring (symbol-name keyword) 1))
 
 (defmacro doom-log (format-string &rest args)
-  "Log to *Messages* if `doom-debug-mode' is on.
-Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
-Accepts the same arguments as `message'."
-  `(when doom-debug-mode
+  "Log to *Messages* if `doom-debug-p' is on.
+Does not display text in echo area, but still logs to *Messages*. Accepts the
+same arguments as `message'."
+  `(when doom-debug-p
      (let ((inhibit-message (active-minibuffer-window)))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
@@ -88,7 +85,7 @@ Accepts the same arguments as `message'."
 (defalias 'doom-partial #'apply-partially)
 
 (defun doom-rpartial (fn &rest args)
-  "Return a function that is a partial application of FUN to right-hand ARGS.
+  "Return a partial application of FUN to right-hand ARGS.
 
 ARGS is a list of the last N arguments to pass to FUN. The result is a new
 function which does the same as FUN, except that the last N arguments are fixed
@@ -97,27 +94,32 @@ at the values with which this function was called."
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
+(defun doom-lookup-key (keys &rest keymaps)
+  "Like `lookup-key', but search active keymaps if KEYMAP is omitted."
+  (if keymaps
+      (cl-some (doom-rpartial #'lookup-key keys) keymaps)
+    (cl-loop for keymap
+             in (append (cl-loop for alist in emulation-mode-map-alists
+                                 append (mapcar #'cdr
+                                                (if (symbolp alist)
+                                                    (if (boundp alist) (symbol-value alist))
+                                                  alist)))
+                        (list (current-local-map))
+                        (mapcar #'cdr minor-mode-overriding-map-alist)
+                        (mapcar #'cdr minor-mode-map-alist)
+                        (list (current-global-map)))
+             if (keymapp keymap)
+             if (lookup-key keymap keys)
+             return it)))
+
 
 ;;
 ;;; Sugars
 
-(defmacro λ! (&rest body)
-  "Expands to (lambda () (interactive) ,@body).
-A factory for quickly producing interaction commands, particularly for keybinds
-or aliases."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda () (interactive) ,@body))
-(defalias 'lambda! 'λ!)
-
-(defun λ!! (command &optional arg)
-  "Expands to a command that interactively calls COMMAND with prefix ARG.
-A factory for quickly producing interactive, prefixed commands for keybinds or
-aliases."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  (lambda () (interactive)
-     (let ((current-prefix-arg arg))
-       (call-interactively command))))
-(defalias 'lambda!! 'λ!!)
+(defun dir! ()
+  "Returns the directory of the emacs lisp file this macro is called from."
+  (when-let (path (file!))
+    (directory-file-name (file-name-directory path))))
 
 (defun file! ()
   "Return the emacs lisp file this macro is called from."
@@ -128,10 +130,217 @@ aliases."
         (buffer-file-name)
         ((error "Cannot get this file-path"))))
 
-(defun dir! ()
-  "Returns the directory of the emacs lisp file this macro is called from."
-  (when-let (path (file!))
-    (directory-file-name (file-name-directory path))))
+(defmacro letenv! (envvars &rest body)
+  "Lexically bind ENVVARS in BODY, like `let' but for `process-environment'."
+  (declare (indent 1))
+  `(let ((process-environment (copy-sequence process-environment)))
+     (dolist (var (list ,@(cl-loop for (var val) in envvars
+                                   collect `(cons ,var ,val))))
+       (setenv (car var) (cdr var)))
+     ,@body))
+
+(defmacro letf! (bindings &rest body)
+  "Temporarily rebind function and macros in BODY.
+Intended as a simpler version of `cl-letf' and `cl-macrolet'.
+
+BINDINGS is either a) a list of, or a single, `defun' or `defmacro'-ish form, or
+b) a list of (PLACE VALUE) bindings as `cl-letf*' would accept.
+
+TYPE is either `defun' or `defmacro'. NAME is the name of the function. If an
+original definition for NAME exists, it can be accessed as a lexical variable by
+the same name, for use with `funcall' or `apply'. ARGLIST and BODY are as in
+`defun'.
+
+\(fn ((TYPE NAME ARGLIST &rest BODY) ...) BODY...)"
+  (declare (indent defun))
+  (setq body (macroexp-progn body))
+  (when (memq (car bindings) '(defun defmacro))
+    (setq bindings (list bindings)))
+  (dolist (binding (reverse bindings) (macroexpand body))
+    (let ((type (car binding))
+          (rest (cdr binding)))
+      (setq
+       body (pcase type
+              (`defmacro `(cl-macrolet ((,@rest)) ,body))
+              (`defun `(cl-letf* ((,(car rest) (symbol-function #',(car rest)))
+                                  ((symbol-function #',(car rest))
+                                   (lambda ,(cadr rest) ,@(cddr rest))))
+                         (ignore ,(car rest))
+                         ,body))
+              (_
+               (when (eq (car-safe type) 'function)
+                 (setq type (list 'symbol-function type)))
+               (list 'cl-letf (list (cons type rest)) body)))))))
+
+(defmacro quiet! (&rest forms)
+  "Run FORMS without generating any output.
+
+This silences calls to `message', `load', `write-region' and anything that
+writes to `standard-output'. In interactive sessions this won't suppress writing
+to *Messages*, only inhibit output in the echo area."
+  `(if doom-debug-p
+       (progn ,@forms)
+     ,(if doom-interactive-p
+          `(let ((inhibit-message t)
+                 (save-silently t))
+             (prog1 ,@forms (message "")))
+        `(letf! ((standard-output (lambda (&rest _)))
+                 (defun message (&rest _))
+                 (defun load (file &optional noerror nomessage nosuffix must-suffix)
+                   (funcall load file noerror t nosuffix must-suffix))
+                 (defun write-region (start end filename &optional append visit lockname mustbenew)
+                   (unless visit (setq visit 'no-message))
+                   (funcall write-region start end filename append visit lockname mustbenew)))
+           ,@forms))))
+
+(defmacro eval-if! (cond then &rest body)
+  "Expands to THEN if COND is non-nil, to BODY otherwise.
+COND is checked at compile/expansion time, allowing BODY to be omitted entirely
+when the elisp is byte-compiled. Use this for forms that contain expensive
+macros that could safely be removed at compile time."
+  (declare (indent 2))
+  (if (eval cond)
+      then
+    (macroexp-progn body)))
+
+(defmacro eval-when! (cond &rest body)
+  "Expands to BODY if CONDITION is non-nil at compile/expansion time.
+See `eval-if!' for details on this macro's purpose."
+  (declare (indent 1))
+  (when (eval cond)
+    (macroexp-progn body)))
+
+
+;;; Closure factories
+(defmacro fn! (arglist &rest body)
+  "Returns (cl-function (lambda ARGLIST BODY...))
+The closure is wrapped in `cl-function', meaning ARGLIST will accept anything
+`cl-defun' will. Implicitly adds `&allow-other-keys' if `&key' is present in
+ARGLIST."
+  (declare (indent defun) (doc-string 1) (pure t) (side-effect-free t))
+  ;; Don't complain about undeclared keys.
+  (when (memq '&key arglist)
+    (if (memq '&aux arglist)
+        (let (newarglist arg)
+          (while arglist
+            (setq arg (pop arglist))
+            (when (eq arg '&aux)
+              (push '&allow-other-keys newarglist))
+            (push arg newarglist))
+          (setq arglist (nreverse newarglist)))
+      (setq arglist (append arglist (list '&allow-other-keys)))))
+  `(cl-function (lambda ,arglist ,@body)))
+
+(defmacro cmd! (&rest body)
+  "Returns (lambda () (interactive) ,@body)
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (&rest _) (interactive) ,@body))
+
+(defmacro cmd!! (command &optional prefix-arg &rest args)
+  "Returns a closure that interactively calls COMMAND with ARGS and PREFIX-ARG.
+Like `cmd!', but allows you to change `current-prefix-arg' or pass arguments to
+COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
+`define-key' or `map!')."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (arg &rest _) (interactive "P")
+     (let ((current-prefix-arg (or ,prefix-arg arg)))
+       (,(if args
+             'funcall-interactively
+           'call-interactively)
+        ,command ,@args))))
+
+(defmacro cmds! (&rest branches)
+  "Returns a dispatcher that runs the a command in BRANCHES.
+Meant to be used as a target for keybinds (e.g. with `define-key' or `map!').
+
+BRANCHES is a flat list of CONDITION COMMAND pairs. CONDITION is a lisp form
+that is evaluated when (and each time) the dispatcher is invoked. If it returns
+non-nil, COMMAND is invoked, otherwise it falls through to the next pair.
+
+The last element of BRANCHES can be a COMMANd with no CONDITION. This acts as
+the fallback if all other conditions fail.
+
+Otherwise, Emacs will fall through the keybind and search the next keymap for a
+keybind (as if this keybind never existed).
+
+See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
+  (declare (doc-string 1))
+  (let ((docstring (if (stringp (car branches)) (pop branches) ""))
+        fallback)
+    (when (cl-oddp (length branches))
+      (setq fallback (car (last branches))
+            branches (butlast branches)))
+    (let ((defs (cl-loop for (key value) on branches by 'cddr
+                         unless (keywordp key)
+                         collect (list key value))))
+      `'(menu-item
+         ,(or docstring "") nil
+         :filter (lambda (&optional _)
+                   (let (it)
+                     (cond ,@(mapcar (lambda (pred-def)
+                                       `((setq it ,(car pred-def))
+                                         ,(cadr pred-def)))
+                                     defs)
+                           (t ,fallback))))))))
+
+(defalias 'kbd! 'general-simulate-key)
+
+;; For backwards compatibility
+(defalias 'λ! 'cmd!)
+(defalias 'λ!! 'cmd!!)
+;; DEPRECATED These have been superseded by `cmd!' and `cmd!!'
+(define-obsolete-function-alias 'lambda! 'cmd! "3.0.0")
+(define-obsolete-function-alias 'lambda!! 'cmd!! "3.0.0")
+
+
+;;; Mutation
+(defmacro appendq! (sym &rest lists)
+  "Append LISTS to SYM in place."
+  `(setq ,sym (append ,sym ,@lists)))
+
+(defmacro setq! (&rest settings)
+  "A stripped-down `customize-set-variable' with the syntax of `setq'.
+
+This can be used as a drop-in replacement for `setq'. Particularly when you know
+a variable has a custom setter (a :set property in its `defcustom' declaration).
+This triggers setters. `setq' does not."
+  (macroexp-progn
+   (cl-loop for (var val) on settings by 'cddr
+            collect `(funcall (or (get ',var 'custom-set) #'set)
+                              ',var ,val))))
+
+(defmacro delq! (elt list &optional fetcher)
+  "`delq' ELT from LIST in-place.
+
+If FETCHER is a function, ELT is used as the key in LIST (an alist)."
+  `(setq ,list
+         (delq ,(if fetcher
+                    `(funcall ,fetcher ,elt ,list)
+                  elt)
+               ,list)))
+
+(defmacro pushnew! (place &rest values)
+  "Push VALUES sequentially into PLACE, if they aren't already present.
+This is a variadic `cl-pushnew'."
+  (let ((var (make-symbol "result")))
+    `(dolist (,var (list ,@values) (with-no-warnings ,place))
+       (cl-pushnew ,var ,place :test #'equal))))
+
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place."
+  `(setq ,sym (append ,@lists ,sym)))
+
+
+;;; Loading
+(defmacro add-load-path! (&rest dirs)
+  "Add DIRS to `load-path', relative to the current file.
+The current file is the file from which `add-to-load-path!' is used."
+  `(let ((default-directory ,(dir!))
+         file-name-handler-alist)
+     (dolist (dir (list ,@dirs))
+       (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
 
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.
@@ -164,77 +373,97 @@ This is a wrapper around `eval-after-load' that:
                       (require package nil 'noerror))
                   #'progn
                 #'with-no-warnings)
-              (let ((body (macroexp-progn body)))
-                `(if (featurep ',package)
-                     ,body
-                   ;; We intentionally avoid `with-eval-after-load' to prevent
-                   ;; eager macro expansion from pulling (or failing to pull) in
-                   ;; autoloaded macros/packages.
-                   (eval-after-load ',package ',body)))))
+              ;; We intentionally avoid `with-eval-after-load' to prevent eager
+              ;; macro expansion from pulling (or failing to pull) in autoloaded
+              ;; macros/packages.
+              `(eval-after-load ',package ',(macroexp-progn body))))
     (let ((p (car package)))
-      (cond ((not (keywordp p))
-             `(after! (:and ,@package) ,@body))
-            ((memq p '(:or :any))
+      (cond ((memq p '(:or :any))
              (macroexp-progn
               (cl-loop for next in (cdr package)
                        collect `(after! ,next ,@body))))
             ((memq p '(:and :all))
-             (dolist (next (cdr package))
-               (setq body `((after! ,next ,@body))))
-             (car body))))))
+             (dolist (next (reverse (cdr package)) (car body))
+               (setq body `((after! ,next ,@body)))))
+            (`(after! (:and ,@package) ,@body))))))
 
-(defmacro setq! (&rest settings)
-  "A stripped-down `customize-set-variable' with the syntax of `setq'.
+(defun doom--handle-load-error (e target path)
+  (let* ((source (file-name-sans-extension target))
+         (err (cond ((not (featurep 'core))
+                     (cons 'error (file-name-directory path)))
+                    ((file-in-directory-p source doom-core-dir)
+                     (cons 'doom-error doom-core-dir))
+                    ((file-in-directory-p source doom-private-dir)
+                     (cons 'doom-private-error doom-private-dir))
+                    ((cons 'doom-module-error doom-emacs-dir)))))
+    (signal (car err)
+            (list (file-relative-name
+                    (concat source ".el")
+                    (cdr err))
+                  e))))
 
-Use this instead of `setq' when you know a variable has a custom setter (a :set
-property in its `defcustom' declaration). This trigger setters. `setq' does
-not."
-  (macroexp-progn
-   (cl-loop for (var val) on settings by 'cddr
-            collect `(funcall (or (get ',var 'custom-set) #'set)
-                              ',var ,val))))
+(defmacro load! (filename &optional path noerror)
+  "Load a file relative to the current executing file (`load-file-name').
 
-(defmacro pushnew! (place &rest values)
-  "Push VALUES sequentially into PLACE, if they aren't already present.
-This is a variadic `cl-pushnew'."
-  (let ((var (make-symbol "result")))
-    `(dolist (,var (list ,@values) (with-no-warnings ,place))
-       (cl-pushnew ,var ,place :test #'equal))))
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
 
-(defmacro prependq! (sym &rest lists)
-  "Prepend LISTS to SYM in place."
-  `(setq ,sym (append ,@lists ,sym)))
+If NOERROR is non-nil, don't throw an error if the file doesn't exist."
+  (let* ((path (or path
+                   (dir!)
+                   (error "Could not detect path to look for '%s' in"
+                          filename)))
+         (file (if path
+                  `(expand-file-name ,filename ,path)
+                filename)))
+    `(condition-case-unless-debug e
+         (let (file-name-handler-alist)
+           (load ,file ,noerror 'nomessage))
+       (doom-error (signal (car e) (cdr e)))
+       (error (doom--handle-load-error e ,file ,path)))))
 
-(defmacro appendq! (sym &rest lists)
-  "Append LISTS to SYM in place."
-  `(setq ,sym (append ,sym ,@lists)))
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
+serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+       (progn ,@body)
+     ,(let ((fn (intern (format "doom--delay-form-%s-h" (sxhash (cons condition body))))))
+        `(progn
+           (fset ',fn (lambda (&rest args)
+                        (when ,(or condition t)
+                          (remove-hook 'after-load-functions #',fn)
+                          (unintern ',fn nil)
+                          (ignore args)
+                          ,@body)))
+           (put ',fn 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fn)))))
 
-(defmacro delq! (elt list &optional fetcher)
-  "`delq' ELT from LIST in-place.
+(defmacro defer-feature! (feature &rest fns)
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FN runs.
 
-If FETCHER is a function, ELT is used as the key in LIST (an alist)."
-  `(setq ,list
-         (delq ,(if fetcher
-                    `(funcall ,fetcher ,elt ,list)
-                  elt)
-               ,list)))
+Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
+startup, which will prematurely trigger `after!' (and `with-eval-after-load')
+blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
+then wait until FEATURE-hook (or MODE-hook, if FN is provided) is triggered to
+reverse this and trigger `after!' blocks at a more reasonable time."
+  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature))))
+    `(progn
+       (delq! ',feature features)
+       (defadvice! ,advice-fn (&rest _)
+         :before ',fns
+         ;; Some plugins (like yasnippet) will invoke a fn early to parse
+         ;; code, which would prematurely trigger this. In those cases, well
+         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
+         (unless delay-mode-hooks
+           ;; ...Otherwise, announce to the world this package has been loaded,
+           ;; so `after!' handlers can react.
+           (provide ',feature)
+           (dolist (fn ',fns)
+             (advice-remove fn #',advice-fn)))))))
 
-(defmacro letenv! (envvars &rest body)
-  "Lexically bind ENVVARS in BODY, like `let' but for `process-environment'."
-  (declare (indent 1))
-  `(let ((process-environment (copy-sequence process-environment)))
-     (dolist (var (list ,@(cl-loop for (var val) in envvars
-                                   collect `(cons ,var ,val))))
-       (setenv (car var) (cdr var)))
-     ,@body))
-
-(defmacro add-load-path! (&rest dirs)
-  "Add DIRS to `load-path', relative to the current file.
-The current file is the file from which `add-to-load-path!' is used."
-  `(let ((default-directory ,(dir!))
-         file-name-handler-alist)
-     (dolist (dir (list ,@dirs))
-       (cl-pushnew (expand-file-name dir) load-path))))
 
 ;;; Hooks
 (defvar doom--transient-counter 0)
@@ -268,15 +497,13 @@ advised)."
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
 
-If N and M = 1, there's no benefit to using this macro over `add-hook'.
-
 This macro accepts, in order:
 
   1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
      unquoted list of modes, a quoted hook variable or a quoted list of hook
      variables.
-  2. Optional properties :local and/or :append, which will make the hook
-     buffer-local or append to the list of hooks (respectively),
+  2. Optional properties :local, :append, and/or :depth [N], which will make the
+     hook buffer-local or append to the list of hooks (respectively),
   3. The function(s) to be added: this can be one function, a quoted list
      thereof, a list of `defun's, or body forms (implicitly wrapped in a
      lambda).
@@ -293,10 +520,12 @@ This macro accepts, in order:
          append-p
          local-p
          remove-p
+         depth
          forms)
     (while (keywordp (car rest))
       (pcase (pop rest)
         (:append (setq append-p t))
+        (:depth  (setq depth (pop rest)))
         (:local  (setq local-p t))
         (:remove (setq remove-p t))))
     (let ((first (car-safe (car rest))))
@@ -318,7 +547,7 @@ This macro accepts, in order:
         (dolist (func func-forms)
           (push (if remove-p
                     `(remove-hook ',hook #',func ,local-p)
-                  `(add-hook ',hook #',func ,append-p ,local-p))
+                  `(add-hook ',hook #',func ,(or depth append-p) ,local-p))
                 forms)))
       (macroexp-progn
        (append defn-forms
@@ -360,106 +589,8 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             in (doom--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
-(defmacro load! (filename &optional path noerror)
-  "Load a file relative to the current executing file (`load-file-name').
 
-FILENAME is either a file path string or a form that should evaluate to such a
-string at run time. PATH is where to look for the file (a string representing a
-directory path). If omitted, the lookup is relative to either `load-file-name',
-`byte-compile-current-file' or `buffer-file-name' (checked in that order).
-
-If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (let* ((path (or path
-                   (dir!)
-                   (error "Could not detect path to look for '%s' in"
-                          filename)))
-         (file (if path
-                  `(expand-file-name ,filename ,path)
-                filename)))
-    `(condition-case-unless-debug e
-         (let (file-name-handler-alist)
-           (load ,file ,noerror 'nomessage))
-       (doom-error (signal (car e) (cdr e)))
-       (error
-        (let* ((source (file-name-sans-extension ,file))
-               (err (cond ((not (featurep 'core))
-                           (cons 'error (file-name-directory path)))
-                          ((file-in-directory-p source doom-core-dir)
-                           (cons 'doom-error doom-core-dir))
-                          ((file-in-directory-p source doom-private-dir)
-                           (cons 'doom-private-error doom-private-dir))
-                          ((cons 'doom-module-error doom-emacs-dir)))))
-          (signal (car err)
-                  (list (file-relative-name
-                         (concat source ".el")
-                         (cdr err))
-                        e)))))))
-
-(defmacro defer-until! (condition &rest body)
-  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
-serve as a predicated alternative to `after!'."
-  (declare (indent defun) (debug t))
-  `(if ,condition
-       (progn ,@body)
-     ,(let ((fn (intern (format "doom--delay-form-%s-h" (sxhash (cons condition body))))))
-        `(progn
-           (fset ',fn (lambda (&rest args)
-                        (when ,(or condition t)
-                          (remove-hook 'after-load-functions #',fn)
-                          (unintern ',fn nil)
-                          (ignore args)
-                          ,@body)))
-           (put ',fn 'permanent-local-hook t)
-           (add-hook 'after-load-functions #',fn)))))
-
-(defmacro defer-feature! (feature &optional fn)
-  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FN runs.
-
-Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
-startup, which will prematurely trigger `after!' (and `with-eval-after-load')
-blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
-then wait until FEATURE-hook (or MODE-hook, if FN is provided) is triggered to
-reverse this and trigger `after!' blocks at a more reasonable time."
-  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
-        (fn (or fn feature)))
-    `(progn
-       (setq features (delq ',feature features))
-       (advice-add #',fn :before #',advice-fn)
-       (defun ,advice-fn (&rest _)
-         ;; Some plugins (like yasnippet) will invoke a fn early to parse
-         ;; code, which would prematurely trigger this. In those cases, well
-         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
-         (when (and ,(intern (format "%s-hook" fn))
-                    (not delay-mode-hooks))
-           ;; ...Otherwise, announce to the world this package has been loaded,
-           ;; so `after!' handlers can react.
-           (provide ',feature)
-           (advice-remove #',fn #',advice-fn))))))
-
-(defmacro quiet! (&rest forms)
-  "Run FORMS without generating any output.
-
-This silences calls to `message', `load-file', `write-region' and anything that
-writes to `standard-output'."
-  `(cond (doom-debug-mode ,@forms)
-         ((not doom-interactive-mode)
-          (let ((old-fn (symbol-function 'write-region)))
-            (cl-letf ((standard-output (lambda (&rest _)))
-                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                      ((symbol-function 'message) (lambda (&rest _)))
-                      ((symbol-function 'write-region)
-                       (lambda (start end filename &optional append visit lockname mustbenew)
-                         (unless visit (setq visit 'no-message))
-                         (funcall old-fn start end filename append visit lockname mustbenew))))
-              ,@forms)))
-         ((let ((inhibit-message t)
-                (save-silently t))
-            (prog1 ,@forms (message ""))))))
-
-
-;;
 ;;; Definers
-
 (defmacro defadvice! (symbol arglist &optional docstring &rest body)
   "Define an advice called SYMBOL and add it to PLACES.
 
@@ -499,6 +630,12 @@ testing advice (when combined with `rotate-text').
     `(dolist (targets (list ,@(nreverse where-alist)))
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
+
+
+;;
+;;; Backports
+
+;; None at the moment!
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

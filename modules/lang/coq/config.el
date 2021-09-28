@@ -69,7 +69,7 @@
     :references #'company-coq-grep-symbol
     :documentation #'company-coq-doc)
 
-  (setq company-coq-disabled-features '(hello company-defaults))
+  (setq company-coq-disabled-features '(hello company-defaults spinner))
 
   (if (featurep! :completion company)
       (define-key coq-mode-map [remap company-complete-common]

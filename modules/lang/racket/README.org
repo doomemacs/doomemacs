@@ -9,26 +9,41 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#arch-linux][Arch Linux]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#racket-smart-open-bracket-mode][racket-smart-open-bracket-mode]]
+  - [[#unicode-input][Unicode Input]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module provide integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
+This module provides integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
 
 ** Maintainers
 This module has no dedicated maintainers.
 
 ** Module Flags
-This module provides no flags.
++ =+lsp= Enables LSP support. Requires jeapostrophe/racket-langserver.
++ =+xp= Enables the explore mode, which "analyzes expanded code to explain and explore."
 
 ** Plugins
 + [[https://github.com/greghendershott/racket-mode][racket-mode]]
 
 * Prerequisites
-This module only require `racket`. Install it directly from the [[https://download.racket-lang.org/][racket website]],
+This module only requires ~racket~. Install it directly from the [[https://download.racket-lang.org/][racket website]],
 or check your package manger.
+
+** Arch Linux
+
+#+begin_src bash
+pacman -S racket
+#+end_src
+
+Or, for fewer dependencies:
+
+#+begin_src bash
+pacman -S racket-minimal
+#+end_src
 
 * TODO Features
 
@@ -41,5 +56,15 @@ or check your package manger.
   (add-hook! racket-mode
              #'racket-smart-open-bracket-mode))
 #+END_SRC
+** Unicode Input
+The optional ~racket-unicode~ input method lets you type unicode characters such as λ or π.
+To enable unicode input for a single buffer, run ~racket-unicode-input-method-enable~.
+To enable unicode input by default on all racket buffers, add the following hooks
+to your ~config.el~:
+#+BEGIN_SRC elisp
+(add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
+(add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
+#+END_SRC
+Once enabled, unicode input can be toggled by pressing C-\ or running ~toggle-input-method~.
 
 * TODO Troubleshooting

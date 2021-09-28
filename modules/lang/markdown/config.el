@@ -22,16 +22,24 @@ capture, the end position, and the output buffer.")
         markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-asymmetric-header t
-        markdown-fontify-code-blocks-natively t
-        markdown-gfm-uppercase-checkbox t ; for compat with org-mode
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
 
-        ;; Preview/compilation defaults
+        ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
+        ;;      'wrong-type-argument consp nil' error if you use native-comp.
+        markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p)))
+
+        ;; `+markdown-compile' offers support for many transpilers (see
+        ;; `+markdown-compile-functions'), which it tries until one succeeds.
         markdown-command #'+markdown-compile
+        ;; This is set to `nil' by default, which causes a wrong-type-arg error
+        ;; when you use `markdown-open'. These are more sensible defaults.
         markdown-open-command
         (cond (IS-MAC "open")
               (IS-LINUX "xdg-open"))
+
+        ;; A sensible and simple default preamble for markdown exports that
+        ;; takes after the github asthetic (plus highlightjs syntax coloring).
         markdown-content-type "application/xhtml+xml"
         markdown-css-paths
         '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
@@ -39,6 +47,7 @@ capture, the end position, and the output buffer.")
         markdown-xhtml-header-content
         (concat "<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>"
                 "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
+                "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>"
                 "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
                 "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
 
@@ -57,37 +66,62 @@ capture, the end position, and the output buffer.")
   (sp-local-pair '(markdown-mode gfm-mode) "`" "`"
                  :unless '(:add sp-point-before-word-p sp-point-before-same-p))
 
+  ;; Highly rust blocks correctly
+  (when (featurep! :lang rust)
+    (add-to-list 'markdown-code-lang-modes '("rust" . rustic-mode)))
+
+  ;; Don't trigger autofill in code blocks (see `auto-fill-mode')
   (setq-hook! 'markdown-mode-hook
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
                                  fill-nobreak-predicate))
 
   ;; HACK Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
   ;;      which occurs when the first line contains a colon in it. See
-  ;;      https://github.com/jrblevin/markdown-mode/issues/328.
+  ;;      jrblevin/markdown-mode#328.
   (defadvice! +markdown-disable-front-matter-fontification-a (&rest _)
     :override #'markdown-match-generic-metadata
     (ignore (goto-char (point-max))))
 
   (map! :map markdown-mode-map
         :localleader
+        "'" #'markdown-edit-code-block
         "o" #'markdown-open
         "p" #'markdown-preview
         "e" #'markdown-export
         (:when (featurep! +grip)
-          "p" #'grip-mode)
+         "p" #'grip-mode)
         (:prefix ("i" . "insert")
-          "t" #'markdown-toc-generate-toc
-          "i" #'markdown-insert-image
-          "l" #'markdown-insert-link)))
-
+         :desc "Table Of Content" "T" #'markdown-toc-generate-toc
+         :desc "Image" "i" #'markdown-insert-image
+         :desc "Link" "l" #'markdown-insert-link
+         :desc "<hr>" "-" #'markdown-insert-hr
+         :desc "Heading 1" "1" #'markdown-insert-header-atx-1
+         :desc "Heading 2" "2" #'markdown-insert-header-atx-2
+         :desc "Heading 3" "3" #'markdown-insert-header-atx-3
+         :desc "Heading 4" "4" #'markdown-insert-header-atx-4
+         :desc "Heading 5" "5" #'markdown-insert-header-atx-5
+         :desc "Heading 6" "6" #'markdown-insert-header-atx-6
+         :desc "Code block" "C" #'markdown-insert-gfm-code-block
+         :desc "Pre region" "P" #'markdown-pre-region
+         :desc "Blockquote region" "Q" #'markdown-blockquote-region
+         :desc "Checkbox" "[" #'markdown-insert-gfm-checkbox
+         :desc "Bold" "b" #'markdown-insert-bold
+         :desc "Inline code" "c" #'markdown-insert-code
+         :desc "Italic" "e" #'markdown-insert-italic
+         :desc "Footnote" "f" #'markdown-insert-footnote
+         :desc "Header dwim" "h" #'markdown-insert-header-dwim
+         :desc "Italic" "i" #'markdown-insert-italic
+         :desc "Kbd" "k" #'markdown-insert-kbd
+         :desc "Link" "l" #'markdown-insert-link
+         :desc "Pre" "p" #'markdown-insert-pre
+         :desc "New blockquote" "q" #'markdown-insert-blockquote
+         :desc "Strike through" "s" #'markdown-insert-strike-through
+         :desc "Table" "t" #'markdown-insert-table
+         :desc "Wiki link" "w" #'markdown-insert-wiki-link)))
 
 (use-package! evil-markdown
   :when (featurep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
-  :init
-  ;; REVIEW Until Somelauw/evil-markdown#1 is resolved:
-  (defun evil-disable-insert-state-bindings ()
-    evil-disable-insert-state-bindings)
   :config
   (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)
   (map! :map evil-markdown-mode-map

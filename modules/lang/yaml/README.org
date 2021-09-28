@@ -1,0 +1,38 @@
+#+TITLE:   lang/yaml
+#+DATE:    April 23, 2020
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides support for the [[https://yaml.org/][YAML file format]].
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ =+lsp= Enables integration with LSP servers. Requires the =:tools lsp= module to be enabled.
+
+** Plugins
++ [[https://github.com/yoshiki/yaml-mode][yaml-mode]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* TODO Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* TODO Configuration
+# How to configure this module, including common problems and how to address them.
+
+* TODO Troubleshooting
+# Common issues and their solution, or places to look for help.
