@@ -11,12 +11,19 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#using-bidi-mode][Using =+bidi-mode=]]
+  - [[#input-methods][Input Methods]]
+  - [[#fonts][Fonts]]
+  - [[#change-dictionary-language-on-bidi-buffers][Change Dictionary Language On Bidi Buffers]]
+  - [[#automatic-input-mode-switching][Automatic input mode switching]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
 
 This module improves support for bidi (bidirectional text). It should be enabled
-if you regularly write in languages that write right-to-left.
+if you regularly write in languages that write right-to-left. It also provides
+some added configuration instructions in the README, since a lot of it is user
+specific.
 
 ** Maintainers
 + [[https://github.com/iyefrat][@iyefrat]]
@@ -32,10 +39,69 @@ This module provides no plugins.
 This module has no prerequisites.
 
 * Features
-# An in-depth list of features, how to use them, and their dependencies.
+This module provides =+bidi-mode=, a minor mode that improves the display of RTL
+text by right-aligning lines that start with an RTL language, on a per-line
+basis. Since exact use cases vary, turning on this mode is left to the user.
 
 * Configuration
-# How to configure this module, including common problems and how to address them.
+** Using =+bidi-mode=
+=+bidi-mode= is a local minor mode, meaning it has to be turned on a per-buffer
+basis.
+
+If you only need it for specific purposes, e.g. editing LaTeX
+documents, you probably want to enable it through a hook:
+
+#+begin_src emacs-lisp
+(add-hook 'TeX-mode-hook #'+bidi-mode)
+#+end_src
+
+This is also useful for adding specific functionality for when =+bidi-mode= is on.
+
+** Input Methods
+If you need bidi support, it's likely that you want to easily switch between
+English and your favorite RTL language. In order to be able to do this without
+losing access to all of the keybindings require English letters, you should use
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Input-Methods.html][input methods]] to switch languages instead of changing the system keyboard
+language. If you use a non-qwerty layout, you will need extra configuration to
+keep the input method consistent, see [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/dvorak-config.el#L3-L18][here]] for an example for dvorak.
+
+Toggling the input method bound to =C-\=. It prompts you to choose an input
+method the first time you do this in a session, but you bypass this by setting
+the default input method:
+
+#+begin_src emacs-lisp
+(setq default-input-method "hebrew")
+#+end_src
+
+** Fonts
+You may want to set a different font for the characters in your favorite
+RTL language, this is highly recommended in Hebrew since the default font Emacs
+uses is terrible. You can do this by changing the default font for specific
+Unicode blocks. For example:
+
+#+begin_src emacs-lisp
+(set-fontset-font t 'hebrew (font-spec :family "DejaVu Sans"))
+#+end_src
+
+Note that the Unicode block for your language might not have the same name as
+your language, e.g. Urdu characters are under the Arabic Unicode block. See the
+documentation of =set-fontset-font= for more information.
+
+** Change Dictionary Language On Bidi Buffers
+If you are only using =+bidi-mode= in specific buffers, you might want to
+automatically change the dictionary language there. For example:
+
+#+begin_src emacs-lisp
+(add-hook! '+bidi-mode-hook
+  (if +bidi-mode
+      (ispell-change-dictionary "hebrew")
+    (ispell-change-dictionary "default")))
+#+end_src
+
+** Automatic input mode switching
+You may want to Emacs to try and guess when you want it to switch input methods.
+See [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L7-L21][here]] and [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L99-L102][here]] for an example of how to get Emacs to switch to hebrew when
+entering insert mode after a hebrew character, in LaTeX buffers.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.
