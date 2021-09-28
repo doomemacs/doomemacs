@@ -1068,7 +1068,9 @@ compelling reason, so..."
         ;; Resume when clocking into task with open clock
         org-clock-in-resume t
         ;; Remove log if task was clocked for 0:00 (accidental clocking)
-        org-clock-out-remove-zero-time-clocks t)
+        org-clock-out-remove-zero-time-clocks t
+        ;; The default value (5) is too conservative.
+        org-clock-history-length 20)
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
 
