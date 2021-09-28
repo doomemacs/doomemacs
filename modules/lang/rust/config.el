@@ -9,6 +9,7 @@
 
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
+  :hook (rustic-mode . rainbow-delimiters-mode)
   :init
   (after! org-src
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
