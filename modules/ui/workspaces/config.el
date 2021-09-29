@@ -252,6 +252,12 @@ stored in `persp-save-dir'.")
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
    :save-vars '(major-mode default-directory compilation-directory
                 compilation-environment compilation-arguments))
+  ;; magit
+  (persp-def-buffer-save/load
+   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
+   :save-vars '(default-directory)
+   :load-function (fn! ((_ _ vars-list &rest _) &rest _)
+                    (magit-status (alist-get 'default-directory vars-list))))
   ;; Restore indirect buffers
   (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load
