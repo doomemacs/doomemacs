@@ -87,8 +87,12 @@ uses is terrible. You can do this by changing the default font for specific
 Unicode blocks. For example:
 
 #+begin_src emacs-lisp
-(set-fontset-font t 'hebrew (font-spec :family "DejaVu Sans"))
+(add-hook 'after-setting-font-hook
+          (lambda () (set-fontset-font t 'hebrew (font-spec :family "DejaVu Sans"))))
 #+end_src
+
+The hook is needed because otherwise refreshing the font with =SPC h r f= will
+undo =set-fontset-font=.
 
 Note that the Unicode block for your language might not have the same name as
 your language, e.g. Urdu characters are under the Arabic Unicode block. See the
