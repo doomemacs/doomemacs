@@ -6,7 +6,8 @@
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
-Set to `default' to load no theme at all. This is changed by `load-theme'.")
+Set to `nil' to load no theme at all. This variable is changed by
+`load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
