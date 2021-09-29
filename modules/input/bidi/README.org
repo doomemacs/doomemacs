@@ -48,6 +48,13 @@ basis. Since exact use cases vary, turning on this mode is left to the user.
 =+bidi-mode= is a local minor mode, meaning it has to be turned on a per-buffer
 basis.
 
+If you want to have it on for all buffers, use =+bidi-global-mode=:
+
+#+begin_src emacs-lisp
+;; ~/.doom.d/config.el
+(+bidi-global-mode 1)
+#+end_src
+
 If you only need it for specific purposes, e.g. editing LaTeX
 documents, you probably want to enable it through a hook:
 

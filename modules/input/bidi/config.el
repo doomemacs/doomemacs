@@ -21,3 +21,5 @@ easier."
           bidi-paragraph-separate-re nil
           bidi-paragraph-start-re nil
           bidi-inhibit-bpa t)))
+
+(define-globalized-minor-mode +bidi-global-mode +bidi-mode +bidi-mode)
