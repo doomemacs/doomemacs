@@ -306,6 +306,13 @@ config.el instead."
 ;; memory usage, however!
 (setq inhibit-compacting-font-caches t)
 
+;; PGTK builds only: this timeout adds latency to frame operations, like
+;; `make-frame-invisible', which are frequently called without a guard because
+;; it's inexpensive in non-PGTK builds. Lowering the timeout from the default
+;; 0.1 should make childframes and packages that manipulate them (like `lsp-ui',
+;; `company-box', and `posframe') feel much snappier. See emacs-lsp/lsp-ui#613.
+(setq pgtk-wait-for-event-timeout 0.001)
+
 ;; Increase how much is read from processes in a single chunk (default is 4kb).
 ;; This is further increased elsewhere, where needed (like our LSP module).
 (setq read-process-output-max (* 64 1024))  ; 64kb
