@@ -146,12 +146,14 @@
         (fn! (&key body)
           (with-temp-buffer
             (insert body)
-            (catch 'result
-              (let ((bump-re "^\\(?:https?://.+\\|[^/]+\\)/[^/]+@\\([a-z0-9]+\\)"))
-                (while (re-search-backward bump-re nil t)
-                  (when (/= (length (match-string 1)) 12)
-                    (throw 'result (cons 'error (format "Commit hash in %S must be 12 characters long"
-                                                        (match-string 0))))))))))
+            (let ((bump-re "\\<\\(?:https?://[^@]+\\|[^/]+\\)/[^/]+@\\([a-z0-9]+\\)")
+                  refs)
+              (while (re-search-backward bump-re nil t)
+                (when (/= (length (match-string 1)) 12)
+                  (push (match-string 0) refs)))
+              (when refs
+                (cons 'error (format "%d commit hash(s) not 12 characters long: %s"
+                                     (length refs) (string-join (nreverse refs) ", ")))))))
 
         ;; TODO Add bump validations for revert: type.
 
