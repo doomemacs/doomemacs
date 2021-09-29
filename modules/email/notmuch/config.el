@@ -39,6 +39,17 @@ OR a shell command string such as
     'notmuch-company '(company-ispell company-yasnippet))
 
   (set-popup-rule! "^\\*notmuch-hello" :side 'left :size 30 :ttl 0)
+  (set-popup-rule! "^\\*subject:" :size 0.6 :ttl 0)
+
+  (defadvice! +notmuch-search-show-thread-a (fn &rest args)
+    "Give email buffers a sane name so they can be targeted via
+`display-buffer-alist' (and the :ui popup module)."
+    :around #'notmuch-search-show-thread
+    (letf! (defun notmuch-show (thread-id &optional elide-toggle parent-buffer query-context buffer-name)
+             (funcall notmuch-show
+                      thread-id elide-toggle parent-buffer query-context
+                      (format "*subject:%s*" (substring buffer-name 1 -1))))
+      (apply fn args)))
 
   (setq notmuch-fcc-dirs nil
         message-kill-buffer-on-exit t
