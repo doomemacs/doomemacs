@@ -8,6 +8,11 @@
   (setq pyim-page-tooltip t
         default-input-method "pyim")
 
+  (defun +input-method-activate-p ()
+    current-input-method)
+
+  (after! evil-escape
+    (add-to-list 'evil-escape-inhibit-functions #'+input-method-activate-p))
 
   ;; allow vertico/selectrum search with pinyin
   (cond ((featurep! :completion vertico)
