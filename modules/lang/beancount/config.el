@@ -30,22 +30,4 @@
         (:prefix ("i" . "insert")
          "a" #'beancount-insert-account
          "p" #'beancount-insert-prices
-         "d" #'beancount-insert-date))
-
-  (defadvice! +beancount--fix-account-currency-a (account)
-    "Fixes `beancount-electric-currency', which could never find the currency
-for the current account. Also allows it to fall back to the operating_currency."
-    :override #'beancount--account-currency
-    (save-excursion
-      (goto-char (point-min))
-      (when (or (re-search-forward
-                 (concat "^" beancount-date-regexp " +open"
-                         "\\s-+" (regexp-quote account)
-                         "\\s-+\\(" beancount-currency-regexp "\\)\\>")
-                 nil t)
-                (re-search-forward
-                 (concat "^option\\s-+\"operating_currency\"\\s-+\"\\("
-                         beancount-currency-regexp
-                         "\\)\"")
-                 nil t))
-        (match-string-no-properties 1)))))
+         "d" #'beancount-insert-date)))
