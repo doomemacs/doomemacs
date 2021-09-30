@@ -14,6 +14,9 @@
   (after! evil-escape
     (add-to-list 'evil-escape-inhibit-functions #'+input-method-activate-p))
 
+  (after! posframe
+    (setq pyim-page-tooltip 'posframe))
+
   ;; allow vertico/selectrum search with pinyin
   (cond ((featurep! :completion vertico)
          (defadvice! +pinyin-orderless-regexp (orig-fn component)
@@ -25,8 +28,7 @@
                '((t . pyim-cregexp-ivy))))))
 
 (use-package! posframe
-  :after pyim
-  (setq pyim-page-tooltip 'posframe))
+  :when (featurep! +childframe))
 
 (use-package! liberime
   :when (featurep! +rime)
