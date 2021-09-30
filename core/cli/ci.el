@@ -188,7 +188,37 @@
 
         ;; TODO Ensure your diff corraborates your SCOPE
 
-        ))
+        )
+  "A list of validator functions to run against a commit.
+
+Each function is N-arity and is passed a plist with the following keys:
+
+  :bang
+    (Boolean) If `t', the commit is declared to contain a breaking change.
+    e.g. 'refactor!: this commit breaks everything'
+  :body
+    (String) Contains the whole BODY of a commit message. This includes the
+    subject line (the first line) and the footer.
+  :refs
+    (List<String>) Contains a list of reference lines, i.e. All Fix, Ref, Close,
+    or Revert lines with a valid reference (an URL, commit hash, or valid Github
+    issue/PR reference).
+  :scopes
+    (List<Symbol>) Contains a list of scopes, as symbols. e.g. with
+    'feat(org,lsp): so on and so forth', this contains '(org lsp).
+  :subject
+    (String) Contains the whole first line of a commit message.
+  :summary
+    (String) Contains the summary following the type and scopes. e.g. In
+    'feat(org): fix X, Y, and Z' the summary is 'fix X, Y, and Z.
+  :type
+    (Symbol) The type of commit this is. E.g. `feat', `fix', `bump', etc.
+
+Each function should return nothing if there was no error, otherwise return a
+cons cell whose CAR is the type of incident as a symbol (one of `error' or
+`warn') and whose CDR is an explanation (string) for the result.
+
+Note: warnings are not considered failures.")
 
 (defun doom-cli--ci-hook-commit-msg (file)
   (with-temp-buffer
