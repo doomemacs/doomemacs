@@ -264,8 +264,8 @@
              (when (looking-at "^\\([a-zA-Z0-9_-]+\\)\\(!?\\)\\(?:(\\([^)]+\\))\\)?: \\([^\n]+\\)")
                (setq type (intern (match-string 1))
                      bang (equal (match-string 2) "!")
-                     scopes (ignore-errors (split-string (match-string 3) ","))
-                     summary (match-string 4)))))
+                     summary (match-string 4)
+                     scopes (ignore-errors (split-string (match-string 3) ","))))))
          (unless (string-match-p "^\\(?:\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
            (dolist (fn doom-cli-commit-rules)
              (pcase (funcall fn
