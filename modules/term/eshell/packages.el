@@ -8,6 +8,9 @@
 (package! eshell-did-you-mean :pin "80cd8c4b186a2fb29621cf634bcf2bcd914f1e3d")
 (package! eshell-syntax-highlighting :pin "8e3a685fc6d97af79e1046e5b24385786d8e92f6")
 
+(when (featurep! +with-editor)
+  (package! with-editor :pin "cfcbc2731e402b9169c0dc03e89b5b57aa988502"))
+
 (unless IS-WINDOWS
   (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
   (package! bash-completion :pin "c5eaeed156ab906190c662d491269230967104b1"))

@@ -125,6 +125,12 @@ You should use `set-eshell-alias!' to change this.")
                   +eshell-aliases))))
 
 
+(when (featurep! +with-editor)
+  (add-hook! 'eshell-mode-hook
+             #'with-editor-export-editor
+             #'with-editor-export-git-editor))
+
+
 (after! esh-mode
   (map! :map eshell-mode-map
         :n  "RET"    #'+eshell/goto-end-of-prompt

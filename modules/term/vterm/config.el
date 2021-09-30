@@ -29,3 +29,8 @@
     confirm-kill-processes nil
     ;; Prevent premature horizontal scrolling
     hscroll-margin 0))
+
+(when (featurep! +with-editor)
+  (add-hook! 'vterm-mode-hook
+             #'with-editor-export-editor
+             #'with-editor-export-git-editor))
