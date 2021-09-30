@@ -24,6 +24,10 @@
          (setq ivy-re-builders-alist
                '((t . pyim-cregexp-ivy))))))
 
+(use-package! posframe
+  :after pyim
+  (setq pyim-page-tooltip 'posframe))
+
 (use-package! liberime
   :when (featurep! +rime)
   :init

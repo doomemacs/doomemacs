@@ -7,3 +7,5 @@
 (package! pangu-spacing :pin "f92898949ba3bf991fd229416f3bbb54e9c6c223")
 (when (featurep! +rime)
   (package! liberime :pin "8291e22cd0990a99cb2f88ca67a9065a157f39af"))
+(when (featurep! +childframe)
+  (package! posframe))
