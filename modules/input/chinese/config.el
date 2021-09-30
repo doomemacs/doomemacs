@@ -8,6 +8,18 @@
   (setq pyim-page-tooltip t
         default-input-method "pyim"))
 
+(use-package! liberime
+  :when (featurep! +rime)
+  :init
+  (setq liberime-auto-build t)
+  (setq liberime-user-data-dir (expand-file-name "rime" doom-cache-dir)))
+
+(use-package! pyim-liberime
+  :when (featurep! +rime)
+  :after liberime
+  :config
+  (setq pyim-default-scheme 'rime))
+
 
 (use-package! pangu-spacing
   :hook (text-mode . pangu-spacing-mode)
