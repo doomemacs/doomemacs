@@ -1,31 +1,11 @@
 ;;; tools/pass/autoload/pass.el -*- lexical-binding: t; -*-
 
-(defun +pass--open-url (entry)
-  (if-let* ((url (+pass-get-field entry +pass-url-fields)))
-      (and (or (string-match-p "https?://" url)
-               (error "Field for %s doesn't look like an url" item))
-           (browse-url url))
-    (error "url not found.")))
-
-(defun +pass--copy (entry field text)
-  (password-store-clear)
-  (message "Copied %s's %s field to clipboard. Will clear in %s seconds"
-           entry field (password-store-timeout))
-  (kill-new text)
-  (setq password-store-timeout-timer
-        (run-at-time (password-store-timeout) nil 'password-store-clear)))
-
 (defun +pass--copy-username (entry)
   (if-let* ((user (+pass-get-field entry +pass-user-fields)))
       (progn (password-store-clear)
              (message "Copied username to the kill ring.")
              (kill-new user))
     (error "Username not found.")))
-
-(defun +pass--completing-read-field (entry)
-  (let* ((data (+pass-get-entry entry))
-         (field (if data (completing-read "Field: " (mapcar #'car data) nil t))))
-    (+pass-get-field data field)))
 
 
 ;;
@@ -67,29 +47,13 @@ search of your username. May prompt for your gpg passphrase."
 ;;;###autoload (autoload 'password-store--completing-read "password-store")
 
 ;;;###autoload
-(defun +pass/edit-entry (entry)
-  "Interactively search for and open a pass entry for editing."
-  (interactive
-   (list (password-store--completing-read)))
-  (find-file (concat (expand-file-name entry (password-store-dir)) ".gpg")))
+(define-obsolete-function-alias '+pass/edit-entry #'password-store-edit "21.12")
 
 ;;;###autoload
-(defun +pass/copy-field (entry)
-  "Interactively search for an entry and copy a particular field to your
-clipboard."
-  (interactive
-   (list (password-store--completing-read)))
-  (let* ((data (+pass-get-entry entry))
-         (field (if data (completing-read "Field: " (mapcar #'car data) nil t))))
-    (+pass--copy entry field (+pass-get-field data field))))
+(define-obsolete-function-alias '+pass/copy-field #'password-store-copy-field "21.12")
 
 ;;;###autoload
-(defun +pass/copy-secret (entry)
-  "Interactively search for an entry and copy its secret/password to your
-clipboard."
-  (interactive
-   (list (password-store--completing-read)))
-  (+pass--copy entry 'secret (+pass-get-secret entry)))
+(define-obsolete-function-alias '+pass/copy-secret #'password-store-copy "21.12")
 
 ;;;###autoload
 (defun +pass/copy-user (entry)
@@ -100,9 +64,4 @@ fields in `+pass-user-fields' is used to find the login field."
   (+pass--copy-username entry))
 
 ;;;###autoload
-(defun +pass/browse-url (entry)
-  "Interactively search for an entry and open its url in your browser. The
-fields in `+pass-url-fields' is used to find the url field."
-  (interactive
-   (list (password-store--completing-read)))
-  (+pass--open-url entry))
+(define-obsolete-function-alias '+pass/browse-url #'password-store-url "21.12")
