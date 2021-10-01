@@ -1,3 +1,8 @@
+> :warning: **Doom Emacs won't be participating in Hacktoberfest 2021.** I'm not
+> in the best of health, my hands are already full with its current PR load, and
+> large sections of the project are undergoing a rewrite where I'm not accepting
+> PRs, such as our docs (a popular target for hacktoberfesters) and CLI.
+
 <div align="center">
 
 # Doom Emacs
