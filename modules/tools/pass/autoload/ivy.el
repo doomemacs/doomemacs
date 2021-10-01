@@ -3,7 +3,7 @@
 
 ;;;###autoload
 (defun +pass/ivy (arg)
-  "TODO"
+  "Complete and act on password store entries."
   (interactive "P")
   (ivy-read "Pass: " (password-store-list)
             :action (if arg
@@ -15,7 +15,7 @@
   (ivy-add-actions
    '+pass/ivy
    '(("o" password-store-copy "copy password")
-     ("e" +pass/edit-entry "edit entry")
+     ("e" password-store-edit "edit entry")
      ("u" +pass/copy-user "copy username")
-     ("b" +pass/copy-url "open url in browser")
-     ("f" +pass/copy-field "get field"))))
+     ("b" password-store-url "open url in browser")
+     ("f" password-store-copy-field "get field"))))
