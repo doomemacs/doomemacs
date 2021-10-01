@@ -115,6 +115,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "1b8f2627cd63ac21b84c5abe3d5b607bc778670a"))
+    :pin "f0357fa7449cc8baecee588dab7dcf9ea243f3b4"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
