@@ -374,9 +374,9 @@ Ugh, such an ugly hack."
           which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
           which-key-custom-show-popup-function
           (lambda (act-popup-dim)
-            (letf! ((defun display-buffer-in-side-window (buffer alist)
-                      (+popup-display-buffer-stacked-side-window-fn
-                       buffer (append '((vslot . -9999)) alist))))
+            (letf! (defun display-buffer-in-side-window (buffer alist)
+                     (+popup-display-buffer-stacked-side-window-fn
+                      buffer (append '((vslot . -9999) (select . t)) alist)))
               ;; HACK Fix #2219 where the which-key popup would get cut off.
               (setcar act-popup-dim (1+ (car act-popup-dim)))
               (which-key--show-buffer-side-window act-popup-dim))))))
