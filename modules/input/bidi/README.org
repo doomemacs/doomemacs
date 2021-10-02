@@ -81,22 +81,27 @@ the default input method:
 #+end_src
 
 ** Fonts
-You may want to set a different font for the characters in your favorite
-RTL language, this is highly recommended in Hebrew since the default font Emacs
-uses is terrible. You can do this by changing the default font for specific
-Unicode blocks. For example:
+Many good English fonts do not have great coverage for RTL languages, especially
+for Hebrew and monospace fonts. To this end, we provide ~+bidi-hebrew-font~ and
+~+bidi-arabic-font~ as an easy way to override the default fonts but only for
+Hebrew and Arabic characters. They are set by default to =DejaVu Sans=, since
+it has pretty decent looking Hebrew and Arabic characters.
+
+Note, that if you are writing in an Arabic-derived script, such as Persian,
+Urdu, or Pashto, you may want to change ~+bidi-arabic-font~ to one specific to
+your language, especially if you want your script to be written in the Nastaliq
+style.
+
+If you use an RTL language the script of which isn't covered by the =hebrew= or
+=arabic= unicode blocks, you can set a font override manually. For example:
 
 #+begin_src emacs-lisp
 (add-hook 'after-setting-font-hook
-          (lambda () (set-fontset-font t 'hebrew (font-spec :family "DejaVu Sans"))))
+          (lambda () (set-fontset-font t 'syriac (font-spec :family "DejaVu Sans"))))
 #+end_src
 
-The hook is needed because otherwise refreshing the font with =SPC h r f= will
-undo =set-fontset-font=.
-
-Note that the Unicode block for your language might not have the same name as
-your language, e.g. Urdu characters are under the Arabic Unicode block. See the
-documentation of =set-fontset-font= for more information.
+Make sure to use the correct unicode block name, see the documentation of
+~set-fontset-font~ for more details.
 
 ** Change Dictionary Language On Bidi Buffers
 If you are only using =+bidi-mode= in specific buffers, you might want to
