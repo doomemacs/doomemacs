@@ -186,7 +186,8 @@ instead is more sensible."
 
   (setq lsp-ui-peek-enable (featurep! +peek)
         lsp-ui-doc-max-height 8
-        lsp-ui-doc-max-width 35
+        lsp-ui-doc-max-width 72         ; 150 (default) is too wide
+        lsp-ui-doc-delay 0.75           ; 0.2 (default) is too naggy
         lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
         lsp-ui-doc-position 'at-point
         lsp-ui-sideline-ignore-duplicate t
