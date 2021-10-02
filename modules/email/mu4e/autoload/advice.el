@@ -39,9 +39,9 @@ clicked."
   "For a given IMG-URI, use imagemagick to find its width."
   (if +org-msg-currently-exporting
       (when (and (not IS-WINDOWS)) ; relies on posix path
-        (let ((with-call (and (executable-find "identify")
-                              (doom-call-process "identify" "-format" "%w"
-                                                 (substring img-uri 7))))) ; 7=(length "file://")
+        (let ((width-call (and (executable-find "identify")
+                               (doom-call-process "identify" "-format" "%w"
+                                                  (substring img-uri 7))))) ; 7=(length "file://")
           (unless width-call
             (setq width-call (doom-call-process "file" (substring img-uri 7)))
             (setcdr width-call (replace-regexp-in-string "^.*image data, \\([0-9]+\\).*$" "\\1" (cdr width-call)))
@@ -74,14 +74,14 @@ account for the value of :scale in `org-format-latex-options'."
         (let ((formula-link
                (org-html-format-latex latex-frag processing-type info)))
           (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
-            (let ((source (org-export-file-uri (match-string 1 formula-link)))
-                  (attributes (append (list :alt latex-frag
-                                            :class
-                                            (concat "latex-fragment-"
-                                                    (if (equal "\\(" (substring latex-frag 0 2))
-                                                        "inline" "block")))
-                                      (when (memq processing-type '(dvipng convert))
-                                        (+org-msg-img-scale-css source)))))
+            (let* ((source (org-export-file-uri (match-string 1 formula-link)))
+                   (attributes (append (list :alt latex-frag
+                                             :class
+                                             (concat "latex-fragment-"
+                                                     (if (equal "\\(" (substring latex-frag 0 2))
+                                                         "inline" "block")))
+                                       (when (memq processing-type '(dvipng convert))
+                                         (+org-msg-img-scale-css source)))))
               (org-html--format-image source attributes info)))))
        (t latex-frag))))
 
