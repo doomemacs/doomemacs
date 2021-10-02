@@ -5,9 +5,9 @@
 
   - [ ] It targets the develop branch
   - [ ] No other pull requests exist for this issue
-  - [ ] The issue is NOT in Doom's do-not-PR list: https://doomemacs.org/d/do-not-pr
+  - [ ] The issue is NOT in Doom's do-not-PR list: https://discourse.doomemacs.org/t/development-roadmap/42
   - [ ] Any relevant issues and PRs have been linked to
-  - [ ] Commit messages conform to our conventions: https://doomemacs.org/d/how2commit
+  - [ ] Commit messages conform to our conventions: https://discourse.doomemacs.org/t/how-to-contribute/44
 
 -->
 
