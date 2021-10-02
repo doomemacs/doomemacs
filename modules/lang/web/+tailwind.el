@@ -7,4 +7,5 @@
   (setq lsp-tailwindcss-add-on-mode t
         lsp-tailwindcss-emmet-completions (featurep 'emmet-mode))
   :config
+  (delq! 'typescript-mode lsp-tailwindcss-major-modes)
   (add-to-list 'lsp-tailwindcss-major-modes 'typescript-tsx-mode))
