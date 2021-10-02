@@ -231,8 +231,8 @@ See the [[https://github.com/BurntSushi/ripgrep#building][ripgrep documentation]
 Everything you need is in Gentoo's official =::gentoo= repository.
 
 ***** Emacs
-To use Emacs graphically, enable the =gui= USE flag. And enable the =xft= USE flag to render fonts correctly (see
-[[https://github.com/hlissner/doom-emacs/issues/4876][issue #4876]])
+To use Emacs graphically, enable the =gui= USE flag. And enable the =xft= USE flag
+to render fonts correctly (see [[https://github.com/hlissner/doom-emacs/issues/4876][issue #4876]])
 #+begin_src sh
 echo "app-editors/emacs gui xft" >> /etc/portage/package.use/emacs
 #+end_src
@@ -242,21 +242,25 @@ To install the latest unmasked version compatible with Doom:
 emerge '>=app-editors/emacs-27.0'
 #+end_src
 
-Or, for GCCEmacs/Native Compilation, use the live ebuild for version 28.0 with the =jit= USE flag:
+****** GCCEmacs/Native Compilation
+For native compilation, you'll need an ebuild for version 28 or greater, because
+only they provide the =jit= USE flag.
 
-Unmask the desired ebuild by adding the following to =package.accept_keywords=:
+At this moment the Emacs 28 and 29 packages are "live", so you'll need to accept
+all keywords to install them. So unmask the desired ebuild(s) by adding the
+following to =package.accept_keywords=:
 #+begin_src
-=app-editors/emacs-28.0.9999 **
+>=app-editors/emacs-28 **
 #+end_src
 
 Add the =jit= USE flag to =package.use=:
 #+begin_src
-=app-editors/emacs-28.0.9999 jit
+app-editors/emacs jit
 #+end_src
 
 And emerge:
 #+begin_src sh
-emerge =app-editors/emacs-28.0.9999
+emerge '>=app-editors/emacs-28'
 #+end_src
 
 ***** Other Dependencies
