@@ -2,6 +2,7 @@
 
 (load! "+html")
 (load! "+css")
+(load! "+tailwind")
 
 
 (use-package! emmet-mode

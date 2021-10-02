@@ -14,6 +14,10 @@
 (package! css-mode :built-in t)
 (package! less-css-mode :built-in t :pin "c7fa3d56d83206b28657f2e56439dc62280a2bf2")
 
+;; LSP
+(when (and (featurep! +lsp) (featurep! +tailwind))
+  (package! lsp-tailwindcss :pin "bfcae3f53a500b712f503f5a16d25502a480a892"))
+
 (package! sass-mode :pin "247a0d4b509f10b28e4687cd8763492bca03599b")
 (package! stylus-mode :pin "111460b056838854e470a6383041a99f843b93ee")
 (package! sws-mode :pin "111460b056838854e470a6383041a99f843b93ee")
