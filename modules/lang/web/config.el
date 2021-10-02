@@ -2,7 +2,8 @@
 
 (load! "+html")
 (load! "+css")
-(load! "+tailwind")
+(when (featurep! +tailwind)
+  (load! "+tailwind"))
 
 
 (use-package! emmet-mode
