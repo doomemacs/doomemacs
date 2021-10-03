@@ -394,10 +394,11 @@ choco install fd llvm
 #+END_SRC
 
 Scoop will work too, but because Emacs is a GUI application you'll need to
-enable the 'extras' Scoop bucket:
+enable the 'extras' Scoop bucket, and =scoop bucket add= requires git:
 #+BEGIN_SRC sh
+scoop install git
 scoop bucket add extras
-scoop install git emacs ripgrep
+scoop install emacs ripgrep
 # Optional dependencies
 scoop install fd llvm
 #+END_SRC
