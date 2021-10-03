@@ -351,6 +351,13 @@ declaration) or dependency thereof that hasn't already been."
            (doom--compile-site-packages)
            (doom--wait-for-compile-jobs)
            (doom--write-missing-eln-errors)
+           ;; HACK Every time you save a file in a package that straight tracks,
+           ;;      it is recorded in ~/.emacs.d/.local/straight/modified/.
+           ;;      Typically, straight will clean these up after rebuilding, but
+           ;;      Doom's use-case circumnavigates that, leaving these files
+           ;;      there and causing a rebuild of those packages each time `doom
+           ;;      sync' or similar is run, so we clean it up ourselves:
+           (delete-directory (straight--modified-dir) 'recursive)
            (print! (success "\033[KRebuilt %d package(s)") (length built)))
        (print! (info "No packages need rebuilding"))
        nil))))
