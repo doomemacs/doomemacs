@@ -924,6 +924,7 @@ between the two."
         (:prefix ("s" . "tree/subtree")
          "a" #'org-toggle-archive-tag
          "b" #'org-tree-to-indirect-buffer
+         "c" #'org-clone-subtree-with-time-shift
          "d" #'org-cut-subtree
          "h" #'org-promote-subtree
          "j" #'org-move-subtree-down
