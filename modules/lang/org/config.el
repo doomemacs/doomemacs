@@ -308,7 +308,9 @@ Also adds support for a `:sync' parameter to override `:async'."
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
   (after! python
-    (setq org-babel-python-command python-shell-interpreter))
+    (unless org-babel-python-command
+      (setq org-babel-python-command
+            (concat python-shell-interpreter " " python-shell-interpreter-args))))
 
   (after! ob-ditaa
     ;; TODO Should be fixed upstream
@@ -1208,6 +1210,7 @@ compelling reason, so..."
   (defvar org-directory nil)
   (defvar org-id-locations-file nil)
   (defvar org-attach-id-dir nil)
+  (defvar org-babel-python-command nil)
 
   (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
