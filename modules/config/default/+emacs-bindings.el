@@ -613,13 +613,17 @@
       ;;; smartparens
       (:after smartparens
         :map smartparens-mode-map
-        "C-M-a"     #'sp-beginning-of-sexp
-        "C-M-e"     #'sp-end-of-sexp
-        "C-M-f"     #'sp-forward-sexp
-        "C-M-b"     #'sp-backward-sexp
-        "C-M-d"     #'sp-splice-sexp
-        "C-M-k"     #'sp-kill-sexp
-        "C-M-t"     #'sp-transpose-sexp)
+        "C-M-a"           #'sp-beginning-of-sexp
+        "C-M-e"           #'sp-end-of-sexp
+        "C-M-f"           #'sp-forward-sexp
+        "C-M-b"           #'sp-backward-sexp
+        "C-M-n"           #'sp-next-sexp
+        "C-M-p"           #'sp-previous-sexp
+        "C-M-u"           #'sp-up-sexp
+        "C-M-d"           #'sp-down-sexp
+        "C-M-k"           #'sp-kill-sexp
+        "C-M-t"           #'sp-transpose-sexp
+        "C-M-<backspace>" #'sp-splice-sexp)
 
       ;;; treemacs
       (:when (featurep! :ui treemacs)
