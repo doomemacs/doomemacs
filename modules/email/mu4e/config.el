@@ -616,6 +616,19 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
   (mu4e-alert-enable-mode-line-display)
   (mu4e-alert-enable-notifications)
 
+  (when (version<= "1.6" mu4e-mu-version)
+    (defadvice! +mu4e-alert-filter-repeated-mails-fixed-a (mails)
+      "Filters the MAILS that have been seen already\nUses :message-id not :docid."
+      :override #'mu4e-alert-filter-repeated-mails
+      (cl-remove-if (lambda (mail)
+                      (prog1 (and (not mu4e-alert-notify-repeated-mails)
+                                  (ht-get mu4e-alert-repeated-mails
+                                          (plist-get mail :message-id)))
+                        (ht-set! mu4e-alert-repeated-mails
+                                 (plist-get mail :message-id)
+                                 t)))
+                    mails)))
+
   (when IS-LINUX
     (mu4e-alert-set-default-style 'libnotify)
 
@@ -628,7 +641,7 @@ Disabled when set to nil.")
       "Default function to format MAIL-GROUP for notification.
 ALL-MAILS are the all the unread emails"
       (when +mu4e-alert-bell-cmd
-        (start-process (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd)))
+        (start-process "mu4e-alert-bell" nil (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd)))
       (if (> (length mail-group) 1)
           (let* ((mail-count (length mail-group))
                  (first-mail (car mail-group))
@@ -652,7 +665,8 @@ ALL-MAILS are the all the unread emails"
                                                    ((string-match-p "\\`Fwd:"
                                                                     (plist-get mail :subject)) " ⮯ ")
                                                    (t "  "))
-                                                  (truncate-string-to-width (caar (plist-get mail :from))
+                                                  (truncate-string-to-width (or (caar (plist-get mail :from))
+                                                                                (cdar (plist-get mail :from)))
                                                                             20 nil nil t)
                                                   (truncate-string-to-width
                                                    (replace-regexp-in-string "\\`Re: \\|\\`Fwd: " ""
