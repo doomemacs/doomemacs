@@ -86,6 +86,7 @@ purpose.")
     ((help-p        ["-h" "--help"]  "Same as help command")
      (auto-accept-p ["-y" "--yes"]   "Auto-accept all confirmation prompts")
      (debug-p       ["-d" "--debug"] "Enables on verbose output")
+     (loadfile      ["-l" "--load" file] "Load an elisp FILE before executing any commands")
      (doomdir       ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
      (localdir      ["--localdir" dir] "Use DIR as your local storage directory")
      (nocolor       ["-C" "--nocolor"] "Disable colored output")
@@ -125,9 +126,8 @@ Environment variables:
               (setenv "YES" auto-accept-p)
               (print! (info "Confirmations auto-accept enabled")))
             (throw 'exit "__DOOMRESTART=1 $@"))
-          ;; TODO Rotate logs out, instead of overwriting them?
-          (delete-file doom-cli-log-file)
-          (delete-file doom-cli-log-error-file)
+          (when loadfile
+            (load (doom-path loadfile) nil t t))
           (when help-p
             (when command
               (push command args))
