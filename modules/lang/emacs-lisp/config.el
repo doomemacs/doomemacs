@@ -26,26 +26,6 @@ employed so that flycheck still does *some* helpful linting.")
 
 (use-package! elisp-mode
   :mode ("\\.Cask\\'" . emacs-lisp-mode)
-  :init
-  ;; Instead of pestering the user about accepting unsafe file local variables,
-  ;; I'd rather it quietly ignore them...
-  (setq-default enable-local-variables :safe)
-  ;; ...but still log them, so we can discover them if we're looking for it.
-  (defadvice! +emacs-lisp-log-unsafe-local-variables-a (variables dir-name)
-    :before #'hack-local-variables-filter
-    (when (eq enable-local-variables :safe)
-      (pcase-dolist (`(,var . ,val) variables)
-        (cond ((memq var ignored-local-variables))
-              ((memq var '(mode unibyte coding)))
-              ((eq var 'eval)
-               (and enable-local-eval
-                    (not (or (hack-one-local-variable-eval-safep val)
-                             (safe-local-variable-p var val)))
-                    (message "Ignoring unsafe form in file local variable: %S" val)))
-              ((not (safe-local-variable-p var val))
-               (message "Ignoring unsafe file local variable: %S" var))
-              ((get var 'risky-local-variable)
-               (message "Ignoring risky file local variable: %S" var))))))
   :config
   (set-repl-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp/open-repl)
   (set-eval-handler! '(emacs-lisp-mode lisp-interaction-mode) #'+emacs-lisp-eval)
