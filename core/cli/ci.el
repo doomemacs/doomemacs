@@ -62,8 +62,9 @@
                     (string-blank-p summary))
             (cons 'error "Commit has no summary")))
 
-        (fn! (&key summary subject)
-          (and (stringp summary)
+        (fn! (&key type summary subject)
+          (and (not (eq type 'revert))
+               (stringp summary)
                (string-match-p "^[A-Z][^-]" summary)
                (not (string-match-p "\\(SPC\\|TAB\\|ESC\\|LFD\\|DEL\\|RET\\)" summary))
                (cons 'error (format "%S in summary is capitalized; do not capitalize the summary"
