@@ -1,25 +1,55 @@
 #+TITLE:   editor/parinfer
 #+DATE:    June 9, 2018
 #+SINCE:   v2.1
-#+STARTUP: inlineimages
+#+STARTUP: inlineimages nofold
 
-* Table of Contents :TOC:
+* Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
-  - [[#packages][Packages]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#keybindings][Keybindings]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
-Parinfer is a proof-of-concept editor mode for Lisp programming languages. It
-will infer some changes to keep Parens and Indentation inline with one another.
 
-https://raw.githubusercontent.com/DogLooksGood/parinfer-mode/a7c041454e05ec2b88333a73e72debaa671ed596/images/demo.gif
+Parinfer is a minor mode that aids the writing of Lisp code. It automatically
+infers parenthesis matching and indentation alignment, keeping your code
+balanced and beautiful.
 
-More information can be found about it [[https://shaunlebron.github.io/parinfer/][in the project's documentation]].
+Note that the original =parinfer-mode= has been deprecated and superceded by
+=parinfer-rust-mode=, which has much better performance.
+
+** Maintainers
+
+This module has no dedicated maintainers.
 
 ** Module Flags
-+ =+rust= Use [[github:justinbarclay/parinfer-rust-mode][parinfer-rust-mode]] instead of the now deprecated [[github:DogLooksGood/parinfer-mode][parinfer-mode]].
-  This depends on Emacs being compiled with the option `--with-modules`. The
-  pre-built library is only available for Linux, Windows and MacOS.
 
-** Packages
-+ [[https://github.com/DogLooksGood/parinfer-mode][parinfer]]
+This module provides no flags.
+
+** Plugins
+
++ [[https://github.com/justinbarclay/parinfer-rust-mode][parinfer-rust-mode]]
+
+* Prerequisites
+
+This module has no prerequisites.
+
+* Features
+
+** Keybindings
+
+| Binding           | Description                               |
+|-------------------+-------------------------------------------|
+| ~<localleader> m p~ | Toggle between different inference modes. |
+| ~<localleader> m P~ | Temporarily disable parinfer.             |
+
+* Configuration
+# How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
