@@ -112,6 +112,7 @@ variable for an explanation of the defaults (in comments). See
       debug
       devdocs
       dictionary
+      diff-hl
       diff-mode
       dired
       dired-sidebar
@@ -244,6 +245,7 @@ variable for an explanation of the defaults (in comments). See
       woman
       xref
       xwidget
+      yaml-mode
       youtube-dl
       zmusic
       (ztree ztree-diff)))
