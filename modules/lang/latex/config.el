@@ -102,11 +102,15 @@ If no viewers are found, `latex-preview-pane' is used.")
                #'lsp!))
   (map! :localleader
         :map latex-mode-map
-        :desc "View" "v" #'TeX-view)
+        :desc "View"          "v" #'TeX-view
+        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Run a command" "m" #'TeX-command-master)
   (map! :after latex
-        :map LaTeX-mode-map
         :localleader
-        :desc "View" "v" #'TeX-view))
+        :map LaTeX-mode-map
+        :desc "View"          "v" #'TeX-view
+        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Run a command" "m" #'TeX-command-master))
 
 
 (use-package! tex-fold
