@@ -4,11 +4,10 @@
   :when (and (featurep! +lsp) (featurep! +tailwind))
   :after lsp-mode
   :init
-  (setq lsp-tailwindcss-add-on-mode t
-        lsp-tailwindcss-emmet-completions (featurep 'emmet-mode))
+  (setq lsp-tailwindcss-add-on-mode t)
   :config
-  (delq! 'typescript-mode lsp-tailwindcss-major-modes)
-  (add-to-list 'lsp-tailwindcss-major-modes 'typescript-tsx-mode))
+  (setq lsp-tailwindcss-major-modes '(web-mode css-mode rjsx-mode typescript-tsx-mode)
+        lsp-tailwindcss-emmet-completions (featurep 'emmet-mode)))
 
 (set-docsets! '(web-mode css-mode rjsx-mode typescript-tsx-mode)
   :add "Tailwind_CSS")
