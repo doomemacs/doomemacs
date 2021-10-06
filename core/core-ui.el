@@ -603,7 +603,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                 ((signal 'wrong-type-argument
                          (list '(fontp stringp) doom-font)))))
     (when reload
-      (set-frame-font doom-font t)))
+      (set-frame-font doom-font t t)))
    ((display-graphic-p)
     (setq font-use-system-font t)))
   ;; Give users a chance to inject their own font logic.
