@@ -34,19 +34,22 @@ select buffers.")
 ;;
 ;;; Bootstrap
 
+(add-to-list 'doom-debug-variables 'format-all-debug)
+
 (defun +format-enable-on-save-maybe-h ()
   "Enable formatting on save in certain major modes.
 
 This is controlled by `+format-on-save-enabled-modes'."
-  (cond ((eq major-mode 'fundamental-mode))
-        ((string-prefix-p " " (buffer-name)))
-        ((booleanp +format-on-save-enabled-modes)
-         +format-on-save-enabled-modes)
-        ((if (eq (car-safe +format-on-save-enabled-modes) 'not)
-             (memq major-mode (cdr +format-on-save-enabled-modes))
-           (not (memq major-mode +format-on-save-enabled-modes))))
-        ((not (require 'format-all nil t)))
-        ((format-all-mode +1))))
+  (or (cond ((eq major-mode 'fundamental-mode))
+            ((string-prefix-p " " (buffer-name)))
+            ((and (booleanp +format-on-save-enabled-modes)
+                  (not +format-on-save-enabled-modes)))
+            ((and (listp +format-on-save-enabled-modes)
+                  (if (eq (car +format-on-save-enabled-modes) 'not)
+                      (memq major-mode (cdr +format-on-save-enabled-modes))
+                    (not (memq major-mode +format-on-save-enabled-modes)))))
+            ((not (require 'format-all nil t))))
+      (format-all-mode +1)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
