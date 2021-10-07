@@ -9,7 +9,11 @@
         ;; and this highlights the entire sub tree in your code
         tree-sitter-debug-highlight-jump-region t))
 
-(add-hook! 'tree-sitter-after-on-hook (require 'tree-sitter-langs))
+(if (daemonp) ;; eager load when in daemon as its start time is easily consumed
+    (require 'tree-sitter-langs)
+  (add-hook! 'tree-sitter-after-on-hook
+    (require 'tree-sitter-langs)))
+
 
 (when (featurep! :editor evil +everywhere)
   (use-package! evil-textobj-tree-sitter
@@ -32,4 +36,3 @@
 
      :textobj "l" nil nil
      :textobj "l" (evil-textobj-tree-sitter-get-textobj "loop.inner") (evil-textobj-tree-sitter-get-textobj "loop.outer"))))
-
