@@ -522,7 +522,7 @@ This macro accepts, in order:
      thereof, a list of `defun's, or body forms (implicitly wrapped in a
      lambda).
 
-\(fn HOOKS [:append :local] FUNCTIONS)"
+\(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)"
   (declare (indent (lambda (indent-point state)
                      (goto-char indent-point)
                      (when (looking-at-p "\\s-*(")
@@ -531,43 +531,31 @@ This macro accepts, in order:
   (let* ((hook-forms (doom--resolve-hook-forms hooks))
          (func-forms ())
          (defn-forms ())
-         append-p
-         local-p
-         remove-p
-         depth
-         forms)
+         append-p local-p remove-p depth)
     (while (keywordp (car rest))
       (pcase (pop rest)
         (:append (setq append-p t))
         (:depth  (setq depth (pop rest)))
         (:local  (setq local-p t))
         (:remove (setq remove-p t))))
-    (let ((first (car-safe (car rest))))
-      (cond ((null first)
-             (setq func-forms rest))
-
-            ((eq first 'defun)
-             (setq func-forms (mapcar #'cadr rest)
-                   defn-forms rest))
-
-            ((memq first '(quote function))
-             (setq func-forms
-                   (if (cdr rest)
-                       (mapcar #'doom-unquote rest)
-                     (doom-enlist (doom-unquote (car rest))))))
-
-            ((setq func-forms (list `(lambda (&rest _) ,@rest)))))
-      (dolist (hook hook-forms)
-        (dolist (func func-forms)
-          (push (if remove-p
-                    `(remove-hook ',hook #',func ,local-p)
-                  `(add-hook ',hook #',func ,(or depth append-p) ,local-p))
-                forms)))
-      (macroexp-progn
-       (append defn-forms
-               (if append-p
-                   (nreverse forms)
-                 forms))))))
+    (while rest
+      (let* ((next (pop rest))
+             (first (car-safe next)))
+        (push (cond ((memq first '(quote function nil))
+                     next)
+                    ((memq first '(defun cl-defun))
+                     (push next defn-forms)
+                     (list 'function (cadr next)))
+                    ((prog1 `(lambda (&rest _) ,@(cons next rest))
+                       (setq rest nil))))
+              func-forms)))
+    `(progn
+       ,@defn-forms
+       (dolist (hook (nreverse ',hook-forms))
+         (dolist (func (list ,@func-forms))
+           ,(if remove-p
+                `(remove-hook hook func ,local-p)
+              `(add-hook hook func ,(or depth append-p) ,local-p)))))))
 
 (defmacro remove-hook! (hooks &rest rest)
   "A convenience macro for removing N functions from M hooks.
