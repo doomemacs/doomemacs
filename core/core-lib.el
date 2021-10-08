@@ -1,5 +1,8 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
+(require 'cl-lib)
+
+
 ;;
 ;;; Helpers
 
@@ -111,6 +114,87 @@ at the values with which this function was called."
              if (keymapp keymap)
              if (lookup-key keymap keys)
              return it)))
+
+(defun doom-load-envvars-file (file &optional noerror)
+  "Read and set envvars from FILE.
+If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
+unreadable. Returns the names of envvars that were changed."
+  (if (null (file-exists-p file))
+      (unless noerror
+        (signal 'file-error (list "No envvar file exists" file)))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (when-let (env (read (current-buffer)))
+        (setq-default
+         process-environment
+         (append env (default-value 'process-environment))
+         exec-path
+         (append (split-string (getenv "PATH") path-separator t)
+                 (list exec-directory))
+         shell-file-name
+         (or (getenv "SHELL")
+             (default-value 'shell-file-name)))
+        env))))
+
+(defun doom-run-hook (hook)
+  "Run HOOK (a hook function) with better error handling.
+Meant to be used with `run-hook-wrapped'."
+  (condition-case-unless-debug e
+      (funcall hook)
+    (error
+     (signal 'doom-hook-error (list hook e))))
+  ;; return nil so `run-hook-wrapped' won't short circuit
+  nil)
+
+(defun doom-run-hooks (&rest hooks)
+  "Run HOOKS (a list of hook variable symbols) with better error handling.
+Is used as advice to replace `run-hooks'."
+  (dolist (hook hooks)
+    (condition-case-unless-debug e
+        (run-hook-wrapped hook #'doom-run-hook)
+      (doom-hook-error
+       (unless debug-on-error
+         (lwarn hook :error "Error running hook %S because: %s"
+                (if (symbolp (cadr e))
+                    (symbol-name (cadr e))
+                  (cadr e))
+                (caddr e)))
+       (signal 'doom-hook-error (cons hook (cdr e)))))))
+
+(defun doom-run-hook-on (hook-var trigger-hooks)
+  "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
+are invoked *after* Emacs has initialized (to reduce false positives). Once
+HOOK-VAR is triggered, it is reset to nil.
+
+HOOK-VAR is a quoted hook.
+TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
+  (dolist (hook trigger-hooks)
+    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
+      (fset
+       fn (lambda (&rest _)
+            ;; Only trigger this after Emacs has initialized.
+            (when (and after-init-time
+                       (or (daemonp)
+                           ;; In some cases, hooks may be lexically unset to
+                           ;; inhibit them during expensive batch operations on
+                           ;; buffers (such as when processing buffers
+                           ;; internally). In these cases we should assume this
+                           ;; hook wasn't invoked interactively.
+                           (and (boundp hook)
+                                (symbol-value hook))))
+              (doom-run-hooks hook-var)
+              (set hook-var nil))))
+      (cond ((daemonp)
+             ;; In a daemon session we don't need all these lazy loading
+             ;; shenanigans. Just load everything immediately.
+             (add-hook 'after-init-hook fn 'append))
+            ((eq hook 'find-file-hook)
+             ;; Advise `after-find-file' instead of using `find-file-hook'
+             ;; because the latter is triggered too late (after the file has
+             ;; opened and modes are all set up).
+             (advice-add 'after-find-file :before fn '((depth . -101))))
+            ((add-hook hook fn -101)))
+      fn)))
 
 
 ;;
