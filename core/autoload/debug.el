@@ -222,12 +222,16 @@ ready to be pasted in a bug report on github."
 
 ;;;###autoload
 (defun doom/version ()
-  "Display the current version of Doom & Emacs, including the current Doom
-branch and commit."
+  "Display the current version and ocmit of Doom & Emacs."
   (interactive)
-  (let ((default-directory doom-core-dir))
-    (print! "Doom v%s (%s)"
+  (let ((default-directory doom-emacs-dir))
+    (print! "Doom emacs\tv%-15s %s"
             doom-version
+            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
+                "n/a")))
+  (let ((default-directory doom-core-dir))
+    (print! "Doom core\tv%-15s %s"
+            doom-core-version
             (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
                 "n/a"))))
 
