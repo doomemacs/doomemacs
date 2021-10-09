@@ -13,19 +13,20 @@
 ;;;
 
 
-(defun doom-cli--ci-deploy-hooks ()
+(defun doom-cli--ci-deploy-hooks (&optional noforce)
   (let ((dir (doom-path doom-emacs-dir ".git/hooks"))
         (default-directory doom-emacs-dir))
     (make-directory dir 'parents)
     (dolist (hook '("commit-msg" "pre-push"))
       (let ((file (doom-path dir hook)))
-        (with-temp-file file
-          (insert "#!/usr/bin/env sh\n"
-                  (doom-path doom-emacs-dir "bin/doom")
-                  " --nocolor ci hook-" hook
-                  " \"$@\""))
-        (set-file-modes file #o700)
-        (print! (success "Created %s") (relpath file))))))
+        (unless (and (file-exists-p file) noforce)
+          (with-temp-file file
+            (insert "#!/usr/bin/env sh\n"
+                    (doom-path doom-emacs-dir "bin/doom")
+                    " --nocolor ci hook-" hook
+                    " \"$@\""))
+          (set-file-modes file #o700)
+          (print! (success "Created %s") (relpath file)))))))
 
 
 ;;
