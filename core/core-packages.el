@@ -302,13 +302,18 @@ processed."
           nil-value)
       plist)))
 
-(defun doom-package-dependencies (package &optional recursive _noerror)
-  "Return a list of dependencies for a package."
-  (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
-    (if recursive
-        (append deps (mapcan (lambda (dep) (doom-package-dependencies dep t t))
-                             (copy-sequence deps)))
-      (copy-sequence deps))))
+(defun doom-package-dependencies (package &optional recursive noerror)
+  "Return a list of dependencies for a package.
+
+If RECURSIVE is `tree', return a tree of dependencies.
+If RECURSIVE is nil, only return PACKAGE's immediate dependencies.
+If NOERROR, return nil in case of error."
+  (cl-check-type package symbol)
+  (let ((deps (straight-dependencies (symbol-name package))))
+    (pcase recursive
+      (`tree deps)
+      (`t (flatten-list deps))
+      (`nil (cl-remove-if #'listp deps)))))
 
 (defun doom-package-depending-on (package &optional noerror)
   "Return a list of packages that depend on PACKAGE.
@@ -320,12 +325,7 @@ non-nil."
   (unless (or (doom-package-build-recipe package)
               noerror)
     (error "Couldn't find %s, is it installed?" package))
-  (cl-loop for pkg in (hash-table-keys straight--build-cache)
-           for deps = (doom-package-dependencies pkg)
-           if (memq package deps)
-           collect pkg
-           and append (doom-package-depending-on pkg t)))
-
+  (straight-dependents (symbol-name package)))
 
 ;;; Predicate functions
 (defun doom-package-built-in-p (package)
