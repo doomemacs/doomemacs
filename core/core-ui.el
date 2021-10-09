@@ -302,16 +302,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; so these are just clutter (the scrollbar also impacts performance). Whats
 ;; more, the menu bar exposes functionality that Doom doesn't endorse.
 ;;
-;; I am intentionally avoid using `menu-bar-mode', `tool-bar-mode', and
+;; I am intentionally not calling `menu-bar-mode', `tool-bar-mode', and
 ;; `scroll-bar-mode' because they do extra and unnecessary work that can be more
-;; concisely, and efficiently, expressed with these six lines:
+;; concisely and efficiently expressed with these six lines:
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-
-;; These are disabled directly through their frame parameters to avoid the extra
-;; work their minor modes do, but their variables must be unset too, otherwise
-;; users will have to cycle them twice to re-enable them.
+;; And set these to nil so users don't have to toggle the modes twice to
+;; reactivate them.
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
@@ -325,8 +323,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; GUIs are inconsistent across systems and themes (and will rarely match our
 ;; active Emacs theme). They impose inconsistent shortcut key paradigms too.
-;; It's best to avoid GUIs altogether and have Emacs handle the prompting, since
-;; its promtps are governed by the same rules and keybinds as the rest of Emacs.
+;; It's best to avoid them altogether and have Emacs handle the prompting.
 (setq use-dialog-box nil)
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
@@ -564,7 +561,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
-;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
+;; User themes should live in $DOOMDIR/themes, not ~/.emacs.d
 (setq custom-theme-directory (concat doom-private-dir "themes/"))
 
 ;; Always prioritize the user's themes above the built-in/packaged ones.

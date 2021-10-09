@@ -94,19 +94,17 @@ debian, and derivatives). On most it's 'fd'.")
   (setq compilation-buffer-name-function #'projectile-compilation-buffer-name
         compilation-save-buffers-predicate #'projectile-current-project-buffer-p)
 
-  ;; Override projectile's dirconfig file '.projectile' with doom's project marker '.project'.
+  ;; Support the more generic .project files as an alternative to .projectile
   (defadvice! doom--projectile-dirconfig-file-a ()
     :override #'projectile-dirconfig-file
-    (cond
-     ;; Prefers '.projectile' to maintain compatibility with existing projects.
-     ((file-exists-p! (or ".projectile" ".project") (projectile-project-root)))
-     ((expand-file-name ".project" (projectile-project-root)))))
+    (cond ((file-exists-p! (or ".projectile" ".project") (projectile-project-root)))
+          ((expand-file-name ".project" (projectile-project-root)))))
 
   ;; Disable commands that won't work, as is, and that Doom already provides a
   ;; better alternative for.
-  (put 'projectile-ag 'disabled "Use +{ivy,helm}/project-search instead")
-  (put 'projectile-ripgrep 'disabled "Use +{ivy,helm}/project-search instead")
-  (put 'projectile-grep 'disabled "Use +{ivy,helm}/project-search instead")
+  (put 'projectile-ag 'disabled "Use +default/search-project instead")
+  (put 'projectile-ripgrep 'disabled "Use +default/search-project instead")
+  (put 'projectile-grep 'disabled "Use +default/search-project instead")
 
   ;; Treat current directory in dired as a "file in a project" and track it
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
