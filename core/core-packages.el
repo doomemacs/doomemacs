@@ -53,20 +53,18 @@ uses a straight or package.el command directly).")
 ;;; package.el
 
 ;; Ensure that, if we do need package.el, it is configured correctly. You really
-;; shouldn't be using it, but it may be convenient for quick package testing.
+;; shouldn't be using it, but it may be convenient for quickly testing packages.
 (setq package-enable-at-startup nil
       package-user-dir (concat doom-local-dir "elpa/")
-      package-gnupghome-dir (expand-file-name "gpg" package-user-dir)
-      ;; I omit Marmalade because its packages are manually submitted rather
-      ;; than pulled, so packages are often out of date with upstream.
-      package-archives
-      (let ((proto (if gnutls-verify-error "https" "http")))
-        (list (cons "gnu"   (concat proto "://elpa.gnu.org/packages/"))
-              (cons "melpa" (concat proto "://melpa.org/packages/"))
-              (cons "org"   (concat proto "://orgmode.org/elpa/")))))
+      package-gnupghome-dir (expand-file-name "gpg" package-user-dir))
 
-;; package.el has no business modifying the user's init.el
-(advice-add #'package--ensure-init-file :override #'ignore)
+(after! package
+  (let ((s (if gnutls-verify-error "s" "")))
+    (prependq! package-archives
+               ;; I omit Marmalade because its packages are manually submitted
+               ;; rather than pulled, and so often out of date.
+               `(("melpa" . ,(format "http%s://melpa.org/packages/" s))
+                 ("org"   . ,(format "http%s://orgmode.org/elpa/"   s))))))
 
 ;; Refresh package.el the first time you call `package-install', so it can still
 ;; be used (e.g. to temporarily test packages). Remember to run 'doom sync' to
@@ -564,10 +562,10 @@ Only use this macro in a module's (or your private) packages.el file."
 This unpins packages, so that 'doom upgrade' downloads their latest version. It
 can be used one of five ways:
 
-+ To disable pinning wholesale: (unpin! t)
-+ To unpin individual packages: (unpin! packageA packageB ...)
-+ To unpin all packages in a group of modules: (unpin! :lang :tools ...)
-+ To unpin packages in individual modules:
+- To disable pinning wholesale: (unpin! t)
+- To unpin individual packages: (unpin! packageA packageB ...)
+- To unpin all packages in a group of modules: (unpin! :lang :tools ...)
+- To unpin packages in individual modules:
     (unpin! (:lang python javascript) (:tools docker))
 
 Or any combination of the above.

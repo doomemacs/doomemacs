@@ -65,13 +65,6 @@ purpose.")
 (require 'core-packages)
 (doom-initialize-core-packages)
 
-;; Don't generate superfluous files when writing temp buffers
-(setq make-backup-files nil)
-;; Stop user configuration from interfering with package management
-(setq enable-dir-local-variables nil)
-;; Reduce ambiguity, embrace specificity. It's more predictable.
-(setq-default case-fold-search nil)
-
 ;; Default to using all cores, rather than half of them, since we compile things
 ;; ahead-of-time in a non-interactive session.
 (defadvice! doom--comp-use-all-cores-a (&rest _)
@@ -248,6 +241,16 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d."
 (load! doom-module-init-file doom-private-dir t)
 (maphash (doom-module-loader doom-cli-file) doom-modules)
 (load! doom-cli-file doom-private-dir t)
+
+
+;; Don't generate superfluous files when writing temp buffers
+(setq make-backup-files nil)
+;; Stop user configuration from interfering with package management
+(setq enable-dir-local-variables nil)
+;; Reduce ambiguity, embrace specificity. It's more predictable.
+(setq-default case-fold-search nil)
+;; Don't clog the user's trash with anything we clean up in this session.
+(setq delete-by-moving-to-trash nil)
 
 (provide 'core-cli)
 ;;; core-cli.el ends here
