@@ -73,6 +73,9 @@ name. e.g.
     (print! "Regenerating autoloads files")
     (doom-autoloads-reload)
 
+    (print! "Deploying commit-msg and pre-push git hooks")
+    (doom-cli--ci-deploy-hooks)
+
     (cond (nofonts-p)
           (IS-WINDOWS
            (print! (warn "Doom cannot install all-the-icons' fonts on Windows!\n"))
