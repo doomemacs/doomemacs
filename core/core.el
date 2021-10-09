@@ -310,10 +310,12 @@ config.el instead."
 
 ;; The GC introduces annoying pauses and stuttering into our Emacs experience,
 ;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
-;; when it's idle.
-(setq gcmh-idle-delay 0.5  ; default is 15s
-      gcmh-high-cons-threshold (* 16 1024 1024)  ; 16mb
-      gcmh-verbose doom-debug-p)
+;; when it's idle. However, if the idle delay is too long, we run the risk of
+;; runaway memory usage in busy sessions. If it's too low, then we may as well
+;; not be using gcmh at all.
+(setq gcmh-idle-delay 'auto  ; default is 15s
+      gcmh-auto-idle-delay-factor 10
+      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
 
 ;; Emacs "updates" its ui more often than it needs to, so slow it down slightly
 (setq idle-update-delay 1.0)  ; default is 0.5
