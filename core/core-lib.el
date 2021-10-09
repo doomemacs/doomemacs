@@ -564,7 +564,6 @@ reverse this and trigger `after!' blocks at a more reasonable time."
 
 
 ;;; Hooks
-(defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
@@ -577,7 +576,10 @@ advised)."
   (let ((append (if (eq (car forms) :after) (pop forms)))
         ;; Avoid `make-symbol' and `gensym' here because an interned symbol is
         ;; easier to debug in backtraces (and is visible to `describe-function')
-        (fn (intern (format "doom--transient-%d-h" (cl-incf doom--transient-counter)))))
+        (fn (intern (format "doom--transient-%d-h"
+                            (put 'add-transient-hook! 'counter
+                                 (1+ (or (get 'add-transient-hook! 'counter)
+                                         0)))))))
     `(let ((sym ,hook-or-function))
        (defun ,fn (&rest _)
          ,(format "Transient hook for %S" (doom-unquote hook-or-function))
