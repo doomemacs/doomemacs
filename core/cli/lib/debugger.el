@@ -2,7 +2,7 @@
 
 (cl-defun doom-cli--debugger (error data)
   (cl-incf num-nonmacro-input-events)
-  (cl-destructuring-bind (backtrace &optional type data . _)
+  (cl-destructuring-bind (backtrace &optional type data . rest)
       (cons (doom-cli--backtrace) data)
     (with-output-to! doom--cli-log-buffer
       (let ((straight-error
@@ -25,15 +25,17 @@
               ((print! (error "There was an unexpected error"))
                (print-group!
                 (print! "%s %s" (bold "Message:") (get type 'error-message))
-                (print! "%s %S" (bold "Data:") (cons type data))
+                (print! "%s %S" (bold "Error:") (append (list type data) rest))
                 (when backtrace
                   (print! (bold "Backtrace:"))
                   (print-group!
                    (dolist (frame (seq-take backtrace 10))
-                     (print!
-                      "%0.74s" (replace-regexp-in-string
-                                "[\n\r]" "\\\\n"
-                                (format "%S" frame)))))))))
+                     (let* ((frame (replace-regexp-in-string
+                                    "[\n\r]" "\\\\n" (prin1-to-string frame)))
+                            (frame (if (> (length frame) 74)
+                                       (concat (substring frame 0 74) "...")
+                                     frame)))
+                       (print! "%s" frame))))))))
         (when backtrace
           (with-temp-file doom-cli-log-error-file
             (insert "# -*- lisp-interaction -*-\n")
