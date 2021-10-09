@@ -159,7 +159,7 @@ tell you about it. Very annoying. This prevents that."
            (sha1 buffer-file-name))))
     (funcall fn)))
 
-;; HACK Does the same for Emacs backup files, but also packages that use
+;; HACK ...does the same for Emacs backup files, but also packages that use
 ;;      `make-backup-file-name-1' directly (like undo-tree).
 (defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
@@ -167,10 +167,11 @@ tell you about it. Very annoying. This prevents that."
   (let ((alist backup-directory-alist)
         backup-directory)
     (while alist
-      (let ((elt (pop alist)))
+      (let ((elt (car alist)))
         (if (string-match (car elt) file)
             (setq backup-directory (cdr elt)
-                  alist nil))))
+                  alist nil)
+          (setq alist (cdr alist)))))
     (let ((file (funcall fn file)))
       (if (or (null backup-directory)
               (not (file-name-absolute-p backup-directory)))
