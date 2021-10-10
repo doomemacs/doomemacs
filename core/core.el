@@ -478,6 +478,14 @@ If this is a daemon session, load them all immediately instead."
 
 
 ;;
+;;; Fixes/hacks
+
+;; Produce more helpful (and visible) error messages from errors emitted from
+;; hooks (particularly mode hooks, that usually go unnoticed otherwise.
+(advice-add #'run-hooks :override #'doom-run-hooks)
+
+
+;;
 ;;; Bootstrapper
 
 (defun doom-display-benchmark-h (&optional return-p)
