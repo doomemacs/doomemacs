@@ -563,7 +563,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Give users a chance to inject their own font logic.
   (run-hooks 'after-setting-font-hook))
 
-(defun doom-init-theme-h ()
+(defun doom-init-theme-h (&rest _)
   "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (custom-theme-enabled-p doom-theme)))
     (load-theme doom-theme t)))
@@ -589,12 +589,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Bootstrap
 
-(defun doom-init-ui-h ()
+(defun doom-init-ui-h (&optional _)
   "Initialize Doom's user interface by applying all its advice and hooks."
-  ;; Produce more helpful (and visible) error messages from errors emitted from
-  ;; hooks (particularly mode hooks, that usually go unnoticed otherwise.
-  (advice-add #'run-hooks :override #'doom-run-hooks)
-
   (doom-run-hooks 'doom-init-ui-hook)
 
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
@@ -609,19 +605,21 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; These should be done as late as possible, as not to prematurely trigger
   ;; hooks during startup.
   (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
-  (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h))
+  (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
 
-;; Apply `doom-font' et co
-(let ((hook (if (daemonp) 'server-after-make-frame-hook)))
-  (add-hook (or hook 'after-init-hook)
-            #'doom-init-fonts-h
-            -100)
-  (add-hook (or hook 'after-init-hook)
-            #'doom-init-theme-h
-            -90)
-  (add-hook (or hook 'window-setup-hook)
-            #'doom-init-ui-h
-            100))
+  ;; Only execute this function once.
+  (remove-hook 'window-buffer-change-functions #'doom-init-ui-h))
+
+;; Apply fonts and theme
+(let ((hook (if (daemonp)
+                'server-after-make-frame-hook
+              'after-init-hook)))
+  (add-hook hook #'doom-init-fonts-h -100)
+  (add-hook hook #'doom-init-theme-h -90))
+
+;; Initialize UI as late as possible. `window-buffer-change-functions' runs
+;; once, when the scratch/dashboard buffer is first displayed.
+(add-hook 'window-buffer-change-functions #'doom-init-ui-h -100)
 
 
 ;;
