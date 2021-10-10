@@ -550,7 +550,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (cond
    (doom-font
     (when (or reload (daemonp))
-      (set-frame-font doom-font t t t))
+      (set-frame-font doom-font t t))
     ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
     ;; unnecessary work we can avoid by setting the frame parameter directly.
     (setf (alist-get 'font default-frame-alist)
