@@ -592,28 +592,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (put sym 'saved-face nil))
   (cond
    (doom-font
+    (when (or reload (daemonp))
+      (set-frame-font doom-font t t t))
     ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
     ;; unnecessary work we can avoid by setting the frame parameter directly.
     (setf (alist-get 'font default-frame-alist)
           (cond ((stringp doom-font) doom-font)
                 ((fontp doom-font) (font-xlfd-name doom-font))
                 ((signal 'wrong-type-argument
-                         (list '(fontp stringp) doom-font)))))
-    (when reload
-      (set-frame-font doom-font t t)))
+                         (list '(fontp stringp) doom-font))))))
    ((display-graphic-p)
     (setq font-use-system-font t)))
   ;; Give users a chance to inject their own font logic.
   (run-hooks 'after-setting-font-hook))
 
-(defun doom-init-theme-h (&optional frame)
+(defun doom-init-theme-h ()
   "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (custom-theme-enabled-p doom-theme)))
-    ;; Fix #1397: if `doom-init-theme-h' is used on `after-make-frame-functions'
-    ;; (for daemon sessions), the new frame must be focused to ensure the theme
-    ;; loads correctly.
-    (with-selected-frame (or frame (selected-frame))
-      (load-theme doom-theme t))))
+    (load-theme doom-theme t)))
 
 (defadvice! doom--load-theme-a (fn theme &optional no-confirm no-enable)
   "Record `doom-theme', disable old themes, and trigger `doom-load-theme-hook'."
@@ -663,16 +659,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
 ;; Apply `doom-font' et co
-(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h -100)
-
-;; Apply `doom-theme'
-(add-hook (if (daemonp)
-              'after-make-frame-functions
-            'doom-after-init-modules-hook)
-          #'doom-init-theme-h
-          -90)
-
-(add-hook 'window-setup-hook #'doom-init-ui-h 100)
+(let ((hook (if (daemonp) 'server-after-make-frame-hook)))
+  (add-hook (or hook 'after-init-hook)
+            #'doom-init-fonts-h
+            -100)
+  (add-hook (or hook 'after-init-hook)
+            #'doom-init-theme-h
+            -90)
+  (add-hook (or hook 'window-setup-hook)
+            #'doom-init-ui-h
+            100))
 
 
 ;;
