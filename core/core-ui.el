@@ -75,62 +75,20 @@ font to that size. It's rarely a good idea to do so!")
 (defvar doom-switch-frame-hook nil
   "A list of hooks run after changing the focused frame.")
 
-(defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-switch-buffer-hook'. Do not set this directly.")
-(defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-switch-window-hook'. Do not set this directly.")
-(defvar doom-inhibit-switch-frame-hooks nil
-  "Letvar for inhibiting `doom-switch-frame-hook'. Do not set this directly.")
+(defun doom-run-switch-buffer-hooks-h (&optional _)
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (inhibit-redisplay t))
+    (run-hooks 'doom-switch-buffer-hook)))
 
-(defvar doom--last-window nil)
 (defvar doom--last-frame nil)
-
-(defun doom-run-switch-window-hooks-h ()
-  (unless (or doom-inhibit-switch-window-hooks
-              (eq doom--last-window (selected-window))
-              (minibufferp))
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-window-hooks t)
-          (inhibit-redisplay t))
-      (run-hooks 'doom-switch-window-hook)
-      (setq doom--last-window (selected-window)))))
-
-(defun doom-run-switch-frame-hooks-h (&rest _)
-  (unless (or doom-inhibit-switch-frame-hooks
-              (eq doom--last-frame (selected-frame))
-              (frame-parameter nil 'parent-frame))
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-frame-hooks t))
-      (run-hooks 'doom-switch-frame-hook)
-      (setq doom--last-frame (selected-frame)))))
-
-(defun doom-run-switch-buffer-hooks-a (fn buffer-or-name &rest args)
-  (if (or doom-inhibit-switch-buffer-hooks
-          (and buffer-or-name
-               (eq (current-buffer)
-                   (get-buffer buffer-or-name)))
-          (and (eq fn #'switch-to-buffer) (car args)))
-      (apply fn buffer-or-name args)
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-buffer-hooks t)
-          (inhibit-redisplay t))
-      (when-let (buffer (apply fn buffer-or-name args))
-        (with-current-buffer (if (windowp buffer)
-                                 (window-buffer buffer)
-                               buffer)
-          (run-hooks 'doom-switch-buffer-hook))
-        buffer))))
-
-(defun doom-run-switch-to-next-prev-buffer-hooks-a (fn &rest args)
-  (if doom-inhibit-switch-buffer-hooks
-      (apply fn args)
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-buffer-hooks t)
-          (inhibit-redisplay t))
-      (when-let (buffer (apply fn args))
-        (with-current-buffer buffer
-          (run-hooks 'doom-switch-buffer-hook))
-        buffer))))
+(defun doom-run-switch-window-or-frame-hooks-h (&optional _)
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (inhibit-redisplay t))
+    (unless (equal (old-selected-frame) (selected-frame))
+      (run-hooks 'doom-switch-frame-hook))
+    (unless (or (minibufferp)
+                (equal (old-selected-window) (minibuffer-window)))
+      (run-hooks 'doom-switch-window-hook))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -256,7 +214,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                                         buf))))
                  (user-error "Aborted")))
              (let ((inhibit-redisplay t)
-                   (doom-inhibit-switch-buffer-hooks t)
                    buffer-list-update-hook)
                (when (or ;; if there aren't more real buffers than visible buffers,
                       ;; then there are no real, non-visible buffers left.
@@ -270,7 +227,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                  (with-current-buffer buf
                    (restore-buffer-modified-p nil))
                  (kill-buffer buf)))
-             (run-hooks 'doom-switch-buffer-hook 'buffer-list-update-hook)
+             (run-hooks 'buffer-list-update-hook)
              t)))))
 
 
@@ -645,18 +602,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
   ;;
-  ;; + `doom-switch-buffer-hook'
-  ;; + `doom-switch-window-hook'
-  ;; + `doom-switch-frame-hook'
+  ;; - `doom-switch-buffer-hook'
+  ;; - `doom-switch-window-hook'
+  ;; - `doom-switch-frame-hook'
   ;;
   ;; These should be done as late as possible, as not to prematurely trigger
   ;; hooks during startup.
-  (add-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
-  (add-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
-  (dolist (fn '(switch-to-next-buffer switch-to-prev-buffer))
-    (advice-add fn :around #'doom-run-switch-to-next-prev-buffer-hooks-a))
-  (dolist (fn '(switch-to-buffer display-buffer))
-    (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
+  (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
+  (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h))
 
 ;; Apply `doom-font' et co
 (let ((hook (if (daemonp) 'server-after-make-frame-hook)))
