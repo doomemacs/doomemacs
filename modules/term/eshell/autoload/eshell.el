@@ -102,13 +102,14 @@
         (let (confirm-kill-processes)
           (delete-window win)
           (ignore-errors (kill-buffer eshell-buffer)))
-      (with-current-buffer (pop-to-buffer eshell-buffer)
+      (with-current-buffer eshell-buffer
         (doom-mark-buffer-as-real-h)
         (if (eq major-mode 'eshell-mode)
             (run-hooks 'eshell-mode-hook)
           (eshell-mode))
         (when command
-          (+eshell-run-command command eshell-buffer))))))
+          (+eshell-run-command command eshell-buffer)))
+      (pop-to-buffer eshell-buffer))))
 
 ;;;###autoload
 (defun +eshell/here (&optional command)
