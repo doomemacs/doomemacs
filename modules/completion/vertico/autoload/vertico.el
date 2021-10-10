@@ -44,7 +44,7 @@ orderless."
           (concat "rg "
                   (if all-files "-uu ")
                   (unless recursive "--maxdepth 1 ")
-                  "--line-buffered --color=never --max-columns=1000 "
+                  "--null --line-buffered --color=never --max-columns=1000 "
                   "--path-separator /   --smart-case --no-heading --line-number "
                   "--hidden -g !.git "
                   (mapconcat #'shell-quote-argument args " ")
@@ -209,7 +209,7 @@ current target followed by an ellipsis if there are further
 targets."
   (lambda (&optional keymap targets prefix)
     (if (null keymap)
-        (kill-buffer which-key--buffer)
+        (which-key--hide-popup-ignore-command)
       (which-key--show-keymap
        (if (eq (caar targets) 'embark-become)
            "Become"
@@ -217,7 +217,11 @@ targets."
                  (plist-get (car targets) :type)
                  (embark--truncate-target (plist-get (car targets) :target))
                  (if (cdr targets) "…" "")))
-       (if prefix (lookup-key keymap prefix) keymap)
+       (if prefix
+           (pcase (lookup-key keymap prefix 'accept-default)
+             ((and (pred keymapp) km) km)
+             (_ (key-binding prefix 'accept-default)))
+         keymap)
        nil nil t))))
 
 ;;;###autoload
