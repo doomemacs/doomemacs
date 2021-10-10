@@ -14,7 +14,6 @@
       (setq xwidget-webkit-last-session-buffer +lookup--xwidget-webkit-last-session-buffer)
       (save-window-excursion
         (xwidget-webkit-browse-url url new-session))
-      (with-popup-rules! '(("^\\*xwidget" :vslot -11 :size 0.35 :select nil))
-        (pop-to-buffer xwidget-webkit-last-session-buffer))
+      (pop-to-buffer xwidget-webkit-last-session-buffer)
       (setq +lookup--xwidget-webkit-last-session-buffer xwidget-webkit-last-session-buffer
             xwidget-webkit-last-session-buffer orig-last-session-buffer))))
