@@ -30,7 +30,8 @@ This module has no dedicated maintainers.
 
 ** Plugins
 + [[https://github.com/skeeto/elfeed][elfeed]]
-+ [[https://github.com/algernon/elfeed-goodies][elfeed-goodies]] 
++ =+goodies=
+  + [[https://github.com/algernon/elfeed-goodies][elfeed-goodies]]
 + =+org=
   + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
 
