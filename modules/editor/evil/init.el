@@ -235,6 +235,7 @@ variable for an explanation of the defaults (in comments). See
       vc-dir
       vc-git
       vdiff
+      vertico
       view
       vlf
       vterm
