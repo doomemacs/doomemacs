@@ -94,7 +94,7 @@
 
   (plist-put (cdr (assoc :flags mu4e-header-info)) :shortname " Flags") ; default=Flgs
   (add-to-list 'mu4e-bookmarks
-               '(:name "Flagged messages" :query "flag:flagged" :key ?f) t)
+               '("flag:flagged" "Flagged messages" ?f) t)
 
   ;; TODO avoid assuming that all-the-icons is present
   (defvar +mu4e-header-colorized-faces
