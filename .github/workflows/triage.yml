@@ -4,6 +4,7 @@ on:
     - cron: '0 */12 * * *'  # twice, daily
 jobs:
   lock:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v3
