@@ -9,7 +9,7 @@
 (package! go-gen-test :pin "35df36dcd555233ee1a618c0f6a58ce6db4154d9")
 
 (when (featurep! :completion company)
-  (package! company-go :pin "4acdcbdea79de6b3dee1c637eca5cbea0fdbe37c"))
+  (package! company-go :pin "31948b463f2fc18f8801e5a8fe511fef300eb3dd"))
 
 (when (featurep! :checkers syntax)
   (package! flycheck-golangci-lint :pin "8e446c68311048f0b87febf8ef0379e29d358851"))
