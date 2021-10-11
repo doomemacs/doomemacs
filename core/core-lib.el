@@ -604,9 +604,9 @@ This macro accepts, in order:
      variables.
   2. Optional properties :local, :append, and/or :depth [N], which will make the
      hook buffer-local or append to the list of hooks (respectively),
-  3. The function(s) to be added: this can be one function, a quoted list
-     thereof, a list of `defun's, or body forms (implicitly wrapped in a
-     lambda).
+  3. The function(s) to be added: this can be a quoted function, a quoted list
+     thereof, a list of `defun' or `cl-defun' forms, or arbitrary forms (will
+     implicitly be wrapped in a lambda).
 
 \(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)"
   (declare (indent (lambda (indent-point state)
