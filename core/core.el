@@ -230,11 +230,7 @@ config.el instead."
   "Run MODE-local-vars-hook after local variables are initialized."
   (unless doom-inhibit-major-mode-post-hooks
     (setq-local doom-inhibit-major-mode-post-hooks t)
-    (when-let (hk (intern-soft (format "%s-local-vars-hook" major-mode)))
-      (message "%S is deprecated, use after-%s-hook instead"
-               hk major-mode)
-      (doom-run-hooks hk))
-    (doom-run-hooks (intern-soft (format "after-%s-hook" major-mode)))))
+    (doom-run-hooks (intern (format "%s-local-vars-hook" major-mode)))))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
