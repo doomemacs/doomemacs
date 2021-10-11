@@ -93,11 +93,20 @@ in."
               "Emacs with the --with-json option."))
 
   (print! (start "Checking for private config conflicts..."))
-  (let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
-                             "~/.config")
-                         "/doom/"))
-        (doom-dir (or (getenv "DOOMDIR")
-                      "~/.doom.d/")))
+  (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
+                              "~/.config")
+                          "/doom/"))
+         (doom-dir (or (getenv "DOOMDIR")
+                       "~/.doom.d/"))
+         (dir (if (file-directory-p xdg-dir)
+                  xdg-dir
+                doom-dir)))
+    (when (file-equal-p dir user-emacs-directory)
+      (print! (error "Doom was cloned to %S, not ~/.emacs.d or ~/.config/emacs"
+                     (path dir)))
+      (explain! "Doom's source and your private Doom config have to live in separate directories. "
+                "Putting them in the same directory (without changing the DOOMDIR environment "
+                "variable) will cause errors on startup."))
     (when (and (not (file-equal-p xdg-dir doom-dir))
                (file-directory-p xdg-dir)
                (file-directory-p doom-dir))
