@@ -195,9 +195,9 @@ exist, and `org-link' otherwise."
           (user-error "Can't find Doom module '%s'" link))))
     (when flag
       (goto-char (point-min))
-      (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module Flags")
-           (re-search-forward (format "^\\s-*- %s :: "
-                                      (regexp-quote (symbol-name flag)))
+      (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module flags")
+           (re-search-forward (format "^\\s-*- \\+%s ::[ \n]"
+                                      (substring (symbol-name flag) 1))
                               (save-excursion (org-get-next-sibling)
                                               (point)))
            (recenter)))))
