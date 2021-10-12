@@ -1,11 +1,11 @@
 ;;; lang/latex/+fontification.el -*- lexical-binding: t; -*-
 
-;; Fontification taken from https://tex.stackexchange.com/a/86119/81279
+;; Fontification taken from https://tex.stackexchange.com/a/86119/81279.
 (setq font-latex-match-reference-keywords
-      '(;; biblatex
+      '(;; BibLaTeX.
         ("printbibliography" "[{")
         ("addbibresource" "[{")
-        ;; Standard commands
+        ;; Standard commands.
         ("cite" "[{")
         ("citep" "[{")
         ("citet" "[{")
@@ -14,7 +14,7 @@
         ("Parencite" "[{")
         ("footcite" "[{")
         ("footcitetext" "[{")
-        ;; Style-specific commands
+        ;; Style-specific commands.
         ("textcite" "[{")
         ("Textcite" "[{")
         ("smartcite" "[{")
@@ -22,7 +22,7 @@
         ("cite*" "[{")
         ("parencite*" "[{")
         ("supercite" "[{")
-        ;; Qualified citation lists
+        ;; Qualified citation lists.
         ("cites" "[{")
         ("Cites" "[{")
         ("parencites" "[{")
@@ -34,14 +34,14 @@
         ("textcites" "[{")
         ("Textcites" "[{")
         ("supercites" "[{")
-        ;; Style-independent commands
+        ;; Style-independent commands.
         ("autocite" "[{")
         ("Autocite" "[{")
         ("autocite*" "[{")
         ("Autocite*" "[{")
         ("autocites" "[{")
         ("Autocites" "[{")
-        ;; Text commands
+        ;; Text commands.
         ("citeauthor" "[{")
         ("Citeauthor" "[{")
         ("citetitle" "[{")
@@ -49,9 +49,9 @@
         ("citeyear" "[{")
         ("citedate" "[{")
         ("citeurl" "[{")
-        ;; Special commands
+        ;; Special commands.
         ("fullcite" "[{")
-        ;; cleveref
+        ;; Cleveref.
         ("cref" "{")
         ("Cref" "{")
         ("cpageref" "{")
@@ -63,22 +63,22 @@
         ("labelcref" "{")))
 
 (setq font-latex-match-textual-keywords
-      '(;; biblatex brackets
+      '(;; BibLaTeX brackets.
         ("parentext" "{")
         ("brackettext" "{")
         ("hybridblockquote" "[{")
-        ;; Auxiliary Commands
+        ;; Auxiliary commands.
         ("textelp" "{")
         ("textelp*" "{")
         ("textins" "{")
         ("textins*" "{")
-        ;; subcaption
+        ;; Subcaption.
         ("subcaption" "[{")))
 
 (setq font-latex-match-variable-keywords
-      '(;; amsmath
+      '(;; Amsmath.
         ("numberwithin" "{")
-        ;; enumitem
+        ;; Enumitem.
         ("setlist" "[{")
         ("setlist*" "[{")
         ("newlist" "{")

@@ -50,8 +50,8 @@ function uses."
   "Advice to auto-fold LaTeX macros after functions that
 typically insert macros."
   ;; A simpler approach would be to just fold the whole line, but if point was
-  ;; inside a macro that would would kick it out. So instead we fold the last
-  ;; macro before point, hoping its the one newly inserted.
+  ;; inside a macro that would kick it out. So instead we fold the last macro
+  ;; before point, hoping its the one newly inserted.
   (TeX-fold-region (save-excursion
                      (search-backward "\\" (line-beginning-position) t)
                      (point))
