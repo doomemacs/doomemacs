@@ -15,8 +15,13 @@
     - [[#opensuse][openSUSE]]
   - [[#dependencies][Dependencies]]
 - [[#features][Features]]
+  - [[#lsp-support][LSP Support]]
+  - [[#phpunit][PHPUnit]]
+  - [[#composer][Composer]]
 - [[#configuration][Configuration]]
+  - [[#docker-compose][Docker Compose]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#im-missing-functionality-on-lsp-mode]["I'm missing functionality on lsp-mode"]]
 
 * Description
 This module adds support for PHP 5.3+ (including PHP7).
@@ -27,6 +32,7 @@ This module adds support for PHP 5.3+ (including PHP7).
 + Code refactoring commands (~php-refactor-mode~)
 + Unit-test commands (~phpunit~)
 + Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
++ Shortcuts for composer commands
 + [[../../editor/file-templates/templates/php-mode][File templates]]
 + [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
@@ -45,8 +51,8 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 + =+hack= Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
-+ =+lsp= Enable LSP support through phpactor or intelephense. Requires the
-  ~:tools lsp~ module and the [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor server]] to be installed on your system.
++ =+lsp= Enable LSP support through phpactor or intelephense. Requires the ~:tools
+  lsp~ module and the [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor server]] to be installed on your system.
 ** Plugins
 + [[https://github.com/tomterl/php-boris][async]]
 + [[https://github.com/tomterl/php-boris][php-boris]]
@@ -54,6 +60,7 @@ This module has no dedicated maintainers.
 + [[https://github.com/emacs-php/php-mode][php-mode]]
 + [[https://github.com/keelerm84/php-refactor-mode.el][php-refactor-mode]]
 + [[https://github.com/nlamirault/phpunit.el][phpunit]]
++ [[https://github.com/emacs-php/composer.el][composer.el]]
 + =+hack=
   + [[https://github.com/hhvm/hack-mode][hack-mode]]
 + =+lsp=
@@ -71,9 +78,10 @@ Note for =+lsp=:
 2. If you use intelephense, ~node~ and ~npm~ are needed.
 
 *** MacOS
-PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are provided for reference:
+PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are
+provided for reference:
 
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+#+begin_src sh :tangle (if (doom-system-os 'macos) "yes")
 brew tap homebrew/homebrew-php
 brew install php71  # or php53, php54, php55
 brew install composer
@@ -81,23 +89,23 @@ brew install composer
 # If you use intelephense:
 brew install node
 brew install npm
-#+END_SRC
+#+end_src
 
 *** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+#+begin_src sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
 
 # If you use intelephense:
 sudo pacman -S nodejs npm
-#+END_SRC
+#+end_src
 
 *** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
+#+begin_src sh :dir /sudo::
 sudo zypper install php-composer
 
 # If you use intelephense:
 sudo zypper install nodejs npm
-#+END_SRC
+#+end_src
 
 ** Dependencies
 This module has no required dependencies, but it has a couple optional ones.
@@ -106,40 +114,129 @@ This module has no required dependencies, but it has a couple optional ones.
 + ~phpctags~ (better code completion)
 + ~phpunit~ (unit test commands)
 + ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
++ ~phpactor~ (for LSP if intelephense isn't desired)
 
-#+BEGIN_SRC sh
+#+begin_src sh
 composer global require \
     d11wtq/boris \
     phpunit/phpunit \
     techlivezheng/phpctags \
-    friendsofphp/php-cs-fixer
+    friendsofphp/php-cs-fixer \
+    phpactor/phpactor
 
 # Needed by php-cs-fixer, otherwise you'll get "Couldn't resolve parser
 # 'php'" errors
 npm install -g @prettier/plugin-php
-#+END_SRC
+#+end_src
 
-You must ensure that ~\~/.composer/vendor/bin~ is in ~PATH~, so these
-executables are visible to Emacs:
+You must ensure that ~~/.composer/vendor/bin~ is in ~PATH~, so these executables are
+visible to Emacs:
 
-#+BEGIN_SRC sh
+#+begin_src sh
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
-#+END_SRC
+#+end_src
 
 You may also need to regenerate your envvar file by running ~doom env~ on the
 command line.
 
-#+begin_quote
-To use intelephense instead of , run =M-x lsp-install-server= and choose ~iph~ to
-install lsp-intelephense.
-#+end_quote
+*NOTE* phpactor doesn't have to be installed via =composer=, just has to exist in
+your =$PATH=.
 
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
+* Features
+** LSP Support
+There are a number of currently supported LSP servers:
 
-* TODO Configuration
-# How to configure this module, including common problems and how to address them.
++ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-intelephense/][Intelephense]] (_Recommended_)
++ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-phpactor/][phpactor]]
++ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-serenata/][Serenata]]
++ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-php/][felixbecker]] (Considered unsupported)
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+Intelephense is currently the only server that supports automatic installation,
+which will trigger either when you open a PHP project or manually invoke
+=lsp-install-server= through =M-x=.
+
+The others have to be installed manually and added to your =$PATH=.
+
+** PHPUnit
+This module provides an interface to PHPUnit through a number of commands as
+detailed below. By default, it loads configuration from the root ~phpunit.xml~.
+
++ ~phpunit-current-project~ Launch all tests for the project
++ ~phpunit-current-class~ Launch all tests for the current class/fixture
++ ~phpunit-current-test~ Launch the current test at point
+
+If for some reason, the default ~phpunit.xml~ is in a different location (or you
+use the ~phpunit.xml.dist~ convention) , the path can be changed via
+=phpunit-configuration-file=
+
+#+begin_src emacs-lisp
+(setq phpunit-configuration-file "phpunit.xml")
+#+end_src
+
+** Composer
+This module provides several convenience methods for triggering composer
+commands:
+
+| Binding             | Function                        |
+|---------------------+---------------------------------|
+| ~<localleader> m c c~ | ~composer~                        |
+| ~<localleader> m c i~ | ~composer-install~                |
+| ~<localleader> m c r~ | ~composer-require~                |
+| ~<localleader> m c u~ | ~composer-update~                 |
+| ~<localleader> m c d~ | ~composer-dump-autoload~          |
+| ~<localleader> m c s~ | ~composer-run-scripts~            |
+| ~<localleader> m c v~ | ~composer-run-vendor-bin-command~ |
+| ~<localleader> m c o~ | ~composer-find-json-file~         |
+| ~<localleader> m c l~ | ~composer-view-lock-file~         |
+
+These are all invokable via =M-x= too.
+
+* Configuration
+** Docker Compose
+A lot of projects rely on running inside docker compose (ie Laravel), and as
+such a minor mode has been configured to attempt to run tests inside the =php-fpm=
+(by default) container.
+
+If for some reason you wish to specify a different container, modify the
+~+php/default-docker-container~ variable (ideally inside a ~.dir-locals.el~ file)
+
+#+begin_src emacs-lisp
+((php-mode . ((+php/default-docker-container . "php-octane"))))
+#+end_src
+
+* Troubleshooting
+** "I'm missing functionality on lsp-mode"
+Unfortunately, [[https://intelephense.com/][intelephense]] currently operates under a "freemium" model, and as
+such requires a license for extended features. Once purchased, this can be
+(insecurely) added directly to your config:
+
+#+begin_src emacs-lisp
+(setq lsp-intelephense-licence-key "<key>")
+#+end_src
+
+A more recommended approach would be to utilise Emacs' own ~auth-sources~ for
+storing authentication info, which can also be encrypted.
+
+Create a file in your home directory (which can optionally be encrypted, verify
+your ~auth-sources~ has the correct values) called ~~/.authinfo~
+
+#+begin_src
+machine * login intelephense password <key>
+#+end_src
+
+And add the following to your config
+
+#+begin_src emacs-lisp
+(defun my-fetch-password (&rest params)
+  (require 'auth-source)
+  (let ((match (car (apply #'auth-source-search params))))
+    (if match
+        (let ((secret (plist-get match :secret)))
+          (if (functionp secret)
+              (funcall secret)
+            secret))
+      (error "Password not found for %S" params))))
+
+(setq lsp-intelephense-license-key (my-fetch-password :user intelephense))
+#+end_src
