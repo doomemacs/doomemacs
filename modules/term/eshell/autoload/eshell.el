@@ -166,12 +166,7 @@ Once the eshell process is killed, the previous frame layout is restored."
         ((featurep! :completion helm)
          (helm-eshell-history))
         ((featurep! :completion vertico)
-         (completing-read "Command: "
-                          (delete-dups
-                           (when (> (ring-size eshell-history-ring) 0)
-                             (ring-elements eshell-history-ring)))
-                          )
-         )
+         (consult-history))
         ((eshell-list-history))))
 
 ;;;###autoload
