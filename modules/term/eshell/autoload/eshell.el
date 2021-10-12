@@ -166,6 +166,7 @@ Once the eshell process is killed, the previous frame layout is restored."
         ((featurep! :completion helm)
          (helm-eshell-history))
         ((featurep! :completion vertico)
+         (forward-char 1) ;; Move outside of read only prompt text.
          (consult-history))
         ((eshell-list-history))))
 
