@@ -1323,4 +1323,47 @@ compelling reason, so..."
       (remove-hook 'post-command-hook #'+org-play-all-gifs-h t)
       (pcase +org-startup-with-animated-gifs
         (`at-point (add-hook 'post-command-hook #'+org-play-gif-at-point-h nil t))
-        (`t (add-hook 'post-command-hook #'+org-play-all-gifs-h nil t))))))
+        (`t (add-hook 'post-command-hook #'+org-play-all-gifs-h nil t)))))
+
+  ;; Make `doom-big-font-mode' update the sizes of LaTeX fragments.
+  ;;
+  ;; This function runs when a buffer is rendered and automatically removes
+  ;; itself from the hook. It regenerates fragments in the current buffer and is
+  ;; called when the current buffer becomes visible.
+  (defun +org-regenerate-fragments-fn (&optional _)
+    (save-restriction
+      (widen)
+      ;; Iterate over fragments in buffer
+      (dolist (overlay (overlays-in (point-min) (point-max)))
+        (when (equal (overlay-get overlay 'org-overlay-type) 'org-latex-overlay)
+          (let ((start (overlay-start overlay)))
+            (when start
+              ;; Regenerate fragment
+              (org-clear-latex-preview start (overlay-end overlay))
+              (save-excursion
+                (goto-char start)
+                (org-latex-preview)))))))
+    (remove-hook! 'doom-switch-buffer-hook
+      :local
+      #'+org-regenerate-fragments-fn))
+  ;; Update LaTeX fragment sizes when `doom-big-font-mode' is toggled.
+  (add-hook! 'doom-big-font-mode-hook
+    (defun +org-toggle-big-font-h ()
+      ;; Update fragment :scale
+      (plist-put org-format-latex-options
+                 :scale
+                 (+ (if doom-big-font-mode
+                        doom-big-font-increment
+                      (- doom-big-font-increment))
+                    (plist-get org-format-latex-options :scale)))
+      ;; Regenerate fragments in buffers
+      (dolist (buffer (buffer-list))
+        (with-current-buffer buffer
+          ;; Check if buffer is visible
+          (if (get-buffer-window nil t)
+              ;; Immediately regenerate fragments in visible buffer
+              (+org-regenerate-fragments-fn)
+            ;; Lazilly regenerate fragments in buried buffer
+            (add-hook! 'doom-switch-buffer-hook
+              :local
+              #'+org-regenerate-fragments-fn)))))))
