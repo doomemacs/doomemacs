@@ -35,7 +35,7 @@
     ;; handling encrypted or compressed files, among other things.
     (defun doom-reset-file-handler-alist-h ()
       (setq file-name-handler-alist
-            ;; Merge instead of overwrite because there may have bene changes to
+            ;; Merge instead of overwrite because there may have been changes to
             ;; `file-name-handler-alist' since startup we want to preserve.
             (delete-dups (append file-name-handler-alist
                                  old-file-name-handler-alist))))
