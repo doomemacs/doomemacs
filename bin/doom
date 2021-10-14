@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
+:; unset GIT_CONFIG  # BUG some GIT_CONFIG values cause "origin already exists" error
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
 :; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
