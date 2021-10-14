@@ -12,7 +12,7 @@
 (when (featurep! :completion ivy)
   (package! ivy-xref :pin "3d4c35fe2b243d948d8fe02a1f0d76a249d63de9"))
 (when (featurep! :completion helm)
-  (package! helm-xref :pin "23f1174cfca7667d95828dcd388c655a4a9c877d"))
+  (package! helm-xref :pin "9764eabd50c40b009073c7ef64e3a71d0d066d0b"))
 
 ;; For dictionary and online lookup
 (package! request :pin "2b68b3ca543f1dfbebb43a44f20601c3947bd729")
