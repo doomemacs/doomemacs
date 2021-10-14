@@ -678,6 +678,13 @@ our Discord server]].
 #+end_quote
 
 ** TODO From Spacemacs
+
+Some notes from and for users migrating from Spacemacs:
+
++ One can achieve behavior similar to [[https://www.spacemacs.org/doc/DOCUMENTATION.html#hybrid][hybrid editing style]] by putting
+  ~(setq evil-disable-insert-state-bindings t)~ into =~/.doom.d/init.el=
+  file (needs to be set early in the init process to take effect).
+
 #+begin_quote
 Have you migrated from Spacemacs? Help me flesh out this section by letting me
 know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on our Discord
