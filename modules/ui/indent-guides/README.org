@@ -1,12 +1,12 @@
-← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::ui tabs][Issues]]  ↖ [[doom-module-source:ui/tabs][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::ui indent-guides][Issues]]  ↖ [[doom-module-source:ui/indent-guides][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui tabs
-#+SUBTITLE: Keep tabs on your buffers, literally
-#+CREATED:  July 12, 2019
+#+TITLE:    :ui indent-guides
+#+SUBTITLE: Line up them indent columns
+#+CREATED:  March 11, 2019
 #+SINCE:    21.12.0
 
-* Description :unfold:
-This module adds an Atom-esque tab bar to the Emacs UI.
+* TODO Description :unfold:
+/(No description yet)/
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -15,7 +15,7 @@ This module adds an Atom-esque tab bar to the Emacs UI.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][centaur-tabs]]
+- [[doom-package:][highlight-indent-guides]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -40,7 +40,7 @@ This module adds an Atom-esque tab bar to the Emacs UI.
 #+end_quote
 
 * Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+/There are no known problems with this module./ [[doom-report-issue:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
