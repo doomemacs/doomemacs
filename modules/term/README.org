@@ -1,12 +1,11 @@
-← [[doom-module-index:][Back to module index]]                      ↙ [[doom-changelog-search:::term nil][Changelog]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]                         ↖ [[doom-module-source:term][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:     :term
-#+CREATED:   August 1, 2021
-#+SINCE:     v21.12.0
-#+SETUPFILE: ../../docs/.setupfile.org
+#+TITLE:   :term
+#+CREATED: August 01, 2021
+#+SINCE:   21.12.0
 
 * Description
-What's an operating system without a terminal? The moduels in this category
+What's an operating system without a terminal? The modules in this category
 bring varying degrees of terminal emulation into Emacs.
 
 If you can't decide which to choose, I recommend [[doom-package:][vterm]] or [[doom-package:][eshell]]. [[doom-module:][:term vterm]]
