@@ -1,10 +1,8 @@
-← [[doom-module-index:][Back to module index]]                      ↙ [[doom-changelog-search:::editor nil][Changelog]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]                         ↖ [[doom-module-source:editor][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:     :editor
-#+CREATED:   July 30, 2021
-#+SINCE:     v21.12.0
-#+SETUPFILE: ../../docs/.setupfile.org
+#+TITLE:   :editor
+#+CREATED: July 30, 2021
+#+SINCE:   21.12.0
 
 * Description
-For modules concerned with the insertion, manipulation, and general editing of
-text. Amen.
+For modules concerned with the insertion and editing of text. Amen.
