@@ -1,7 +1,7 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
 (defvar doom-detect-indentation-excluded-modes
-  '(fundamental-mode pascal-mode so-long-mode)
+  '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
   "A list of major modes in which indentation should be automatically
 detected.")
 
