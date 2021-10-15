@@ -1,12 +1,12 @@
-← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang sml][Issues]]  ↖ [[doom-module-source:lang/sml][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang rst][Issues]]  ↖ [[doom-module-source:lang/rst][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang sml
-#+SUBTITLE: ...
-#+CREATED:  Mar 30, 2020
+#+TITLE:    :lang rst
+#+SUBTITLE: ReST in peace
+#+CREATED:  October 15, 2021
 #+SINCE:    21.12.0
 
 * Description :unfold:
-THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming language]] support to Doom Emacs.
+This module adds [[https://docutils.sourceforge.io/rst.html][ReStructured Text]] support to Doom Emacs.
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -15,8 +15,7 @@ THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming l
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][company-mlton]] if [[doom-module:][:completion company]]
-- [[doom-package:][sml-mode]]
+- [[doom-package:][sphinx-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -25,19 +24,19 @@ THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming l
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
 
-* TODO Installation
+* Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires =sml= and =MLton=.
+This module requires [[https://www.sphinx-doc.org/en/master/usage/installation.html][sphinx]] to build RST documents.
 
 * TODO Usage
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -48,5 +47,5 @@ This module requires =sml= and =MLton=.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

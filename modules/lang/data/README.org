@@ -1,13 +1,12 @@
-← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang agda][Issues]]  ↖ [[doom-module-source:lang/agda][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang data][Issues]]  ↖ [[doom-module-source:lang/data][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang agda
-#+SUBTITLE: Types of types of types of types...
-#+CREATED:  August 21, 2018
-#+SINCE:    21.12.0 (#821)
+#+TITLE:    :lang data
+#+SUBTITLE: A dumping ground for data formats
+#+CREATED:  February 20, 2017
+#+SINCE:    2.0.0
 
 * Description :unfold:
-This module adds support for the [[http://wiki.portal.chalmers.se/agda/pmwiki.php][agda]] programming language. The Emacs support
-exists directly in the agda repository, but not in melpa.
+This module adds Emacs support for CSV and XML files.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -16,9 +15,7 @@ exists directly in the agda repository, but not in melpa.
 /This module has no flags./
 
 ** Packages
-- unless [[doom-module:][+local]]
-  - [[doom-package:][agda-input]]
-  - [[doom-package:][agda2-mode]]
+- [[doom-package:][csv-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -34,12 +31,12 @@ exists directly in the agda repository, but not in melpa.
 
 * TODO Usage
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -50,5 +47,5 @@ exists directly in the agda repository, but not in melpa.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote
