@@ -198,11 +198,15 @@ A lot of projects rely on running inside docker compose (ie Laravel), and as
 such a minor mode has been configured to attempt to run tests inside the =php-fpm=
 (by default) container.
 
-If for some reason you wish to specify a different container, modify the
-~+php/default-docker-container~ variable (ideally inside a ~.dir-locals.el~ file)
+This mode is disabled by default, to opt-in set =+php-run-tests-in-docker= to =t= in
+your config. If this is done during Emacs running, you will also have to reload
+=php-mode= (i.e. through =M-x php-mode=)
+
+If you wish to specify a different container, modify the
+~+php-default-docker-container~ variable (ideally inside a ~.dir-locals.el~ file)
 
 #+begin_src emacs-lisp
-((php-mode . ((+php/default-docker-container . "php-octane"))))
+((php-mode . ((+php-default-docker-container . "php-octane"))))
 #+end_src
 
 * Troubleshooting
