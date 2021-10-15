@@ -1,25 +1,24 @@
-← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang json][Issues]]  ↖ [[doom-module-source:lang/json][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::lang dhall][Issues]]  ↖ [[doom-module-source:lang/dhall][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang json
-#+SUBTITLE: At least it ain't XML
-#+CREATED:  April 23, 2020
+#+TITLE:    :lang dhall
+#+SUBTITLE: Config as code
+#+CREATED:  August 03, 2021
 #+SINCE:    21.12.0
 
 * Description :unfold:
-This module adds [[https://www.json.org/json-en.html][JSON]] support to Doom Emacs.
+This module adds [[https://dhall-lang.org/][Dhall]] language support to Emacs.
+
+Dhall is a programmable configuration language that you can think of as: JSON +
+functions + types + imports.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-- +lsp ::
-  Enable LSP support for ~json-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
-  (supports [[https://github.com/vscode-langservers/vscode-json-languageserver][vscode-json-languageserver]]).
+/This module has no flags./
 
 ** Packages
-- [[doom-package:][counsel-jq]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][json-mode]]
-- [[doom-package:][json-snatcher]]
+- [[doom-package:][dhall-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -31,7 +30,8 @@ This module adds [[https://www.json.org/json-en.html][JSON]] support to Doom Ema
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-/This module has no external requirements./
+This module requires the =dhall-json= package, which provides both the
+=dhall-to-json=, =dhall-to-yaml=, and =dhall-format= executables.
 
 * TODO Usage
 #+begin_quote
@@ -44,7 +44,7 @@ This module adds [[https://www.json.org/json-en.html][JSON]] support to Doom Ema
 #+end_quote
 
 * Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+/There are no known problems with this module./ [[doom-report-issue:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
