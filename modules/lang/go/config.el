@@ -6,10 +6,6 @@
 (after! go-mode
   (set-docsets! 'go-mode "Go")
   (set-repl-handler! 'go-mode #'gorepl-run)
-  (set-lookup-handlers! 'go-mode
-    :definition #'go-guru-definition
-    :references #'go-guru-referrers
-    :documentation #'godoc-at-point)
 
   ;; Redefines default formatter to *not* use goimports if reformatting a
   ;; region; as it doesn't play well with partial code.
@@ -21,7 +17,11 @@
 
   (if (featurep! +lsp)
       (add-hook 'go-mode-local-vars-hook #'lsp!)
-    (add-hook 'go-mode-hook #'go-eldoc-setup))
+    (progn (add-hook 'go-mode-hook #'go-eldoc-setup)
+           (set-lookup-handlers! 'go-mode
+             :definition #'go-guru-definition
+             :references #'go-guru-referrers
+             :documentation #'godoc-at-point)))
 
   (map! :map go-mode-map
         :localleader
