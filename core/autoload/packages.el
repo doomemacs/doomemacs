@@ -258,3 +258,48 @@ Must be run from a magit diff buffer."
   (interactive)
   (magit-commit-create
    (list "-e" "-m" (doom/bumpify-diff))))
+
+
+;;
+;;; Package metadata
+
+;;;###autoload
+(defun doom-package-homepage (package)
+  "Return the url to PACKAGE's homepage (usually a repo)."
+  (doom-initialize-packages)
+  (or (get package 'homepage)
+      (put package 'homepage
+           (cond ((when-let (location (locate-library (symbol-name package)))
+                    (with-temp-buffer
+                      (if (string-match-p "\\.gz$" location)
+                          (jka-compr-insert-file-contents location)
+                        (insert-file-contents (concat (file-name-sans-extension location) ".el")
+                                              nil 0 4096))
+                      (let ((case-fold-search t))
+                        (when (re-search-forward " \\(?:URL\\|homepage\\|Website\\): \\(http[^\n]+\\)\n" nil t)
+                          (match-string-no-properties 1))))))
+                 ((when-let ((recipe (straight-recipes-retrieve package)))
+                    (straight--with-plist (straight--convert-recipe recipe)
+                        (host repo)
+                      (pcase host
+                        (`github (format "https://github.com/%s" repo))
+                        (`gitlab (format "https://gitlab.com/%s" repo))
+                        (`bitbucket (format "https://bitbucket.com/%s" (plist-get plist :repo)))
+                        (`git repo)
+                        (_ nil)))))
+                 ((or package-archive-contents
+                      (progn (package-refresh-contents)
+                             package-archive-contents))
+                  (pcase (ignore-errors (package-desc-archive (cadr (assq package package-archive-contents))))
+                    (`nil nil)
+                    ("org" "https://orgmode.org")
+                    ((or "melpa" "melpa-mirror")
+                     (format "https://melpa.org/#/%s" package))
+                    ("gnu"
+                     (format "https://elpa.gnu.org/packages/%s.html" package))
+                    (archive
+                     (if-let (src (cdr (assoc package package-archives)))
+                         (format "%s" src)
+                       (user-error "%S isn't installed through any known source (%s)"
+                                   package archive)))))
+                 ((user-error "Can't get homepage for %S package" package))))))
