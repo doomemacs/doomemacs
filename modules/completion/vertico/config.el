@@ -34,6 +34,14 @@ overrides `completion-styles' during company completion sessions.")
 (use-package! orderless
   :after-call doom-first-input-hook
   :config
+  (defadvice! +vertico--company-capf--candidates-a (fn &rest args)
+    "Highlight company matches correctly, and try default completion styles before
+orderless."
+    :around #'company-capf--candidates
+    (let ((orderless-match-faces [completions-common-part])
+          (completion-styles +vertico-company-completion-styles))
+      (apply fn args)))
+
   (defun +vertico-orderless-dispatch (pattern _index _total)
     (cond
      ;; Ensure $ works with Consult commands, which add disambiguation suffixes
@@ -94,6 +102,11 @@ overrides `completion-styles' during company completion sessions.")
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   (advice-add #'multi-occur :override #'consult-multi-occur)
   :config
+  (defadvice! +vertico--consult-recent-file-a (&rest _args)
+    "`consult-recent-file' needs to have `recentf-mode' on to work correctly"
+    :before #'consult-recent-file
+    (recentf-mode +1))
+
   (setq consult-project-root-function #'doom-project-root
         consult-narrow-key "<"
         consult-line-numbers-widen t

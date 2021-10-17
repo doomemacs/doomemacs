@@ -1,27 +1,8 @@
 ;;; completion/vertico/autoload/vertico.el -*- lexical-binding: t; -*-
 
-;; To prevent "Unused lexical variable" warning from +vertico--company-capf--candidates-a
-;;;###autoload
-(defvar orderless-match-faces)
-
 ;; To prevent "Defining as dynamic an already lexical var" from +vertico/embark-preview
 ;;;###autoload
 (defvar embark-quit-after-action)
-
-;;;###autoload
-(defadvice! +vertico--company-capf--candidates-a (fn &rest args)
-  "Highlight company matches correctly, and try default completion styles before
-orderless."
-  :around #'company-capf--candidates
-  (let ((orderless-match-faces [completions-common-part])
-        (completion-styles +vertico-company-completion-styles))
-    (apply fn args)))
-
-;;;###autoload
-(defadvice! +vertico--consult-recent-file-a (&rest _args)
-  "`consult-recent-file' needs to have `recentf-mode' on to work correctly"
-  :before #'consult-recent-file
-  (recentf-mode +1))
 
 ;;;###autoload
 (cl-defun +vertico-file-search (&key query in all-files (recursive t) prompt args)
