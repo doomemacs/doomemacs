@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "45eb6112b2ea1214bfbec35ea20df7a75147fc08")
+  :pin "f81d9b755fef36a8186d84dc071dd2f6011f89cf")
 
 ;; core-modules.el
 (package! use-package
@@ -41,12 +41,12 @@
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
   :recipe (:host github :repo "hlissner/ws-butler")
-  :pin "2bb49d3ee7d2cba133bc7e9cdac416cd1c5e4fe0")
+  :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
 
 ;; core-projects.el
-(package! projectile :pin "17c152b0628e1809f359492731b5af3aefc1c0d8")
-(package! project :pin "c6dc955f60825aabdd7d9248dcc388dad96932e1")
+(package! projectile :pin "7f64570d3e6829d767d340c8584f3e4f3472ee81")
+(package! project :pin "a546cce47c434b0b4bf24bf1d5ed6e4623492072")
 
 ;; core-keybinds.el
-(package! general :pin "a0b17d207badf462311b2eef7c065b884462cb7c")
+(package! general :pin "26f1d4c4e258c40e6b70ce831a04800c914f29b3")
 (package! which-key :pin "4790a14683a2f3e4f72ade197c78e4c0af1cdd4b")
