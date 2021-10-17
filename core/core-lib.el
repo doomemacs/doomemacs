@@ -316,18 +316,28 @@ The closure is wrapped in `cl-function', meaning ARGLIST will accept anything
 `cl-defun' will. Implicitly adds `&allow-other-keys' if `&key' is present in
 ARGLIST."
   (declare (indent defun) (doc-string 1) (pure t) (side-effect-free t))
-  ;; Don't complain about undeclared keys.
-  (when (memq '&key arglist)
-    (if (memq '&aux arglist)
-        (let (newarglist arg)
-          (while arglist
-            (setq arg (pop arglist))
-            (when (eq arg '&aux)
-              (push '&allow-other-keys newarglist))
-            (push arg newarglist))
-          (setq arglist (nreverse newarglist)))
-      (setq arglist (append arglist (list '&allow-other-keys)))))
-  `(cl-function (lambda ,arglist ,@body)))
+  `(cl-function
+    (lambda
+      ,(letf! (defun* allow-other-keys (args)
+                (mapcar
+                 (lambda (arg)
+                   (if (listp arg)
+                       (allow-other-keys arg)
+                     arg))
+                 (if (and (memq '&key args)
+                          (not (memq '&allow-other-keys args)))
+                     (if (memq '&aux args)
+                         (let (newargs arg)
+                           (while args
+                             (setq arg (pop args))
+                             (when (eq arg '&aux)
+                               (push '&allow-other-keys newargs))
+                             (push arg newargs))
+                           (nreverse newargs))
+                       (append args (list '&allow-other-keys)))
+                   args)))
+         (allow-other-keys arglist))
+      ,@body)))
 
 (defmacro cmd! (&rest body)
   "Returns (lambda () (interactive) ,@body)
