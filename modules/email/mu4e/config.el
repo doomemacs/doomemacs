@@ -313,7 +313,7 @@ This is enacted by `+mu4e~main-action-str-prettier-a' and
      +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
-  (advice-add 'mu4e~start :around #'+mu4e-lock-start)
+  (advice-add 'mu4e--start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
 (unless (featurep! +org)
@@ -554,7 +554,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
     ;;
     ;; Gmail will handle the rest.
     (defun +mu4e--mark-seen (docid _msg target)
-      (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
+      (mu4e--server-move docid (mu4e~mark-check-target target) "+S-u-N"))
 
     (defvar +mu4e--last-invalid-gmail-action 0)
 
@@ -571,7 +571,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                                 (when (< 2 (- (float-time) +mu4e--last-invalid-gmail-action))
                                   (sit-for 1))
                                 (setq +mu4e--last-invalid-gmail-action (float-time)))
-                       (mu4e~proc-remove docid))))
+                       (mu4e--server-remove docid))))
           (alist-get 'trash mu4e-marks)
           (list :char '("d" . "▼")
                 :prompt "dtrash"
@@ -579,7 +579,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "+T-N"))))
+                            (mu4e--server-move docid (mu4e~mark-check-target target) "+T-N"))))
           ;; Refile will be my "archive" function.
           (alist-get 'refile mu4e-marks)
           (list :char '("r" . "▼")
@@ -588,7 +588,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+                            (mu4e--server-move docid (mu4e~mark-check-target target) "-N")))
                 #'+mu4e--mark-seen))
 
     ;; This hook correctly modifies gmail flags on emails when they are marked.
