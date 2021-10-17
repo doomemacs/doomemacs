@@ -134,7 +134,7 @@ PLIST can have the following properties:
       (add-hook 'persp-activated-functions #'+doom-dashboard-reload-maybe-h))
     (add-hook 'persp-before-switch-functions #'+doom-dashboard--persp-record-project-h)))
 
-(add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h)
+(add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h 'append)
 
 ;;
 ;;; Faces
