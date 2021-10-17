@@ -1,0 +1,52 @@
+#+TITLE:   editor/rotate-text
+#+DATE:    October 14, 2021
+#+SINCE:   v2.0.4
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+# A summary of what this module does.
+Provides a convenient way to rotate trough a set of related entities using a single key binding. There are both globally available sets as well as mode local once. For example the sequence ~enable~ and ~disable~ is globally available whereas the sequence ~public~, ~protected~ and ~private~ is only available in ~c++~ mode. 
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
+
+** Module Flags
+# If this module has no flags, then...
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/debug-ito/rotate-text.el][rotate-text.el]]
+
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+With point on a word or symbol that is part of a sequence you can call ~rotate-text~ or ~rotate-text-backward~ to rotate to the next or previous item in the sequence. The list of items will wrap around as you cycle through them.
+
+* Configuration
+To enable a set of items to cycle through globally, add the following to your configuration
+#+begin_src emacs-lisp
+;; in ~/.doom.d/config.el
+(after! rotate-text
+  (pushnew! rotate-text-words '("small" "medium" "large")))
+#+end_src
+
+To add a sequence to a specific mode, you can add something like the following to your configuration
+#+begin_src emacs-lisp
+;; in ~/.doom.d/config.el
+(set-rotate-patterns! 'c++-mode
+    :words '(("float" "double")))
+#+end_src    
+
+When configuring a sequence of words or symbols that should be rotated through, it is important that all items are all lower case. The casing will be determined by the item that initiated the rotation. For example, ~Small~ will be replaced with ~Medium~ and ~SMALL~ will be replaced with ~MEDIUM~ using the example described above.
