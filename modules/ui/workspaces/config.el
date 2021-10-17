@@ -37,15 +37,9 @@ stored in `persp-save-dir'.")
 ;; Packages
 
 (use-package! persp-mode
+  :unless noninteractive
   :commands persp-switch-to-buffer
-  :init
-  (add-hook! 'doom-init-modules-hook
-    (defun +workspaces-init-h ()
-      (unless noninteractive
-        ;; Remove default buffer predicate so persp-mode can put in its own
-        (delq! 'buffer-predicate default-frame-alist 'assq)
-        (require 'persp-mode)
-        (persp-mode +1))))
+  :hook (doom-init-ui . persp-mode)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-reset-windows-on-nil-window-conf nil
