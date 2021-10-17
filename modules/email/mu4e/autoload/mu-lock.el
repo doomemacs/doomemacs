@@ -76,7 +76,7 @@ Else, write to this process' PID to the lock file"
   "Handle another process requesting the Mu4e lock."
   (when (equal (nth 1 event) 'created)
     (when +mu4e-lock-relaxed
-      (mu4e~stop)
+      (mu4e--stop)
       (file-notify-rm-watch +mu4e-lock--file-watcher)
       (message "Someone else wants to use Mu4e, releasing lock")
       (delete-file +mu4e-lock-file)
@@ -90,4 +90,4 @@ Else, write to this process' PID to the lock file"
       (setq +mu4e-lock--file-just-deleted t)
       (when (and +mu4e-lock-greedy (+mu4e-lock-available t))
         (message "Noticed Mu4e lock was available, grabbed it")
-        (run-at-time 0.2 nil #'mu4e~start)))))
+        (run-at-time 0.2 nil #'mu4e--start)))))
