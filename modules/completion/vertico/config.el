@@ -168,6 +168,14 @@ orderless."
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
   :config
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
+
+  (defadvice! +vertico--embark-which-key-prompt-a (fn &rest args)
+    "Hide the which-key indicator immediately when using the completing-read prompter."
+    :around #'embark-completing-read-prompter
+    (which-key--hide-popup-ignore-command)
+    (let ((embark-indicators
+           (remq #'embark-which-key-indicator embark-indicators)))
+      (apply fn args)))
   (cl-nsubstitute #'+vertico-embark-which-key-indicator #'embark-mixed-indicator embark-indicators)
   (add-to-list 'embark-indicators #'+vertico-embark-vertico-indicator)
   ;; add the package! target finder before the file target finder,
