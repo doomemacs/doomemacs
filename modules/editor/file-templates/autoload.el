@@ -59,7 +59,10 @@ evil is loaded and enabled)."
   (when (and pred (not ignore))
     (when (if project (doom-project-p) t)
       (unless mode
-        (setq mode (if (symbolp pred) pred major-mode)))
+        (setq mode
+              (if (and (symbolp pred) (not (booleanp pred)))
+                  pred
+                major-mode)))
       (unless mode
         (user-error "Couldn't determine mode for %s file template" pred))
       (unless trigger
@@ -119,10 +122,14 @@ evil is loaded and enabled)."
   "Tests the current buffer and outputs the file template rule most appropriate
 for it. This is used for testing."
   (interactive)
-  (let ((template (cl-find-if #'+file-template-p +file-templates-alist)))
-    (if (cl-find trigger (yas--all-templates
-                          (yas--get-snippet-tables
-                           (plist-get template :mode)))
-                 :key #'yas--template-key :test #'equal)
-        (message "Found %s" template)
-      (message "Found rule, but can't find associated snippet: %s" template))))
+  (cl-destructuring-bind (pred &rest plist &key trigger mode &allow-other-keys)
+      (or (cl-find-if #'+file-template-p +file-templates-alist)
+          (user-error "Found no file template for this file"))
+    (if (or (functionp trigger)
+            (cl-find trigger
+                     (yas--all-templates
+                      (yas--get-snippet-tables
+                       mode))
+                     :key #'yas--template-key :test #'equal))
+        (message "Found %s" (cons pred plist))
+      (message "Found rule, but can't find associated snippet: %s" (cons pred plist)))))
