@@ -21,7 +21,7 @@ about it (it will be logged to *Messages* however).")
   :commands lsp-install-server
   :init
   ;; Don't touch ~/.emacs.d, which could be purged without warning
-  (setq lsp-session-file (concat doom-etc-dir "lsp-session")
+  (setq lsp-session-file (concat doom-cache-dir "lsp-session")
         lsp-server-install-dir (concat doom-etc-dir "lsp"))
   ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
