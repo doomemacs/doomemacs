@@ -41,9 +41,15 @@
                                  old-file-name-handler-alist))))
     (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101))
 
-  ;; Contrary to what many Emacs users have in their configs, you don't need
-  ;; more than this to make UTF-8 the default coding system:
-  (set-language-environment "UTF-8"))
+  ;; Emacs really shouldn't be displaying anything until it has fully started
+  ;; up. This saves a bit of time.
+  (setq-default inhibit-redisplay t
+                inhibit-message t)
+  (add-hook 'window-setup-hook
+            (lambda ()
+              (setq-default inhibit-redisplay nil
+                            inhibit-message nil)
+              (redisplay))))
 
 
 ;;
