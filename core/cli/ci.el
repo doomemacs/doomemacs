@@ -14,8 +14,8 @@
 
 
 (defun doom-cli--ci-deploy-hooks (&optional noforce)
-  (let ((dir (doom-path doom-emacs-dir ".git/hooks"))
-        (default-directory doom-emacs-dir))
+  (let* ((default-directory doom-emacs-dir)
+         (dir (cdr (doom-call-process "git" "rev-parse" "--git-path" "hooks"))))
     (make-directory dir 'parents)
     (dolist (hook '("commit-msg" "pre-push"))
       (let ((file (doom-path dir hook)))
