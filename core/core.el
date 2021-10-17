@@ -271,6 +271,12 @@ config.el instead."
                     ;; compatibility fallbacks
                     "gnutls-cli -p %p %h"))
 
+;; Emacs stores `authinfo' in $HOME and in plain-text. Let's not do that, mkay?
+;; This file stores usernames, passwords, and other such treasures for the
+;; aspiring malicious third party.
+(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
+                         "~/.authinfo.gpg"))
+
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted, and
 ;; indicates misconfiguration (don't rely on case insensitivity for file names).
 (setq auto-mode-case-fold nil)
