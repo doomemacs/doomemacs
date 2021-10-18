@@ -270,44 +270,71 @@ Note: warnings are not considered failures.")
 ;;
 ;;;
 
+(defun doom-cli--parse-commit (commit-msg)
+  (with-temp-buffer
+    (save-excursion (insert commit-msg))
+    (append
+     (let ((end (save-excursion
+                  (or (and (re-search-forward
+                            (format "\n\n%s "
+                                    (regexp-opt (append doom-cli-commit-ref-types
+                                                        doom-cli-commit-ref-git-types)
+                                                t))
+                            nil t)
+                           (match-beginning 1))
+                      (point-max)))))
+       `(:subject ,(buffer-substring (point-min) (line-end-position))
+         :body ,(buffer-substring (line-beginning-position 3) end)
+         :refs ,(split-string (buffer-substring end (point-max)) "\n" t)))
+     (save-match-data
+       (when (looking-at "^\\([a-zA-Z0-9_-]+\\)\\(!?\\)\\(?:(\\([^)]+\\))\\)?: \\([^\n]+\\)")
+         `(:type ,(intern (match-string 1))
+           :bang ,(equal (match-string 2) "!")
+           :summary ,(match-string 4)
+           :scopes ,(ignore-errors (split-string (match-string 3) ",")))))
+     (save-excursion
+       (let ((bump-re "\\(\\(?:https?://.+\\|[^/ \n]+\\)/[^/ \n]+@[a-z0-9]\\{12\\}\\)")
+             bumps)
+         (while (re-search-forward (format "^\\s-*\\<%s -> %s\\>" bump-re bump-re) nil t)
+           (cond ((rassoc (match-string 1) bumps)
+                  (setcdr (rassoc (match-string 1) bumps) (match-string 2)))
+                 ((assoc (match-string 2) bumps)
+                  (setcar (assoc (match-string 2) bumps) (match-string 1)))
+                 ((setf (alist-get (match-string 1) bumps nil nil #'equal)
+                        (match-string 2)))))
+         `(:bumps ,(cl-sort (delete-dups bumps) #'string-lessp :key #'car)))))))
+
+(defun doom-cli--parse-bumps (from end)
+  (with-temp-buffer
+    (save-excursion
+      (insert
+       (cdr (doom-call-process "git" "log" "--format=full" "--grep=\\(bump\\|revert\\):"
+                               (format "%s...%s" from end)))))
+    (save-match-data
+      (let (packages)
+        (while (let ((bump-re "\\(\\(?:https?://.+\\|[^/ ]+\\)/[^/ ]+@[a-z0-9]\\{12\\}\\)"))
+                 (re-search-forward (format "^\\s-*\\<%s -> %s\\>" bump-re bump-re) nil t))
+          (cond ((rassoc (match-string 1) packages)
+                 (setcdr (rassoc (match-string 1) packages) (match-string 2)))
+                ((assoc (match-string 2) packages)
+                 (setcar (assoc (match-string 2) packages) (match-string 1)))
+                ((setf (alist-get (match-string 1) packages nil nil #'equal)
+                       (match-string 2)))))
+        (cl-sort (delete-dups packages) #'string-lessp :key #'car)))))
+
 (defun doom-cli--ci--lint (commits)
   (let ((errors? 0)
         (warnings? 0))
     (print! (start "Linting %d commits" (length commits)))
     (print-group!
      (dolist (commit commits)
-       (let (subject body refs summary type scopes bang refs errors warnings)
-         (with-temp-buffer
-           (save-excursion (insert (cdr commit)))
-           (let ((end (save-excursion
-                        (or (and (re-search-forward
-                                  (format "\n\n%s "
-                                          (regexp-opt (append doom-cli-commit-ref-types
-                                                              doom-cli-commit-ref-git-types)
-                                                      t))
-                                  nil t)
-                                 (match-beginning 1))
-                            (point-max)))))
-             (setq subject (buffer-substring (point-min) (line-end-position))
-                   body (buffer-substring (line-beginning-position 3) end)
-                   refs (split-string (buffer-substring end (point-max))
-                                      "\n" t)))
-           (save-match-data
-             (when (looking-at "^\\([a-zA-Z0-9_-]+\\)\\(!?\\)\\(?:(\\([^)]+\\))\\)?: \\([^\n]+\\)")
-               (setq type (intern (match-string 1))
-                     bang (equal (match-string 2) "!")
-                     summary (match-string 4)
-                     scopes (ignore-errors (split-string (match-string 3) ","))))))
-         (unless (string-match-p "^\\(?:\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
+       (let* ((plist (doom-cli--parse-commit (cdr commit)))
+              (subject (plist-get plist :subject))
+              warnings errors)
+         (unless (string-match-p "^\\(?:\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) "
+                                 subject)
            (dolist (fn doom-cli-commit-rules)
-             (pcase (funcall fn
-                             :bang bang
-                             :body body
-                             :refs refs
-                             :scopes scopes
-                             :subject subject
-                             :summary summary
-                             :type type)
+             (pcase (apply fn plist)
                (`(,type . ,msg)
                 (push msg (if (eq type 'error) errors warnings)))))
            (if (and (null errors) (null warnings))
