@@ -89,3 +89,18 @@
         "m" #'ess-noweb-mark-chunk
         "p" #'ess-noweb-previous-chunk
         "n" #'ess-noweb-next-chunk))
+
+
+(use-package! stan-mode
+  :when (featurep! +stan)
+  :hook (stan-mode . stan-mode-setup)
+  :hook (stan-mode . eldoc-stan-setup)
+  :init
+  (use-package! company-stan
+    :when (featurep! :completion company)
+    :hook (stan-mode . company-stan-setup))
+
+  (use-package! flycheck-stan
+    :when (featurep! :checkers syntax)
+    :hook (stan-mode . flycheck-stan-stanc2-setup)
+    :hook (stan-mode . flycheck-stan-stanc3-setup)))
