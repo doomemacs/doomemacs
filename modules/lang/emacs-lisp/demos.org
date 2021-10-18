@@ -37,7 +37,7 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 
 * core-lib
 ** add-hook!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
 (add-hook! 'some-mode-hook #'enable-something)
@@ -62,11 +62,11 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
     ...)
   (defun do-another-thing ()
     ...))
-#+END_SRC
+#+end_src
 
 ** TODO add-transient-hook!
 ** after!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;;; `after!' will take:
 
 ;; An unquoted package symbol (the name of a package)
@@ -90,30 +90,30 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 ;; and python-mode is in the `python' package. This is what you want:
 (after! rustic ...)
 (after! python ...)
-#+END_SRC
+#+end_src
 ** appendq!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (let ((x '(a b c)))
   (appendq! x '(c d e))
   x)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : (a b c c d e)
 
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (let ((x '(a b c))
       (y '(c d e))
       (z '(f g)))
   (appendq! x y z '(h))
   x)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : (a b c c d e f g h)
 
 ** custom-set-faces!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (custom-set-faces!
  '(outline-1 :weight normal)
  '(outline-2 :weight normal)
@@ -142,10 +142,10 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 (custom-set-faces!
  `(outline-1 :foreground ,(doom-color 'red))
  `(outline-2 :background ,(doom-color 'blue)))
-#+END_SRC
+#+end_src
 
 ** custom-theme-set-faces!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (custom-theme-set-faces! 'doom-one
  '(outline-1 :weight normal)
  '(outline-2 :weight normal)
@@ -174,18 +174,18 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 (custom-theme-set-faces! 'doom-one
  `(outline-1 :foreground ,(doom-color 'red))
  `(outline-2 :background ,(doom-color 'blue)))
-#+END_SRC
+#+end_src
 
 ** TODO defer-feature!
 ** TODO defer-until!
 ** disable-packages!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; Disable packages enabled by DOOM
 (disable-packages! some-package second-package)
-#+END_SRC
+#+end_src
 
 ** doom!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (doom! :completion
        company
        ivy
@@ -212,51 +212,51 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
        :config
        literate
        (default +bindings +smartparens))
-#+END_SRC
+#+end_src
 
 ** file-exists-p!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (file-exists-p! "init.el" doom-emacs-dir)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : /home/hlissner/.emacs.d/init.el
 
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (file-exists-p! (and (or "doesnotexist" "init.el")
                      "LICENSE")
                 doom-emacs-dir)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
 ** cmd!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (map! "C-j" (cmd! (newline) (indent-according-to-mode)))
-#+END_SRC
+#+end_src
 
 ** cmd!!
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
 the prefix arg into the command call:
 
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (map! "C-j" (cmd!! #'newline 5))
-#+END_SRC
+#+end_src
 
 Or to create aliases for functions that behave differently:
 
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (fset 'insert-5-newlines (cmd!! #'newline 5))
 
 ;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
 ;; its startup visibility settings.
 (fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
-#+END_SRC
+#+end_src
 
 ** cmds!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (map! :i [tab] (cmds! (and (featurep! :editor snippets)
                            (bound-and-true-p yas-minor-mode)
                            (yas-maybe-expand-abbrev-key-filter 'yas-expand))
@@ -273,25 +273,25 @@ Or to create aliases for functions that behave differently:
                       #'+fold/toggle
                       (fboundp 'evil-jump-item)
                       #'evil-jump-item))
-#+END_SRC
+#+end_src
 
 ** kbd!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (map! "," (kbd! "SPC")
       ";" (kbd! ":"))
-#+END_SRC
+#+end_src
 
 ** letenv!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (letenv! (("SHELL" "/bin/sh"))
   (shell-command-to-string "echo $SHELL"))
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : "/bin/sh\n"
 
 ** load!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;;; Lets say we're in ~/.doom.d/config.el
 (load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
 (load! "somefile" doom-emacs-dir)      ; loads ~/.emacs.d/somefile.el
@@ -299,10 +299,10 @@ Or to create aliases for functions that behave differently:
 
 ;; If you don't want a `load!' call to throw an error if the file doesn't exist:
 (load! "~/.maynotexist" nil t)
-#+END_SRC
+#+end_src
 
 ** map!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (map! :map magit-mode-map
       :m  "C-r" 'do-something           ; C-r in motion state
       :nv "q" 'magit-mode-quit-window   ; q in normal+visual states
@@ -324,12 +324,12 @@ Or to create aliases for functions that behave differently:
           :desc "View" "v" #'TeX-view)) ; Add which-key description
       :leader                           ; Use leader key from now on
       :desc "Eval expression" ";" #'eval-expression)
-#+END_SRC
+#+end_src
 
 These are side-by-side comparisons, showing how to bind keys with and without
 ~map!~:
 
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; bind a global key
 (global-set-key (kbd "C-x y") #'do-something)
 (map! "C-x y" #'do-something)
@@ -394,10 +394,10 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (evil-define-key* 'normal go-lisp-mode-map (kbd "C-x x") #'do-something-else)
 (map! (:map emacs-lisp-mode :nv "C-x x" #'do-something)
       (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
-#+END_SRC
+#+end_src
 
 ** package!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
 ;; specified in `straight-recipe-repositories':
 (package! evil)
@@ -426,46 +426,46 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; If you share your config between two computers, and don't want bin/doom
 ;; refresh to delete packages used only on one system, use :ignore
 (package! evil :ignore (not (equal system-name "my-desktop")))
-#+END_SRC
+#+end_src
 
 ** pushnew!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (let ((list '(a b c)))
   (pushnew! list 'c 'd 'e)
   list)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : (e d a b c)
 
 ** prependq!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (let ((x '(a b c)))
   (prependq! x '(c d e))
   x)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : (c d e a b c)
 
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 (let ((x '(a b c))
       (y '(c d e))
       (z '(f g)))
   (prependq! x y z '(h))
   x)
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : (c d e f g h a b c)
 
 ** quiet!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; Enters recentf-mode without extra output
 (quiet! (recentf-mode +1))
-#+END_SRC
+#+end_src
 ** remove-hook!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; With only one hook and one function, this is identical to `remove-hook'. In
 ;; that case, use that instead.
 (remove-hook! 'some-mode-hook #'enable-something)
@@ -481,17 +481,17 @@ These are side-by-side comparisons, showing how to bind keys with and without
 
 ;; Removing arbitrary forms (must be exactly the same as the definition)
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-#+END_SRC
+#+end_src
 ** setq!
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 ;; Each of these have a setter associated with them, which must be triggered in
 ;; order for their new values to have an effect.
 (setq! evil-want-Y-yank-to-eol nil
        evil-want-C-u-scroll nil
        evil-want-C-d-scroll nil)
-#+END_SRC
+#+end_src
 ** setq-hook!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; Set multiple variables after a hook
 (setq-hook! 'markdown-mode-hook
   line-spacing 2
@@ -500,10 +500,10 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; Set variables after multiple hooks
 (setq-hook! '(eshell-mode-hook term-mode-hook)
   hscroll-margin 0)
-#+END_SRC
+#+end_src
 
 ** unsetq-hook!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 (unsetq-hook! 'markdown-mode-hook line-spacing)
 
 ;; Removes the following variable hook
@@ -514,10 +514,10 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (unsetq-hook! some-mode (enable-something and-another))
 (unsetq-hook! '(one-mode-hook second-mode-hook) enable-something)
 (unsetq-hook! (one-mode second-mode) enable-something)
-#+END_SRC
+#+end_src
 
 ** use-package!
-#+BEGIN_SRC elisp :eval no
+#+begin_src emacs-lisp :eval no
 ;; Use after-call to load package before hook
 (use-package! projectile
   :after-call (pre-command-hook after-find-file dired-before-readin-hook))
@@ -530,4 +530,4 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; This is equivalent to :defer-incrementally (abc)
 (use-package! abc
   :defer-incrementally t)
-#+END_SRC
+#+end_src
