@@ -17,7 +17,7 @@
   "An alist mapping languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.
 
-For example, (fish . shell) will cause #+BEGIN_SRC fish blocks to load
+For example, (fish . shell) will cause #+begin_src fish blocks to load
 ob-shell.el when executed.")
 
 (defvar +org-babel-load-functions ()
