@@ -1,27 +1,22 @@
 ;;; lang/solidity/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Packages
+;;; Packages
 
-;;;###package solidity-mode
-(setq solidity-comment-style 'slash)
-
-
-(use-package! solidity-flycheck  ; included with solidity-mode
-  :when (featurep! :checkers syntax)
-  :after solidity-mode
-  :config
+(after! solidity-mode
+  (setq solidity-comment-style 'slash)
   (set-docsets! 'solidity-mode "Solidity")
-  (setq flycheck-solidity-solc-addstd-contracts t)
-  (when (funcall flycheck-executable-find solidity-solc-path)
-    (add-to-list 'flycheck-checkers 'solidity-checker nil #'eq))
-  (when (funcall flycheck-executable-find solidity-solium-path)
-    (add-to-list 'flycheck-checkers 'solium-checker nil #'eq)))
+  (set-company-backend! 'solidity-mode 'company-solidity)
 
+  (use-package! solidity-flycheck  ; included with solidity-mode
+    :when (featurep! :checkers syntax)
+    :config
+    (setq flycheck-solidity-solc-addstd-contracts t)
+    (when (funcall flycheck-executable-find solidity-solc-path)
+      (add-to-list 'flycheck-checkers 'solidity-checker nil #'eq))
+    (when (funcall flycheck-executable-find solidity-solium-path)
+      (add-to-list 'flycheck-checkers 'solium-checker nil #'eq)))
 
-(use-package! company-solidity
-  :when (featurep! :completion company)
-  :after solidity-mode
-  :config
-  (delq! 'company-solidity company-backends)
-  (set-company-backend! 'solidity-mode 'company-solidity))
+  (use-package! company-solidity
+    :when (featurep! :completion company)
+    :config (delq! 'company-solidity company-backends)))
