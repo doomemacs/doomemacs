@@ -1,4 +1,4 @@
-#+TITLE:   :ui minimap
+#+TITLE:   ui/minimap
 #+DATE:    May 8, 2020
 #+SINCE:   v3.0.0
 #+STARTUP: inlineimages nofold
