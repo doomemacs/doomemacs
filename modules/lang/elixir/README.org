@@ -42,6 +42,7 @@ If you want to add support for LSP ([[modules/tools/lsp][:tools lsp]]), be sure 
 and enable ~:tools lsp~ in your ~init.el~.
 
 To support linting with [[https://github.com/rrrene/credo][credo]], add ~:checkers syntax~ to your ~init.el~
+
 ** Install Elixir
 *** With ~asdf~
 #+BEGIN_SRC sh
@@ -62,6 +63,7 @@ sudo emerge -v dev-lang/elixir
 sudo zypper install elixir
 #+END_SRC
 See [[https://elixir-lang.org/install.html]] for other operating systems
+
 * Features
 - Code completion (~:completion company~)
 - Documentation lookup (~:tools lookup~)
@@ -69,6 +71,7 @@ See [[https://elixir-lang.org/install.html]] for other operating systems
 - Phoenix support
 - ~iex~ integration (~:tools eval~)
 - Syntax checking (~:checkers syntax~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+  
 * Appendix
 ** Commands
 *** exunit-mode

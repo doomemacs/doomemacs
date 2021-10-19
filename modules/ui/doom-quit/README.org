@@ -24,13 +24,18 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags
+
 ** Plugins
+
 This module uses no Plugins
+
 * Prerequisites
 This module provides no prerequisite
+
 * Features
 This module only works when you run individual Emacs instances and not the
 daemon.
+
 * Configurations
  you can configure the messages by adding to the variable ~+doom-quit-messages~
  #+BEGIN_SRC emacs-lisp
@@ -41,5 +46,6 @@ daemon.
                             "Look, bud. You leave now and you forfeit your body count!"
                             "You're lucky I don't smack you for thinking about leaving."))
  #+END_SRC
+
 * Troubleshooting
 If you have any issues with this module do let me know
