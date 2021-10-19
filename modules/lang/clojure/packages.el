@@ -15,7 +15,7 @@
 
 ;;; Core packages
 (package! clojure-mode :pin "e1dc7caee76d117a366f8b8b1c2da7e6400636a8")
-(package! clj-refactor :pin "a5e1953753310e5e715e8e1e293181bf61521440")
+(package! clj-refactor :pin "4cb75bd6a2fcb376455e8b4f3edee509f87b86b8")
 (package! cider :pin "0a9d0ef429e76ee36c34e116c4633c69cea96c67")
 (when (featurep! :checkers syntax)
   (package! flycheck-clj-kondo :pin "a558bda44c4cb65b69fa53df233e8941ebd195c5"))
