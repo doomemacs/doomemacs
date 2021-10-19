@@ -13,7 +13,8 @@
 If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
   (interactive "P")
   (require 'browse-at-remote)
-  (let ((browse-at-remote-prefer-symbolic
+  (let ((vc-ignore-dir-regexp locate-dominating-stop-dir-regexp)
+        (browse-at-remote-prefer-symbolic
          (if arg
              (not browse-at-remote-prefer-symbolic)
            browse-at-remote-prefer-symbolic)))
@@ -25,7 +26,8 @@ If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
 If prefix ARG, negate the default value of `browse-at-remote-prefer-symbolic'."
   (interactive "P")
   (require 'browse-at-remote)
-  (let ((browse-at-remote-prefer-symbolic
+  (let ((vc-ignore-dir-regexp locate-dominating-stop-dir-regexp)
+        (browse-at-remote-prefer-symbolic
          (if arg
              (not browse-at-remote-prefer-symbolic)
            browse-at-remote-prefer-symbolic)))
