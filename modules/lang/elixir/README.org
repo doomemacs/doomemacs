@@ -16,6 +16,7 @@
 - [[#features][Features]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
+    - [[#exunit-mode][exunit-mode]]
 
 * Description
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
