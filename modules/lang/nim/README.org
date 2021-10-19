@@ -1,5 +1,23 @@
-#+TITLE: :lang Nim
+#+TITLE:   lang/nim
+#+DATE:    October 19, 2021
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#nim][Nim]]
+    - [[#macos][MacOS]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#opensuse][openSUSE]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
 #+begin_quote
 This module is a work in progress.
 #+end_quote
@@ -10,14 +28,18 @@ This module adds [[https://nim-lang.org][Nim]] support to Emacs.
 + Syntax checking (nimsuggest + flycheck)
 + Babel support (~ob-nim~)
 
-* Table of Contents :TOC:
-- [[#module-flags][Module Flags]]
-- [[#prerequisites][Prerequisites]]
-  - [[#nim][Nim]]
-- [[#configuration][Configuration]]
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
-* Module Flags
+** Module Flags
+# If this module has no flags, then...
 This module provides no flags.
+
+** Plugins
++ [[https://github.com/nim-lang/nim-mode][nim-mode]] 
++ =:checkers syntax=
+    + [[https://github.com/ALSchwalm/flycheck-nim][flycheck-nim]]  
 
 * Prerequisites
 + ~nim~ (for building & evaluation)
@@ -49,4 +71,11 @@ sudo pacman --needed --noconfirm -S nim nimble
 sudo zypper install nim
 #+END_SRC
 
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+
 * Configuration
+# How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
