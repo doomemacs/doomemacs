@@ -5,7 +5,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module flags]]
+  - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#install-elixir][Install Elixir]]
@@ -26,7 +26,7 @@ or [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 # If this module has no maintainers, then...
 This module has no dedicated maintainers.
 
-** Module flags
+** Module Flags
 + ~+lsp~ Enable LSP support. Requires [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 
 ** Plugins
