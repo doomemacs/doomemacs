@@ -21,7 +21,7 @@ This module extends support for Emacs Lisp in Doom Emacs.
 + Go-to-definitions or references functionality
 
 ** Maintainers
-+ @hlissner (author)
++ [[https://github.com/hlissner][@hlissner]] (author)
 
 ** Module Flags
 This module provides no flags.
