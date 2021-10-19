@@ -24,18 +24,18 @@
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
   (set-lookup-handlers! 'sh-mode :documentation #'+sh-lookup-documentation-handler)
   (set-ligatures! 'sh-mode
-    ;; Functional
-    :def "function"
-    ;; Types
-    :true "true" :false "false"
-    ;; Flow
-    :not "!"
-    :and "&&" :or "||"
-    :in "in"
-    :for "for"
-    :return "return"
-    ;; Other
-    :dot "." :dot "source")
+                  ;; Functional
+                  :def "function"
+                  ;; Types
+                  :true "true" :false "false"
+                  ;; Flow
+                  :not "!"
+                  :and "&&" :or "||"
+                  :in "in"
+                  :for "for"
+                  :return "return"
+                  ;; Other
+                  :dot "." :dot "source")
 
   (when (featurep! +lsp)
     (add-hook 'sh-mode-local-vars-hook #'lsp! 'append))
@@ -93,3 +93,7 @@
   :config
   (when (featurep! +lsp)
     (add-hook 'powershell-mode-local-vars-hook #'lsp! 'append)))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'sh-mode-hook #'turn-on-tree-sitter-mode))

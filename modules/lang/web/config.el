@@ -55,3 +55,9 @@
   (def-project-mode! +web-phaser-mode
     :modes '(+javascript-npm-mode)
     :when (+javascript-npm-dep-p '(or phaser phaser-ce))))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! '(html-mode-hook
+               mhtml-mode-hook
+               css-mode-hook)) #'turn-on-tree-sitter-mode)

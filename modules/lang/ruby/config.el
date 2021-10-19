@@ -195,3 +195,7 @@
   (map! :localleader
         :map projectile-rails-mode-map
         "r" #'projectile-rails-command-map))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'ruby-mode-hook #'turn-on-tree-sitter-mode))

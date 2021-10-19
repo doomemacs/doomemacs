@@ -31,3 +31,7 @@
                           "sourcekit"
                           "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit-lsp"
                           "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit"))))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'swift-mode-hook #'turn-on-tree-sitter-mode))

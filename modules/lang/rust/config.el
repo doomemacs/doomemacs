@@ -81,3 +81,7 @@
   (set-lookup-handlers! 'rustic-mode
     :definition '(racer-find-definition :async t)
     :documentation '+rust-racer-lookup-documentation))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'rustic-mode-hook #'turn-on-tree-sitter-mode))

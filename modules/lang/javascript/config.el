@@ -311,3 +311,12 @@ to tide."
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! '(javascript-mode-hook
+               js-mode-hook
+               js2-mode-hook
+               js3-mode-hook
+               typescript-mode-hook
+               rjsx-mode) #'turn-on-tree-sitter-mode))

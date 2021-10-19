@@ -99,3 +99,7 @@
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'julia-mode-hook #'turn-on-tree-sitter-mode))

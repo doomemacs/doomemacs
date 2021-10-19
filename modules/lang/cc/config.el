@@ -304,3 +304,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                               "-isystem/usr/local/include"]
                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! '(c-mode-hook
+               c++-mode-hook) #'turn-on-tree-sitter-mode))

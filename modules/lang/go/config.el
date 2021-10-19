@@ -76,3 +76,7 @@
 (use-package! flycheck-golangci-lint
   :when (featurep! :checkers syntax)
   :hook (go-mode . flycheck-golangci-lint-setup))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'go-mode-hook #'turn-on-tree-sitter-mode))

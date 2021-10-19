@@ -72,3 +72,7 @@ or terminating simple string."
 
 
 (use-package! sln-mode :mode "\\.sln\\'")
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'csharp-mode-hook #'turn-on-tree-sitter-mode))

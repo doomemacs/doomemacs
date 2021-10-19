@@ -21,3 +21,7 @@
   :when (featurep! :checkers syntax)
   :after elm-mode
   :config (add-to-list 'flycheck-checkers 'elm))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'elm-mode-hook #'turn-on-tree-sitter-mode))
