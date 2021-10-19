@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -22,6 +23,10 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 + Syntax highlighting and latex symbols from ~julia-mode~
 + REPL integration from ~julia-repl~
 + Code completion and syntax checking, requires ~:tools lsp~ and ~+lsp~
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enable LSP server support.

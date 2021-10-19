@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -18,6 +19,10 @@ This module adds support for shell scripting languages.
 
 + Code completion (company-shell)
 + Syntax Checking (flycheck)
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables LSP support for sh-mode. This requires the =:tools lsp= module

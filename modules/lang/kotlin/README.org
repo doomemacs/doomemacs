@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -14,6 +15,10 @@
 
 * Description
 This module adds Kotlin support to Emacs.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables integration with [[https://github.com/emacs-lsp/lsp-mode][kotlin-language-server]]. This requires the

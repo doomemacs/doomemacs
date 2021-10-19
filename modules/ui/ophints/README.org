@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 
@@ -14,6 +15,10 @@ certain operations. It highlights regions of text that the last operation (like
 yank) acted on.
 
 Uses ~evil-goggles~ for evil users and ~volatile-highlights~ otherwise.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

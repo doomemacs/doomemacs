@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
 - [[#prerequisites][Prerequisites]]
@@ -26,6 +27,10 @@ This module adds JavaScript and TypeScript support.
 + Browser code injection with skewer-mode
 + Coffeescript & JSX support
 + Jump-to-definitions and references support (xref)
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables LangServer support for this module. You must have =:tools lsp=

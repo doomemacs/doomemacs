@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -19,6 +20,10 @@ _fuel_ emacs plugin.
 + If possible, include a brief list of feature highlights here
 + Like code completion, syntax checking or available snippets
 + Include links to packages & external things where possible
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

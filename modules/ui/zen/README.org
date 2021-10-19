@@ -6,6 +6,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#usage][Usage]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -44,6 +45,10 @@ This module provides two entry points:
   other windows and full screens the Emacs frame).
 
 Invoke either command again to undo the change.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

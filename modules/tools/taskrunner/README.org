@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -15,6 +16,10 @@
 * Description
 This module integrates [[https://github.com/emacs-taskrunner/emacs-taskrunner][Taskrunner]] into Doom Emacs, which scraps runnable tasks
 from build systems like make, gradle, npm and the like.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

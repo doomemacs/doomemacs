@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -29,6 +30,10 @@ current and parent directories. If the file exists (and is authorized), it is
 loaded into a bash sub-shell and all exported variables are then captured by
 direnv and then made available to the current shell.
 #+end_quote
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

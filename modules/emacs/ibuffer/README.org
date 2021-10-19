@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -18,6 +19,10 @@ This module augments ibuffer.
 + Adds project-based grouping of buffers
 + Support for file-type icons
 + Uses human-readable file-size
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+icons= Enables filetype icons for buffers

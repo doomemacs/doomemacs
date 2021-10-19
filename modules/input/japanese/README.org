@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -20,6 +21,10 @@ This module adds support for Japanese script.
 Because I am unable to personally test this module, help to improve this module
 would be greatly appreciated! Especially where performance is concerned.
 #+end_quote
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

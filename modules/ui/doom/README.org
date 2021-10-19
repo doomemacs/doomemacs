@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -24,6 +25,10 @@ This module gives Doom its signature look: powered by the =doom-one= theme
 + A custom folded-region indicator for ~hideshow~
 + "Thin bar" fringe bitmaps for ~git-gutter-fringe~
 + File-visiting buffers are slightly brighter (thanks to solaire-mode)
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
 - [[#prerequisites][Prerequisites]]
 - [[#configuration][Configuration]]
@@ -28,6 +29,10 @@ Besides eye candy, the dashboard serves two other purposes:
    Since the dashboard cannot be killed, and it remembers the working directory
    of the last open buffer, ~M-x find-file~ will work from the directory I
    expect.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

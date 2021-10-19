@@ -5,6 +5,7 @@
 
 * Table of Contents                                             :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -20,6 +21,10 @@
 * Description
 This modules adds inline code evaluation support to Emacs and a universal
 interface for opening and interacting with REPLs.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+overlay= Enables the use of overlays (near the cursor) to display the result

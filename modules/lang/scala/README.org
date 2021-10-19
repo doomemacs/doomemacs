@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
 - [[#lsp-integration][=+lsp= Integration]]
   - [[#prerequisites][Prerequisites]]
@@ -15,6 +16,10 @@
 
 * Description
 This module adds [[https://www.scala-lang.org][scala]] and [[https://www.scala-sbt.org/][sbt]] support to Doom Emacs.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables integration for the metals LSP server.

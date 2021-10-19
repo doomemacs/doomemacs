@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -24,6 +25,10 @@
 
 * Description
 This module turns Emacs into an email client using [[https://notmuchmail.org/][notmuch]].
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+org= Enables org-mime for writing HTML emails using org-mode.

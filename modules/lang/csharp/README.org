@@ -2,6 +2,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -12,6 +13,10 @@
 * Description
 This module adds C# support to Emacs. Powered by omnisharp (directly or through
 LSP).
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables omnisharp through LSP support (requires omnisharp).

@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -16,6 +17,11 @@
 A silly module that prompts you with messages when you try to quit, like DOOM
 did. Some quotes are from Doom's quit-message list. Others are random, nerdy
 references that no decent human being has any business recognising.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
+
 ** Module Flags
 This module provides no flags
 ** Plugins

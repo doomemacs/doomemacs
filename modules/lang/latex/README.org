@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -29,6 +30,10 @@ Provide a helping hand when working with LaTeX documents.
 + Bibtex editor
 + Autocompletion using ~company-mode~
 + Compile your .tex code only once using LatexMk
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+latexmk= Use LatexMk instead of LaTeX to compile documents.

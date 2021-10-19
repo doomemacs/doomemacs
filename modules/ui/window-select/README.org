@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
 - [[#prerequisites][Prerequisites]]
@@ -24,6 +25,10 @@ The command ~other-window~ is remapped to either ~switch-window~ or
 It also provides numbered windows and selection with the ~winum~ package, if
 desired. Evil users can jump to window N in =C-w <N>= (where N is a number
 between 0 and 9). Non evil users have =C-x w <N>= instead.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+switch-window= Use the switch-window package as the backend, instead of

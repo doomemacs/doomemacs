@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -27,6 +28,10 @@ This module adds [[https://fsharp.org/][F#]] support.
 + Code completion
 + eldoc support
 + Syntax checking
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables lsp-fsharp (this requires ~:tools lsp~ to be enabled).

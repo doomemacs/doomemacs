@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
 - [[#prerequisites][Prerequisites]]
 - [[#configuration][Configuration]]
@@ -26,6 +27,10 @@ More than that, popups ought to be the second class citizens of my editor;
 spawned off to the side, discarded with the push of a button (e.g. =ESC= or
 =C-g=), and easily restored if I want to see them again. Of course, this system
 should clean up after itself and kill off buffers I mark as transient.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+all= Enables fallback rules to ensure all temporary/special buffers (whose

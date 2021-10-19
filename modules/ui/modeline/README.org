@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_2:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -29,6 +30,10 @@
 * Description
 This module provides an Atom-inspired, minimalistic modeline for Doom Emacs,
 powered by [[https://github.com/seagle0128/doom-modeline][the doom-modeline package]] (where you can find screenshots).
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+light= Enables a lighter, less featureful version of the modeline that does

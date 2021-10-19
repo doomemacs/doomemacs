@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -30,6 +31,10 @@ a unified interface for project search and replace, powered by [[https://github.
 I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
 lighter, simpler and faster in many cases.
 #+end_quote
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+fuzzy= Enables fuzzy completion for Ivy searches.

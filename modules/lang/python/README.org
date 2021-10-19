@@ -6,6 +6,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
+  - [[#maintainers][Maintainers]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#language-server-protocol-support][Language Server Protocol Support]]
@@ -31,6 +32,10 @@ Adds Python support to Doom Emacs.
 + ~+poetry~ Python packaging, dependency management, and virtual environment
   support via [[https://python-poetry.org/][Poetry]]
 + ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Plugins
 + [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*

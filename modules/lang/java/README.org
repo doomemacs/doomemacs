@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
 - [[#prerequisites][Prerequisites]]
   - [[#openjdk-11][OpenJDK 11]]
@@ -23,6 +24,10 @@
 * Description
 This module adds [[https://www.java.com][java]] support to Doom Emacs, including =android-mode= and
 =groovy-mode=.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables integration for the eclipse.jdt.ls LSP server.

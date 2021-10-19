@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -29,6 +30,10 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 + [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
 + Generate testing code (~go-gen-test~)
 + Code checking (~flycheck-golangci-lint~)
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables integration for the gopls LSP server. It is highly recommended

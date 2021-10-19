@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -31,6 +32,10 @@ e.g. ~cargo~.
 + Syntax checking (=flycheck=)
 + LSP support (for rust-analyzer and rls) (=rustic=)
 + Snippets
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + ~+lsp~ to add support Language server protocol. Will use the first of

@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#plugins][Plugins]]
 - [[#features][Features]]
 
@@ -25,6 +26,10 @@ Add support to Faust language inside emacs.
 + Automatic keyword completion (if Auto-Complete is installed)
 + Automatic objets (functions, operators, etc.) template insertion with default sensible values (if Yasnippet is installed)
 + Modeline indicator of the state of the code
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Plugins
 + [[https://bitbucket.org/yphil/faustine][faustine]]

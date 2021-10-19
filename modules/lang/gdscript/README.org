@@ -4,6 +4,7 @@
 
 * Table of Contents                                                     :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -15,6 +16,10 @@
 * Description
 This module adds support for GDScript, the scripting language of the [[http://godotengine.org/][Godot]] game
 engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mode][gdscript-mode]].
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables LSP support for gdscript-mode. This requires the =:tools lsp=

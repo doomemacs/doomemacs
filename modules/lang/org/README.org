@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
   - [[#hacks][Hacks]]
@@ -55,6 +56,10 @@ executed.
 
 https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode/
 #+end_quote
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+brain= Enables [[https://github.com/Kungsgeten/org-brain][org-brain]] integration.

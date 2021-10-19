@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -23,6 +24,10 @@
 This module adds support for working with [[https://www.terraform.io][Terraform]] files in Doom Emacs. This
 includes syntax highlighting, intelligent code completion, and the ability to run
 Terraform commands directly from Emacs.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.

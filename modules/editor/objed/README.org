@@ -4,6 +4,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
 
 * Description
@@ -17,6 +18,10 @@ cause errors.
 #+end_quote
 
 [[https://github.com/clemera/objed][See the objed project README]] for information on keybinds and usage.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + ~+manual~ Do not turn =objed= automatically. The user is responsible for calling

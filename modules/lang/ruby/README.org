@@ -5,6 +5,7 @@
 
 * Table of contents :TOC:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#packages][Packages]]
 - [[#prerequisites][Prerequisites]]
@@ -22,6 +23,10 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 + Jump-to-definitions (robe)
 + Bundler
 + Rubocop integration (flycheck)
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+lsp= Enables LangServer support for ruby. You must have =:tools lsp= enabled

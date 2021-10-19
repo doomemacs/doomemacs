@@ -5,6 +5,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
@@ -33,6 +34,10 @@ lighter, simpler and faster in many cases.
 #+end_quote
 
 Ivy is considered a first-class citizen in Doom, however it is still possible to use Helm if you so desire.
+
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
 ** Module Flags
 + =+fuzzy= Enables fuzzy completion for Helm searches.
