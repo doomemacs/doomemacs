@@ -1,4 +1,4 @@
-#+TITLE: :ui hl-todo
+#+TITLE: ui/hl-todo
 #+DATE:    February 19, 2017
 #+SINCE:   v1.3
 #+STARTUP: inlineimages
