@@ -5,6 +5,10 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(assert! (or (not (featurep! +tree-sitter))
+             (featurep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (unless (executable-find "javac")
   (warn! "Couldn't find the javac executable, are you sure the JDK is installed?"))
 

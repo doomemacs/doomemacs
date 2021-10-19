@@ -5,6 +5,10 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(assert! (or (not (featurep! +tree-sitter))
+             (featurep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (when (require 'rtags nil t)
   ;; rtags
   (when-let (bins (cl-remove-if #'rtags-executable-find
