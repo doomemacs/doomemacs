@@ -1,21 +1,41 @@
-#+TITLE: :lang solidity
+#+TITLE:   lang/solidity
+#+DATE:    October 19, 2021
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#solc][Solc]]
+  - [[#solium][Solium]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+# A summary of what this module does.
 This module adds [[https://github.com/ethereum/solidity][Solidity]] support through [[https://github.com/ethereum/emacs-solidity][solidity-mode]]
 
 + Syntax-checking (~flycheck~)
 + Code completion ([[https://github.com/ssmolkin1/company-solidity][company-solidity]])
 + Gas estimation (~C-c C-g~)
 
-* Table of Contents :TOC:
-- [[#module-flags][Module Flags]]
-- [[#prerequisites][Prerequisites]]
-  - [[#solc][Solc]]
-  - [[#solium][Solium]]
-- [[#todo][TODO]]
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
-* Module Flags
+** Module Flags
+# If this module has no flags, then...
 This module provides no flags.
 
+** Plugins
++ [[https://github.com/ethereum/emacs-solidity][solidity-mode]]  
++ [[https://github.com/ethereum/emacs-solidity][company-solidity]] 
++ [[https://github.com/ethereum/emacs-solidity][flycheck-solidity]] 
+  
 * Prerequisites
 This module requires one or both linters for syntax checking:
 
@@ -43,5 +63,11 @@ can set it to your own ~.soliumrc.json~ with this in your private doom
 (setq flycheck-solidity-solium-soliumrcfile "~/.soliumrc.json")
 #+END_SRC
 
-* TODO
-+ Snippets
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+# How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
