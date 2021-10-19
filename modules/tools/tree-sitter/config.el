@@ -1,9 +1,17 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
+
+
 (use-package! tree-sitter
-  :hook (prog-mode . turn-on-tree-sitter-mode)
+  ;; :hook (prog-mode . turn-on-tree-sitter-mode)
+  :defer t ;; loading is handled by individual modes
   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
   :config
+  (defvar +tree-sitter-enabled-mode-maps (seq-map (lambda (mode)
+                                                     (intern (concat
+                                                              (symbol-name (car mode)) "-map")))
+                                                   tree-sitter-major-mode-language-alist)
+    "List of mode hooks for tree sitter enabled modes.")
   ;; This makes every node a link to a section of code
   (setq tree-sitter-debug-jump-buttons t
         ;; and this highlights the entire sub tree in your code
@@ -21,6 +29,7 @@
     :config
     ;; FIXME: only bind when using a supported major mode
     (map!
+     :map +tree-sitter-enabled-mode-maps
      :textobj "f" nil nil
      :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
 
