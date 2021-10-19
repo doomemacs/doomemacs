@@ -1,5 +1,24 @@
-#+TITLE: :config default
+#+TITLE:   config/default
+#+DATE:    October 19, 2021
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#im-not-an-evil-user][I'm not an evil user...]]
+- [[#troubleshooting][Troubleshooting]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
+# A summary of what this module does.
 This module provides a set of reasonable defaults, including:
 
 + A Spacemacs-esque keybinding scheme
@@ -16,20 +35,39 @@ Refer to the [[https://github.com/hlissner/doom-emacs/wiki/Customization][Custom
 private module.
 #+end_quote
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-- [[#configuration][Configuration]]
-  - [[#im-not-an-evil-user][I'm not an evil user...]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
-  - [[#hacks][Hacks]]
+** Maintainers
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
 
-* Install
-This module has no external dependencies.
+** Module Flags
+# If this module has no flags, then...
++ =+smartparens= enables default smartparens configuration
++ =+bindings= enables configuration of default key bindings
+
+** Plugins
++ [[https://github.com/abo-abo/avy][avy]]
++ [[https://github.com/rejeep/drag-stuff.el][drag-stuff]]
++ [[https://github.com/noctuid/link-hint.el][link-hint]]
++ [[https://github.com/magnars/expand-region.el][expand-region]] (unless =:editor evil= is enabled)
+
+** Hacks
+# A list of internal modifications to included packages; omit if unneeded
++ ~epa-pinentry-mode~ is set to ~'loopback~, forcing gpg-agent to use the Emacs
+  minibuffer when prompting for your passphrase. *Only works with GPG 2.1+!*
+  
+* Prerequisites
+This module has no prerequisites.
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
 
 * Configuration
+# How to configure this module, including common problems and how to address them.
 ** I'm not an evil user...
 That's fine. All evil configuration is ignored if =:editor evil= is disabled.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
 
 * Appendix
 ** Commands
@@ -39,6 +77,3 @@ That's fine. All evil configuration is ignored if =:editor evil= is disabled.
 + ~+default/browse-notes~
 + ~+default/find-in-notes~
 + ~+default/find-in-snippets~
-** Hacks
-+ ~epa-pinentry-mode~ is set to ~'loopback~, forcing gpg-agent to use the Emacs
-  minibuffer when prompting for your passphrase. *Only works with GPG 2.1+!*
