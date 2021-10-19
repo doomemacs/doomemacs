@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#mouse-wheel-and-wrapadditional-wrap-key-themes-in-tty-emacs-2573][Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs (#2573)]]
@@ -51,6 +52,11 @@ This module has no dedicated maintainers.
 
 ** Module Flags
 This module provides no flags.
+
+** Plugins 
++ [[https://github.com/abo-abo/lispy][lispy]] 
++ =:editor evil=
+    + [[https://github.com/noctuid/lispyville][lispyville]] 
 
 * Prerequisites
 This module has no prerequisites.
