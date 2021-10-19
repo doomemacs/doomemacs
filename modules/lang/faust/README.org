@@ -6,6 +6,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#features][Features]]
 
@@ -30,6 +31,9 @@ Add support to Faust language inside emacs.
 ** Maintainers
 # If this module has no maintainers, then...
 This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
 
 ** Plugins
 + [[https://bitbucket.org/yphil/faustine][faustine]]

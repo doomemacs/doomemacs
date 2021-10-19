@@ -6,6 +6,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
 - [[#prerequisites][Prerequisites]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#mouse-wheel-and-wrapadditional-wrap-key-themes-in-tty-emacs-2573][Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs (#2573)]]
@@ -47,6 +48,9 @@ lispyville's [[https://github.com/noctuid/lispyville/blob/master/README.org][REA
 ** Maintainers
 # If this module has no maintainers, then...
 This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
 
 * Prerequisites
 This module has no prerequisites.
