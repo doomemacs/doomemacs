@@ -1,7 +1,7 @@
-#+title:   app/everywhere
-#+date:    February 7, 2021
-#+since:   v3.0
-#+startup: inlineimages nofold
+#+TITLE:   app/everywhere
+#+DATE:    February 7, 2021
+#+SINCE:   v3.0
+#+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
