@@ -321,9 +321,9 @@ ARGLIST."
       ,(letf! (defun* allow-other-keys (args)
                 (mapcar
                  (lambda (arg)
-                   (if (listp arg)
-                       (allow-other-keys arg)
-                     arg))
+                   (cond ((nlistp (cdr-safe arg)) arg)
+                         ((listp arg) (allow-other-keys arg))
+                         (arg)))
                  (if (and (memq '&key args)
                           (not (memq '&allow-other-keys args)))
                      (if (memq '&aux args)
