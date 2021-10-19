@@ -58,8 +58,8 @@ You can make a TODO item by simply writing
   For warning about a problematic or misguiding code
 
 ** Keybindings
-| keybind   | description                      |
-|-----------+----------------------------------|
+| keybind | description                      |
+|---------+----------------------------------|
 | =]t=      | go to next TODO item             |
 | =[t=      | go to previous TODO item         |
 | =SPC p t= | show all TODO items in a project |
