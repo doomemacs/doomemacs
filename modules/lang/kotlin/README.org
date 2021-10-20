@@ -1,6 +1,6 @@
 #+TITLE:   lang/kotlin
 #+DATE:    March 28, 2019
-#+SINCE:   v3.0.0
+#+SINCE:   v2.0.9
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
@@ -25,8 +25,9 @@ This module has no dedicated maintainers.
   =:tools lsp= module.
 
 ** Plugins
-+ kotlin-mode
-+ flycheck-kotlin
++ [[https://github.com/Emacs-Kotlin-Mode-Maintainers/kotlin-mode][kotlin-mode]]
++ =:checkers syntax=
+  + [[https://github.com/whirm/flycheck-kotlin][flycheck-kotlin]]
 
 * Prerequisites
 TODO
