@@ -301,7 +301,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (setq rest nil))
                  (:prefix-map
                   (cl-destructuring-bind (prefix . desc)
-                      (doom-enlist (pop rest))
+                      (let ((arg (pop rest)))
+                        (if (consp arg) arg (list arg)))
                     (let ((keymap (intern (format "doom-leader-%s-map" desc))))
                       (setq rest
                             (append (list :desc desc prefix keymap
@@ -311,7 +312,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                             doom--map-forms))))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc)
-                      (doom-enlist (pop rest))
+                      (let ((arg (pop rest)))
+                        (if (consp arg) arg (list arg)))
                     (doom--map-set (if doom--map-fn :infix :prefix)
                                    prefix)
                     (when (stringp desc)
