@@ -203,6 +203,7 @@ Environment variables:
 (load! "cli/packages")
 (load! "cli/autoloads")
 (load! "cli/ci")
+(load! "cli/make")
 
 (defcligroup! "Diagnostics"
   "For troubleshooting and diagnostics"
