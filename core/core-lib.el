@@ -54,7 +54,7 @@ list is returned as-is."
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
   (declare (pure t) (side-effect-free t))
-  (if (listp exp) exp (list exp)))
+  (if (proper-list-p exp) exp (list exp)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
