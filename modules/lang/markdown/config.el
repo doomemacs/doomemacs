@@ -127,6 +127,7 @@ capture, the end position, and the output buffer.")
   (map! :map evil-markdown-mode-map
         :n "TAB" #'markdown-cycle
         :n [backtab] #'markdown-shifttab
+        :n "<RET>" #'markdown-do
         :i "M-*" #'markdown-insert-list-item
         :i "M-b" #'markdown-insert-bold
         :i "M-i" #'markdown-insert-italic
