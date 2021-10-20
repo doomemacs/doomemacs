@@ -3,11 +3,11 @@
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
 
-* Table of Contents :TOC:
+* Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
-  - [[#packages][Packages]]
+  - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#macos][MacOS]]
   - [[#arch-linux][Arch Linux]]
@@ -16,6 +16,11 @@
   - [[#tide-sort-completions-by-kind-isnt-respected][~tide-sort-completions-by-kind~ isn't respected]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
+    - [[#js2-mode][JS2-mode]]
+    - [[#tide][Tide]]
+    - [[#refactoring-js2-refactor-mode][Refactoring (js2-refactor-mode)]]
+    - [[#skewer-mode][skewer-mode]]
+    - [[#npm-mode][npm-mode]]
 
 * Description
 This module adds JavaScript and TypeScript support.
@@ -37,7 +42,7 @@ This module has no dedicated maintainers.
   enabled for this to work, as well as the langserver (e.g.
   typescript-language-server) installed on your system.
 
-** Packages
+** Plugins
 + [[https://github.com/defunkt/coffee-mode][coffee-mode]]
 + [[https://github.com/mooz/js2-mode][js2-mode]]
 + [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]]
