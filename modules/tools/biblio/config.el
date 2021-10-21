@@ -19,4 +19,4 @@
   :after embark
   :defer t
   :config
-  (add-to-list 'embark-keymap-alist '(bibtex . bibtex-actions-map)))
+  (add-to-list 'embark-keymap-alist '(bib-reference . bibtex-actions-map)))
