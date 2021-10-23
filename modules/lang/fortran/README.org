@@ -26,6 +26,7 @@ registry]], and [[https://fortran-lang.discourse.group/][Discourse community]].
 In particular, this module features:
 
 + Support for all major Fortran varieties.
++ Auto-formatting via =fprettier=.
 + Integration with the =fpm= package manager.
 + LSP support via [[https://github.com/hansec/fortran-language-server][fortran-language-server]].
 + Optional support for [[https://www.intel.com/content/www/us/en/developer/tools/oneapi/fortran-compiler.html][Intel Fortran]] (otherwise =gfortran= by default).
