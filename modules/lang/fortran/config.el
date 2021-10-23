@@ -5,6 +5,9 @@
 
 (use-package! f90
   :config
+  ;; Used by `compile' (SPC c c)
+  (setq compile-command "gfortran ")
+
   ;; --- LSP Configuration --- ;;
   (when (featurep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
@@ -26,7 +29,11 @@
   ;; named the latter way, so we account for that manually here.
   :mode ("\\.FOR$" . fortran-mode)
   :config
+  ;; Or else Flycheck will get very mad.
   (setq flycheck-gfortran-language-standard "legacy")
+
+  ;; Used by `compile' (SPC c c)
+  (setq compile-command "gfortran -std=legacy ")
 
   ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
   ;; (when (featurep! +lsp)

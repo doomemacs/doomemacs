@@ -6,13 +6,21 @@
 (defun +fortran/gfortran-compile ()
   "Compile the current file using gfortran."
   (interactive)
-  (message "Compiling with gfortran."))
+  (compile (format "gfortran %s %s"
+                   (+fortran/fortran-std)
+                   buffer-file-name)))
 
 ;;;###autoload
 (defun +fortran/gfortran-run ()
   "Run the current file using gfortran."
   (interactive)
   (message "Running with gfortran."))
+
+(defun +fortran/fortran-std ()
+  "Which version of Fortran should we target?"
+  (cl-case major-mode
+    (fortran-mode "-std=legacy")
+    (t "")))
 
 ;; --- FPM --- ;;
 
