@@ -32,6 +32,10 @@
             (end-of-line)
             (+fold--hideshow-fold-p))))))
 
+;; NOTE: does this need more?
+(defun +fold--ts-fold-p ()
+  (featurep 'ts-fold))
+
 (defun +fold--invisible-points (count)
   (let (points)
     (save-excursion
@@ -62,7 +66,7 @@
 (defun +fold/toggle ()
   "Toggle the fold at point.
 
-Targets `vimmish-fold', `hideshow' and `outline' folds."
+Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-toggle))
@@ -70,29 +74,32 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
            (cl-letf (((symbol-function #'outline-hide-subtree)
                       (symbol-function #'outline-hide-entry)))
              (outline-toggle-children)))
+          ((+fold--ts-fold-p) (ts-fold-toggle))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding))))))
 
 ;;;###autoload
 (defun +fold/open ()
   "Open the folded region at point.
 
-Targets `vimmish-fold', `hideshow' and `outline' folds."
+Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
           ((+fold--outline-fold-p)
            (outline-show-children)
            (outline-show-entry))
+          ((+fold--ts-fold-p) (ts-fold-open))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block))))))
 
 ;;;###autoload
 (defun +fold/close ()
   "Close the folded region at point.
 
-Targets `vimmish-fold', `hideshow' and `outline' folds."
+Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-refold))
+          ((+fold--ts-fold-p) (ts-fold-close))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block)))
           ((+fold--outline-fold-p) (outline-hide-subtree)))))
 
