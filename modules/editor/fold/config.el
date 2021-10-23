@@ -86,3 +86,9 @@
     "zE" #'vimish-fold-delete-all)
   :config
   (vimish-fold-global-mode +1))
+
+(use-package! ts-fold
+  :when (featurep! :tools tree-sitter)
+  :after tree-sitter
+  :config
+  (ts-fold-mode +1))
