@@ -41,3 +41,10 @@
   "Test the current project using fpm."
   (interactive)
   (message "Testing with fpm."))
+
+;; --- MISC. --- ;;
+;;;###autoload
+(defun +fortran/compilation-buffer-name (mode)
+  "The name of the buffer produced by `compile'."
+  (interactive)
+  "*fortran-compilation*")

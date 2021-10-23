@@ -32,9 +32,13 @@
   ;; Or else Flycheck will get very mad.
   (setq flycheck-gfortran-language-standard "legacy")
 
+  ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (setq compile-command "gfortran -std=legacy ")
+  (setq compile-command "gfortran -std=legacy "
+        compilation-buffer-name-function #'+fortran/compilation-buffer-name)
+  (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
+  ;; --- LSP --- ;;
   ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
   ;; (when (featurep! +lsp)
   ;;   (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
