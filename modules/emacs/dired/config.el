@@ -157,10 +157,10 @@ we have to clean it up ourselves."
   (setq dired-omit-verbose nil
         dired-omit-files
         (concat dired-omit-files
-                "\\|^.DS_Store\\'"
-                "\\|^.project\\(?:ile\\)?\\'"
-                "\\|^.\\(svn\\|git\\)\\'"
-                "\\|^.ccls-cache\\'"
+                "\\|^\\.DS_Store\\'"
+                "\\|^\\.project\\(?:ile\\)?\\'"
+                "\\|^\\.\\(?:svn\\|git\\)\\'"
+                "\\|^\\.ccls-cache\\'"
                 "\\|\\(?:\\.js\\)?\\.meta\\'"
                 "\\|\\.\\(?:elc\\|o\\|pyo\\|swp\\|class\\)\\'"))
   ;; Disable the prompt about whether I want to kill the Dired buffer for a
