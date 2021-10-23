@@ -27,11 +27,10 @@
   (use-package! evil-textobj-tree-sitter
     :after tree-sitter
     :config
-    ;; FIXME: only bind when using a supported major mode
     (map!
      :map +tree-sitter-enabled-mode-maps
      :textobj "f" nil nil
-     :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer") ;; redef
+     :textobj "f" (evil-textobj-tree-sitter-get-textobj "function.inner") (evil-textobj-tree-sitter-get-textobj "function.outer")
 
      :textobj "F" (evil-textobj-tree-sitter-get-textobj "call.inner") (evil-textobj-tree-sitter-get-textobj "call.outer")
 
