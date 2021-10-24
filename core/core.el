@@ -185,13 +185,14 @@ users).")
 
 (with-eval-after-load 'comp
   ;; HACK Disable native-compilation for some troublesome packages
-  (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+  (when (featurep 'comp)
+    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
         (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
           (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
                 (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
                 (concat local-dir-re ".*/with-editor\\.el\\'")
                 ;; https://github.com/nnicandro/emacs-jupyter/issues/297
-                (concat local-dir-re ".*/jupyter-channel\\.el\\'")))))
+                (concat local-dir-re ".*/jupyter-channel\\.el\\'"))))))
 
 
 ;;
