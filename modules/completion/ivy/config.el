@@ -104,6 +104,14 @@ results buffer.")
     (add-to-list 'ivy-dispatching-done-hydra-exit-keys '("C-o" nil))
     (defhydra+ hydra-ivy () ("M-o" nil)))
 
+  ;; Disable ‘flx’ features enabled merely by having ‘flx’ on ‘load-path’ unless
+  ;; ‘+fuzzy’ is enabled.
+  (after! flx
+     (unless (featurep! +fuzzy)
+      (setq ivy-flx-limit 0
+            ivy--flx-cache nil
+            ivy--flx-featurep nil)))
+
   (define-key! ivy-minibuffer-map
     [remap doom/delete-backward-word] #'ivy-backward-kill-word
     "C-c C-e" #'+ivy/woccur

@@ -12,10 +12,9 @@
 (package! ivy-rich :pin "600b8183ed0be8668dcc548cc2c8cb94b001363b")
 (package! wgrep :pin "f9687c28bbc2e84f87a479b6ce04407bb97cfb23")
 
-(if (featurep! +prescient)
-    (package! ivy-prescient :pin "027c2137a8d9e01a1d4c7b5e5d98da017dd2d48e")
-  (when (featurep! +fuzzy)
-    (package! flx :pin "647cb2f92f9936c62e277d7a74ad54a80502d255")))
+(when (featurep! +prescient)
+    (package! ivy-prescient :pin "027c2137a8d9e01a1d4c7b5e5d98da017dd2d48e"))
+(package! flx :pin "647cb2f92f9936c62e277d7a74ad54a80502d255")
 
 (when (featurep! +childframe)
   (package! ivy-posframe :pin "9c8382823392d5e64fb4879055e43ab4a029e62a"))
