@@ -54,7 +54,7 @@ Else, write to this process' PID to the lock file"
     (write-region (number-to-string (emacs-pid)) nil +mu4e-lock-file)
     (delete-file +mu4e-lock-request-file)
     (call-process "touch" nil nil nil +mu4e-lock-request-file)
-    (funcall orig-fun callback)
+    (funcall-interactively orig-fun callback)
     (setq +mu4e-lock--request-watcher
           (file-notify-add-watch +mu4e-lock-request-file
                                  '(change)
