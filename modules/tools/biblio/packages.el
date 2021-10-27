@@ -8,3 +8,5 @@
   (package! helm-bibtex :pin "b85662081de98077f13f1a9fac03764702325d28"))
 (when (featurep! :completion vertico)
   (package! citar :pin "fd33f5c4f7981036a969b5ca8aaf42380848ab32"))
+
+(package! citeproc :pin "0857973409e3ef2ef0238714f2ef7ff724230d1c")
