@@ -32,16 +32,19 @@
     (with-temp-file sandbox-file
       (prin1 forms (current-buffer)))
     (condition-case-unless-debug e
-        (cond ((display-graphic-p)
-               (if (memq system-type '(windows-nt ms-dos))
-                   (restart-emacs--start-gui-on-windows args)
-                 (restart-emacs--start-gui-using-sh args)))
-              ((memq system-type '(windows-nt ms-dos))
-               (user-error "Cannot start another Emacs from Windows shell."))
-              ((suspend-emacs
-                (format "%s %s -nw; fg"
-                        (shell-quote-argument (restart-emacs--get-emacs-binary))
-                        (mapconcat #'shell-quote-argument args " ")))))
+        (let ((cmd
+               (format "%s %s -nw"
+                       (shell-quote-argument (restart-emacs--get-emacs-binary))
+                       (mapconcat #'shell-quote-argument args " "))))
+          (cond ((display-graphic-p)
+                 (if (memq system-type '(windows-nt ms-dos))
+                     (restart-emacs--start-gui-on-windows args)
+                   (restart-emacs--start-gui-using-sh args)))
+                ((memq system-type '(windows-nt ms-dos))
+                 (user-error "Cannot start another Emacs from Windows shell."))
+                ((suspend-emacs (format "%s ; fg" cmd)))
+                (t
+                 (message "Failed to start another emacs. Invoke this command manually: %s" cmd))))
       (error
        (delete-directory doom-sandbox-dir 'recursive)
        (signal (car e) (cdr e))))))
