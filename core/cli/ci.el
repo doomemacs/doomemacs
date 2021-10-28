@@ -202,7 +202,7 @@ representing the current commit being checked against. See
                  (lines
                   ;; Scan BODY because invalid trailers won't be in TRAILERS.
                   (save-match-data
-                    (and (string-match "\n\\(\n[a-zA-Z-]+:? [^ ][^\n]+\\)+\n*\\'" body)
+                    (and (string-match "\n\\(\n[a-zA-Z][a-zA-Z-]*:? [^ ][^\n]+\\)+\n+\\'" body)
                          (split-string (match-string 0 body) "\n" t)))))
             (dolist (line lines)
               (unless (string-match-p (concat "^" key-re ":? [^ ]") line)
