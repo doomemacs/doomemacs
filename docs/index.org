@@ -1,7 +1,7 @@
 #+TITLE: Doom Emacs Documentation
 #+STARTUP: nofold
 
-Doom is a configuration framework for [[https://www.gnu.org/software/emacs/][GNU Emacs 26.3+]] tailored for Emacs
+Doom is a configuration framework for [[https://www.gnu.org/software/emacs/][GNU Emacs 27.1+]] tailored for Emacs
 bankruptcy veterans who want less framework in their frameworks and the
 performance of a hand rolled config (or better). It can be a foundation for your
 own config or a resource for Emacs enthusiasts to learn more about our favorite
