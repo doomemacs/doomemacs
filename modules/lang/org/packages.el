@@ -2,14 +2,18 @@
 ;;; lang/org/packages.el
 
 (package! org
-  :recipe (:host nil
-           :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+  :recipe (:host github
+           ;; REVIEW I intentionally avoid git.savannah.gnu.org because of SSL
+           ;;   issues (see #5655), uptime issues, download time, and lack of
+           ;;   shallow clone support.
+           :repo "emacs-straight/org-mode"
            :files (:defaults "etc")
+           :depth 1
            ;; HACK Org requires a post-install compilation step to generate a
-           ;;      org-version.el with org-release and org-git-version
-           ;;      functions, using a 'git describe ...' call.  This won't work
-           ;;      in a sparse clone and I value smaller network burdens on
-           ;;      users over non-essential variables so we fake it:
+           ;;   org-version.el with org-release and org-git-version functions,
+           ;;   using a 'git describe ...' call.  This won't work in a sparse
+           ;;   clone and I value smaller network burdens on users over
+           ;;   non-essential variables so we fake it:
            :build t
            :pre-build
            (with-temp-file "org-version.el"
@@ -17,8 +21,8 @@
                      (format "(defun org-git-version (&rest _) \"9.5-??-%s\")\n"
                              (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                      "(provide 'org-version)\n")))
-  :pin "cc2490a7061955395c4f5a1a23a088044554a2f7")
-(package! org-contrib :pin "b8012e759bd5bf5da802b0b41734a8fec218323c")
+  :pin "1b2d06880f03c4e2063a9c91741935ea49144d2c")
+(package! org-contrib :pin "56a3bbbd486c567234e63c95c954c5e2ed77f8e7")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -64,12 +68,12 @@
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "571ff333084dad83a535becfc1fdd601ead2da02")
-  (package! org-re-reveal :pin "36d0973c6c3110a71bc27f8464f4d4b6a798e467")
+  (package! org-tree-slide :pin "27f8bb6a9676e1c0b500e75799e3b5c37a9156af")
+  (package! org-re-reveal :pin "ee0417aac3969ec2d776eba1ddc6434d4c61a10d")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "05e57dea66529a1b472f743f8ac520fb8bed0ba2"))
+    :pin "1ce77db3d0b66ac4baeb8e133e1f15b919362a19"))
 (cond
  ((featurep! +roam)
   (package! org-roam
@@ -80,7 +84,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "54d17cc50f03f22ca44f4d88f7e589a00c59d05c")))
+    :pin "1b221a1d4ad0edae746a7eae435f4c3bca56c10e")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -109,6 +113,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "f0357fa7449cc8baecee588dab7dcf9ea243f3b4"))
+    :pin "14723c3cb93abec61a8bd35c6e4162754f902a6a"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
