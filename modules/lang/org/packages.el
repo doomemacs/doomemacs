@@ -3,7 +3,7 @@
 
 (package! org
   :recipe (:host nil
-           :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+           :repo "git://git.sv.gnu.org/emacs/org-mode.git"
            :files (:defaults "etc")
            ;; HACK Org requires a post-install compilation step to generate a
            ;;      org-version.el with org-release and org-git-version
@@ -18,7 +18,7 @@
                              (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                      "(provide 'org-version)\n")))
   :pin "cc2490a7061955395c4f5a1a23a088044554a2f7")
-(package! org-contrib :pin "b8012e759bd5bf5da802b0b41734a8fec218323c")
+;(package! org-contrib :pin "b8012e759bd5bf5da802b0b41734a8fec218323c")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
