@@ -139,6 +139,9 @@ we have to clean it up ourselves."
   ;;      wdired-mode.
   (defvar +wdired-icons-enabled -1)
 
+  ;; display icons with colors
+  (setq all-the-icons-dired-monochrome nil)
+
   (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
     :before #'wdired-change-to-wdired-mode
     (setq-local +wdired-icons-enabled (if all-the-icons-dired-mode 1 -1))
