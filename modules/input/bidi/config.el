@@ -78,4 +78,6 @@ easier."
 (add-hook! 'after-setting-font-hook
   (defun +bidi-set-fonts-h ()
     (set-fontset-font t 'hebrew +bidi-hebrew-font)
-    (set-fontset-font t 'arabic +bidi-arabic-font)))
+    (set-fontset-font t 'arabic +bidi-arabic-font)
+    (set-face-font '+bidi-arabic-face +bidi-arabic-font)
+    (set-face-font '+bidi-hebrew-face +bidi-hebrew-font)))
