@@ -192,7 +192,7 @@ targets."
     (if (null keymap)
         (which-key--hide-popup-ignore-command)
       (which-key--show-keymap
-       (if (eq (caar targets) 'embark-become)
+       (if (eq (plist-get (car targets) :type) 'embark-become)
            "Become"
          (format "Act on %s '%s'%s"
                  (plist-get (car targets) :type)
@@ -203,7 +203,8 @@ targets."
              ((and (pred keymapp) km) km)
              (_ (key-binding prefix 'accept-default)))
          keymap)
-       nil nil t))))
+       nil nil t (lambda (binding)
+                   (not (string-suffix-p "-argument" (cdr binding))))))))
 
 ;;;###autoload
 (defun +vertico/crm-select ()
