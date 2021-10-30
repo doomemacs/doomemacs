@@ -18,6 +18,7 @@
   - [[#change-dictionary-language-on-bidi-buffers][Change Dictionary Language On Bidi Buffers]]
   - [[#automatic-input-mode-switching][Automatic input mode switching]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#nastaliq-font-display-bug][Nastaliq font display bug]]
 
 * Description
 
@@ -131,4 +132,7 @@ See [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e
 entering insert mode after a hebrew character, in LaTeX buffers.
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
+
+** Nastaliq font display bug
+If Emacs is having trouble properly displaying a Nastaliq font, try using one of
+[[https://urdufonts.net/fonts/jameel-noori-nastaleeq-regular][these]] [[https://urdufonts.net/fonts/alvi-nastaleeq-regular][two]] fonts for ~+bidi-arabic-font~.
