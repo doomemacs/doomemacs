@@ -14,6 +14,7 @@
   - [[#using-bidi-mode][Using =+bidi-mode=]]
   - [[#input-methods][Input Methods]]
   - [[#fonts][Fonts]]
+    - [[#smart-fontify][Smart Fontify]]
   - [[#change-dictionary-language-on-bidi-buffers][Change Dictionary Language On Bidi Buffers]]
   - [[#automatic-input-mode-switching][Automatic input mode switching]]
 - [[#troubleshooting][Troubleshooting]]
@@ -102,6 +103,16 @@ If you use an RTL language the script of which isn't covered by the =hebrew= or
 
 Make sure to use the correct unicode block name, see the documentation of
 ~set-fontset-font~ for more details.
+
+*** Smart Fontify
+Since good bidi fonts are often not monospace (as is the default =DejaVu Sans=),
+It usually looks better to have the surrounding spaces and punctuation in the
+use the bidi font as well. This is the default behaviour, but you can turn this
+off by setting:
+
+#+begin_src emacs-lisp
+(setq +bidi-want-smart-fontify nil)
+#+end_src
 
 ** Change Dictionary Language On Bidi Buffers
 If you are only using =+bidi-mode= in specific buffers, you might want to
