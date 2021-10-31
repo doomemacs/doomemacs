@@ -89,5 +89,19 @@ easier to scroll through.")
   :config
   (elfeed-goodies/setup))
 
+(defvar +rss-youtube-feed-format
+  '(("^UC" . "https://www.youtube.com/feeds/videos.xml?channel_id=%s")
+    ("^PL" . "https://www.youtube.com/feeds/videos.xml?playlist_id=%s")
+    (""    . "https://www.youtube.com/feeds/videos.xml?user=%s")))
+
 (use-package! youtube-dl
-  :when (featurep! +media))
+  :when (featurep! +media)
+  :after elfeed
+  :config
+  (map! :when (and (featurep! +media)
+                   (featurep! :editor evil +everywhere))
+        (:map elfeed-show-mode-map
+              :n "y" #'+rss/show-youtube-dl)
+        (:map elfeed-search-mode-map
+              :n "y" #'+rss/search-youtube-dl
+              :n "L" #'youtube-dl-list)))

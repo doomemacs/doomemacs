@@ -60,14 +60,14 @@ When you don't want to use org mode to manage your elfeed feeds you can put your
         "http://feeds.bbci.co.uk/news/rss.xml"))
 #+END_SRC
 
-You can also use the =+rss-elfeed-config=. If you're using the =+media= tag you should use this macro because it will allow you to enter youtube channel ids, user ids, and playlist ids without defining full urls as long as they are tagged with the ~youtube~ tag. You can use this macro without the =+media= flag too if you want.
+You can also use the =+rss-set-elfeed= function to configure your feeds. If you're using the =+media= tag you should use it to enter youtube channel ids, user ids, and playlist ids without defining full urls. These feed entries must be tagged with the ~youtube~ tag. You can use this function to set your feeds without the =+media= flag too if you'd like.
 
 #+BEGIN_SRC elisp
-(+rss-elfeed-config!
-    ("https://this-week-in-rust.org/rss.xml" rust)
-    ("http://feeds.bbci.co.uk/news/rss.xml" news bbc)
+(+rss-set-elfeed!
+    '("https://this-week-in-rust.org/rss.xml" rust)
+    '("http://feeds.bbci.co.uk/news/rss.xml" news bbc)
     ;; Systemcrafters - Learning Emacs Lisp Playlist
-    ("PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7" youtube system-crafters emacs))
+    '("PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7" youtube system-crafters emacs))
 #+END_SRC
 
 ** With +org

@@ -6,4 +6,4 @@
 (when (featurep! +org)
   (package! elfeed-org :pin "268efdd0121fa61f63b722c30e0951c5d31224a4"))
 (when (featurep! +media)
-  (package! youtube-dl))
+  (package! youtube-dl :pin "af877b5bc4f01c04fccfa7d47a2c328926f20ef4"))

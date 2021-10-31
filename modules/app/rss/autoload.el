@@ -1,13 +1,6 @@
 ;;; app/rss/autoload.el -*- lexical-binding: t; -*-
 
-(require 'cl-lib)
-
 (defvar +rss--wconf nil)
-
-(defvar +rss-youtube-feed-format
-  '(("^UC" . "https://www.youtube.com/feeds/videos.xml?channel_id=%s")
-    ("^PL" . "https://www.youtube.com/feeds/videos.xml?playlist_id=%s")
-    (""    . "https://www.youtube.com/feeds/videos.xml?user=%s")))
 
 ;;;###autoload
 (defun =rss ()
@@ -188,7 +181,6 @@
      (listing))))
 
 ;;;###autoload
-(defmacro +rss-elfeed-config! (&rest feeds)
-  "Minimizes FEEDS listings."
-  (declare (indent 0))
-  `(setf elfeed-feeds (mapcar #'+rss--elfeed-expand ',feeds)))
+(defun +rss-set-elfeed! (&rest feeds)
+  "Helper for setting multiple elfeed FEEDS."
+  (setq elfeed-feeds (mapcar #'+rss--elfeed-expand feeds)))
