@@ -24,7 +24,7 @@
                           (match-string-no-properties 1)
                         "Unknown"))))
                (insert (format "(defun org-release () %S)\n" version)
-                       (format "(defun org-git-version (&rest _) \"%S-??-%s\")\n"
+                       (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
   :pin "d4e192514769368e32c4e61629bf51e67a781bff")
