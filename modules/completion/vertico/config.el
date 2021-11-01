@@ -148,6 +148,12 @@ orderless."
         :desc "Enter candidates" "RET" #'+vertico/crm-exit))
 
 
+(use-package! consult-dir
+  :bind (([remap list-directory] . consult-dir)
+         :map vertico-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
 (use-package! consult-flycheck
   :when (featurep! :checkers syntax)
   :after (consult flycheck))
