@@ -11,7 +11,7 @@ choices.
 
 There are two groups of snippets in Doom Emacs. The built in ones (under
 `doom-emacs-dir'; provided by Doom or its plugins) or your private snippets
-(outside of `doom-eamcs-dir').
+(outside of `doom-emacs-dir').
 
 If there are multiple snippets with the same key in either camp (but not both),
 you will be prompted to select one.
