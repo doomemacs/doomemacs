@@ -17,11 +17,17 @@
            :build t
            :pre-build
            (with-temp-file "org-version.el"
-             (insert "(defun org-release () \"9.5\")\n"
-                     (format "(defun org-git-version (&rest _) \"9.5-??-%s\")\n"
-                             (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
-                     "(provide 'org-version)\n")))
-  :pin "1b2d06880f03c4e2063a9c91741935ea49144d2c")
+             (let ((version
+                    (with-temp-buffer
+                      (insert-file-contents (doom-path "lisp/org.el") nil 0 1024)
+                      (if (re-search-forward "^;; Version: \\([^\n-]+\\)" nil t)
+                          (match-string-no-properties 1)
+                        "Unknown"))))
+               (insert (format "(defun org-release () %S)\n" version)
+                       (format "(defun org-git-version (&rest _) \"%S-??-%s\")\n"
+                               version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
+                       "(provide 'org-version)\n"))))
+  :pin "d4e192514769368e32c4e61629bf51e67a781bff")
 (package! org-contrib :pin "56a3bbbd486c567234e63c95c954c5e2ed77f8e7")
 
 (package! avy)
@@ -84,7 +90,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "1b221a1d4ad0edae746a7eae435f4c3bca56c10e")))
+    :pin "c789531e368f440f554601790747f10003d1796b")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
