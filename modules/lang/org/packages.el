@@ -28,7 +28,10 @@
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
   :pin "d4e192514769368e32c4e61629bf51e67a781bff")
-(package! org-contrib :pin "56a3bbbd486c567234e63c95c954c5e2ed77f8e7")
+(package! org-contrib
+  :recipe (:host github
+           :repo "emacsmirror/org-contrib")
+  :pin "56a3bbbd486c567234e63c95c954c5e2ed77f8e7")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
