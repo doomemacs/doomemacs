@@ -27,8 +27,11 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "d4e192514769368e32c4e61629bf51e67a781bff")
-(package! org-contrib :pin "56a3bbbd486c567234e63c95c954c5e2ed77f8e7")
+  :pin "2e99997830c78dbf4df62be22391491fe88337f2")
+(package! org-contrib
+  :recipe (:host github
+           :repo "emacsmirror/org-contrib")
+  :pin "0231706232f29034b941d317c0700506ecccb4af")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -59,7 +62,7 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "1f0612eb936d36abab0f27b09cca691e81fc6e74"))
+  (package! jupyter :pin "20e68a683632d4772780199216932223fa404aa7"))
 (when (featurep! +journal)
   (package! org-journal :pin "71e8b10088ae52c4ac17f7af87020ea85fbc6ff7"))
 (when (featurep! +noter)
@@ -90,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "c789531e368f440f554601790747f10003d1796b")))
+    :pin "3e47f198c7b6c3254944d98357e41840e5e1b102")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -119,6 +122,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "14723c3cb93abec61a8bd35c6e4162754f902a6a"))
+    :pin "9438efc34f3837ed18da5a97bb705e945b234bff"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
