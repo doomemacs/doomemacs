@@ -134,7 +134,7 @@ list remains lean."
                       (doom--abbrev-commit ref)
                       (doom--abbrev-commit newref))
               (unless (string-empty-p output)
-                (print-group! (print! (info "%s" output))))))))))
+                (print-group! (print! (debug "%s" output))))))))))
     (setq straight--recipe-lookup-cache (make-hash-table :test #'eq)
           doom--cli-updated-recipes t)))
 
