@@ -48,7 +48,7 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
   '((ref      . "^\\(https?://[^ ]+\\|[^/]+/[^/]+\\)?#[0-9]+$")
     (hash     . "^\\(https?://[^ ]+\\|[^/]+/[^/]+@\\)?[a-z0-9]\\{12\\}$")
     (url      . "^https?://")
-    (name     . "^[a-zA-Z0-9-_ ]+<[^@]+@[^.]+\\.[^>]+>$")
+    (name     . "^[a-zA-Z0-9-_ \\.]+<[^@]+@[^.]+\\.[^>]+>$")
     (username . "^@[^a-zA-Z0-9_-]+$"))
   "An alist of valid trailer keys and their accepted value types.
 
@@ -219,7 +219,8 @@ representing the current commit being checked against. See
                        (truncate-string-to-width (string-trim line) 16 nil nil "…")
                        (match-string 1 line))))
             (pcase-dolist (`(,key . ,value) trailers)
-              (if (string-match-p " " value)
+              (if (and (not (memq 'name (cdr (assoc key doom-cli-commit-trailer-keys))))
+                       (string-match-p " " value))
                   (fail! "Found %S, but only one value allowed per trailer"
                          (truncate-string-to-width (concat key ": " value) 20 nil nil "…"))
                 (when-let (allowed-types (cdr (assoc key doom-cli-commit-trailer-keys)))
