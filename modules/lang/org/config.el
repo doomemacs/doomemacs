@@ -498,7 +498,10 @@ relative to `org-directory', unless it is an absolute path."
             '("gmap"        . "https://maps.google.com/maps?q=%s")
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
-            '("wolfram"     . "https://wolframalpha.com/input/?i=%s"))
+            '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
+            '("doom"        . "https://github.com/hlissner/doom-emacs/%s")
+            `("emacsdir"    . ,(doom-path doom-emacs-dir "%s"))
+            `("doomdir"     . ,(doom-path doom-private-dir "%s")))
 
   (+org-define-basic-link "org" 'org-directory)
 

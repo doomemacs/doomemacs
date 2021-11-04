@@ -257,26 +257,22 @@ This primes `org-mode' for reading."
 ;;; `doom-docs-org-mode'
 
 (defvar doom-docs-link-alist
-  '(("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
-    ("doom-faq"                . "id:5fa8967a-532f-4e0c-8ae8-25cd802bf9a9")
-    ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
-    ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
+  '(("doom-tag"                . "https://github.com/hlissner/doom-emacs/releases/tag/%s")
     ("doom-contrib-core"       . "id:9ac0c15c-29e7-43f8-8926-5f0edb1098f0")
+    ("doom-contrib-docs"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
     ("doom-contrib-maintainer" . "id:e71e9595-a297-4c49-bd11-f238329372db")
     ("doom-contrib-module"     . "id:b461a050-8702-4e63-9995-c2ef3a78f35d")
-    ("doom-contrib-docs"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
+    ("doom-faq"                . "id:5fa8967a-532f-4e0c-8ae8-25cd802bf9a9")
     ("doom-help"               . "id:9bb17259-0b07-45a8-ae7a-fc5e0b16244e")
     ("doom-help-changelog"     . "id:7c56cc08-b54b-4f4b-b106-a76e2650addd")
     ("doom-help-modules"       . "id:1ee0b650-f09b-4454-8690-cc145aadef6e")
-    ("doom-changelog-search"   . "doom-docs:changelog.org::/^\*+ %s/")
-    ("doom-commit"             . "https://github.com/hlissner/doom-emacs/commit/%s")
-    ("doom-issue"              . "https://github.com/hlissner/doom-emacs/issues/%s")
-    ("doom-report-issue"       . "https://github.com/hlissner/doom-emacs/issues/new/choose")
+    ("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
+    ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
+    ("doom-module-issues"      . "https://github.com/orgs/doomemacs/projects/2/views/1?filterQuery=label:\"%s\"")
+    ("doom-report"             . "https://github.com/hlissner/doom-emacs/issues/new/choose")
+    ("doom-source"             . "https://github.com/hlissner/doom-emacs/tree/develop/%s")
     ("doom-suggest-edit"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
-    ("doom-repo"               . "https://github.com/hlissner/doom-emacs/%s")
-    ("doom-docs-source"        . "https://github.com/hlissner/doom-emacs/tree/develop/docs/%s")
-    ("doom-module-source"      . "https://github.com/hlissner/doom-emacs/tree/develop/modules/%s")
-    ("doom-module-issues"      . "https://github.com/orgs/doomemacs/projects/2/?filterQuery=label:\"%s\"")
+    ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
     ("github"                  . "https://github.com/%s")))
 
 ;;;###autoload
@@ -436,6 +432,31 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
    "fn"
    :follow (doom-docs-make-symbol-link #'helpful-callable)
    :face '(font-lock-function-name-face underline))
+  (org-link-set-parameters
+   "doom-ref"
+   :follow (lambda (link)
+             (let ((link (doom-docs-read-link-desc-at-point link))
+                   (url "https://github.com")
+                   (doom-repo "hlissner/doom-emacs"))
+               (save-match-data
+                 (browse-url
+                  (cond ((string-match "^\\([^/]+\\(?:/[^/]+\\)?\\)?#\\([0-9]+\\(?:#.*\\)?\\)" link)
+                         (format "%s/%s/issues/%s" url
+                                 (or (match-string 1 link)
+                                     doom-repo)
+                                 (match-string 2 link)))
+                        ((string-match "^\\([^/]+\\(?:/[^/]+\\)?@\\)?\\([a-z0-9]\\{7,\\}\\(?:#.*\\)?\\)" link)
+                         (format "%s/%s/commit/%s" url
+                                 (or (match-string 1 link)
+                                     doom-repo)
+                                 (match-string 2 link)))
+                        ((user-error "Invalid doom-ref link: %S" link)))))))
+   :face (lambda (link)
+           (let ((link (doom-docs-read-link-desc-at-point link)))
+             (if (or (string-match "^\\([^/]+\\(?:/[^/]+\\)?\\)?#\\([0-9]+\\(?:#.*\\)?\\)" link)
+                     (string-match "^\\([^/]+\\(?:/[^/]+\\)?@\\)?\\([a-z0-9]\\{7,\\}\\(?:#.*\\)?\\)" link))
+                 'org-link
+               'error))))
   (org-link-set-parameters
    "doom-user"
    :follow (lambda (link)

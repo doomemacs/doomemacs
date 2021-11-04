@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ↙ [[doom-module-issues:::term term][Issues]]  ↖ [[doom-module-source:term/term][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::term term][Issues]]  ↖ [[doom-source:modules/term/term/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :term term
 #+SUBTITLE: It's terminal
@@ -40,7 +40,7 @@
 #+end_quote
 
 * Troubleshooting
-/There are no known problems with this module./ [[doom-report-issue:][Report one?]]
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
