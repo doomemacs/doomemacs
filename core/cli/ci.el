@@ -67,10 +67,11 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
                      scope)
             (user-error "%s commits should never have a scope" type)))
         (fn! (scope _)
-          (doom-glob doom-modules-dir
-                     (if (string-prefix-p ":" scope)
-                         (format "%s" (substring scope 1))
-                       (format "*/%s" scope)))))
+          (seq-find (doom-rpartial
+                     #'doom-glob (if (string-prefix-p ":" scope)
+                                     (format "%s" (substring scope 1))
+                                   (format "*/%s" scope)))
+                    doom-modules-dirs)))
   "A list of valid commit scopes as strings or functions.
 
 Functions should take two arguments: a single scope (symbol) and a commit plist
