@@ -2,8 +2,8 @@
 --------------------------------------------------------------------------------
 #+TITLE:    :email notmuch
 #+SUBTITLE: Closest Emacs will ever be to multi-threaded
-#+CREATED:  May 05, 2019
-#+SINCE:    2.0.0
+#+CREATED:  July 31, 2018
+#+SINCE:    21.12.0
 
 * Description :unfold:
 This module turns Emacs into an email client using [[doom-package:][notmuch]].

@@ -2,7 +2,7 @@
 --------------------------------------------------------------------------------
 #+TITLE:    :completion ivy
 #+SUBTITLE: Yesterday's lightest search engine
-#+CREATED:  February 13, 2017
+#+CREATED:  February 20, 2017
 #+SINCE:    2.0.0
 
 * Description :unfold:

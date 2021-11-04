@@ -3,7 +3,7 @@
 #+TITLE:    :editor fold
 #+SUBTITLE: What you can't see won't hurt you
 #+CREATED:  May 15, 2019
-#+SINCE:    2.1
+#+SINCE:    21.12.0
 
 * Description :unfold:
 This module marries [[doom-package:][hideshow]], [[doom-package:][vimish-fold]], and ~outline-minor-mode~ to bring you

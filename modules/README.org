@@ -452,7 +452,7 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
 - [[https://github.com/hlissner/doom-snippets/tree/master/coq-mode][Snippets]]
 
 *** [[doom-module::lang crystal][crystal]]:                                                           -
-: Ruby at the speed of c
+: Ruby at the speed of C
 
 This modules adds [[https://crystal-lang.org/][crystal]] support.
 
@@ -460,7 +460,7 @@ This modules adds [[https://crystal-lang.org/][crystal]] support.
 - REPL (~inf-crystal~)
 
 *** [[doom-module::lang csharp][csharp]]:                                          [[doom-module::lang csharp +dotnet][+dotnet]] [[doom-module::lang csharp +lsp][+lsp]] [[doom-module::lang csharp +unity][+unity]]
-: Unity, .NET, and mono shenanigans
+: Unity, .NET, and Mono shenanigans
 
 This module adds C# support to Emacs, powered by Omnisharp (directly or through
 LSP).
