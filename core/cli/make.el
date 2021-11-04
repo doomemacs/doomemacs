@@ -2,34 +2,28 @@
 
 (defvar doom-cli-docs-menu
   `(("docs/*.org"
-     (left ("← Back to index" . "doom-index:"))
-     (right ("↖ Source"
-             . ,(fn! (&key readme)
-                  (format "doom-docs-source:%s" (file-name-nondirectory readme))))))
+     (left ("← Back to index" . "doom-index:")))
     ("docs/index.org"
      (left ("↖ FAQ" . "doom-faq:")))
     ("modules/*/README.org"
-     (left ("← Back to module index" . "doom-module-index:"))
-     (right ("↖ Source"
-             . ,(fn! (&key category)
-                  (format "doom-module-source%s" category)))))
+     (left ("← Back to module index" . "doom-module-index:")))
     ("modules/*/*/README.org"
      (left ("← Back to module index" . "doom-module-index:"))
-     (right ("↙ Issues"
+     (right ("! Issues"
              . ,(fn! (&key category module)
-                  (format "doom-module-issues::%s %s" category module)))
-            ("↖ Source"
-             . ,(fn! (&key category module)
-                  (format "doom-module-source%s/%s" category module)))))))
+                  (format "doom-module-issues::%s %s" category module)))))))
 
 (defvar doom-cli-docs-common-menu
-  `(("± Suggest edits" . "doom-suggest-edit:")
+  `(("↖ Github"
+     . ,(fn! (&key category readme)
+          (if category
+              (format "doom-source:modules/%s" (string-remove-prefix "./" (file-name-directory readme)))
+            (format "doom-source:%s" (string-remove-prefix "./../" readme)))))
+    ("± Suggest edits" . "doom-suggest-edit:")
     ("? Help"
      . ,(fn! (&key title)
-          (cond ((equal title "Changelog")
-                 "doom-help-changelog:")
-                ((string-prefix-p ":" title)
-                 "doom-help-modules:")
+          (cond ((equal title "Changelog")   "doom-help-changelog:")
+                ((string-prefix-p ":" title) "doom-help-modules:")
                 ("doom-help:"))))))
 
 
