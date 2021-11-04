@@ -1,0 +1,19 @@
+.DS_Store
+.idea
+*.log
+tmp/
+*~
+*.*~
+\#*
+.\#*
+*.cache*
+*.log
+test/.local*/
+test/result
+
+# compiled files
+*.elc
+*.lib
+*.fas
+*.dat
+*.eld
