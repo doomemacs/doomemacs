@@ -97,21 +97,40 @@
   (when (featurep! :ui modeline +light)
     (defvar-local cider-modeline-icon nil)
 
+    (defun +clojure--cider-set-modeline (face label)
+      "Update repl icon on modeline with cider information."
+      (setq cider-modeline-icon (concat
+                                 " "
+                                 (+modeline-format-icon 'faicon "terminal" "" face label -0.0575)
+                                 " "))
+      (add-to-list 'global-mode-string
+                   '(t (:eval cider-modeline-icon))
+                   'append))
+
     (add-hook! '(cider-connected-hook
                  cider-disconnected-hook
                  cider-mode-hook)
-      (defun +clojure--cider-update-modeline ()
+      (defun +clojure--cider-connected-update-modeline ()
         "Update modeline with cider connection state."
         (let* ((connected (cider-connected-p))
-               (face (if connected 'success 'warning))
+               (face (if connected 'warning 'breakpoint-disabled))
                (label (if connected "Cider connected" "Cider disconnected")))
-          (setq cider-modeline-icon (concat
-                                     " "
-                                     (+modeline-format-icon 'faicon "terminal" "" face label -0.0575)
-                                     " "))
-          (add-to-list 'global-mode-string
-                       '(t (:eval cider-modeline-icon))
-                       'append)))))
+          (+clojure--cider-set-modeline face label))))
+
+    (add-hook! '(cider-before-eval-hook)
+      (defun +clojure--cider-before-eval-hook-update-modeline ()
+        "Update modeline with cider state before eval."
+        (+clojure--cider-set-modeline 'warning "Cider evaluating")))
+
+    (add-hook! '(cider-after-eval-done-hook)
+      (defun +clojure--cider-after-eval-done-hook-update-modeline ()
+        "Update modeline with cider state after eval."
+        (+clojure--cider-set-modeline 'success "Cider syncronized")))
+
+    (add-hook! '(cider-file-loaded-hook)
+      (defun +clojure--cider-file-loaded-update-modeline ()
+        "Update modeline with cider file loaded state."
+        (+clojure--cider-set-modeline 'success "Cider syncronized"))))
 
   ;; Ensure that CIDER is used for sessions in org buffers.
   (when (featurep! :lang org)
