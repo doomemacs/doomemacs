@@ -3,7 +3,7 @@
 #+TITLE:    :input japanese
 #+SUBTITLE: Ah, a man of culture
 #+CREATED:  May 13, 2019
-#+SINCE:    2.1
+#+SINCE:    21.12.0
 
 * Description :unfold:
 This module adds support for Japanese script.

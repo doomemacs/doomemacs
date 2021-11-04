@@ -2,8 +2,8 @@
 --------------------------------------------------------------------------------
 #+TITLE:    :completion ido
 #+SUBTITLE: A foil for other search engines
-#+CREATED:  October 13, 2021
-#+SINCE:    21.12.0
+#+CREATED:  February 20, 2017
+#+SINCE:    2.0.0
 
 * Description :unfold:
 Interactive DO things. The completion engine that is /mostly/ built-into Emacs.

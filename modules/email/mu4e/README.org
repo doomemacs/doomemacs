@@ -3,7 +3,7 @@
 #+TITLE:    :email mu4e
 #+SUBTITLE: The great filter Hanson hadn't anticipated
 #+CREATED:  April 08, 2017
-#+SINCE:    2.0.0
+#+SINCE:    2.0.3
 
 * Description :unfold:
 This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].

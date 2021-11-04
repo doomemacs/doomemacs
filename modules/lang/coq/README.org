@@ -2,8 +2,8 @@
 --------------------------------------------------------------------------------
 #+TITLE:    :lang coq
 #+SUBTITLE: Proofs as programs
-#+CREATED:  August 27, 2018
-#+SINCE:    21.12.0
+#+CREATED:  August 14, 2018
+#+SINCE:    21.12.0 (#804)
 
 * Description :unfold:
 This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://proofgeneral.github.io][Proof General]].

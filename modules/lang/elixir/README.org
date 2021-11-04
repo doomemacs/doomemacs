@@ -2,8 +2,8 @@
 --------------------------------------------------------------------------------
 #+TITLE:    :lang elixir
 #+SUBTITLE: Erlang done right
-#+CREATED:  June 24, 2019
-#+SINCE:    21.12.0
+#+CREATED:  May 24, 2017
+#+SINCE:    2.0.3 (#83)
 
 * Description :unfold:
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[doom-package:][alchemist]] or

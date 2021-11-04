@@ -3,7 +3,7 @@
 #+TITLE:    :editor objed
 #+SUBTITLE: Text object editing for the innocent
 #+CREATED:  May 30, 2019
-#+SINCE:    2.1
+#+SINCE:    21.12.0
 
 * Description :unfold:
 This modules adds [[doom-package:][objed]], a global minor-mode for navigating and manipulating

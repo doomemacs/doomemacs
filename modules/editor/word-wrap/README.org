@@ -3,7 +3,7 @@
 #+TITLE:    :editor word-wrap
 #+SUBTITLE: Soft-wrapping with language-aware indent
 #+CREATED:  August 25, 2019
-#+SINCE:    2.1
+#+SINCE:    21.12.0 (#1709)
 
 * Description :unfold:
 This module adds a minor-mode [[fn:][+word-wrap-mode]], which intelligently wraps long

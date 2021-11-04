@@ -3,7 +3,7 @@
 #+TITLE:    :editor parinfer
 #+SUBTITLE: For lispers that like Python more (i.e. nobody)
 #+CREATED:  February 27, 2021
-#+SINCE:    2.1
+#+SINCE:    21.12.0
 
 * Description :unfold:
 Parinfer is a minor mode that aids the writing of Lisp code. It automatically

@@ -3,7 +3,7 @@
 #+TITLE:    :lang ess
 #+SUBTITLE: 73.6% of all statistics are made up
 #+CREATED:  February 05, 2018
-#+SINCE:    21.12.0
+#+SINCE:    21.12.0 (#410)
 
 * Description :unfold:
 This module adds support for various statistics languages, including R, S-Plus,
