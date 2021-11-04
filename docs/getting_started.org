@@ -158,7 +158,7 @@ dnf install fd-find    # is 'fd' in Fedora <28
 **** Arch Linux
 #+BEGIN_SRC bash
 # required dependencies
-pacman -S git emacs ripgrep
+pacman -Syu --needed git emacs ripgrep
 # optional dependencies
 pacman -S fd
 #+END_SRC
