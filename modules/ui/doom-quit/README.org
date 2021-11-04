@@ -17,7 +17,7 @@ A silly module that prompts you with messages when you try to quit, like DOOM
 did. Some quotes are from Doom's quit-message list. Others are random, nerdy
 references that no decent human being has any business recognising.
 ** Module Flags
-This module provides no flags
++ =+friendly= Hides some of the default ~+doom-quit-messages~.
 ** Plugins
 This module uses no Plugins
 * Prerequisites
