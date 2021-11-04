@@ -195,7 +195,6 @@ representing the current commit being checked against. See
                        (length refs) (string-join (nreverse refs) ", "))))))
 
         ;; TODO Add bump validations for revert: type.
-
         (fn! (&key body trailers)
           "Validate commit trailers."
           (let* ((keys   (mapcar #'car doom-cli-commit-trailer-keys))
@@ -376,18 +375,18 @@ Note: warnings are not considered failures.")
        (let* ((commit   (doom-cli--parse-commit commitmsg))
               (shortref (substring ref 0 7))
               (subject  (plist-get commit :subject)))
-         (letf! ((defun skip! (reason &rest args)
-                   (print! (warn "Skipped because: %s") (apply #'format reason args))
-                   (cl-return-from 'linter))
-                 (defun warn! (reason &rest args)
-                   (cl-incf warnings)
-                   (print! (warn "%s") (apply #'format reason args)))
-                 (defun fail! (reason &rest args)
-                   (cl-incf failures)
-                   (print! (error "%s") (apply #'format reason args))))
-           (print! (start "%s %s") shortref subject)
-           (print-group!
-            (cl-block 'linter
+         (cl-block 'linter
+           (letf! ((defun skip! (reason &rest args)
+                     (print! (warn "Skipped because: %s") (apply #'format reason args))
+                     (cl-return-from 'linter))
+                   (defun warn! (reason &rest args)
+                     (cl-incf warnings)
+                     (print! (warn "%s") (apply #'format reason args)))
+                   (defun fail! (reason &rest args)
+                     (cl-incf failures)
+                     (print! (error "%s") (apply #'format reason args))))
+             (print! (start "%s %s") shortref subject)
+             (print-group!
               (mapc (doom-rpartial #'apply commit)
                     doom-cli-commit-rules)))))))
     (let ((issues (+ warnings failures)))
