@@ -499,7 +499,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (fn arg)
+  (defadvice! doom--fix-broken-smie-modes-a (fn &optional arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode
