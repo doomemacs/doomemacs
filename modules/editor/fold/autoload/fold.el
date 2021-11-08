@@ -154,7 +154,25 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
                         (if (> count 0)
                             (evil-vimish-fold/next-fold count)
                           (evil-vimish-fold/previous-fold (- count))))
-                      (if (/= (point) orig-pt) (point))))
+                      (if (/= (point) orig-pt) (point)))
+                    (lambda ()
+                      ;; ts-fold does not define movement functions so we need to do it ourselves
+                      (when (+fold--ts-fold-p)
+                        (let* ((arg-list (if (> count 0) ;; depending on direction we need to change the ranges
+                                             (list (point) (point-max))
+                                           (list (point-min) (point))))
+                               (comp-fun (if (> count 0) ;; also depending on direction we need to change how we sort the list
+                                             #'<
+                                           #'>))
+                               (ovs (seq-filter
+                                     (lambda (ov)
+                                       (eq (overlay-get ov 'creator) 'ts-fold))
+                                     ;; `overlays-in' does not provide a list that is sorted
+                                     ;; (in the way we need it atleast) so we need to sort it based on direction
+                                     (cl-sort (eval `(overlays-in ,@arg-list))
+                                              (lambda (ov1 ov2)
+                                                (funcall comp-fun (overlay-start ov1) (overlay-start ov2)))))))
+                          (if ovs (goto-char (overlay-start (nth (- (abs count) 1) ovs))))))))
            if (save-excursion (funcall fn))
            collect it into points
            finally do
