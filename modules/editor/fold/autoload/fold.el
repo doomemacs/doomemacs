@@ -172,7 +172,8 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
                                      (cl-sort (eval `(overlays-in ,@arg-list))
                                               (lambda (ov1 ov2)
                                                 (funcall comp-fun (overlay-start ov1) (overlay-start ov2)))))))
-                          (if ovs (goto-char (overlay-start (nth (- (abs count) 1) ovs))))))))
+                          (if (and ovs (<= count (length ovs)))
+                                   (goto-char (overlay-start (nth (- (abs count) 1) ovs))))))))
            if (save-excursion (funcall fn))
            collect it into points
            finally do
