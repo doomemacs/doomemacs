@@ -117,6 +117,9 @@ variable accordingly.")
   :after (org notmuch)
   :config (setq org-mime-library 'mml))
 
+(use-package! ol-notmuch
+  :when (featurep! +org)
+  :after (org notmuch))
 
 (use-package! counsel-notmuch
   :when (featurep! :completion ivy)
