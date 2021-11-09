@@ -76,32 +76,32 @@
 ;;;###autoload
 (defun +notmuch/search-delete ()
   (interactive)
-  (notmuch-search-add-tag (list "+trash" "-inbox" "-unread"))
+  (notmuch-search-add-tag +notmuch-delete-tags)
   (notmuch-tree-next-message))
 
 ;;;###autoload
 (defun +notmuch/tree-delete ()
   (interactive)
-  (notmuch-tree-add-tag (list "+trash" "-inbox" "-unread"))
+  (notmuch-tree-add-tag +notmuch-delete-tags)
   (notmuch-tree-next-message))
 
 ;;;###autoload
 (defun +notmuch/show-delete ()
   "Mark email for deletion in notmuch-show"
   (interactive)
-  (notmuch-show-add-tag (list "+trash" "-inbox" "-unread"))
+  (notmuch-show-add-tag +notmuch-delete-tags)
   (notmuch-show-next-thread-show))
 
 ;;;###autoload
 (defun +notmuch/search-spam ()
   (interactive)
-  (notmuch-search-add-tag (list "+spam" "-inbox" "-unread"))
+  (notmuch-search-add-tag +notmuch-spam-tags)
   (notmuch-search-next-thread))
 
 ;;;###autoload
 (defun +notmuch/tree-spam ()
   (interactive)
-  (notmuch-tree-add-tag (list "+spam" "-inbox" "-unread"))
+  (notmuch-tree-add-tag +notmuch-spam-tags)
   (notmuch-tree-next-message))
 
 ;;;###autoload
