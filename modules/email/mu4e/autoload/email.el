@@ -199,7 +199,7 @@ is tomorrow.  With two prefixes, select the deadline."
                               "[[mu4e:msgid:"
                               (plist-get msg :message-id) "]["
                               (truncate-string-to-width
-                               (or (caar from) (cadr from)) 25 nil nil t)
+                               (or (caar from) (cdar from)) 25 nil nil t)
                               " - "
                               (truncate-string-to-width
                                (plist-get msg :subject) 40 nil nil t)
