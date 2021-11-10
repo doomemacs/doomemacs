@@ -115,9 +115,11 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 (use-package! tex-fold
   :when (featurep! +fold)
-  :hook (TeX-mode . TeX-fold-buffer)
+  :hook (TeX-mode . +latex-TeX-fold-buffer-h)
   :hook (TeX-mode . TeX-fold-mode)
   :config
+  (defun +latex-TeX-fold-buffer-h ()
+    (run-with-idle-timer 0 nil 'TeX-fold-buffer))
   ;; Fold after all auctex macro insertions
   (advice-add #'TeX-insert-macro :after #'+latex-fold-last-macro-a)
   ;; Fold after cdlatex macro insertions
