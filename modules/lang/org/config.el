@@ -298,7 +298,7 @@ Also adds support for a `:sync' parameter to override `:async'."
                ;; Since Doom adds its most expensive hooks to
                ;; MAJOR-MODE-local-vars-hook, we can savely inhibit those.
                (lambda ()
-                 (let ((doom-inhibit-local-var-hooks t))
+                 (let ((doom-inhibit-major-mode-post-hooks t))
                    (funcall initialize)))
              initialize)
            args))
