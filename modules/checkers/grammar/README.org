@@ -43,6 +43,10 @@ This module tries to guess the location of languagetool-commandline.jar. If you
 get a warning that Doom =couldn't find languagetool-commandline.jar=, you will
 need to set ~langtool-language-tool-jar~ to its location.
 
+#+begin_quote
+Note for macOS: If you use ~brew install java~, you may ~(setq langtool-java-bin "/usr/local/opt/openjdk/bin/java")~ if languagetool complains about missing Java Runtime.
+#+end_quote
+
 * Features
 An in-depth list of features, how to use them, and their dependencies.
 
