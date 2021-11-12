@@ -71,7 +71,7 @@ core/core-ui.el has four relevant variables:
 
 - ~doom-font~ :: the default font to use in Doom Emacs.
 - ~doom-big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
-- ~doom-variable-font~ :: the font to use when ~variable-pitch-mode~ is active
+- ~doom-variable-pitch-font~ :: the font to use when ~variable-pitch-mode~ is active
   (or where the ~variable-pitch~ face is used).
 - ~doom-unicode-font~ :: the font used to display unicode symbols. This is
   ignored if the [[doom-module:][:ui unicode]] module is enabled.
