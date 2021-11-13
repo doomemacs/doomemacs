@@ -28,6 +28,7 @@
                  (ssh-deploy-root-remote . stringp)
                  (ssh-deploy-script . functionp)
                  (ssh-deploy-on-explicit-save . booleanp)
+                 (ssh-deploy-force-on-explicit-save . booleanp)
                  (ssh-deploy-async . booleanp)
                  (ssh-deploy-exclude-list . listp)))
     (put (car sym) 'safe-local-variable (cdr sym)))
@@ -37,7 +38,7 @@
     (defun +upload-init-after-save-h ()
       (when (and (bound-and-true-p ssh-deploy-root-remote)
                  ssh-deploy-on-explicit-save)
-        (ssh-deploy-upload-handler))))
+        (ssh-deploy-upload-handler ssh-deploy-force-on-explicit-save))))
 
   ;; Enable ssh-deploy if variables are set, and check for changes on open file
   ;; (if possible)
