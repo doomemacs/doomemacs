@@ -6,15 +6,20 @@
 (defun +fortran/gfortran-compile ()
   "Compile the current file using gfortran."
   (interactive)
-  (compile (format "gfortran %s %s"
-                   (+fortran/fortran-std)
-                   buffer-file-name)))
+  (compile (format "gfortran %s %s" (+fortran/fortran-std) buffer-file-name)))
 
 ;;;###autoload
 (defun +fortran/gfortran-run ()
   "Run the current file using gfortran."
   (interactive)
-  (message "Running with gfortran."))
+  (+fortran/gfortran-compile)
+  (let* ((buffer (+fortran/compilation-buffer-name nil))
+         (proc (get-buffer-process buffer))
+         (exec (expand-file-name "a.out" ".")))
+    (while (accept-process-output proc))
+    (start-process "gfortran-run" buffer exec)))
+    ;; (comint-exec buffer "gfortran-run" exec nil nil)))
+    ;; (comint-send-string (get-buffer-process buffer) exec)))
 
 (defun +fortran/fortran-std ()
   "Which version of Fortran should we target?"
