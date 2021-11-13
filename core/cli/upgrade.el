@@ -32,7 +32,7 @@ following shell commands:
 ;;
 ;;; library
 
-(defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
+(defvar doom-repo-url "https://github.com/shelper/doom-emacs"
   "The git repo url for Doom Emacs.")
 (defvar doom-repo-remote "_upgrade"
   "The name to use as our staging remote.")
