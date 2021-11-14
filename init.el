@@ -1,6 +1,6 @@
 ;;; init.el -*- lexical-binding: t; -*-
 ;;
-;; Author:  Henrik Lissner <henrik@lissner.net>
+;; Author:  Henrik Lissner <contact@henrik.io>
 ;; URL:     https://github.com/hlissner/doom-emacs
 ;;
 ;;   =================     ===============     ===============   ========  ========

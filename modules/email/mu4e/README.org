@@ -181,14 +181,14 @@ Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ;; Each path is relative to the path of the maildir you passed to mu
-(set-email-account! "Lissner.net"
-  '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
-    (mu4e-drafts-folder     . "/Lissner.net/Drafts")
-    (mu4e-trash-folder      . "/Lissner.net/Trash")
-    (mu4e-refile-folder     . "/Lissner.net/All Mail")
-    (smtpmail-smtp-user     . "henrik@lissner.net")
-    (user-mail-address      . "henrik@lissner.net")    ;; only needed for mu < 1.4
-    (mu4e-compose-signature . "---\nHenrik Lissner"))
+(set-email-account! "bar.com"
+  '((mu4e-sent-folder       . "/bar.com/Sent Mail")
+    (mu4e-drafts-folder     . "/bar.com/Drafts")
+    (mu4e-trash-folder      . "/bar.com/Trash")
+    (mu4e-refile-folder     . "/bar.com/All Mail")
+    (smtpmail-smtp-user     . "foo@bar.com")
+    (user-mail-address      . "foo@bar.com")    ;; only needed for mu < 1.4
+    (mu4e-compose-signature . "---\nYours truly\nThe Baz"))
   t)
 #+END_SRC
 
