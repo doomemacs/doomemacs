@@ -193,8 +193,9 @@
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (map! :map mu4e-main-mode-map
-        :ne "h" #'+workspace/other)
+  (when (featurep! :ui workspaces)
+    (map! :map mu4e-main-mode-map
+          :ne "h" #'+workspace/other))
 
   (map! :map mu4e-headers-mode-map
         :vne "l" #'+mu4e/capture-msg-to-agenda)
