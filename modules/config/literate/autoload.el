@@ -15,16 +15,12 @@ byte-compiled from.")
 ;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 ;;;###autoload
-(defun +literate-tangle-h ()
-  "Tangles `+literate-config-file' if it has changed."
-  (and (not (getenv "__NOTANGLE"))
+(defun +literate-tangle-fn (target dest cache guard-env)
+  "Tangles TARGET if it has changed"
+  (and (not (getenv guard-env))
        (require 'ox nil t)
        (require 'ob-tangle nil t)
-       (letf! ((default-directory doom-private-dir)
-               (target +literate-config-file)
-               (cache +literate-config-cache-file)
-               (dest (expand-file-name (concat doom-module-config-file ".el")))
-               ;; Ensure output conforms to the formatting of all doom CLIs
+       (letf! (;; Ensure output conforms to the formatting of all doom CLIs
                (defun message (msg &rest args)
                  (when msg
                    (print! (info "%s") (apply #'format msg args)))))
@@ -54,7 +50,36 @@ byte-compiled from.")
           (with-temp-file cache)
           (if doom-interactive-p t
             (message "Restarting..." )
-            (throw 'exit "__DOOMRESTART=1 __NOTANGLE=1 $@"))))))
+            (throw 'exit (format "__DOOMRESTART=1 %s=1 $@" guard-env)))))))
+
+;;;###autoload
+(defun +literate-tangle-h ()
+  "Tangles `+literate-config-file' if it has changed."
+       (letf! ((default-directory doom-private-dir)
+               (target +literate-config-file)
+               (dest (expand-file-name (concat doom-module-config-file ".el")))
+               (cache +literate-config-cache-file))
+         (+literate-tangle-fn target dest cache "__NOTANGLE")))
+
+(defun +literate--guard-env-fn (category module)
+  "Generate an env name to guard from re-running `org-babel-tangle-file'.
+
+For example: `(+literate--guard-env-fn 'config 'my-literate-module)'
+generates `__NOTANGLE_CONFIG_MY_LITERATE_MODULE'"
+  (upcase
+   (replace-regexp-in-string "-" "_"
+                             (format "__NOTANGLE_%s_%s" category module))))
+
+;;;###autoload
+(defun +literate-tangle-module-h (category module)
+  "Tangle `config.org' for the module specified by CATEGORY and MODULE."
+  (let* ((org-patch-dir (format "modules/%s/%s/" category module))
+         ;; TODO support ofther literate files (e.g. README.org)
+         (target (concat doom-private-dir org-patch-dir "config.org"))
+         (dest "config.el")
+         (cache (concat doom-cache-dir org-patch-dir "literate-last-compile"))
+         (guard-env (+literate--guard-env-fn category module)))
+    (+literate-tangle-fn target dest cache guard-env)))
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)
