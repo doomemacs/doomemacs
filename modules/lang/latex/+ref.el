@@ -5,6 +5,11 @@
   :config
   ;; set up completion for citations and references
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations)
+  ;; This variable was introduced in AUCTeX 11.90.
+  ;; We need set LaTeX-reftex-cite-format-auto-activate to nil 
+  ;; when setting reftex-cite-format below
+  ;; https://superuser.com/a/1386206
+  (setq LaTeX-reftex-cite-format-auto-activate nil)
   ;; Get ReTeX working with biblatex
   ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
   (setq reftex-cite-format
