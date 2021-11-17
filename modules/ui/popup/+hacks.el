@@ -246,6 +246,14 @@ the command buffer."
     (when (+popup-window-p win)
       (select-window win))))
 
+
+;;;###package latex
+(defadvice! +popup--use-popup-window-for-reftex-citation-a (fn &rest args)
+  :around #'reftex-do-citation
+  (letf! ((#'switch-to-buffer-other-window #'pop-to-buffer))
+    (apply fn args)))
+
+
 ;;;###package org
 (after! org
   (defadvice! +popup--suppress-delete-other-windows-a (fn &rest args)
