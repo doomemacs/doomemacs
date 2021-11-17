@@ -8,9 +8,9 @@
       (progn
         (when (featurep! :ui workspaces)
           (+workspace-switch "*MAIL*" t))
-        (if-let* ((buf (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
+        (if-let* ((win (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
                                    (doom-visible-windows))))
-            (select-window (get-buffer-window buf))
+            (select-window win)
           (funcall +notmuch-home-function))
         (when (featurep! :ui workspaces)
           (+workspace/display)))
