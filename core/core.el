@@ -226,12 +226,12 @@ do)."
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
-(defvar doom-inhibit-major-mode-post-hooks nil)
+(defvar doom-inhibit-local-var-hooks nil)
 
 (defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
-  (unless doom-inhibit-major-mode-post-hooks
-    (setq-local doom-inhibit-major-mode-post-hooks t)
+  (unless doom-inhibit-local-var-hooks
+    (setq-local doom-inhibit-local-var-hooks t)
     (doom-run-hooks (intern (format "%s-local-vars-hook" major-mode)))))
 
 ;; If the user has disabled `enable-local-variables', then
