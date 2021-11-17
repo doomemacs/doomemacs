@@ -362,10 +362,8 @@ Ugh, such an ugly hack."
 (defadvice! +popup--use-popup-window-for-undo-tree-visualizer-a (fn &rest args)
   "TODO"
   :around #'undo-tree-visualize
-  (if undo-tree-visualizer-diff
-      (apply fn args)
-    (letf! ((#'switch-to-buffer-other-window #'pop-to-buffer))
-      (apply fn args))))
+   (letf! ((#'switch-to-buffer-other-window #'pop-to-buffer))
+      (apply fn args)))
 
 ;;;###package wgrep
 (progn

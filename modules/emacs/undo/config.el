@@ -80,6 +80,15 @@
       :filter-return #'undo-tree-make-history-save-file-name
       (concat file ".zst")))
 
+  ;; Make these functions respect the value of `undo-tree-visualizer-diff'
+  (defun +keep-undo-tree-visualizer-diff-a (fn &rest args)
+    (let (old-undo-tree-visualizer-dif undo-tree-visualizer-diff)
+      (apply fn args)
+      (setq undo-tree-visualizer-diff old-undo-tree-visualizer-dif)))
+
+  (advice-add #'undo-tree-visualizer-show-diff :around #'+keep-undo-tree-visualizer-diff-a)
+  (advice-add #'undo-tree-visualizer-hide-diff :around #'+keep-undo-tree-visualizer-diff-a)
+
   ;; Strip text properties from undo-tree data to stave off bloat. File size
   ;; isn't the concern here; undo cache files bloat easily, which can cause
   ;; freezing, crashes, GC-induced stuttering or delays when opening files.
