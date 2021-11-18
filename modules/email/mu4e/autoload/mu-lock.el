@@ -16,9 +16,9 @@
   "Get info on the PID refered to in `+mu4e-lock-file' in the form (pid . process-attributes)
  If the file or process do not exist, the lock file is deleted an nil returned."
   (when (file-exists-p +mu4e-lock-file)
-    (let* ((pid (string-to-number
+    (let* ((coding-system-for-read 'utf-8)
+           (pid (string-to-number
                  (with-temp-buffer
-                   (setq coding-system-for-read 'utf-8)
                    (insert-file-contents +mu4e-lock-file)
                    (buffer-string))))
            (process (process-attributes pid)))
