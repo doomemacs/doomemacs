@@ -52,7 +52,7 @@ If prefix ARG is non-nil, prompt for the search path."
         (dolist (dir projectile-project-search-path)
           (cl-destructuring-bind (dir . depth) (if (consp dir) dir (cons dir nil))
             (if (not (file-accessible-directory-p dir))
-                (message "%S was inaccessible and couldn't searched" dir)
+                (message "%S was inaccessible and couldn't be searched" dir)
               (projectile-discover-projects-in-directory dir depth))))))))
 
 ;;;###autoload
