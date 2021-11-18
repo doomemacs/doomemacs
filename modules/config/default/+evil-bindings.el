@@ -514,7 +514,7 @@
        :desc "Org agenda"                   "a" #'org-agenda
        (:when (featurep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion vertico)  #'bibtex-actions-open-entry)
+        (cond ((featurep! :completion vertico)  #'citar-open-entry)
               ((featurep! :completion ivy)      #'ivy-bibtex)
               ((featurep! :completion helm)     #'helm-bibtex)))
 
