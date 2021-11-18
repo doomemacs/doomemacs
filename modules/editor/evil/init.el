@@ -141,6 +141,7 @@ variable for an explanation of the defaults (in comments). See
       finder
       flycheck
       flymake
+      forge
       free-keys
       geiser
       ggtags
@@ -187,6 +188,7 @@ variable for an explanation of the defaults (in comments). See
       nov
       (occur replace)
       omnisharp
+      org
       org-present
       osx-dictionary
       outline
@@ -211,6 +213,7 @@ variable for an explanation of the defaults (in comments). See
       robe
       rtags
       ruby-mode
+      scheme
       scroll-lock
       selectrum
       sh-script
