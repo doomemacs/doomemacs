@@ -50,9 +50,10 @@ If prefix ARG is non-nil, prompt for the search path."
                  (funcall projectile-add-known-project project-root)
                  (message "Added %S to known project roots" project-root)))
         (dolist (dir projectile-project-search-path)
-          (if (not (file-accessible-directory-p dir))
-              (message "%S was inaccessible and couldn't searched" dir)
-            (projectile-discover-projects-in-directory dir)))))))
+          (cl-destructuring-bind (dir . depth) (if (consp dir) dir (cons dir nil))
+            (if (not (file-accessible-directory-p dir))
+                (message "%S was inaccessible and couldn't be searched" dir)
+              (projectile-discover-projects-in-directory dir depth))))))))
 
 ;;;###autoload
 (defun +default/dired (arg)
