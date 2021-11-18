@@ -41,6 +41,14 @@ when `+bidi-mode' is on."
   "`font-lock' keywords matching spaces and punctuation after RTL characters.
 See the variable `font-lock-keywords' for information on the format.")
 
+(defcustom +bidi-paragraph-direction nil
+  "The value of `bidi-paragragh-direction' when `+bidi-mode' is on.
+See the `bidi-paragraph-direction' for more info.'"
+  :type '(choice
+          (const :tag "Left to Right" left-to-right)
+          (const :tag "Right to Left" right-to-left)
+          (const :tag "Dynamic, according to paragraph text" nil)))
+
 ;;;###autoload
 (define-minor-mode +bidi-mode
   "Minor mode for using bidirectional text in a buffer.
@@ -51,7 +59,7 @@ easier."
   :keymap +bidi-mode-map
   (if +bidi-mode
       (progn
-        (setq bidi-paragraph-direction nil   ; Do treat +Bidi as right-to-left
+        (setq bidi-paragraph-direction +bidi-paragraph-direction   ; Better paragraph alignment
               bidi-paragraph-separate-re "^" ; No need for empty lines to switch alignment
               bidi-paragraph-start-re "^"    ; ^
               bidi-inhibit-bpa nil)          ; Better bidi paren logic

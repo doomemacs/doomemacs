@@ -12,6 +12,7 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#using-bidi-mode][Using =+bidi-mode=]]
+  - [[#force-rtl-text-alignment][Force RTL text alignment]]
   - [[#input-methods][Input Methods]]
   - [[#fonts][Fonts]]
     - [[#smart-fontify][Smart Fontify]]
@@ -65,6 +66,15 @@ documents, you probably want to enable it through a hook:
 #+end_src
 
 This is also useful for adding specific functionality for when =+bidi-mode= is on.
+
+** Force RTL text alignment
+By default, =+bidi-mode= will align paragraphs by the first character with
+strong directionality. If you want to force all paragraphs to be aligned
+right-to-left when =+bidi-mode= is on, add the following to your config:
+
+#+begin_src emacs-lisp
+(setq +bidi-paragraph-direction 'right-to-left)
+#+end_src
 
 ** Input Methods
 If you need bidi support, it's likely that you want to easily switch between
