@@ -17,10 +17,11 @@
   (let ((char (read-char "\\")))
     (if (eq char 27)
         (cons "" "")
-      (let ((pair (+evil--embrace-get-pair (string char)))
-            (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
-        (cons (format text (car pair))
-              (format text (cdr pair)))))))
+      (let* ((pair (+evil--embrace-get-pair (string char)))
+             (escape (if (sp-point-in-string) "\\\\" "\\"))
+             (escape (format "\\1%s" (regexp-quote escape))))
+        (cons (replace-regexp-in-string "^\\( *\\)" escape (car pair))
+              (replace-regexp-in-string "^\\( *\\)" escape (cdr pair)))))))
 
 ;;;###autoload
 (defun +evil--embrace-latex ()
