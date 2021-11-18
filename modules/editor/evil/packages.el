@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "17c635f6e1f538bf4b2c3c276ddd9d4d165a52fb")
+(package! evil :pin "07aba40dd32c667f36eb1ad244f859983a077d12")
 (package! evil-args :pin "758ad5ae54ad34202064fec192c88151c08cb387")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "464e8ec52ff78edf3c9060143fc375f6ce5f275f")
@@ -13,8 +13,8 @@
 (package! evil-lion :pin "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
 (package! evil-nerd-commenter :pin "63baf2d1c796edd11bbec5fe1dee711173d4155d")
 (package! evil-numbers :pin "08f0c1ee93b8a563770eaefaf21ab9087fca7bdb")
-(package! evil-snipe :pin "1a28d718c835a21591a170af78a03a366cd60c0d")
-(package! evil-surround :pin "3bd73794ee5a760118042584ef74e2b6fb2a1e06")
+(package! evil-snipe :pin "a79177df406a79b4ffa25743c752f21363bba1cc")
+(package! evil-surround :pin "282a975bda83310d20a2c536ac3cf95d2bf188a5")
 (package! evil-textobj-anyblock
   :recipe (:host github
            :repo "willghatch/evil-textobj-anyblock"
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "63d84ff4bde31e2933440235ce5ee13a109e43e9"))
+  (package! evil-collection :pin "652d74acfb5789eacef36660c4ffc68905c8d741"))
