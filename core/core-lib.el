@@ -637,8 +637,15 @@ This macro accepts, in order:
     (while rest
       (let* ((next (pop rest))
              (first (car-safe next)))
-        (push (cond ((memq first '(quote function nil))
+        (push (cond ((memq first '(function nil))
                      next)
+                    ((eq first 'quote)
+                     (let ((quoted (cadr next)))
+                       (if (atom quoted)
+                           next
+                         (when (cdr quoted)
+                           (setq rest (cons (list first (cdr quoted)) rest)))
+                         (list first (car quoted)))))
                     ((memq first '(defun cl-defun))
                      (push next defn-forms)
                      (list 'function (cadr next)))
