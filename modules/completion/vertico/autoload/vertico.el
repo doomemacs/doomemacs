@@ -29,7 +29,7 @@
                   "--path-separator /   --smart-case --no-heading --line-number "
                   "--hidden -g !.git "
                   (mapconcat #'shell-quote-argument args " ")
-                  "."))
+                  " ."))
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
