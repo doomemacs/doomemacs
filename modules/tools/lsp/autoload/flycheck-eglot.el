@@ -67,4 +67,10 @@ CALLBACK is the function that we need to call when we are done, on all the error
       ;; errors
       (flycheck-buffer-deferred))))
 
+(after! flymake
+  (when (and
+         (not (fboundp 'flymake--diag-buffer))
+         (fboundp 'flymake--diag-locus))
+    (defalias 'flymake--diag-buffer 'flymake--diag-locus)))
+
 ;;; flycheck-eglot.el ends here
