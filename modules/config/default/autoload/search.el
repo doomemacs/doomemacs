@@ -101,18 +101,17 @@ If prefix ARG is set, prompt for a known project to search from."
    (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))
          current-prefix-arg))
   (let* ((projectile-project-root nil)
-         (default-directory
-           (if arg
-               (if-let (projects (projectile-relevant-known-projects))
-                   (completing-read "Search project: " projects nil t)
-                 (user-error "There are no known projects"))
-             default-directory)))
+         (dir (if arg
+                  (if-let (projects (projectile-relevant-known-projects))
+                      (completing-read "Search project: " projects nil t)
+                    (user-error "There are no known projects"))
+                default-directory)))
     (cond ((featurep! :completion ivy)
-           (+ivy/project-search nil symbol))
+           (+ivy/project-search nil symbol dir))
           ((featurep! :completion helm)
-           (+helm/project-search nil symbol))
+           (+helm/project-search nil symbol dir))
           ((featurep! :completion vertico)
-           (+vertico/project-search nil symbol))
+           (+vertico/project-search nil symbol dir))
           ((rgrep (regexp-quote symbol))))))
 
 ;;;###autoload
