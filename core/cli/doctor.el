@@ -50,6 +50,17 @@ in."
   (print! (start "Checking your Emacs version..."))
   (print-group!
    (cond
+    ((string= ".50" (substring emacs-version -3))
+     (error! "Emacs development version detected (%s)" emacs-version)
+     ;; There are 2 newlines between each item to fight against
+     ;; the (fill-region) call in `doom--output-autofill'
+     (explain! "Doom supports this version, but you are using a development version of Emacs! "
+               "Be prepared for possibly weekly breakages that\n\n"
+               "\t- you will have to investigate yourself,\n\n"
+               "\t- might appear, or be solved, on any Emacs update,\n\n"
+               "\t- might depend subtly on upstream packages updates\n\n"
+               "You might need to unpin packages to get a fix for a specific commit of Emacs, "
+               "and you should be ready to downgrade Emacs if something is just not fixable."))
     (EMACS28+
      (warn! "Emacs %s detected" emacs-version)
      (explain! "Doom supports this version, but you are living on the edge! "
