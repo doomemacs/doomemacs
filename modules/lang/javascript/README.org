@@ -12,7 +12,7 @@
   - [[#arch-linux][Arch Linux]]
   - [[#opensuse][openSUSE]]
 - [[#troubleshooting][Troubleshooting]]
-  - [[#tide-sort-completions-by-kind-isnt-respected][~tide-sort-completions-by-kind~ isn't respected]]
+  - [[#tide-sort-completions-by-kind-isnt-respected][ ~tide-sort-completions-by-kind~ isn't respected]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
 
