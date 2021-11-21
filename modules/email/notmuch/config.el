@@ -25,6 +25,16 @@ OR a shell command string such as
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
 
+(defvar +notmuch-delete-tags '("+trash" "-inbox" "-unread")
+  "Tags applied to mark email for deletion.
+
+When replacing the +trash tag by a different tag such as
++deleted, you will need to update the notmuch-saved-searches
+variable accordingly.")
+
+(defvar +notmuch-spam-tags '("+spam" "-inbox" "-unread")
+  "Tags applied to mark email as spam.")
+
 
 ;;
 ;;; Packages
