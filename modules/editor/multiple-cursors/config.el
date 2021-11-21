@@ -12,11 +12,7 @@
 
 (use-package! evil-multiedit
   :when (featurep! :editor evil)
-  :defer t
-  :config
-  (map! :map (evil-multiedit-state-map evil-multiedit-insert-state-map)
-        "C-n" #'evil-multiedit-next
-        "C-p" #'evil-multiedit-prev))
+  :defer t)
 
 
 (use-package! iedit
