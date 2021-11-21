@@ -89,6 +89,7 @@ orderless."
     [remap bookmark-jump]                 #'consult-bookmark
     [remap evil-show-marks]               #'consult-mark
     [remap evil-show-jumps]               #'+vertico/jump-list
+    [remap evil-show-registers]           #'consult-register
     [remap goto-line]                     #'consult-goto-line
     [remap imenu]                         #'consult-imenu
     [remap locate]                        #'consult-locate
