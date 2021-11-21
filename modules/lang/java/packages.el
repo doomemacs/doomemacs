@@ -14,4 +14,4 @@
 
 (when (featurep! +lsp)
   (unless (featurep! :tools lsp +eglot)
-    (package! lsp-java :pin "2a7d27e899edf7ad221a546ed67711ef5487f3ec")))
+    (package! lsp-java :pin "3246272b43659ce3020e6f47cd3eea17432b389a")))
