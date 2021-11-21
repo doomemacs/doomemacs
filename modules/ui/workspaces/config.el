@@ -250,8 +250,9 @@ stored in `persp-save-dir'.")
   (persp-def-buffer-save/load
    :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
    :save-vars '(default-directory)
-   :load-function (fn! ((_ _ vars-list &rest _) &rest _)
-                    (magit-status (alist-get 'default-directory vars-list))))
+   :load-function (lambda (savelist &rest _)
+                    (cl-destructuring-bind (buffer-name vars &rest _rest) (cdr savelist)
+                      (magit-status (alist-get 'default-directory vars)))))
   ;; Restore indirect buffers
   (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load
