@@ -19,8 +19,8 @@ More specifically, this accepts one of the following symbols (see
 OR a shell command string such as
 
   \"path/to/some/shell-script.sh\"
-  \"offlineimap && notmuch new && afew -a -t\"
-  \"mbsync %s -a && notmuch new && afew -a -t\"")
+  \"offlineimap && notmuch new && afew -n -t\"
+  \"mbsync %s -a && notmuch new && afew -n -t\"")
 
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
@@ -88,7 +88,7 @@ OR a shell command string such as
                notmuch-tree-mode-hook
                notmuch-search-mode-hook)
              #'hide-mode-line-mode)
- 
+
   (map! :localleader
         :map (notmuch-hello-mode-map notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
         :desc "Compose email"   "c" #'+notmuch/compose
