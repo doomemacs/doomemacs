@@ -147,7 +147,7 @@ You should use `set-eshell-alias!' to change this.")
         [remap evil-window-split]   #'+eshell/split-below
         [remap evil-window-vsplit]  #'+eshell/split-right
         ;; To emulate terminal keybinds
-        "C-l"   #'eshell/clear
+        "C-l"   (cmd! (eshell/clear-scrollback) (eshell-emit-prompt))
         (:localleader
          "b" #'eshell-insert-buffer-name
          "e" #'eshell-insert-envvar
