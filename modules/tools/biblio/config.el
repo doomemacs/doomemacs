@@ -54,6 +54,7 @@
 ;;;; Third-party
 
 (use-package! citar-org
+  :no-require
   :when (featurep! :lang org +roam2)
   :config
   ;; Include property drawer metadata for 'org-roam' v2.
