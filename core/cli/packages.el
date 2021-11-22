@@ -376,6 +376,7 @@ declaration) or dependency thereof that hasn't already been."
   "Updates packages."
   (doom-initialize-packages)
   (doom--barf-if-incomplete-packages)
+  (doom--cli-recipes-update)
   (let* ((repo-dir (straight--repos-dir))
          (pinned (doom-package-pinned-list))
          (recipes (doom-package-recipe-list))
@@ -385,8 +386,6 @@ declaration) or dependency thereof that hasn't already been."
          (esc (unless doom-debug-p "\033[1A"))
          (i 0)
          errors)
-    (when recipes
-      (doom--cli-recipes-update))
     (print! (start "Updating packages (this may take a while)..."))
     (doom--with-package-recipes recipes (recipe package type local-repo)
       (cl-incf i)
