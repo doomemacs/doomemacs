@@ -510,6 +510,8 @@ declaration) or dependency thereof that hasn't already been."
       (delq nil (mapcar #'doom--cli-packages-purge-build builds))))))
 
 (cl-defun doom--cli-packages-regraft-repo (repo)
+  (unless repo
+    (error "No repo specified for regrafting"))
   (let ((default-directory (straight--repos-dir repo)))
     (unless (file-directory-p ".git")
       (print! (warn "\033[Krepos/%s is not a git repo, skipping" repo))
