@@ -45,6 +45,7 @@ envvar will enable this at startup.")
 (defconst doom-interactive-p (not noninteractive)
   "If non-nil, Emacs is in interactive mode.")
 
+(defconst NATIVECOMP (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
 (defconst EMACS28+   (> emacs-major-version 27))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -155,43 +156,17 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
-;; REVIEW Remove after a month
-(when EMACS28+
-  (mapc (lambda (varset)
-          (unless (boundp (car varset))
-            (defvaralias (car varset) (cdr varset))))
-        '((native-comp-deferred-compilation . comp-deferred-compilation)
-          (native-comp-deferred-compilation-deny-list . comp-deferred-compilation-deny-list)
-          (native-comp-eln-load-path . comp-eln-load-path)
-          (native-comp-warning-on-missing-source . comp-warning-on-missing-source)
-          (native-comp-driver-options . comp-native-driver-options)
-          (native-comp-async-query-on-exit . comp-async-query-on-exit)
-          (native-comp-async-report-warnings-errors . comp-async-report-warnings-errors)
-          (native-comp-async-env-modifier-form . comp-async-env-modifier-form)
-          (native-comp-async-all-done-hook . comp-async-all-done-hook)
-          (native-comp-async-cu-done-functions . comp-async-cu-done-functions)
-          (native-comp-async-jobs-number . comp-async-jobs-number)
-          (native-comp-never-optimize-functions . comp-never-optimize-functions)
-          (native-comp-bootstrap-deny-list . comp-bootstrap-deny-list)
-          (native-comp-always-compile . comp-always-compile)
-          (native-comp-verbose . comp-verbose)
-          (native-comp-debug . comp-debug)
-          (native-comp-speed . comp-speed)))
-
+(when NATIVECOMP
   ;; Don't store eln files in ~/.emacs.d/eln-cache (they are likely to be purged
   ;; when upgrading Doom).
-  (when (boundp 'native-comp-eln-load-path)
-    (add-to-list 'native-comp-eln-load-path (concat doom-cache-dir "eln/"))))
+  (add-to-list 'native-comp-eln-load-path (concat doom-cache-dir "eln/"))
 
-(with-eval-after-load 'comp
-  ;; HACK Disable native-compilation for some troublesome packages
-  (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
-        (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-          (list (concat "\\`" (regexp-quote doom-autoloads-file) "\\'")
-                (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                (concat local-dir-re ".*/with-editor\\.el\\'")
-                ;; https://github.com/nnicandro/emacs-jupyter/issues/297
-                (concat local-dir-re ".*/jupyter-channel\\.el\\'")))))
+  (with-eval-after-load 'comp
+    ;; HACK Disable native-compilation for some troublesome packages
+    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+          (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
+            (list (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
+                  (concat local-dir-re ".*/with-editor\\.el\\'"))))))
 
 
 ;;
