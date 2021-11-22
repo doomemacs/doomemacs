@@ -1,6 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/cli/packages.el
 
+(require 'comp nil t)
+
+
+;;
+;;; Commands
+
 (defcli! (update u) (&rest _)
   "This command was removed."
   :hidden t
@@ -210,7 +216,7 @@ list remains lean."
          (comp-async-runnings))
     0))
 
-(defun doom--wait-for-compile-jobs ()
+(defun doom--wait-for-native-compile-jobs ()
   "Wait for all pending async native compilation jobs."
   (cl-loop for pending = (doom--native-compile-jobs)
            with previous = 0
@@ -224,8 +230,7 @@ list remains lean."
 
 (defun doom--write-missing-eln-errors ()
   "Write .error files for any expected .eln files that are missing."
-  (when (and (require 'comp nil t)
-             (ignore-errors (native-comp-available-p)))
+  (when NATIVECOMP
     (cl-loop for file in doom--eln-output-expected
              for eln-name = (doom--eln-file-name file)
              for eln-file = (doom--eln-output-file eln-name)
@@ -239,8 +244,7 @@ list remains lean."
 
 (defun doom--compile-site-packages ()
   "Queue async compilation for all non-doom Elisp files."
-  (when (and (featurep 'comp)
-             (ignore-errors (native-comp-available-p)))
+  (when NATIVECOMP
     (cl-loop with paths = (cl-loop for path in load-path
                                    unless (string-prefix-p doom-local-dir path)
                                    collect path)
@@ -288,8 +292,9 @@ declaration) or dependency thereof that hasn't already been."
                    (signal 'doom-package-error (list package e))))))
          (progn
            (doom--compile-site-packages)
-           (doom--wait-for-compile-jobs)
-           (doom--write-missing-eln-errors)
+           (when NATIVECOMP
+             (doom--wait-for-native-compile-jobs)
+             (doom--write-missing-eln-errors))
            (print! (success "\033[KInstalled %d packages") (length built)))
        (print! (info "No packages need to be installed"))
        nil))))
@@ -334,9 +339,8 @@ declaration) or dependency thereof that hasn't already been."
                     (and (eq (car-safe build) :not)
                          (setq want-byte-compile (not want-byte-compile)
                                want-native-compile (not want-native-compile)))
-                    (or (and (require 'comp nil t)
-                             (ignore-errors (native-comp-available-p)))
-                        (setq want-native-compile nil))
+                    (unless NATIVECOMP
+                      (setq want-native-compile nil))
                     (and (or want-byte-compile want-native-compile)
                          (or (file-newer-than-file-p repo-dir build-dir)
                              (file-exists-p (straight--modified-dir (or local-repo package)))
@@ -352,8 +356,9 @@ declaration) or dependency thereof that hasn't already been."
                 (straight-use-package (intern package))))
          (progn
            (doom--compile-site-packages)
-           (doom--wait-for-compile-jobs)
-           (doom--write-missing-eln-errors)
+           (when NATIVECOMP
+             (doom--wait-for-native-compile-jobs)
+             (doom--write-missing-eln-errors))
            ;; HACK Every time you save a file in a package that straight tracks,
            ;;      it is recorded in ~/.emacs.d/.local/straight/modified/.
            ;;      Typically, straight will clean these up after rebuilding, but
@@ -637,8 +642,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not regraft-repos-p)
                (ignore (print! (info "Skipping regrafting")))
              (doom--cli-packages-regraft-repos repos-to-regraft))
-           (when (and (require 'comp nil t)
-                      (native-comp-available-p))
+           (when NATIVECOMP
              (if (not eln-p)
                  (ignore (print! (info "Skipping native bytecode")))
                (doom--cli-packages-purge-eln))))))))
