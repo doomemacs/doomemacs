@@ -798,6 +798,7 @@ between the two."
         "+" #'org-ctrl-c-minus
         "," #'org-switchb
         "." #'org-goto
+        "@" #'org-cite-insert
         (:when (featurep! :completion ivy)
          "." #'counsel-org-goto
          "/" #'counsel-org-goto-all)
