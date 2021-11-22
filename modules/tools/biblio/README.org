@@ -1,0 +1,151 @@
+#+TITLE:   tools/biblio
+#+DATE:    April 11, 2020
+#+SINCE:   3.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#pdf-viewing][PDF viewing]]
+  - [[#bibtex-completion][Bibtex completion]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#org-cite][Org-cite]]
+    - [[#processor-configuration][Processor configuration]]
+    - [[#other-configuration-options][Other configuration options]]
+  - [[#path-configuration][Path configuration]]
+  - [[#templates][Templates]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds tools to help when working with bibliographies and citations.
+Minimal modifications have been made to the packages and the configuration
+details are listed in [[*Configuration][Configuration]] below. Some sensible defaults have been
+selected so it should be possible to use without modifications.
+
+** Maintainers
++ [[https://github.com/bdarcus][bdarcus]]
++ [[https://github.com/brianmcgillion][bmg]]
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++  [[https://github.com/tmalsburg/helm-bibtex][bibtex-completion]]
++ ~:completion vertico~
+  + [[https://github.com/bdarcus/citar][citar]]
++ ~:completion helm~
+  + [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]
++ ~:completion ivy~
+  + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]
+
+* Prerequisites
+There are no hard dependencies for this module.
+
+** PDF viewing
+An application for opening PDF files is required. By default =DocView= is used
+though it is highly recommended to enable =:tools pdf= in your personal ~init.el~
+file to enable [[https://github.com/politza/pdf-tools][pdf-tools]].
+
+** Bibtex completion
+For vertico, helm, or ivy bibtex completion you should enable =:completion vertico=, =:completion helm=, or
+=:completion ivy= respectively.
+
+* Features
+Both [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]] (includes helm-bibtex, ivy-bibtex and bibtex-completion code)
+and [[https://github.com/bdarcus/bibtex-actions][citar]] provide an extensive range of features so it is best to check their
+respective sites for a full list of features.
+
+On a high-level you can expect:
++ bibliography management
++ Notes per reference
++ citation support
++ citation lookup
++ org integration for writing literate latex (org-roam)
++ fast indexing and searching of references.
+
+To understand the interaction of these packages this [[https://www.reddit.com/r/emacs/comments/cxu0qg/emacs_org_and_bibtex_as_alternative_to_zotero_and/eyqe4vq/][reddit]] thread will explain
+the unique features and the overlapping functionality if any.
+
+In addition, this module provides support for native Org-mode citations: =org-cite=.
+
+* Configuration
+
+For all these packages it is advisable to use ~(after! package)~ in your
+~config.el~ to override any default settings and tune the packages to your
+needs.
+
+** Org-cite
+
+*** Processor configuration
+
+=Org-cite= provides rich features and flexible configuration options via its "processor" capabilities.
+
+1. /insert/ provides =org-cite-insert= integration for inserting and editing citations.
+2. /activate/ provides fontification, previews, etc.
+3. /follow/ integrates contextual citation actions with =org-open-at-point=.
+4. /export/ for different output targets.
+
+This module makes available the following processors:
+
+1. The core =oc-basic=, =oc-natbib=, =oc-biblatex=, and =oc-csl=.
+2. [[https://github.com/bdarcus/bibtex-actions][citar]] for integration with =vertico= completion.
+
+For user-interface, the module configures these processors as follows for the different completion modules:
+
+| Feature  | Vertico | Ivy      | Helm     |
+|----------+---------+----------+----------|
+| Insert   | citar   | oc-basic | oc-basic |
+| Activate | citar   | oc-basic | oc-basic |
+| Follow   | citar   | oc-basic | oc-basic |
+
+
+*** Other configuration options
+
+If you like, you can also set the =oc-csl= processor to look in a specific
+directory for your CSL styles:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-cite-csl-styles-dir "~/Zotero/styles")
+#+END_SRC
+
+** Path configuration
+
+You must set the path variable for either =citar= (if using =vertico=
+completion) or =bibtex-completion= (if using =ivy= or =helm=); this module will
+in turn set the =org-cite-global-bibliography= path variable to this:
+
+#+BEGIN_src emacs-lisp
+(setq! bibtex-completion-bibliography '("/path/to/references.bib"))
+#+END_src
+
+#+BEGIN_src emacs-lisp
+(setq! citar-bibliography '("/path/to/references.bib"))
+#+END_src
+
+You may also set the respective note and library path variables as well for
+enhanced functionality:
+
+#+BEGIN_src emacs-lisp
+(setq! bibtex-completion-library-path '("/path/to/library/path/")
+       bibtex-completion-notes-path "/path/to/your/notes/")
+#+END_src
+
+#+BEGIN_src emacs-lisp
+(setq! citar-library-paths '("/path/to/library/files/")
+       citar-notes-paths '("/path/to/your/notes/"))
+#+END_src
+
+** Templates
+
+This module provides reasonable default templates for the packages. However, if
+you wish to change these refer to the respective packages for in-depth
+instructions.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
+
+Look to the respective package repositories.
