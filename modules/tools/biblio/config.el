@@ -34,7 +34,7 @@
   :defer t
   :config
   ;; Include property drawer metadata for 'org-roam' v2.
-  (setq citar-org-note-include '(org-id org-roam-ref)))
+  (setq citar-file-note-org-include '(org-id org-roam-ref)))
 
 
 (use-package! bibtex-completion
