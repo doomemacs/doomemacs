@@ -61,14 +61,14 @@ respective sites for a full list of features.
 
 On a high-level you can expect:
 + bibliography management
-+ Notes per reference
++ notes per reference
 + citation support
 + citation lookup
 + org integration for writing literate latex (org-roam)
 + fast indexing and searching of references.
 
-To understand the interaction of these packages this [[https://www.reddit.com/r/emacs/comments/cxu0qg/emacs_org_and_bibtex_as_alternative_to_zotero_and/eyqe4vq/][reddit]] thread will explain
-the unique features and the overlapping functionality if any.
+To understand the interaction between these packages this [[https://www.reddit.com/r/emacs/comments/cxu0qg/emacs_org_and_bibtex_as_alternative_to_zotero_and/eyqe4vq/][reddit]] thread will explain
+the unique features and the overlapping functionality, if any.
 
 In addition, this module provides support for native Org-mode citations: =org-cite=.
 
@@ -89,12 +89,12 @@ needs.
 3. /follow/ integrates contextual citation actions with =org-open-at-point=.
 4. /export/ for different output targets.
 
-This module makes available the following processors:
+This module makes the following processors available:
 
 1. The core =oc-basic=, =oc-natbib=, =oc-biblatex=, and =oc-csl=.
 2. [[https://github.com/bdarcus/bibtex-actions][citar]] for integration with =vertico= completion.
 
-For user-interface, the module configures these processors as follows for the different completion modules:
+The module configures these processors as follows for the different completion modules:
 
 | Feature  | Vertico | Ivy      | Helm     |
 |----------+---------+----------+----------|
@@ -116,7 +116,7 @@ directory for your CSL styles:
 
 You must set the path variable for either =citar= (if using =vertico=
 completion) or =bibtex-completion= (if using =ivy= or =helm=); this module will
-in turn set the =org-cite-global-bibliography= path variable to this:
+in turn set the =org-cite-global-bibliography= variable to the same value:
 
 #+BEGIN_src emacs-lisp
 (setq! bibtex-completion-bibliography '("/path/to/references.bib"))
@@ -142,10 +142,10 @@ enhanced functionality:
 ** Templates
 
 This module provides reasonable default templates for the packages. However, if
-you wish to change these refer to the respective packages for in-depth
+you wish to change them, refer to the respective packages' documentation for in-depth
 instructions.
 
 * Troubleshooting
 # Common issues and their solution, or places to look for help.
 
-Look to the respective package repositories.
+Refer to the respective package repositories.
