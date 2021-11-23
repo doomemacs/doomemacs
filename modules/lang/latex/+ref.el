@@ -3,10 +3,10 @@
 (use-package! reftex
   :hook (LaTeX-mode . reftex-mode)
   :config
-  ;; set up completion for citations and references
+  ;; Set up completion for citations and references.
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations)
-  ;; Get ReTeX working with biblatex
-  ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
+  ;; Get RefTeX working with BibLaTeX, see
+  ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992.
   (setq reftex-cite-format
         '((?a . "\\autocite[]{%l}")
           (?b . "\\blockcquote[]{%l}{}")
@@ -31,7 +31,7 @@
           :e "q"   #'kill-buffer-and-window
           :e "ESC" #'kill-buffer-and-window)))
 
-;; set up mode for bib files
+;; Set up mode for bib files.
 (after! bibtex
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
