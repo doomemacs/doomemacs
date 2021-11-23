@@ -13,10 +13,19 @@
         ;; Setup export processor; default csl/citeproc-el, with biblatex for
         ;; latex
         org-cite-export-processors '((latex biblatex) (t csl))
-        org-cite-insert-processor 'citar
-        org-cite-follow-processor 'citar
-        org-cite-activate-processor 'citar
         org-support-shift-select t))
+
+
+(use-package! citar
+  :when (featurep! :completion vertico)
+  :no-require
+  :config
+  (setq org-cite-insert-processor 'citar
+        org-cite-follow-processor 'citar
+        org-cite-activate-processor 'citar)
+  (when (featurep! :lang org +roam2)
+    ;; Include property drawer metadata for 'org-roam' v2.
+    (setq citar-file-note-org-include '(org-id org-roam-ref))))
 
 
 ;; `org-cite' processors
@@ -27,15 +36,6 @@
 
 ;;
 ;;; Third-party
-
-(use-package! citar-org
-  :when (featurep! :completion vertico)
-  :when (featurep! :lang org +roam2)
-  :defer t
-  :config
-  ;; Include property drawer metadata for 'org-roam' v2.
-  (setq citar-file-note-org-include '(org-id org-roam-ref)))
-
 
 (use-package! bibtex-completion
   :when (or (featurep! :completion ivy)
