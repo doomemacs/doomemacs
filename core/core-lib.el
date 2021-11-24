@@ -125,15 +125,19 @@ unreadable. Returns the names of envvars that were changed."
     (with-temp-buffer
       (insert-file-contents file)
       (when-let (env (read (current-buffer)))
-        (setq-default
-         process-environment
-         (append env (default-value 'process-environment))
-         exec-path
-         (append (split-string (getenv "PATH") path-separator t)
-                 (list exec-directory))
-         shell-file-name
-         (or (getenv "SHELL")
-             (default-value 'shell-file-name)))
+        (let ((tz (getenv-internal "TZ")))
+          (setq-default
+           process-environment
+           (append env (default-value 'process-environment))
+           exec-path
+           (append (split-string (getenv "PATH") path-separator t)
+                   (list exec-directory))
+           shell-file-name
+           (or (getenv "SHELL")
+               (default-value 'shell-file-name)))
+          (when-let (newtz (getenv-internal "TZ"))
+            (unless (equal tz newtz)
+              (set-time-zone-rule newtz))))
         env))))
 
 (defun doom-run-hook (hook)
