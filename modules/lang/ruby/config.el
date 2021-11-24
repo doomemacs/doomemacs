@@ -35,6 +35,10 @@
         "{" #'ruby-toggle-block))
 
 
+(use-package! web-mode
+  :when (featurep! :lang web)
+  :mode "\\.erb\\'")
+
 (use-package! robe
   :defer t
   :init
