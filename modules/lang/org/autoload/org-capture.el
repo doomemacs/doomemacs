@@ -15,8 +15,9 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    ,(when (and IS-LINUX (not (getenv "DISPLAY")))
-       `(display . ":0"))
+    ,@(when IS-LINUX
+        `((window-system . ,(if (boundp 'pgtk-initialized) 'pgtk 'x))
+          (display . ,(or (getenv "DISPLAY") ":0"))))
     ,(if IS-MAC '(menu-bar-lines . 1)))
   "TODO")
 
