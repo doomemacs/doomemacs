@@ -10,6 +10,7 @@
   (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
         company-tooltip-align-annotations t
+        company-selection-wrap-around t
         company-require-match 'never
         company-global-modes
         '(not erc-mode
