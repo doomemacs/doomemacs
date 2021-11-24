@@ -7,7 +7,7 @@
 (when (featurep! :editor evil +everywhere)
   (package! evil-tex :pin "aa0ddf8e768a24cda6d50d07f04c8e7813a2dccd"))
 
-;; Optional module features:
+;; Optional module features.
 
 (when (featurep! +latexmk)
   (package! auctex-latexmk :pin "4d353522650d7685acbf1d38f7dbc504f734bd84"))
@@ -15,7 +15,7 @@
 (when (featurep! +cdlatex)
   (package! cdlatex :pin "f215b70c5cb02bbc43f5a7d5c8e5e3460ff82428"))
 
-;; Features according to other user selected options
+;; Features according to other user selected options.
 
 (when (featurep! :completion company)
   (package! company-auctex :pin "9400a2ec7459dde8cbf1a5d50dfee4e300ed7e18")
