@@ -30,7 +30,12 @@
 (package! rspec-mode :pin "92ef785010f6a68cbf73861e75ac6cf4e1832291")
 (package! minitest :pin "ddd152c990a528ad09a696bfad23afa4330ea4d7")
 
+;; Refactoring
+(package! ruby-json-to-hash :pin "383b22bb2e007289ac0dba146787d02ff99d4415")
+
 ;; Rails
 (when (featurep! +rails)
+  (package! rails-routes :pin "76fde6e50ff42e392cbc6c0b158be2921ef24445")
+  (package! rails-i18n :pin "4d7c7ba4c6549e29aadb1eadbce8378291277623")
   (package! projectile-rails :pin "30828afbfa7b0e07970e3e668e975e7916b824c4")
   (package! inflections :pin "55caa66a7cc6e0b1a76143fd40eff38416928941"))

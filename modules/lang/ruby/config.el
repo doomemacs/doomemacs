@@ -104,6 +104,45 @@
         "R" #'rake-regenerate-cache
         "f" #'rake-find-task))
 
+
+(use-package! rails-routes
+  :when (featurep! +rails)
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        "C-c o" #'rails-routes-insert
+        "C-c C-o" #'rails-routes-insert-no-cache
+        "C-c ! o" #'rails-routes-jump)
+  (map! :after web-mode
+        :map web-mode-map
+        "C-c o" #'rails-routes-insert
+        "C-c C-o" #'rails-routes-insert-no-cache
+        "C-c ! o" #'rails-routes-jump))
+
+
+(use-package! rails-i18n
+  :when (featurep! +rails)
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        "C-c i" #'rails-i18n-insert-with-cache)
+  (map! :after web-mode
+        :map web-mode-map
+        "C-c i" #'rails-i18n-insert-with-cache))
+
+
+(use-package! ruby-json-to-hash
+  :defer t
+  :init
+  (map! :after ruby-mode
+        :map ruby-mode-map
+        :localleader
+        "J" #'ruby-json-to-hash-parse-json
+        "j" #'ruby-json-to-hash-toggle-let))
+
+
 (use-package! bundler
   :defer t
   :init
