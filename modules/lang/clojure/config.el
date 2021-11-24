@@ -142,7 +142,7 @@
   (setq cider-repl-display-help-banner nil)
 
   (map! (:localleader
-          (:map (clojure-mode-map clojurescript-mode-map)
+          (:map (clojure-mode-map clojurescript-mode-map clojurec-mode)
             "'"  #'cider-jack-in-clj
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
