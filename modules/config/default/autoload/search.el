@@ -94,44 +94,47 @@ If prefix ARG is set, include ignored/hidden files."
   (+default/search-project 'other))
 
 ;;;###autoload
-(defun +default/search-project-for-symbol-at-point (&optional symbol arg)
+(defun +default/search-project-for-symbol-at-point (symbol dir)
   "Search current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
    (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))
-         current-prefix-arg))
-  (let* ((projectile-project-root nil)
-         (dir (if arg
-                  (if-let (projects (projectile-relevant-known-projects))
-                      (completing-read "Search project: " projects nil t)
-                    (user-error "There are no known projects"))
-                default-directory)))
-    (cond ((featurep! :completion ivy)
-           (+ivy/project-search nil symbol dir))
-          ((featurep! :completion helm)
-           (+helm/project-search nil symbol dir))
-          ((featurep! :completion vertico)
-           (+vertico/project-search nil symbol dir))
-          ((rgrep (regexp-quote symbol))))))
+         (let ((projectile-project-root nil))
+           (if current-prefix-arg
+               (if-let (projects (projectile-relevant-known-projects))
+                   (completing-read "Search project: " projects nil t)
+                 (user-error "There are no known projects"))
+             (doom-project-root default-directory)))))
+  (cond ((featurep! :completion ivy)
+         (+ivy/project-search nil symbol dir))
+        ((featurep! :completion helm)
+         (+helm/project-search nil symbol dir))
+        ((featurep! :completion vertico)
+         (+vertico/project-search nil symbol dir))
+        ((rgrep (regexp-quote symbol)))))
 
 ;;;###autoload
-(defun +default/search-notes-for-symbol-at-point (&optional symbol)
+(defun +default/search-notes-for-symbol-at-point (symbol)
   "Conduct a text search in the current project for symbol at point. If prefix
 ARG is set, prompt for a known project to search from."
   (interactive
    (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))))
   (require 'org)
-  (let ((default-directory org-directory))
-    (+default/search-project-for-symbol-at-point
-     nil symbol)))
+  (+default/search-project-for-symbol-at-point
+   symbol org-directory))
 
 ;;;###autoload
-(defun +default/org-notes-search ()
+(defun +default/org-notes-search (query)
   "Perform a text search on `org-directory'."
-  (interactive)
+  (interactive
+   (list (if (doom-region-active-p)
+             (buffer-substring-no-properties
+              (doom-region-beginning)
+              (doom-region-end))
+           "")))
   (require 'org)
-  (let ((default-directory org-directory))
-    (+default/search-project-for-symbol-at-point "")))
+  (+default/search-project-for-symbol-at-point
+   query org-directory))
 
 ;;;###autoload
 (defun +default/org-notes-headlines ()
