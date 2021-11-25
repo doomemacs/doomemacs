@@ -36,7 +36,27 @@
         :n    "U"  #'evil-insert-line
         :v    "U"  #'evil-insert
         :n    "gu" #'evil-insert-resume
-        :n    "gU" #'evil-insert-0-line))
+        :n    "gU" #'evil-insert-0-line
+        (:map doom-leader-file-map
+         "w"       #'save-buffer)
+        (:map evil-window-map
+         "n"       #'evil-window-down
+         "N"       #'+evil/window-move-down
+         "C-n"     #'evil-window-down
+         "C-S-n"   #'evil-window-move-very-bottom
+         "e"       #'evil-window-up
+         "E"       #'+evil/window-move-up
+         "C-e"     #'evil-window-up
+         "C-S-e"   #'evil-window-move-very-top
+         "i"       #'evil-window-right
+         "I"       #'+evil/window-move-right
+         "C-i"     #'evil-window-right
+         "C-S-i"   #'evil-window-move-far-right
+         "k"       #'evil-window-new)
+        (:when (featurep! :tools magit)
+         :map magit-mode-map
+         :nv "n"   #'evil-next-visual-line
+         :nv "e"   #'evil-previous-visual-line)))
 
 (when (featurep! :editor evil)
   (+layout-remap-evil-keys-for-colemak-h))
