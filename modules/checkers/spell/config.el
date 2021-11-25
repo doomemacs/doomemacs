@@ -99,6 +99,8 @@
               org-block-begin-line
               org-block-end-line
               org-code
+              org-cite
+              org-cite-key
               org-date
               org-footnote
               org-formula
