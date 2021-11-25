@@ -150,6 +150,9 @@ If on a:
         (setq context (org-element-property :parent context)
               type (org-element-type context)))
       (pcase type
+        ((or `citation `citation-reference)
+         (org-cite-follow context arg))
+
         (`headline
          (cond ((memq (bound-and-true-p org-goto-map)
                       (current-active-maps))
