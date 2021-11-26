@@ -12,6 +12,7 @@
   - [[#code-completion][Code completion]]
   - [[#vim-esque-omni-completion-prefix-c-x][Vim-esque omni-completion prefix (C-x)]]
 - [[#configuration][Configuration]]
+  - [[#enable-default-company-backends][Enable default company backend(s)]]
   - [[#enable-company-backends-in-certain-modes][Enable company backend(s) in certain modes]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#x-mode-doesnt-have-code-completion-support-or-requires-extra-setup][X-mode doesn't have code completion support or requires extra setup.]]
@@ -80,6 +81,14 @@ available to evil users to access specific company backends:
 | =C-x s=   | Complete spelling suggestions     |
 
 * Configuration
+** Enable default company backend(s)
+By default, only ~company-capf~ backend is enabled globally.
+The global default backend(s) can be configured:
+
+#+begin_src emacs-lisp
+(setq company-backends '(company-capf company-files))
+#+end_src
+
 ** Enable company backend(s) in certain modes
 The ~set-company-backend!~ function exists for setting ~company-backends~
 buffer-locally in MODES, which is either a major-mode symbol, a minor-mode
