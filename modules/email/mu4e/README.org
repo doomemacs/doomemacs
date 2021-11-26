@@ -207,6 +207,13 @@ If you send mail from various email aliases for different services,
 you are not replying to an email to or from one of the specified aliases, you
 will be prompted for an alias to send from.
 
+By default, periodic email update is *disabled*. To enable periodic
+mail retrieval/indexing, change the value of ~mu4e-update-interval~:
+
+#+begin_src emacs-lisp
+(setq mu4e-update-interval 300)
+#+end_src
+
 *** Gmail
 With the =+gmail= flag, integrations are applied which account for the different
 behaviour of Gmail.
