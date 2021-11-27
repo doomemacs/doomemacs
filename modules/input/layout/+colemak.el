@@ -16,6 +16,8 @@
         :mnv  "ge" #'evil-previous-visual-line
         :mnvo "i"  #'evil-forward-char
         :mnv  "I"  #'evil-window-bottom
+        :nv   "gi" #'evil-lion-left
+        :nv   "gI" #'evil-lion-right
         :mnv  "zi" #'evil-scroll-column-right
         :mnv  "zI" #'evil-scroll-right
         :mnv  "j"  #'evil-forward-word-end
