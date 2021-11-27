@@ -17,3 +17,22 @@ This is intended for use with the Colemak-DH layout."
          "h h"     #'doom/window-maximize-buffer
          "h s"     #'doom/window-maximize-horizontally
          "h v"     #'doom/window-maximize-vertically)))
+
+;;;###autoload
+(defun +layout-colemak-rotate-t-f-j ()
+  "Rotate the T, F and J keys.
+T becomes find-char   (Qwerty F, same position)
+F becomes end-of-word (Qwerty E, same position)
+J becomes until-char  (Qwerty T, different position)"
+  (map! :mnv "t"  #'evil-snipe-f
+        :mnv "T"  #'evil-snipe-F
+        :mnv "gt" #'find-file-at-point
+        :mnv "gT" #'evil-find-file-at-point-with-line
+        :mnv "f"  #'evil-forward-word-end
+        :mnv "F"  #'evil-forward-WORD-end
+        :mnv "gf" #'evil-backward-word-end
+        :mnv "gF" #'evil-backward-WORD-end
+        :mnv "j"  #'evil-snipe-t
+        :mnv "J"  #'evil-snipe-T
+        :mnv "gj" #'+workspace:switch-next
+        :mnv "gJ" #'+workspace:switch-previous))
