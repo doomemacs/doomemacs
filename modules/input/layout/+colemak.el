@@ -52,11 +52,14 @@
          "I"       #'+evil/window-move-right
          "C-i"     #'evil-window-right
          "C-S-i"   #'evil-window-move-far-right
-         "k"       #'evil-window-new)
-        (:when (featurep! :tools magit)
-         :map magit-mode-map
-         :nv "n"   #'evil-next-visual-line
-         :nv "e"   #'evil-previous-visual-line)))
+         "k"       #'evil-window-new)))
+
+(defun +layout-remap-magit-evil-keys-for-colemak-h ()
+  (map! :map magit-mode-map
+        :nv "n"    #'evil-next-visual-line
+        :nv "e"    #'evil-previous-visual-line))
 
 (when (featurep! :editor evil)
-  (+layout-remap-evil-keys-for-colemak-h))
+  (+layout-remap-evil-keys-for-colemak-h)
+  (when (featurep! :tools magit)
+    (add-hook 'magit-mode-hook #'+layout-remap-magit-evil-keys-for-colemak-h)))
