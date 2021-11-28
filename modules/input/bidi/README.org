@@ -11,7 +11,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
-  - [[#using-bidi-mode][Using =+bidi-mode=]]
+  - [[#using-bidi-mode][Using ~+bidi-mode~]]
   - [[#force-rtl-text-alignment][Force RTL text alignment]]
   - [[#input-methods][Input Methods]]
   - [[#fonts][Fonts]]
@@ -42,16 +42,16 @@ This module provides no plugins.
 This module has no prerequisites.
 
 * Features
-This module provides =+bidi-mode=, a minor mode that improves the display of RTL
+This module provides ~+bidi-mode~, a minor mode that improves the display of RTL
 text by right-aligning lines that start with an RTL language, on a per-line
 basis. Since exact use cases vary, turning on this mode is left to the user.
 
 * Configuration
-** Using =+bidi-mode=
-=+bidi-mode= is a local minor mode, meaning it has to be turned on a per-buffer
+** Using ~+bidi-mode~
+~+bidi-mode~ is a local minor mode, meaning it has to be turned on a per-buffer
 basis.
 
-If you want to have it on for all buffers, use =+bidi-global-mode=:
+If you want to have it on for all buffers, use ~+bidi-global-mode~:
 
 #+begin_src emacs-lisp
 ;; ~/.doom.d/config.el
@@ -65,12 +65,12 @@ documents, you probably want to enable it through a hook:
 (add-hook 'TeX-mode-hook #'+bidi-mode)
 #+end_src
 
-This is also useful for adding specific functionality for when =+bidi-mode= is on.
+This is also useful for adding specific functionality for when ~+bidi-mode~ is on.
 
 ** Force RTL text alignment
-By default, =+bidi-mode= will align paragraphs by the first character with
+By default, ~+bidi-mode~ will align paragraphs by the first character with
 strong directionality. If you want to force all paragraphs to be aligned
-right-to-left when =+bidi-mode= is on, add the following to your config:
+right-to-left when ~+bidi-mode~ is on, add the following to your config:
 
 #+begin_src emacs-lisp
 (setq +bidi-paragraph-direction 'right-to-left)
@@ -126,7 +126,7 @@ off by setting:
 #+end_src
 
 ** Change Dictionary Language On Bidi Buffers
-If you are only using =+bidi-mode= in specific buffers, you might want to
+If you are only using ~+bidi-mode~ in specific buffers, you might want to
 automatically change the dictionary language there. For example:
 
 #+begin_src emacs-lisp
