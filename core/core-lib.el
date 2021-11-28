@@ -641,9 +641,9 @@ This macro accepts, in order:
     (while rest
       (let* ((next (pop rest))
              (first (car-safe next)))
-        (push (cond ((memq first '(function nil))
+        (push (cond ((null first)
                      next)
-                    ((eq first 'quote)
+                    ((memq first '(function quote))
                      (let ((quoted (cadr next)))
                        (if (atom quoted)
                            next
