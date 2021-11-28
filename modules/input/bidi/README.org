@@ -46,6 +46,11 @@ This module provides ~+bidi-mode~, a minor mode that improves the display of RTL
 text by right-aligning lines that start with an RTL language, on a per-line
 basis. Since exact use cases vary, turning on this mode is left to the user.
 
+It also provides easy font configuration for Hebrew and Arabic-derived scripts
+(Arabic, Persian, Urdu, etc.) in ~+bidi-hebrew-font~ and ~+bidi-arabic-font~.
+See [[Fonts]] for more information. If you use an RTL language that isn't covered by
+these characters, open an issue requesting support for it.
+
 * Configuration
 ** Using ~+bidi-mode~
 ~+bidi-mode~ is a local minor mode, meaning it has to be turned on a per-buffer
