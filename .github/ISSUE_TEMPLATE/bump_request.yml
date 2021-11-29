@@ -8,14 +8,14 @@ body:
     value: |
       Doom pins its packages to certain commits to avoid breaking updates and to help its maintainer keep up with changes. These pins are updated (bumped) frequently, usually every other week, but some may warrant an early bump, due to critical bug fixes or to adapt to external events.
 
-      Use this form to let us know about these packages. Alternatively, [file a bump PR](https://discourse.doomemacs.org/how2bump).
+      Use this form to let us know about these packages.
 
       -----
 
       **Before you submit this bump request, make sure...**
 
       + [ ] To search for any open (or closed) [bump requests for this package](https://github.com/hlissner/doom-emacs/pulls?q=is%3Apr+is%3Aopen+label%3A%221.+update%29%22+).
-      + [ ] The target package(s) **are not** in [the do-not-PR list](https://discourse.doomemacs.org/do-not-pr) list.
+      + [ ] The target package(s) **are not** in [the do-not-PR list](https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837) list.
       + [ ] These packages haven't already been bumped on the [latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
       + [ ] The new versions of these packages work without issue.
 - type: textarea
