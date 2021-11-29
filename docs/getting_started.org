@@ -296,7 +296,7 @@ to least recommended for Doom (based on compatibility).
   brew install emacs-mac --with-modules
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
-
+  
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]].  Some users have
   experienced [flashing artifacts when scrolling](https://github.com/d12frosted/homebrew-emacs-plus/issues/314):
   #+BEGIN_SRC bash
@@ -309,6 +309,15 @@ to least recommended for Doom (based on compatibility).
   #+BEGIN_SRC bash
   brew install emacs
   #+END_SRC
+  
+If you create a symbolic link with the above ~ln -s~ commands, you won't be able to open Emacs with Spotlight. To get Spotlight to open Doom:
+1. open Automator.
+2. create an application.
+3. select ~/bin/bash~ shell for compatibility (It's probably fine to use any shell here though).
+4. pass input as arguments (dropdown in the top right of the Automator window).
+5. enter ~open /usr/local/opt/emacs-mac/Emacs.app $@~ in the text window.
+6. [optional] run the script to ensure it works.
+7. assuming it works, save it and name it whatever you want (the name you give it is what you'll type into Spotlight).
 
 ***** Where *not* to install Emacs from
 These builds/forks have known compatibility issues with Doom and are *very
