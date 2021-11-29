@@ -10,9 +10,9 @@ body:
 
       **Before you proceed, to rule out the possibility that your request has already been made (or fulfilled), please follow these guidelines:**
 
-      + [ ] Read the [contributing guidelines](https://discourse.doomemacs.org/how2contribute).
+      + [ ] Read the [contributing guidelines](https://git.doomemacs.org/docs/contributing.org).
       + [ ] Search [the issue tracker](https://github.com/hlissner/doom-emacs/issues?q=label%3A%221.+request%22+) for similar requests.
-      + [ ] Search [the module list](https://doomemacs.org/docs/modules.org) in case my feature was already implemented.
+      + [ ] Search [the module list](https://git.doomemacs.org/docs/modules.org) in case my feature was already implemented.
       + [ ] The request hasn't been fulfilled on [the latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
 - type: textarea
   attributes:
