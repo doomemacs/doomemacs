@@ -277,6 +277,18 @@ directives. By default, this only recognizes C directives.")
     (embrace-add-pair ?$ "${" "}"))
 
   (defun +evil-embrace-latex-mode-hook-h ()
+    (dolist (pair '((?\' . ("`" . "\'"))
+                    (?\" . ("``" . "\'\'"))))
+      (delete (car pair) evil-embrace-evil-surround-keys)
+      ;; Avoid `embrace-add-pair' because it would overwrite the default
+      ;; rules, which we want for other modes
+      (push (cons (car pair) (make-embrace-pair-struct
+                              :key (car pair)
+                              :left (cadr pair)
+                              :right (cddr pair)
+                              :left-regexp (regexp-quote (cadr pair))
+                              :right-regexp (regexp-quote (cddr pair))))
+            embrace--pairs-list))
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
   (defun +evil-embrace-lisp-mode-hook-h ()
