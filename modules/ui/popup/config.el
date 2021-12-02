@@ -164,7 +164,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
     ("^\\*CPU-Profiler-Report "    :side bottom :vslot 100 :slot 1 :height 0.4 :width 0.5 :quit nil)
     ("^\\*Memory-Profiler-Report " :side bottom :vslot 100 :slot 2 :height 0.4 :width 0.5 :quit nil)
     ("^\\*Process List\\*" :side bottom :vslot 101 :size 0.25 :select t :quit t)
-    ("^\\*\\(?:Proced\\|timer-list\\|Abbrevs\\|Output\\|Occur\\|unsent mail\\)\\*" :ignore t)))
+    ("^\\*\\(?:Proced\\|timer-list\\|Abbrevs\\|Output\\|Occur\\|unsent mail.*?\\|message\\)\\*" :ignore t)))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode 'append)
 
