@@ -648,7 +648,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (defun doom-is-childframes-p ()
     "`whitespace-mode' inundates child frames with whitespace markers, so
 disable it to fix all that visual noise."
-    (frame-parameter nil 'parent-frame))
+    (null (frame-parameter nil 'parent-frame)))
   (add-function :before-while whitespace-enable-predicate #'doom-is-childframes-p))
 
 (provide 'core-ui)
