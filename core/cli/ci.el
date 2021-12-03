@@ -15,18 +15,24 @@
 
 (defun doom-cli--ci-deploy-hooks (&optional noforce)
   (let* ((default-directory doom-emacs-dir)
-         (dir (cdr (doom-call-process "git" "rev-parse" "--git-path" "hooks"))))
-    (make-directory dir 'parents)
-    (dolist (hook '("commit-msg" "pre-push"))
-      (let ((file (doom-path dir hook)))
-        (unless (and (file-exists-p file) noforce)
-          (with-temp-file file
-            (insert "#!/usr/bin/env sh\n"
-                    (doom-path doom-emacs-dir "bin/doom")
-                    " --nocolor ci hook-" hook
-                    " \"$@\""))
-          (set-file-modes file #o700)
-          (print! (success "Created %s") (relpath file)))))))
+	 (hooksPathProcess (doom-call-process "git" "rev-parse" "--git-path" "hooks"))
+	 (hooksPathStatus (car hooksPathProcess))
+	 (dir (cdr hooksPathProcess)))
+    (if (= hooksPathStatus 0)
+      (progn
+	(make-directory dir 'parents)
+	(dolist (hook '("commit-msg" "pre-push"))
+	  (let ((file (doom-path dir hook)))
+	    (unless (and (file-exists-p file) noforce)
+	      (with-temp-file file
+			      (insert "#!/usr/bin/env sh\n"
+				      (doom-path doom-emacs-dir "bin/doom")
+				      " --nocolor ci hook-" hook
+				      " \"$@\""))
+	      (set-file-modes file #o700)
+	      (print! (success "Created %s") (relpath file))))
+	  ))
+      (warn! "Not git repository, skip deploy hooks."))))
 
 
 ;;
