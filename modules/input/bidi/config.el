@@ -43,7 +43,9 @@ See the variable `font-lock-keywords' for information on the format.")
 
 (defcustom +bidi-paragraph-direction nil
   "The value of `bidi-paragragh-direction' when `+bidi-mode' is on.
-See the `bidi-paragraph-direction' for more info.'"
+See the `bidi-paragraph-direction' for more info.
+
+Warning: do not change this if you are using `+bidi-global-mode'.'"
   :type '(choice
           (const :tag "Left to Right" left-to-right)
           (const :tag "Right to Left" right-to-left)

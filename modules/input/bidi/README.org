@@ -81,6 +81,9 @@ right-to-left when ~+bidi-mode~ is on, add the following to your config:
 (setq +bidi-paragraph-direction 'right-to-left)
 #+end_src
 
+*Warning:* do not do this if you are using ~+bidi-global-mode~, it will mess up
+all of the buffers in Emacs that use English, including things like the =M-x= buffer.
+
 ** Input Methods
 If you need bidi support, it's likely that you want to easily switch between
 English and your favorite RTL language. In order to be able to do this without
