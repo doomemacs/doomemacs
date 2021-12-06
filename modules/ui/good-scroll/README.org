@@ -1,0 +1,18 @@
+#+TITLE:   ui/good-scroll
+#+DATE:    December 6, 2021
+#+SINCE:   v3.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+
+* Description
+This module enables pixel-based smooth scrolling.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/io12/good-scroll.el][good-scroll]]
