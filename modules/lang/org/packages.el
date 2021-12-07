@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "a2e46db80848cb17185f257a397370a22cd686bb")))
+    :pin "abe63b436035049923ae96639b9b856697047779")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
