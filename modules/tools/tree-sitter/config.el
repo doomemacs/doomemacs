@@ -1,9 +1,6 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
-
-
 (use-package! tree-sitter
-  ;; :hook (prog-mode . turn-on-tree-sitter-mode)
   :defer t ;; loading is handled by individual modes
   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
   :config
@@ -17,7 +14,7 @@
         ;; and this highlights the entire sub tree in your code
         tree-sitter-debug-highlight-jump-region t))
 
-(if (daemonp) ;; eager load when in daemon as its start time is easily consumed
+(if (daemonp) ;; HACK: eager load when in daemon as its start time is easily consumed
     (require 'tree-sitter-langs)
   (add-hook! 'tree-sitter-after-on-hook
     (require 'tree-sitter-langs)))
