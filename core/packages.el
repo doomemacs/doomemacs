@@ -48,5 +48,5 @@
 (package! project :pin "a546cce47c434b0b4bf24bf1d5ed6e4623492072")
 
 ;; core-keybinds.el
-(package! general :pin "26f1d4c4e258c40e6b70ce831a04800c914f29b3")
+(package! general :pin "9651024e7f40a8ac5c3f31f8675d3ebe2b667344")
 (package! which-key :pin "4790a14683a2f3e4f72ade197c78e4c0af1cdd4b")
