@@ -31,7 +31,7 @@
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "0231706232f29034b941d317c0700506ecccb4af")
+  :pin "e3183921779eb4f36a2170ebb58e43eb0e84a07e")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
