@@ -38,9 +38,10 @@
 
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (setq compile-command "gfortran -std=legacy "
-        compilation-buffer-name-function #'+fortran/compilation-buffer-name)
-  ;; (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
+  (setq-hook! 'fortran-mode-hook ; TODO These work for f90 but not for fortran.
+    compile-command "gfortran -std=legacy "
+    compilation-buffer-name-function #'+fortran/compilation-buffer-name)
+  (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP --- ;;
   ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
@@ -53,3 +54,4 @@
         :localleader
         :desc "compile (gfortran)" "c" #'+fortran/gfortran-compile
         :desc "run (gfortran)"     "r" #'+fortran/gfortran-run))
+

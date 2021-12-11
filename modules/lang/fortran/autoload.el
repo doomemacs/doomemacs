@@ -14,14 +14,11 @@
 (defun +fortran/gfortran-run ()
   "Run the current buffer using gfortran."
   (interactive)
+  (delete-file "./a.out")
   (+fortran/gfortran-compile)
-  (let* ((buffer (+fortran/compilation-buffer-name nil))
-         (proc (get-buffer-process buffer))
-         (exec (expand-file-name "a.out" ".")))
-    (while (accept-process-output proc))
-    (start-process "gfortran-run" buffer exec)))
-    ;; (comint-exec buffer "gfortran-run" exec nil nil)))
-    ;; (comint-send-string (get-buffer-process buffer) exec)))
+  (while (not (file-exists-p "./a.out"))
+    (sleep-for 1))
+  (compile "./a.out"))
 
 (defun +fortran/fortran-std ()
   "Which version of Fortran should we target?"
