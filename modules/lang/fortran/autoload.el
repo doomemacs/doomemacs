@@ -4,13 +4,15 @@
 
 ;;;###autoload
 (defun +fortran/gfortran-compile ()
-  "Compile the current file using gfortran."
+  "Compile the current buffer using gfortran."
   (interactive)
-  (compile (format "gfortran %s %s" (+fortran/fortran-std) buffer-file-name)))
+  (compile (format "gfortran %s %s"
+                   (+fortran/fortran-std)
+                   buffer-file-name)))
 
 ;;;###autoload
 (defun +fortran/gfortran-run ()
-  "Run the current file using gfortran."
+  "Run the current buffer using gfortran."
   (interactive)
   (+fortran/gfortran-compile)
   (let* ((buffer (+fortran/compilation-buffer-name nil))

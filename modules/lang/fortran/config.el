@@ -5,15 +5,19 @@
 
 (use-package! f90
   :config
+  ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (setq compile-command "gfortran ")
+  (setq-hook! 'f90-mode-hook
+    compile-command "gfortran "
+    compilation-buffer-name-function #'+fortran/compilation-buffer-name)
+  (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
-  ;; --- LSP Configuration --- ;;
+    ;; --- LSP Configuration --- ;;
   (when (featurep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
     (add-hook 'f90-mode-local-vars-hook #'lsp!))
 
-  ;; --- Keybindings --- ;;
+    ;; --- Keybindings --- ;;
   (map! :map f90-mode-map
         :localleader
         (:prefix ("f" . "fpm")
@@ -36,7 +40,7 @@
   ;; Used by `compile' (SPC c c)
   (setq compile-command "gfortran -std=legacy "
         compilation-buffer-name-function #'+fortran/compilation-buffer-name)
-  (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
+  ;; (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP --- ;;
   ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
