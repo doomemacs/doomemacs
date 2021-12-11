@@ -33,19 +33,19 @@
 (defun +fortran/fpm-build ()
   "Build the current project using fpm."
   (interactive)
-  (message "Building with fpm."))
+  (compile "fpm build"))
 
 ;;;###autoload
 (defun +fortran/fpm-run ()
   "Run the current project using fpm."
   (interactive)
-  (message "Running with fpm."))
+  (compile "fpm run"))
 
 ;;;###autoload
 (defun +fortran/fpm-test ()
   "Test the current project using fpm."
   (interactive)
-  (message "Testing with fpm."))
+  (compile "fpm test"))
 
 ;; --- MISC. --- ;;
 ;;;###autoload
