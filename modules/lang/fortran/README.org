@@ -9,6 +9,7 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
+  - [[#arch-linux][Arch Linux]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
@@ -32,9 +33,10 @@ In particular, this module features:
 + Optional support for [[https://www.intel.com/content/www/us/en/developer/tools/oneapi/fortran-compiler.html][Intel Fortran]] (otherwise =gfortran= by default).
 
 #+begin_quote
-After a career of writing Fortran on Windows, my now-retired Dad is switching to
-Linux. Imagine my surprise when I learned that off-the-shelf setups for Fortran
-on Linux basically don't exist! Well, until now... Cheers Dad, hope this helps.
+After a career of writing Fortran on Mainframes and Windows machines, my
+now-retired Dad is switching to Linux. Imagine my surprise when I learned that
+off-the-shelf setups for Fortran on Linux basically don't exist! Well, until
+now... Cheers Dad, hope this helps.
 #+end_quote
 
 ** Maintainers
@@ -47,7 +49,24 @@ on Linux basically don't exist! Well, until now... Cheers Dad, hope this helps.
 ** Plugins
 
 * Prerequisites
-This module has no prerequisites.
+
+For minimum functionality, this module requires =gfortran=. For most project
+management tasks you will also need [[https://github.com/fortran-lang/fpm][fpm]], the Fortran Package Manager.
+
+** Arch Linux
+
+=gfortran= is available from the official repositories:
+
+#+begin_example
+sudo pacman -S gcc-fortran
+#+end_example
+
+Whereas =fpm= is available from the AUR and thus must be installed with an
+AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
+
+#+begin_example
+sudo aura -A fortran-fpm
+#+end_example
 
 * Features
 # An in-depth list of features, how to use them, and their dependencies.
