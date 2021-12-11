@@ -1,5 +1,5 @@
 #+TITLE:   ui/pixel-scroll
-#+DATE:    December 6, 2021
+#+DATE:    December 11, 2021
 #+SINCE:   v3.0
 #+STARTUP: inlineimages
 
@@ -15,4 +15,4 @@ This module enables pixel-based smooth scrolling.
 This module provides no flags.
 
 ** Plugins
-+ [[https://github.com/io12/good-scroll.el][good-scroll]]
++ [[https://github.com/io12/good-scroll.el][good-scroll]] (emacs-major-version < 29 and not emacs-mac)
