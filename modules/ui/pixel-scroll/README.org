@@ -1,4 +1,4 @@
-#+TITLE:   ui/good-scroll
+#+TITLE:   ui/pixel-scroll
 #+DATE:    December 6, 2021
 #+SINCE:   v3.0
 #+STARTUP: inlineimages
