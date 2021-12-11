@@ -30,7 +30,6 @@ In particular, this module features:
 + Auto-formatting via =fprettier=.
 + Integration with the =fpm= package manager.
 + LSP support via [[https://github.com/hansec/fortran-language-server][fortran-language-server]].
-+ Optional support for [[https://www.intel.com/content/www/us/en/developer/tools/oneapi/fortran-compiler.html][Intel Fortran]] (otherwise =gfortran= by default).
 
 #+begin_quote
 After a career of writing Fortran on Mainframes and Windows machines, my
@@ -43,7 +42,6 @@ now... Cheers Dad, hope this helps.
 + [[https://github.com/fosskers][@fosskers]] (Author)
 
 ** Module Flags
-+ =+intel= Enable usage of Intel Fortran instead of GNU Fortran.
 + =+lsp= Activate =fortran-language-server= for Fortran projects.
 
 ** Plugins

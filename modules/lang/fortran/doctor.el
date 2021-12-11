@@ -1,15 +1,11 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/fortran/doctor.el
 
-;; TODO
-;; Check for `gfortran' if not `+intel'.
-
 (assert! (or (not (featurep! +lsp))
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(when (and (featurep! +intel)
-           (not (executable-find "gfortran")))
+(when (not (executable-find "gfortran"))
   (warn! "Couldn't find gfortran - compilation will not work."))
 
 (unless (executable-find "fpm")
