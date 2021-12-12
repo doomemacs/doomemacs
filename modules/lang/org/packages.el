@@ -27,11 +27,11 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "27edae8cedd1fc793acb8ff34e478762a330e867")
+  :pin "0c9b30e961ac7a20eb2e8985ab686c6940e79ef3")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "0231706232f29034b941d317c0700506ecccb4af")
+  :pin "e3183921779eb4f36a2170ebb58e43eb0e84a07e")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -62,7 +62,7 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "162d047e62468de763db322010a6c348b4fea710"))
+  (package! jupyter :pin "df343af5e9187a400a9291fa6a2b0c69f3ad0425"))
 (when (featurep! +journal)
   (package! org-journal :pin "71e8b10088ae52c4ac17f7af87020ea85fbc6ff7"))
 (when (featurep! +noter)
@@ -70,7 +70,7 @@
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
 (when (featurep! +pretty)
-  (package! org-appear :pin "a1aa8496f2fd61305e43e03e6eeee2ff92aa9e24")
+  (package! org-appear :pin "a4d10fc346ba14f487eb7aa95761b9295089ba55")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")
   (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
@@ -82,7 +82,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "c79f4b5a4f0cd6937ce4bff9b4b3b645ee207e53"))
+    :pin "a9277f9d465a07cc3b2baa3a2c4fbc152afd7f14"))
 (cond
  ((featurep! +roam)
   (package! org-roam
@@ -118,10 +118,10 @@
 
 ;;; Export
 (when (featurep! +pandoc)
-  (package! ox-pandoc :pin "e76324ecf1b9be6353bf22ff5e13652ea2714674"))
+  (package! ox-pandoc :pin "eda1f21fd519427c070d165f8a663db07b87ac29"))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "3442d8cf1f60f28cf28daaca06f524dd660681f8"))
+    :pin "88e60681901573797ce53c91ad8fa0936f6e4ee2"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
