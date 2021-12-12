@@ -1,6 +1,8 @@
 ;;; lang/fsharp/config.el -*- lexical-binding: t; -*-
 
 (after! fsharp-mode
+  (when (executable-find "dotnet")
+    (setq inferior-fsharp-program "dotnet fsi --readline-"))
   (if (featurep! +lsp)
       (progn
         (setq fsharp-ac-intellisense-enabled nil)
@@ -15,5 +17,5 @@
         "e" #'fsharp-eval-region
         "l" #'fsharp-load-buffer-file
         (:unless (featurep! +lsp)
-          "q" #'fsharp-ac/stop-process
-          "t" #'fsharp-ac/show-tooltip-at-point)))
+         "q" #'fsharp-ac/stop-process
+         "t" #'fsharp-ac/show-tooltip-at-point)))
