@@ -41,8 +41,8 @@
                                  old-file-name-handler-alist))))
     (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101))
 
-  ;; Emacs really shouldn't be displaying anything until it has fully started
-  ;; up. This saves a bit of time.
+  ;; Premature redisplays can substantially affect startup times and produce
+  ;; ugly flashes of unstyled Emacs.
   (setq-default inhibit-redisplay t
                 inhibit-message t)
   (add-hook 'window-setup-hook
@@ -62,6 +62,18 @@
   ;; may introduce down the road.
   (define-advice startup--load-user-init-file (:before (&rest _) init-doom)
     (advice-remove #'load-file #'load-file@silence)))
+
+;; Site files tend to use `load-file', which emits "Loading X..." messages in
+;; the echo area, which in turn triggers a redisplay. Redisplays can have a
+;; substantial effect on startup times and in this case, happens so early that
+;; Emacs may jarringly flash white while starting up.
+(define-advice load-file (:override (file) silence)
+  (load file nil 'nomessage))
+
+;; ...Then undo our `load-file' advice above, to limit the scope of any edge
+;; cases it may introduce down the road.
+(define-advice startup--load-user-init-file (:before (&rest _) init-doom)
+  (advice-remove #'load-file #'load-file@silence))
 
 
 ;;
