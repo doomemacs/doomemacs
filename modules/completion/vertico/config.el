@@ -185,7 +185,6 @@ orderless."
            (remq #'embark-which-key-indicator embark-indicators)))
       (apply fn args)))
   (cl-nsubstitute #'+vertico-embark-which-key-indicator #'embark-mixed-indicator embark-indicators)
-  (add-to-list 'embark-indicators #'+vertico-embark-vertico-indicator)
   ;; add the package! target finder before the file target finder,
   ;; so we don't get a false positive match.
   (let ((pos (or (cl-position
