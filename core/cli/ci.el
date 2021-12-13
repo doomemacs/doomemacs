@@ -87,9 +87,9 @@ representing the current commit being checked against. See
         (fn! (&key type subject)
           "Test SUBJECT length"
           (let ((len (length subject)))
-            (cond ((<= len 10)
+            (cond ((memq type '(bump revert)))
+                  ((<= len 10)
                    (fail! "Subject is too short (<10) and should be more descriptive"))
-                  ((memq type '(bump revert)))
                   ((<= len 20)
                    (warn! "Subject is short (<20); are you sure it's descriptive enough?"))
                   ((> len 72)
