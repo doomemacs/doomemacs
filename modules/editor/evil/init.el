@@ -221,7 +221,6 @@ variable for an explanation of the defaults (in comments). See
       simple
       slime
       sly
-      smerge-mode
       speedbar
       tablist
       tar-mode
