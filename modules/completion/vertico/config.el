@@ -146,7 +146,8 @@ orderless."
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
     (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
   (map! :map consult-crm-map
-        :desc "Select candidate" "TAB" #'+vertico/crm-select
+        :desc "Select candidate" [tab] #'+vertico/crm-select
+        :desc "Select candidate and keep input" [backtab] #'+vertico/crm-select-keep-input
         :desc "Enter candidates" "RET" #'+vertico/crm-exit))
 
 
