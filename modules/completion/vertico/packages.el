@@ -8,13 +8,13 @@
 
 (package! orderless :pin "1ccf74ffdbb0dd34caa63022e92f947c09c49c86")
 
-(package! consult :pin "85008702de2d28a02123e3f93111dbf54d0a9189")
+(package! consult :pin "cc8eff9578f5d089735e8b7dd7a08732890ed648")
 (package! consult-dir :pin "08f543ae6acbfc1ffe579ba1d00a5414012d5c0b")
 (when (featurep! :checkers syntax)
   (package! consult-flycheck :pin "0ad7e8ff15683a4d64b79c29b3fcf847edfe244b"))
 
-(package! embark :pin "725794f01347a8b1f25c6aea58886a1a0b14fc5b")
-(package! embark-consult :pin "725794f01347a8b1f25c6aea58886a1a0b14fc5b")
+(package! embark :pin "e08899ef2e7fb9c1ed4b4b21e44cd368561f91f9")
+(package! embark-consult :pin "e08899ef2e7fb9c1ed4b4b21e44cd368561f91f9")
 
 (package! marginalia :pin "2fb2787bc302a5533e09bc558c76eb914e98543b")
 
