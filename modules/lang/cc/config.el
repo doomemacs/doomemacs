@@ -276,7 +276,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 (use-package! ccls
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
-  :hook (lsp-lens-mode . ccls-code-lens-mode)
+  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-ccls-code-lens-mode-maybe-h)
   :init
   (defvar ccls-sem-highlight-method 'font-lock)
   (after! projectile
@@ -287,6 +287,10 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   ;; loads, rather than `ccls' loads.
   (after! lsp-mode (require 'ccls))
   :config
+  (defun +cc-init-ccls-code-lens-mode-maybe-h ()
+    (when (and (boundp 'lsp-lens-mode) lsp-lens-mode)
+      (ccls-code-lens-mode)
+      ))
   (set-evil-initial-state! 'ccls-tree-mode 'emacs)
   ;; Disable `ccls-sem-highlight-method' if `lsp-enable-semantic-highlighting'
   ;; is nil. Otherwise, it appears ccls bypasses it.
