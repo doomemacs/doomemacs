@@ -1,0 +1,76 @@
+#+TITLE:   lang/fortran
+#+DATE:    October 22, 2021
+#+SINCE:   v3.0.0 (#5676)
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#arch-linux][Arch Linux]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+
+This module enables a complete, modern development environment for the [[https://fortran-lang.org/][Fortran]]
+language. Initially released in 1956 (a year before Lisp 1.0), Fortran is the
+original high-performance computation language and is still widely used in
+science and academia. Popular versions of the language include Fortran 77 and
+Fortran 90, with further extensions in the 1995 and 2008 varieties. Today,
+Fortran has joined the modern age with its own [[https://github.com/fortran-lang/fpm][package manager]], [[https://fortran-lang.org/packages/][package
+registry]], and [[https://fortran-lang.discourse.group/][Discourse community]].
+
+In particular, this module features:
+
++ Support for all major Fortran varieties.
++ Auto-formatting via =fprettier=.
++ Integration with the =fpm= package manager.
++ LSP support via [[https://github.com/hansec/fortran-language-server][fortran-language-server]].
+
+#+begin_quote
+After a career of writing Fortran on Mainframes and Windows machines, my
+now-retired Dad is switching to Linux. Imagine my surprise when I learned that
+off-the-shelf setups for Fortran on Linux basically don't exist! Well, until
+now... Cheers Dad, hope this helps.
+#+end_quote
+
+** Maintainers
++ [[https://github.com/fosskers][@fosskers]] (Author)
+
+** Module Flags
++ =+lsp= Activate =fortran-language-server= for Fortran projects.
+
+** Plugins
+
+* Prerequisites
+
+For minimum functionality, this module requires =gfortran=. For most project
+management tasks you will also need [[https://github.com/fortran-lang/fpm][fpm]], the Fortran Package Manager.
+
+** Arch Linux
+
+=gfortran= is available from the official repositories:
+
+#+begin_example
+sudo pacman -S gcc-fortran
+#+end_example
+
+Whereas =fpm= is available from the AUR and thus must be installed with an
+AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
+
+#+begin_example
+sudo aura -A fortran-fpm
+#+end_example
+
+* Features
+# An in-depth list of features, how to use them, and their dependencies.
+
+* Configuration
+# How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+# Common issues and their solution, or places to look for help.
