@@ -21,7 +21,7 @@ This module provides Magit, an interface to the Git version control system.
 ** Packages
 - [[doom-package:][evil-magit]] if [[doom-module:][:editor evil +everywhere]]
 - [[doom-package:][forge]] if [[doom-module:][+forge]]
-- [[doom-package:][github-review]]
+- [[doom-package:][code-review]]
 - [[doom-package:][magit]]
 - [[doom-package:][magit-gitflow]]
 - [[doom-package:][magit-todos]]
@@ -45,6 +45,7 @@ This module provides Magit, an interface to the Git version control system.
 This module requires:
 - [[https://git-scm.com/][Git]]
 - [[doom-module:][+forge]] requires [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]]
+- [[doom-package:][code-review]] will also require a token setup (see [[https://github.com/wandersoncferreira/code-review#configuration][configuration]] for your particular forge)
 
 * TODO Usage
 #+begin_quote
@@ -82,7 +83,18 @@ This is so for [[https://magit.vc/manual/magit/Performance.html][performance rea
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions
-/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+** "I recently updated and now I get 'deferred error : (wrong-type-argument sequencep code-review--auth-token-set\?)' whenever I try to review'"
+The previous package "github-review" was replaced with a package that supercedes it called "code-review", which requires a simple change in your authinfo file.
+
+#+begin_src authinfo
+machine api.github.com login yourlogin^github-review password MYTOKENGOESHERE
+#+end_src
+
+becomes
+
+#+begin_src authinfo
+machine api.github.com login yourlogin^code-review password MYTOKENGOESHERE
+#+end_src
 
 * TODO Appendix
 #+begin_quote
