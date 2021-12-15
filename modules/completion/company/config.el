@@ -13,6 +13,7 @@
         company-require-match 'never
         company-global-modes
         '(not erc-mode
+              circe-mode
               message-mode
               help-mode
               gud-mode
