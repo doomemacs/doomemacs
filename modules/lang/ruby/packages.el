@@ -12,7 +12,7 @@
 
 ;; Programming environment
 (package! rubocop :pin "f5fd18aa810c3d3269188cbbd731ddc09006f8f5")
-(package! robe :pin "fd972e912d0c6c310acb2d057da1be1149937d0e")
+(package! robe :pin "11207bd549a5a78e3a4d70265c3715990dcdab71")
 
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
