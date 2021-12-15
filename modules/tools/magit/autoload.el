@@ -153,9 +153,9 @@ kill all magit buffers for this repo."
             (kill-buffer buf)))))))
 
 ;;;###autoload
-(defun +magit/start-github-review (arg)
+(defun +magit/start-code-review (arg)
   (interactive "P")
   (call-interactively
     (if (or arg (not (featurep 'forge)))
-        #'github-review-start
-      #'github-review-forge-pr-at-point)))
+        #'code-review-start
+      #'code-review-forge-pr-at-point)))
