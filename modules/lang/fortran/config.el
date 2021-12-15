@@ -4,6 +4,7 @@
 ;;; Packages
 
 (use-package! f90
+  :defer t
   :config
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
@@ -12,12 +13,12 @@
     compilation-buffer-name-function #'+fortran/compilation-buffer-name)
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
-    ;; --- LSP Configuration --- ;;
+  ;; --- LSP Configuration --- ;;
   (when (featurep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
     (add-hook 'f90-mode-local-vars-hook #'lsp!))
 
-    ;; --- Keybindings --- ;;
+  ;; --- Keybindings --- ;;
   (map! :map f90-mode-map
         :localleader
         (:prefix ("f" . "fpm")
@@ -54,4 +55,3 @@
         :localleader
         :desc "compile (gfortran)" "c" #'+fortran/gfortran-compile
         :desc "run (gfortran)"     "r" #'+fortran/gfortran-run))
-
