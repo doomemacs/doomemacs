@@ -29,7 +29,7 @@
 ;; Detects weasel words, passive voice and duplicates. Proselint would be a
 ;; better choice.
 (use-package! writegood-mode
-  :hook (org-mode markdown-mode rst-mode asciidoc-mode latex-mode)
+  :hook (org-mode markdown-mode rst-mode asciidoc-mode latex-mode LaTeX-mode)
   :config
   (map! :localleader
         :map writegood-mode-map
