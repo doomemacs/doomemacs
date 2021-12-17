@@ -134,12 +134,6 @@
                      prog-mode-hook)
                    #'spell-fu-mode))
       :config
-      (map! :after spell-fu
-            :map override
-            :n [return]
-            (cmds! (memq 'spell-fu-incorrect-face (face-at-point nil t))
-                   #'+spell/correct))
-
       ;; TODO PR this fix upstream!
       (defadvice! +spell--fix-face-detection-a (fn &rest args)
         "`spell-fu--faces-at-point' uses face detection that won't penetrary
