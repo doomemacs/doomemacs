@@ -26,7 +26,10 @@
     (when (executable-find "Microsoft.Python.LanguageServer")
       (set-eglot-client! 'python-mode '("Microsoft.Python.LanguageServer"))))
   :config
-  (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
+  (set-repl-handler! 'python-mode #'+python/open-repl
+    :persist t
+    :send-region #'python-shell-send-region
+    :send-buffer #'python-shell-send-buffer)
   (set-docsets! '(python-mode inferior-python-mode) "Python 3" "NumPy" "SciPy" "Pandas")
 
   (set-ligatures! 'python-mode
