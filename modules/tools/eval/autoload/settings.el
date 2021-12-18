@@ -22,7 +22,14 @@ PLIST is a property list that map special attributes to this repl. These are
 recognized:
 
   :persist BOOL
-    If non-nil, this REPL won't be killed when its window is closed."
+    If non-nil, this REPL won't be killed when its window is closed.
+  :send-region FUNC
+    A function that accepts a BEG and END, and sends the contents of the region
+    to the REPL. Defaults to `+eval/send-region-to-repl'.
+  :send-buffer FUNC
+    A function of no arguments that sends the contents of the buffer to the REPL.
+    Defaults to `+eval/region', which will run the :send-region specified function
+    or `+eval/send-region-to-repl'."
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (setf (alist-get mode +eval-repls)
