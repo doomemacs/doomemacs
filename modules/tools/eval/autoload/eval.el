@@ -114,7 +114,10 @@
 
 ;;;###autoload
 (defun +eval/buffer-or-region ()
-  "Evaluate the whole buffer."
+  "Evaluate the region if it's active, otherwise evaluate the whole buffer.
+
+If a REPL is open the code will be evaluated in it, otherwise a quickrun
+runner will be used."
   (interactive)
   (call-interactively
    (if (use-region-p)
