@@ -73,7 +73,9 @@
                           (buffer-file-name (buffer-base-buffer))))
                         "emacs")
                  (alist-get 'emacs-lisp-mode +eval-runners)))
-        (+eval/region (point-min) (point-max))
+        (if-let ((buffer-handler (plist-get (cdr (alist-get major-mode +eval-repls)) :send-buffer)))
+            (funcall buffer-handler)
+          (+eval/region (point-min) (point-max)))
       (quickrun))))
 
 ;;;###autoload
@@ -85,7 +87,9 @@
                 (ignore-errors
                   (get-buffer-window (or (+eval--ensure-in-repl-buffer)
                                          t))))
-           (+eval/send-region-to-repl beg end))
+           (funcall (or (plist-get (cdr (alist-get major-mode +eval-repls)) :send-region)
+                        #'+eval/send-region-to-repl)
+                    beg end))
           ((let ((runner
                   (or (alist-get major-mode +eval-runners)
                       (and (require 'quickrun nil t)
