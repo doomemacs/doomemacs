@@ -8,12 +8,12 @@
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#language-support][Language support]]
   - [[#text-objects][Text Objects]]
 - [[#configuration][Configuration]]
+  - [[#disable-text-objects-for-certain-modes][Disable text objects for certain modes]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -41,9 +41,6 @@ This module provides no flags.
 + [[https://github.com/emacs-tree-sitter/tree-sitter-langs][tree-sitter-langs]]
 + [[https://github.com/meain/evil-textobj-tree-sitter][evil-textobj-tree-sitter]]* (=:editor evil +everywhere=)
 
-** TODO Hacks
-# A list of internal modifications to included packages; omit if unneeded
-
 * Prerequisites
 This module has no prerequisites.
 
@@ -68,8 +65,14 @@ Currently text objects are bound to:
 
 They are used in a container context (not =vf= but =vaf= or =vif=)
 
-* TODO Configuration
-# How to configure this module, including common problems and how to address them.
+* Configuration
+** Disable text objects for certain modes
+If you wish to disable tree sitter text objects then you can just remove
+=+tree-sitter-keys-mode= from the language mode hook, for example if we did not
+want it for ruby we would use this snippet
+#+begin_src emacs-lisp
+(remove-hook! 'ruby-mode-hook #'+tree-sitter-keys-mode)
+#+end_src
 
 * TODO Troubleshooting
 # Common issues and their solution, or places to look for help.
