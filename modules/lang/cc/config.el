@@ -308,4 +308,6 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
   (add-hook! '(c-mode-hook
-               c++-mode-hook) #'turn-on-tree-sitter-mode))
+               c++-mode-hook)
+             #'turn-on-tree-sitter-mode
+             #'+tree-sitter-keys-mode))

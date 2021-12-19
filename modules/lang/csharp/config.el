@@ -75,4 +75,6 @@ or terminating simple string."
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'csharp-mode-hook #'turn-on-tree-sitter-mode))
+  (add-hook! 'csharp-mode-hook
+             #'turn-on-tree-sitter-mode
+             #'+tree-sitter-keys-mode))

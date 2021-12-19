@@ -348,4 +348,6 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'python-mode-hook #'turn-on-tree-sitter-mode))
+  (add-hook! 'python-mode-hook
+             #'turn-on-tree-sitter-mode
+             #'+tree-sitter-keys-mode))

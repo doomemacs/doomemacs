@@ -79,4 +79,6 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'go-mode-hook #'turn-on-tree-sitter-mode))
+  (add-hook! 'go-mode-hook
+             #'turn-on-tree-sitter-mode
+             #'+tree-sitter-keys-mode))

@@ -60,4 +60,6 @@
 (eval-when! (featurep! +tree-sitter)
   (add-hook! '(html-mode-hook
                mhtml-mode-hook
-               css-mode-hook)) #'turn-on-tree-sitter-mode)
+               css-mode-hook)
+             #'turn-on-tree-sitter-mode
+             #'+tree-sitter-keys-mode))
