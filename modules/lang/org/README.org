@@ -265,17 +265,14 @@ For =evil-mode= users, an overview of org-mode keybindings is provided [[https:/
 *** Should I go with =+roam= (v1) or =+roam2= (v2)?
 Long story short: if you're new to [[doom-package:org-roam]] and haven't used it, then you should
 go with [[doom-module:+roam2]]; if you already have an ~org-roam-directory~ with the v1 files in
-it, then you can keep use [[doom-module:+roam]] for a time being.
+it, then you can keep use [[doom-module:+roam]] for the time being, but it will eventually be
+removed, so you should [[https://www.orgroam.com/manual.html#How-to-migrate-from-Org_002droam-v1_003f][migrate]] at your earliest convenience.
 
 V1 isn't actively maintained anymore and is now basically EOL. This means that
 the feature disparity between the both will continue to grow, while its existing
 bugs and problems won't be addressed, at least by the main maintainers. V2 can
 be considered as a complete rewrite of the package so it comes with a lot of
 breaking changes.
-
-While v1 won't be actively maintained anymore, it still will be available in
-Doom for a while, at least until there will be a reliable tool that will migrate
-your data from v1 to v2.
 
 To learn more about v2 you can use the next resources:
 - [[https://github.com/org-roam/org-roam/blob/master/doc/org-roam.org][Org-roam v2 Official Manual]]
