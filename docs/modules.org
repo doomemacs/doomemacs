@@ -195,7 +195,7 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/taskrunner/README.org][taskrunner]] - TODO
 + [[file:../modules/tools/terraform/README.org][terraform]] - TODO
 + tmux - TODO
-+ [[file:../modules/tools/tree-sitter/README.org][tree-sitter]]  - TODO
++ [[file:../modules/tools/tree-sitter/README.org][tree-sitter]]  - syntax and parsing, sitting in a tree...
 + [[file:../modules/tools/upload/README.org][upload]] - TODO
 
 * :ui
