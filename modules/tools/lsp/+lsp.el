@@ -133,7 +133,7 @@ server getting expensively restarted when reverting buffers."
       (require 'lsp-mode)
       (lsp--require-packages)
       (if (or (lsp--filter-clients
-               (-andfn #'lsp--matching-clients?
+               (-andfn #'lsp--supports-buffer?
                        #'lsp--server-binary-present?))
               (not (memq +lsp-prompt-to-install-server '(nil quiet))))
           (apply fn args)

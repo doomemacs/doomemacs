@@ -6,7 +6,7 @@
       (package! eglot :pin "55c13a91378cdd7822c99bbbf340ea76b1f0bf38")
       (when (featurep! :completion vertico)
         (package! consult-eglot :pin "f93c571dc392a8b11d35541bffde30bd9f411d30")))
-  (package! lsp-mode :pin "41173dca4d6a7fa381ba6dc154e7149cb113f7e1")
+  (package! lsp-mode :pin "2736652be86f7e83f1fe08e7158a3d1d8f1bb965")
   (package! lsp-ui :pin "98d0ad00b8bf1d3a7cea490002169f2286d7208c")
   (when (featurep! :completion ivy)
     (package! lsp-ivy :pin "3e87441a625d65ced5a208a0b0442d573596ffa3"))
