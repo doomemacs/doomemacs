@@ -34,6 +34,8 @@ It includes:
 + Structural text objects to manipulate functions statements and other code
   structures like any other text object
 
+*Currently this module does not support M1 macbooks due to grammars being built for x86*
+
 ** Maintainers
 - @jeetelongname
 
@@ -46,7 +48,10 @@ This module provides no flags.
 + [[https://github.com/meain/evil-textobj-tree-sitter][evil-textobj-tree-sitter]]* (=:editor evil +everywhere=)
 
 * Prerequisites
-This module has no prerequisites.
+This module has no prerequisites. but if you are using an M1 mac (or a system
+that's is not using an X86 instruction set) then you will not be able to use this
+module for the moment, functions are being put in place for this use case but
+they are still being worked on.
 
 * Features
 ** Language support
@@ -56,7 +61,7 @@ highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighti
 ** Text Objects
 Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
 objects languages support]]
-Note: only languages with parsers in emacs have text object support currently.
+Note: only languages with parser's in emacs have text object support currently.
 Currently text objects are bound to:
 | key | text object         |
 |-----+---------------------|
