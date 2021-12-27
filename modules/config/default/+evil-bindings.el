@@ -438,6 +438,7 @@
        :desc "Revert file"                 "R"   #'vc-revert
        :desc "Copy link to remote"         "y"   #'+vc/browse-at-remote-kill
        :desc "Copy link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
+       :desc "SMerge"                      "m"   smerge-basic-map
        (:when (modulep! :ui hydra)
         :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body)
        (:when (modulep! :ui vc-gutter)
