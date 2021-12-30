@@ -3,7 +3,7 @@
 (use-package! dired
   :commands dired-jump
   :init
-  (setq dired-auto-revert-buffer t  ; don't prompt to revert; just do it
+  (setq dired-auto-revert-buffer (lambda (dir) (not (file-remote-p dir)))  ; don't prompt to revert; just do it
         dired-dwim-target t  ; suggest a target for moving/copying intelligently
         dired-hide-details-hide-symlink-targets nil
         ;; Always copy/delete recursively
