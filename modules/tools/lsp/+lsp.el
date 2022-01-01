@@ -39,6 +39,8 @@ about it (it will be logged to *Messages* however).")
   (setq lsp-enable-on-type-formatting nil)
   ;; Make breadcrumbs opt-in; they're redundant with the modeline and imenu
   (setq lsp-headerline-breadcrumb-enable nil)
+  ;; Disable prompt to automatically download server
+  (setq lsp-enable-suggest-server-download nil)
 
   ;; Let doom bind the lsp keymap.
   (when (featurep! :config default +bindings)
@@ -126,23 +128,6 @@ server getting expensively restarted when reverting buffers."
                          (funcall fn))
                        (+lsp-optimization-mode -1))))
              lsp--cur-workspace))))
-
-  (defadvice! +lsp-dont-prompt-to-install-servers-maybe-a (fn &rest args)
-    :around #'lsp
-    (when (buffer-file-name)
-      (require 'lsp-mode)
-      (lsp--require-packages)
-      (if (or (lsp--filter-clients
-               (-andfn #'lsp--matching-clients?
-                       #'lsp--server-binary-present?))
-              (not (memq +lsp-prompt-to-install-server '(nil quiet))))
-          (apply fn args)
-        ;; HACK `lsp--message' overrides `inhibit-message', so use `quiet!'
-        (let ((doom-debug-p
-               (or doom-debug-p
-                   (not (eq +lsp-prompt-to-install-server 'quiet)))))
-          (doom-shut-up-a #'lsp--info "No language server available for %S"
-                          major-mode)))))
 
   (when (featurep! :ui modeline +light)
     (defvar-local lsp-modeline-icon nil)
