@@ -43,7 +43,10 @@
 (when (featurep! :lang javascript)
   (def-project-mode! +web-angularjs-mode
     :modes '(+javascript-npm-mode)
-    :when (+javascript-npm-dep-p 'angular))
+    :when (+javascript-npm-dep-p '(angular @angular/core))
+    :on-enter
+    (when (derived-mode-p 'web-mode)
+      (web-mode-set-engine "angular")))
 
   (def-project-mode! +web-react-mode
     :modes '(+javascript-npm-mode)
