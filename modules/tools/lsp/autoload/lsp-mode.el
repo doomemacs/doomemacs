@@ -28,7 +28,7 @@
      (require 'lsp-mode)
      (list (completing-read
             "Select server: "
-            (or (mapcar #'lsp--client-server-id (lsp--filter-clients (-andfn #'lsp--matching-clients?
+            (or (mapcar #'lsp--client-server-id (lsp--filter-clients (-andfn #'lsp--supports-buffer?
                                                                              #'lsp--server-binary-present?)))
                 (user-error "No available LSP clients for %S" major-mode))))))
   (require 'lsp-mode)
