@@ -189,6 +189,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! code-review
+  :when (featurep! +forge)
   :after magit
   :init
   ;; TODO This needs to either a) be cleaned up or better b) better map things
