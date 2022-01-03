@@ -37,6 +37,14 @@
     (set-repl-handler! 'clojure-mode #'+clojure/open-repl :persist t)
     (set-repl-handler! 'clojurescript-mode #'+clojure/open-cljs-repl :persist t)
     (set-eval-handler! '(clojure-mode clojurescript-mode) #'cider-eval-region))
+
+  ;; HACK Fix raxod502/radian#446: CIDER tries to calculate the frame's
+  ;;   background too early; sometimes before the initial frame has been
+  ;;   initialized, causing errors.
+  (defvar cider-docview-code-background-color nil)
+  (defvar cider-stacktrace-frames-background-color nil)
+  (add-transient-hook! #'cider-docview-fontify-code-blocks (cider--docview-adapt-to-theme))
+  (add-transient-hook! #'cider-stacktrace-render-cause     (cider--stacktrace-adapt-to-theme))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (set-lookup-handlers! '(cider-mode cider-repl-mode)
@@ -221,25 +229,6 @@
           :i "s"  #'cider-repl-history-search-forward
           :i "r"  #'cider-repl-history-search-backward
           :i "U"  #'cider-repl-history-undo-other-window)))
-
-
-(after! cider-doc
-  ;; Fixes raxod502/radian#446: CIDER tries to do color calculations when it's
-  ;; loaded, sometimes too early, causing errors. Better to wait until something
-  ;; is actually rendered.
-  (setq cider-docview-code-background-color nil)
-
-  (defadvice! +clojure--defer-color-calculation-a (&rest _)
-    "Set `cider-docview-code-background-color'.
-This is needed because we have ripped out the code that would normally set it
-(since that code will run during early init, which is a problem)."
-    :before #'cider-docview-fontify-code-blocks
-    (setq cider-docview-code-background-color (cider-scale-background-color)))
-
-  ;; HACK Disable cider's advice on these; and hope no one else is using these
-  ;;      old-style advice.
-  (ad-deactivate #'enable-theme)
-  (ad-deactivate #'disable-theme))
 
 
 (use-package! clj-refactor
