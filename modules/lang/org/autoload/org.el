@@ -375,6 +375,10 @@ Made for `org-tab-first-hook' in evil-mode."
   (cond ((not (and (bound-and-true-p evil-local-mode)
                    (evil-insert-state-p)))
          nil)
+        ((and (bound-and-true-p org-cdlatex-mode)
+              (or (org-inside-LaTeX-fragment-p)
+                  (org-inside-latex-macro-p)))
+         nil)
         ((org-at-item-p)
          (if (eq this-command 'org-shifttab)
              (org-outdent-item-tree)
@@ -441,7 +445,10 @@ of the time I just want to peek into the current subtree -- at most, expand
 All my (performant) foldings needs are met between this and `org-show-subtree'
 (on zO for evil users), and `org-cycle' on shift-TAB if I need it."
   (interactive "P")
-  (unless (eq this-command 'org-shifttab)
+  (unless (or (eq this-command 'org-shifttab)
+              (and (bound-and-true-p org-cdlatex-mode)
+                   (or (org-inside-LaTeX-fragment-p)
+                       (org-inside-latex-macro-p))))
     (save-excursion
       (org-beginning-of-line)
       (let (invisible-p)
