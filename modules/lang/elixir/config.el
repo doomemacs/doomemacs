@@ -56,11 +56,11 @@
 (use-package! alchemist
   :hook (elixir-mode . alchemist-mode)
   :config
-  (set-lookup-handlers! 'alchemist-mode
+  (set-lookup-handlers! 'elixir-mode
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)
-  (set-eval-handler! 'alchemist-mode #'alchemist-eval-region)
-  (set-repl-handler! 'alchemist-mode #'alchemist-iex-project-run)
+  (set-eval-handler! 'elixir-mode #'alchemist-eval-region)
+  (set-repl-handler! 'elixir-mode #'alchemist-iex-project-run)
   (map! :after elixir-mode
         :localleader
         :map elixir-mode-map
