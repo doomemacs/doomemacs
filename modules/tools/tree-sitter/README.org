@@ -65,6 +65,7 @@ Note: only languages with parser's in emacs have text object support currently.
 Currently text objects are bound to:
 | key | text object         |
 |-----+---------------------|
+| =a= | parameter list      |
 | =f= | function definition |
 | =F= | function call       |
 | =C= | class               |
