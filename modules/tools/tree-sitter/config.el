@@ -30,12 +30,14 @@
   :config
 
   (map! (:map +tree-sitter-inner-text-objects-map
+         "a" (evil-textobj-tree-sitter-get-textobj "parameter.inner")
          "f" (evil-textobj-tree-sitter-get-textobj "function.inner")
          "F" (evil-textobj-tree-sitter-get-textobj "call.inner")
          "C" (evil-textobj-tree-sitter-get-textobj "class.inner")
          "i" (evil-textobj-tree-sitter-get-textobj "conditional.inner")
          "l" (evil-textobj-tree-sitter-get-textobj "loop.inner"))
         (:map +tree-sitter-outer-text-objects-map
+         "a" (evil-textobj-tree-sitter-get-textobj "parameter.outer")
          "f" (evil-textobj-tree-sitter-get-textobj "function.outer")
          "F" (evil-textobj-tree-sitter-get-textobj "call.outer")
          "C" (evil-textobj-tree-sitter-get-textobj "class.outer")
