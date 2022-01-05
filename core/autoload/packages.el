@@ -242,7 +242,7 @@ Must be run from a magit diff buffer."
                                 (mapconcat (lambda (x)
                                              (mapconcat #'symbol-name x " "))
                                            (cl-loop with alist = ()
-                                                    for (category . module) in targets
+                                                    for (category . module) in (reverse targets)
                                                     do (setf (alist-get category alist)
                                                              (append (alist-get category alist) (list module)))
                                                     finally return alist)
