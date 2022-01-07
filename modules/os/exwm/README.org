@@ -1,0 +1,145 @@
+#+TITLE:   private/exwm
+#+DATE:    January 5, 2022
+#+SINCE:   v1.0.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#setting-up-your-xinitrc-file][Setting up your ~xinitrc~ file.]]
+  - [[#setting-the-default-major-mode-for-exwm-edit][Setting the default major mode for EXWM Edit.]]
+  - [[#setting-up-link-hints-for-chrome-based-and-firefox-based-web-browsers][Setting up link hints for Chrome-based and Firefox-based web browsers]]
+  - [[#setting-up-multiple-monitors][Setting up multiple monitors]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#how-do-i-send-escape-or-c-c-to-applications][How do I send ~escape~ or ~C-c~ to applications?]]
+  - [[#when-i-mouse-click-while-in-evils-normal-state-i-get-an-error][When I mouse-click while in Evil's normal state I get an error.]]
+
+* Description
+
+This module enables and provides sane defaults for the Emacs X Window Manager
+[[https://github.com/ch11ng/exwm][(EXWM)]].
+
++ Control applications as Emacs buffers.
++ Edit any application's input field with Emacs.
++ Use Emacs input methods in other applications.
++ Use VIM keys in major web browsers like Firefox and Chrome.
++ Truly use Evil everywhere!
+
+** Maintainers
+
++ @[[https://github.com/LemonBreezes][LemonBreezes]] (Author)
+
+** Module Flags
+
+This module provides no flags.
+
+** Plugins
+
+# A list of linked plugins
++ [[https://github.com/ch11ng/exwm][exwm]]
++ [[https://github.com/LemonBreezes/exwm-evil][exwm-evil]]
++ [[https://github.com/walseb/exwm-firefox-evil][exwm-firefox-evil]]
++ [[https://github.com/agzam/exwm-edit][exwm-edit]]
++ [[https://github.com/andreasjansson/language-detection.el][language-detection]]
++ [[https://github.com/ieure/exwm-mff][exwm-mff]]
+
+** Hacks
+
+When switching to a workspace where an EXWM buffer is focused, inputs do not get
+passed to the application. To fix this, I wrote a hook which clicks on the
+application with the mouse to regain focus. The spot I chose for clicking may
+not be blank for all applications. If someone finds a better solution, please
+submit a pull request.
+
+* Prerequisites
+
+This module has no prerequisites.
+
+* Features
+
++ Edit any application's input field with ~C-c '~.
++ Use Emacs input methods in other applications. Simply set the input method as
+  usual with =C-x RET C-\=.
++ Use Evil in any application! Specific browsers such as Google Chrome and
+  Firefox have extended support for Evil keybindings. Simply install the
+  ~link-hints~ extension/add-on and start VIM-ing!
+
+Moreover, when this module is loaded, the following global keybindings are made:
+
+| Keybinding | Description                  |
+|------------+------------------------------|
+| =SPC $=    | Open a GNU/Linux application |
+
+* Configuration
+
+** Setting up your ~xinitrc~ file.
+
+In order to enable EXWM, Emacs needs to be running within X.Org without any
+window manager present. The recommended way to go about this is with the
+~startx~ script. The [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][EXWM wiki]] contains an example ~xinitrc~ file for use by
+~startx~.
+
+** Setting the default major mode for EXWM Edit.
+:PROPERTIES:
+:CREATED_TIME: [2022-01-05 Wed 23:44]
+:END:
+
+By default, when you edit an application's input field and no programming
+language can be detected in the text, ~org-mode~ will your major mode. If you
+would like to change this, set the ~+exwm-edit-default-major-mode~ variable:
+#+begin_src elisp
+(setq +exwm-edit-default-major-mode 'markdown-mode)
+#+end_src
+
+** Setting up link hints for Chrome-based and Firefox-based web browsers
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 01:19]
+:END:
+
+For users of Evil, the ~f~ and ~F~ keys are bound to special Link Hint commands
+within Chrome-based and Firefox-based web browsers. For these commands to work,
+you must have the Link Hint add-on/extension installed. For Chrome-based web
+browsers, install Link Hint through [[https://chrome.google.com/webstore/detail/link-hints/kjjgifdfplpegljdfnpmbjmkngdilmkd][here]]. For Firefox-based web browsers, use
+[[https://addons.mozilla.org/en-US/firefox/addon/linkhints/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][this]] link instead.
+
+** Setting up multiple monitors
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:06]
+:END:
+
+Currently this module does not provide any simplified setup for multi-head
+configurations. Please refer to
+https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this.
+
+* Troubleshooting
+
+# Common issues and their solution, or places to look for help.
+
+** How do I send ~escape~ or ~C-c~ to applications?
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:13]
+:END:
+
+| Keybind   | Description                                            |
+|-----------+--------------------------------------------------------|
+| =C-c C-i= | Send the escape key (only bound when Evil is enabled). |
+| =C-c C-c= | Send the C-c key.                                      |
+
+** When I mouse-click while in Evil's normal state I get an error.
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:24]
+:END:
+
+I (the author) do not know how to suppress or remove the,
+"evil-mouse-drag-region must be bound to an event with parameters" error. I
+recommend ignoring this error though as your clicks still register.
+
+This bug is a result of a workaround I copied from this GitHub issue:
+https://github.com/walseb/exwm-firefox-evil/issues/1
