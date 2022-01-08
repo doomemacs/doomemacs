@@ -115,8 +115,14 @@ Linux distributions. In the unusual case that 27.1 or newer is unavailable on
 your system, you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]] instead.
 
 **** Ubuntu
-Emacs 27.x is not available through Ubuntu's package manager out-of-the-box, but
-is available through a PPA:
+Emacs 27.x is available through Ubuntu's package manager out-of-the-box for versions 21.04 and newer:
+
+#+BEGIN_SRC bash
+apt-get update
+apt-get install emacs
+#+END_SRC
+
+For ubuntu versions 20.04 or older, it is available through a PPA:
 
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs
