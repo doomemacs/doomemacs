@@ -34,9 +34,9 @@
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
-    (set-repl-handler! 'clojure-mode #'+clojure/open-repl :persist t)
+    (set-repl-handler! '(clojure-mode clojurec-mode) #'+clojure/open-repl :persist t)
     (set-repl-handler! 'clojurescript-mode #'+clojure/open-cljs-repl :persist t)
-    (set-eval-handler! '(clojure-mode clojurescript-mode) #'cider-eval-region))
+    (set-eval-handler! '(clojure-mode clojurescript-mode clojurec-mode) #'cider-eval-region))
 
   ;; HACK Fix raxod502/radian#446: CIDER tries to calculate the frame's
   ;;   background too early; sometimes before the initial frame has been
