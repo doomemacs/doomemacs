@@ -119,8 +119,9 @@ Grabs the latest commit id of the package using 'git'."
 
 ;;;###autoload
 (defun doom/bump-packages-in-buffer (&optional select)
-  "Inserts or updates a `:pin' for the `package!' statement at point.
-Grabs the latest commit id of the package using 'git'."
+  "Inserts or updates a `:pin' to all `package!' statements in current buffer.
+If SELECT (prefix arg) is non-nil, prompt you to choose a specific commit for
+each package."
   (interactive "P")
   (save-excursion
     (goto-char (point-min))
@@ -134,7 +135,7 @@ Grabs the latest commit id of the package using 'git'."
                         (and (goto-char (match-beginning 0))
                              (not (plist-member (sexp-at-point) :pin))))))
           (condition-case e
-              (push (doom/bump-package-at-point) packages)
+              (push (doom/bump-package-at-point select) packages)
             (user-error (message "%s" (error-message-string e))))))
       (if packages
           (message "Updated %d packages\n- %s" (length packages) (string-join packages "\n- "))
