@@ -115,7 +115,7 @@ If no project is active, return all buffers."
 
 ;;;###autoload
 (defun doom-real-buffer-list (&optional buffer-list)
-  "Return a list of buffers that satify `doom-real-buffer-p'."
+  "Return a list of buffers that satisfy `doom-real-buffer-p'."
   (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload

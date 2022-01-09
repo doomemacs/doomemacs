@@ -1,6 +1,6 @@
 ;;; config/default/+emacs-bindings.el -*- lexical-binding: t; -*-
 
-;; Sensible deafult key bindings for non-evil users
+;; Sensible default key bindings for non-evil users
 (setq doom-leader-alt-key "C-c"
       doom-localleader-alt-key "C-c l")
 
