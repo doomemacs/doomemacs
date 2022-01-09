@@ -103,7 +103,7 @@ we have to clean it up ourselves."
         (local-unset-key [mouse-1]))))
 
   (defadvice! +dired--ranger-travel-a ()
-    "Temprorary fix for this function until ralesi/ranger.el#236 gets merged."
+    "Temporary fix for this function until ralesi/ranger.el#236 gets merged."
     :override #'ranger-travel
     (interactive)
     (let ((prompt "Travel: "))

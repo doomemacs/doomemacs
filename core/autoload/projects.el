@@ -41,7 +41,7 @@ they are absolute."
 
 ;;;###autoload
 (defun doom/find-file-in-other-project (project-root)
-  "Preforms `projectile-find-file' in a known project of your choosing."
+  "Performs `projectile-find-file' in a known project of your choosing."
   (interactive
    (list
     (completing-read "Find file in project: " (projectile-relevant-known-projects))))
@@ -51,7 +51,7 @@ they are absolute."
 
 ;;;###autoload
 (defun doom/browse-in-other-project (project-root)
-  "Preforms `find-file' in a known project of your choosing."
+  "Performs `find-file' in a known project of your choosing."
   (interactive
    (list
     (completing-read "Browse in project: " (projectile-relevant-known-projects))))

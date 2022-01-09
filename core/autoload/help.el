@@ -221,7 +221,7 @@ will be automatically appended to the result."
 
 ;;;###autoload
 (defun doom/help-search (&optional initial-input)
-  "Preform a text search on all of Doom's documentation."
+  "Perform a text search on all of Doom's documentation."
   (interactive)
   (funcall (cond ((fboundp '+ivy-file-search)
                   #'+ivy-file-search)
