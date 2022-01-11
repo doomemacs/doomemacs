@@ -211,7 +211,7 @@ will spawn a temporary daemon for you.
 
 Alternatively, you can call ~+org-capture/open-frame~ directly, e.g.
 #+begin_src sh
-emacsclient --eval '(+org-capture/open-frame INTIAL-INPUT KEY)'
+emacsclient --eval '(+org-capture/open-frame INITIAL-INPUT KEY)'
 #+end_src
 
 ** Built-in custom link types
