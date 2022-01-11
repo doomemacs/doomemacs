@@ -131,6 +131,7 @@ orderless."
    +default/search-project-for-symbol-at-point
    +default/search-cwd +default/search-other-cwd
    +default/search-notes-for-symbol-at-point
+   +default/search-emacsd
    consult--source-file consult--source-project-file consult--source-bookmark
    :preview-key (kbd "C-SPC"))
   (consult-customize
