@@ -1,13 +1,25 @@
 ;;; lang/fortran/autoload.el -*- lexical-binding: t; -*-
 
-;; --- GFORTRAN --- ;;
+;;
+;;; GFortran
+
+(defun +fortran--std ()
+  "Which version of Fortran should we target?"
+  (pcase major-mode
+    (`fortran-mode "-std=legacy")
+    (_ "")))
+
+;;;###autoload
+(defun +fortran-compilation-buffer-name-fn (mode)
+  "The name of the buffer produced by `compile'."
+  "*fortran-compilation*")
 
 ;;;###autoload
 (defun +fortran/gfortran-compile ()
   "Compile the current buffer using gfortran."
   (interactive)
   (compile (format "gfortran %s %s"
-                   (+fortran/fortran-std)
+                   (+fortran--std)
                    buffer-file-name)))
 
 ;;;###autoload
@@ -20,13 +32,9 @@
     (sleep-for 1))
   (compile "./a.out"))
 
-(defun +fortran/fortran-std ()
-  "Which version of Fortran should we target?"
-  (cl-case major-mode
-    (fortran-mode "-std=legacy")
-    (t "")))
 
-;; --- FPM --- ;;
+;;
+;;; FPM
 
 ;;;###autoload
 (defun +fortran/fpm-build ()
@@ -45,10 +53,3 @@
   "Test the current project using fpm."
   (interactive)
   (compile "fpm test"))
-
-;; --- MISC. --- ;;
-;;;###autoload
-(defun +fortran/compilation-buffer-name (mode)
-  "The name of the buffer produced by `compile'."
-  (interactive)
-  "*fortran-compilation*")
