@@ -25,7 +25,7 @@ includes syntax highlighting, intelligent code completion, and the ability to ru
 Terraform commands directly from Emacs.
 
 ** Module Flags
-This module provides no flags.
++ =+lsp= Enables LangServer support for this module. You must have =:tools lsp= enabled for this to work, as well as the langserver (e.g. terraform-ls) installed on your system.
 
 ** Plugins
 + [[https://github.com/syohex/emacs-terraform-mode][terraform-mode]]
