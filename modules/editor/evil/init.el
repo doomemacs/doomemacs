@@ -131,6 +131,7 @@ variable for an explanation of the defaults (in comments). See
       elisp-slime-nav
       embark
       emms
+      ,@(when EMACS29+ '(emoji))
       epa
       ert
       eshell

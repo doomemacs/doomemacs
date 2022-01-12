@@ -135,6 +135,7 @@
   (evil-add-command-properties '+multiple-cursors:evil-mc :evil-mc t)
 
   (map! :map evil-mc-key-map
+        :nv "g." nil
         :nv "C-n" #'evil-mc-make-and-goto-next-cursor
         :nv "C-N" #'evil-mc-make-and-goto-last-cursor
         :nv "C-p" #'evil-mc-make-and-goto-prev-cursor
