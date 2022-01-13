@@ -10,8 +10,7 @@ on:
       - '.dir-locals.el'
       - 'LICENSE'
     branches:
-      - main
-      - develop
+      - master
 
 jobs:
   unix-test:
