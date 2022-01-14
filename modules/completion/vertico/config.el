@@ -131,6 +131,7 @@ orderless."
    +default/search-project-for-symbol-at-point
    +default/search-cwd +default/search-other-cwd
    +default/search-notes-for-symbol-at-point
+   +default/search-emacsd
    consult--source-file consult--source-project-file consult--source-bookmark
    :preview-key (kbd "C-SPC"))
   (consult-customize
@@ -146,7 +147,8 @@ orderless."
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
     (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
   (map! :map consult-crm-map
-        :desc "Select candidate" "TAB" #'+vertico/crm-select
+        :desc "Select candidate" [tab] #'+vertico/crm-select
+        :desc "Select candidate and keep input" [backtab] #'+vertico/crm-select-keep-input
         :desc "Enter candidates" "RET" #'+vertico/crm-exit))
 
 
@@ -171,6 +173,7 @@ orderless."
         (:map minibuffer-local-map
          "C-;"               #'embark-act
          "C-c C-;"           #'embark-export
+         "C-c C-s"           #'embark-collect-snapshot
          :desc "Export to writable buffer" "C-c C-e" #'+vertico/embark-export-write)
         (:leader
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
@@ -203,11 +206,11 @@ orderless."
     ("u" doom/help-package-homepage))
   (setf (alist-get 'package embark-keymap-alist) #'+vertico/embark-doom-package-map)
   (map! (:map embark-file-map
-         :desc "Open target with sudo" "s" #'doom/sudo-find-file
+         :desc "Open target with sudo"        "s"   #'doom/sudo-find-file
          (:when (featurep! :tools magit)
           :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (featurep! :ui workspaces)
-          :desc "Open in new workspace" "TAB" #'+vertico/embark-open-in-new-workspace))))
+          :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia

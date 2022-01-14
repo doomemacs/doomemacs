@@ -79,15 +79,16 @@ Doom-specific additions:
 When in an active Vertico completion session, the following doom added
 keybindings are available:
 
-| Keybind               | Description                                        |
-|-----------------------+----------------------------------------------------|
-| =C-k=                 | (evil) Go to previous candidate                    |
-| =C-j=                 | (evil) Go to next candidate                        |
-| =C-M-k=               | (evil) Go to previous group                        |
-| =C-M-j=               | (evil) Go to next group                            |
-| =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action |
-| =C-c C-;=             | export the current candidate list to a buffer      |
-| =C-SPC=               | Preview the current candidate                      |
+| Keybind               | Description                                                                   |
+|-----------------------+-------------------------------------------------------------------------------|
+| =C-k=                 | (evil) Go to previous candidate                                               |
+| =C-j=                 | (evil) Go to next candidate                                                   |
+| =C-M-k=               | (evil) Go to previous group                                                   |
+| =C-M-j=               | (evil) Go to next group                                                       |
+| =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action                            |
+| =C-c C-;=             | ~embark-export~ the current candidate list (export to a type-specific buffer) |
+| =C-c C-s=             | ~embark-collect-snapsnot~ the current candidate list (collect verbatim)       |
+| =C-SPC=               | Preview the current candidate                                                 |
 
 ~embark-act~ will prompt you with a =which-key= menu with useful commands on the
 selected candidate or candidate list, depending on the completion category. Note
