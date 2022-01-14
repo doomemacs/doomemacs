@@ -26,6 +26,8 @@ following shell commands:
         (print! (info "Switching to master branch"))
         (let ((remote
                (cdr (doom-call-process "git" "config" "--get" "branch.develop.remote"))))
+          (doom-call-process "git" "config" (format "remote.%s.fetch" remote) (format "+refs/heads/*:refs/remotes/%s/*" remote))
+          (doom-call-process "git" "fetch" "--append" remote "master")
           (doom-call-process "git" "checkout" "--track" (format "%s/master" remote))
           (print! (info "Reloading Doom Emacs"))
           (throw 'exit (list "doom" "upgrade" (if force-p "-f"))))))
