@@ -8,7 +8,7 @@
   (interactive)
   (if (featurep! :ui workspaces)
       (progn
-        (+workspace-switch "rss" t)
+        (+workspace-switch "*rss*" t)
         (doom/switch-to-scratch-buffer)
         (elfeed)
         (+workspace/display))
