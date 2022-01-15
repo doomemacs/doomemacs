@@ -266,6 +266,14 @@ If you don't like this use:
 (package! mu4e-alert :disable t)
 #+end_src
 
+** Enabling automatic email fetching
+By default, periodic email update is *disabled*. To enable periodic
+mail retrieval/indexing, change the value of ~mu4e-update-interval~:
+
+#+begin_src emacs-lisp
+(setq mu4e-update-interval 60)
+#+end_src
+
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
