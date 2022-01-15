@@ -17,8 +17,9 @@
   Install it or enable +lsp."))
 
 (when (and (featurep! :editor format)
+           (not (featurep! +lsp))
            (not (executable-find "brittany")))
-      (warn! "Couldn't find brittany. Code formatting will not work.
+  (warn! "Couldn't find brittany. Code formatting will not work.
   Install it or enable +lsp."))
 
 (when (and (featurep! +lsp)
