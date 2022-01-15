@@ -224,20 +224,23 @@ list remains lean."
 
 (defun doom--write-missing-eln-errors ()
   "Write .error files for any expected .eln files that are missing."
-  (cl-loop for file in doom--eln-output-expected
-           for eln-name = (doom--eln-file-name file)
-           for eln-file = (doom--eln-output-file eln-name)
-           for error-file = (doom--eln-error-file eln-name)
-           unless (or (file-exists-p eln-file)
-                      (file-newer-than-file-p error-file file))
-           do (make-directory (file-name-directory error-file) 'parents)
-              (write-region "" nil error-file)
-              (doom-log "Wrote %s" error-file))
-  (setq doom--eln-output-expected nil))
+  (when (and (require 'comp nil t)
+             (ignore-errors (native-comp-available-p)))
+    (cl-loop for file in doom--eln-output-expected
+             for eln-name = (doom--eln-file-name file)
+             for eln-file = (doom--eln-output-file eln-name)
+             for error-file = (doom--eln-error-file eln-name)
+             unless (or (file-exists-p eln-file)
+                        (file-newer-than-file-p error-file file))
+             do (make-directory (file-name-directory error-file) 'parents)
+             (write-region "" nil error-file)
+             (doom-log "Wrote %s" error-file))
+    (setq doom--eln-output-expected nil)))
 
 (defun doom--compile-site-packages ()
   "Queue async compilation for all non-doom Elisp files."
-  (when (featurep 'comp)
+  (when (and (featurep 'comp)
+             (ignore-errors (native-comp-available-p)))
     (cl-loop with paths = (cl-loop for path in load-path
                                    unless (string-prefix-p doom-local-dir path)
                                    collect path)
@@ -351,6 +354,13 @@ declaration) or dependency thereof that hasn't already been."
            (doom--compile-site-packages)
            (doom--wait-for-compile-jobs)
            (doom--write-missing-eln-errors)
+           ;; HACK Every time you save a file in a package that straight tracks,
+           ;;      it is recorded in ~/.emacs.d/.local/straight/modified/.
+           ;;      Typically, straight will clean these up after rebuilding, but
+           ;;      Doom's use-case circumnavigates that, leaving these files
+           ;;      there and causing a rebuild of those packages each time `doom
+           ;;      sync' or similar is run, so we clean it up ourselves:
+           (delete-directory (straight--modified-dir) 'recursive)
            (print! (success "\033[KRebuilt %d package(s)") (length built)))
        (print! (info "No packages need rebuilding"))
        nil))))
@@ -627,7 +637,8 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not regraft-repos-p)
                (ignore (print! (info "Skipping regrafting")))
              (doom--cli-packages-regraft-repos repos-to-regraft))
-           (when (require 'comp nil t)
+           (when (and (require 'comp nil t)
+                      (native-comp-available-p))
              (if (not eln-p)
                  (ignore (print! (info "Skipping native bytecode")))
                (doom--cli-packages-purge-eln))))))))

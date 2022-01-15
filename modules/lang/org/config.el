@@ -17,7 +17,7 @@
   "An alist mapping languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.
 
-For example, (fish . shell) will cause #+BEGIN_SRC fish blocks to load
+For example, (fish . shell) will cause #+begin_src fish blocks to load
 ob-shell.el when executed.")
 
 (defvar +org-babel-load-functions ()
@@ -115,16 +115,19 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         org-fontify-whole-heading-line t
         org-hide-leading-stars t
         org-image-actual-width nil
-        org-imenu-depth 8
-        ;; Sub-lists should have different bullets
-        org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a."))
+        org-imenu-depth 6
         org-priority-faces
         '((?A . error)
           (?B . warning)
           (?C . success))
         org-startup-indented t
         org-tags-column 0
-        org-use-sub-superscripts '{})
+        org-use-sub-superscripts '{}
+        ;; `showeverything' is org's default, but it doesn't respect
+        ;; `org-hide-block-startup' (#+startup: hideblocks), archive trees,
+        ;; hidden drawers, or VISIBILITY properties. `nil' is equivalent, but
+        ;; respects these settings.
+        org-startup-folded nil)
 
   (setq org-refile-targets
         '((nil :maxlevel . 3)
@@ -185,21 +188,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
     (when-let* ((context (org-element-context))
                 (path (org-element-property :path context)))
       (pcase (org-element-property :type context)
-        ("kbd"
-         (format "%s %s"
-                 (propertize "Key sequence:" 'face 'bold)
-                 (propertize (+org-read-kbd-at-point path context)
-                             'face 'help-key-binding)))
-        ("doom-module"
-         (format "%s %s"
-                 (propertize "Doom module:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
-        ("doom-package"
-         (format "%s %s"
-                 (propertize "Doom package:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
         (type (format "Link: %s" (org-element-property :raw-link context))))))
 
   ;; Automatic indent detection in org files is meaningless
@@ -305,7 +293,9 @@ Also adds support for a `:sync' parameter to override `:async'."
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
   (after! python
-    (setq org-babel-python-command python-shell-interpreter))
+    (unless org-babel-python-command
+      (setq org-babel-python-command
+            (concat python-shell-interpreter " " python-shell-interpreter-args))))
 
   (after! ob-ditaa
     ;; TODO Should be fixed upstream
@@ -509,28 +499,11 @@ relative to `org-directory', unless it is an absolute path."
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
-            '("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s"))
+            '("doom"        . "https://github.com/hlissner/doom-emacs/%s")
+            `("emacsdir"    . ,(doom-path doom-emacs-dir "%s"))
+            `("doomdir"     . ,(doom-path doom-private-dir "%s")))
 
   (+org-define-basic-link "org" 'org-directory)
-  (+org-define-basic-link "doom" 'doom-emacs-dir)
-  (+org-define-basic-link "doom-docs" 'doom-docs-dir)
-  (+org-define-basic-link "doom-modules" 'doom-modules-dir)
-
-  ;; Add "lookup" links for packages and keystrings; useful for Emacs
-  ;; documentation -- especially Doom's!
-  (org-link-set-parameters
-   "kbd"
-   :follow (lambda (_) (minibuffer-message "%s" (+org-display-link-in-eldoc-a)))
-   :help-echo #'+org-read-kbd-at-point
-   :face 'help-key-binding)
-  (org-link-set-parameters
-   "doom-package"
-   :follow #'+org-link--doom-package-follow-fn
-   :face (lambda (_) '(:inherit org-priority :slant italic)))
-  (org-link-set-parameters
-   "doom-module"
-   :follow #'+org-link--doom-module-follow-fn
-   :face #'+org-link--doom-module-face-fn)
 
   ;; Allow inline image previews of http(s)? urls or data uris.
   ;; `+org-http-image-data-fn' will respect `org-display-remote-inline-images'.
@@ -804,7 +777,7 @@ between the two."
          "/" #'consult-org-agenda)
         "A" #'org-archive-subtree
         "e" #'org-export-dispatch
-        "f" #'org-footnote-new
+        "f" #'org-footnote-action
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
         "I" #'org-id-get-create
@@ -921,6 +894,7 @@ between the two."
         (:prefix ("s" . "tree/subtree")
          "a" #'org-toggle-archive-tag
          "b" #'org-tree-to-indirect-buffer
+         "c" #'org-clone-subtree-with-time-shift
          "d" #'org-cut-subtree
          "h" #'org-promote-subtree
          "j" #'org-move-subtree-down
@@ -1065,7 +1039,9 @@ compelling reason, so..."
         ;; Resume when clocking into task with open clock
         org-clock-in-resume t
         ;; Remove log if task was clocked for 0:00 (accidental clocking)
-        org-clock-out-remove-zero-time-clocks t)
+        org-clock-out-remove-zero-time-clocks t
+        ;; The default value (5) is too conservative.
+        org-clock-history-length 20)
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
 
@@ -1074,11 +1050,22 @@ compelling reason, so..."
   :commands org-pdftools-export
   :init
   (after! org
+    ;; HACK Fixes an issue where org-pdftools link handlers will throw a
+    ;;      'pdf-info-epdfinfo-program is not executable' error whenever any
+    ;;      link is stored or exported (whether or not they're a pdf link). This
+    ;;      error gimps org until `pdf-tools-install' is run, but this is poor
+    ;;      UX, so we suppress it.
+    (defun +org--pdftools-link-handler (fn &rest args)
+      "Produces a link handler for org-pdftools that suppresses missing-epdfinfo errors whenever storing or exporting links."
+      (lambda (&rest args)
+        (and (ignore-errors (require 'org-pdftools nil t))
+             (file-executable-p pdf-info-epdfinfo-program)
+             (apply fn args))))
     (org-link-set-parameters (or (bound-and-true-p org-pdftools-link-prefix) "pdf")
-                             :follow #'org-pdftools-open
-                             :complete #'org-pdftools-complete-link
-                             :store #'org-pdftools-store-link
-                             :export #'org-pdftools-export)
+                             :follow   (+org--pdftools-link-handler #'org-pdftools-open)
+                             :complete (+org--pdftools-link-handler #'org-pdftools-complete-link)
+                             :store    (+org--pdftools-link-handler #'org-pdftools-store-link)
+                             :export   (+org--pdftools-link-handler #'org-pdftools-export))
     (add-hook! 'org-open-link-functions
       (defun +org-open-legacy-pdf-links-fn (link)
         "Open pdftools:* and pdfviews:* links as if they were pdf:* links."
@@ -1192,6 +1179,7 @@ compelling reason, so..."
   (defvar org-directory nil)
   (defvar org-id-locations-file nil)
   (defvar org-attach-id-dir nil)
+  (defvar org-babel-python-command nil)
 
   (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")

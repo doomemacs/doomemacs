@@ -102,18 +102,24 @@ If no viewers are found, `latex-preview-pane' is used.")
                #'lsp!))
   (map! :localleader
         :map latex-mode-map
-        :desc "View" "v" #'TeX-view)
+        :desc "View"          "v" #'TeX-view
+        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Run a command" "m" #'TeX-command-master)
   (map! :after latex
-        :map LaTeX-mode-map
         :localleader
-        :desc "View" "v" #'TeX-view))
+        :map LaTeX-mode-map
+        :desc "View"          "v" #'TeX-view
+        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Run a command" "m" #'TeX-command-master))
 
 
 (use-package! tex-fold
   :when (featurep! +fold)
-  :hook (TeX-mode . TeX-fold-buffer)
+  :hook (TeX-mode . +latex-TeX-fold-buffer-h)
   :hook (TeX-mode . TeX-fold-mode)
   :config
+  (defun +latex-TeX-fold-buffer-h ()
+    (run-with-idle-timer 0 nil 'TeX-fold-buffer))
   ;; Fold after all auctex macro insertions
   (advice-add #'TeX-insert-macro :after #'+latex-fold-last-macro-a)
   ;; Fold after cdlatex macro insertions

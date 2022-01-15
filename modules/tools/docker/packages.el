@@ -1,6 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/docker/packages.el
 
-(package! docker :pin "9bcefbe54dbed4d364286fe65a87872e763ff7dc")
-(package! docker-tramp :pin "aaee11cedf7b4c31700f24a1fd88dcef9c2a7c3d")
-(package! dockerfile-mode :pin "ad06a41259ff2961d603bf23a3a8fbd22dde2161")
+(package! docker :pin "4fc69969b11687896b6c71b099de5d4c12c1c685")
+(package! docker-tramp :pin "7bfbb55417e7d2aac53adf92cb0e3fd329c495c1")
+(package! dockerfile-mode :pin "628315e2e4ab2f269548126444234caa057b2c75")

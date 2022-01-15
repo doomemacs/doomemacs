@@ -65,13 +65,6 @@ purpose.")
 (require 'core-packages)
 (doom-initialize-core-packages)
 
-;; Don't generate superfluous files when writing temp buffers
-(setq make-backup-files nil)
-;; Stop user configuration from interfering with package management
-(setq enable-dir-local-variables nil)
-;; Reduce ambiguity, embrace specificity. It's more predictable.
-(setq-default case-fold-search nil)
-
 ;; Default to using all cores, rather than half of them, since we compile things
 ;; ahead-of-time in a non-interactive session.
 (defadvice! doom--comp-use-all-cores-a (&rest _)
@@ -86,6 +79,7 @@ purpose.")
     ((help-p        ["-h" "--help"]  "Same as help command")
      (auto-accept-p ["-y" "--yes"]   "Auto-accept all confirmation prompts")
      (debug-p       ["-d" "--debug"] "Enables on verbose output")
+     (loadfile      ["-l" "--load" file] "Load an elisp FILE before executing any commands")
      (doomdir       ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
      (localdir      ["--localdir" dir] "Use DIR as your local storage directory")
      (nocolor       ["-C" "--nocolor"] "Disable colored output")
@@ -125,9 +119,8 @@ Environment variables:
               (setenv "YES" auto-accept-p)
               (print! (info "Confirmations auto-accept enabled")))
             (throw 'exit "__DOOMRESTART=1 $@"))
-          ;; TODO Rotate logs out, instead of overwriting them?
-          (delete-file doom-cli-log-file)
-          (delete-file doom-cli-log-error-file)
+          (when loadfile
+            (load (doom-path loadfile) nil t t))
           (when help-p
             (when command
               (push command args))
@@ -210,6 +203,7 @@ Environment variables:
 (load! "cli/packages")
 (load! "cli/autoloads")
 (load! "cli/ci")
+(load! "cli/make")
 
 (defcligroup! "Diagnostics"
   "For troubleshooting and diagnostics"
@@ -248,6 +242,16 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d."
 (load! doom-module-init-file doom-private-dir t)
 (maphash (doom-module-loader doom-cli-file) doom-modules)
 (load! doom-cli-file doom-private-dir t)
+
+
+;; Don't generate superfluous files when writing temp buffers
+(setq make-backup-files nil)
+;; Stop user configuration from interfering with package management
+(setq enable-dir-local-variables nil)
+;; Reduce ambiguity, embrace specificity. It's more predictable.
+(setq-default case-fold-search nil)
+;; Don't clog the user's trash with anything we clean up in this session.
+(setq delete-by-moving-to-trash nil)
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

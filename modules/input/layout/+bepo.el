@@ -217,10 +217,10 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
        magit-staged-section-map
        magit-unstaged-section-map
        magit-untracked-section-map))
-    ;; Without this, "s" is mapped to 'magit-delete-thing (the old "k" for "kill") and
+    ;; Without this, "s" is mapped to `magit-delete-thing' (the old "k" for "kill") and
     ;; takes precedence over the evil command to go up one line
     ;; :nv doesn't work on this, needs to be the bare map.
-    ;; This is the output of `describe-function 'magit-delete-thing` when we add :nv or :nvm
+    ;; This is the output of `describe-function `magit-delete-thing' when we add :nv or :nvm
     ;; Key Bindings
     ;;   evil-collection-magit-mode-map-backup-map <normal-state> x
     ;;   evil-collection-magit-mode-map-backup-map <visual-state> x
@@ -230,7 +230,10 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     ;;   magit-mode-map <normal-state> x
     ;;   magit-mode-map <visual-state> x
     ;;   magit-mode-map s
-    (map! :map magit-mode-map "s" nil)
+    ;; Same thing for t, which gets mapped to `magit-quick-status'
+    (map! :map magit-mode-map
+          "s" nil
+          "t" nil)
     ;; Even though magit bindings are part of evil-collection now, the hook only
     ;; runs on `evil-collection-magit-maps', which is way to short to cover all
     ;; usages. The hook is run manually on other maps

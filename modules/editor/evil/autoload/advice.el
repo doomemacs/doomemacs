@@ -147,12 +147,12 @@ more information on modifiers."
   ;; HACK This ping-ponging between the destination and source windows is to
   ;;      update the window focus history, so that, if you close either split
   ;;      afterwards you won't be sent to some random window.
-  (let ((doom-inhibit-switch-window-hooks t)
-        (origwin (selected-window)))
+  (let ((origwin (selected-window))
+        window-selection-change-functions)
     (select-window (split-window origwin count 'below))
     (unless evil-split-window-below
-      (select-window origwin))
-    (run-hooks 'doom-switch-window-hook))
+      (select-window origwin)))
+  (run-hooks 'window-selection-change-functions)
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
@@ -166,13 +166,12 @@ more information on modifiers."
   ;; HACK This ping-ponging between the destination and source windows is to
   ;;      update the window focus history, so that, if you close either split
   ;;      afterwards you won't be sent to some random window.
-  (let ((doom-inhibit-switch-window-hooks t)
-        (origwin (selected-window)))
+  (let ((origwin (selected-window))
+        window-selection-change-functions)
     (select-window (split-window origwin count 'right))
     (unless evil-vsplit-window-right
-      (select-window origwin))
-    (run-hooks 'doom-switch-window-hook))
-  (run-hooks)
+      (select-window origwin)))
+  (run-hooks 'window-selection-change-functions)
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
@@ -183,27 +182,47 @@ more information on modifiers."
   "Join the selected lines.
 
 This advice improves on `evil-join' by removing comment delimiters when joining
-commented lines, by using `fill-region-as-paragraph'.
+commented lines, without `fill-region-as-paragraph'.
 
-From https://github.com/emacs-evil/evil/issues/606"
-  ;; But revert to the default we're not in a comment, where
-  ;; `fill-region-as-paragraph' is too greedy.
-  (if (not (doom-point-in-comment-p (min (max beg (1+ (point))) end)))
-      (funcall fn beg end)
-    (let* ((count (count-lines beg end))
-           (count (if (> count 1) (1- count) count))
-           (fixup-mark (make-marker)))
-      (unwind-protect
-          (dotimes (var count)
-            (if (and (bolp) (eolp))
-                (join-line 1)
-              (let* ((end (line-beginning-position 3))
-                     (fill-column (1+ (- end beg))))
-                (set-marker fixup-mark (line-end-position))
-                (fill-region-as-paragraph beg end nil t)
-                (goto-char fixup-mark)
-                (fixup-whitespace))))
-        (set-marker fixup-mark nil)))))
+Adapted from https://github.com/emacs-evil/evil/issues/606"
+  (if-let* (((not (= (line-end-position) (point-max))))
+            (cend (save-excursion (goto-char end) (line-end-position)))
+            (cbeg (save-excursion
+                    (goto-char beg)
+                    (and (doom-point-in-comment-p
+                          (save-excursion
+                            (goto-char (line-beginning-position 2))
+                            (skip-syntax-forward " \t")
+                            (point)))
+                         (or (comment-search-backward (line-beginning-position) t)
+                             (comment-search-forward  (line-end-position) t)
+                             (and (doom-point-in-comment-p beg)
+                                  (stringp comment-continue)
+                                  (or (search-forward comment-continue (line-end-position) t)
+                                      beg)))))))
+      (let* ((count (count-lines beg end))
+             (count (if (> count 1) (1- count) count))
+             (fixup-mark (make-marker)))
+        (uncomment-region (line-beginning-position 2)
+                          (save-excursion
+                            (goto-char cend)
+                            (line-end-position 0)))
+        (unwind-protect
+            (dotimes (_ count)
+              (join-line 1)
+              (save-match-data
+                (when (or (and comment-continue
+                               (not (string-empty-p comment-continue))
+                               (looking-at (concat "\\(\\s-*" (regexp-quote comment-continue) "\\) ")))
+                          (and comment-start-skip
+                               (not (string-empty-p comment-start-skip))
+                               (looking-at (concat "\\(\\s-*" comment-start-skip "\\)"))))
+                  (replace-match "" t nil nil 1)
+                  (just-one-space))))
+          (set-marker fixup-mark nil)))
+    ;; But revert to the default we're not in a comment, where
+    ;; `fill-region-as-paragraph' is too greedy.
+    (funcall fn beg end)))
 
 ;;;###autoload
 (defun +evil--fix-dabbrev-in-minibuffer-h ()

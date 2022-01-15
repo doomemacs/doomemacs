@@ -3,6 +3,15 @@
 (defvar +php--company-backends nil
   "List of company backends to use in `php-mode'.")
 
+(defvar +php-default-docker-container "php-fpm"
+  "The default docker container to run commands in.")
+
+(defvar +php-default-docker-compose "docker-compose.yml"
+  "Path to docker-compose file.")
+
+(defvar +php-run-tests-in-docker nil
+  "Whether or not to run tests in a docker environment")
+
 (after! projectile
   (add-to-list 'projectile-project-root-files "composer.json"))
 
@@ -12,10 +21,11 @@
 
 (use-package! php-mode
   :mode "\\.inc\\'"
+  :hook (php-mode . rainbow-delimiters-mode)
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml extension instead.
-  (setq php-template-compatibility nil)
+  (setq php-mode-template-compatibility nil)
 
   (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
   (set-repl-handler! 'php-mode #'php-boris)
@@ -23,7 +33,7 @@
   (set-formatter! 'php-mode #'php-cs-fixer-fix)
   (set-ligatures! 'php-mode
     ;; Functional
-    :lambda "function()"
+    :lambda "function()" :lambda "fn"
     :def "function"
     ;; Types
     :null "null"
@@ -127,6 +137,24 @@
   :mode "\\.hh$")
 
 
+(use-package! composer
+  :defer t
+  :init
+  (map! :after php-mode
+        :localleader
+        :map php-mode-map
+        :prefix ("c" . "composer")
+        "c" #'composer
+        "i" #'composer-install
+        "r" #'composer-require
+        "u" #'composer-update
+        "d" #'composer-dump-autoload
+        "s" #'composer-run-script
+        "v" #'composer-run-vendor-bin-command
+        "o" #'composer-find-json-file
+        "l" #'composer-view-lock-file))
+
+
 ;;
 ;; Projects
 
@@ -137,3 +165,14 @@
 (def-project-mode! +php-composer-mode
   :modes '(web-mode php-mode)
   :files ("composer.json"))
+
+(def-project-mode! +phpunit-docker-compose-mode
+  :when +php-run-tests-in-docker
+  :modes '(php-mode docker-compose-mode)
+  :files (and "phpunit.xml" (or +php-default-docker-compose  "docker-compose.yml"))
+  :on-enter
+  (setq phpunit-args `("exec" ,+php-default-docker-container "php" "vendor/bin/phpunit")
+        phpunit-executable (executable-find "docker-compose"))
+  :on-exit
+  (setq phpunit-args nil
+        phpunit-executable nil))

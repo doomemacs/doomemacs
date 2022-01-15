@@ -2,36 +2,20 @@
 
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
+  :hook (beancount-mode . outline-minor-mode)
   :init
-  (add-hook 'beancount-mode-hook #'outline-minor-mode)
-
+  ;; REVIEW Remove once domtronn/all-the-icons.el#272 is merged
   (after! all-the-icons
     (add-to-list 'all-the-icons-icon-alist
                  '("\\.beancount\\'" all-the-icons-material "attach_money" :face all-the-icons-lblue))
     (add-to-list 'all-the-icons-mode-icon-alist
                  '(beancount-mode all-the-icons-material "attach_money" :face all-the-icons-lblue)))
 
-  ;; TODO PR this upstream
-  (defadvice! +beancount--fix-faces-a ()
-    "`beancount-outline-face' returns org-level-N faces for beancount-mode's
-font-lock keywords, but there is no guarantee `org' will be loaded when
-beancount-mode is activated. If it is absent, you will see a flood of 'invalid
-face' errors. Just use the outline-N faces to get around this.
-
-This msut be advised *before* beancount-mode loads, because
-`beancount-outline-face' is used at load time."
-    :override #'beancount-outline-face
-    (if outline-minor-mode
-        (let ((level (funcall outline-level)))
-          (if (integerp level)
-              (intern (format "outline-%d" level))))
-      nil))
-
   :config
+  (setq beancount-electric-currency t)
+
   (when (featurep! +lsp)
     (add-hook 'beancount-mode-local-vars-hook #'lsp!))
-
-  (setq beancount-electric-currency t)
 
   (map! :map beancount-mode-map
         "TAB" (cmds! (and outline-minor-mode (outline-on-heading-p))
@@ -46,33 +30,4 @@ This msut be advised *before* beancount-mode loads, because
         (:prefix ("i" . "insert")
          "a" #'beancount-insert-account
          "p" #'beancount-insert-prices
-         "d" #'beancount-insert-date))
-
-  ;; TODO PR this upstream?
-  (defun +beancount-electric-align-h ()
-    "Align amount in current line to `beancount-number-alignment-column'."
-    (when (and beancount-electric-currency (eq last-command-event ?\n))
-      (save-excursion
-        (forward-line -1)
-        (ignore-errors (beancount-align-to-previous-number)))))
-  (add-hook! 'beancount-mode-hook
-    (add-hook 'post-self-insert-hook #'+beancount-electric-align-h 'append t))
-
-  ;; TODO PR this upstream
-  (defadvice! +beancount--fix-account-currency-a (account)
-    "Fixes `beancount-electric-currency', which could never find the currency
-for the current account. Also allows it to fall back to the operating_currency."
-    :override #'beancount--account-currency
-    (save-excursion
-      (goto-char (point-min))
-      (when (or (re-search-forward
-                 (concat "^" beancount-date-regexp " +open"
-                         "\\s-+" (regexp-quote account)
-                         "\\s-+\\(" beancount-currency-regexp "\\)\\>")
-                 nil t)
-                (re-search-forward
-                 (concat "^option\\s-+\"operating_currency\"\\s-+\"\\("
-                         beancount-currency-regexp
-                         "\\)\"")
-                 nil t))
-        (match-string-no-properties 1)))))
+         "d" #'beancount-insert-date)))

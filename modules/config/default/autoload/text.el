@@ -46,10 +46,14 @@
     (error "Couldn't find filename in current buffer")))
 
 ;;;###autoload
-(defun +default/yank-buffer-path-relative-to-project ()
-  "Copy the current buffer's path to the kill ring."
-  (interactive)
-  (+default/yank-buffer-path (doom-project-root)))
+(defun +default/yank-buffer-path-relative-to-project (&optional include-root)
+  "Copy the current buffer's path to the kill ring.
+With non-nil prefix INCLUDE-ROOT, also include the project's root."
+  (interactive "P")
+  (+default/yank-buffer-path
+   (if include-root
+       (file-name-directory (directory-file-name (doom-project-root)))
+     (doom-project-root))))
 
 ;;;###autoload
 (defun +default/insert-file-path (arg)

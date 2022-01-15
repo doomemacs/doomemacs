@@ -58,7 +58,11 @@ easier to scroll through.")
     (evil-define-key 'normal elfeed-search-mode-map
       "q" #'elfeed-kill-buffer
       "r" #'elfeed-search-update--force
-      (kbd "M-RET") #'elfeed-search-browse-url)))
+      (kbd "M-RET") #'elfeed-search-browse-url)
+    (map! (:map elfeed-show-mode-map
+       :n "gc" nil
+       :n "gc" #'+rss/copy-link))))
+
 
 
 (use-package! elfeed-org
@@ -76,3 +80,8 @@ easier to scroll through.")
         (dolist (file (cl-remove-if #'file-exists-p files))
           (message "elfeed-org: ignoring %S because it can't be read" file))
         (setq rmh-elfeed-org-files (cl-remove-if-not #'file-exists-p files))))))
+
+(use-package! elfeed-goodies
+  :after elfeed
+  :config
+  (elfeed-goodies/setup))

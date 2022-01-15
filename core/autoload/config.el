@@ -76,9 +76,8 @@ package list, and lastly, reloads your private config.el.
 Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
-  (doom--if-compile (format "%S sync" doom-bin)
-      (let ((doom-reloading-p t)
-            doom-env-file)
+  (doom--if-compile (format "%S sync -e" doom-bin)
+      (let ((doom-reloading-p t))
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-initialize 'force)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"

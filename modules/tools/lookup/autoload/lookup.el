@@ -188,15 +188,16 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
                         (xref-find-backend)
                         identifier)))
     (when xrefs
-      (let ((marker-ring (ring-copy xref--marker-ring)))
+      (let* ((jumped nil)
+             (xref-after-jump-hook
+              (cons (lambda () (setq jumped t))
+                    xref-after-jump-hook)))
         (funcall (or show-fn #'xref--show-defs)
                  (lambda () xrefs)
                  nil)
         (if (cdr xrefs)
             'deferred
-          ;; xref will modify its marker stack when it finds a result to jump to.
-          ;; Use that to determine success.
-          (not (equal xref--marker-ring marker-ring)))))))
+          jumped)))))
 
 (defun +lookup-dictionary-definition-backend-fn (identifier)
   "Look up dictionary definition for IDENTIFIER."
@@ -329,7 +330,7 @@ evil-mode is active."
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :definition identifier nil arg))
-        ((error "Couldn't find the definition of %S" identifier))))
+        ((user-error "Couldn't find the definition of %S" (substring-no-properties identifier)))))
 
 ;;;###autoload
 (defun +lookup/implementations (identifier &optional arg)
@@ -341,7 +342,7 @@ the point or current buffer."
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :implementations identifier nil arg))
-        ((error "Couldn't find the implementations of %S" identifier))))
+        ((user-error "Couldn't find the implementations of %S" (substring-no-properties identifier)))))
 
 ;;;###autoload
 (defun +lookup/type-definition (identifier &optional arg)
@@ -353,7 +354,7 @@ the point or current buffer."
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :type-definition identifier nil arg))
-        ((error "Couldn't find the definition of %S" identifier))))
+        ((user-error "Couldn't find the definition of %S" (substring-no-properties identifier)))))
 
 ;;;###autoload
 (defun +lookup/references (identifier &optional arg)
@@ -366,7 +367,7 @@ search otherwise."
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :references identifier nil arg))
-        ((error "Couldn't find references of %S" identifier))))
+        ((user-error "Couldn't find references of %S" (substring-no-properties identifier)))))
 
 ;;;###autoload
 (defun +lookup/documentation (identifier &optional arg)
@@ -378,7 +379,7 @@ for the current mode/buffer (if any), then falls back to the backends in
   (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer arg))
-        ((user-error "Couldn't find documentation for %S" identifier))))
+        ((user-error "Couldn't find documentation for %S" (substring-no-properties identifier)))))
 
 ;;;###autoload
 (defun +lookup/file (&optional path)

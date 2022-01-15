@@ -1,6 +1,6 @@
 ---
-name: 📝 Bump Package
-description: Request a pinned package be updated
+name: 📦 Update Package
+description: Request a pinned package be bumped
 labels: ["1. update", "needs-triage"]
 body:
 - type: markdown

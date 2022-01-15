@@ -152,6 +152,7 @@ Only has an effect in GUI Emacs.")
   :commands forge-create-pullreq forge-create-issue
   :preface
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
+  (setq forge-add-default-bindings (not (featurep! :editor evil +everywhere)))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)

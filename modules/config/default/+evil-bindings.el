@@ -209,11 +209,9 @@
          "M-RET" #'vertico-exit-input
          "C-SPC" #'+vertico/embark-preview
          "C-j"   #'vertico-next
-         "C-M-j" #'+vertico/next-candidate-preview
-         "C-S-j" #'vertico-next-group
+         "C-M-j" #'vertico-next-group
          "C-k"   #'vertico-previous
-         "C-M-k" #'+vertico/previous-candidate-preview
-         "C-S-k" #'vertico-previous-group)))
+         "C-M-k" #'vertico-previous-group)))
 
 
 ;;; :ui
@@ -266,11 +264,10 @@
        :v  "M-D"   #'evil-multiedit-match-and-prev
        :nv "C-M-d" #'evil-multiedit-restore
        (:after evil-multiedit
-        (:map evil-multiedit-state-map
-         "M-d"    #'evil-multiedit-match-and-next
-         "M-D"    #'evil-multiedit-match-and-prev
-         "RET"    #'evil-multiedit-toggle-or-restrict-region
-         [return] #'evil-multiedit-toggle-or-restrict-region)))
+        (:map evil-multiedit-mode-map
+         :nv "M-d" #'evil-multiedit-match-and-next
+         :nv "M-D" #'evil-multiedit-match-and-prev
+         [return]  #'evil-multiedit-toggle-or-restrict-region)))
 
       (:when (featurep! :editor snippets)
        ;; auto-yasnippet
@@ -398,7 +395,9 @@
        (:when (featurep! :tools lsp +eglot)
         :desc "LSP Execute code action" "a" #'eglot-code-actions
         :desc "LSP Rename" "r" #'eglot-rename
-        :desc "LSP Find declaration" "j" #'eglot-find-declaration)
+        :desc "LSP Find declaration"                 "j"   #'eglot-find-declaration
+        (:when (featurep! :completion vertico)
+         :desc "Jump to symbol in current workspace" "j"   #'consult-eglot-symbols))
        :desc "Compile"                               "c"   #'compile
        :desc "Recompile"                             "C"   #'recompile
        :desc "Jump to definition"                    "d"   #'+lookup/definition
@@ -412,9 +411,7 @@
        :desc "Find type definition"                  "t"   #'+lookup/type-definition
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
-       :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-       (:when (featurep! :checkers syntax)
-        :desc "List errors"                         "x"   #'flycheck-list-errors))
+       :desc "List errors"                           "x"   #'+default/diagnostics)
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -505,7 +502,7 @@
        :desc "Current file name"             "f"   #'+default/insert-file-path
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Evil ex path"                  "p"   (cmd! (evil-ex "R!echo "))
-       :desc "From evil register"            "r"   #'evil-ex-registers
+       :desc "From evil register"            "r"   #'evil-show-registers
        :desc "Snippet"                       "s"   #'yas-insert-snippet
        :desc "Unicode"                       "u"   #'insert-char
        :desc "From clipboard"                "y"   #'+default/yank-pop)
@@ -516,7 +513,7 @@
        :desc "Org agenda"                   "a" #'org-agenda
        (:when (featurep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion vertico)  #'bibtex-actions-open-entry)
+        (cond ((featurep! :completion vertico)  #'citar-open-entry)
               ((featurep! :completion ivy)      #'ivy-bibtex)
               ((featurep! :completion helm)     #'helm-bibtex)))
 
@@ -704,7 +701,7 @@
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
        :desc "Search buffer"                "b"
-       (cond ((featurep! :completion vertico)   #'consult-line)
+       (cond ((featurep! :completion vertico)   #'+default/search-buffer)
              ((featurep! :completion ivy)       #'swiper)
              ((featurep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
@@ -713,6 +710,7 @@
              ((featurep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
+       :desc "Search .emacs.d"              "e" #'+default/search-emacsd
        :desc "Locate file"                  "f" #'locate
        :desc "Jump to symbol"               "i" #'imenu
        :desc "Jump to visible link"         "l" #'link-hint-open-link

@@ -6,7 +6,8 @@
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
-Set to `default' to load no theme at all. This is changed by `load-theme'.")
+Set to `nil' to load no theme at all. This variable is changed by
+`load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
@@ -74,62 +75,20 @@ font to that size. It's rarely a good idea to do so!")
 (defvar doom-switch-frame-hook nil
   "A list of hooks run after changing the focused frame.")
 
-(defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-switch-buffer-hook'. Do not set this directly.")
-(defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-switch-window-hook'. Do not set this directly.")
-(defvar doom-inhibit-switch-frame-hooks nil
-  "Letvar for inhibiting `doom-switch-frame-hook'. Do not set this directly.")
+(defun doom-run-switch-buffer-hooks-h (&optional _)
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (inhibit-redisplay t))
+    (run-hooks 'doom-switch-buffer-hook)))
 
-(defvar doom--last-window nil)
 (defvar doom--last-frame nil)
-
-(defun doom-run-switch-window-hooks-h ()
-  (unless (or doom-inhibit-switch-window-hooks
-              (eq doom--last-window (selected-window))
-              (minibufferp))
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-window-hooks t)
-          (inhibit-redisplay t))
-      (run-hooks 'doom-switch-window-hook)
-      (setq doom--last-window (selected-window)))))
-
-(defun doom-run-switch-frame-hooks-h (&rest _)
-  (unless (or doom-inhibit-switch-frame-hooks
-              (eq doom--last-frame (selected-frame))
-              (frame-parameter nil 'parent-frame))
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-frame-hooks t))
-      (run-hooks 'doom-switch-frame-hook)
-      (setq doom--last-frame (selected-frame)))))
-
-(defun doom-run-switch-buffer-hooks-a (fn buffer-or-name &rest args)
-  (if (or doom-inhibit-switch-buffer-hooks
-          (and buffer-or-name
-               (eq (current-buffer)
-                   (get-buffer buffer-or-name)))
-          (and (eq fn #'switch-to-buffer) (car args)))
-      (apply fn buffer-or-name args)
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-buffer-hooks t)
-          (inhibit-redisplay t))
-      (when-let (buffer (apply fn buffer-or-name args))
-        (with-current-buffer (if (windowp buffer)
-                                 (window-buffer buffer)
-                               buffer)
-          (run-hooks 'doom-switch-buffer-hook))
-        buffer))))
-
-(defun doom-run-switch-to-next-prev-buffer-hooks-a (fn &rest args)
-  (if doom-inhibit-switch-buffer-hooks
-      (apply fn args)
-    (let ((gc-cons-threshold most-positive-fixnum)
-          (doom-inhibit-switch-buffer-hooks t)
-          (inhibit-redisplay t))
-      (when-let (buffer (apply fn args))
-        (with-current-buffer buffer
-          (run-hooks 'doom-switch-buffer-hook))
-        buffer))))
+(defun doom-run-switch-window-or-frame-hooks-h (&optional _)
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (inhibit-redisplay t))
+    (unless (equal (old-selected-frame) (selected-frame))
+      (run-hooks 'doom-switch-frame-hook))
+    (unless (or (minibufferp)
+                (equal (old-selected-window) (minibuffer-window)))
+      (run-hooks 'doom-switch-window-hook))))
 
 (defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -255,7 +214,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                                         buf))))
                  (user-error "Aborted")))
              (let ((inhibit-redisplay t)
-                   (doom-inhibit-switch-buffer-hooks t)
                    buffer-list-update-hook)
                (when (or ;; if there aren't more real buffers than visible buffers,
                       ;; then there are no real, non-visible buffers left.
@@ -269,7 +227,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                  (with-current-buffer buf
                    (restore-buffer-modified-p nil))
                  (kill-buffer buf)))
-             (run-hooks 'doom-switch-buffer-hook 'buffer-list-update-hook)
+             (run-hooks 'buffer-list-update-hook)
              t)))))
 
 
@@ -301,16 +259,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; so these are just clutter (the scrollbar also impacts performance). Whats
 ;; more, the menu bar exposes functionality that Doom doesn't endorse.
 ;;
-;; I am intentionally avoid using `menu-bar-mode', `tool-bar-mode', and
+;; I am intentionally not calling `menu-bar-mode', `tool-bar-mode', and
 ;; `scroll-bar-mode' because they do extra and unnecessary work that can be more
-;; concisely, and efficiently, expressed with these six lines:
+;; concisely and efficiently expressed with these six lines:
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-
-;; These are disabled directly through their frame parameters to avoid the extra
-;; work their minor modes do, but their variables must be unset too, otherwise
-;; users will have to cycle them twice to re-enable them.
+;; And set these to nil so users don't have to toggle the modes twice to
+;; reactivate them.
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
@@ -324,8 +280,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; GUIs are inconsistent across systems and themes (and will rarely match our
 ;; active Emacs theme). They impose inconsistent shortcut key paradigms too.
-;; It's best to avoid GUIs altogether and have Emacs handle the prompting, since
-;; its promtps are governed by the same rules and keybinds as the rest of Emacs.
+;; It's best to avoid them altogether and have Emacs handle the prompting.
 (setq use-dialog-box nil)
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
@@ -354,7 +309,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq resize-mini-windows 'grow-only)
 
 ;; Typing yes/no is obnoxious when y/n will do
-(fset #'yes-or-no-p #'y-or-n-p)
+(advice-add #'yes-or-no-p :override #'y-or-n-p)
 
 ;; Try to keep the cursor out of the read-only portions of the minibuffer.
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
@@ -563,7 +518,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Theme & font
 
-;; User themes should live in ~/.doom.d/themes, not ~/.emacs.d
+;; User themes should live in $DOOMDIR/themes, not ~/.emacs.d
 (setq custom-theme-directory (concat doom-private-dir "themes/"))
 
 ;; Always prioritize the user's themes above the built-in/packaged ones.
@@ -594,28 +549,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
     (put sym 'saved-face nil))
   (cond
    (doom-font
+    (when (or reload (daemonp))
+      (set-frame-font doom-font t t))
     ;; I avoid `set-frame-font' at startup because it is expensive; doing extra,
     ;; unnecessary work we can avoid by setting the frame parameter directly.
     (setf (alist-get 'font default-frame-alist)
           (cond ((stringp doom-font) doom-font)
                 ((fontp doom-font) (font-xlfd-name doom-font))
                 ((signal 'wrong-type-argument
-                         (list '(fontp stringp) doom-font)))))
-    (when reload
-      (set-frame-font doom-font t)))
+                         (list '(fontp stringp) doom-font))))))
    ((display-graphic-p)
     (setq font-use-system-font t)))
   ;; Give users a chance to inject their own font logic.
   (run-hooks 'after-setting-font-hook))
 
-(defun doom-init-theme-h (&optional frame)
+(defun doom-init-theme-h (&rest _)
   "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (custom-theme-enabled-p doom-theme)))
-    ;; Fix #1397: if `doom-init-theme-h' is used on `after-make-frame-functions'
-    ;; (for daemon sessions), the new frame must be focused to ensure the theme
-    ;; loads correctly.
-    (with-selected-frame (or frame (selected-frame))
-      (load-theme doom-theme t))))
+    (load-theme doom-theme t)))
 
 (defadvice! doom--load-theme-a (fn theme &optional no-confirm no-enable)
   "Record `doom-theme', disable old themes, and trigger `doom-load-theme-hook'."
@@ -638,12 +589,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Bootstrap
 
-(defun doom-init-ui-h ()
+(defun doom-init-ui-h (&optional _)
   "Initialize Doom's user interface by applying all its advice and hooks."
-  ;; Produce more helpful (and visible) error messages from errors emitted from
-  ;; hooks (particularly mode hooks, that usually go unnoticed otherwise.
-  (advice-add #'run-hooks :override #'doom-run-hooks)
-
   (doom-run-hooks 'doom-init-ui-hook)
 
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
@@ -651,30 +598,28 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
   ;;
-  ;; + `doom-switch-buffer-hook'
-  ;; + `doom-switch-window-hook'
-  ;; + `doom-switch-frame-hook'
+  ;; - `doom-switch-buffer-hook'
+  ;; - `doom-switch-window-hook'
+  ;; - `doom-switch-frame-hook'
   ;;
   ;; These should be done as late as possible, as not to prematurely trigger
   ;; hooks during startup.
-  (add-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
-  (add-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
-  (dolist (fn '(switch-to-next-buffer switch-to-prev-buffer))
-    (advice-add fn :around #'doom-run-switch-to-next-prev-buffer-hooks-a))
-  (dolist (fn '(switch-to-buffer display-buffer))
-    (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
+  (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
+  (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
 
-;; Apply `doom-font' et co
-(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h -100)
+  ;; Only execute this function once.
+  (remove-hook 'window-buffer-change-functions #'doom-init-ui-h))
 
-;; Apply `doom-theme'
-(add-hook (if (daemonp)
-              'after-make-frame-functions
-            'doom-after-init-modules-hook)
-          #'doom-init-theme-h
-          -90)
+;; Apply fonts and theme
+(let ((hook (if (daemonp)
+                'server-after-make-frame-hook
+              'after-init-hook)))
+  (add-hook hook #'doom-init-fonts-h -100)
+  (add-hook hook #'doom-init-theme-h -90))
 
-(add-hook 'window-setup-hook #'doom-init-ui-h 100)
+;; Initialize UI as late as possible. `window-buffer-change-functions' runs
+;; once, when the scratch/dashboard buffer is first displayed.
+(add-hook 'window-buffer-change-functions #'doom-init-ui-h -100)
 
 
 ;;

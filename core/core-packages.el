@@ -53,20 +53,18 @@ uses a straight or package.el command directly).")
 ;;; package.el
 
 ;; Ensure that, if we do need package.el, it is configured correctly. You really
-;; shouldn't be using it, but it may be convenient for quick package testing.
+;; shouldn't be using it, but it may be convenient for quickly testing packages.
 (setq package-enable-at-startup nil
       package-user-dir (concat doom-local-dir "elpa/")
-      package-gnupghome-dir (expand-file-name "gpg" package-user-dir)
-      ;; I omit Marmalade because its packages are manually submitted rather
-      ;; than pulled, so packages are often out of date with upstream.
-      package-archives
-      (let ((proto (if gnutls-verify-error "https" "http")))
-        (list (cons "gnu"   (concat proto "://elpa.gnu.org/packages/"))
-              (cons "melpa" (concat proto "://melpa.org/packages/"))
-              (cons "org"   (concat proto "://orgmode.org/elpa/")))))
+      package-gnupghome-dir (expand-file-name "gpg" package-user-dir))
 
-;; package.el has no business modifying the user's init.el
-(advice-add #'package--ensure-init-file :override #'ignore)
+(after! package
+  (let ((s (if gnutls-verify-error "s" "")))
+    (prependq! package-archives
+               ;; I omit Marmalade because its packages are manually submitted
+               ;; rather than pulled, and so often out of date.
+               `(("melpa" . ,(format "http%s://melpa.org/packages/" s))
+                 ("org"   . ,(format "http%s://orgmode.org/elpa/"   s))))))
 
 ;; Refresh package.el the first time you call `package-install', so it can still
 ;; be used (e.g. to temporarily test packages). Remember to run 'doom sync' to
@@ -302,13 +300,18 @@ processed."
           nil-value)
       plist)))
 
-(defun doom-package-dependencies (package &optional recursive _noerror)
-  "Return a list of dependencies for a package."
-  (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
-    (if recursive
-        (append deps (mapcan (lambda (dep) (doom-package-dependencies dep t t))
-                             (copy-sequence deps)))
-      (copy-sequence deps))))
+(defun doom-package-dependencies (package &optional recursive noerror)
+  "Return a list of dependencies for a package.
+
+If RECURSIVE is `tree', return a tree of dependencies.
+If RECURSIVE is nil, only return PACKAGE's immediate dependencies.
+If NOERROR, return nil in case of error."
+  (cl-check-type package symbol)
+  (let ((deps (straight-dependencies (symbol-name package))))
+    (pcase recursive
+      (`tree deps)
+      (`t (flatten-list deps))
+      (`nil (cl-remove-if #'listp deps)))))
 
 (defun doom-package-depending-on (package &optional noerror)
   "Return a list of packages that depend on PACKAGE.
@@ -320,12 +323,7 @@ non-nil."
   (unless (or (doom-package-build-recipe package)
               noerror)
     (error "Couldn't find %s, is it installed?" package))
-  (cl-loop for pkg in (hash-table-keys straight--build-cache)
-           for deps = (doom-package-dependencies pkg)
-           if (memq package deps)
-           collect pkg
-           and append (doom-package-depending-on pkg t)))
-
+  (straight-dependents (symbol-name package)))
 
 ;;; Predicate functions
 (defun doom-package-built-in-p (package)
@@ -564,10 +562,10 @@ Only use this macro in a module's (or your private) packages.el file."
 This unpins packages, so that 'doom upgrade' downloads their latest version. It
 can be used one of five ways:
 
-+ To disable pinning wholesale: (unpin! t)
-+ To unpin individual packages: (unpin! packageA packageB ...)
-+ To unpin all packages in a group of modules: (unpin! :lang :tools ...)
-+ To unpin packages in individual modules:
+- To disable pinning wholesale: (unpin! t)
+- To unpin individual packages: (unpin! packageA packageB ...)
+- To unpin all packages in a group of modules: (unpin! :lang :tools ...)
+- To unpin packages in individual modules:
     (unpin! (:lang python javascript) (:tools docker))
 
 Or any combination of the above.

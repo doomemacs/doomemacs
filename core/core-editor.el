@@ -1,7 +1,7 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
 (defvar doom-detect-indentation-excluded-modes
-  '(fundamental-mode pascal-mode so-long-mode)
+  '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
   "A list of major modes in which indentation should be automatically
 detected.")
 
@@ -159,7 +159,7 @@ tell you about it. Very annoying. This prevents that."
            (sha1 buffer-file-name))))
     (funcall fn)))
 
-;; HACK Does the same for Emacs backup files, but also packages that use
+;; HACK ...does the same for Emacs backup files, but also packages that use
 ;;      `make-backup-file-name-1' directly (like undo-tree).
 (defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
@@ -167,10 +167,11 @@ tell you about it. Very annoying. This prevents that."
   (let ((alist backup-directory-alist)
         backup-directory)
     (while alist
-      (let ((elt (pop alist)))
+      (let ((elt (car alist)))
         (if (string-match (car elt) file)
             (setq backup-directory (cdr elt)
-                  alist nil))))
+                  alist nil)
+          (setq alist (cdr alist)))))
     (let ((file (funcall fn file)))
       (if (or (null backup-directory)
               (not (file-name-absolute-p backup-directory)))
@@ -234,10 +235,6 @@ tell you about it. Very annoying. This prevents that."
 ;; Cull duplicates in the kill ring to reduce bloat and make the kill ring
 ;; easier to peruse (with `counsel-yank-pop' or `helm-show-kill-ring'.
 (setq kill-do-not-save-duplicates t)
-
-;; Allow UTF or composed text from the clipboard, even in the terminal or on
-;; non-X systems (like Windows or macOS), where only `STRING' is used.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 
 ;;
@@ -502,7 +499,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (defadvice! doom--fix-broken-smie-modes-a (fn arg)
+  (defadvice! doom--fix-broken-smie-modes-a (fn &optional arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode

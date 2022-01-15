@@ -335,3 +335,13 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
             (with-current-buffer origin
               (revert-buffer t t))))
       (user-error "Unable to open %S" file))))
+
+;;;###autoload
+(defun doom/remove-recent-file (file)
+  "Remove FILE from your recently-opened-files list."
+  (interactive
+   (list (completing-read "Remove recent file: " recentf-list
+                          nil t)))
+  (setq recentf-list (delete file recentf-list))
+  (recentf-save-list)
+  (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))

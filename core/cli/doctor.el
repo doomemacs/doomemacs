@@ -50,6 +50,17 @@ in."
   (print! (start "Checking your Emacs version..."))
   (print-group!
    (cond
+    ((string= ".50" (substring emacs-version -3))
+     (error! "Emacs development version detected (%s)" emacs-version)
+     ;; There are 2 newlines between each item to fight against
+     ;; the (fill-region) call in `doom--output-autofill'
+     (explain! "Doom supports this version, but you are using a development version of Emacs! "
+               "Be prepared for possibly weekly breakages that\n\n"
+               "\t- you will have to investigate yourself,\n\n"
+               "\t- might appear, or be solved, on any Emacs update,\n\n"
+               "\t- might depend subtly on upstream packages updates\n\n"
+               "You might need to unpin packages to get a fix for a specific commit of Emacs, "
+               "and you should be ready to downgrade Emacs if something is just not fixable."))
     (EMACS28+
      (warn! "Emacs %s detected" emacs-version)
      (explain! "Doom supports this version, but you are living on the edge! "
@@ -66,8 +77,8 @@ in."
        (let* ((version
                (cdr (doom-call-process "git" "version")))
               (version
-               (and (string-match "\\_<[0-9]+\\.[0-9]+\\(\\.[0-9]+\\)\\_>" version)
-                    (match-string 0 version))))
+               (and (string-match "git version \\([0-9]+\\(?:\\.[0-9]+\\)\\{2\\}\\)" version)
+                    (match-string 1 version))))
          (if version
              (when (version< version "2.23")
                (error! "Git %s detected! Doom requires git 2.23 or newer!"
@@ -93,11 +104,20 @@ in."
               "Emacs with the --with-json option."))
 
   (print! (start "Checking for private config conflicts..."))
-  (let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
-                             "~/.config")
-                         "/doom/"))
-        (doom-dir (or (getenv "DOOMDIR")
-                      "~/.doom.d/")))
+  (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
+                              "~/.config")
+                          "/doom/"))
+         (doom-dir (or (getenv "DOOMDIR")
+                       "~/.doom.d/"))
+         (dir (if (file-directory-p xdg-dir)
+                  xdg-dir
+                doom-dir)))
+    (when (file-equal-p dir user-emacs-directory)
+      (print! (error "Doom was cloned to %S, not ~/.emacs.d or ~/.config/emacs"
+                     (path dir)))
+      (explain! "Doom's source and your private Doom config have to live in separate directories. "
+                "Putting them in the same directory (without changing the DOOMDIR environment "
+                "variable) will cause errors on startup."))
     (when (and (not (file-equal-p xdg-dir doom-dir))
                (file-directory-p xdg-dir)
                (file-directory-p doom-dir))

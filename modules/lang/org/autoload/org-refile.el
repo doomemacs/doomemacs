@@ -8,7 +8,7 @@
 If prefix ARG, copy instead of move."
   (interactive "P")
   (let ((org-refile-targets `((,file :maxlevel . 10)))
-        (org-refile-use-outline-path nil)
+        (org-refile-use-outline-path t)
         (org-refile-keep arg)
         current-prefix-arg)
     (call-interactively #'org-refile)))

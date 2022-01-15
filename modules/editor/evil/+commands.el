@@ -33,7 +33,7 @@
 ;;; GIT
 (evil-ex-define-cmd "gist"        #'+gist:send)  ; send current buffer/region to gist
 (evil-ex-define-cmd "gistl"       #'+gist:list)  ; list gists by user
-(evil-ex-define-cmd "gbrowse"     #'+vc/browse-at-remote-file-or-region) ; show file/region in github/gitlab
+(evil-ex-define-cmd "gbrowse"     #'+vc/browse-at-remote) ; show file/region in github/gitlab
 (evil-ex-define-cmd "gissues"     #'forge-browse-issues)  ; show github issues
 (evil-ex-define-cmd "git"         #'magit-status)         ; open magit status window
 (evil-ex-define-cmd "gstage"      #'magit-stage)
@@ -78,7 +78,7 @@
 (evil-ex-define-cmd "make"        #'+evil:make)
 (evil-ex-define-cmd "mk"          #'+evil:make) ; convenience alias
 (evil-ex-define-cmd "debug"       #'+debugger/start)
-(evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
+(evil-ex-define-cmd "er[rors]"    #'+default/diagnostics)
 
 ;;; File operations
 (evil-ex-define-cmd "cp"          #'+evil:copy-this-file)

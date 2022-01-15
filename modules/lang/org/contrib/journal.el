@@ -43,8 +43,6 @@
   ;; interpret it as anything other than a date.
   (setq org-journal-carryover-items  "TODO=\"TODO\"|TODO=\"PROJ\"|TODO=\"STRT\"|TODO=\"WAIT\"|TODO=\"HOLD\"")
 
-  (set-popup-rule! "^\\*Org-journal search" :select t :quit t)
-
   (set-company-backend! 'org-journal-mode 'company-capf 'company-dabbrev)
 
   (map! (:map org-journal-mode-map

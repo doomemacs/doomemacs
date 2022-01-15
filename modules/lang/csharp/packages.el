@@ -1,11 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/csharp/packages.el
 
-(package! csharp-mode :pin "093f0f21a9d04d79a380de145cbc42693ef8c76f")
+(package! csharp-mode :pin "fe8a68e9849fc7617e0c870cacd6599b8a797638")
 (package! csproj-mode :pin "a7f0f4610c976a28c41b9b8299892f88b5d0336c")
 (package! sln-mode :pin "0f91d1b957c7d2a7bab9278ec57b54d57f1dbd9c")
-(unless (featurep! +lsp)
-  (package! omnisharp :pin "5fad6835bee15792774183164dd423ba18cf1e01"))
 (when (featurep! +unity)
   (package! shader-mode :pin "d7dc8d0d6fe8914e8b6d5cf2081ad61e6952359c"))
 (when (featurep! +dotnet)

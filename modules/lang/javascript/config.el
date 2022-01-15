@@ -142,7 +142,11 @@
     typescript-indent-level
     (or (and (bound-and-true-p tide-mode)
              (plist-get (tide-tsfmt-options) :indentSize))
-        typescript-indent-level)))
+        typescript-indent-level)
+
+    ;; Fix #5556: expand .x to className="x" instead of class="x", if
+    ;; `emmet-mode' is used.
+    emmet-expand-jsx-className? t))
 
 
 ;;

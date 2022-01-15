@@ -188,7 +188,7 @@ results buffer.")
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
     [remap describe-symbol]          #'counsel-describe-symbol
-    [remap evil-ex-registers]        #'counsel-evil-registers
+    [remap evil-show-registers]      #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
     [remap find-file]                #'counsel-find-file
@@ -368,6 +368,7 @@ results buffer.")
   :when (featurep! +fuzzy)
   :unless (featurep! +prescient)
   :defer t  ; is loaded by ivy
+  :preface (setq ivy--flx-featurep (featurep! +fuzzy))
   :init (setq ivy-flx-limit 10000))
 
 (use-package! ivy-avy

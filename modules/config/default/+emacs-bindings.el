@@ -40,9 +40,7 @@
        :desc "Find type definition"                  "t"   #'+lookup/type-definition
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
-       :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
-       (:when (featurep! :checkers syntax)
-        :desc "List errors"                         "x"   #'flycheck-list-errors)
+       :desc "List errors"                           "x"   #'+default/diagnostics
        (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "o"   #'lsp-organize-imports
@@ -66,7 +64,9 @@
        (:when (featurep! :tools lsp +eglot)
         :desc "LSP Execute code action"              "a" #'eglot-code-actions
         :desc "LSP Rename"                           "r" #'eglot-rename
-        :desc "LSP Find declaration"                 "j" #'eglot-find-declaration))
+        :desc "LSP Find declaration"                 "j" #'eglot-find-declaration
+        (:when (featurep! :completion vertico)
+         :desc "Jump to symbol in current workspace" "j" #'consult-eglot-symbols)))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -123,6 +123,7 @@
              ((featurep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
+       :desc "Search .emacs.d"              "e" #'+default/search-emacsd
        :desc "Locate file"                  "f" #'+lookup/file
        :desc "Jump to symbol"               "i" #'imenu
        :desc "Jump to visible link"         "l" #'link-hint-open-link
@@ -157,7 +158,7 @@
        :desc "Org agenda"                     "a" #'org-agenda
        (:when (featurep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion vertico)   #'bibtex-actions-open-entry)
+        (cond ((featurep! :completion vertico)   #'citar-open-entry)
               ((featurep! :completion ivy)       #'ivy-bibtex)
               ((featurep! :completion helm)      #'helm-bibtex)))
 
@@ -612,13 +613,17 @@
       ;;; smartparens
       (:after smartparens
         :map smartparens-mode-map
-        "C-M-a"     #'sp-beginning-of-sexp
-        "C-M-e"     #'sp-end-of-sexp
-        "C-M-f"     #'sp-forward-sexp
-        "C-M-b"     #'sp-backward-sexp
-        "C-M-d"     #'sp-splice-sexp
-        "C-M-k"     #'sp-kill-sexp
-        "C-M-t"     #'sp-transpose-sexp)
+        "C-M-a"           #'sp-beginning-of-sexp
+        "C-M-e"           #'sp-end-of-sexp
+        "C-M-f"           #'sp-forward-sexp
+        "C-M-b"           #'sp-backward-sexp
+        "C-M-n"           #'sp-next-sexp
+        "C-M-p"           #'sp-previous-sexp
+        "C-M-u"           #'sp-up-sexp
+        "C-M-d"           #'sp-down-sexp
+        "C-M-k"           #'sp-kill-sexp
+        "C-M-t"           #'sp-transpose-sexp
+        "C-M-<backspace>" #'sp-splice-sexp)
 
       ;;; treemacs
       (:when (featurep! :ui treemacs)

@@ -20,7 +20,9 @@ If there are conflicting keys across the two camps, the built-in ones are
 ignored. This makes it easy to override built-in snippets with private ones."
   (when (eq this-command 'yas-expand)
     (let* ((gc-cons-threshold most-positive-fixnum)
-           (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
+           (choices (condition-case _
+                        (cl-remove-duplicates choices :test #'+snippets--remove-p)
+                      (wrong-type-argument choices))))
       (if (cdr choices)
           (cl-loop for fn in (cdr (memq '+snippets-prompt-private yas-prompt-functions))
                    if (funcall fn prompt choices display-fn)

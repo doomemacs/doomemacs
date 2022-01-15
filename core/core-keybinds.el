@@ -221,10 +221,10 @@ localleader prefix."
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
   :config
-  (defvar doom--initial-which-key-replacement-alist which-key-replacement-alist)
+  (put 'which-key-replacement-alist 'initial-value which-key-replacement-alist)
   (add-hook! 'doom-before-reload-hook
     (defun doom-reset-which-key-replacements-h ()
-      (setq which-key-replacement-alist doom--initial-which-key-replacement-alist)))
+      (setq which-key-replacement-alist (get 'which-key-replacement-alist 'initial-value))))
   ;; general improvements to which-key readability
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
@@ -301,7 +301,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (setq rest nil))
                  (:prefix-map
                   (cl-destructuring-bind (prefix . desc)
-                      (doom-enlist (pop rest))
+                      (let ((arg (pop rest)))
+                        (if (consp arg) arg (list arg)))
                     (let ((keymap (intern (format "doom-leader-%s-map" desc))))
                       (setq rest
                             (append (list :desc desc prefix keymap
@@ -311,7 +312,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                             doom--map-forms))))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc)
-                      (doom-enlist (pop rest))
+                      (let ((arg (pop rest)))
+                        (if (consp arg) arg (list arg)))
                     (doom--map-set (if doom--map-fn :infix :prefix)
                                    prefix)
                     (when (stringp desc)

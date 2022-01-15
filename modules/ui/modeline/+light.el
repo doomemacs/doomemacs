@@ -499,6 +499,19 @@ lines are selected, or the NxM dimensions of a block selection.")
                 (concat (upcase (symbol-name (plist-get sys :name)))
                         "  "))))))
 
+(def-modeline-var! +modeline-pdf-page nil
+  "Display page number of pdf"
+  :local t)
+
+(defun +modeline-update-pdf-pages ()
+  "Update PDF pages."
+  (setq +modeline-pdf-page
+        (format "  P%d/%d "
+                (eval `(pdf-view-current-page))
+                (pdf-cache-number-of-pages))))
+
+(add-hook 'pdf-view-change-page-hook #'+modeline-update-pdf-pages)
+
 ;; Clearer mnemonic labels for EOL styles
 (setq eol-mnemonic-dos "CRLF"
       eol-mnemonic-mac "CR"
@@ -541,15 +554,22 @@ lines are selected, or the NxM dimensions of a block selection.")
     " " +modeline-buffer-identification)
   '("" +modeline-modes))
 
-;; (def-modeline! pdf
-;;   '("" +modeline-matches))
+(def-modeline! 'pdf
+  '(""
+    +modeline-matches
+    " "
+    +modeline-buffer-identification
+    +modeline-pdf-page)
+  `(""
+    +modeline-modes
+    "  "))
 ;; TODO (def-modeline! helm ...)
 
 
 ;; Other modes
 (set-modeline! :main 'default)
 (set-modeline-hook! '+doom-dashboard-mode-hook 'project)
-;; (set-modeline-hook! 'pdf-tools-enabled-hook 'pdf)
+(set-modeline-hook! 'pdf-tools-enabled-hook 'pdf)
 (set-modeline-hook! '(special-mode-hook
                       image-mode-hook
                       circe-mode-hook)

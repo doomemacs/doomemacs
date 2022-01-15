@@ -12,11 +12,15 @@
 
 (use-package! evil-multiedit
   :when (featurep! :editor evil)
+  :defer t)
+
+
+(use-package! iedit
+  :when (featurep! :completion vertico)
   :defer t
-  :config
-  (map! :map (evil-multiedit-state-map evil-multiedit-insert-state-map)
-        "C-n" #'evil-multiedit-next
-        "C-p" #'evil-multiedit-prev))
+  :init
+  ;; Fix conflict with embark.
+  (setq iedit-toggle-key-default nil))
 
 
 (use-package! evil-mc

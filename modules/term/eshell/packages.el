@@ -10,4 +10,4 @@
 
 (unless IS-WINDOWS
   (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
-  (package! bash-completion :pin "65e54c6f9c0ffebf94f7c505694bd249b9b53d32"))
+  (package! bash-completion :pin "c5eaeed156ab906190c662d491269230967104b1"))

@@ -21,7 +21,7 @@ about it (it will be logged to *Messages* however).")
   :commands lsp-install-server
   :init
   ;; Don't touch ~/.emacs.d, which could be purged without warning
-  (setq lsp-session-file (concat doom-etc-dir "lsp-session")
+  (setq lsp-session-file (concat doom-cache-dir "lsp-session")
         lsp-server-install-dir (concat doom-etc-dir "lsp"))
   ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
@@ -186,7 +186,8 @@ instead is more sensible."
 
   (setq lsp-ui-peek-enable (featurep! +peek)
         lsp-ui-doc-max-height 8
-        lsp-ui-doc-max-width 35
+        lsp-ui-doc-max-width 72         ; 150 (default) is too wide
+        lsp-ui-doc-delay 0.75           ; 0.2 (default) is too naggy
         lsp-ui-doc-show-with-mouse nil  ; don't disappear on mouseover
         lsp-ui-doc-position 'at-point
         lsp-ui-sideline-ignore-duplicate t
@@ -196,10 +197,7 @@ instead is more sensible."
         lsp-ui-sideline-show-hover nil
         ;; Re-enable icon scaling (it's disabled by default upstream for Emacs
         ;; 26.x compatibility; see emacs-lsp/lsp-ui#573)
-        lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default
-        ;; REVIEW Temporarily disabled, due to immense slowness on every
-        ;;        keypress. See emacs-lsp/lsp-ui#613
-        lsp-ui-doc-enable nil)
+        lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)
 
   (map! :map lsp-ui-peek-mode-map
         "j"   #'lsp-ui-peek--select-next
@@ -216,3 +214,10 @@ instead is more sensible."
 (use-package! lsp-ivy
   :when (featurep! :completion ivy)
   :commands lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)
+
+
+(use-package! consult-lsp
+  :defer t
+  :when (featurep! :completion vertico)
+  :init
+  (map! :map lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))

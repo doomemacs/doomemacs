@@ -22,16 +22,50 @@ If prefix ARG is set, prompt for a directory to search from."
   (+default/search-cwd 'other))
 
 ;;;###autoload
+(defun +default/search-emacsd ()
+  "Conduct a text search in files under `user-emacs-directory'."
+  (interactive)
+  (let ((default-directory user-emacs-directory))
+    (call-interactively
+     (cond ((featurep! :completion ivy)     #'+ivy/project-search-from-cwd)
+           ((featurep! :completion helm)    #'+helm/project-search-from-cwd)
+           ((featurep! :completion vertico) #'+vertico/project-search-from-cwd)
+           (#'rgrep)))))
+
+;;;###autoload
 (defun +default/search-buffer ()
   "Conduct a text search on the current buffer.
-If a selection is active, pre-fill the prompt with it."
+
+If a selection is active and multi-line, perform a search restricted to that
+region.
+
+If a selection is active and not multi-line, use the selection as the initial
+input and search the whole buffer for it."
   (interactive)
-  (call-interactively
-   (cond ((or (featurep! :completion helm) (featurep! :completion ivy))
-          (if (region-active-p)
-              #'swiper-isearch-thing-at-point
-            #'swiper-isearch))
-         ((featurep! :completion vertico) #'consult-line))))
+  (let (start end multiline-p)
+    (save-restriction
+      (when (region-active-p)
+        (setq start (region-beginning)
+              end   (region-end)
+              multiline-p (/= (line-number-at-pos start)
+                              (line-number-at-pos end)))
+        (deactivate-mark)
+        (when multiline-p
+          (narrow-to-region start end)))
+      (cond ((or (featurep! :completion helm)
+                 (featurep! :completion ivy))
+             (call-interactively
+              (if (and start end (not multiline-p))
+                  #'swiper-isearch-thing-at-point
+                #'swiper-isearch)))
+            ((featurep! :completion vertico)
+             (if (and start end (not multiline-p))
+                 (consult-line
+                  (replace-regexp-in-string
+                   " " "\\\\ "
+                   (rxt-quote-pcre
+                    (buffer-substring-no-properties start end))))
+               (call-interactively #'consult-line)))))))
 
 ;;;###autoload
 (defun +default/search-project (&optional arg)
@@ -67,18 +101,17 @@ If prefix ARG is set, prompt for a known project to search from."
    (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))
          current-prefix-arg))
   (let* ((projectile-project-root nil)
-         (default-directory
-           (if arg
-               (if-let (projects (projectile-relevant-known-projects))
-                   (completing-read "Search project: " projects nil t)
-                 (user-error "There are no known projects"))
-             default-directory)))
+         (dir (if arg
+                  (if-let (projects (projectile-relevant-known-projects))
+                      (completing-read "Search project: " projects nil t)
+                    (user-error "There are no known projects"))
+                default-directory)))
     (cond ((featurep! :completion ivy)
-           (+ivy/project-search nil symbol))
+           (+ivy/project-search nil symbol dir))
           ((featurep! :completion helm)
-           (+helm/project-search nil symbol))
+           (+helm/project-search nil symbol dir))
           ((featurep! :completion vertico)
-           (+vertico/project-search nil symbol))
+           (+vertico/project-search nil symbol dir))
           ((rgrep (regexp-quote symbol))))))
 
 ;;;###autoload

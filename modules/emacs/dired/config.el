@@ -102,6 +102,26 @@ we have to clean it up ourselves."
       (with-current-buffer (window-buffer ranger-preview-window)
         (local-unset-key [mouse-1]))))
 
+  (defadvice! +dired--ranger-travel-a ()
+    "Temprorary fix for this function until ralesi/ranger.el#236 gets merged."
+    :override #'ranger-travel
+    (interactive)
+    (let ((prompt "Travel: "))
+      (cond
+       ((bound-and-true-p helm-mode)
+        (ranger-find-file (helm-read-file-name prompt)))
+       ((bound-and-true-p ivy-mode)
+        (ivy-read prompt 'read-file-name-internal
+                  :matcher #'counsel--find-file-matcher
+                  :action
+                  (lambda (x)
+                    (with-ivy-window
+                     (ranger-find-file (expand-file-name x default-directory))))))
+       ((bound-and-true-p ido-mode)
+        (ranger-find-file (ido-read-file-name prompt)))
+       (t
+        (ranger-find-file (read-file-name prompt))))))
+
   (setq ranger-cleanup-on-disable t
         ranger-excluded-extensions '("mkv" "iso" "mp4")
         ranger-deer-show-details t
@@ -137,10 +157,10 @@ we have to clean it up ourselves."
   (setq dired-omit-verbose nil
         dired-omit-files
         (concat dired-omit-files
-                "\\|^.DS_Store\\'"
-                "\\|^.project\\(?:ile\\)?\\'"
-                "\\|^.\\(svn\\|git\\)\\'"
-                "\\|^.ccls-cache\\'"
+                "\\|^\\.DS_Store\\'"
+                "\\|^\\.project\\(?:ile\\)?\\'"
+                "\\|^\\.\\(?:svn\\|git\\)\\'"
+                "\\|^\\.ccls-cache\\'"
                 "\\|\\(?:\\.js\\)?\\.meta\\'"
                 "\\|\\.\\(?:elc\\|o\\|pyo\\|swp\\|class\\)\\'"))
   ;; Disable the prompt about whether I want to kill the Dired buffer for a

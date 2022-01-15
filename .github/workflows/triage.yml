@@ -4,21 +4,21 @@ on:
     - cron: '0 */12 * * *'  # twice, daily
 jobs:
   lock:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v3
         with:
           stale-issue-message: >
-            This issue has been automatically marked stale because of a lack of
-            recent activity. If this issue is still valid, reply to it or remove
-            the label or it will be closed in 7 days.
+            :warning: **This issue has been automatically marked stale because
+            due to 60 days of inactivity.** If this issue is still valid, please
+            reply to it or it will be closed in 7 days.
           stale-pr-message: >-
-            This PR has been automatically marked stale because it hasn't been
-            approved and due to a lack of recent activity (in the past 60 days).
-            If this PR is still valid or a work in progress, post a reply or
-            remove the label. It will otherwise be closed in 7 days.
-          exempt-issue-labels: ':heart:,needs-triage,backlog,help wanted,1. announcement,2. status:confirmed'
-          exempt-pr-labels:    ':heart:,needs-triage,backlog,2. status:confirmed,2. status:archived,2. status:resolved-temporarily,2. status:waiting,2. status:needs-work'
+            :warning: **This pull request has been automatically marked stale
+            due to 60 days of inactivity.** If this PR is still valid, please
+            reply to it or it will be closed in 7 days.
+          exempt-issue-labels: ':heart:,needs-triage,help wanted,1. announcement,2. status:confirmed,2. status:waiting,2. status:undecided'
+          exempt-pr-labels:    ':heart:,needs-triage,2. status:confirmed,2. status:archived,2. status:resolved-temporarily,2. status:waiting,2. status:needs-work,2. status:undecided'
           stale-issue-label: stale
           stale-pr-label: stale
           exempt-all-milestones: true
@@ -28,4 +28,3 @@ jobs:
           github-token: ${{ github.token }}
           issue-lock-inactive-days: '90'
           pr-lock-inactive-days: '90'
-          issue-lock-labels: 'locked'
