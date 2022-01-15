@@ -28,7 +28,7 @@
       (unwind-protect
           (if (= 0 (setq code (quiet! (shell-command cmdstr output errors))))
               (with-current-buffer output
-                (setq +tmux-last-command `(,cmdstr ,@args))
+                (setq +tmux-last-command `(,(substring cmdstr (+ 1 (length bin))) ,@args))
                 (buffer-string))
             (error "[%d] tmux $ %s (%s)"
                    code
@@ -61,7 +61,7 @@ but do not execute them."
 ;;;###autoload
 (defun +tmux/rerun ()
   "Rerun the last command executed by `+tmux' and `+tmux/run'."
-  (interactive "P")
+  (interactive)
   (unless +tmux-last-command
     (user-error "No last command to run"))
   (apply #'+tmux +tmux-last-command))
