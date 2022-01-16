@@ -80,7 +80,7 @@
   (unless lsp-julia-default-environment
     (setq lsp-julia-default-environment
           (or (car (last (doom-glob "~/.julia/environments/v*")))
-              "~/.julia/environments/v1.0")))
+              "~/.julia/environments/v1.6")))
   :config
   ;; See non-Jedi/lsp-julia#35
   (setq-hook! 'julia-mode-hook
@@ -94,7 +94,7 @@
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl
-  (setq eglot-jl-language-server-project "~/.julia/environments/v1.0")
+  (setq eglot-jl-language-server-project "~/.julia/environments/v1.6")
   :init
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
