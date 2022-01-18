@@ -22,11 +22,8 @@
   :config
   (setq org-cite-insert-processor 'citar
         org-cite-follow-processor 'citar
-        org-cite-activate-processor 'citar)
-  (when (featurep! :lang org +roam2)
-    ;; Include property drawer metadata for 'org-roam' v2.
-    (setq citar-file-note-org-include '(org-id org-roam-ref))))
-
+        org-cite-activate-processor 'citar
+        org-cite-global-bibliography citar-bibliography))
 
 ;; `org-cite' processors
 (use-package! oc-biblatex :after oc)
