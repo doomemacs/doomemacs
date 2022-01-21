@@ -69,10 +69,7 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
         (with-selected-window that-window
           (switch-to-buffer (doom-fallback-buffer)))
         (setq that-buffer (window-buffer that-window)))
-      (with-selected-window this-window
-        (switch-to-buffer that-buffer))
-      (with-selected-window that-window
-        (switch-to-buffer this-buffer))
+      (window-swap-states this-window that-window)
       (select-window that-window))))
 
 ;;;###autoload
