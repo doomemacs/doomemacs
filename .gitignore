@@ -11,6 +11,9 @@
 test/.local*/
 test/result
 
+# possible eaf installation
+site-lisp/
+
 # emacs tempfiles that shouldn't be there
 .dap-breakpoints
 .org-id-locations
