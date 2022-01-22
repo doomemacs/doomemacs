@@ -116,19 +116,19 @@
 
 (defmacro doom-tutorial-page! (&rest body)
   (let ((parameters (doom-tutorial-normalise-plist body)))
-    (dolist (strparam '(:instructions :title))
-      (plist-put parameters strparam
-                 (if-let ((paramvalue (plist-get parameters strparam)))
+    (dolist (strparam '(:title :instructions :template))
+      (if-let ((paramvalue (plist-get parameters strparam)))
+          (plist-put parameters strparam
                      (if (cl-every #'stringp paramvalue)
                          (apply #'concat paramvalue)
-                       `(lambda () (concat ,@paramvalue)))
-                   "")))
-    (when-let ((test (plist-get parameters :test)))
-      (plist-put parameters :test
-                 (cond
-                  ((functionp test) test)
-                  ((consp test) `(lambda () ,@test))
-                  (_ (error "Test is invalid. %S" test)))))
+                       `(lambda () (concat ,@paramvalue))))))
+    (dolist (funparam '(:setup :test))
+      (when-let ((paramvalue (plist-get parameters funparam)))
+        (plist-put parameters funparam
+                   (cond
+                    ((functionp paramvalue) paramvalue)
+                    ((consp paramvalue) `(lambda () ,@paramvalue))
+                    (_ (error "%s is invalid. %S" funparam paramvalue))))))
     `(list ,@parameters)))
 
 (defun doom-tutorial--current-page (name)
@@ -171,7 +171,17 @@
             (insert ?\n)
             (insert
              (cond ((stringp instructions) instructions)
-                   ((functionp instructions) (funcall instructions))))))))))
+                   ((functionp instructions) (funcall instructions)))))))
+      (let ((template (plist-get content :template))
+            (setup (plist-get content :setup)))
+        (with-current-buffer doom-tutorial--scratchpad-buffer-name
+          (when template
+            (erase-buffer)
+            (insert
+             (cond
+              ((stringp template) template)
+              ((functionp template) (funcall template)))))
+          (when setup (funcall setup)))))))
 
 (defun doom-tutorial--complete (name)
   (with-current-buffer doom-tutorial--instructions-buffer-name
