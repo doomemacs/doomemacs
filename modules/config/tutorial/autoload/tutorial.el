@@ -34,6 +34,38 @@
 (defvar doom-tutorials--loaded nil
   "An alist of loaded tutorials.")
 
+(defun doom-tutorial-normalise-plist (somelist)
+  (cdr (cl-reduce
+        (lambda (result new)
+          (if (keywordp new)
+              (progn (push new result)
+                     (push nil result))
+            (push new (car result)))
+          result)
+        (nreverse somelist)
+        :initial-value (list nil))))
+
+;;;###autoload
+(defmacro define-tutorial! (name &optional docstring &rest body)
+  (declare (doc-string 2) (indent defun))
+  (unless (stringp docstring)
+    (push docstring body)
+    (setq docstring nil))
+  (let ((parameters (doom-tutorial-normalise-plist body)))
+    (when (plist-get parameters :setup)
+      (plist-put parameters :setup
+                 (append (list #'progn) (plist-get parameters :setup))))
+    (when (plist-get parameters :teardown)
+      (plist-put parameters :teardown
+                 (append (list #'progn) (plist-get parameters :teardown))))
+    `(progn
+       (defun ,(intern (format "doom-tutorial-%s" name)) (&optional autotriggered)
+         ,docstring
+         (interactive "p")
+         (if autotriggered
+             (doom-tutorial-run ',name)
+           (doom-tutorial-run-maybe ',name)))
+       (doom-tutorial-register ',name ',parameters))))
 
 (defun doom-tutorial-register (name parameters)
   (push (cons name parameters) doom-tutorials--loaded)
