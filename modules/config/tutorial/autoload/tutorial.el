@@ -153,10 +153,10 @@
       (setq-local doom-tutorial-test (plist-get content :test)))))
 
 (defvar doom-tutorial-workspace-name "*tutorial*")
-(defvar doom-tutorial--old-windowconf)
+(defvar doom-tutorial--old-windowconf nil)
 
 (defvar doom-tutorial--scratchpad-buffer-name "*tutorial scratchpad*")
-(defvar doom-tutorial--scratchpad-window)
+(defvar doom-tutorial--scratchpad-window nil)
 (defvar doom-tutorial--instructions-buffer-name "*tutorial instructions*")
 (defvar doom-tutorial--cmd-log-buffer-name "*tutorial cmd-log*")
 
