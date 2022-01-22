@@ -34,6 +34,9 @@
 (defvar doom-tutorial--registered nil
   "An alist of registered tutorials.")
 
+(defvar doom-tutorial--test-interval 0.5
+  "How often to try the test function.")
+
 (defun doom-tutorial-run (name)
   "Run the tutorial NAME."
   (doom-tutorial-quit)
@@ -135,6 +138,8 @@
   (plist-put (cdr (assoc name doom-tutorial--progress)) :page page)
   page)
 
+(defvar doom-tutorial--name nil)
+(defvar doom-tutorial--test nil)
 
 (defun doom-tutorial-load-page (name &optional page)
   (let ((content (nth (or (and page
@@ -169,8 +174,16 @@
     (doom-tutorial-load-page name))
   (doom-tutorial--save-progress))
 
+(defvar doom-tutorial--test-timer nil)
+
+(defun doom-tutorial--check-test ()
+  (let ((test (buffer-local-value
+               'doom-tutorial--test
+               (get-buffer
+                doom-tutorial--instructions-buffer-name))))
     (with-current-buffer doom-tutorial--scratchpad-buffer-name
-      (setq-local doom-tutorial-test (plist-get content :test)))))
+      (when (and test (funcall test))
+        (doom-tutorial-next-page)))))
 
 (defvar doom-tutorial-workspace-name "*tutorial*")
 (defvar doom-tutorial--old-windowconf nil)
@@ -226,6 +239,8 @@
 
 (defun doom-tutorial-quit ()
   (interactive)
+  (when doom-tutorial--test-timer
+    (cancel-timer doom-tutorial--test-timer))
   (cond
    ((and (featurep! :ui workspaces)
          (+workspace-exists-p doom-tutorial-workspace-name))
