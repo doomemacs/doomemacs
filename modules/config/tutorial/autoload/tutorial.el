@@ -30,3 +30,18 @@
       (file-error
        (lwarn '(doom-tutorial-hist-file) :warning "Error writing `%s': %s"
               doom-tutorial-hist-file (caddr err))))))
+
+(defvar doom-tutorials--loaded nil
+  "An alist of loaded tutorials.")
+
+
+(defun doom-tutorial-register (name parameters)
+  (push (cons name parameters) doom-tutorials--loaded)
+  (unless (assoc name doom-tutorial--progress)
+    (push (list name :skipped nil :complete nil :page 0)
+          doom-tutorial--progress))
+  (dolist (target (plist-get parameters :triggers))
+    (advice-add target :after name))
+  (dolist (filepattern (plist-get parameters :file-triggers))
+    (add-to-list 'doom-tutorials--file-triggers (cons (eval filepattern) name))))
+
