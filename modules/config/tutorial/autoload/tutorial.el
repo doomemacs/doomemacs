@@ -39,13 +39,20 @@
 
 (defun doom-tutorial-run (name)
   "Run the tutorial NAME."
-  (doom-tutorial-quit)
-  (when-let ((tutorial (cdr (assoc name doom-tutorial--registered))))
-    (eval (plist-get tutorial :setup)))
-  (doom-tutorial-load-page name))
+  (unless (and (plist-get (cdr (assoc name doom-tutorial--progress)) :complete)
+               (not (yes-or-no-p "You have already completed this tutorial, would you like to do it again?")))
+    (when (plist-get (cdr (assoc name doom-tutorial--progress)) :complete)
+      (plist-put (cdr (assoc name doom-tutorial--progress)) :complete nil)
+      (plist-put (cdr (assoc name doom-tutorial--progress)) :page 0))
+    (doom-tutorial-quit)
+    (when-let ((tutorial (cdr (assoc name doom-tutorial--registered))))
+      (eval (plist-get tutorial :setup)))
+    (doom-tutorial-load-page name)
+    (run-at-time t doom-tutorial--test-interval #'doom-tutorial--check-test)))
 
 (defun doom-tutorial-run-maybe (name)
-  (unless (plist-get (cdr (assoc name doom-tutorial--progress)) :skipped)
+  (unless (or (plist-get (cdr (assoc name doom-tutorial--progress)) :skipped)
+              (plist-get (cdr (assoc name doom-tutorial--progress)) :complete))
     (pcase (read-char-choice
             (format "Do you want to run the %s tutorial? (y)es/(l)ater/(n)ever: "
                     (propertize (symbol-name name) 'face 'bold))
