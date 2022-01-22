@@ -125,3 +125,56 @@
              doom-modules)
     loaded-tutorials))
 
+(defvar doom-tutorial-workspace-name "*tutorial*")
+(defvar doom-tutorial--old-windowconf)
+
+(defvar doom-tutorial--scratchpad-buffer-name "*tutorial scratchpad*")
+(defvar doom-tutorial--scratchpad-window)
+(defvar doom-tutorial--instructions-buffer-name "*tutorial instructions*")
+(defvar doom-tutorial--cmd-log-buffer-name "*tutorial cmd-log*")
+
+(defun doom-tutorial-setup-3-window ()
+  (if (featurep! :ui workspaces)
+      (progn
+        (unless (+workspace-buffer-list)
+          (+workspace-delete (+workspace-current-name)))
+        (+workspace-switch doom-tutorial-workspace-name t))
+    (setq doom-tutorial--old-windowconf (current-window-configuration))
+    (delete-other-windows)
+    (switch-to-buffer (doom-fallback-buffer)))
+  ;; Setup do buffer
+  (setq doom-tutorial--scratchpad-window (selected-window))
+  (switch-to-buffer
+   (get-buffer-create doom-tutorial--scratchpad-buffer-name))
+  (erase-buffer)
+  (setq-local header-line-format "Scratch pad")
+  ;; Setup instruction buffer
+  (split-window nil nil 'right)
+  (select-window (next-window))
+  (switch-to-buffer
+   (get-buffer-create doom-tutorial--instructions-buffer-name))
+  (erase-buffer)
+  (read-only-mode 1)
+  (hide-mode-line-mode 1)
+  (setq-local header-line-format "Instructions")
+  ;; Setup cmd log buffer
+  (split-window nil (max window-min-height
+                         (/ (window-height) 3))
+                'above)
+  (switch-to-buffer
+   (get-buffer-create doom-tutorial--cmd-log-buffer-name))
+  (erase-buffer)
+  (hide-mode-line-mode 1)
+  (setq-local header-line-format "Command log")
+  (select-window doom-tutorial--scratchpad-window))
+
+(defun doom-tutorial-quit ()
+  (interactive)
+  (cond
+   ((and (featurep! :ui workspaces)
+         (+workspace-exists-p doom-tutorial-workspace-name))
+    (+workspace/delete doom-tutorial-workspace-name))
+   (doom-tutorial--old-windowconf
+    (set-window-configuration doom-tutorial--old-windowconf)
+    (setq doom-tutorial--old-windowconf nil)))
+  (doom-tutorial--save-progress))
