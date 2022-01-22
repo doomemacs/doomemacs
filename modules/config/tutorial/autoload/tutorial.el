@@ -106,7 +106,7 @@
     (push (list name :skipped nil :complete nil :page 0)
           doom-tutorial--progress))
   (dolist (target (plist-get parameters :triggers))
-    (advice-add target :after name))
+    (advice-add target :after (intern (format "doom-tutorial-%s" name))))
   (dolist (filepattern (plist-get parameters :file-triggers))
     (add-to-list 'doom-tutorials--file-triggers (cons (eval filepattern) name))))
 
