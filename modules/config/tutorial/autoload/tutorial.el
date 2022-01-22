@@ -30,11 +30,3 @@
       (file-error
        (lwarn '(doom-tutorial-hist-file) :warning "Error writing `%s': %s"
               doom-tutorial-hist-file (caddr err))))))
-
-;;;###autoload
-(defun take-the-tutorial! ()
-  "Tutorial entry point."
-  (interactive)
-  (with-current-buffer (get-buffer-create "*doom-tutorial*")
-    (switch-to-buffer (current-buffer))
-    (insert "TODO: this needs some work")))
