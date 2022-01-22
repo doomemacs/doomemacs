@@ -142,20 +142,47 @@
 (defvar doom-tutorial--test nil)
 
 (defun doom-tutorial-load-page (name &optional page)
-  (let ((content (nth (or (and page
-                               (doom-tutorial--set-page name page))
-                          (doom-tutorial--current-page name))
-                      (plist-get (cdr (assoc name doom-tutorial--registered))
-                                 :pages))))
-    (let ((instructions (plist-get content :instructions))
-          (title (plist-get content :title)))
-      (with-current-buffer doom-tutorial--instructions-buffer-name
-        (with-silent-modifications
-          (erase-buffer)
-          (insert ?\n)
-          (insert (cond
-                   ((stringp instructions) instructions)
-                   ((functionp instructions) (funcall instructions)))))))
+  "Load page PAGE of the tutorial NAME."
+  (let* ((page (or (and page
+                        (doom-tutorial--set-page name page))
+                   (doom-tutorial--current-page name)))
+         (pages (length
+                 (plist-get (cdr (assoc name doom-tutorial--registered))
+                            :pages)))
+         (content (nth page
+                       (plist-get (cdr (assoc name doom-tutorial--registered))
+                                  :pages))))
+    (if (>= page pages)
+        (doom-tutorial--complete name)
+      (let ((instructions (or (plist-get content :instructions) ""))
+            (title (or (plist-get content :title) "")))
+        (with-current-buffer doom-tutorial--instructions-buffer-name
+          (setq-local header-line-format
+                      (concat
+                       (propertize
+                        (format "Instructions (%s/%s)	"
+                                (1+ page) pages)
+                        'face '(bold org-document-title))
+                       (propertize title 'face '(bold org-document-info))))
+          (setq-local doom-tutorial--name name)
+          (setq-local doom-tutorial--test (plist-get content :test))
+          (with-silent-modifications
+            (erase-buffer)
+            (insert ?\n)
+            (insert
+             (cond ((stringp instructions) instructions)
+                   ((functionp instructions) (funcall instructions))))))))))
+
+(defun doom-tutorial--complete (name)
+  (with-current-buffer doom-tutorial--instructions-buffer-name
+    (setq-local header-line-format
+                (propertize "Finished!" 'face '(bold org-document-title))))
+  (setq-local doom-tutorial--test nil)
+  (with-silent-modifications
+    (erase-buffer)
+    (insert ?\n
+            (format "You have completed the %s tutorial!" name))))
+(plist-put (cdr (assoc name doom-tutorial--progress)) :complete t))
 
 (defun doom-tutorial-last-page ()
   (let* ((name (buffer-local-value
