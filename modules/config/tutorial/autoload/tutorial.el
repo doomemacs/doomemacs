@@ -58,6 +58,13 @@
     (when (plist-get parameters :teardown)
       (plist-put parameters :teardown
                  (append (list #'progn) (plist-get parameters :teardown))))
+    (when (plist-get parameters :pages)
+      (plist-put parameters :pages
+                 (mapcar (lambda (page)
+                           (if (eq 'page (car page))
+                               (eval `(doom-tutorial-page! ,@(cdr page)))
+                             page))
+                         (plist-get parameters :pages))))
     `(progn
        (defun ,(intern (format "doom-tutorial-%s" name)) (&optional autotriggered)
          ,docstring
@@ -66,6 +73,22 @@
              (doom-tutorial-run ',name)
            (doom-tutorial-run-maybe ',name)))
        (doom-tutorial-register ',name ',parameters))))
+
+(defmacro doom-tutorial-page! (&rest body)
+  (let ((parameters (doom-tutorial-normalise-plist body)))
+    (dolist (strparam '(:instructions :title))
+      (when-let ((paramvalue (plist-get parameters strparam)))
+        (plist-put parameters strparam
+                   (if (cl-every #'stringp paramvalue)
+                       (apply #'concat paramvalue)
+                     `(lambda () (concat ,@paramvalue))))))
+    (when-let ((test (plist-get parameters :test)))
+      (plist-put parameters :test
+                 (cond
+                  ((functionp test) test)
+                  ((consp test) `(lambda () ,@test))
+                  (_ (error "Test is invalid. %S" test)))))
+    `(list ,@parameters)))
 
 (defun doom-tutorial-register (name parameters)
   (push (cons name parameters) doom-tutorials--loaded)
