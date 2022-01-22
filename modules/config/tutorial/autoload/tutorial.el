@@ -246,6 +246,10 @@
   (with-silent-modifications
     (erase-buffer))
   (org-mode)
+  (when (bound-and-true-p spell-fu-mode)
+    (spell-fu-mode -1))
+  (when (bound-and-true-p flyspell-mode)
+    (flyspell-mode -1))
   (display-line-numbers-mode -1)
   (read-only-mode 1)
   (setq-local mode-line-format "next / prev buttons (todo)")
@@ -258,7 +262,8 @@
   (switch-to-buffer
    (get-buffer-create doom-tutorial--cmd-log-buffer-name))
   (with-silent-modifications
-    (erase-buffer))
+    (erase-buffer)
+    (insert "WIP"))
   (setq-local mode-line-format nil)
   (setq-local header-line-format
               (propertize "Command log" 'face '(bold org-document-title)))
