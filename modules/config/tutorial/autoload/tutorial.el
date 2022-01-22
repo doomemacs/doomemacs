@@ -280,14 +280,15 @@
   (select-window doom-tutorial--scratchpad-window))
 
 (defun doom-tutorial-quit ()
+  "Exit the current tutorial."
   (interactive)
   (when doom-tutorial--test-timer
     (cancel-timer doom-tutorial--test-timer))
+  (doom-tutorial--save-progress)
   (cond
    ((and (featurep! :ui workspaces)
          (+workspace-exists-p doom-tutorial-workspace-name))
     (+workspace/delete doom-tutorial-workspace-name))
    (doom-tutorial--old-windowconf
     (set-window-configuration doom-tutorial--old-windowconf)
-    (setq doom-tutorial--old-windowconf nil)))
-  (doom-tutorial--save-progress))
+    (setq doom-tutorial--old-windowconf nil))))
