@@ -151,6 +151,24 @@
           (insert (cond
                    ((stringp instructions) instructions)
                    ((functionp instructions) (funcall instructions)))))))
+
+(defun doom-tutorial-last-page ()
+  (let* ((name (buffer-local-value
+                'doom-tutorial--name
+                (get-buffer
+                 doom-tutorial--instructions-buffer-name))))
+    (doom-tutorial--set-page name (1- (doom-tutorial--current-page name)))
+    (doom-tutorial-load-page name)))
+
+(defun doom-tutorial-next-page ()
+  (let* ((name (buffer-local-value
+                'doom-tutorial--name
+                (get-buffer
+                 doom-tutorial--instructions-buffer-name))))
+    (doom-tutorial--set-page name (1+ (doom-tutorial--current-page name)))
+    (doom-tutorial-load-page name))
+  (doom-tutorial--save-progress))
+
     (with-current-buffer doom-tutorial--scratchpad-buffer-name
       (setq-local doom-tutorial-test (plist-get content :test)))))
 
