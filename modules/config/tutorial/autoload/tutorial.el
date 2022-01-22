@@ -77,3 +77,14 @@
   (dolist (filepattern (plist-get parameters :file-triggers))
     (add-to-list 'doom-tutorials--file-triggers (cons (eval filepattern) name))))
 
+;;;###autoload
+(defun doom-tutorial-load-modules ()
+  (let (loaded-tutorials)
+    (maphash (lambda (key _plist)
+               (let ((tutorial-file (doom-module-path (car key) (cdr key) "tutorial.el")))
+                 (when (file-exists-p tutorial-file)
+                   (push (cdr key) loaded-tutorials)
+                   (load tutorial-file 'noerror 'nomessage))))
+             doom-modules)
+    loaded-tutorials))
+

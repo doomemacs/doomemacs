@@ -4,3 +4,5 @@
   :commands evil-tutor-start
   :config
   (setq evil-tutor-working-directory (expand-file-name "tutor" doom-cache-dir)))
+
+(doom-tutorial-load-modules)
