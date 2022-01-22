@@ -31,12 +31,12 @@
        (lwarn '(doom-tutorial-hist-file) :warning "Error writing `%s': %s"
               doom-tutorial-hist-file (caddr err))))))
 
-(defvar doom-tutorials--loaded nil
-  "An alist of loaded tutorials.")
+(defvar doom-tutorial--registered nil
+  "An alist of registered tutorials.")
 
 (defun doom-tutorial-run (name)
   "Run the tutorial NAME."
-  (when-let ((tutorial (cdr (assoc name doom-tutorials--loaded))))
+  (when-let ((tutorial (cdr (assoc name doom-tutorial--registered))))
     (eval (plist-get tutorial :setup))))
 
 (defun doom-tutorial-run-maybe (name)
@@ -105,7 +105,7 @@
     `(list ,@parameters)))
 
 (defun doom-tutorial-register (name parameters)
-  (push (cons name parameters) doom-tutorials--loaded)
+  (push (cons name parameters) doom-tutorial--registered)
   (unless (assoc name doom-tutorial--progress)
     (push (list name :skipped nil :complete nil :page 0)
           doom-tutorial--progress))
