@@ -29,6 +29,8 @@
 ;;    -q, --quiet          Suppress the output of status information
 ;;    -                    Output to stdout instead of writing to files
 
+;; TODO output dir(s) [see org publish]
+
 (require 'cl-lib)
 (require 'ox)
 (require 'ob-tangle)
@@ -317,7 +319,7 @@ the string."
     (progress-colour . "[0;36m")
     (progress-progression . ("⠖" "⠲" "⠴" "⠦"))
     (started . nil)
-    (executing . "[0m⠶[0m")
+    (executing . "[0;33m⠔[0m")
     (tangling . "[0;35m⠶[0m")
     (completed . "[0;32m✓[0m")
     (error . "[0;31m![0m")))
@@ -585,6 +587,8 @@ the string."
             (process-org-file-1 file))
         (ignore-errors (copy-file backup file t))
         (ignore-errors (delete-file backup))))))
+
+(advice-add #'yes-or-no-p :before #'debug)
 
 (defun process-org-file-1 (file)
   ;; Prevent slow hooks from interfering
