@@ -36,8 +36,10 @@
 
 (defun doom-tutorial-run (name)
   "Run the tutorial NAME."
+  (doom-tutorial-quit)
   (when-let ((tutorial (cdr (assoc name doom-tutorial--registered))))
-    (eval (plist-get tutorial :setup))))
+    (eval (plist-get tutorial :setup)))
+  (doom-tutorial-load-page name))
 
 (defun doom-tutorial-run-maybe (name)
   (unless (plist-get (cdr (assoc name doom-tutorial--progress)) :skipped)
@@ -88,22 +90,6 @@
            (doom-tutorial-run-maybe ',name)))
        (doom-tutorial-register ',name ',parameters))))
 
-(defmacro doom-tutorial-page! (&rest body)
-  (let ((parameters (doom-tutorial-normalise-plist body)))
-    (dolist (strparam '(:instructions :title))
-      (when-let ((paramvalue (plist-get parameters strparam)))
-        (plist-put parameters strparam
-                   (if (cl-every #'stringp paramvalue)
-                       (apply #'concat paramvalue)
-                     `(lambda () (concat ,@paramvalue))))))
-    (when-let ((test (plist-get parameters :test)))
-      (plist-put parameters :test
-                 (cond
-                  ((functionp test) test)
-                  ((consp test) `(lambda () ,@test))
-                  (_ (error "Test is invalid. %S" test)))))
-    `(list ,@parameters)))
-
 (defun doom-tutorial-register (name parameters)
   (push (cons name parameters) doom-tutorial--registered)
   (unless (assoc name doom-tutorial--progress)
@@ -124,6 +110,47 @@
                    (load tutorial-file 'noerror 'nomessage))))
              doom-modules)
     loaded-tutorials))
+
+(defmacro doom-tutorial-page! (&rest body)
+  (let ((parameters (doom-tutorial-normalise-plist body)))
+    (dolist (strparam '(:instructions :title))
+      (plist-put parameters strparam
+                 (if-let ((paramvalue (plist-get parameters strparam)))
+                     (if (cl-every #'stringp paramvalue)
+                         (apply #'concat paramvalue)
+                       `(lambda () (concat ,@paramvalue)))
+                   "")))
+    (when-let ((test (plist-get parameters :test)))
+      (plist-put parameters :test
+                 (cond
+                  ((functionp test) test)
+                  ((consp test) `(lambda () ,@test))
+                  (_ (error "Test is invalid. %S" test)))))
+    `(list ,@parameters)))
+
+(defun doom-tutorial--current-page (name)
+  (plist-get (cdr (assoc name doom-tutorial--progress)) :page))
+
+(defun doom-tutorial--set-page (name page)
+  (plist-put (cdr (assoc name doom-tutorial--progress)) :page page))
+
+(defun doom-tutorial-load-page (name &optional page)
+  (let ((content (nth (or (and page
+                               (doom-tutorial--set-page name page))
+                          (doom-tutorial--current-page name))
+                      (plist-get (cdr (assoc name doom-tutorial--registered))
+                                 :pages))))
+    (let ((instructions (plist-get content :instructions))
+          (title (plist-get content :title)))
+      (with-current-buffer doom-tutorial--instructions-buffer-name
+        (with-silent-modifications
+          (erase-buffer)
+          (insert ?\n)
+          (insert (cond
+                   ((stringp instructions) instructions)
+                   ((functionp instructions) (funcall instructions)))))))
+    (with-current-buffer doom-tutorial--scratchpad-buffer-name
+      (setq-local doom-tutorial-test (plist-get content :test)))))
 
 (defvar doom-tutorial-workspace-name "*tutorial*")
 (defvar doom-tutorial--old-windowconf)
