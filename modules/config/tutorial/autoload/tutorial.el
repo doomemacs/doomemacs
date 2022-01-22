@@ -132,7 +132,9 @@
   (plist-get (cdr (assoc name doom-tutorial--progress)) :page))
 
 (defun doom-tutorial--set-page (name page)
-  (plist-put (cdr (assoc name doom-tutorial--progress)) :page page))
+  (plist-put (cdr (assoc name doom-tutorial--progress)) :page page)
+  page)
+
 
 (defun doom-tutorial-load-page (name &optional page)
   (let ((content (nth (or (and page
