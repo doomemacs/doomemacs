@@ -176,13 +176,13 @@
 (defun doom-tutorial--complete (name)
   (with-current-buffer doom-tutorial--instructions-buffer-name
     (setq-local header-line-format
-                (propertize "Finished!" 'face '(bold org-document-title))))
-  (setq-local doom-tutorial--test nil)
-  (with-silent-modifications
-    (erase-buffer)
-    (insert ?\n
-            (format "You have completed the %s tutorial!" name))))
-(plist-put (cdr (assoc name doom-tutorial--progress)) :complete t))
+                (propertize "Finished!" 'face '(bold org-document-title)))
+    (setq-local doom-tutorial--test nil)
+    (with-silent-modifications
+      (erase-buffer)
+      (insert ?\n
+              (format "You have completed the %s tutorial!" name))))
+  (plist-put (cdr (assoc name doom-tutorial--progress)) :complete t))
 
 (defun doom-tutorial-last-page ()
   (let* ((name (buffer-local-value
