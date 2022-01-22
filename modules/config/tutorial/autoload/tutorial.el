@@ -34,6 +34,20 @@
 (defvar doom-tutorials--loaded nil
   "An alist of loaded tutorials.")
 
+(defun doom-tutorial-run (name)
+  "Run the tutorial NAME."
+  (when-let ((tutorial (cdr (assoc name doom-tutorials--loaded))))
+    (eval (plist-get tutorial :setup))))
+
+(defun doom-tutorial-run-maybe (name)
+  (unless (plist-get (cdr (assoc name doom-tutorial--progress)) :skipped)
+    (pcase (read-char-choice
+            (format "Do you want to run the %s tutorial? (y)es/(l)ater/(n)ever: "
+                    (propertize (symbol-name name) 'face 'bold))
+            '(?y ?l ?n))
+      (?y (doom-tutorial-run name))
+      (?n (plist-put (cdr (assoc name doom-tutorial--progress)) :skipped nil)))))
+
 (defun doom-tutorial-normalise-plist (somelist)
   (cdr (cl-reduce
         (lambda (result new)
