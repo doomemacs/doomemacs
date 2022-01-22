@@ -173,26 +173,35 @@
   (setq doom-tutorial--scratchpad-window (selected-window))
   (switch-to-buffer
    (get-buffer-create doom-tutorial--scratchpad-buffer-name))
-  (erase-buffer)
-  (setq-local header-line-format "Scratch pad")
+  (with-silent-modifications
+    (erase-buffer))
+  (fundamental-mode)
+  (setq-local header-line-format
+              (propertize "Scratch pad" 'face '(bold org-document-title)))
   ;; Setup instruction buffer
   (split-window nil nil 'right)
   (select-window (next-window))
   (switch-to-buffer
    (get-buffer-create doom-tutorial--instructions-buffer-name))
-  (erase-buffer)
+  (with-silent-modifications
+    (erase-buffer))
+  (org-mode)
+  (display-line-numbers-mode -1)
   (read-only-mode 1)
-  (hide-mode-line-mode 1)
-  (setq-local header-line-format "Instructions")
+  (setq-local mode-line-format "next / prev buttons (todo)")
+  (setq-local header-line-format
+              (propertize "Instructions" 'face '(bold org-document-title)))
   ;; Setup cmd log buffer
   (split-window nil (max window-min-height
                          (/ (window-height) 3))
                 'above)
   (switch-to-buffer
    (get-buffer-create doom-tutorial--cmd-log-buffer-name))
-  (erase-buffer)
-  (hide-mode-line-mode 1)
-  (setq-local header-line-format "Command log")
+  (with-silent-modifications
+    (erase-buffer))
+  (setq-local mode-line-format nil)
+  (setq-local header-line-format
+              (propertize "Command log" 'face '(bold org-document-title)))
   (select-window doom-tutorial--scratchpad-window))
 
 (defun doom-tutorial-quit ()
