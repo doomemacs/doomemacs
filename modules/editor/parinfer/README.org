@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor parinfer][Issues]]  ↖ [[doom-source:modules/editor/parinfer/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor parinfer][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/parinfer/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :editor parinfer
 #+SUBTITLE: For lispers that like Python more (i.e. nobody)

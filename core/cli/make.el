@@ -1,7 +1,7 @@
 ;;; core/cli/make.el -*- lexical-binding: t; -*-
 
 (defvar doom-cli-docs-menu
-  `(("docs/*.org"
+  `((("docs/*.org" "modules/README.org")
      (left ("← Back to index" . "doom-index:")))
     ("docs/index.org"
      (left ("↖ FAQ" . "doom-faq:")))
@@ -15,10 +15,10 @@
 
 (defvar doom-cli-docs-common-menu
   `(("↖ Github"
-     . ,(fn! (&key category readme)
-          (if category
-              (format "doom-source:modules/%s" (string-remove-prefix "./" (file-name-directory readme)))
-            (format "doom-source:%s" (string-remove-prefix "./../" readme)))))
+     . ,(fn! (&key readme)
+          (if (file-exists-p! readme doom-modules-dir)
+              (format "doom-repo:tree/develop/modules/%s" (string-remove-prefix "./" (file-name-directory readme)))
+            (format "doom-repo:tree/develop/%s" (string-remove-prefix "./../" readme)))))
     ("± Suggest edits" . "doom-suggest-edit:")
     ("? Help"
      . ,(fn! (&key title)

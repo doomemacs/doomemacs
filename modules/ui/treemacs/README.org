@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui treemacs][Issues]]  ↖ [[doom-source:modules/ui/treemacs/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui treemacs][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/treemacs/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :ui treemacs
 #+SUBTITLE: A sidebar for all the things

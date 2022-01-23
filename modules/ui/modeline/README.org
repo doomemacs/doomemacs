@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui modeline][Issues]]  ↖ [[doom-source:modules/ui/modeline/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui modeline][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/modeline/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :ui modeline
 #+SUBTITLE: Snazzy, Atom-inspired modeline, plus API

@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui hydra][Issues]]  ↖ [[doom-source:modules/ui/hydra/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui hydra][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/hydra/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :ui hydra
 #+SUBTITLE: Discount modality for mythological beast hunters

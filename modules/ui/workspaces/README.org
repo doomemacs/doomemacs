@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui workspaces][Issues]]  ↖ [[doom-source:modules/ui/workspaces/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui workspaces][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/workspaces/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :ui workspaces
 #+SUBTITLE: Tab emulation, persistence, & separate workspaces

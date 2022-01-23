@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::os macos][Issues]]  ↖ [[doom-source:modules/os/macos/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::os macos][Issues]]  ↖ [[doom-repo:tree/develop/modules/os/macos/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :os macos
 #+SUBTITLE: Compatibility for our favorite walled garden

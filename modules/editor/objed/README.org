@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor objed][Issues]]  ↖ [[doom-source:modules/editor/objed/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor objed][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/objed/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :editor objed
 #+SUBTITLE: Text object editing for the innocent
