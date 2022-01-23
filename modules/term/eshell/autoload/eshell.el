@@ -113,7 +113,7 @@
 
 ;;;###autoload
 (defun +eshell/here (&optional command)
-  "Open eshell in the current buffer."
+  "Open eshell in the current window."
   (interactive "P")
   (let ((buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
