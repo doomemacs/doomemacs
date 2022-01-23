@@ -171,6 +171,7 @@
                                 (1+ page) pages)
                         'face '(bold org-document-title))
                        (propertize title 'face '(bold org-document-info))))
+          (doom-tutorial--set-info-modeline page pages)
           (setq-local doom-tutorial--name name)
           (setq-local doom-tutorial--test (plist-get content :test))
           (setq doom-tutorial--cmd-log nil)
@@ -193,6 +194,33 @@
               ((stringp template) template)
               ((functionp template) (funcall template)))))
           (when setup (funcall setup)))))))
+
+(defun doom-tutorial--set-info-modeline (page npages)
+  (with-current-buffer doom-tutorial--instructions-buffer-name
+    (setq-local mode-line-format
+                (with-temp-buffer
+                  (insert " ")
+                  (if (> page 0)
+                      (insert-text-button
+                       "previous"
+                       'action (lambda (_) (doom-tutorial-last-page))
+                       'face 'org-link
+                       'help-echo "Go to previous step"
+                       'follow-link t)
+                    (insert
+                     (propertize "previous" 'face 'font-lock-comment-face)))
+                  (insert " / ")
+                  (if (> npages (1+ page))
+                      (insert-text-button
+                       "next"
+                       'action (lambda (_) (doom-tutorial-next-page))
+                       'face 'org-link
+                       'help-echo "Go to next step"
+                       'follow-link t)
+                    (insert
+                     (propertize "next" 'face 'font-lock-comment-face)))
+                  (insert " step")
+                  (buffer-string)))))
 
 (defun doom-tutorial--complete (name)
   (with-current-buffer doom-tutorial--instructions-buffer-name
@@ -343,7 +371,6 @@
   (when (featurep 'org-superstar)
     (setq-local org-superstar-remove-leading-stars t)
     (org-superstar-restart))
-  (setq-local mode-line-format "next / prev buttons (todo)")
   (setq-local header-line-format
               (propertize "Instructions" 'face '(bold org-document-title)))
   ;; Setup cmd log buffer
