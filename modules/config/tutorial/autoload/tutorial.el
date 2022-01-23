@@ -173,6 +173,7 @@
                        (propertize title 'face '(bold org-document-info))))
           (setq-local doom-tutorial--name name)
           (setq-local doom-tutorial--test (plist-get content :test))
+          (setq doom-tutorial--cmd-log nil)
           (with-silent-modifications
             (erase-buffer)
             (insert ?\n)
@@ -184,6 +185,7 @@
         (with-current-buffer doom-tutorial--scratchpad-buffer-name
           (setq-local header-line-format
                       (propertize "Scratch pad" 'face '(bold org-document-title)))
+          (add-hook 'pre-command-hook #'doom-tutorial--log-cmd nil t)
           (when template
             (erase-buffer)
             (insert
@@ -230,6 +232,70 @@
     (with-current-buffer doom-tutorial--scratchpad-buffer-name
       (when (and test (funcall test))
         (doom-tutorial-next-page)))))
+
+(defvar doom-tutorial--cmd-log nil)
+
+(defvar doom-tutorial--cmd-log-ignore
+  '(nil self-insert-command backward-char forward-char
+        delete-char delete-backward-char backward-delete-char
+        backward-delete-char-untabify
+        universal-argument universal-argument-other-key
+        universal-argument-minus universal-argument-more
+        beginning-of-line end-of-line recenter
+        move-end-of-line move-beginning-of-line
+        handle-switch-frame
+        newline previous-line next-line)
+  "A list of commands which should not be logged.")
+
+(defun doom-tutorial--log-cmd (&optional cmd)
+  (when (string= (buffer-name) doom-tutorial--scratchpad-buffer-name)
+    (let ((cmd (or cmd this-command))
+          (keys (this-command-keys)))
+      (cond
+       ((memq cmd doom-tutorial--cmd-log-ignore)
+        nil)
+       ((eq cmd (caar doom-tutorial--cmd-log))
+        (setf (cadar doom-tutorial--cmd-log)
+              (1+ (cadar doom-tutorial--cmd-log)))
+        (with-current-buffer doom-tutorial--cmd-log-buffer-name
+          (goto-char (point-max))
+          (forward-char -1)
+          (kill-whole-line))
+        (doom-tutorial--log-cmd-insert))
+       (t
+        (push (list cmd 1 keys (current-time))
+              doom-tutorial--cmd-log)
+        (doom-tutorial--log-cmd-insert))))))
+
+(defun doom-tutorial--log-cmd-insert (&optional entry)
+  (let ((entry (or entry (car doom-tutorial--cmd-log))))
+    (with-current-buffer doom-tutorial--cmd-log-buffer-name
+      (goto-char (point-max))
+      (insert
+       (propertize (format-time-string "%H:%M:%S" (cadddr entry))
+                   'face '((:height 0.9) font-lock-type-face))
+       " ")
+      (let ((action (car entry)))
+        (cond
+         ((symbolp action)
+          (insert-text-button
+           (symbol-name action)
+           'action `(lambda (_) (helpful-callable ',(car entry)))
+           'face 'underline
+           'help-echo "Open help page"
+           'follow-link t))
+         ((functionp action)
+          (insert (propertize "anonymous function" 'face 'italic)))))
+      (when-let ((keys (caddr entry)))
+        (insert
+         (propertize (format " (%s)" (key-description keys))
+                     'face 'font-lock-keyword-face)))
+      (when (> (cadr entry) 1)
+        (insert
+         (propertize (format " × %d" (cadr entry))
+                     'face 'font-lock-doc-face)))
+      (insert ?\n)
+      (set-window-point nil (point-max)))))
 
 (defvar doom-tutorial-workspace-name "*tutorial*")
 (defvar doom-tutorial--old-windowconf nil)
@@ -287,13 +353,13 @@
   (switch-to-buffer
    (get-buffer-create doom-tutorial--cmd-log-buffer-name))
   (with-silent-modifications
-    (erase-buffer)
-    (insert "WIP"))
+    (erase-buffer))
   (when (bound-and-true-p solaire-mode)
     (solaire-mode -1))
-  (setq-local mode-line-format nil)
-  (setq-local header-line-format
-              (propertize "Command log" 'face '(bold org-document-title)))
+  (setq-local mode-line-format nil
+              header-line-format
+              (propertize "Command log" 'face '(bold org-document-title))
+              scroll-margin 0)
   (select-window doom-tutorial--scratchpad-window))
 
 (defun doom-tutorial-quit ()
