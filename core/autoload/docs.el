@@ -87,6 +87,7 @@
               (cl-pushnew beg doom--docs-babel-cache)
               (quiet! (org-babel-execute-src-block))
               (setq results (org-babel-where-is-src-block-result))
+              (org-element-cache-refresh beg)
               (restore-buffer-modified-p nil)))
           (save-excursion
             (when results
@@ -103,7 +104,8 @@
           (dolist (pos doom--docs-babel-cache)
             (goto-char pos)
             (org-babel-remove-result)
-            (restore-buffer-modified-p nil)))))))
+            (org-element-cache-refresh pos))
+          (restore-buffer-modified-p nil))))))
 
 (defvar doom--docs-macro-cache nil)
 (defun doom--docs-expand-macros-h ()
@@ -126,7 +128,8 @@
                                      `(display ,value))))
           (remove-text-properties (match-beginning 0)
                                   (match-end 0)
-                                  '(display)))))))
+                                  '(display))))
+      (org-element-cache-refresh (point)))))
 
 (defvar doom--docs-kbd-alist
   (let ((evilp (featurep! :editor evil)))
@@ -147,7 +150,8 @@
                          ,(let ((kbd (match-string-no-properties 1)))
                             (dolist (rep doom--docs-kbd-alist kbd)
                               (setq kbd (replace-regexp-in-string (car rep) (cdr rep) kbd))))))
-            (remove-text-properties beg end '(display)))))
+            (remove-text-properties beg end '(display)))
+          (org-element-cache-refresh beg)))
       (restore-buffer-modified-p nil))))
 
 (defun doom--docs-realign-tables-h ()
@@ -157,6 +161,7 @@
     (while (re-search-forward org-table-line-regexp nil t)
       (let ((inhibit-read-only t))
         (org-table-align)))
+    (org-element-cache-refresh (point))
     (restore-buffer-modified-p nil)))
 
 (defvar doom-docs-mode-alist
