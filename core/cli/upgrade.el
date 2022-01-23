@@ -13,8 +13,25 @@ following shell commands:
     bin/doom clean
     bin/doom sync -u"
   :bare t
-  (let ((doom-auto-discard force-p))
+  (let ((doom-auto-discard force-p)
+        (default-directory doom-emacs-dir))
     (cond
+     ((equal (replace-regexp-in-string
+              "^\\(?:[^/]+/[^/]+/\\)?\\(.+\\)\\(?:~[0-9]+\\)?$" "\\1"
+              (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD")))
+             "develop")
+      (print! (warn "Doom's primary branch has changed to 'master'. The develop branch will no\nlonger recieve updates and will eventually be deleted.\n"))
+      (if (not (or force-p (y-or-n-p "Switch to the master branch?")))
+          (error! "Aborting...")
+        (print! (info "Switching to master branch"))
+        (let ((remote
+               (cdr (doom-call-process "git" "config" "--get" "branch.develop.remote"))))
+          (doom-call-process "git" "config" (format "remote.%s.fetch" remote) (format "+refs/heads/*:refs/remotes/%s/*" remote))
+          (doom-call-process "git" "fetch" "--append" remote "master")
+          (doom-call-process "git" "checkout" "--track" (format "%s/master" remote))
+          (print! (info "Reloading Doom Emacs"))
+          (throw 'exit (list "doom" "upgrade" (if force-p "-f"))))))
+
      (packages-only-p
       (doom-cli-execute "sync" "-u")
       (print! (success "Finished upgrading Doom Emacs")))

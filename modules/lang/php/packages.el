@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/php/packages.el
 
-(package! php-boris :pin "f2faebf610c917f7091f7ec0cd97645629c4f819")
+(package! psysh :pin "21250984ad8137aa3440ac12e52475ef03f19fcb")
 (package! php-extras
   :recipe (:host github :repo "arnested/php-extras")
   :pin "d410c5af663c30c01d461ac476d1cbfbacb49367")

@@ -139,13 +139,13 @@ Doom is an active and ongoing project. To make that development more
 transparent, its roadmap (and other concerns) are published across three github
 project boards and a newsletter:
 
-+ [Development Roadmap](https://github.com/hlissner/doom-emacs/projects/3):
++ [Development Roadmap](https://github.com/orgs/doomemacs/projects/6):
   roughly outlines our goals between release milestones and their progress.
-+ [Plugins under review](https://github.com/hlissner/doom-emacs/projects/2):
++ [Plugins under review](https://github.com/orgs/doomemacs/projects/5):
   lists plugins we are watching and considering for inclusion, and what their
   status for inclusion is. Please consult this list before requesting new
   packages/features.
-+ [Upstream bugs](https://github.com/hlissner/doom-emacs/projects/5): lists
++ [Upstream bugs](https://github.com/orgs/doomemacs/projects/7): lists
   issues that originate from elsewhere, and whether or not we have local
   workarounds or temporary fixes for them.
 + ~~Doom's newsletter~~ (not finished) will contain changelogs in between

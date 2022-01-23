@@ -13,3 +13,14 @@ ignore the cache."
                                (require 'json)
                                (json-read-file package-file)))
             (puthash project-root data +php-composer-conf))))))
+
+;;
+;;; Commands
+
+
+;;;###autoload
+(defun +php/open-repl ()
+  "Open PHP REPL."
+  (interactive)
+  (psysh)
+  (pop-to-buffer (current-buffer)))

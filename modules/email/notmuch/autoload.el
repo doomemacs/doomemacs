@@ -32,7 +32,7 @@
     (+workspace/delete "*MAIL*")))
 
 (defun +notmuch-get-sync-command ()
-  "Return a shell command string to synchronize your notmuch mmail with."
+  "Return a shell command string to synchronize your notmuch mail with."
   (let* ((afew-cmd "afew -a -t")
          (sync-cmd
           (pcase +notmuch-sync-backend

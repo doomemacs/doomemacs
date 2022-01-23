@@ -122,7 +122,10 @@
                     'jsx-tide)))))
   :config
   (when (fboundp 'web-mode)
-    (define-derived-mode typescript-tsx-mode web-mode "TypeScript-TSX"))
+    (define-derived-mode typescript-tsx-mode web-mode "TypeScript-TSX")
+    (when (featurep! +lsp)
+      (after! lsp-mode
+        (add-to-list 'lsp--formatting-indent-alist '(typescript-tsx-mode . typescript-indent-level)))))
 
   (set-docsets! '(typescript-mode typescript-tsx-mode)
     :add "TypeScript" "AngularTS")

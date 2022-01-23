@@ -10,7 +10,7 @@
   ;; Used by `compile' (SPC c c)
   (setq-hook! 'f90-mode-hook
     compile-command "gfortran "
-    compilation-buffer-name-function #'+fortran/compilation-buffer-name)
+    compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn)
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP Configuration --- ;;
@@ -41,7 +41,7 @@
   ;; Used by `compile' (SPC c c)
   (setq-hook! 'fortran-mode-hook ; TODO These work for f90 but not for fortran.
     compile-command "gfortran -std=legacy "
-    compilation-buffer-name-function #'+fortran/compilation-buffer-name)
+    compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn)
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP --- ;;

@@ -205,12 +205,12 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 ;;; Sugars
 
 (defun dir! ()
-  "Returns the directory of the emacs lisp file this macro is called from."
+  "Returns the directory of the emacs lisp file this function is called from."
   (when-let (path (file!))
     (directory-file-name (file-name-directory path))))
 
 (defun file! ()
-  "Return the emacs lisp file this macro is called from."
+  "Return the emacs lisp file this function is called from."
   (cond ((bound-and-true-p byte-compile-current-file))
         (load-file-name)
         ((stringp (car-safe current-load-list))
