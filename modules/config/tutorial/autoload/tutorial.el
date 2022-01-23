@@ -263,12 +263,20 @@
   (with-silent-modifications
     (erase-buffer))
   (org-mode)
+  (read-only-mode 1)
   (when (bound-and-true-p spell-fu-mode)
     (spell-fu-mode -1))
   (when (bound-and-true-p flyspell-mode)
     (flyspell-mode -1))
+  (when (bound-and-true-p writegood-mode)
+    (writegood-mode -1))
+  (when (bound-and-true-p solaire-mode)
+    (solaire-mode -1))
   (display-line-numbers-mode -1)
-  (read-only-mode 1)
+  (org-indent-mode -1)
+  (when (featurep 'org-superstar)
+    (setq-local org-superstar-remove-leading-stars t)
+    (org-superstar-restart))
   (setq-local mode-line-format "next / prev buttons (todo)")
   (setq-local header-line-format
               (propertize "Instructions" 'face '(bold org-document-title)))
@@ -281,6 +289,8 @@
   (with-silent-modifications
     (erase-buffer)
     (insert "WIP"))
+  (when (bound-and-true-p solaire-mode)
+    (solaire-mode -1))
   (setq-local mode-line-format nil)
   (setq-local header-line-format
               (propertize "Command log" 'face '(bold org-document-title)))
