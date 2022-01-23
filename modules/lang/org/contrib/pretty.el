@@ -22,3 +22,6 @@
   :hook (org-mode . org-fancy-priorities-mode)
   :hook (org-agenda-mode . org-fancy-priorities-mode)
   :config (setq org-fancy-priorities-list '("⚑" "⬆" "■")))
+
+(use-package! org-pretty-table ; "prettier" tables
+  :hook (org-mode . org-pretty-table-mode))
