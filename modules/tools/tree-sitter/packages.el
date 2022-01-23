@@ -9,4 +9,4 @@
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-textobj-tree-sitter
-    :pin "08823ff97277fe50540d8226c7d298e06fb14932"))
+    :pin "607b71f38a1b2d7fa464814d968427435d31dd7c"))
