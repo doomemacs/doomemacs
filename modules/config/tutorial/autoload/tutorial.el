@@ -182,6 +182,8 @@
       (let ((template (plist-get content :template))
             (setup (plist-get content :setup)))
         (with-current-buffer doom-tutorial--scratchpad-buffer-name
+          (setq-local header-line-format
+                      (propertize "Scratch pad" 'face '(bold org-document-title)))
           (when template
             (erase-buffer)
             (insert
@@ -253,8 +255,6 @@
   (with-silent-modifications
     (erase-buffer))
   (fundamental-mode)
-  (setq-local header-line-format
-              (propertize "Scratch pad" 'face '(bold org-document-title)))
   ;; Setup instruction buffer
   (split-window nil nil 'right)
   (select-window (next-window))
