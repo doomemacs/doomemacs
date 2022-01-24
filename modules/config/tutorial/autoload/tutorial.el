@@ -325,6 +325,12 @@
       (insert ?\n)
       (set-window-point nil (point-max)))))
 
+(defun doom-tutorial-cmd-log-startswith (sequence)
+  "Check if the command log most recently recorded SEQUENCE of symbols."
+  (and (>= (length doom-tutorial--cmd-log) (length sequence))
+       (equal (reverse sequence)
+              (cl-subseq (mapcar #'car doom-tutorial--cmd-log) 0 (length sequence)))))
+
 (defvar doom-tutorial-workspace-name "*tutorial*")
 (defvar doom-tutorial--old-windowconf nil)
 
