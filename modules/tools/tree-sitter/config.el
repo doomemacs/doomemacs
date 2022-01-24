@@ -11,12 +11,19 @@
 
 (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
 (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
+(defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
+(defvar +tree-sitter-goto-next-map (make-sparse-keymap))
 
 (defvar +tree-sitter-keys-mode-map
   (let ((keymap (make-sparse-keymap)))
+    ;; ts text objects
     (evil-define-key '(visual operator) '+tree-sitter-keys-mode
       "i" +tree-sitter-inner-text-objects-map
       "a" +tree-sitter-outer-text-objects-map)
+    ;; ts goto nodes
+    (evil-define-key 'normal '+tree-sitter-keys-mode
+      "[g" +tree-sitter-goto-previous-map
+      "]g" +tree-sitter-goto-next-map)
     keymap)
   "Basic keymap for tree sitter text objects")
 
@@ -43,7 +50,25 @@
          "C" (evil-textobj-tree-sitter-get-textobj "class.outer")
          "c" (evil-textobj-tree-sitter-get-textobj "comment.outer")
          "i" (evil-textobj-tree-sitter-get-textobj "conditional.outer")
-         "l" (evil-textobj-tree-sitter-get-textobj "loop.outer")))
+         "l" (evil-textobj-tree-sitter-get-textobj "loop.outer"))
+
+        (:map +tree-sitter-goto-previous-map
+         "a" (+tree-sitter-goto-textobj "parameter.outer" t)
+         "f" (+tree-sitter-goto-textobj "function.outer" t)
+         "F" (+tree-sitter-goto-textobj "call.outer" t)
+         "C" (+tree-sitter-goto-textobj "class.outer" t)
+         "c" (+tree-sitter-goto-textobj "comment.outer" t)
+         "i" (+tree-sitter-goto-textobj "conditional.outer" t)
+         "l" (+tree-sitter-goto-textobj "loop.outer" t))
+        (:map +tree-sitter-goto-next-map
+         "a" (+tree-sitter-goto-textobj "parameter.outer")
+         "f" (+tree-sitter-goto-textobj "function.outer")
+         "F" (+tree-sitter-goto-textobj "call.outer")
+         "C" (+tree-sitter-goto-textobj "class.outer")
+         "c" (+tree-sitter-goto-textobj "comment.outer")
+         "i" (+tree-sitter-goto-textobj "conditional.outer")
+         "l" (+tree-sitter-goto-textobj "loop.outer")))
+
 
   (after! which-key
     (setq which-key-allow-multiple-replacements t)
