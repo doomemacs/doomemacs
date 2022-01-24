@@ -12,6 +12,7 @@
 - [[#features][Features]]
   - [[#language-support][Language support]]
   - [[#text-objects][Text Objects]]
+  - [[#goto-certain-nodes][Goto certain nodes]]
 - [[#configuration][Configuration]]
   - [[#disable-text-objects-for-certain-modes][Disable text objects for certain modes]]
   - [[#adding-your-own-text-objects][Adding your own text objects]]
@@ -75,6 +76,11 @@ Currently text objects are bound to:
 | =l= | loop                |
 
 They are used in a container context (not =vf= but =vaf= or =vif=)
+
+** Goto certain nodes
+you can also jump to the next / previous node type in a buffer by using =[g=
+or =]g= respectfully, the following key will correspond to the text object you
+want to jump to
 
 * Configuration
 ** Disable text objects for certain modes
