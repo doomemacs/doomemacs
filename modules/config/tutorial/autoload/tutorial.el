@@ -165,12 +165,10 @@
             (title (or (plist-get content :title) "")))
         (with-current-buffer doom-tutorial--instructions-buffer-name
           (setq-local header-line-format
-                      (concat
                        (propertize
-                        (format "Instructions (%s/%s)	"
-                                (1+ page) pages)
-                        'face '(bold org-document-title))
-                       (propertize title 'face '(bold org-document-info))))
+                        (format "Step %s/%s:	%s"
+                                (1+ page) pages title)
+                        'face '(bold org-document-title)))
           (doom-tutorial--set-info-modeline page pages)
           (setq-local doom-tutorial--name name)
           (setq-local doom-tutorial--test (plist-get content :test))
@@ -364,6 +362,7 @@
     (erase-buffer))
   (org-mode)
   (read-only-mode 1)
+  (setq-local org-hide-emphasis-markers t)
   (when (bound-and-true-p spell-fu-mode)
     (spell-fu-mode -1))
   (when (bound-and-true-p flyspell-mode)
