@@ -58,7 +58,7 @@ they are still being worked on.
 * Features
 ** Language support
 Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
-highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]].
+highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]] as well as ~typescript-tsx-mode~
 
 ** Text Objects
 Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
