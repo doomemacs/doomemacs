@@ -82,7 +82,11 @@
 (defun +eval/region (beg end)
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
-  (let ((load-file-name buffer-file-name))
+  (let ((load-file-name buffer-file-name)
+        (load-true-file-name
+         (or buffer-file-truename
+             (if buffer-file-name
+                 (file-truename buffer-file-name)))))
     (cond ((and (fboundp '+eval--ensure-in-repl-buffer)
                 (ignore-errors
                   (get-buffer-window (or (+eval--ensure-in-repl-buffer)
