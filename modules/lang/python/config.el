@@ -265,6 +265,7 @@
   ;; explicitly. Afterwards, run M-x `conda-env-activate' to switch between
   ;; environments
   (or (cl-loop for dir in (list conda-anaconda-home
+                                "~/.conda"
                                 "~/.anaconda"
                                 "~/.miniconda"
                                 "~/.miniconda3"
