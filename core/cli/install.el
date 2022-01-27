@@ -4,7 +4,8 @@
     ((noconfig-p  ["--no-config"]  "Don't create DOOMDIR or dummy files therein")
      (noenv-p     ["--no-env"]     "Don't generate an envvars file (see 'doom help env')")
      (noinstall-p ["--no-install"] "Don't auto-install packages")
-     (nofonts-p   ["--no-fonts"]   "Don't install (or prompt to install) all-the-icons fonts"))
+     (nofonts-p   ["--no-fonts"]   "Don't install (or prompt to install) all-the-icons fonts")
+     (nohooks-p   ["--no-hooks"]   "Don't deploy git hooks"))
   "Installs and sets up Doom Emacs for the first time.
 
 This command does the following:
@@ -73,8 +74,10 @@ name. e.g.
     (print! "Regenerating autoloads files")
     (doom-autoloads-reload)
 
-    (print! "Deploying commit-msg and pre-push git hooks")
-    (doom-cli--ci-deploy-hooks)
+    (if nohooks-p
+        (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))
+      (print! "Deploying commit-msg and pre-push git hooks")
+      (doom-cli--ci-deploy-hooks))
 
     (cond (nofonts-p)
           (IS-WINDOWS
