@@ -181,6 +181,7 @@ variable for an explanation of the defaults (in comments). See
       magit-todos
       markdown-mode
       monky
+      mpc
       mu4e
       mu4e-conversation
       neotree
