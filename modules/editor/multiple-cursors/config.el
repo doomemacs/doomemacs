@@ -53,7 +53,19 @@
   (defvar evil-mc-key-map (make-sparse-keymap))
 
   :config
-  (global-evil-mc-mode +1)
+  ;; HACK evil-mc's design is bizarre. Its variables and hooks are lazy loaded
+  ;;   rather than declared at top-level, some hooks aren't defined or
+  ;;   documented, it's a bit initializer-function drunk, and its minor modes
+  ;;   are intended to be perpetually active -- even when no cursors are active
+  ;;   (causing #6021). I undo all of that here.
+  (evil-mc-define-vars)
+  (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
+  (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
+  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
+  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
+  (advice-add #'evil-mc-initialize-hooks :override #'ignore)
+  (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
+  (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
 
   ;; REVIEW This is tremendously slow on macos and windows for some reason.
   (setq evil-mc-enable-bar-cursor (not (or IS-MAC IS-WINDOWS)))
