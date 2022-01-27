@@ -152,7 +152,7 @@ more information on modifiers."
     (select-window (split-window origwin count 'below))
     (unless evil-split-window-below
       (select-window origwin)))
-  (run-hooks 'window-selection-change-functions)
+  (run-hook-with-args 'window-selection-change-functions nil)
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
@@ -171,7 +171,7 @@ more information on modifiers."
     (select-window (split-window origwin count 'right))
     (unless evil-vsplit-window-right
       (select-window origwin)))
-  (run-hooks 'window-selection-change-functions)
+  (run-hook-with-args 'window-selection-change-functions nil)
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
