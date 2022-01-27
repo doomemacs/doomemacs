@@ -48,7 +48,7 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
   '((ref      . "^\\(https?://[^ ]+\\|[^/]+/[^/]+\\)?#[0-9]+$")
     (hash     . "^\\(https?://[^ ]+\\|[^/]+/[^/]+@\\)?[a-z0-9]\\{12\\}$")
     (url      . "^https?://")
-    (name     . "^[a-zA-Z0-9-_ \\.]+<[^@]+@[^.]+\\.[^>]+>$")
+    (name     . "^[a-zA-Z0-9-_ \\.']+<[^@]+@[^.]+\\.[^>]+>$")
     (username . "^@[^a-zA-Z0-9_-]+$"))
   "An alist of valid trailer keys and their accepted value types.
 
