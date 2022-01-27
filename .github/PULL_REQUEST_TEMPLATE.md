@@ -4,6 +4,7 @@
   FOLLOWING CRITERIA:
 
   - [ ] No other pull requests exist for this issue
+  - [ ] Your PR targets the master branch (or rewrite-docs if changing org files)
   - [ ] The issue is NOT in Doom's do-not-PR list: https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837
   - [ ] Any relevant issues and PRs have been linked to
   - [ ] Commit messages conform to our conventions: https://gist.github.com/hlissner/4d78e396acb897d9b2d8be07a103a854
