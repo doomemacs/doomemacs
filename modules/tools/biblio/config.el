@@ -22,8 +22,7 @@
   :config
   (setq org-cite-insert-processor 'citar
         org-cite-follow-processor 'citar
-        org-cite-activate-processor 'citar
-        org-cite-global-bibliography citar-bibliography))
+        org-cite-activate-processor 'citar))
 
 ;; `org-cite' processors
 (use-package! oc-biblatex :after oc)
