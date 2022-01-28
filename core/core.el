@@ -53,6 +53,13 @@ envvar will enable this at startup.")
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
+(when-let (realhome
+           (and IS-WINDOWS
+                (null (getenv-internal "HOME"))
+                (getenv "USERPROFILE")))
+  (setenv "HOME" realhome)
+  (setq abbreviated-home-dir nil))
+
 
 ;;
 ;;; Directory variables
