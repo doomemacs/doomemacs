@@ -58,6 +58,7 @@
       (mixed-pitch-mode (if writeroom-mode +1 -1))))
 
   (pushnew! mixed-pitch-fixed-pitch-faces
+            'solaire-line-number-face
             'org-date
             'org-footnote
             'org-special-keyword
