@@ -129,6 +129,9 @@ your ~doom!~ block in =$DOOMDIR/init.el=):
 +(python +lsp)
 #+end_src
 
+** Tuning performance
+Follow [[https://emacs-lsp.github.io/lsp-mode/page/performance/#tuning][lsp-tuning-guide]] to further fine-tune LSP mode performance.
+
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
