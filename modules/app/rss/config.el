@@ -33,6 +33,7 @@
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
+  (add-hook 'elfeed-show-mode-hook #'variable-pitch-mode)
 
   (map! (:map (elfeed-search-mode-map elfeed-show-mode-map)
           [remap doom/kill-this-buffer] "q"
