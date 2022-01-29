@@ -590,22 +590,21 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;; Bootstrap
 
 (defun doom-init-ui-h (&optional _)
-  "Initialize Doom's user interface by applying all its advice and hooks."
+  "Initialize Doom's user interface by applying all its advice and hooks.
+
+These should be done as late as possible, as to avoid/minimize prematurely
+triggering hooks during startup."
   (doom-run-hooks 'doom-init-ui-hook)
 
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
   (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
 
-  ;; Initialize custom switch-{buffer,window,frame} hooks:
-  ;;
-  ;; - `doom-switch-buffer-hook'
-  ;; - `doom-switch-window-hook'
-  ;; - `doom-switch-frame-hook'
-  ;;
-  ;; These should be done as late as possible, as not to prematurely trigger
-  ;; hooks during startup.
-  (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
+  ;; Initialize `doom-switch-window-hook' and `doom-switch-frame-hook'
   (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
+  ;; Initialize `doom-switch-buffer-hook'
+  (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
+  ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
+  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h)
 
   ;; Only execute this function once.
   (remove-hook 'window-buffer-change-functions #'doom-init-ui-h))
