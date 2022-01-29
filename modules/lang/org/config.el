@@ -314,8 +314,8 @@ Also adds support for a `:sync' parameter to override `:async'."
                ;; ...and not while tangling org buffers (which happens in a temp
                ;; buffer where `buffer-file-name' is nil).
                (string-match-p "^ \\*temp" (buffer-name)))
-        (let ((beg (org-babel-where-is-src-block-result))
-              (end (org-babel-result-end)))
+        (when-let ((beg (org-babel-where-is-src-block-result))
+                   (end (org-babel-result-end)))
           (org-display-inline-images nil nil (min beg end) (max beg end))))))
 
   (after! python
