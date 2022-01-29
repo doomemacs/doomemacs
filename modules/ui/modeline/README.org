@@ -42,9 +42,13 @@ powered by the [[doom-package:][doom-modeline]] package (where you can find scre
 #+end_quote
 
 ** Hiding the modeline
-- You can use ~M-x hide-mode-line-mode RET~ to hide modeline for the current buffer.
-- Also, there is ~global-hide-mode-line-mode~ for globally hiding modeline. You can just add =(global-hide-mode-line-mode)= into =~/.doom.d/config.el~.
-- ~hide-mode-line-excluded-modes~ can be set for preventing ~global-hide-mode-line-mode~ hiding modeline for buffers with the corresponding major modes.
+- You can use ~M-x hide-mode-line-mode RET~ to hide modeline for the current
+  buffer.
+- Also, there is ~global-hide-mode-line-mode~ for globally hiding modeline. You
+  can just add =(global-hide-mode-line-mode)= into =~/.doom.d/config.el~.
+- ~hide-mode-line-excluded-modes~ can be set for preventing
+  ~global-hide-mode-line-mode~ hiding modeline for buffers with the
+  corresponding major modes.
 
 ** TODO Switching the modeline and header line
 
@@ -54,7 +58,6 @@ powered by the [[doom-package:][doom-modeline]] package (where you can find scre
 #+end_quote
 
 ** TODO Changing the default modeline
-Run ~M-x customize-group RET doom-modeline RET~ or set the variables in [[Appendix]]. See [[https://github.com/seagle0128/doom-modeline/blob/master/README.md][README.md]] for details.
 
 ** TODO Activating a format
 
@@ -72,27 +75,23 @@ I rarely need to know what minor modes are active, so I removed them. ~M-x
 doom/describe-active-minor-mode~ was written to substitute for it.
 
 ** Icons in my modeline look strange
-1. Check whether ~all-the-icons~ are installed. Run ~M-x all-the-icons-install-fonts~ to install the resource fonts. Note that ~all-the-icons~ only support GUI. See [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] for details.
-2. ~cnfonts~ will conflict with ~all-the-icons~. You can refer the following workaround:
+1. Check whether ~all-the-icons~ are installed. Run ~M-x
+   all-the-icons-install-fonts~ to install the resource fonts. Note that
+   ~all-the-icons~ only support GUI. See [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] for details.
 
-   #+begin_src elisp
-;; See https://github.com/seagle0128/doom-modeline/issues/278#issuecomment-569510336
-(use-package cnfonts
-  :ensure t
-  :after all-the-icons
-  :hook (cnfonts-set-font-finish
-         . (lambda (fontsizes-list)
-             (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
-             (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
-             (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
-             (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
-             (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
-             (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil 'append)))
-  :config
-  (cnfonts-enable))
-   #+end_src
+2. ~cnfonts~ will conflict with ~all-the-icons~. You can refer the following
+   workaround:
+    #+begin_src emacs-lisp
+    ;; See https://github.com/seagle0128/doom-modeline/issues/278#issuecomment-569510336
+    ;; Add to $DOOMDIR/packages.el
+    (package! cnfonts)
+    ;; Add to $DOOMDIR/config.el
+    (add-hook 'after-setting-font-hook #'cnfonts-set-font)
+    #+end_src
 
-3. If ~all-the-icons~ fonts are installed while the icons cannot display correctly, please install the non-free font [[https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip][Symbola]]. This issue usually occurs on Windows.
+3. If ~all-the-icons~ fonts are installed while the icons cannot display
+   correctly, please install the non-free font [[https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip][Symbola]]. This issue usually
+   occurs on Windows.
 
 ** The right side of the modeline is cut off
 I believe the consensus is: this is due to oversized icons, i.e. a font issue.
