@@ -53,6 +53,9 @@ This module adds snippet expansions to Emacs, powered by [[doom-package:][yasnip
 (package! yasnippet-snippets)
 #+end_src
 
+** Adding custom snippets
+Custom snippets should be added under ~~/.doom.d/snippets/~ directory. Refer to [[http://joaotavora.github.io/yasnippet/snippet-development.html][yasnippet-documentation]] on how to write snippets.
+
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
