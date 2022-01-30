@@ -95,16 +95,16 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   (interactive)
   (require 'embark)
   (require 'wgrep)
-  (pcase-let ((`(,type . ,candidates)
-               (run-hook-with-args-until-success 'embark-candidate-collectors)))
-    (pcase type
-      ('consult-grep (let ((embark-after-export-hook #'wgrep-change-to-wgrep-mode))
-                       (embark-export)))
-      ('file (let ((embark-after-export-hook #'wdired-change-to-wdired-mode))
-               (embark-export)))
-      ('consult-location (let ((embark-after-export-hook #'occur-edit-mode))
-                           (embark-export)))
-      (x (user-error "embark category %S doesn't support writable export" x)))))
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "embark category %S doesn't support writable export" x)))))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
 
 ;;;###autoload
 (defun +vertico/embark-preview ()
