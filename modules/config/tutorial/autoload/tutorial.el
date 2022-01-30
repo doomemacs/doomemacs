@@ -182,6 +182,8 @@
       (let ((template (plist-get content :template))
             (setup (plist-get content :setup)))
         (with-current-buffer doom-tutorial--scratchpad-buffer-name
+          ;; Reapply local variables values, in case the got cleared
+          ;; (e.g. by mode changing).
           (setq-local header-line-format
                       (propertize "Scratch pad" 'face '(bold org-document-title)))
           (add-hook 'pre-command-hook #'doom-tutorial--log-cmd nil t)
