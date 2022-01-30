@@ -1,10 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/ansible/packages.el
 
-(package! ansible :recipe (:nonrecursive t) :pin "40af0d2bbb6c5bbcf7aa9269ac9a07e22622d263")
+(package! ansible :recipe (:nonrecursive t) :pin "d89ac0ee57742cca0f0e0a3453d9dcc521575690")
 (package! ansible-doc :pin "86083a7bb2ed0468ca64e52076b06441a2f8e9e0")
-(package! jinja2-mode :pin "ecd19a40b7832bb00f0a2244e3b0713d0bf3850d")
-(package! yaml-mode :pin "a79d2a7b9281f8c56f461d717b1ba40fc58e22fd")
+(package! jinja2-mode :pin "03e5430a7efe1d163a16beaf3c82c5fd2c2caee1")
+(package! yaml-mode :pin "535273d5a1eb76999d20afbcf4d9f056d8ffd2da")
 
 (when (featurep! :completion company)
   (package! company-ansible :pin "79dd421b161efa49fbdffad57fa40edb41f484a3"))

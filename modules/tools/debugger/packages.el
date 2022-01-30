@@ -7,4 +7,4 @@
 
 (when (featurep! +lsp)
   (package! dap-mode :pin "76cad34de8984f57c2b1e374e9c985cc7ec8dad0")
-  (package! posframe :pin "6c0e63d6b3b6638c11729c5db28019a38ff44f5b"))
+  (package! posframe :pin "c91d4d53fa479ceb604071008ce0a901770eff57"))
