@@ -316,8 +316,8 @@ Also adds support for a `:sync' parameter to override `:async'."
                (string-match-p "^ \\*temp" (buffer-name)))
         (save-excursion
           (when-let ((beg (org-babel-where-is-src-block-result))
-                     (end (progn (goto-char beg) (forward-line) (org-babel-result-end)))))
-            (org-display-inline-images nil nil (min beg end) (max beg end))))))
+                     (end (progn (goto-char beg) (forward-line) (org-babel-result-end))))
+            (org-display-inline-images nil nil (min beg end) (max beg end)))))))
 
   (after! python
     (unless org-babel-python-command
