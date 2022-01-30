@@ -8,7 +8,7 @@
   (interactive)
   (if (featurep! :ui workspaces)
       (progn
-        (+workspace-switch "*rss*" t)
+        (+workspace-switch +rss-workspace-name t)
         (doom/switch-to-scratch-buffer)
         (elfeed)
         (+workspace/display))
@@ -99,7 +99,7 @@
         (kill-buffer b)))
     (mapc #'kill-buffer show-buffers))
   (if (featurep! :ui workspaces)
-      (+workspace/delete "rss")
+      (+workspace/delete +rss-workspace-name)
     (when (window-configuration-p +rss--wconf)
       (set-window-configuration +rss--wconf))
     (setq +rss--wconf nil)))

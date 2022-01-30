@@ -11,6 +11,8 @@
   "Automatically slice images shown in elfeed-show-mode buffers, making them
 easier to scroll through.")
 
+(defvar +rss-workspace-name "*rss*"
+  "Name of the workspace that contains the elfeed buffer.")
 
 ;;
 ;; Packages
@@ -59,9 +61,9 @@ easier to scroll through.")
       "q" #'elfeed-kill-buffer
       "r" #'elfeed-search-update--force
       (kbd "M-RET") #'elfeed-search-browse-url)
-    (map! (:map elfeed-show-mode-map
+    (map! (:map elfeed-show-mode-map)
        :n "gc" nil
-       :n "gc" #'+rss/copy-link))))
+       :n "gc" #'+rss/copy-link)))
 
 
 
