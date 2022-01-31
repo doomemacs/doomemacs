@@ -61,9 +61,9 @@ easier to scroll through.")
       "q" #'elfeed-kill-buffer
       "r" #'elfeed-search-update--force
       (kbd "M-RET") #'elfeed-search-browse-url)
-    (map! (:map elfeed-show-mode-map)
-       :n "gc" nil
-       :n "gc" #'+rss/copy-link)))
+    (map! :map elfeed-show-mode-map
+          :n "gc" nil
+          :n "gc" #'+rss/copy-link)))
 
 
 
