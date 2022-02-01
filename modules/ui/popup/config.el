@@ -152,7 +152,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :slot 2 :side left :size 20 :select t :quit t)
       ;; `help-mode', `helpful-mode'
       ("^\\*\\([Hh]elp\\|Apropos\\)"
-       :slot 2 :vslot -8 :size 0.35 :select t)
+       :slot 2 :vslot -8 :size 0.42 :select t)
       ("^\\*eww\\*"  ; `eww' (and used by dash docsets)
        :vslot -11 :size 0.35 :select t)
       ("^\\*xwidget"
