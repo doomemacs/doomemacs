@@ -61,6 +61,17 @@
                           (line-end-position)
                           doom-docs-mode t))))))
 
+(defun doom--docs-hide-stars-h ()
+  "Update invisible property to VISIBILITY for markers in the current buffer."
+  (org-with-wide-buffer
+   (goto-char (point-min))
+   (with-silent-modifications
+     (while (re-search-forward "^\\(\\*[ \t]\\|\\*\\*+\\)" nil t)
+       (org-flag-region
+        (match-beginning 0)
+        (match-end 0)
+        doom-docs-mode t)))))
+
 (defvar doom--docs-babel-cache nil)
 (defun doom--docs-hide-src-blocks-h ()
   "Hide babel blocks (and/or their results) depending on their :exports arg."
@@ -222,6 +233,7 @@ This primes `org-mode' for reading."
            #'doom--docs-hide-meta-h
            #'doom--docs-hide-tags-h
            #'doom--docs-hide-drawers-h
+           #'doom--docs-hide-stars-h
            #'doom--docs-expand-macros-h
            #'doom--docs-expand-kbd-h
            #'doom--docs-realign-tables-h
