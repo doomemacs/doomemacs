@@ -320,7 +320,10 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
     (unless (local-variable-p 'org-startup-folded)
       (let ((org-startup-folded 'content))
         (org-set-startup-visibility))))
-  (add-hook 'read-only-mode-hook #'doom--docs-toggle-read-only-h nil 'local))
+  (add-hook 'read-only-mode-hook #'doom--docs-toggle-read-only-h nil 'local)
+  (org-with-limited-levels
+   (end-of-line)
+   (null (re-search-forward org-outline-regexp-bol nil t))))
 
 ;;;###autoload
 (defun doom-docs-read-only-h ()
