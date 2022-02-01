@@ -99,7 +99,8 @@
                                 (goto-char (org-babel-result-end))
                                 (skip-chars-forward "\n")
                                 (point))))))
-         (org-flag-region beg end doom-docs-mode t)))
+         (unless (member exports '(nil "both" "code" "t"))
+           (org-flag-region beg end doom-docs-mode t))))
      (unless doom-docs-mode
        (save-excursion
          (dolist (pos doom--docs-babel-cache)
