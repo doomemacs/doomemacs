@@ -306,7 +306,8 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
               org-link-abbrev-alist-local (append org-link-abbrev-alist-local doom-docs-link-alist)
               org-babel-default-header-args
               (append '((:eval . "no") (:tangle . "no"))
-                      org-babel-default-header-args))
+                      org-babel-default-header-args)
+              save-place-ignore-files-regexp ".")
   (unless org-inhibit-startup
     (doom/reload-docs)
     (unless (local-variable-p 'org-startup-with-inline-images)
