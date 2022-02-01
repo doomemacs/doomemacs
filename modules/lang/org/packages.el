@@ -72,10 +72,7 @@
 (when (featurep! +pretty)
   (package! org-appear :pin "a4d10fc346ba14f487eb7aa95761b9295089ba55")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")
-  (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d")
-  (package! org-pretty-table
-    :recipe (:host github :repo "Fuco1/org-pretty-table")
-    :pin "7bd68b420d3402826fea16ee5099d04aa9879b78"))
+  (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
