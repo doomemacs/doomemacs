@@ -5,7 +5,7 @@
 
 (defun doom--docs-hide-meta-h ()
   "Hide all meta or comment lines."
-  (save-excursion
+  (org-with-wide-buffer
     (goto-char (point-min))
     (let (case-fold-search)
       (while (re-search-forward "^[ \t]*\\#" nil t)
@@ -26,7 +26,7 @@
 
 (defun doom--docs-hide-drawers-h ()
   "Hide all property drawers."
-  (save-excursion
+  (org-with-wide-buffer
     (goto-char (point-min))
     (while (re-search-forward org-drawer-regexp nil t)
       (let ((beg (1- (match-beginning 0)))
@@ -37,80 +37,82 @@
 
 (defun doom--docs-hide-tags-h ()
   "Hide tags in org headings."
-  (goto-char (point-min))
-  (while (re-search-forward org-heading-regexp nil t)
-    (when-let (tags (org-get-tags nil t))
-      (when (or (member "noorg" tags)
-                (member "unfold" tags))
-        ;; prevent `org-ellipsis' around hidden regions
-        (org-show-entry))
-      (if (member "noorg" tags)
-          (org-flag-region (line-end-position 0)
-                           (save-excursion
-                             (org-end-of-subtree t)
-                             (forward-line 1)
-                             (if (and (bolp) (eolp))
-                                 (line-beginning-position)
-                               (line-end-position 0)))
-                           doom-docs-mode t)
-        (org-flag-region (save-excursion
-                           (goto-char (line-beginning-position))
-                           (re-search-forward " +:[^ ]" (line-end-position))
-                           (match-beginning 0))
-                         (line-end-position)
-                         doom-docs-mode t)))))
+  (org-with-wide-buffer
+   (goto-char (point-min))
+   (while (re-search-forward org-heading-regexp nil t)
+     (when-let (tags (org-get-tags nil t))
+       (when (or (member "noorg" tags)
+                 (member "unfold" tags))
+         ;; prevent `org-ellipsis' around hidden regions
+         (org-show-entry))
+       (if (member "noorg" tags)
+           (org-flag-region (line-end-position 0)
+                            (save-excursion
+                              (org-end-of-subtree t)
+                              (forward-line 1)
+                              (if (and (bolp) (eolp))
+                                  (line-beginning-position)
+                                (line-end-position 0)))
+                            doom-docs-mode t)
+         (org-flag-region (save-excursion
+                            (goto-char (line-beginning-position))
+                            (re-search-forward " +:[^ ]" (line-end-position))
+                            (match-beginning 0))
+                          (line-end-position)
+                          doom-docs-mode t))))))
 
 (defvar doom--docs-babel-cache nil)
 (defun doom--docs-hide-src-blocks-h ()
   "Hide babel blocks (and/or their results) depending on their :exports arg."
-  (let ((inhibit-read-only t))
-    (save-excursion
-      (goto-char (point-min))
-      (make-local-variable 'doom--docs-babel-cache)
-      (while (re-search-forward org-babel-src-block-regexp nil t)
-        (let* ((beg (match-beginning 0))
-               (end (save-excursion (goto-char (match-end 0))
-                                    (skip-chars-forward "\n")
-                                    (point)))
-               (exports
-                (save-excursion
-                  (goto-char beg)
-                  (and (re-search-forward " :exports \\([^ \n]+\\)" (line-end-position) t)
-                       (match-string-no-properties 1))))
-               (results (org-babel-where-is-src-block-result)))
-          (save-excursion
-            (when (and (if (stringp exports)
-                           (member exports '("results" "both"))
-                         org-export-use-babel)
-                       (not results)
-                       doom-docs-mode)
-              (cl-pushnew beg doom--docs-babel-cache)
-              (quiet! (org-babel-execute-src-block))
-              (setq results (org-babel-where-is-src-block-result))
-              (org-element-cache-refresh beg)
-              (restore-buffer-modified-p nil)))
-          (save-excursion
-            (when results
-              (when (member exports '("code" "both" "t"))
-                (setq beg results))
-              (when (member exports '("none" "code"))
-                (setq end (progn (goto-char results)
-                                 (goto-char (org-babel-result-end))
-                                 (skip-chars-forward "\n")
-                                 (point))))))
-          (org-flag-region beg end doom-docs-mode t)))
-      (unless doom-docs-mode
-        (save-excursion
-          (dolist (pos doom--docs-babel-cache)
-            (goto-char pos)
-            (org-babel-remove-result)
-            (org-element-cache-refresh pos))
-          (restore-buffer-modified-p nil))))))
+  (org-with-wide-buffer
+   (let ((inhibit-read-only t))
+     (goto-char (point-min))
+     (make-local-variable 'doom--docs-babel-cache)
+     (while (re-search-forward org-babel-src-block-regexp nil t)
+       (let* ((beg (match-beginning 0))
+              (end (save-excursion (goto-char (match-end 0))
+                                   (skip-chars-forward "\n")
+                                   (point)))
+              (exports
+               (save-excursion
+                 (goto-char beg)
+                 (and (re-search-forward " :exports \\([^ \n]+\\)" (line-end-position) t)
+                      (match-string-no-properties 1))))
+              (results (org-babel-where-is-src-block-result)))
+         (save-excursion
+           (when (and (if (stringp exports)
+                          (member exports '("results" "both"))
+                        org-export-use-babel)
+                      (not results)
+                      doom-docs-mode)
+             (cl-pushnew beg doom--docs-babel-cache)
+             (quiet! (org-babel-execute-src-block))
+             (setq results (org-babel-where-is-src-block-result))
+             (org-element-cache-refresh beg)
+             (restore-buffer-modified-p nil)))
+         (save-excursion
+           (when results
+             (when (member exports '("code" "both" "t"))
+               (setq beg results))
+             (when (member exports '("none" "code"))
+               (setq end (progn (goto-char results)
+                                (goto-char (org-babel-result-end))
+                                (skip-chars-forward "\n")
+                                (point))))))
+         (org-flag-region beg end doom-docs-mode t)))
+     (unless doom-docs-mode
+       (save-excursion
+         (dolist (pos doom--docs-babel-cache)
+           (goto-char pos)
+           (org-babel-remove-result)
+           (org-element-cache-refresh pos))
+         (kill-local-variable 'doom--docs-babel-cache)
+         (restore-buffer-modified-p nil))))))
 
 (defvar doom--docs-macro-cache nil)
 (defun doom--docs-expand-macros-h ()
   "Expand {{{macros}}} with their value."
-  (save-excursion
+  (org-with-wide-buffer
     (goto-char (point-min))
     (make-local-variable 'doom--docs-macro-cache)
     (while (re-search-forward "{{{[^}]+}}}" nil t)
@@ -138,7 +140,7 @@
       ("<help>"        . ,(if evilp "SPC h" "C-h")))))
 (defun doom--docs-expand-kbd-h ()
   "Replace special keywords in [[kbd:][...]] links."
-  (save-excursion
+  (org-with-wide-buffer
     (let ((inhibit-read-only t))
       (goto-char (point-min))
       (while (re-search-forward "\\[\\[kbd:.*\\]\\[\\(.*<[^>]+>.*\\)\\]\\]" nil t)
@@ -156,7 +158,7 @@
 
 (defun doom--docs-realign-tables-h ()
   "Realign tables, as they may have changed."
-  (save-excursion
+  (org-with-wide-buffer
     (goto-char (point-min))
     (while (re-search-forward org-table-line-regexp nil t)
       (let ((inhibit-read-only t))
@@ -324,11 +326,12 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
   "Activate `read-only-mode' if the current file exists and is non-empty."
   ;; The rationale: if it's empty or non-existant, you want to write an org
   ;; file, not read it.
-  (when (and buffer-file-name
-             (> (buffer-size) 0)
-             (not (string-prefix-p "." (file-name-base buffer-file-name)))
-             (file-exists-p buffer-file-name))
-    (read-only-mode +1)))
+  (let ((file-name (buffer-file-name (buffer-base-buffer))))
+    (when (and file-name
+               (> (buffer-size) 0)
+               (not (string-prefix-p "." (file-name-base file-name)))
+               (file-exists-p file-name))
+      (read-only-mode +1))))
 
 ;;;###autoload (add-hook 'doom-docs-org-mode-hook #'doom-docs-read-only-h)
 
