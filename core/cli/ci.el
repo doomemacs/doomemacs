@@ -62,6 +62,7 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
   (list "cli"
         "ci"
         "lib"
+        "docs"
         (fn! (scope (&key type))
           (when (and (memq type '(bump merge module release revert))
                      scope)
