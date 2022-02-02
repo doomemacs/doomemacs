@@ -27,7 +27,7 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "0c9b30e961ac7a20eb2e8985ab686c6940e79ef3")
+  :pin "e7ea951ac976ac78d4f6c3df9979bb9e942ef086")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -38,8 +38,8 @@
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")
-(package! ox-clip :pin "05a14d56bbffe569d86f20b49ae31ed2ac7d1101")
-(package! toc-org :pin "df4ad6ff15e3b02f6322305638a441a636b9b37e")
+(package! ox-clip :pin "ff117cf3c619eef12eccc0ccbfa3f11adb73ea68")
+(package! toc-org :pin "bf2e4b358efbd860ecafe6e74776de0885d9d100")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
 
 (when (featurep! :editor evil +everywhere)
@@ -49,7 +49,7 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "a5b61bca3f8c91b0859bb0df1a929f9a31a57b99"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "f956d802f19ea495efa95af6c673588afeb3adc5")
+  (package! orgit :pin "66367d6bfc5e00726fb74f7cd20c32175ab8521b")
   (when (featurep! :tools magit +forge)
     (package! orgit-forge :pin "365b75609a9454dccf5681eb6075ca53bd32af85")))
 (when (featurep! +brain)
@@ -57,32 +57,32 @@
 (when (featurep! +dragndrop)
   (package! org-download :pin "947ca223643d28e189480e607df68449c15786cb"))
 (when (featurep! +gnuplot)
-  (package! gnuplot :pin "7138b139d2dca9683f1a81325c643b2744aa1ea3")
+  (package! gnuplot :pin "d1a6a606dcb389a7c91a6b0d9fb995434df561be")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "df343af5e9187a400a9291fa6a2b0c69f3ad0425"))
+  (package! jupyter :pin "42a9765897ad36518b5371f558b36cdac3a0ec74"))
 (when (featurep! +journal)
-  (package! org-journal :pin "71e8b10088ae52c4ac17f7af87020ea85fbc6ff7"))
+  (package! org-journal :pin "f121450610650c63aabf13afd0d2089e05fad2e4"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "aa07c11318f91219336197e62c47bc7a3d090479"))
 (when (featurep! +pretty)
-  (package! org-appear :pin "a4d10fc346ba14f487eb7aa95761b9295089ba55")
+  (package! org-appear :pin "303fcc8d5d85a4ebff2798dab50b2ccc0255ea5f")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")
   (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
   (package! centered-window
     :recipe (:host github :repo "anler/centered-window-mode")
-    :pin "f50859941ab5c7cbeaee410f2d38716252b552ac")
-  (package! org-tree-slide :pin "27f8bb6a9676e1c0b500e75799e3b5c37a9156af")
+    :pin "80965f6c6afe8d918481433984b493de72af5399")
+  (package! org-tree-slide :pin "3faa042393ebfe5699a3bffce775f039d7416ceb")
   (package! org-re-reveal :pin "55fca47c740c50fe04cbf2b8ae90e02174626c0c")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "a9277f9d465a07cc3b2baa3a2c4fbc152afd7f14"))
+    :pin "19f04bcbcbc3f83a6f90de4f7b2bf994c983d302"))
 (cond
  ((featurep! +roam)
   (package! org-roam
@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "abe63b436035049923ae96639b9b856697047779")))
+    :pin "eed1df90f571b19cae1581e7f5d938892b00c24d")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -112,16 +112,16 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient :pin "bfbc4d8e8a348c140f9328542daf5d979f0993e2"))
+  (package! ob-restclient :pin "f81f2f4f3fe6882947b8547ccd570f540106ed4d"))
 (when (featurep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
 ;;; Export
 (when (featurep! +pandoc)
-  (package! ox-pandoc :pin "eda1f21fd519427c070d165f8a663db07b87ac29"))
+  (package! ox-pandoc :pin "b2e43b936249de2a100afb4262698105c39ce289"))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "88e60681901573797ce53c91ad8fa0936f6e4ee2"))
+    :pin "1b6b3dc8f9f310102d1a6862889c6ff5e0fb7b13"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
