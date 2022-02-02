@@ -521,6 +521,10 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   :commands helpful--read-symbol
   :hook (helpful-mode . visual-line-mode)
   :init
+  (when EMACS29+
+    ;; REVIEW See Wilfred/elisp-refs#35. Remove once fixed upstream.
+    (defvar read-symbol-positions-list nil))
+
   ;; Make `apropos' et co search more extensively. They're more useful this way.
   (setq apropos-do-all t)
 
