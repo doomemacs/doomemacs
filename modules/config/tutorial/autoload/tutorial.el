@@ -165,10 +165,10 @@
             (title (or (plist-get content :title) "")))
         (with-current-buffer doom-tutorial--instructions-buffer-name
           (setq-local header-line-format
-                       (propertize
-                        (format "Step %s/%s:	%s"
-                                (1+ page) pages title)
-                        'face '(bold org-document-title)))
+                      (propertize
+                       (format "Step %s/%s:	%s"
+                               (1+ page) pages title)
+                       'face '(bold org-document-title)))
           (doom-tutorial--set-info-modeline page pages)
           (setq-local doom-tutorial--name name)
           (setq-local doom-tutorial--test (plist-get content :test))
@@ -380,6 +380,8 @@
     (org-superstar-restart))
   (setq-local header-line-format
               (propertize "Instructions" 'face '(bold org-document-title)))
+  ;; Prevent cache errors
+  (remove-hook 'eldoc-documentation-functions #'org-eldoc-documentation-function t)
   ;; Setup cmd log buffer
   (split-window nil (max window-min-height
                          (/ (window-height) 3))
