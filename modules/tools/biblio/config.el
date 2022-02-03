@@ -49,3 +49,44 @@
   :defer t
   :config
   (add-to-list 'ivy-re-builders-alist '(ivy-bibtex . ivy--regex-plus)))
+
+
+(use-package! org-roam-bibtex
+  :when (featurep! :lang org +roam2)
+  :after org-roam
+  :preface
+  ;; if the user has not set a template mechanism set a reasonable one of them
+  ;; The package already tests for nil itself so we define a dummy tester
+  (defvar orb-preformat-keywords
+    '("title" "url" "file" "author-or-editor" "keywords" "citekey" "pdf"))
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :custom
+  (orb-note-actions-interface (cond ((featurep! :completion ivy)  'ivy)
+                                    ((featurep! :completion helm) 'helm)
+                                    ((t                           'default))))
+  :config
+  (setq orb-insert-interface (cond ((featurep! :completion ivy)  'ivy-bibtex)
+                                   ((featurep! :completion helm) 'helm-bibtex)
+                                   ((t                           'generic))))
+  (setq orb-process-file-keyword t
+        orb-file-field-extensions '("pdf"))
+
+  (add-to-list 'org-roam-capture-templates
+               '("b" "Bibliography note" plain
+                 "%?
+- keywords :: %^{keywords}
+- related ::
+
+* %^{title}
+:PROPERTIES:
+:Custom_ID: %^{citekey}
+:URL: %^{url}
+:AUTHOR: %^{author-or-editor}
+:NOTER_DOCUMENT: %^{file}
+:NOTER_PAGE:
+:END:\n\n"
+                 :if-new (file+head "${citekey}.org" ":PROPERTIES:
+:ROAM_REFS: cite:${citekey}
+:END:
+#+TITLE: ${title}\n")
+                 :unnarrowed t)))

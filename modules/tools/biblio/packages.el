@@ -11,3 +11,6 @@
   (package! citar :pin "ee98b94f7f80ae3c11b901ff1bc6212f9e5701a5"))
 
 (package! citeproc :pin "ba49516265fa24b138346c4918d39d19b4de8a62")
+
+(when (featurep! :lang org +roam2)
+  (package! org-roam-bibtex :pin "3ac2445f431bc39aa0ca5abfc80e28c0c06f0738"))

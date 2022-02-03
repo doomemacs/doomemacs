@@ -16,6 +16,7 @@
   - [[#org-cite][Org-cite]]
     - [[#processor-configuration][Processor configuration]]
     - [[#other-configuration-options][Other configuration options]]
+  - [[#org-roam-bibtex][org-roam-bibtex]]
   - [[#path-configuration][Path configuration]]
   - [[#templates][Templates]]
 - [[#troubleshooting][Troubleshooting]]
@@ -41,6 +42,8 @@ This module provides no flags.
   + [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]
 + ~:completion ivy~
   + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]
++ ~:lang org +roam2~
+  + [[https://github.com/Zaeph/org-roam-bibtex][org-roam-bibtex]]
 
 * Prerequisites
 There are no hard dependencies for this module.
@@ -111,6 +114,11 @@ directory for your CSL styles:
 #+BEGIN_SRC emacs-lisp
 (setq org-cite-csl-styles-dir "~/Zotero/styles")
 #+END_SRC
+
+** org-roam-bibtex
+This package integrates org-ref, org-cite, and bibtex-completion into [[https://github.com/jethrokuan/org-roam][org-roam]] mode,
+which can be enabled via =lang org +roam2=. For academics and those working
+extensively with documents which they need to keep detailed notes on for cross-referencing.
 
 ** Path configuration
 
