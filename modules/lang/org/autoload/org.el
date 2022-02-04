@@ -5,16 +5,16 @@
 
 (defun +org--toggle-inline-images-in-subtree (&optional beg end refresh)
   "Refresh inline image previews in the current heading/tree."
-  (let ((beg (or beg
-                 (if (org-before-first-heading-p)
-                     (line-beginning-position)
-                   (save-excursion (org-back-to-heading) (point)))))
-        (end (or end
-                 (if (org-before-first-heading-p)
-                     (line-end-position)
-                   (save-excursion (org-end-of-subtree) (point)))))
-        (overlays (cl-remove-if-not (lambda (ov) (overlay-get ov 'org-image-overlay))
-                                    (ignore-errors (overlays-in beg end)))))
+  (let* ((beg (or beg
+                  (if (org-before-first-heading-p)
+                      (save-excursion (point-min))
+                    (save-excursion (org-back-to-heading) (point)))))
+         (end (or end
+                  (if (org-before-first-heading-p)
+                      (save-excursion (org-next-visible-heading 1) (point))
+                    (save-excursion (org-end-of-subtree) (point)))))
+         (overlays (cl-remove-if-not (lambda (ov) (overlay-get ov 'org-image-overlay))
+                                     (ignore-errors (overlays-in beg end)))))
     (dolist (ov overlays nil)
       (delete-overlay ov)
       (setq org-inline-image-overlays (delete ov org-inline-image-overlays)))
@@ -242,6 +242,9 @@ If on a:
                 (org-element-property :begin lineage)
                 (org-element-property :end lineage))
              (org-open-at-point arg))))
+
+        (`paragraph
+         (+org--toggle-inline-images-in-subtree))
 
         ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
          (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
