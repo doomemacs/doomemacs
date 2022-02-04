@@ -127,16 +127,19 @@
 
 If on a:
 - checkbox list item or todo heading: toggle it.
-- clock: update its time.
+- citation: follow it
 - headline: cycle ARCHIVE subtrees, toggle latex fragments and inline images in
   subtree; update statistics cookies/checkboxes and ToCs.
+- clock: update its time.
 - footnote reference: jump to the footnote's definition
 - footnote definition: jump to the first reference of this footnote
+- timestamp: open an agenda view for the time-stamp date/range at point.
 - table-row or a TBLFM: recalculate the table's formulas
 - table-cell: clear it and go into insert mode. If this is a formula cell,
   recaluclate it instead.
 - babel-call: execute the source block
 - statistics-cookie: update it.
+- src block: execute it
 - latex fragment: toggle it.
 - link: follow it
 - otherwise, refresh all inline images in current tree."
