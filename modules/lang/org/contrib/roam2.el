@@ -98,9 +98,9 @@ In case of failure, fail gracefully."
 
   (set-popup-rules!
     `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
-       :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 1)
+       :side right :width 0.33 :height 0.5 :ttl nil :modeline nil :quit nil :slot 1)
       ("^\\*org-roam: " ; node dedicated org-roam buffer
-       :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
+       :side right :width 0.33 :height 0.5 :ttl nil :modeline nil :quit nil :slot 2)))
 
   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
 
