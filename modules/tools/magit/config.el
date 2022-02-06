@@ -114,12 +114,12 @@ Only has an effect in GUI Emacs.")
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
 
-  (add-hook! 'magit-mode-hook
+  (add-hook! 'magit-section-mode-hook
     (add-hook! 'window-configuration-change-hook :local
       (defun +magit-enlargen-fringe-h ()
         "Make fringe larger in magit."
         (and (display-graphic-p)
-             (derived-mode-p 'magit-mode)
+             (derived-mode-p 'magit-section-mode)
              +magit-fringe-size
              (let ((left  (or (car-safe +magit-fringe-size) +magit-fringe-size))
                    (right (or (cdr-safe +magit-fringe-size) +magit-fringe-size)))
