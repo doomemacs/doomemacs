@@ -79,7 +79,8 @@ In case of failure, fail gracefully."
         org-roam-completion-everywhere t
         org-roam-mode-section-functions
         #'(org-roam-backlinks-section
-           org-roam-reflinks-section))
+           org-roam-reflinks-section)
+        org-roam-db-gc-threshold most-positive-fixnum)
 
   (setq-hook! 'org-roam-find-file-hook
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)
