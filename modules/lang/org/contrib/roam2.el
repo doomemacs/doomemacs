@@ -45,26 +45,27 @@ the database. See `+org-init-roam-h' for the launch process."
     "Setup `org-roam' but don't immediately initialize its database.
 Instead, initialize it when it will be actually needed."
     (letf! ((#'org-roam-db-sync #'ignore))
-      (org-roam-setup))
-    (defadvice! +org-roam-try-init-db-a (&rest _)
-      "Try to initialize org-roam database at the last possible safe moment.
+      (org-roam-db-autosync-enable)))
+
+  (defadvice! +org-roam-try-init-db-a (&rest _)
+    "Try to initialize org-roam database at the last possible safe moment.
 In case of failure, fail gracefully."
-      :before #'org-roam-db-query
-      (message "Initializing org-roam database...")
-      (let ((run-cleanup-p t))
-        (unwind-protect
-            ;; Try to build the binary if it doesn't exist. In case of failure
-            ;; this will error, run the cleanup and exit, and in case of success
-            ;; this will return nil and sync the database.
-            (setq run-cleanup-p (emacsql-sqlite-ensure-binary))
-          (when run-cleanup-p
-            (setq org-roam--sqlite-available-p nil)
-            (org-roam-teardown)
-            (message (concat "EmacSQL failied to build SQLite binary for org-roam; "
-                             "see *Compile-Log* buffer for details.\n"
-                             "To try reinitialize org-roam, run \"M-x org-roam-setup\"")))))
-      (advice-remove 'org-roam-db-query #'+org-roam-try-init-db-a)
-      (org-roam-db-sync)))
+    :before #'org-roam-db-query
+    (message "Initializing org-roam database...")
+    (let ((run-cleanup-p t))
+      (unwind-protect
+          ;; Try to build the binary if it doesn't exist. In case of failure
+          ;; this will error, run the cleanup and exit, and in case of success
+          ;; this will return nil and sync the database.
+          (setq run-cleanup-p (emacsql-sqlite-ensure-binary))
+        (when run-cleanup-p
+          (setq org-roam--sqlite-available-p nil)
+          (org-roam-teardown)
+          (message (concat "EmacSQL failied to build SQLite binary for org-roam; "
+                           "see *Compile-Log* buffer for details.\n"
+                           "To try reinitialize org-roam, run \"M-x org-roam-setup\"")))))
+    (advice-remove 'org-roam-db-query #'+org-roam-try-init-db-a)
+    (org-roam-db-sync))
 
   (setq org-roam-directory
         (thread-first (or org-roam-directory "roam")
