@@ -1329,6 +1329,9 @@ compelling reason, so..."
     (file-writable-p org-id-locations-file))
 
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
+  ;; HACK For functions that dodge `org-open-at-point-functions', like
+  ;;   `org-id-open', `org-goto', or roam: links.
+  (advice-add #'org-mark-ring-push :around #'doom-set-jump-a)
 
   ;; Add the ability to play gifs, at point or throughout the buffer. However,
   ;; 'playgifs' is stupid slow and there's not much I can do to fix it; use at
