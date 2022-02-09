@@ -88,7 +88,7 @@
 
   (map! :map web-mode-map
         (:localleader
-          :desc "Rehighlight buffer" "h" #'web-mode-buffer-highlight
+          :desc "Rehighlight buffer" "h" #'web-mode-reload
           :desc "Indent buffer"      "i" #'web-mode-buffer-indent
           (:prefix ("a" . "attribute")
             "b" #'web-mode-attribute-beginning
