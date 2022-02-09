@@ -30,20 +30,31 @@
     (pcase (org-element-type context)
       ;; Add a new list item (carrying over checkboxes if necessary)
       ((or `item `plain-list)
-       ;; Position determines where org-insert-todo-heading and org-insert-item
-       ;; insert the new list item.
-       (if (eq direction 'above)
-           (org-beginning-of-item)
-         (org-end-of-item)
-         (backward-char))
-       (org-insert-item (org-element-property :checkbox context))
-       ;; Handle edge case where current item is empty and bottom of list is
-       ;; flush against a new heading.
-       (when (and (eq direction 'below)
-                  (eq (org-element-property :contents-begin context)
-                      (org-element-property :contents-end context)))
-         (org-end-of-item)
-         (org-end-of-line)))
+       (let* ((item
+               (if (eq 'item (org-element-type context))
+                   context
+                 ;; if the context has type `plain-list', find closest item
+                 (let ((struct (org-element-property :structure context)))
+                   (save-excursion
+                     (goto-char
+                      (if (= (point) (org-element-property :begin context))
+                          ;; at the begin of the plain-list, we get the list and
+                          ;; not the item with `org-element-at-point'
+                          (1+ (car (car struct)))
+                        (1+ (car (car (last struct))))))
+                     (org-element-at-point)))))
+              (begin (org-element-property :begin item))
+              (end (org-element-property :end item))
+              (cnts-begin (org-element-property :contents-begin item))
+              (str (string-trim (buffer-substring begin (or cnts-begin end)) "\n+" "[ \t\r\n]+")))
+         (pcase direction
+           (`below
+            (goto-char (max (1- end) (line-end-position)))
+            (insert "\n" str " "))
+           (`above
+            (goto-char (line-beginning-position))
+            (insert str " ")
+            (save-excursion (insert "\n"))))))
 
       ;; Add a new table row
       ((or `table `table-row)
