@@ -95,8 +95,9 @@ In case of failure, fail gracefully."
   (add-hook! 'org-roam-find-file-hook :append
     (defun +org-roam-open-with-buffer-maybe-h ()
       (and +org-roam-open-buffer-on-find-file
-           (not org-roam-capture--node) ;; don't proc for roam capture buffers
-           (not org-capture-mode) ;; don't proc for normal capture buffers
+           (not org-roam-capture--node)  ; not for roam capture buffers
+           (not org-capture-mode)        ; not for capture buffers
+           (not (bound-and-true-p +popup-buffer-mode))
            (not (eq 'visible (org-roam-buffer--visibility)))
            (org-roam-buffer-toggle))))
 
