@@ -59,13 +59,19 @@
   ;;   are intended to be perpetually active -- even when no cursors are active
   ;;   (causing #6021). I undo all of that here.
   (evil-mc-define-vars)
+  (evil-mc-initialize-vars)
   (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
   (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
   (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
   (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
   (advice-add #'evil-mc-initialize-hooks :override #'ignore)
+  (advice-add #'evil-mc-teardown-hooks :override #'evil-mc-initialize-vars)
   (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
   (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
+  (defadvice! +multiple-cursors--dont-reinit-vars-a (fn &rest args)
+    :around #'evil-mc-mode
+    (letf! ((#'evil-mc-initialize-vars #'ignore))
+      (apply fn args)))
 
   ;; REVIEW This is tremendously slow on macos and windows for some reason.
   (setq evil-mc-enable-bar-cursor (not (or IS-MAC IS-WINDOWS)))
