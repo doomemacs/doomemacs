@@ -6,18 +6,23 @@ body:
 - type: markdown
   attributes:
     value: |
-      Doom pins its packages to certain commits to avoid breaking updates and to help its maintainer keep up with changes. These pins are updated (bumped) frequently, usually every other week, but some may warrant an early bump, due to critical bug fixes or to adapt to external events.
+      Doom pins its packages to certain commits to avoid breaking updates and
+      help its maintainer keep up with changes. These pins are updated (bumped)
+      frequently, usually every other week, but sometimes I'll fall behind,
+      either due to life:tm: or upstream issues. Other times, a package may
+      introduce critical fixes I should be made aware of.
 
-      Use this form to let us know about these packages.
+      Use this form to let me know about these updates.
 
       -----
 
-      **Before you submit this bump request, make sure...**
+      **Before you submit this bump request, please ensure that the target
+      packages:**
 
-      + [ ] To search for any open (or closed) [bump requests for this package](https://github.com/hlissner/doom-emacs/pulls?q=is%3Apr+is%3Aopen+label%3A%221.+update%29%22+).
-      + [ ] The target package(s) **are not** in [the do-not-PR list](https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837) list.
-      + [ ] These packages haven't already been bumped on the [latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
-      + [ ] The new versions of these packages work without issue.
+      - Haven't already been [requested](https://github.com/hlissner/doom-emacs/issues) or [PRed](https://github.com/hlissner/doom-emacs/pulls),
+      - *Is not* in [our do-not-PR list](https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837),
+      - Hasn't already been bumped in later commits of Doom,
+      - Still work with Doom on their latest commits.
 - type: textarea
   attributes:
     label: What package(s) should be bumped?
@@ -29,6 +34,24 @@ body:
   attributes:
     label: Why should Doom bump these packages early?
     description: |
-      Briefly describe what has changed, and why they warrant an early bump. Link any relevant commits or issues, if possible. Mention anything Doom may have to change to accommodate it.
+      What has changed, upstream? Why do those changes warrant an early bump?
+      Link any relevant commits or issues, if possible. Mention anything Doom
+      may have to change to accommodate it.
     placeholder: |
       Recent changes to X have fixed several open issues in Y and Z, but have broken A and B in Doom.
+- type: markdown
+  attributes:
+    value: |
+      Please take a moment to ensure your bump request is **well-researched,
+      descriptive, and specific**, otherwise, you risk it being significantly
+      delayed or automatically closed.
+
+      Emacs' complexity and extensibility produces many false positive or vague
+      requests, so I will immediately close issues that aren't **actionable**,
+      **poorly explained**, or able to be investigated in a reasonable amount of
+      **time**.
+
+      If you don't think your request qualifies, please bring it up on [our
+      Discord](https://doomemacs.org/discord) instead.
+
+      :heart: **Thank you for taking the time to make this bump request!**

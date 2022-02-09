@@ -6,14 +6,15 @@ body:
 - type: markdown
   attributes:
     value: |
-      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
+      > :warning: **Our issue tracker is for bug reports and feature requests,
+      > not configuration questions or requests for help.** Use [our
+      > Discord](https://doomemacs.org/discord) for those instead.
 
-      **Before you proceed, to rule out the possibility that your request has already been made (or fulfilled), please follow these guidelines:**
+      **Before you proceed, please ensure your request:**
 
-      + [ ] Read the [contributing guidelines](https://git.doomemacs.org/docs/contributing.org).
-      + [ ] Search [the issue tracker](https://github.com/hlissner/doom-emacs/issues?q=label%3A%221.+request%22+) for similar requests.
-      + [ ] Search [the module list](https://git.doomemacs.org/docs/modules.org) in case my feature was already implemented.
-      + [ ] The request hasn't been fulfilled on [the latest commit of Doom](https://github.com/hlissner/doom-emacs/commit).
+      - Is a feature request and not a bug report,
+      - Hasn't already been requested or reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues),
+      - Hasn't already been fulfilled on the latest version of Doom or in [one of our modules](https://git.doomemacs.org/docs/modules.org).
 - type: textarea
   attributes:
     label: Describe your request
@@ -27,7 +28,9 @@ body:
   attributes:
     label: Briefly explain its use-case
     description: |
-      A screencast is ideal, but a list of steps and effects showing off how it would work is acceptable.
+      How would your requested feature be used? Can you demonstrate it with a
+      screencast of another editor? List the steps a typical user would take to
+      use it, were it added to Doom.
     placeholder: |
       1. Install Linux
       2. Install Emacs
@@ -40,4 +43,16 @@ body:
 - type: markdown
   attributes:
     value: |
-      **Thank you for taking the time to fill out a feature request!**
+      Please take a moment to ensure your feature request (and it's title) is
+      **well-researched, descriptive, and specific**, otherwise, you risk it
+      being significantly delayed or automatically closed.
+
+      Emacs' complexity and extensibility produces many false positive or vague
+      requests, so I will immediately close issues that aren't **actionable**,
+      **poorly explained**, or able to be investigated in a reasonable amount of
+      **time**.
+
+      If you don't think your request qualifies, please bring it up on [our
+      Discord](https://doomemacs.org/discord) instead.
+
+      :heart: **Thank you for taking the time to make this feature request!**

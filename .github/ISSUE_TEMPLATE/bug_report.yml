@@ -6,17 +6,19 @@ body:
 - type: markdown
   attributes:
     value: |
-      > :warning: **Our issue tracker is not for how-to or configuration questions.** Please post those on [our Discord](https://doomemacs.org/discord).
+      > :warning: **Our issue tracker is for bug reports and feature requests,
+      > not configuration questions or requests for help.** Use [our
+      > Discord](https://doomemacs.org/discord) for those instead.
 
-      **Before you proceed...**
+      **Before you proceed, please ensure your issue:**
 
-      We depend on you to ensure your issue hasn't already been addressed, isn't covered by documentation, and isn't caused by personal configuration. To help us rule out these possibilities please follow these guidelines:
-
-      + [ ] Search [the FAQ](https://git.doomemacs.org/docs/faq.org) and [the documentation](https://git.doomemacs.org/docs/getting_started.org) for solutions.
-      + [ ] Search [the issue tracker](https://github.com/hlissner/doom-emacs/issues) for similar issues (the closed issues too).
-      + [ ] Search [the Discourse](https://discourse.doomemacs.org) for any errors and solutions.
-      + [ ] Ensure the issue can be reproduced on [the latest commit](https://github.com/hlissner/doom-emacs/commit) of Doom Emacs.
-      + [ ] Consult [our troubleshooting](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#troubleshoot) on techniques to get more information and, possibly, solve the issue yourself.
+      - Wasn't already reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues),
+      - Hasn't been covered by [our FAQ](https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org),
+      - Can be reproduced on the **latest commit** of Doom,
+      - Is reproducible on Emacs 27 or 28, _(Emacs 29 is not supported!)_
+      - Is reproducible in [vanilla Doom](https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#testing-in-dooms-sandbox) (i.e. with your private config disabled),
+      - Is well-researched using [our troubleshooting guide](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#troubleshoot).
+      - Has not been reported upstream (e.g. in the repos of any involved packages).
 - type: textarea
   attributes:
     label: What did you expect to happen?
@@ -27,12 +29,11 @@ body:
   attributes:
     label: What actually happened?
     description: |
-      + Include screenshots/casts, if possible
-      + List *all* error messages and **[include backtraces for each of them](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#how-to-extract-a-backtrace-from-an-error)
-      + Include any suspicious logs in the **[\*Messages\*](https://doomemacs.org/d/t/55) buffer.
-      + If you include log dumps, please use [pastebin.com](https://pastebin.com)
-      + **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, error messages, and backtraces.**
-      + Avoid phrases like "X does not work" or "X stopped working" without explaining what "working" means.
+      - Screenshots and gifs are a big help!
+      - Check the \*Messages\* buffer for errors and/or warnings (press `C-h e` to view this buffer).
+      - **Always include backtraces for errors.** ([How to produce a backtrace](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#how-to-extract-a-backtrace-from-an-error))
+      - **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, logs, or text dumps!** Or use pastebin.com!
+      - Be specific! Phrases like "X does not work" or "X stopped working" are unacceptable.
     placeholder: |
       When I do X, Z happened. Here is the backtrace:
 
@@ -52,9 +53,9 @@ body:
   attributes:
     label: Describe your attempts to resolve the issue
     description: |
-      Describe resources you consulted or code you tried to fix your problem, and their result.
+      How have you tried to fix your issue? What was the result?
 
-      **HINT: Remember to use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, log output, and backtraces.**
+      _(Hint: use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code or text dumps!)_
     placeholder: |
       I tried setting X to Y, then I tried Z. Here's what else I tried...
 
@@ -64,7 +65,11 @@ body:
 - type: textarea
   attributes:
     label: Steps to reproduce
-    description: How do we reproduce your issue? Walk us through a minimal test case.
+    description: |
+      How do we reproduce your issue? Walk us through a minimal test case.
+
+      > :warning: This is required! If you can't offer steps to reproduce it,
+      > the issue will be immediately closed!
     placeholder: |
       1. Open Emacs
       2. `M-x doom/info` and be prompted to visit pastebin.com
@@ -79,17 +84,29 @@ body:
   attributes:
     label: System Information
     description: |
-      Paste a link to a [pastebin](https://pastebin.com) where you've uploaded the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info`.
+      Provide a [pastebin.com](https://pastebin.com) link to the output of `M-x
+      doom/info` or `$ ~/.emacs.d/bin/doom info`.
 
-      > :warning: **Do not paste your M-x doom/info directly into this box!** Use pastebin to minimize search result pollution in our issue tracker.
-
-      > :warning: **Do not omit any part of or modify your doom/info.**
+      > :warning: **This _must_ be a pastebin.com link.** Please don't use any
+      > other service, please don't paste your doom-info directly into this box,
+      > and please don't omit it. If you can't provide it, **please explain why
+      > in the box below or other fields above!**
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
 - type: markdown
   attributes:
     value: |
-      Before you go, please make sure your report's title is descriptive and specific. Avoid phrases like "X doesn't work" or "X stopped working". Error messages are best, but failing that, try to describe what "working" means to you.
+      Please take a moment to ensure your issue (and it's title) is
+      **well-researched, descriptive, and specific**, otherwise, you risk it
+      being significantly delayed or automatically closed.
 
-      **Thank you for taking the time to fill out a bug report!**
+      Emacs' complexity and extensibility produces many false positive or vague
+      bug reports, so I will immediately close issues that aren't
+      **actionable**, **reproducible in vanilla Doom**, or able to be
+      investigated in a **reasonable amount of time**.
+
+      If you don't think your issue qualifies, please bring it up on [our
+      Discord](https://doomemacs.org/discord) instead.
+
+      :heart: **Thank you for taking the time to file this bug report!**
