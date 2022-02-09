@@ -141,4 +141,6 @@ ARG is set, prompt for a known project to search from."
   "Jump to an Org headline in `org-agenda-files'."
   (interactive)
   (doom-completing-read-org-headings
-   "Jump to org headline: " org-agenda-files 3 t))
+   "Jump to org headline: " org-agenda-files
+   :depth 3
+   :include-files t))

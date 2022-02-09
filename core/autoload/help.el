@@ -107,12 +107,13 @@ selection of all minor-modes, active or not."
 ;;; Documentation commands
 
 (defvar org-agenda-files)
-(defun doom--org-headings (files &optional depth include-files)
+(cl-defun doom--org-headings (files &key depth mindepth include-files &allow-other-keys)
   "TODO"
   (require 'org)
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
          (depth (if (integerp depth) depth))
+         (mindepth (if (integerp mindepth) mindepth))
          (org-inhibit-startup t))
     (message "Loading search results...")
     (unwind-protect
@@ -124,6 +125,8 @@ selection of all minor-modes, active or not."
                 (org-heading-components)
               (when (and (or (null depth)
                              (<= level depth))
+                         (or (null mindepth)
+                             (>= level mindepth))
                          (or (null tags)
                              (not (string-match-p ":TOC" tags))))
                 (let ((path  (org-get-outline-path))
@@ -147,25 +150,28 @@ selection of all minor-modes, active or not."
 
 (defvar ivy-sort-functions-alist)
 ;;;###autoload
-(defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input extra-candidates)
+(cl-defun doom-completing-read-org-headings
+    (prompt files &rest plist &key depth mindepth include-files initial-input extra-candidates action)
   "TODO"
   (let ((alist
-         (append (doom--org-headings files depth include-files)
+         (append (apply #'doom--org-headings files plist)
                  extra-candidates))
         ivy-sort-functions-alist)
     (if-let (result (completing-read prompt alist nil nil initial-input))
         (cl-destructuring-bind (file &optional location)
             (cdr (assoc result alist))
-          (find-file file)
-          (cond ((functionp location)
-                 (funcall location))
-                (location
-                 (goto-char location)))
-          (ignore-errors
-            (when (outline-invisible-p)
-              (save-excursion
-                (outline-previous-visible-heading 1)
-                (org-show-subtree)))))
+          (if action
+              (funcall action file location)
+            (find-file file)
+            (cond ((functionp location)
+                   (funcall location))
+                  (location
+                   (goto-char location)))
+            (ignore-errors
+              (when (outline-invisible-p)
+                (save-excursion
+                  (outline-previous-visible-heading 1)
+                  (org-show-subtree))))))
       (user-error "Aborted"))))
 
 ;;;###autoload
@@ -213,7 +219,10 @@ will be automatically appended to the result."
          "troubleshooting.org"
          "tutorials.org"
          "faq.org")
-   3 t initial-input
+   :depth 3
+   :include-files t
+   :initial-input initial-input
+   :extra-candidates
    (mapcar (lambda (x)
              (setcar x (concat "Doom Modules > " (car x)))
              x)
@@ -249,7 +258,8 @@ will be automatically appended to the result."
    (nreverse (doom-files-in (expand-file-name "news" doom-docs-dir)
                             :match "/[0-9]"
                             :relative-to doom-docs-dir))
-   nil t initial-input))
+   :include-files t
+   :initial-input initial-input))
 
 ;;;###autoload
 (defun doom/help-faq (&optional initial-input)
@@ -257,7 +267,8 @@ will be automatically appended to the result."
   (interactive)
   (doom-completing-read-org-headings
    "Find in FAQ: " (list "faq.org")
-   2 nil initial-input))
+   :depth 2
+   :initial-input initial-input))
 
 ;;;###autoload
 (defun doom/help-news ()
