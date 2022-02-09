@@ -81,7 +81,9 @@ In case of failure, fail gracefully."
         org-roam-mode-section-functions
         #'(org-roam-backlinks-section
            org-roam-reflinks-section)
-        org-roam-db-gc-threshold most-positive-fixnum)
+        org-roam-db-gc-threshold most-positive-fixnum
+        ;; Reverse the default to favor faster searchers over slower ones.
+        org-roam-list-files-commands '(fd fdfind rg find))
 
   (setq-hook! 'org-roam-find-file-hook
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)
