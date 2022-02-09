@@ -132,7 +132,7 @@ orderless."
    +default/search-cwd +default/search-other-cwd
    +default/search-notes-for-symbol-at-point
    +default/search-emacsd
-   consult--source-file consult--source-project-file consult--source-bookmark
+   consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
    :preview-key (kbd "C-SPC"))
   (consult-customize
    consult-theme
@@ -233,7 +233,17 @@ orderless."
             '(projectile-find-file . project-file)
             '(projectile-recentf . project-file)
             '(projectile-switch-to-buffer . buffer)
-            '(projectile-switch-project . project-file)))
+            '(projectile-switch-project . project-file))
+
+  ;; HACK minad/marginalia#127 adds annotation to read-library-name, but
+  ;;   compression errors (or any errors while reading compressed files) will
+  ;;   break completion entirely. This advice suppresses those errors and
+  ;;   degrades gracefully.
+  ;; TODO PR error handling upstream.
+  (defadvice! +vertico--suppress-errors-a (fn &rest args)
+    :around #'marginalia--library-doc
+    (letf! ((#'jka-compr-error #'ignore))
+      (ignore-errors (apply fn args)))))
 
 
 (use-package! embark-consult
