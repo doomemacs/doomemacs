@@ -182,13 +182,15 @@ ready to be pasted in a bug report on github."
                         collect
                         (let* ((flags (doom-module-get cat (cdr key) :flags))
                                (path  (doom-module-get cat (cdr key) :path))
-                               (module (append (cond ((null path)
-                                                      (list '&nopath))
-                                                     ((file-in-directory-p path doom-private-dir)
-                                                      (list '&user)))
-                                               (if flags
-                                                   `(,(cdr key) ,@flags)
-                                                 (list (cdr key))))))
+                               (module
+                                (append
+                                 (cond ((null path)
+                                        (list '&nopath))
+                                       ((not (file-in-directory-p path doom-modules-dir))
+                                        (list '&user)))
+                                 (if flags
+                                     `(,(cdr key) ,@flags)
+                                   (list (cdr key))))))
                           (if (= (length module) 1)
                               (car module)
                             module)))
