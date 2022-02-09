@@ -28,6 +28,8 @@
         "q" #'beancount-query
         "x" #'beancount-context
         (:prefix ("i" . "insert")
+         "c" #'+beancount/clone-transaction
+         "C" #'+beancount/clone-this-transaction
          "a" #'beancount-insert-account
          "p" #'beancount-insert-prices
          "d" #'beancount-insert-date)))
