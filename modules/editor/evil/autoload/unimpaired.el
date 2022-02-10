@@ -47,7 +47,7 @@ By default, this only recognizes C preproc directives. To change this see
 
 See `+evil/next-preproc-directive' for details."
   (interactive "p")
-  (+evil/next-preproc-statement (- count)))
+  (+evil/next-preproc-directive (- count)))
 
 ;;;###autoload
 (defun +evil/next-comment (count)
