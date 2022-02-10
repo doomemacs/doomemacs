@@ -66,6 +66,27 @@ If there's none, return an empty string."
     (directory-file-name dir)))
 
 
+;;
+;;; Hooks
+
+;;;###autoload
+(defun +org-roam-manage-backlinks-buffer-h ()
+  "Open or close roam backlinks buffer depending on visible org-roam buffers.
+
+Intended to be added to `doom-switch-buffer-hook' in `org-roam-find-file-hook'.
+Controlled by `+org-roam-open-buffer-on-find-file'."
+  (when (and +org-roam-auto-backlinks-buffer
+             (not org-roam-capture--node)  ; not for roam capture buffers
+             (not org-capture-mode)        ; not for capture buffers
+             (not (bound-and-true-p +popup-buffer-mode)))
+    (let ((visible-p (eq 'visible (org-roam-buffer--visibility))))
+      (if (cl-some #'org-roam-buffer-p (doom-visible-buffers))
+          (unless visible-p
+            (org-roam-buffer-toggle))
+        (when visible-p
+          (org-roam-buffer-toggle))
+        (unless (doom-buffers-in-mode 'org-mode)
+          (remove-hook 'doom-switch-buffer-hook #'+org-roam-manage-backlinks-buffer-h))))))
 
 
 ;;

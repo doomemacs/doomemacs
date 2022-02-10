@@ -1,8 +1,12 @@
 ;;; lang/org/contrib/roam2.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +roam2)
 
-(defvar +org-roam-open-buffer-on-find-file t
-  "If non-nil, open the org-roam buffer when opening an org roam file.")
+(defvar +org-roam-auto-backlinks-buffer nil
+  "If non-nil, open and close the org-roam backlinks buffer automatically.
+
+This ensures the backlinks buffer is always present so long as an org roam file
+is visible. Once they are all closed or killed, the backlinks buffer will be
+closed.")
 
 (defvar +org-roam-link-to-org-use-id 'create-if-interactive
   "`org-roam-directory' local value for `org-id-link-to-org-use-id'.
@@ -86,18 +90,13 @@ In case of failure, fail gracefully."
   (setq-hook! 'org-roam-find-file-hook
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)
 
-  ;; Normally, the org-roam buffer doesn't open until you explicitly call
-  ;; `org-roam'. If `+org-roam-open-buffer-on-find-file' is non-nil, the
-  ;; org-roam buffer will be opened for you whenever you visit a file in
-  ;; `org-roam-directory'.
+  ;; Normally, the org-roam buffer won't open until `org-roam-buffer-toggle' is
+  ;; explicitly called. If `+org-roam-open-buffer-on-find-file' is non-nil, the
+  ;; org-roam buffer will automatically open whenever a file in
+  ;; `org-roam-directory' is visited and closed when no org-roam buffers remain.
   (add-hook! 'org-roam-find-file-hook :append
-    (defun +org-roam-open-with-buffer-maybe-h ()
-      (and +org-roam-open-buffer-on-find-file
-           (not org-roam-capture--node)  ; not for roam capture buffers
-           (not org-capture-mode)        ; not for capture buffers
-           (not (bound-and-true-p +popup-buffer-mode))
-           (not (eq 'visible (org-roam-buffer--visibility)))
-           (org-roam-buffer-toggle))))
+    (defun +org-roam-enable-auto-backlinks-buffer-h ()
+      (add-hook 'doom-switch-buffer-hook #'+org-roam-manage-backlinks-buffer-h)))
 
   (set-popup-rules!
     `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
