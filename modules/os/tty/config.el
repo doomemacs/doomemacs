@@ -3,9 +3,10 @@
 ;; Keep window title up-to-date; should fail gracefully in non-xterm terminals.
 ;; Only works in Emacs 27+.
 (setq xterm-set-window-title t)
+;; DEPRECATED Not needed on Emacs 28+. Remove when dropping 27 support.
 (defadvice! +tty--only-set-window-title-in-tty-a (&optional terminal)
   "`xterm-set-window-title' fails in GUI Emacs. Stop that. Get some help."
-  :before-until #'xterm-set-window-title
+  :before-while #'xterm-set-window-title
   (not (display-graphic-p terminal)))
 
 ;; Some terminals offer two different cursors: a "visible" static cursor and a
