@@ -242,4 +242,7 @@ e.g. proselint and langtool."
     :config
     (setq flyspell-lazy-idle-seconds 1
           flyspell-lazy-window-idle-seconds 3)
+    ;; Fix #3357: flyspell-lazy inhibits flyspell entirely in message-mode
+    ;; derivatives (e.g. for notmuch users).
+    (setq-hook! 'message-mode-hook flyspell-lazy-disallow-buffers nil)
     (flyspell-lazy-mode +1)))
