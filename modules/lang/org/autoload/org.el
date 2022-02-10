@@ -414,8 +414,9 @@ Made for `org-tab-first-hook' in evil-mode."
              (org-demote)))
          t)
         ((org-in-src-block-p t)
-         (org-babel-do-in-edit-buffer
-          (call-interactively #'indent-for-tab-command))
+         (save-window-excursion
+           (org-babel-do-in-edit-buffer
+            (call-interactively #'indent-for-tab-command)))
          t)
         ((and (save-excursion
                 (skip-chars-backward " \t")
