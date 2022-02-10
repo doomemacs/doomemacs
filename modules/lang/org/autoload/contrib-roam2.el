@@ -19,7 +19,7 @@ If some elements are missing, they will be stripped out."
         (olp       (org-roam-node-olp   node))
         (level     (org-roam-node-level node))
         (filetitle (org-roam-node-doom-filetitle node))
-        (separator (propertize " > " 'face 'shadow)))
+        (separator (propertize org-eldoc-breadcrumb-separator 'face 'shadow)))
     (cl-case level
       ;; node is a top-level file
       (0 filetitle)
@@ -28,7 +28,7 @@ If some elements are missing, they will be stripped out."
                  separator title))
       ;; node is a heading with an arbitrary outline path
       (t (concat (propertize filetitle 'face '(shadow italic))
-                 separator (propertize (string-join olp " > ") 'face '(shadow italic))
+                 separator (propertize (string-join olp separator) 'face '(shadow italic))
                  separator title)))))
 
 ;;;###autoload (autoload 'org-roam-node-doom-subdirs "lang/org/autoload/contrib-roam2" nil t)
