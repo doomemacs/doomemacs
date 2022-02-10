@@ -72,11 +72,16 @@ In case of failure, fail gracefully."
           (file-truename)
           (file-name-as-directory))
         org-roam-node-display-template
-        "${doom-hierarchy:*} ${doom-tags:45}"
+        (format "${doom-hierarchy:*} %s %s"
+                (propertize "${doom-type:15}" 'face 'font-lock-keyword-face)
+                (propertize "${doom-tags:-1}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-db-gc-threshold most-positive-fixnum
         ;; Reverse the default to favor faster searchers over slower ones.
         org-roam-list-files-commands '(fd fdfind rg find))
+
+  (add-to-list 'org-roam-node-template-prefixes '("doom-tags" . "#"))
+  (add-to-list 'org-roam-node-template-prefixes '("doom-type" . "@"))
 
   (setq-hook! 'org-roam-find-file-hook
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)

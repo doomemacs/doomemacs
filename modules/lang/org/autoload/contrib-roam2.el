@@ -35,27 +35,37 @@ If some elements are missing, they will be stripped out."
 (cl-defmethod org-roam-node-doom-subdirs ((node org-roam-node))
   "Return subdirectories of `org-roam-directory' in which NODE resides in.
 If there's none, return an empty string."
-  (if-let ((dirs (thread-first node
-                   (org-roam-node-file)
-                   (file-relative-name org-roam-directory)
-                   (file-name-directory))))
-      dirs
-    ""))
+  (thread-first
+    node
+    (org-roam-node-file)
+    (file-relative-name org-roam-directory)
+    (file-name-directory)))
 
 ;;;###autoload (autoload 'org-roam-node-doom-tags "lang/org/autoload/contrib-roam2" nil t)
 (cl-defmethod org-roam-node-doom-tags ((node org-roam-node))
-  "Return tags formatted in the same way how they appear in org files.
-Treat subdirectories as tags too. If there's no elements to build
-the tags of, return an empty string."
-  (let ((tags (org-roam-node-tags node))
-        (subdirs (org-roam-node-doom-subdirs node)))
-    (when tags
-      (setq tags (propertize (concat (mapconcat (lambda (s) (concat ":" s)) tags nil) ":")
-                             'face 'shadow)))
-    (unless (string-empty-p subdirs)
-      (setq subdirs (propertize (concat ":" (replace-regexp-in-string "/\\|\\\\" ":" subdirs))
-                                'face '(shadow italic))))
-    (replace-regexp-in-string ":+" (propertize ":" 'face 'shadow) (concat subdirs tags))))
+  "Return tags formatted in the same way how they appear in org files."
+  (when-let* ((tags (org-roam-node-tags node))
+              (tags (cl-remove-if
+                     (doom-rpartial
+                      #'member (delq
+                                nil (append
+                                     (list (bound-and-true-p org-archive-tag)
+                                           (bound-and-true-p org-attach-auto-tag))
+                                     (bound-and-true-p org-num-skip-tags))))
+                     tags)))
+    tags))
+
+;;;###autoload (autoload 'org-roam-node-doom-type "lang/org/autoload/contrib-roam2" nil t)
+(cl-defmethod org-roam-node-doom-type ((node org-roam-node))
+  "Return the directory relative to `org-roam-directory' as a note's \"type\"."
+  (when-let (dir (thread-first
+                   node
+                   (org-roam-node-file)
+                   (file-relative-name org-roam-directory)
+                   (file-name-directory)))
+    (directory-file-name dir)))
+
+
 
 
 ;;
