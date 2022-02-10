@@ -103,6 +103,11 @@ In case of failure, fail gracefully."
   ;; Soft-wrap lines in the backlinks buffer
   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
 
+  ;; Use a 'roam:X' link's description if X is empty.
+  ;; TODO PR this upstream?
+  (advice-add #'org-roam-link-follow-link :filter-args #'org-roam-link-follow-link-with-description-a)
+  (advice-add #'org-roam-link-replace-at-point :override #'org-roam-link-replace-at-point-a)
+
   (map! :map org-mode-map
         :localleader
         :prefix ("m" . "org-roam")

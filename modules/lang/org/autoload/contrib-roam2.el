@@ -56,3 +56,48 @@ the tags of, return an empty string."
       (setq subdirs (propertize (concat ":" (replace-regexp-in-string "/\\|\\\\" ":" subdirs))
                                 'face '(shadow italic))))
     (replace-regexp-in-string ":+" (propertize ":" 'face 'shadow) (concat subdirs tags))))
+
+
+;;
+;;; Advice
+
+;;;###autoload
+(defun org-roam-link-follow-link-with-description-a (args)
+  "Use a 'roam:X' link's description if X is empty."
+  (when (or (string-empty-p (car args))
+            (null (car args)))
+    (setcar
+     args (let ((link (org-element-context)))
+            (and (org-element-property :contents-begin link)
+                 (org-element-property :contents-end link)
+                 (buffer-substring-no-properties
+                  (org-element-property :contents-begin link)
+                  (org-element-property :contents-end link))))))
+  args)
+
+;;;###autoload
+(defun org-roam-link-replace-at-point-a (&optional link)
+  "Replace \"roam:\" LINK at point with an \"id:\" link."
+  (save-excursion
+    (save-match-data
+      (let* ((link (or link (org-element-context)))
+             (type (org-element-property :type link))
+             (path (org-element-property :path link))
+             (desc (and (org-element-property :contents-begin link)
+                        (org-element-property :contents-end link)
+                        (buffer-substring-no-properties
+                         (org-element-property :contents-begin link)
+                         (org-element-property :contents-end link))))
+             node)
+        (goto-char (org-element-property :begin link))
+        (when (and (org-in-regexp org-link-any-re 1)
+                   (string-equal type "roam")
+                   ;; Added `desc' ref here
+                   (setq node (save-match-data
+                                (org-roam-node-from-title-or-alias
+                                 (if (string-empty-p path)
+                                     desc
+                                   path)))))
+          (replace-match (org-link-make-string
+                          (concat "id:" (org-roam-node-id node))
+                          (or desc path))))))))
