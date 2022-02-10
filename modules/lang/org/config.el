@@ -1169,8 +1169,8 @@ compelling reason, so..."
             ;; more intuitive RET keybinds
             :n [return]   #'+org/dwim-at-point
             :n "RET"      #'+org/dwim-at-point
-            :i [return]   (cmd! (org-return electric-indent-mode))
-            :i "RET"      (cmd! (org-return electric-indent-mode))
+            :i [return]   #'+org/return
+            :i "RET"      #'+org/return
             :i [S-return] #'+org/shift-return
             :i "S-RET"    #'+org/shift-return
             ;; more vim-esque org motion keys (not covered by evil-org-mode)

@@ -133,6 +133,12 @@
 ;;; Commands
 
 ;;;###autoload
+(defun +org/return ()
+  "Call `org-return' then indent (if `electric-indent-mode' is on)."
+  (interactive)
+  (org-return electric-indent-mode))
+
+;;;###autoload
 (defun +org/dwim-at-point (&optional arg)
   "Do-what-I-mean at point.
 
