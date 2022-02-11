@@ -44,16 +44,13 @@ If there's none, return an empty string."
 ;;;###autoload (autoload 'org-roam-node-doom-tags "lang/org/autoload/contrib-roam2" nil t)
 (cl-defmethod org-roam-node-doom-tags ((node org-roam-node))
   "Return tags formatted in the same way how they appear in org files."
-  (when-let* ((tags (org-roam-node-tags node))
-              (tags (cl-remove-if
-                     (doom-rpartial
-                      #'member (delq
-                                nil (append
-                                     (list (bound-and-true-p org-archive-tag)
-                                           (bound-and-true-p org-attach-auto-tag))
-                                     (bound-and-true-p org-num-skip-tags))))
-                     tags)))
-    tags))
+  (cl-remove-if (doom-rpartial
+                 #'member (delq
+                           nil (append
+                                (list (bound-and-true-p org-archive-tag)
+                                      (bound-and-true-p org-attach-auto-tag))
+                                (bound-and-true-p org-num-skip-tags))))
+                (org-roam-node-tags node)))
 
 ;;;###autoload (autoload 'org-roam-node-doom-type "lang/org/autoload/contrib-roam2" nil t)
 (cl-defmethod org-roam-node-doom-type ((node org-roam-node))
