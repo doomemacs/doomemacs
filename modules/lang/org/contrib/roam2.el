@@ -77,8 +77,8 @@ In case of failure, fail gracefully."
           (file-name-as-directory))
         org-roam-node-display-template
         (format "${doom-hierarchy:*} %s %s"
-                (propertize "${doom-type:15}" 'face 'font-lock-keyword-face)
-                (propertize "${doom-tags:-1}" 'face 'org-tag))
+                (propertize "${doom-type:12}" 'face 'font-lock-keyword-face)
+                (propertize "${doom-tags:42}" 'face 'org-tag))
         org-roam-completion-everywhere t
         org-roam-db-gc-threshold most-positive-fixnum
         ;; Reverse the default to favor faster searchers over slower ones.
@@ -86,6 +86,19 @@ In case of failure, fail gracefully."
 
   (add-to-list 'org-roam-node-template-prefixes '("doom-tags" . "#"))
   (add-to-list 'org-roam-node-template-prefixes '("doom-type" . "@"))
+
+  ;; REVIEW Remove when addressed upstream. See org-roam/org-roam#2066.
+  (defadvice! +org--roam-fix-completion-width-for-vertico-a (fn &rest args)
+    "Fixes completion candidate width for vertico users."
+    :around #'org-roam-node-read--to-candidate
+    (letf! (defun org-roam-node--format-entry (template node &optional width)
+             (funcall org-roam-node--format-entry template node
+                      (if (bound-and-true-p vertico-mode)
+                          (if (minibufferp)
+                              (window-width)
+                            (1- (frame-width)))
+                        width)))
+      (apply fn args)))
 
   (setq-hook! 'org-roam-find-file-hook
     org-id-link-to-org-use-id +org-roam-link-to-org-use-id)
