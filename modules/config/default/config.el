@@ -35,13 +35,18 @@
   ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
   ;; for the key passphrase.
   (set 'epg-pinentry-mode 'loopback)
-  ;; Default to the first secret key available in your keyring.
+  ;; Default to the first enabled and non-expired key in your keyring.
   (setq-default
    epa-file-encrypt-to
    (or (default-value 'epa-file-encrypt-to)
        (unless (string-empty-p user-full-name)
-         (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
-                  collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
+         (cl-loop with context = (epg-make-context)
+                  for key in (ignore-errors (epg-list-keys context user-full-name 'public))
+                  for subkey = (car (epg-key-sub-key-list key))
+                  if (not (memq 'disabled (epg-sub-key-capability subkey)))
+                  if (< (or (epg-sub-key-expiration-time subkey) 0)
+                        (time-to-seconds))
+                  collect (epg-sub-key-fingerprint subkey)))
        user-mail-address))
    ;; And suppress prompts if epa-file-encrypt-to has a default value (without
    ;; overwriting file-local values).
