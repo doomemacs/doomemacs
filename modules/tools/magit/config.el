@@ -4,7 +4,7 @@
   "What direction to open new windows from the status buffer.
 For example, diffs and log buffers. Accepts `left', `right', `up', and `down'.")
 
-(defvar +magit-fringe-size 14
+(defvar +magit-fringe-size '(13 . 1)
   "Size of the fringe in magit-mode buffers.
 
 Can be an integer or a cons cell whose CAR and CDR are integer widths for the
