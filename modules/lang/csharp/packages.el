@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/csharp/packages.el
 
-(package! csharp-mode :pin "fe8a68e9849fc7617e0c870cacd6599b8a797638")
+(package! csharp-mode :pin "9917e1b97d6a374c8043124817142ea3419a649b")
 (package! csproj-mode :pin "a7f0f4610c976a28c41b9b8299892f88b5d0336c")
 (package! sln-mode :pin "0f91d1b957c7d2a7bab9278ec57b54d57f1dbd9c")
 (when (featurep! +unity)
