@@ -56,7 +56,8 @@ Examples:
        (append (cl-loop for (mode . backends) in +company-backend-alist
                         if (or (eq major-mode mode)  ; major modes
                                (and (boundp mode)
-                                    (symbol-value mode))) ; minor modes
+                                    (symbol-value mode)
+                                    (memq mode minor-mode-list))) ; minor modes
                         append backends)
                (nreverse backends))))))
 
