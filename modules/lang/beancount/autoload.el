@@ -143,7 +143,7 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
                             "\n")))))))
   (when transaction
     (goto-char (point-min))
-    (re-search-forward (concat "^" (regexp-quote select)))
+    (re-search-forward (concat "^" (regexp-quote transaction)))
     (+beancount/clone-this-transaction t)))
 
 ;;;###autoload
