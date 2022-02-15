@@ -330,6 +330,6 @@ to tide."
                js3-mode-hook
                typescript-mode-hook
                typescript-tsx-mode-hook
-               rjsx-mode)
+               rjsx-mode-hook)
              #'turn-on-tree-sitter-mode
              #'+tree-sitter-keys-mode))
