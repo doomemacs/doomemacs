@@ -62,12 +62,12 @@ Note: only languages with parsers in emacs have text object support currently.
 Currently text objects are bound to:
 | key | text object         |
 |-----+---------------------|
-| =a= | parameter list      |
+| =A= | parameter list      |
 | =f= | function definition |
 | =F= | function call       |
 | =C= | class               |
 | =c= | comment             |
-| =i= | conditional         |
+| =v= | conditional         |
 | =l= | loop                |
 
 They are used in a container context (not =vf= but =vaf= or =vif=)
