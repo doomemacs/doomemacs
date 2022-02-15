@@ -37,19 +37,19 @@
   :config
 
   (map! (:map +tree-sitter-inner-text-objects-map
-         "a" (evil-textobj-tree-sitter-get-textobj "parameter.inner")
+         "A" (evil-textobj-tree-sitter-get-textobj ("parameter.inner" "call.inner"))
          "f" (evil-textobj-tree-sitter-get-textobj "function.inner")
          "F" (evil-textobj-tree-sitter-get-textobj "call.inner")
          "C" (evil-textobj-tree-sitter-get-textobj "class.inner")
-         "i" (evil-textobj-tree-sitter-get-textobj "conditional.inner")
+         "v" (evil-textobj-tree-sitter-get-textobj "conditional.inner")
          "l" (evil-textobj-tree-sitter-get-textobj "loop.inner"))
         (:map +tree-sitter-outer-text-objects-map
-         "a" (evil-textobj-tree-sitter-get-textobj "parameter.outer")
+         "A" (evil-textobj-tree-sitter-get-textobj ("parameter.outer" "call.outer"))
          "f" (evil-textobj-tree-sitter-get-textobj "function.outer")
          "F" (evil-textobj-tree-sitter-get-textobj "call.outer")
          "C" (evil-textobj-tree-sitter-get-textobj "class.outer")
          "c" (evil-textobj-tree-sitter-get-textobj "comment.outer")
-         "i" (evil-textobj-tree-sitter-get-textobj "conditional.outer")
+         "v" (evil-textobj-tree-sitter-get-textobj "conditional.outer")
          "l" (evil-textobj-tree-sitter-get-textobj "loop.outer"))
 
         (:map +tree-sitter-goto-previous-map
