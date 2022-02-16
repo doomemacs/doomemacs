@@ -134,8 +134,12 @@ public variables/functions (e.g. ~bookmark-default-file~ or
   ~set-company-backends!~, ~set-evil-initial-state!~
 
 *** TODO Commits & PRs
-+ Target =develop= instead of =master=. The only exception are hotfixes!
-
+- Target the correct branch:
+  - =rewrite-docs= for changes to =*.org= files.
+  - =master= for everything else.
+  - /Never/ =develop=. It's EOL.
+- Consult [[https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837][our do-not-PR list]] for things we won't accept pull requests for.
+  
 *** TODO Keybind conventions
 
 ** TODO Your first code contribution
