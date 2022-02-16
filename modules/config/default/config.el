@@ -40,13 +40,13 @@
    epa-file-encrypt-to
    (or (default-value 'epa-file-encrypt-to)
        (unless (string-empty-p user-full-name)
-         (cl-loop with context = (epg-make-context)
-                  for key in (ignore-errors (epg-list-keys context user-full-name 'public))
-                  for subkey = (car (epg-key-sub-key-list key))
-                  if (not (memq 'disabled (epg-sub-key-capability subkey)))
-                  if (< (or (epg-sub-key-expiration-time subkey) 0)
-                        (time-to-seconds))
-                  collect (epg-sub-key-fingerprint subkey)))
+         (when-let (context (ignore-errors (epg-make-context)))
+           (cl-loop for key in (epg-list-keys context user-full-name 'public)
+                    for subkey = (car (epg-key-sub-key-list key))
+                    if (not (memq 'disabled (epg-sub-key-capability subkey)))
+                    if (< (or (epg-sub-key-expiration-time subkey) 0)
+                          (time-to-seconds))
+                    collect (epg-sub-key-fingerprint subkey))))
        user-mail-address))
    ;; And suppress prompts if epa-file-encrypt-to has a default value (without
    ;; overwriting file-local values).
