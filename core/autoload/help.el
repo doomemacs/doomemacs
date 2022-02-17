@@ -41,7 +41,7 @@
     (gfm-mode        :lang markdown)
     (nim-mode        :lang nim)
     (nix-mode        :lang nix)
-    (taureg-mode     :lang ocaml)
+    (tuareg-mode     :lang ocaml)
     (org-mode        :lang org)
     (raku-mode       :lang raku)
     (php-mode        :lang php)
