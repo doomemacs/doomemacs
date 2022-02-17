@@ -246,3 +246,10 @@ orderless."
 (use-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
+
+
+(use-package! vertico-posframe
+  :when (featurep! +childframe)
+  :hook (vertico-mode . vertico-posframe-mode)
+  :config
+  (add-hook 'doom-after-reload-hook #'posframe-delete-all))

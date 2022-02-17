@@ -22,3 +22,8 @@
 
 (when (featurep! +icons)
   (package! all-the-icons-completion :pin "286e2c064a1298be0d8d4100dc91d7a7a554d04a"))
+
+(when (featurep! +childframe)
+  (package! vertico-posframe
+    :recipe (:host github :repo "tumashu/vertico-posframe")
+    :pin "7ca364d319e7ba8ccba26a0d57513f3e66f1b05b"))
