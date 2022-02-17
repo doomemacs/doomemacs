@@ -221,7 +221,15 @@ if you don't like the symbols chosen you can change them by using:
 #+end_src
 
 * Troubleshooting
-/There are no known problems with this module./ [[doom-report:][Report one?]]
+[[doom-report:][Report an issue?]]
+
+** Some symbols are not rendering correctly
+This can usually be fixed by doing one of the following:
+
+- Make sure Symbola (the font) is installed on your system.
+- Otherwise, change [[var:][doom-unicode-font]] (set to Symbola by default).
+- Disable the [[doom-module:][:ui unicode]] module. It not only overrides [[var:][doom-unicode-font]], but
+  should only be used as a last resort.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
