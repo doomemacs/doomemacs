@@ -23,7 +23,7 @@ PDF files. The key difference being pages are not pre-rendered, but instead
 rendered on-demand and stored in memory; a much faster approach, especially for
 larger PDFs.
 
-Displaying PDF files is just one function of =pdf-tools=. See [[https://github.com/politza/pdf-tools][its project
+Displaying PDF files is just one function of =pdf-tools=. See [[https://github.com/vedang/pdf-tools][its project
 website]] for details and videos.
 
 ** Maintainers
@@ -33,7 +33,7 @@ This module has no dedicated maintainers.
 This module provides no flags.
 
 ** Plugins
-+ [[https://github.com/politza/pdf-tools][pdf-tools]]
++ [[https://github.com/vedang/pdf-tools][pdf-tools]]
 
 ** Hacks
 + Added out-of-the-box support for HiDPI or Retina displays.
