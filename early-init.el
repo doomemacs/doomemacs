@@ -23,7 +23,9 @@
 ;; to skip the mtime checks on every *.elc file.
 (setq load-prefer-newer noninteractive)
 
-(unless (or (daemonp) noninteractive)
+(unless (or (daemonp)
+            noninteractive
+            init-file-debug)
   (let ((old-file-name-handler-alist file-name-handler-alist))
     ;; `file-name-handler-alist' is consulted on each `require', `load' and
     ;; various path/io functions. You get a minor speed up by unsetting this.
