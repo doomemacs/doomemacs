@@ -1,53 +1,41 @@
 ;;; completion/vertico/autoload/workspaces.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :ui workspaces)
 
-;;;###autoload
-(defun +vertico--workspace-nth-source (n)
-  "Generate a consult buffer source for buffers in the NTH workspace"
-  (cond ((numberp n)
-         `(:name     ,(nth n (+workspace-list-names))
-           :hidden   ,(not (string= (+workspace-current-name) (nth n (+workspace-list-names))))
-           :narrow   ,(string-to-char (number-to-string (1+ n)))
-           :category buffer
-           :state    ,#'consult--buffer-state
-           :items    ,(lambda ()
-                        (consult--buffer-query
-                         :sort 'visibility
-                         :as #'buffer-name
-                         :predicate (lambda (buf)
-                                      (+workspace-contains-buffer-p
-                                       buf
-                                       (nth n (+workspace-list))))))))
-        ((eq n 'final)
-         `(:name     ,(car (last (+workspace-list-names)))
-           :hidden   t
-           :narrow   ?0
-           :category buffer
-           :state    ,#'consult--buffer-state
-           :items    ,(lambda ()
-                        (consult--buffer-query
-                         :sort 'visibility
-                         :as #'buffer-name
-                         :predicate (lambda (buf)
-                                      (+workspace-contains-buffer-p
-                                       buf
-                                       (car (last (+workspace-list)))))))))
-        (t
-         (user-error "invalid workspace source %s" n))))
-
-;;;###autoload
 (defun +vertico--workspace-generate-sources ()
   "Generate list of consult buffer sources for all workspaces"
-  (mapcar #'+vertico--workspace-nth-source '(0 1 2 3 4 5 6 7 8 final)))
+  (let* ((active-workspace (+workspace-current-name))
+         (workspaces (+workspace-list-names))
+         (key-range (append (cl-loop for i from ?1 to ?9 collect i)
+                            (cl-loop for i from ?a to ?z collect i)
+                            (cl-loop for i from ?A to ?Z collect i)))
+         (last-i (length workspaces))
+         (i 0))
+    (mapcar (lambda (name)
+              (cl-incf i)
+              `(:name     ,name
+                :hidden   ,(not (string= active-workspace name))
+                :narrow   ,(nth i key-range)
+                :category buffer
+                :state    consult--buffer-state
+                :items    ,(lambda ()
+                             (consult--buffer-query
+                              :sort 'visibility
+                              :as #'buffer-name
+                              :predicate
+                              (lambda (buf)
+                                (when-let (workspace (+workspace-get name t))
+                                  (+workspace-contains-buffer-p buf workspace)))))))
+            (+workspace-list-names))))
 
 (autoload 'consult--multi "consult")
 ;;;###autoload
 (defun +vertico/switch-workspace-buffer ()
   "Switch to another buffer in the same workspace.
 
-Use consult narrowing with another workspace number to open a buffer from that workspace
- BUG but it opens it in the current workspace (ivy also does this, but who cares)"
+Type the workspace's number (starting from 1) followed by a space to display its
+buffer list."
   (interactive)
+  ;; FIXME Open buffers in other workspaces in their respective workspace
   (when-let (buffer (consult--multi (+vertico--workspace-generate-sources)
                                     :require-match
                                     (confirm-nonexistent-file-or-buffer)
