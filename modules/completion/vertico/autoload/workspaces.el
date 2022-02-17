@@ -51,7 +51,7 @@
 
 (autoload 'consult--multi "consult")
 ;;;###autoload
-(defun +vertico/switch-workspace-buffer (buffers &optional force-same-workspace)
+(defun +vertico/switch-workspace-buffer (&optional force-same-workspace)
   "Switch to another buffer in the same workspace.
 
 Type the workspace's number (starting from 1) followed by a space to display its
