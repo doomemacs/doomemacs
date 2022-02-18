@@ -650,7 +650,25 @@ on."
 (use-package! so-long
   :hook (doom-first-file . global-so-long-mode)
   :config
-  (setq so-long-threshold 400) ; reduce false positives w/ larger threshold
+  ;; Emacs 29 introduced faster long-line detection, so they can afford a much
+  ;; larger `so-long-threshold' and its default `so-long-predicate'.
+  (if (fboundp 'buffer-line-statistics)
+      (unless NATIVECOMP
+        (setq so-long-threshold 5000))
+    ;; reduce false positives w/ larger threshold
+    (setq so-long-threshold 400)
+
+    (defun doom-buffer-has-long-lines-p ()
+      (unless (bound-and-true-p visual-line-mode)
+        (let ((so-long-skip-leading-comments
+               ;; HACK Fix #2183: `so-long-detected-long-line-p' calls
+               ;;   `comment-forward' which tries to use comment syntax, which
+               ;;   throws an error if comment state isn't initialized, leading
+               ;;   to a wrong-type-argument: stringp error.
+               ;; DEPRECATED Fixed in Emacs 28.
+               (bound-and-true-p comment-use-syntax)))
+          (so-long-detected-long-line-p))))
+    (setq so-long-predicate #'doom-buffer-has-long-lines-p))
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
   ;; experience in them, at least. It will remain off in `so-long-mode',
@@ -665,26 +683,19 @@ on."
   ;; But disable everything else that may be unnecessary/expensive for large or
   ;; wide buffers.
   (appendq! so-long-minor-modes
-            '(flycheck-mode
-              spell-fu-mode
+            '(spell-fu-mode
               eldoc-mode
-              smartparens-mode
               highlight-numbers-mode
               better-jumper-local-mode
               ws-butler-mode
               auto-composition-mode
               undo-tree-mode
               highlight-indent-guides-mode
-              hl-fill-column-mode))
-  (defun doom-buffer-has-long-lines-p ()
-    (unless (bound-and-true-p visual-line-mode)
-      (let ((so-long-skip-leading-comments
-             ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse
-             ;;      comment syntax, but comment state may not be initialized,
-             ;;      leading to a wrong-type-argument: stringp error.
-             (bound-and-true-p comment-use-syntax)))
-        (so-long-detected-long-line-p))))
-  (setq so-long-predicate #'doom-buffer-has-long-lines-p))
+              hl-fill-column-mode
+              ;; These are redundant on Emacs 29+
+              flycheck-mode
+              smartparens-mode
+              smartparens-strict-mode)))
 
 
 (use-package! ws-butler
