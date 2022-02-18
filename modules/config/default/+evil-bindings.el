@@ -95,6 +95,10 @@
        :prefix "gz"
        :nv "d" #'evil-mc-make-and-goto-next-match
        :nv "D" #'evil-mc-make-and-goto-prev-match
+       :nv "s" #'evil-mc-skip-and-goto-next-match
+       :nv "S" #'evil-mc-skip-and-goto-prev-match
+       :nv "c" #'evil-mc-skip-and-goto-next-cursor
+       :nv "C" #'evil-mc-skip-and-goto-prev-cursor
        :nv "j" #'evil-mc-make-cursor-move-next-line
        :nv "k" #'evil-mc-make-cursor-move-prev-line
        :nv "m" #'evil-mc-make-all-cursors
