@@ -325,7 +325,7 @@
          (propertize (format " × %d" (cadr entry))
                      'face 'font-lock-doc-face)))
       (insert ?\n)
-      (set-window-point nil (point-max)))))
+      (set-window-point (get-buffer-window doom-tutorial--cmd-log-buffer-name) (point-max)))))
 
 (defun doom-tutorial-cmd-log-startswith (sequence)
   "Check if the command log most recently recorded SEQUENCE of symbols."
