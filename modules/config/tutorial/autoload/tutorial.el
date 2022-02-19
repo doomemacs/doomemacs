@@ -193,7 +193,8 @@
             (insert
              (cond
               ((stringp template) template)
-              ((functionp template) (funcall template)))))
+              ((functionp template) (funcall template))))
+            (goto-char (point-min)))
           (when setup (funcall setup)))))))
 
 (defun doom-tutorial--set-info-modeline (page npages)
