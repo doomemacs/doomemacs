@@ -48,7 +48,8 @@
     (when-let ((tutorial (cdr (assoc name doom-tutorial--registered))))
       (eval (plist-get tutorial :setup)))
     (doom-tutorial-load-page name)
-    (run-at-time t doom-tutorial--test-interval #'doom-tutorial--check-test)))
+    (setq doom-tutorial--test-timer
+          (run-at-time t doom-tutorial--test-interval #'doom-tutorial--check-test))))
 
 (defun doom-tutorial-run-maybe (name)
   (unless (or (plist-get (cdr (assoc name doom-tutorial--progress)) :skipped)
