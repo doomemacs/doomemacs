@@ -76,6 +76,26 @@
           (:from-or-to . 25)
           (:subject)))
 
+  ;; Better search symbols
+  (letf! ((defun make-help-button (text help-echo)
+            (with-temp-buffer
+              (insert-text-button text
+                                  'help-echo help-echo
+                                  'mouse-face nil)
+              (buffer-string)))
+          (defun make-help-button-cons (text1 text2 help-echo)
+            (cons (make-help-button text1 help-echo)
+                  (make-help-button text2 help-echo))))
+    (setq mu4e-headers-threaded-label
+          (make-help-button-cons "T" (concat " " (all-the-icons-octicon "git-branch" :v-adjust 0.05))
+                                 "Thread view")
+          mu4e-headers-related-label
+          (make-help-button-cons "R" (concat " " (all-the-icons-material "link" :v-adjust -0.1))
+                                 "Showing related emails")
+          mu4e-headers-full-label
+          (make-help-button-cons "F" (concat " " (all-the-icons-material "disc_full"))
+                                 "Search is full!")))
+
   ;; set mail user agent
   (setq mail-user-agent 'mu4e-user-agent
         message-mail-user-agent 'mu4e-user-agent)
