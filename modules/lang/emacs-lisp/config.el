@@ -112,7 +112,7 @@ employed so that flycheck still does *some* helpful linting.")
         ret)))
 
   (map! :localleader
-        :map emacs-lisp-mode-map
+        :map (emacs-lisp-mode-map lisp-interaction-mode-map)
         :desc "Expand macro" "m" #'macrostep-expand
         (:prefix ("d" . "debug")
           "f" #'+emacs-lisp/edebug-instrument-defun-on
