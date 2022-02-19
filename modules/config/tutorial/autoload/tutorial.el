@@ -290,8 +290,7 @@
               (1+ (cadar doom-tutorial--cmd-log)))
         (with-current-buffer doom-tutorial--cmd-log-buffer-name
           (goto-char (point-max))
-          (forward-char -1)
-          (kill-whole-line))
+          (delete-region (line-beginning-position 0) (point)))
         (doom-tutorial--log-cmd-insert))
        (t
         (push (list cmd 1 keys (current-time))
