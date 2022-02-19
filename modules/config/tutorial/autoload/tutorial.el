@@ -272,7 +272,9 @@
         beginning-of-line end-of-line recenter
         move-end-of-line move-beginning-of-line
         handle-switch-frame
-        newline previous-line next-line)
+        newline previous-line next-line
+        mwheel-scroll mouse-set-point mouse-set-region
+        evil-mouse-drag-region)
   "A list of commands which should not be logged.")
 
 (defun doom-tutorial--log-cmd (&optional cmd)
