@@ -6,9 +6,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      > :warning: **Our issue tracker is for bug reports and feature requests,
-      > not configuration questions or requests for help.** Use [our
-      > Discord](https://doomemacs.org/discord) for those instead.
+      > :warning: **Our issue tracker is for bug reports and feature requests, not configuration questions or requests for help.** Use [our Discord](https://doomemacs.org/discord) for those instead.
 
       **Before you proceed, please ensure your request:**
 
@@ -28,9 +26,7 @@ body:
   attributes:
     label: Briefly explain its use-case
     description: |
-      How would your requested feature be used? Can you demonstrate it with a
-      screencast of another editor? List the steps a typical user would take to
-      use it, were it added to Doom.
+      How would your requested feature be used? Can you demonstrate it with a screencast of another editor? List the steps a typical user would take to use it, were it added to Doom.
     placeholder: |
       1. Install Linux
       2. Install Emacs
@@ -43,16 +39,10 @@ body:
 - type: markdown
   attributes:
     value: |
-      Please take a moment to ensure your feature request (and it's title) is
-      **well-researched, descriptive, and specific**, otherwise, you risk it
-      being significantly delayed or automatically closed.
+      Please take a moment to ensure your feature request (and it's title) is **well-researched, descriptive, and specific**, otherwise, you risk it being significantly delayed or automatically closed.
 
-      Emacs' complexity and extensibility produces many false positive or vague
-      requests, so I will immediately close issues that aren't **actionable**,
-      **poorly explained**, or able to be investigated in a reasonable amount of
-      **time**.
+      Emacs' complexity and extensibility produces many false positive or vague requests, so I will immediately close issues that aren't **actionable**, **poorly explained**, or able to be investigated in a reasonable amount of **time**.
 
-      If you don't think your request qualifies, please bring it up on [our
-      Discord](https://doomemacs.org/discord) instead.
+      If you don't think your request qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) instead.
 
       :heart: **Thank you for taking the time to make this feature request!**

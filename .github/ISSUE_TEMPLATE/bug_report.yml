@@ -68,8 +68,7 @@ body:
     description: |
       How do we reproduce your issue? Walk us through a minimal test case.
 
-      > :warning: This is required! If you can't offer steps to reproduce it,
-      > the issue will be immediately closed!
+      > :warning: This is required! If you can't offer steps to reproduce it, the issue will be immediately closed!
     placeholder: |
       1. Open Emacs
       2. `M-x doom/info` and be prompted to visit pastebin.com
@@ -84,29 +83,19 @@ body:
   attributes:
     label: System Information
     description: |
-      Provide a [pastebin.com](https://pastebin.com) link to the output of `M-x
-      doom/info` or `$ ~/.emacs.d/bin/doom info`.
+      Provide a [pastebin.com](https://pastebin.com) link to the output of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info`.
 
-      > :warning: **This _must_ be a pastebin.com link.** Please don't use any
-      > other service, please don't paste your doom-info directly into this box,
-      > and please don't omit it. If you can't provide it, **please explain why
-      > in the box below or other fields above!**
+      > :warning: **This _must_ be a pastebin.com link.** Please don't use any other service, please don't paste your doom-info directly into this box, and please don't omit it. If you can't provide it, **please explain why in the box below or other fields above!**
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
 - type: markdown
   attributes:
     value: |
-      Please take a moment to ensure your issue (and it's title) is
-      **well-researched, descriptive, and specific**, otherwise, you risk it
-      being significantly delayed or automatically closed.
+      Please take a moment to ensure your issue (and it's title) is **well-researched, descriptive, and specific**, otherwise, you risk it being significantly delayed or automatically closed.
 
-      Emacs' complexity and extensibility produces many false positive or vague
-      bug reports, so I will immediately close issues that aren't
-      **actionable**, **reproducible in vanilla Doom**, or able to be
-      investigated in a **reasonable amount of time**.
+      Emacs' complexity and extensibility produces many false positive or vague bug reports, so I will immediately close issues that aren't **actionable**, **reproducible in vanilla Doom**, or able to be investigated in a **reasonable amount of time**.
 
-      If you don't think your issue qualifies, please bring it up on [our
-      Discord](https://doomemacs.org/discord) instead.
+      If you don't think your issue qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) instead.
 
       :heart: **Thank you for taking the time to file this bug report!**
