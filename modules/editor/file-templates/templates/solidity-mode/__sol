@@ -3,8 +3,10 @@
 # contributor: Edmund Miller
 # name: solidity template
 # --
-pragma solidity ^0.4.22;
+// SPDX-License-Identifier: ${1:UNLICENSED}
 
-contract $0 {
+pragma solidity ${2:>=0.8.7 <0.9.0};
 
+contract $3 {
+    $0
 }
