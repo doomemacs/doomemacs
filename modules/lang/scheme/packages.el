@@ -10,7 +10,7 @@
   (when (featurep! +chicken)
     (package! geiser-chicken :pin "ceab39c89607f55cba88e5606ba5eb37c7df5260"))
   (when (featurep! +gambit)
-    (package! geiser-gambit :pin "3294c944d1c3b79db44ed14b133129fec454bd60"))
+    (package! geiser-gambit :pin "381d74ca5059b44fe3d8b5daf42214019c6d1a88"))
   (when (featurep! +gauche)
     (package! geiser-gauche :pin "fd52cbaed9b0a0d0f10e87674b5747e5ee44ebc9"))
   (when (featurep! +guile)
