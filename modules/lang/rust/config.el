@@ -9,10 +9,6 @@
 
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
-  :init
-  (after! org-src
-    (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
-    (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
   (setq rustic-indent-method-chain t)
 
@@ -28,6 +24,7 @@
   (remove-hook 'rustic-mode-hook #'flycheck-mode)
   (remove-hook 'rustic-mode-hook #'flymake-mode-off)
   (unless (featurep! +lsp)
+    (setq rustic-lsp-client nil)
     (after! flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))
 
@@ -71,12 +68,6 @@
 (use-package! racer
   :unless (featurep! +lsp)
   :hook (rustic-mode-local-vars . racer-mode)
-  :init
-  ;; HACK Fix #2132: `racer' depends on `rust-mode', which tries to modify
-  ;;      `auto-mode-alist'. We make extra sure that doesn't stick, especially
-  ;;      when a buffer is reverted, as it is after rustfmt is done with it.
-  (after! rust-mode
-    (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
   :config
   (set-lookup-handlers! 'rustic-mode
     :definition '(racer-find-definition :async t)
