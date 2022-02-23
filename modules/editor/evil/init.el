@@ -281,6 +281,7 @@ and complains if a module is loaded too early (during startup)."
     (setq evil-collection-key-blacklist
           (append (list doom-leader-key doom-localleader-key
                         doom-leader-alt-key)
+                  evil-collection-key-blacklist
                   (when (featurep! :tools lookup)
                     '("gd" "gf" "K"))
                   (when (featurep! :tools eval)
