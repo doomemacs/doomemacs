@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "3b0f1a1d215f3dd441bca6a31313aaf91874a311")
+  :pin "653b04a64f341bfa2606c8f2acba10c3fe284ca2")
 
 ;; core-modules.el
 (package! use-package
@@ -34,9 +34,9 @@
 ;; core-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
 (package! dtrt-indent :pin "926fc4260c3f71f5aac2e0becb9ee435a4124d5d")
-(package! helpful :pin "f865f17ad04cd270685187b0a5331ec8eb06e541")
+(package! helpful :pin "67cdd1030b3022d3dc4da2297f55349da57cde01")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
-(package! smartparens :pin "f59a40d54f35299007c396bd667ce3e9ec4714e3")
+(package! smartparens :pin "37f77bf2e2199be9fe27e981317b02cfd0e8c70e")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -44,9 +44,9 @@
   :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
 
 ;; core-projects.el
-(package! projectile :pin "4e6f66c329e57d66269b4bd3fc02518eb0c677bc")
-(package! project :pin "5347dfc5f32b0408bf4ff7bbace7b2356cf59a8f")
+(package! projectile :pin "0243ad7dc96072126fc6c23e48184a0419bab028")
+(package! project :pin "125a1a8d15f998cd495ef6a6b981b1a0e201bd2f")
 
 ;; core-keybinds.el
 (package! general :pin "9651024e7f40a8ac5c3f31f8675d3ebe2b667344")
-(package! which-key :pin "9f64733e4ac563c0cda3685acf4e1c2cf600319b")
+(package! which-key :pin "1217db8c6356659e67b35dedd9f5f260c06f6e99")

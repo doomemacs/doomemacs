@@ -524,10 +524,6 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   :commands helpful--read-symbol
   :hook (helpful-mode . visual-line-mode)
   :init
-  (when EMACS29+
-    ;; REVIEW See Wilfred/elisp-refs#35. Remove once fixed upstream.
-    (defvar read-symbol-positions-list nil))
-
   ;; Make `apropos' et co search more extensively. They're more useful this way.
   (setq apropos-do-all t)
 
@@ -554,16 +550,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
       (button-type-put
        var-bt 'action
        (lambda (button)
-         (helpful-variable (button-get button 'apropos-symbol))))))
-
-  ;; HACK `help-fns--autoloaded-p's signature changed on Emacs 29. This
-  ;;   suppressed the error until it is addressed upstream.
-  (when EMACS29+
-    (defadvice! doom--fix-helpful--autoloaded-p (fn &rest args)
-      :around #'helpful--autoloaded-p
-      (letf! (defun help-fns--autoloaded-p (sym _)
-               (funcall help-fns--autoloaded-p sym))
-        (apply fn args)))))
+         (helpful-variable (button-get button 'apropos-symbol)))))))
 
 
 ;;;###package imenu
