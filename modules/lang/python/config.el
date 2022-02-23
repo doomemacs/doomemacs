@@ -79,10 +79,13 @@
         (setq-local flycheck-python-flake8-executable "flake8"))))
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
-  (sp-local-pair 'python-mode "'" nil
-                 :unless '(sp-point-before-word-p
-                           sp-point-after-word-p
-                           sp-point-before-same-p))
+  ;; Automatically close f-strings
+  (sp-with-modes 'python-mode
+    (sp-local-pair  "f\"" "\"")
+    (sp-local-pair  "f\"\"\"" "\"\"\"")
+    (sp-local-pair  "f'''" "'''")
+    (sp-local-pair  "f'" "'"))
+  (setq sp-python-insert-colon-in-function-definitions nil) ; interferes with snippet
 
   ;; Affects pyenv and conda
   (when (featurep! :ui modeline)
