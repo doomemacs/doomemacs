@@ -2,7 +2,7 @@
 ;;
 ;; Copyright (C) `(format-time-string "%Y")` `user-full-name`
 ;;
-;; Author: `user-full-name` <https://github.com/`(cl-find-if-not #'string-empty-p (list (cdr (doom-call-process "git" "config" "github.user")) user-login-name))`>
+;; Author: `user-full-name` <`user-mail-address`>
 ;; Maintainer: `user-full-name` <`user-mail-address`>
 ;; Created: `(format-time-string "%B %d, %Y")`
 ;; Modified: `(format-time-string "%B %d, %Y")`
