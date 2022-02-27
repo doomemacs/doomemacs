@@ -82,6 +82,10 @@ available to evil users to access specific company backends:
 | [[kbd:][C-x C-s]] | Complete snippet                  |
 | [[kbd:][C-x s]]   | Complete spelling suggestions     |
 
+** Searching with multiple keywords
+If the =vertico= module is enabled, users can perform code completion with multiple search keywords with an ampersand =&=.
+More information can be found [[https://github.com/oantolin/orderless#company][here]].
+
 * TODO Configuration
 #+begin_quote
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
