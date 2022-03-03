@@ -495,7 +495,7 @@ What can you do about it?
    performance, particularly for LSP users.
 2. Try out [[http://akrl.sdf.org/gccemacs.html][gccemacs]], which promises significant strides in Emacs performance,
    but can be a bit of a hassle to set up. There are packages available for
-   [[https://aur.archlinux.org/packages/emacs-native-comp-git/][Arch Linux]], [[https://github.com/flatwhatson/guix-channel][Guix]] and [[https://github.com/nix-community/emacs-overlay][Nix users]]. [[https://www.emacswiki.org/emacs/GccEmacs][More information available on EmacsWiki]].
+   [[https://aur.archlinux.org/packages/emacs-native-comp-git-enhanced][Arch Linux]], [[https://github.com/flatwhatson/guix-channel][Guix]] and [[https://github.com/nix-community/emacs-overlay][Nix users]]. [[https://www.emacswiki.org/emacs/GccEmacs][More information available on EmacsWiki]].
 3. Disable some of Doom's slowest modules. The biggest offenders tend to be:
    =:ui tabs=, =:ui indent-guides=, =:ui ligatures=, =:editor word-wrap= and =:ui
    vc-gutter=.
