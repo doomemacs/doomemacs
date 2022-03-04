@@ -29,7 +29,7 @@ In particular, this module features:
 + Support for all major Fortran varieties.
 + Auto-formatting via =fprettier=.
 + Integration with the =fpm= package manager.
-+ LSP support via [[https://github.com/hansec/fortran-language-server][fortran-language-server]].
++ LSP support via [[https://github.com/gnikit/fortls][fortls]].
 
 #+begin_quote
 After a career of writing Fortran on Mainframes and Windows machines, my
@@ -42,7 +42,7 @@ now... Cheers Dad, hope this helps.
 + [[https://github.com/fosskers][@fosskers]] (Author)
 
 ** Module Flags
-+ =+lsp= Activate =fortran-language-server= for Fortran projects.
++ =+lsp= Activate =fortls= for Fortran projects.
 
 ** Plugins
 
@@ -59,11 +59,11 @@ management tasks you will also need [[https://github.com/fortran-lang/fpm][fpm]]
 sudo pacman -S gcc-fortran
 #+end_example
 
-Whereas =fpm= is available from the AUR and thus must be installed with an
-AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
+Whereas =fpm= and =fortls= are available from the AUR and thus must be installed
+with an AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
 
 #+begin_example
-sudo aura -A fortran-fpm
+sudo aura -A fortran-fpm fortls
 #+end_example
 
 * Features
