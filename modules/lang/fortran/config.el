@@ -29,10 +29,10 @@
         :desc "run (gfortran)"     "r" #'+fortran/gfortran-run)
 
   (easy-menu-define f90-menu f90-mode-map "Simpler menu for F90 mode."
-    '("F90"
-      ["Compile" +fortran/fpm-build :active t :help "Compile with FPM"]
-      ["Run" +fortran/fpm-run :active t :help "Run the Executable"]
-      ["Test" +fortran/fpm-test :active t :help "Run the Unit Tests"])))
+    `("F90"
+      ["Compile" +fortran/build :active t :help "Compile the Project"]
+      ["Run" +fortran/run :active t :help "Run the Executable"]
+      ["Test" +fortran/fpm-test :active (+fortran--fpm-toml) :help "Run the Unit Tests"])))
 
 (use-package! fortran
   ;; The `.for' extension is automatically recognized by Emacs and invokes

@@ -1,6 +1,29 @@
 ;;; lang/fortran/autoload.el -*- lexical-binding: t; -*-
 
 ;;
+;;; Generalised Building
+
+;;;###autoload
+(defun +fortran/build ()
+  "Compile a Fortran project or file.
+If the current file is detected to be within an fpm project,
+then building will occur with fpm. Otherwise it will default to gfortran."
+  (interactive)
+  (if (+fortran--fpm-toml)
+      (+fortran/fpm-build)
+    (+fortran/gfortran-compile)))
+
+;;;###autoload
+(defun +fortran/run ()
+  "Run a Fortran project or file.
+If the current file is detected to be within an fpm project,
+then building will occur with fpm. Otherwise it will default to gfortran."
+  (interactive)
+  (if (+fortran--fpm-toml)
+      (+fortran/fpm-run)
+    (+fortran/gfortran-run)))
+
+;;
 ;;; GFortran
 
 (defun +fortran--std ()
@@ -32,9 +55,16 @@
     (sleep-for 1))
   (compile "./a.out"))
 
-
 ;;
 ;;; FPM
+
+;;;###autoload
+(defun +fortran--fpm-toml ()
+  "If this is an fpm project, find its toml file."
+  (when-let* ((project-root (doom-project-root))
+              (toml (expand-file-name "fpm.toml" project-root)))
+    (when (file-exists-p toml)
+      toml)))
 
 ;;;###autoload
 (defun +fortran/fpm-build ()
