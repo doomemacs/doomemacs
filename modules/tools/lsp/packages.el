@@ -3,11 +3,11 @@
 
 (if (featurep! +eglot)
     (progn
-      (package! eglot :pin "0f352213fcfa9f9e8406771fbc8629f2885e80ee")
+      (package! eglot :pin "9389d2e4a0976068f129c9b4d20253bc0c562199")
       (when (featurep! :completion vertico)
         (package! consult-eglot :pin "f93c571dc392a8b11d35541bffde30bd9f411d30")))
-  (package! lsp-mode :pin "cb7ec94435e6b8cc0b5686a2fdabb1c87260920f")
-  (package! lsp-ui :pin "21ce926eedd41ef305c2d89412506ce59b1a7eac")
+  (package! lsp-mode :pin "3d2b8523d57be74b0f7d4966b9ee1f9d4b118852")
+  (package! lsp-ui :pin "96b1ecbfbf87a775f05b5f0b55253376a3bd61e7")
   (when (featurep! :completion ivy)
     (package! lsp-ivy :pin "3e87441a625d65ced5a208a0b0442d573596ffa3"))
   (when (featurep! :completion helm)
