@@ -26,7 +26,13 @@
          :desc "fpm run"   "r" #'+fortran/fpm-run
          :desc "fpm test"  "t" #'+fortran/fpm-test)
         :desc "compile (gfortran)" "c" #'+fortran/gfortran-compile
-        :desc "run (gfortran)"     "r" #'+fortran/gfortran-run))
+        :desc "run (gfortran)"     "r" #'+fortran/gfortran-run)
+
+  (easy-menu-define f90-menu f90-mode-map "Simpler menu for F90 mode."
+    '("F90"
+      ["Compile" +fortran/fpm-build :active t :help "Compile with FPM"]
+      ["Run" +fortran/fpm-run :active t :help "Run the Executable"]
+      ["Test" +fortran/fpm-test :active t :help "Run the Unit Tests"])))
 
 (use-package! fortran
   ;; The `.for' extension is automatically recognized by Emacs and invokes
@@ -54,4 +60,9 @@
   (map! :map fortran-mode-map
         :localleader
         :desc "compile (gfortran)" "c" #'+fortran/gfortran-compile
-        :desc "run (gfortran)"     "r" #'+fortran/gfortran-run))
+        :desc "run (gfortran)"     "r" #'+fortran/gfortran-run)
+
+  (easy-menu-define fortran-menu fortran-mode-map "Simpler menu for Fortran mode."
+      '("Fortran"
+        ["Compile" +fortran/gfortran-compile :active t :help "Compile with gfortran"]
+        ["Run" +fortran/gfortran-run :active t :help "Run the Executable"])))
