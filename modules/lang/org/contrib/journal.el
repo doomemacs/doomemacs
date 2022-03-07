@@ -55,10 +55,11 @@
          "C-p" #'org-journal-search-previous)
         :localleader
         (:map org-journal-mode-map
-         "c" #'org-journal-new-entry
-         "d" #'org-journal-new-date-entry
-         "n" #'org-journal-next-entry
-         "p" #'org-journal-previous-entry
+         (:prefix "j"
+          "c" #'org-journal-new-entry
+          "d" #'org-journal-new-date-entry
+          "n" #'org-journal-next-entry
+          "p" #'org-journal-previous-entry)
          (:prefix "s"
           "s" #'org-journal-search
           "f" #'org-journal-search-forever
