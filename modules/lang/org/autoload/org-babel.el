@@ -67,6 +67,19 @@
 
 
 ;;
+;;; Commands
+
+;;;###autoload
+(defun +org/remove-result-blocks (remove-all)
+  "Remove all result blocks located after current point."
+  (interactive "P")
+  (let ((pos (point)))
+    (org-babel-map-src-blocks nil
+      (if (or remove-all (< pos end-block))
+          (org-babel-remove-result)))))
+
+
+;;
 ;;; Hooks
 
 ;;;###autoload
