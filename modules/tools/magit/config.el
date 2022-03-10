@@ -236,7 +236,10 @@ ensure it is built when we actually use Forge."
   (evil-define-key* 'normal magit-status-mode-map [escape] nil)
 
   (after! code-review
-    (undefine-key! code-review-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0"))
+    (undefine-key! code-review-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
+    (map! :map code-review-mode-map
+          :n "r" #'code-review-transient-api
+          :n "RET" #'code-review-comment-add-or-edit))
 
   ;; Some extra vim-isms I thought were missing from upstream
   (evil-define-key* '(normal visual) magit-mode-map
