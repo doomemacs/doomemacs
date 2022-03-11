@@ -60,7 +60,6 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/bower\\.json$"          :trigger "__bower.json" :mode json-mode)
     ("/gulpfile\\.js$"         :trigger "__gulpfile.js" :mode js-mode)
     ("/webpack\\.config\\.js$" :trigger "__webpack.config.js" :mode js-mode)
-    ("\\.js\\(?:on\\|hintrc\\)$" :mode json-mode)
     ;; Lua
     ("/main\\.lua$" :trigger "__main.lua" :mode love-mode)
     ("/conf\\.lua$" :trigger "__conf.lua" :mode love-mode)
