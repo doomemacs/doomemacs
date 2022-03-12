@@ -14,7 +14,7 @@
   "
           Split: _v_ert  _s_:horz
          Delete: _c_lose  _o_nly
-  Switch Window: _h_:left  _j_:down  _k_:up  _l_:right
+  Switch Window: _h_:left  _j_:down  _k_:up  _l_:right  _u_:undo  _r_:redo
         Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file
          Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
            Move: _a_:up  _z_:down  _i_menu
@@ -27,6 +27,8 @@
   ("j" windmove-down)
   ("k" windmove-up)
   ("l" windmove-right)
+  ("u" winner-undo)
+  ("r" winner-redo)
 
   ("p" previous-buffer)
   ("n" next-buffer)
