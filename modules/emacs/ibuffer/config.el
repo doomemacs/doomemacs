@@ -57,11 +57,11 @@
       (+ibuffer-workspace (+workspace-current-name))))
 
   (when (featurep! :completion ivy)
-    (defadvice! +ibuffer-use-counsel-maybe-a (_file &optional _wildcards)
+    (defadvice! +ibuffer-use-counsel-maybe-a (&optional _file _wildcards)
       "Use `counsel-find-file' instead of `find-file'."
       :override #'ibuffer-find-file
       (interactive)
-      (counsel-find-file
+      (counsel-find-file nil
        (let ((buf (ibuffer-current-buffer)))
          (if (buffer-live-p buf)
              (with-current-buffer buf
