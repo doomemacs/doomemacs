@@ -10,6 +10,7 @@
 - [[#configuration][Configuration]]
   - [[#a-custom-banner][A custom banner]]
   - [[#adding-text-to-the-dashboard][Adding text to the dashboard]]
+  - [[#customizing-commands-and-bindings][Customizing commands and bindings]]
   - [[#customizing-faces][Customizing Faces]]
 
 * Description
@@ -62,6 +63,27 @@ whatever you like to Doom's splash screen.
 Keep in mind that inserting text from expensive sources, e.g. your org agenda,
 will negate most of Doom's startup benefits.
 #+end_quote
+
+** Customizing commands and bindings
+You can add extra commands to the dashboard, or modify the displayed keys by
+adding bindings to ~+doom-dashboard-mode-map~
+#+begin_src emacs-lisp
+(map! :map +doom-dashboard-mode-map
+        :desc "Reload Last Session" :n "r" #'doom/quickload-session)
+#+end_src
+in your ~config.el~, will add an extra line with "Reload Last Session"
+to the ~r~ key.
+
+You can override all existing keys to make completely your own dashboard
+with a hook to redefine the entire keymap:
+
+#+begin_src emacs-lisp
+(defun +doom-dashboard-setup-modified-keymap ()
+  (setq +doom-dashboard-mode-map (make-sparse-keymap))
+  (map! :map +doom-dashboard-mode-map
+        :desc "Reload Last Session" :n "r" #'doom/quickload-session))
+(add-transient-hook! #'+doom-dashboard-mode (+doom-dashboard-setup-modified-keymap))
+#+end_src
 
 ** Customizing Faces
 Doom's dashboard defaults to inheriting faces set by the current theme. If you wish

@@ -82,8 +82,6 @@ PLIST can have the following properties:
 
   :icon FORM
     Uses the return value of FORM as an icon (can be literal string).
-  :key STRING
-    The keybind displayed next to the button.
   :when FORM
     If FORM returns nil, don't display this button.
   :face FACE
@@ -455,6 +453,7 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
    "\n"))
 
 (defun doom-dashboard-widget-shortmenu ()
+  (require 'cl)
   (let ((all-the-icons-scale-factor 1.45)
         (all-the-icons-default-adjust -0.02))
     (insert "\n")
@@ -482,8 +481,16 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
                          (format "%s (%s)" label
                                  (propertize (symbol-name action) 'face 'doom-dashboard-menu-desc)))
                         (format "%-37s" (buffer-string)))
-                      ;; Lookup command keys dynamically
-                      (or (when-let (key (where-is-internal action nil t))
+                      ;; Lookup command keys dynamically, with priority to
+                      ;; normal mode binding to +doom-dashboard-mode-map
+                      (or (when-let (key
+                                     (or (where-is-internal
+                                          action
+                                          (cl-remove-if-not #'identity
+                                                            (list +doom-dashboard-mode-map
+                                                                  (when (fboundp 'evil-get-auxiliary-keymap)
+                                                                    (evil-get-auxiliary-keymap +doom-dashboard-mode-map 'normal)))))
+                                         (where-is-internal action nil t)))
                             (with-temp-buffer
                               (save-excursion (insert (key-description key)))
                               (while (re-search-forward "<\\([^>]+\\)>" nil t)
