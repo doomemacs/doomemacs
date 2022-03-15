@@ -155,9 +155,9 @@
   (map! :map evil-mc-key-map
         :nv "g." nil
         :nv "C-n" #'evil-mc-make-and-goto-next-cursor
-        :nv "C-N" #'evil-mc-make-and-goto-last-cursor
+        :nv "C-S-n" #'evil-mc-make-and-goto-last-cursor
         :nv "C-p" #'evil-mc-make-and-goto-prev-cursor
-        :nv "C-P" #'evil-mc-make-and-goto-first-cursor))
+        :nv "C-S-p" #'evil-mc-make-and-goto-first-cursor))
 
 
 (after! multiple-cursors-core
