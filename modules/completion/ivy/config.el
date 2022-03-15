@@ -126,7 +126,7 @@ results buffer.")
     (let ((filename (ivy-rich-bookmark-filename candidate)))
       (if (not filename) "" filename)))
 
-  ;; Enahnce the appearance of a couple counsel commands
+  ;; Enhance the appearance of a couple counsel commands
   (plist-put! ivy-rich-display-transformers-list
               'counsel-describe-variable
               '(:columns
