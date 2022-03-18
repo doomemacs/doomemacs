@@ -33,7 +33,6 @@
                      ((executable-find "gnome-screenshot") "gnome-screenshot -a -f %s"))))
 
         org-download-heading-lvl nil
-        org-download-link-format "[[download:%s]]\n"
         org-download-annotate-function (lambda (_link) "")
         org-download-link-format-function
         (lambda (filename)
