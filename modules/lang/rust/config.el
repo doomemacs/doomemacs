@@ -14,8 +14,10 @@
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
     (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
-  (setq rustic-indent-method-chain t)
+  ;; rust-mode
+  (setq rust-prettify-symbols-alist nil)
 
+  (setq rustic-indent-method-chain t)
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
