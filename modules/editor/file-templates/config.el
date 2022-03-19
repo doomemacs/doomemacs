@@ -142,13 +142,9 @@ must be non-read-only, empty, and there must be a rule in
        (not (member (substring (buffer-name) 0 1) '("*" " ")))
        (not (file-exists-p buffer-file-name))
        (not (buffer-modified-p))
+       (null (buffer-base-buffer))
        (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
          (apply #'+file-templates--expand rule))))
-
-(defadvice! +file-templates-inhibit-in-org-capture-a (fn &rest args)
-  :around #'org-capture
-  (let ((+file-templates-inhibit t))
-    (apply fn args)))
 
 
 ;;
