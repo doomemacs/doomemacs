@@ -456,9 +456,6 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
 ;; For backwards compatibility
 (defalias 'λ! 'cmd!)
 (defalias 'λ!! 'cmd!!)
-;; DEPRECATED These have been superseded by `cmd!' and `cmd!!'
-(define-obsolete-function-alias 'lambda! 'cmd! "3.0.0")
-(define-obsolete-function-alias 'lambda!! 'cmd!! "3.0.0")
 
 
 ;;; Mutation
