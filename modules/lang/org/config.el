@@ -844,6 +844,8 @@ between the two."
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
         "I" #'org-id-get-create
+        "k" #'org-babel-remove-result
+        "K" #'+org/remove-result-blocks
         "n" #'org-store-link
         "o" #'org-set-property
         "q" #'org-set-tags-command
