@@ -463,11 +463,11 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
   `(setq ,sym (append ,sym ,@lists)))
 
 (defmacro setq! (&rest settings)
-  "A stripped-down `customize-set-variable' with the syntax of `setq'.
+  "A more sensible `setopt' for setting customizable variables.
 
-This can be used as a drop-in replacement for `setq'. Particularly when you know
-a variable has a custom setter (a :set property in its `defcustom' declaration).
-This triggers setters. `setq' does not."
+This can be used as a drop-in replacement for `setq' and *should* be used
+instead of `setopt'. Unlike `setq', this triggers custom setters on variables.
+Unlike `setopt', this won't needlessly pull in dependencies."
   (macroexp-progn
    (cl-loop for (var val) on settings by 'cddr
             collect `(funcall (or (get ',var 'custom-set) #'set)
