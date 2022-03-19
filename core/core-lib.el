@@ -222,9 +222,8 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   "Lexically bind ENVVARS in BODY, like `let' but for `process-environment'."
   (declare (indent 1))
   `(let ((process-environment (copy-sequence process-environment)))
-     (dolist (var (list ,@(cl-loop for (var val) in envvars
-                                   collect `(cons ,var ,val))))
-       (setenv (car var) (cdr var)))
+     ,@(cl-loop for (var val) in envvars
+                collect `(setenv ,var ,val))
      ,@body))
 
 (defmacro letf! (bindings &rest body)
@@ -451,11 +450,11 @@ See `general-key-dispatch' for what other arguments it accepts in BRANCHES."
                                      defs)
                            (t ,fallback))))))))
 
-(defalias 'kbd! 'general-simulate-key)
+(defalias 'kbd! #'general-simulate-key)
 
 ;; For backwards compatibility
-(defalias 'λ! 'cmd!)
-(defalias 'λ!! 'cmd!!)
+(defalias 'λ!  #'cmd!)
+(defalias 'λ!! #'cmd!!)
 
 
 ;;; Mutation
@@ -478,11 +477,10 @@ This triggers setters. `setq' does not."
   "`delq' ELT from LIST in-place.
 
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
-  `(setq ,list
-         (delq ,(if fetcher
-                    `(funcall ,fetcher ,elt ,list)
-                  elt)
-               ,list)))
+  `(setq ,list (delq ,(if fetcher
+                          `(funcall ,fetcher ,elt ,list)
+                        elt)
+                     ,list)))
 
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
