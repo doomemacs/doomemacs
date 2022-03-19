@@ -16,6 +16,9 @@
   :config
   (setq rustic-indent-method-chain t)
 
+  ;; Conflicts with (and is redundant with) :ui ligatures
+  (setq rust-prettify-symbols-alist nil)
+
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
