@@ -343,6 +343,60 @@ ARGLIST."
          (allow-other-keys arglist))
       ,@body)))
 
+(defun doom--fn-crawl (data args)
+  (cond ((symbolp data)
+         (when-let*
+             ((lookup '(_ _ %2 %3 %4 %5 %6 %7 %8 %9))
+              (pos (cond ((eq data '%*) 0)
+                         ((memq data '(% %1)) 1)
+                         ((cdr (assq data (seq-map-indexed #'cons lookup)))))))
+           (when (and (= pos 1)
+                      (aref args 1)
+                      (not (eq data (aref args 1))))
+             (error "%% and %%1 are mutually exclusive"))
+           (aset args pos data)))
+        ((and (not (eq (car-safe data) '!))
+              (or (listp data)
+                  (vectorp data)))
+         (seq-doseq (elt data)
+           (doom--fn-crawl elt args)))))
+
+(defmacro fn!! (&rest args)
+  "Return an lambda with implicit, positional arguments.
+
+The function's arguments are determined recursively from ARGS.  Each symbol from
+`%1' through `%9' that appears in ARGS is treated as a positional argument.
+Missing arguments are named `_%N', which keeps the byte-compiler quiet.  `%' is
+a shorthand for `%1'; only one of these can appear in ARGS.  `%*' represents
+extra `&rest' arguments.
+
+Instead of:
+
+  (lambda (a _ c &rest d)
+    (if a c (cadr d)))
+
+you can use this macro and write:
+
+  (fn!! (if %1 %3 (cadr %*)))
+
+which expands to:
+
+  (lambda (%1 _%2 %3 &rest %*)
+    (if %1 %3 (cadr %*)))
+
+This macro was adapted from llama.el (see https://git.sr.ht/~tarsius/llama),
+minus font-locking, the outer function call, and minor optimizations."
+  `(lambda ,(let ((argv (make-vector 10 nil)))
+              (doom--fn-crawl args argv)
+              `(,@(let ((n 0))
+                    (mapcar (lambda (sym)
+                              (cl-incf n)
+                              (or sym (intern (format "_%%%s" n))))
+                            (reverse (seq-drop-while
+                                      #'null (reverse (seq-subseq argv 1))))))
+                ,@(and (aref argv 0) '(&rest %*))))
+     ,@args))
+
 (defmacro cmd! (&rest body)
   "Returns (lambda () (interactive) ,@body)
 A factory for quickly producing interaction commands, particularly for keybinds
