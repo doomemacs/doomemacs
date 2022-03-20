@@ -24,11 +24,11 @@
   "An Emacs framework for the stubborn martian hacker."
   :link '(url-link "https://doomemacs.org"))
 
-(defconst doom-version "21.12.0-alpha"
-  "Current version of Doom Emacs.")
-
-(defconst doom-core-version "3.0.0-alpha"
+(defconst doom-version "3.0.0-dev"
   "Current version of Doom Emacs core.")
+
+(defconst doom-modules-version "22.03.0-dev"
+  "Current version of Doom Emacs.")
 
 (defvar doom-debug-p (or (getenv-internal "DEBUG") init-file-debug)
   "If non-nil, Doom will log more.

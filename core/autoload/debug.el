@@ -258,16 +258,19 @@ ready to be pasted in a bug report on github."
           "GNU Emacs"
           emacs-version
           emacs-repository-version)
-  (let ((default-directory doom-core-dir))
-    (print! "%-13s v%-15s %s"
-            "Doom core"
-            doom-core-version
-            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
-                "n/a")))
   (let ((default-directory doom-emacs-dir))
     (print! "%-13s v%-15s %s"
-            "Doom modules"
+            "Doom core"
             doom-version
+            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
+                "n/a")))
+  ;; NOTE This is a placeholder. Our modules will be moved to its own repo
+  ;;   eventually, and Doom core will later be capable of managing them like
+  ;;   package sources.
+  (let ((default-directory doom-modules-dir))
+    (print! "%-13s v%-15s %s"
+            "Doom modules"
+            doom-modules-version
             (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
                 "n/a"))))
 
