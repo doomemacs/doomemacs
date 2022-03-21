@@ -1,17 +1,17 @@
-#+TITLE:${1:1234-5678}
-#+DATE:     `(format-time-string "%Y-%m-%d")`
-#+ISSUED:   ${2:`(format-time-string "%Y-%m-%d")`}
-#+PAID:     ${3:`(format-time-string "%Y-%m-%d")`}
-#+CURRENCY: ${4:CAD|USD|DKK|GBP}
-#+CONTACT:  ${5:Contact ID}
-#+PROJECT:  ${6:Project ID}
+#+title:${1:1234-5678}
+#+date:     `(format-time-string "%Y-%m-%d")`
+#+issued:   ${2:`(format-time-string "%Y-%m-%d")`}
+#+paid:     ${3:`(format-time-string "%Y-%m-%d")`}
+#+currency: ${4:CAD|USD|DKK|GBP}
+#+contact:  ${5:Contact ID}
+#+project:  ${6:Project ID}
 
 | *Description*                                  | *qty* |   *rate* | *total* |
 |----------------------------------------------+-----+--------+-------|
 | $0 [1]                                         |     |        |       |
 |----------------------------------------------+-----+--------+-------|
 |                                              |     |        |       |
-#+TBLFM: $4=$2+$3::@>$4=vsum(@2..@-1)
+#+tblfm: $4=$2+$3::@>$4=vsum(@2..@-1)
 
 [1] ...
 
