@@ -1,6 +1,6 @@
-#+TITLE:${1:Project Name}
-#+DATE:    `(format-time-string "%Y-%m-%d")`
-#+CONTACT: ${2:Contact name}
+#+title:${1:Project Name}
+#+date:    `(format-time-string "%Y-%m-%d")`
+#+contact: ${2:Contact name}
 
 $0
 

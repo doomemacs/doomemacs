@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: Org template
 # --
-#+TITLE: ${1:`
+#+title: ${1:`
 (string-join
  (mapcar #'capitalize
          ;; Replace -,_... with space
