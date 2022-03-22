@@ -14,6 +14,18 @@ When 'everything, also preview virtual buffers")
   "A plist mapping ivy/counsel commands to commands that generate an editable
 results buffer.")
 
+(defvar +ivy--counsel-file-jump-fd-args
+  '("H" "-I" "--color=never" "--type" "file" "--type" "symlink" "--follow")
+  "List of args to be passed to `fd' when used for `counsel-file-jump'.
+
+See `+ivy--counsel-file-jump-use-fd-rg-a'.")
+
+(defvar +ivy--counsel-file-jump-rg-args
+  '("--files" "--follow" "--color=never" "--hidden" "-g!.git" "--no-messages")
+  "List of args to be passed to `rg' when used for `counsel-file-jump'.
+
+See `+ivy--counsel-file-jump-use-fd-rg-a'.")
+
 
 ;;
 ;;; Packages
@@ -287,10 +299,10 @@ results buffer.")
     :override #'counsel--find-return-list
     (cl-destructuring-bind (find-program . args)
         (cond ((when-let (fd (executable-find (or doom-projectile-fd-binary "fd") t))
-                 (append (list fd "-H" "-I" "--color=never" "--type" "file" "--type" "symlink" "--follow")
+                 (append (list fd) +ivy--counsel-file-jump-fd-args
                          (if IS-WINDOWS '("--path-separator=/")))))
               ((executable-find "rg" t)
-               (append (list "rg" "--files" "--follow" "--color=never" "--hidden" "-g!.git" "--no-messages")
+               (append (list "rg") +ivy--counsel-file-jump-rg-args
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
                                 collect (concat "!" dir))
