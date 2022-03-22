@@ -275,116 +275,25 @@ ready to be pasted in a bug report on github."
                 "n/a"))))
 
 ;;;###autoload
-(defun doom/info (&optional raw)
+(defun doom/info ()
   "Collects some debug information about your Emacs session, formats it and
 copies it to your clipboard, ready to be pasted into bug reports!"
   (interactive "P")
-  (let ((buffer (get-buffer-create "*doom info*"))
-        (info (doom-info)))
-    (with-current-buffer buffer
+  (with-current-buffer (pop-to-buffer "*doom info*")
+    (setq buffer-read-only t)
+    (with-silent-modifications
       (erase-buffer)
-      (if raw
-          (progn
-            (save-excursion
-              (pp info (current-buffer)))
-            (dolist (sym '(modules packages))
-              (when (re-search-forward (format "^ *\\((%s\\)" sym) nil t)
-                (goto-char (match-beginning 1))
-                (cl-destructuring-bind (beg . end)
-                    (bounds-of-thing-at-point 'sexp)
-                  (let ((sexp (prin1-to-string (sexp-at-point))))
-                    (delete-region beg end)
-                    (insert sexp))))))
-        (dolist (spec info)
-          (when (cdr spec)
-            (insert! "%-11s  %s\n"
-                     ((car spec)
-                      (if (listp (cdr spec))
-                          (mapconcat (lambda (x) (format "%s" x))
-                                     (cdr spec) " ")
-                        (cdr spec)))))))
-      (if (not doom-interactive-p)
-          (print! (buffer-string))
-        (with-current-buffer (pop-to-buffer buffer)
-          (setq buffer-read-only t)
-          (goto-char (point-min))
-          (kill-new (buffer-string))
-          (when (y-or-n-p "Your doom-info was copied to the clipboard.\n\nOpen pastebin.com?")
-            (browse-url "https://pastebin.com")))))))
-
-
-;;;###autoload
-(defun doom/am-i-secure ()
-  "Test to see if your root certificates are securely configured in emacs.
-Some items are not supported by the `nsm.el' module."
-  (declare (interactive-only t))
-  (interactive)
-  (unless (string-match-p "\\_<GNUTLS\\_>" system-configuration-features)
-    (warn "gnutls support isn't built into Emacs, there may be problems"))
-  (if-let* ((bad-hosts
-             (cl-loop for bad
-                      in '("https://expired.badssl.com/"
-                           "https://wrong.host.badssl.com/"
-                           "https://self-signed.badssl.com/"
-                           "https://untrusted-root.badssl.com/"
-                           ;; "https://revoked.badssl.com/"
-                           ;; "https://pinning-test.badssl.com/"
-                           "https://sha1-intermediate.badssl.com/"
-                           "https://rc4-md5.badssl.com/"
-                           "https://rc4.badssl.com/"
-                           "https://3des.badssl.com/"
-                           "https://null.badssl.com/"
-                           "https://sha1-intermediate.badssl.com/"
-                           ;; "https://client-cert-missing.badssl.com/"
-                           "https://dh480.badssl.com/"
-                           "https://dh512.badssl.com/"
-                           "https://dh-small-subgroup.badssl.com/"
-                           "https://dh-composite.badssl.com/"
-                           "https://invalid-expected-sct.badssl.com/"
-                           ;; "https://no-sct.badssl.com/"
-                           ;; "https://mixed-script.badssl.com/"
-                           ;; "https://very.badssl.com/"
-                           "https://subdomain.preloaded-hsts.badssl.com/"
-                           "https://superfish.badssl.com/"
-                           "https://edellroot.badssl.com/"
-                           "https://dsdtestprovider.badssl.com/"
-                           "https://preact-cli.badssl.com/"
-                           "https://webpack-dev-server.badssl.com/"
-                           "https://captive-portal.badssl.com/"
-                           "https://mitm-software.badssl.com/"
-                           "https://sha1-2016.badssl.com/"
-                           "https://sha1-2017.badssl.com/")
-                      if (condition-case _e
-                             (url-retrieve-synchronously bad)
-                           (error nil))
-                      collect bad)))
-      (error "tls seems to be misconfigured (it got %s)."
-             bad-hosts)
-    (url-retrieve "https://badssl.com"
-                  (lambda (status)
-                    (if (or (not status) (plist-member status :error))
-                        (warn "Something went wrong.\n\n%s" (pp-to-string status))
-                      (message "Your trust roots are set up properly.\n\n%s" (pp-to-string status))
-                      t)))))
-
-
-;;
-;;; Reporting bugs
-
-;;;###autoload
-(defun doom/copy-buffer-contents (buffer-name)
-  "Copy the contents of BUFFER-NAME to your clipboard."
-  (interactive
-   (list (if current-prefix-arg
-             (completing-read "Select buffer: " (mapcar #'buffer-name (buffer-list)))
-           (buffer-name (current-buffer)))))
-  (let ((buffer (get-buffer buffer-name)))
-    (unless (buffer-live-p buffer)
-      (user-error "Buffer isn't live"))
-    (kill-new
-     (with-current-buffer buffer
-       (substring-no-properties (buffer-string))))
-    (message "Contents of %S were copied to the clipboard" buffer-name)))
+      (save-excursion
+        (dolist (spec (cl-remove-if-not #'cdr (doom-info)))
+          (insert! "%-11s  %s\n"
+                   ((car spec)
+                    (if (listp (cdr spec))
+                        (mapconcat (lambda (x) (format "%s" x))
+                                   (cdr spec) " ")
+                      (cdr spec)))))))
+    (kill-new (buffer-string))
+    (when (y-or-n-p "Your doom-info was copied to the clipboard.\n\nOpen pastebin.com?")
+      (browse-url "https://pastebin.com"))))
 
 
 ;;
