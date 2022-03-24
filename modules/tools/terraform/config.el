@@ -1,7 +1,7 @@
 ;;; tools/terraform/config.el -*- lexical-binding: t; -*-
 
 (when (featurep! +lsp)
-  (add-hook 'terraform-mode-local-vars-hook #'lsp!))
+  (add-hook 'terraform-mode-local-vars-hook #'lsp! 'append))
 
 
 (after! terraform-mode

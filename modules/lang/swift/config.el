@@ -22,7 +22,7 @@
 (use-package! lsp-sourcekit
   :when (featurep! +lsp)
   :after swift-mode
-  :init (add-hook 'swift-mode-local-vars-hook #'lsp!)
+  :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config
   (setq lsp-sourcekit-executable
         (cl-find-if #'executable-find

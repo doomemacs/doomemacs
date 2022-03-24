@@ -21,7 +21,7 @@
 
   (set-docsets! 'ess-r-mode "R")
   (when (featurep! +lsp)
-    (add-hook 'ess-r-mode-local-vars-hook #'lsp!))
+    (add-hook 'ess-r-mode-local-vars-hook #'lsp! 'append))
 
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
   (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)

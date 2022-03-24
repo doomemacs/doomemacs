@@ -14,7 +14,7 @@
     :documentation #'gdscript-docs-browse-symbol-at-point)
 
   (when (featurep! +lsp)
-    (add-hook 'gdscript-mode-local-vars-hook #'lsp!))
+    (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
   (map! :localleader
         :map gdscript-mode-map

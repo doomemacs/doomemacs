@@ -16,7 +16,7 @@
   ;; --- LSP Configuration --- ;;
   (when (featurep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
-    (add-hook 'f90-mode-local-vars-hook #'lsp!))
+    (add-hook 'f90-mode-local-vars-hook #'lsp! 'append))
 
   ;; --- Keybindings --- ;;
   (map! :map f90-mode-map
@@ -57,7 +57,7 @@
   ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
   ;; (when (featurep! +lsp)
   ;;   (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
-  ;;   (add-hook 'fortran-mode-local-vars-hook #'lsp!)))
+  ;;   (add-hook 'fortran-mode-local-vars-hook #'lsp! 'append)))
 
   ;; --- Keybindings --- ;;
   (map! :map fortran-mode-map

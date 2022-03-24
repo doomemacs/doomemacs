@@ -15,7 +15,7 @@
   (setq beancount-electric-currency t)
 
   (when (featurep! +lsp)
-    (add-hook 'beancount-mode-local-vars-hook #'lsp!))
+    (add-hook 'beancount-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map beancount-mode-map
         "TAB" (cmds! (and outline-minor-mode (outline-on-heading-p))

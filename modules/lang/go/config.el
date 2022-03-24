@@ -20,7 +20,7 @@
               "goimports"))))
 
   (if (featurep! +lsp)
-      (add-hook 'go-mode-local-vars-hook #'lsp!)
+      (add-hook 'go-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'go-mode-hook #'go-eldoc-setup))
 
   (map! :map go-mode-map

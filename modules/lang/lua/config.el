@@ -19,7 +19,7 @@
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
   (when (featurep! +lsp)
-    (add-hook 'lua-mode-local-vars-hook #'lsp!)
+    (add-hook 'lua-mode-local-vars-hook #'lsp! 'append)
 
     (when (featurep! :tools lsp +eglot)
       (defvar +lua-lsp-dir (concat doom-etc-dir "lsp/lua-language-server/")

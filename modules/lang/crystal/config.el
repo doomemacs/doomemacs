@@ -5,7 +5,7 @@
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
   (when (featurep! +lsp)
-    (add-hook 'crystal-mode-local-vars-hook #'lsp!))
+    (add-hook 'crystal-mode-local-vars-hook #'lsp! 'append))
   (map! :localleader
         :map crystal-mode-map
         :prefix "t"

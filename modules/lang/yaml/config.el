@@ -4,6 +4,6 @@
   :mode "Procfile\\'"
   :init
   (when (featurep! +lsp)
-    (add-hook 'yaml-mode-local-vars-hook #'lsp!))
+    (add-hook 'yaml-mode-local-vars-hook #'lsp! 'append))
   :config
   (setq-hook! 'yaml-mode-hook tab-width yaml-indent-offset))

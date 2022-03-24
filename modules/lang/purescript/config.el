@@ -2,7 +2,7 @@
 
 (after! purescript-mode
   (when (featurep! +lsp)
-    (add-hook 'purescript-mode-local-vars-hook  #'lsp!))
+    (add-hook 'purescript-mode-local-vars-hook #'lsp! 'append))
 
   (add-hook! 'purescript-mode-hook
              #'purescript-indentation-mode

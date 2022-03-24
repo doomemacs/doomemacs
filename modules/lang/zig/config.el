@@ -13,7 +13,7 @@
   (setq zig-format-on-save nil) ; rely on :editor format instead
 
   (when (featurep! +lsp)
-    (add-hook 'zig-mode-local-vars-hook #'lsp!))
+    (add-hook 'zig-mode-local-vars-hook #'lsp! 'append))
 
   (when (featurep! :checkers syntax)
     (flycheck-define-checker zig

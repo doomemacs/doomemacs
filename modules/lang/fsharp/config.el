@@ -6,7 +6,7 @@
   (if (featurep! +lsp)
       (progn
         (setq fsharp-ac-intellisense-enabled nil)
-        (add-hook 'fsharp-mode-local-vars-hook #'lsp!))
+        (add-hook 'fsharp-mode-local-vars-hook #'lsp! 'append))
     (setq fsharp-ac-use-popup nil) ; Use a buffer for docs rather than a pop-up
     (set-lookup-handlers! 'fsharp-mode :async t :definition #'fsharp-ac/gotodefn-at-point)
     (set-company-backend! 'fsharp-mode 'fsharp-ac/company-backend))

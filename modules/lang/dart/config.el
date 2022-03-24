@@ -1,9 +1,10 @@
 ;;; lang/dart/config.el -*- lexical-binding: t; -*-
 
 (use-package! dart-mode
-  :when (featurep! +lsp)
-  :hook (dart-mode-local-vars . lsp!)
+  :defer t
   :config
+  (when (featurep! +lsp)
+    (add-hook 'dart-mode-local-vars-hook #'lsp! 'append))
   (set-ligatures! '(dart-mode)
     ;; Functional
     :def "Function"

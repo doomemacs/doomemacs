@@ -4,4 +4,4 @@
   (set-docsets! 'dockerfile-mode "Docker")
 
   (when (featurep! +lsp)
-    (add-hook 'dockerfile-mode-local-vars-hook #'lsp!)))
+    (add-hook 'dockerfile-mode-local-vars-hook #'lsp! 'append)))

@@ -58,7 +58,7 @@
           'company-dabbrev-code))
     (when (executable-find "php-language-server.php")
       (setq lsp-clients-php-server-command "php-language-server.php"))
-    (add-hook 'php-mode-local-vars-hook #'lsp!))
+    (add-hook 'php-mode-local-vars-hook #'lsp! 'append))
 
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
   (setq-hook! 'php-mode-hook sp-max-pair-length 5)

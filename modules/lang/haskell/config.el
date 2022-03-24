@@ -46,7 +46,7 @@
 (use-package! lsp-haskell
   :when (featurep! +lsp)
   :after lsp-mode
-  :preface (add-hook 'haskell-mode-local-vars-hook #'lsp!)
+  :preface (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
   :config
   ;; Does some strange indentation if it pastes in the snippet
   (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))

@@ -4,7 +4,7 @@
   :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
   :init
   (when (featurep! +lsp)
-    (add-hook 'json-mode-local-vars-hook #'lsp!))
+    (add-hook 'json-mode-local-vars-hook #'lsp! 'append))
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?}))
 

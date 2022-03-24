@@ -66,7 +66,7 @@
 
 
 (when (featurep! +lsp)
-  (add-hook 'julia-mode-local-vars-hook #'lsp!))
+  (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
 
 
 (use-package! lsp-julia

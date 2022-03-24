@@ -17,7 +17,7 @@
 
   (when (featurep! +lsp)
     (setq-hook! 'scala-mode-hook lsp-enable-indentation nil)
-    (add-hook 'scala-mode-local-vars-hook #'lsp!))
+    (add-hook 'scala-mode-local-vars-hook #'lsp! 'append))
 
   (set-ligatures! 'scala-mode
     ;; Functional

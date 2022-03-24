@@ -27,7 +27,7 @@
              #'highlight-quoted-mode)
 
   (when (featurep! +lsp)
-    (add-hook 'racket-mode-local-vars-hook #'lsp!))
+    (add-hook 'racket-mode-local-vars-hook #'lsp! 'append))
 
   (when (featurep! +xp)
     (add-hook 'racket-mode-local-vars-hook #'racket-xp-mode)

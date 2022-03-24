@@ -19,7 +19,7 @@
   (set-repl-handler! 'ruby-mode #'inf-ruby)
 
   (when (featurep! +lsp)
-    (add-hook 'ruby-mode-local-vars-hook #'lsp!))
+    (add-hook 'ruby-mode-local-vars-hook #'lsp! 'append))
 
   (after! inf-ruby
     (add-hook 'inf-ruby-mode-hook #'doom-mark-buffer-as-real-h)
