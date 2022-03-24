@@ -10,12 +10,12 @@
 
 ;; HACK Forward declare these clj-refactor/cider deps so that their deps are
 ;;      byte-compiled first.
-(package! parseclj :pin "90595049634549e6d8872f719b13e9555897d17b")
+(package! parseclj :pin "b04eae67384c1d8181edf318fd62d422a8220724")
 (package! parseedn :pin "ea7b5281ec80aca0bd1cc93a348aebb302497339")
 
 ;;; Core packages
-(package! clojure-mode :pin "b7d08b87f6a116ff47b33ee857926b60c66c3ab7")
+(package! clojure-mode :pin "c339353f9e649b3af084f1bb6ce759e614a2f243")
 (package! clj-refactor :pin "f368c56c83843396b160440f472a661a3b639862")
-(package! cider :pin "02ca53021682f426323dc7bb4e6b28e6c8f5eb30")
+(package! cider :pin "36277802a47b0dbc9c1fd60f60908963c59c58d6")
 (when (featurep! :checkers syntax)
   (package! flycheck-clj-kondo :pin "d8a6ee9a16aa24b5be01f1edf9843d41bdc75555"))
