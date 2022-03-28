@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang purescript][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/purescript/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang purescript
-#+SUBTITLE: Javascript, but functional
-#+CREATED:  May 21, 2017
-#+SINCE:    2.0.3 (#75)
+#+title:    :lang purescript
+#+subtitle: Javascript, but functional
+#+created:  May 21, 2017
+#+since:    2.0.3 (#75)
 
 * Description :unfold:
 This module adds [[https://www.purescript.org/][Purescript]] support to Doom Emacs.

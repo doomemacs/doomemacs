@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::email mu4e][Issues]]  ↖ [[doom-repo:tree/develop/modules/email/mu4e/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :email mu4e
-#+SUBTITLE: The great filter Hanson hadn't anticipated
-#+CREATED:  April 08, 2017
-#+SINCE:    2.0.3
+#+title:    :email mu4e
+#+subtitle: The great filter Hanson hadn't anticipated
+#+created:  April 08, 2017
+#+since:    2.0.3
 
 * Description :unfold:
 This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].

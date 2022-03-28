@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang emacs-lisp][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/emacs-lisp/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang emacs-lisp
-#+SUBTITLE: A parsel-tongue for the oldest serpent
-#+CREATED:  January 16, 2017
-#+SINCE:    1.3
+#+title:    :lang emacs-lisp
+#+subtitle: A parsel-tongue for the oldest serpent
+#+created:  January 16, 2017
+#+since:    1.3
 
 * Description :unfold:
 This module extends support for Emacs Lisp in Doom Emacs.

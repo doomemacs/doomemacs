@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools pdf][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/pdf/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :tools pdf
-#+SUBTITLE: Emacs, your next PDF reader
-#+CREATED:  February 06, 2018
-#+SINCE:    21.12.0
+#+title:    :tools pdf
+#+subtitle: Emacs, your next PDF reader
+#+created:  February 06, 2018
+#+since:    21.12.0
 
 * Description :unfold:
 This module improves support for reading and interacting with PDF files in

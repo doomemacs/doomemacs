@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang dart][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/dart/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang dart
-#+SUBTITLE: Paint ui and not much else
-#+CREATED:  February 15, 2020
-#+SINCE:    21.12.0 (#2729)
+#+title:    :lang dart
+#+subtitle: Paint ui and not much else
+#+created:  February 15, 2020
+#+since:    21.12.0 (#2729)
 
 * Description :unfold:
 [[https://dart.dev/][Dart]] is a client-optimized language by Google for fast apps on any platform. It

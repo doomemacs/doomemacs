@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools docker][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/docker/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :tools docker
-#+SUBTITLE: Yo dawg, I heard you like OSes, so I…
-#+CREATED:  September 06, 2018
-#+SINCE:    21.12.0
+#+title:    :tools docker
+#+subtitle: Yo dawg, I heard you like OSes, so I…
+#+created:  September 06, 2018
+#+since:    21.12.0
 
 * Description :unfold:
 This module allows you to manipulate Docker images, containers, and more from
@@ -80,9 +80,9 @@ following keybindings (for more marking possibilities, check out
 
 ** TRAMP
 Offers the [[https://www.gnu.org/software/tramp/][TRAMP]] method =docker= to access running containers:
-#+BEGIN_EXAMPLE
+#+begin_example
 C-x C-f /docker:$USER@$CONTAINER:/path/to/file
-#+END_EXAMPLE
+#+end_example
 
 | =$USER=      | the user that you want to use (optional) |
 | =$CONTAINER= | the id or name of the container          |

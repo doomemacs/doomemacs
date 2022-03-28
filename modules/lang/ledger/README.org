@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang ledger][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/ledger/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang ledger
-#+SUBTITLE: Be audit you can be
-#+CREATED:  September 09, 2017
-#+SINCE:    2.0.6 (#194)
+#+title:    :lang ledger
+#+subtitle: Be audit you can be
+#+created:  September 09, 2017
+#+since:    2.0.6 (#194)
 
 * Description :unfold:
 This module adds support for [[https://www.ledger-cli.org/][ledger]] files. Ledger is a command line double-entry

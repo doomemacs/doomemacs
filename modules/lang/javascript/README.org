@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang javascript][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/javascript/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang javascript
-#+SUBTITLE: all(hope(abandon(ye(who(enter(here))))))
-#+CREATED:  January 16, 2017
-#+SINCE:    1.3
+#+title:    :lang javascript
+#+subtitle: all(hope(abandon(ye(who(enter(here))))))
+#+created:  January 16, 2017
+#+since:    1.3
 
 * Description :unfold:
 This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.typescriptlang.org/][TypeScript]] support to Doom Emacs.

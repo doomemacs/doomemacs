@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::completion ido][Issues]]  ↖ [[doom-repo:tree/develop/modules/completion/ido/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :completion ido
-#+SUBTITLE: A foil for other search engines
-#+CREATED:  February 20, 2017
-#+SINCE:    2.0.0
+#+title:    :completion ido
+#+subtitle: A foil for other search engines
+#+created:  February 20, 2017
+#+since:    2.0.0
 
 * Description :unfold:
 Interactive DO things. The completion engine that is /mostly/ built-into Emacs.

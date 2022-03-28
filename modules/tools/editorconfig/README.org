@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools editorconfig][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/editorconfig/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :tools editorconfig
-#+SUBTITLE: Let someone else argue tabs and spaces
-#+CREATED:  December 27, 2015
-#+SINCE:    0.9
+#+title:    :tools editorconfig
+#+subtitle: Let someone else argue tabs and spaces
+#+created:  December 27, 2015
+#+since:    0.9
 
 * Description :unfold:
 This module integrates [[https://editorconfig.org/][EditorConfig]] into Emacs, allowing users to dictate code

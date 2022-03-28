@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang dhall][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/dhall/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang dhall
-#+SUBTITLE: Config as code
-#+CREATED:  August 03, 2021
-#+SINCE:    21.12.0
+#+title:    :lang dhall
+#+subtitle: Config as code
+#+created:  August 03, 2021
+#+since:    21.12.0
 
 * Description :unfold:
 This module adds [[https://dhall-lang.org/][Dhall]] language support to Emacs.

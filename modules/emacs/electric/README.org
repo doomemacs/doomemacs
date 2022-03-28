@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::emacs electric][Issues]]  ↖ [[doom-repo:tree/develop/modules/emacs/electric/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :emacs electric
-#+SUBTITLE: Shocking keyword-based electric-indent
-#+CREATED:  February 21, 2017
-#+SINCE:    2.0.0
+#+title:    :emacs electric
+#+subtitle: Shocking keyword-based electric-indent
+#+created:  February 21, 2017
+#+since:    2.0.0
 
 * Description :unfold:
 This module augments the built-in [[doom-package:][electric]] package with keyword-based

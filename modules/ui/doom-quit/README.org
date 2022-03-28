@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui doom-quit][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/doom-quit/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui doom-quit
-#+SUBTITLE: One does not simply quit Emacs
-#+CREATED:  February 19, 2017
-#+SINCE:    2.0.0
+#+title:    :ui doom-quit
+#+subtitle: One does not simply quit Emacs
+#+created:  February 19, 2017
+#+since:    2.0.0
 
 * Description :unfold:
 A silly module that throws cute confirmation prompts at you when you exit Emacs,

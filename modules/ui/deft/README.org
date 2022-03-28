@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui deft][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/deft/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui deft
-#+SUBTITLE: Notational velocity for Emacs
-#+CREATED:  August 26, 2018
-#+SINCE:    21.12.0 (#835)
+#+title:    :ui deft
+#+subtitle: Notational velocity for Emacs
+#+created:  August 26, 2018
+#+since:    21.12.0 (#835)
 
 * Description :unfold:
 [[https://jblevins.org/projects/deft/][Deft]] is a major mode for creating, browsing, and filtering notes written in

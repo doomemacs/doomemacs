@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui tabs][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/tabs/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui tabs
-#+SUBTITLE: Keep tabs on your buffers, literally
-#+CREATED:  July 12, 2019
-#+SINCE:    21.12.0
+#+title:    :ui tabs
+#+subtitle: Keep tabs on your buffers, literally
+#+created:  July 12, 2019
+#+since:    21.12.0
 
 * Description :unfold:
 This module adds an Atom-esque tab bar to the Emacs UI.

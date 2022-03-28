@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools ansible][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/ansible/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :tools ansible
-#+SUBTITLE: Allow silly people to focus on silly things
-#+CREATED:  September 11, 2018
-#+SINCE:    21.12.0 (#881)
+#+title:    :tools ansible
+#+subtitle: Allow silly people to focus on silly things
+#+created:  September 11, 2018
+#+since:    21.12.0 (#881)
 
 * Description :unfold:
 /(No description)/

@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang crystal][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/crystal/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang crystal
-#+SUBTITLE: Ruby at the speed of C
-#+CREATED:  January 16, 2017
-#+SINCE:    1.3
+#+title:    :lang crystal
+#+subtitle: Ruby at the speed of C
+#+created:  January 16, 2017
+#+since:    1.3
 
 * Description :unfold:
 This modules adds [[https://crystal-lang.org/][crystal]] support.

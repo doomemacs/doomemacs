@@ -6,23 +6,24 @@
 (defun doom--docs-hide-meta-h ()
   "Hide all meta or comment lines."
   (org-with-wide-buffer
-    (goto-char (point-min))
-    (let (case-fold-search)
-      (while (re-search-forward "^[ \t]*\\#" nil t)
-        (catch 'abort
-          (org-flag-region
-           (line-beginning-position)
-           (cond ((looking-at "+\\(?:TITLE\\|SUBTITLE\\): +")
-                  (match-end 0))
-                 ((looking-at "+\\(?:CREATED\\|SINCE\\|AUTHOR\\|EMAIL\\|DATE\\): +")
-                  (throw 'abort nil))
-                 ((or (eq (char-after) ?\s)
-                      (looking-at "+\\(begin\\|end\\)_comment"))
-                  (line-beginning-position 2))
-                 ((looking-at "+\\(?:begin\\|end\\)_\\([^ \n]+\\)")
-                  (line-end-position))
-                 ((line-beginning-position 2)))
-           doom-docs-mode t))))))
+   (goto-char (point-min))
+   (save-match-data
+     (let ((case-fold-search t))
+       (while (re-search-forward "^[ \t]*\\#" nil t)
+         (catch 'abort
+           (org-flag-region
+            (line-beginning-position)
+            (cond ((looking-at "+\\(?:title\\|subtitle\\): +")
+                   (match-end 0))
+                  ((looking-at "+\\(?:created\\|since\\|author\\|email\\|date\\): +")
+                   (throw 'abort nil))
+                  ((or (eq (char-after) ?\s)
+                       (looking-at "+\\(begin\\|end\\)_comment"))
+                   (line-beginning-position 2))
+                  ((looking-at "+\\(?:begin\\|end\\)_\\([^ \n]+\\)")
+                   (line-end-position))
+                  ((line-beginning-position 2)))
+            doom-docs-mode t)))))))
 
 (defun doom--docs-hide-drawers-h ()
   "Hide all property drawers."

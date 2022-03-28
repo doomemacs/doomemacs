@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::checkers syntax][Issues]]  ↖ [[doom-repo:tree/develop/modules/checkers/syntax/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :checkers syntax
-#+SUBTITLE: Tasing you for every semicolon you forget
-#+CREATED:  February 20, 2017
-#+SINCE:    2.0.0
+#+title:    :checkers syntax
+#+subtitle: Tasing you for every semicolon you forget
+#+created:  February 20, 2017
+#+since:    2.0.0
 
 * Description :unfold:
 This module provides syntax checking and error highlighting, powered by

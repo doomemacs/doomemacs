@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang latex][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/latex/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang latex
-#+SUBTITLE: Writing papers in Emacs has never been so fun
-#+CREATED:  January 16, 2017
-#+SINCE:    1.3
+#+title:    :lang latex
+#+subtitle: Writing papers in Emacs has never been so fun
+#+created:  January 16, 2017
+#+since:    1.3
 
 * Description :unfold:
 Provide a helping hand when working with LaTeX documents.

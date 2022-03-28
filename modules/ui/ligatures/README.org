@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui ligatures][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/ligatures/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui ligatures
-#+SUBTITLE: Distract folks from your code
-#+CREATED:  June 16, 2018
-#+SINCE:    21.12.0
+#+title:    :ui ligatures
+#+subtitle: Distract folks from your code
+#+created:  June 16, 2018
+#+since:    21.12.0
 
 * Description :unfold:
 This module enables ligatures and arbitrary symbol substitutions with

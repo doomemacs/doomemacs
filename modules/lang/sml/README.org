@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang sml][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/sml/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang sml
-#+SUBTITLE: ...
-#+CREATED:  Mar 30, 2020
-#+SINCE:    21.12.0
+#+title:    :lang sml
+#+subtitle: ...
+#+created:  Mar 30, 2020
+#+since:    21.12.0
 
 * Description :unfold:
 THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming language]] support to Doom Emacs.

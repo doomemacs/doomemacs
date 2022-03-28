@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools lsp][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/lsp/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :tools lsp
-#+SUBTITLE: M-x vscode
-#+CREATED:  March 05, 2019
-#+SINCE:    21.12.0
+#+title:    :tools lsp
+#+subtitle: M-x vscode
+#+created:  March 05, 2019
+#+since:    21.12.0
 
 * Description :unfold:
 This module integrates [[https://langserver.org/][language servers]] into Doom Emacs. They provide features

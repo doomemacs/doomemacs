@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor rotate-text][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/rotate-text/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :editor rotate-text
-#+SUBTITLE: The only back'n'forth nerds will ever know
-#+CREATED:  June 22, 2018
-#+SINCE:    2.0.4
+#+title:    :editor rotate-text
+#+subtitle: The only back'n'forth nerds will ever know
+#+created:  June 22, 2018
+#+since:    2.0.4
 
 * Description :unfold:
 This module adds text rotation to Doom Emacs. I.e. The ability to cycle through

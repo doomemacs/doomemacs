@@ -3,9 +3,9 @@
 :END:
 ← [[doom-index:][Back to index]]                                ↖ [[doom-repo:tree/develop/modules/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    Official modules
-#+SUBTITLE: Doom Emacs' official module repository
-#+STARTUP:  nonum
+#+title:    Official modules
+#+subtitle: Doom Emacs' official module repository
+#+startup:  nonum
 
 * Description :unfold:
 This is a repository of official modules for [[https://github.com/doomemacs/core][Doom Emacs]]. They are more closely

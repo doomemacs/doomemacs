@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang erlang][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/erlang/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang erlang
-#+SUBTITLE: An elegant language for a more civilized age
-#+CREATED:  April 07, 2018
-#+SINCE:    21.12.0 (#497)
+#+title:    :lang erlang
+#+subtitle: an elegant language for a more civilized age
+#+created:  April 07, 2018
+#+since:    21.12.0 (#497)
 
 * Description :unfold:
 This module provides support [[https://www.erlang.org/][Erlang programming language]]. Support for the

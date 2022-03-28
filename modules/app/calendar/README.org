@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::app calendar][Issues]]  ↖ [[doom-repo:tree/develop/modules/app/calendar/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :app calendar
-#+SUBTITLE: Watch your missed deadlines in real time
-#+CREATED:  January 13, 2018
-#+SINCE:    21.12.0 (#355)
+#+title:    :app calendar
+#+subtitle: Watch your missed deadlines in real time
+#+created:  January 13, 2018
+#+since:    21.12.0 (#355)
 
 * Description :unfold:
 This module adds a calendar view for Emacs, with org and google calendar sync

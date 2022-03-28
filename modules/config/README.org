@@ -1,8 +1,8 @@
 ← [[doom-module-index:][Back to module index]]                         ↖ [[doom-repo:tree/develop/modules/config/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:   :config
-#+CREATED: July 29, 2021
-#+SINCE:   21.12.0
+#+title:   :config
+#+created: July 29, 2021
+#+since:   21.12.0
 
 * Description
 Modules in this category provide sane defaults or improve your ability to

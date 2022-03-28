@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang coq][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/coq/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang coq
-#+SUBTITLE: Proofs as programs
-#+CREATED:  August 14, 2018
-#+SINCE:    21.12.0 (#804)
+#+title:    :lang coq
+#+subtitle: Proofs as programs
+#+created:  August 14, 2018
+#+since:    21.12.0 (#804)
 
 * Description :unfold:
 This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://proofgeneral.github.io][Proof General]].

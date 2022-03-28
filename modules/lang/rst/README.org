@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang rst][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/rst/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang rst
-#+SUBTITLE: ReST in peace
-#+CREATED:  October 15, 2021
-#+SINCE:    21.12.0
+#+title:    :lang rst
+#+subtitle: ReST in peace
+#+created:  October 15, 2021
+#+since:    21.12.0
 
 * Description :unfold:
 This module adds [[https://docutils.sourceforge.io/rst.html][ReStructured Text]] support to Doom Emacs.

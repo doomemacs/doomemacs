@@ -1,8 +1,8 @@
 ← [[doom-module-index:][Back to module index]]                         ↖ [[doom-repo:tree/develop/modules/term/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:   :term
-#+CREATED: August 01, 2021
-#+SINCE:   21.12.0
+#+title:   :term
+#+created: August 01, 2021
+#+since:   21.12.0
 
 * Description
 What's an operating system without a terminal? The modules in this category

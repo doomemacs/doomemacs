@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang go][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/go/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang go
-#+SUBTITLE: The hipster dialect
-#+CREATED:  June 15, 2015
-#+SINCE:    0.7
+#+title:    :lang go
+#+subtitle: The hipster dialect
+#+created:  June 15, 2015
+#+since:    0.7
 
 * Description :unfold:
 This module adds [[https://golang.org][Go]] support, with optional (but recommended) LSP support via

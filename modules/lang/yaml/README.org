@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang yaml][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/yaml/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :lang yaml
-#+SUBTITLE: JSON, but readable
-#+CREATED:  April 24, 2020
-#+SINCE:    21.12.0
+#+title:    :lang yaml
+#+subtitle: JSON, but readable
+#+created:  April 24, 2020
+#+since:    21.12.0
 
 * Description :unfold:
 This module provides support for the [[https://yaml.org/][YAML file format]] to Doom Emacs.

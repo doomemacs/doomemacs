@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor file-templates][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/file-templates/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :editor file-templates
-#+SUBTITLE: Fill the void in your empty files
-#+CREATED:  February 11, 2017
-#+SINCE:    2.0.0
+#+title:    :editor file-templates
+#+subtitle: Fill the void in your empty files
+#+created:  February 11, 2017
+#+since:    2.0.0
 
 * Description :unfold:
 This module adds file templates for blank files, powered by [[doom-package:][yasnippet]].

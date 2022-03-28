@@ -1,9 +1,9 @@
 ← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui vc-gutter][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/vc-gutter/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
-#+TITLE:    :ui vc-gutter
-#+SUBTITLE: Get your diff out of the gutter
-#+CREATED:  June 26, 2018
-#+SINCE:    21.12.0
+#+title:    :ui vc-gutter
+#+subtitle: Get your diff out of the gutter
+#+created:  June 26, 2018
+#+since:    21.12.0
 
 * Description :unfold:
 This module displays a diff of the current file (against HEAD) in the fringe.
