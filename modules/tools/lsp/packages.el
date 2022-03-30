@@ -3,14 +3,14 @@
 
 (if (featurep! +eglot)
     (progn
-      (package! eglot :pin "f77518711507810b779d87190d0ca0183fc02e10")
+      (package! eglot :pin "83a61f673a0395e9ea3f17f8bf7afd7da37bce03")
       (when (featurep! :completion vertico)
         (package! consult-eglot :pin "f93c571dc392a8b11d35541bffde30bd9f411d30")))
-  (package! lsp-mode :pin "c6482c1bbfa366a1fc52c32c03164ac77f297022")
+  (package! lsp-mode :pin "1e7128c43f611ed78752130ce5ce67e641a276df")
   (package! lsp-ui :pin "96b1ecbfbf87a775f05b5f0b55253376a3bd61e7")
   (when (featurep! :completion ivy)
     (package! lsp-ivy :pin "3e87441a625d65ced5a208a0b0442d573596ffa3"))
   (when (featurep! :completion helm)
     (package! helm-lsp :pin "c2c6974dadfac459b1a69a1217441283874cea92"))
   (when (featurep! :completion vertico)
-    (package! consult-lsp :pin "f4f195046b97be5ce0406e0723921b3393d9442e")))
+    (package! consult-lsp :pin "5a3c4e3f4233feff3f141df38f93d1be80259301")))
