@@ -459,7 +459,7 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
         (all-the-icons-default-adjust -0.02))
     (insert "\n")
     (dolist (section +doom-dashboard-menu-sections)
-      (cl-destructuring-bind (label &key icon action when face) section
+      (cl-destructuring-bind (label &key icon action when face key) section
         (when (and (fboundp action)
                    (or (null when)
                        (eval when t)))
@@ -483,17 +483,29 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
                                  (propertize (symbol-name action) 'face 'doom-dashboard-menu-desc)))
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
-                      (or (when-let (key (where-is-internal action nil t))
-                            (with-temp-buffer
-                              (save-excursion (insert (key-description key)))
-                              (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                (let ((str (match-string 1)))
-                                  (replace-match
-                                   (upcase (if (< (length str) 3)
-                                               str
-                                             (substring str 0 3))))))
-                              (propertize (buffer-string) 'face 'doom-dashboard-menu-desc)))
-                          ""))))
+                      (propertize
+                       (or key
+                           (when-let*
+                               ((keymaps
+                                 (delq
+                                  nil (list (when (bound-and-true-p evil-local-mode)
+                                              (evil-get-auxiliary-keymap +doom-dashboard-mode-map 'normal))
+                                            +doom-dashboard-mode-map)))
+                                (key
+                                 (or (when keymaps
+                                       (where-is-internal action keymaps t))
+                                     (where-is-internal action nil t))))
+                             (with-temp-buffer
+                               (save-excursion (insert (key-description key)))
+                               (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                                 (let ((str (match-string 1)))
+                                   (replace-match
+                                    (upcase (if (< (length str) 3)
+                                                str
+                                              (substring str 0 3))))))
+                               (buffer-string)))
+                           "")
+                       'face 'doom-dashboard-menu-desc))))
            (if (display-graphic-p)
                "\n\n"
              "\n")))))))
