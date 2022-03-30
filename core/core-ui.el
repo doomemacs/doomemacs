@@ -164,9 +164,6 @@ or if the current buffer is read-only or not file-visiting."
       mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
       mouse-wheel-scroll-amount-horizontal 2)
 
-;; Remove hscroll-margin in shells, otherwise it causes jumpiness
-(setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
-
 
 ;;
 ;;; Cursor

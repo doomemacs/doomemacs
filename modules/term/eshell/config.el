@@ -101,6 +101,10 @@ You should use `set-eshell-alias!' to change this.")
 
   (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
 
+  ;; Remove hscroll-margin in shells, otherwise you get jumpiness when the
+  ;; cursor comes close to the left/right edges of the window.
+  (setq-hook! 'eshell-mode-hook hscroll-margin 0)
+
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
   ;; or configure `+eshell-aliases' via elisp.
   (advice-add #'eshell-write-aliases-list :override #'ignore)
