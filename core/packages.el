@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "653b04a64f341bfa2606c8f2acba10c3fe284ca2")
+  :pin "e2de88ea0e7ccf9f4846e9e756f86e0dcf469c44")
 
 ;; core-modules.el
 (package! use-package
@@ -25,7 +25,7 @@
   :pin "a7422fb8ab1baee19adb2717b5b47b9c3812a84c")
 
 ;; core-ui.el
-(package! all-the-icons :pin "2c963ebb75f211d2f7ac3d2db5f4a9ee2f3e27da")
+(package! all-the-icons :pin "65c496d3d1d1298345beb9845840067bffb2ffd8")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "a32b39bdfe6c61c322c37226d66e1b6d4f107ed0")
@@ -33,7 +33,7 @@
 
 ;; core-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
-(package! dtrt-indent :pin "926fc4260c3f71f5aac2e0becb9ee435a4124d5d")
+(package! dtrt-indent :pin "66fc30af02901db023e464a24d2b5fb3ff472794")
 (package! helpful :pin "67cdd1030b3022d3dc4da2297f55349da57cde01")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "37f77bf2e2199be9fe27e981317b02cfd0e8c70e")
@@ -44,8 +44,8 @@
   :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
 
 ;; core-projects.el
-(package! projectile :pin "0243ad7dc96072126fc6c23e48184a0419bab028")
-(package! project :pin "125a1a8d15f998cd495ef6a6b981b1a0e201bd2f")
+(package! projectile :pin "f3468e8d20b9d3c0da58fe5d779bd2ff35e310a9")
+(package! project :pin "4fe1eec8035969d59ab461eb1674343378182a0b")
 
 ;; core-keybinds.el
 (package! general :pin "9651024e7f40a8ac5c3f31f8675d3ebe2b667344")

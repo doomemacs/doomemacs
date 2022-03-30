@@ -176,6 +176,9 @@ one wants that.")
          ;; Prevent a possible source of crashes when there's a syntax error
          ;; in the autoloads file
          debug-on-error
+         ;; Non-nil interferes with autoload generation in Emacs < 29.  See
+         ;; raxod502/straight.el#904.
+         (left-margin 0)
          ;; The following bindings are in `package-generate-autoloads'.
          ;; Presumably for a good reason, so I just copied them
          (backup-inhibited t)
