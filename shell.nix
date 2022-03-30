@@ -9,7 +9,7 @@
 #
 # With your own DOOMDIR:
 #
-#   nix-shell --argstr doomdir ~/.config/doom
+#   nix-shell --argstr doomdir ~/.config/other-doom-config
 #
 # With a specific version of Emacs
 #
@@ -39,9 +39,9 @@
     ];
   }
 , emacs ? "27"
-, emacsdir ? "$(pwd)/.."
-, doomdir ? "$(pwd)"
-, doomlocaldir ? "$(pwd)/.local" }:
+, emacsdir ? "$(pwd)"
+, doomdir ? ""
+, doomlocaldir ? "$EMACSDIR/.local" }:
 
 let emacsPkg = (if      emacs == "26"       then pkgs.emacs26
                 else if emacs == "26.3"     then pkgs.emacs26
@@ -88,6 +88,6 @@ in pkgs.stdenv.mkDerivation {
       cp -r "$EMACSDIR/.local/straight/repos" ./repos
     fi
     popd >/dev/null
-    echo "Ready!"
+    echo "Ready! Remember to 'doom sync'!"
   '';
 }
