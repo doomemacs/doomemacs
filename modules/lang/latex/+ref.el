@@ -17,7 +17,10 @@
           (?s . "\\smartcite[]{%l}")
           (?t . "\\textcite[]{%l}"))
         reftex-plug-into-AUCTeX t
-        reftex-toc-split-windows-fraction 0.3)
+        reftex-toc-split-windows-fraction 0.3
+        ;; This is needed when `reftex-cite-format' is set. See
+        ;; https://superuser.com/a/1386206
+        LaTeX-reftex-cite-format-auto-activate)
   (when (featurep! :editor evil)
     (add-hook 'reftex-mode-hook #'evil-normalize-keymaps))
   (map! :map reftex-mode-map
