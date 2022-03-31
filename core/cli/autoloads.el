@@ -7,8 +7,7 @@ These packages have silly or destructive autoload files that try to load
 everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
-(defvar doom-autoloads-excluded-files
-  '("/bufler/bufler-workspaces-tabs\\.el$")
+(defvar doom-autoloads-excluded-files ()
   "List of regexps whose matching files won't be indexed for autoloads.")
 
 (defvar doom-autoloads-cached-vars
