@@ -1,16 +1,16 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "be97395e31861fa7b84e7440a87db455e2089107")
+(package! evil :pin "3e41a823334abbba9cf16e482855699054d9dfe0")
 (package! evil-args :pin "2671071a4a57eaee7cc8c27b9e4b6fc60fd2ccd3")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
-(package! evil-embrace :pin "464e8ec52ff78edf3c9060143fc375f6ce5f275f")
+(package! evil-embrace :pin "7b5a539cfe7db238d860122c793a0cb2d329cc6e")
 (package! evil-escape
   :recipe (:host github :repo "hlissner/evil-escape")
   :pin "819f1ee1cf3f69a1ae920e6004f2c0baeebbe077")
 (package! evil-exchange :pin "5f0a2d41434c17c6fb02e4f744043775de1c63a2")
 (package! evil-indent-plus :pin "b4dacbfdb57f474f798bfbf5026d434d549eb65c")
-(package! evil-lion :pin "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
+(package! evil-lion :pin "4da660e124731ed65e7aaa6c067c30e876619429")
 (package! evil-nerd-commenter :pin "42ba1a473b4f1df061baddd2f8b812a2f35e366e")
 (package! evil-numbers :pin "08f0c1ee93b8a563770eaefaf21ab9087fca7bdb")
 (package! evil-snipe :pin "a79177df406a79b4ffa25743c752f21363bba1cc")
@@ -35,4 +35,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "e69abfcb1cc0dd59dfe7c055b0779a6622f8282d"))
+  (package! evil-collection :pin "e55718869252a8cd46e61e350bb514194a37f2f8"))

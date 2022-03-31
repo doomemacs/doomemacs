@@ -90,6 +90,7 @@ variable for an explanation of the defaults (in comments). See
       anaconda-mode
       apropos
       arc-mode
+      atomic-chrome
       auto-package-update
       beginend
       bm
@@ -221,6 +222,7 @@ variable for an explanation of the defaults (in comments). See
       sh-script
       ,@(when EMACS28+ '(shortdoc))
       simple
+      simple-mpc
       slime
       sly
       speedbar
