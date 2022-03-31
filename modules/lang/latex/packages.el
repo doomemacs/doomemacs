@@ -1,7 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/latex/packages.el
 
-(package! auctex :pin "3b0a080ae596c26c17b15ba9c71fc5542eae238b")
+(package! auctex
+  :recipe (:files ("*.el" "*.info" "dir"
+                   "doc" "etc" "images" "latex" "style"))
+  :pin "3b0a080ae596c26c17b15ba9c71fc5542eae238b")
 (package! adaptive-wrap :pin "0d5b4a07de76d87dd64333a566a8a0a845f2b9f0")
 (package! latex-preview-pane :pin "5297668a89996b50b2b62f99cba01cc544dbed2e")
 (when (featurep! :editor evil +everywhere)
