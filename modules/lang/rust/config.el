@@ -12,11 +12,7 @@
   :preface
   ;; HACK `rustic' sets up some things too early. I'd rather disable it and let
   ;;   our respective modules standardize how they're initialized.
-  (setq rustic-lsp-client
-        (when (featurep! +lsp)
-          (if (featurep! :tools lsp +eglot)
-              'eglot
-            'lsp-mode)))
+  (setq rustic-lsp-client nil)
   (after! rustic-lsp
     (remove-hook 'rustic-mode-hook 'rustic-setup-lsp))
   (after! rustic-flycheck
