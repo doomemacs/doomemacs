@@ -315,9 +315,10 @@ editorconfig or dtrt-indent installed."
          (let (editorconfig-lisp-use-default-indent)
            (editorconfig-set-indentation nil width)))
         ((require 'dtrt-indent nil t)
-         (when-let (var (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
-           (doom-log "Updated %s = %d" var width)
-           (set var width))))
+         (when-let (vars (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
+           (dolist (var (doom-enlist var))
+             (doom-log "Updated %s = %d" var width)
+             (set var width)))))
   (message "Changed indentation to %d" width))
 
 
