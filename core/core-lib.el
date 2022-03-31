@@ -73,7 +73,7 @@ list is returned as-is."
 Does not display text in echo area, but still logs to *Messages*. Accepts the
 same arguments as `message'."
   `(when doom-debug-p
-     (let ((inhibit-message (active-minibuffer-window)))
+     (let ((inhibit-message t))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
                  (when (bound-and-true-p doom--current-module)
