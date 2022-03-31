@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/solidity/packages.el
 
-(package! solidity-mode :pin "6f7bd1641e5282ec5163188d8b8c2f6dfddc2e36")
+(package! solidity-mode :pin "20fb77e089e10187b37ae1a94153017b82ed2a0a")
 (when (featurep! :completion company)
   (package! company-solidity))
 (when (featurep! :checkers syntax)

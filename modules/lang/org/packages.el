@@ -82,7 +82,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "918ee5610a5062d872fdda43351de09f526a71bd"))
+    :pin "e281b3234e7991283ce4dcca705dd9a6a9ebe5d2"))
 (cond
  ((featurep! +roam)
   (package! org-roam

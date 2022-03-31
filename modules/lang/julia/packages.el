@@ -2,7 +2,7 @@
 ;;; lang/julia/packages.el
 
 (package! julia-mode :pin "47f43f7d839019cac3ba6559d93b29487ca118cb")
-(package! julia-repl :pin "e90b1ed2cc806262b0ee772dcc88f8da693d9210")
+(package! julia-repl :pin "6c1d63511fb2b3b3f2e342eff6a375d78be6c12c")
 
 (when (featurep! +lsp)
   (if (featurep! :tools lsp +eglot)

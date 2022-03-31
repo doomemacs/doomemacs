@@ -20,7 +20,7 @@
     (unless (featurep! :tools lsp +eglot)
       ;; ccls package is necessary only for lsp-mode.
       (package! ccls :pin "675a5704c14a27931e835a431beea3631d92e8e6"))
-  (when (package! irony :pin "5063d6b16d5d0a444bbc7599caabfdc6b512f70c")
+  (when (package! irony :pin "870d1576fb279bb93f776a71e65f45283c423a9e")
     (package! irony-eldoc :pin "73e79a89fad982a2ba072f2fcc1b4e41f0aa2978")
     (when (featurep! :checkers syntax)
       (package! flycheck-irony :pin "42dbecd4a865cabeb301193bb4d660e26ae3befe"))

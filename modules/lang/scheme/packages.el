@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scheme/packages.el
 
-(when (package! geiser :pin "c1cc4da1edc46b763e0342ab4aa971e54f48658d")
+(when (package! geiser :pin "9507e81a075351d090fd1f4f708efd05d6470cba")
   (package! macrostep-geiser :pin "f6a2d5bb96ade4f23df557649af87ebd0cc45125")
   (when (featurep! +chez)
     (package! geiser-chez :pin "48427d4aecc6fed751d266673f1ce2ad57ddbcfc"))
@@ -14,7 +14,7 @@
   (when (featurep! +gauche)
     (package! geiser-gauche :pin "fd52cbaed9b0a0d0f10e87674b5747e5ee44ebc9"))
   (when (featurep! +guile)
-    (package! geiser-guile :pin "cfd9116dcb246126950d7f2f662f09149684128b")
+    (package! geiser-guile :pin "c641fcc50b6b86ca95743122b5206cdcd475f96e")
     (when (featurep! :checkers syntax)
       (package! flycheck-guile
         :recipe (:host github :repo "flatwhatson/flycheck-guile")
