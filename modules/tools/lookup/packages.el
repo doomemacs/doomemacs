@@ -15,7 +15,7 @@
   (package! helm-xref :pin "ea0e4ed8a9baf236e4085cbc7178241f109a53fa"))
 
 ;; For dictionary and online lookup
-(package! request :pin "3336eaa97de923f74b90dda3e35985e122d40805")
+(package! request :pin "c769cf33f2ac0a1a9798b508935c4b260e856ab5")
 
 (when (featurep! +docsets)
   (package! dash-docs :pin "29848b6b347ac520f7646c200ed2ec36cea3feda")
@@ -28,7 +28,7 @@
   (if IS-MAC
       (package! osx-dictionary :pin "1a4479d9f44ef1e6e5f7643c172c32f6fe6cce21")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
-    (package! powerthesaurus :pin "02c9d11a3f407023aa7c7b080bb9f8a5f5e7cd7a")
+    (package! powerthesaurus :pin "810a25056c623f304de6a72123652d9c35936718")
     (when (featurep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")
       (package! synosaurus :pin "14d34fc92a77c3a916b4d58400424c44ae99cd81"))))

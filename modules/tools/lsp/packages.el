@@ -3,7 +3,7 @@
 
 (if (featurep! +eglot)
     (progn
-      (package! eglot :pin "83a61f673a0395e9ea3f17f8bf7afd7da37bce03")
+      (package! eglot :pin "fd9a5646d1b49ef5968713005d83131dd75a52ad")
       (when (featurep! :completion vertico)
         (package! consult-eglot :pin "f93c571dc392a8b11d35541bffde30bd9f411d30")))
   (package! lsp-mode :pin "1e7128c43f611ed78752130ce5ce67e641a276df")

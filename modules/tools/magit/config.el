@@ -201,7 +201,8 @@ ensure it is built when we actually use Forge."
           (evil-collection-define-key state 'code-review-mode-map evil-binding fn))))
     (evil-set-initial-state 'code-review-mode evil-default-state))
   (setq code-review-db-database-file (concat doom-etc-dir "code-review/code-review-db-file.sqlite")
-        code-review-log-file (concat doom-etc-dir "code-review/code-review-error.log"))
+        code-review-log-file (concat doom-etc-dir "code-review/code-review-error.log")
+        code-review-download-dir (concat doom-etc-dir "code-review/"))
   :config
   (transient-append-suffix 'magit-merge "i"
     '("y" "Review pull request" +magit/start-code-review))
