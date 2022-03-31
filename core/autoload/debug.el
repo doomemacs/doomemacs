@@ -278,22 +278,24 @@ ready to be pasted in a bug report on github."
 (defun doom/info ()
   "Collects some debug information about your Emacs session, formats it and
 copies it to your clipboard, ready to be pasted into bug reports!"
-  (interactive "P")
-  (with-current-buffer (pop-to-buffer "*doom info*")
-    (setq buffer-read-only t)
-    (with-silent-modifications
-      (erase-buffer)
-      (save-excursion
-        (dolist (spec (cl-remove-if-not #'cdr (doom-info)))
-          (insert! "%-11s  %s\n"
-                   ((car spec)
-                    (if (listp (cdr spec))
-                        (mapconcat (lambda (x) (format "%s" x))
-                                   (cdr spec) " ")
-                      (cdr spec)))))))
-    (kill-new (buffer-string))
-    (when (y-or-n-p "Your doom-info was copied to the clipboard.\n\nOpen pastebin.com?")
-      (browse-url "https://pastebin.com"))))
+  (interactive)
+  (let ((buffer (get-buffer-create "*doom info*")))
+    (with-current-buffer buffer
+      (setq buffer-read-only t)
+      (with-silent-modifications
+        (erase-buffer)
+        (save-excursion
+          (dolist (spec (cl-remove-if-not #'cdr (doom-info)))
+            (insert! "%-11s  %s\n"
+                     ((car spec)
+                      (if (listp (cdr spec))
+                          (mapconcat (lambda (x) (format "%s" x))
+                                     (cdr spec) " ")
+                        (cdr spec)))))))
+      (pop-to-buffer buffer)
+      (kill-new (buffer-string))
+      (when (y-or-n-p "Your doom-info was copied to the clipboard.\n\nOpen pastebin.com?")
+        (browse-url "https://pastebin.com")))))
 
 
 ;;
