@@ -173,19 +173,19 @@ one wants that.")
          ;; to recentf.
          find-file-hook
          write-file-functions
-         ;; Prevent a possible source of crashes when there's a syntax error
-         ;; in the autoloads file
+         ;; Prevent a possible source of crashes when there's a syntax error in
+         ;; the autoloads file.
          debug-on-error
-         ;; Non-nil interferes with autoload generation in Emacs < 29.  See
+         ;; Non-nil interferes with autoload generation in Emacs < 29. See
          ;; raxod502/straight.el#904.
          (left-margin 0)
          ;; The following bindings are in `package-generate-autoloads'.
-         ;; Presumably for a good reason, so I just copied them
+         ;; Presumably for a good reason, so I just copied them.
          (backup-inhibited t)
          (version-control 'never)
          case-fold-search    ; reduce magic
          autoload-timestamps ; reduce noise in generated files
-         ;; Needed for `autoload-generate-file-autoloads'
+         ;; So `autoload-generate-file-autoloads' knows where to write it
          (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
@@ -199,12 +199,15 @@ one wants that.")
        file target-buffer module module-enabled-p))))
 
 (defun doom-autoloads--scan (files &optional exclude literal)
+  "Scan and return all autoloaded forms in FILES.
+
+Autoloads will be generated from autoload cookies in FILES (except those that
+match one of the regexps in EXCLUDE -- a list of strings). If LITERAL is
+non-nil, treat FILES as pre-generated autoload files instead."
   (require 'autoload)
   (let (autoloads)
     (dolist (file files (nreverse (delq nil autoloads)))
-      (when (and (or (null exclude)
-                     (seq-remove (doom-rpartial #'string-match-p file)
-                                 exclude))
+      (when (and (not (seq-find (doom-rpartial #'string-match-p file) exclude))
                  (file-readable-p file))
         (doom-log "Scanning %s" file)
         (setq file (file-truename file))
@@ -213,15 +216,14 @@ one wants that.")
               (insert-file-contents file)
             (doom-autoloads--scan-file file))
           (save-excursion
-            (let ((filestr (prin1-to-string file)))
-              (while (re-search-forward "\\_<load-file-name\\_>" nil t)
-                ;; `load-file-name' is meaningless in a concatenated
-                ;; mega-autoloads file, so we replace references to it with the
-                ;; file they came from.
-                (let ((ppss (save-excursion (syntax-ppss))))
-                  (or (nth 3 ppss)
-                      (nth 4 ppss)
-                      (replace-match filestr t t))))))
+            (while (re-search-forward "\\_<load-file-name\\_>" nil t)
+              ;; `load-file-name' is meaningless in a concatenated
+              ;; mega-autoloads file, but also essential in isolation, so we
+              ;; replace references to it with the file they came from.
+              (let ((ppss (save-excursion (syntax-ppss))))
+                (or (nth 3 ppss)
+                    (nth 4 ppss)
+                    (replace-match (prin1-to-string file) t t)))))
           (let ((load-file-name file)
                 (load-path
                  (append (list doom-private-dir)

@@ -282,11 +282,11 @@ Note: warnings are not considered failures.")
 
 (defun doom-cli--ci-hook-pre-push (_remote _url)
   (with-temp-buffer
-    (let ((z40 "0000000000000000000000000000000000000000")
+    (let ((z40 (make-string 40 ?0))
           line error)
       (while (setq line (ignore-errors (read-from-minibuffer "")))
         (catch 'continue
-          (cl-destructuring-bind (local-ref local-sha remote-ref remote-sha)
+          (seq-let (local-ref local-sha remote-ref remote-sha)
               (split-string line " ")
             (unless (or (string-match-p "^refs/heads/\\(master\\|main\\)$" remote-ref)
                         (equal local-sha z40))
