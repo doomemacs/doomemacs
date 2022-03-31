@@ -103,6 +103,8 @@
   (package! ob-elixir :pin "8990a8178b2f7bd93504a9ab136622aab6e82e32"))
 (when (featurep! :lang go)
   (package! ob-go :pin "2067ed55f4c1d33a43cb3f6948609d240a8915f5"))
+(when (featurep! :lang graphql)
+  (package! ob-graphql :pin "7c35419f9eec5dc44967cbcfa13c7135b9a96bfc"))
 (when (featurep! :lang hy)
   (package! ob-hy :pin "a42ecaf440adc03e279afe43ee5ef6093ddd542a"))
 (when (featurep! :lang nim)

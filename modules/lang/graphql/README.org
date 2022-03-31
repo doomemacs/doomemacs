@@ -1,0 +1,115 @@
+#+TITLE:   lang/graphql
+#+DATE:    March 31, 2022
+#+SINCE:   v2.0
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#sending-queries][Sending queries]]
+  - [[#viewing-docs][Viewing docs]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds [[https://www.graphql.org][GraphQL]] support to Doom Emacs.
+
++ Code completion
++ LSP support (=+lsp=)
+  + Diagnostics (GraphQL syntax linting/validations) (spec-compliant)
+  + Autocomplete suggestions (spec-compliant)
+  + Hyperlink to fragment definitions and named types (type, input, enum) definitions (spec-compliant)
+  + Outline view support for queries and SDL
+  + Symbols support across the workspace
++ Local schema viewer
++ Org-babel exporter (requires =:lang org=)
+
+** Maintainers
++ [[https://github.com/elken][@elken]] (Author)
+
+** Module Flags
++ =+lsp= Enable LSP support through [[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#readme][graphql-language-service-cli]] (also requires =:tools lsp=)
+
+** Plugins
++ [[https://github.com/davazp/graphql-mode][graphql-mode]]
++ [[https://github.com/ifitzpatrick/graphql-doc.el][graphql-doc]]
++ [[https://github.com/timoweave/company-graphql][company-graphql]] (when =+lsp= is disabled)
+
+** Hacks
+Added a convenience function =+graphql-doc-open-config= to open schema docs from a
+[[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file.
+
+* Prerequisites
+There are no prerequisites for using this module. LSP server should be
+downloaded upon opening a graphql buffer.
+
+* Features
+** Sending queries
+When visiting a graphql buffer, you have access to the ability to send the
+current query with =C-c C-c= which will prompt you for an optional variables file,
+then execute the query and return a buffer of the results.
+
+It's also possible to send queries using org-babel using a block such as the
+ones below (executing correctly will require =:lang org=)
+
+#+NAME: my-variables
+#+begin_src json
+{
+    "continentCode": "AF"
+}
+#+end_src
+
+#+BEGIN_SRC graphql :url https://countries.trevorblades.com/ :variables my-variables
+query GetContinents($continentCode: String!) {
+  continent(code: $continentCode) {
+    name
+    code
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: {
+:   "data": {
+:     "continent": {
+:       "name": "Africa",
+:       "code": "AF"
+:     }
+:   }
+: }
+
+** Viewing docs
+With this module, there are 3 ways to view schemas:
++ =+graphql-doc-open-config= which uses a local [[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file to seed endpoints to query
++ =graphql-doc= which prompts you to select an endpoint based on ones added manually by =graphql-doc-add-api=
++ =graphql-doc-open-url= which prompts to to manually enter an endpoint url
+
+When using the doc viewer, there are a few bindings for navigating around.
+
+| Key         | Command             | Description                       |
+|-------------+---------------------+-----------------------------------|
+| =C-j=         | =forward-button=      | Follow a forward button           |
+| =C-k=         | =backward-button=     | Follow a backward button          |
+| =<backspace>= | =graphql-doc-go-back= | Go back to a previous page        |
+| =mouse-1=     | -                   | Follow the next label under =point= |
+| =RET=         | -                   | Follow the next label under =point= |
+
+* Configuration
+Most of the "magic" in the module relies on a properly configured
+[[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file, so follow the examples linked to create an appropriate
+setup.
+
+LSP configuration is handled through [[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#graphql-configuration-file-graphqlrcyml][GraphQL Config]] to handle custom directives/documents/validation etc.
+
+These files will also be useful to other editors, so it would be worth trying to
+get them into version control.
+
+* Troubleshooting
+- [[https://github.com/ifitzpatrick/graphql-doc.el/issues][Issues with the doc viewer]]
+- [[https://github.com/davazp/graphql-mode/issues][Issues with graphql-mode]]
+- [[https://github.com/emacs-lsp/lsp-mode/issues][Issues with LSP]] ([[https://github.com/graphql/graphiql/issues][Upstream LSP issues]])
