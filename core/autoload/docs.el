@@ -315,6 +315,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
               org-footnote-define-inline nil
               org-footnote-auto-label t
               org-footnote-auto-adjust t
+              org-footnote-section nil
               wgrep-change-readonly-file t
               org-link-abbrev-alist-local (append org-link-abbrev-alist-local doom-docs-link-alist)
               org-babel-default-header-args
