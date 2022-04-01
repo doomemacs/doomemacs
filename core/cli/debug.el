@@ -32,7 +32,6 @@
 
 (defcli! (version v) ()
   "Show version information for Doom & Emacs."
-  (error "Test")
   (doom/version)
   nil)
 
