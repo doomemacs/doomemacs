@@ -230,7 +230,20 @@
         (sp-local-pair "{-@" "@-}" :actions :rem)
         (sp-local-pair "{-" "-")
         (sp-local-pair "{-#" "#-")
-        (sp-local-pair "{-@" "@-")))))
+        (sp-local-pair "{-@" "@-")))
+
+    (after! smartparens-python
+      (sp-with-modes 'python-mode
+        ;; Automatically close f-strings
+        (sp-local-pair "f\"" "\"")
+        (sp-local-pair "f\"\"\"" "\"\"\"")
+        (sp-local-pair "f'''" "'''")
+        (sp-local-pair "f'" "'"))
+      ;; Original keybind interferes with smartparens rules
+      (define-key python-mode-map (kbd "DEL") nil)
+      ;; Interferes with the def snippet in doom-snippets
+      ;; TODO Fix this upstream, in doom-snippets, instead
+      (setq sp-python-insert-colon-in-function-definitions nil))))
 
 
 ;;

@@ -78,15 +78,6 @@
         (setq-local flycheck-python-pylint-executable "pylint")
         (setq-local flycheck-python-flake8-executable "flake8"))))
 
-  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
-  ;; Automatically close f-strings
-  (sp-with-modes 'python-mode
-    (sp-local-pair  "f\"" "\"")
-    (sp-local-pair  "f\"\"\"" "\"\"\"")
-    (sp-local-pair  "f'''" "'''")
-    (sp-local-pair  "f'" "'"))
-  (setq sp-python-insert-colon-in-function-definitions nil) ; interferes with snippet
-
   ;; Affects pyenv and conda
   (when (featurep! :ui modeline)
     (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
