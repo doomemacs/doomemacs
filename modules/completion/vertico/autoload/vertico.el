@@ -282,5 +282,5 @@ If prefix ARG is provided, select which session to resume."
   (interactive "P")
   (call-interactively
    (if arg
-       #'vertico-resume-select
-     #'vertico-resume-last)))
+       #'vertico-repeat-select
+     #'vertico-repeat-last)))
