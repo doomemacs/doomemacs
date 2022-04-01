@@ -459,6 +459,10 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
    :follow (doom-docs-make-symbol-link #'helpful-callable)
    :face '(font-lock-function-name-face underline))
   (org-link-set-parameters
+   "face"
+   :follow (doom-docs-make-symbol-link #'describe-face)
+   :face '(font-lock-type-face underline))
+  (org-link-set-parameters
    "doom-ref"
    :follow (lambda (link)
              (let ((link (doom-docs-read-link-desc-at-point link))
