@@ -585,29 +585,56 @@ lines are selected, or the NxM dimensions of a block selection.")
 ;;
 ;;; Bootstrap
 
-(defvar +modeline--old-format (default-value 'mode-line-format))
+(if (and (featurep! +light)
+         (not (featurep! +headerline)))
+    (progn
+      (defvar +modeline--old-format (default-value 'mode-line-format))
+      (define-minor-mode +modeline-mode
+        "TODO"
+        :init-value nil
+        :global nil
+        (cond
+         (+modeline-mode
+          (setq mode-line-format
+                (cons
+                 "" '(+modeline-bar
+                      +modeline-format-left
+                      (:eval
+                       (propertize
+                        " "
+                        'display
+                        `((space :align-to (- (+ right right-fringe right-margin)
+                                              ,(string-width
+                                                (format-mode-line '("" +modeline-format-right))))))))
+                      +modeline-format-right))))
+         ((setq mode-line-format +modeline--old-format))))
+      (define-global-minor-mode +modeline-global-mode +modeline-mode +modeline-mode)
+      (add-hook '+modeline-global-mode-hook #'size-indication-mode)
+      (add-hook 'doom-init-ui-hook #'+modeline-global-mode)))
 
-(define-minor-mode +modeline-mode
-  "TODO"
-  :init-value nil
-  :global nil
-  (cond
-   (+modeline-mode
-    (setq mode-line-format
-          (cons
-           "" '(+modeline-bar
-                +modeline-format-left
-                (:eval
-                 (propertize
-                  " "
-                  'display
-                  `((space :align-to (- (+ right right-fringe right-margin)
-                                        ,(string-width
-                                          (format-mode-line '("" +modeline-format-right))))))))
-                +modeline-format-right))))
-   ((setq mode-line-format +modeline--old-format))))
-
-(define-global-minor-mode +modeline-global-mode +modeline-mode +modeline-mode)
-
-(add-hook '+modeline-global-mode-hook #'size-indication-mode)
-(add-hook 'doom-init-ui-hook #'+modeline-global-mode)
+(if (featurep! +headerline)
+    (progn
+      (defvar +headerline--old-format (default-value 'header-line-format))
+      (define-minor-mode +headerline-mode
+        "TODO"
+        :init-value nil
+        :global nil
+        (cond
+         (+headerline-mode
+          (setq header-line-format
+                (cons
+                 "" '(+modeline-bar
+                      +modeline-format-left
+                      (:eval
+                       (propertize
+                        " "
+                        'display
+                        `((space :align-to (- (+ right right-fringe right-margin)
+                                              ,(string-width
+                                                (format-mode-line '("" +modeline-format-right))))))))
+                      +modeline-format-right))))
+         ((setq header-line-format +headerline--old-format))))
+      (define-global-minor-mode +headerline-global-mode +headerline-mode +headerline-mode)
+      (add-hook '+headerline-global-mode-hook #'size-indication-mode)
+      (add-hook 'doom-init-ui-hook #'+headerline-global-mode)
+      (global-hide-mode-line-mode 1)))
