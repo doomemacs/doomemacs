@@ -6,22 +6,44 @@
 ;;;###autoload
 (defun +fortran/build ()
   "Compile a Fortran project or file.
-If the current file is detected to be within an fpm project,
-then building will occur with fpm. Otherwise it will default to gfortran."
+
+If the current file is detected to be within an fpm project, then
+building will occur with fpm. Otherwise it will default to ifort
+or gfortran, depending on what feature flags are set."
   (interactive)
-  (if (+fortran--fpm-toml)
-      (+fortran/fpm-build)
-    (+fortran/gfortran-compile)))
+  (cond ((+fortran--fpm-toml) (+fortran/fpm-build))
+        ((featurep! +intel) (+fortran/ifort-compile))
+        (t (+fortran/gfortran-compile))))
 
 ;;;###autoload
 (defun +fortran/run ()
   "Run a Fortran project or file.
-If the current file is detected to be within an fpm project,
-then building will occur with fpm. Otherwise it will default to gfortran."
+
+If the current file is detected to be within an fpm project, then
+building will occur with fpm. Otherwise it will default to ifort
+or gfortran, depending on what feature flags are set."
   (interactive)
-  (if (+fortran--fpm-toml)
-      (+fortran/fpm-run)
-    (+fortran/gfortran-run)))
+  (cond ((+fortran--fpm-toml) (+fortran/fpm-run))
+        ((featurep! +intel) (+fortran/ifort-run))
+        (t (+fortran/gfortran-run))))
+
+;; Intel Fortran
+;;;###autoload
+(defun +fortran/ifort-compile ()
+  "Compile the current buffer using ifort."
+  (interactive)
+  (compile (format "ifort %s"
+                   (buffer-file-name))))
+
+;;;###autoload
+(defun +fortran/ifort-run ()
+  "Run the current buffer using ifort."
+  (interactive)
+  (delete-file "./a.out")
+  (+fortran/ifort-compile)
+  (while (not (file-exists-p "./a.out"))
+    (sleep-for 1))
+  (compile "./a.out"))
 
 ;;
 ;;; GFortran

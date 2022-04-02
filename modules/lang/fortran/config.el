@@ -8,9 +8,11 @@
   :config
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (setq-hook! 'f90-mode-hook
-    compile-command "gfortran "
-    compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn)
+  (let ((cmd (cond ((featurep! +intel) "ifort ")
+                   (t "gfortran "))))
+    (setq-hook! 'f90-mode-hook
+      compile-command cmd
+      compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn))
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP Configuration --- ;;
