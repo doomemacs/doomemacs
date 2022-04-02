@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang swift][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/swift/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :lang swift
 #+subtitle: We asked for emoji variables?
 #+created:  June 15, 2015

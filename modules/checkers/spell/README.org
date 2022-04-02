@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::checkers spell][Issues]]  ↖ [[doom-repo:tree/develop/modules/checkers/spell/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :checkers spell
 #+subtitle: Tasing you for misspelling mispelling
 #+created:  February 20, 2017

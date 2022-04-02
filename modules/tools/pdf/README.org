@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools pdf][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/pdf/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :tools pdf
 #+subtitle: Emacs, your next PDF reader
 #+created:  February 06, 2018

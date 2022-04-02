@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]                         ↖ [[doom-repo:tree/develop/modules/app/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:   :app
 #+created: February 19, 2017
 #+since:   21.12.0
@@ -8,3 +6,6 @@
 Application modules are complex and opinionated modules that transform Emacs
 toward a specific purpose. They may have additional dependencies and *should be
 loaded last* (but before [[doom-module:][:config]] modules).
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

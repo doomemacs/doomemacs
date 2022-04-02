@@ -1,8 +1,6 @@
 :PROPERTIES:
 :ID:       12d2de30-c569-4b8e-bbc7-85dd5ccc4afa
 :END:
-← [[doom-index:][Back to index]]                                ↖ [[doom-repo:tree/develop/modules/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help:][Help]]
---------------------------------------------------------------------------------
 #+title:    Official modules
 #+subtitle: Doom Emacs' official module repository
 #+startup:  nonum

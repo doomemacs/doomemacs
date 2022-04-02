@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang web][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/web/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :lang web
 #+subtitle: The tubes
 #+created:  June 15, 2015

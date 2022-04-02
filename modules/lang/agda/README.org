@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang agda][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/agda/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :lang agda
 #+subtitle: Types of types of types of types...
 #+created:  August 21, 2018

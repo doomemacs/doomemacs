@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools docker][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/docker/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :tools docker
 #+subtitle: Yo dawg, I heard you like OSes, so I…
 #+created:  September 06, 2018

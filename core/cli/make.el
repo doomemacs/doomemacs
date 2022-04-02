@@ -14,12 +14,7 @@
                   (format "doom-module-issues::%s %s" category module)))))))
 
 (defvar doom-cli-docs-common-menu
-  `(("↖ Github"
-     . ,(fn! (&key readme)
-          (if (file-exists-p! readme doom-modules-dir)
-              (format "doom-repo:tree/develop/modules/%s" (string-remove-prefix "./" (file-name-directory readme)))
-            (format "doom-repo:tree/develop/%s" (string-remove-prefix "./../" readme)))))
-    ("± Suggest edits" . "doom-suggest-edit:")
+  `(("± Suggest edits" . "doom-suggest-edit:")
     ("? Help"
      . ,(fn! (&key title)
           (cond ((equal title "Changelog")   "doom-help-changelog:")

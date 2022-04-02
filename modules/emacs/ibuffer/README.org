@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::emacs ibuffer][Issues]]  ↖ [[doom-repo:tree/develop/modules/emacs/ibuffer/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :emacs ibuffer
 #+subtitle: Edit me like one of your French buffers
 #+created:  October 20, 2019

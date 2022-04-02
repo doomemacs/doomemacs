@@ -1,8 +1,9 @@
-← [[doom-module-index:][Back to module index]]                         ↖ [[doom-repo:tree/develop/modules/emacs/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:   :emacs
 #+created: August 01, 2021
 #+since:   21.12.0
 
 * Description
 Modules in this category augment and extend the built-in features of Emacs.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui indent-guides][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/indent-guides/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :ui indent-guides
 #+subtitle: Line up them indent columns
 #+created:  March 11, 2019

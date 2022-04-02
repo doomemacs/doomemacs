@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui unicode][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/unicode/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :ui unicode
 #+subtitle: Extended unicode support for various languages
 #+created:  June 08, 2020

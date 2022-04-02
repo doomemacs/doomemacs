@@ -1,8 +1,6 @@
 # -*- mode: snippet -*-
 # name: Doom category readme
 # --
-← [[doom-module-index:][Back to module index]]                         ↖ [[doom-module-source:lang][Source]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:   `(+file-templates-module-for-path)`
 #+created: `(format-time-string "%B %d, %Y")`
 #+since:   `(car (split-string doom-version "-"))`

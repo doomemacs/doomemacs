@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]                         ↖ [[doom-repo:tree/develop/modules/term/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:   :term
 #+created: August 01, 2021
 #+since:   21.12.0
@@ -12,3 +10,6 @@ If you can't decide which to choose, I recommend [[doom-package:][vterm]] or [[d
 offers that best terminal emulation available but requires a few extra steps to
 get going. [[doom-module:][:term eshell]] works everywhere that Emacs runs, even Windows, and
 provides a shell entirely implemented in Emacs Lisp.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::ui emoji][Issues]]  ↖ [[doom-repo:tree/develop/modules/ui/emoji/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :ui emoji
 #+subtitle: 💩
 #+created:  September 30, 2020

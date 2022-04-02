@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools gist][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/gist/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :tools gist
 #+subtitle: A pastebin for Githubsters
 #+created:  May 07, 2017

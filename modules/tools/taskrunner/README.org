@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools taskrunner][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/taskrunner/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :tools taskrunner
 #+subtitle: Taskrunner for all your projects
 #+created:  November 09, 2019

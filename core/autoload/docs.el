@@ -7,9 +7,89 @@
   (expand-file-name "../../docs/" (file-name-directory load-file-name))
   "Where Doom's documentation files are stored. Must end with a slash.")
 
+(defvar doom-docs-header-alist
+  `(("/docs/index\\.org$"
+     (left ("↖ FAQ" . "doom-faq:")))
+    (("/docs/[^/]+\\.org$" "/modules/README\\.org$")
+     (left ("← Back to index" . "doom-index:")))
+    ("/modules/[^/]+/README\\.org$"
+     (left ("← Back to module index" . "doom-module-index:")))
+    ("/modules/[^/]+/[^/]+/README\\.org$"
+     (left ("← Back to module index" . "doom-module-index:"))
+     (right ("↖ History"
+             . ,(lambda (file)
+                  (cl-destructuring-bind (category . module) (doom-module-from-path file)
+                    (format "doom-module-history:%s/%s" (doom-keyword-name category) module))))
+            ("! Issues"
+             . ,(lambda (file)
+                  (cl-destructuring-bind (category . module) (doom-module-from-path file)
+                    (format "doom-module-issues::%s %s" category module)))))))
+  "TODO")
+
+(defvar doom-docs-header-common-alist
+  `(("± Suggest edits" . "doom-suggest-edit:")
+    ("? Help"
+     . ,(lambda (_file)
+          (let ((title (cadar (org-collect-keywords '("TITLE")))))
+            (cond ((equal title "Changelog")   "doom-help-changelog:")
+                  ((string-prefix-p ":" title) "doom-help-modules:")
+                  ("doom-help:"))))))
+  "TODO")
+
 
 ;;
 ;;; `doom-docs-mode'
+
+(defun doom-docs--display-header-h ()
+  "Show header line in Doom documentation."
+  (let ((beg (point-min))
+        end)
+    (org-with-wide-buffer
+     (goto-char (point-min))
+     (when (looking-at-p org-drawer-regexp)
+       (re-search-forward org-drawer-regexp nil t 2)
+       (setq beg (1+ (line-end-position))))
+     (with-silent-modifications
+       (let ((inhibit-modification-hooks nil))
+         (when (re-search-forward "^-\\{80\\}" 512 t)
+           (delete-region beg (1+ (line-end-position))))
+         (when doom-docs-mode
+           (let* ((menu
+                   (cl-loop for (regexp . rules) in doom-docs-header-alist
+                            if (seq-find (doom-rpartial #'string-match-p (buffer-file-name))
+                                         (ensure-list regexp))
+                            return rules))
+                  (fn
+                   (lambda (menu)
+                     (cl-destructuring-bind (icon . label)
+                         (split-string (car menu) " ")
+                       (if (cdr menu)
+                           (format "%s [[%s][%s]]"
+                                   icon
+                                   (cond ((functionp (cdr menu))
+                                          (funcall (cdr menu) (buffer-file-name)))
+                                         ((file-name-absolute-p (cdr menu))
+                                          (concat "file:"
+                                                  (file-relative-name (file-truename (cdr menu)))))
+                                         ((cdr menu)))
+                                   (string-join label " "))
+                         (format "%s+ %s+" icon (string-join label " "))))))
+                  (lenfn
+                   (lambda (link)
+                     (length (replace-regexp-in-string org-link-any-re "\\3" link))))
+                  (sep  "  ")
+                  (lhs  (mapconcat fn (alist-get 'left menu) sep))
+                  (rhs  (mapconcat fn (append (alist-get 'right menu)
+                                              doom-docs-header-common-alist)
+                                   sep))
+                  (llen (funcall lenfn lhs))
+                  (rlen (funcall lenfn rhs))
+                  (pad  (max 0 (- 80 llen rlen))))
+             (insert lhs
+                     (if (zerop rlen) ""
+                       (format "%s%s" (make-string pad 32) rhs))
+                     "\n" (make-string 80 ?-) "\n")))))
+     (org-element-cache-refresh (point-min)))))
 
 (defun doom-docs--hide-meta-h ()
   "Hide all meta or comment lines."
@@ -244,6 +324,7 @@ This primes `org-mode' for reading."
     (kill-local-variable 'doom-docs--initial-values)))
 
 (add-hook! 'doom-docs-mode-hook
+           #'doom-docs--display-header-h
            #'doom-docs--hide-meta-h
            #'doom-docs--hide-tags-h
            #'doom-docs--hide-drawers-h

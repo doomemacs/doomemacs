@@ -1,5 +1,3 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang org][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/org/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
---------------------------------------------------------------------------------
 #+title:    :lang org
 #+subtitle: Organize your plain life in plain text
 #+created:  February 20, 2017
