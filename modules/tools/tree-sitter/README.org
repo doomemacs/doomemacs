@@ -19,7 +19,6 @@
   - [[#disabling-highlighting-for-certain-modes][Disabling highlighting for certain modes]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#error-bad-bounding-indices-0-1][=(error "Bad bounding indices: 0, 1")=]]
-  - [[#no-textobj-text-object-found][=No 'TEXTOBJ' text object found=]]
 
 * Description
 This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
@@ -116,11 +115,3 @@ If you only want it for certain modes then
 This means that the text object does not have the underlying query needed, this can be
 fixed by either adding in a custom query (which would override the current key
 bound.) or [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects/][contributing upstream!]]
-
-** =No 'TEXTOBJ' text object found=
-the main reason for this is the underlying text object using the =#make-range!=
-predicate, which at the moment [[https://github.com/emacs-tree-sitter/elisp-tree-sitter/issues/180][is not implemented in emacs tree sitter]] (see this
-issue on [[https://github.com/meain/evil-textobj-tree-sitter/issues/33][evil-textobj-tree-sitter]]).
-
-the only way around it is to rewrite the query to not use =#make-range!= or to
-implement that predicate the elisp tree sitter core
