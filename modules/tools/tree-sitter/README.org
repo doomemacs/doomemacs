@@ -82,7 +82,7 @@ If you wish to disable tree sitter text objects then you can just remove
 =+tree-sitter-keys-mode= from the language mode hook, for example if we did not
 want it for ruby we would use this snippet
 #+begin_src emacs-lisp
-(remove-hook! 'ruby-mode-hook #'+tree-sitter-keys-mode)
+(remove-hook 'ruby-mode-hook #'+tree-sitter-keys-mode)
 #+end_src
 
 ** Adding your own text objects
@@ -105,9 +105,9 @@ If you want to disable highlighting by default you can add a
 
 If you only want it for certain modes then
 #+begin_src emacs-lisp
-(remove-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(remove-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
-(add-hook! 'MAJOR-MODE-HOOK #'tree-sitter-hl-mode)
+(add-hook 'MAJOR-MODE-HOOK #'tree-sitter-hl-mode)
 #+end_src
 
 * Troubleshooting
