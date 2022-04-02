@@ -113,16 +113,16 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
          (ts-fold-open-all))
         ((featurep 'vimish-fold)
          (vimish-fold-unfold-all))
-        (t (save-excursion
-             (+fold--ensure-hideshow-mode)
-             (if (integerp level)
-                 (progn
-                   (outline-hide-sublevels (max 1 (1- level)))
-                   (hs-life-goes-on
-                    (hs-hide-level-recursive (1- level) (point-min) (point-max))))
-               (hs-show-all)
-               (when (fboundp 'outline-show-all)
-                 (outline-show-all)))))))
+        ((save-excursion
+           (+fold--ensure-hideshow-mode)
+           (if (integerp level)
+               (progn
+                 (outline-hide-sublevels (max 1 (1- level)))
+                 (hs-life-goes-on
+                  (hs-hide-level-recursive (1- level) (point-min) (point-max))))
+             (hs-show-all)
+             (when (fboundp 'outline-show-all)
+               (outline-show-all)))))))
 
 ;;;###autoload
 (defun +fold/close-all (&optional level)
@@ -130,15 +130,16 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
   (save-excursion
-    (cond ((+fold--ts-fold-p)
-           (ts-fold-close-all))
-          (t (when (featurep 'vimish-fold)
-               (vimish-fold-refold-all))
-             (+fold--ensure-hideshow-mode)
-             (hs-life-goes-on
-              (if (integerp level)
-                  (hs-hide-level-recursive (1- level) (point-min) (point-max))
-                (hs-hide-all)))))))
+    (if (+fold--ts-fold-p)
+        (ts-fold-close-all)
+      (progn
+        (when (featurep 'vimish-fold)
+          (vimish-fold-refold-all))
+        (+fold--ensure-hideshow-mode)
+        (hs-life-goes-on
+         (if (integerp level)
+             (hs-hide-level-recursive (1- level) (point-min) (point-max))
+           (hs-hide-all)))))))
 
 ;;;###autoload
 (defun +fold/next (count)
@@ -164,7 +165,7 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
                                (comp-fun (if (> count 0) ;; also depending on direction we need to change how we sort the list
                                              #'<
                                            #'>))
-                               (ovs (seq-filter
+                               (ovs (cl-remove-if-not
                                      (lambda (ov)
                                        (eq (overlay-get ov 'creator) 'ts-fold))
                                      ;; `overlays-in' does not provide a list that is sorted
