@@ -8,12 +8,13 @@
         ;; and this highlights the entire sub tree in your code
         tree-sitter-debug-highlight-jump-region t))
 
-(defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
-(defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
-(defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
-(defvar +tree-sitter-goto-next-map (make-sparse-keymap))
 
 (when (featurep! :editor evil +everywhere)
+  (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
+  (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
+  (defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
+  (defvar +tree-sitter-goto-next-map (make-sparse-keymap))
+
   (defvar +tree-sitter-keys-mode-map
     (let ((keymap (make-sparse-keymap)))
       ;; ts text objects
