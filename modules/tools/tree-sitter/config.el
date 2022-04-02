@@ -1,7 +1,6 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
 (use-package! tree-sitter
-  :defer t ;; loading is handled by individual modes
   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
   :config
   ;; This makes every node a link to a section of code
