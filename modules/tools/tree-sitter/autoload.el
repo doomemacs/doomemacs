@@ -1,5 +1,10 @@
 ;;; tools/tree-sitter/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autodef
+(defun tree-sitter! ()
+  (turn-on-tree-sitter-mode)
+  (+tree-sitter-keys-mode))
+
 ;;;###autoload
 (defun +tree-sitter-goto-textobj (group &optional previous end query)
   "Thin wrapper that returns the symbol of a named function, used in keybindings."
