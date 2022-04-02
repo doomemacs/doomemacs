@@ -34,7 +34,7 @@
 
 ;; NOTE: does this need more?
 (defun +fold--ts-fold-p ()
-  (and tree-sitter-mode
+  (and (bound-and-true-p tree-sitter-mode)
        (featurep 'ts-fold)))
 
 (defun +fold--invisible-points (count)
