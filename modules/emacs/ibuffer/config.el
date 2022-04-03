@@ -44,7 +44,9 @@
         "Filter for workspace buffers"
       (:reader (+workspace-get (read-string "workspace name: "))
        :description "workspace")
-      (memq buf (+workspace-buffer-list qualifier))))
+      (memq buf (+workspace-buffer-list qualifier)))
+
+    (define-key ibuffer-mode-map [remap ibuffer-visit-buffer] #'+ibuffer/visit-workspace-buffer))
 
   (when (featurep! :completion ivy)
     (defadvice! +ibuffer--use-counsel-maybe-a (_file &optional _wildcards)
