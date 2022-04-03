@@ -18,18 +18,17 @@
   "Visit buffer, but switch to its workspace if it exists."
   (interactive "P")
   (let ((buf (ibuffer-current-buffer t)))
-    (if (not (buffer-live-p buf))
-        (user-error "Not a valid or live buffer: %s" buf)
-      (when-let (workspaces
-                 (cl-loop for wk in (+workspace-list)
-                          if (+workspace-contains-buffer-p buf wk)
-                          collect wk))
+    (unless (buffer-live-p buf)
+      (user-error "Not a valid or live buffer: %s" buf))
+    (if-let (workspaces
+             (cl-loop for wk in (+workspace-list)
+                      if (+workspace-contains-buffer-p buf wk)
+                      collect wk))
         (+workspace-switch
-         (persp-name
-          (if (and (not select-first) (cdr workspaces))
-              (+workspace-get
-               (or (completing-read "Select workspace: " (mapcar #'persp-name workspaces))
-                   (user-error "Aborted")))
-            (car workspaces)))))
-      (persp-add-buffer buf) ; then add the buffer to the current workspace
-      (switch-to-buffer buf))))
+         (if (and (not select-first) (cdr workspaces))
+             (or (completing-read "Select workspace: " (mapcar #'persp-name workspaces))
+                 (user-error "Aborted"))
+           (persp-name (car workspaces))))
+      ;; Or add the buffer to the current workspace
+      (persp-add-buffer buf))
+    (switch-to-buffer buf)))
