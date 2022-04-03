@@ -190,6 +190,7 @@ sections seems to ignore the detachment."
           :nv "zC"      #'magit-section-hide-children
           :nv "zo"      #'magit-section-show
           :nv "zO"      #'magit-section-show-children
+          :nv "zm"      #'magit-section-show-level-2-all
           :nv "zr"      #'magit-section-show-level-4-all
           :nv "C-j"     #'magit-section-forward
           :nv "C-k"     #'magit-section-backward
