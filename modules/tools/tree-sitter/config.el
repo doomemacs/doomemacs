@@ -8,34 +8,22 @@
         ;; and this highlights the entire sub tree in your code
         tree-sitter-debug-highlight-jump-region t))
 
+(use-package! evil-textobj-tree-sitter
+  :when (featurep! :editor evil +everywhere)
+  :after tree-sitter
+  :config
 
-(when (featurep! :editor evil +everywhere)
   (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
   (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
   (defvar +tree-sitter-goto-previous-map (make-sparse-keymap))
   (defvar +tree-sitter-goto-next-map (make-sparse-keymap))
 
-  (defvar +tree-sitter-keys-mode-map
-    (let ((keymap (make-sparse-keymap)))
-      ;; ts text objects
-      (evil-define-key '(visual operator) '+tree-sitter-keys-mode
-        "i" +tree-sitter-inner-text-objects-map
-        "a" +tree-sitter-outer-text-objects-map)
-      ;; ts goto nodes
-      (evil-define-key 'normal '+tree-sitter-keys-mode
-        "[g" +tree-sitter-goto-previous-map
-        "]g" +tree-sitter-goto-next-map)
-      keymap)
-    "Basic keymap for tree sitter text objects")
-
-  (define-minor-mode +tree-sitter-keys-mode
-    "A minor mode with tree sitter keybinds."
-    :keymap +tree-sitter-keys-mode-map))
-
-(use-package! evil-textobj-tree-sitter
-  :when (featurep! :editor evil +everywhere)
-  :after tree-sitter
-  :config
+  (evil-define-key '(visual operator) 'tree-sitter-mode
+    "i" +tree-sitter-inner-text-objects-map
+    "a" +tree-sitter-outer-text-objects-map)
+  (evil-define-key 'normal 'tree-sitter-mode
+    "[g" +tree-sitter-goto-previous-map
+    "]g" +tree-sitter-goto-next-map)
 
   (map! (:map +tree-sitter-inner-text-objects-map
          "A" (evil-textobj-tree-sitter-get-textobj ("parameter.inner" "call.inner"))

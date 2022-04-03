@@ -2,8 +2,8 @@
 
 ;;;###autodef
 (defun tree-sitter! ()
-  (turn-on-tree-sitter-mode)
-  (+tree-sitter-keys-mode))
+  (interactive)
+  (turn-on-tree-sitter-mode))
 
 ;;;###autoload
 (defun +tree-sitter-goto-textobj (group &optional previous end query)
