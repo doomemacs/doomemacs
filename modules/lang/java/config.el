@@ -52,6 +52,4 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'java-mode-hook
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! 'java-mode-local-vars-hook #'tree-sitter!))

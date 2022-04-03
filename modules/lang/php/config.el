@@ -179,6 +179,4 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! #'php-mode-hook
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! 'php-mode-local-vars-hook #'tree-sitter!))

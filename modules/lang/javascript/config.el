@@ -324,12 +324,9 @@ to tide."
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! '(javascript-mode-hook
-               js-mode-hook
-               js2-mode-hook
-               js3-mode-hook
-               typescript-mode-hook
-               typescript-tsx-mode-hook
-               rjsx-mode-hook)
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! '(js-mode-local-vars-hook
+               js2-mode-local-vars-hook
+               typescript-mode-local-vars-hook
+               typescript-tsx-mode-local-vars-hook
+               rjsx-mode-local-vars-hook)
+             #'tree-sitter!))

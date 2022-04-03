@@ -41,7 +41,6 @@
 
 ;; Tree Sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! '(agda-mode
-               agda2-mode)
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! '(agda-mode-local-vars-hook
+               agda2-mode-local-vars-hook)
+             #'tree-sitter!))

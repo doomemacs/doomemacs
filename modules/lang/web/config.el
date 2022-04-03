@@ -58,8 +58,7 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! '(html-mode-hook
-               mhtml-mode-hook
-               css-mode-hook)
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! '(html-mode-local-vars-hook
+               mhtml-mode-local-vars-hook
+               css-mode-local-vars-hook)
+             #'tree-sitter!))

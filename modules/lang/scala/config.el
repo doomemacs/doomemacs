@@ -53,6 +53,4 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'scala-mode-hook
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! 'scala-mode-local-vars-hook #'tree-sitter!))

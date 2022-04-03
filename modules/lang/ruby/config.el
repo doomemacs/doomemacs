@@ -198,6 +198,4 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'ruby-mode-hook
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! 'ruby-mode-local-vars-hook #'tree-sitter!))

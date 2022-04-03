@@ -31,7 +31,6 @@
         "s" #'counsel-jq))
 
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! '(json-mode
-               jsonc-mode)
-             #'turn-on-tree-sitter-mode
-             #'+tree-sitter-keys-mode))
+  (add-hook! '(json-mode-local-vars-hook
+               jsonc-mode-local-vars-hook)
+             #'tree-sitter!))
