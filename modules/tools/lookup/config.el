@@ -182,6 +182,7 @@ Dictionary.app behind the scenes to get definitions.")
 
   (use-package! consult-xref
     :when (featurep! :completion vertico)
+    :defer t
     :init
     (setq xref-show-xrefs-function       #'consult-xref
           xref-show-definitions-function #'consult-xref)))
