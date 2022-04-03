@@ -44,7 +44,7 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 
 ;; Adding many-to-many functions to hooks
 (add-hook! some-mode #'enable-something #'and-another)
-(add-hook! some-mode #'(enable-something and-another))
+(add-hook! some-mode '(enable-something and-another))
 (add-hook! '(one-mode-hook second-mode-hook) #'enable-something)
 (add-hook! (one-mode second-mode) #'enable-something)
 
