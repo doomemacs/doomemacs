@@ -228,7 +228,8 @@ results buffer.")
 
   ;; Integrate with `helpful'
   (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
+        counsel-describe-variable-function #'helpful-variable
+        counsel-descbinds-function #'helpful-callable)
 
   ;; Decorate `doom/help-custom-variable' results the same way as
   ;; `counsel-describe-variable' (adds value and docstring columns).
