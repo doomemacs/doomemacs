@@ -373,7 +373,11 @@ This value is cached. If REFRESH-P, then don't use the cached value."
     :around #'use-package-normalize-paths
     ;; `use-package-normalize-paths' resolves paths relative to
     ;; `user-emacs-directory', so we change that.
-    (let ((user-emacs-directory (if (stringp arg) (dir!))))
+    (let ((user-emacs-directory
+           (or (and (stringp arg)
+                    (not (file-name-absolute-p arg))
+                    (ignore-errors (dir!)))
+               user-emacs-directory)))
       (funcall fn label arg recursed)))
 
   ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
