@@ -51,6 +51,18 @@
         filename))))
 
 
+(use-package! vundo
+  :unless (modulep! :emacs undo +tree)
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols)
+  (vundo-compact-display t)
+  :config
+  (when (featurep! :editor evil)
+    (map! :map vundo-mode-map
+          [remap doom/escape] #'vundo-quit))
+  :defer t)
+
+
 (use-package! undo-tree
   :when (featurep! +tree)
   ;; Branching & persistent undo
