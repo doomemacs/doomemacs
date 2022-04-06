@@ -93,8 +93,10 @@
 (use-package! typescript-mode
   :hook (typescript-mode . rainbow-delimiters-mode)
   :hook (typescript-tsx-mode . rainbow-delimiters-mode)
-  :commands typescript-tsx-mode
   :init
+  (when (featurep! :lang web)
+    (autoload 'typescript-tsx-mode "typescript-mode" nil t))
+
   ;; REVIEW We associate TSX files with `typescript-tsx-mode' derived from
   ;;        `web-mode' because `typescript-mode' does not officially support
   ;;        JSX/TSX. See emacs-typescript/typescript.el#4
