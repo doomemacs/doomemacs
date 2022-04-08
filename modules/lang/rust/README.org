@@ -22,7 +22,8 @@ e.g. ~cargo~.
 ** Module flags
 - +lsp ::
   Enable LSP support for ~rustic-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
-  (supports rust-analyzer and rls).
+  (supports rust-analyzer and rls). Langservers are to be installed seperately.
+  (Depending on OS/ Linux distribution. )
 
 ** Packages
 - [[doom-package:][rustic]]
@@ -38,18 +39,28 @@ e.g. ~cargo~.
 /This module does not have a changelog yet./
 
 * Installation
-[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+To enable this module in Doom Emacs, uncomment the line ~;;rust~ in ~$DOOMDIR/init.el~.
+Run ~doom sync~ inside the shell afterwards.
 
-This module requires ~rust~, which can be acquired through =rustup=:
+This module requires a working installation of [[https://www.rust-lang.org/][Rust]]. The installation of
+Rust depends on the OS / the Linux distribution. Some distros come with
+Rust packages inside their repositories. Refer to the documentation/ the Wiki
+of your Linux distro for further information.
+The generic way to install Rust is via rustup, which can be acquired with
+this command on Linux/ MacOS:
 #+begin_src sh
-curl https://sh.rustup.rs -sSf | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #+end_src
 
-Note that when the Rust /language/ has updates, you are to run =rustup= such
-that it doesn't upgrade itself:
-#+begin_src sh
-rustup update --no-self-update
-#+end_src
+For installation on MS Windows refer to the installation instructions
+in the [[https://forge.rust-lang.org/infra/other-installation-methods.html][official Rust documentation.]]
+
+** $PATH
+For cargo to work properly add ~~/.cargo/bin~ to your $PATH environment variable.
+(e.g. by adding ~export PATH="$HOME/.cargo/bin:$PATH"~ to your ~.bashrc~)
+Since emacs uses its own environment variables you need to update them after
+changing $PATH by running ~doom env~ in the shell. After that either restart emacs
+or run ~doom/reload-env~ inside doom emacs.
 
 ** Other Requirements
 - If [[doom-module:][:editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
@@ -57,7 +68,7 @@ rustup update --no-self-update
 - Users without [[doom-module:][+lsp]] enabled will need [[doom-package:][racer]]: ~$ cargo +nightly install racer~
   (with requires rust nightly edition).
 - Users with [[doom-module:][+lsp]] enabled will need:
-  - =rust-analyzer= or =rls=
+  - [[github:rust-analyzer/rust-analyzer][rust-analyzer]]  or =rls=
 - Using the following commands requires:
   - ~cargo-process-check~: ~$ cargo install cargo-check~
   - ~cargo-process-clippy~: ~$ rustup component add clippy-preview~
@@ -70,10 +81,13 @@ rustup update --no-self-update
 ** LSP support (rls or rust-analyzer)
 This module supports LSP integration. For it to work you'll need:
 
-1. Either [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] or [[https://github.com/rust-lang/rls][the Rust Language Server]] installed (e.g. through your
-   OS package manager).
-2. The [[doom-module:][:tools lsp]] module enabled.
-3. The [[doom-module:][+lsp]] flag on this module enabled.
+1. Either [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] or [[https://github.com/rust-lang/rls][the Rust Language Server]] installed. (rust-analyzer
+   is installed as a seperate package e.g. via your distributions package manager
+   while the Rust Language Server is a part of Rust-Lang itself and can be installed
+   via ~rustup component add rls rust-analysis rust-src~)
+2. The [[doom-module:][:tools lsp]] module in ~init.el~ enabled.
+3. The [[doom-module:][+lsp]] flag on this module enabled. To enable a flag on a module add it after the module in
+   ~init.el~ and put that in parenthesis, e.g. change to line that says ~rust~ in ~init.el~ to ~(rust +lsp)~
 
 ** Format on save
 Enable [[doom-module:][:editor format +onsave]] to get formatting on save with =rustfmt=. No
@@ -123,6 +137,21 @@ format]] enabled).
 
 To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.
 
+** rust-analyzer not working with rustlings
+[[github:rust-lang/rustlings][Rustlings]] is a popular resource to learn Rust. However, in its current state
+rust-analyzer is not working with Rustlings.
+The is a quick fix available in cargo:
+
+#+begin_src sh
+# Install rustlings-fix from cargo
+cargo install rustlings-fix
+
+# Change directory into wherever rustlings is cloned
+cd ~/rustlings
+
+# Run the binary
+rustlings-fix
+#+end_src
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
