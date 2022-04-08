@@ -61,7 +61,7 @@ in."
                "\t- might depend subtly on upstream packages updates\n\n"
                "You might need to unpin packages to get a fix for a specific commit of Emacs, "
                "and you should be ready to downgrade Emacs if something is just not fixable."))
-    (EMACS28+
+    (EMACS29+
      (warn! "Emacs %s detected" emacs-version)
      (explain! "Doom supports this version, but you are living on the edge! "
                "Be prepared for breakages in future versions of Emacs."))
