@@ -274,13 +274,3 @@ If there are selected candidates, disregard the current candidate and exit."
 (defun +vertico-basic-remote-all-completions (string table pred point)
   (and (vertico--remote-p string)
        (completion-basic-all-completions string table pred point)))
-
-;;;###autoload
-(defun +vertico/resume (&optional arg)
-  "Resume the last session.
-If prefix ARG is provided, select which session to resume."
-  (interactive "P")
-  (call-interactively
-   (if arg
-       #'vertico-repeat-select
-     #'vertico-repeat-last)))

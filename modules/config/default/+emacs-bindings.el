@@ -490,7 +490,7 @@
         "C-S-s"        #'swiper-helm
         "C-S-r"        #'helm-resume)
       (:when (featurep! :completion vertico)
-        "C-S-r"        #'vertico-repeat-last)
+        "C-S-r"        #'vertico-repeat)
 
       ;;; objed
       (:when (featurep! :editor objed +manual)

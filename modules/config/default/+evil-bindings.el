@@ -305,7 +305,7 @@
        :desc "Switch buffer"           "<" #'switch-to-buffer)
       :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
-      (cond ((featurep! :completion vertico)    #'+vertico/resume)
+      (cond ((featurep! :completion vertico)    #'vertico-repeat)
             ((featurep! :completion ivy)        #'ivy-resume)
             ((featurep! :completion helm)       #'helm-resume))
 
