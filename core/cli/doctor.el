@@ -102,6 +102,13 @@ in."
               "jansson support (i.e. a native JSON library), particularly LSP users. "
               "You must install a prebuilt Emacs binary with this included, or compile "
               "Emacs with the --with-json option."))
+  (when EMACS28+
+    (unless NATIVECOMP
+      (warn! "Emacs was not built with native compilation support")
+      (explain! "Users will see a substantial performance gain by building Emacs with "
+                "native compilation support, availible in emacs 28+."
+                "You must install a prebuilt Emacs binary with this included, or compile "
+                "Emacs with the --with-native-compilation option.")))
 
   (print! (start "Checking for private config conflicts..."))
   (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
