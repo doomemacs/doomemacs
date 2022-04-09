@@ -87,7 +87,7 @@ keybindings are available:
 | =C-M-j=               | (evil) Go to next group                                                       |
 | =C-;= or =<leader> a= | Open an ~embark-act~ menu to chose a useful action                            |
 | =C-c C-;=             | ~embark-export~ the current candidate list (export to a type-specific buffer) |
-| =C-c C-s=             | ~embark-collect-snapsnot~ the current candidate list (collect verbatim)       |
+| =C-c C-l=             | ~embark-collect~ the current candidate list (collect verbatim)       |
 | =C-SPC=               | Preview the current candidate                                                 |
 
 ~embark-act~ will prompt you with a =which-key= menu with useful commands on the
