@@ -34,6 +34,9 @@ This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
   Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
 - +pyright ::
   Use the pyright LSP server instead of mspyls or pyls (requires [[doom-module:][+lsp]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][anaconda-mode]]

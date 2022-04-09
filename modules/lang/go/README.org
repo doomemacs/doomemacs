@@ -29,6 +29,9 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
   Enable LSP support for ~go-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports gopls). Highly recommended, as the non-LSP experience is deprecated
   (and poor).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][company-go]] if [[doom-module:][:completion company]] (DEPRECATED)

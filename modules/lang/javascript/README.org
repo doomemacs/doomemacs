@@ -26,6 +26,9 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
   Enable LSP support for ~js2-mode~, ~rjsx-mode~, JS in ~web-mode~, and
   ~typescript-mode~. Requires [[doom-module:][:tools lsp]] and a langserver (supports ts-ls and
   deno-ls).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][js2-refactor]]

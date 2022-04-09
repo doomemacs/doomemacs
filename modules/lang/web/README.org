@@ -19,6 +19,9 @@ ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
 - +lsp ::
   Enable LSP support for ~web-mode~ and ~css-mode~. Requires [[doom-module:][:tools lsp]] and a
   langserver.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][company-web]] if [[doom-module:][:completion company]]

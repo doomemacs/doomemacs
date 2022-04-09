@@ -31,6 +31,9 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
   Enable rbenv integration.
 - +rvm ::
   Enable RVM (Ruby Version Manager) integration.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][bundler]]

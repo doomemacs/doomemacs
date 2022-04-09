@@ -15,6 +15,9 @@ exists directly in the agda repository, but not in melpa.
 ** Module flags
 - +local ::
   Use the =agda-mode= executable that comes with your local =agda= install.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - unless [[doom-module:][+local]]
