@@ -13,4 +13,4 @@
   (when (featurep! :completion helm)
     (package! helm-lsp :pin "c2c6974dadfac459b1a69a1217441283874cea92"))
   (when (featurep! :completion vertico)
-    (package! consult-lsp :pin "5a3c4e3f4233feff3f141df38f93d1be80259301")))
+    (package! consult-lsp :pin "a8eb3a062feb2715f174500d0624d3a85e000cf7")))
