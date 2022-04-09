@@ -18,6 +18,9 @@ LSP).
 - +lsp ::
   Enable LSP support for ~csharp-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports =omnisharp-roslyn=).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 - +unity ::
   Enable special support for the [[https://unity.com/][Unity game engine]] (particularly, support for
   HLSL shaders).

@@ -26,6 +26,9 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
   Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module:][:tools
   lsp]] and a langserver (supports ccls, clangd, and cquery). Replaces irony &
   rtags.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][cmake-mode]]

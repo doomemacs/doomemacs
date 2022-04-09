@@ -22,6 +22,9 @@ This module adds [[https://ziglang.org/][Zig]] support, with optional (but recom
 - +lsp ::
   Enables integration for the zls LSP server. It is highly recommended you use
   this.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][zig-mode]]

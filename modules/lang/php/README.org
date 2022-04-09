@@ -36,6 +36,9 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 - +lsp ::
   Enable LSP support for ~php-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor]] and intelephense).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][async]]

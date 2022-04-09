@@ -18,6 +18,9 @@ This module adds [[https://www.java.com][Java]] support to Doom Emacs, including
   (supports eclipse.jdt.ls). *Incompatible with [[doom-module:][+meghanada]].*
 - +meghanada ::
   Enable [[doom-package:][meghanada-mode]]. *Incompatible with [[doom-module:][+lsp]].*
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][android-mode]]
