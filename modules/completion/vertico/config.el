@@ -173,7 +173,7 @@ orderless."
         (:map minibuffer-local-map
          "C-;"               #'embark-act
          "C-c C-;"           #'embark-export
-         "C-c C-s"           #'embark-collect-snapshot
+         "C-c C-l"           #'embark-collect
          :desc "Export to writable buffer" "C-c C-e" #'+vertico/embark-export-write)
         (:leader
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
