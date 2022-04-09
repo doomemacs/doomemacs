@@ -3,25 +3,33 @@
 
 (defun +vertico--workspace-buffer-state ()
   (let ((preview
-         (let ((orig-buf (current-buffer))
-               cleanup-buffers)
-           (lambda (cand restore)
-             (when (and (not restore)
-                        ;; Only preview in current window and other window.
-                        ;; Preview in frames and tabs is not possible since
-                        ;; these don't get cleaned up.
-                        (or (eq consult--buffer-display #'switch-to-buffer)
-                            (eq consult--buffer-display #'switch-to-buffer-other-window)))
-               (cond
-                ((and cand (get-buffer cand))
-                 (unless (+workspace-contains-buffer-p cand)
-                   (cl-pushnew cand cleanup-buffers))
-                 (consult--buffer-action cand 'norecord))
-                ((buffer-live-p orig-buf)
-                 (consult--buffer-action orig-buf 'norecord)
-                 (mapc #'persp-remove-buffer cleanup-buffers))))))))
-    (lambda (cand restore)
-      (funcall preview cand restore))))
+         ;; Only preview in current window and other window.
+         ;; Preview in frames and tabs is not possible since these don't get cleaned up.
+         (if (memq consult--buffer-display
+                   '(switch-to-buffer switch-to-buffer-other-window))
+             (let ((orig-buf (current-buffer))
+                   other-win
+                   cleanup-buffers)
+               (lambda (action cand)
+                 (when (eq action 'preview)
+                   (when (and (eq consult--buffer-display #'switch-to-buffer-other-window)
+                              (not other-win))
+                     (switch-to-buffer-other-window orig-buf)
+                     (setq other-win (selected-window)))
+                   (let ((win (or other-win (selected-window))))
+                     (when (window-live-p win)
+                       (with-selected-window win
+                         (cond
+                          ((and cand (get-buffer cand))
+                           (unless (+workspace-contains-buffer-p cand)
+                             (cl-pushnew cand cleanup-buffers))
+                           (switch-to-buffer cand 'norecord))
+                          ((buffer-live-p orig-buf)
+                           (switch-to-buffer orig-buf 'norecord)
+                           (mapc #'persp-remove-buffer cleanup-buffers)))))))))
+           #'ignore)))
+    (lambda (action cand)
+      (funcall preview action cand))))
 
 (defun +vertico--workspace-generate-sources ()
   "Generate list of consult buffer sources for all workspaces"
