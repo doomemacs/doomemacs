@@ -5,8 +5,8 @@
   :pin "5e1091658d625984c6c5756e3550c4d2eebd73a1")
 
 (package! tree-sitter-langs
-  :pin "f4effc81fcac3592bce7072619a0e17043412cf4")
+  :pin "0dd5e56e2f5646aa51ed0fc9eb869a8f7090228a")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-textobj-tree-sitter
-    :pin "f3b3e9554e5ecae55200454804e183e268b4a6fc"))
+    :pin "e5fda8eca926e65f7aadc9ed27d768eb6d1d415f"))
