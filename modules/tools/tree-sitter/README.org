@@ -15,6 +15,7 @@
   - [[#goto-certain-nodes][Goto certain nodes]]
 - [[#configuration][Configuration]]
   - [[#disable-text-objects-for-certain-modes][Disable text objects for certain modes]]
+  - [[#rebinding-text-objects][Rebinding text objects]]
   - [[#adding-your-own-text-objects][Adding your own text objects]]
   - [[#disabling-highlighting-for-certain-modes][Disabling highlighting for certain modes]]
 - [[#troubleshooting][Troubleshooting]]
@@ -83,6 +84,23 @@ If you wish to disable tree sitter text objects then you can just remove
 want it for ruby we would use this snippet
 #+begin_src emacs-lisp
 (remove-hook 'ruby-mode-hook #'+tree-sitter-keys-mode)
+#+end_src
+
+** Rebinding text objects
+Rebinding keys is the same as any other key but do notes they need to be bound 
+to the keymaps ~+tree-sitter-inner-text-object-map~ or
+~+tree-sitter-outer-text-object-map~
+#+begin_src emacs-lisp
+(map! (:map +tree-sitter-outer-text-objects-map
+       "f" nil
+       "f" (evil-textobj-tree-sitter-get-textobj "call.inner")
+       "F" nil
+       "F" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+      (:map +tree-sitter-inner-text-objects-map
+       "f" nil
+       "f" (evil-textobj-tree-sitter-get-textobj "call.inner")
+       "F" nil
+       "F" (evil-textobj-tree-sitter-get-textobj "function.inner")))
 #+end_src
 
 ** Adding your own text objects
