@@ -235,17 +235,6 @@ orderless."
             '(projectile-switch-to-buffer . buffer)
             '(projectile-switch-project . project-file))
 
-  ;; HACK minad/marginalia#127 adds annotation to read-library-name, but
-  ;;   compression errors (or any errors while reading compressed files) will
-  ;;   break completion entirely. This advice suppresses those errors and
-  ;;   degrades gracefully.
-  ;; TODO PR error handling upstream.
-  (defadvice! +vertico--suppress-errors-a (fn &rest args)
-    :around #'marginalia--library-doc
-    (letf! ((#'jka-compr-error #'ignore))
-      (ignore-errors (apply fn args)))))
-
-
 (use-package! embark-consult
   :after (embark consult)
   :config
