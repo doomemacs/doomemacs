@@ -136,7 +136,12 @@ immediately after."
               ;; current REPL uses comint. Even if it did, no telling if they
               ;; have their own `comint-send-input' wrapper, so to be safe, I
               ;; simply emulate the keypress.
-              (call-interactively (doom-lookup-key (kbd "RET"))))
+              (call-interactively
+               (if (bound-and-true-p evil-local-mode)
+                   (evil-save-state
+                     (evil-insert-state)
+                     (doom-lookup-key (kbd "RET")))
+                 (doom-lookup-key (kbd "RET")))))
             (sit-for 0.001)
             (redisplay 'force)))
         (when (and (eq origin-window (selected-window))
