@@ -158,6 +158,7 @@ orderless."
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
+
 (use-package! consult-flycheck
   :when (featurep! :checkers syntax)
   :after (consult flycheck))
@@ -233,7 +234,8 @@ orderless."
             '(projectile-find-file . project-file)
             '(projectile-recentf . project-file)
             '(projectile-switch-to-buffer . buffer)
-            '(projectile-switch-project . project-file))
+            '(projectile-switch-project . project-file)))
+
 
 (use-package! embark-consult
   :after (embark consult)
