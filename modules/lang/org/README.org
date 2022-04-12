@@ -182,7 +182,7 @@ brew install gnuplot
 
 ** Arch Linux
 #+begin_src sh
-pacman -S texlive-core texlive-bin texlive-science
+pacman -S texlive-core texlive-bin texlive-science texlive-latexextra
 pacman -S gnuplot
 pacman -S jupyter # required by +jupyter
 #+end_src
