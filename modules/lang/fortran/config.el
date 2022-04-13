@@ -33,6 +33,13 @@
         :desc "build" "b" #'+fortran/build
         :desc "run"   "r" #'+fortran/run)
 
+  (when (featurep! +intel)
+    (map! :map f90-mode-map
+          :localleader
+          (:prefix ("i" . "ifort")
+           :desc "compile" "c" #'+fortran/ifort-compile
+           :desc "run"     "r" #'+fortran/ifort-run)))
+
   (easy-menu-define f90-menu f90-mode-map "Simpler menu for F90 mode."
     `("F90"
       ["Compile" +fortran/build :active t :help "Compile the Project"]
@@ -50,16 +57,12 @@
 
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (setq-hook! 'fortran-mode-hook ; TODO These work for f90 but not for fortran.
-    compile-command "gfortran -std=legacy "
-    compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn)
+  (let ((cmd (cond ((featurep! +intel) "ifort ")
+                   (t "gfortran -std=legacy "))))
+    (setq-hook! 'fortran-mode-hook
+      compile-command cmd
+      compilation-buffer-name-function #'+fortran-compilation-buffer-name-fn))
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
-
-  ;; --- LSP --- ;;
-  ;; Strangely, the built-in flycheck support seems to give better hints than the LSP.
-  ;; (when (featurep! +lsp)
-  ;;   (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
-  ;;   (add-hook 'fortran-mode-local-vars-hook #'lsp! 'append)))
 
   ;; --- Keybindings --- ;;
   (map! :map fortran-mode-map
@@ -68,7 +71,14 @@
          :desc "compile" "c" #'+fortran/gfortran-compile
          :desc "run"     "r" #'+fortran/gfortran-run))
 
+  (when (featurep! +intel)
+    (map! :map fortran-mode-map
+          :localleader
+          (:prefix ("i" . "ifort")
+           :desc "compile" "c" #'+fortran/ifort-compile
+           :desc "run"     "r" #'+fortran/ifort-run)))
+
   (easy-menu-define fortran-menu fortran-mode-map "Simpler menu for Fortran mode."
     '("Fortran"
-      ["Compile" +fortran/gfortran-compile :active t :help "Compile with gfortran"]
-      ["Run" +fortran/gfortran-run :active t :help "Run the Executable"])))
+      ["Compile" +fortran/build :active t :help "Compile with Project"]
+      ["Run" +fortran/run :active t :help "Run the Executable"])))
