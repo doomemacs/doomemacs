@@ -9,7 +9,9 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-  - [[#arch-linux][Arch Linux]]
+  - [[#general][General]]
+    - [[#arch-linux][Arch Linux]]
+  - [[#installing-intel-fortran][Installing Intel Fortran]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
@@ -30,6 +32,7 @@ In particular, this module features:
 + Auto-formatting via =fprettier=.
 + Integration with the =fpm= package manager.
 + LSP support via [[https://github.com/gnikit/fortls][fortls]].
++ Optional Intel Fortran support via the =+intel= flag.
 
 #+begin_quote
 After a career of writing Fortran on Mainframes and Windows machines, my
@@ -43,15 +46,18 @@ now... Cheers Dad, hope this helps.
 
 ** Module Flags
 + =+lsp= Activate =fortls= for Fortran projects.
++ =+intel= Use the =ifort= compiler by default.
 
 ** Plugins
 
 * Prerequisites
 
+** General
+
 For minimum functionality, this module requires =gfortran=. For most project
 management tasks you will also need [[https://github.com/fortran-lang/fpm][fpm]], the Fortran Package Manager.
 
-** Arch Linux
+*** Arch Linux
 
 =gfortran= is available from the official repositories:
 
@@ -65,6 +71,39 @@ with an AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
 #+begin_example
 sudo aura -A fortran-fpm fortls
 #+end_example
+
+** Installing Intel Fortran
+
+Activating the =+intel= flag won't automatically install Intel Fortan for you.
+Here's how to do it on *nix systems.
+
+You can of course install the entire High-performance Computing kit from Intel,
+which includes Fortran, but the installation footprint is quite large. Instead,
+you're able to install just Fortran and its core facilities on their own as a
+[[https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran][standalone component]]. Download this script, and make it executable via:
+
+#+begin_example
+chmod +x l_fortran-compiler_p_2022.0.3.83_offline.sh
+#+end_example
+
+The filepath will of course change with time, so alter the above command
+accordingly. Now run the script _as a normal user_ (non-sudo) and follow the
+instructions of the installer. This will install =ifort=, etc., in a local
+filepath of your choosing.
+
+To actually use =ifort= and have it link to its libraries properly, we must run a
+script provided by Intel to set certain environment variables:
+
+#+begin_example
+. ~/intel/oneapi/setvars.sh
+#+end_example
+
+(Modify according to where you installed Intel Fortran.) Now =ifort= should be
+runnable in your terminal as you'd expect. _To persist this, add that line to
+your Bash Profile, etc., and log out and in again._ Now Doom will be able to use
+=ifort= too.
+
+Good luck and happy computing!
 
 * Features
 # An in-depth list of features, how to use them, and their dependencies.
