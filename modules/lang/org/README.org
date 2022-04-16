@@ -233,6 +233,9 @@ They are (with examples):
 - ~youtube:P196hEuA_Xc~ (link only)
 - ~yt:P196hEuA_Xc~ (like =youtube=, but includes an inline preview of the video)
 
+** evil-mode keybindings
+For =evil-mode= users, an overview of org-mode keybindings is provided [[https://github.com/Somelauw/evil-org-mode/blob/master/README.org#keybindings][here]].
+
 * TODO Configuration
 #+begin_quote
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
