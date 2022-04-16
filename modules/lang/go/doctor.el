@@ -17,7 +17,8 @@
 (unless (executable-find "gomodifytags")
   (warn! "Couldn't find gomodifytags. Manipulating struct tags will not work"))
 
-(when (featurep! :completion company)
+(when (and (featurep! :completion company)
+           (not (featurep! +lsp)))
   (require 'company-go)
   (unless (executable-find company-go-gocode-command)
     (warn! "Couldn't find gocode. Code completion won't work")))
