@@ -67,6 +67,13 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :implementations '(lsp-find-implementation :async t)
     :type-definition #'lsp-find-type-definition)
 
+  (defadvice! +lsp--skip-during-magit-preview (fn &rest args)
+    "Ensure that `lsp' is not initialized when user opens the buffer through
+`magit-find-file' and friends."
+    :around #'lsp
+    (unless (bound-and-true-p magit-buffer-revision)
+      (apply fn args)))
+
   (defadvice! +lsp--respect-user-defined-checkers-a (fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."
     :around #'lsp-diagnostics-flycheck-enable
