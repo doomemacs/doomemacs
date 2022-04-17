@@ -117,7 +117,15 @@ capture, the end position, and the output buffer.")
          :desc "New blockquote" "q" #'markdown-insert-blockquote
          :desc "Strike through" "s" #'markdown-insert-strike-through
          :desc "Table" "t" #'markdown-insert-table
-         :desc "Wiki link" "w" #'markdown-insert-wiki-link)))
+         :desc "Wiki link" "w" #'markdown-insert-wiki-link)
+        (:prefix ("t" . "toggle")
+         :desc "Toggle url hiding" "l" #'markdown-toggle-url-hiding
+         :desc "Toggle inline latex" "e" #'markdown-toggle-math
+         :desc "Toggle wiki links" "w" #'markdown-toggle-wiki-links
+         :desc "Toggle gfm checkbox" "x" #'markdown-toggle-gfm-checkbox
+         :desc "Toggle inline images" "TAB" #'markdown-toggle-inline-images
+         :desc "Toggle markup hiding" "RET" #'markdown-toggle-markup-hiding
+         :desc "Toggle native codeblock fontification" "f" #'markdown-toggle-fontify-code-blocks-natively)))
 
 (use-package! evil-markdown
   :when (featurep! :editor evil +everywhere)
