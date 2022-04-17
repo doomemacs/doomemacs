@@ -57,7 +57,7 @@
 (when (featurep! +dragndrop)
   (package! org-download :pin "947ca223643d28e189480e607df68449c15786cb"))
 (when (featurep! +gnuplot)
-  (package! gnuplot :pin "57be3c7addec31e226a5a27aa553e996f9c684e3")
+  (package! gnuplot :pin "7138b139d2dca9683f1a81325c643b2744aa1ea3")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
