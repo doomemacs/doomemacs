@@ -33,6 +33,7 @@ us know!
       - [[#with-chocolatey--scoop][With chocolatey / scoop]]
       - [[#with-a-precompiled-binary--git-bash][With a precompiled binary + Git Bash]]
       - [[#with-wsl--ubuntu-1804-lts][With WSL + Ubuntu 18.04 LTS]]
+      - [[#with-msys2-and-mingw64][With MSYS2 and MingW64]]
   - [[#doom-emacs][Doom Emacs]]
     - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
@@ -354,6 +355,7 @@ pros and cons:
 + With chocolatey/scoop
 + With a precompiled binary + Git Bash
 + With WSL2 + Ubuntu
++ With MSYS2 and MingW64
 
 If you don't know which to choose, I highly recommend WSL; it produces the
 fastest and most stable environment of the three, but has the most complex
@@ -459,6 +461,54 @@ bin/doom command.
    #+END_SRC
 
 And done! Keep Ubuntu open, you'll need it for the rest of this guide.
+
+**** With MSYS2 and MingW64
+
+As described in its official page [[https://www.msys2.org/][MSYS2]] provides a native ~windows~ environment with Unix-like tools and utilities. An important feature is that it provides a series of repositories with a  command package manager [[https://wiki.archlinux.org/title/pacman][pacman]] of ~Arch Linux~.
+
+To install Doom on MSYS2 it is necessary to follow the steps below:
+
+1. Download ~MSYS2~ and ~MinGW64~
+
+   Download the installer from its official website https://www.msys2.org/ and follow the steps documented there. It is recommended not to change the default paths, i.e. =C:\msys64=.
+
+2. Updating repositories and packages
+
+   Once the software is installed, run the command terminal with the name =MSYS2 MINGW x64= and proceed with the update and installation from the package repository:
+
+   #+begin_src bash
+   pacman -Syyu
+   #+end_src
+
+   And proceed with the installation of updates. This may require to restart the command terminal.
+
+3. Install the required packages
+
+   Proceed to install the necessary packages to install ~Doom Emacs~ with the ~pacman~ package manager.
+
+   #+begin_src bash
+   pacman -S git mingw64/mingw-w64-x86_64-emacs mingw64/mingw-w64-x86_64-ripgrep mingw64/mingw-w64-x86_64-ag
+   #+end_src
+
+   To install =fd= use the version of [[https://github.com/sharkdp/fd/releases][fd-vx.x.x-x86_64-pc-windows-msvc.zip]]] and then extract the executable to =C:\msys64-msvc.zip=.
+
+4. Install ~Doom Emacs~
+
+   Once the dependencies and tools are installed, proceed to install ~DOOM Emacs~ in the =$HOME= of ~MSYS2~.
+
+   #+begin_src bash
+   cd %HOME
+   git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+   ~/.emacs.d/bin/doom install
+   #+end_src
+
+   This will start the installation of ~Doom Emacs~.
+
+5. Install typography fonts
+
+   Launch ~Doom Emacs~ with ~emacs~ command, execute 'M-x all-the-icons-install-fonts' to download the fonts or directly from [[https://github.com/domtronn/all-the-icons.el/tree/master/fonts][package]]. Install them,  in default ~Windows~ path of =C:\Windows\Fonts=. In the same fonts folder install the fonts /ttf/ corresponding to [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://github.com/mozilla/Fira][Fira Sans]].
+
+You can now start ~Doom Emacs~ natively and only with the necessary installation packages. If required, you can add the other corresponding tools from the [[https://packages.msys2.org/repos][repos]].
 
 ** Doom Emacs
 With Emacs and Doom's dependencies installed, next is to install Doom Emacs
