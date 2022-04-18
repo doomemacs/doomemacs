@@ -20,6 +20,8 @@ marker, indent and syntax-based code folding for as many languages as possible.
 ** Packages
 - [[doom-package:][evil-vimish-fold]]
 - [[doom-package:][vimish-fold]]
+- if [[doom-module:][:tools tree-sitter]]
+  - [[doom-package:][ts-fold]]
 
 ** TODO Hacks
 #+begin_quote
