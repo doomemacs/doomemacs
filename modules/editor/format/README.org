@@ -29,11 +29,15 @@ This module integrates code formatters into Emacs. Here are some of the
 formatters that it currently supports:
 
 #+begin_quote
-asmfmt, black, brittany, cabal-fmt, clang-format, cmake-format, dartfmt, dfmt,
-dhall format, dockfmt, elm-format, emacs, fish_indent, fprettify, gleam format,
-gofmt, iStyle, jsonnetfmt, ktlint, latexindent, ledger-mode, lua-fmt, mix
-format, nixfmt, node-cljfmt, ocp-indent, perltidy, prettier, purty, rufo,
-rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
+acutex, asmfmt, black, brittany, buildifier, cabal-fmt, clang-format,
+cmake-format, crystal tool format, dartfmt, dfmt, dhall format, dockfmt,
+efmt, elm-format, emacs, fantomas, fish_indent, fourmolu, fprettify, gawk, gleam
+format, gofmt, goimports, hindent, iStyle, isort, jsonnetfmt, ktlint,
+latexindent, ledger-mode, lua-fmt, mix format, nginxfmt, nixfmt, nixpkgs-fmt,
+node-cljfmt, ocp-indent, ormolu, perltidy, pgformatter, prettier,
+purescript-tidy, purty, raco fmt, rescript format, rubocop, rufo, rustfmt,
+scalafmt, script shfmt, snakefmt, sqlformat, standardrb, styler, stylua,
+swiftformat, terraform fmt, tidy, ts-standard, v fmt, yapf, zig, zprint
 #+end_quote
 
 ** Maintainers
@@ -63,57 +67,71 @@ fail silently.
 
 + Angular/Vue (prettier)
 + Assembly (asmfmt)
++ ATS (atsfmt)
++ Awk (gawk)
 + Bazel Starlark (buildifier)
-+ BibTeX (emacs)
-+ C/C++/Objective-C (clang-format)
++ BibTeX (Emacs)
++ C/C++/Objective-C (clang-format, astyle)
++ C# (clang-format, astyle)
 + Cabal (cabal-fmt)
-+ Clojure/ClojureScript (node-cljfmt)
++ Clojure/ClojureScript (zprint, node-cljfmt)
 + CMake (cmake-format)
 + Crystal (crystal tool format)
 + CSS/Less/SCSS (prettier)
++ Cuda (clang-format)
 + D (dfmt)
-+ Dart (dartfmt)
++ Dart (dartfmt, dart-format)
 + Dhall (dhall format)
 + Dockerfile (dockfmt)
 + Elixir (mix format)
 + Elm (elm-format)
-+ Emacs Lisp (emacs)
++ Emacs Lisp (Emacs)
++ Erlang (efmt)
++ F# (fantomas)
 + Fish Shell (fish_indent)
-+ Fortran 90 (fprettify)
++ Fortran Free Form (fprettify)
 + Gleam (gleam format)
-+ Go (gofmt)
++ GLSL (clang-format)
++ Go (gofmt, goimports)
 + GraphQL (prettier)
-+ Haskell (brittany)
++ Haskell (brittany, fourmolu, hindent, ormolu, stylish-haskell)
 + HTML/XHTML/XML (tidy)
-+ Java (clang-format)
-+ JavaScript/JSON/JSX (prettier)
++ Java (clang-format, astyle)
++ JavaScript/JSON/JSX (prettier, standard)
 + Jsonnet (jsonnetfmt)
 + Kotlin (ktlint)
-+ LaTeX (latexindent)
++ LaTeX (latexindent, auctex)
 + Ledger (ledger-mode)
-+ Lua (lua-fmt)
++ Lua (lua-fmt, stylua, prettier plugin)
 + Markdown (prettier)
-+ Nix (nixfmt)
++ Nginx (nginxfmt)
++ Nix (nixpkgs-fmt, nixfmt)
 + OCaml (ocp-indent)
 + Perl (perltidy)
-+ PHP (prettier plugin-php)
++ PHP (prettier plugin)
 + Protocol Buffers (clang-format)
-+ PureScript (purty)
-+ Python (black)
++ PureScript (purty, purescript-tidy)
++ Python (black, yapf, isort)
 + R (styler)
-+ Ruby (rufo)
++ Racket (raco fmt)
++ Reason (bsrefmt)
++ ReScript (rescript format)
++ Ruby (rubocop, rufo, standardrb)
 + Rust (rustfmt)
 + Scala (scalafmt)
-+ Shell script (shfmt)
++ Shell script (beautysh, shfmt)
 + Snakemake (snakefmt)
-+ Solidity (prettier-plugin-solidity)
-+ SQL (sqlformat)
++ Solidity (prettier plugin)
++ SQL (pgformatter, sqlformat)
++ Svelte (prettier plugin)
 + Swift (swiftformat)
 + Terraform (terraform fmt)
-+ TOML (prettier-plugin-toml)
-+ TypeScript/TSX (prettier)
++ TOML (prettier plugin)
++ TypeScript/TSX (prettier, ts-standard)
++ V (v fmt)
 + Verilog (iStyle)
 + YAML (prettier)
++ Zig (zig)
 
 * TODO Features
 # An in-depth list of features, how to use them, and their dependencies.
