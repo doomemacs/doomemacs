@@ -325,7 +325,7 @@
   (defadvice! +python--inhibit-pip-requirements-fetch-packages-a (fn &rest args)
     "No-op `pip-requirements-fetch-packages', which can be expensive."
     :around #'pip-requirements-mode
-    (letf ((#'pip-requirements-fetch-packages #'ignore))
+    (cl-letf ((#'pip-requirements-fetch-packages #'ignore))
       (apply fn args))))
 
 
