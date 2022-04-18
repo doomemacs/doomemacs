@@ -8,15 +8,16 @@ body:
     value: |
       > :warning: **Our issue tracker is for bug reports and feature requests,
       > not configuration questions or requests for help.** Use [our
-      > Discord](https://doomemacs.org/discord) for those instead.
+      > Discord](https://doomemacs.org/discord) or [our
+      > Discourse](https://discourse.doomemacs.org) for those instead.
 
       **Before you proceed, please ensure your issue:**
 
-      - Wasn't already reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues),
-      - Hasn't been covered by [our FAQ](https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org),
+      - Wasn't already reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues) or [Discourse](https://discourse.doomemacs.org),
+      - Hasn't been covered by [our FAQ](https://github.com/hlissner/doom-emacs/blob/master/docs/faq.org),
       - Can be reproduced on the **latest commit** of Doom,
       - Is reproducible on Emacs 27 or 28, _(Emacs 29 is not supported!)_
-      - Is reproducible in [vanilla Doom](https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#testing-in-dooms-sandbox) (i.e. with your private config disabled),
+      - Is reproducible in [vanilla Doom](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#testing-in-dooms-sandbox) (i.e. with your private config disabled),
       - Is well-researched using [our troubleshooting guide](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#troubleshoot).
       - Has not been reported upstream (e.g. in the repos of any involved packages).
 - type: textarea
@@ -31,7 +32,7 @@ body:
     description: |
       - Screenshots and gifs are a big help!
       - Check the \*Messages\* buffer for errors and/or warnings (press `C-h e` to view this buffer).
-      - **Always include backtraces for errors.** ([How to produce a backtrace](https://github.com/hlissner/doom-emacs/blob/master/docs/getting_started.org#how-to-extract-a-backtrace-from-an-error))
+      - **Always include backtraces for errors.** ([How to produce a backtrace](https://doomemacs.org/d/how2backtrace))
       - **Use [code fences](https://docs.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks) for code, logs, or text dumps!** Or use pastebin.com!
       - Be specific! Phrases like "X does not work" or "X stopped working" are unacceptable.
     placeholder: |
@@ -94,8 +95,6 @@ body:
     value: |
       Please take a moment to ensure your issue (and it's title) is **well-researched, descriptive, and specific**, otherwise, you risk it being significantly delayed or automatically closed.
 
-      Emacs' complexity and extensibility produces many false positive or vague bug reports, so I will immediately close issues that aren't **actionable**, **reproducible in vanilla Doom**, or able to be investigated in a **reasonable amount of time**.
-
-      If you don't think your issue qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) instead.
+      Emacs' complexity produces many false positive and vague bug reports, so issues that aren't **actionable**, **reproducible in vanilla Doom**, or able to be investigated in a **reasonable amount of time** will be closed. If you think your issue might fall into these categories, please bring it up on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
 
       :heart: **Thank you for taking the time to file this bug report!**

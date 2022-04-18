@@ -1,9 +1,9 @@
 blank_issues_enabled: false
 contact_links:
   - name: Official Documentation
-    url: https://doomemacs.org/docs/index.org
+    url: https://github.com/hlissner/doom-emacs/blob/master/docs/index.org
     about: "Walks you through how to use, abuse, or confuse Doom Emacs. Also available from within Doom: `M-x doom/help`"
-  - name: Visit our Discourse (work in progress)
+  - name: Visit our Discourse
     url: https://discourse.doomemacs.org
     about: "A repository of official learning resources and discussion forum for Emacs and Doom"
   - name: Visit our Discord

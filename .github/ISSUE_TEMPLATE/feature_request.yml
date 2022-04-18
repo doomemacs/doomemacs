@@ -6,13 +6,13 @@ body:
 - type: markdown
   attributes:
     value: |
-      > :warning: **Our issue tracker is for bug reports and feature requests, not configuration questions or requests for help.** Use [our Discord](https://doomemacs.org/discord) for those instead.
+      > :warning: **Our issue tracker is for bug reports and feature requests, not configuration questions or requests for help.** Use [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) for those instead.
 
       **Before you proceed, please ensure your request:**
 
       - Is a feature request and not a bug report,
-      - Hasn't already been requested or reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues),
-      - Hasn't already been fulfilled on the latest version of Doom or in [one of our modules](https://git.doomemacs.org/docs/modules.org).
+      - Hasn't already been requested or reported on [our issue tracker](https://github.com/hlissner/doom-emacs/issues) or [Discourse](https://discourse.doomemacs.org),
+      - Hasn't already been fulfilled on the latest version of Doom or in [one of our modules](https://docs.doomemacs.org/latest/#/modules).
 - type: textarea
   attributes:
     label: Describe your request
@@ -43,6 +43,6 @@ body:
 
       Emacs' complexity and extensibility produces many false positive or vague requests, so I will immediately close issues that aren't **actionable**, **poorly explained**, or able to be investigated in a reasonable amount of **time**.
 
-      If you don't think your request qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) instead.
+      If you don't think your request qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
 
       :heart: **Thank you for taking the time to make this feature request!**

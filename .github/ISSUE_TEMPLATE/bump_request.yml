@@ -15,7 +15,7 @@ body:
       **Before you submit this bump request, please ensure that the target packages:**
 
       - Haven't already been [requested](https://github.com/hlissner/doom-emacs/issues) or [PRed](https://github.com/hlissner/doom-emacs/pulls),
-      - *Is not* in [our do-not-PR list](https://gist.github.com/hlissner/bb6365626d825aeaf5e857b1c03c9837),
+      - *Is not* in [our do-not-PR list](https://doomemacs.org/d/do-not-pr),
       - Hasn't already been bumped in later commits of Doom,
       - Still work with Doom on their latest commits.
 - type: textarea
@@ -39,6 +39,6 @@ body:
 
       Emacs' complexity and extensibility produces many false positive or vague requests, so I will immediately close issues that aren't **actionable**, **poorly explained**, or able to be investigated in a reasonable amount of **time**.
 
-      If you don't think your request qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) instead.
+      If you don't think your request qualifies, please bring it up on [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) instead.
 
       :heart: **Thank you for taking the time to make this bump request!**
