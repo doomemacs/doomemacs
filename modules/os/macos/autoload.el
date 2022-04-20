@@ -19,6 +19,34 @@
     (shell-command command)))
 
 ;;;###autoload
+(defun +macos--enable-in-new-window (bool)
+  (let ((command (format "defaults write com.googlecode.iterm2 OpenFileInNewWindows -bool %s" (if bool
+											       "true"
+											     "false"))))
+    (message "Running: %s" command)
+    (shell-command command)))
+
+;;;###autoload
+(defun +macos--read-new-window-value ()
+  (let ((command "defaults read com.googlecode.iterm2 OpenFileInNewWindows"))
+    (message "Running: %s" command)
+    (let ((value (shell-command command)))
+      (if (eq value 1)
+	  t
+	nil))))
+
+;;;###autoload
+(defmacro +macos--open-with-iterm (id &optional app dir new)
+  `(defun ,(intern (format "+macos/%s" id)) ()
+     (interactive)
+     (let ((original-value (+macos--read-new-window-value)))
+       (if (and ,new (not original-value))
+		(+macos--enable-in-new-window t))
+       (+macos-open-with ,app ,dir)
+       (if (and ,new (not original-value))
+		(+macos--enable-in-new-window nil)))))
+
+;;;###autoload
 (defmacro +macos--open-with (id &optional app dir)
   `(defun ,(intern (format "+macos/%s" id)) ()
      (interactive)
@@ -48,4 +76,7 @@
                    (or (doom-project-root) default-directory))
 
 ;;;###autoload (autoload '+macos/open-in-iterm "os/macos/autoload" nil t)
-(+macos--open-with open-in-iterm "iTerm" default-directory)
+(+macos--open-with-iterm open-in-iterm "iTerm" default-directory)
+
+;;;###autoload (autoload '+macos/open-in-iterm-new-window "os/macos/autoload" nil t)
+(+macos--open-with-iterm open-in-iterm-new-window "iTerm" default-directory t)
