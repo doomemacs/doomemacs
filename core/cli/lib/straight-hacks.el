@@ -118,3 +118,12 @@ However, in batch mode, print to stdout instead of stderr."
     (and (string-match-p "^\\(Cloning\\|\\(Reb\\|B\\)uilding\\) " msg)
          (not (string-suffix-p "...done" msg))
          (doom--print (doom--format (concat "> " msg))))))
+
+(defadvice! doom--straight-ignore-gitconfig-a (fn &rest args)
+  "Prevent user and system git configuration from interfering with git calls."
+  :around #'straight--process-call
+  (letenv! (("GIT_CONFIG" nil)
+            ("GIT_CONFIG_NOSYSTEM" "1")
+            ("GIT_CONFIG_GLOBAL" (or (getenv "DOOMGITCONFIG")
+                                     "/dev/null")))
+    (apply fn args)))

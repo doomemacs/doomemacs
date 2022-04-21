@@ -2,9 +2,6 @@
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; $EMACS --version >/dev/null 2>&1 || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
-:; unset GIT_CONFIG
-:; export GIT_CONFIG_NOSYSTEM=1
-:; export GIT_CONFIG_GLOBAL="${DOOMGITCONFIG:-/dev/null}"
 :; $EMACS --no-site-file --script "$0" -- "$@" || __DOOMCODE=$?
 :; [ "${__DOOMCODE:-0}" -eq 128 ] && { sh "`$EMACS -Q --batch --eval '(princ temporary-file-directory)'`/doom.sh" "$0" "$@" && true; __DOOMCODE=$?; }
 :; exit $__DOOMCODE
