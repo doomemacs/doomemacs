@@ -8,6 +8,12 @@
   :config
   (set-yas-minor-mode! 'emacs-everywhere-mode)
 
+  ;; HACK Inhibit MAJOR-MODE-local-vars-hook in emacs-everywhere buffers,
+  ;;   because Doom commonly starts servers and other extraneous services on
+  ;;   this hook, which will rarely work well in emacs-everywhere's temporary
+  ;;   buffers anyway.
+  (setq-hook! 'emacs-everywhere-init-hooks doom-inhibit-local-var-hooks t)
+
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
       (concat
