@@ -6,7 +6,10 @@ body:
 - type: markdown
   attributes:
     value: |
-      > :warning: **Our issue tracker is for bug reports and feature requests, not configuration questions or requests for help.** Use [our Discord](https://doomemacs.org/discord) or [Discourse](https://discourse.doomemacs.org) for those instead.
+      > :warning: **Only bug reports, TODOs, and feature requests belong on our
+      > issue tracker.** For questions, discussions, and general user support
+      > use [our Discourse](https://discourse.doomemacs.org) or [our
+      > Discord](https://doomemacs.org/discord) instead.
 
       **Before you proceed, please ensure your request:**
 
