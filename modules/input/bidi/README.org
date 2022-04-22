@@ -1,5 +1,5 @@
 #+TITLE:   input/bidi
-#+DATE:    September 28, 2021
+#+DATE:    April 22, 2022
 #+SINCE:   v3.0.0
 #+STARTUP: inlineimages nofold
 
