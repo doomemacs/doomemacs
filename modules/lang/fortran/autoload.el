@@ -32,7 +32,7 @@ or gfortran, depending on what feature flags are set."
 (defun +fortran/ifort-compile ()
   "Compile the current buffer using ifort."
   (interactive)
-  (compile (format "ifort %s"
+  (compile (format "ifort %S"
                    (buffer-file-name))))
 
 ;;;###autoload
@@ -63,7 +63,7 @@ or gfortran, depending on what feature flags are set."
 (defun +fortran/gfortran-compile ()
   "Compile the current buffer using gfortran."
   (interactive)
-  (compile (format "gfortran %s %s"
+  (compile (format "gfortran %s %S"
                    (+fortran--std)
                    buffer-file-name)))
 
