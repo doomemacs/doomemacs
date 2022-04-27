@@ -18,13 +18,13 @@ overrides `completion-styles' during company completion sessions.")
   :config
   (setq vertico-resize nil
         vertico-count 17
-        vertico-cycle t
-        completion-in-region-function
-        (lambda (&rest args)
-          (apply (if vertico-mode
-                     #'consult-completion-in-region
-                   #'completion--in-region)
-                 args)))
+        vertico-cycle t)
+  (setq-default completion-in-region-function
+                (lambda (&rest args)
+                  (apply (if vertico-mode
+                             #'consult-completion-in-region
+                           #'completion--in-region)
+                         args)))
   ;; Cleans up path when moving directories with shadowed paths syntax, e.g.
   ;; cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
