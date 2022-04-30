@@ -117,7 +117,10 @@
 
 ;;;###autoload
 (defun doom/restart-and-restore (&optional debug)
-  "TODO"
+  "Restart Emacs (and the daemon, if active).
+
+If DEBUG (the prefix arg) is given, start the new instance with the --debug
+switch."
   (interactive "P")
   (setq doom-autosave-session nil)
   (doom/quicksave-session)
@@ -125,7 +128,8 @@
   (letf! ((#'save-buffers-kill-emacs #'kill-emacs)
           (confirm-kill-emacs))
     (restart-emacs
-     (append (if debug (list "--debug-init"))
-             (when (boundp 'chemacs-current-emacs-profile)
-               (list "--with-profile" chemacs-current-emacs-profile))
-             (list "--eval" "(add-hook 'window-setup-hook #'doom-load-session 100)")))))
+     (combine-and-quote-strings
+      (append (if debug (list "--debug-init"))
+              (when (boundp 'chemacs-current-emacs-profile)
+                (list "--with-profile" chemacs-current-emacs-profile))
+              (list "--eval" "(add-hook 'window-setup-hook #'doom-load-session 100)"))))))
