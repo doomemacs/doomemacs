@@ -55,24 +55,16 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
 Accapted value types can be one or more of ref, hash, url, username, or name.")
 
 (defvar doom-cli-commit-types
-  '(bump dev docs feat fix merge module nit perf refactor release revert test tweak)
+  '(bump dev docs feat fix merge nit perf refactor release revert test tweak)
   "A list of valid commit types.")
 
-(defvar doom-cli-commit-scopes
-  (list "cli"
-        "ci"
-        "lib"
-        "docs"
-        (fn! (scope (&key type))
-          (when (and (memq type '(bump merge module release revert))
-                     scope)
-            (user-error "%s commits should never have a scope" type)))
-        (fn! (scope _)
-          (seq-find (doom-rpartial
-                     #'doom-glob (if (string-prefix-p ":" scope)
-                                     (format "%s" (substring scope 1))
-                                   (format "*/%s" scope)))
-                    doom-modules-dirs)))
+(defvar doom-cli-commit-scopeless-types '(bump merge release revert)
+  "A list of commit types whose scopes should be passed in its BODY.
+
+  Don't: \"bump(SCOPE): ...\"
+  Do:    \"bump: SCOPE\"")
+
+(defvar doom-cli-commit-scopes '("ci")
   "A list of valid commit scopes as strings or functions.
 
 Functions should take two arguments: a single scope (symbol) and a commit plist
@@ -122,8 +114,8 @@ representing the current commit being checked against. See
 
         (fn! (&key type scopes summary)
           "Complain about scoped types that are incompatible with scopes"
-          (and (memq type '(bump revert merge module release))
-               scopes
+          (and scopes
+               (memq type doom-cli-commit-scopeless-types)
                (fail! "Scopes for %s commits should go after the colon, not before"
                       type)))
 
