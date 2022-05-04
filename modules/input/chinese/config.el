@@ -37,6 +37,7 @@
     (setq-default evil-pinyin-with-search-rule 'always)
     (global-evil-pinyin-mode 1)))
 
+(use-package! pinyinlib)
 ;;
 ;;; Hacks
 
@@ -52,9 +53,18 @@ when exporting org-mode to html."
              "\\1\\2"
              contents)))
       (list paragraph fixed-contents info))))
-(when (featurep! :editor evil)
-  (use-package! evil-pinyin
-    :after evil
-    :config
-    (setq-default evil-pinyin-with-search-rule 'always)
-    (global-evil-pinyin-mode 1)))
+;; isearch with pinyin
+(defun cregexp-isearch-search-fun ()
+  (funcall
+   (lambda ()
+     `(lambda (string &optional bound noerror count)
+        (funcall (if ,isearch-forward
+                     're-search-forward
+                   're-search-backward)
+                 (pinyinlib-build-regexp-string string) bound noerror count)))))
+(advice-add 'isearch-search-fun :override #'cregexp-isearch-search-fun)
+;; vertico with pinyin, e.g. find-file
+(after! orderless
+  (defun completion--regex-pinyin (str)
+    (orderless-regexp (pinyinlib-build-regexp-string str)))
+  (add-to-list 'orderless-matching-styles 'completion--regex-pinyin))
