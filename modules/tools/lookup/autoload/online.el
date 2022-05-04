@@ -74,12 +74,12 @@ QUERY must be a string, and PROVIDER must be a key of
 ;;;###autoload
 (defun +lookup--online-backend-google (query)
   "Search Google, starting with QUERY, with live autocompletion."
-  (cond ((fboundp 'counsel-search)
+  (cond ((and (bound-and-true-p ivy-mode) (fboundp 'counsel-search))
          (let ((ivy-initial-inputs-alist `((t . ,query)))
                (counsel-search-engine 'google))
            (call-interactively #'counsel-search)
            t))
-        ((require 'helm-net nil t)
+        ((and (bound-and-true-p helm-mode) (require 'helm-net nil t))
          (helm :sources 'helm-source-google-suggest
                :buffer "*helm google*"
                :input query)
@@ -88,7 +88,7 @@ QUERY must be a string, and PROVIDER must be a key of
 ;;;###autoload
 (defun +lookup--online-backend-duckduckgo (query)
   "Search DuckDuckGo, starting with QUERY, with live autocompletion."
-  (cond ((fboundp 'counsel-search)
+  (cond ((and (bound-and-true-p ivy-mode) (fboundp 'counsel-search))
          (let ((ivy-initial-inputs-alist `((t . ,query)))
                (counsel-search-engine 'ddg))
            (call-interactively #'counsel-search)
