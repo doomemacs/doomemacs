@@ -10,5 +10,5 @@ contact_links:
     url: https://doomemacs.org/discord
     about: "A place to chat, get to know the community, and get help quick"
   - name: See third-party resources
-    url: https://discourse.doomemacs.org/resources
+    url: https://discourse.doomemacs.org/c/guides/resources
     about: "A curated collection of non-official resources to help you learn Emacs and Doom"
