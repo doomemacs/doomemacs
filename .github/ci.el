@@ -22,7 +22,8 @@
              #'doom-glob (if (string-prefix-p ":" scope)
                              (format "%s" (substring scope 1))
                            (format "*/%s" scope)))
-            doom-modules-dirs))
+            (list (doom-dir (dir!) "../modules/")
+                  (doom-dir doom-private-dir "modules/"))))
 
 (cl-defun ci-docs-scope (scope (&key type))
   "Allow any filename in docs/* as a scope for docs commits."
@@ -30,6 +31,6 @@
     (member scope
             (cons "install"
                   (mapcar #'file-name-base
-                          (doom-glob doom-docs-dir "*.org"))))))
+                          (doom-glob (dir!) "../docs/*.org"))))))
 
 ;;; ci.el ends here
