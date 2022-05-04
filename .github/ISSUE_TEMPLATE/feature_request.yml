@@ -1,7 +1,7 @@
 ---
 name: 📝 Feature Request
 description: Propose a new idea or feature
-labels: ["1. request", "needs-triage"]
+labels: ["is:feature", "needs-triage"]
 body:
 - type: markdown
   attributes:
