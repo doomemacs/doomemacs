@@ -4,14 +4,14 @@
 
 [Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
 
-![Made with Doom Emacs](https://img.shields.io/github/tag/hlissner/doom-emacs.svg?style=flat-square&label=release&color=58839b)
+![Made with Doom Emacs](https://img.shields.io/github/tag/doomemacs/doomemacs.svg?style=flat-square&label=release&color=58839b)
 ![Supports Emacs 27.1 - 28.1](https://img.shields.io/badge/Supports-Emacs_27.1--28.1-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
-![Latest commit](https://img.shields.io/github/last-commit/hlissner/doom-emacs/master?style=flat-square)
-![Build status: master](https://img.shields.io/github/workflow/status/hlissner/doom-emacs/CI/master?style=flat-square)
+![Latest commit](https://img.shields.io/github/last-commit/doomemacs/doomemacs/master?style=flat-square)
+![Build status: master](https://img.shields.io/github/workflow/status/doomemacs/doomemacs/CI/master?style=flat-square)
 [![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord&logo=discord&logoColor=white&style=flat-square)][Discord]
 [![Discourse server](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.doomemacs.org&logo=discourse&label=Discourse&style=flat-square&color=9cf)][Discourse]
 
-![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
+![Doom Emacs Screenshot](https://raw.githubusercontent.com/doomemacs/doomemacs/screenshots/main.png)
 
 </div>
 
@@ -29,7 +29,7 @@
 
 # Introduction
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
-  <img src="https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/cacochan.png" align="right" />
+  <img src="https://raw.githubusercontent.com/doomemacs/doomemacs/screenshots/cacochan.png" align="right" />
 </a>
 
 > It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
@@ -111,7 +111,7 @@ doctor` to check for any that you may have missed.
 
 # Install
 ``` sh
-git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
 
@@ -177,7 +177,7 @@ mysterious errors. When you do, here are some places you can look for help:
 + Run `bin/doom doctor` to detect common issues with your development
   environment and private config.
 + Check out the [FAQ], in case your question has already been answered.
-+ Search [Doom's issue tracker](https://github.com/hlissner/doom-emacs/issues) in case your issue was already
++ Search [Doom's issue tracker](https://github.com/doomemacs/doomemacs/issues) in case your issue was already
   reported.
 + Hop on [our Discord server][discord]; it's active and friendly! Keep an eye on
   the #announcements channel, where I announce breaking updates and releases.
@@ -196,7 +196,7 @@ kind!
 + I :heart: pull requests and bug reports (see the [Contributing
   Guidelines][contribute])!
 + Don't hesitate to [tell me my Elisp-fu
-  sucks](https://github.com/hlissner/doom-emacs/issues/new), but please tell me
+  sucks](https://github.com/doomemacs/doomemacs/issues/new), but please tell me
   why.
 + Hop on [our Discord server][Discord] and say hi! Help others, hang out or talk
   to me about Emacs, gamedev, programming, physics, pixel art, anime, gaming --
@@ -223,7 +223,7 @@ kind!
 [change-font]: docs/faq.org#how-do-i-change-the-fonts
 [modules]: docs/modules.org
 [popup-system]: modules/ui/popup/README.org
-[screenshots]: https://github.com/hlissner/doom-emacs/tree/screenshots#emacsd-screenshots
+[screenshots]: https://github.com/doomemacs/doomemacs/tree/screenshots#emacsd-screenshots
 
 [bindings]: modules/config/default/+evil-bindings.el
 [editorconfig]: http://editorconfig.org/
