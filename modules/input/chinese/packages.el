@@ -5,3 +5,5 @@
 (package! fcitx :pin "12dc2638ddd15c8f6cfaecb20e1f428ab2bb5624")
 (package! ace-pinyin :pin "47662c0b05775ba353464b44c0f1a037c85e746e")
 (package! pangu-spacing :pin "f92898949ba3bf991fd229416f3bbb54e9c6c223")
+(when (featurep! :editor evil)
+  (package! evil-pinyin :pin "3e9e501ded86f88e01a4edec5d526ab0fab879d7"))

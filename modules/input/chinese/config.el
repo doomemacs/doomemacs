@@ -30,6 +30,12 @@
   :init (setq ace-pinyin-use-avy t)
   :config (ace-pinyin-global-mode t))
 
+(when (featurep! :editor evil)
+  (use-package! evil-pinyin
+    :after evil
+    :config
+    (setq-default evil-pinyin-with-search-rule 'always)
+    (global-evil-pinyin-mode 1)))
 
 ;;
 ;;; Hacks
@@ -46,3 +52,9 @@ when exporting org-mode to html."
              "\\1\\2"
              contents)))
       (list paragraph fixed-contents info))))
+(when (featurep! :editor evil)
+  (use-package! evil-pinyin
+    :after evil
+    :config
+    (setq-default evil-pinyin-with-search-rule 'always)
+    (global-evil-pinyin-mode 1)))
