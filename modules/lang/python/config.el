@@ -313,6 +313,25 @@
     (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
   :config
   (add-hook 'python-mode-local-vars-hook #'pyvenv-track-virtualenv)
+
+  (add-hook! 'python-mode-hook
+    (defun +python-actiavte-local-venv-h ()
+      "Automatically activates pyvenv version if a local
+.venv-like directory exists in parent directories."
+      (when (buffer-file-name)
+        (f-traverse-upwards
+         (lambda (path)
+           (let ((venv-path (+python/search-venv-in-directory path)))
+             (if venv-path
+                 (progn
+                   (message "Activate %s" venv-path)
+                   (pyvenv-activate venv-path)
+                   ;; Stop traverse
+                   t)
+               ;; continue traverse
+               nil)))
+         (f-dirname (buffer-file-name))))))
+
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
                'append))

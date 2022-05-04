@@ -71,3 +71,35 @@ falling back on searching your PATH."
   (interactive)
   (pyimport-remove-unused)
   (py-isort-buffer))
+
+;;;###autoload
+(defun +python/search-venv-in-directory (directory)
+  "Search for .venv-like in directory.
+
+Accepts .venv/ directory, .venv symlink, .venv file containing
+path to a directory relative the directory, .venv-* directory or
+symlink. The latest .venv-* is used i.e. .venv-py3.10 is prefered
+to .venv-py2.7.
+
+Returns venv or nil if no .venv in this directory."
+  (let ((bare-venv (f-canonical (f-expand ".venv" directory))))
+    ;; First, try .venv
+    (if (f-exists? bare-venv)
+        ;; Read .venv file
+        (if (f-file? bare-venv)
+            (let ((venv-content (f-canonical (f-expand (string-trim (f-read bare-venv)) directory))))
+              (if (f-exists? venv-content)
+                  ;; Read venv from bare .venv
+                  venv-content
+                (progn
+                  (message "%s contains bad venv: %s" bare-venv venv-content)
+                  nil)))
+          ;; Found bare .venv directory
+          bare-venv)
+      ;; else search .venv-*
+      (let ((first-venv (car (sort (f-glob ".venv-*" directory) 'string>))))
+        (if first-venv
+            ;; First .venv-* found
+            first-venv
+          ;; No venv found in directory.
+          nil)))))
