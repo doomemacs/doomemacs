@@ -111,9 +111,9 @@ MATCH is a string regexp. Only entries that match it will be included."
                    (not (and (file-symlink-p file)
                              (not follow-symlinks)))
                    (<= mindepth 0)
-                   (list (cond (map (funcall map file))
-                               (relative-to (file-relative-name file relative-to))
-                               (file))))
+                   (list (if relative-to
+                             (file-relative-name file relative-to)
+                           file)))
               (and (>= depth 1)
                    (apply #'doom-files-in file
                           (append (list :mindepth (1- mindepth)
@@ -128,7 +128,9 @@ MATCH is a string regexp. Only entries that match it will be included."
                        (file-relative-name file relative-to)
                      file)
                    result))))
-    result))
+    (if map
+        (mapcar map result)
+      result)))
 
 ;;;###autoload
 (defun doom-file-cookie-p (file &optional cookie null-value)
