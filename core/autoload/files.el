@@ -118,7 +118,8 @@ MATCH is a string regexp. Only entries that match it will be included."
                    (apply #'doom-files-in file
                           (append (list :mindepth (1- mindepth)
                                         :depth (1- depth)
-                                        :relative-to relative-to)
+                                        :relative-to relative-to
+                                        :map nil)
                                   rest)))))
             ((and (memq type '(t files))
                   (string-match-p match file)
