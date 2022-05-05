@@ -24,7 +24,7 @@ name. e.g.
 
   DOOMDIR=~/.config/doom doom install"
   (print! (green "Installing Doom Emacs!\n"))
-  (let ((default-directory (doom-path "~")))
+  (let ((default-directory doom-emacs-dir))
     ;; Create `doom-private-dir'
     (if noconfig-p
         (print! (warn "Not copying private config template, as requested"))
@@ -77,7 +77,11 @@ name. e.g.
     (if nohooks-p
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))
       (print! "Deploying commit-msg and pre-push git hooks")
-      (doom-cli--ci-deploy-hooks))
+      (print-group!
+       (condition-case e
+           (doom-cli--ci-deploy-hooks doom-auto-accept)
+         ('user-error
+          (print! (warn "%s") (error-message-string e))))))
 
     (cond (nofonts-p)
           (IS-WINDOWS

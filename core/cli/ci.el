@@ -22,20 +22,33 @@
 ;;;
 
 
-(defun doom-cli--ci-deploy-hooks (&optional noforce)
-  (let* ((default-directory doom-emacs-dir)
-         (dir (cdr (doom-call-process "git" "rev-parse" "--git-path" "hooks"))))
-    (make-directory dir 'parents)
-    (dolist (hook '("commit-msg" "pre-push"))
-      (let ((file (doom-path dir hook)))
-        (unless (and (file-exists-p file) noforce)
-          (with-temp-file file
-            (insert "#!/usr/bin/env sh\n"
-                    (doom-path doom-emacs-dir "bin/doom")
-                    " --nocolor ci hook-" hook
-                    " \"$@\""))
-          (set-file-modes file #o700)
-          (print! (success "Created %s") (relpath file)))))))
+(defun doom-cli--ci-deploy-hooks (&optional force)
+  (let* ((repo-path (cdr (doom-call-process "git" "rev-parse" "--show-toplevel")))
+         (submodule-p (string-empty-p (cdr (doom-call-process "git" "rev-parse" "show-superproject-working-tree"))))
+         (config-hooks-path (cdr (doom-call-process "git" "config" "core.hooksPath")))
+         (hooks-path (cdr (doom-call-process "git" "rev-parse" "--git-path" "hooks"))))
+    (unless (string-empty-p config-hooks-path)
+      (or force
+          (y-or-n-p
+           (format (concat "Detected non-standard core.hookPath: %S\n\n"
+                           "Install Doom's commit-msg and pre-push git hooks anyway?")
+                   hooks-path))
+          (user-error "Aborted")))
+    (make-directory hooks-path 'parents)
+    (print! (start "Deploying git hooks in %S") (path hooks-path))
+    (print-group!
+     (dolist (hook '("commit-msg" "pre-push"))
+       (let* ((hook (doom-path hooks-path hook))
+              (overwrite-p (file-exists-p hook)))
+         (with-temp-file hook
+           (insert "#!/usr/bin/env sh\n"
+                   (doom-path doom-emacs-dir "bin/doom")
+                   " --nocolor ci hook-" (file-name-base hook)
+                   " \"$@\""))
+         (set-file-modes hook #o700)
+         (print! (success "%s %s")
+                 (if overwrite-p "Overwrote" "Created")
+                 (path hook)))))))
 
 
 ;;
