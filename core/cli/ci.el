@@ -4,6 +4,15 @@
   "TODO"
   (unless target
     (user-error "No CI target given"))
+  (when-let* ((ci-dir
+               (or (locate-dominating-file default-directory ".github/ci.el")
+                   doom-private-dir))
+              (ci-config
+               (car (or (doom-glob ci-dir ".github/ci.el")
+                        (doom-glob ci-dir "ci.el")
+                        (doom-glob ci-dir "cli.el")))))
+    (print! (info "Loading %s") (path ci-config))
+    (load ci-config nil t t))
   (if-let (fn (intern-soft (format "doom-cli--ci-%s" target)))
       (apply fn args)
     (user-error "No known CI target: %S" target)))
@@ -64,14 +73,34 @@ Accapted value types can be one or more of ref, hash, url, username, or name.")
   Don't: \"bump(SCOPE): ...\"
   Do:    \"bump: SCOPE\"")
 
-(defvar doom-cli-commit-scopes '("ci")
-  "A list of valid commit scopes as strings or functions.
+(defvar doom-cli-commit-scopes '("ci" doom-cli-enforce-scopeless-types)
+  "A list of valid commit scopes as strings, predicate functions, or lists.
 
-Functions should take two arguments: a single scope (symbol) and a commit plist
-representing the current commit being checked against. See
-`doom-cli-commit-core-rules' for possible values.")
+These are checked against each item in the comma-delimited scope field of the
+current commit's message. E.g. 'fix(foo,bar,baz): ...' => foo, bar and baz
+
+Each element of this list can be one of:
+
+- A string, compared literally against the scope's name.
+- A function predicate, taking two arguments (a scope as a symbol, and a plist
+  containing information about the current commit--see `doom-cli-commit-scopes'
+  for more about its structure). These predicates should:
+  - Return non-nil to immediately pass a scope.
+  - Throw a `user-error' to immediately fail the scope.
+  - Return nil to continue with the checks in this list.
+- A list, denoting type-specific scopes. Its CAR is the type as a symbol, and
+  its CDR is a nested list of scopes as strings/predicates. E.g.
+
+    '(docs \"faq\" \"install\" check-docs)")
+
+(cl-defun doom-cli-enforce-scopeless-types (scope (&key type scopes summary &allow-other-keys))
+  "Complain about scoped types that are incompatible with scopes"
+  (when (memq type doom-cli-commit-scopeless-types)
+    (user-error "Scopes for %s commits should go after the colon, not before"
+                type)))
 
 (defvar doom-cli-commit-rules
+  ;; TODO Extract into named functions
   (list (fn! (&key subject)
           "If a fixup/squash commit, don't lint this commit"
           (when (string-match "^\\(\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
@@ -112,25 +141,21 @@ representing the current commit being checked against. See
                (fail! "%S in summary should not be capitalized"
                       (car (split-string summary " ")))))
 
-        (fn! (&key type scopes summary)
-          "Complain about scoped types that are incompatible with scopes"
-          (and scopes
-               (memq type doom-cli-commit-scopeless-types)
-               (fail! "Scopes for %s commits should go after the colon, not before"
-                      type)))
-
         (fn! (&rest plist &key type scopes)
           "Ensure scopes are valid"
           (dolist (scope scopes)
             (condition-case e
-                (or (cl-loop for rule in doom-cli-commit-scopes
-                             if (or (and (stringp rule)
-                                         (string= rule scope))
-                                    (and (functionp rule)
-                                         (funcall rule scope plist)))
-                             return t)
-                    (fail! "Invalid scope: %s" scope))
-              (user-error (fail! "%s" (error-message-string))))))
+                (letf! (defun* check-rule (rule)
+                         (or (and (stringp rule)
+                                  (string= rule scope))
+                             (and (functionp rule)
+                                  (funcall rule scope plist))
+                             (and (listp rule)
+                                  (eq type (car rule))
+                                  (seq-find #'check-rule (cdr rule)))))
+                  (or (seq-find #'check-rule doom-cli-commit-scopes)
+                      (fail! "Invalid scope: %s" scope)))
+              (user-error (fail! "%s" (error-message-string e))))))
 
         (fn! (&key scopes)
           "Esnure scopes are sorted correctly"
@@ -387,7 +412,7 @@ Note: warnings are not considered failures.")
           (print! (success "There were no issues!"))
         (if (> warnings 0) (print! (warn "Warnings: %d" warnings)))
         (if (> failures 0) (print! (warn "Failures: %d" failures)))
-        (print! "\nSee https://docs.doomemacs.org/-/conventions/git-commits")
+        (print! "\nSee https://discourse.doomemacs.org/git-conventions")
         (unless (zerop failures)
           (throw 'exit 1)))
       t)))
