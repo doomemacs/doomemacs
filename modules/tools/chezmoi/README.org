@@ -1,0 +1,48 @@
+#+TITLE:   tools/chezmoi
+#+DATE:    May 5, 2022
+#+SINCE:   22.05
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module provides convenience functions for interacting with the [[https://chezmoi.io][chezmoi]]
+dotfile management system via Emacs.
+
+** Maintainers
+This module has no dedicated maintainers
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/tuh8888/chezmoi.el][chezmoi.el]]
+
+* Prerequisites
+This module has one dependency: the ~chezmoi~ binary. See [[https://www.chezmoi.io/install/][chezmoi.io]] for install
+instructions.
+
+* Features
+This module facilitate editing dotfiles managed by ~chezmoi~.
+
+This module provides a set of Emacs commands that are equivalent to ~chezmoi~
+commands, including:
+
+| Command      | chezmoi equivalent |
+|--------------+--------------------|
+| find-file    | chezmoi edit       |
+| save-buffer  | chezmoi apply      |
+| diff         | chezmoi diff       |
+| ediff        | chezmoi merge      |
+| magit-status | chezmoi git status |
+
+More information can be found on the [[https://github.com/tuh8888/chezmoi.el][chezmoi.el]] GitHub page.
+
+* TODO Configuration
