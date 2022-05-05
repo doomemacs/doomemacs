@@ -32,16 +32,12 @@
   :init
   (map! :after dart-mode
         :map dart-mode-map
-        (:localleader
-         (:prefix ("f" . "Flutter")
-          :desc "Flutter run"
+        :localleader
+         (:prefix ("f" . "flutter")
           "f" #'flutter-run
-          :desc "Flutter quit"
           "q" #'flutter-quit
-          :desc "Flutter hot reload"
           "r" #'flutter-hot-reload
-          :desc "Flutter hot restart"
-          "R" #'flutter-hot-restart))))
+          "R" #'flutter-hot-restart)))
 
 
 (use-package! lsp-dart
