@@ -122,14 +122,22 @@
 If DEBUG (the prefix arg) is given, start the new instance with the --debug
 switch."
   (interactive "P")
-  (setq doom-autosave-session nil)
   (doom/quicksave-session)
   (save-some-buffers nil t)
   (letf! ((#'save-buffers-kill-emacs #'kill-emacs)
-          (confirm-kill-emacs))
+          (confirm-kill-emacs)
+          (tmpfile (make-temp-file "post-load")))
+    ;; HACK `restart-emacs' does not properly escape arguments on Windows (in
+    ;;   `restart-emacs--daemon-on-windows' and
+    ;;   `restart-emacs--start-gui-on-windows'), so don't give it complex
+    ;;   arguments at all. Should be fixed upstream, but restart-emacs seems to
+    ;;   be unmaintained.
+    (with-temp-file tmpfile
+      (print `(progn (add-hook 'window-setup-hook #'doom-load-session 100)
+                     (delete-file ,tmpfile))
+             (current-buffer)))
     (restart-emacs
-     (combine-and-quote-strings
-      (append (if debug (list "--debug-init"))
-              (when (boundp 'chemacs-current-emacs-profile)
-                (list "--with-profile" chemacs-current-emacs-profile))
-              (list "--eval" "(add-hook 'window-setup-hook #'doom-load-session 100)"))))))
+     (append (if debug (list "--debug-init"))
+             (when (boundp 'chemacs-current-emacs-profile)
+               (list "--with-profile" chemacs-current-emacs-profile))
+             (list "-l" tmpfile)))))
