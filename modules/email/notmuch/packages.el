@@ -28,4 +28,4 @@
 (when (featurep! :completion helm)
   (package! helm-notmuch :pin "97a01497e079a7b6505987e9feba6b603bbec288"))
 (when (featurep! :completion vertico)
-  (package! consult-notmuch :pin "a5133b9e1f19b6d51e51dd5c5e3a4f236ca29b57"))
+  (package! consult-notmuch :pin "16eb2c100ca144140f07014c32e99487c6a73e18"))
