@@ -4,19 +4,19 @@
 (package! vertico
   :recipe (:host github :repo "minad/vertico"
            :files ("*.el" "extensions/*.el"))
-  :pin "46e8e0565079b7161ada4beb94c8938ee9c04bfb")
+  :pin "cc5f5421c6270b8fdd12265ccdaffc3cd297d0d8")
 
-(package! orderless :pin "8f64537f556f26492fe5ee401d8d578d7d88684b")
+(package! orderless :pin "75eeae21971d86b51a712ed8ecd6434463b2d866")
 
-(package! consult :pin "d30213aa209391e03b1c1011df92d91a1fc5ef32")
-(package! consult-dir :pin "08f543ae6acbfc1ffe579ba1d00a5414012d5c0b")
+(package! consult :pin "822928a8609730e8c22e068b04d7908312706cfd")
+(package! consult-dir :pin "d397ca6ea67af4d3c59a330a778affd825f0efd9")
 (when (featurep! :checkers syntax)
   (package! consult-flycheck :pin "9b40f136c017fadf6239d7602d16bf73b4ad5198"))
 
-(package! embark :pin "2890e535f55b1f08f379fd761b263fa337a72185")
-(package! embark-consult :pin "2890e535f55b1f08f379fd761b263fa337a72185")
+(package! embark :pin "d88478b45f2d589339334dc8d40b07bce28aab0e")
+(package! embark-consult :pin "d88478b45f2d589339334dc8d40b07bce28aab0e")
 
-(package! marginalia :pin "dbc37b373e734269bd75d1763e7309863508bf10")
+(package! marginalia :pin "26f2bd9ee7b63bcad6604108e2f565b34bc6083b")
 
 (package! wgrep :pin "f9687c28bbc2e84f87a479b6ce04407bb97cfb23")
 

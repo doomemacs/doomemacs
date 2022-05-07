@@ -101,7 +101,6 @@ orderless."
     [remap switch-to-buffer-other-frame]  #'consult-buffer-other-frame
     [remap yank-pop]                      #'consult-yank-pop
     [remap persp-switch-to-buffer]        #'+vertico/switch-workspace-buffer)
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   (advice-add #'multi-occur :override #'consult-multi-occur)
   :config
   (defadvice! +vertico--consult-recent-file-a (&rest _args)
@@ -145,11 +144,7 @@ orderless."
         :category buffer
         :state    ,#'consult--buffer-state
         :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
-    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
-  (map! :map consult-crm-map
-        :desc "Select candidate" [tab] #'+vertico/crm-select
-        :desc "Select candidate and keep input" [backtab] #'+vertico/crm-select-keep-input
-        :desc "Enter candidates" "RET" #'+vertico/crm-exit))
+    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
 
 
 (use-package! consult-dir
