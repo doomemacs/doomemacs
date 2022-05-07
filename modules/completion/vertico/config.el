@@ -136,14 +136,30 @@ orderless."
   (consult-customize
    consult-theme
    :preview-key (list (kbd "C-SPC") :debounce 0.5 'any))
-  (after! org
+  (when (featurep! :lang org)
     (defvar +vertico--consult-org-source
-      `(:name     "Org"
-        :narrow   ?o
-        :hidden t
-        :category buffer
-        :state    ,#'consult--buffer-state
-        :items    ,(lambda () (mapcar #'buffer-name (org-buffer-list)))))
+      (list :name     "Org Buffer"
+            :category 'buffer
+            :narrow   ?o
+            :hidden   t
+            :face     'consult-buffer
+            :history  'buffer-name-history
+            :state    #'consult--buffer-state
+            :new
+            (lambda (name)
+              (with-current-buffer (get-buffer-create name)
+                (insert "#+title: " name "\n\n")
+                (org-mode)
+                (consult--buffer-action (current-buffer))))
+            :items
+            (lambda ()
+              (mapcar #'buffer-name
+                      (if (featurep 'org)
+                          (org-buffer-list)
+                        (seq-filter
+                         (lambda (x)
+                           (eq (buffer-local-value 'major-mode x) 'org-mode))
+                         (buffer-list)))))))
     (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
 
 
