@@ -2,7 +2,13 @@
 
 (defvar +literate-config-file
   (concat doom-private-dir "config.org")
-  "The file path of your literate config file.")
+  "The file path of your main literate config file.")
+
+(defvar +literate-config-watch-files
+  (list doom-private-dir)
+  "A list of the paths of files and/or directories that should trigger
+  recompilation of your config. Choose whichever org files will contribute to
+  your config.el file in the end. Defaults to your entire `doom-private-dir'")
 
 (defvar +literate-config-cache-file
   (concat doom-cache-dir "literate-last-compile")
@@ -12,7 +18,7 @@ byte-compiled from.")
 (defvar org-mode-hook)
 (defvar org-inhibit-startup)
 
-;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
+;;;###autoload (add-hook 'kill-emacs-hook #'+literate-recompile-maybe)
 
 ;;;###autoload
 (defun +literate-tangle-h ()
@@ -68,8 +74,55 @@ byte-compiled from.")
 (defun +literate-recompile-maybe-h ()
   "Recompile literate config to `doom-private-dir'.
 
-We assume any org file in `doom-private-dir' is connected to your literate
-config, and should trigger a recompile if changed."
-  (and (file-in-directory-p
-        buffer-file-name (file-name-directory +literate-config-file))
+We assume any org file in `+literate-config-watch-files' is connected to your
+literate config, and should trigger a recompile if changed."
+  (and (cl-some (lambda (path)
+                  (or (file-in-directory-p
+                       buffer-file-name path)
+                      (file-equal-p
+                       buffer-file-name path)))
+                +literate-config-watch-files)
        (+literate-tangle-h)))
+
+;;;###autoload
+(defun +file-mod-time-diff (f1 f2)
+  "Calculates the difference between modification time in seconds of two files."
+  (apply #'- (mapcar (lambda (file)
+                       (time-convert
+                        (file-attribute-modification-time
+                         (file-attributes file)) 'integer))
+                     (list f1 f2))))
+
+;;;###autoload
+(defun +literate-recompile-maybe (&optional force)
+  "Recompile literate config to `doom-private-dir' if org files have been saved
+more recently than el file.
+
+We assume any org file in `+literate-config-watch-files' is connected to your
+literate config and should trigger a recompile if changed.
+
+A prefix argument will force a recompile."
+  (interactive "P")
+  ;; set file variables
+  (let ((sources +literate-config-watch-files)
+        (dest (expand-file-name
+               (concat doom-module-config-file ".el")
+               doom-private-dir)))
+    (when (or force
+              ;; compare file modification times
+              (cl-some (lambda (path)
+                         (if (file-directory-p path)
+                             (cl-some (lambda (source-file)
+                                        (> (+file-mod-time-diff source-file dest) 0))
+                                      (directory-files path t "\\.org$"))
+                           (> (+file-mod-time-diff path dest) 0)))
+                       sources))
+      (+literate-tangle-h))))
+
+;;;###autoload
+(defun +load-private-config (&optional force)
+  "Load private elisp config file, compiling if necessary.
+Optional prefix arg will force tangling config."
+  (interactive "P")
+  (+literate-recompile-maybe force)
+  (load-file (expand-file-name "config.el" doom-private-dir)))

@@ -12,10 +12,11 @@
 - [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#change-the-location-of-configorg][Change the location of config.org]]
+  - [[#change-which-files-trigger-tangling][Change which files trigger tangling]]
+  - [[#change-to-tangle-on-save][Change to tangle-on-save]]
   - [[#change-where-src-blocks-are-tangled-or-prevent-it-entirely][Change where src blocks are tangled or prevent it entirely]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-to-tangle-to-doomdirinitel][How to tangle to =DOOMDIR/init.el=]]
-  - [[#how-to-disable-tangle-on-save][How to disable tangle-on-save]]
 
 * Description
 This module enables support for a literate config.
@@ -36,12 +37,14 @@ This module installs no plugins.
 This module has no prerequisites.
 
 * Features
-+ Automatically tangles ~config.org~ to ~config.el~ when saving. See
-  Troubleshooting section belong on how to disable it.
++ Automatically tangles =config.org= to =config.el= when closing Emacs. See [[*Change to tangle-on-save][below]] on
+  how to change when tangling occurs.
++ Use ~+literate-recompile-maybe~ to manually tangle =config.org= to =config.el=. A prefix arg will force the tangling.
++ Use ~+load-private-config~ to reload =config.el=, first tangling =config.org= if needed. A prefix arg will force the tangling.
 
 * Configuration
 ** Change the location of config.org
-The ~+literate-config-file~ variable controls where to look for your config.org.
+The ~+literate-config-file~ variable controls where to look for your =config.org=.
 To change this it must be modified early -- in =DOOMDIR/init.el= or
 =DOOMDIR/cli.el=.
 
@@ -51,13 +54,36 @@ blocks are tangled to ~config.el~, but ~elisp~ gives correct syntax
 highlighting. If you don't want to specify language in block you can also
 enforce tangling by adding ~#+BEGIN_SRC :tangle yes~
 
+** Change which files trigger tangling
+The ~+literate-config-watch-files~ variable controls which files will cause your
+literate config to be re-tangled when they are modified. It can include file and
+directory names. The default value is to track all org files in your
+~doom-private-dir~.
+
+If you would like to track only your =config.org= file, for example:
+#+begin_src elisp
+;; add to DOOMDIR/config.el
+(setq +literate-config-watch-files (list +literate-config-file))
+#+end_src
+
+** Change to tangle-on-save
+You may want your config to be tangled more often than just when Emacs is
+closed. You could call ~+literate-recompile-maybe~ manually (e.g. set to a
+keybinding) or switch the following hooks to call it anytime one of your
+literate config files is saved:
+#+begin_src elisp
+;; add to DOOMDIR/config.el
+(remove-hook 'kill-emacs-hook #'+literate-recompile-maybe)
+(add-hook 'org-mode-hook #'+literate-enable-recompile-h)
+#+end_src
+
 ** Change where src blocks are tangled or prevent it entirely
-By default, this module tangles all src emacs-lisp blocks to config.el unless
+By default, this module tangles all src emacs-lisp blocks to =config.el= unless
 otherwise specified.
 
 To specify otherwise use the =:tangle= parameter to:
 
-- Specify a destination other than config.el: ~:tangle packages.el~
+- Specify a destination other than =config.el=: ~:tangle packages.el~
 - Disable tangling of the block altogether with ~:tangle no~
 - Or force non-elisp src blocks to tangle somewhere
 
@@ -95,12 +121,3 @@ However, Doom comes with a [[file:../../../bin/org-tangle][bin/org-tangle]] scri
 arbitrary org files from the command line. Use it to create your own compilation
 workflows. This is /much/ faster than using ~org-babel-load-file~ directly to
 load your literate config every time Doom is started.
-
-** How to disable tangle-on-save
-There are occasions where tangling on save may be undesirable. Maybe it's too
-slow, produces too much noise, or happens too often (on unrelated org files in
-your =DOOMDIR=). This behavior can be disabled with:
-#+BEGIN_SRC elisp
-;; add to DOOMDIR/config.el
-(remove-hook 'org-mode-hook #'+literate-enable-recompile-h)
-#+END_SRC
