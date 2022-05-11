@@ -86,7 +86,7 @@ window that already exists in that direction. It will split otherwise."
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
     (kill-local-variable '+magit--stale-p)
-    (when buffer-file-name
+    (when (and buffer-file-name (file-exists-p buffer-file-name))
       (if (buffer-modified-p (current-buffer))
           (when (bound-and-true-p vc-mode)
             (vc-refresh-state)
