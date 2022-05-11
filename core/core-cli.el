@@ -231,7 +231,24 @@ All arguments are passed on to Emacs.
 WARNING: this command exists for convenience and testing. Doom will suffer
 additional overhead by being started this way. For the best performance, it is
 best to run Doom out of ~/.emacs.d and ~/.doom.d."
-    (throw 'exit (cons invocation-name args))))
+    ;; TODO Does this work on Windows?
+    (let* ((tempdir (doom-path (temporary-file-directory) "doom.run"))
+           (tempemacsdir (doom-path tempdir ".emacs.d")))
+      (delete-directory tempdir t)
+      (make-directory tempemacsdir t)
+      (with-temp-file (doom-path tempemacsdir "early-init.el")
+        (prin1 `(progn
+                  (setenv "HOME" ,(getenv "HOME"))
+                  (setq user-emacs-directory ,doom-emacs-dir)
+                  (load ,(doom-path doom-emacs-dir "early-init.el")
+                        nil ,(not doom-debug-mode))
+                  (define-advice startup--load-user-init-file (:filter-args (args) init-doom)
+                    (cons (lambda () ,(doom-path doom-emacs-dir "init.el"))
+                          (cdr args))))
+               (current-buffer)))
+      (throw 'exit (format "HOME=%S %s %s"
+                           tempdir invocation-name
+                           (combine-and-quote-strings args))))))
 
 
 ;;
