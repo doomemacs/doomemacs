@@ -6,8 +6,7 @@
   :init
   (global-set-key [remap other-window] #'switch-window)
   :config
-  (setq switch-window-shortcut-style 'qwerty
-        switch-window-qwerty-shortcuts '("a" "s" "d" "f" "g" "h" "j" "k" "l")))
+  (setq switch-window-shortcut-style 'qwerty))
 
 
 (use-package! ace-window
