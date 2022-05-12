@@ -38,7 +38,7 @@
   (if (string-match "_test\\.go" buffer-file-name)
       (save-excursion
         (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
-        (+go--run-tests (concat "-run" "='" (match-string-no-properties 2) "'")))
+        (+go--run-tests (concat "-run" "='^\\Q" (match-string-no-properties 2) "\\E$'")))
     (error "Must be in a _test.go file")))
 
 ;;;###autoload
@@ -52,7 +52,7 @@
   (if (string-match "_test\\.go" buffer-file-name)
       (save-excursion
         (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Benchmark[[:alnum:]_]+\\)(.*)")
-        (+go--run-tests (concat "-test.run=NONE -test.bench" "='" (match-string-no-properties 2) "'")))
+        (+go--run-tests (concat "-test.run=NONE -test.bench" "='^\\Q" (match-string-no-properties 2) "\\E$'")))
     (error "Must be in a _test.go file")))
 
 
