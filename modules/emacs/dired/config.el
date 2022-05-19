@@ -136,8 +136,32 @@ we have to clean it up ourselves."
         ranger-hide-cursor nil))
 
 
+(use-package! dirvish
+  :when (featurep! +dirvish)
+  :defer t
+  :init (after! dired (dirvish-override-dired-mode))
+  :hook (dired-mode . dired-omit-mode)
+  :config
+  (setq dirvish-cache-dir (concat doom-cache-dir "dirvish/")
+        dirvish-hide-details nil
+        dirvish-attributes '(git-msg)
+        dired-omit-files (concat dired-omit-files "\\|^\\..*$"))
+  (when (featurep! +icons)
+    (push 'all-the-icons dirvish-attributes))
+  (map! :map dirvish-mode-map
+        :n "b" #'dirvish-goto-bookmark
+        :n "z" #'dirvish-show-history
+        :n "f" #'dirvish-file-info-menu
+        :n "F" #'dirvish-toggle-fullscreen
+        :n "l" #'dired-find-file
+        :n "h" #'dired-up-directory
+        :localleader
+        "h" #'dired-omit-mode))
+
+
 (use-package! all-the-icons-dired
   :when (featurep! +icons)
+  :unless (featurep! +dirvish)
   :hook (dired-mode . all-the-icons-dired-mode)
   :config
   ;; HACK Fixes #1929: icons break file renaming in Emacs 27+, because the icon
@@ -160,6 +184,7 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-x
+  :unless (featurep! +dirvish)
   :unless (featurep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
