@@ -57,6 +57,9 @@ lua-language-server.")
     (require 'flycheck-moonscript nil t)))
 
 
+(defvar +lua-fennel-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `fennel-mode'.")
+
 (use-package! fennel-mode
   :when (featurep! +fennel)
   :defer t
@@ -71,8 +74,7 @@ lua-language-server.")
     tab-width 2
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp "[ \t]*;;;;* [^ \t\n]"))
-
+    outline-regexp +lua-fennel-outline-regexp))
 
 ;;
 ;;; Frameworks
