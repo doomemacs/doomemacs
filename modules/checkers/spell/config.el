@@ -98,12 +98,13 @@
            . (org-block
               org-block-begin-line
               org-block-end-line
-              org-code
               org-cite
               org-cite-key
+              org-code
               org-date
               org-footnote
               org-formula
+              org-inline-src-block
               org-latex-and-related
               org-link
               org-meta-line
