@@ -306,6 +306,9 @@ tell you about it. Very annoying. This prevents that."
         (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
       file))
 
+  ;; Anything in the runtime folders (i.e. $XDG_RUNTIME_DIR)
+  (add-to-list 'recentf-exclude "^/run")
+
   ;; Resolve symlinks, strip out the /sudo:X@ prefix in local tramp paths, and
   ;; abbreviate $HOME -> ~ in filepaths (more portable, more readable, & saves
   ;; space)
