@@ -307,7 +307,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq resize-mini-windows 'grow-only)
 
 ;; Typing yes/no is obnoxious when y/n will do
-(advice-add #'yes-or-no-p :override #'y-or-n-p)
+(if EMACS28+
+    (setq use-short-answers t)
+  ;; DEPRECATED Remove when we drop 27.x support
+  (advice-add #'yes-or-no-p :override #'y-or-n-p))
 
 ;; Try to keep the cursor out of the read-only portions of the minibuffer.
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
