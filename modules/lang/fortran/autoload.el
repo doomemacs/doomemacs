@@ -27,23 +27,31 @@ or gfortran, depending on what feature flags are set."
         ((featurep! +intel) (+fortran/ifort-run))
         (t (+fortran/gfortran-run))))
 
-;; Intel Fortran
+(defun +fortran--exec-name ()
+  "The name of the output executable."
+  (file-name-sans-extension buffer-file-name))
+
+;;
+;;; Intel Fortran
+
 ;;;###autoload
 (defun +fortran/ifort-compile ()
   "Compile the current buffer using ifort."
   (interactive)
-  (compile (format "ifort %S"
-                   (buffer-file-name))))
+  (compile (format "ifort %S -o %S"
+                   (buffer-file-name)
+                   (+fortran--exec-name))))
 
 ;;;###autoload
 (defun +fortran/ifort-run ()
   "Run the current buffer using ifort."
   (interactive)
-  (delete-file "./a.out")
-  (+fortran/ifort-compile)
-  (while (not (file-exists-p "./a.out"))
-    (sleep-for 1))
-  (compile "./a.out"))
+  (let ((exec (+fortran--exec-name)))
+    (delete-file exec)
+    (+fortran/ifort-compile)
+    (while (not (file-exists-p exec))
+      (sleep-for 1))
+    (compile (format "%S" exec))))
 
 ;;
 ;;; GFortran
@@ -63,20 +71,21 @@ or gfortran, depending on what feature flags are set."
 (defun +fortran/gfortran-compile ()
   "Compile the current buffer using gfortran."
   (interactive)
-  (compile (format "gfortran %s %S"
+  (compile (format "gfortran %s %S -o %S"
                    (+fortran--std)
-                   buffer-file-name)))
+                   buffer-file-name
+                   (+fortran--exec-name))))
 
 ;;;###autoload
 (defun +fortran/gfortran-run ()
   "Run the current buffer using gfortran."
   (interactive)
-  (delete-file "./a.out")
-  (+fortran/gfortran-compile)
-  (while (not (file-exists-p "./a.out"))
-    (sleep-for 1))
-  (compile "./a.out"))
-
+  (let ((exec (+fortran--exec-name)))
+    (delete-file exec)
+    (+fortran/gfortran-compile)
+    (while (not (file-exists-p exec))
+      (sleep-for 1))
+    (compile (format "%S" exec))))
 
 ;;
 ;;; FPM
