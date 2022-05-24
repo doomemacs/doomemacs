@@ -76,6 +76,16 @@ They are used in a container context (not =vf= but =vaf= or =vif=)
 you can also jump to the next / previous node type in a buffer by using =[g=
 or =]g= respectfully, the following key will correspond to the text object you
 want to jump to
+Currently keys are bound to:
+| key | text object    |
+|-----+----------------|
+| =a= | parameter list |
+| =f= | function       |
+| =F= | function call  |
+| =c= | comment        |
+| =C= | class          |
+| =i= | conditional    |
+| =l= | loop           |
 
 * Configuration
 ** Disable text objects for certain modes
