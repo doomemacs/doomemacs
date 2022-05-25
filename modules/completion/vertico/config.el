@@ -15,6 +15,15 @@ overrides `completion-styles' during company completion sessions.")
 
 (use-package! vertico
   :hook (doom-first-input . vertico-mode)
+  :init
+  (defadvice! +vertico-crm-indicator-a (args)
+    :filter-args #'completing-read-multiple
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
   :config
   (setq vertico-resize nil
         vertico-count 17
