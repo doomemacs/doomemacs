@@ -47,7 +47,7 @@
          "F" (+tree-sitter-goto-textobj "call.outer" t)
          "C" (+tree-sitter-goto-textobj "class.outer" t)
          "c" (+tree-sitter-goto-textobj "comment.outer" t)
-         "i" (+tree-sitter-goto-textobj "conditional.outer" t)
+         "v" (+tree-sitter-goto-textobj "conditional.outer" t)
          "l" (+tree-sitter-goto-textobj "loop.outer" t))
         (:map +tree-sitter-goto-next-map
          "a" (+tree-sitter-goto-textobj "parameter.outer")
@@ -55,7 +55,7 @@
          "F" (+tree-sitter-goto-textobj "call.outer")
          "C" (+tree-sitter-goto-textobj "class.outer")
          "c" (+tree-sitter-goto-textobj "comment.outer")
-         "i" (+tree-sitter-goto-textobj "conditional.outer")
+         "v" (+tree-sitter-goto-textobj "conditional.outer")
          "l" (+tree-sitter-goto-textobj "loop.outer")))
 
 
