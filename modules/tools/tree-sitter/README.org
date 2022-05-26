@@ -84,7 +84,7 @@ Currently keys are bound to:
 | =F= | function call  |
 | =c= | comment        |
 | =C= | class          |
-| =i= | conditional    |
+| =v= | conditional    |
 | =l= | loop           |
 
 * Configuration
