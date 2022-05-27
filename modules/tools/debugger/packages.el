@@ -6,5 +6,5 @@
     (package! realgud-trepan-ni :pin "0ec088ea343835e24ae73da09bea96bfb02a3130")))
 
 (when (featurep! +lsp)
-  (package! dap-mode :pin "f918c0580bd17105cbe50aa701a2375abca5a6ab")
+  (package! dap-mode :pin "67fd9e5d4e157e72b09ab34daca67619cb98c673")
   (package! posframe :pin "c91d4d53fa479ceb604071008ce0a901770eff57"))
