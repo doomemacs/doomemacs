@@ -98,7 +98,7 @@ orderless."
 
 
 (use-package! consult
-  :defer t
+  :after (embark)
   :init
   (define-key!
     [remap apropos]                       #'consult-apropos
