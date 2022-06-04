@@ -555,7 +555,27 @@ files, so this replace calls to `pp' with the much faster `prin1'."
       (button-type-put
        var-bt 'action
        (lambda (button)
-         (helpful-variable (button-get button 'apropos-symbol)))))))
+         (helpful-variable (button-get button 'apropos-symbol))))))
+
+  (when EMACS29+
+    ;; REVIEW This should be reported upstream to Emacs.
+    (defadvice! doom--find-function-search-for-symbol-save-excursion-a (fn &rest args)
+      "Suppress cursor movement by `find-function-search-for-symbol'.
+
+Addresses an unwanted side-effect in `find-function-search-for-symbol' on Emacs
+29 where the cursor is moved to a variable's definition if it's defined in the
+current buffer."
+      :around #'find-function-search-for-symbol
+      (let (buf pos)
+        (letf! (defun find-library-name (library)
+                 (let ((filename (funcall find-library-name library)))
+                   (with-current-buffer (find-file-noselect filename)
+                     (setq buf (current-buffer)
+                           pos (point)))
+                   filename))
+          (prog1 (apply fn args)
+            (when (buffer-live-p buf)
+              (with-current-buffer buf (goto-char pos)))))))))
 
 
 ;;;###package imenu
