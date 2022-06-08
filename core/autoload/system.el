@@ -100,7 +100,7 @@ Tries to be portable. Returns 1 if cannot be determined."
                          (wrong-type-argument
                           (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
                                       cpus))))
-                      (consp
+                      (cons
                        (if (zerop (car cpus))
                            (string-to-number (cdr cpus))
                          (user-error "Failed to look up number of processors, because:\n\n%s"
