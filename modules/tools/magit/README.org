@@ -33,7 +33,7 @@ This module has no dedicated maintainers.
 + [[https://github.com/magit/forge][forge]]* (=+forge=)
 + [[https://github.com/jtatarik/magit-gitflow][magit-gitflow]]
 + [[https://github.com/alphapapa/magit-todos][magit-todos]]
-+ [[https://github.com/charignon/github-review][github-review]]
++ [[https://github.com/wandersoncferreira/code-review][code-review]]
 + [[https://github.com/emacs-evil/evil-magit][evil-magit]]* (=:editor evil +everywhere=)
 
 ** Hacks
