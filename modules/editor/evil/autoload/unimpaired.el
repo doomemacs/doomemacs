@@ -113,7 +113,7 @@ See `+evil/next-preproc-directive' for details."
     (user-error "Must be called from a file-visiting buffer"))
   (let* ((directory (file-name-directory buffer-file-name))
          (filename (file-name-nondirectory buffer-file-name))
-         (files (doom-glob (file-name-directory buffer-file-name) "[!.]*"))
+         (files (cl-remove-if #'file-directory-p (doom-glob (file-name-directory buffer-file-name) "[!.]*")))
          (index (cl-position filename files :test #'file-equal-p)))
     (when (null index)
       (user-error "Couldn't find this file in current directory"))
