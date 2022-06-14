@@ -12,7 +12,7 @@ See `circe-network-options' for details."
   (declare (indent 1))
   (after! circe
     (unless (plist-member plist :host)
-      (plist-put! plist :host server))
+      (cl-callf plist-put plist :host server))
     (setf (alist-get server circe-network-options
                      nil nil #'equal)
           plist)))

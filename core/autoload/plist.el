@@ -21,6 +21,7 @@ list, the pair is destructured into (CAR . CDR)."
            ,@body))
        ,retval)))
 
+;;; DEPRECATED In favor of `cl-callf'
 ;;;###autoload
 (defmacro plist-put! (plist &rest rest)
   "Set each PROP VALUE pair in REST to PLIST in-place."
@@ -51,7 +52,7 @@ list, the pair is destructured into (CAR . CDR)."
   "Non-destructively merge FROM-PLIST onto TO-PLIST"
   (let ((plist (copy-sequence from-plist)))
     (while plist
-      (plist-put! to-plist (pop plist) (pop plist)))
+      (cl-callf plist-put to-plist (pop plist) (pop plist)))
     to-plist))
 
 ;;;###autoload
@@ -60,7 +61,7 @@ list, the pair is destructured into (CAR . CDR)."
   (let (p)
     (while plist
       (if (car plist)
-          (plist-put! p (car plist) (nth 1 plist)))
+          (cl-callf plist-put p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
 
@@ -70,7 +71,7 @@ list, the pair is destructured into (CAR . CDR)."
   (let (p)
     (while plist
       (if (not (memq (car plist) props))
-          (plist-put! p (car plist) (nth 1 plist)))
+          (cl-callf plist-put p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
 

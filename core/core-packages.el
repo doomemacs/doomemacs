@@ -500,30 +500,30 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (when (and recipe (keywordp (car-safe recipe)))
-    (plist-put! plist :recipe `(quote ,recipe)))
+    (cl-callf plist-put plist :recipe `(quote ,recipe)))
   ;; :built-in t is basically an alias for :ignore (locate-library NAME)
   (when built-in
     (when (and (not ignore)
                (equal built-in '(quote prefer)))
       (setq built-in `(locate-library ,(symbol-name name) nil (get 'load-path 'initial-value))))
-    (plist-delete! plist :built-in)
-    (plist-put! plist :ignore built-in))
+    (cl-callf doom-plist-delete plist :built-in)
+    (cl-callf plist-put plist :ignore built-in))
   `(let* ((name ',name)
           (plist (cdr (assq name doom-packages))))
      ;; Record what module this declaration was found in
      (let ((module-list (plist-get plist :modules))
            (module ',(doom-module-from-path)))
        (unless (member module module-list)
-         (plist-put! plist :modules
-                     (append module-list
-                             (list module)
-                             (when (file-in-directory-p ,(dir!) doom-private-dir)
-                               '((:private . modules)))
-                             nil))))
+         (cl-callf plist-put plist :modules
+                   (append module-list
+                           (list module)
+                           (when (file-in-directory-p ,(dir!) doom-private-dir)
+                             '((:private . modules)))
+                           nil))))
      ;; Merge given plist with pre-existing one
      (doplist! ((prop val) (list ,@plist) plist)
        (unless (null val)
-         (plist-put! plist prop val)))
+         (cl-callf plist-put plist prop val)))
      ;; Some basic key validation; throws an error on invalid properties
      (condition-case e
          (when-let (recipe (plist-get plist :recipe))
@@ -535,13 +535,12 @@ elsewhere."
                recipe
              ;; Expand :local-repo from current directory
              (when local-repo
-               (plist-put!
-                plist :recipe
-                (plist-put recipe :local-repo
-                           (let ((local-path (expand-file-name local-repo ,(dir!))))
-                             (if (file-directory-p local-path)
-                                 local-path
-                               local-repo)))))))
+               (cl-callf plist-put plist :recipe
+                         (plist-put recipe :local-repo
+                                    (let ((local-path (expand-file-name local-repo ,(dir!))))
+                                      (if (file-directory-p local-path)
+                                          local-path
+                                        local-repo)))))))
        (error
         (signal 'doom-package-error
                 (cons ,(symbol-name name)
