@@ -49,6 +49,7 @@ like =ivy= and =helm= do. The primary packages are:
 
 ** Module Flags
 + =+icons= Adds icons to =file= and =buffer= category completion selections.
++ =+childframe= Lets vertico use posframe to show its candidate menu.
 
 ** Plugins
 + [[https://github.com/minad/vertico][vertico]]
@@ -60,6 +61,7 @@ like =ivy= and =helm= do. The primary packages are:
 + [[https://github.com/mhayashi1120/Emacs-wgrep][wgrep]]
 + [[https://github.com/minad/consult/][consult-flycheck]] (=:checkers syntax=)
 + [[https://github.com/iyefrat/all-the-icons-completion][all-the-icons-completion]] (=+icons=)
++ [[https://github.com/tumashu/vertico-posframe][vertico-postframe]] (=+childframe=)
 
 * Prerequisites
 Some of the advanced filtering features in async =consult= commands require
