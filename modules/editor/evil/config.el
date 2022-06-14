@@ -494,7 +494,7 @@ directives. By default, this only recognizes C directives.")
       :v  "g-"    #'evil-numbers/dec-at-pt-incremental
       :v  "g+"    #'evil-numbers/inc-at-pt
       (:when (featurep! :tools lookup)
-       :nv "K"   #'+lookup/documentation
+       :nv "gK"   #'+lookup/documentation
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
        :nv "gf"  #'+lookup/file
