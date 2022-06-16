@@ -12,7 +12,8 @@ to a pop up buffer."
     (condition-case-unless-debug e
         (let ((result
                (let* ((buffer-file-name (buffer-file-name (buffer-base-buffer)))
-                      (buffer-file-truename (file-truename buffer-file-name))
+                      (buffer-file-truename
+                       (and buffer-file-name (file-truename buffer-file-name)))
                       (doom--current-module
                        (ignore-errors (doom-module-from-path buffer-file-name)))
                       (debug-on-error t))
