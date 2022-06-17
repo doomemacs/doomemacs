@@ -27,11 +27,11 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "971eb6885ec996c923e955730df3bafbdc244e54")
+  :pin "e9da29b6fafe63abbc2774e9d485ac13d2811b65")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "17f3c514356430448627104e015f155008b45575")
+  :pin "c1e0980fd7a57ca2042fd78acfb1dfb5c3bc03fa")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -49,9 +49,9 @@
 (when (featurep! :tools pdf)
   (package! org-pdftools :pin "967f48fb5038bba32915ee9da8dc4e8b10ba3376"))
 (when (featurep! :tools magit)
-  (package! orgit :pin "42b7f682b3e4e487ff209a44221a729921241133")
+  (package! orgit :pin "b33b916915db5f91d2c9da4cb1a2457ccbb09332")
   (when (featurep! :tools magit +forge)
-    (package! orgit-forge :pin "36e57a0359992e02312f453b8086512e77beb150")))
+    (package! orgit-forge :pin "8baf1dee795f026d4555687022487fab89c9bcdf")))
 (when (featurep! +brain)
   (package! org-brain :pin "46ca9f766322cff31279ecdf02251ff24a0e9431"))
 (when (featurep! +dragndrop)
@@ -62,15 +62,15 @@
 (when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (featurep! +jupyter)
-  (package! jupyter :pin "0a7055d7b12cf98723110415b08ee91869fa7d94"))
+  (package! jupyter :pin "7d20c0aee2f9c896215f35232905b23532ef04c5"))
 (when (featurep! +journal)
-  (package! org-journal :pin "f121450610650c63aabf13afd0d2089e05fad2e4"))
+  (package! org-journal :pin "839a2e19865a03bec30ef32431f981f33880a754"))
 (when (featurep! +noter)
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (featurep! +pretty)
-  (package! org-appear :pin "ffbd742267ff81ba8433177fac5d7fe22b6d68a9")
+  (package! org-appear :pin "8dd1e564153d8007ebc4bb4e14250bde84e26a34")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")
   (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
@@ -78,11 +78,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "3faa042393ebfe5699a3bffce775f039d7416ceb")
-  (package! org-re-reveal :pin "e5bae22b9ef63a9fcfbbaa000e087703751eaad0")
+  (package! org-re-reveal :pin "93ba4e91f1d007669d39fc76c097ff5d6a64489e")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "e281b3234e7991283ce4dcca705dd9a6a9ebe5d2"))
+    :pin "039972c730690af7a83a5cb832056a7cc8b565d7"))
 (cond
  ((featurep! +roam)
   (package! org-roam
@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "36152590ad1e8ffea86cb909e5ef818cbdb2a22d")))
+    :pin "171a8db32f5b51d3ddb4a31356e1d9c581b4bbd2")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -120,10 +120,10 @@
 
 ;;; Export
 (when (featurep! +pandoc)
-  (package! ox-pandoc :pin "b2e43b936249de2a100afb4262698105c39ce289"))
+  (package! ox-pandoc :pin "0a35d0fbfa56bdd9ec5ba5bac2fe002b61c05c52"))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "65e349b306b7fa27285f4c663e44bb36f6c8e653"))
+    :pin "85d11219a58d3a7927d7fe67144987a574fa54aa"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
