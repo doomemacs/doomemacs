@@ -6,4 +6,4 @@
 (unless (featurep! +lsp)
   (package! company-graphql
     :recipe (:host github :repo "thaenalpha/company-graphql")
-    :pin "aed9f5109e87..."))
+    :pin "aed9f5109e877944a895d08fc08bad103f03096b"))
