@@ -2,6 +2,8 @@
 ;;; lang/graphql/packages.el
 
 (package! graphql-mode :pin "9740e4027bd9313697d5cac5caaa5b15626ab1da")
-(package! graphql-doc :pin "6ba7961fc9c5c9818bd60abce6ba9dfef2dad452")
-(when (not (featurep! +lsp))
-  (package! company-graphql :pin "757dfa45ad0cef9b9c362c8993d6474a2426c01c"))
+(package! graphql-doc :pin "d37140267e0c426c7c18aff31900aa1650257394")
+(unless (featurep! +lsp)
+  (package! company-graphql
+    :recipe (:host github :repo "thaenalpha/company-graphql")
+    :pin "aed9f5109e87..."))
