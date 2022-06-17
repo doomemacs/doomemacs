@@ -1337,10 +1337,6 @@ compelling reason, so..."
              #'+org-init-protocol-lazy-loader-h
              #'+org-init-smartparens-h)
 
-  ;; (Re)activate eldoc-mode in org-mode a little later, because it disables
-  ;; itself if started too soon (which is the case with `global-eldoc-mode').
-  (add-hook 'org-mode-local-vars-hook #'eldoc-mode)
-
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
              (not byte-compile-current-file))
