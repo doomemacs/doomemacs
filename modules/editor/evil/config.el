@@ -366,9 +366,7 @@ directives. By default, this only recognizes C directives.")
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
-        evil-snipe-char-fold t)
-  :config
-  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode 'treemacs-mode 'dired-mode))
+        evil-snipe-char-fold t))
 
 
 (use-package! evil-surround

@@ -104,6 +104,7 @@ variable for an explanation of the defaults (in comments). See
       company
       compile
       consult
+      corfu
       (custom cus-edit)
       cus-theme
       daemons
@@ -121,12 +122,14 @@ variable for an explanation of the defaults (in comments). See
       doc-view
       docker
       ebib
+      ebuku
       edbi
       edebug
       ediff
       eglot
       explain-pause-mode
       elfeed
+      eldoc
       elisp-mode
       elisp-refs
       elisp-slime-nav
@@ -178,7 +181,8 @@ variable for an explanation of the defaults (in comments). See
       kotlin-mode
       macrostep
       man
-      magit
+      (magit magit-repos magit-submodule)
+      magit-section
       magit-todos
       markdown-mode
       monky
@@ -193,6 +197,7 @@ variable for an explanation of the defaults (in comments). See
       omnisharp
       org
       org-present
+      org-roam
       osx-dictionary
       outline
       p4
@@ -225,6 +230,8 @@ variable for an explanation of the defaults (in comments). See
       simple-mpc
       slime
       sly
+      snake
+      so-long
       speedbar
       tablist
       tar-mode
@@ -246,6 +253,7 @@ variable for an explanation of the defaults (in comments). See
       view
       vlf
       vterm
+      vundo
       w3m
       wdired
       wgrep
