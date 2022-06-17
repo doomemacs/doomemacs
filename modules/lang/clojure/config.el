@@ -38,7 +38,7 @@
     (set-repl-handler! 'clojurescript-mode #'+clojure/open-cljs-repl :persist t)
     (set-eval-handler! '(clojure-mode clojurescript-mode clojurec-mode) #'cider-eval-region))
 
-  ;; HACK Fix raxod502/radian#446: CIDER tries to calculate the frame's
+  ;; HACK Fix radian-software/radian#446: CIDER tries to calculate the frame's
   ;;   background too early; sometimes before the initial frame has been
   ;;   initialized, causing errors.
   (defvar cider-docview-code-background-color nil)

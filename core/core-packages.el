@@ -480,8 +480,8 @@ Accepts the following properties:
        be installed or uninstalled. Use this to pin 2nd order dependencies.
  :recipe RECIPE
    Specifies a straight.el recipe to allow you to acquire packages from external
-   sources. See https://github.com/raxod502/straight.el#the-recipe-format for
-   details on this recipe.
+   sources. See https://github.com/radian-software/straight.el#the-recipe-format
+   for details on this recipe.
  :disable BOOL
    Do not install or update this package AND disable all of its `use-package!'
    and `after!' blocks.

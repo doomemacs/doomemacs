@@ -237,7 +237,7 @@ kind!
 [nix]: https://nixos.org
 [ported-vim-plugins]: modules/editor/evil/README.org#ported-vim-plugins
 [ripgrep]: https://github.com/BurntSushi/ripgrep
-[straight.el]: https://github.com/raxod502/straight.el
+[straight.el]: https://github.com/radian-software/straight.el
 [vim-easymotion]: https://github.com/easymotion/vim-easymotion
 [vim-lion]: https://github.com/tommcdo/vim-lion
 [vim-sneak]: https://github.com/justinmk/vim-sneak
