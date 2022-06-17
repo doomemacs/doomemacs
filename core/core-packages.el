@@ -521,9 +521,9 @@ elsewhere."
                              '((:private . modules)))
                            nil))))
      ;; Merge given plist with pre-existing one
-     (doplist! ((prop val) (list ,@plist) plist)
-       (unless (null val)
-         (cl-callf plist-put plist prop val)))
+     (cl-loop for (key value) on (list ,@plist) by 'cddr
+              when value
+              do (cl-callf plist-put plist key value))
      ;; Some basic key validation; throws an error on invalid properties
      (condition-case e
          (when-let (recipe (plist-get plist :recipe))
