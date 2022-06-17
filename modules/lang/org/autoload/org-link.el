@@ -51,7 +51,7 @@ exist, and `org-link' otherwise."
                          (if (file-exists-p file-name)
                              'org-link
                            'error)))
-           (doom-plist-delete plist :requires))))
+           (plist-put plist :requires nil))))
 
 
 ;;

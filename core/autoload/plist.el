@@ -3,24 +3,6 @@
 ;;
 ;;; Macros
 
-;;;###autoload
-(cl-defmacro doplist! ((arglist plist &optional retval) &rest body)
-  "Loop over a PLIST's (property value) pairs then return RETVAL.
-
-Evaluate BODY with either ARGLIST bound to (cons PROP VAL) or, if ARGLIST is a
-list, the pair is destructured into (CAR . CDR)."
-  (declare (indent 1))
-  (let ((plist-var (make-symbol "plist")))
-    `(let ((,plist-var (copy-sequence ,plist)))
-       (while ,plist-var
-         (let ,(if (listp arglist)
-                   `((,(pop arglist) (pop ,plist-var))
-                     (,(pop arglist) (pop ,plist-var)))
-                 `((,arglist (cons (pop ,plist-var)
-                                   (pop ,plist-var)))))
-           ,@body))
-       ,retval)))
-
 ;;; DEPRECATED In favor of `cl-callf'
 ;;;###autoload
 (defmacro plist-put! (plist &rest rest)
@@ -30,11 +12,6 @@ list, the pair is destructured into (CAR . CDR)."
             do ,(if (symbolp plist)
                     `(setq ,plist (plist-put ,plist prop value))
                   `(plist-put ,plist prop value))))
-
-;;;###autoload
-(defmacro plist-delete! (plist prop)
-  "Delete PROP from PLIST in-place."
-  `(setq ,plist (doom-plist-delete ,plist ,prop)))
 
 
 ;;
@@ -61,16 +38,6 @@ list, the pair is destructured into (CAR . CDR)."
   (let (p)
     (while plist
       (if (car plist)
-          (cl-callf plist-put p (car plist) (nth 1 plist)))
-      (setq plist (cddr plist)))
-    p))
-
-;;;###autoload
-(defun doom-plist-delete (plist &rest props)
-  "Delete PROPS from a copy of PLIST."
-  (let (p)
-    (while plist
-      (if (not (memq (car plist) props))
           (cl-callf plist-put p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
