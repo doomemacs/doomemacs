@@ -181,26 +181,34 @@ users).")
 ;;
 ;;; Don't litter `doom-emacs-dir'
 
-;; We avoid `no-littering' because it's a mote too opinionated for our needs.
-(setq async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
-      custom-file                  (concat doom-private-dir "custom.el")
-      desktop-dirname              (concat doom-etc-dir "desktop")
-      desktop-base-file-name       "autosave"
-      desktop-base-lock-name       "autosave-lock"
-      pcache-directory             (concat doom-cache-dir "pcache/")
-      request-storage-directory    (concat doom-cache-dir "request")
-      shared-game-score-directory  (concat doom-etc-dir "shared-game-score/"))
+;; I change `user-emacs-directory' because many packages (even built-in ones)
+;; abuse it to build paths for storage/cache files (instead of correctly using
+;; `locate-user-emacs-file'). This change ensures that said data files are never
+;; saved to the root of your emacs directory *and* saves us the trouble setting
+;; a million directory/file variables.
+(setq user-emacs-directory doom-cache-dir)
 
-(defadvice! doom--write-to-sane-paths-a (fn &rest args)
-  "Write 3rd party files to `doom-etc-dir' to keep `user-emacs-directory' clean.
+;; ...However, this may surprise packages (and users) that read
+;; `user-emacs-directory' expecting to find the location of your Emacs config,
+;; such as server.el!
+(setq server-auth-dir (expand-file-name "server/" doom-emacs-dir))
 
-Also writes `put' calls for saved safe-local-variables to `custom-file' instead
-of `user-init-file' (which `en/disable-command' in novice.el.gz is hardcoded to
-do)."
-  :around #'en/disable-command
-  :around #'locate-user-emacs-file
-  (let ((user-emacs-directory doom-etc-dir)
-        (user-init-file custom-file))
+;; Packages with file/dir settings that don't use `user-emacs-directory' or
+;; `locate-user-emacs-file' to initialize will need to set explicitly, to stop
+;; them from littering in ~/.emacs.d/.
+(setq desktop-dirname  (expand-file-name "desktop" doom-cache-dir)
+      pcache-directory (expand-file-name "pcache/" doom-cache-dir))
+
+;; Allow the user to store custom.el-saved settings and themes in their Doom
+;; config (e.g. ~/.doom.d/).
+(setq custom-file (expand-file-name "custom.el" doom-private-dir))
+
+(define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
+  "Write saved safe-local-variables to `custom-file' instead.
+
+Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
+`user-init-file')."
+  (let ((user-init-file custom-file))
     (apply fn args)))
 
 
