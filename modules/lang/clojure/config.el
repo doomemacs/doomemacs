@@ -87,7 +87,7 @@
     (add-hook! 'cider-mode-hook
       (defun +clojure--cider-disable-completion ()
         "Use lsp completion instead of cider."
-        (remove-hook 'completion-at-point-functions #'cider-complete-at-point))))
+        (remove-hook 'completion-at-point-functions #'cider-complete-at-point t))))
 
   ;; Error messages emitted from CIDER is silently funneled into *nrepl-server*
   ;; rather than the *cider-repl* buffer. How silly. We might want to see that
