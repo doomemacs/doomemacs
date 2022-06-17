@@ -99,3 +99,6 @@
         "T" #'exunit-toggle-file-and-test
         "t" #'exunit-toggle-file-and-test-other-window
         "s" #'exunit-verify-single))
+
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'elixir-mode-local-vars-hook #'tree-sitter!))

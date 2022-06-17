@@ -47,3 +47,7 @@
 
 (use-package! nix-repl
   :commands nix-repl-show)
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'nix-mode-local-vars-hook #'tree-sitter!))

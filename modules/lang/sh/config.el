@@ -93,3 +93,7 @@
   :config
   (when (featurep! +lsp)
     (add-hook 'powershell-mode-local-vars-hook #'lsp! 'append)))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'sh-mode-local-vars-hook #'tree-sitter!))

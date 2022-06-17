@@ -176,3 +176,7 @@
   :on-exit
   (setq phpunit-args nil
         phpunit-executable nil))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'php-mode-local-vars-hook #'tree-sitter!))

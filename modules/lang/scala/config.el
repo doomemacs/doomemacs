@@ -50,3 +50,7 @@
 (use-package! sbt-mode
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'+scala/open-repl :persist t))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'scala-mode-local-vars-hook #'tree-sitter!))

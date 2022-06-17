@@ -38,3 +38,9 @@
           "h"   #'agda2-display-implicit-arguments
           "q"   #'agda2-quit
           "r"   #'agda2-restart)))
+
+;; Tree Sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! '(agda-mode-local-vars-hook
+               agda2-mode-local-vars-hook)
+             #'tree-sitter!))

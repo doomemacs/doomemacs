@@ -4,6 +4,10 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
+(assert! (or (not (featurep! +tree-sitter))
+             (featurep! :tools tree-sitter))
+         "This module requires (:tools tree-sitter)")
+
 (if (not (or (executable-find "python")
              (executable-find "python3")))
     (error! "Couldn't find python in your PATH")

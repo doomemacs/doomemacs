@@ -30,3 +30,6 @@
         "f" #'zig-format-buffer
         "r" #'zig-run
         "t" #'zig-test-buffer))
+
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'zig-mode-local-vars-hook #'tree-sitter!))

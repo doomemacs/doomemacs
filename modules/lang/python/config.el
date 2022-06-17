@@ -345,3 +345,7 @@
   (use-package! lsp-pyright
     :when (featurep! +pyright)
     :after lsp-mode))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'python-mode-local-vars-hook #'tree-sitter!))

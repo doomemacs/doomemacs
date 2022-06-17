@@ -49,3 +49,7 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
   (set-docsets! 'groovy-mode "Groovy" "Groovy_JDK")
   (set-eval-handler! 'groovy-mode "groovy")
   (set-repl-handler! 'groovy-mode #'+java/open-groovy-repl))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'java-mode-local-vars-hook #'tree-sitter!))

@@ -118,3 +118,7 @@
                 ((equal ext ".eliomi")
                  (setq-local ocamlformat-file-kind 'interface)))))
       (setq +format-with 'ocamlformat))))
+
+;; Tree sitter
+(eval-when! (featurep! +tree-sitter)
+  (add-hook! 'tuareg-mode-local-vars-hook #'tree-sitter))
