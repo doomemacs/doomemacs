@@ -233,9 +233,7 @@ do)."
 ;; Emacs is essentially one huge security vulnerability, what with all the
 ;; dependencies it pulls in from all corners of the globe. Let's try to be at
 ;; least a little more discerning.
-(setq gnutls-verify-error (and (fboundp 'gnutls-available-p)
-                               (gnutls-available-p)
-                               (not (getenv-internal "INSECURE")))
+(setq gnutls-verify-error noninteractive
       gnutls-algorithm-priority
       (when (boundp 'libgnutls-version)
         (concat "SECURE128:+SECURE192:-VERS-ALL"
