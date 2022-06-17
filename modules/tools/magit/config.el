@@ -227,17 +227,11 @@ ensure it is built when we actually use Forge."
   :defer t
   :init (defvar evil-collection-magit-use-z-for-folds t)
   :config
-  ;; These numbered keys mask the numerical prefix keys. Since they've already
-  ;; been replaced with z1, z2, z3, etc (and 0 with g=), there's no need to keep
-  ;; them around:
-  (undefine-key! magit-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
-
   ;; q is enough; ESC is way too easy for a vimmer to accidentally press,
   ;; especially when traversing modes in magit buffers.
   (evil-define-key* 'normal magit-status-mode-map [escape] nil)
 
   (after! code-review
-    (undefine-key! code-review-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
     (map! :map code-review-mode-map
           :n "r" #'code-review-transient-api
           :n "RET" #'code-review-comment-add-or-edit))
@@ -290,3 +284,17 @@ ensure it is built when we actually use Forge."
 
   (transient-append-suffix 'magit-dispatch '(0 -1 -1)
     '("*" "Worktree" magit-worktree)))
+
+
+(use-package! evil-collection-magit-section
+  :when (featurep! :editor evil +everywhere)
+  :defer t
+  :init
+  (defvar evil-collection-magit-section-use-z-for-folds evil-collection-magit-use-z-for-folds)
+  (after! magit-section
+    ;; These numbered keys mask the numerical prefix keys. Since they've already
+    ;; been replaced with z1, z2, z3, etc (and 0 with g=), there's no need to
+    ;; keep them around:
+    (undefine-key! magit-section-mode-map "M-1" "M-2" "M-3" "M-4" "1" "2" "3" "4" "0")
+    ;; `evil-collection-magit-section' binds these redundant keys.
+    (map! :map magit-section-mode-map :n "1" nil :n "2" nil :n "3" nil :n "4" nil)))
