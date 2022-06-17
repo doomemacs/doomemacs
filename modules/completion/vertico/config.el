@@ -98,8 +98,8 @@ orderless."
 
 
 (use-package! consult
-  :after (embark)
-  :init
+  :defer t
+  :preface
   (define-key!
     [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
@@ -232,6 +232,8 @@ orderless."
         (:leader
          :desc "Actions" "a" #'embark-act)) ; to be moved to :config default if accepted
   :config
+  (require 'consult)
+
   (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
 
   (defadvice! +vertico--embark-which-key-prompt-a (fn &rest args)
