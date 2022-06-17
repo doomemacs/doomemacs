@@ -183,8 +183,34 @@ orderless."
   :bind (([remap list-directory] . consult-dir)
          :map vertico-map
          ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
+         ("C-x C-j" . consult-dir-jump-file))
+  :config
+  (when (featurep! :tools docker)
+    (defun +vertico--consult-dir-docker-hosts ()
+      "Get a list of hosts from docker."
+      (when (require 'docker-tramp nil t)
+        (let ((hosts)
+              (docker-tramp-use-names t))
+          (dolist (cand (docker-tramp--parse-running-containers))
+            (let ((user (unless (string-empty-p (car cand))
+                          (concat (car cand) "@")))
+                  (host (car (cdr cand))))
+              (push (concat "/docker:" user host ":/") hosts)))
+          hosts)))
 
+    (defvar +vertico--consult-dir-source-tramp-docker
+      `(:name     "Docker"
+        :narrow   ?d
+        :category file
+        :face     consult-file
+        :history  file-name-history
+        :items    ,#'+vertico--consult-dir-docker-hosts)
+      "Docker candiadate source for `consult-dir'.")
+
+    (add-to-list 'consult-dir-sources '+vertico--consult-dir-source-tramp-docker t))
+
+  (add-to-list 'consult-dir-sources 'consult-dir--source-tramp-ssh t)
+  (add-to-list 'consult-dir-sources 'consult-dir--source-tramp-local t))
 
 (use-package! consult-flycheck
   :when (featurep! :checkers syntax)
