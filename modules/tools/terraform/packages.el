@@ -3,4 +3,4 @@
 
 (package! terraform-mode :pin "e560caaa9d9a11b0868adf6d9dcae5ebb5055730")
 (when (featurep! :completion company)
-  (package! company-terraform :pin "2d11a21fee2f298e48968e479ddcaeda4d736e12"))
+  (package! company-terraform :pin "8d5a16d1bbeeb18ca49a8fd57b5d8cd30c8b8dc7"))

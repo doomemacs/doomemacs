@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/rgb/packages.el
 
-(package! rainbow-mode :pin "949166cc0146bc9fabf74ce70c1c4a097f4cffd4")
-(package! kurecolor :pin "3fc84840cbbd75e646cafa2fd3a00004b55e37ec")
+(package! rainbow-mode :pin "55a8c15782197cd9db8950d2f5ed1b9caca08dae")
+(package! kurecolor :pin "d17a77d9210b3e7b8141d03c04d1898bcab2b876")
