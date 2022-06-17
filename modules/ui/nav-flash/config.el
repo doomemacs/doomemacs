@@ -21,6 +21,7 @@
   (add-hook! '(imenu-after-jump-hook
                better-jumper-post-jump-hook
                counsel-grep-post-action-hook
+               consult-after-jump-hook
                dumb-jump-after-jump-hook)
              #'+nav-flash-blink-cursor-maybe-h)
 
