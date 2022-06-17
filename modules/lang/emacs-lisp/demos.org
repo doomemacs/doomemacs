@@ -3,7 +3,8 @@
 
 This file contains demos of Doom's public API; its core library, macros, and
 autodefs. It is used by the =elisp-demos= package to display examples of their
-usage from their documentation (e.g. =SPC h f add-hook\!=).
+usage in the documentation displayed by either ~describe-function~ or
+~helpful-function~ (on [[kbd:][SPC h f]]).
 
 * Table of Contents :TOC_3:
 - [[#core-lib][core-lib]]
@@ -37,6 +38,9 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 
 * core-lib
 ** add-hook!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
@@ -65,7 +69,13 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 #+end_src
 
 ** TODO add-transient-hook!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 ** after!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;;; `after!' will take:
 
@@ -92,6 +102,9 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 (after! python ...)
 #+end_src
 ** appendq!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 (let ((x '(a b c)))
   (appendq! x '(c d e))
@@ -113,6 +126,9 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 : (a b c c d e f g h)
 
 ** custom-set-faces!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (custom-set-faces!
  '(outline-1 :weight normal)
@@ -145,6 +161,9 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 #+end_src
 
 ** custom-theme-set-faces!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (custom-theme-set-faces! 'doom-one
  '(outline-1 :weight normal)
@@ -177,14 +196,26 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 #+end_src
 
 ** TODO defer-feature!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 ** TODO defer-until!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 ** disable-packages!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; Disable packages enabled by DOOM
 (disable-packages! some-package second-package)
 #+end_src
 
 ** doom!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (doom! :completion
        company
@@ -215,6 +246,9 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 #+end_src
 
 ** file-exists-p!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 (file-exists-p! "init.el" doom-emacs-dir)
 #+end_src
@@ -232,11 +266,17 @@ usage from their documentation (e.g. =SPC h f add-hook\!=).
 : /home/hlissner/.emacs.d/LICENSE
 
 ** cmd!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (map! "C-j" (cmd! (newline) (indent-according-to-mode)))
 #+end_src
 
 ** cmd!!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
 the prefix arg into the command call:
@@ -256,6 +296,9 @@ Or to create aliases for functions that behave differently:
 #+end_src
 
 ** cmds!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (map! :i [tab] (cmds! (and (featurep! :editor snippets)
                            (bound-and-true-p yas-minor-mode)
@@ -276,12 +319,18 @@ Or to create aliases for functions that behave differently:
 #+end_src
 
 ** kbd!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (map! "," (kbd! "SPC")
       ";" (kbd! ":"))
 #+end_src
 
 ** letenv!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 (letenv! (("SHELL" "/bin/sh"))
   (shell-command-to-string "echo $SHELL"))
@@ -291,6 +340,9 @@ Or to create aliases for functions that behave differently:
 : "/bin/sh\n"
 
 ** load!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;;; Lets say we're in ~/.doom.d/config.el
 (load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
@@ -302,6 +354,9 @@ Or to create aliases for functions that behave differently:
 #+end_src
 
 ** map!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (map! :map magit-mode-map
       :m  "C-r" 'do-something           ; C-r in motion state
@@ -397,6 +452,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+end_src
 
 ** package!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
 ;; specified in `straight-recipe-repositories':
@@ -429,6 +487,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+end_src
 
 ** pushnew!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 (let ((list '(a b c)))
   (pushnew! list 'c 'd 'e)
@@ -439,6 +500,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 : (e d a b c)
 
 ** prependq!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 (let ((x '(a b c)))
   (prependq! x '(c d e))
@@ -460,11 +524,17 @@ These are side-by-side comparisons, showing how to bind keys with and without
 : (c d e f g h a b c)
 
 ** quiet!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; Enters recentf-mode without extra output
 (quiet! (recentf-mode +1))
 #+end_src
 ** remove-hook!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; With only one hook and one function, this is identical to `remove-hook'. In
 ;; that case, use that instead.
@@ -483,6 +553,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
 #+end_src
 ** setq!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp
 ;; Each of these have a setter associated with them, which must be triggered in
 ;; order for their new values to have an effect.
@@ -491,6 +564,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
        evil-want-C-d-scroll nil)
 #+end_src
 ** setq-hook!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; Set multiple variables after a hook
 (setq-hook! 'markdown-mode-hook
@@ -503,6 +579,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+end_src
 
 ** unsetq-hook!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 (unsetq-hook! 'markdown-mode-hook line-spacing)
 
@@ -517,6 +596,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 #+end_src
 
 ** use-package!
+:PROPERTIES:
+:added: pre-3.0.0
+:END:
 #+begin_src emacs-lisp :eval no
 ;; Use after-call to load package before hook
 (use-package! projectile
