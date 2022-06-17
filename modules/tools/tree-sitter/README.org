@@ -54,6 +54,8 @@ This module has no prerequisites.
 ** Language support
 Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
 highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]] as well as ~typescript-tsx-mode~
+To enable tree sitter for individual languages add the =+tree-sitter= flag.
+Check the module readme of your language for support.
 
 ** Text Objects
 Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
