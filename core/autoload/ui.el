@@ -56,13 +56,6 @@ In tty Emacs, messages are suppressed completely."
 ;;; Hooks
 
 ;;;###autoload
-(defun doom-apply-ansi-color-to-compilation-buffer-h ()
-  "Applies ansi codes to the compilation buffers. Meant for
-`compilation-filter-hook'."
-  (with-silent-modifications
-    (ansi-color-apply-on-region compilation-filter-start (point))))
-
-;;;###autoload
 (defun doom-disable-show-paren-mode-h ()
   "Turn off `show-paren-mode' buffer-locally."
   (setq-local show-paren-mode nil))
