@@ -33,7 +33,7 @@ following shell commands:
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
          (sync-cmd `("doom" "sync" "-u")))
     (cond
-     (packages-only?
+     (packages?
       (doom-cli-call sync-cmd)
       (print! (success "Finished upgrading Doom Emacs")))
 
