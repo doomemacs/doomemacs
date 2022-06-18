@@ -477,11 +477,6 @@
 
 (map! "C-'" #'imenu
 
-      ;;; Text scaling
-      "M-+" #'doom/reset-font-size
-      "M-=" #'doom/increase-font-size
-      "M--" #'doom/decrease-font-size
-
       ;;; search
       (:when (featurep! :completion ivy)
         "C-S-s"        #'swiper
@@ -540,7 +535,6 @@
 
       ;;; expand-region
       "C-="  #'er/expand-region
-      "C--"  #'er/contract-region
 
       ;;; flycheck
       (:after flycheck
