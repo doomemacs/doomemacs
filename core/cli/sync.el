@@ -46,7 +46,7 @@ stale."
       (print-group!
        (when (and (not noenvvar?)
                   (file-exists-p doom-env-file))
-         (doom-cli-call '("doom" "env")))
+         (call! '("env")))
        (doom-packages-install)
        (doom-packages-build)
        (when update?
