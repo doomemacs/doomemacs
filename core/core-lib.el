@@ -44,6 +44,8 @@ list is returned as-is."
 ;;
 ;;; Public library
 
+(define-obsolete-function-alias 'doom-enlist 'ensure-list "v3.0.0")
+
 (defun doom-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
@@ -793,7 +795,15 @@ testing advice (when combined with `rotate-text').
 ;;
 ;;; Backports
 
-;; None at the moment!
+(unless EMACS28+
+  (defun ensure-list (object)
+    "Return OBJECT as a list.
+If OBJECT is already a list, return OBJECT itself.  If it's
+not a list, return a one-element list containing OBJECT."
+    (declare (pure t) (side-effect-free t))
+    (if (listp object)
+        object
+      (list object))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
