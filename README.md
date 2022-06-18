@@ -99,7 +99,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 # Prerequisites
 + Git 2.23+
-+ Emacs 27.1+ (*27.2 is recommended*, or [native-comp](https://www.emacswiki.org/emacs/GccEmacs). **29+ is not supported**).
++ Emacs 27.1+ (*28.1 is recommended*, or [native-comp](https://www.emacswiki.org/emacs/GccEmacs). **29+ is not supported**).
 + [ripgrep] 11.0+
 + GNU `find`
 + *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
