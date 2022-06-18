@@ -119,14 +119,14 @@ Activate this advice with:
     (let (forms)
       (with-temp-buffer
         (insert-file-contents file)
-        (let (emacs-lisp-mode-hook) (emacs-lisp-mode))
-        (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
-          (let ((ppss (syntax-ppss)))
-            (unless (or (nth 4 ppss)
-                        (nth 3 ppss))
-              (save-excursion
-                (goto-char (match-beginning 0))
-                (push (sexp-at-point) forms)))))
+        (with-syntax-table emacs-lisp-mode-syntax-table
+          (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
+            (let ((ppss (syntax-ppss)))
+              (unless (or (nth 4 ppss)
+                          (nth 3 ppss))
+                (save-excursion
+                  (goto-char (match-beginning 0))
+                  (push (sexp-at-point) forms))))))
         (nreverse forms)))))
 
 ;;;###autoload
