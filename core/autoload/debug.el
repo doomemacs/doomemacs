@@ -315,6 +315,29 @@ ready to be pasted in a bug report on github."
                           collect (format "%s" name)))
              (error (format "<%S>" e))))))))
 
+;;;###autoload
+(defun doom-info-string (&optional width nocolor)
+  "Return the `doom-info' as a compact string.
+
+FILL-COLUMN determines the column at which lines will be broken."
+  (with-temp-buffer
+    (let ((doom-print-backend (unless nocolor doom-print-backend))
+          (doom-print-indent 0))
+      (dolist (spec (cl-remove-if-not #'cdr (doom-info)) (buffer-string))
+        ;; FIXME Refactor this horrible cludge, either here or in `format!'
+        (insert! ((bold "%-10s ") (symbol-name (car spec)))
+                 ("%s\n"
+                  (string-trim-left
+                   (indent
+                    (fill
+                     (if (listp (cdr spec))
+                         (mapconcat (doom-partial #'format "%s")
+                                    (cdr spec)
+                                    " ")
+                       (cdr spec))
+                     (- (or width 80) 11))
+                    11))))))))
+
 
 ;;
 ;;; Commands
@@ -356,14 +379,7 @@ copies it to your clipboard, ready to be pasted into bug reports!"
       (setq buffer-read-only t)
       (with-silent-modifications
         (erase-buffer)
-        (save-excursion
-          (dolist (spec (cl-remove-if-not #'cdr (doom-info)))
-            (insert! "%-11s  %s\n"
-                     ((car spec)
-                      (if (listp (cdr spec))
-                          (mapconcat (lambda (x) (format "%s" x))
-                                     (cdr spec) " ")
-                        (cdr spec)))))))
+        (insert (doom-info-string 86)))
       (pop-to-buffer buffer)
       (kill-new (buffer-string))
       (when (y-or-n-p "Your doom-info was copied to the clipboard.\n\nOpen pastebin.com?")
