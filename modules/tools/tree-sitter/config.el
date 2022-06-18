@@ -9,9 +9,11 @@
         ;; and this highlights the entire sub tree in your code
         tree-sitter-debug-highlight-jump-region t))
 
+
 (use-package! evil-textobj-tree-sitter
   :when (featurep! :editor evil +everywhere)
-  :after tree-sitter
+  :defer t
+  :init (after! tree-sitter (require 'evil-textobj-tree-sitter))
   :config
   (defvar +tree-sitter-inner-text-objects-map (make-sparse-keymap))
   (defvar +tree-sitter-outer-text-objects-map (make-sparse-keymap))
@@ -57,7 +59,6 @@
          "c" (+tree-sitter-goto-textobj "comment.outer")
          "v" (+tree-sitter-goto-textobj "conditional.outer")
          "l" (+tree-sitter-goto-textobj "loop.outer")))
-
 
   (after! which-key
     (setq which-key-allow-multiple-replacements t)
