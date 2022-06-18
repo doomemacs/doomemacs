@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # This is a shebang interpreter for launching emacs lisp scripts with Doom's CLI
 # framework preloaded and all the metadata it needs initialized. Use it like so:
 #
@@ -22,7 +22,7 @@ case "$EMACS" in
     *) EMACS="${EMACS:-emacs}" ;;
 esac
 
-TMPDIR=${TMPDIR:-`$EMACS -Q --batch --eval '(princ (temporary-file-directory))' 2>/dev/null`}
+TMPDIR="${TMPDIR:-$($EMACS -Q --batch --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
 if [ -z "$TMPDIR" ]; then
     >&2 echo "Error: failed to run Emacs with command '$EMACS'"
     >&2 echo
@@ -30,15 +30,7 @@ if [ -z "$TMPDIR" ]; then
     exit 1
 fi
 
-if [ -z "$EMACSDIR" ]; then
-    EMACSDIR="${XDG_CONFIG_HOME:-$HOME/.config}/emacs"
-    [ -d "$EMACSDIR" ] || EMACSDIR="$HOME/.emacs.d"
-    if [ ! -d "$EMACSDIR" ]; then
-        >&2 echo "Failed to find \$EMACSDIR in ~/.config/emacs or ~/.emacs.d"
-        exit 1
-    fi
-fi
-
+export EMACSDIR="${EMACSDIR:-$(cd $(dirname "$BASH_SOURCE")/.. && pwd)}"
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="$((__DOOMSTEP+1))"
 export __DOOMGEOM="${__DOOMGEOM:-`tput cols lines 2>/dev/null`}"
