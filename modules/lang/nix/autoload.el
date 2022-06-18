@@ -42,8 +42,13 @@
                    :initial-input initial-input
                    :action #'+nix--options-action
                    :caller '+nix/options))
-        ;; TODO Add general `completing-read' support
-        ((user-error "No search engine is enabled. Enable helm or ivy!")))
+        ((+nix--options-action (cdr
+                                (assoc
+                                 (completing-read "NixOs options: "
+                                                  nixos-options
+                                                  nil
+                                                  t
+                                                  initial-input) nixos-options)))))
   ;; Tell lookup module to let us handle things from here
   'deferred)
 
