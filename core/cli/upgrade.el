@@ -63,7 +63,7 @@ following shell commands:
            (branch (replace-regexp-in-string
                     "^\\(?:[^/]+/[^/]+/\\)?\\(.+\\)\\(?:~[0-9]+\\)?$" "\\1"
                     (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD"))))
-           (target-remote (format "%s_%s" doom-repo-remote branch)))
+           (target-remote (format "%s_%s" doom-upgrade-remote branch)))
       (unless branch
         (error (if (file-exists-p! ".git" doom-emacs-dir)
                    "Couldn't find Doom's .git directory. Was Doom cloned properly?"
@@ -81,12 +81,12 @@ following shell commands:
           (doom-call-process "git" "reset" "--hard" (format "origin/%s" branch))
           (doom-call-process "git" "clean" "-ffd")))
 
-      (doom-call-process "git" "remote" "remove" doom-repo-remote)
+      (doom-call-process "git" "remote" "remove" doom-upgrade-remote)
       (unwind-protect
           (let (result)
-            (or (zerop (car (doom-call-process "git" "remote" "add" doom-repo-remote doom-repo-url)))
-                (error "Failed to add %s to remotes" doom-repo-remote))
-            (or (zerop (car (setq result (doom-call-process "git" "fetch" "--force" "--tags" doom-repo-remote (format "%s:%s" branch target-remote)))))
+            (or (zerop (car (doom-call-process "git" "remote" "add" doom-upgrade-remote doom-upgrade-url)))
+                (error "Failed to add %s to remotes" doom-upgrade-remote))
+            (or (zerop (car (setq result (doom-call-process "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote)))))
                 (error "Failed to fetch from upstream"))
 
             (let ((this-rev (cdr (doom-call-process "git" "rev-parse" "HEAD")))
@@ -107,7 +107,7 @@ following shell commands:
                               (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
                 (let ((diff-url
                        (format "%s/compare/%s...%s"
-                               doom-repo-url
+                               doom-upgrade-url
                                this-rev
                                new-rev)))
                   (print! "Link to diff: %s" diff-url)
@@ -142,7 +142,7 @@ following shell commands:
                    t))))))
         (ignore-errors
           (doom-call-process "git" "branch" "-D" target-remote)
-          (doom-call-process "git" "remote" "remove" doom-repo-remote))))))
+          (doom-call-process "git" "remote" "remove" doom-upgrade-remote))))))
 
 (defun doom-upgrade--working-tree-dirty-p (dir)
   (cl-destructuring-bind (success . stdout)
