@@ -552,7 +552,7 @@ relative to `org-directory', unless it is an absolute path."
   (+org-define-basic-link "doom-modules" 'doom-modules-dir)
 
   ;; TODO PR this upstream
-  (defadvice! +org--follow-search-string-a (fn link arg)
+  (defadvice! +org--follow-search-string-a (fn link &optional arg)
     "Support ::SEARCH syntax for id: links."
     :around #'org-id-open
     :around #'org-roam-id-open
