@@ -36,14 +36,7 @@ debian, and derivatives). On most it's 'fd'.")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-ignored-projects '("~/")
-        projectile-ignored-project-function #'doom-project-ignored-p
-
-        ;; The original `projectile-default-mode-line' can be expensive over
-        ;; TRAMP, so we gimp it in remote buffers.
-        projectile-mode-line-function
-        (lambda ()
-          (if (file-remote-p default-directory) ""
-            (projectile-default-mode-line))))
+        projectile-ignored-project-function #'doom-project-ignored-p)
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
