@@ -277,7 +277,7 @@ SEE ALSO:
     (defgroup! "Development"
       :docs "Commands for developing or launching Doom."
       (defautoload! (ci))
-      ;; TODO (defautoload! (make))
+      (defautoload! (make))
       (defautoload! (run))
 
       ;; FIXME Test framework
