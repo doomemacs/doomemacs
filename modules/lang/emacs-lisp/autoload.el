@@ -9,20 +9,19 @@
 to a pop up buffer."
   (+eval-display-results
    (string-trim-right
-    (condition-case-unless-debug e
-        (let ((result
-               (let* ((buffer-file-name (buffer-file-name (buffer-base-buffer)))
-                      (buffer-file-truename
-                       (and buffer-file-name (file-truename buffer-file-name)))
-                      (doom--current-module
-                       (ignore-errors (doom-module-from-path buffer-file-name)))
-                      (debug-on-error t))
-                 (eval (read (format "(progn %s)"
-                                     (buffer-substring-no-properties beg end)))
-                       lexical-binding))))
-          (require 'pp)
-          (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
-      (error (error-message-string e))))
+    (let ((buffer (generate-new-buffer " *+eval-output*"))
+          (debug-on-error t))
+      (unwind-protect
+          (condition-case-unless-debug e
+              (let ((doom--current-module (ignore-errors (doom-module-from-path buffer-file-name))))
+                (eval-region beg end buffer load-read-function)
+                (with-current-buffer buffer
+                  (let ((pp-max-width nil))
+                    (require 'pp)
+                    (pp-buffer)
+                    (replace-regexp-in-string "\\\\n" "\n" (string-trim-left (buffer-string))))))
+            (error (format "ERROR: %s" e)))
+        (kill-buffer buffer))))
    (current-buffer)))
 
 
