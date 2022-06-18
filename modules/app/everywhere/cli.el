@@ -1,5 +1,5 @@
 ;;; app/everywhere/cli.el -*- lexical-binding: t; -*-
 
-(defcli! everywhere ()
+(defcli! () ()
   "Spawn an emacsclient window for quick edits."
-  (throw 'exit (list "emacsclient" "--eval" "(emacs-everywhere)")))
+  (throw :exit "emacsclient --eval '(emacs-everywhere)'"))

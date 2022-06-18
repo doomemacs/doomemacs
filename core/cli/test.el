@@ -1,16 +1,20 @@
 ;;; core/cli/test.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
-(defun doom--emacs-binary ()
-  (let ((emacs-binary-path (doom-path invocation-directory invocation-name))
-        (runemacs-binary-path (if IS-WINDOWS (doom-path invocation-directory "runemacs.exe"))))
-    (if (and runemacs-binary-path (file-exists-p runemacs-binary-path))
-        runemacs-binary-path
-      emacs-binary-path)))
+;;
+;;; Variables
 
+;; None yet!
+
+
+;;
+;;; Commands
 
 (defcli! test (&rest targets)
   "Run Doom unit tests."
-  :bare t
+  :disable t
+  ;; FIXME Tests don't work; will be fixed in v3.1
   (doom-initialize 'force 'noerror)
   (require 'ansi-color)
   (let (files read-files)
@@ -39,13 +43,12 @@
       (print! (start "Bootstrapping test environment, if necessary..."))
       (cl-destructuring-bind (status . output)
           (doom-exec-process
-           (doom--emacs-binary)
+           (doom-test--emacs-binary)
            "--batch"
            "--eval"
            (prin1-to-string
             `(progn
-               (setq user-emacs-directory ,doom-emacs-dir
-                     doom-auto-accept t)
+               (setq user-emacs-directory ,doom-emacs-dir)
                (require 'core ,(locate-library "core"))
                (require 'core-cli)
                (doom-initialize 'force 'noerror)
@@ -60,7 +63,7 @@
         (if (doom-file-cookie-p file "if" t)
             (cl-destructuring-bind (_status . output)
                 (apply #'doom-exec-process
-                       (doom--emacs-binary)
+                       (doom-test--emacs-binary)
                        "--batch"
                        "-l" (concat doom-core-dir "core.el")
                        "-l" (concat doom-core-dir "test/helpers.el")
@@ -70,7 +73,7 @@
                                      "-f" "buttercup-run")))
               (insert (replace-regexp-in-string ansi-color-control-seq-regexp "" output))
               (push file read-files))
-          (print! (info "Ignoring %s" (relpath file)))))
+          (print! (item "Ignoring %s" (relpath file)))))
       (let ((total 0)
             (total-failed 0)
             (i 0))
@@ -102,3 +105,16 @@
           (print! (error "Ran %d tests, %d failed") total total-failed)
           (kill-emacs 1)))
       t)))
+
+
+;;
+;;; Helpers
+
+(defun doom-test--emacs-binary ()
+  (let ((emacs-binary-path (doom-path invocation-directory invocation-name))
+        (runemacs-binary-path (if IS-WINDOWS (doom-path invocation-directory "runemacs.exe"))))
+    (if (and runemacs-binary-path (file-exists-p runemacs-binary-path))
+        runemacs-binary-path
+      emacs-binary-path)))
+
+;;; test.el ends here

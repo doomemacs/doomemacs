@@ -27,7 +27,7 @@ byte-compiled from.")
                ;; Ensure output conforms to the formatting of all doom CLIs
                (defun message (msg &rest args)
                  (when msg
-                   (print! (info "%s") (apply #'format msg args)))))
+                   (print! (item "%s") (apply #'format msg args)))))
          (print! (start "Compiling your literate config..."))
          (print-group!
           (let (;; Do as little unnecessary work as possible in these org files.
@@ -53,8 +53,8 @@ byte-compiled from.")
           ;; Write an empty file to serve as our mtime cache
           (with-temp-file cache)
           (if doom-interactive-p t
-            (message "Restarting..." )
-            (throw 'exit "__DOOMRESTART=1 __NOTANGLE=1 $@"))))))
+            (print! "Restarting...")
+            (exit! "__DOOMRESTART=1 __NOTANGLE=1 $@"))))))
 
 ;;;###autoload
 (defalias '+literate/reload #'doom/reload)

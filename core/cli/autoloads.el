@@ -30,6 +30,9 @@ one wants that.")
 (defun doom-autoloads-reload (&optional file)
   "Regenerates Doom's autoloads and writes them to FILE."
   (unless file
+    ;; TODO Uncomment when profile system is implemented
+    ;; (make-directory doom-profile-dir t)
+    ;; (setq file (expand-file-name "init.el" doom-profile-dir))
     (setq file doom-autoloads-file))
   (print! (start "(Re)generating autoloads file..."))
   (print-group!
@@ -59,7 +62,10 @@ one wants that.")
                   (seq-difference (hash-table-keys straight--build-cache)
                                   doom-autoloads-excluded-packages))
           doom-autoloads-excluded-files
-          'literal))
+          'literal)
+         ;; TODO Uncomment when profile system is implemented
+         ;; `((if doom-interactive-p (require 'core-start)))
+         )
         (print! (start "Byte-compiling autoloads file..."))
         (doom-autoloads--compile-file file)
         (print! (success "Generated %s")
@@ -128,10 +134,10 @@ one wants that.")
         (cond ((and (not module-enabled-p) altform)
                (print (read altform)))
               ((memq definer '(defun defmacro cl-defun cl-defmacro))
-               (if module-enabled-p
-                   (print (make-autoload form file))
-                 (cl-destructuring-bind (_ _ arglist &rest body) form
-                   (print
+               (print
+                (if module-enabled-p
+                    (make-autoload form file)
+                  (seq-let (_ _ arglist &rest body) form
                     (if altform
                         (read altform)
                       (append
@@ -141,21 +147,20 @@ one wants that.")
                                (_ type))
                              symbol arglist
                              (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
-                                     module
-                                     (if (stringp (car body))
-                                         (pop body)
-                                       "No documentation.")))
+                                     module (if (stringp (car body))
+                                                (pop body)
+                                              "No documentation.")))
                        (cl-loop for arg in arglist
-                                if (and (symbolp arg)
-                                        (not (keywordp arg))
-                                        (not (memq arg cl--lambda-list-keywords)))
+                                if (symbolp arg)
+                                if (not (keywordp arg))
+                                if (not (memq arg cl--lambda-list-keywords))
                                 collect arg into syms
                                 else if (listp arg)
                                 collect (car arg) into syms
                                 finally return (if syms `((ignore ,@syms)))))))))
                (print `(put ',symbol 'doom-module ',module)))
               ((eq definer 'defalias)
-               (cl-destructuring-bind (_ _ target &optional docstring) form
+               (seq-let (_ _ target docstring) form
                  (unless module-enabled-p
                    (setq target #'ignore
                          docstring
@@ -176,7 +181,7 @@ one wants that.")
          ;; the autoloads file.
          debug-on-error
          ;; Non-nil interferes with autoload generation in Emacs < 29. See
-         ;; raxod502/straight.el#904.
+         ;; radian-software/straight.el#904.
          (left-margin 0)
          ;; The following bindings are in `package-generate-autoloads'.
          ;; Presumably for a good reason, so I just copied them.

@@ -7,7 +7,9 @@
 (defvar doom-debug-variables
   '(async-debug
     debug-on-error
+    (debugger . doom-debugger)
     doom-debug-p
+    (doom-print-level . debug)
     garbage-collection-messages
     gcmh-verbose
     init-file-debug
@@ -65,6 +67,73 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
            (remove-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
            (remove-hook 'after-load-functions #'doom--watch-debug-vars-h)))
     (message "Debug mode %s" (if enabled "on" "off"))))
+
+
+;;
+;;; Custom debuggers
+
+(autoload 'backtrace-get-frames "backtrace")
+
+(defun doom-backtrace ()
+  "Return a stack trace as a list of `backtrace-frame' objects."
+  ;; (let* ((n 0)
+  ;;        (frame (backtrace-frame n))
+  ;;        (frame-list nil)
+  ;;        (in-program-stack nil))
+  ;;   (while frame
+  ;;     (when in-program-stack
+  ;;       (push (cdr frame) frame-list))
+  ;;     (when (eq (elt frame 1) debugger)
+  ;;       (setq in-program-stack t))
+  ;;     ;; (when (and (eq (elt frame 1) 'doom-cli-execute)
+  ;;     ;;            (eq (elt frame 2) :doom))
+  ;;     ;;   (setq in-program-stack nil))
+  ;;     (setq n (1+ n)
+  ;;           frame (backtrace-frame n)))
+  ;;   (nreverse frame-list))
+  (cdr (backtrace-get-frames debugger)))
+
+(defun doom-backtrace-write-to-file (backtrace file)
+  "Write BACKTRACE to FILE with appropriate boilerplate."
+  (make-directory (file-name-directory file) t)
+  (let ((doom-print-indent 0))
+    (with-temp-file file
+      (insert ";; -*- lisp-interaction -*-\n")
+      (insert ";; vim: set ft=lisp:\n")
+      (insert (format ";; command=%S\n" command-line-args))
+      (insert (format ";; date=%S\n\n" (format-time-string "%Y-%m-%d %H-%M-%S" before-init-time)))
+      (insert ";;;; ENVIRONMENT\n" (with-output-to-string (doom/version)) "\n")
+      (let ((standard-output (current-buffer))
+            (print-quoted t)
+            (print-escape-newlines t)
+            (print-escape-control-characters t)
+            (print-symbols-bare t)
+            (print-level nil)
+            (print-circle nil)
+            (n -1))
+        (mapc (lambda (frame)
+                (princ (format ";;;; %d\n" (cl-incf n)))
+                (pp (list (cons (backtrace-frame-fun frame)
+                                (backtrace-frame-args frame))
+                          (backtrace-frame-locals frame)))
+                (terpri))
+              backtrace))
+      file)))
+
+(defun doom-debugger (&rest args)
+  "Enter `debugger' in interactive sessions, `doom-cli-debugger' otherwise.
+
+Writes backtraces to file and ensures the backtrace is recorded, so the user can
+always access it."
+  (let ((backtrace (doom-backtrace)))
+    ;; Work around Emacs's heuristic (in eval.c) for detecting errors in the
+    ;; debugger, which would run this handler again on subsequent calls. Taken
+    ;; from `ert--run-test-debugger'.
+    (cl-incf num-nonmacro-input-events)
+    ;; TODO Write backtraces to file
+    ;; TODO Write backtrace to a buffer in case recursive error interupts the
+    ;;   debugger (happens more often than it should).
+    (apply #'debug args)))
 
 
 ;;
