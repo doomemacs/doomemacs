@@ -17,12 +17,15 @@
 
 ;; DEPRECATED Replace with "doom sync --rebuild"
 (defcli! ((build b))
-    ((rebuild-p ("-r") "Only rebuild packages that need rebuilding"))
+    ((rebuild-p ("-r") "Only rebuild packages that need rebuilding")
+     (jobs      ("-j" "--jobs" num) "How many CPUs to use for native compilation"))
   "Byte-compiles & symlinks installed packages.
 
 This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled. This is especially necessary if you upgrade
 Emacs (as byte-code is generally not forward-compatible)."
+  (when jobs
+    (setq native-comp-async-jobs-number (truncate jobs)))
   (when (doom-packages-build (not rebuild-p))
     (doom-autoloads-reload))
   t)

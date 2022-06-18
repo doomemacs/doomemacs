@@ -24,7 +24,8 @@
     ((noenvvar? ("-e") "Don't regenerate the envvar file")
      (noelc?    ("-c") "Don't recompile config")
      (update?   ("-u") "Update installed packages after syncing")
-     (purge?    ("-p") "Purge orphaned package repos & regraft them"))
+     (purge?    ("-p") "Purge orphaned package repos & regraft them")
+     (jobs      ("-j" "--jobs" num) "How many CPUs to use for native compilation"))
   "Synchronize your config with Doom Emacs.
 
 This is the equivalent of running autoremove, install, autoloads, then
@@ -37,10 +38,17 @@ recompile. Run this whenever you:
 
 It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
-stale."
+stale.
+
+OPTIONS:
+  -j, --jobs
+    Defaults to the maximum number of threads (or 1, if your CPU's threadcount
+    can't be determined)."
   :benchmark t
   (run-hooks 'doom-before-sync-hook)
   (add-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)
+  (when jobs
+    (setq native-comp-async-jobs-number (truncate jobs)))
   (print! (start "Synchronizing your config with Doom Emacs..."))
   (unwind-protect
       (print-group!

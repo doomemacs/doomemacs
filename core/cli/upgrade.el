@@ -20,6 +20,7 @@
 
 (defcli! ((upgrade up))
     ((packages?  ("-p" "--packages") "Only upgrade packages, not Doom")
+     (jobs       ("-j" "--jobs" num) "How many CPUs to use for native compilation")
      &context context)
   "Updates Doom and packages.
 
@@ -31,7 +32,7 @@ following shell commands:
     doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
-         (sync-cmd '("sync" "-u")))
+         (sync-cmd (append '("sync" "-u") (if jobs `("-j" ,num)))))
     (cond
      (packages?
       (call! sync-cmd)
@@ -41,7 +42,9 @@ following shell commands:
       ;; Reload Doom's CLI & libraries, in case there were any upstream changes.
       ;; Major changes will still break, however
       (print! (item "Reloading Doom Emacs"))
-      (exit! "doom" "upgrade" "-p" (if force? "--force")))
+      (exit! "doom" "upgrade" "-p"
+             (if force? "--force")
+             (if jobs (format "--jobs=%d" jobs))))
 
      ((print! "Doom is up-to-date!")
       (call! sync-cmd)))))
