@@ -363,10 +363,10 @@ Also adds support for a `:sync' parameter to override `:async'."
                  (require lang nil t))
         (add-to-list 'org-babel-load-languages (cons lang t)))))
 
-  (defadvice! +org--export-lazy-load-library-h ()
+  (defadvice! +org--export-lazy-load-library-h (&optional element)
     "Lazy load a babel package when a block is executed during exporting."
     :before #'org-babel-exp-src-block
-    (+org--babel-lazy-load-library-a (org-babel-get-src-block-info)))
+    (+org--babel-lazy-load-library-a (org-babel-get-src-block-info nil element)))
 
   (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
