@@ -323,25 +323,28 @@ ready to be pasted in a bug report on github."
 (defun doom/version ()
   "Display the running version of Doom core, module sources, and Emacs."
   (interactive)
-  (print! "%-13s v%-15s %s"
-          "GNU Emacs"
-          emacs-version
-          emacs-repository-version)
-  (let ((default-directory doom-emacs-dir))
-    (print! "%-13s v%-15s %s"
-            "Doom core"
-            doom-version
-            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
-                "n/a")))
-  ;; NOTE This is a placeholder. Our modules will be moved to its own repo
-  ;;   eventually, and Doom core will later be capable of managing them like
-  ;;   package sources.
-  (let ((default-directory doom-modules-dir))
-    (print! "%-13s v%-15s %s"
-            "Doom modules"
-            doom-modules-version
-            (or (cdr (doom-call-process "git" "log" "-1" "--format=%D %h %ci"))
-                "n/a"))))
+  (print! "%s\n%s\n%s"
+          (format "%-13s v%-15s %s"
+                  "GNU Emacs"
+                  emacs-version
+                  emacs-repository-version)
+          (format "%-13s v%-15s %s"
+                  "Doom core"
+                  doom-version
+                  (or (cdr (doom-call-process
+                            "git" "-C" doom-emacs-dir
+                            "log" "-1" "--format=%D %h %ci"))
+                      "n/a"))
+          ;; NOTE This is a placeholder. Our modules will be moved to its own
+          ;;   repo eventually, and Doom core will later be capable of managing
+          ;;   them like package sources.
+          (format "%-13s v%-15s %s"
+                  "Doom modules"
+                  doom-modules-version
+                  (or (cdr (doom-call-process
+                            "git" "-C" doom-modules-dir
+                            "log" "-1" "--format=%D %h %ci"))
+                      "n/a"))))
 
 ;;;###autoload
 (defun doom/info ()
