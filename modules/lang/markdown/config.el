@@ -24,6 +24,7 @@ capture, the end position, and the output buffer.")
         markdown-asymmetric-header t
         markdown-gfm-additional-languages '("sh")
         markdown-make-gfm-checkboxes-buttons t
+        markdown-fontify-whole-heading-line t
 
         ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
         ;;      'wrong-type-argument consp nil' error if you use native-comp.

@@ -1,12 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/markdown/packages.el
 
-(package! markdown-mode :pin "521658eb32e456681592443e04ae507c3a59ed07")
+(package! markdown-mode :pin "1f709778ac7990f4a07fdf11fe37bc6541810b29")
 (package! markdown-toc :pin "3d724e518a897343b5ede0b976d6fb46c46bcc01")
-(package! edit-indirect :pin "e3d86416bcf8ddca951d7d112e57ad30c5f9a081")
+(package! edit-indirect :pin "f80f63822ffae78de38dbe72cacaeb1aaa96c732")
 
 (when (featurep! +grip)
-  (package! grip-mode :pin "6b427143a8f61bb0b5dd070d554e5058130d15ff"))
+  (package! grip-mode :pin "6d6ddbe0af39c82a633add8499488ad8dc9e1daa"))
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-markdown
