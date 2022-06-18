@@ -129,14 +129,14 @@
       (after! lsp-mode
         (add-to-list 'lsp--formatting-indent-alist '(typescript-tsx-mode . typescript-indent-level))))
     (when (featurep! +tree-sitter)
+      (after! evil-textobj-tree-sitter
+        (pushnew! evil-textobj-tree-sitter-major-mode-language-alist '(typescript-tsx-mode . "tsx")))
       (after! tree-sitter
-        (pushnew! tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
-        (pushnew! evil-textobj-tree-sitter-major-mode-language-alist '(typescript-tsx-mode . "tsx"))
-
-        ;; HACK: the tsx grammer doesn't work with the hightlighting provided by
-        ;; font-lock-keywords. See emacs-tree-sitter/tree-sitter-langs#23
-        (setq-hook! 'typescript-tsx-mode-hook
-          tree-sitter-hl-use-font-lock-keywords nil))))
+        (pushnew! tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+      ;; HACK: the tsx grammer doesn't work with the hightlighting provided by
+      ;;   font-lock-keywords. See emacs-tree-sitter/tree-sitter-langs#23
+      (setq-hook! 'typescript-tsx-mode-hook
+        tree-sitter-hl-use-font-lock-keywords nil)))
 
   (set-docsets! '(typescript-mode typescript-tsx-mode)
     :add "TypeScript" "AngularTS")
