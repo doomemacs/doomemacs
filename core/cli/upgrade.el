@@ -31,10 +31,10 @@ following shell commands:
     doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
-         (sync-cmd `("doom" "sync" "-u")))
+         (sync-cmd '("sync" "-u")))
     (cond
      (packages?
-      (doom-cli-call sync-cmd)
+      (call! sync-cmd)
       (print! (success "Finished upgrading Doom Emacs")))
 
      ((doom-cli-upgrade force? force?)
@@ -44,7 +44,7 @@ following shell commands:
       (exit! "doom" "upgrade" "-p" (if force? "--force")))
 
      ((print! "Doom is up-to-date!")
-      (doom-cli-call sync-cmd)))))
+      (call! sync-cmd)))))
 
 
 ;;
