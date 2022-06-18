@@ -97,7 +97,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (let ((load-prefer-newer t)
             (noninteractive t)
             doom-interactive-p)
-        (doom-initialize 'force)
+        (require 'core-start)
         (quiet! (doom-initialize-packages))
         (quiet! (doom-initialize-modules))))
 
