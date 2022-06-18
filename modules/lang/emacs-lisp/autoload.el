@@ -107,6 +107,10 @@ if it's callable, `apropos' otherwise."
         (thing (helpful-symbol (intern thing)))
         ((call-interactively #'helpful-at-point))))
 
+;; DEPRECATED Remove when 28 support is dropped.
+(unless (fboundp 'lisp--local-defform-body-p)
+  (fset 'lisp--local-defform-body-p #'ignore))
+
 ;;;###autoload
 (defun +emacs-lisp-indent-function (indent-point state)
   "A replacement for `lisp-indent-function'.
