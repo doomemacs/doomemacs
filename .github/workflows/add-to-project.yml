@@ -5,3 +5,4 @@ on:
 jobs:
   add-to-project:
     uses: doomemacs/ci/.github/workflows/add-to-project.yml@legacy
+    secrets: inherit
