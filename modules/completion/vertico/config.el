@@ -234,7 +234,7 @@ orderless."
   :config
   (require 'consult)
 
-  (set-popup-rule! "^\\*Embark Export Grep" :size 0.35 :ttl 0 :quit nil)
+  (set-popup-rule! "^\\*Embark Export:" :size 0.35 :ttl 0 :quit nil)
 
   (defadvice! +vertico--embark-which-key-prompt-a (fn &rest args)
     "Hide the which-key indicator immediately when using the completing-read prompter."
