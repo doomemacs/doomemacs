@@ -118,7 +118,7 @@ uses a straight or package.el command directly).")
     (let ((repo-dir (doom-path straight-base-dir "straight/repos/straight.el"))
           (repo-url (concat "http" (if gnutls-verify-error "s")
                             "://github.com/"
-                            (or (plist-get recipe :repo) "raxod502/straight.el")))
+                            (or (plist-get recipe :repo) "radian-software/straight.el")))
           (branch (or (plist-get recipe :branch) straight-repository-branch))
           (call (if doom-debug-p
                     (lambda (&rest args)
