@@ -300,7 +300,7 @@ Each argument in ARGS can be a list, as if they were arguments to `format!':
                          (c 0))
                      (while (and (not (eolp)) (<= n target))
                        (save-match-data
-                         (if (looking-at ansi-color--control-seq-fragment-regexp)
+                         (if (looking-at ansi-color-control-seq-regexp)
                              (let ((len (length (match-string 0))))
                                (cl-incf c len)
                                (forward-char len))
