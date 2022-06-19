@@ -169,10 +169,10 @@ OPTIONS:
          (s2 (downcase s2))
          (s1len (length s1))
          (s2len (length s2)))
-    (/ (if (or (zerop s1len)
-               (zerop s2len))
-           0.0
-         (let ((i 0) (j 0) (score 0) jlast)
+    (if (or (zerop s1len)
+            (zerop s2len))
+        0.0
+      (/ (let ((i 0) (j 0) (score 0) jlast)
            (while (< i s1len)
              (unless jlast (setq jlast j))
              (if (and (< j s2len)
@@ -186,9 +186,9 @@ OPTIONS:
                  (setq j (or jlast j)
                        jlast nil)
                  (cl-incf i))))
-           (* 2.0 score)))
-       (+ (length s1)
-          (length s2)))))
+           (* 2.0 score))
+         (+ (length s1)
+            (length s2))))))
 
 ;;; Help: printers
 ;; TODO Parameterize optional args with `cl-defun'
