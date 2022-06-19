@@ -578,7 +578,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
   ;; The geometry of the terminal window.
   (geometry (when-let* ((geom (getenv "__DOOMGEOM"))
                         ((not (string-blank-p geom)))
-                        (geom (split-string geom "\n")))
+                        (geom (split-string geom "x")))
               (cons (string-to-number (car geom))
                     (string-to-number (cadr geom)))))
   ;; Whether the script is being piped into or out of
