@@ -11,7 +11,7 @@
      (let ((case-fold-search t))
        (while (re-search-forward "^[ \t]*\\#" nil t)
          (catch 'abort
-           (org-flag-region
+           (org-fold-core-region
             (line-beginning-position)
             (cond ((looking-at "+\\(?:title\\|subtitle\\): +")
                    (match-end 0))
@@ -23,18 +23,18 @@
                   ((looking-at "+\\(?:begin\\|end\\)_\\([^ \n]+\\)")
                    (line-end-position))
                   ((line-beginning-position 2)))
-            doom-docs-mode t)))))))
+            doom-docs-mode 'doom-doc-hidden)))))))
 
 (defun doom--docs-hide-drawers-h ()
   "Hide all property drawers."
   (org-with-wide-buffer
     (goto-char (point-min))
     (while (re-search-forward org-drawer-regexp nil t)
-      (let ((beg (1- (match-beginning 0)))
+      (let ((beg (max (point-min) (1- (match-beginning 0))))
             (end (re-search-forward org-drawer-regexp nil t)))
         (when (save-excursion (goto-char beg) (bobp))
           (cl-incf end))
-        (org-flag-region beg end doom-docs-mode t)))))
+        (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden)))))
 
 (defun doom--docs-hide-tags-h ()
   "Hide tags in org headings."
@@ -47,20 +47,20 @@
          ;; prevent `org-ellipsis' around hidden regions
          (org-show-entry))
        (if (member "noorg" tags)
-           (org-flag-region (line-end-position 0)
-                            (save-excursion
-                              (org-end-of-subtree t)
-                              (forward-line 1)
-                              (if (and (bolp) (eolp))
-                                  (line-beginning-position)
-                                (line-end-position 0)))
-                            doom-docs-mode t)
-         (org-flag-region (save-excursion
-                            (goto-char (line-beginning-position))
-                            (re-search-forward " +:[^ ]" (line-end-position))
-                            (match-beginning 0))
-                          (line-end-position)
-                          doom-docs-mode t))))))
+           (org-fold-core-region (line-end-position 0)
+                                 (save-excursion
+                                   (org-end-of-subtree t)
+                                   (forward-line 1)
+                                   (if (and (bolp) (eolp))
+                                       (line-beginning-position)
+                                     (line-end-position 0)))
+                                 doom-docs-mode 'doom-doc-hidden)
+         (org-fold-core-region (save-excursion
+                                 (goto-char (line-beginning-position))
+                                 (re-search-forward " +:[^ ]" (line-end-position))
+                                 (match-beginning 0))
+                               (line-end-position)
+                               doom-docs-mode 'doom-doc-hidden))))))
 
 (defun doom--docs-hide-stars-h ()
   "Update invisible property to VISIBILITY for markers in the current buffer."
@@ -68,10 +68,10 @@
    (goto-char (point-min))
    (with-silent-modifications
      (while (re-search-forward "^\\(\\*[ \t]\\|\\*\\*+\\)" nil t)
-       (org-flag-region
-        (match-beginning 0)
-        (match-end 0)
-        doom-docs-mode t)))))
+       (org-fold-core-region (match-beginning 0)
+                             (match-end 0)
+                             doom-docs-mode
+                             'doom-doc-hidden)))))
 
 (defvar doom--docs-babel-cache nil)
 (defun doom--docs-hide-src-blocks-h ()
@@ -112,7 +112,7 @@
                                 (skip-chars-forward "\n")
                                 (point))))))
          (unless (member exports '(nil "both" "code" "t"))
-           (org-flag-region beg end doom-docs-mode t))))
+           (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden))))
      (unless doom-docs-mode
        (save-excursion
          (dolist (pos doom--docs-babel-cache)
@@ -200,6 +200,11 @@ This primes `org-mode' for reading."
   :after-hook (org-restart-font-lock)
   (unless (derived-mode-p 'org-mode)
     (user-error "Not an org mode buffer"))
+  (org-fold-add-folding-spec
+   'doom-doc-hidden '(:visible nil
+                      :alias (hidden)
+                      :isearch-open nil
+                      :font-lock-skip t))
   (mapc (lambda (sym)
           (if doom-docs-mode
               (set (make-local-variable sym) t)
