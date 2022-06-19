@@ -375,7 +375,7 @@ Return nil if CLI (a `doom-cli') has no explicit documentation."
       (when (or (< argc min)
                 (> argc max))
         (signal 'doom-cli-wrong-number-of-arguments-error
-                (list (doom-cli--command context) nil args min max)))
+                (list (doom-cli-key cli) nil args min max)))
       (dolist (sym spec)
         (setf (alist-get sym alist) (if args (pop args))))
       (dolist (type `((&args    . ,args)
@@ -1667,14 +1667,17 @@ errors to `doom-cli-error-file')."
            (doom-cli-wrong-number-of-arguments-error
             (pcase-let ((`(,command ,flag ,args ,min ,max) (cdr e)))
               (print! (red "Error: %S expected %s argument%s, but got %d")
-                      (or flag (doom-cli-command-string (cdr command)))
+                      (or flag (doom-cli-command-string
+                                (if (keywordp (car command))
+                                    command
+                                  (cdr command))))
                       (if (or (= min max)
                               (= max most-positive-fixnum))
                           min
                         (format "%d-%d" min max))
                       (if (or (= min 0) (> min 1)) "s" "")
                       (length args))
-              (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr command)) context e))
+              (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e))
             5)
            (doom-cli-unrecognized-option-error
             (print! (red "Error: unknown option %s") (cadr e))
