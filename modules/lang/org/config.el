@@ -1046,45 +1046,6 @@ between the two."
       ("^\\*Capture\\*$\\|CAPTURE-.*$" :size 0.42 :quit nil :select t :autosave ignore))))
 
 
-(defun +org-init-protocol-lazy-loader-h ()
-  "Brings lazy-loaded support for org-protocol, so external programs (like
-browsers) can invoke specialized behavior from Emacs. Normally you'd simply
-require `org-protocol' and use it, but the package loads all of org for no
-compelling reason, so..."
-  (defadvice! +org--server-visit-files-a (args)
-    "Advise `server-visit-flist' to invoke `org-protocol' lazily."
-    :filter-args #'server-visit-files
-    (cl-destructuring-bind (files proc &optional nowait) args
-      (catch 'greedy
-        (let ((flist (reverse files)))
-          (dolist (var flist)
-            (when (string-match-p ":/+" (car var))
-              (require 'server)
-              (require 'org-protocol)
-              ;; `\' to `/' on windows
-              (let ((fname (org-protocol-check-filename-for-protocol
-                            (expand-file-name (car var))
-                            (member var flist)
-                            proc)))
-                (cond ((eq fname t) ; greedy? We need the t return value.
-                       (setq files nil)
-                       (throw 'greedy t))
-                      ((stringp fname) ; probably filename
-                       (setcar var fname))
-                      ((setq files (delq var files)))))))))
-      (list files proc nowait)))
-
-  ;; Disable built-in, clumsy advice
-  (after! org-protocol
-    (ad-disable-advice 'server-visit-files 'before 'org-protocol-detect-protocol-server)))
-
-
-(defun +org-init-protocol-h ()
-  ;; TODO org-board or better link grabbing support
-  ;; TODO org-capture + org-protocol instead of bin/org-capture
-  )
-
-
 (defun +org-init-smartparens-h ()
   ;; Disable the slow defaults
   (provide 'smartparens-org))
@@ -1333,9 +1294,22 @@ compelling reason, so..."
              #'+org-init-hacks-h
              #'+org-init-keybinds-h
              #'+org-init-popup-rules-h
-             #'+org-init-protocol-h
-             #'+org-init-protocol-lazy-loader-h
              #'+org-init-smartparens-h)
+
+  ;; Wait until an org-protocol link is opened via emacsclient to load
+  ;; `org-protocol'. Normally you'd simply require `org-protocol' and use it,
+  ;; but the package loads all of org for no compelling reason, so...
+  (defadvice! +org--server-visit-files-a (fn files &rest args)
+    "Advise `server-visit-files' to load `org-protocol' lazily."
+    :around #'server-visit-files
+    (if (not (cl-loop for var in files
+                      if (string-match-p "://" (car var))
+                      return t))
+        (apply fn files args)
+      (require 'org-protocol)
+      (apply #'org--protocol-detect-protocol-server fn files args)))
+  (after! org-protocol
+    (advice-remove 'server-visit-files #'org--protocol-detect-protocol-server)))
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
