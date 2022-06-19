@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(eval-when-compile (require 'core-cli)) ; appease byte-compiler-sama
+(load! "packages")
 
 
 ;;
