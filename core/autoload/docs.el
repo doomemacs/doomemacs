@@ -1,9 +1,17 @@
-;;; core/autoload/docs.el -*- lexical-binding: t; -*-
+;;; core/autoload/docs.el -- a reader mode for Doom's Org docs -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
+
+;; REVIEW Remove me before pushing
+(defconst doom-docs-dir
+  (expand-file-name "../../docs/" (file-name-directory load-file-name))
+  "Where Doom's documentation files are stored. Must end with a slash.")
+
 
 ;;
 ;;; `doom-docs-mode'
 
-(defun doom--docs-hide-meta-h ()
+(defun doom-docs--hide-meta-h ()
   "Hide all meta or comment lines."
   (org-with-wide-buffer
    (goto-char (point-min))
@@ -25,7 +33,7 @@
                   ((line-beginning-position 2)))
             doom-docs-mode 'doom-doc-hidden)))))))
 
-(defun doom--docs-hide-drawers-h ()
+(defun doom-docs--hide-drawers-h ()
   "Hide all property drawers."
   (org-with-wide-buffer
     (goto-char (point-min))
@@ -36,7 +44,7 @@
           (cl-incf end))
         (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden)))))
 
-(defun doom--docs-hide-tags-h ()
+(defun doom-docs--hide-tags-h ()
   "Hide tags in org headings."
   (org-with-wide-buffer
    (goto-char (point-min))
@@ -62,7 +70,7 @@
                                (line-end-position)
                                doom-docs-mode 'doom-doc-hidden))))))
 
-(defun doom--docs-hide-stars-h ()
+(defun doom-docs--hide-stars-h ()
   "Update invisible property to VISIBILITY for markers in the current buffer."
   (org-with-wide-buffer
    (goto-char (point-min))
@@ -73,13 +81,13 @@
                              doom-docs-mode
                              'doom-doc-hidden)))))
 
-(defvar doom--docs-babel-cache nil)
-(defun doom--docs-hide-src-blocks-h ()
+(defvar doom-docs--babel-cache nil)
+(defun doom-docs--hide-src-blocks-h ()
   "Hide babel blocks (and/or their results) depending on their :exports arg."
   (org-with-wide-buffer
    (let ((inhibit-read-only t))
      (goto-char (point-min))
-     (make-local-variable 'doom--docs-babel-cache)
+     (make-local-variable 'doom-docs--babel-cache)
      (while (re-search-forward org-babel-src-block-regexp nil t)
        (let* ((beg (match-beginning 0))
               (end (save-excursion (goto-char (match-end 0))
@@ -97,7 +105,7 @@
                         org-export-use-babel)
                       (not results)
                       doom-docs-mode)
-             (cl-pushnew beg doom--docs-babel-cache)
+             (cl-pushnew beg doom-docs--babel-cache)
              (quiet! (org-babel-execute-src-block))
              (setq results (org-babel-where-is-src-block-result))
              (org-element-cache-refresh beg)
@@ -115,19 +123,19 @@
            (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden))))
      (unless doom-docs-mode
        (save-excursion
-         (dolist (pos doom--docs-babel-cache)
+         (dolist (pos doom-docs--babel-cache)
            (goto-char pos)
            (org-babel-remove-result)
            (org-element-cache-refresh pos))
-         (kill-local-variable 'doom--docs-babel-cache)
+         (kill-local-variable 'doom-docs--babel-cache)
          (restore-buffer-modified-p nil))))))
 
-(defvar doom--docs-macro-cache nil)
-(defun doom--docs-expand-macros-h ()
+(defvar doom-docs--macro-cache nil)
+(defun doom-docs--expand-macros-h ()
   "Expand {{{macros}}} with their value."
   (org-with-wide-buffer
     (goto-char (point-min))
-    (make-local-variable 'doom--docs-macro-cache)
+    (make-local-variable 'doom-docs--macro-cache)
     (while (re-search-forward "{{{[^}]+}}}" nil t)
       (with-silent-modifications
         (if doom-docs-mode
@@ -135,8 +143,8 @@
                         (key (org-element-property :key element))
                         (cachekey (org-element-property :value element))
                         (template (cdr (assoc-string key org-macro-templates t))))
-              (let ((value (or (cdr (assoc-string cachekey doom--docs-macro-cache))
-                               (setf (alist-get cachekey doom--docs-macro-cache nil nil 'equal)
+              (let ((value (or (cdr (assoc-string cachekey doom-docs--macro-cache))
+                               (setf (alist-get cachekey doom-docs--macro-cache nil nil 'equal)
                                      (org-macro-expand element org-macro-templates)))))
                 (add-text-properties (match-beginning 0)
                                      (match-end 0)
@@ -146,12 +154,12 @@
                                   '(display))))
       (org-element-cache-refresh (point)))))
 
-(defvar doom--docs-kbd-alist
+(defvar doom-docs--kbd-alist
   (let ((evilp (featurep! :editor evil)))
     `(("<leader>"      . ,(if evilp "SPC"   "C-c"))
       ("<localleader>" . ,(if evilp "SPC m" "C-c l"))
       ("<help>"        . ,(if evilp "SPC h" "C-h")))))
-(defun doom--docs-expand-kbd-h ()
+(defun doom-docs--expand-kbd-h ()
   "Replace special keywords in [[kbd:][...]] links."
   (org-with-wide-buffer
     (let ((inhibit-read-only t))
@@ -163,13 +171,13 @@
               (add-text-properties
                beg end `(display
                          ,(let ((kbd (match-string-no-properties 1)))
-                            (dolist (rep doom--docs-kbd-alist kbd)
+                            (dolist (rep doom-docs--kbd-alist kbd)
                               (setq kbd (replace-regexp-in-string (car rep) (cdr rep) kbd))))))
             (remove-text-properties beg end '(display)))
           (org-element-cache-refresh beg)))
       (restore-buffer-modified-p nil))))
 
-(defun doom--docs-realign-tables-h ()
+(defun doom-docs--realign-tables-h ()
   "Realign tables, as they may have changed."
   (org-with-wide-buffer
     (goto-char (point-min))
@@ -190,8 +198,8 @@
 The CAR is the minor mode symbol, and CDR should be either +1 or -1,
 depending.")
 
-(defvar doom--docs-initial-values nil)
-(defvar doom--docs-cookies nil)
+(defvar doom-docs--initial-values nil)
+(defvar doom-docs--cookies nil)
 ;;;###autoload
 (define-minor-mode doom-docs-mode
   "Hides metadata, tags, & drawers and activates all org-mode pretiffications.
@@ -213,44 +221,44 @@ This primes `org-mode' for reading."
           org-hide-emphasis-markers
           org-hide-macro-markers))
   (when doom-docs-mode
-    (make-local-variable 'doom--docs-initial-values))
+    (make-local-variable 'doom-docs--initial-values))
   (mapc (fn! ((face . plist))
           (if doom-docs-mode
-              (push (apply #'face-remap-add-relative face plist) doom--docs-cookies)
-            (mapc #'face-remap-remove-relative doom--docs-cookies)))
+              (push (apply #'face-remap-add-relative face plist) doom-docs--cookies)
+            (mapc #'face-remap-remove-relative doom-docs--cookies)))
         '((org-document-title :weight bold :height 1.4)
           (org-document-info  :weight normal :height 1.15)))
   (mapc (fn! ((mode . state))
           (if doom-docs-mode
               (if (and (boundp mode) (symbol-value mode))
                   (unless (> state 0)
-                    (setf (alist-get mode doom--docs-initial-values) t)
+                    (setf (alist-get mode doom-docs--initial-values) t)
                     (funcall mode -1))
                 (unless (< state 0)
-                  (setf (alist-get mode doom--docs-initial-values) nil)
+                  (setf (alist-get mode doom-docs--initial-values) nil)
                   (funcall mode +1)))
-            (when-let (old-val (assq mode doom--docs-initial-values))
+            (when-let (old-val (assq mode doom-docs--initial-values))
               (funcall mode (if old-val +1 -1)))))
         doom-docs-mode-alist)
   (unless doom-docs-mode
-    (kill-local-variable 'doom--docs-initial-values)))
+    (kill-local-variable 'doom-docs--initial-values)))
 
 (add-hook! 'doom-docs-mode-hook
-           #'doom--docs-hide-meta-h
-           #'doom--docs-hide-tags-h
-           #'doom--docs-hide-drawers-h
-           #'doom--docs-hide-stars-h
-           #'doom--docs-expand-macros-h
-           #'doom--docs-expand-kbd-h
-           #'doom--docs-realign-tables-h
-           #'doom--docs-hide-src-blocks-h)
+           #'doom-docs--hide-meta-h
+           #'doom-docs--hide-tags-h
+           #'doom-docs--hide-drawers-h
+           #'doom-docs--hide-stars-h
+           #'doom-docs--expand-macros-h
+           #'doom-docs--expand-kbd-h
+           #'doom-docs--realign-tables-h
+           #'doom-docs--hide-src-blocks-h)
 
-(defun doom--docs-toggle-read-only-h ()
+(defun doom-docs--toggle-read-only-h ()
   (doom-docs-mode (if buffer-read-only +1 -1)))
 
 
-(defvar doom--docs-id-locations nil)
-(defvar doom--docs-id-files nil)
+(defvar doom-docs--id-locations nil)
+(defvar doom-docs--id-files nil)
 ;;;###autoload
 (defun doom/reload-docs (&optional force)
   "Reload the ID locations in Doom's documentation and open docs buffers."
@@ -271,12 +279,12 @@ This primes `org-mode' for reading."
            (doom-files-in (list doom-docs-dir doom-modules-dir)
                           :match "/[^.].+\\.org$"))
         (org-id-locations-load))
-      (setq doom--docs-id-files org-id-files
-            doom--docs-id-locations org-id-locations)))
+      (setq doom-docs--id-files org-id-files
+            doom-docs--id-locations org-id-locations)))
   (dolist (buf (doom-buffers-in-mode 'doom-docs-org-mode))
     (with-current-buffer buf
-      (setq-local org-id-files doom--docs-id-files
-                  org-id-locations doom--docs-id-locations))))
+      (setq-local org-id-files doom-docs--id-files
+                  org-id-locations doom-docs--id-locations))))
 
 
 ;;
@@ -294,9 +302,9 @@ This primes `org-mode' for reading."
     ("doom-help-modules"       . "id:1ee0b650-f09b-4454-8690-cc145aadef6e")
     ("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
     ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
-    ("doom-module-issues"      . "https://github.com/orgs/doomemacs/projects/2/views/1?filterQuery=label:\"%s\"")
+    ("doom-module-issues"      . "https://github.com/hlissner/doom-emacs/labels/%s")
+    ("doom-module-history"     . "https://github.com/hlissner/doom-emacs/commits/master/modules/%s")
     ("doom-report"             . "https://github.com/hlissner/doom-emacs/issues/new/choose")
-    ("doom-source"             . "https://github.com/hlissner/doom-emacs/tree/develop/%s")
     ("doom-suggest-edit"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
     ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
     ("github"                  . "https://github.com/%s")))
@@ -314,8 +322,8 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
               org-id-method 'uuid
               org-id-track-globally t
               org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids")
-              org-id-locations doom--docs-id-locations
-              org-id-files doom--docs-id-files
+              org-id-locations doom-docs--id-locations
+              org-id-files doom-docs--id-files
               org-num-max-level 3
               org-footnote-define-inline nil
               org-footnote-auto-label t
@@ -340,7 +348,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
     (unless (local-variable-p 'org-startup-folded)
       (let ((org-startup-folded 'content))
         (org-set-startup-visibility))))
-  (add-hook 'read-only-mode-hook #'doom--docs-toggle-read-only-h nil 'local)
+  (add-hook 'read-only-mode-hook #'doom-docs--toggle-read-only-h nil 'local)
   (org-with-limited-levels
    (end-of-line)
    (null (re-search-forward org-outline-regexp-bol nil t))))
@@ -380,7 +388,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 ;;;###autoload
 (defun doom-docs-doom-module-link-follow-fn (link)
   (cl-destructuring-bind (&key category module flag)
-      (doom--docs-read-module-link link)
+      (doom-docs--read-module-link link)
     (when category
       (let ((doom-modules-dirs (list doom-modules-dir)))
         (if-let* ((path (doom-module-locate-path category module))
@@ -401,7 +409,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 ;;;###autoload
 (defun doom-docs-doom-module-link-face-fn (link)
   (cl-destructuring-bind (&key category module flag)
-      (doom--docs-read-module-link link)
+      (doom-docs--read-module-link link)
     (if (doom-module-locate-path category module)
         `(:inherit org-priority
           :weight bold)
@@ -423,7 +431,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
        fn (or (intern-soft desc)
               (user-error "Can't find documentation for %S" desc))))))
 
-(defun doom--docs-describe-kbd (keystr)
+(defun doom-docs--describe-kbd (keystr)
   (dolist (key `(("<leader>" . ,doom-leader-key)
                  ("<localleader>" . ,doom-localleader-key)
                  ("<prefix>" . ,(if (bound-and-true-p evil-mode)
@@ -444,7 +452,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 ;;;###autoload
 (defun doom-docs-read-kbd-at-point (&optional default context)
   "TODO"
-  (doom--docs-describe-kbd
+  (doom-docs--describe-kbd
    (doom-docs-read-link-desc-at-point default context)))
 
 ;;;###autoload
@@ -506,6 +514,21 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
    :follow #'doom-docs-doom-package-link-follow-fn
    :face (lambda (_) '(:inherit org-priority :slant italic)))
   (org-link-set-parameters
+   "doom-source"
+   :follow (lambda (link)
+             (user-error "-- %S %S %S" source url link)
+             (cl-destructuring-bind (source . url)
+                 (save-match-data
+                   (and (string-match "^\\([^:]+\\):\\(.+\\)$" link)
+                        (cons (match-string 1) (match-string 2))))
+               (pcase source
+                 ("doom"
+                  (org-link-open (expand-file-name url doom-modules-dir)))
+                 ("contrib"
+                  (browse-url (format "https://docs.doomemacs.org/modules/"
+                                      (replace-regexp-in-string "::\\(.+\\)$" "#\\1" url))))
+                 (_ (user-error "%s is not a valid module source" source))))))
+  (org-link-set-parameters
    "doom-module"
    :follow #'doom-docs-doom-module-link-follow-fn
    :face #'doom-docs-doom-module-link-face-fn)
@@ -514,7 +537,6 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
    :follow (lambda (link)
              (find-file (doom-path doom-docs-dir "changelog.org"))
              (org-match-sparse-tree nil link)))
-
 
   (add-to-list 'org-link-abbrev-alist '("doom-repo" . "https://github.com/hlissner/doom-emacs/%s"))
 
@@ -540,7 +562,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
                  (propertize (doom-docs-read-link-desc-at-point path)
                              'face 'org-priority)))))))
 
-(defun doom--docs-read-module-link (link)
+(defun doom-docs--read-module-link (link)
   (cl-destructuring-bind (category &optional module flag)
       (let ((desc (doom-docs-read-link-desc-at-point link)))
         (if (string-prefix-p "+" (string-trim-left desc))
@@ -549,3 +571,5 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
     (list :category category
           :module module
           :flag flag)))
+
+;;; docs.el ends here
