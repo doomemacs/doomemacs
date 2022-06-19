@@ -266,11 +266,14 @@ Note: warnings are not considered failures.")
 
 (defcli! (ci deploy-hooks) ((force ("--force")))
   "TODO"
-  (let* ((default-directory doom-emacs-dir)
-         (repo-path (cdr (doom-call-process "git" "rev-parse" "--show-toplevel")))
-         (submodule-p (string-empty-p (cdr (doom-call-process "git" "rev-parse" "show-superproject-working-tree"))))
-         (config-hooks-path (cdr (doom-call-process "git" "config" "core.hooksPath")))
-         (hooks-path (cdr (doom-call-process "git" "rev-parse" "--git-path" "hooks"))))
+  (let* ((repo-path (sh! "git" "rev-parse" "--show-toplevel"))
+         (repo-path (if (zerop (car repo-path))
+                        (cdr repo-path)
+                      (user-error "Cannot locate a git repo in %s"
+                                  (file-relative-name default-directory))))
+         (submodule-p (string-empty-p (cdr (sh! "git" "rev-parse" "show-superproject-working-tree"))))
+         (config-hooks-path (cdr (sh! "git" "config" "core.hooksPath")))
+         (hooks-path (cdr (sh! "git" "rev-parse" "--git-path" "hooks"))))
     (unless (string-empty-p config-hooks-path)
       (or force
           (y-or-n-p
