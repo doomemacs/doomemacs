@@ -18,18 +18,19 @@
 
 (after! core-cli-make
   ;;; Codeowners
-  (dolist (path (cdr (doom-module-load-path (list doom-modules-dir))))
-    (save-match-data
-      (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/$" path)
-        (add-to-list 'doom-make-codeowners
-                     (cons (format "%s*" (substring (match-string 0 path) 1))
-                           (list "@doomemacs/maintainers"
-                                 (format "@doomemacs/%s-%s"
-                                         (match-string 1 path)
-                                         (match-string 2 path))))))))
+  ;; (dolist (path (cdr (doom-module-load-path (list doom-modules-dir))))
+  ;;   (save-match-data
+  ;;     (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/$" path)
+  ;;       (add-to-list 'doom-make-codeowners
+  ;;                    (cons (format "%s*" (substring (match-string 0 path) 1))
+  ;;                          (list "@doomemacs/maintainers"
+  ;;                                (format "@doomemacs/%s-%s"
+  ;;                                        (match-string 1 path)
+  ;;                                        (match-string 2 path))))))))
 
   ;;; Documentation exporters
-  (add-to-list 'doom-ci-docs-title-replace '("^Doom Emacs " . "")))
+  ;; (add-to-list 'doom-ci-docs-title-replace '("^Doom Emacs " . ""))
+  )
 
 
 ;;; Helpers
