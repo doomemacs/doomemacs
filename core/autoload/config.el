@@ -79,7 +79,7 @@ Runs `doom-after-reload-hook' afterwards."
   (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
         (doom-run-hooks 'doom-before-reload-hook)
-        (doom-initialize 'force)
+        (load "core-start")
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
@@ -100,10 +100,7 @@ remove orphaned ones. It also doesn't reload your private config.
 It is useful to only pull in changes performed by 'doom sync' on the command
 line."
   (interactive)
-  (require 'core-cli)
-  (require 'core-packages)
-  (doom-initialize-packages)
-  (doom-autoloads-reload))
+  (load (file-name-sans-extension doom-autoloads-file) nil 'nomessage))
 
 ;;;###autoload
 (defun doom/reload-env ()
