@@ -247,15 +247,18 @@ Note: warnings are not considered failures.")
 ;;; Commands
 
 ;;; doom ci
-(defcli! (:before ci) (&rest _)
+(defcli! (:before ci) (&args _)
   (when-let*
-      ((repo-root (or (cdr (doom-call-process "git" "rev-parse" "--show-toplevel"))
-                      default-directory))
+      ((repo-root
+        (if-let* ((result (sh! "git" "rev-parse" "--show-toplevel"))
+                  ((zerop (car result))))
+            (cdr result)
+          default-directory))
        (local-config
         (car (or (doom-glob repo-root "ci.el")
                  (doom-glob doom-private-dir "ci.el")))))
-    (print! (item "Loading %s") (path local-config))
-    (load local-config nil t t)))
+    (load local-config nil t t)
+    (print! (item "Loaded %S") local-config)))
 
 (defcli! ci ()
   "Commands that automate development processes."
