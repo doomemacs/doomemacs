@@ -49,7 +49,7 @@ OPTIONS:
          (cli (doom-cli-get command t))
          (rcli (doom-cli-get cli))
          (fallbackcli (cl-loop with targets = (doom-cli--command-expand (butlast command) t)
-                               for cmd in (cons command (nreverse targets))
+                               for cmd in (cons command targets)
                                if (doom-cli-get cmd t)
                                return it)))
     (cond (commands?
@@ -112,7 +112,7 @@ OPTIONS:
                 (print! "See %s for documentation."
                         (join (cl-loop with spec =
                                        `((?p . ,(doom-cli-context-prefix context))
-                                         (?c . ,(doom-cli-command-string (cdr (doom-cli-command cli)))))
+                                         (?c . ,(doom-cli-command-string (cdr (doom-cli-command (or cli fallbackcli))))))
                                        for cmd in doom-help-commands
                                        for formatted = (trim (format-spec cmd spec))
                                        collect (replace-regexp-in-string
