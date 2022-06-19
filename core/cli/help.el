@@ -216,7 +216,7 @@ OPTIONS:
                    .commands :prefix (doom-cli-command cli) :grouped? t :docs? t))
               ("OPTIONS"
                . ,(doom-cli-help--render-options
-                   (if (or (not (doom-cli-fn cli)) localonly?)
+                   (if (or (not (doom-cli-fn cli)) noglobal?)
                        `(,(assq 'local .options))
                      .options)
                    cli)))))
@@ -305,9 +305,12 @@ OPTIONS:
            (toplevel (assq nil commands))
            (rest (nreverse (remove toplevel commands)))
            (drop (if prefix (length prefix) 0))
-           (minwidth (apply #'max (cl-loop for cmd in (apply #'append (mapcar #'cdr commands))
-                                           for cmd = (seq-drop cmd drop)
-                                           collect (length (doom-cli-command-string cmd)))))
+           (minwidth
+            (apply
+             #'max (or (cl-loop for cmd in (apply #'append (mapcar #'cdr commands))
+                                for cmd = (seq-drop cmd drop)
+                                collect (length (doom-cli-command-string cmd)))
+                       (list 15))))
            (ellipsis (doom-print--style 'dark " […]"))
            (ellipsislen (- (length ellipsis) (if (eq doom-print-backend 'ansi) 2 4))))
       (dolist (group (cons toplevel rest))
