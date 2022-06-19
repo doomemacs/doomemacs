@@ -270,18 +270,18 @@ COMMAND can be a command path (list of strings), a `doom-cli' struct, or a
 
 Returned in the order they will execute. Includes pseudo CLIs."
   (let* ((command (doom-cli--command command))
-         (pseudo? (keywordp (car-safe command)))
-         (paths (doom-cli--command-expand command t))
-         results)
-    (unless pseudo?
-      (dolist (path paths)
-        (push (cons :before path) results)))
+         (paths (nreverse (doom-cli--command-expand command t)))
+         results clis)
+    (push '(:after) results)
+    (dolist (path paths)
+      (push (cons :after path) results))
     (push command results)
-    (unless pseudo?
-      (dolist (path (reverse paths))
-        (push (cons :after path) results)))
-    (setq results (delq nil (mapcar #'doom-cli-get results))
-          results (nreverse (delete-dups results)))))
+    (dolist (path (nreverse paths))
+      (push (cons :before path) results))
+    (push '(:before) results)
+    (dolist (result (nreverse results) clis)
+      (when-let (cli (doom-cli-get result))
+        (cl-pushnew cli clis :test #'equal :key #'doom-cli-key)))))
 
 (defun doom-cli-prop (cli prop &optional null-value)
   "Returns a PROPerty of CLI's plist, or NULL-VALUE if it doesn't exist."
@@ -1485,7 +1485,7 @@ ignored.
                            :command alias
                            :type type
                            :docs docs
-                           :alias target
+                           :alias (delq nil (cons type target))
                            :plist (append plist '(:hide t)))
                           doom-cli--table))
                (dolist (partial commands)
