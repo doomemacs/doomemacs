@@ -24,6 +24,7 @@
 This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled. This is especially necessary if you upgrade
 Emacs (as byte-code is generally not forward-compatible)."
+  :benchmark t
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (when (doom-packages-build (not rebuild-p))
@@ -46,6 +47,7 @@ possible.
 
 It is a good idea to occasionally run this doom purge -g to ensure your package
 list remains lean."
+  :benchmark t
   (straight-check-all)
   (when (doom-packages-purge
          (not noelpa-p)
