@@ -3,6 +3,7 @@
 ;;; Code:
 
 (load! "packages")
+(load! "compile")
 
 
 ;;
@@ -124,7 +125,7 @@ following shell commands:
                     (ignore (print! (error "Aborted")))
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
-                   (doom-clean-byte-compiled-files)
+                   (doom-compile-clean)
                    (let ((straight-recipe (doom-upgrade--get-straight-recipe)))
                      (or (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
                               (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) new-rev))
