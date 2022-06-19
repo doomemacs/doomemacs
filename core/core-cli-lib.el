@@ -633,9 +633,12 @@ executable context."
            (signal 'doom-cli-command-not-found-error
                    (append command (alist-get t (doom-cli-context-arguments context)))))
 
-          ((let ((seen '(t)))
+          ((let ((seen '(t))
+                 runners)
              (dolist (cli (doom-cli-find command (doom-cli-type cli)))
-               (doom-cli-execute cli (doom-cli--bindings cli context seen)))
+               (push (cons cli (doom-cli--bindings cli context seen)) runners))
+             (pcase-dolist (`(,cli . ,bindings) (nreverse runners))
+               (doom-cli-execute cli bindings))
              context)))))
 
 (defun doom-cli-context-restore (file context)
