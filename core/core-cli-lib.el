@@ -576,11 +576,11 @@ Throws `doom-cli-invalid-option-error' for illegal values."
             (string-to-number step)
           -1))
   ;; The geometry of the terminal window.
-  (geometry (when-let* ((geom (getenv "__DOOMGEOM"))
-                        ((not (string-blank-p geom)))
-                        (geom (split-string geom "x")))
-              (cons (string-to-number (car geom))
-                    (string-to-number (cadr geom)))))
+  (geometry (save-match-data
+              (when-let* ((geom (getenv "__DOOMGEOM"))
+                          ((string-match "^\\([0-9]+\\)x\\([0-9]+\\)$" geom)))
+                (cons (string-to-number (match-string 1 geom))
+                      (string-to-number (match-string 2 geom))))))
   ;; Whether the script is being piped into or out of
   (pipes (cl-loop for (env . scope) in `((,(getenv "__DOOMGPIPE") . global)
                                          (,(getenv "__DOOMPIPE")  . local))
