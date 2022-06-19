@@ -1571,12 +1571,19 @@ example:
     This reruns the current command with two new switches.
   (exit! \"emacs -nw FILE\")
     Opens Emacs on FILE
+  (exit! \"emacs\" \"-nw\" \"FILE\")
+    Opens Emacs on FILE, but each argument is escaped (and nils are ignored).
   (exit! t) or (exit! nil)
     A safe way to simply abort back to the shell with exit code 0
   (exit! 42)
     Abort to shell with an explicit exit code.
   (exit! context)
     Restarts the current session, but with context (a `doom-cli-context' struct).
+  (exit! :pager [FILES...])
+    Invoke $DOOMPAGER (or less) on the output of this session. If ARGS are given, launch the pager on those
+  (exit! :pager? [FILES...])
+    Same as :pager, but does so only if output is longer than the terminal is
+    tall.
 
 See `doom-cli--restart' for implementation details."
   (doom-cli--exit (flatten-list args) doom-cli--context))
