@@ -229,7 +229,7 @@ helm and ivy). Here is how Doom does it:
 (add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
 #+END_SRC
 
-Another alternative (which is [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L269-L274][what Doom uses]]) is the [[https://gitlab.com/koral/gcmh/][gcmh]] package; which staves
+Another alternative (which is [[https://github.com/doomemacs/doomemacs/blob/develop/core/core.el#L269-L274][what Doom uses]]) is the [[https://gitlab.com/koral/gcmh/][gcmh]] package; which staves
 off the GC until you are idle. Doom also triggers GC when you unfocus the Emacs
 frame.
 
@@ -245,7 +245,7 @@ file can hurt startup times, especially without an SSD. We get around this by
 concatenating these files into one giant one when you run ~doom sync~.
 
 Emacs 27+ introduces a ~package-quickstart~ command that does this for you, and
-=straight= (which powers our package manager) does this for you too, but [[https://github.com/hlissner/doom-emacs/tree/develop/core/cli/autoloads.el][Doom
+=straight= (which powers our package manager) does this for you too, but [[https://github.com/doomemacs/doomemacs/tree/develop/core/cli/autoloads.el][Doom
 Emacs has its own specialized mechanism]] for this, topped off with a few
 Doom-specific optimizations.
 
@@ -408,7 +408,7 @@ another location:
 
 #+BEGIN_SRC bash
 # First install Doom somewhere
-git clone https://github.com/hlissner/doom-emacs ~/fakehome/doom-emacs
+git clone https://github.com/doomemacs/doomemacs ~/fakehome/doom-emacs
 # Then create a place to store our private doom configs. The bin/doom script
 # recognizes the DOOMDIR environment variable.
 export DOOMDIR=~/fakehome/doom-emacs-config
@@ -1158,11 +1158,11 @@ Check out ~doom help env~ for details on how this works.
 For issue #2, you'll need to investigate your launcher. [[https://discord.gg/qvGgnVx][Our Discord]] is a good
 place to ask about it.
 
-** There's artefacting on my icon fonts in GUI Emacs ([[https://github.com/hlissner/doom-emacs/issues/956][#956]])
+** There's artefacting on my icon fonts in GUI Emacs ([[https://github.com/doomemacs/doomemacs/issues/956][#956]])
 Check your font rendering settings. Changing the RGBA order to "rgba" will often
-fix this issue. See [[https://github.com/hlissner/doom-emacs/issues/956][#956]] for details.
+fix this issue. See [[https://github.com/doomemacs/doomemacs/issues/956][#956]] for details.
 
-** The =s= and =S= keys don't behave like they do in vim/evil ([[https://github.com/hlissner/doom-emacs/issues/1307][#1307]])
+** The =s= and =S= keys don't behave like they do in vim/evil ([[https://github.com/doomemacs/doomemacs/issues/1307][#1307]])
 This is intentional. =s= and =S= have been replaced by the evil-snipe plugin,
 which provides 2-character versions of the f/F motion keys, ala vim-seek or
 vim-sneak.
@@ -1215,7 +1215,7 @@ Here are a few common causes for random crashes:
     (setq org-startup-indented nil))
   #+END_SRC
 
-  Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/hlissner/doom-emacs/issues/1170][#1170]]).
+  Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/doomemacs/doomemacs/issues/1170][#1170]]).
 + Ligatures and some fonts can cause Emacs to crash. You may want to try a
   different font, or disable the =:ui ligatures module.
 
@@ -1224,7 +1224,7 @@ This means Emacs can't find the X-theme.el file for the theme you want to load.
 Emacs will search for this file in ~custom-theme-load-path~ and
 ~custom-theme-directory~. There are a couple reasons why it can't be found:
 
-1. It is generally expected that third party themes will [[https://github.com/hlissner/emacs-doom-themes/blob/master/doom-themes.el#L400-L405][add themselves]] to
+1. It is generally expected that third party themes will [[https://github.com/doomemacs/emacs-doom-themes/blob/master/doom-themes.el#L400-L405][add themselves]] to
    ~custom-theme-load-path~, but you will occasionally encounter a theme that
    does not. This should be reported upstream.
 
@@ -1251,7 +1251,7 @@ Emacs will search for this file in ~custom-theme-load-path~ and
 You'll find solutions [[https://www.emacswiki.org/emacs/TrampMode#toc7][on the emacswiki]].
 
 ** An upstream package was broken and I can't update it
-Sometimes, if you've installed a [[https://github.com/hlissner/doom-emacs/issues/2213][broken package]] which was subsequently fixed
+Sometimes, if you've installed a [[https://github.com/doomemacs/doomemacs/issues/2213][broken package]] which was subsequently fixed
 upstream, you can't run ~doom update~ to get the latest fixes due to evaluation
 errors.
 
@@ -1265,7 +1265,7 @@ the new one, which is achieved by either deleting it from
 4. Run ~doom sync~.
 
 ** Why do I see ugly indentation highlights for tabs?
-[[https://github.com/hlissner/doom-emacs/blob/develop/core/core-ui.el#L132-L150][Doom highlights non-standard indentation]]. i.e. Indentation that doesn't match
+[[https://github.com/doomemacs/doomemacs/blob/develop/core/core-ui.el#L132-L150][Doom highlights non-standard indentation]]. i.e. Indentation that doesn't match
 the indent style you've set for that file. Spaces are Doom's default style for
 most languages (excluding languages where tabs are the norm, like Go).
 

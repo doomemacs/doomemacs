@@ -37,20 +37,20 @@ to contribute to our fine corner of the interwebs.
 - [[#special-thanks][Special thanks]]
 
 * Where can I help?
-+ Our [[https://github.com/hlissner/doom-emacs/issues][issue tracker]] has many issues. If you find one that you have an answer to,
++ Our [[https://github.com/doomemacs/doomemacs/issues][issue tracker]] has many issues. If you find one that you have an answer to,
   it would be a huge help!
-+ Look for issues tagged [[https://github.com/hlissner/doom-emacs/labels/good%20first%20issue][good first issue]]. These were judged to have a low
++ Look for issues tagged [[https://github.com/doomemacs/doomemacs/labels/good%20first%20issue][good first issue]]. These were judged to have a low
   barrier of entry.
-+ Look for issues tagged [[https://github.com/hlissner/doom-emacs/labels/help%20wanted][help wanted]]. These tend to be a little (or a lot)
++ Look for issues tagged [[https://github.com/doomemacs/doomemacs/labels/help%20wanted][help wanted]]. These tend to be a little (or a lot)
   harder, and are issues outside my own expertise.
-+ If you've encountered a bug, [[https://github.com/hlissner/doom-emacs/issues/new/choose][file a bug report]].
-+ The [[https://github.com/hlissner/doom-emacs/projects/3][development roadmap board]] is a rough timeline of what is being worked on
++ If you've encountered a bug, [[https://github.com/doomemacs/doomemacs/issues/new/choose][file a bug report]].
++ The [[https://github.com/doomemacs/doomemacs/projects/3][development roadmap board]] is a rough timeline of what is being worked on
   and when. It will give you an idea of what will change and where you can
   redirect your efforts.
-+ The [[https://github.com/hlissner/doom-emacs/projects/2][plugins under review board]] lists third party plugins being considered (or
++ The [[https://github.com/doomemacs/doomemacs/projects/2][plugins under review board]] lists third party plugins being considered (or
   rejected) for inclusion in Doom Emacs. Approved and unclaimed packages are
   open for you to implement yourself.
-+ The [[https://github.com/hlissner/doom-emacs/projects/5][upstream bugs board]] lists known issues that have external causes, but
++ The [[https://github.com/doomemacs/doomemacs/projects/5][upstream bugs board]] lists known issues that have external causes, but
   affect Doom. If you're feeling adventurous (or are better acquainted with the
   cause) perhaps you can address them at the source.
 
