@@ -54,7 +54,7 @@ OPTIONS:
       (print-group!
        (when (and (not noenvvar?)
                   (file-exists-p doom-env-file))
-         (call! '("env")))
+         (call! '(env)))
        (doom-packages-install)
        (doom-packages-build)
        (when update?

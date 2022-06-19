@@ -83,13 +83,13 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (if (file-exists-p doom-env-file)
           (print! (item "Envvar file already exists, skipping"))
         (when (or yes? (y-or-n-p "Generate an envvar file? (see `doom help env` for details)"))
-          (doom-cli-reload-env-file 'force-p))))
+          (call! '(env)))))
 
     ;; Install Doom packages
     (if (eq install? :no)
         (print! (warn "Not installing plugins, as requested"))
       (print! "Installing plugins")
-      (doom-cli-packages-install))
+      (doom-packages-install))
 
     (print! "Regenerating autoloads files")
     (doom-autoloads-reload)
@@ -99,7 +99,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (print! "Deploying commit-msg and pre-push git hooks")
       (print-group!
        (condition-case e
-           (doom-cli--ci-deploy-hooks yes?)
+           (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
          ('user-error
           (print! (warn "%s") (error-message-string e))))))
 
