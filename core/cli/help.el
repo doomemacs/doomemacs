@@ -86,12 +86,14 @@ OPTIONS:
                ("--similar"
                 (unless command
                   (user-error "No command specified"))
-                (when-let (similar (doom-cli-help-similar-commands command 0.4))
+                (let ((similar (doom-cli-help-similar-commands command 0.4)))
                   (print! "Similar commands:")
-                  (dolist (command (seq-take similar 10))
-                    (print! (indent (item "(%d%%) %s"))
-                            (* (car command) 100)
-                            (doom-cli-command-string (cdr command))))))
+                  (if (not similar)
+                      (print! (indent (warn "Can't find any!")))
+                    (dolist (command (seq-take similar 10))
+                      (print! (indent (item "(%d%%) %s"))
+                              (* (car command) 100)
+                              (doom-cli-command-string (cdr command)))))))
                ("--envvars"
                 (let* ((key "ENVIRONMENT VARIABLES")
                        (clis (if command (doom-cli-find command) (hash-table-values doom-cli--table)))
