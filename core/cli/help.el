@@ -138,13 +138,14 @@ OPTIONS:
 
 (defun doom-cli-help (cli)
   "Return an alist of documentation summarizing CLI (a `doom-cli')."
-  (let ((docs (doom-cli-docs cli)))
+  (let* ((rcli (doom-cli-get cli))
+         (docs (doom-cli-docs rcli)))
     `((command     . ,(doom-cli-command-string cli))
       (summary     . ,(or (cdr (assoc "SUMMARY" docs)) "TODO"))
       (description . ,(or (cdr (assoc "MAIN" docs)) "TODO"))
       (synopsis    . ,(doom-cli-help--synopsis cli))
-      (arguments   . ,(doom-cli-help--arguments cli))
-      (options     . ,(doom-cli-help--options cli))
+      (arguments   . ,(doom-cli-help--arguments rcli))
+      (options     . ,(doom-cli-help--options rcli))
       (commands    . ,(doom-cli-subcommands cli 1))
       (sections    . ,(seq-filter #'cdr (cddr docs))))))
 
@@ -234,7 +235,8 @@ OPTIONS:
 
 ;;; Help: synopsis
 (defun doom-cli-help--synopsis (cli &optional all-options?)
-  (let* ((opts (doom-cli-help--options cli))
+  (let* ((rcli (doom-cli-get cli))
+         (opts (doom-cli-help--options rcli))
          (opts (mapcar #'car (if all-options? (mapcan #'cdr opts) (alist-get 'local opts))))
          (opts (cl-loop for opt in opts
                         for args = (cdar opt)
@@ -245,9 +247,8 @@ OPTIONS:
                                         (string-join switches "|")
                                         (string-join (remove "..." args) "|"))
                         else collect (format "[%s]" (string-join switches "|"))))
-         (args (doom-cli-arguments cli))
-         ;; (partial? (null (doom-cli-fn cli)))
-         (subcommands? (doom-cli-subcommands cli 1 :predicate? t)))
+         (args (doom-cli-arguments rcli))
+         (subcommands? (doom-cli-subcommands rcli 1 :predicate? t)))
     `((command  . ,(doom-cli-command cli))
       (options  ,@opts)
       (required ,@(mapcar (fn!! (upcase (format "`%s'" %))) (if subcommands? '(command) (alist-get '&required args))))
@@ -354,7 +355,7 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
          local-options
          global-options
          seen)
-    (dolist (neighbor (nreverse (doom-cli-find (doom-cli-command cli))))
+    (dolist (neighbor (nreverse (doom-cli-find cli)))
       (dolist (option (doom-cli-options neighbor))
         (when-let* ((switches (cl-loop for sw in (doom-cli-option-switches option)
                                        if (and (doom-cli-option-flag-p option)
