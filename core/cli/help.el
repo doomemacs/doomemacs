@@ -306,7 +306,7 @@ OPTIONS:
     (let* ((doom-print-indent 0)
            (commands (seq-group-by (fn!! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) commands))
            (toplevel (assq nil commands))
-           (rest (nreverse (remove toplevel commands)))
+           (rest (remove toplevel commands))
            (drop (if prefix (length prefix) 0))
            (minwidth
             (apply
