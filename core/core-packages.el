@@ -530,7 +530,7 @@ elsewhere."
            (cl-destructuring-bind
                (&key local-repo _files _flavor
                      _build _pre-build _post-build _includes
-                     _type _repo _host _branch
+                     _type _repo _host _branch _protocol
                      _remote _nonrecursive _fork _depth)
                recipe
              ;; Expand :local-repo from current directory
