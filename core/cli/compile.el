@@ -163,7 +163,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                                    (byte-compile-file target)
                                  (quiet! (byte-compile-file target))))
                         (`no-byte-compile
-                         (doom-log "(% 3d/%d) Ignored %s" i total-modules (relpath target))
+                         (doom-log "(% 3d/%d) Ignored %s" i total-modules target)
                          total-noop)
                         (`nil
                          (print! (error "(% 3d/%d) Failed to compile %s")
