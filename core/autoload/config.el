@@ -121,6 +121,6 @@ imported into Emacs."
 (defun doom/upgrade ()
   "Run 'doom upgrade' then prompt to restart Emacs."
   (interactive)
-  (doom--if-compile (format "%S -y upgrade" doom-bin)
+  (doom--if-compile (format "%S upgrade --force" doom-bin)
       (when (y-or-n-p "You must restart Emacs for the upgrade to take effect.\n\nRestart Emacs?")
         (doom/restart-and-restore))))
