@@ -98,13 +98,11 @@
         (remove-hook 'kill-buffer-hook #'+rss-cleanup-h :local)
         (kill-buffer b)))
     (mapc #'kill-buffer show-buffers))
-  (if (and (featurep! :ui workspaces)
-           (+workspace-exists-p +rss-workspace-name))
+  (if (featurep! :ui workspaces)
       (+workspace/delete +rss-workspace-name)
     (when (window-configuration-p +rss--wconf)
       (set-window-configuration +rss--wconf))
-    (setq +rss--wconf nil)
-    (previous-buffer)))
+    (setq +rss--wconf nil)))
 
 
 ;;
