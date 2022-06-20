@@ -17,12 +17,9 @@
   :config
   (set-docsets! 'sh-mode "Bash")
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
-  (after! apheleia
-    (setf (alist-get 'shfmt apheleia-formatters)
-          '("shfmt" "-ci"
-            (unless indent-tabs-mode
-              (list "-i" (number-to-string tab-width)))
-            (list "-ln" (pcase sh-shell (`bash "bash") (`mksh "mksh") (_ "posix"))))))
+  (set-formatter! 'shfmt '("shfmt" "-ci"
+                           (unless indent-tabs-mode
+                             (list "-i" (number-to-string tab-width)))))
 
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
   (set-lookup-handlers! 'sh-mode :documentation #'+sh-lookup-documentation-handler)
