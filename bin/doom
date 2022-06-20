@@ -105,6 +105,10 @@
 
 (require 'core-cli (expand-file-name "core/core-cli" user-emacs-directory))
 
+;; Load $DOOMDIR/init.el, to read the user's `doom!' block, and so users can
+;; customize things early, if they like.
+(load! doom-module-init-file doom-private-dir t)
+
 
 ;;
 ;;; Entry point
@@ -218,9 +222,6 @@ SEE ALSO:
     (when pager
       (setenv "DOOMPAGER" pager))
     (exit! :restart))
-  ;; Load $DOOMDIR/init.el, so users can customize things, if they like.
-  (doom-log "Loading $DOOMDIR/init.el")
-  (load! doom-module-init-file doom-private-dir t)
   ;; Load extra files and forms, as per given options.
   (dolist (file loads)
     (load (doom-path (cdr file))
@@ -288,10 +289,9 @@ SEE ALSO:
     (let ((cli-file "cli"))
       (defgroup! "Module commands"
         (dolist (key (hash-table-keys doom-modules))
-          (when-let* ((path (plist-get (gethash key doom-modules) path))
-                      (path (car (doom-glob path cli-file))))
+          (when-let (path (plist-get (gethash key doom-modules) :path))
             (defgroup! :prefix (format "+%s" (cdr key))
-              (defautoload! () path)))))
+              (load! cli-file path t)))))
 
       (doom-log "Loading $DOOMDIR/cli.el")
       (load! cli-file doom-private-dir t))))
