@@ -1309,7 +1309,7 @@ between the two."
       (require 'org-protocol)
       (apply #'org--protocol-detect-protocol-server fn files args)))
   (after! org-protocol
-    (advice-remove 'server-visit-files #'org--protocol-detect-protocol-server)))
+    (advice-remove 'server-visit-files #'org--protocol-detect-protocol-server))
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
