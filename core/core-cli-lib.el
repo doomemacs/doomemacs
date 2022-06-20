@@ -181,7 +181,8 @@ the return value of the executed CLI.")
 ;;
 ;;; `doom-cli'
 
-(cl-defstruct doom-cli
+(cl-defstruct (doom-cli (:constructor doom-cli-create)
+                        (:copier nil))
   "An executable CLI command."
   (command nil :read-only t)
   type
@@ -464,7 +465,8 @@ If RECURSIVE, includes breadcrumbs leading up to COMMANDSPEC."
 ;;
 ;;; `doom-cli-option'
 
-(cl-defstruct doom-cli-option
+(cl-defstruct (doom-cli-option (:constructor doom-cli-option-create)
+                               (:copier nil))
   "A switch specification dictating the characteristics of a recognized option."
   (symbol nil :read-only t)
   docs
@@ -530,7 +532,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
                 collect spec)))
 
 (defun doom-cli--make-option-generic (symbol spec &optional docs)
-  (make-doom-cli-option
+  (doom-cli-option-create
    :symbol symbol
    :docs docs
    :switches  (doom-cli--read-option-switches spec)
@@ -545,7 +547,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
       (signal 'doom-cli-definition-error
               (cons "Argument type %s cannot accept arguments for: %s"
                     '&flag (mapconcat #'symbol-name spec ", "))))
-    (make-doom-cli-option
+    (doom-cli-option-create
      :symbol symbol
      :docs docs
      :flag-p t
@@ -553,7 +555,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
      :default (car args))))
 
 (defun doom-cli--make-option-multi (symbol spec &optional docs)
-  (make-doom-cli-option
+  (doom-cli-option-create
    :symbol symbol
    :docs docs
    :multiple-p t
@@ -564,7 +566,8 @@ Throws `doom-cli-invalid-option-error' for illegal values."
 ;;
 ;;; `doom-cli-context'
 
-(cl-defstruct doom-cli-context
+(cl-defstruct (doom-cli-context (:constructor doom-cli-context-create)
+                                (:copier doom-cli-context-copy))
   "A CLI context, containing all state pertinent to the current session."
   (init-time before-init-time) ; When this context was created
   ;; A session-specific ID of the current context (defaults to number
@@ -876,7 +879,7 @@ considered as well."
          (executing-kbd-macro nil)
          (load-read-function #'read)
          (backtrace (doom-backtrace))
-         (context (or context (make-doom-cli-context)))
+         (context (or context (doom-cli-context-create)))
          (straight-error
           (and (bound-and-true-p straight-process-buffer)
                (stringp data)
@@ -1063,7 +1066,7 @@ Emacs' batch library lacks an implementation of the exec system call."
     (make-directory (file-name-directory context-file) t)
     (with-temp-file context-file
       ;; DEPRECATED Use `print-unreadable-function' when 28 support is dropped
-      (let ((newcontext (copy-doom-cli-context context))
+      (let ((newcontext (doom-cli-context-copy context))
             (print-level nil)
             (print-length nil)
             (print-circle nil)
@@ -1468,7 +1471,7 @@ ignored.
              (dolist (prop '(:autoload :alias :partial :hide))
                (cl-callf map-delete plist prop))
              (puthash (delq nil (cons type target))
-                      (make-doom-cli
+                      (doom-cli-create
                        :command target
                        :type type
                        :docs ',(doom-cli--parse-docs docstring)
@@ -1484,7 +1487,7 @@ ignored.
                                        while (= (length c) (length target))
                                        collect (pop commands)))
                  (puthash (delq nil (cons type alias))
-                          (make-doom-cli
+                          (doom-cli-create
                            :command alias
                            :type type
                            :docs docs
@@ -1495,7 +1498,7 @@ ignored.
                  (let ((cli (gethash partial doom-cli--table)))
                    (when (or (null cli) (doom-cli-autoload cli))
                      (puthash (delq nil (cons type partial))
-                              (make-doom-cli
+                              (doom-cli-create
                                :command partial
                                :type type
                                :docs docs
@@ -1637,7 +1640,7 @@ errors to `doom-cli-error-file')."
         (doom-cli--dump
          (progn (doom-cli-load-all)
                 (hash-table-values doom-cli--table)))
-      (letf! ((context (make-doom-cli-context :prefix prefix))
+      (letf! ((context (doom-cli-context-create :prefix prefix))
               (doom-cli--context context)
               (write-logs-fn (doom-partial #'doom-cli--output-write-logs-h context))
               (show-benchmark-fn (doom-partial #'doom-cli--output-benchmark-h context))

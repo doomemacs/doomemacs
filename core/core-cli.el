@@ -28,15 +28,6 @@
 
 
 ;;
-;;; Variables
-
-(defvar doom-cli--dump (getenv "__DOOMDUMP")
-  "If non-nil, dump target CLIs to stdout (or all of `doom-cli--table').
-
-This exists so external tools or Doom binscripts can inspect each other.")
-
-
-;;
 ;;; Setup CLI session
 
 ;; The garbage collector isn't so important during CLI ops. A higher threshold
@@ -113,6 +104,10 @@ This exists so external tools or Doom binscripts can inspect each other.")
 
 ;; Load standard :help and :version handlers.
 (load! "cli/help")
+
+(defcli! (:root :dump) (&args commands)
+  "Dump metadata to stdout for other commands to read."
+  (doom-cli--dump (doom-cli-find commands)))
 
 (provide 'core-cli)
 ;;; core-cli.el ends here
