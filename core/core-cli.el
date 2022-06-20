@@ -49,23 +49,22 @@ This exists so external tools or Doom binscripts can inspect each other.")
 
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
-(let ((inhibit-message t))
+(let ((inhibit-message (not (or (getenv "DEBUG") init-file-debug))))
   (require 'cl)
   (unless site-run-file
     (let ((site-run-file "site-start")
-          (verbose (or (getenv "DEBUG") init-file-debug))
           (tail load-path)
           (lispdir (expand-file-name "../lisp" data-directory))
           dir)
       (while tail
         (setq dir (car tail))
         (let ((default-directory dir))
-          (load (expand-file-name "subdirs.el") t (not verbose) t))
+          (load (expand-file-name "subdirs.el") t inhibit-message t))
         (or (string-prefix-p lispdir dir)
             (let ((default-directory dir))
-              (load (expand-file-name "leim-list.el") t (not verbose) t)))
+              (load (expand-file-name "leim-list.el") t inhibit-message t)))
         (setq tail (cdr tail)))
-      (load site-run-file t (not verbose)))))
+      (load site-run-file t inhibit-message))))
 
 ;; Just the... bear necessities~
 (require 'core (expand-file-name "core" (file-name-directory load-file-name)))
