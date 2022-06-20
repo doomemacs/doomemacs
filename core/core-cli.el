@@ -105,9 +105,21 @@
 ;; Load standard :help and :version handlers.
 (load! "cli/help")
 
-(defcli! (:root :dump) (&args commands)
+;; When __DOOMDUMP is set, doomscripts trigger this special handler.
+(defcli! (:root :dump)
+    ((pretty? ("--pretty") "Pretty print output")
+     &context context
+     &args commands)
   "Dump metadata to stdout for other commands to read."
-  (doom-cli--dump (doom-cli-find commands)))
+  (let* ((prefix (doom-cli-context-prefix context))
+         (command (cons prefix commands)))
+    (funcall (if pretty? #'pp #'prin1)
+             (cond ((equal commands '("-")) (hash-table-values doom-cli--table))
+                   (commands (doom-cli-find command))
+                   ((doom-cli-find (list prefix)))))
+    (terpri)
+    ;; Kill manually so we don't save output to logs.
+    (let (kill-emacs) (kill-emacs 0))))
 
 (provide 'core-cli)
 ;;; core-cli.el ends here
