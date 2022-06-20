@@ -159,7 +159,9 @@ in."
   (condition-case-unless-debug ex
       (print-group!
        (let ((doom-interactive-p 'doctor)
-             (noninteractive nil))
+             (noninteractive nil)
+             kill-emacs-query-functions
+             kill-emacs-hook)
          (defvar doom-reloading-p nil)
          (require 'core-start)
          (doom-initialize-packages))
