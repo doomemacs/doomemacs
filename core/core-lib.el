@@ -327,13 +327,15 @@ ARGLIST."
          (allow-other-keys arglist))
       ,@body)))
 
+(put 'doom--fn-crawl 'lookup-table
+     '((_  . 0) (_  . 1) (%2 . 2) (%3 . 3) (%4 . 4)
+       (%5 . 5) (%6 . 6) (%7 . 7) (%8 . 8) (%9 . 9)))
 (defun doom--fn-crawl (data args)
   (cond ((symbolp data)
-         (when-let*
-             ((lookup '(_ _ %2 %3 %4 %5 %6 %7 %8 %9))
-              (pos (cond ((eq data '%*) 0)
-                         ((memq data '(% %1)) 1)
-                         ((cdr (assq data (seq-map-indexed #'cons lookup)))))))
+         (when-let
+             (pos (cond ((eq data '%*) 0)
+                        ((memq data '(% %1)) 1)
+                        ((cdr (assq data (get 'doom--fn-crawl 'lookup-table))))))
            (when (and (= pos 1)
                       (aref args 1)
                       (not (eq data (aref args 1))))
@@ -342,8 +344,11 @@ ARGLIST."
         ((and (not (eq (car-safe data) '!))
               (or (listp data)
                   (vectorp data)))
-         (seq-doseq (elt data)
-           (doom--fn-crawl elt args)))))
+         (let ((len (length data))
+               (i 0))
+           (while (< i len)
+             (doom--fn-crawl (elt data i) args)
+             (cl-incf i))))))
 
 (defmacro fn! (&rest args)
   "Return an lambda with implicit, positional arguments.
