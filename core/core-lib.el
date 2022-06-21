@@ -780,10 +780,12 @@ testing advice (when combined with `rotate-text').
 ;;
 ;;; Backports
 
-(unless EMACS28+
-  ;; `format-spec' wasn't autoloaded until 28
-  (autoload #'format-spec "format-spec")
+;; `format-spec' wasn't autoloaded until 28.1
+(unless (fboundp 'format-spec)
+  (autoload #'format-spec "format-spec"))
 
+;; Introduced in Emacs 28.1
+(unless (fboundp 'ensure-list)
   (defun ensure-list (object)
     "Return OBJECT as a list.
 If OBJECT is already a list, return OBJECT itself.  If it's
