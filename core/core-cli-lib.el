@@ -1179,7 +1179,9 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
            (set-file-modes tmpfile #o600)
            (doom-cli--restart
             (format "${DOOMPAGER:-less %s} <%s; rm -f%s %s"
-                    (combine-and-quote-strings (or args '("+g")))
+                    (combine-and-quote-strings
+                     (append (if doom-print-backend '("-r")) ; process ANSI codes
+                             (or (delq nil args) '("+g"))))
                     (shell-quote-argument tmpfile)
                     (if doom-debug-p "v" "")
                     (shell-quote-argument tmpfile))
