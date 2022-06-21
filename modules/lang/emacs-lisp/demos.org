@@ -1,5 +1,5 @@
 #+TITLE: API Demos
-#+PROPERTY: header-args:elisp :results pp
+#+PROPERTY: header-args:emacs-lisp :results verbatim
 
 This file contains demos of Doom's public API; its core library, macros, and
 autodefs. It is used by the =elisp-demos= package to display examples of their
@@ -23,6 +23,8 @@ usage in the documentation displayed by either ~describe-function~ or
   - [[#cmd-1][cmd!!]]
   - [[#cmds][cmds!]]
   - [[#kbd][kbd!]]
+  - [[#lambda][lambda!]]
+  - [[#fn][fn!]]
   - [[#letenv][letenv!]]
   - [[#load][load!]]
   - [[#map][map!]]
