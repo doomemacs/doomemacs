@@ -2,4 +2,4 @@
 
 (defcli! () ()
   "Spawn an emacsclient window for quick edits."
-  (throw :exit "emacsclient --eval '(emacs-everywhere)'"))
+  (exit! "emacsclient --eval '(emacs-everywhere)'"))
