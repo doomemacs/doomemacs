@@ -59,14 +59,21 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     ;; potentially define one of `doom-debug-variables'), in case some of them
     ;; aren't defined when `doom-debug-mode' is first loaded.
     (cond (enabled
+           (message "Debug mode enabled! (Run 'M-x view-echo-area-messages' to open the log buffer)")
+           ;; Produce more helpful (and visible) error messages from errors
+           ;; emitted from hooks (particularly mode hooks), that usually go
+           ;; unnoticed otherwise.
+           (advice-add #'run-hooks :override #'doom-run-hooks)
+           ;; Add time stamps to lines in *Messages*
            (advice-add #'message :before #'doom--timestamped-message-a)
            (add-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
            (add-hook 'after-load-functions #'doom--watch-debug-vars-h))
           (t
+           (advice-remove #'run-hooks #'doom-run-hooks)
            (advice-remove #'message #'doom--timestamped-message-a)
            (remove-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
-           (remove-hook 'after-load-functions #'doom--watch-debug-vars-h)))
-    (message "Debug mode %s" (if enabled "on" "off"))))
+           (remove-hook 'after-load-functions #'doom--watch-debug-vars-h)
+           (message "Debug mode disabled!")))))
 
 
 ;;
@@ -310,7 +317,8 @@ ready to be pasted in a bug report on github."
         (elpa
          ,@(condition-case e
                (progn
-                 (package-initialize)
+                 (unless (bound-and-true-p package--initialized)
+                   (package-initialize))
                  (cl-loop for (name . _) in package-alist
                           collect (format "%s" name)))
              (error (format "<%S>" e))))))))
