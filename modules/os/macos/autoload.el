@@ -1,6 +1,8 @@
 ;;; os/macos/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload
+(defun +macos-defaults (action &rest args)
+  (apply #'doom-call-process "defaults" action args))
+
 (defun +macos-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
@@ -18,11 +20,28 @@
     (message "Running: %s" command)
     (shell-command command)))
 
-;;;###autoload
 (defmacro +macos--open-with (id &optional app dir)
   `(defun ,(intern (format "+macos/%s" id)) ()
      (interactive)
      (+macos-open-with ,app ,dir)))
+
+(defmacro +macos--open-with-iterm (id &optional dir newwindow?)
+  `(defun ,(intern (format "+macos/%s" id)) ()
+     (interactive)
+     (letf! ((defun read-newwindows ()
+               (cdr (+macos-defaults
+                     "read" "com.googlecode.iterm2" "OpenFileInNewWindows")))
+             (defun write-newwindows (bool)
+               (+macos-defaults
+                "write" "com.googlecode.iterm2" "OpenFileInNewWindows"
+                "-bool" (if bool "true" "false"))))
+       (let ((newwindow?
+              (if newwindow? (not (equal (read-newwindows) "1")))))
+         (when newwindow?
+           (write-newwindows t))
+         (unwind-protect (+macos-open-with "iTerm" ,dir)
+           (when newwindow?
+             (write-newwindows nil)))))))
 
 ;;;###autoload (autoload '+macos/open-in-default-program "os/macos/autoload" nil t)
 (+macos--open-with open-in-default-program)
@@ -48,4 +67,7 @@
                    (or (doom-project-root) default-directory))
 
 ;;;###autoload (autoload '+macos/open-in-iterm "os/macos/autoload" nil t)
-(+macos--open-with open-in-iterm "iTerm" default-directory)
+(+macos--open-with-iterm open-in-iterm default-directory)
+
+;;;###autoload (autoload '+macos/open-in-iterm-new-window "os/macos/autoload" nil t)
+(+macos--open-with-iterm open-in-iterm-new-window default-directory t)

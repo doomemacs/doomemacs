@@ -261,7 +261,8 @@
         :desc "Send project to Transmit"   "U" #'+macos/send-project-to-transmit
         :desc "Send to Launchbar"          "l" #'+macos/send-to-launchbar
         :desc "Send project to Launchbar"  "L" #'+macos/send-project-to-launchbar
-        :desc "Open in iTerm"              "i" #'+macos/open-in-iterm)
+        :desc "Open in iTerm"              "i" #'+macos/open-in-iterm
+        :desc "Open in new iTerm window"   "I" #'+macos/open-in-iterm-new-window)
        (:when (featurep! :tools docker)
         :desc "Docker" "D" #'docker)
        (:when (featurep! :email mu4e)
