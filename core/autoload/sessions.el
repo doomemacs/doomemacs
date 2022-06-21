@@ -113,7 +113,13 @@
   (doom-save-session file))
 
 ;;;###autoload
-(defalias 'doom/restart #'restart-emacs)
+(defun doom/restart ()
+  "Restart Emacs (and the daemon, if active).
+
+Unlike `doom/restart-and-restore', does not restart the current session."
+  (interactive)
+  (require 'restart-emacs)
+  (restart-emacs))
 
 ;;;###autoload
 (defun doom/restart-and-restore (&optional debug)
@@ -122,6 +128,7 @@
 If DEBUG (the prefix arg) is given, start the new instance with the --debug
 switch."
   (interactive "P")
+  (require 'restart-emacs)
   (doom/quicksave-session)
   (save-some-buffers nil t)
   (letf! ((#'save-buffers-kill-emacs #'kill-emacs)
