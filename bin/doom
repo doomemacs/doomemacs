@@ -203,7 +203,6 @@ SEE ALSO:
   (when (and (equal (doom-cli-context-step context) 0)
              (or ;; profile
                  debug?
-                 force?
                  emacsdir
                  doomdir
                  pager))
@@ -213,9 +212,6 @@ SEE ALSO:
     (when debug?
       (setenv "DEBUG" "1")
       (print! (item "Debug mode enabled")))
-    (when force?
-      (setenv "__DOOMFORCE" (and force? "1"))
-      (print! (item "Suppressing all prompts")))
     (when emacsdir
       (setenv "EMACSDIR" emacsdir))
     (when doomdir
@@ -223,6 +219,9 @@ SEE ALSO:
     (when pager
       (setenv "DOOMPAGER" pager))
     (exit! :restart))
+  (when force?
+    (setf (doom-cli-context-suppress-prompts-p context) t)
+    (print! (item "Suppressing all prompts")))
   ;; Load extra files and forms, as per given options.
   (dolist (file loads)
     (load (doom-path (cdr file))
