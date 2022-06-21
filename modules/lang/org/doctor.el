@@ -28,3 +28,9 @@
   (when IS-WINDOWS
     (unless (executable-find "convert")
       (warn! "Couldn't find the convert program (from ImageMagick). org-download-clipboard will not work."))))
+
+(when (featurep! +media-note)
+  (unless (executable-find "mpv")
+    (warn! "Couldn't find the mpv executable. org-media-note will not be able to play media files."))
+  (unless (executable-find "youtube-dl")
+    (warn! "Couldn't find the youtube-dl executable. mpv will not be able to play online media files properly. You can install youtuble-dl using pip or OS package managers like homebrew, apt, dnf(yum), yay and etc.")))

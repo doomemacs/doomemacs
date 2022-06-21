@@ -69,6 +69,10 @@
   (package! org-noter :pin "9ead81d42dd4dd5074782d239b2efddf9b8b7b3d"))
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
+(when (featurep! +media-note)
+  (package! org-media-note
+    :recipe (:host github :repo "yuchen-lea/org-media-note")
+    :pin "dd458c3260530d1866eaa0cde4b1bb71c6f8cf0e"))
 (when (featurep! +pretty)
   (package! org-appear :pin "8dd1e564153d8007ebc4bb4e14250bde84e26a34")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")

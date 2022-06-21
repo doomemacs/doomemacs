@@ -882,6 +882,8 @@ between the two."
         "k" #'org-babel-remove-result
         "K" #'+org/remove-result-blocks
         "n" #'org-store-link
+        (:when (featurep! +media-note)
+         "v" #'org-media-note-hydra/body)
         "o" #'org-set-property
         "q" #'org-set-tags-command
         "t" #'org-todo
@@ -1224,6 +1226,84 @@ between the two."
   (evil-org-agenda-set-keys)
   (evil-define-key* 'motion evil-org-agenda-mode-map
     (kbd doom-leader-key) nil))
+
+(defvar +mpv-default-subtitle-langs '("en")
+  "A list of subtitles which can use in mpv and youtuble-dl.
+These values are passed to mpv-profiles")
+
+(defvar +mpv-default-profile "480p"
+  "Default mpv and youtube-dl profile")
+
+(defvar +mpv-options
+  `(("120p"
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?120][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" ))
+    ("240p"
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?240][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" ))
+    ("360p" ;; Default
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?360][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" ))
+    ("480p"
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?480][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" ))
+    ("720p"
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?720][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" ))
+    ("1080p"
+     "--force-window"
+     "--ytdl-format=bestvideo[height<=?1080][fps<=?30][vcodec!=?vp9]+bestaudio/best"
+     ,(concat "--ytdl-raw-options=sub-lang=\"" (string-join +mpv-default-subtitle-langs ",") "\",write-sub=,write-auto-sub=" )))
+"A list of mpv and Youtuble-dl options.")
+
+(use-package! mpv
+  :when (featurep! +media-note)
+  :after org
+  :config
+  (defun org-mpv-complete-link (&optional arg)
+    (replace-regexp-in-string
+     "file:" "mpv:"
+     (org-link-complete-file arg) t t))
+  (defun +mpv-org-metareturn-insert-playback-position ()
+    (when-let ((item-beg (org-in-item-p)))
+      (when (and (not org-timer-start-time)
+                 (mpv-live-p)
+                 (save-excursion
+                   (goto-char item-beg)
+                   (and (not (org-invisible-p)) (org-at-item-timer-p))))
+        (mpv-insert-playback-position t))))
+  (defun +mpv/select-profiles ()
+    (interactive)
+    (let ((profile-name (helm :sources (helm-build-sync-source "Select MPV Profiles"
+                                                               :candidates (-map #'car +mpv-options)
+                                                               :fuzzy-match t)
+                              :buffer "*helm mpv profile*")))
+      (when profile-name
+        (setq mpv-default-options (cdr (assoc profile-name +mpv-options))))))
+  (setq mpv-default-options
+        (cdr (assoc +mpv-default-profile +mpv-options)))
+  (org-link-set-parameters "mpv" :follow #'mpv-play)
+  (add-hook 'org-metareturn-hook #'+mpv-org-metareturn-insert-playback-position)
+  (add-hook 'org-open-at-point-functions #'mpv-seek-to-position-at-point))
+
+(use-package! org-media-note
+  :when (featurep! +media-note)
+  :after org org-attach
+  :hook (org-mode . org-media-note-mode)
+  :config
+
+  (unless org-media-note-use-org-ref
+    (setq-default org-media-note-use-org-ref t))
+  (unless org-media-note-use-refcite-first
+    ;; Use videocite link instead of video link if possible
+    (setq-default org-media-note-use-refcite-first t)
+  (unless org-media-note-screenshot-image-dir
+    (setq-default org-media-note-screenshot-image-dir (expand-file-name "imgs" org-directory)))))
 
 
 ;;
