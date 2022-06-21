@@ -16,7 +16,6 @@
 # $BASH_SOURCE to locate it would reduce its POSIX compliance). This shouldn't
 # be an issue for folks writing their own CLIs, however.
 
-set -e
 case "$EMACS" in
     *term*) EMACS=emacs ;;
     *) EMACS="${EMACS:-emacs}" ;;
