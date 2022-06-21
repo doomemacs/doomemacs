@@ -327,6 +327,43 @@ Or to create aliases for functions that behave differently:
       ";" (kbd! ":"))
 #+end_src
 
+** lambda!
+#+begin_src emacs-lisp
+(mapcar (lambda! ((&key foo bar baz))
+          (list foo bar baz))
+        '((:foo 10 :bar 25)
+          (:baz hello :boop nil)
+          (:bar 42)))
+#+end_src
+
+#+RESULTS:
+: ((10 25 nil) (nil nil hello) (nil 42 nil))
+
+** fn!
+#+begin_src emacs-lisp
+(mapcar (fn! (symbol-name %)) '(hello world))
+#+end_src
+
+#+RESULTS:
+: ("hello" "world")
+
+#+begin_src emacs-lisp
+(seq-sort (fn! (string-lessp (symbol-name %1)
+                             (symbol-name %2)))
+          '(bonzo foo bar buddy doomguy baz zombies))
+#+end_src
+
+#+RESULTS:
+: (bar baz bonzo buddy doomguy foo zombies)
+
+#+begin_src emacs-lisp
+(format "You passed %d arguments to this function"
+        (funcall (fn! (length %*)) :foo :bar :baz "hello" 123 t))
+#+end_src
+
+#+RESULTS:
+: "You passed 6 arguments to this function"
+
 ** letenv!
 :PROPERTIES:
 :added: pre-3.0.0
