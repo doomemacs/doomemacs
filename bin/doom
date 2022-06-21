@@ -1,14 +1,15 @@
 #!/usr/bin/env sh
 :; set -e # -*- mode: emacs-lisp; lexical-binding: t -*-
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
-:; tmpdir=`$EMACS -Q --batch --eval '(princ (temporary-file-directory))' 2>/dev/null`
+:; emacs="$EMACS -q --no-site-file --no-x-resources --no-splash --batch"
+:; tmpdir=`$emacs --eval '(princ (temporary-file-directory))' 2>/dev/null`
 :; [ -z "$tmpdir" ] && { >&2 echo "Error: failed to run Emacs with command '$EMACS'"; >&2 echo; >&2 echo "Are you sure Emacs is installed and in your \$PATH?"; exit 1; }
 :; export __DOOMPID="${__DOOMPID:-$$}"
 :; export __DOOMSTEP="$((__DOOMSTEP+1))"
 :; export __DOOMGEOM="${__DOOMGEOM:-`tput cols 2>/dev/null`x`tput lines 2>/dev/null`}"
 :; export __DOOMGPIPE=${__DOOMGPIPE:-$__DOOMPIPE}
 :; export __DOOMPIPE=; [ -t 0 ] || __DOOMPIPE+=0; [ -t 1 ] || __DOOMPIPE+=1
-:; $EMACS -Q --batch --load "$0" -- "$@" || exit=$?
+:; $emacs --load "$0" -- "$@" || exit=$?
 :; [ "${exit:-0}" -eq 254 ] && { sh "${tmpdir}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@" && true; exit="$?"; }
 :; exit $exit
 

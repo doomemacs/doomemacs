@@ -22,7 +22,9 @@ case "$EMACS" in
     *) EMACS="${EMACS:-emacs}" ;;
 esac
 
-TMPDIR="${TMPDIR:-$($EMACS -Q --batch --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
+emacs="$EMACS -q --no-site-file --no-x-resources --no-splash --batch"
+
+TMPDIR="${TMPDIR:-$($emacs --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
 if [ -z "$TMPDIR" ]; then
     >&2 echo "Error: failed to run Emacs with command '$EMACS'"
     >&2 echo
@@ -41,10 +43,9 @@ tmpfile="$TMPDIR/doomscript.${__DOOMPID}"
 
 target="$1"
 shift
-$EMACS -Q --batch \
-    --load "$EMACSDIR/core/core-cli" \
-    --load "$target" \
-    -- "$@" || exit=$?
+$emacs --load "$EMACSDIR/core/core-cli" \
+       --load "$target" \
+       -- "$@" || exit=$?
 # Execute exit-script, if requested (to simulate execve)
 if [ "${exit:-0}" -eq 254 ]; then
     sh "${tmpdir}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@" && true
