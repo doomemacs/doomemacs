@@ -33,6 +33,12 @@
          ((error "No kill-ring search backend available. Enable ivy, helm or vertico!")))))
 
 ;;;###autoload
+(defun +default/yank-buffer-contents ()
+  "Copy entire buffer into kill ring."
+  (interactive)
+  (clipboard-kill-ring-save (point-min) (point-max)))
+
+;;;###autoload
 (defun +default/yank-buffer-path (&optional root)
   "Copy the current buffer's path to the kill ring."
   (interactive)
