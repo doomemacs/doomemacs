@@ -377,7 +377,7 @@ minus font-locking, the outer function call, and minor optimizations."
                         sym arglist)
                     (while (> i 0)
                       (setq sym (aref argv i))
-                      (unless (and (= n -1) (null x))
+                      (unless (and (= n -1) (null sym))
                         (cl-incf n)
                         (push (or sym (intern (format "_%%%d" (1+ n))))
                               arglist))
