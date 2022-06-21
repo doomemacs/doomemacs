@@ -207,7 +207,7 @@ OPTIONS:
                                    ;; FIXME Who am I fooling?
                                    (format (format "%%-%ds%%s%%%ds" width width)
                                            "DOOM(1)" title "DOOM(1)")))
-                      ("NAME" . ,(concat (doom-cli-command-string cli) " - " .summary))
+                      ("NAME" . ,(concat .command " - " .summary))
                       ("SYNOPSIS" . ,(doom-cli-help--render-synopsis .synopsis nil t))
                       ("DESCRIPTION" . ,.description))
                   `((nil . ,(doom-cli-help--render-synopsis .synopsis "Usage: "))
@@ -222,9 +222,17 @@ OPTIONS:
                    (if (or (not (doom-cli-fn cli)) noglobal?)
                        `(,(assq 'local .options))
                      .options)
-                   cli)))))
+                   cli))))
+           (command (doom-cli-command cli)))
       (letf! (defun printsection (section)
-               (print! "%s\n" (if section (markup section) (dark "TODO"))))
+               (print! "%s\n"
+                       (if (null section)
+                           (dark "TODO")
+                         (markup
+                          (format-spec
+                           section `((?p . ,(car command))
+                                     (?c . ,(doom-cli-command-string (cdr command))))
+                           'ignore)))))
         (pcase-dolist (`(,label . ,contents) alist)
           (when (and contents (not (string-blank-p contents)))
             (when label

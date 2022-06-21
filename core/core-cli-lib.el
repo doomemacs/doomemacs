@@ -1280,23 +1280,33 @@ command listings served by help commands. The rest of DOCSTRING lines should be
 no longer than 80 columns, and should go into greater detail. This documentation
 may use `quoting' to appropriately highlight ARGUMENTS, --options, or $ENVVARS.
 
-DOCSTRING may also contain sections, denoted by a capitalized header ending with
+DOCSTRING may also contain sections denoted by a capitalized header ending with
 a colon and newline, and its contents indented by 2 spaces. These will be
 appended to the end of the help documentation for that command. These three
 sections are special:
 
-  SYNOPSIS:
-    These are appended to the pregenerated SYNOPSIS of any commands help
-    documentation. Use this to specify additional use cases and examples for the
-    command.
   ARGUMENTS:
     Use this to specify longer-form documentation for arguments. They are
-    appended to the auto-generated section of the same name.
+    prepended to the documentation for commands. If pseudo CLIs specify their
+    own ARGUMENTS sections, they are joined with that of the root command's CLI
+    as well. E.g. ':before doom sync's ARGUMENTS will be prepended to 'doom
+    sync's.
   OPTIONS:
     Use this to specify longer-form documentation for options. They are appended
     to the auto-generated section of the same name. Only the option needs to be
     specified for its lookup behavior to work. See bin/doom's `doom' command as
     an example.
+  EXAMPLES:
+    To list example uses of the containing script. These are appended to
+    SYNOPSIS in generated manpages, but treated as a normal section otherwise
+    (i.e. appended to 'doom help's output).
+
+DOCSTRING may use any of these format specifications:
+
+  %p  The running script's prefix. E.g. for 'doom ci deploy-hooks' the
+      prefix is 'doom'.
+  %c  The parent command minus the prefix. E.g. for 'doom ci deploy-hooks',
+      the command is 'ci deploy-hooks'.
 
 ARGLIST is a specification for options and arguments that is accepted by this
 command. Arguments are represented by either a symbol or a cons cell where
