@@ -1070,6 +1070,7 @@ between the two."
         (set-marker p nil)))))
 
 
+;; TODO Move to +encrypt flag
 (use-package! org-crypt ; built-in
   :commands org-encrypt-entries org-encrypt-entry org-decrypt-entries org-decrypt-entry
   :hook (org-reveal-start . org-decrypt-entry)

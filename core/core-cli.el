@@ -51,9 +51,9 @@
         (setq dir (car tail))
         (let ((default-directory dir))
           (load (expand-file-name "subdirs.el") t inhibit-message t))
-        (or (string-prefix-p lispdir dir)
-            (let ((default-directory dir))
-              (load (expand-file-name "leim-list.el") t inhibit-message t)))
+        (unless (string-prefix-p lispdir dir)
+          (let ((default-directory dir))
+            (load (expand-file-name "leim-list.el") t inhibit-message t)))
         (setq tail (cdr tail)))
       (load site-run-file t inhibit-message))))
 

@@ -13,6 +13,7 @@
 ;;
 ;;; Packages
 
+;; DEPRECATED To be replaced with pulsar.el when Emacs 28 support is dropped
 (use-package! nav-flash
   :defer t
   :init

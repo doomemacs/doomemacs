@@ -262,8 +262,8 @@ NAME, ARGLIST, and BODY are the same as `defun', `defun*', `defmacro', and
   "Run FORMS without generating any output.
 
 This silences calls to `message', `load', `write-region' and anything that
-writes to `standard-output'. In interactive sessions this won't suppress writing
-to *Messages*, only inhibit output in the echo area."
+writes to `standard-output'. In interactive sessions this inhibits output to the
+echo-area, but not to *Messages*."
   `(if doom-debug-p
        (progn ,@forms)
      ,(if doom-interactive-p

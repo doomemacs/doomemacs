@@ -14,9 +14,9 @@
     gcmh-verbose
     init-file-debug
     jka-compr-verbose
+    (message-log-max . 16384)
     url-debug
-    use-package-verbose
-    (message-log-max . 16384))
+    use-package-verbose)
   "A list of variable to toggle on `doom-debug-mode'.
 
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
