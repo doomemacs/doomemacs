@@ -281,8 +281,10 @@ Returned in the order they will execute. Includes pseudo CLIs."
       (push (cons :before path) results))
     (push '(:before) results)
     (dolist (result (nreverse results) clis)
-      (when-let (cli (doom-cli-get result))
-        (cl-pushnew cli clis :test #'equal :key #'doom-cli-key)))))
+      (when-let (cli (doom-cli-get result t))
+        (cl-pushnew cli clis
+                    :test #'equal
+                    :key #'doom-cli-key)))))
 
 (defun doom-cli-prop (cli prop &optional null-value)
   "Returns a PROPerty of CLI's plist, or NULL-VALUE if it doesn't exist."
@@ -637,7 +639,9 @@ executable context."
           ((let ((seen '(t))
                  runners)
              (dolist (cli (doom-cli-find command (doom-cli-type cli)))
-               (push (cons cli (doom-cli--bindings cli context seen)) runners))
+               (push (cons (doom-cli-get cli)
+                           (doom-cli--bindings cli context seen))
+                     runners))
              (pcase-dolist (`(,cli . ,bindings) (nreverse runners))
                (doom-cli-execute cli bindings))
              context)))))
