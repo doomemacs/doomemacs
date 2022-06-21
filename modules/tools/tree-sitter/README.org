@@ -21,78 +21,94 @@
   - [[#error-bad-bounding-indices-0-1][=(error "Bad bounding indices: 0, 1")=]]
 
 * Description
-This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
+
+This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to Doom:
 
 #+begin_quote
 Tree sitter is a parser generator tool and an incremental parsing library. It
 can build a concrete syntax tree for a source file and efficiently update the
 syntax tree as the source file is edited. This allows for features of the editor
-  to become syntax aware.
+to become syntax aware.
 #+end_quote
 
 It includes:
-+ Better syntax highlighting of supported languages
+
++ Better syntax highlighting of supported languages.
 + Structural text objects to manipulate functions statements and other code
-  structures like any other text object
+  structures like any other text object.
 
 ** Maintainers
-- @jeetelongname
+
++ @jeetelongname
 
 ** Module Flags
+
 This module provides no flags.
 
 ** Plugins
+
 + [[https://github.com/emacs-tree-sitter/elisp-tree-sitter][tree-sitter]]
 + [[https://github.com/emacs-tree-sitter/tree-sitter-langs][tree-sitter-langs]]
 + [[https://github.com/meain/evil-textobj-tree-sitter][evil-textobj-tree-sitter]]* (=:editor evil +everywhere=)
 
 * Prerequisites
+
 This module has no prerequisites. 
 
 * Features
 ** Language support
-Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
-highlighting support for [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/queries][these languages]] as well as ~typescript-tsx-mode~
-To enable tree sitter for individual languages add the =+tree-sitter= flag.
-Check the module readme of your language for support.
+
+Currently Emacs tree sitter has [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]], and syntax
+highlighting support for [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/queries][these languages]] as well as ~typescript-tsx-mode~.
+
+To enable tree sitter for individual languages, add the =+tree-sitter= flag. Check
+the module readme of your language for support.
 
 ** Text Objects
-Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
-objects languages support]]
-Note: only languages with parsers in emacs have text object support currently.
+
+Not all languages support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
+object languages support]].
+
+Note: Only languages with parsers in Emacs have text object support currently.
 Currently text objects are bound to:
+
 | key | text object         |
 |-----+---------------------|
-| =A= | parameter list      |
-| =f= | function definition |
-| =F= | function call       |
-| =C= | class               |
-| =c= | comment             |
-| =v= | conditional         |
-| =l= | loop                |
+| =A=   | parameter list      |
+| =f=   | function definition |
+| =F=   | function call       |
+| =C=   | class               |
+| =c=   | comment             |
+| =v=   | conditional         |
+| =l=   | loop                |
 
 They are used in a container context (not =vf= but =vaf= or =vif=)
 
 ** Goto certain nodes
-you can also jump to the next / previous node type in a buffer by using =[g=
-or =]g= respectfully, the following key will correspond to the text object you
-want to jump to
+
+You can also jump to the next / previous node type in a buffer by using =[g= or =]g=
+respectfully, the following key will correspond to the text object you want to
+jump to.
+
 Currently keys are bound to:
+
 | key | text object    |
 |-----+----------------|
-| =a= | parameter list |
-| =f= | function       |
-| =F= | function call  |
-| =c= | comment        |
-| =C= | class          |
-| =v= | conditional    |
-| =l= | loop           |
+| =a=   | parameter list |
+| =f=   | function       |
+| =F=   | function call  |
+| =c=   | comment        |
+| =C=   | class          |
+| =v=   | conditional    |
+| =l=   | loop           |
 
 * Configuration
 ** Rebinding text objects
-Rebinding keys is the same as any other key but do notes they need to be bound 
-to the keymaps ~+tree-sitter-inner-text-object-map~ or
-~+tree-sitter-outer-text-object-map~
+
+Rebinding keys is the same as any other key, but do note that they need to be
+bound to the keymaps ~+tree-sitter-inner-text-object-map~ or
+~+tree-sitter-outer-text-object-map~.
+
 #+begin_src emacs-lisp
 (map! (:map +tree-sitter-outer-text-objects-map
        "f" nil
@@ -108,8 +124,8 @@ to the keymaps ~+tree-sitter-inner-text-object-map~ or
 
 ** Adding your own text objects
 If you wish to [[https://github.com/meain/evil-textobj-tree-sitter#custom-textobjects][add your own custom text objects]] then you need to bind them to
-~+tree-sitter-{inner, outer}-text-objects-map~
-for example:
+~+tree-sitter-{inner, outer}-text-objects-map~. For example:
+
 #+begin_src emacs-lisp
 (map! (:map +tree-sitter-outer-text-objects-map
        "m" (evil-textobj-tree-sitter-get-textobj "import"
@@ -118,13 +134,16 @@ for example:
 #+end_src
 
 ** Disabling highlighting for certain modes
-If you want to disable highlighting by default you can add a 
+
+If you want to disable highlighting by default you can do:
+
 #+begin_src emacs-lisp
 (after! MODE-PACKAGE
   (tree-sitter-hl-mode -1))
 #+end_src
 
-If you only want it for certain modes then
+If you only want it for certain modes, then:
+
 #+begin_src emacs-lisp
 (remove-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
@@ -133,6 +152,7 @@ If you only want it for certain modes then
 
 * Troubleshooting
 ** =(error "Bad bounding indices: 0, 1")=
-This means that the text object does not have the underlying query needed, this can be
-fixed by either adding in a custom query (which would override the current key
-bound.) or [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects/][contributing upstream!]]
+
+This means that the text object does not have the underlying query needed. This
+can be fixed by either adding in a custom query (which would override the
+current key bound) or [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects/][contributing upstream!]]
