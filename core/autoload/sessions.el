@@ -133,8 +133,10 @@ switch."
     ;;   arguments at all. Should be fixed upstream, but restart-emacs seems to
     ;;   be unmaintained.
     (with-temp-file tmpfile
-      (print `(progn (add-hook 'window-setup-hook #'doom-load-session 100)
-                     (delete-file ,tmpfile))
+      (print `(progn
+                (when (boundp 'doom-version)
+                  (add-hook 'window-setup-hook #'doom-load-session 100))
+                (delete-file ,tmpfile))
              (current-buffer)))
     (restart-emacs
      (append (if debug (list "--debug-init"))
