@@ -1511,7 +1511,8 @@ ignored.
                            :command alias
                            :type type
                            :docs docs
-                           :alias (delq nil (cons type target))
+                           :autoload autoload
+                           :alias (unless autoload (delq nil (cons type target)))
                            :plist (append plist '(:hide t)))
                           doom-cli--table))
                (dolist (partial commands)
@@ -1550,7 +1551,7 @@ WHEN specifies what version this command was rendered obsolete."
 (defmacro defautoload! (commandspec &optional path &rest plist)
   "Defer loading of PATHS until PREFIX is called."
   `(let* ((doom-cli--plist (append (list ,@plist) doom-cli--plist))
-          (commandspec (doom-cli-command-normalize ',commandspec doom-cli--plist))
+          (commandspec (doom-cli-command-normalize ',commandspec))
           (commands (doom-cli--command-expand commandspec))
           (path (or ,path
                     (when-let* ((cmd  (car commands))
