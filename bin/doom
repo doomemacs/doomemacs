@@ -62,10 +62,13 @@
 ;;   Put together, plus a strategically placed exit call, the shell will read
 ;;   one part of this file and ignore the rest, while the elisp interpreter will
 ;;   do the opposite.
-;; - I intentionally avoid loading site files (using -Q), because
-;;   core/core-cli.el loads them by hand later. There, I can suppress and deal
-;;   with unhelpful warnings (e.g. "package cl is deprecated"), "Loading
-;;   X...DONE" spam, and any other disasterous side-effects.
+;; - I intentionally avoid loading site files, so core/core-cli.el can load them
+;;   by hand later. There, I can suppress and deal with unhelpful warnings (e.g.
+;;   "package cl is deprecated"), "Loading X...DONE" spam, and any other
+;;   disasterous side-effects.
+;;
+;;   But be careful not to use -Q! It implies --no-site-lisp, which omits the
+;;   site-lisp directory from `load-path'.
 ;; - POSIX-compliancy is paramount: there's no guarantee what /bin/sh will be
 ;;   symlinked to in the esoteric OSes/distros Emacs users use.
 ;; - The user may have a noexec flag set on /tmp, so pass the exit script to
