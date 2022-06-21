@@ -372,12 +372,17 @@ This macro was adapted from llama.el (see https://git.sr.ht/~tarsius/llama),
 minus font-locking, the outer function call, and minor optimizations."
   `(lambda ,(let ((argv (make-vector 10 nil)))
               (doom--fn-crawl args argv)
-              `(,@(let ((n 0))
-                    (mapcar (lambda (sym)
-                              (cl-incf n)
-                              (or sym (intern (format "_%%%s" n))))
-                            (reverse (seq-drop-while
-                                      #'null (reverse (seq-subseq argv 1))))))
+              `(,@(let ((i (1- (length argv)))
+                        (n -1)
+                        sym arglist)
+                    (while (> i 0)
+                      (setq sym (aref argv i))
+                      (unless (and (= n -1) (null x))
+                        (cl-incf n)
+                        (push (or sym (intern (format "_%%%d" (1+ n))))
+                              arglist))
+                      (cl-decf i))
+                    arglist)
                 ,@(and (aref argv 0) '(&rest %*))))
      ,@args))
 
