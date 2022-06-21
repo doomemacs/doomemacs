@@ -230,7 +230,7 @@ prepended, and the keyword is in front."
                    command (or (cl-position :root command :from-end t)
                                0))))
     (when (or command prefix)
-      (cl-loop with map = (fn!! (if (or (stringp %) (keywordp %)) % (prin1-to-string %)))
+      (cl-loop with map = (fn! (if (or (stringp %) (keywordp %)) % (prin1-to-string %)))
                for c in (delq nil (cons type (seq-remove #'keywordp command)))
                if (listp c)
                collect (mapcar map c)
@@ -420,7 +420,7 @@ TARGET can be a `doom-cli', `doom-cli-context', or a command list."
 If RECURSIVE, includes breadcrumbs leading up to COMMANDSPEC."
   (funcall (if recursive?
                #'identity
-             (fn!! (cl-loop with cmdlen = (length (car %))
+             (fn! (cl-loop with cmdlen = (length (car %))
                             for command in %
                             while (= (length command) cmdlen)
                             collect command)))

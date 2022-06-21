@@ -321,9 +321,9 @@ Each argument in ARGS can be a list, as if they were arguments to `format!':
 
 `nil' and empty strings in SEQUENCE are omitted."
   (mapconcat (doom-partial #'format "%s")
-             (seq-remove (fn!! (or (null %)
-                                   (and (stringp %)
-                                        (string-empty-p %))))
+             (seq-remove (fn! (or (null %)
+                                  (and (stringp %)
+                                       (string-empty-p %))))
                          sequence)
              (or separator " ")))
 

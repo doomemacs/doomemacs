@@ -162,7 +162,7 @@ each package."
      (list (intern (car module))
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
-  (mapc (fn! ((cat . mod))
+  (mapc (lambda! ((cat . mod))
           (if-let (packages-file
                    (pcase cat
                      (:private (car (doom-glob doom-private-dir "packages.el")))

@@ -251,7 +251,7 @@ NAME, ARGLIST, and BODY are the same as `defun', `defun*', `defmacro', and
                   ,(if (eq type 'defun*)
                        `(cl-labels ((,@rest)) ,body)
                      `(cl-letf (((symbol-function #',(car rest))
-                                 (fn! ,(cadr rest) ,@(cddr rest))))
+                                 (lambda! ,(cadr rest) ,@(cddr rest))))
                         ,body))))
               (_
                (when (eq (car-safe type) 'function)
@@ -298,7 +298,7 @@ See `eval-if!' for details on this macro's purpose."
 
 
 ;;; Closure factories
-(defmacro fn! (arglist &rest body)
+(defmacro lambda! (arglist &rest body)
   "Returns (cl-function (lambda ARGLIST BODY...))
 The closure is wrapped in `cl-function', meaning ARGLIST will accept anything
 `cl-defun' will. Implicitly adds `&allow-other-keys' if `&key' is present in
@@ -345,7 +345,7 @@ ARGLIST."
          (seq-doseq (elt data)
            (doom--fn-crawl elt args)))))
 
-(defmacro fn!! (&rest args)
+(defmacro fn! (&rest args)
   "Return an lambda with implicit, positional arguments.
 
 The function's arguments are determined recursively from ARGS.  Each symbol from
@@ -361,7 +361,7 @@ Instead of:
 
 you can use this macro and write:
 
-  (fn!! (if %1 %3 (cadr %*)))
+  (fn! (if %1 %3 (cadr %*)))
 
 which expands to:
 

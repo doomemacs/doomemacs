@@ -57,12 +57,12 @@ Each element of this list can be one of:
 
 (defvar doom-ci-commit-rules
   ;; TODO Extract into named functions
-  (list (fn! (&key subject)
+  (list (lambda! (&key subject)
           "If a fixup/squash commit, don't lint this commit"
           (when (string-match "^\\(\\(?:fixup\\|squash\\)!\\|FIXUP\\|WIP\\) " subject)
             (skip! (format "Found %S commit, skipping commit" (match-string 1 subject)))))
 
-        (fn! (&key type subject)
+        (lambda! (&key type subject)
           "Test SUBJECT length"
           (let ((len (length subject)))
             (cond ((memq type '(bump revert)))
@@ -77,27 +77,27 @@ Each element of this list can be one of:
                    (warn! "Subject is %d characters; <=50 is ideal"
                           len)))))
 
-        (fn! (&key type)
+        (lambda! (&key type)
           "Ensure commit has valid type"
           (or (memq type doom-ci-commit-types)
               (if type
                   (fail! "Invalid commit type: %s" type)
                 (fail! "Commit has no detectable type"))))
 
-        (fn! (&key summary)
+        (lambda! (&key summary)
           "Ensure commit has a summary"
           (when (or (not (stringp summary))
                     (string-blank-p summary))
             (fail! "Commit has no summary")))
 
-        (fn! (&key type summary subject)
+        (lambda! (&key type summary subject)
           "Ensure summary isn't needlessly capitalized"
           (and (stringp summary)
                (string-match-p "^[A-Z][^-A-Z.]" summary)
                (fail! "%S in summary should not be capitalized"
                       (car (split-string summary " ")))))
 
-        (fn! (&rest plist &key type scopes)
+        (lambda! (&rest plist &key type scopes)
           "Ensure scopes are valid"
           (dolist (scope scopes)
             (condition-case e
@@ -113,12 +113,12 @@ Each element of this list can be one of:
                       (fail! "Invalid scope: %s" scope)))
               (user-error (fail! "%s" (error-message-string e))))))
 
-        (fn! (&key scopes)
+        (lambda! (&key scopes)
           "Esnure scopes are sorted correctly"
           (unless (equal scopes (sort (copy-sequence scopes) #'string-lessp))
             (fail! "Scopes are not in lexicographical order")))
 
-        (fn! (&key type body)
+        (lambda! (&key type body)
           "Enforce 72 character line width for BODY"
           (catch 'result
             (with-temp-buffer
@@ -136,7 +136,7 @@ Each element of this list can be one of:
                    (re-search-backward "^\\(?:#\\| +\\)" nil t)
                    (throw 'result (fail! "Line(s) in commit body exceed 72 characters"))))))))
 
-        (fn! (&key bang body type)
+        (lambda! (&key bang body type)
           "Ensure ! is accompanied by a 'BREAKING CHANGE:' in BODY"
           (if bang
               (cond ((not (string-match-p "^BREAKING CHANGE:" body))
@@ -147,7 +147,7 @@ Each element of this list can be one of:
               (fail! "'BREAKING CHANGE:' present in body, but missing '!' after %S"
                      type))))
 
-        (fn! (&key type body)
+        (lambda! (&key type body)
           "Ensure bump commits have package ref lines"
           (and (eq type 'bump)
                (let ((bump-re "\\(?:https?://.+\\|[^/]+\\)/[^/]+@\\([a-z0-9]+\\)"))
@@ -155,7 +155,7 @@ Each element of this list can be one of:
                                       body)))
                (fail! "Bump commit is missing commit hash diffs")))
 
-        (fn! (&key body)
+        (lambda! (&key body)
           "Ensure commit hashes in bump lines are 12 characters long"
           (with-temp-buffer
             (insert body)
@@ -169,7 +169,7 @@ Each element of this list can be one of:
                        (length refs) (string-join (nreverse refs) ", "))))))
 
         ;; TODO Add bump validations for revert: type.
-        (fn! (&key body trailers)
+        (lambda! (&key body trailers)
           "Validate commit trailers."
           (let* ((keys   (mapcar #'car doom-ci-commit-trailer-keys))
                  (key-re (regexp-opt keys t))

@@ -98,7 +98,7 @@ OPTIONS:
                 (let* ((key "ENVIRONMENT VARIABLES")
                        (clis (if command (doom-cli-find command) (hash-table-values doom-cli--table)))
                        (clis (seq-remove #'doom-cli-alias clis))
-                       (clis (seq-filter (fn!! (cdr (assoc key (doom-cli-docs %)))) clis))
+                       (clis (seq-filter (fn! (cdr (assoc key (doom-cli-docs %)))) clis))
                        (clis (seq-group-by #'doom-cli-command clis)))
                   (print! "List of environment variables for %s:\n" command)
                   (if (null clis)
@@ -154,7 +154,7 @@ OPTIONS:
 (defun doom-cli-help-similar-commands (command &optional maxscore)
   "Return N commands that are similar to COMMAND."
   (seq-take-while
-   (fn!! (>= (car %) (or maxscore 0.0)))
+   (fn! (>= (car %) (or maxscore 0.0)))
    (seq-sort-by
     #'car #'>
     (cl-loop with prefix = (seq-find #'doom-cli-get (nreverse (doom-cli--command-expand command t)))
@@ -261,9 +261,9 @@ OPTIONS:
          (subcommands? (doom-cli-subcommands rcli 1 :predicate? t)))
     `((command  . ,(doom-cli-command cli))
       (options  ,@opts)
-      (required ,@(mapcar (fn!! (upcase (format "`%s'" %))) (if subcommands? '(command) (alist-get '&required args))))
-      (optional ,@(mapcar (fn!! (upcase (format "[`%s']" %)))(alist-get '&optional args)))
-      (rest     ,@(mapcar (fn!! (upcase (format "[`%s'...]" %))) (if subcommands? '(args) (alist-get '&args args))))
+      (required ,@(mapcar (fn! (upcase (format "`%s'" %))) (if subcommands? '(command) (alist-get '&required args))))
+      (optional ,@(mapcar (fn! (upcase (format "[`%s']" %)))(alist-get '&optional args)))
+      (rest     ,@(mapcar (fn! (upcase (format "[`%s'...]" %))) (if subcommands? '(args) (alist-get '&args args))))
       (examples ,@(doom-cli-help--parse-docs (doom-cli-find cli t) "SYNOPSIS")))))
 
 (defun doom-cli-help--render-synopsis (synopsis &optional prefix with-examples?)
@@ -312,7 +312,7 @@ OPTIONS:
 (cl-defun doom-cli-help--render-commands (commands &key prefix grouped? docs? (inline? t))
   (with-temp-buffer
     (let* ((doom-print-indent 0)
-           (commands (seq-group-by (fn!! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) commands))
+           (commands (seq-group-by (fn! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) commands))
            (toplevel (assq nil commands))
            (rest (remove toplevel commands))
            (drop (if prefix (length prefix) 0))
@@ -358,7 +358,7 @@ OPTIONS:
 The alist's CAR are lists of formatted switches plus their arguments, e.g.
 '((\"`--foo'\" \"`BAR'\") ...). Their CDR is their formatted documentation."
   (let* ((docs (doom-cli-help--parse-docs (doom-cli-find cli t) "OPTIONS"))
-         (docs (mapcar (fn!! (cons (split-string (car %) ", ")
+         (docs (mapcar (fn! (cons (split-string (car %) ", ")
                                    (cdr %)))
                        docs))
          (strfmt (if noformatting? "%s" "`%s'"))
@@ -408,7 +408,7 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
                    (insert!
                     ("%s%s\n%s"
                      (mapconcat
-                      (fn!!
+                      (fn!
                        (when (member "..." (cdr %))
                          (setq multiple? t))
                        (string-trim-right
