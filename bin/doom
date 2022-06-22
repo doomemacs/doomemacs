@@ -224,7 +224,7 @@ SEE ALSO:
     (exit! :restart))
   (when force?
     (setf (doom-cli-context-suppress-prompts-p context) t)
-    (print! (item "Suppressing all prompts")))
+    (doom-log "User requested all prompts be suppressed"))
   ;; Load extra files and forms, as per given options.
   (dolist (file loads)
     (load (doom-path (cdr file))
