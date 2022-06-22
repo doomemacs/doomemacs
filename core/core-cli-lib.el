@@ -1413,6 +1413,8 @@ properties:
     version specifier, indicating when the command was deprecated.
   :disable BOOL
     If non-nil, the command will not be defined.
+  :docs STRING
+    An alternative to DOCSTRING for defining documentation for this command.
   :group (STR...)
     A breadcrumb of group names to file this command under. They will be
     organized by category in the CLI documentation (available through SCRIPT
@@ -1494,7 +1496,7 @@ ignored.
                       (doom-cli-create
                        :command target
                        :type type
-                       :docs ',(doom-cli--parse-docs docstring)
+                       :docs (doom-cli--parse-docs (or ',docstring docs))
                        :arguments ',arguments
                        :options ',(nreverse options)
                        :autoload autoload
