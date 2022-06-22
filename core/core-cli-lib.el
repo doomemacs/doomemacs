@@ -764,6 +764,7 @@ executable context."
 
          ((when-let*
               (((null arguments))
+               ((not rest?))
                (command (append (doom-cli--command context) (list arg)))
                (cli  (doom-cli-get command t))
                (rcli (doom-cli-get command))
@@ -784,7 +785,7 @@ executable context."
                     (setf (map-elt (doom-cli-context-options context) switch)
                           nil)))))
             (when (and (doom-cli-fn rcli)
-                       (alist-get '&rest (doom-cli-arguments cli)))
+                       (alist-get '&rest (doom-cli-arguments rcli)))
               (setq rest? t))
             t))
 
