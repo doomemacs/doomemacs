@@ -935,7 +935,11 @@ considered as well."
                      (error-message-string data)
                    (get (car data) 'error-message)))
          (unless generic?
-           (print! "%s %S" (bold "Details:") (cdr data)))
+           (print! "%s %s" (bold "Details:")
+                   (let* ((print-level 3)
+                          (print-circle t)
+                          (print-escape-newlines t))
+                     (prin1-to-string (cdr data)))))
          (when backtrace
            (print! (bold "Backtrace:"))
            (print-group!
