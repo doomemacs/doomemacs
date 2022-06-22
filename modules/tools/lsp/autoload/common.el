@@ -1,6 +1,6 @@
 ;;; tools/lsp/autoload/common.el -*- lexical-binding: t; -*-
 
-;;;###autodef
+;;;###autodef (fset 'lsp! #'ignore)
 (defun lsp! ()
   "Dispatch to call the currently used lsp client entrypoint"
   (interactive)

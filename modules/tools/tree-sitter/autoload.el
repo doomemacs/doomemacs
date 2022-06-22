@@ -1,6 +1,6 @@
 ;;; tools/tree-sitter/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autodef
+;;;###autodef (fset 'tree-sitter! #'ignore)
 (defun tree-sitter! ()
   (interactive)
   (turn-on-tree-sitter-mode))
