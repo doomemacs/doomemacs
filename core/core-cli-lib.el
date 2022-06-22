@@ -334,7 +334,8 @@ an integer.
 This cannot see autoloaded CLIs. Use `doom-cli-load' or `doom-cli-load-all'
 to reach them."
   (cl-loop for rcli in (hash-table-values doom-cli--table)
-           if (equal (doom-cli-alias rcli) (doom-cli-key cli))
+           if (equal (doom-cli-key (doom-cli-get rcli))
+                     (doom-cli-key rcli))
            collect rcli))
 
 (defun doom-cli-short-docs (cli)
