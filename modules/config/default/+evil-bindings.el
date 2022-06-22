@@ -665,6 +665,7 @@
        :desc "Save project files"           "s" #'projectile-save-project-buffers
        :desc "List project todos"           "t" #'magit-todos-list
        :desc "Test project"                 "T" #'projectile-test-project
+       :desc "Toggle test/implementation"   "z" #'projectile-toggle-between-implementation-and-test
        :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
        :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
        (:when (and (featurep! :tools taskrunner)
