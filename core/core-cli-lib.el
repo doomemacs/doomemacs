@@ -263,6 +263,19 @@ If NORESOLVE?, don't follow aliases."
           (signal 'doom-cli-command-not-found-error (or path command)))
         cli))))
 
+(defun doom-cli-path (cli &optional noload?)
+  "Return a list of `doom-cli's encountered while following CLI's aliases.
+
+If NOLOAD? is non-nil, don't autoload deferred CLIs (see `doom-cli-get')."
+  (when cli
+    (cons
+     cli (let (alias paths)
+           (while (and (doom-cli-p cli)
+                       (setq alias (doom-cli-alias cli)))
+             (and (setq cli (doom-cli-get alias t noload?))
+                  (push cli paths)))
+           (nreverse paths)))))
+
 (defun doom-cli-find (command &optional norecursive)
   "Find all CLIs assocated with COMMAND, excluding partials if NORECURSIVE.
 
@@ -615,10 +628,13 @@ Throws `doom-cli-invalid-option-error' for illegal values."
 
 Use `doom-cli-context-parse' or `doom-cli-context-restore' to produce a valid,
 executable context."
-  (let* ((command (doom-cli--command context))
-         (cli (doom-cli-get command))
+  (let* ((command (doom-cli-context-command context))
+         (cli (doom-cli-get command t))
          (prefix (doom-cli-context-prefix context)))
-    (doom-log "doom-cli-context-execute: %s %s" command context)
+    (doom-log "doom-cli-context-execute: %s"
+              (mapconcat #'doom-cli-command-string
+                         (delq nil (list (car (doom-cli-context-path context)) command))
+                         " -> "))
     (cond ((null (or command (doom-cli-get (list prefix) t)))
            (signal 'doom-cli-invalid-prefix-error (list prefix)))
 
@@ -632,7 +648,7 @@ executable context."
               t)
              (_ (error "In meta mode with no destination!"))))
 
-          ((not (and cli (doom-cli-fn cli)))
+          ((not (and cli (doom-cli-fn (doom-cli-get cli))))
            (signal 'doom-cli-command-not-found-error
                    (append command (alist-get t (doom-cli-context-arguments context)))))
 
@@ -752,15 +768,17 @@ executable context."
          ((when-let*
               (((null arguments))
                (command (append (doom-cli--command context) (list arg)))
-               (cli (doom-cli-get command))
-               (key (doom-cli-key cli)))
-            (doom-log "Found command: %s" command)
-            (unless (equal command key)
-              (doom-log "Laid breadcrumb: %s" command)
-              (push command (doom-cli-context-path context)))
+               (cli  (doom-cli-get command t))
+               (rcli (doom-cli-get command))
+               (key  (doom-cli-key rcli)))
+            (doom-log "doom-cli-context-execute: found %s" command)
+            (when (doom-cli-alias cli)
+              (dolist (pcli (doom-cli-path cli))
+                (doom-log "doom-cli-context-execute: path=%s" (doom-cli-key pcli))
+                (push (doom-cli-key pcli) (doom-cli-context-path context))))
             (setf (doom-cli-context-command context) key
                   (map-elt (doom-cli-context-arguments context)
-                           (doom-cli-command cli))
+                           (doom-cli-command rcli))
                   (copy-sequence args))
             (dolist (cli (doom-cli-find key))
               (dolist (option (doom-cli-options cli))
@@ -768,7 +786,7 @@ executable context."
                   (unless (assoc switch (doom-cli-context-options context))
                     (setf (map-elt (doom-cli-context-options context) switch)
                           nil)))))
-            (when (and (doom-cli-fn cli)
+            (when (and (doom-cli-fn rcli)
                        (alist-get '&rest (doom-cli-arguments cli)))
               (setq rest? t))
             t))
@@ -1033,16 +1051,17 @@ shown."
 
 If ERROR is provided, store the error in CONTEXT, in case a later CLI wants to
 read/use it (e.g. like a :help CLI)."
-  (when-let (command (doom-cli-context-command context))
-    (push command (doom-cli-context-path context)))
-  (when error
-    (setf (doom-cli-context-error context) error))
-  (setf (doom-cli-context-command context) nil
-        (doom-cli-context-arguments context) nil
-        (doom-cli-context-meta-p context) nil)
-  (doom-log "doom-cli-call: %s" args)
-  (doom-cli-context-execute
-   (doom-cli-context-parse args (or context doom-cli--context))))
+  (let ((oldcommand (doom-cli-context-command context)))
+    (if oldcommand
+        (doom-log "doom-cli-call: %s -> %s" oldcommand args)
+      (doom-log "doom-cli-call: %s" oldcommand args))
+    (when error
+      (setf (doom-cli-context-error context) error))
+    (setf (doom-cli-context-command context) nil
+          (doom-cli-context-arguments context) nil
+          (doom-cli-context-meta-p context) nil)
+    (doom-cli-context-execute
+     (doom-cli-context-parse args (or context doom-cli--context)))))
 
 (defun doom-cli--restart (args context)
   "Restart the current CLI session.
