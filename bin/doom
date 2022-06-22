@@ -203,12 +203,12 @@ SEE ALSO:
     instead."
   (when color?
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
+  ;; For these settings to take full effect, the script must be restarted:
   (when (and (equal (doom-cli-context-step context) 0)
              (or ;; profile
                  debug?
                  emacsdir
-                 doomdir
-                 pager))
+                 doomdir))
     ;; TODO Implement after v3.0
     ;; (when profile
     ;;   (setenv "DOOMPROFILE" profile))
@@ -219,9 +219,10 @@ SEE ALSO:
       (setenv "EMACSDIR" emacsdir))
     (when doomdir
       (setenv "DOOMDIR" doomdir))
-    (when pager
-      (setenv "DOOMPAGER" pager))
     (exit! :restart))
+  ;; But these don't need a restart:
+  (when pager
+    (setenv "DOOMPAGER" pager))
   (when force?
     (setf (doom-cli-context-suppress-prompts-p context) t)
     (doom-log "User requested all prompts be suppressed"))
