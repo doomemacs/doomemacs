@@ -319,7 +319,7 @@ Note: warnings are not considered failures.")
        commits))))
 
 ;;; TODO
-(defcli! (ci run-tests) (&rest targets) :stub t)
+(defstub! (ci run-tests))
 
 ;;; doom ci hook
 (defcli! (ci hook commit-msg) (file)

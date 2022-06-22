@@ -270,8 +270,8 @@ SEE ALSO:
       ;; (load! "nuke" dir)
       ;; (load! "package" dir)
       ;; (load! "profile" dir)
-      ;; (defobsolete! ((compile c)) "doom sync --compile" "v3.0.0")
-      ;; (defobsolete! ((build b))   "doom sync --rebuild" "v3.0.0")
+      ;; (defobsolete! ((compile c)) (sync "--compile") "v3.0.0")
+      ;; (defobsolete! ((build b))   (sync "--rebuild") "v3.0.0")
       )
 
     (defgroup! "Diagnostics"

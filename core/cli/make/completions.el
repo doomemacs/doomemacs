@@ -18,7 +18,6 @@
      ;; TODO (outfile ("-o" "--outfile" file))
      &context context &args args)
   "Generate completion scripts for a Doom-CLI script."
-  ;; :stub t
   ;; (unless outfile
   ;;   (user-error "No destination file specified"))
   (let ((shell (or shell (file-name-base (getenv "SHELL"))))

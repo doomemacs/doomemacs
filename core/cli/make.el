@@ -22,9 +22,8 @@
   :partial t)
 
 ;; TODO Finish and generalize me
-(defcli! (make codeowners) ()
+(defstub! (make codeowners) ()
   "TODO"
-  :stub t
   (print! (start "Generating CODEOWNERS file"))
   (let ((codeowners (doom-path doom-emacs-dir ".github/CODEOWNERS")))
     (with-temp-file codeowners
@@ -41,7 +40,7 @@
                             (match-string-no-properties 2 path)))))))))
 
 ;; TODO Finish me
-(defcli! (make changelog) () :stub t)
+(defstub! (make changelog))
 
 
 

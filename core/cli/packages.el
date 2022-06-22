@@ -58,7 +58,7 @@ list remains lean."
     (doom-autoloads-reload))
   t)
 
-(defcli! rollback () :stub t) ; TODO Implement me post-3.0
+(defstub! rollback)  ; TODO Implement me post-3.0
 
 
 ;;

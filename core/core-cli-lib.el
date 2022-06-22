@@ -178,7 +178,6 @@ the return value of the executed CLI.")
 (define-error 'doom-cli-wrong-number-of-arguments-error "Wrong number of CLI arguments" 'doom-cli-error)
 (define-error 'doom-cli-unrecognized-option-error "Not a recognized option" 'doom-cli-error)
 (define-error 'doom-cli-invalid-option-error "Invalid option value" 'doom-cli-error)
-(define-error 'doom-cli-deprecated-error "Command is deprecated" 'doom-cli-error)
 
 
 ;;
@@ -203,12 +202,7 @@ the return value of the executed CLI.")
 BINDINGS is an alist of (SYMBOL . VALUE) to bind lexically during CLI's
 execution. Can be generated from a `doom-cli-context' with
 `doom-cli--bindings'."
-  (let ((plist (doom-cli-plist cli)))
-    (doom-log "doom-cli-execute: %s %s" (doom-cli-key cli) plist)
-    (when (plist-get plist :stub)
-      (user-error "Command not implemented yet"))
-    (when (plist-get plist :obsolete)
-      (print! (warn "Command is obsolete and may be removed soon"))))
+  (doom-log "doom-cli-execute: %s %s" (doom-cli-key cli) bindings)
   (funcall (doom-cli-fn cli) cli bindings))
 
 (defun doom-cli-key (cli)
@@ -1429,10 +1423,6 @@ properties:
     identical to COMMANDSPEC.
   :benchmark BOOL
     If non-nil, display a benchmark after the command finishes.
-  :deprecated BOOL|STR
-    If non-nil, display a deprecation notice when using the command (unless
-    piping output to another process). If given a string, it will be used as the
-    version specifier, indicating when the command was deprecated.
   :disable BOOL
     If non-nil, the command will not be defined.
   :docs STRING
@@ -1454,14 +1444,8 @@ properties:
   :prefix (STR...)
     A command path to prepend to the command name. This is more useful as part
     of `defgroup!'s inheritance.
-  :since STR
-    Documentation property, displaying since what version this command has
-    existed.
-  :stub BOOL
-    If non-nil, throw a \"This command hasn't been implemented yet\" error when
-    it is invoked.
 
-The BODY of commands with a non-nil :alias, :disable, :partial, or :stub will be
+The BODY of commands with a non-nil :alias, :disable, or :partial will be
 ignored.
 
 \(fn COMMANDSPEC ARGLIST [DOCSTRING] &rest BODY...)"
@@ -1504,8 +1488,8 @@ ignored.
        ;; `cl-destructuring-bind's will validate keywords, so I don't have to
        (cl-destructuring-bind
            (&whole plist &key
-                   alias autoload _benchmark docs disable hide _group _obsolete
-                   partial _prefix stub)
+                   alias autoload _benchmark docs disable hide _group partial
+                   _prefix)
            (append (list ,@plist) doom-cli--plist)
          (unless disable
            (let* ((command  (doom-cli-command-normalize (backquote ,commandspec) plist))
@@ -1523,7 +1507,7 @@ ignored.
                        :options ',(nreverse options)
                        :autoload autoload
                        :alias (if alias (doom-cli-command-normalize alias plist))
-                       :plist (append plist (list :hide (and (or stub hide type) t)))
+                       :plist (append plist (list :hide (and (or hide type) t)))
                        :fn (unless (or partial autoload) fn))
                       doom-cli--table)
              (let ((docs (doom-cli--parse-docs docs)))
@@ -1564,13 +1548,27 @@ TARGET is not a command specification, and should be a command list."
 See `defcli!' for information about COMMANDSPEC.
 TARGET is simply a command list.
 WHEN specifies what version this command was rendered obsolete."
-  `(defcli! ,commandspec (&context context &rest _)
+  `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--plist)))
+     (defcli! ,commandspec (&context context &cli cli &rest args)
+       :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
+       :hide t
+       (print! (warn "'%s' was deprecated in %s")
+               (doom-cli-command-string cli)
+               ,when)
+       (print! (warn "It will eventually be removed; use '%s' instead.")
+               (doom-cli-command-string ncommand))
+       (call! ',target args))))
+
+(defmacro defstub! (commandspec &optional _argspec &rest body)
+  "Define a stub CLI, which will throw an error if invoked.
+
+Use this to define commands that will eventually be implemented, but haven't
+yet. They won't be included in command listings (by help documentation)."
+  `(defcli! ,commandspec (&rest _)
+     ,(concat "THIS COMMAND IS A STUB AND HAS NOT BEEN IMPLEMENTED YET."
+              (if (stringp (car body)) (concat "\n\n" (pop body))))
      :hide t
-     :obsolete ,when
-     (signal 'doom-cli-deprecated-error
-             (list (doom-cli-context-command context)
-                   ,target
-                   ,when))))
+     (user-error "Command not implemented yet")))
 
 (defmacro defautoload! (commandspec &optional path &rest plist)
   "Defer loading of PATHS until PREFIX is called."
@@ -1756,15 +1754,6 @@ errors to `doom-cli-error-file')."
                                       return (car (doom-cli-command cli))))
               (print! "Did you mean %S?" suggested)
             (print! "There are no commands defined under %S." prefix)))
-        4)
-       (doom-cli-deprecated-error
-        (pcase-let ((`(,command ,replacement ,when) (cdr e)))
-          (print! (yellow "Error: %S was removed in %s")
-                  (doom-cli-command-string command)
-                  when)
-          (print-group!
-           (print! "\nUse %S instead." replacement)))
-        (doom-cli-call `(:help "--postamble" ,@(cdr command)) context e)
         4)
        (user-error
         (print! (red "Error: %s") (cadr e))
