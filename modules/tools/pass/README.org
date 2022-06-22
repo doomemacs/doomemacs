@@ -15,17 +15,16 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-+ Manage passwords on ~pass~ with power of ~doom~.
-+ You can open ~pass~ by =M-x pass=
++ Manage passwords with ~pass~ with power of ~Doom~.
++ You can open ~pass~ with =M-x pass=.
 
 ** Maintainers
 This module has no dedicated maintainers.
 
 ** Module Flags
-+ ~+auth~ to enable ~auth-source-pass~
++ ~+auth~ to enable ~auth-source-pass~.
 
 ** Plugins
-# A list of linked plugins
 + [[https://github.com/NicolasPetton/pass][pass]]
 + [[https://github.com/zx2c4/password-store][password-store]]
 + [[https://github.com/volrath/password-store-otp.el][password-store-otp]]
@@ -36,7 +35,8 @@ This module has no dedicated maintainers.
   + [[https://github.com/emacs-helm/helm-pass][helm-pass]]
 
 ** Hacks
-In ~pass-mode~ ~evil~ is put into ~emacs~ state so shown keybindings works correctly, but some keybindings is more ~evil~.
+In ~pass-mode~, ~evil~ is put into ~emacs~ state, so the keybindings which are displayed at the top of the ~*Password-Store*~ buffer work correctly.
+The following keybindings are also defined:
 | keybinding | action                  |
 |------------+-------------------------|
 | j          | pass-next-entry         |
@@ -45,7 +45,7 @@ In ~pass-mode~ ~evil~ is put into ~emacs~ state so shown keybindings works corre
 | C-j        | pass-next-directory     |
 | C-k        | pass-previous-directory |
 * Prerequisites
-+ This module requires that [[https://www.passwordstore.org/][pass]] is installed and setup correctly.
++ This module requires that [[https://www.passwordstore.org/][pass]] is installed and set up correctly.
 
 * TODO Features
 
