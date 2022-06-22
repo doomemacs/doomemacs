@@ -59,8 +59,6 @@
 
 ;; Just the... bear necessities~
 (require 'core (expand-file-name "core" (file-name-directory load-file-name)))
-(require 'seq)
-(require 'map)
 
 ;; Load these eagerly, since autoloads haven't been generated/loaded yet
 (load! "autoload/process")
@@ -75,6 +73,9 @@
 (require 'core-modules)
 (require 'core-packages)
 
+;; Our DSL, API, and everything nice.
+(require 'core-cli-lib)
+
 ;; Don't generate superfluous files when writing temp buffers.
 (setq make-backup-files nil)
 ;; Stop user configuration from interfering with package management.
@@ -87,9 +88,6 @@
 
 ;;
 ;;; Bootstrap
-
-;; Our DSL, API, and everything nice.
-(require 'core-cli-lib)
 
 ;; Use our own home-grown debugger so we can capture backtraces, make them more
 ;; presentable, and write them to a file. Cleaner backtraces are better UX than

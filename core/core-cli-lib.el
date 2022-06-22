@@ -8,6 +8,9 @@
   (unless (or load-in-progress (not noninteractive))
     (require 'core-cli)))
 
+(require 'seq)
+(require 'map)
+
 
 ;;
 ;;; Variables
