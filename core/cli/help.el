@@ -121,7 +121,9 @@ OPTIONS:
                                                 " +" " " (format "'%s'" formatted)))
                               " or ")))))))))
 
-(defcli! (:root :version) ((simple? ("--simple")) &context context)
+(defcli! (:root :version)
+    ((simple? ("--simple"))
+     &context context)
   "Show installed versions of Doom, Doom modules, and Emacs."
   (doom/version)
   (unless simple?
@@ -359,7 +361,7 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
 '((\"`--foo'\" \"`BAR'\") ...). Their CDR is their formatted documentation."
   (let* ((docs (doom-cli-help--parse-docs (doom-cli-find cli t) "OPTIONS"))
          (docs (mapcar (fn! (cons (split-string (car %) ", ")
-                                   (cdr %)))
+                                  (cdr %)))
                        docs))
          (strfmt (if noformatting? "%s" "`%s'"))
          local-options
@@ -408,14 +410,13 @@ The alist's CAR are lists of formatted switches plus their arguments, e.g.
                    (insert!
                     ("%s%s\n%s"
                      (mapconcat
-                      (fn!
-                       (when (member "..." (cdr %))
-                         (setq multiple? t))
-                       (string-trim-right
-                        (format "%s %s"
-                                (doom-print--cli-markup (car %))
-                                (doom-print--cli-markup
-                                 (string-join (remove "..." (cdr %)) "|")))))
+                      (fn! (when (member "..." (cdr %))
+                             (setq multiple? t))
+                           (string-trim-right
+                            (format "%s %s"
+                                    (doom-print--cli-markup (car %))
+                                    (doom-print--cli-markup
+                                     (string-join (remove "..." (cdr %)) "|")))))
                       switches
                       ", ")
                      (if multiple? ", ..." "")

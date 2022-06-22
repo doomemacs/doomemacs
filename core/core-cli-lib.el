@@ -1,12 +1,6 @@
-;;; core/core-cli-lib.el --- API+DSL for Doom's CLI framework -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; core/core-cli-lib.el --- API+DSL for Doom's CLI framework -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
-
-;; Appease byte-compiler-sama
-(eval-when-compile
-  ;; ...but prevent recursive or unwanted loads
-  (unless (or load-in-progress (not noninteractive))
-    (require 'core-cli)))
 
 (require 'seq)
 (require 'map)
@@ -267,8 +261,7 @@ If NOLOAD? is non-nil, don't autoload deferred CLIs (see `doom-cli-get')."
   (when cli
     (cons
      cli (let (alias paths)
-           (while (and (doom-cli-p cli)
-                       (setq alias (doom-cli-alias cli)))
+           (while (setq alias (ignore-errors (doom-cli-alias cli)))
              (and (setq cli (doom-cli-get alias t noload?))
                   (push cli paths)))
            (nreverse paths)))))
@@ -290,7 +283,7 @@ Returned in the order they will execute. Includes pseudo CLIs."
     (dolist (path (nreverse paths))
       (push (cons :before path) results))
     (push '(:before) results)
-    (dolist (result (nreverse results) clis)
+    (dolist (result results (nreverse clis))
       (when-let (cli (doom-cli-get result t))
         (cl-pushnew cli clis
                     :test #'equal
@@ -374,7 +367,7 @@ Return nil if CLI (a `doom-cli') has no explicit documentation."
             (push (car option) seen)))))
     ;; Populate arguments
     (let* ((arglist  (doom-cli-context-arguments context))
-           (rest     (copy-sequence (alist-get (doom-cli-command cli) arglist nil nil #'equal)))
+           (rest     (copy-sequence (map-elt arglist (doom-cli-command cli))))
            (args     (copy-sequence (alist-get t arglist)))
            (argc     (length args))
            (required (alist-get '&required argspec))
@@ -431,9 +424,9 @@ If RECURSIVE, includes breadcrumbs leading up to COMMANDSPEC."
   (funcall (if recursive?
                #'identity
              (fn! (cl-loop with cmdlen = (length (car %))
-                            for command in %
-                            while (= (length command) cmdlen)
-                            collect command)))
+                           for command in %
+                           while (= (length command) cmdlen)
+                           collect command)))
            (seq-reduce (lambda (init next)
                          (nconc (cl-loop with firstlen = (length (car init))
                                          for seg in (doom-enlist next)
@@ -765,25 +758,31 @@ executable context."
          ((when-let*
               (((null arguments))
                ((not rest?))
-               (command (append (doom-cli--command context) (list arg)))
+               (command (append (doom-cli-context-command context) (list arg)))
                (cli  (doom-cli-get command t))
                (rcli (doom-cli-get command))
                (key  (doom-cli-key rcli)))
             (doom-log "doom-cli-context-execute: found %s" command)
+            ;; Show warnings depending on CLI plists
             (when (doom-cli-alias cli)
               (dolist (pcli (doom-cli-path cli))
                 (doom-log "doom-cli-context-execute: path=%s" (doom-cli-key pcli))
                 (push (doom-cli-key pcli) (doom-cli-context-path context))))
+            ;; Collect &rest for this command
             (setf (doom-cli-context-command context) key
                   (map-elt (doom-cli-context-arguments context)
                            (doom-cli-command rcli))
                   (copy-sequence args))
+            ;; Initialize options associated with this command to a nil value;
+            ;; this simplifies existence validation later.
             (dolist (cli (doom-cli-find key))
               (dolist (option (doom-cli-options cli))
                 (dolist (switch (doom-cli-option-switches option))
                   (unless (assoc switch (doom-cli-context-options context))
                     (setf (map-elt (doom-cli-context-options context) switch)
                           nil)))))
+            ;; If this command uses &rest, stop processing commands from this
+            ;; point on and pass the rest (of the unprocessed arguments) to it.
             (when (and (doom-cli-fn rcli)
                        (alist-get '&rest (doom-cli-arguments rcli)))
               (setq rest? t))
@@ -974,14 +973,6 @@ See `doom-cli-log-file-format' for details."
       (when (bufferp buffer)
         (princ str buffer)))
     (send-string-to-terminal str)))
-
-(defun doom-cli--output-read-stdin (buffer)
-  (with-current-buffer buffer
-    (let (in)
-      (while (setq in (ignore-errors (read-from-minibuffer "")))
-        (insert in "\n"))
-      (when in
-        (delete-char -1)))))
 
 (defun doom-cli--output-write-logs-h (context)
   "Write all log buffers to their appropriate files."
@@ -1699,7 +1690,10 @@ errors to `doom-cli-error-file')."
     (when (doom-cli-context-pipe-p context :out t)
       (setq doom-print-backend nil))
     (when (doom-cli-context-pipe-p context :in)
-      (doom-cli--output-read-stdin (doom-cli-context-stdin context)))
+      (with-current-buffer (doom-cli-context-stdin context)
+        (while (if-let (in (ignore-errors (read-from-minibuffer "")))
+                   (insert in "\n")
+                 (ignore-errors (delete-char -1))))))
     (doom-log "doom-cli-run: %s" command-line-args)
     (doom-cli--exit
      (condition-case e
