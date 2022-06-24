@@ -133,7 +133,7 @@ list remains lean."
        nil (mapcar (doom-rpartial #'gethash straight--repo-cache)
                    (mapcar #'symbol-name straight-recipe-repositories)))
       (recipe package type local-repo)
-      (let ((esc (unless doom-debug-p "\033[1A"))
+      (let ((esc (unless init-file-debug "\033[1A"))
             (ref (straight-vc-get-commit type local-repo))
             newref output)
         (print! (start "\033[KUpdating recipes for %s...%s") package esc)
@@ -401,7 +401,7 @@ declaration) or dependency thereof that hasn't already been."
          (packages-to-rebuild (make-hash-table :test 'equal))
          (repos-to-rebuild (make-hash-table :test 'equal))
          (total (length recipes))
-         (esc (unless doom-debug-p "\033[1A"))
+         (esc (unless init-file-debug "\033[1A"))
          (i 0)
          errors)
     (print! (start "Updating packages (this may take a while)..."))
@@ -723,9 +723,9 @@ it doesn't make sense to slack."
 (defadvice! doom-cli--straight-fallback-to-y-or-n-prompt-a (fn &optional prompt noprompt?)
   :around #'straight-are-you-sure
   (or noprompt?
-      (if doom-interactive-p
-          (funcall fn prompt)
-        (y-or-n-p (format! "%s" (or prompt ""))))))
+      (if noninteractive
+          (y-or-n-p (format! "%s" (or prompt "")))
+        (funcall fn prompt))))
 
 (defun doom-cli--straight-recommended-option-p (prompt option)
   (cl-loop for (prompt-re . opt-re) in doom-cli--straight-auto-options

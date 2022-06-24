@@ -6,7 +6,7 @@
 ;;      while it is lexically bound, you get "Defining as dynamic an already
 ;;      lexical var" errors in Emacs 28+).
 ;;;###autoload (defvar projectile-project-root nil)
-;;;###autoload (defvar projectile-enable-caching doom-interactive-p)
+;;;###autoload (defvar projectile-enable-caching (not noninteractive))
 ;;;###autoload (defvar projectile-require-project-root 'prompt)
 
 ;;;###autodef

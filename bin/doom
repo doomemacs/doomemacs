@@ -230,7 +230,7 @@ SEE ALSO:
   (dolist (file loads)
     (load (doom-path (cdr file))
           (not (equal (car file) "--strict-load"))
-          (not doom-debug-p) t))
+          (not init-file-debug) t))
   (dolist (form evals)
     (eval (read (cdr form)) t)))
 

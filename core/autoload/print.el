@@ -110,13 +110,12 @@ Any of these classes can be called like functions from within `format!' and
 (defvar doom-print-indent-increment 2
   "Steps in which to increment `doom-print-indent' for consecutive levels.")
 
-(defvar doom-print-backend
-  (if doom-interactive-p 'text-properties 'ansi)
+(defvar doom-print-backend (if noninteractive 'ansi 'text-properties)
   "Whether to print colors/styles with ANSI codes or with text properties.
 
 Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 
-(defvar doom-print-level (if doom-debug-p 'debug 'info)
+(defvar doom-print-level (if init-file-debug 'debug 'info)
   "The default level of messages to print.")
 
 (defvar doom-print-logging-level 'debug
@@ -178,7 +177,7 @@ Returns OUTPUT."
 Does not emit the message in the echo area. This is a macro instead of a
 function to prevent the potentially expensive execution of its arguments when
 debug mode is off."
-    `(when (or doom-debug-p (not doom-interactive-p))
+    `(when (or init-file-debug noninteractive)
        (let ((inhibit-message t))
          (message
           "%s" (propertize

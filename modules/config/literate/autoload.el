@@ -69,8 +69,6 @@
                          "--eval"
                          (prin1-to-string
                           `(progn
-                             (defvar doom-interactive-p nil)
-                             (defvar doom-debug-p ,doom-debug-p)
                              (require 'cl-lib)
                              (require 'subr-x)
                              (load ,(doom-path doom-core-dir "autoload/print"))
@@ -111,10 +109,10 @@
 (defun +literate-tangle-h ()
   "Tangles `+literate-config-file' if it has changed.
 This is performed with an asyncronous Emacs process, except when
-`doom-interactive-p' is non-nil."
-  (if doom-interactive-p
-      (+literate-tangle--async)
-    (+literate-tangle--sync)))
+`noninteractive' is nil."
+  (if noninteractive
+      (+literate-tangle--sync)
+    (+literate-tangle--async)))
 
 ;;;###autoload
 (defun +literate-tangle-check-finished-h ()

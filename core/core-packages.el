@@ -120,7 +120,7 @@ uses a straight or package.el command directly).")
                             "://github.com/"
                             (or (plist-get recipe :repo) "radian-software/straight.el")))
           (branch (or (plist-get recipe :branch) straight-repository-branch))
-          (call (if doom-debug-p
+          (call (if init-file-debug
                     (lambda (&rest args)
                       (print! "%s" (cdr (apply #'doom-call-process args))))
                   (lambda (&rest args)

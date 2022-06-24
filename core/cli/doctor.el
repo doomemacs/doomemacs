@@ -158,8 +158,7 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-       (let ((doom-interactive-p 'doctor)
-             (noninteractive nil)
+       (let ((noninteractive nil)
              kill-emacs-query-functions
              kill-emacs-hook)
          (defvar doom-reloading-p nil)

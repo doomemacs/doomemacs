@@ -8,7 +8,6 @@
   '(async-debug
     debug-on-error
     (debugger . doom-debugger)
-    doom-debug-p
     (doom-print-level . debug)
     garbage-collection-messages
     gcmh-verbose
@@ -33,7 +32,7 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
 ;;;###autoload
 (define-minor-mode doom-debug-mode
-  "Toggle `debug-on-error' and `doom-debug-p' for verbose logging."
+  "Toggle `debug-on-error' and `init-file-debug' for verbose logging."
   :init-value nil
   :global t
   (let ((enabled doom-debug-mode))
@@ -246,7 +245,7 @@ ready to be pasted in a bug report on github."
          . ,(mapcar
              #'symbol-name
              (delq
-              nil (list (cond ((not doom-interactive-p) 'batch)
+              nil (list (cond (noninteractive 'batch)
                               ((display-graphic-p) 'gui)
                               ('tty))
                         (if (daemonp) 'daemon)

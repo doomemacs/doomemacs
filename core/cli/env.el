@@ -86,8 +86,6 @@ Why this over exec-path-from-shell?
                   "Regenerating"
                 "Generating"))
       (print-group!
-       (when doom-interactive-p
-         (user-error "doom env: must be run on the command line, not an interactive session"))
        (goto-char (point-min))
        (insert
         ";; -*- mode: lisp-interaction; coding: utf-8-unix; -*-\n"

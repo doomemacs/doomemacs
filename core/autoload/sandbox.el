@@ -60,7 +60,7 @@
          forms
        `(progn
           ;; doom variables
-          (setq doom-debug-p t
+          (setq init-file-debug t
                 doom-emacs-dir ,doom-emacs-dir
                 doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
                 doom-etc-dir   ,(expand-file-name "etc/" doom-sandbox-dir))
@@ -71,7 +71,7 @@
           ;; emacs essential variables
           (setq before-init-time (current-time)
                 after-init-time nil
-                init-file-debug doom-debug-p
+                init-file-debug init-file-debug
                 noninteractive nil
                 process-environment (get 'process-environment 'initial-value)
                 exec-path (get 'exec-path 'initial-value)

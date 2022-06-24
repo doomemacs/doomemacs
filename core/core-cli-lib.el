@@ -1009,7 +1009,7 @@ shown."
               (seconds  (- duration (* hours 60 60) (* minutes 60)))
               (standard-output
                (if (and (/= doom-cli--exit-code 0)
-                        (or doom-debug-p
+                        (or init-file-debug
                             (eq (doom-cli-prop cli :benchmark) t)
                             (and (eq (doom-cli-prop cli :benchmark :null) :null)
                                  (not (doom-cli-context-pipe-p context 'out t))
@@ -1100,7 +1100,7 @@ Emacs' batch library lacks an implementation of the exec system call."
       (insert "#!/usr/bin/env sh\n"
               "trap _doomcleanup EXIT\n"
               "_doomcleanup() {\n"
-              "  rm -" (if doom-debug-p "v" "") "f "
+              "  rm -" (if init-file-debug "v" "") "f "
               (combine-and-quote-strings (delq nil (list script-file context-file)))
               "\n}\n"
               "_doomrun() {\n  " command "\n}\n"
@@ -1195,7 +1195,7 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
                      (append (if doom-print-backend '("-r")) ; process ANSI codes
                              (or (delq nil args) '("+g"))))
                     (shell-quote-argument tmpfile)
-                    (if doom-debug-p "v" "")
+                    (if init-file-debug "v" "")
                     (shell-quote-argument tmpfile))
             context)))))
 

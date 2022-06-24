@@ -115,18 +115,6 @@
 (defconst doom-modules-version "22.06.0-dev"
   "Current version of Doom Emacs.")
 
-(defvar doom-debug-p (or (getenv-internal "DEBUG") init-file-debug)
-  "If non-nil, Doom will log more.
-
-Use `doom-debug-mode' to toggle it. The --debug-init flag and setting the DEBUG
-envvar will enable this at startup.")
-
-(defvar doom-init-p nil
-  "Non-nil if Doom has been initialized.")
-
-(defconst doom-interactive-p (not noninteractive)
-  "If non-nil, Emacs is in interactive mode.")
-
 
 ;;
 ;;; Directory variables

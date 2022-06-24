@@ -95,8 +95,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
       (let ((load-prefer-newer t)
-            (noninteractive t)
-            doom-interactive-p)
+            (noninteractive t))
         (require 'core-start)
         (quiet! (doom-initialize-packages))
         (quiet! (doom-initialize-modules))))
@@ -198,7 +197,7 @@ module. This does not include your byte-compiled, third party packages.'"
   (print-group!
    (cl-loop with default-directory = doom-emacs-dir
             with success = 0
-            with esc = (if doom-debug-p "" "\033[1A")
+            with esc = (if init-file-debug "" "\033[1A")
             for path
             in (append (doom-glob doom-emacs-dir "*.elc")
                        (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
