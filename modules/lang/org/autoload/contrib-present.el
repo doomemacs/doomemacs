@@ -80,7 +80,7 @@
            (text-scale-set 0)
            (pcase (type-of fringe-mode)
              ((or 'integer 'symbol) (set-window-fringes nil fringe-mode fringe-mode))
-             ('cons (set-window-fringes nil (car fringe-mode) (cdr fringe-mode)))
+             ('cons (set-window-fringes nil (car fringe-mode) (cdr fringe-mode))))
            (org-clear-latex-preview)
            (org-remove-inline-images)
            (org-mode)))
