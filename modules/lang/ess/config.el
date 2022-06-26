@@ -61,7 +61,8 @@
             [up]   #'comint-next-input
             [down] #'comint-previous-input
             [C-return] #'ess-eval-line))
-
+        (:map ess-roxy-mode-map
+        :i "RET" #'ess-indent-new-comment-line)
         :map ess-mode-map
         :n [C-return] #'ess-eval-line
         :localleader
