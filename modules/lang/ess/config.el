@@ -44,56 +44,55 @@
     ;;      have a sane `comment-line-break-function', so...
     comment-line-break-function nil)
 
-  (map! (:after ess-help
-          (:map ess-help-mode-map
-            :n "q"  #'kill-current-buffer
-            :n "Q"  #'ess-kill-buffer-and-go
-            :n "K"  #'ess-display-help-on-object
-            :n "go" #'ess-display-help-in-browser
-            :n "gO" #'ess-display-help-apropos
-            :n "gv" #'ess-display-vignettes
-            :m "]]" #'ess-skip-to-next-section
-            :m "[[" #'ess-skip-to-previous-section)
-          (:map ess-doc-map
-            "h"    #'ess-display-help-on-object
-            "p"    #'ess-R-dv-pprint
-            "t"    #'ess-R-dv-ctable
-            [up]   #'comint-next-input
-            [down] #'comint-previous-input
-            [C-return] #'ess-eval-line))
-        (:map ess-roxy-mode-map
-        :i "RET" #'ess-indent-new-comment-line)
-        :map ess-mode-map
-        :n [C-return] #'ess-eval-line
-        :localleader
-        "," #'ess-eval-region-or-function-or-paragraph-and-step
-        "'" #'R
-        [tab]     #'ess-switch-to-inferior-or-script-buffer
-        [backtab] #'ess-switch-process
-        ;; REPL
-        "B" #'ess-eval-buffer-and-go
-        "b" #'ess-eval-buffer
-        "d" #'ess-eval-region-or-line-and-step
-        "D" #'ess-eval-function-or-paragraph-and-step
-        "L" #'ess-eval-line-and-go
-        "l" #'ess-eval-line
-        "R" #'ess-eval-region-and-go
-        "r" #'ess-eval-region
-        "F" #'ess-eval-function-and-go
-        "f" #'ess-eval-function
-        ;; predefined keymaps
-        "h" 'ess-doc-map
-        "x" 'ess-extra-map
-        "p" 'ess-r-package-dev-map
-        "v" 'ess-dev-map
-        ;; noweb
-        :prefix "c"
-        "C" #'ess-eval-chunk-and-go
-        "c" #'ess-eval-chunk
-        "d" #'ess-eval-chunk-and-step
-        "m" #'ess-noweb-mark-chunk
-        "p" #'ess-noweb-previous-chunk
-        "n" #'ess-noweb-next-chunk))
+  (map!
+   (:map ess-help-mode-map
+    :n "q"  #'kill-current-buffer
+    :n "Q"  #'ess-kill-buffer-and-go
+    :n "K"  #'ess-display-help-on-object
+    :n "go" #'ess-display-help-in-browser
+    :n "gO" #'ess-display-help-apropos
+    :n "gv" #'ess-display-vignettes
+    :m "]]" #'ess-skip-to-next-section
+    :m "[[" #'ess-skip-to-previous-section)
+   (:map ess-doc-map
+         "h"    #'ess-display-help-on-object
+         "p"    #'ess-view-data-print
+         [up]   #'comint-next-input
+         [down] #'comint-previous-input
+         [C-return] #'ess-eval-line)
+   (:map ess-roxy-mode-map
+    :i "RET" #'ess-indent-new-comment-line)
+   (:map ess-mode-map
+    :n [C-return] #'ess-eval-line
+    :localleader
+    "," #'ess-eval-region-or-function-or-paragraph-and-step
+    "'" #'R
+    [tab]     #'ess-switch-to-inferior-or-script-buffer
+    [backtab] #'ess-switch-process
+    ;; REPL
+    "B" #'ess-eval-buffer-and-go
+    "b" #'ess-eval-buffer
+    "d" #'ess-eval-region-or-line-and-step
+    "D" #'ess-eval-function-or-paragraph-and-step
+    "L" #'ess-eval-line-and-go
+    "l" #'ess-eval-line
+    "R" #'ess-eval-region-and-go
+    "r" #'ess-eval-region
+    "F" #'ess-eval-function-and-go
+    "f" #'ess-eval-function
+    ;; predefined keymaps
+    "h" 'ess-doc-map
+    "x" 'ess-extra-map
+    "p" 'ess-r-package-dev-map
+    "v" 'ess-dev-map
+    ;; noweb
+    :prefix "c"
+    "C" #'ess-eval-chunk-and-go
+    "c" #'ess-eval-chunk
+    "d" #'ess-eval-chunk-and-step
+    "m" #'ess-noweb-mark-chunk
+    "p" #'ess-noweb-previous-chunk
+    "n" #'ess-noweb-next-chunk)))
 
 
 (use-package! stan-mode
