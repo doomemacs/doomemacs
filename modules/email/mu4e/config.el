@@ -71,7 +71,7 @@
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account-stripe . 1)
-          (:human-date . 10)
+          (:human-date . 12)
           (:flags . 6) ; 3 icon flags
           (:from-or-to . 25)
           (:subject)))
