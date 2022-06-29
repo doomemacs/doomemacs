@@ -36,7 +36,7 @@
                 "write" "com.googlecode.iterm2" "OpenFileInNewWindows"
                 "-bool" (if bool "true" "false"))))
        (let ((newwindow?
-              (if newwindow? (not (equal (read-newwindows) "1")))))
+              (if ,newwindow? (not (equal (read-newwindows) "1")))))
          (when newwindow?
            (write-newwindows t))
          (unwind-protect (+macos-open-with "iTerm" ,dir)
