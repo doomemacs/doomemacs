@@ -43,8 +43,8 @@
       indent
       image
       kotlin-mode
-      occur
       outline
+      replace
       simple
       slime
       lispy)
@@ -193,7 +193,6 @@ variable for an explanation of the defaults (in comments). See
       newsticker
       notmuch
       nov
-      (occur replace)
       omnisharp
       org
       org-present
@@ -214,6 +213,7 @@ variable for an explanation of the defaults (in comments). See
       racket-describe
       realgud
       reftex
+      replace
       restclient
       rg
       ripgrep
@@ -319,7 +319,7 @@ and complains if a module is loaded too early (during startup)."
     (add-transient-hook! 'emacs-lisp-mode
       (+evil-collection-init 'elisp-mode))
     (add-transient-hook! 'occur-mode
-      (+evil-collection-init '(occur replace)))
+      (+evil-collection-init 'replace))
     (add-transient-hook! 'indent-rigidly
       (+evil-collection-init '(indent "indent")))
     (add-transient-hook! 'minibuffer-setup-hook
