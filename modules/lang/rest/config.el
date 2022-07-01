@@ -4,6 +4,8 @@
   :mode ("\\.http\\'" . restclient-mode)
   ;; line numbers aren't enabled by default in fundamental-mode-derived modes
   :hook (restclient-mode . display-line-numbers-mode)
+  :init
+  (defvar gnutls-verify-error)
   :config
   (set-popup-rule! "^\\*HTTP Response" :size 0.4 :quit 'other)
 
