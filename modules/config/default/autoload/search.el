@@ -23,9 +23,9 @@ If prefix ARG is set, prompt for a directory to search from."
 
 ;;;###autoload
 (defun +default/search-emacsd ()
-  "Conduct a text search in files under `user-emacs-directory'."
+  "Conduct a text search in files under `doom-emacs-dir'."
   (interactive)
-  (let ((default-directory user-emacs-directory))
+  (let ((default-directory doom-emacs-dir))
     (call-interactively
      (cond ((featurep! :completion ivy)     #'+ivy/project-search-from-cwd)
            ((featurep! :completion helm)    #'+helm/project-search-from-cwd)

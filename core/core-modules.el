@@ -377,7 +377,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
            (or (and (stringp arg)
                     (not (file-name-absolute-p arg))
                     (ignore-errors (dir!)))
-               user-emacs-directory)))
+               doom-emacs-dir)))
       (funcall fn label arg recursed)))
 
   ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:

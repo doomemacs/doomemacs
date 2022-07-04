@@ -258,7 +258,7 @@ ready to be pasted in a bug report on github."
                             'envvar-file)
                         (if (featurep 'exec-path-from-shell)
                             'exec-path-from-shell)
-                        (if (file-symlink-p user-emacs-directory)
+                        (if (file-symlink-p doom-emacs-dir)
                             'symlinked-emacsdir)
                         (if (file-symlink-p doom-private-dir)
                             'symlinked-doomdir)
