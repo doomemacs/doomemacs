@@ -1176,28 +1176,32 @@ Emacs' batch library lacks an implementation of the exec system call."
   "Invoke pager on output unconditionally.
 
 ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
-  (cond ((null (or doom-cli-pager (executable-find "less")))
-         (user-error "No pager set or available")
-         (doom-cli--exit 1 context))
+  (let ((pager (or doom-cli-pager (getenv "DOOMPAGER"))))
+    (cond ((null (or pager (executable-find "less")))
+           (user-error "No pager set or available")
+           (doom-cli--exit 1 context))
 
-        ((doom-cli-context-pipe-p context :out t)
-         (doom-cli--exit 0 context))
+          ((or (doom-cli-context-pipe-p context :out t)
+               (equal pager ""))
+           (doom-cli--exit 0 context))
 
-        ((let ((tmpfile (doom-cli--output-file 'output context))
-               (coding-system-for-write 'utf-8-auto))
-           (make-directory (file-name-directory tmpfile) t)
-           (with-temp-file tmpfile
-             (insert-buffer-substring (doom-cli-context-stdout context)))
-           (set-file-modes tmpfile #o600)
-           (doom-cli--restart
-            (format "${DOOMPAGER:-less %s} <%s; rm -f%s %s"
-                    (combine-and-quote-strings
-                     (append (if doom-print-backend '("-r")) ; process ANSI codes
-                             (or (delq nil args) '("+g"))))
-                    (shell-quote-argument tmpfile)
-                    (if init-file-debug "v" "")
-                    (shell-quote-argument tmpfile))
-            context)))))
+          ((let ((tmpfile (doom-cli--output-file 'output context))
+                 (coding-system-for-write 'utf-8-auto))
+             (make-directory (file-name-directory tmpfile) t)
+             (with-temp-file tmpfile
+               (insert-buffer-substring (doom-cli-context-stdout context)))
+             (set-file-modes tmpfile #o600)
+             (doom-cli--restart
+              (format "%s <%s; rm -f%s %s"
+                      (or pager
+                          (format "less %s"
+                                  (combine-and-quote-strings
+                                   (append (if doom-print-backend '("-r")) ; process ANSI codes
+                                           (or (delq nil args) '("+g"))))))
+                      (shell-quote-argument tmpfile)
+                      (if init-file-debug "v" "")
+                      (shell-quote-argument tmpfile))
+              context))))))
 
 (defun doom-cli--exit-pager-maybe (args context)
   "Invoke pager if stdout is longer than TTY height * `doom-cli-pager-ratio'.
