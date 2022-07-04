@@ -174,7 +174,7 @@ SEE ALSO:
   https://git.doomemacs.org/issues    Global issue tracker"
   :partial t)
 
-(defcli! (:before doom)
+(defcli! :before
     ((force?   ("-!" "--force")   "Suppress prompts by auto-accepting their consequences")
      (debug?   ("-D" "--debug")   "Enable verbose output")
      (doomdir  ("--doomdir" dir)  "Use Doom config living in `DIR' (e.g. ~/.doom.d)")
