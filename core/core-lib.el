@@ -805,5 +805,13 @@ not a list, return a one-element list containing OBJECT."
         object
       (list object))))
 
+;; Introduced in Emacs 28.1
+(unless (fboundp 'always)
+  (defun always (&rest _arguments)
+    "Do nothing and return t.
+This function accepts any number of ARGUMENTS, but ignores them.
+Also see `ignore'."
+    t))
+
 (provide 'core-lib)
 ;;; core-lib.el ends here
