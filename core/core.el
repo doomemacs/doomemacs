@@ -112,7 +112,7 @@
 (defconst doom-version "3.0.0-dev"
   "Current version of Doom Emacs core.")
 
-(defconst doom-modules-version "22.06.0-dev"
+(defconst doom-modules-version "22.07.0-dev"
   "Current version of Doom Emacs.")
 
 
