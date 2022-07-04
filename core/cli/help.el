@@ -65,7 +65,7 @@ OPTIONS:
           ((null sections)
            (if (null cli)
                (signal 'doom-cli-command-not-found-error command)
-             (doom-cli-help--print cli context manpage? (not localonly?))
+             (doom-cli-help--print cli context manpage? localonly?)
              (exit! :pager?)))
           (t
            (dolist (section sections)
