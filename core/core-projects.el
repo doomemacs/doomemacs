@@ -174,7 +174,7 @@ And if it's a function, evaluate it."
                          (cl-find-if (doom-rpartial #'executable-find t)
                                      (list "fdfind" "fd"))
                        doom-projectile-fd-binary))
-              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git"
+              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git --strip-cwd-prefix"
                               bin)
                       (if IS-WINDOWS " --path-separator=/"))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
