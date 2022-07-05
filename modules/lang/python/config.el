@@ -224,7 +224,7 @@
         :localleader
         (:prefix ("i" . "imports")
           :desc "Insert missing imports" "i" #'pyimport-insert-missing
-          :desc "Remove unused imports"  "r" #'pyimport-remove-unused
+          :desc "Remove unused imports"  "R" #'pyimport-remove-unused
           :desc "Optimize imports"       "o" #'+python/optimize-imports)))
 
 
