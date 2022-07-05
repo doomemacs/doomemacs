@@ -125,7 +125,7 @@ in."
          (dir (if (file-directory-p xdg-dir)
                   xdg-dir
                 doom-dir)))
-    (when (file-equal-p dir user-emacs-directory)
+    (when (file-equal-p dir doom-emacs-dir)
       (print! (error "Doom was cloned to %S, not ~/.emacs.d or ~/.config/emacs"
                      (path dir)))
       (explain! "Doom's source and your private Doom config have to live in separate directories. "
@@ -140,7 +140,7 @@ in."
       (explain! "The second directory will be ignored, as it has lower precedence.")))
 
   (print! (start "Checking for stale elc files..."))
-  (elc-check-dir user-emacs-directory)
+  (elc-check-dir doom-emacs-dir)
 
   (print! (start "Checking for problematic git global settings..."))
   (if (executable-find "git")
@@ -158,8 +158,7 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-       (let ((doom-interactive-p 'doctor)
-             (noninteractive nil)
+       (let ((noninteractive nil)
              kill-emacs-query-functions
              kill-emacs-hook)
          (defvar doom-reloading-p nil)

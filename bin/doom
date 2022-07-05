@@ -174,12 +174,12 @@ SEE ALSO:
   https://git.doomemacs.org/issues    Global issue tracker"
   :partial t)
 
-(defcli! (:before doom)
+(defcli! :before
     ((force?   ("-!" "--force")   "Suppress prompts by auto-accepting their consequences")
      (debug?   ("-D" "--debug")   "Enable verbose output")
      (doomdir  ("--doomdir" dir)  "Use Doom config living in `DIR' (e.g. ~/.doom.d)")
      (emacsdir ("--emacsdir" dir) "Use Doom install living in `DIR' (e.g. ~/.emacs.d)")
-     (pager    ("--pager" bool)    "Pager command to use for large output")
+     (pager    ("--pager" cmd)    "Pager command to use for large output")
      ;; TODO Implement after v3.0
      ;; (profile   ("--profile" name) "Use profile named NAME")
      &flags
@@ -222,7 +222,7 @@ SEE ALSO:
     (exit! :restart))
   ;; But these don't need a restart:
   (when pager
-    (setenv "DOOMPAGER" pager))
+    (setq doom-cli-pager pager))
   (when force?
     (setf (doom-cli-context-suppress-prompts-p context) t)
     (doom-log "User requested all prompts be suppressed"))
@@ -230,7 +230,7 @@ SEE ALSO:
   (dolist (file loads)
     (load (doom-path (cdr file))
           (not (equal (car file) "--strict-load"))
-          (not doom-debug-p) t))
+          (not init-file-debug) t))
   (dolist (form evals)
     (eval (read (cdr form)) t)))
 

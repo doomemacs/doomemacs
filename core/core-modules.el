@@ -66,7 +66,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
-(defvar doom-inhibit-module-warnings doom-interactive-p
+(defvar doom-inhibit-module-warnings (not noninteractive)
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
@@ -309,7 +309,7 @@ those directories. The first returned path is always `doom-private-dir'."
                                   :flags (if (listp m) (cdr m))
                                   :path (if (stringp path) (file-truename path)))
                          results)))))))
-    (unless doom-interactive-p
+    (when noninteractive
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
 
@@ -328,10 +328,10 @@ This value is cached. If REFRESH-P, then don't use the cached value."
 
 (autoload 'use-package "use-package-core" nil nil t)
 
-(setq use-package-compute-statistics doom-debug-p
-      use-package-verbose doom-debug-p
-      use-package-minimum-reported-time (if doom-debug-p 0 0.1)
-      use-package-expand-minimally doom-interactive-p)
+(setq use-package-compute-statistics init-file-debug
+      use-package-verbose init-file-debug
+      use-package-minimum-reported-time (if init-file-debug 0 0.1)
+      use-package-expand-minimally (not noninteractive))
 
 ;; A common mistake for new users is that they inadvertently install their
 ;; packages with package.el, by copying over old `use-package' declarations with
@@ -377,7 +377,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
            (or (and (stringp arg)
                     (not (file-name-absolute-p arg))
                     (ignore-errors (dir!)))
-               user-emacs-directory)))
+               doom-emacs-dir)))
       (funcall fn label arg recursed)))
 
   ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
@@ -474,7 +474,7 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  `(unless doom-interactive-p
+  `(when noninteractive
      (doom-module-mplist-map
       (lambda (category module &rest plist)
         (if (plist-member plist :path)

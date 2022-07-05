@@ -64,7 +64,7 @@ one wants that.")
           doom-autoloads-excluded-files
           'literal)
          ;; TODO Uncomment when profile system is implemented
-         ;; `((if doom-interactive-p (require 'core-start)))
+         ;; `((unless noninteractive (require 'core-start)))
          )
         (print! (start "Byte-compiling autoloads file..."))
         (doom-autoloads--compile-file file)
@@ -91,7 +91,7 @@ one wants that.")
 
 (defun doom-autoloads--compile-file (file)
   (condition-case-unless-debug e
-      (let ((byte-compile-warnings (if doom-debug-p byte-compile-warnings)))
+      (let ((byte-compile-warnings (if init-file-debug byte-compile-warnings)))
         (and (byte-compile-file file)
              (load (byte-compile-dest-file file) nil t)))
     (error

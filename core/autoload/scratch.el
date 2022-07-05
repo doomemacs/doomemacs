@@ -111,7 +111,7 @@ the first, fresh scratch buffer you create. This accepts:
     (remove-hook 'doom-switch-buffer-hook #'doom-persist-scratch-buffers-after-switch-h)))
 
 ;;;###autoload
-(when doom-interactive-p
+(unless noninteractive
   (add-hook 'kill-emacs-hook #'doom-persist-scratch-buffers-h))
 
 

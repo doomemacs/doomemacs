@@ -333,8 +333,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (setq compilation-always-kill t       ; kill compilation process before starting another
         compilation-ask-about-save nil  ; save all buffers on `compile'
         compilation-scroll-output 'first-error)
-  ;; Handle ansi codes in compilation buffers
-  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter)
+  ;; Handle ansi codes in compilation buffer
+  ;; DEPRECATED Use `ansi-color-compilation-filter' when dropping 27.x support
+  (add-hook 'compilation-filter-hook #'doom-apply-ansi-color-to-compilation-buffer-h)
   ;; Automatically truncate compilation buffers so they don't accumulate too
   ;; much data and bog down the rest of Emacs.
   (autoload 'comint-truncate-buffer "comint" nil t)

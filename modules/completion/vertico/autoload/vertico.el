@@ -38,7 +38,7 @@
          (consult-async-split-styles-alist consult-async-split-styles-alist))
     ;; Change the split style if the initial query contains the separator.
     (when query
-      (cl-destructuring-bind (&key type separator initial)
+      (cl-destructuring-bind (&key type separator initial _function)
           (consult--async-split-style)
         (pcase type
           (`separator

@@ -80,12 +80,7 @@
   (unless lsp-julia-default-environment
     (setq lsp-julia-default-environment
           (or (car (last (doom-glob "~/.julia/environments/v*")))
-              "~/.julia/environments/v1.6")))
-  :config
-  ;; See non-Jedi/lsp-julia#35
-  (setq-hook! 'julia-mode-hook
-    lsp-enable-folding t
-    lsp-folding-range-limit 100))
+              "~/.julia/environments/v1.6"))))
 
 
 (use-package! eglot-jl

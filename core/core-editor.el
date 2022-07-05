@@ -484,7 +484,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
 
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
-  :when doom-interactive-p
+  :unless noninteractive
   ;; I'm not using `global-dtrt-indent-mode' because it has hard-coded and rigid
   ;; major mode checks, so I implement it in `doom-detect-indentation-h'.
   :hook ((change-major-mode-after-body read-only-mode) . doom-detect-indentation-h)
@@ -496,7 +496,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
                 (memq major-mode doom-detect-indentation-excluded-modes)
                 (member (substring (buffer-name) 0 1) '(" " "*")))
       ;; Don't display messages in the echo area, but still log them
-      (let ((inhibit-message (not doom-debug-p)))
+      (let ((inhibit-message (not init-file-debug)))
         (dtrt-indent-mode +1))))
 
   ;; Enable dtrt-indent even in smie modes so that it can update `tab-width',

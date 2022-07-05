@@ -30,7 +30,7 @@ debian, and derivatives). On most it's 'fd'.")
         ;; Auto-discovery is slow to do by default. Better to update the list
         ;; when you need to (`projectile-discover-projects-in-search-path').
         projectile-auto-discover nil
-        projectile-enable-caching doom-interactive-p
+        projectile-enable-caching (not noninteractive)
         projectile-globally-ignored-files '(".DS_Store" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
@@ -115,8 +115,7 @@ b) represent blacklisted directories that are too big, change too often or are
    private. (see `doom-projectile-cache-blacklist'),
 c) are not valid projectile projects."
       (when (and (bound-and-true-p projectile-projects-cache)
-                 projectile-enable-caching
-                 doom-interactive-p)
+                 projectile-enable-caching)
         (setq projectile-known-projects
               (cl-remove-if #'projectile-ignored-project-p
                             projectile-known-projects))

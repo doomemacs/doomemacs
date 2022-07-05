@@ -34,7 +34,7 @@
 
   ;; Reduce verbosity. 3 is too chatty about initializing yasnippet. 2 is just
   ;; right (only shows errors).
-  (setq yas-verbosity (if doom-debug-p 3 0))
+  (setq yas-verbosity (if init-file-debug 3 0))
 
   ;; default snippets library, if available
   (add-to-list 'load-path +snippets-dir)

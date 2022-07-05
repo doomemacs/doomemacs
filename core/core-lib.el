@@ -264,20 +264,20 @@ NAME, ARGLIST, and BODY are the same as `defun', `defun*', `defmacro', and
 This silences calls to `message', `load', `write-region' and anything that
 writes to `standard-output'. In interactive sessions this inhibits output to the
 echo-area, but not to *Messages*."
-  `(if doom-debug-p
+  `(if init-file-debug
        (progn ,@forms)
-     ,(if doom-interactive-p
-          `(let ((inhibit-message t)
-                 (save-silently t))
-             (prog1 ,@forms (message "")))
-        `(letf! ((standard-output (lambda (&rest _)))
-                 (defun message (&rest _))
-                 (defun load (file &optional noerror nomessage nosuffix must-suffix)
-                   (funcall load file noerror t nosuffix must-suffix))
-                 (defun write-region (start end filename &optional append visit lockname mustbenew)
-                   (unless visit (setq visit 'no-message))
-                   (funcall write-region start end filename append visit lockname mustbenew)))
-           ,@forms))))
+     ,(if noninteractive
+          `(letf! ((standard-output (lambda (&rest _)))
+                   (defun message (&rest _))
+                   (defun load (file &optional noerror nomessage nosuffix must-suffix)
+                     (funcall load file noerror t nosuffix must-suffix))
+                   (defun write-region (start end filename &optional append visit lockname mustbenew)
+                     (unless visit (setq visit 'no-message))
+                     (funcall write-region start end filename append visit lockname mustbenew)))
+             ,@forms)
+        `(let ((inhibit-message t)
+               (save-silently t))
+           (prog1 ,@forms (message ""))))))
 
 (defmacro eval-if! (cond then &rest body)
   "Expands to THEN if COND is non-nil, to BODY otherwise.
@@ -804,6 +804,14 @@ not a list, return a one-element list containing OBJECT."
     (if (listp object)
         object
       (list object))))
+
+;; Introduced in Emacs 28.1
+(unless (fboundp 'always)
+  (defun always (&rest _arguments)
+    "Do nothing and return t.
+This function accepts any number of ARGUMENTS, but ignores them.
+Also see `ignore'."
+    t))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
