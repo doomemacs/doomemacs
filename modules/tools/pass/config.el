@@ -24,7 +24,7 @@
 
 
 (after! pass
-  (set-evil-initial-state! 'pass-mode 'emacs)
+  (set-evil-initial-state! 'pass-mode 'normal)
   (set-popup-rule! "^\\*Password-Store" :side 'left :size 0.25 :quit nil)
   (define-key! pass-mode-map
     "j"    #'pass-next-entry
