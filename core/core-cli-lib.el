@@ -59,7 +59,7 @@ See argument types in `doom-cli-argument-types', and `defcli!' for usage.")
             :zshcomp "_files")
     (path   :read expand-file-name :zshcomp "_files")
     (form   :read read)
-    (regexp :test ,(doom-rpartial #'string-match-p ""))
+    (regexp :test ,(lambda (str) (always (string-match-p str ""))))
     (int    :test "^[0-9]+$"
             :read string-to-number
             :error "Not an integer")
