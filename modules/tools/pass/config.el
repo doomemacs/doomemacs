@@ -13,16 +13,6 @@
 ;;;###package password-store
 (setq password-store-password-length 12)
 
-;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar
-(defadvice! +pass--respect-pass-dir-envvar-a (entry)
-  "Return a string with the file content of ENTRY."
-  :override #'auth-source-pass--read-entry
-  (with-temp-buffer
-    (insert-file-contents
-     (expand-file-name (format "%s.gpg" entry) (password-store-dir)))
-    (buffer-substring-no-properties (point-min) (point-max))))
-
-
 (after! pass
   (set-evil-initial-state! 'pass-mode 'normal)
   (set-popup-rule! "^\\*Password-Store" :side 'left :size 0.25 :quit nil)
