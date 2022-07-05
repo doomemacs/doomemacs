@@ -26,6 +26,10 @@
 (after! pass
   (set-evil-initial-state! 'pass-mode 'normal)
   (set-popup-rule! "^\\*Password-Store" :side 'left :size 0.25 :quit nil)
+
+  ;; FIXME This needs to be upstreamed to evil-collection.
+  (add-to-list  'evil-collection-pass-command-to-label '(pass-update-buffer . "gr"))
+
   (map! :map pass-mode-map
     :n "j"    #'pass-next-entry
     :n "k"    #'pass-prev-entry
