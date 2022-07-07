@@ -349,7 +349,8 @@
        :desc "Next buffer"                 "]"   #'next-buffer
        (:when (featurep! :ui workspaces)
         :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
-        :desc "Switch buffer"           "B" #'switch-to-buffer)
+        :desc "Switch buffer"           "B" #'switch-to-buffer
+        :desc "ibuffer workspace"       "i" #'+ibuffer/open-for-current-workspace)
        (:unless (featurep! :ui workspaces)
         :desc "Switch buffer"           "b" #'switch-to-buffer)
        :desc "Clone buffer"                "c"   #'clone-indirect-buffer
