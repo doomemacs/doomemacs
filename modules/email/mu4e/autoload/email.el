@@ -67,7 +67,7 @@ default/fallback account."
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
     (switch-to-buffer (doom-fallback-buffer)))
-  (mu4e~start 'mu4e~main-view)
+  (mu4e)
   ;; (save-selected-window
   ;;   (prolusion-mail-show))
   )
