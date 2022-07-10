@@ -14,7 +14,8 @@
   :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
-  (when (or (not (require 'mu4e-meta nil t))
+  (when (or (not (or (require 'mu4e-config nil t)
+                     (require 'mu4e-meta nil t)))
             (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
@@ -22,6 +23,49 @@
         (lambda (&rest _)
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  (when (version< mu4e-mu-version "1.8")
+    ;; Evidently the mu4e author has never heard of `define-obsolete-function-alias'.
+    ;; List of suffixes obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
+    (dolist (transferable-suffix
+             '("check-requirements" "contains-line-matching" "context-ask-user"
+               "context-autoswitch" "default-handler" "get-folder" "get-log-buffer"
+               "get-mail-process-filter" "guess-maildir" "key-val"
+               "longest-of-maildirs-and-bookmarks" "maildirs-with-query"
+               "main-action-str" "main-bookmarks" "main-maildirs" "main-menu"
+               "main-queue-size" "main-redraw-buffer"
+               "main-toggle-mail-sending-mode" "main-view" "main-view-queue"
+               "main-view-real" "main-view-real-1" "mark-ask-target"
+               "mark-check-target" "mark-clear" "mark-find-headers-buffer"
+               "mark-get-dyn-target" "mark-get-markpair" "mark-get-move-target"
+               "mark-in-context" "mark-initialize" "org-store-link-message"
+               "org-store-link-query" "pong-handler" "read-char-choice"
+               "read-patch-directory" "replace-first-line-matching"
+               "request-contacts-maybe" "rfc822-phrase-type" "start" "stop"
+               "temp-window" "update-contacts" "update-mail-and-index-real"
+               "update-mail-mode" "update-sentinel-func"))
+      (defalias (intern (concat "mu4e--" transferable-suffix))
+        (intern (concat "mu4e~" transferable-suffix))
+        "Alias to provide the API of mu4e 1.8 (mu4e~ ⟶ mu4e--).")
+      (dolist (transferable-proc-suffixes
+               '("add" "compose" "contacts" "eat-sexp-from-buf" "filter"
+                 "find" "index" "kill" "mkdir" "move" "ping" "remove"
+                 "sent" "sentinel" "start" "view"))
+        (defalias (intern (concat "mu4e--server-" transferable-proc-suffixes))
+          (intern (concat "mu4e~proc-" transferable-proc-suffixes))
+          "Alias to provide the API of mu4e 1.8 (mu4e~proc ⟶ mu4e--server)."))
+      (defalias 'mu4e-search-rerun #'mu4e-headers-rerun-search
+        "Alias to provide the API of mu4e 1.8.")
+      (defun mu4e (&optional background)
+        "If mu4e is not running yet, start it.
+Then, show the main window, unless BACKGROUND (prefix-argument)
+is non-nil."
+        (interactive "P")
+        (mu4e--start (and (not background) #'mu4e--main-view))))
+    (setq mu4e-view-show-addresses t
+          mu4e-view-show-images t
+          mu4e-view-image-max-width 800
+          mu4e-view-use-gnus t))
+
   (pcase +mu4e-backend
     (`mbsync
      (setq mu4e-get-mail-command "mbsync -a"
@@ -30,13 +74,8 @@
      (setq mu4e-get-mail-command "offlineimap -o -q")))
 
   (setq mu4e-update-interval nil
-        mu4e-view-show-addresses t
         mu4e-sent-messages-behavior 'sent
         mu4e-hide-index-messages t
-        ;; try to show images
-        mu4e-view-show-images t
-        mu4e-view-image-max-width 800
-        mu4e-view-use-gnus t ; the way of the future: https://github.com/djcb/mu/pull/1442#issuecomment-591695814
         ;; configuration for sending mail
         message-send-mail-function #'smtpmail-send-it
         smtpmail-stream-type 'starttls
@@ -175,7 +214,7 @@
 
   ;; Marks usually affect the current view
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
-    :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
+    :after #'mu4e-mark-execute-all (mu4e-search-rerun))
 
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
@@ -183,7 +222,7 @@
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
   (when (fboundp 'make-xwidget)
-    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-with-xwidget)))
+    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-in-xwidget)))
 
   ;; Detect empty subjects, and give users an opotunity to fill something in
   (defun +mu4e-check-for-subject ()
@@ -321,8 +360,8 @@ This should already be the case yet it does not always seem to be."
 This is enacted by `+mu4e~main-action-str-prettier-a' and
 `+mu4e~main-keyval-str-prettier-a'.")
 
-  (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
-  (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
+  (advice-add #'mu4e--key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
+  (advice-add #'mu4e--main-action-str :override #'+mu4e~main-action-str-prettier-a)
   (when (featurep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
     (setq evil-collection-mu4e-end-region-misc "quit"))
@@ -334,7 +373,7 @@ This is enacted by `+mu4e~main-action-str-prettier-a' and
      +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
-  (advice-add 'mu4e~start :around #'+mu4e-lock-start)
+  (advice-add 'mu4e--start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
 (unless (featurep! +org)
@@ -575,7 +614,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
     ;;
     ;; Gmail will handle the rest.
     (defun +mu4e--mark-seen (docid _msg target)
-      (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
+      (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))
 
     (defvar +mu4e--last-invalid-gmail-action 0)
 
@@ -592,7 +631,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                                 (when (< 2 (- (float-time) +mu4e--last-invalid-gmail-action))
                                   (sit-for 1))
                                 (setq +mu4e--last-invalid-gmail-action (float-time)))
-                       (mu4e~proc-remove docid))))
+                       (mu4e--server-remove docid))))
           (alist-get 'trash mu4e-marks)
           (list :char '("d" . "▼")
                 :prompt "dtrash"
@@ -600,7 +639,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "+T-N"))))
+                            (mu4e--server-move docid (mu4e--mark-check-target target) "+T-N"))))
           ;; Refile will be my "archive" function.
           (alist-get 'refile mu4e-marks)
           (list :char '("r" . "▼")
@@ -609,7 +648,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+                            (mu4e--server-move docid (mu4e--mark-check-target target) "-N")))
                 #'+mu4e--mark-seen))
 
     ;; This hook correctly modifies gmail flags on emails when they are marked.

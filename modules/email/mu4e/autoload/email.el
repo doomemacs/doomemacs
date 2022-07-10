@@ -67,7 +67,7 @@ default/fallback account."
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
     (switch-to-buffer (doom-fallback-buffer)))
-  (mu4e~start 'mu4e~main-view)
+  (mu4e)
   ;; (save-selected-window
   ;;   (prolusion-mail-show))
   )
@@ -188,6 +188,8 @@ is tomorrow.  With two prefixes, select the deadline."
                   (lev (org-outline-level))
                   (folded-p (invisible-p (point-at-eol)))
                   (from (plist-get msg :from)))
+              (if (consp (car from)) ; Occurs when using mu4e 1.8+.
+                  (setq from (car from)))
               ;; place the subheader
               (when folded-p (show-branches))    ; unfold if necessary
               (org-end-of-meta-data) ; skip property drawer
