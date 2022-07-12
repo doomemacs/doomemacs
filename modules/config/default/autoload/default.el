@@ -62,7 +62,9 @@ current project. Otherwise list them for the current buffer"
               (bound-and-true-p flycheck-mode))
          (flycheck-list-errors))
         ((bound-and-true-p flymake-mode)
-         (flymake-show-diagnostics-buffer))
+         (if (featurep! :completion vertico)
+             (consult-flymake)
+           (flymake-show-diagnostics-buffer)))
         (t
          (user-error "No diagnostics backend detected. Enable flycheck or \
 flymake, or set up lsp-mode if applicable (see :lang lsp)"))))
