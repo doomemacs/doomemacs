@@ -27,9 +27,12 @@
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
             ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
-            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
+            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s")
+            ("Sourcegraph"       "https://sourcegraph.com/search?q=context:global+%s&patternType=literal"))
           (when (featurep! :lang rust)
-            '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
+            '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s")))
+          (when (featurep! :lang python)
+            '(("Python Docs" "https://docs.python.org/3/search.html?q=%s"))))
   "An alist that maps online resources to either:
 
   1. A search url (needs on '%s' to substitute with an url encoded query),
