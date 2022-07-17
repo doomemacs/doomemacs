@@ -149,12 +149,13 @@ we have to clean it up ourselves."
   (when (featurep! +icons)
     (push 'all-the-icons dirvish-attributes))
   (map! :map dirvish-mode-map
-        :n "b" #'dirvish-goto-bookmark
-        :n "z" #'dirvish-show-history
-        :n "f" #'dirvish-file-info-menu
-        :n "F" #'dirvish-toggle-fullscreen
-        :n "l" #'dired-find-file
-        :n "h" #'dired-up-directory
+        :ng "q" #'+dirvish-quit
+        :n  "b" #'dirvish-goto-bookmark
+        :n  "z" #'dirvish-show-history
+        :n  "f" #'dirvish-file-info-menu
+        :n  "F" #'dirvish-toggle-fullscreen
+        :n  "l" #'dired-find-file
+        :n  "h" #'dired-up-directory
         :localleader
         "h" #'dired-omit-mode))
 

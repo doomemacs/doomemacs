@@ -8,6 +8,13 @@
   (message "Killed all dired buffers"))
 
 ;;;###autoload
+(defun +dirvish-quit ()
+  "Quit the current Dirvish session."
+  (interactive)
+  (interactive)
+  (dirvish-kill (dirvish-curr)))
+
+;;;###autoload
 (defun +dired-enable-git-info-h ()
   "Enable `dired-git-info-mode' in git repos."
   (and (not (file-remote-p default-directory))
