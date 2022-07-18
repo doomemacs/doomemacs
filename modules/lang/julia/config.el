@@ -120,4 +120,6 @@
            "b" #'julia-snail-send-buffer-file
            "l" #'julia-snail-send-line
            "r" #'julia-snail-send-region
-           "e" #'julia-snail-send-dwim)))))
+           "e" #'julia-snail-send-dwim))
+         (:map (julia-snail-repl-mode-map)
+          "m" #'julia-snail-repl-go-back))))
