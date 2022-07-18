@@ -102,6 +102,7 @@
 
 (use-package! julia-snail
   :when (featurep! +snail)
+  :when (featurep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
   :config
   (setq julia-snail-popup-display-eval-results :command)
