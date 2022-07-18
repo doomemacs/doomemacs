@@ -14,7 +14,6 @@
   - [[#text-objects][Text Objects]]
   - [[#goto-certain-nodes][Goto certain nodes]]
 - [[#configuration][Configuration]]
-  - [[#disable-text-objects-for-certain-modes][Disable text objects for certain modes]]
   - [[#rebinding-text-objects][Rebinding text objects]]
   - [[#adding-your-own-text-objects][Adding your own text objects]]
   - [[#disabling-highlighting-for-certain-modes][Disabling highlighting for certain modes]]
@@ -53,7 +52,7 @@ This module has no prerequisites.
 * Features
 ** Language support
 Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
-highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]] as well as ~typescript-tsx-mode~
+highlighting support for [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/queries][these languages]] as well as ~typescript-tsx-mode~
 To enable tree sitter for individual languages add the =+tree-sitter= flag.
 Check the module readme of your language for support.
 
@@ -90,14 +89,6 @@ Currently keys are bound to:
 | =l= | loop           |
 
 * Configuration
-** Disable text objects for certain modes
-If you wish to disable tree sitter text objects then you can just remove
-=+tree-sitter-keys-mode= from the language mode hook, for example if we did not
-want it for ruby we would use this snippet
-#+begin_src emacs-lisp
-(remove-hook 'ruby-mode-hook #'+tree-sitter-keys-mode)
-#+end_src
-
 ** Rebinding text objects
 Rebinding keys is the same as any other key but do notes they need to be bound 
 to the keymaps ~+tree-sitter-inner-text-object-map~ or
@@ -116,8 +107,8 @@ to the keymaps ~+tree-sitter-inner-text-object-map~ or
 #+end_src
 
 ** Adding your own text objects
-If you wish to [[https://github.com/meain/evil-textobj-tree-sitter#custom-textobjects][add your own custom text objects]] then you need to bind them and
-add them to the ~+tree-sitter-{inner, outer}-text-objects-map~
+If you wish to [[https://github.com/meain/evil-textobj-tree-sitter#custom-textobjects][add your own custom text objects]] then you need to bind them to
+~+tree-sitter-{inner, outer}-text-objects-map~
 for example:
 #+begin_src emacs-lisp
 (map! (:map +tree-sitter-outer-text-objects-map
