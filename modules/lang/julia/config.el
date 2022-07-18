@@ -91,7 +91,9 @@
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl
-  (setq eglot-jl-language-server-project "~/.julia/environments/v1.6")
+  (setq eglot-jl-language-server-project
+        (or (car (last (doom-glob "~/.julia/environments/v*")))
+            "~/.julia/environments/v1.6"))
   :init
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
