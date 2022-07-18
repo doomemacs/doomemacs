@@ -72,6 +72,7 @@ Fixes #3939: unsortable dired entries on Windows."
 
 
 (use-package! diff-hl
+  :unless (featurep! +dirvish)
   :hook (dired-mode . diff-hl-dired-mode-unless-remote)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
@@ -142,10 +143,12 @@ we have to clean it up ourselves."
   :init (after! dired (dirvish-override-dired-mode))
   :hook (dired-mode . dired-omit-mode)
   :config
+  (require 'dired-x)
   (setq dirvish-cache-dir (concat doom-cache-dir "dirvish/")
         dirvish-hide-details nil
-        dirvish-attributes '(git-msg)
-        dired-omit-files (concat dired-omit-files "\\|^\\..*$"))
+        dirvish-attributes '(git-msg vc-state file-size))
+  (setq dirvish-mode-line-format
+   '(:left (sort file-time " " file-size symlink) :right (omit yank index)))
   (when (featurep! +icons)
     (push 'all-the-icons dirvish-attributes))
   (map! :map dirvish-mode-map
@@ -155,8 +158,12 @@ we have to clean it up ourselves."
         :n "F" #'dirvish-toggle-fullscreen
         :n "l" #'dired-find-file
         :n "h" #'dired-up-directory
+        :n "?" #'dirvish-dispatch
+        :n "q" #'quit-window
         :localleader
-        "h" #'dired-omit-mode))
+        "h" #'dired-omit-mode)
+  (global-set-key [remap find-dired] #'dirvish-fd)
+  (set-popup-rule! "^ \\*Dirvish.*" :ignore t))
 
 
 (use-package! all-the-icons-dired
@@ -184,7 +191,6 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-x
-  :unless (featurep! +dirvish)
   :unless (featurep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
@@ -221,6 +227,7 @@ we have to clean it up ourselves."
 
 (use-package! fd-dired
   :when doom-projectile-fd-binary
+  :unless (featurep! +dirvish)
   :defer t
   :init
   (global-set-key [remap find-dired] #'fd-dired)
