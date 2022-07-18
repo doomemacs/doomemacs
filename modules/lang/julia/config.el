@@ -96,3 +96,25 @@
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
+
+
+(use-package! julia-snail
+  :when (featurep! +snail)
+  :hook (julia-mode . julia-snail-mode)
+  :config
+  (setq julia-snail-popup-display-eval-results :command)
+  (setq julia-snail-multimedia-enable t)
+  (setq julia-snail-popup-display-face '(:background "grey10" :box (:line-width 1 :color "black")
+                                         ((class color) (background dark))))
+  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+  (map! (:localleader
+         (:map (julia-snail-mode-map)
+          "'" #'julia-snail
+          "a" #'julia-snail-package-activate
+          "r" #'julia-snail-update-module-cache
+          "d" #'julia-snail-doc-lookup
+          (:prefix ("e" . "eval")
+           "b" #'julia-snail-send-buffer-file
+           "l" #'julia-snail-send-line
+           "r" #'julia-snail-send-region
+           "e" #'julia-snail-send-dwim)))))

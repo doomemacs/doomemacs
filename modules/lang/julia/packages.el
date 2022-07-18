@@ -8,3 +8,6 @@
   (if (modulep! :tools lsp +eglot)
       (package! eglot-jl :pin "2e04597223553a369dd5b6520b6365b41e6ea508")
     (package! lsp-julia :pin "d6688bb131ff4a5a0201f6d3826ef0b018265389")))
+
+(when (featurep! +snail)
+  (package! julia-snail :pin "326da9a7d0463ed2727f66dcbd4cb58b517ffe25"))
