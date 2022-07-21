@@ -30,6 +30,13 @@ if [ -z "$TMPDIR" ]; then
 fi
 
 export EMACSDIR="${EMACSDIR:-$(cd $(dirname "$BASH_SOURCE")/.. && pwd)}"
+# If running under Chemacs2, emacs-user-directory will be different than our desired path.
+# We then need to load chemacs manually to allow it to set the directory correctly.
+user_emacs_directory="$($emacs --batch --eval '(princ user-emacs-directory)' 2>/dev/null)"
+if [ "$EMACSDIR" != "$user_emacs_directory" ]; then
+   load_chemacs="--load $user_emacs_directory""early-init.el"
+fi
+
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="$((__DOOMSTEP+1))"
 export __DOOMGEOM="${__DOOMGEOM:-`tput cols lines 2>/dev/null`}"
@@ -40,7 +47,8 @@ tmpfile="$TMPDIR/doomscript.${__DOOMPID}"
 
 target="$1"
 shift
-$emacs --load "$EMACSDIR/core/core-cli" \
+$emacs $load_chemacs \
+       --load "$EMACSDIR/core/core-cli" \
        --load "$target" \
        -- "$@" || exit=$?
 # Execute exit-script, if requested (to simulate execve)
