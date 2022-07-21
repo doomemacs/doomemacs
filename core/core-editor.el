@@ -287,7 +287,14 @@ tell you about it. Very annoying. This prevents that."
     "Auto revert stale buffers in visible windows, if necessary."
     (dolist (buf (doom-visible-buffers))
       (with-current-buffer buf
-        (doom-auto-revert-buffer-h)))))
+        (doom-auto-revert-buffer-h))))
+
+  (defadvice! +dired--no-revert-while-compressing-a (oldfun &rest args)
+    "Don't revert while executing `dired-do-compress' on marked lines."
+    :around #'dired-do-compress
+    (advice-add #'doom-auto-revert-buffer-h :override #'ignore)
+    (unwind-protect (apply oldfun args)
+      (advice-remove #'doom-auto-revert-buffer-h #'ignore))))
 
 
 (use-package! recentf
