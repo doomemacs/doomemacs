@@ -18,14 +18,14 @@
   (set-popup-rule! "^\\*Password-Store" :side 'left :size 0.25 :quit nil)
 
   ;; FIXME This needs to be upstreamed to evil-collection.
-  (add-to-list  'evil-collection-pass-command-to-label '(pass-update-buffer . "gr"))
+  (add-to-list 'evil-collection-pass-command-to-label '(pass-update-buffer . "gr"))
 
   (map! :map pass-mode-map
-    :n "j"    #'pass-next-entry
-    :n "k"    #'pass-prev-entry
-    :n "d"    #'pass-kill
-    :n "C-j" #'pass-next-directory
-    :n "C-k" #'pass-prev-directory))
+        :n "j"   #'pass-next-entry
+        :n "k"   #'pass-prev-entry
+        :n "d"   #'pass-kill
+        :n "C-j" #'pass-next-directory
+        :n "C-k" #'pass-prev-directory))
 
 
 ;; Is built into Emacs 26+
