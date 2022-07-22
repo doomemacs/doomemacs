@@ -18,6 +18,7 @@
 (defun +dired-subtree-remove-all ()
   "Remove all subtrees in the current buffer."
   (interactive)
+  (require 'dired-subtree)
   (save-excursion
     (goto-char (point-min))
     (while (not (eq (point) (progn (re-search-forward dired-re-dir nil t 1) (point))))
