@@ -20,6 +20,9 @@
         image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image")
         ;; Screens are larger nowadays, we can afford slightly larger thumbnails
         image-dired-thumb-size 150)
+  (when EMACS29+
+    (setq dired-mouse-drag-files t
+          mouse-drag-and-drop-region-cross-program t))
   :config
   (set-popup-rule! "^\\*image-dired"
     :slot 20 :size 0.8 :select t :quit nil :ttl 0)
