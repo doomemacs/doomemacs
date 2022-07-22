@@ -78,7 +78,8 @@ Fixes #3939: unsortable dired entries on Windows."
   :config
   (setq! dired-subtree-use-backgrounds nil)
   (map! :map dired-mode-map
-        "TAB" #'dired-subtree-cycle))
+        "TAB" #'dired-subtree-cycle
+        "<backtab>" #'+dired-subtree-remove-all))
 
 
 (use-package! diff-hl
