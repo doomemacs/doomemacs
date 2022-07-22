@@ -164,8 +164,6 @@ we have to clean it up ourselves."
         :n "F" #'dirvish-toggle-fullscreen
         :n "l" #'dired-find-file
         :n "h" #'dired-up-directory
-        [remap dired-sort-toggle-or-edit] #'dirvish-quicksort
-        [remap dired-summary] #'dirvish-dispatch
         :localleader
         "h" #'dired-omit-mode))
 
