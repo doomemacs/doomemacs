@@ -81,6 +81,8 @@ Fixes #3939: unsortable dired entries on Windows."
         "TAB" #'dired-subtree-cycle
         "<backtab>" #'+dired-subtree-remove-all))
 
+(use-package! dired-narrow
+  :after dired)
 
 (use-package! diff-hl
   :hook (dired-mode . diff-hl-dired-mode-unless-remote)
