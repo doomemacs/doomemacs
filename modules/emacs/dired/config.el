@@ -73,12 +73,6 @@ Fixes #3939: unsortable dired entries on Windows."
 (use-package! diredfl
   :hook (dired-mode . diredfl-mode))
 
-(use-package! dired-subtree
-  :general (dired-mode-map
-            "TAB" #'dired-subtree-cycle
-            "<backtab>" #'+dired-subtree-remove-all)
-  :config
-  (setq! dired-subtree-use-backgrounds nil))
 
 (use-package! diff-hl
   :hook (dired-mode . diff-hl-dired-mode-unless-remote)

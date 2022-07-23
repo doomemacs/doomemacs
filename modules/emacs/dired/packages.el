@@ -4,7 +4,6 @@
 (package! diredfl :pin "f9140b2c42151dca669003d685c9f079b2e3dc37")
 (package! dired-git-info :pin "9461476a28a5fec0784260f6e318237c662c3430")
 (package! diff-hl :pin "4a08b02afec1fc6b1e84de46cc34f75f6c9c3bcc")
-(package! dired-subtree :pin "1f19e249bdc66163b10028271943fc7b87e936ae")
 (package! dired-rsync :pin "7940d9154d0a908693999b0e1ea351a6d365c93d")
 (when (featurep! +ranger)
   (package! ranger :pin "2498519cb21dcd5791d240607a72a204d1761668"))
