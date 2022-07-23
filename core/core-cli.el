@@ -33,7 +33,8 @@
 ;; The garbage collector isn't so important during CLI ops. A higher threshold
 ;; makes it 15-30% faster, but set it too high and we risk runaway memory usage
 ;; in longer sessions.
-(setq gc-cons-threshold 134217728)   ; 128mb
+(setq gc-cons-threshold 134217728   ; 128mb
+      gc-cons-percentage 1.0)
 
 ;; Ensure errors are sufficiently detailed from this point on.
 (setq debug-on-error t)
