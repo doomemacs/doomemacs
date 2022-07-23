@@ -66,16 +66,14 @@
           (start-process "tangle-config"
                          (get-buffer-create " *tangle config*")
                          "emacs" "--batch"
+                         "--load" (doom-path doom-core-dir "core")
+                         "--load" (doom-path doom-core-dir "autoload/print")
                          "--eval"
                          (prin1-to-string
-                          `(progn
-                             (require 'cl-lib)
-                             (require 'subr-x)
-                             (load ,(doom-path doom-core-dir "autoload/print"))
-                             (funcall #',(symbol-function #'+literate-tangle)
+                          `(funcall #',(symbol-function #'+literate-tangle)
                                     ,+literate-config-file
                                     ,(concat doom-module-config-file ".el")
-                                    ,doom-private-dir)))))
+                                    ,doom-private-dir))))
     (add-hook 'kill-emacs-hook #'+literate-tangle-check-finished-h)
     (set-process-sentinel +literate-tangle--async-proc #'+literate-tangle--async-sentinel)
     (run-at-time nil nil (lambda () (message "Tangling config.org"))) ; ensure shown after a save message
