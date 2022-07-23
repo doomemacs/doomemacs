@@ -290,7 +290,7 @@ tell you about it. Very annoying. This prevents that."
         (doom-auto-revert-buffer-h))))
 
   (defadvice! +dired--no-revert-while-compressing-a (oldfun &rest args)
-    "Don't revert while executing `dired-do-compress' on marked lines."
+    "Don't revert while executing `dired-do-compress'."
     :around #'dired-do-compress
     (advice-add #'doom-auto-revert-buffer-h :override #'ignore)
     (unwind-protect (apply oldfun args)
