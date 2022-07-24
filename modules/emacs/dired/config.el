@@ -151,6 +151,8 @@ we have to clean it up ourselves."
    '(:left (sort file-time " " file-size symlink) :right (omit yank index)))
   (when (featurep! +icons)
     (push 'all-the-icons dirvish-attributes))
+  (when (featurep! ui: tabs +centaur-tabs)
+    (add-hook! 'dirvish-mode-hook (centaur-tabs-local-mode)))
   (map! :map dirvish-mode-map
         :n "b" #'dirvish-goto-bookmark
         :n "z" #'dirvish-show-history
@@ -159,7 +161,7 @@ we have to clean it up ourselves."
         :n "l" #'dired-find-file
         :n "h" #'dired-up-directory
         :n "?" #'dirvish-dispatch
-        :n "q" #'quit-window
+        :n "q" #'dirvish-quit
         :localleader
         "h" #'dired-omit-mode)
   (global-set-key [remap find-dired] #'dirvish-fd)
