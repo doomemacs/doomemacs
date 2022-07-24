@@ -8,7 +8,7 @@
 (when (featurep! +ranger)
   (package! ranger :pin "2498519cb21dcd5791d240607a72a204d1761668"))
 (when (featurep! +dirvish)
-  (package! dirvish :pin "bf44aa283e6cbb93129d72e5b965bf4bfe8d5f61"))
+  (package! dirvish :pin "86b7002d3b035b1a314775db5ff1946e29bd33ef"))
 (when (and (featurep! +icons)
            (not (featurep! +dirvish)))
   (package! all-the-icons-dired :pin "5e9b097f9950cc9f86de922b07903a4e5fefc733"))
