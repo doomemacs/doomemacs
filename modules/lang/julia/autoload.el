@@ -19,3 +19,10 @@
       (with-current-buffer buffer
         (inferior-julia-mode))
       buffer)))
+
+;;;###autoload
+(defun +julia/open-snail-repl ()
+  "A wrapper for julia-snail"
+  (interactive)
+  (julia-snail)
+  (current-buffer))

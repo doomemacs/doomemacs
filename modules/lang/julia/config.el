@@ -3,7 +3,8 @@
 (use-package! julia-mode
   :interpreter "julia"
   :config
-  (set-repl-handler! 'julia-mode #'+julia/open-repl)
+  (unless (featurep! +snail)
+    (set-repl-handler! 'julia-mode #'+julia/open-repl))
 
   (when (modulep! +lsp)
     (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
@@ -110,6 +111,13 @@
   (setq julia-snail-popup-display-face '(:background "grey10" :box (:line-width 1 :color "black")
                                          ((class color) (background dark))))
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+
+  (after! julia-mode
+    (set-repl-handler! 'julia-mode #'+julia/open-snail-repl
+      :persist t
+      :send-region #'julia-snail-send-region
+      :send-buffer #'julia-snail-send-buffer-file))
+
   (map! (:localleader
          (:map (julia-snail-mode-map)
           "'" #'julia-snail
