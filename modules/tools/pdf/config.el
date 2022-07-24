@@ -21,13 +21,25 @@
   (defadvice! +pdf--install-epdfinfo-a (fn &rest args)
     "Install epdfinfo after the first PDF file, if needed."
     :around #'pdf-view-mode
-    (if (file-executable-p pdf-info-epdfinfo-program)
+    (if (and (require 'pdf-info nil t)
+             (or (pdf-info-running-p)
+                 (ignore-errors (pdf-info-check-epdfinfo) t)))
         (apply fn args)
       ;; If we remain in pdf-view-mode, it'll spit out cryptic errors. This
       ;; graceful failure is better UX.
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
+  ;; Despite its namesake, this does not call `pdf-tools-install', it only sets
+  ;; up hooks, auto-mode-alist/magic-mode-alist entries, global modes, and
+  ;; refreshes pdf-view-mode buffers, if any.
+  ;;
+  ;; I avoid calling `pdf-tools-install' directly because `pdf-tools' is easy to
+  ;; prematurely load in the background (e.g. when exporting an org file or by
+  ;; packages like org-pdftools). And I don't want pdf-tools to suddenly block
+  ;; Emacs and spew out compiler output for a few minutes in those cases. It's
+  ;; abysmal UX. The `pdf-view-mode' advice above works around this with a less
+  ;; cryptic failure message, at least.
   (pdf-tools-install-noverify)
 
   ;; For consistency with other special modes
