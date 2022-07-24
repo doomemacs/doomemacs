@@ -124,16 +124,28 @@ outer}-text-objects-map~:
               (rust-mode . [(use_declaration) @import]))))
 #+end_src
 
-** Disable syntax highlighting for certain modes
-To disable syntax highlighting across the board you can do:
+** Configuring Tree sitter highlighting
+Highlighting is controlled by the variable =+tree-sitter-hl-enabled-modes=
+This list allows you to whitelist, blacklist, fully enable or fully disable
+tree-sitter highlighting for all major modes
+
+To use highlighting in select modes add major-modes to
+~+tree-sitter-hl-enabled-modes~. This disables highlighting in all other modes.
+The symbol that should be used is the major mode symbol, *not the package
+symbol*.
 #+begin_src emacs-lisp
-(remove-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(setq +tree-sitter-hl-enabled-modes '(python-mode go-mode))
 #+end_src
 
-Then it can be enabled for specific major modes:
+If you want to disallow highlighting in certain modes then the car of
+~+tree-sitter-hl-enabled-modes~ should be =not=. This enables highlighting in
+all modes except the ones disallowed.
 #+begin_src emacs-lisp
-(add-hook 'MAJOR-MODE-hook #'tree-sitter-hl-mode)
+(setq +tree-sitter-hl-enabled-modes '(not web-mode typescript-tsx-mode))
 #+end_src
+
+If ~+tree-sitter-hl-enabled-modes~ is set to ~nil~ or ~t~ it will fully disable
+or fully enable highlighting in every tree sitter enabled language respectively.
 
 * Troubleshooting
 [[doom-report:][Report an issue?]]
