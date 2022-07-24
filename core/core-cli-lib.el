@@ -497,7 +497,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
             (types (ensure-list (nth i args)))
             errors)
         (catch 'done
-          (dolist (type (ensure-list (nth i args)))
+          (dolist (type types)
             (pcase-let
                 (((map :test :read :error)
                   (if (or (symbolp type)
