@@ -28,8 +28,6 @@
       (fundamental-mode)
       (message "Viewing PDFs in Emacs requires epdfinfo. Use `M-x pdf-tools-install' to build it")))
 
-  (pdf-tools-install-noverify)
-
   ;; For consistency with other special modes
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
