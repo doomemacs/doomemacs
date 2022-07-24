@@ -2,8 +2,21 @@
 
 ;;;###autodef (fset 'tree-sitter! #'ignore)
 (defun tree-sitter! ()
-  (interactive)
-  (turn-on-tree-sitter-mode))
+  "Dispatch to turn on tree sitter.
+
+Used as a hook function which turns on `tree-sitter-mode'
+and selectively turn on `tree-sitter-hl-mode'.
+according to `+tree-sitter-hl-enabled-modes'"
+  (turn-on-tree-sitter-mode)
+  ;; conditionally enable `tree-sitter-hl-mode'
+  (let ((mode (bound-and-true-p tree-sitter-hl-mode)))
+    (when-let (mode (if (pcase +tree-sitter-hl-enabled-modes
+                          (`(not . ,modes) (not (memq major-mode modes)))
+                          ((and `(,_ . ,_) modes) (memq major-mode modes))
+                          (bool bool))
+                        (unless mode +1)
+                      (if mode -1)))
+      (tree-sitter-hl-mode mode))))
 
 ;; HACK: Remove and refactor when `use-package' eager macro expansion is solved or `use-package!' is removed
 ;;;###autoload
