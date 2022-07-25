@@ -130,4 +130,7 @@
            "r" #'julia-snail-send-region
            "e" #'julia-snail-send-dwim))
          (:map (julia-snail-repl-mode-map)
-          "m" #'julia-snail-repl-go-back))))
+          "a" #'julia-snail-package-activate
+          "d" #'julia-snail-doc-lookup
+          "m" #'julia-snail-repl-go-back
+          "r" #'julia-snail-update-module-cache))))
