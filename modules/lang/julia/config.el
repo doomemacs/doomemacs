@@ -115,6 +115,7 @@
   (after! julia-mode
     (set-repl-handler! 'julia-mode #'+julia/open-snail-repl
       :persist t
+      ;; FIXME These aren't working as expected
       :send-region #'julia-snail-send-region
       :send-buffer #'julia-snail-send-buffer-file))
 
