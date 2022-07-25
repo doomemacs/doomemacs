@@ -8,4 +8,4 @@
 (when (featurep! +rime)
   (package! liberime :pin "8291e22cd0990a99cb2f88ca67a9065a157f39af"))
 (when (featurep! +childframe)
-  (package! posframe))
+  (package! posframe :pin "0d23bc5f7cfac00277d83ae7ba52c48685bcbc68"))
