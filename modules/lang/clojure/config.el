@@ -18,9 +18,10 @@
     (add-hook! '(clojure-mode-local-vars-hook
                  clojurec-mode-local-vars-hook
                  clojurescript-mode-local-vars-hook)
-      (defun +clojure-disable-lsp-indentation-h ()
-        (setq-local lsp-enable-indentation nil))
-      #'lsp!)
+               :append
+               (defun +clojure-disable-lsp-indentation-h ()
+                 (setq-local lsp-enable-indentation nil))
+               #'lsp!)
     (after! lsp-clojure
       (dolist (m '(clojure-mode
                    clojurec-mode

@@ -240,7 +240,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook
                cmake-mode-local-vars-hook)
-             #'lsp!)
+             :append #'lsp!)
 
   (map! :after ccls
         :map (c-mode-map c++-mode-map)

@@ -101,7 +101,7 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
   (when (featurep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
-               #'lsp!))
+               :append #'lsp!))
   (map! :localleader
         :map latex-mode-map
         :desc "View"          "v" #'TeX-view

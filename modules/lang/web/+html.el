@@ -167,7 +167,7 @@
   (add-hook! '(html-mode-local-vars-hook
                web-mode-local-vars-hook
                nxml-mode-local-vars-hook)
-             #'lsp!))
+             :append #'lsp!))
 
 (when (featurep! +tree-sitter)
   (add-hook! '(html-mode-local-vars-hook
