@@ -29,6 +29,9 @@
   ;; dreadfully slow. It can still be invoked manually..
   (setq-hook! 'nix-mode-hook company-idle-delay nil)
 
+  (when (featurep! +lsp)
+    (add-hook 'nix-mode-local-vars-hook #'lsp! 'append))
+
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
