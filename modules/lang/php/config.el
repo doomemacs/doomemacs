@@ -60,6 +60,9 @@
       (setq lsp-clients-php-server-command "php-language-server.php"))
     (add-hook 'php-mode-local-vars-hook #'lsp! 'append))
 
+  (when (featurep! +tree-sitter)
+    (add-hook 'php-mode-local-vars-hook #'tree-sitter! 'append))
+
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
   (setq-hook! 'php-mode-hook sp-max-pair-length 5)
 
@@ -176,7 +179,3 @@
   :on-exit
   (setq phpunit-args nil
         phpunit-executable nil))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'php-mode-local-vars-hook #'tree-sitter!))

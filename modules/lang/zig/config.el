@@ -15,6 +15,9 @@
   (when (featurep! +lsp)
     (add-hook 'zig-mode-local-vars-hook #'lsp! 'append))
 
+  (when (featurep! +tree-sitter)
+    (add-hook 'zig-mode-local-vars-hook #'tree-sitter! 'append))
+
   (when (featurep! :checkers syntax)
     (flycheck-define-checker zig
       "A zig syntax checker using zig's `ast-check` command."
@@ -30,6 +33,3 @@
         "f" #'zig-format-buffer
         "r" #'zig-run
         "t" #'zig-test-buffer))
-
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'zig-mode-local-vars-hook #'tree-sitter!))

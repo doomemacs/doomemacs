@@ -67,6 +67,11 @@ This is ignored by ccls.")
     :return "return"
     :yield "#require")
 
+  (when (featurep! +tree-sitter)
+    (add-hook! '(c-mode-local-vars-hook
+                 c++-mode-local-vars-hook)
+               :append #'tree-sitter!))
+
   ;; HACK Suppress 'Args out of range' error in when multiple modifications are
   ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
   ;;      multiple cursors.
@@ -304,9 +309,3 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                               "-isystem/usr/local/include"]
                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! '(c-mode-local-vars-hook
-               c++-mode-local-vars-hook)
-             #'tree-sitter!))

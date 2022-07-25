@@ -1,7 +1,10 @@
 ;;; lang/swift/config.el -*- lexical-binding: t; -*-
 
 (after! swift-mode
-  (set-repl-handler! 'swift-mode #'run-swift))
+  (set-repl-handler! 'swift-mode #'run-swift)
+
+  (when (featurep! +tree-sitter)
+    (add-hook 'swift-mode-local-vars-hook #'tree-sitter! 'append)))
 
 
 (use-package! flycheck-swift
@@ -31,7 +34,3 @@
                           "sourcekit"
                           "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit-lsp"
                           "/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin/sourcekit"))))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'swift-mode-local-vars-hook #'tree-sitter!))

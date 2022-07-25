@@ -166,6 +166,13 @@
 ;;
 ;;; Tools
 
+(when (featurep! +tree-sitter)
+  (add-hook! '(js2-mode-local-vars-hook
+               typescript-mode-local-vars-hook
+               typescript-tsx-mode-local-vars-hook
+               rjsx-mode-local-vars-hook)
+             :append #'tree-sitter!))
+
 (add-hook! '(typescript-mode-local-vars-hook
              typescript-tsx-mode-local-vars-hook
              web-mode-local-vars-hook
@@ -320,12 +327,3 @@ to tide."
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! '(js-mode-local-vars-hook
-               js2-mode-local-vars-hook
-               typescript-mode-local-vars-hook
-               typescript-tsx-mode-local-vars-hook
-               rjsx-mode-local-vars-hook)
-             #'tree-sitter!))

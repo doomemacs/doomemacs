@@ -21,6 +21,9 @@
   (when (featurep! +lsp)
     (add-hook 'ruby-mode-local-vars-hook #'lsp! 'append))
 
+  (when (featurep! +tree-sitter)
+    (add-hook 'ruby-mode-local-vars-hook #'tree-sitter! 'append))
+
   (after! inf-ruby
     (add-hook 'inf-ruby-mode-hook #'doom-mark-buffer-as-real-h)
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
@@ -195,7 +198,3 @@
   (map! :localleader
         :map projectile-rails-mode-map
         "r" #'projectile-rails-command-map))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'ruby-mode-local-vars-hook #'tree-sitter!))

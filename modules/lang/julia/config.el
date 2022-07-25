@@ -5,6 +5,12 @@
   :config
   (set-repl-handler! 'julia-mode #'+julia/open-repl)
 
+  (when (featurep! +lsp)
+    (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
+
+  (when (featurep! +tree-sitter)
+    (add-hook 'julia-mode-local-vars-hook #'tree-sitter! 'append))
+
   ;; Borrow matlab.el's fontification of math operators. From
   ;; <https://web.archive.org/web/20170326183805/https://ogbe.net/emacsconfig.html>
   (dolist (mode '(julia-mode ess-julia-mode))
@@ -65,10 +71,6 @@
     (term-set-escape-char ?\C-c)))
 
 
-(when (featurep! +lsp)
-  (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
-
-
 (use-package! lsp-julia
   :when (featurep! +lsp)
   :unless (featurep! :tools lsp +eglot)
@@ -94,7 +96,3 @@
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'julia-mode-local-vars-hook #'tree-sitter!))

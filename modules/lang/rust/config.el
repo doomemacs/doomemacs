@@ -48,6 +48,9 @@
             'lsp-mode))
     (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp 'append))
 
+  (when (featurep! +tree-sitter)
+    (add-hook 'rustic-mode-local-vars-hook #'tree-sitter! 'append))
+
   ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;;   package.el. Doom manages its own dependencies through straight so disable
   ;;   this behavior to avoid package-not-initialized errors.
@@ -81,7 +84,3 @@
   (set-lookup-handlers! 'rustic-mode
     :definition '(racer-find-definition :async t)
     :documentation '+rust-racer-lookup-documentation))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'rustic-mode-local-vars-hook #'tree-sitter!))

@@ -10,6 +10,12 @@
 (after! agda2-mode
   (set-lookup-handlers! 'agda2-mode
     :definition #'agda2-goto-definition-keyboard)
+
+  (when (featurep! +tree-sitter)
+    (add-hook! '(agda-mode-local-vars-hook
+                 agda2-mode-local-vars-hook)
+               :append #'tree-sitter!))
+
   (map! :map agda2-mode-map
         :localleader
         "?"   #'agda2-show-goals
@@ -38,9 +44,3 @@
           "h"   #'agda2-display-implicit-arguments
           "q"   #'agda2-quit
           "r"   #'agda2-restart)))
-
-;; Tree Sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! '(agda-mode-local-vars-hook
-               agda2-mode-local-vars-hook)
-             #'tree-sitter!))

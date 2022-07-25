@@ -31,6 +31,8 @@
 
   (when (featurep! +lsp)
     (add-hook 'nix-mode-local-vars-hook #'lsp! 'append))
+  (when (featurep! +tree-sitter)
+    (add-hook 'nix-mode-local-vars-hook #'tree-sitter! 'append))
 
   (map! :localleader
         :map nix-mode-map
@@ -42,15 +44,14 @@
         "u" #'nix-unpack
         "o" #'+nix/lookup-option))
 
+
 (use-package! nix-drv-mode
   :mode "\\.drv\\'")
+
 
 (use-package! nix-update
   :commands nix-update-fetch)
 
+
 (use-package! nix-repl
   :commands nix-repl-show)
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'nix-mode-local-vars-hook #'tree-sitter!))

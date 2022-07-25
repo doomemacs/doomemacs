@@ -25,6 +25,9 @@
     ;; Use "mspyls" in eglot if in PATH
     (when (executable-find "Microsoft.Python.LanguageServer")
       (set-eglot-client! 'python-mode '("Microsoft.Python.LanguageServer"))))
+
+  (when (featurep! +tree-sitter)
+    (add-hook 'python-mode-local-vars-hook #'tree-sitter! 'append))
   :config
   (set-repl-handler! 'python-mode #'+python/open-repl
     :persist t
@@ -428,7 +431,3 @@
   (use-package! lsp-pyright
     :when (featurep! +pyright)
     :after lsp-mode))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'python-mode-local-vars-hook #'tree-sitter!))

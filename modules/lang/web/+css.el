@@ -77,3 +77,6 @@ If set to `nil', disable all the above behaviors.")
                sass-mode-local-vars-hook
                less-css-mode-local-vars-hook)
              #'lsp!))
+
+(when (featurep! +tree-sitter)
+  (add-hook 'css-mode-local-vars-hook #'tree-sitter! 'append))

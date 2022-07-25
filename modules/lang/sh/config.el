@@ -40,6 +40,9 @@
   (when (featurep! +lsp)
     (add-hook 'sh-mode-local-vars-hook #'lsp! 'append))
 
+  (when (featurep! +tree-sitter)
+    (add-hook 'sh-mode-local-vars-hook #'tree-sitter! 'append))
+
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]
@@ -93,7 +96,3 @@
   :config
   (when (featurep! +lsp)
     (add-hook 'powershell-mode-local-vars-hook #'lsp! 'append)))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'sh-mode-local-vars-hook #'tree-sitter!))
