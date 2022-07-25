@@ -8,10 +8,9 @@
   (setq pyim-page-tooltip t
         default-input-method "pyim")
 
-  (defun +input-method-activate-p ()
-    current-input-method)
-
   (after! evil-escape
+    (defun +input-method-activate-p ()
+      current-input-method)
     (add-to-list 'evil-escape-inhibit-functions #'+input-method-activate-p))
 
   (after! posframe
@@ -19,22 +18,20 @@
 
   ;; allow vertico/selectrum search with pinyin
   (cond ((featurep! :completion vertico)
-         (defadvice! +pinyin-orderless-regexp (orig-fn component)
-           :around 'orderless-regexp
-           (let ((result (funcall orig-fn component)))
-             (pyim-cregexp-build result))))
+         (defadvice! +pinyin-orderless-regexp (result)
+           :filter-return 'orderless-regexp
+           (pyim-cregexp-build result)))
         ((featurep! :completion ivy)
          (setq ivy-re-builders-alist
                '((t . pyim-cregexp-ivy))))))
 
-(use-package! posframe
-  :when (featurep! +childframe))
 
 (use-package! liberime
   :when (featurep! +rime)
   :init
   (setq liberime-auto-build t)
   (setq liberime-user-data-dir (expand-file-name "rime" doom-cache-dir)))
+
 
 (use-package! pyim-liberime
   :when (featurep! +rime)
