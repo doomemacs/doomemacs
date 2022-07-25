@@ -696,14 +696,18 @@ mutating hooks on exported output, like formatters."
   (defadvice! +org--more-startup-folded-options-a ()
     "Adds support for 'showNlevels*' startup options.
 Unlike showNlevels, this will also unfold parent trees."
-    :before #'org-set-startup-visibility
+    :before-until #'org-cycle-set-startup-visibility
     (when-let (n (pcase org-startup-folded
                    (`show2levels* 2)
                    (`show3levels* 3)
                    (`show4levels* 4)
                    (`show5levels* 5)))
-      (org-show-all '(headings drawers))
+      (org-fold-show-all '(headings))
       (save-excursion
+        (goto-char (point-max))
+        (save-restriction
+          (narrow-to-region (point-min) (or (re-search-forward org-outline-regexp-bol nil t) (point-max)))
+          (org-fold-hide-drawer-all))
         (goto-char (point-max))
         (let ((regexp (if (and (wholenump n) (> n 0))
                           (format "^\\*\\{%d,%d\\} " (1- n) n)
@@ -712,8 +716,9 @@ Unlike showNlevels, this will also unfold parent trees."
           (while (re-search-backward regexp nil t)
             (when (or (not (wholenump n))
                       (= (org-current-level) n))
-              (org-flag-region (line-end-position) last t 'outline))
-            (setq last (line-end-position 0)))))))
+              (org-fold-core-region (line-end-position) last t 'outline))
+            (setq last (line-end-position 0)))))
+      t))
 
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and
