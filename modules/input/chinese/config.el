@@ -13,7 +13,7 @@
       current-input-method)
     (add-to-list 'evil-escape-inhibit-functions #'+input-method-activate-p))
 
-  (after! posframe
+  (when (featurep! +childframe)
     (setq pyim-page-tooltip 'posframe))
 
   ;; allow vertico/selectrum search with pinyin
