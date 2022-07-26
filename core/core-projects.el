@@ -15,6 +15,14 @@ Emacs.")
   "The filename of the `fd' executable. On some distros it's 'fdfind' (ubuntu,
 debian, and derivatives). On most it's 'fd'.")
 
+(defvar doom-projectile-search-method-override nil
+  "If non-nil, use a specific method for projectile search commands
+instead of the usual fd > ripgrep > find fallback mechanism.
+Should be one of 'fd, 'ripgrep, or 'find.
+
+Useful when a higher priority binary is present on your system,
+but is an incompatible version.")
+
 
 ;;
 ;;; Packages
@@ -168,20 +176,30 @@ And if it's a function, evaluate it."
           ;; If fd exists, use it for git and generic projects. fd is a rust
           ;; program that is significantly faster than git ls-files or find, and
           ;; it respects .gitignore. This is recommended in the projectile docs.
-          (cond
-           ((when-let
-                (bin (if (ignore-errors (file-remote-p default-directory nil t))
-                         (cl-find-if (doom-rpartial #'executable-find t)
-                                     (list "fdfind" "fd"))
-                       doom-projectile-fd-binary))
-              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git --strip-cwd-prefix"
-                              bin)
-                      (if IS-WINDOWS " --path-separator=/"))))
-           ;; Otherwise, resort to ripgrep, which is also faster than find
-           ((executable-find "rg" t)
-            (concat "rg -0 --files --follow --color=never --hidden -g!.git"
-                    (if IS-WINDOWS " --path-separator=/")))
-           ("find . -type f -print0"))))
+          (letf!
+              ((defun fd-command ()
+                 (let ((bin (if (ignore-errors (file-remote-p default-directory nil t))
+                                      (cl-find-if (doom-rpartial #'executable-find t)
+                                                  (list "fdfind" "fd"))
+                                    doom-projectile-fd-binary)))
+                         (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git --strip-cwd-prefix"
+                                         bin)
+                                 (if IS-WINDOWS " --path-separator=/"))))
+               (defun ripgrep-command ()
+                 (if (executable-find "rg" t)
+                           (concat "rg -0 --files --follow --color=never --hidden -g!.git"
+                                   (if IS-WINDOWS " --path-separator=/"))))
+               (defun find-command ()
+                 "find . -type f -print0"))
+            (if (eq doom-projectile-search-method-override nil)
+                ;; If no override, try fd > ripgrep > find
+                (cond ((fd-command))
+                      ((ripgrep-command))
+                      ((find-command)))
+              ;; Otherwise only try specified method
+              (cond ((eq doom-projectile-search-method-override 'fd) (fd-command))
+                    ((eq doom-projectile-search-method-override 'ripgrep) (ripgrep-command))
+                    ((eq doom-projectile-search-method-override 'find) (find-command)))))))
 
   (defadvice! doom--projectile-default-generic-command-a (fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error
