@@ -67,28 +67,64 @@
 
 
 ;;
+;;; Detect `user-emacs-directory'
+
+;; Prevent recursive profile processing, in case you're loading a Doom profile.
+(unless (boundp 'doom-version)
+  ;; Not using `command-switch-alist' to process --profile and --init-directory
+  ;; was intentional. `command-switch-alist' is processed too late at startup to
+  ;; change `user-emacs-directory' in time.
+
+  ;; DEPRECATED Backported from 29. Remove this when 27/28 support is removed.
+  (let ((initdir (or (cadr (member "--init-directory" command-line-args))
+                     (getenv-internal "EMACSDIR"))))
+    (when initdir
+      ;; Discard the switch to prevent "invalid option" errors later.
+      (add-to-list 'command-switch-alist (cons "--init-directory" (lambda (_) (pop argv))))
+      (setq user-emacs-directory initdir)))
+
+  (let ((profile (or (cadr (member "--profile" command-line-args))
+                     (getenv-internal "DOOMPROFILE"))))
+    (when profile
+      ;; Discard the switch to prevent "invalid option" errors later.
+      (add-to-list 'command-switch-alist (cons "--profile" (lambda (_) (pop argv))))
+      ;; Then process the requested profile, which should set
+      ;; `user-emacs-directory'. If it doesn't, then you're essentially using
+      ;; profiles.el as a glorified, runtime dir-locals.el -- which is fine.
+      (let ((profiles-dir (or (getenv-internal "DOOMPROFILESDIR")
+                              (expand-file-name "profiles/" user-emacs-directory)))
+            (profiles-file (expand-file-name "profiles.el" user-emacs-directory)))
+        (if (file-exists-p profiles-file)
+            (with-temp-buffer
+              (let ((coding-system-for-read 'utf-8-auto))
+                (insert-file-contents profiles-file))
+              (condition-case err
+                  (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
+                                   (user-error "No %S profile found" profile)))
+                    (if (eq var 'env)
+                        (dolist (env var) (setenv (car env) (cdr env)))
+                      (set (car var) (cdr var))))
+                (error (error "Failed to parse profiles.el: %s" (error-message-string err)))))
+          ;; If the profile doesn't exist, then use anything in
+          ;; $EMACSDIR/profiles/* as implicit profiles. I.e. If a foo profile
+          ;; doesn't exist, `emacs --profile foo' is equivalent to `emacs
+          ;; --init-directory $EMACSDIR/profile/foo', if the directory exists.
+          (let ((profile-dir (expand-file-name profile profiles-dir)))
+            (if (file-directory-p profile-dir)
+                (setq user-emacs-directory profile-dir)
+              (user-error "No profiles.el to look up %S in" profile))))))))
+
+
+;;
 ;;; Bootstrap
 
-(let (;; DEPRECATED Backported from 29. Remove when 27/28 support is removed.
-      (initdir (cadr (member "--init-directory" command-line-args)))
-
-      initfile)
-
-  ;; But discard the switches later to prevent "invalid option" errors.
-  (when initdir
-    (add-to-list 'command-switch-alist (cons "--init-directory" (lambda (_) (pop argv)))))
-
-  ;; Detect emacs directory
-  (setq user-emacs-directory
-        (cond (initdir (expand-file-name initdir))
-              ((getenv-internal "EMACSDIR"))
-              (user-emacs-directory)))
-
+;; Let er rip
+(let (init-file)
   ;; Load the heart of Doom Emacs
   (if (load (expand-file-name "core/core" user-emacs-directory) t t)
       ;; ...and prepare it for an interactive session.
-      (setq initfile (expand-file-name "core-start" doom-core-dir))
-    ;; ...but if that fails, then assume this isn't a Doom config.
+      (setq init-file (expand-file-name "core-start" doom-core-dir))
+    ;; ...but if that fails, then this is likely not a Doom config.
     (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
     (load early-init-file t t))
 
@@ -99,19 +135,19 @@
   ;;   ~/.emacs and ~/_emacs. And skips ~/.emacs.d/init.el, which won't exist if
   ;;   you're using Doom (fyi: doom hackers or chemacs users could then use
   ;;   $EMACSDIR as their $DOOMDIR, if they wanted).
-  ;; - Later, 'doom sync' will dynamically generate its bootstrap file, which is
-  ;;   important for Doom's soon-to-be profile system (which can replace Chemacs).
-  ;;   Until then, we'll use core/core-start.el.
-  ;; - A "fallback" initfile can be trivially specified, in case the bootstrapper
-  ;;   is missing (if the user hasn't run 'doom sync' or is a first-timer). This
-  ;;   is an opportunity to display a "safe mode" environment that's less
-  ;;   intimidating and more helpful than the broken state errors would've left
-  ;;   Emacs in, otherwise.
+  ;; - Later, 'doom sync' will dynamically generate its bootstrap file, which
+  ;;   will be important for Doom's profile system later. Until then, we'll use
+  ;;   core/core-start.el.
+  ;; - A "fallback" initfile can be trivially specified, in case the
+  ;;   bootstrapper is missing (if the user hasn't run 'doom sync' or is a
+  ;;   first-timer). This is an opportunity to display a "safe mode" environment
+  ;;   that's less intimidating and more helpful than the broken state errors
+  ;;   would've left Emacs in, otherwise.
   ;; - A generated config allows for a file IO optimized startup.
   (define-advice startup--load-user-init-file (:filter-args (args) init-doom)
     "Initialize Doom Emacs in an interactive session."
     (list (lambda ()
-            (or initfile
+            (or init-file
                 (expand-file-name "init.el" user-emacs-directory)))
           nil  ; TODO Replace with safe mode initfile
           (caddr args))))
