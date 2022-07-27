@@ -128,30 +128,6 @@
 (defconst doom-modules-dir (concat doom-emacs-dir "modules/")
   "The root directory for Doom's modules. Must end with a slash.")
 
-(defconst doom-local-dir
-  (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
-      (expand-file-name (file-name-as-directory localdir))
-    (concat doom-emacs-dir ".local/"))
-  "Root directory for local storage.
-
-Use this as a storage location for this system's installation of Doom Emacs.
-
-These files should not be shared across systems. By default, it is used by
-`doom-etc-dir' and `doom-cache-dir'. Must end with a slash.")
-
-;; DEPRECATED
-(defconst doom-etc-dir (concat doom-local-dir "etc/")
-  "Directory for non-volatile local storage.
-
-Use this for files that don't change much, like server binaries, external
-dependencies or long-term shared data. Must end with a slash.")
-
-;; DEPRECATED
-(defconst doom-cache-dir (concat doom-local-dir "cache/")
-  "Directory for volatile local storage.
-
-Use this for files that change often, like cache files. Must end with a slash.")
-
 (defconst doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
@@ -169,15 +145,109 @@ Use this for files that change often, like cache files. Must end with a slash.")
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
-;; DEPRECATED
+(defconst doom-profile
+  (if-let (profile (getenv-internal "DOOMPROFILE"))
+      ;; DEPRECATED Use `string-search' once 27 support is dropped
+      (if (string-match-p "@" profile)
+          profile
+        (concat profile "@latest"))
+    ;; TODO Restore this when profile system is complete
+    ;; "default@latest"
+    )
+  "The name of the active profile.")
+
+;; TODO Use me
+(defconst doom-profiles-file
+  (expand-file-name "profiles.el" user-emacs-directory)
+  "TODO")
+
+(defconst doom-profiles-dir
+  (if-let (profilesdir (getenv-internal "DOOMPROFILESDIR"))
+      (expand-file-name "./" profilesdir)
+    (expand-file-name "profiles/" doom-emacs-dir))
+   "Where Doom stores its profiles.
+
+Profiles are essentially snapshots of Doom Emacs environments. Every time you
+update or sync, you create a new generation of a profile (which can be easily
+rolled back or switched between with the DOOMPROFILE envvar). Must end in a
+slash.")
+
+(defconst doom-profile-dir
+  (expand-file-name (concat (or doom-profile "default@latest") "/")
+                    doom-profiles-dir)
+  "The path to the current, active profile.
+
+Must end in a slash.")
+
+(defconst doom-profile-data-dir
+  (expand-file-name "data/" doom-profile-dir)
+  "Where file storage/servers for the current, active profile is kept.
+
+Use this for long-living files that contain shared data that the user would
+reasonably want to keep, and/or are required for Emacs to function correctly.
+Must end in a slash.")
+
+(defconst doom-profile-cache-dir
+  (expand-file-name "cache/" doom-profile-dir)
+  "Where file caches for the current, active profile is kept.
+
+Use this for non-essential data files that, when deleted, won't cause breakage
+or misbehavior, and can be restored. This includes server binaries or programs
+downloaded/installed by packages. Must end in a slash.")
+
+(defconst doom-profile-init-file
+  (expand-file-name "init.el" doom-profile-dir)
+  "TODO")
+
+
+;;
+;;; DEPRECATED file/directory vars
+
+(defconst doom-local-dir
+  (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
+      (expand-file-name (file-name-as-directory localdir))
+    (if doom-profile
+        (expand-file-name doom-profile doom-profiles-dir)
+      (format "%s.local%s/"
+              doom-emacs-dir
+              (if doom-profile (concat "." doom-profile) ""))))
+  "Root directory for local storage.
+
+Use this as a storage location for this system's installation of Doom Emacs.
+
+These files should not be shared across systems. By default, it is used by
+`doom-etc-dir' and `doom-cache-dir'. Must end with a slash.")
+
+(defconst doom-etc-dir
+  (if doom-profile
+      doom-profile-data-dir
+    (concat doom-local-dir "etc/"))
+  "Directory for non-volatile local storage.
+
+Use this for files that don't change much, like server binaries, external
+dependencies or long-term shared data. Must end with a slash.")
+
+(defconst doom-cache-dir
+  (if doom-profile
+      doom-profile-cache-dir
+    (concat doom-local-dir "cache/"))
+  "Directory for volatile local storage.
+
+Use this for files that change often, like cache files. Must end with a slash.")
+
 (defconst doom-autoloads-file
-  (concat doom-local-dir "autoloads." emacs-version ".el")
+  (if doom-profile
+      doom-profile-init-file
+    (concat doom-local-dir "autoloads." emacs-version ".el"))
   "Where `doom-reload-core-autoloads' stores its core autoloads.
 
 This file is responsible for informing Emacs where to find all of Doom's
 autoloaded core functions (in core/autoload/*.el).")
 
-(defconst doom-env-file (concat doom-local-dir "env")
+(defconst doom-env-file
+  (if doom-profile
+      (expand-file-name "env" doom-profile-dir)
+    (concat doom-local-dir "env"))
   "The location of your envvar file, generated by `doom env`.
 
 This file contains environment variables scraped from your shell environment,

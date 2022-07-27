@@ -39,6 +39,20 @@
 ;; Ensure errors are sufficiently detailed from this point on.
 (setq debug-on-error t)
 
+;;; Initialize profile
+(let ((profile (getenv "DOOMPROFILE")))
+  (when profile
+    (with-temp-buffer
+      (let ((coding-system-for-read 'utf-8-auto))
+        (insert-file-contents (expand-file-name "profiles.el" user-emacs-directory)))
+      (condition-case e
+          (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
+                           (user-error "No %S profile found" profile)))
+            (if (eq var 'env)
+                (dolist (env var) (setenv (car env) (cdr env)))
+              (set (car var) (cdr var))))
+        (error (error "Failed to parse profiles.el: %s" (error-message-string e)))))))
+
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
 (let ((inhibit-message (not (or (getenv "DEBUG") init-file-debug))))

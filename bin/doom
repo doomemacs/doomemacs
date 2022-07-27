@@ -180,8 +180,7 @@ SEE ALSO:
      (doomdir  ("--doomdir" dir)  "Use Doom config living in `DIR' (e.g. ~/.doom.d)")
      (emacsdir ("--emacsdir" dir) "Use Doom install living in `DIR' (e.g. ~/.emacs.d)")
      (pager    ("--pager" cmd)    "Pager command to use for large output")
-     ;; TODO Implement after v3.0
-     ;; (profile   ("--profile" name) "Use profile named NAME")
+     (profile  ("--profile" name) "Use profile named NAME")
      &flags
      (color?   ("--color") "Whether or not to show ANSI color codes")
      &multiple
@@ -205,13 +204,12 @@ SEE ALSO:
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
   ;; For these settings to take full effect, the script must be restarted:
   (when (and (equal (doom-cli-context-step context) 0)
-             (or ;; profile
+             (or profile
                  debug?
                  emacsdir
                  doomdir))
-    ;; TODO Implement after v3.0
-    ;; (when profile
-    ;;   (setenv "DOOMPROFILE" profile))
+    (when profile
+      (setenv "DOOMPROFILE" profile))
     (when debug?
       (setenv "DEBUG" "1")
       (print! (item "Debug mode enabled")))
