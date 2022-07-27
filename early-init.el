@@ -1,30 +1,34 @@
 ;;; early-init.el -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
-;; Emacs 27.1 introduced early-init.el, which is run before init.el, before
-;; package and UI initialization happens, and before site files are loaded. This
-;; is the best time to make all our changes (though any UI work will have to be
-;; deferred).
+;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el;
+;; before Emacs initializes package.el and its UI; and before site files are
+;; loaded. This is the best time to tweak Emacs (though any UI work will have to
+;; be deferred).
 ;;
-;; This file is the entry point into Doom Emacs for your standard, interactive
-;; Emacs session, and houses our most pressing and hackiest startup
-;; optimizations. That said, only the "bootstrap" section at the bottom is
-;; required for Doom to function.
+;; This file is responsible for bootstrapping an interactive session, and is
+;; where all our dirtiest (and config-agnostic) startup hacks should live. It's
+;; also home to Doom's bootloader, which lets you choose what Emacs config to
+;; load with one of two switches:
+;; - '--init-directory DIR' (backported from Emacs 29)
+;; - Or Doom's profile system with '--profile NAME' (you declare configs in
+;;   $EMACSDIR/profiles.el or implicitly as directories in $EMACSDIR/profiles/).
+;;
+;; You should *never* load this file in non-interactive sessions (e.g. batch
+;; scripts). Load `core-start' or use 'doom run' instead!
 ;;
 ;;; Code:
 
-;; A big contributor to startup times is garbage collection. We up the gc
-;; threshold to temporarily prevent it from running, then reset it later by
-;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
+;; Garbage collection is a big contributor to startup times. This fends it off,
+;; then is reset later by enabling `gcmh-mode'. Not resetting it will cause
+;; stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; In noninteractive sessions, prioritize non-byte-compiled source files to
-;; prevent the use of stale byte-code. Otherwise, it saves us a little IO time
-;; to skip the mtime checks on every *.elc file.
-(setq load-prefer-newer noninteractive)
+;; Prioritize old byte-compiled source files over newer sources. It saves us a
+;; little IO time to skip all the mtime checks on each lookup.
+(setq load-prefer-newer nil)
 
 (unless (or (daemonp)
-            noninteractive
             init-file-debug)
   (let ((old-file-name-handler-alist file-name-handler-alist))
     ;; `file-name-handler-alist' is consulted on each `require', `load' and
@@ -58,7 +62,7 @@
   ;; substantial effect on startup times and in this case happens so early that
   ;; Emacs may flash white while starting up.
   (define-advice load-file (:override (file) silence)
-    (load file nil 'nomessage))
+    (load file nil :nomessage))
 
   ;; Undo our `load-file' advice above, to limit the scope of any edge cases it
   ;; may introduce down the road.
