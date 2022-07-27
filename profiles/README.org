@@ -10,6 +10,8 @@ This directory may serve as an alternative to =$EMACSDIR/profiles.el= for
 =$EMACSDIR/profiles/foo/init.el= exists, then ~emacs --profile foo~ will be
 equivalent to ~emacs --init-directory $EMACSDIR/profiles/foo~.
 
-> :warning: Generated (or included) profiles will follow the =X@Y= naming
-> convention. To avoid conflicts, avoid naming any profile you put in here the
-> same way. For example: =default@latest=, =test@942=, =safe-mode@static=,.
+#+begin_quote
+*Warning:* Generated (or static) profiles will follow the =X@Y= naming
+convention. To avoid conflicts, avoid naming any profile you put in here the
+same way. For example: =default@latest=, =test@942=, =safe-mode@static=,.
+#+end_quote
