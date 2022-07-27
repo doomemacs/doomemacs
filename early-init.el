@@ -92,31 +92,36 @@
     (when profile
       ;; Discard the switch to prevent "invalid option" errors later.
       (add-to-list 'command-switch-alist (cons "--profile" (lambda (_) (pop argv))))
-      ;; Then process the requested profile, which should set
-      ;; `user-emacs-directory'. If it doesn't, then you're essentially using
-      ;; profiles.el as a glorified, runtime dir-locals.el -- which is fine.
-      (let ((profiles-dir (or (getenv-internal "DOOMPROFILESDIR")
-                              (expand-file-name "profiles/" user-emacs-directory)))
-            (profiles-file (expand-file-name "profiles.el" user-emacs-directory)))
-        (if (file-exists-p profiles-file)
+      ;; While processing the requested profile, Doom loosely expects
+      ;; `user-emacs-directory' to be changed. If it doesn't, then you're using
+      ;; profiles.el as a glorified, runtime dir-locals.el (which is fine, if
+      ;; intended).
+      (catch 'found
+        (let ((profiles-file (expand-file-name "profiles.el" user-emacs-directory)))
+          (when (file-exists-p profiles-file)
             (with-temp-buffer
               (let ((coding-system-for-read 'utf-8-auto))
                 (insert-file-contents profiles-file))
-              (condition-case err
-                  (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
-                                   (user-error "No %S profile found" profile)))
-                    (if (eq var 'env)
-                        (dolist (env var) (setenv (car env) (cdr env)))
-                      (set (car var) (cdr var))))
-                (error (error "Failed to parse profiles.el: %s" (error-message-string err)))))
-          ;; If the profile doesn't exist, then use anything in
-          ;; $EMACSDIR/profiles/* as implicit profiles. I.e. If a foo profile
-          ;; doesn't exist, `emacs --profile foo' is equivalent to `emacs
-          ;; --init-directory $EMACSDIR/profile/foo', if the directory exists.
-          (let ((profile-dir (expand-file-name profile profiles-dir)))
-            (if (file-directory-p profile-dir)
-                (setq user-emacs-directory profile-dir)
-              (user-error "No profiles.el to look up %S in" profile))))))))
+              (condition-case-unless-debug e
+                  (let ((profile-data (cdr (assq (intern profile) (read (current-buffer))))))
+                    (dolist (var profile-data (if profile-data (throw 'found t)))
+                      (if (eq var 'env)
+                          (dolist (env var) (setenv (car env) (cdr env)))
+                        (set (car var) (cdr var)))))
+                (error (error "Failed to parse profiles.el: %s" (error-message-string e))))))
+          ;; If the requested profile isn't in profiles.el, then see if
+          ;; $EMACSDIR/profiles/$DOOMPROFILE exists. These are implicit
+          ;; profiles, where `emacs --profile foo` will be equivalent to `emacs
+          ;; --init-directory $EMACSDIR/profile/foo', if that directory exists.
+          (let ((profile-dir
+                 (expand-file-name
+                  profile (or (getenv-internal "DOOMPROFILESDIR")
+                              (expand-file-name "profiles/" user-emacs-directory)))))
+            (when (file-directory-p profile-dir)
+              (setq user-emacs-directory profile-dir)
+              (throw 'found t)))
+
+          (user-error "No %S profile found" profile))))))
 
 
 ;;
