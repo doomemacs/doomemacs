@@ -138,12 +138,13 @@ we have to clean it up ourselves."
 
 
 (use-package! dirvish
-  :when (featurep! +dirvish)
   :defer t
-  :init (after! dired (dirvish-override-dired-mode))
-  :hook (dired-mode . dired-omit-mode)
+  :when (featurep! +dirvish)
+  :init (dirvish-override-dired-mode)
   :config
-  (require 'dired-x)
+  (when (featurep! :ui tabs)
+    (after! centaur-tabs
+          (add-hook! 'dirvish-mode-hook 'centaur-tabs-local-mode)))
   (setq dirvish-cache-dir (concat doom-cache-dir "dirvish/")
         dirvish-hide-details nil
         dirvish-attributes '(git-msg vc-state file-size))
@@ -151,8 +152,8 @@ we have to clean it up ourselves."
    '(:left (sort file-time " " file-size symlink) :right (omit yank index)))
   (when (featurep! +icons)
     (push 'all-the-icons dirvish-attributes))
-  (when (featurep! ui: tabs +centaur-tabs)
-    (add-hook! 'dirvish-mode-hook (centaur-tabs-local-mode)))
+  ;; (when (featurep! ui: tabs)
+  ;;   (add-hook! 'dirvish-mode-hook (centaur-tabs-local-mode)))
   (map! :map dirvish-mode-map
         :n "b" #'dirvish-goto-bookmark
         :n "z" #'dirvish-show-history
