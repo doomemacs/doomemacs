@@ -1,9 +1,9 @@
 ;;; core/core-cli.el --- The heart of Doom's CLI framework -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; Commentary:
 ;;
-;; The heart of Doom's CLI framework. This is safe to load in interactive
-;; sessions (for API access and syntax highlighting), but much of the API
-;; expects a noninteractive session, so take care when testing code!
+;; The bootstrapper for Doom's CLI. This is *not* safe to load in interactive
+;; sessions as it has many side-effects. Loads `core-cli-lib' instead for API
+;; access and syntax highlighting.
 ;;
 ;;; Code:
 

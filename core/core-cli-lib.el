@@ -1,5 +1,10 @@
 ;;; core/core-cli-lib.el --- API+DSL for Doom's CLI framework -*- lexical-binding: t; -*-
 ;;; Commentary:
+;;
+;; The heart of Doom's CLI framework. This is safe to load in interactive
+;; sessions (for API access and syntax highlighting), but much of the API
+;; expects a noninteractive session, so take care when testing code!
+;;
 ;;; Code:
 
 (require 'seq)
