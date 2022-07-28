@@ -215,7 +215,7 @@ SEE ALSO:
     (let (omit)
       (when debug?
         (setenv "DEBUG" "1")
-        (print! (item "Debug mode enabled"))
+        (setq init-file-debug t)
         (push "--debug" omit))
       (when profile
         (setenv "DOOMPROFILE" profile)

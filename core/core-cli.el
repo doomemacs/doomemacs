@@ -38,6 +38,9 @@
 
 ;; Ensure errors are sufficiently detailed from this point on.
 (setq debug-on-error t)
+;; Be more verbose if debug mode is on.
+(when (setq init-file-debug (getenv "DEBUG"))
+  (message "Debug mode enabled"))
 
 ;;; Initialize profile
 (let ((profile (getenv "DOOMPROFILE")))
@@ -55,7 +58,7 @@
 
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
-(let ((inhibit-message (not (or (getenv "DEBUG") init-file-debug))))
+(let ((inhibit-message (not init-file-debug)))
   (require 'cl)
   (unless site-run-file
     (let ((site-run-file "site-start")
