@@ -51,8 +51,8 @@
       (condition-case e
           (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
                            (user-error "No %S profile found" profile)))
-            (if (eq var 'env)
-                (dolist (env var) (setenv (car env) (cdr env)))
+            (if (eq (car var) 'env)
+                (dolist (env (cdr var)) (setenv (car env) (cdr env)))
               (set (car var) (cdr var))))
         (error (error "Failed to parse profiles.el: %s" (error-message-string e)))))))
 
