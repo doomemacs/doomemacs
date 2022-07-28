@@ -46,15 +46,18 @@
 (let ((profile (getenv "DOOMPROFILE")))
   (when profile
     (with-temp-buffer
-      (let ((coding-system-for-read 'utf-8-auto))
-        (insert-file-contents (expand-file-name "profiles.el" user-emacs-directory)))
-      (condition-case e
-          (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
-                           (user-error "No %S profile found" profile)))
-            (if (eq (car var) 'env)
-                (dolist (env (cdr var)) (setenv (car env) (cdr env)))
-              (set (car var) (cdr var))))
-        (error (error "Failed to parse profiles.el: %s" (error-message-string e)))))))
+      (let ((coding-system-for-read 'utf-8-auto)
+            (profile-file (expand-file-name "profiles.el" user-emacs-directory)))
+        (insert-file-contents profile-file)
+        (condition-case e
+            (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
+                             (progn (message "No %S profile found" profile)
+                                    (kill-emacs 3))))
+              (if (eq (car var) 'env)
+                  (dolist (env (cdr var)) (setenv (car env) (cdr env)))
+                (set (car var) (cdr var))))
+          (end-of-file (signal 'end-of-file (list profile-file)))
+          (error (error "Parser error in profiles.el: %s" (error-message-string e))))))))
 
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
 ;;      with deprecation and/or file load messages.
