@@ -1006,28 +1006,27 @@ Will also output it to stdout if requested (CLI sets :benchmark to t) or the
 command takes >5s to run. If :benchmark is explicitly set to nil (or
 `doom-cli-benchmark-threshold' is nil), under no condition should a benchmark be
 shown."
+  (doom-log "%s (GCs: %d, elapsed: %.6fs)"
+            (if (= doom-cli--exit-code 254) "Restarted" "Finished")
+            gcs-done gc-elapsed)
   (when-let* ((init-time (doom-cli-context-init-time context))
-              (cli (doom-cli-get context))
-              (duration (float-time (time-subtract (current-time) init-time)))
-              (hours    (/ (truncate duration) 60 60))
-              (minutes  (- (/ (truncate duration) 60) (* hours 60)))
-              (seconds  (- duration (* hours 60 60) (* minutes 60)))
-              (standard-output
-               (if (and (/= doom-cli--exit-code 0)
-                        (or init-file-debug
-                            (eq (doom-cli-prop cli :benchmark) t)
-                            (and (eq (doom-cli-prop cli :benchmark :null) :null)
-                                 (not (doom-cli-context-pipe-p context 'out t))
-                                 (> duration (or doom-cli-benchmark-threshold
-                                                 most-positive-fixnum)))))
-                   (doom-rpartial #'doom-cli--output context)
-                 (doom-cli-context-stderr context))))
-    (print! (success "Finished in %s")
-            (join (list (unless (zerop hours)   (format "%dh" hours))
-                        (unless (zerop minutes) (format "%dm" minutes))
-                        (format (if (> duration 60) "%ds" "%.5fs")
-                                seconds))))
-    (doom-log "GC count: %d (%.6fs)" gcs-done gc-elapsed)))
+              (cli       (doom-cli-get context))
+              (duration  (float-time (time-subtract (current-time) init-time)))
+              (hours     (/ (truncate duration) 60 60))
+              (minutes   (- (/ (truncate duration) 60) (* hours 60)))
+              (seconds   (- duration (* hours 60 60) (* minutes 60)))
+              (standard-output (doom-rpartial #'doom-cli--output context)))
+    (when (and (/= doom-cli--exit-code 254)
+               (or (eq (doom-cli-prop cli :benchmark) t)
+                   (and (eq (doom-cli-prop cli :benchmark :null) :null)
+                        (not (doom-cli-context-pipe-p context 'out t))
+                        (> duration (or doom-cli-benchmark-threshold
+                                        most-positive-fixnum)))))
+      (print! (success "Finished in %s")
+              (join (list (unless (zerop hours)   (format "%dh" hours))
+                          (unless (zerop minutes) (format "%dm" minutes))
+                          (format (if (> duration 60) "%ds" "%.5fs")
+                                  seconds)))))))
 
 (defun doom-cli--redirect-output-a (context message &rest args)
   ":override advice for `message' to mirror output to log buffers"
@@ -1100,26 +1099,26 @@ Emacs' batch library lacks an implementation of the exec system call."
     (set-file-modes context-file #o400)
     (setenv "__DOOMCONTEXT" context-file)
     (make-directory (file-name-directory script-file) t)
-    (with-temp-file script-file
-      (setq-local coding-system-for-write 'utf-8-auto)
-      (insert "#!/usr/bin/env sh\n"
-              "trap _doomcleanup EXIT\n"
-              "_doomcleanup() {\n"
-              "  rm -" (if init-file-debug "v" "") "f "
-              (combine-and-quote-strings (delq nil (list script-file context-file)))
-              "\n}\n"
-              "_doomrun() {\n  " command "\n}\n"
-              (save-match-data
-                (cl-loop with initial-env = (get 'process-environment 'initial-value)
-                         for env in (seq-difference process-environment initial-env)
-                         if (string-match "^\\([a-zA-Z0-9_]+\\|__DOOM[^=]+\\)=\\(.+\\)$" env)
-                         concat (format "%s=%s \\\n"
-                                        (match-string 1 env)
-                                        (shell-quote-argument (match-string 2 env)))))
-              (format "PATH=\"%s%s$PATH\" \\\n"
-                      (doom-path doom-emacs-dir "bin")
-                      path-separator)
-              "_doomrun \"$@\"\n"))
+    (let ((coding-system-for-write 'utf-8-auto)
+          (persistent-files (combine-and-quote-strings (delq nil (list script-file context-file)))))
+      (with-temp-file script-file
+        (doom-log "_doomrun: %s" command)
+        (doom-log "_doomcleanup: %s" persistent-files)
+        (insert "#!/usr/bin/env sh\n"
+                "trap _doomcleanup EXIT\n"
+                "_doomcleanup() {\n  rm -f " persistent-files "\n}\n"
+                "_doomrun() {\n  " command "\n}\n"
+                (save-match-data
+                  (cl-loop with initial-env = (get 'process-environment 'initial-value)
+                           for env in (seq-difference process-environment initial-env)
+                           if (string-match "^\\([a-zA-Z0-9_]+\\|__DOOM[^=]+\\)=\\(.+\\)$" env)
+                           concat (format "%s=%s \\\n"
+                                          (match-string 1 env)
+                                          (shell-quote-argument (match-string 2 env)))))
+                (format "PATH=\"%s%s$PATH\" \\\n"
+                        (doom-path doom-emacs-dir "bin")
+                        path-separator)
+                "_doomrun \"$@\"\n")))
     (set-file-modes script-file #o600)
     ;; Error code 254 is special: it indicates to the caller that the
     ;; post-script should be executed after this session ends. It's up to
