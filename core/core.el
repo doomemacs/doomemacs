@@ -207,10 +207,8 @@ downloaded/installed by packages. Must end in a slash.")
   (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
       (expand-file-name (file-name-as-directory localdir))
     (if doom-profile
-        (expand-file-name doom-profile doom-profiles-dir)
-      (format "%s.local%s/"
-              doom-emacs-dir
-              (if doom-profile (concat "." doom-profile) ""))))
+        doom-profile-dir
+      (expand-file-name ".local/" doom-emacs-dir)))
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
