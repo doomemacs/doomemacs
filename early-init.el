@@ -105,8 +105,8 @@
               (condition-case-unless-debug e
                   (let ((profile-data (cdr (assq (intern profile) (read (current-buffer))))))
                     (dolist (var profile-data (if profile-data (throw 'found t)))
-                      (if (eq var 'env)
-                          (dolist (env var) (setenv (car env) (cdr env)))
+                      (if (eq (car var) 'env)
+                          (dolist (env (cdr var)) (setenv (car env) (cdr env)))
                         (set (car var) (cdr var)))))
                 (error (error "Failed to parse profiles.el: %s" (error-message-string e))))))
           ;; If the requested profile isn't in profiles.el, then see if
