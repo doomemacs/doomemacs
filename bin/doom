@@ -202,28 +202,31 @@ SEE ALSO:
     instead."
   (when color?
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
-  ;; For these settings to take full effect, the script must be restarted:
-  (when (and (equal (doom-cli-context-step context) 0)
-             (or profile
-                 debug?
-                 emacsdir
-                 doomdir))
-    (when profile
-      (setenv "DOOMPROFILE" profile))
-    (when debug?
-      (setenv "DEBUG" "1")
-      (print! (item "Debug mode enabled")))
-    (when emacsdir
-      (setenv "EMACSDIR" emacsdir))
-    (when doomdir
-      (setenv "DOOMDIR" doomdir))
-    (exit! :restart))
-  ;; But these don't need a restart:
   (when pager
     (setq doom-cli-pager pager))
   (when force?
     (setf (doom-cli-context-suppress-prompts-p context) t)
     (doom-log "User requested all prompts be suppressed"))
+  ;; For these settings to take full effect, the script must be restarted:
+  (when (or debug?
+            profile
+            emacsdir
+            doomdir)
+    (let (omit)
+      (when debug?
+        (setenv "DEBUG" "1")
+        (print! (item "Debug mode enabled"))
+        (push "--debug" omit))
+      (when profile
+        (setenv "DOOMPROFILE" profile)
+        (push "--profile=" omit))
+      (when emacsdir
+        (setenv "EMACSDIR" emacsdir)
+        (push "--emacsdir=" omit))
+      (when doomdir
+        (setenv "DOOMDIR" doomdir)
+        (push "--doomdir=" omit))
+      (exit! :restart :omit omit)))
   ;; Load extra files and forms, as per given options.
   (dolist (file loads)
     (load (doom-path (cdr file))
