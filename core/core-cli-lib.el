@@ -1174,8 +1174,41 @@ Emacs' batch library lacks an implementation of the exec system call."
       (_ (error "Invalid exit code or command: %s" command)))))
 
 (defun doom-cli--exit-restart (args context)
-  "Restart the session, verbatim (persisting CONTEXT)."
-  (doom-cli--exit (cons "$@" args) context))
+  "Restart the session, verbatim (persisting CONTEXT).
+
+ARGS are addiitonal arguments to pass to the sub-process (in addition to the
+ones passed to this one). It may contain :omit -- all arguments after this will
+be removed from the argument list. They may specify number of arguments in the
+format:
+
+  --foo=4     omits --foo plus four following arguments
+  --foo=1     omits --foo plus one following argument
+  --foo=      equivalent to --foo=1
+  --foo=*     omits --foo plus all following arguments
+
+Arguments don't have to be switches either."
+  (let ((pred (fn! (not (keywordp %))))
+        (args (append (doom-cli-context-whole context)
+                      (flatten-list args))))
+    (let ((argv (seq-take-while pred args))
+          (omit (mapcar (fn! (seq-let (arg n) (split-string % "=")
+                               (cons
+                                arg (cond ((not (stringp n)) 0)
+                                          ((string-empty-p n) 1)
+                                          ((equal n "*") -1)
+                                          ((string-to-number n))))))
+                        (seq-take-while pred (cdr (memq :omit args)))))
+          newargs)
+      (when omit
+        (while argv
+          (let ((arg (pop argv)))
+            (if-let (n (cdr (assoc arg omit)))
+                (if (= n -1)
+                    (setq argv nil)
+                  (dotimes (i n) (pop argv)))
+              (push arg newargs)))))
+      (doom-cli--exit (cons "$1" (or (nreverse newargs) argv))
+                      context))))
 
 (defun doom-cli--exit-pager (args context)
   "Invoke pager on output unconditionally.
@@ -1620,6 +1653,9 @@ example:
     This reruns the current command with the same arguments.
   (exit! \"$@ -h -c\")
     This reruns the current command with two new switches.
+  (exit! :restart \"-c\" :omit \"--foo=2\" \"--bar\")
+    This reruns the current command with one new switch (-c) and two switches
+    removed (--foo plus two arguments and --bar).
   (exit! \"emacs -nw FILE\")
     Opens Emacs on FILE
   (exit! \"emacs\" \"-nw\" \"FILE\")
