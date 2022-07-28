@@ -58,7 +58,7 @@
 
 ;;;###autoload
 (defun +vertico/project-search (&optional arg initial-query directory)
-  "Peforms a live project search from the project root using ripgrep.
+  "Performs a live project search from the project root using ripgrep.
 If ARG (universal argument), include all files, even hidden or compressed ones,
 in the search."
   (interactive "P")
