@@ -1034,7 +1034,7 @@ shown."
   (when message
     (let ((output (apply #'doom-print--format message args)))
       ;; One for the terminal, if the log level is high enough.
-      (doom-print output :format nil :level doom-print-message-level)
+      (doom-print output :format nil :level doom-print-message-level :stream t)
       ;; And one for the logs...
       (when (doom-cli-context-p context)
         (doom-print output :format nil :stream (doom-cli-context-stderr context) :level t)))
