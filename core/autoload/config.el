@@ -1,7 +1,7 @@
 ;;; core/autoload/config.el -*- lexical-binding: t; -*-
 
-(defvar doom-bin-dir (concat doom-emacs-dir "bin/"))
-(defvar doom-bin (concat doom-bin-dir "doom"))
+(defvar doom-bin-dir (expand-file-name "bin/" doom-emacs-dir))
+(defvar doom-bin (expand-file-name "doom" doom-bin-dir))
 
 ;;;###autoload
 (defvar doom-reloading-p nil
