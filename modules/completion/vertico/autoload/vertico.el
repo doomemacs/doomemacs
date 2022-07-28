@@ -73,6 +73,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 
 ;;;###autoload
 (defun +vertico/search-symbol-at-point ()
+  "Performs a search in the current buffer for thing at point."
   (interactive)
   (consult-line (thing-at-point 'symbol)))
 
