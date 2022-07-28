@@ -611,8 +611,8 @@ Throws `doom-cli-invalid-option-error' for illegal values."
   command       ; The full command that led to this context
   path          ; Breadcrumb list of resolved commands so far
   whole         ; Unfiltered and unprocessed list of arguments
-  options       ; An alist of (flags . value)
-  arguments     ; An alist of non-subcommand arguments, by command
+  (options nil :skip t)    ; An alist of (flags . value)
+  (arguments nil :skip t)  ; An alist of non-subcommand arguments, by command
   (stdin  (generate-new-buffer " *doom-cli stdin*")  :type buffer)  ; buffer containing anything piped into this session
   (stdout (generate-new-buffer " *doom-cli stdout*") :type buffer)  ; buffer containing user-visible output
   (stderr (generate-new-buffer " *doom-cli stderr*") :type buffer)  ; buffer containing all output, including debug output
