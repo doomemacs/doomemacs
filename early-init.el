@@ -123,6 +123,8 @@
 
           (user-error "No %S profile found" profile)))
 
+      (when init-file-debug
+        (message "Selected profile: %s" profile))
       ;; Ensure the selected profile persists through the session
       (setenv "DOOMPROFILE" profile))))
 
@@ -131,10 +133,10 @@
 ;;; Bootstrap
 
 ;; Load the heart of Doom Emacs
-(unless (load (expand-file-name "core/core" user-emacs-directory) t t)
+(unless (load (expand-file-name "core/core" user-emacs-directory) t (not init-file-debug))
   ;; ...but if that fails, then this is likely not a Doom config.
   (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
-  (load early-init-file t t))
+  (load early-init-file t (not init-file-debug)))
 
 ;; We hijack Emacs' initfile resolver to inject our own entry point. Why do
 ;; this? Because:
