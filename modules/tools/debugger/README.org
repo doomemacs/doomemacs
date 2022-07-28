@@ -24,10 +24,10 @@ there is still not *enough* documentation for it.
   - [[doom-package:][dap-mode]] 
   - [[doom-package:][posframe]] 
 
-** TODO Hacks
-#+begin_quote
- 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
-#+end_quote
+** Hacks
+- Enables ~gdb-many-windows-mode~ in ~gdb-mode~ by default
+- Patches realgud to run in a popup window. This causes realgud bindings to focus the command window.
+- Closes realgud's command buffer after the session ends.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -62,7 +62,55 @@ You need this if you are having ~"wrong-type-argument stringp nil"~ error when
 calling ~dap-gdb-lldb-setup~. [[github:emacs-lsp/dap-mode/issues/313][See emacs-lsp/dap-mode#313]]
 
 ** DAP debuggers
-*** Python
+
+*** dap-cpptools
+
+- Languages: C, C++, Rust
+- Documentation
+  - [[https://code.visualstudio.com/docs/cpp/cpp-debug][adapter]]
+  - [[https://emacs-lsp.github.io/dap-mode/page/configuration/#vscode-cpptools][dap-mode configuration]]
+
+Run =M-x dap-cpptools-setup= to setup the adapter before using it the first time.
+
+*** dap-gdb-lldb
+
+- Languages: C, C++, Rust
+- Documentation
+  - [[https://github.com/WebFreak001/code-debug][adapter]]
+  - [[https://emacs-lsp.github.io/dap-mode/page/configuration/#native-debug-gdblldb][dap-mode configuration]]
+
+Install the vscode extension using =M-x dap-gdb-lldb-setup= before using it the first time.
+
+*** dap-lldb
+
+- Languages: C, C++, Rust
+- Documentation
+  - [[https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode][adapter]]
+  - [[https://emacs-lsp.github.io/dap-mode/page/configuration/#lldb][dap-mode configuration]]
+
+Needs [[https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode][lldb-vscode]]. Install LLDB from your package manager.
+
+*Arch:*
+#+begin_src sh
+pacman -S lldb
+#+end_src
+
+*Fedora:*
+#+begin_src sh
+dnf install lldb
+#+end_src
+
+*** dap-python
+
+- Languages: Python
+- Documentation:
+  - [[https://github.com/microsoft/debugpy/][adapter]]
+  - [[https://emacs-lsp.github.io/dap-mode/page/configuration/#python][dap-mode configuration]]
+
+#+begin_quote
+TODO: Verify the instructions below
+#+end_quote
+
 DAP expects [[https://github.com/Microsoft/ptvsd][ptvsd]] by default as the Python debugger, but [[https://github.com/microsoft/debugpy][debugpy]] is recommended.
 See [[*Configuration][Configuration]].
 
@@ -82,31 +130,27 @@ pip3 install debugpy --user
   (setq dap-python-debugger 'debugpy))
 #+end_src
 
-*** C, C++, Rust, Golang
-Needs [[https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode][lldb-vscode]]. Install LLDB from your package manager.
-
-*Fedora:*
-#+begin_src sh
-dnf install lldb
-#+end_src
-
 * TODO Usage
-#+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
 
-- ~M-x +debugger/start~
-- ~M-x +debugger/start-last~
-- ~M-x +debugger/quit~
-  
-** Realgud
+To start a debugging session, use ~M-x +debugger/start~ (bound to =SPC o d= in evil). The user is asked to select a debugging configuration if the command is used for the first time. Otherwise, the last used configuration is started automatically. Prefix the command with an argument to trigger the selection in that case (by prefixing the command with =SPC u= or a number in evil, =C-u= in vanilla). The last used configuration is stored for each project individually.
+
+~M-x +debugger/start-last~ starts the last used debug configuration, if it exists, and prints a message otherwise instead of offering a selection.
+
+Once the session is started, it can be terminated by ~M-x +debugger/quit~ or by using the mode-specific way.
+
+** realgud
+
+** dap-mode
+
+*** How to add a debug configuration
+
 1. Call ~dap-gdb-lldb-setup~ function.
 2. Use ~dap-debug-edit-template~ to configure debugging settings for your
    project. [[github:WebFreak001/code-debug/blob/master/package.json#L72][Available settings can be inspected here.]] Call ~eval-buffer~ to save
    your settings. *Don't save the file!*
 3. Call ~dap-debug~, select a configuration and start debugging.
 
-** dap-mode with ~+lsp~
+*** dap-mode with ~+lsp~
 Intuitive and powerful debugging.
 
 - Breakpoints
@@ -117,6 +161,24 @@ Intuitive and powerful debugging.
   expressions.
   
 ** Keybindings
+
+*** General
+
+| Keybind   | Description              |
+|-----------+--------------------------|
+| =SPC o d= | Start a debugger session |
+
+
+*** dap-mode
+
+When a dap-mode session is running, the following mappings are active:
+
+| Keybind   | Description                      |
+|-----------+----------------------------------|
+| =SPC m d= | Open a hydra for session control |
+
+The hydra is defined as follows:
+
 #+begin_src emacs-lisp
 (map! :map dap-mode-map
       :leader
@@ -150,6 +212,7 @@ Intuitive and powerful debugging.
       :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
 #+end_src
 
+
 * TODO Configuration
 #+begin_quote
  🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
@@ -161,6 +224,10 @@ Intuitive and powerful debugging.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+** Setting breakpoints in realgud does not work outside a session
+
+This currently is not supported by realgud.
 
 * TODO Appendix
 #+begin_quote
