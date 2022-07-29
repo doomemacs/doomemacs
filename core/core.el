@@ -439,7 +439,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;;      reason; inexplicably doubling startup time for terminal Emacs. Keeping
 ;;      it disabled will have nasty side-effects, so we simply delay it instead,
 ;;      and invoke it later, at which point it runs quickly; how mysterious!
-(unless (daemonp)
+(unless (or (daemonp) init-file-debug)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook! 'window-setup-hook
     (defun doom-init-tty-h ()
