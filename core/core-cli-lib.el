@@ -1601,6 +1601,7 @@ WHEN specifies what version this command was rendered obsolete."
 
 Use this to define commands that will eventually be implemented, but haven't
 yet. They won't be included in command listings (by help documentation)."
+  (declare (indent 2) (doc-string 3))
   `(defcli! ,commandspec (&rest _)
      ,(concat "THIS COMMAND IS A STUB AND HAS NOT BEEN IMPLEMENTED YET."
               (if (stringp (car body)) (concat "\n\n" (pop body))))
