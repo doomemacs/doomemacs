@@ -314,7 +314,7 @@ OPTIONS:
 (cl-defun doom-cli-help--render-commands (commands &key prefix grouped? docs? (inline? t))
   (with-temp-buffer
     (let* ((doom-print-indent 0)
-           (commands (seq-group-by (fn! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) commands))
+           (commands (seq-group-by (fn! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) (nreverse commands)))
            (toplevel (assq nil commands))
            (rest (remove toplevel commands))
            (drop (if prefix (length prefix) 0))
