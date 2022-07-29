@@ -47,16 +47,22 @@
   (when profile
     (with-temp-buffer
       (let ((coding-system-for-read 'utf-8-auto)
-            (profile-file (expand-file-name "profiles.el" user-emacs-directory)))
-        (insert-file-contents profile-file)
+            (profiles-file (expand-file-name "profiles.el" user-emacs-directory)))
         (condition-case e
-            (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
-                             (progn (message "No %S profile found" profile)
-                                    (kill-emacs 3))))
-              (if (eq (car var) 'env)
-                  (dolist (env (cdr var)) (setenv (car env) (cdr env)))
-                (set (car var) (cdr var))))
-          (end-of-file (signal 'end-of-file (list profile-file)))
+            (progn
+              (insert-file-contents profiles-file)
+              (dolist (var (or (cdr (assq (intern profile) (read (current-buffer))))
+                               (progn (message "No %S profile found" profile)
+                                      (kill-emacs 3))))
+                (if (eq (car var) 'env)
+                    (dolist (env (cdr var)) (setenv (car env) (cdr env)))
+                  (set (car var) (cdr var)))))
+          (file-missing
+           (message "No $EMACSDIR/%s file to look up %S in."
+                    (file-name-nondirectory profiles-file)
+                    profile)
+           (kill-emacs 3))
+          (end-of-file (signal 'end-of-file (list profiles-file)))
           (error (error "Parser error in profiles.el: %s" (error-message-string e))))))))
 
 ;; HACK Load `cl' and site files manually to prevent polluting logs and stdout
