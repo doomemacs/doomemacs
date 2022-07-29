@@ -122,10 +122,10 @@
 (defconst doom-emacs-dir user-emacs-directory
   "The path to the currently loaded .emacs.d directory. Must end with a slash.")
 
-(defconst doom-core-dir (concat doom-emacs-dir "core/")
+(defconst doom-core-dir (expand-file-name "core/" doom-emacs-dir)
   "The root directory of Doom's core files. Must end with a slash.")
 
-(defconst doom-modules-dir (concat doom-emacs-dir "modules/")
+(defconst doom-modules-dir (expand-file-name "modules/" doom-emacs-dir)
   "The root directory for Doom's modules. Must end with a slash.")
 
 (defconst doom-docs-dir (concat doom-emacs-dir "docs/")
