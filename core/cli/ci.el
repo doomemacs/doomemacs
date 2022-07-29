@@ -257,10 +257,11 @@ Note: warnings are not considered failures.")
        (local-config
         (car (or (doom-glob repo-root "ci.el")
                  (doom-glob doom-private-dir "ci.el")))))
-    (load local-config nil t t)
+    (defgroup! :prefix '(doom ci)
+      (load local-config nil t t))
     (print! (item "Loaded %S") local-config)))
 
-(defcli! ci ()
+(defcli! ci (&args _)
   "Commands that automate development processes."
   :partial t)
 
