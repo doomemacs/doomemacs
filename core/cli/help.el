@@ -265,35 +265,28 @@ OPTIONS:
       (options  ,@opts)
       (required ,@(mapcar (fn! (upcase (format "`%s'" %))) (if subcommands? '(command) (alist-get '&required args))))
       (optional ,@(mapcar (fn! (upcase (format "[`%s']" %)))(alist-get '&optional args)))
-      (rest     ,@(mapcar (fn! (upcase (format "[`%s'...]" %))) (if subcommands? '(args) (alist-get '&args args))))
-      (examples ,@(doom-cli-help--parse-docs (doom-cli-find cli t) "SYNOPSIS")))))
+      (rest     ,@(mapcar (fn! (upcase (format "[`%s'...]" %))) (if subcommands? '(args) (alist-get '&args args)))))))
 
-(defun doom-cli-help--render-synopsis (synopsis &optional prefix with-examples?)
+(defun doom-cli-help--render-synopsis (synopsis &optional prefix)
   (let-alist synopsis
     (let ((doom-print-indent 0)
           (prefix (or prefix ""))
           (command (doom-cli-command-string .command)))
-      (with-temp-buffer
-        (insert! ("%s\n\n"
-                  (fill (concat prefix
-                                (bold (format "%s " command))
-                                (markup
-                                 (join (append .options
-                                               (and .options
-                                                    (or .required
-                                                        .optional
-                                                        .rest)
-                                                    (list (dark "[--]")))
-                                               .required
-                                               .optional
-                                               .rest))))
-                        80 (1+ (length (concat prefix command))))))
-        (dolist (example (if with-examples? .examples))
-          (insert! ("%s\n%s\n" (markup (car example))
-                    (if (cdr example)
-                        (format "%s\n" (indent (markup (cdr example))
-                                               doom-print-indent-increment))))))
-        (string-trim-right (buffer-string))))))
+      (string-trim-right
+       (format! "%s\n\n"
+                (fill (concat (bold prefix)
+                              (format "%s " command)
+                              (markup
+                               (join (append .options
+                                             (and .options
+                                                  (or .required
+                                                      .optional
+                                                      .rest)
+                                                  (list (dark "[--]")))
+                                             .required
+                                             .optional
+                                             .rest))))
+                      80 (1+ (length (concat prefix command)))))))))
 
 ;;; Help: arguments
 (defun doom-cli-help--arguments (cli &optional all?)
