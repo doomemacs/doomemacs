@@ -508,7 +508,7 @@ Throws `doom-cli-invalid-option-error' for illegal values."
                   (if (or (symbolp type)
                           (and (stringp type)
                                (string-match-p "^[A-Z0-9-_]+$" type)))
-                      (cdr (assq (if (symbolp type) type (intern type))
+                      (cdr (assq (if (symbolp type) type (intern (downcase type)))
                                  doom-cli-option-arg-types))
                     (list 'str :test #'stringp))))
               (condition-case-unless-debug e
