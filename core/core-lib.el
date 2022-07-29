@@ -407,8 +407,8 @@ COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
   `(lambda (arg &rest _) (interactive "P")
      (let ((current-prefix-arg (or ,prefix-arg arg)))
        (,(if args
-             'funcall-interactively
-           'call-interactively)
+             #'funcall-interactively
+           #'call-interactively)
         ,command ,@args))))
 
 (defmacro cmds! (&rest branches)

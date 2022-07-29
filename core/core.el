@@ -305,7 +305,7 @@ users).")
 
 
 ;;
-;;; Don't litter `doom-emacs-dir'
+;;; Don't litter `doom-emacs-dir'/$HOME
 
 ;; I change `user-emacs-directory' because many packages (even built-in ones)
 ;; abuse it to build paths for storage/cache files (instead of correctly using
@@ -328,6 +328,12 @@ users).")
 ;; Allow the user to store custom.el-saved settings and themes in their Doom
 ;; config (e.g. ~/.doom.d/).
 (setq custom-file (expand-file-name "custom.el" doom-private-dir))
+
+;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
+;; that, mkay? This file stores usernames, passwords, and other treasures for
+;; the aspiring malicious third party. You'll need a GPG setup though.
+(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
+                         "~/.authinfo.gpg"))
 
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
   "Write saved safe-local-variables to `custom-file' instead.
@@ -470,15 +476,9 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 (setq debug-on-error init-file-debug
       jka-compr-verbose init-file-debug)
 
-;; Emacs stores `authinfo' in $HOME and in plain-text. Let's not do that, mkay?
-;; This file stores usernames, passwords, and other treasures for the aspiring
-;; malicious third party. However, for this to work you need a GPG setup.
-(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
-                         "~/.authinfo.gpg"))
-
-;; Get rid of "For information about GNU Emacs..." message at startup, unless
-;; we're in a daemon session where it'll say "Starting Emacs daemon." instead,
-;; which isn't so bad.
+;; Get rid of "For information about GNU Emacs..." message at startup. It's
+;; redundant with our dashboard. However, in daemon sessions it says "Starting
+;; Emacs daemon." instead, which is fine.
 (unless (daemonp)
   (advice-add #'display-startup-echo-area-message :override #'ignore))
 
