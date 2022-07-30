@@ -15,7 +15,7 @@
 ;;   $EMACSDIR/profiles.el or implicitly as directories in $EMACSDIR/profiles/).
 ;;
 ;; You should *never* load this file in non-interactive sessions (e.g. batch
-;; scripts). Load `core-start' or use 'doom run' instead!
+;; scripts). Load `doom-start' or use 'doom run' instead!
 ;;
 ;;; Code:
 
@@ -133,7 +133,7 @@
 ;;; Bootstrap
 
 ;; Load the heart of Doom Emacs
-(unless (load (expand-file-name "core/core" user-emacs-directory) t (not init-file-debug))
+(unless (require 'doom (expand-file-name "lisp/doom" user-emacs-directory) t)
   ;; ...but if that fails, then this is likely not a Doom config.
   (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
   (load early-init-file t (not init-file-debug)))
@@ -147,7 +147,7 @@
 ;;   $EMACSDIR as their $DOOMDIR, if they wanted).
 ;; - Later, 'doom sync' will dynamically generate its bootstrap file, which
 ;;   will be important for Doom's profile system later. Until then, we'll use
-;;   core/core-start.el.
+;;   lisp/doom-start.el.
 ;; - A "fallback" initfile can be trivially specified, in case the
 ;;   bootstrapper is missing (if the user hasn't run 'doom sync' or is a
 ;;   first-timer). This is an opportunity to display a "safe mode" environment
@@ -158,7 +158,7 @@
   "Initialize Doom Emacs in an interactive session."
   (list (lambda ()
           (if (boundp 'doom-core-dir)
-              (expand-file-name "core-start" doom-core-dir)
+              (expand-file-name "doom-start" doom-core-dir)
             (expand-file-name "init.el" user-emacs-directory)))
         (when (boundp 'doom-profiles-dir)
           (lambda ()

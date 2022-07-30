@@ -261,8 +261,8 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                   `(progn
                      (setq doom-modules ',doom-modules
                            doom-disabled-packages ',doom-disabled-packages)
-                     (require 'core)
-                     (require 'core-cli-lib)
+                     (require 'doom)
+                     (require 'doom-cli-lib)
                      (ignore-errors (load ,user-init-file t t))
                      (setq byte-compile-warnings
                            '(obsolete cl-functions

@@ -40,7 +40,7 @@ tmpfile="$TMPDIR/doomscript.${__DOOMPID}"
 
 target="$1"
 shift
-$emacs --load "$EMACSDIR/core/core-cli" \
+$emacs --load "$EMACSDIR/lisp/doom-cli" \
        --load "$target" \
        -- "$@" || exit=$?
 # Execute exit-script, if requested (to simulate execve)

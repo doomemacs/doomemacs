@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(after! core-cli-ci
+(after! doom-cli-ci
   ;;; Commit linter types
   (add-to-list 'doom-ci-commit-types 'module)
   (add-to-list 'doom-ci-commit-scopeless-types 'module)
@@ -16,7 +16,7 @@
   ;; DEPRECATED Will be removed once modules live in their own repo
   (add-to-list 'doom-ci-commit-scopes '(release "modules")))
 
-(after! core-cli-make
+(after! doom-cli-make
   ;;; Codeowners
   ;; (dolist (path (cdr (doom-module-load-path (list doom-modules-dir))))
   ;;   (save-match-data

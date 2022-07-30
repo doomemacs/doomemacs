@@ -62,7 +62,7 @@
 ;;   Put together, plus a strategically placed exit call, the shell will read
 ;;   one part of this file and ignore the rest, while the elisp interpreter will
 ;;   do the opposite.
-;; - I intentionally avoid loading site files, so core/core-cli.el can load them
+;; - I intentionally avoid loading site files, so lisp/doom-cli.el can load them
 ;;   by hand later. There, I can suppress and deal with unhelpful warnings (e.g.
 ;;   "package cl is deprecated"), "Loading X...DONE" spam, and any other
 ;;   disasterous side-effects.
@@ -107,7 +107,7 @@
 ;;
 ;;; Load Doom's CLI framework
 
-(require 'core-cli (expand-file-name "core/core-cli" user-emacs-directory))
+(require 'doom-cli (expand-file-name "lisp/doom-cli" user-emacs-directory))
 
 ;; Load $DOOMDIR/init.el, to read the user's `doom!' block, and so users can
 ;; customize things early, if they like.

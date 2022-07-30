@@ -7,7 +7,7 @@ usage in the documentation displayed by either ~describe-function~ or
 ~helpful-function~ (on [[kbd:][SPC h f]]).
 
 * Table of Contents :TOC_3:
-- [[#core-lib][core-lib]]
+- [[#doom-lib][doom-lib]]
   - [[#add-hook][add-hook!]]
   - [[#add-transient-hook][add-transient-hook!]]
   - [[#after][after!]]
@@ -38,7 +38,7 @@ usage in the documentation displayed by either ~describe-function~ or
   - [[#unsetq-hook][unsetq-hook!]]
   - [[#use-package][use-package!]]
 
-* core-lib
+* doom-lib
 ** add-hook!
 :PROPERTIES:
 :added: pre-3.0.0
