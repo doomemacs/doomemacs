@@ -66,7 +66,7 @@ following shell commands:
            ;; `vc-git--symbolic-ref') won't work; it can't deal with submodules.
            (branch (replace-regexp-in-string
                     "^\\(?:[^/]+/[^/]+/\\)?\\(.+\\)\\(?:~[0-9]+\\)?$" "\\1"
-                    (cdr (doom-call-process "git" "name-rev" "--name-only" "HEAD"))))
+                    (cdr (sh! "git" "name-rev" "--name-only" "HEAD"))))
            (target-remote (format "%s_%s" doom-upgrade-remote branch)))
       (unless branch
         (error (if (file-exists-p! ".git" doom-emacs-dir)
@@ -82,19 +82,19 @@ following shell commands:
                         "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes."
                         (string-join dirty "\n"))
           (print! (item "You have local modifications in Doom's source. Discarding them..."))
-          (doom-call-process "git" "reset" "--hard" (format "origin/%s" branch))
-          (doom-call-process "git" "clean" "-ffd")))
+          (sh! "git" "reset" "--hard" (format "origin/%s" branch))
+          (sh! "git" "clean" "-ffd")))
 
-      (doom-call-process "git" "remote" "remove" doom-upgrade-remote)
+      (sh! "git" "remote" "remove" doom-upgrade-remote)
       (unwind-protect
           (let (result)
-            (or (zerop (car (doom-call-process "git" "remote" "add" doom-upgrade-remote doom-upgrade-url)))
+            (or (zerop (car (sh! "git" "remote" "add" doom-upgrade-remote doom-upgrade-url)))
                 (error "Failed to add %s to remotes" doom-upgrade-remote))
-            (or (zerop (car (setq result (doom-call-process "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote)))))
+            (or (zerop (car (setq result (sh! "git" "fetch" "--force" "--tags" doom-upgrade-remote (format "%s:%s" branch target-remote)))))
                 (error "Failed to fetch from upstream"))
 
-            (let ((this-rev (cdr (doom-call-process "git" "rev-parse" "HEAD")))
-                  (new-rev  (cdr (doom-call-process "git" "rev-parse" target-remote))))
+            (let ((this-rev (cdr (sh! "git" "rev-parse" "HEAD")))
+                  (new-rev  (cdr (sh! "git" "rev-parse" target-remote))))
               (cond
                ((and (null this-rev)
                      (null new-rev))
@@ -106,9 +106,9 @@ following shell commands:
 
                ((print! (item "A new version of Doom Emacs is available!\n\n  Old revision: %s (%s)\n  New revision: %s (%s)\n"
                               (substring this-rev 0 10)
-                              (cdr (doom-call-process "git" "log" "-1" "--format=%cr" "HEAD"))
+                              (cdr (sh! "git" "log" "-1" "--format=%cr" "HEAD"))
                               (substring new-rev 0 10)
-                              (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
+                              (cdr (sh! "git" "log" "-1" "--format=%cr" target-remote))))
                 (let ((diff-url
                        (format "%s/compare/%s...%s"
                                doom-upgrade-url
@@ -127,8 +127,8 @@ following shell commands:
                   (print-group!
                    (doom-compile-clean)
                    (let ((straight-recipe (doom-upgrade--get-straight-recipe)))
-                     (or (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
-                              (equal (cdr (doom-call-process "git" "rev-parse" "HEAD")) new-rev))
+                     (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
+                              (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
                          (error "Failed to check out %s" (substring new-rev 0 10)))
                      ;; HACK It's messy to use straight to upgrade straight, due
                      ;;   to the potential for backwards incompatibility, so we
@@ -145,8 +145,8 @@ following shell commands:
                    (print! (item "%s") (cdr result))
                    t))))))
         (ignore-errors
-          (doom-call-process "git" "branch" "-D" target-remote)
-          (doom-call-process "git" "remote" "remove" doom-upgrade-remote))))))
+          (sh! "git" "branch" "-D" target-remote)
+          (sh! "git" "remote" "remove" doom-upgrade-remote))))))
 
 (defun doom-upgrade--working-tree-dirty-p (dir)
   (cl-destructuring-bind (success . stdout)
