@@ -21,10 +21,10 @@
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
 symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
-(defvar doom--debug-vars-undefined nil)
+(defvar doom-debug--undefined-vars nil)
 
-(defun doom--watch-debug-vars-h (&rest _)
-  (when-let (bound-vars (cl-remove-if-not #'boundp doom--debug-vars-undefined))
+(defun doom-debug--watch-vars-h (&rest _)
+  (when-let (bound-vars (cl-delete-if-not #'boundp doom-debug--undefined-vars))
     (doom-log "New variables available: %s" bound-vars)
     (let ((message-log-max nil))
       (doom-debug-mode -1)
@@ -33,13 +33,13 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 ;;;###autoload
 (define-minor-mode doom-debug-mode
   "Toggle `debug-on-error' and `init-file-debug' for verbose logging."
-  :init-value nil
+  :init-value init-file-debug
   :global t
   (let ((enabled doom-debug-mode))
-    (setq doom--debug-vars-undefined nil)
+    (setq doom-debug--undefined-vars nil)
     (dolist (var doom-debug-variables)
       (cond ((listp var)
-             (cl-destructuring-bind (var . val) var
+             (pcase-let ((`(,var . ,val) var))
                (if (boundp var)
                    (set-default
                     var (if (not enabled)
@@ -47,10 +47,10 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
                               (put 'x 'initial-value nil))
                           (put var 'initial-value (symbol-value var))
                           val))
-                 (add-to-list 'doom--debug-vars-undefined var))))
+                 (add-to-list 'doom-debug--undefined-vars var))))
             ((if (boundp var)
                  (set-default var enabled)
-               (add-to-list 'doom--debug-vars-undefined var)))))
+               (add-to-list 'doom-debug--undefined-vars var)))))
     (when (called-interactively-p 'any)
       (when (fboundp 'explain-pause-mode)
         (explain-pause-mode (if enabled +1 -1))))
@@ -65,13 +65,13 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
            (advice-add #'run-hooks :override #'doom-run-hooks)
            ;; Add time stamps to lines in *Messages*
            (advice-add #'message :before #'doom--timestamped-message-a)
-           (add-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
-           (add-hook 'after-load-functions #'doom--watch-debug-vars-h))
+           (add-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
+           (add-hook 'after-load-functions #'doom-debug--watch-vars-h))
           (t
            (advice-remove #'run-hooks #'doom-run-hooks)
            (advice-remove #'message #'doom--timestamped-message-a)
-           (remove-variable-watcher 'doom-debug-variables #'doom--watch-debug-vars-h)
-           (remove-hook 'after-load-functions #'doom--watch-debug-vars-h)
+           (remove-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
+           (remove-hook 'after-load-functions #'doom-debug--watch-vars-h)
            (message "Debug mode disabled!")))))
 
 
