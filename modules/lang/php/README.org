@@ -236,7 +236,7 @@ And add the following to your config:
             secret))
       (error "Password not found for %S" params))))
 
-(setq lsp-intelephense-license-key (my-fetch-password :user intelephense))
+(setq lsp-intelephense-licence-key (my-fetch-password :user intelephense))
 #+end_src
 
 * Frequently asked questions
