@@ -14,7 +14,7 @@
                                    "~/Applications/Skim.app"))))
        (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
        (add-to-list 'TeX-view-program-list
-                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -b %%n %%o %%b"
+                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -r -b %%n %%o %%b"
                                          app-path)))))
 
     (`sumatrapdf
