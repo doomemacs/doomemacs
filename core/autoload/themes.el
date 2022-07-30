@@ -72,3 +72,38 @@ doom-themes' API without worry."
                       (if (cdr themes) "s" ""))
               'face 'bold)
              (mapconcat #'prin1-to-string themes ", "))))
+
+
+;;
+;;; Helpers
+
+;;;###autoload
+(defun doom-theme-face-attribute (theme face attribute &optional recursive)
+  "Read a FACE's ATTRIBUTE for a loaded THEME.
+
+This is different from `face-attribute', which reads the attribute of an active
+face for the current theme, but an active theme can change (or fail to load) in
+non-interactive or frame-less sessions."
+  (let* ((spec
+          (cl-loop for (type f _ spec) in (get theme 'theme-settings)
+                   if (and (eq type 'theme-face) (eq face f))
+                   return spec))
+         (spec
+          (letf! ((defun window-system (_frame) 'x)
+                  (defun display-color-cells (_frame) 257)
+                  (defun frame-parameter (frame parameter)
+                    (pcase parameter
+                      (`display-type 'color)
+                      (`background-mode 'dark)
+                      (_ (funcall frame-parameter frame parameter))))
+                  (#'display-supports-face-attributes-p #'always))
+            (face-spec-choose spec)))
+         (inherit (if recursive (plist-get spec :inherit)))
+         (value (if (plist-member spec attribute)
+                    (plist-get spec attribute)
+                  'unspecified)))
+    (when (and inherit (not (eq inherit 'unspecified)))
+      (letf! (defun face-attribute (face attribute &optional _frame inherit)
+               (doom-theme-face-attribute theme face attribute inherit))
+        (setq value (face-attribute-merged-with attribute value inherit))))
+    value))
