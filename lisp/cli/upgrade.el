@@ -36,10 +36,21 @@ following shell commands:
          (sync-cmd (append '("sync" "-u") (if jobs `("-j" ,num)))))
     (cond
      (packages?
+      ;; HACK It's messy to use straight to upgrade straight, due to the
+      ;;   potential for backwards incompatibility, so we staticly check if
+      ;;   Doom's `package!' declaration for straight has changed. If it has,
+      ;;   delete straight so 'doom sync' will install the new version for us.
+      ;;
+      ;;   Clumsy, but a better solution is in the works.
+      (let ((recipe (doom-cli-context-get context 'straight-recipe)))
+        (when (and recipe (not (equal recipe (doom-upgrade--get-straight-recipe))))
+          (print! (item "Preparing straight for an update"))
+          (delete-directory (doom-path straight-base-dir "straight/repos/straight.el")
+                            'recursive)))
       (call! sync-cmd)
       (print! (success "Finished upgrading Doom Emacs")))
 
-     ((doom-cli-upgrade force? force?)
+     ((doom-cli-upgrade context force? force?)
       ;; Reload Doom's CLI & libraries, in case there were any upstream changes.
       ;; Major changes will still break, however
       (print! (item "Reloading Doom Emacs"))
@@ -54,7 +65,7 @@ following shell commands:
 ;;
 ;;; Helpers
 
-(defun doom-cli-upgrade (&optional auto-accept-p force-p)
+(defun doom-cli-upgrade (context &optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
   (let ((default-directory doom-emacs-dir)
         process-file-side-effects)
@@ -126,24 +137,10 @@ following shell commands:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-compile-clean)
-                   (let ((straight-recipe (doom-upgrade--get-straight-recipe)))
-                     (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
-                              (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
-                         (error "Failed to check out %s" (substring new-rev 0 10)))
-                     ;; HACK It's messy to use straight to upgrade straight, due
-                     ;;   to the potential for backwards incompatibility, so we
-                     ;;   staticly check if Doom's `package!' declaration for
-                     ;;   straight has changed. If it has, delete straight so
-                     ;;   'doom upgrade's second stage will install the new
-                     ;;   version for us.
-                     ;;
-                     ;;   Clumsy, but a better solution is in the works.
-                     (unless (equal straight-recipe (doom-upgrade--get-straight-recipe))
-                       (print! (item "Preparing straight for an update"))
-                       (delete-directory (doom-path straight-base-dir "straight/repos/straight.el")
-                                         'recursive)))
-                   (print! (item "%s") (cdr result))
-                   t))))))
+                   (doom-cli-context-put context 'straight-recipe (doom-upgrade--get-straight-recipe))
+                   (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
+                            (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
+                       (error "Failed to check out %s" (substring new-rev 0 10)))))))))
         (ignore-errors
           (sh! "git" "branch" "-D" target-remote)
           (sh! "git" "remote" "remove" doom-upgrade-remote))))))
