@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang nix][Issues]]  ↖ [[doom-source:modules/lang/nix/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang nix][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/nix/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang nix
 #+SUBTITLE: I hereby declare "nix geht mehr!"
@@ -21,7 +21,9 @@ Includes:
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][company-nixos-options]] if [[doom-module:][:completion company]]

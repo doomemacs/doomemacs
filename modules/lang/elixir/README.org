@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang elixir][Issues]]  ↖ [[doom-source:modules/lang/elixir/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang elixir][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/elixir/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang elixir
 #+SUBTITLE: Erlang done right
@@ -16,6 +16,9 @@ This module provides support for [[https://elixir-lang.org/][Elixir programming 
 - +lsp ::
   Enable LSP support for ~elixir-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][alchemist]]

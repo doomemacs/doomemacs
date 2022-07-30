@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools terraform][Issues]]  ↖ [[doom-source:modules/tools/terraform/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools terraform][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/terraform/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :tools terraform
 #+SUBTITLE: Infrastructure as code

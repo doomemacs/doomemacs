@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::input japanese][Issues]]  ↖ [[doom-source:modules/input/japanese/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::input japanese][Issues]]  ↖ [[doom-repo:tree/develop/modules/input/japanese/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :input japanese
 #+SUBTITLE: Ah, a man of culture

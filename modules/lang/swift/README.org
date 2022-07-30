@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang swift][Issues]]  ↖ [[doom-source:modules/lang/swift/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang swift][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/swift/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang swift
 #+SUBTITLE: We asked for emoji variables?
@@ -15,6 +15,9 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 - +lsp ::
   Enable LSP support for ~swift-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports sourcekit).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][swift-mode]]

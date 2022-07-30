@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::completion company][Issues]]  ↖ [[doom-source:modules/completion/company/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::completion company][Issues]]  ↖ [[doom-repo:tree/develop/modules/completion/company/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :completion company
 #+SUBTITLE: The ultimate code completion backend
@@ -81,6 +81,10 @@ available to evil users to access specific company backends:
 | [[kbd:][C-x C-p]] | Complete previous symbol at point |
 | [[kbd:][C-x C-s]] | Complete snippet                  |
 | [[kbd:][C-x s]]   | Complete spelling suggestions     |
+
+** Searching with multiple keywords
+If the =vertico= module is enabled, users can perform code completion with multiple search keywords with an ampersand =&=.
+More information can be found [[https://github.com/oantolin/orderless#company][here]].
 
 * TODO Configuration
 #+begin_quote

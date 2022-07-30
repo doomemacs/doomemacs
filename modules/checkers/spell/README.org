@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::checkers spell][Issues]]  ↖ [[doom-source:modules/checkers/spell/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::checkers spell][Issues]]  ↖ [[doom-repo:tree/develop/modules/checkers/spell/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :checkers spell
 #+SUBTITLE: Tasing you for misspelling mispelling
@@ -207,6 +207,24 @@ corrections for "save word to dictionary").
 installed, it will generate an empty word list, causing it to highlight all
 words as incorrect. Delete its cache files in =$EMACSDIR/.local/etc/spell-fu/=
 to fix this.
+
+** Cannot add [word] to any active dictionary
+*** Aspell
+If ~M-x +spell/add-word~ results in the above error this mean that the
+personal dictionary file was not created for some reason. This can be
+fixed by creating the required file manually.
+#+begin_example shell
+mkdir -p ~/.emacs.d/.local/etc/ispell
+echo personal_ws-1.1 en 0 > ~/.emacs.d/.local/etc/ispell/.pws
+#+end_example
+
+Where ~personal_ws-1.1 en 0~ is the required header format for the personal
+dictionary file. ~en~ is the language you're writing in and have a dict
+installed and ~0~ is the number of added words in the dictionary. If you are
+planning of updating the file with the list of words, update the number
+accordingly.
+
+After the file is created, restart emacs and adding words should work.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

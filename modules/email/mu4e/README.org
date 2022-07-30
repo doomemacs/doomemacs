@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::email mu4e][Issues]]  ↖ [[doom-source:modules/email/mu4e/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::email mu4e][Issues]]  ↖ [[doom-repo:tree/develop/modules/email/mu4e/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :email mu4e
 #+SUBTITLE: The great filter Hanson hadn't anticipated
@@ -248,7 +248,7 @@ With the [[doom-module:][+org]] flag, [[doom-package:][org-msg]] is installed, a
 composing the first message. To disable ~org-msg-mode~ by default:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
-(setq mu4e-compose--org-msg-toggle-next nil)
+(setq +mu4e-compose-org-msg-toggle-next nil)
 #+end_src
 
 To toggle org-msg for a single message, just apply the universal argument to the
@@ -264,6 +264,14 @@ If you don't like this use:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/packages.el
 (package! mu4e-alert :disable t)
+#+end_src
+
+** Enabling automatic email fetching
+By default, periodic email update is *disabled*. To enable periodic
+mail retrieval/indexing, change the value of ~mu4e-update-interval~:
+
+#+begin_src emacs-lisp
+(setq mu4e-update-interval 60)
 #+end_src
 
 * Troubleshooting

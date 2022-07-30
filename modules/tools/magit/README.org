@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools magit][Issues]]  ↖ [[doom-source:modules/tools/magit/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools magit][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/magit/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :tools magit
 #+SUBTITLE: Wield git like a wizard

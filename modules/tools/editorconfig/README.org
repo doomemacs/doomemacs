@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools editorconfig][Issues]]  ↖ [[doom-source:modules/tools/editorconfig/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools editorconfig][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/editorconfig/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :tools editorconfig
 #+SUBTITLE: Let someone else argue tabs and spaces

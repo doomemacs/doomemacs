@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang org][Issues]]  ↖ [[doom-source:modules/lang/org/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang org][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/org/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang org
 #+SUBTITLE: Organize your plain life in plain text
@@ -72,7 +72,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   Enable integration with reveal.js, beamer and org-tree-slide, so Emacs can be
   used for presentations. It automatically downloads [[https://github.com/hakimel/reveal.js][reveal.js]].
 - +pretty ::
-  Enable pretty unicode symbols for bullets and priorities, and better syntax
+  Enable pretty unicode symbols for bullets+priorities and better syntax
   highlighting for latex. Keep in mind: this can be expensive. If org becomes
   too slow, it'd be wise to disable this flag.
 - +roam ::
@@ -182,7 +182,7 @@ brew install gnuplot
 
 ** Arch Linux
 #+begin_src sh
-pacman -S texlive-core texlive-bin texlive-science
+pacman -S texlive-core texlive-bin texlive-science texlive-latexextra
 pacman -S gnuplot
 pacman -S jupyter # required by +jupyter
 #+end_src
@@ -211,7 +211,7 @@ will spawn a temporary daemon for you.
 
 Alternatively, you can call ~+org-capture/open-frame~ directly, e.g.
 #+begin_src sh
-emacsclient --eval '(+org-capture/open-frame INTIAL-INPUT KEY)'
+emacsclient --eval '(+org-capture/open-frame INITIAL-INPUT KEY)'
 #+end_src
 
 ** Built-in custom link types
@@ -232,6 +232,9 @@ They are (with examples):
 - ~wikipedia:Emacs~
 - ~youtube:P196hEuA_Xc~ (link only)
 - ~yt:P196hEuA_Xc~ (like =youtube=, but includes an inline preview of the video)
+
+** evil-mode keybindings
+For =evil-mode= users, an overview of org-mode keybindings is provided [[https://github.com/Somelauw/evil-org-mode/blob/master/README.org#keybindings][here]].
 
 * TODO Configuration
 #+begin_quote

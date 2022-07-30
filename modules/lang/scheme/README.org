@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang scheme][Issues]]  ↖ [[doom-source:modules/lang/scheme/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang scheme][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/scheme/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang scheme
 #+SUBTITLE: A fully conniving family of lisps

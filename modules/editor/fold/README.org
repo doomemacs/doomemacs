@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor fold][Issues]]  ↖ [[doom-source:modules/editor/fold/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor fold][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/fold/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :editor fold
 #+SUBTITLE: What you can't see won't hurt you
@@ -20,6 +20,8 @@ marker, indent and syntax-based code folding for as many languages as possible.
 ** Packages
 - [[doom-package:][evil-vimish-fold]]
 - [[doom-package:][vimish-fold]]
+- if [[doom-module:][:tools tree-sitter]]
+  - [[doom-package:][ts-fold]]
 
 ** TODO Hacks
 #+begin_quote

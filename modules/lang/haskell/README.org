@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang haskell][Issues]]  ↖ [[doom-source:modules/lang/haskell/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang haskell][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/haskell/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang haskell
 #+SUBTITLE: A language that's lazier than I am
@@ -76,7 +76,7 @@ After installing your preferred formatter, make sure to set
 Make sure to configure the lsp to use your perfered formatter, e.g.:
 #+begin_src emacs-lisp
 ;; ~/.doom.d/config.el
-(after!
+(after! lsp-haskell
   (setq lsp-haskell-formatting-provider "brittany"))
 #+end_src
 

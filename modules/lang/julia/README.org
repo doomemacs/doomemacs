@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang julia][Issues]]  ↖ [[doom-source:modules/lang/julia/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang julia][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/julia/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang julia
 #+SUBTITLE: A better, faster MATLAB
@@ -19,6 +19,9 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 - +lsp ::
   Enable LSP support for ~julia-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
   (supports LanguageServer.jl).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
 ** Packages
 - [[doom-package:][julia-mode]]
@@ -68,21 +71,21 @@ To instruct [[doom-package:][lsp-julia]] not to use the built-in package:
 #+end_src
 
 To find your installation of ~LanguageServer.jl~, [[doom-package:][lsp-julia]] needs to know the
-environment in which it is installed. This is set to v1.0 by default as it is
+environment in which it is installed. This is set to v1.6 by default as it is
 the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (after! lsp-julia
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.0"))
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.6"))
 #+end_src
 
 *** =eglot-jl=
 To find your installation of ~LanguageServer.jl~, [[doom-package:][eglot-jl]] must know the
-environment in which it is installed. This is set to v1.0 by default as it is
+environment in which it is installed. This is set to v1.6 by default as it is
 the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(setq eglot-jl-language-server-project "~/.julia/environments/v1.0")
+(setq eglot-jl-language-server-project "~/.julia/environments/v1.6")
 #+end_src
 
 But to let [[doom-package:][eglot-jl]] use the environment bundled with it, set it to
@@ -110,11 +113,11 @@ described above.
 
 ** Change the default environment for the Julia language server
 [[doom-package:][lsp-julia]] requires a variable be set for the Julia environment. This is set to
-v1.0 by default as it is the current LTS:
+v1.6 by default as it is the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (after! lsp-julia
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.0"))
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.6"))
 #+end_src
 
 * Troubleshooting

@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools lookup][Issues]]  ↖ [[doom-source:modules/tools/lookup/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools lookup][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/lookup/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :tools lookup
 #+SUBTITLE: Navigate your labyrinthine code and docs
@@ -146,7 +146,7 @@ You can perform a documentation lookup on any backends directly:
   o]]), or ~:lo[okup] QUERY~ for evil users.
 
 ** Dash.app Docset integration
-You can install dash docsets with ~M-x dash-docset-install-docset~ and search
+You can install dash docsets with ~M-x dash-docs-install-docset~ and search
 them offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in
 modes that don't have a specialized :documentation lookup handler.
 
@@ -209,7 +209,7 @@ E.g.
 
 This determines what docsets to implicitly search for when you use
 ~+lookup/documentation~ in a mode with no ~:documentation~ handler. Those
-docsets must be installed with ~dash-docset-install-docset~.
+docsets must be installed with ~dash-docs-install-docset~.
 
 ** Open in eww instead of browser
 ~+lookup/online~ opens the search results with in ~+lookup-open-url-fn~

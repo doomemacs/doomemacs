@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang sh][Issues]]  ↖ [[doom-source:modules/lang/sh/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang sh][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/sh/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang sh
 #+SUBTITLE: She sells {ba,z,fi}sh shells on the C xor
@@ -25,6 +25,9 @@ Fish script) to Doom Emacs.
   (supports bash-language-server).
 - +powershell ::
   Add syntax highlighting for Powershell script files (=.ps1= and =.psm1=).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
  
 ** Packages
 - [[doom-package:][company-shell]] if [[doom-module:][:completion company]]

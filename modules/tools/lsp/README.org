@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools lsp][Issues]]  ↖ [[doom-source:modules/tools/lsp/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::tools lsp][Issues]]  ↖ [[doom-repo:tree/develop/modules/tools/lsp/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :tools lsp
 #+SUBTITLE: M-x vscode
@@ -128,6 +128,9 @@ your ~doom!~ block in =$DOOMDIR/init.el=):
 -python
 +(python +lsp)
 #+end_src
+
+** LSP is slow
+Follow [[https://emacs-lsp.github.io/lsp-mode/page/performance/#tuning][lsp-tuning-guide]] to further fine-tune LSP mode performance.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

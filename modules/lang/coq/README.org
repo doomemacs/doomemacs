@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang coq][Issues]]  ↖ [[doom-source:modules/lang/coq/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::lang coq][Issues]]  ↖ [[doom-repo:tree/develop/modules/lang/coq/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :lang coq
 #+SUBTITLE: Proofs as programs
@@ -22,30 +22,28 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
 - [[doom-package:][company-coq]]
 
 ** Hacks
-/No hacks documented for this module./
++ Replaces coq-mode abbrevs with yasnippet snippets from doom's snippet library
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
 
-* TODO Installation
-[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
-
-#+begin_quote
- 🔨 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
-#+end_quote
-
+* Installation
++ [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
++ To use the completion features of company-coq you need to enable ~(:completion company)~
++ Make sure you have Coq installed and that the ~coqtop~ command is available. This comes with a standard installation of Coq.
+  You can use your linux distribution's Coq package or one of the methods given on the [[https://coq.inria.fr/download][Coq website]].
+  
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
-* TODO Configuration
-#+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+* Configuration
+This module provides no additional configuration over that of the [[Packages]] it loads
 
 * Troubleshooting
+See [[https://github.com/hlissner/doom-emacs/issues?q=is%3Aissue+is%3Aopen+label%3A%22%3Alang+coq"][related github issues]]
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
 * Frequently asked questions

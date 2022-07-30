@@ -1,4 +1,4 @@
-← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor lispy][Issues]]  ↖ [[doom-source:modules/editor/lispy/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+← [[doom-module-index:][Back to module index]]               ! [[doom-module-issues:::editor lispy][Issues]]  ↖ [[doom-repo:tree/develop/modules/editor/lispy/][Github]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
 --------------------------------------------------------------------------------
 #+TITLE:    :editor lispy
 #+SUBTITLE: Vim for lisp, for people who don't like vim
