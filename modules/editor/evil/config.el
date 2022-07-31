@@ -23,7 +23,6 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-i-jump nil)  ; we do this ourselves
 (defvar evil-want-C-u-scroll t)  ; moved the universal arg to <leader> u
 (defvar evil-want-C-u-delete t)
-(defvar evil-want-C-w-scroll t)
 (defvar evil-want-C-w-delete t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)
