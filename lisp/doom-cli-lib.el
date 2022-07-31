@@ -905,7 +905,9 @@ considered as well."
          (context (or context (doom-cli-context-create)))
          (straight-error
           (and (bound-and-true-p straight-process-buffer)
-               (member straight-process-buffer data)
+               (or (member straight-process-buffer data)
+                   (string-match-p (regexp-quote straight-process-buffer)
+                                   (error-message-string data)))
                (with-current-buffer (straight--process-buffer)
                  (split-string (buffer-string) "\n" t))))
          (error-file (doom-cli--output-file 'error context)))
