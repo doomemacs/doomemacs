@@ -102,7 +102,7 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 + Emacs 27.1+ (*28.1 is recommended*, or [native-comp](https://www.emacswiki.org/emacs/GccEmacs). **29+ is not supported**).
 + [ripgrep] 11.0+
 + GNU `find`
-+ *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
++ *OPTIONAL:* [fd] 8.3.0+ (improves file indexing performance for some commands)
   
 Doom is comprised of [~150 optional modules][Modules], some of which may have
 additional dependencies. [Visit their documentation][Modules] or run `bin/doom
