@@ -66,8 +66,8 @@
           (start-process "tangle-config"
                          (get-buffer-create " *tangle config*")
                          "emacs" "--batch"
-                         "--load" (doom-path doom-core-dir "core")
-                         "--load" (doom-path doom-core-dir "autoload/print")
+                         "--load" (doom-path doom-core-dir "doom")
+                         "--load" (doom-path doom-core-dir "lib/print")
                          "--eval"
                          (prin1-to-string
                           `(funcall #',(symbol-function #'+literate-tangle)
