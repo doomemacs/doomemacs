@@ -193,7 +193,7 @@ debug mode is off."
                            ((when-let (file (ignore-errors (file!)))
                               (format "[%s] "
                                       (file-relative-name
-                                       file (doom-path (file-name-directory file) "../")))))
+                                       file (expand-file-name "../" (file-name-directory file))))))
                            (time)))
                   ,output)
                  ,@args)
