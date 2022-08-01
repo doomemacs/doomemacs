@@ -171,7 +171,7 @@ SEE ALSO:
   https://doomemacs.org/discord       Discord chat server
   https://doomemacs.org/roadmap       Development roadmap
   https://git.doomemacs.org           Shortcut to Github org
-  https://git.doomemacs.org/issues    Global issue tracker"
+  https://git.doomemacs.org/todo      Global issue tracker"
   :partial t)
 
 (defcli! :before
