@@ -132,37 +132,39 @@
 ;;
 ;;; Bootstrap
 
-;; Load the heart of Doom Emacs
-(unless (require 'doom (expand-file-name "lisp/doom" user-emacs-directory) t)
-  ;; ...but if that fails, then this is likely not a Doom config.
-  (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
-  (load early-init-file t (not init-file-debug)))
+(let (init-file)
+  ;; Load the heart of Doom Emacs
+  (if (require 'doom (expand-file-name "lisp/doom" user-emacs-directory) t)
+      ;; ...and prepare for an interactive session.
+      (setq init-file (expand-file-name "doom-start" doom-core-dir))
+    ;; ...but if that fails, then this is likely not a Doom config.
+    (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
+    (load early-init-file t (not init-file-debug)))
 
-;; We hijack Emacs' initfile resolver to inject our own entry point. Why do
-;; this? Because:
-;;
-;; - It spares Emacs the effort of looking for/loading useless initfiles, like
-;;   ~/.emacs and ~/_emacs. And skips ~/.emacs.d/init.el, which won't exist if
-;;   you're using Doom (fyi: doom hackers or chemacs users could then use
-;;   $EMACSDIR as their $DOOMDIR, if they wanted).
-;; - Later, 'doom sync' will dynamically generate its bootstrap file, which
-;;   will be important for Doom's profile system later. Until then, we'll use
-;;   lisp/doom-start.el.
-;; - A "fallback" initfile can be trivially specified, in case the
-;;   bootstrapper is missing (if the user hasn't run 'doom sync' or is a
-;;   first-timer). This is an opportunity to display a "safe mode" environment
-;;   that's less intimidating and more helpful than the broken state errors
-;;   would've left Emacs in, otherwise.
-;; - A generated config allows for a file IO optimized startup.
-(define-advice startup--load-user-init-file (:filter-args (args) init-doom)
-  "Initialize Doom Emacs in an interactive session."
-  (list (lambda ()
-          (if (boundp 'doom-core-dir)
-              (expand-file-name "doom-start" doom-core-dir)
-            (expand-file-name "init.el" user-emacs-directory)))
-        (when (boundp 'doom-profiles-dir)
-          (lambda ()
-            (expand-file-name "safe-mode@static/init.el" doom-profiles-dir)))
-        (caddr args)))
+  ;; We hijack Emacs' initfile resolver to inject our own entry point. Why do
+  ;; this? Because:
+  ;;
+  ;; - It spares Emacs the effort of looking for/loading useless initfiles, like
+  ;;   ~/.emacs and ~/_emacs. And skips ~/.emacs.d/init.el, which won't exist if
+  ;;   you're using Doom (fyi: doom hackers or chemacs users could then use
+  ;;   $EMACSDIR as their $DOOMDIR, if they wanted).
+  ;; - Later, 'doom sync' will dynamically generate its bootstrap file, which
+  ;;   will be important for Doom's profile system later. Until then, we'll use
+  ;;   lisp/doom-start.el.
+  ;; - A "fallback" initfile can be trivially specified, in case the
+  ;;   bootstrapper is missing (if the user hasn't run 'doom sync' or is a
+  ;;   first-timer). This is an opportunity to display a "safe mode" environment
+  ;;   that's less intimidating and more helpful than the broken state errors
+  ;;   would've left Emacs in, otherwise.
+  ;; - A generated config allows for a file IO optimized startup.
+  (define-advice startup--load-user-init-file (:filter-args (args) init-doom)
+    "Initialize Doom Emacs in an interactive session."
+    (list (lambda ()
+            (or init-file
+                (expand-file-name "init.el" user-emacs-directory)))
+          (when (boundp 'doom-profiles-dir)
+            (lambda ()
+              (expand-file-name "safe-mode@static/init.el" doom-profiles-dir)))
+          (caddr args))))
 
 ;;; early-init.el ends here
