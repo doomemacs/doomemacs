@@ -26,11 +26,16 @@ This module turns Emacs into a [[https://en.wikipedia.org/wiki/Representational_
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +jq ::
+  Enable native support for reading and processing REST responses with jq.
+  *Requires the =jq= command line utility.*
 
 ** Packages
 - [[doom-package:][company-restclient]] if [[doom-module:][:completion company]]
 - [[doom-package:][restclient]]
+- if [[doom-module:][+jq]]
+  - [[doom-package:][restclient-jq]]
+  - [[doom-package:][jq-mode]]
 
 ** Hacks
 - Adds imenu support to ~restclient-mode~.
