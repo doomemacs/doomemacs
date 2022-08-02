@@ -234,39 +234,6 @@
                                   '(display))))
       (org-element-cache-refresh (point)))))
 
-(defvar doom-docs--kbd-alist
-  (let ((evilp (featurep! :editor evil)))
-    `(("<leader>"      . ,(if evilp "SPC"   "C-c"))
-      ("<localleader>" . ,(if evilp "SPC m" "C-c l"))
-      ("<help>"        . ,(if evilp "SPC h" "C-h")))))
-(defun doom-docs--expand-kbd-h ()
-  "Replace special keywords in [[kbd:][...]] links."
-  (org-with-wide-buffer
-    (let ((inhibit-read-only t))
-      (goto-char (point-min))
-      (while (re-search-forward "\\[\\[kbd:.*\\]\\[\\(.*<[^>]+>.*\\)\\]\\]" nil t)
-        (let ((beg (match-beginning 1))
-              (end (match-end 1)))
-          (if doom-docs-mode
-              (add-text-properties
-               beg end `(display
-                         ,(let ((kbd (match-string-no-properties 1)))
-                            (dolist (rep doom-docs--kbd-alist kbd)
-                              (setq kbd (replace-regexp-in-string (car rep) (cdr rep) kbd))))))
-            (remove-text-properties beg end '(display)))
-          (org-element-cache-refresh beg)))
-      (restore-buffer-modified-p nil))))
-
-(defun doom-docs--realign-tables-h ()
-  "Realign tables, as they may have changed."
-  (org-with-wide-buffer
-    (goto-char (point-min))
-    (while (re-search-forward org-table-line-regexp nil t)
-      (let ((inhibit-read-only t))
-        (org-table-align)))
-    (org-element-cache-refresh (point))
-    (restore-buffer-modified-p nil)))
-
 (defvar doom-docs-mode-alist
   '((flyspell-mode . -1)
     (spell-fu-mode . -1)
@@ -330,8 +297,6 @@ This primes `org-mode' for reading."
            #'doom-docs--hide-drawers-h
            #'doom-docs--hide-stars-h
            #'doom-docs--expand-macros-h
-           #'doom-docs--expand-kbd-h
-           #'doom-docs--realign-tables-h
            #'doom-docs--hide-src-blocks-h)
 
 (defun doom-docs--toggle-read-only-h ()
