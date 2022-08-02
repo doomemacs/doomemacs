@@ -95,13 +95,29 @@ server:
 | [[kbd:][SPC c J]] | Jump to symbol in any workspace     |
 
 ** Differences between eglot and lsp-mode
-Entering the debate about which one to use would be useless. Doom provides an
-easy way to switch out lsp client implementations so you can test for yourself
-which one you prefer.
+The two projects are large and actively developed, so without writing a novel,
+it can only be compared in (very) broad strokes:
 
-Mainly, from a code point of view, lsp-mode has a lot of custom code for UI
-(~lsp-ui-peek~, ~lsp-ui-sideline~, ...), while eglot is more barebones with a
-closer integration with "more basic" emacs packages ([[doom-package:][eldoc]], [[doom-package:][xref]], ...).
+- [[doom-package:][lsp-mode]] tends to be more featureful, beginner-friendly (e.g. offers to
+  install servers for you and has more [[https://emacs-lsp.github.io/lsp-mode][helpful documentation]]), and has a user
+  experience that feels familiar to modern editors/IDEs, but at the cost of
+  performance (at baseline) and complexity (it has more moving parts and
+  reinvents a number of wheels to achieve a slicker UI, like ~lsp-ui-peek~,
+  ~lsp-ui-sideline~, etc).
+
+- [[doom-package:][eglot]] has fewer bells and whistles: it relies on built-in Emacs functionality
+  more (eldoc, xref, capf, project.el, etc), offers less pre-configuration for
+  you, and is more performant than lsp-mode (again, at baseline). It also works
+  with TRAMP out-of-the-box (lsp-mode needs some extra configuration).
+
+#+begin_quote
+ 🕞 I recommend beginners use lsp-mode. More experienced users can can disable
+    many of [[https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/][its inessential features]] to gain back some ground on performance and
+    complexity costs.
+#+end_quote
+
+All that said, it's easy to switch between the two implementations by swapping
+in/out the [[doom-module:][+lsp]] or [[doom-module:][+eglot]] flag when [[id:01cffea4-3329-45e2-a892-95a384ab2338][enabling this module]].
 
 * TODO Configuration
 #+begin_quote
