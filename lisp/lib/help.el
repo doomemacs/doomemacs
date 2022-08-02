@@ -182,9 +182,9 @@ selection of all minor-modes, active or not."
 
 ;;;###autoload
 (defun doom/issue-tracker ()
-  "Open Doom Emacs' issue tracker on Discourse."
+  "Open Doom Emacs' global issue tracker on Discourse."
   (interactive)
-  (browse-url "https://github.com/hlissner/doom-emacs/issues"))
+  (browse-url "https://git.doomemacs.org/todo"))
 
 ;;;###autoload
 (defun doom/report-bug ()
@@ -193,8 +193,7 @@ selection of all minor-modes, active or not."
 If called when a backtrace buffer is present, it and the output of `doom-info'
 will be automatically appended to the result."
   (interactive)
-  ;; TODO Upload doom/info to pastebin and append to querystring
-  (browse-url "https://github.com/hlissner/doom-emacs/issues/new?labels=1.+bug%2C2.+status%3Aunread&template=bug_report.yml"))
+  (browse-url "https://git.doomemacs.org/core/issues/new?labels=1.+bug%2C2.+status%3Aunread&template=bug_report.yml"))
 
 ;;;###autoload
 (defun doom/discourse ()
