@@ -1248,9 +1248,9 @@ between the two."
   (defvar org-attach-id-dir nil)
   (defvar org-babel-python-command nil)
 
-  (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
-        org-persist-directory (concat doom-cache-dir "org-persist/")
+  (setq org-persist-directory (concat doom-cache-dir "org/persist/")
+        org-publish-timestamp-directory (concat doom-cache-dir "org/timestamps/")
+        org-preview-latex-image-directory (concat doom-cache-dir "org/latex/")
         ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
         org-list-allow-alphabetical t)
 
