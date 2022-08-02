@@ -3,7 +3,7 @@
 
 # I will be the default owner for everything in the repo unless a later match
 # takes precedence.
-*  @hlissner
+* @doomemacs/maintainers
 
 # Module maintainers
 # Don't edit this by hand! Use 'doom make workflows'
