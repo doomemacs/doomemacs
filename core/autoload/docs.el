@@ -2,11 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; REVIEW Remove me before pushing
-(defconst doom-docs-dir
-  (expand-file-name "../../docs/" (file-name-directory load-file-name))
-  "Where Doom's documentation files are stored. Must end with a slash.")
-
 (defvar doom-docs-header-alist
   `(("/docs/index\\.org$"
      (left ("↖ FAQ" . "doom-faq:")))
