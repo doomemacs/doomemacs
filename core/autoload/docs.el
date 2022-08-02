@@ -269,13 +269,13 @@ This primes `org-mode' for reading."
           org-hide-macro-markers))
   (when doom-docs-mode
     (make-local-variable 'doom-docs--initial-values))
-  (mapc (fn! ((face . plist))
+  (mapc (lambda! ((face . plist))
           (if doom-docs-mode
               (push (apply #'face-remap-add-relative face plist) doom-docs--cookies)
             (mapc #'face-remap-remove-relative doom-docs--cookies)))
         '((org-document-title :weight bold :height 1.4)
           (org-document-info  :weight normal :height 1.15)))
-  (mapc (fn! ((mode . state))
+  (mapc (lambda! ((mode . state))
           (if doom-docs-mode
               (if (and (boundp mode) (symbol-value mode))
                   (unless (> state 0)
@@ -348,9 +348,9 @@ This primes `org-mode' for reading."
     ("doom-help-modules"       . "id:1ee0b650-f09b-4454-8690-cc145aadef6e")
     ("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
     ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
-    ("doom-module-issues"      . "https://github.com/hlissner/doom-emacs/labels/%s")
-    ("doom-module-history"     . "https://github.com/hlissner/doom-emacs/commits/master/modules/%s")
-    ("doom-report"             . "https://github.com/hlissner/doom-emacs/issues/new/choose")
+    ("doom-module-issues"      . "https://github.com/doomemacs/doomemacs/labels/%s")
+    ("doom-module-history"     . "https://github.com/doomemacs/doomemacs/commits/master/modules/%s")
+    ("doom-report"             . "https://github.com/doomemacs/doomemacs/issues/new/choose")
     ("doom-suggest-edit"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
     ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
     ("github"                  . "https://github.com/%s")))
@@ -527,7 +527,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
    :follow (lambda (link)
              (let ((link (doom-docs-read-link-desc-at-point link))
                    (url "https://github.com")
-                   (doom-repo "hlissner/doom-emacs"))
+                   (doom-repo "doomemacs/doomemacs"))
                (save-match-data
                  (browse-url
                   (cond ((string-match "^\\([^/]+\\(?:/[^/]+\\)?\\)?#\\([0-9]+\\(?:#.*\\)?\\)" link)
@@ -584,7 +584,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
              (find-file (doom-path doom-docs-dir "changelog.org"))
              (org-match-sparse-tree nil link)))
 
-  (add-to-list 'org-link-abbrev-alist '("doom-repo" . "https://github.com/hlissner/doom-emacs/%s"))
+  (add-to-list 'org-link-abbrev-alist '("doom-repo" . "https://github.com/doomemacs/doomemacs/%s"))
 
   (defadvice! doom--display-docs-link-in-eldoc-a (&rest _)
     "Display full doom-*: links in minibuffer when cursor/mouse is over it."
