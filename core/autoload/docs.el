@@ -376,6 +376,11 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
               (append '((:eval . "no") (:tangle . "no"))
                       org-babel-default-header-args)
               save-place-ignore-files-regexp ".")
+  (when (require 'org-glossary nil t)
+    (setq org-glossary-collection-root doom-docs-dir
+          org-glossary-global-terms (list (doom-path org-glossary-collection-root "appendix.org")))
+    (require 'ox)
+    (org-glossary-mode +1))
   (unless org-inhibit-startup
     (doom/reload-docs)
     (unless (local-variable-p 'org-startup-with-inline-images)
