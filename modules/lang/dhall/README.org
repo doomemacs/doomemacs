@@ -2,7 +2,7 @@
 #+title:    :lang dhall
 #+subtitle: Config as code
 #+created:  August 03, 2021
-#+since:    21.12.0
+#+since:    21.12.0 (#4791)
 
 * Description :unfold:
 This module adds [[https://dhall-lang.org/][Dhall]] language support to Emacs.

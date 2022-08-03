@@ -2,7 +2,7 @@
 #+title:    :app emms
 #+subtitle: A media player for music no one's heard of
 #+created:  March 06, 2021
-#+since:    21.12.0
+#+since:    21.12.0 (#3581)
 
 * Description :unfold:
 This module enables Emacs to be used as a music player. It uses [[https://www.musicpd.org/][mpd]] as a backend

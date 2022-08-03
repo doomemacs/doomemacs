@@ -2,7 +2,7 @@
 #+title:    :app everywhere
 #+subtitle: *leave* Emacs!? You must be joking
 #+created:  February 07, 2021
-#+since:    21.12.0
+#+since:    21.12.0 (#4630)
 
 * Description :unfold:
 This module adds system-wide popup Emacs windows for quick edits.
