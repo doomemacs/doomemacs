@@ -383,6 +383,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
   (unless org-inhibit-startup
     (doom/reload-docs)
     (unless (local-variable-p 'org-startup-with-inline-images)
+      (setq org-display-remote-inline-images 'cache)
       (org-display-inline-images))
     (unless (local-variable-p 'org-startup-indented)
       (org-indent-mode +1))
