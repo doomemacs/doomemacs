@@ -27,11 +27,11 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "e9da29b6fafe63abbc2774e9d485ac13d2811b65")
+  :pin "5a49cc5f4f09910fd03d5db590ae2b80f5981a66")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "c1e0980fd7a57ca2042fd78acfb1dfb5c3bc03fa")
+  :pin "39e2abc5629c1be6186bb6489ec4f76524edf82a")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -70,7 +70,7 @@
 (when (featurep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (featurep! +pretty)
-  (package! org-appear :pin "8dd1e564153d8007ebc4bb4e14250bde84e26a34")
+  (package! org-appear :pin "60ba267c5da336e75e603f8c7ab3f44e6f4e4dac")
   (package! org-superstar :pin "03be6c0a3081c46a59b108deb8479ee24a6d86c0")
   (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (featurep! +present)
@@ -78,7 +78,7 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "3faa042393ebfe5699a3bffce775f039d7416ceb")
-  (package! org-re-reveal :pin "93ba4e91f1d007669d39fc76c097ff5d6a64489e")
+  (package! org-re-reveal :pin "f184e66e398e1cfdfd55894c67392805ae531a39")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "171a8db32f5b51d3ddb4a31356e1d9c581b4bbd2")))
+    :pin "e435581215a9eb8e95dde49ce1fb3c25929b80f4")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -118,16 +118,16 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient :pin "586f1fa07f76aaca13cb3f86945759f4b9fb8db7"))
+  (package! ob-restclient :pin "3ac834b02b8276aae1b760312612c3b940598f90"))
 (when (featurep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 
 ;;; Export
 (when (featurep! +pandoc)
-  (package! ox-pandoc :pin "0a35d0fbfa56bdd9ec5ba5bac2fe002b61c05c52"))
+  (package! ox-pandoc :pin "f8eac5e5692fc44a4724ada43191e7c28a1ccf30"))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "85d11219a58d3a7927d7fe67144987a574fa54aa"))
+    :pin "97ff24fe0b8d29c503b88eea69235b02ae71beb0"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "99fa790da55b57a3f2e9aa187493ba434a64250e"))
