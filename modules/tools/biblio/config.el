@@ -24,6 +24,11 @@
         org-cite-follow-processor 'citar
         org-cite-activate-processor 'citar))
 
+(use-package! citar-embark
+  :when (featurep! :completion vertico)
+  :after citar embark
+  :config (citar-embark-mode))
+
 ;; `org-cite' processors
 (use-package! oc-biblatex :after oc)
 (use-package! oc-csl :after oc)
