@@ -21,7 +21,9 @@ selected so it should be possible to use without modifications.
 
 ** Packages
 - [[doom-package:][bibtex-completion]] if [[doom-module:][:completion ivy]] or [[doom-module:][:completion helm]]
+- [[doom-package:][parsebib]] if [[doom-module:][:completion ivy]] or [[doom-module:][:completion helm]] or [[doom-module:][:completion vertico]]
 - [[doom-package:][citar]] if [[doom-module:][:completion vertico]]
+- [[doom-package:][citar-embark]] if [[doom-module:][:completion vertico]]
 - [[doom-package:][helm-bibtex]] if [[doom-module:][:completion helm]]
 - [[doom-package:][ivy-bibtex]] if [[doom-module:][:completion ivy]]
 
