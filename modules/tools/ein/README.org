@@ -1,26 +1,54 @@
-#+TITLE:   tools/ein
-#+DATE:    April 11, 2018
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :tools ein
+#+subtitle: Tame Jupyter notebooks with emacs
+#+created:  April 11, 2018
+#+since:    21.12.0 (#524)
 
-* Table of Contents :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
+* Description :unfold:
+Adds [[https://jupyter.org/][Jupyter]] notebook integration into Emacs.
 
-* Description
-Adds Jupyter notebook integration into emacs.
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/millejoh/emacs-ipython-notebook][ein]]
+** Packages
+- [[doom-package:][ein]]
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
 
-* Features
-Please refer [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_quote
+ 🔨 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+Refer to [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

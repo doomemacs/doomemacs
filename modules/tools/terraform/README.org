@@ -1,69 +1,80 @@
-#+TITLE:   tools/terraform
-#+DATE:    November 21, 2019
-#+SINCE:   v2.1.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :tools terraform
+#+subtitle: Infrastructure as code
+#+created:  November 21, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#syntax-highlighting][Syntax highlighting]]
-  - [[#code-formatting][Code formatting]]
-  - [[#code-navigation][Code navigation]]
-  - [[#code-completion][Code completion]]
-  - [[#documentation][Documentation]]
-  - [[#executing-terraform-commands][Executing Terraform commands]]
-- [[#appendix][Appendix]]
-  - [[#keybindings][Keybindings]]
-    - [[#localleader][:localleader]]
+* Description :unfold:
+This module adds support for working with [[https://www.terraform.io][Terraform]] files within Emacs. This
+includes syntax highlighting, intelligent code completion, and the ability to
+run Terraform commands directly from Emacs.
 
-* Description
-This module adds support for working with [[https://www.terraform.io][Terraform]] files in Doom Emacs. This
-includes syntax highlighting, intelligent code completion, and the ability to run
-Terraform commands directly from Emacs.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/syohex/emacs-terraform-mode][terraform-mode]]
-+ [[https://github.com/rafalcieslak/emacs-company-terraform][company-terraform*]]
+** Packages
+- [[doom-package:][company-terraform]] if [[doom-package:][:completion company]]
+- [[doom-package:][terraform-mode]]
 
-* Prerequisites
-The =terraform= executable must be installed and accessible from your PATH.
+** Hacks
+/No hacks documented for this module./
 
-* Features
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires the ~terraform~ executable to be installed and in your
+=$PATH=.
+
+* Usage
 ** Syntax highlighting
-Syntax highlighting is provided from =terraform-mode= and =hcl-mode=.
+Syntax highlighting is provided from ~terraform-mode~ and ~hcl-mode~.
 
 ** Code formatting
-=:tools terraform= does not provide code formatting directly, but =:editor
-format= works with Terraform files.
+[[doom-module:][:tools terraform]] does not provide code formatting directly, but [[doom-module:][:editor format]]
+works with Terraform files.
 
 ** Code navigation
-Code navigation is supported through =imenu= from =terraform-mode=.
+Code navigation is supported through [[doom-package:][imenu]] from [[doom-package:][terraform-mode]].
 
 ** Code completion
-Code completion of Terraform builtins is provided from =company-terraform= and
+Code completion of Terraform builtins is provided from [[doom-package:][company-terraform]] and
 generally works well despite being generated through a [[https://github.com/rafalcieslak/emacs-company-terraform/blob/master/company-terraform-data.el][static (outdated) file]].
 
-=company-terraform= also provides code completion of resources within your project.
+[[doom-package:][company-terraform]] also provides code completion of resources within your
+project.
 
 ** Documentation
-Documentation is accessible through the normal =company-mode= show documentation
-functionality, thanks to =company-terraform=.
+Documentation is accessible through the normal [[doom-package:][company]] show documentation
+functionality, thanks to [[doom-package:][company-terraform]].
 
 ** Executing Terraform commands
-=:tools terraform= provides commands under the =localleader= to run the most
-common Terraform operations (see Keybindings below).
+[[doom-module:][:tools terraform]] provides commands under [[kbd:][<localleader>]] to run the most common
+Terraform operations:
+| key             | description              |
+|-----------------+--------------------------|
+| [[kbd:][<localleader> i]] | Runs ~$ terraform init~  |
+| [[kbd:][<localleader> p]] | Runs ~$ terraform plan~  |
+| [[kbd:][<localleader> a]] | Runs ~$ terraform apply~ |
 
-* Appendix
-** Keybindings
-*** :localleader
-| key | description           |
-|-----+-----------------------|
-| =i= | Run =terraform init=  |
-| =p= | Run =terraform plan=  |
-| =a= | Run =terraform apply= |
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

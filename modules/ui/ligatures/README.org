@@ -1,72 +1,68 @@
-#+TITLE:   ui/ligatures
-#+DATE:    June 16, 2018
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :ui ligatures
+#+subtitle: Distract folks from your code
+#+created:  June 16, 2018
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-    - [[#font-ligatures-module-flags][Font ligatures module flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#mutsuharus-emacs-mac-port-or-emacs-28-with-harfbuzz-support][Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support]]
-  - [[#not-emacs-mac-and-emacs--27][Not Emacs-mac and Emacs <= 27]]
-- [[#features][Features]]
-  - [[#mathematical-symbols-replacement][Mathematical symbols replacement]]
-  - [[#coding-ligatures][Coding ligatures]]
-- [[#configuration][Configuration]]
-  - [[#setting-ligatures][Setting ligatures]]
-  - [[#changing-ligatures][Changing ligatures]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module enables ligatures and arbitrary symbol substitutions with
 ~mac-auto-operator-composition-mode~ (on supported macOS systems) or composition
 tables (harfbuzz on Emacs 28), falling back on ~prettify-symbols-mode~
 otherwise.
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+extra= Enables extra symbol substitutions in certain modes, for example
-  ~lambda~ in lisps are replaced with ~λ~.
-
-*** Font ligatures module flags
-This module provides four flags for enabling fall-back ligature support for a
-particular font. They are:
-
-+ =+fira= Enables =Fira Code= ligatures. This requires Fira Code Symbol and a
-  patched version of Fira Code (see below).
-+ =+hasklig= Enable =Hasklig= ligatures. This requires a patched version of the
-  HaskLig font (see below).
-+ =+iosevka= Enable =Iosevka= ligatures. This requires a patched version of the
-  Iosevka font (see below).
-+ =+pragmata-pro= Enable =Pragmata Pro= ligatures. This requires the [[https://www.fsd.it/shop/fonts/pragmatapro/][Pragmata
-  Pro font]].
+** Module flags
+- +extra ::
+  Enables extra symbol substitutions in certain modes, for example ~lambda~ in
+  lisps are replaced with ~λ~.
+- +fira ::
+  Enable =Fira Code= ligatures. This requires Fira Code Symbol and [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched
+  version of Fira Code]].
+- +hasklig ::
+  Enable =Hasklig= ligatures. This requires [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched version of the HaskLig
+  font]].
+- +iosevka ::
+  Enable =Iosevka= ligatures. This requires [[id:a7e7402b-e202-4860-878b-d1933cff1d16][a patched version of the Iosevka
+  font]].
+- +pragmata-pro ::
+  Enable =Pragmata Pro= ligatures. This requires the [[https://www.fsd.it/shop/fonts/pragmatapro/][Pragmata Pro font]].
 
 #+begin_quote
-All these flags are ignored _if_ you're sporting either a) Emacs 28+ with
-Harfbuzz support (which can compose ligatures natively), or b) Mitsuharu's
-=emacs-mac= build on macOS (which uses ~mac-auto-operator-composition-mode~).
+ 🚧 Font flags are ignored _if_ you're sporting either a) Emacs 28+ with
+    Harfbuzz support (which can compose ligatures natively), or b) Mitsuharu's
+    =emacs-mac= build on macOS (which uses
+    ~mac-auto-operator-composition-mode~).
 #+end_quote
 
-** Plugins
-This module installs no packages.
+** Packages
+/This module doesn't install any packages./
 
-* Prerequisites
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module requires one of three setups for ligatures to work:
 
 - A recent enough version of Emacs which will compose ligatures automatically
   (Emacs 28 with Harfbuzz support), or
-- Mitsuharu's =emacs-mac= build on macOS (available on homebrew), or
+- Mitsuharu's =emacs-mac= build on macOS (available on Homebrew), or
 - A patched font for Doom's fallback ligature support.
 
 ** Mutsuharu's emacs-mac port or Emacs 28+ with Harfbuzz support
 Ligatures should be handled without any additional configuration.
 
 ** Not Emacs-mac and Emacs <= 27
+:PROPERTIES:
+:ID:       a7e7402b-e202-4860-878b-d1933cff1d16
+:END:
 1. Enable one of the four ligature font flags: =+fira=, =+hasklig=, =+iosevka=
    or =+pragmata-pro=.
 2. Install the patched version of the associated font with ~M-x
@@ -74,8 +70,13 @@ Ligatures should be handled without any additional configuration.
    way because it is a non-free font and must be purchased and installed
    manually.
 
-* TODO Features
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** TODO Mathematical symbols replacement
+
 ** Coding ligatures
 This module includes configuration to compose combinations like =->= or =::=
 into prettier glyphs (called a ligature). Depending on the current version of
@@ -85,8 +86,8 @@ emacs, this is implemented in two different ways :
   which haves the ligatures as separate unicode symbols, and using
   prettify-symbols-mode, =->=-like combinations are manually listed and replaced
   with the correct symbol. The mapping between =->=-like sequences and unicode
-  values in the font are font-specific ; therefore =+fira=, =+iosevka=... files
-  and specific fonts are necessary for it to work.
+  values in the font are font-specific ; therefore [[doom-module:][+fira]], [[doom-module:][+iosevka]]... files and
+  specific fonts are necessary for it to work.
 - composition-function-table method :: regexps are used to match all the usual
   sequences which are composed into ligatures. These regexps are passed to emacs
   directly, which asks Harfbuzz to shape it. Ligatures are obtained
@@ -102,17 +103,23 @@ Even though harfbuzz has been included in emacs 27, there is currently a [[https
 (#40864)]] which prevents a safe usage of /composition-function-table/ method in
 emacs 27.
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Setting ligatures
 If you want to set ligatures for modules that don't have them by default you can
-use the ~set-ligatures!~ macro in your config el file
-#+BEGIN_SRC emacs-lisp
+use the ~set-ligatures!~ macro:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (after! PACKAGE
   (set-ligatures! 'MAJOR-MODE
     :symbol "keyword"))
-#+END_SRC
-eg.
-#+BEGIN_SRC emacs-lisp
+#+end_src
+
+E.g.
+#+begin_src emacs-lisp
 (after! go-mode ; in this case the major mode and package named the same thing
   (set-ligatures! 'go-mode
     :def "func" ; function keyword
@@ -123,9 +130,10 @@ eg.
     :float "float" :bool "bool"
     :for "for"
     :return "return" :yeild "yeild"))
-#+END_SRC
-you can set these symbols out of the box
-#+BEGIN_SRC emacs-lisp
+#+end_src
+
+You can set these symbols out of the box:
+#+begin_src emacs-lisp
 (set-ligatures! 'MAJOR-MODE
     ;; Functional
     :lambda        "lambda keyword"
@@ -158,19 +166,18 @@ you can set these symbols out of the box
     :tuple         "Tuple Keyword "
     :pipe          "Pipe Keyword" ;; FIXME: find a non-private char
     :dot           "Dot operator")
-#+END_SRC
+#+end_src
 
-If you have multiple versions of the same keyword you can set the symbol twice
-
-#+BEGIN_SRC emacs-lisp
+If you have multiple versions of the same keyword you can set the symbol twice:
+#+begin_src emacs-lisp
 (set-ligatures! scala-mode
   :null "none"
   :null "None")
-#+END_SRC
-** Changing ligatures
-if you don't like the symbols chosen you can change them by using...
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+** Changing ligatures
+if you don't like the symbols chosen you can change them by using:
+#+begin_src emacs-lisp
 ;; you don't need to include all of them you can pick and mix
 (plist-put! +ligatures-extra-symbols
   ;; org
@@ -210,7 +217,23 @@ if you don't like the symbols chosen you can change them by using...
   :tuple         "⨂"
   :pipe          "" ;; FIXME: find a non-private char
   :dot           "•")  ;; you could also add your own if you want
-#+END_SRC
+#+end_src
 
-* TODO Troubleshooting
- If you have any problems with this module, do get in touch!
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+** Some symbols are not rendering correctly
+This can usually be fixed by doing one of the following:
+
+- Make sure Symbola (the font) is installed on your system.
+- Otherwise, change [[var:][doom-unicode-font]] (set to Symbola by default).
+- Disable the [[doom-module:][:ui unicode]] module. It not only overrides [[var:][doom-unicode-font]], but
+  should only be used as a last resort.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

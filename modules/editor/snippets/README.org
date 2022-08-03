@@ -1,46 +1,67 @@
-#+TITLE:   editor/snippets
-#+DATE:    February 11, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :editor snippets
+#+subtitle: My elves type so I don't have to
+#+created:  February 11, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#disabling-the-built-in-snippets][Disabling the built-in snippets]]
-- [[#troubleshooting][Troubleshooting]]
+* Description :unfold:
+This module adds snippet expansions to Emacs, powered by [[doom-package:][yasnippet]].
 
-* Description
-This module adds snippets to Emacs, powered by yasnippet.
+** Maintainers
+- [[doom-user:][@hlissner]]
+  
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module exposes no flags.
+** Module flags
+/This module exposes no flags./
 
-** Plugins
-+ [[https://github.com/joaotavora/yasnippet][yasnippet]]
-+ [[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]]
-+ [[https://github.com/hlissner/doom-snippets][doom-snippets]]
+** Packages
+- [[doom-package:][yasnippet]]
+- [[doom-package:][auto-yasnippet]]
+- [[doom-package:][doom-snippets]]
 
 ** TODO Hacks
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
 
-* Prerequisites
-This module has no external dependencies.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* TODO Features
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Configuration
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Disabling the built-in snippets
-Don't want to use provided one? Then add this to your private module,
-
-#+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/packages.el
+#+begin_src emacs-lisp
+;; in $DOOMDIR/packages.el
 (package! doom-snippets :ignore t)
 ;; If you want to replace it with yasnippet's default snippets
 (package! yasnippet-snippets)
-#+END_SRC
+#+end_src
 
-* TODO Troubleshooting
+** Adding custom snippets
+Custom snippets should be added under =$DOOMDIR/snippets/= directory. Refer to [[http://joaotavora.github.io/yasnippet/snippet-development.html][yasnippet-documentation]] on how to write snippets.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

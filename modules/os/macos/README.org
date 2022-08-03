@@ -1,36 +1,45 @@
-#+TITLE:   os/macos
-#+DATE:    February 19, 2017
-#+SINCE:   v1.3
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :os macos
+#+subtitle: Compatibility for our favorite walled garden
+#+created:  February 19, 2017
+#+since:    1.3
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#maintainers][Maintainers]]
-  - [[#plugins][Plugins]]
-- [[#features][Features]]
-  - [[#open-with-x]["Open with X"]]
-
-* Description
+* Description :unfold:
 This module provides extra functionality for macOS.
 
-** Module Flags
-This module provides no flags.
-
 ** Maintainers
-This module has no dedicated maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/emacsorphanage/osx-trash][osx-trash]]
-+ [[https://github.com/purcell/ns-auto-titlebar][ns-auto-titlebar]]
+** Module flags
+/This module has no flags./
 
-* Features
+** Packages
+- [[doom-package:][ns-auto-titlebar]]
+- [[doom-package:][osx-trash]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires a macOS environment.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** "Open with X"
-This module adds various macOS-specific launchers under the =SPC o= prefix (=C-c
-o= for users with Evil disabled).
+This module adds various macOS-specific launchers under the [[kbd:][SPC o]] prefix ([[kbd:][C-c
+o]] for users with Evil disabled).
 
-It also enables Keychain integration for =auth-source=. This is used by our [[file:../../../modules/app/irc/README.org][irc]]
-and [[file:../../../modules/tools/magit/README.org][magit]]-forge modules, for instance.
+It also enables Keychain integration for [[doom-package:][auth-source]]. This is used by our [[doom-module:][:app
+irc]] and [[doom-module:][:tools magit]] modules, for instance.
 
 To support GitHub Forge add an internet password like this to your keychain:
 | Field    | Value                   |
@@ -40,3 +49,19 @@ To support GitHub Forge add an internet password like this to your keychain:
 | Account  | <username>^forge        |
 | Where    | https://api.github.com/ |
 | Password | <token>                 |
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

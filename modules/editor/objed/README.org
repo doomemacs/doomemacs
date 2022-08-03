@@ -1,23 +1,61 @@
-#+TITLE:   editor/objed
-#+DATE:    May 30, 2019
-#+SINCE:   v2.1
+# -*- mode: doom-docs-org -*-
+#+title:    :editor objed
+#+subtitle: Text object editing for the innocent
+#+created:  May 30, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-
-* Description
-This modules adds [[https://github.com/clemera/objed][objed]], a global minor-mode for navigating and manipulating
-text objects. It combines the ideas of versor-mode and other editors like Vim or
-Kakoune and tries to align them with regular Emacs conventions.
-
-#+begin_quote
-This module is incompatible with the =:editor evil=. Enabling them both will
-cause errors.
-#+end_quote
+* Description :unfold:
+This modules adds [[doom-package:][objed]], a global minor-mode for navigating and manipulating
+text objects. It combines the ideas of ~versor-mode~ and other editors like Vim
+or Kakoune and tries to align them with regular Emacs conventions.
 
 [[https://github.com/clemera/objed][See the objed project README]] for information on keybinds and usage.
 
-** Module Flags
-+ ~+manual~ Do not turn =objed= automatically. The user is responsible for calling
-  `objed-activate` (bound to `M-SPC` if using the default Emacs bindings.)
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +manual ::
+  Don't activate [[doom-package:][objed]] at startup, automatically, leaving it to the user to call
+  [[fn:][objed-activate]] (bound to [[kbd:][M-SPC]] if using [[doom-module:][:config default +bindings]]).
+  
+** Packages
+- [[doom-package:][objed]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+#+begin_quote
+ 🚧 This module is incompatible with [[doom-module:][:editor evil]]. Do not enable them both at
+    the same time or you will get errors.
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

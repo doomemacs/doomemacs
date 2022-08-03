@@ -1,64 +1,80 @@
-#+TITLE:   tools/upload
-#+DATE:    Feb 19, 2020
-#+SINCE:   2.0.9
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :tools upload
+#+subtitle: Map local directories to remotes via ssh/ftp
+#+created:  February 20, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#root-local-and-root-remote-must-match][~root-local~ and ~root-remote~ must match]]
-
-* Description
+* Description :unfold:
 Uses ~ssh-deploy~ to map a local folder to a remote one.
 
 From the [[https://github.com/cjohansson/emacs-ssh-deploy/blob/master/README.md][ssh-deploy README]]:
-
-#+BEGIN_QUOTE
+#+begin_quote
 The ssh-deploy plug-in for Emacs makes it possible to effortlessly deploy local files and directories to remote hosts via Tramp (including but not limited to SSH, SFTP, FTP). It tries to provide functions that can be easily used by custom scripts.
 
 The idea for this plug-in was to mimic the behavior of PhpStorm deployment functionality.
-#+END_QUOTE
+#+end_quote
 
 ** Maintainers
-This module has no dedicated maintainers.
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/cjohansson/emacs-ssh-deploy][ssh-deploy]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites.
+** Packages
+- [[doom-package:][ssh-deploy]]
 
-* Features
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 Uses ~ssh-deploy~ to map a local folder to a remote one. Set
-~ssh-deploy-root-remote~ and ~ssh-deploy-root-local~ in a .dir-locals.el file
-to establish this mapping.
-
-Example:
-#+BEGIN_SRC emacs-lisp
+~ssh-deploy-root-remote~ and ~ssh-deploy-root-local~ in a =.dir-locals.el= file
+to establish this mapping. E.g.
+#+begin_src emacs-lisp
 ((nil . ((ssh-deploy-root-local . "/local/path/to/project")
          (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
          (ssh-deploy-on-explicit-save . t))))
-#+END_SRC
+#+end_src
 
-Note: ~ssh-deploy-root-local~ is optional, and will resort to
-~doom-project-root~ if unspecified.
+#+begin_quote
+ 📌 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~
+    if unspecified.
+#+end_quote
 
 * TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 Check out [[https://github.com/cjohansson/emacs-ssh-deploy#deployment-configuration-examples][Deployment configuration examples]] for some ideas of what's possible.
 
 * Troubleshooting
 ** ~root-local~ and ~root-remote~ must match
-The final directory names much match
-#+BEGIN_SRC emacs-lisp
+The final directory names much match:
+#+begin_src emacs-lisp
 ((nil . ((ssh-deploy-root-local . "/local/path/to/example-project")
          (ssh-deploy-root-remote . "/ssh:user@server:/remote/example-project/")
-#+END_SRC
+#+end_src
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

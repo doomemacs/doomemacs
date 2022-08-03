@@ -172,7 +172,7 @@ PLIST can have the following properties:
 ;;; Major mode
 
 (define-derived-mode +doom-dashboard-mode special-mode
-  (format "DOOM v%s" doom-version)
+  (format "DOOM v%s" doom-core-version)
   "Major mode for the DOOM dashboard buffer."
   :syntax-table nil
   :abbrev-table nil
@@ -512,7 +512,11 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
 
 (defun doom-dashboard-widget-footer ()
   (insert
-   "\n"
+   (+doom-dashboard--center
+    +doom-dashboard--width
+    (propertize (concat "DOOM CORE: " doom-core-version "   MODULES: " doom-version)
+                'face 'font-lock-doc-face))
+   "\n\n"
    (+doom-dashboard--center
     (- +doom-dashboard--width 2)
     (with-temp-buffer
@@ -521,5 +525,6 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
                           'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
                           'follow-link t
                           'help-echo "Open Doom Emacs github page")
+
       (buffer-string)))
    "\n"))

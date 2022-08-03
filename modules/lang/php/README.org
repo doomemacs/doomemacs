@@ -1,87 +1,79 @@
-#+TITLE:   lang/php
-#+DATE:    January 16, 2017
-#+SINCE:   v1.3
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang php
+#+subtitle: Perl's insecure younger brother
+#+created:  January 16, 2017
+#+since:    1.3
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#php][PHP]]
-    - [[#macos][MacOS]]
-    - [[#arch-linux][Arch Linux]]
-    - [[#opensuse][openSUSE]]
-  - [[#dependencies][Dependencies]]
-- [[#features][Features]]
-  - [[#lsp-support][LSP Support]]
-  - [[#phpunit][PHPUnit]]
-  - [[#composer][Composer]]
-- [[#configuration][Configuration]]
-  - [[#docker-compose][Docker Compose]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#im-missing-functionality-on-lsp-mode]["I'm missing functionality on lsp-mode"]]
+* Description :unfold:
+This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 
-* Description
-This module adds support for PHP 5.3+ (including PHP7).
-
-+ ctags-based code completion (~company-php~ and ~phpctags~)
-+ eldoc support (~ac-php~ and ~php-extras~)
-+ REPL (~php-boris~)
-+ Code refactoring commands (~php-refactor-mode~)
-+ Unit-test commands (~phpunit~)
-+ Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
-+ Shortcuts for composer commands
-+ [[../../editor/file-templates/templates/php-mode][File templates]]
-+ [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
+- ctags-based code completion (~company-php~ and ~phpctags~)
+- eldoc support (~ac-php~ and ~php-extras~)
+- REPL (~php-boris~)
+- Code refactoring commands (~php-refactor-mode~)
+- Unit-test commands (~phpunit~)
+- Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
+- [[../../editor/file-templates/templates/php-mode][File templates]]
+- [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote
-PHP was the first programming language I got paid to code in, back in the
-Cretaceous period (2003). My sincerest apologies go out to all the programmers
-who inherited my earliest PHP work. I know you're out there, writhing in your
-straitjackets.
+ 💡 PHP was the first programming language I got paid to code in, back in the
+    Cretaceous period (2003). My sincerest apologies go out to all the
+    programmers who inherited my earliest PHP work. I know you're out there,
+    writhing in your straitjackets.
 
-Save a programmer today. Stop a friend from choosing PHP as their first
-language.
+    Save a programmer today. Stop a friend from choosing PHP as their first
+    language.
 #+end_quote
 
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+hack= Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
-+ =+lsp= Enable LSP support through phpactor or intelephense. Requires the ~:tools
-  lsp~ module and the [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor server]] to be installed on your system.
-** Plugins
-+ [[https://github.com/tomterl/php-boris][async]]
-+ [[https://github.com/tomterl/php-boris][php-boris]]
-+ [[https://github.com/arnested/php-extras][php-extras]]
-+ [[https://github.com/emacs-php/php-mode][php-mode]]
-+ [[https://github.com/keelerm84/php-refactor-mode.el][php-refactor-mode]]
-+ [[https://github.com/nlamirault/phpunit.el][phpunit]]
-+ [[https://github.com/emacs-php/composer.el][composer.el]]
-+ =+hack=
-  + [[https://github.com/hhvm/hack-mode][hack-mode]]
-+ =+lsp=
-  + [[https://github.com/emacs-php/phpactor.el][phpactor]]
-  + [[https://github.com/emacs-php/phpactor.el][company-phpactor]]
-+ =:editor format=
-  + [[https://github.com/OVYA/php-cs-fixer][php-cs-fixer]]
+** Module flags
+- +hack ::
+  Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
+- +lsp ::
+  Enable LSP support for ~php-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  (supports [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor]] and intelephense).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module:][:tools tree-sitter]].
 
-* Prerequisites
+** Packages
+- [[doom-package:][async]]
+- [[doom-package:][hack-mode]] if [[doom-module:][+hack]]
+- [[doom-package:][php-boris]]
+- [[doom-package:][php-cs-fixer]] if [[doom-package:][:editor format]]
+- [[doom-package:][php-extras]]
+- [[doom-package:][php-mode]]
+- [[doom-package:][php-refactor-mode]]
+- [[doom-package:][phpunit]]
+- if [[doom-module:][+lsp]]
+  - [[doom-package:][phpactor]]
+  - [[doom-package:][company-phpactor]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires ~php~ (5.3+) and ~composer~.
+
+If [[doom-module:][+lsp]] is enabled, you'll also need one of these LSP servers:
+- Phpactor requires ~php~ 7.3+.
+- Intelephense requires ~node~ and ~npm~.
+
 ** PHP
-To get started with PHP, you'll need ~php~ (5.3+) and ~composer~.
-
-Note for =+lsp=:
-1. In order to make full use of phpactor server, ~php~ (7.3+) is recommended.
-2. If you use intelephense, ~node~ and ~npm~ are needed.
-
 *** MacOS
 PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are
 provided for reference:
 
-#+begin_src sh :tangle (if (doom-system-os 'macos) "yes")
+#+begin_src sh
 brew tap homebrew/homebrew-php
 brew install php71  # or php53, php54, php55
 brew install composer
@@ -92,7 +84,7 @@ brew install npm
 #+end_src
 
 *** Arch Linux
-#+begin_src sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+#+begin_src sh
 sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
 
 # If you use intelephense:
@@ -100,20 +92,32 @@ sudo pacman -S nodejs npm
 #+end_src
 
 *** openSUSE
-#+begin_src sh :dir /sudo::
+#+begin_src sh
 sudo zypper install php-composer
 
 # If you use intelephense:
 sudo zypper install nodejs npm
 #+end_src
 
-** Dependencies
-This module has no required dependencies, but it has a couple optional ones.
+** LSP Support
+There are a number of currently supported LSP servers:
 
-+ ~boris~ (REPL)
-+ ~phpctags~ (better code completion)
-+ ~phpunit~ (unit test commands)
-+ ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
+- [[https://emacs-lsp.github.io/lsp-mode/page/lsp-intelephense/][Intelephense]] (_Recommended_)
+- [[https://emacs-lsp.github.io/lsp-mode/page/lsp-phpactor/][phpactor]]
+- [[https://emacs-lsp.github.io/lsp-mode/page/lsp-serenata/][Serenata]]
+- [[https://emacs-lsp.github.io/lsp-mode/page/lsp-php/][felixbecker]] (Considered unsupported)
+
+Intelephense is currently the only server that supports automatic installation,
+which will trigger either when you open a PHP project or manually invoke
+~lsp-install-server~ through [[kbd:][M-x]].
+
+The others have to be installed manually and added to your =$PATH=.
+
+** Dependencies
+- ~boris~ (REPL)
+- ~phpctags~ (better code completion)
+- ~phpunit~ (unit test commands)
+- ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
 + ~phpactor~ (for LSP if intelephense isn't desired)
 
 #+begin_src sh
@@ -129,34 +133,23 @@ composer global require \
 npm install -g @prettier/plugin-php
 #+end_src
 
-You must ensure that ~~/.composer/vendor/bin~ is in ~PATH~, so these executables are
-visible to Emacs:
-
+You must ensure that =$HOME/.composer/vendor/bin= is in =$PATH=, so these
+executables are visible to Emacs:
 #+begin_src sh
 # place this in your profile file, like ~/.bash_profile or ~/.zshenv
 export PATH="~/.composer/vendor/bin:$PATH"
 #+end_src
 
-You may also need to regenerate your envvar file by running ~doom env~ on the
+You may also need to regenerate your envvar file by running ~$ doom env~ on the
 command line.
 
 *NOTE* phpactor doesn't have to be installed via =composer=, just has to exist in
 your =$PATH=.
 
-* Features
-** LSP Support
-There are a number of currently supported LSP servers:
-
-+ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-intelephense/][Intelephense]] (_Recommended_)
-+ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-phpactor/][phpactor]]
-+ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-serenata/][Serenata]]
-+ [[https://emacs-lsp.github.io/lsp-mode/page/lsp-php/][felixbecker]] (Considered unsupported)
-
-Intelephense is currently the only server that supports automatic installation,
-which will trigger either when you open a PHP project or manually invoke
-=lsp-install-server= through =M-x=.
-
-The others have to be installed manually and added to your =$PATH=.
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
 ** PHPUnit
 This module provides an interface to PHPUnit through a number of commands as
@@ -178,21 +171,25 @@ use the ~phpunit.xml.dist~ convention) , the path can be changed via
 This module provides several convenience methods for triggering composer
 commands:
 
-| Binding             | Function                        |
-|---------------------+---------------------------------|
-| ~<localleader> m c c~ | ~composer~                        |
-| ~<localleader> m c i~ | ~composer-install~                |
-| ~<localleader> m c r~ | ~composer-require~                |
-| ~<localleader> m c u~ | ~composer-update~                 |
-| ~<localleader> m c d~ | ~composer-dump-autoload~          |
-| ~<localleader> m c s~ | ~composer-run-scripts~            |
-| ~<localleader> m c v~ | ~composer-run-vendor-bin-command~ |
-| ~<localleader> m c o~ | ~composer-find-json-file~         |
-| ~<localleader> m c l~ | ~composer-view-lock-file~         |
+| Binding             | Function                          |
+|---------------------+-----------------------------------|
+| [[kbd:][<localleader> m c c]] | ~composer~                        |
+| [[kbd:][<localleader> m c i]] | ~composer-install~                |
+| [[kbd:][<localleader> m c r]] | ~composer-require~                |
+| [[kbd:][<localleader> m c u]] | ~composer-update~                 |
+| [[kbd:][<localleader> m c d]] | ~composer-dump-autoload~          |
+| [[kbd:][<localleader> m c s]] | ~composer-run-scripts~            |
+| [[kbd:][<localleader> m c v]] | ~composer-run-vendor-bin-command~ |
+| [[kbd:][<localleader> m c o]] | ~composer-find-json-file~         |
+| [[kbd:][<localleader> m c l]] | ~composer-view-lock-file~         |
 
-These are all invokable via =M-x= too.
+These are all invokable via [[kbd:][M-x]] too.
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Docker Compose
 A lot of projects rely on running inside docker compose (ie Laravel), and as
 such a minor mode has been configured to attempt to run tests inside the =php-fpm=
@@ -210,11 +207,12 @@ If you wish to specify a different container, modify the
 #+end_src
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 ** "I'm missing functionality on lsp-mode"
 Unfortunately, [[https://intelephense.com/][intelephense]] currently operates under a "freemium" model, and as
 such requires a license for extended features. Once purchased, this can be
 (insecurely) added directly to your config:
-
 #+begin_src emacs-lisp
 (setq lsp-intelephense-licence-key "<key>")
 #+end_src
@@ -223,14 +221,12 @@ A more recommended approach would be to utilise Emacs' own ~auth-sources~ for
 storing authentication info, which can also be encrypted.
 
 Create a file in your home directory (which can optionally be encrypted, verify
-your ~auth-sources~ has the correct values) called ~~/.authinfo~
-
+your ~auth-sources~ has the correct values) called ~~/.authinfo~:
 #+begin_src
 machine * login intelephense password <key>
 #+end_src
 
-And add the following to your config
-
+And add the following to your config:
 #+begin_src emacs-lisp
 (defun my-fetch-password (&rest params)
   (require 'auth-source)
@@ -242,5 +238,13 @@ And add the following to your config
             secret))
       (error "Password not found for %S" params))))
 
-(setq lsp-intelephense-license-key (my-fetch-password :user intelephense))
+(setq lsp-intelephense-licence-key (my-fetch-password :user intelephense))
 #+end_src
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

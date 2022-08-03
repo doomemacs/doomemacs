@@ -1,42 +1,61 @@
-#+TITLE:   ui/vi-tilde-fringe
-#+DATE:    May 22, 2021
-#+SINCE:   v2.0.5
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :ui vi-tilde-fringe
+#+subtitle: Fringe tildes beyond EOB
+#+created:  September 24, 2017
+#+since:    2.0.6
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#configuration][Configuration]]
-
-* Description
-Displays a tilde(~) in the left fringe to indicate an empty line, similar to Vi. 
+* Description :unfold:
+Displays a tilde(~) in the left fringe to indicate an empty line, similar to Vi.
 
 ** Maintainers
-This module has no dedicated maintainers.
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites.
+** Packages
+- [[doom-package:][vi-tilde-fringe]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
+Nothing more needs to be done once the module is activated. Tildes will become
+visible in all buffers, after EOB.
 
 * Configuration
-By default, doom activates ~vi-tilde-fringe-mode~ for ~prog-mode~, ~text-mode~ and ~conf-mode~. To change this to your liking, you can remove any of the modes from the list
-
+By default, doom activates ~vi-tilde-fringe-mode~ for ~prog-mode~, ~text-mode~
+and ~conf-mode~. To change this to your liking, you can remove any of the modes
+from the list:
 #+begin_src emacs-lisp
-;; in ~/.doom.d/config.el
+;; in $DOOMDIR/config.el
 (remove-hook 'text-mode-hook #'vi-tilde-fringe-mode)
 #+end_src
 
-or add new modes where you would like ~vi-tilde-fringe-mode~ enabled.
-
+Or add new modes where you would like ~vi-tilde-fringe-mode~ enabled:
 #+begin_src emacs-lisp
-;; in ~/.doom.d/config.el
+;; in $DOOMDIR/config.el
 (add-hook 'org-mode-hook #'vi-tilde-fringe-mode)
 #+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

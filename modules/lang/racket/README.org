@@ -1,70 +1,89 @@
-#+TITLE:   lang/racket
-#+DATE:    July 29, 2018
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang racket
+#+subtitle: The DSL for DSLs
+#+created:  July 29, 2018
+#+since:    2.0.9 (#772)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#arch-linux][Arch Linux]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#racket-smart-open-bracket-mode][racket-smart-open-bracket-mode]]
-  - [[#unicode-input][Unicode Input]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
-This module provides integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
+* Description :unfold:
+This module adds support for the [[https://www.racket-lang.org/][Racket programming language]] to Doom Emacs.
 
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+lsp= Enables LSP support. Requires jeapostrophe/racket-langserver.
-+ =+xp= Enables the explore mode, which "analyzes expanded code to explain and explore."
+** Module flags
+- +lsp ::
+  Enable support for ~racket-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  (supports [[https://github.com/jeapostrophe/racket-langserver][racket-langserver]]).
+- +xp ::
+  Enable the explore mode (~racket-xp-mode~), which "analyzes expanded code to
+  explain and explore."
 
-** Plugins
-+ [[https://github.com/greghendershott/racket-mode][racket-mode]]
+** Packages
+- [[doom-package:][racket-mode]]
 
-* Prerequisites
-This module only requires ~racket~. Install it directly from the [[https://download.racket-lang.org/][racket website]],
-or check your package manger.
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires ~racket~. Install it from the [[https://download.racket-lang.org/][racket website]] or through
+your OS package manger.
 
 ** Arch Linux
-
-#+begin_src bash
+#+begin_src sh
 pacman -S racket
 #+end_src
 
 Or, for fewer dependencies:
-
-#+begin_src bash
+#+begin_src sh
 pacman -S racket-minimal
 #+end_src
 
-* TODO Features
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** racket-smart-open-bracket-mode
-~racket-smart-open-bracket-mode~ gets turned off automatically if you use ~parinfer~,
-~lispy~. If you wish to enable it, add the following to your ~config.el~:
-#+BEGIN_SRC elisp
+~racket-smart-open-bracket-mode~ gets turned off automatically if you use
+~parinfer~, ~lispy~. If you wish to enable it:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (after! racket-mode
-  (add-hook! racket-mode
-             #'racket-smart-open-bracket-mode))
-#+END_SRC
+  (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
+#+end_src
+
 ** Unicode Input
-The optional ~racket-unicode~ input method lets you type unicode characters such as λ or π.
-To enable unicode input for a single buffer, run ~racket-unicode-input-method-enable~.
-To enable unicode input by default on all racket buffers, add the following hooks
-to your ~config.el~:
-#+BEGIN_SRC elisp
+The optional ~racket-unicode~ input method lets you type unicode characters such
+as λ or π. To enable unicode input for a single buffer, run
+~racket-unicode-input-method-enable~. To enable unicode input by default on all
+racket buffers:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
 (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
-#+END_SRC
-Once enabled, unicode input can be toggled by pressing C-\ or running ~toggle-input-method~.
+#+end_src
 
-* TODO Troubleshooting
+Once enabled, unicode input can be toggled by pressing C-\ or running
+~toggle-input-method~.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

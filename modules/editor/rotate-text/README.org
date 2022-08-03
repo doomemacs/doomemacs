@@ -1,52 +1,78 @@
-#+TITLE:   editor/rotate-text
-#+DATE:    October 14, 2021
-#+SINCE:   v2.0.4
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :editor rotate-text
+#+subtitle: The only back'n'forth nerds will ever know
+#+created:  June 22, 2018
+#+since:    2.0.4
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-
-* Description
-# A summary of what this module does.
-Provides a convenient way to rotate trough a set of related entities using a single key binding. There are both globally available sets as well as mode local once. For example the sequence ~enable~ and ~disable~ is globally available whereas the sequence ~public~, ~protected~ and ~private~ is only available in ~c++~ mode. 
+* Description :unfold:
+This module adds text rotation to Doom Emacs. I.e. The ability to cycle through
+keywords or text patterns at point, like ~true~ and ~false~, or ~public~,
+~protected~, and ~private~ (in ~c++-mode~).
 
 ** Maintainers
-# If this module has no maintainers, then...
-This module has no dedicated maintainers.
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-# If this module has no flags, then...
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/debug-ito/rotate-text.el][rotate-text.el]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites.
+** Packages
+- [[doom-package:][rotate-text]]
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
-With point on a word or symbol that is part of a sequence you can call ~rotate-text~ or ~rotate-text-backward~ to rotate to the next or previous item in the sequence. The list of items will wrap around as you cycle through them.
+** Hacks
+/No hacks documented for this module./
 
-* Configuration
-To enable a set of items to cycle through globally, add the following to your configuration
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+For evil users: [[kbd:][[r]] and [[kbd:][]r]] will cycle back and forward (respectively) through
+specified patterns for the text at point. Patterns will wrap around as you cycle
+through them.
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+To enable a set of items to cycle through globally:
 #+begin_src emacs-lisp
-;; in ~/.doom.d/config.el
+;; in $DOOMDIR/config.el
 (after! rotate-text
-  (pushnew! rotate-text-words '("small" "medium" "large")))
+  (add-to-list 'rotate-text-words '("small" "medium" "large")))
 #+end_src
 
-To add a sequence to a specific mode, you can add something like the following to your configuration
+To add a sequence to a specific mode:
 #+begin_src emacs-lisp
-;; in ~/.doom.d/config.el
+;; in $DOOMDIR/config.el
 (set-rotate-patterns! 'c++-mode
     :words '(("float" "double")))
-#+end_src    
+#+end_src
 
-When configuring a sequence of words or symbols that should be rotated through, it is important that all items are all lower case. The casing will be determined by the item that initiated the rotation. For example, ~Small~ will be replaced with ~Medium~ and ~SMALL~ will be replaced with ~MEDIUM~ using the example described above.
+When configuring a sequence of words or symbols that should be rotated through,
+it is important that all items are all lower case. The casing will be determined
+by the item that initiated the rotation. For example, ~Small~ will be replaced
+with ~Medium~ and ~SMALL~ will be replaced with ~MEDIUM~ using the example
+described above.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

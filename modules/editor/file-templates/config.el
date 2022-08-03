@@ -71,9 +71,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/shell\\.nix$" :trigger "__shell.nix")
     (nix-mode)
     ;; Org
-    ("/README\\.org$"
-     :when +file-templates-in-emacs-dirs-p
-     :trigger "__doom-readme"
+    (doom-docs-org-mode
+     :trigger +file-templates-insert-doom-docs-fn
      :mode org-mode)
     (org-journal-mode :ignore t)
     (org-mode)

@@ -1,92 +1,103 @@
-#+TITLE:   completion/company
-#+DATE:    February 19, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :completion company
+#+subtitle: The ultimate code completion backend
+#+created:  February 19, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#code-completion][Code completion]]
-  - [[#vim-esque-omni-completion-prefix-c-x][Vim-esque omni-completion prefix (C-x)]]
-- [[#configuration][Configuration]]
-  - [[#enable-company-backends-in-certain-modes][Enable company backend(s) in certain modes]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#x-mode-doesnt-have-code-completion-support-or-requires-extra-setup][X-mode doesn't have code completion support or requires extra setup.]]
-  - [[#no-backends-or-the-incorrect-ones-have-been-registered-for-x-mode][No backends (or the incorrect ones) have been registered for X-mode.]]
-
-* Description
-This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. It is required
-for code completion in many of Doom's :lang modules.
+* Description :unfold:
+This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. Many of Doom's
+[[doom-module:][:lang]] modules require it for "intellisense" functionality.
 
 https://assets.doomemacs.org/completion/company/overlay.png
 
-** Module Flags
-+ =+childframe= Enables displaying completion candidates in a child frame,
-  rather than an overlay or tooltip (among with other UI enhancements). *This
-  requires GUI Emacs 26.1+ and is incompatible with the =+tng= flag*
-+ =+tng= Enables completion using only ~TAB~. Pressing ~TAB~ will select the
-  next completion suggestion, while ~S-TAB~ will select the previous one. *This
-  is incompatible with the =+childframe= flag*
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-** Plugins
-+ [[https://github.com/company-mode/company-mode][company-mode]]
-+ [[https://github.com/hlissner/emacs-company-dict][company-dict]]
-+ [[https://github.com/sebastiencs/company-box][company-box]]* (=+childframe=)
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-* Prerequisites
-This module has no direct prerequisites.
+** Module flags
+- +childframe ::
+  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or
+  tooltip. *Requires GUI Emacs.*
+- +tng ::
+  Invoke completion on [[kbd:][TAB]] instad of [[kbd:][C-SPC]]. When company is active, [[kbd:][TAB]] and
+  [[kbd:][S-TAB]] will navigate the completion candidates.
 
-However, some major modes may require additional setup for code completion to
-work in them. Some major modes may have no completion support at all. Check that
-major mode's module's documentation for details.
+** Packages
+- [[doom-package:][company-box]] if [[doom-module:][+childframe]]
+- [[doom-package:][company-dict]]
+- [[doom-package:][company-mode]]
 
-* Features
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module has no direct requirements, but some languages may have their own
+requirements to fulfill before you get code completion in them (and some
+languages may lack code completion support altogether). Run ~$ doom doctor~ to
+find out if you're missing any dependencies.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Code completion
 By default, completion is triggered after a short idle period or with the
-=C-SPC= key. While the popup is visible, the following keys are available:
+[[kbd:][C-SPC]] key. While the popup is visible, the following keys are available:
 
 | Keybind | Description                              |
 |---------+------------------------------------------|
-| =C-n=   | Go to next candidate                     |
-| =C-p=   | Go to previous candidate                 |
-| =C-j=   | (evil) Go to next candidate              |
-| =C-k=   | (evil) Go to previous candidate          |
-| =C-h=   | Display documentation (if available)     |
-| =C-u=   | Move to previous page of candidates      |
-| =C-d=   | Move to next page of candidates          |
-| =C-s=   | Filter candidates                        |
-| =C-S-s= | Search candidates with helm/ivy          |
-| =C-SPC= | Complete common                          |
-| =TAB=   | Complete common or select next candidate |
-| =S-TAB= | Select previous candidate                |
+| [[kbd:][C-n]]     | Go to next candidate                     |
+| [[kbd:][C-p]]     | Go to previous candidate                 |
+| [[kbd:][C-j]]     | (evil) Go to next candidate              |
+| [[kbd:][C-k]]     | (evil) Go to previous candidate          |
+| [[kbd:][C-h]]     | Display documentation (if available)     |
+| [[kbd:][C-u]]     | Move to previous page of candidates      |
+| [[kbd:][C-d]]     | Move to next page of candidates          |
+| [[kbd:][C-s]]     | Filter candidates                        |
+| [[kbd:][C-S-s]]   | Search candidates with helm/ivy          |
+| [[kbd:][C-SPC]]   | Complete common                          |
+| [[kbd:][TAB]]     | Complete common or select next candidate |
+| [[kbd:][S-TAB]]   | Select previous candidate                |
 
 ** Vim-esque omni-completion prefix (C-x)
 In the spirit of Vim's omni-completion, the following insert mode keybinds are
 available to evil users to access specific company backends:
+| Keybind | Description                       |
+|---------+-----------------------------------|
+| [[kbd:][C-x C-]]​] | Complete etags                    |
+| [[kbd:][C-x C-f]] | Complete file path                |
+| [[kbd:][C-x C-k]] | Complete from dictionary/keyword  |
+| [[kbd:][C-x C-l]] | Complete full line                |
+| [[kbd:][C-x C-o]] | Invoke complete-at-point function |
+| [[kbd:][C-x C-n]] | Complete next symbol at point     |
+| [[kbd:][C-x C-p]] | Complete previous symbol at point |
+| [[kbd:][C-x C-s]] | Complete snippet                  |
+| [[kbd:][C-x s]]   | Complete spelling suggestions     |
 
-| Keybind   | Description                       |
-|-----------+-----------------------------------|
-| =C-x C-]= | Complete etags                    |
-| =C-x C-f= | Complete file path                |
-| =C-x C-k= | Complete from dictionary/keyword  |
-| =C-x C-l= | Complete full line                |
-| =C-x C-o= | Invoke complete-at-point function |
-| =C-x C-n= | Complete next symbol at point     |
-| =C-x C-p= | Complete previous symbol at point |
-| =C-x C-s= | Complete snippet                  |
-| =C-x s=   | Complete spelling suggestions     |
+** Searching with multiple keywords
+If the =vertico= module is enabled, users can perform code completion with multiple search keywords with an ampersand =&=.
+More information can be found [[https://github.com/oantolin/orderless#company][here]].
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Enable company backend(s) in certain modes
 The ~set-company-backend!~ function exists for setting ~company-backends~
 buffer-locally in MODES, which is either a major-mode symbol, a minor-mode
 symbol, or a list of either. BACKENDS are prepended to ~company-backends~ for
 those modes.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (after! js2-mode
   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
 
@@ -97,20 +108,18 @@ those modes.
 (after! cc-mode
   (set-company-backend! 'c-mode
     '(:separate company-irony-c-headers company-irony)))
-#+END_SRC
+#+end_src
 
 To unset the backends for a particular mode, pass ~nil~ to it:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (after! sh-script
   (set-company-backend! 'sh-mode nil))
-#+END_SRC
+#+end_src
 
 * Troubleshooting
-If code completion isn't working for you, consider the following common causes
-before you file a bug report:
+[[doom-report:][Report an issue?]]
 
-** X-mode doesn't have code completion support or requires extra setup.
+** X-mode doesn't have code completion support or requires extra setup
 There is no guarantee your language mode will have completion support.
 
 Some, like ~lua-mode~, don't have completion support in Emacs at all. Others may
@@ -120,11 +129,19 @@ requires that you have a Robe server running (~M-x robe-start~).
 
 Check the relevant module's documentation for this kind of information.
 
-** No backends (or the incorrect ones) have been registered for X-mode.
-Doom expects every mode to have an explicit list of company-backends (and as
+** No backends (or the incorrect ones) have been registered for X-mode
+Doom expects every mode to have an explicit list of ~company-backends~ (and as
 short a list as possible). This may mean you aren't getting all the completion
 you want or any at all.
 
-Check the value of ~company-backends~ (=SPC h v company-backends=) from that
-mode to see what backends are available. Check the [[*Assigning company backend(s) to modes][Configuration section]] for
-details on changing what backends are available for that mode.
+Check the value of ~company-backends~ ([[kbd:][SPC h v company-backends]]) from that mode
+to see what backends are available. Check the [[*Assigning company backend(s) to modes][Configuration section]] for details
+on changing what backends are available for that mode.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

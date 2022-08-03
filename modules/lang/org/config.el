@@ -188,21 +188,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
     (when-let* ((context (org-element-context))
                 (path (org-element-property :path context)))
       (pcase (org-element-property :type context)
-        ("kbd"
-         (format "%s %s"
-                 (propertize "Key sequence:" 'face 'bold)
-                 (propertize (+org-read-kbd-at-point path context)
-                             'face 'help-key-binding)))
-        ("doom-module"
-         (format "%s %s"
-                 (propertize "Doom module:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
-        ("doom-package"
-         (format "%s %s"
-                 (propertize "Doom package:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
         (type (format "Link: %s" (org-element-property :raw-link context))))))
 
   ;; Automatic indent detection in org files is meaningless
@@ -544,7 +529,9 @@ relative to `org-directory', unless it is an absolute path."
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
-            '("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s"))
+            '("doom"        . "https://github.com/hlissner/doom-emacs/%s")
+            `("emacsdir"    . ,(doom-path doom-emacs-dir "%s"))
+            `("doomdir"     . ,(doom-path doom-private-dir "%s")))
 
   (+org-define-basic-link "org" 'org-directory)
   (+org-define-basic-link "doom" 'doom-emacs-dir)

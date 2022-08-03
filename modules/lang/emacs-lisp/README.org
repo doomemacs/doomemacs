@@ -1,60 +1,74 @@
-#+TITLE:   lang/emacs-lisp
-#+DATE:    January 16, 2017
-#+SINCE:   v1.3
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang emacs-lisp
+#+subtitle: A parsel-tongue for the oldest serpent
+#+created:  January 16, 2017
+#+since:    1.3
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module extends support for Emacs Lisp in Doom Emacs.
 
-+ Macro expansion
-+ Go-to-definitions or references functionality
+- Macro expansion
+- Go-to-definitions or references functionality
+- Syntax highlighting for defined and quoted symbols
+- Replaces the built-in help with the more powerful [[doom-package:][helpful]]
+- Adds function example uses to documentation
 
 ** Maintainers
-+ @hlissner (author)
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]]
-+ [[https://github.com/Wilfred/elisp-def][elisp-def]]
-+ [[https://github.com/xuchunyang/elisp-demos][elisp-demos]]
-+ [[https://github.com/flycheck/flycheck-cask][flycheck-cask]] (=:checkers syntax=)
-+ [[https://github.com/Fanael/highlight-quoted][highlight-quoted]]
-+ [[https://github.com/joddie/macrostep][macrostep]]
-+ [[https://github.com/tonini/overseer.el][overseer]]
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:][buttercup]]
+- [[doom-package:][elisp-def]]
+- [[doom-package:][elisp-demos]]
+- [[doom-package:][flycheck-cask]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:][flycheck-package]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:][highlight-quoted]]
+- [[doom-package:][macrostep]]
+- [[doom-package:][overseer]]
 
 ** Hacks
-+ Symbols that are defined in the current session are highlighted with
+- Symbols that are defined in the current session are highlighted with
   ~font-lock-variable-face~.
-+ Eldoc will display the values of variables next to its documentation.
-+ ~elisp-demos~ was modified to display API demos for Doom's standard library
+- Eldoc will display the values of variables next to its documentation.
+- ~elisp-demos~ was modified to display API demos for Doom's standard library
   (in [[file:../../../docs/api.org][docs/api.org]]).
-+ This module extends imenu support for Doom's API (e.g. ~package!~,
+- This module extends imenu support for Doom's API (e.g. ~package!~,
   ~use-package~, ~after!~)
-+ Flycheck has been configured to tone down the false positives when you are
+- Flycheck has been configured to tone down the false positives when you are
   editing your Emacs or Doom config.
 
-* Prerequisites
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module's sole dependency is Emacs. It's very obscure, you wouldn't know
 about it.
 
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * TODO Configuration
-# How to configure this module, including common problems and how to address them.
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

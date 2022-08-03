@@ -1,43 +1,56 @@
-#+TITLE:   input/japanese
-#+DATE:    May 13, 2019
-#+SINCE:   2.1
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :input japanese
+#+subtitle: Ah, a man of culture
+#+created:  May 13, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds support for Japanese script.
 
-#+begin_quote
-Because I am unable to personally test this module, help to improve this module
-would be greatly appreciated! Especially where performance is concerned.
-#+end_quote
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/emacs-jp/migemo][migemo]]
-+ [[https://github.com/momomo5717/avy-migemo][avy-migemo]]
-+ [[https://github.com/hsaito/ddskk][ddskk]]
-+ [[https://github.com/coldnew/pangu-spacing][pangu-spacing]]
+** Packages
+- [[doom-package:][avy-migemo]]
+- [[doom-package:][ddskk]]
+- [[doom-package:][migemo]]
+- [[doom-package:][pangu-spacing]]
 
 ** Hacks
-+ ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
+- ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
   a single long line without wanted spaced (when exporting org-mode to html).
 
-* TODO Prerequisites
-+ For incremental search with Migemo, one of the following is required:
-  + [[https://github.com/koron/cmigemo][cmigemo]], which is recommended, or
-  + [[http://0xcc.net/migemo/][CVS Head Migemo]]
-* TODO Features
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+- For incremental search with Migemo, one of the following is required:
+  - [[https://github.com/koron/cmigemo][cmigemo]] (recommended)
+  - or [[http://0xcc.net/migemo/][CVS Head Migemo]]
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
 * TODO Configuration
-* TODO Troubleshooting
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -1,92 +1,102 @@
-#+TITLE:   app/rss
-#+DATE:    May 12, 2020
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :app rss
+#+subtitle: An RSS reader that Google can't shut down
+#+created:  May 12, 2020
+#+since:    2.0.9
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#without-org][Without +org]]
-  - [[#with-org][With +org]]
-  - [[#keybindings][Keybindings]]
-  - [[#news-filtering][News filtering]]
-  - [[#automatically-updating-feed-when-opening-elfeed][Automatically updating feed when opening elfeed]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
-+ Read RSS feeds in the comfort of DOOM (Emacs)
+* Description :unfold:
+Read RSS feeds in the comfort of Emacs.
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+org= to enable ~elfeed-org~ to use ~org-directory/elfeed.org~
+** Module flags
+- +org ::
+  Enable [[doom-package:][elfeed-org]], so you can configure your feeds with an org file
+  (={org-directory}/elfeed.org=) rather than Elisp.
 
-** Plugins
-+ [[https://github.com/skeeto/elfeed][elfeed]]
-+ [[https://github.com/algernon/elfeed-goodies][elfeed-goodies]] 
-+ =+org=
-  + [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
+** Packages
+- [[doom-package:][elfeed]]
+- [[doom-package:][elfeed-goodies]]
+- [[doom-package:][elfeed-org]] if [[doom-module:][+org]]
 
 ** Hacks
-+ By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last 2 weeks of entries visible. This needs to be set after elfeed has loaded like so in your ~config.el~
-  #+begin_src elisp
-(after! elfeed
-  (setq elfeed-search-filter "@1-month-ago +unread"))
+- By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last
+  2 weeks of entries visible. This needs to be set after elfeed has loaded like
+  so in your =$DOOMDIR/config.el=:
+  #+begin_src emacs-lisp
+  (after! elfeed
+    (setq elfeed-search-filter "@1-month-ago +unread"))
   #+end_src
 
-* Prerequisites
-This module has no prerequisites.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Features
-+ As there isn't currently binding for ~elfeed-update~ you can run it with ~M-x elfeed-update~
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Configuration
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+- As there isn't currently binding for ~elfeed-update~ you can run it with ~M-x
+  elfeed-update~
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Without +org
-When you don't want to use org mode to manage your elfeed feeds you can put your subscriptions to personal ~config.el~ file, ex:
-#+BEGIN_SRC elisp
+When you don't want to use org mode to manage your elfeed feeds you can put your
+subscriptions in =$DOOMDIR/config.el=:
+#+begin_src emacs-lisp
 (setq elfeed-feeds
       '("https://this-week-in-rust.org/rss.xml"
         "http://feeds.bbci.co.uk/news/rss.xml"))
-#+END_SRC
+#+end_src
 
 ** With +org
-When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to configure feeds to follow.
-#+BEGIN_SRC org
+When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to
+configure feeds to follow:
+#+begin_src org
 ,* root :elfeed:
 ,** Programming :programming:
 ,*** [[https://this-week-in-rust.org/rss.xml][This Week in Rust]] :rust:
 ,** News :news:
 ,*** Top news :tops:
 ,**** http://feeds.bbci.co.uk/news/rss.xml
-#+END_SRC
-+ Root of ~elfeed-org~ needs to have ~:elfeed:~ tag. This is where ~elfeed-org~ starts to read.
-+ You can have subheaders as in example ~:programming:~, and ~elfeed-org~ applies that tag to all subheader feeds, in example it adds it to ~This Week in Rust~.
-+ You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ (~C-c C-l~) and put name as you want into ~description~.
-+ If you don't want to use ~org-directory/elfeed.org~ file you can specify it with ~(setq rmh-elfeed-org-files '("path/to/your/elfeed/file.org))~
+#+end_src
+- Root of ~elfeed-org~ needs to have ~:elfeed:~ tag. This is where ~elfeed-org~
+  starts to read.
+- You can have subheaders as in example ~:programming:~, and ~elfeed-org~
+  applies that tag to all subheader feeds, in example it adds it to ~This Week
+  in Rust~.
+- You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ ([[kbd:][C-c C-l]])
+  and put name as you want into ~description~.
+- If you don't want to use ~org-directory/elfeed.org~ file you can specify it
+  with ~(setq rmh-elfeed-org-files '("path/to/your/elfeed/file.org))~
 
 ** Keybindings
 + General
-  | Key     | Mode               | Description                    |
-  |---------+--------------------+--------------------------------|
-  | =S-RET= | Elfeed-search-mode | Open link into browser         |
-  | =RET=   | Elfeed-search-mode | Open item                      |
-  | =s=     | Elfeed-search-mode | Filter                         |
-  | =C-j=   | Elfeed-show-mode   | Move to next item              |
-  | =C-k=   | Elfeed-show-mode   | Move to previous item          |
+  | Key   | Mode               | Description            |
+  |-------+--------------------+------------------------|
+  | [[kbd:][S-RET]] | elfeed-search-mode | Open link into browser |
+  | [[kbd:][RET]]   | elfeed-search-mode | Open item              |
+  | [[kbd:][s]]     | elfeed-search-mode | Filter                 |
+  | [[kbd:][C-j]]   | elfeed-show-mode   | Move to next item      |
+  | [[kbd:][C-k]]   | elfeed-show-mode   | Move to previous item  |
 
 + If ~:editor evil +everywhere~
   | Key | Description                 |
   |-----+-----------------------------|
-  | q   | elfeed-kill-buffer          |
-  | r   | elfeed-search-update--force |
-  | g c | Copy link of current entry  |
+  | [[kbd:][q]]   | elfeed-kill-buffer          |
+  | [[kbd:][r]]   | elfeed-search-update--force |
+  | [[kbd:][g c]] | Copy link of current entry  |
 
 ** News filtering
 + Time filtering
@@ -106,9 +116,18 @@ When using ~+org~ flag then configuration is easier. You can use ~org-mode~ to c
   + Exclude ~!something~
 
 ** Automatically updating feed when opening elfeed
-Hook ~elfeed-update~ to ~elfeed-search-mode-hook~
-#+BEGIN_SRC elisp
-(add-hook! 'elfeed-search-mode-hook 'elfeed-update)
-#+END_SRC
+Hook ~elfeed-update~ to ~elfeed-search-mode-hook~:
+#+begin_src emacs-lisp
+(add-hook 'elfeed-search-mode-hook #'elfeed-update)
+#+end_src
 
-* TODO Troubleshooting
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

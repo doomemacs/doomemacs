@@ -1,76 +1,97 @@
-#+TITLE:   tools/direnv
-#+DATE:    July 10, 2019
-#+SINCE:   v2.1.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :tools direnv
+#+subtitle: Save (or destroy) the environment at your leisure
+#+created:  April 05, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
-  - [[#nixos][NixOS]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#direnv--nix-is-slow][direnv + nix is slow]]
-
-* Description
+* Description :unfold:
 This module integrates direnv into Emacs.
 
 #+begin_quote
-direnv is an environment switcher for the shell. It knows how to hook into bash,
-zsh, tcsh, fish shell and elvish to load or unload environment variables
-depending on the current directory. This allows project-specific environment
-variables without cluttering the ~/.profile file.
+ 📌 direnv is an environment switcher for the shell. It knows how to hook into
+    bash, zsh, tcsh, fish shell and elvish to load or unload environment
+    variables depending on the current directory. This allows project-specific
+    environment variables without cluttering the ~/.profile file.
 
-Before each prompt, direnv checks for the existence of a ".envrc" file in the
-current and parent directories. If the file exists (and is authorized), it is
-loaded into a bash sub-shell and all exported variables are then captured by
-direnv and then made available to the current shell.
+    Before each prompt, direnv checks for the existence of a ".envrc" file in
+    the current and parent directories. If the file exists (and is authorized),
+    it is loaded into a bash sub-shell and all exported variables are then
+    captured by direnv and then made available to the current shell.
 #+end_quote
 
-** Module Flags
-This module provides no flags.
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-** Plugins
-+ [[https://github.com/purcell/envrc][envrc]]
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:][envrc]]
 
 ** Hacks
-+ Normally, the direnv environment is updated on ~post-command-hook~. We've
-  changed it to update on ~doom-switch-buffer-hook~, ~doom-switch-window-hook~
-  and ~doom-switch-frame-hook~ instead.
-+ Special direnv keywords/commands are highlighted in direnv-envrc-mode.
-+ A fix has been applied to ensure flycheck searches for executables from within
-  the direnv environment, if any.
+- ~envrc-mode~ has been modified to fail gracefully if ~direnv~ isn't available.
+- ~envrc-global-mode~ has been modified to activate envrc-mode sooner in the
+  major mode activation process, so that any env state performed in mode hooks
+  aren't overwritten by direnv.
+- Added direnv support for Org src blocks.
 
-* Prerequisites
-This module requires the ~direnv~ utility.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires [[https://direnv.net/][direnv]].
 
 ** MacOS
-#+BEGIN_SRC bash
+#+begin_src sh
 brew install direnv
-#+END_SRC
+#+end_src
 
 ** Arch Linux
-~direnv~ is available on the AUR
-
-#+BEGIN_SRC bash
+~direnv~ is available on the AUR:
+#+begin_src sh
 yay -S direnv
-#+END_SRC
+#+end_src
 
 ** NixOS
-#+BEGIN_SRC nix
+#+begin_src nix
 environment.systemPackages = [ pkgs.direnv ];
-#+END_SRC
+#+end_src
 
-Or ~nix-env -i direnv~
+Or ~$ nix-env -i direnv~
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+To make use of direnv you need a =.envrc= file in a directory. Any time you open
+a file or buffer in said directory, the [[doom-package:][envrc]] Emacs package will kick in,
+activate the local env, and inject it into Emacs for the current buffer.
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 ** direnv + nix is slow
 Consider augmenting direnv with [[https://github.com/nix-community/lorri][lorri]], which will cache nix builds and speed up
 direnv tremendously:
-
-#+BEGIN_SRC nix
+#+begin_src nix
 services.lorri.enable = true;
-#+END_SRC
+#+end_src
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

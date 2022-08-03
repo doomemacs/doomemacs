@@ -1,115 +1,121 @@
-#+TITLE:   lang/clojure
-#+DATE:    May 30, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang clojure
+#+subtitle: Java with a lisp
+#+created:  May 30, 2017
+#+since:    2.0.3
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#keybindings][Keybindings]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds support for the Clojure(Script) language.
 
-+ Interactive development environment (~cider~): REPL, compilation, debugging,
+- Interactive development environment (~cider~): REPL, compilation, debugging,
   running tests, definitions & documentation lookup, code completion, and much
   more
-+ Refactoring (~clj-refactor~)
-+ Linting (~clj-kondo~), requires ~:checkers syntax~
-+ LSP support (~clojure-lsp~)
+- Refactoring (~clj-refactor~)
+- Linting (~clj-kondo~), requires ~:checkers syntax~
+- LSP support (~clojure-lsp~)
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+lsp= Enables LSP support, alongside Cider.
+** Module flags
+- +lsp ::
+  Enable LSP support for ~clojure-mode~ (alongside Cider). Requires [[doom-module:][:tools lsp]]
+  and a langserver (supports [[https://clojure-lsp.io/][clojure-lsp]]).
 
-** Plugins
-+ [[https://github.com/clojure-emacs/cider][cider]]
-+ [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor]]
-+ [[https://github.com/borkdude/flycheck-clj-kondo][flycheck-clj-kondo]]
+** Packages
+- [[doom-package:][cider]]
+- [[doom-package:][clj-refactor]]
+- [[doom-package:][flycheck-clj-kondo]] if [[doom-module:][:checkers syntax]]
 
 ** Hacks
-+ Error messages emitted from CIDER are piped into the REPL buffer when it is
+- Error messages emitted from CIDER are piped into the REPL buffer when it is
   first opened, to make them easier to notice.
-+ Disabled the help banner when opening the cider REPL.
+- Disabled the help banner when opening the cider REPL.
 
-* Prerequisites
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module requires:
+- [[https://clojure.org/][clojure]]
+- [[https://leiningen.org/][leiningen]], for the REPL
+- [[https://github.com/borkdude/clj-kondo][clj-kondo]], for linting code
+- [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]], for LSP support (if [[doom-module:][+lsp]])
 
-+ [[https://clojure.org/][clojure]]
-+ [[https://leiningen.org/][leiningen]] (REPL)
-+ [[https://github.com/borkdude/clj-kondo][clj-kondo]] (linter)
-+ With =+lsp=
-  + [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]]
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
-** Keybindings
-| Binding             | Description                                          |
-|---------------------+------------------------------------------------------|
-| =<localleader> '​=   | =cider-jack-in-clj=                                  |
-| =<localleader> C=   | =cider-connect-cljs=                                 |
-| =<localleader> M=   | =cider-macroexpand-all=                              |
-| =<localleader> R=   | =hydra-cljr-help-menu/body=                          |
-| =<localleader> c=   | =cider-connect-clj=                                  |
-| =<localleader> e D= | =cider-insert-defun-in-repl=                         |
-| =<localleader> e E= | =cider-insert-last-sexp-in-repl=                     |
-| =<localleader> e R= | =cider-insert-region-in-repl=                        |
-| =<localleader> e b= | =cider-eval-buffer=                                  |
-| =<localleader> e d= | =cider-eval-defun-at-point=                          |
-| =<localleader> e e= | =cider-eval-last-sexp=                               |
-| =<localleader> e r= | =cider-eval-region=                                  |
-| =<localleader> e u= | =cider-undef=                                        |
-| =<localleader> g b= | =cider-pop-back=                                     |
-| =<localleader> g g= | =cider-find-var=                                     |
-| =<localleader> g n= | =cider-find-ns=                                      |
-| =<localleader> h a= | =cider-apropos=                                      |
-| =<localleader> h c= | =cider-clojuredocs=                                  |
-| =<localleader> h d= | =cider-doc=                                          |
-| =<localleader> h j= | =cider-javadoc=                                      |
-| =<localleader> h n= | =cider-find-ns=                                      |
-| =<localleader> h w= | =cider-clojuredocs-web=                              |
-| =<localleader> i e= | =cider-enlighten-mode=                               |
-| =<localleader> i i= | =cider-inspect=                                      |
-| =<localleader> i r= | =cider-inspect-last-result=                          |
-| =<localleader> m "​= | =cider-jack-in-cljs=                                 |
-| =<localleader> m=   | =cider-macroexpand-1=                                |
-| =<localleader> n N= | =cider-browse-ns-all=                                |
-| =<localleader> n n= | =cider-browse-ns=                                    |
-| =<localleader> n r= | =cider-ns-refresh=                                   |
-| =<localleader> p d= | =cider-pprint-eval-defun-at-point=                   |
-| =<localleader> p D= | =cider-pprint-eval-defun-to-comment=                 |
-| =<localleader> p p= | =cider-pprint-eval-last-sexp=                        |
-| =<localleader> p P= | =cider-pprint-eval-last-sexp-to-comment=             |
-| =<localleader> p r= | =cider-pprint-eval-last-sexp-to-repl=                |
-| =<localleader> r B= | =+clojure/cider-switch-to-repl-buffer-and-switch-ns= |
-| =<localleader> r L= | =cider-load-buffer-and-switch-to-repl-buffer=        |
-| =<localleader> r R= | =cider-restart=                                      |
-| =<localleader> r b= | =cider-switch-to-repl-buffer=                        |
-| =<localleader> r c= | =cider-find-and-clear-repl-output=                   |
-| =<localleader> r l= | =cider-load-buffer=                                  |
-| =<localleader> r n= | =cider-repl-set-ns=                                  |
-| =<localleader> r q= | =cider-quit=                                         |
-| =<localleader> r r= | =cider-ns-refresh=                                   |
-| =<localleader> t a= | =cider-test-rerun-test=                              |
-| =<localleader> t l= | =cider-test-run-loaded-tests=                        |
-| =<localleader> t n= | =cider-test-run-ns-tests=                            |
-| =<localleader> t p= | =cider-test-run-project-tests=                       |
-| =<localleader> t r= | =cider-test-rerun-failed-tests=                      |
-| =<localleader> t s= | =cider-test-run-ns-tests-with-filters=               |
-| =<localleader> t t= | =cider-test-run-test=                                |
+| Keybind           | Command                                              |
+|-------------------+------------------------------------------------------|
+| [[kbd:][<localleader> ']]   | ~cider-jack-in-clj~                                  |
+| [[kbd:][<localleader> C]]   | ~cider-connect-cljs~                                 |
+| [[kbd:][<localleader> M]]   | ~cider-macroexpand-all~                              |
+| [[kbd:][<localleader> R]]   | ~hydra-cljr-help-menu/body~                          |
+| [[kbd:][<localleader> c]]   | ~cider-connect-clj~                                  |
+| [[kbd:][<localleader> e D]] | ~cider-insert-defun-in-repl~                         |
+| [[kbd:][<localleader> e E]] | ~cider-insert-last-sexp-in-repl~                     |
+| [[kbd:][<localleader> e R]] | ~cider-insert-region-in-repl~                        |
+| [[kbd:][<localleader> e b]] | ~cider-eval-buffer~                                  |
+| [[kbd:][<localleader> e d]] | ~cider-eval-defun-at-point~                          |
+| [[kbd:][<localleader> e e]] | ~cider-eval-last-sexp~                               |
+| [[kbd:][<localleader> e r]] | ~cider-eval-region~                                  |
+| [[kbd:][<localleader> e u]] | ~cider-undef~                                        |
+| [[kbd:][<localleader> g b]] | ~cider-pop-back~                                     |
+| [[kbd:][<localleader> g g]] | ~cider-find-var~                                     |
+| [[kbd:][<localleader> g n]] | ~cider-find-ns~                                      |
+| [[kbd:][<localleader> h a]] | ~cider-apropos~                                      |
+| [[kbd:][<localleader> h c]] | ~cider-clojuredocs~                                  |
+| [[kbd:][<localleader> h d]] | ~cider-doc~                                          |
+| [[kbd:][<localleader> h j]] | ~cider-javadoc~                                      |
+| [[kbd:][<localleader> h n]] | ~cider-find-ns~                                      |
+| [[kbd:][<localleader> h w]] | ~cider-clojuredocs-web~                              |
+| [[kbd:][<localleader> i e]] | ~cider-enlighten-mode~                               |
+| [[kbd:][<localleader> i i]] | ~cider-inspect~                                      |
+| [[kbd:][<localleader> i r]] | ~cider-inspect-last-result~                          |
+| [[kbd:][<localleader> m "]] | ~cider-jack-in-cljs~                                 |
+| [[kbd:][<localleader> m]]   | ~cider-macroexpand-1~                                |
+| [[kbd:][<localleader> n N]] | ~cider-browse-ns-all~                                |
+| [[kbd:][<localleader> n n]] | ~cider-browse-ns~                                    |
+| [[kbd:][<localleader> n r]] | ~cider-ns-refresh~                                   |
+| [[kbd:][<localleader> p d]] | ~cider-pprint-eval-defun-at-point~                   |
+| [[kbd:][<localleader> p D]] | ~cider-pprint-eval-defun-to-comment~                 |
+| [[kbd:][<localleader> p p]] | ~cider-pprint-eval-last-sexp~                        |
+| [[kbd:][<localleader> p P]] | ~cider-pprint-eval-last-sexp-to-comment~             |
+| [[kbd:][<localleader> p r]] | ~cider-pprint-eval-last-sexp-to-repl~                |
+| [[kbd:][<localleader> r B]] | ~+clojure/cider-switch-to-repl-buffer-and-switch-ns~ |
+| [[kbd:][<localleader> r L]] | ~cider-load-buffer-and-switch-to-repl-buffer~        |
+| [[kbd:][<localleader> r R]] | ~cider-restart~                                      |
+| [[kbd:][<localleader> r b]] | ~cider-switch-to-repl-buffer~                        |
+| [[kbd:][<localleader> r c]] | ~cider-find-and-clear-repl-output~                   |
+| [[kbd:][<localleader> r l]] | ~cider-load-buffer~                                  |
+| [[kbd:][<localleader> r n]] | ~cider-repl-set-ns~                                  |
+| [[kbd:][<localleader> r q]] | ~cider-quit~                                         |
+| [[kbd:][<localleader> r r]] | ~cider-ns-refresh~                                   |
+| [[kbd:][<localleader> t a]] | ~cider-test-rerun-test~                              |
+| [[kbd:][<localleader> t l]] | ~cider-test-run-loaded-tests~                        |
+| [[kbd:][<localleader> t n]] | ~cider-test-run-ns-tests~                            |
+| [[kbd:][<localleader> t p]] | ~cider-test-run-project-tests~                       |
+| [[kbd:][<localleader> t r]] | ~cider-test-rerun-failed-tests~                      |
+| [[kbd:][<localleader> t s]] | ~cider-test-run-ns-tests-with-filters~               |
+| [[kbd:][<localleader> t t]] | ~cider-test-run-test~                                |
 
 * TODO Configuration
-# How to configure this module, including common problems and how to address them.
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

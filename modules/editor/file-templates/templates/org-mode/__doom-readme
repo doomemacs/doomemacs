@@ -1,70 +1,194 @@
 # -*- mode: snippet -*-
 # name: Doom module readme                                             
 # --
-#+TITLE:   ${1:`(if (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
-                    (format "%s/%s"
-                            (match-string 1 buffer-file-name)
-                            (match-string 2 buffer-file-name))
-                  "")`}
-#+DATE:    `(format (format-time-string "%B %%s, %Y") (string-to-number (format-time-string "%d")))`
-#+SINCE:   ${2:<replace with next tagged release version>}
-#+STARTUP: inlineimages nofold
+#+title:     `(+file-templates-module-for-path)`
+#+subtitle:  <A one-line quip about this module to display in init.example.el>
+#+created:   `(format-time-string "%B %d, %Y")`
+#+since:     `(car (split-string doom-version "-"))` (#COMMIT-OR-PR-REF)
 
-* Table of Contents :TOC_3:noexport:
+* Description :unfold:
+$0Replace this with a short (1-2 sentence) description of what this module does.
+This is displayed in the module index.
 
-* Description
-${3:# A summary of what this module does.}
-
-+ If possible, include a brief list of feature highlights here
-+ Like code completion, syntax checking or available snippets
-+ Include links to packages & external things where possible
+Then a longer, multiple paragraph description goes here, which should explain
+the purpose of the module and the features/technology(ies) it provides.
 
 ** Maintainers
-+ @username_linked_to_gihub (Author)
-+ @username_linked_to_gihub
-+ @username_linked_to_gihub
+- [[doom-user:][@github_username]]
+- [[doom-user:][@github_username]]
+- [[doom-user:][@github_username]]
 
-# If this module has no maintainers, then...
-This module has no dedicated maintainers.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+flag1= A short description of what this flag does and what it might need
-  when enabled.
-+ =+flag2= A short description of what this flag does and what it might need
-  when enabled.
-+ =+flag3= A short description of what this flag does and what it might need
-  when enabled.
+# If a module has no maintainers and can't be casually maintained by Henrik
+# alone, use:
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+
+# Otherwise, use:
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+# Flags should be in alphanumerical order.
+- +bar ::
+  A short description of what this flag does and what it might need when
+  enabled.
+- +childframe ::
+  Display X in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or tooltip. *Requires GUI
+  Emacs.*
+- +lsp ::
+  Enable LSP support for ~X-mode~. Requires [[doom-module:][:tools lsp]] and a
+  langserver (supports A, B, and C).
 
 # If this module has no flags, then...
-This module provides no flags.
+/This module has no flags./
 
-** Plugins
-# A list of linked plugins
-+ [[https://orgmode.org/][org-plus-contrib]]
-+ [[https://github.com/sabof/org-bullets][org-bullets]]
-+ [[https://github.com/TobiasZawada/org-yt][org-yt]]
-+ [[https://github.com/sebastiencs/company-box][company-box]]* (=+childframe=)
-+ =:lang crystal=
-  + [[https://github.com/brantou/ob-crystal][ob-crystal]]
-+ =:lang go=
-  + [[https://github.com/pope/ob-go][ob-go]]
-+ =+present=
-  + [[https://github.com/anler/centered-window-mode][centered-window]]
-  + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
-  + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
+# If this module has flags but you can't document them now, add a TODO to the
+# heading and use:
+#+begin_quote
+ 🔨 This module has flags, but they aren't documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** Packages
+- [[doom-package:][org]]
+- [[doom-package:][org-contrib]] if [[doom-module:][+contrib]]
+- [[doom-package:][org-bullets]] unless  [[doom-module:][+bullets]]
+- if [[doom-module:][+present]]
+  - [[doom-package:][centered-window]]
+  - [[doom-package:][org-tree-slide]]
+  - [[doom-package:][org-re-reveal]]
+
+# If this module installs no packages, then...
+/This module doesn't install any packages./
+
+# If this module installs packages, but you can't document them now, add a TODO
+# to the heading and use:
+#+begin_quote
+ 🔨 This module installs packages, but they aren't documented yet. [[doom-contrib-module:][Document
+    them?]]
+#+end_quote
 
 ** Hacks
-# A list of internal modifications to included packages; omit if unneeded
+# Place a list of internal (and potentially unexpected) modifications to
+# included packages:
+- Fixed X which should help you do Y
+- Advised Z to work harder, better, faster, stronger.
+- Tricked the hobbitses into giving me the precious.
 
-* Prerequisites
-This module has no prerequisites.
+# If there aren't any hacks, use:
+/No hacks documented for this module./
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
+# If this module contains hacks, but you can't document them now, add a TODO to
+# the heading and use:
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
 
-* Configuration
-# How to configure this module, including common problems and how to address them.
+** TODO Changelog
+# Do not edit this by hand. Your commits are your changelog. Commits that
+# shouldn't show up should use the 'Amend: ...' trailer (see
+# https://docs.doomemacs.org/-/git-conventions for details).
+#
+# ALSO: Version headings should be linked to the respective heading in
+# docs/changelog.org.
+** [[doom-tag:][v21.12.0]] [2021-12-30]
+*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+commit BODY
+*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+commit BODY
+*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+commit BODY
+
+# If no changelog is available, use:
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+# This section should describe, in-depth, how to set up this module and its
+# dependencies, starting with this line:
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+# ...Then list its external requirements, if any.
+This module requires:
+- ...
+- ...
+- ...
+# And finally, go into detail about how to install them.
+
+# If there are no external requirements, use:
+/This module has no external requirements./
+
+# If there are prerequisites but you can't document them yet, add TODO to the
+# heading and use:
+#+begin_quote
+ 🔨 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+* Usage
+# Walk the user through how this module is used.
+
+# If this is left empty, add TODO to the heading and use:
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+# If this section has incomplete content, add TODO to the heading and use:
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+* TODO Configuration
+# Walk the user through how to configure this module, including any variables it
+# exposes or user-facing configuration API.
+
+# If this is left empty, add TODO to the heading and use:
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+# If this section has incomplete content, add TODO to the heading and use:
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
-$0
+# List common issues and any workarounds/solutions, or link to external resources. 
+[[doom-report:][Report an issue?]]
+
+** Common issue
+Solution.
+** Common issue
+Solution.
+** Common issue
+Solution.
+
+# If this is left empty, use:
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+[[doom-suggest-faq:][Ask a question?]]
+
+# This is for adoption, design, or niche questions. More general
+# usage/configuration matters should be covered in the sections above.
+** Question
+Answer
+** Question
+Answer
+** Question
+Answer
+
+# If no questions are available, use
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+# A glossary of important major modes, minor modes, commands, functions, faces,
+# and variables that this module exposes. It doesn't have to be exhaustive and
+# should omit explanation/documentation.
+
+# If this is left empty, add TODO to the heading and use:
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
+
+# If this section has incomplete content, add TODO to the heading and use:
+#+begin_quote
+ 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+#+end_quote

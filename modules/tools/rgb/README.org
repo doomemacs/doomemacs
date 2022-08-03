@@ -1,35 +1,36 @@
-#+TITLE:   tools/rgb
-#+DATE:    May 6, 2020
-#+SINCE:   3.0.0
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :tools rgb
+#+subtitle: Creating color strings
+#+created:  May 06, 2020
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
+#+begin_quote
+ 🚧 *This module is deprecated.* The module is too trivial to warrant a module.
+#+end_quote
 
-* Description
+* Description :unfold:
 Highlights color hex values and names with the color itself, and provides tools
 to easily modify color values or formats.
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://elpa.gnu.org/packages/rainbow-mode.html][rainbow-mode]]
-+ [[https://github.com/alphapapa/kurecolor][kurecolor]]
+** Packages
+- [[doom-package:][kurecolor]]
+- [[doom-package:][rainbow-mode]]
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
 
-* Features
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
 =rainbow-mode= provides automatic highlighting to hex color codes, and in
 relevant modes, color names (e.g. html color names in =css-mode= or LaTeX color
 names in =latex-mode=)
@@ -39,13 +40,23 @@ hue of hex colors (and a useful hydra for this, if =:ui hydra= is enabled), as
 well as conversion between hex and css colors
 
 * Configuration
-=hl-line-mode= overrides the color highlighting of =rainbow-mode=, limiting 
-the use of that plugin and on-site color changes using =kurecolor=. To
-automatically disable it only when =rainbow-mode= is active, you can add the
-following hook:
+=hl-line-mode= overrides the color highlighting of =rainbow-mode=, limiting the
+use of that plugin and on-site color changes using =kurecolor=. To automatically
+disable it only when =rainbow-mode= is active, you can add the following hook:
 
-#+BEGIN_SRC elisp
-;; ~/.doom.d/config.el
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (add-hook! 'rainbow-mode-hook
   (hl-line-mode (if rainbow-mode -1 +1)))
-#+END_SRC
+#+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

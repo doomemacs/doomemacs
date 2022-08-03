@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Doom documentation
+# --
+#+title:    ${1:Title}
+#+subtitle: ${2:Subtitle}
+
+$0

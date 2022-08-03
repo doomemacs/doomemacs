@@ -95,7 +95,7 @@ if it's callable, `apropos' otherwise."
              (with-demoted-errors "%s"
                (re-search-forward
                 (if (caddr module)
-                    "\\* Module Flags$"
+                    "\\* Module flags$"
                   "\\* Description$"))
                (when (caddr module)
                  (re-search-forward (format "=\\%s=" (caddr module))

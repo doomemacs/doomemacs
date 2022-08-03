@@ -1,17 +1,80 @@
-#+TITLE:   editor/word-wrap
-#+DATE:    August 26, 2019
-#+SINCE:   v2.1
+# -*- mode: doom-docs-org -*-
+#+title:    :editor word-wrap
+#+subtitle: Soft-wrapping with language-aware indent
+#+created:  August 25, 2019
+#+since:    21.12.0 (#1709)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#configuration][Configuration]]
-
-* Description
-This module adds a minor-mode ~+word-wrap-mode~, which intelligently wraps long
+* Description :unfold:
+This module adds a minor-mode [[fn:][+word-wrap-mode]], which intelligently wraps long
 lines in the buffer without modifying the buffer content.
 
+** Maintainers
+- [[doom-user:][@flatwhatson]]
+  
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:][adaptive-wrap]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+** Activation
+Word wrapping is not enabled by default.
+
+Wrapping can be toggled in the current buffer with ~M-x +word-wrap-mode~. The
+default doom bindings bind this to [[kbd:][SPC t w]] for ~evil~ users.
+
+To enable wrapping in a specific mode, add it to the appropriate hook in your
+~config.el~:
+#+begin_src emacs-lisp
+;; enable word-wrap in C/C++/ObjC/Java
+(add-hook 'c-mode-common-hook #'+word-wrap-mode)
+#+end_src
+
+To customize the behaviour in a specific mode:
+#+begin_src emacs-lisp
+;; use a single indent in json-mode
+(add-hook! 'json-mode-hook
+  (setq-local +word-wrap-extra-indent 'single)
+  (+word-wrap-mode +1))
+#+end_src
+
+To turn on word wrapping (almost) everywhere:
+#+begin_src emacs-lisp
+;; enable word-wrap (almost) everywhere
+(+global-word-wrap-mode +1)
+#+end_src
+
+To disable global word-wrapping in a specific mode:
+#+begin_src emacs-lisp
+;; disable global word-wrap in emacs-lisp-mode
+(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
+#+end_src
+
+** Settings
 Wrapped lines will be indented to match the preceding line. In code buffers,
 lines which are not inside a string or comment will have extra indentation as
 determined by ~+word-wrap-extra-indent~. The default is to increase the indent
@@ -37,45 +100,13 @@ The ~+word-wrap-visual-modes~ variable lists modes which should only enable
 ~visual-line-mode~ and not provide any prefix indentation. This is useful for
 modes like ~org-mode~ which handle prefix indentation themselves.
 
-** Module Flags
-This module provides no flags.
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
-** Plugins
-+ [[https://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
-* Configuration
-Word wrapping is not enabled by default.
-
-Wrapping can be toggled in the current buffer with ~M-x +word-wrap-mode~. The
-default doom bindings bind this to ~SPC t w~ for ~evil~ users.
-
-To enable wrapping in a specific mode, add it to the appropriate hook in your
-~config.el~:
-
-#+BEGIN_SRC emacs-lisp
-;; enable word-wrap in C/C++/ObjC/Java
-(add-hook 'c-mode-common-hook #'+word-wrap-mode)
-#+END_SRC
-
-To customize the behaviour in a specific mode:
-
-#+BEGIN_SRC emacs-lisp
-;; use a single indent in json-mode
-(add-hook! 'json-mode-hook
-  (setq-local +word-wrap-extra-indent 'single)
-  (+word-wrap-mode +1))
-#+END_SRC
-
-To turn on word wrapping (almost) everywhere:
-
-#+BEGIN_SRC emacs-lisp
-;; enable word-wrap (almost) everywhere
-(+global-word-wrap-mode +1)
-#+END_SRC
-
-To disable global word-wrapping in a specific mode:
-
-#+BEGIN_SRC emacs-lisp
-;; disable global word-wrap in emacs-lisp-mode
-(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
-#+END_SRC
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

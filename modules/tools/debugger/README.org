@@ -1,0 +1,168 @@
+# -*- mode: doom-docs-org -*-
+#+title:    :tools debugger
+#+subtitle: Step through code to help you add bugs
+#+created:  February 20, 2020
+#+since:    2.0.0
+
+* Description :unfold:
+Introduces a code debugger to Emacs, powered by [[doom-package:][realgud]] or [[doom-package:][dap-mode]] (LSP).
+
+This document will help you to configure [[doom-package:][dap-mode]] [[https://emacs-lsp.github.io/dap-mode/page/configuration/#native-debug-gdblldb][Native Debug(GDB/LLDB)]] as
+there is still not *enough* documentation for it.
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +lsp ::
+  Enable support for [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protocol]] (DAP) debuggers.
+
+** Packages
+- [[doom-package:][realgud]]
+- [[doom-package:][realgud-trepan-ni]] if [[doom-module:][:lang javascript]]
+- if [[doom-module:][+lsp]]
+  - [[doom-package:][dap-mode]] 
+  - [[doom-package:][posframe]] 
+
+** TODO Hacks
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+#+begin_quote
+ 🔨 /This module's prerequisites documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+Make sure all of these pre-requirements is in your ~$PATH~:
+- =nodejs=
+- =lldb= and =lldb-mi= (optional)
+- =gdb= (optional), requires =unzip=
+
+If you are getting an error like ~Searching for program no such file or
+directory "node"~, then you need [[github:nodejs/node][nodejs]] ([[github:emacs-lsp/dap-mode/issues/79][emacs-lsp/dap-mode#79]]).
+
+** Realgud debuggers
+*** lldb and lldb-mi
+This is optional if you want to debug with [[https:lldb.llvm.org][LLDB]]. Install lldb and [[github:lldb-tools/lldb-mi][lldb-mi]].
+
+*** gdb
+This is optional if you want to debug with [[https:www.gnu.org/software/gdb/][GDB]]. Install gdb.
+
+You will need ~unzip~ for ~dap-gdb-lldb-setup~. It downloads a VS-Code extension
+and it needs to extract compressed downloaded file.
+
+You need this if you are having ~"wrong-type-argument stringp nil"~ error when
+calling ~dap-gdb-lldb-setup~. [[github:emacs-lsp/dap-mode/issues/313][See emacs-lsp/dap-mode#313]]
+
+** DAP debuggers
+*** Python
+DAP expects [[https://github.com/Microsoft/ptvsd][ptvsd]] by default as the Python debugger, but [[https://github.com/microsoft/debugpy][debugpy]] is recommended.
+See [[*Configuration][Configuration]].
+
+*installing ptvsd:*
+#+begin_src sh
+pip3 install ptvsd --user
+#+end_src
+
+*install debugpy:*
+#+begin_src sh
+pip3 install debugpy --user
+#+end_src
+
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
+(after! dap-mode
+  (setq dap-python-debugger 'debugpy))
+#+end_src
+
+*** C, C++, Rust, Golang
+Needs [[https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode][lldb-vscode]]. Install LLDB from your package manager.
+
+*Fedora:*
+#+begin_src sh
+dnf install lldb
+#+end_src
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+- ~M-x +debugger/start~
+- ~M-x +debugger/start-last~
+- ~M-x +debugger/quit~
+  
+** Realgud
+1. Call ~dap-gdb-lldb-setup~ function.
+2. Use ~dap-debug-edit-template~ to configure debugging settings for your
+   project. [[github:WebFreak001/code-debug/blob/master/package.json#L72][Available settings can be inspected here.]] Call ~eval-buffer~ to save
+   your settings. *Don't save the file!*
+3. Call ~dap-debug~, select a configuration and start debugging.
+
+** dap-mode with ~+lsp~
+Intuitive and powerful debugging.
+
+- Breakpoints
+- REPL
+- *local variable view:* Allows you to browse variables in the current stack
+  frame.
+- *expressions:* Add expressions to either watch variables or generic
+  expressions.
+  
+** Keybindings
+#+begin_src emacs-lisp
+(map! :map dap-mode-map
+      :leader
+      :prefix ("d" . "dap")
+      ;; basics
+      :desc "dap next"          "n" #'dap-next
+      :desc "dap step in"       "i" #'dap-step-in
+      :desc "dap step out"      "o" #'dap-step-out
+      :desc "dap continue"      "c" #'dap-continue
+      :desc "dap hydra"         "h" #'dap-hydra
+      :desc "dap debug restart" "r" #'dap-debug-restart
+      :desc "dap debug"         "s" #'dap-debug
+
+      ;; debug
+      :prefix ("dd" . "Debug")
+      :desc "dap debug recent"  "r" #'dap-debug-recent
+      :desc "dap debug last"    "l" #'dap-debug-last
+
+      ;; eval
+      :prefix ("de" . "Eval")
+      :desc "eval"                "e" #'dap-eval
+      :desc "eval region"         "r" #'dap-eval-region
+      :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+      :desc "add expression"      "a" #'dap-ui-expressions-add
+      :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+      :prefix ("db" . "Breakpoint")
+      :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+      :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+      :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+      :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
+#+end_src
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+- There is a known issue with the ~+debugger/start~ command, which is bound to
+  [[kbd:][SPC o d]] right now. It prints "No debugging session to quit" no matter what.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

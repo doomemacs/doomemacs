@@ -1,31 +1,54 @@
-#+TITLE:   lang/qt
-#+DATE:    May 22, 2021
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang qt
+#+subtitle: The cutest GUI framework ever
+#+created:  June 02, 2018
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-
-* Description
-# A summary of what this module does.
+* Description :unfold:
 This module provides language functionality for [[https://qt.io][Qt]] specific files.
 
-+ Syntax highlighting for [[https:://en.wikipedia.org/wiki/QML][qml]] files
-+ Syntax highlighting for .pro and .pri files used by [[https://doc.qt.io/qt-5/qmake-project-files.html][qmake]]
+- Syntax highlighting for [[https:://en.wikipedia.org/wiki/QML][qml]] files
+- Syntax highlighting for =.pro= and =.pri= files used by [[https://doc.qt.io/qt-5/qmake-project-files.html][qmake]]
 
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/coldnew/qml-mode/tree/master][qml-mode]]
-+ [[https://github.com/EricCrosson/qt-pro-mode][qt-pro-mode]]
+** Packages
+- [[doom-package:][qml-mode]]
+- [[doom-package:][qt-pro-mode]]
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

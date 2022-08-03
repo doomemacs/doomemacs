@@ -1,78 +1,101 @@
-#+TITLE:   tools/magit
-#+DATE:    March 14, 2018
-#+SINCE:   v2.0.0
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :tools magit
+#+subtitle: Wield git like a wizard
+#+created:  February 20, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#enable-gravatars][Enable Gravatars]]
-  - [[#enable-granular-diff-highlights-for-all-hunks][Enable granular diff-highlights for all hunks]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module provides Magit, an interface to the Git version control system.
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +forge ::
+  Enable Forge; a porcelain for managing Github issues and PRs from within
+  Emacs. Will take a while on first run to build =emacsql-sqlite=.
+
+** Packages
+- [[doom-package:][evil-magit]] if [[doom-module:][:editor evil +everywhere]]
+- [[doom-package:][forge]] if [[doom-module:][+forge]]
+- [[doom-package:][code-review]]
+- [[doom-package:][magit]]
+- [[doom-package:][magit-gitflow]]
+- [[doom-package:][magit-todos]]
+
+** Hacks
+- [[doom-package:][magit]] has been modified to recognize =$XDG_CACHE_HOME/git/credential/socket=.
+- [[doom-package:][magit]] has been modified to invalidate the projectile cache when you check out
+  a new branch or commit.
+- [[doom-package:][magit]] has been modified to revert repo buffers (e.g. after changing branches)
+  when you later switch to them, rather than all at once.
+- [[doom-package:][forge]] was modified to defer compilation of emacsql-sqlite until you try to use
+  forge, rather than when magit first loads (which could be as soon as startup).
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires:
+- [[https://git-scm.com/][Git]]
+- [[doom-module:][+forge]] requires [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]]
+- [[doom-package:][code-review]] will also require a token setup (see [[https://github.com/wandersoncferreira/code-review#configuration][configuration]] for your particular forge)
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+Start magit with [[kbd:][<leader> g g]] (~M-x magit-status~).
 
 If you are new to Magit, see the [[https://github.com/magit/magit#getting-started][Getting Started]] section of its project readme.
 
-** Maintainers
-This module has no dedicated maintainers.
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-** Module Flags
-+ =+forge= Enable Forge; a porcelain for managing issues and PRs from within
-  Emacs. Will take a while on first run to build emacsql-sqlite.
-
-** Plugins
-+ [[https://github.com/magit/magit][magit]]
-+ [[https://github.com/magit/forge][forge]]* (=+forge=)
-+ [[https://github.com/jtatarik/magit-gitflow][magit-gitflow]]
-+ [[https://github.com/alphapapa/magit-todos][magit-todos]]
-+ [[https://github.com/charignon/github-review][github-review]]
-+ [[https://github.com/emacs-evil/evil-magit][evil-magit]]* (=:editor evil +everywhere=)
-
-** Hacks
-+ =forge= was modified to defer compilation of emacsql-sqlite until you try to
-  use forge, rather than when magit first loads (which could be as soon as
-  startup).
-+ =magit= has been modified to recognize
-  =$XDG_CACHE_HOME/git/credential/socket=.
-+ =magit= has been modified to invalidate the projectile cache when you check
-  out a new branch or commit.
-+ =magit= has been modified to revert repo buffers (e.g. after changing
-  branches) when you later switch to them, rather than all at once.
-
-* Prerequisites
-This module requires ~git~.
-
-Forge will require [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]] the first time you run =forge-pull=.
-
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
-
-* Configuration
-Add these to =$DOOMDIR/config.el=.
 ** Enable Gravatars
-This will enable gravatars when viewing commits. The service used by default is [[https://www.libravatar.org/][Libravatar]].
-#+BEGIN_SRC emacs-lisp
-(setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
-#+END_SRC
+To enable gravatars when viewing commits:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
+(after! magit
+  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")))
+#+end_src
 
 ** Enable granular diff-highlights for all hunks
-
-By default, changes are highlighted *linewise* for all but the selected hunk. This
-has [[https://magit.vc/manual/magit/Performance.html][performance reasons]]. You can enable character-wise highlights for all
-visible hunks with:
-
-#+BEGIN_SRC emacs-lisp
+By default, changes are highlighted *linewise* for all but the selected hunk.
+This is so for [[https://magit.vc/manual/magit/Performance.html][performance reasons]]. You can enable character-wise highlights for
+/all/ visible hunks with:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (after! magit
   (setq magit-diff-refine-hunk 'all))
-#+END_SRC
+#+end_src
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+** "I recently updated and now I get 'deferred error : (wrong-type-argument sequencep code-review--auth-token-set\?)' whenever I try to review'"
+The previous package "github-review" was replaced with a package that supercedes it called "code-review", which requires a simple change in your authinfo file.
+
+#+begin_src authinfo
+machine api.github.com login yourlogin^github-review password MYTOKENGOESHERE
+#+end_src
+
+becomes
+
+#+begin_src authinfo
+machine api.github.com login yourlogin^code-review password MYTOKENGOESHERE
+#+end_src
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

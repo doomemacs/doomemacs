@@ -1,60 +1,82 @@
-#+TITLE:   lang/scheme
-#+DATE:    July 23, 2019
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :lang scheme
+#+subtitle: A fully conniving family of lisps
+#+created:  July 23, 2019
+#+since:    21.12.0 (#1588)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#commands][Commands]]
-    - [[#geiser][Geiser]]
+* Description :unfold:
+This module provides support for the Scheme family of Lisp languages, powered by
+[[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
 
-* Description
-This module provides an environment for hacking and having fun in scheme. It is
-powered by [[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+chez=
-+ =+chibi=
-+ =+chicken=
-+ =+gambit=
-+ =+gauche=
-+ =+guile=
-+ =+kawa=
-+ =+mit=
-+ =+racket=
+** Module flags
+- +chez ::
+- +chibi ::
+- +chicken ::
+- +gambit ::
+- +gauche ::
+- +guile ::
+- +kawa ::
+- +mit ::
+- +racket ::
 
-** Plugins
-+ [[https://gitlab.com/jaor/geiser][geiser]]
-+ [[https://github.com/nbfalcon/macrostep-geiser][macrostep-geiser]]
-+ [[https://gitlab.com/emacs-geiser/chez][geiser-chez]] (if =+chez=)
-+ [[https://gitlab.com/emacs-geiser/chibi][geiser-chibi]] (if =+chibi=)
-+ [[https://gitlab.com/emacs-geiser/chicken][geiser-chicken]] (if =+chicken=)
-+ [[https://gitlab.com/emacs-geiser/gambit][geiser-gambit]] (if =+gambit=)
-+ [[https://gitlab.com/emacs-geiser/gauche][geiser-gauche]] (if =+gauche=)
-+ [[https://gitlab.com/emacs-geiser/guile][geiser-guile]] (if =+guile=)
-+ [[https://github.com/flatwhatson/flycheck-guile][flycheck-guile]] (if =+guile= and =:checkers syntax=)
-+ [[https://gitlab.com/emacs-geiser/kawa][geiser-kawa]] (if =+kawa=)
-+ [[https://gitlab.com/emacs-geiser/mit][geiser-mit]] (if =+mit=)
-+ [[https://gitlab.com/emacs-geiser/racket][geiser-racket]] (if =+racket=)
+** Packages
+- [[doom-package:][flycheck-guile]] if [[doom-module:][+guile]] and [[doom-module:][:checkers syntax]]
+- [[doom-package:][geiser]]
+- [[doom-package:][geiser-chez]] if [[doom-module:][+chez]]
+- [[doom-package:][geiser-chibi]] if [[doom-module:][+chibi]]
+- [[doom-package:][geiser-chicken]] if [[doom-module:][+chicken]]
+- [[doom-package:][geiser-gambit]] if [[doom-module:][+gambit]]
+- [[doom-package:][geiser-gauche]] if [[doom-module:][+gauche]]
+- [[doom-package:][geiser-guile]] if [[doom-module:][+guile]]
+- [[doom-package:][geiser-kawa]] if [[doom-module:][+kawa]]
+- [[doom-package:][geiser-mit]] if [[doom-module:][+mit]]
+- [[doom-package:][geiser-racket]] if [[doom-module:][+racket]]
+- [[doom-package:][macrostep-geiser]]
 
-* Prerequisites
-This module requires you to have at least one of the supported schemes, namely:
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+Depending on which flags you have enabled on this module, you'll need the
+associated Schemes, namely:
 - [[https://www.gnu.org/software/guile][Guile]] 2.2.0 or better
 - [[https://call-cc.org][Chicken]] 4.8.0 or better
 - [[https://www.gnu.org/software/mit-scheme][MIT/GNU Scheme]] 9.1.1 or better
 - [[https://synthcode.com/scheme/chibi][Chibi Scheme]] 0.7.3 or better
 - [[https://www.scheme.com][Chez Scheme]] 9.4 or better
 
-Their executables must be present in your path for geiser to work properly.
+Their executables must be present in your =$PATH= for [[doom-package:][geiser]] to work properly.
 
-* Features
-** Commands
-*** Geiser
-| command             | key / ex command | description          |
-|---------------------+------------------+----------------------|
-| ~+scheme/open-repl~ | =:repl=          | Open the Scheme Repl |
-|                     |                  |                      |
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+| command             | key / ex command      | description          |
+|---------------------+-----------------------+----------------------|
+| ~+scheme/open-repl~ | [[kbd:][<leader> o r]], =:repl= | Open the Scheme Repl |
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

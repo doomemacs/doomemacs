@@ -1,51 +1,66 @@
-#+TITLE:   input/chinese
-#+DATE:    May 13, 2019
-#+SINCE:   2.1
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :input chinese
+#+subtitle: Spend your 3 hours a week in Emacs
+#+created:  May 13, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#using-fcitx5][Using fcitx5]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds support for traditional Chinese script by introducing two input
 methods: Pinyin and Wubi.
 
-#+begin_quote
-Because I am unable to personally test this module, help to improve this module
-would be greatly appreciated! Especially where performance is concerned.
-#+end_quote
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/tumashu/pyim][pyim]] (unless =+wubi=)
-+ [[https://github.com/zilongshanren/chinese-wbim][chinese-wbim]] (if =+wubi=)
-+ [[https://github.com/cute-jumper/fcitx.el][fcitx]]
-+ [[https://github.com/cute-jumper/ace-pinyin][ace-pinyin]]
-+ [[https://github.com/coldnew/pangu-spacing][pangu-spacing]]
+** Packages
+- [[doom-package:][ace-pinyin]]
+- [[doom-package:][chinese-wbim]] if [[doom-module:][+wubi]]
+- [[doom-package:][fcitx]]
+- [[doom-package:][pangu-spacing]]
+- [[doom-package:][pyim]] unless [[doom-module:][+wubi]]
 
 ** Hacks
-+ ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
+- ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
   a single long line without wanted spaced (when exporting org-mode to html).
 
-* TODO Prerequisites
-* TODO Features
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_quote
+ 🔨 This module is missing install instructions. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
 * TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Using fcitx5
 Modify ~fcitx-remote-command~ to change the default:
 
-#+BEGIN_SRC elisp
+#+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (setq fcitx-remote-command "fcitx5-remote")
-#+END_SRC
+#+end_src
 
-* TODO Troubleshooting
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

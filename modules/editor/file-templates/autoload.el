@@ -96,6 +96,14 @@ evil is loaded and enabled)."
              (file-relative-name path doom-private-dir))
             ((abbreviate-file-name path))))))
 
+;;;###autoload
+(defun +file-templates-module-for-path (&optional path)
+  "Generate a title for a doom module's readme at PATH."
+  (let ((m (doom-module-from-path (or path (buffer-file-name)))))
+    (if (eq (cdr m) 'README.org)
+        (symbol-name (car m))
+      (format "%s %s" (car m) (cdr m)))))
+
 
 ;;
 ;;; Commands
@@ -133,3 +141,20 @@ for it. This is used for testing."
                      :key #'yas--template-key :test #'equal))
         (message "Found %s" (cons pred plist))
       (message "Found rule, but can't find associated snippet: %s" (cons pred plist)))))
+
+
+;;
+;;; Trigger functions
+
+(defun +file-templates-insert-doom-docs-fn ()
+  "Expand one of Doom's README templates depending."
+  (+file-templates--expand
+   t :trigger
+   (let ((path (file-truename (buffer-file-name))))
+     (cond ((string-match-p "/modules/[^/]+/README\\.org$" path)
+            "__doom-category-readme")
+           ((string-match-p "/modules/[^/]+/[^/]+/README\\.org$" path)
+            "__doom-readme")
+           ((file-in-directory-p path doom-docs-dir)
+            "__doom-docs")
+           ("__")))))

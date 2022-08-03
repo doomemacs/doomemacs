@@ -1,96 +1,102 @@
-#+TITLE:   app/twitter
-#+DATE:    October 11, 2019
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :app twitter
+#+subtitle: Be superficial in plain text
+#+created:  October 11, 2019
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-- [[#appendix][Appendix]]
-  - [[#commands--keybindings][Commands & Keybindings]]
-
-* Description
+* Description :unfold:
 Enjoy twitter from emacs.
 
-+ View various timelines side by side, e.g. user's timeline, home, etc.
-+ Post new tweets
-+ Send direct messages
-+ Retweet
-+ Follow and un-follow users
-+ Favorite tweets
+- View various timelines side by side, e.g. user's timeline, home, etc.
+- Post new tweets
+- Send direct messages
+- Retweet
+- Follow and un-follow users
+- Favorite tweets
 
-** Module Flags
-This module provides no flags.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/hayamiz/twittering-mode][twittering-mode]]
-+ [[https://github.com/abo-abo/avy][avy]]
+** Module flags
+/This module has no flags./
 
-** TODO Hacks
-{A list of internal modifications to included packages}
+** Packages
+- [[doom-package:][avy]]
+- [[doom-package:][twittering-mode]]
 
-* Prerequisites
+** Hacks
+/No hacks documented for this module./
 
-+ For SSL connection (required by Twitter's API), one of the followings is required:
-  + [[http://curl.haxx.se/][cURL]]
-  + [[http://www.gnu.org/software/wget/][GNU Wget]]
-  + [[http://www.openssl.org/][OpenSSL]]
-  + [[http://www.gnu.org/software/gnutls/][GnuTLS]]
-+ [[http://www.gnupg.org/][GnuPG]] is required for keeping the OAuth token encrypted in local storage.
-+ ~twittering-icon-mode~ converts retrieved icons into XPM by default. To
-  achieve this and for displaying icons in formats that are not supported by
-  Emacs as well as for resizing icon images, [[http://www.imagemagick.org/][ImageMagick]] is required.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-  To build emacs with ImageMagick support the ~--with-imagemagick~ flag needs to
-  be passed to the ~configure~ script, e.g. ~./configure --with-imagemagick~.
-  For detailed instruction on how to build Emacs from source please refer to
-  [[https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL][INSTALL]] in Emacs' savannah repository.
-+ For keeping retrieved icons in local storage, [[http://www.gzip.org/][gzip]] is required.
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* TODO Features
-An in-depth list of features, how to use them, and their dependencies.
+This module requires:
+- One of the following (for SSL connections; required by Twitter's API):
+  - [[http://curl.haxx.se/][cURL]]
+  - [[http://www.gnu.org/software/wget/][GNU Wget]]
+  - [[http://www.openssl.org/][OpenSSL]]
+  - [[http://www.gnu.org/software/gnutls/][GnuTLS]]
+- [[http://www.gnupg.org/][GnuPG]], for encrypting the OAuth token, stored locally.
+- [[http://www.gzip.org/][gzip]], for compressing retrieved profile pictures,
+- [[http://www.imagemagick.org/][ImageMagick]], for displaying and resizing profile pictures.
+
+  Build Emacs with ImageMagick support using the ~--with-imagemagick~ flag ([[https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL][how
+  to build Emacs from source]]).
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * TODO Configuration
-How to configure this module, including common problems and how to address them.
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Troubleshooting
-Currently ~twittering-mode~ binds =SPC=, breaking its functionality as a leader
-key. To work around this issue you may use =M-SPC= instead when in
-~twittering-mode~.
-
-* Appendix
 ** Commands & Keybindings
 Here is a list of available commands and their default keybindings (defined in
-[[./config.el][config.el]]).
-
+[[./config.el][config.el]]):
 | command             | key / ex command | description                                                 |
 |---------------------+------------------+-------------------------------------------------------------|
-| ~+twitter/quit~     | =q=              | Close current window                                        |
-| ~+twitter/quit-all~ | =Q=              | Close all twitter windows and buffers, and delete workspace |
+| ~+twitter/quit~     | [[kbd:][q]]                | Close current window                                        |
+| ~+twitter/quit-all~ | [[kbd:][Q]]                | Close all twitter windows and buffers, and delete workspace |
 
-And when ~:editor evil +everywhere~ is active:
-
+And when [[doom-module:][:editor evil +everywhere]] is active:
 | command                                          | key / ex command | description                                                      |
 |--------------------------------------------------+------------------+------------------------------------------------------------------|
-| ~twittering-favorite~                            | =f=              | Favorite/Like a tweet                                            |
-| ~twittering-unfavorite~                          | =F=              | Un-favorite/Un-like a tweet                                      |
-| ~twittering-follow~                              | =C-f=            | Follow user                                                      |
-| ~twittering-unfollow~                            | =C-F=            | Un-follow user                                                   |
-| ~twittering-delete-status~                       | =d=              | Delete a tweet                                                   |
-| ~twittering-retweet~                             | =r=              | Retweet                                                          |
-| ~twittering-toggle-or-retrieve-replied-statuses~ | =R=              | Toggle or retrieve replies                                       |
-| ~twittering-update-status-interactive~           | =o=              | Update tweets                                                    |
-| ~+twitter/ace-link~                              | =O=              | Open some visible link from a ~twittering-mode~ buffer using ace |
-| ~twittering-search~                              | =/=              | Search                                                           |
-| ~twittering-goto-next-status~                    | =J=              | Go to next tweet                                                 |
-| ~twittering-goto-previous-status~                | =K=              | Go to previous tweet                                             |
-| ~twittering-goto-first-status~                   | =gg=             | Go to first tweet                                                |
-| ~twittering-goto-last-status~                    | =G=              | Go to last tweet                                                 |
-| ~twittering-goto-next-status-of-user~            | =gj=             | Go to next tweet of user                                         |
-| ~twittering-goto-previous-status-of-user)))~     | =gk=             | Go to previous tweet of user                                     |
+| ~twittering-favorite~                            | [[kbd:][f]]                | Favorite/Like a tweet                                            |
+| ~twittering-unfavorite~                          | [[kbd:][F]]                | Un-favorite/Un-like a tweet                                      |
+| ~twittering-follow~                              | [[kbd:][C-f]]              | Follow user                                                      |
+| ~twittering-unfollow~                            | [[kbd:][C-F]]              | Un-follow user                                                   |
+| ~twittering-delete-status~                       | [[kbd:][d]]                | Delete a tweet                                                   |
+| ~twittering-retweet~                             | [[kbd:][r]]                | Retweet                                                          |
+| ~twittering-toggle-or-retrieve-replied-statuses~ | [[kbd:][R]]                | Toggle or retrieve replies                                       |
+| ~twittering-update-status-interactive~           | [[kbd:][o]]                | Update tweets                                                    |
+| ~+twitter/ace-link~                              | [[kbd:][O]]                | Open some visible link from a ~twittering-mode~ buffer using ace |
+| ~twittering-search~                              | [[kbd:][/]]                | Search                                                           |
+| ~twittering-goto-next-status~                    | [[kbd:][J]]                | Go to next tweet                                                 |
+| ~twittering-goto-previous-status~                | [[kbd:][K]]                | Go to previous tweet                                             |
+| ~twittering-goto-first-status~                   | [[kbd:][gg]]               | Go to first tweet                                                |
+| ~twittering-goto-last-status~                    | [[kbd:][G]]                | Go to last tweet                                                 |
+| ~twittering-goto-next-status-of-user~            | [[kbd:][gj]]               | Go to next tweet of user                                         |
+| ~twittering-goto-previous-status-of-user)))~     | [[kbd:][gk]]               | Go to previous tweet of user                                     |
+
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+** ~twittering-mode~ overrides the [[kbd:][SPC]] key
+Currently ~twittering-mode~ binds [[kbd:][SPC]], breaking its functionality as a leader
+key for evil users. To work around this issue you may use [[kbd:][M-SPC]] instead.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
+

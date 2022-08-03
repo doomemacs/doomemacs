@@ -1,73 +1,78 @@
-#+TITLE:   tools/eval
-#+DATE:    February 13, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :tools eval
+#+subtitle: Run code, run (also, repls)
+#+created:  February 20, 2017
+#+since:    2.0.0
 
-* Table of Contents                                             :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#inline-code-evaluation][Inline Code Evaluation]]
-  - [[#repls][REPLs]]
-- [[#configuration][Configuration]]
-  - [[#register-a-repl-for-a-major-mode][Register a REPL for a major-mode]]
-  - [[#change-how-code-is-evaluated-in-a-major-mode][Change how code is evaluated in a major mode]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This modules adds inline code evaluation support to Emacs and a universal
 interface for opening and interacting with REPLs.
 
-** Module Flags
-+ =+overlay= Enables the use of overlays (near the cursor) to display the result
-  of inline code evaluation (rather than the minibuffer). That is, unless the
-  results are too big, in which case it will still fall back to popup buffers.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/syohex/emacs-quickrun][quickrun]]
+** Module flags
+- +overlay ::
+  Enable the use of overlays (near the cursor) to display the result of inline
+  code evaluation (rather than the minibuffer). If the results are too big the
+  minibuffer will be used anyway.
+
+** Packages
+- [[doom-package:][quickrun]]
 
 ** Hacks
-+ Quickrun has been modified to:
-  + Use only one output window, in case of consecutive execution of code.
-  + The quickrun window will resize itself to fit its output, once the
+- Quickrun has been modified to:
+  - Use only one output window, in case of consecutive execution of code.
+  - The quickrun window will resize itself to fit its output, once the
     underlying process is finished executing the code.
 
-* Prerequisites
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module has no direct prerequisites.
 
 However, many languages will require that you install their interpreters, code
 runners and/or repls to power the functionality of this module. Visit the
-documentation of their respective =:lang= module for instructions.
+documentation of their respective [[doom-module:][:lang]] module for instructions.
 
-* Features
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Inline Code Evaluation
 Quickrun can be invoked via:
-+ ~M-x +eval/buffer~ (or ~gR~, or ~M-r~)
-+ ~M-x +eval/region~
-+ ~M-x +eval/region-and-replace~
-+ Evil users can use the ~gr~ operator to select and run a region.
+- ~M-x +eval/buffer~ (or [[kbd:][gR]], or [[kbd:][M-r]])
+- ~M-x +eval/region~
+- ~M-x +eval/region-and-replace~
+- Evil users can use the [[kbd:][gr]] operator to select and run a region.
 
 ** REPLs
 Invoked via:
-+ =SPC o r= or ~:repl~ will open a REPL in a popup window. =SPC o R= or ~:repl!~
+- [[kbd:][SPC o r]] or ~:repl~ will open a REPL in a popup window. [[kbd:][SPC o R]] or ~:repl!~
   will open a REPL in the current window. If a REPL is already open and a
   selection is active, it will be sent to the REPL.
-+ ~M-x +eval/open-repl-other-window~ (=SPC o r=)
-+ ~M-x +eval/open-repl-same-window~ (=SPC o R=)
-+ ~M-x +eval/send-region-to-repl~ (=SPC c s=) while a selection (and REPL) is
+- ~M-x +eval/open-repl-other-window~ ([[kbd:][SPC o r]])
+- ~M-x +eval/open-repl-same-window~ ([[kbd:][SPC o R]])
+- ~M-x +eval/send-region-to-repl~ ([[kbd:][SPC c s]]) while a selection (and REPL) is
   active
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Register a REPL for a major-mode
 REPLs are defined for most languages Doom supports. Check that language module's
 README.org to see if it does (and if it requires additional setup).
 
 To use them, you may use ~M-x +eval/open-repl-other-window~, ~M-x
 +eval/open-repl-same-window~, ~:repl~ (for evil users) or the default binding:
-=SPC o r=. These will open a REPL in a popup window.
+[[kbd:][SPC o r]]. These will open a REPL in a popup window.
 
 #+begin_quote
 You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but this
@@ -79,19 +84,18 @@ Otherwise, you can define your own for a specified major mode:
 
 ~(set-repl-handler! MAJOR-MODES FUNCTION)~
 
-MAJOR-MODES is a single major mode symbol or a list of them.
+=MAJOR-MODES= is a single major mode symbol or a list of them.
 
-FUNCTION should return a repl buffer. Any window changes in this function are
-ignored, then the REPL is opened in a popup window.
-
-#+BEGIN_SRC emacs-lisp
+=FUNCTION= should return a repl buffer. Any window changes in this function are
+ignored, then the REPL is opened in a popup window. E.g.
+#+begin_src emacs-lisp
 (defun +lua/open-repl ()
   (interactive)
   (lua-start-process "lua" "lua")
   (pop-to-buffer lua-process-buffer))
 
 (set-repl-handler! 'lua-mode #'+lua/open-repl)
-#+END_SRC
+#+end_src
 
 ** Change how code is evaluated in a major mode
 Run regions or entire buffers with [[https://github.com/syohex/emacs-quickrun][Quickrun]]. Output is show in a popup window.
@@ -101,25 +105,31 @@ to interpreters or compilers. However, occasionally, you'll find a language
 without support (like [[https://crystal-lang.org/][Crystal]]), or a language with better Emacs integration
 (like elisp).
 
-Here's how you define a "runner":
-
-#+BEGIN_SRC emacs-lisp
+To define a "runner":
+#+begin_src emacs-lisp
 (set-eval-handler! 'crystal-mode
   '((:command     . "crystal")
     (:exec        . "%c %s")
     (:description . "Run Crystal script")))
-#+END_SRC
+#+end_src
 
 A simpler version is simply to use the path to the binary:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (set-eval-handler! 'groovy-mode "groovy")
-#+END_SRC
+#+end_src
 
 Or if you'd rather run an elisp command:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
-#+END_SRC
+#+end_src
 
 * TODO Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
