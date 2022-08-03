@@ -43,18 +43,17 @@
      (goto-char (point-min))
      (when (looking-at-p org-drawer-regexp)
        (re-search-forward org-drawer-regexp nil t 2)
-       (setq beg (1+ (line-end-position))))
+       (goto-char (setq beg (1+ (line-end-position)))))
      (with-silent-modifications
-       (let ((inhibit-modification-hooks nil))
-         (when (re-search-forward "^-\\{80\\}" 512 t)
-           (delete-region beg (1+ (line-end-position))))
-         (when doom-docs-mode
-           (let* ((menu
-                   (cl-loop for (regexp . rules) in doom-docs-header-alist
+       (let ((inhibit-modification-hooks nil)
+             (menu (cl-loop for (regexp . rules) in doom-docs-header-alist
                             if (seq-find (doom-rpartial #'string-match-p (buffer-file-name))
                                          (ensure-list regexp))
-                            return rules))
-                  (fn
+                            return rules)))
+         (when (re-search-forward "^-\\{80\\}" 512 t)
+           (delete-region beg (1+ (line-end-position))))
+         (when (and menu doom-docs-mode)
+           (let* ((fn
                    (lambda (menu)
                      (cl-destructuring-bind (icon . label)
                          (split-string (car menu) " ")
@@ -115,7 +114,7 @@
     (while (re-search-forward org-drawer-regexp nil t)
       (let ((beg (max (point-min) (1- (match-beginning 0))))
             (end (re-search-forward org-drawer-regexp nil t)))
-        (when (save-excursion (goto-char beg) (bobp))
+        (unless (org-current-level)
           (cl-incf end))
         (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden)))))
 
@@ -378,7 +377,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
               save-place-ignore-files-regexp ".")
   (when (require 'org-glossary nil t)
     (setq org-glossary-collection-root doom-docs-dir
-          org-glossary-global-terms (list (doom-path org-glossary-collection-root "appendix.org")))
+          org-glossary-global-terms (doom-glob org-glossary-collection-root "appendix.org"))
     (require 'ox)
     (org-glossary-mode +1))
   (unless org-inhibit-startup
@@ -411,7 +410,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
                (file-exists-p file-name))
       (read-only-mode +1))))
 
-;;;###autoload (add-hook 'doom-docs-org-mode-hook #'doom-docs-read-only-h)
+(add-hook 'doom-docs-org-mode-hook #'doom-docs-read-only-h)
 
 
 ;;
