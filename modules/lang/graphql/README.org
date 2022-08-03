@@ -1,54 +1,53 @@
-#+TITLE:   lang/graphql
-#+DATE:    March 31, 2022
-#+SINCE:   v2.0
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang graphql
+#+subtitle: Give queries a REST
+#+created:  March 31, 2022
+#+since:    22.04.0 (#6226)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#sending-queries][Sending queries]]
-  - [[#viewing-docs][Viewing docs]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds [[https://www.graphql.org][GraphQL]] support to Doom Emacs.
 
-+ Code completion
-+ LSP support (=+lsp=)
-  + Diagnostics (GraphQL syntax linting/validations) (spec-compliant)
-  + Autocomplete suggestions (spec-compliant)
-  + Hyperlink to fragment definitions and named types (type, input, enum) definitions (spec-compliant)
-  + Outline view support for queries and SDL
-  + Symbols support across the workspace
-+ Local schema viewer
-+ Org-babel exporter (requires =:lang org=)
+It includes:
+- Code completion
+- LSP support ([[doom-module:][+lsp]])
+  - Diagnostics (GraphQL syntax linting/validations) (spec-compliant)
+  - Autocomplete suggestions (spec-compliant)
+  - Hyperlink to fragment definitions and named types (type, input, enum) definitions (spec-compliant)
+  - Outline view support for queries and SDL
+  - Symbols support across the workspace
+- Local schema viewer
+- Org-babel exporter (requires [[doom-module:][:lang org]])
 
 ** Maintainers
-+ [[https://github.com/elken][@elken]] (Author)
+- [[doom-user:][@elken]]
 
-** Module Flags
-+ =+lsp= Enable LSP support through [[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#readme][graphql-language-service-cli]] (also requires =:tools lsp=)
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/davazp/graphql-mode][graphql-mode]]
-+ [[https://github.com/ifitzpatrick/graphql-doc.el][graphql-doc]]
-+ [[https://github.com/timoweave/company-graphql][company-graphql]] (when =+lsp= is disabled)
+** Module flags
+- +lsp ::
+  Enable LSP support for ~graphql-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  ([[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#readme][graphql-language-service-cli]]).
+
+** Packages
+- [[doom-package:][company-graphql]] unless [[doom-module:][+lsp]]
+- [[doom-package:][graphql-mode]]
+- [[doom-package:][graphql-doc]]
 
 ** Hacks
-Added a convenience function =+graphql-doc-open-config= to open schema docs from a
-[[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file.
+- Added a convenience function [[fn:][+graphql-doc-open-config]] to open schema docs from
+  a [[https://github.com/jimkyndemeyer/graphql-config-examples][.graphqlconfig]] file.
 
-* Prerequisites
-There are no prerequisites for using this module. LSP server should be
-downloaded upon opening a graphql buffer.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Features
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module has no direct requirements, but the +lsp flag requires a [[https://emacs-lsp.github.io/lsp-mode/page/lsp-graphql/][supported
+LSP server]].
+
+* Usage
 ** Sending queries
 When visiting a graphql buffer, you have access to the ability to send the
 current query with =C-c C-c= which will prompt you for an optional variables file,
@@ -100,16 +99,26 @@ When using the doc viewer, there are a few bindings for navigating around.
 | =RET=         | -                   | Follow the next label under =point= |
 
 * Configuration
-Most of the "magic" in the module relies on a properly configured
-[[https://github.com/jimkyndemeyer/graphql-config-examples][=.graphqlconfig=]] file, so follow the examples linked to create an appropriate
-setup.
+Most of the "magic" in the module relies on a properly configured [[https://github.com/jimkyndemeyer/graphql-config-examples][.graphqlconfig]]
+file, so follow the examples linked to create an appropriate setup.
 
-LSP configuration is handled through [[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#graphql-configuration-file-graphqlrcyml][GraphQL Config]] to handle custom directives/documents/validation etc.
+LSP configuration is handled through [[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#graphql-configuration-file-graphqlrcyml][GraphQL Config]] to handle custom
+directives/documents/validation etc.
 
-These files will also be useful to other editors, so it would be worth trying to
-get them into version control.
+These files will also be useful to other editors, so it would be worth checking
+them into version control.
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 - [[https://github.com/ifitzpatrick/graphql-doc.el/issues][Issues with the doc viewer]]
 - [[https://github.com/davazp/graphql-mode/issues][Issues with graphql-mode]]
 - [[https://github.com/emacs-lsp/lsp-mode/issues][Issues with LSP]] ([[https://github.com/graphql/graphiql/issues][Upstream LSP issues]])
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

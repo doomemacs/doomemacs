@@ -1,102 +1,95 @@
-#+TITLE:   lang/fortran
-#+DATE:    October 22, 2021
-#+SINCE:   v3.0.0 (#5676)
-#+STARTUP: inlineimages nofold
+# -*- mode: doom-docs-org -*-
+#+title:    :lang fortran
+#+subtitle: In FORTRAN, GOD is REAL (unless declared INTEGER)
+#+date:     October 22, 2021
+#+since:    22.04.0 (#5676)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#general][General]]
-    - [[#arch-linux][Arch Linux]]
-  - [[#installing-intel-fortran][Installing Intel Fortran]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
-
+* Description :unfold:
 This module enables a complete, modern development environment for the [[https://fortran-lang.org/][Fortran]]
 language. Initially released in 1956 (a year before Lisp 1.0), Fortran is the
 original high-performance computation language and is still widely used in
 science and academia. Popular versions of the language include Fortran 77 and
 Fortran 90, with further extensions in the 1995 and 2008 varieties. Today,
-Fortran has joined the modern age with its own [[https://github.com/fortran-lang/fpm][package manager]], [[https://fortran-lang.org/packages/][package
-registry]], and [[https://fortran-lang.discourse.group/][Discourse community]].
+Fortran has joined the modern age with its own [[https://github.com/fortran-lang/fpm][package manager]], [[https://fortran-lang.org/packages/][package registry]]
+and [[https://fortran-lang.discourse.group/][Discourse community]].
 
 In particular, this module features:
-
-+ Support for all major Fortran varieties.
-+ Auto-formatting via =fprettier=.
-+ Integration with the =fpm= package manager.
-+ LSP support via [[https://github.com/gnikit/fortls][fortls]].
-+ Optional Intel Fortran support via the =+intel= flag.
+- Support for all major Fortran varieties.
+- Auto-formatting via =fprettier=.
+- Integration with the =fpm= package manager.
+- LSP support via [[https://github.com/gnikit/fortls][fortls]].
+- Optional Intel Fortran support via the [[doom-module:][+intel]] flag.
 
 #+begin_quote
-After a career of writing Fortran on Mainframes and Windows machines, my
-now-retired Dad is switching to Linux. Imagine my surprise when I learned that
-off-the-shelf setups for Fortran on Linux basically don't exist! Well, until
-now... Cheers Dad, hope this helps.
+ 💬 After a career of writing Fortran on Mainframes and Windows machines, my
+    now-retired Dad is switching to Linux. Imagine my surprise when I learned
+    that off-the-shelf setups for Fortran on Linux basically don't exist! Well,
+    until now... Cheers Dad, hope this helps. --[[doom-user:][fosskers]]
 #+end_quote
 
 ** Maintainers
-+ [[https://github.com/fosskers][@fosskers]] (Author)
+- [[doom-user:][@fosskers]]
 
-** Module Flags
-+ =+lsp= Activate =fortls= for Fortran projects.
-+ =+intel= Use the =ifort= compiler by default.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
+** Module flags
+- +lsp ::
+  Enable LSP support for ~fortran-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  (fortls).
+- +intel ::
+  Use the =ifort= compiler by default.
 
-* Prerequisites
+** Packages
+/This module doesn't install any packages./
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 ** General
-
 For minimum functionality, this module requires =gfortran=. For most project
 management tasks you will also need [[https://github.com/fortran-lang/fpm][fpm]], the Fortran Package Manager.
 
 *** Arch Linux
-
 =gfortran= is available from the official repositories:
-
-#+begin_example
-sudo pacman -S gcc-fortran
-#+end_example
+#+begin_src bash
+$ sudo pacman -S gcc-fortran
+#+end_src bash
 
 Whereas =fpm= and =fortls= are available from the AUR and thus must be installed
 with an AUR-compatible tool like [[https://github.com/fosskers/aura][Aura]]:
-
-#+begin_example
-sudo aura -A fortran-fpm fortls
-#+end_example
+#+begin_src bash
+$ sudo aura -A fortran-fpm fortls
+#+end_src bash
 
 ** Installing Intel Fortran
-
-Activating the =+intel= flag won't automatically install Intel Fortan for you.
+Activating the [[doom-module:][+intel]] flag won't automatically install Intel Fortan for you.
 Here's how to do it on *nix systems.
 
 You can of course install the entire High-performance Computing kit from Intel,
 which includes Fortran, but the installation footprint is quite large. Instead,
 you're able to install just Fortran and its core facilities on their own as a
 [[https://www.intel.com/content/www/us/en/developer/articles/tool/oneapi-standalone-components.html#fortran][standalone component]]. Download this script, and make it executable via:
-
-#+begin_example
-chmod +x l_fortran-compiler_p_2022.0.3.83_offline.sh
-#+end_example
+#+begin_src bash
+$ chmod +x l_fortran-compiler_p_2022.0.3.83_offline.sh
+#+end_src bash
 
 The filepath will of course change with time, so alter the above command
 accordingly. Now run the script _as a normal user_ (non-sudo) and follow the
 instructions of the installer. This will install =ifort=, etc., in a local
 filepath of your choosing.
 
-To actually use =ifort= and have it link to its libraries properly, we must run a
-script provided by Intel to set certain environment variables:
-
-#+begin_example
-. ~/intel/oneapi/setvars.sh
-#+end_example
+To actually use =ifort= and have it link to its libraries properly, we must run
+a script provided by Intel to set certain environment variables:
+#+begin_src bash
+$ . ~/intel/oneapi/setvars.sh
+#+end_src
 
 (Modify according to where you installed Intel Fortran.) Now =ifort= should be
 runnable in your terminal as you'd expect. _To persist this, add that line to
@@ -105,11 +98,23 @@ your Bash Profile, etc., and log out and in again._ Now Doom will be able to use
 
 Good luck and happy computing!
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* Configuration
-# How to configure this module, including common problems and how to address them.
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
