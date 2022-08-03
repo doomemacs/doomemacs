@@ -119,7 +119,10 @@ will also be the width of all other printable characters."
         mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :color "silver"))
         mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "lock"))
         mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :color "dpurple"))
-        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
+        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))
+        mu4e-headers-list-mark       (cons "l" (+mu4e-normalised-icon "sitemap" :set "faicon"))
+        mu4e-headers-personal-mark   (cons "p" (+mu4e-normalised-icon "user"))
+        mu4e-headers-calendar-mark   (cons "c" (+mu4e-normalised-icon "calendar"))))
 
 (defun +mu4e-colorize-str (str &optional unique herring)
   "Apply a face from `+mu4e-header-colorized-faces' to STR.
