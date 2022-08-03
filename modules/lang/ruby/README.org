@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang ruby
 #+subtitle: 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
 #+created:  January 16, 2007

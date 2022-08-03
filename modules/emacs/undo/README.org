@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :emacs undo
 #+subtitle: Persistent, smarter undo for your inevitable mistakes
 #+created:  April 14, 2020

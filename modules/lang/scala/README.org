@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang scala
 #+subtitle: Java, but good
 #+created:  May 12, 2016

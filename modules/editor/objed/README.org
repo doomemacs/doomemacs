@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :editor objed
 #+subtitle: Text object editing for the innocent
 #+created:  May 30, 2019

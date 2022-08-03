@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang python
 #+subtitle: Beautiful is better than ugly
 #+created:  June 15, 2015

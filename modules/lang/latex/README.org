@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang latex
 #+subtitle: Writing papers in Emacs has never been so fun
 #+created:  January 16, 2017

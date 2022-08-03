@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang faust
 #+subtitle: DSP, but you can keep your soul
 #+created:  October 14, 2019

@@ -40,7 +40,10 @@
   (let ((beg (point-min))
         end)
     (org-with-wide-buffer
-     (goto-char (point-min))
+     (goto-char beg)
+     (when (looking-at-p "^# -\\*- ")
+       (goto-char (line-beginning-position 2))
+       (setq beg (point)))
      (when (looking-at-p org-drawer-regexp)
        (re-search-forward org-drawer-regexp nil t 2)
        (goto-char (setq beg (1+ (line-end-position)))))

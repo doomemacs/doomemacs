@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang web
 #+subtitle: The tubes
 #+created:  June 15, 2015

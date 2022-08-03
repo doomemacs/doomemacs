@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :editor god
 #+subtitle: IDDQD
 #+created:  October 13, 2021

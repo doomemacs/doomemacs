@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :app emms
 #+subtitle: A media player for music no one's heard of
 #+created:  March 06, 2021

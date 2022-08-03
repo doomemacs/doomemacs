@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang erlang
 #+subtitle: an elegant language for a more civilized age
 #+created:  April 07, 2018

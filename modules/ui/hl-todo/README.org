@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :ui hl-todo
 #+subtitle: TODO FIXME NOTE DEPRECATED HACK REVIEW
 #+created:  February 19, 2017

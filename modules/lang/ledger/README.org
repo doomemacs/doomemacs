@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang ledger
 #+subtitle: Be audit you can be
 #+created:  September 09, 2017

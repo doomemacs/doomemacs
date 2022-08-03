@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :checkers syntax
 #+subtitle: Tasing you for every semicolon you forget
 #+created:  February 20, 2017

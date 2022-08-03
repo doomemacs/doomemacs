@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang rest
 #+subtitle: Emacs as a REST client
 #+created:  February 20, 2017

@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :tools pass
 #+subtitle: A password manager for nerds
 #+created:  May 04, 2020

@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :ui unicode
 #+subtitle: Extended unicode support for various languages
 #+created:  June 08, 2020

@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :app calendar
 #+subtitle: Watch your missed deadlines in real time
 #+created:  January 13, 2018

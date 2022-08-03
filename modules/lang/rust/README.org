@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang rust
 #+subtitle: Fe2O3.unwrap().unwrap().unwrap().unwrap()
 #+created:  September 30, 2015

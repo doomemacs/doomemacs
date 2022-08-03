@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :ui nav-flash
 #+subtitle: Blink after big motions
 #+created:  June 04, 2017

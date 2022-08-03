@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang agda
 #+subtitle: Types of types of types of types...
 #+created:  August 21, 2018

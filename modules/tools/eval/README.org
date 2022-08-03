@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :tools eval
 #+subtitle: Run code, run (also, repls)
 #+created:  February 20, 2017

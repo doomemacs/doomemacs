@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :lang javascript
 #+subtitle: all(hope(abandon(ye(who(enter(here))))))
 #+created:  January 16, 2017

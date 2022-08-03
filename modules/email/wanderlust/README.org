@@ -1,3 +1,4 @@
+# -*- mode: doom-docs-org -*-
 #+title:    :email wanderlust
 #+subtitle: To boldly go where no mail has gone before
 #+created:  May 05, 2019
