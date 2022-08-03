@@ -1,6 +1,10 @@
 # -*- mode: snippet -*-
 # name: Doom module readme                                             
 # --
+# -*- mode: doom-docs-org -*-
+:PROPERTIES:
+:ID:       `(doom-docs-generate-id)`
+:END:
 #+title:     `(+file-templates-module-for-path)`
 #+subtitle:  <A one-line quip about this module to display in init.example.el>
 #+created:   `(format-time-string "%B %d, %Y")`
@@ -90,12 +94,12 @@ the purpose of the module and the features/technology(ies) it provides.
 #
 # ALSO: Version headings should be linked to the respective heading in
 # docs/changelog.org.
-** [[doom-tag:][v21.12.0]] [2021-12-30]
-*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+*** [[doom-tag:][v21.12.0]] [2021-12-30]
+**** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
 commit BODY
-*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+**** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
 commit BODY
-*** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
+**** [[doom-ref:a1b2c3d4][commit SUBJECT linked to github commit]]
 commit BODY
 
 # If no changelog is available, use:

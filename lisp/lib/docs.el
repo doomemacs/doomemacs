@@ -353,6 +353,21 @@ This primes `org-mode' for reading."
     ("github"                  . "https://github.com/%s")))
 
 ;;;###autoload
+(defun doom-docs-generate-id (&optional force?)
+  "Generate an ID for a `doom-docs-org-mode' buffer."
+  (let ((org-id-link-to-org-use-id t)
+        (org-id-method 'uuid)
+        (org-id-track-globally t)
+        (org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids"))
+        (org-id-locations doom-docs--id-locations)
+        (org-id-files doom-docs--id-files))
+    (doom/reload-docs)
+    (let ((id (org-id-new)))
+      (org-id-add-location
+       id (buffer-file-name (buffer-base-buffer)))
+      id)))
+
+;;;###autoload
 (define-derived-mode doom-docs-org-mode org-mode "Doom Docs"
   "A derivative of `org-mode' for Doom's documentation files.
 

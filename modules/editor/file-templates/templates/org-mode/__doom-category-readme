@@ -1,6 +1,10 @@
 # -*- mode: snippet -*-
 # name: Doom category readme
 # --
+# -*- mode: doom-docs-org -*-
+:PROPERTIES:
+:ID:       `(doom-docs-generate-id)`
+:END:
 #+title:   `(+file-templates-module-for-path)`
 #+created: `(format-time-string "%B %d, %Y")`
 #+since:   `(car (split-string doom-version "-"))`
