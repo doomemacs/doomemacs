@@ -292,7 +292,7 @@ This primes `org-mode' for reading."
            #'doom-docs--hide-meta-h
            #'doom-docs--hide-tags-h
            #'doom-docs--hide-drawers-h
-           #'doom-docs--hide-stars-h
+           ;; #'doom-docs--hide-stars-h
            #'doom-docs--expand-macros-h
            #'doom-docs--hide-src-blocks-h)
 
