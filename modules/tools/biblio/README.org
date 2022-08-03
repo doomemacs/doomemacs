@@ -1,151 +1,140 @@
-#+TITLE:   tools/biblio
-#+DATE:    April 11, 2020
-#+SINCE:   21.12.0 (#5290)
-#+STARTUP: inlineimages
+# -*- mode: doom-docs-org -*-
+#+title:    :tools biblio
+#+subtitle: Writes a PhD for you (citation needed)
+#+created:  April 11, 2020
+#+since:    21.12.0 (#5290)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#pdf-viewing][PDF viewing]]
-  - [[#bibtex-completion][Bibtex completion]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#org-cite][Org-cite]]
-    - [[#processor-configuration][Processor configuration]]
-    - [[#other-configuration-options][Other configuration options]]
-  - [[#path-configuration][Path configuration]]
-  - [[#templates][Templates]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds tools to help when working with bibliographies and citations.
 Minimal modifications have been made to the packages and the configuration
 details are listed in [[*Configuration][Configuration]] below. Some sensible defaults have been
 selected so it should be possible to use without modifications.
 
 ** Maintainers
-+ [[https://github.com/bdarcus][bdarcus]]
-+ [[https://github.com/brianmcgillion][bmg]]
+- [[doom-user:][bdarcus]]
+- [[doom-user:][bmg]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+  [[https://github.com/tmalsburg/helm-bibtex][bibtex-completion]]
-+ ~:completion vertico~
-  + [[https://github.com/bdarcus/citar][citar]]
-+ ~:completion helm~
-  + [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]
-+ ~:completion ivy~
-  + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-There are no hard dependencies for this module.
+** Packages
+- [[doom-package:][bibtex-completion]] if [[doom-module:][:completion ivy]] or [[doom-module:][:completion helm]]
+- [[doom-package:][citar]] if [[doom-module:][:completion vertico]]
+- [[doom-package:][helm-bibtex]] if [[doom-module:][:completion helm]]
+- [[doom-package:][ivy-bibtex]] if [[doom-module:][:completion ivy]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+There are no hard dependencies for this module, but this module can benefit from
+having a PDF reader and one of Doom's [[doom-module:][:completion]] modules.
 
 ** PDF viewing
 An application for opening PDF files is required. By default =DocView= is used
-though it is highly recommended to enable =:tools pdf= in your personal ~init.el~
-file to enable [[https://github.com/politza/pdf-tools][pdf-tools]].
+though [[doom-module:][:tools pdf]] is highly recommended so PDFs can be viewed within Emacs.
 
 ** Bibtex completion
-For vertico, helm, or ivy bibtex completion you should enable =:completion vertico=, =:completion helm=, or
-=:completion ivy= respectively.
+For vertico, helm, or ivy bibtex completion you should enable [[doom-module:][:completion
+vertico]], [[doom-module:][:completion helm]], or [[doom-module:][:completion ivy]] respectively.
 
-* Features
-Both [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]] (includes helm-bibtex, ivy-bibtex and bibtex-completion code)
-and [[https://github.com/bdarcus/bibtex-actions][citar]] provide an extensive range of features so it is best to check their
+* Usage
+Both [[doom-package:][helm-bibtex]] (includes [[doom-package:][helm-bibtex]], [[doom-package:][ivy-bibtex]], and bibtex-completion code)
+and [[doom-package:][citar]] provide an extensive range of features so it is best to check their
 respective sites for a full list of features.
 
 On a high-level you can expect:
-+ bibliography management
-+ notes per reference
-+ citation support
-+ citation lookup
-+ org integration for writing literate latex (org-roam)
-+ fast indexing and searching of references.
+- bibliography management
+- notes per reference
+- citation support
+- citation lookup
+- org integration for writing literate latex (org-roam)
+- fast indexing and searching of references.
 
-To understand the interaction between these packages this [[https://www.reddit.com/r/emacs/comments/cxu0qg/emacs_org_and_bibtex_as_alternative_to_zotero_and/eyqe4vq/][reddit]] thread will explain
-the unique features and the overlapping functionality, if any.
+To understand the interaction between these packages this [[https://www.reddit.com/r/emacs/comments/cxu0qg/emacs_org_and_bibtex_as_alternative_to_zotero_and/eyqe4vq/][reddit]] thread will
+explain the unique features and the overlapping functionality, if any.
 
-In addition, this module provides support for native Org-mode citations: =org-cite=.
+In addition, this module provides support for native Org-mode citations
+([[doom-package:][org-cite]]).
 
 * Configuration
-
-For all these packages it is advisable to use ~(after! package)~ in your
-~config.el~ to override any default settings and tune the packages to your
-needs.
+To override any defaults set by this module, do so in an ~(after! package ...)~
+block in =$DOOMDIR/config.el=.
 
 ** Org-cite
-
 *** Processor configuration
+[[doom-package:][org-cite]] provides rich features and flexible configuration options via its
+"processor" capabilities.
 
-=Org-cite= provides rich features and flexible configuration options via its "processor" capabilities.
-
-1. /insert/ provides =org-cite-insert= integration for inserting and editing citations.
+1. /insert/ provides =org-cite-insert= integration for inserting and editing
+   citations.
 2. /activate/ provides fontification, previews, etc.
 3. /follow/ integrates contextual citation actions with =org-open-at-point=.
 4. /export/ for different output targets.
 
 This module makes the following processors available:
-
 1. The core =oc-basic=, =oc-natbib=, =oc-biblatex=, and =oc-csl=.
-2. [[https://github.com/bdarcus/bibtex-actions][citar]] for integration with =vertico= completion.
+2. [[doom-package:][citar]] for integration with [[doom-package:][vertico]] completion.
 
-The module configures these processors as follows for the different completion modules:
-
+The module configures these processors as follows for the different completion
+modules:
 | Feature  | Vertico | Ivy      | Helm     |
 |----------+---------+----------+----------|
 | Insert   | citar   | oc-basic | oc-basic |
 | Activate | citar   | oc-basic | oc-basic |
 | Follow   | citar   | oc-basic | oc-basic |
 
-
 *** Other configuration options
-
 If you like, you can also set the =oc-csl= processor to look in a specific
 directory for your CSL styles:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-cite-csl-styles-dir "~/Zotero/styles")
-#+END_SRC
+#+end_src
 
 ** Path configuration
-
-You must set the path variable for either =citar= (if using =vertico=
-completion) or =bibtex-completion= (if using =ivy= or =helm=); this module will
-in turn set the =org-cite-global-bibliography= variable to the same value:
-
-#+BEGIN_src emacs-lisp
+You must set the path variable for either [[doom-package:][citar]] (if using [[doom-module:][:completion vertico]])
+or [[doom-package:][bibtex-completion]] (if using [[doom-module::completion ivy][ivy]] or [[doom-module::completion helm][helm]]); this module will in turn set the
+[[var:][org-cite-global-bibliography]] variable to the same value:
+#+begin_src emacs-lisp
 (setq! bibtex-completion-bibliography '("/path/to/references.bib"))
-#+END_src
+#+end_src
 
-#+BEGIN_src emacs-lisp
+#+begin_src emacs-lisp
 (setq! citar-bibliography '("/path/to/references.bib"))
-#+END_src
+#+end_src
 
 You may also set the respective note and library path variables as well for
 enhanced functionality:
-
-#+BEGIN_src emacs-lisp
+#+begin_src emacs-lisp
 (setq! bibtex-completion-library-path '("/path/to/library/path/")
        bibtex-completion-notes-path "/path/to/your/notes/")
-#+END_src
+#+end_src
 
-#+BEGIN_src emacs-lisp
+#+begin_src emacs-lisp
 (setq! citar-library-paths '("/path/to/library/files/")
        citar-notes-paths '("/path/to/your/notes/"))
-#+END_src
+#+end_src
 
 ** Templates
-
 This module provides reasonable default templates for the packages. However, if
-you wish to change them, refer to the respective packages' documentation for in-depth
-instructions.
+you wish to change them, refer to the respective packages' documentation for
+in-depth instructions.
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
-Refer to the respective package repositories.
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote
