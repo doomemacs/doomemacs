@@ -56,6 +56,7 @@
           "a" #'+go/test-all
           "s" #'+go/test-single
           "n" #'+go/test-nested
+          "f" #'+go/test-file
           "g" #'go-gen-test-dwim
           "G" #'go-gen-test-all
           "e" #'go-gen-test-exported
