@@ -290,6 +290,10 @@ tell you about it. Very annoying. This prevents that."
         (doom-auto-revert-buffer-h)))))
 
 
+;;;###package bookmark
+(setq bookmark-default-file (concat doom-etc-dir "bookmarks"))
+
+
 (use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
