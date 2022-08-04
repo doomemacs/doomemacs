@@ -8,7 +8,9 @@
 This module adds Haskell support to Doom Emacs.
 
 ** Maintainers
-*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+- [[doom-user:][@iyefrat]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +lsp ::
