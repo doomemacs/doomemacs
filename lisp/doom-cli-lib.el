@@ -608,9 +608,9 @@ Throws `doom-cli-invalid-option-error' for illegal values."
   (prefix "@")  ; The basename of the script creating this context
   meta-p        ; Whether or not this is a help/meta request
   error         ;
-  command       ; The full command that led to this context
-  path          ; Breadcrumb list of resolved commands so far
-  whole         ; Unfiltered and unprocessed list of arguments
+  (command nil :skip t)    ; The full command that led to this context
+  (path nil :skip t)       ; Breadcrumb list of resolved commands so far
+  (whole nil :skip t)      ; Unfiltered and unprocessed list of arguments
   (options nil :skip t)    ; An alist of (flags . value)
   (arguments nil :skip t)  ; An alist of non-subcommand arguments, by command
   (stdin  (generate-new-buffer " *doom-cli stdin*")  :type buffer)  ; buffer containing anything piped into this session
@@ -688,8 +688,8 @@ executable context."
                     (_ old-value))))))
       (run-hook-with-args 'doom-cli-create-context-functions context)
       (delete-file file)
-      (doom-log "Restored context: %s" (doom-cli-context-pid context))
-      context)))
+      (doom-log "Restored context: %s" (doom-cli-context-pid context))))
+  context)
 
 (defun doom-cli-context-parse (args context)
   "Parse ARGS and update CONTEXT to reflect it."
@@ -1746,9 +1746,8 @@ errors to `doom-cli-error-file')."
     (doom-cli--exit
      (condition-case e
          (let* ((args (cons (if (getenv "__DOOMDUMP") :dump prefix) args))
-                (context
-                 (or (doom-cli-context-restore (getenv "__DOOMCONTEXT") context)
-                     (doom-cli-context-parse args context))))
+                (context (doom-cli-context-restore (getenv "__DOOMCONTEXT") context))
+                (context (doom-cli-context-parse args context)))
            (run-hook-with-args 'doom-cli-before-run-functions context)
            (let ((result (doom-cli-context-execute context)))
              (run-hook-with-args 'doom-cli-after-run-functions context result))
