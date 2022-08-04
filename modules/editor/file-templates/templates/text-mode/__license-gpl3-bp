@@ -3,6 +3,7 @@
 # uuid: __license-gpl3-bp
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/lgpl-3.0
+# expand-env: ((yas-indent-line 'fixed))
 # --
 ${1:<program name and description>}
 Copyright (C) ${2:`(format-time-string "%Y")`} ${3:`user-full-name`}

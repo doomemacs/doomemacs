@@ -1,6 +1,8 @@
 # -*- mode: snippet -*-
 # name: 3-clause BSD License
 # uuid: __license-bsd3
+# group: Licenses
+# expand-env: ((yas-indent-line 'fixed))
 # --
 Copyright (c) ${1:`(format-time-string "%Y")`} ${2:`user-full-name`}
 All rights reserved.

@@ -3,6 +3,7 @@
 # uuid: __license-unlicense
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/unlicense
+# expand-env: ((yas-indent-line 'fixed))
 # --
 This is free and unencumbered software released into the public domain.
 

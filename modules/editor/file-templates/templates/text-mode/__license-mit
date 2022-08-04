@@ -3,6 +3,7 @@
 # uuid: __license-mit
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/mit/
+# expand-env: ((yas-indent-line 'fixed))
 # --
 The MIT License (MIT)
 

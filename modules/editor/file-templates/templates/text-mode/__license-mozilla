@@ -3,6 +3,7 @@
 # uuid: __license-mozilla
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/mpl-2.0
+# expand-env: ((yas-indent-line 'fixed))
 # --
 Mozilla Public License Version 2.0
 ==================================
