@@ -27,7 +27,9 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 #+end_quote
 
 ** Maintainers
-*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+- [[doom-user:][@elken]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +hack ::
