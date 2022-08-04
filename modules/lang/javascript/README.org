@@ -16,7 +16,9 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 - Jump-to-definitions and references support ([[doom-package:][xref]])
 
 ** Maintainers
+- [[doom-user:][@elken]]
 - [[doom-user:][@hlissner]]
+- [[doom-user:][@iyefrat]]
 
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
