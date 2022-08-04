@@ -134,7 +134,8 @@ a quoted symbol for a alist of current strings and faces provided."
   (put-text-property
    0 (length str)
    'face
-   (if (not unique)
+   (list
+    (if (not unique)
        (+mu4e--str-color-face herring str)
      (let ((unique-alist (eval unique)))
        (unless (assoc herring unique-alist)
@@ -152,6 +153,7 @@ a quoted symbol for a alist of current strings and faces provided."
              (push (cons herring color) unique-alist)))
          (set unique unique-alist))
        (cdr (assoc herring unique-alist))))
+    'default)
    str)
   str)
 
