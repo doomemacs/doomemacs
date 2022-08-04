@@ -258,7 +258,7 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
     (set (make-local-variable 'flycheck-emacs-lisp-check-form)
          (concat "(progn "
                  (prin1-to-string
-                  `(progn
+                  `(ignore-errors
                      (setq doom-modules ',doom-modules
                            doom-disabled-packages ',doom-disabled-packages)
                      (require 'doom)
