@@ -26,7 +26,7 @@
 (when (featurep! +pyenv)
   (package! pyenv-mode :pin "b818901b8eac0e260ced66a6a5acabdbf6f5ba99"))
 (when (featurep! +conda)
-  (package! conda :pin "9c28d7a853b4b4bd00215cf7f07856c1563f2ad7"))
+  (package! conda :pin "8aae96771c6cc8139e675f04d96c4d794580c3cd"))
 (when (featurep! +poetry)
   (package! poetry :pin "5b9ef569d629d79820e73b5380e54e443ba90616"))
 
