@@ -813,5 +813,23 @@ This function accepts any number of ARGUMENTS, but ignores them.
 Also see `ignore'."
     t))
 
+;; Introduced in 28.1
+(unless (fboundp 'file-name-concat)
+  (defun file-name-concat (directory &rest components)
+    "Append COMPONENTS to DIRECTORY and return the resulting string.
+
+Elements in COMPONENTS must be a string or nil.
+DIRECTORY or the non-final elements in COMPONENTS may or may not end
+with a slash -- if they don't end with a slash, a slash will be
+inserted before contatenating."
+    (mapconcat
+     #'identity
+     (save-match-data
+       (cl-loop for str in (cons directory components)
+                when (and str (/= 0 (length str))
+                          (string-match "\\(.+\\)/?" str))
+                collect (match-string 1 str)))
+     "/")))
+
 (provide 'doom-lib)
 ;;; doom-lib.el ends here
