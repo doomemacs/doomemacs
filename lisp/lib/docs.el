@@ -374,48 +374,47 @@ This primes `org-mode' for reading."
 Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 `read-only-mode' is activated."
   :after-hook (visual-line-mode -1)
-  (require 'org-id)
-  (require 'ob)
-  (setq-local org-id-link-to-org-use-id t
-              org-id-method 'uuid
-              org-id-track-globally t
-              org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids")
-              org-id-locations doom-docs--id-locations
-              org-id-files doom-docs--id-files
-              org-num-max-level 3
-              org-footnote-define-inline nil
-              org-footnote-auto-label t
-              org-footnote-auto-adjust t
-              org-footnote-section nil
-              wgrep-change-readonly-file t
-              org-link-abbrev-alist-local (append org-link-abbrev-alist-local doom-docs-link-alist)
-              org-babel-default-header-args
-              (append '((:eval . "no") (:tangle . "no"))
-                      org-babel-default-header-args)
-              save-place-ignore-files-regexp ".")
-  (when (require 'org-glossary nil t)
-    (setq org-glossary-collection-root doom-docs-dir
-          org-glossary-global-terms (doom-glob org-glossary-collection-root "appendix.org"))
-    (require 'ox)
-    (org-glossary-mode +1))
-  (unless org-inhibit-startup
-    (doom/reload-docs)
-    (unless (local-variable-p 'org-startup-with-inline-images)
-      (setq org-display-remote-inline-images 'cache)
-      (org-display-inline-images))
-    (unless (local-variable-p 'org-startup-indented)
-      (org-indent-mode +1))
-    (unless (local-variable-p 'org-startup-numerated)
-      (when (bound-and-true-p org-num-mode)
-        (org-num-mode -1))
-      (org-num-mode +1))
-    (unless (local-variable-p 'org-startup-folded)
-      (let ((org-startup-folded 'content))
-        (org-set-startup-visibility))))
-  (add-hook 'read-only-mode-hook #'doom-docs--toggle-read-only-h nil 'local)
-  (org-with-limited-levels
-   (end-of-line)
-   (null (re-search-forward org-outline-regexp-bol nil t))))
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (gc-cons-percentage 1.0))
+    (require 'org-id)
+    (require 'ob)
+    (setq-local org-id-link-to-org-use-id t
+                org-id-method 'uuid
+                org-id-track-globally t
+                org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids")
+                org-id-locations doom-docs--id-locations
+                org-id-files doom-docs--id-files
+                org-num-max-level 3
+                org-footnote-define-inline nil
+                org-footnote-auto-label t
+                org-footnote-auto-adjust t
+                org-footnote-section nil
+                wgrep-change-readonly-file t
+                org-link-abbrev-alist-local (append org-link-abbrev-alist-local doom-docs-link-alist)
+                org-babel-default-header-args
+                (append '((:eval . "no") (:tangle . "no"))
+                        org-babel-default-header-args)
+                save-place-ignore-files-regexp ".")
+    (when (require 'org-glossary nil t)
+      (setq org-glossary-collection-root doom-docs-dir
+            org-glossary-global-terms (doom-glob org-glossary-collection-root "appendix.org"))
+      (require 'ox)
+      (org-glossary-mode +1))
+    (unless org-inhibit-startup
+      (doom/reload-docs)
+      (unless (local-variable-p 'org-startup-with-inline-images)
+        (setq org-display-remote-inline-images 'cache)
+        (org-display-inline-images))
+      (unless (local-variable-p 'org-startup-indented)
+        (org-indent-mode +1))
+      (unless (local-variable-p 'org-startup-numerated)
+        (when (bound-and-true-p org-num-mode)
+          (org-num-mode -1))
+        (org-num-mode +1))
+      (unless (local-variable-p 'org-startup-folded)
+        (let ((org-startup-folded 'content))
+          (org-set-startup-visibility))))
+    (add-hook 'read-only-mode-hook #'doom-docs--toggle-read-only-h nil 'local)))
 
 ;;;###autoload
 (defun doom-docs-read-only-h ()
