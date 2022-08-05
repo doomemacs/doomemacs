@@ -680,6 +680,13 @@ mutating hooks on exported output, like formatters."
             '("show4levels*" org-startup-folded show4levels*)
             '("show5levels*" org-startup-folded show5levels*))
 
+  ;; TODO Upstream this.
+  (defadvice! +org--recursive-org-persist-mkdir-a (fn &rest args)
+    "`org-persist-write:index' does not recursively create
+`org-persist-directory', which causes an error if it's a parent doesn't exist."
+    :before #'org-persist-write:index
+    (make-directory org-persist-directory t))
+
   (defadvice! +org--more-startup-folded-options-a ()
     "Adds support for 'showNlevels*' startup options.
 Unlike showNlevels, this will also unfold parent trees."
