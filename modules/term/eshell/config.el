@@ -211,7 +211,19 @@ But uses `completion-styles' to find the mathces."
 
 (use-package! esh-help
   :after eshell
-  :config (setup-esh-help-eldoc))
+  :config
+  (setup-esh-help-eldoc)
+  ;; Man can choke on some paths, like ~/dir/some-exe
+  (defadvice! +eshell-eldoc-function-a (func cmd)
+    "Don't try to parse man output unless a manpage exists."
+    :around #'esh-help-eldoc-man-minibuffer-string
+    (if-let ((cache-result (gethash cmd esh-help-man-cache)))
+        (unless (eql 'none cache-result)
+          cache-result)
+      (if (Man-completion-table cmd nil nil)
+          (funcall func cmd)
+        (prog1 nil
+          (puthash cmd 'none esh-help-man-cache))))))
 
 
 (use-package! eshell-did-you-mean
@@ -281,7 +293,6 @@ when inhibited to show history matches."
               (base8 "black") (base5 "bright-black")
               (orange "bright-red") (teal "bright-green")
               (yellow "bright-yellow") (blue "bright-blue")
-              (violet "bright-magenta") (dark-cyan "bright-cyan")))
-      (message "Done with mapping ansi faces."))))
+              (violet "bright-magenta") (dark-cyan "bright-cyan"))))))
 
 (after! tldr (set-popup-rule! "^\\*tldr\\*" :side 'bottom :size 0.45))

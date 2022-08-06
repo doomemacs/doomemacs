@@ -17,9 +17,9 @@
    ((or (and (string-match-p "^\\*." cmd) (cl-callf substring cmd 1))
         (eshell-search-path cmd))
     (or (and (tldr-get-file-path-from-command-name cmd)
-             (prog1 t (tldr cmd))
+             (prog1 t (tldr cmd)))
         (and (Man-completion-table cmd nil nil)
-             (prog1 t (man cmd))))))
+             (prog1 t (display-buffer (man cmd))))))
    ((functionp (intern cmd)) (helpful-callable (intern cmd)) t)))
 
 ;;;###autoload
