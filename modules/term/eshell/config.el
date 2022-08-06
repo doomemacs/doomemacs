@@ -122,8 +122,70 @@ You should use `set-eshell-alias!' to change this.")
     (setq +eshell--default-aliases eshell-command-aliases-list
           eshell-command-aliases-list
           (append eshell-command-aliases-list
-                  +eshell-aliases))))
+                  +eshell-aliases)))
 
+  (set-lookup-handlers! 'eshell-mode :documentation #'+eshell-help-run-help)
+
+  (map! :map Man-mode-map :n "x" #'+eshell-man-to-tldr)
+  (map! :map tldr-mode-map :n "x" #'+eshell-tldr-to-man)
+
+  (defvar +eshell-matches-in-history)
+  (defvar +eshell-history-current-match)
+
+  (defadvice! +eshell-previous-matching-input-from-input-a (arg)
+    "Like `eshell-previous-matching-input-from-input'.
+But uses `completion-styles' to find the mathces."
+    :override #'eshell-previous-matching-input-from-input
+    (interactive "p")
+    (when (not (memq last-command '(eshell-previous-matching-input-from-input
+                                    eshell-next-matching-input-from-input)))
+      ;; Starting a new search
+      (setq +eshell-history-current-match 0
+            eshell-matching-input-from-input-string
+            (buffer-substring (save-excursion (eshell-bol) (point))
+                              (point))
+            +eshell-matches-in-history
+            (completion-all-completions eshell-matching-input-from-input-string
+                                        (ring-elements eshell-history-ring)
+                                        nil 0))
+      (setf (nthcdr (safe-length +eshell-matches-in-history)
+                    +eshell-matches-in-history)
+            nil)
+      (cl-callf (lambda (list) (ring-convert-sequence-to-ring
+                           (cons eshell-matching-input-from-input-string
+                                 (delete-dups list))))
+          +eshell-matches-in-history))
+    (if (ring-empty-p +eshell-matches-in-history)
+        (message "No matches in history for %s"
+                 eshell-matching-input-from-input-string)
+      (cl-callf + +eshell-history-current-match arg)
+      (delete-region eshell-last-output-end (point))
+      (insert (ring-ref +eshell-matches-in-history
+                        +eshell-history-current-match))))
+
+  (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
+    "Selectively inhibit `eshell-syntax-highlighting-mode'.
+So that mathces from history show up with highlighting."
+    :before-until #'eshell-syntax-highlighting--enable-highlighting
+    (memq this-command '(eshell-previous-matching-input-from-input
+                         eshell-next-matching-input-from-input)))
+
+  (after! eshell-syntax-highlighting
+    (defun +eshell-syntax-highlight-maybe-h ()
+      "Hook added to `pre-command-hook' to restore syntax highlighting
+when inhibited to show history matches."
+      (when (and eshell-syntax-highlighting-mode
+                 (memq last-command '(eshell-previous-matching-input-from-input
+                                      eshell-next-matching-input-from-input)))
+        (eshell-syntax-highlighting--enable-highlighting)))
+
+    (defun +eshell-syntax-highlighting-mode-h ()
+      "Hook to enable `+eshell-syntax-highlight-maybe-h'."
+      (if eshell-syntax-highlighting-mode
+          (add-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h nil t)
+        (remove-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h t)))
+
+    (add-hook 'eshell-syntax-highlighting-mode-hook #'+eshell-syntax-highlighting-mode-h)))
 
 (after! esh-mode
   (map! :map eshell-mode-map

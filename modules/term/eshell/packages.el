@@ -7,6 +7,7 @@
 (package! esh-help :pin "417673ed18a983930a66a6692dbfb288a995cb80")
 (package! eshell-did-you-mean :pin "80cd8c4b186a2fb29621cf634bcf2bcd914f1e3d")
 (package! eshell-syntax-highlighting :pin "8e3a685fc6d97af79e1046e5b24385786d8e92f6")
+(package! tldr :pin "d3fd2a809a266c005915026799121c78e8b358f0")
 
 (unless IS-WINDOWS
   (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
