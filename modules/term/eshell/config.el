@@ -265,3 +265,25 @@ when inhibited to show history matches."
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
     (unless (executable-find "fish") "")))
+
+(when EMACS28+
+;; Why is this delayed evaluation needed? It should'nt be according to the docs
+;; `custom-set-faces!' but it doesn't works for me without it.
+  (after! esh-mode
+    (let ((ansi-color-set
+           (lambda (color &optional name)
+             (custom-set-faces! `(,(intern-soft
+                                    (concat "ansi-color-"
+                                            (or name (symbol-name color))))
+                                  :foreground ,(doom-color color)
+                                  :background ,(doom-color color))))))
+      (mapc ansi-color-set '(red blue green yellow magenta cyan))
+      (mapc (lambda (arg) (apply ansi-color-set arg))
+            '((base0 "white") (base2 "bright-white")
+              (base8 "black") (base5 "bright-black")
+              (orange "bright-red") (teal "bright-green")
+              (yellow "bright-yellow") (blue "bright-blue")
+              (violet "bright-magenta") (dark-cyan "bright-cyan")))
+      (message "Done with mapping ansi faces."))))
+
+(after! tldr (set-popup-rule! "^\\*tldr\\*" :side 'bottom :size 0.45))
