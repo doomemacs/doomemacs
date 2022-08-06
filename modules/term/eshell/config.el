@@ -161,31 +161,7 @@ But uses `completion-styles' to find the mathces."
       (cl-callf + +eshell-history-current-match arg)
       (delete-region eshell-last-output-end (point))
       (insert (ring-ref +eshell-matches-in-history
-                        +eshell-history-current-match))))
-
-  (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
-    "Selectively inhibit `eshell-syntax-highlighting-mode'.
-So that mathces from history show up with highlighting."
-    :before-until #'eshell-syntax-highlighting--enable-highlighting
-    (memq this-command '(eshell-previous-matching-input-from-input
-                         eshell-next-matching-input-from-input)))
-
-  (after! eshell-syntax-highlighting
-    (defun +eshell-syntax-highlight-maybe-h ()
-      "Hook added to `pre-command-hook' to restore syntax highlighting
-when inhibited to show history matches."
-      (when (and eshell-syntax-highlighting-mode
-                 (memq last-command '(eshell-previous-matching-input-from-input
-                                      eshell-next-matching-input-from-input)))
-        (eshell-syntax-highlighting--enable-highlighting)))
-
-    (defun +eshell-syntax-highlighting-mode-h ()
-      "Hook to enable `+eshell-syntax-highlight-maybe-h'."
-      (if eshell-syntax-highlighting-mode
-          (add-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h nil t)
-        (remove-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h t)))
-
-    (add-hook 'eshell-syntax-highlighting-mode-hook #'+eshell-syntax-highlighting-mode-h)))
+                        +eshell-history-current-match)))))
 
 (after! esh-mode
   (map! :map eshell-mode-map
@@ -250,7 +226,29 @@ when inhibited to show history matches."
 
 
 (use-package eshell-syntax-highlighting
-  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+  :hook (eshell-mode . eshell-syntax-highlighting-mode)
+  :config
+  (defadvice! +eshell-filter-history-from-highlighting-a (&rest _)
+    "Selectively inhibit `eshell-syntax-highlighting-mode'.
+So that mathces from history show up with highlighting."
+    :before-until #'eshell-syntax-highlighting--enable-highlighting
+    (memq this-command '(eshell-previous-matching-input-from-input
+                         eshell-next-matching-input-from-input)))
+  (defun +eshell-syntax-highlight-maybe-h ()
+    "Hook added to `pre-command-hook' to restore syntax highlighting
+when inhibited to show history matches."
+    (when (and eshell-syntax-highlighting-mode
+               (memq last-command '(eshell-previous-matching-input-from-input
+                                    eshell-next-matching-input-from-input)))
+      (eshell-syntax-highlighting--enable-highlighting)))
+
+  (defun +eshell-syntax-highlighting-mode-h ()
+    "Hook to enable `+eshell-syntax-highlight-maybe-h'."
+    (if eshell-syntax-highlighting-mode
+        (add-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h nil t)
+      (remove-hook 'pre-command-hook #'+eshell-syntax-highlight-maybe-h t)))
+
+  (add-hook 'eshell-syntax-highlighting-mode-hook #'+eshell-syntax-highlighting-mode-h))
 
 
 (use-package! fish-completion
