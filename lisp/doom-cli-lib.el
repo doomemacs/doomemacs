@@ -1102,21 +1102,22 @@ Emacs' batch library lacks an implementation of the exec system call."
     (setenv "__DOOMCONTEXT" context-file)
     (make-directory (file-name-directory script-file) t)
     (let ((coding-system-for-write 'utf-8-auto)
-          (persistent-files (combine-and-quote-strings (delq nil (list script-file context-file)))))
+          (persistent-files (combine-and-quote-strings (delq nil (list script-file context-file))))
+          (env (save-match-data
+                 (cl-loop with initial-env = (get 'process-environment 'initial-value)
+                          for env in (seq-difference process-environment initial-env)
+                          if (string-match "^\\([a-zA-Z0-9_][^=]+\\)=\\(.+\\)$" env)
+                          collect (format "%s=%s"
+                                          (match-string 1 env)
+                                          (shell-quote-argument (match-string 2 env)))))))
       (with-temp-file script-file
-        (doom-log "_doomrun: %s" command)
+        (doom-log "_doomrun: %s %s" (string-join env " ") command)
         (doom-log "_doomcleanup: %s" persistent-files)
         (insert "#!/usr/bin/env sh\n"
                 "trap _doomcleanup EXIT\n"
                 "_doomcleanup() {\n  rm -f " persistent-files "\n}\n"
                 "_doomrun() {\n  " command "\n}\n"
-                (save-match-data
-                  (cl-loop with initial-env = (get 'process-environment 'initial-value)
-                           for env in (seq-difference process-environment initial-env)
-                           if (string-match "^\\([a-zA-Z0-9_]+\\|__DOOM[^=]+\\)=\\(.+\\)$" env)
-                           concat (format "%s=%s \\\n"
-                                          (match-string 1 env)
-                                          (shell-quote-argument (match-string 2 env)))))
+                (string-join env " \\\n")
                 (format "PATH=\"%s%s$PATH\" \\\n"
                         (doom-path doom-emacs-dir "bin")
                         path-separator)
