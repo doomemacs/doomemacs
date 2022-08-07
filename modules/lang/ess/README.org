@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang ess
 #+subtitle: 73.6% of all statistics are made up
 #+created:  February 05, 2018

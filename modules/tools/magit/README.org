@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :tools magit
 #+subtitle: Wield git like a wizard
 #+created:  February 20, 2017

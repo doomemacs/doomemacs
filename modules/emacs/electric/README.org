@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :emacs electric
 #+subtitle: Shocking keyword-based electric-indent
 #+created:  February 21, 2017

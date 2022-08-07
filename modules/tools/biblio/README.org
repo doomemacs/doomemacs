@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :tools biblio
 #+subtitle: Writes a PhD for you (citation needed)
 #+created:  April 11, 2020

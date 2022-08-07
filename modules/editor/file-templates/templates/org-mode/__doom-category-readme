@@ -1,7 +1,6 @@
 # -*- mode: snippet -*-
 # name: Doom category readme
 # --
-# -*- mode: doom-docs-org -*-
 :PROPERTIES:
 :ID:       `(doom-docs-generate-id)`
 :END:

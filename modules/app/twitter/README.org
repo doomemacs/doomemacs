@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :app twitter
 #+subtitle: Be superficial in plain text
 #+created:  October 11, 2019

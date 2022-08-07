@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang yaml
 #+subtitle: JSON, but readable
 #+created:  April 24, 2020

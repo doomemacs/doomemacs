@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:   :input
 #+created: May 13, 2019
 #+since:   2.0.9

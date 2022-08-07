@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :ui hydra
 #+subtitle: Discount modality for mythological beast hunters
 #+created:  October 29, 2019

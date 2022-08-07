@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :app everywhere
 #+subtitle: *leave* Emacs!? You must be joking
 #+created:  February 07, 2021

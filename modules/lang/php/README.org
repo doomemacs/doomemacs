@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang php
 #+subtitle: Perl's insecure younger brother
 #+created:  January 16, 2017

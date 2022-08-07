@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang qt
 #+subtitle: The cutest GUI framework ever
 #+created:  June 02, 2018

@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :tools editorconfig
 #+subtitle: Let someone else argue tabs and spaces
 #+created:  December 27, 2015

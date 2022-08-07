@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang swift
 #+subtitle: We asked for emoji variables?
 #+created:  June 15, 2015

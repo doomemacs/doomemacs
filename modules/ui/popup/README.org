@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :ui popup
 #+subtitle: Tame sudden yet inevitable temporary windows
 #+created:  January 06, 2018

@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :lang go
 #+subtitle: The hipster dialect
 #+created:  June 15, 2015

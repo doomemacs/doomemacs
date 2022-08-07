@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 :PROPERTIES:
 :ID:       5fa8967a-532f-4e0c-8ae8-25cd802bf9a9
 :END:

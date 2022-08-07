@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :tools gist
 #+subtitle: A pastebin for Githubsters
 #+created:  May 07, 2017

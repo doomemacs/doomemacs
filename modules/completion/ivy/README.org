@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :completion ivy
 #+subtitle: Yesterday's lightest search engine
 #+created:  February 20, 2017

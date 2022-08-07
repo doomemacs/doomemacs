@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 :PROPERTIES:
 :ID:       ca20678f-0f1a-4462-a599-da03f0e16330
 :END:

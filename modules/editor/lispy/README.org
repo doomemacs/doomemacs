@@ -1,4 +1,3 @@
-# -*- mode: doom-docs-org -*-
 #+title:    :editor lispy
 #+subtitle: Vim for lisp, for people who don't like vim
 #+created:  October 27, 2018
