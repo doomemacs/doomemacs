@@ -26,7 +26,7 @@ exist, and `org-link' otherwise."
     (apply #'org-link-set-parameters
            key
            :complete (lambda ()
-                       (if requires (mapc #'require (doom-enlist requires)))
+                       (if requires (mapc #'require (ensure-list requires)))
                        (+org--relative-path (+org--read-link-path key (funcall dir-fn))
                                             (funcall dir-fn)))
            :follow   (lambda (link)

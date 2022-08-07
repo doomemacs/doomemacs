@@ -111,7 +111,7 @@ selection of all minor-modes, active or not."
   "TODO"
   (require 'org)
   (let* ((default-directory doom-docs-dir)
-         (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
+         (org-agenda-files (mapcar #'expand-file-name (ensure-list files)))
          (depth (if (integerp depth) depth))
          (mindepth (if (integerp mindepth) mindepth))
          (org-inhibit-startup t))

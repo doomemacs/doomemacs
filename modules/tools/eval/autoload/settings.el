@@ -31,7 +31,7 @@ recognized:
     Defaults to `+eval/region', which will run the :send-region specified function
     or `+eval/send-region-to-repl'."
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (setf (alist-get mode +eval-repls)
           (cons command plist))))
 
@@ -59,7 +59,7 @@ MODES can be list of major mode symbols, or a single one.
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners', which is used by `+eval/region'."
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (cond ((symbolp command)
            (push (cons mode command) +eval-runners))
           ((stringp command)

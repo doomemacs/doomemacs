@@ -11,7 +11,7 @@
 (defun set-flyspell-predicate! (modes predicate)
   "TODO"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes) +spell--flyspell-predicate-alist)
+  (dolist (mode (ensure-list modes) +spell--flyspell-predicate-alist)
     (add-to-list '+spell--flyspell-predicate-alist (cons mode predicate))))
 
 ;;;###autoload

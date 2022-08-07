@@ -42,7 +42,7 @@
            '(((lambda (limit)
                 (let (case-fold-search)
                   (and (re-search-forward hl-todo-regexp limit t)
-                       (memq 'font-lock-comment-face (doom-enlist (get-text-property (point) 'face))))))
+                       (memq 'font-lock-comment-face (ensure-list (get-text-property (point) 'face))))))
               (1 (hl-todo-get-face) t t))))
       (when hl-todo-mode
         (hl-todo-mode -1)

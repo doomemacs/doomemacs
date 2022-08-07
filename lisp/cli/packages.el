@@ -118,7 +118,7 @@ list remains lean."
        (dolist (,recipe-var ,recipes-var (nreverse built))
          (cl-block nil
            (straight--with-plist (append (list :recipe ,recipe-var) ,recipe-var)
-               ,(doom-enlist binds)
+               ,(ensure-list binds)
              ,@body))))))
 
 (defvar doom-packages--cli-updated-recipes nil)

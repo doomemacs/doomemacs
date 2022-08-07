@@ -316,7 +316,7 @@ editorconfig or dtrt-indent installed."
            (editorconfig-set-indentation nil width)))
         ((require 'dtrt-indent nil t)
          (when-let (vars (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
-           (dolist (var (doom-enlist vars))
+           (dolist (var (ensure-list vars))
              (doom-log "Updated %s = %d" var width)
              (set var width)))))
   (message "Changed indentation to %d" width))

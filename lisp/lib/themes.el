@@ -28,7 +28,7 @@ all themes. It will apply to all themes once they are loaded."
     `(progn
        (defun ,fn ()
          (let (custom--inhibit-theme-enable)
-           (dolist (theme (doom-enlist (or ,theme 'user)))
+           (dolist (theme (ensure-list (or ,theme 'user)))
              (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces theme

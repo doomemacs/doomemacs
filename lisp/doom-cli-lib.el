@@ -216,7 +216,7 @@ execution. Can be generated from a `doom-cli-context' with
 
 This means that all non-keywords are strings, any prefixes provided by PLIST are
 prepended, and the keyword is in front."
-  (let* ((command (doom-enlist command))
+  (let* ((command (ensure-list command))
          (prefix  (plist-get plist :prefix))
          (prefix  (if prefix (doom-cli-command-normalize
                               prefix (append `(:prefix nil) plist))))
@@ -435,14 +435,14 @@ If RECURSIVE, includes breadcrumbs leading up to COMMANDSPEC."
                            collect command)))
            (seq-reduce (lambda (init next)
                          (nconc (cl-loop with firstlen = (length (car init))
-                                         for seg in (doom-enlist next)
+                                         for seg in (ensure-list next)
                                          nconc
                                          (cl-loop for command in init
                                                   while (= (length command) firstlen)
                                                   collect (append command (list seg))))
                                 init))
                        (cdr commandspec)
-                       `(,@(mapcar #'list (doom-enlist (car commandspec)))))))
+                       `(,@(mapcar #'list (ensure-list (car commandspec)))))))
 
 (defun doom-cli--parse-docs (docs)
   (when (and (stringp docs)
@@ -1639,7 +1639,7 @@ yet. They won't be included in command listings (by help documentation)."
              (push `(cl-callf plist-put doom-cli--plist
                       ,key ,(if (eq key :prefix)
                                 `(append (plist-get doom-cli--plist ,key)
-                                         (doom-enlist ,val))
+                                         (ensure-list ,val))
                               val))
                    forms)))
          (nreverse forms))

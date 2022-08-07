@@ -140,7 +140,7 @@ uses a straight or package.el command directly).")
         (print! (start "Installing straight..."))
         (print-group!
          (cl-destructuring-bind (depth . options)
-             (doom-enlist straight-vc-git-default-clone-depth)
+             (ensure-list straight-vc-git-default-clone-depth)
            (let ((branch-switch (if (memq 'single-branch options)
                                     "--single-branch"
                                   "--no-single-branch")))
@@ -341,7 +341,7 @@ non-nil."
 
 (defun doom-package-is-type-p (package type)
   "TODO"
-  (memq type (doom-enlist (doom-package-get package :type))))
+  (memq type (ensure-list (doom-package-get package :type))))
 
 (defun doom-package-in-module-p (package category &optional module)
   "Return non-nil if PACKAGE was installed by the user's private config."
@@ -585,7 +585,7 @@ should use it!"
       (cl-loop for target in targets
                if (or (keywordp target) (listp target))
                append
-               (cl-loop with (category . modules) = (doom-enlist target)
+               (cl-loop with (category . modules) = (ensure-list target)
                         for (name . plist) in doom-packages
                         for pkg-modules = (plist-get plist :modules)
                         if (and (assq category pkg-modules)

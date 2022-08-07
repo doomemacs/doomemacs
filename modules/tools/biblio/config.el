@@ -7,7 +7,7 @@
   :defer t
   :config
   (setq org-cite-global-bibliography
-        (doom-enlist
+        (ensure-list
          (or (bound-and-true-p citar-bibliography)
              (bound-and-true-p bibtex-completion-bibliography)))
         ;; Setup export processor; default csl/citeproc-el, with biblatex for

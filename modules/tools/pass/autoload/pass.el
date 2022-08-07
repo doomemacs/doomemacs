@@ -21,7 +21,7 @@
 single one. If a list, the first field found will be returned. Will error out
 otherwise, unless NOERROR is non-nill."
   (if-let* ((data (if (listp entry) entry (+pass-get-entry entry))))
-      (cl-loop for key in (doom-enlist fields)
+      (cl-loop for key in (ensure-list fields)
                when (assoc key data)
                return (cdr it))
     (unless noerror

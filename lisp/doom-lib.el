@@ -12,7 +12,7 @@
 If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
 list is returned as-is."
   (declare (pure t) (side-effect-free t))
-  (let ((hook-list (doom-enlist (doom-unquote hooks))))
+  (let ((hook-list (ensure-list (doom-unquote hooks))))
     (if (eq (car-safe hooks) 'quote)
         hook-list
       (cl-loop for hook in hook-list
@@ -52,11 +52,6 @@ list is returned as-is."
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
-
-(defun doom-enlist (exp)
-  "Return EXP wrapped in a list, or as-is if already a list."
-  (declare (pure t) (side-effect-free t))
-  (if (proper-list-p exp) exp (list exp)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
@@ -760,7 +755,7 @@ DOCSTRING and BODY are as in `defun'.
     (setq docstring nil))
   (let (where-alist)
     (while (keywordp (car body))
-      (push `(cons ,(pop body) (doom-enlist ,(pop body)))
+      (push `(cons ,(pop body) (ensure-list ,(pop body)))
             where-alist))
     `(progn
        (defun ,symbol ,arglist ,docstring ,@body)
@@ -780,7 +775,7 @@ testing advice (when combined with `rotate-text').
     (unless (stringp docstring)
       (push docstring body))
     (while (keywordp (car body))
-      (push `(cons ,(pop body) (doom-enlist ,(pop body)))
+      (push `(cons ,(pop body) (ensure-list ,(pop body)))
             where-alist))
     `(dolist (targets (list ,@(nreverse where-alist)))
        (dolist (target (cdr targets))

@@ -66,7 +66,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
 \(fn MODES &key DEFINITION IMPLEMENTATIONS TYPE-DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC)"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup--init-%s-handlers-h" mode))))
       (if (null (car plist))
@@ -106,7 +106,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 (defun +lookup--set-handler (spec functions-var &optional async enable)
   (when spec
     (cl-destructuring-bind (fn . plist)
-        (doom-enlist spec)
+        (ensure-list spec)
       (if (not enable)
           (remove-hook functions-var fn 'local)
         (put fn '+lookup-async (or (plist-get plist :async) async))

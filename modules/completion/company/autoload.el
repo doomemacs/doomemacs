@@ -30,7 +30,7 @@ Examples:
 
   (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (if (null (car backends))
         (setq +company-backend-alist
               (delq (assq mode +company-backend-alist)

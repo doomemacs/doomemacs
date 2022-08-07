@@ -6,7 +6,7 @@
   (declare (indent defun))
   (after! evil
     (if (listp modes)
-        (dolist (mode (doom-enlist modes))
+        (dolist (mode (ensure-list modes))
           (evil-set-initial-state mode state))
       (evil-set-initial-state modes state))))
 
