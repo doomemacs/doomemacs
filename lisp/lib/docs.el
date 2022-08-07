@@ -425,11 +425,6 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
                 (append '((:eval . "no") (:tangle . "no"))
                         org-babel-default-header-args)
                 save-place-ignore-files-regexp ".")
-    (when (require 'org-glossary nil t)
-      (setq org-glossary-collection-root doom-docs-dir
-            org-glossary-global-terms (doom-glob org-glossary-collection-root "appendix.org"))
-      (require 'ox)
-      (org-glossary-mode +1))
     (unless org-inhibit-startup
       (doom/reload-docs)
       (unless (local-variable-p 'org-startup-with-inline-images)
@@ -445,6 +440,13 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
         (let ((org-startup-folded 'content))
           (org-set-startup-visibility))))
     (add-hook 'read-only-mode-hook #'doom-docs--toggle-read-only-h nil 'local)))
+
+(defun doom-docs-init-glossary-h ()
+  "Activates `org-glossary-mode', if it's available."
+  (when (require 'org-glossary nil t)
+    (setq-local org-glossary-global-terms (doom-glob doom-docs-dir "appendix.org"))
+    (org-glossary-mode +1)))
+(add-hook 'doom-docs-org-mode-hook #'doom-docs-init-glossary-h)
 
 ;;;###autoload
 (defun doom-docs-read-only-h ()
