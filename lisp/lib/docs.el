@@ -1,7 +1,18 @@
 ;;; core/lib/docs.el -- a reader mode for Doom's Org docs -*- lexical-binding: t; -*-
 ;;; Commentary:
+;;
+;; This file defines `doom-docs-org-mode', a major mode derived from org-mode,
+;; intended to make Doom's documentation more readable, insert virtual
+;; navigation in the header, prettify org buffers (hiding syntax and special
+;; tags), and defines special link types.
+;;
+;; This mode isn't only for Doom's docs, but also for docs found in other Doom
+;; projects, like doomemacs/themes, doomemacs/snippets, and more. Most of its
+;; variables can be customized in its root .dir-locals.el.
+;;
 ;;; Code:
 
+;; DEPRECATED Will be renamed once docs "framework" is generalized
 (defvar doom-docs-header-alist
   `(("/docs/index\\.org$"
      (left ("↖ FAQ" . "doom-faq:")))
@@ -21,6 +32,7 @@
                     (format "doom-module-issues::%s %s" category module)))))))
   "TODO")
 
+;; DEPRECATED Will be renamed once docs "framework" is generalized
 (defvar doom-docs-header-common-alist
   `(("± Suggest edits" . "doom-suggest-edit:")
     ("? Help"
@@ -31,12 +43,49 @@
                   ("doom-help:"))))))
   "TODO")
 
+;; DEPRECATED Will be renamed once docs "framework" is generalized
+(defvar doom-docs-link-alist
+  '(("doom-tag"                . "https://github.com/hlissner/doom-emacs/releases/tag/%s")
+    ("doom-contrib-core"       . "id:9ac0c15c-29e7-43f8-8926-5f0edb1098f0")
+    ("doom-contrib-docs"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
+    ("doom-contrib-maintainer" . "id:e71e9595-a297-4c49-bd11-f238329372db")
+    ("doom-contrib-module"     . "id:b461a050-8702-4e63-9995-c2ef3a78f35d")
+    ("doom-faq"                . "id:5fa8967a-532f-4e0c-8ae8-25cd802bf9a9")
+    ("doom-help"               . "id:9bb17259-0b07-45a8-ae7a-fc5e0b16244e")
+    ("doom-help-changelog"     . "id:7c56cc08-b54b-4f4b-b106-a76e2650addd")
+    ("doom-help-modules"       . "id:1ee0b650-f09b-4454-8690-cc145aadef6e")
+    ("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
+    ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
+    ("doom-module-issues"      . "https://github.com/doomemacs/doomemacs/labels/%s")
+    ("doom-module-history"     . "https://github.com/doomemacs/doomemacs/commits/master/modules/%s")
+    ("doom-report"             . "https://github.com/doomemacs/doomemacs/issues/new/choose")
+    ("doom-suggest-edit"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
+    ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
+    ("github"                  . "https://github.com/%s")
+
+    ;; TODO Implement later, once docs are generalized
+    ;; ("github-release"          . (lambda (link)
+    ;;                                (format "%s/releases/tag/%s"
+    ;;                                        doom-docs-this-repo
+    ;;                                        link)))
+    ;; ("github-label"            . (lambda (link)
+    ;;                                (format "%s/labels/%s"
+    ;;                                        doom-docs-this-repo
+    ;;                                        link)))
+    ;; ("github-commits"          . (lambda (link)
+    ;;                                (format "%s/commits/%s/modules/%s"
+    ;;                                        doom-docs-this-repo
+    ;;                                        "master"
+    ;;                                        link))"github-repo:/commits/%b/modules/%%s")
+    ;; ("github-report"           . "github-repo:/issues/new/choose")
+    ))
+
 
 ;;
 ;;; `doom-docs-mode'
 
-(defun doom-docs--display-header-h ()
-  "Show header line in Doom documentation."
+(defun doom-docs--display-menu-h ()
+  "Toggle virtual menu line at top of buffer."
   (let ((beg (point-min))
         end)
     (org-with-wide-buffer
@@ -288,7 +337,7 @@ This primes `org-mode' for reading."
     (kill-local-variable 'doom-docs--initial-values)))
 
 (add-hook! 'doom-docs-mode-hook
-           #'doom-docs--display-header-h
+           #'doom-docs--display-menu-h
            #'doom-docs--hide-meta-h
            #'doom-docs--hide-tags-h
            #'doom-docs--hide-drawers-h
@@ -332,25 +381,6 @@ This primes `org-mode' for reading."
 
 ;;
 ;;; `doom-docs-org-mode'
-
-(defvar doom-docs-link-alist
-  '(("doom-tag"                . "https://github.com/hlissner/doom-emacs/releases/tag/%s")
-    ("doom-contrib-core"       . "id:9ac0c15c-29e7-43f8-8926-5f0edb1098f0")
-    ("doom-contrib-docs"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
-    ("doom-contrib-maintainer" . "id:e71e9595-a297-4c49-bd11-f238329372db")
-    ("doom-contrib-module"     . "id:b461a050-8702-4e63-9995-c2ef3a78f35d")
-    ("doom-faq"                . "id:5fa8967a-532f-4e0c-8ae8-25cd802bf9a9")
-    ("doom-help"               . "id:9bb17259-0b07-45a8-ae7a-fc5e0b16244e")
-    ("doom-help-changelog"     . "id:7c56cc08-b54b-4f4b-b106-a76e2650addd")
-    ("doom-help-modules"       . "id:1ee0b650-f09b-4454-8690-cc145aadef6e")
-    ("doom-index"              . "id:3051d3b6-83e2-4afa-b8fe-1956c62ec096")
-    ("doom-module-index"       . "id:12d2de30-c569-4b8e-bbc7-85dd5ccc4afa")
-    ("doom-module-issues"      . "https://github.com/doomemacs/doomemacs/labels/%s")
-    ("doom-module-history"     . "https://github.com/doomemacs/doomemacs/commits/master/modules/%s")
-    ("doom-report"             . "https://github.com/doomemacs/doomemacs/issues/new/choose")
-    ("doom-suggest-edit"       . "id:31f5a61d-d505-4ee8-9adb-97678250f4e2")
-    ("doom-suggest-faq"        . "id:aa28b732-0512-49ed-a47b-f20586c0f051")
-    ("github"                  . "https://github.com/%s")))
 
 ;;;###autoload
 (defun doom-docs-generate-id (&optional force?)
@@ -446,7 +476,6 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
         (unless (= beg end)
           (replace-regexp-in-string
            "[ \n]+" " " (string-trim (buffer-substring-no-properties beg end)))))))
-
 
 ;;;###autoload
 (defun doom-docs-doom-module-link-follow-fn (link)
