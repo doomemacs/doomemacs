@@ -85,12 +85,38 @@ See argument types in `doom-cli-argument-types', and `defcli!' for usage.")
                        ((or "n" "no"  "nil" "false" "0" "off") :no)))
             :error "Not a valid boolean, should be blank or one of: yes, no, y, n, true, false, on, off"
             :zshcomp "(y n yes no true false on off 1 0)")
-    ;; TODO Implement these implicit types
-    ;; (date ...)
-    ;; (time ...)
-    ;; (duration ...)
-    ;; (size ...)
-    )
+    (date   :test ,(lambda (str)
+                     (let ((ts (parse-time-string str)))
+                       (and (decoded-time-day ts)
+                            (decoded-time-month ts)
+                            (decoded-time-year ts))))
+            :read parse-time-string
+            :error "Not a valid date (try YYYY-MM-DD or a date produced by `date')")
+    (time   :test ,(lambda (str)
+                     (let ((ts (parse-time-string str)))
+                       (and (decoded-time-hour ts)
+                            (decoded-time-minute ts)
+                            (decoded-time-second ts))))
+            :read parse-time-string
+            :error "Not a valid date (try YYYY-MM-DD or a date produced by `date')")
+    (duration :test ,(lambda (str)
+                       (not (cl-loop for d in (split-string-and-unquote str " ")
+                                     unless (string-match-p "^[0-9]+[hmsdMY]$" d)
+                                     return t)))
+              :read ,(doom-rpartial #'split-string-and-unquote " ")
+              :error "Not a valid duration (e.g. 5h 20m 40s 2Y 1M)")
+    (size :test "^[0-9]+[kmgt]?b$"
+          :read ,(lambda (str)
+                   (save-match-data
+                     (and (string-match "^\\([0-9]+\\(?:\\.[0-9]+\\)\\)\\([kmgt]?b\\)$" str)
+                          (* (string-to-number (match-string 1 str))
+                             (or (cdr (assoc (match-string 2 str)
+                                             '(("kb" . 1000)
+                                               ("mb" . 1000000)
+                                               ("gb" . 1000000000)
+                                               ("tb" . 1000000000000))))
+                                 1)))))
+          :error "Not a valid filesize (e.g. 5mb 10.4kb 2gb 1.4tb)"))
   "A list of implicit option argument datatypes and their rules.
 
 Recognizies the following properies:
