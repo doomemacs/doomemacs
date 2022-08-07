@@ -87,22 +87,6 @@
 ;; Just the... bear necessities~
 (require 'doom (expand-file-name "doom" (file-name-directory load-file-name)))
 
-;; Load these eagerly, since autoloads haven't been generated/loaded yet
-(load! "lib/process")
-(load! "lib/system")
-(load! "lib/plist")
-(load! "lib/files")
-(load! "lib/debug")
-(load! "lib/print")
-;; (load! "lib/autoloads")
-
-;; Ensure straight and core packages are ready to go for CLI commands.
-(require 'doom-modules)
-(require 'doom-packages)
-
-;; Our DSL, API, and everything nice.
-(require 'doom-cli-lib)
-
 ;; Don't generate superfluous files when writing temp buffers.
 (setq make-backup-files nil)
 ;; Stop user configuration from interfering with package management.

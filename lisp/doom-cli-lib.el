@@ -10,6 +10,21 @@
 (require 'seq)
 (require 'map)
 
+;; Load these eagerly, since autoloads may not have been generated/loaded yet
+(load! "lib/process")
+(load! "lib/system")
+(load! "lib/git")
+(load! "lib/plist")
+(load! "lib/files")
+(load! "lib/debug")
+(load! "lib/print")
+;; (load! "lib/autoloads")
+
+;; Ensure straight and core packages are ready to go for CLI commands.
+(require 'doom-modules)
+(require 'doom-packages)
+;; TODO (require 'doom-profiles)
+
 
 ;;
 ;;; Variables
