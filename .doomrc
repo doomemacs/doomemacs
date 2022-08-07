@@ -1,6 +1,7 @@
-;;; ci.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; .doomrc --- doom runtime config -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
+(require 'doom) ; be silent, byte-compiler
 
 (after! doom-cli-ci
   ;;; Commit linter types
@@ -50,4 +51,4 @@
                         :match "\\.org$"
                         :map #'file-name-base)))
 
-;;; ci.el ends here
+;;; .doomrc ends here

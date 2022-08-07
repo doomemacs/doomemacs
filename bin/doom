@@ -198,8 +198,8 @@ SEE ALSO:
     silently fail on missing files, but --strict-load won't.
 
     Warning: files loaded this way load too late to define new commands. To
-    define commands, do so from `$DOOMDIR'/cli.el or `$DOOMDIR'/init.el
-    instead."
+    define commands, do so from `$DOOMDIR'/cli.el, `$DOOMDIR'/init.el, or a
+    .doomrc file in the current project tree."
   (when color?
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
   (when pager
@@ -299,7 +299,17 @@ SEE ALSO:
               (load! cli-file path t)))))
 
       (doom-log "Loading $DOOMDIR/cli.el")
-      (load! cli-file doom-private-dir t))))
+      (load! cli-file doom-private-dir t))
+
+    ;; Allow per-project Doom settings in .doom files.
+    (let (doomrc)
+      (cond
+       ((setq doomrc (getenv "DOOMRC"))
+        (load! doomrc))
+       ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
+        (load! ".doomrc" doomrc)))
+      (when doomrc
+        (print! "Loaded doomrc: %s" doomrc)))))
 
 
 ;;
