@@ -18,7 +18,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/docker-compose\\.yml$" :mode yaml-mode)
     ("/Makefile$"             :mode makefile-gmake-mode)
     ;; elisp
-    ("/.dir-locals.el$")
+    ("/\\.dir-locals\\.el$")
     ("/\\.doomrc$"
      :trigger "__doomrc"
      :mode emacs-lisp-mode)
@@ -96,7 +96,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/Rakefile$"         :trigger "__Rakefile" :mode ruby-mode :project t)
     (ruby-mode)
     ;; Rust
-    ("/Cargo.toml$" :trigger "__Cargo.toml" :mode rust-mode)
+    ("/Cargo\\.toml$" :trigger "__Cargo.toml" :mode rust-mode)
     ("/main\\.rs$" :trigger "__main.rs" :mode rust-mode)
     ;; Slim
     ("/\\(?:index\\|main\\)\\.slim$" :mode slim-mode)
