@@ -537,9 +537,9 @@ Throws `doom-cli-invalid-option-error' for illegal values."
    nil (cl-loop for spec in argspec
                 if (or (and (stringp spec)
                             (not (string-match-p "^-\\(?:-[a-zA-Z0-9]\\|[^-]$\\)" spec)))
-                       (keywordp spec))
-                collect spec
-                else if (symbolp spec)
+                       (keywordp spec)
+                       (symbolp spec)
+                       (listp spec))
                 collect spec)))
 
 (defun doom-cli--make-option-generic (symbol spec &optional docs)
@@ -1408,14 +1408,16 @@ formats:
 
     If a string, they are used verbatim as the argument's documentation. Use
     this to document more complex specifications, like \"[user@]host[:port]\".
-    Use reference `quotes' to highlight arguments appropriately.
+    Use reference `quotes' to highlight arguments appropriately. No input
+    validation is performed on these arguments.
 
     If a symbol, this is equivalent to (upcase (format \"`%s'\" SYMBOL)), but
     its arguments will also be implicitly validated against
     `doom-cli-option-arg-types'.
 
     A nested list indicates that an argument accepts multiple types, and are
-    implicitly joined into \"`ARG1'|`ARG2'|...\".
+    implicitly joined into \"`ARG1'|`ARG2'|...\". Input validation is performed
+    on symbols only.
 
     WARNING: If this option is a &flag, the option must not accept arguments.
     Instead, use ARGSPEC to specify a single, default value (one of `:yes' or
