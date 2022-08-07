@@ -55,16 +55,16 @@ See argument types in `doom-cli-argument-types', and `defcli!' for usage.")
 
 (defvar doom-cli-option-arg-types
   `((dir    :test file-directory-p
-            :read doom-path
-            :error "Directory does not exist"
+            :read expand-file-name
+            :error "Not a valid path to an existing directory"
             :zshcomp "_dirs")
     (file   :test file-exists-p
-            :read doom-path
-            :error "File does not exist"
+            :read expand-file-name
+            :error "Not a valid path to an existing file"
             :zshcomp "_files")
     (stdout :test ,(lambda (str) (equal str "-"))
             :read identity
-            :error "Must be a dash to signal stdout"
+            :error "Not a dash to signal stdout"
             :zshcomp "(-)")
     (path   :read expand-file-name :zshcomp "_files")
     (form   :read read)
