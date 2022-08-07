@@ -62,6 +62,10 @@ See argument types in `doom-cli-argument-types', and `defcli!' for usage.")
             :read doom-path
             :error "File does not exist"
             :zshcomp "_files")
+    (stdout :test ,(lambda (str) (equal str "-"))
+            :read identity
+            :error "Must be a dash to signal stdout"
+            :zshcomp "(-)")
     (path   :read expand-file-name :zshcomp "_files")
     (form   :read read)
     (regexp :test ,(lambda (str) (always (string-match-p str ""))))
