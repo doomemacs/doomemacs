@@ -44,7 +44,7 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
                    (set-default
                     var (if (not enabled)
                             (prog1 (get var 'initial-value)
-                              (put 'x 'initial-value nil))
+                              (put var 'initial-value nil))
                           (put var 'initial-value (symbol-value var))
                           val))
                  (add-to-list 'doom-debug--undefined-vars var))))
