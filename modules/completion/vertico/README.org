@@ -23,6 +23,10 @@ like [[doom-package:][ivy]] and [[doom-package:][helm]] do. The primary packages
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
+- +childframe ::
+  Display completion candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or
+  tooltip. *Requires GUI Emacs.*
+
 - +icons ::
   Add icons to =file= and =buffer= category completion selections.
 
@@ -35,6 +39,7 @@ like [[doom-package:][ivy]] and [[doom-package:][helm]] do. The primary packages
 - [[doom-package:][marginalia]]
 - [[doom-package:][orderless]]
 - [[doom-package:][vertico]]
+- [[doom-package:][vertico-posframe]] if [[doom-module:][+childframe]]
 - [[doom-package:][wgrep]]
 
 ** Hacks
