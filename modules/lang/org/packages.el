@@ -27,7 +27,7 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "5a49cc5f4f09910fd03d5db590ae2b80f5981a66")
+  :pin "00adad9357b9123a7b11ecf12c148a5196debcb7")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
@@ -78,11 +78,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "3faa042393ebfe5699a3bffce775f039d7416ceb")
-  (package! org-re-reveal :pin "f184e66e398e1cfdfd55894c67392805ae531a39")
+  (package! org-re-reveal :pin "6f78a0a2287e7eecd4d22aebdb597ebadcc3eab3")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "039972c730690af7a83a5cb832056a7cc8b565d7"))
+    :pin "e219184f37a71c406e41d55ac3212eb79797f0aa"))
 (cond
  ((featurep! +roam)
   (package! org-roam
@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "e435581215a9eb8e95dde49ce1fb3c25929b80f4")))
+    :pin "7f453f3fffb924ca4ae3f8d34cabc03fbcae0127")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
