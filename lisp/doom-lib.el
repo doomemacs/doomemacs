@@ -569,11 +569,11 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                    (error "Could not detect path to look for '%s' in"
                           filename)))
          (file (if path
-                   `(expand-file-name ,filename ,path)
+                   `(let (file-name-handler-alist)
+                      (expand-file-name ,filename ,path))
                  filename)))
     `(condition-case-unless-debug e
-         (let (file-name-handler-alist)
-           (load ,file ,noerror 'nomessage))
+         (load ,file ,noerror 'nomessage)
        (doom-error (signal (car e) (cdr e)))
        (error (doom--handle-load-error e ,file ,path)))))
 
