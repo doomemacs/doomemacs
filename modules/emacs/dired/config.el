@@ -72,11 +72,12 @@ Fixes #3939: unsortable dired entries on Windows."
 
 
 (use-package! diff-hl
-  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
-  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
-  :config
-  ;; use margin instead of fringe
-  (diff-hl-margin-mode))
+  :when (featurep! :ui vc-gutter)
+  :hook (dired-mode-hook . diff-hl-margin-local-mode)
+  :init
+  (unless (featurep! :ui vc-gutter +diff-hl)
+    (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 
 
 (use-package! ranger

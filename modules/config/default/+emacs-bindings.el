@@ -349,11 +349,11 @@
        :desc "Kill link to remote"         "y"   #'+vc/browse-at-remote-kill
        :desc "Kill link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
        (:when (featurep! :ui vc-gutter)
-        :desc "Git revert hunk"            "r"   #'git-gutter:revert-hunk
-        :desc "Git stage hunk"             "s"   #'git-gutter:stage-hunk
+        :desc "Git revert hunk"            "r"   #'+vc-gutter/revert-hunk
+        :desc "Git stage hunk"             "s"   #'+vc-gutter/stage-hunk
         :desc "Git time machine"           "t"   #'git-timemachine-toggle
-        :desc "Jump to next hunk"          "n"   #'git-gutter:next-hunk
-        :desc "Jump to previous hunk"      "p"   #'git-gutter:previous-hunk)
+        :desc "Jump to next hunk"          "n"   #'+vc-gutter/next-hunk
+        :desc "Jump to previous hunk"      "p"   #'+vc-gutter/previous-hunk)
        (:when (featurep! :tools magit)
         :desc "Magit dispatch"             "/"   #'magit-dispatch
         :desc "Magit file dispatch"        "."   #'magit-file-dispatch

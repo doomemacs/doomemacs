@@ -13,6 +13,10 @@ Supports Git, Svn, Hg, and Bzr.
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
+- +diff-hl ::
+  Use [[doom-package:][diff-hl]] instead of git-gutter to power the VC gutter. It is a little
+  faster, but is slightly more prone to visual glitching. [[doom-package:][diff-hl]] is intended to
+  replace git-gutter at some point in the future.
 - +pretty ::
   Apply some stylistic defaults to the fringe, enabling thin bars in the fringe.
   This look takes after the modern look of git-gutter in VSCode and Sublime
@@ -22,7 +26,8 @@ Supports Git, Svn, Hg, and Bzr.
   diff-hl's faces (like modus-themes does).
 
 ** Packages
-- [[doom-package:][git-gutter-fringe]]
+- [[doom-package:][git-gutter-fringe]] unless [[doom-module:][+diff-hl]]
+- [[doom-package:][diff-hl]] if [[doom-module:][+diff-hl]]
 
 ** TODO Hacks
 #+begin_quote

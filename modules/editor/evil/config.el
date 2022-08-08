@@ -445,8 +445,8 @@ directives. By default, this only recognizes C directives.")
        :m "]x"   #'+web:encode-html-entities
        :m "[x"   #'+web:decode-html-entities)
       (:when (featurep! :ui vc-gutter)
-       :m "]d"   #'git-gutter:next-hunk
-       :m "[d"   #'git-gutter:previous-hunk)
+       :m "]d"   #'+vc-gutter/next-hunk
+       :m "[d"   #'+vc-gutter/previous-hunk)
       (:when (featurep! :ui hl-todo)
        :m "]t"   #'hl-todo-next
        :m "[t"   #'hl-todo-previous)

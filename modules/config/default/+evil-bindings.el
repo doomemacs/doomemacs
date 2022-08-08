@@ -452,11 +452,11 @@
        (:when (featurep! :ui vc-gutter)
         (:when (featurep! :ui hydra)
          :desc "VCGutter"                "."   #'+vc/gutter-hydra/body)
-        :desc "Revert hunk"               "r"   #'git-gutter:revert-hunk
-        :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
+        :desc "Revert hunk at point"      "r"   #'+vc-gutter/revert-hunk
+        :desc "stage hunk at point"       "s"   #'+vc-gutter/stage-hunk
         :desc "Git time machine"          "t"   #'git-timemachine-toggle
-        :desc "Jump to next hunk"         "]"   #'git-gutter:next-hunk
-        :desc "Jump to previous hunk"     "["   #'git-gutter:previous-hunk)
+        :desc "Jump to next hunk"         "]"   #'+vc-gutter/next-hunk
+        :desc "Jump to previous hunk"     "["   #'+vc-gutter/previous-hunk)
        (:when (featurep! :tools magit)
         :desc "Magit dispatch"            "/"   #'magit-dispatch
         :desc "Magit file dispatch"       "."   #'magit-file-dispatch
