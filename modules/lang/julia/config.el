@@ -108,8 +108,8 @@
   :config
   (setq julia-snail-popup-display-eval-results :command)
   (setq julia-snail-multimedia-enable t)
-  (setq julia-snail-popup-display-face '(:background "grey10" :box (:line-width 1 :color "black")
-                                         ((class color) (background dark))))
+  (setq julia-snail-popup-display-face '(:background base3 :box `(:line-width -1 :color base5)))
+
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
 
   (after! julia-mode
