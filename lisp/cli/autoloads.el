@@ -45,6 +45,13 @@ one wants that.")
              (signal 'doom-error
                      (list "The installed version of Doom has changed since last 'doom sync' ran"
                            "Run 'doom sync' to bring Doom up to speed"))))
+         ;; If the bundled elisp for this Emacs install isn't byte-compiled,
+         ;; disengage the `file-name-handler-alist' optimization early to
+         ;; prevent encoding errors when Emacs tries to read gzipped elisp.
+         (unless (locate-file "startup.elc" (get 'load-path 'initial-value))
+           `((unless noninteractive
+               (doom-reset-file-handler-alist-h)
+               (remove-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101))))
          (cl-loop for var in doom-autoloads-cached-vars
                   when (boundp var)
                   collect `(set ',var ',(symbol-value var)))
