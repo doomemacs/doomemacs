@@ -19,7 +19,7 @@
        (let* ((default-directory (or dir default-directory))
               (target (expand-file-name target))
               (dest   (expand-file-name dest)))
-         (print! (start "Compiling your literate config..."))
+         (print! (start "Tangling your literate config..."))
          (print-group!
           (let (;; Do as little unnecessary work as possible in these org files.
                 (org-startup-indented nil)
@@ -39,18 +39,23 @@
                 ;; Allow evaluation of src blocks at tangle-time (would abort
                 ;; them otherwise). This is a security hazard, but Doom will
                 ;; trust that you know what you're doing!
-                (org-confirm-babel-evaluate nil))
-            (org-babel-tangle-file target dest))
-          t))))
+                (org-confirm-babel-evaluate nil)
+                ;; Say a little more
+                (doom-print-message-level 'info))
+            (if-let (files (org-babel-tangle-file target dest))
+                (always (print! (success "Done tangling %d file(s)!" (length files))))
+              (print! (error "Failed to tangle any blocks from your config."))
+              nil))))))
 
 (defun +literate-tangle--sync ()
   "Tangles `+literate-config-file' if it has changed."
-  (and (not (getenv "__NOTANGLE"))
-       (+literate-tangle +literate-config-file
-                         (concat doom-module-config-file ".el")
-                         doom-private-dir)
-       (setenv "__NOTANGLE" "1")
-       (exit! :restart)))
+  (or (getenv "__NOTANGLE")
+      (and (+literate-tangle +literate-config-file
+                             (concat doom-module-config-file ".el")
+                             doom-private-dir)
+           (setenv "__NOTANGLE" "1")
+           (or (not noninteractive)
+               (exit! :restart)))))
 
 (defun +literate-tangle--async ()
   "Tangles `+literate-config-file' using an async Emacs process."
@@ -109,7 +114,8 @@
 This is performed with an asyncronous Emacs process, except when
 `noninteractive' is nil."
   (if noninteractive
-      (+literate-tangle--sync)
+      (unless (+literate-tangle--sync)
+        (kill-emacs 3))
     (+literate-tangle--async)))
 
 ;;;###autoload
