@@ -15,6 +15,8 @@ Emacs.")
   "The filename of the `fd' executable. On some distros it's 'fdfind' (ubuntu,
 debian, and derivatives). On most it's 'fd'.")
 
+(defvar doom-projects--fd-version nil)
+
 
 ;;
 ;;; Packages
@@ -174,9 +176,17 @@ And if it's a function, evaluate it."
                          (cl-find-if (doom-rpartial #'executable-find t)
                                      (list "fdfind" "fd"))
                        doom-projectile-fd-binary))
-              (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git --strip-cwd-prefix"
-                              bin)
-                      (if IS-WINDOWS " --path-separator=/"))))
+              ;; REVIEW Temporary fix for #6618. Improve me later.
+              (let ((version (or doom-projects--fd-version
+                                 (cadr (split-string (cdr (doom-call-process bin "--version"))
+                                                     " " t)))))
+                (when version
+                  (setq doom-projects--fd-version version))
+                (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git %s"
+                                bin (if (and (stringp version)
+                                             (version< version "8.3.0"))
+                                        "" "--strip-cwd-prefix"))
+                        (if IS-WINDOWS " --path-separator=/")))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
            ((executable-find "rg" t)
             (concat "rg -0 --files --follow --color=never --hidden -g!.git"
