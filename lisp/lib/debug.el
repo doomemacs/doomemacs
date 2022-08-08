@@ -14,6 +14,7 @@
     init-file-debug
     jka-compr-verbose
     (message-log-max . 16384)
+    (warning-suppress-types . nil)
     url-debug
     use-package-verbose)
   "A list of variable to toggle on `doom-debug-mode'.

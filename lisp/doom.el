@@ -476,6 +476,12 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;; useful, and often come from third party packages.
 (setq ad-redefinition-action 'accept)
 
+;; Ignore warnings about "existing variables being aliased". Otherwise the user
+;; gets very intrusive popup warnings about our (intentional) uses of
+;; defvaralias.
+(after! warnings
+  (add-to-list 'warning-suppress-types '(defvaralias)))
+
 ;; Reduce debug output unless we've asked for it.
 (setq debug-on-error init-file-debug
       jka-compr-verbose init-file-debug)
