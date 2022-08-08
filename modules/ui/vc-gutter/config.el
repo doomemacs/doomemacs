@@ -17,6 +17,39 @@ flycheck indicators moved to the right fringe.")
 
 
 ;;
+;;; Default styles
+
+(when (featurep! +pretty)
+  ;; UI: make the fringe small enough that the diff bars aren't too domineering,
+  ;; while leaving enough room for other indicators.
+  (if (fboundp 'fringe-mode) (fringe-mode '8))
+  ;; UI: the gutter looks less cramped with some space between it and  buffer.
+  (setq-default fringes-outside-margins t)
+
+  ;; STYLE: Redefine fringe bitmaps to take up only half the horizontal space in
+  ;; the fringe. This way we avoid overbearingly large diff bars without having
+  ;; to shrink the fringe and sacrifice precious space for other fringe
+  ;; indicators (like flycheck or flyspell).
+  ;; TODO Extract these into a package with faces that themes can target.
+  (after! git-gutter-fringe
+    (define-fringe-bitmap 'git-gutter-fr:added [224]
+      nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:modified [224]
+      nil nil '(center repeated))
+    (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
+      nil nil 'bottom))
+
+  ;; FIX: To minimize overlap between flycheck indicators and git-gutter/diff-hl
+  ;; indicators in the left fringe.
+  (after! flycheck
+    ;; let diff have left fringe, flycheck can have right fringe
+    (setq flycheck-indication-mode 'right-fringe)
+    ;; A non-descript, left-pointing arrow
+    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+      [16 48 112 240 112 48 16] nil nil 'center)))
+
+
+;;
 ;;; Packages
 
 (use-package! git-gutter

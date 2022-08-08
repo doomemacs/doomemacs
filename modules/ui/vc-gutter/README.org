@@ -13,7 +13,13 @@ Supports Git, Svn, Hg, and Bzr.
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +pretty ::
+  Apply some stylistic defaults to the fringe, enabling thin bars in the fringe.
+  This look takes after the modern look of git-gutter in VSCode and Sublime
+  Text, without sacrificing on fringe width (which squeeze other indicators,
+  like flycheck's, flymake's, or flyspell's). However, this will look bad with
+  themes that invert the foreground/background of either git-gutter's or
+  diff-hl's faces (like modus-themes does).
 
 ** Packages
 - [[doom-package:][git-gutter-fringe]]
