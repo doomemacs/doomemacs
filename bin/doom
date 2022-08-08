@@ -309,7 +309,7 @@ SEE ALSO:
        ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
         (load! ".doomrc" doomrc)))
       (when doomrc
-        (print! "Loaded doomrc: %s" doomrc)))))
+        (doom-log "Loaded doomrc: %s" doomrc)))))
 
 
 ;;
