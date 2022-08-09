@@ -203,14 +203,12 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
       (apply fn args)))
 
   ;; UX: Don't delete the current hunk's indicators while we're editing
-  (add-hook! 'diff-hl-flydiff-mode-hook
-    (defun +vc-gutter-init-flydiff-mode-h ()
-      (if diff-hl-flydiff-mode
-          (progn
-            (advice-remove #'diff-hl-overlay-modified #'ignore)
-            (when (featurep! :editor evil)
-              (add-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)))
-        (remove-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update))))
+  (when (featurep! :editor evil)
+    (add-hook! 'diff-hl-flydiff-mode-hook
+      (defun +vc-gutter-init-flydiff-mode-h ()
+        (if (not diff-hl-flydiff-mode)
+            (remove-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)
+          (add-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)))))
 
   ;; FIX: Reverting a hunk causes the cursor to be moved to an unexpected place,
   ;; often far from the target hunk.
