@@ -53,9 +53,8 @@
       (and (+literate-tangle +literate-config-file
                              (concat doom-module-config-file ".el")
                              doom-private-dir)
-           (setenv "__NOTANGLE" "1")
            (or (not noninteractive)
-               (exit! :restart)))))
+               (exit! "__NOTANGLE=1 $@")))))
 
 (defun +literate-tangle--async ()
   "Tangles `+literate-config-file' using an async Emacs process."
