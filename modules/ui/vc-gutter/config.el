@@ -183,9 +183,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; UX: Update diff-hl when magit alters git state.
   (when (featurep! :tools magit)
     (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
-    (add-hook 'magit-post-stage-hook   #'+vc-gutter-update-h)
-    (add-hook 'magit-post-unstage-hook #'+vc-gutter-update-h))
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
   ;; UX: Don't delete the current hunk's indicators while we're editing
   (add-hook! 'diff-hl-flydiff-mode-hook
