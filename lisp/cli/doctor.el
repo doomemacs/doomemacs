@@ -162,6 +162,8 @@ in."
              kill-emacs-query-functions
              kill-emacs-hook)
          (defvar doom-reloading-p nil)
+         (unless (file-exists-p doom-autoloads-file)
+           (user-error "Autoloads file not generated. Did you remember to run 'doom sync'?"))
          (require 'doom-start)
          (doom-initialize-packages))
 
