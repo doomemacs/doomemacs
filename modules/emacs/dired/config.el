@@ -71,15 +71,6 @@ Fixes #3939: unsortable dired entries on Windows."
   :hook (dired-mode . diredfl-mode))
 
 
-(use-package! diff-hl
-  :when (featurep! :ui vc-gutter)
-  :hook (dired-mode-hook . diff-hl-margin-local-mode)
-  :init
-  (unless (featurep! :ui vc-gutter +diff-hl)
-    (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
-    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
-
-
 (use-package! ranger
   :when (featurep! +ranger)
   :after dired
