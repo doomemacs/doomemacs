@@ -1,5 +1,7 @@
 ;;; term/vterm/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +vterm--id nil)
+
 ;;;###autoload
 (defun +vterm/toggle (arg)
   "Toggles a terminal popup window at project root.
@@ -10,7 +12,7 @@ Returns the vterm buffer."
   (interactive "P")
   (+vterm--configure-project-root-and-display
    arg
-   (lambda()
+   (lambda ()
      (let ((buffer-name
             (format "*doom:vterm-popup:%s*"
                     (if (bound-and-true-p persp-mode)
@@ -27,8 +29,13 @@ Returns the vterm buffer."
              (delete-window window))))
        (if-let (win (get-buffer-window buffer-name))
            (delete-window win)
-         (let ((buffer (get-buffer-create buffer-name)))
+         (let ((buffer (or (cl-loop for buf in (doom-buffers-in-mode 'vterm-mode)
+                                    if (equal (buffer-local-value '+vterm--id buf)
+                                              buffer-name)
+                                    return buf)
+                           (get-buffer-create buffer-name))))
            (with-current-buffer buffer
+             (setq-local +vterm--id buffer-name)
              (unless (eq major-mode 'vterm-mode)
                (vterm-mode)))
            (pop-to-buffer buffer)))
