@@ -190,6 +190,18 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
+  ;; FIX: The revert popup consumes 50% of the frame, whether or not you're
+  ;; reverting 2 lines or 20. This fix resizes the popup to match its contents.
+  (defadvice! +vc-gutter--shrink-popup-a (fn &rest args)
+    :around #'diff-hl-revert-hunk-1
+    (letf! ((refine-mode diff-auto-refine-mode)
+            (diff-auto-refine-mode t)
+            (defun diff-refine-hunk ()
+              (when refine-mode
+                (funcall diff-refine-hunk))
+              (shrink-window-if-larger-than-buffer)))
+      (apply fn args)))
+
   ;; UX: Don't delete the current hunk's indicators while we're editing
   (add-hook! 'diff-hl-flydiff-mode-hook
     (defun +vc-gutter-init-flydiff-mode-h ()
