@@ -33,9 +33,6 @@
           nil nil 'bottom))
     (defadvice! +vc-gutter-define-thin-bitmaps-a (&rest args)
       :override #'diff-hl-define-bitmaps
-      (set-face-background 'diff-hl-insert nil)
-      (set-face-background 'diff-hl-delete nil)
-      (set-face-background 'diff-hl-change nil)
       (define-fringe-bitmap 'diff-hl-bmp-middle [224] nil nil '(center repeated))
       (define-fringe-bitmap 'diff-hl-bmp-delete [240 224 192 128] nil nil 'top))
     (defun +vc-gutter-type-face-fn (type _pos)
@@ -44,8 +41,15 @@
       (if (eq type 'delete)
           'diff-hl-bmp-delete
         'diff-hl-bmp-middle))
-    (setq diff-hl-fringe-bmp-function #'+vc-gutter-type-at-pos-fn
-          diff-hl-draw-borders nil))
+    (advice-add #'diff-hl-fringe-bmp-from-pos  :override #'+vc-gutter-type-at-pos-fn)
+    (advice-add #'diff-hl-fringe-bmp-from-type :override #'+vc-gutter-type-at-pos-fn)
+    (setq diff-hl-draw-borders nil)
+    (add-hook! 'diff-hl-mode-hook
+      (defun +vc-gutter-fix-diff-hl-faces-h ()
+        (mapc (doom-rpartial #'set-face-background nil)
+              '(diff-hl-insert
+                diff-hl-delete
+                diff-hl-change)))))
 
   ;; FIX: To minimize overlap between flycheck indicators and git-gutter/diff-hl
   ;; indicators in the left fringe.
