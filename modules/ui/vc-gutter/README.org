@@ -29,10 +29,28 @@ Supports Git, Svn, Hg, and Bzr.
 - [[doom-package:][git-gutter-fringe]] unless [[doom-module:][+diff-hl]]
 - [[doom-package:][diff-hl]] if [[doom-module:][+diff-hl]]
 
-** TODO Hacks
-#+begin_quote
- 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
-#+end_quote
+** Hacks
+- The VC gutter will be updated when pressing ESC, leaving insert mode (evil
+  users), or refocusing the frame or window where it is active.
+- If [[doom-module:][+pretty]] is enabled
+  - The fringes that both git-gutter-fringe and diff-hl define will be replaced
+    with a set of thin bars. This achieves a slicker look closer to git-gutter's
+    appearance in VSCode or Sublime Text, but may look weird for themes that
+    swap their faces' :foreground and :background (like modus-themes).
+  - The fringes are moved to the outside of the margins (closest to the frame
+    edge), so they have some breathing space away from the buffer's contents.
+- If [[doom-package:][+diff-hl]] is enabled:
+  - ~diff-hl-revert-hunk~ displays a preview popup of the hunk being reverted.
+    It takes up ~50% of the frame, by default, whether you're reverting 2 lines
+    or 20. Since this isn't easily customized, it has been advised to shrink
+    this popup to the side of its contents.
+  - ~diff-hl-revert-hunk~ will sometimes move the cursor to an unexpected
+    location (the bounds of hunks, is my guess), but this is not intuitive and
+    often unexpected. Cursor movements have been suppressed for it.
+- If +diff-hl is *not* enabled:
+  - Sometimes, ~git-gutter:next-hunk~ and ~git-gutter:previous-hunk~ get
+    confused about the order of hunks. They have been advised to fix this
+    (although the hack is a little inefficient).
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
