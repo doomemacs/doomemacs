@@ -143,7 +143,8 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 
 (use-package! diff-hl
   :when (featurep! +diff-hl)
-  :hook (doom-first-file . global-diff-hl-mode)
+  :hook (find-file    . diff-hl-mode)
+  :hook (vc-dir-mode  . diff-hl-dir-mode)
   :hook (diff-hl-mode . diff-hl-flydiff-mode)
   :config
   (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
