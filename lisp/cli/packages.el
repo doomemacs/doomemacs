@@ -189,20 +189,19 @@ list remains lean."
 
 (defun doom-packages--eln-file-outdated-p (file)
   "Check whether the corresponding .eln for `file' is outdated."
-  (let* ((eln-name (doom-packages--eln-file-name file))
-         (eln-file (doom-packages--find-eln-file eln-name))
-         (error-file (doom-packages--eln-error-file eln-name)))
-    (cond (eln-file
-           (when (file-newer-than-file-p file eln-file)
-             (doom-log "%s is newer than %s" file eln-file)
-             t))
-          ((file-exists-p error-file)
-           (when (file-newer-than-file-p file error-file)
-             (doom-log "%s is newer than %s" file error-file)
-             t))
-          (t
-           (doom-log "%s doesn't exist" eln-name)
-           t))))
+  (when (file-exists-p file)
+    (let* ((eln-name (doom-packages--eln-file-name file))
+           (eln-file (doom-packages--find-eln-file eln-name))
+           (error-file (doom-packages--eln-error-file eln-name)))
+      (cond (eln-file
+             (when (file-newer-than-file-p file eln-file)
+               (doom-log "%s is newer than %s" file eln-file)
+               t))
+            ((file-exists-p error-file)
+             (when (file-newer-than-file-p file error-file)
+               (doom-log "%s is newer than %s" file error-file)
+               t))
+            ((always (doom-log "%s doesn't exist" eln-name)))))))
 
 (defun doom-packages--native-compile-done-h (file)
   "Callback fired when an item has finished async compilation."
