@@ -2,6 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'comp nil t)
+
 ;;
 ;;; Variables
 
@@ -157,31 +159,29 @@ list remains lean."
 
 (defun doom-packages--eln-file-name (file)
   "Return the short .eln file name corresponding to `file'."
-  (concat comp-native-version-dir "/"
-          (file-name-nondirectory
-           (comp-el-to-eln-filename file))))
+  (file-name-concat
+   comp-native-version-dir
+   (file-name-nondirectory
+    (comp-el-to-eln-filename file))))
 
 (defun doom-packages--eln-output-file (eln-name)
   "Return the expected .eln file corresponding to `eln-name'."
-  (concat doom-packages--eln-output-path eln-name))
+  (file-name-concat doom-packages--eln-output-path eln-name))
 
 (defun doom-packages--eln-error-file (eln-name)
   "Return the expected .error file corresponding to `eln-name'."
-  (concat doom-packages--eln-output-path eln-name ".error"))
+  (file-name-concat doom-packages--eln-output-path eln-name ".error"))
 
 (defun doom-packages--find-eln-file (eln-name)
   "Find `eln-name' on the `native-comp-eln-load-path'."
-  (cl-some (lambda (eln-path)
-             (let ((file (concat eln-path eln-name)))
-               (when (file-exists-p file)
-                 file)))
+  (cl-some (fn! (file-exists-p! eln-name %))
            native-comp-eln-load-path))
 
 (defun doom-packages--elc-file-outdated-p (file)
   "Check whether the corresponding .elc for `file' is outdated."
   (let ((elc-file (byte-compile-dest-file file)))
     ;; NOTE Ignore missing elc files, they could be missing due to
-    ;; `no-byte-compile'. Rebuilding unnecessarily is expensive.
+    ;;   `no-byte-compile'. Rebuilding unnecessarily is expensive.
     (when (and (file-exists-p elc-file)
                (file-newer-than-file-p file elc-file))
       (doom-log "%s is newer than %s" file elc-file)
@@ -215,19 +215,12 @@ list remains lean."
         (write-region "" nil error-file)
         (doom-log "Wrote %s" error-file)))))
 
-(defun doom-packages--native-compile-jobs ()
-  "How many async native compilation jobs are queued or in-progress."
-  (if (featurep 'comp)
-      (+ (length comp-files-queue)
-         (comp-async-runnings))
-    0))
-
 (defun doom-packages--wait-for-native-compile-jobs ()
   "Wait for all pending async native compilation jobs."
   (cl-loop with previous = 0
            with timeout = 30
            with timer = 0
-           for pending = (doom-packages--native-compile-jobs)
+           for pending = (+ (length comp-files-queue) (comp-async-runnings))
            while (not (zerop pending))
            if (/= previous pending) do
            (print! (start "\033[KNatively compiling %d files...\033[1A" pending))
@@ -263,13 +256,12 @@ list remains lean."
   "Queue async compilation for all non-doom Elisp files."
   (when NATIVECOMP
     (cl-loop with paths = (cl-loop for path in load-path
-                                   unless (string-prefix-p doom-local-dir path)
+                                   unless (file-in-directory-p path doom-local-dir)
                                    collect path)
              for file in (doom-files-in paths :match "\\.el\\(?:\\.gz\\)?$")
              if (and (file-exists-p (byte-compile-dest-file file))
                      (not (doom-packages--find-eln-file (doom-packages--eln-file-name file)))
-                     (not (cl-some (lambda (re)
-                                     (string-match-p re file))
+                     (not (cl-some (fn! (string-match-p % file))
                                    native-comp-deferred-compilation-deny-list))) do
              (doom-log "Compiling %s" file)
              (native-compile-async file))))
