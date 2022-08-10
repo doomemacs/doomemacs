@@ -54,7 +54,7 @@ one wants that.")
          ;;   explicitly tries to load the un-compiled calc-loaddefs.el. If it
          ;;   doesn't exist, it'll go for calc-loaddefs.el.gz instead.
          (unless (locate-file "calc-loaddefs.el" (get 'load-path 'initial-value) nil)
-           `((unless noninteractive
+           `((when (fboundp 'doom-reset-file-handler-alist-h)
                (doom-reset-file-handler-alist-h)
                (remove-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))))
          (cl-loop for var in doom-autoloads-cached-vars
