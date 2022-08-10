@@ -1144,7 +1144,6 @@ Emacs' batch library lacks an implementation of the exec system call."
           (convert-buffer doom-cli-context-stderr))
         (prin1 newcontext (current-buffer))))
     (set-file-modes context-file #o400)
-    (setenv "__DOOMCONTEXT" context-file)
     (make-directory (file-name-directory script-file) t)
     (let ((coding-system-for-write 'utf-8-auto)
           (persistent-files (combine-and-quote-strings (delq nil (list script-file context-file))))
@@ -1163,6 +1162,7 @@ Emacs' batch library lacks an implementation of the exec system call."
                 "_doomcleanup() {\n  rm -f " persistent-files "\n}\n"
                 "_doomrun() {\n  " command "\n}\n"
                 (string-join env " \\\n")
+                "__DOOMCONTEXT=" (shell-quote-argument context-file) " \\\n"
                 (format "PATH=\"%s%s$PATH\" \\\n"
                         (doom-path doom-emacs-dir "bin")
                         path-separator)
