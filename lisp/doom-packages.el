@@ -108,6 +108,23 @@ uses a straight or package.el command directly).")
 
 
 ;;
+;;; native-comp
+
+(when NATIVECOMP
+  (after! comp
+    ;; HACK Disable native-compilation for some troublesome packages
+    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+          (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
+            (list (concat local-dir-re ".*/emacs-jupyter.*\\.el\\'")
+                  (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
+                  (concat local-dir-re ".*/with-editor\\.el\\'")))))
+
+  ;; Remove unwanted $EMACSDIR/eln-cache/ directory.
+  (cl-callf2 delete (file-name-concat doom-emacs-dir "eln-cache/")
+             native-comp-eln-load-path))
+
+
+;;
 ;;; Bootstrappers
 
 (defun doom--ensure-straight (recipe pin)

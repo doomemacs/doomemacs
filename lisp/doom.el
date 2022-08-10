@@ -294,15 +294,7 @@ users).")
 (when NATIVECOMP
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
-  (add-to-list 'native-comp-eln-load-path (concat doom-cache-dir "eln/"))
-
-  (with-eval-after-load 'comp
-    ;; HACK Disable native-compilation for some troublesome packages
-    (mapc (apply-partially #'add-to-list 'native-comp-deferred-compilation-deny-list)
-          (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-            (list (concat local-dir-re ".*/emacs-jupyter.*\\.el\\'")
-                  (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                  (concat local-dir-re ".*/with-editor\\.el\\'"))))))
+  (add-to-list 'native-comp-eln-load-path (file-name-concat doom-cache-dir "eln/")))
 
 
 ;;
