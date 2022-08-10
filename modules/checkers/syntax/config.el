@@ -4,6 +4,7 @@
 ;;; Flycheck
 
 (use-package! flycheck
+  :unless (modulep! +flymake)
   :commands flycheck-list-errors flycheck-buffer
   :hook (doom-first-buffer . global-flycheck-mode)
   :config
@@ -45,6 +46,7 @@
 
 
 (use-package! flycheck-popup-tip
+  :unless (modulep! +flymake)
   :commands flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
@@ -63,6 +65,7 @@
 
 (use-package! flycheck-posframe
   :when (modulep! +childframe)
+  :unless (modulep! +flymake)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
   (setq flycheck-posframe-warning-prefix "! "
@@ -80,4 +83,20 @@
 
 
 ;;
-;;; TODO Flymake
+;;; Flymake
+(use-package flymake
+  :when (modulep! +flymake)
+  :defer t
+  :init
+  (add-hook! (prog-mode text-mode) #'flymake-mode)
+  :config
+  (setq flymake-fringe-indicator-position 'right-fringe))
+
+
+(use-package flymake-popon
+  :when (modulep! +flymake)
+  :hook (flymake-mode . flymake-popon-mode)
+  :config
+  (setq flymake-popon-method (if (modulep! +childframe)
+                                 'postframe
+                               'popon)))
