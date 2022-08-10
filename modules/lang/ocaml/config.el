@@ -122,4 +122,4 @@
 
 ;; Tree sitter
 (eval-when! (featurep! +tree-sitter)
-  (add-hook! 'tuareg-mode-local-vars-hook #'tree-sitter))
+  (add-hook! 'tuareg-mode-local-vars-hook #'tree-sitter!))
