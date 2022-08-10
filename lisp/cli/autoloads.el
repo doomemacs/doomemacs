@@ -1,11 +1,10 @@
 ;;; lisp/cli/autoloads.el -*- lexical-binding: t; -*-
 
 (defvar doom-autoloads-excluded-packages ()
-  "What packages whose autoloads files we won't index.
+  "Which packages to exclude from Doom's autoloads files.
 
-These packages have silly or destructive autoload files that try to load
-everyone in the universe and their dog, causing errors that make babies cry. No
-one wants that.")
+Use this for packages with problematic autoloads; e.g. they autoload too much or
+hoist buggy forms into autoloads.")
 
 (defvar doom-autoloads-excluded-files ()
   "List of regexps whose matching files won't be indexed for autoloads.")

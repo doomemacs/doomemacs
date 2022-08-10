@@ -24,8 +24,8 @@
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
   (when (version< mu4e-mu-version "1.8")
-    ;; Evidently the mu4e author has never heard of `define-obsolete-function-alias'.
-    ;; List of suffixes obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
+    ;; Define aliases to maintain backwards compatibility. The list of suffixes
+    ;; were obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
     (dolist (transferable-suffix
              '("check-requirements" "contains-line-matching" "context-ask-user"
                "context-autoswitch" "default-handler" "get-folder" "get-log-buffer"

@@ -90,10 +90,9 @@
         "Use lsp completion instead of cider."
         (remove-hook 'completion-at-point-functions #'cider-complete-at-point t))))
 
-  ;; Error messages emitted from CIDER is silently funneled into *nrepl-server*
-  ;; rather than the *cider-repl* buffer. How silly. We might want to see that
-  ;; stuff and who's going to check *nrepl-server* on every startup? I've got a
-  ;; better idea: we copy these errors into the *cider-repl* buffer.
+  ;; UX: CIDER's error messages get quietly funneled into *nrepl-server*. That
+  ;; sort of information would be more helpful displayed front and center when
+  ;; opening a *cider-repl*.
   (add-hook! 'cider-connected-hook
     (defun +clojure--cider-dump-nrepl-server-log-h ()
       "Copy contents of *nrepl-server* to beginning of *cider-repl*."

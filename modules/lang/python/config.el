@@ -57,7 +57,7 @@
   (setq python-indent-guess-indent-offset-verbose nil)
 
   ;; Default to Python 3. Prefer the versioned Python binaries since some
-  ;; systems stupidly make the unversioned one point at Python 2.
+  ;; systems link the unversioned one to Python 2.
   (when (and (executable-find "python3")
              (string= python-shell-interpreter "python"))
     (setq python-shell-interpreter "python3"))
