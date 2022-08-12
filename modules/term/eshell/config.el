@@ -158,7 +158,9 @@ But uses `completion-styles' to find the mathces."
     (if (ring-empty-p +eshell-matches-in-history)
         (message "No matches in history for %s"
                  eshell-matching-input-from-input-string)
-      (cl-callf + +eshell-history-current-match arg)
+      (if (eq 0 arg)
+          (setq +eshell-history-current-match 0)
+        (cl-callf + +eshell-history-current-match arg))
       (delete-region eshell-last-output-end (point))
       (insert (ring-ref +eshell-matches-in-history
                         +eshell-history-current-match)))))
@@ -246,6 +248,14 @@ So that mathces from history show up with highlighting."
     :before-until #'eshell-syntax-highlighting--enable-highlighting
     (memq this-command '(eshell-previous-matching-input-from-input
                          eshell-next-matching-input-from-input)))
+
+  (defadvice! +eshell-syntax-highlight-silently-a (fun &rest args)
+    "Advice to add syntax highlighting silently.
+This ensures that undo list isn't polluted with changes recording
+ syntax highlighting."
+    :around #'eshell-syntax-highlighting--enable-highlighting
+    (with-silent-modifications (apply fun args)))
+
   (defun +eshell-syntax-highlight-maybe-h ()
     "Hook added to `pre-command-hook' to restore syntax highlighting
 when inhibited to show history matches."
