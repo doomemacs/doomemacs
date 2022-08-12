@@ -561,7 +561,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
        (lambda (button)
          (helpful-variable (button-get button 'apropos-symbol))))))
 
-  (when EMACS29+
+  (when (> emacs-major-version 28)
     ;; REVIEW This should be reported upstream to Emacs.
     (defadvice! doom--find-function-search-for-symbol-save-excursion-a (fn &rest args)
       "Suppress cursor movement by `find-function-search-for-symbol'.
@@ -669,7 +669,7 @@ on."
   ;; Emacs 29 introduced faster long-line detection, so they can afford a much
   ;; larger `so-long-threshold' and its default `so-long-predicate'.
   (if (fboundp 'buffer-line-statistics)
-      (unless NATIVECOMP
+      (unless (featurep 'native-compile)
         (setq so-long-threshold 5000))
     ;; reduce false positives w/ larger threshold
     (setq so-long-threshold 400)

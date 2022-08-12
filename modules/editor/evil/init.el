@@ -136,7 +136,7 @@ variable for an explanation of the defaults (in comments). See
       elisp-slime-nav
       embark
       emms
-      ,@(when EMACS29+ '(emoji))
+      ,@(if (> emacs-major-version 28) '(emoji))
       epa
       ert
       eshell
@@ -226,7 +226,7 @@ variable for an explanation of the defaults (in comments). See
       scroll-lock
       selectrum
       sh-script
-      ,@(when EMACS28+ '(shortdoc))
+      ,@(if (> emacs-major-version 27) '(shortdoc))
       simple
       simple-mpc
       slime

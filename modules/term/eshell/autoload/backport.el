@@ -1,5 +1,5 @@
 ;;; term/eshell/autoload/mode.el -*- lexical-binding: t; -*-
-;;;###if (not EMACS28+)
+;;;###if (< emacs-major-version 28)
 
 ;; DEPRECATED Remove this when we drop Emacs 27 support.
 

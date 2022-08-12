@@ -240,7 +240,7 @@ list remains lean."
 
 (defun doom-packages--write-missing-eln-errors ()
   "Write .error files for any expected .eln files that are missing."
-  (when NATIVECOMP
+  (when (featurep 'native-compile)
     (cl-loop for file in doom-packages--eln-output-expected
              for eln-name = (doom-packages--eln-file-name file)
              for eln-file = (doom-packages--eln-output-file eln-name)
@@ -254,7 +254,7 @@ list remains lean."
 
 (defun doom-packages--compile-site-files ()
   "Queue async compilation for all non-doom Elisp files."
-  (when NATIVECOMP
+  (when (featurep 'native-compile)
     (cl-loop with paths = (cl-loop for path in load-path
                                    unless (file-in-directory-p path doom-local-dir)
                                    collect path)
@@ -301,7 +301,7 @@ declaration) or dependency thereof that hasn't already been."
                    (signal 'doom-package-error (list package e))))))
          (progn
            (doom-packages--compile-site-files)
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            (print! (success "\033[KInstalled %d packages") (length built)))
@@ -348,7 +348,7 @@ declaration) or dependency thereof that hasn't already been."
                     (and (eq (car-safe build) :not)
                          (setq want-byte-compile (not want-byte-compile)
                                want-native-compile (not want-native-compile)))
-                    (unless NATIVECOMP
+                    (unless (featurep 'native-compile)
                       (setq want-native-compile nil))
                     (and (or want-byte-compile want-native-compile)
                          (or (file-newer-than-file-p repo-dir build-dir)
@@ -365,7 +365,7 @@ declaration) or dependency thereof that hasn't already been."
                 (straight-use-package (intern package))))
          (progn
            (doom-packages--compile-site-files)
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            ;; HACK Every time you save a file in a package that straight tracks,
@@ -659,7 +659,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not regraft-repos-p)
                (ignore (print! (item "Skipping regrafting")))
              (doom-packages--regraft-repos repos-to-regraft))
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
              (if (not eln-p)
                  (ignore (print! (item "Skipping native bytecode")))
                (doom-packages--purge-eln))))))))

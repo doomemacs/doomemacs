@@ -307,7 +307,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq resize-mini-windows 'grow-only)
 
 ;; Typing yes/no is obnoxious when y/n will do
-(if EMACS28+
+(if (boundp 'use-short-answers)
     (setq use-short-answers t)
   ;; DEPRECATED Remove when we drop 27.x support
   (advice-add #'yes-or-no-p :override #'y-or-n-p))
@@ -513,7 +513,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; Fix #2742: cursor is off by 4 characters in `artist-mode'
 ;; REVIEW Reported upstream https://debbugs.gnu.org/cgi/bugreport.cgi?bug=43811
 ;; DEPRECATED Fixed in Emacs 28; remove when we drop 27 support
-(unless EMACS28+
+(unless (> emacs-major-version 27)
   (add-hook 'artist-mode-hook #'doom-disable-line-numbers-h))
 
 

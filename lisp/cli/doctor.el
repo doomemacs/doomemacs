@@ -67,7 +67,7 @@ in."
                "\t- might depend subtly on upstream packages updates.\n"
                "You might need to unpin packages to get a fix for a specific commit of Emacs, "
                "and you should be ready to downgrade Emacs if something is just not fixable."))
-    (EMACS29+
+    ((> emacs-major-version 28)
      (warn! "Emacs %s detected" emacs-version)
      (explain! "Doom supports this version, but you are living on the edge! "
                "Be prepared for breakages in future versions of Emacs."))
@@ -108,13 +108,12 @@ in."
               "jansson support (i.e. a native JSON library), particularly LSP users. "
               "You must install a prebuilt Emacs binary with this included, or compile "
               "Emacs with the --with-json option."))
-  (when EMACS28+
-    (unless NATIVECOMP
-      (warn! "Emacs was not built with native compilation support")
-      (explain! "Users will see a substantial performance gain by building Emacs with "
-                "native compilation support, availible in emacs 28+."
-                "You must install a prebuilt Emacs binary with this included, or compile "
-                "Emacs with the --with-native-compilation option.")))
+  (unless (featurep 'native-compile)
+    (warn! "Emacs was not built with native compilation support")
+    (explain! "Users will see a substantial performance gain by building Emacs with "
+              "native compilation support, availible in emacs 28+."
+              "You must install a prebuilt Emacs binary with this included, or compile "
+              "Emacs with the --with-native-compilation option."))
 
   (print! (start "Checking for private config conflicts..."))
   (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")

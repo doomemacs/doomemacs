@@ -179,7 +179,7 @@ and cannot run in."
 
  ;; Harfbuzz and Mac builds do not need font-specific ligature support
  ;; if they are above emacs-27.
- ((and EMACS28+
+ ((and (> emacs-major-version 27)
        (or (featurep 'ns)
            (string-match-p "HARFBUZZ" system-configuration-features))
        (featurep 'composite))  ; Emacs loads `composite' at startup

@@ -110,7 +110,7 @@ uses a straight or package.el command directly).")
 ;;
 ;;; native-comp
 
-(when NATIVECOMP
+(when (featurep 'native-compile)
   (after! comp
     ;; HACK Disable native-compilation for some troublesome packages
     (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)

@@ -77,17 +77,37 @@
 ;;
 ;;; Global constants
 
-;; Emacs features
-(defconst EMACS28+    (> emacs-major-version 27))
-(defconst EMACS29+    (> emacs-major-version 28))
-(defconst MODULES     (bound-and-true-p module-file-suffix))
-(defconst NATIVECOMP  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
-
-;; Operating system
+;; DEPRECATED
 (defconst IS-MAC      (eq system-type 'darwin))
 (defconst IS-LINUX    (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS  (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD      (or IS-MAC (eq system-type 'berkeley-unix)))
+(defconst IS-BSD      (memq system-type '(darwin berkeley-unix gnu/kfreebsd)))
+
+(unless (featurep 'doom)
+  ;; Since `system-configuration-features's docs state not to rely on it to test
+  ;; for features, let's give users an easier way to detect them.
+  (if (bound-and-true-p module-file-suffix)
+      (push 'dynamic-modules features))
+  (if (fboundp #'json-parse-string)
+      (push 'jansson features))
+  ;; `native-compile' exists whether or not it is functional (e.g. libgcc is
+  ;; available or not). This seems silly, so pretend it doesn't exist if it
+  ;; isn't available.
+  (if (featurep 'native-compile)
+      (if (not (native-comp-available-p))
+          (delq 'native-compile features)))
+
+  ;; DEPRECATED remove in v3
+  (defconst EMACS28+    (> emacs-major-version 27))
+  (defconst EMACS29+    (> emacs-major-version 28))
+  ;; DEPRECATED remove in v3
+  (defconst MODULES     (featurep 'dynamic-modules))
+  (defconst NATIVECOMP  (featurep 'native-compile))
+
+  (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
+  (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
+  (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
+  (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0"))
 
 
 ;;
@@ -291,7 +311,7 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
-(when NATIVECOMP
+(when (featurep 'native-compile)
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
   (add-to-list 'native-comp-eln-load-path (file-name-concat doom-cache-dir "eln/")))

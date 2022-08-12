@@ -53,7 +53,7 @@ directives. By default, this only recognizes C directives.")
         evil-undo-system
         (cond ((featurep! :emacs undo +tree) 'undo-tree)
               ((featurep! :emacs undo) 'undo-fu)
-              (EMACS28+ 'undo-redo)))
+              ((> emacs-major-version 27) 'undo-redo)))
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
