@@ -28,7 +28,7 @@ Meant for `doom-change-font-size-hook'."
 ;;;###autoload
 (defun +modeline-clear-env-in-all-windows-h (&rest _)
   "Blank out version strings in all buffers."
-  (unless (featurep! +light)
+  (unless (modulep! +light)
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
         (setq doom-modeline-env--version

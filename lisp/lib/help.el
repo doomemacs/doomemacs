@@ -361,7 +361,8 @@ without needing to check if they are available."
              (unless (eq (char-after) ?\()
                (backward-char))
              (let ((sexp (sexp-at-point)))
-               (when (memq (car-safe sexp) '(featurep! require!))
+               ;; DEPRECATED `featurep!'
+               (when (memq (car-safe sexp) '(featurep! modulep! require!))
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((when buffer-file-name
            (when-let (mod (doom-module-from-path buffer-file-name))
@@ -382,7 +383,7 @@ If VISIT-DIR is non-nil, visit the module's directory rather than its
 documentation.
 
 Automatically selects a) the module at point (in private init files), b) the
-module derived from a `featurep!' or `require!' call, c) the module that the
+module derived from a `modulep!' or `require!' call, c) the module that the
 current file is in, or d) the module associated with the current major mode (see
 `doom--help-major-mode-module-alist')."
   (interactive

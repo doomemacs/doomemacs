@@ -1,5 +1,5 @@
 ;;; input/layout/autoload/bepo.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +bepo)
+;;;###if (modulep! +bepo)
 
 ;;;###autoload
 (defun +layout-bepo-rotate-ts-bare-keymap (keymaps)

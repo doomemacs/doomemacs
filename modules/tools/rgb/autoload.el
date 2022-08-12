@@ -1,5 +1,5 @@
 ;;; tools/rgb/autoload.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :ui hydra)
+;;;###if (modulep! :ui hydra)
 
 ;;;###autoload (autoload '+rgb/kurecolor-hydra/body "tools/rgb/autoload" nil t)
 (defhydra +rgb/kurecolor-hydra (:color pink :hint nil)

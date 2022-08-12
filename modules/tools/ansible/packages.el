@@ -6,5 +6,5 @@
 (package! jinja2-mode :pin "03e5430a7efe1d163a16beaf3c82c5fd2c2caee1")
 (package! yaml-mode :pin "535273d5a1eb76999d20afbcf4d9f056d8ffd2da")
 
-(when (featurep! :completion company)
+(when (modulep! :completion company)
   (package! company-ansible :pin "79dd421b161efa49fbdffad57fa40edb41f484a3"))

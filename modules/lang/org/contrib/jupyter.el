@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/jupyter.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +jupyter)
+;;;###if (modulep! +jupyter)
 
 (use-package! ob-jupyter
   :defer t

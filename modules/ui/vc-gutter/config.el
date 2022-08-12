@@ -11,7 +11,7 @@
 ;;
 ;;; Default styles
 
-(when (featurep! +pretty)
+(when (modulep! +pretty)
   ;; UI: make the fringe small enough that the diff bars aren't too domineering,
   ;; while leaving enough room for other indicators.
   (if (fboundp 'fringe-mode) (fringe-mode '8))
@@ -23,7 +23,7 @@
   ;; to shrink the fringe and sacrifice precious space for other fringe
   ;; indicators (like flycheck or flyspell).
   ;; TODO Extract these into a package with faces that themes can target.
-  (if (not (featurep! +diff-hl))
+  (if (not (modulep! +diff-hl))
       (after! git-gutter-fringe
         (define-fringe-bitmap 'git-gutter-fr:added [224]
           nil nil '(center repeated))
@@ -65,7 +65,7 @@
 ;;; git-gutter
 
 (use-package! git-gutter
-  :unless (featurep! +diff-hl)
+  :unless (modulep! +diff-hl)
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
   :init
   (add-hook! 'find-file-hook
@@ -146,7 +146,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 ;;; diff-hl
 
 (use-package! diff-hl
-  :when (featurep! +diff-hl)
+  :when (modulep! +diff-hl)
   :hook (find-file    . diff-hl-mode)
   :hook (vc-dir-mode  . diff-hl-dir-mode)
   :hook (dired-mode   . diff-hl-dired-mode)
@@ -165,7 +165,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   (setq diff-hl-show-staged-changes nil)
 
   ;; UX: Update diffs when it makes sense too, without being too slow
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (map! :after diff-hl-show-hunk
           :map diff-hl-show-hunk-map
           :n "p" #'diff-hl-show-hunk-previous
@@ -186,7 +186,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
                            (bound-and-true-p diff-hl-dir-mode))
                        (diff-hl-update-once))))))
   ;; UX: Update diff-hl when magit alters git state.
-  (when (featurep! :tools magit)
+  (when (modulep! :tools magit)
     (add-hook 'magit-pre-refresh-hook  #'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
@@ -203,7 +203,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
       (apply fn args)))
 
   ;; UX: Don't delete the current hunk's indicators while we're editing
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook! 'diff-hl-flydiff-mode-hook
       (defun +vc-gutter-init-flydiff-mode-h ()
         (if (not diff-hl-flydiff-mode)

@@ -549,12 +549,15 @@ WARNINGS:
                (lambda () ,@body)
                'append)))
 
-(defmacro featurep! (category &optional module flag)
-  "Returns t if CATEGORY MODULE is enabled.
+;; DEPRECATED Remove in 3.0
+(define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
+
+(defmacro modulep! (category &optional module flag)
+  "Return t if FEATURES are all present.
 
 If FLAG is provided, returns t if CATEGORY MODULE has FLAG enabled.
 
-  (featurep! :config default)
+  (modulep! :config default)
 
 Module FLAGs are set in your config's `doom!' block, typically in
 ~/.doom.d/init.el. Like so:
@@ -562,13 +565,13 @@ Module FLAGs are set in your config's `doom!' block, typically in
   :config (default +flag1 -flag2)
 
 CATEGORY and MODULE can be omitted When this macro is used from inside a module
-(except your DOOMDIR, which is a special module). e.g. (featurep! +flag)"
+(except your DOOMDIR, which is a special module). e.g. (modulep! +flag)"
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
              ((if-let (module (doom-module-from-path))
                   (memq category (doom-module-get (car module) (cdr module) :flags))
-                (error "(featurep! %s %s %s) couldn't figure out what module it was called from (in %s)"
+                (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
                        category module flag (file!)))))
        t))
 

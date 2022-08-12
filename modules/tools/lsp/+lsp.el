@@ -1,7 +1,7 @@
 ;;; tools/lsp/+lsp.el -*- lexical-binding: t; -*-
 
 (defvar +lsp-company-backends
-  (if (featurep! :editor snippets)
+  (if (modulep! :editor snippets)
       '(:separate company-capf company-yasnippet)
     'company-capf)
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
@@ -35,7 +35,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   (setq lsp-headerline-breadcrumb-enable nil)
 
   ;; Let doom bind the lsp keymap.
-  (when (featurep! :config default +bindings)
+  (when (modulep! :config default +bindings)
     (setq lsp-keymap-prefix nil))
 
   :config
@@ -86,7 +86,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
           (lsp--info "Could not guess project root."))))
     #'+lsp-optimization-mode)
 
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (add-hook! 'lsp-completion-mode-hook
       (defun +lsp-init-company-backends-h ()
         (when lsp-completion-mode
@@ -121,7 +121,7 @@ server getting expensively restarted when reverting buffers."
                        (+lsp-optimization-mode -1))))
              lsp--cur-workspace))))
 
-  (when (featurep! :ui modeline +light)
+  (when (modulep! :ui modeline +light)
     (defvar-local lsp-modeline-icon nil)
 
     (add-hook! '(lsp-before-initialize-hook
@@ -154,14 +154,14 @@ instead is more sensible."
       (apply fn args)))
 
   :config
-  (when (featurep! +peek)
+  (when (modulep! +peek)
     (set-lookup-handlers! 'lsp-ui-mode
       :definition 'lsp-ui-peek-find-definitions
       :implementations 'lsp-ui-peek-find-implementation
       :references 'lsp-ui-peek-find-references
       :async t))
 
-  (setq lsp-ui-peek-enable (featurep! +peek)
+  (setq lsp-ui-peek-enable (modulep! +peek)
         lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 72         ; 150 (default) is too wide
         lsp-ui-doc-delay 0.75           ; 0.2 (default) is too naggy
@@ -184,17 +184,17 @@ instead is more sensible."
 
 
 (use-package! helm-lsp
-  :when (featurep! :completion helm)
+  :when (modulep! :completion helm)
   :commands helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
 
 
 (use-package! lsp-ivy
-  :when (featurep! :completion ivy)
+  :when (modulep! :completion ivy)
   :commands lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)
 
 
 (use-package! consult-lsp
   :defer t
-  :when (featurep! :completion vertico)
+  :when (modulep! :completion vertico)
   :init
   (map! :map lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))

@@ -145,14 +145,14 @@ Only has an effect in GUI Emacs.")
 
 
 (use-package! forge
-  :when (featurep! +forge)
+  :when (modulep! +forge)
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
   :commands forge-create-pullreq forge-create-issue
   :preface
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
-  (setq forge-add-default-bindings (not (featurep! :editor evil +everywhere)))
+  (setq forge-add-default-bindings (not (modulep! :editor evil +everywhere)))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
@@ -189,7 +189,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! code-review
-  :when (featurep! +forge)
+  :when (modulep! +forge)
   :after magit
   :init
   ;; TODO This needs to either a) be cleaned up or better b) better map things
@@ -223,7 +223,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! evil-collection-magit
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init (defvar evil-collection-magit-use-z-for-folds t)
   :config
@@ -287,7 +287,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! evil-collection-magit-section
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init
   (defvar evil-collection-magit-section-use-z-for-folds evil-collection-magit-use-z-for-folds)

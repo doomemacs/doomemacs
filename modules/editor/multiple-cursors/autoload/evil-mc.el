@@ -1,5 +1,5 @@
 ;;; editor/multiple-cursors/autoload/evil-mc.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload
 (defun +multiple-cursors/evil-mc-toggle-cursors ()

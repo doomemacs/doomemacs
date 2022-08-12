@@ -15,10 +15,10 @@
   (map!
    :leader
    :desc "Window" "z" 'evil-window-map
-   (:when (featurep! :ui popup)
+   (:when (modulep! :ui popup)
     :desc "Toggle last popup"   "é" #'+popup/toggle)
    :desc "Switch to last buffer" "²" #'evil-switch-to-windows-last-buffer
-   (:when (featurep! :ui workspaces)
+   (:when (modulep! :ui workspaces)
     (:prefix-map ("TAB" . "workspace")
      :desc "Switch to last workspace" "²" #'+workspace/other
      :desc "Previous workspace" "é" #'+workspace/switch-left
@@ -27,14 +27,14 @@
     :desc "Previous buffer" "é" #'previous-buffer
     :desc "Next buffer" "è" #'next-buffer)
    (:prefix-map ("g" . "git")
-    (:when (featurep! :ui vc-gutter)
+    (:when (modulep! :ui vc-gutter)
      :desc "Jump to previous hunk" "é" #'git-gutter:previous-hunk
      :desc "Jump to next hunk" "è" #'git-gutter:next-hunk))))
 
 (defun +layout-remap-evil-keys-for-azerty-h ()
   (map! :nv "à" #'evil-execute-macro
         :nv "²" #'evil-goto-mark
-        (:when (featurep! :checkers spell)
+        (:when (modulep! :checkers spell)
          :m "és" #'+spell/previous-error
          :m "ès" #'+spell/next-error)
         :n  "è SPC" #'+evil/insert-newline-below
@@ -47,13 +47,13 @@
         :m  "éu"    #'+evil:url-decode
         :m  "èy"    #'+evil:c-string-encode
         :m  "éy"    #'+evil:c-string-decode
-        (:when (featurep! :ui vc-gutter)
+        (:when (modulep! :ui vc-gutter)
          :m "èd"   #'git-gutter:next-hunk
          :m "éd"   #'git-gutter:previous-hunk)
-        (:when (featurep! :ui hl-todo)
+        (:when (modulep! :ui hl-todo)
          :m "èt"   #'hl-todo-next
          :m "ét"   #'hl-todo-previous)
-        (:when (featurep! :ui workspaces)
+        (:when (modulep! :ui workspaces)
          :n "èw"   #'+workspace/switch-right
          :n "éw"   #'+workspace/switch-left)
         :m  "è#"    #'+evil/next-preproc-directive
@@ -77,5 +77,5 @@
         :nv "gà"    #'+evil:apply-macro))
 
 (+layout-remap-keys-for-azerty-h)
-(when (featurep! :editor evil)
+(when (modulep! :editor evil)
   (+layout-remap-evil-keys-for-azerty-h))

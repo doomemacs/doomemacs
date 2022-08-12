@@ -18,7 +18,7 @@
       :after avy
       :config (avy-migemo-mode 1))
 
-    (when (featurep! :completion helm)
+    (when (modulep! :completion helm)
       (after! helm (helm-migemo-mode +1)))))
 
 

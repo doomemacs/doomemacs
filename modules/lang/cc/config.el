@@ -17,7 +17,7 @@ This is ignored by ccls.")
   `((c-mode . nil)
     (c++-mode
      . ,(list "-std=c++1z" ; use C++17 draft by default
-              (when IS-MAC
+              (when (featurep :os 'macos)
                 ;; NOTE beware: you'll get abi-inconsistencies when passing
                 ;; std-objects to libraries linked with libstdc++ (e.g. if you
                 ;; use boost which wasn't compiled with libc++)
@@ -67,7 +67,7 @@ This is ignored by ccls.")
     :return "return"
     :yield "#require")
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook! '(c-mode-local-vars-hook
                  c++-mode-local-vars-hook)
                :append #'tree-sitter!))
@@ -125,7 +125,7 @@ This is ignored by ccls.")
 
 
 (use-package! irony
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :commands irony-install-server
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
@@ -146,11 +146,11 @@ This is ignored by ccls.")
     :hook (irony-mode . irony-eldoc))
 
   (use-package! flycheck-irony
-    :when (featurep! :checkers syntax)
+    :when (modulep! :checkers syntax)
     :config (flycheck-irony-setup))
 
   (use-package! company-irony
-    :when (featurep! :completion company)
+    :when (modulep! :completion company)
     :init (set-company-backend! 'irony-mode '(:separate company-irony-c-headers company-irony))
     :config (require 'company-irony-c-headers)))
 
@@ -166,7 +166,7 @@ This is ignored by ccls.")
 
 
 (use-package! company-cmake  ; for `cmake-mode'
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after cmake-mode
   :config (set-company-backend! 'cmake-mode 'company-cmake))
 
@@ -176,7 +176,7 @@ This is ignored by ccls.")
 
 
 (use-package! company-glsl  ; for `glsl-mode'
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after glsl-mode
   :config (set-company-backend! 'glsl-mode 'company-glsl))
 
@@ -185,7 +185,7 @@ This is ignored by ccls.")
 ;; Rtags Support
 
 (use-package! rtags
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   ;; Only initialize rtags-mode if rtags and rdm are available.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-rtags-maybe-h)
   :preface (setq rtags-install-path (concat doom-etc-dir "rtags/"))
@@ -201,8 +201,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
         rtags-use-bookmarks nil
         rtags-completions-enabled nil
         rtags-display-result-backend
-        (cond ((featurep! :completion ivy)  'ivy)
-              ((featurep! :completion helm) 'helm)
+        (cond ((modulep! :completion ivy)  'ivy)
+              ((modulep! :completion helm) 'helm)
               ('default))
         ;; These executables are named rtags-* on debian
         rtags-rc-binary-name
@@ -235,7 +235,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 ;;
 ;; LSP
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook
@@ -261,7 +261,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
           :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
           :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
 
-  (when (featurep! :tools lsp +eglot)
+  (when (modulep! :tools lsp +eglot)
     ;; Map eglot specific helper
     (map! :localleader
           :after cc-mode
@@ -270,8 +270,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 
     ;; NOTE : This setting is untested yet
     (after! eglot
-      ;; IS-MAC custom configuration
-      (when IS-MAC
+      (when (featurep :os 'macos)
         (add-to-list 'eglot-workspace-configuration
                      `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
@@ -279,8 +278,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))))))
 
 (use-package! ccls
-  :when (featurep! +lsp)
-  :unless (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :defer t
   :init
   (defvar ccls-sem-highlight-method 'font-lock)
@@ -298,11 +297,12 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (setq-hook! 'lsp-configure-hook
     ccls-sem-highlight-method (if lsp-enable-semantic-highlighting
                                   ccls-sem-highlight-method))
-  (when (or IS-MAC IS-LINUX)
+  (when (or (featurep :os 'macos)
+            (featurep :os 'linux))
     (setq ccls-initialization-options
           `(:index (:trackDependency 1
                     :threads ,(max 1 (/ (doom-system-cpus) 2))))))
-  (when IS-MAC
+  (when (featurep :os 'macos)
     (setq ccls-initialization-options
           (append ccls-initialization-options
                   `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"

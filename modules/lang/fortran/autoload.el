@@ -12,7 +12,7 @@ building will occur with fpm. Otherwise it will default to ifort
 or gfortran, depending on what feature flags are set."
   (interactive)
   (cond ((+fortran--fpm-toml) (+fortran/fpm-build))
-        ((featurep! +intel) (+fortran/ifort-compile))
+        ((modulep! +intel) (+fortran/ifort-compile))
         (t (+fortran/gfortran-compile))))
 
 ;;;###autoload
@@ -24,7 +24,7 @@ building will occur with fpm. Otherwise it will default to ifort
 or gfortran, depending on what feature flags are set."
   (interactive)
   (cond ((+fortran--fpm-toml) (+fortran/fpm-run))
-        ((featurep! +intel) (+fortran/ifort-run))
+        ((modulep! +intel) (+fortran/ifort-run))
         (t (+fortran/gfortran-run))))
 
 (defun +fortran--exec-name ()

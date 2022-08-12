@@ -7,7 +7,7 @@
   :config
   (setq ansible-section-face 'font-lock-variable-name-face
         ansible-task-label-face 'font-lock-doc-face)
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (set-company-backend! 'ansible 'company-ansible))
   (map! :map ansible-key-map
         :localleader

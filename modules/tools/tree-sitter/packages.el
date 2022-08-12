@@ -7,6 +7,6 @@
 (package! tree-sitter-langs
   :pin "deb2d8674be8f777ace50e15c7c041aeddb1d0b2")
 
-(when (featurep! :editor evil +everywhere)
+(when (modulep! :editor evil +everywhere)
   (package! evil-textobj-tree-sitter
     :pin "9dce8dab68c954ae32095328cf898eb856fc341a"))

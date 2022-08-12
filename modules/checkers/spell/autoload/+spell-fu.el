@@ -1,5 +1,5 @@
 ;;; checkers/spell/autoload/+spell-fu.el -*- lexical-binding: t; -*-
-;;;###if (not (featurep! +flyspell))
+;;;###if (not (modulep! +flyspell))
 
 (defun +spell--correct (replace poss word orig-pt start end)
   (cond ((eq replace 'ignore)
@@ -61,9 +61,9 @@
   (ispell-set-spellchecker-params)
   (save-current-buffer
     (ispell-accept-buffer-local-defs))
-  (if (not (or (featurep! :completion ivy)
-               (featurep! :completion helm)
-               (featurep! :completion vertico)))
+  (if (not (or (modulep! :completion ivy)
+               (modulep! :completion helm)
+               (modulep! :completion vertico)))
       (call-interactively #'ispell-word)
     (cl-destructuring-bind (start . end)
         (or (bounds-of-thing-at-point 'word)

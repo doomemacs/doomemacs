@@ -18,10 +18,10 @@
   (set-repl-handler! 'lua-mode #'+lua/open-repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'lua-mode-local-vars-hook #'lsp! 'append)
 
-    (when (featurep! :tools lsp +eglot)
+    (when (modulep! :tools lsp +eglot)
       (defvar +lua-lsp-dir (concat doom-etc-dir "lsp/lua-language-server/")
         "Absolute path to the directory of sumneko's lua-language-server.
 
@@ -34,9 +34,9 @@ lua-language-server.")
         ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
         (list (or (executable-find "lua-language-server")
                   (doom-path +lua-lsp-dir
-                             (cond (IS-MAC     "bin/macOS")
-                                   (IS-LINUX   "bin/Linux")
-                                   (IS-WINDOWS "bin/Windows"))
+                             (cond ((featurep :os 'macos)   "bin/macOS")
+                                   ((featurep :os 'linux)   "bin/Linux")
+                                   ((featurep :os 'windows) "bin/Windows"))
                              "lua-language-server"))
               "-E" "-e" "LANG=en"
               (doom-path +lua-lsp-dir "main.lua")))
@@ -45,7 +45,7 @@ lua-language-server.")
 
 
 (use-package! moonscript
-  :when (featurep! +moonscript)
+  :when (modulep! +moonscript)
   :defer t
   :config
   (setq-hook! 'moonscript-mode-hook
@@ -53,12 +53,12 @@ lua-language-server.")
   (add-hook! 'moonscript-mode-hook
              #'+lua-moonscript-fix-single-quotes-h
              #'+lua-moonscript-fontify-interpolation-h)
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (require 'flycheck-moonscript nil t)))
 
 
 (use-package! fennel-mode
-  :when (featurep! +fennel)
+  :when (modulep! +fennel)
   :defer t
   :config
   (set-lookup-handlers! 'fennel-mode

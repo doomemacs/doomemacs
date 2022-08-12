@@ -56,7 +56,7 @@ default/fallback account."
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       ;; delete current workspace if empty
       ;; this is useful when mu4e is in the daemon
       ;; as otherwise you can accumulate empty workspaces
@@ -326,7 +326,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
 (defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
   (cond
-   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
+   ((and (modulep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
     (+workspace/delete +mu4e-workspace-name))
 
    (+mu4e--old-wconf

@@ -7,7 +7,7 @@
 
 ;; REPL
 (package! inf-ruby :pin "dbf4386bac12f1733257db6105e3f1fca05ffb79")
-(when (featurep! :completion company)
+(when (modulep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
 ;; Programming environment
@@ -19,11 +19,11 @@
 (package! rake :pin "452ea0caca33376487103c64177c295ed2960cca")
 
 ;; Environment management
-(when (featurep! +rbenv)
+(when (modulep! +rbenv)
   (package! rbenv :pin "2ea1a5bdc1266caef1dd77700f2c8f42429b03f1"))
-(when (featurep! +rvm)
+(when (modulep! +rvm)
   (package! rvm :pin "c1f2642434b0f68d9baa0687127079ecd884ba12"))
-(when (featurep! +chruby)
+(when (modulep! +chruby)
   (package! chruby :pin "42bc6d521f832eca8e2ba210f30d03ad5529788f"))
 
 ;; Testing frameworks
@@ -31,6 +31,6 @@
 (package! minitest :pin "ddd152c990a528ad09a696bfad23afa4330ea4d7")
 
 ;; Rails
-(when (featurep! +rails)
+(when (modulep! +rails)
   (package! projectile-rails :pin "772f4766b5d1159a395b93459f07d5f1f6c02f4e")
   (package! inflections :pin "55caa66a7cc6e0b1a76143fd40eff38416928941"))

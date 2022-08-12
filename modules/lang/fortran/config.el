@@ -8,7 +8,7 @@
   :config
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (let ((cmd (cond ((featurep! +intel) "ifort ")
+  (let ((cmd (cond ((modulep! +intel) "ifort ")
                    (t "gfortran "))))
     (setq-hook! 'f90-mode-hook
       compile-command cmd
@@ -16,7 +16,7 @@
   (set-popup-rule! "^\\*fortran-compilation" :side 'right :size 0.5 :quit t)
 
   ;; --- LSP Configuration --- ;;
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (setq lsp-clients-fortls-args '("--enable_code_actions" "--hover_signature"))
     (add-hook 'f90-mode-local-vars-hook #'lsp! 'append))
 
@@ -33,7 +33,7 @@
         :desc "build" "b" #'+fortran/build
         :desc "run"   "r" #'+fortran/run)
 
-  (when (featurep! +intel)
+  (when (modulep! +intel)
     (map! :map f90-mode-map
           :localleader
           (:prefix ("i" . "ifort")
@@ -57,7 +57,7 @@
 
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
-  (let ((cmd (cond ((featurep! +intel) "ifort ")
+  (let ((cmd (cond ((modulep! +intel) "ifort ")
                    (t "gfortran -std=legacy "))))
     (setq-hook! 'fortran-mode-hook
       compile-command cmd
@@ -71,7 +71,7 @@
          :desc "compile" "c" #'+fortran/gfortran-compile
          :desc "run"     "r" #'+fortran/gfortran-run))
 
-  (when (featurep! +intel)
+  (when (modulep! +intel)
     (map! :map fortran-mode-map
           :localleader
           (:prefix ("i" . "ifort")

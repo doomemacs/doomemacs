@@ -1,5 +1,5 @@
 ;;; emacs/ibuffer/autoload/workspaces.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :ui workspaces)
+;;;###if (modulep! :ui workspaces)
 
 ;;;###autoload
 (defun +ibuffer-workspace (workspace-name)

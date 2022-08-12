@@ -28,7 +28,7 @@
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
             ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
             ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
-          (when (featurep! :lang rust)
+          (when (modulep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
 
@@ -110,7 +110,7 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
-(defvar +lookup-dictionary-prefer-offline (featurep! +offline)
+(defvar +lookup-dictionary-prefer-offline (modulep! +offline)
   "If non-nil, look up dictionaries online.
 
 Setting this to nil will force it to use offline backends, which may be less
@@ -132,8 +132,8 @@ Dictionary.app behind the scenes to get definitions.")
         dumb-jump-prefer-searcher 'rg
         dumb-jump-aggressive nil
         dumb-jump-selector
-        (cond ((featurep! :completion ivy)  'ivy)
-              ((featurep! :completion helm) 'helm)
+        (cond ((modulep! :completion ivy)  'ivy)
+              ((modulep! :completion helm) 'helm)
               ('popup)))
   (add-hook 'dumb-jump-after-jump-hook #'better-jumper-set-jump))
 
@@ -157,12 +157,12 @@ Dictionary.app behind the scenes to get definitions.")
       (funcall fn)))
 
   ;; This integration is already built into evil
-  (unless (featurep! :editor evil)
+  (unless (modulep! :editor evil)
     ;; Use `better-jumper' instead of xref's marker stack
     (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a))
 
   (use-package! ivy-xref
-    :when (featurep! :completion ivy)
+    :when (modulep! :completion ivy)
     :config
     (set-popup-rule! "^\\*xref\\*$" :ignore t)
     (setq xref-show-definitions-function #'ivy-xref-show-defs
@@ -178,10 +178,10 @@ Dictionary.app behind the scenes to get definitions.")
       (funcall fn fetcher alist)))
 
   (use-package! helm-xref
-    :when (featurep! :completion helm))
+    :when (modulep! :completion helm))
 
   (use-package! consult-xref
-    :when (featurep! :completion vertico)
+    :when (modulep! :completion vertico)
     :defer t
     :init
     (setq xref-show-xrefs-function       #'consult-xref
@@ -192,7 +192,7 @@ Dictionary.app behind the scenes to get definitions.")
 ;;; Dash docset integration
 
 (use-package! dash-docs
-  :when (featurep! +docsets)
+  :when (modulep! +docsets)
   :defer t
   :init
   (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend-fn)
@@ -202,9 +202,9 @@ Dictionary.app behind the scenes to get definitions.")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)
 
-  (cond ((featurep! :completion helm)
+  (cond ((modulep! :completion helm)
          (require 'helm-dash nil t))
-        ((featurep! :completion ivy)
+        ((modulep! :completion ivy)
          (require 'counsel-dash nil t))))
 
 
@@ -212,7 +212,7 @@ Dictionary.app behind the scenes to get definitions.")
 ;;; Dictionary integration
 
 (use-package! define-word
-  :when (featurep! +dictionary)
+  :when (modulep! +dictionary)
   :unless IS-MAC
   :defer t
   :config

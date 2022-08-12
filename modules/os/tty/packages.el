@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; os/tty/packages.el
 
-(if (featurep! +osc)
+(if (modulep! +osc)
     (package! clipetty
       :recipe (:host github :repo "spudlyo/clipetty")
       :pin "01b39044b9b65fa4ea7d3166f8b1ffab6f740362")

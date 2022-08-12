@@ -1,5 +1,5 @@
 ;;; lang/java/autoload/lsp.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :tools debugger +lsp)
+;;;###if (modulep! :tools debugger +lsp)
 
 ;;;###autoload
 (defun +java/run-test ()

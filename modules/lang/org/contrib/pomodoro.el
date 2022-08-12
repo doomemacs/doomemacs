@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/pomodoro.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +pomodoro)
+;;;###if (modulep! +pomodoro)
 
 (after! org-pomodoro
   ;; prefer PulseAudio to ALSA in $current_year

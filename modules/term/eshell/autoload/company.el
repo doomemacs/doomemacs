@@ -1,5 +1,5 @@
 ;;; term/eshell/autoload/company.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :completion company)
+;;;###if (modulep! :completion company)
 
 ;; REVIEW Refactor me
 

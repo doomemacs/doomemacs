@@ -40,13 +40,13 @@
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil)
 
-  (when (featurep! +tng)
+  (when (modulep! +tng)
     (add-hook 'global-company-mode-hook #'company-tng-mode))
 
   :config
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
-    (unless (featurep! +childframe)
+    (unless (modulep! +childframe)
       ;; Don't persist company popups when switching back to normal mode.
       ;; `company-box' aborts on mode switch so it doesn't need this.
       (add-hook! 'evil-normal-state-entry-hook
@@ -95,7 +95,7 @@
 
 
 (use-package! company-box
-  :when (featurep! +childframe)
+  :when (modulep! +childframe)
   :hook (company-mode . company-box-mode)
   :config
   (setq company-box-show-single-candidate t

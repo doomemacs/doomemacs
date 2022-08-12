@@ -63,17 +63,17 @@ Can be negative.")
         ;; disable special behavior for left/right, M-left/right keys.
         helm-ff-lynx-style-map nil)
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
   :init
-  (when (featurep! +childframe)
+  (when (modulep! +childframe)
     ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
     ;; helm completion.
     (setq iconify-child-frame 'make-invisible)
     (setq helm-display-function #'+helm-posframe-display-fn))
 
-  (let ((fuzzy (featurep! +fuzzy)))
+  (let ((fuzzy (modulep! +fuzzy)))
     (setq helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
@@ -117,7 +117,7 @@ Can be negative.")
     (advice-add fn :around #'doom-use-helpful-a)))
 
 (use-package! helm-flx
-  :when (featurep! +fuzzy)
+  :when (modulep! +fuzzy)
   :hook (helm-mode . helm-flx-mode)
   :config (helm-flx-mode +1))
 
@@ -154,7 +154,7 @@ Can be negative.")
 
 
 (use-package! helm-org
-  :when (featurep! :lang org)
+  :when (modulep! :lang org)
   :defer t
   :init
   (after! helm-mode
@@ -188,7 +188,7 @@ Can be negative.")
 
 (use-package! helm-icons
   :after helm
-  :when (featurep! +icons)
+  :when (modulep! +icons)
   :init
   (setq helm-icons-provider 'all-the-icons)
   :config

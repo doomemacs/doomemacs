@@ -14,7 +14,7 @@
   :config
   (setq beancount-electric-currency t)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'beancount-mode-local-vars-hook #'lsp! 'append))
 
   (map! :map beancount-mode-map

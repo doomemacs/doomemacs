@@ -145,7 +145,7 @@ possible, or just one char if that's not possible."
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
         ((= n 1)
-         (cond ((or (not (featurep! +smartparens))
+         (cond ((or (not (modulep! +smartparens))
                     (not (bound-and-true-p smartparens-mode))
                     (and (memq (char-before) (list ?\  ?\t))
                          (save-excursion

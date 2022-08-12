@@ -7,7 +7,7 @@
         ibuffer-filter-group-name-face '(:inherit (success bold))
         ibuffer-formats
         `((mark modified read-only locked
-                ,@(if (featurep! +icons)
+                ,@(if (modulep! +icons)
                       `(;; Here you may adjust by replacing :right with :center
                         ;; or :left According to taste, if you want the icon
                         ;; further from the name
@@ -39,7 +39,7 @@
      :header-mouse-map ibuffer-size-header-map)
     (file-size-human-readable (buffer-size)))
 
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (define-ibuffer-filter workspace-buffers
         "Filter for workspace buffers"
       (:reader (+workspace-get (read-string "workspace name: "))
@@ -48,7 +48,7 @@
 
     (define-key ibuffer-mode-map [remap ibuffer-visit-buffer] #'+ibuffer/visit-workspace-buffer))
 
-  (when (featurep! :completion ivy)
+  (when (modulep! :completion ivy)
     (defadvice! +ibuffer--use-counsel-maybe-a (_file &optional _wildcards)
       "Use `counsel-find-file' instead of `find-file'."
       :override #'ibuffer-find-file
@@ -71,7 +71,7 @@
   :hook (ibuffer . ibuffer-projectile-set-filter-groups)
   :config
   (setq ibuffer-projectile-prefix
-        (if (featurep! +icons)
+        (if (modulep! +icons)
             (concat (all-the-icons-octicon
                      "file-directory"
                      :face ibuffer-filter-group-name-face

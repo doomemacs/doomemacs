@@ -1,40 +1,40 @@
 ;;; lang/python/doctor.el -*- lexical-binding: t; -*-
 
-(assert! (or (not (featurep! +lsp))
-             (featurep! :tools lsp))
+(assert! (or (not (modulep! +lsp))
+             (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(assert! (or (not (featurep! +tree-sitter))
-             (featurep! :tools tree-sitter))
+(assert! (or (not (modulep! +tree-sitter))
+             (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
 (if (not (or (executable-find "python")
              (executable-find "python3")))
     (error! "Couldn't find python in your PATH")
-  (unless (featurep! +lsp)
+  (unless (modulep! +lsp)
     (unless (or (zerop (shell-command "python -c 'import setuptools'"))
                 (zerop (shell-command "python3 -c 'import setuptools'")))
       (warn! "setuptools wasn't detected, which anaconda-mode requires"))))
 
-(when (featurep! +pyenv)
+(when (modulep! +pyenv)
   (if (not (executable-find "pyenv"))
       (warn! "Couldn't find pyenv in your PATH")
     (unless (split-string (shell-command-to-string "pyenv versions --bare") "\n" t)
       (warn! "No versions of python are available via pyenv, did you forget to install one?"))))
 
-(when (featurep! +conda)
+(when (modulep! +conda)
   (unless (executable-find "conda")
     (warn! "Couldn't find conda in your PATH")))
 
-(when (featurep! +poetry)
+(when (modulep! +poetry)
   (if (not (executable-find "poetry"))
       (warn! "Couldn't find poetry in your PATH")))
 
-(when (featurep! +cython)
+(when (modulep! +cython)
   (unless (executable-find "cython")
     (warn! "Couldn't find cython. cython-mode will not work.")))
 
-(when (featurep! +ipython)
+(when (modulep! +ipython)
   (unless (executable-find "ipython")
     (warn! "Couldn't find ipython in your PATH")))
 
@@ -50,7 +50,7 @@
 (unless (executable-find "isort")
   (warn! "Couldn't find isort. Import sorting will not work."))
 
-(when (featurep! :editor format)
+(when (modulep! :editor format)
   (unless (executable-find "pyflakes")
     (warn! "Couldn't find pyflakes. Import management will not work."))
   (unless (executable-find "black")

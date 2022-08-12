@@ -141,7 +141,7 @@ and cannot run in."
     (let ((in-mode-p
            (+ligatures--enable-p +ligatures-in-modes))
           (in-mode-extras-p
-           (and (featurep! +extra)
+           (and (modulep! +extra)
                 (+ligatures--enable-p +ligatures-extras-in-modes))))
       (when in-mode-p
         (if (boundp '+ligature--composition-table)
@@ -214,7 +214,7 @@ and cannot run in."
 
   (defvar +ligatures--font-alist ())
 
-  (cond ((featurep! +fira)         (load! "+fira"))
-        ((featurep! +iosevka)      (load! "+iosevka"))
-        ((featurep! +hasklig)      (load! "+hasklig"))
-        ((featurep! +pragmata-pro) (load! "+pragmata-pro")))))
+  (cond ((modulep! +fira)         (load! "+fira"))
+        ((modulep! +iosevka)      (load! "+iosevka"))
+        ((modulep! +hasklig)      (load! "+hasklig"))
+        ((modulep! +pragmata-pro) (load! "+pragmata-pro")))))

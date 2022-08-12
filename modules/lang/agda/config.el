@@ -1,6 +1,6 @@
 ;;; lang/agda/config.el -*- lexical-binding: t; -*-
 
-(when (and (featurep! +local)
+(when (and (modulep! +local)
            (executable-find "agda-mode"))
   (add-load-path!
    (file-name-directory (shell-command-to-string "agda-mode locate")))
@@ -11,7 +11,7 @@
   (set-lookup-handlers! 'agda2-mode
     :definition #'agda2-goto-definition-keyboard)
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook! '(agda-mode-local-vars-hook
                  agda2-mode-local-vars-hook)
                :append #'tree-sitter!))

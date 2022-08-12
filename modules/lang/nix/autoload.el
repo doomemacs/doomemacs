@@ -27,14 +27,14 @@
        (save-excursion
          (skip-chars-forward "^ ")
          (point))))))
-  (cond ((featurep! :completion helm)
+  (cond ((modulep! :completion helm)
          (require 'helm-nixos-options)
          ;; REVIEW We reimplment `helm-nixos-options' so we can supply
          ;; `initial-input'. Maybe use `helm-attrset' instead?
          (helm :sources `(,(helm-source-nixos-options-search))
                :buffer "*helm-nixos-options*"
                :input initial-input))
-        ((featurep! :completion ivy)
+        ((modulep! :completion ivy)
          (require 'nixos-options)
          (ivy-read "NixOS options: "
                    nixos-options

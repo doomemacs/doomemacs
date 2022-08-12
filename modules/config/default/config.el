@@ -10,10 +10,10 @@
             minibuffer-local-must-match-map
             minibuffer-local-isearch-map
             read-expression-map)
-          (cond ((featurep! :completion ivy)
+          (cond ((modulep! :completion ivy)
                  '(ivy-minibuffer-map
                    ivy-switch-buffer-map))
-                ((featurep! :completion helm)
+                ((modulep! :completion helm)
                  '(helm-map
                    helm-rg-map
                    helm-read-file-map))))
@@ -83,7 +83,7 @@
 ;;
 ;;; Smartparens config
 
-(when (featurep! +smartparens)
+(when (modulep! +smartparens)
   ;; You can disable :unless predicates with (sp-pair "'" nil :unless nil)
   ;; And disable :post-handlers with (sp-pair "{" nil :post-handlers nil)
   ;; or specific :post-handlers with:
@@ -311,7 +311,7 @@ Continues comments if executed from a commented line. Consults
         "s-l" #'goto-line
         ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
         ;; it imposes some other functionality and overhead we don't need)
-        "s-f" (if (featurep! :completion vertico) #'consult-line #'swiper)
+        "s-f" (if (modulep! :completion vertico) #'consult-line #'swiper)
         "s-z" #'undo
         "s-Z" #'redo
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
@@ -433,7 +433,7 @@ Continues comments if executed from a commented line. Consults
                 which-key-replacement-alist)))
 
 
-(when (featurep! +bindings)
+(when (modulep! +bindings)
   ;; Make M-x harder to miss
   (define-key! 'override
     "M-x" #'execute-extended-command
@@ -441,15 +441,15 @@ Continues comments if executed from a commented line. Consults
 
   ;; A Doom convention where C-s on popups and interactive searches will invoke
   ;; ivy/helm/vertico for their superior filtering.
-  (when-let (command (cond ((featurep! :completion ivy)
+  (when-let (command (cond ((modulep! :completion ivy)
                             #'counsel-minibuffer-history)
-                           ((featurep! :completion helm)
+                           ((modulep! :completion helm)
                             #'helm-minibuffer-history)
-                           ((featurep! :completion vertico)
+                           ((modulep! :completion vertico)
                             #'consult-history)))
     (define-key!
       :keymaps (append +default-minibuffer-maps
-                       (when (featurep! :editor evil +everywhere)
+                       (when (modulep! :editor evil +everywhere)
                          '(evil-ex-completion-map)))
       "C-s" command))
 

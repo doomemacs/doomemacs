@@ -49,7 +49,7 @@
     :return "return"
     :yield "use")
 
-  (if (not (featurep! +lsp))
+  (if (not (modulep! +lsp))
       ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
       ;; `company-dabbrev-code', in that order.
       (when +php--company-backends
@@ -60,7 +60,7 @@
       (setq lsp-clients-php-server-command "php-language-server.php"))
     (add-hook 'php-mode-local-vars-hook #'lsp! 'append))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'php-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
@@ -79,7 +79,7 @@
 
 
 (use-package! phpactor
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :after php-mode
   :init
   (add-to-list '+php--company-backends #'company-phpactor nil 'eq)
@@ -136,7 +136,7 @@
 
 
 (use-package! hack-mode
-  :when (featurep! +hack)
+  :when (modulep! +hack)
   :mode "\\.hh$")
 
 

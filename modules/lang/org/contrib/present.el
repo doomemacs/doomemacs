@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/present.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +present)
+;;;###if (modulep! +present)
 
 (defvar +org-present-text-scale 5
   "The `text-scale-amount' for `org-tree-slide-mode'.")
@@ -40,7 +40,7 @@ headings as titles, and you have more freedom to place them wherever you like.")
   (add-hook 'org-tree-slide-play-hook #'+org-present-hide-blocks-h)
   (add-hook 'org-tree-slide-stop-hook #'+org-present-hide-blocks-h)
 
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (map! :map org-tree-slide-mode-map
           :n [C-right] #'org-tree-slide-move-next-tree
           :n [C-left]  #'org-tree-slide-move-previous-tree)

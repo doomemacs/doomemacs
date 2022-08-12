@@ -13,7 +13,7 @@
 (defun =calendar ()
   "Activate (or switch to) `calendar' in its workspace."
   (interactive)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       (progn
         (+workspace-switch "Calendar" t)
         (doom/switch-to-scratch-buffer)
@@ -28,7 +28,7 @@
 (defun +calendar/quit ()
   "TODO"
   (interactive)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       (when (+workspace-exists-p "Calendar")
         (+workspace/delete "Calendar"))
     (when (window-configuration-p +calendar--wconf)

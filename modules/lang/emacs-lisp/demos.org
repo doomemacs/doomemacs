@@ -302,18 +302,18 @@ Or to create aliases for functions that behave differently:
 :added: pre-3.0.0
 :END:
 #+begin_src emacs-lisp :eval no
-(map! :i [tab] (cmds! (and (featurep! :editor snippets)
+(map! :i [tab] (cmds! (and (modulep! :editor snippets)
                            (bound-and-true-p yas-minor-mode)
                            (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                       #'yas-expand
-                      (featurep! :completion company +tng)
+                      (modulep! :completion company +tng)
                       #'company-indent-or-complete-common)
       :m [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
                            (evil-visual-state-p)
                            (or (eq evil-visual-selection 'line)
                                (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
                       #'yas-insert-snippet
-                      (and (featurep! :editor fold)
+                      (and (modulep! :editor fold)
                            (save-excursion (end-of-line) (invisible-p (point))))
                       #'+fold/toggle
                       (fboundp 'evil-jump-item)
@@ -407,12 +407,12 @@ Or to create aliases for functions that behave differently:
         :n "M-s" 'some-fn
         :i "M-o" (cmd! (message "Hi"))))
 
-(map! (:when (featurep! :completion company) ; Conditional loading
+(map! (:when (modulep! :completion company) ; Conditional loading
         :i "C-@" #'+company/complete
         (:prefix "C-x"                       ; Use a prefix key
           :i "C-l" #'+company/whole-lines)))
 
-(map! (:when (featurep! :lang latex)    ; local conditional
+(map! (:when (modulep! :lang latex)    ; local conditional
         (:map LaTeX-mode-map
           :localleader                  ; Use local leader
           :desc "View" "v" #'TeX-view)) ; Add which-key description

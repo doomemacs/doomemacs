@@ -10,17 +10,17 @@
 (package! phpunit :pin "fe6bc91c3bd8b329c6d26ad883a025f06b5121ee")
 (package! composer :pin "7c7f89df226cac69664d7eca5e913b544dc475c5")
 
-(when (featurep! +hack)
+(when (modulep! +hack)
   (package! hack-mode
     :recipe (:host github :repo "hhvm/hack-mode")
     :pin "a522f61c088ee2a13ab17f289a3131329e59badf"))
 
-(unless (featurep! +lsp)
+(unless (modulep! +lsp)
   (package! phpactor :pin "34195f1533209e2ffd0f898a69c7db2bffd1eabe")
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (package! company-phpactor :pin "34195f1533209e2ffd0f898a69c7db2bffd1eabe")))
 
-(when (featurep! :editor format)
+(when (modulep! :editor format)
   (package! php-cs-fixer :pin "7e12a1af5d65cd8a801eeb5564c6268a4e190c0c"))
 
 ;; For building php-extras

@@ -28,10 +28,10 @@
   :pin "69c883720b30a892c63bc89f49d4f0e8b8028908")
 
 ;;
-(when (featurep! +everywhere)
+(when (modulep! +everywhere)
   ;; `evil-collection-neotree' uses the `neotree-make-executor' macro, but this
   ;; requires neotree be available during byte-compilation (while installing).
-  (when (featurep! :ui neotree)
+  (when (modulep! :ui neotree)
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 

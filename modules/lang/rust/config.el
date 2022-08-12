@@ -40,16 +40,16 @@
   (setq rustic-babel-format-src-block nil
         rustic-format-trigger nil)
 
-  (if (not (featurep! +lsp))
+  (if (not (modulep! +lsp))
       (after! rustic-flycheck
         (add-to-list 'flycheck-checkers 'rustic-clippy))
     (setq rustic-lsp-client
-          (if (featurep! :tools lsp +eglot)
+          (if (modulep! :tools lsp +eglot)
               'eglot
             'lsp-mode))
     (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp 'append))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'rustic-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
@@ -79,7 +79,7 @@
 
 
 (use-package! racer
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :hook (rustic-mode-local-vars . racer-mode)
   :config
   (set-lookup-handlers! 'rustic-mode

@@ -71,7 +71,7 @@ buffer rather than an overlay on the line at point or the minibuffer.")
   ;; Display evaluation results in an overlay at the end of the current line. If
   ;; the output is more than `+eval-popup-min-lines' (4) lines long, it is
   ;; displayed in a popup.
-  (when (featurep! +overlay)
+  (when (modulep! +overlay)
     (defadvice! +eval--show-output-in-overlay-a (fn)
       :filter-return #'quickrun--make-sentinel
       (lambda (process event)
@@ -97,5 +97,5 @@ buffer rather than an overlay on the line at point or the minibuffer.")
 
 
 (use-package! eros
-  :when (featurep! +overlay)
+  :when (modulep! +overlay)
   :hook (emacs-lisp-mode . eros-mode))

@@ -22,11 +22,11 @@ results buffer.")
   :hook (doom-first-input . ivy-mode)
   :init
   (let ((standard-search-fn
-         (if (featurep! +prescient)
+         (if (modulep! +prescient)
              #'+ivy-prescient-non-fuzzy
            #'ivy--regex-plus))
         (alt-search-fn
-         (if (featurep! +fuzzy)
+         (if (modulep! +fuzzy)
              #'ivy--regex-fuzzy
            ;; Ignore order for non-fuzzy searches by default
            #'ivy--regex-ignore-order)))
@@ -116,7 +116,7 @@ results buffer.")
   :config
   (setq ivy-rich-parse-remote-buffer nil)
 
-  (when (featurep! +icons)
+  (when (modulep! +icons)
     (cl-pushnew '(+ivy-rich-buffer-icon)
                 (cadr (plist-get ivy-rich-display-transformers-list
                                  'ivy-switch-buffer))
@@ -160,7 +160,7 @@ results buffer.")
 
 
 (use-package! all-the-icons-ivy
-  :when (featurep! +icons)
+  :when (modulep! +icons)
   :after ivy
   :config
   ;; `all-the-icons-ivy' is incompatible with ivy-rich's switch-buffer
@@ -335,7 +335,7 @@ results buffer.")
   ;; no highlighting visited files; slows down the filtering
   (ivy-set-display-transformer #'counsel-projectile-find-file nil)
 
-  (when (featurep! +prescient)
+  (when (modulep! +prescient)
     (setq counsel-projectile-sort-files t)))
 
 
@@ -345,7 +345,7 @@ results buffer.")
 
 
 (use-package! ivy-posframe
-  :when (featurep! +childframe)
+  :when (modulep! +childframe)
   :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil
@@ -369,23 +369,23 @@ results buffer.")
 
 
 (use-package! flx
-  :when (featurep! +fuzzy)
-  :unless (featurep! +prescient)
+  :when (modulep! +fuzzy)
+  :unless (modulep! +prescient)
   :defer t  ; is loaded by ivy
-  :preface (setq ivy--flx-featurep (featurep! +fuzzy))
+  :preface (setq ivy--flx-featurep (modulep! +fuzzy))
   :init (setq ivy-flx-limit 10000))
 
 (use-package! ivy-avy
   :after ivy)
 
 (use-package! ivy-prescient
-  :when (featurep! +prescient)
+  :when (modulep! +prescient)
   :hook (ivy-mode . ivy-prescient-mode)
   :hook (ivy-prescient-mode . prescient-persist-mode)
   :commands +ivy-prescient-non-fuzzy
   :init
   (setq prescient-filter-method
-        (if (featurep! +fuzzy)
+        (if (modulep! +fuzzy)
             '(literal regexp initialism fuzzy)
           '(literal regexp initialism)))
   :config

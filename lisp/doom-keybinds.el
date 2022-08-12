@@ -170,7 +170,7 @@ interface.
 
 See `doom-localleader-key' and `doom-localleader-alt-key' to change the
 localleader prefix."
-  (if (featurep! :editor evil)
+  (if (modulep! :editor evil)
       ;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's
       ;; emacs state)
       `(general-define-key

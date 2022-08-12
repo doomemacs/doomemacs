@@ -62,14 +62,14 @@
   (swiper-isearch search))
 (evil-ex-define-cmd "sw[iper]" #'+evil:swiper)
 
-(cond ((featurep! :completion ivy)
+(cond ((modulep! :completion ivy)
        (evil-ex-define-cmd "pg[rep]"   #'+ivy:project-search)
        (evil-ex-define-cmd "pg[grep]d" #'+ivy:project-search-from-cwd))
 
-      ((featurep! :completion helm)
+      ((modulep! :completion helm)
        (evil-ex-define-cmd "pg[rep]"   #'+helm:project-search)
        (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd))
-      ((featurep! :completion vertico)
+      ((modulep! :completion vertico)
        (evil-ex-define-cmd "pg[rep]"   #'+vertico:project-search)
        (evil-ex-define-cmd "pg[grep]d" #'+vertico:project-search-from-cwd)))
 
@@ -104,5 +104,5 @@
 (evil-ex-define-cmd "cap[ture]"   #'org-capture)
 
 ;;; ibuffer
-(when (featurep! :emacs ibuffer)
+(when (modulep! :emacs ibuffer)
   (evil-ex-define-cmd "buffers" #'ibuffer))

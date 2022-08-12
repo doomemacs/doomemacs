@@ -86,9 +86,9 @@ is non-nil."
         mu4e-compose-context-policy 'ask-if-none
         ;; use helm/ivy/vertico
         mu4e-completing-read-function
-        (cond ((featurep! :completion ivy)     #'ivy-completing-read)
-              ((featurep! :completion helm)    #'completing-read)
-              ((featurep! :completion vertico) #'completing-read)
+        (cond ((modulep! :completion ivy)     #'ivy-completing-read)
+              ((modulep! :completion helm)    #'completing-read)
+              ((modulep! :completion vertico) #'completing-read)
               (t #'ido-completing-read))
         mu4e-attachment-dir
         (concat
@@ -252,7 +252,7 @@ is non-nil."
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (map! :map mu4e-main-mode-map
           :ne "h" #'+workspace/other))
 
@@ -337,7 +337,7 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
   ;; Due to evil, none of the marking commands work when making a visual selection in
   ;; the headers view of mu4e. Without overriding any evil commands we may actually
   ;; want to use in and evil selection, this can be easily fixed.
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (map! :map mu4e-headers-mode-map
           :v "*" #'mu4e-headers-mark-for-something
           :v "!" #'mu4e-headers-mark-for-read
@@ -362,7 +362,7 @@ This is enacted by `+mu4e~main-action-str-prettier-a' and
 
   (advice-add #'mu4e--key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
   (advice-add #'mu4e--main-action-str :override #'+mu4e~main-action-str-prettier-a)
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
     (setq evil-collection-mu4e-end-region-misc "quit"))
 
@@ -376,7 +376,7 @@ This is enacted by `+mu4e~main-action-str-prettier-a' and
   (advice-add 'mu4e--start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
-(unless (featurep! +org)
+(unless (modulep! +org)
   (after! mu4e
     (defun org-msg-mode (&optional _)
       "Dummy function."
@@ -388,7 +388,7 @@ Ignores all arguments and returns nil."
 
 (use-package! org-msg
   :after mu4e
-  :when (featurep! +org)
+  :when (modulep! +org)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
@@ -583,7 +583,7 @@ Must be set before org-msg is loaded to take effect.")
 ;;
 ;;; Gmail integration
 
-(when (featurep! +gmail)
+(when (modulep! +gmail)
   (after! mu4e
     (defvar +mu4e-gmail-accounts nil
       "Gmail accounts that do not contain \"gmail\" in address and maildir.

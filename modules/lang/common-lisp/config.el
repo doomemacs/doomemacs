@@ -152,7 +152,7 @@
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
           :desc "Untrace all"    "u" #'sly-untrace-all)))
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)))
 
 

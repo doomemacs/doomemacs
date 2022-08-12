@@ -1,5 +1,5 @@
 ;;; app/irc/autoload/vertico.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :completion vertico)
+;;;###if (modulep! :completion vertico)
 
 ;;;###autoload
 (defun +irc/vertico-jump-to-channel ()

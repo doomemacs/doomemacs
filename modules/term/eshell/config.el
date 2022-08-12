@@ -86,7 +86,7 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
   ;; Persp-mode/workspaces integration
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (add-hook 'persp-activated-functions #'+eshell-switch-workspace-fn)
     (add-hook 'persp-before-switch-functions #'+eshell-save-workspace-fn))
 

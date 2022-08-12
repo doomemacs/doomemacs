@@ -21,7 +21,7 @@ If nil, it is disabled in all modes")
 
 
 (use-package! evil-textobj-tree-sitter
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init (after! tree-sitter (require 'evil-textobj-tree-sitter))
   :config

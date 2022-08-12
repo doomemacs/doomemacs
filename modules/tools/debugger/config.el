@@ -109,7 +109,7 @@
 
 
 (use-package! dap-mode
-  :when (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
+  :when (and (modulep! +lsp) (not (modulep! :tools lsp +eglot)))
   :hook (dap-mode . dap-tooltip-mode)
   :init
   (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
@@ -155,6 +155,6 @@
 
 
 (use-package! dap-ui
-  :when (featurep! +lsp)
+  :when (modulep! +lsp)
   :hook (dap-mode . dap-ui-mode)
   :hook (dap-ui-mode . dap-ui-controls-mode))

@@ -1,5 +1,5 @@
 ;;; lang/org/autoload/contrib-ipython.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +ipython)
+;;;###if (modulep! +ipython)
 
 ;;;###autoload
 (defun +org-ob-ipython-initiate-session-a (&optional session params)
@@ -115,7 +115,7 @@ This function is called by `org-babel-execute-src-block'."
                        (cdr (assoc :pydir (nth 2 info))))))
   (ob-ipython-mode 1)
   ;; hack on company mode to use company-capf rather than company-anaconda
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (setq-local company-backends
                 '(company-capf
                   company-dabbrev

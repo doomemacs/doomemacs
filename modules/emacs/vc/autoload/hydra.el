@@ -1,5 +1,5 @@
 ;;; emacs/vc/autoload/hydra.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :ui hydra)
+;;;###if (modulep! :ui hydra)
 
 ;;;###autoload (autoload '+vc/smerge-hydra/body "emacs/vc/autoload/hydra" nil t)
 (defhydra +vc/smerge-hydra (:hint nil

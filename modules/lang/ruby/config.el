@@ -18,10 +18,10 @@
   (set-electric! 'ruby-mode :words '("else" "end" "elsif"))
   (set-repl-handler! 'ruby-mode #'inf-ruby)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'ruby-mode-local-vars-hook #'lsp! 'append))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'ruby-mode-local-vars-hook #'tree-sitter! 'append))
 
   (after! inf-ruby
@@ -58,7 +58,7 @@
     ;; the GC, so increase the amount of data Emacs reads from it at a time.
     (setq-hook! '(robe-mode-hook inf-ruby-mode-hook)
       read-process-output-max (* 1024 1024)))
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook 'robe-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map robe-mode-map
@@ -122,7 +122,7 @@
         "o" #'bundle-open))
 
 (use-package! chruby
-  :when (featurep! +chruby)
+  :when (modulep! +chruby)
   :hook (ruby-mode . chruby-use-corresponding)
   :config
   (setq rspec-use-rvm nil
@@ -140,7 +140,7 @@
   :mode ("/\\.rspec\\'" . text-mode)
   :init
   (setq rspec-use-spring-when-possible nil)
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
   (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.3 :ttl nil :select t)
@@ -170,7 +170,7 @@
 (use-package! minitest
   :defer t
   :config
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook 'minitest-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map minitest-mode-map
@@ -182,18 +182,18 @@
 
 
 (use-package! projectile-rails
-  :when (featurep! +rails)
+  :when (modulep! +rails)
   :hook ((ruby-mode inf-ruby-mode projectile-rails-server-mode) . projectile-rails-mode)
   :hook (projectile-rails-server-mode . doom-mark-buffer-as-real-h)
   :hook (projectile-rails-mode . auto-insert-mode)
   :init
   (setq auto-insert-query nil)
   (setq inf-ruby-console-environment "development")
-  (when (featurep! :lang web)
+  (when (modulep! :lang web)
     (add-hook 'web-mode-hook #'projectile-rails-mode))
   :config
   (set-popup-rule! "^\\*\\(projectile-\\)?rails" :ttl nil)
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (add-hook 'projectile-rails-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map projectile-rails-mode-map

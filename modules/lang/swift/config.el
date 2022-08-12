@@ -3,27 +3,27 @@
 (after! swift-mode
   (set-repl-handler! 'swift-mode #'run-swift)
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'swift-mode-local-vars-hook #'tree-sitter! 'append)))
 
 
 (use-package! flycheck-swift
-  :when (featurep! :checkers syntax)
-  :unless (featurep! +lsp)
+  :when (modulep! :checkers syntax)
+  :unless (modulep! +lsp)
   :after swift-mode
   :config (flycheck-swift-setup))
 
 
 (use-package! company-sourcekit
-  :when (featurep! :completion company)
-  :unless (featurep! +lsp)
+  :when (modulep! :completion company)
+  :unless (modulep! +lsp)
   :after swift-mode
   :config
   (set-company-backend! 'swift-mode '(company-sourcekit company-yasnippet)))
 
 
 (use-package! lsp-sourcekit
-  :when (featurep! +lsp)
+  :when (modulep! +lsp)
   :after swift-mode
   :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config

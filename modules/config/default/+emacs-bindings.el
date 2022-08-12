@@ -41,36 +41,36 @@
        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
        :desc "List errors"                           "x"   #'+default/diagnostics
-       (:when (and (featurep! :tools lsp) (not (featurep! :tools lsp +eglot)))
+       (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
         :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                  "o"   #'lsp-organize-imports
         :desc "LSP Rename"                            "r"   #'lsp-rename
         :desc "LSP"                                   "l"   #'+default/lsp-command-map
-        (:when (featurep! :completion ivy)
+        (:when (modulep! :completion ivy)
          :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
-        (:when (featurep! :completion helm)
+        (:when (modulep! :completion helm)
          :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
          :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)
-        (:when (featurep! :completion vertico)
+        (:when (modulep! :completion vertico)
          :desc "Jump to symbol in current workspace" "j"   #'consult-lsp-symbols
          :desc "Jump to symbol in any workspace"     "J"   (cmd!! #'consult-lsp-symbols 'all-workspaces))
-        (:when (featurep! :ui treemacs +lsp)
+        (:when (modulep! :ui treemacs +lsp)
          :desc "Errors list"                         "X"   #'lsp-treemacs-errors-list
          :desc "Incoming call hierarchy"             "y"   #'lsp-treemacs-call-hierarchy
          :desc "Outgoing call hierarchy"             "Y"   (cmd!! #'lsp-treemacs-call-hierarchy t)
          :desc "References tree"                     "R"   (cmd!! #'lsp-treemacs-references t)
          :desc "Symbols"                             "S"   #'lsp-treemacs-symbols))
-       (:when (featurep! :tools lsp +eglot)
+       (:when (modulep! :tools lsp +eglot)
         :desc "LSP Execute code action"              "a" #'eglot-code-actions
         :desc "LSP Rename"                           "r" #'eglot-rename
         :desc "LSP Find declaration"                 "j" #'eglot-find-declaration
-        (:when (featurep! :completion vertico)
+        (:when (modulep! :completion vertico)
          :desc "Jump to symbol in current workspace" "j" #'consult-eglot-symbols)))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
-       (:when (featurep! :tools editorconfig)
+       (:when (modulep! :tools editorconfig)
         :desc "Open project editorconfig"  "c"   #'editorconfig-find-current-editorconfig)
        :desc "Copy this file"              "C"   #'doom/copy-this-file
        :desc "Find directory"              "d"   #'dired
@@ -93,7 +93,7 @@
        :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer)
 
       ;;; <leader> r --- remote
-      (:when (featurep! :tools upload)
+      (:when (modulep! :tools upload)
        (:prefix-map ("r" . "remote")
         :desc "Browse remote"              "b" #'ssh-deploy-browse-remote-base-handler
         :desc "Browse relative"            "B" #'ssh-deploy-browse-remote-handler
@@ -114,13 +114,13 @@
       (:prefix-map ("s" . "search")
        :desc "Search project for symbol"    "." #'+default/search-project-for-symbol-at-point
        :desc "Search buffer"                "b"
-       (cond ((featurep! :completion vertico)   #'consult-line)
-             ((featurep! :completion ivy)       #'swiper)
-             ((featurep! :completion helm)      #'swiper))
+       (cond ((modulep! :completion vertico)   #'consult-line)
+             ((modulep! :completion ivy)       #'swiper)
+             ((modulep! :completion helm)      #'swiper))
        :desc "Search all open buffers"      "B"
-       (cond ((featurep! :completion vertico)   (cmd!! #'consult-line-multi 'all-buffers))
-             ((featurep! :completion ivy)       #'swiper-all)
-             ((featurep! :completion helm)      #'swiper-all))
+       (cond ((modulep! :completion vertico)   (cmd!! #'consult-line-multi 'all-buffers))
+             ((modulep! :completion ivy)       #'swiper-all)
+             ((modulep! :completion helm)      #'swiper-all))
        :desc "Search current directory"     "d" #'+default/search-cwd
        :desc "Search other directory"       "D" #'+default/search-other-cwd
        :desc "Search .emacs.d"              "e" #'+default/search-emacsd
@@ -137,9 +137,9 @@
        :desc "Search other project"         "P" #'+default/search-other-project
        :desc "Search buffer"                "s" #'+default/search-buffer
        :desc "Search buffer for thing at point" "S"
-       (cond ((featurep! :completion vertico)   #'+vertico/search-symbol-at-point)
-             ((featurep! :completion ivy)       #'swiper-isearch-thing-at-point)
-             ((featurep! :completion helm)      #'swiper-isearch-thing-at-point))
+       (cond ((modulep! :completion vertico)   #'+vertico/search-symbol-at-point)
+             ((modulep! :completion ivy)       #'swiper-isearch-thing-at-point)
+             ((modulep! :completion helm)      #'swiper-isearch-thing-at-point))
        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
        :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 
@@ -156,16 +156,16 @@
       (:prefix-map ("n" . "notes")
        :desc "Search notes for symbol"        "." #'+default/search-notes-for-symbol-at-point
        :desc "Org agenda"                     "a" #'org-agenda
-       (:when (featurep! :tools biblio)
+       (:when (modulep! :tools biblio)
         :desc "Bibliographic entries"        "b"
-        (cond ((featurep! :completion vertico)   #'citar-open-entry)
-              ((featurep! :completion ivy)       #'ivy-bibtex)
-              ((featurep! :completion helm)      #'helm-bibtex)))
+        (cond ((modulep! :completion vertico)   #'citar-open-entry)
+              ((modulep! :completion ivy)       #'ivy-bibtex)
+              ((modulep! :completion helm)      #'helm-bibtex)))
 
        :desc "Toggle last org-clock"          "c" #'+org/toggle-last-clock
        :desc "Cancel current org-clock"       "C" #'org-clock-cancel
        :desc "Open deft"                      "d" #'deft
-       (:when (featurep! :lang org +noter)
+       (:when (modulep! :lang org +noter)
         :desc "Org noter"                    "e" #'org-noter)
 
        :desc "Find file in notes"             "f" #'+default/find-in-notes
@@ -181,12 +181,12 @@
        :desc "View search"                    "v" #'org-search-view
        :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
        :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
-       (:when (featurep! :lang org +journal)
+       (:when (modulep! :lang org +journal)
         (:prefix ("j" . "journal")
          :desc "New Entry"           "j" #'org-journal-new-entry
          :desc "New Scheduled Entry" "J" #'org-journal-new-scheduled-entry
          :desc "Search Forever"      "s" #'org-journal-search-forever))
-       (:when (featurep! :lang org +roam)
+       (:when (modulep! :lang org +roam)
         (:prefix ("r" . "roam")
          :desc "Switch to buffer"              "b" #'org-roam-switch-to-buffer
          :desc "Org Roam Capture"              "c" #'org-roam-capture
@@ -202,7 +202,7 @@
           :desc "Today"          "t" #'org-roam-dailies-find-today
           :desc "Tomorrow"       "m" #'org-roam-dailies-find-tomorrow
           :desc "Yesterday"      "y" #'org-roam-dailies-find-yesterday)))
-       (:when (featurep! :lang org +roam2)
+       (:when (modulep! :lang org +roam2)
         (:prefix ("r" . "roam")
          :desc "Open random node"           "a" #'org-roam-node-random
          :desc "Find node"                  "f" #'org-roam-node-find
@@ -236,25 +236,25 @@
        :desc "REPL"               "r"  #'+eval/open-repl-other-window
        :desc "REPL (same window)" "R"  #'+eval/open-repl-same-window
        :desc "Dired"              "-"  #'dired-jump
-       (:when (featurep! :ui neotree)
+       (:when (modulep! :ui neotree)
         :desc "Project sidebar"               "p" #'+neotree/open
         :desc "Find file in project sidebar"  "P" #'+neotree/find-this-file)
-       (:when (featurep! :ui treemacs)
+       (:when (modulep! :ui treemacs)
         :desc "Project sidebar"               "p" #'+treemacs/toggle
         :desc "Find file in project rsidebar" "P" #'treemacs-find-file)
-       (:when (featurep! :term shell)
+       (:when (modulep! :term shell)
         :desc "Toggle shell popup"            "t" #'+shell/toggle
         :desc "Open shell here"               "T" #'+shell/here)
-       (:when (featurep! :term term)
+       (:when (modulep! :term term)
         :desc "Toggle terminal popup"         "t" #'+term/toggle
         :desc "Open terminal here"            "T" #'+term/here)
-       (:when (featurep! :term vterm)
+       (:when (modulep! :term vterm)
         :desc "Toggle vterm popup"            "t" #'+vterm/toggle
         :desc "Open vterm here"               "T" #'+vterm/here)
-       (:when (featurep! :term eshell)
+       (:when (modulep! :term eshell)
         :desc "Toggle eshell popup"           "e" #'+eshell/toggle
         :desc "Open eshell here"              "E" #'+eshell/here)
-       (:when (featurep! :os macos)
+       (:when (modulep! :os macos)
         :desc "Reveal in Finder"           "o" #'+macos/reveal-in-finder
         :desc "Reveal project in Finder"   "O" #'+macos/reveal-project-in-finder
         :desc "Send to Transmit"           "u" #'+macos/send-to-transmit
@@ -263,13 +263,13 @@
         :desc "Send project to Launchbar"  "L" #'+macos/send-project-to-launchbar
         :desc "Open in iTerm"              "i" #'+macos/open-in-iterm
         :desc "Open in new iTerm window"   "I" #'+macos/open-in-iterm-new-window)
-       (:when (featurep! :tools docker)
+       (:when (modulep! :tools docker)
         :desc "Docker" "D" #'docker)
-       (:when (featurep! :email mu4e)
+       (:when (modulep! :email mu4e)
         :desc "mu4e" "m" #'=mu4e)
-       (:when (featurep! :email notmuch)
+       (:when (modulep! :email notmuch)
         :desc "notmuch" "m" #'=notmuch)
-       (:when (featurep! :email wanderlust)
+       (:when (modulep! :email wanderlust)
         :desc "wanderlust" "m" #'=wanderlust))
 
 
@@ -281,9 +281,9 @@
        :desc "List project todos"          "t" #'magit-todos-list
        :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
        :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
-       (:when (and (featurep! :tools taskrunner)
-                   (or (featurep! :completion ivy)
-                       (featurep! :completion helm)))
+       (:when (and (modulep! :tools taskrunner)
+                   (or (modulep! :completion ivy)
+                       (modulep! :completion helm)))
         :desc "List project tasks"         "z" #'+taskrunner/project-tasks)
        ;; later expanded by projectile
        (:prefix ("4" . "in other window"))
@@ -322,24 +322,24 @@
        :desc "Indent style"                 "I" #'doom/toggle-indent-style
        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
        :desc "Soft line wrapping"           "w" #'visual-line-mode
-       (:when (featurep! :editor word-wrap)
+       (:when (modulep! :editor word-wrap)
         :desc "Soft line wrapping"          "w" #'+word-wrap-mode)
-       (:when (featurep! :checkers syntax)
+       (:when (modulep! :checkers syntax)
         :desc "Flycheck"                   "f" #'flycheck-mode)
-       (:when (featurep! :ui indent-guides)
+       (:when (modulep! :ui indent-guides)
         :desc "Indent guides"              "i" #'highlight-indent-guides-mode)
-       (:when (featurep! :ui minimap)
+       (:when (modulep! :ui minimap)
         :desc "Minimap mode"               "m" #'minimap-mode)
-       (:when (featurep! :lang org +present)
+       (:when (modulep! :lang org +present)
         :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
        :desc "Read-only mode"               "r" #'read-only-mode
-       (:when (and (featurep! :checkers spell) (not (featurep! :checkers spell +flyspell)))
+       (:when (and (modulep! :checkers spell) (not (modulep! :checkers spell +flyspell)))
         :desc "Spell checker"              "s" #'spell-fu-mode)
-       (:when (featurep! :checkers spell +flyspell)
+       (:when (modulep! :checkers spell +flyspell)
         :desc "Spell checker"              "s" #'flyspell-mode)
-       (:when (featurep! :lang org +pomodoro)
+       (:when (modulep! :lang org +pomodoro)
         :desc "Pomodoro timer"             "t" #'org-pomodoro)
-       (:when (featurep! :ui zen)
+       (:when (modulep! :ui zen)
         :desc "Zen mode"                   "z" #'+zen/toggle
         :desc "Zen mode (fullscreen)"      "Z" #'+zen/toggle-fullscreen))
 
@@ -348,13 +348,13 @@
        :desc "Git revert file"             "R"   #'vc-revert
        :desc "Kill link to remote"         "y"   #'+vc/browse-at-remote-kill
        :desc "Kill link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
-       (:when (featurep! :ui vc-gutter)
+       (:when (modulep! :ui vc-gutter)
         :desc "Git revert hunk"            "r"   #'+vc-gutter/revert-hunk
         :desc "Git stage hunk"             "s"   #'+vc-gutter/stage-hunk
         :desc "Git time machine"           "t"   #'git-timemachine-toggle
         :desc "Jump to next hunk"          "n"   #'+vc-gutter/next-hunk
         :desc "Jump to previous hunk"      "p"   #'+vc-gutter/previous-hunk)
-       (:when (featurep! :tools magit)
+       (:when (modulep! :tools magit)
         :desc "Magit dispatch"             "/"   #'magit-dispatch
         :desc "Magit file dispatch"        "."   #'magit-file-dispatch
         :desc "Forge dispatch"             "'"   #'forge-dispatch
@@ -383,7 +383,7 @@
          :desc "Browse issues"             "I"   #'forge-browse-issues
          :desc "Browse pull requests"      "P"   #'forge-browse-pullreqs)
         (:prefix ("l" . "list")
-         (:when (featurep! :tools gist)
+         (:when (modulep! :tools gist)
           :desc "List gists"               "g"   #'gist-list)
          :desc "List repositories"         "r"   #'magit-list-repositories
          :desc "List submodules"           "s"   #'magit-list-submodules
@@ -400,7 +400,7 @@
 
       ;;; <leader> w --- workspaces/windows
       (:prefix-map ("w" . "workspaces/windows")
-       (:when (featurep! :ui workspaces)
+       (:when (modulep! :ui workspaces)
         :desc "Display workspaces"           "d" #'+workspace/display
         :desc "Rename workspace"             "r" #'+workspace/rename
         :desc "Create workspace"             "c" #'+workspace/new
@@ -429,7 +429,7 @@
        :desc "Redo window config"           "U" #'winner-redo)
 
       ;;; <leader> m --- multiple cursors
-      (:when (featurep! :editor multiple-cursors)
+      (:when (modulep! :editor multiple-cursors)
        (:prefix-map ("m" . "multiple-cursors")
         :desc "Edit lines"         "l"         #'mc/edit-lines
         :desc "Mark next"          "n"         #'mc/mark-next-like-this
@@ -446,26 +446,26 @@
 
       ;; APPs
       ;;; <leader> M --- mu4e
-      (:when (featurep! :email mu4e)
+      (:when (modulep! :email mu4e)
        (:prefix-map ("M" . "mu4e")
         :desc "Open email app" "M" #'=mu4e
         :desc "Compose email"  "c" #'+mu4e/compose))
 
       ;;; <leader> I --- IRC
-      (:when (featurep! :app irc)
+      (:when (modulep! :app irc)
        (:prefix-map ("I" . "irc")
         :desc "Open irc app"       "I" #'=irc
         :desc "Next unread buffer" "a" #'tracking-next-buffer
         :desc "Quit irc"           "q" #'+irc/quit
         :desc "Reconnect all"      "r" #'circe-reconnect-all
         :desc "Send message"       "s" #'+irc/send-message
-        (:when (featurep! :completion ivy)
+        (:when (modulep! :completion ivy)
          :desc "Jump to channel"  "j" #'+irc/ivy-jump-to-channel)
-        (:when (featurep! :completion vertico)
+        (:when (modulep! :completion vertico)
          :desc "Jump to channel"  "j" #'+irc/vertico-jump-to-channel)))
 
       ;;; <leader> T --- twitter
-      (:when (featurep! :app twitter)
+      (:when (modulep! :app twitter)
        (:prefix-map ("T" . "twitter")
         :desc "Open twitter app" "T" #'=twitter
         :desc "Quit twitter"     "q" #'+twitter/quit
@@ -479,27 +479,27 @@
 (map! "C-'" #'imenu
 
       ;;; search
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
         "C-S-s"        #'swiper
         "C-S-r"        #'ivy-resume)
-      (:when (featurep! :completion helm)
+      (:when (modulep! :completion helm)
         "C-S-s"        #'swiper-helm
         "C-S-r"        #'helm-resume)
-      (:when (featurep! :completion vertico)
+      (:when (modulep! :completion vertico)
         "C-S-r"        #'vertico-repeat)
 
       ;;; objed
-      (:when (featurep! :editor objed +manual)
+      (:when (modulep! :editor objed +manual)
         "M-SPC"     #'objed-activate)
 
       ;;; buffer management
       "C-x b"       #'switch-to-buffer
       "C-x 4 b"     #'switch-to-buffer-other-window
-      (:when (featurep! :ui workspaces)
+      (:when (modulep! :ui workspaces)
         "C-x b"       #'persp-switch-to-buffer
         "C-x B"       #'switch-to-buffer
         "C-x 4 B"     #'switch-to-buffer-other-window
-        (:when (featurep! :completion ivy)
+        (:when (modulep! :completion ivy)
           "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window))
       "C-x C-b"     #'ibuffer
       "C-x K"       #'doom/kill-this-buffer-in-all-windows
@@ -518,12 +518,12 @@
         [C-tab]      #'company-complete-common-or-cycle
         [tab]        #'company-complete-common-or-cycle
         [backtab]    #'company-select-previous
-        "C-RET"      (cond ((featurep! :completion vertico)  #'completion-at-point)
-                           ((featurep! :completion ivy)      #'counsel-company)
-                           ((featurep! :completion helm)     #'helm-company))
-        "C-<return>" (cond ((featurep! :completion vertico)  #'completion-at-point)
-                           ((featurep! :completion ivy)      #'counsel-company)
-                           ((featurep! :completion helm)     #'helm-company))
+        "C-RET"      (cond ((modulep! :completion vertico)  #'completion-at-point)
+                           ((modulep! :completion ivy)      #'counsel-company)
+                           ((modulep! :completion helm)     #'helm-company))
+        "C-<return>" (cond ((modulep! :completion vertico)  #'completion-at-point)
+                           ((modulep! :completion ivy)      #'counsel-company)
+                           ((modulep! :completion helm)     #'helm-company))
         :map company-search-map
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
@@ -565,7 +565,7 @@
         "o" #'link-hint-open-link)
 
       ;;; ivy & counsel
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
         (:after ivy
           :map ivy-minibuffer-map
           "TAB"   #'ivy-alt-done
@@ -577,7 +577,7 @@
         "C-M-y"   #'counsel-yank-pop)
 
       ;;; neotree
-      (:when (featurep! :ui neotree)
+      (:when (modulep! :ui neotree)
         "<f9>"    #'+neotree/open
         "<C-f9>"  #'+neotree/find-this-file
         (:after neotree
@@ -600,7 +600,7 @@
           "P"     #'neotree-select-previous-sibling-node))
 
       ;;; popups
-      (:when (featurep! :ui popup)
+      (:when (modulep! :ui popup)
         "C-x p"   #'+popup/other
         "C-`"     #'+popup/toggle
         "C-~"     #'+popup/raise)
@@ -621,12 +621,12 @@
         "C-M-<backspace>" #'sp-splice-sexp)
 
       ;;; treemacs
-      (:when (featurep! :ui treemacs)
+      (:when (modulep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
         "<C-f9>" #'treemacs-find-file))
 
 (map! :leader
-      (:when (featurep! :editor fold)
+      (:when (modulep! :editor fold)
        (:prefix ("C-f" . "fold")
         "C-d"     #'vimish-fold-delete
         "C-a C-d" #'vimish-fold-delete-all

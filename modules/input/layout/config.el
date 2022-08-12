@@ -2,7 +2,7 @@
 
 (add-hook! 'doom-init-modules-hook
   (defun +layout-init-h ()
-    (cond ((featurep! +bepo)
+    (cond ((modulep! +bepo)
            (load! "+bepo"))
-          ((featurep! +azerty)
+          ((modulep! +azerty)
            (load! "+azerty")))))

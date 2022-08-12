@@ -29,5 +29,5 @@
 
 
 ;; Is built into Emacs 26+
-(when (featurep! +auth)
+(when (modulep! +auth)
   (auth-source-pass-enable))

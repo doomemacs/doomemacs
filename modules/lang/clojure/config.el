@@ -14,7 +14,7 @@
 (use-package! clojure-mode
   :hook (clojure-mode . rainbow-delimiters-mode)
   :config
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook! '(clojure-mode-local-vars-hook
                  clojurec-mode-local-vars-hook
                  clojurescript-mode-local-vars-hook)
@@ -48,7 +48,7 @@
   (add-transient-hook! #'cider-stacktrace-render-cause     (cider--stacktrace-adapt-to-theme))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
-  (unless (featurep! +lsp)
+  (unless (modulep! +lsp)
     (set-lookup-handlers! '(cider-mode cider-repl-mode)
       :definition #'+clojure-cider-lookup-definition
       :documentation #'cider-doc))
@@ -82,7 +82,7 @@
         ;; See https://github.com/clojure-emacs/cider/issues/1872
         cider-repl-pop-to-buffer-on-connect 'display-only)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (setq cider-eldoc-display-for-symbol-at-point nil
           cider-font-lock-dynamically nil)
     (add-hook! 'cider-mode-hook
@@ -111,7 +111,7 @@
         (evil-make-overriding-map cider--debug-mode-map 'normal)
         (evil-normalize-keymaps))))
 
-  (when (featurep! :ui modeline +light)
+  (when (modulep! :ui modeline +light)
     (defvar-local cider-modeline-icon nil)
 
     (defun +clojure--cider-set-modeline (face label)
@@ -150,7 +150,7 @@
         (+clojure--cider-set-modeline 'success "Cider syncronized"))))
 
   ;; Ensure that CIDER is used for sessions in org buffers.
-  (when (featurep! :lang org)
+  (when (modulep! :lang org)
     (after! ob-clojure
       (setq! org-babel-clojure-backend 'cider)))
 
@@ -221,7 +221,7 @@
               "s" #'cider-test-run-ns-tests-with-filters
               "t" #'cider-test-run-test)))
 
-        (:when (featurep! :editor evil +everywhere)
+        (:when (modulep! :editor evil +everywhere)
           :map cider-repl-mode-map
           :i [S-return] #'cider-repl-newline-and-indent
           :i [M-return] #'cider-repl-return
@@ -243,10 +243,10 @@
 (use-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
   :config
-  (unless (featurep! +lsp)
+  (unless (modulep! +lsp)
     (set-lookup-handlers! 'clj-refactor-mode
       :references #'cljr-find-usages))
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (setq cljr-add-ns-to-blank-clj-files nil))
   (map! :map clojure-mode-map
         :localleader
@@ -255,6 +255,6 @@
 
 ;; clojure-lsp already uses clj-kondo under the hood
 (use-package! flycheck-clj-kondo
-  :when (and (featurep! :checkers syntax)
-             (not (featurep! +lsp)))
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! +lsp)))
   :after flycheck)

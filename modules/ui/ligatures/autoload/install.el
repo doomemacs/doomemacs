@@ -1,5 +1,5 @@
 ;;; ui/ligatures/autoload/install.el -*- lexical-binding: t; -*-
-;;;###if (or (featurep! +fira) (featurep! +hasklig) (featurep! +iosevka))
+;;;###if (or (modulep! +fira) (modulep! +hasklig) (modulep! +iosevka))
 
 (defun +ligatures--install-font (prefix name url-format fonts-alist &optional extra-fonts)
   "Install fonts to the local system.

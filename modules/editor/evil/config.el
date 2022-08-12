@@ -51,8 +51,8 @@ directives. By default, this only recognizes C directives.")
         ;; errors will abort macros, so suppress them:
         evil-kbd-macro-suppress-motion-error t
         evil-undo-system
-        (cond ((featurep! :emacs undo +tree) 'undo-tree)
-              ((featurep! :emacs undo) 'undo-fu)
+        (cond ((modulep! :emacs undo +tree) 'undo-tree)
+              ((modulep! :emacs undo) 'undo-fu)
               ((> emacs-major-version 27) 'undo-redo)))
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
@@ -428,7 +428,7 @@ directives. By default, this only recognizes C directives.")
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
-      (:when (featurep! :checkers spell)
+      (:when (modulep! :checkers spell)
        :n  "zg"   #'+spell/add-word
        :n  "zw"   #'+spell/remove-word
        :m  "[s"   #'+spell/previous-error
@@ -445,21 +445,21 @@ directives. By default, this only recognizes C directives.")
       :m  "[u"    #'+evil:url-decode
       :m  "]y"    #'+evil:c-string-encode
       :m  "[y"    #'+evil:c-string-decode
-      (:when (featurep! :lang web)
+      (:when (modulep! :lang web)
        :m "]x"   #'+web:encode-html-entities
        :m "[x"   #'+web:decode-html-entities)
-      (:when (featurep! :ui vc-gutter)
+      (:when (modulep! :ui vc-gutter)
        :m "]d"   #'+vc-gutter/next-hunk
        :m "[d"   #'+vc-gutter/previous-hunk)
-      (:when (featurep! :ui hl-todo)
+      (:when (modulep! :ui hl-todo)
        :m "]t"   #'hl-todo-next
        :m "[t"   #'hl-todo-previous)
-      (:when (featurep! :ui workspaces)
+      (:when (modulep! :ui workspaces)
        :n "gt"   #'+workspace:switch-next
        :n "gT"   #'+workspace:switch-previous
        :n "]w"   #'+workspace/switch-right
        :n "[w"   #'+workspace/switch-left)
-      (:when (featurep! :ui tabs)
+      (:when (modulep! :ui tabs)
        :n "gt"   #'+tabs:next-or-goto
        :n "gT"   #'+tabs:previous-or-goto)
 
@@ -494,14 +494,14 @@ directives. By default, this only recognizes C directives.")
       :v  "g="    #'evil-numbers/inc-at-pt-incremental
       :v  "g-"    #'evil-numbers/dec-at-pt-incremental
       :v  "g+"    #'evil-numbers/inc-at-pt
-      (:when (featurep! :tools lookup)
+      (:when (modulep! :tools lookup)
        :nv "K"   #'+lookup/documentation
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
        :nv "gf"  #'+lookup/file
        :nv "gI"  #'+lookup/implementations
        :nv "gA"  #'+lookup/assignments)
-      (:when (featurep! :tools eval)
+      (:when (modulep! :tools eval)
        :nv "gr"  #'+eval:region
        :n  "gR"  #'+eval/buffer
        :v  "gR"  #'+eval:replace-region
@@ -610,7 +610,7 @@ directives. By default, this only recognizes C directives.")
       :v "gL" #'evil-lion-right
 
       ;; Omni-completion
-      (:when (featurep! :completion company)
+      (:when (modulep! :completion company)
        (:prefix "C-x"
         :i "C-l"    #'+company/whole-lines
         :i "C-k"    #'+company/dict-or-keywords

@@ -38,12 +38,12 @@
 
 
 (use-package! flycheck-ledger
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after ledger-mode)
 
 
 (use-package! evil-ledger
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (ledger-mode . evil-ledger-mode)
   :config
   (set-evil-initial-state! 'ledger-report-mode 'normal)

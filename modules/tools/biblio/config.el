@@ -17,7 +17,7 @@
 
 
 (use-package! citar
-  :when (featurep! :completion vertico)
+  :when (modulep! :completion vertico)
   :no-require
   :config
   (setq org-cite-insert-processor 'citar
@@ -25,7 +25,7 @@
         org-cite-activate-processor 'citar))
 
 (use-package! citar-embark
-  :when (featurep! :completion vertico)
+  :when (modulep! :completion vertico)
   :after citar embark
   :config (citar-embark-mode))
 
@@ -39,8 +39,8 @@
 ;;; Third-party
 
 (use-package! bibtex-completion
-  :when (or (featurep! :completion ivy)
-            (featurep! :completion helm))
+  :when (or (modulep! :completion ivy)
+            (modulep! :completion helm))
   :defer t
   :config
   (setq bibtex-completion-additional-search-fields '(keywords)
@@ -50,7 +50,7 @@
 
 
 (use-package! ivy-bibtex
-  :when (featurep! :completion ivy)
+  :when (modulep! :completion ivy)
   :defer t
   :config
   (add-to-list 'ivy-re-builders-alist '(ivy-bibtex . ivy--regex-plus)))

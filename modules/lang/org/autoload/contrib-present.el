@@ -1,5 +1,5 @@
 ;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +present)
+;;;###if (modulep! +present)
 
 ;;
 ;;; Helpers

@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/agda/packages.el
 
-(unless (featurep! +local)
+(unless (modulep! +local)
   (package! agda-input
     :recipe (:host github :repo "agda/agda"
              :files ("src/data/emacs-mode/agda-input.el")

@@ -1,6 +1,6 @@
 ;;; editor/fold/config.el -*- lexical-binding: t; -*-
 
-(when (featurep! :editor evil)
+(when (modulep! :editor evil)
   ;; Add vimish-fold, outline-mode & hideshow support to folding commands
   (define-key! 'global
     [remap evil-toggle-fold]   #'+fold/toggle
@@ -72,7 +72,7 @@
 
 
 (use-package! evil-vimish-fold
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :commands (evil-vimish-fold/next-fold evil-vimish-fold/previous-fold
              evil-vimish-fold/delete evil-vimish-fold/delete-all
              evil-vimish-fold/create evil-vimish-fold/create-line)
@@ -88,7 +88,7 @@
   (vimish-fold-global-mode +1))
 
 (use-package! ts-fold
-  :when (featurep! :tools tree-sitter)
+  :when (modulep! :tools tree-sitter)
   :after tree-sitter
   :config
   ;; we want to use our own face so we nullify this one to have no effect and

@@ -1,11 +1,11 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
-(when (featurep! +light)
+(when (modulep! +light)
   (load! "+light"))
 
 
 (use-package! doom-modeline
-  :unless (featurep! +light)
+  :unless (modulep! +light)
   :hook (after-init . doom-modeline-mode)
   :hook (doom-modeline-mode . size-indication-mode) ; filesize in modeline
   :hook (doom-modeline-mode . column-number-mode)   ; cursor column in modeline
@@ -75,6 +75,6 @@
     :after-call isearch-mode)
 
   (use-package! evil-anzu
-    :when (featurep! :editor evil)
+    :when (modulep! :editor evil)
     :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight
     :config (global-anzu-mode +1)))

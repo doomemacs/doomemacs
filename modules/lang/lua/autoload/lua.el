@@ -17,7 +17,7 @@ Returns nil if 'love' executable can't be found."
     (if (doom-project-p)
         (file-name-directory
          (or (project-file-exists-p! (or "main.lua" "src/main.lua"))
-             (and (featurep! +moonscript)
+             (and (modulep! +moonscript)
                   (project-file-exists-p! (or "main.moon" "src/main.moon")))
              ""))
       ;; Since Love2D games are likely to be prototypes, they may not be in a
@@ -26,7 +26,7 @@ Returns nil if 'love' executable can't be found."
       (or (projectile-locate-dominating-file default-directory "main.lua")
           (when-let (root (projectile-locate-dominating-file default-directory "src/main.lua"))
             (expand-file-name "src" root))
-          (and (featurep! +moonscript)
+          (and (modulep! +moonscript)
                (or (projectile-locate-dominating-file default-directory "main.moon")
                    (when-let (root (projectile-locate-dominating-file default-directory "src/main.moon"))
                      (expand-file-name "src" root))))))))

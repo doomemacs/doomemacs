@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/roam.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +roam)
+;;;###if (modulep! +roam)
 
 (defvar +org-roam-open-buffer-on-find-file t
   "If non-nil, open the org-roam buffer when opening an org roam file.")
@@ -67,9 +67,9 @@
         org-roam-link-use-custom-faces 'everywhere
         org-roam-completion-everywhere t
         org-roam-completion-system
-        (cond ((featurep! :completion helm) 'helm)
-              ((featurep! :completion ivy) 'ivy)
-              ((featurep! :completion ido) 'ido)
+        (cond ((modulep! :completion helm) 'helm)
+              ((modulep! :completion ivy) 'ivy)
+              ((modulep! :completion ido) 'ido)
               ('default)))
 
   ;; Normally, the org-roam buffer doesn't open until you explicitly call

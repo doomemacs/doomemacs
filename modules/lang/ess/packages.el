@@ -6,10 +6,10 @@
 (package! polymode :pin "2094c92403fe395dfb2b8b2521da1012a966e9ab")
 (package! poly-R :pin "e4a39caaf48e1c2e5afab3865644267b10610537")
 
-(when (featurep! +stan)
+(when (modulep! +stan)
   (package! stan-mode :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")
   (package! eldoc-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (package! company-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581"))
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (package! flycheck-stan :pin "150bbbe5fd3ad2b5a3dbfba9d291e66eeea1a581")))

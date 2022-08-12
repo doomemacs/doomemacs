@@ -437,7 +437,7 @@ Made for `org-tab-first-hook' in evil-mode."
 (defun +org-yas-expand-maybe-h ()
   "Expand a yasnippet snippet, if trigger exists at point or region is active.
 Made for `org-tab-first-hook'."
-  (when (and (featurep! :editor snippets)
+  (when (and (modulep! :editor snippets)
              (require 'yasnippet nil t)
              (bound-and-true-p yas-minor-mode))
     (and (let ((major-mode (cond ((org-in-src-block-p t)

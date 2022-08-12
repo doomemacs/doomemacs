@@ -3,5 +3,5 @@
 
 (package! lean-mode :pin "c1c68cc946eb31b6ba8faefdceffce1f77ca52df")
 
-(when (featurep! :completion company)
+(when (modulep! :completion company)
   (package! company-lean :pin "c1c68cc946eb31b6ba8faefdceffce1f77ca52df"))

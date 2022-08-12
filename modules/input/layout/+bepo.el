@@ -37,12 +37,12 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
   (map! "C-é" 'evil-window-map)
   (map! :leader
         :desc "Window"                     "é"  evil-window-map
-        (:when (featurep! :ui popup)
+        (:when (modulep! :ui popup)
          :desc "Toggle last popup"         "#"  #'+popup/toggle)
-        (:when (featurep! :ui workspaces)
+        (:when (modulep! :ui workspaces)
          :desc "Switch buffer"             "«"  #'switch-to-buffer)
         :desc "Switch to last buffer"      "$"  #'evil-switch-to-windows-last-buffer
-        (:when (featurep! :ui workspaces)
+        (:when (modulep! :ui workspaces)
          (:prefix-map ("TAB" . "workspace")
           :desc "Switch to last workspace" "$"  #'+workspace/other
           :desc "Next workspace"           ")"  #'+workspace/switch-right
@@ -53,7 +53,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
         (:prefix-map ("c" . "code")
          :desc "Jump to documentation"     "S"  #'+lookup/documentation)
         (:prefix-map ("g" . "git")
-         (:when (featurep! :ui vc-gutter)
+         (:when (modulep! :ui vc-gutter)
           :desc "Jump to next hunk"        ")"  #'git-gutter:next-hunk
           :desc "Jump to previous hunk"    "("  #'git-gutter:previous-hunk))
         (:prefix-map ("p" . "project")
@@ -92,7 +92,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
             :m "V"  #'evil-visual-screen-line)))
 
   (map! :i "C-t" #'+default-newline
-        (:when (featurep! :editor multiple-cursors)
+        (:when (modulep! :editor multiple-cursors)
          :prefix "gz"
          :nv "t"   #'evil-mc-make-cursor-move-next-line
          :nv "s"   #'evil-mc-make-cursor-move-prev-line
@@ -100,7 +100,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
          ;; mnemonics and "j" as a "classic" rotation
          :nv "T"   #'+multiple-cursors/evil-mc-toggle-cursors
          :nv "j"   #'+multiple-cursors/evil-mc-toggle-cursors)
-        (:when (featurep! :ui popup)
+        (:when (modulep! :ui popup)
          :n "C-$"  #'+popup/toggle
          :n "C-#"  #'+popup/raise))
   (after! treemacs
@@ -262,7 +262,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
 ;;; Bootstrap
 
 (+layout-remap-keys-for-bepo-h)
-(when (featurep! :editor evil)
+(when (modulep! :editor evil)
   (+layout-remap-evil-keys-for-bepo-h)
   (add-hook! 'evil-collection-setup-hook
     (defun +layout-bepo-rotate-evil-collection-keymap (_mode mode-keymaps &rest _rest)

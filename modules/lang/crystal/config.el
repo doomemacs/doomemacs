@@ -4,7 +4,7 @@
   (set-lookup-handlers! 'crystal-mode
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'crystal-mode-local-vars-hook #'lsp! 'append))
   (map! :localleader
         :map crystal-mode-map
@@ -16,12 +16,12 @@
 
 
 (use-package! flycheck-crystal
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after crystal-mode)
 
 
 (use-package! flycheck-ameba
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after crystal-mode
   :config (flycheck-ameba-setup))
 

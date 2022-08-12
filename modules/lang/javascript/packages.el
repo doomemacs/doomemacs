@@ -16,5 +16,5 @@
 
 ;; Programming environment
 (package! tide :pin "b93e555858edc331ba33d1d8bd4582d578c7ca31")
-(when (featurep! :tools lookup)
+(when (modulep! :tools lookup)
   (package! xref-js2 :pin "fd6b723e7f1f9793d189a815e1904364dc026b03"))

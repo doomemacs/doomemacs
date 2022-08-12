@@ -1,5 +1,5 @@
 ;;; checkers/spell/autoload/+flyspell.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +flyspell)
+;;;###if (modulep! +flyspell)
 
 ;;;###autodef
 (defalias 'flyspell-mode! #'flyspell-mode)

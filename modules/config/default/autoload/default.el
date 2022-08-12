@@ -32,7 +32,7 @@ generate `completing-read' candidates."
 (defun +default/new-buffer ()
   "TODO"
   (interactive)
-  (if (featurep! 'evil)
+  (if (modulep! 'evil)
       (call-interactively #'evil-buffer-new)
     (let ((buffer (generate-new-buffer "*new*")))
       (set-window-buffer nil buffer)
@@ -54,17 +54,17 @@ generate `completing-read' candidates."
 If the the vertico and lsp modules are active, list lsp diagnostics for the
 current project. Otherwise list them for the current buffer"
   (interactive)
-  (cond ((and (featurep! :completion vertico)
-              (featurep! :tools lsp)
+  (cond ((and (modulep! :completion vertico)
+              (modulep! :tools lsp)
               (bound-and-true-p lsp-mode))
          (consult-lsp-diagnostics arg))
-        ((and (featurep! :checkers syntax)
+        ((and (modulep! :checkers syntax)
               (bound-and-true-p flycheck-mode))
-         (if (featurep! :completion vertico)
+         (if (modulep! :completion vertico)
              (consult-flycheck)
            (flycheck-list-errors)))
         ((bound-and-true-p flymake-mode)
-         (if (featurep! :completion vertico)
+         (if (modulep! :completion vertico)
              (consult-flymake)
            (flymake-show-diagnostics-buffer)))
         (t

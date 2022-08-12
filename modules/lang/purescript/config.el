@@ -1,7 +1,7 @@
 ;;; lang/purescript/config.el -*- lexical-binding: t; -*-
 
 (after! purescript-mode
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'purescript-mode-local-vars-hook #'lsp! 'append))
 
   (add-hook! 'purescript-mode-hook
@@ -33,6 +33,6 @@
   :hook (purescript-mode . psc-ide-mode)
   :config
   (remove-hook 'company-backends 'company-psc-ide-backend)
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (psc-ide-flycheck-setup))
   (set-company-backend! 'purescript-mode 'company-psc-ide-backend))

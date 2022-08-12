@@ -1,5 +1,5 @@
 ;;; lang/org/autoload/contrib-roam2.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +roam2)
+;;;###if (modulep! +roam2)
 
 ;;; Custom node accessors
 ;;;###autoload (autoload 'org-roam-node-doom-filetitle "lang/org/autoload/contrib-roam2" nil t)

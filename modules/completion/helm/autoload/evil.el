@@ -1,5 +1,5 @@
 ;;; completion/helm/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+helm:project-search "completion/helm/autoload/evil" nil t)
 (evil-define-command +helm:project-search (all-files-p query)

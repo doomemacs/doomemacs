@@ -1,5 +1,5 @@
 ;;; lang/java/+lsp.el -*- lexical-binding: t; -*-
-;;;###if (and (featurep! +lsp) (not (featurep! :tools lsp +eglot)))
+;;;###if (and (modulep! +lsp) (not (modulep! :tools lsp +eglot)))
 
 (use-package! lsp-java
   :after lsp-mode
@@ -7,13 +7,13 @@
   (setq lsp-java-workspace-dir (concat doom-etc-dir "java-workspace"))
   (add-hook 'java-mode-local-vars-hook #'lsp! 'append)
   :config
-  (when (featurep! :tools debugger +lsp)
+  (when (modulep! :tools debugger +lsp)
     (setq lsp-jt-root (concat lsp-java-server-install-dir "java-test/server/")
           dap-java-test-runner (concat lsp-java-server-install-dir "test-runner/junit-platform-console-standalone.jar"))))
 
 
 (use-package! dap-java
-  :when (featurep! :tools debugger +lsp)
+  :when (modulep! :tools debugger +lsp)
   :commands dap-java-run-test-class dap-java-debug-test-class
   :init
   (map! :after cc-mode ; where `java-mode' is defined

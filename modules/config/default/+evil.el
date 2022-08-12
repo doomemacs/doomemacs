@@ -17,5 +17,5 @@
       :prefix doom-leader-key     "u" #'universal-argument-more
       :prefix doom-leader-alt-key "u" #'universal-argument-more)
 
-(when (featurep! +bindings)
+(when (modulep! +bindings)
   (load! "+evil-bindings"))

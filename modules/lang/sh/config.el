@@ -37,10 +37,10 @@
     ;; Other
     :dot "." :dot "source")
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'sh-mode-local-vars-hook #'lsp! 'append))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'sh-mode-local-vars-hook #'tree-sitter! 'append))
 
   (setq sh-indent-after-continuation 'always)
@@ -76,8 +76,8 @@
   (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
 (use-package! company-shell
-  :when (featurep! :completion company)
-  :unless (featurep! +lsp)
+  :when (modulep! :completion company)
+  :unless (modulep! +lsp)
   :after sh-script
   :config
   (set-company-backend! 'sh-mode '(company-shell company-files))
@@ -86,13 +86,13 @@
         company-shell-dont-fetch-meta IS-MAC))
 
 (use-package! fish-mode
-  :when (featurep! +fish)
+  :when (modulep! +fish)
   :defer t
   :config (set-formatter! 'fish-mode #'fish_indent))
 
 (use-package! powershell
-  :when (featurep! +powershell)
+  :when (modulep! +powershell)
   :defer t
   :config
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'powershell-mode-local-vars-hook #'lsp! 'append)))

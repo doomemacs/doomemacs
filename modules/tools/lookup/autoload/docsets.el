@@ -1,5 +1,5 @@
 ;;; tools/lookup/autoload/docsets.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +docsets)
+;;;###if (modulep! +docsets)
 
 (defvar dash-docs-docsets nil)
 
@@ -102,7 +102,7 @@ installed with `dash-docs-install-docset'."
            (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
-    (cond ((featurep! :completion vertico)
+    (cond ((modulep! :completion vertico)
            (dash-docs-initialize-debugging-buffer)
            (dash-docs-create-buffer-connections)
            (dash-docs-create-common-connections)
@@ -118,9 +118,9 @@ installed with `dash-docs-install-docset'."
                                       :initial query)
                        (user-error "Aborted"))))
              (dash-docs-browse-url (cdr (assoc result (funcall sink nil))))))
-          ((featurep! :completion ivy)
+          ((modulep! :completion ivy)
            (counsel-dash query))
-          ((featurep! :completion helm)
+          ((modulep! :completion helm)
            (helm-dash query))
           ((user-error "No dash backend is installed, enable ivy or helm.")))))
 

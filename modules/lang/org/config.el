@@ -478,7 +478,7 @@ relative to `org-directory', unless it is an absolute path."
     :after #'org-capture-refile
     (+org-capture-cleanup-frame-h))
 
-  (when (featurep! :ui doom-dashboard)
+  (when (modulep! :ui doom-dashboard)
     (add-hook '+doom-dashboard-inhibit-functions #'+org-capture-frame-p)))
 
 
@@ -514,7 +514,8 @@ relative to `org-directory', unless it is an absolute path."
    :face (lambda (path)
            (if (or (file-remote-p path)
                    ;; filter out network shares on windows (slow)
-                   (and IS-WINDOWS (string-prefix-p "\\\\" path))
+                   (and (featurep :os 'windows)
+                        (string-prefix-p "\\\\" path))
                    (file-exists-p path))
                'org-link
              '(warning org-link))))
@@ -599,15 +600,15 @@ relative to `org-directory', unless it is an absolute path."
         org-html-validation-link nil
         org-latex-prefer-user-labels t)
 
-  (when (featurep! :lang markdown)
+  (when (modulep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
   (use-package! ox-hugo
-    :when (featurep! +hugo)
+    :when (modulep! +hugo)
     :after ox)
 
   (use-package! ox-pandoc
-    :when (featurep! +pandoc)
+    :when (modulep! +pandoc)
     :when (executable-find "pandoc")
     :after ox
     :init
@@ -847,7 +848,7 @@ between the two."
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
-        (:when IS-MAC
+        (:when (featurep :os 'macos)
          [s-return]   #'+org/insert-item-below
          [s-S-return] #'+org/insert-item-above
          [s-M-return] #'org-insert-subheading)
@@ -863,13 +864,13 @@ between the two."
         "," #'org-switchb
         "." #'org-goto
         "@" #'org-cite-insert
-        (:when (featurep! :completion ivy)
+        (:when (modulep! :completion ivy)
          "." #'counsel-org-goto
          "/" #'counsel-org-goto-all)
-        (:when (featurep! :completion helm)
+        (:when (modulep! :completion helm)
          "." #'helm-org-in-buffer-headings
          "/" #'helm-org-agenda-files-headings)
-        (:when (featurep! :completion vertico)
+        (:when (modulep! :completion vertico)
          "." #'consult-org-heading
          "/" #'consult-org-agenda)
         "A" #'org-archive-subtree
@@ -900,7 +901,7 @@ between the two."
          "u" #'org-attach-url
          "s" #'org-attach-set-directory
          "S" #'org-attach-sync
-         (:when (featurep! +dragndrop)
+         (:when (modulep! +dragndrop)
           "c" #'org-download-screenshot
           "p" #'org-download-clipboard
           "P" #'org-download-yank))
@@ -926,7 +927,7 @@ between the two."
          (:prefix ("t" . "toggle")
           "f" #'org-table-toggle-formula-debugger
           "o" #'org-table-toggle-coordinate-overlays)
-         (:when (featurep! +gnuplot)
+         (:when (modulep! +gnuplot)
           "p" #'org-plot/gnuplot))
         (:prefix ("c" . "clock")
          "c" #'org-clock-cancel
@@ -951,13 +952,13 @@ between the two."
          "T" #'org-time-stamp-inactive)
         (:prefix ("g" . "goto")
          "g" #'org-goto
-         (:when (featurep! :completion ivy)
+         (:when (modulep! :completion ivy)
           "g" #'counsel-org-goto
           "G" #'counsel-org-goto-all)
-         (:when (featurep! :completion helm)
+         (:when (modulep! :completion helm)
           "g" #'helm-org-in-buffer-headings
           "G" #'helm-org-agenda-files-headings)
-         (:when (featurep! :completion vertico)
+         (:when (modulep! :completion vertico)
           "g" #'consult-org-heading
           "G" #'consult-org-agenda)
          "c" #'org-clock-goto
@@ -1107,7 +1108,7 @@ between the two."
 
 
 (use-package! org-pdftools
-  :when (featurep! :tools pdf)
+  :when (modulep! :tools pdf)
   :commands org-pdftools-export
   :init
   (after! org
@@ -1137,7 +1138,7 @@ between the two."
 
 
 (use-package! evil-org
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :hook (org-capture-mode . evil-insert-state)
   :hook (doom-docs-org-mode . evil-org-mode)
@@ -1219,7 +1220,7 @@ between the two."
 
 
 (use-package! evil-org-agenda
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (org-agenda-mode . evil-org-agenda-mode)
   :config
   (evil-org-agenda-set-keys)
@@ -1304,7 +1305,7 @@ between the two."
     "Advise `server-visit-files' to load `org-protocol' lazily."
     :around #'server-visit-files
     (if (not (cl-loop with protocol =
-                      (if IS-WINDOWS
+                      (if (featurep :os 'windows)
                           ;; On Windows, the file arguments for `emacsclient'
                           ;; get funnelled through `expand-file-path' by
                           ;; `server-process-filter'. This substitutes
