@@ -154,7 +154,7 @@ each package."
                                (if (listp m)
                                    (format "%s %s" (car m) (cdr m))
                                  (format "%s" m)))
-                             (append '(:private :core)
+                             (append '(:user :core)
                                      (delete-dups (mapcar #'car modules))
                                      modules)))
                    nil t nil nil))
@@ -165,8 +165,8 @@ each package."
   (mapc (lambda! ((cat . mod))
           (if-let (packages-file
                    (pcase cat
-                     (:private (car (doom-glob doom-private-dir "packages.el")))
-                     (:core    (car (doom-glob doom-core-dir "packages.el")))
+                     (:user (car (doom-glob doom-user-dir "packages.el")))
+                     (:core (car (doom-glob doom-core-dir "packages.el")))
                      (_ (doom-module-locate-path cat mod "packages.el"))))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
@@ -177,7 +177,7 @@ each package."
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
-                            (append '((:core) (:private))
+                            (append '((:core) (:user))
                                     (doom-module-list 'all))))))
 
 ;;;###autoload

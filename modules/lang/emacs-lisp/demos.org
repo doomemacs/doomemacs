@@ -386,7 +386,7 @@ Or to create aliases for functions that behave differently:
 ;;; Lets say we're in ~/.doom.d/config.el
 (load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
 (load! "somefile" doom-emacs-dir)      ; loads ~/.emacs.d/somefile.el
-(load! "anotherfile" doom-private-dir) ; loads ~/.doom.d/anotherfile.el
+(load! "anotherfile" doom-user-dir)    ; loads ~/.doom.d/anotherfile.el
 
 ;; If you don't want a `load!' call to throw an error if the file doesn't exist:
 (load! "~/.maynotexist" nil t)

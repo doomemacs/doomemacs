@@ -247,7 +247,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 ;;;###autoload
 (defun +emacs-lisp-reduce-flycheck-errors-in-emacs-config-h ()
   "Remove `emacs-lisp-checkdoc' checker and reduce `emacs-lisp' checker
-verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
+verbosity when editing a file in `doom-user-dir' or `doom-emacs-dir'."
   (when (and (bound-and-true-p flycheck-mode)
              (eq major-mode 'emacs-lisp-mode)
              (or (not default-directory)

@@ -8,7 +8,7 @@
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 (defvar +emacs-lisp-disable-flycheck-in-dirs
-  (list doom-emacs-dir doom-private-dir)
+  (list doom-emacs-dir doom-user-dir)
   "List of directories to disable `emacs-lisp-checkdoc' in.
 
 This checker tends to produce a lot of false positives in your .emacs.d and

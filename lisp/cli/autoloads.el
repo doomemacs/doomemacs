@@ -63,7 +63,7 @@ hoist buggy forms into autoloads.")
           (append (doom-glob doom-core-dir "lib/*.el")
                   (cl-loop for dir
                            in (append (cdr (doom-module-load-path 'all-p))
-                                      (list doom-private-dir))
+                                      (list doom-user-dir))
                            if (doom-glob dir "autoload.el") collect (car it)
                            if (doom-glob dir "autoload/*.el") append it)
                   (mapcan #'doom-glob doom-autoloads-files))
@@ -204,7 +204,7 @@ hoist buggy forms into autoloads.")
          (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
-         (module-enabled-p (and (or (memq (car module) '(:core :private))
+         (module-enabled-p (and (or (memq (car module) '(:core :user))
                                     (doom-module-p (car module) (cdr module)))
                                 (doom-file-cookie-p file "if" t))))
     (save-excursion
@@ -241,7 +241,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
                     (replace-match (prin1-to-string file) t t)))))
           (let ((load-file-name file)
                 (load-path
-                 (append (list doom-private-dir)
+                 (append (list doom-user-dir)
                          doom-modules-dirs
                          load-path)))
             (condition-case _

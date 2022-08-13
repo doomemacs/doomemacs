@@ -111,7 +111,7 @@
 
 ;; Load $DOOMDIR/init.el, to read the user's `doom!' block, and so users can
 ;; customize things early, if they like.
-(load! doom-module-init-file doom-private-dir t)
+(load! doom-module-init-file doom-user-dir t)
 
 
 ;;
@@ -299,7 +299,7 @@ SEE ALSO:
               (load! cli-file path t)))))
 
       (doom-log "Loading $DOOMDIR/cli.el")
-      (load! cli-file doom-private-dir t))
+      (load! cli-file doom-user-dir t))
 
     ;; Allow per-project Doom settings in .doom files.
     (let (doomrc)

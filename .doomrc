@@ -42,7 +42,7 @@
                              (format "%s" (substring scope 1))
                            (format "*/%s" scope)))
             (list (doom-dir (dir!) "../modules/")
-                  (doom-dir doom-private-dir "modules/"))))
+                  (doom-dir doom-user-dir "modules/"))))
 
 (defun ci-check-docs-scope (scope _)
   "Allow any filename in docs/* as a scope for docs commits."

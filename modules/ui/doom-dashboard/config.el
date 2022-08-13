@@ -69,7 +69,7 @@ Possible values:
      :action bookmark-jump)
     ("Open private configuration"
      :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
-     :when (file-directory-p doom-private-dir)
+     :when (file-directory-p doom-user-dir)
      :action doom/open-private-config)
     ("Open documentation"
      :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)

@@ -199,10 +199,10 @@ in."
                     "          (remove \".git\" projectile-project-root-files-bottom-up)))"))
 
         ;; There should only be one
-        (when (and (file-equal-p doom-private-dir "~/.config/doom")
+        (when (and (file-equal-p doom-user-dir "~/.config/doom")
                    (file-directory-p "~/.doom.d"))
           (print! (warn "Both %S and '~/.doom.d' exist on your system")
-                  (path doom-private-dir))
+                  (path doom-user-dir))
           (explain! "Doom will only load one of these (~/.config/doom takes precedence). Possessing\n"
                     "both is rarely intentional; you should one or the other."))
 
@@ -234,9 +234,9 @@ in."
                                 "case feel free to ignore this warning.")))))))))
 
        (print! (start "Checking for stale elc files in your DOOMDIR..."))
-       (when (file-directory-p doom-private-dir)
+       (when (file-directory-p doom-user-dir)
          (print-group!
-          (elc-check-dir doom-private-dir)))
+          (elc-check-dir doom-user-dir)))
 
        (when doom-modules
          (print! (start "Checking your enabled modules..."))

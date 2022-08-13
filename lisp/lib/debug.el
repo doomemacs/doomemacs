@@ -239,7 +239,7 @@ ready to be pasted in a bug report on github."
                              (symlink-path doom-emacs-dir))))
         (doom . ,(list doom-version
                        (sh "git" "log" "-1" "--format=%D %h %ci")
-                       (symlink-path doom-private-dir)))
+                       (symlink-path doom-user-dir)))
         (shell  . ,(abbrev-path shell-file-name))
         (features . ,system-configuration-features)
         (traits
@@ -261,13 +261,13 @@ ready to be pasted in a bug report on github."
                             'exec-path-from-shell)
                         (if (file-symlink-p doom-emacs-dir)
                             'symlinked-emacsdir)
-                        (if (file-symlink-p doom-private-dir)
+                        (if (file-symlink-p doom-user-dir)
                             'symlinked-doomdir)
                         (if (and (stringp custom-file) (file-exists-p custom-file))
                             'custom-file)
                         (if (doom-files-in `(,@doom-modules-dirs
                                              ,doom-core-dir
-                                             ,doom-private-dir)
+                                             ,doom-user-dir)
                                            :type 'files :match "\\.elc$")
                             'byte-compiled-config)))))
         (custom
@@ -303,7 +303,7 @@ ready to be pasted in a bug report on github."
          ,@(condition-case e
                (mapcar
                 #'cdr (doom--collect-forms-in
-                       (doom-path doom-private-dir "packages.el")
+                       (doom-path doom-user-dir "packages.el")
                        "package!"))
              (error (format "<%S>" e))))
         (unpin
@@ -311,7 +311,7 @@ ready to be pasted in a bug report on github."
                (mapcan #'identity
                        (mapcar
                         #'cdr (doom--collect-forms-in
-                               (doom-path doom-private-dir "packages.el")
+                               (doom-path doom-user-dir "packages.el")
                                "unpin!")))
              (error (list (format "<%S>" e)))))
         (elpa

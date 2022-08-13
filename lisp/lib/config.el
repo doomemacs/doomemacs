@@ -9,24 +9,24 @@
 
 ;;;###autoload
 (defun doom/open-private-config ()
-  "Browse your `doom-private-dir'."
+  "Browse your `doom-user-dir'."
   (interactive)
-  (unless (file-directory-p doom-private-dir)
-    (make-directory doom-private-dir t))
-  (doom-project-browse doom-private-dir))
+  (unless (file-directory-p doom-user-dir)
+    (make-directory doom-user-dir t))
+  (doom-project-browse doom-user-dir))
 
 ;;;###autoload
 (defun doom/find-file-in-private-config ()
-  "Search for a file in `doom-private-dir'."
+  "Search for a file in `doom-user-dir'."
   (interactive)
-  (doom-project-find-file doom-private-dir))
+  (doom-project-find-file doom-user-dir))
 
 ;;;###autoload
 (defun doom/goto-private-init-file ()
   "Open your private init.el file.
 And jumps to your `doom!' block."
   (interactive)
-  (find-file (expand-file-name "init.el" doom-private-dir))
+  (find-file (expand-file-name "init.el" doom-user-dir))
   (goto-char
    (or (save-excursion
          (goto-char (point-min))
@@ -37,13 +37,13 @@ And jumps to your `doom!' block."
 (defun doom/goto-private-config-file ()
   "Open your private config.el file."
   (interactive)
-  (find-file (expand-file-name "config.el" doom-private-dir)))
+  (find-file (expand-file-name "config.el" doom-user-dir)))
 
 ;;;###autoload
 (defun doom/goto-private-packages-file ()
   "Open your private packages.el file."
   (interactive)
-  (find-file (expand-file-name "packages.el" doom-private-dir)))
+  (find-file (expand-file-name "packages.el" doom-user-dir)))
 
 
 ;;

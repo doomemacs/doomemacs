@@ -26,7 +26,7 @@
 ;;   versions. There's also 'bin/doom sync -u' for updating only your packages.
 ;;
 ;; How this works is: the system reads packages.el files located in each
-;; activated module, your private directory (`doom-private-dir'), and one in
+;; activated module, your private directory (`doom-user-dir'), and one in
 ;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
 ;; plugins to install and where from.
 ;;
@@ -114,10 +114,10 @@ uses a straight or package.el command directly).")
   (after! comp
     ;; HACK Disable native-compilation for some troublesome packages
     (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
-          (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-            (list (concat local-dir-re ".*/emacs-jupyter.*\\.el\\'")
-                  (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                  (concat local-dir-re ".*/with-editor\\.el\\'")))))
+          (list "/emacs-jupyter.*\\.el\\'"
+                "/evil-collection-vterm\\.el\\'"
+                "/vterm\\.el\\'"
+                "/with-editor\\.el\\'")))
 
   ;; Remove unwanted $EMACSDIR/eln-cache/ directory.
   (cl-callf2 delete (file-name-concat doom-emacs-dir "eln-cache/")
@@ -363,7 +363,7 @@ non-nil."
 (defun doom-package-in-module-p (package category &optional module)
   "Return non-nil if PACKAGE was installed by the user's private config."
   (when-let (modules (doom-package-get package :modules))
-    (or (and (not module) (assq :private modules))
+    (or (and (not module) (assq :user modules))
         (member (cons category module) modules))))
 
 (defun doom-package-backend (package)
@@ -422,7 +422,7 @@ ones."
     (doom--read-packages
      (doom-path doom-core-dir packages-file) all-p 'noerror)
     (unless core-only-p
-      (let ((private-packages (doom-path doom-private-dir packages-file))
+      (let ((private-packages (doom-path doom-user-dir packages-file))
             (doom-modules (doom-module-list)))
         (if all-p
             (mapc #'doom--read-packages
@@ -534,8 +534,8 @@ elsewhere."
          (cl-callf plist-put plist :modules
                    (append module-list
                            (list module)
-                           (when (file-in-directory-p ,(dir!) doom-private-dir)
-                             '((:private . modules)))
+                           (when (file-in-directory-p ,(dir!) doom-user-dir)
+                             '((:user . modules)))
                            nil))))
      ;; Merge given plist with pre-existing one
      (cl-loop for (key value) on (list ,@plist) by 'cddr

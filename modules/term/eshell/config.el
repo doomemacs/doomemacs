@@ -8,7 +8,7 @@
 ;;   is restored.
 
 (defvar +eshell-config-dir
-  (expand-file-name "eshell/" doom-private-dir)
+  (expand-file-name "eshell/" doom-user-dir)
   "Where to store eshell configuration files, as opposed to
 `eshell-directory-name', which is where Doom will store temporary/data files.")
 

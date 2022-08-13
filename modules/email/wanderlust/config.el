@@ -17,8 +17,8 @@
 
   (setq wl-demo nil
         wl-stay-folder-window t
-        wl-init-file (expand-file-name "wl.el" doom-private-dir)
-        wl-folders-file (expand-file-name "folders.wl" doom-private-dir))
+        wl-init-file (expand-file-name "wl.el" doom-user-dir)
+        wl-folders-file (expand-file-name "folders.wl" doom-user-dir))
 
   (setq wl-message-truncate-lines t
         wl-summary-width 120

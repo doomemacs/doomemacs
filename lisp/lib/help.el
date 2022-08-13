@@ -366,7 +366,7 @@ without needing to check if they are available."
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((when buffer-file-name
            (when-let (mod (doom-module-from-path buffer-file-name))
-             (unless (memq (car mod) '(:core :private))
+             (unless (memq (car mod) '(:core :user))
                (format "%s %s" (car mod) (cdr mod))))))
         ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
            (format "%s %s"
@@ -609,7 +609,7 @@ If prefix arg is present, refresh the cache."
           (dolist (m modules)
             (let* ((module-path (pcase (car m)
                                   (:core doom-core-dir)
-                                  (:private doom-private-dir)
+                                  (:user doom-user-dir)
                                   (category
                                    (doom-module-locate-path category
                                                             (cdr m)))))

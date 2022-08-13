@@ -7,7 +7,7 @@
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-modules-dirs
-  (list (expand-file-name "modules/" doom-private-dir)
+  (list (expand-file-name "modules/" doom-user-dir)
         doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
@@ -107,22 +107,21 @@ symbols, and that module's plist."
       (load! file (plist-get plist :path) t))))
 
 (defun doom-initialize-modules (&optional force-p no-config-p)
-  "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
-session of Dooming. Will noop if used more than once, unless FORCE-P is
-non-nil."
+  "Loads the init.el in `doom-user-dir' and sets up hooks for a healthy session
+of Dooming. Will noop if used more than once, unless FORCE-P is non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t)
     (unless no-config-p
       (doom-log "Initializing core modules")
       (doom-initialize-core-modules))
-    (when-let (init-p (load! doom-module-init-file doom-private-dir t))
+    (when-let (init-p (load! doom-module-init-file doom-user-dir t))
       (doom-log "Initializing user config")
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
       (doom-run-hooks 'doom-before-init-modules-hook)
       (unless no-config-p
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
         (doom-run-hooks 'doom-init-modules-hook)
-        (load! "config" doom-private-dir t)
+        (load! "config" doom-user-dir t)
         (when custom-file
           (load custom-file 'noerror (not doom-debug-mode)))))))
 
@@ -231,18 +230,18 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
               ((or (string-match-p (concat "^" (regexp-quote doom-core-dir)) path)
                    (file-in-directory-p path doom-core-dir))
                (cons :core (intern (file-name-base path))))
-              ((or (string-match-p (concat "^" (regexp-quote doom-private-dir)) path)
-                   (file-in-directory-p path doom-private-dir))
-               (cons :private (intern (file-name-base path)))))))))
+              ((or (string-match-p (concat "^" (regexp-quote doom-user-dir)) path)
+                   (file-in-directory-p path doom-user-dir))
+               (cons :user (intern (file-name-base path)))))))))
 
 (defun doom-module-load-path (&optional module-dirs)
   "Return a list of file paths to activated modules.
 
 The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
-those directories. The first returned path is always `doom-private-dir'."
+those directories. The first returned path is always `doom-user-dir'."
   (declare (pure t) (side-effect-free t))
-  (append (list doom-private-dir)
+  (append (list doom-user-dir)
           (if module-dirs
               (mapcar (lambda (m) (doom-module-locate-path (car m) (cdr m)))
                       (delete-dups

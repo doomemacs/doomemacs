@@ -102,12 +102,7 @@
   (defconst EMACS29+    (> emacs-major-version 28))
   ;; DEPRECATED remove in v3
   (defconst MODULES     (featurep 'dynamic-modules))
-  (defconst NATIVECOMP  (featurep 'native-compile))
-
-  (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
-  (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
-  (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
-  (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0"))
+  (defconst NATIVECOMP  (featurep 'native-compile)))
 
 
 ;;
@@ -152,7 +147,7 @@
 (defconst doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
-(defconst doom-private-dir
+(defconst doom-user-dir
   (if-let (doomdir (getenv-internal "DOOMDIR"))
       (expand-file-name (file-name-as-directory doomdir))
     (or (let ((xdgdir
@@ -276,13 +271,24 @@ users).")
 
 
 ;;
+;;; Legacy support
+
+(define-obsolete-variable-alias 'doom-private-dir 'doom-user-dir "3.0.0")
+
+(make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
+(make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
+(make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
+(make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0")
+
+
+;;
 ;;; Custom error types
 
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
 (define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
 (define-error 'doom-module-error "Error in a Doom module" 'doom-error)
-(define-error 'doom-private-error "Error in private config" 'doom-error)
+(define-error 'doom-user-error "Error in user's config" 'doom-error)
 (define-error 'doom-package-error "Error with packages" 'doom-error)
 
 
@@ -340,7 +346,7 @@ users).")
 
 ;; Allow the user to store custom.el-saved settings and themes in their Doom
 ;; config (e.g. ~/.doom.d/).
-(setq custom-file (expand-file-name "custom.el" doom-private-dir))
+(setq custom-file (expand-file-name "custom.el" doom-user-dir))
 
 ;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
 ;; that, mkay? This file stores usernames, passwords, and other treasures for

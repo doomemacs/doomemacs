@@ -180,7 +180,7 @@
 (use-package! company-dict
   :defer t
   :config
-  (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))
+  (setq company-dict-dir (expand-file-name "dicts" doom-user-dir))
   (add-hook! 'doom-project-hook
     (defun +company-enable-project-dicts-h (mode &rest _)
       "Enable per-project dictionaries."
