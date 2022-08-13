@@ -321,6 +321,7 @@ users).")
 (when (featurep 'native-compile)
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
+  ;; REVIEW Use `startup-redirect-eln-cache' when 28 support is dropped
   (add-to-list 'native-comp-eln-load-path (file-name-concat doom-cache-dir "eln/")))
 
 
