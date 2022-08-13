@@ -249,13 +249,6 @@ So that mathces from history show up with highlighting."
     (memq this-command '(eshell-previous-matching-input-from-input
                          eshell-next-matching-input-from-input)))
 
-  (defadvice! +eshell-syntax-highlight-silently-a (fun &rest args)
-    "Advice to add syntax highlighting silently.
-This ensures that undo list isn't polluted with changes recording
- syntax highlighting."
-    :around #'eshell-syntax-highlighting--enable-highlighting
-    (with-silent-modifications (apply fun args)))
-
   (defun +eshell-syntax-highlight-maybe-h ()
     "Hook added to `pre-command-hook' to restore syntax highlighting
 when inhibited to show history matches."
@@ -284,9 +277,45 @@ when inhibited to show history matches."
   ;;      advise it to fail silently.
   (defadvice! +eshell--fallback-to-bash-a (&rest _)
     :before-until #'fish-completion--list-completions-with-desc
-    (unless (executable-find "fish") "")))
+    (unless (executable-find "fish") ""))
 
-(when EMACS28+
+  (when (modulep! :completion vertico)
+    ;; Code is mostly from  https://github.com/minad/marginalia/issues/87
+    ;; But we implement a capf because getting annotations from fish is
+    ;; difficult if we stick with pcomplete. The capf is non-exclusive
+    ;; so fallback to pcomplete machinery happens if there are no candidates.
+    (defun +eshell-fish-completion-list (raw-prompt)
+      "Return list of completion candidates for RAW-PROMPT."
+      (mapcar (lambda (e) (let ((res (split-string e "\t")))
+                       (propertize (car res) 'fish-annotation (cadr res))))
+              (split-string
+               (fish-completion--list-completions-with-desc raw-prompt)
+               "\n" t)))
+
+    (defun +eshell-fish-capf ()
+      "A a capf for fish-completion."
+      (when-let ((args (ignore-errors (eshell-complete-parse-arguments)))
+                 (table (+eshell-fish-completion-list
+                         (buffer-substring (cadr args) (point))))
+                 ((not (file-exists-p (car table)))))
+        (list (car (last args)) (point) table
+              :exclusive 'no
+              :annotation-function #'+eshell-fish-completion-annotate
+              :exit-function (lambda (&rest _) (insert " ")))))
+
+    (defun +eshell-fish-completion-annotate (cand)
+      (when-let* ((ann (get-text-property 0 'fish-annotation cand)))
+        (concat (propertize " " 'display '(space :align-to center)) ann)))
+
+    (defun +eshell-use-annotated-completions-h ()
+      "Use annotaed fish completions."
+      (if fish-completion-mode
+          (add-hook 'completion-at-point-functions #'+eshell-fish-capf nil t)
+        (remove-hook 'completion-at-point-functions #'+eshell-fish-capf t)))
+
+    (add-hook 'fish-completion-mode-hook #'+eshell-use-annotated-completions-h)))
+
+(when (>= emacs-major-version 28)
 ;; Why is this delayed evaluation needed? It should'nt be according to the docs
 ;; `custom-set-faces!' but it doesn't works for me without it.
   (after! esh-mode
