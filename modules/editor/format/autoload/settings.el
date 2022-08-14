@@ -1,8 +1,7 @@
 ;;; editor/format/autoload/settings.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
-(cl-defun set-formatter!
-    (name &rest args &key modes filter &allow-other-keys)
+(cl-defun set-formatter! (name args &key modes filter)
   "Define (or modify) a formatter named NAME.
 
 Supported keywords: :modes :filter
@@ -80,7 +79,10 @@ Advanced examples:
           (while (rassoc name apheleia-mode-alist)
             (setq apheleia-mode-alist
                   (assq-delete-all (car (rassoc name apheleia-mode-alist)) apheleia-mode-alist))))
-      (setf (alist-get name apheleia-formatters) args)
+      (let ((formatter (cond
+                        ((listp args) `(,@args))
+                        (t args))))
+        (setf (alist-get name apheleia-formatters) formatter))
       (when modes
         (dolist (mode modes)
           (setf (alist-get mode apheleia-mode-alist) name))))))
