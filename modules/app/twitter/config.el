@@ -4,7 +4,7 @@
   :commands twit
   :config
   (setq twittering-private-info-file
-        (expand-file-name "twittering-mode.gpg" doom-etc-dir)
+        (expand-file-name "twittering-mode.gpg" doom-data-dir)
         twittering-use-master-password t
         twittering-request-confirmation-on-posting t
         ;; twittering-icon-mode t

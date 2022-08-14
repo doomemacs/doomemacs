@@ -230,9 +230,9 @@ downloaded/installed by packages. Must end in a slash.")
 Use this as a storage location for this system's installation of Doom Emacs.
 
 These files should not be shared across systems. By default, it is used by
-`doom-etc-dir' and `doom-cache-dir'. Must end with a slash.")
+`doom-data-dir' and `doom-cache-dir'. Must end with a slash.")
 
-(defconst doom-etc-dir
+(defconst doom-data-dir
   (if doom-profile
       doom-profile-data-dir
     (concat doom-local-dir "etc/"))
@@ -274,6 +274,7 @@ users).")
 ;;; Legacy support
 
 (define-obsolete-variable-alias 'doom-private-dir 'doom-user-dir "3.0.0")
+(define-obsolete-variable-alias 'doom-etc-dir 'doom-data-dir "3.0.0")
 
 (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
 (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
@@ -351,7 +352,7 @@ users).")
 ;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
 ;; that, mkay? This file stores usernames, passwords, and other treasures for
 ;; the aspiring malicious third party. You'll need a GPG setup though.
-(setq auth-sources (list (concat doom-etc-dir "authinfo.gpg")
+(setq auth-sources (list (concat doom-data-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)

@@ -22,9 +22,9 @@ Only has an effect in GUI Emacs.")
   :init
   (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
   ;; Must be set early to prevent ~/.emacs.d/transient from being created
-  (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
-        transient-values-file  (concat doom-etc-dir "transient/values")
-        transient-history-file (concat doom-etc-dir "transient/history"))
+  (setq transient-levels-file  (concat doom-data-dir "transient/levels")
+        transient-values-file  (concat doom-data-dir "transient/values")
+        transient-history-file (concat doom-data-dir "transient/history"))
   :config
   (add-to-list 'doom-debug-variables 'magit-refresh-verbose)
 
@@ -151,7 +151,7 @@ Only has an effect in GUI Emacs.")
   :after-call magit-status
   :commands forge-create-pullreq forge-create-issue
   :preface
-  (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
+  (setq forge-database-file (concat doom-data-dir "forge/forge-database.sqlite"))
   (setq forge-add-default-bindings (not (modulep! :editor evil +everywhere)))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
@@ -200,9 +200,9 @@ ensure it is built when we actually use Forge."
         (dolist (state states)
           (evil-collection-define-key state 'code-review-mode-map evil-binding fn))))
     (evil-set-initial-state 'code-review-mode evil-default-state))
-  (setq code-review-db-database-file (concat doom-etc-dir "code-review/code-review-db-file.sqlite")
-        code-review-log-file (concat doom-etc-dir "code-review/code-review-error.log")
-        code-review-download-dir (concat doom-etc-dir "code-review/"))
+  (setq code-review-db-database-file (concat doom-data-dir "code-review/code-review-db-file.sqlite")
+        code-review-log-file (concat doom-data-dir "code-review/code-review-error.log")
+        code-review-download-dir (concat doom-data-dir "code-review/"))
   :config
   (transient-append-suffix 'magit-merge "i"
     '("y" "Review pull request" +magit/start-code-review))

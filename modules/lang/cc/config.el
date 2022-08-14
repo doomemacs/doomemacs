@@ -133,7 +133,7 @@ This is ignored by ccls.")
   ;; Only initialize `irony-mode' if the server is available. Otherwise fail
   ;; quietly and gracefully.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-irony-mode-maybe-h)
-  :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
+  :preface (setq irony-server-install-prefix (concat doom-data-dir "irony-server/"))
   :config
   (defun +cc-init-irony-mode-maybe-h ()
     (if (file-directory-p irony-server-install-prefix)
@@ -188,7 +188,7 @@ This is ignored by ccls.")
   :unless (modulep! +lsp)
   ;; Only initialize rtags-mode if rtags and rdm are available.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-rtags-maybe-h)
-  :preface (setq rtags-install-path (concat doom-etc-dir "rtags/"))
+  :preface (setq rtags-install-path (concat doom-data-dir "rtags/"))
   :config
   (defun +cc-init-rtags-maybe-h ()
     "Start an rtags server in c-mode and c++-mode buffers.

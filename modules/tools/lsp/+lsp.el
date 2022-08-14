@@ -16,7 +16,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   :init
   ;; Don't touch ~/.emacs.d, which could be purged without warning
   (setq lsp-session-file (concat doom-cache-dir "lsp-session")
-        lsp-server-install-dir (concat doom-etc-dir "lsp"))
+        lsp-server-install-dir (concat doom-data-dir "lsp"))
   ;; Don't auto-kill LSP server after last workspace buffer is killed, because I
   ;; will do it for you, after `+lsp-defer-shutdown' seconds.
   (setq lsp-keep-workspace-alive nil)
@@ -41,7 +41,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   :config
   (add-to-list 'doom-debug-variables 'lsp-log-io)
 
-  (setq lsp-intelephense-storage-path (concat doom-etc-dir "lsp-intelephense/")
+  (setq lsp-intelephense-storage-path (concat doom-data-dir "lsp-intelephense/")
         lsp-vetur-global-snippets-dir
         (expand-file-name
          "vetur" (or (bound-and-true-p +snippets-dir)

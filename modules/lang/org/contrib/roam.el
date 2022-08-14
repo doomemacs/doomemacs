@@ -60,7 +60,7 @@
           (expand-file-name (or org-roam-directory "roam")
                             org-directory)))
         org-roam-db-location (or org-roam-db-location
-                                 (concat doom-etc-dir "org-roam.db"))
+                                 (concat doom-data-dir "org-roam.db"))
         ;; Make org-roam buffer sticky; i.e. don't replace it when opening a
         ;; file with an *-other-window command.
         org-roam-buffer-window-parameters '((no-delete-other-windows . t))

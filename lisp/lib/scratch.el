@@ -5,7 +5,7 @@
 
 Will be saved in `doom-scratch-dir'.")
 
-(defvar doom-scratch-dir (concat doom-etc-dir "scratch")
+(defvar doom-scratch-dir (concat doom-data-dir "scratch")
   "Where to save persistent scratch buffers.")
 
 (defvar doom-scratch-initial-major-mode nil

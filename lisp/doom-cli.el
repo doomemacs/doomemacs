@@ -108,7 +108,7 @@
 ;; Create all our core directories to quell file errors.
 (mapc (doom-rpartial #'make-directory 'parents)
       (list doom-local-dir
-            doom-etc-dir
+            doom-data-dir
             doom-cache-dir))
 
 ;; Load standard :help and :version handlers.

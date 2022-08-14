@@ -291,7 +291,7 @@ tell you about it. Very annoying. This prevents that."
 
 
 ;;;###package bookmark
-(setq bookmark-default-file (concat doom-etc-dir "bookmarks"))
+(setq bookmark-default-file (concat doom-data-dir "bookmarks"))
 
 
 (use-package! recentf

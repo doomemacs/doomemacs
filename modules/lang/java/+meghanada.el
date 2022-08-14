@@ -4,7 +4,7 @@
 (use-package! meghanada
   :hook (java-mode-local-vars . meghanada-mode)
   :init
-  (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
+  (setq meghanada-server-install-dir (concat doom-data-dir "meghanada-server/")
         meghanada-use-company (modulep! :completion company)
         meghanada-use-flycheck (modulep! :checkers syntax)
         meghanada-use-eldoc t

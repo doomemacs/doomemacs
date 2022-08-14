@@ -1087,7 +1087,7 @@ between the two."
 (use-package! org-clock ; built-in
   :commands org-clock-save
   :init
-  (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  (setq org-clock-persist-file (concat doom-data-dir "org-clock-save.el"))
   (defadvice! +org--clock-load-a (&rest _)
     "Lazy load org-clock until its commands are used."
     :before '(org-clock-in

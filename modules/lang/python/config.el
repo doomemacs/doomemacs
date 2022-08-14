@@ -175,7 +175,7 @@
 (use-package! anaconda-mode
   :defer t
   :init
-  (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
+  (setq anaconda-mode-installation-directory (concat doom-data-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
   (add-hook! 'python-mode-local-vars-hook :append
