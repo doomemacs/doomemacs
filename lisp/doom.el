@@ -144,9 +144,6 @@
 (defconst doom-modules-dir (expand-file-name "modules/" doom-emacs-dir)
   "The root directory for Doom's modules. Must end with a slash.")
 
-(defconst doom-docs-dir (concat doom-emacs-dir "docs/")
-  "Where Doom's documentation files are stored. Must end with a slash.")
-
 (defconst doom-user-dir
   (if-let (doomdir (getenv-internal "DOOMDIR"))
       (expand-file-name (file-name-as-directory doomdir))

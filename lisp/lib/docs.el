@@ -12,6 +12,10 @@
 ;;
 ;;; Code:
 
+;;;###autoload
+(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
+  "Where Doom's documentation files are stored. Must end with a slash.")
+
 ;; DEPRECATED Will be renamed once docs "framework" is generalized
 (defvar doom-docs-header-alist
   `(("/docs/index\\.org$"
