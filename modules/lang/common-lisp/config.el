@@ -26,9 +26,13 @@
   (after! lisp-mode
     (set-repl-handler! 'lisp-mode #'+lisp/open-repl)
     (set-eval-handler! 'lisp-mode #'sly-eval-region)
+    (set-formatter! 'lisp-indent #'apheleia--indent-lisp-buffer :modes '(lisp-mode))
     (set-lookup-handlers! 'lisp-mode
       :definition #'sly-edit-definition
       :documentation #'sly-describe-symbol))
+
+  (add-hook! 'lisp-mode
+    (after! sly (sly-lisp-indent-compatibility-mode)))
 
   ;; HACK Ensures that sly's contrib modules are loaded as soon as possible, but
   ;;      also as late as possible, so users have an opportunity to override
