@@ -1,6 +1,9 @@
 ;;; lang/crystal/config.el -*- lexical-binding: t; -*-
 
 (after! crystal-mode
+  (when (executable-find "crystal")
+    (set-formatter! 'crystal-mode '("crystal" "tool" "format" "-") :modes '(crystal-mode)))
+
   (set-lookup-handlers! 'crystal-mode
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
