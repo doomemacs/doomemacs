@@ -322,21 +322,21 @@ ARGLIST."
          (allow-other-keys arglist))
       ,@body)))
 
-(put 'doom--fn-crawl 'lookup-table
-     '((_  . 0) (_  . 1) (%2 . 2) (%3 . 3) (%4 . 4)
-       (%5 . 5) (%6 . 6) (%7 . 7) (%8 . 8) (%9 . 9)))
+(put 'fn! 'lookup-table
+     '((%2 . 2) (%3 . 3) (%4 . 4) (%5 . 5)
+       (%6 . 6) (%7 . 7) (%8 . 8) (%9 . 9)))
 (defun doom--fn-crawl (data args)
   (cond ((symbolp data)
          (when-let
              (pos (cond ((eq data '%*) 0)
                         ((memq data '(% %1)) 1)
-                        ((cdr (assq data (get 'doom--fn-crawl 'lookup-table))))))
+                        ((cdr (assq data (get 'fn! 'lookup-table))))))
            (when (and (= pos 1)
                       (aref args 1)
                       (not (eq data (aref args 1))))
              (error "%% and %%1 are mutually exclusive"))
            (aset args pos data)))
-        ((and (not (eq (car-safe data) '!))
+        ((and (not (eq (car-safe data) 'fn!))
               (or (listp data)
                   (vectorp data)))
          (let ((len (length data))
@@ -369,7 +369,7 @@ which expands to:
     (if %1 %3 (cadr %*)))
 
 This macro was adapted from llama.el (see https://git.sr.ht/~tarsius/llama),
-minus font-locking, the outer function call, and minor optimizations."
+minus font-locking and the outer function call, plus some minor optimizations."
   `(lambda ,(let ((argv (make-vector 10 nil)))
               (doom--fn-crawl args argv)
               `(,@(let ((i (1- (length argv)))
@@ -379,7 +379,7 @@ minus font-locking, the outer function call, and minor optimizations."
                       (setq sym (aref argv i))
                       (unless (and (= n -1) (null sym))
                         (cl-incf n)
-                        (push (or sym (intern (format "_%%%d" (1+ n))))
+                        (push (or sym (intern (format "_%%%d" i)))
                               arglist))
                       (cl-decf i))
                     arglist)
