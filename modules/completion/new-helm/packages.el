@@ -2,8 +2,7 @@
 ;;; completion/helm/packages.el
 
 ;; Version 3.8.7 2022-08-03
-;; (package! helm :pin "1003539c2ec66e7697903f4b4cb354adea70040e")
-(package! helm :pin "4ede199d5d1b7050486a6e7697903f4b4cb354adea70040e")
+(package! helm :pin "4ede199d5d1b7050486a0fdeecbbbf49fef31118")
 ;; Version 2021-03-30
 (package! helm-c-yasnippet :pin "e214eec8b2875d8a7cd09006dfb6a8e15e9e4079")
 ;; Version v0.2.5 2019-08-12
@@ -14,7 +13,7 @@
 ;; Note: The github repo has a later date (2017), but that is only an insignificant documentation change. No change to .el file.
 (package! helm-describe-modes :pin "11fb36af119b784539d31c6160002de1957408aa")
 ;; Version 2022-08-07
-(package! helm-projectile :pin "6dcc54381598021714fc5d23b9f95c7f95ce07f1")
+(package! helm-projectile :pin "6dcc543815984f7f40e99050b1ee3b68a088e160")
 ;; Version 2020-07-21
 (package! helm-rg :pin "ee0a3c09da0c843715344919400ab0a0190cc9dc")
 ;; Version 2018-01-31
@@ -22,7 +21,7 @@
 
 (when (featurep! +childframe)
   ;; Version 2021-11-03
-  (package! helm-posframe :pin "87461b52b6f3f378c6"))
+  (package! helm-posframe :pin "87461b52b6f3f378c63642a33f584d4a4ba28351"))
 
 (when (featurep! +fuzzy)
   ;; Version 2022-04-02
