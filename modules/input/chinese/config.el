@@ -13,28 +13,28 @@
       current-input-method)
     (add-to-list 'evil-escape-inhibit-functions #'+input-method-activate-p))
 
-  (when (featurep! +childframe)
+  (when (modulep! +childframe)
     (setq pyim-page-tooltip 'posframe))
 
   ;; allow vertico/selectrum search with pinyin
-  (cond ((featurep! :completion vertico)
+  (cond ((modulep! :completion vertico)
          (defadvice! +pinyin-orderless-regexp (result)
            :filter-return 'orderless-regexp
            (pyim-cregexp-build result)))
-        ((featurep! :completion ivy)
+        ((modulep! :completion ivy)
          (setq ivy-re-builders-alist
                '((t . pyim-cregexp-ivy))))))
 
 
 (use-package! liberime
-  :when (featurep! +rime)
+  :when (modulep! +rime)
   :init
   (setq liberime-auto-build t)
   (setq liberime-user-data-dir (expand-file-name "rime" doom-cache-dir)))
 
 
 (use-package! pyim-liberime
-  :when (featurep! +rime)
+  :when (modulep! +rime)
   :after liberime
   :config
   (setq pyim-default-scheme 'rime))
