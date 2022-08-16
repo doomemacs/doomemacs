@@ -574,7 +574,7 @@ the default config:
    #+BEGIN_SRC bash :eval no
    [ -f ~/.emacs ] && mv ~/.emacs ~/.emacs.bak
    [ -d ~/.emacs.d ] && mv ~/.emacs.d ~/.emacs.legacy
-   git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
+   git clone --depth 1 https://github.com/plexus/chemacs2.git ~/.emacs.d
    #+END_SRC
 
 3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
