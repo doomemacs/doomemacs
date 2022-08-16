@@ -26,3 +26,7 @@
   ;; glslangValidator
   (unless (executable-find "glslangValidator")
     (warn! "Couldn't find glslangValidator. GLSL code completion is disabled")))
+
+(when (modulep! :editor format)
+  (unless (executable-find "clang-format")
+    (warn! "Couldn't find clang-format. Formatting will be disabled.")))

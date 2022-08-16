@@ -48,6 +48,18 @@ This is ignored by ccls.")
   (set-docsets! 'c-mode "C")
   (set-docsets! 'c++-mode "C++" "Boost")
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\} ?\{))
+  (when (executable-find "clang-format")
+    (set-formatter!
+      'clang-format
+      '("clang-format"
+        "-assume-filename"
+        (or (buffer-file-name)
+            (cdr (assoc major-mode
+                        '((c-mode        . ".c")
+                          (c++-mode      . ".cpp")
+                          (cuda-mode     . ".cu")
+                          (protobuf-mode . ".proto"))))))
+      :modes '(c-mode c++-mode protobuf-mode cuda-mode)))
   (set-rotate-patterns! 'c++-mode
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
