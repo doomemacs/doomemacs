@@ -107,8 +107,6 @@
   :commands ocamlformat
   :hook (tuareg-mode-local-vars . +ocaml-init-ocamlformat-h)
   :config
-  (set-formatter! 'ocamlformat #'ocamlformat
-    :modes '(caml-mode tuareg-mode))
   ;; TODO Fix region-based formatting support
   (defun +ocaml-init-ocamlformat-h ()
     (setq +format-with 'ocp-indent)

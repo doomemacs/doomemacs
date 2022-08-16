@@ -27,15 +27,15 @@
 
   ;; tidy is already defined by the format-all package. We redefine it to add
   ;; more sensible arguments to the tidy command.
-  (set-formatter! 'html-tidy
-    '("tidy" "-q" "-indent"
-      "--tidy-mark" "no"
-      "--drop-empty-elements" "no"
-      ("--show-body-only" "%s" (if +format-region-p "true" "auto"))
-      ("--indent-spaces" "%d" tab-width)
-      ("--indent-with-tabs" "%s" (if indent-tabs-mode "yes" "no"))
-      ("-xml" (memq major-mode '(nxml-mode xml-mode))))
-    :ok-statuses '(0 1))
+  ;; (set-formatter! 'html-tidy
+  ;;   '("tidy" "-q" "-indent"
+  ;;     "--tidy-mark" "no"
+  ;;     "--drop-empty-elements" "no"
+  ;;     ("--show-body-only" "%s" (if +format-region-p "true" "auto"))
+  ;;     ("--indent-spaces" "%d" tab-width)
+  ;;     ("--indent-with-tabs" "%s" (if indent-tabs-mode "yes" "no"))
+  ;;     ("-xml" (memq major-mode '(nxml-mode xml-mode))))
+  ;;   :ok-statuses '(0 1))
 
   (setq web-mode-enable-html-entities-fontification t
         web-mode-auto-close-style 1)
