@@ -20,7 +20,10 @@
   (cond ((modulep! :completion vertico)
          (defadvice! +pinyin-orderless-regexp (result)
            :filter-return 'orderless-regexp
-           (pyim-cregexp-build result)))
+           (let ((regexp-build-func (if (modulep! :editor evil +everywhere)
+                                        #'evil-pinyin--build-regexp-string
+                                      #'pyim-cregexp-build-regexp-string)))
+             (funcall regexp-build-func result))))
         ((modulep! :completion ivy)
          (setq ivy-re-builders-alist
                '((t . pyim-cregexp-ivy))))))
@@ -60,6 +63,14 @@
   :after avy
   :init (setq ace-pinyin-use-avy t)
   :config (ace-pinyin-global-mode t))
+
+
+(use-package! evil-pinyin
+  :when (modulep! :editor evil +everywhere)
+  :after evil
+  :config
+  (setq-default evil-pinyin-with-search-rule 'always)
+  (global-evil-pinyin-mode 1))
 
 
 ;;

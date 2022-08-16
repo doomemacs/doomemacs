@@ -9,3 +9,5 @@
   (package! liberime :pin "8291e22cd0990a99cb2f88ca67a9065a157f39af"))
 (when (modulep! +childframe)
   (package! posframe :pin "0d23bc5f7cfac00277d83ae7ba52c48685bcbc68"))
+(when (modulep! :editor evil +everywhere)
+  (package! evil-pinyin :pin "3e9e501ded86f88e01a4edec5d526ab0fab879d7"))
