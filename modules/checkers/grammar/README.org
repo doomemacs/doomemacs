@@ -11,11 +11,15 @@ This module adds grammar checking to Emacs to aid your writing by combining
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +lsp ::
+  Use [[doom-package:][lsp-ltex]] to provide on the fly corrections via [[https://valentjn.github.io/ltex/index.html][LTeX LS]].
 
 ** Packages
-- [[doom-package:][langtool]]
 - [[doom-package:][writegood-mode]]
+- if [[doom-module:][+lsp]]
+  - [[doom-package:][lsp-ltex]]
+- else
+  - [[doom-package:][langtool]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -27,7 +31,8 @@ This module adds grammar checking to Emacs to aid your writing by combining
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires [[https://languagetool.org/][LanguageTool]] (which requires =Java 1.8+=).
+When using [[doom-package:][langtool]], this module requires [[https://languagetool.org/][LanguageTool]] (which requires =Java
+1.8+=).
 
 It is available from either https://languagetool.org/ or your OS's package
 manager. E.g.
@@ -37,6 +42,10 @@ manager. E.g.
 This module tries to guess the location of =languagetool-commandline.jar=. If
 you get a warning that Doom ~couldn't find languagetool-commandline.jar~, you
 will need to set ~langtool-language-tool-jar~ to its location.
+
+When configured with the [[doom-module:][+lsp]] flag, the [[doom-package:][lsp-ltex]] package will automatically
+install the LSP server which comes with bundled with LanguageTool and a Java
+distribution.
 
 * TODO Usage
 #+begin_quote
@@ -52,8 +61,16 @@ stylistic issues in your writing. This requires Java 1.8+.
 #+end_quote
 
 *** Commands
+**** For [[doom-package:][langtool]] users
 - ~M-x langtool-check~
 - ~M-x langtool-correct-buffer~
+
+**** For [[doom-package:][lsp-ltex]] users
+Doom automatically enables ~lsp-ltex~ for ~text-mode~, ~latex-mode~, ~org-mode~, and
+~markdown-mode~.
+
+- Use ~M-x +lsp-ltex-toggle~ or ~SPC localleadr G~ to enable or disable ~lsp-ltex~ in the current
+buffer.
 
 ** writegood-mode
 This minor mode highlights weasel words, duplication and passive voice.
@@ -62,6 +79,32 @@ This minor mode highlights weasel words, duplication and passive voice.
 #+begin_quote
  🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
+
+
+** For [[doom-package:][lsp-ltex]] users
+You can enhance your LanguageTool experience by customizing ~lsp-ltex~.
+
+#+begin_src emacs-lisp
+(setq lsp-ltex-language "fr" ;; Set your default (most used) language
+      lsp-ltex-mother-tongue "ar") ;; Set your mother longue
+#+end_src
+
+LanguageTool can make use of large n-gram data sets to detect errors with words
+that are often confused, like /their/ and /there/. The n-gram data set is huge and
+thus not part of the LanguageTool package. To make use of it, you have two
+choices:
+
+- Download it form [[https://languagetool.org/download/ngram-data/][languagetool.org]]
+- Install it from your distribution package manager
+  - For Arch-based distros, there is AUR packages (~languagetool-ngrams-<lang>~
+    for languages: en, fr, de, es, he, it, nl, ru or zh.
+
+Doom will automatically use n-grams if found in =/usr/share/ngrams=, however, if
+you downloaded them to another directory, you can set the following variable:
+
+#+begin_src emacs-lisp
+(setq lsp-ltex-additional-rules-language-model "path/to/ngrams")
+#+end_src
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
