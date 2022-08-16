@@ -12,6 +12,8 @@ nimsuggest isn't installed."
       (when (and nimsuggest-path (file-executable-p nimsuggest-path))
         (nimsuggest-mode))))
 
+  (set-formatter! 'nmfmt '("nimfmt" filepath) :modes '(nim-mode))
+
   (when IS-WINDOWS
     ;; TODO File PR/report upstream (https://github.com/nim-lang/nim-mode)
     (defadvice! +nim--suggest-get-temp-file-name-a (path)
