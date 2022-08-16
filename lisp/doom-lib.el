@@ -595,14 +595,15 @@ serve as a predicated alternative to `after!'."
            (add-hook 'after-load-functions #',fn)))))
 
 (defmacro defer-feature! (feature &rest fns)
-  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FN runs.
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FNS run.
 
 Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
 startup, which will prematurely trigger `after!' (and `with-eval-after-load')
 blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
-then wait until FEATURE-hook (or MODE-hook, if FN is provided) is triggered to
-reverse this and trigger `after!' blocks at a more reasonable time."
-  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature))))
+then wait until FEATURE-hook (or any of FNS, if FNS are provided) is triggered
+to reverse this and trigger `after!' blocks at a more reasonable time."
+  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
+        (fns (or fns (list feature))))
     `(progn
        (delq! ',feature features)
        (defadvice! ,advice-fn (&rest _)
