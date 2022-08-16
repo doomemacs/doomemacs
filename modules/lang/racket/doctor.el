@@ -9,3 +9,8 @@
 
 (unless (executable-find "raco")
   (warn! "Could not find raco executable; commands for install packages and build libraries will not work."))
+
+(when (modulep! :editor format)
+  (unless (and (executable-find "raco")
+               (eq 0 (call-process-shell-command "raco fmt --help" nil nil)))
+    (warn! "Couldn't find raco fmt. Formatting will be disabled.")))
