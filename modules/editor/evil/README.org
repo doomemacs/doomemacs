@@ -146,6 +146,7 @@ You must do two things to remove Evil:
    autoloads files.
 3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
    ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.
+4. [OPTIONAL] You may also want to disable default evil key bindings by removing the flag =+bindings= under =:config= in =~/.doom.d/init.el=.
 
 #+begin_quote
 Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
