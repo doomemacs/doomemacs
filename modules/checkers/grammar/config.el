@@ -1,6 +1,7 @@
 ;;; checkers/grammar/config.el -*- lexical-binding: t; -*-
 
 (use-package! langtool
+  :unless (modulep! +lsp)
   :commands (langtool-check
              langtool-check-done
              langtool-show-message-at-point
@@ -24,6 +25,62 @@
              (setq langtool-java-classpath "/opt/local/share/java/LanguageTool/*"))))
           (IS-LINUX
            (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")))))
+
+
+(use-package! lsp-ltex
+  :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
+  :commands (+lsp-ltex-toggle
+             +lsp-ltex-enable
+             +lsp-ltex-disable
+             +lsp-ltex-setup)
+  :hook ((text-mode latex-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
+  :init
+  (setq lsp-ltex-check-frequency "save" ;; Less overhead than the default "edit"
+        lsp-ltex-log-level "warning" ;; No need to log everything
+        ;; Path in which, interactively added words and rules will be stored.
+        lsp-ltex-user-rules-path (expand-file-name "lsp-ltex" doom-data-dir))
+
+  ;; When n-gram data sets are available, use them to detect errors with words
+  ;; that are often confused (like their and there).
+  (when (file-directory-p "/usr/share/ngrams")
+    (setq lsp-ltex-additional-rules-language-model "/usr/share/ngrams"))
+
+  (defun +lsp-ltex-setup ()
+    "Load LTeX LSP server."
+    (interactive)
+    (require 'lsp-ltex)
+    (lsp-deferred))
+
+  (defun +lsp-ltex--enabled-p ()
+    (not (memq 'ltex-ls lsp-disabled-clients)))
+
+  (defun +lsp-ltex-enable ()
+    "Enable LTeX LSP for the current buffer."
+    (interactive)
+    (unless (+lsp-ltex--enabled-p)
+      (delq! 'ltex-ls lsp-disabled-clients)
+      (message "Enabled ltex-ls"))
+    (+lsp-ltex-setup))
+
+  (defun +lsp-ltex-disable ()
+    "Disable LTeX LSP for the current buffer."
+    (interactive)
+    (when (+lsp-ltex--enabled-p)
+      (add-to-list 'lsp-disabled-clients 'ltex-ls)
+      (lsp-disconnect)
+      (message "Disabled ltex-ls")))
+
+  (defun +lsp-ltex-toggle ()
+    "Toggle LTeX LSP for the current buffer."
+    (interactive)
+    (if (+lsp-ltex--enabled-p)
+        (+lsp-ltex-disable)
+      (+lsp-ltex-enable)))
+
+  (map! :localleader
+        :map (text-mode-map latex-mode-map org-mode-map markdown-mode-map)
+        :desc "Toggle grammar check" "G" #'+lsp-ltex-toggle))
 
 
 ;; Detects weasel words, passive voice and duplicates. Proselint would be a
