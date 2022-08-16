@@ -50,7 +50,8 @@
     "Load LTeX LSP server."
     (interactive)
     (require 'lsp-ltex)
-    (lsp-deferred))
+    (when (+lsp-ltex--enabled-p)
+      (lsp-deferred)))
 
   (defun +lsp-ltex--enabled-p ()
     (not (memq 'ltex-ls lsp-disabled-clients)))
