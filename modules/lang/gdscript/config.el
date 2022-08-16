@@ -13,6 +13,9 @@
   (set-lookup-handlers! 'gdscript-mode
     :documentation #'gdscript-docs-browse-symbol-at-point)
 
+  (when (executable-find "gdformat")
+    (set-formatter! 'gdformat '("gdformat" "-") :modes '(gdscript-mode)))
+
   (when (modulep! +lsp)
     (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
