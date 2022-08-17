@@ -27,6 +27,7 @@
   :after swift-mode
   :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config
+  (set-formatter! 'swiftformat '("swiftformat" "--output" "stdout"))
   (setq lsp-sourcekit-executable
         (cl-find-if #'executable-find
                     (list lsp-sourcekit-executable ; 'sourcekit-lsp' by default
