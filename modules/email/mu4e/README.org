@@ -159,8 +159,9 @@ mail by disabling this module's backend selection and setting the value of the
 #+end_src
 
 If your command prompts you for a passphrase, you might want to change the value
-of the ~mu4e~get-mail-password-regexp~ such that [[doom-package:][mu4e]] will recognize the prompt
-and let you provide the passphrase from within Emacs.
+of the ~mu4e~get-mail-password-regexp~ variable
+(~mu4e--get-mail-password-regexp~ if =mu= *>=1.8*) such that [[doom-package:][mu4e]] will recognize
+the prompt and let you provide the passphrase from within Emacs.
 
 ** mu and mu4e
 You should have your email downloaded already. If you have not, you need to set
