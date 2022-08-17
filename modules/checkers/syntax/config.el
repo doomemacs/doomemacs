@@ -88,6 +88,7 @@
   :when (modulep! +flymake)
   :defer t
   :init
+  ;; as flymakes fail silently there is no need to activate it on a per major mode basis
   (add-hook! (prog-mode text-mode) #'flymake-mode)
   :config
   (setq flymake-fringe-indicator-position 'right-fringe))
