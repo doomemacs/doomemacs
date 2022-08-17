@@ -56,7 +56,8 @@ lua-language-server.")
   (add-hook! 'moonscript-mode-hook
              #'+lua-moonscript-fix-single-quotes-h
              #'+lua-moonscript-fontify-interpolation-h)
-  (when (modulep! :checkers syntax)
+  (when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
     (require 'flycheck-moonscript nil t)))
 
 

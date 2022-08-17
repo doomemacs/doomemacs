@@ -6,7 +6,8 @@
   :init
   (setq meghanada-server-install-dir (concat doom-data-dir "meghanada-server/")
         meghanada-use-company (modulep! :completion company)
-        meghanada-use-flycheck (modulep! :checkers syntax)
+        meghanada-use-flycheck (or (modulep! :checkers syntax +flymake)
+                                   (not (modulep! :checkers syntax)))
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
 

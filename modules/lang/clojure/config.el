@@ -271,6 +271,7 @@
 ;; clojure-lsp already uses clj-kondo under the hood
 (use-package! flycheck-clj-kondo
   :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake))
              (not (modulep! +lsp)))
   :after flycheck)
 
