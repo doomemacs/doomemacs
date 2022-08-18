@@ -20,6 +20,9 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
+- +snail :: Use Snail, a development environment and REPL interaction package
+  for Julia in the spirit of Common Lisp’s SLIME and Clojure’s CIDER. It enables
+  convenient and dynamic REPL-driven development.
 
 ** Packages
 - [[doom-package:julia-mode]]
@@ -31,6 +34,8 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
   - if [[doom-module::tools lsp +eglot]]
     - [[doom-package:eglot-jl]]
     - [[doom-package:eglot]]
+- if [[doom-package:][+snail]]
+  - [[doom-package:][julia-snail]]
 
 ** Hacks
 /No hacks documented for this module./
