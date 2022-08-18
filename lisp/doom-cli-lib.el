@@ -548,14 +548,14 @@ Throws `doom-cli-invalid-option-error' for illegal values."
             errors)
         (catch 'done
           (dolist (type types)
-            (pcase-let
-                (((map :test :read :error)
-                  (if (or (symbolp type)
-                          (and (stringp type)
-                               (string-match-p "^[A-Z0-9-_]+$" type)))
-                      (cdr (assq (if (symbolp type) type (intern (downcase type)))
-                                 doom-cli-option-arg-types))
-                    (list 'str :test #'stringp))))
+            ;; REVIEW Use pcase-let + map.el when 27.x support is dropped
+            (cl-destructuring-bind (&key test read error &allow-other-keys)
+                (if (or (symbolp type)
+                        (and (stringp type)
+                             (string-match-p "^[A-Z0-9-_]+$" type)))
+                    (cdr (assq (if (symbolp type) type (intern (downcase type)))
+                               doom-cli-option-arg-types))
+                  (list 'str :test #'stringp))
               (condition-case-unless-debug e
                   (or (and (or (null test)
                                (if (stringp test)
