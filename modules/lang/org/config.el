@@ -514,7 +514,7 @@ relative to `org-directory', unless it is an absolute path."
    :face (lambda (path)
            (if (or (file-remote-p path)
                    ;; filter out network shares on windows (slow)
-                   (and (featurep :os 'windows)
+                   (and IS-WINDOWS
                         (string-prefix-p "\\\\" path))
                    (file-exists-p path))
                'org-link
@@ -848,7 +848,7 @@ between the two."
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
-        (:when (featurep :os 'macos)
+        (:when IS-MAC
          [s-return]   #'+org/insert-item-below
          [s-S-return] #'+org/insert-item-above
          [s-M-return] #'org-insert-subheading)
@@ -1305,7 +1305,7 @@ between the two."
     "Advise `server-visit-files' to load `org-protocol' lazily."
     :around #'server-visit-files
     (if (not (cl-loop with protocol =
-                      (if (featurep :os 'windows)
+                      (if IS-WINDOWS
                           ;; On Windows, the file arguments for `emacsclient'
                           ;; get funnelled through `expand-file-path' by
                           ;; `server-process-filter'. This substitutes

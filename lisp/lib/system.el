@@ -6,8 +6,8 @@
   ;; REVIEW Use `with-memoization' when 27.x support is dropped
   (or (get 'doom-system-distro 'cached-value)
       (put 'doom-system-distro 'cached-value
-           (cond ((featurep :os 'windows) 'windows)
-                 ((featurep :os 'macos)   'macos)
+           (cond (IS-WINDOWS 'windows)
+                 (IS-MAC     'macos)
                  ((and (file-exists-p "/etc/os-release")
                        (with-temp-buffer
                          (insert-file-contents "/etc/os-release")

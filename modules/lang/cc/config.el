@@ -17,7 +17,7 @@ This is ignored by ccls.")
   `((c-mode . nil)
     (c++-mode
      . ,(list "-std=c++1z" ; use C++17 draft by default
-              (when (featurep :os 'macos)
+              (when IS-MAC
                 ;; NOTE beware: you'll get abi-inconsistencies when passing
                 ;; std-objects to libraries linked with libstdc++ (e.g. if you
                 ;; use boost which wasn't compiled with libc++)
@@ -270,7 +270,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 
     ;; NOTE : This setting is untested yet
     (after! eglot
-      (when (featurep :os 'macos)
+      (when IS-MAC
         (add-to-list 'eglot-workspace-configuration
                      `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
                                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
@@ -297,12 +297,12 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (setq-hook! 'lsp-configure-hook
     ccls-sem-highlight-method (if lsp-enable-semantic-highlighting
                                   ccls-sem-highlight-method))
-  (when (or (featurep :os 'macos)
-            (featurep :os 'linux))
+  (when (or IS-MAC
+            IS-LINUX)
     (setq ccls-initialization-options
           `(:index (:trackDependency 1
                     :threads ,(max 1 (/ (doom-system-cpus) 2))))))
-  (when (featurep :os 'macos)
+  (when IS-MAC
     (setq ccls-initialization-options
           (append ccls-initialization-options
                   `(:clang ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"

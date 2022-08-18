@@ -74,8 +74,8 @@
       (apply fn args)))
 
   ;; REVIEW This is tremendously slow on macos and windows for some reason.
-  (setq evil-mc-enable-bar-cursor (not (or (featurep :os 'macos)
-                                           (featurep :os 'windows))))
+  (setq evil-mc-enable-bar-cursor (not (or IS-MAC
+                                           IS-WINDOWS)))
 
   (after! smartparens
     ;; Make evil-mc cooperate with smartparens better

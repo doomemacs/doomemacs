@@ -34,9 +34,9 @@ lua-language-server.")
         ;; is a function is to dynamically change when/if `+lua-lsp-dir' does
         (list (or (executable-find "lua-language-server")
                   (doom-path +lua-lsp-dir
-                             (cond ((featurep :os 'macos)   "bin/macOS")
-                                   ((featurep :os 'linux)   "bin/Linux")
-                                   ((featurep :os 'windows) "bin/Windows"))
+                             (cond (IS-MAC     "bin/macOS")
+                                   (IS-LINUX   "bin/Linux")
+                                   (IS-WINDOWS "bin/Windows"))
                              "lua-language-server"))
               "-E" "-e" "LANG=en"
               (doom-path +lua-lsp-dir "main.lua")))
