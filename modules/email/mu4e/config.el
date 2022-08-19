@@ -103,10 +103,11 @@ is non-nil."
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
-        mu4e-headers-thread-orphan-prefix '("┬>" . "┬▶ ")
-        mu4e-headers-thread-last-child-prefix '("└>" . "╰▶")
-        mu4e-headers-thread-child-prefix '("├>" . "├▶")
-        mu4e-headers-thread-connection-prefix '("│" . "│ ")
+        mu4e-headers-thread-orphan-prefix        '("┬>" . "┬▶ ")
+        mu4e-headers-thread-connection-prefix    '("│ " . "│ ")
+        mu4e-headers-thread-first-child-prefix   '("├>" . "├▶")
+        mu4e-headers-thread-child-prefix         '("├>" . "├▶")
+        mu4e-headers-thread-last-child-prefix    '("└>" . "╰▶")
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account-stripe . 1)
