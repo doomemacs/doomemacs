@@ -27,7 +27,11 @@
 ;;;###autoload
 (defun doom-system-distro-version ()
   "Return a distro name and version string."
-  (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
+  (letf! ((defun sh (&rest args) (cdr (apply #'doom-call-process args)))
+          (defun cat (file &optional limit)
+            (with-temp-buffer
+              (insert-file-contents file nil 0 limit)
+              (buffer-string))))
     (let ((distro (doom-system-distro)))
       (cond
        ((eq distro 'windows)
