@@ -136,7 +136,11 @@ This is performed with an asyncronous Emacs process, except when
 
 We assume any org file in `doom-user-dir' is connected to your literate
 config, and should trigger a recompile if changed."
-  (and (file-in-directory-p
-        (buffer-file-name (buffer-base-buffer))
-        (file-name-directory +literate-config-file))
+  (and
+   (if (file-symlink-p +literate-config-file)
+       (string= (buffer-file-name (buffer-base-buffer))
+                (file-truename +literate-config-file))
+     (file-in-directory-p
+      (buffer-file-name (buffer-base-buffer))
+      (file-name-directory +literate-config-file)))
        (+literate-tangle-h)))
