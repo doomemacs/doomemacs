@@ -210,7 +210,9 @@ to fix this.
 *** Aspell
 If ~M-x +spell/add-word~ results in the above error this mean that the
 personal dictionary file was not created for some reason. This can be
-fixed by creating the required file manually.
+fixed by creating the required file manually. Note: the personal dictionary 
+is defined by ~ispell-personal-dictionary~, you may need to check it first
+with ~M-x describe-variable~.
 #+begin_example shell
 mkdir -p ~/.emacs.d/.local/etc/ispell
 echo personal_ws-1.1 en 0 > ~/.emacs.d/.local/etc/ispell/.pws
