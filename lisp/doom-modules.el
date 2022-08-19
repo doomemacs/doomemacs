@@ -346,10 +346,6 @@ This value is cached. If REFRESH-P, then don't use the cached value."
     (setq use-package-ensure-function #'use-package-ensure-elpa)))
 
 (with-eval-after-load 'use-package-core
-  ;; `use-package' adds syntax highlighting for the `use-package' macro, but
-  ;; Emacs 26+ already highlights macros, so it's redundant.
-  (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
-
   ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
   ;; so we don't have to load `auto-minor-mode' so early.
   (dolist (keyword '(:minor :magic-minor))
