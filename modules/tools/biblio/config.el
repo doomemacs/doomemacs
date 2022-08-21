@@ -29,6 +29,11 @@
   :after citar embark
   :config (citar-embark-mode))
 
+(use-package! citar-org-roam
+  :when (modulep! :completion vertico)
+  :after citar org-roam
+  :config (citar-org-roam-mode))
+
 ;; `org-cite' processors
 (use-package! oc-biblatex :after oc)
 (use-package! oc-csl :after oc)
