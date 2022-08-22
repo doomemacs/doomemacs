@@ -363,7 +363,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                   "Doom core"
                   doom-version
                   (or (cdr (doom-call-process
-                            "git" "-C" doom-emacs-dir
+                            "git" "-C" (expand-file-name doom-emacs-dir)
                             "log" "-1" "--format=%D %h %ci"))
                       "n/a"))
           ;; NOTE This is a placeholder. Our modules will be moved to its own
@@ -373,7 +373,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                   "Doom modules"
                   doom-modules-version
                   (or (cdr (doom-call-process
-                            "git" "-C" doom-modules-dir
+                            "git" "-C" (expand-file-name doom-modules-dir)
                             "log" "-1" "--format=%D %h %ci"))
                       "n/a"))))
 
