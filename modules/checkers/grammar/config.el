@@ -35,6 +35,11 @@
              +lsp-ltex-disable
              +lsp-ltex-setup)
   :hook ((text-mode latex-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
+  :config
+  ;; Disable by default, can be enabled in a ber buffer basis,
+  ;; Currentrly, launching LSP in some buffers (like org-msg-mode) can cause
+  ;; annoying messages, as LSP tries to guess the project root.
+  (add-to-list 'lsp-disabled-clients 'ltex-ls)
   :init
   (setq lsp-ltex-check-frequency "save" ;; Less overhead than the default "edit"
         lsp-ltex-log-level "warning" ;; No need to log everything
@@ -60,7 +65,7 @@
     "Enable LTeX LSP for the current buffer."
     (interactive)
     (unless (+lsp-ltex--enabled-p)
-      (delq! 'ltex-ls lsp-disabled-clients)
+      (setq-local lsp-disabled-clients (delq 'ltex-ls lsp-disabled-clients))
       (message "Enabled ltex-ls"))
     (+lsp-ltex-setup))
 
@@ -68,7 +73,7 @@
     "Disable LTeX LSP for the current buffer."
     (interactive)
     (when (+lsp-ltex--enabled-p)
-      (add-to-list 'lsp-disabled-clients 'ltex-ls)
+      (setq-local lsp-disabled-clients (cons 'ltex-ls lsp-disabled-clients))
       (lsp-disconnect)
       (message "Disabled ltex-ls")))
 
