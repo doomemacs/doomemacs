@@ -111,7 +111,7 @@ in."
   (unless (featurep 'native-compile)
     (warn! "Emacs was not built with native compilation support")
     (explain! "Users will see a substantial performance gain by building Emacs with "
-              "native compilation support, availible in emacs 28+."
+              "native compilation support, available in emacs 28+."
               "You must install a prebuilt Emacs binary with this included, or compile "
               "Emacs with the --with-native-compilation option."))
 
