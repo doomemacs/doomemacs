@@ -90,6 +90,7 @@
             (org-back-to-heading)
             (insert (make-string level ?*) " ")
             (save-excursion (insert "\n"))))
+         (run-hooks 'org-insert-heading-hook)
          (when-let* ((todo-keyword (org-element-property :todo-keyword context))
                      (todo-type    (org-element-property :todo-type context)))
            (org-todo
