@@ -156,19 +156,8 @@ project boards and a newsletter:
 Emacs is no journey of a mere thousand miles. You _will_ run into problems and
 mysterious errors. When you do, here are some places you can look for help:
 
-+ [Our documentation][documentation] covers many use cases.
-  + [The Configuration section][configuration] covers how to configure Doom and
-    its packages.
-  + [The Package Management section][package-management] covers how to install
-    and disable packages.
-  + [This section][bin/doom] explains the `bin/doom` script's most important
-    commands.
-  + [This section][common-mistakes] lists some common configuration mistakes new
-    users make, when migrating a config from another distro or their own.
-  + [This answer][change-theme] shows you how to add your own themes to your
-    private config.
-  + [This answer][change-font] shows you how to change the default font.
-  + Your issue may be documented in the [FAQ].
+Our documentation can be found online here [docs](https://github.com/doomemacs/doomemacs/tree/develop/docs)
+
 + With Emacs built-in help system documentation is a keystroke away:
   + For functions: <kbd>SPC h f</kbd> or <kbd>C-h f</kbd>
   + For variables: <kbd>SPC h v</kbd> or <kbd>C-h v</kbd>
