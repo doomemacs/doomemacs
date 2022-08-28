@@ -58,9 +58,6 @@ and `format!' into colored output, where COLOR is any car of this list.")
     (rtrim   . string-trim-right)
     (ltrim   . string-trim-left)
     (p       . doom-print--paragraph)
-    (buffer  . (lambda (buffer)
-                 (with-current-buffer buffer
-                   (buffer-string))))
     (truncate . doom-print--truncate)
     (success . (lambda (str &rest args)
                  (apply #'doom-print--style 'green
