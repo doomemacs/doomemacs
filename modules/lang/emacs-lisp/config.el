@@ -61,8 +61,6 @@ employed so that flycheck still does *some* helpful linting.")
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
     outline-regexp +emacs-lisp-outline-regexp
-    ;; As we are changing `outline-regexp', we also set a new `outline-level'
-    ;; function for that.
     outline-level #'+emacs-lisp-outline-level
     ;; Fixed indenter that intends plists sensibly.
     lisp-indent-function #'+emacs-lisp-indent-function)
