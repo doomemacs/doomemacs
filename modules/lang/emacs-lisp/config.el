@@ -3,9 +3,13 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;\\([;*]+\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
+(defvar +emacs-lisp-outline-level-function
+  (defun +emacs-lisp-outline-level () (- (match-end 1) (match-beginning 1)))
+  "See the documentation of `outline-level'.")
 
 (defvar +emacs-lisp-disable-flycheck-in-dirs
   (list doom-emacs-dir doom-user-dir)
@@ -57,6 +61,9 @@ employed so that flycheck still does *some* helpful linting.")
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
     outline-regexp +emacs-lisp-outline-regexp
+    ;; As we are changing `outline-regexp', we also set a few `outline-level'
+    ;; function for that.
+    outline-level #'+emacs-lisp-outline-level
     ;; Fixed indenter that intends plists sensibly.
     lisp-indent-function #'+emacs-lisp-indent-function)
 

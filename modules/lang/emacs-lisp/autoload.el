@@ -228,7 +228,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 (defun +emacs-lisp-extend-imenu-h ()
   "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
   (setq imenu-generic-expression
-        `(("Section" "^[ \t]*;;;;*[ \t]+\\([^\n]+\\)" 1)
+        `(("Section" "^[ \t]*;;[;*]+[ \t]+\\([^\n]+\\)" 1)
           ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
           ("Package" "^\\s-*\\(?:;;;###package\\|(\\(?:package!\\|use-package!?\\|after!\\)\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
