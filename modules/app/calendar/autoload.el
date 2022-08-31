@@ -18,8 +18,12 @@
   (if (modulep! :ui workspaces)
       (progn
         (+workspace-switch +calendar-workspace-name t)
-        (doom/switch-to-scratch-buffer)
-        (+calendar--init)
+        (unless (memq (buffer-local-value 'major-mode
+                                          (window-buffer (selected-window)))
+                      '(cfw:details-mode
+                        cfw:calendar-mode))
+          (doom/switch-to-scratch-buffer)
+          (+calendar--init))
         (+workspace/display))
     (setq +calendar--wconf (current-window-configuration))
     (delete-other-windows)
