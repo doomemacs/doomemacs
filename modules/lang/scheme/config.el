@@ -9,6 +9,7 @@
   :defer t
   :init
   (setq geiser-autodoc-identifier-format "%s → %s"
+        geiser-repl-per-project-p t
         geiser-repl-current-project-function #'doom-project-root
         geiser-repl-history-filename (concat doom-cache-dir "geiser-history"))
 
