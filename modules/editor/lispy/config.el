@@ -24,11 +24,6 @@
   (setq lispy-close-quotes-at-end-p t)
   (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode)
 
-  ;; We recommend `outline-minor-faces-mode' from
-  ;; https://github.com/tarsius/outline-minor-faces as an alternative which
-  ;; respects `outline-regexp' and `outline-level'.
-  (setq lispy-font-lock-keywords nil)
-
   (when (modulep! :lang emacs-lisp)
     (add-hook 'lispy-mode-hook #'+lispy-restore-elisp-outline-settings)))
 
