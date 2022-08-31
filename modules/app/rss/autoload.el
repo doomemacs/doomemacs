@@ -9,8 +9,13 @@
   (if (modulep! :ui workspaces)
       (progn
         (+workspace-switch +rss-workspace-name t)
-        (doom/switch-to-scratch-buffer)
-        (elfeed)
+        (unless (memq (buffer-local-value 'major-mode
+                                          (window-buffer
+                                           (selected-window)))
+                      '(elfeed-show-mode
+                        elfeed-search-mode))
+          (doom/switch-to-scratch-buffer)
+          (elfeed))
         (+workspace/display))
     (setq +rss--wconf (current-window-configuration))
     (delete-other-windows)
