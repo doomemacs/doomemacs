@@ -1,6 +1,8 @@
 ;;; app/calendar/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +calendar--wconf nil)
+(defvar +calendar-workspace-name "*calendar*"
+  "Name of the workspace created by `=calendar', dedicated to the calendar.")
 
 (defun +calendar--init ()
   (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
@@ -15,7 +17,7 @@
   (interactive)
   (if (modulep! :ui workspaces)
       (progn
-        (+workspace-switch "Calendar" t)
+        (+workspace-switch +calendar-workspace-name t)
         (doom/switch-to-scratch-buffer)
         (+calendar--init)
         (+workspace/display))
@@ -29,8 +31,8 @@
   "TODO"
   (interactive)
   (if (modulep! :ui workspaces)
-      (when (+workspace-exists-p "Calendar")
-        (+workspace/delete "Calendar"))
+      (when (+workspace-exists-p +calendar-workspace-name)
+        (+workspace/delete +calendar-workspace-name))
     (when (window-configuration-p +calendar--wconf)
       (set-window-configuration +calendar--wconf))
     (setq +calendar--wconf nil))
