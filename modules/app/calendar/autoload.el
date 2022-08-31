@@ -2,7 +2,7 @@
 
 (defvar +calendar--wconf nil)
 (defvar +calendar-workspace-name "*calendar*"
-  "Name of the workspace created by `=calendar', dedicated to the calendar.")
+  "Name of the workspace created by `=calendar', dedicated to calfw.")
 
 (defun +calendar--init ()
   (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
