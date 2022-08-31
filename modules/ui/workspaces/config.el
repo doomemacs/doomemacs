@@ -276,4 +276,10 @@ stored in `persp-save-dir'.")
               (when (get-buffer buffer-name)
                 (setq buffer-name (generate-new-buffer-name buffer-name)))
               (make-indirect-buffer base-buffer buffer-name t)))))
-      (setq +workspaces--indirect-buffers-to-restore nil))))
+      (setq +workspaces--indirect-buffers-to-restore nil)))
+
+;;; tab-bar
+  (add-hook! 'tab-bar-mode-hook
+    (defun +workspaces-set-up-tab-bar-integration-h ()
+      (add-hook 'persp-before-deactivate-functions #'+workspaces-save-tab-bar-data-h)
+      (add-hook 'persp-activated-functions #'+workspaces-load-tab-bar-data-h))))
