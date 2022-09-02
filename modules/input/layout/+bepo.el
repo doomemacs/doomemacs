@@ -210,13 +210,52 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     (map! :map Info-mode-map
           "s" nil
           "t" nil))
-  (after! (evil magit)
+
+  
+  ;; Start of the Magit zone
+  ;;
+  ;; The magit zone needs to be special because evil-collection and magit and
+  ;; this module don't fully agree on the order with which features, keymaps,
+  ;; overriding keymaps, and evil-collection-setup-hook are run.
+  ;;
+  ;; This is _probably_ more complex than what it needs to be, but the
+  ;; interactions between all packages are so hard to track that a
+  ;; trial-and-error approach has been used to arrive at this result.
+  (after! (evil magit-section)
     (+layout-bepo-rotate-ts-bare-keymap
-     '(magit-mode-map
-       magit-diff-section-base-map
+     '(magit-section-mode-map)))
+  (after! (evil magit-log)
+    (+layout-bepo-rotate-keymaps
+     '(magit-log-read-revs-map
+       magit-log-mode-map
+       ;; NOTE: magit-cherry-mode could be moved of magit-log anyday, be
+       ;; careful
+       magit-cherry-mode-map)))
+  (after! (evil magit-reflog)
+    (+layout-bepo-rotate-keymaps
+     '(magit-reflog-mode-map)))
+  (after! (evil magit-status)
+    (+layout-bepo-rotate-keymaps
+     '(magit-status-mode-map
        magit-staged-section-map
        magit-unstaged-section-map
-       magit-untracked-section-map))
+       magit-untracked-section-map)))
+  (after! (evil magit-diff)
+    (+layout-bepo-rotate-keymaps
+     '(magit-diff-mode-map
+       magit-diff-section-base-map)))
+  (after! (evil magit-process)
+    (+layout-bepo-rotate-keymaps
+     '(magit-process-mode-map)))
+  (after! (evil magit-refs)
+    (+layout-bepo-rotate-keymaps
+     '(magit-refs-mode-map)))
+  (after! (evil magit-blob)
+    (+layout-bepo-rotate-keymaps
+     '(magit-blob-mode-map)))
+  (after! (evil magit)
+    (+layout-bepo-rotate-ts-bare-keymap
+     '(magit-mode-map))
     ;; Without this, "s" is mapped to `magit-delete-thing' (the old "k" for "kill") and
     ;; takes precedence over the evil command to go up one line
     ;; :nv doesn't work on this, needs to be the bare map.
@@ -234,24 +273,11 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
     (map! :map magit-mode-map
           "s" nil
           "t" nil)
-    ;; Even though magit bindings are part of evil-collection now, the hook only
-    ;; runs on `evil-collection-magit-maps', which is way to short to cover all
-    ;; usages. The hook is run manually on other maps
-    ;; NOTE `magit-mode-map' is last because other keymaps inherit from it.
-    ;;      Therefore to prevent a "double rotation" issue, `magit-mode-map' is
-    ;;      changed last.
     (+layout-bepo-rotate-keymaps
-     '(magit-cherry-mode-map
-       magit-blob-mode-map
-       magit-diff-mode-map
-       magit-log-mode-map
-       magit-log-select-mode-map
-       magit-reflog-mode-map
-       magit-status-mode-map
-       magit-log-read-revs-map
-       magit-process-mode-map
-       magit-refs-mode-map
-       magit-mode-map)))
+     '(magit-mode-map)))
+  ;; End of the Magit zone
+  
+
   (after! evil-easymotion
     ;; Use "gé" instead of default "gs" to avoid conflicts w/org-mode later
     (evilem-default-keybindings "gé")
