@@ -505,6 +505,30 @@
        :desc "Unicode"                       "u"   #'insert-char
        :desc "From clipboard"                "y"   #'+default/yank-pop)
 
+      ;;; <leader> l --- live share/collab
+      ;;; TODO Do you like this location for this map? This was the best idea we
+      ;;; could come up with, but we're happy to move it if there's a better
+      ;;; place! Also not sure if we're allowed to say "live share" since that's
+      ;;; a blatant ripoff of VS Code's name for this feature
+      (:when (modulep! :tools collab)
+       (:prefix-map ("l" . "live share/collab")
+        :desc "Switch to a shared buffer"      "b"   #'crdt-switch-to-buffer
+        :desc "Connect to a session"           "c"   #'crdt-connect
+        :desc "Disconnect from session"        "d"   #'crdt-disconnect
+        :desc "Toggle following user's cursor" "f"   #'crdt-follow-user
+        :desc "Stop following user if any"     "F"   #'crdt-stop-follow
+        :desc "Goto another user's cursor"     "g"   #'crdt-goto-user
+        :desc "List shared buffers"            "i"   #'crdt-list-buffers
+        :desc "Kick a user (host only)"        "k"   #'crdt-kill-user
+        :desc "List sessions"                  "l"   #'crdt-list-sessions
+        :desc "Share current buffer"           "s"   #'crdt-share-buffer
+        :desc "Stop sharing current buffer"    "S"   #'crdt-stop-share-buffer
+        :desc "List connected users"           "u"   #'crdt-list-users
+        :desc "Stop a session (host only)"     "x"   #'crdt-stop-session
+        :desc "Copy URL of current session"    "y"   #'crdt-copy-url
+        :desc "Goto next user's cursor"        "]"   #'crdt-goto-next-user
+        :desc "Goto previous user's cursor"    "["   #'crdt-goto-prev-user))
+
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
        :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
