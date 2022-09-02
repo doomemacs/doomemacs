@@ -74,8 +74,8 @@
        :n "o"       #'link-hint-open-link)
       (:after info :map Info-mode-map
        :n "o"       #'link-hint-open-link
-       :nv "/" #'isearch-forward
-       :nv "?" #'isearch-backward)
+       :nv "/"      #'isearch-forward
+       :nv "?"      #'isearch-backward)
       (:after apropos :map apropos-mode-map
        :n "o"       #'link-hint-open-link
        :n "TAB"     #'forward-button
