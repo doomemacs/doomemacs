@@ -34,7 +34,7 @@
              +lsp-ltex-enable
              +lsp-ltex-disable
              +lsp-ltex-setup)
-  :hook ((text-mode latex-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
+  :hook ((text-mode latex-mode LaTeX-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
   :config
   ;; Disable by default, can be enabled in a ber buffer basis,
   ;; Currentrly, launching LSP in some buffers (like org-msg-mode) can cause
@@ -85,7 +85,7 @@
       (+lsp-ltex-enable)))
 
   (map! :localleader
-        :map (text-mode-map latex-mode-map org-mode-map markdown-mode-map)
+        :map (text-mode-map latex-mode-map LaTeX-mode-map org-mode-map markdown-mode-map)
         :desc "Toggle grammar check" "G" #'+lsp-ltex-toggle))
 
 
