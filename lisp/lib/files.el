@@ -54,11 +54,22 @@ inaccurate)."
 
 ;;;###autoload
 (defun doom-glob (&rest segments)
-  "Construct a path from SEGMENTS and expand glob patterns.
-Returns nil if the path doesn't exist.
-Ignores `nil' elements in SEGMENTS."
-  (let (case-fold-search)
-    (file-expand-wildcards (apply #'doom-path segments) t)))
+  "Return file list matching the glob created by joining SEGMENTS.
+
+The returned file paths will be relative to `default-directory', unless SEGMENTS
+concatenate into an absolute path.
+
+Returns nil if no matches exist.
+Ignores `nil' elements in SEGMENTS.
+If the glob ends in a slash, only returns matching directories."
+  (declare (side-effect-free t))
+  (let* (case-fold-search
+         file-name-handler-alist
+         (path (apply #'file-name-concat segments))
+         (full? (file-name-absolute-p path)))
+    (if (string-suffix-p "/" path)
+        (cl-delete-if-not #'file-directory-p (file-expand-wildcards (substring path 0 -1) full?))
+      (file-expand-wildcards path full?))))
 
 ;;;###autoload
 (defun doom-dir (&rest segments)
