@@ -6,12 +6,10 @@
   (with-memoization (get 'doom-system-distro 'cached-value)
     (cond (IS-WINDOWS 'windows)
           (IS-MAC     'macos)
-          ((and (file-exists-p "/etc/os-release")
-                (with-temp-buffer
-                  (let ((coding-system-for-read 'utf-8-auto))
-                    (insert-file-contents "/etc/os-release"))
-                  (when (re-search-forward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)
-                    (intern (downcase (match-string 1)))))))
+          ((ignore-errors
+             (with-file-contents! "/etc/os-release"
+               (when (re-search-backward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)
+                 (intern (downcase (match-string 1)))))))
           ;; A few redundancies in case os-release fails us
           ((file-exists-p "/etc/debian_version")
            'debian)
@@ -27,8 +25,7 @@
 (defun doom-system-distro-version ()
   "Return a distro name and version string."
   (letf! (defun sh (&rest args) (cdr (apply #'doom-call-process args)))
-    (let ((distro (doom-system-distro))
-          (coding-system-for-read 'utf-8-auto))
+    (let ((distro (doom-system-distro)))
       (cond
        ((eq distro 'windows)
         (format "Windows %s" "Unknown")) ; TODO
@@ -38,19 +35,14 @@
         (sh "lsb_release" "-s" "-d"))
        ((executable-find "nixos-version")
         (format "NixOS %s" (sh "nixos-version")))
-       ((and (file-exists-p "/etc/os-release")
-             (with-temp-buffer
-              (insert-file-contents "/etc/os-release")
-              (when (re-search-forward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
-                (match-string 1)))))
+       ((ignore-errors
+          (with-file-contents! "/etc/os-release"
+            (when (re-search-backward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
+              (match-string 1)))))
        ((when-let (files (doom-glob "/etc/*-release"))
           (truncate-string-to-width
            (replace-regexp-in-string
-            "\n" " "
-            (with-temp-buffer
-             (insert-file-contents (car files) nil nil 73)
-             (buffer-string))
-            nil t)
+            "\n" " " (doom-file-read (car files) :end 73) nil t)
            64 nil nil "...")))
        ((concat "Unknown " (sh "uname" "-v")))))))
 
