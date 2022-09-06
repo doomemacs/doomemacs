@@ -4,6 +4,14 @@
 (defvar doom-bin (expand-file-name "doom" doom-bin-dir))
 
 ;;;###autoload
+(defvar doom-after-reload-hook nil
+  "A list of hooks to run after `doom/reload' has reloaded Doom.")
+
+;;;###autoload
+(defvar doom-before-reload-hook nil
+  "A list of hooks to run before `doom/reload' has reloaded Doom.")
+
+;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 

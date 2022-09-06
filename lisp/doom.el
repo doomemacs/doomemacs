@@ -286,16 +286,6 @@ users).")
 
 
 ;;
-;;; Custom hooks
-
-(defvar doom-after-reload-hook nil
-  "A list of hooks to run after `doom/reload' has reloaded Doom.")
-
-(defvar doom-before-reload-hook nil
-  "A list of hooks to run before `doom/reload' has reloaded Doom.")
-
-
-;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
 (when (featurep 'native-compile)
