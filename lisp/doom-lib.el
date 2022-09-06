@@ -851,5 +851,9 @@ and return the value found in PLACE instead."
                ,(funcall setter val)
                ,val)))))
 
+;; Introduced in Emacs 29+ (emacs-mirror/emacs@f117b5df4dc6)
+(defbackport! defalias 'bol #'line-beginning-position)
+(defbackport! defalias 'eol #'line-end-position)
+
 (provide 'doom-lib)
 ;;; doom-lib.el ends here
