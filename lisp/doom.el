@@ -59,11 +59,6 @@
   (unless (get var 'initial-value)
     (put var 'initial-value (default-value var))))
 
-;; Prevent unwanted runtime compilation for gccemacs (native-comp) users;
-;; packages are compiled ahead-of-time when they are installed and site files
-;; are compiled when gccemacs is installed.
-(setq native-comp-deferred-compilation nil)
-
 ;; Since Emacs 27, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'. Doom handles package initialization, so
 ;; we must prevent Emacs from doing it again.
@@ -316,6 +311,18 @@ users).")
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
 (when (featurep 'native-compile)
+  ;; Enable deferred compilation and disable ahead-of-time compilation, so we
+  ;; don't bog down the install process with an excruciatingly long compile
+  ;; times. It will mean more CPU time at runtime, but given its asynchronosity,
+  ;; this is acceptable.
+  (setq native-comp-deferred-compilation t
+        straight-disable-native-compile t)
+
+  ;; Suppress compiler warnings, to avoid inundating users will popups. They
+  ;; don't cause breakage, so it's not worth dedicating screen estate to them.
+  (setq native-comp-async-report-warnings-errors init-file-debug
+        native-comp-warning-on-missing-source init-file-debug)
+
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
   ;; REVIEW Use `startup-redirect-eln-cache' when 28 support is dropped
