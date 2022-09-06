@@ -88,14 +88,29 @@
   (unless (get var 'initial-value)
     (put var 'initial-value (default-value var))))
 
+;; Ensure Doom's core libraries are visible for loading
+(add-to-list 'load-path (file-name-directory load-file-name))
+
 ;; Since Emacs 27, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'. Doom handles package initialization, so
 ;; we must prevent Emacs from doing it again.
 (setq package-enable-at-startup nil)
 
-;; Just the... bear necessities~
+;; Custom error types
+(define-error 'doom-error "An unexpected Doom error")
+(define-error 'doom-core-error "Unexpected error in Doom's core" 'doom-error)
+(define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
+(define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
+(define-error 'doom-user-error "Error caused by user's config or system" 'doom-error)
+(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
+(define-error 'doom-package-error "Error with packages" 'doom-error)
+(define-error 'doom-profile-error "Error while processing profiles" 'doom-error)
+
+;; Load just the... bear necessities~
 (require 'cl-lib)
 (require 'subr-x)
+;; ...then load *the* one
+(require 'doom-lib)
 
 
 ;;
@@ -304,17 +319,6 @@ users).")
 
 
 ;;
-;;; Custom error types
-
-(define-error 'doom-error "Error in Doom Emacs core")
-(define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
-(define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
-(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
-(define-error 'doom-user-error "Error in user's config" 'doom-error)
-(define-error 'doom-package-error "Error with packages" 'doom-error)
-
-
-;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
 (when (featurep 'native-compile)
@@ -374,16 +378,6 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 `user-init-file')."
   (let ((user-init-file custom-file))
     (apply fn args)))
-
-
-;;
-;;; Bootstrap
-
-;; Ensure Doom's core libraries are visible for loading
-(add-to-list 'load-path doom-core-dir)
-
-;; ...then load *the* one
-(require 'doom-lib)
 
 
 ;;
