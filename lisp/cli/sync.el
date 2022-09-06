@@ -69,9 +69,6 @@ OPTIONS:
        t)
     (remove-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)))
 
-;; DEPRECATED Remove when v3.0 is released
-(defobsolete! ((refresh re)) (sync) "v3.0.0")
-
 
 ;;
 ;;; Helpers
