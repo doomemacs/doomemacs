@@ -119,7 +119,7 @@ in."
   (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
                               "~/.config")
                           "/doom/"))
-         (doom-path (or (getenv "DOOMDIR")
+         (doom-dir (or (getenv "DOOMDIR")
                        "~/.doom.d/"))
          (dir (if (file-directory-p xdg-dir)
                   xdg-dir
