@@ -1128,49 +1128,48 @@ Emacs' batch library lacks an implementation of the exec system call."
          (context-file (format (doom-path temporary-file-directory "doom.%s.%s.context") pid step))
          (script-file  (format (doom-path temporary-file-directory "doom.%s.%s.sh") pid step))
          (command (if (listp args) (combine-and-quote-strings (remq nil args)) args))
-         (coding-system-for-write 'utf-8-auto)
-         (coding-system-for-read  'utf-8-auto))
+         (persistent-files
+          (combine-and-quote-strings (delq nil (list script-file context-file))))
+         (persisted-env
+          (save-match-data
+            (cl-loop with initial-env = (get 'process-environment 'initial-value)
+                     for env in (seq-difference process-environment initial-env)
+                     if (string-match "^\\([a-zA-Z0-9_][^=]+\\)=\\(.+\\)$" env)
+                     collect (format "%s=%s"
+                                     (match-string 1 env)
+                                     (shell-quote-argument (match-string 2 env)))))))
     (cl-incf (doom-cli-context-step context))
-    (make-directory (file-name-directory context-file) t)
-    (with-temp-file context-file
-      ;; DEPRECATED Use `print-unreadable-function' when 28 support is dropped
-      (let ((newcontext (doom-cli-context-copy context))
-            (print-level nil)
-            (print-length nil)
-            (print-circle nil)
-            (print-escape-newlines t))
-        (letf! (defmacro convert-buffer (fn)
-                 `(setf (,fn newcontext) (with-current-buffer (,fn context)
-                                           (buffer-string))))
-          (convert-buffer doom-cli-context-stdin)
-          (convert-buffer doom-cli-context-stdout)
-          (convert-buffer doom-cli-context-stderr))
-        (prin1 newcontext (current-buffer))))
-    (set-file-modes context-file #o400)
-    (make-directory (file-name-directory script-file) t)
-    (let ((coding-system-for-write 'utf-8-auto)
-          (persistent-files (combine-and-quote-strings (delq nil (list script-file context-file))))
-          (env (save-match-data
-                 (cl-loop with initial-env = (get 'process-environment 'initial-value)
-                          for env in (seq-difference process-environment initial-env)
-                          if (string-match "^\\([a-zA-Z0-9_][^=]+\\)=\\(.+\\)$" env)
-                          collect (format "%s=%s"
-                                          (match-string 1 env)
-                                          (shell-quote-argument (match-string 2 env)))))))
-      (with-temp-file script-file
-        (doom-log "_doomrun: %s %s" (string-join env " ") command)
-        (doom-log "_doomcleanup: %s" persistent-files)
-        (insert "#!/usr/bin/env sh\n"
-                "trap _doomcleanup EXIT\n"
-                "_doomcleanup() {\n  rm -f " persistent-files "\n}\n"
-                "_doomrun() {\n  " command "\n}\n"
-                (string-join env " \\\n")
-                "__DOOMCONTEXT=" (shell-quote-argument context-file) " \\\n"
-                (format "PATH=\"%s%s$PATH\" \\\n"
-                        (doom-path doom-emacs-dir "bin")
-                        path-separator)
-                "_doomrun \"$@\"\n")))
-    (set-file-modes script-file #o600)
+    (with-file-modes #o600
+      (doom-log "Writing context file: %s" context-file)
+      (doom-file-write
+       context-file (let ((newcontext (copy-doom-cli-context context))
+                          (print-level nil)
+                          (print-length nil)
+                          (print-circle nil)
+                          (print-escape-newlines t))
+                      ;; REVIEW: Use `print-unreadable-function' when 28 support
+                      ;;   is dropped.
+                      (letf! (defmacro convert-buffer (fn)
+                               `(setf (,fn newcontext) (with-current-buffer (,fn context)
+                                                         (buffer-string))))
+                        (convert-buffer doom-cli-context-stdin)
+                        (convert-buffer doom-cli-context-stdout)
+                        (convert-buffer doom-cli-context-stderr))
+                      newcontext))
+      (doom-log "Writing post-script file: %s" script-file)
+      (doom-file-write
+       script-file `("#!/usr/bin/env sh\n"
+                     "trap _doomcleanup EXIT\n"
+                     "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
+                     "_doomrun() {\n  " ,command "\n}\n"
+                     ,(string-join persisted-env " \\\n")
+                     "__DOOMCONTEXT=" ,(shell-quote-argument context-file) " \\\n"
+                     ,(format "PATH=\"%s%s$PATH\" \\\n"
+                              (doom-path doom-emacs-dir "bin")
+                              path-separator)
+                     "_doomrun \"$@\"\n")))
+    (doom-log "_doomrun: %s %s" (string-join persisted-env " ") command)
+    (doom-log "_doomcleanup: %s" persistent-files)
     ;; Error code 254 is special: it indicates to the caller that the
     ;; post-script should be executed after this session ends. It's up to
     ;; `doom-cli-run's caller to enforce this (see bin/doom's shebang for a
