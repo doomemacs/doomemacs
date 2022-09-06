@@ -6,6 +6,22 @@
 
 
 ;;
+;;; doom-first-*-hook
+
+(defvar doom-first-input-hook nil
+  "Transient hooks run before the first user input.")
+(put 'doom-first-input-hook 'permanent-local t)
+
+(defvar doom-first-file-hook nil
+  "Transient hooks run before the first interactively opened file.")
+(put 'doom-first-file-hook 'permanent-local t)
+
+(defvar doom-first-buffer-hook nil
+  "Transient hooks run before the first interactively opened buffer.")
+(put 'doom-first-buffer-hook 'permanent-local t)
+
+
+;;
 ;;; Reasonable defaults for interactive sessions
 
 ;; GUIs are inconsistent across systems, will rarely match our active Emacs

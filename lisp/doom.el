@@ -288,18 +288,6 @@ users).")
 ;;
 ;;; Custom hooks
 
-(defvar doom-first-input-hook nil
-  "Transient hooks run before the first user input.")
-(put 'doom-first-input-hook 'permanent-local t)
-
-(defvar doom-first-file-hook nil
-  "Transient hooks run before the first interactively opened file.")
-(put 'doom-first-file-hook 'permanent-local t)
-
-(defvar doom-first-buffer-hook nil
-  "Transient hooks run before the first interactively opened buffer.")
-(put 'doom-first-buffer-hook 'permanent-local t)
-
 (defvar doom-after-reload-hook nil
   "A list of hooks to run after `doom/reload' has reloaded Doom.")
 
