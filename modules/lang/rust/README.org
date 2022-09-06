@@ -20,7 +20,7 @@ e.g. ~cargo~.
 ** Module flags
 - +lsp ::
   Enable LSP support for ~rustic-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
-  (supports rust-analyzer and rls).
+  (supports [[https://rust-analyzer.github.io/][rust-analyzer]] and rls).
 
 ** Packages
 - [[doom-package:][rustic]]
@@ -65,10 +65,10 @@ rustup update --no-self-update
 ** LSP support (rls or rust-analyzer)
 This module supports LSP integration. For it to work you'll need:
 
-1. Either [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] or [[https://github.com/rust-lang/rls][the Rust Language Server]] installed (e.g. through your
-   OS package manager).
-2. The [[doom-module:][:tools lsp]] module enabled.
-3. The [[doom-module:][+lsp]] flag on this module enabled.
+1. To install [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] through your OS package manager ([[https://github.com/rust-lang/rls][RLS]] is supported
+   too, but it is [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
+2. To enable the [[doom-module:][:tools lsp]] module.
+3. To enable the [[doom-module:][+lsp]] flag on this module.
 
 ** Format on save
 Enable [[doom-module:][:editor format +onsave]] to get formatting on save with =rustfmt=. No
@@ -93,15 +93,6 @@ additional configuration is necessary.
 #+begin_quote
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
-
-** Enable RLS by default
-If both =rls= and =rust-analyzer= are present on your system, =rust-analyzer= is
-used by default. Modify ~rustic-lsp-server~ to change the default:
-#+begin_src emacs-lisp
-;; in $DOOMDIR/config.el
-(after! rustic
-  (setq rustic-lsp-server 'rls))
-#+end_src
 
 ** Enabling eglot support for Rust
 Doom's [[doom-module:][:tools lsp]] module has an [[doom-module:][+eglot]] flag. Enable it and this module will use
