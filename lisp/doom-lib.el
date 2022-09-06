@@ -317,15 +317,15 @@ ARGLIST."
          (allow-other-keys arglist))
       ,@body)))
 
-(put 'fn! 'lookup-table
-     '((%2 . 2) (%3 . 3) (%4 . 4) (%5 . 5)
-       (%6 . 6) (%7 . 7) (%8 . 8) (%9 . 9)))
+(let ((i 1))
+  (dolist (sym '(%2 %3 %4 %5 %6 %7 %8 %9))
+    (put 'fn! sym (cl-incf i))))
 (defun doom--fn-crawl (data args)
   (cond ((symbolp data)
          (when-let
              (pos (cond ((eq data '%*) 0)
                         ((memq data '(% %1)) 1)
-                        ((cdr (assq data (get 'fn! 'lookup-table))))))
+                        ((get 'fn! data))))
            (when (and (= pos 1)
                       (aref args 1)
                       (not (eq data (aref args 1))))
