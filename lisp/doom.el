@@ -355,9 +355,6 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 
 ;; ...then load *the* one
 (require 'doom-lib)
-;; ...and in batch session, load our CLI framework
-(when noninteractive
-  (require 'doom-cli-lib))
 
 
 ;;

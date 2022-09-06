@@ -1030,22 +1030,23 @@ See `doom-cli-log-file-format' for details."
 
 (defun doom-cli--output-write-logs-h (context)
   "Write all log buffers to their appropriate files."
-  ;; Delete the last `doom-cli-log-retain' logs
-  (mapc #'delete-file
-        (let ((prefix (doom-cli-context-prefix context)))
-          (append (butlast (doom-glob (format doom-cli-log-file-format prefix "*" "log"))
-                           doom-cli-log-retain)
-                  (butlast (doom-glob (format doom-cli-log-file-format prefix "*" "error"))
-                           doom-cli-log-retain))))
-  ;; Then write the log file, if necessary
-  (let* ((buffer (doom-cli-context-stderr context))
-         (file (doom-cli--output-file "log" context)))
-    (when (> (buffer-size buffer) 0)
-      (make-directory (file-name-directory file) t)
-      (with-temp-file file
-        (insert-buffer-substring buffer)
-        (ansi-color-filter-region (point-min) (point-max)))
-      (set-file-modes file #o600))))
+  (when (/= doom-cli--exit-code 254)
+    ;; Delete the last `doom-cli-log-retain' logs
+    (mapc #'delete-file
+          (let ((prefix (doom-cli-context-prefix context)))
+            (append (butlast (doom-glob (format doom-cli-log-file-format prefix "*" "log"))
+                             doom-cli-log-retain)
+                    (butlast (doom-glob (format doom-cli-log-file-format prefix "*" "error"))
+                             doom-cli-log-retain))))
+    ;; Then write the log file, if necessary
+    (let* ((buffer (doom-cli-context-stderr context))
+           (file (doom-cli--output-file "log" context)))
+      (when (> (buffer-size buffer) 0)
+        (make-directory (file-name-directory file) t)
+        (with-temp-file file
+          (insert-buffer-substring buffer)
+          (ansi-color-filter-region (point-min) (point-max)))
+        (set-file-modes file #o600)))))
 
 (defun doom-cli--output-benchmark-h (context)
   "Write this session's benchmark to stdout or stderr, depending.
