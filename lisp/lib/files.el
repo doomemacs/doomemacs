@@ -72,12 +72,7 @@ If the glob ends in a slash, only returns matching directories."
       (file-expand-wildcards path full?))))
 
 ;;;###autoload
-(defun doom-dir (&rest segments)
-  "Constructs a path from SEGMENTS.
-See `doom-path'.
-Ignores `nil' elements in SEGMENTS."
-  (when-let (path (doom-path segments))
-    (directory-file-name path)))
+(define-obsolete-function-alias 'doom-dir 'doom-path "3.0.0")
 
 ;;;###autoload
 (cl-defun doom-files-in

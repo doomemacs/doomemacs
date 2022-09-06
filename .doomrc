@@ -41,8 +41,8 @@
              #'doom-glob (if (string-prefix-p ":" scope)
                              (format "%s" (substring scope 1))
                            (format "*/%s" scope)))
-            (list (doom-dir (dir!) "../modules/")
-                  (doom-dir doom-user-dir "modules/"))))
+            (list (doom-path (dir!) "../modules/")
+                  (doom-path doom-user-dir "modules/"))))
 
 (defun ci-check-docs-scope (scope _)
   "Allow any filename in docs/* as a scope for docs commits."
