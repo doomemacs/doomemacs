@@ -1,26 +1,38 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # This is a shebang interpreter for launching Emacs Lisp scripts with Doom's CLI
 # framework preloaded, plus any environment variables it needs. Use it like so:
 #
 #   #!/usr/bin/env doomscript
 #   (print! "Hello world!")
 #
-# For this to work (and to avoid absolute paths in your shebang line), I
-# recommend having this file in your $PATH:
+# For this to work (and to avoid an absolute path in your shebang line), this
+# file must be in your $PATH:
 #
 #   export PATH="$HOME/.emacs.d/bin:$PATH"
 #
-# This isn't used for bin/doom because of the $PATH/absolute path requirement
+# This isn't used for bin/doom because of this $PATH/absolute path requirement
 # (and using $BASH_SOURCE to locate it would reduce its POSIX compliance), but
-# this shouldn't be an issue for folks writing their own CLIs.
+# this should be less of an issue for folks writing their own doomscripts.
+
+if [ "$#" -eq 0 ]; then
+    >&2 echo "Error: missing required file argument"
+    exit 1
+fi
 
 case "$EMACS" in
-    *term*) EMACS=emacs ;;
+    *term*) EMACS=emacs ;;   # in {ansi-,v}term
     *) EMACS="${EMACS:-emacs}" ;;
 esac
 
+# Careful not to use -Q! It implies --no-site-lisp, which omits the site-lisp
+# directory from `load-path', which would prevent Doom from manually loading the
+# site files later. These are important on some systems or deployment methods
+# (like Snap or NixOS).
 emacs="$EMACS -q --no-site-file --no-x-resources --no-splash --batch"
 
+# $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values, and
+# mktemp isn't available on all systems, but you know what is? Emacs! So I rely
+# on it to provide TMPDIR. And can second as a quick existence check for Emacs.
 TMPDIR="${TMPDIR:-$($emacs --eval '(princ (temporary-file-directory))' 2>/dev/null)}"
 if [ -z "$TMPDIR" ]; then
     >&2 echo "Error: failed to run Emacs with command '$EMACS'"
@@ -29,23 +41,47 @@ if [ -z "$TMPDIR" ]; then
     exit 1
 fi
 
-export EMACSDIR="${EMACSDIR:-$(cd $(dirname "$BASH_SOURCE")/.. && pwd)}"
+# Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
+# either isn't bash, or it's a posix shell being directly sourced with sh, which
+# is unsupported.
+export EMACSDIR="${EMACSDIR:-$(CDPATH= cd -- $(dirname -- "${BASH_SOURCE:-0}")/.. && pwd)}"
+if [ ! -f "$EMACSDIR/early-init.el" ]; then
+    >&2 echo "Error: cannot load $EMACSDIR/early-init.el."
+    >&2 echo
+    >&2 echo "Either the file doesn't exist (indicating a broken or missing Doom install)"
+    >&2 echo "or that doomscript is being source directly (which is unsupported)."
+    >&2 echo
+    >&2 echo "Set \$EMACSDIR to the path of an existing Doom installation."
+    exit 1
+fi
+# Some state that Doom's CLI framework needs to know about the terminal. Read
+# the comments at the top of bin/doom for explanations.
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="$((__DOOMSTEP+1))"
-export __DOOMGEOM="${__DOOMGEOM:-`tput cols lines 2>/dev/null`}"
+export __DOOMGEOM="${__DOOMGEOM:-$(tput cols lines 2>/dev/null)}"
 export __DOOMGPIPE=${__DOOMGPIPE:-$__DOOMPIPE}
-export __DOOMPIPE=; [ -t 0 ] || __DOOMPIPE+=0; [ -t 1 ] || __DOOMPIPE+=1
+export __DOOMPIPE=
+[ -t 0 ] || __DOOMPIPE="${__DOOMPIPE}0"
+[ -t 1 ] || __DOOMPIPE="${__DOOMPIPE}1"
 
-tmpfile="$TMPDIR/doomscript.${__DOOMPID}"
-
-target="$1"
+# Now we're ready to execute the given script. $EMACSDIR/early-init.el is Doom's
+# universal bootstrapper (and will only load the bare minimum), so it must be
+# loaded first.
+script="$1"
 shift
-$emacs --load "$EMACSDIR/lisp/doom-cli" \
-       --load "$target" \
-       -- "$@" || exit=$?
-# Execute exit-script, if requested (to simulate execve)
+$emacs --load "$EMACSDIR/early-init" \
+       --load "$script" \
+       -- "$@"
+exit=$?
+
+# To simulate execve syscalls, Doom generates a temporary exit-script if a
+# Doomscript returns a 254 exit code.
 if [ "${exit:-0}" -eq 254 ]; then
-    sh "${tmpdir}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@" && true
+    # The user may have a noexec flag set on /tmp, so the exit-script should be
+    # passed to /bin/sh rather than executed directly.
+    sh "${tmpdir}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@"
     exit="$?"
 fi
 exit $exit
+
+# doomscript ends here... Unless?
