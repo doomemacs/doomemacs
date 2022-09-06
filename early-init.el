@@ -24,9 +24,12 @@
 ;; stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; Prioritize old byte-compiled source files over newer sources. It saves us a
-;; little IO time to skip all the mtime checks on each lookup.
-(setq load-prefer-newer nil)
+(eval-and-compile
+  ;; PERF: Don't use precious startup time checking mtime on elisp bytecode.
+  ;;   Ensuring correctness is 'doom sync's job, not the interactive session's.
+  ;;   Still, stale byte-code will cause *heavy* losses in startup efficiency.
+  (setq load-prefer-newer noninteractive))
+
 
 (unless (or (daemonp)
             init-file-debug)
@@ -85,7 +88,7 @@
     (when initdir
       ;; Discard the switch to prevent "invalid option" errors later.
       (add-to-list 'command-switch-alist (cons "--init-directory" (lambda (_) (pop argv))))
-      (setq user-emacs-directory initdir)))
+      (setq user-emacs-directory (expand-file-name initdir))))
 
   (let ((profile (or (cadr (member "--profile" command-line-args))
                      (getenv-internal "DOOMPROFILE"))))
@@ -136,7 +139,9 @@
   ;; Load the heart of Doom Emacs
   (if (require 'doom (expand-file-name "lisp/doom" user-emacs-directory) t)
       ;; ...and prepare for an interactive session.
-      (setq init-file (expand-file-name "doom-start" doom-core-dir))
+      (if noninteractive
+          (require 'doom-cli)
+        (setq init-file (expand-file-name "doom-start" doom-core-dir)))
     ;; ...but if that fails, then this is likely not a Doom config.
     (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
     (load early-init-file t (not init-file-debug)))

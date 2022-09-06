@@ -74,19 +74,20 @@
 ;; - The user may have a noexec flag set on /tmp, so pass the exit script to
 ;;   /bin/sh rather than executing them directly.
 
-;; Ensure Doom runs out of this file's parent directory (or $EMACSDIR), where
-;; Doom is presumably installed.
-(setq user-emacs-directory
-      (if (getenv-internal "EMACSDIR")
-          (file-name-as-directory
-           (file-truename (getenv-internal "EMACSDIR")))
-        (expand-file-name
-         "../" (file-name-directory (file-truename load-file-name)))))
+;; Doom's core sets up everything we need; including `doom-*-dir' variables,
+;; universal defaults, and autoloads for doom-*-initialize functions.
+(condition-case e
+    (let ((load-prefer-newer t))
+      (load (expand-file-name
+             "../early-init" (file-name-directory (file-truename load-file-name)))
+            nil 'nomessage))
+  ;; Prevent ugly backtraces for trivial errors
+  (user-error (message "Error: %s" (cadr e))
+              (kill-emacs 2)))
 
-
-;;
-;;; Sanity checks
-
+;; UX: Abort if the user is using 'doom' as root, unless ~/.emacs.d is owned by
+;; root, in which case we assume the user genuinely wants root to be their
+;; primary user account for Emacs.
 (when (equal (user-real-uid) 0)
   ;; If ~/.emacs.d is owned by root, assume the user genuinely wants root to be
   ;; their primary user, otherwise complain.
@@ -102,16 +103,6 @@
       "  chown root:root -R " (abbreviate-file-name user-emacs-directory) "\n\n"
       "Aborting..."))
     (kill-emacs 2)))
-
-
-;;
-;;; Load Doom's CLI framework
-
-(require 'doom-cli (expand-file-name "lisp/doom-cli" user-emacs-directory))
-
-;; Load $DOOMDIR/init.el, to read the user's `doom!' block, and so users can
-;; customize things early, if they like.
-(load! doom-module-init-file doom-user-dir t)
 
 
 ;;
@@ -237,7 +228,12 @@ SEE ALSO:
 
 
 ;;
-;;; Commands
+;;; Load user config + commands
+
+;; Load $DOOMDIR/init.el, to read the user's `doom!' block and give users an
+;; opportunity to customize the CLI environment, if they like. Otherwise, they
+;; can do so in .doomrc or .doomproject.
+(load! doom-module-init-file doom-user-dir t)
 
 (let ((dir (doom-path doom-core-dir "cli")))
   ;; It'd be simple to just load these files directly, but because there could
