@@ -24,7 +24,6 @@ e.g. ~cargo~.
 
 ** Packages
 - [[doom-package:][rustic]]
-- [[doom-package:][racer]] unless [[doom-module:][+lsp]]
 
 ** Hacks
 - rustic has been modified /not/ to automatically install lsp-mode or eglot if
@@ -52,10 +51,8 @@ rustup update --no-self-update
 ** Other Requirements
 - If [[doom-module:][:editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
   rustfmt-preview~.
-- Users without [[doom-module:][+lsp]] enabled will need [[doom-package:][racer]]: ~$ cargo +nightly install racer~
-  (with requires rust nightly edition).
-- Users with [[doom-module:][+lsp]] enabled will need:
-  - =rust-analyzer= or =rls=
+- Users with [[doom-module:][+lsp]] enabled will need [[https://rust-analyzer.github.io/][rust-analyzer]] (rls is supported, but
+  [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
 - Using the following commands requires:
   - ~cargo-process-check~: ~$ cargo install cargo-check~
   - ~cargo-process-clippy~: ~$ rustup component add clippy-preview~
