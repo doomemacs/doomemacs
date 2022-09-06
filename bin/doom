@@ -172,6 +172,7 @@ SEE ALSO:
      (emacsdir ("--emacsdir" dir) "Use Doom install living in `DIR' (e.g. ~/.emacs.d)")
      (pager    ("--pager" cmd)    "Pager command to use for large output")
      (profile  ("--profile" name) "Use profile named NAME")
+     (bench?   ("--benchmark")    "Always display the benchmark")
      &flags
      (color?   ("--color") "Whether or not to show ANSI color codes")
      &multiple
@@ -191,6 +192,8 @@ SEE ALSO:
     Warning: files loaded this way load too late to define new commands. To
     define commands, do so from `$DOOMDIR'/cli.el, `$DOOMDIR'/init.el, or a
     .doomrc file in the current project tree."
+  (when bench?
+    (setq doom-cli-benchmark-threshold 'always))
   (when color?
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
   (when pager

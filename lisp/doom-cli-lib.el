@@ -179,7 +179,8 @@ Must have two arguments, one for session id and the other for log type.")
   "How much execution time (in seconds) before benchmark is shown.
 
 If set to nil, only display benchmark if a CLI explicitly requested with a
-non-nil :benchmark property.")
+non-nil :benchmark property.
+If set to `always', show the benchmark no matter what.")
 
 (defvar doom-cli--context nil)
 (defvar doom-cli--exit-code 255)
@@ -1065,6 +1066,7 @@ shown."
               (standard-output (doom-rpartial #'doom-cli--output context)))
     (when (and (/= doom-cli--exit-code 254)
                (or (eq (doom-cli-prop cli :benchmark) t)
+                   (eq doom-cli-benchmark-threshold 'always)
                    (and (eq (doom-cli-prop cli :benchmark :null) :null)
                         (not (doom-cli-context-pipe-p context 'out t))
                         (> duration (or doom-cli-benchmark-threshold
