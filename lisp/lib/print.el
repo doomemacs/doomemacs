@@ -115,13 +115,13 @@ Any of these classes can be called like functions from within `format!' and
 
 Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 
-(defvar doom-print-level (if init-file-debug 'debug 'info)
+(defvar doom-print-level 'info
   "The default level of messages to print.")
 
 (defvar doom-print-logging-level 'debug
   "The default logging level used by `doom-log'/`doom-print'.")
 
-(defvar doom-print-message-level (if noninteractive 'debug 'info)
+(defvar doom-print-message-level 'info
   "The default logging level used by `message'.")
 
 (defvar doom-print--levels

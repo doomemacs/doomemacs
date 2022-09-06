@@ -21,6 +21,9 @@
           doom-print-level 'debug)
     (message "Debug mode enabled"))
 
+  ;; FIX: All output via `message' should be seen as debug output.
+  (setq doom-print-message-level 'debug)
+
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
   (when noninteractive
