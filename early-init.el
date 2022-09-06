@@ -30,13 +30,23 @@
 
 (unless (or (daemonp)
             init-file-debug)
+  ;; PERF: `file-name-handler-alist' is consulted on each `require', `load' and
+  ;;   various path/io functions (like `expand-file-name'). You get a minor, but
+  ;;   noteable, boost by unsetting this.
   (let ((old-file-name-handler-alist file-name-handler-alist))
-    ;; `file-name-handler-alist' is consulted on each `require', `load' and
-    ;; various path/io functions. You get a minor speed up by unsetting this.
-    ;; Some warning, however: this could cause problems on builds of Emacs where
-    ;; its site lisp files aren't byte-compiled and we're forced to load the
-    ;; *.el.gz files (e.g. on Alpine).
-    (setq-default file-name-handler-alist nil)
+    (setq file-name-handler-alist
+          ;; HACK: If the bundled elisp for this Emacs install isn't
+          ;;   byte-compiled (but is compressed), then leave the gzip file
+          ;;   handler there so Emacs won't forget how to read read them.
+          ;;
+          ;;   calc-loaddefs.el is our heuristic for this because it is built-in
+          ;;   in all supported versions of Emacs, and calc.el explicitly load
+          ;;   it uncompiled. This ensure the only other, psosible fallback
+          ;;   would be calc-loaddefs.el.gz.
+          (if (eval-when-compile
+                (locate-file-internal "calc-loaddefs.el" load-path nil))
+              nil
+            (list (rassq 'jka-compr-handler file-name-handler-alist))))
     ;; ...but restore `file-name-handler-alist' later, because it is needed for
     ;; handling encrypted or compressed files, among other things.
     (defun doom-reset-file-handler-alist-h ()

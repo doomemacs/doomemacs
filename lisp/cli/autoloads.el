@@ -44,18 +44,6 @@ hoist buggy forms into autoloads.")
              (signal 'doom-error
                      (list "The installed version of Doom has changed since last 'doom sync' ran"
                            "Run 'doom sync' to bring Doom up to speed"))))
-         ;; HACK If the bundled elisp for this Emacs install isn't
-         ;;   byte-compiled, disengage the `file-name-handler-alist'
-         ;;   optimization early to prevent encoding errors when Emacs tries to
-         ;;   read gzipped elisp.
-         ;;
-         ;;   calc-loaddefs.el is a good heuristic for this because calc.el
-         ;;   explicitly tries to load the un-compiled calc-loaddefs.el. If it
-         ;;   doesn't exist, it'll go for calc-loaddefs.el.gz instead.
-         (unless (locate-file "calc-loaddefs.el" (get 'load-path 'initial-value) nil)
-           `((when (fboundp 'doom-reset-file-handler-alist-h)
-               (doom-reset-file-handler-alist-h)
-               (remove-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))))
          (cl-loop for var in doom-autoloads-cached-vars
                   when (boundp var)
                   collect `(set ',var ',(symbol-value var)))
