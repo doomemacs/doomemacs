@@ -163,7 +163,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                      (float-time (time-subtract (current-time) before-init-time))))))
 
 ;; Add support for additional file extensions.
-(dolist (entry '(("/\\.doomrc\\'" . emacs-lisp-mode)
+(dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
                  ("/LICENSE\\'" . text-mode)
                  ("\\.log\\'" . text-mode)
                  ("rc\\'" . conf-mode)
