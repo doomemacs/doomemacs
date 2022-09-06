@@ -86,15 +86,13 @@
               (kill-emacs 2)))
 
 ;; UX: Abort if the user is using 'doom' as root, unless ~/.emacs.d is owned by
-;; root, in which case we assume the user genuinely wants root to be their
-;; primary user account for Emacs.
+;;   root, in which case we assume the user genuinely wants root to be their
+;;   primary user account for Emacs.
 (when (equal (user-real-uid) 0)
-  ;; If ~/.emacs.d is owned by root, assume the user genuinely wants root to be
-  ;; their primary user, otherwise complain.
   (unless (= 0 (file-attribute-user-id (file-attributes user-emacs-directory)))
     (message
      (concat
-      "Error: this script is being run as root, which is likely not what you want.\n"
+      "Error: this script was executed as root, which is likely not what you want.\n"
       "It will cause file permissions errors later, when you run Doom as another\n"
       "user.\n\n"
       "If this really *is* what you want, then change the owner of your Emacs\n"
