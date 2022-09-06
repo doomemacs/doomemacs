@@ -6,8 +6,6 @@
 ;; expects a noninteractive session, so take care when testing code!
 ;;
 ;;; Code:
-(eval-when-compile! (require 'doom)) ; be silent, o'byte-compiler
-
 (when noninteractive
   ;; PERF: Deferring the GC in non-interactive sessions isn't as important, but
   ;;   still yields a notable benefit. Still, avoid setting it to high here, as
