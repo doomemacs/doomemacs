@@ -777,68 +777,66 @@ testing advice (when combined with `rotate-text').
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
 
+(defmacro defbackport! (type symbol &rest body)
+  "Backport a function/macro/alias from later versions of Emacs."
+  (declare (indent defun) (doc-string 4))
+  (unless (fboundp (doom-unquote symbol))
+    `(,type ,symbol ,@body)))
+
 
 ;;
 ;;; Backports
 
 ;; `format-spec' wasn't autoloaded until 28.1
-(unless (fboundp 'format-spec)
-  (autoload #'format-spec "format-spec"))
+(defbackport! autoload 'format-spec "format-spec")
 
 ;; Introduced in Emacs 28.1
-(unless (fboundp 'ensure-list)
-  (defun ensure-list (object)
-    "Return OBJECT as a list.
+(defbackport! defun ensure-list (object)
+  "Return OBJECT as a list.
 If OBJECT is already a list, return OBJECT itself.  If it's
 not a list, return a one-element list containing OBJECT."
-    (declare (pure t) (side-effect-free t))
-    (if (listp object)
-        object
-      (list object))))
+  (declare (pure t) (side-effect-free t))
+  (if (listp object) object (list object)))
 
 ;; Introduced in Emacs 28.1
-(unless (fboundp 'always)
-  (defun always (&rest _arguments)
-    "Do nothing and return t.
+(defbackport! defun always (&rest _args)
+  "Do nothing and return t.
 This function accepts any number of ARGUMENTS, but ignores them.
 Also see `ignore'."
-    t))
+  t)
 
-;; Introduced in 28.1
-(unless (fboundp 'file-name-concat)
-  (defun file-name-concat (directory &rest components)
-    "Append COMPONENTS to DIRECTORY and return the resulting string.
+;; Introduced in Emacs 28.1
+(defbackport! defun file-name-concat (directory &rest components)
+  "Append COMPONENTS to DIRECTORY and return the resulting string.
 
 Elements in COMPONENTS must be a string or nil.
 DIRECTORY or the non-final elements in COMPONENTS may or may not end
 with a slash -- if they don't end with a slash, a slash will be
 inserted before contatenating."
-    (mapconcat
-     #'identity
-     (save-match-data
-       (cl-loop for str in (cons directory components)
-                when (and str (/= 0 (length str))
-                          (string-match "\\(.+\\)/?" str))
-                collect (match-string 1 str)))
-     "/")))
+  (mapconcat
+   #'identity
+   (save-match-data
+     (cl-loop for str in (cons directory components)
+              when (and str (/= 0 (length str))
+                        (string-match "\\(.+\\)/?" str))
+              collect (match-string 1 str)))
+   "/"))
 
-;; Introduced in 28.1
-(unless (fboundp 'with-environment-variables)
-  (defmacro with-environment-variables (variables &rest body)
-    "Set VARIABLES in the environment and execute BODY.
+;; Introduced in Emacs 28.1
+(defbackport! defmacro with-environment-variables (variables &rest body)
+  "Set VARIABLES in the environment and execute BODY.
 VARIABLES is a list of variable settings of the form (VAR VALUE),
 where VAR is the name of the variable (a string) and VALUE
 is its value (also a string).
 
 The previous values will be be restored upon exit."
-    (declare (indent 1) (debug (sexp body)))
-    (unless (consp variables)
-      (error "Invalid VARIABLES: %s" variables))
-    `(let ((process-environment (copy-sequence process-environment)))
-       ,@(mapcar (lambda (elem)
-                   `(setenv ,(car elem) ,(cadr elem)))
-                 variables)
-       ,@body)))
+  (declare (indent 1) (debug (sexp body)))
+  (unless (consp variables)
+    (error "Invalid VARIABLES: %s" variables))
+  `(let ((process-environment (copy-sequence process-environment)))
+     ,@(cl-loop for var in variables
+                collect `(setenv ,(car var) ,(cadr var)))
+     ,@body))
 
 (provide 'doom-lib)
 ;;; doom-lib.el ends here
