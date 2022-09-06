@@ -137,10 +137,12 @@ always access it."
     ;; debugger, which would run this handler again on subsequent calls. Taken
     ;; from `ert--run-test-debugger'.
     (cl-incf num-nonmacro-input-events)
-    ;; TODO Write backtraces to file
-    ;; TODO Write backtrace to a buffer in case recursive error interupts the
-    ;;   debugger (happens more often than it should).
-    (apply #'debug args)))
+    (if (and noninteractive (fboundp 'doom-cli-debugger))
+        (apply #'doom-cli-debugger args)
+      ;; TODO Write backtraces to file
+      ;; TODO Write backtrace to a buffer in case recursive error interupts the
+      ;;   debugger (happens more often than it should).
+      (apply #'debug args))))
 
 
 ;;
