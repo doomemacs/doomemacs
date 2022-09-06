@@ -50,8 +50,37 @@
 ;;; Code:
 
 (when (< emacs-major-version 27)
-  (error "Detected Emacs %s. Minimum supported version is 27.1."
-         emacs-version))
+  (user-error
+   (concat
+    "Detected Emacs " emacs-version ", but Doom requires 27.1 or newer.\n\n"
+    "The version of Emacs in use is located at:\n\n  " (car command-line-args) "\n\n"
+    "A guide for installing a newer version of Emacs can be found at:\n\n  "
+    (format "https://docs.doomemacs.org/-/install/%s"
+            (cond ((eq system-type 'darwin) "on-macos")
+                  ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")
+                  ("on-linux")))
+    "\n\n"
+    (if (not noninteractive)
+        (concat "If you believe this error is a mistake, run 'doom doctor' on the command line\n"
+                "to diagnose common issues with your config and system.")
+      (concat "Alternatively, either update your $PATH environment variable to include the\n"
+              "path of the desired Emacs executable OR alter the $EMACS environment variable\n"
+              "to specify the exact path or command needed to invoke Emacs. For example:\n\n"
+              (let ((command (ignore-errors (file-name-nondirectory (cadr (member "--load" command-line-args))))))
+                (concat "  $ EMACS=/path/to/valid/emacs " command " ...\n"
+                        "  $ EMACS=\"/Applications/Emacs.app/Contents/MacOS/Emacs\" " command " ...\n"
+                        "  $ EMACS=\"snap run emacs\" " command " ...\n"))
+              "\nAborting...")))))
+
+;; Doom needs to be synced/rebuilt if either Doom or Emacs has been
+;; up/downgraded. This is because byte-code isn't backwards compatible, and many
+;; packages (including Doom), make in absolute paths into their caches that need
+;; to be refreshed.
+(let ((old-version (eval-when-compile emacs-version)))
+  (unless (equal emacs-version old-version)
+    (user-error (concat "Doom was compiled with Emacs %s, but was loaded with %s. Run 'doom sync' to"
+                        "recompile it.")
+                emacs-version old-version)))
 
 ;; Remember these variables' initial values, so we can safely reset them at a
 ;; later time, or consult them without fear of contamination.
