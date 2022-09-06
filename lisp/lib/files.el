@@ -38,19 +38,19 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
 
 ;;;###autoload
 (defun doom-path (&rest segments)
-  "Constructs a file path from SEGMENTS.
-Ignores `nil' elements in SEGMENTS."
-  (let ((segments (remq nil segments))
-        file-name-handler-alist
-        dir)
-    (while segments
-      (setq segment (pop segments)
-            dir (expand-file-name
-                 (if (listp segment)
-                     (apply #'doom-path dir segment)
-                   segment)
-                 dir)))
-    dir))
+  "Return an path expanded after concatenating SEGMENTS with path separators.
+
+Ignores `nil' elements in SEGMENTS, and is intended as a fast compromise between
+`expand-file-name' (slow, but accurate), `file-name-concat' (fast, but
+inaccurate)."
+  ;; PERF: An empty `file-name-handler-alist' = faster `expand-file-name'.
+  (let (file-name-handler-alist)
+    (expand-file-name
+     ;; PERF: avoid the overhead of `apply' in the trivial case. This function
+     ;;   is used a lot, so every bit counts.
+     (if (cdr segments)
+         (apply #'file-name-concat segments)
+       (car segments)))))
 
 ;;;###autoload
 (defun doom-glob (&rest segments)
