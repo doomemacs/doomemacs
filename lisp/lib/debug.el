@@ -5,18 +5,23 @@
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(async-debug
+  '(;; Doom variables
+    (doom-print-level . debug)
+
+    ;; Emacs variables
+    async-debug
     debug-on-error
     (debugger . doom-debugger)
-    (doom-print-level . debug)
     garbage-collection-messages
     gcmh-verbose
     init-file-debug
     jka-compr-verbose
     (message-log-max . 16384)
-    (warning-suppress-types . nil)
+    (native-comp-async-report-warnings-errors . silent)
+    (native-comp-warning-on-missing-source . t)
     url-debug
-    use-package-verbose)
+    use-package-verbose
+    (warning-suppress-types . nil))
   "A list of variable to toggle on `doom-debug-mode'.
 
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
