@@ -13,16 +13,16 @@
 
 (when (modulep! +pretty)
   ;; UI: make the fringe small enough that the diff bars aren't too domineering,
-  ;; while leaving enough room for other indicators.
+  ;;   while leaving enough room for other indicators.
   (if (fboundp 'fringe-mode) (fringe-mode '8))
   ;; UI: the gutter looks less cramped with some space between it and  buffer.
   (setq-default fringes-outside-margins t)
 
   ;; STYLE: Redefine fringe bitmaps to take up only half the horizontal space in
-  ;; the fringe. This way we avoid overbearingly large diff bars without having
-  ;; to shrink the fringe and sacrifice precious space for other fringe
-  ;; indicators (like flycheck or flyspell).
-  ;; TODO Extract these into a package with faces that themes can target.
+  ;;   the fringe. This way we avoid overbearingly large diff bars without
+  ;;   having to shrink the fringe and sacrifice precious space for other fringe
+  ;;   indicators (like flycheck or flyspell).
+  ;; REVIEW: Extract these into a package with faces that themes can target.
   (if (not (modulep! +diff-hl))
       (after! git-gutter-fringe
         (define-fringe-bitmap 'git-gutter-fr:added [224]
@@ -52,9 +52,9 @@
                 diff-hl-change)))))
 
   ;; FIX: To minimize overlap between flycheck indicators and git-gutter/diff-hl
-  ;; indicators in the left fringe.
+  ;;   indicators in the left fringe.
   (after! flycheck
-    ;; let diff have left fringe, flycheck can have right fringe
+    ;; Let diff-hl have left fringe, flycheck can have right fringe
     (setq flycheck-indication-mode 'right-fringe)
     ;; A non-descript, left-pointing arrow
     (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
@@ -78,12 +78,12 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
          ((and (file-remote-p (or file-name default-directory))
                (not +vc-gutter-in-remote-files)))
          ;; UX: If not a valid file, wait until it is written/saved to activate
-         ;; git-gutter.
+         ;;   git-gutter.
          ((not (and file-name (vc-backend file-name)))
           (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local))
          ;; UX: Allow git-gutter or git-gutter-fringe to activate based on the
-         ;; type of frame we're in. This allows git-gutter to work for silly
-         ;; geese who open both tty and gui frames from the daemon.
+         ;;   type of frame we're in. This allows git-gutter to work for silly
+         ;;   geese who open both tty and gui frames from the daemon.
          ((if (and (display-graphic-p)
                    (require 'git-gutter-fringe nil t))
               (setq-local git-gutter:init-function      #'git-gutter-fr:init
@@ -99,16 +99,16 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
             (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
   ;; UX: Disable in Org mode, as per syl20bnr/spacemacs#10555 and
-  ;; syohex/emacs-git-gutter#24. Apparently, the mode-enabling function for
-  ;; global minor modes gets called for new buffers while they are still in
-  ;; `fundamental-mode', before a major mode has been assigned. I don't know why
-  ;; this is the case, but adding `fundamental-mode' here fixes the issue.
+  ;;   syohex/emacs-git-gutter#24. Apparently, the mode-enabling function for
+  ;;   global minor modes gets called for new buffers while they are still in
+  ;;   `fundamental-mode', before a major mode has been assigned. I don't know
+  ;;   why this is the case, but adding `fundamental-mode' here fixes the issue.
   (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
   :config
   (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
 
   ;; PERF: Only enable the backends that are available, so it doesn't have to
-  ;; check when opening each buffer.
+  ;;   check when opening each buffer.
   (setq git-gutter:handled-backends
         (cons 'git (cl-remove-if-not #'executable-find (list 'hg 'svn 'bzr)
                                      :key #'symbol-name)))
@@ -130,9 +130,8 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
   (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
 
+  ;; FIX: stop git-gutter:{next,previous}-hunk from jumping to random hunks.
   (defadvice! +vc-gutter--fix-linearity-of-hunks-a (diffinfos is-reverse)
-    "FIX: `git-gutter:next-hunk' and `git-gutter:previous-hunk' sometimes
-  jumping to random hunks."
     :override #'git-gutter:search-near-diff-index
     (cl-position-if (let ((lineno (line-number-at-pos))
                           (fn (if is-reverse #'> #'<)))
@@ -191,7 +190,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
   ;; FIX: The revert popup consumes 50% of the frame, whether or not you're
-  ;; reverting 2 lines or 20. This fix resizes the popup to match its contents.
+  ;;   reverting 2 lines or 20. This resizes the popup to match its contents.
   (defadvice! +vc-gutter--shrink-popup-a (fn &rest args)
     :around #'diff-hl-revert-hunk-1
     (letf! ((refine-mode diff-auto-refine-mode)
@@ -211,7 +210,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
           (add-hook 'evil-insert-state-exit-hook #'diff-hl-flydiff-update)))))
 
   ;; FIX: Reverting a hunk causes the cursor to be moved to an unexpected place,
-  ;; often far from the target hunk.
+  ;;   often far from the target hunk.
   (defadvice! +vc-gutter--save-excursion-a (fn &rest args)
     "Suppresses unexpected cursor movement by `diff-hl-revert-hunk'."
     :around #'diff-hl-revert-hunk
