@@ -193,6 +193,10 @@ uses a straight or package.el command directly).")
               (melpa              :type git :host github
                                   :repo "melpa/melpa"
                                   :build nil)
+              (nongnu-elpa        :type git
+                                  :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git"
+                                  :local-repo "nongnu-elpa"
+                                  :build nil)
               (gnu-elpa-mirror    :type git :host github
                                   :repo "emacs-straight/gnu-elpa-mirror"
                                   :build nil)
