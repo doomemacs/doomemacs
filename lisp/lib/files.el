@@ -328,6 +328,32 @@ ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
       (write-region nil nil buffer-file-name append :silent))
     buffer-file-name))
 
+;;;###autoload
+(defmacro with-file-contents! (file &rest body)
+  "Create a temporary buffer with FILE's contents and execute BODY in it.
+
+The point is at the beginning of the buffer afterwards.
+
+A convenience macro to express the common `with-temp-buffer' +
+`insert-file-contents' idiom more succinctly, enforce `utf-8', and perform some
+optimizations for `binary' IO."
+  (declare (indent 1))
+  `(doom--with-prepared-file-buffer ,file (or coding-system-for-read 'utf-8) nil
+     (doom-file-read buffer-file-name :by 'insert :coding coding-system-for-read)
+     ,@body))
+
+;;;###autoload
+(defmacro with-file! (file &rest body)
+  "Evaluate BODY in a temp buffer, then write its contents to FILE.
+
+Unlike `with-temp-file', this uses the `utf-8' encoding by default and performs
+some optimizations for `binary' IO."
+  (declare (indent 1))
+  `(doom--with-prepared-file-buffer ,file (or coding-system-for-read 'utf-8) nil
+     (prog1 (progn ,@body)
+       (doom-file-write buffer-file-name (current-buffer)
+                        :coding (or coding-system-for-write 'utf-8)))))
+
 
 ;;
 ;;; Helpers
