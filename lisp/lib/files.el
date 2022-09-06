@@ -203,6 +203,133 @@ single file or nested compound statement of `and' and `or' statements."
 
 
 ;;
+;;; File read/write
+
+(defmacro doom--with-prepared-file-buffer (file coding mode &rest body)
+  "Create a temp buffer and prepare it for file IO in BODY."
+  (declare (indent 3))
+  (let ((nmask (make-symbol "new-mask"))
+        (omask (make-symbol "old-mask")))
+    `(let* ((,nmask ,mode)
+            (,omask (if ,nmask (default-file-modes))))
+       (unwind-protect
+           (with-temp-buffer
+             (if ,nmask (set-default-file-modes ,nmask))
+             (let* ((buffer-file-name (doom-path ,file))
+                    (coding-system-for-read  (or ,coding 'binary))
+                    (coding-system-for-write (or coding-system-for-write coding-system-for-read 'binary)))
+               (unless (eq coding-system-for-read 'binary)
+                 (set-buffer-multibyte nil)
+                 (setq-local buffer-file-coding-system 'binary))
+               ,@body))
+         (if ,nmask (set-default-file-modes ,omask))))))
+
+;;;###autoload
+(cl-defun doom-file-read
+    (file &key
+          (by 'buffer-string)
+          (coding (or coding-system-for-read 'utf-8))
+          noerror
+          beg end)
+  "Read FILE and return its contents.
+
+Set BY to change how its contents are consumed. It accepts any function, to be
+called with no arguments and expected to return the contents as any arbitrary
+data. By default, BY is set to `buffer-string'. Otherwise, BY recognizes these
+special values:
+
+'insert      -- insert FILE's contents into the current buffer before point.
+'read        -- read the first form in FILE and return it as a single S-exp.
+'read*       -- read all forms in FILE and return it as a list of S-exps.
+'(read . N)  -- read the first N (an integer) S-exps in FILE.
+
+CODING dictates the encoding of the buffer. This defaults to `utf-8'.
+
+If NOERROR is non-nil, don't throw an error if FILE doesn't exist. This will
+still throw an error if FILE is unreadable, however.
+
+If BEG and/or END are integers, only that region will be read from FILE."
+  (when (or (not noerror)
+            (file-exists-p file))
+    (let ((old-buffer (current-buffer)))
+      (doom--with-prepared-file-buffer file coding nil
+        (if (not (eq coding-system-for-read 'binary))
+            (insert-file-contents buffer-file-name nil beg end)
+          (insert-file-contents-literally buffer-file-name nil beg end))
+        (pcase by
+          ('insert
+           (insert-into-buffer old-buffer)
+           t)
+          ('buffer-string
+           (buffer-substring-no-properties (point-min) (point-max)))
+          ('read
+           (condition-case _ (read (current-buffer)) (end-of-file)))
+          ('(read . ,i)
+           (let (forms)
+             (condition-case _
+                 (dotimes (_ i) (push (read (current-buffer)) forms))
+               (end-of-file))
+             (nreverse forms)))
+          ('read*
+           (let (forms)
+             (condition-case _
+                 (while t (push (read (current-buffer)) forms))
+               (end-of-file))
+             (nreverse forms)))
+          (fn (funcall fn)))))))
+
+;;;###autoload
+(cl-defun doom-file-write
+    (file contents
+          &key
+          append
+          (coding 'utf-8)  ; default: `utf-8'
+          mode             ; default: `default-file-modes' (#o755)
+          (mkdir    'parents)
+          (insertfn #'insert)
+          (printfn  #'prin1))
+  "Write CONTENTS (a string or list of forms) to FILE (a string path).
+
+If CONTENTS is list of forms. Any literal strings in the list are inserted
+verbatim, as text followed by a newline, with `insert'. Sexps are inserted with
+`prin1'. BY is the function to use to emit
+
+MODE dictates the permissions of the file. If FILE already exists, its
+permissions will be changed.
+
+CODING dictates the encoding to read/write with (see `coding-system-for-write').
+If set to nil, `binary' is used.
+
+APPEND dictates where CONTENTS will be written. If neither is set,
+the file will be overwritten. If both are, the contents will be written to both
+ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
+  (doom--with-prepared-file-buffer file coding mode
+    (let ((contents (ensure-list contents))
+          datum)
+      (while (setq datum (pop contents))
+        (cond ((stringp datum)
+               (funcall
+                insertfn (if (or (string-suffix-p "\n" datum)
+                                 (stringp (cadr contents)))
+                             datum
+                           (concat datum "\n"))))
+              ((bufferp datum)
+               (insert-buffer-substring datum))
+              ((let ((standard-output (current-buffer))
+                     (print-quoted t)
+                     (print-level nil)
+                     (print-length nil))
+                 (funcall printfn datum))))))
+    (let (write-region-annotate-functions
+          write-region-post-annotation-function)
+      (when mkdir
+        (make-directory (file-name-directory buffer-file-name)
+                        (eq mkdir 'parents)))
+      (write-region nil nil buffer-file-name append :silent))
+    buffer-file-name))
+
+
+;;
 ;;; Helpers
 
 (defun doom--update-files (&rest files)
