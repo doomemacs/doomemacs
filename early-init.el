@@ -4,18 +4,20 @@
 ;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el;
 ;; before Emacs initializes package.el and its UI; and before site files are
 ;; loaded. This is the best time to tweak Emacs (though any UI work will have to
-;; be deferred).
+;; be deferred), and will always be where Doom's dirtiest (and config-agnostic)
+;; startup optimizations will live.
 ;;
-;; This file is responsible for bootstrapping an interactive session, and is
-;; where all our dirtiest (and config-agnostic) startup hacks should live. It's
-;; also home to Doom's bootloader, which lets you choose what Emacs config to
-;; load with one of two switches:
-;; - '--init-directory DIR' (backported from Emacs 29)
-;; - Or Doom's profile system with '--profile NAME' (you declare configs in
-;;   $EMACSDIR/profiles.el or implicitly as directories in $EMACSDIR/profiles/).
+;; Doom uses this file as its universal bootstrapper, for both interactive and
+;; non-interactive sessions. It's also the heart of its bootloader, which lets
+;; you switch between Emacs configs on demand using `--init-directory DIR'
+;; (which it has backported from Emacs 29) or `--profile NAME` (for more about
+;; this, read the Profiles section in docs/developers.org or
+;; `https://docs.doomemacs.org/developers').
 ;;
-;; You should *never* load this file in non-interactive sessions (e.g. batch
-;; scripts). Load `doom-start' or use 'doom run' instead!
+;; If you're writing a Doom-based batch script, or using Doom's CLI framework,
+;; load this file to initialize Doom and its CLI framework. Then you may
+;; optionally load `doom-start' to initialize your interactive config on top of
+;; it, if you need it.
 ;;
 ;;; Code:
 
