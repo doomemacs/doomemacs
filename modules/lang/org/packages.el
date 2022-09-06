@@ -42,6 +42,24 @@
 (package! toc-org :pin "bf2e4b358efbd860ecafe6e74776de0885d9d100")
 (package! org-cliplink :pin "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
 
+;; TODO Adjust when this is added to GNU ELPA
+(when (modulep! +contacts)
+  (package! org-contacts
+    :pin "919511eb86975353eab78842f6b68e65f55fd44d"
+    :recipe (:host nil
+             :type git
+             :repo "https://repo.or.cz/org-contacts.git")))
+
+(when (and IS-MAC
+           (modulep! :os macos))
+  (package! org-mac-link :pin "0b18c1d070b9601cc65c40e902169e367e4348c9"))
+
+(when (modulep! +passwords)
+  (package! org-passwords
+    :pin "61584aa701defcc0c435d3e7552916235cb655a6"
+    :recipe (:host github
+             :repo "alfaromurillo/org-passwords.el")))
+
 (when (modulep! :editor evil +everywhere)
   (package! evil-org
     :recipe (:host github :repo "hlissner/evil-org-mode")
@@ -97,6 +115,12 @@
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
+(when (modulep! :lang clojure)
+  (package! ob-clojure-literate
+    :recipe (:type git
+             :host nil
+             :repo "https://repo.or.cz/ob-clojure-literate.el.git")
+    :pin "18c3ea15b872a43e67c899a9914182c35b00b7ee"))
 (when (modulep! :lang crystal)
   (package! ob-crystal :pin "d84c1adee4b269cdba06a97caedb8071561a09af"))
 (when (modulep! :lang elixir)
@@ -113,6 +137,12 @@
   (package! ob-hy :pin "a42ecaf440adc03e279afe43ee5ef6093ddd542a"))
 (when (modulep! :lang nim)
   (package! ob-nim :pin "6fd060a3ecd38be37e4ec2261cd65760a3c35a91"))
+(when (modulep! :lang php)
+  (package! ob-php
+    :recipe (:type git
+             :host nil
+             :repo "https://repo.or.cz/ob-php.git")
+    :pin "6ebf7799e9ded1d5114094f46785960a50000614"))
 (when (modulep! :lang racket)
   (package! ob-racket
     :recipe (:host github :repo "DEADB17/ob-racket")

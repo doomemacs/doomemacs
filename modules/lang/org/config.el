@@ -975,7 +975,9 @@ between the two."
          "L" #'org-insert-all-links
          "s" #'org-store-link
          "S" #'org-insert-last-stored-link
-         "t" #'org-toggle-link-display)
+         "t" #'org-toggle-link-display
+         (:when (modulep! :os macos)
+          "g" #'org-mac-link-get-link))
         (:prefix ("P" . "publish")
          "a" #'org-publish-all
          "f" #'org-publish-current-file
