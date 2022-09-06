@@ -68,7 +68,7 @@ If you want to disable incremental loading altogether, either remove
 `doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
 in daemon sessions (they are loaded immediately at startup).")
 
-(defvar doom-incremental-first-idle-timer 2.0
+(defvar doom-incremental-first-idle-timer (if (featurep 'native-compile) 3.0 2.0)
   "How long (in idle seconds) until incremental loading starts.
 
 Set this to nil to disable incremental loading.")
@@ -86,31 +86,35 @@ If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
 intervals."
   (if (not now)
       (appendq! doom-incremental-packages packages)
-    (while packages
-      (let* ((gc-cons-threshold most-positive-fixnum)
-             (req (pop packages)))
-        (unless (featurep req)
-          (doom-log "Incrementally loading %s" req)
-          (condition-case-unless-debug e
-              (or (while-no-input
-                    ;; If `default-directory' is a directory that doesn't exist
-                    ;; or is unreadable, Emacs throws up file-missing errors, so
-                    ;; we set it to a directory we know exists and is readable.
-                    (let ((default-directory doom-emacs-dir)
-                          (inhibit-message t)
-                          file-name-handler-alist)
-                      (require req nil t))
-                    t)
-                  (push req packages))
-            (error
-             (message "Failed to load %S package incrementally, because: %s"
-                      req e)))
-          (if (not packages)
-              (doom-log "Finished incremental loading")
-            (run-with-idle-timer doom-incremental-idle-timer
-                                 nil #'doom-load-packages-incrementally
-                                 packages t)
-            (setq packages nil)))))))
+    (if (and packages (bound-and-true-p comp-files-queue))
+        (run-with-idle-timer doom-incremental-idle-timer
+                             nil #'doom-load-packages-incrementally
+                             packages t)
+      (while packages
+        (let* ((gc-cons-threshold most-positive-fixnum)
+               (req (pop packages)))
+          (unless (featurep req)
+            (doom-log "Incrementally loading %s" req)
+            (condition-case-unless-debug e
+                (or (while-no-input
+                      ;; If `default-directory' is a directory that doesn't exist
+                      ;; or is unreadable, Emacs throws up file-missing errors, so
+                      ;; we set it to a directory we know exists and is readable.
+                      (let ((default-directory doom-emacs-dir)
+                            (inhibit-message t)
+                            file-name-handler-alist)
+                        (require req nil t))
+                      t)
+                    (push req packages))
+              (error
+               (message "Failed to load %S package incrementally, because: %s"
+                        req e)))
+            (if (not packages)
+                (doom-log "Finished incremental loading")
+              (run-with-idle-timer doom-incremental-idle-timer
+                                   nil #'doom-load-packages-incrementally
+                                   packages t)
+              (setq packages nil))))))))
 
 (defun doom-load-packages-incrementally-h ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
