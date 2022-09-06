@@ -1,6 +1,22 @@
-;;; doom-lib.el -*- lexical-binding: t; -*-
+;;; doom-lib.el --- Doom's core standard library -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
-(require 'cl-lib)
+(defmacro doom-log (output &rest args)
+  "Log a message in *Messages*.
+
+Does not emit the message in the echo area. This is a macro instead of a
+function to prevent the potentially expensive execution of its arguments when
+debug mode is off."
+  (declare (debug t))
+  `(when (or init-file-debug noninteractive)
+     (let ((inhibit-message (not init-file-debug)))
+       (message
+        "%s" (propertize
+              (format (concat "* [%.06f] " ,output)
+                      (float-time (time-subtract (current-time) before-init-time))
+                      ,@args)
+              'face 'font-lock-doc-face)))))
 
 
 ;;

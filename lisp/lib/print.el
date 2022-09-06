@@ -168,38 +168,6 @@ Returns OUTPUT."
       output)))
 
 ;;;###autoload
-(progn
-  ;; Autoload whole definition, so its buried uses don't pull in this whole file
-  ;; with them at expansion time.
-  (defmacro doom-log (output &rest args)
-    "Log a message in *Messages*.
-
-Does not emit the message in the echo area. This is a macro instead of a
-function to prevent the potentially expensive execution of its arguments when
-debug mode is off."
-    `(when (or init-file-debug noninteractive)
-       (let ((inhibit-message t))
-         (message
-          "%s" (propertize
-                (doom-print--format
-                 (format
-                  "* [%s] %s"
-                  ,(let ((time `(format "%.06f" (float-time (time-subtract (current-time) before-init-time)))))
-                     (cond (noninteractive time)
-                           ((bound-and-true-p doom--current-module)
-                            (format "[:%s %s] "
-                                    (doom-keyword-name (car doom--current-module))
-                                    (cdr doom--current-module)))
-                           ((when-let (file (ignore-errors (file!)))
-                              (format "[%s] "
-                                      (file-relative-name
-                                       file (expand-file-name "../" (file-name-directory file))))))
-                           (time)))
-                  ,output)
-                 ,@args)
-                'face 'font-lock-doc-face))))))
-
-;;;###autoload
 (defmacro format! (message &rest args)
   "An alternative to `format' that understands (color ...) and converts them
 into faces or ANSI codes depending on the type of sesssion we're in."
