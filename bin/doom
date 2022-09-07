@@ -88,8 +88,8 @@
 ;; UX: Abort if the user is using 'doom' as root, unless ~/.emacs.d is owned by
 ;;   root, in which case we assume the user genuinely wants root to be their
 ;;   primary user account for Emacs.
-(when (equal (user-real-uid) 0)
-  (unless (= 0 (file-attribute-user-id (file-attributes user-emacs-directory)))
+(when (equal 0 (user-real-uid))
+  (unless (equal 0 (file-attribute-user-id (file-attributes doom-emacs-dir)))
     (message
      (concat
       "Error: this script was executed as root, which is likely not what you want.\n"
@@ -98,7 +98,7 @@
       "If this really *is* what you want, then change the owner of your Emacs\n"
       "config to root:\n\n"
       ;; TODO Add cmd.exe/powershell commands
-      "  chown root:root -R " (abbreviate-file-name user-emacs-directory) "\n\n"
+      "  chown root:root -R " (abbreviate-file-name doom-emacs-dir) "\n\n"
       "Aborting..."))
     (kill-emacs 2)))
 
