@@ -39,8 +39,8 @@ This module requires:
 * Usage
 To use this, invoke the =emacs-everywhere= executable. This can be done in two
 ways:
-+ ~$ emacsclient --eval "(emacs-everywhere)"~
-+ ~$ doom everywhere~
+- ~$ emacsclient --eval "(emacs-everywhere)"~
+- ~$ doom +everywhere~
 
 It is recommended that you add a keybinding for this.
 
