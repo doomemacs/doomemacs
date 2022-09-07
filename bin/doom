@@ -236,12 +236,9 @@ SEE ALSO:
 ;; can do so in .doomrc or .doomproject.
 (load! doom-module-init-file doom-user-dir t)
 
+;; There are a lot of CLIs, and some have expensive initialization, so best we
+;; load them lazily.
 (let ((dir (doom-path doom-core-dir "cli")))
-  ;; It'd be simple to just load these files directly, but because there could
-  ;; be a lot of them (and some of them have expensive dependencies), I use
-  ;; `defautoload!' to load them lazily.
-  (add-to-list 'doom-cli-load-path dir)
-
   ;; Library for generating autoloads files for Doom modules & packages.
   (load! "autoloads" dir)
 

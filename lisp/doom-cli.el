@@ -84,7 +84,8 @@
 ;;; Variables
 
 (defvar doom-cli-load-path
-  (ignore-errors (split-string (getenv "DOOMPATH") path-separator))
+  (append (ignore-errors (split-string (getenv "DOOMPATH") path-separator))
+          (list (doom-path (file-name-directory load-file-name) "cli")))
   "A list of paths to search for autoloaded CLIs on.")
 
 (defvar doom-cli-argument-types
