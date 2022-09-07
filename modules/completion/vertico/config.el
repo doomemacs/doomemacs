@@ -86,13 +86,27 @@ orderless."
      +vertico-basic-remote-try-completion
      +vertico-basic-remote-all-completions
      "Use basic completion on remote files only"))
+
+  (defun +vertico-escapable-split-on-space-or-ampersand (string)
+    "This function splits `string' into"
+    (mapcar
+     (lambda (piece)
+       (replace-regexp-in-string (concat "\0" "\\|" "\1")
+                                 (lambda (x) (pcase x ("\0" " ") ("\1" "&") (_ x)))
+                                 piece))
+     (split-string (replace-regexp-in-string
+                    "\\\\\\\\\\|\\\\ \\|\\\\&"
+                    (lambda (x) (pcase x ("\\ " "\0") ("\\&" "\1") (_ x)))
+                    string 'fixedcase 'literal)
+                   "[ &]+" t)))
+
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         ;; note that despite override in the name orderless can still be used in
         ;; find-file etc.
         completion-category-overrides '((file (styles +vertico-basic-remote orderless partial-completion)))
         orderless-style-dispatchers '(+vertico-orderless-dispatch)
-        orderless-component-separator "[ &]")
+        orderless-component-separator #'+vertico-escapable-split-on-space-or-ampersand)
   ;; ...otherwise find-file gets different highlighting than other commands
   (set-face-attribute 'completions-first-difference nil :inherit nil))
 
