@@ -111,6 +111,49 @@ at the values with which this function was called."
              if (lookup-key keymap keys)
              return it)))
 
+(defun doom-load (path &optional noerror)
+  "Load PATH and handle any Doom errors that arise from it.
+
+If NOERROR, don't throw an error if PATH doesn't exist."
+  (doom-log "Loading %S..." path)
+  (condition-case-unless-debug e
+      (load path noerror 'nomessage)
+    ((doom-error file-missing)
+     (signal (car e) (cdr e)))
+    (error
+     (unless (file-name-absolute-p path)
+       (when-let (newpath (locate-file path load-path))
+         (setq path newpath)))
+     (cl-destructuring-bind (err . dir)
+         (cond ((not path)
+                (cons 'error path))
+               ((not (featurep 'doom))
+                (cons 'error (file-name-directory path)))
+               ((file-in-directory-p path (expand-file-name "cli" doom-core-dir))
+                (cons 'doom-cli-error doom-emacs-dir))
+               ((file-in-directory-p path doom-core-dir)
+                (cons 'doom-core-error doom-emacs-dir))
+               ((file-in-directory-p path doom-user-dir)
+                (cons 'doom-user-error doom-user-dir))
+               ((cons 'doom-module-error doom-emacs-dir)))
+       (signal err (list (unless (equal path dir)
+                           (file-relative-name (or path "") dir))
+                         e))))))
+
+(defun doom-require (feature &optional filename noerror)
+  "Like `require', but handles and enhances Doom errors.
+
+Can also load Doom's subfeatures, e.g. (doom-require 'doom-lib 'files)"
+  (or (if (and filename (symbolp filename))
+          (let ((subfeature filename))
+            (setq filename
+                  (file-name-concat doom-core-dir
+                                    (string-remove-prefix "doom-" (symbol-name feature))
+                                    (symbol-name filename)))
+            (and (memq subfeature (get feature 'subfeatures)) t))
+        (featurep feature))
+      (doom-load (or filename (symbol-name feature)) noerror)))
+
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE.
 If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
@@ -557,23 +600,6 @@ things you want byte-compiled in them! Like function/macro definitions."
                (setq body `((after! ,next ,@body)))))
             (`(after! (:and ,@package) ,@body))))))
 
-(defun doom--handle-load-error (e target path)
-  (let* ((source (file-name-sans-extension target))
-         (err (cond ((not (featurep 'doom))
-                     (cons 'error (file-name-directory path)))
-                    ((file-in-directory-p source doom-core-dir)
-                     (cons 'doom-error doom-core-dir))
-                    ((file-in-directory-p source doom-user-dir)
-                     (cons 'doom-user-error doom-user-dir))
-                    ((file-in-directory-p source (expand-file-name "cli" doom-core-dir))
-                     (cons 'doom-cli-error (expand-file-name "cli" doom-core-dir)))
-                    ((cons 'doom-module-error doom-emacs-dir)))))
-    (signal (car err)
-            (list (file-relative-name
-                    (concat source ".el")
-                    (cdr err))
-                  e))))
-
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
 
@@ -583,18 +609,9 @@ directory path). If omitted, the lookup is relative to either `load-file-name',
 `byte-compile-current-file' or `buffer-file-name' (checked in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (let* ((path (or path
-                   (dir!)
-                   (error "Could not detect path to look for '%s' in"
-                          filename)))
-         (file (if path
-                   `(let (file-name-handler-alist)
-                      (expand-file-name ,filename ,path))
-                 filename)))
-    `(condition-case-unless-debug e
-         (load ,file ,noerror 'nomessage)
-       (doom-error (signal (car e) (cdr e)))
-       (error (doom--handle-load-error e ,file ,path)))))
+  `(doom-load
+    (file-name-concat ,(or path `(dir!)) ,filename)
+    ,noerror))
 
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
