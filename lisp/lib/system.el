@@ -8,7 +8,7 @@
           (IS-MAC     'macos)
           ((ignore-errors
              (with-file-contents! "/etc/os-release"
-               (when (re-search-backward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)
+               (when (re-search-forward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)
                  (intern (downcase (match-string 1)))))))
           ;; A few redundancies in case os-release fails us
           ((file-exists-p "/etc/debian_version")
@@ -37,7 +37,7 @@
         (format "NixOS %s" (sh "nixos-version")))
        ((ignore-errors
           (with-file-contents! "/etc/os-release"
-            (when (re-search-backward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
+            (when (re-search-forward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
               (match-string 1)))))
        ((when-let (files (doom-glob "/etc/*-release"))
           (truncate-string-to-width

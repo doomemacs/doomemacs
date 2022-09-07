@@ -342,6 +342,7 @@ optimizations for `binary' IO."
   (declare (indent 1))
   `(doom--with-prepared-file-buffer ,file (or coding-system-for-read 'utf-8) nil
      (doom-file-read buffer-file-name :by 'insert :coding coding-system-for-read)
+     (goto-char (point-min))
      ,@body))
 
 ;;;###autoload
