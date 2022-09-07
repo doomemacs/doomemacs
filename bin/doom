@@ -254,7 +254,7 @@ SEE ALSO:
 
     (defgroup! "Config Management"
       :docs "Commands for maintaining your Doom Emacs configuration."
-      (defautoload! ((sync s refresh re)))
+      (defautoload! ((sync s)))
       (defautoload! ((upgrade up)))
       (defautoload! (env))
       (defautoload! ((build b purge p rollback)) "packages")
