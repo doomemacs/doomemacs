@@ -28,7 +28,7 @@ esac
 # directory from `load-path', which would prevent Doom from manually loading the
 # site files later. These are important on some systems or deployment methods
 # (like Snap or NixOS).
-emacs="$EMACS -q --no-site-file --no-x-resources --no-splash --batch"
+emacs="$EMACS -q --no-site-file --batch"
 
 # $TMPDIR (or $TEMP and $TMP on Windows) aren't guaranteed to have values, and
 # mktemp isn't available on all systems, but you know what is? Emacs! So I rely
