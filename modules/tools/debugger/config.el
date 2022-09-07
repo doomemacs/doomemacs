@@ -155,6 +155,6 @@
 
 
 (use-package! dap-ui
-  :when (modulep! +lsp)
+  :when (and (modulep! +lsp) (not (modulep! :tools lsp +eglot)))
   :hook (dap-mode . dap-ui-mode)
   :hook (dap-ui-mode . dap-ui-controls-mode))
