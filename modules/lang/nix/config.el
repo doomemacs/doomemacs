@@ -45,10 +45,6 @@
         "o" #'+nix/lookup-option))
 
 
-(use-package! nix-drv-mode
-  :mode "\\.drv\\'")
-
-
 (use-package! nix-update
   :commands nix-update-fetch)
 
