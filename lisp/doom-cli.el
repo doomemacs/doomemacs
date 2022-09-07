@@ -65,20 +65,22 @@
   ;; Load just the... bear necessities~
   (require 'seq)
   (require 'map)
-  ;; Load these eagerly, since autoloads may not have been generated/loaded yet
-  (load! "lib/process")
-  (load! "lib/system")
-  (load! "lib/git")
-  (load! "lib/plist")
-  (load! "lib/files")
-  (load! "lib/debug")
-  (load! "lib/print")
-  ;; (load! "lib/autoloads")
 
-  ;; Use our own home-grown debugger so we can capture backtraces, make them more
-  ;; presentable, and write them to a file. Cleaner backtraces are better UX than
-  ;; the giant wall of text the default debugger throws up.
+  ;; Use our own home-grown debugger so we can capture backtraces, make them
+  ;; more presentable, and write them to a file. Cleaner backtraces are better
+  ;; UX than the giant wall of text the default debugger throws up.
+  (doom-require 'doom-lib 'debug)
   (setq debugger #'doom-debugger)
+
+  ;; Then load the rest of Doom's libs eagerly, since autoloads may not be
+  ;; generated/loaded yet.
+  (doom-require 'doom-lib 'process)
+  (doom-require 'doom-lib 'system)
+  (doom-require 'doom-lib 'git)
+  (doom-require 'doom-lib 'plist)
+  (doom-require 'doom-lib 'files)
+  (doom-require 'doom-lib 'print)
+  ;; (doom-require 'doom-lib 'autoloads)
 
   ;; Ensure straight and core packages are ready to go for CLI commands.
   ;; (require 'doom-profiles)

@@ -106,3 +106,6 @@ Tries to be portable. Returns 1 if cannot be determined."
                   (user-error "Failed to look up number of processors, because:\n\n%s"
                               (cdr cpus)))))
              1)))))
+
+(provide 'doom-lib '(system))
+;;; system.el ends here

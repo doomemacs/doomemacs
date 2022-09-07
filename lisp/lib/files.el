@@ -1,4 +1,6 @@
 ;;; lisp/lib/files.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defun doom-files--build-checks (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
@@ -507,3 +509,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (setq recentf-list (delete file recentf-list))
   (recentf-save-list)
   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
+
+(provide 'doom-lib '(files))
+;;; files.el ends here

@@ -1,4 +1,6 @@
 ;;; lisp/lib/debug.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 ;;
 ;;; Doom's debug mode
@@ -414,3 +416,6 @@ copies it to your clipboard, ready to be pasted into bug reports!"
     (profiler-report)
     (profiler-stop))
   (setq doom--profiler (not doom--profiler)))
+
+(provide 'doom-lib '(debug))
+;;; debug.el ends here

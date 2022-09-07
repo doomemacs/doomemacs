@@ -1,15 +1,19 @@
 ;;; lisp/lib/print.el -*- lexical-binding: t; -*-
 ;;; Commentary
-;;;
-;;; This is Doom's output library, for controlling what does and doesn't get
-;;; logged, and provides a simple DSL for formatting output. It's mainly to
-;;; serve the noninteractive use-case, as `message' is more than good enough in
-;;; interactive sessions, but `print!' and `doom-log' are safe to use as a
-;;; drop-in replacement.
-;;;
+;;
+;; This is Doom's output library, for controlling what does and doesn't get
+;; logged, and provides a simple DSL for formatting output. It's mainly to
+;; serve the noninteractive use-case, as `message' is more than good enough in
+;; interactive sessions, but `print!' and `doom-log' are safe to use as a
+;; drop-in replacement.
+;;
 ;;; Code:
-
+(eval-when-compile (require 'doom)) ; be silent, o'byte-compiler
 (require 'ansi-color)
+
+
+;;
+;;; Variables
 
 (defvar doom-print-ansi-alist
   '(;; fx
@@ -438,3 +442,6 @@ transformative logic."
                  (doom-print--apply (cdr forms) t)
                  nil))
         (forms)))
+
+(provide 'doom-lib '(print))
+;;; print.el ends here
