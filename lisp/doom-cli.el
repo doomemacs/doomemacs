@@ -13,6 +13,12 @@
   (setq gc-cons-threshold 134217728  ; 128mb
         gc-cons-percentage 1.0)      ; DEPRECATED: backported from 29
 
+  ;; Create all our core directories to quell file errors.
+  (mapc (doom-rpartial #'make-directory 'parents)
+        (list doom-local-dir
+              doom-data-dir
+              doom-cache-dir))
+
   ;; UX: Ensure errors are sufficiently verbose from this point on.
   (when (setq init-file-debug (getenv-internal "DEBUG"))
     (setq debug-on-error t
