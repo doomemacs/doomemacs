@@ -586,7 +586,7 @@ things you want byte-compiled in them! Like function/macro definitions."
                       (require package nil 'noerror))
                   #'progn
                 #'with-no-warnings)
-              `(eval-after-load ',package ',(macroexp-progn body))))
+              `(with-eval-after-load ',package ,@body)))
     (let ((p (car package)))
       (cond ((memq p '(:or :any))
              (macroexp-progn
