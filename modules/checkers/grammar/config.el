@@ -42,8 +42,9 @@
   ;; Add doom-docs-mode to LSP language IDs
   (add-to-list 'lsp-language-id-configuration '(doom-docs-org-mode . "org"))
   :init
-  (setq lsp-ltex-check-frequency "save" ;; Less overhead than the default "edit"
+  (setq lsp-ltex-check-frequency "edit"
         lsp-ltex-log-level "warning" ;; No need to log everything
+        lsp-ltex-diagnostic-severity "warning"
         ;; Path in which, interactively added words and rules will be stored.
         lsp-ltex-user-rules-path (expand-file-name "lsp-ltex" doom-data-dir))
 
