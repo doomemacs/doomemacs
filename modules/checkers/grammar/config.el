@@ -34,12 +34,13 @@
              +lsp-ltex-enable
              +lsp-ltex-disable
              +lsp-ltex-setup)
-  :hook ((text-mode latex-mode LaTeX-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
+  :hook ((latex-mode LaTeX-mode org-mode markdown-mode) . #'+lsp-ltex-setup)
+  :init
+  ;; There is some problematic modes when it comes to enabling LSP
+  (defvar +lsp-ltex-disabled-modes '(org-msg-edit-mode))
   :config
-  ;; Disable by default, can be enabled in a ber buffer basis,
-  ;; Currentrly, launching LSP in some buffers (like org-msg-mode) can cause
-  ;; annoying messages, as LSP tries to guess the project root.
-  (add-to-list 'lsp-disabled-clients 'ltex-ls)
+  ;; Add doom-docs-mode to LSP language IDs
+  (add-to-list 'lsp-language-id-configuration '(doom-docs-org-mode . "org"))
   :init
   (setq lsp-ltex-check-frequency "save" ;; Less overhead than the default "edit"
         lsp-ltex-log-level "warning" ;; No need to log everything
@@ -55,7 +56,8 @@
     "Load LTeX LSP server."
     (interactive)
     (require 'lsp-ltex)
-    (when (+lsp-ltex--enabled-p)
+    (when (and (+lsp-ltex--enabled-p)
+               (not (memq major-mode +lsp-ltex-disabled-modes)))
       (lsp-deferred)))
 
   (defun +lsp-ltex--enabled-p ()
