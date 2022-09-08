@@ -83,29 +83,31 @@
   "Return the max number of processing units on this system.
 Tries to be portable. Returns 1 if cannot be determined."
   (with-memoization (get 'doom-system-cpus 'cached-value)
-    (let ((cpus
-           (cond ((fboundp 'w32-get-nproc)
-                  (w32-get-nproc))
-                 ((getenv "NUMBER_OF_PROCESSORS"))
-                 ((executable-find "nproc")
-                  (doom-call-process "nproc"))
-                 ((executable-find "sysctl")
-                  (doom-call-process "sysctl" "-n" "hw.ncpu")))))
-      (max
-       1 (or (cl-typecase cpus
-               (integer cpus)
-               (string
-                (condition-case _
-                    (string-to-number cpus)
-                  (wrong-type-argument
-                   (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
-                               cpus))))
-               (cons
-                (if (zerop (car cpus))
-                    (string-to-number (cdr cpus))
-                  (user-error "Failed to look up number of processors, because:\n\n%s"
-                              (cdr cpus)))))
-             1)))))
+    (if (fboundp 'num-processors)
+        (num-processors) ; added in Emacs 28.1
+      (let ((cpus
+             (cond ((fboundp 'w32-get-nproc)
+                    (w32-get-nproc))
+                   ((getenv "NUMBER_OF_PROCESSORS"))
+                   ((executable-find "nproc")
+                    (doom-call-process "nproc"))
+                   ((executable-find "sysctl")
+                    (doom-call-process "sysctl" "-n" "hw.ncpu")))))
+        (max
+         1 (or (cl-typecase cpus
+                 (integer cpus)
+                 (string
+                  (condition-case _
+                      (string-to-number cpus)
+                    (wrong-type-argument
+                     (user-error "NUMBER_OF_PROCESSORS contains an invalid value: %S"
+                                 cpus))))
+                 (cons
+                  (if (zerop (car cpus))
+                      (string-to-number (cdr cpus))
+                    (user-error "Failed to look up number of processors, because:\n\n%s"
+                                (cdr cpus)))))
+               1))))))
 
 (provide 'doom-lib '(system))
 ;;; system.el ends here
