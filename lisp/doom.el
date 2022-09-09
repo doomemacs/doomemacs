@@ -321,23 +321,16 @@ users).")
 ;;
 ;;; Native Compilation support (http://akrl.sdf.org/gccemacs.html)
 
-(when (featurep 'native-compile)
-  ;; Enable deferred compilation and disable ahead-of-time compilation, so we
-  ;; don't bog down the install process with an excruciatingly long compile
-  ;; times. It will mean more CPU time at runtime, but given its asynchronosity,
-  ;; this is acceptable.
-  (setq native-comp-deferred-compilation t
-        straight-disable-native-compile t)
-
-  ;; Suppress compiler warnings, to avoid inundating users will popups. They
-  ;; don't cause breakage, so it's not worth dedicating screen estate to them.
-  (setq native-comp-async-report-warnings-errors init-file-debug
-        native-comp-warning-on-missing-source init-file-debug)
-
+(when (boundp 'native-comp-eln-load-path)
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
   ;; REVIEW Use `startup-redirect-eln-cache' when 28 support is dropped
-  (add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" doom-cache-dir)))
+  (add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" doom-cache-dir))
+
+  ;; UX: Suppress compiler warnings and don't inundate users with their popups.
+  ;;   They are rarely more than warnings, so are safe to ignore.
+  (setq native-comp-async-report-warnings-errors init-file-debug
+        native-comp-warning-on-missing-source init-file-debug))
 
 
 ;;
