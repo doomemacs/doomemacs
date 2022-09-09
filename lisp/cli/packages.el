@@ -739,7 +739,7 @@ it doesn't make sense to slack."
       (if (doom-cli-context-suppress-prompts-p doom-cli--context)
           (cl-loop for (_key desc func) in actions
                    when desc
-                   when (doom-cli--straight-recommended-option-p prompt desc t)
+                   when (doom-cli--straight-recommended-option-p prompt desc)
                    return (funcall func))
         (print! (start "%s") (red prompt))
         (print-group!
