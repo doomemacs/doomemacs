@@ -7,13 +7,13 @@
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(;; Doom variables
+  `(;; Doom variables
     (doom-print-level . debug)
+    (doom-print-message-level . info)
 
     ;; Emacs variables
     async-debug
     debug-on-error
-    (debugger . doom-debugger)
     garbage-collection-messages
     gcmh-verbose
     init-file-debug
@@ -84,10 +84,29 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
 
 ;;
-;;; Custom debuggers
+;;; Custom debugger
+
+;; HACK: I advise `debug' instead of changing `debugger' to hide the debugger
+;;   itself from the backtrace. Doing it manually would require reimplementing
+;;   most of `debug', which is a lot of unnecessary work, when I only want to
+;;   decorate the original one slightly.
+(defadvice! doom-debugger-a (fn &rest args)
+  :around #'debug
+  ;; Without `doom-debug-mode', be as vanilla as possible.
+  (if (not doom-debug-mode)
+      (apply fn args)
+    ;; Work around Emacs's heuristic (in eval.c) for detecting errors in the
+    ;; debugger, which would run this handler again on subsequent calls. Taken
+    ;; from `ert--run-test-debugger'.
+    (if (and noninteractive (fboundp 'doom-cli-debugger))
+        (apply #'doom-cli-debugger args)
+      ;; TODO: Write backtraces to file
+      ;; TODO: Write backtrace to a buffer in case recursive error interupts the
+      ;;   debugger (happens more often than it should).
+      (apply fn args))))
 
 (autoload 'backtrace-get-frames "backtrace")
-
+;;;###autoload
 (defun doom-backtrace ()
   "Return a stack trace as a list of `backtrace-frame' objects."
   ;; (let* ((n 0)
@@ -133,23 +152,6 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
                 (terpri))
               backtrace))
       file)))
-
-(defun doom-debugger (&rest args)
-  "Enter `debugger' in interactive sessions, `doom-cli-debugger' otherwise.
-
-Writes backtraces to file and ensures the backtrace is recorded, so the user can
-always access it."
-  (let ((backtrace (doom-backtrace)))
-    ;; Work around Emacs's heuristic (in eval.c) for detecting errors in the
-    ;; debugger, which would run this handler again on subsequent calls. Taken
-    ;; from `ert--run-test-debugger'.
-    (cl-incf num-nonmacro-input-events)
-    (if (and noninteractive (fboundp 'doom-cli-debugger))
-        (apply #'doom-cli-debugger args)
-      ;; TODO Write backtraces to file
-      ;; TODO Write backtrace to a buffer in case recursive error interupts the
-      ;;   debugger (happens more often than it should).
-      (apply #'debug args))))
 
 
 ;;

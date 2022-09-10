@@ -21,12 +21,7 @@
 
   ;; UX: Ensure errors are sufficiently verbose from this point on.
   (when (setq init-file-debug (getenv-internal "DEBUG"))
-    (setq debug-on-error t
-          doom-print-level 'debug)
-    (message "Debug mode enabled"))
-
-  ;; FIX: All output via `message' should be seen as debug output.
-  (setq doom-print-message-level 'debug)
+    (setq debug-on-error t))
 
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
@@ -70,7 +65,7 @@
   ;; more presentable, and write them to a file. Cleaner backtraces are better
   ;; UX than the giant wall of text the default debugger throws up.
   (doom-require 'doom-lib 'debug)
-  (setq debugger #'doom-debugger)
+  (if init-file-debug (doom-debug-mode +1))
 
   ;; Then load the rest of Doom's libs eagerly, since autoloads may not be
   ;; generated/loaded yet.

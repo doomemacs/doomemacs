@@ -125,14 +125,14 @@ Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 (defvar doom-print-logging-level 'debug
   "The default logging level used by `doom-log'/`doom-print'.")
 
-(defvar doom-print-message-level 'info
+(defvar doom-print-message-level (if noninteractive 'debug 'info)
   "The default logging level used by `message'.")
 
 (defvar doom-print--levels
   '(debug    ; the system is thinking out loud
     info     ; a FYI; to keep you posted
     warning  ; a dismissable issue that may have reprecussions later
-    error))  ; functionality has been disabled by misbehavior
+    error))  ; functionality has been disabled/broken by misbehavior
 
 (dotimes (i (length doom-print--levels))
   (put (nth i doom-print--levels) 'level i))
