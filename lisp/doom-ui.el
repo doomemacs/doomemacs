@@ -529,7 +529,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-(defun doom--make-font-specs (face font &optional base-specs)
+(defun doom--make-font-specs (face font)
   (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
          (base-specs (or base-specs '((t nil))))
          (attrs '(:family :foundry :slant :weight :height :width))
