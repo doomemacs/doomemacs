@@ -244,33 +244,70 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
           ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\|var\\(?:-local\\)?\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
           ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
 
+(defun +emacs-lisp--in-package-buffer-p ()
+  (let* ((file-path (buffer-file-name (buffer-base-buffer)))
+         (file-base (if file-path (file-name-base file-path))))
+    (and (derived-mode-p 'emacs-lisp-mode)
+         (or (null file-base)
+             (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))
+             (save-excursion
+               (save-restriction
+                 (widen)
+                 (goto-char (point-max))
+                 (when (re-search-backward "^ *\\((provide\\)\\(?:-theme\\)? +'"
+                                           (max (point-min) (- (point-max) 512))
+                                           t)
+                   (goto-char (match-beginning 1))
+                   (ignore-errors
+                     (and (stringp file-base)
+                          (equal (symbol-name (doom-unquote (nth 1 (read (current-buffer)))))
+                                 file-base)))))))
+         (not (locate-dominating-file default-directory ".doommodule")))))
+
 ;;;###autoload
-(defun +emacs-lisp-reduce-flycheck-errors-in-emacs-config-h ()
-  "Remove `emacs-lisp-checkdoc' checker and reduce `emacs-lisp' checker
-verbosity when editing a file in `doom-user-dir' or `doom-emacs-dir'."
-  (when (and (bound-and-true-p flycheck-mode)
-             (eq major-mode 'emacs-lisp-mode)
-             (or (not default-directory)
-                 (null (buffer-file-name (buffer-base-buffer)))
-                 (cl-find-if (doom-partial #'file-in-directory-p default-directory)
-                             +emacs-lisp-disable-flycheck-in-dirs)))
-    (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
-    (set (make-local-variable 'flycheck-emacs-lisp-check-form)
-         (concat "(progn "
-                 (prin1-to-string
-                  `(ignore-errors
-                     (setq doom-modules ',doom-modules
-                           doom-disabled-packages ',doom-disabled-packages)
-                     (require 'doom)
-                     (ignore-errors (load ,user-init-file t t))
-                     (setq byte-compile-warnings
-                           '(obsolete cl-functions
-                             interactive-only make-local mapcar
-                             suspicious constants))
-                     (defmacro map! (&rest _))))
-                 " "
-                 (default-value 'flycheck-emacs-lisp-check-form)
-                 ")"))))
+(define-minor-mode +emacs-lisp-non-package-mode
+  "Reduce flycheck verbosity where it is appropriate.
+
+Essentially, this means in any elisp file that either:
+- Is not a theme in `custom-theme-load-path',
+- Lacks a `provide' statement,
+- Lives in a project with a .doommodule file,
+- Is a dotfile (like .dir-locals.el or .doomrc).
+
+This generally applies to your private config (`doom-user-dir') or Doom's source
+\(`doom-emacs-dir')."
+  :since "3.0.0"
+  (unless (and (bound-and-true-p flycheck-mode)
+               (not (+emacs-lisp--in-package-buffer-p)))
+    (setq +emacs-lisp-non-package-mode nil))
+  (when (derived-mode-p 'emacs-lisp-mode)
+    (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
+  (if (not +emacs-lisp-non-package-mode)
+      (when (get 'flycheck-disabled-checkers 'initial-value)
+        (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
+        (kill-local-variable 'flycheck-emacs-lisp-check-form))
+    (with-memoization (get 'flycheck-disabled-checkers 'initial-value)
+      flycheck-disabled-checkers)
+    (setq-local flycheck-emacs-lisp-check-form
+                (prin1-to-string
+                 `(progn
+                    (setq doom-modules ',doom-modules
+                          doom-disabled-packages ',doom-disabled-packages
+                          byte-compile-warnings ',+emacs-lisp-linter-warnings)
+                    (condition-case e
+                        (progn
+                          (require 'doom)
+                          (require 'doom-cli)
+                          (require 'doom-start)
+                          (defmacro map! (&rest _)))
+                      (error
+                       (princ
+                        (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
+                                ,(file-name-nondirectory (buffer-file-name (buffer-base-buffer)))
+                                0 0 (error-message-string e)))))
+                    ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
+                flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
+                                                 flycheck-disabled-checkers))))
 
 
 ;;

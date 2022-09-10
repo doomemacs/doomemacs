@@ -7,13 +7,17 @@
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
-(defvar +emacs-lisp-disable-flycheck-in-dirs
-  (list doom-emacs-dir doom-user-dir)
-  "List of directories to disable `emacs-lisp-checkdoc' in.
+(defconst +emacs-lisp-linter-warnings
+  '(not free-vars    ; don't complain about unknown variables
+        noruntime    ; don't complain about unknown function calls
+        unresolved)  ; don't complain about undefined functions
+  "The value for `byte-compile-warnings' in non-packages.
 
-This checker tends to produce a lot of false positives in your .emacs.d and
-private config, so it is mostly useless there. However, special hacks are
-employed so that flycheck still does *some* helpful linting.")
+This reduces the verbosity of flycheck in Emacs configs and scripts, which are
+so stateful that the deluge of false positives (from the byte-compiler,
+package-lint, and checkdoc) can be more overwhelming than helpful.
+
+See `+emacs-lisp-non-package-mode' for details.")
 
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
@@ -76,10 +80,11 @@ employed so that flycheck still does *some* helpful linting.")
              ;; Ensure straight sees modifications to installed packages
              #'+emacs-lisp-init-straight-maybe-h)
 
-  ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
-  ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
-  ;; `emacs-lisp' checker's verbosity.
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp-reduce-flycheck-errors-in-emacs-config-h)
+  ;; UX: Flycheck's two emacs-lisp checkers produce a *lot* of false positives
+  ;;   in non-packages (like Emacs configs or elisp scripts), so I disable
+  ;;   `emacs-lisp-checkdoc' and set `byte-compile-warnings' to a subset of the
+  ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
 
   ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
   ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
