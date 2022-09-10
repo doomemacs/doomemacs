@@ -857,11 +857,12 @@ with a slash -- if they don't end with a slash, a slash will be
 inserted before contatenating."
   (mapconcat
    #'identity
-   (save-match-data
-     (cl-loop for str in (cons directory components)
-              when (and str (/= 0 (length str))
-                        (string-match "\\(.+\\)/?" str))
-              collect (match-string 1 str)))
+   (cl-loop for str in (cons directory components)
+            if (and str (/= 0 (length str))
+                    (if (string-suffix-p "/" str)
+                        (substring str 0 -1)
+                      str))
+            collect it)
    "/"))
 
 ;; Introduced in Emacs 28.1
