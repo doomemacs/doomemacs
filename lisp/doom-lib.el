@@ -610,7 +610,7 @@ directory path). If omitted, the lookup is relative to either `load-file-name',
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   `(doom-load
-    (file-name-concat ,(or path `(dir!)) ,filename)
+    (file-name-concat ,(or path (dir!)) ,filename)
     ,noerror))
 
 (defmacro defer-until! (condition &rest body)
