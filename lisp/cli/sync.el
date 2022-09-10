@@ -18,7 +18,7 @@
 ;;
 ;;; Commands
 
-(defalias! (:before (sync s)) (:before build))
+(defcli-alias! (:before (sync s)) (:before build))
 
 (defcli! ((sync s))
     ((noenvvar? ("-e") "Don't regenerate the envvar file")

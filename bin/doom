@@ -246,22 +246,22 @@ SEE ALSO:
   ;; Library for generating autoloads files for Doom modules & packages.
   (load! "autoloads" dir)
 
-  (defgroup!
+  (defcli-group!
     :prefix 'doom
     ;; Import this for implicit 'X help' commands for your script:
-    (defalias! ((help h)) (:root :help))
+    (defcli-alias! ((help h)) (:root :help))
     ;; And suggest its use when errors occur.
     (add-to-list 'doom-help-commands "%p h[elp] %c")
 
-    (defgroup! "Config Management"
+    (defcli-group! "Config Management"
       :docs "Commands for maintaining your Doom Emacs configuration."
-      (defautoload! ((sync s)))
-      (defautoload! ((upgrade up)))
-      (defautoload! (env))
-      (defautoload! ((build b purge p rollback)) "packages")
-      (defautoload! ((install i)))
-      (defautoload! ((compile c)))
-      (defautoload! (clean) "compile")
+      (defcli-autoload! ((sync s)))
+      (defcli-autoload! ((upgrade up)))
+      (defcli-autoload! (env))
+      (defcli-autoload! ((build b purge p rollback)) "packages")
+      (defcli-autoload! ((install i)))
+      (defcli-autoload! ((compile c)))
+      (defcli-autoload! (clean) "compile")
 
       ;; TODO Post-3.0 commands
       ;; (load! "gc" dir)
@@ -269,31 +269,31 @@ SEE ALSO:
       ;; (load! "nuke" dir)
       ;; (load! "package" dir)
       ;; (load! "profile" dir)
-      ;; (defobsolete! ((compile c)) (sync "--compile") "v3.0.0")
-      ;; (defobsolete! ((build b))   (sync "--rebuild") "v3.0.0")
+      ;; (defcli-obsolete! ((compile c)) (sync "--compile") "v3.0.0")
+      ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
       )
 
-    (defgroup! "Diagnostics"
+    (defcli-group! "Diagnostics"
       :docs "Commands for troubleshooting and debugging Doom."
-      (defautoload! ((doctor doc)))
-      (defautoload! (info))
-      (defalias! ((version v)) (:root :version)))
+      (defcli-autoload! ((doctor doc)))
+      (defcli-autoload! (info))
+      (defcli-alias! ((version v)) (:root :version)))
 
-    (defgroup! "Development"
+    (defcli-group! "Development"
       :docs "Commands for developing or launching Doom."
-      (defautoload! (ci))
-      (defautoload! (make))
-      (defautoload! (run))
+      (defcli-autoload! (ci))
+      (defcli-autoload! (make))
+      (defcli-autoload! (run))
 
       ;; FIXME Test framework
       ;; (load! "test" dir)
       )
 
     (let ((cli-file "cli"))
-      (defgroup! "Module commands"
+      (defcli-group! "Module commands"
         (dolist (key (hash-table-keys doom-modules))
           (when-let (path (plist-get (gethash key doom-modules) :path))
-            (defgroup! :prefix (format "+%s" (cdr key))
+            (defcli-group! :prefix (format "+%s" (cdr key))
               (load! cli-file path t)))))
 
       (doom-log "Loading $DOOMDIR/cli.el")

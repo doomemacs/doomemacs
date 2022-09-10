@@ -60,7 +60,7 @@ list remains lean."
     (doom-autoloads-reload))
   t)
 
-(defstub! rollback)  ; TODO Implement me post-3.0
+(defcli-stub! rollback)  ; TODO Implement me post-3.0
 
 
 ;;

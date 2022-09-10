@@ -5,7 +5,7 @@
 ;; command is passed with -?, --help, or --version. They can also be aliased to
 ;; a sub-command to make more of its capabilities accessible to users, with:
 ;;
-;;    (defalias! (myscript (help h)) (:help))
+;;    (defcli-alias! (myscript (help h)) (:help))
 ;;
 ;; You can define your own command-specific help handlers, e.g.
 ;;

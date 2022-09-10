@@ -32,7 +32,7 @@ Should be one of:
 ;;; Commands
 
 ;; FIXME Will be fixed in v3.1
-(defstub! test
+(defcli-stub! test
     ((backend ("--ert" "--buttercup"))
      (jobs    ("-j" "--jobs" int))
      &rest targets)

@@ -347,7 +347,7 @@ struct."
 (defun doom-cli-get (command &optional noresolve? noload?)
   "Return CLI at COMMAND.
 
-Will autoload COMMAND if it was deferred with `defautoload!'.
+Will autoload COMMAND if it was deferred with `defcli-autoload!'.
 
 If NORESOLVE?, don't follow aliases."
   (when-let* ((command (doom-cli--command command))
@@ -1475,7 +1475,7 @@ treated as a list of aliases for the command. For example:
 COMMANDSPEC may be prefixed with any of these special keywords:
 
   :root ...
-    This command will ignore any :prefix set by a parent `defgroup!'.
+    This command will ignore any :prefix set by a parent `defcli-group!'.
   :before ...
     This command will run before the specified command(s).
   :after ...
@@ -1655,7 +1655,7 @@ properties:
     an 'unknown command' error.
   :prefix (STR...)
     A command path to prepend to the command name. This is more useful as part
-    of `defgroup!'s inheritance.
+    of `defcli-group!'s inheritance.
 
 The BODY of commands with a non-nil :alias, :disable, or :partial will be
 ignored.
@@ -1747,14 +1747,14 @@ ignored.
                               doom-cli--table)))))
              target))))))
 
-(defmacro defalias! (commandspec target &rest plist)
+(defmacro defcli-alias! (commandspec target &rest plist)
   "Define a CLI alias for TARGET at COMMANDSPEC.
 
 See `defcli!' for information about COMMANDSPEC.
 TARGET is not a command specification, and should be a command list."
   `(defcli! ,commandspec () :alias ',target ,@plist))
 
-(defmacro defobsolete! (commandspec target when)
+(defmacro defcli-obsolete! (commandspec target when)
   "Define an obsolete CLI COMMANDSPEC that refers users to NEW-COMMAND.
 
 See `defcli!' for information about COMMANDSPEC.
@@ -1771,7 +1771,7 @@ WHEN specifies what version this command was rendered obsolete."
                (doom-cli-command-string ncommand))
        (call! ',target args))))
 
-(defmacro defstub! (commandspec &optional _argspec &rest body)
+(defmacro defcli-stub! (commandspec &optional _argspec &rest body)
   "Define a stub CLI, which will throw an error if invoked.
 
 Use this to define commands that will eventually be implemented, but haven't
@@ -1783,7 +1783,7 @@ yet. They won't be included in command listings (by help documentation)."
      :hide t
      (user-error "Command not implemented yet")))
 
-(defmacro defautoload! (commandspec &optional path &rest plist)
+(defmacro defcli-autoload! (commandspec &optional path &rest plist)
   "Defer loading of PATHS until PREFIX is called."
   `(let* ((doom-cli--plist (append (list ,@plist) doom-cli--plist))
           (commandspec (doom-cli-command-normalize ',commandspec))
@@ -1799,7 +1799,7 @@ yet. They won't be included in command listings (by help documentation)."
                (doom-cli-autoload cli))
        (defcli! ,commandspec () :autoload path))))
 
-(defmacro defgroup! (&rest body)
+(defmacro defcli-group! (&rest body)
   "Declare common properties for any CLI commands defined in BODY."
   (when (stringp (car body))
     (push :group body))
