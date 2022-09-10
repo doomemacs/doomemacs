@@ -165,14 +165,15 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 ;;
 ;;; Time-stamped *Message* logs
 
-(defun doom--timestamped-message-a (format-string &rest args)
+(defun doom--timestamped-message-a (format-string &rest _args)
   "Advice to run before `message' that prepends a timestamp to each message.
 
 Activate this advice with:
 (advice-add 'message :before 'doom--timestamped-message-a)"
   (when (and (stringp format-string)
-             message-log-max
-             (not (string-equal format-string "%s%s")))
+             message-log-max  ; if nil, logging is disabled
+             (not (equal format-string "%s%s"))
+             (not (equal format-string "\n")))
     (with-current-buffer "*Messages*"
       (let ((timestamp (format-time-string "[%F %T] " (current-time)))
             (deactivate-mark nil))
