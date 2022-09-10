@@ -156,7 +156,9 @@ return NULL-VALUE."
     (insert-file-contents file nil 0 256)
     (if (re-search-forward (format "^;;;###%s " (regexp-quote (or cookie "if")))
                            nil t)
-        (let ((load-file-name file))
+        (let* ((load-file-name file)
+               (doom--current-module (doom-module-from-path file))
+               (doom--current-flags (doom-module-get (car doom--current-module) (cdr doom--current-module) :flags)))
           (eval (sexp-at-point) t))
       null-value)))
 
