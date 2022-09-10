@@ -463,11 +463,10 @@ ones."
           (let (doom-packages)
             (doom--read-packages private-packages nil 'noerror))
           (cl-loop for key being the hash-keys of doom-modules
-                   for plist = (get (car key) (cdr key))
-                   for doom--current-flags = (plist-get plist :flags)
+                   for path = (doom-module-path (car key) (cdr key) packages-file)
                    for doom--current-module = key
-                   for file = (doom-path (plist-get plist :path) packages-file)
-                   do (doom--read-packages file nil 'noerror)))
+                   for doom--current-flags = (doom-module-get (car key) (cdr key) :flags)
+                   do (doom--read-packages path nil 'noerror)))
         (doom--read-packages private-packages all-p 'noerror)))
     (cl-remove-if-not
      (if core-only-p
