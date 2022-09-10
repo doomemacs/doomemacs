@@ -245,10 +245,14 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 
 (defmacro file! ()
   "Return the file of the file this macro was called."
-  (or (macroexp-file-name)
-      load-file-name
-      buffer-file-name   ; for `eval'
-      (error "file!: cannot deduce the current file path")))
+  (or
+   ;; REVIEW: Use `macroexp-file-name' once 27 support is dropped.
+   (let ((file (car (last current-load-list))))
+     (if (stringp file) file))
+   (bound-and-true-p byte-compile-current-file)
+   load-file-name
+   buffer-file-name   ; for `eval'
+   (error "file!: cannot deduce the current file path")))
 
 (defmacro dir! ()
   "Return the directory of the file this macro was called."
