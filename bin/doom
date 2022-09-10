@@ -74,13 +74,17 @@
 ;; - The user may have a noexec flag set on /tmp, so pass the exit script to
 ;;   /bin/sh rather than executing them directly.
 
+;; In CLI sessions, prefer correctness over performance.
+(setq load-prefer-newer t)
+
 ;; Doom's core sets up everything we need; including `doom-*-dir' variables,
 ;; universal defaults, and autoloads for doom-*-initialize functions.
 (condition-case e
-    (let ((load-prefer-newer t))
-      (load (expand-file-name
-             "../early-init" (file-name-directory (file-truename load-file-name)))
-            nil 'nomessage))
+    (let* ((bin-dir (file-name-directory (file-truename load-file-name)))
+           (init-file (expand-file-name "../early-init.el" bin-dir)))
+      (or (and (load init-file nil 'nomessage)
+               (featurep 'doom))
+          (user-error "Failed to load Doom from %s" init-file)))
   ;; Prevent ugly backtraces for trivial errors
   (user-error (message "Error: %s" (cadr e))
               (kill-emacs 2)))
