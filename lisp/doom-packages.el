@@ -554,11 +554,11 @@ elsewhere."
     (cl-callf map-delete plist :built-in)
     (cl-callf plist-put plist :ignore built-in))
   `(let* ((name ',name)
-          (plist (cdr (assq name doom-packages))))
+          (plist (cdr (assq name doom-packages)))
+          (dir (dir!)))
      ;; Record what module this declaration was found in
-     (let* ((dir (dir!))
-            (module-list (plist-get plist :modules))
-            (module (doom-module-from-path dir)))
+     (let ((module-list (plist-get plist :modules))
+           (module (doom-module-from-path dir)))
        (unless (member module module-list)
          (cl-callf plist-put plist :modules
                    (append module-list
@@ -582,7 +582,7 @@ elsewhere."
              (when local-repo
                (cl-callf plist-put plist :recipe
                          (plist-put recipe :local-repo
-                                    (let ((local-path (expand-file-name local-repo ,(dir!))))
+                                    (let ((local-path (expand-file-name local-repo dir)))
                                       (if (file-directory-p local-path)
                                           local-path
                                         local-repo)))))))
