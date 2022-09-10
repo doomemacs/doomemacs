@@ -67,11 +67,10 @@ If the glob ends in a slash, only returns matching directories."
   (declare (side-effect-free t))
   (let* (case-fold-search
          file-name-handler-alist
-         (path (apply #'file-name-concat segments))
-         (full? (file-name-absolute-p path)))
+         (path (apply #'file-name-concat segments)))
     (if (string-suffix-p "/" path)
-        (cl-delete-if-not #'file-directory-p (file-expand-wildcards (substring path 0 -1) full?))
-      (file-expand-wildcards path full?))))
+        (cl-delete-if-not #'file-directory-p (file-expand-wildcards (substring path 0 -1)))
+      (file-expand-wildcards path))))
 
 ;;;###autoload
 (define-obsolete-function-alias 'doom-dir 'doom-path "3.0.0")
