@@ -14,7 +14,6 @@
     ;; Emacs variables
     async-debug
     debug-on-error
-    garbage-collection-messages
     gcmh-verbose
     init-file-debug
     jka-compr-verbose
@@ -73,14 +72,23 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
            (advice-add #'run-hooks :override #'doom-run-hooks)
            ;; Add time stamps to lines in *Messages*
            (advice-add #'message :before #'doom--timestamped-message-a)
+           ;; The constant debug output from GC is mostly unhelpful. I still
+           ;; want it logged to *Messages*, just out of the echo area.
+           (advice-add #'gcmh-idle-garbage-collect :around #'doom-debug-shut-up-a)
            (add-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
            (add-hook 'after-load-functions #'doom-debug--watch-vars-h))
           (t
            (advice-remove #'run-hooks #'doom-run-hooks)
            (advice-remove #'message #'doom--timestamped-message-a)
+           (advice-remove #'gcmh-idle-garbage-collect #'doom-debug-shut-up-a)
            (remove-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
            (remove-hook 'after-load-functions #'doom-debug--watch-vars-h)
            (message "Debug mode disabled!")))))
+
+(defun doom-debug-shut-up-a (fn &rest args)
+  "Suppress output from FN, even in debug mode."
+  (let (init-file-debug)
+    (apply #'doom-shut-up-a fn args)))
 
 
 ;;
