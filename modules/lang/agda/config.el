@@ -12,6 +12,7 @@
     :definition #'agda2-goto-definition-keyboard)
 
   (when (modulep! +tree-sitter)
+    (set-tree-sitter-lang! 'agda2-mode 'agda)
     (add-hook! '(agda-mode-local-vars-hook
                  agda2-mode-local-vars-hook)
                :append #'tree-sitter!))
