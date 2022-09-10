@@ -75,9 +75,15 @@ in pkgs.stdenv.mkDerivation {
   shellHook = ''
     export EMACS="${emacsPkg}/bin/emacs"
     export EMACSVERSION="$($EMACS --no-site-file --batch --eval '(princ emacs-version)')"
-    export EMACSDIR="$(readlink -f "${emacsdir}")/"
-    export DOOMDIR="$(readlink -f "${doomdir}")/"
-    export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
+    if [[ -n "${emacsdir}" ]]; then
+      export EMACSDIR="$(readlink -f "${emacsdir}")/"
+    fi
+    if [[ -n "${doomdir}" ]]; then
+      export DOOMDIR="$(readlink -f "${doomdir}")/"
+    fi
+    if [[ -n "${doomlocaldir}" ]]; then
+      export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
+    fi
     export DOOMNOCOMPILE=1
     export PATH="$EMACSDIR/bin:$PATH"
 
@@ -91,7 +97,7 @@ in pkgs.stdenv.mkDerivation {
     mkdir -p "$DOOMLOCALDIR/straight"
     pushd "$DOOMLOCALDIR/straight" >/dev/null
     if [[ -d "$EMACSDIR/.local/straight/repos" && ! -d ./repos ]]; then
-      echo "Copying '$EMACSDIR/.local/straight/repos' to './$(basename $DOOMLOCALDIR)straight/repos' to save time"
+      echo "Copying '$EMACSDIR/.local/straight/repos' to './$(basename $DOOMLOCALDIR)/straight/repos' to save time"
       cp -r "$EMACSDIR/.local/straight/repos" ./repos
     fi
     popd >/dev/null
