@@ -372,7 +372,9 @@ results buffer.")
   :when (modulep! +fuzzy)
   :unless (modulep! +prescient)
   :defer t  ; is loaded by ivy
-  :preface (setq ivy--flx-featurep (modulep! +fuzzy))
+  :preface (when (or (not (modulep! +fuzzy))
+                     (modulep! +prescient))
+             (setq ivy--flx-featurep nil))
   :init (setq ivy-flx-limit 10000))
 
 (use-package! ivy-avy
