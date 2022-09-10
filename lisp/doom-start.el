@@ -84,16 +84,15 @@ If you want to disable incremental loading altogether, either remove
 `doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
 in daemon sessions (they are loaded immediately at startup).")
 
-(defvar doom-incremental-first-idle-timer 2.0
+(defvar doom-incremental-first-idle-timer (if (daemonp) 0 2.0)
   "How long (in idle seconds) until incremental loading starts.
 
-Set this to nil to disable incremental loading.")
+Set this to nil to disable incremental loading.
+Set this to 0 to load all incrementally deferred packages immediately at
+`emacs-startup-hook'.")
 
 (defvar doom-incremental-idle-timer 0.75
   "How long (in idle seconds) in between incrementally loading packages.")
-
-(defvar doom-incremental-load-immediately (daemonp)
-  "If non-nil, load all incrementally deferred packages immediately at startup.")
 
 (defun doom-load-packages-incrementally (packages &optional now)
   "Registers PACKAGES to be loaded incrementally.
@@ -140,9 +139,9 @@ intervals."
   "Begin incrementally loading packages in `doom-incremental-packages'.
 
 If this is a daemon session, load them all immediately instead."
-  (if doom-incremental-load-immediately
-      (mapc #'require (cdr doom-incremental-packages))
-    (when (numberp doom-incremental-first-idle-timer)
+  (when (numberp doom-incremental-first-idle-timer)
+    (if (zerop doom-incremental-first-idle-timer)
+        (mapc #'require (cdr doom-incremental-packages))
       (run-with-idle-timer doom-incremental-first-idle-timer
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
