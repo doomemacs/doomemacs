@@ -139,7 +139,8 @@ in."
       (explain! "The second directory will be ignored, as it has lower precedence.")))
 
   (print! (start "Checking for stale elc files..."))
-  (elc-check-dir doom-emacs-dir)
+  (elc-check-dir doom-core-dir)
+  (elc-check-dir doom-local-dir)
 
   (print! (start "Checking for problematic git global settings..."))
   (if (executable-find "git")
