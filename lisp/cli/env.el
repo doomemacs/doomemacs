@@ -17,15 +17,20 @@ users).")
   '(;; Unix/shell state that shouldn't be persisted
     "^HOME$" "^\\(OLD\\)?PWD$" "^SHLVL$" "^PS1$" "^R?PROMPT$" "^TERM\\(CAP\\)?$"
     "^USER$" "^GIT_CONFIG" "^INSIDE_EMACS$"
-    ;; X server or services' variables that shouldn't be persisted
-    "^DISPLAY$" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$" "^XDG_SESSION_TYPE$"
+    ;; X server, Wayland, or services' env  that shouldn't be persisted
+    "^DISPLAY$" "^WAYLAND_DISPLAY" "^DBUS_SESSION_BUS_ADDRESS$" "^XAUTHORITY$"
     ;; Windows+WSL envvars that shouldn't be persisted
     "^WSL_INTEROP$"
-    ;; ssh and gpg variables (likely to become stale)
+    ;; XDG variables that are best not persisted.
+    "^XDG_CURRENT_DESKTOP$" "^XDG_RUNTIME_DIR$"
+    "^XDG_\\(VTNR\\|SEAT\\|SESSION_\\(TYPE\\|CLASS\\)\\)"
+    ;; Socket envvars, like I3SOCK, GREETD_SOCK, SEATD_SOCK, SWAYSOCK, etc.
+    "SOCK$"
+    ;; ssh and gpg variables that could quickly become stale if persisted.
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
     "^GPG_AGENT_INFO$"
     ;; Internal Doom envvars
-    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\)DIR$" "^__")
+    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\)DIR$" "DOOMPROFILE" "^__")
   "Environment variables to omit from envvar files.
 
 Each string is a regexp, matched against variable names to omit from
