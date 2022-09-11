@@ -13,9 +13,11 @@ debug mode is off."
      (let ((inhibit-message (not init-file-debug)))
        (message
         "%s" (propertize
-              (format (concat "* [%.06f] " ,output)
-                      (float-time (time-subtract (current-time) before-init-time))
-                      ,@args)
+              ;; Byte compiler: don't complain about more args than %-sequences.
+              (with-no-warnings
+                (format (concat "* %.06f: " ,output)
+                        (float-time (time-subtract (current-time) before-init-time))
+                        ,@args))
               'face 'font-lock-doc-face)))))
 
 
@@ -115,7 +117,7 @@ at the values with which this function was called."
   "Load PATH and handle any Doom errors that arise from it.
 
 If NOERROR, don't throw an error if PATH doesn't exist."
-  (doom-log "Loading %S..." path)
+  (doom-log "load: %s %s" (abbreviate-file-name path) noerror)
   (condition-case-unless-debug e
       (load path noerror 'nomessage)
     ((doom-error file-missing)

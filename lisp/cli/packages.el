@@ -184,7 +184,7 @@ list remains lean."
     ;;   `no-byte-compile'. Rebuilding unnecessarily is expensive.
     (when (and (file-exists-p elc-file)
                (file-newer-than-file-p file elc-file))
-      (doom-log "%s is newer than %s" file elc-file)
+      (doom-log "packages:elc: %s is newer than %s" file elc-file)
       t)))
 
 (defun doom-packages--eln-file-outdated-p (file)
@@ -195,13 +195,15 @@ list remains lean."
            (error-file (doom-packages--eln-error-file eln-name)))
       (cond (eln-file
              (when (file-newer-than-file-p file eln-file)
-               (doom-log "%s is newer than %s" file eln-file)
+               (doom-log "packages:eln: %s is newer than %s" file eln-file)
                t))
             ((file-exists-p error-file)
              (when (file-newer-than-file-p file error-file)
-               (doom-log "%s is newer than %s" file error-file)
+               (doom-log "packages:eln: %s is newer than %s" file error-file)
                t))
-            ((always (doom-log "%s doesn't exist" eln-name)))))))
+            ((file-exists-p (byte-compile-dest-file file))
+             (doom-log "packages:eln: cannot find %s" eln-name)
+             t)))))
 
 (defun doom-packages--native-compile-done-h (file)
   "Callback fired when an item has finished async compilation."
@@ -210,13 +212,13 @@ list remains lean."
            (eln-file (doom-packages--eln-output-file eln-name))
            (error-file (doom-packages--eln-error-file eln-name)))
       (if (file-exists-p eln-file)
-          (doom-log "Compiled %s" eln-file)
+          (doom-log "packages:nativecomp: Compiled %s" eln-file)
         (let ((error-dir (file-name-directory error-file)))
           (if (not (file-writable-p error-dir))
-              (doom-log "Can't write %s" error-file)
+              (doom-log "packages:nativecomp: failed to write %s" error-file)
             (make-directory error-dir 'parents)
             (write-region "" nil error-file)
-            (doom-log "Wrote %s" error-file)))))))
+            (doom-log "packages:nativecomp: wrote %s" error-file)))))))
 
 (defun doom-packages--wait-for-native-compile-jobs ()
   "Wait for all pending async native compilation jobs."

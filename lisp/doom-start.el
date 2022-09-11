@@ -106,14 +106,14 @@ intervals."
         (let ((req (pop packages))
               idle-time)
           (if (featurep req)
-              (doom-log "[ILoader] Already loaded: %s (%d left)" req (length packages))
+              (doom-log "start:iloader: Already loaded %s (%d left)" req (length packages))
             (condition-case-unless-debug e
                 (and
                  (or (null (setq idle-time (current-idle-time)))
                      (< (float-time idle-time) doom-incremental-first-idle-timer)
                      (not
                       (while-no-input
-                        (doom-log "[ILoader] Loading: %s (%d left)" req (length packages))
+                        (doom-log "start:iloader: Loading %s (%d left)" req (length packages))
                         ;; If `default-directory' doesn't exist or is
                         ;; unreadable, Emacs throws file errors.
                         (let ((default-directory doom-emacs-dir)
@@ -127,7 +127,7 @@ intervals."
                (message "Error: failed to incrementally load %S because: %s" req e)
                (setq packages nil)))
             (if (null packages)
-                (doom-log "[ILoader] Finished!")
+                (doom-log "start:iloader: Finished!")
               (run-at-time (if idle-time
                                doom-incremental-idle-timer
                              doom-incremental-first-idle-timer)

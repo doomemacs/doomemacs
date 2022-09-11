@@ -201,8 +201,7 @@ SEE ALSO:
   (when pager
     (setq doom-cli-pager pager))
   (when force?
-    (setf (doom-cli-context-suppress-prompts-p context) t)
-    (doom-log "User requested all prompts be suppressed"))
+    (setf (doom-cli-context-suppress-prompts-p context) t))
   ;; For these settings to take full effect, the script must be restarted:
   (when (or debug?
             profile
@@ -296,7 +295,6 @@ SEE ALSO:
             (defcli-group! :prefix (format "+%s" (cdr key))
               (load! cli-file path t)))))
 
-      (doom-log "Loading $DOOMDIR/cli.el")
       (load! cli-file doom-user-dir t))
 
     ;; Allow per-project Doom settings in .doom files.
@@ -305,9 +303,7 @@ SEE ALSO:
        ((setq doomrc (getenv "DOOMRC"))
         (load! doomrc))
        ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
-        (load! ".doomrc" doomrc)))
-      (when doomrc
-        (doom-log "Loaded doomrc: %s" doomrc)))))
+        (load! ".doomrc" doomrc))))))
 
 
 ;;
