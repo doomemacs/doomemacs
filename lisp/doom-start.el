@@ -22,7 +22,131 @@
 
 
 ;;
+;;; Runtime/startup optimizations
+
+;; A second, case-insensitive pass over `auto-mode-alist' is time wasted.
+(setq auto-mode-case-fold nil)
+
+;; Disable bidirectional text scanning for a modest performance boost. I've set
+;; this to `nil' in the past, but the `bidi-display-reordering's docs say that
+;; is an undefined state and suggest this to be just as good:
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+
+;; Disabling the BPA makes redisplay faster, but might produce incorrect display
+;; reordering of bidirectional text with embedded parentheses and other bracket
+;; characters whose 'paired-bracket' Unicode property is non-nil.
+(setq bidi-inhibit-bpa t)  ; Emacs 27+ only
+
+;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
+;; in non-focused windows.
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+
+;; More performant rapid scrolling over unfontified regions. May cause brief
+;; spells of inaccurate syntax highlighting right after scrolling, which should
+;; quickly self-correct.
+(setq fast-but-imprecise-scrolling t)
+
+;; Don't ping things that look like domain names.
+(setq ffap-machine-p-known 'reject)
+
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we halve startup times, particularly when we use
+;; fonts that are larger than the system default (which would resize the frame).
+(setq frame-inhibit-implied-resize t)
+
+;; Emacs "updates" its ui more often than it needs to, so slow it down slightly
+(setq idle-update-delay 1.0)  ; default is 0.5
+
+;; Font compacting can be terribly expensive, especially for rendering icon
+;; fonts on Windows. Whether disabling it has a notable affect on Linux and Mac
+;; hasn't been determined, but do it anyway, just in case. This increases memory
+;; usage, however!
+(setq inhibit-compacting-font-caches t)
+
+;; PGTK builds only: this timeout adds latency to frame operations, like
+;; `make-frame-invisible', which are frequently called without a guard because
+;; it's inexpensive in non-PGTK builds. Lowering the timeout from the default
+;; 0.1 should make childframes and packages that manipulate them (like `lsp-ui',
+;; `company-box', and `posframe') feel much snappier. See emacs-lsp/lsp-ui#613.
+(eval-when! (boundp 'pgtk-wait-for-event-timeout)
+  (setq pgtk-wait-for-event-timeout 0.001))
+
+;; Increase how much is read from processes in a single chunk (default is 4kb).
+;; This is further increased elsewhere, where needed (like our LSP module).
+(setq read-process-output-max (* 64 1024))  ; 64kb
+
+;; Introduced in Emacs HEAD (b2f8c9f), this inhibits fontification while
+;; receiving input, which should help a little with scrolling performance.
+(setq redisplay-skip-fontification-on-input t)
+
+;; Performance on Windows is considerably worse than elsewhere. We'll need
+;; everything we can get.
+(eval-when! (boundp 'w32-get-true-file-attributes)
+  (setq w32-get-true-file-attributes nil    ; decrease file IO workload
+        w32-pipe-read-delay 0               ; faster IPC
+        w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
+
+;; Remove command line options that aren't relevant to our current OS; means
+;; slightly less to process at startup.
+(eval-when! (not IS-MAC)   (setq command-line-ns-option-alist nil))
+(eval-when! (not IS-LINUX) (setq command-line-x-option-alist nil))
+
+;; HACK: `tty-run-terminal-initialization' is *tremendously* slow for some
+;;   reason; inexplicably doubling startup time for terminal Emacs. Keeping it
+;;   disabled will have nasty side-effects, so we simply delay it instead, and
+;;   invoke it later, at which point it runs quickly; how mysterious!
+(unless (or (daemonp) init-file-debug)
+  (advice-add #'tty-run-terminal-initialization :override #'ignore)
+  (defun doom-init-tty-h ()
+    (advice-remove #'tty-run-terminal-initialization #'ignore)
+    (tty-run-terminal-initialization (selected-frame) nil t))
+  (add-hook 'window-setup-hook #'doom-init-tty-h))
+
+;; Reduce *Message* noise at startup. An empty scratch buffer (or the dashboard)
+;; is more than enough.
+(setq inhibit-startup-screen t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t)
+
+;; Shave seconds off startup time by starting the scratch buffer in
+;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which pull
+;; in a ton of packages. `doom/open-scratch-buffer' provides a better scratch
+;; buffer anyway.
+(setq initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
+
+;; The GC introduces annoying pauses and stuttering into our Emacs experience,
+;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
+;; when it's idle. However, if the idle delay is too long, we run the risk of
+;; runaway memory usage in busy sessions. If it's too low, then we may as well
+;; not be using gcmh at all.
+(setq gcmh-idle-delay 'auto  ; default is 15s
+      gcmh-auto-idle-delay-factor 10
+      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
+(add-hook 'doom-first-buffer-hook #'gcmh-mode)
+
+
+;;
 ;;; Reasonable defaults for interactive sessions
+
+;; Contrary to what many Emacs users have in their configs, you don't need more
+;; than this to make UTF-8 the default coding system:
+(set-language-environment "UTF-8")
+;; ...but `set-language-environment' also sets `default-input-method', which is
+;; a step too opinionated.
+(setq default-input-method nil)
+;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
+;; leave Emacs to its own devices.
+(eval-when! IS-WINDOWS
+  (setq selection-coding-system 'utf-8))
+
+;; Get rid of "For information about GNU Emacs..." message at startup. It's
+;; redundant with our dashboard. However, in daemon sessions it says "Starting
+;; Emacs daemon." instead, which is fine.
+(unless (daemonp)
+  (advice-add #'display-startup-echo-area-message :override #'ignore))
 
 ;; GUIs are inconsistent across systems, will rarely match our active Emacs
 ;; theme, and impose their shortcut key paradigms suddenly. Let's just avoid
@@ -30,7 +154,7 @@
 (setq use-dialog-box nil)
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
-(when IS-LINUX
+(eval-when! IS-LINUX
   (setq x-gtk-use-system-tooltips nil))
 
 ;; Favor vertical splits over horizontal ones, since monitors are trending
@@ -208,16 +332,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
-
-;; The GC introduces annoying pauses and stuttering into our Emacs experience,
-;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
-;; when it's idle. However, if the idle delay is too long, we run the risk of
-;; runaway memory usage in busy sessions. If it's too low, then we may as well
-;; not be using gcmh at all.
-(setq gcmh-idle-delay 'auto  ; default is 15s
-      gcmh-auto-idle-delay-factor 10
-      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
-(add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
 ;; There's a chance the user will later use package.el or straight in this
 ;; interactive session. If they do, make sure they're properly initialized
