@@ -169,7 +169,8 @@ SEE ALSO:
 
 (defcli! :before
     ((force?   ("-!" "--force")   "Suppress prompts by auto-accepting their consequences")
-     (debug?   ("-D" "--debug")   "Enable verbose output")
+     (debug?   ("-D" "--debug")   "Enable debug output")
+     (verbose? ("-v" "--verbose") "Enable verbose output")
      (doomdir  ("--doomdir" dir)  "Use Doom config living in `DIR' (e.g. ~/.doom.d)")
      (emacsdir ("--emacsdir" dir) "Use Doom install living in `DIR' (e.g. ~/.emacs.d)")
      (pager    ("--pager" cmd)    "Pager command to use for large output")
@@ -196,6 +197,9 @@ SEE ALSO:
     .doomrc file in the current project tree."
   (when bench?
     (setq doom-cli-benchmark-threshold 'always))
+  (unless init-file-debug ; debug-mode implies verbose
+    (when verbose?
+      (setq doom-print-minimum-level 'info)))
   (when color?
     (setq doom-print-backend (if (eq color? :yes) 'ansi)))
   (when pager

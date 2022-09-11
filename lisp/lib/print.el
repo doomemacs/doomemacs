@@ -116,23 +116,20 @@ Any of these classes can be called like functions from within `format!' and
 
 Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 
-(defvar doom-print-level 'info
-  "The default level of messages to print.")
+(defvar doom-print-level 'notice
+  "The current, default logging level.")
 
-(defvar doom-print-logging-level 'debug
-  "The default logging level used by `doom-log'/`doom-print'.")
+(defvar doom-print-minimum-level 'notice
+  "The minimum logging level for a message to be output.")
 
-(defvar doom-print-message-level (if noninteractive 'debug 'info)
-  "The default logging level used by `message'.")
-
-(defvar doom-print--levels
-  '(debug    ; the system is thinking out loud
-    info     ; a FYI; to keep you posted
-    warning  ; a dismissable issue that may have reprecussions later
-    error))  ; functionality has been disabled/broken by misbehavior
-
-(dotimes (i (length doom-print--levels))
-  (put (nth i doom-print--levels) 'level i))
+;; Record print levels in these symbols for easy, quasi-read-only access later.
+(let ((levels '(debug    ; the system is thinking out loud
+                info     ; less details about important progress
+                notice   ; important details about important progress
+                warning  ; a dismissable issue that may have reprecussions later
+                error))) ; something has gone terribly wrong
+  (dotimes (i (length levels))
+    (put (nth i levels) 'print-level i)))
 
 
 ;;
@@ -141,52 +138,57 @@ Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 ;;;###autoload
 (cl-defun doom-print
     (output &key
-            (format t)
+            (format nil)
+            (level doom-print-level)
             (newline t)
-            (stream standard-output)
-            (level doom-print-level))
+            (stream standard-output))
   "Print OUTPUT to stdout.
 
 Unlike `message', this:
-- Respects `standard-output'.
-- Respects `doom-print-indent' (if FORMAT)
+- Respects the value of `standard-output'.
+- Indents according to `doom-print-indent' (if FORMAT is non-nil).
 - Prints to stdout instead of stderr in batch mode.
-- Respects more ANSI codes (only in batch mode).
+- Recognizes more terminal escape codes (only in batch mode).
 - No-ops if OUTPUT is nil or an empty/blank string.
 
 Returns OUTPUT."
   (cl-check-type output (or null string))
   (when (and (stringp output)
-             (not (string-blank-p output))
              (or (eq level t)
-                 (>= (get level 'level)
-                     (get doom-print-level 'level))))
-    (let ((output (if format
-                      (doom-print--format "%s" output)
-                    output)))
-      (princ output stream)
-      (if newline (terpri stream))
-      output)))
+                 (if (listp level)
+                     (memq doom-print-minimum-level level)
+                   (>= (get level 'print-level)
+                       (get doom-print-minimum-level 'print-level)))))
+    (when format
+      (setq output (doom-print--format "%s" output)))
+    (princ output stream)
+    (if newline (terpri stream))
+    output))
 
 ;;;###autoload
 (defmacro format! (message &rest args)
-  "An alternative to `format' that understands (color ...) and converts them
-into faces or ANSI codes depending on the type of sesssion we're in."
+  "An alternative to `format' that understands `print!'s style syntax."
   `(doom-print--format ,@(doom-print--apply `(,message ,@args))))
 
 ;;;###autoload
 (defmacro print-group! (&rest body)
   "Indents any `print!' or `format!' output within BODY."
-  `(print-group-if! t ,@body))
-
-;;;###autoload
-(defmacro print-group-if! (condition &rest body)
-  "Indents any `print!' or `format!' output within BODY."
-  (declare (indent 1))
-  `(let ((doom-print-indent
-          (+ (if ,condition doom-print-indent-increment 0)
-             doom-print-indent)))
-     ,@body))
+  (declare (indent defun))
+  (cl-destructuring-bind (&key if indent level verbose title
+                               ;; TODO: Implement these
+                               _benchmark)
+      (cl-loop for (key val) on body by #'cddr
+               while (keywordp key)
+               collect (pop body)
+               collect (pop body))
+    (if verbose (setq level ''info))
+    `(progn
+       ,@(if title `((print! (start ,title))))
+       (let ((doom-print-level (or ,level doom-print-level))
+             (doom-print-indent
+              (+ (if ,(or if t) (or ,indent doom-print-indent-increment) 0)
+                 doom-print-indent)))
+         ,@body))))
 
 ;;;###autoload
 (defmacro print! (message &rest args)
@@ -201,7 +203,7 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  `(doom-print (format! ,message ,@args) :format nil))
+  `(doom-print (format! ,message ,@args)))
 
 ;;;###autoload
 (defmacro insert! (&rest args)
@@ -216,9 +218,72 @@ Each argument in ARGS can be a list, as if they were arguments to `format!':
                       collect `(format! ,@arg)
                       else collect arg)))
 
+(defvar doom-print--output-depth 0)
+;;;###autoload
+(defmacro with-output-to! (streamspec &rest body)
+  "Capture all output within BODY according to STREAMSPEC.
+
+STREAMSPEC is a list of log specifications, indicating where to write output
+based on the print level of the message. For example:
+
+  `((>= notice ,(get-buffer-create \"*stdout*\"))
+    (= error   ,(get-buffer-create \"*errors*\"))
+    (t . ,(get-buffer-create \"*debug*\")))"
+  (declare (indent 1))
+  (let ((sym (make-symbol "streamspec")))
+    `(letf! ((,sym ,streamspec)
+             (standard-output (doom-print--redirect-standard-output ,sym t))
+             (#'message (doom-print--redirect-message ,sym (if noninteractive 'debug 'notice)))
+             (doom-print--output-depth (1+ doom-print--output-depth)))
+       ,@body)))
+
 
 ;;
 ;;; Helpers
+
+(defun doom-print--redirect-streams (streamspec level)
+  (if (or (eq streamspec t)
+          (bufferp streamspec)
+          (functionp streamspec)
+          (markerp streamspec))
+      (list (cons t streamspec))
+    (cl-loop for (car . spec) in streamspec
+             if (eq car t)
+             collect (cons t spec)
+             else
+             collect (cons (or (eq level t)
+                               (doom-partial
+                                car
+                                (get level 'print-level)
+                                (get (car spec) 'print-level)))
+                           (cadr spec)))))
+
+(defun doom-print--redirect-standard-output (streamspec level)
+  (let ((old standard-output)
+        (streams (doom-print--redirect-streams streamspec level)))
+    (lambda (ch)
+      (let ((str (char-to-string ch)))
+        (dolist (stream streams)
+          (when (or (eq (car stream) t)
+                    (funcall (car stream)))
+            (doom-print str :newline nil :stream (cdr stream))))
+        (doom-print str :newline nil :stream t :level level)))))
+
+(defun doom-print--redirect-message (streamspec level)
+  (let ((old (symbol-function #'message))
+        (streams (doom-print--redirect-streams streamspec level)))
+    (lambda (message &rest args)
+      (when message
+        (let ((output (apply #'doom-print--format message args)))
+          (if (= doom-print--output-depth 0)
+              (doom-print output :level level :stream t)
+            (let ((doom-print--output-depth (1- doom-print--output-depth)))
+              (funcall old "%s" output)))
+          (dolist (stream streams)
+            (when (or (eq (car stream) t)
+                      (funcall (car stream)))
+              (doom-print output :stream (cdr stream)))))
+        message))))
 
 ;;;###autoload
 (defun doom-print--format (message &rest args)

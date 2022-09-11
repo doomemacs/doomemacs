@@ -1064,6 +1064,18 @@ considered as well."
                      (path backtrace-file))))))))
     (exit! 255)))
 
+(defmacro doom-cli-redirect-output (context &rest body)
+  "Redirect output from BODY to the appropriate log buffers in CONTEXT."
+  (declare (indent 1))
+  (let ((contextsym (make-symbol "doomctxt")))
+    `(let* ((,contextsym ,context)
+            ;; Emit more user-friendly backtraces
+            (debugger (doom-rpartial #'doom-cli-debugger ,contextsym))
+            (debug-on-error t))
+       (with-output-to! `((>= notice ,(doom-cli-context-stdout ,contextsym))
+                          (t . ,(doom-cli-context-stderr ,contextsym)))
+         ,@body))))
+
 (defun doom-cli--output-file (type context)
   "Return a log file path for TYPE and CONTEXT.
 
@@ -1072,15 +1084,6 @@ See `doom-cli-log-file-format' for details."
           (doom-cli-context-prefix context)
           (doom-cli-context-sid context)
           type))
-
-(defun doom-cli--output (out &optional context)
-  "A `standard-output' function which mirrors output to log buffers."
-  (let ((str (char-to-string out)))
-    (dolist (buffer (list (doom-cli-context-stdout context)
-                          (doom-cli-context-stderr context)))
-      (when (bufferp buffer)
-        (princ str buffer)))
-    (send-string-to-terminal str)))
 
 (defun doom-cli--output-write-logs-h (context)
   "Write all log buffers to their appropriate files."
@@ -1109,39 +1112,28 @@ Will also output it to stdout if requested (CLI sets :benchmark to t) or the
 command takes >5s to run. If :benchmark is explicitly set to nil (or
 `doom-cli-benchmark-threshold' is nil), under no condition should a benchmark be
 shown."
-  (doom-log "cli: %s (GCs: %d, elapsed: %.6fs)"
-            (if (= doom-cli--exit-code 254) "Restarted" "Finished")
-            gcs-done gc-elapsed)
-  (when-let* ((init-time (doom-cli-context-init-time context))
-              (cli       (doom-cli-get context))
-              (duration  (float-time (time-subtract (current-time) init-time)))
-              (hours     (/ (truncate duration) 60 60))
-              (minutes   (- (/ (truncate duration) 60) (* hours 60)))
-              (seconds   (- duration (* hours 60 60) (* minutes 60)))
-              (standard-output (doom-rpartial #'doom-cli--output context)))
-    (when (and (/= doom-cli--exit-code 254)
-               (or (eq (doom-cli-prop cli :benchmark) t)
-                   (eq doom-cli-benchmark-threshold 'always)
-                   (and (eq (doom-cli-prop cli :benchmark :null) :null)
-                        (not (doom-cli-context-pipe-p context 'out t))
-                        (> duration (or doom-cli-benchmark-threshold
-                                        most-positive-fixnum)))))
-      (print! (success "Finished in %s")
-              (join (list (unless (zerop hours)   (format "%dh" hours))
-                          (unless (zerop minutes) (format "%dm" minutes))
-                          (format (if (> duration 60) "%ds" "%.5fs")
-                                  seconds)))))))
-
-(defun doom-cli--redirect-output-a (context message &rest args)
-  ":override advice for `message' to mirror output to log buffers"
-  (when message
-    (let ((output (apply #'doom-print--format message args)))
-      ;; One for the terminal, if the log level is high enough.
-      (doom-print output :format nil :level doom-print-message-level :stream t)
-      ;; And one for the logs...
-      (when (doom-cli-context-p context)
-        (doom-print output :format nil :stream (doom-cli-context-stderr context) :level t)))
-    message))
+  (doom-cli-redirect-output context
+    (doom-log "cli: %s (GCs: %d, elapsed: %.6fs)"
+              (if (= doom-cli--exit-code 254) "Restarted" "Finished")
+              gcs-done gc-elapsed)
+    (when-let* ((init-time (doom-cli-context-init-time context))
+                (cli       (doom-cli-get context))
+                (duration  (float-time (time-subtract (current-time) init-time)))
+                (hours     (/ (truncate duration) 60 60))
+                (minutes   (- (/ (truncate duration) 60) (* hours 60)))
+                (seconds   (- duration (* hours 60 60) (* minutes 60))))
+      (when (and (/= doom-cli--exit-code 254)
+                 (or (eq (doom-cli-prop cli :benchmark) t)
+                     (eq doom-cli-benchmark-threshold 'always)
+                     (and (eq (doom-cli-prop cli :benchmark :null) :null)
+                          (not (doom-cli-context-pipe-p context 'out t))
+                          (> duration (or doom-cli-benchmark-threshold
+                                          most-positive-fixnum)))))
+        (print! (success "Finished in %s")
+                (join (list (unless (zerop hours)   (format "%dh" hours))
+                            (unless (zerop minutes) (format "%dm" minutes))
+                            (format (if (> duration 60) "%ds" "%.5fs")
+                                    seconds))))))))
 
 
 ;;
@@ -1893,90 +1885,85 @@ Once done, this function kills Emacs gracefully and writes output to log files
 errors to `doom-cli-error-file')."
   (when doom-cli--context
     (error "Cannot nest `run!' calls"))
-  (letf! ((args (flatten-list args))
-          (context (make-doom-cli-context :prefix prefix :whole args))
-          (doom-cli--context context)
-          (write-logs-fn (doom-partial #'doom-cli--output-write-logs-h context))
-          (show-benchmark-fn (doom-partial #'doom-cli--output-benchmark-h context))
-          ;; Write more user-friendly backtraces
-          (debugger (doom-rpartial #'doom-cli-debugger context))
-          (debug-on-error t)
-          ;; Clone output to stdout/stderr buffers for logging.
-          (standard-output (doom-rpartial #'doom-cli--output context))
-          (#'message (doom-partial #'doom-cli--redirect-output-a context)))
+  (let* ((args (flatten-list args))
+         (context (make-doom-cli-context :prefix prefix :whole args))
+         (doom-cli--context context)
+         (write-logs-fn (doom-partial #'doom-cli--output-write-logs-h context))
+         (show-benchmark-fn (doom-partial #'doom-cli--output-benchmark-h context)))
     ;; Clone output to stdout/stderr buffers for logging.
-    (doom-log "run!: %s %s" prefix (combine-and-quote-strings args))
-    (add-hook 'kill-emacs-hook show-benchmark-fn 94)
-    (add-hook 'kill-emacs-hook write-logs-fn 95)
-    (when (doom-cli-context-pipe-p context :out t)
-      (setq doom-print-backend nil))
-    (when (doom-cli-context-pipe-p context :in)
-      (with-current-buffer (doom-cli-context-stdin context)
-        (while (if-let (in (ignore-errors (read-from-minibuffer "")))
-                   (insert in "\n")
-                 (ignore-errors (delete-char -1))))))
-    (doom-cli--exit
-     (condition-case e
-         (let* ((args (cons (if (getenv "__DOOMDUMP") :dump prefix) args))
-                (context (doom-cli-context-restore (getenv "__DOOMCONTEXT") context))
-                (context (doom-cli-context-parse args context)))
-           (run-hook-with-args 'doom-cli-before-run-functions context)
-           (let ((result (doom-cli-context-execute context)))
-             (run-hook-with-args 'doom-cli-after-run-functions context result))
-           0)
-       (doom-cli-wrong-number-of-arguments-error
-        (pcase-let ((`(,command ,flag ,args ,min ,max) (cdr e)))
-          (print! (red "Error: %S expected %s argument%s, but got %d")
-                  (or flag (doom-cli-command-string
-                            (if (keywordp (car command))
-                                command
-                              (cdr command))))
-                  (if (or (= min max)
-                          (= max most-positive-fixnum))
-                      min
-                    (format "%d-%d" min max))
-                  (if (or (= min 0) (> min 1)) "s" "")
-                  (length args))
-          (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e))
-        5)
-       (doom-cli-unrecognized-option-error
-        (print! (red "Error: unknown option %s") (cadr e))
-        (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e)
-        5)
-       (doom-cli-invalid-option-error
-        (pcase-let ((`(,types ,option ,value ,errors) (cdr e)))
-          (print! (red "Error: %s received invalid value %S")
-                  (string-join (doom-cli-option-switches option) "/")
-                  value)
-          (print! (bold "\nValidation errors:"))
-          (dolist (err errors) (print! (item "%s." (fill err)))))
-        (doom-cli-call `(:help "--postamble" ,@(cdr (doom-cli--command context))) context e)
-        5)
-       (doom-cli-command-not-found-error
-        (let* ((command (cdr e))
-               (cli (doom-cli-get command)))
-          (cond ((null cli)
-                 (print! (red "Error: unrecognized command '%s'")
-                         (doom-cli-command-string (or (cdr command) command)))
-                 (doom-cli-call `(:help "--similar" "--postamble" ,@(cdr command)) context e))
-                ((null (doom-cli-fn cli))
-                 (print! (red "Error: a subcommand is required"))
-                 (doom-cli-call `(:help "--subcommands" "--postamble" ,@(cdr command)) context e))))
-        4)
-       (doom-cli-invalid-prefix-error
-        (let ((prefix (cadr e)))
-          (print! (red "Error: `run!' called with invalid prefix %S") prefix)
-          (if-let (suggested (cl-loop for cli being the hash-value of doom-cli--table
-                                      unless (doom-cli-type cli)
-                                      return (car (doom-cli-command cli))))
-              (print! "Did you mean %S?" suggested)
-            (print! "There are no commands defined under %S." prefix)))
-        4)
-       (user-error
-        (print! (red "Error: %s") (cadr e))
-        (print! "\nAborting...")
-        3))
-     context)))
+    (doom-cli-redirect-output context
+      (doom-log "run!: %s %s" prefix (combine-and-quote-strings args))
+      (add-hook 'kill-emacs-hook show-benchmark-fn 94)
+      (add-hook 'kill-emacs-hook write-logs-fn 95)
+      (when (doom-cli-context-pipe-p context :out t)
+        (setq doom-print-backend nil))
+      (when (doom-cli-context-pipe-p context :in)
+        (with-current-buffer (doom-cli-context-stdin context)
+          (while (if-let (in (ignore-errors (read-from-minibuffer "")))
+                     (insert in "\n")
+                   (ignore-errors (delete-char -1))))))
+      (doom-cli--exit
+       (condition-case e
+           (let* ((args (cons (if (getenv "__DOOMDUMP") :dump prefix) args))
+                  (context (doom-cli-context-restore (getenv "__DOOMCONTEXT") context))
+                  (context (doom-cli-context-parse args context)))
+             (run-hook-with-args 'doom-cli-before-run-functions context)
+             (let ((result (doom-cli-context-execute context)))
+               (run-hook-with-args 'doom-cli-after-run-functions context result))
+             0)
+         (doom-cli-wrong-number-of-arguments-error
+          (pcase-let ((`(,command ,flag ,args ,min ,max) (cdr e)))
+            (print! (red "Error: %S expected %s argument%s, but got %d")
+                    (or flag (doom-cli-command-string
+                              (if (keywordp (car command))
+                                  command
+                                (cdr command))))
+                    (if (or (= min max)
+                            (= max most-positive-fixnum))
+                        min
+                      (format "%d-%d" min max))
+                    (if (or (= min 0) (> min 1)) "s" "")
+                    (length args))
+            (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e))
+          5)
+         (doom-cli-unrecognized-option-error
+          (print! (red "Error: unknown option %s") (cadr e))
+          (doom-cli-call `(:help "--synopsis" "--postamble" ,@(cdr (doom-cli--command context))) context e)
+          5)
+         (doom-cli-invalid-option-error
+          (pcase-let ((`(,types ,option ,value ,errors) (cdr e)))
+            (print! (red "Error: %s received invalid value %S")
+                    (string-join (doom-cli-option-switches option) "/")
+                    value)
+            (print! (bold "\nValidation errors:"))
+            (dolist (err errors) (print! (item "%s." (fill err)))))
+          (doom-cli-call `(:help "--postamble" ,@(cdr (doom-cli--command context))) context e)
+          5)
+         (doom-cli-command-not-found-error
+          (let* ((command (cdr e))
+                 (cli (doom-cli-get command)))
+            (cond ((null cli)
+                   (print! (red "Error: unrecognized command '%s'")
+                           (doom-cli-command-string (or (cdr command) command)))
+                   (doom-cli-call `(:help "--similar" "--postamble" ,@(cdr command)) context e))
+                  ((null (doom-cli-fn cli))
+                   (print! (red "Error: a subcommand is required"))
+                   (doom-cli-call `(:help "--subcommands" "--postamble" ,@(cdr command)) context e))))
+          4)
+         (doom-cli-invalid-prefix-error
+          (let ((prefix (cadr e)))
+            (print! (red "Error: `run!' called with invalid prefix %S") prefix)
+            (if-let (suggested (cl-loop for cli being the hash-value of doom-cli--table
+                                        unless (doom-cli-type cli)
+                                        return (car (doom-cli-command cli))))
+                (print! "Did you mean %S?" suggested)
+              (print! "There are no commands defined under %S." prefix)))
+          4)
+         (user-error
+          (print! (red "Error: %s") (cadr e))
+          (print! "\nAborting...")
+          3))
+       context))))
 
 (defalias 'sh! #'doom-call-process)
 
