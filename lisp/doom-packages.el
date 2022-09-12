@@ -452,8 +452,7 @@ ones."
     (doom--read-packages
      (doom-path doom-core-dir packages-file) all-p 'noerror)
     (unless core-only-p
-      (let ((private-packages (doom-path doom-user-dir packages-file))
-            (doom-modules (doom-module-list)))
+      (let ((private-packages (doom-path doom-user-dir packages-file)))
         (if all-p
             (mapc #'doom--read-packages
                   (doom-files-in doom-modules-dir
@@ -465,10 +464,10 @@ ones."
           ;; overwritten.
           (let (doom-packages)
             (doom--read-packages private-packages nil 'noerror))
-          (cl-loop for key being the hash-keys of doom-modules
-                   for path = (doom-module-expand-path (car key) (cdr key) packages-file)
-                   for doom--current-module = key
-                   for doom--current-flags = (doom-module-get (car key) (cdr key) :flags)
+          (cl-loop for (cat . mod) in (doom-module-list)
+                   for path = (doom-module-expand-path cat mod packages-file)
+                   for doom--current-module = (cons cat mod)
+                   for doom--current-flags = (doom-module-get cat mod :flags)
                    do (doom--read-packages path nil 'noerror)))
         (doom--read-packages private-packages all-p 'noerror)))
     (cl-remove-if-not

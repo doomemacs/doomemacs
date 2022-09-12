@@ -300,15 +300,15 @@ ready to be pasted in a bug report on github."
                       if (eq type 'theme-value)
                       collect var)))
         (modules
-         ,@(or (cl-loop with cat = nil
-                        for key being the hash-keys of doom-modules
-                        if (or (not cat)
-                               (not (eq cat (car key))))
-                        do (setq cat (car key))
-                        and collect cat
+         ,@(or (cl-loop with lastcat = nil
+                        for (cat . mod) in (cddr (doom-module-list))
+                        if (or (not lastcat)
+                               (not (eq lastcat cat)))
+                        do (setq lastcat cat)
+                        and collect lastcat
                         collect
-                        (let* ((flags (doom-module-get cat (cdr key) :flags))
-                               (path  (doom-module-get cat (cdr key) :path))
+                        (let* ((flags (doom-module-get lastcat mod :flags))
+                               (path  (doom-module-get lastcat mod :path))
                                (module
                                 (append
                                  (cond ((null path)
@@ -316,8 +316,8 @@ ready to be pasted in a bug report on github."
                                        ((not (file-in-directory-p path doom-modules-dir))
                                         (list '&user)))
                                  (if flags
-                                     `(,(cdr key) ,@flags)
-                                   (list (cdr key))))))
+                                     `(,mod ,@flags)
+                                   (list mod)))))
                           (if (= (length module) 1)
                               (car module)
                             module)))

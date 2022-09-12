@@ -249,8 +249,8 @@ those directories. The first returned path is always `doom-user-dir'."
                                       :mindepth 1
                                       :depth 1)))
             (delq
-             nil (cl-loop for plist being the hash-values of doom-modules
-                          collect (plist-get plist :path)) ))
+             nil (cl-loop for (cat . mod) in (doom-module-list)
+                          collect (doom-module-get cat mod :path))))
           nil))
 
 (defun doom-module-mplist-map (fn mplist)
@@ -309,11 +309,15 @@ those directories. The first returned path is always `doom-user-dir'."
     (nreverse results)))
 
 (defun doom-module-list (&optional all-p)
-  "Minimally initialize `doom-modules' (a hash table) and return it.
-This value is cached. If REFRESH-P, then don't use the cached value."
+  "Return modules as a list of (:CATEGORY . MODULE) in their enabled order.
+
+If ALL-P, return a list of *all* available modules instead, whether or not
+they're enabled, and in lexicographical order.
+
+If ALL-P is `real', only return *real"
   (if all-p
       (mapcar #'doom-module-from-path (cdr (doom-module-load-path 'all)))
-    doom-modules))
+    (hash-table-keys doom-modules)))
 
 
 ;;
