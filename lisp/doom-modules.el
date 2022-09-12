@@ -1,4 +1,9 @@
 ;;; doom-modules.el --- module & package management system -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
+
+;;
+;;; Variables
 
 (defvar doom-init-modules-p nil
   "Non-nil if `doom-initialize-modules' has run.")

@@ -49,6 +49,9 @@
 ;;
 ;;; Code:
 
+;; Doom's minimum supported version of Emacs is 27.1. Its my goal to support one
+;; major version below the stable release, for about a year or until stable is
+;; ubiquitous (or at least easily accessible) across Linux distros.
 (when (< emacs-major-version 27)
   (user-error
    (concat
@@ -147,10 +150,10 @@
 ;;
 ;;; Cross-platform fixes
 
+;; Fix $HOME on Windows, where it's not normally defined, because many unix
+;; tools expect it.
 (when IS-WINDOWS
   (when-let (realhome
-             ;; Fix HOME on Windows, where it's not normally defined (though
-             ;; many unix tools expect it).
              (and (null (getenv-internal "HOME"))
                   (getenv "USERPROFILE")))
     (setenv "HOME" realhome)
@@ -336,11 +339,11 @@ users).")
 ;;
 ;;; Don't litter `doom-emacs-dir'/$HOME
 
-;; I change `user-emacs-directory' because many packages (even built-in ones)
-;; abuse it to build paths for storage/cache files (instead of correctly using
-;; `locate-user-emacs-file'). This change ensures that said data files are never
-;; saved to the root of your emacs directory *and* saves us the trouble setting
-;; a million directory/file variables.
+;; HACK: I change `user-emacs-directory' because many packages (even built-in
+;;   ones) abuse it to build paths for storage/cache files (instead of correctly
+;;   using `locate-user-emacs-file'). This change ensures that said data files
+;;   are never saved to the root of your emacs directory *and* saves us the
+;;   trouble setting a million directory/file variables.
 (setq user-emacs-directory doom-cache-dir)
 
 ;; ...However, this may surprise packages (and users) that read
@@ -365,7 +368,7 @@ users).")
                          "~/.authinfo.gpg"))
 
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
-  "Write saved safe-local-variables to `custom-file' instead.
+  "Save safe-local-variables to `custom-file' instead of `user-init-file'.
 
 Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 `user-init-file')."

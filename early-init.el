@@ -1,28 +1,33 @@
-;;; early-init.el -*- lexical-binding: t; -*-
+;;; early-init.el --- Doom's universal bootstrapper -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el;
-;; before Emacs initializes package.el and its UI; and before site files are
-;; loaded. This is the best time to tweak Emacs (though any UI work will have to
-;; be deferred), and will always be where Doom's dirtiest (and config-agnostic)
-;; startup optimizations will live.
+;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el, and
+;; before Emacs initializes its UI or package.el, and before site files are
+;; loaded. This is good place for startup optimizating, because only here can
+;; you *prevent* things from loading, rather than turn them off after-the-fact.
+;; As such, Doom does all its initializing here.
 ;;
-;; Doom uses this file as its universal bootstrapper, for both interactive and
-;; non-interactive sessions. It's also the heart of its bootloader, which lets
-;; you switch between Emacs configs on demand using `--init-directory DIR'
-;; (which it has backported from Emacs 29) or `--profile NAME` (for more about
-;; this, read the Profiles section in docs/developers.org or
-;; `https://docs.doomemacs.org/developers').
+;; This file is Doom's "universal bootstrapper" for both interactive and
+;; non-interactive sessions. It's also the heart of its profile bootloader,
+;; which allows you to switch between Emacs configs on demand using
+;; `--init-directory DIR' (which was backported from Emacs 29) or `--profile
+;; NAME` (more about profiles at `https://docs.doomemacs.org/-/developers' or
+;; docs/developers.org).
 ;;
-;; If you're writing a Doom-based batch script, or using Doom's CLI framework,
-;; load this file to initialize Doom and its CLI framework. Then you may
-;; optionally load `doom-start' to initialize your interactive config on top of
-;; it, if you need it.
+;; In summary, this file is responsible for:
+;; - Setting up some universal startup optimizations.
+;; - Determining where `user-emacs-directory' is from one of:
+;;   - `--init-directory DIR' (backported from 29)
+;;   - `--profile PROFILENAME'
+;; - Do one of the following:
+;;   - Load `doom' and one of `doom-start' or `doom-cli'.
+;;   - Or (if the user is trying to load a non-Doom config) load
+;;     `user-emacs-directory'/early-init.el.
 ;;
 ;;; Code:
 
 ;; PERF: Garbage collection is a big contributor to startup times. This fends it
-;;   off, then is reset later by enabling `gcmh-mode'. Not resetting it will
+;;   off, but will be reset later by `gcmh-mode'. Not resetting it later will
 ;;   cause stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
 

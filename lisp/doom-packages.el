@@ -1,7 +1,8 @@
 ;;; lisp/doom-packages.el -*- lexical-binding: t; -*-
-
+;;; Commentary:
+;;
 ;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
-;; to create a declarative, lazy-loaded and (nominally) reproducible package
+;; to create a declarative, lazy-loaded, and (nominally) reproducible package
 ;; management system. We use `straight' over `package' because the latter is
 ;; tempermental. ELPA sources suffer downtime occasionally and often fail to
 ;; build packages when GNU Tar is unavailable (e.g. MacOS users start with BSD
@@ -17,21 +18,23 @@
 ;; bin/doom script. Find out more about it by running 'doom help' (I highly
 ;; recommend you add the script to your PATH). Here are some highlights:
 ;;
-;; + `bin/doom install`: a wizard that guides you through setting up Doom and
-;;   your private config for the first time.
-;; + `bin/doom sync`: your go-to command for making sure Doom is in optimal
+;; - `doom install`: a wizard that guides you through setting up Doom and your
+;;   private config for the first time.
+;; - `doom sync`: your go-to command for making sure Doom is in optimal
 ;;   condition. It ensures all unneeded packages are removed, all needed ones
 ;;   are installed, and all metadata associated with them is generated.
-;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest
+;; - `doom upgrade`: upgrades Doom Emacs and your packages to the latest
 ;;   versions. There's also 'bin/doom sync -u' for updating only your packages.
 ;;
 ;; How this works is: the system reads packages.el files located in each
-;; activated module, your private directory (`doom-user-dir'), and one in
+;; activated module, your private config (`doom-user-dir'), and one in
 ;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
-;; plugins to install and where from.
+;; packages to install and where from.
 ;;
-;; All that said, you can still use package.el's commands, but 'bin/doom sync'
-;; will purge ELPA packages.
+;; All that said, you can still use package.el's commands, but 'doom sync' will
+;; purge ELPA packages.
+;;
+;;; Code:
 
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
@@ -97,10 +100,10 @@ uses a straight or package.el command directly).")
       straight-vc-git-default-clone-depth '(1 single-branch))
 
 (with-eval-after-load 'straight
-  ;; HACK Doom relies on deferred compilation, which spares the user 20-50min of
-  ;;   compilation at install time, but subjects them to ~50% CPU activity when
-  ;;   starting Emacs for the first time. To complete this, straight.el needs to
-  ;;   be told not to do native-compilation, but it won't obey
+  ;; HACK: Doom relies on deferred compilation, which spares the user 20-50min
+  ;;   of compilation at install time, but subjects them to ~50% CPU activity
+  ;;   when starting Emacs for the first time. To complete this, straight.el
+  ;;   needs to be told not to do native-compilation, but it won't obey
   ;;   `straight-disable-native-compile'.
   ;;
   ;;   It *will* obey `straight--native-comp-available', though. Trouble is:

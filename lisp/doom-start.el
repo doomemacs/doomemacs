@@ -1,4 +1,4 @@
-;;; lisp/doom-start.el --- bootstrapper for interactive sessions -*- lexical-binding: t; -*-
+;;; lisp/doom-start.el --- bootstraps interactive sessions -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -6,7 +6,7 @@
 
 
 ;;
-;;; doom-first-*-hook
+;;; Custom hooks
 
 (defvar doom-first-input-hook nil
   "Transient hooks run before the first user input.")
@@ -22,8 +22,9 @@
 
 
 ;;
-;;; Runtime/startup optimizations
+;;; Reasonable defaults for interactive sessions
 
+;;; Runtime optimizations
 ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted.
 (setq auto-mode-case-fold nil)
 
@@ -50,11 +51,6 @@
 
 ;; Don't ping things that look like domain names.
 (setq ffap-machine-p-known 'reject)
-
-;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we halve startup times, particularly when we use
-;; fonts that are larger than the system default (which would resize the frame).
-(setq frame-inhibit-implied-resize t)
 
 ;; Emacs "updates" its ui more often than it needs to, so slow it down slightly
 (setq idle-update-delay 1.0)  ; default is 0.5
@@ -88,6 +84,23 @@
         w32-pipe-read-delay 0               ; faster IPC
         w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
 
+;; The GC introduces annoying pauses and stuttering into our Emacs experience,
+;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
+;; when it's idle. However, if the idle delay is too long, we run the risk of
+;; runaway memory usage in busy sessions. If it's too low, then we may as well
+;; not be using gcmh at all.
+(setq gcmh-idle-delay 'auto  ; default is 15s
+      gcmh-auto-idle-delay-factor 10
+      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
+(add-hook 'doom-first-buffer-hook #'gcmh-mode)
+
+
+;;; Startup optimizations
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we halve startup times, particularly when we use
+;; fonts that are larger than the system default (which would resize the frame).
+(setq frame-inhibit-implied-resize t)
+
 ;; Remove command line options that aren't relevant to our current OS; means
 ;; slightly less to process at startup.
 (eval-when! (not IS-MAC)   (setq command-line-ns-option-alist nil))
@@ -105,10 +118,15 @@
   (add-hook 'window-setup-hook #'doom-init-tty-h))
 
 ;; Reduce *Message* noise at startup. An empty scratch buffer (or the dashboard)
-;; is more than enough.
+;; is more than enough, and faster to display.
 (setq inhibit-startup-screen t
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init t)
+;; Get rid of "For information about GNU Emacs..." message at startup. It's
+;; redundant with our dashboard and incurs a redraw. In daemon sessions it says
+;; "Starting Emacs daemon" instead, which is fine.
+(unless (daemonp)
+  (advice-add #'display-startup-echo-area-message :override #'ignore))
 
 ;; Shave seconds off startup time by starting the scratch buffer in
 ;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which pull
@@ -117,20 +135,8 @@
 (setq initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
-;; The GC introduces annoying pauses and stuttering into our Emacs experience,
-;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
-;; when it's idle. However, if the idle delay is too long, we run the risk of
-;; runaway memory usage in busy sessions. If it's too low, then we may as well
-;; not be using gcmh at all.
-(setq gcmh-idle-delay 'auto  ; default is 15s
-      gcmh-auto-idle-delay-factor 10
-      gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
-(add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
-
-;;
-;;; Reasonable defaults for interactive sessions
-
+;;; Language
 ;; Contrary to what many Emacs users have in their configs, you don't need more
 ;; than this to make UTF-8 the default coding system:
 (set-language-environment "UTF-8")
@@ -142,12 +148,8 @@
 (eval-when! IS-WINDOWS
   (setq selection-coding-system 'utf-8))
 
-;; Get rid of "For information about GNU Emacs..." message at startup. It's
-;; redundant with our dashboard. However, in daemon sessions it says "Starting
-;; Emacs daemon." instead, which is fine.
-(unless (daemonp)
-  (advice-add #'display-startup-echo-area-message :override #'ignore))
 
+;;; User interface
 ;; GUIs are inconsistent across systems, will rarely match our active Emacs
 ;; theme, and impose their shortcut key paradigms suddenly. Let's just avoid
 ;; them altogether and have Emacs handle the prompting.
@@ -161,6 +163,14 @@
 ;; toward wide rather than tall.
 (setq split-width-threshold 160
       split-height-threshold nil)
+
+;; Add support for additional file extensions.
+(dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
+                 ("/LICENSE\\'" . text-mode)
+                 ("\\.log\\'" . text-mode)
+                 ("rc\\'" . conf-mode)
+                 ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
+  (push entry auto-mode-alist))
 
 
 ;;
@@ -272,7 +282,7 @@ If this is a daemon session, load them all immediately instead."
 
 
 ;;
-;;; Let 'er rip
+;;; Benchmark
 
 (defvar doom-init-time nil
   "The time it took, in seconds, for Doom Emacs to initialize.")
@@ -289,13 +299,6 @@ If RETURN-P, return the message as a string instead of displaying it."
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
 
-;; Add support for additional file extensions.
-(dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
-                 ("/LICENSE\\'" . text-mode)
-                 ("\\.log\\'" . text-mode)
-                 ("rc\\'" . conf-mode)
-                 ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
-  (push entry auto-mode-alist))
 
 ;; Doom caches a lot of information in `doom-autoloads-file'. Module and package
 ;; autoloads, autodefs like `set-company-backend!', and variables like
