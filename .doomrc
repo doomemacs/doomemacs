@@ -19,7 +19,7 @@
 
 (after! doom-cli-make
   ;;; Codeowners
-  (dolist (path (cdr (doom-module-load-path (list doom-modules-dir))))
+  (dolist (path (doom-module-load-path (list doom-modules-dir)))
     ;; I will be the default owner for everything in the repo unless a later
     ;; match takes precedence.
     (add-to-list 'doom-make-codeowners "# The default owner(s) unless another takes precedence")

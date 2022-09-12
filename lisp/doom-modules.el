@@ -246,23 +246,19 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
 
 The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
-those directories. The first returned path is always `doom-user-dir'."
+those directories."
   (declare (pure t) (side-effect-free t))
-  (append (list doom-user-dir)
-          (if module-dirs
-              (mapcar (lambda (m) (doom-module-locate-path (car m) (cdr m)))
-                      (delete-dups
-                       (doom-files-in (if (listp module-dirs)
-                                          module-dirs
-                                        doom-modules-dirs)
-                                      :map #'doom-module-from-path
-                                      :type 'dirs
-                                      :mindepth 1
-                                      :depth 1)))
-            (delq
-             nil (cl-loop for (cat . mod) in (doom-module-list)
-                          collect (doom-module-get cat mod :path))))
-          nil))
+  (if module-dirs
+      (mapcar (lambda (m) (doom-module-locate-path (car m) (cdr m)))
+              (delete-dups
+               (doom-files-in module-dirs
+                              :map #'doom-module-from-path
+                              :type 'dirs
+                              :mindepth 1
+                              :depth 1)))
+    (delq
+     nil (cl-loop for (cat . mod) in (cddr (doom-module-list))
+                  collect (doom-module-get cat mod :path)))))
 
 (defun doom-module-mplist-map (fn mplist)
   "Apply FN to each module in MPLIST."
@@ -327,7 +323,7 @@ they're enabled, and in lexicographical order.
 
 If ALL-P is `real', only return *real"
   (if all-p
-      (mapcar #'doom-module-from-path (cdr (doom-module-load-path 'all)))
+      (mapcar #'doom-module-from-path (doom-module-load-path doom-modules-dirs))
     (hash-table-keys doom-modules)))
 
 
@@ -583,6 +579,15 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
                 (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
                        category module flag (file!)))))
        t))
+
+
+;;
+;;; Defaults
+
+;; Register Doom's two virtual module categories, representing Doom's core and
+;; the user's config; which are always enabled.
+(doom-module-set :core nil :path doom-core-dir)
+(doom-module-set :user nil :path doom-user-dir)
 
 (provide 'doom-modules)
 ;;; doom-modules.el ends here

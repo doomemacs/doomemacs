@@ -163,11 +163,7 @@ each package."
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
   (mapc (lambda! ((cat . mod))
-          (if-let (packages-file
-                   (pcase cat
-                     (:user (car (doom-glob doom-user-dir "packages.el")))
-                     (:core (car (doom-glob doom-core-dir "packages.el")))
-                     (_ (doom-module-locate-path cat mod "packages.el"))))
+          (if-let (packages-file (doom-module-locate-path cat mod "packages.el"))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
                       (find-file-noselect packages-file))

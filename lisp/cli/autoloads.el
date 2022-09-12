@@ -56,7 +56,7 @@ hoist buggy forms into autoloads.")
          (doom-autoloads--scan
           (append (doom-glob doom-core-dir "lib/*.el")
                   (cl-loop for dir
-                           in (append (cdr (doom-module-load-path 'all-p))
+                           in (append (doom-module-load-path doom-modules-dirs)
                                       (list doom-user-dir))
                            if (doom-glob dir "autoload.el") collect (car it)
                            if (doom-glob dir "autoload/*.el") append it)
@@ -198,8 +198,7 @@ hoist buggy forms into autoloads.")
          (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
-         (module-enabled-p (and (or (memq (car module) '(:core :user))
-                                    (doom-module-p (car module) (cdr module)))
+         (module-enabled-p (and (doom-module-p (car module) (cdr module))
                                 (doom-file-cookie-p file "if" t))))
     (save-excursion
       (when module-enabled-p

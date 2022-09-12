@@ -41,7 +41,7 @@ and your private config files, respectively. To recompile your packages, use
               ;; Only compile Doom's modules
               (doom-rpartial #'file-in-directory-p doom-emacs-dir)
               ;; Omit `doom-user-dir', which is always first
-              (cdr (doom-module-load-path)))))
+              (doom-module-load-path))))
    recompile-p
    verbose-p))
 
