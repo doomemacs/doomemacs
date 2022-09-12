@@ -17,37 +17,38 @@
 
 (defvar doom-print-ansi-alist
   '(;; fx
-    (bold       1 :weight bold)
-    (dark       2)
-    (italic     3 :slant italic)
-    (underscore 4 :underline t)
-    (blink      5)
-    (rapid      6)
-    (contrary   7)
-    (concealed  8)
-    (strike     9 :strike-through t)
+    (bold       . 1)
+    (dark       . 2)
+    (italic     . 3)
+    (underscore . 4)
+    (blink      . 5)
+    (rapid      . 6)
+    (contrary   . 7)
+    (concealed  . 8)
+    (strike     . 9)
     ;; fg
-    (black      30 term-color-black)
-    (red        31 term-color-red)
-    (green      32 term-color-green)
-    (yellow     33 term-color-yellow)
-    (blue       34 term-color-blue)
-    (magenta    35 term-color-magenta)
-    (cyan       36 term-color-cyan)
-    (white      37 term-color-white)
+    (black      . 30)
+    (red        . 31)
+    (green      . 32)
+    (yellow     . 33)
+    (blue       . 34)
+    (magenta    . 35)
+    (cyan       . 36)
+    (white      . 37)
     ;; bg
-    (on-black   40 term-color-black)
-    (on-red     41 term-color-red)
-    (on-green   42 term-color-green)
-    (on-yellow  43 term-color-yellow)
-    (on-blue    44 term-color-blue)
-    (on-magenta 45 term-color-magenta)
-    (on-cyan    46 term-color-cyan)
-    (on-white   47 term-color-white))
-  "An alist of fg/bg/fx names mapped to ansi codes and term-color-* variables.
+    (on-black   . 40)
+    (on-red     . 41)
+    (on-green   . 42)
+    (on-yellow  . 43)
+    (on-blue    . 44)
+    (on-magenta . 45)
+    (on-cyan    . 46)
+    (on-white   . 47))
+  "An alist of fg/bg/fx names mapped to ansi codes.
 
 This serves as the cipher for converting (COLOR ...) function calls in `print!'
-and `format!' into colored output, where COLOR is any car of this list.")
+and `format!' into colored output, where COLOR is any car of this list (or
+`doom-print-class-alist').")
 
 (defvar doom-print-class-alist
   `((buffer  . doom-print--buffer)
@@ -453,7 +454,7 @@ STYLE is a symbol that correlates to `doom-print-ansi-alist'.
 
 In a noninteractive session, this wraps the result in ansi color codes.
 Otherwise, it maps colors to a term-color-* face."
-  (let* ((code (cadr (assq style doom-print-ansi-alist)))
+  (let* ((code (cdr (assq style doom-print-ansi-alist)))
          (format (format "%s" (or format "")))
          (message (if args (apply #'format format args) format)))
     (unless code
@@ -462,16 +463,7 @@ Otherwise, it maps colors to a term-color-* face."
       (`ansi
        (format "\e[0%dm%s\e[%dm" code message 0))
       (`text-properties
-       (require 'term)  ; piggyback on term's color faces
-       (propertize
-        message
-        'face
-        (append (get-text-property 0 'face format)
-                (cond ((>= code 40)
-                       `(:background ,(caddr (assq style doom-print-ansi-alist))))
-                      ((>= code 30)
-                       `(:foreground ,(face-foreground (caddr (assq style doom-print-ansi-alist)))))
-                      ((cddr (assq style doom-print-ansi-alist)))))))
+       (ansi-color-apply message))
       (_ message))))
 
 ;;;###autoload
