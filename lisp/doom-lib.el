@@ -357,6 +357,38 @@ this macro's BODY will only be evaluated during byte-compilation."
   (when (bound-and-true-p byte-compile-current-file)
     (ignore (eval (macroexp-progn body) t))))
 
+(defmacro versionp! (v1 comp v2 &rest comps)
+  "Perform compound version checks.
+
+Compares V1 and V2 with COMP (a math comparison operator: <, <=, =, /=, >=, >).
+Can chain these comparisons by adding more (COMPn Vn) pairs afterwards.
+
+\(fn V1 COMP V2 [COMPn Vn]...)"
+  (let ((forms t))
+    (push v2 comps)
+    (push comp comps)
+    `(let ((v2 (version-to-list ,v1)))
+       ,(progn
+          (cl-loop for (v op) on (nreverse comps) by #'cddr
+                   for not? = (not (memq op '(> >= /=)))
+                   for fn = (or (get 'versionp! op)
+                                (error "Invalid comparator %s" op))
+                   for form = `(,fn v1 v2)
+                   do (if not? (setq form `(not ,form)))
+                   do (setq v1 'v2
+                            v2 `(version-to-list ,v)
+                            forms `(let ((v1 ,v1)
+                                         (v2 ,v2))
+                                     (and (not ,form) ,forms))))
+          forms))))
+;; PERF: Store in symbol plist for ultra-fast lookups at this scale.
+(setplist 'versionp! '(>  version-list-<
+                       >= version-list-<=
+                       <  version-list-<
+                       <= version-list-<=
+                       =  version-list-=
+                       /= version-list-=))
+
 ;;; Closure factories
 (defmacro lambda! (arglist &rest body)
   "Returns (cl-function (lambda ARGLIST BODY...))
