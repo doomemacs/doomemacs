@@ -466,7 +466,7 @@ ones."
           (let (doom-packages)
             (doom--read-packages private-packages nil 'noerror))
           (cl-loop for key being the hash-keys of doom-modules
-                   for path = (doom-module-path (car key) (cdr key) packages-file)
+                   for path = (doom-module-expand-path (car key) (cdr key) packages-file)
                    for doom--current-module = key
                    for doom--current-flags = (doom-module-get (car key) (cdr key) :flags)
                    do (doom--read-packages path nil 'noerror)))

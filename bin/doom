@@ -295,9 +295,9 @@ SEE ALSO:
     (let ((cli-file "cli"))
       (defcli-group! "Module commands"
         (dolist (key (hash-table-keys doom-modules))
-          (when-let (path (plist-get (gethash key doom-modules) :path))
+          (when-let (path (doom-module-expand-path (car key) (cdr key) cli-file))
             (defcli-group! :prefix (format "+%s" (cdr key))
-              (load! cli-file path t)))))
+              (doom-load path t)))))
 
       (load! cli-file doom-user-dir t))
 

@@ -180,16 +180,15 @@ Example:
   (doom-module-set :lang 'haskell :flags '(+lsp))"
   (puthash (cons category module) plist doom-modules))
 
-(defun doom-module-path (category module &optional file)
-  "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and
-MODULE (symbol).
+(defun doom-module-expand-path (category module &optional file)
+  "Expands a path to FILE relative to CATEGORY and MODULE.
 
-If the category isn't enabled this will always return nil. For finding disabled
-modules use `doom-module-locate-path'."
-  (let ((path (doom-module-get category module :path)))
+CATEGORY is a keyword. MODULE is a symbol. FILE is an optional string path.
+If the category isn't enabled this returns nil. For finding disabled modules use
+`doom-module-locate-path'."
+  (when-let (path (doom-module-get category module :path))
     (if file
-        (let (file-name-handler-alist)
-          (expand-file-name file path))
+        (file-name-concat path file)
       path)))
 
 (defun doom-module-locate-path (category &optional module file)
@@ -197,19 +196,22 @@ modules use `doom-module-locate-path'."
 
 CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g. 'python). FILE
 is a string that will be appended to the resulting path. If no path exists, this
-returns nil, otherwise an absolute path.
-
-This doesn't require modules to be enabled. For enabled modules us
-`doom-module-path'."
-  (when (keywordp category)
-    (setq category (doom-keyword-name category)))
-  (when (and module (symbolp module))
-    (setq module (symbol-name module)))
-  (cl-loop with file-name-handler-alist = nil
-           for default-directory in doom-modules-dirs
-           for path = (concat category "/" module "/" file)
-           if (file-exists-p path)
-           return (expand-file-name path)))
+returns nil, otherwise an absolute path."
+  (let (file-name-handler-alist)
+    (if-let (path (doom-module-expand-path category module file))
+        (if (or (null file)
+                (file-exists-p path))
+            path)
+      (let* ((category (doom-keyword-name category))
+             (module (if module (symbol-name module)))
+             (path (file-name-concat category module file)))
+        (if file
+            ;; PERF: locate-file-internal is a little faster for finding files,
+            ;;   but its interface for finding directories is clumsy.
+            (locate-file-internal path doom-modules-dirs)
+          (cl-loop for default-directory in doom-modules-dirs
+                   if (file-exists-p path)
+                   return (expand-file-name path)))))))
 
 (defun doom-module-from-path (path &optional enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
