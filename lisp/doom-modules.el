@@ -176,14 +176,20 @@ following properties:
   :flags [SYMBOL LIST]  list of enabled category flags
   :path  [STRING]       path to category root directory
 
+If PLIST consists of a single nil, unset and disable CATEGORY MODULE.
+
 Example:
   (doom-module-set :lang 'haskell :flags '(+lsp))"
-  ;; Doom caches flags and features using symbol plists for fast lookups in
-  ;; `modulep!'. plists lack the overhead, and are much faster for datasets this
-  ;; small. The format of this case is (cons FEATURES FLAGS)
-  (put category module (cons t (plist-get plist :flags)))
-  ;; But the hash table will always been Doom's formal storage for modules.
-  (puthash (cons category module) plist doom-modules))
+  (if (car plist)
+      (progn
+        ;; Doom caches flags and features using symbol plists for fast lookups in
+        ;; `modulep!'. plists lack the overhead, and are much faster for datasets this
+        ;; small. The format of this case is (cons FEATURES FLAGS)
+        (put category module (cons t (plist-get plist :flags)))
+        ;; But the hash table will always been Doom's formal storage for modules.
+        (puthash (cons category module) plist doom-modules))
+    (remhash (cons category module) doom-modules)
+    (cl-remf (symbol-plist category) module)))
 
 (defun doom-module-expand-path (category module &optional file)
   "Expands a path to FILE relative to CATEGORY and MODULE.
