@@ -4,8 +4,6 @@
 ;; file-based session persistence. I used workgroups2 before this, but abandoned
 ;; it because it was unstable and slow; `persp-mode' is neither (and still
 ;; maintained).
-;;
-;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
   "The name of the primary and initial workspace, which cannot be deleted.")
