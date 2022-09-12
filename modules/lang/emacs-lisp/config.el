@@ -60,9 +60,10 @@ See `+emacs-lisp-non-package-mode' for details.")
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp +emacs-lisp-outline-regexp
-    ;; Fixed indenter that intends plists sensibly.
-    lisp-indent-function #'+emacs-lisp-indent-function)
+    outline-regexp +emacs-lisp-outline-regexp)
+
+  ;; Fixed indenter that intends plists sensibly.
+  (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
   ;; variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
   ;; and `editorconfig' would force fixed indentation on elisp.
