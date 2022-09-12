@@ -1,49 +1,76 @@
-#+title: API Demos
+:PROPERTIES:
+:ID:       e103c1bc-be8e-4451-8e43-a93d9e35e692
+:END:
+#+title:    Examples
+#+subtitle: Samples of Emacs/Doom dotfiles, concepts, and sub-projects
 #+property: header-args:elisp :results pp
 
-This file contains demos of Doom's public API; its core library, macros, and
-autodefs. It is used by the =elisp-demos= package to display examples of their
-usage in the documentation displayed by either ~describe-function~ or
-~helpful-function~ (on [[kbd:][SPC h f]]).
+* Introduction
+Examples speak louder than technical explanations, so this file exists to house
+examples of Doom's (and Emacs') concepts, libraries, dotfiles, and more, for
+your own reference. They are divided into Emacs-specific and Doom-specific
+examples; where the former can also be useful to users who don't use Doom.
 
-* Table of Contents :TOC_3:
-- [[#doom-lib][doom-lib]]
-  - [[#add-hook][add-hook!]]
-  - [[#add-transient-hook][add-transient-hook!]]
-  - [[#after][after!]]
-  - [[#appendq][appendq!]]
-  - [[#custom-set-faces][custom-set-faces!]]
-  - [[#custom-theme-set-faces][custom-theme-set-faces!]]
-  - [[#defer-feature][defer-feature!]]
-  - [[#defer-until][defer-until!]]
-  - [[#disable-packages][disable-packages!]]
-  - [[#doom][doom!]]
-  - [[#file-exists-p][file-exists-p!]]
-  - [[#cmd][cmd!]]
-  - [[#cmd-1][cmd!!]]
-  - [[#cmds][cmds!]]
-  - [[#kbd][kbd!]]
-  - [[#lambda][lambda!]]
-  - [[#fn][fn!]]
-  - [[#letenv][letenv!]]
-  - [[#load][load!]]
-  - [[#map][map!]]
-  - [[#package][package!]]
-  - [[#pushnew][pushnew!]]
-  - [[#prependq][prependq!]]
-  - [[#quiet][quiet!]]
-  - [[#remove-hook][remove-hook!]]
-  - [[#setq][setq!]]
-  - [[#setq-hook][setq-hook!]]
-  - [[#unsetq-hook][unsetq-hook!]]
-  - [[#use-package][use-package!]]
+Some of Doom's components will read this file to generate documentation for you,
+for example:
 
-* doom-lib
-** add-hook!
+- Doom's [[doom-module:][:lang emacs-lisp]] module installs the [[doom-package:][elisp-demos]] package. This displays
+  usage examples alongside documentation in [[doom-package:][help]] and [[doom-package:][helpful]] buffers (produced
+  by =describe-*= and =helpful-*= commands; e.g. [[kbd:][<help> h f]]). Doom has extended
+  this package to search this file as well.
+- [[id:1b8b8fa9-6233-4ed8-95c7-f46f8e4e2592][Some Doom's CLI commands]] will emit documentation informed by Doom's org files,
+  including this file.
+
+If you're interested in adding to this document, read [[id:9ac0c15c-29e7-43f8-8926-5f0edb1098f0][the documentation section]]
+of our contributing guide first.
+
+* TODO Emacs
+This section is dedicated to examples of concepts and libraries that can benefit
+all Emacs users, whether or not they use Doom.
+
+** TODO Emacs Lisp :demos:
+**** file-name-with-extension
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 28.1
 :END:
-#+begin_src emacs-lisp :eval no
+#+begin_src emacs-lisp
+(file-name-with-extension "some/file.cpp" "h")
+#+end_src
+
+#+RESULTS:
+: some/file.h
+
+**** file-name-concat
+:PROPERTIES:
+:added: 28.1
+:END:
+#+begin_src emacs-lisp
+(file-name-concat user-emacs-directory "lisp" "file.el")
+#+end_src
+
+#+begin_src emacs-lisp
+(file-name-concat "foo" "bar" "baz")
+#+end_src
+
+#+RESULTS:
+: foo/bar/baz
+
+** TODO Templates
+*** TODO Emacs package
+*** TODO Dynamic module
+
+* TODO Doom Emacs
+This section is dedicated to examples of concepts and libraries only relevant to
+Doom and its users. These are intended to be demonstrations, not substitutes for
+documentation.
+
+** TODO Emacs Lisp :demos:
+*** doom-lib
+**** add-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
 (add-hook! 'some-mode-hook #'enable-something)
@@ -70,13 +97,13 @@ usage in the documentation displayed by either ~describe-function~ or
     ...))
 #+end_src
 
-** TODO add-transient-hook!
+**** TODO add-transient-hook!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
-** after!
+**** after!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 ;;; `after!' will take:
@@ -103,9 +130,9 @@ usage in the documentation displayed by either ~describe-function~ or
 (after! rustic ...)
 (after! python ...)
 #+end_src
-** appendq!
+**** appendq!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp
 (let ((x '(a b c)))
@@ -127,9 +154,9 @@ usage in the documentation displayed by either ~describe-function~ or
 #+RESULTS:
 : (a b c c d e f g h)
 
-** custom-set-faces!
+**** custom-set-faces!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (custom-set-faces!
@@ -162,9 +189,9 @@ usage in the documentation displayed by either ~describe-function~ or
  `(outline-2 :background ,(doom-color 'blue)))
 #+end_src
 
-** custom-theme-set-faces!
+**** custom-theme-set-faces!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (custom-theme-set-faces! 'doom-one
@@ -197,59 +224,26 @@ usage in the documentation displayed by either ~describe-function~ or
  `(outline-2 :background ,(doom-color 'blue)))
 #+end_src
 
-** TODO defer-feature!
+**** TODO defer-feature!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
-** TODO defer-until!
+**** TODO defer-until!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
-** disable-packages!
+**** disable-packages!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 ;; Disable packages enabled by DOOM
 (disable-packages! some-package second-package)
 #+end_src
 
-** doom!
+**** file-exists-p!
 :PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-(doom! :completion
-       company
-       ivy
-       ;;helm
-
-       :tools
-       (:if IS-MAC macos)
-       docker
-       lsp
-
-       :lang
-       (cc +lsp)
-       (:cond ((string= system-name "work-pc")
-               python
-               rust
-               web)
-              ((string= system-name "writing-pc")
-               (org +dragndrop)
-               ruby))
-       (:if IS-LINUX
-           (web +lsp)
-         web)
-
-       :config
-       literate
-       (default +bindings +smartparens))
-#+end_src
-
-** file-exists-p!
-:PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp
 (file-exists-p! "init.el" doom-emacs-dir)
@@ -267,17 +261,17 @@ usage in the documentation displayed by either ~describe-function~ or
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
-** cmd!
+**** cmd!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (map! "C-j" (cmd! (newline) (indent-according-to-mode)))
 #+end_src
 
-** cmd!!
+**** cmd!!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~cmd!!~ to easily create a keybinds that bakes in
@@ -297,9 +291,9 @@ Or to create aliases for functions that behave differently:
 (fset 'org-reset-global-visibility (cmd!! #'org-global-cycle '(4))
 #+end_src
 
-** cmds!
+**** cmds!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (map! :i [tab] (cmds! (and (modulep! :editor snippets)
@@ -320,16 +314,16 @@ Or to create aliases for functions that behave differently:
                       #'evil-jump-item))
 #+end_src
 
-** kbd!
+**** kbd!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (map! "," (kbd! "SPC")
       ";" (kbd! ":"))
 #+end_src
 
-** lambda!
+**** lambda!
 #+begin_src emacs-lisp
 (mapcar (lambda! ((&key foo bar baz))
           (list foo bar baz))
@@ -338,16 +332,10 @@ Or to create aliases for functions that behave differently:
           (:bar 42)))
 #+end_src
 
-#+RESULTS:
-: ((10 25 nil) (nil nil hello) (nil 42 nil))
-
-** fn!
+**** fn!
 #+begin_src emacs-lisp
 (mapcar (fn! (symbol-name %)) '(hello world))
 #+end_src
-
-#+RESULTS:
-: ("hello" "world")
 
 #+begin_src emacs-lisp
 (seq-sort (fn! (string-lessp (symbol-name %1)
@@ -355,32 +343,14 @@ Or to create aliases for functions that behave differently:
           '(bonzo foo bar buddy doomguy baz zombies))
 #+end_src
 
-#+RESULTS:
-: (bar baz bonzo buddy doomguy foo zombies)
-
 #+begin_src emacs-lisp
 (format "You passed %d arguments to this function"
         (funcall (fn! (length %*)) :foo :bar :baz "hello" 123 t))
 #+end_src
 
-#+RESULTS:
-: "You passed 6 arguments to this function"
-
-** letenv!
+**** load!
 :PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp
-(letenv! (("SHELL" "/bin/sh"))
-  (shell-command-to-string "echo $SHELL"))
-#+end_src
-
-#+RESULTS:
-: "/bin/sh\n"
-
-** load!
-:PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 ;;; Lets say we're in ~/.doom.d/config.el
@@ -392,9 +362,9 @@ Or to create aliases for functions that behave differently:
 (load! "~/.maynotexist" nil t)
 #+end_src
 
-** map!
+**** map!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 (map! :map magit-mode-map
@@ -490,9 +460,188 @@ These are side-by-side comparisons, showing how to bind keys with and without
       (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
 #+end_src
 
-** package!
+**** pushnew!
 :PROPERTIES:
-:added: pre-3.0.0
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(let ((list '(a b c)))
+  (pushnew! list 'c 'd 'e)
+  list)
+#+end_src
+
+#+RESULTS:
+: (e d a b c)
+
+**** prependq!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(let ((x '(a b c)))
+  (prependq! x '(c d e))
+  x)
+#+end_src
+
+#+RESULTS:
+: (c d e a b c)
+
+#+begin_src emacs-lisp
+(let ((x '(a b c))
+      (y '(c d e))
+      (z '(f g)))
+  (prependq! x y z '(h))
+  x)
+#+end_src
+
+#+RESULTS:
+: (c d e f g h a b c)
+
+**** quiet!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Enters recentf-mode without extra output
+(quiet! (recentf-mode +1))
+#+end_src
+**** remove-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; With only one hook and one function, this is identical to `remove-hook'. In
+;; that case, use that instead.
+(remove-hook! 'some-mode-hook #'enable-something)
+
+;; Removing N functions from M hooks
+(remove-hook! some-mode #'enable-something #'and-another)
+(remove-hook! some-mode #'(enable-something and-another))
+(remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(remove-hook! (one-mode second-mode) #'enable-something)
+
+;; Removing buffer-local hooks
+(remove-hook! (one-mode second-mode) :local #'enable-something)
+
+;; Removing arbitrary forms (must be exactly the same as the definition)
+(remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+#+end_src
+**** setq!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+;; Each of these have a setter associated with them, which must be triggered in
+;; order for their new values to have an effect.
+(setq! evil-want-Y-yank-to-eol nil
+       evil-want-C-u-scroll nil
+       evil-want-C-d-scroll nil)
+#+end_src
+**** setq-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Set multiple variables after a hook
+(setq-hook! 'markdown-mode-hook
+  line-spacing 2
+  fill-column 80)
+
+;; Set variables after multiple hooks
+(setq-hook! '(eshell-mode-hook term-mode-hook)
+  hscroll-margin 0)
+#+end_src
+
+**** unsetq-hook!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(unsetq-hook! 'markdown-mode-hook line-spacing)
+
+;; Removes the following variable hook
+(setq-hook! 'markdown-mode-hook line-spacing 2)
+
+;; Removing N variables from M hooks
+(unsetq-hook! some-mode enable-something and-another)
+(unsetq-hook! some-mode (enable-something and-another))
+(unsetq-hook! '(one-mode-hook second-mode-hook) enable-something)
+(unsetq-hook! (one-mode second-mode) enable-something)
+#+end_src
+**** versionp!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp
+(versionp! "25.3" > "27.1")
+#+end_src
+
+#+RESULTS:
+: nil
+
+#+begin_src emacs-lisp
+(versionp! "28.0" <= emacs-version <= "28.1")
+#+end_src
+
+#+RESULTS:
+: t
+
+*** doom-modules
+**** doom!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+(doom! :completion
+       company
+       ivy
+       ;;helm
+
+       :tools
+       (:if IS-MAC macos)
+       docker
+       lsp
+
+       :lang
+       (cc +lsp)
+       (:cond ((string= system-name "work-pc")
+               python
+               rust
+               web)
+              ((string= system-name "writing-pc")
+               (org +dragndrop)
+               ruby))
+       (:if IS-LINUX
+           (web +lsp)
+         web)
+
+       :config
+       literate
+       (default +bindings +smartparens))
+#+end_src
+
+**** use-package!
+:PROPERTIES:
+:added: 3.0.0-pre
+:END:
+#+begin_src emacs-lisp :eval no
+;; Use after-call to load package before hook
+(use-package! projectile
+  :after-call (pre-command-hook after-find-file dired-before-readin-hook))
+
+;; defer recentf packages one by one
+(use-package! recentf
+  :defer-incrementally easymenu tree-widget timer
+  :after-call after-find-file)
+
+;; This is equivalent to :defer-incrementally (abc)
+(use-package! abc
+  :defer-incrementally t)
+#+end_src
+
+**** package!
+:PROPERTIES:
+:added: 3.0.0-pre
 :END:
 #+begin_src emacs-lisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
@@ -525,130 +674,260 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (package! evil :ignore (not (equal system-name "my-desktop")))
 #+end_src
 
-** pushnew!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
+*** doom-cli
+**** TODO defcli!
+**** TODO defcli-alias!
+**** TODO defcli-obsolete!
+**** TODO defcli-stub!
+**** TODO defcli-autoload!
+**** TODO defcli-group!
+**** TODO exit!
+**** TODO call!
+**** TODO run!
+**** TODO sh!
+**** TODO sh!!
+**** TODO git!
+**** TODO def-cli-context-get
+**** TODO def-cli-context-put
+**** TODO def-cli-context-find-option
+**** TODO def-cli-call
+**** TODO def-cli-exit
+**** TODO def-cli-load
+**** TODO def-cli-load-all
+**** TODO doom-cli-find
+**** TODO doom-cli-get
+**** TODO doom-cli-prop
+**** TODO doom-cli-subcommands
+**** TODO doom-cli-aliases
+*** TODO lib/files.el
+**** TODO doom-path
+**** TODO doom-glob
+**** TODO doom-dir
+**** TODO doom-files-in
+**** TODO doom-file-cookie-p
+**** TODO file-exists-p!
+**** TODO doom-file-size
+**** TODO doom-file-line-count
+**** TODO doom-directory-size
+**** TODO doom-file-read
+**** TODO doom-file-write
+**** TODO with-file-contents!
+
+** TODO Configuration files
+*** TODO doomprofiles.el
+*** TODO =.doomrc=
+*** TODO =.doomproject=
+*** TODO =.doommodule=
+*** TODO =.doomprofile=
+** TODO Templates
+*** TODO User configuration
+*** TODO Module
+*** TODO Project
+*** TODO Theme
+*** TODO Command-line interface
+**** Unix utilities, rewritten as Doom scripts
+To show off the syntax and capabilities of Doom's CLI framework, here are some
+popular scripts ported to doomscripts for reference. They will all operate under
+these assumptions:
+
+1. The script lives somewhere in your =$PATH=,
+2. =$EMACSDIR/bin/doomscript= lives in your =$PATH=.
+3. The script is executable,
+4. The script's filename matches the first argument of ~run!~ (by convention,
+   not a requirement),
+
+***** ~mkdir~
+#+begin_src emacs-lisp :eval no
+#!/usr/bin/env doomscript
+
+(defcli! mkdir
+    ((mode     ("-m" "--mode" mode))
+     (parents? ("-p" "--parents"))
+     (verbose? ("-v" "--verbose"))
+     &args directories)
+  "Create the DIRECTORIES, if do not already exist.
+
+Mandatory arguments to long options are mandatory for short options too.
+
+OPTIONS:
+  -m, --mode
+    set file mode (as in chmod), not a=rwx - umask.
+  -p, --parents
+    no error if existing, make parent directories as needed, with their file
+    modes unaffected by any `-m' option.
+  -v, --verbose
+    print a message for each created directory
+
+AUTHOR:
+  Original program by David MacKenzie. Doomscript port by Henrik Lissner.
+
+SEE ALSO:
+  `mkdir(2)`
+
+  Full documentation <https://www.gnu.org/software/coreutils/mkdir>
+  or available locally via: info '(coreutils) mkdir invocation'
+
+  Packaged by https://nixos.org
+  Copyright © 2022 Free Software Foundation, Inc.
+  License  GPLv3+:  GNU  GPL  version 3 or later <https://gnu.org/li‐
+  censes/gpl.html>.
+  This is free software: you are free to change and redistribute it.
+  There is NO WARRANTY, to the extent permitted by law."
+  (dolist (dir directories)
+    (unless (file-directory-p dir)
+      (make-directory dir parents?)
+      (when mode
+        (set-file-modes dir mode))
+      (when verbose?
+        (print! "mkdir: created directory '%s'" dir)))))
+#+end_src
+
+****** Notes
+- Docstrings for Doom CLIs recognize indented sections with a capitalized
+  heading followed by a colon (like ~SEE ALSO:~, ~OPTIONS:~, etc). They will be
+  appended to the --help output for this command. ~OPTIONS~ and ~ARGUMENTS~ are
+  special, in that they decorate pre-existing documentation for referenced
+  options/arguments.
+
+- The options were documented in the CLI's docstring, instead of inline like so:
+
+  #+begin_src emacs-lisp
+      ((mode     ("-m" "--mode" mode) "set file modes (as in chmod), not a=rwx - umask.")
+       (parents? ("-p" "--parents") "no error if existing, make parent directories as needed, with their file modes unaffected by any `-m' option.")
+       (verbose? ("-v" "--verbose") "print a message for each created directory")
+       &args directories)
+  #+end_src
+
+  Either is acceptable, but for long docs like this, it's better suited to the
+  docstring. If both were present, Doom's help docs would have concatenated them
+  (separated by two newlines).
+
+- The ~mode~ option takes one argument, a chmod mask. I indicate this with
+  ~"`MODE'"~. This is a special syntax for highlighting arguments in the help
+  docs of this command. If I had used a symbol, instead (one of the predefined
+  types in [[var:][doom-cli-argument-value-types]]), I would've gotten free type-checking
+  and error handling, but there is no predefined type for chmod masks (yet), so
+  I'd have to do my own checks:
+
+  #+begin_src emacs-lisp :eval no
+  (defcli! mkdir
+      ((mode     ("-m" "--mode" "`MODE'"))
+       (parents? ("-p" "--parents"))
+       (verbose? ("-v" "--verbose"))
+       &args directories)
+    (unless (string-match-p "^[0-9]\\{3,4\\}$" mode)
+      (user-error "Invalid mode: %s" mode))
+    (setq mode (string-to-number mode 8))
+    (dolist (dir directories)
+      (unless (file-directory-p dir)
+        (make-directory dir parents?)
+        (when mode
+          (set-file-modes dir mode))
+        (when verbose?
+          (print! "mkdir: created directory '%s'" dir)))))
+  #+end_src
+
+  That said, set-file-modes will throw its own type error, but it likely won't
+  be as user friendly.
+
+***** TODO ~say~
+#+begin_src emacs-lisp :eval no
+#!/usr/bin/env doomscript
+
+(defcli! say
+    ((name ("--speaker" name) "Who is speaking?")
+     &args args)
+  "This command repeats what you say to it.
+
+It serves as an example of the bare minimum you need to write a Doom-based CLI.
+Naturally, it could be more useful; it could process more complex options and
+arguments, call other Doom CLIs, read/write data from files or over networks --
+but that can wait for more complicated examples.
+
+ARGUMENTS:
+  ARGS
+    The message to be repeated back at you.
+
+OPTIONS:
+  --speaker
+    If not specified, it is assumed that Emacs is speaking."
+  (print! "%s says: %S"
+          (or name "Emacs")
+          (string-join args " ")))
+
+(run! "say" (cdr (member "--" argv)))
+#+end_src
+
+#+begin_src bash :eval no
+$ say hello world
+Emacs says: "Hello world"
+$ say --speaker Henrik "I've doomed us all"
+Henrik says: "I've doomed us all"
+$ say --help
+TODO
+#+end_src
+
+***** emacs
+This isn't useful, but it should hopefully demonstrate the full spectrum of
+Doom's CLI, by reimplementing a subset of ~emacs~'s options and arguments (and
+none of its documentation). It will simply forward them to the real program
+afterwards.
+
+Since I don't want to override the real ~emacs~ in the ~$PATH~, I'll just call
+it ~demacs~:
+
+#+begin_src emacs-lisp :eval no
+#!/usr/bin/env doomscript
+
+(defcli! demacs
+    ((cd ("--chdir" dir))
+     (quick?     ("-Q" "--quick"))
+     (no-init?   ("-q" "--no-init-file"))
+     (no-slisp?  ("-nsl" "--no-site-lisp"))
+     (no-sfile?  ("--no-site-file"))
+     (initdir    ("--init-directory" dir))
+     (batch?     ("--batch"))
+     (batch      (("-l" "--load" (file) ...))
+                 (("-e" "--eval" (form) ...))
+                 (("-f" "--funcall" (fn) ...))
+                 (("-L" "--directory" (dir) ...))
+                 (("--kill")))
+     (script     ("--script" (file)))
+     &args (args (file linecol)))
+  "Demacs is a thin wrapper around Emacs, made to demo of Doom's CLI Framework.
+
+Since documentation isn't the focus of this example, this is all you'll get!"
+  (cond (script (load script))
+        (batch?
+         (dolist (do batch)
+           (pcase do
+             (`(,(or "-l" "--load") . ,file) (load file))
+             (`(,(or "-e" "--eval") . ,form) (eval (read form) t))
+             (`(,(or "-f" "--funcall") . ,fn) (funcall (read fn)))
+             (`("--kill" . t) (kill-emacs 0)))))
+        ((exit! :then (cons "emacs"
+                            (append (if quick '("-Q"))
+                                    (if no-init? '("-q"))
+                                    (if no-slisp? '("-nsl"))
+                                    (if no-sfile? '("--no-site-file"))
+                                    (if initdir `("--init-directory" ,initdir))
+                                    args))))))
+#+end_src
+
+****** Notes
+There's a lot of (intentional) redundancy here, for posterity. A *much* simpler
+(and more reliable) version of this command would've looked like this:
+
 #+begin_src emacs-lisp
-(let ((list '(a b c)))
-  (pushnew! list 'c 'd 'e)
-  list)
+(defcli! demacs (&rest args)
+  (exit! :then (cons "emacs" args)))
 #+end_src
 
-#+RESULTS:
-: (e d a b c)
+But that wouldn't demonstrate enough. Though, it wouldn't forward ~--version~ or
+~--help~ either.
 
-** prependq!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp
-(let ((x '(a b c)))
-  (prependq! x '(c d e))
-  x)
-#+end_src
-
-#+RESULTS:
-: (c d e a b c)
-
-#+begin_src emacs-lisp
-(let ((x '(a b c))
-      (y '(c d e))
-      (z '(f g)))
-  (prependq! x y z '(h))
-  x)
-#+end_src
-
-#+RESULTS:
-: (c d e f g h a b c)
-
-** quiet!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-;; Enters recentf-mode without extra output
-(quiet! (recentf-mode +1))
-#+end_src
-** remove-hook!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-;; With only one hook and one function, this is identical to `remove-hook'. In
-;; that case, use that instead.
-(remove-hook! 'some-mode-hook #'enable-something)
-
-;; Removing N functions from M hooks
-(remove-hook! some-mode #'enable-something #'and-another)
-(remove-hook! some-mode #'(enable-something and-another))
-(remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
-(remove-hook! (one-mode second-mode) #'enable-something)
-
-;; Removing buffer-local hooks
-(remove-hook! (one-mode second-mode) :local #'enable-something)
-
-;; Removing arbitrary forms (must be exactly the same as the definition)
-(remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-#+end_src
-** setq!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp
-;; Each of these have a setter associated with them, which must be triggered in
-;; order for their new values to have an effect.
-(setq! evil-want-Y-yank-to-eol nil
-       evil-want-C-u-scroll nil
-       evil-want-C-d-scroll nil)
-#+end_src
-** setq-hook!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-;; Set multiple variables after a hook
-(setq-hook! 'markdown-mode-hook
-  line-spacing 2
-  fill-column 80)
-
-;; Set variables after multiple hooks
-(setq-hook! '(eshell-mode-hook term-mode-hook)
-  hscroll-margin 0)
-#+end_src
-
-** unsetq-hook!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-(unsetq-hook! 'markdown-mode-hook line-spacing)
-
-;; Removes the following variable hook
-(setq-hook! 'markdown-mode-hook line-spacing 2)
-
-;; Removing N variables from M hooks
-(unsetq-hook! some-mode enable-something and-another)
-(unsetq-hook! some-mode (enable-something and-another))
-(unsetq-hook! '(one-mode-hook second-mode-hook) enable-something)
-(unsetq-hook! (one-mode second-mode) enable-something)
-#+end_src
-
-** use-package!
-:PROPERTIES:
-:added: pre-3.0.0
-:END:
-#+begin_src emacs-lisp :eval no
-;; Use after-call to load package before hook
-(use-package! projectile
-  :after-call (pre-command-hook after-find-file dired-before-readin-hook))
-
-;; defer recentf packages one by one
-(use-package! recentf
-  :defer-incrementally easymenu tree-widget timer
-  :after-call after-find-file)
-
-;; This is equivalent to :defer-incrementally (abc)
-(use-package! abc
-  :defer-incrementally t)
-#+end_src
+** TODO Use cases
+*** TODO Note-taking
+*** TODO Game development
+*** TODO Web development
+*** TODO Emacs as your terminal

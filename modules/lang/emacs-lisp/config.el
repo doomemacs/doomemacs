@@ -196,24 +196,7 @@ See `+emacs-lisp-non-package-mode' for details.")
   (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
-    "Add Doom's own demos to help buffers."
-    :around #'elisp-demos--search
-    (or (funcall fn symbol)
-        (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
-          (with-temp-buffer
-            (insert-file-contents demos-file)
-            (goto-char (point-min))
-            (when (re-search-forward
-                   (format "^\\*\\* %s$" (regexp-quote (symbol-name symbol)))
-                   nil t)
-              (let (beg end)
-                (forward-line 1)
-                (setq beg (point))
-                (if (re-search-forward "^\\*" nil t)
-                    (setq end (line-beginning-position))
-                  (setq end (point-max)))
-                (string-trim (buffer-substring-no-properties beg end)))))))))
+  (advice-add #'elisp-demos--search :around #'+emacs-lisp--add-doom-elisp-demos-a))
 
 
 (use-package! buttercup
