@@ -52,28 +52,29 @@ in."
   :benchmark nil
   (print! "The doctor will see you now...\n")
 
-  ;; REVIEW Refactor me
   (print! (start "Checking your Emacs version..."))
   (print-group!
-   (cond
-    ((string= ".50" (substring emacs-version -3))
-     (error! "Emacs development version detected (%s)" emacs-version)
-     ;; There are 2 newlines between each item to fight against
-     ;; the (fill-region) call in `doom--output-autofill'
-     (explain! "Doom supports this version, but you are using a development version of Emacs! "
-               "Be prepared for possibly weekly breakages that\n"
-               "\t- you will have to investigate yourself."
-               "\t- might appear, or be solved, on any Emacs update."
-               "\t- might depend subtly on upstream packages updates.\n"
-               "You might need to unpin packages to get a fix for a specific commit of Emacs, "
-               "and you should be ready to downgrade Emacs if something is just not fixable."))
-    ((> emacs-major-version 28)
-     (warn! "Emacs %s detected" emacs-version)
-     (explain! "Doom supports this version, but you are living on the edge! "
-               "Be prepared for breakages in future versions of Emacs."))
-    ((< emacs-major-version 27)
-     (error! "Emacs %s detected, Doom only supports 27.1 and newer"
-             emacs-version))))
+    (cond ((or (> emacs-major-version 28)
+               (string-match-p ".\\(50\\|9[0-9]\\)$" emacs-version))
+           (warn! "Detected a development version of Emacs (%s)" emacs-version)
+           (if (> emacs-major-version 28)
+               (explain! "This is the bleeding edge of Emacs. Doom does not support it because Emacs "
+                         "HEAD is in an especially unstable period of its development. If you've found "
+                         "a stable commit, great! But be cautious about updating too eagerly!\n")
+             (explain! "A .50 or .9x appended to the version string indicates that this is a version of "
+                       "Emacs in between stable releases. These are not well supported.\n"))
+           (explain! "Because development builds are prone to random breakage, there will be a greater "
+                     "burden on you to investigate and deal with issues. Please make extra sure that "
+                     "your issue is reproducible in 28.1 before reporting them to Doom's issue tracker!\n"
+                     "\n"
+                     "If this doesn't phase you, read the \"Why does Doom not support Emacs HEAD\" QnA "
+                     "in Doom's FAQ. It offers some advice for debugging and surviving issues on the "
+                     "bleeding edge. Failing that, 28.1 is highly recommended and will always be "
+                     "Doom's best supported version of Emacs."))
+          ((= emacs-major-version 27)
+           (warn! "Emacs 27 is supported, but consider upgrading to 28.1")
+           (explain! "Emacs 28.1 is better supported, faster, and more stable. Plus, Doom will drop "
+                     "27.x support sometime mid-2022."))))
 
   (print! (start "Checking for Doom's prerequisites..."))
   (print-group!
