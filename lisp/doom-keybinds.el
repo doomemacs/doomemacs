@@ -456,7 +456,9 @@ States
   Don't
     (map! :n :leader :desc \"Description\" \"C-c\" #'dosomething)
     (map! :leader :n :desc \"Description\" \"C-c\" #'dosomething)"
-  (doom--map-process rest))
+  (when (or (bound-and-true-p byte-compile-current-file)
+            (not noninteractive))
+    (doom--map-process rest)))
 
 (provide 'doom-keybinds)
 ;;; doom-keybinds.el ends here
