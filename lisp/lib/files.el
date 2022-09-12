@@ -261,7 +261,12 @@ If BEG and/or END are integers, only that region will be read from FILE."
           (insert-file-contents-literally buffer-file-name nil beg end))
         (pcase by
           ('insert
-           (insert-into-buffer old-buffer)
+           (if (fboundp 'insert-into-buffer)
+               (insert-into-buffer old-buffer)
+             ;; DEPRECATED: Remove fallback when 27.x support is dropped.
+             (let ((input (buffer-substring-no-properties (point-min) (point-max))))
+               (with-current-buffer old-buffer
+                 (insert input))))
            t)
           ('buffer-string
            (buffer-substring-no-properties (point-min) (point-max)))
