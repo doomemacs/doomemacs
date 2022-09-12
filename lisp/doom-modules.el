@@ -107,7 +107,7 @@ symbols, and that module's plist."
   (declare (pure t) (side-effect-free t))
   (lambda (module plist)
     (let ((doom--current-module module)
-          (doom--current-flags (plist-get plist :flags))
+          (doom--current-flags (cdr (get (car module) (cdr module))))
           (inhibit-redisplay t))
       (load! file (plist-get plist :path) t))))
 
@@ -178,6 +178,11 @@ following properties:
 
 Example:
   (doom-module-set :lang 'haskell :flags '(+lsp))"
+  ;; Doom caches flags and features using symbol plists for fast lookups in
+  ;; `modulep!'. plists lack the overhead, and are much faster for datasets this
+  ;; small. The format of this case is (cons FEATURES FLAGS)
+  (put category module (cons t (plist-get plist :flags)))
+  ;; But the hash table will always been Doom's formal storage for modules.
   (puthash (cons category module) plist doom-modules))
 
 (defun doom-module-expand-path (category module &optional file)
@@ -561,15 +566,14 @@ Module FLAGs are set in your config's `doom!' block, typically in
 
 CATEGORY and MODULE can be omitted When this macro is used from inside a module
 (except your DOOMDIR, which is a special module). e.g. (modulep! +flag)"
-  (and (cond (flag (memq flag (doom-module-get category module :flags)))
-             (module (doom-module-p category module))
+  (and (cond (flag (memq flag (cdr (get category module))))
+             (module (get category module))
              (doom--current-flags (memq category doom--current-flags))
              (doom--current-module
-              (memq category (doom-module-get (car doom--current-module)
-                                              (cdr doom--current-module)
-                                              :flags)))
+              (memq category (cdr (get (car doom--current-module)
+                                       (cdr doom--current-module)))))
              ((if-let (module (doom-module-from-path (macroexpand '(file!))))
-                  (memq category (doom-module-get (car module) (cdr module) :flags))
+                  (memq category (cdr (get (car module) (cdr module))))
                 (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
                        category module flag (file!)))))
        t))

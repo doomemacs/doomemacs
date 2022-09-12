@@ -47,6 +47,12 @@ hoist buggy forms into autoloads.")
          (cl-loop for var in doom-autoloads-cached-vars
                   when (boundp var)
                   collect `(set ',var ',(symbol-value var)))
+         ;; Cache module state and flags in symbol plists for quick lookup by
+         ;; `modulep!' later.
+         (cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
+                  collect `(setplist ',category
+                            (quote ,(cl-loop for (_ . module) in modules
+                                             nconc `(,module ,(get category module))))))
          (doom-autoloads--scan
           (append (doom-glob doom-core-dir "lib/*.el")
                   (cl-loop for dir
