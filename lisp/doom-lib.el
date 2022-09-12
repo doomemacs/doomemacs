@@ -214,7 +214,7 @@ HOOK-VAR is triggered, it is reset to nil.
 HOOK-VAR is a quoted hook.
 TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (dolist (hook trigger-hooks)
-    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
+    (let ((fn (make-symbol (format "chain-%s-to-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
@@ -709,13 +709,8 @@ again.
 HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
 advised)."
   (declare (indent 1))
-  (let ((append (if (eq (car forms) :after) (pop forms)))
-        ;; Avoid `make-symbol' and `gensym' here because an interned symbol is
-        ;; easier to debug in backtraces (and is visible to `describe-function')
-        (fn (intern (format "doom--transient-%d-h"
-                            (put 'add-transient-hook! 'counter
-                                 (1+ (or (get 'add-transient-hook! 'counter)
-                                         0)))))))
+  (let ((append? (if (eq (car forms) :after) (pop forms)))
+        (fn (gensym "doom-transient-hook")))
     `(let ((sym ,hook-or-function))
        (defun ,fn (&rest _)
          ,(format "Transient hook for %S" (doom-unquote hook-or-function))
@@ -725,10 +720,10 @@ advised)."
                  ((symbolp sym)   (remove-hook sym #',fn))))
          (unintern ',fn nil))
        (cond ((functionp sym)
-              (advice-add ,hook-or-function ,(if append :after :before) #',fn))
+              (advice-add ,hook-or-function ,(if append? :after :before) #',fn))
              ((symbolp sym)
               (put ',fn 'permanent-local-hook t)
-              (add-hook sym #',fn ,append))))))
+              (add-hook sym #',fn ,append?))))))
 
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
@@ -807,8 +802,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             collect `(defun ,fn (&rest _)
                        ,(format "%s = %s" var (pp-to-string val))
                        (setq-local ,var ,val))
-            collect `(remove-hook ',hook #',fn) ; ensure set order
-            collect `(add-hook ',hook #',fn))))
+            collect `(add-hook ',hook #',fn -90))))
 
 (defmacro unsetq-hook! (hooks &rest vars)
   "Unbind setq hooks on HOOKS for VARS.
