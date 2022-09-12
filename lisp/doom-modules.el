@@ -564,6 +564,10 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
+             (doom--current-module
+              (memq category (doom-module-get (car doom--current-module)
+                                              (cdr doom--current-module)
+                                              :flags)))
              ((if-let (module (doom-module-from-path (macroexpand '(file!))))
                   (memq category (doom-module-get (car module) (cdr module) :flags))
                 (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
