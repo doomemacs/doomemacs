@@ -44,7 +44,7 @@ fi
 # Doom respects $EMACSDIR to tell it where Doom lives. If it fails, then this is
 # either isn't bash, or it's a posix shell being directly sourced with sh, which
 # is unsupported.
-export EMACSDIR="${EMACSDIR:-$(CDPATH= cd -- $(dirname -- "${BASH_SOURCE:-$0}")/.. && pwd)}"
+export EMACSDIR="${EMACSDIR:-$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE:-$0}")/.." && pwd)}"
 if [ ! -f "$EMACSDIR/early-init.el" ]; then
     >&2 echo "Error: cannot load $EMACSDIR/early-init.el."
     >&2 echo
@@ -59,7 +59,7 @@ fi
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="$((__DOOMSTEP+1))"
 export __DOOMGEOM="${__DOOMGEOM:-$(tput cols lines 2>/dev/null)}"
-export __DOOMGPIPE=${__DOOMGPIPE:-$__DOOMPIPE}
+export __DOOMGPIPE="${__DOOMGPIPE:-$__DOOMPIPE}"
 export __DOOMPIPE=
 [ -t 0 ] || __DOOMPIPE="${__DOOMPIPE}0"
 [ -t 1 ] || __DOOMPIPE="${__DOOMPIPE}1"
@@ -79,7 +79,7 @@ exit=$?
 if [ "${exit:-0}" -eq 254 ]; then
     # The user may have a noexec flag set on /tmp, so the exit-script should be
     # passed to /bin/sh rather than executed directly.
-    sh "${tmpdir}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@"
+    sh "${TMPDIR}/doom.${__DOOMPID}.${__DOOMSTEP}.sh" "$0" "$@"
     exit="$?"
 fi
 exit $exit
