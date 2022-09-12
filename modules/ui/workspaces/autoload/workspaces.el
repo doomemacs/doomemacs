@@ -27,6 +27,40 @@
                finally return (if max (1+ max)))
       1))
 
+;;;###autoload
+(defun +workspace--mru-switch (new-persp-name w-or-f)
+  (let ((cur-persp-name (safe-persp-name (get-current-persp))))
+    (when (member cur-persp-name persp-names-cache)
+      (setq persp-names-cache
+            (cons cur-persp-name
+                  (delete cur-persp-name persp-names-cache))))))
+
+;;;###autoload
+(defun +workspace--mru-rename (persp old-name new-name)
+  (setq persp-names-cache
+        (cons new-name (delete old-name persp-names-cache))))
+
+;;;###autoload
+(defun +workspace--mru-kill (persp)
+  (setq persp-names-cache
+        (delete (safe-persp-name persp) persp-names-cache)))
+
+;;;###autoload
+(defun +workspace--mru-create (persp phash)
+  (when (and (eq phash *persp-hash*)
+             (not (member (safe-persp-name persp)
+                          persp-names-cache)))
+    (setq persp-names-cache
+          (cons (safe-persp-name persp) persp-names-cache))))
+
+(defun +workspace--filter-mru ()
+  "Returns the mru order of non-app workspaces.
+
+The function filters out workspaces that start with a '*'."
+  (cl-remove-if (lambda (p)
+                  (or (string-prefix-p "*" p)
+                      (string= "none" p)))
+                persp-names-cache))
 
 ;;; Predicates
 ;;;###autoload
@@ -435,6 +469,25 @@ the next."
   (interactive "p")
   (funcall-interactively #'+workspace/swap-left (- count)))
 
+;; (defun +workspace/other-non-app ()
+;;   "Function to switch to last used non-app workspace.
+
+;; Non-app just means workspaces that aren't prefixed with '*'."
+;;   (interactive "p")
+;;   (when-let ((w (+workspace--filter-mru)))
+;;     (+workspace-switch (car w))))
+
+(defun +workspace/other-non-app ()
+  (interactive)
+  (when-let ((mru-non-app (+workspace--filter-mru))
+             (prev-workspace +workspace--last)
+             (cur-workspace (+workspace-current-name)))
+    ;; if we're coming from a previous *foo* workspace, the first entry in
+    ;; `mru-non-app' is the current workspace; so use the second item
+
+    (if (string-prefix-p (nth 0 mru-non-app) cur-workspace)
+        (+workspace/switch-to (nth 1 mru-non-app))
+      (+workspace/switch-to (nth 0 mru-non-app)))))
 
 ;;
 ;;; Tabs display in minibuffer

@@ -282,4 +282,11 @@ stored in `persp-save-dir'.")
   (add-hook! 'tab-bar-mode-hook
     (defun +workspaces-set-up-tab-bar-integration-h ()
       (add-hook 'persp-before-deactivate-functions #'+workspaces-save-tab-bar-data-h)
-      (add-hook 'persp-activated-functions #'+workspaces-load-tab-bar-data-h))))
+      (add-hook 'persp-activated-functions #'+workspaces-load-tab-bar-data-h)))
+
+;;; mru
+  (when (modulep! :ui workspaces +mru)
+    (add-hook 'persp-renamed-functions       #'+workspace--mru-rename)
+    (add-hook 'persp-created-functions       #'+workspace--mru-create)
+    (add-hook 'persp-before-kill-functions   #'+workspace--mru-kill)
+    (add-hook 'persp-before-switch-functions #'+workspace--mru-switch)))

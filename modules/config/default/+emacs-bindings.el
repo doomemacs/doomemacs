@@ -408,6 +408,9 @@
         :desc "Delete workspace"             "k" #'+workspace/delete
         :desc "Save workspace"               "S" #'+workspace/save
         :desc "Switch to other workspace"    "o" #'+workspace/other
+        (:when (modulep! :ui workspaces +mru)
+         :desc "Switch to other non-app workspace"
+         "O" #'+workspace/other-non-app)
         :desc "Switch to left workspace"     "p" #'+workspace/switch-left
         :desc "Switch to right workspace"    "n" #'+workspace/switch-right
         :desc "Switch to"                    "w" #'+workspace/switch-to
