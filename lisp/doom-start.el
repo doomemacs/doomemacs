@@ -2,8 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'doom-modules)
-
 
 ;;
 ;;; Custom hooks
@@ -310,8 +308,15 @@ If RETURN-P, return the message as a string instead of displaying it."
 (autoload 'doom-initialize-packages "doom-packages")
 (eval-after-load 'package '(require 'doom-packages))
 (eval-after-load 'straight '(doom-initialize-packages))
+(require 'doom-modules)
 
-;; Load all things.
+;; Undo any problematic startup optimizations; from this point, I make no
+;; assumptions about what might be loaded in userland.
+(when (get 'load-suffixes 'initial-value)
+  (setq load-suffixes (get 'load-suffixes 'initial-value)
+        load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value)))
+
+;; Load user config + modules
 (doom-initialize-modules)
 
 (provide 'doom-start)
