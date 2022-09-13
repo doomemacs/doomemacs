@@ -1,5 +1,5 @@
 ;;; tools/lsp/autoload/lsp-mode.el -*- lexical-binding: t; -*-
-;;;###if (not (modulep! +eglot))
+;;;###if (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
 
 ;;;###autodef
 (defun set-lsp-priority! (client priority)

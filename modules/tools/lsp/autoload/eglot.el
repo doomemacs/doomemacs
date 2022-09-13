@@ -1,5 +1,5 @@
 ;;; tools/lsp/autoload/eglot.el -*- lexical-binding: t; -*-
-;;;###if (modulep! +eglot)
+;;;###if (modulep! :tools lsp +eglot)
 
 ;;;###autodef
 (defun set-eglot-client! (mode server-call)
