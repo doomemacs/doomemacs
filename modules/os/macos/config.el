@@ -12,7 +12,7 @@
 ;;; Compatibilty fixes
 
 ;; Curse Lion and its sudden but inevitable fullscreen mode!
-;; NOTE Meaningless to railwaycat's emacs-mac build
+;; This is meaningless to railwaycat's emacs-mac build though.
 (setq ns-use-native-fullscreen nil)
 
 ;; Visit files opened outside of Emacs in existing frame, not a new one
@@ -29,11 +29,11 @@
      (require 'ns-auto-titlebar nil t)
      (ns-auto-titlebar-mode +1))
 
-;; HACK On MacOS, disabling the menu bar makes MacOS treat Emacs as a
-;;      non-application window -- which means it doesn't automatically capture
-;;      focus when it is started, among other things, so enable the menu-bar for
-;;      GUI frames, but keep it disabled in terminal frames because there it
-;;      activates an ugly, in-frame menu bar.
+;; HACK: On MacOS, disabling the menu bar makes MacOS treat Emacs as a
+;;   non-application window -- which means it doesn't automatically capture
+;;   focus when it is started, among other things, so enable the menu-bar for
+;;   GUI frames, but keep it disabled in terminal frames because there it
+;;   activates an ugly, in-frame menu bar.
 (add-hook! '(window-setup-hook after-make-frame-functions)
   (defun doom-init-menu-bar-in-gui-frames-h (&optional frame)
     "Re-enable menu-bar-lines in GUI frames."

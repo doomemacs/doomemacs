@@ -1,4 +1,6 @@
-;;; doom-projects.el -*- lexical-binding: t; -*-
+;;; doom-projects.el --- defaults for project management in Doom -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-projectile-cache-limit 10000
   "If any project cache surpasses this many files it is purged when quitting

@@ -25,18 +25,18 @@
 ;;; Reasonable defaults for interactive sessions
 
 ;;; Runtime optimizations
-;; A second, case-insensitive pass over `auto-mode-alist' is time wasted.
+;; PERF: A second, case-insensitive pass over `auto-mode-alist' is time wasted.
 (setq auto-mode-case-fold nil)
 
-;; Disable bidirectional text scanning for a modest performance boost. I've set
-;; this to `nil' in the past, but the `bidi-display-reordering's docs say that
-;; is an undefined state and suggest this to be just as good:
+;; PERF: Disable bidirectional text scanning for a modest performance boost.
+;;   I've set this to `nil' in the past, but the `bidi-display-reordering's docs
+;;   say that is an undefined state and suggest this to be just as good:
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
 
-;; Disabling the BPA makes redisplay faster, but might produce incorrect display
-;; reordering of bidirectional text with embedded parentheses and other bracket
-;; characters whose 'paired-bracket' Unicode property is non-nil.
+;; PERF: Disabling BPA makes redisplay faster, but might produce incorrect
+;;   reordering of bidirectional text with embedded parentheses (and other
+;;   bracket characters whose 'paired-bracket' Unicode property is non-nil).
 (setq bidi-inhibit-bpa t)  ; Emacs 27+ only
 
 ;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
@@ -82,7 +82,7 @@
 (eval-when! (boundp 'w32-get-true-file-attributes)
   (setq w32-get-true-file-attributes nil    ; decrease file IO workload
         w32-pipe-read-delay 0               ; faster IPC
-        w32-pipe-buffer-size (* 64 1024))) ; read more at a time (was 4K)
+        w32-pipe-buffer-size (* 64 1024)))  ; read more at a time (was 4K)
 
 ;; The GC introduces annoying pauses and stuttering into our Emacs experience,
 ;; so we use `gcmh' to stave off the GC while we're using Emacs, and provoke it
@@ -300,6 +300,10 @@ If RETURN-P, return the message as a string instead of displaying it."
                      (float-time (time-subtract (current-time) before-init-time))))))
 
 
+;;
+;;; Let 'er rip!
+
+;;; Load loaddefs
 ;; Doom caches a lot of information in `doom-autoloads-file'. Module and package
 ;; autoloads, autodefs like `set-company-backend!', and variables like
 ;; `doom-modules', `doom-disabled-packages', `load-path', `auto-mode-alist', and
@@ -321,6 +325,10 @@ If RETURN-P, return the message as a string instead of displaying it."
              (list "Doom is in an incomplete state"
                    "run 'doom sync' on the command line to repair it")))))
 
+;;; Load envvar file
+;; 'doom env' generates an envvar file. This is a snapshot of your shell
+;; environment, which Doom loads here. This is helpful in scenarios where Emacs
+;; is launched from an environment detached from the user's shell environment.
 (when (and (or (display-graphic-p)
                (daemonp))
            doom-env-file)
@@ -336,9 +344,10 @@ If RETURN-P, return the message as a string instead of displaying it."
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
 
-;; There's a chance the user will later use package.el or straight in this
-;; interactive session. If they do, make sure they're properly initialized
-;; when they do.
+;;; Setup autoloads for major core libraries
+;; UX: There's a chance the user will later use package.el or straight in this
+;;   interactive session. If they do, make sure they're properly initialized
+;;   when they do.
 (autoload 'doom-initialize-packages "doom-packages")
 (eval-after-load 'package '(require 'doom-packages))
 (eval-after-load 'straight '(doom-initialize-packages))

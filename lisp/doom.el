@@ -344,7 +344,8 @@ users).")
 ;;   ones) abuse it to build paths for storage/cache files (instead of correctly
 ;;   using `locate-user-emacs-file'). This change ensures that said data files
 ;;   are never saved to the root of your emacs directory *and* saves us the
-;;   trouble setting a million directory/file variables.
+;;   trouble of setting a million directory/file variables. But it may throw off
+;;   anyone (or any package) that uses it to search for your Emacs initfiles.
 (setq user-emacs-directory doom-cache-dir)
 
 ;; ...However, this may surprise packages (and users) that read
@@ -380,6 +381,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;;
 ;;; Reasonable, global defaults
 
+;;; Reduce unnecessary/unactionable warnings/logs
 ;; Disable warnings from the legacy advice API. They aren't actionable or
 ;; useful, and often come from third party packages.
 (setq ad-redefinition-action 'accept)
@@ -396,6 +398,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 (setq debug-on-error init-file-debug
       jka-compr-verbose init-file-debug)
 
+;;; Stricter security defaults
 ;; Emacs is essentially one huge security vulnerability, what with all the
 ;; dependencies it pulls in from all corners of the globe. Let's try to be a
 ;; *little* more discerning.

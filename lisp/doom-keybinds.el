@@ -1,4 +1,4 @@
-;;; doom-keybinds.el -*- lexical-binding: t; -*-
+;;; doom-keybinds.el --- defaults for Doom's keybinds -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; A centralized keybinds system, integrated with `which-key' to preview

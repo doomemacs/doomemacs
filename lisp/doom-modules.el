@@ -104,7 +104,6 @@ before the user's private module.")
 
 This closure takes two arguments: a cons cell containing (CATEGORY . MODULE)
 symbols, and that module's plist."
-  (declare (pure t) (side-effect-free t))
   (lambda (module plist)
     (let ((doom--current-module module)
           (doom--current-flags (cdr (get (car module) (cdr module))))

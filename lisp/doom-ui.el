@@ -1,4 +1,6 @@
-;;; doom-ui.el -*- lexical-binding: t; -*-
+;;; doom-ui.el --- defaults for Doom's aesthetics -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code;
 
 ;;
 ;;; Variables
@@ -253,13 +255,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; when resizing too many windows at once or rapidly.
 (setq window-resize-pixelwise nil)
 
-;; Disable tool, menu, and scrollbars. Doom is designed to be keyboard-centric,
-;; so these are just clutter (the scrollbar also impacts performance). Whats
-;; more, the menu bar exposes functionality that Doom doesn't endorse.
+;; UI: Doom strives to be keyboard-centric, so I consider these UI elements
+;;   clutter. Initializing them also costs a morsel of startup time. Whats more,
+;;   the menu bar exposes functionality that Doom doesn't endorse. Perhaps one
+;;   day Doom will support these, but today is not that day.
 ;;
-;; I am intentionally not calling `menu-bar-mode', `tool-bar-mode', and
-;; `scroll-bar-mode' because they do extra and unnecessary work that can be more
-;; concisely and efficiently expressed with these six lines:
+;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
+;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
+;;   that isn't necessary this early in the startup process.
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -268,9 +271,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
+;; Note, that disabling `menu-bar-mode' can cause issues on MacOS. See the
+;; :os macos module for a fix.
 
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
+;; FIX: The native border "consumes" a pixel of the fringe on righter-most
+;;   splits, `window-divider' does not. Available since Emacs 25.1.
 (setq window-divider-default-places t
       window-divider-default-bottom-width 1
       window-divider-default-right-width 1)
@@ -285,8 +290,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (when IS-LINUX
   (setq x-gtk-use-system-tooltips nil))
 
- ;; Favor vertical splits over horizontal ones. Monitors are trending toward
- ;; wide, rather than tall.
+;; UX: Favor vertical splits over horizontal ones. Monitors are trending toward
+;;   wide, rather than tall.
 (setq split-width-threshold 160
       split-height-threshold nil)
 
@@ -309,7 +314,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; Typing yes/no is obnoxious when y/n will do
 (if (boundp 'use-short-answers)
     (setq use-short-answers t)
-  ;; DEPRECATED Remove when we drop 27.x support
+  ;; DEPRECATED: Remove when we drop 27.x support
   (advice-add #'yes-or-no-p :override #'y-or-n-p))
 
 ;; Try to keep the cursor out of the read-only portions of the minibuffer.

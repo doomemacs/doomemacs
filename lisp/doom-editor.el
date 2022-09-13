@@ -1,4 +1,6 @@
-;;; doom-editor.el -*- lexical-binding: t; -*-
+;;; doom-editor.el --- defaults for text editing in Doom -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-detect-indentation-excluded-modes
   '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
