@@ -95,47 +95,6 @@
 (add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
 
-;;; Startup optimizations
-;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we halve startup times, particularly when we use
-;; fonts that are larger than the system default (which would resize the frame).
-(setq frame-inhibit-implied-resize t)
-
-;; Remove command line options that aren't relevant to our current OS; means
-;; slightly less to process at startup.
-(eval-when! (not IS-MAC)   (setq command-line-ns-option-alist nil))
-(eval-when! (not IS-LINUX) (setq command-line-x-option-alist nil))
-
-;; HACK: `tty-run-terminal-initialization' is *tremendously* slow for some
-;;   reason; inexplicably doubling startup time for terminal Emacs. Keeping it
-;;   disabled will have nasty side-effects, so we simply delay it instead, and
-;;   invoke it later, at which point it runs quickly; how mysterious!
-(unless (or (daemonp) init-file-debug)
-  (advice-add #'tty-run-terminal-initialization :override #'ignore)
-  (defun doom-init-tty-h ()
-    (advice-remove #'tty-run-terminal-initialization #'ignore)
-    (tty-run-terminal-initialization (selected-frame) nil t))
-  (add-hook 'window-setup-hook #'doom-init-tty-h))
-
-;; Reduce *Message* noise at startup. An empty scratch buffer (or the dashboard)
-;; is more than enough, and faster to display.
-(setq inhibit-startup-screen t
-      inhibit-startup-echo-area-message user-login-name
-      inhibit-default-init t)
-;; Get rid of "For information about GNU Emacs..." message at startup. It's
-;; redundant with our dashboard and incurs a redraw. In daemon sessions it says
-;; "Starting Emacs daemon" instead, which is fine.
-(unless (daemonp)
-  (advice-add #'display-startup-echo-area-message :override #'ignore))
-
-;; Shave seconds off startup time by starting the scratch buffer in
-;; `fundamental-mode', rather than, say, `org-mode' or `text-mode', which pull
-;; in a ton of packages. `doom/open-scratch-buffer' provides a better scratch
-;; buffer anyway.
-(setq initial-major-mode 'fundamental-mode
-      initial-scratch-message nil)
-
-
 ;;; Language
 ;; Contrary to what many Emacs users have in their configs, you don't need more
 ;; than this to make UTF-8 the default coding system:
