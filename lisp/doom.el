@@ -122,7 +122,7 @@
 
 ;; DEPRECATED
 (defconst IS-MAC      (eq system-type 'darwin))
-(defconst IS-LINUX    (eq system-type 'gnu/linux))
+(defconst IS-LINUX    (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix)))
 (defconst IS-WINDOWS  (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD      (memq system-type '(darwin berkeley-unix gnu/kfreebsd)))
 
