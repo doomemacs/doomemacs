@@ -49,31 +49,32 @@
 ;;
 ;;; Code:
 
-;; Doom's minimum supported version of Emacs is 27.1. Its my goal to support one
-;; major version below the stable release, for about a year or until stable is
-;; ubiquitous (or at least easily accessible) across Linux distros.
-(when (< emacs-major-version 27)
-  (user-error
-   (concat
-    "Detected Emacs " emacs-version ", but Doom requires 27.1 or newer.\n\n"
-    "The version of Emacs in use is located at:\n\n  " (car command-line-args) "\n\n"
-    "A guide for installing a newer version of Emacs can be found at:\n\n  "
-    (format "https://docs.doomemacs.org/-/install/%s"
-            (cond ((eq system-type 'darwin) "on-macos")
-                  ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")
-                  ("on-linux")))
-    "\n\n"
-    (if (not noninteractive)
-        (concat "If you believe this error is a mistake, run 'doom doctor' on the command line\n"
-                "to diagnose common issues with your config and system.")
-      (concat "Alternatively, either update your $PATH environment variable to include the\n"
-              "path of the desired Emacs executable OR alter the $EMACS environment variable\n"
-              "to specify the exact path or command needed to invoke Emacs. For example:\n\n"
-              (let ((command (ignore-errors (file-name-nondirectory (cadr (member "--load" command-line-args))))))
-                (concat "  $ EMACS=/path/to/valid/emacs " command " ...\n"
-                        "  $ EMACS=\"/Applications/Emacs.app/Contents/MacOS/Emacs\" " command " ...\n"
-                        "  $ EMACS=\"snap run emacs\" " command " ...\n"))
-              "\nAborting...")))))
+(eval-and-compile  ; Check version at both compile and runtime.
+  ;; Doom's minimum supported version of Emacs is 27.1. Its my goal to support
+  ;; one major version below the stable release, for about a year or until
+  ;; stable is ubiquitous (or at least easily accessible) across Linux distros.
+  (when (< emacs-major-version 27)
+    (user-error
+     (concat
+      "Detected Emacs " emacs-version ", but Doom requires 27.1 or newer.\n\n"
+      "The version of Emacs in use is located at:\n\n  " (car command-line-args) "\n\n"
+      "A guide for installing a newer version of Emacs can be found at:\n\n  "
+      (format "https://docs.doomemacs.org/-/install/%s"
+              (cond ((eq system-type 'darwin) "on-macos")
+                    ((memq system-type '(cygwin windows-nt ms-dos)) "on-windows")
+                    ("on-linux")))
+      "\n\n"
+      (if (not noninteractive)
+          (concat "If you believe this error is a mistake, run 'doom doctor' on the command line\n"
+                  "to diagnose common issues with your config and system.")
+        (concat "Alternatively, either update your $PATH environment variable to include the\n"
+                "path of the desired Emacs executable OR alter the $EMACS environment variable\n"
+                "to specify the exact path or command needed to invoke Emacs. For example:\n\n"
+                (let ((command (ignore-errors (file-name-nondirectory (cadr (member "--load" command-line-args))))))
+                  (concat "  $ EMACS=/path/to/valid/emacs " command " ...\n"
+                          "  $ EMACS=\"/Applications/Emacs.app/Contents/MacOS/Emacs\" " command " ...\n"
+                          "  $ EMACS=\"snap run emacs\" " command " ...\n"))
+                "\nAborting..."))))))
 
 ;; Doom needs to be synced/rebuilt if either Doom or Emacs has been
 ;; up/downgraded. This is because byte-code isn't backwards compatible, and many
