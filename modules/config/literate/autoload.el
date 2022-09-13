@@ -70,6 +70,7 @@
           (start-process "tangle-config"
                          (get-buffer-create " *tangle config*")
                          "emacs" "--batch"
+                         "-L" (file-name-directory (locate-library "org"))
                          "--load" (doom-path doom-core-dir "doom")
                          "--load" (doom-path doom-core-dir "lib/print")
                          "--eval"
