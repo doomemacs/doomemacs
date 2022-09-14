@@ -35,5 +35,5 @@
 (package! python-pytest :pin "9bf8db38bf18feb0484931877210cecfaa96bfc6")
 
 ;; Import managements
-(package! pyimport :pin "a6f63cf7ed93f0c0f7c207e6595813966f8852b9")
+(package! pyimport :pin "c006a5fd0e5c9e297aa2ad71b2f02f463286b5e3")
 (package! py-isort :pin "e67306f459c47c53a65604e4eea88a3914596560")
