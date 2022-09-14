@@ -263,16 +263,19 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
 ;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
 ;;   that isn't necessary this early in the startup process.
-(push '(menu-bar-lines . 0)   default-frame-alist)
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-;; And set these to nil so users don't have to toggle the modes twice to
-;; reactivate them.
-(setq menu-bar-mode nil
+(setq scroll-bar-mode nil
       tool-bar-mode nil
-      scroll-bar-mode nil)
-;; Note, that disabling `menu-bar-mode' can cause issues on MacOS. See the
-;; :os macos module for a fix.
+      ;; Disabling `menu-bar-mode' causes focus issues on MacOS. The :os macos
+      ;; module has a fix for this.
+      menu-bar-mode nil)
+;; Setting `scroll-bar-mode' isn't enough to disable them, so:
+(push '(vertical-scroll-bars) default-frame-alist)
+
+;; UX: GUIs are inconsistent across systems, desktop environments, and themes,
+;;   and don't match the look of Emacs. They also impose inconsistent shortcut
+;;   key paradigms. I'd rather Emacs be responsible for prompting.
+(setq use-dialog-box nil
+      tooltip-mode nil)
 
 ;; FIX: The native border "consumes" a pixel of the fringe on righter-most
 ;;   splits, `window-divider' does not. Available since Emacs 25.1.
@@ -280,15 +283,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       window-divider-default-bottom-width 1
       window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
-
-;; GUIs are inconsistent across systems and themes (and will rarely match our
-;; active Emacs theme). They impose inconsistent shortcut key paradigms too.
-;; It's best to avoid them altogether and have Emacs handle the prompting.
-(setq use-dialog-box nil)
-(when (bound-and-true-p tooltip-mode)
-  (tooltip-mode -1))
-(when IS-LINUX
-  (setq x-gtk-use-system-tooltips nil))
 
 ;; UX: Favor vertical splits over horizontal ones. Monitors are trending toward
 ;;   wide, rather than tall.

@@ -106,21 +106,7 @@
   (setq selection-coding-system 'utf-8))
 
 
-;;; User interface
-;; GUIs are inconsistent across systems, will rarely match our active Emacs
-;; theme, and impose their shortcut key paradigms suddenly. Let's just avoid
-;; them altogether and have Emacs handle the prompting.
-(setq use-dialog-box nil)
-(when (bound-and-true-p tooltip-mode)
-  (tooltip-mode -1))
-(eval-when! IS-LINUX
-  (setq x-gtk-use-system-tooltips nil))
-
-;; Favor vertical splits over horizontal ones, since monitors are trending
-;; toward wide rather than tall.
-(setq split-width-threshold 160
-      split-height-threshold nil)
-
+;;; Support for more file extensions
 ;; Add support for additional file extensions.
 (dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
                  ("/LICENSE\\'" . text-mode)
