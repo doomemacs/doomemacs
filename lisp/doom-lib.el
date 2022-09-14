@@ -2,6 +2,20 @@
 ;;; Commentary:
 ;;; Code:
 
+;;; Custom error types
+(define-error 'doom-error "An unexpected Doom error")
+(define-error 'doom-core-error "Unexpected error in Doom's core" 'doom-error)
+(define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
+(define-error 'doom-autoload-error "Error in Doom's autoloads file" 'doom-error)
+(define-error 'doom-user-error "Error caused by user's config or system" 'doom-error)
+(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
+(define-error 'doom-package-error "Error with packages" 'doom-error)
+(define-error 'doom-profile-error "Error while processing profiles" 'doom-error)
+
+
+;;
+;;; Logging
+
 (defmacro doom-log (output &rest args)
   "Log a message in *Messages*.
 
