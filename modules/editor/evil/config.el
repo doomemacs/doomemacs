@@ -29,7 +29,7 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-respect-visual-line-mode nil)
 
 (use-package! evil
-  :hook (doom-init-modules . evil-mode)
+  :hook (doom-after-modules-config . evil-mode)
   :demand t
   :preface
   (setq evil-ex-search-vim-style-regexp t
@@ -77,7 +77,7 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
 
   ;; Done in a hook to ensure the popup rules load as late as possible
-  (add-hook! 'doom-init-modules-hook
+  (add-hook! 'doom-after-modules-config-hook
     (defun +evil--init-popup-rules-h ()
       (set-popup-rules!
         '(("^\\*evil-registers" :size 0.3)
@@ -85,7 +85,7 @@ directives. By default, this only recognizes C directives.")
 
   ;; Change the cursor color in emacs state. We do it this roundabout way
   ;; to ensure changes in theme doesn't break these colors.
-  (add-hook! '(doom-load-theme-hook doom-init-modules-hook)
+  (add-hook! '(doom-load-theme-hook doom-after-modules-config-hook)
     (defun +evil-update-cursor-color-h ()
       (put 'cursor 'evil-emacs-color  (face-foreground 'warning))
       (put 'cursor 'evil-normal-color (face-background 'cursor))))

@@ -36,12 +36,13 @@
 ;;   $EMACSDIR/lisp/doom.el
 ;;   $EMACSDIR/lisp/doom-start.el
 ;;   $DOOMDIR/init.el
+;;   `doom-before-modules-init-hook'
 ;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-;;   `doom-before-init-modules-hook'
+;;   `doom-after-modules-init-hook'
+;;   `doom-before-modules-config-hook'
 ;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
-;;   `doom-init-modules-hook'
+;;   `doom-after-modules-config-hook'
 ;;   $DOOMDIR/config.el
-;;   `doom-after-init-modules-hook'
 ;;   `after-init-hook'
 ;;   `emacs-startup-hook'
 ;;   `doom-init-ui-hook'

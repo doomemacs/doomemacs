@@ -21,13 +21,13 @@
 
 Init files are loaded early, just after Doom core, and before modules' config
 files. They are always loaded, even in non-interactive sessions, and before
-`doom-before-init-modules-hook'. Related to `doom-module-config-file'.")
+`doom-before-modules-init-hook'. Related to `doom-module-config-file'.")
 
 (defvar doom-module-config-file "config"
   "The basename of config files for modules.
 
 Config files are loaded later, and almost always in interactive sessions. These
-run before `doom-init-modules-hook'. Relevant to `doom-module-init-file'.")
+run before `doom-after-modules-config-hook'. Relevant to `doom-module-init-file'.")
 
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
@@ -75,15 +75,25 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
-(defvar doom-before-init-modules-hook nil
-  "A list of hooks to run before Doom's modules' config.el files are loaded, but
-after their init.el files are loaded.")
+(defcustom doom-before-modules-init-hook nil
+  "Hooks run before module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
 
-(defvar doom-init-modules-hook nil
-  "A list of hooks to run after Doom's modules' config.el files have loaded, but
-before the user's private module.")
+(defcustom doom-after-modules-init-hook nil
+  "Hooks run after module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
 
-(defvaralias 'doom-after-init-modules-hook 'after-init-hook)
+(defcustom doom-before-modules-config-hook nil
+  "Hooks run before module config.el files are loaded."
+  :group 'doom
+  :type 'hook)
+
+(defcustom doom-after-modules-config-hook nil
+  "Hooks run after module config.el files are loaded (but before the user's)."
+  :group 'doom
+  :type 'hook)
 
 (defvar doom--current-module nil)
 (defvar doom--current-flags nil)
@@ -120,11 +130,13 @@ of Dooming. Will noop if used more than once, unless FORCE-P is non-nil."
       (doom-initialize-core-modules))
     (when-let (init-p (load! doom-module-init-file doom-user-dir t))
       (doom-log "Initializing user config")
+      (doom-run-hooks 'doom-before-module-init-hook)
       (maphash (doom-module-loader doom-module-init-file) doom-modules)
-      (doom-run-hooks 'doom-before-init-modules-hook)
+      (doom-run-hooks 'doom-after-module-init-hook)
       (unless no-config-p
+        (doom-run-hooks 'doom-before-module-config-hook)
         (maphash (doom-module-loader doom-module-config-file) doom-modules)
-        (doom-run-hooks 'doom-init-modules-hook)
+        (doom-run-hooks 'doom-after-module-config-hook)
         (load! "config" doom-user-dir t)
         (when custom-file
           (load custom-file 'noerror (not doom-debug-mode)))))))
@@ -456,21 +468,6 @@ The bootstrap process involves making sure the essential directories exist, core
 packages are installed, `doom-autoloads-file' is loaded, `doom-packages-file'
 cache exists (and is loaded) and, finally, loads your private init.el (which
 should contain your `doom!' block).
-
-The overall load order of Doom is as follows:
-
-  ~/.emacs.d/init.el
-  ~/.emacs.d/lisp/doom.el
-  $DOOMDIR/init.el
-  {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-  `doom-before-init-modules-hook'
-  {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
-  `doom-init-modules-hook'
-  $DOOMDIR/config.el
-  `doom-after-init-modules-hook'
-  `after-init-hook'
-  `emacs-startup-hook'
-  `window-setup-hook'
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
