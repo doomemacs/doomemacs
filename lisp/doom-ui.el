@@ -622,10 +622,7 @@ triggering hooks during startup."
   ;; Initialize `doom-switch-buffer-hook'
   (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
   ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
-  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h)
-
-  ;; Only execute this function once.
-  (remove-hook 'window-buffer-change-functions #'doom-init-ui-h))
+  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h))
 
 ;; Apply fonts and theme
 (let ((hook (if (daemonp)
@@ -636,7 +633,7 @@ triggering hooks during startup."
 
 ;; Initialize UI as late as possible. `window-buffer-change-functions' runs
 ;; once, when the scratch/dashboard buffer is first displayed.
-(add-hook 'window-buffer-change-functions #'doom-init-ui-h -100)
+(add-hook 'doom-after-init-hook #'doom-init-ui-h -100)
 
 
 ;;

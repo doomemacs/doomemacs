@@ -35,6 +35,7 @@
 ;;   $EMACSDIR/early-init.el
 ;;   $EMACSDIR/lisp/doom.el
 ;;   $EMACSDIR/lisp/doom-start.el
+;;   `doom-before-init-hook'
 ;;   $DOOMDIR/init.el
 ;;   `doom-before-modules-init-hook'
 ;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
@@ -47,6 +48,7 @@
 ;;   `emacs-startup-hook'
 ;;   `doom-init-ui-hook'
 ;;   `window-setup-hook'
+;;   `doom-after-init-hook'
 ;;
 ;;; Code:
 
@@ -294,7 +296,7 @@ users).")
   ;;   `load', or various file/io functions (like `expand-file-name' or
   ;;   `file-remote-p'). You get a noteable boost to startup time by unsetting
   ;;   or simplifying its value.
-  (let ((old-value (get 'file-name-handler-alist 'initial-value)))
+  (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
     (setq file-name-handler-alist
           ;; HACK: If the bundled elisp for this Emacs install isn't
           ;;   byte-compiled (but is compressed), then leave the gzip file
@@ -375,12 +377,21 @@ users).")
     ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on each
     ;;   `require' and `load'. Doom won't load any dmodules this early, so omit
     ;;   .so for a small startup boost. This is later restored in doom-start.
+    (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
+    (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
     (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
     (set-default-toplevel-value 'load-file-rep-suffixes '(""))
+    ;; COMPAT: Undo any problematic startup optimizations; from this point, I make
+    ;;   no assumptions about what might be loaded in userland.
+    (add-hook! 'doom-before-init-hook
+      (defun doom--reset-load-suffixes-h ()
+        (setq load-suffixes (get 'load-suffixes 'initial-value)
+              load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
 
     ;; PERF: The mode-line procs a couple dozen times during startup. This is
     ;;   normally quite fast, but disabling the default mode-line and reducing the
     ;;   update delay timer seems to stave off ~30-50ms.
+    (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
     (setq-default mode-line-format nil)
     (dolist (buf (buffer-list))
       (with-current-buffer buf (setq mode-line-format nil)))
@@ -507,6 +518,50 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 --strict-tofu --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3' %h"
                     ;; compatibility fallbacks
                     "gnutls-cli -p %p %h"))
+
+
+;;
+;;; Custom hooks
+
+(defcustom doom-before-init-hook ()
+  "A hook run before Doom has been initialized and before $DOOMDIR/init.el.
+
+This occurs in the context of early-init.el. Much of Emacs and Doom isn't
+initialized at this point, only loaded. Use this for configuration at the latest
+opportunity before the session becomes unpredictably complicated by user config,
+packages, etc.
+
+Do not use this for interactive functionality, as it's triggered in
+noninteractive sessions as well, after Doom core has been loaded, but not
+initialized.
+
+In contrast, `before-init-hook' is run just after $DOOMDIR/init.el is loaded,
+but before the rest of Doom is loaded."
+  :group 'doom
+  :type 'hook)
+
+(defcustom doom-after-init-hook ()
+  "A hook run at the (true) end of Emacs startup.
+
+When this runs, all modules, config files, and startup hooks have been
+triggered. This is the absolute latest point in the startup process."
+  :group 'doom
+  :type 'hook)
+
+
+;;
+;;; Last minute initialization
+
+(add-hook! 'doom-before-init-hook
+  (defun doom--set-initial-values-h ()
+    ;; Remember these variables' initial values, so we can safely reset them at
+    ;; a later time, or consult them without fear of contamination.
+    (dolist (var '(exec-path load-path process-environment))
+      (put var 'initial-value (default-toplevel-value var)))))
+
+;; This is the absolute latest a hook can run in Emacs' startup process.
+(define-advice command-line-1 (:after (&rest _) run-after-init-hook)
+  (doom-run-hooks 'doom-after-init-hook))
 
 (provide 'doom)
 ;;; doom.el ends here

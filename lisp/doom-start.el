@@ -295,8 +295,8 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; Bootstrap the interactive session
 (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
 (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
-(add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
-(add-hook 'window-setup-hook #'doom-display-benchmark-h 105)
+(add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h)
+(add-hook 'doom-after-init-hook #'doom-display-benchmark-h 110)
 (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
@@ -310,11 +310,9 @@ If RETURN-P, return the message as a string instead of displaying it."
 (eval-after-load 'straight '(doom-initialize-packages))
 (require 'doom-modules)
 
-;; Undo any problematic startup optimizations; from this point, I make no
-;; assumptions about what might be loaded in userland.
-(when (get 'load-suffixes 'initial-value)
-  (setq load-suffixes (get 'load-suffixes 'initial-value)
-        load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value)))
+;; A last ditch opportunity to undo dodgy optimizations or do extra
+;; configuration before the session is complicated by user config and packages.
+(doom-run-hooks 'doom-before-init-hook)
 
 ;; Load user config + modules
 (doom-initialize-modules)

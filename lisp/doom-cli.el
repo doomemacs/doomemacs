@@ -25,27 +25,22 @@
 
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
-  (when noninteractive
-    (let ((inhibit-message (not init-file-debug)))
-      (require 'cl nil t)
-      (unless site-run-file
-        (let ((site-run-file "site-start")
-              (tail load-path)
-              (lispdir (expand-file-name "../lisp" data-directory))
-              dir)
-          (while tail
-            (setq dir (car tail))
+  (let ((inhibit-message (not init-file-debug)))
+    (require 'cl nil t)
+    (unless site-run-file
+      (let ((site-run-file "site-start")
+            (tail load-path)
+            (lispdir (expand-file-name "../lisp" data-directory))
+            dir)
+        (while tail
+          (setq dir (car tail))
+          (let ((default-directory dir))
+            (load (expand-file-name "subdirs.el") t inhibit-message t))
+          (unless (string-prefix-p lispdir dir)
             (let ((default-directory dir))
-              (load (expand-file-name "subdirs.el") t inhibit-message t))
-            (unless (string-prefix-p lispdir dir)
-              (let ((default-directory dir))
-                (load (expand-file-name "leim-list.el") t inhibit-message t)))
-            (setq tail (cdr tail)))
-          (load site-run-file t inhibit-message)))))
-
-  ;; Reset these vars' initial values, in case the site files have changed them.
-  (dolist (var '(exec-path load-path process-environment))
-    (put var 'initial-value (default-value var)))
+              (load (expand-file-name "leim-list.el") t inhibit-message t)))
+          (setq tail (cdr tail)))
+        (load site-run-file t inhibit-message))))
 
   (setq-default
    ;; PERF: Don't generate superfluous files when writing temp buffers.
@@ -79,7 +74,9 @@
   ;; Ensure straight and core packages are ready to go for CLI commands.
   ;; (require 'doom-profiles)
   (require 'doom-modules)
-  (require 'doom-packages))
+  (require 'doom-packages)
+  ;; For any last-minute initialization.
+  (run-hooks 'doom-before-init-hook))
 
 
 ;;
