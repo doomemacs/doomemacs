@@ -90,7 +90,7 @@ following shell commands:
             (user-error "%s\n\n%s\n\n %s"
                         (format "Refusing to upgrade because %S has been modified."
                                 (abbreviate-file-name doom-emacs-dir))
-                        "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes."
+                        "Either stash/undo your changes or run 'doom upgrade --force' to discard local changes."
                         (string-join dirty "\n"))
           (print! (item "You have local modifications in Doom's source. Discarding them..."))
           (sh! "git" "reset" "--hard" (format "origin/%s" branch))
