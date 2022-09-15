@@ -34,7 +34,7 @@
   `(print! (bold (blue ,@args))))
 
 (defmacro explain! (&rest args)
-  `(print-group! (print! (fill (string-join (list ,@args) "\n")))))
+  `(print-group! (print! (p ,@args))))
 
 
 ;;
