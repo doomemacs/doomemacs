@@ -656,7 +656,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not builds-p)
                (ignore (print! (item "Skipping builds")))
              (and (/= 0 (doom-packages--purge-builds builds-to-purge))
-                  (straight-prune-build-cache)))
+                  (quiet! (straight-prune-build-cache))))
            (if (not elpa-p)
                (ignore (print! (item "Skipping elpa packages")))
              (/= 0 (doom-packages--purge-elpa)))
