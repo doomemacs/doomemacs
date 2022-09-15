@@ -93,7 +93,34 @@
 (add-hook 'doom-first-buffer-hook #'gcmh-mode)
 
 
-;;; Language
+;;; Disable UI elements early
+;; PERF,UI: Doom strives to be keyboard-centric, so I consider these UI elements
+;;   clutter. Initializing them also costs a morsel of startup time. Whats more,
+;;   the menu bar exposes functionality that Doom doesn't endorse. Perhaps one
+;;   day Doom will support these, but today is not that day.
+;;
+;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
+;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
+;;   that isn't necessary this early in the startup process.
+(setq scroll-bar-mode nil
+      tool-bar-mode nil
+      menu-bar-mode nil)
+;; Setting `scroll-bar-mode' isn't enough to disable them, so:
+(push '(vertical-scroll-bars) default-frame-alist)
+;; FIX: On MacOS, disabling the menu bar makes MacOS treat Emacs as a
+;;   non-application window -- which means it doesn't automatically capture
+;;   focus when it is started, among other things, so enable the menu-bar for
+;;   GUI frames, but keep it disabled in terminal frames because there it
+;;   activates an ugly, in-frame menu bar.
+(when IS-MAC
+  (add-hook! '(window-setup-hook after-make-frame-functions)
+    (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
+      (when-let (frame (or frame (selected-frame)))
+        (when (display-graphic-p frame)
+          (set-frame-parameter frame 'menu-bar-lines 1))))))
+
+
+;;; Encodings
 ;; Contrary to what many Emacs users have in their configs, you don't need more
 ;; than this to make UTF-8 the default coding system:
 (set-language-environment "UTF-8")

@@ -29,18 +29,6 @@
      (require 'ns-auto-titlebar nil t)
      (ns-auto-titlebar-mode +1))
 
-;; HACK: On MacOS, disabling the menu bar makes MacOS treat Emacs as a
-;;   non-application window -- which means it doesn't automatically capture
-;;   focus when it is started, among other things, so enable the menu-bar for
-;;   GUI frames, but keep it disabled in terminal frames because there it
-;;   activates an ugly, in-frame menu bar.
-(add-hook! '(window-setup-hook after-make-frame-functions)
-  (defun doom-init-menu-bar-in-gui-frames-h (&optional frame)
-    "Re-enable menu-bar-lines in GUI frames."
-    (when-let (frame (or frame (selected-frame)))
-      (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1)))))
-
 ;; Integrate with Keychain
 (after! auth-source
   (pushnew! auth-sources 'macos-keychain-internet 'macos-keychain-generic))

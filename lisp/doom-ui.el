@@ -255,22 +255,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; when resizing too many windows at once or rapidly.
 (setq window-resize-pixelwise nil)
 
-;; UI: Doom strives to be keyboard-centric, so I consider these UI elements
-;;   clutter. Initializing them also costs a morsel of startup time. Whats more,
-;;   the menu bar exposes functionality that Doom doesn't endorse. Perhaps one
-;;   day Doom will support these, but today is not that day.
-;;
-;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
-;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
-;;   that isn't necessary this early in the startup process.
-(setq scroll-bar-mode nil
-      tool-bar-mode nil
-      ;; Disabling `menu-bar-mode' causes focus issues on MacOS. The :os macos
-      ;; module has a fix for this.
-      menu-bar-mode nil)
-;; Setting `scroll-bar-mode' isn't enough to disable them, so:
-(push '(vertical-scroll-bars) default-frame-alist)
-
 ;; UX: GUIs are inconsistent across systems, desktop environments, and themes,
 ;;   and don't match the look of Emacs. They also impose inconsistent shortcut
 ;;   key paradigms. I'd rather Emacs be responsible for prompting.
