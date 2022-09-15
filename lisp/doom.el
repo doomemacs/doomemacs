@@ -371,11 +371,12 @@ users).")
     ;;   startup doesn't appear to affect it if it's called a little later in
     ;;   the startup process, so that's what I do.
     ;; REVIEW: This optimization is not understood. Investigate this properly!
-    (advice-add #'tty-run-terminal-initialization :override #'ignore)
-    (add-hook! 'window-setup-hook
-      (defun doom--reset-tty-run-terminal-initialization-h ()
-        (advice-remove #'tty-run-terminal-initialization #'ignore)
-        (tty-run-terminal-initialization (selected-frame) nil t)))
+    (unless initial-window-system
+      (advice-add #'tty-run-terminal-initialization :override #'ignore)
+      (add-hook! 'window-setup-hook
+        (defun doom--reset-tty-run-terminal-initialization-h ()
+          (advice-remove #'tty-run-terminal-initialization #'ignore)
+          (tty-run-terminal-initialization (selected-frame) nil t))))
 
     ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
     ;;   messages in the echo area. Writing to the echo-area triggers a
