@@ -64,6 +64,7 @@
 ;; offensive) optimizations, and load the minimum for all Doom sessions.
 ;;
 ;;; Code:
+(eval-when-compile (require 'subr-x))
 
 ;;; Version checks
 (eval-and-compile  ; Check version at both compile and runtime.
