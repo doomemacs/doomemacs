@@ -370,8 +370,8 @@ If NOLOAD? is non-nil, don't autoload deferred CLIs (see `doom-cli-get')."
                   (push cli paths)))
            (nreverse paths)))))
 
-(defun doom-cli-find (command &optional norecursive)
-  "Find all CLIs assocated with COMMAND, excluding partials if NORECURSIVE.
+(defun doom-cli-find (command &optional nopartials?)
+  "Find all CLIs assocated with COMMAND, including partials.
 
 COMMAND can be a command path (list of strings), a `doom-cli' struct, or a
 `doom-cli-context' struct.
@@ -388,7 +388,9 @@ Returned in the order they will execute. Includes pseudo CLIs."
       (push (cons :before path) results))
     (push '(:before) results)
     (dolist (result results (nreverse clis))
-      (when-let (cli (doom-cli-get result t))
+      (when-let ((cli (doom-cli-get result t))
+                 ((or (not nopartials?)
+                      (doom-cli-type cli))))
         (cl-pushnew cli clis
                     :test #'equal
                     :key #'doom-cli-key)))))
