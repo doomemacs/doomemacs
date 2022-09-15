@@ -1700,7 +1700,7 @@ ignored.
                   (commands (doom-cli--command-expand command t))
                   (target   (pop commands)))
              (dolist (prop '(:autoload :alias :partial :hide))
-               (cl-callf map-delete plist prop))
+               (cl-remf plist prop))
              (puthash (delq nil (cons type target))
                       (make-doom-cli
                        :command target
