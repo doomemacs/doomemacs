@@ -308,11 +308,10 @@ users).")
 ;;; Startup optimizations
 
 ;; Here are Doom's hackiest (and least offensive) startup optimizations. They
-;; exploit implementation details and unintended side-effects, and will  change
-;; often between major Emacs releases. I've (roughly) ordered them from most to
-;; least effective (on Linux), and disable them if this is a daemon session
-;; (where startup time matters less) or in debug-mode (to mitigate interference
-;; with our debugging).
+;; exploit implementation details and unintended side-effects, and will change
+;; often between major Emacs releases. However, I disable them if this is a
+;; daemon session (where startup time matters less) or in debug-mode (to
+;; mitigate interference with our debugging).
 (unless (or (daemonp) init-file-debug)
   ;; PERF: `file-name-handler-alist' is consulted on each call to `require',
   ;;   `load', or various file/io functions (like `expand-file-name' or
@@ -370,7 +369,7 @@ users).")
     ;;   2-3s when starting up Emacs in the terminal. Whatever slows it down at
     ;;   startup doesn't appear to affect it if it's called a little later in
     ;;   the startup process, so that's what I do.
-    ;; REVIEW: This optimization is not understood. Investigate this properly!
+    ;; REVIEW: This optimization is not well understood. Investigate it!
     (unless initial-window-system
       (advice-add #'tty-run-terminal-initialization :override #'ignore)
       (add-hook! 'window-setup-hook
