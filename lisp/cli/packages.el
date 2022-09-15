@@ -307,8 +307,8 @@ declaration) or dependency thereof that hasn't already been."
                   (error
                    (signal 'doom-package-error (list package e))))))
          (progn
-           (doom-packages--compile-site-files)
            (when (featurep 'native-compile)
+             (doom-packages--compile-site-files)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            (print! (success "\033[KInstalled %d packages") (length built)))
@@ -371,8 +371,8 @@ declaration) or dependency thereof that hasn't already been."
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (progn
-           (doom-packages--compile-site-files)
            (when (featurep 'native-compile)
+             (doom-packages--compile-site-files)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            ;; HACK Every time you save a file in a package that straight tracks,
