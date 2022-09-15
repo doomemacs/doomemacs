@@ -141,11 +141,11 @@
   "An Emacs framework for the stubborn martian hacker."
   :link '(url-link "https://doomemacs.org"))
 
-(defconst doom-version "3.0.0-dev"
+(defconst doom-version "3.0.0-pre"
   "Current version of Doom Emacs core.")
 
 ;; DEPRECATED: Remove these when the modules are moved out of core.
-(defconst doom-modules-version "22.09.0-dev"
+(defconst doom-modules-version "22.09.0-pre"
   "Current version of Doom Emacs.")
 
 (defconst doom-profile
