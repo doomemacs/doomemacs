@@ -274,11 +274,8 @@ those directories."
                                mplist)
                          (push (car key) mplist))
                        (throw 'doom-modules t))))
-                 (let ((path (doom-module-locate-path category module)))
-                   (push (funcall fn category module
-                                  :flags (if (listp m) (cdr m))
-                                  :path (if (stringp path) (file-truename path)))
-                         results)))))))
+                 (push (funcall fn category module :flags (if (listp m) (cdr m)))
+                       results))))))
     (when noninteractive
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
@@ -432,9 +429,12 @@ to least)."
   `(when noninteractive
      (doom-module-mplist-map
       (lambda (category module &rest plist)
-        (if (plist-member plist :path)
-            (apply #'doom-module-set category module plist)
-          (message "WARNING Couldn't find the %s %s module" category module)))
+        (let ((path (doom-module-locate-path category module)))
+          (unless path
+            (print! (warn "Failed to locate a '%s %s' module") category module))
+          (apply #'doom-module-set category module
+                 :path path
+                 plist)))
       ,@(if (keywordp (car modules))
             (list (list 'quote modules))
           modules))
