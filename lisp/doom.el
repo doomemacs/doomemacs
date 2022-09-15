@@ -420,6 +420,14 @@ users).")
       (unless (default-toplevel-value 'mode-line-format)
         (setq-default mode-line-format (get 'mode-line-format 'initial-value))))
 
+    ;; PERF: Doom disables the UI elements by default, so that there's less for
+    ;;   the frame to initialize. However, the toolbar is still populated
+    ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
+    (advice-add #'tool-bar-setup :override #'ignore)
+    (define-advice startup--load-user-init-file (:before (&rest _) defer-tool-bar-setup)
+      (advice-remove #'tool-bar-setup #'ignore)
+      (add-transient-hook! 'tool-bar-mode (tool-bar-setup)))
+
     ;; PERF: Unset a non-trivial list of command line options that aren't
     ;;   relevant to our current OS, but `command-line-1' still processes.
     (unless IS-MAC
