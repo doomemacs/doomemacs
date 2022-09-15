@@ -193,8 +193,8 @@ See `+emacs-lisp-non-package-mode' for details.")
 (use-package! elisp-demos
   :defer t
   :init
-  (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
+  (advice-add #'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+  (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
   (advice-add #'elisp-demos--search :around #'+emacs-lisp--add-doom-elisp-demos-a))
 
