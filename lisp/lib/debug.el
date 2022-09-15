@@ -261,6 +261,11 @@ ready to be pasted in a bug report on github."
                                   (substring emacs-repository-version 0 9))
                              (symlink-path doom-emacs-dir))))
         (doom . ,(list doom-version
+                       (if doom-profile
+                           (format "PROFILE=%s@%s"
+                                   (car doom-profile)
+                                   (cdr doom-profile))
+                         "PROFILE=_@0")
                        (sh "git" "log" "-1" "--format=%D %h %ci")
                        (symlink-path doom-user-dir)))
         (shell  . ,(abbrev-path shell-file-name))
