@@ -508,19 +508,18 @@ WARNINGS:
 (define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
 
 (defmacro modulep! (category &optional module flag)
-  "Return t if FEATURES are all present.
+  "Return t if :CATEGORY MODULE (and +FLAGS) are enabled.
 
 If FLAG is provided, returns t if CATEGORY MODULE has FLAG enabled.
 
-  (modulep! :config default)
+  (modulep! :config default +flag)
 
-Module FLAGs are set in your config's `doom!' block, typically in
-~/.doom.d/init.el. Like so:
+CATEGORY and MODULE may be omitted when this macro is used from a Doom module's
+source (except your DOOMDIR, which is a special module). Like so:
 
-  :config (default +flag1 -flag2)
+  (modulep! +flag)
 
-CATEGORY and MODULE can be omitted When this macro is used from inside a module
-(except your DOOMDIR, which is a special module). e.g. (modulep! +flag)"
+For more about modules and flags, see `doom!'."
   (and (cond (flag (memq flag (cdr (get category module))))
              (module (get category module))
              (doom--current-flags (memq category doom--current-flags))
