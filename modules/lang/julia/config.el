@@ -3,7 +3,7 @@
 (use-package! julia-mode
   :interpreter "julia"
   :config
-  (unless (featurep! +snail)
+  (unless (modulep! +snail)
     (set-repl-handler! 'julia-mode #'+julia/open-repl))
 
   (when (modulep! +lsp)
@@ -102,8 +102,8 @@
 
 
 (use-package! julia-snail
-  :when (featurep! +snail)
-  :when (featurep! :term vterm)
+  :when (modulep! +snail)
+  :when (modulep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
   :config
   (setq julia-snail-popup-display-eval-results :command)
