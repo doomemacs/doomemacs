@@ -148,20 +148,21 @@
    (save-match-data
      (let ((case-fold-search t))
        (while (re-search-forward "^[ \t]*\\#" nil t)
-         (catch 'abort
-           (org-fold-core-region
-            (line-beginning-position)
-            (cond ((looking-at "+\\(?:title\\|subtitle\\): +")
-                   (match-end 0))
-                  ((looking-at "+\\(?:created\\|since\\|author\\|email\\|date\\): +")
-                   (throw 'abort nil))
-                  ((or (eq (char-after) ?\s)
-                       (looking-at "+\\(begin\\|end\\)_comment"))
-                   (line-beginning-position 2))
-                  ((looking-at "+\\(?:begin\\|end\\)_\\([^ \n]+\\)")
-                   (line-end-position))
-                  ((line-beginning-position 2)))
-            doom-docs-mode 'doom-doc-hidden)))))))
+         (unless (org-in-src-block-p t)
+           (catch 'abort
+             (org-fold-core-region
+              (line-beginning-position)
+              (cond ((looking-at "+\\(?:title\\|subtitle\\): +")
+                     (match-end 0))
+                    ((looking-at "+\\(?:created\\|since\\|author\\|email\\|date\\): +")
+                     (throw 'abort nil))
+                    ((or (eq (char-after) ?\s)
+                         (looking-at "+\\(begin\\|end\\)_comment"))
+                     (line-beginning-position 2))
+                    ((looking-at "+\\(?:begin\\|end\\)_\\([^ \n]+\\)")
+                     (line-end-position))
+                    ((line-beginning-position 2)))
+              doom-docs-mode 'doom-doc-hidden))))))))
 
 (defun doom-docs--hide-drawers-h ()
   "Hide all property drawers."
