@@ -260,12 +260,14 @@ those directories."
                  (when-let (new (assq module obsolete))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
-                         (message "WARNING %s module was removed" (list category module))
+                         (print! (warn "%s module was removed"))
                        (if (cdr newkeys)
-                           (message "WARNING %s module was removed and split into the %s modules"
-                                    (list category module) (mapconcat #'prin1-to-string newkeys ", "))
-                         (message "WARNING %s module was moved to %s"
-                                  (list category module) (car newkeys)))
+                           (print! (warn "%s module was removed and split into the %s modules")
+                                   (list category module)
+                                   (mapconcat #'prin1-to-string newkeys ", "))
+                         (print! (warn "%s module was moved to %s")
+                                 (list category module)
+                                 (car newkeys)))
                        (push category mplist)
                        (dolist (key newkeys)
                          (push (if flags
