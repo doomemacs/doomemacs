@@ -72,9 +72,9 @@
   ;; (doom-require 'doom-lib 'autoloads)
 
   ;; Ensure straight and core packages are ready to go for CLI commands.
-  ;; (require 'doom-profiles)
   (require 'doom-modules)
   (require 'doom-packages)
+  (require 'doom-profiles)
   ;; For any last-minute initialization.
   (run-hooks 'doom-before-init-hook))
 

@@ -32,23 +32,36 @@
 ;;
 ;; The overall load order of Doom is as follows:
 ;;
-;;   $EMACSDIR/early-init.el
-;;   $EMACSDIR/lisp/doom.el
-;;   $EMACSDIR/lisp/doom-start.el
-;;   `doom-before-init-hook'
-;;   $DOOMDIR/init.el
-;;   `doom-before-modules-init-hook'
-;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-;;   `doom-after-modules-init-hook'
-;;   `doom-before-modules-config-hook'
-;;   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
-;;   `doom-after-modules-config-hook'
-;;   $DOOMDIR/config.el
-;;   `after-init-hook'
-;;   `emacs-startup-hook'
-;;   `doom-init-ui-hook'
-;;   `window-setup-hook'
-;;   `doom-after-init-hook'
+;;   > $EMACSDIR/early-init.el
+;;     > $EMACSDIR/lisp/doom.el
+;;       - $EMACSDIR/lisp/doom-lib.el
+;;     > $EMACSDIR/lisp/doom-start.el
+;;       - $EMACSDIR/doom-{keybinds,ui,projects,editor}.el
+;;       - hook: `doom-before-init-hook'
+;;       - $DOOMDIR/init.el
+;;   > $XDG_DATA_HOME/doom/$PROFILE/@/curr/init.el   (replaces $EMACSDIR/init.el)
+;;     - hook: `doom-before-modules-init-hook'
+;;     - {$DOOMDIR,$EMACSDIR}/modules/*/*/init.el
+;;     - hook: `doom-after-modules-init-hook'
+;;     - hook: `doom-before-modules-config-hook'
+;;     - {$DOOMDIR,$EMACSDIR}/modules/*/*/config.el
+;;     - hook: `doom-after-modules-config-hook'
+;;     - $DOOMDIR/config.el
+;;     - `custom-file' or $DOOMDIR/custom.el
+;;   > The rest of `command-line' (Emacs startup)
+;;     - hook: `after-init-hook'
+;;     - hook: `emacs-startup-hook'
+;;     - hook: `window-setup-hook'
+;;     - hook: `doom-init-ui-hook'
+;;     - hook: `doom-after-init-hook'
+;;   > After startup is complete:
+;;     - On first input:              `doom-first-input-hook'
+;;     - On first switched-to buffer: `doom-first-buffer-hook'
+;;     - On first opened file:        `doom-first-file-hook'
+;;
+;; This is Doom's heart, where I define all its major constants and variables,
+;; set only its sanest global defaults, employ its hackiest (and least
+;; offensive) optimizations, and load the minimum for all Doom sessions.
 ;;
 ;;; Code:
 
@@ -187,54 +200,11 @@
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
-(defconst doom-profiles-dir
-  (if-let (profilesdir (getenv-internal "DOOMPROFILESDIR"))
-      (expand-file-name "./" profilesdir)
-    (expand-file-name "profiles/" doom-emacs-dir))
-   "Where Doom stores its profiles.
-
-Profiles are essentially snapshots of Doom Emacs environments. Every time you
-update or sync, you create a new generation of a profile (which can be easily
-rolled back or switched between with the DOOMPROFILE envvar). Must end in a
-slash.")
-
-(defconst doom-profile-dir
-  (expand-file-name (concat (or doom-profile "default@latest") "/")
-                    doom-profiles-dir)
-  "The path to the current, active profile.
-
-Must end in a slash.")
-
-(defconst doom-profile-data-dir
-  (expand-file-name "data/" doom-profile-dir)
-  "Where file storage/servers for the current, active profile is kept.
-
-Use this for long-living files that contain shared data that the user would
-reasonably want to keep, and/or are required for Emacs to function correctly.
-Must end in a slash.")
-
-(defconst doom-profile-cache-dir
-  (expand-file-name "cache/" doom-profile-dir)
-  "Where file caches for the current, active profile is kept.
-
-Use this for non-essential data files that, when deleted, won't cause breakage
-or misbehavior, and can be restored. This includes server binaries or programs
-downloaded/installed by packages. Must end in a slash.")
-
-(defconst doom-profile-init-file
-  (expand-file-name "init.el" doom-profile-dir)
-  "TODO")
-
-
-;;
-;;; DEPRECATED file/directory vars
-
-(defconst doom-local-dir
+;; DEPRECATED: .local will be removed entirely in 3.0
+(defvar doom-local-dir
   (if-let (localdir (getenv-internal "DOOMLOCALDIR"))
       (expand-file-name (file-name-as-directory localdir))
-    (if doom-profile
-        doom-profile-dir
-      (expand-file-name ".local/" doom-emacs-dir)))
+    (expand-file-name ".local/" doom-emacs-dir))
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
@@ -243,32 +213,82 @@ These files should not be shared across systems. By default, it is used by
 `doom-data-dir' and `doom-cache-dir'. Must end with a slash.")
 
 (define-obsolete-variable-alias 'doom-etc-dir 'doom-data-dir "3.0.0")
-(defconst doom-data-dir
+(defvar doom-data-dir
   (if doom-profile
-      doom-profile-data-dir
+      (if IS-WINDOWS
+          (expand-file-name "doomemacs/data/" (getenv-internal "APPDATA"))
+        (expand-file-name "doom/" (or (getenv-internal "XDG_DATA_HOME") "~/.local/share")))
+    ;; DEPRECATED: .local will be removed entirely in 3.0
     (concat doom-local-dir "etc/"))
-  "Directory for non-volatile local storage.
+  "Where Doom stores its global data files.
 
-Use this for files that don't change much, like server binaries, external
-dependencies or long-term shared data. Must end with a slash.")
+Data files contain shared and long-lived data that Doom, Emacs, and their
+packages require to function correctly or at all. Deleting them by hand will
+cause breakage, and require user intervention (e.g. a 'doom sync' or 'doom env')
+to restore.
 
-(defconst doom-cache-dir
+Use this for: server binaries, package source, pulled module libraries,
+generated files for profiles, profiles themselves, autoloads/loaddefs, etc.
+
+For profile-local data files, use `doom-profile-data-dir' instead.")
+
+(defvar doom-cache-dir
   (if doom-profile
-      doom-profile-cache-dir
+      (if IS-WINDOWS
+          (expand-file-name "doomemacs/cache/" (getenv-internal "APPDATA"))
+        (expand-file-name "doom/" (or (getenv-internal "XDG_CACHE_HOME") "~/.cache")))
+    ;; DEPRECATED: .local will be removed entirely in 3.0
     (concat doom-local-dir "cache/"))
-  "Directory for volatile local storage.
+  "Where Doom stores its global cache files.
 
-Use this for files that change often, like cache files. Must end with a slash.")
+Cache files represent non-essential data that shouldn't be problematic when
+deleted (besides, perhaps, a one-time performance hit), lack portability (and so
+shouldn't be copied to other systems/configs), and are regenerated when needed,
+without user input (e.g. a 'doom sync').
 
-(defconst doom-autoloads-file
+Some examples: images/data caches, elisp bytecode, natively compiled elisp,
+session files, ELPA archives, authinfo files, org-persist, etc.
+
+For profile-local cache files, use `doom-profile-cache-dir' instead.")
+
+(defvar doom-state-dir
   (if doom-profile
-      doom-profile-init-file
-    (concat doom-local-dir "autoloads." emacs-version ".el"))
-  "Where `doom-reload-core-autoloads' stores its core autoloads.
+      (if IS-WINDOWS
+          (expand-file-name "doomemacs/state/" (getenv-internal "APPDATA"))
+        (expand-file-name "doom/" (or (getenv-internal "XDG_STATE_HOME") "~/.local/state")))
+    ;; DEPRECATED: .local will be removed entirely in 3.0
+    (concat doom-local-dir "state/"))
+  "Where Doom stores its global state files.
 
-This file is responsible for informing Emacs where to find all of Doom's
-autoloaded core functions (in lisp/lib/*.el).")
+State files contain non-essential, unportable, but persistent data which, if
+lost won't cause breakage, but may be inconvenient as they cannot be
+automatically regenerated or restored. For example, a recently-opened file list
+is not essential, but losing it means losing this record, and restoring it
+requires revisiting all those files.
 
+Use this for: history, logs, user-saved data, autosaves/backup files, known
+projects, recent files, bookmarks.
+
+For profile-local state files, use `doom-profile-state-dir' instead.")
+
+;;; Profile file/directory variables
+(defvar doom-profile-cache-dir
+  (file-name-concat doom-cache-dir (car doom-profile))
+  "For profile-local cache files under `doom-cache-dir'.")
+
+(defvar doom-profile-data-dir
+  (file-name-concat doom-data-dir (car doom-profile))
+  "For profile-local data files under `doom-data-dir'.")
+
+(defvar doom-profile-state-dir
+  (file-name-concat doom-state-dir (car doom-profile))
+  "For profile-local state files under `doom-state-dir'.")
+
+(defconst doom-profile-dir
+  (file-name-concat doom-profile-data-dir "@" (cdr doom-profile))
+  "Where generated files for the active profile are kept.")
+
+;; DEPRECATED: Will be moved to cli/env
 (defconst doom-env-file
   (file-name-concat (if doom-profile
                         doom-profile-dir
@@ -328,14 +348,6 @@ users).")
     ;;   Even trivial deltas can yield a ~1000ms loss, though it varies wildly
     ;;   depending on font size.
     (setq frame-inhibit-implied-resize t)
-
-    ;; PERF: Emacs supports a "default init file", which is a library named
-    ;;   "default.el" living anywhere in your `load-path' (or `$EMACSLOADPATH').
-    ;;   It's loaded after $EMACSDIR/init.el, but there really is no reason to
-    ;;   do so. Doom doesn't define one, users shouldn't use one, and it seems
-    ;;   too magical when an explicit `-l FILE' would do. I do away with it for
-    ;;   the *miniscule* savings in file IO spent trying to load it.
-    (setq inhibit-default-init t)
 
     ;; PERF,UX: Reduce *Message* noise at startup. An empty scratch buffer (or
     ;;   the dashboard) is more than enough, and faster to display.

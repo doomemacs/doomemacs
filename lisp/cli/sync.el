@@ -45,6 +45,7 @@ OPTIONS:
     Defaults to the maximum number of threads (or 1, if your CPU's threadcount
     can't be determined)."
   :benchmark t
+  (call! '(profiles sync))
   (run-hooks 'doom-before-sync-hook)
   (add-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)
   (when jobs
@@ -63,9 +64,9 @@ OPTIONS:
        (when update?
          (doom-packages-update))
        (doom-packages-purge purge? 'builds-p purge? purge? purge?)
-       (run-hooks 'doom-after-sync-hook)
-       (when (doom-autoloads-reload)
-         (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect")))
+       (when (doom-profile-generate)
+         (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
+         (run-hooks 'doom-after-sync-hook))
        t)
     (remove-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)))
 

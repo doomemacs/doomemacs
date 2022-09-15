@@ -100,49 +100,6 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 
 
 ;;
-;;; Bootstrap API
-
-(defun doom-initialize-core-modules ()
-  "Load Doom's core files for an interactive session."
-  (require 'doom-keybinds)
-  (require 'doom-ui)
-  (require 'doom-projects)
-  (require 'doom-editor))
-
-(defun doom-module-loader (file)
-  "Return a closure that loads FILE from a module.
-
-This closure takes two arguments: a cons cell containing (CATEGORY . MODULE)
-symbols, and that module's plist."
-  (lambda (module plist)
-    (let ((doom--current-module module)
-          (doom--current-flags (cdr (get (car module) (cdr module))))
-          (inhibit-redisplay t))
-      (load! file (plist-get plist :path) t))))
-
-(defun doom-initialize-modules (&optional force-p no-config-p)
-  "Loads the init.el in `doom-user-dir' and sets up hooks for a healthy session
-of Dooming. Will noop if used more than once, unless FORCE-P is non-nil."
-  (when (or force-p (not doom-init-modules-p))
-    (setq doom-init-modules-p t)
-    (unless no-config-p
-      (doom-log "Initializing core modules")
-      (doom-initialize-core-modules))
-    (when-let (init-p (load! doom-module-init-file doom-user-dir t))
-      (doom-log "Initializing user config")
-      (doom-run-hooks 'doom-before-module-init-hook)
-      (maphash (doom-module-loader doom-module-init-file) doom-modules)
-      (doom-run-hooks 'doom-after-module-init-hook)
-      (unless no-config-p
-        (doom-run-hooks 'doom-before-module-config-hook)
-        (maphash (doom-module-loader doom-module-config-file) doom-modules)
-        (doom-run-hooks 'doom-after-module-config-hook)
-        (load! "config" doom-user-dir t)
-        (when custom-file
-          (load custom-file 'noerror (not doom-debug-mode)))))))
-
-
-;;
 ;;; Module API
 
 (defun doom-module-p (category module &optional flag)

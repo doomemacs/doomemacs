@@ -714,11 +714,92 @@ These are side-by-side comparisons, showing how to bind keys with and without
 **** TODO with-file-contents!
 
 ** TODO Configuration files
-*** TODO doomprofiles.el
+*** =profiles.el=
+:PROPERTIES:
+:ID:       f9bce7da-d155-4727-9b6f-b566b5b8d824
+:END:
+This file can live in any of:
+
+- =$DOOMDIR/profiles.el=
+- =$EMACSDIR/profiles.el=
+- =~/.config/doom-profiles.el=
+- =~/.doom-profiles.el=
+
+Here is an exhaustive example of all its syntax and capabilities:
+#+begin_src emacs-lisp
+;; -*- mode: emacs-lisp; -*-
+((profile1
+  ;; The permitted formats of each entry:
+  (var . value)
+  ("envvar" . value)
+  (var :directive values...)
+
+  ;; `user-emacs-directory' is often the first variable you want to set, so
+  ;; Emacs knows where this profile lives. If you don't, it'll use the config
+  ;; living in the default locations (~/.config/emacs or ~/.emacs.d).
+  (user-emacs-directory . "~/another/emacs/config/")
+  ;; If this is a Doom config, you'll also want to set `doom-user-dir', which
+  ;; defaults to ~/.config/doom or ~/.doom.d:
+  (doom-user-dir . "~/another/doom/config/")
+  ;; If a CAR is a string, it is assumed you want to set an environment
+  ;; variable. (Side-note: setting DOOMDIR will be unnecessary if you're setting
+  ;; `doom-user-dir' above).
+  ("DOOMDIR" . "~/another/doom/config/")
+
+  ;; Doom profiles support a number of special directives. They are:
+  ;;
+  ;; (VAR :path SEGMENTS...) -- set VAR to an exapnded path built from SEGMENTS,
+  ;; relative to `user-emacs-directory', unless an absolute path is in SEGMENTS.
+  (doom-cache-dir :path doom-user-dir ".local/cache")
+  (doom-data-dir  :path doom-user-dir ".local/data")
+  (doom-state-dir :path doom-user-dir ".local/state")
+  ;; (VAR :plist VALUE) -- use VALUE as a literal plist; ignoring any profile
+  ;; directives that may be in it.
+  (some-plist :plist (:foo bar :baz womp))
+  ;; (VAR :eval FORMS...) -- use to evaluate arbitrary elisp forms. Note that
+  ;; his runs early in early-init.el. It's wise to assume no APIs are available
+  ;; or loaded, only the previous bindings in this profile.
+  (doom-theme :eval (if (equal (system-name) "foo") 'doom-one 'doom-dracula))
+  ;; Though discouraged, you may evaluate forms without a binding by using `_'.
+  ;; You really should be doing this in the profile though...
+  (_ :eval (message "Hello world!"))
+  (_ :eval (with-eval-after-load 'company (setq-default company-idle-delay 2.0)))
+  ;; (VAR :prepend FORMS...) or (VAR :append FORMS...) -- prepend or append the
+  ;; evaluated result of each form in FORMS to VAR (a list). If VAR is undefined
+  ;; at startup, it will be deferred until the variable is available.
+  (load-path :prepend (expand-file-name "packages/" doom-user-dir))
+  (load-path :prepend (expand-file-name "lisp/" doom-user-dir))
+  (load-path :append  (expand-file-name "fallback/" doom-user-dir))
+  (exec-path :prepend (expand-file-name "bin/" doom-user-dir))
+  (auto-mode-alist :prepend '("\\.el\\'" . lisp-mode)))
+
+ (profile2
+  ...)
+
+ (profile3
+  ...))
+#+end_src
+  
+*** =.doomprofile=
+:PROPERTIES:
+:ID:       ac37ac6f-6082-4c34-b98c-962bc1e528c9
+:END:
+This file takes after the second level of =profiles.el='s format (see a more
+complete example in [[id:f9bce7da-d155-4727-9b6f-b566b5b8d824][the previous section]]). For example:
+
+#+begin_src emacs-lisp
+;;; -*- mode: emacs-lisp -*-
+;; A .doomprofile can be placed under an implicit profile. Same rules as
+;; .doom-profiles.el, but one level deeper.
+
+((var . value)
+ ("envvar" . value)
+ (var :directive values...))
+#+end_src
+
 *** TODO =.doomrc=
 *** TODO =.doomproject=
 *** TODO =.doommodule=
-*** TODO =.doomprofile=
 ** TODO Templates
 *** TODO User configuration
 *** TODO Module

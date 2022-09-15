@@ -159,125 +159,118 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-       (let ((noninteractive nil)
-             kill-emacs-query-functions
-             kill-emacs-hook)
-         (defvar doom-reloading-p nil)
-         (unless (file-exists-p doom-autoloads-file)
-           (user-error "Autoloads file not generated. Did you remember to run 'doom sync'?"))
-         (require 'doom-start)
-         (doom-initialize-packages))
+        (require 'doom-start)
 
-       (print! (success "Initialized Doom Emacs %s") doom-version)
-       (print!
-        (if (hash-table-p doom-modules)
-            (success "Detected %d modules" (hash-table-count doom-modules))
-          (warn "Failed to load any modules. Do you have an private init.el?")))
+        (print! (success "Initialized Doom Emacs %s") doom-version)
+        (print!
+         (if (hash-table-p doom-modules)
+             (success "Detected %d modules" (hash-table-count doom-modules))
+           (warn "Failed to load any modules. Do you have an private init.el?")))
 
-       (print! (success "Detected %d packages") (length doom-packages))
+        (print! (success "Detected %d packages") (length doom-packages))
 
-       (print! (start "Checking Doom core for irregularities..."))
-       (print-group!
-        ;; Check for oversized problem files in cache that may cause unusual/tremendous
-        ;; delays or freezing. This shouldn't happen often.
-        (dolist (file (list "savehist" "projectile.cache"))
-          (when-let (size (ignore-errors (doom-file-size file doom-cache-dir)))
-            (when (> size 1048576) ; larger than 1mb
-              (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
-                     file (/ size 1024 1024.0))
-              (explain! "Consider deleting it from your system (manually)"))))
+        (print! (start "Checking Doom core for irregularities..."))
+        (print-group!
+          ;; Check for oversized problem files in cache that may cause unusual/tremendous
+          ;; delays or freezing. This shouldn't happen often.
+          (dolist (file (list "savehist" "projectile.cache"))
+            (when-let (size (ignore-errors (doom-file-size file doom-cache-dir)))
+              (when (> size 1048576) ; larger than 1mb
+                (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
+                       file (/ size 1024 1024.0))
+                (explain! "Consider deleting it from your system (manually)"))))
 
-        (unless (ignore-errors (executable-find doom-projectile-fd-binary))
-          (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
+          (unless (ignore-errors (executable-find doom-projectile-fd-binary))
+            (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
-        (require 'projectile)
-        (when (projectile-project-root "~")
-          (warn! "Your $HOME is recognized as a project root")
-          (explain! "Emacs will assume $HOME is the root of any project living under $HOME. If this isn't\n"
-                    "desired, you will need to remove \".git\" from `projectile-project-root-files-bottom-up'\n"
-                    "(a variable), e.g.\n\n"
-                    "  (after! projectile\n"
-                    "    (setq projectile-project-root-files-bottom-up\n"
-                    "          (remove \".git\" projectile-project-root-files-bottom-up)))"))
+          (require 'projectile)
+          (when (projectile-project-root "~")
+            (warn! "Your $HOME is recognized as a project root")
+            (explain! "Emacs will assume $HOME is the root of any project living under $HOME. If this isn't\n"
+                      "desired, you will need to remove \".git\" from `projectile-project-root-files-bottom-up'\n"
+                      "(a variable), e.g.\n\n"
+                      "  (after! projectile\n"
+                      "    (setq projectile-project-root-files-bottom-up\n"
+                      "          (remove \".git\" projectile-project-root-files-bottom-up)))"))
 
-        ;; There should only be one
-        (when (and (file-equal-p doom-user-dir "~/.config/doom")
-                   (file-directory-p "~/.doom.d"))
-          (print! (warn "Both %S and '~/.doom.d' exist on your system")
-                  (path doom-user-dir))
-          (explain! "Doom will only load one of these (~/.config/doom takes precedence). Possessing\n"
-                    "both is rarely intentional; you should one or the other."))
+          ;; There should only be one
+          (when (and (file-equal-p doom-user-dir "~/.config/doom")
+                     (file-directory-p "~/.doom.d"))
+            (print! (warn "Both %S and '~/.doom.d' exist on your system")
+                    (path doom-user-dir))
+            (explain! "Doom will only load one of these (~/.config/doom takes precedence). Possessing\n"
+                      "both is rarely intentional; you should one or the other."))
 
-        ;; Check for fonts
-        (if (not (executable-find "fc-list"))
-            (warn! "Warning: unable to detect fonts because fontconfig isn't installed")
-          ;; all-the-icons fonts
-          (when (and (pcase system-type
-                       (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")
-                                               "~/.local/share")
-                                           "/fonts/"))
-                       (`darwin "~/Library/Fonts/"))
-                     (require 'all-the-icons nil t))
-            (with-temp-buffer
-              (let ((errors 0))
-                (cl-destructuring-bind (status . output)
-                    (doom-call-process "fc-list" "" "file")
-                  (if (not (zerop status))
-                      (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
-                    (insert (cdr (doom-call-process "fc-list" "" "file")))
-                    (dolist (font all-the-icons-font-names)
-                      (if (save-excursion (re-search-backward font nil t))
-                          (success! "Found font %s" font)
-                        (print! (warn "Warning: couldn't find %S font") font)))
-                    (when (> errors 0)
-                      (explain! "Some all-the-icons fonts were missing.\n\n"
-                                "You can install them by running `M-x all-the-icons-install-fonts' within Emacs.\n"
-                                "This could also mean you've installed them in non-standard locations, in which "
-                                "case feel free to ignore this warning.")))))))))
+          ;; Check for fonts
+          (if (not (executable-find "fc-list"))
+              (warn! "Warning: unable to detect fonts because fontconfig isn't installed")
+            ;; all-the-icons fonts
+            (when (and (pcase system-type
+                         (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")
+                                                 "~/.local/share")
+                                             "/fonts/"))
+                         (`darwin "~/Library/Fonts/"))
+                       (require 'all-the-icons nil t))
+              (with-temp-buffer
+                (let ((errors 0))
+                  (cl-destructuring-bind (status . output)
+                      (doom-call-process "fc-list" "" "file")
+                    (if (not (zerop status))
+                        (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
+                      (insert (cdr (doom-call-process "fc-list" "" "file")))
+                      (dolist (font all-the-icons-font-names)
+                        (if (save-excursion (re-search-backward font nil t))
+                            (success! "Found font %s" font)
+                          (print! (warn "Warning: couldn't find %S font") font)))
+                      (when (> errors 0)
+                        (explain! "Some all-the-icons fonts were missing.\n\n"
+                                  "You can install them by running `M-x all-the-icons-install-fonts' within Emacs.\n"
+                                  "This could also mean you've installed them in non-standard locations, in which "
+                                  "case feel free to ignore this warning.")))))))))
 
-       (print! (start "Checking for stale elc files in your DOOMDIR..."))
-       (when (file-directory-p doom-user-dir)
-         (print-group!
-          (elc-check-dir doom-user-dir)))
+        (print! (start "Checking for stale elc files in your DOOMDIR..."))
+        (when (file-directory-p doom-user-dir)
+          (print-group!
+            (elc-check-dir doom-user-dir)))
 
-       (when doom-modules
-         (print! (start "Checking your enabled modules..."))
-         (advice-add #'require :around #'doom-shut-up-a)
-         (maphash (lambda (key plist)
-                    (let (doom-local-errors
-                          doom-local-warnings)
-                      (let (doom-doctor--errors
-                            doom-doctor--warnings)
-                        (condition-case-unless-debug ex
-                            (let ((doom--current-module key)
-                                  (doom--current-flags (plist-get plist :flags))
-                                  (doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
-                                  (packages-file (doom-module-expand-path (car key) (cdr key) "packages.el")))
-                              (cl-loop with doom-output-indent = 6
-                                       for name in (let (doom-packages
-                                                         doom-disabled-packages)
-                                                     (load packages-file 'noerror 'nomessage)
-                                                     (mapcar #'car doom-packages))
-                                       unless (or (doom-package-get name :disable)
-                                                  (eval (doom-package-get name :ignore))
-                                                  (plist-member (doom-package-get name :recipe) :local-repo)
-                                                  (locate-library (symbol-name name))
-                                                  (doom-package-built-in-p name)
-                                                  (doom-package-installed-p name))
-                                       do (print! (error "Missing emacs package: %S") name))
-                              (let ((inhibit-message t))
-                                (load doctor-file 'noerror 'nomessage)))
-                          (file-missing (error! "%s" (error-message-string ex)))
-                          (error (error! "Syntax error: %s" ex)))
-                        (when (or doom-doctor--errors doom-doctor--warnings)
-                          (print-group!
-                           (print! (start (bold "%s %s")) (car key) (cdr key))
-                           (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
-                          (setq doom-local-errors doom-doctor--errors
-                                doom-local-warnings doom-doctor--warnings)))
-                      (appendq! doom-doctor--errors doom-local-errors)
-                      (appendq! doom-doctor--warnings doom-local-warnings)))
-                  doom-modules)))
+        (when doom-modules
+          (print! (start "Checking your enabled modules..."))
+          (advice-add #'require :around #'doom-shut-up-a)
+          (maphash (lambda (key plist)
+                     (let (doom-local-errors
+                           doom-local-warnings)
+                       (let (doom-doctor--errors
+                             doom-doctor--warnings)
+                         (condition-case-unless-debug ex
+                             (let ((doom--current-module key)
+                                   (doom--current-flags (plist-get plist :flags))
+                                   (doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
+                                   (packages-file (doom-module-expand-path (car key) (cdr key) "packages.el")))
+                               (cl-loop with doom-output-indent = 6
+                                        for name in (let* (doom-packages
+                                                           doom-disabled-packages)
+                                                      (load packages-file 'noerror 'nomessage)
+                                                      (mapcar #'car doom-packages))
+                                        unless (or (doom-package-get name :disable)
+                                                   (eval (doom-package-get name :ignore))
+                                                   (plist-member (doom-package-get name :recipe) :local-repo)
+                                                   (locate-library (symbol-name name))
+                                                   (doom-package-built-in-p name)
+                                                   (doom-package-installed-p name))
+                                        do (print! (error "Missing emacs package: %S") name))
+                               (let ((inhibit-message t))
+                                 (load doctor-file 'noerror 'nomessage)))
+                           (file-missing (error! "%s" (error-message-string ex)))
+                           (error (error! "Syntax error: %s" ex)))
+                         (when (or doom-doctor--errors doom-doctor--warnings)
+                           (print-group!
+                             (print! (start (bold "%s %s")) (car key) (cdr key))
+                             (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
+                           (setq doom-local-errors doom-doctor--errors
+                                 doom-local-warnings doom-doctor--warnings)))
+                       (appendq! doom-doctor--errors doom-local-errors)
+                       (appendq! doom-doctor--warnings doom-local-warnings)))
+                   doom-modules)))
     (error
      (warn! "Attempt to load DOOM failed\n  %s\n"
             (or (cdr-safe ex) (car ex)))

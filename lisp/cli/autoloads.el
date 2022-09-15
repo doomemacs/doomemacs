@@ -26,57 +26,6 @@ hoist buggy forms into autoloads.")
 ;;
 ;;; Library
 
-(defun doom-autoloads-reload (&optional file)
-  "Regenerates Doom's autoloads and writes them to FILE."
-  (unless file
-    ;; TODO Uncomment when profile system is implemented
-    ;; (make-directory doom-profile-dir t)
-    ;; (setq file (expand-file-name "init.el" doom-profile-dir))
-    (setq file doom-autoloads-file))
-  (print! (start "(Re)generating autoloads file..."))
-  (print-group!
-   (cl-check-type file string)
-   (doom-initialize-packages)
-   (and (print! (start "Generating autoloads file..."))
-        (doom-autoloads--write
-         file
-         `((unless (equal doom-version ,doom-version)
-             (signal 'doom-error
-                     (list "The installed version of Doom has changed since last 'doom sync' ran"
-                           "Run 'doom sync' to bring Doom up to speed"))))
-         (cl-loop for var in doom-autoloads-cached-vars
-                  when (boundp var)
-                  collect `(set ',var ',(symbol-value var)))
-         ;; Cache module state and flags in symbol plists for quick lookup by
-         ;; `modulep!' later.
-         (cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
-                  collect `(setplist ',category
-                            (quote ,(cl-loop for (_ . module) in modules
-                                             nconc `(,module ,(get category module))))))
-         (doom-autoloads--scan
-          (append (doom-glob doom-core-dir "lib/*.el")
-                  (cl-loop for dir
-                           in (append (doom-module-load-path doom-modules-dirs)
-                                      (list doom-user-dir))
-                           if (doom-glob dir "autoload.el") collect (car it)
-                           if (doom-glob dir "autoload/*.el") append it)
-                  (mapcan #'doom-glob doom-autoloads-files))
-          nil)
-         (doom-autoloads--scan
-          (mapcar #'straight--autoloads-file
-                  (seq-difference (hash-table-keys straight--build-cache)
-                                  doom-autoloads-excluded-packages))
-          doom-autoloads-excluded-files
-          'literal)
-         ;; TODO Uncomment when profile system is implemented
-         ;; `((unless noninteractive (require 'doom-start)))
-         )
-        (print! (start "Byte-compiling autoloads file..."))
-        (doom-autoloads--compile-file file)
-        (print! (success "Generated %s")
-                (relpath (byte-compile-dest-file file)
-                         doom-emacs-dir)))))
-
 (defun doom-autoloads--write (file &rest forms)
   (make-directory (file-name-directory file) 'parents)
   (condition-case-unless-debug e

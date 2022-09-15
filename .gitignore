@@ -1,7 +1,5 @@
 # machine generated doom profiles or metadata
-/profiles/*
-!/profiles/*.org
-!/profiles/*@static/
+/profiles/init.*el
 /.local*/
 
 # possible user config files

@@ -259,6 +259,7 @@ SEE ALSO:
     (defcli-group! "Config Management"
       :docs "Commands for maintaining your Doom Emacs configuration."
       (defcli-autoload! ((sync s)))
+      (defcli-autoload! ((profiles profile)))
       (defcli-autoload! ((upgrade up)))
       (defcli-autoload! (env))
       (defcli-autoload! ((build b purge p rollback)) "packages")

@@ -246,28 +246,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;;; Let 'er rip!
 
-;;; Load loaddefs
-;; Doom caches a lot of information in `doom-autoloads-file'. Module and package
-;; autoloads, autodefs like `set-company-backend!', and variables like
-;; `doom-modules', `doom-disabled-packages', `load-path', `auto-mode-alist', and
-;; `Info-directory-list'. etc. Compiling them into one place is a big reduction
-;; in startup time.
-(condition-case-unless-debug e
-    ;; Avoid `file-name-sans-extension' for premature optimization reasons.
-    ;; `string-remove-suffix' is cheaper because it performs no file sanity
-    ;; checks; just plain ol' string manipulation.
-    (load (string-remove-suffix ".el" doom-autoloads-file) nil 'nomessage)
-  (file-missing
-   ;; If the autoloads file fails to load then the user forgot to sync, or
-   ;; aborted a doom command midway!
-   (if (locate-file doom-autoloads-file load-path)
-       ;; Something inside the autoloads file is triggering this error;
-       ;; forward it to the caller!
-       (signal 'doom-autoload-error e)
-     (signal 'doom-error
-             (list "Doom is in an incomplete state"
-                   "run 'doom sync' on the command line to repair it")))))
-
 ;;; Load envvar file
 ;; 'doom env' generates an envvar file. This is a snapshot of your shell
 ;; environment, which Doom loads here. This is helpful in scenarios where Emacs
@@ -278,7 +256,23 @@ If RETURN-P, return the message as a string instead of displaying it."
   (setq-default process-environment (get 'process-environment 'initial-value))
   (doom-load-envvars-file doom-env-file 'noerror))
 
-;; Bootstrap the interactive session
+;;; Load core modules and set up their autoloads
+(require 'doom-modules)
+(autoload 'doom-initialize-packages "doom-packages")
+;; TODO (autoload 'doom-profiles-initialize "doom-profiles")
+;; TODO (autoload 'doom-packages-initialize "doom-packages")
+
+;; UX: There's a chance the user will later use package.el or straight in this
+;;   interactive session. If they do, make sure they're properly initialized
+;;   when they do.
+(with-eval-after-load 'package (require 'doom-packages))
+(with-eval-after-load 'straight (doom-initialize-packages))
+
+;; A last ditch opportunity to undo dodgy optimizations or do extra
+;; configuration before the session is complicated by user config and packages.
+(doom-run-hooks 'doom-before-init-hook)
+
+;;; Last minute setup
 (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
 (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 (add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h)
@@ -287,21 +281,96 @@ If RETURN-P, return the message as a string instead of displaying it."
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
 
-;;; Setup autoloads for major core libraries
-;; UX: There's a chance the user will later use package.el or straight in this
-;;   interactive session. If they do, make sure they're properly initialized
-;;   when they do.
-(autoload 'doom-initialize-packages "doom-packages")
-(eval-after-load 'package '(require 'doom-packages))
-(eval-after-load 'straight '(doom-initialize-packages))
-(require 'doom-modules)
+;;; Load $DOOMDIR/init.el early
+;; TODO: Catch errors
+(doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
 
-;; A last ditch opportunity to undo dodgy optimizations or do extra
-;; configuration before the session is complicated by user config and packages.
-(doom-run-hooks 'doom-before-init-hook)
+;;; Load the rest of $DOOMDIR + modules if noninteractive
+;; If the user is loading this file from a batch script, let's assume they want
+;; to load their userland config as well.
+(when noninteractive
+  (doom-require 'doom-profiles)
+  (let ((init-file (doom-profile-init-file)))
+    (unless (file-exists-p init-file)
+      (user-error "Profile init file hasn't been generated. Did you forgot to run 'doom sync'?"))
+    (let (kill-emacs-query-functions
+          kill-emacs-hook)
+      ;; Loads modules, then $DOOMDIR/config.el
+      (doom-load init-file 'noerror)
+      (doom-initialize-packages))))
 
-;; Load user config + modules
-(doom-initialize-modules)
+;;; Entry point
+;; HACK: This advice hijacks Emacs' initfile loader to accomplish the following:
+;;
+;;   1. Load the profile init file directory (generated on `doom sync`)
+;;   2. Ignore initfiles we don't care about (like $EMACSDIR/init.el, ~/.emacs,
+;;      and ~/_emacs) -- and spare us the IO of searching for them, and allows
+;;      savvy hackers to use $EMACSDIR as their $DOOMDIR, if they wanted.
+;;   3. Cut down on unnecessary logic in Emacs' bootstrapper.
+;;   4. Offer a more user-friendly error state/screen, especially for errors
+;;      emitted from Doom's core or the user's config.
+(define-advice startup--load-user-init-file (:override (file-fn _ _) init-doom 100)
+  (let ((debug-on-error-from-init-file nil)
+        (debug-on-error-should-be-set nil)
+        (debug-on-error-initial (if (eq init-file-debug t) 'startup init-file-debug)))
+    (let ((debug-on-error debug-on-error-initial))
+      (condition-case-unless-debug error
+          (when init-file-user
+            (let ((init-file-name
+                   ;; This dynamically generated init file stores a lot of
+                   ;; precomputed information, such as module and package
+                   ;; autoloads, and values for expensive variables like
+                   ;; `doom-modules', `doom-disabled-packages', `load-path',
+                   ;; `auto-mode-alist', and `Info-directory-list'. etc.
+                   ;; Compiling them in one place is a big reduction in startup
+                   ;; time, and by keeping a history of them, you get a snapshot
+                   ;; of your config in time.
+                   (file-name-concat doom-profile-dir (format "init.%d.elc" emacs-major-version))))
+              ;; If `user-init-file' is t, then `load' will store the name of
+              ;; the file that it loads into `user-init-file'.
+              (setq user-init-file t)
+              (when init-file-name
+                (load init-file-name 'noerror 'nomessage nil 'must-suffix))
+              ;; If we did not find the user's init file, set user-init-file
+              ;; conclusively.  Don't let it be set from default.el.
+              (when (eq user-init-file t)
+                (signal 'doom-nosync-error (list init-file-name))))
+            ;; If we loaded a compiled file, set `user-init-file' to the source
+            ;; version if that exists.
+            (setq user-init-file
+                  (concat (string-remove-suffix (format ".%d.elc" emacs-major-version)
+                                                user-init-file)
+                          ".el")))
+        ;; TODO: Add safe-mode profile.
+        ;; (error
+        ;;  ;; HACK: This is not really this variable's intended purpose, but it
+        ;;  ;;   doesn't mind what value its set to, only that its non-nil, so I'm
+        ;;  ;;   exploiting its dynamic scope to pass the error to the profile.
+        ;;  (setq init-file-had-error error)
+        ;;  (load (file-name-concat doom-emacs-dir "profiles" "safe-mode" "init.el")
+        ;;        nil 'nomessage 'nosuffix))
+        (error
+         (display-warning
+          'initialization
+          (format-message "\
+An error occurred while loading `%s':\n\n%s%s%s\n\n\
+To ensure normal operation, you should investigate and remove the
+cause of the error in your initialization file.  Start Emacs with
+the `--debug-init' option to view a complete error backtrace."
+                          user-init-file
+                          (get (car error) 'error-message)
+                          (if (cdr error) ": " "")
+                          (mapconcat (lambda (s) (prin1-to-string s t))
+                                     (cdr error) ", "))
+          :warning)
+         (setq init-file-had-error t)))
+      ;; If we can tell that the init file altered debug-on-error, arrange to
+      ;; preserve the value that it set up.
+      (or (eq debug-on-error debug-on-error-initial)
+          (setq debug-on-error-should-be-set t
+                debug-on-error-from-init-file debug-on-error)))
+    (when debug-on-error-should-be-set
+      (setq debug-on-error debug-on-error-from-init-file))))
 
 (provide 'doom-start)
 ;;; doom-start.el ends here
