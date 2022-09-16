@@ -82,18 +82,18 @@
    ;;   To reduce that burden -- and since Doom doesn't load any dynamic modules
    ;;   -- I remove `.so' from `load-suffixes' and pass the `must-suffix' arg to
    ;;   `load'. See the docs of `load' for details.
-   (or (let ((load-suffixes '(".elc" ".el")))
+   (if (let ((load-suffixes '(".elc" ".el")))
          ;; Load the heart of Doom Emacs.
-         (if (load (expand-file-name "lisp/doom" user-emacs-directory)
-                   'noerror 'nomessage nil 'must-suffix)
-             ;; ...and prepare for the rest of the session.
-             (doom-require (if noninteractive 'doom-cli 'doom-start))))
-       ;; Failing that, assume we're loading a non-Doom config and prepare.
-       (ignore
-        (setq user-init-file (expand-file-name "early-init" user-emacs-directory)
-              ;; I make no assumptions about the config we're about to load, so
-              ;; to limit side-effects, undo any leftover optimizations:
-              load-prefer-newer t))))
+         (load (expand-file-name "lisp/doom" user-emacs-directory)
+               'noerror 'nomessage nil 'must-suffix))
+       ;; ...and prepare for the rest of the session.
+       (doom-require (if noninteractive 'doom-cli 'doom-start))
+     ;; Failing that, assume we're loading a non-Doom config and prepare.
+     (setq user-init-file (expand-file-name "early-init" user-emacs-directory)
+           ;; I make no assumptions about the config we're about to load, so
+           ;; to limit side-effects, undo any leftover optimizations:
+           load-prefer-newer t)
+     nil))
 
  ;; Then continue on to the config/profile we want to load.
  (load early-init-file 'noerror 'nomessage nil 'must-suffix))
