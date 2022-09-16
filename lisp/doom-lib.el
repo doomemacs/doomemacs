@@ -154,15 +154,15 @@ If NOERROR, don't throw an error if PATH doesn't exist."
   "Like `require', but handles and enhances Doom errors.
 
 Can also load Doom's subfeatures, e.g. (doom-require 'doom-lib 'files)"
-  (or (if (and filename (symbolp filename))
-          (let ((subfeature filename))
-            (setq filename
-                  (file-name-concat doom-core-dir
-                                    (string-remove-prefix "doom-" (symbol-name feature))
-                                    (symbol-name filename)))
-            (and (memq subfeature (get feature 'subfeatures)) t))
-        (featurep feature))
-      (doom-load (or filename (symbol-name feature)) noerror)))
+  (let ((subfeature (if (symbolp filename) filename)))
+    (or (featurep feature subfeature)
+        (doom-load
+         (if subfeature
+             (file-name-concat doom-core-dir
+                               (string-remove-prefix "doom-" (symbol-name feature))
+                               (symbol-name filename))
+           (symbol-name feature))
+         noerror))))
 
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE.
