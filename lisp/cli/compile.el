@@ -94,11 +94,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (doom-log "Reloading Doom in preparation for byte-compilation")
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
-      (let ((load-prefer-newer t)
-            (noninteractive t))
-        (require 'doom-start)
-        (quiet! (doom-initialize-packages))
-        (quiet! (doom-initialize-modules))))
+      (let ((load-prefer-newer t))
+        (require 'doom-start)))
 
     (if (null targets)
         (print! (item "No targets to %scompile" (if recompile-p "re" "")))

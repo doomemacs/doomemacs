@@ -74,9 +74,8 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
                ("config.el" . ,(doom-path doom-emacs-dir "templates/config.example.el"))
                ("packages.el" . ,(doom-path doom-emacs-dir "templates/packages.example.el"))))))
 
-    ;; In case no init.el was present the first time `doom-initialize-modules' was
-    ;; called in core.el (e.g. on first install)
-    (doom-initialize-modules 'force 'no-config)
+    ;; In case no init.el was present the first time it was loaded.
+    (doom-load (doom-path doom-user-dir doom-module-init-file) t)
 
     ;; Ask if user would like an envvar file generated
     (if (eq envfile? :no)
