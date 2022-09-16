@@ -490,7 +490,18 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
   ;; UX: Suppress compiler warnings and don't inundate users with their popups.
   ;;   They are rarely more than warnings, so are safe to ignore.
   (setq native-comp-async-report-warnings-errors init-file-debug
-        native-comp-warning-on-missing-source init-file-debug))
+        native-comp-warning-on-missing-source init-file-debug)
+
+  ;; UX: By default, native-comp uses 100% of half your cores. If you're
+  ;;   expecting this this should be no issue, but the sudden (and silent) spike
+  ;;   of CPU and memory utilization can alarm folks, overheat laptops, or
+  ;;   overwhelm less performant systems.
+  (define-advice comp-effective-async-max-jobs (:before (&rest _) set-default-cpus)
+    "Default to 1/4 of cores in interactive sessions and all of them otherwise."
+    (and (null comp-num-cpus)
+         (zerop native-comp-async-jobs-number)
+         (setq comp-num-cpus
+               (max 1 (/ (num-processors) (if noninteractive 1 4)))))))
 
 ;;; Suppress package.el
 ;; Since Emacs 27, package initialization occurs before `user-init-file' is
