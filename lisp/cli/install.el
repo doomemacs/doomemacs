@@ -93,7 +93,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (doom-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-autoloads-reload)
+    (doom-profile-generate)
 
     (if (eq hooks? :no)
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))

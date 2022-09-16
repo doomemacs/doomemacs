@@ -30,7 +30,7 @@ Emacs (as byte-code is generally not forward-compatible)."
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (when (doom-packages-build (not rebuild-p))
-    (doom-autoloads-reload))
+    (doom-profile-generate))
   t)
 
 ;; TODO Rename to "doom gc" and move to its own file
@@ -57,7 +57,7 @@ list remains lean."
          (not nobuilds-p)
          (not noregraft-p)
          (not noeln-p))
-    (doom-autoloads-reload))
+    (doom-profile-generate))
   t)
 
 (defcli-stub! rollback)  ; TODO Implement me post-3.0
