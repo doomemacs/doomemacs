@@ -225,7 +225,7 @@ is non-nil, refresh the cache."
               (if (or noninteractive
                       (file-equal-p user-emacs-directory "~/.config/emacs")
                       (file-equal-p user-emacs-directory "~/.emacs.d"))
-                  (user-error "Failed to find profile: %s" id)
+                  (user-error "Failed to find profile: %s" (getenv "DOOMPROFILE"))
                 (user-error "To be a bootloader, Doom must be installed in ~/.config/emacs or ~/.emacs.d"))))))
    :mode #o600
    :printfn #'pp)
