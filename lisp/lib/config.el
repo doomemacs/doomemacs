@@ -99,7 +99,7 @@ Runs `doom-after-reload-hook' afterwards."
 
 ;;;###autoload
 (defun doom/reload-autoloads ()
-  "Reload only `doom-autoloads-file' and `doom-package-autoload-file'.
+  "Reload only the autoloads of the current profile.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
 reloads your package and module visibility, but does not install new packages or
@@ -108,7 +108,12 @@ remove orphaned ones. It also doesn't reload your private config.
 It is useful to only pull in changes performed by 'doom sync' on the command
 line."
   (interactive)
-  (load (file-name-sans-extension doom-autoloads-file) nil 'nomessage))
+  (require 'doom-profiles)
+  ;; TODO: Make this more robust
+  (dolist (file (mapcar #'car doom-profile-generators))
+    (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
+      (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
+            'noerror))))
 
 ;;;###autoload
 (defun doom/reload-env ()
