@@ -303,7 +303,10 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
                       (error
                        (princ
                         (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
-                                ,(file-name-nondirectory (buffer-file-name (buffer-base-buffer)))
+                                (or ,(ignore-errors
+                                       (file-name-nondirectory
+                                        (buffer-file-name (buffer-base-buffer))))
+                                    (car command-line-args-left))
                                 0 0 (error-message-string e)))))
                     ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
                 flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
