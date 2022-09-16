@@ -7,7 +7,7 @@
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
-(defconst +emacs-lisp-linter-warnings
+(defvar +emacs-lisp-linter-warnings
   '(not free-vars    ; don't complain about unknown variables
         noruntime    ; don't complain about unknown function calls
         unresolved)  ; don't complain about undefined functions
