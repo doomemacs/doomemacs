@@ -629,16 +629,17 @@ mutating hooks on exported output, like formatters."
     :around '(org-export-to-file org-export-as)
     (let ((old-async-init-file org-export-async-init-file)
           (org-export-async-init-file (make-temp-file "doom-org-async-export")))
-      (with-temp-file org-export-async-init-file
-        (prin1 `(progn (setq org-export-async-debug
-                             ,(or org-export-async-debug
-                                  debug-on-error)
-                             load-path ',load-path)
-                       (unwind-protect
-                           (load ,(or old-async-init-file user-init-file)
-                                 nil t)
-                         (delete-file load-file-name)))
-               (current-buffer)))
+      (doom-file-write
+       org-export-async-init-file
+       `((setq org-export-async-debug ,(or org-export-async-debug debug-on-error)
+               load-path ',load-path)
+         (unwind-protect
+             (let ((init-file ,old-async-init-file))
+               (if init-file
+                   (load init-file nil t)
+                 (load ,early-init-file nil t)
+                 (require 'doom-start)))
+           (delete-file load-file-name))))
       (apply fn args))))
 
 
