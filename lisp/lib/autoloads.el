@@ -1,4 +1,6 @@
-;;; lisp/cli/autoloads.el -*- lexical-binding: t; -*-
+;;; lisp/lib/autoloads.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-autoloads-excluded-packages ()
   "Which packages to exclude from Doom's autoloads files.
@@ -192,3 +194,6 @@ non-nil, treat FILES as pre-generated autoload files instead."
                                                       (not literal))
                         autoloads))
               (end-of-file))))))))
+
+(provide 'doom-lib '(autoloads))
+;;; autoloads.el end here

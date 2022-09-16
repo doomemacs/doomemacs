@@ -69,7 +69,7 @@
   (doom-require 'doom-lib 'plist)
   (doom-require 'doom-lib 'files)
   (doom-require 'doom-lib 'print)
-  ;; (doom-require 'doom-lib 'autoloads)
+  (doom-require 'doom-lib 'autoloads)
 
   ;; Ensure straight and core packages are ready to go for CLI commands.
   (require 'doom-modules)

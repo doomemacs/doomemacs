@@ -245,70 +245,66 @@ SEE ALSO:
 
 ;; There are a lot of CLIs, and some have expensive initialization, so best we
 ;; load them lazily.
-(let ((dir (doom-path doom-core-dir "cli")))
-  ;; Library for generating autoloads files for Doom modules & packages.
-  (load! "autoloads" dir)
+(defcli-group!
+  :prefix 'doom
+  ;; Import this for implicit 'X help' commands for your script:
+  (defcli-alias! ((help h)) (:root :help))
+  ;; And suggest its use when errors occur.
+  (add-to-list 'doom-help-commands "%p h[elp] %c")
 
-  (defcli-group!
-    :prefix 'doom
-    ;; Import this for implicit 'X help' commands for your script:
-    (defcli-alias! ((help h)) (:root :help))
-    ;; And suggest its use when errors occur.
-    (add-to-list 'doom-help-commands "%p h[elp] %c")
+  (defcli-group! "Config Management"
+    :docs "Commands for maintaining your Doom Emacs configuration."
+    (defcli-autoload! ((sync s)))
+    (defcli-autoload! ((profiles profile)))
+    (defcli-autoload! ((upgrade up)))
+    (defcli-autoload! (env))
+    (defcli-autoload! ((build b purge p rollback)) "packages")
+    (defcli-autoload! ((install i)))
+    (defcli-autoload! ((compile c)))
+    (defcli-autoload! (clean) "compile")
 
-    (defcli-group! "Config Management"
-      :docs "Commands for maintaining your Doom Emacs configuration."
-      (defcli-autoload! ((sync s)))
-      (defcli-autoload! ((profiles profile)))
-      (defcli-autoload! ((upgrade up)))
-      (defcli-autoload! (env))
-      (defcli-autoload! ((build b purge p rollback)) "packages")
-      (defcli-autoload! ((install i)))
-      (defcli-autoload! ((compile c)))
-      (defcli-autoload! (clean) "compile")
+    ;; TODO Post-3.0 commands
+    ;; (load! "gc" dir)
+    ;; (load! "module" dir)
+    ;; (load! "nuke" dir)
+    ;; (load! "package" dir)
+    ;; (load! "profile" dir)
+    ;; (defcli-obsolete! ((compile c)) (sync "--compile") "v3.0.0")
+    ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
+    )
 
-      ;; TODO Post-3.0 commands
-      ;; (load! "gc" dir)
-      ;; (load! "module" dir)
-      ;; (load! "nuke" dir)
-      ;; (load! "package" dir)
-      ;; (load! "profile" dir)
-      ;; (defcli-obsolete! ((compile c)) (sync "--compile") "v3.0.0")
-      ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
-      )
+  (defcli-group! "Diagnostics"
+    :docs "Commands for troubleshooting and debugging Doom."
+    (defcli-autoload! ((doctor doc)))
+    (defcli-autoload! (info))
+    (defcli-alias! ((version v)) (:root :version)))
 
-    (defcli-group! "Diagnostics"
-      :docs "Commands for troubleshooting and debugging Doom."
-      (defcli-autoload! ((doctor doc)))
-      (defcli-autoload! (info))
-      (defcli-alias! ((version v)) (:root :version)))
+  (defcli-group! "Development"
+    :docs "Commands for developing or launching Doom."
+    (defcli-autoload! (ci))
+    (defcli-autoload! (make))
+    (defcli-autoload! (run))
 
-    (defcli-group! "Development"
-      :docs "Commands for developing or launching Doom."
-      (defcli-autoload! (ci))
-      (defcli-autoload! (make))
-      (defcli-autoload! (run))
+    ;; FIXME Test framework
+    ;; (load! "test" dir)
+    )
 
-      ;; FIXME Test framework
-      ;; (load! "test" dir)
-      )
+  (let ((cli-file "cli"))
+    (defcli-group! "Module commands"
+      (dolist (key (doom-module-list))
+        (when-let (path (doom-module-expand-path (car key) (cdr key) cli-file))
+          (defcli-group! :prefix (format "+%s" (cdr key))
+            (doom-load path t)))))
 
-    (let ((cli-file "cli"))
-      (defcli-group! "Module commands"
-        (dolist (key (doom-module-list))
-          (when-let (path (doom-module-expand-path (car key) (cdr key) cli-file))
-            (defcli-group! :prefix (format "+%s" (cdr key))
-              (doom-load path t)))))
+    (load! cli-file doom-user-dir t))
 
-      (load! cli-file doom-user-dir t))
-
-    ;; Allow per-project Doom settings in .doom files.
-    (let (doomrc)
-      (cond
-       ((setq doomrc (getenv "DOOMRC"))
-        (load! doomrc))
-       ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
-        (load! ".doomrc" doomrc))))))
+  ;; Allow per-project Doom settings in .doom files.
+  (let (doomrc)
+    (cond
+     ((setq doomrc (getenv "DOOMRC"))
+      (load! doomrc))
+     ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
+      (load! ".doomrc" doomrc)))))
 
 
 ;;
