@@ -156,6 +156,10 @@ Only has an effect in GUI Emacs.")
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
+  (when (not forge-add-default-bindings)
+    (map! :map magit-mode-map [remap magit-browse-thing] #'forge-browse-dwim
+          :map magit-remote-section-map [remap magit-browse-thing] #'forge-browse-remote
+          :map magit-branch-section-map [remap magit-browse-thing] #'forge-browse-branch))
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
   (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
 
