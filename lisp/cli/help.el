@@ -67,8 +67,7 @@ OPTIONS:
                (signal 'doom-cli-command-not-found-error command)
              (doom-cli-help--print cli context manpage? localonly?)
              (exit! :pager?)))
-          (t
-           (dolist (section sections)
+          ((dolist (section sections)
              (unless (equal section (car sections)) (terpri))
              (pcase section
                ("--synopsis"
@@ -239,7 +238,7 @@ OPTIONS:
           (when (and contents (not (string-blank-p contents)))
             (when label
               (print! (bold "%s%s") label (if manpage? "" ":")))
-            (print-group-if! label (printsection contents))))
+            (print-group! :if label (printsection contents))))
         (pcase-dolist (`(,label . ,contents) .sections)
           (when (and contents (not (assoc label alist)))
             (print! (bold "%s:") label)
@@ -323,7 +322,7 @@ OPTIONS:
         (let ((label (if (car-safe group) (cdr commands))))
           (when label
             (insert! ((bold "%s:") (car group)) "\n"))
-          (print-group-if! label
+          (print-group! :if label
             (dolist (command (cdr group))
               (let* ((cli  (doom-cli-get command t))
                      (rcli (doom-cli-get command))
