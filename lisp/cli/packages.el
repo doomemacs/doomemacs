@@ -704,14 +704,6 @@ It may not be obvious to users what they should do for some straight prompts,
 so Doom will recommend the one that reverts a package back to its (or target)
 original state.")
 
-;; FIXME Replace with a -j/--jobs option in 'doom sync' et co
-(defadvice! doom-cli--comp-use-all-cores-a (&rest _)
-  "Default to using all cores, rather than half.
-Doom compiles packages ahead-of-time, in a dedicated noninteractive session, so
-it doesn't make sense to slack."
-  :before #'comp-effective-async-max-jobs
-  (setq comp-num-cpus (doom-system-cpus)))
-
 ;; HACK Remove dired & magit options from prompt, since they're inaccessible in
 ;;      noninteractive sessions.
 (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw)
