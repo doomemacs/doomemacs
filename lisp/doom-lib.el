@@ -249,14 +249,22 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
             ((add-hook hook fn -101)))
       fn)))
 
-(defun doom-compile-function (fn &optional level)
-  "Compile FN, and natively, if possible."
-  (if (featurep 'native-compile)
-      (let ((native-comp-speed (or level native-comp-speed)))
-        (unless (subr-native-elisp-p (symbol-function fn))
-          (native-compile fn)))
-    (unless (byte-code-function-p (symbol-function fn))
-      (with-no-warnings (byte-compile fn)))))
+(defun doom-compile-functions (&rest fns)
+  "Queue FNS to be byte/natively-compiled after a brief delay."
+  (with-memoization (get 'doom-compile-function 'timer)
+    (run-with-idle-timer
+     1 t (fn! (when-let ((fn (pop fns))
+                         (fndef (indirect-function fn)))
+                (if (featurep 'native-compile)
+                    (unless (subr-native-elisp-p fndef)
+                      (doom-log "native-compile: Compiling %s" fn)
+                      (native-compile fn))
+                  (unless (byte-code-function-p fndef)
+                    (doom-log "byte-compile: Compiling %s" fn)
+                    (byte-compile fn))))
+              (unless fns
+                (cancel-timer (get 'doom-compile-function 'timer))
+                (put 'doom-compile-function 'timer nil))))))
 
 
 ;;
