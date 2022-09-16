@@ -339,7 +339,11 @@ If RETURN-P, return the message as a string instead of displaying it."
 (define-advice startup--load-user-init-file (:override (file-fn _ _) init-doom 100)
   (let ((debug-on-error-from-init-file nil)
         (debug-on-error-should-be-set nil)
-        (debug-on-error-initial (if (eq init-file-debug t) 'startup init-file-debug)))
+        (debug-on-error-initial (if (eq init-file-debug t) 'startup init-file-debug))
+        ;; The init file might contain byte-code with embedded NULs, which can
+        ;; cause problems when read back, so disable nul byte detection. (Bug
+        ;; #52554)
+        (inhibit-null-byte-detection t))
     (let ((debug-on-error debug-on-error-initial))
       (condition-case-unless-debug error
           (when init-file-user
