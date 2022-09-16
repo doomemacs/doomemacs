@@ -94,6 +94,7 @@ variable for an explanation of the defaults (in comments). See
       atomic-chrome
       auto-package-update
       beginend
+      bluetooth
       bm
       bookmark
       (buff-menu "buff-menu")
