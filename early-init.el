@@ -44,6 +44,12 @@
  ;; PERF: `file-name-handler-alist' is consulted often. Unsetting it offers a
  ;;   notable saving in startup time.
  (let (file-name-handler-alist)
+   ;; FIX: If this file was loaded via -batch or bin/doom, then
+   ;;   `user-emacs-directory' won't be set. As a starting point, let's assume
+   ;;   it's the directory this early-init.el file lives in.
+   (unless user-emacs-directory
+     (setq user-emacs-directory (file-name-directory (file-truename load-file-name))))
+
    ;; FEAT: First, we process --init-directory and --profile to detect what
    ;;   `user-emacs-directory' to load from. I avoid using
    ;;   `command-switch-alist' to process --profile and --init-directory because
