@@ -8,8 +8,7 @@
 ;;;###autoload
 (defvar doom-debug-variables
   `(;; Doom variables
-    (doom-print-level . debug)
-    (doom-print-message-level . info)
+    (doom-print-minimum-level . debug)
 
     ;; Emacs variables
     async-debug
