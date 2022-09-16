@@ -739,8 +739,8 @@ it doesn't make sense to slack."
       ;; We can't intercept C-g, so no point displaying any options for this key
       ;; when C-c is the proper way to abort batch Emacs.
       (delq! "C-g" actions 'assoc)
-      ;; HACK These are associated with opening dired or magit, which isn't
-      ;;      possible in tty Emacs, so...
+      ;; HACK: These are associated with opening dired or magit, which isn't
+      ;;   possible in tty Emacs, so...
       (delq! "e" actions 'assoc)
       (delq! "g" actions 'assoc)
       (if (doom-cli-context-suppress-prompts-p doom-cli--context)

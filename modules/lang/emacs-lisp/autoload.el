@@ -226,7 +226,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 
 ;;;###autoload
 (defun +emacs-lisp-extend-imenu-h ()
-  "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
+  "Improve imenu support in `emacs-lisp-mode' for Doom's APIs."
   (setq imenu-generic-expression
         `(("Section" "^[ \t]*;;;;*[ \t]+\\([^\n]+\\)" 1)
           ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)

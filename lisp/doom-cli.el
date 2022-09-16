@@ -868,7 +868,7 @@ executable context."
                (cli  (doom-cli-get command t))
                (rcli (doom-cli-get command))
                (key  (doom-cli-key rcli)))
-            (doom-log "cli-context-parse: found %s" command)
+            (doom-log "cli-context-parse: found command %s" command)
             ;; Show warnings depending on CLI plists
             (when (doom-cli-alias cli)
               (dolist (pcli (doom-cli-path cli))
@@ -1654,11 +1654,10 @@ ignored.
 \(fn COMMANDSPEC ARGLIST [DOCSTRING] &rest BODY...)"
   (declare (indent 2) (doc-string 3))
   (let ((docstring (if (stringp (car body)) (pop body)))
-        (plist (let (plist)
-                 (while (keywordp (car body))
-                   (push (pop body) plist)
-                   (push (pop body) plist))
-                 (nreverse plist)))
+        (plist (cl-loop for (key val) on body by #'cddr
+                        while (keywordp key)
+                        collect (pop body)
+                        collect (pop body)))
         options arguments bindings)
     (let ((type '&required))
       (dolist (arg arglist)

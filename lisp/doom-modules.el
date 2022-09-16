@@ -5,9 +5,6 @@
 ;;
 ;;; Variables
 
-(defvar doom-init-modules-p nil
-  "Non-nil if `doom-initialize-modules' has run.")
-
 (defvar doom-modules (make-hash-table :test 'equal)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
@@ -377,7 +374,7 @@ If ALL-P is `real', only return *real"
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
-                   (doom-log "Loading deferred package %s from %s" ',name ',fn)
+                   (doom-log "use-package: lazy loading %s from %s" ',name ',fn)
                    (condition-case e
                        ;; If `default-directory' is a directory that doesn't
                        ;; exist or is unreadable, Emacs throws up file-missing

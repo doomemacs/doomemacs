@@ -143,11 +143,7 @@ uses a straight or package.el command directly).")
           (list "/emacs-jupyter.*\\.el\\'"
                 "/evil-collection-vterm\\.el\\'"
                 "/vterm\\.el\\'"
-                "/with-editor\\.el\\'")))
-
-  ;; Remove unwanted $EMACSDIR/eln-cache/ directory.
-  (cl-callf2 delete (file-name-concat doom-emacs-dir "eln-cache/")
-             native-comp-eln-load-path))
+                "/with-editor\\.el\\'"))))
 
 
 ;;
