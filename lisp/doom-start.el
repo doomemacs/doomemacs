@@ -102,11 +102,14 @@
 ;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
 ;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
 ;;   that isn't necessary this early in the startup process.
-(setq scroll-bar-mode nil
-      tool-bar-mode nil
-      menu-bar-mode nil)
-;; Setting `scroll-bar-mode' isn't enough to disable them, so:
+(push '(menu-bar-lines . 0)   default-frame-alist)
+(push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
+;; And set these to nil so users don't have to toggle the modes twice to
+;; reactivate them.
+(setq menu-bar-mode nil
+      tool-bar-mode nil
+      scroll-bar-mode nil)
 ;; FIX: On MacOS, disabling the menu bar makes MacOS treat Emacs as a
 ;;   non-application window -- which means it doesn't automatically capture
 ;;   focus when it is started, among other things, so enable the menu-bar for
