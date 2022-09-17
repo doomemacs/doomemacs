@@ -8,31 +8,37 @@
 ;;; Variables
 
 ;;; File/directory variables
-(defvar doom-profiles-dir doom-data-dir
+(defvar doom-profiles-generated-dir doom-data-dir
   "Where generated profiles are kept.
 
 Profile directories are in the format {data-profiles-dir}/$NAME/@/$VERSION, for
 example: '~/.local/share/doom/_/@/0/'")
 
-(defvar doom-profile-dirs
-  (list (file-name-concat doom-user-dir "profiles")
-        (file-name-concat doom-emacs-dir "profiles"))
-  "A list of directories to search for implicit Doom profiles in.")
+(defvar doom-profile-load-path
+  (if-let (path (getenv-internal "DOOMPROFILELOADPATH"))
+      (mapcar #'expand-file-name (split-string-and-unquote path path-separator))
+    (list (file-name-concat doom-user-dir "profiles.el")
+          (file-name-concat doom-emacs-dir "profiles.el")
+          (expand-file-name "doom-profiles.el" (or (getenv "XDG_CONFIG_HOME") "~/.config"))
+          (expand-file-name "~/.doom-profiles.el")
+          (file-name-concat doom-user-dir "profiles")
+          (file-name-concat doom-emacs-dir "profiles")))
+  "A list of profile config files or directories that house implicit profiles.
 
-(defvar doom-profile-config-files
-  (list (file-name-concat doom-user-dir "profiles.el")
-        (file-name-concat doom-emacs-dir "profiles.el")
-        (expand-file-name "doom-profiles.el" (or (getenv "XDG_CONFIG_HOME") "~/.config"))
-        (expand-file-name "~/.doom-profiles.el"))
-  "A list of potential locations for a profiles.el file.
+`doom-profiles-initialize' loads and merges all profiles defined in the above
+files/directories, then writes a profile load script to
+`doom-profile-load-file'.
 
-`doom-profiles-initialize' will load and merge all profiles defined in the above
-files, and will write a summary profiles.el to the first entry in this
-variable.")
+Can be changed externally by setting $DOOMPROFILELOADPATH to a colon-delimited
+list of paths or profile config files (semi-colon delimited on Windows).")
 
-(defvar doom-profiles-bootstrap-file
-  (file-name-concat doom-emacs-dir (format "profiles/init.el" emacs-major-version))
-  "Where Doom writes its interactive profile bootstrap script.")
+(defvar doom-profile-load-file
+  (if-let (loader (getenv-internal "DOOMPROFILELOADFILE"))
+      (expand-file-name loader doom-emacs-dir)
+    (file-name-concat doom-emacs-dir (format "profiles/load.el" emacs-major-version)))
+  "Where Doom writes its interactive profile loader script.
+
+Can be changed externally by setting $DOOMPROFILELOADFILE.")
 
 (defvar doom-profile-init-file-name (format "init.%d.el" emacs-major-version)
   "TODO")
@@ -113,21 +119,23 @@ run.")
                           :key #'car)))))))
     (nreverse profiles)))
 
-(defun doom-profiles-autodetect ()
+(defun doom-profiles-autodetect (&optional _internal?)
   "Return all known profiles as a nested alist.
 
-This reads all profiles in `doom-profile-config-files', then reads implicit profiles
-living in `doom-profile-dirs', then caches them in `doom--profiles'. If RELOAD?
-is non-nil, refresh the cache."
-  (doom-profiles-read doom-profile-config-files
-                      doom-profile-dirs))
+This reads all profile configs and directories in `doom-profile-load-path', then
+caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
+  (doom-profiles-read doom-profile-load-path
+                      ;; TODO: Add in v3
+                      ;; (if internal? doom-profiles-generated-dir)
+                      ))
 
 (defun doom-profiles-outdated-p ()
-  "Return non-nil if files in `doom-profile-loader-file' are outdated."
-  (cl-loop for file in doom-profile-config-files
-           if (or (not (file-exists-p doom-profiles-bootstrap-file))
-                  (file-newer-than-file-p file doom-profiles-bootstrap-file)
-                  (not (equal (doom-file-read doom-profiles-bootstrap-file :by 'read)
+  "Return non-nil if files in `doom-profile-load-file' are outdated."
+  (cl-loop for path in doom-profile-load-path
+           when (string-suffix-p path ".el")
+           if (or (not (file-exists-p doom-profile-load-file))
+                  (file-newer-than-file-p path doom-profile-load-file)
+                  (not (equal (doom-file-read doom-profile-load-file :by 'read)
                               doom-version)))
            return t))
 
@@ -153,7 +161,7 @@ is non-nil, refresh the cache."
 (defun doom-profiles-save (profiles &optional file)
   "Generate a profile bootstrapper for Doom to load at startup."
   (unless file
-    (setq file doom-profiles-bootstrap-file))
+    (setq file doom-profile-load-file))
   (doom-file-write
    file (let ((profilesym (make-symbol "profile"))
               (deferredsym (make-symbol "deferred-vars")))

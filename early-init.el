@@ -74,14 +74,19 @@
              (setq user-emacs-directory (expand-file-name init-dir))))
        ;; FIX: Discard the switch to prevent "invalid option" errors later.
        (push (cons "--profile" (lambda (_) (pop argv))) command-switch-alist)
-       ;; Running 'doom sync' will (re)generate a lightweight profile
-       ;; bootstrapper in $EMACSDIR/profiles/init.el, after reading
-       ;; $EMACSDIR/profiles.el, $DOOMDIR/profiles,
-       ;; $XDG_CONFIG_HOME/doom-profiles.el, and ~/.doom-profiles.el. All it
-       ;; needs is for `$DOOMPROFILE' to be set.
+       ;; Running 'doom sync' or 'doom profile sync' (re)generates a light
+       ;; profile loader in $EMACSDIR/profiles/load.el (or
+       ;; $DOOMPROFILELOADFILE), after reading `doom-profile-load-path'. This
+       ;; loader requires `$DOOMPROFILE' be set to function.
        (setenv "DOOMPROFILE" profile)
-       (or (load (expand-file-name (format "profiles/init.%d.elc" emacs-major-version)
-                                   user-emacs-directory)
+       (or (load (expand-file-name
+                  (format (let ((lfile (getenv-internal "DOOMPROFILELOADFILE")))
+                            (if lfile
+                                (concat (string-remove-suffix ".el" lfile)
+                                        ".%d.elc")
+                              "profiles/load.%d.elc"))
+                          emacs-major-version)
+                  user-emacs-directory)
                  'noerror (not init-file-debug) 'nosuffix)
            (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 

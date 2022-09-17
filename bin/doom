@@ -139,11 +139,24 @@ ENVIRONMENT VARIABLES:
     option also sets this variable.
 
   `$DOOMPROFILE'
-    (Not implemented yet) Which Doom profile to activate (default: \"current\").
+    Which Doom profile to activate (default: \"_@0\"). The `--profile' option
+    also sets this variable.
 
-  `$DOOMPROFILESDIR'
-    (Not implemented yet) Where to find or write generated Doom profiles
-    (default: `$EMACSDIR'/profiles).
+  `$DOOMPROFILELOADFILE'
+    Doom generates a profile loader script on 'doom sync' or 'doom profiles
+    sync'. By default, this file is written to and loaded from
+    $EMACSDIR/profiles/load.el. Set this envvar to change that. Note that this
+    envvar must be in scope for both interactive and non-interactive sessions
+    for it to be effective. This is especially useful for folks on Nix/Guix, who
+    have deployed Doom to a read-only directory.
+
+    Note: this file *must* end with a .el extension. It will be byte-compiled
+    after it is generated.
+
+  `$DOOMPROFILELOADPATH'
+    A colon-delimited (semi-colon on Windows) list of profile config files or
+    directories under which Doom will search for implicit profiles. See
+    `var:doom-profile-load-path' for its default value.
 
 EXIT CODES:
   0        Successful run

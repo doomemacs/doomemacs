@@ -38,17 +38,16 @@
   :benchmark t
   (let* ((old-profiles (doom-profiles-read doom-cli-known-profiles-file))
          (new-profiles (doom-profiles-autodetect))
-         (init-file doom-profiles-bootstrap-file)
-         (version (doom-file-read init-file :by 'read :noerror t))
+         (load-file doom-profile-load-file)
+         (version (doom-file-read load-file :by 'read :noerror t))
          (recreate? (or (not reload?) (doom-profiles-outdated-p))))
-    (unless (file-exists-p init-file)
-      (print! (warn "No profile manifest found. Generating one..."))
+    (unless (file-exists-p load-file)
+      (print! (warn "No profile loader found. Generating one..."))
       (print-group! (print! (start "Regenerating it...")))
       (setq recreate? t))
     (unless (equal (or version doom-version) doom-version)
-      (print! (warn "Detected version mismatch in profile manifest (%s != %s)"
-                    version
-                    doom-version))
+      (print! (warn "Detected version mismatch in profile loader (%s != %s)"
+                    version doom-version))
       (print! (start "Generating profile manifest..."))
       (setq recreate? t))
     (print-group!
@@ -70,9 +69,9 @@
               (dolist (p removed) (print! (item "Removed %S") (car p)))
               (dolist (p changed) (print! (item "Changed %S") (car p)))
               (doom-file-write doom-cli-known-profiles-file (list new-profiles) :mode #o600)
-              (doom-profiles-save new-profiles)
-              (print! (success "Regenerated profile bootstrapper: %s")
-                      (path doom-profiles-bootstrap-file)))))))))
+              (doom-profiles-save new-profiles load-file)
+              (print! (success "Regenerated profile loader: %s")
+                      (path load-file)))))))))
 
 
 ;;
