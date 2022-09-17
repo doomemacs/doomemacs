@@ -81,9 +81,9 @@
        ;; $XDG_CONFIG_HOME/doom-profiles.el, and ~/.doom-profiles.el. All it
        ;; needs is for `$DOOMPROFILE' to be set.
        (setenv "DOOMPROFILE" profile)
-       (or (load (expand-file-name (format "profiles/init.%d" emacs-major-version)
+       (or (load (expand-file-name (format "profiles/init.%d.elc" emacs-major-version)
                                    user-emacs-directory)
-                 'noerror (not init-file-debug) nil 'must-suffix)
+                 'noerror (not init-file-debug) 'nosuffix)
            (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
    ;; PERF: When `load'ing or `require'ing files, each permutation of

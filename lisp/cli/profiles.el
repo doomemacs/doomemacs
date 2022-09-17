@@ -70,8 +70,8 @@
               (dolist (p removed) (print! (item "Removed %S") (car p)))
               (dolist (p changed) (print! (item "Changed %S") (car p)))
               (doom-file-write doom-cli-known-profiles-file (list new-profiles) :mode #o600)
-              (doom-profiles-save new-profiles doom-profiles-bootstrap-file)
-              (print! (success "Regenerated profile init file: %s")
+              (doom-profiles-save new-profiles)
+              (print! (success "Regenerated profile bootstrapper: %s")
                       (path doom-profiles-bootstrap-file)))))))))
 
 
