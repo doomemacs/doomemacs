@@ -45,7 +45,7 @@ OPTIONS:
     Defaults to the maximum number of threads (or 1, if your CPU's threadcount
     can't be determined)."
   :benchmark t
-  (call! '(profiles sync))
+  (call! '(profiles sync "--reload"))
   (run-hooks 'doom-before-sync-hook)
   (add-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)
   (when jobs

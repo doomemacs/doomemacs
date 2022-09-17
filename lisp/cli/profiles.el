@@ -31,14 +31,14 @@
 ;;
 ;;; doom profiles ...
 
-(defcli! (profiles sync) ()
+(defcli! (profiles sync) ((reload? ("--reload")))
   "Synchronize your profiles with Doom."
   :benchmark t
   (let* ((old-profiles (doom-profiles-read doom-cli-known-profiles-file))
          (new-profiles (doom-profiles-autodetect))
          (init-file doom-profiles-bootstrap-file)
          (version (doom-file-read init-file :by 'read :noerror t))
-         (recreate? (doom-profiles-outdated-p)))
+         (recreate? (or (not reload?) (doom-profiles-outdated-p))))
     (unless (file-exists-p init-file)
       (print! (warn "No profile manifest found. Generating one..."))
       (print-group! (print! (start "Regenerating it...")))
