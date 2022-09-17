@@ -45,21 +45,21 @@
  ;;   notable saving in startup time. This let-binding is just a stopgap though,
  ;;   a more complete version of this optimization can be found in lisp/doom.el.
  (let (file-name-handler-alist)
-   ;; FIX: If this file was loaded via -batch or bin/doom, then
-   ;;   `user-emacs-directory' won't be set. As a starting point, let's assume
-   ;;   it's the directory this early-init.el file lives in.
-   (unless user-emacs-directory
-     (setq user-emacs-directory (file-name-directory (file-truename load-file-name))))
-
    ;; FEAT: First, we process --init-directory and --profile to detect what
    ;;   `user-emacs-directory' to load from. I avoid using
    ;;   `command-switch-alist' to process --profile and --init-directory because
    ;;   it is processed too late to change `user-emacs-directory' in time.
-
    ;; REVIEW: Backported from Emacs 29. Remove when 28 support is dropped.
    (let ((initdir (or (cadr (member "--init-directory" command-line-args))
                       (getenv-internal "EMACSDIR"))))
-     (when initdir
+     (if (null initdir)
+         ;; FIX: If we've been loaded directly (via 'emacs -batch -l
+         ;;   early-init.el') or by a doomscript (like bin/doom), and Doom is
+         ;;   in a non-standard location (and/or Chemacs is used), then
+         ;;   `user-emacs-directory' will be wrong.
+         (when noninteractive
+           (setq user-emacs-directory
+                 (file-name-directory (file-truename load-file-name))))
        ;; FIX: Discard the switch to prevent "invalid option" errors later.
        (push (cons "--init-directory" (lambda (_) (pop argv))) command-switch-alist)
        (setq user-emacs-directory (expand-file-name initdir))))
