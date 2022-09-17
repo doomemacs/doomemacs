@@ -224,7 +224,8 @@ is non-nil, refresh the cache."
                 (user-error "To be a bootloader, Doom must be installed in ~/.config/emacs or ~/.emacs.d"))))))
    :mode #o600
    :printfn #'pp)
-  (byte-compile-file file))
+  (let ((byte-compile-warnings (if init-file-debug byte-compile-warnings)))
+    (print-group! (byte-compile-file file))))
 
 (defun doom-profile-p (profile-name)
   "Return t if PROFILE-NAME is a valid and existing profile."
