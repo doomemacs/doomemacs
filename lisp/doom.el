@@ -176,17 +176,17 @@
   "The active profile as a cons cell (NAME . VERSION).")
 
 ;;; Data directory variables
-(defconst doom-emacs-dir user-emacs-directory
+(defvar doom-emacs-dir user-emacs-directory
   "The path to the currently loaded .emacs.d directory. Must end with a slash.")
 
 (defconst doom-core-dir (file-name-directory load-file-name)
   "The root directory of Doom's core files. Must end with a slash.")
 
-(defconst doom-modules-dir (expand-file-name "modules/" doom-emacs-dir)
+(defvar doom-modules-dir (expand-file-name "modules/" doom-emacs-dir)
   "The root directory for Doom's modules. Must end with a slash.")
 
 (define-obsolete-variable-alias 'doom-private-dir 'doom-user-dir "3.0.0")
-(defconst doom-user-dir
+(defvar doom-user-dir
   (expand-file-name
    (if-let (doomdir (getenv-internal "DOOMDIR"))
        (file-name-as-directory doomdir)
