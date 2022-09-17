@@ -33,7 +33,7 @@ as =$DOOMDIR=).
    cached profile loader (generated at =$EMACSDIR/profiles/init.X.elc=, where X
    is your major Emacs version).
 
- 3. To launch them:
+3. To launch a profile:
    - Launch the profile you want: ~$ emacs --profile FOO~
    - Use ~bin/doom~ on the profile you want: ~$ doom sync --profile FOO~
      
