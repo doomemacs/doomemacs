@@ -82,7 +82,7 @@
 (condition-case e
     (let* ((bin-dir (file-name-directory (file-truename load-file-name)))
            (init-file (expand-file-name "../early-init.el" bin-dir)))
-      (or (and (load init-file nil 'nomessage)
+      (or (and (load init-file nil 'nomessage 'nosuffix)
                (featurep 'doom))
           (user-error "Failed to load Doom from %s" init-file)))
   ;; Prevent ugly backtraces for trivial errors
