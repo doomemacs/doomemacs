@@ -449,7 +449,7 @@ users).")
 ;;   are never saved to the root of your emacs directory *and* saves us the
 ;;   trouble of setting a million directory/file variables. But it may throw off
 ;;   anyone (or any package) that uses it to search for your Emacs initfiles.
-(setq user-emacs-directory doom-cache-dir)
+(setq user-emacs-directory doom-profile-cache-dir)
 
 ;; ...However, this may surprise packages (and users) that read
 ;; `user-emacs-directory' expecting to find the location of your Emacs config,
@@ -459,8 +459,8 @@ users).")
 ;; Packages with file/dir settings that don't use `user-emacs-directory' or
 ;; `locate-user-emacs-file' to initialize will need to set explicitly, to stop
 ;; them from littering in ~/.emacs.d/.
-(setq desktop-dirname  (file-name-concat doom-cache-dir "desktop")
-      pcache-directory (file-name-concat doom-cache-dir "pcache/"))
+(setq desktop-dirname  (file-name-concat doom-profile-state-dir "desktop")
+      pcache-directory (file-name-concat doom-profile-cache-dir "pcache/"))
 
 ;; Allow the user to store custom.el-saved settings and themes in their Doom
 ;; config (e.g. ~/.doom.d/).
@@ -469,7 +469,7 @@ users).")
 ;; By default, Emacs stores `authinfo' in $HOME and in plain-text. Let's not do
 ;; that, mkay? This file stores usernames, passwords, and other treasures for
 ;; the aspiring malicious third party. You'll need a GPG setup though.
-(setq auth-sources (list (file-name-concat doom-data-dir "authinfo.gpg")
+(setq auth-sources (list (file-name-concat doom-profile-state-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 (define-advice en/disable-command (:around (fn &rest args) write-to-data-dir)
@@ -485,7 +485,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
   ;; Don't store eln files in ~/.emacs.d/eln-cache (where they can easily be
   ;; deleted by 'doom upgrade').
   ;; REVIEW Use `startup-redirect-eln-cache' when 28 support is dropped
-  (add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" doom-cache-dir))
+  (add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" doom-profile-cache-dir))
 
   ;; UX: Suppress compiler warnings and don't inundate users with their popups.
   ;;   They are rarely more than warnings, so are safe to ignore.
