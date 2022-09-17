@@ -536,7 +536,8 @@ relative to `org-directory', unless it is an absolute path."
       (if-let ((type (org-element-property :type context))
                (eldocfn (org-link-get-parameter type :eldoc)))
           (funcall eldocfn context)
-        (format "Link: %s" (org-element-property :raw-link context)))))
+        (when-let (raw-link (org-element-property :raw-link context))
+          (format "Link: %s" raw-link)))))
 
   ;; Add "lookup" links for packages and keystrings; useful for Emacs
   ;; documentation -- especially Doom's!
