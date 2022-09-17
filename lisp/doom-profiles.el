@@ -168,13 +168,10 @@ is non-nil, refresh the cache."
                          (pcase (car-safe val)
                            (:path
                             `(,(if (stringp var) 'setenv 'set)
-                              ',var ,(if (cddr val)
-                                         (macroexpand-all
-                                          `(cl-loop with path = ',(cadr val)
-                                                    for dir in ',(cddr val)
-                                                    do (setq path (expand-file-name dir path))
-                                                    finally return path))
-                                       `(file-truename ,(cadr val)))))
+                              ',var ,(cl-loop with form = `(expand-file-name ,(cadr val) user-emacs-directory)
+                                              for dir in (cddr val)
+                                              do (setq form `(expand-file-name ,dir ,form))
+                                              finally return form)))
                            (:eval
                             (if (eq var '_)
                                 (macroexp-progn (cdr val))
@@ -207,12 +204,7 @@ is non-nil, refresh the cache."
                                                     `(add-to-list ',var item 'append)
                                                   `(setq ',var (append ',var (list item)))))))
                                      --deferred-vars--)))
-                           (_ `(,(if (stringp var) 'setenv 'set)
-                                ',var ,(if (and (symbolp var)
-                                                (or (eq var 'user-emacs-directory)
-                                                    (string-match-p "^doom-.+-dir$" (symbol-name var))))
-                                           `(file-truename ,var)
-                                         ''var)))))
+                           (_ `(,(if (stringp var) 'setenv 'set) ',var ',val))))
                       ,@(when deferred?
                           `((defun --defer-vars-- (_)
                               (dolist (var --deferred-vars--)
@@ -221,8 +213,7 @@ is non-nil, refresh the cache."
                                   (setq --deferred-vars-- (delete var --deferred-vars--))))
                               (unless --deferred-vars--
                                 (remove-hook 'after-load-functions #'--defer-vars--)
-                                (unintern '--defer-vars-- obarray)
-                                (unintern '--deferred-vars-- obarray)))
+                                (unintern '--defer-vars-- obarray)))
                             (add-hook 'after-load-functions #'--defer-vars--)
                             (--defer-vars--))))))))
             (lambda ()
