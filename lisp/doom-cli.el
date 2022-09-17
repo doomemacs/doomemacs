@@ -1205,7 +1205,14 @@ Emacs' batch library lacks an implementation of the exec system call."
                      "_doomcleanup() {\n  rm -f " ,persistent-files "\n}\n"
                      "_doomrun() {\n  " ,command "\n}\n"
                      ,(string-join persisted-env " \\\n")
-                     "__DOOMCONTEXT=" ,(shell-quote-argument context-file) " \\\n"
+                     ,(cl-loop for (envvar . val)
+                               in `(("DOOMPROFILE" . ,(doom-profile->id (or doom-profile doom-profile-default)))
+                                    ("EMACSDIR" . ,doom-emacs-dir)
+                                    ("DOOMDIR" . ,doom-user-dir)
+                                    ("DEBUG" . ,(if init-file-debug "1"))
+                                    ("__DOOMCONTEXT" . ,context-file))
+                               if val
+                               concat (format "%s=%s \\\n" envvar (shell-quote-argument val)))
                      ,(format "PATH=\"%s%s$PATH\" \\\n"
                               (doom-path doom-emacs-dir "bin")
                               path-separator)
