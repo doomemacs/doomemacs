@@ -158,7 +158,7 @@
   "Run MODE-local-vars-hook after local variables are initialized."
   (unless (or doom-inhibit-local-var-hooks delay-mode-hooks)
     (setq-local doom-inhibit-local-var-hooks t)
-    (doom-run-hooks (intern (format "%s-local-vars-hook" major-mode)))))
+    (doom-run-hooks (intern-soft (format "%s-local-vars-hook" major-mode)))))
 
 ;; If the user has disabled `enable-local-variables', then
 ;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
