@@ -52,9 +52,7 @@ OPTIONS:
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (print! (start "Synchronizing %S profile..." )
-          (if doom-profile
-              (car (split-string doom-profile "@"))
-            "default"))
+          (or (car doom-profile) "default"))
   (unwind-protect
       (print-group!
        (when (and (not noenvvar?)
