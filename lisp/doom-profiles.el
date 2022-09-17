@@ -66,9 +66,7 @@ run.")
 
 (defvar doom--profiles ())
 
-;; TODO Restore this in 3.0
-(defconst doom-profile-default nil)
-;; (defconst doom-profile-default (cons "_" "0"))
+(defconst doom-profile-default (cons "_" "0"))
 
 
 ;;
@@ -83,34 +81,36 @@ run.")
 (defun doom-profiles-read (&rest paths)
   "TODO"
   (let (profiles)
-    (dolist (path (flatten-list paths))
+    (dolist (path (delq nil (flatten-list paths)))
       (cond
        ((file-directory-p path)
         (setq path (file-truename path))
         (dolist (subdir (doom-files-in path :depth 0 :match "/[^.][^/]+$" :type 'dirs :map #'file-name-base))
-          (unless (string-prefix-p "_" subdir)
-            (cl-pushnew
-             (cons (intern subdir)
-                   (let* ((val (abbreviate-file-name (file-name-as-directory subdir)))
-                          (val (if (file-name-absolute-p val)
-                                   `(,val)
-                                 `(,(abbreviate-file-name path) ,val))))
-                     (cons `(user-emacs-directory :path ,@val)
-                           (if-let (profile-file (file-exists-p! doom-profiles-config-file-name path))
-                               (car (doom-file-read profile-file :by 'read*))
-                             (when (file-exists-p (doom-path path subdir "lisp/doom.el"))
-                               '((doom-user-dir :path ,@val)))))))
-             profiles
-             :test #'eq
-             :key #'car))))
+          (if (equal subdir (car doom-profile-default))
+              (signal 'doom-profile-error (list (file-name-concat path subdir) "Implicit profile has invalid name"))
+            (unless (string-prefix-p "_" subdir)
+              (cl-pushnew
+               (cons (intern subdir)
+                     (let* ((val (abbreviate-file-name (file-name-as-directory subdir)))
+                            (val (if (file-name-absolute-p val)
+                                     `(,val)
+                                   `(,(abbreviate-file-name path) ,val))))
+                       (cons `(user-emacs-directory :path ,@val)
+                             (if-let (profile-file (file-exists-p! doom-profiles-config-file-name path))
+                                 (car (doom-file-read profile-file :by 'read*))
+                               (when (file-exists-p (doom-path path subdir "lisp/doom.el"))
+                                 '((doom-user-dir :path ,@val)))))))
+               profiles
+               :test #'eq
+               :key #'car)))))
        ((file-exists-p path)
         (dolist (profile (car (doom-file-read path :by 'read*)))
-          (unless (string-prefix-p "_" (symbol-name (car profile)))
-            (cl-pushnew profile profiles
-                        :test #'eq
-                        :key #'car))))))
-    (when (assq '_ profiles)
-      (signal 'doom-profile-error (list "Profile cannot be named _, as this is reserved for the implicit global profile")))
+          (if (eq (symbol-name (car profile)) (car doom-profile-default))
+              (signal 'doom-profile-error (list path "Profile has invalid name: _"))
+            (unless (string-prefix-p "_" (symbol-name (car profile)))
+              (cl-pushnew profile profiles
+                          :test #'eq
+                          :key #'car)))))))
     (nreverse profiles)))
 
 (defun doom-profiles-autodetect ()
@@ -272,8 +272,10 @@ Defaults to the profile at `doom-profile-default'."
           (doom-profile<-id profile-id)
         (cl-check-type profile-id (or null string))
         (cl-check-type version (or null string))
-        (cons (or profile-id (car doom-profile-default))
-              (or version    (cdr doom-profile-default))))
+        (cons (or profile-id ;; (car doom-profile-default)
+                  )
+              (or version    ;; (cdr doom-profile-default)
+                  )))
     (file-name-concat doom-data-dir
                       profile "@" version
                       (format doom-profile-init-file-name emacs-major-version))))
