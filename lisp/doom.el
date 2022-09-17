@@ -221,7 +221,7 @@ These files should not be shared across systems. By default, it is used by
           (expand-file-name "doomemacs/data/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_DATA_HOME") "~/.local/share")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
-    (concat doom-local-dir "etc/"))
+    (file-name-concat doom-local-dir "etc/"))
   "Where Doom stores its global data files.
 
 Data files contain shared and long-lived data that Doom, Emacs, and their
@@ -240,7 +240,7 @@ For profile-local data files, use `doom-profile-data-dir' instead.")
           (expand-file-name "doomemacs/cache/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_CACHE_HOME") "~/.cache")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
-    (concat doom-local-dir "cache/"))
+    (file-name-concat doom-local-dir "cache/"))
   "Where Doom stores its global cache files.
 
 Cache files represent non-essential data that shouldn't be problematic when
@@ -259,7 +259,7 @@ For profile-local cache files, use `doom-profile-cache-dir' instead.")
           (expand-file-name "doomemacs/state/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_STATE_HOME") "~/.local/state")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
-    (concat doom-local-dir "state/"))
+    (file-name-concat doom-local-dir "state/"))
   "Where Doom stores its global state files.
 
 State files contain non-essential, unportable, but persistent data which, if
