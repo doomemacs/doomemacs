@@ -123,9 +123,13 @@ is non-nil, refresh the cache."
                       doom-profile-dirs))
 
 (defun doom-profiles-outdated-p ()
-  "Return non-nil if files in `doom-profiles-bootstrap-file' are outdated."
-  (cl-find-if (doom-rpartial #'file-newer-than-file-p doom-profiles-bootstrap-file)
-              doom-profile-config-files))
+  "Return non-nil if files in `doom-profile-loader-file' are outdated."
+  (cl-loop for file in doom-profile-config-files
+           if (or (not (file-exists-p doom-profiles-bootstrap-file))
+                  (file-newer-than-file-p file doom-profiles-bootstrap-file)
+                  (not (equal (doom-file-read doom-profiles-bootstrap-file :by 'read)
+                              doom-version)))
+           return t))
 
 (defun doom-profile<-id (id)
   "Return a (NAME . VERSION) profile cons cell from an id string NAME@VERSION."
