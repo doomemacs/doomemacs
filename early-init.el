@@ -42,7 +42,8 @@
 
 (or
  ;; PERF: `file-name-handler-alist' is consulted often. Unsetting it offers a
- ;;   notable saving in startup time.
+ ;;   notable saving in startup time. This let-binding is just a stopgap though,
+ ;;   a more complete version of this optimization can be found in lisp/doom.el.
  (let (file-name-handler-alist)
    ;; FIX: If this file was loaded via -batch or bin/doom, then
    ;;   `user-emacs-directory' won't be set. As a starting point, let's assume
