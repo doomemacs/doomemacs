@@ -6,7 +6,9 @@
 ;;; Variables
 
 (defvar doom-cli-known-profiles-file
-  (file-name-concat doom-cache-dir "known-profiles.el")
+  (file-name-concat doom-cache-dir (format "profiles.%s.el" (or (car doom-profile) "@")))
+  ;; REVIEW: Use `doom-profile-data-dir' in v3
+  ;; (file-name-concat doom-profile-data-dir "known-profiles.el")
   "TODO")
 
 
@@ -68,8 +70,6 @@
               (dolist (p removed) (print! (item "Removed %S") (car p)))
               (dolist (p changed) (print! (item "Changed %S") (car p)))
               (doom-file-write doom-cli-known-profiles-file (list new-profiles) :mode #o600)
-              (print! (success "Regenerated profile manifest: %s")
-                      (path doom-cli-known-profiles-file))
               (doom-profiles-save new-profiles doom-profiles-bootstrap-file)
               (print! (success "Regenerated profile init file: %s")
                       (path doom-profiles-bootstrap-file)))))))))

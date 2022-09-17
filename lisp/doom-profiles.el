@@ -74,6 +74,12 @@ run.")
 ;;
 ;;; Helpers
 
+(defun doom-profiles-bootloadable-p ()
+  "Return non-nil if `doom-emacs-dir' can be a bootloader."
+  (with-memoization (get 'doom 'bootloader)
+    (or (file-equal-p doom-emacs-dir "~/.config/emacs")
+        (file-equal-p doom-emacs-dir "~/.emacs.d"))))
+
 (defun doom-profiles-read (&rest paths)
   "TODO"
   (let (profiles)
@@ -218,8 +224,7 @@ is non-nil, refresh the cache."
                             (--defer-vars--))))))))
             (lambda ()
               (if (or noninteractive
-                      (file-equal-p user-emacs-directory "~/.config/emacs")
-                      (file-equal-p user-emacs-directory "~/.emacs.d"))
+                      (,(symbol-function #'doom-profiles-bootloadable-p)))
                   (user-error "Failed to find profile: %s" (getenv "DOOMPROFILE"))
                 (user-error "To be a bootloader, Doom must be installed in ~/.config/emacs or ~/.emacs.d"))))))
    :mode #o600
