@@ -276,16 +276,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;;; Let 'er rip!
 
-;;; Load envvar file
-;; 'doom env' generates an envvar file. This is a snapshot of your shell
-;; environment, which Doom loads here. This is helpful in scenarios where Emacs
-;; is launched from an environment detached from the user's shell environment.
-(when (and (or (display-graphic-p)
-               (daemonp))
-           doom-env-file)
-  (setq-default process-environment (get 'process-environment 'initial-value))
-  (doom-load-envvars-file doom-env-file 'noerror))
-
 ;;; Load core modules and set up their autoloads
 (require 'doom-modules)
 (autoload 'doom-initialize-packages "doom-packages")
@@ -301,6 +291,15 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; A last ditch opportunity to undo dodgy optimizations or do extra
 ;; configuration before the session is complicated by user config and packages.
 (doom-run-hooks 'doom-before-init-hook)
+
+;;; Load envvar file
+;; 'doom env' generates an envvar file. This is a snapshot of your shell
+;; environment, which Doom loads here. This is helpful in scenarios where Emacs
+;; is launched from an environment detached from the user's shell environment.
+(when (and (or initial-window-system
+               (daemonp))
+           doom-env-file)
+  (doom-load-envvars-file doom-env-file 'noerror))
 
 ;;; Last minute setup
 (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
