@@ -77,7 +77,7 @@
        (setenv "DOOMPROFILE" profile)
        (or (load (expand-file-name (format "profiles/init.%d" emacs-major-version)
                                    user-emacs-directory)
-                 'noerror 'nomessage nil t)
+                 'noerror 'nomessage nil 'must-suffix)
            (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
    ;; PERF: When `load'ing or `require'ing files, each permutation of
