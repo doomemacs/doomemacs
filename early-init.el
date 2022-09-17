@@ -36,6 +36,12 @@
 ;;   Still, stale byte-code will cause *heavy* losses in startup efficiency.
 (setq load-prefer-newer noninteractive)
 
+;; UX: Respect DEBUG envvar as an alternative to --debug-init, and to make are
+;;   startup sufficiently verbose from this point on.
+(when (getenv-internal "DEBUG")
+  (setq init-file-debug t
+        debug-on-error t))
+
 
 ;;
 ;;; Bootstrap
@@ -77,7 +83,7 @@
        (setenv "DOOMPROFILE" profile)
        (or (load (expand-file-name (format "profiles/init.%d" emacs-major-version)
                                    user-emacs-directory)
-                 'noerror 'nomessage nil 'must-suffix)
+                 'noerror (not init-file-debug) nil 'must-suffix)
            (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
    ;; PERF: When `load'ing or `require'ing files, each permutation of
@@ -92,7 +98,7 @@
    (if (let ((load-suffixes '(".elc" ".el")))
          ;; Load the heart of Doom Emacs.
          (load (expand-file-name "lisp/doom" user-emacs-directory)
-               'noerror 'nomessage nil 'must-suffix))
+               'noerror (not init-file-debug) nil 'must-suffix))
        ;; ...and prepare for the rest of the session.
        (doom-require (if noninteractive 'doom-cli 'doom-start))
      ;; Failing that, assume we're loading a non-Doom config and prepare.
@@ -103,6 +109,6 @@
      nil))
 
  ;; Then continue on to the config/profile we want to load.
- (load early-init-file 'noerror 'nomessage nil 'must-suffix))
+ (load early-init-file 'noerror (not init-file-debug) nil 'must-suffix))
 
 ;;; early-init.el ends here

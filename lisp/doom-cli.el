@@ -19,10 +19,6 @@
               doom-data-dir
               doom-cache-dir))
 
-  ;; UX: Ensure errors are sufficiently verbose from this point on.
-  (when (setq init-file-debug (getenv-internal "DEBUG"))
-    (setq debug-on-error t))
-
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
   (let ((inhibit-message (not init-file-debug)))
