@@ -299,7 +299,7 @@ using code similar to:
 
 #+begin_src emacs-lisp
 (after! helm
-  (when (featurep! :completion new-helm +childframe)
+  (when (modulep! :completion new-helm +childframe)
     (setq helm-posframe-border-width 16)))
 #+end_src
 
