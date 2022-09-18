@@ -30,16 +30,16 @@ certs, rather than reject them silently."
 
 
 (use-package! company-restclient
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after restclient
   :config (set-company-backend! 'restclient-mode 'company-restclient))
 
 
 (use-package! restclient-jq
-  :when (featurep! +jq)
+  :when (modulep! +jq)
   :after restclient)
 
 
 (use-package! jq-mode
-  :when (featurep! +jq)
+  :when (modulep! +jq)
   :after restclient-jq)

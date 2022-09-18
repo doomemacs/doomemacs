@@ -36,12 +36,12 @@
     (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'elixir-mode-local-vars-hook #'lsp! 'append)
     (after! lsp-mode
       (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]_build\\'")))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'elixir-mode-local-vars-hook #'tree-sitter! 'append))
 
   (after! highlight-numbers
@@ -51,7 +51,7 @@
 
 
 (use-package! flycheck-credo
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after elixir-mode
   :config (flycheck-credo-setup))
 
@@ -79,7 +79,7 @@
 
 
 (use-package! alchemist-company
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :commands alchemist-company
   :config
   (set-company-backend! 'alchemist-mode '(alchemist-company company-yasnippet))

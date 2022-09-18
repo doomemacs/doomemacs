@@ -13,7 +13,7 @@
   (set-lookup-handlers! 'gdscript-mode
     :documentation #'gdscript-docs-browse-symbol-at-point)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'gdscript-mode-local-vars-hook #'lsp! 'append))
 
   (map! :localleader

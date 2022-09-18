@@ -1,5 +1,5 @@
 ;; completion/ivy/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+ivy:project-search "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:project-search (query &optional all-files-p)

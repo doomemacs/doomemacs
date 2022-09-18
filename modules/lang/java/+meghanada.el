@@ -1,12 +1,12 @@
 ;;; lang/java/+meghanada.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +meghanada)
+;;;###if (modulep! +meghanada)
 
 (use-package! meghanada
   :hook (java-mode-local-vars . meghanada-mode)
   :init
-  (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
-        meghanada-use-company (featurep! :completion company)
-        meghanada-use-flycheck (featurep! :checkers syntax)
+  (setq meghanada-server-install-dir (concat doom-data-dir "meghanada-server/")
+        meghanada-use-company (modulep! :completion company)
+        meghanada-use-flycheck (modulep! :checkers syntax)
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
 

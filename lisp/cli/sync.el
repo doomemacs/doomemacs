@@ -18,7 +18,7 @@
 ;;
 ;;; Commands
 
-(defalias! (:before (sync s)) (:before build))
+(defcli-alias! (:before (sync s)) (:before build))
 
 (defcli! ((sync s))
     ((noenvvar? ("-e") "Don't regenerate the envvar file")
@@ -45,14 +45,14 @@ OPTIONS:
     Defaults to the maximum number of threads (or 1, if your CPU's threadcount
     can't be determined)."
   :benchmark t
+  (when (doom-profiles-bootloadable-p)
+    (call! '(profiles sync "--reload")))
   (run-hooks 'doom-before-sync-hook)
   (add-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (print! (start "Synchronizing %S profile..." )
-          (if doom-profile
-              (car (split-string doom-profile "@"))
-            "default"))
+          (or (car doom-profile) "default"))
   (unwind-protect
       (print-group!
        (when (and (not noenvvar?)
@@ -63,14 +63,11 @@ OPTIONS:
        (when update?
          (doom-packages-update))
        (doom-packages-purge purge? 'builds-p purge? purge? purge?)
-       (run-hooks 'doom-after-sync-hook)
-       (when (doom-autoloads-reload)
-         (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect")))
+       (when (doom-profile-generate)
+         (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
+         (run-hooks 'doom-after-sync-hook))
        t)
     (remove-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)))
-
-;; DEPRECATED Remove when v3.0 is released
-(defobsolete! ((refresh re)) (sync) "v3.0.0")
 
 
 ;;

@@ -19,11 +19,11 @@
                 "gofmt"
               "goimports"))))
 
-  (if (featurep! +lsp)
+  (if (modulep! +lsp)
       (add-hook 'go-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'go-mode-hook #'go-eldoc-setup))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'go-mode-local-vars-hook #'tree-sitter! 'append))
 
   (map! :map go-mode-map
@@ -70,13 +70,13 @@
 
 
 (use-package! company-go
-  :when (featurep! :completion company)
-  :unless (featurep! +lsp)
+  :when (modulep! :completion company)
+  :unless (modulep! +lsp)
   :after go-mode
   :config
   (set-company-backend! 'go-mode 'company-go)
   (setq company-go-show-annotation t))
 
 (use-package! flycheck-golangci-lint
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :hook (go-mode . flycheck-golangci-lint-setup))

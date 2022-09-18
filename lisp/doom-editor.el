@@ -1,4 +1,6 @@
-;;; doom-editor.el -*- lexical-binding: t; -*-
+;;; doom-editor.el --- defaults for text editing in Doom -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-detect-indentation-excluded-modes
   '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
@@ -291,7 +293,7 @@ tell you about it. Very annoying. This prevents that."
 
 
 ;;;###package bookmark
-(setq bookmark-default-file (concat doom-etc-dir "bookmarks"))
+(setq bookmark-default-file (concat doom-data-dir "bookmarks"))
 
 
 (use-package! recentf
@@ -307,7 +309,7 @@ tell you about it. Very annoying. This prevents that."
   (defun doom--recentf-file-truename-fn (file)
     (if (or (not (file-remote-p file))
             (equal "sudo" (file-remote-p file 'method)))
-        (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
+        (abbreviate-file-name (file-truename (tramp-file-name-localname file)))
       file))
 
   ;; Anything in runtime folders
@@ -407,12 +409,10 @@ files, so this replace calls to `pp' with the much faster `prin1'."
 (use-package! server
   :when (display-graphic-p)
   :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
-  :custom (server-auth-dir (concat doom-emacs-dir "server/"))
   :defer 1
-  :init
+  :config
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
-  :config
   (unless (server-running-p)
     (server-start)))
 
@@ -561,7 +561,7 @@ files, so this replace calls to `pp' with the much faster `prin1'."
        (lambda (button)
          (helpful-variable (button-get button 'apropos-symbol))))))
 
-  (when EMACS29+
+  (when (> emacs-major-version 28)
     ;; REVIEW This should be reported upstream to Emacs.
     (defadvice! doom--find-function-search-for-symbol-save-excursion-a (fn &rest args)
       "Suppress cursor movement by `find-function-search-for-symbol'.
@@ -669,7 +669,7 @@ on."
   ;; Emacs 29 introduced faster long-line detection, so they can afford a much
   ;; larger `so-long-threshold' and its default `so-long-predicate'.
   (if (fboundp 'buffer-line-statistics)
-      (unless NATIVECOMP
+      (unless (featurep 'native-compile)
         (setq so-long-threshold 5000))
     ;; reduce false positives w/ larger threshold
     (setq so-long-threshold 400)

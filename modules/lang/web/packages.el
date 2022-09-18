@@ -7,7 +7,7 @@
 (package! pug-mode :pin "73f8c2f95eba695f701df20c8436f49abadebdc1")
 (package! slim-mode :pin "3636d18ab1c8b316eea71c4732eb44743e2ded87")
 (when (package! web-mode :pin "efa853e5cfff8e0bcacbda9d1c6696b33da91b03")
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (package! company-web :pin "863fb84b81ed283474e50330cd8d27b1ca0d74f1")))
 
 ;; +css.el
@@ -18,7 +18,7 @@
 (package! stylus-mode :pin "1ad7c51f3c6a6ae64550d9510c5e4e8470014375")
 (package! sws-mode :pin "1ad7c51f3c6a6ae64550d9510c5e4e8470014375")
 (package! rainbow-mode :pin "949166cc0146bc9fabf74ce70c1c4a097f4cffd4")
-(when (featurep! :completion ivy)
+(when (modulep! :completion ivy)
   (package! counsel-css :pin "8e9c0515fc952452eee786d8ebb43d48ea86c9f8"))
-(when (featurep! :completion helm)
+(when (modulep! :completion helm)
   (package! helm-css-scss :pin "48b996f73af1fef8d6e88a1c545d98f8c50b0cf3"))

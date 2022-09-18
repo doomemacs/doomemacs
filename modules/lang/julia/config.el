@@ -5,10 +5,10 @@
   :config
   (set-repl-handler! 'julia-mode #'+julia/open-repl)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
 
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook 'julia-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; Borrow matlab.el's fontification of math operators. From
@@ -54,7 +54,7 @@
   :config
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
 
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (defadvice! +julia--namespace-repl-buffer-to-workspace-a (&optional executable-key suffix)
       "Name for a Julia REPL inferior buffer. Uses workspace name for doom emacs"
       :override #'julia-repl--inferior-buffer-name
@@ -72,8 +72,8 @@
 
 
 (use-package! lsp-julia
-  :when (featurep! +lsp)
-  :unless (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :after lsp-mode
   :preface (setq lsp-julia-default-environment nil)
   :init
@@ -86,8 +86,8 @@
 
 
 (use-package! eglot-jl
-  :when (featurep! +lsp)
-  :when (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :when (modulep! :tools lsp +eglot)
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl

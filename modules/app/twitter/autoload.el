@@ -29,7 +29,7 @@ that works with the ui/popup module."
   (interactive "P")
   (condition-case _
       (progn
-        (if (and (not arg) (featurep! :ui workspaces))
+        (if (and (not arg) (modulep! :ui workspaces))
             (+workspace/new +twitter-workspace-name)
           (setq +twitter--old-wconf (current-window-configuration))
           (delete-other-windows)
@@ -52,7 +52,7 @@ that works with the ui/popup module."
   (when (eq major-mode 'twittering-mode)
     (twittering-kill-buffer)
     (cond ((one-window-p) (+twitter/quit-all))
-          ((featurep! :ui workspaces)
+          ((modulep! :ui workspaces)
            (+workspace/close-window-or-workspace))
           ((delete-window)))))
 
@@ -60,7 +60,7 @@ that works with the ui/popup module."
 (defun +twitter/quit-all ()
   "Close all open `twitter-mode' buffers and the associated workspace, if any."
   (interactive)
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (+workspace/delete +twitter-workspace-name))
   (when +twitter--old-wconf
     (set-window-configuration +twitter--old-wconf)

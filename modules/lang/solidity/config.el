@@ -9,7 +9,7 @@
   (set-company-backend! 'solidity-mode 'company-solidity)
 
   (use-package! solidity-flycheck  ; included with solidity-mode
-    :when (featurep! :checkers syntax)
+    :when (modulep! :checkers syntax)
     :config
     (setq flycheck-solidity-solc-addstd-contracts t)
     (when (funcall flycheck-executable-find solidity-solc-path)
@@ -18,5 +18,5 @@
       (add-to-list 'flycheck-checkers 'solium-checker nil #'eq)))
 
   (use-package! company-solidity
-    :when (featurep! :completion company)
+    :when (modulep! :completion company)
     :config (delq! 'company-solidity company-backends)))

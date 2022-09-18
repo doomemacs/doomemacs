@@ -51,7 +51,7 @@ This is controlled by `+format-on-save-enabled-modes'."
             ((not (require 'format-all nil t))))
       (format-all-mode +1)))
 
-(when (featurep! +onsave)
+(when (modulep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
 
 

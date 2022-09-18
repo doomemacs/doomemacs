@@ -18,6 +18,12 @@ according to `+tree-sitter-hl-enabled-modes'"
                       (if mode -1)))
       (tree-sitter-hl-mode mode))))
 
+;;;###autodef (fset 'set-tree-sitter-lang! #'ignore)
+(defun set-tree-sitter-lang! (mode lang)
+  "Associate LANG with major MODE."
+  (after! tree-sitter-langs
+    (add-to-list 'tree-sitter-major-mode-language-alist (cons mode lang))))
+
 ;; HACK: Remove and refactor when `use-package' eager macro expansion is solved or `use-package!' is removed
 ;;;###autoload
 (defun +tree-sitter-get-textobj (group &optional query)

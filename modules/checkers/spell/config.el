@@ -21,9 +21,9 @@
   ;;     if their binary is found.
   ;;   If one of the flags `+aspell', `+hunspell' or `+enchant' is given,
   ;;     only enable that spell checker.
-  (pcase (cond ((featurep! +aspell)   'aspell)
-               ((featurep! +hunspell) 'hunspell)
-               ((featurep! +enchant)  'enchant)
+  (pcase (cond ((modulep! +aspell)   'aspell)
+               ((modulep! +hunspell) 'hunspell)
+               ((modulep! +enchant)  'enchant)
                ((executable-find "aspell")    'aspell)
                ((executable-find "hunspell")  'hunspell)
                ((executable-find "enchant-2") 'enchant))
@@ -41,7 +41,7 @@
      (unless ispell-personal-dictionary
        (setq ispell-personal-dictionary
              (expand-file-name (concat "ispell/" ispell-dictionary ".pws")
-                               doom-etc-dir)))
+                               doom-data-dir)))
 
      (add-hook! 'text-mode-hook
        (defun +spell-remove-run-together-switch-for-aspell-h ()
@@ -66,7 +66,7 @@
 ;;
 ;;; Implementations
 
-(eval-if! (not (featurep! +flyspell))
+(eval-if! (not (modulep! +flyspell))
 
     (use-package! spell-fu
       :when (executable-find "aspell")
@@ -74,9 +74,9 @@
       :general ([remap ispell-word] #'+spell/correct)
       :preface
       (defvar +spell-correct-interface
-        (cond ((featurep! :completion ivy)
+        (cond ((modulep! :completion ivy)
                #'+spell-correct-ivy-fn)
-              ((featurep! :completion helm)
+              ((modulep! :completion helm)
                #'+spell-correct-helm-fn)
               (#'+spell-correct-generic-fn))
         "Function to use to display corrections.")
@@ -128,8 +128,8 @@
               font-lock-variable-name-face)))
         "Faces in certain major modes that spell-fu will not spellcheck.")
 
-      (setq spell-fu-directory (concat doom-etc-dir "spell-fu"))
-      (when (featurep! +everywhere)
+      (setq spell-fu-directory (concat doom-data-dir "spell-fu"))
+      (when (modulep! +everywhere)
         (add-hook! '(yaml-mode-hook
                      conf-mode-hook
                      prog-mode-hook)
@@ -184,7 +184,7 @@ directory first)."
                  git-commit-mode-hook)
                #'flyspell-mode)
 
-    (when (featurep! +everywhere)
+    (when (modulep! +everywhere)
       (add-hook! '(yaml-mode-hook
                    conf-mode-hook
                    prog-mode-hook)
@@ -228,11 +228,11 @@ e.g. proselint and langtool."
     :commands flyspell-correct-previous
     :general ([remap ispell-word] #'flyspell-correct-at-point)
     :config
-    (cond ((and (featurep! :completion helm)
+    (cond ((and (modulep! :completion helm)
                 (require 'flyspell-correct-helm nil t)))
-          ((and (featurep! :completion ivy)
+          ((and (modulep! :completion ivy)
                 (require 'flyspell-correct-ivy nil t)))
-          ((featurep! :completion vertico)) ; vertico doesn't need any extra configuration
+          ((modulep! :completion vertico)) ; vertico doesn't need any extra configuration
           ((require 'flyspell-correct-popup nil t) ; only use popup if no compatible completion UI is enabled
            (setq flyspell-popup-correct-delay 0.8)
            (define-key popup-menu-keymap [escape] #'keyboard-quit))))

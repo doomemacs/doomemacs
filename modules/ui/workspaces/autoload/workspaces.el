@@ -318,7 +318,7 @@ workspace, otherwise the new workspace is blank."
 end of the workspace list."
   (interactive
    (list (or current-prefix-arg
-             (if (featurep! :completion ivy)
+             (if (modulep! :completion ivy)
                  (ivy-read "Switch to workspace: "
                            (+workspace-list-names)
                            :caller #'+workspace/switch-to

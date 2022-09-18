@@ -29,7 +29,7 @@
 
 
 (use-package! company-lean
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after lean-mode
   :init
   (advice-add #'company-lean-hook :override #'ignore)

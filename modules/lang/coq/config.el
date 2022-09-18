@@ -71,7 +71,7 @@
 
   (setq company-coq-disabled-features '(hello company-defaults spinner))
 
-  (if (featurep! :completion company)
+  (if (modulep! :completion company)
       (define-key coq-mode-map [remap company-complete-common]
         #'company-indent-or-complete-common)
     ;; `company-coq''s company defaults impose idle-completion on folks, so

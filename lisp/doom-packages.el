@@ -1,7 +1,8 @@
 ;;; lisp/doom-packages.el -*- lexical-binding: t; -*-
-
+;;; Commentary:
+;;
 ;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
-;; to create a declarative, lazy-loaded and (nominally) reproducible package
+;; to create a declarative, lazy-loaded, and (nominally) reproducible package
 ;; management system. We use `straight' over `package' because the latter is
 ;; tempermental. ELPA sources suffer downtime occasionally and often fail to
 ;; build packages when GNU Tar is unavailable (e.g. MacOS users start with BSD
@@ -17,21 +18,23 @@
 ;; bin/doom script. Find out more about it by running 'doom help' (I highly
 ;; recommend you add the script to your PATH). Here are some highlights:
 ;;
-;; + `bin/doom install`: a wizard that guides you through setting up Doom and
-;;   your private config for the first time.
-;; + `bin/doom sync`: your go-to command for making sure Doom is in optimal
+;; - `doom install`: a wizard that guides you through setting up Doom and your
+;;   private config for the first time.
+;; - `doom sync`: your go-to command for making sure Doom is in optimal
 ;;   condition. It ensures all unneeded packages are removed, all needed ones
 ;;   are installed, and all metadata associated with them is generated.
-;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest
+;; - `doom upgrade`: upgrades Doom Emacs and your packages to the latest
 ;;   versions. There's also 'bin/doom sync -u' for updating only your packages.
 ;;
 ;; How this works is: the system reads packages.el files located in each
-;; activated module, your private directory (`doom-private-dir'), and one in
+;; activated module, your private config (`doom-user-dir'), and one in
 ;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
-;; plugins to install and where from.
+;; packages to install and where from.
 ;;
-;; All that said, you can still use package.el's commands, but 'bin/doom sync'
-;; will purge ELPA packages.
+;; All that said, you can still use package.el's commands, but 'doom sync' will
+;; purge ELPA packages.
+;;
+;;; Code:
 
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
@@ -97,6 +100,16 @@ uses a straight or package.el command directly).")
       straight-vc-git-default-clone-depth '(1 single-branch))
 
 (with-eval-after-load 'straight
+  ;; HACK: Doom relies on deferred compilation, which spares the user 20-50min
+  ;;   of compilation at install time, but subjects them to ~50% CPU activity
+  ;;   when starting Emacs for the first time. To complete this, straight.el
+  ;;   needs to be told not to do native-compilation, but it won't obey
+  ;;   `straight-disable-native-compile'.
+  ;;
+  ;;   It *will* obey `straight--native-comp-available', though. Trouble is:
+  ;;   it's a constant; it resets itself when straight is loaded, so it must be
+  ;;   changed afterwards.
+  (setq straight--native-comp-available nil)
   ;; `let-alist' is built into Emacs 26 and onwards
   (add-to-list 'straight-built-in-pseudo-packages 'let-alist))
 
@@ -106,22 +119,31 @@ uses a straight or package.el command directly).")
   (append (apply fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))
 
+;; HACK: This fixes an issue present in recent builds of Emacs 29. See
+;;   emacs-mirror/emacs@0d383b592c2f. Straight.el uses `loaddefs-generate' if it
+;;   is available, which activates `emacs-lisp-mode' to read autoloads files,
+;;   but does so without suppressing its hooks. Some packages (like overseer)
+;;   add hooks to `emacs-lisp-mode-hook' in their autoloads, and once triggered,
+;;   they will try to load their dependencies (like dash or pkg-info), causing
+;;   file errors.
+;; REVIEW: Report this upstream.
+(defadvice! doom--fix-loaddefs-generate--parse-file-a (fn &rest args)
+  :around #'loaddefs-generate--parse-file
+  (let (emacs-lisp-mode-hook)
+    (apply fn args)))
+
 
 ;;
 ;;; native-comp
 
-(when NATIVECOMP
+(when (featurep 'native-compile)
   (after! comp
     ;; HACK Disable native-compilation for some troublesome packages
     (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
-          (let ((local-dir-re (concat "\\`" (regexp-quote doom-local-dir))))
-            (list (concat local-dir-re ".*/emacs-jupyter.*\\.el\\'")
-                  (concat local-dir-re ".*/evil-collection-vterm\\.el\\'")
-                  (concat local-dir-re ".*/with-editor\\.el\\'")))))
-
-  ;; Remove unwanted $EMACSDIR/eln-cache/ directory.
-  (cl-callf2 delete (file-name-concat doom-emacs-dir "eln-cache/")
-             native-comp-eln-load-path))
+          (list "/emacs-jupyter.*\\.el\\'"
+                "/evil-collection-vterm\\.el\\'"
+                "/vterm\\.el\\'"
+                "/with-editor\\.el\\'"))))
 
 
 ;;
@@ -192,6 +214,10 @@ uses a straight or package.el command directly).")
             '((org-elpa :local-repo nil)
               (melpa              :type git :host github
                                   :repo "melpa/melpa"
+                                  :build nil)
+              (nongnu-elpa        :type git
+                                  :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git"
+                                  :local-repo "nongnu-elpa"
                                   :build nil)
               (gnu-elpa-mirror    :type git :host github
                                   :repo "emacs-straight/gnu-elpa-mirror"
@@ -363,7 +389,7 @@ non-nil."
 (defun doom-package-in-module-p (package category &optional module)
   "Return non-nil if PACKAGE was installed by the user's private config."
   (when-let (modules (doom-package-get package :modules))
-    (or (and (not module) (assq :private modules))
+    (or (and (not module) (assq :user modules))
         (member (cons category module) modules))))
 
 (defun doom-package-backend (package)
@@ -422,8 +448,7 @@ ones."
     (doom--read-packages
      (doom-path doom-core-dir packages-file) all-p 'noerror)
     (unless core-only-p
-      (let ((private-packages (doom-path doom-private-dir packages-file))
-            (doom-modules (doom-module-list)))
+      (let ((private-packages (doom-path doom-user-dir packages-file)))
         (if all-p
             (mapc #'doom--read-packages
                   (doom-files-in doom-modules-dir
@@ -435,9 +460,10 @@ ones."
           ;; overwritten.
           (let (doom-packages)
             (doom--read-packages private-packages nil 'noerror))
-          (cl-loop for key being the hash-keys of doom-modules
-                   for path = (doom-module-path (car key) (cdr key) packages-file)
-                   for doom--current-module = key
+          (cl-loop for (cat . mod) in (doom-module-list)
+                   for path = (doom-module-expand-path cat mod packages-file)
+                   for doom--current-module = (cons cat mod)
+                   for doom--current-flags = (doom-module-get cat mod :flags)
                    do (doom--read-packages path nil 'noerror)))
         (doom--read-packages private-packages all-p 'noerror)))
     (cl-remove-if-not
@@ -526,16 +552,17 @@ elsewhere."
     (cl-callf map-delete plist :built-in)
     (cl-callf plist-put plist :ignore built-in))
   `(let* ((name ',name)
-          (plist (cdr (assq name doom-packages))))
+          (plist (cdr (assq name doom-packages)))
+          (dir (dir!)))
      ;; Record what module this declaration was found in
      (let ((module-list (plist-get plist :modules))
-           (module ',(doom-module-from-path)))
+           (module (doom-module-from-path dir)))
        (unless (member module module-list)
          (cl-callf plist-put plist :modules
                    (append module-list
                            (list module)
-                           (when (file-in-directory-p ,(dir!) doom-private-dir)
-                             '((:private . modules)))
+                           (when (file-in-directory-p dir doom-user-dir)
+                             '((:user . modules)))
                            nil))))
      ;; Merge given plist with pre-existing one
      (cl-loop for (key value) on (list ,@plist) by 'cddr
@@ -553,7 +580,7 @@ elsewhere."
              (when local-repo
                (cl-callf plist-put plist :recipe
                          (plist-put recipe :local-repo
-                                    (let ((local-path (expand-file-name local-repo ,(dir!))))
+                                    (let ((local-path (expand-file-name local-repo dir)))
                                       (if (file-directory-p local-path)
                                           local-path
                                         local-repo)))))))

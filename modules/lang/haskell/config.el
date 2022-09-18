@@ -10,7 +10,7 @@
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t
-        haskell-process-show-overlays (not (featurep! :checkers syntax))) ; redundant with flycheck
+        haskell-process-show-overlays (not (modulep! :checkers syntax))) ; redundant with flycheck
 
   (set-lookup-handlers! 'haskell-mode
     :definition #'haskell-mode-jump-to-def-or-tag)
@@ -32,7 +32,7 @@
   (map! :map haskell-mode-map
         :n "o" #'+haskell/evil-open-below
         :n "O" #'+haskell/evil-open-above
-        (:when (featurep! :tools lookup)
+        (:when (modulep! :tools lookup)
          [remap haskell-mode-jump-to-def-or-tag] #'+lookup/definition))
 
   (map! :localleader
@@ -44,7 +44,7 @@
 
 
 (use-package! lsp-haskell
-  :when (featurep! +lsp)
+  :when (modulep! +lsp)
   :after lsp-mode
   :preface (add-hook 'haskell-mode-local-vars-hook #'lsp! 'append)
   :config

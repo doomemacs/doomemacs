@@ -1,5 +1,5 @@
 ;;; lang/java/+eclim.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +eclim)
+;;;###if (modulep! +eclim)
 
 ;; NOTE This submodule is incomplete
 
@@ -44,7 +44,7 @@
 
 
 (use-package! company-emacs-eclim
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after java-mode
   :config
   (set-company-backend! 'java-mode '(company-emacs-eclim)))

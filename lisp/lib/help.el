@@ -342,8 +342,7 @@ without needing to check if they are available."
       (describe-function fn))))
 
 (defun doom--help-modules-list ()
-  (cl-loop for path in (cdr (doom-module-load-path 'all))
-           for (cat . mod) = (doom-module-from-path path)
+  (cl-loop for (cat . mod) in (doom-module-list 'all)
            for readme-path = (or (doom-module-locate-path cat mod "README.org")
                                  (doom-module-locate-path cat mod))
            for format = (format "%s %s" cat mod)
@@ -361,11 +360,12 @@ without needing to check if they are available."
              (unless (eq (char-after) ?\()
                (backward-char))
              (let ((sexp (sexp-at-point)))
-               (when (memq (car-safe sexp) '(featurep! require!))
+               ;; DEPRECATED `featurep!'
+               (when (memq (car-safe sexp) '(featurep! modulep! require!))
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((when buffer-file-name
            (when-let (mod (doom-module-from-path buffer-file-name))
-             (unless (memq (car mod) '(:core :private))
+             (unless (memq (car mod) '(:core :user))
                (format "%s %s" (car mod) (cdr mod))))))
         ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
            (format "%s %s"
@@ -382,7 +382,7 @@ If VISIT-DIR is non-nil, visit the module's directory rather than its
 documentation.
 
 Automatically selects a) the module at point (in private init files), b) the
-module derived from a `featurep!' or `require!' call, c) the module that the
+module derived from a `modulep!' or `require!' call, c) the module that the
 current file is in, or d) the module associated with the current major mode (see
 `doom--help-major-mode-module-alist')."
   (interactive
@@ -608,7 +608,7 @@ If prefix arg is present, refresh the cache."
           (dolist (m modules)
             (let* ((module-path (pcase (car m)
                                   (:core doom-core-dir)
-                                  (:private doom-private-dir)
+                                  (:user doom-user-dir)
                                   (category
                                    (doom-module-locate-path category
                                                             (cdr m)))))

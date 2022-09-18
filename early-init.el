@@ -1,170 +1,120 @@
-;;; early-init.el -*- lexical-binding: t; -*-
+;;; early-init.el --- Doom's universal bootstrapper -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el;
-;; before Emacs initializes package.el and its UI; and before site files are
-;; loaded. This is the best time to tweak Emacs (though any UI work will have to
-;; be deferred).
+;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el, and
+;; before Emacs initializes its UI or package.el, and before site files are
+;; loaded. This is good place for startup optimizating, because only here can
+;; you *prevent* things from loading, rather than turn them off after-the-fact.
+;; As such, Doom does all its initializing here.
 ;;
-;; This file is responsible for bootstrapping an interactive session, and is
-;; where all our dirtiest (and config-agnostic) startup hacks should live. It's
-;; also home to Doom's bootloader, which lets you choose what Emacs config to
-;; load with one of two switches:
-;; - '--init-directory DIR' (backported from Emacs 29)
-;; - Or Doom's profile system with '--profile NAME' (you declare configs in
-;;   $EMACSDIR/profiles.el or implicitly as directories in $EMACSDIR/profiles/).
+;; This file is Doom's "universal bootstrapper" for both interactive and
+;; non-interactive sessions. It's also the heart of its profile bootloader,
+;; which allows you to switch between Emacs configs on demand using
+;; `--init-directory DIR' (which was backported from Emacs 29) or `--profile
+;; NAME` (more about profiles at `https://docs.doomemacs.org/-/developers' or
+;; docs/developers.org).
 ;;
-;; You should *never* load this file in non-interactive sessions (e.g. batch
-;; scripts). Load `doom-start' or use 'doom run' instead!
+;; In summary, this file is responsible for:
+;; - Setting up some universal startup optimizations.
+;; - Determining where `user-emacs-directory' is from one of:
+;;   - `--init-directory DIR' (backported from 29)
+;;   - `--profile PROFILENAME'
+;; - Do one of the following:
+;;   - Load `doom' and one of `doom-start' or `doom-cli'.
+;;   - Or (if the user is trying to load a non-Doom config) load
+;;     `user-emacs-directory'/early-init.el.
 ;;
 ;;; Code:
 
-;; Garbage collection is a big contributor to startup times. This fends it off,
-;; then is reset later by enabling `gcmh-mode'. Not resetting it will cause
-;; stuttering/freezes.
+;; PERF: Garbage collection is a big contributor to startup times. This fends it
+;;   off, but will be reset later by `gcmh-mode'. Not resetting it later will
+;;   cause stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; Prioritize old byte-compiled source files over newer sources. It saves us a
-;; little IO time to skip all the mtime checks on each lookup.
-(setq load-prefer-newer nil)
+;; PERF: Don't use precious startup time checking mtime on elisp bytecode.
+;;   Ensuring correctness is 'doom sync's job, not the interactive session's.
+;;   Still, stale byte-code will cause *heavy* losses in startup efficiency.
+(setq load-prefer-newer noninteractive)
 
-(unless (or (daemonp)
-            init-file-debug)
-  (let ((old-file-name-handler-alist file-name-handler-alist))
-    ;; `file-name-handler-alist' is consulted on each `require', `load' and
-    ;; various path/io functions. You get a minor speed up by unsetting this.
-    ;; Some warning, however: this could cause problems on builds of Emacs where
-    ;; its site lisp files aren't byte-compiled and we're forced to load the
-    ;; *.el.gz files (e.g. on Alpine).
-    (setq-default file-name-handler-alist nil)
-    ;; ...but restore `file-name-handler-alist' later, because it is needed for
-    ;; handling encrypted or compressed files, among other things.
-    (defun doom-reset-file-handler-alist-h ()
-      (setq file-name-handler-alist
-            ;; Merge instead of overwrite because there may have bene changes to
-            ;; `file-name-handler-alist' since startup we want to preserve.
-            (delete-dups (append file-name-handler-alist
-                                 old-file-name-handler-alist))))
-    (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101))
-
-  ;; Premature redisplays can substantially affect startup times and produce
-  ;; ugly flashes of unstyled Emacs.
-  (setq-default inhibit-redisplay t
-                inhibit-message t)
-  (add-hook 'window-setup-hook
-            (lambda ()
-              (setq-default inhibit-redisplay nil
-                            inhibit-message nil)
-              (redisplay)))
-
-  ;; Site files tend to use `load-file', which emits "Loading X..." messages in
-  ;; the echo area, which in turn triggers a redisplay. Redisplays can have a
-  ;; substantial effect on startup times and in this case happens so early that
-  ;; Emacs may flash white while starting up.
-  (define-advice load-file (:override (file) silence)
-    (load file nil :nomessage))
-
-  ;; Undo our `load-file' advice above, to limit the scope of any edge cases it
-  ;; may introduce down the road.
-  (define-advice startup--load-user-init-file (:before (&rest _) init-doom)
-    (advice-remove #'load-file #'load-file@silence)))
-
-
-;;
-;;; Detect `user-emacs-directory'
-
-;; Prevent recursive profile processing, in case you're loading a Doom profile.
-(unless (boundp 'doom-version)
-  ;; Not using `command-switch-alist' to process --profile and --init-directory
-  ;; was intentional. `command-switch-alist' is processed too late at startup to
-  ;; change `user-emacs-directory' in time.
-
-  ;; DEPRECATED Backported from 29. Remove this when 27/28 support is removed.
-  (let ((initdir (or (cadr (member "--init-directory" command-line-args))
-                     (getenv-internal "EMACSDIR"))))
-    (when initdir
-      ;; Discard the switch to prevent "invalid option" errors later.
-      (add-to-list 'command-switch-alist (cons "--init-directory" (lambda (_) (pop argv))))
-      (setq user-emacs-directory initdir)))
-
-  (let ((profile (or (cadr (member "--profile" command-line-args))
-                     (getenv-internal "DOOMPROFILE"))))
-    (when profile
-      ;; Discard the switch to prevent "invalid option" errors later.
-      (add-to-list 'command-switch-alist (cons "--profile" (lambda (_) (pop argv))))
-      ;; While processing the requested profile, Doom loosely expects
-      ;; `user-emacs-directory' to be changed. If it doesn't, then you're using
-      ;; profiles.el as a glorified, runtime dir-locals.el (which is fine, if
-      ;; intended).
-      (catch 'found
-        (let ((profiles-file (expand-file-name "profiles.el" user-emacs-directory)))
-          (when (file-exists-p profiles-file)
-            (with-temp-buffer
-              (let ((coding-system-for-read 'utf-8-auto))
-                (insert-file-contents profiles-file))
-              (condition-case-unless-debug e
-                  (let ((profile-data (cdr (assq (intern profile) (read (current-buffer))))))
-                    (dolist (var profile-data (if profile-data (throw 'found t)))
-                      (if (eq (car var) 'env)
-                          (dolist (env (cdr var)) (setenv (car env) (cdr env)))
-                        (set (car var) (cdr var)))))
-                (error (error "Failed to parse profiles.el: %s" (error-message-string e))))))
-          ;; If the requested profile isn't in profiles.el, then see if
-          ;; $EMACSDIR/profiles/$DOOMPROFILE exists. These are implicit
-          ;; profiles, where `emacs --profile foo` will be equivalent to `emacs
-          ;; --init-directory $EMACSDIR/profile/foo', if that directory exists.
-          (let ((profile-dir
-                 (expand-file-name
-                  profile (or (getenv-internal "DOOMPROFILESDIR")
-                              (expand-file-name "profiles/" user-emacs-directory)))))
-            (when (file-directory-p profile-dir)
-              (setq user-emacs-directory profile-dir)
-              (throw 'found t)))
-
-          (user-error "No %S profile found" profile)))
-
-      (when init-file-debug
-        (message "Selected profile: %s" profile))
-      ;; Ensure the selected profile persists through the session
-      (setenv "DOOMPROFILE" profile))))
+;; UX: Respect DEBUG envvar as an alternative to --debug-init, and to make are
+;;   startup sufficiently verbose from this point on.
+(when (getenv-internal "DEBUG")
+  (setq init-file-debug t
+        debug-on-error t))
 
 
 ;;
 ;;; Bootstrap
 
-(let (init-file)
-  ;; Load the heart of Doom Emacs
-  (if (require 'doom (expand-file-name "lisp/doom" user-emacs-directory) t)
-      ;; ...and prepare for an interactive session.
-      (setq init-file (expand-file-name "doom-start" doom-core-dir))
-    ;; ...but if that fails, then this is likely not a Doom config.
-    (setq early-init-file (expand-file-name "early-init" user-emacs-directory))
-    (load early-init-file t (not init-file-debug)))
+(or
+ ;; PERF: `file-name-handler-alist' is consulted often. Unsetting it offers a
+ ;;   notable saving in startup time. This let-binding is just a stopgap though,
+ ;;   a more complete version of this optimization can be found in lisp/doom.el.
+ (let (file-name-handler-alist)
+   (let* (;; FIX: Unset `command-line-args' in noninteractive sessions, to
+          ;;   ensure upstream switches aren't misinterpreted.
+          (command-line-args (unless noninteractive command-line-args))
+          ;; I avoid using `command-switch-alist' to process --profile (and
+          ;; --init-directory) because it is processed too late to change
+          ;; `user-emacs-directory' in time.
+          (profile (or (cadr (member "--profile" command-line-args))
+                       (getenv-internal "DOOMPROFILE"))))
+     (if (null profile)
+         ;; REVIEW: Backported from Emacs 29. Remove when 28 support is dropped.
+         (let ((init-dir (or (cadr (member "--init-directory" command-line-args))
+                             (getenv-internal "EMACSDIR"))))
+           (if (null init-dir)
+               ;; FIX: If we've been loaded directly (via 'emacs -batch -l
+               ;;   early-init.el') or by a doomscript (like bin/doom), and Doom
+               ;;   is in a non-standard location (and/or Chemacs is used), then
+               ;;   `user-emacs-directory' will be wrong.
+               (when noninteractive
+                 (setq user-emacs-directory
+                       (file-name-directory (file-truename load-file-name))))
+             ;; FIX: To prevent "invalid option" errors later.
+             (push (cons "--init-directory" (lambda (_) (pop argv))) command-switch-alist)
+             (setq user-emacs-directory (expand-file-name init-dir))))
+       ;; FIX: Discard the switch to prevent "invalid option" errors later.
+       (push (cons "--profile" (lambda (_) (pop argv))) command-switch-alist)
+       ;; Running 'doom sync' or 'doom profile sync' (re)generates a light
+       ;; profile loader in $EMACSDIR/profiles/load.el (or
+       ;; $DOOMPROFILELOADFILE), after reading `doom-profile-load-path'. This
+       ;; loader requires `$DOOMPROFILE' be set to function.
+       (setenv "DOOMPROFILE" profile)
+       (or (load (expand-file-name
+                  (format (let ((lfile (getenv-internal "DOOMPROFILELOADFILE")))
+                            (if lfile
+                                (concat (string-remove-suffix ".el" lfile)
+                                        ".%d.elc")
+                              "profiles/load.%d.elc"))
+                          emacs-major-version)
+                  user-emacs-directory)
+                 'noerror (not init-file-debug) 'nosuffix)
+           (user-error "Profiles not initialized yet; run 'doom sync' first"))))
 
-  ;; We hijack Emacs' initfile resolver to inject our own entry point. Why do
-  ;; this? Because:
-  ;;
-  ;; - It spares Emacs the effort of looking for/loading useless initfiles, like
-  ;;   ~/.emacs and ~/_emacs. And skips ~/.emacs.d/init.el, which won't exist if
-  ;;   you're using Doom (fyi: doom hackers or chemacs users could then use
-  ;;   $EMACSDIR as their $DOOMDIR, if they wanted).
-  ;; - Later, 'doom sync' will dynamically generate its bootstrap file, which
-  ;;   will be important for Doom's profile system later. Until then, we'll use
-  ;;   lisp/doom-start.el.
-  ;; - A "fallback" initfile can be trivially specified, in case the
-  ;;   bootstrapper is missing (if the user hasn't run 'doom sync' or is a
-  ;;   first-timer). This is an opportunity to display a "safe mode" environment
-  ;;   that's less intimidating and more helpful than the broken state errors
-  ;;   would've left Emacs in, otherwise.
-  ;; - A generated config allows for a file IO optimized startup.
-  (define-advice startup--load-user-init-file (:filter-args (args) init-doom)
-    "Initialize Doom Emacs in an interactive session."
-    (list (lambda ()
-            (or init-file
-                (expand-file-name "init.el" user-emacs-directory)))
-          (when (boundp 'doom-profiles-dir)
-            (lambda ()
-              (expand-file-name "safe-mode@static/init.el" doom-profiles-dir)))
-          (caddr args))))
+   ;; PERF: When `load'ing or `require'ing files, each permutation of
+   ;;   `load-suffixes' and `load-file-rep-suffixes' (then `load-suffixes' +
+   ;;   `load-file-rep-suffixes') is used to locate the file.  Each permutation
+   ;;   is a file op, which is normally very fast, but they can add up over the
+   ;;   hundreds/thousands of files Emacs needs to load.
+   ;;
+   ;;   To reduce that burden -- and since Doom doesn't load any dynamic modules
+   ;;   -- I remove `.so' from `load-suffixes' and pass the `must-suffix' arg to
+   ;;   `load'. See the docs of `load' for details.
+   (if (let ((load-suffixes '(".elc" ".el")))
+         ;; Load the heart of Doom Emacs.
+         (load (expand-file-name "lisp/doom" user-emacs-directory)
+               'noerror (not init-file-debug) nil 'must-suffix))
+       ;; ...and prepare for the rest of the session.
+       (doom-require (if noninteractive 'doom-cli 'doom-start))
+     ;; Failing that, assume we're loading a non-Doom config and prepare.
+     (setq user-init-file (expand-file-name "early-init" user-emacs-directory)
+           ;; I make no assumptions about the config we're about to load, so
+           ;; to limit side-effects, undo any leftover optimizations:
+           load-prefer-newer t)
+     nil))
+
+ ;; Then continue on to the config/profile we want to load.
+ (load early-init-file 'noerror (not init-file-debug) nil 'must-suffix))
 
 ;;; early-init.el ends here

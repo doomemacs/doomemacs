@@ -63,9 +63,9 @@
           (setq init-file-debug t
                 doom-emacs-dir ,doom-emacs-dir
                 doom-cache-dir ,(expand-file-name "cache/" doom-sandbox-dir)
-                doom-etc-dir   ,(expand-file-name "etc/" doom-sandbox-dir))
+                doom-data-dir  ,(expand-file-name "data/" doom-sandbox-dir))
           (defun doom--write-to-etc-dir-a (fn &rest args)
-            (let ((user-emacs-directory doom-etc-dir))
+            (let ((user-emacs-directory doom-data-dir))
               (apply fn args)))
           (advice-add #'locate-user-emacs-file :around #'doom--write-to-etc-dir-a)
           ;; emacs essential variables
@@ -109,9 +109,12 @@
                              :path (doom-module-locate-path (car key) (cdr key))))
                           doom-modules)
                  (--run--)
+                 (doom-run-hooks 'doom-before-modules-init-hook)
                  (maphash (doom-module-loader doom-module-init-file) doom-modules)
+                 (doom-run-hooks 'doom-after-modules-init-hook)
+                 (doom-run-hooks 'doom-before-modules-config-hook)
                  (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                 (doom-run-hooks 'doom-init-modules-hook)))
+                 (doom-run-hooks 'doom-after-modules-config-hook)))
              (`vanilla-doom  ; only Doom core
               `(progn
                  (load-file ,(expand-file-name "doom.el" doom-core-dir))

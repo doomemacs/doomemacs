@@ -17,5 +17,5 @@
 (package! clojure-mode :pin "b6f41d74904daa9312648f3a7bea7a72fd8e140b")
 (package! clj-refactor :pin "f368c56c83843396b160440f472a661a3b639862")
 (package! cider :pin "b9e1cc26e2afda003a4b6c1f2a26e04f1c45f3d0")
-(when (featurep! :checkers syntax)
+(when (modulep! :checkers syntax)
   (package! flycheck-clj-kondo :pin "ff7bed2315755cfe02ef471edf522e27b78cd5ca"))

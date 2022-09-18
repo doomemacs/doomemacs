@@ -4,7 +4,7 @@
   :commands twit
   :config
   (setq twittering-private-info-file
-        (expand-file-name "twittering-mode.gpg" doom-etc-dir)
+        (expand-file-name "twittering-mode.gpg" doom-data-dir)
         twittering-use-master-password t
         twittering-request-confirmation-on-posting t
         ;; twittering-icon-mode t
@@ -35,7 +35,7 @@
     :group 'twittering-mode)
 
   (add-hook 'doom-real-buffer-functions #'+twitter-buffer-p)
-  (when (featurep! :ui popup)
+  (when (modulep! :ui popup)
     (setq twittering-pop-to-buffer-function #'+twitter-display-buffer-fn))
 
   ;; Custom header-line for twitter buffers
@@ -54,7 +54,7 @@
     [remap twittering-kill-buffer] #'+twitter/quit
     [remap delete-window]          #'+twitter/quit
     [remap +workspace/close-window-or-workspace] #'+twitter/quit)
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (define-key! twittering-mode-map
       [remap evil-window-delete] #'+twitter/quit
       "f"    #'twittering-favorite

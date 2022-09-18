@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/dragndrop.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +dragndrop)
+;;;###if (modulep! +dragndrop)
 
 (use-package! org-download
   :commands

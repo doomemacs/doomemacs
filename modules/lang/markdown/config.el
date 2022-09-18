@@ -68,7 +68,7 @@ capture, the end position, and the output buffer.")
                  :unless '(:add sp-point-before-word-p sp-point-before-same-p))
 
   ;; Highly rust blocks correctly
-  (when (featurep! :lang rust)
+  (when (modulep! :lang rust)
     (add-to-list 'markdown-code-lang-modes '("rust" . rustic-mode)))
 
   ;; Don't trigger autofill in code blocks (see `auto-fill-mode')
@@ -89,7 +89,7 @@ capture, the end position, and the output buffer.")
         "o" #'markdown-open
         "p" #'markdown-preview
         "e" #'markdown-export
-        (:when (featurep! +grip)
+        (:when (modulep! +grip)
          "p" #'grip-mode)
         (:prefix ("i" . "insert")
          :desc "Table Of Content"  "T" #'markdown-toc-generate-toc
@@ -129,7 +129,7 @@ capture, the end position, and the output buffer.")
 
 
 (use-package! evil-markdown
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
   :config
   (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)

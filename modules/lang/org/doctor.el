@@ -1,19 +1,19 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/org/doctor.el
 
-(when (featurep! +gnuplot)
+(when (modulep! +gnuplot)
   (unless (executable-find "gnuplot")
     (warn! "Couldn't find gnuplot. org-plot/gnuplot will not work")))
 
-(when (featurep! +roam)
+(when (modulep! +roam)
   (unless (executable-find "sqlite3")
     (warn! "Couldn't find the sqlite3 executable. org-roam will not work.")))
-(when (or (featurep! +roam)
-          (featurep! +roam2))
+(when (or (modulep! +roam)
+          (modulep! +roam2))
   (unless (executable-find "dot")
     (warn! "Couldn't find the dot executable (from graphviz). org-roam will not be able to generate graph visualizations.")))
 
-(when (featurep! +dragndrop)
+(when (modulep! +dragndrop)
   (when IS-MAC
     (unless (executable-find "pngpaste")
       (warn! "Couldn't find the pngpaste executable. org-download-clipboard will not work.")))

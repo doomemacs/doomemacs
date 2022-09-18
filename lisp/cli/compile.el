@@ -17,17 +17,17 @@
   "Byte-compiles your config or selected modules.
 
   compile [TARGETS...]
-  compile :core :private lang/python
+  compile :core :user lang/python
   compile feature lang
 
-Accepts :core and :private as special arguments, which target Doom's core files
+Accepts :core and :user as special arguments, which target Doom's core files
 and your private config files, respectively. To recompile your packages, use
 'doom build' instead."
   (doom-cli-compile
    (if (or core-p private-p)
        (append (if core-p    (doom-glob doom-emacs-dir "init.el"))
                (if core-p    (list doom-core-dir))
-               (if private-p (list doom-private-dir)))
+               (if private-p (list doom-user-dir)))
      (or (y-or-n-p
           (concat "WARNING: Changes made to your config after compiling it won't take effect until\n"
                   "this command is rerun or you run 'doom clean'! It will also make error backtraces\n"
@@ -40,8 +40,8 @@ and your private config files, respectively. To recompile your packages, use
              (seq-filter
               ;; Only compile Doom's modules
               (doom-rpartial #'file-in-directory-p doom-emacs-dir)
-              ;; Omit `doom-private-dir', which is always first
-              (cdr (doom-module-load-path)))))
+              ;; Omit `doom-user-dir', which is always first
+              (doom-module-load-path))))
    recompile-p
    verbose-p))
 
@@ -94,11 +94,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (doom-log "Reloading Doom in preparation for byte-compilation")
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
-      (let ((load-prefer-newer t)
-            (noninteractive t))
-        (require 'doom-start)
-        (quiet! (doom-initialize-packages))
-        (quiet! (doom-initialize-modules))))
+      (let ((load-prefer-newer t))
+        (require 'doom-start)))
 
     (if (null targets)
         (print! (item "No targets to %scompile" (if recompile-p "re" "")))
@@ -200,7 +197,7 @@ module. This does not include your byte-compiled, third party packages.'"
             with esc = (if init-file-debug "" "\033[1A")
             for path
             in (append (doom-glob doom-emacs-dir "*.elc")
-                       (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
+                       (doom-files-in doom-user-dir :match "\\.elc$" :depth 1)
                        (doom-files-in doom-core-dir :match "\\.elc$")
                        (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
             if (file-exists-p path)

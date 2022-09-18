@@ -40,7 +40,7 @@
   :modes '(php-mode web-mode css-mode haml-mode pug-mode)
   :files (or "wp-config.php" "wp-config-sample.php"))
 
-(when (featurep! :lang javascript)
+(when (modulep! :lang javascript)
   (def-project-mode! +web-angularjs-mode
     :modes '(+javascript-npm-mode)
     :when (+javascript-npm-dep-p '(angular @angular/core))

@@ -8,11 +8,11 @@
 ;;   is restored.
 
 (defvar +eshell-config-dir
-  (expand-file-name "eshell/" doom-private-dir)
+  (expand-file-name "eshell/" doom-user-dir)
   "Where to store eshell configuration files, as opposed to
 `eshell-directory-name', which is where Doom will store temporary/data files.")
 
-(defvar eshell-directory-name (concat doom-etc-dir "eshell")
+(defvar eshell-directory-name (concat doom-data-dir "eshell")
   "Where to store temporary/data files, as opposed to `eshell-config-dir',
 which is where Doom will store eshell configuration files.")
 
@@ -86,7 +86,7 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
   ;; Persp-mode/workspaces integration
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (add-hook 'persp-activated-functions #'+eshell-switch-workspace-fn)
     (add-hook 'persp-before-switch-functions #'+eshell-save-workspace-fn))
 

@@ -5,7 +5,7 @@
 ;; command is passed with -?, --help, or --version. They can also be aliased to
 ;; a sub-command to make more of its capabilities accessible to users, with:
 ;;
-;;    (defalias! (myscript (help h)) (:help))
+;;    (defcli-alias! (myscript (help h)) (:help))
 ;;
 ;; You can define your own command-specific help handlers, e.g.
 ;;
@@ -67,8 +67,7 @@ OPTIONS:
                (signal 'doom-cli-command-not-found-error command)
              (doom-cli-help--print cli context manpage? localonly?)
              (exit! :pager?)))
-          (t
-           (dolist (section sections)
+          ((dolist (section sections)
              (unless (equal section (car sections)) (terpri))
              (pcase section
                ("--synopsis"
@@ -239,7 +238,7 @@ OPTIONS:
           (when (and contents (not (string-blank-p contents)))
             (when label
               (print! (bold "%s%s") label (if manpage? "" ":")))
-            (print-group-if! label (printsection contents))))
+            (print-group! :if label (printsection contents))))
         (pcase-dolist (`(,label . ,contents) .sections)
           (when (and contents (not (assoc label alist)))
             (print! (bold "%s:") label)
@@ -307,7 +306,8 @@ OPTIONS:
 (cl-defun doom-cli-help--render-commands (commands &key prefix grouped? docs? (inline? t))
   (with-temp-buffer
     (let* ((doom-print-indent 0)
-           (commands (seq-group-by (fn! (if grouped? (doom-cli-prop (doom-cli-get % t) :group))) (nreverse commands)))
+           (commands (seq-group-by (fn! (if grouped? (doom-cli-prop (doom-cli-get % t) :group)))
+                                   (nreverse commands)))
            (toplevel (assq nil commands))
            (rest (remove toplevel commands))
            (drop (if prefix (length prefix) 0))
@@ -323,7 +323,7 @@ OPTIONS:
         (let ((label (if (car-safe group) (cdr commands))))
           (when label
             (insert! ((bold "%s:") (car group)) "\n"))
-          (print-group-if! label
+          (print-group! :if label
             (dolist (command (cdr group))
               (let* ((cli  (doom-cli-get command t))
                      (rcli (doom-cli-get command))

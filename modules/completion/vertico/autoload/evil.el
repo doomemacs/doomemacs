@@ -1,5 +1,5 @@
 ;; completion/vertico/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+vertico:project-search "completion/vertico/autoload/evil" nil t)
 (evil-define-command +vertico:project-search (query &optional all-files-p)

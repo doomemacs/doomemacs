@@ -23,5 +23,5 @@
         (face-remap-remove-relative remap))
       (setq +objed--extra-face-remaps nil)))
 
-  (unless (featurep! +manual)
+  (unless (modulep! +manual)
     (objed-mode +1)))

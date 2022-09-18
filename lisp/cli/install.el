@@ -44,39 +44,38 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
   (print! (green "Installing Doom Emacs!\n"))
   (let ((default-directory doom-emacs-dir)
         (yes? (doom-cli-context-suppress-prompts-p context)))
-    ;; Create `doom-private-dir'
+    ;; Create `doom-user-dir'
     (if (eq config? :no)
         (print! (warn "Not copying private config template, as requested"))
       ;; Create DOOMDIR in ~/.config/doom if ~/.config/emacs exists.
-      (when (and (not (file-directory-p doom-private-dir))
+      (when (and (not (file-directory-p doom-user-dir))
                  (not (getenv "DOOMDIR")))
         (let ((xdg-config-dir (or (getenv "XDG_CONFIG_HOME") "~/.config")))
           (when (file-in-directory-p doom-emacs-dir xdg-config-dir)
-            (setq doom-private-dir (expand-file-name "doom/" xdg-config-dir)))))
+            (setq doom-user-dir (expand-file-name "doom/" xdg-config-dir)))))
 
-      (if (file-directory-p doom-private-dir)
-          (print! (item "Skipping %s (already exists)") (relpath doom-private-dir))
-        (make-directory doom-private-dir 'parents)
-        (print! (success "Created %s") (relpath doom-private-dir)))
+      (if (file-directory-p doom-user-dir)
+          (print! (item "Skipping %s (already exists)") (relpath doom-user-dir))
+        (make-directory doom-user-dir 'parents)
+        (print! (success "Created %s") (relpath doom-user-dir)))
 
       ;; Create init.el, config.el & packages.el
       (print-group!
        (mapc (lambda (file)
                (cl-destructuring-bind (filename . template) file
-                 (if (file-exists-p! filename doom-private-dir)
+                 (if (file-exists-p! filename doom-user-dir)
                      (print! (item "Skipping %s (already exists)")
                              (path filename))
-                   (print! (item "Creating %s%s") (relpath doom-private-dir) filename)
-                   (with-temp-file (doom-path doom-private-dir filename)
+                   (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
+                   (with-temp-file (doom-path doom-user-dir filename)
                      (insert-file-contents template))
                    (print! (success "Done!")))))
              `(("init.el" . ,(doom-path doom-emacs-dir "templates/init.example.el"))
                ("config.el" . ,(doom-path doom-emacs-dir "templates/config.example.el"))
                ("packages.el" . ,(doom-path doom-emacs-dir "templates/packages.example.el"))))))
 
-    ;; In case no init.el was present the first time `doom-initialize-modules' was
-    ;; called in core.el (e.g. on first install)
-    (doom-initialize-modules 'force 'no-config)
+    ;; In case no init.el was present the first time it was loaded.
+    (doom-load (doom-path doom-user-dir doom-module-init-file) t)
 
     ;; Ask if user would like an envvar file generated
     (if (eq envfile? :no)
@@ -93,7 +92,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (doom-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-autoloads-reload)
+    (doom-profile-generate)
 
     (if (eq hooks? :no)
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))

@@ -3,9 +3,9 @@
 (use-package! json-mode
   :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
   :init
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'json-mode-local-vars-hook #'lsp! 'append))
-  (when (featurep! +tree-sitter)
+  (when (modulep! +tree-sitter)
     (add-hook! '(json-mode-local-vars-hook
                  jsonc-mode-local-vars-hook)
                :append #'tree-sitter!))
@@ -26,7 +26,7 @@
 
 
 (use-package! counsel-jq
-  :when (featurep! :completion ivy)
+  :when (modulep! :completion ivy)
   :defer t
   :init
   (map! :after json-mode

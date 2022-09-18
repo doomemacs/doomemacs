@@ -1,49 +1,54 @@
 ;;; lisp/lib/print.el -*- lexical-binding: t; -*-
 ;;; Commentary
-;;;
-;;; This is Doom's output library, for controlling what does and doesn't get
-;;; logged, and provides a simple DSL for formatting output. It's mainly to
-;;; serve the noninteractive use-case, as `message' is more than good enough in
-;;; interactive sessions, but `print!' and `doom-log' are safe to use as a
-;;; drop-in replacement.
-;;;
+;;
+;; This is Doom's output library, for controlling what does and doesn't get
+;; logged, and provides a simple DSL for formatting output. It's mainly to
+;; serve the noninteractive use-case, as `message' is more than good enough in
+;; interactive sessions, but `print!' and `doom-log' are safe to use as a
+;; drop-in replacement.
+;;
 ;;; Code:
-
+(eval-when-compile (require 'doom)) ; be silent, o'byte-compiler
 (require 'ansi-color)
+
+
+;;
+;;; Variables
 
 (defvar doom-print-ansi-alist
   '(;; fx
-    (bold       1 :weight bold)
-    (dark       2)
-    (italic     3 :slant italic)
-    (underscore 4 :underline t)
-    (blink      5)
-    (rapid      6)
-    (contrary   7)
-    (concealed  8)
-    (strike     9 :strike-through t)
+    (bold       . 1)
+    (dark       . 2)
+    (italic     . 3)
+    (underscore . 4)
+    (blink      . 5)
+    (rapid      . 6)
+    (contrary   . 7)
+    (concealed  . 8)
+    (strike     . 9)
     ;; fg
-    (black      30 term-color-black)
-    (red        31 term-color-red)
-    (green      32 term-color-green)
-    (yellow     33 term-color-yellow)
-    (blue       34 term-color-blue)
-    (magenta    35 term-color-magenta)
-    (cyan       36 term-color-cyan)
-    (white      37 term-color-white)
+    (black      . 30)
+    (red        . 31)
+    (green      . 32)
+    (yellow     . 33)
+    (blue       . 34)
+    (magenta    . 35)
+    (cyan       . 36)
+    (white      . 37)
     ;; bg
-    (on-black   40 term-color-black)
-    (on-red     41 term-color-red)
-    (on-green   42 term-color-green)
-    (on-yellow  43 term-color-yellow)
-    (on-blue    44 term-color-blue)
-    (on-magenta 45 term-color-magenta)
-    (on-cyan    46 term-color-cyan)
-    (on-white   47 term-color-white))
-  "An alist of fg/bg/fx names mapped to ansi codes and term-color-* variables.
+    (on-black   . 40)
+    (on-red     . 41)
+    (on-green   . 42)
+    (on-yellow  . 43)
+    (on-blue    . 44)
+    (on-magenta . 45)
+    (on-cyan    . 46)
+    (on-white   . 47))
+  "An alist of fg/bg/fx names mapped to ansi codes.
 
 This serves as the cipher for converting (COLOR ...) function calls in `print!'
-and `format!' into colored output, where COLOR is any car of this list.")
+and `format!' into colored output, where COLOR is any car of this list (or
+`doom-print-class-alist').")
 
 (defvar doom-print-class-alist
   `((buffer  . doom-print--buffer)
@@ -58,9 +63,6 @@ and `format!' into colored output, where COLOR is any car of this list.")
     (rtrim   . string-trim-right)
     (ltrim   . string-trim-left)
     (p       . doom-print--paragraph)
-    (buffer  . (lambda (buffer)
-                 (with-current-buffer buffer
-                   (buffer-string))))
     (truncate . doom-print--truncate)
     (success . (lambda (str &rest args)
                  (apply #'doom-print--style 'green
@@ -115,23 +117,20 @@ Any of these classes can be called like functions from within `format!' and
 
 Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 
-(defvar doom-print-level (if init-file-debug 'debug 'info)
-  "The default level of messages to print.")
+(defvar doom-print-level 'notice
+  "The current, default logging level.")
 
-(defvar doom-print-logging-level 'debug
-  "The default logging level used by `doom-log'/`doom-print'.")
+(defvar doom-print-minimum-level 'notice
+  "The minimum logging level for a message to be output.")
 
-(defvar doom-print-message-level (if noninteractive 'debug 'info)
-  "The default logging level used by `message'.")
-
-(defvar doom-print--levels
-  '(debug    ; the system is thinking out loud
-    info     ; a FYI; to keep you posted
-    warning  ; a dismissable issue that may have reprecussions later
-    error))  ; functionality has been disabled by misbehavior
-
-(dotimes (i (length doom-print--levels))
-  (put (nth i doom-print--levels) 'level i))
+;; Record print levels in these symbols for easy, quasi-read-only access later.
+(let ((levels '(debug    ; the system is thinking out loud
+                info     ; less details about important progress
+                notice   ; important details about important progress
+                warning  ; a dismissable issue that may have reprecussions later
+                error))) ; something has gone terribly wrong
+  (dotimes (i (length levels))
+    (put (nth i levels) 'print-level i)))
 
 
 ;;
@@ -140,84 +139,57 @@ Accepts `ansi' and `text-properties'. `nil' means don't render styles at all.")
 ;;;###autoload
 (cl-defun doom-print
     (output &key
-            (format t)
+            (format nil)
+            (level doom-print-level)
             (newline t)
-            (stream standard-output)
-            (level doom-print-level))
+            (stream standard-output))
   "Print OUTPUT to stdout.
 
 Unlike `message', this:
-- Respects `standard-output'.
-- Respects `doom-print-indent' (if FORMAT)
+- Respects the value of `standard-output'.
+- Indents according to `doom-print-indent' (if FORMAT is non-nil).
 - Prints to stdout instead of stderr in batch mode.
-- Respects more ANSI codes (only in batch mode).
+- Recognizes more terminal escape codes (only in batch mode).
 - No-ops if OUTPUT is nil or an empty/blank string.
 
 Returns OUTPUT."
   (cl-check-type output (or null string))
   (when (and (stringp output)
-             (not (string-blank-p output))
              (or (eq level t)
-                 (>= (get level 'level)
-                     (get doom-print-level 'level))))
-    (let ((output (if format
-                      (doom-print--format "%s" output)
-                    output)))
-      (princ output stream)
-      (if newline (terpri stream))
-      output)))
-
-;;;###autoload
-(progn
-  ;; Autoload whole definition, so its buried uses don't pull in this whole file
-  ;; with them at expansion time.
-  (defmacro doom-log (output &rest args)
-    "Log a message in *Messages*.
-
-Does not emit the message in the echo area. This is a macro instead of a
-function to prevent the potentially expensive execution of its arguments when
-debug mode is off."
-    `(when (or init-file-debug noninteractive)
-       (let ((inhibit-message t))
-         (message
-          "%s" (propertize
-                (doom-print--format
-                 (format
-                  "* [%s] %s"
-                  ,(let ((time `(format "%.06f" (float-time (time-subtract (current-time) before-init-time)))))
-                     (cond (noninteractive time)
-                           ((bound-and-true-p doom--current-module)
-                            (format "[:%s %s] "
-                                    (doom-keyword-name (car doom--current-module))
-                                    (cdr doom--current-module)))
-                           ((when-let (file (ignore-errors (file!)))
-                              (format "[%s] "
-                                      (file-relative-name
-                                       file (expand-file-name "../" (file-name-directory file))))))
-                           (time)))
-                  ,output)
-                 ,@args)
-                'face 'font-lock-doc-face))))))
+                 (if (listp level)
+                     (memq doom-print-minimum-level level)
+                   (>= (get level 'print-level)
+                       (get doom-print-minimum-level 'print-level)))))
+    (when format
+      (setq output (doom-print--format "%s" output)))
+    (princ output stream)
+    (if newline (terpri stream))
+    output))
 
 ;;;###autoload
 (defmacro format! (message &rest args)
-  "An alternative to `format' that understands (color ...) and converts them
-into faces or ANSI codes depending on the type of sesssion we're in."
+  "An alternative to `format' that understands `print!'s style syntax."
   `(doom-print--format ,@(doom-print--apply `(,message ,@args))))
 
 ;;;###autoload
 (defmacro print-group! (&rest body)
   "Indents any `print!' or `format!' output within BODY."
-  `(print-group-if! t ,@body))
-
-;;;###autoload
-(defmacro print-group-if! (condition &rest body)
-  "Indents any `print!' or `format!' output within BODY."
-  (declare (indent 1))
-  `(let ((doom-print-indent
-          (+ (if ,condition doom-print-indent-increment 0)
-             doom-print-indent)))
-     ,@body))
+  (declare (indent defun))
+  (cl-destructuring-bind (&key if indent level verbose title
+                               ;; TODO: Implement these
+                               _benchmark)
+      (cl-loop for (key val) on body by #'cddr
+               while (keywordp key)
+               collect (pop body)
+               collect (pop body))
+    (if verbose (setq level ''info))
+    `(progn
+       ,@(if title `((print! (start ,title))))
+       (let ((doom-print-level (or ,level doom-print-level))
+             (doom-print-indent
+              (+ (if ,(or if t) (or ,indent doom-print-indent-increment) 0)
+                 doom-print-indent)))
+         ,@body))))
 
 ;;;###autoload
 (defmacro print! (message &rest args)
@@ -232,7 +204,7 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  `(doom-print (format! ,message ,@args) :format nil))
+  `(doom-print (format! ,message ,@args)))
 
 ;;;###autoload
 (defmacro insert! (&rest args)
@@ -247,9 +219,72 @@ Each argument in ARGS can be a list, as if they were arguments to `format!':
                       collect `(format! ,@arg)
                       else collect arg)))
 
+(defvar doom-print--output-depth 0)
+;;;###autoload
+(defmacro with-output-to! (streamspec &rest body)
+  "Capture all output within BODY according to STREAMSPEC.
+
+STREAMSPEC is a list of log specifications, indicating where to write output
+based on the print level of the message. For example:
+
+  `((>= notice ,(get-buffer-create \"*stdout*\"))
+    (= error   ,(get-buffer-create \"*errors*\"))
+    (t . ,(get-buffer-create \"*debug*\")))"
+  (declare (indent 1))
+  (let ((sym (make-symbol "streamspec")))
+    `(letf! ((,sym ,streamspec)
+             (standard-output (doom-print--redirect-standard-output ,sym t))
+             (#'message (doom-print--redirect-message ,sym (if noninteractive 'debug 'notice)))
+             (doom-print--output-depth (1+ doom-print--output-depth)))
+       ,@body)))
+
 
 ;;
 ;;; Helpers
+
+(defun doom-print--redirect-streams (streamspec level)
+  (if (or (eq streamspec t)
+          (bufferp streamspec)
+          (functionp streamspec)
+          (markerp streamspec))
+      (list (cons t streamspec))
+    (cl-loop for (car . spec) in streamspec
+             if (eq car t)
+             collect (cons t spec)
+             else
+             collect (cons (or (eq level t)
+                               (doom-partial
+                                car
+                                (get level 'print-level)
+                                (get (car spec) 'print-level)))
+                           (cadr spec)))))
+
+(defun doom-print--redirect-standard-output (streamspec level)
+  (let ((old standard-output)
+        (streams (doom-print--redirect-streams streamspec level)))
+    (lambda (ch)
+      (let ((str (char-to-string ch)))
+        (dolist (stream streams)
+          (when (or (eq (car stream) t)
+                    (funcall (car stream)))
+            (doom-print str :newline nil :stream (cdr stream))))
+        (doom-print str :newline nil :stream t :level level)))))
+
+(defun doom-print--redirect-message (streamspec level)
+  (let ((old (symbol-function #'message))
+        (streams (doom-print--redirect-streams streamspec level)))
+    (lambda (message &rest args)
+      (when message
+        (let ((output (apply #'doom-print--format message args)))
+          (if (= doom-print--output-depth 0)
+              (doom-print output :level level :stream t)
+            (let ((doom-print--output-depth (1- doom-print--output-depth)))
+              (funcall old "%s" output)))
+          (dolist (stream streams)
+            (when (or (eq (car stream) t)
+                      (funcall (car stream)))
+              (doom-print output :stream (cdr stream)))))
+        message))))
 
 ;;;###autoload
 (defun doom-print--format (message &rest args)
@@ -419,7 +454,7 @@ STYLE is a symbol that correlates to `doom-print-ansi-alist'.
 
 In a noninteractive session, this wraps the result in ansi color codes.
 Otherwise, it maps colors to a term-color-* face."
-  (let* ((code (cadr (assq style doom-print-ansi-alist)))
+  (let* ((code (cdr (assq style doom-print-ansi-alist)))
          (format (format "%s" (or format "")))
          (message (if args (apply #'format format args) format)))
     (unless code
@@ -428,16 +463,7 @@ Otherwise, it maps colors to a term-color-* face."
       (`ansi
        (format "\e[0%dm%s\e[%dm" code message 0))
       (`text-properties
-       (require 'term)  ; piggyback on term's color faces
-       (propertize
-        message
-        'face
-        (append (get-text-property 0 'face format)
-                (cond ((>= code 40)
-                       `(:background ,(caddr (assq style doom-print-ansi-alist))))
-                      ((>= code 30)
-                       `(:foreground ,(face-foreground (caddr (assq style doom-print-ansi-alist)))))
-                      ((cddr (assq style doom-print-ansi-alist)))))))
+       (ansi-color-apply message))
       (_ message))))
 
 ;;;###autoload
@@ -470,3 +496,6 @@ transformative logic."
                  (doom-print--apply (cdr forms) t)
                  nil))
         (forms)))
+
+(provide 'doom-lib '(print))
+;;; print.el ends here

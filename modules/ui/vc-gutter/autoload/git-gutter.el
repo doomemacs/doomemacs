@@ -1,5 +1,5 @@
 ;;; ui/vc-gutter/autoload/vc-gutter.el -*- lexical-binding: t; -*-
-;;;###if (not (featurep! +diff-hl))
+;;;###if (not (modulep! +diff-hl))
 
 ;;;###autoload
 (defalias '+vc-gutter/stage-hunk #'git-gutter:stage-hunk)

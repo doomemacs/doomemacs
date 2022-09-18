@@ -45,7 +45,7 @@ stored in `persp-save-dir'.")
         persp-reset-windows-on-nil-window-conf nil
         persp-nil-hidden t
         persp-auto-save-fname "autosave"
-        persp-save-dir (concat doom-etc-dir "workspaces/")
+        persp-save-dir (concat doom-data-dir "workspaces/")
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
         persp-kill-foreign-buffer-behaviour 'kill
@@ -206,7 +206,7 @@ stored in `persp-save-dir'.")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
-  (when (featurep! :completion helm)
+  (when (modulep! :completion helm)
     (after! helm-projectile
       (setcar helm-source-projectile-projects-actions
               '("Switch to Project" . +workspaces-switch-to-project-h))))

@@ -16,13 +16,10 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 - [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote
- 💡 PHP was the first programming language I got paid to code in, back in the
+ 💬 PHP was the first programming language I got paid to code in, back in the
     Cretaceous period (2003). My sincerest apologies go out to all the
     programmers who inherited my earliest PHP work. I know you're out there,
     writhing in your straitjackets.
-
-    Save a programmer today. Stop a friend from choosing PHP as their first
-    language.
 #+end_quote
 
 ** Maintainers

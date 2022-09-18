@@ -38,7 +38,7 @@
        (add-to-list 'TeX-view-program-selection '(output-pdf "Evince"))))
 
     (`pdf-tools
-     (when (featurep! :tools pdf)
+     (when (modulep! :tools pdf)
        (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
        (when IS-MAC
          ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs.

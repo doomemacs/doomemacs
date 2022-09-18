@@ -1,5 +1,5 @@
 ;;; ui/workspaces/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+workspace:save "ui/workspaces/autoload/evil" nil t)
 (evil-define-command +workspace:save (&optional name)

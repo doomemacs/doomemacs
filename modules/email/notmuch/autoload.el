@@ -6,13 +6,13 @@
   (interactive)
   (condition-case-unless-debug e
       (progn
-        (when (featurep! :ui workspaces)
+        (when (modulep! :ui workspaces)
           (+workspace-switch "*MAIL*" t))
         (if-let* ((win (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
                                    (doom-visible-windows))))
             (select-window win)
           (funcall +notmuch-home-function))
-        (when (featurep! :ui workspaces)
+        (when (modulep! :ui workspaces)
           (+workspace/display)))
     ('error
      (+notmuch/quit)
@@ -28,7 +28,7 @@
   (interactive)
   ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
   (doom-kill-matching-buffers "^\\*notmuch")
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (+workspace/delete "*MAIL*")))
 
 (defun +notmuch-get-sync-command ()
@@ -52,7 +52,7 @@
             ((and (pred stringp) it) it)
             (_ (user-error "Invalid notmuch backend specified: %S"
                            +notmuch-sync-backend)))))
-    (if (featurep! +afew)
+    (if (modulep! +afew)
         (format "%s && %s" sync-cmd afew-cmd)
       sync-cmd)))
 

@@ -68,7 +68,7 @@ OPTIONS:
         (write-region (buffer-string) nil codeowners-file)))))
 
 ;; TODO Finish me
-(defstub! (make changelog))
+(defcli-stub! (make changelog))
 
 
 

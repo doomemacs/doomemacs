@@ -11,7 +11,7 @@
         ;; NOTE We disable eglot-auto-display-help-buffer because :select t in
         ;;      its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (setq eglot-stay-out-of '(flymake)))
 
   :config
@@ -25,7 +25,7 @@
 
   (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 0))
 
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (after! flycheck
       (load! "autoload/flycheck-eglot")))
 
@@ -52,6 +52,6 @@ server getting expensively restarted when reverting buffers."
 
 (use-package! consult-eglot
   :defer t
-  :when (featurep! :completion vertico)
+  :when (modulep! :completion vertico)
   :init
   (map! :map eglot-mode-map [remap xref-find-apropos] #'consult-eglot-symbols))

@@ -3,7 +3,7 @@
 ;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
 (defvar +literate-config-file
-  (concat doom-private-dir "config.org")
+  (concat doom-user-dir "config.org")
   "The file path of your literate config file.")
 
 (defvar +literate-tangle--async-proc nil)
@@ -52,7 +52,7 @@
   (or (getenv "__NOTANGLE")
       (and (+literate-tangle +literate-config-file
                              (concat doom-module-config-file ".el")
-                             doom-private-dir)
+                             doom-user-dir)
            (or (not noninteractive)
                (exit! "__NOTANGLE=1 $@")))))
 
@@ -70,6 +70,7 @@
           (start-process "tangle-config"
                          (get-buffer-create " *tangle config*")
                          "emacs" "--batch"
+                         "-L" (file-name-directory (locate-library "org"))
                          "--load" (doom-path doom-core-dir "doom")
                          "--load" (doom-path doom-core-dir "lib/print")
                          "--eval"
@@ -77,7 +78,7 @@
                           `(funcall #',(symbol-function #'+literate-tangle)
                                     ,+literate-config-file
                                     ,(concat doom-module-config-file ".el")
-                                    ,doom-private-dir))))
+                                    ,doom-user-dir))))
     (add-hook 'kill-emacs-hook #'+literate-tangle-check-finished-h)
     (set-process-sentinel +literate-tangle--async-proc #'+literate-tangle--async-sentinel)
     (run-at-time nil nil (lambda () (message "Tangling config.org"))) ; ensure shown after a save message
@@ -132,9 +133,9 @@ This is performed with an asyncronous Emacs process, except when
 
 ;;;###autoload
 (defun +literate-recompile-maybe-h ()
-  "Recompile literate config to `doom-private-dir'.
+  "Recompile literate config to `doom-user-dir'.
 
-We assume any org file in `doom-private-dir' is connected to your literate
+We assume any org file in `doom-user-dir' is connected to your literate
 config, and should trigger a recompile if changed."
   (and (file-in-directory-p
         (buffer-file-name (buffer-base-buffer))

@@ -1,5 +1,5 @@
 ;;; tools/pass/autoload/consult.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :completion vertico)
+;;;###if (modulep! :completion vertico)
 
 ;;;###autoload
 (defun +pass/consult (arg pass)

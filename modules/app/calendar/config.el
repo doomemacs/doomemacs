@@ -25,7 +25,7 @@
   (set-popup-rule! "^\\*cfw:details" :quit t :ttl 0 :select t :size 0.4)
 
   (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (set-evil-initial-state! '(cfw:calendar-mode cfw:details-mode) 'motion)
     (add-hook! (cfw:calendar-mode cfw:details-mode) #'evil-normalize-keymaps)
     (map! (:map cfw:calendar-mode-map

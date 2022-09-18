@@ -74,7 +74,7 @@
     js-switch-indent-offset js2-basic-offset)
 
   (use-package! xref-js2
-    :when (featurep! :tools lookup)
+    :when (modulep! :tools lookup)
     :init
     (setq xref-js2-search-program 'rg)
     (set-lookup-handlers! 'rjsx-mode
@@ -94,7 +94,7 @@
   :hook (typescript-mode . rainbow-delimiters-mode)
   :hook (typescript-tsx-mode . rainbow-delimiters-mode)
   :init
-  (when (featurep! :lang web)
+  (when (modulep! :lang web)
     (autoload 'typescript-tsx-mode "typescript-mode" nil t))
 
   ;; REVIEW We associate TSX files with `typescript-tsx-mode' derived from
@@ -102,17 +102,17 @@
   ;;        JSX/TSX. See emacs-typescript/typescript.el#4
   (add-to-list 'auto-mode-alist
                (cons "\\.tsx\\'"
-                     (if (featurep! :lang web)
+                     (if (modulep! :lang web)
                          #'typescript-tsx-mode
                        #'typescript-mode)))
 
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (after! flycheck
       (flycheck-add-mode 'javascript-eslint 'web-mode)
       (flycheck-add-mode 'javascript-eslint 'typescript-mode)
       (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
       (flycheck-add-mode 'typescript-tslint 'typescript-tsx-mode)
-      (unless (featurep! +lsp)
+      (unless (modulep! +lsp)
         (after! tide
           (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint) 'append)
           (flycheck-add-mode 'typescript-tide 'typescript-tsx-mode)))
@@ -125,10 +125,10 @@
   :config
   (when (fboundp 'web-mode)
     (define-derived-mode typescript-tsx-mode web-mode "TypeScript-TSX")
-    (when (featurep! +lsp)
+    (when (modulep! +lsp)
       (after! lsp-mode
         (add-to-list 'lsp--formatting-indent-alist '(typescript-tsx-mode . typescript-indent-level))))
-    (when (featurep! +tree-sitter)
+    (when (modulep! +tree-sitter)
       (after! evil-textobj-tree-sitter
         (pushnew! evil-textobj-tree-sitter-major-mode-language-alist '(typescript-tsx-mode . "tsx")))
       (after! tree-sitter
@@ -166,7 +166,7 @@
 ;;
 ;;; Tools
 
-(when (featurep! +tree-sitter)
+(when (modulep! +tree-sitter)
   (add-hook! '(js2-mode-local-vars-hook
                typescript-mode-local-vars-hook
                typescript-tsx-mode-local-vars-hook
@@ -192,7 +192,7 @@ to tide."
             ;; file-visiting buffer
             (add-hook 'after-save-hook #'+javascript-init-lsp-or-tide-maybe-h
                       nil 'local)
-          (or (if (featurep! +lsp) (lsp!))
+          (or (if (modulep! +lsp) (lsp!))
               ;; fall back to tide
               (if (executable-find "node")
                   (and (require 'tide nil t)
@@ -267,7 +267,7 @@ to tide."
           (:prefix ("w" . "wrap"))
           (:prefix ("3" . "ternary"))))
   :config
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (add-hook 'js2-refactor-mode-hook #'evil-normalize-keymaps)
     (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
       (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))

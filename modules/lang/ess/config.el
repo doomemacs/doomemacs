@@ -10,17 +10,17 @@
 (use-package! ess
   :commands stata SAS
   :init
-  (unless (featurep! :lang julia)
+  (unless (modulep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
   (setq ess-offset-continued 'straight
-        ess-use-flymake (not (featurep! :checkers syntax))
+        ess-use-flymake (not (modulep! :checkers syntax))
         ess-nuke-trailing-whitespace-p t
         ess-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
   (set-docsets! 'ess-r-mode "R")
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'ess-r-mode-local-vars-hook #'lsp! 'append))
 
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
@@ -92,15 +92,15 @@
 
 
 (use-package! stan-mode
-  :when (featurep! +stan)
+  :when (modulep! +stan)
   :hook (stan-mode . stan-mode-setup)
   :hook (stan-mode . eldoc-stan-setup)
   :init
   (use-package! company-stan
-    :when (featurep! :completion company)
+    :when (modulep! :completion company)
     :hook (stan-mode . company-stan-setup))
 
   (use-package! flycheck-stan
-    :when (featurep! :checkers syntax)
+    :when (modulep! :checkers syntax)
     :hook (stan-mode . flycheck-stan-stanc2-setup)
     :hook (stan-mode . flycheck-stan-stanc3-setup)))

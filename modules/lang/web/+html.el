@@ -163,13 +163,13 @@
   (set-company-backend! 'slim-mode 'company-web-slim))
 
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (add-hook! '(html-mode-local-vars-hook
                web-mode-local-vars-hook
                nxml-mode-local-vars-hook)
              :append #'lsp!))
 
-(when (featurep! +tree-sitter)
+(when (modulep! +tree-sitter)
   (add-hook! '(html-mode-local-vars-hook
                mhtml-mode-local-vars-hook)
              :append #'tree-sitter!))

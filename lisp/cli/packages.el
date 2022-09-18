@@ -30,7 +30,7 @@ Emacs (as byte-code is generally not forward-compatible)."
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (when (doom-packages-build (not rebuild-p))
-    (doom-autoloads-reload))
+    (doom-profile-generate))
   t)
 
 ;; TODO Rename to "doom gc" and move to its own file
@@ -57,10 +57,10 @@ list remains lean."
          (not nobuilds-p)
          (not noregraft-p)
          (not noeln-p))
-    (doom-autoloads-reload))
+    (doom-profile-generate))
   t)
 
-(defstub! rollback)  ; TODO Implement me post-3.0
+(defcli-stub! rollback)  ; TODO Implement me post-3.0
 
 
 ;;
@@ -184,7 +184,7 @@ list remains lean."
     ;;   `no-byte-compile'. Rebuilding unnecessarily is expensive.
     (when (and (file-exists-p elc-file)
                (file-newer-than-file-p file elc-file))
-      (doom-log "%s is newer than %s" file elc-file)
+      (doom-log "packages:elc: %s is newer than %s" file elc-file)
       t)))
 
 (defun doom-packages--eln-file-outdated-p (file)
@@ -195,13 +195,15 @@ list remains lean."
            (error-file (doom-packages--eln-error-file eln-name)))
       (cond (eln-file
              (when (file-newer-than-file-p file eln-file)
-               (doom-log "%s is newer than %s" file eln-file)
+               (doom-log "packages:eln: %s is newer than %s" file eln-file)
                t))
             ((file-exists-p error-file)
              (when (file-newer-than-file-p file error-file)
-               (doom-log "%s is newer than %s" file error-file)
+               (doom-log "packages:eln: %s is newer than %s" file error-file)
                t))
-            ((always (doom-log "%s doesn't exist" eln-name)))))))
+            ((file-exists-p (byte-compile-dest-file file))
+             (doom-log "packages:eln: cannot find %s" eln-name)
+             t)))))
 
 (defun doom-packages--native-compile-done-h (file)
   "Callback fired when an item has finished async compilation."
@@ -210,10 +212,13 @@ list remains lean."
            (eln-file (doom-packages--eln-output-file eln-name))
            (error-file (doom-packages--eln-error-file eln-name)))
       (if (file-exists-p eln-file)
-          (doom-log "Compiled %s" eln-file)
-        (make-directory (file-name-directory error-file) 'parents)
-        (write-region "" nil error-file)
-        (doom-log "Wrote %s" error-file)))))
+          (doom-log "packages:nativecomp: Compiled %s" eln-file)
+        (let ((error-dir (file-name-directory error-file)))
+          (if (not (file-writable-p error-dir))
+              (doom-log "packages:nativecomp: failed to write %s" error-file)
+            (make-directory error-dir 'parents)
+            (write-region "" nil error-file)
+            (doom-log "packages:nativecomp: wrote %s" error-file)))))))
 
 (defun doom-packages--wait-for-native-compile-jobs ()
   "Wait for all pending async native compilation jobs."
@@ -240,21 +245,23 @@ list remains lean."
 
 (defun doom-packages--write-missing-eln-errors ()
   "Write .error files for any expected .eln files that are missing."
-  (when NATIVECOMP
+  (when (featurep 'native-compile)
     (cl-loop for file in doom-packages--eln-output-expected
              for eln-name = (doom-packages--eln-file-name file)
              for eln-file = (doom-packages--eln-output-file eln-name)
              for error-file = (doom-packages--eln-error-file eln-name)
+             for error-dir = (file-name-directory error-file)
              unless (or (file-exists-p eln-file)
-                        (file-newer-than-file-p error-file file))
-             do (make-directory (file-name-directory error-file) 'parents)
+                        (file-newer-than-file-p error-file file)
+                        (not (file-writable-p error-dir)))
+             do (make-directory error-dir 'parents)
              (write-region "" nil error-file)
              (doom-log "Wrote %s" error-file))
     (setq doom-packages--eln-output-expected nil)))
 
 (defun doom-packages--compile-site-files ()
   "Queue async compilation for all non-doom Elisp files."
-  (when NATIVECOMP
+  (when (featurep 'native-compile)
     (cl-loop with paths = (cl-loop for path in load-path
                                    unless (file-in-directory-p path doom-local-dir)
                                    collect path)
@@ -300,8 +307,8 @@ declaration) or dependency thereof that hasn't already been."
                   (error
                    (signal 'doom-package-error (list package e))))))
          (progn
-           (doom-packages--compile-site-files)
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
+             (doom-packages--compile-site-files)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            (print! (success "\033[KInstalled %d packages") (length built)))
@@ -348,7 +355,7 @@ declaration) or dependency thereof that hasn't already been."
                     (and (eq (car-safe build) :not)
                          (setq want-byte-compile (not want-byte-compile)
                                want-native-compile (not want-native-compile)))
-                    (unless NATIVECOMP
+                    (unless (featurep 'native-compile)
                       (setq want-native-compile nil))
                     (and (or want-byte-compile want-native-compile)
                          (or (file-newer-than-file-p repo-dir build-dir)
@@ -364,8 +371,8 @@ declaration) or dependency thereof that hasn't already been."
                          (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (progn
-           (doom-packages--compile-site-files)
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
+             (doom-packages--compile-site-files)
              (doom-packages--wait-for-native-compile-jobs)
              (doom-packages--write-missing-eln-errors))
            ;; HACK Every time you save a file in a package that straight tracks,
@@ -649,7 +656,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not builds-p)
                (ignore (print! (item "Skipping builds")))
              (and (/= 0 (doom-packages--purge-builds builds-to-purge))
-                  (straight-prune-build-cache)))
+                  (quiet! (straight-prune-build-cache))))
            (if (not elpa-p)
                (ignore (print! (item "Skipping elpa packages")))
              (/= 0 (doom-packages--purge-elpa)))
@@ -659,7 +666,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (if (not regraft-repos-p)
                (ignore (print! (item "Skipping regrafting")))
              (doom-packages--regraft-repos repos-to-regraft))
-           (when NATIVECOMP
+           (when (featurep 'native-compile)
              (if (not eln-p)
                  (ignore (print! (item "Skipping native bytecode")))
                (doom-packages--purge-eln))))))))
@@ -697,14 +704,6 @@ It may not be obvious to users what they should do for some straight prompts,
 so Doom will recommend the one that reverts a package back to its (or target)
 original state.")
 
-;; FIXME Replace with a -j/--jobs option in 'doom sync' et co
-(defadvice! doom-cli--comp-use-all-cores-a (&rest _)
-  "Default to using all cores, rather than half.
-Doom compiles packages ahead-of-time, in a dedicated noninteractive session, so
-it doesn't make sense to slack."
-  :before #'comp-effective-async-max-jobs
-  (setq comp-num-cpus (doom-system-cpus)))
-
 ;; HACK Remove dired & magit options from prompt, since they're inaccessible in
 ;;      noninteractive sessions.
 (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw)
@@ -732,14 +731,14 @@ it doesn't make sense to slack."
       ;; We can't intercept C-g, so no point displaying any options for this key
       ;; when C-c is the proper way to abort batch Emacs.
       (delq! "C-g" actions 'assoc)
-      ;; HACK These are associated with opening dired or magit, which isn't
-      ;;      possible in tty Emacs, so...
+      ;; HACK: These are associated with opening dired or magit, which isn't
+      ;;   possible in tty Emacs, so...
       (delq! "e" actions 'assoc)
       (delq! "g" actions 'assoc)
       (if (doom-cli-context-suppress-prompts-p doom-cli--context)
           (cl-loop for (_key desc func) in actions
                    when desc
-                   when (doom-cli--straight-recommended-option-p prompt desc t)
+                   when (doom-cli--straight-recommended-option-p prompt desc)
                    return (funcall func))
         (print! (start "%s") (red prompt))
         (print-group!
@@ -789,7 +788,7 @@ However, in batch mode, print to stdout instead of stderr."
         (setq msg (match-string 1 msg))))
     (and (string-match-p "^\\(Cloning\\|\\(Reb\\|B\\)uilding\\) " msg)
          (not (string-suffix-p "...done" msg))
-         (doom-print (concat "> " msg)))))
+         (doom-print (concat "> " msg) :format t))))
 
 (defadvice! doom-cli--straight-ignore-gitconfig-a (fn &rest args)
   "Prevent user and system git configuration from interfering with git calls."

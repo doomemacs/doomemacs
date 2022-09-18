@@ -56,7 +56,7 @@ default/fallback account."
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       ;; delete current workspace if empty
       ;; this is useful when mu4e is in the daemon
       ;; as otherwise you can accumulate empty workspaces
@@ -134,7 +134,8 @@ a quoted symbol for a alist of current strings and faces provided."
   (put-text-property
    0 (length str)
    'face
-   (if (not unique)
+   (list
+    (if (not unique)
        (+mu4e--str-color-face herring str)
      (let ((unique-alist (eval unique)))
        (unless (assoc herring unique-alist)
@@ -152,6 +153,7 @@ a quoted symbol for a alist of current strings and faces provided."
              (push (cons herring color) unique-alist)))
          (set unique unique-alist))
        (cdr (assoc herring unique-alist))))
+    'default)
    str)
   str)
 
@@ -326,7 +328,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
 (defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
   (cond
-   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
+   ((and (modulep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
     (+workspace/delete +mu4e-workspace-name))
 
    (+mu4e--old-wconf

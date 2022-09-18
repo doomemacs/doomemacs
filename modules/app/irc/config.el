@@ -141,7 +141,7 @@ playback.")
   ;; Fail gracefully if not in a circe buffer
   (global-set-key [remap tracking-next-buffer] #'+irc/tracking-next-buffer)
 
-  (when (featurep! :completion vertico)
+  (when (modulep! :completion vertico)
     (after! consult
       (add-to-list 'consult-buffer-sources '+irc--consult-circe-source 'append)))
 
@@ -198,7 +198,7 @@ playback.")
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (setq lui-fill-type nil)
 
-  (when (featurep! :checkers spell)
+  (when (modulep! :checkers spell)
     (setq lui-flyspell-p t))
 
   (after! evil

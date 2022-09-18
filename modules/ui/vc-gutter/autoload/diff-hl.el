@@ -1,5 +1,5 @@
 ;;; ui/vc-gutter/autoload/diff-hl.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +diff-hl)
+;;;###if (modulep! +diff-hl)
 
 ;;;###autoload
 (defalias '+vc-gutter/stage-hunk #'diff-hl-stage-current-hunk)

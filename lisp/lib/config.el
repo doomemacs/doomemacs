@@ -4,29 +4,37 @@
 (defvar doom-bin (expand-file-name "doom" doom-bin-dir))
 
 ;;;###autoload
+(defvar doom-after-reload-hook nil
+  "A list of hooks to run after `doom/reload' has reloaded Doom.")
+
+;;;###autoload
+(defvar doom-before-reload-hook nil
+  "A list of hooks to run before `doom/reload' has reloaded Doom.")
+
+;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 
 ;;;###autoload
 (defun doom/open-private-config ()
-  "Browse your `doom-private-dir'."
+  "Browse your `doom-user-dir'."
   (interactive)
-  (unless (file-directory-p doom-private-dir)
-    (make-directory doom-private-dir t))
-  (doom-project-browse doom-private-dir))
+  (unless (file-directory-p doom-user-dir)
+    (make-directory doom-user-dir t))
+  (doom-project-browse doom-user-dir))
 
 ;;;###autoload
 (defun doom/find-file-in-private-config ()
-  "Search for a file in `doom-private-dir'."
+  "Search for a file in `doom-user-dir'."
   (interactive)
-  (doom-project-find-file doom-private-dir))
+  (doom-project-find-file doom-user-dir))
 
 ;;;###autoload
 (defun doom/goto-private-init-file ()
   "Open your private init.el file.
 And jumps to your `doom!' block."
   (interactive)
-  (find-file (expand-file-name "init.el" doom-private-dir))
+  (find-file (expand-file-name "init.el" doom-user-dir))
   (goto-char
    (or (save-excursion
          (goto-char (point-min))
@@ -37,13 +45,13 @@ And jumps to your `doom!' block."
 (defun doom/goto-private-config-file ()
   "Open your private config.el file."
   (interactive)
-  (find-file (expand-file-name "config.el" doom-private-dir)))
+  (find-file (expand-file-name "config.el" doom-user-dir)))
 
 ;;;###autoload
 (defun doom/goto-private-packages-file ()
   "Open your private packages.el file."
   (interactive)
-  (find-file (expand-file-name "packages.el" doom-private-dir)))
+  (find-file (expand-file-name "packages.el" doom-user-dir)))
 
 
 ;;
@@ -79,11 +87,11 @@ Runs `doom-after-reload-hook' afterwards."
   (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
         (doom-run-hooks 'doom-before-reload-hook)
-        (load "doom-start")
+        (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
-              (doom-initialize-modules 'force)
+              (startup--load-user-init-file nil)
             (general-auto-unbind-keys t)))
         (doom-run-hooks 'doom-after-reload-hook)
         (message "Config successfully reloaded!"))
@@ -91,7 +99,7 @@ Runs `doom-after-reload-hook' afterwards."
 
 ;;;###autoload
 (defun doom/reload-autoloads ()
-  "Reload only `doom-autoloads-file' and `doom-package-autoload-file'.
+  "Reload only the autoloads of the current profile.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
 reloads your package and module visibility, but does not install new packages or
@@ -100,7 +108,12 @@ remove orphaned ones. It also doesn't reload your private config.
 It is useful to only pull in changes performed by 'doom sync' on the command
 line."
   (interactive)
-  (load (file-name-sans-extension doom-autoloads-file) nil 'nomessage))
+  (require 'doom-profiles)
+  ;; TODO: Make this more robust
+  (dolist (file (mapcar #'car doom-profile-generators))
+    (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
+      (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
+            'noerror))))
 
 ;;;###autoload
 (defun doom/reload-env ()

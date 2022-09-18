@@ -1,4 +1,6 @@
 ;;; lisp/lib/process.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 ;;;###autoload
 (defun doom-call-process (command &rest args)
@@ -31,7 +33,7 @@ Warning: freezes indefinitely on any stdin prompt."
             (set-process-filter
              process (lambda (_process output)
                        (princ output (current-buffer))
-                       (princ (doom--format output))))
+                       (princ (doom-print--format output))))
             (set-process-sentinel
              process (lambda (process _event)
                        (when (memq (process-status process) '(exit stop))
@@ -40,3 +42,6 @@ Warning: freezes indefinitely on any stdin prompt."
               (sit-for 0.1))
             (process-exit-status process))
           (string-trim (buffer-string)))))
+
+(provide 'doom-lib '(process))
+;;; process.el ends here

@@ -1,4 +1,6 @@
 ;;; lisp/lib/git.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 ;;;###autoload
 (defun doom-git-toplevel (&rest segments)
@@ -9,3 +11,6 @@
         (apply #'file-name-concat output segments)
       ;; TODO throw stderr as error
       (user-error "Not in a git repo: %s" default-directory))))
+
+(provide 'doom-lib '(git))
+;;; git.el ends here

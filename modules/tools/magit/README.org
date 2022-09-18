@@ -19,7 +19,7 @@ This module provides Magit, an interface to the Git version control system.
 ** Packages
 - [[doom-package:][evil-magit]] if [[doom-module:][:editor evil +everywhere]]
 - [[doom-package:][forge]] if [[doom-module:][+forge]]
-- [[doom-package:][code-review]]
+- [[doom-package:][code-review]] if [[doom-module:][+forge]]
 - [[doom-package:][magit]]
 - [[doom-package:][magit-gitflow]]
 - [[doom-package:][magit-todos]]

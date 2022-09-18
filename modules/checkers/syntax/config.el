@@ -62,7 +62,7 @@
 
 
 (use-package! flycheck-posframe
-  :when (featurep! +childframe)
+  :when (modulep! +childframe)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
   (setq flycheck-posframe-warning-prefix "! "

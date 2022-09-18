@@ -1,4 +1,6 @@
 ;;; lisp/lib/plist.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 ;;
 ;;; Macros
@@ -59,3 +61,6 @@
       (push (cadr plist) keys)
       (setq plist (cddr plist)))
     keys))
+
+(provide 'doom-lib '(plist))
+;;; plist.el ends here

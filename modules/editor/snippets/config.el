@@ -1,6 +1,6 @@
 ;;; editor/snippets/config.el -*- lexical-binding: t; -*-
 
-(defvar +snippets-dir (expand-file-name "snippets/" doom-private-dir)
+(defvar +snippets-dir (expand-file-name "snippets/" doom-user-dir)
   "Directory where `yasnippet' will search for your private snippets.")
 
 

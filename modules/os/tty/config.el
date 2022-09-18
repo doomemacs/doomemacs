@@ -24,7 +24,7 @@
 (add-hook! 'tty-setup-hook
   (defun doom-init-clipboard-in-tty-emacs-h ()
     ;; Fix the clipboard in tty Emacs by...
-    (if (featurep! +osc)
+    (if (modulep! +osc)
         ;; ...communicating with the clibpoard through OSC escape codes (must
         ;; use a terminal that supports it)
         (and (require 'clipetty nil t)

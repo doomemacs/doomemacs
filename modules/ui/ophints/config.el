@@ -1,7 +1,7 @@
 ;;; ui/ophints/config.el -*- lexical-binding: t; -*-
 
 (use-package! evil-goggles
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :hook (doom-first-input . evil-goggles-mode)
   :init
   (setq evil-goggles-duration 0.1
@@ -24,7 +24,7 @@
               :face evil-goggles-yank-face
               :switch evil-goggles-enable-yank
               :advice evil-goggles--generic-async-advice))
-  (when (featurep! :editor lispy)
+  (when (modulep! :editor lispy)
     (pushnew! evil-goggles--commands
               '(lispyville-delete
                 :face evil-goggles-delete-face
@@ -65,7 +65,7 @@
 
 
 (use-package! volatile-highlights
-  :unless (featurep! :editor evil)
+  :unless (modulep! :editor evil)
   :hook (doom-first-input . volatile-highlights-mode)
   :config
   (after! undo-fu

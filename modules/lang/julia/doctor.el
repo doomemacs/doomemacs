@@ -1,14 +1,14 @@
 ;;; lang/julia/doctor.el -*- lexical-binding: t; -*-
 
-(assert! (or (not (featurep! +lsp))
-             (featurep! :tools lsp))
+(assert! (or (not (modulep! +lsp))
+             (modulep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(assert! (or (not (featurep! +tree-sitter))
-             (featurep! :tools tree-sitter))
+(assert! (or (not (modulep! +tree-sitter))
+             (modulep! :tools tree-sitter))
          "This module requires (:tools tree-sitter)")
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (let ((args
          (cond ((require 'eglot-jl nil t)
                 `(,eglot-jl-julia-command

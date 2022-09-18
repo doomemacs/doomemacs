@@ -33,8 +33,7 @@
   ;; HACK Ensures that sly's contrib modules are loaded as soon as possible, but
   ;;      also as late as possible, so users have an opportunity to override
   ;;      `sly-contrib' in an `after!' block.
-  (add-hook! 'doom-after-init-modules-hook
-    (after! sly (sly-setup)))
+  (add-hook! 'after-init-hook (after! sly (sly-setup)))
 
   :config
   (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
@@ -152,7 +151,7 @@
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
           :desc "Untrace all"    "u" #'sly-untrace-all)))
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)))
 
 

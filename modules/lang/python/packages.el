@@ -3,31 +3,31 @@
 
 ;; Major modes
 (package! pip-requirements :pin "216cd1690f80cc965d4ae47b8753fc185f778ff6")
-(when (featurep! +cython)
+(when (modulep! +cython)
   (package! cython-mode :pin "8afd932c28d08428d45bba03d6b642093e4c973b")
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (package! flycheck-cython :pin "ecc4454d35ab5317ab66a04406f36f0c1dbc0b76")))
 
 ;; LSP
-(when (featurep! +lsp)
-  (unless (featurep! :tools lsp +eglot)
-    (if (featurep! +pyright)
+(when (modulep! +lsp)
+  (unless (modulep! :tools lsp +eglot)
+    (if (modulep! +pyright)
         (package! lsp-pyright :pin "c745228f39fdb35372b29b909f25fa6c98dc7c88")
       (package! lsp-python-ms :pin "f8e7c4bcaefbc3fd96e1ca53d17589be0403b828"))))
 
 ;; Programming environment
 (package! anaconda-mode :pin "160e4e7185881233d96da6722332bd6d038187a9")
-(when (featurep! :completion company)
+(when (modulep! :completion company)
   (package! company-anaconda :pin "da1566db41a68809ef7f91ebf2de28118067c89b"))
 
 ;; Environment management
 (package! pipenv :pin "3af159749824c03f59176aff7f66ddd6a5785a10")
 (package! pyvenv :pin "31ea715f2164dd611e7fc77b26390ef3ca93509b")
-(when (featurep! +pyenv)
+(when (modulep! +pyenv)
   (package! pyenv-mode :pin "b818901b8eac0e260ced66a6a5acabdbf6f5ba99"))
-(when (featurep! +conda)
+(when (modulep! +conda)
   (package! conda :pin "a65ed0084876366fd1b238bb2b8b36ee75ac98d8"))
-(when (featurep! +poetry)
+(when (modulep! +poetry)
   (package! poetry :pin "5b9ef569d629d79820e73b5380e54e443ba90616"))
 
 ;; Testing frameworks
