@@ -27,11 +27,11 @@
                        (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                        "(provide 'org-version)\n"))))
-  :pin "00adad9357b9123a7b11ecf12c148a5196debcb7")
+  :pin "86c4635dba556da01c18f6896aa09bf05d67802b")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "39e2abc5629c1be6186bb6489ec4f76524edf82a")
+  :pin "0740bd3fe69c4b327420185d931dcf0a9900a80e")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -55,7 +55,7 @@
 (when (modulep! +brain)
   (package! org-brain :pin "46ca9f766322cff31279ecdf02251ff24a0e9431"))
 (when (modulep! +dragndrop)
-  (package! org-download :pin "947ca223643d28e189480e607df68449c15786cb"))
+  (package! org-download :pin "19e166f0a8c539b4144cfbc614309d47a9b2a9b7"))
 (when (modulep! +gnuplot)
   (package! gnuplot :pin "7138b139d2dca9683f1a81325c643b2744aa1ea3")
   (package! gnuplot-mode :pin "601f6392986f0cba332c87678d31ae0d0a496ce7"))
@@ -82,7 +82,7 @@
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "e219184f37a71c406e41d55ac3212eb79797f0aa"))
+    :pin "c1c4145240270380140d0794bf1bfbfca6b3e101"))
 (cond
  ((modulep! +roam)
   (package! org-roam
@@ -93,7 +93,7 @@
     ;; FIXME A :recipe isn't strictly necessary, but without it, our package
     ;;       bumper fails to distinguish between org-roam v1 and v2.
     :recipe (:host github :repo "org-roam/org-roam")
-    :pin "7f453f3fffb924ca4ae3f8d34cabc03fbcae0127")))
+    :pin "d95d25615e69e7cc847641800c1886366336c97e")))
 
 ;;; Babel
 (package! ob-async :pin "9aac486073f5c356ada20e716571be33a350a982")
@@ -118,7 +118,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (modulep! :lang rest)
-  (package! ob-restclient :pin "3ac834b02b8276aae1b760312612c3b940598f90"))
+  (package! ob-restclient :pin "1b021ce1c67c97fa1aa4d2c0816edb7add129e48"))
 (when (modulep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 

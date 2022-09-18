@@ -166,14 +166,24 @@
 
 (defun doom-docs--hide-drawers-h ()
   "Hide all property drawers."
-  (org-with-wide-buffer
-    (goto-char (point-min))
-    (while (re-search-forward org-drawer-regexp nil t)
-      (let ((beg (max (point-min) (1- (match-beginning 0))))
-            (end (re-search-forward org-drawer-regexp nil t)))
-        (unless (org-current-level)
-          (cl-incf end))
-        (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden)))))
+  (let (pt)
+    (org-with-wide-buffer
+     (goto-char (point-min))
+     (when (looking-at-p org-drawer-regexp)
+       (setq pt (org-element-property :end (org-element-at-point))))
+     (while (re-search-forward org-drawer-regexp nil t)
+       (when-let ((el (org-element-at-point))
+                  (beg (max (point-min) (1- (org-element-property :begin el))))
+                  (end (org-element-property :end el))
+                  ((memq (org-element-type el) '(drawer property-drawer))))
+         (when (org-current-level)
+           (cl-decf end))
+         (org-fold-core-region beg end doom-docs-mode 'doom-doc-hidden)
+         (when doom-docs-mode
+           (org-fold-core-region beg end nil 'org-hide-drawer)))))
+    ;; FIX: If the cursor remains within a newly folded region, that folk will
+    ;;   come undone, so we move it.
+    (if pt (goto-char pt))))
 
 (defun doom-docs--hide-tags-h ()
   "Hide tags in org headings."
@@ -308,9 +318,8 @@ This primes `org-mode' for reading."
     (user-error "Not an org mode buffer"))
   (org-fold-add-folding-spec
    'doom-doc-hidden '(:visible nil
-                      :alias (hidden)
-                      :isearch-open nil
-                      :font-lock-skip t))
+                      :ellipsis nil
+                      :isearch-ignore t))
   (mapc (lambda (sym)
           (if doom-docs-mode
               (set (make-local-variable sym) t)
@@ -442,7 +451,8 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
           (org-num-mode -1))
         (org-num-mode +1))
       (unless (local-variable-p 'org-startup-folded)
-        (let ((org-startup-folded 'content))
+        (let ((org-startup-folded 'content)
+              org-cycle-hide-drawer-startup)
           (org-set-startup-visibility))))
     (add-hook 'read-only-mode-hook #'doom-docs--toggle-read-only-h nil 'local)))
 
