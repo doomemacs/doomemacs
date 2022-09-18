@@ -43,16 +43,32 @@ performance, it is best to run Doom out of ~/.config/emacs or ~/.emacs.d."
           ;; Evaluate piped-in text directly, if given.
           (eval (read input) t)
         (doom-run-repl context))
-    ;; TODO Does this work on Windows?
     (let* ((tempdir      (doom-path (temporary-file-directory) "doom.run"))
            (tempemacsdir (doom-path tempdir ".emacs.d")))
-      (delete-directory tempdir t)
+      (delete-directory tempdir t) ; start from scratch
       (make-directory tempemacsdir t)
+      ;; HACK: So that Emacs doesn't lose track of local state, like user fonts,
+      ;;   configs, or binscripts, we symlink these to the sandbox.
+      ;; REVIEW: Use `--init-directory' when we drop 29 support OR when Doom is
+      ;;   in bootloader mode.
+      (dolist (dir (list (or (getenv "XDG_DATA_HOME") "~/.local/share")
+                         (or (getenv "XDG_BIN_HOME") "~/.local/bin")
+                         (or (getenv "XDG_CONFIG_HOME") "~/.config")
+                         (or (getenv "XDG_CACHE_HOME") "~/.cache")))
+        (let* ((xdg-dir (doom-path dir))
+               (target  (doom-path tempdir (file-relative-name xdg-dir "~"))))
+          (when (file-directory-p xdg-dir)
+            (unless (file-symlink-p target)
+              (make-directory (file-name-directory target) t)
+              (make-symbolic-link xdg-dir target)))))
       (with-temp-file (doom-path tempemacsdir "early-init.el")
         (prin1 `(progn
                   (setenv "HOME" ,(getenv "HOME"))
-                  (setq user-emacs-directory ,doom-emacs-dir)
-                  (load-file ,(doom-path doom-emacs-dir "early-init.el")))
+                  (setenv "EMACSDIR" ,doom-emacs-dir)
+                  (setenv "DOOMDIR"  ,doom-user-dir)
+                  (setenv "DOOMPROFILE" ,(getenv "DOOMPROFILE"))
+                  (setq early-init-file ,(doom-path doom-emacs-dir "early-init.el"))
+                  (load early-init-file nil (not ,init-file-debug) 'nosuffix))
                (current-buffer)))
       (exit! (format "HOME=%S %s %s"
                      tempdir
