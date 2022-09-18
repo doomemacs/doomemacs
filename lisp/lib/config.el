@@ -87,11 +87,11 @@ Runs `doom-after-reload-hook' afterwards."
   (doom--if-compile (format "%S sync -e" doom-bin)
       (let ((doom-reloading-p t))
         (doom-run-hooks 'doom-before-reload-hook)
-        (load "doom-start")
+        (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
           (general-auto-unbind-keys)
           (unwind-protect
-              (doom-initialize-modules 'force)
+              (startup--load-user-init-file nil)
             (general-auto-unbind-keys t)))
         (doom-run-hooks 'doom-after-reload-hook)
         (message "Config successfully reloaded!"))
