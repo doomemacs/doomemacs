@@ -19,18 +19,18 @@
 ;; Version 2018-01-31
 (package! swiper-helm :pin "93fb6db87bc6a5967898b5fd3286954cc72a0008")
 
-(when (featurep! +childframe)
+(when (modulep! +childframe)
   ;; Version 2021-11-03
   (package! helm-posframe :pin "87461b52b6f3f378c63642a33f584d4a4ba28351"))
 
-(when (featurep! +fuzzy)
+(when (modulep! +fuzzy)
   ;; Version 2022-04-02
   (package! helm-flx :pin "27dd9e3ce385a3ca15092150e65781de14b5b00b"))
 
-(when (featurep! +icons)
+(when (modulep! +icons)
   ;; Version 2021-03-30
   (package! helm-icons :pin "8d2f5e705c8b78a390677cf242024739c932fc95"))
 
-(when (featurep! :lang org)
+(when (modulep! :lang org)
   ;; Version 2021-03-24
   (package! helm-org :pin "d67186d3a64e610c03a5f3d583488f018fb032e4"))

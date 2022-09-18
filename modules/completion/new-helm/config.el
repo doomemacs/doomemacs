@@ -5,7 +5,7 @@
 
 (use-package! helm-mode
   :config
-  (when (featurep! +find-file-at-point)
+  (when (modulep! +find-file-at-point)
     ;; helm is too heavy for `find-file-at-point' (is this still true?)
     (add-to-list 'helm-completing-read-handlers-alist (cons #'find-file-at-point nil))))
 
@@ -25,17 +25,17 @@
         ;; symbol at point
         helm-imenu-execute-action-at-once-if-one nil)
 
-  (when (and (featurep! +ack-grep) (executable-find "ack"))
+  (when (and (modulep! +ack-grep) (executable-find "ack"))
     (setq helm-grep-default-command
        "ack -Hn --color --smart-case --no-group -- %p %f"
        helm-grep-default-recurse-command
        "ack -H --color --smart-case --no-group -- %p %f"))
 
-  (when (featurep! +disable-helm-ff-lynx-style)
+  (when (modulep! +disable-helm-ff-lynx-style)
     ;; disable special behavior for left/right, M-left/right keys.
     (setq helm-ff-lynx-style-map nil))
 
-  (when (featurep! +remap-commands)
+  (when (modulep! +remap-commands)
     (map! [remap apropos]                   #'helm-apropos
           [remap find-library]              #'helm-locate-library
           [remap bookmark-jump]             #'helm-bookmarks
@@ -54,7 +54,7 @@
           [remap recentf-open-files]        #'helm-recentf
           [remap yank-pop]                  #'helm-show-kill-ring))
 
-  (when (featurep! +childframe)
+  (when (modulep! +childframe)
     (setq helm-posframe-poshandler #'posframe-poshandler-frame-center)
     (setq helm-posframe-width 0.65)
     (setq helm-posframe-height 0.35)
@@ -63,16 +63,16 @@
     (setq helm-posframe-border-width 8)
     (helm-posframe-enable))
 
-  (when (featurep! +autoresize)
-    (unless (featurep! +helm-popup-layout)
+  (when (modulep! +autoresize)
+    (unless (modulep! +helm-popup-layout)
       (progn
         (setq helm-split-window-inside-p t)
         (helm-autoresize-mode t))))
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
-  (let ((fuzzy (featurep! +fuzzy)))
+  (let ((fuzzy (modulep! +fuzzy)))
     (setq helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
@@ -99,7 +99,7 @@
     ;; Variable completion-styles is ignored unless helm-completion-style is
     ;; customized to 'emacs.
     (customize-set-variable 'helm-completion-style 'emacs)
-    (if (featurep! :completion vertico)
+    (if (modulep! :completion vertico)
         (if fuzzy
             (after! vertico
               (add-to-list 'completion-styles 'flex t))
@@ -107,11 +107,11 @@
             (add-to-list 'completion-styles 'helm t)))
       (add-to-list 'completion-styles (if fuzzy 'flex 'helm) t)))
 
-  (when (featurep! +helm-popup-layout)
+  (when (modulep! +helm-popup-layout)
     (setq helm-display-buffer-default-height 0.25)
     (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil))
 
-  (when (featurep! +helm-hide-mode-line)
+  (when (modulep! +helm-hide-mode-line)
     ;; Hide the modeline in helm windows.
     (setq helm-mode-line-string nil)
     (defun +helm--hide-mode-line (&rest _)
@@ -126,17 +126,17 @@
   (dolist (fn '(helm-describe-variable helm-describe-function))
     (advice-add fn :around #'doom-use-helpful-a))
 
-  (when (featurep! +helm-mode)
+  (when (modulep! +helm-mode)
     (helm-mode 1)))
 
 
 (use-package! helm-flx
-  :when (featurep! +fuzzy)
+  :when (modulep! +fuzzy)
   :config (helm-flx-mode +1))
 
 
 (after! helm-rg
-  (when (featurep! +helm-popup-layout)
+  (when (modulep! +helm-popup-layout)
     (setq helm-rg-display-buffer-normal-method #'pop-to-buffer)
     (set-popup-rule! "^helm-rg-" :ttl nil :select t :size 0.45))
   (map! :map helm-rg-map
@@ -168,7 +168,7 @@
 
 
 (use-package! helm-org
-  :when (featurep! :lang org)
+  :when (modulep! :lang org)
   :defer t
   :init
   (after! helm-mode
@@ -190,11 +190,11 @@
 
 
 (after! swiper-helm
-  (when (featurep! +helm-popup-layout)
+  (when (modulep! +helm-popup-layout)
     (setq ivy-height 20) ; for `swiper-isearch'
     (setq swiper-helm-display-function
           (lambda (buf &optional _resume) (pop-to-buffer buf))))
-  (when (featurep! +remap-swiper)
+  (when (modulep! +remap-swiper)
     (global-set-key [remap swiper] #'swiper-helm))
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))
 
@@ -207,9 +207,9 @@
 
 (use-package! helm-icons
   :after helm
-  :when (featurep! +icons)
+  :when (modulep! +icons)
   :init
-  (if (featurep! +treemacs-icons)
+  (if (modulep! +treemacs-icons)
       (setq helm-icons-provider 'treemacs)
     (progn
       (customize-set-value 'helm-icons-mode->icon nil) ; Fix for all-the-icons

@@ -18,7 +18,7 @@
   "A version of `helm-buffers-list' with its buffer list restricted to the
 current workspace."
   (interactive)
-  (unless (featurep! :ui workspaces)
+  (unless (modulep! :ui workspaces)
     (user-error "This command requires the :ui workspaces module"))
   (with-no-warnings
     (with-persp-buffer-list nil (helm-buffers-list))))
@@ -28,7 +28,7 @@ current workspace."
   "A version of `helm-mini' with its buffer list restricted to the current
 workspace."
   (interactive)
-  (unless (featurep! :ui workspaces)
+  (unless (modulep! :ui workspaces)
     (user-error "This command requires the :ui workspaces module"))
   (with-no-warnings
     (with-persp-buffer-list nil (helm-mini))))
