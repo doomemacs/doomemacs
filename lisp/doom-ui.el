@@ -258,8 +258,9 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; UX: GUIs are inconsistent across systems, desktop environments, and themes,
 ;;   and don't match the look of Emacs. They also impose inconsistent shortcut
 ;;   key paradigms. I'd rather Emacs be responsible for prompting.
-(setq use-dialog-box nil
-      tooltip-mode nil)
+(setq use-dialog-box nil)
+(when (bound-and-true-p tooltip-mode)
+  (tooltip-mode -1))
 
 ;; FIX: The native border "consumes" a pixel of the fringe on righter-most
 ;;   splits, `window-divider' does not. Available since Emacs 25.1.
