@@ -1206,7 +1206,7 @@ Emacs' batch library lacks an implementation of the exec system call."
                      "_doomrun() {\n  " ,command "\n}\n"
                      ,(string-join persisted-env " \\\n")
                      ,(cl-loop for (envvar . val)
-                               in `(("DOOMPROFILE" . ,(doom-profile->id (or doom-profile doom-profile-default)))
+                               in `(("DOOMPROFILE" . ,(ignore-errors (doom-profile->id doom-profile)))
                                     ("EMACSDIR" . ,doom-emacs-dir)
                                     ("DOOMDIR" . ,doom-user-dir)
                                     ("DEBUG" . ,(if init-file-debug "1"))
