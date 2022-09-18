@@ -338,7 +338,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;   3. Cut down on unnecessary logic in Emacs' bootstrapper.
 ;;   4. Offer a more user-friendly error state/screen, especially for errors
 ;;      emitted from Doom's core or the user's config.
-(define-advice startup--load-user-init-file (:override (file-fn _ _) init-doom 100)
+(define-advice startup--load-user-init-file (:override (&rest _) init-doom 100)
   (let ((debug-on-error-from-init-file nil)
         (debug-on-error-should-be-set nil)
         (debug-on-error-initial (if (eq init-file-debug t) 'startup init-file-debug))
@@ -363,17 +363,18 @@ If RETURN-P, return the message as a string instead of displaying it."
               ;; the file that it loads into `user-init-file'.
               (setq user-init-file t)
               (when init-file-name
-                (load init-file-name 'noerror 'nomessage nil 'must-suffix))
-              ;; If we did not find the user's init file, set user-init-file
-              ;; conclusively.  Don't let it be set from default.el.
+                (load init-file-name 'noerror 'nomessage 'nosuffix))
+              ;; If `user-file-name' is `t' when `load' is called, it will
+              ;; change `user-file-name' to the loaded file (assuming it
+              ;; successfully loaded).
               (when (eq user-init-file t)
-                (signal 'doom-nosync-error (list init-file-name))))
-            ;; If we loaded a compiled file, set `user-init-file' to the source
-            ;; version if that exists.
-            (setq user-init-file
-                  (concat (string-remove-suffix (format ".%d.elc" emacs-major-version)
-                                                user-init-file)
-                          ".el")))
+                (signal 'doom-nosync-error (list init-file-name)))
+              ;; If we loaded a compiled file, set `user-init-file' to the
+              ;; source version if that exists.
+              (setq user-init-file
+                    (concat (string-remove-suffix (format ".%d.elc" emacs-major-version)
+                                                  user-init-file)
+                            ".el"))))
         ;; TODO: Add safe-mode profile.
         ;; (error
         ;;  ;; HACK: This is not really this variable's intended purpose, but it
