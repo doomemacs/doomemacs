@@ -292,11 +292,12 @@ ready to be pasted in a bug report on github."
                             'symlinked-doomdir)
                         (if (and (stringp custom-file) (file-exists-p custom-file))
                             'custom-file)
-                        (if (doom-files-in `(,@doom-modules-dirs
-                                             ,doom-core-dir
-                                             ,doom-user-dir)
-                                           :type 'files :match "\\.elc$")
-                            'byte-compiled-config)))))
+                        (if (doom-files-in doom-user-dir :type 'files :match "\\.elc$")
+                            'compiled-user-config)
+                        (if (doom-files-in doom-core-dir :type 'files :match "\\.elc$")
+                            'compiled-core)
+                        (if (doom-files-in doom-modules-dirs :type 'files :match "\\.elc$")
+                            'compiled-modules)))))
         (custom
          ,@(when (and (stringp custom-file)
                       (file-exists-p custom-file))
