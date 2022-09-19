@@ -276,7 +276,7 @@ based on the print level of the message. For example:
     (lambda (message &rest args)
       (when message
         (let ((output (apply #'doom-print--format message args)))
-          (if (= doom-print--output-depth 0)
+          (if (<= doom-print--output-depth 1)
               (doom-print output :level level :stream t)
             (let ((doom-print--output-depth (1- doom-print--output-depth)))
               (funcall old "%s" output)))
