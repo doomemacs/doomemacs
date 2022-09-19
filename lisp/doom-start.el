@@ -302,13 +302,19 @@ If RETURN-P, return the message as a string instead of displaying it."
   (doom-load-envvars-file doom-env-file 'noerror))
 
 ;;; Last minute setup
-(add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
-(add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 (add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h)
 (add-hook 'doom-after-init-hook #'doom-display-benchmark-h 110)
 (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))
 (doom-run-hook-on 'doom-first-input-hook  '(pre-command-hook))
+;; PERF: Activate these later, otherwise they'll fire for every buffer created
+;;   between now and the end of startup.
+(add-hook! 'after-init-hook
+  (defun doom-init-local-var-hooks-h ()
+    ;; These fire `MAJOR-MODE-local-vars-hook' hooks, which is a Doomism. See
+    ;; the `MODE-local-vars-hook' section above.
+    (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
+    (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)))
 
 ;;; Load $DOOMDIR/init.el early
 ;; TODO: Catch errors
