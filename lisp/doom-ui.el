@@ -187,9 +187,6 @@ or if the current buffer is read-only or not file-visiting."
 ;;
 ;;; Buffers
 
-;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
-
 (defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
@@ -595,6 +592,9 @@ triggering hooks during startup."
 
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
   (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
+
+  ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+  (push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
 
   ;; Initialize `doom-switch-window-hook' and `doom-switch-frame-hook'
   (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
