@@ -4,20 +4,20 @@
 (package! vertico
   :recipe (:host github :repo "minad/vertico"
            :files ("*.el" "extensions/*.el"))
-  :pin "2ad46196653b8a873adf11aee949d621af8ff6bc")
+  :pin "8078b8cb940d6b2fe7578bc2e9c7cf1838cd092f")
 
-(package! orderless :pin "8b9af2796fa0eb87eea4140bc08d16880a493803")
+(package! orderless :pin "6b86527b30ef96e047d97e314ac640a410891d1f")
 
-(package! consult :pin "6319aec3513cd587a8817269bc32c8283d419710")
-(package! compat :pin "cc1924fd8b3f9b75b26bf93f084ea938c06f9615")
-(package! consult-dir :pin "d397ca6ea67af4d3c59a330a778affd825f0efd9")
+(package! consult :pin "76aab86015c3d7628dbd5f92b2dd8ab9aeadac8d")
+(package! compat :pin "056e3ccffc716990dcb7b33273453d5fce0402de")
+(package! consult-dir :pin "8abf62df088de87175e98adf8f6f5fb93515004c")
 (when (modulep! :checkers syntax)
   (package! consult-flycheck :pin "9b40f136c017fadf6239d7602d16bf73b4ad5198"))
 
-(package! embark :pin "5d0459d27aa7cf738b5af36cf862723a62bef955")
-(package! embark-consult :pin "5d0459d27aa7cf738b5af36cf862723a62bef955")
+(package! embark :pin "3add321d7442973413fb92a4052f8d0ad6915829")
+(package! embark-consult :pin "3add321d7442973413fb92a4052f8d0ad6915829")
 
-(package! marginalia :pin "69442c2d9472b665f698f67426cd255f6c0620a3")
+(package! marginalia :pin "7f5bf7818b8c5a88cc3e7011d561655b287570e3")
 
 (package! wgrep :pin "f9687c28bbc2e84f87a479b6ce04407bb97cfb23")
 
@@ -27,4 +27,4 @@
 (when (modulep! +childframe)
   (package! vertico-posframe
     :recipe (:host github :repo "tumashu/vertico-posframe")
-    :pin "7ca364d319e7ba8ccba26a0d57513f3e66f1b05b"))
+    :pin "46aa1dffd18dc9500c04f0b61524b0625b7b5429"))
