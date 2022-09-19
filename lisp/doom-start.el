@@ -365,20 +365,18 @@ If RETURN-P, return the message as a string instead of displaying it."
                   ;; `doom-profile--generate-load-modules' for details).
                   doom-init-time)
               ;; If `user-init-file' is t, then `load' will store the name of
-              ;; the file that it loads into `user-init-file'.
+              ;; the next file it loads into `user-init-file'.
               (setq user-init-file t)
               (when init-file-name
                 (load init-file-name 'noerror 'nomessage 'nosuffix))
-              ;; If `user-file-name' is `t' when `load' is called, it will
-              ;; change `user-file-name' to the loaded file (assuming it
-              ;; successfully loaded).
+              ;; If it's still `t', then it failed to load the profile initfile.
+              ;; This likely means the user has forgotten to run `doom sync'!
               (when (eq user-init-file t)
                 (signal 'doom-nosync-error (list init-file-name)))
               ;; If we loaded a compiled file, set `user-init-file' to the
               ;; source version if that exists.
               (setq user-init-file
-                    (concat (string-remove-suffix (format ".%d.elc" emacs-major-version)
-                                                  user-init-file)
+                    (concat (string-remove-suffix ".elc" user-init-file)
                             ".el"))))
         ;; TODO: Add safe-mode profile.
         ;; (error
