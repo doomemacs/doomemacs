@@ -12,12 +12,11 @@ hoist buggy forms into autoloads.")
   "List of regexps whose matching files won't be indexed for autoloads.")
 
 (defvar doom-autoloads-cached-vars
-  '(doom-modules
-    doom-disabled-packages
-    native-comp-deferred-compilation-deny-list
-    load-path
+  '(load-path
     auto-mode-alist
     interpreter-mode-alist
+    magic-mode-alist
+    magic-fallback-mode-alist
     Info-directory-list)
   "A list of variables to be cached in `doom-autoloads-file'.")
 
@@ -145,6 +144,7 @@ hoist buggy forms into autoloads.")
          (version-control 'never)
          case-fold-search    ; reduce magic
          autoload-timestamps ; reduce noise in generated files
+         autoload-compute-prefixes
          ;; So `autoload-generate-file-autoloads' knows where to write it
          (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))

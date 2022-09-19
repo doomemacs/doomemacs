@@ -722,6 +722,11 @@ original state.")
            if (string-match-p prompt-re prompt)
            return (string-match-p opt-re option)))
 
+(defadvice! doom-cli--straight-no-compute-prefixes-a (fn &rest args)
+  :around #'straight--build-autoloads
+  (let (autoload-compute-prefixes)
+    (apply fn args)))
+
 (defadvice! doom-cli--straight-fallback-to-tty-prompt-a (fn prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
   :around #'straight--popup-raw

@@ -362,10 +362,6 @@ Defaults to the profile at `doom-profile-default'."
              (signal 'doom-autoload-error (list init-file e))))))
 
 (defun doom-profile--generate-init-vars ()
-  (setq doom-autoloads-cached-vars '(load-path
-                                     Info-directory-list
-                                     auto-mode-alist
-                                     interpreter-mode-alist))
   (let ((v (version-to-list doom-version))
         (ref (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD"))
         (branch (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")))
