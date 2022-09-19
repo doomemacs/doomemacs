@@ -369,52 +369,64 @@ Defaults to the profile at `doom-profile-default'."
   (let ((v (version-to-list doom-version))
         (ref (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD"))
         (branch (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")))
-    `(,@(cl-loop for var in doom-autoloads-cached-vars
-                 if (boundp var)
-                 collect `(set-default ',var ',(symbol-value var)))
-      (setplist 'doom-version
-                '(major  ,(nth 0 v)
-                  minor  ,(nth 1 v)
-                  build  ,(nth 2 v)
-                  tag    ,(cadr (split-string doom-version "-" t))
-                  ref    ,(if (zerop (car ref)) (cdr ref))
-                  branch ,(if (zerop (car branch)) (cdr branch)))))))
+    ;; FIX: The `doom-init-time' guard protects us from a nefarious edge case in
+    ;;   which Emacs' interpreter, while lazy-loading docstrings in
+    ;;   byte-compiled elisp, ends up re-evaluating the whole file. This can
+    ;;   happen rapidly, multiple times, if something loads these docstrings (by
+    ;;   calling the `documentation' function) rapidly, which is the case for
+    ;;   `marginalia' and each symbol in the M-x and describe-* command
+    ;;   completion lists. By guarding the expensive part of this file, this
+    ;;   process becomes instant.
+    `((unless doom-init-time
+        ,@(cl-loop for var in doom-autoloads-cached-vars
+                   if (boundp var)
+                   collect `(set-default ',var ',(symbol-value var)))
+        (setplist 'doom-version
+                  '(major  ,(nth 0 v)
+                    minor  ,(nth 1 v)
+                    build  ,(nth 2 v)
+                    tag    ,(cadr (split-string doom-version "-" t))
+                    ref    ,(if (zerop (car ref)) (cdr ref))
+                    branch ,(if (zerop (car branch)) (cdr branch))))))))
 
 (defun doom-profile--generate-load-modules ()
-  (let ((module-list (cddr (doom-module-list))))
-    `((set 'doom-disabled-packages ',doom-disabled-packages)
-      (set 'doom-modules ',doom-modules)
-      ;; Cache module state and flags in symbol plists for quick lookup by
-      ;; `modulep!' later.
-      ,@(cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
-                 collect `(setplist ',category
-                           (quote ,(cl-loop for (_ . module) in modules
-                                            nconc `(,module ,(get category module))))))
-      (doom-run-hooks 'doom-before-modules-init-hook)
-      ;; TODO: Until these files are byte-compiler-ready, I must use `load'
-      ;;   instead of `require', as to not invite the byte-compiler to load them
-      ;;   while this init file is compiled.
-      (doom-load ,(doom-path doom-core-dir "doom-keybinds"))
-      (doom-load ,(doom-path doom-core-dir "doom-ui"))
-      (doom-load ,(doom-path doom-core-dir "doom-projects"))
-      (doom-load ,(doom-path doom-core-dir "doom-editor"))
-      ,@(cl-loop for (cat . mod) in module-list
-                 if (doom-module-locate-path cat mod (concat doom-module-init-file ".el"))
-                 collect `(let ((doom--current-module '(,cat . ,mod))
-                                (doom--current-flags ',(doom-module-get cat mod :flags)))
-                            (doom-load ,it)))
-      (doom-run-hooks 'doom-after-modules-init-hook)
-      (doom-run-hooks 'doom-before-modules-config-hook)
-      ,@(cl-loop for (cat . mod) in module-list
-                 if (doom-module-locate-path cat mod (concat doom-module-config-file ".el"))
-                 collect `(let ((doom--current-module '(,cat . ,mod))
-                                (doom--current-flags ',(doom-module-get cat mod :flags)))
-                            (doom-load ,it)))
-      (doom-run-hooks 'doom-after-modules-config-hook)
-      (let ((old-custom-file custom-file))
-        (doom-load ,(doom-path doom-user-dir doom-module-config-file) 'noerror)
-        (when (eq custom-file old-custom-file)
-          (doom-load custom-file 'noerror))))))
+  (let ((module-list (doom-module-list)))
+    ;; FIX: Same as above (see `doom-profile--generate-init-vars').
+    `((unless doom-init-time
+        (set 'doom-disabled-packages ',doom-disabled-packages)
+        (set 'doom-modules ',doom-modules)
+        (defvar doom-modules-list ',(cddr module-list))
+        ;; Cache module state and flags in symbol plists for quick lookup by
+        ;; `modulep!' later.
+        ,@(cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
+                   collect `(setplist ',category
+                             (quote ,(cl-loop for (_ . module) in modules
+                                              nconc `(,module ,(get category module))))))
+        (doom-run-hooks 'doom-before-modules-init-hook)
+        ;; TODO: Until these files are byte-compiler-ready, I must use `load'
+        ;;   instead of `require', as to not invite the byte-compiler to load them
+        ;;   while this init file is compiled.
+        (doom-load ,(doom-path doom-core-dir "doom-keybinds"))
+        (doom-load ,(doom-path doom-core-dir "doom-ui"))
+        (doom-load ,(doom-path doom-core-dir "doom-projects"))
+        (doom-load ,(doom-path doom-core-dir "doom-editor"))
+        ,@(cl-loop for (cat . mod) in module-list
+                   if (doom-module-locate-path cat mod (concat doom-module-init-file ".el"))
+                   collect `(let ((doom--current-module '(,cat . ,mod))
+                                  (doom--current-flags ',(doom-module-get cat mod :flags)))
+                              (doom-load ,it)))
+        (doom-run-hooks 'doom-after-modules-init-hook)
+        (doom-run-hooks 'doom-before-modules-config-hook)
+        ,@(cl-loop for (cat . mod) in module-list
+                   if (doom-module-locate-path cat mod (concat doom-module-config-file ".el"))
+                   collect `(let ((doom--current-module '(,cat . ,mod))
+                                  (doom--current-flags ',(doom-module-get cat mod :flags)))
+                              (doom-load ,it)))
+        (doom-run-hooks 'doom-after-modules-config-hook)
+        (let ((old-custom-file custom-file))
+          (doom-load ,(doom-path doom-user-dir doom-module-config-file) 'noerror)
+          (when (eq custom-file old-custom-file)
+            (doom-load custom-file 'noerror)))))))
 
 (defun doom-profile--generate-doom-autoloads ()
   (doom-autoloads--scan

@@ -358,7 +358,12 @@ If RETURN-P, return the message as a string instead of displaying it."
                    ;; Compiling them in one place is a big reduction in startup
                    ;; time, and by keeping a history of them, you get a snapshot
                    ;; of your config in time.
-                   (file-name-concat doom-profile-dir (format "init.%d.elc" emacs-major-version))))
+                   (file-name-concat
+                    doom-profile-dir (format "init.%d.elc" emacs-major-version)))
+                  ;; If the config is being reloaded, let's pretend it hasn't be
+                  ;; initialized by unsetting this (see note in
+                  ;; `doom-profile--generate-load-modules' for details).
+                  doom-init-time)
               ;; If `user-init-file' is t, then `load' will store the name of
               ;; the file that it loads into `user-init-file'.
               (setq user-init-file t)
