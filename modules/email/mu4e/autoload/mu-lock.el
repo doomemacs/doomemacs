@@ -26,6 +26,7 @@
           (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
 
+;;;###autoload
 (defun +mu4e-lock-available (&optional strict)
   "If the `+mu4e-lock-file' is available (unset or owned by this emacs) return t.
 If STRICT only accept an unset lock file."
