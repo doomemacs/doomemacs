@@ -386,12 +386,11 @@ Defaults to the profile at `doom-profile-default'."
                     branch ,(if (zerop (car branch)) (cdr branch))))))))
 
 (defun doom-profile--generate-load-modules ()
-  (let ((module-list (doom-module-list)))
+  (let ((module-list (cddr (doom-module-list))))
     ;; FIX: Same as above (see `doom-profile--generate-init-vars').
     `((unless doom-init-time
         (set 'doom-disabled-packages ',doom-disabled-packages)
         (set 'doom-modules ',doom-modules)
-        (defvar doom-modules-list ',(cddr module-list))
         ;; Cache module state and flags in symbol plists for quick lookup by
         ;; `modulep!' later.
         ,@(cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
