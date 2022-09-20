@@ -68,7 +68,10 @@
           +literate-tangle--async-proc
           ;; See `+literate-tangle--sync' for an explanation of the (progn ...) below.
           (start-process "tangle-config"
-                         (get-buffer-create " *tangle config*")
+                         (with-current-buffer
+                             (get-buffer-create " *tangle config*")
+                           (erase-buffer)
+                           (current-buffer))
                          "emacs" "--batch"
                          "-L" (file-name-directory (locate-library "org"))
                          "--load" (doom-path doom-core-dir "doom")
