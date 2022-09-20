@@ -406,14 +406,16 @@ Defaults to the profile at `doom-profile-default'."
         (doom-load ,(doom-path doom-core-dir "doom-projects"))
         (doom-load ,(doom-path doom-core-dir "doom-editor"))
         ,@(cl-loop for (cat . mod) in module-list
-                   if (doom-module-locate-path cat mod (concat doom-module-init-file ".el"))
+                   for dir = (doom-module-locate-path cat mod)
+                   if (locate-file-internal doom-module-init-file (list dir) load-suffixes)
                    collect `(let ((doom--current-module '(,cat . ,mod))
                                   (doom--current-flags ',(doom-module-get cat mod :flags)))
                               (doom-load ,it)))
         (doom-run-hooks 'doom-after-modules-init-hook)
         (doom-run-hooks 'doom-before-modules-config-hook)
         ,@(cl-loop for (cat . mod) in module-list
-                   if (doom-module-locate-path cat mod (concat doom-module-config-file ".el"))
+                   for dir = (doom-module-locate-path cat mod)
+                   if (locate-file-internal doom-module-config-file (list dir) load-suffixes)
                    collect `(let ((doom--current-module '(,cat . ,mod))
                                   (doom--current-flags ',(doom-module-get cat mod :flags)))
                               (doom-load ,it)))
