@@ -18,9 +18,9 @@
                (sp-point-in-string-or-comment p)))
       (pcase +word-wrap-extra-indent
         ('double
-         (* 2 (symbol-value +word-wrap--major-mode-indent-var)))
+         (* 2 +word-wrap--major-mode-indent-var))
         ('single
-         (symbol-value +word-wrap--major-mode-indent-var))
+         +word-wrap--major-mode-indent-var)
         ((and (pred integerp) fixed)
          fixed)
         (_ 0))
