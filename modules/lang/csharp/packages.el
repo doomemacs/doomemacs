@@ -10,3 +10,5 @@
   (package! shader-mode :pin "d7dc8d0d6fe8914e8b6d5cf2081ad61e6952359c"))
 (when (modulep! +dotnet)
   (package! sharper :pin "96edd4a1dbc267afdff0cb97298d1b05b7c2080c"))
+(when (modulep! +tree-sitter)
+  (package! tree-sitter-indent :pin "4ef246db3e4ff99f672fe5e4b416c890f885c09e"))

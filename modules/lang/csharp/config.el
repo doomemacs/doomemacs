@@ -1,6 +1,9 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
 (use-package! csharp-mode
+  :init
+  (when (modulep! +tree-sitter)
+    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
   :hook (csharp-mode . rainbow-delimiters-mode)
   :config
   (set-electric! 'csharp-mode :chars '(?\n ?\}))
