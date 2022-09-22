@@ -214,8 +214,10 @@ is tomorrow.  With two prefixes, select the deadline."
                   (lev (org-outline-level))
                   (folded-p (invisible-p (point-at-eol)))
                   (from (plist-get msg :from)))
-              (if (consp (car from)) ; Occurs when using mu4e 1.8+.
-                  (setq from (car from)))
+              (when (consp (car from)) ; Occurs when using mu4e 1.8+.
+                (setq from (car from)))
+              (unless (keywordp (car from)) ; If using mu4e <= 1.6.
+                (setq from (list :name (or (caar from) (cdar from)))))
               ;; place the subheader
               (when folded-p (show-branches))    ; unfold if necessary
               (org-end-of-meta-data) ; skip property drawer
@@ -227,7 +229,7 @@ is tomorrow.  With two prefixes, select the deadline."
                               "[[mu4e:msgid:"
                               (plist-get msg :message-id) "]["
                               (truncate-string-to-width
-                               (or (caar from) (cdar from)) 25 nil nil t)
+                               (plist-get from :name) 25 nil nil t)
                               " - "
                               (truncate-string-to-width
                                (plist-get msg :subject) 40 nil nil t)
