@@ -517,8 +517,8 @@
        :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
        :desc "Org agenda"                   "a" #'org-agenda
        (:when (modulep! :tools biblio)
-        :desc "Bibliographic entries"        "b"
-        (cond ((modulep! :completion vertico)  #'citar-open-entry)
+        :desc "Bibliographic notes"        "b"
+        (cond ((modulep! :completion vertico)  #'citar-open-notes)
               ((modulep! :completion ivy)      #'ivy-bibtex)
               ((modulep! :completion helm)     #'helm-bibtex)))
 
