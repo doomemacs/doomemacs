@@ -19,11 +19,6 @@
             :files ("straight*.el"))
   :pin "e20a44c4ac5c04896aecd43a5fdd12c67527c69e")
 
-;; doom-modules.el
-(package! use-package
-  :type 'core
-  :pin "e2d173b1200865a9efd5c2066831a230497582c0")
-
 ;; doom-ui.el
 (package! all-the-icons :pin "4a4d6269b8b85b0b15954f063e6ce378630d80c0")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
