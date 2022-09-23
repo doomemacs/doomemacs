@@ -189,6 +189,16 @@ returns nil, otherwise an absolute path."
                    if (file-exists-p path)
                    return (expand-file-name path)))))))
 
+(defun doom-module-locate-paths (module-list file)
+  "Return all existing paths to FILE under each module in MODULE-LIST.
+
+MODULE-LIST is a list of cons cells (GROUP . NAME). See `doom-module-list' for
+an example."
+  (cl-loop with file = (file-name-sans-extension file)
+           for (group . name) in module-list
+           if (doom-module-locate-path group name file)
+           collect it))
+
 (defun doom-module-from-path (path &optional enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
 If ENABLED-ONLY, return nil if the containing module isn't enabled."
