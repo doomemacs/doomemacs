@@ -2,21 +2,26 @@
 ;;; Commentary:
 ;;; Code:
 
-
 ;;
 ;;; Custom hooks
 
-(defvar doom-first-input-hook nil
-  "Transient hooks run before the first user input.")
-(put 'doom-first-input-hook 'permanent-local t)
+(defcustom doom-first-input-hook ()
+  "Transient hooks run before the first user input."
+  :type 'hook
+  :local 'permenant-local
+  :group 'doom)
 
-(defvar doom-first-file-hook nil
-  "Transient hooks run before the first interactively opened file.")
-(put 'doom-first-file-hook 'permanent-local t)
+(defcustom doom-first-file-hook ()
+  "Transient hooks run before the first interactively opened file."
+  :type 'hook
+  :local 'permenant-local
+  :group 'doom)
 
-(defvar doom-first-buffer-hook nil
-  "Transient hooks run before the first interactively opened buffer.")
-(put 'doom-first-buffer-hook 'permanent-local t)
+(defcustom doom-first-buffer-hook ()
+  "Transient hooks run before the first interactively opened buffer."
+  :type 'hook
+  :local 'permenant-local
+  :group 'doom)
 
 
 ;;
