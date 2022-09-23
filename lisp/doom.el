@@ -38,6 +38,7 @@
 ;;     > $EMACSDIR/lisp/doom-start.el
 ;;       - hook: `doom-before-init-hook'
 ;;       - $DOOMDIR/init.el
+;;   - hook: `before-init-hook'
 ;;   > $XDG_DATA_HOME/doom/$PROFILE/@/$VERSION/init.el   (replaces $EMACSDIR/init.el)
 ;;     - $EMACSDIR/doom-{keybinds,ui,projects,editor}.el
 ;;     - hook: `doom-before-modules-init-hook'
@@ -48,12 +49,11 @@
 ;;     - hook: `doom-after-modules-config-hook'
 ;;     - $DOOMDIR/config.el
 ;;     - `custom-file' or $DOOMDIR/custom.el
-;;   > The rest of `command-line' (Emacs startup)
-;;     - hook: `after-init-hook'
-;;     - hook: `emacs-startup-hook'
-;;     - hook: `window-setup-hook'
-;;     - hook: `doom-init-ui-hook'
-;;     - hook: `doom-after-init-hook'
+;;   - hook: `after-init-hook'
+;;   - hook: `emacs-startup-hook'
+;;   - hook: `window-setup-hook'
+;;   - hook: `doom-init-ui-hook'
+;;   - hook: `doom-after-init-hook'
 ;;   > After startup is complete:
 ;;     - On first input:              `doom-first-input-hook'
 ;;     - On first switched-to buffer: `doom-first-buffer-hook'
@@ -560,27 +560,26 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;;; Custom hooks
 
 (defcustom doom-before-init-hook ()
-  "A hook run before Doom has been initialized and before $DOOMDIR/init.el.
+  "A hook run after Doom's core has initialized; before user configuration.
 
-This occurs in the context of early-init.el. Much of Emacs and Doom isn't
-initialized at this point, only loaded. Use this for configuration at the latest
-opportunity before the session becomes unpredictably complicated by user config,
-packages, etc.
-
-Do not use this for interactive functionality, as it's triggered in
-noninteractive sessions as well, after Doom core has been loaded, but not
-initialized.
+This is triggered right before $DOOMDIR/init.el is loaded, in the context of
+early-init.el. Use this for configuration at the latest opportunity before the
+session becomes unpredictably complicated by user config, packages, etc. This
+runs in both interactive and non-interactive contexts, so guard hooks
+appropriately against `noninteractive' or the `cli' context (see
+`doom-context').
 
 In contrast, `before-init-hook' is run just after $DOOMDIR/init.el is loaded,
-but before the rest of Doom is loaded."
+but long before your modules and $DOOMDIR/config.el are loaded."
   :group 'doom
   :type 'hook)
 
 (defcustom doom-after-init-hook ()
-  "A hook run at the (true) end of Emacs startup.
+  "A hook run once Doom's core and modules, and the user's config are loaded.
 
-When this runs, all modules, config files, and startup hooks have been
-triggered. This is the absolute latest point in the startup process."
+This triggers at the absolutel atest point in the eager startup process, and
+runs in both interactive and non-interactive sessions, so guard hooks
+appropriately against `noninteractive' or the `cli' context."
   :group 'doom
   :type 'hook)
 
