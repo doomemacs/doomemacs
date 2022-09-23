@@ -381,7 +381,7 @@ Defaults to the profile at `doom-profile-default'."
                   '(major  ,(nth 0 v)
                     minor  ,(nth 1 v)
                     build  ,(nth 2 v)
-                    tag    ,(cadr (split-string doom-version "-" t))
+                    tag    ,(ignore-errors (cadr (split-string doom-version "-" t)))
                     ref    ,(if (zerop (car ref)) (cdr ref))
                     branch ,(if (zerop (car branch)) (cdr branch))))))))
 
