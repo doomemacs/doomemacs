@@ -154,8 +154,7 @@ each package."
                                (if (listp m)
                                    (format "%s %s" (car m) (cdr m))
                                  (format "%s" m)))
-                             (append '(:user :core)
-                                     (delete-dups (mapcar #'car modules))
+                             (append (delete-dups (mapcar #'car modules))
                                      modules)))
                    nil t nil nil))
           (module (split-string module " " t)))
@@ -173,8 +172,7 @@ each package."
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
-                            (append '((:core) (:user))
-                                    (doom-module-list 'all))))))
+                            (doom-module-list 'all)))))
 
 ;;;###autoload
 (defun doom/bump-package (package)

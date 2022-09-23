@@ -251,11 +251,13 @@ uses a straight or package.el command directly).")
   "Ensure `straight' is installed and was compiled with this version of Emacs."
   (when (or force-p (null (bound-and-true-p straight-recipe-repositories)))
     (doom-log "Initializing straight")
-    (let ((packages (doom-package-list nil 'core)))
+    (let ((packages (doom-package-list '((:core)))))
       (cl-destructuring-bind (&key recipe pin &allow-other-keys)
           (alist-get 'straight packages)
         (doom--ensure-straight recipe pin))
-      (doom--ensure-core-packages packages))))
+      (doom--ensure-core-packages
+       (seq-filter (fn! (eq (plist-get % :type) 'core))
+                   packages)))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Process all packages, essential and otherwise, if they haven't already been.
@@ -407,29 +409,34 @@ installed."
 
 
 ;;; Package getters
-(defun doom--read-packages (file &optional noeval noerror)
+(defun doom-packages--read (file &optional noeval noerror)
   (condition-case-unless-debug e
       (with-temp-buffer ; prevent buffer-local state from propagating
-        (if (not noeval)
-            (load file noerror 'nomessage 'nosuffix)
-          (when (file-exists-p file)
-            (insert-file-contents file)
-            (let (emacs-lisp-mode) (emacs-lisp-mode))
-            ;; Scrape `package!' blocks from FILE for a comprehensive listing of
-            ;; packages used by this module.
-            (while (search-forward "(package!" nil t)
-              (let ((ppss (save-excursion (syntax-ppss))))
-                ;; Don't collect packages in comments or strings
-                (unless (or (nth 3 ppss)
-                            (nth 4 ppss))
-                  (goto-char (match-beginning 0))
-                  (cl-destructuring-bind (_ name . plist)
-                      (read (current-buffer))
-                    (push (cons
-                           name (plist-put
-                                 plist :modules
-                                 (list (doom-module-from-path file))))
-                          doom-packages))))))))
+        (let* ((doom--current-module (doom-module-from-path file))
+               (doom--current-flags
+                (doom-module-get (car doom--current-module)
+                                 (cdr doom--current-module)
+                                 :flags)))
+          (if (not noeval)
+              (load file noerror 'nomessage 'nosuffix)
+            (when (file-exists-p file)
+              (insert-file-contents file)
+              (let (emacs-lisp-mode) (emacs-lisp-mode))
+              ;; Scrape `package!' blocks from FILE for a comprehensive listing of
+              ;; packages used by this module.
+              (while (search-forward "(package!" nil t)
+                (let ((ppss (save-excursion (syntax-ppss))))
+                  ;; Don't collect packages in comments or strings
+                  (unless (or (nth 3 ppss)
+                              (nth 4 ppss))
+                    (goto-char (match-beginning 0))
+                    (cl-destructuring-bind (_ name . plist)
+                        (read (current-buffer))
+                      (push (cons
+                             name (plist-put
+                                   plist :modules
+                                   (list doom--current-module)))
+                            doom-packages)))))))))
     (user-error
      (user-error (error-message-string e)))
     (error
@@ -437,40 +444,32 @@ installed."
              (list (doom-module-from-path file)
                    file e)))))
 
-(defun doom-package-list (&optional all-p core-only-p)
-  "Retrieve a list of explicitly declared packages from enabled modules.
+(defun doom-package-list (&optional module-list)
+  "Retrieve a list of explicitly declared packages from MODULE-LIST.
 
-If ALL-P, gather packages unconditionally across all modules, including disabled
-ones."
-  (let ((packages-file (concat doom-packages-file ".el"))
+If MODULE-LIST is omitted, read enabled module list in configdepth order (see
+`doom-module-set'). Otherwise, MODULE-LIST may be any symbol (or t) to mean read
+all modules in `doom-modules-dir', including :core and :user. MODULE-LIST may
+also be a list of module keys."
+  (let ((module-list (cond ((null module-list) (doom-module-list))
+                           ((symbolp module-list) (doom-module-list 'all))
+                           (module-list)))
+        ;; TODO: doom-module-context + doom-context
+        (packages-file "packages.el")
         doom-disabled-packages
         doom-packages)
-    (doom--read-packages
-     (doom-path doom-core-dir packages-file) all-p 'noerror)
-    (unless core-only-p
-      (let ((private-packages (doom-path doom-user-dir packages-file)))
-        (if all-p
-            (mapc #'doom--read-packages
-                  (doom-files-in doom-modules-dir
-                                 :depth 2
-                                 :match "/packages\\.el$"))
-          ;; We load the private packages file twice to populate
-          ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
-          ;; second time to ensure privately overridden packages are properly
-          ;; overwritten.
-          (let (doom-packages)
-            (doom--read-packages private-packages nil 'noerror))
-          (cl-loop for (cat . mod) in (doom-module-list)
-                   for path = (doom-module-expand-path cat mod packages-file)
-                   for doom--current-module = (cons cat mod)
-                   for doom--current-flags = (doom-module-get cat mod :flags)
-                   do (doom--read-packages path nil 'noerror)))
-        (doom--read-packages private-packages all-p 'noerror)))
-    (cl-remove-if-not
-     (if core-only-p
-         (lambda (pkg) (eq (plist-get (cdr pkg) :type) 'core))
-       #'identity)
-     (nreverse doom-packages))))
+    (when (assq :user module-list)
+      ;; We load the private packages file twice to populate
+      ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
+      ;; second time to ensure privately overridden packages are properly
+      ;; overwritten.
+      (let (doom-packages)
+        (doom-packages--read (doom-module-expand-path :user nil packages-file)
+                             nil 'noerror)))
+    (cl-loop for (cat . mod) in module-list
+             if (doom-module-locate-path cat mod packages-file)
+             do (doom-packages--read it nil 'noerror))
+    (nreverse doom-packages)))
 
 (defun doom-package-pinned-list ()
   "Return an alist mapping package names (strings) to pinned commits (strings)."

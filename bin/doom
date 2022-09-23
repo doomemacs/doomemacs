@@ -302,14 +302,12 @@ SEE ALSO:
     ;; (load! "test" dir)
     )
 
-  (let ((cli-file "cli"))
+  (let ((cli-file "cli.el"))
     (defcli-group! "Module commands"
       (dolist (key (doom-module-list))
-        (when-let (path (doom-module-expand-path (car key) (cdr key) cli-file))
-          (defcli-group! :prefix (format "+%s" (cdr key))
-            (doom-load path t)))))
-
-    (load! cli-file doom-user-dir t))
+        (when-let (path (doom-module-locate-path (car key) (cdr key) cli-file))
+          (defcli-group! :prefix (if (cdr key) (format "+%s" (cdr key)))
+            (doom-load (file-name-sans-extension path)))))))
 
   ;; Allow per-project Doom settings in .doom files.
   (let (doomrc)

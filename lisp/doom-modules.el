@@ -107,6 +107,18 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
         (and (memq flag (plist-get plist :flags))
              t))))
 
+(defun doom-module-depth (category module &optional initdepth?)
+  "Return the depth of CATEGORY MODULE.
+
+If INITDEPTH? is non-nil, use the CAR if a module was given two depths (see
+`doom-module-set')."
+  (if-let (depth (doom-module-get category module :depth))
+      (or (if initdepth?
+              (car-safe depth)
+            (cdr-safe depth))
+          depth)
+    0))
+
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
   (declare (pure t) (side-effect-free t))
@@ -138,23 +150,75 @@ of PROPERTY and VALUEs.
 CATEGORY is a keyword, module is a symbol, PLIST is a plist that accepts the
 following properties:
 
-  :flags [SYMBOL LIST]  list of enabled category flags
-  :path  [STRING]       path to category root directory
+  :path STRING
+    Path to the directory where this module lives.
+  :depth INT|(INITDEPTH . CONFIGDEPTH)
+    Determines module load order. If a cons cell, INITDEPTH determines the load
+    order of the module's init.el, while CONFIGDEPTH determines the same for all
+    other config files (config.el, packages.el, doctor.el, etc).
+  :flags (SYMBOL...)
+    A list of activated flags for this module.
+  :features (SYMBOL...)
+    A list of active features, determined from module's metadata. NOT
+    IMPLEMENTED YET.
 
-If PLIST consists of a single nil, unset and disable CATEGORY MODULE.
-
-Example:
-  (doom-module-set :lang 'haskell :flags '(+lsp))"
+If PLIST consists of a single nil, the module is purged from memory instead."
   (if (car plist)
       (progn
-        ;; Doom caches flags and features using symbol plists for fast lookups in
-        ;; `modulep!'. plists lack the overhead, and are much faster for datasets this
-        ;; small. The format of this case is (cons FEATURES FLAGS)
-        (put category module (cons t (plist-get plist :flags)))
+        ;; PERF: Doom caches module index, flags, and features in symbol plists
+        ;;   for fast lookups in `modulep!' and elsewhere. plists are lighter
+        ;;   and faster than hash tables for datasets this size, and this
+        ;;   information is looked up *very* often.
+        (put category module
+             (let ((depth (ensure-list (or (plist-get plist :depth) 0))))
+               (cl-destructuring-bind (i j)
+                   (with-memoization (get 'doom-modules depth) '(0 0))
+                 (dolist (n (list i j))
+                   (when (> n 999)
+                     ;; No one will have more than 999 modules at any single
+                     ;; depth enabled, right? ...Right?
+                     (signal 'doom-module-error
+                             (list (cons category module) "Over 999 module limit" n))))
+                 (put 'doom-modules depth (list (1+ i) (1+ j)))
+                 (vector (+ (* (or (cdr depth) (car depth)) 1000) j)
+                         (+ (* (car depth) 1000) i)
+                         (plist-get plist :flags)
+                         (plist-get plist :features)))))
         ;; But the hash table will always been Doom's formal storage for modules.
         (puthash (cons category module) plist doom-modules))
     (remhash (cons category module) doom-modules)
     (cl-remf (symbol-plist category) module)))
+
+(defun doom-module-list (&optional paths-or-all initorder?)
+  "Return a list of (:group . name) module keys in order of their :depth.
+
+PATHS-OR-ALL can either be a non-nil value or a list of directories. If given a
+list of directories, return a list of module keys for all modules present
+underneath it.  If non-nil, return the same, but search `doom-modules-dirs'
+(includes :core and :user). Modules that are enabled are sorted first by their
+:depth, followed by disabled modules in lexicographical order (unless a :depth
+is specified in their .doommodule).
+
+If INITORDER? is non-nil, sort modules by their initdepth, rather than their
+configdepth. See `doom-module-set' for details."
+  (sort (if paths-or-all
+            (delete-dups
+             (append (seq-remove #'cdr (doom-module-list nil initorder?))
+                     (doom-files-in (if (listp paths-or-all)
+                                        paths-or-all
+                                      doom-modules-dirs)
+                                    :map #'doom-module-from-path
+                                    :type 'dirs
+                                    :mindepth 1
+                                    :depth 1)))
+          (hash-table-keys doom-modules))
+        (let ((idx (if initorder? 1 0)))
+          (lambda! ((groupa . namea) (groupb . nameb))
+            (let ((a (get groupa namea))
+                  (b (get groupb nameb)))
+              (or (null b)
+                  (if a (< (aref a idx)
+                           (aref b idx)))))))))
 
 (defun doom-module-expand-path (category module &optional file)
   "Expands a path to FILE relative to CATEGORY and MODULE.
@@ -223,17 +287,8 @@ The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
 those directories."
   (declare (pure t) (side-effect-free t))
-  (if module-dirs
-      (mapcar (lambda (m) (doom-module-locate-path (car m) (cdr m)))
-              (delete-dups
-               (doom-files-in module-dirs
-                              :map #'doom-module-from-path
-                              :type 'dirs
-                              :mindepth 1
-                              :depth 1)))
-    (delq
-     nil (cl-loop for (cat . mod) in (cddr (doom-module-list))
-                  collect (doom-module-get cat mod :path)))))
+  (cl-loop for (cat . mod) in (doom-module-list module-dirs)
+           collect (doom-module-locate-path cat mod)))
 
 (defun doom-module-mplist-map (fn mplist)
   "Apply FN to each module in MPLIST."
@@ -288,17 +343,6 @@ those directories."
     (when noninteractive
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
-
-(defun doom-module-list (&optional all-p)
-  "Return modules as a list of (:CATEGORY . MODULE) in their enabled order.
-
-If ALL-P, return a list of *all* available modules instead, whether or not
-they're enabled, and in lexicographical order.
-
-If ALL-P is `real', only return *real"
-  (if all-p
-      (mapcar #'doom-module-from-path (doom-module-load-path doom-modules-dirs))
-    (hash-table-keys doom-modules)))
 
 
 ;;
@@ -516,6 +560,7 @@ WARNINGS:
 ;; DEPRECATED Remove in 3.0
 (define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
 
+(defvar doom--empty-module [nil nil nil nil])
 (defmacro modulep! (category &optional module flag)
   "Return t if :CATEGORY MODULE (and +FLAGS) are enabled.
 
@@ -529,14 +574,22 @@ source (except your DOOMDIR, which is a special module). Like so:
   (modulep! +flag)
 
 For more about modules and flags, see `doom!'."
-  (and (cond (flag (memq flag (cdr (get category module))))
+  ;; PERF: This macro bypasses the module API to spare startup their runtime
+  ;;   cost, as `modulep!' gets called *a lot* during startup. In the future,
+  ;;   Doom will byte-compile its core files. At that time, we can use it again.
+  (and (cond (flag (memq flag (aref (or (get category module) doom--empty-module) 2)))
              (module (get category module))
              (doom--current-flags (memq category doom--current-flags))
              (doom--current-module
-              (memq category (cdr (get (car doom--current-module)
-                                       (cdr doom--current-module)))))
+              (memq category
+                    (aref (or (get (car doom--current-module)
+                                   (cdr doom--current-module))
+                              doom--empty-module)
+                          2)))
              ((if-let (module (doom-module-from-path (macroexpand '(file!))))
-                  (memq category (cdr (get (car module) (cdr module))))
+                  (memq category (aref (or (get (car module) (cdr module))
+                                           doom--empty-module)
+                                       2))
                 (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
                        category module flag (file!)))))
        t))
@@ -547,8 +600,8 @@ For more about modules and flags, see `doom!'."
 
 ;; Register Doom's two virtual module categories, representing Doom's core and
 ;; the user's config; which are always enabled.
-(doom-module-set :core nil :path doom-core-dir)
-(doom-module-set :user nil :path doom-user-dir)
+(doom-module-set :core nil :path doom-core-dir :depth -110)
+(doom-module-set :user nil :path doom-user-dir :depth '(-105 . 105))
 
 (provide 'doom-modules)
 ;;; doom-modules.el ends here

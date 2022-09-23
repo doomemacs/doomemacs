@@ -306,7 +306,7 @@ ready to be pasted in a bug report on github."
                       collect var)))
         (modules
          ,@(or (cl-loop with lastcat = nil
-                        for (cat . mod) in (cddr (doom-module-list))
+                        for (cat . mod) in (seq-filter #'cdr (doom-module-list))
                         if (or (not lastcat)
                                (not (eq lastcat cat)))
                         do (setq lastcat cat)

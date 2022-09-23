@@ -36,10 +36,10 @@
 ;;     > $EMACSDIR/lisp/doom.el
 ;;       - $EMACSDIR/lisp/doom-lib.el
 ;;     > $EMACSDIR/lisp/doom-start.el
-;;       - $EMACSDIR/doom-{keybinds,ui,projects,editor}.el
 ;;       - hook: `doom-before-init-hook'
 ;;       - $DOOMDIR/init.el
-;;   > $XDG_DATA_HOME/doom/$PROFILE/@/curr/init.el   (replaces $EMACSDIR/init.el)
+;;   > $XDG_DATA_HOME/doom/$PROFILE/@/$VERSION/init.el   (replaces $EMACSDIR/init.el)
+;;     - $EMACSDIR/doom-{keybinds,ui,projects,editor}.el
 ;;     - hook: `doom-before-modules-init-hook'
 ;;     - {$DOOMDIR,$EMACSDIR}/modules/*/*/init.el
 ;;     - hook: `doom-after-modules-init-hook'

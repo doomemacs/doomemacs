@@ -386,44 +386,53 @@ Defaults to the profile at `doom-profile-default'."
                     branch ,(if (zerop (car branch)) (cdr branch))))))))
 
 (defun doom-profile--generate-load-modules ()
-  (let ((module-list (cddr (doom-module-list))))
-    ;; FIX: Same as above (see `doom-profile--generate-init-vars').
-    `((unless doom-init-time
-        (set 'doom-disabled-packages ',doom-disabled-packages)
-        (set 'doom-modules ',doom-modules)
-        ;; Cache module state and flags in symbol plists for quick lookup by
-        ;; `modulep!' later.
-        ,@(cl-loop for (category . modules) in (seq-group-by #'car (doom-module-list))
-                   collect `(setplist ',category
-                             (quote ,(cl-loop for (_ . module) in modules
-                                              nconc `(,module ,(get category module))))))
-        (doom-run-hooks 'doom-before-modules-init-hook)
-        ;; TODO: Until these files are byte-compiler-ready, I must use `load'
-        ;;   instead of `require', as to not invite the byte-compiler to load them
-        ;;   while this init file is compiled.
-        (doom-load ,(doom-path doom-core-dir "doom-keybinds"))
-        (doom-load ,(doom-path doom-core-dir "doom-ui"))
-        (doom-load ,(doom-path doom-core-dir "doom-projects"))
-        (doom-load ,(doom-path doom-core-dir "doom-editor"))
-        ,@(cl-loop for (cat . mod) in module-list
-                   for dir = (doom-module-locate-path cat mod)
-                   if (locate-file-internal doom-module-init-file (list dir) load-suffixes)
-                   collect `(let ((doom--current-module '(,cat . ,mod))
-                                  (doom--current-flags ',(doom-module-get cat mod :flags)))
-                              (doom-load ,it)))
-        (doom-run-hooks 'doom-after-modules-init-hook)
-        (doom-run-hooks 'doom-before-modules-config-hook)
-        ,@(cl-loop for (cat . mod) in module-list
-                   for dir = (doom-module-locate-path cat mod)
-                   if (locate-file-internal doom-module-config-file (list dir) load-suffixes)
-                   collect `(let ((doom--current-module '(,cat . ,mod))
-                                  (doom--current-flags ',(doom-module-get cat mod :flags)))
-                              (doom-load ,it)))
-        (doom-run-hooks 'doom-after-modules-config-hook)
-        (let ((old-custom-file custom-file))
-          (doom-load ,(doom-path doom-user-dir doom-module-config-file) 'noerror)
-          (when (eq custom-file old-custom-file)
-            (doom-load custom-file 'noerror)))))))
+  (let* ((init-modules-list (doom-module-list nil t))
+         (config-modules-list (doom-module-list))
+         (pre-init-modules
+          (seq-filter (fn! (<= (doom-module-depth (car %) (cdr %) t) -100))
+                      (remove '(:user) init-modules-list)))
+         (init-modules
+          (seq-filter (fn! (<= 0 (doom-module-depth (car %) (cdr %) t) 100))
+                      init-modules-list))
+         (config-modules
+          (seq-filter (fn! (<= 0 (doom-module-depth (car %) (cdr %)) 100))
+                      config-modules-list))
+         (post-config-modules
+          (seq-filter (fn! (>= (doom-module-depth (car %) (cdr %)) 100))
+                      config-modules-list))
+         (init-file   (concat doom-module-init-file ".el"))
+         (config-file (concat doom-module-config-file ".el")))
+    (letf! ((defun module-loader (group name file &optional noerror)
+              `(let ((doom--current-module '(,group . ,name))
+                     (doom--current-flags ',(doom-module-get group name :flags)))
+                 (doom-load ,(abbreviate-file-name file))))
+            (defun module-list-loader (modules file &optional noerror)
+              (cl-loop for (cat . mod) in modules
+                       if (doom-module-locate-path cat mod file)
+                       collect (module-loader cat mod it noerror))))
+      ;; FIX: Same as above (see `doom-profile--generate-init-vars').
+      `((unless doom-init-time
+          (set 'doom-modules ',doom-modules)
+          (set 'doom-disabled-packages ',doom-disabled-packages)
+          ;; Cache module state and flags in symbol plists for quick lookup by
+          ;; `modulep!' later.
+          ,@(cl-loop
+             for (category . modules) in (seq-group-by #'car config-modules-list)
+             collect
+             `(setplist ',category
+               (quote ,(cl-loop for (_ . module) in modules
+                                nconc `(,module ,(get category module))))))
+          (let ((old-custom-file custom-file))
+            ,@(module-list-loader pre-init-modules init-file)
+            (doom-run-hooks 'doom-before-modules-init-hook)
+            ,@(module-list-loader init-modules init-file)
+            (doom-run-hooks 'doom-after-modules-init-hook)
+            (doom-run-hooks 'doom-before-modules-config-hook)
+            ,@(module-list-loader config-modules config-file)
+            (doom-run-hooks 'doom-after-modules-config-hook)
+            ,@(module-list-loader post-config-modules config-file t)
+            (when (eq custom-file old-custom-file)
+              (doom-load custom-file 'noerror))))))))
 
 (defun doom-profile--generate-doom-autoloads ()
   (doom-autoloads--scan
