@@ -163,6 +163,9 @@
 (defconst doom-modules-version "22.09.0-pre"
   "Current version of Doom Emacs.")
 
+(defvar doom-init-time nil
+  "The time it took, in seconds, for Doom Emacs to initialize.")
+
 (defconst doom-profile
   (if-let (profile (getenv-internal "DOOMPROFILE"))
       (save-match-data
@@ -591,6 +594,11 @@ triggered. This is the absolute latest point in the startup process."
     ;; a later time, or consult them without fear of contamination.
     (dolist (var '(exec-path load-path process-environment))
       (put var 'initial-value (default-toplevel-value var)))))
+
+(add-hook! 'doom-after-init-hook :depth -110
+  (defun doom--end-init-h ()
+    "Set `doom-init-time'."
+    (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))))
 
 ;; This is the absolute latest a hook can run in Emacs' startup process.
 (define-advice command-line-1 (:after (&rest _) run-after-init-hook)

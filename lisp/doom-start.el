@@ -262,9 +262,6 @@ If this is a daemon session, load them all immediately instead."
 ;;
 ;;; Benchmark
 
-(defvar doom-init-time nil
-  "The time it took, in seconds, for Doom Emacs to initialize.")
-
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark including number of packages and modules loaded.
 
@@ -273,9 +270,7 @@ If RETURN-P, return the message as a string instead of displaying it."
            "Doom loaded %d packages across %d modules in %.03fs"
            (- (length load-path) (length (get 'load-path 'initial-value)))
            (hash-table-count doom-modules)
-           (or doom-init-time
-               (setq doom-init-time
-                     (float-time (time-subtract (current-time) before-init-time))))))
+           doom-init-time))
 
 
 ;;
@@ -370,11 +365,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                    ;; time, and by keeping a history of them, you get a snapshot
                    ;; of your config in time.
                    (file-name-concat
-                    doom-profile-dir (format "init.%d.elc" emacs-major-version)))
-                  ;; If the config is being reloaded, let's pretend it hasn't be
-                  ;; initialized by unsetting this (see note in
-                  ;; `doom-profile--generate-load-modules' for details).
-                  doom-init-time)
+                    doom-profile-dir (format "init.%d.elc" emacs-major-version))))
               ;; If `user-init-file' is t, then `load' will store the name of
               ;; the next file it loads into `user-init-file'.
               (setq user-init-file t)
