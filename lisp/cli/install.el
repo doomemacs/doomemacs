@@ -61,18 +61,26 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
 
       ;; Create init.el, config.el & packages.el
       (print-group!
-       (mapc (lambda (file)
-               (cl-destructuring-bind (filename . template) file
-                 (if (file-exists-p! filename doom-user-dir)
-                     (print! (item "Skipping %s (already exists)")
-                             (path filename))
-                   (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
-                   (with-temp-file (doom-path doom-user-dir filename)
-                     (insert-file-contents template))
-                   (print! (success "Done!")))))
-             `(("init.el" . ,(doom-path doom-emacs-dir "templates/init.example.el"))
-               ("config.el" . ,(doom-path doom-emacs-dir "templates/config.example.el"))
-               ("packages.el" . ,(doom-path doom-emacs-dir "templates/packages.example.el"))))))
+        (mapc (lambda (file)
+                (cl-destructuring-bind (filename . template) file
+                  (setq filenam)
+                  (if (file-exists-p! filename doom-user-dir)
+                      (print! (item "Skipping %s (already exists)")
+                              (path filename))
+                    (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
+                    (with-temp-file (doom-path doom-user-dir filename)
+                      (insert-file-contents template))
+                    (print! (success "Done!")))))
+              (let ((template-dir (doom-path doom-emacs-dir "templates")))
+                `((,doom-module-init-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-init-file)
+                                                ".example.el"))
+                  (,doom-module-config-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-config-file)
+                                                ".example.el"))
+                  (,doom-module-packages-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-packages-file)
+                                                ".example.el")))))))
 
     ;; In case no init.el was present the first time it was loaded.
     (doom-load (doom-path doom-user-dir doom-module-init-file) t)

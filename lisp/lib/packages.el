@@ -162,7 +162,7 @@ each package."
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
   (mapc (lambda! ((cat . mod))
-          (if-let (packages-file (doom-module-locate-path cat mod "packages.el"))
+          (if-let (packages-file (doom-module-locate-path cat mod doom-module-packages-file))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
                       (find-file-noselect packages-file))
@@ -185,7 +185,7 @@ each package."
     (unless modules
       (user-error "This package isn't installed by any Doom module"))
     (dolist (module modules)
-      (when-let (packages-file (doom-module-locate-path (car module) (cdr module)))
+      (when (doom-module-locate-path (car module) (cdr module) doom-module-packages-file)
         (doom/bump-module (car module) (cdr module))))))
 
 

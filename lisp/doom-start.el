@@ -318,7 +318,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 ;;; Load $DOOMDIR/init.el early
 ;; TODO: Catch errors
-(doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
+(load! (string-remove-suffix ".el" doom-module-init-file) doom-user-dir t)
 
 ;;; Load the rest of $DOOMDIR + modules if noninteractive
 ;; If the user is loading this file from a batch script, let's assume they want

@@ -154,7 +154,7 @@ following shell commands:
 
 (defun doom-upgrade--get-straight-recipe ()
   (with-temp-buffer
-    (insert-file-contents (doom-path doom-core-dir "packages.el"))
+    (insert-file-contents (doom-path doom-core-dir doom-module-packages-file))
     (when (re-search-forward "(package! straight" nil t)
       (goto-char (match-beginning 0))
       (let ((sexp (sexp-at-point)))

@@ -331,7 +331,7 @@ ready to be pasted in a bug report on github."
          ,@(condition-case e
                (mapcar
                 #'cdr (doom--collect-forms-in
-                       (doom-path doom-user-dir "packages.el")
+                       (doom-path doom-user-dir doom-module-packages-file)
                        "package!"))
              (error (format "<%S>" e))))
         (unpin
@@ -339,7 +339,7 @@ ready to be pasted in a bug report on github."
                (mapcan #'identity
                        (mapcar
                         #'cdr (doom--collect-forms-in
-                               (doom-path doom-user-dir "packages.el")
+                               (doom-path doom-user-dir doom-module-packages-file)
                                "unpin!")))
              (error (list (format "<%S>" e)))))
         (elpa

@@ -13,18 +13,33 @@
         doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
-(defvar doom-module-init-file "init"
-  "The basename of init files for modules.
+;;; Module file variables
+(defvar doom-module-init-file "init.el"
+  "The filename for module early initialization config files.
 
 Init files are loaded early, just after Doom core, and before modules' config
 files. They are always loaded, even in non-interactive sessions, and before
 `doom-before-modules-init-hook'. Related to `doom-module-config-file'.")
 
-(defvar doom-module-config-file "config"
-  "The basename of config files for modules.
+(defvar doom-module-config-file "config.el"
+  "The filename for module configuration files.
 
 Config files are loaded later, and almost always in interactive sessions. These
-run before `doom-after-modules-config-hook'. Relevant to `doom-module-init-file'.")
+run before `doom-after-modules-config-hook' and after `doom-module-init-file'.")
+
+(defvar doom-module-packages-file "packages.el"
+  "The filename for the package configuration file.
+
+Package files are read whenever Doom's package manager wants a manifest of all
+desired packages. They are rarely read in interactive sessions (unless the user
+uses a straight or package.el command directly).")
+
+(defvar doom-module-metadata-file ".doommodule"
+  "The filename for a module's metadata file.
+
+NOT IMPLEMENTED YET. This file contains a module's metadata: their version,
+maintainers, checks, features, submodules, debug information, etc. And are used
+to locate modules in the user's file tree.")
 
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))

@@ -455,7 +455,7 @@ also be a list of module keys."
                            ((symbolp module-list) (doom-module-list 'all))
                            (module-list)))
         ;; TODO: doom-module-context + doom-context
-        (packages-file "packages.el")
+        (packages-file doom-module-packages-file)
         doom-disabled-packages
         doom-packages)
     (when (assq :user module-list)

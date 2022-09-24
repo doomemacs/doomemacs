@@ -400,12 +400,12 @@ Defaults to the profile at `doom-profile-default'."
          (post-config-modules
           (seq-filter (fn! (>= (doom-module-depth (car %) (cdr %)) 100))
                       config-modules-list))
-         (init-file   (concat doom-module-init-file ".el"))
-         (config-file (concat doom-module-config-file ".el")))
+         (init-file   doom-module-init-file)
+         (config-file doom-module-config-file))
     (letf! ((defun module-loader (group name file &optional noerror)
               `(let ((doom--current-module '(,group . ,name))
                      (doom--current-flags ',(doom-module-get group name :flags)))
-                 (doom-load ,(abbreviate-file-name file))))
+                 (doom-load ,(abbreviate-file-name (file-name-sans-extension file)))))
             (defun module-list-loader (modules file &optional noerror)
               (cl-loop for (cat . mod) in modules
                        if (doom-module-locate-path cat mod file)

@@ -245,7 +245,7 @@ in."
                     (let ((doom--current-module key)
                           (doom--current-flags (plist-get plist :flags))
                           (doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
-                          (packages-file (doom-module-expand-path (car key) (cdr key) "packages.el")))
+                          (packages-file (doom-module-expand-path (car key) (cdr key) doom-module-packages-file)))
                       (cl-loop with doom-output-indent = 6
                                for name in (let* (doom-packages
                                                   doom-disabled-packages)

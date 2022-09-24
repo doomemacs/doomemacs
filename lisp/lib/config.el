@@ -34,7 +34,7 @@
   "Open your private init.el file.
 And jumps to your `doom!' block."
   (interactive)
-  (find-file (expand-file-name "init.el" doom-user-dir))
+  (find-file (expand-file-name doom-module-init-file doom-user-dir))
   (goto-char
    (or (save-excursion
          (goto-char (point-min))
@@ -45,13 +45,13 @@ And jumps to your `doom!' block."
 (defun doom/goto-private-config-file ()
   "Open your private config.el file."
   (interactive)
-  (find-file (expand-file-name "config.el" doom-user-dir)))
+  (find-file (expand-file-name doom-module-config-file doom-user-dir)))
 
 ;;;###autoload
 (defun doom/goto-private-packages-file ()
   "Open your private packages.el file."
   (interactive)
-  (find-file (expand-file-name "packages.el" doom-user-dir)))
+  (find-file (expand-file-name doom-module-packages-file doom-user-dir)))
 
 
 ;;

@@ -180,7 +180,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 (defun doom-compile--ignore-file-p (path)
   (let ((filename (file-name-nondirectory path)))
     (or (not (equal (file-name-extension path) "el"))
-        (member filename (list "packages.el" "doctor.el"))
+        (member filename (list doom-module-packages-file "doctor.el"))
         (string-prefix-p "." filename)
         (string-prefix-p "test-" filename)
         (string-prefix-p "flycheck_" filename)
