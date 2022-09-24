@@ -63,7 +63,6 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (print-group!
         (mapc (lambda (file)
                 (cl-destructuring-bind (filename . template) file
-                  (setq filenam)
                   (if (file-exists-p! filename doom-user-dir)
                       (print! (item "Skipping %s (already exists)")
                               (path filename))
