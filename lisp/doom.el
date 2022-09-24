@@ -316,7 +316,7 @@ users).")
 ;; often between major Emacs releases. However, I disable them if this is a
 ;; daemon session (where startup time matters less) or in debug-mode (to
 ;; mitigate interference with our debugging).
-(unless (or (daemonp) init-file-debug)
+(unless (daemonp)
   ;; PERF: `file-name-handler-alist' is consulted on each call to `require',
   ;;   `load', or various file/io functions (like `expand-file-name' or
   ;;   `file-remote-p'). You get a noteable boost to startup time by unsetting
