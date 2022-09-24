@@ -17,6 +17,10 @@
 ;;
 ;;; Logging
 
+(defun doom--log (text)
+  (let ((inhibit-message (not init-file-debug)))
+    (message "%s" (propertize text 'face 'font-lock-doc-face))))
+
 (defmacro doom-log (output &rest args)
   "Log a message in *Messages*.
 
@@ -25,15 +29,17 @@ function to prevent the potentially expensive evaluation of its arguments when
 debug mode is off."
   (declare (debug t))
   `(when (or init-file-debug noninteractive)
-     (let ((inhibit-message (not init-file-debug)))
-       (message
-        "%s" (propertize
-              ;; Byte compiler: don't complain about more args than %-sequences.
-              (with-no-warnings
-                (format (concat "* %.06f: " ,output)
-                        (float-time (time-subtract (current-time) before-init-time))
-                        ,@args))
-              'face 'font-lock-doc-face)))))
+     (doom--log
+      (with-no-warnings ; suppress 'more args than %-sequences' warning
+        (let* ((output ,output)
+               (absolute? (string-prefix-p ":" output)))
+          (format (concat "* %.06f%s" (if absolute? output (concat ":" output)))
+                  (float-time (time-subtract (current-time) before-init-time))
+                  (let ((context (remq t (reverse doom-context))))
+                    (if (and context (not absolute?))
+                        (concat "::" (mapconcat #'symbol-name context ":"))
+                      ""))
+                  ,@args))))))
 
 
 ;;

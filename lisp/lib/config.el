@@ -12,10 +12,6 @@
   "A list of hooks to run before `doom/reload' has reloaded Doom.")
 
 ;;;###autoload
-(defvar doom-reloading-p nil
-  "TODO")
-
-;;;###autoload
 (defun doom/open-private-config ()
   "Browse your `doom-user-dir'."
   (interactive)
@@ -85,7 +81,7 @@ Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile (format "%S sync -e" doom-bin)
-      (let ((doom-reloading-p t))
+      (doom-with-context '(reload modules)
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
@@ -110,10 +106,11 @@ line."
   (interactive)
   (require 'doom-profiles)
   ;; TODO: Make this more robust
-  (dolist (file (mapcar #'car doom-profile-generators))
-    (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
-      (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
-            'noerror))))
+  (doom-with-context 'reload
+    (dolist (file (mapcar #'car doom-profile-generators))
+      (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
+        (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
+              'noerror)))))
 
 ;;;###autoload
 (defun doom/reload-env ()
@@ -125,10 +122,11 @@ Doing so from within Emacs will taint your shell environment.
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive)
-  (let ((default-directory doom-emacs-dir))
-    (with-temp-buffer
-      (doom-load-envvars-file doom-env-file)
-      (message "Reloaded %S" (abbreviate-file-name doom-env-file)))))
+  (doom-with-context 'reload
+    (let ((default-directory doom-emacs-dir))
+      (with-temp-buffer
+        (doom-load-envvars-file doom-env-file)
+        (message "Reloaded %S" (abbreviate-file-name doom-env-file))))))
 
 ;;;###autoload
 (defun doom/upgrade ()

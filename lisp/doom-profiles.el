@@ -365,15 +365,10 @@ Defaults to the profile at `doom-profile-default'."
   (let ((v (version-to-list doom-version))
         (ref (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD"))
         (branch (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")))
-    ;; FIX: The `doom-init-time' guard protects us from a nefarious edge case in
-    ;;   which Emacs' interpreter, while lazy-loading docstrings in
-    ;;   byte-compiled elisp, ends up re-evaluating the whole file. This can
-    ;;   happen rapidly, multiple times, if something loads these docstrings (by
-    ;;   calling the `documentation' function) rapidly, which is the case for
-    ;;   `marginalia' and each symbol in the M-x and describe-* command
-    ;;   completion lists. By guarding the expensive part of this file, this
-    ;;   process becomes instant.
-    `((unless doom-init-time
+    ;; FIX: Make sure this only runs at startup to protect us Emacs' interpreter
+    ;;   re-evaluating this file when lazy-loading dynamic docstrings from the
+    ;;   byte-compiled init file.
+    `((when (doom-context-p 'init)
         ,@(cl-loop for var in doom-autoloads-cached-vars
                    if (boundp var)
                    collect `(set-default ',var ',(symbol-value var)))
@@ -411,28 +406,30 @@ Defaults to the profile at `doom-profile-default'."
                        if (doom-module-locate-path cat mod file)
                        collect (module-loader cat mod it noerror))))
       ;; FIX: Same as above (see `doom-profile--generate-init-vars').
-      `((unless doom-init-time
-          (set 'doom-modules ',doom-modules)
-          (set 'doom-disabled-packages ',doom-disabled-packages)
-          ;; Cache module state and flags in symbol plists for quick lookup by
-          ;; `modulep!' later.
-          ,@(cl-loop
-             for (category . modules) in (seq-group-by #'car config-modules-list)
-             collect
-             `(setplist ',category
-               (quote ,(cl-loop for (_ . module) in modules
-                                nconc `(,module ,(get category module))))))
-          (let ((old-custom-file custom-file))
-            ,@(module-list-loader pre-init-modules init-file)
-            (doom-run-hooks 'doom-before-modules-init-hook)
-            ,@(module-list-loader init-modules init-file)
-            (doom-run-hooks 'doom-after-modules-init-hook)
-            (doom-run-hooks 'doom-before-modules-config-hook)
-            ,@(module-list-loader config-modules config-file)
-            (doom-run-hooks 'doom-after-modules-config-hook)
-            ,@(module-list-loader post-config-modules config-file t)
-            (when (eq custom-file old-custom-file)
-              (doom-load custom-file 'noerror))))))))
+      `((if (or (doom-context-p 'init)
+                (doom-context-p 'reload))
+            (doom-context-with 'modules
+              (set 'doom-modules ',doom-modules)
+              (set 'doom-disabled-packages ',doom-disabled-packages)
+              ;; Cache module state and flags in symbol plists for quick lookup by
+              ;; `modulep!' later.
+              ,@(cl-loop
+                 for (category . modules) in (seq-group-by #'car config-modules-list)
+                 collect
+                 `(setplist ',category
+                   (quote ,(cl-loop for (_ . module) in modules
+                                    nconc `(,module ,(get category module))))))
+              (let ((old-custom-file custom-file))
+                ,@(module-list-loader pre-init-modules init-file)
+                (doom-run-hooks 'doom-before-modules-init-hook)
+                ,@(module-list-loader init-modules init-file)
+                (doom-run-hooks 'doom-after-modules-init-hook)
+                (doom-run-hooks 'doom-before-modules-config-hook)
+                ,@(module-list-loader config-modules config-file)
+                (doom-run-hooks 'doom-after-modules-config-hook)
+                ,@(module-list-loader post-config-modules config-file t)
+                (when (eq custom-file old-custom-file)
+                  (doom-load custom-file 'noerror)))))))))
 
 (defun doom-profile--generate-doom-autoloads ()
   (doom-autoloads--scan

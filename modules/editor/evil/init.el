@@ -20,7 +20,7 @@
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
 (when (and (not noninteractive)
-           (not doom-reloading-p)
+           (not (doom-context-p 'reload))
            (modulep! +everywhere))
 
   (setq evil-collection-company-use-tng (modulep! :completion company +tng)

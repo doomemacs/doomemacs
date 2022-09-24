@@ -442,6 +442,67 @@ users).")
       (setq command-line-x-option-alist nil))))
 
 
+;;
+;;; `doom-context'
+
+(defvar doom-context '(t)
+  "A list of symbols identifying all active Doom execution contexts.
+
+This should never be directly changed, only let-bound, and should never be
+empty. Each context describes what phase Doom is in, and may respond to.
+
+All valid contexts:
+  cli        -- while executing a Doom CLI
+  compile    -- while byte-compilation is in progress
+  eval       -- during inline evaluation of elisp
+  init       -- while doom is formally starting up for the first time, after its
+                core libraries are loaded, but before user config is.
+  modules    -- while loading modules and their files
+  sandbox    -- This session was launched from Doom's sandbox.
+  packages   -- when packagedefs are being read
+  reload     -- while reloading doom")
+(put 'doom-context 'valid-values '(cli compile eval init modules packages reload sandbox))
+(put 'doom-context 'risky-local-variable t)
+
+(defun doom-context--check (context)
+  (let ((valid (get 'doom-context 'valid-values)))
+    (unless (memq context valid)
+      (signal 'doom-context-error
+              (list context "Unrecognized context" valid)))))
+
+(defun doom-context-p (context)
+  "Return t if CONTEXT is active (i.e. in `doom-context')."
+  (if (memq context doom-context) t))
+
+(defun doom-context-push (context)
+  "Add CONTEXT to `doom-context', if it isn't already.
+
+Return non-nil if successful. Throws an error if CONTEXT is invalid."
+  (unless (memq context doom-context)
+    (doom-context--check context)
+    (doom-log ":context: +%s %s" context doom-context)
+    (push context doom-context)))
+
+(defun doom-context-pop (context &optional strict?)
+  "Remove CONTEXT from `doom-context'.
+
+Return non-nil if successful. If STRICT? is non-nil, throw an error if CONTEXT
+wasn't active when this was called."
+  (if (not (doom-context-p context))
+      (when strict?
+        (signal 'doom-context-error
+                (list doom-context "Attempt to pop missing context" context)))
+    (doom-log ":context: -%s %s" context doom-context)
+    (setq doom-context (delq context doom-context))))
+
+(defmacro doom-context-with (contexts &rest body)
+  "Evaluate BODY with CONTEXT added to `doom-context'."
+  (declare (indent 1))
+  `(let ((doom-context doom-context))
+     (dolist (context (ensure-list ,contexts))
+       (doom-context-push context))
+     ,@body))
+
 
 ;;
 ;;; Reasonable, global defaults
@@ -588,21 +649,25 @@ appropriately against `noninteractive' or the `cli' context."
 ;;
 ;;; Last minute initialization
 
-(add-hook! 'doom-before-init-hook
-  (defun doom--set-initial-values-h ()
-    ;; Remember these variables' initial values, so we can safely reset them at
-    ;; a later time, or consult them without fear of contamination.
-    (dolist (var '(exec-path load-path process-environment))
-      (put var 'initial-value (default-toplevel-value var)))))
+(add-hook! 'doom-before-init-hook :depth -105
+  (defun doom--begin-init-h ()
+    "Begin the startup process."
+    (when (doom-context-push 'init)
+      ;; Remember these variables' initial values, so we can safely reset them at
+      ;; a later time, or consult them without fear of contamination.
+      (dolist (var '(exec-path load-path process-environment))
+        (put var 'initial-value (default-toplevel-value var))))))
 
-(add-hook! 'doom-after-init-hook :depth -110
+(add-hook! 'doom-after-init-hook :depth 105
   (defun doom--end-init-h ()
     "Set `doom-init-time'."
-    (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))))
+    (when (doom-context-pop 'init)
+      (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-;; This is the absolute latest a hook can run in Emacs' startup process.
-(define-advice command-line-1 (:after (&rest _) run-after-init-hook)
-  (doom-run-hooks 'doom-after-init-hook))
+(unless noninteractive
+  ;; This is the absolute latest a hook can run in Emacs' startup process.
+  (define-advice command-line-1 (:after (&rest _) run-after-init-hook)
+    (doom-run-hooks 'doom-after-init-hook)))
 
 (provide 'doom)
 ;;; doom.el ends here

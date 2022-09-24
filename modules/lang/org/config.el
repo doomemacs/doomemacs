@@ -1417,7 +1417,7 @@ between the two."
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
              (not byte-compile-current-file))
-    (unless doom-reloading-p
+    (unless (doom-context-p 'reload)
       (message "`org' was already loaded by the time lang/org loaded, this may cause issues"))
     (run-hooks 'org-load-hook))
 

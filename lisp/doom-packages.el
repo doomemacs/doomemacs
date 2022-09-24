@@ -410,39 +410,40 @@ installed."
 
 ;;; Package getters
 (defun doom-packages--read (file &optional noeval noerror)
-  (condition-case-unless-debug e
-      (with-temp-buffer ; prevent buffer-local state from propagating
-        (let* ((doom--current-module (doom-module-from-path file))
-               (doom--current-flags
-                (doom-module-get (car doom--current-module)
-                                 (cdr doom--current-module)
-                                 :flags)))
-          (if (not noeval)
-              (load file noerror 'nomessage 'nosuffix)
-            (when (file-exists-p file)
-              (insert-file-contents file)
-              (let (emacs-lisp-mode) (emacs-lisp-mode))
-              ;; Scrape `package!' blocks from FILE for a comprehensive listing of
-              ;; packages used by this module.
-              (while (search-forward "(package!" nil t)
-                (let ((ppss (save-excursion (syntax-ppss))))
-                  ;; Don't collect packages in comments or strings
-                  (unless (or (nth 3 ppss)
-                              (nth 4 ppss))
-                    (goto-char (match-beginning 0))
-                    (cl-destructuring-bind (_ name . plist)
-                        (read (current-buffer))
-                      (push (cons
-                             name (plist-put
-                                   plist :modules
-                                   (list doom--current-module)))
-                            doom-packages)))))))))
-    (user-error
-     (user-error (error-message-string e)))
-    (error
-     (signal 'doom-package-error
-             (list (doom-module-from-path file)
-                   file e)))))
+  (doom-context-with 'packages
+    (condition-case-unless-debug e
+        (with-temp-buffer ; prevent buffer-local state from propagating
+          (let* ((doom--current-module (doom-module-from-path file))
+                 (doom--current-flags
+                  (doom-module-get (car doom--current-module)
+                                   (cdr doom--current-module)
+                                   :flags)))
+            (if (not noeval)
+                (load file noerror 'nomessage 'nosuffix)
+              (when (file-exists-p file)
+                (insert-file-contents file)
+                (let (emacs-lisp-mode) (emacs-lisp-mode))
+                ;; Scrape `package!' blocks from FILE for a comprehensive listing of
+                ;; packages used by this module.
+                (while (search-forward "(package!" nil t)
+                  (let ((ppss (save-excursion (syntax-ppss))))
+                    ;; Don't collect packages in comments or strings
+                    (unless (or (nth 3 ppss)
+                                (nth 4 ppss))
+                      (goto-char (match-beginning 0))
+                      (cl-destructuring-bind (_ name . plist)
+                          (read (current-buffer))
+                        (push (cons
+                               name (plist-put
+                                     plist :modules
+                                     (list doom--current-module)))
+                              doom-packages)))))))))
+      (user-error
+       (user-error (error-message-string e)))
+      (error
+       (signal 'doom-package-error
+               (list (doom-module-from-path file)
+                     file e))))))
 
 (defun doom-package-list (&optional module-list)
   "Retrieve a list of explicitly declared packages from MODULE-LIST.
@@ -454,7 +455,7 @@ also be a list of module keys."
   (let ((module-list (cond ((null module-list) (doom-module-list))
                            ((symbolp module-list) (doom-module-list 'all))
                            (module-list)))
-        ;; TODO: doom-module-context + doom-context
+        ;; TODO: doom-module-context
         (packages-file doom-module-packages-file)
         doom-disabled-packages
         doom-packages)
@@ -552,10 +553,13 @@ elsewhere."
     (cl-callf plist-put plist :ignore built-in))
   `(let* ((name ',name)
           (plist (cdr (assq name doom-packages)))
-          (dir (dir!)))
+          (dir (dir!))
+          (module (doom-module-from-path dir)))
+     (unless (doom-context-p 'packages)
+       (signal 'doom-module-error
+               (list module "package! can only be used in packages.el files")))
      ;; Record what module this declaration was found in
-     (let ((module-list (plist-get plist :modules))
-           (module (doom-module-from-path dir)))
+     (let ((module-list (plist-get plist :modules)))
        (unless (member module module-list)
          (cl-callf plist-put plist :modules
                    (append module-list

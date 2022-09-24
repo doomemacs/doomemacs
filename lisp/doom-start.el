@@ -302,7 +302,7 @@ If RETURN-P, return the message as a string instead of displaying it."
   (doom-load-envvars-file doom-env-file 'noerror))
 
 ;;; Last minute setup
-(add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h)
+(add-hook 'doom-after-init-hook #'doom-load-packages-incrementally-h 100)
 (add-hook 'doom-after-init-hook #'doom-display-benchmark-h 110)
 (doom-run-hook-on 'doom-first-buffer-hook '(find-file-hook doom-switch-buffer-hook))
 (doom-run-hook-on 'doom-first-file-hook   '(find-file-hook dired-initial-position-hook))

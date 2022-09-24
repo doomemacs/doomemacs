@@ -14,7 +14,8 @@ to a pop up buffer."
       (unwind-protect
           (condition-case-unless-debug e
               (let ((doom--current-module (ignore-errors (doom-module-from-path buffer-file-name))))
-                (eval-region beg end buffer load-read-function)
+                (doom-context-with 'eval
+                  (eval-region beg end buffer load-read-function))
                 (with-current-buffer buffer
                   (let ((pp-max-width nil))
                     (require 'pp)

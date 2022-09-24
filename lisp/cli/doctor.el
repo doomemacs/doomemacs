@@ -247,10 +247,11 @@ in."
                           (doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
                           (packages-file (doom-module-expand-path (car key) (cdr key) doom-module-packages-file)))
                       (cl-loop with doom-output-indent = 6
-                               for name in (let* (doom-packages
-                                                  doom-disabled-packages)
-                                             (load packages-file 'noerror 'nomessage)
-                                             (mapcar #'car doom-packages))
+                               for name in (doom-context-with 'packages
+                                             (let* (doom-packages
+                                                    doom-disabled-packages)
+                                               (load packages-file 'noerror 'nomessage)
+                                               (mapcar #'car doom-packages)))
                                unless (or (doom-package-get name :disable)
                                           (eval (doom-package-get name :ignore))
                                           (plist-member (doom-package-get name :recipe) :local-repo)
