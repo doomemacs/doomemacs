@@ -86,7 +86,8 @@
           (concat "Alternatively, either update your $PATH environment variable to include the\n"
                   "path of the desired Emacs executable OR alter the $EMACS environment variable\n"
                   "to specify the exact path or command needed to invoke Emacs."
-                  (when-let (command (ignore-errors (file-name-nondirectory (cadr (member "--load" command-line-args)))))
+                  (when-let ((script (cadr (member "--load" command-line-args)))
+                             (command (file-name-nondirectory script)))
                     (concat " For example:\n\n"
                             "  $ EMACS=/path/to/valid/emacs " command " ...\n"
                             "  $ EMACS=\"/Applications/Emacs.app/Contents/MacOS/Emacs\" " command " ...\n"
@@ -368,17 +369,17 @@ users).")
     (setq initial-major-mode 'fundamental-mode
           initial-scratch-message nil)
 
-    ;; PERF: Inexplicably, `tty-run-terminal-initialization' can sometimes take
-    ;;   2-3s when starting up Emacs in the terminal. Whatever slows it down at
-    ;;   startup doesn't appear to affect it if it's called a little later in
-    ;;   the startup process, so that's what I do.
-    ;; REVIEW: This optimization is not well understood. Investigate it!
     (unless initial-window-system
-      (advice-add #'tty-run-terminal-initialization :override #'ignore)
-      (add-hook! 'window-setup-hook
-        (defun doom--reset-tty-run-terminal-initialization-h ()
-          (advice-remove #'tty-run-terminal-initialization #'ignore)
-          (tty-run-terminal-initialization (selected-frame) nil t))))
+      ;; PERF: Inexplicably, `tty-run-terminal-initialization' can sometimes
+      ;;   take 2-3s when starting up Emacs in the terminal. Whatever slows it
+      ;;   down at startup doesn't appear to affect it if it's called a little
+      ;;   later in the startup process, so that's what I do.
+      ;; REVIEW: This optimization is not well understood. Investigate it!
+      (define-advice tty-run-terminal-initialization (:override (&rest _) defer)
+        (advice-remove #'tty-run-terminal-initialization #'tty-run-terminal-initialization@defer)
+        (add-hook 'window-setup-hook
+                  (doom-partial #'tty-run-terminal-initialization
+                                (selected-frame) nil t))))
 
     ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
     ;;   messages in the echo area. Writing to the echo-area triggers a
@@ -437,7 +438,7 @@ users).")
     ;;   relevant to our current OS, but `command-line-1' still processes.
     (unless IS-MAC
       (setq command-line-ns-option-alist nil))
-    (when (or IS-MAC IS-WINDOWS)
+    (unless (eq initial-window-system 'x)
       (setq command-line-x-option-alist nil))))
 
 

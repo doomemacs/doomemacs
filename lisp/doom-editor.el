@@ -312,6 +312,10 @@ tell you about it. Very annoying. This prevents that."
         (abbreviate-file-name (file-truename (tramp-file-name-localname file)))
       file))
 
+  ;; REVIEW: Use this in lieu of `doom--recentf-file-truename-fn' when we drop
+  ;;   28 support. See emacs-mirror/emacs@32906819addd.
+  ;; (setq recentf-show-abbreviated t)
+
   ;; Anything in runtime folders
   (add-to-list 'recentf-exclude
                (concat "^" (regexp-quote (or (getenv "XDG_RUNTIME_DIR")

@@ -120,7 +120,7 @@
 ;;   focus when it is started, among other things, so enable the menu-bar for
 ;;   GUI frames, but keep it disabled in terminal frames because there it
 ;;   activates an ugly, in-frame menu bar.
-(when IS-MAC
+(eval-when! IS-MAC
   (add-hook! '(window-setup-hook after-make-frame-functions)
     (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
       (when-let (frame (or frame (selected-frame)))

@@ -11,9 +11,11 @@
   ;;   still yields a notable benefit. Still, avoid setting it to high here, as
   ;;   runaway memory usage is a real risk in longer sessions.
   (setq gc-cons-threshold 134217728  ; 128mb
-        gc-cons-percentage 1.0)      ; DEPRECATED: backported from 29
+        ;; Backported from 29 (see emacs-mirror/emacs@73a384a98698)
+        gc-cons-percentage 1.0)
 
-  ;; Create all our core directories to quell file errors.
+  ;; REVIEW: Remove these later. The endpoints should be responsibile for
+  ;;   ensuring they exist. For now, they exist to quell file errors.
   (mapc (doom-rpartial #'make-directory 'parents)
         (list doom-local-dir
               doom-data-dir
@@ -1161,8 +1163,7 @@ session.
 This is done by writing a temporary shell script, which is executed after this
 session ends (see the shebang lines of this file). It's done this way because
 Emacs' batch library lacks an implementation of the exec system call."
-  (unless (doom-cli-context-p context)
-    (error "Attempted `doom-cli--restart' without active context"))
+  (cl-check-type context doom-cli-context)
   (when (= (doom-cli-context-step context) -1)
     (error "__DOOMSTEP envvar missing; extended `exit!' functionality will not work"))
   (let* ((pid  (doom-cli-context-pid context))

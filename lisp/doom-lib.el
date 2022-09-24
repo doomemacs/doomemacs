@@ -21,7 +21,7 @@
   "Log a message in *Messages*.
 
 Does not emit the message in the echo area. This is a macro instead of a
-function to prevent the potentially expensive execution of its arguments when
+function to prevent the potentially expensive evaluation of its arguments when
 debug mode is off."
   (declare (debug t))
   `(when (or init-file-debug noninteractive)

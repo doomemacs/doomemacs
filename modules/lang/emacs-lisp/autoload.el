@@ -298,8 +298,7 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
                         (progn
                           (require 'doom)
                           (require 'doom-cli)
-                          (require 'doom-start)
-                          (defmacro map! (&rest _)))
+                          (require 'doom-start))
                       (error
                        (princ
                         (format "%s:%d:%d:Error:Failed to load Doom: %s\n"

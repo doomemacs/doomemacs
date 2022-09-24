@@ -203,7 +203,7 @@ localleader prefix."
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
 ;; the user a chance to modify them.
-(add-hook! 'after-init-hook
+(add-hook! 'doom-after-init-hook
   (defun doom-init-leader-keys-h ()
     "Bind `doom-leader-key' and `doom-leader-alt-key'."
     (let ((map general-override-mode-map))
