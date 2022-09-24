@@ -458,6 +458,39 @@ Continues comments if executed from a commented line. Consults
                          '(evil-ex-completion-map)))
       "C-s" command))
 
+  (map! :when (modulep! :completion corfu)
+        :after corfu
+        (:map corfu-map
+         "C-S-s" #'+corfu-move-to-minibuffer
+         "C-p" #'corfu-previous
+         "C-n" #'corfu-next
+         "S-TAB" #'corfu-previous
+         [backtab] #'corfu-previous
+         "TAB" #'corfu-next
+         [tab] #'corfu-next))
+  (let ((cmds-ret
+          `(menu-item "Insert completion DWIM" corfu-insert
+             :filter ,(lambda (cmd)
+                        (interactive)
+                        (cond ((null +corfu-want-ret-to-confirm)
+                               (corfu-quit)
+                               nil)
+                              ((eq +corfu-want-ret-to-confirm 'minibuffer)
+                               (funcall-interactively cmd)
+                               nil)
+                              ((and (or (not (minibufferp nil t))
+                                        (eq +corfu-want-ret-to-confirm t))
+                                    (>= corfu--index 0))
+                               cmd)
+                              ((or (not (minibufferp nil t))
+                                   (eq +corfu-want-ret-to-confirm t))
+                               nil)
+                              (t cmd))))))
+    (map! :when (modulep! :completion corfu)
+          :map corfu-map
+          :gi [return] cmds-ret
+          :gi "RET" cmds-ret))
+
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except
   ;; it will ignore comments+trailing whitespace before jumping to eol.

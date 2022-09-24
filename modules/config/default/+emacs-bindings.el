@@ -511,7 +511,7 @@
       "C-x C-b"     #'ibuffer
       "C-x K"       #'doom/kill-this-buffer-in-all-windows
 
-      ;;; company-mode
+      ;;; completion (in-buffer)
       (:when (modulep! :completion company)
        "C-;" #'+company/complete
        (:after company
