@@ -583,7 +583,7 @@ instead of `setopt'. Unlike `setq', this triggers custom setters on variables.
 Unlike `setopt', this won't needlessly pull in dependencies."
   (macroexp-progn
    (cl-loop for (var val) on settings by 'cddr
-            collect `(funcall (or (get ',var 'custom-set) #'set)
+            collect `(funcall (or (get ',var 'custom-set) #'set-default-toplevel-value)
                               ',var ,val))))
 
 (defmacro delq! (elt list &optional fetcher)
