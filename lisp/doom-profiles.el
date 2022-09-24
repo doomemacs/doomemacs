@@ -362,23 +362,24 @@ Defaults to the profile at `doom-profile-default'."
              (signal 'doom-autoload-error (list init-file e))))))
 
 (defun doom-profile--generate-init-vars ()
-  (let ((v (version-to-list doom-version))
-        (ref (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD"))
-        (branch (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")))
-    ;; FIX: Make sure this only runs at startup to protect us Emacs' interpreter
-    ;;   re-evaluating this file when lazy-loading dynamic docstrings from the
-    ;;   byte-compiled init file.
-    `((when (doom-context-p 'init)
-        ,@(cl-loop for var in doom-autoloads-cached-vars
-                   if (boundp var)
-                   collect `(set-default ',var ',(symbol-value var)))
-        (setplist 'doom-version
-                  '(major  ,(nth 0 v)
-                    minor  ,(nth 1 v)
-                    build  ,(nth 2 v)
-                    tag    ,(ignore-errors (cadr (split-string doom-version "-" t)))
-                    ref    ,(if (zerop (car ref)) (cdr ref))
-                    branch ,(if (zerop (car branch)) (cdr branch))))))))
+  ;; FIX: Make sure this only runs at startup to protect us Emacs' interpreter
+  ;;   re-evaluating this file when lazy-loading dynamic docstrings from the
+  ;;   byte-compiled init file.
+  `((when (doom-context-p 'init)
+      ,@(cl-loop for var in doom-autoloads-cached-vars
+                 if (boundp var)
+                 collect `(set-default ',var ',(symbol-value var)))
+      ,@(cl-loop with v = (version-to-list doom-version)
+                 with ref = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "rev-parse" "HEAD")
+                 with branch = (doom-call-process "git" "-C" (doom-path doom-emacs-dir) "branch" "--show-current")
+                 for (var . val)
+                 in `((major  . ,(nth 0 v))
+                      (minor  . ,(nth 1 v))
+                      (build  . ,(nth 2 v))
+                      (tag    . ,(ignore-errors (cadr (split-string doom-version "-" t))))
+                      (ref    . ,(if (zerop (car ref)) (cdr ref)))
+                      (branch . ,(if (zerop (car branch)) (cdr branch))))
+                 collect `(put 'doom-version ',var ',val)))))
 
 (defun doom-profile--generate-load-modules ()
   (let* ((init-modules-list (doom-module-list nil t))
