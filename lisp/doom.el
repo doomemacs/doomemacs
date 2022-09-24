@@ -406,6 +406,16 @@ users).")
         (setq load-suffixes (get 'load-suffixes 'initial-value)
               load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
 
+    ;; PERF: Doom uses `defcustom' to indicate variables that users are expected
+    ;;   to reconfigure. Trouble is it fires off initializers meant to
+    ;;   accommodate any user attempts to configure them before they were
+    ;;   defined. This is unnecessary before $DOOMDIR/init.el is loaded, so I
+    ;;   disable them until it is.
+    (setq custom-dont-initialize t)
+    (add-hook! 'doom-before-init-hook
+      (defun doom--reset-custom-dont-initialize-h ()
+        (setq custom-dont-initialize nil)))
+
     ;; PERF: The mode-line procs a couple dozen times during startup. This is
     ;;   normally quite fast, but disabling the default mode-line and reducing the
     ;;   update delay timer seems to stave off ~30-50ms.
@@ -584,8 +594,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;; defvaralias, which are done because ensuring aliases are created before
 ;; packages are loaded is an unneeded and unhelpful maintenance burden. Emacs
 ;; still aliases them fine regardless.
-(with-eval-after-load 'warnings
-  (add-to-list 'warning-suppress-types '(defvaralias)))
+(setq warning-suppress-types '(defvaralias))
 
 ;; Reduce debug output unless we've asked for it.
 (setq debug-on-error init-file-debug
