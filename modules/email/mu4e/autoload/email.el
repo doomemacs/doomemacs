@@ -67,17 +67,31 @@ default/fallback account."
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
     (switch-to-buffer (doom-fallback-buffer)))
-  (unless (memq (buffer-local-value 'major-mode
-                                    (window-buffer (selected-window)))
-                '(mu4e-main-mode
-                  mu4e-headers-mode
-                  mu4e-view-mode
-                  mu4e-compose-mode
-                  org-msg-edit-mode))
-    (mu4e))
-  ;; (save-selected-window
-  ;;   (prolusion-mail-show))
-  )
+  ;; At this point, we're going to guess what the user wants to do.
+  ;; To help with this, we'll collect potentially-useful buffers.
+  ;; Then we'll try to jump to in order of preference:
+  ;; 1. A draft message buffer
+  ;; 2. A viewed message buffer
+  ;; 3. A headers buffer
+  ;; If none of those exist and are appropiate to jump to,
+  ;; `mu4e' will be called.
+  (let (compose-buffer view-buffer headers-buffer)
+    (dolist (buf (buffer-list))
+      (pcase (buffer-local-value 'major-mode buf)
+        ((and (or 'org-msg-edit-mode 'mu4e-compose-mode)
+              (guard (not compose-buffer)))
+         (setq compose-buffer buf))
+        ((and 'mu4e-view-mode (guard (not view-buffer)))
+         (setq view-buffer buf))
+        ((and 'mu4e-headers-mode (guard (not headers-buffer)))
+         (setq headers-buffer buf))))
+    (if (and compose-buffer (not (eq compose-buffer (current-buffer))))
+        (switch-to-buffer compose-buffer)
+      (if (and view-buffer (not (eq view-buffer (current-buffer))))
+          (switch-to-buffer view-buffer)
+        (if (and headers-buffer (not (eq headers-buffer (current-buffer))))
+            (switch-to-buffer headers-buffer)
+          (mu4e))))))
 
 ;;;###autoload
 (defun +mu4e/compose ()
