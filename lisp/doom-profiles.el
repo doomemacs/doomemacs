@@ -399,9 +399,9 @@ Defaults to the profile at `doom-profile-default'."
          (init-file   doom-module-init-file)
          (config-file doom-module-config-file))
     (letf! ((defun module-loader (group name file &optional noerror)
-              `(let ((doom--current-module '(,group . ,name))
-                     (doom--current-flags ',(doom-module-get group name :flags)))
-                 (doom-load ,(abbreviate-file-name (file-name-sans-extension file)))))
+              (doom-module-context-with (cons group name)
+                `(let ((doom-module-context ,doom-module-context))
+                   (doom-load ,(abbreviate-file-name (file-name-sans-extension file))))))
             (defun module-list-loader (modules file &optional noerror)
               (cl-loop for (cat . mod) in modules
                        if (doom-module-locate-path cat mod file)

@@ -411,13 +411,9 @@ installed."
 ;;; Package getters
 (defun doom-packages--read (file &optional noeval noerror)
   (doom-context-with 'packages
-    (condition-case-unless-debug e
-        (with-temp-buffer ; prevent buffer-local state from propagating
-          (let* ((doom--current-module (doom-module-from-path file))
-                 (doom--current-flags
-                  (doom-module-get (car doom--current-module)
-                                   (cdr doom--current-module)
-                                   :flags)))
+    (doom-module-context-with (doom-module-from-path file)
+      (condition-case-unless-debug e
+          (with-temp-buffer ; prevent buffer-local state from propagating
             (if (not noeval)
                 (load file noerror 'nomessage 'nosuffix)
               (when (file-exists-p file)
@@ -436,14 +432,14 @@ installed."
                         (push (cons
                                name (plist-put
                                      plist :modules
-                                     (list doom--current-module)))
-                              doom-packages)))))))))
-      (user-error
-       (user-error (error-message-string e)))
-      (error
-       (signal 'doom-package-error
-               (list (doom-module-from-path file)
-                     file e))))))
+                                     (list (doom-module-context-key))))
+                              doom-packages))))))))
+        (user-error
+         (user-error (error-message-string e)))
+        (error
+         (signal 'doom-package-error
+                 (list (doom-module-context-key)
+                       file e)))))))
 
 (defun doom-package-list (&optional module-list)
   "Retrieve a list of explicitly declared packages from MODULE-LIST.

@@ -17,29 +17,34 @@
 ;;
 ;;; Logging
 
-(defun doom--log (text)
-  (let ((inhibit-message (not init-file-debug)))
-    (message "%s" (propertize text 'face 'font-lock-doc-face))))
+(defvar doom-inhibit-log (not (or noninteractive init-file-debug))
+  "If non-nil, suppress `doom-log' output.")
 
-(defmacro doom-log (output &rest args)
+(defun doom--log (text &rest args)
+  (let ((inhibit-message (not init-file-debug))
+        (absolute? (string-prefix-p ":" text)))
+    (apply #'message
+           (propertize (concat "* %.06f:%s" (if (not absolute?) ":") text)
+                       'face 'font-lock-doc-face)
+           (float-time (time-subtract (current-time) before-init-time))
+           (mapconcat
+            (lambda (x) (format "%s" x))
+            (unless absolute?
+              (append (cons '* (remq t (reverse doom-context)))
+                      (if (bound-and-true-p doom-module-context)
+                          (let ((key (doom-module-context-key)))
+                            (delq nil (list (car key) (cdr key)))))))
+            ":")
+           args)))
+
+(defmacro doom-log (message &rest args)
   "Log a message in *Messages*.
 
 Does not emit the message in the echo area. This is a macro instead of a
 function to prevent the potentially expensive evaluation of its arguments when
-debug mode is off."
+debug mode is off. Return non-nil."
   (declare (debug t))
-  `(when (or init-file-debug noninteractive)
-     (doom--log
-      (with-no-warnings ; suppress 'more args than %-sequences' warning
-        (let* ((output ,output)
-               (absolute? (string-prefix-p ":" output)))
-          (format (concat "* %.06f%s" (if absolute? output (concat ":" output)))
-                  (float-time (time-subtract (current-time) before-init-time))
-                  (let ((context (remq t (reverse doom-context))))
-                    (if (and context (not absolute?))
-                        (concat "::" (mapconcat #'symbol-name context ":"))
-                      ""))
-                  ,@args))))))
+  `(unless doom-inhibit-log (doom--log ,message ,@args)))
 
 
 ;;

@@ -107,8 +107,56 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
   :group 'doom
   :type 'hook)
 
-(defvar doom--current-module nil)
-(defvar doom--current-flags nil)
+
+;;
+;;; `doom-module-context'
+
+(defvar doom-module-context [nil nil nil nil]
+  "A vector describing the module associated it with the active context.
+
+Contains the following: [:GROUP MODULE FLAGS FEATURES]
+
+Do not directly set this variable, only let-bind it.")
+(eval-and-compile
+  (setplist 'doom-module-context '(group 0 name 1 flags 2 features 3)))
+
+;; DEPRECATED: Remove this when byte-compilation is introduced to Doom core.
+(defmacro doom-module--context-field (field) (get 'doom-module-context field))
+
+(defun doom-module-context-get (field &optional context)
+  "Return the FIELD of CONTEXT.
+
+FIELD should be one of `group', `name', `flags', or `features'.
+CONTEXT should be a `doom-module-context' vector. If omitted, defaults to
+`doom-module-context'."
+  (aref (or context doom-module-context) (get 'doom-module-context field)))
+
+(defun doom-module-context (group &optional name)
+  "Create a `doom-module-context' from a module by GROUP and NAME.
+
+If NAME is omitted, GROUP is treated as a module key cons cell: (GROUP . NAME)."
+  (declare (side-effect-free t))
+  (let* ((key   (if name (cons group name) group))
+         (group (or (car-safe key) key))
+         (name  (cdr-safe key))
+         (data  (get group name)))
+    (vector group name
+            (aref data (doom-module--context-field flags))
+            (aref data (doom-module--context-field features)))))
+
+(defun doom-module-context-key (&optional context)
+  "Return the module of the active `doom-module-context' as a module key."
+  (declare (side-effect-free t))
+  (let ((context (or context doom-module-context)))
+    (cons (aref context (doom-module--context-field group))
+          (aref context (doom-module--context-field name)))))
+
+(defmacro doom-module-context-with (module-key &rest body)
+  "Evaluate BODY with `doom-module-context' informed by MODULE-KEY."
+  (declare (indent 1))
+  `(let ((doom-module-context (doom-module-context ,module-key)))
+     (doom-log ":context:module: =%s" doom-module-context)
+     ,@body))
 
 
 ;;
@@ -418,19 +466,17 @@ For more about modules and flags, see `doom!'."
   ;;   Doom will byte-compile its core files. At that time, we can use it again.
   (and (cond (flag (memq flag (aref (or (get category module) doom--empty-module) 2)))
              (module (get category module))
-             (doom--current-flags (memq category doom--current-flags))
-             (doom--current-module
-              (memq category
-                    (aref (or (get (car doom--current-module)
-                                   (cdr doom--current-module))
-                              doom--empty-module)
-                          2)))
-             ((if-let (module (doom-module-from-path (macroexpand '(file!))))
-                  (memq category (aref (or (get (car module) (cdr module))
-                                           doom--empty-module)
-                                       2))
-                (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
-                       category module flag (file!)))))
+             (doom-module-context (memq category (aref doom-module-context 2)))
+             ((let ((file
+                     ;; This must be expanded at the call site, not in
+                     ;; `modulep!'s definition, to get the file we want.
+                     (macroexpand '(file!))))
+                (if-let (module (doom-module-from-path file))
+                    (memq category (aref (or (get (car module) (cdr module))
+                                             doom--empty-module)
+                                         2))
+                  (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
+                         category module flag file)))))
        t))
 
 

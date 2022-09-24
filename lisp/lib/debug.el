@@ -9,6 +9,7 @@
 (defvar doom-debug-variables
   `(;; Doom variables
     (doom-print-minimum-level . debug)
+    (doom-inhibit-log . nil)
 
     ;; Emacs variables
     async-debug

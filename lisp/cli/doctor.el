@@ -242,23 +242,22 @@ in."
               (let (doom-doctor--errors
                     doom-doctor--warnings)
                 (condition-case-unless-debug ex
-                    (let ((doom--current-module key)
-                          (doom--current-flags (plist-get plist :flags))
-                          (doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
-                          (packages-file (doom-module-expand-path (car key) (cdr key) doom-module-packages-file)))
-                      (cl-loop with doom-output-indent = 6
-                               for name in (doom-context-with 'packages
-                                             (let* (doom-packages
-                                                    doom-disabled-packages)
-                                               (load packages-file 'noerror 'nomessage)
-                                               (mapcar #'car doom-packages)))
-                               unless (or (doom-package-get name :disable)
-                                          (eval (doom-package-get name :ignore))
-                                          (plist-member (doom-package-get name :recipe) :local-repo)
-                                          (locate-library (symbol-name name))
-                                          (doom-package-built-in-p name)
-                                          (doom-package-installed-p name))
-                               do (print! (error "Missing emacs package: %S") name)))
+                    (doom-module-context-with key
+                      (let ((doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
+                            (packages-file (doom-module-expand-path (car key) (cdr key) doom-module-packages-file)))
+                        (cl-loop with doom-output-indent = 6
+                                 for name in (doom-context-with 'packages
+                                               (let* (doom-packages
+                                                      doom-disabled-packages)
+                                                 (load packages-file 'noerror 'nomessage)
+                                                 (mapcar #'car doom-packages)))
+                                 unless (or (doom-package-get name :disable)
+                                            (eval (doom-package-get name :ignore))
+                                            (plist-member (doom-package-get name :recipe) :local-repo)
+                                            (locate-library (symbol-name name))
+                                            (doom-package-built-in-p name)
+                                            (doom-package-installed-p name))
+                                 do (print! (error "Missing emacs package: %S") name))))
                   (let ((inhibit-message t))
                     (load doctor-file 'noerror 'nomessage))
                   (file-missing (error! "%s" (error-message-string ex)))
