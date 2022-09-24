@@ -933,6 +933,29 @@ The previous values will be be restored upon exit."
                 collect `(setenv ,(car var) ,(cadr var)))
      ,@body))
 
+;; Introduced in Emacs 28.1
+(defbackport! defun file-name-with-extension (filename extension)
+  "Return FILENAME modified to have the specified EXTENSION.
+The extension (in a file name) is the part that begins with the last \".\".
+This function removes any existing extension from FILENAME, and then
+appends EXTENSION to it.
+
+EXTENSION may include the leading dot; if it doesn't, this function
+will provide it.
+
+It is an error if FILENAME or EXTENSION is empty, or if FILENAME
+is in the form of a directory name according to `directory-name-p'.
+
+See also `file-name-sans-extension'."
+  (let ((extn (string-trim-left extension "[.]")))
+    (cond ((string-empty-p filename)
+           (error "Empty filename"))
+          ((string-empty-p extn)
+           (error "Malformed extension: %s" extension))
+          ((directory-name-p filename)
+           (error "Filename is a directory: %s" filename))
+          ((concat (file-name-sans-extension filename) "." extn)))))
+
 ;; Introduced in Emacs 29+
 (defbackport! defmacro with-memoization (place &rest code)
   "Return the value of CODE and stash it in PLACE.
