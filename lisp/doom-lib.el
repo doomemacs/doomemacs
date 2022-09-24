@@ -147,7 +147,11 @@ If NOERROR, don't throw an error if PATH doesn't exist."
                     'doom-core-error)
                    ((file-in-directory-p path doom-user-dir)
                     'doom-user-error)
-                   ('doom-module-error))
+                   ((file-in-directory-p path doom-profile-dir)
+                    'doom-profile-error)
+                   ((file-in-directory-p path doom-modules-dir)
+                    'doom-module-error)
+                   ('doom-error))
              (list path e)))))
 
 (defun doom-require (feature &optional filename noerror)
