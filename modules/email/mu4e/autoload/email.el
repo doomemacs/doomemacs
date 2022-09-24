@@ -256,7 +256,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
   (pcase major-mode
     ((or 'mu4e-compose-mode 'org-msg-edit-mode)
      (let ((mail-buffer (current-buffer))
-           (location (read-file-name "Attach: ")))
+           (location (read-file-name "Attach: " nil nil t "")))
        (if (not (file-directory-p location))
            (pcase major-mode
              ('mu4e-compose-mode
