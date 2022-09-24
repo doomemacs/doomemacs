@@ -292,7 +292,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
                    (mapcar
                     ;; don't attach directories
                     (lambda (f) (if (file-directory-p f) nil f))
-                    (dired-map-over-marks (dired-get-filename) nil)))))
+                    (nreverse (dired-map-over-marks (dired-get-filename) nil))))))
      (if (not files-to-attach)
          (progn
            (message "No files marked, aborting.")
