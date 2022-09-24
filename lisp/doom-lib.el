@@ -204,9 +204,11 @@ unreadable. Returns the names of envvars that were changed."
               (set-time-zone-rule newtz))))
         env))))
 
+(defvar doom--hook nil)
 (defun doom-run-hook (hook)
   "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
+  (doom-log "hook:%s: run %s" (or doom--hook '*) hook)
   (condition-case-unless-debug e
       (funcall hook)
     (error
@@ -219,7 +221,8 @@ Meant to be used with `run-hook-wrapped'."
 Is used as advice to replace `run-hooks'."
   (dolist (hook hooks)
     (condition-case-unless-debug e
-        (run-hook-wrapped hook #'doom-run-hook)
+        (let ((doom--hook hook))
+          (run-hook-wrapped hook #'doom-run-hook))
       (doom-hook-error
        (unless debug-on-error
          (lwarn hook :error "Error running hook %S because: %s"
