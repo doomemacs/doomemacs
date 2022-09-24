@@ -200,10 +200,7 @@ list remains lean."
             ((file-exists-p error-file)
              (when (file-newer-than-file-p file error-file)
                (doom-log "packages:eln: %s is newer than %s" file error-file)
-               t))
-            ((file-exists-p (byte-compile-dest-file file))
-             (doom-log "packages:eln: cannot find %s" eln-name)
-             t)))))
+               t))))))
 
 (defun doom-packages--native-compile-done-h (file)
   "Callback fired when an item has finished async compilation."
