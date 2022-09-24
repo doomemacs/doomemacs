@@ -1437,7 +1437,7 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
                   (path (locate-file-internal path doom-cli-load-path load-suffixes)))
         (doom-log "load: autoload %s" path)
         (let ((doom-cli--plist (doom-cli-plist cli)))
-          (load! path))
+          (doom-load path))
         (let* ((key (doom-cli-key cli))
                (cli (gethash key doom-cli--table)))
           (when (doom-cli-autoload cli)
