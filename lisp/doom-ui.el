@@ -610,9 +610,10 @@ triggering hooks during startup."
   (add-hook hook #'doom-init-fonts-h -100)
   (add-hook hook #'doom-init-theme-h -90))
 
-;; Initialize UI as late as possible. `window-buffer-change-functions' runs
-;; once, when the scratch/dashboard buffer is first displayed.
-(add-hook 'doom-after-init-hook #'doom-init-ui-h -100)
+;; PERF: Init UI late, but not too late. Its impact on startup time seems to
+;;   vary wildly depending on exact placement. `window-setup-hook' appears to be
+;;   the sweet spot.
+(add-hook 'window-setup-hook #'doom-init-ui-h -100)
 
 
 ;;
