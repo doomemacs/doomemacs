@@ -11,7 +11,7 @@
 (defun +modeline--set-var-and-refresh-bars-fn (&optional symbol value)
   (when symbol
     (set-default symbol value))
-  (when doom-init-time
+  (when (fboundp '+modeline-refresh-bars-h)
     (+modeline-refresh-bars-h)))
 
 
