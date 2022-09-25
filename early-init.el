@@ -1,28 +1,28 @@
 ;;; early-init.el --- Doom's universal bootstrapper -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; early-init.el was introduced in Emacs 27.1 and is loaded before init.el, and
+;; This file, in summary:
+;; - Determines where `user-emacs-directory' is by:
+;;   - Processing `--init-directory DIR' (backported from Emacs 29),
+;;   - Processing `--profile NAME' (see
+;;     `https://docs.doomemacs.org/-/developers' or docs/developers.org),
+;;   - Or assume that it's the directory this file lives in.
+;; - Loads Doom as efficiently as possible, with only the essential startup
+;;   optimizations, and prepares it for interactive or non-interactive sessions.
+;; - If Doom isn't present, then we assume that Doom is being used as a
+;;   bootloader and the user wants to load a non-Doom config, so we undo all our
+;;   global side-effects, load `user-emacs-directory'/early-init.el, and carry
+;;   on as normal (without Doom).
+;; - Do all this without breaking compatibility with Chemacs.
+;;
+;; early-init.el was introduced in Emacs 27.1. It is loaded before init.el,
 ;; before Emacs initializes its UI or package.el, and before site files are
-;; loaded. This is good place for startup optimizating, because only here can
-;; you *prevent* things from loading, rather than turn them off after-the-fact.
-;; As such, Doom does all its initializing here.
+;; loaded. This is great place for startup optimizing, because only here can you
+;; *prevent* things from loading, rather than turn them off after-the-fact.
 ;;
-;; This file is Doom's "universal bootstrapper" for both interactive and
-;; non-interactive sessions. It's also the heart of its profile bootloader,
-;; which allows you to switch between Emacs configs on demand using
-;; `--init-directory DIR' (which was backported from Emacs 29) or `--profile
-;; NAME` (more about profiles at `https://docs.doomemacs.org/-/developers' or
-;; docs/developers.org).
-;;
-;; In summary, this file is responsible for:
-;; - Setting up some universal startup optimizations.
-;; - Determining where `user-emacs-directory' is from one of:
-;;   - `--init-directory DIR' (backported from 29)
-;;   - `--profile PROFILENAME'
-;; - Do one of the following:
-;;   - Load `doom' and one of `doom-start' or `doom-cli'.
-;;   - Or (if the user is trying to load a non-Doom config) load
-;;     `user-emacs-directory'/early-init.el.
+;; Doom uses this file as its "universal bootstrapper" for both interactive and
+;; non-interactive sessions. That means: no matter what environment you want
+;; Doom in, load this file first.
 ;;
 ;;; Code:
 
