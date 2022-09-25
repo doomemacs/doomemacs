@@ -133,6 +133,11 @@ rdm &
 rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 #+end_src
 
+** =:editor format=
+The formatter used is [[doom-executable:clang-format]] which should be installed alongside =clang=.
+
+For more info, see [[doom-module::editor format]].
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
