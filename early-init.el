@@ -102,17 +102,32 @@
    ;;   -- I remove `.so' from `load-suffixes' and pass the `must-suffix' arg to
    ;;   `load'. See the docs of `load' for details.
    (if (let ((load-suffixes '(".elc" ".el")))
-         ;; Load the heart of Doom Emacs.
-         (load (expand-file-name "lisp/doom" user-emacs-directory)
-               'noerror (not init-file-debug) nil 'must-suffix))
-       ;; ...and prepare for the rest of the session.
-       (doom-require (if noninteractive 'doom-cli 'doom-start))
-     ;; Failing that, assume we're loading a non-Doom config and prepare.
-     (setq user-init-file (expand-file-name "early-init" user-emacs-directory)
-           ;; I make no assumptions about the config we're about to load, so
-           ;; to limit side-effects, undo any leftover optimizations:
-           load-prefer-newer t)
-     nil))
+         ;; I avoid `load's NOERROR argument because other, legitimate errors
+         ;; (like permission or IO errors) should not be suppressed or
+         ;; interpreted as "this is not a Doom config".
+         (condition-case _
+             ;; Load the heart of Doom Emacs.
+             (load (expand-file-name "lisp/doom" user-emacs-directory)
+                   nil (not init-file-debug) nil 'must-suffix)
+           ;; Failing that, assume that we're loading a non-Doom config.
+           (file-missing
+            ;; Set `user-init-file' for the `load' call further below, and do so
+            ;; here while our `file-name-handler-alist' optimization is still
+            ;; effective (benefits `expand-file-name'). BTW: Emacs resets
+            ;; `user-init-file' and `early-init-file' after this file is loaded.
+            (setq user-init-file (expand-file-name "early-init" user-emacs-directory))
+            ;; COMPAT: I make no assumptions about the config we're going to
+            ;;   load, so undo this file's global side-effects.
+            (setq load-prefer-newer t)
+            ;; PERF: But make an exception for `gc-cons-threshold', which I
+            ;;   think all Emacs users and configs will benefit from. Still,
+            ;;   setting it to `most-positive-fixnum' is dangerous if downstream
+            ;;   does not reset it later to something reasonable, so I use 16mb
+            ;;   as a best fit guess. It's better than Emacs' 80kb default.
+            (setq gc-cons-threshold (* 16 1024 1024))
+            nil)))
+       ;; ...But if Doom loaded then continue as normal.
+       (doom-require (if noninteractive 'doom-cli 'doom-start))))
 
  ;; Then continue on to the config/profile we want to load.
  (load user-init-file 'noerror (not init-file-debug) nil 'must-suffix))
