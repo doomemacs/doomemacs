@@ -14,8 +14,8 @@ from plain text.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][plantuml-mode]]
-- [[doom-package:][flycheck-plantuml]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:plantuml-mode]]
+- [[doom-package:flycheck-plantuml]] if [[doom-module::checkers syntax]]
 
 ** Hacks
 /No hacks documented for this module./

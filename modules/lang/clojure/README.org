@@ -18,13 +18,13 @@ This module adds support for the Clojure(Script) language.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~clojure-mode~ (alongside Cider). Requires [[doom-module:][:tools lsp]]
+  Enable LSP support for ~clojure-mode~ (alongside Cider). Requires [[doom-module::tools lsp]]
   and a langserver (supports [[https://clojure-lsp.io/][clojure-lsp]]).
 
 ** Packages
-- [[doom-package:][cider]]
-- [[doom-package:][clj-refactor]]
-- [[doom-package:][flycheck-clj-kondo]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:cider]]
+- [[doom-package:clj-refactor]]
+- [[doom-package:flycheck-clj-kondo]] if [[doom-module::checkers syntax]]
 
 ** Hacks
 - Error messages emitted from CIDER are piped into the REPL buffer when it is
@@ -42,7 +42,7 @@ This module requires:
 - [[https://clojure.org/][clojure]]
 - [[https://leiningen.org/][leiningen]], for the REPL
 - [[https://github.com/borkdude/clj-kondo][clj-kondo]], for linting code
-- [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]], for LSP support (if [[doom-module:][+lsp]])
+- [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]], for LSP support (if [[doom-module:+lsp]])
 
 * TODO Usage
 #+begin_quote

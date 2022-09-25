@@ -13,11 +13,11 @@ Interactive DO things. The completion engine that is /mostly/ built-into Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][crm-custom]]
-- [[doom-package:][flx-ido]]
-- [[doom-package:][ido-completing-read+]]
-- [[doom-package:][ido-sort-mtime]]
-- [[doom-package:][ido-vertical-mode]]
+- [[doom-package:crm-custom]]
+- [[doom-package:flx-ido]]
+- [[doom-package:ido-completing-read+]]
+- [[doom-package:ido-sort-mtime]]
+- [[doom-package:ido-vertical-mode]]
 
 ** Hacks
 /No hacks documented for this module./

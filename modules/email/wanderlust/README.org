@@ -16,7 +16,7 @@
   Enable gmail-specific configuration for mail ~To~ or ~From~ a gmail address.
 
 ** Packages
-- [[doom-package:][wanderlust]]
+- [[doom-package:wanderlust]]
 
 ** TODO Hacks
 #+begin_quote

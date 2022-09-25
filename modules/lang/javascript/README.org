@@ -6,13 +6,13 @@
 * Description :unfold:
 This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.typescriptlang.org/][TypeScript]] support to Doom Emacs.
 
-- Code completion ([[doom-package:][tide]])
-- REPL support ([[doom-package:][nodejs-repl]])
-- Refactoring commands ([[doom-package:][js2-refactor]])
-- Syntax checking ([[doom-package:][flycheck]])
-- Browser code injection with [[doom-package:][skewer-mode]]
+- Code completion ([[doom-package:tide]])
+- REPL support ([[doom-package:nodejs-repl]])
+- Refactoring commands ([[doom-package:js2-refactor]])
+- Syntax checking ([[doom-package:flycheck]])
+- Browser code injection with [[doom-package:skewer-mode]]
 - Coffeescript & JSX support
-- Jump-to-definitions and references support ([[doom-package:][xref]])
+- Jump-to-definitions and references support ([[doom-package:xref]])
 
 ** Maintainers
 - [[doom-user:][@elken]]
@@ -24,21 +24,21 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 ** Module flags
 - +lsp ::
   Enable LSP support for ~js2-mode~, ~rjsx-mode~, JS in ~web-mode~, and
-  ~typescript-mode~. Requires [[doom-module:][:tools lsp]] and a langserver (supports ts-ls and
+  ~typescript-mode~. Requires [[doom-module::tools lsp]] and a langserver (supports ts-ls and
   deno-ls).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][js2-refactor]]
-- [[doom-package:][nodejs-repl]]
-- [[doom-package:][npm-mode]]
-- [[doom-package:][rjsx-mode]]
-- [[doom-package:][skewer-mode]] (DEPRECATED)
-- [[doom-package:][tide]]
-- [[doom-package:][typescript-mode]]
-- [[doom-package:][xref-js2]] if [[doom-module:][:tools lookup]]
+- [[doom-package:js2-refactor]]
+- [[doom-package:nodejs-repl]]
+- [[doom-package:npm-mode]]
+- [[doom-package:rjsx-mode]]
+- [[doom-package:skewer-mode]] (DEPRECATED)
+- [[doom-package:tide]]
+- [[doom-package:typescript-mode]]
+- [[doom-package:xref-js2]] if [[doom-module::tools lookup]]
 
 ** TODO Hacks
 #+begin_quote

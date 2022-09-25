@@ -18,8 +18,8 @@ to easily modify color values or formats.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][kurecolor]]
-- [[doom-package:][rainbow-mode]]
+- [[doom-package:kurecolor]]
+- [[doom-package:rainbow-mode]]
 
 ** Hacks
 /No hacks documented for this module./

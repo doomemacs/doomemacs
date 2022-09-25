@@ -13,7 +13,7 @@ This module adds an Atom-esque tab bar to the Emacs UI.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][centaur-tabs]]
+- [[doom-package:centaur-tabs]]
 
 ** Hacks
 /No hacks documented for this module./

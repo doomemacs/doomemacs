@@ -13,7 +13,7 @@ This module adds commands for executing Makefile targets.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][makefile-executor]]
+- [[doom-package:makefile-executor]]
 
 ** Hacks
 /No hacks documented for this module./

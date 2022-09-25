@@ -8,8 +8,8 @@ Provides a REPL for your shell.
 
 #+begin_quote
  💡 =shell= is more REPL than terminal emulator. You can edit your command line
-    like you would any ordinary text in Emacs -- something you can't do in [[doom-package:][term]]
-    (without ~term-line-mode~, which can be unstable) or [[doom-package:][vterm]].
+    like you would any ordinary text in Emacs -- something you can't do in [[doom-package:term]]
+    (without ~term-line-mode~, which can be unstable) or [[doom-package:vterm]].
 
     Due to =shell='s simplicity, you're less likely to encounter edge cases
     (e.g. against your shell config), but it's also the least capable. TUI

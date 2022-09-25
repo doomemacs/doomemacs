@@ -16,7 +16,7 @@ functions + types + imports.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][dhall-mode]]
+- [[doom-package:dhall-mode]]
 
 ** Hacks
 /No hacks documented for this module./

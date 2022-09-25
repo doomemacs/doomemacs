@@ -6,7 +6,7 @@
 * Description :unfold:
 This module provides two minor modes that make Emacs into a more comfortable
 writing or coding environment. Folks familiar with "distraction-free" or "zen"
-modes from other editors -- or [[doom-package:][olivetti]], [[doom-package:][sublimity]], and [[doom-package:][tabula-rasa]] (Emacs
+modes from other editors -- or [[doom-package:olivetti]], [[doom-package:sublimity]], and [[doom-package:tabula-rasa]] (Emacs
 plugins) -- will feel right at home.
 
 These modes are:
@@ -33,8 +33,8 @@ These modes are:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][mixed-pitch]]
-- [[doom-package:][writeroom-mode]]
+- [[doom-package:mixed-pitch]]
+- [[doom-package:writeroom-mode]]
 
 ** Hacks
 + Doom has disabled all of writeroom-mode's "global" effects

@@ -22,7 +22,7 @@ The idea for this plug-in was to mimic the behavior of PhpStorm deployment funct
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][ssh-deploy]]
+- [[doom-package:ssh-deploy]]
 
 ** Hacks
 /No hacks documented for this module./

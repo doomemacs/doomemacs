@@ -57,7 +57,7 @@ Support for the bépo layout includes:
 - Bind [[kbd:][`~]] functions to [[kbd:][$#]] keys when possible
 
 *** Easymotion
-If you use [[doom-package:][evil-easymotion]], then all the bindings that were on [[kbd:][gs]] have been
+If you use [[doom-package:evil-easymotion]], then all the bindings that were on [[kbd:][gs]] have been
 moved to [[kbd:][gé]].
 
 In short : [[kbd:][g s j]] -> [[kbd:][g é t]] (~evilem-motion-next-line~). And so on.
@@ -93,7 +93,7 @@ key in the bépo layout. Finding a way to use [[kbd:][é]] or even [[kbd:][è]] 
 a welcome change
 
 *** Org-mode
-[[doom-package:][evil-org]] allows to define ~evil-org-movement-bindings~ to automatically map
+[[doom-package:evil-org]] allows to define ~evil-org-movement-bindings~ to automatically map
 movement bindings on non-hjkl keys. It maps automatically keys to [[kbd:][C-c]] and [[kbd:][C-r]] in
 normal and insert states though, and it's not really user friendly in Emacs to
 remap those.
@@ -123,7 +123,7 @@ key that does not need a curl.
 
 ** Outstanding issues (contributions welcome)
 *** Bépo
-- In [[doom-package:][eshell]], the key [[kbd:][c]] is still bound to ~evil-collection-eshell-evil-change~ in
+- In [[doom-package:eshell]], the key [[kbd:][c]] is still bound to ~evil-collection-eshell-evil-change~ in
   normal mode.
   
 ** How to investigate an issue ?

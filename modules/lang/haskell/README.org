@@ -13,12 +13,12 @@ This module adds Haskell support to Doom Emacs.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~haskell-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~haskell-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/haskell/haskell-language-server][haskell-language-server]]).
 
 ** Packages
-- [[doom-package:][haskell-mode]]
-- [[doom-package:][lsp-haskell]] if [[doom-module:][+lsp]]
+- [[doom-package:haskell-mode]]
+- [[doom-package:lsp-haskell]] if [[doom-module:+lsp]]
 
 ** Hacks
 /No hacks documented for this module./

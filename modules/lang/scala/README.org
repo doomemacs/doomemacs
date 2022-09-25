@@ -26,16 +26,16 @@ Through the power of [[https://scalameta.org/metals/docs/editors/overview.html][
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~scala-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~scala-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports metals).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][sbt-mode]]
-- [[doom-package:][scala-mode]]
-- [[doom-package:][lsp-metals]] if [[doom-module:][+lsp]]
+- [[doom-package:sbt-mode]]
+- [[doom-package:scala-mode]]
+- [[doom-package:lsp-metals]] if [[doom-module:+lsp]]
 
 ** Hacks
 /No hacks documented for this module./

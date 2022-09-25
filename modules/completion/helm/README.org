@@ -18,21 +18,21 @@ as a unified interface for project search and replace, powered by [[https://gith
   Enable fuzzy completion for Helm searches.
 - +icons ::
   Display icons on completion results (where possible) using either
-  [[doom-package:][all-the-icons]] or [[doom-package:][treemacs]] iconsets.
+  [[doom-package:all-the-icons]] or [[doom-package:treemacs]] iconsets.
 
 ** Packages
-- [[doom-package:][helm]]
-- [[doom-package:][helm-company]]
-- [[doom-package:][helm-c-yasnippet]]
-- [[doom-package:][helm-descbinds]]
-- [[doom-package:][helm-describe-modes]]
-- [[doom-package:][helm-flx]]* if [[doom-module:][+fuzzy]]
-- [[doom-package:][helm-icons]]* if [[doom-module:][+icons]]
-- [[doom-package:][helm-org]]* if [[doom-module:][:lang org]]
-- [[doom-package:][helm-posframe]]* if [[doom-module:][+childframe]]
-- [[doom-package:][helm-projectile]]
-- [[doom-package:][helm-rg]]
-- [[doom-package:][helm-swiper]]
+- [[doom-package:helm]]
+- [[doom-package:helm-company]]
+- [[doom-package:helm-c-yasnippet]]
+- [[doom-package:helm-descbinds]]
+- [[doom-package:helm-describe-modes]]
+- [[doom-package:helm-flx]]* if [[doom-module:+fuzzy]]
+- [[doom-package:helm-icons]]* if [[doom-module:+icons]]
+- [[doom-package:helm-org]]* if [[doom-module::lang org]]
+- [[doom-package:helm-posframe]]* if [[doom-module:+childframe]]
+- [[doom-package:helm-projectile]]
+- [[doom-package:helm-rg]]
+- [[doom-package:helm-swiper]]
 
 ** TODO Hacks
 #+begin_quote
@@ -59,13 +59,13 @@ Helm command or plugin.
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-Much like [[doom-package:][ivy]] and [[doom-package:][vertico]], [[doom-package:][helm]] is a /large/ framework. Covering all its
+Much like [[doom-package:ivy]] and [[doom-package:vertico]], [[doom-package:helm]] is a /large/ framework. Covering all its
 features is not within the scope of this module's documentation, so only its
 highlights will be covered here.
 
 ** Jump-to navigation
 Similar to Ivy, this module provides an interface to navigate within a project
-using [[doom-package:][projectile]]:
+using [[doom-package:projectile]]:
 | Keybind          | Description                         |
 |------------------+-------------------------------------|
 | [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Jump to file in project             |
@@ -109,7 +109,7 @@ Changes to the resulting wgrep buffer (opened by [[kbd:][C-c C-e]]) can be commi
 [[kbd:][C-c C-c]] and aborted with [[kbd:][C-c C-k]] (alternatively [[kbd:][ZZ]] and [[kbd:][ZQ]], for evil users).
 
 ** In-buffer searching
-The [[doom-package:][swiper]] package provides an interactive buffer search powered by helm. It can
+The [[doom-package:swiper]] package provides an interactive buffer search powered by helm. It can
 be invoked with:
 - [[kbd:][SPC s s]] (~swiper-isearch~)
 - [[kbd:][SPC s S]] (~swiper-isearch-thing-at-point~)
@@ -156,8 +156,8 @@ Helm also has a number of overrides for built-in functionality:
 #+end_quote
 
 ** Icons
-Icon support is now included, through one of two providers: [[doom-package:][all-the-icons]] and
-[[doom-package:][treemacs]]. By default, to maintain consistency we use [[doom-package:][all-the-icons]]; however if
+Icon support is now included, through one of two providers: [[doom-package:all-the-icons]] and
+[[doom-package:treemacs]]. By default, to maintain consistency we use [[doom-package:all-the-icons]]; however if
 you wish to modify this you can do so using the below snippet:
 
 #+begin_src emacs-lisp

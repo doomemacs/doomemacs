@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This module provides support for [[https://lisp-lang.org/][Common Lisp]] and the [[doom-package:][Sly]] development
+This module provides support for [[https://lisp-lang.org/][Common Lisp]] and the [[doom-package:Sly]] development
 environment. Common Lisp is not a single language but a specification, with many
 competing compiler implementations. By default, [[http://www.sbcl.org/][Steel Bank Common Lisp]] (SBCL) is
 assumed to be installed, but this can be configured.
@@ -21,9 +21,9 @@ to run unmodified for a long time.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][sly]]
-- [[doom-package:][sly-macrostep]]
-- [[doom-package:][sly-repl-ansi-color]]
+- [[doom-package:sly]]
+- [[doom-package:sly-macrostep]]
+- [[doom-package:sly-repl-ansi-color]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -42,7 +42,7 @@ This module requires [[http://www.sbcl.org/][SBCL]].
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-This module does not integrate with [[doom-module:][:tools lsp]]. Sly (and SLIME before it) is
+This module does not integrate with [[doom-module::tools lsp]]. Sly (and SLIME before it) is
 considered the defacto development environment for Common Lisp and provides much
 of what is normally expected of an LSP, plus tight integration with the REPL and
 Emacs.

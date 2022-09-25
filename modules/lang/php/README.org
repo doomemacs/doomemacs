@@ -31,24 +31,24 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 - +hack ::
   Add support for the [[https://hacklang.org/][Hack dialect of PHP]] by Facebook.
 - +lsp ::
-  Enable LSP support for ~php-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~php-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://phpactor.readthedocs.io/en/develop/usage/standalone.html][phpactor]] and intelephense).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][async]]
-- [[doom-package:][hack-mode]] if [[doom-module:][+hack]]
-- [[doom-package:][php-boris]]
-- [[doom-package:][php-cs-fixer]] if [[doom-package:][:editor format]]
-- [[doom-package:][php-extras]]
-- [[doom-package:][php-mode]]
-- [[doom-package:][php-refactor-mode]]
-- [[doom-package:][phpunit]]
-- if [[doom-module:][+lsp]]
-  - [[doom-package:][phpactor]]
-  - [[doom-package:][company-phpactor]]
+- [[doom-package:async]]
+- [[doom-package:hack-mode]] if [[doom-module:+hack]]
+- [[doom-package:php-boris]]
+- [[doom-package:php-cs-fixer]] if [[doom-package::editor format]]
+- [[doom-package:php-extras]]
+- [[doom-package:php-mode]]
+- [[doom-package:php-refactor-mode]]
+- [[doom-package:phpunit]]
+- if [[doom-module:+lsp]]
+  - [[doom-package:phpactor]]
+  - [[doom-package:company-phpactor]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -62,7 +62,7 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 
 This module requires ~php~ (5.3+) and ~composer~.
 
-If [[doom-module:][+lsp]] is enabled, you'll also need one of these LSP servers:
+If [[doom-module:+lsp]] is enabled, you'll also need one of these LSP servers:
 - Phpactor requires ~php~ 7.3+.
 - Intelephense requires ~node~ and ~npm~.
 

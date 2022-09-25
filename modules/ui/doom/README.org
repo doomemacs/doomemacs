@@ -5,11 +5,11 @@
 
 * Description :unfold:
 This module gives Doom its signature look: powered by the [[doom-package:doom-themes][doom-one]] theme
-(loosely inspired by [[https://github.com/atom/one-dark-syntax][Atom's One Dark theme]]) and [[doom-package:][solaire-mode]]. Includes:
+(loosely inspired by [[https://github.com/atom/one-dark-syntax][Atom's One Dark theme]]) and [[doom-package:solaire-mode]]. Includes:
 
-- A custom folded-region indicator for [[doom-package:][hideshow]].
-- "Thin bar" fringe bitmaps for [[doom-package:][git-gutter-fringe]].
-- File-visiting buffers are slightly brighter (thanks to [[doom-package:][solaire-mode]]).
+- A custom folded-region indicator for [[doom-package:hideshow]].
+- "Thin bar" fringe bitmaps for [[doom-package:git-gutter-fringe]].
+- File-visiting buffers are slightly brighter (thanks to [[doom-package:solaire-mode]]).
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -20,8 +20,8 @@ This module gives Doom its signature look: powered by the [[doom-package:doom-th
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][doom-themes]]
-- [[doom-package:][solaire-mode]]
+- [[doom-package:doom-themes]]
+- [[doom-package:solaire-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -72,7 +72,7 @@ core/core-ui.el has four relevant variables:
 - ~doom-variable-pitch-font~ :: the font to use when ~variable-pitch-mode~ is active
   (or where the ~variable-pitch~ face is used).
 - ~doom-unicode-font~ :: the font used to display unicode symbols. This is
-  ignored if the [[doom-module:][:ui unicode]] module is enabled.
+  ignored if the [[doom-module::ui unicode]] module is enabled.
 
 #+begin_src emacs-lisp
 (setq doom-font (font-spec :family "Fira Mono" :size 12)
@@ -90,7 +90,7 @@ If you're seeing strange unicode symbols, this is likely because you don't have
 all-the-icons-install-fonts~.
 
 ** Ugly background colors in tty Emacs for daemon users
-[[doom-package:][solaire-mode]] is an aesthetic plugin that makes non-file-visiting buffers darker
+[[doom-package:solaire-mode]] is an aesthetic plugin that makes non-file-visiting buffers darker
 than the rest of the Emacs' frame (to visually differentiate temporary windows
 or sidebars from editing windows). This looks great in GUI Emacs, but can look
 questionable in the terminal.

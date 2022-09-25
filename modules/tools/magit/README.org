@@ -17,20 +17,20 @@ This module provides Magit, an interface to the Git version control system.
   Emacs. Will take a while on first run to build =emacsql-sqlite=.
 
 ** Packages
-- [[doom-package:][evil-magit]] if [[doom-module:][:editor evil +everywhere]]
-- [[doom-package:][forge]] if [[doom-module:][+forge]]
-- [[doom-package:][code-review]] if [[doom-module:][+forge]]
-- [[doom-package:][magit]]
-- [[doom-package:][magit-gitflow]]
-- [[doom-package:][magit-todos]]
+- [[doom-package:evil-magit]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:forge]] if [[doom-module:+forge]]
+- [[doom-package:code-review]] if [[doom-module:+forge]]
+- [[doom-package:magit]]
+- [[doom-package:magit-gitflow]]
+- [[doom-package:magit-todos]]
 
 ** Hacks
-- [[doom-package:][magit]] has been modified to recognize =$XDG_CACHE_HOME/git/credential/socket=.
-- [[doom-package:][magit]] has been modified to invalidate the projectile cache when you check out
+- [[doom-package:magit]] has been modified to recognize =$XDG_CACHE_HOME/git/credential/socket=.
+- [[doom-package:magit]] has been modified to invalidate the projectile cache when you check out
   a new branch or commit.
-- [[doom-package:][magit]] has been modified to revert repo buffers (e.g. after changing branches)
+- [[doom-package:magit]] has been modified to revert repo buffers (e.g. after changing branches)
   when you later switch to them, rather than all at once.
-- [[doom-package:][forge]] was modified to defer compilation of emacsql-sqlite until you try to use
+- [[doom-package:forge]] was modified to defer compilation of emacsql-sqlite until you try to use
   forge, rather than when magit first loads (which could be as soon as startup).
 
 ** TODO Changelog
@@ -42,8 +42,8 @@ This module provides Magit, an interface to the Git version control system.
 
 This module requires:
 - [[https://git-scm.com/][Git]]
-- [[doom-module:][+forge]] requires [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]]
-- [[doom-package:][code-review]] will also require a token setup (see [[https://github.com/wandersoncferreira/code-review#configuration][configuration]] for your particular forge)
+- [[doom-module:+forge]] requires [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][a Github API token]]
+- [[doom-package:code-review]] will also require a token setup (see [[https://github.com/wandersoncferreira/code-review#configuration][configuration]] for your particular forge)
 
 * TODO Usage
 #+begin_quote

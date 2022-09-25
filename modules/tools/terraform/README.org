@@ -15,8 +15,8 @@ run Terraform commands directly from Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][company-terraform]] if [[doom-package:][:completion company]]
-- [[doom-package:][terraform-mode]]
+- [[doom-package:company-terraform]] if [[doom-package::completion company]]
+- [[doom-package:terraform-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -36,25 +36,25 @@ This module requires the ~terraform~ executable to be installed and in your
 Syntax highlighting is provided from ~terraform-mode~ and ~hcl-mode~.
 
 ** Code formatting
-[[doom-module:][:tools terraform]] does not provide code formatting directly, but [[doom-module:][:editor format]]
+[[doom-module::tools terraform]] does not provide code formatting directly, but [[doom-module::editor format]]
 works with Terraform files.
 
 ** Code navigation
-Code navigation is supported through [[doom-package:][imenu]] from [[doom-package:][terraform-mode]].
+Code navigation is supported through [[doom-package:imenu]] from [[doom-package:terraform-mode]].
 
 ** Code completion
-Code completion of Terraform builtins is provided from [[doom-package:][company-terraform]] and
+Code completion of Terraform builtins is provided from [[doom-package:company-terraform]] and
 generally works well despite being generated through a [[https://github.com/rafalcieslak/emacs-company-terraform/blob/master/company-terraform-data.el][static (outdated) file]].
 
-[[doom-package:][company-terraform]] also provides code completion of resources within your
+[[doom-package:company-terraform]] also provides code completion of resources within your
 project.
 
 ** Documentation
-Documentation is accessible through the normal [[doom-package:][company]] show documentation
-functionality, thanks to [[doom-package:][company-terraform]].
+Documentation is accessible through the normal [[doom-package:company]] show documentation
+functionality, thanks to [[doom-package:company-terraform]].
 
 ** Executing Terraform commands
-[[doom-module:][:tools terraform]] provides commands under [[kbd:][<localleader>]] to run the most common
+[[doom-module::tools terraform]] provides commands under [[kbd:][<localleader>]] to run the most common
 Terraform operations:
 | key             | description              |
 |-----------------+--------------------------|

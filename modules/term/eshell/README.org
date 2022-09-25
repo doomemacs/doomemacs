@@ -6,7 +6,7 @@
 * Description :unfold:
 This module provides additional features for the built-in [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][Emacs Shell]]
 
-The Emacs Shell or [[doom-package:][eshell]] is a shell-like command interpreter implemented in
+The Emacs Shell or [[doom-package:eshell]] is a shell-like command interpreter implemented in
 Emacs Lisp. It is an alternative to traditional shells such as =bash=, =zsh=,
 =fish=, etc. that is built into Emacs and entirely cross-platform.
 
@@ -19,19 +19,19 @@ Emacs Lisp. It is an alternative to traditional shells such as =bash=, =zsh=,
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][eshell-did-you-mean]]
-- [[doom-package:][eshell-up]]
-- [[doom-package:][eshell-z]]
-- [[doom-package:][esh-help]]
-- [[doom-package:][shrink-path]]
-- if [[doom-module:][:completion company]]
-  - [[doom-package:][fish-completion]]
-  - [[doom-package:][bash-completion]]
+- [[doom-package:eshell-did-you-mean]]
+- [[doom-package:eshell-up]]
+- [[doom-package:eshell-z]]
+- [[doom-package:esh-help]]
+- [[doom-package:shrink-path]]
+- if [[doom-module::completion company]]
+  - [[doom-package:fish-completion]]
+  - [[doom-package:bash-completion]]
 
 ** Hacks
 - Even with ~fish-completion-fallback-on-bash-p~ non-nil, fish must be installed
   for bash completion to work. This has been circumvented.
-- [[doom-package:][eshell-did-you-mean]] does not work on first invocation, so we manually invoke
+- [[doom-package:eshell-did-you-mean]] does not work on first invocation, so we manually invoke
   it once.
 
 ** TODO Changelog
@@ -59,7 +59,7 @@ This module requires either [[https://fishshell.com/][Fish shell]] or [[https://
 #+end_quote
 
 ** TERM name
-By default, [[doom-package:][eshell]] sets the =$TERM= variable to ~"xterm-256color"~, which helps
+By default, [[doom-package:eshell]] sets the =$TERM= variable to ~"xterm-256color"~, which helps
 with rendering various colours. As eshell is /not/ a terminal emulator, these
 will not always work 100%. Modifying ~eshell-term-name~ to your liking may help.
 

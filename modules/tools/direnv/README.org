@@ -27,7 +27,7 @@ This module integrates direnv into Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][envrc]]
+- [[doom-package:envrc]]
 
 ** Hacks
 - ~envrc-mode~ has been modified to fail gracefully if ~direnv~ isn't available.
@@ -69,7 +69,7 @@ Or ~$ nix-env -i direnv~
 #+end_quote
 
 To make use of direnv you need a =.envrc= file in a directory. Any time you open
-a file or buffer in said directory, the [[doom-package:][envrc]] Emacs package will kick in,
+a file or buffer in said directory, the [[doom-package:envrc]] Emacs package will kick in,
 activate the local env, and inject it into Emacs for the current buffer.
 
 * TODO Configuration

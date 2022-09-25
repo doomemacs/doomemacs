@@ -12,23 +12,23 @@ This module adds [[https://www.java.com][Java]] support to Doom Emacs, including
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~java-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
-  (supports eclipse.jdt.ls). *Incompatible with [[doom-module:][+meghanada]].*
+  Enable LSP support for ~java-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports eclipse.jdt.ls). *Incompatible with [[doom-module:+meghanada]].*
 - +meghanada ::
-  Enable [[doom-package:][meghanada-mode]]. *Incompatible with [[doom-module:][+lsp]].*
+  Enable [[doom-package:meghanada-mode]]. *Incompatible with [[doom-module:+lsp]].*
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][android-mode]]
-- [[doom-package:][groovy-mode]]
-- [[doom-package:][meghanada]] if [[doom-module:][+meghanada]]
-- if [[doom-module:][+eclim]]
-  - [[doom-package:][eclim]]
-  - [[doom-package:][company-emacs-eclim]] if [[doom-module:][:completion company]]
-- if [[doom-module:][+lsp]] and not [[doom-module:][:tools lsp +eglot]]
-  - [[doom-package:][lsp-java]]
+- [[doom-package:android-mode]]
+- [[doom-package:groovy-mode]]
+- [[doom-package:meghanada]] if [[doom-module:+meghanada]]
+- if [[doom-module:+eclim]]
+  - [[doom-package:eclim]]
+  - [[doom-package:company-emacs-eclim]] if [[doom-module::completion company]]
+- if [[doom-module:+lsp]] and not [[doom-module::tools lsp +eglot]]
+  - [[doom-package:lsp-java]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -42,7 +42,7 @@ This module adds [[https://www.java.com][Java]] support to Doom Emacs, including
 
 This module requires:
 - [[https://www.oracle.com/java/technologies/downloads/][Java SDK]]
-- The LSP test runner requires [[doom-module:][:tools debugger +lsp]] (requires [[doom-package:][dap-mode]])
+- The LSP test runner requires [[doom-module::tools debugger +lsp]] (requires [[doom-package:dap-mode]])
 
 ** OpenJDK 11
 *** Ubuntu
@@ -88,14 +88,14 @@ It is common to need support for multiple Java versions. You can use a generic
 tool like [[https://github.com/shyiko/jabba][jabba]] to install and manage multiple Java versions on any OS.
 
 To have a different version of Java per-project, it is recommended you use
-[[https://github.com/direnv/direnv][direnv]] and [[doom-module:][:tools direnv]]; create a =.envrc= in the root of the project pointing
+[[https://github.com/direnv/direnv][direnv]] and [[doom-module::tools direnv]]; create a =.envrc= in the root of the project pointing
 to the Java installation:
 #+begin_src sh
 PATH_add ~/.jabba/jdk/adopt@1.11.0-3
 JAVA_HOME=~/.jabba/jdk/adopt@1.11.0-3
 #+end_src
 
-And then run ~$ direnv allow .~ in the project directory. The [[doom-module:][:tools direnv]]
+And then run ~$ direnv allow .~ in the project directory. The [[doom-module::tools direnv]]
 module will automatically source this environment before activating LSP servers.
 
 * TODO Usage
@@ -103,23 +103,23 @@ module will automatically source this environment before activating LSP servers.
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-** [[doom-module:][+lsp]] features
+** [[doom-module:+lsp]] features
 According to [[https://github.com/emacs-lsp/lsp-java]], you get:
-- As you type reporting of parsing and compilation errors (via [[doom-package:][flycheck]] or
-  [[doom-package:][lsp-ui]])
-- Code completion ([[doom-package:][company-lsp]] or complete-at-point)
-- Javadoc hovers ([[doom-package:][lsp-ui]])
-- Code actions ([[doom-package:][lsp-ui]])
-- Code outline ([[doom-package:][imenu]])
-- Code navigation ([[doom-package:][xref]])
-- Code lens for references/implementations ([[doom-package:][xref]])
+- As you type reporting of parsing and compilation errors (via [[doom-package:flycheck]] or
+  [[doom-package:lsp-ui]])
+- Code completion ([[doom-package:company-lsp]] or complete-at-point)
+- Javadoc hovers ([[doom-package:lsp-ui]])
+- Code actions ([[doom-package:lsp-ui]])
+- Code outline ([[doom-package:imenu]])
+- Code navigation ([[doom-package:xref]])
+- Code lens for references/implementations ([[doom-package:xref]])
 - Highlights
 - Code formatting
 - Maven pom.xml project support
 - Limited Gradle support
-- Visual debugger ([[doom-package:][dap-mode]])
-- Test runner ([[doom-package:][dap-mode]])
-- Project explorer integration ([[doom-package:][treemacs]])
+- Visual debugger ([[doom-package:dap-mode]])
+- Test runner ([[doom-package:dap-mode]])
+- Project explorer integration ([[doom-package:treemacs]])
 - Integration with [[https://start.spring.io/][Spring Initializr]]
 
 ** =+meghanada= features
@@ -129,14 +129,14 @@ According to [[https://github.com/mopemope/meghanada-emacs/]], you get:
 - No need build tool's plugin
 - Run build tool task
 - Compile your project
-- Syntax check and analyze java source ([[doom-package:][flycheck-meghanada]])
+- Syntax check and analyze java source ([[doom-package:flycheck-meghanada]])
 - Support =Generic Types=
-- Code completion with [[doom-package:][company-mode]] ([[doom-package:][company-meghanada]])
+- Code completion with [[doom-package:company-mode]] ([[doom-package:company-meghanada]])
 - Optimize import and sort
 - Jump declaration
 - Run [[http://www.junit.org/][JUnit]] test (include test runner)
-- Diagnostic reporting with [[doom-package:][flycheck]] ([[doom-package:][flycheck-meghanada]])
-- Show symbol's type info with [[doom-package:][eldoc]]
+- Diagnostic reporting with [[doom-package:flycheck]] ([[doom-package:flycheck-meghanada]])
+- Show symbol's type info with [[doom-package:eldoc]]
 - Search references
 - Full-featured text search
 
@@ -145,7 +145,7 @@ According to [[https://github.com/mopemope/meghanada-emacs/]], you get:
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-** [[doom-module:][+lsp]]
+** [[doom-module:+lsp]]
 Install the eclipse server by executing ~M-x lsp-install-server~ and selecting
 =jdtls=. After that any newly opened =java= files should start the LSP server
 automatically.
@@ -156,7 +156,7 @@ Note that if you change Java version you may need to remove the LSP server and
 install it again. You can do this with ~M-x +lsp/uninstall-server~ followed by
 ~M-x lsp-install-server~.
 
-Enable the [[doom-module:][:tools debugger +lsp]] module to get test runner support.
+Enable the [[doom-module::tools debugger +lsp]] module to get test runner support.
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]

@@ -10,9 +10,9 @@ system outlines of your projects in a simple tree layout allowing quick
 navigation and exploration, while also possessing basic file management
 utilities. It includes:
 
-- Integration with Git (if [[doom-module:][:tools magit]] is enabled)
-- Integration with Evil (if [[doom-module:][:editor evil +everywhere]] is enabled)
-- Workspace awareness (if [[doom-module:][:ui workspaces]] is enabled)
+- Integration with Git (if [[doom-module::tools magit]] is enabled)
+- Integration with Evil (if [[doom-module::editor evil +everywhere]] is enabled)
+- Workspace awareness (if [[doom-module::ui workspaces]] is enabled)
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -24,12 +24,12 @@ utilities. It includes:
   Enable ~lsp-treemacs~ integration and add shortcuts for common commands.
 
 ** Packages
-- [[doom-package:][lsp-treemacs]] if [[doom-module:][+lsp]]
-- [[doom-package:][treemacs]]
-- [[doom-package:][treemacs-evil]] if [[doom-module:][:editor evil +everywhere]]
-- [[doom-package:][treemacs-magit]] if [[doom-module:][:tools magit]]
-- [[doom-package:][treemacs-persp]] if [[doom-module:][:ui workspaces]]
-- [[doom-package:][treemacs-projectile]]
+- [[doom-package:lsp-treemacs]] if [[doom-module:+lsp]]
+- [[doom-package:treemacs]]
+- [[doom-package:treemacs-evil]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:treemacs-magit]] if [[doom-module::tools magit]]
+- [[doom-package:treemacs-persp]] if [[doom-module::ui workspaces]]
+- [[doom-package:treemacs-projectile]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -41,7 +41,7 @@ utilities. It includes:
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-If =python3= is present on your =$PATH=, [[doom-package:][treemacs]] will use it to display git
+If =python3= is present on your =$PATH=, [[doom-package:treemacs]] will use it to display git
 status for files.
 
 * TODO Usage

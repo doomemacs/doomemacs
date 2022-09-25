@@ -5,7 +5,7 @@
 
 * Description :unfold:
 This module adds support to the [[https://github.com/factor/factor][factor]] programming language and its associated
-[[doom-package:][fuel]] emacs plugin.
+[[doom-package:fuel]] emacs plugin.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]

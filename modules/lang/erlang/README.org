@@ -8,20 +8,20 @@ This module provides support [[https://www.erlang.org/][Erlang programming langu
 [[https://github.com/erlang/sourcer][sourcer]] language server is optional.
 
 Includes:
-- Code completion ([[doom-module:][+lsp]], [[doom-module:][:completion company]], & [[doom-module:][:completion ivy]])
-- Syntax checking ([[doom-module:][:checkers syntax]])
+- Code completion ([[doom-module:+lsp]], [[doom-module::completion company]], & [[doom-module::completion ivy]])
+- Syntax checking ([[doom-module::checkers syntax]])
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~erlang-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~erlang-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/erlang/sourcer][sourcer]]).
 
 ** Packages
-- [[doom-package:][flycheck-rebar3]]
-- [[doom-package:][ivy-erlang-complete]]
+- [[doom-package:flycheck-rebar3]]
+- [[doom-package:ivy-erlang-complete]]
 
 ** Hacks
 /No hacks documented for this module./

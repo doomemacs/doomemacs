@@ -14,7 +14,7 @@ includes ~org-mode~, ~markdown-mode~, the Git Commit buffer (from magit),
 - Spell checking and correction using =aspell=, =hunspell= or =enchant=.
 - Ignores source code inside org or markdown files.
 - Lazily spellchecking recent changes only when idle.
-- Choosing suggestions using completion interfaces ([[doom-package:][ivy]] or [[doom-package:][helm]]).
+- Choosing suggestions using completion interfaces ([[doom-package:ivy]] or [[doom-package:helm]]).
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -27,21 +27,21 @@ includes ~org-mode~, ~markdown-mode~, the Git Commit buffer (from magit),
 - +everywhere ::
   Spell check in programming modes as well (in comments only).
 - +flyspell ::
-  Use [[doom-package:][flyspell]] instead of [[doom-package:][spell-fu]]. It's significantly slower, but supports
+  Use [[doom-package:flyspell]] instead of [[doom-package:spell-fu]]. It's significantly slower, but supports
   multiple languages and dictionaries.
 - +hunspell ::
   Use =hunspell= as a backend for correcting words.
 
 ** Packages
-- if [[doom-module:][+flyspell]]
-  - [[doom-package:][flyspell-correct]]
-  - [[doom-package:][flyspell-correct-ivy]] if [[doom-module:][:completion ivy]]
-  - [[doom-package:][flyspell-correct-helm]] if [[doom-module:][:completion helm]]
-  - [[doom-package:][flyspell-correct-popup]] unless [[doom-module:][:completion ivy]], [[doom-module:][:completion helm]], or
-    [[doom-module:][:completion vertico]]
-  - [[doom-package:][flyspell-lazy]]
+- if [[doom-module:+flyspell]]
+  - [[doom-package:flyspell-correct]]
+  - [[doom-package:flyspell-correct-ivy]] if [[doom-module::completion ivy]]
+  - [[doom-package:flyspell-correct-helm]] if [[doom-module::completion helm]]
+  - [[doom-package:flyspell-correct-popup]] unless [[doom-module::completion ivy]], [[doom-module::completion helm]], or
+    [[doom-module::completion vertico]]
+  - [[doom-package:flyspell-lazy]]
 - else
-  - [[doom-package:][spell-fu]]
+  - [[doom-package:spell-fu]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -58,9 +58,9 @@ your system and in your =$PATH=. They also need dictionaries for your
 language(s).
 
 #+begin_quote
- 🚧 If you *are not* using [[doom-module:][+flyspell]], you will need =aspell= (and a dictionary)
-    installed whether or not you have [[doom-module:][+hunspell]] or [[doom-module:][+enchant]] enabled. This is
-    because [[doom-package:][spell-fu]] does not support generating the word list with anything
+ 🚧 If you *are not* using [[doom-module:+flyspell]], you will need =aspell= (and a dictionary)
+    installed whether or not you have [[doom-module:+hunspell]] or [[doom-module:+enchant]] enabled. This is
+    because [[doom-package:spell-fu]] does not support generating the word list with anything
     other than =aspell= yet.
 #+end_quote
 
@@ -111,7 +111,7 @@ language(s).
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-When using [[doom-module:][+everywhere]], spell checking is performed for as many major modes as
+When using [[doom-module:+everywhere]], spell checking is performed for as many major modes as
 possible, and not only ~text-mode~ derivatives. e.g. in comments for programming
 major modes.
 
@@ -133,7 +133,7 @@ recent changes:
 #+end_src
 
 *** Flyspell users
-Lazy spellcheck is provided by [[doom-package:][flyspell-lazy]] package.
+Lazy spellcheck is provided by [[doom-package:flyspell-lazy]] package.
 
 ~flyspell-lazy-idle-seconds~ sets how many idle seconds until spellchecking
 recent changes (default as 1), while ~flyspell-lazy-window-idle-seconds~ sets
@@ -193,15 +193,15 @@ Return nil if on a link url, markup, html, or references."
 ** Adding or removing words to your personal dictionary
 Use ~M-x +spell/add-word~ and ~M-x +spell/remove-word~ to whitelist words that
 you know are not misspellings. For evil users these are bound to [[kbd:][zg]] and [[kbd:][zw]],
-respectively. [[doom-module:][+flyspell]] users can also add/remove words from the
-[[doom-package:][flyspell-correct]] popup interface (there will be extra options on the list of
+respectively. [[doom-module:+flyspell]] users can also add/remove words from the
+[[doom-package:flyspell-correct]] popup interface (there will be extra options on the list of
 corrections for "save word to dictionary").
 
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
 ** spell-fu highlights every single word
-[[doom-package:][spell-fu]] caches its word list. If it was activated before your dictionaries were
+[[doom-package:spell-fu]] caches its word list. If it was activated before your dictionaries were
 installed, it will generate an empty word list, causing it to highlight all
 words as incorrect. Delete its cache files in =$EMACSDIR/.local/etc/spell-fu/=
 to fix this.

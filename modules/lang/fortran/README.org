@@ -17,7 +17,7 @@ In particular, this module features:
 - Auto-formatting via =fprettier=.
 - Integration with the =fpm= package manager.
 - LSP support via [[https://github.com/gnikit/fortls][fortls]].
-- Optional Intel Fortran support via the [[doom-module:][+intel]] flag.
+- Optional Intel Fortran support via the [[doom-module:+intel]] flag.
 
 #+begin_quote
  💬 After a career of writing Fortran on Mainframes and Windows machines, my
@@ -33,7 +33,7 @@ In particular, this module features:
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~fortran-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~fortran-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (fortls).
 - +intel ::
   Use the =ifort= compiler by default.
@@ -68,7 +68,7 @@ $ sudo aura -A fortran-fpm fortls
 #+end_src bash
 
 ** Installing Intel Fortran
-Activating the [[doom-module:][+intel]] flag won't automatically install Intel Fortan for you.
+Activating the [[doom-module:+intel]] flag won't automatically install Intel Fortan for you.
 Here's how to do it on *nix systems.
 
 You can of course install the entire High-performance Computing kit from Intel,

@@ -7,11 +7,11 @@
 This module provides several methods for selecting windows without the use of
 the mouse or spatial navigation (e.g. [[kbd:][C-w {h,j,k,l}]]).
 
-The command ~other-window~ is remapped to either [[doom-package:][switch-window]] or [[doom-package:][ace-window]],
+The command ~other-window~ is remapped to either [[doom-package:switch-window]] or [[doom-package:ace-window]],
 depending on which backend you've enabled. It is bound to [[kbd:][C-x o]] (and [[kbd:][C-w C-w]] for
 evil users).
 
-It also provides numbered windows and selection with the [[doom-package:][winum]] package, if
+It also provides numbered windows and selection with the [[doom-package:winum]] package, if
 desired. Evil users can jump to window N in [[kbd:][C-w <N>]] (where N is a number between
 0 and 9). Non evil users have [[kbd:][C-x w <N>]] instead.
 
@@ -20,14 +20,14 @@ desired. Evil users can jump to window N in [[kbd:][C-w <N>]] (where N is a numb
 
 ** Module flags
 - +numbers ::
-  Enable numbered windows and window selection (using [[doom-package:][winum]]).
+  Enable numbered windows and window selection (using [[doom-package:winum]]).
 - +switch-window ::
-  Use the [[doom-package:][switch-window]] package as the backend, instead of ace-window ([[doom-package:][avy]]).
+  Use the [[doom-package:switch-window]] package as the backend, instead of ace-window ([[doom-package:avy]]).
 
 ** Packages
-- [[doom-package:][ace-window]] unless [[doom-module:][+switch-window]]
-- [[doom-package:][switch-window]] if [[doom-module:][+switch-window]]
-- [[doom-package:][winum]] if [[doom-module:][+numbers]]
+- [[doom-package:ace-window]] unless [[doom-module:+switch-window]]
+- [[doom-package:switch-window]] if [[doom-module:+switch-window]]
+- [[doom-package:winum]] if [[doom-module:+numbers]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -52,7 +52,7 @@ desired. Evil users can jump to window N in [[kbd:][C-w <N>]] (where N is a numb
 #+end_quote
 
 This module provides two backends, both providing the same functionality, but
-with different visual cues. They are [[doom-package:][ace-window]] and [[doom-package:][switch-window]].
+with different visual cues. They are [[doom-package:ace-window]] and [[doom-package:switch-window]].
 
 ** ace-window
 The first character of the buffers changes to a highlighted, user-selectable

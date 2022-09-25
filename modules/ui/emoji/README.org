@@ -20,7 +20,7 @@ style, or unicode styles), as well as convert certain text patterns (e.g.
   Include unicode emojis like 🙂.
 
 ** Packages
-- [[doom-package:][emojify]]
+- [[doom-package:emojify]]
  
 ** Hacks
 /No hacks documented for this module./

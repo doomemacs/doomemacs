@@ -29,15 +29,15 @@ This module turns Emacs into a [[https://en.wikipedia.org/wiki/Representational_
   *Requires the =jq= command line utility.*
 
 ** Packages
-- [[doom-package:][company-restclient]] if [[doom-module:][:completion company]]
-- [[doom-package:][restclient]]
-- if [[doom-module:][+jq]]
-  - [[doom-package:][restclient-jq]]
-  - [[doom-package:][jq-mode]]
+- [[doom-package:company-restclient]] if [[doom-module::completion company]]
+- [[doom-package:restclient]]
+- if [[doom-module:+jq]]
+  - [[doom-package:restclient-jq]]
+  - [[doom-package:jq-mode]]
 
 ** Hacks
 - Adds imenu support to ~restclient-mode~.
-- [[doom-package:][restclient]] has been modified not to silently reject self-signed or invalid
+- [[doom-package:restclient]] has been modified not to silently reject self-signed or invalid
   certificates.
 
 ** TODO Changelog

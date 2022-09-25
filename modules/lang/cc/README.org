@@ -21,33 +21,33 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module:][:tools
+  Enable LSP support for ~c-mode~, ~c++-mode~, and ~objc-mode~. Requires [[doom-module::tools
   lsp]] and a langserver (supports ccls, clangd, and cquery). Replaces irony &
   rtags.
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][cmake-mode]]
-- [[doom-package:][company-glsl]]
-- [[doom-package:][cuda-mode]]
-- [[doom-package:][demangle-mode]]
-- [[doom-package:][disaster]]
-- [[doom-package:][glsl-mode]]
-- [[doom-package:][modern-cpp-font-lock]]
-- [[doom-package:][opencl-mode]]
-- if [[doom-module:][+lsp]]
-  - [[doom-package:][ccls]] if [[doom-module:][:tools lsp -eglot]]
+- [[doom-package:cmake-mode]]
+- [[doom-package:company-glsl]]
+- [[doom-package:cuda-mode]]
+- [[doom-package:demangle-mode]]
+- [[doom-package:disaster]]
+- [[doom-package:glsl-mode]]
+- [[doom-package:modern-cpp-font-lock]]
+- [[doom-package:opencl-mode]]
+- if [[doom-module:+lsp]]
+  - [[doom-package:ccls]] if [[doom-module::tools lsp -eglot]]
 - else
-  - [[doom-package:][company-irony]]
-  - [[doom-package:][company-irony-c-headers]]
-  - [[doom-package:][flycheck-irony]]
-  - [[doom-package:][helm-rtags]] if [[doom-module:][:completion helm]]
-  - [[doom-package:][irony]]
-  - [[doom-package:][irony-eldoc]]
-  - [[doom-package:][ivy-rtags]] if [[doom-module:][:completion ivy]]
-  - [[doom-package:][rtags]]
+  - [[doom-package:company-irony]]
+  - [[doom-package:company-irony-c-headers]]
+  - [[doom-package:flycheck-irony]]
+  - [[doom-package:helm-rtags]] if [[doom-module::completion helm]]
+  - [[doom-package:irony]]
+  - [[doom-package:irony-eldoc]]
+  - [[doom-package:ivy-rtags]] if [[doom-module::completion ivy]]
+  - [[doom-package:rtags]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -61,8 +61,8 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 
 This module's requirements change depending on how you use it.
 
-- If [[doom-module:][+lsp]] is enabled, you need one of *clangd v9+* or *ccls*.
-- If [[doom-module:][+lsp]] is *not* enabled, you need *irony-server* and *rtags*.
+- If [[doom-module:+lsp]] is enabled, you need one of *clangd v9+* or *ccls*.
+- If [[doom-module:+lsp]] is *not* enabled, you need *irony-server* and *rtags*.
 - Other features in this module depend on:
   - (optional) glslangValidator, for GLSL completion in ~glsl-mode~
   - (optional) cmake, for code completion in ~cmake-mode~
@@ -146,7 +146,7 @@ rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 4. Run ~$ doom sync~ on the command line and restart Emacs.
 
 ** Eglot-specific bindings
-When using [[doom-module:][+lsp]] and [[doom-module:][:tools lsp +eglot]], [[doom-package:][lsp-mode]] is replaced with [[doom-package:][eglot]], and an
+When using [[doom-module:+lsp]] and [[doom-module::tools lsp +eglot]], [[doom-package:lsp-mode]] is replaced with [[doom-package:eglot]], and an
 additional function to get inheritance type hierarchy is added:
 | Binding                    | Description                                    |
 |----------------------------+------------------------------------------------|
@@ -219,7 +219,7 @@ Additional info:
 
 ** Configure LSP servers
 Search for your combination of =(LSP client package, LSP server)=. You are using
-[[doom-package:][lsp-mode]] by default, [[doom-package:][eglot]] if you have [[doom-module:][:tools lsp +eglot]] active in
+[[doom-package:lsp-mode]] by default, [[doom-package:eglot]] if you have [[doom-module::tools lsp +eglot]] active in
 =$DOOMDIR/init.el= file.
 
 *** LSP-mode with clangd

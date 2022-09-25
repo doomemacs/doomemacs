@@ -5,7 +5,7 @@
 
 * Description :unfold:
 This module provides syntax checking and error highlighting, powered by
-[[doom-package:][flycheck]].
+[[doom-package:flycheck]].
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -16,9 +16,9 @@ This module provides syntax checking and error highlighting, powered by
   *Requires GUI Emacs.*
 
 ** Packages
-- [[doom-package:][flycheck]]
-- [[doom-package:][flycheck-popup-tip]]
-- [[doom-package:][flycheck-posframe]] if [[doom-module:][+childframe]]
+- [[doom-package:flycheck]]
+- [[doom-package:flycheck-popup-tip]]
+- [[doom-package:flycheck-posframe]] if [[doom-module:+childframe]]
 
 ** Hacks
 - If ~lsp-ui-mode~ is active, most of the aesthetic functionality of this module
