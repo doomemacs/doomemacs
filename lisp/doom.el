@@ -448,7 +448,7 @@ users).")
     ;;   relevant to our current OS, but `command-line-1' still processes.
     (unless IS-MAC
       (setq command-line-ns-option-alist nil))
-    (unless (eq initial-window-system 'x)
+    (unless (memq initial-window-system '(x pgtk))
       (setq command-line-x-option-alist nil))))
 
 
