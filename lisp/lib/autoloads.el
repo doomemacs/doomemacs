@@ -55,7 +55,7 @@ hoist buggy forms into autoloads.")
 
 (defun doom-autoloads--cleanup-form (form &optional expand)
   (let ((func (car-safe form)))
-    (cond ((memq func '(provide custom-autoload))
+    (cond ((memq func '(provide custom-autoload register-definition-prefixes))
            nil)
           ((and (eq func 'add-to-list)
                 (memq (doom-unquote (cadr form))
@@ -91,7 +91,7 @@ hoist buggy forms into autoloads.")
               ((memq definer '(defun defmacro cl-defun cl-defmacro))
                (print
                 (if module-enabled-p
-                    (make-autoload form file)
+                    (make-autoload form (abbreviate-file-name file))
                   (seq-let (_ _ arglist &rest body) form
                     (if altform
                         (read altform)
@@ -146,9 +146,9 @@ hoist buggy forms into autoloads.")
          autoload-timestamps ; reduce noise in generated files
          autoload-compute-prefixes
          ;; So `autoload-generate-file-autoloads' knows where to write it
-         (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
+         (generated-autoload-load-name (abbreviate-file-name (file-name-sans-extension file)))
          (module-enabled-p (and (doom-module-p (car module) (cdr module))
                                 (doom-file-cookie-p file "if" t))))
     (save-excursion
@@ -182,7 +182,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
               (let ((ppss (save-excursion (syntax-ppss))))
                 (or (nth 3 ppss)
                     (nth 4 ppss)
-                    (replace-match (prin1-to-string file) t t)))))
+                    (replace-match (prin1-to-string (abbreviate-file-name file)) t t)))))
           (let ((load-file-name file)
                 (load-path
                  (append (list doom-user-dir)
