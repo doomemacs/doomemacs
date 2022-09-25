@@ -78,13 +78,20 @@ exist, and `org-link' otherwise."
   keystr)
 
 (defun +org-link--read-module-spec (module-spec-str)
-  (cl-destructuring-bind (category &optional module flag)
-      (if (string-prefix-p "+" (string-trim-left module-spec-str))
-          (list nil nil (intern module-spec-str))
-        (mapcar #'intern (split-string module-spec-str " " nil)))
-    (list :category category
-          :module module
-          :flag flag)))
+  (if (string-prefix-p "+" (string-trim-left module-spec-str))
+      (let ((title (cadar (org-collect-keywords '("TITLE")))))
+        (if (and title (string-match-p "\\`:[a-z]+ [a-z]+\\'" title))
+            (+org-link--read-module-spec (concat title " " module-spec-str))
+          (list :category nil :module nil :flag (intern module-spec-str))))
+    (cl-destructuring-bind (category &optional module flag)
+        (mapcar #'intern (split-string
+                          (if (string-prefix-p ":" module-spec-str)
+                              module-spec-str
+                            (concat ":" module-spec-str))
+                          "[ \n]+" nil))
+      (list :category category
+            :module module
+            :flag flag))))
 
 ;;;###autoload
 (defun +org-link--doom-module-link-face-fn (module-path)
