@@ -5,7 +5,7 @@
 
 * Description :unfold:
 This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. Many of Doom's
-[[doom-module:][:lang]] modules require it for "intellisense" functionality.
+[[doom-module::lang]] modules require it for "intellisense" functionality.
 
 https://assets.doomemacs.org/completion/company/overlay.png
 
@@ -23,9 +23,9 @@ https://assets.doomemacs.org/completion/company/overlay.png
   [[kbd:][S-TAB]] will navigate the completion candidates.
 
 ** Packages
-- [[doom-package:][company-box]] if [[doom-module:][+childframe]]
-- [[doom-package:][company-dict]]
-- [[doom-package:][company-mode]]
+- [[doom-package:company-box]] if [[doom-module:+childframe]]
+- [[doom-package:company-dict]]
+- [[doom-package:company-mode]]
 
 ** Hacks
 /No hacks documented for this module./

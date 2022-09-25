@@ -13,8 +13,8 @@ This module turns Emacs into an IRC client, capable of OS notifications.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][circe]]
-- [[doom-package:][circe-notifications]]
+- [[doom-package:circe]]
+- [[doom-package:circe-notifications]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -96,7 +96,7 @@ here are ways to avoid that:
 #+end_quote
 
 [[https://www.passwordstore.org/][Pass]] is my tool of choice. I use it to manage my passwords. If you activate the
-[[doom-module:][:tools pass]] module you get an elisp API through which to access your password
+[[doom-module::tools pass]] module you get an elisp API through which to access your password
 store.
 
 ~set-irc-server!~ accepts a plist can use functions instead of strings.

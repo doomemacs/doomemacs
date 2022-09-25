@@ -6,8 +6,8 @@
 * Description :unfold:
 This module adds [[https://github.com/ethereum/solidity][Solidity]] support to Doom Emacs.
 
-- Syntax-checking ([[doom-package:][flycheck]])
-- Code completion ([[doom-package:][company-solidity]])
+- Syntax-checking ([[doom-package:flycheck]])
+- Code completion ([[doom-package:company-solidity]])
 - Gas estimation (~C-c C-g~)
 
 ** Maintainers
@@ -17,9 +17,9 @@ This module adds [[https://github.com/ethereum/solidity][Solidity]] support to D
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][company-solidity]] if [[doom-module:][:completion company]]
-- [[doom-package:][solidity-flycheck]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][solidity-mode]]
+- [[doom-package:company-solidity]] if [[doom-module::completion company]]
+- [[doom-package:solidity-flycheck]] if [[doom-module::checkers syntax]]
+- [[doom-package:solidity-mode]]
 
 ** Hacks
 /No hacks documented for this module./

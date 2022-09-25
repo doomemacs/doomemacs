@@ -4,7 +4,7 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module augments the built-in [[doom-package:][electric]] package with keyword-based
+This module augments the built-in [[doom-package:electric]] package with keyword-based
 indentation (as opposed to character-based).
 
 ** Maintainers

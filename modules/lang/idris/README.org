@@ -13,7 +13,7 @@ This module adds rudimentary [[https://www.idris-lang.org/][Idris]] support to D
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][idris-mode]]
+- [[doom-package:idris-mode]]
 
 ** Hacks
 /No hacks documented for this module./

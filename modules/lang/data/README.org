@@ -13,7 +13,7 @@ This module adds Emacs support for CSV and XML files.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][csv-mode]]
+- [[doom-package:csv-mode]]
 
 ** Hacks
 /No hacks documented for this module./

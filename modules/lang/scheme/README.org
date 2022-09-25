@@ -22,18 +22,18 @@ This module provides support for the Scheme family of Lisp languages, powered by
 - +racket ::
 
 ** Packages
-- [[doom-package:][flycheck-guile]] if [[doom-module:][+guile]] and [[doom-module:][:checkers syntax]]
-- [[doom-package:][geiser]]
-- [[doom-package:][geiser-chez]] if [[doom-module:][+chez]]
-- [[doom-package:][geiser-chibi]] if [[doom-module:][+chibi]]
-- [[doom-package:][geiser-chicken]] if [[doom-module:][+chicken]]
-- [[doom-package:][geiser-gambit]] if [[doom-module:][+gambit]]
-- [[doom-package:][geiser-gauche]] if [[doom-module:][+gauche]]
-- [[doom-package:][geiser-guile]] if [[doom-module:][+guile]]
-- [[doom-package:][geiser-kawa]] if [[doom-module:][+kawa]]
-- [[doom-package:][geiser-mit]] if [[doom-module:][+mit]]
-- [[doom-package:][geiser-racket]] if [[doom-module:][+racket]]
-- [[doom-package:][macrostep-geiser]]
+- [[doom-package:flycheck-guile]] if [[doom-module:+guile]] and [[doom-module::checkers syntax]]
+- [[doom-package:geiser]]
+- [[doom-package:geiser-chez]] if [[doom-module:+chez]]
+- [[doom-package:geiser-chibi]] if [[doom-module:+chibi]]
+- [[doom-package:geiser-chicken]] if [[doom-module:+chicken]]
+- [[doom-package:geiser-gambit]] if [[doom-module:+gambit]]
+- [[doom-package:geiser-gauche]] if [[doom-module:+gauche]]
+- [[doom-package:geiser-guile]] if [[doom-module:+guile]]
+- [[doom-package:geiser-kawa]] if [[doom-module:+kawa]]
+- [[doom-package:geiser-mit]] if [[doom-module:+mit]]
+- [[doom-package:geiser-racket]] if [[doom-module:+racket]]
+- [[doom-package:macrostep-geiser]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -53,7 +53,7 @@ associated Schemes, namely:
 - [[https://synthcode.com/scheme/chibi][Chibi Scheme]] 0.7.3 or better
 - [[https://www.scheme.com][Chez Scheme]] 9.4 or better
 
-Their executables must be present in your =$PATH= for [[doom-package:][geiser]] to work properly.
+Their executables must be present in your =$PATH= for [[doom-package:geiser]] to work properly.
 
 * TODO Usage
 #+begin_quote

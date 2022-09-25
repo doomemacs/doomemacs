@@ -15,26 +15,26 @@ ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~web-mode~ and ~css-mode~. Requires [[doom-module:][:tools lsp]] and a
+  Enable LSP support for ~web-mode~ and ~css-mode~. Requires [[doom-module::tools lsp]] and a
   langserver.
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][company-web]] if [[doom-module:][:completion company]]
-- [[doom-package:][counsel-css]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][emmet-mode]]
-- [[doom-package:][haml-mode]]
-- [[doom-package:][helm-css-scss]] if [[doom-module:][:completion helm]]
-- [[doom-package:][less-css-mode]]
-- [[doom-package:][pug-mode]]
-- [[doom-package:][rainbow-mode]]
-- [[doom-package:][sass-mode]]
-- [[doom-package:][slim-mode]]
-- [[doom-package:][stylus-mode]]
-- [[doom-package:][sws-mode]]
-- [[doom-package:][web-mode]]
+- [[doom-package:company-web]] if [[doom-module::completion company]]
+- [[doom-package:counsel-css]] if [[doom-module::completion ivy]]
+- [[doom-package:emmet-mode]]
+- [[doom-package:haml-mode]]
+- [[doom-package:helm-css-scss]] if [[doom-module::completion helm]]
+- [[doom-package:less-css-mode]]
+- [[doom-package:pug-mode]]
+- [[doom-package:rainbow-mode]]
+- [[doom-package:sass-mode]]
+- [[doom-package:slim-mode]]
+- [[doom-package:stylus-mode]]
+- [[doom-package:sws-mode]]
+- [[doom-package:web-mode]]
 
 ** TODO Hacks
 #+begin_quote

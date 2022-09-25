@@ -13,7 +13,7 @@ Adds [[https://jupyter.org/][Jupyter]] notebook integration into Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][ein]]
+- [[doom-package:ein]]
 
 ** Hacks
 /No hacks documented for this module./

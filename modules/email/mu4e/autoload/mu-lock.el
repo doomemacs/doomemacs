@@ -34,7 +34,6 @@ If STRICT only accept an unset lock file."
                    (pid (car lock-info)))
          (when (or strict (/= (emacs-pid) pid)) t))))
 
-;;;###autoload
 (defun +mu4e-lock-file-delete-maybe ()
   "Check `+mu4e-lock-file', and delete it if this process is responsible for it."
   (when (+mu4e-lock-available)
@@ -54,7 +53,7 @@ Else, write to this process' PID to the lock file"
       (user-error "Unfortunately another Emacs is already doing stuff with Mu4e, and you can only have one at a time")
     (write-region (number-to-string (emacs-pid)) nil +mu4e-lock-file)
     (delete-file +mu4e-lock-request-file)
-    (call-process "touch" nil nil nil +mu4e-lock-request-file)
+    ;; (call-process "touch" nil nil nil +mu4e-lock-request-file)
     (funcall orig-fun callback)
     (when +mu4e-lock--request-watcher
       (file-notify-rm-watch +mu4e-lock--request-watcher))

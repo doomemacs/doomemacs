@@ -13,11 +13,11 @@
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][ansible]]
-- [[doom-package:][ansible-doc]]
-- [[doom-package:][company-ansible]] if [[doom-module:][:completion company]]
-- [[doom-package:][jinja2-mode]]
-- [[doom-package:][yaml-mode]]
+- [[doom-package:ansible]]
+- [[doom-package:ansible-doc]]
+- [[doom-package:company-ansible]] if [[doom-module::completion company]]
+- [[doom-package:jinja2-mode]]
+- [[doom-package:yaml-mode]]
 
 ** Hacks
 /No hacks documented for this module./

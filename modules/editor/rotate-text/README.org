@@ -17,7 +17,7 @@ keywords or text patterns at point, like ~true~ and ~false~, or ~public~,
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][rotate-text]]
+- [[doom-package:rotate-text]]
 
 ** Hacks
 /No hacks documented for this module./

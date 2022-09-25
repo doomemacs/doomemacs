@@ -7,9 +7,9 @@
 This module adds support for the Rust language and integration for its tools,
 e.g. ~cargo~.
 
-- Code completion ([[doom-package:][racer]] or an LSP server)
-- Syntax checking ([[doom-package:][flycheck]])
-- LSP support (for rust-analyzer and rls) ([[doom-package:][rustic]])
+- Code completion ([[doom-package:racer]] or an LSP server)
+- Syntax checking ([[doom-package:flycheck]])
+- LSP support (for rust-analyzer and rls) ([[doom-package:rustic]])
 - Snippets
 
 ** Maintainers
@@ -19,15 +19,15 @@ e.g. ~cargo~.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~rustic-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~rustic-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://rust-analyzer.github.io/][rust-analyzer]] and rls).
 
 ** Packages
-- [[doom-package:][rustic]]
+- [[doom-package:rustic]]
 
 ** Hacks
 - rustic has been modified /not/ to automatically install lsp-mode or eglot if
-  they're missing. Doom expects you to have enabled the [[doom-module:][:tools lsp]] module
+  they're missing. Doom expects you to have enabled the [[doom-module::tools lsp]] module
   yourself.
 
 ** TODO Changelog
@@ -49,9 +49,9 @@ rustup update --no-self-update
 #+end_src
 
 ** Other Requirements
-- If [[doom-module:][:editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
+- If [[doom-module::editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
   rustfmt-preview~.
-- Users with [[doom-module:][+lsp]] enabled will need [[https://rust-analyzer.github.io/][rust-analyzer]] (rls is supported, but
+- Users with [[doom-module:+lsp]] enabled will need [[https://rust-analyzer.github.io/][rust-analyzer]] (rls is supported, but
   [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
 - Using the following commands requires:
   - ~cargo-process-check~: ~$ cargo install cargo-check~
@@ -67,11 +67,11 @@ This module supports LSP integration. For it to work you'll need:
 
 1. To install [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] through your OS package manager ([[https://github.com/rust-lang/rls][RLS]] is supported
    too, but it is [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
-2. To enable the [[doom-module:][:tools lsp]] module.
-3. To enable the [[doom-module:][+lsp]] flag on this module.
+2. To enable the [[doom-module::tools lsp]] module.
+3. To enable the [[doom-module:+lsp]] flag on this module.
 
 ** Format on save
-Enable [[doom-module:][:editor format +onsave]] to get formatting on save with =rustfmt=. No
+Enable [[doom-module::editor format +onsave]] to get formatting on save with =rustfmt=. No
 additional configuration is necessary.
 
 ** Keybinds
@@ -95,7 +95,7 @@ additional configuration is necessary.
 #+end_quote
 
 ** Enabling eglot support for Rust
-Doom's [[doom-module:][:tools lsp]] module has an [[doom-module:][+eglot]] flag. Enable it and this module will use
+Doom's [[doom-module::tools lsp]] module has an [[doom-module:+eglot]] flag. Enable it and this module will use
 eglot instead.
 
 * Troubleshooting
@@ -104,7 +104,7 @@ eglot instead.
 ** error[E0670]: `async fn` is not permitted in the 2015 edition
 You may be seeing this error, despite having ~edition = "2018"~ in your
 =Cargo.toml=. This error actually originates from ~rustfmt~, which the LSP
-server tries to invoke on save (if you have ~rustic-format-trigger~ or [[doom-module:][:editor
+server tries to invoke on save (if you have ~rustic-format-trigger~ or [[doom-module::editor
 format]] enabled).
 
 To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.

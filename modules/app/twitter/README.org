@@ -20,8 +20,8 @@ Enjoy twitter from emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][avy]]
-- [[doom-package:][twittering-mode]]
+- [[doom-package:avy]]
+- [[doom-package:twittering-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -64,7 +64,7 @@ Here is a list of available commands and their default keybindings (defined in
 | ~+twitter/quit~     | [[kbd:][q]]                | Close current window                                        |
 | ~+twitter/quit-all~ | [[kbd:][Q]]                | Close all twitter windows and buffers, and delete workspace |
 
-And when [[doom-module:][:editor evil +everywhere]] is active:
+And when [[doom-module::editor evil +everywhere]] is active:
 | command                                          | key / ex command | description                                                      |
 |--------------------------------------------------+------------------+------------------------------------------------------------------|
 | ~twittering-favorite~                            | [[kbd:][f]]                | Favorite/Like a tweet                                            |

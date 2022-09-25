@@ -9,7 +9,7 @@
 #+end_quote
 
 * Description :unfold:
-This module integrates [[doom-package:][taskrunner]] into Doom Emacs, which scraps runnable tasks
+This module integrates [[doom-package:taskrunner]] into Doom Emacs, which scraps runnable tasks
 from build systems like make, gradle, npm and the like.
 
 ** Maintainers
@@ -19,9 +19,9 @@ from build systems like make, gradle, npm and the like.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][emacs-taskrunner]]
-- [[doom-package:][helm-taskrunner]] if [[doom-module:][:completion helm]]
-- [[doom-package:][ivy-taskrunner]] if [[doom-module:][:completion ivy]]
+- [[doom-package:emacs-taskrunner]]
+- [[doom-package:helm-taskrunner]] if [[doom-module::completion helm]]
+- [[doom-package:ivy-taskrunner]] if [[doom-module::completion ivy]]
 
 ** Hacks
 /No hacks documented for this module./

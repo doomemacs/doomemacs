@@ -15,7 +15,7 @@ quickly jot down thoughts and easily retrieve them later.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][deft]]
+- [[doom-package:deft]]
 
 ** Hacks
 /No hacks documented for this module./

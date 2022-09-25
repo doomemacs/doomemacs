@@ -13,7 +13,7 @@
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][multi-term]]
+- [[doom-package:multi-term]]
 
 ** Hacks
 /No hacks documented for this module./

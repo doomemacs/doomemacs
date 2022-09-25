@@ -16,8 +16,8 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][proof-general]]
-- [[doom-package:][company-coq]]
+- [[doom-package:proof-general]]
+- [[doom-package:company-coq]]
 
 ** Hacks
 + Replaces coq-mode abbrevs with yasnippet snippets from doom's snippet library

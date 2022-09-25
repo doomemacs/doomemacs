@@ -16,12 +16,12 @@ This module adds [[https://fsharp.org/][F#]] support to Doom Emacs.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~fsharp-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~fsharp-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]].).
 
 ** Packages
-- [[doom-package:][fsharp-mode]]
-- [[doom-package:][lsp-fsharp]] if [[doom-package:][+lsp]]
+- [[doom-package:fsharp-mode]]
+- [[doom-package:lsp-fsharp]] if [[doom-package:+lsp]]
 
 ** Hacks
 /No hacks documented for this module./

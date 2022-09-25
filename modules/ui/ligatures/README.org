@@ -85,7 +85,7 @@ emacs, this is implemented in two different ways :
   which haves the ligatures as separate unicode symbols, and using
   prettify-symbols-mode, =->=-like combinations are manually listed and replaced
   with the correct symbol. The mapping between =->=-like sequences and unicode
-  values in the font are font-specific ; therefore [[doom-module:][+fira]], [[doom-module:][+iosevka]]... files and
+  values in the font are font-specific ; therefore [[doom-module:+fira]], [[doom-module:+iosevka]]... files and
   specific fonts are necessary for it to work.
 - composition-function-table method :: regexps are used to match all the usual
   sequences which are composed into ligatures. These regexps are passed to emacs
@@ -225,8 +225,8 @@ if you don't like the symbols chosen you can change them by using:
 This can usually be fixed by doing one of the following:
 
 - Make sure Symbola (the font) is installed on your system.
-- Otherwise, change [[var:][doom-unicode-font]] (set to Symbola by default).
-- Disable the [[doom-module:][:ui unicode]] module. It not only overrides [[var:][doom-unicode-font]], but
+- Otherwise, change [[var:doom-unicode-font]] (set to Symbola by default).
+- Disable the [[doom-module::ui unicode]] module. It not only overrides [[var:doom-unicode-font]], but
   should only be used as a last resort.
 
 * Frequently asked questions

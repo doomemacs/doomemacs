@@ -8,11 +8,11 @@ Provide a helping hand when working with LaTeX documents.
 
 - Sane defaults
 - Fontification of many popular commands
-- Pretty indentation of wrapped lines using the [[doom-package:][adaptive-wrap]] package
-- Spell checking with [[doom-package:][flycheck]]
-- Change PDF viewer to Okular or [[doom-package:][latex-preview-pane]]
+- Pretty indentation of wrapped lines using the [[doom-package:adaptive-wrap]] package
+- Spell checking with [[doom-package:flycheck]]
+- Change PDF viewer to Okular or [[doom-package:latex-preview-pane]]
 - Bibtex editor
-- Autocompletion using [[doom-package:][company-mode]]
+- Autocompletion using [[doom-package:company-mode]]
 - Compile your =.tex= code only once using LatexMk
 
 ** Maintainers
@@ -23,27 +23,27 @@ Provide a helping hand when working with LaTeX documents.
 
 ** Module flags
 - +cdlatex ::
-  Enable [[doom-package:][cdlatex]] for fast math insertion.
+  Enable [[doom-package:cdlatex]] for fast math insertion.
 - +fold ::
-  Use TeX-fold (from [[doom-package:][auctex]]) to fold LaTeX macros to unicode, and make folding
+  Use TeX-fold (from [[doom-package:auctex]]) to fold LaTeX macros to unicode, and make folding
   hook-based and less manual.
 - +latexmk ::
   Use LatexMk instead of LaTeX to compile documents.
 - +lsp ::
-  Enable LSP support in latex buffers. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support in latex buffers. Requires [[doom-module::tools lsp]] and a langserver
   (supports digestif and TexLab).
 
 ** Packages
-- [[doom-package:][adaptive-wrap]]
-- [[doom-package:][auctex]]
-- [[doom-package:][auctex-latexmk]] if [[doom-module:][+latexmk]]
-- [[doom-package:][cdlatex]] if [[doom-module:][+cdlatex]]
-- [[doom-package:][evil-tex]] if [[doom-module:][:editor evil +everywhere]]
-- [[doom-package:][latex-preview-pane]]
-- if [[doom-module:][:completion company]]
-  - [[doom-package:][company-auctex]]
-  - [[doom-package:][company-math]]
-  - [[doom-package:][company-reftex]]
+- [[doom-package:adaptive-wrap]]
+- [[doom-package:auctex]]
+- [[doom-package:auctex-latexmk]] if [[doom-module:+latexmk]]
+- [[doom-package:cdlatex]] if [[doom-module:+cdlatex]]
+- [[doom-package:evil-tex]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:latex-preview-pane]]
+- if [[doom-module::completion company]]
+  - [[doom-package:company-auctex]]
+  - [[doom-package:company-math]]
+  - [[doom-package:company-reftex]]
 
 ** TODO Hacks
 #+begin_quote
@@ -115,7 +115,7 @@ This module provides integration for four supported pdf viewers. They are
 + Sumatra PDF
 + Zathura
 + Okular
-+ pdf-tools (requires [[doom-module:][:tools pdf]] module)
++ pdf-tools (requires [[doom-module::tools pdf]] module)
 
 They are searched for in this order. See ~+latex-viewers~ to change the order,
 or remove tools from the search altogether. If you want to exclusively use one
@@ -130,8 +130,8 @@ is used as a fallback. You can use this exclusively by setting ~+latex-viewers~
 to ~nil~.
 
 ** Using cdlatex's snippets despite having yasnippet
-[[doom-package:][cdlatex]] has a snippet insertion capability which is disabled in favor of
-[[doom-package:][yasnippet]] when using [[doom-module:][:editor snippets]]. If you still wanna use it, simply rebind
+[[doom-package:cdlatex]] has a snippet insertion capability which is disabled in favor of
+[[doom-package:yasnippet]] when using [[doom-module::editor snippets]]. If you still wanna use it, simply rebind
 the [[kbd:][TAB]] key for cdlatex, which takes care of snippet-related stuff:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el

@@ -9,7 +9,7 @@ for managing [[https://nixos.org/][Nix(OS)]].
 
 Includes:
 - Syntax highlighting
-- Completion through [[doom-package:][company]] and/or [[doom-package:][helm]]
+- Completion through [[doom-package:company]] and/or [[doom-package:helm]]
 - Nix option lookup
 - Formatting (~nixfmt~)
 
@@ -21,13 +21,13 @@ Includes:
 ** Module flags
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][company-nixos-options]] if [[doom-module:][:completion company]]
-- [[doom-package:][helm-nixos-options]] if [[doom-module:][:completion helm]]
-- [[doom-package:][nix-mode]]
-- [[doom-package:][nix-update]]
+- [[doom-package:company-nixos-options]] if [[doom-module::completion company]]
+- [[doom-package:helm-nixos-options]] if [[doom-module::completion helm]]
+- [[doom-package:nix-mode]]
+- [[doom-package:nix-update]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -42,7 +42,7 @@ Includes:
 This module requires:
 - [[https://nixos.org/guides/install-nix.html][The Nix package manager]], for a variety of its features (besides syntax
   highlighting).
-- =nixfmt=, for automatic formatting (requires [[doom-module:][:editor format]]).
+- =nixfmt=, for automatic formatting (requires [[doom-module::editor format]]).
 
 - *MacOS:* TODO
 - *Arch Linux:* TODO

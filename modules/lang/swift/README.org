@@ -11,19 +11,19 @@ This module adds support for the [[https://developer.apple.com/swift/][Swift pro
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~swift-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~swift-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports sourcekit).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][swift-mode]]
-- if [[doom-module:][+lsp]]
-  - [[doom-package:][lsp-sourcekit]]
+- [[doom-package:swift-mode]]
+- if [[doom-module:+lsp]]
+  - [[doom-package:lsp-sourcekit]]
 - else
-  - [[doom-package:][company-sourcekit]] if [[doom-module:][:completion company]]
-  - [[doom-package:][flycheck-sourcekit]] if [[doom-module:][:checkers syntax]]
+  - [[doom-package:company-sourcekit]] if [[doom-module::completion company]]
+  - [[doom-package:flycheck-sourcekit]] if [[doom-module::checkers syntax]]
 
 ** Hacks
 /No hacks documented for this module./

@@ -6,31 +6,31 @@
 * Description :unfold:
 This module adds support for [[https://julialang.org/][the Julia language]] to Doom Emacs.
 
-- Syntax highlighting and latex symbols from [[doom-package:][julia-mode]]
-- REPL integration from [[doom-package:][julia-repl]]
-- Code completion and syntax checking, requires [[doom-module:][:tools lsp]] and [[doom-module:][+lsp]]
+- Syntax highlighting and latex symbols from [[doom-package:julia-mode]]
+- REPL integration from [[doom-package:julia-repl]]
+- Code completion and syntax checking, requires [[doom-module::tools lsp]] and [[doom-module:+lsp]]
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~julia-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~julia-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports LanguageServer.jl).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][julia-mode]]
-- [[doom-package:][julia-repl]]
-- if [[doom-package:][+lsp]]
-  - if [[doom-module:][:tools lsp]]
-    - [[doom-package:][lsp-julia]]
-    - [[doom-package:][lsp]]
-  - if [[doom-module:][:tools lsp +eglot]]
-    - [[doom-package:][eglot-jl]]
-    - [[doom-package:][eglot]]
+- [[doom-package:julia-mode]]
+- [[doom-package:julia-repl]]
+- if [[doom-package:+lsp]]
+  - if [[doom-module::tools lsp]]
+    - [[doom-package:lsp-julia]]
+    - [[doom-package:lsp]]
+  - if [[doom-module::tools lsp +eglot]]
+    - [[doom-package:eglot-jl]]
+    - [[doom-package:eglot]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -42,11 +42,11 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires [[https://julialang.org/][Julia]] and an language server if [[doom-module:][+lsp]] is enabled.
+This module requires [[https://julialang.org/][Julia]] and an language server if [[doom-module:+lsp]] is enabled.
 
 ** Language Server
-[[doom-module:][+lsp]] requires ~LanguageServer.jl~ and ~SymbolServer.jl~. The [[doom-package:][lsp-julia]] and
-[[doom-package:][eglot-jl]] packages both come bundled with their own versions of these servers,
+[[doom-module:+lsp]] requires ~LanguageServer.jl~ and ~SymbolServer.jl~. The [[doom-package:lsp-julia]] and
+[[doom-package:eglot-jl]] packages both come bundled with their own versions of these servers,
 which is used by default. If you're happy with that, no further configuration is
 necessary.
 
@@ -58,17 +58,17 @@ Pkg.add("LanguageServer")
 Pkg.add("SymbolServer")
 #+end_src
 
-Then configure [[doom-package:][lsp-julia]] or [[doom-package:][eglot-jl]] depending on whether you have enabled
-[[doom-module:][:tools lsp]] or [[doom-module:][:tools lsp +eglot]], respectively:
+Then configure [[doom-package:lsp-julia]] or [[doom-package:eglot-jl]] depending on whether you have enabled
+[[doom-module::tools lsp]] or [[doom-module::tools lsp +eglot]], respectively:
 
 *** =lsp-julia=
-To instruct [[doom-package:][lsp-julia]] not to use the built-in package:
+To instruct [[doom-package:lsp-julia]] not to use the built-in package:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (setq lsp-julia-package-dir nil)
 #+end_src
 
-To find your installation of ~LanguageServer.jl~, [[doom-package:][lsp-julia]] needs to know the
+To find your installation of ~LanguageServer.jl~, [[doom-package:lsp-julia]] needs to know the
 environment in which it is installed. This is set to v1.6 by default as it is
 the current LTS:
 #+begin_src emacs-lisp
@@ -78,7 +78,7 @@ the current LTS:
 #+end_src
 
 *** =eglot-jl=
-To find your installation of ~LanguageServer.jl~, [[doom-package:][eglot-jl]] must know the
+To find your installation of ~LanguageServer.jl~, [[doom-package:eglot-jl]] must know the
 environment in which it is installed. This is set to v1.6 by default as it is
 the current LTS:
 #+begin_src emacs-lisp
@@ -86,7 +86,7 @@ the current LTS:
 (setq eglot-jl-language-server-project "~/.julia/environments/v1.6")
 #+end_src
 
-But to let [[doom-package:][eglot-jl]] use the environment bundled with it, set it to
+But to let [[doom-package:eglot-jl]] use the environment bundled with it, set it to
 ~eglot-jl-base~ instead:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
@@ -100,8 +100,8 @@ But to let [[doom-package:][eglot-jl]] use the environment bundled with it, set 
 #+end_quote
 
 ** Language Server
-[[doom-module:][+lsp]] adds code completion, syntax checking, formatting and other [[doom-package:][lsp-mode]] or
-[[doom-package:][eglot]] features. It requires ~LanguageServer.jl~, the installation of which is
+[[doom-module:+lsp]] adds code completion, syntax checking, formatting and other [[doom-package:lsp-mode]] or
+[[doom-package:eglot]] features. It requires ~LanguageServer.jl~, the installation of which is
 described above.
 
 * TODO Configuration
@@ -110,7 +110,7 @@ described above.
 #+end_quote
 
 ** Change the default environment for the Julia language server
-[[doom-package:][lsp-julia]] requires a variable be set for the Julia environment. This is set to
+[[doom-package:lsp-julia]] requires a variable be set for the Julia environment. This is set to
 v1.6 by default as it is the current LTS:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el

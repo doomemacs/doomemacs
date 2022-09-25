@@ -12,7 +12,7 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 - Eldoc support (~go-eldoc~)
 - REPL (~gore~)
 - Syntax-checking (~flycheck~)
-- Auto-formatting on save (~gofmt~) (requires [[doom-module:][:editor format +onsave]])
+- Auto-formatting on save (~gofmt~) (requires [[doom-module::editor format +onsave]])
 - Code navigation & refactoring (~go-guru~)
 - [[../../editor/file-templates/templates/go-mode][File templates]]
 - [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
@@ -24,22 +24,22 @@ This module adds [[https://golang.org][Go]] support, with optional (but recommen
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~go-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~go-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports gopls). Highly recommended, as the non-LSP experience is deprecated
   (and poor).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][company-go]] if [[doom-module:][:completion company]] (DEPRECATED)
-- [[doom-package:][flycheck-golangci-lint]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][go-eldoc]]
-- [[doom-package:][go-gen-test]]
-- [[doom-package:][go-guru]]
-- [[doom-package:][go-mode]]
-- [[doom-package:][gorepl-mode]]
-- [[doom-package:][go-tag]]
+- [[doom-package:company-go]] if [[doom-module::completion company]] (DEPRECATED)
+- [[doom-package:flycheck-golangci-lint]] if [[doom-module::checkers syntax]]
+- [[doom-package:go-eldoc]]
+- [[doom-package:go-gen-test]]
+- [[doom-package:go-guru]]
+- [[doom-package:go-mode]]
+- [[doom-package:gorepl-mode]]
+- [[doom-package:go-tag]]
 
 ** Hacks
 /No hacks documented for this module./

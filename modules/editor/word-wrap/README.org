@@ -4,7 +4,7 @@
 #+since:    21.12.0 (#1709)
 
 * Description :unfold:
-This module adds a minor-mode [[fn:][+word-wrap-mode]], which intelligently wraps long
+This module adds a minor-mode [[fn:+word-wrap-mode]], which intelligently wraps long
 lines in the buffer without modifying the buffer content.
 
 ** Maintainers
@@ -16,7 +16,7 @@ lines in the buffer without modifying the buffer content.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][adaptive-wrap]]
+- [[doom-package:adaptive-wrap]]
 
 ** Hacks
 /No hacks documented for this module./

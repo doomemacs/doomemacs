@@ -15,7 +15,7 @@ This module adds system-wide popup Emacs windows for quick edits.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][emacs-everywhere]]
+- [[doom-package:emacs-everywhere]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -49,7 +49,7 @@ return to the original window and paste the content with [[kbd:][C-c C-c]] or [[
 exit without pasting, use [[kbd:][C-c C-k]].
 
 * Configuration
-[[doom-package:][emacs-everywhere]] likes to guess if you triggered it from an application which
+[[doom-package:emacs-everywhere]] likes to guess if you triggered it from an application which
 supports markdown. Configure ~emacs-everywhere-markdown-windows~ and
 ~emacs-everywhere-markdown-apps~ to improve how accurate this is on your system.
 

@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This modules adds [[doom-package:][objed]], a global minor-mode for navigating and manipulating
+This modules adds [[doom-package:objed]], a global minor-mode for navigating and manipulating
 text objects. It combines the ideas of ~versor-mode~ and other editors like Vim
 or Kakoune and tries to align them with regular Emacs conventions.
 
@@ -15,11 +15,11 @@ or Kakoune and tries to align them with regular Emacs conventions.
 
 ** Module flags
 - +manual ::
-  Don't activate [[doom-package:][objed]] at startup, automatically, leaving it to the user to call
-  [[fn:][objed-activate]] (bound to [[kbd:][M-SPC]] if using [[doom-module:][:config default +bindings]]).
+  Don't activate [[doom-package:objed]] at startup, automatically, leaving it to the user to call
+  [[fn:objed-activate]] (bound to [[kbd:][M-SPC]] if using [[doom-module::config default +bindings]]).
   
 ** Packages
-- [[doom-package:][objed]]
+- [[doom-package:objed]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -34,7 +34,7 @@ or Kakoune and tries to align them with regular Emacs conventions.
 /This module has no external requirements./
 
 #+begin_quote
- 🚧 This module is incompatible with [[doom-module:][:editor evil]]. Do not enable them both at
+ 🚧 This module is incompatible with [[doom-module::editor evil]]. Do not enable them both at
     the same time or you will get errors.
 #+end_quote
 

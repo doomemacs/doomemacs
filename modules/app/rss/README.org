@@ -11,13 +11,13 @@ Read RSS feeds in the comfort of Emacs.
 
 ** Module flags
 - +org ::
-  Enable [[doom-package:][elfeed-org]], so you can configure your feeds with an org file
+  Enable [[doom-package:elfeed-org]], so you can configure your feeds with an org file
   (={org-directory}/elfeed.org=) rather than Elisp.
 
 ** Packages
-- [[doom-package:][elfeed]]
-- [[doom-package:][elfeed-goodies]]
-- [[doom-package:][elfeed-org]] if [[doom-module:][+org]]
+- [[doom-package:elfeed]]
+- [[doom-package:elfeed-goodies]]
+- [[doom-package:elfeed-org]] if [[doom-module:+org]]
 
 ** Hacks
 - By default ~elfeed-search-filter~ is set to ~@2-weeks-ago~ and makes the last

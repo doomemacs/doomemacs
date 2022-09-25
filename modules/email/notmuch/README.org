@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This module turns Emacs into an email client using [[doom-package:][notmuch]].
+This module turns Emacs into an email client using [[doom-package:notmuch]].
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -13,13 +13,13 @@ This module turns Emacs into an email client using [[doom-package:][notmuch]].
 - +afew ::
   Enable integration with [[https://github.com/afewmail/afew][afew]].
 - +org ::
-  Enable [[doom-package:][org-mime]] for writing HTML emails using org-mode.
+  Enable [[doom-package:org-mime]] for writing HTML emails using org-mode.
 
 ** Packages
-- [[doom-package:][counsel-notmuch]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][helm-notmuch]] if [[doom-module:][:completion helm]]
-- [[doom-package:][notmuch]]
-- [[doom-package:][org-mime]]* if [[doom-module:][+org]]
+- [[doom-package:counsel-notmuch]] if [[doom-module::completion ivy]]
+- [[doom-package:helm-notmuch]] if [[doom-module::completion helm]]
+- [[doom-package:notmuch]]
+- [[doom-package:org-mime]]* if [[doom-module:+org]]
 
 ** TODO Hacks
 #+begin_quote

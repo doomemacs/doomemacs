@@ -13,8 +13,8 @@ THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming l
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][company-mlton]] if [[doom-module:][:completion company]]
-- [[doom-package:][sml-mode]]
+- [[doom-package:company-mlton]] if [[doom-module::completion company]]
+- [[doom-package:sml-mode]]
 
 ** Hacks
 /No hacks documented for this module./

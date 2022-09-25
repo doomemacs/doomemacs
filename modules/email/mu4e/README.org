@@ -6,15 +6,15 @@
 * Description :unfold:
 This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
-- Tidied mu4e headers view, with flags from [[doom-package:][all-the-icons]].
+- Tidied mu4e headers view, with flags from [[doom-package:all-the-icons]].
 - Consistent coloring of reply depths (across compose and gnus modes).
 - Prettified =mu4e:main= view.
 - Cooperative locking of the =mu= process. Another Emacs instance may request
   access, or grab the lock when it's available.
-- [[doom-package:][org-msg]] integration with [[doom-module:][+org]], which can be toggled per-message, with revamped
+- [[doom-package:org-msg]] integration with [[doom-module:+org]], which can be toggled per-message, with revamped
   style and an accent color.
-- Gmail integrations with the [[doom-module:][+gmail]] flag.
-- Email notifications with [[doom-package:][mu4e-alert]], and (on Linux) a customised notification
+- Gmail integrations with the [[doom-module:+gmail]] flag.
+- Email notifications with [[doom-package:mu4e-alert]], and (on Linux) a customised notification
   style.
 
 #+begin_quote
@@ -38,12 +38,12 @@ This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/cod
   Enable gmail-specific configuration for mail ~To~ or ~From~ a gmail address,
   or a maildir with ~gmail~ in the name.
 - +org ::
-  Use [[doom-package:][org-msg]] for composing email in Org, then sending a multipart text (ASCII
+  Use [[doom-package:org-msg]] for composing email in Org, then sending a multipart text (ASCII
   export) and HTML message.
 
 ** Packages
-- [[doom-package:][mu4e-alert]]
-- [[doom-package:][org-msg]] if [[doom-module:][+org]]
+- [[doom-package:mu4e-alert]]
+- [[doom-package:org-msg]] if [[doom-module:+org]]
 
 ** TODO Hacks
 #+begin_quote
@@ -160,7 +160,7 @@ mail by disabling this module's backend selection and setting the value of the
 
 If your command prompts you for a passphrase, you might want to change the value
 of the ~mu4e~get-mail-password-regexp~ variable
-(~mu4e--get-mail-password-regexp~ if =mu= *>=1.8*) such that [[doom-package:][mu4e]] will recognize
+(~mu4e--get-mail-password-regexp~ if =mu= *>=1.8*) such that [[doom-package:mu4e]] will recognize
 the prompt and let you provide the passphrase from within Emacs.
 
 ** mu and mu4e
@@ -214,7 +214,7 @@ you are not replying to an email to or from one of the specified aliases, you
 will be prompted for an alias to send from.
 
 *** Gmail
-With the [[doom-module:][+gmail]] flag, integrations are applied which account for the different
+With the [[doom-module:+gmail]] flag, integrations are applied which account for the different
 behaviour of Gmail.
 
 The integrations are applied to addresses with /both/ "@gmail.com" in the
@@ -243,7 +243,7 @@ as deleted: Auto-Expunge off - Wait for the client to update the server." and
 folder: Move the message to the trash" for the integrations to work as expected.
 
 ** OrgMsg
-With the [[doom-module:][+org]] flag, [[doom-package:][org-msg]] is installed, and ~org-msg-mode~ is enabled before
+With the [[doom-module:+org]] flag, [[doom-package:org-msg]] is installed, and ~org-msg-mode~ is enabled before
 composing the first message. To disable ~org-msg-mode~ by default:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
@@ -251,7 +251,7 @@ composing the first message. To disable ~org-msg-mode~ by default:
 #+end_src
 
 To toggle org-msg for a single message, just apply the universal argument to the
-compose or reply command ([[kbd:][SPC u]] with [[doom-package:][evil]], [[kbd:][C-u]] otherwise).
+compose or reply command ([[kbd:][SPC u]] with [[doom-package:evil]], [[kbd:][C-u]] otherwise).
 
 The accent color that Doom uses can be customised by setting
 ~+org-msg-accent-color~ to a CSS color string.

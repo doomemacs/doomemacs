@@ -14,11 +14,11 @@ This module provides an Emacs interface to [[https://www.passwordstore.org/][Pas
   Allow Emacs to use pass for authentication (via ~auth-source-pass~).
 
 ** Packages
-- [[doom-package:][helm-pass]] if [[doom-module:][:completion helm]]
-- [[doom-package:][ivy-pass]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][pass]]
-- [[doom-package:][password-store]]
-- [[doom-package:][password-store-otp]]
+- [[doom-package:helm-pass]] if [[doom-module::completion helm]]
+- [[doom-package:ivy-pass]] if [[doom-module::completion ivy]]
+- [[doom-package:pass]]
+- [[doom-package:password-store]]
+- [[doom-package:password-store-otp]]
 
 ** Hacks
 /No hacks documented for this module./

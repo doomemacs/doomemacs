@@ -13,10 +13,10 @@ This module adds support for Japanese script.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][avy-migemo]]
-- [[doom-package:][ddskk]]
-- [[doom-package:][migemo]]
-- [[doom-package:][pangu-spacing]]
+- [[doom-package:avy-migemo]]
+- [[doom-package:ddskk]]
+- [[doom-package:migemo]]
+- [[doom-package:pangu-spacing]]
 
 ** Hacks
 - ~org-html-paragraph~ has been modified to join consecutive Chinese lines into

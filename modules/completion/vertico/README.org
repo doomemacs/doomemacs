@@ -9,7 +9,7 @@ provides a united interface for project search and replace, powered by [[https:/
 
 It does this with several modular packages focused on enhancing the built-in
 ~completing-read~ interface, rather than replacing it with a parallel ecosystem
-like [[doom-package:][ivy]] and [[doom-package:][helm]] do. The primary packages are:
+like [[doom-package:ivy]] and [[doom-package:helm]] do. The primary packages are:
 
 - Vertico, which provides the vertical completion user interface
 - Consult, which provides a suite of useful commands using ~completing-read~
@@ -31,16 +31,16 @@ like [[doom-package:][ivy]] and [[doom-package:][helm]] do. The primary packages
   Add icons to =file= and =buffer= category completion selections.
 
 ** Packages
-- [[doom-package:][all-the-icons-completion]] if [[doom-module:][+icons]]
-- [[doom-package:][consult]]
-- [[doom-package:][consult-flycheck]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][embark]]
-- [[doom-package:][embark-consult]]
-- [[doom-package:][marginalia]]
-- [[doom-package:][orderless]]
-- [[doom-package:][vertico]]
-- [[doom-package:][vertico-posframe]] if [[doom-module:][+childframe]]
-- [[doom-package:][wgrep]]
+- [[doom-package:all-the-icons-completion]] if [[doom-module:+icons]]
+- [[doom-package:consult]]
+- [[doom-package:consult-flycheck]] if [[doom-module::checkers syntax]]
+- [[doom-package:embark]]
+- [[doom-package:embark-consult]]
+- [[doom-package:marginalia]]
+- [[doom-package:orderless]]
+- [[doom-package:vertico]]
+- [[doom-package:vertico-posframe]] if [[doom-module:+childframe]]
+- [[doom-package:wgrep]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -95,7 +95,7 @@ due to Marginalia annotations.
 
 ** Jump-to navigation
 This module provides an interface to navigate within a project using
-[[doom-package:][projectile]]:
+[[doom-package:projectile]]:
 
 https://assets.doomemacs.org/completion/vertico/projectile.png
 
@@ -135,8 +135,8 @@ commands.
 On top of the usual Vertico keybindings, search commands also offer support for
 exporting the current candidate list to an editable buffer [[kbd:][C-c C-e]]. After
 editing the changes can be committed with [[kbd:][C-c C-c]] and aborted with [[kbd:][C-c C-k]]
-(alternatively [[kbd:][ZZ]] and [[kbd:][ZQ]], for evil users). It uses [[doom-package:][wgrep]] for grep searches,
-[[doom-package:][wdired]] for file searches, and =occur= for buffer searches.
+(alternatively [[kbd:][ZZ]] and [[kbd:][ZQ]], for evil users). It uses [[doom-package:wgrep]] for grep searches,
+[[doom-package:wdired]] for file searches, and =occur= for buffer searches.
 
 https://assets.doomemacs.org/completion/vertico/search-replace.png
 
@@ -213,7 +213,7 @@ Consult async commands (e.g. ~consult-ripgrep~) will have a preceding separator
 character (usually ~#~) before the search input. This is known as the =perl=
 splitting style. Input typed after the separator will be fed to the async
 command until you type a second seperator, afterwhich the candidate list will be
-filtered with Emacs instead (and can be filtered using [[doom-package:][orderless]], for example).
+filtered with Emacs instead (and can be filtered using [[doom-package:orderless]], for example).
 The specific seperator character can be changed by editing it, and might be
 different if the initial input already contains =#=.
 

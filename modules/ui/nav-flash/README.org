@@ -20,7 +20,7 @@ make it easy to follow after big operations.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][nav-flash]]
+- [[doom-package:nav-flash]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -35,16 +35,16 @@ make it easy to follow after big operations.
 /This module has no external requirements./
 
 * Usage
-By default, [[doom-package:][nav-flash]] will be triggered whenever [[fn:][recenter]] is called or an entry
-is added to the jump-list (managed by [[doom-package:][better-jumper]]).
+By default, [[doom-package:nav-flash]] will be triggered whenever [[fn:recenter]] is called or an entry
+is added to the jump-list (managed by [[doom-package:better-jumper]]).
 
-[[fn:][recenter]] is called after many hooks and commands, such as:
-- [[var:][better-jumper-post-jump-hook]]
-- [[var:][rtags-after-find-file-hook]]
-- [[var:][org-follow-link-hook]]
-- [[var:][imenu-after-jump-hook]]
-- [[var:][counsel-grep-post-action-hook]]
-- [[var:][dumb-jump-after-jump-hook]]
+[[fn:recenter]] is called after many hooks and commands, such as:
+- [[var:better-jumper-post-jump-hook]]
+- [[var:rtags-after-find-file-hook]]
+- [[var:org-follow-link-hook]]
+- [[var:imenu-after-jump-hook]]
+- [[var:counsel-grep-post-action-hook]]
+- [[var:dumb-jump-after-jump-hook]]
 
 * TODO Configuration
 #+begin_quote

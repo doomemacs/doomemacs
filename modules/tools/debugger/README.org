@@ -4,9 +4,9 @@
 #+since:    2.0.0
 
 * Description :unfold:
-Introduces a code debugger to Emacs, powered by [[doom-package:][realgud]] or [[doom-package:][dap-mode]] (LSP).
+Introduces a code debugger to Emacs, powered by [[doom-package:realgud]] or [[doom-package:dap-mode]] (LSP).
 
-This document will help you to configure [[doom-package:][dap-mode]] [[https://emacs-lsp.github.io/dap-mode/page/configuration/#native-debug-gdblldb][Native Debug(GDB/LLDB)]] as
+This document will help you to configure [[doom-package:dap-mode]] [[https://emacs-lsp.github.io/dap-mode/page/configuration/#native-debug-gdblldb][Native Debug(GDB/LLDB)]] as
 there is still not *enough* documentation for it.
 
 ** Maintainers
@@ -17,11 +17,11 @@ there is still not *enough* documentation for it.
   Enable support for [[https://microsoft.github.io/debug-adapter-protocol/][Debug Adapter Protocol]] (DAP) debuggers.
 
 ** Packages
-- [[doom-package:][realgud]]
-- [[doom-package:][realgud-trepan-ni]] if [[doom-module:][:lang javascript]]
-- if [[doom-module:][+lsp]]
-  - [[doom-package:][dap-mode]] 
-  - [[doom-package:][posframe]] 
+- [[doom-package:realgud]]
+- [[doom-package:realgud-trepan-ni]] if [[doom-module::lang javascript]]
+- if [[doom-module:+lsp]]
+  - [[doom-package:dap-mode]] 
+  - [[doom-package:posframe]] 
 
 ** TODO Hacks
 #+begin_quote

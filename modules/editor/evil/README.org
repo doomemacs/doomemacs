@@ -17,24 +17,24 @@ This holy module brings the Vim editing model to Emacs.
   as a foundation.
 
 ** Packages
-- [[doom-package:][evil]]
-- [[doom-package:][evil-args]]
-- [[doom-package:][evil-collection]] if [[doom-module:][+everywhere]]
-- [[doom-package:][evil-easymotion]]
-- [[doom-package:][evil-embrace]]
-- [[doom-package:][evil-escape]]
-- [[doom-package:][evil-exchange]]
-- [[doom-package:][evil-indent-plus]]
-- [[doom-package:][evil-lion]]
-- [[doom-package:][evil-nerd-commentary]]
-- [[doom-package:][evil-numbers]]
-- [[doom-package:][evil-quick-diff]]
-- [[doom-package:][evil-snipe]]
-- [[doom-package:][evil-surround]]
-- [[doom-package:][evil-textobj-anyblock]]
-- [[doom-package:][evil-vimish-fold]]
-- [[doom-package:][evil-visualstar]]
-- [[doom-package:][exato]]
+- [[doom-package:evil]]
+- [[doom-package:evil-args]]
+- [[doom-package:evil-collection]] if [[doom-module:+everywhere]]
+- [[doom-package:evil-easymotion]]
+- [[doom-package:evil-embrace]]
+- [[doom-package:evil-escape]]
+- [[doom-package:evil-exchange]]
+- [[doom-package:evil-indent-plus]]
+- [[doom-package:evil-lion]]
+- [[doom-package:evil-nerd-commentary]]
+- [[doom-package:evil-numbers]]
+- [[doom-package:evil-quick-diff]]
+- [[doom-package:evil-snipe]]
+- [[doom-package:evil-surround]]
+- [[doom-package:evil-textobj-anyblock]]
+- [[doom-package:evil-vimish-fold]]
+- [[doom-package:evil-visualstar]]
+- [[doom-package:exato]]
 
 ** Hacks
 - The o/O keys will respect and continue commented lines (can be disabled by
@@ -76,11 +76,11 @@ The following vim plugins have been ported to evil:
 This module has also ported vim-unimpaired keybinds to Emacs.
 
 In other modules:
-- The [[doom-module:][:ui neotree]] & [[doom-module:][:ui treemacs]] modules provide a =NERDTree= equivalent.
-- The [[doom-module:][:editor multiple-cursors]] module contains functionality equal to the
+- The [[doom-module::ui neotree]] & [[doom-module::ui treemacs]] modules provide a =NERDTree= equivalent.
+- The [[doom-module::editor multiple-cursors]] module contains functionality equal to the
   following vim plugins:
-  - [[doom-package:][evil-multiedit]] => [[github:hlissner/vim-multiedit][vim-multiedit]]
-  - [[doom-package:][evil-mc]] => [[https://github.com/terryma/vim-multiple-cursors][vim-multiple-cursors]]
+  - [[doom-package:evil-multiedit]] => [[github:hlissner/vim-multiedit][vim-multiedit]]
+  - [[doom-package:evil-mc]] => [[https://github.com/terryma/vim-multiple-cursors][vim-multiple-cursors]]
 
 ** Custom Text Objects
 This module provides a couple extra text objects, along with the built-in ones.
@@ -157,13 +157,13 @@ To undo this, use:
 #+end_src
 
 ** The [[kbd:][s]]/[[kbd:][S]] keys behave differently from Vim
-Doom replaces the [[kbd:][s]] and [[kbd:][S]] keys with the [[doom-package:][evil-snipe]] package (a port of
+Doom replaces the [[kbd:][s]] and [[kbd:][S]] keys with the [[doom-package:evil-snipe]] package (a port of
 vim-seek/vim-sneak for 2-character versions of f/F/t/T).
 
 To disable evil-snipe on s/S, you can either:
 1. Disable ~evil-snipe-mode~ by adding ~(remove-hook 'doom-first-input-hook
    #'evil-snipe-mode)~ to =$DOOMDIR/config.el=,
-2. Or disable [[doom-package:][evil-snipe]] completely with ~(package! evil-snipe :disable t)~
+2. Or disable [[doom-package:evil-snipe]] completely with ~(package! evil-snipe :disable t)~
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
 3. Or use [[kbd:][cl]] and [[kbd:][cc]], respectively; they do the same thing.
@@ -198,7 +198,7 @@ If you prefer the old behavior, it can be reversed with:
 #+end_quote
 
 Evil-specific configuration and keybindings (defined with ~map!~) will be
-ignored without [[doom-module:][:editor evil]] present (and omitted when byte-compiling).
+ignored without [[doom-module::editor evil]] present (and omitted when byte-compiling).
 
 ** Include underscores in evil word motions?
 A more in-depth answer and explanation for this can be found [[https://evil.readthedocs.io/en/latest/faq.html#underscore-is-not-a-word-character][in Evil's

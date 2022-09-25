@@ -7,8 +7,8 @@
 This module adds support for shell scripting languages (including Powershell and
 Fish script) to Doom Emacs.
 
-- Code completion ([[doom-package:][company-shell]])
-- Syntax Checking ([[doom-package:][flycheck]])
+- Code completion ([[doom-package:company-shell]])
+- Syntax Checking ([[doom-package:flycheck]])
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -19,18 +19,18 @@ Fish script) to Doom Emacs.
 - +fish ::
   Add syntax highlighting for fish script files.
 - +lsp ::
-  Enable LSP support for ~sh-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~sh-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports bash-language-server).
 - +powershell ::
   Add syntax highlighting for Powershell script files (=.ps1= and =.psm1=).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
  
 ** Packages
-- [[doom-package:][company-shell]] if [[doom-module:][:completion company]]
-- [[doom-package:][fish-mode]] if [[doom-module:][+fish]]
-- [[doom-package:][powershell-mode]] if [[doom-module:][+powershell]]
+- [[doom-package:company-shell]] if [[doom-module::completion company]]
+- [[doom-package:fish-mode]] if [[doom-module:+fish]]
+- [[doom-package:powershell-mode]] if [[doom-module:+powershell]]
 
 ** Hacks
 - Interpolated variables are fontified.
@@ -45,8 +45,8 @@ Fish script) to Doom Emacs.
 This module has several optional dependencies:
 
 - [[https://github.com/koalaman/shellcheck][shellcheck]]: Enables advanced shell script linting.
-- [[https://github.com/mads-hartmann/bash-language-server][bash-language-server]]: Enables LSP support (with [[doom-module:][+lsp]] flag).
-- With the [[doom-module:][:tools debugger]] module
+- [[https://github.com/mads-hartmann/bash-language-server][bash-language-server]]: Enables LSP support (with [[doom-module:+lsp]] flag).
+- With the [[doom-module::tools debugger]] module
   - [[http://bashdb.sourceforge.net/][bashdb]]: Enables debugging for bash scripts
   - [[https://github.com/rocky/zshdb][zshdb]]: Enables debugging for zsh scripts
 

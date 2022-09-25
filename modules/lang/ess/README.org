@@ -15,15 +15,15 @@ SAS, Julia and Stata.
   Enable support for ~stan-mode~, including code completion and syntax checking.
 
 ** Packages
-- [[doom-package:][ess]]
-- [[doom-package:][ess-R-data-view]]
-- [[doom-package:][polymode]]
-- [[doom-package:][poly-R]]
-- if [[doom-module:][+stan]]
-  - [[doom-package:][company-stan]] if [[doom-module:][:completion company]]
-  - [[doom-package:][eldoc-stan]]
-  - [[doom-package:][flycheck-stan]] if [[doom-module:][:checkers syntax]]
-  - [[doom-package:][stan-mode]]
+- [[doom-package:ess]]
+- [[doom-package:ess-R-data-view]]
+- [[doom-package:polymode]]
+- [[doom-package:poly-R]]
+- if [[doom-module:+stan]]
+  - [[doom-package:company-stan]] if [[doom-module::completion company]]
+  - [[doom-package:eldoc-stan]]
+  - [[doom-package:flycheck-stan]] if [[doom-module::checkers syntax]]
+  - [[doom-package:stan-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -38,7 +38,7 @@ SAS, Julia and Stata.
 This module has several optional dependencies:
 
 - [[https://github.com/jimhester/lintr][lintr]]: for R linting.
-- [[https://github.com/REditorSupport/languageserver][languageserver]]: for LSP support in an R buffer (with [[doom-module:][+lsp]] flag).
+- [[https://github.com/REditorSupport/languageserver][languageserver]]: for LSP support in an R buffer (with [[doom-module:+lsp]] flag).
 
 * TODO Usage
 #+begin_quote

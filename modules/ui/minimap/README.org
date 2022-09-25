@@ -16,7 +16,7 @@ feature found in many other editors.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][minimap]]
+- [[doom-package:minimap]]
 
 ** Hacks
 /No hacks documented for this module./

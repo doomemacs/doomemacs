@@ -199,10 +199,10 @@ Doom's LSP support and install a supported LSP client.
 This provides code completion, lookup {definition,references,documentation}
 functionality, and syntax checking, all in one:
 
-1. Enable Doom's [[doom-module:][:tools lsp]] module. ([[id:01cffea4-3329-45e2-a892-95a384ab2338][How do I enable modules?]])
+1. Enable Doom's [[doom-module::tools lsp]] module. ([[id:01cffea4-3329-45e2-a892-95a384ab2338][How do I enable modules?]])
 2. Enable the ~+lsp~ flag on the ~:lang~ module corresponding to the language
-   you want LSP support for. E.g. For python, enable [[doom-module:][:lang python +lsp]]. For
-   rust, enable [[doom-module:][:lang rust +lsp]]. ([[id:01cffea4-3329-45e2-a892-95a384ab2338][How do I enable module flags?]])
+   you want LSP support for. E.g. For python, enable [[doom-module::lang python +lsp]]. For
+   rust, enable [[doom-module::lang rust +lsp]]. ([[id:01cffea4-3329-45e2-a892-95a384ab2338][How do I enable module flags?]])
 3. Install [[https://emacs-lsp.github.io/lsp-mode/page/languages/][a supported LSP client]] on your system using your OS package manager
    OR from within Emacs using ~M-x lsp-install-server~ (warning: not all servers
    can be installed this way).
@@ -215,7 +215,7 @@ functionality, and syntax checking, all in one:
 *** Potential issues
 1. Some language modules lack LSP support (either because it doesn't exist or
    I'm not aware of it -- let me know!). If you're certain a language is
-   supported by [[doom-package:][lsp-mode]], simply adding [[fn:][lsp!]] to that major mode's hook will be
+   supported by [[doom-package:lsp-mode]], simply adding [[fn:lsp!]] to that major mode's hook will be
    enough to enable it:
 
    #+begin_src elisp
@@ -238,15 +238,15 @@ documentation with [[kbd:][<help> d m]] (or ~M-x doom/help-modules~).
 ** Change my fonts
 Doom exposes a couple variables for setting fonts. They are:
 
-- [[var:][doom-font]]: the primary font for Emacs to use.
-- [[var:][doom-variable-pitch-font]]: used for non-monospace fonts (e.g. when using
+- [[var:doom-font]]: the primary font for Emacs to use.
+- [[var:doom-variable-pitch-font]]: used for non-monospace fonts (e.g. when using
   variable-pitch-mode or mixed-pitch-mode). Popular for text modes, like Org or
   Markdown.
-- [[var:][doom-unicode-font]]: used for rendering unicode glyphs. This is ~Symbola~ by
-  default. It is ignored if the [[doom-module:][:ui unicode]] module is enabled.
-- [[var:][doom-serif-font]]: the sans-serif font to use wherever the [[face:][fixed-pitch-serif]]
+- [[var:doom-unicode-font]]: used for rendering unicode glyphs. This is ~Symbola~ by
+  default. It is ignored if the [[doom-module::ui unicode]] module is enabled.
+- [[var:doom-serif-font]]: the sans-serif font to use wherever the [[face:fixed-pitch-serif]]
   face is used.
-- [[var:][doom-big-font]]: the large font to use when [[fn:][doom-big-font-mode]] is active.
+- [[var:doom-big-font]]: the large font to use when [[fn:doom-big-font-mode]] is active.
 
 Each of these variables accept one of:
 
@@ -329,7 +329,7 @@ This is documented in more detail in our user manual:
 - [[id:8e0d2c05-6028-4e68-a50d-b81851f3f258][How to bind aliases for your leader / localleader prefix]]
 
 ** Change the style of (or disable) line-numbers?
-Doom uses the [[doom-package:][display-line-numbers]] package, which is included with Emacs 26+.
+Doom uses the [[doom-package:display-line-numbers]] package, which is included with Emacs 26+.
 
 *** To disable line numbers entirely
 #+begin_src emacs-lisp
@@ -357,7 +357,7 @@ For example:
 #+end_src
 
 You'll find more precise documentation on the variable through [[kbd:][<help> v
-display-line-numbers-type]] ([[kbd:][<help>]] is [[kbd:][SPC h]] for [[doom-package:][evil]] users, [[kbd:][C-h]] otherwise).
+display-line-numbers-type]] ([[kbd:][<help>]] is [[kbd:][SPC h]] for [[doom-package:evil]] users, [[kbd:][C-h]] otherwise).
 
 *** To cycle through different styles of line numbers
 Use ~M-x doom/toggle-line-numbers~ (bound to [[kbd:][<leader> t l]] by default) to cycle
@@ -366,7 +366,7 @@ through the available line number styles in the current buffer.
 E.g. ~normal -> relative -> visual -> disabled -> normal~
 
 ** Disable Evil (vim emulation)?
-By disabling the [[doom-module:][:editor evil]] module ([[id:01cffea4-3329-45e2-a892-95a384ab2338][how to toggle modules]]).
+By disabling the [[doom-module::editor evil]] module ([[id:01cffea4-3329-45e2-a892-95a384ab2338][how to toggle modules]]).
 
 Read the "[[id:f3925da6-5f0b-4d11-aa08-7bb58bea1982][Removing evil-mode]]" section in the module's documentation for precise
 instructions.
@@ -408,7 +408,7 @@ moved.
 Delete =$EMACSDIR/.local/straight= and run ~$ doom sync~.
 
 ** Restore the s and S keys to their default vim behavior ([[doom-ref:][#1307]])
-[[kbd:][s]] and [[kbd:][S]] have been intentionally replaced with the [[doom-package:][evil-snipe]] plugin, which
+[[kbd:][s]] and [[kbd:][S]] have been intentionally replaced with the [[doom-package:evil-snipe]] plugin, which
 provides 2-character versions of the f/F/t/T motion keys, ala [[https://github.com/goldfeld/vim-seek][vim-seek]] or
 [[https://github.com/justinmk/vim-sneak][vim-sneak]].
 
@@ -456,7 +456,7 @@ The common explanations for this are:
   the error can shed more light on it (and will be required if you ask the
   community for help debugging it).
 
-- You have disabled the [[doom-module:][:ui doom-dashboard]] module. Read about
+- You have disabled the [[doom-module::ui doom-dashboard]] module. Read about
   [[id:5e267107-81fa-45b4-8ff3-26d4b98e508e][what Doom modules are]] and [[id:01cffea4-3329-45e2-a892-95a384ab2338][how to
   toggle them]].
 
@@ -521,7 +521,7 @@ Here are a few common causes for random crashes:
   ~doom-unicode-font~.
 
 - Ligatures can cause Emacs to crash. Try a different [[doom-module::ui ligatures +fira][ligature font]] or disable
-  the [[doom-module:][:ui ligatures]] module altogether.
+  the [[doom-module::ui ligatures]] module altogether.
 
 - On some systems (particularly MacOS), manipulating the fringes or window
   margins can cause Emacs to crash. This is most prominent in Doom's Dashboard
@@ -540,7 +540,7 @@ Here are a few common causes for random crashes:
     (setq org-startup-indented nil))
   #+end_src
 
-  Or disable the [[doom-module:][:ui doom-dashboard]] and [[doom-module:][:tools magit]] modules (see [[doom-ref:][#1170]]).
+  Or disable the [[doom-module::ui doom-dashboard]] and [[doom-module::tools magit]] modules (see [[doom-ref:][#1170]]).
 
 If these don't help, check our troubleshooting guides for [[id:f88eaf35-97c4-48de-85ef-2d53f8615d4a][hard crashes]] or
 [[id:0b744192-c648-452d-ba62-1b4c76dc3aee][freezes/hangs]].
@@ -575,10 +575,10 @@ There are a couple ways to address this:
    #+end_src
 
 3. Use [[https://editorconfig.org/][editorconfig]] to configure code style on a per-project basis. If you
-   enable Doom's [[doom-module:][:tools editorconfig]] module, Doom will recognize
+   enable Doom's [[doom-module::tools editorconfig]] module, Doom will recognize
    =.editorconfigrc= files.
 
-4. Or trust in [[doom-package:][dtrt-indent]]; a plugin Doom uses to analyze and detect indentation
+4. Or trust in [[doom-package:dtrt-indent]]; a plugin Doom uses to analyze and detect indentation
    when you open a file (that isn't in a project with an editorconfig file).
    This isn't foolproof, and won't work for files that have no content in them,
    but it can help in one-off scenarios.
@@ -886,7 +886,7 @@ All that said, I take no steps to disable or cripple =Customize= in Doom
 to cause issues). If used sparingly, you may not even run into these issues.
 
 ** Why no =expand-region= for evil users (by default)?
-I believe [[doom-package:][expand-region]] is redundant with and less precise than evil's text
+I believe [[doom-package:expand-region]] is redundant with and less precise than evil's text
 objects and motions.
 
 - There's a text object for every "step" of expansion that expand-region
@@ -904,7 +904,7 @@ objects and motions.
   the surrounding brackets/parentheses, etc. There is no reverse of this
   however; you'd have to restart visual mode.
 
-The [[doom-package:][expand-region]] way dictates you start at some point and expand/contract until
+The [[doom-package:expand-region]] way dictates you start at some point and expand/contract until
 you have what you want selected. The vim/evil way would rather you select
 exactly what you want from the get go. In the rare event a text object fails
 you, a combination of [[kbd:][o]] (swaps your cursor between the two ends of the region)
@@ -921,7 +921,7 @@ editing paradigm. Vimmers will feel right at home. To everyone else: mastering
 them will have a far-reaching effect on your effectiveness in vim environments.
 I highly recommend putting in the time to learn them.
 
-That said, if you aren't convinced, it is trivial to install [[doom-package:][expand-region]] and
+That said, if you aren't convinced, it is trivial to install [[doom-package:expand-region]] and
 binds keys to it yourself:
 #+begin_src emacs-lisp
 ;;; in $DOOMDIR/packages.el
@@ -939,17 +939,17 @@ variables. This affects macOS users (all =Emacs.app= bundles launch Emacs in an
 isolated environment), Linux users who misconfigure their launchers to use the
 wrong shell, or Windows users who may have no shell environment at all.
 
-[[doom-package:][exec-path-from-shell]] was written to mitigate this, by polling the shell at
+[[doom-package:exec-path-from-shell]] was written to mitigate this, by polling the shell at
 startup for those environment variables. ~$ doom env~ was written as more
 reliable (and slightly faster) substitute. Here's why it's better:
 
-1. [[doom-package:][exec-path-from-shell]] must spawn (at least) one process at startup to scrape
+1. [[doom-package:exec-path-from-shell]] must spawn (at least) one process at startup to scrape
    your shell environment. This can be slow depending on the user's shell
    configuration and may fail on non-standard shells (like =fish=). A single
    program (like =pyenv= or =nvm=) or config framework (like =oh-my-zsh=) could
    all our startup optimizations in one fell swoop.
 
-2. [[doom-package:][exec-path-from-shell]] takes a whitelist approach and captures only =$PATH= and
+2. [[doom-package:exec-path-from-shell]] takes a whitelist approach and captures only =$PATH= and
    =$MANPATH= by default. You must be proactive in order to capture all the
    envvars relevant to your development environment and tools.
 
@@ -957,7 +957,7 @@ reliable (and slightly faster) substitute. Here's why it's better:
    environment. This front loads the debugging process, which is nicer than
    dealing with it later, while you're getting work done.
 
-That said, if you still want [[var:][exec-path-from-shell]], it is trivial to install
+That said, if you still want [[var:exec-path-from-shell]], it is trivial to install
 yourself:
 #+begin_src emacs-lisp
 ;;; in $DOOMDIR/packages.el
@@ -970,12 +970,12 @@ yourself:
 #+end_src
 
 ** Why =ws-butler= over =whitespace-cleanup= or =delete-trailing-whitespace=?
-I believe [[doom-package:][ws-butler]] is less imposing on teammates/project maintainers; it only
+I believe [[doom-package:ws-butler]] is less imposing on teammates/project maintainers; it only
 cleans up whitespace on the lines you've touched.
 
 You know the story: a PR with 99 whitespace adjustments around a one-line
-contribution. Why? Because they added [[fn:][delete-trailing-whitespace]] (or
-[[fn:][whitespace-cleanup]]) to [[var:][before-save-hook]], which mutates entire buffers.
+contribution. Why? Because they added [[fn:delete-trailing-whitespace]] (or
+[[fn:whitespace-cleanup]]) to [[var:before-save-hook]], which mutates entire buffers.
 
 Automated processes that mutate entire files (or worse, whole projects) should
 be deliberately invoked, and by someone privvy to the consequences, rather than
