@@ -48,7 +48,10 @@
                  (buffer-file-name
                   (or buffer-file-name
                       (bound-and-true-p org-src-source-file-name)))
-                 (package (eval (sexp-at-point) t)))
+                 (package
+                  (doom-context-with 'packages
+                    (doom-module-context-with (doom-module-from-path buffer-file-name)
+                      (eval (sexp-at-point) t)))))
             (list :beg beg
                   :end end
                   :package (car package)
