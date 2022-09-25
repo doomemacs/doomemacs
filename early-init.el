@@ -115,6 +115,6 @@
      nil))
 
  ;; Then continue on to the config/profile we want to load.
- (load early-init-file 'noerror (not init-file-debug) nil 'must-suffix))
+ (load user-init-file 'noerror (not init-file-debug) nil 'must-suffix))
 
 ;;; early-init.el ends here
