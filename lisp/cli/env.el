@@ -33,7 +33,7 @@
     "^SSH_\\(AUTH_SOCK\\|AGENT_PID\\)$" "^\\(SSH\\|GPG\\)_TTY$"
     "^GPG_AGENT_INFO$"
     ;; Internal Doom envvars
-    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\)DIR$" "DOOMPROFILE" "^__")
+    "^DEBUG$" "^INSECURE$" "^\\(EMACS\\|DOOM\\)DIR$" "^DOOMPROFILE$" "^__")
   "Environment variables to omit from envvar files.
 
 Each string is a regexp, matched against variable names to omit from
