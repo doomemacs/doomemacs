@@ -242,9 +242,9 @@ in."
               (let (doom-doctor--errors
                     doom-doctor--warnings)
                 (condition-case-unless-debug ex
-                    (doom-module-context-with key
-                      (let ((doctor-file   (doom-module-expand-path (car key) (cdr key) "doctor.el"))
-                            (packages-file (doom-module-expand-path (car key) (cdr key) doom-module-packages-file)))
+                    (doom-module-context-with (cons group name)
+                      (let ((doctor-file   (doom-module-expand-path group name "doctor.el"))
+                            (packages-file (doom-module-expand-path group name doom-module-packages-file)))
                         (cl-loop with doom-output-indent = 6
                                  for name in (doom-context-with 'packages
                                                (let* (doom-packages
@@ -264,7 +264,7 @@ in."
                   (error (error! "Syntax error: %s" ex)))
                 (when (or doom-doctor--errors doom-doctor--warnings)
                   (print-group!
-                    (print! (start (bold "%s %s")) (car key) (cdr key))
+                    (print! (start (bold "%s %s")) group name)
                     (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
                   (setq doom-local-errors doom-doctor--errors
                         doom-local-warnings doom-doctor--warnings)))
