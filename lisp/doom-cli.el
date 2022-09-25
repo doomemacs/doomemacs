@@ -6,6 +6,7 @@
 ;; expects a noninteractive session, so take care when testing code!
 ;;
 ;;; Code:
+
 (when noninteractive
   ;; PERF: Deferring the GC in non-interactive sessions isn't as important, but
   ;;   still yields a notable benefit. Still, avoid setting it to high here, as
@@ -72,11 +73,19 @@
   ;; Ensure straight and core packages are ready to go for CLI commands.
   (require 'doom-modules)
   (require 'doom-packages)
-  (require 'doom-profiles))
+  (require 'doom-profiles)
+  ;; Last minute initialization at the end of loading this file.
+  (with-eval-after-load 'doom-cli
+    (doom-run-hooks 'doom-before-init-hook)))
 
 
 ;;
 ;;; Variables
+
+(defgroup doom-cli nil
+  "Doom's command-line interface framework."
+  :link '(url-link "https://doomemacs.org/cli")
+  :group 'doom)
 
 (defvar doom-cli-load-path
   (let ((paths (split-string (or (getenv "DOOMPATH") "") path-separator)))
@@ -89,6 +98,7 @@ It is prefilled by the DOOMPATH envvar (a colon-separated list on Linux/macOS,
 semicolon otherwise). Empty entries in DOOMPATH are replaced with the
 $EMACSDIR/cli/.")
 
+;;; CLI definition variables
 (defvar doom-cli-argument-types
   '(&args
     &cli
@@ -199,6 +209,7 @@ Recognizies the following properies:
   :error STR
     The message to display if a value fails :test.")
 
+;;; Post-script settings
 (defvar doom-cli-exit-commands
   '(;; (:editor  . doom-cli--exit-editor)
     ;; (:emacs   . doom-cli--exit-emacs)
@@ -217,6 +228,7 @@ If nil, falls back to less.")
 
 Only applies if (exit! :pager) or (exit! :pager?) are called.")
 
+;;; Logger settings
 (defvar doom-cli-log-file-format (expand-file-name "logs/cli.%s.%s.%s" doom-local-dir)
   "Where to write any output/log file to.
 
@@ -225,47 +237,54 @@ Must have two arguments, one for session id and the other for log type.")
 (defvar doom-cli-log-retain 12
   "Number of each log type to retain.")
 
-(defvar doom-cli-backtrace-depth 12
+(defvar doom-cli-log-backtrace-depth 12
   "How many frames of the backtrace to display in stdout.")
 
-(defvar doom-cli-straight-error-lines 16
+(defvar doom-cli-log-straight-error-lines 16
   "How many lines of straight.el errors to display in stdout.")
 
-(defvar doom-cli-benchmark-threshold 5
+(defvar doom-cli-log-benchmark-threshold 5
   "How much execution time (in seconds) before benchmark is shown.
 
 If set to nil, only display benchmark if a CLI explicitly requested with a
 non-nil :benchmark property.
 If set to `always', show the benchmark no matter what.")
 
+;;; Internal variables
 (defvar doom-cli--context nil)
 (defvar doom-cli--exit-code 255)
-(defvar doom-cli--plist nil)
+(defvar doom-cli--group-plist nil)
 (defvar doom-cli--table (make-hash-table :test 'equal))
 
 
 ;;
-;;; Hooks
+;;; Custom hooks
 
-(defvar doom-cli-create-context-functions ()
+(defcustom doom-cli-create-context-functions ()
   "A hook executed once a new context has been generated.
 
 Called by `doom-cli-context-parse' and `doom-cli-context-restore', once a
 `doom-cli-context' is fully populated and ready to be executed (but before it
 has).
 
-Hooks are run with one argument: the newly created context.")
+Hooks are run with one argument: the newly created context."
+  :type 'hook
+  :group 'doom-cli)
 
-(defvar doom-cli-before-run-functions ()
-  "Hooks run before `doom-cli-run' executes the command.
+(defcustom doom-cli-before-run-functions ()
+  "Hooks run before `run!' executes the command.
 
-Runs with a single argument: the active context (a `doom-cli-context' struct).")
+Runs with a single argument: the active context (a `doom-cli-context' struct)."
+  :type 'hook
+  :group 'doom-cli)
 
-(defvar doom-cli-after-run-functions ()
-  "Hooks run after `doom-cli-run' has executed the command.
+(defcustom doom-cli-after-run-functions ()
+  "Hooks run after `run!' has executed the command.
 
 Runs with two arguments: the active context (a `doom-cli-context' struct) and
-the return value of the executed CLI.")
+the return value of the executed CLI."
+  :type 'hook
+  :group 'doom-cli)
 
 
 ;;
@@ -835,7 +854,6 @@ executable context."
                                (signal 'doom-cli-unrecognized-option-error
                                        (list fullflag))))
                    (explicit-arg (match-string 2 arg))
-                   (argsleft (+ (length args) (if explicit-arg 1 0)))
                    (arity (length (doom-cli-option-arguments option)))
                    (key (if (doom-cli-option-multiple-p option)
                             (car (doom-cli-option-switches option))
@@ -1017,13 +1035,13 @@ considered as well."
      (straight-error
       (print! (error "The package manager threw an error"))
       (print! (error "Last %d lines of straight's error log:")
-              doom-cli-straight-error-lines)
+              doom-cli-log-straight-error-lines)
       (print-group!
        (print!
         "%s" (string-join
               (seq-subseq straight-error
                           (max 0 (- (length straight-error)
-                                    doom-cli-straight-error-lines))
+                                    doom-cli-log-straight-error-lines))
                           (length straight-error))
               "\n")))
       (print! (warn "Wrote extended straight log to %s")
@@ -1034,7 +1052,7 @@ considered as well."
                       error-file))))
      ((eq type 'error)
       (let* ((generic? (eq (car data) 'error))
-             (doom-cli-backtrace-depth doom-cli-backtrace-depth)
+             (doom-cli-log-backtrace-depth doom-cli-log-backtrace-depth)
              (print-escape-newlines t))
         (if (doom-cli-context-p context)
             (print! (error "There was an unexpected runtime error"))
@@ -1053,7 +1071,7 @@ considered as well."
          (when backtrace
            (print! (bold "Backtrace:"))
            (print-group!
-            (dolist (frame (seq-take backtrace doom-cli-backtrace-depth))
+            (dolist (frame (seq-take backtrace doom-cli-log-backtrace-depth))
               (print! "%s" (truncate (prin1-to-string
                                       (cons (backtrace-frame-fun  frame)
                                             (backtrace-frame-args frame)))
@@ -1112,8 +1130,8 @@ See `doom-cli-log-file-format' for details."
 
 Will also output it to stdout if requested (CLI sets :benchmark to t) or the
 command takes >5s to run. If :benchmark is explicitly set to nil (or
-`doom-cli-benchmark-threshold' is nil), under no condition should a benchmark be
-shown."
+`doom-cli-log-benchmark-threshold' is nil), under no condition should a
+benchmark be shown."
   (doom-cli-redirect-output context
     (doom-log "%s (GCs: %d, elapsed: %.6fs)"
               (if (= doom-cli--exit-code 254) "Restarted" "Finished")
@@ -1126,10 +1144,10 @@ shown."
                 (seconds   (- duration (* hours 60 60) (* minutes 60))))
       (when (and (/= doom-cli--exit-code 254)
                  (or (eq (doom-cli-prop cli :benchmark) t)
-                     (eq doom-cli-benchmark-threshold 'always)
+                     (eq doom-cli-log-benchmark-threshold 'always)
                      (and (eq (doom-cli-prop cli :benchmark :null) :null)
                           (not (doom-cli-context-pipe-p context 'out t))
-                          (> duration (or doom-cli-benchmark-threshold
+                          (> duration (or doom-cli-log-benchmark-threshold
                                           most-positive-fixnum)))))
         (print! (success "Finished in %s")
                 (join (list (unless (zerop hours)   (format "%dh" hours))
@@ -1442,7 +1460,7 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
   (or (when-let* ((path (doom-cli-autoload cli))
                   (path (locate-file-internal path doom-cli-load-path load-suffixes)))
         (doom-log "load: autoload %s" path)
-        (let ((doom-cli--plist (doom-cli-plist cli)))
+        (let ((doom-cli--group-plist (doom-cli-plist cli)))
           (doom-load path))
         (let* ((key (doom-cli-key cli))
                (cli (gethash key doom-cli--table)))
@@ -1700,7 +1718,7 @@ ignored.
            (&whole plist &key
                    alias autoload _benchmark docs disable hide _group partial
                    _prefix)
-           (append (list ,@plist) doom-cli--plist)
+           (append (list ,@plist) doom-cli--group-plist)
          (unless disable
            (let* ((command  (doom-cli-command-normalize (backquote ,commandspec) plist))
                   (type     (if (keywordp (car command)) (pop command)))
@@ -1758,7 +1776,7 @@ TARGET is not a command specification, and should be a command list."
 See `defcli!' for information about COMMANDSPEC.
 TARGET is simply a command list.
 WHEN specifies what version this command was rendered obsolete."
-  `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--plist)))
+  `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--group-plist)))
      (defcli! ,commandspec (&context context &cli cli &rest args)
        :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
        :hide t
@@ -1783,7 +1801,7 @@ yet. They won't be included in command listings (by help documentation)."
 
 (defmacro defcli-autoload! (commandspec &optional path &rest plist)
   "Defer loading of PATHS until PREFIX is called."
-  `(let* ((doom-cli--plist (append (list ,@plist) doom-cli--plist))
+  `(let* ((doom-cli--group-plist (append (list ,@plist) doom-cli--group-plist))
           (commandspec (doom-cli-command-normalize ',commandspec))
           (commands (doom-cli--command-expand commandspec))
           (path (or ,path
@@ -1801,14 +1819,14 @@ yet. They won't be included in command listings (by help documentation)."
   "Declare common properties for any CLI commands defined in BODY."
   (when (stringp (car body))
     (push :group body))
-  `(let ((doom-cli--plist (copy-sequence doom-cli--plist)))
+  `(let ((doom-cli--group-plist (copy-sequence doom-cli--group-plist)))
      ,@(let (forms)
          (while (keywordp (car body))
            (let ((key (pop body))
                  (val (pop body)))
-             (push `(cl-callf plist-put doom-cli--plist
+             (push `(cl-callf plist-put doom-cli--group-plist
                       ,key ,(if (eq key :prefix)
-                                `(append (plist-get doom-cli--plist ,key)
+                                `(append (plist-get doom-cli--group-plist ,key)
                                          (ensure-list ,val))
                               val))
                    forms)))
@@ -1982,34 +2000,11 @@ errors to `doom-cli-error-file')."
 (defalias 'git! (doom-partial #'straight--process-run "git"))
 
 
+
 ;;
 ;;; Predefined CLIs
 
-;; Load standard :help and :version handlers.
-(load! "cli/help")
-
-;; When __DOOMDUMP is set, doomscripts trigger this special handler.
-(defcli! (:root :dump)
-    ((pretty? ("--pretty") "Pretty print output")
-     &context context
-     &args commands)
-  "Dump metadata to stdout for other commands to read."
-  (let* ((prefix (doom-cli-context-prefix context))
-         (command (cons prefix commands)))
-    (funcall (if pretty? #'pp #'prin1)
-             (cond ((equal commands '("-")) (hash-table-values doom-cli--table))
-                   (commands (doom-cli-find command))
-                   ((doom-cli-find (list prefix)))))
-    (terpri)
-    ;; Kill manually so we don't save output to logs.
-    (let (kill-emacs) (kill-emacs 0))))
-
-
-;;
-;;; Last minute initialization
-
-(when noninteractive
-  (doom-run-hooks 'doom-before-init-hook))
+(load! "cli/meta")  ; :help, :version, and :dump
 
 (provide 'doom-cli)
 ;;; doom-cli.el ends here
