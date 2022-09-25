@@ -246,8 +246,9 @@ ready to be pasted in a bug report on github."
                (abbreviate-file-name path)))
             (defun symlink-path (file)
               (format "%s%s" (abbrev-path file)
-                      (if (file-symlink-p file) ""
-                        (concat " -> " (abbrev-path (file-truename file)))))))
+                      (if (file-symlink-p file)
+                          (concat " -> " (abbrev-path (file-truename file)))
+                        ""))))
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
         (system . ,(delq
                     nil (list (doom-system-distro-version)
