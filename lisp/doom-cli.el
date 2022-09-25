@@ -79,9 +79,15 @@
 ;;; Variables
 
 (defvar doom-cli-load-path
-  (append (ignore-errors (split-string (getenv "DOOMPATH") path-separator))
-          (list (doom-path (file-name-directory load-file-name) "cli")))
-  "A list of paths to search for autoloaded CLIs on.")
+  (let ((paths (split-string (or (getenv "DOOMPATH") "") path-separator)))
+    (if (member "" paths)
+        (cl-substitute (doom-path (dir!) "cli/") "" paths :test #'equal)
+      paths))
+  "A list of paths to search for autoloaded Doom CLIs.
+
+It is prefilled by the DOOMPATH envvar (a colon-separated list on Linux/macOS,
+semicolon otherwise). Empty entries in DOOMPATH are replaced with the
+$EMACSDIR/cli/.")
 
 (defvar doom-cli-argument-types
   '(&args
