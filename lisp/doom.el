@@ -337,6 +337,8 @@ users).")
             (list (rassq 'jka-compr-handler old-value))))
     ;; Make sure the new value survives any current let-binding.
     (set-default-toplevel-value 'file-name-handler-alist file-name-handler-alist)
+    ;; Remember it so it can be reset where needed.
+    (put 'file-name-handler-alist 'initial-value old-value)
     ;; COMPAT: ...but restore `file-name-handler-alist' later, because it is
     ;;   needed for handling encrypted or compressed files, among other things.
     (add-hook! 'emacs-startup-hook :depth 101
@@ -435,9 +437,15 @@ users).")
     ;; COMPAT: Then reset it with advice, because `startup--load-user-init-file'
     ;;   will never be interrupted by errors. And if these settings are left
     ;;   set, Emacs could appear frozen or garbled.
-    (define-advice startup--load-user-init-file (:after (&rest _) undo-inhibit-vars)
+    (defun doom--reset-inhibited-vars-h ()
       (setq-default inhibit-redisplay nil
+                    ;; Inhibiting `message' only prevents redraws and
                     inhibit-message nil)
+      (redraw-frame))
+    (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
+    (define-advice startup--load-user-init-file (:after (&rest _) undo-inhibit-vars)
+      (when init-file-had-error
+        (doom--reset-inhibited-vars-h))
       (unless (default-toplevel-value 'mode-line-format)
         (setq-default mode-line-format (get 'mode-line-format 'initial-value))))
 
