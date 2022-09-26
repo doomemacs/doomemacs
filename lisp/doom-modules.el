@@ -139,7 +139,7 @@ If NAME is omitted, GROUP is treated as a module key cons cell: (GROUP . NAME)."
   (let* ((key   (if name (cons group name) group))
          (group (or (car-safe key) key))
          (name  (cdr-safe key))
-         (data  (get group name)))
+         (data  (or (get group name) doom--empty-module)))
     (vector group name
             (aref data (doom-module--context-field flags))
             (aref data (doom-module--context-field features)))))
