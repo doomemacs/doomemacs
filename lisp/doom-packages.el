@@ -410,36 +410,34 @@ installed."
 
 ;;; Package getters
 (defun doom-packages--read (file &optional noeval noerror)
-  (doom-context-with 'packages
-    (doom-module-context-with (doom-module-from-path file)
-      (condition-case-unless-debug e
-          (with-temp-buffer ; prevent buffer-local state from propagating
-            (if (not noeval)
-                (load file noerror 'nomessage 'nosuffix)
-              (when (file-exists-p file)
-                (insert-file-contents file)
-                (let (emacs-lisp-mode) (emacs-lisp-mode))
-                ;; Scrape `package!' blocks from FILE for a comprehensive listing of
-                ;; packages used by this module.
-                (while (search-forward "(package!" nil t)
-                  (let ((ppss (save-excursion (syntax-ppss))))
-                    ;; Don't collect packages in comments or strings
-                    (unless (or (nth 3 ppss)
-                                (nth 4 ppss))
-                      (goto-char (match-beginning 0))
-                      (cl-destructuring-bind (_ name . plist)
-                          (read (current-buffer))
-                        (push (cons
-                               name (plist-put
-                                     plist :modules
-                                     (list (doom-module-context-key))))
-                              doom-packages))))))))
-        (user-error
-         (user-error (error-message-string e)))
-        (error
-         (signal 'doom-package-error
-                 (list (doom-module-context-key)
-                       file e)))))))
+  (condition-case-unless-debug e
+      (with-temp-buffer ; prevent buffer-local state from propagating
+        (if (not noeval)
+            (load file noerror 'nomessage 'nosuffix)
+          (when (file-exists-p file)
+            (insert-file-contents file)
+            (with-syntax-table emacs-lisp-mode-syntax-table
+              ;; Scrape `package!' blocks from FILE for a comprehensive listing of
+              ;; packages used by this module.
+              (while (search-forward "(package!" nil t)
+                (let ((ppss (save-excursion (syntax-ppss))))
+                  ;; Don't collect packages in comments or strings
+                  (unless (or (nth 3 ppss)
+                              (nth 4 ppss))
+                    (goto-char (match-beginning 0))
+                    (cl-destructuring-bind (_ name . plist)
+                        (read (current-buffer))
+                      (push (cons
+                             name (plist-put
+                                   plist :modules
+                                   (list (doom-module-context-key))))
+                            doom-packages)))))))))
+    (user-error
+     (user-error (error-message-string e)))
+    (error
+     (signal 'doom-package-error
+             (list (doom-module-context-key)
+                   file e)))))
 
 (defun doom-package-list (&optional module-list)
   "Retrieve a list of explicitly declared packages from MODULE-LIST.
@@ -448,25 +446,27 @@ If MODULE-LIST is omitted, read enabled module list in configdepth order (see
 `doom-module-set'). Otherwise, MODULE-LIST may be any symbol (or t) to mean read
 all modules in `doom-modules-dir', including :core and :user. MODULE-LIST may
 also be a list of module keys."
-  (let ((module-list (cond ((null module-list) (doom-module-list))
-                           ((symbolp module-list) (doom-module-list 'all))
-                           (module-list)))
-        ;; TODO: doom-module-context
-        (packages-file doom-module-packages-file)
-        doom-disabled-packages
-        doom-packages)
-    (when (assq :user module-list)
-      ;; We load the private packages file twice to populate
-      ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
-      ;; second time to ensure privately overridden packages are properly
-      ;; overwritten.
-      (let (doom-packages)
-        (doom-packages--read (doom-module-expand-path :user nil packages-file)
-                             nil 'noerror)))
-    (cl-loop for (cat . mod) in module-list
-             if (doom-module-locate-path cat mod packages-file)
-             do (doom-packages--read it nil 'noerror))
-    (nreverse doom-packages)))
+    (let ((module-list (cond ((null module-list) (doom-module-list))
+                             ((symbolp module-list) (doom-module-list 'all))
+                             (module-list)))
+          (packages-file doom-module-packages-file)
+          doom-disabled-packages
+          doom-packages)
+      (letf! (defun read-packages (key)
+               (doom-module-context-with key
+                 (when-let (file (doom-module-locate-path
+                                  (car key) (cdr key) doom-module-packages-file))
+                   (doom-packages--read file nil 'noerror))))
+        (doom-context-with 'packages
+          (when (assq :user module-list)
+            ;; We load the private packages file twice to populate
+            ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
+            ;; second time to ensure privately overridden packages are properly
+            ;; overwritten.
+            (let (doom-packages)
+              (read-packages (cons :user nil))))
+          (mapc #'read-packages module-list)
+          (nreverse doom-packages)))))
 
 (defun doom-package-pinned-list ()
   "Return an alist mapping package names (strings) to pinned commits (strings)."
