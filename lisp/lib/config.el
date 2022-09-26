@@ -81,7 +81,7 @@ Runs `doom-after-reload-hook' afterwards."
   (interactive)
   (mapc #'require (cdr doom-incremental-packages))
   (doom--if-compile (format "%S sync -e" doom-bin)
-      (doom-with-context '(reload modules)
+      (doom-context-with '(reload modules)
         (doom-run-hooks 'doom-before-reload-hook)
         (doom-load (file-name-concat doom-user-dir doom-module-init-file) t)
         (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
@@ -106,7 +106,7 @@ line."
   (interactive)
   (require 'doom-profiles)
   ;; TODO: Make this more robust
-  (doom-with-context 'reload
+  (doom-context-with 'reload
     (dolist (file (mapcar #'car doom-profile-generators))
       (when (string-match-p "/[0-9]+-loaddefs[.-]" file)
         (load (doom-path doom-profile-dir doom-profile-init-dir-name file)
@@ -122,7 +122,7 @@ Doing so from within Emacs will taint your shell environment.
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive)
-  (doom-with-context 'reload
+  (doom-context-with 'reload
     (let ((default-directory doom-emacs-dir))
       (with-temp-buffer
         (doom-load-envvars-file doom-env-file)
