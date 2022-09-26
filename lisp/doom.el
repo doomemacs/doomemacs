@@ -361,6 +361,11 @@ users).")
     ;; PERF,UX: Remove "For information about GNU Emacs..." message at startup.
     ;;   It's redundant with our dashboard and incurs a premature redraw.
     (advice-add #'display-startup-echo-area-message :override #'ignore)
+    ;; PERF: Suppress the vanilla startup screen completely. We've disabled it
+    ;;   with `inhibit-startup-screen', but it would still initialize anyway.
+    ;;   This involves some file IO and/or bitmap work (depending on the frame
+    ;;   type) that we can no-op for a free 50-100ms boost in startup time.
+    (advice-add #'display-startup-screen :override #'ignore)
 
     ;; PERF: Shave seconds off startup time by starting the scratch buffer in
     ;;   `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
