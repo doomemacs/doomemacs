@@ -314,8 +314,10 @@ users).")
 ;; Here are Doom's hackiest (and least offensive) startup optimizations. They
 ;; exploit implementation details and unintended side-effects, and will change
 ;; often between major Emacs releases. However, I disable them if this is a
-;; daemon session (where startup time matters less) or in debug-mode (to
-;; mitigate interference with our debugging).
+;; daemon session (where startup time matters less).
+;;
+;; Most of these have been tested on Linux and on fairly fast machines (with
+;; SSDs), so your mileage may vary depending on your hardware.
 (unless (daemonp)
   ;; PERF: `file-name-handler-alist' is consulted on each call to `require',
   ;;   `load', or various file/io functions (like `expand-file-name' or
