@@ -141,7 +141,8 @@ in."
 
   (print! (start "Checking for stale elc files..."))
   (elc-check-dir doom-core-dir)
-  (elc-check-dir doom-local-dir)
+  (elc-check-dir doom-modules-dir)
+  (elc-check-dir (doom-path doom-local-dir "straight" straight-build-dir))
 
   (print! (start "Checking for problematic git global settings..."))
   (if (executable-find "git")
