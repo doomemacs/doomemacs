@@ -36,7 +36,7 @@ This must be set before `treemacs' has loaded.")
       (setq +treemacs-git-mode 'simple))
     (treemacs-git-mode +treemacs-git-mode)
     (setq treemacs-collapse-dirs
-          (if (memq treemacs-git-mode '(extended deferred))
+          (if (memq +treemacs-git-mode '(extended deferred))
               3
             0))))
 
