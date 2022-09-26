@@ -156,6 +156,12 @@ kill all magit buffers for this repo."
 (defun +magit/start-code-review (arg)
   (interactive "P")
   (call-interactively
-    (if (or arg (not (featurep 'forge)))
-        #'code-review-start
-      #'code-review-forge-pr-at-point)))
+   (let* ((pullreq (or (forge-pullreq-at-point) (forge-current-topic)))
+          (repo    (forge-get-repository pullreq))
+          (githost (concat (oref repo githost) "/api")))
+     (when (forge-gitlab-repository-p repo)
+       (setq code-review-gitlab-host githost
+             code-review-gitlab-graphql-host githost))
+     (if (or arg (not (featurep 'forge)))
+         #'code-review-start
+       #'code-review-forge-pr-at-point))))
