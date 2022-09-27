@@ -530,9 +530,9 @@ mkdir ~/.doom.d  # or ~/.config/doom
 
 # The init.example.el file contains an example doom! call, which tells Doom what
 # modules to load and in what order.
-cp ~/.emacs.d/init.example.el ~/.doom.d/init.el
-cp ~/.emacs.d/core/templates/config.example.el ~/.doom.d/config.el
-cp ~/.emacs.d/core/templates/packages.example.el ~/.doom.d/packages.el
+cp ~/.emacs.d/templates/init.example.el ~/.doom.d/init.el
+cp ~/.emacs.d/templates/config.example.el ~/.doom.d/config.el
+cp ~/.emacs.d/templates/packages.example.el ~/.doom.d/packages.el
 
 # You might want to edit ~/.doom.d/init.el here and make sure you only have the
 # modules you want enabled.
