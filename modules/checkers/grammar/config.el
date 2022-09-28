@@ -19,6 +19,9 @@
                                 (doom-files-in "/usr/local/Cellar/languagetool"
                                                :type 'dirs
                                                :depth 2))))
+            ;; homebrew
+            ((file-directory-p "/opt/homebrew/opt/languagetool/bin")
+             (setq langtool-bin "/opt/homebrew/opt/languagetool/bin/languagetool"))
             ;; macports compatibility
             ((file-directory-p "/opt/local/share/java/LanguageTool")
              (setq langtool-java-classpath "/opt/local/share/java/LanguageTool/*"))))
