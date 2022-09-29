@@ -111,14 +111,17 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 ;;
 ;;; `doom-module-context'
 
-(defvar doom-module-context [nil nil nil nil]
+(defvar doom--empty-module-context [nil nil nil nil nil nil nil])
+
+(eval-and-compile
+  (setplist 'doom-module-context '(index 0 initdepth 1 configdepth 2
+                                   group 3 name 4 flags 5 features 6)))
+(defvar doom-module-context doom--empty-module-context
   "A vector describing the module associated it with the active context.
 
-Contains the following: [:GROUP MODULE FLAGS FEATURES]
+Contains the following: [INDEX INITDEPTH CONFIGDEPTH :GROUP MODULE FLAGS FEATURES]
 
 Do not directly set this variable, only let-bind it.")
-(eval-and-compile
-  (setplist 'doom-module-context '(group 0 name 1 flags 2 features 3)))
 
 ;; DEPRECATED: Remove this when byte-compilation is introduced to Doom core.
 (defmacro doom-module--context-field (field) (get 'doom-module-context field))
@@ -126,9 +129,9 @@ Do not directly set this variable, only let-bind it.")
 (defun doom-module-context-get (field &optional context)
   "Return the FIELD of CONTEXT.
 
-FIELD should be one of `group', `name', `flags', or `features'.
-CONTEXT should be a `doom-module-context' vector. If omitted, defaults to
-`doom-module-context'."
+FIELD should be one of `index', `initdepth', `configdepth', `group', `name',
+`flags', or `features'.  CONTEXT should be a `doom-module-context' vector. If
+omitted, defaults to `doom-module-context'."
   (aref (or context doom-module-context) (get 'doom-module-context field)))
 
 (defun doom-module-context (group &optional name)
@@ -136,13 +139,10 @@ CONTEXT should be a `doom-module-context' vector. If omitted, defaults to
 
 If NAME is omitted, GROUP is treated as a module key cons cell: (GROUP . NAME)."
   (declare (side-effect-free t))
-  (let* ((key   (if name (cons group name) group))
-         (group (or (car-safe key) key))
-         (name  (cdr-safe key))
-         (data  (or (get group name) doom--empty-module)))
-    (vector group name
-            (aref data (doom-module--context-field flags))
-            (aref data (doom-module--context-field features)))))
+  (let ((key (if name (cons group name) group)))
+    (or (get (or (car-safe key) key)
+             (cdr-safe key))
+        doom--empty-module-context)))
 
 (defun doom-module-context-key (&optional context)
   "Return the module of the active `doom-module-context' as a module key."
@@ -227,27 +227,22 @@ following properties:
 
 If PLIST consists of a single nil, the module is purged from memory instead."
   (if (car plist)
-      (progn
+      (let* ((depth (ensure-list (or (plist-get plist :depth) 0)))
+             (idepth (or (cdr depth) (car depth)))
+             (cdepth (car depth))
+             (idx (hash-table-count doom-modules)))
         ;; PERF: Doom caches module index, flags, and features in symbol plists
         ;;   for fast lookups in `modulep!' and elsewhere. plists are lighter
         ;;   and faster than hash tables for datasets this size, and this
-        ;;   information is looked up *very* often.
+        ;;   information is looked up *very* often. The structure of this cache
+        ;;   should match `doom-module-context's.
         (put category module
-             (let ((depth (ensure-list (or (plist-get plist :depth) 0))))
-               (cl-destructuring-bind (i j)
-                   (with-memoization (get 'doom-modules depth) '(0 0))
-                 (dolist (n (list i j))
-                   (when (> n 999)
-                     ;; No one will have more than 999 modules at any single
-                     ;; depth enabled, right? ...Right?
-                     (signal 'doom-module-error
-                             (list (cons category module) "Over 999 module limit" n))))
-                 (put 'doom-modules depth (list (1+ i) (1+ j)))
-                 (vector (+ (* (or (cdr depth) (car depth)) 1000) j)
-                         (+ (* (car depth) 1000) i)
-                         (plist-get plist :flags)
-                         (plist-get plist :features)))))
-        ;; But the hash table will always been Doom's formal storage for modules.
+             (vector idx idepth cdepth
+                     category module
+                     (plist-get plist :flags)
+                     (plist-get plist :features)))
+        ;; The hash table will always been Doom's formal storage for
+        ;; modules.
         (puthash (cons category module) plist doom-modules))
     (remhash (cons category module) doom-modules)
     (cl-remf (symbol-plist category) module)))
@@ -275,13 +270,17 @@ configdepth. See `doom-module-set' for details."
                                     :mindepth 1
                                     :depth 1)))
           (hash-table-keys doom-modules))
-        (let ((idx (if initorder? 1 0)))
+        (let ((idx (if initorder? 1 2)))
           (lambda! ((groupa . namea) (groupb . nameb))
             (let ((a (get groupa namea))
                   (b (get groupb nameb)))
               (or (null b)
-                  (if a (< (aref a idx)
-                           (aref b idx)))))))))
+                  (and
+                   a (let ((adepth (aref a idx))
+                           (bdepth (aref b idx)))
+                       (if (= adepth bdepth)
+                           (< (aref a 0) (aref b 0))
+                         (< adepth bdepth))))))))))
 
 (defun doom-module-expand-path (category module &optional file)
   "Expands a path to FILE relative to CATEGORY and MODULE.
@@ -447,7 +446,6 @@ to least)."
 ;; DEPRECATED Remove in 3.0
 (define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
 
-(defvar doom--empty-module [nil nil nil nil])
 (defmacro modulep! (category &optional module flag)
   "Return t if :CATEGORY MODULE (and +FLAGS) are enabled.
 
@@ -464,17 +462,20 @@ For more about modules and flags, see `doom!'."
   ;; PERF: This macro bypasses the module API to spare startup their runtime
   ;;   cost, as `modulep!' gets called *a lot* during startup. In the future,
   ;;   Doom will byte-compile its core files. At that time, we can use it again.
-  (and (cond (flag (memq flag (aref (or (get category module) doom--empty-module) 2)))
+  (and (cond (flag (memq flag (aref (or (get category module) doom--empty-module-context)
+                                    (doom-module--context-field flags))))
              (module (get category module))
-             (doom-module-context (memq category (aref doom-module-context 2)))
+             ((aref doom-module-context 0)
+              (memq category (aref doom-module-context
+                                   (doom-module--context-field flags))))
              ((let ((file
                      ;; This must be expanded at the call site, not in
                      ;; `modulep!'s definition, to get the file we want.
                      (macroexpand '(file!))))
                 (if-let (module (doom-module-from-path file))
                     (memq category (aref (or (get (car module) (cdr module))
-                                             doom--empty-module)
-                                         2))
+                                             doom--empty-module-context)
+                                         (doom-module--context-field flags)))
                   (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
                          category module flag file)))))
        t))
