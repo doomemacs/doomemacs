@@ -5,7 +5,6 @@
   :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
   :mode "\\.erb\\'"
   :mode "\\.[lh]?eex\\'"
-  :mode "\\.sface\\'"
   :mode "\\.jsp\\'"
   :mode "\\.as[cp]x\\'"
   :mode "\\.ejs\\'"
