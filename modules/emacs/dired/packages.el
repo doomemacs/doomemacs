@@ -1,14 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; emacs/dired/packages.el
 
-(package! diredfl :pin "f9140b2c42151dca669003d685c9f079b2e3dc37")
-(package! dired-git-info :pin "9461476a28a5fec0784260f6e318237c662c3430")
-(package! dired-rsync :pin "7940d9154d0a908693999b0e1ea351a6d365c93d")
-(when (modulep! +ranger)
-  (package! ranger :pin "2498519cb21dcd5791d240607a72a204d1761668"))
-(when (modulep! +dirvish)
-  (package! dirvish :pin "73dcaa404da9ab84d25f2919e6e3af4b1f8e7f37"))
-(when (and (modulep! +icons)
-           (not (modulep! +dirvish)))
-  (package! all-the-icons-dired :pin "5e9b097f9950cc9f86de922b07903a4e5fefc733"))
-(package! fd-dired :pin "458464771bb220b6eb87ccfd4c985c436e57dc7e")
+(package! diredfl :pin "62b559e1d6b69834a56a57eb1832ac6ad4d2e5d0")
+(package! dirvish :pin "11a3bec247b9e4742f171434e948895b3dc730ed")
