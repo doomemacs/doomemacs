@@ -140,9 +140,8 @@ will be quicker than =offlineimap=.
 If you have a unique method for synchronizing your email, you can define your
 own backend:
 #+begin_src emacs-lisp
-(setq +notmuch-sync-backend 'custom
-      ;; Set this to an arbitrary shell command
-      +notmuch-sync-command "my-notmuch-sync-cmd")
+;; Set this to an arbitrary shell command
+(setq +notmuch-sync-backend "my-notmuch-sync-cmd")
 #+end_src
 
 ** Sending mail
