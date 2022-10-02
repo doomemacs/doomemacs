@@ -59,6 +59,13 @@
     ;;      have a sane `comment-line-break-function', so...
     comment-line-break-function nil)
 
+  ;; HACK make the REPL buffer more responsive.
+  (setq-hook! 'inferior-ess-mode-hook
+    comint-scroll-to-bottom-on-input t
+    comint-scroll-to-bottom-on-output t
+    comint-move-point-for-output t)
+
+
   (map!
    (:map ess-help-mode-map
     :n "q"  #'kill-current-buffer
