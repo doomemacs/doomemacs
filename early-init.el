@@ -111,6 +111,13 @@
                    nil (not init-file-debug) nil 'must-suffix)
            ;; Failing that, assume that we're loading a non-Doom config.
            (file-missing
+            ;; HACK: `startup--load-user-init-file' resolves $EMACSDIR from a
+            ;;   lexically bound `startup-init-directory', which means changes
+            ;;   to `user-emacs-directory' won't be respected when loading
+            ;;   $EMACSDIR/init.el, so I force it to:
+            (define-advice startup--load-user-init-file (:filter-args (args) reroute-to-profile)
+              (list (lambda () (expand-file-name "init.el" user-emacs-directory))
+                    nil (nth 2 args)))
             ;; Set `user-init-file' for the `load' call further below, and do so
             ;; here while our `file-name-handler-alist' optimization is still
             ;; effective (benefits `expand-file-name'). BTW: Emacs resets
