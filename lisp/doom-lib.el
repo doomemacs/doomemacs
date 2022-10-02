@@ -393,15 +393,6 @@ See `eval-if!' for details on this macro's purpose."
   (when (eval cond)
     (macroexp-progn body)))
 
-(defmacro eval-when-compile! (&rest body)
-  "Evaluate BODY *only* during byte-compilation.
-
-Unlike `eval-when-compile', which is equivalent to `progn' in interpreted code,
-this macro's BODY will only be evaluated during byte-compilation."
-  (declare (indent 0))
-  (when (bound-and-true-p byte-compile-current-file)
-    (ignore (eval (macroexp-progn body) t))))
-
 (defmacro versionp! (v1 comp v2 &rest comps)
   "Perform compound version checks.
 
