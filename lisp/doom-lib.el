@@ -749,8 +749,9 @@ advised)."
        (defun ,fn (&rest _)
          ,(format "Transient hook for %S" (doom-unquote hook-or-function))
          ,@forms
-         (cond ((functionp sym) (advice-remove sym #',fn))
-               ((symbolp sym)   (remove-hook sym #',fn)))
+         (let ((sym ,hook-or-function))
+           (cond ((functionp sym) (advice-remove sym #',fn))
+                 ((symbolp sym)   (remove-hook sym #',fn))))
          (unintern ',fn nil))
        (cond ((functionp sym)
               (advice-add ,hook-or-function ,(if append? :after :before) #',fn))
