@@ -27,6 +27,21 @@
   (when (modulep! +tree-sitter)
     (add-hook 'ess-r-mode-local-vars-hook #'tree-sitter! 'append))
 
+  ;; WAIT lsp-mode over TRAMP needs manual configuration, and still it doesn't
+  ;; work (see https://github.com/emacs-lsp/lsp-mode/issues/3579). In eglot
+  ;; remote buffers should work out the box.
+  ;;
+  ;; The problem and the fix it is already known by the lsp-mode devs. So we
+  ;; must be patient. The expected configuration should be something like this:
+
+  (after! lsp-mode
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-stdio-connection '("R" "--slave" "-e" "languageserver::run()"))
+      :major-modes '(ess-r-mode)
+      :remote? t
+      :server-id 'lsp-r-remote)))
+
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
   (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
