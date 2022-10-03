@@ -579,17 +579,17 @@ relative to `org-directory', unless it is an absolute path."
      :follow #'+org-link-follow-doom-package-fn
      :activate-func #'+org-link--doom-package-link-activate-fn
      :face (lambda (_) '(:inherit org-priority :slant italic))
-     :eldoc (-eldoc-fn "Doom package" 'org-priority))
+     :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-module"
      :follow #'+org-link-follow-doom-module-fn
      :activate-func #'+org-link--doom-module-link-activate-fn
      :face #'+org-link--doom-module-link-face-fn
-     :eldoc (-eldoc-fn "Doom module" 'org-priority))
+     :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-executable"
      :activate-func #'+org-link--doom-executable-link-activate-fn
-     ;; :help-echo #'doom-docs--help-echo-from-textprop
+     :help-echo #'+org-link-doom--help-echo-from-textprop
      :face 'org-verbatim)
     (org-link-set-parameters
      "doom-ref"
