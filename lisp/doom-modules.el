@@ -310,7 +310,7 @@ returns nil, otherwise an absolute path."
         (if file
             ;; PERF: locate-file-internal is a little faster for finding files,
             ;;   but its interface for finding directories is clumsy.
-            (locate-file-internal path doom-modules-dirs '(".elc" ".el"))
+            (locate-file-internal path doom-modules-dirs '("" ".elc" ".el"))
           (cl-loop for default-directory in doom-modules-dirs
                    if (file-exists-p path)
                    return (expand-file-name path)))))))
