@@ -562,23 +562,28 @@ relative to `org-directory', unless it is an absolute path."
     (org-link-set-parameters
      "var"
      :follow (-call-interactively #'helpful-variable)
-     :face '(font-lock-variable-name-face underline))
+     :activate-func #'+org-link--var-link-activate-fn
+     :face 'org-code)
     (org-link-set-parameters
      "fn"
      :follow (-call-interactively #'helpful-callable)
-     :face '(font-lock-function-name-face underline))
+     :activate-func #'+org-link--fn-link-activate-fn
+     :face 'org-code)
     (org-link-set-parameters
      "face"
      :follow (-call-interactively #'describe-face)
+     :activate-func #'+org-link--face-link-activate-face
      :face '(font-lock-type-face underline))
     (org-link-set-parameters
      "doom-package"
      :follow #'+org-link-follow-doom-package-fn
+     :activate-func #'+org-link--doom-package-link-activate-fn
      :face (lambda (_) '(:inherit org-priority :slant italic))
      :eldoc (-eldoc-fn "Doom package" 'org-priority))
     (org-link-set-parameters
      "doom-module"
      :follow #'+org-link-follow-doom-module-fn
+     :activate-func #'+org-link--doom-module-link-activate-fn
      :face #'+org-link--doom-module-link-face-fn
      :eldoc (-eldoc-fn "Doom module" 'org-priority))
     (org-link-set-parameters
