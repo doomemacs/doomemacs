@@ -11,7 +11,7 @@
   :mode (("\\.sp\\'"           . S-mode)
          ("/R/.*\\.q\\'"       . R-mode)
          ("\\.[qsS]\\'"        . S-mode)
-         ("\\.[Ss][s][c]\\'"          . S-mode)
+         ("\\.[Ss][s][c]\\'"   . S-mode)
          ("\\.SSC\\'"          . S-mode)
          ("\\.[rR]\\'"         . R-mode)
          ("\\.[rR]nw\\'"       . poly-noweb+r-mode)
