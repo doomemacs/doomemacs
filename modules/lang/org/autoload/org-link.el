@@ -230,6 +230,25 @@ exist, and `org-link' otherwise."
   "TODO"
   (doom/describe-package (intern-soft pkg)))
 
+;;;###autoload
+(defun +org-link--doom-executable-link-activate-fn (start end executable _bracketed-p)
+  (when buffer-read-only
+    (let ((found (executable-find executable)))
+      (add-text-properties
+       start end
+       (list 'display
+             (concat
+              (propertize
+               ""
+               'rear-nonsticky t
+               'display '(raise -0.02)
+               'face (list :family "all-the-icons"
+                           :height 1.0
+                           :inherit (if found 'success 'error)))
+              " "
+              (propertize
+               executable
+               'face (if found 'org-verbatim 'default))))))))
 
 ;;
 ;;; Image data functions (for custom inline images)
