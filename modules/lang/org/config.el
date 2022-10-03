@@ -587,6 +587,11 @@ relative to `org-directory', unless it is an absolute path."
      :face #'+org-link--doom-module-link-face-fn
      :eldoc (-eldoc-fn "Doom module" 'org-priority))
     (org-link-set-parameters
+     "doom-executable"
+     :activate-func #'+org-link--doom-executable-link-activate-fn
+     ;; :help-echo #'doom-docs--help-echo-from-textprop
+     :face 'org-verbatim)
+    (org-link-set-parameters
      "doom-ref"
      :follow (lambda (link)
                (let ((link (+org-link-read-desc-at-point link))
