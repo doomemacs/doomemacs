@@ -251,6 +251,67 @@ exist, and `org-link' otherwise."
                'face (if found 'org-verbatim 'default))))))))
 
 ;;
+;;; Help-echo / eldoc
+
+(defadvice! doom-docs--display-docs-link-in-eldoc-a (&rest _)
+  "Display help for doom-*: links in minibuffer when cursor/mouse is over it."
+  :before-until #'org-eldoc-documentation-function
+  (and (bound-and-true-p doom-docs-mode)
+       (eq (get-text-property (point) 'help-echo)
+           #'+org-link-doom--help-echo-from-textprop)
+       (+org-link-doom--help-echo-from-textprop nil (current-buffer) (point))))
+
+(defvar +org-link-doom--help-echo-cache nil)
+
+(defun +org-link-doom--help-echo-from-textprop (_window object pos)
+  (let ((link (with-current-buffer object
+                (save-excursion (goto-char pos) (org-element-context)))))
+    (if (eq (car +org-link-doom--help-echo-cache)
+            (org-element-property :begin link))
+        (cdr +org-link-doom--help-echo-cache)
+      (cdr (setq +org-link-doom--help-echo-cache
+                 (cons (org-element-property :begin link)
+                       (+org-link-doom--help-string link)))))))
+
+(defun +org-link-doom--help-string (link)
+  (if (not buffer-read-only)
+      (format "LINK: %s" (org-element-property :raw-link link))
+    (pcase (org-element-property :type link)
+      ("doom-package"
+       (concat
+        (propertize "Emacs package " 'face 'bold)
+        (propertize (org-element-property :path link) 'face 'font-lock-keyword-face)
+        ", currently "
+        (cond
+         ((featurep (intern-soft (org-element-property :path link)))
+          (propertize "installed and loaded" 'face 'success))
+         ((locate-library (org-element-property :path link))
+          (propertize "installed but not loaded" 'face 'warning))
+         (t (propertize "not installed" 'face 'error )))))
+      ("doom-module"
+       (concat
+        (propertize "Doom module " 'face 'bold)
+        (propertize (org-element-property :path link) 'face 'font-lock-keyword-face)
+        ", currently "
+        (cl-destructuring-bind (&key category module flag)
+            (+org-link--read-module-spec (org-element-property :path link))
+          (cond
+           ((doom-module-p category module)
+            (propertize "enabled" 'face 'success))
+           ((and category (doom-module-locate-path category module))
+            (propertize "disabled" 'face 'error))
+           (t (propertize "unknown" 'face '(bold error)))))))
+      ("doom-executable"
+       (concat
+        (propertize "System executable " 'face 'bold)
+        (propertize (org-element-property :path link) 'face 'font-lock-keyword-face)
+        ", "
+        (if (executable-find (org-element-property :path link))
+            (propertize "found" 'face 'success)
+          (propertize "not found" 'face 'error))
+        " on PATH")))))
+
+;;
 ;;; Image data functions (for custom inline images)
 
 ;;;###autoload
