@@ -10,11 +10,11 @@ intuitive out of the box:
 
 - A custom, centralized attachment system that stores files in one place, rather
   than in the same directory as the input file(s) (only applies to attachments
-  from files in/under ~org-directory~).
+  from files in/under var:org-directory).
 - Executable code blocks with support for a variety of languages and tools
   (depending on what :lang modules are enabled).
 - Supports an external org-capture workflow through the =bin/org-capture= shell
-  script and ~+org-capture/open-frame~.
+  script and fn:+org-capture/open-frame.
 - A configuration for using org-mode for slide-show presentations or exporting
   org files to reveal.js slideshows.
 - Drag-and-drop support for images (with inline preview) and media files (drops
@@ -22,8 +22,8 @@ intuitive out of the box:
 - Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
   (requires flags).
 - Export-to-clipboard functionality, for copying text into formatted html,
-  markdown or rich text to the clipboard (see ~+org/export-to-clipboard~ and
-  ~+org/export-to-clipboard-as-rich-text~).
+  markdown or rich text to the clipboard (see fn:+org/export-to-clipboard and
+  fn:+org/export-to-clipboard-as-rich-text).
 
 #+begin_quote
 Org is a system for writing plain text notes with syntax highlighting, code
@@ -50,7 +50,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   for images and an icon+link for other media types.
 - +gnuplot ::
   Install gnuplot & gnuplot-mode, which enables rendering images from gnuplot
-  src blocks or plotting tables with ~org-plot/gnuplot~ (bound to =SPC m b p=,
+  src blocks or plotting tables with fn:org-plot/gnuplot (bound to =SPC m b p=,
   by default).
 - +hugo ::
   Enable integration with [[https://gohugo.io][hugo]] to export from Emacs well-formed ([[https://github.com/russross/blackfriday][blackfriday]])
@@ -85,45 +85,45 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   on your system. /Incompatible with [[doom-module:+roam]]./
 
 ** Packages
-- [[doom-package:][evil-org]] if [[doom-package:][:editor evil]]
-- [[doom-package:][htmlize]]
-- [[doom-package:][jupyter]] if [[doom-package:][+jupyter]]
-- [[doom-package:][ob-ammonite]] if [[doom-package:][:lang scala]]
-- [[doom-package:][ob-async]]
-- [[doom-package:][ob-crystal]] if [[doom-package:][:lang crystal]]
-- [[doom-package:][ob-go]] if [[doom-package:][:lang go]]
-- [[doom-package:][ob-ipython]] if [[doom-package:][+ipython]]
-- [[doom-package:][ob-nim]] if [[doom-package:][:lang nim]]
-- [[doom-package:][ob-racket]] if [[doom-package:][:lang racket]]
-- [[doom-package:][ob-restclient]] if [[doom-package:][:lang rest]]
-- [[doom-package:][ob-rust]] if [[doom-package:][:lang rust]]
-- [[doom-package:][org-contacts]] if [[doom-package:][+contacts]]
-- [[doom-package:][org-cliplink]]
-- [[doom-package:][org-download]] if [[doom-package:][+dragndrop]]
-- [[doom-package:][orgit]]
-- [[doom-package:][org-noter]] if [[doom-package:][+noter]]
-- [[doom-package:][org-pdftools]] if [[doom-package:][:tools pdf]]
-- [[doom-package:][org-plus-contrib]]
-- [[doom-package:][org-passwords]] if [[doom-package:][+passwords]]
-- [[doom-package:][org-pomodoro]] if [[doom-package:][+pomodoro]]
-- [[doom-package:][org-roam]] (v1) if [[doom-package:][+roam]]
-- [[doom-package:][org-roam]] (v2) if [[doom-package:][+roam2]]
-- [[doom-package:][org-yt]]
-- [[doom-package:][ox-clip]]
-- [[doom-package:][ox-hugo]] if [[doom-package:][+hugo]]
-- [[doom-package:][ox-pandoc]] if [[doom-package:][+pandoc]]
-- [[doom-package:][ox-rst]] if [[doom-package:][:lang rst]]
-- [[doom-package:][toc-org]]
-- if [[doom-package:][+gnuplot]]
-  - [[doom-package:][gnuplot]]
-  - [[doom-package:][gnuplot-mode]]
-- if [[doom-package:][+present]]
-  - [[doom-package:][centered-window]]
-  - [[doom-package:][org-tree-slide]]
-  - [[doom-package:][org-re-reveal]]
-- if [[doom-package:][+pretty]]
-  - [[doom-package:][org-superstar]]
-  - [[doom-package:][org-fancy-priorities]]
+- [[doom-package:evil-org]] if [[doom-module::editor evil]]
+- [[doom-package:htmlize]]
+- [[doom-package:jupyter]] if [[doom-module:+jupyter]]
+- [[doom-package:ob-ammonite]] if [[doom-module::lang scala]]
+- [[doom-package:ob-async]]
+- [[doom-package:ob-crystal]] if [[doom-module::lang crystal]]
+- [[doom-package:ob-go]] if [[doom-module::lang go]]
+- [[doom-package:ob-ipython]] if [[doom-module:+ipython]]
+- [[doom-package:ob-nim]] if [[doom-module::lang nim]]
+- [[doom-package:ob-racket]] if [[doom-module::lang racket]]
+- [[doom-package:ob-restclient]] if [[doom-module::lang rest]]
+- [[doom-package:ob-rust]] if [[doom-module::lang rust]]
+- [[doom-package:org-contacts]] if [[doom-module:+contacts]]
+- [[doom-package:org-cliplink]]
+- [[doom-package:org-download]] if [[doom-module:+dragndrop]]
+- [[doom-package:orgit]]
+- [[doom-package:org-noter]] if [[doom-module:+noter]]
+- [[doom-package:org-pdftools]] if [[doom-module::tools pdf]]
+- [[doom-package:org-plus-contrib]]
+- [[doom-package:org-passwords]] if [[doom-module:+passwords]]
+- [[doom-package:org-pomodoro]] if [[doom-module:+pomodoro]]
+- [[doom-package:org-roam]] (v1) if [[doom-module:+roam]]
+- [[doom-package:org-roam]] (v2) if [[doom-module:+roam2]]
+- [[doom-package:org-yt]]
+- [[doom-package:ox-clip]]
+- [[doom-package:ox-hugo]] if [[doom-module:+hugo]]
+- [[doom-package:ox-pandoc]] if [[doom-module:+pandoc]]
+- [[doom-package:ox-rst]] if [[doom-module::lang rst]]
+- [[doom-package:toc-org]]
+- if [[doom-module:+gnuplot]]
+  - [[doom-package:gnuplot]]
+  - [[doom-package:gnuplot-mode]]
+- if [[doom-module:+present]]
+  - [[doom-package:centered-window]]
+  - [[doom-package:org-tree-slide]]
+  - [[doom-package:org-re-reveal]]
+- if [[doom-module:+pretty]]
+  - [[doom-package:org-superstar]]
+  - [[doom-package:org-fancy-priorities]]
 
 ** Hacks
 - Adds support for a ~:sync~ parameter for org src blocks. This overrides
@@ -153,7 +153,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   loaded when the server receives a request for an =org-protocol://= url.
 - Babel and babel plugins are now lazy loaded (see
   [[fn:+org-init-babel-lazy-loader-h]]); loaded when a src block is executed. No need
-  to use [[fn:org-babel-do-load-languages]] in your config, just install your babel
+  to use [[var:org-babel-do-load-languages]] in your config, just install your babel
   packages to extend language support (and ensure its ~org-babel-execute:*~
   function is autoloaded).
 - If a variable is used as a file path in [[var:org-capture-template]], it will be
