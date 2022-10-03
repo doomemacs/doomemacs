@@ -11,4 +11,4 @@
 (when (modulep! :ui workspaces)
   (package! treemacs-persp))
 (when (modulep! +lsp)
-  (package! lsp-treemacs :pin "f7ae97560cfbc88e781a2d5b9253dace7175b918"))
+  (package! lsp-treemacs :pin "2894e6dec583eaa77037627e9d8c3bc89cf7273d"))
