@@ -10,8 +10,7 @@
   (unless (or langtool-bin
               langtool-language-tool-jar
               langtool-java-classpath)
-    (cond ((executable-find "languagetool")
-           (setq langtool-bin (executable-find "languagetool")))
+    (cond ((setq langtool-bin (executable-find "languagetool")))
           (IS-MAC
            (cond
             ;; is user using home brew?
@@ -26,6 +25,7 @@
              (setq langtool-java-classpath "/opt/local/share/java/LanguageTool/*"))))
           (IS-LINUX
            (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")))))
+
 
 ;; Detects weasel words, passive voice and duplicates. Proselint would be a
 ;; better choice.
