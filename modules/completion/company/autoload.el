@@ -155,3 +155,18 @@ C-x C-l."
   (let ((company-selection-wrap-around t))
     (call-interactively #'+company/dabbrev)
     (company-select-previous-or-abort)))
+
+;;;###autoload
+(defun +company/completing-read ()
+  "Complete current company candidates in minibuffer.
+
+Uses ivy, helm, vertico, or ido, if available."
+  (interactive)
+  (cond ((modulep! :completion ivy)
+         (call-interactively #'counsel-company))
+        ((modulep! :completion helm)
+         (call-interactively #'helm-company))
+        ((not company-candidates)
+         (user-error "No company candidates available"))
+        ((when-let (cand (completing-read "Candidate: " company-candidates))
+           (company-finish cand)))))

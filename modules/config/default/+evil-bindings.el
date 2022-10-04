@@ -142,9 +142,7 @@
          "C-u"     #'company-previous-page
          "C-d"     #'company-next-page
          "C-s"     #'company-filter-candidates
-         "C-S-s"   (cond ((modulep! :completion vertico)  #'completion-at-point)
-                         ((modulep! :completion ivy)      #'counsel-company)
-                         ((modulep! :completion helm)     #'helm-company))
+         "C-S-s"   #'+company/completing-read
          "C-SPC"   #'company-complete-common
          "TAB"     #'company-complete-common-or-cycle
          [tab]     #'company-complete-common-or-cycle
