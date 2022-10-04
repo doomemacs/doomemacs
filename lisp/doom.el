@@ -610,7 +610,7 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
 ;; defvaralias, which are done because ensuring aliases are created before
 ;; packages are loaded is an unneeded and unhelpful maintenance burden. Emacs
 ;; still aliases them fine regardless.
-(setq warning-suppress-types '(defvaralias))
+(setq warning-suppress-types '((defvaralias)))
 
 ;; Reduce debug output unless we've asked for it.
 (setq debug-on-error init-file-debug
