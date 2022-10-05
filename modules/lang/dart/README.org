@@ -87,7 +87,7 @@ flutter doctor # for Dependency check and further instructions
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-- Syntax highlighting and formatting for ~.dart~ files provided by LSP.
+- Syntax highlighting and formatting for ~.dart~ files provided by LSP or [[doom-module::editor format]].
 - Auto import.
 - Widget guide lines for Flutter.
 - Closing labels for constructors.
