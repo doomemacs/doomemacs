@@ -59,6 +59,12 @@ This module also enables the evaluation of =lisp= source blocks in Org Mode.
 However, you will need a running Sly session for this to work. ~M-x sly~ starts
 such a session if you didn't have one open already.
 
+** formatter
+By enabling [[doom-module::editor format]], [[fn:apheleia-indent-lisp-buffer]] will be
+used to format the current buffer.
+
+Enable [[doom-module::editor format +onsave]] to format the buffer on save.
+
 * TODO Configuration
 #+begin_quote
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
