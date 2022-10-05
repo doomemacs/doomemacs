@@ -74,6 +74,7 @@ zypper install elixir
 - Phoenix support
 - ~iex~ integration ([[doom-module::tools eval]])
 - Syntax checking ([[doom-module::checkers syntax]], using [[doom-package:flycheck-credo]])
+- Formatting for elixir files provided by [[doom-module::editor format]].
 
 ** exunit-mode
 The exunit-mode prefix is [[kbd:][<localleader> t]]. Here is some examples:
