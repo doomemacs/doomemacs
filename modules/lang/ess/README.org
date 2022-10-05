@@ -1,3 +1,5 @@
+← [[doom-module-index:][Back to module index]]              ↖ [[doom-module-history:lang/ess][History]]  ! [[doom-module-issues:::lang ess][Issues]]  ± [[doom-suggest-edit:][Suggest edits]]  ? [[doom-help-modules:][Help]]
+--------------------------------------------------------------------------------
 #+title:    :lang ess
 #+subtitle: 73.6% of all statistics are made up
 #+created:  February 05, 2018
@@ -22,12 +24,12 @@ SAS, Julia and Stata.
 - [[doom-package:ess-R-data-view]]
 - [[doom-package:polymode]]
 - [[doom-package:poly-R]]
+- [[doom-package:quarto-mode]]
 - if [[doom-module:+stan]]
   - [[doom-package:company-stan]] if [[doom-module::completion company]]
   - [[doom-package:eldoc-stan]]
   - [[doom-package:flycheck-stan]] if [[doom-module::checkers syntax]]
   - [[doom-package:stan-mode]]
-
 ** Hacks
 /No hacks documented for this module./
 
