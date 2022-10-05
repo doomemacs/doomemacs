@@ -158,3 +158,6 @@
     :when (modulep! :checkers syntax -flymake)
     :hook (stan-mode . flycheck-stan-stanc2-setup)
     :hook (stan-mode . flycheck-stan-stanc3-setup)))
+
+(use-package!  quarto-mode
+  :mode (("\\.[qQ][mM][dD]" . poly-quarto-mode)))
