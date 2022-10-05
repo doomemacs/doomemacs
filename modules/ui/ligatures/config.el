@@ -206,7 +206,8 @@ and cannot run in."
                (or (alist-get ',id +ligatures--font-alist)
                    (error "No ligature font called %s" ',id))
              (when range
-               (set-fontset-font t range name nil 'prepend))
+               (when (fboundp 'set-fontset-font)
+                 (set-fontset-font t range name nil 'prepend)))
              (setq-default prettify-symbols-alist
                            (append (default-value 'prettify-symbols-alist)
                                    (mapcar #'+ligatures--correct-symbol-bounds ,alist-var)))))
