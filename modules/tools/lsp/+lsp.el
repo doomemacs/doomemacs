@@ -76,15 +76,16 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
           (setq-local flycheck-checker old-checker))
       (apply fn args)))
 
-  (add-hook! 'lsp-mode-hook
-    (defun +lsp-display-guessed-project-root-h ()
-      "Log what LSP things is the root of the current project."
-      ;; Makes it easier to detect root resolution issues.
-      (when-let (path (buffer-file-name (buffer-base-buffer)))
-        (if-let (root (lsp--calculate-root (lsp-session) path))
-            (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
-          (lsp--info "Could not guess project root."))))
-    #'+lsp-optimization-mode)
+  (defadvice! +lsp-display-guessed-project-root (root)
+    "Log what LSP things is the root of the current project."
+    ;; Makes it easier to detect root resolution issues.
+    :filter-return #'lsp--calculate-root
+    (if root
+        (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
+      (lsp--info "Could not guess project root."))
+    root)
+
+  (add-hook! 'lsp-mode-hook #'+lsp-optimization-mode)
 
   (when (modulep! :completion company)
     (add-hook! 'lsp-completion-mode-hook
