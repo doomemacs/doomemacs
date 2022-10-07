@@ -24,9 +24,6 @@
                 (org-startup-indented nil)
                 (org-startup-folded nil)
                 (vc-handled-backends nil)
-                ;; Emit more information about the tangle process:
-                (org-babel-pre-tangle-hook org-babel-pre-tangle-hook)   ; before file tangle
-                (org-babel-tangle-body-hook org-babel-tangle-body-hook) ; after src block
                 ;; Prevent unwanted entries in recentf, or formatters, or
                 ;; anything that could be on these hooks, really. Nothing else
                 ;; should be touching these files (particularly in interactive
@@ -41,17 +38,9 @@
                 ;; Allow evaluation of src blocks at tangle-time (would abort
                 ;; them otherwise). This is a security hazard, but Doom will
                 ;; trust that you know what you're doing!
-                (org-confirm-babel-evaluate nil))
-            (push (lambda () (print! (start "Tangling file: %s...") buffer-file-name))
-                  org-babel-pre-tangle-hook)
-            (print-group!
-             (push (lambda ()
-                     (let ((element (org-element-at-point)))
-                       (when (eq 'src-block (org-element-type element))
-                         (org-element-property :language element)
-                         (print! (start "Tangling %s block...")
-                                 (org-element-property :language element)))))
-                   org-babel-tangle-body-hook))
+                (org-confirm-babel-evaluate nil)
+                ;; Say a little more
+                (doom-print-message-level 'info))
             (if-let (files (org-babel-tangle-file target dest))
                 (always (print! (success "Done tangling %d file(s)!" (length files))))
               (print! (error "Failed to tangle any blocks from your config."))
