@@ -8,7 +8,6 @@
 ;; Tools
 (package! js2-refactor :pin "a0977c4ce1918cc266db9d6cd7a2ab63f3a76b9a")
 (package! npm-mode :pin "3ee7c0bad5b7a041d4739ef3aaa06a3dc764e5eb")
-(package! add-node-modules-path :pin "63f047fd84b825876152743f66de7ee6f9ed203b")
 
 ;; Eval
 (package! nodejs-repl :pin "3b841055cad00f442e4a9159b1056f59411b6646")

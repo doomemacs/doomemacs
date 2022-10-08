@@ -31,6 +31,15 @@ ignore the cache."
              (assq packages deps))
             (t (error "Expected a package symbol or list, got %s" packages))))))
 
+;;;###autoload
+(defun +javascript-add-npm-path-h ()
+  "Add node_modules/.bin to `exec-path'."
+  (when-let ((node-modules-parent (locate-dominating-file default-directory "node_modules/"))
+             (node-modules-dir (expand-file-name "node_modules/.bin/" node-modules-parent)))
+    (make-local-variable 'exec-path)
+    (add-to-list 'exec-path node-modules-dir)
+    (doom-log ":lang:javascript: add %s to $PATH" (expand-file-name "node_modules/" node-modules-parent))))
+
 
 ;;
 ;; Commands

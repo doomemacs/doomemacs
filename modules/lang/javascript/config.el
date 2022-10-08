@@ -323,7 +323,7 @@ to tide."
            typescript-mode
            solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks '(add-node-modules-path npm-mode))
+  :add-hooks '(+javascript-add-npm-path-h npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))
