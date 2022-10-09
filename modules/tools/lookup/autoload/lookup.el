@@ -371,7 +371,7 @@ search otherwise."
 
 ;;;###autoload
 (defun +lookup/documentation (identifier &optional arg)
-  "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
+  "Show documentation for IDENTIFIER (defaults to symbol at point or selection).
 
 First attempts the :documentation handler specified with `set-lookup-handlers!'
 for the current mode/buffer (if any), then falls back to the backends in
