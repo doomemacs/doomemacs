@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/treemacs/packages.el
 
-(package! treemacs :pin "e4bb236bd5cd7c077c2207b33d2699485c405536")
+(package! treemacs :pin "12e0393163c290cd04667e18275f2f6368bf3286")
 ;; These packages have no :pin because they're in the same repo
 (when (modulep! :editor evil +everywhere)
   (package! treemacs-evil))
