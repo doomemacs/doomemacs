@@ -327,7 +327,7 @@ If RETURN-P, return the message as a string instead of displaying it."
   (doom-require 'doom-profiles)
   (let ((init-file (doom-profile-init-file)))
     (unless (file-exists-p init-file)
-      (user-error "Profile init file hasn't been generated. Did you forgot to run 'doom sync'?"))
+      (user-error "Profile init file hasn't been generated. Did you forget to run 'doom sync'?"))
     (let (kill-emacs-query-functions
           kill-emacs-hook)
       ;; Loads modules, then $DOOMDIR/config.el
