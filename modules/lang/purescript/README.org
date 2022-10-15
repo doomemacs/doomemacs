@@ -11,13 +11,13 @@ This module adds [[https://www.purescript.org/][Purescript]] support to Doom Ema
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~purescript-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~purescript-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/nwolverson/purescript-language-server][purescript-language-server]]).
 
 ** Packages
-- [[doom-package:][psci]]
-- [[doom-package:][psc-ide]]
-- [[doom-package:][purescript-mode]]
+- [[doom-package:psci]]
+- [[doom-package:psc-ide]]
+- [[doom-package:purescript-mode]]
 
 ** Hacks
 /No hacks documented for this module./

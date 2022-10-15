@@ -13,7 +13,7 @@
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][hy-mode]]
+- [[doom-package:hy-mode]]
 
 ** Hacks
 /No hacks documented for this module./

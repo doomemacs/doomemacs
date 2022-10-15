@@ -8,7 +8,7 @@ This module brings a side panel for browsing project files, inspired by vim's
 NERDTree.
 
 #+begin_quote
- 💡 Sure, there's [[doom-package:][dired]] and [[doom-package:][projectile]], but sometimes I'd like a bird's eye view
+ 💡 Sure, there's [[doom-package:dired]] and [[doom-package:projectile]], but sometimes I'd like a bird's eye view
     of a project.
 #+end_quote
 
@@ -19,7 +19,7 @@ NERDTree.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][neotree]]
+- [[doom-package:neotree]]
 
 ** TODO Hacks
 #+begin_quote

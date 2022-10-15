@@ -16,12 +16,12 @@ This module provides reasonable defaults and augmentations for dired.
   Enables dired to be more like [[https://github.com/ranger/ranger][ranger]].
 
 ** Packages
-- [[doom-package:][all-the-icons-dired]] if [[doom-module:][+icons]]
-- [[doom-package:][diff-hl]]
-- [[doom-package:][diredfl]]
-- [[doom-package:][dired-rsync]]
-- [[doom-package:][fd-dired]]
-- [[doom-package:][ranger]] if [[doom-module:][+ranger]]
+- [[doom-package:all-the-icons-dired]] if [[doom-module:+icons]]
+- [[doom-package:diff-hl]]
+- [[doom-package:diredfl]]
+- [[doom-package:dired-rsync]]
+- [[doom-package:fd-dired]]
+- [[doom-package:ranger]] if [[doom-module:+ranger]]
 
 ** TODO Hacks
 #+begin_quote
@@ -47,13 +47,13 @@ This module has no requirements *except on BSDs* like MacOS or FreeBSD, where
 |---------+----------------------------|
 | [[kbd:][SPC f d]] | Find directory with dired  |
 | [[kbd:][q]]       | Exit dired buffer          |
-| [[kbd:][C-c C-r]] | Run [[doom-package:][dired-rsync]]            |
-| [[kbd:][C-c C-e]] | Rename entries with [[doom-package:][wdired]] |
+| [[kbd:][C-c C-r]] | Run [[doom-package:dired-rsync]]            |
+| [[kbd:][C-c C-e]] | Rename entries with [[doom-package:wdired]] |
 
 Other keybindings can be found on the official [[https://www.gnu.org/software/emacs/refcards/pdf/dired-ref.pdf][Dired reference card]].
 
 ** Ranger
-If [[doom-module:][+ranger]] is enabled often a buffer will be opened in minimal ranger mode
+If [[doom-module:+ranger]] is enabled often a buffer will be opened in minimal ranger mode
 (~deer-mode~). In this case [[kbd:][z P]] can be used to toggle between full ranger and
 ~deer-mode~.
 

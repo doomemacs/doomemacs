@@ -58,7 +58,7 @@ fi
 # the comments at the top of bin/doom for explanations.
 export __DOOMPID="${__DOOMPID:-$$}"
 export __DOOMSTEP="$((__DOOMSTEP+1))"
-export __DOOMGEOM="${__DOOMGEOM:-$(tput cols lines 2>/dev/null)}"
+export __DOOMGEOM="${__DOOMGEOM:-$(tput cols 2>/dev/null)x$(tput lines 2>/dev/null)}"
 export __DOOMGPIPE="${__DOOMGPIPE:-$__DOOMPIPE}"
 export __DOOMPIPE=
 [ -t 0 ] || __DOOMPIPE="${__DOOMPIPE}0"

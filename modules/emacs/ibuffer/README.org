@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This module augments the built-in [[doom-package:][ibuffer]] package.
+This module augments the built-in [[doom-package:ibuffer]] package.
 
 - Adds project-based grouping of buffers
 - Support for file-type icons
@@ -15,11 +15,11 @@ This module augments the built-in [[doom-package:][ibuffer]] package.
 
 ** Module flags
 - +icons ::
-  Enable filetype icons for buffers using [[doom-package:][all-the-icons]].
+  Enable filetype icons for buffers using [[doom-package:all-the-icons]].
 
 ** Packages
-- [[doom-package:][ibuffer-projectile]]
-- [[doom-package:][ibuffer-vc]]
+- [[doom-package:ibuffer-projectile]]
+- [[doom-package:ibuffer-vc]]
 
 ** TODO Hacks
 #+begin_quote

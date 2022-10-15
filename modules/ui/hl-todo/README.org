@@ -16,7 +16,7 @@ This module adds syntax highlighting for various tags in code comments, such as
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][hl-todo]]
+- [[doom-package:hl-todo]]
  
 ** Hacks
 /No hacks documented for this module./

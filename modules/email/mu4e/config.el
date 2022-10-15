@@ -426,6 +426,15 @@ Usefull for affecting HTML export config.")
         :localleader
         :desc "attach" "a" #'+mu4e/attach-files)
 
+  ;; I feel like it's reasonable to expect files to be attached
+  ;; in the order you attach them, not the reverse.
+  (defadvice! +org-msg-attach-attach-in-order-a (file &rest _args)
+    "Link FILE into the list of attachment."
+    :override #'org-msg-attach-attach
+    (interactive (list (read-file-name "File to attach: ")))
+    (let ((files (org-msg-get-prop "attachment")))
+      (org-msg-set-prop "attachment" (nconc files (list file)))))
+
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
   (defun +mu4e-compose-org-msg-handle-toggle (toggle-p)

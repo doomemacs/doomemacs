@@ -314,7 +314,7 @@ SEE ALSO:
   (let (doomrc)
     (cond
      ((setq doomrc (getenv "DOOMRC"))
-      (load! doomrc))
+      (load! doomrc default-directory))
      ((setq doomrc (locate-dominating-file default-directory ".doomrc"))
       (load! ".doomrc" doomrc)))))
 

@@ -542,11 +542,10 @@ relative to `org-directory', unless it is an absolute path."
   ;; Add "lookup" links for packages and keystrings; useful for Emacs
   ;; documentation -- especially Doom's!
   (letf! ((defun -call-interactively (fn)
-            (lambda (link)
-              (let ((desc (+org-link-read-desc-at-point link)))
-                (funcall
-                 fn (or (intern-soft desc)
-                        (user-error "Can't find documentation for %S" desc))))))
+            (lambda (path _prefixarg)
+              (funcall
+               fn (or (intern-soft path)
+                      (user-error "Can't find documentation for %S" path)))))
           (defun -eldoc-fn (label face)
             (lambda (context)
               (format "%s %s"
@@ -1060,7 +1059,9 @@ between the two."
          "L" #'org-insert-all-links
          "s" #'org-store-link
          "S" #'org-insert-last-stored-link
-         "t" #'org-toggle-link-display)
+         "t" #'org-toggle-link-display
+         (:when (modulep! :os macos)
+          "g" #'org-mac-link-get-link))
         (:prefix ("P" . "publish")
          "a" #'org-publish-all
          "f" #'org-publish-current-file

@@ -20,18 +20,18 @@ This module adds Lua support to Doom Emacs.
 - +fennel ::
   Enable support for the Fennel language.
 - +lsp ::
-  Enable LSP support for ~lua-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~lua-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports EmmyLua, lua-language-server, and lua-lsp).
 - +moonscript ::
   Enable support for the Moonscript language.
 
 ** Packages
-- [[doom-package:][company-lua]] if [[doom-module:][:completion company]]
-- [[doom-package:][fennel-mode]] if [[doom-module:][+fennel]]
-- [[doom-package:][lua-mode]]
-- if [[doom-module:][+moonscript]]
-  - [[doom-package:][flycheck-moonscript]] if [[doom-module:][:checkers syntax]]
-  - [[doom-package:][moonscript-mode]]
+- [[doom-package:company-lua]] if [[doom-module::completion company]]
+- [[doom-package:fennel-mode]] if [[doom-module:+fennel]]
+- [[doom-package:lua-mode]]
+- if [[doom-module:+moonscript]]
+  - [[doom-package:flycheck-moonscript]] if [[doom-module::checkers syntax]]
+  - [[doom-package:moonscript-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -48,8 +48,8 @@ fennel and moonscript transpilers. An LSP server is also required for LSP
 support.
 
 ** Language Server Protocol servers
-LSP server support depends on which flavor of the [[doom-module:][:tools lsp]] module you have
-installed ([[doom-package:][eglot]] or [[doom-package:][lsp-mode]]).
+LSP server support depends on which flavor of the [[doom-module::tools lsp]] module you have
+installed ([[doom-package:eglot]] or [[doom-package:lsp-mode]]).
 
 *** LSP-mode
 Three servers are supported, ordered from highest to lowest priority:
@@ -81,7 +81,7 @@ Eglot currently only supports one of the above servers out of the box:
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-- lua-lsp-dir :: This must be set when using [[doom-module:][+lsp]] and using [[https://github.com/sumneko/lua-language-server][lua-language-server]].
+- lua-lsp-dir :: This must be set when using [[doom-module:+lsp]] and using [[https://github.com/sumneko/lua-language-server][lua-language-server]].
   This controls where the repository has been cloned and built to finish the
   configuration of the server.
 

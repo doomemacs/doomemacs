@@ -14,7 +14,7 @@ Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][prodigy]]
+- [[doom-package:prodigy]]
 
 ** Hacks
 /No hacks documented for this module./

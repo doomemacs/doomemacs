@@ -21,13 +21,13 @@ This module wraps ~dart-mode~, with [[https://microsoft.github.io/language-serve
   Enable ~flutter~ integration and some sane defaults for Flutter development
   along with ~hover~ for desktop development.
 - +lsp ::
-  Enable LSP support for ~dart-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~dart-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports flutter).
 
 ** Packages
-- [[doom-package:][dart-mode]]
-- [[doom-package:][flutter.el]]
-- [[doom-package:][hover.el]]
+- [[doom-package:dart-mode]]
+- [[doom-package:flutter.el]]
+- [[doom-package:hover.el]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -92,7 +92,7 @@ flutter doctor # for Dependency check and further instructions
 - Widget guide lines for Flutter.
 - Closing labels for constructors.
 - Run tests interactively.
-- Outline support via [[doom-package:][lsp-treemacs]].
+- Outline support via [[doom-package:lsp-treemacs]].
 - Emacs functions for running and debugging Flutter projects.
 
 * TODO Configuration

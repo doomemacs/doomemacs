@@ -405,8 +405,8 @@ If FORCE-P, delete without confirmation."
    (list (buffer-file-name (buffer-base-buffer))
          current-prefix-arg))
   (let* ((path (or path (buffer-file-name (buffer-base-buffer))))
-         (short-path (abbreviate-file-name path)))
-    (unless (and path (file-exists-p path))
+         (short-path (and path (abbreviate-file-name path))))
+    (unless path
       (user-error "Buffer is not visiting any file"))
     (unless (file-exists-p path)
       (error "File doesn't exist: %s" path))

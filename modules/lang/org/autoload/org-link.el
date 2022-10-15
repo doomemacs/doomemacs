@@ -77,36 +77,43 @@ exist, and `org-link' otherwise."
                                     keystr t t)))
   keystr)
 
-(defun +org-link--read-module-link (link)
-  (cl-destructuring-bind (category &optional module flag)
-      (let ((desc (+org-link-read-desc-at-point link)))
-        (if (string-prefix-p "+" (string-trim-left desc))
-            (list nil nil (intern desc))
-          (mapcar #'intern (split-string desc " " nil))))
-    (list :category category
-          :module module
-          :flag flag)))
+(defun +org-link--read-module-spec (module-spec-str)
+  (if (string-prefix-p "+" (string-trim-left module-spec-str))
+      (let ((title (cadar (org-collect-keywords '("TITLE")))))
+        (if (and title (string-match-p "\\`:[a-z]+ [a-z]+\\'" title))
+            (+org-link--read-module-spec (concat title " " module-spec-str))
+          (list :category nil :module nil :flag (intern module-spec-str))))
+    (cl-destructuring-bind (category &optional module flag)
+        (mapcar #'intern (split-string
+                          (if (string-prefix-p ":" module-spec-str)
+                              module-spec-str
+                            (concat ":" module-spec-str))
+                          "[ \n]+" nil))
+      (list :category category
+            :module module
+            :flag flag))))
 
 ;;;###autoload
-(defun +org-link--doom-module-link-face-fn (link)
+(defun +org-link--doom-module-link-face-fn (module-path)
   (cl-destructuring-bind (&key category module flag)
-      (+org-link--read-module-link link)
+      (+org-link--read-module-spec module-path)
     (if (doom-module-locate-path category module)
         `(:inherit org-priority
           :weight bold)
       'error)))
+
 ;;;###autoload
-(defun +org-link-follow-doom-module-fn (link)
+(defun +org-link-follow-doom-module-fn (module-path _prefixarg)
   "TODO"
   (cl-destructuring-bind (&key category module flag)
-      (+org-link--read-module-link link)
+      (+org-link--read-module-spec module-path)
     (when category
       (let ((doom-modules-dirs (list doom-modules-dir)))
         (if-let* ((path (doom-module-locate-path category module))
                   (path (or (car (doom-glob path "README.org"))
                             path)))
             (find-file path)
-          (user-error "Can't find Doom module '%s'" link))))
+          (user-error "Can't find Doom module '%s'" module-path))))
     (when flag
       (goto-char (point-min))
       (when (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module flags")
@@ -118,11 +125,9 @@ exist, and `org-link' otherwise."
         (recenter)))))
 
 ;;;###autoload
-(defun +org-link-follow-doom-package-fn (link)
+(defun +org-link-follow-doom-package-fn (pkg _prefixarg)
   "TODO"
-  (doom/describe-package
-   (intern-soft
-    (+org-link-read-desc-at-point link))))
+  (doom/describe-package (intern-soft pkg)))
 
 
 ;;

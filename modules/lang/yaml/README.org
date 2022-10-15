@@ -11,11 +11,11 @@ This module provides support for the [[https://yaml.org/][YAML file format]] to 
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~yaml-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~yaml-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/redhat-developer/yaml-language-server][yaml-language-server]]).
 
 ** Packages
-- [[doom-package:][yaml-mode]]
+- [[doom-package:yaml-mode]]
 
 ** Hacks
 /No hacks documented for this module./

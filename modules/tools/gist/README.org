@@ -19,7 +19,7 @@ Adds the ability to manage, pull from, or push to your [[https://gist.github.com
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][gist]]
+- [[doom-package:gist]]
 
 ** Hacks
 /No hacks documented for this module./

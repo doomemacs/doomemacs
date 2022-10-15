@@ -14,8 +14,8 @@ examples; where the former can also be useful to users who don't use Doom.
 Some of Doom's components will read this file to generate documentation for you,
 for example:
 
-- Doom's [[doom-module:][:lang emacs-lisp]] module installs the [[doom-package:][elisp-demos]] package. This displays
-  usage examples alongside documentation in [[doom-package:][help]] and [[doom-package:][helpful]] buffers (produced
+- Doom's [[doom-module:][:lang emacs-lisp]] module installs the [[doom-package:elisp-demos]] package. This displays
+  usage examples alongside documentation in [[doom-package:help]] and [[doom-package:helpful]] buffers (produced
   by =describe-*= and =helpful-*= commands; e.g. [[kbd:][<help> h f]]). Doom has extended
   this package to search this file as well.
 - [[id:1b8b8fa9-6233-4ed8-95c7-f46f8e4e2592][Some Doom's CLI commands]] will emit documentation informed by Doom's org files,

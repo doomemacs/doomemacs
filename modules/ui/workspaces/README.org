@@ -4,7 +4,7 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module adds support for workspaces, powered by [[doom-package:][persp-mode]], as well as a API
+This module adds support for workspaces, powered by [[doom-package:persp-mode]], as well as a API
 for manipulating them.
 
 #+begin_quote
@@ -25,7 +25,7 @@ for manipulating them.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][persp-mode]]
+- [[doom-package:persp-mode]]
 
 ** TODO Hacks
 #+begin_quote

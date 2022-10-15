@@ -233,7 +233,10 @@ caches them in `doom--profiles'. If RELOAD? is non-nil, refresh the cache."
                                (remove-hook 'after-load-functions #'--doom-profile-set-deferred-vars--)
                                (unintern '--doom-profile-set-deferred-vars-- obarray)))
                            (add-hook 'after-load-functions #'--doom-profile-set-deferred-vars--)
-                           (--doom-profile-set-deferred-vars-- nil)))))))))
+                           (--doom-profile-set-deferred-vars-- nil)))))))
+            ;; `user-emacs-directory' requires that it end in a directory
+            ;; separator, but users may forget this in their profile configs.
+            (setq user-emacs-directory (file-name-as-directory user-emacs-directory))))
    :mode #o600
    :printfn #'pp)
   (print-group!

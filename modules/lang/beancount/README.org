@@ -14,15 +14,15 @@ you [[https://plaintextaccounting.org/][manage your money in plain text]].
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~beancount-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~beancount-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/polarmutex/beancount-language-server][beancount-language-server]]).
 
 ** Packages
-- [[doom-package:][beancount]]
+- [[doom-package:beancount]]
 
 ** Hacks
 - Associates the material =attach_money= icon with =*.beancount= files in the
-  [[doom-package:][all-the-icons]] package.
+  [[doom-package:all-the-icons]] package.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.

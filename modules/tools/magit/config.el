@@ -242,7 +242,7 @@ ensure it is built when we actually use Forge."
 
   ;; Some extra vim-isms I thought were missing from upstream
   (evil-define-key* '(normal visual) magit-mode-map
-    "%"  #'magit-gitflow-popup
+    "*"  #'magit-worktree
     "zt" #'evil-scroll-line-to-top
     "zz" #'evil-scroll-line-to-center
     "zb" #'evil-scroll-line-to-bottom
@@ -283,11 +283,10 @@ ensure it is built when we actually use Forge."
       "gk" #'git-rebase-move-line-up))
 
   (after! magit-gitflow
-    (transient-replace-suffix 'magit-dispatch 'magit-worktree
-      '("%" "Gitflow" magit-gitflow-popup)))
-
-  (transient-append-suffix 'magit-dispatch '(0 -1 -1)
-    '("*" "Worktree" magit-worktree)))
+    (evil-define-key* '(normal visual) magit-mode-map
+      "%" #'magit-gitflow-popup)
+    (transient-append-suffix 'magit-dispatch 'magit-worktree
+      '("%" "Gitflow" magit-gitflow-popup))))
 
 
 (use-package! evil-collection-magit-section

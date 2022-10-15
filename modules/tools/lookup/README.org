@@ -26,26 +26,26 @@ or synonyms.
 - +docsets ::
   Enable integration with Dash.app docsets.
 - +offline ::
-  Install and prefer offline dictionary/thesaurus (with [[doom-module:][+dictionary]]).
+  Install and prefer offline dictionary/thesaurus (with [[doom-module:+dictionary]]).
 
 ** Packages
-- [[doom-package:][dumb-jump]]
-- [[doom-package:][helm-xref]] if [[doom-module:][:completion helm]]
-- [[doom-package:][ivy-xref]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][request]]
-- if [[doom-module:][+docsets]]
-  - [[doom-package:][dash-docs]]
-  - [[doom-package:][counsel-dash]] if [[doom-module:][:completion ivy]]
-  - [[doom-package:][helm-dash]] if [[doom-module:][:completion helm]]
-- if [[doom-module:][+dictionary]]
+- [[doom-package:dumb-jump]]
+- [[doom-package:helm-xref]] if [[doom-module::completion helm]]
+- [[doom-package:ivy-xref]] if [[doom-module::completion ivy]]
+- [[doom-package:request]]
+- if [[doom-module:+docsets]]
+  - [[doom-package:dash-docs]]
+  - [[doom-package:counsel-dash]] if [[doom-module::completion ivy]]
+  - [[doom-package:helm-dash]] if [[doom-module::completion helm]]
+- if [[doom-module:+dictionary]]
   - if macOS
-    - [[doom-package:][osx-dictionary]]
+    - [[doom-package:osx-dictionary]]
   - else
-    - [[doom-package:][define-word]]
-    - [[doom-package:][powerthesaurus]]
-    - if [[doom-module:][+offline]]
-      - [[doom-package:][wordnut]]
-      - [[doom-package:][synosaurus]]
+    - [[doom-package:define-word]]
+    - [[doom-package:powerthesaurus]]
+    - if [[doom-module:+offline]]
+      - [[doom-package:wordnut]]
+      - [[doom-package:synosaurus]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -60,9 +60,9 @@ or synonyms.
 This module has several optional dependencies:
 
 - ~ripgrep~ as a last-resort fallback for jump-to-definition/find-references.
-- ~sqlite3~ for Dash docset support (if you have [[doom-module:][+docsets]] enabled)
+- ~sqlite3~ for Dash docset support (if you have [[doom-module:+docsets]] enabled)
 - ~wordnet~ for offline dictionary and thesaurus support (if you have
-  [[doom-module:][+dictionary]] and [[doom-module:][+offline]] enabled).
+  [[doom-module:+dictionary]] and [[doom-module:+offline]] enabled).
 
 ** MacOS
 #+begin_src sh
@@ -102,7 +102,7 @@ following sources before giving up:
 1. Whatever ~:definition~ function is registered for the current buffer with the
    ~:lookup~ setting (see "Configuration" section).
 2. Any available xref backends.
-3. [[doom-package:][dumb-jump]] (a text search with aides to reduce false positives).
+3. [[doom-package:dumb-jump]] (a text search with aides to reduce false positives).
 3. An ordinary project-wide text search with =ripgrep=.
 5. If ~evil-mode~ is active, use ~evil-goto-definition~, which preforms a simple
    text search within the current buffer.
@@ -118,7 +118,7 @@ will try:
 
 1. Whatever ~:references~ function is registered for the current buffer with the
    ~:lookup~ setting (see [[*Configuration][Configuration]]).
-2. Any available [[doom-package:][xref]] backends.
+2. Any available [[doom-package:xref]] backends.
 3. An ordinary project-wide text search with ripgrep.
 
 If there are multiple results, you will be prompted to select one.
@@ -169,7 +169,7 @@ properties:
   Run when looking up the file for a symbol/string. Typically a file path. Used
   by ~+lookup/file~.
 - ~:xref-backend FN~ ::
-  Defines an [[doom-package:][xref]] backend, which implicitly provides ~:definition~ and
+  Defines an [[doom-package:xref]] backend, which implicitly provides ~:definition~ and
   ~:references~ handlers. If you specify them anyway, they will take precedence
   over the xref backend, however.
 

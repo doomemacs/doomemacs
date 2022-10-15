@@ -62,7 +62,7 @@ If you have any issues with this module do let me know
 
 * Appendix
 ** Variables
-- [[var:][+doom-quit-messages]]
+- [[var:+doom-quit-messages]]
 
 ** Functions
-- [[fn:][+doom-quit-fn]]
+- [[fn:+doom-quit-fn]]

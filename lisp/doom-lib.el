@@ -240,11 +240,13 @@ HOOK-VAR is triggered, it is reset to nil.
 HOOK-VAR is a quoted hook.
 TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (dolist (hook trigger-hooks)
-    (let ((fn (make-symbol (format "chain-%s-to-%s-h" hook-var hook))))
+    (let ((fn (make-symbol (format "chain-%s-to-%s-h" hook-var hook)))
+          running?)
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
             (when (and after-init-time
+                       (not running?)
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on
@@ -253,6 +255,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
                            ;; hook wasn't invoked interactively.
                            (and (boundp hook)
                                 (symbol-value hook))))
+              (setq running? t)  ; prevent infinite recursion
               (doom-run-hooks hook-var)
               (set hook-var nil))))
       (cond ((daemonp)
@@ -389,15 +392,6 @@ See `eval-if!' for details on this macro's purpose."
   (declare (indent 1))
   (when (eval cond)
     (macroexp-progn body)))
-
-(defmacro eval-when-compile! (&rest body)
-  "Evaluate BODY *only* during byte-compilation.
-
-Unlike `eval-when-compile', which is equivalent to `progn' in interpreted code,
-this macro's BODY will only be evaluated during byte-compilation."
-  (declare (indent 0))
-  (when (bound-and-true-p byte-compile-current-file)
-    (ignore (eval (macroexp-progn body) t))))
 
 (defmacro versionp! (v1 comp v2 &rest comps)
   "Perform compound version checks.
@@ -746,8 +740,9 @@ advised)."
        (defun ,fn (&rest _)
          ,(format "Transient hook for %S" (doom-unquote hook-or-function))
          ,@forms
-         (cond ((functionp sym) (advice-remove sym #',fn))
-               ((symbolp sym)   (remove-hook sym #',fn)))
+         (let ((sym ,hook-or-function))
+           (cond ((functionp sym) (advice-remove sym #',fn))
+                 ((symbolp sym)   (remove-hook sym #',fn))))
          (unintern ',fn nil))
        (cond ((functionp sym)
               (advice-add ,hook-or-function ,(if append? :after :before) #',fn))

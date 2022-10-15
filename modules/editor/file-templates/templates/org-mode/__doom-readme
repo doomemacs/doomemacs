@@ -39,7 +39,7 @@ the purpose of the module and the features/technology(ies) it provides.
   Display X in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than an overlay or tooltip. *Requires GUI
   Emacs.*
 - +lsp ::
-  Enable LSP support for ~X-mode~. Requires [[doom-module:][:tools lsp]] and a
+  Enable LSP support for ~X-mode~. Requires [[doom-module::tools lsp]] and a
   langserver (supports A, B, and C).
 
 # If this module has no flags, then...
@@ -52,13 +52,13 @@ the purpose of the module and the features/technology(ies) it provides.
 #+end_quote
 
 ** Packages
-- [[doom-package:][org]]
-- [[doom-package:][org-contrib]] if [[doom-module:][+contrib]]
-- [[doom-package:][org-bullets]] unless  [[doom-module:][+bullets]]
-- if [[doom-module:][+present]]
-  - [[doom-package:][centered-window]]
-  - [[doom-package:][org-tree-slide]]
-  - [[doom-package:][org-re-reveal]]
+- [[doom-package:org]]
+- [[doom-package:org-contrib]] if [[doom-module:+contrib]]
+- [[doom-package:org-bullets]] unless  [[doom-module:+bullets]]
+- if [[doom-module:+present]]
+  - [[doom-package:centered-window]]
+  - [[doom-package:org-tree-slide]]
+  - [[doom-package:org-re-reveal]]
 
 # If this module installs no packages, then...
 /This module doesn't install any packages./

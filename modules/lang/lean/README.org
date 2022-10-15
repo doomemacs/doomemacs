@@ -13,8 +13,8 @@ This module adds support for the [[https://leanprover.github.io/about/][Lean pro
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][lean-mode]]
-- [[doom-package:][company-lean]] if [[doom-module:][:completion company]]
+- [[doom-package:lean-mode]]
+- [[doom-package:company-lean]] if [[doom-module::completion company]]
 
 ** TODO Hacks
 #+begin_quote

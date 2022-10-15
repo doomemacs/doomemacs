@@ -8,7 +8,7 @@ This module provides a terminal emulator powered by libvterm. It is still in
 alpha and requires a component be compiled (=vterm-module.so=).
 
 #+begin_quote
- 💡 [[doom-package:][vterm]] is as good as terminal emulation gets in Emacs (at the time of
+ 💡 [[doom-package:vterm]] is as good as terminal emulation gets in Emacs (at the time of
     writing) and the most performant, as it is implemented in C. However, it
     requires extra steps to set up:
 
@@ -16,9 +16,9 @@ alpha and requires a component be compiled (=vterm-module.so=).
     - and =vterm-module.so= must be compiled, which depends on =libvterm=,
       =cmake=, and =libtool-bin=.
 
-    [[doom-package:][vterm]] will try to automatically build =vterm-module.so= when you first open
+    [[doom-package:vterm]] will try to automatically build =vterm-module.so= when you first open
     it, but this will fail on Windows, NixOS and Guix out of the box. Install
-    instructions for nix/guix can be found in the [[doom-module:][:term vterm]] module's
+    instructions for nix/guix can be found in the [[doom-module::term vterm]] module's
     documentation. There is no way to install vterm on Windows that I'm aware of
     (but perhaps with WSL?).
 #+end_quote
@@ -32,7 +32,7 @@ alpha and requires a component be compiled (=vterm-module.so=).
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][vterm]]
+- [[doom-package:vterm]]
 
 ** Hacks
 /No hacks documented for this module./

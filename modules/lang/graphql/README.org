@@ -8,14 +8,14 @@ This module adds [[https://www.graphql.org][GraphQL]] support to Doom Emacs.
 
 It includes:
 - Code completion
-- LSP support ([[doom-module:][+lsp]])
+- LSP support ([[doom-module:+lsp]])
   - Diagnostics (GraphQL syntax linting/validations) (spec-compliant)
   - Autocomplete suggestions (spec-compliant)
   - Hyperlink to fragment definitions and named types (type, input, enum) definitions (spec-compliant)
   - Outline view support for queries and SDL
   - Symbols support across the workspace
 - Local schema viewer
-- Org-babel exporter (requires [[doom-module:][:lang org]])
+- Org-babel exporter (requires [[doom-module::lang org]])
 
 ** Maintainers
 - [[doom-user:][@elken]]
@@ -24,16 +24,16 @@ It includes:
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~graphql-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~graphql-mode~. Requires [[doom-module::tools lsp]] and a langserver
   ([[https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli#readme][graphql-language-service-cli]]).
 
 ** Packages
-- [[doom-package:][company-graphql]] unless [[doom-module:][+lsp]]
-- [[doom-package:][graphql-mode]]
-- [[doom-package:][graphql-doc]]
+- [[doom-package:company-graphql]] unless [[doom-module:+lsp]]
+- [[doom-package:graphql-mode]]
+- [[doom-package:graphql-doc]]
 
 ** Hacks
-- Added a convenience function [[fn:][+graphql-doc-open-config]] to open schema docs from
+- Added a convenience function [[fn:+graphql-doc-open-config]] to open schema docs from
   a [[https://github.com/jimkyndemeyer/graphql-config-examples][.graphqlconfig]] file.
 
 ** TODO Changelog

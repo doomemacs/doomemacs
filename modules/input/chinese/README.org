@@ -14,11 +14,11 @@ methods: Pinyin and Wubi.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][ace-pinyin]]
-- [[doom-package:][chinese-wbim]] if [[doom-module:][+wubi]]
-- [[doom-package:][fcitx]]
-- [[doom-package:][pangu-spacing]]
-- [[doom-package:][pyim]] unless [[doom-module:][+wubi]]
+- [[doom-package:ace-pinyin]]
+- [[doom-package:chinese-wbim]] if [[doom-module:+wubi]]
+- [[doom-package:fcitx]]
+- [[doom-package:pangu-spacing]]
+- [[doom-package:pyim]] unless [[doom-module:+wubi]]
 
 ** Hacks
 - ~org-html-paragraph~ has been modified to join consecutive Chinese lines into

@@ -20,7 +20,7 @@ This module adds [[https://fstar-lang.org/][F*]] support, powered by [[https://g
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][fstar-mode]]
+- [[doom-package:fstar-mode]]
 
 ** Hacks
 /No hacks documented for this module./

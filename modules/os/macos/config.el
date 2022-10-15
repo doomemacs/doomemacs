@@ -45,6 +45,9 @@
   (setq delete-by-moving-to-trash t)
 
   ;; Lazy load `osx-trash'
-  (and IS-MAC
-       (not (fboundp 'system-move-file-to-trash))
-       (defalias #'system-move-file-to-trash #'osx-trash-move-file-to-trash)))
+  (when (not (fboundp 'system-move-file-to-trash))
+    (defun system-move-file-to-trash (file)
+      "Move FILE to trash."
+      (when (and (not IS-LINUX)
+                 (not (file-remote-p default-directory)))
+        (osx-trash-move-file-to-trash file)))))

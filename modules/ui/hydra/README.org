@@ -23,7 +23,7 @@ start with:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][hydra]]
+- [[doom-package:hydra]]
 
 ** Hacks
 /No hacks documented for this module./

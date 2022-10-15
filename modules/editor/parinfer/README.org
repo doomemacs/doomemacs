@@ -15,7 +15,7 @@ balanced and beautiful.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][parinfer-rust-mode]]
+- [[doom-package:parinfer-rust-mode]]
 
 ** Hacks
 /No hacks documented for this module./

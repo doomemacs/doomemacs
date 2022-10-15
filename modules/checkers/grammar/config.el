@@ -10,7 +10,8 @@
   (unless (or langtool-bin
               langtool-language-tool-jar
               langtool-java-classpath)
-    (cond (IS-MAC
+    (cond ((setq langtool-bin (executable-find "languagetool")))
+          (IS-MAC
            (cond
             ;; is user using home brew?
             ((file-directory-p "/usr/local/Cellar/languagetool")

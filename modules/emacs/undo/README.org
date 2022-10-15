@@ -14,13 +14,13 @@ persist across Emacs sessions.
 
 ** Module flags
 - +tree ::
-  Uses [[doom-package:][undo-tree]] instead of [[doom-package:][undo-fu]], which is a little less stable, but offers
+  Uses [[doom-package:undo-tree]] instead of [[doom-package:undo-fu]], which is a little less stable, but offers
   branching undo history and a visualizer for navigating it.
 
 ** Packages
-- [[doom-package:][undo-fu]]
-- [[doom-package:][undo-fu-session]]
-- [[doom-package:][undo-tree]] if [[doom-module:][+tree]]
+- [[doom-package:undo-fu]]
+- [[doom-package:undo-fu-session]]
+- [[doom-package:undo-tree]] if [[doom-module:+tree]]
 
 ** Hacks
 - Both undo-fu and undo-tree have been modified to use =zstd= to compress undo
@@ -54,7 +54,7 @@ persist across Emacs sessions.
 #+end_quote
 
 ** Disabling persistent undo history
-- If you are using [[doom-module:][+tree]]:
+- If you are using [[doom-module:+tree]]:
   #+begin_src emacs-lisp
   (after! undo-tree
     (setq undo-tree-auto-save-history nil))

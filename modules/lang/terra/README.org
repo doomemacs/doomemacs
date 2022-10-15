@@ -13,8 +13,8 @@
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][company-lua]] if [[doom-module:][:completion company]]
-- [[doom-package:][terra-mode]]
+- [[doom-package:company-lua]] if [[doom-module::completion company]]
+- [[doom-package:terra-mode]]
 
 ** Hacks
 /No hacks documented for this module./

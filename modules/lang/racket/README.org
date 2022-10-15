@@ -11,14 +11,14 @@ This module adds support for the [[https://www.racket-lang.org/][Racket programm
 
 ** Module flags
 - +lsp ::
-  Enable support for ~racket-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable support for ~racket-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/jeapostrophe/racket-langserver][racket-langserver]]).
 - +xp ::
   Enable the explore mode (~racket-xp-mode~), which "analyzes expanded code to
   explain and explore."
 
 ** Packages
-- [[doom-package:][racket-mode]]
+- [[doom-package:racket-mode]]
 
 ** Hacks
 /No hacks documented for this module./

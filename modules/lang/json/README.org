@@ -11,16 +11,16 @@ This module adds [[https://www.json.org/json-en.html][JSON]] support to Doom Ema
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~json-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~json-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/vscode-langservers/vscode-json-languageserver][vscode-json-languageserver]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][counsel-jq]] if [[doom-module:][:completion ivy]]
-- [[doom-package:][json-mode]]
-- [[doom-package:][json-snatcher]]
+- [[doom-package:counsel-jq]] if [[doom-module::completion ivy]]
+- [[doom-package:json-mode]]
+- [[doom-package:json-snatcher]]
 
 ** Hacks
 /No hacks documented for this module./

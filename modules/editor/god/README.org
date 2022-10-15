@@ -8,7 +8,7 @@
 #+end_quote
 
 * Description :unfold:
-Adds [[doom-package:][god-mode]] support to Doom Emacs, allowing for entering commands without
+Adds [[doom-package:god-mode]] support to Doom Emacs, allowing for entering commands without
 modifier keys, similar to Vim's modality, separating command mode and insert
 mode.
 
@@ -19,7 +19,7 @@ mode.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][god-mode]]
+- [[doom-package:god-mode]]
 
 ** Hacks
 /No hacks documented for this module./

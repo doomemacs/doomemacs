@@ -17,7 +17,7 @@ interface for opening and interacting with REPLs.
   minibuffer will be used anyway.
 
 ** Packages
-- [[doom-package:][quickrun]]
+- [[doom-package:quickrun]]
 
 ** Hacks
 - Quickrun has been modified to:
@@ -36,7 +36,7 @@ This module has no direct prerequisites.
 
 However, many languages will require that you install their interpreters, code
 runners and/or repls to power the functionality of this module. Visit the
-documentation of their respective [[doom-module:][:lang]] module for instructions.
+documentation of their respective [[doom-module::lang]] module for instructions.
 
 * TODO Usage
 #+begin_quote
