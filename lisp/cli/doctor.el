@@ -282,7 +282,7 @@ in."
                      (list doom-doctor--errors "error" 'red)))
     (when (car msg)
       (print! (color (nth 2 msg)
-                     (if (cdr msg)
+                     (if (cdar msg)
                          "There are %d %ss!"
                        "There is %d %s!")
                      (length (car msg)) (nth 1 msg)))))
