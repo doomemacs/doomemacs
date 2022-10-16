@@ -32,4 +32,4 @@
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)
   :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
-  :files (or "roles/" "tasks/main.yml"))
+  :files (or "roles/" "tasks/main.yml" "tasks/main.yaml"))
