@@ -274,7 +274,7 @@ Much of the behaviour of Consult commands can be changed with
 ~consult-customize~. The =vertico= module already does this, if you want to
 override the module's modifications, do:
 #+begin_src emacs-lisp
-(setq consult--read-config nil)
+(setq consult--customize-alist nil)
 (consult-customize ...)
 #+end_src
 
