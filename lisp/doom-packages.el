@@ -446,27 +446,29 @@ If MODULE-LIST is omitted, read enabled module list in configdepth order (see
 `doom-module-set'). Otherwise, MODULE-LIST may be any symbol (or t) to mean read
 all modules in `doom-modules-dir', including :core and :user. MODULE-LIST may
 also be a list of module keys."
-    (let ((module-list (cond ((null module-list) (doom-module-list))
-                             ((symbolp module-list) (doom-module-list 'all))
-                             (module-list)))
-          (packages-file doom-module-packages-file)
-          doom-disabled-packages
-          doom-packages)
-      (letf! (defun read-packages (key)
-               (doom-module-context-with key
-                 (when-let (file (doom-module-locate-path
-                                  (car key) (cdr key) doom-module-packages-file))
-                   (doom-packages--read file nil 'noerror))))
-        (doom-context-with 'packages
-          (when (assq :user module-list)
+  (let ((module-list (cond ((null module-list) (doom-module-list))
+                           ((symbolp module-list) (doom-module-list 'all))
+                           (module-list)))
+        (packages-file doom-module-packages-file)
+        doom-disabled-packages
+        doom-packages)
+    (letf! (defun read-packages (key)
+             (doom-module-context-with key
+               (when-let (file (doom-module-locate-path
+                                (car key) (cdr key) doom-module-packages-file))
+                 (doom-packages--read file nil 'noerror))))
+      (doom-context-with 'packages
+        (let ((user? (assq :user module-list)))
+          (when user?
             ;; We load the private packages file twice to populate
-            ;; `doom-disabled-packages' disabled packages are seen ASAP, and a
-            ;; second time to ensure privately overridden packages are properly
-            ;; overwritten.
+            ;; `doom-disabled-packages' disabled packages are seen ASAP...
             (let (doom-packages)
               (read-packages (cons :user nil))))
           (mapc #'read-packages module-list)
-          (nreverse doom-packages)))))
+          ;; ...Then again to ensure privately overriden packages are properly
+          ;; overwritten.
+          (if user? (read-packages (cons :user nil)))
+          (nreverse doom-packages))))))
 
 (defun doom-package-pinned-list ()
   "Return an alist mapping package names (strings) to pinned commits (strings)."
