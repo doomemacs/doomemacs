@@ -79,11 +79,12 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   (add-hook! 'lsp-mode-hook
     (defun +lsp-display-guessed-project-root-h ()
       "Log what LSP things is the root of the current project."
-      ;; Makes it easier to detect root resolution issues.
-      (when-let (path (buffer-file-name (buffer-base-buffer)))
-        (if-let (root (lsp--calculate-root (lsp-session) path))
-            (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
-          (lsp--info "Could not guess project root."))))
+      ;; Makes it easier to detect root resolution issues if auto-guess-root is on.
+      (when lsp-auto-guess-root
+        (when-let (path (buffer-file-name (buffer-base-buffer)))
+          (if-let (root (lsp--calculate-root (lsp-session) path))
+              (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
+            (lsp--info "Could not guess project root.")))))
     #'+lsp-optimization-mode)
 
   (when (modulep! :completion company)
