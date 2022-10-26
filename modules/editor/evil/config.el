@@ -424,7 +424,7 @@ directives. By default, this only recognizes C directives.")
 ;;   zu{q,w} - undo last marking
 
 (map! :v  "@"     #'+evil:apply-macro
-      :m  [C-i]   #'evil-jump-forward
+      :m  (if (display-graphic-p) [C-i] "TAB")  #'evil-jump-forward
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
