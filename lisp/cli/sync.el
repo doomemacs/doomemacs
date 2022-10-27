@@ -62,7 +62,7 @@ OPTIONS:
        (doom-packages-build)
        (when update?
          (doom-packages-update))
-       (doom-packages-purge purge? 'builds-p purge? purge? purge?)
+       (doom-packages-purge purge? purge? purge? purge? purge?)
        (when (doom-profile-generate)
          (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
          (run-hooks 'doom-after-sync-hook))
