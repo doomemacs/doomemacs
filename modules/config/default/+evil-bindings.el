@@ -195,7 +195,10 @@
         [right]    nil)
        (:after helm-files :map (helm-find-files-map helm-read-file-map)
         [C-return] #'helm-ff-run-switch-other-window
-        "C-w"      #'helm-find-files-up-one-level)
+        "C-w"      #'helm-find-files-up-one-level
+        (:when (modulep! :editor evil +everywhere)
+          "C-h"    #'helm-find-files-up-one-level
+          "C-l"    #'helm-execute-persistent-action))
        (:after helm-locate :map helm-generic-files-map
         [C-return] #'helm-ff-run-switch-other-window)
        (:after helm-buffers :map helm-buffer-map
