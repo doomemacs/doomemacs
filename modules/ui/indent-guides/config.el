@@ -2,21 +2,15 @@
 
 (use-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
-  :init
-  (setq highlight-indent-guides-method 'character
-        highlight-indent-guides-suppress-auto-error t)
+  :init (setq highlight-indent-guides-method 'character)
   :config
-  (defun +indent-guides-init-faces-h (&rest _)
-    (when (display-graphic-p)
-      (highlight-indent-guides-auto-set-faces)))
-
-  ;; HACK `highlight-indent-guides' calculates its faces from the current theme,
-  ;;      but is unable to do so properly in terminal Emacs, where it only has
-  ;;      access to 256 colors. So if the user uses a daemon we must wait for
-  ;;      the first graphical frame to be available to do.
-  (add-hook 'doom-load-theme-hook #'+indent-guides-init-faces-h)
-  (when doom-theme
-    (+indent-guides-init-faces-h))
+  ;; HACK: If this package is loaded too early (by the user, and in terminal
+  ;;   Emacs), then `highlight-indent-guides-auto-set-faces' will have been
+  ;;   called much too early to set its faces correctly. To get around this, we
+  ;;   need to call it again, but at a time when I can ensure a frame exists an
+  ;;   the current theme is loaded.
+  (when (doom-context-p 'init)
+    (add-hook 'doom-first-buffer-hook #'highlight-indent-guides-auto-set-faces))
 
   ;; `highlight-indent-guides' breaks when `org-indent-mode' is active
   (add-hook! 'org-mode-local-vars-hook
