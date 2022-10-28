@@ -14,7 +14,8 @@
     "Forces underlying SSL verification to prompt for self-signed or invalid
 certs, rather than reject them silently."
     :around #'restclient-http-do
-    (let (gnutls-verify-error tls-checktrust)
+    (require 'gnutls)
+    (let (gnutls-verify-error)
       (apply fn args)))
 
   (map! :map restclient-mode-map
