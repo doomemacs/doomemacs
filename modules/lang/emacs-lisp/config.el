@@ -56,12 +56,24 @@ See `+emacs-lisp-non-package-mode' for details.")
     ;; unreadable. Since Emacs' lisp indenter doesn't respect this variable it's
     ;; safe to ignore this setting otherwise.
     tab-width 8
-    ;; shorter name in modeline
-    mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
     outline-regexp +emacs-lisp-outline-regexp
     outline-level #'+emacs-lisp-outline-level)
+
+  ;; DEPRECATED: Remove when 27.x support is dropped.
+  (when (< emacs-major-version 28)
+    ;; As of Emacs 28+, `emacs-lisp-mode' uses a shorter label in the mode-line
+    ;; ("ELisp/X", where X = l or d, depending on `lexical-binding'). In <=27,
+    ;; it uses "Emacs-Lisp". The former is more useful, so I backport it:
+    (setq-hook! 'emacs-lisp-mode-hook
+      mode-name `("ELisp"
+                  (lexical-binding (:propertize "/l"
+                                    help-echo "Using lexical-binding mode")
+                                   (:propertize "/d"
+                                    help-echo "Using old dynamic scoping mode"
+                                    face warning
+                                    mouse-face mode-line-highlight)))))
 
   ;; Fixed indenter that intends plists sensibly.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
