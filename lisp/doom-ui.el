@@ -206,6 +206,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
            (let ((visible-p (delq (selected-window) (get-buffer-window-list buf nil t))))
              (unless visible-p
                (when (and (buffer-modified-p buf)
+                          (not (memq major-mode '(dired-mode)))
                           (not (y-or-n-p
                                 (format "Buffer %s is modified; kill anyway?"
                                         buf))))
