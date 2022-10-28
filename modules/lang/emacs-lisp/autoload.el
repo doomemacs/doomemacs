@@ -28,6 +28,12 @@ to a pop up buffer."
         (kill-buffer buffer))))
    (current-buffer)))
 
+;;;###autoload
+(defun +emacs-lisp-outline-level ()
+  "Return outline level for comment at point.
+Intended to replace `lisp-outline-level'."
+  (- (match-end 1) (match-beginning 1)))
+
 
 ;;
 ;;; Handlers
@@ -232,7 +238,7 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 (defun +emacs-lisp-extend-imenu-h ()
   "Improve imenu support in `emacs-lisp-mode' for Doom's APIs."
   (setq imenu-generic-expression
-        `(("Section" "^[ \t]*;;;;*[ \t]+\\([^\n]+\\)" 1)
+        `(("Section" "^[ \t]*;;;*\\**[ \t]+\\([^\n]+\\)" 1)
           ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
           ("Package" "^\\s-*\\(?:;;;###package\\|(\\(?:package!\\|use-package!?\\|after!\\)\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)

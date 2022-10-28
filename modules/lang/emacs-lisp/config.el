@@ -3,7 +3,7 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
@@ -60,7 +60,8 @@ See `+emacs-lisp-non-package-mode' for details.")
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp +emacs-lisp-outline-regexp)
+    outline-regexp +emacs-lisp-outline-regexp
+    outline-level #'+emacs-lisp-outline-level)
 
   ;; Fixed indenter that intends plists sensibly.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
