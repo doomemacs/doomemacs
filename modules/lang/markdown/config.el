@@ -17,6 +17,7 @@ capture, the end position, and the output buffer.")
 
 (use-package! markdown-mode
   :mode ("/README\\(?:\\.md\\)?\\'" . gfm-mode)
+  :hook (markdown-mode . outline-minor-mode)
   :init
   (setq markdown-enable-math t ; syntax highlighting for latex fragments
         markdown-enable-wiki-links t

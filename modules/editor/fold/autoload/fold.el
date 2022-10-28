@@ -86,9 +86,7 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
-          ((+fold--outline-fold-p)
-           (outline-show-children)
-           (outline-show-entry))
+          ((+fold--outline-fold-p) (outline-show-subtree))
           ((+fold--ts-fold-p) (ts-fold-open))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block))))))
 
@@ -139,7 +137,9 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
         (hs-life-goes-on
          (if (integerp level)
              (hs-hide-level-recursive (1- level) (point-min) (point-max))
-           (hs-hide-all)))))))
+           (hs-hide-all)))
+        (when (fboundp 'outline-hide-sublevels)
+          (outline-hide-sublevels (or level 1)))))))
 
 ;;;###autoload
 (defun +fold/next (count)
