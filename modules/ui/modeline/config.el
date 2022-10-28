@@ -6,13 +6,19 @@
 
 (use-package! doom-modeline
   :unless (modulep! +light)
-  :hook (after-init . doom-modeline-mode)
+  :hook (doom-after-init . doom-modeline-mode)
   :hook (doom-modeline-mode . size-indication-mode) ; filesize in modeline
   :hook (doom-modeline-mode . column-number-mode)   ; cursor column in modeline
   :init
-  (unless after-init-time
-    ;; prevent flash of unstyled modeline at startup
-    (setq-default mode-line-format nil))
+  (when (>= emacs-major-version 29)
+    ;; HACK: Emacs 29 treats `nil' for :background as invalid, and complains.
+    ;;   `doom-modeline' hasn't updated its face to address this yet.
+    ;; REVIEW: PR this fix to doom-modeline
+    (defface doom-modeline-buffer-modified
+      '((t (:inherit (error bold) :background unspecified)))
+      "Face used for the \\='unsaved\\=' symbol in the mode-line."
+      :group 'doom-modeline-faces))
+
   ;; We display project info in the modeline ourselves
   (setq projectile-dynamic-mode-line nil)
   ;; Set these early so they don't trigger variable watchers
@@ -53,13 +59,12 @@
   (add-hook 'after-setting-font-hook #'+modeline-resize-for-font-h)
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
-  (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
-
+  (add-to-list 'doom-modeline-mode-alist '(+doom-dashboard-mode . dashboard))
   (add-hook! 'magit-mode-hook
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
       (if (eq major-mode 'magit-status-mode)
-          (doom-modeline-set-vcs-modeline)
+          (doom-modeline-set-modeline 'magit)
         (hide-mode-line-mode))))
 
   ;; Some functions modify the buffer, causing the modeline to show a false

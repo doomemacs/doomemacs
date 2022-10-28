@@ -16,8 +16,8 @@ This module provides language functionality for [[https://qt.io][Qt]] specific f
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][qml-mode]]
-- [[doom-package:][qt-pro-mode]]
+- [[doom-package:qml-mode]]
+- [[doom-package:qt-pro-mode]]
 
 ** Hacks
 /No hacks documented for this module./

@@ -5,7 +5,7 @@
 
 * Description :unfold:
 This module provides an Atom-inspired, minimalistic modeline for Doom Emacs,
-powered by the [[doom-package:][doom-modeline]] package (where you can find screenshots).
+powered by the [[doom-package:doom-modeline]] package (where you can find screenshots).
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -15,12 +15,12 @@ powered by the [[doom-package:][doom-modeline]] package (where you can find scre
 ** Module flags
 - +light ::
   Enable a lighter, less featureful version of the modeline that does not depend
-  on [[doom-package:][doom-modeline]], which has performances issues in some cases.
+  on [[doom-package:doom-modeline]], which has performances issues in some cases.
 
 ** Packages
-- [[doom-package:][anzu]]
-- [[doom-package:][doom-modeline]] unless [[doom-module:][+light]]
-- [[doom-package:][evil-anzu]] if [[doom-module:][:editor evil]]
+- [[doom-package:anzu]]
+- [[doom-package:doom-modeline]] unless [[doom-module:+light]]
+- [[doom-package:evil-anzu]] if [[doom-module::editor evil]]
 
 ** Hacks
 /No hacks documented for this module./

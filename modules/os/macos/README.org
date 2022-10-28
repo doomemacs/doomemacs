@@ -13,8 +13,8 @@ This module provides extra functionality for macOS.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][ns-auto-titlebar]]
-- [[doom-package:][osx-trash]]
+- [[doom-package:ns-auto-titlebar]]
+- [[doom-package:osx-trash]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -37,8 +37,8 @@ This module requires a macOS environment.
 This module adds various macOS-specific launchers under the [[kbd:][SPC o]] prefix ([[kbd:][C-c
 o]] for users with Evil disabled).
 
-It also enables Keychain integration for [[doom-package:][auth-source]]. This is used by our [[doom-module:][:app
-irc]] and [[doom-module:][:tools magit]] modules, for instance.
+It also enables Keychain integration for [[doom-package:auth-source]]. This is used by our [[doom-module::app
+irc]] and [[doom-module::tools magit]] modules, for instance.
 
 To support GitHub Forge add an internet password like this to your keychain:
 | Field    | Value                   |

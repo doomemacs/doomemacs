@@ -6,9 +6,9 @@
 * Description :unfold:
 This module adds [[https://nim-lang.org][Nim]] support to Doom Emacs.
 
-- Code completion ([[doom-package:][nimsuggest]] + [[doom-package:][company]])
-- Syntax checking ([[doom-package:][nimsuggest]] + [[doom-package:][flycheck]])
-- Org babel support ([[doom-package:][ob-nim]])
+- Code completion ([[doom-package:nimsuggest]] + [[doom-package:company]])
+- Syntax checking ([[doom-package:nimsuggest]] + [[doom-package:flycheck]])
+- Org babel support ([[doom-package:ob-nim]])
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -17,13 +17,13 @@ This module adds [[https://nim-lang.org][Nim]] support to Doom Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][flycheck-nim]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][nim-mode]]
+- [[doom-package:flycheck-nim]] if [[doom-module::checkers syntax]]
+- [[doom-package:nim-mode]]
 
 ** Hacks
-- [[doom-package:][nimsuggest]] was modified to strip invalid characters from its temp file paths
+- [[doom-package:nimsuggest]] was modified to strip invalid characters from its temp file paths
   (which would break nimsuggest on Windows systems).
-- [[doom-package:][nim-mode]] was modified to fail gracefully if =nimsuggest= (the executable)
+- [[doom-package:nim-mode]] was modified to fail gracefully if =nimsuggest= (the executable)
   isn't available.
 
 ** TODO Changelog

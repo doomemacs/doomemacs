@@ -1,7 +1,9 @@
 ;;; doom-modules.el --- module & package management system -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
-(defvar doom-init-modules-p nil
-  "Non-nil if `doom-initialize-modules' has run.")
+;;
+;;; Variables
 
 (defvar doom-modules (make-hash-table :test 'equal)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
@@ -11,18 +13,33 @@
         doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
-(defvar doom-module-init-file "init"
-  "The basename of init files for modules.
+;;; Module file variables
+(defvar doom-module-init-file "init.el"
+  "The filename for module early initialization config files.
 
 Init files are loaded early, just after Doom core, and before modules' config
 files. They are always loaded, even in non-interactive sessions, and before
-`doom-before-init-modules-hook'. Related to `doom-module-config-file'.")
+`doom-before-modules-init-hook'. Related to `doom-module-config-file'.")
 
-(defvar doom-module-config-file "config"
-  "The basename of config files for modules.
+(defvar doom-module-config-file "config.el"
+  "The filename for module configuration files.
 
 Config files are loaded later, and almost always in interactive sessions. These
-run before `doom-init-modules-hook'. Relevant to `doom-module-init-file'.")
+run before `doom-after-modules-config-hook' and after `doom-module-init-file'.")
+
+(defvar doom-module-packages-file "packages.el"
+  "The filename for the package configuration file.
+
+Package files are read whenever Doom's package manager wants a manifest of all
+desired packages. They are rarely read in interactive sessions (unless the user
+uses a straight or package.el command directly).")
+
+(defvar doom-module-metadata-file ".doommodule"
+  "The filename for a module's metadata file.
+
+NOT IMPLEMENTED YET. This file contains a module's metadata: their version,
+maintainers, checks, features, submodules, debug information, etc. And are used
+to locate modules in the user's file tree.")
 
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
@@ -70,60 +87,76 @@ your `doom!' block, a warning is emitted before replacing it with :emacs vc and
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
-(defvar doom-before-init-modules-hook nil
-  "A list of hooks to run before Doom's modules' config.el files are loaded, but
-after their init.el files are loaded.")
+(defcustom doom-before-modules-init-hook nil
+  "Hooks run before module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
 
-(defvar doom-init-modules-hook nil
-  "A list of hooks to run after Doom's modules' config.el files have loaded, but
-before the user's private module.")
+(defcustom doom-after-modules-init-hook nil
+  "Hooks run after module init.el files are loaded."
+  :group 'doom
+  :type 'hook)
 
-(defvaralias 'doom-after-init-modules-hook 'after-init-hook)
+(defcustom doom-before-modules-config-hook nil
+  "Hooks run before module config.el files are loaded."
+  :group 'doom
+  :type 'hook)
 
-(defvar doom--current-module nil)
-(defvar doom--current-flags nil)
+(defcustom doom-after-modules-config-hook nil
+  "Hooks run after module config.el files are loaded (but before the user's)."
+  :group 'doom
+  :type 'hook)
 
 
 ;;
-;;; Bootstrap API
+;;; `doom-module-context'
 
-(defun doom-initialize-core-modules ()
-  "Load Doom's core files for an interactive session."
-  (require 'doom-keybinds)
-  (require 'doom-ui)
-  (require 'doom-projects)
-  (require 'doom-editor))
+(defvar doom--empty-module-context [nil nil nil nil nil nil nil])
 
-(defun doom-module-loader (file)
-  "Return a closure that loads FILE from a module.
+(eval-and-compile
+  (setplist 'doom-module-context '(index 0 initdepth 1 configdepth 2
+                                   group 3 name 4 flags 5 features 6)))
+(defvar doom-module-context doom--empty-module-context
+  "A vector describing the module associated it with the active context.
 
-This closure takes two arguments: a cons cell containing (CATEGORY . MODULE)
-symbols, and that module's plist."
-  (declare (pure t) (side-effect-free t))
-  (lambda (module plist)
-    (let ((doom--current-module module)
-          (doom--current-flags (plist-get plist :flags))
-          (inhibit-redisplay t))
-      (load! file (plist-get plist :path) t))))
+Contains the following: [INDEX INITDEPTH CONFIGDEPTH :GROUP MODULE FLAGS FEATURES]
 
-(defun doom-initialize-modules (&optional force-p no-config-p)
-  "Loads the init.el in `doom-user-dir' and sets up hooks for a healthy session
-of Dooming. Will noop if used more than once, unless FORCE-P is non-nil."
-  (when (or force-p (not doom-init-modules-p))
-    (setq doom-init-modules-p t)
-    (unless no-config-p
-      (doom-log "Initializing core modules")
-      (doom-initialize-core-modules))
-    (when-let (init-p (load! doom-module-init-file doom-user-dir t))
-      (doom-log "Initializing user config")
-      (maphash (doom-module-loader doom-module-init-file) doom-modules)
-      (doom-run-hooks 'doom-before-init-modules-hook)
-      (unless no-config-p
-        (maphash (doom-module-loader doom-module-config-file) doom-modules)
-        (doom-run-hooks 'doom-init-modules-hook)
-        (load! "config" doom-user-dir t)
-        (when custom-file
-          (load custom-file 'noerror (not doom-debug-mode)))))))
+Do not directly set this variable, only let-bind it.")
+
+;; DEPRECATED: Remove this when byte-compilation is introduced to Doom core.
+(defmacro doom-module--context-field (field) (get 'doom-module-context field))
+
+(defun doom-module-context-get (field &optional context)
+  "Return the FIELD of CONTEXT.
+
+FIELD should be one of `index', `initdepth', `configdepth', `group', `name',
+`flags', or `features'.  CONTEXT should be a `doom-module-context' vector. If
+omitted, defaults to `doom-module-context'."
+  (aref (or context doom-module-context) (get 'doom-module-context field)))
+
+(defun doom-module-context (group &optional name)
+  "Create a `doom-module-context' from a module by GROUP and NAME.
+
+If NAME is omitted, GROUP is treated as a module key cons cell: (GROUP . NAME)."
+  (declare (side-effect-free t))
+  (let ((key (if name (cons group name) group)))
+    (or (get (or (car-safe key) key)
+             (cdr-safe key))
+        doom--empty-module-context)))
+
+(defun doom-module-context-key (&optional context)
+  "Return the module of the active `doom-module-context' as a module key."
+  (declare (side-effect-free t))
+  (let ((context (or context doom-module-context)))
+    (cons (aref context (doom-module--context-field group))
+          (aref context (doom-module--context-field name)))))
+
+(defmacro doom-module-context-with (module-key &rest body)
+  "Evaluate BODY with `doom-module-context' informed by MODULE-KEY."
+  (declare (indent 1))
+  `(let ((doom-module-context (doom-module-context ,module-key)))
+     (doom-log ":context:module: =%s" doom-module-context)
+     ,@body))
 
 
 ;;
@@ -136,6 +169,18 @@ of Dooming. Will noop if used more than once, unless FORCE-P is non-nil."
     (or (null flag)
         (and (memq flag (plist-get plist :flags))
              t))))
+
+(defun doom-module-depth (category module &optional initdepth?)
+  "Return the depth of CATEGORY MODULE.
+
+If INITDEPTH? is non-nil, use the CAR if a module was given two depths (see
+`doom-module-set')."
+  (if-let (depth (doom-module-get category module :depth))
+      (or (if initdepth?
+              (car-safe depth)
+            (cdr-safe depth))
+          depth)
+    0))
 
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
@@ -168,23 +213,84 @@ of PROPERTY and VALUEs.
 CATEGORY is a keyword, module is a symbol, PLIST is a plist that accepts the
 following properties:
 
-  :flags [SYMBOL LIST]  list of enabled category flags
-  :path  [STRING]       path to category root directory
+  :path STRING
+    Path to the directory where this module lives.
+  :depth INT|(INITDEPTH . CONFIGDEPTH)
+    Determines module load order. If a cons cell, INITDEPTH determines the load
+    order of the module's init.el, while CONFIGDEPTH determines the same for all
+    other config files (config.el, packages.el, doctor.el, etc).
+  :flags (SYMBOL...)
+    A list of activated flags for this module.
+  :features (SYMBOL...)
+    A list of active features, determined from module's metadata. NOT
+    IMPLEMENTED YET.
 
-Example:
-  (doom-module-set :lang 'haskell :flags '(+lsp))"
-  (puthash (cons category module) plist doom-modules))
+If PLIST consists of a single nil, the module is purged from memory instead."
+  (if (car plist)
+      (let* ((depth (ensure-list (or (plist-get plist :depth) 0)))
+             (idepth (or (cdr depth) (car depth)))
+             (cdepth (car depth))
+             (idx (hash-table-count doom-modules)))
+        ;; PERF: Doom caches module index, flags, and features in symbol plists
+        ;;   for fast lookups in `modulep!' and elsewhere. plists are lighter
+        ;;   and faster than hash tables for datasets this size, and this
+        ;;   information is looked up *very* often. The structure of this cache
+        ;;   should match `doom-module-context's.
+        (put category module
+             (vector idx idepth cdepth
+                     category module
+                     (plist-get plist :flags)
+                     (plist-get plist :features)))
+        ;; The hash table will always been Doom's formal storage for
+        ;; modules.
+        (puthash (cons category module) plist doom-modules))
+    (remhash (cons category module) doom-modules)
+    (cl-remf (symbol-plist category) module)))
 
-(defun doom-module-path (category module &optional file)
-  "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and
-MODULE (symbol).
+(defun doom-module-list (&optional paths-or-all initorder?)
+  "Return a list of (:group . name) module keys in order of their :depth.
 
-If the category isn't enabled this will always return nil. For finding disabled
-modules use `doom-module-locate-path'."
-  (let ((path (doom-module-get category module :path)))
+PATHS-OR-ALL can either be a non-nil value or a list of directories. If given a
+list of directories, return a list of module keys for all modules present
+underneath it.  If non-nil, return the same, but search `doom-modules-dirs'
+(includes :core and :user). Modules that are enabled are sorted first by their
+:depth, followed by disabled modules in lexicographical order (unless a :depth
+is specified in their .doommodule).
+
+If INITORDER? is non-nil, sort modules by their initdepth, rather than their
+configdepth. See `doom-module-set' for details."
+  (sort (if paths-or-all
+            (delete-dups
+             (append (seq-remove #'cdr (doom-module-list nil initorder?))
+                     (doom-files-in (if (listp paths-or-all)
+                                        paths-or-all
+                                      doom-modules-dirs)
+                                    :map #'doom-module-from-path
+                                    :type 'dirs
+                                    :mindepth 1
+                                    :depth 1)))
+          (hash-table-keys doom-modules))
+        (let ((idx (if initorder? 1 2)))
+          (lambda! ((groupa . namea) (groupb . nameb))
+            (let ((a (get groupa namea))
+                  (b (get groupb nameb)))
+              (or (null b)
+                  (and
+                   a (let ((adepth (aref a idx))
+                           (bdepth (aref b idx)))
+                       (if (= adepth bdepth)
+                           (< (aref a 0) (aref b 0))
+                         (< adepth bdepth))))))))))
+
+(defun doom-module-expand-path (category module &optional file)
+  "Expands a path to FILE relative to CATEGORY and MODULE.
+
+CATEGORY is a keyword. MODULE is a symbol. FILE is an optional string path.
+If the category isn't enabled this returns nil. For finding disabled modules use
+`doom-module-locate-path'."
+  (when-let (path (doom-module-get category module :path))
     (if file
-        (let (file-name-handler-alist)
-          (expand-file-name file path))
+        (file-name-concat path file)
       path)))
 
 (defun doom-module-locate-path (category &optional module file)
@@ -192,70 +298,59 @@ modules use `doom-module-locate-path'."
 
 CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g. 'python). FILE
 is a string that will be appended to the resulting path. If no path exists, this
-returns nil, otherwise an absolute path.
+returns nil, otherwise an absolute path."
+  (let (file-name-handler-alist)
+    (if-let (path (doom-module-expand-path category module file))
+        (if (or (null file)
+                (file-exists-p path))
+            path)
+      (let* ((category (doom-keyword-name category))
+             (module (if module (symbol-name module)))
+             (path (file-name-concat category module file)))
+        (if file
+            ;; PERF: locate-file-internal is a little faster for finding files,
+            ;;   but its interface for finding directories is clumsy.
+            (locate-file-internal path doom-modules-dirs '("" ".elc" ".el"))
+          (cl-loop for default-directory in doom-modules-dirs
+                   if (file-exists-p path)
+                   return (expand-file-name path)))))))
 
-This doesn't require modules to be enabled. For enabled modules us
-`doom-module-path'."
-  (when (keywordp category)
-    (setq category (doom-keyword-name category)))
-  (when (and module (symbolp module))
-    (setq module (symbol-name module)))
-  (cl-loop with file-name-handler-alist = nil
-           for default-directory in doom-modules-dirs
-           for path = (concat category "/" module "/" file)
-           if (file-exists-p path)
-           return (expand-file-name path)))
+(defun doom-module-locate-paths (module-list file)
+  "Return all existing paths to FILE under each module in MODULE-LIST.
 
-(defun doom-module-from-path (&optional path enabled-only)
+MODULE-LIST is a list of cons cells (GROUP . NAME). See `doom-module-list' for
+an example."
+  (cl-loop with file = (file-name-sans-extension file)
+           for (group . name) in module-list
+           if (doom-module-locate-path group name file)
+           collect it))
+
+(defun doom-module-from-path (path &optional enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
 If ENABLED-ONLY, return nil if the containing module isn't enabled."
-  (if (null path)
-      (if doom--current-module
-          (if enabled-only
-              (and (doom-module-p (car doom--current-module)
-                                  (cdr doom--current-module))
-                   doom--current-module)
-            doom--current-module)
-        (ignore-errors
-          (doom-module-from-path (file!))))
-    (let* ((file-name-handler-alist nil)
-           (path (expand-file-name (or path (file!)))))
-      (save-match-data
-        (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
-               (when-let* ((category (doom-keyword-intern (match-string 1 path)))
-                           (module   (intern (match-string 2 path))))
-                 (and (or (null enabled-only)
-                          (doom-module-p category module))
-                      (cons category module))))
-              ((or (string-match-p (concat "^" (regexp-quote doom-core-dir)) path)
-                   (file-in-directory-p path doom-core-dir))
-               (cons :core (intern (file-name-base path))))
-              ((or (string-match-p (concat "^" (regexp-quote doom-user-dir)) path)
-                   (file-in-directory-p path doom-user-dir))
-               (cons :user (intern (file-name-base path)))))))))
+  (let* ((file-name-handler-alist nil)
+         (path (expand-file-name path)))
+    (save-match-data
+      (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
+             (when-let* ((category (doom-keyword-intern (match-string 1 path)))
+                         (module   (intern (match-string 2 path))))
+               (and (or (null enabled-only)
+                        (doom-module-p category module))
+                    (cons category module))))
+            ((file-in-directory-p path doom-core-dir)
+             (cons :core nil))
+            ((file-in-directory-p path doom-user-dir)
+             (cons :user nil))))))
 
 (defun doom-module-load-path (&optional module-dirs)
   "Return a list of file paths to activated modules.
 
 The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
-those directories. The first returned path is always `doom-user-dir'."
+those directories."
   (declare (pure t) (side-effect-free t))
-  (append (list doom-user-dir)
-          (if module-dirs
-              (mapcar (lambda (m) (doom-module-locate-path (car m) (cdr m)))
-                      (delete-dups
-                       (doom-files-in (if (listp module-dirs)
-                                          module-dirs
-                                        doom-modules-dirs)
-                                      :map #'doom-module-from-path
-                                      :type 'dirs
-                                      :mindepth 1
-                                      :depth 1)))
-            (delq
-             nil (cl-loop for plist being the hash-values of doom-modules
-                          collect (plist-get plist :path)) ))
-          nil))
+  (cl-loop for (cat . mod) in (doom-module-list module-dirs)
+           collect (doom-module-locate-path cat mod)))
 
 (defun doom-module-mplist-map (fn mplist)
   "Apply FN to each module in MPLIST."
@@ -289,12 +384,14 @@ those directories. The first returned path is always `doom-user-dir'."
                  (when-let (new (assq module obsolete))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
-                         (message "WARNING %s module was removed" (list category module))
+                         (print! (warn "%s module was removed"))
                        (if (cdr newkeys)
-                           (message "WARNING %s module was removed and split into the %s modules"
-                                    (list category module) (mapconcat #'prin1-to-string newkeys ", "))
-                         (message "WARNING %s module was moved to %s"
-                                  (list category module) (car newkeys)))
+                           (print! (warn "%s module was removed and split into the %s modules")
+                                   (list category module)
+                                   (mapconcat #'prin1-to-string newkeys ", "))
+                         (print! (warn "%s module was moved to %s")
+                                 (list category module)
+                                 (car newkeys)))
                        (push category mplist)
                        (dolist (key newkeys)
                          (push (if flags
@@ -303,137 +400,11 @@ those directories. The first returned path is always `doom-user-dir'."
                                mplist)
                          (push (car key) mplist))
                        (throw 'doom-modules t))))
-                 (let ((path (doom-module-locate-path category module)))
-                   (push (funcall fn category module
-                                  :flags (if (listp m) (cdr m))
-                                  :path (if (stringp path) (file-truename path)))
-                         results)))))))
+                 (push (funcall fn category module :flags (if (listp m) (cdr m)))
+                       results))))))
     (when noninteractive
       (setq doom-inhibit-module-warnings t))
     (nreverse results)))
-
-(defun doom-module-list (&optional all-p)
-  "Minimally initialize `doom-modules' (a hash table) and return it.
-This value is cached. If REFRESH-P, then don't use the cached value."
-  (if all-p
-      (mapcar #'doom-module-from-path (cdr (doom-module-load-path 'all)))
-    doom-modules))
-
-
-;;
-;;; Use-package modifications
-
-(defvar doom--deferred-packages-alist '(t))
-
-(autoload 'use-package "use-package-core" nil nil t)
-
-(setq use-package-compute-statistics init-file-debug
-      use-package-verbose init-file-debug
-      use-package-minimum-reported-time (if init-file-debug 0 0.1)
-      use-package-expand-minimally (not noninteractive))
-
-;; A common mistake for new users is that they inadvertently install their
-;; packages with package.el, by copying over old `use-package' declarations with
-;; an :ensure t property. Doom doesn't use package.el, so this will throw an
-;; error that will confuse beginners, so we disable `:ensure'.
-(setq use-package-ensure-function
-      (lambda (name &rest _)
-        (message "Ignoring ':ensure t' in '%s' config" name)))
-;; ...On the other hand, if the user has loaded `package', then we should assume
-;; they know what they're doing and restore the old behavior:
-(add-transient-hook! 'package-initialize
-  (when (eq use-package-ensure-function #'ignore)
-    (setq use-package-ensure-function #'use-package-ensure-elpa)))
-
-(with-eval-after-load 'use-package-core
-  ;; `use-package' adds syntax highlighting for the `use-package' macro, but
-  ;; Emacs 26+ already highlights macros, so it's redundant.
-  (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
-
-  ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
-  ;; so we don't have to load `auto-minor-mode' so early.
-  (dolist (keyword '(:minor :magic-minor))
-    (setq use-package-keywords
-          (use-package-list-insert keyword use-package-keywords :commands)))
-
-  (defalias 'use-package-normalize/:minor #'use-package-normalize-mode)
-  (defun use-package-handler/:minor (name _ arg rest state)
-    (use-package-handle-mode name 'auto-minor-mode-alist arg rest state))
-
-  (defalias 'use-package-normalize/:magic-minor #'use-package-normalize-mode)
-  (defun use-package-handler/:magic-minor (name _ arg rest state)
-    (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
-
-  ;; HACK Fix `:load-path' so it resolves relative paths to the containing file,
-  ;;      rather than `user-emacs-directory'. This is a done as a convenience
-  ;;      for users, wanting to specify a local directory.
-  (defadvice! doom--resolve-load-path-from-containg-file-a (fn label arg &optional recursed)
-    "Resolve :load-path from the current directory."
-    :around #'use-package-normalize-paths
-    ;; `use-package-normalize-paths' resolves paths relative to
-    ;; `user-emacs-directory', so we change that.
-    (let ((user-emacs-directory
-           (or (and (stringp arg)
-                    (not (file-name-absolute-p arg))
-                    (ignore-errors (dir!)))
-               doom-emacs-dir)))
-      (funcall fn label arg recursed)))
-
-  ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
-  ;;
-  ;;   :after-call SYMBOL|LIST
-  ;;   :defer-incrementally SYMBOL|LIST|t
-  ;;
-  ;; Check out `use-package!'s documentation for more about these two.
-  (dolist (keyword '(:defer-incrementally :after-call))
-    (push keyword use-package-deferring-keywords)
-    (setq use-package-keywords
-          (use-package-list-insert keyword use-package-keywords :after)))
-
-  (defalias 'use-package-normalize/:defer-incrementally #'use-package-normalize-symlist)
-  (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
-    (use-package-concat
-     `((doom-load-packages-incrementally
-        ',(if (equal targets '(t))
-              (list name)
-            (append targets (list name)))))
-     (use-package-process-keywords name rest state)))
-
-  (defalias 'use-package-normalize/:after-call #'use-package-normalize-symlist)
-  (defun use-package-handler/:after-call (name _keyword hooks rest state)
-    (if (plist-get state :demand)
-        (use-package-process-keywords name rest state)
-      (let ((fn (make-symbol (format "doom--after-call-%s-h" name))))
-        (use-package-concat
-         `((fset ',fn
-                 (lambda (&rest _)
-                   (doom-log "Loading deferred package %s from %s" ',name ',fn)
-                   (condition-case e
-                       ;; If `default-directory' is a directory that doesn't
-                       ;; exist or is unreadable, Emacs throws up file-missing
-                       ;; errors, so we set it to a directory we know exists and
-                       ;; is readable.
-                       (let ((default-directory doom-emacs-dir))
-                         (require ',name))
-                     ((debug error)
-                      (message "Failed to load deferred package %s: %s" ',name e)))
-                   (when-let (deferral-list (assq ',name doom--deferred-packages-alist))
-                     (dolist (hook (cdr deferral-list))
-                       (advice-remove hook #',fn)
-                       (remove-hook hook #',fn))
-                     (delq! deferral-list doom--deferred-packages-alist)
-                     (unintern ',fn nil)))))
-         (let (forms)
-           (dolist (hook hooks forms)
-             (push (if (string-match-p "-\\(?:functions\\|hook\\)$" (symbol-name hook))
-                       `(add-hook ',hook #',fn)
-                     `(advice-add #',hook :before #',fn))
-                   forms)))
-         `((unless (assq ',name doom--deferred-packages-alist)
-             (push '(,name) doom--deferred-packages-alist))
-           (nconc (assq ',name doom--deferred-packages-alist)
-                  '(,@hooks)))
-         (use-package-process-keywords name rest state))))))
 
 
 ;;
@@ -455,124 +426,76 @@ packages are installed, `doom-autoloads-file' is loaded, `doom-packages-file'
 cache exists (and is loaded) and, finally, loads your private init.el (which
 should contain your `doom!' block).
 
-The overall load order of Doom is as follows:
-
-  ~/.emacs.d/init.el
-  ~/.emacs.d/lisp/doom.el
-  $DOOMDIR/init.el
-  {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-  `doom-before-init-modules-hook'
-  {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
-  `doom-init-modules-hook'
-  $DOOMDIR/config.el
-  `doom-after-init-modules-hook'
-  `after-init-hook'
-  `emacs-startup-hook'
-  `window-setup-hook'
-
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   `(when noninteractive
      (doom-module-mplist-map
       (lambda (category module &rest plist)
-        (if (plist-member plist :path)
-            (apply #'doom-module-set category module plist)
-          (message "WARNING Couldn't find the %s %s module" category module)))
+        (let ((path (doom-module-locate-path category module)))
+          (unless path
+            (print! (warn "Failed to locate a '%s %s' module") category module))
+          (apply #'doom-module-set category module
+                 :path path
+                 plist)))
       ,@(if (keywordp (car modules))
             (list (list 'quote modules))
           modules))
      doom-modules))
 
-(defvar doom-disabled-packages)
-(defmacro use-package! (name &rest plist)
-  "Declares and configures a package.
-
-This is a thin wrapper around `use-package', and is ignored if the NAME package
-is disabled by the user (with `package!').
-
-See `use-package' to see what properties can be provided. Doom adds support for
-two extra properties:
-
-:after-call SYMBOL|LIST
-  Takes a symbol or list of symbols representing functions or hook variables.
-  The first time any of these functions or hooks are executed, the package is
-  loaded.
-
-:defer-incrementally SYMBOL|LIST|t
-  Takes a symbol or list of symbols representing packages that will be loaded
-  incrementally at startup before this one. This is helpful for large packages
-  like magit or org, which load a lot of dependencies on first load. This lets
-  you load them piece-meal during idle periods, so that when you finally do need
-  the package, it'll load quicker.
-
-  NAME is implicitly added if this property is present and non-nil. No need to
-  specify it. A value of `t' implies NAME."
-  (declare (indent 1))
-  (unless (or (memq name doom-disabled-packages)
-              ;; At compile-time, use-package will forcibly load packages to
-              ;; prevent compile-time errors. However, if a Doom user has
-              ;; disabled packages you get file-missing package errors, so it's
-              ;; necessary to check for packages at compile time:
-              (and (bound-and-true-p byte-compile-current-file)
-                   (not (locate-library (symbol-name name)))))
-    `(use-package ,name ,@plist)))
-
-(defmacro use-package-hook! (package when &rest body)
-  "Reconfigures a package's `use-package!' block.
-
-This macro must be used *before* PACKAGE's `use-package!' block. Often, this
-means using it from your DOOMDIR/init.el.
-
-Under the hood, this uses use-package's `use-package-inject-hooks'.
-
-PACKAGE is a symbol; the package's name.
-WHEN should be one of the following:
-  :pre-init :post-init :pre-config :post-config
-
-WARNINGS:
-- The use of this macro is more often than not a code smell. Use it as last
-  resort. There is almost always a better alternative.
-- If you are using this solely for :post-config, stop! `after!' is much better.
-- If :pre-init or :pre-config hooks return nil, the original `use-package!''s
-  :init/:config block (respectively) is overwritten, so remember to have them
-  return non-nil (or exploit that to overwrite Doom's config)."
-  (declare (indent defun))
-  (unless (memq when '(:pre-init :post-init :pre-config :post-config))
-    (error "'%s' isn't a valid hook for use-package-hook!" when))
-  `(progn
-     (setq use-package-inject-hooks t)
-     (add-hook ',(intern (format "use-package--%s--%s-hook"
-                                 package
-                                 (substring (symbol-name when) 1)))
-               (lambda () ,@body)
-               'append)))
-
 ;; DEPRECATED Remove in 3.0
 (define-obsolete-function-alias 'featurep! 'modulep! "3.0.0")
 
 (defmacro modulep! (category &optional module flag)
-  "Return t if FEATURES are all present.
+  "Return t if :CATEGORY MODULE (and +FLAGS) are enabled.
 
 If FLAG is provided, returns t if CATEGORY MODULE has FLAG enabled.
 
-  (modulep! :config default)
+  (modulep! :config default +flag)
 
-Module FLAGs are set in your config's `doom!' block, typically in
-~/.doom.d/init.el. Like so:
+CATEGORY and MODULE may be omitted when this macro is used from a Doom module's
+source (except your DOOMDIR, which is a special module). Like so:
 
-  :config (default +flag1 -flag2)
+  (modulep! +flag)
 
-CATEGORY and MODULE can be omitted When this macro is used from inside a module
-(except your DOOMDIR, which is a special module). e.g. (modulep! +flag)"
-  (and (cond (flag (memq flag (doom-module-get category module :flags)))
-             (module (doom-module-p category module))
-             (doom--current-flags (memq category doom--current-flags))
-             ((if-let (module (doom-module-from-path))
-                  (memq category (doom-module-get (car module) (cdr module) :flags))
-                (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
-                       category module flag (file!)))))
+For more about modules and flags, see `doom!'."
+  ;; PERF: This macro bypasses the module API to spare startup their runtime
+  ;;   cost, as `modulep!' gets called *a lot* during startup. In the future,
+  ;;   Doom will byte-compile its core files. At that time, we can use it again.
+  (and (cond (flag (memq flag (aref (or (get category module) doom--empty-module-context)
+                                    (doom-module--context-field flags))))
+             (module (get category module))
+             ((aref doom-module-context 0)
+              (memq category (aref doom-module-context
+                                   (doom-module--context-field flags))))
+             ((let ((file
+                     ;; This must be expanded at the call site, not in
+                     ;; `modulep!'s definition, to get the file we want.
+                     (macroexpand '(file!))))
+                (if-let (module (doom-module-from-path file))
+                    (memq category (aref (or (get (car module) (cdr module))
+                                             doom--empty-module-context)
+                                         (doom-module--context-field flags)))
+                  (error "(modulep! %s %s %s) couldn't figure out what module it was called from (in %s)"
+                         category module flag file)))))
        t))
+
+
+;;
+;;; Defaults
+
+;; Register Doom's two virtual module categories, representing Doom's core and
+;; the user's config; which are always enabled.
+(doom-module-set :core nil :path doom-core-dir :depth -110)
+(doom-module-set :user nil :path doom-user-dir :depth '(-105 . 105))
+
+;; DEPRECATED: I intend to phase out our internal usage of `use-package' and
+;;   move it to a :config use-package module. The macro is far too complex and
+;;   magical for our needs, but until this move is done, ':config use-package'
+;;   will remain a hardcoded module for backwards compatibility.
+(doom-module-set :config 'use-package
+                 :path (doom-module-locate-path :config 'use-package)
+                 :depth -111)
 
 (provide 'doom-modules)
 ;;; doom-modules.el ends here

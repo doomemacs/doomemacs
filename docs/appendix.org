@@ -184,8 +184,8 @@
   [[kbd:][C-x]] and [[kbd:][C-x C-k]] can be considered prefixes.
 
   Prefix keys allow to store and move keybindings in groups. For example by
-  default all [[doom-package:][lsp-mode]] commands are under ~SPC c l ...~, but if you want to
-  change that prefix to ~SPC L ...~ for all [[doom-package:][lsp-mode]] commands, it is a one liner
+  default all [[doom-package:lsp-mode]] commands are under ~SPC c l ...~, but if you want to
+  change that prefix to ~SPC L ...~ for all [[doom-package:lsp-mode]] commands, it is a one liner
   in your configuration; you do _not_ have to rebind each command manually to
   its new ~SPC L ...~ variant.
 

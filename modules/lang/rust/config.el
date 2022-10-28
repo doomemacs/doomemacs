@@ -76,12 +76,3 @@
         (:prefix ("t" . "cargo test")
           :desc "all"              "a" #'rustic-cargo-test
           :desc "current test"     "t" #'rustic-cargo-current-test)))
-
-
-(use-package! racer
-  :unless (modulep! +lsp)
-  :hook (rustic-mode-local-vars . racer-mode)
-  :config
-  (set-lookup-handlers! 'rustic-mode
-    :definition '(racer-find-definition :async t)
-    :documentation '+rust-racer-lookup-documentation))

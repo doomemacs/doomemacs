@@ -11,15 +11,15 @@ This module adds [[https://elm-lang.org/][Elm]] support to Doom Emacs.
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~elm-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~elm-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/elm-tooling/elm-language-server][elm-language-server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][elm-mode]]
-- [[doom-package:][flycheck-elm]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:elm-mode]]
+- [[doom-package:flycheck-elm]] if [[doom-module::checkers syntax]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -35,7 +35,7 @@ This module adds [[https://elm-lang.org/][Elm]] support to Doom Emacs.
  🔨 /This module's prerequisites are not all documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote
 
-- If [[doom-module:][+lsp]] is enabled, [[https://github.com/elm-tooling/elm-language-server][elm-language-server]] is required to be installed and in
+- If [[doom-module:+lsp]] is enabled, [[https://github.com/elm-tooling/elm-language-server][elm-language-server]] is required to be installed and in
   your =$PATH=.
 
 * TODO Usage

@@ -1,5 +1,8 @@
 ;;; email/notmuch/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +notmuch-workspace-name "*notmuch*"
+  "Name of the workspace created by `=notmuch', dedicated to notmuch.")
+
 ;;;###autoload
 (defun =notmuch ()
   "Activate (or switch to) `notmuch' in its workspace."
@@ -7,7 +10,7 @@
   (condition-case-unless-debug e
       (progn
         (when (modulep! :ui workspaces)
-          (+workspace-switch "*MAIL*" t))
+          (+workspace-switch +notmuch-workspace-name t))
         (if-let* ((win (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
                                    (doom-visible-windows))))
             (select-window win)
@@ -29,7 +32,7 @@
   ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
   (doom-kill-matching-buffers "^\\*notmuch")
   (when (modulep! :ui workspaces)
-    (+workspace/delete "*MAIL*")))
+    (+workspace/delete +notmuch-workspace-name)))
 
 (defun +notmuch-get-sync-command ()
   "Return a shell command string to synchronize your notmuch mail with."

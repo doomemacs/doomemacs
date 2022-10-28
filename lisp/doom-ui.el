@@ -1,4 +1,6 @@
-;;; doom-ui.el -*- lexical-binding: t; -*-
+;;; doom-ui.el --- defaults for Doom's aesthetics -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code;
 
 ;;
 ;;; Variables
@@ -185,9 +187,6 @@ or if the current buffer is read-only or not file-visiting."
 ;;
 ;;; Buffers
 
-;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
-
 (defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
@@ -253,40 +252,22 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; when resizing too many windows at once or rapidly.
 (setq window-resize-pixelwise nil)
 
-;; Disable tool, menu, and scrollbars. Doom is designed to be keyboard-centric,
-;; so these are just clutter (the scrollbar also impacts performance). Whats
-;; more, the menu bar exposes functionality that Doom doesn't endorse.
-;;
-;; I am intentionally not calling `menu-bar-mode', `tool-bar-mode', and
-;; `scroll-bar-mode' because they do extra and unnecessary work that can be more
-;; concisely and efficiently expressed with these six lines:
-(push '(menu-bar-lines . 0)   default-frame-alist)
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-;; And set these to nil so users don't have to toggle the modes twice to
-;; reactivate them.
-(setq menu-bar-mode nil
-      tool-bar-mode nil
-      scroll-bar-mode nil)
+;; UX: GUIs are inconsistent across systems, desktop environments, and themes,
+;;   and don't match the look of Emacs. They also impose inconsistent shortcut
+;;   key paradigms. I'd rather Emacs be responsible for prompting.
+(setq use-dialog-box nil)
+(when (bound-and-true-p tooltip-mode)
+  (tooltip-mode -1))
 
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
+;; FIX: The native border "consumes" a pixel of the fringe on righter-most
+;;   splits, `window-divider' does not. Available since Emacs 25.1.
 (setq window-divider-default-places t
       window-divider-default-bottom-width 1
       window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
-;; GUIs are inconsistent across systems and themes (and will rarely match our
-;; active Emacs theme). They impose inconsistent shortcut key paradigms too.
-;; It's best to avoid them altogether and have Emacs handle the prompting.
-(setq use-dialog-box nil)
-(when (bound-and-true-p tooltip-mode)
-  (tooltip-mode -1))
-(when IS-LINUX
-  (setq x-gtk-use-system-tooltips nil))
-
- ;; Favor vertical splits over horizontal ones. Monitors are trending toward
- ;; wide, rather than tall.
+;; UX: Favor vertical splits over horizontal ones. Monitors are trending toward
+;;   wide, rather than tall.
 (setq split-width-threshold 160
       split-height-threshold nil)
 
@@ -309,7 +290,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;; Typing yes/no is obnoxious when y/n will do
 (if (boundp 'use-short-answers)
     (setq use-short-answers t)
-  ;; DEPRECATED Remove when we drop 27.x support
+  ;; DEPRECATED: Remove when we drop 27.x support
   (advice-add #'yes-or-no-p :override #'y-or-n-p))
 
 ;; Try to keep the cursor out of the read-only portions of the minibuffer.
@@ -529,7 +510,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-(defun doom--make-font-specs (face font &optional base-specs)
+(defun doom--make-font-specs (face font)
   (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
          (base-specs (or base-specs '((t nil))))
          (attrs '(:family :foundry :slant :weight :height :width))
@@ -612,15 +593,15 @@ triggering hooks during startup."
   (add-hook 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h)
   (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
 
+  ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+  (push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
+
   ;; Initialize `doom-switch-window-hook' and `doom-switch-frame-hook'
   (add-hook 'window-selection-change-functions #'doom-run-switch-window-or-frame-hooks-h)
   ;; Initialize `doom-switch-buffer-hook'
   (add-hook 'window-buffer-change-functions #'doom-run-switch-buffer-hooks-h)
   ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
-  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h)
-
-  ;; Only execute this function once.
-  (remove-hook 'window-buffer-change-functions #'doom-init-ui-h))
+  (add-hook 'server-visit-hook #'doom-run-switch-buffer-hooks-h))
 
 ;; Apply fonts and theme
 (let ((hook (if (daemonp)
@@ -629,9 +610,10 @@ triggering hooks during startup."
   (add-hook hook #'doom-init-fonts-h -100)
   (add-hook hook #'doom-init-theme-h -90))
 
-;; Initialize UI as late as possible. `window-buffer-change-functions' runs
-;; once, when the scratch/dashboard buffer is first displayed.
-(add-hook 'window-buffer-change-functions #'doom-init-ui-h -100)
+;; PERF: Init UI late, but not too late. Its impact on startup time seems to
+;;   vary wildly depending on exact placement. `window-setup-hook' appears to be
+;;   the sweet spot.
+(add-hook 'window-setup-hook #'doom-init-ui-h -100)
 
 
 ;;

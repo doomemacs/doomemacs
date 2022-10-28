@@ -8,7 +8,7 @@ This module adds [[https://ziglang.org/][Zig]] support, with optional (but recom
 [[https://github.com/zigtools/zls][zls]].
 
 - Syntax highlighting
-- Syntax-checking ([[doom-package:][flycheck]])
+- Syntax-checking ([[doom-package:flycheck]])
 - Code completion and LSP integration (~zls~)
 
 ** Maintainers
@@ -22,10 +22,10 @@ This module adds [[https://ziglang.org/][Zig]] support, with optional (but recom
   this.
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][zig-mode]]
+- [[doom-package:zig-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -52,8 +52,8 @@ systems are available for download from [[https://ziglang.org/download/]] or fro
 This module supports LSP integration. For it to work you'll need:
 
 1. zls installed,
-2. The [[doom-module:][:tools lsp]] module enabled. Only [[doom-package:][lsp-mode]] is supported for now,
-3. The [[doom-module:][+lsp]] flag on this module enabled.
+2. The [[doom-module::tools lsp]] module enabled. Only [[doom-package:lsp-mode]] is supported for now,
+3. The [[doom-module:+lsp]] flag on this module enabled.
 
 ** Keybinds
 | Binding           | Description         |

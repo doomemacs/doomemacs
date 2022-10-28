@@ -27,18 +27,18 @@ lighter, simpler and faster in many cases.
   Enable prescient filtering and sorting for Ivy searches.
 
 ** Packages
-- [[doom-package:][all-the-icons-ivy]]* if [[doom-module:][+icons]]
-- [[doom-package:][amx]]
-- [[doom-package:][counsel]]
-- [[doom-package:][counsel-projectile]]
-- [[doom-package:][flx]]* if [[doom-module:][+fuzzy]]
-- [[doom-package:][ivy]]
-- [[doom-package:][ivy-hydra]]
-- [[doom-package:][ivy-posframe]]* if [[doom-module:][+childframe]]
-- [[doom-package:][ivy-rich]]
-- [[doom-package:][prescient]]* if [[doom-module:][+prescient]]
-- [[doom-package:][swiper]]
-- [[doom-package:][wgrep]]
+- [[doom-package:all-the-icons-ivy]]* if [[doom-module:+icons]]
+- [[doom-package:amx]]
+- [[doom-package:counsel]]
+- [[doom-package:counsel-projectile]]
+- [[doom-package:flx]]* if [[doom-module:+fuzzy]]
+- [[doom-package:ivy]]
+- [[doom-package:ivy-hydra]]
+- [[doom-package:ivy-posframe]]* if [[doom-module:+childframe]]
+- [[doom-package:ivy-rich]]
+- [[doom-package:prescient]]* if [[doom-module:+prescient]]
+- [[doom-package:swiper]]
+- [[doom-package:wgrep]]
 
 ** Hacks
 - Functions with ivy/counsel equivalents have been globally remapped (like
@@ -67,14 +67,14 @@ use their associated Helm command or plugin.
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-[[doom-package:][ivy]] is a /large/ framework for completing things. Covering all its features is
+[[doom-package:ivy]] is a /large/ framework for completing things. Covering all its features is
 not within the scope of this module's documentation, so only its highlights will
 be covered here.
 
 ** Jump-to navigation
 Inspired by Sublime Text's jump-to-anywhere, CtrlP/Unite in Vim, and Textmate's
-Command-T, this module provides similar functionality by bringing [[doom-package:][projectile]] and
-[[doom-package:][ivy]] together.
+Command-T, this module provides similar functionality by bringing [[doom-package:projectile]] and
+[[doom-package:ivy]] together.
 
 https://assets.doomemacs.org/completion/ivy/projectile.png
 
@@ -125,7 +125,7 @@ Changes to the resulting wgrep buffer (opened by [[kbd:][C-c C-e]]) can be commi
 https://assets.doomemacs.org/completion/ivy/search-replace.png
 
 ** In-buffer searching
-The [[doom-package:][swiper]] package provides an interactive buffer search powered by ivy. It
+The [[doom-package:swiper]] package provides an interactive buffer search powered by ivy. It
 can be invoked with:
 
 - [[kbd:][SPC s s]] (~swiper-isearch~)

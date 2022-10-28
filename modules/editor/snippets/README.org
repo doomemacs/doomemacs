@@ -4,7 +4,7 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module adds snippet expansions to Emacs, powered by [[doom-package:][yasnippet]].
+This module adds snippet expansions to Emacs, powered by [[doom-package:yasnippet]].
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -15,9 +15,9 @@ This module adds snippet expansions to Emacs, powered by [[doom-package:][yasnip
 /This module exposes no flags./
 
 ** Packages
-- [[doom-package:][yasnippet]]
-- [[doom-package:][auto-yasnippet]]
-- [[doom-package:][doom-snippets]]
+- [[doom-package:yasnippet]]
+- [[doom-package:auto-yasnippet]]
+- [[doom-package:doom-snippets]]
 
 ** TODO Hacks
 #+begin_quote

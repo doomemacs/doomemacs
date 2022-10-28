@@ -1,16 +1,18 @@
 ;;; lisp/lib/files.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
-(defun doom--resolve-path-forms (spec &optional directory)
+(defun doom-files--build-checks (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
 `file-exists-p' checks.
 
 For example
 
-  (doom--resolve-path-forms
+  (doom-files--build-checks
     '(or A (and B C))
     \"~\")
 
-Returns (approximately):
+Returns (not precisely, but effectively):
 
   '(let* ((_directory \"~\")
           (A (expand-file-name A _directory))
@@ -25,8 +27,8 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
   (if (and (listp spec)
            (memq (car spec) '(or and)))
       (cons (car spec)
-            (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
-                    (cdr spec)))
+            (cl-loop for it in (cdr spec)
+                     collect (doom-files--build-checks it directory)))
     (let ((filevar (make-symbol "file")))
       `(let ((,filevar ,spec))
          (and (stringp ,filevar)
@@ -38,35 +40,40 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
 
 ;;;###autoload
 (defun doom-path (&rest segments)
-  "Constructs a file path from SEGMENTS.
-Ignores `nil' elements in SEGMENTS."
-  (let ((segments (remq nil segments))
-        file-name-handler-alist
-        dir)
-    (while segments
-      (setq segment (pop segments)
-            dir (expand-file-name
-                 (if (listp segment)
-                     (apply #'doom-path dir segment)
-                   segment)
-                 dir)))
-    dir))
+  "Return an path expanded after concatenating SEGMENTS with path separators.
+
+Ignores `nil' elements in SEGMENTS, and is intended as a fast compromise between
+`expand-file-name' (slow, but accurate), `file-name-concat' (fast, but
+inaccurate)."
+  ;; PERF: An empty `file-name-handler-alist' = faster `expand-file-name'.
+  (let (file-name-handler-alist)
+    (expand-file-name
+     ;; PERF: avoid the overhead of `apply' in the trivial case. This function
+     ;;   is used a lot, so every bit counts.
+     (if (cdr segments)
+         (apply #'file-name-concat segments)
+       (car segments)))))
 
 ;;;###autoload
 (defun doom-glob (&rest segments)
-  "Construct a path from SEGMENTS and expand glob patterns.
-Returns nil if the path doesn't exist.
-Ignores `nil' elements in SEGMENTS."
-  (let (case-fold-search)
-    (file-expand-wildcards (apply #'doom-path segments) t)))
+  "Return file list matching the glob created by joining SEGMENTS.
+
+The returned file paths will be relative to `default-directory', unless SEGMENTS
+concatenate into an absolute path.
+
+Returns nil if no matches exist.
+Ignores `nil' elements in SEGMENTS.
+If the glob ends in a slash, only returns matching directories."
+  (declare (side-effect-free t))
+  (let* (case-fold-search
+         file-name-handler-alist
+         (path (apply #'file-name-concat segments)))
+    (if (string-suffix-p "/" path)
+        (cl-delete-if-not #'file-directory-p (file-expand-wildcards (substring path 0 -1)))
+      (file-expand-wildcards path))))
 
 ;;;###autoload
-(defun doom-dir (&rest segments)
-  "Constructs a path from SEGMENTS.
-See `doom-path'.
-Ignores `nil' elements in SEGMENTS."
-  (when-let (path (doom-path segments))
-    (directory-file-name path)))
+(define-obsolete-function-alias 'doom-dir 'doom-path "3.0.0")
 
 ;;;###autoload
 (cl-defun doom-files-in
@@ -148,8 +155,9 @@ return NULL-VALUE."
     (insert-file-contents file nil 0 256)
     (if (re-search-forward (format "^;;;###%s " (regexp-quote (or cookie "if")))
                            nil t)
-        (let ((load-file-name file))
-          (eval (sexp-at-point) t))
+        (doom-module-context-with (doom-module-from-path file)
+          (let ((load-file-name file))
+            (eval (sexp-at-point) t)))
       null-value)))
 
 ;;;###autoload
@@ -160,7 +168,7 @@ DIRECTORY is a path; defaults to `default-directory'.
 
 Returns the last file found to meet the rules set by FILES, which can be a
 single file or nested compound statement of `and' and `or' statements."
-  `(let ((p ,(doom--resolve-path-forms files directory)))
+  `(let ((p ,(doom-files--build-checks files directory)))
      (and p (expand-file-name p ,directory))))
 
 ;;;###autoload
@@ -197,9 +205,168 @@ single file or nested compound statement of `and' and `or' statements."
 
 
 ;;
+;;; File read/write
+
+(defmacro doom--with-prepared-file-buffer (file coding mode &rest body)
+  "Create a temp buffer and prepare it for file IO in BODY."
+  (declare (indent 3))
+  (let ((nmask (make-symbol "new-mask"))
+        (omask (make-symbol "old-mask")))
+    `(let* ((,nmask ,mode)
+            (,omask (if ,nmask (default-file-modes))))
+       (unwind-protect
+           (with-temp-buffer
+             (if ,nmask (set-default-file-modes ,nmask))
+             (let* ((buffer-file-name (doom-path ,file))
+                    (coding-system-for-read  (or ,coding 'binary))
+                    (coding-system-for-write (or coding-system-for-write coding-system-for-read 'binary)))
+               (unless (eq coding-system-for-read 'binary)
+                 (set-buffer-multibyte nil)
+                 (setq-local buffer-file-coding-system 'binary))
+               ,@body))
+         (if ,nmask (set-default-file-modes ,omask))))))
+
+;;;###autoload
+(cl-defun doom-file-read
+    (file &key
+          (by 'buffer-string)
+          (coding (or coding-system-for-read 'utf-8))
+          noerror
+          beg end)
+  "Read FILE and return its contents.
+
+Set BY to change how its contents are consumed. It accepts any function, to be
+called with no arguments and expected to return the contents as any arbitrary
+data. By default, BY is set to `buffer-string'. Otherwise, BY recognizes these
+special values:
+
+'insert      -- insert FILE's contents into the current buffer before point.
+'read        -- read the first form in FILE and return it as a single S-exp.
+'read*       -- read all forms in FILE and return it as a list of S-exps.
+'(read . N)  -- read the first N (an integer) S-exps in FILE.
+
+CODING dictates the encoding of the buffer. This defaults to `utf-8'.
+
+If NOERROR is non-nil, don't throw an error if FILE doesn't exist. This will
+still throw an error if FILE is unreadable, however.
+
+If BEG and/or END are integers, only that region will be read from FILE."
+  (when (or (not noerror)
+            (file-exists-p file))
+    (let ((old-buffer (current-buffer)))
+      (doom--with-prepared-file-buffer file coding nil
+        (if (not (eq coding-system-for-read 'binary))
+            (insert-file-contents buffer-file-name nil beg end)
+          (insert-file-contents-literally buffer-file-name nil beg end))
+        (pcase by
+          ('insert
+           (if (fboundp 'insert-into-buffer)
+               (insert-into-buffer old-buffer)
+             ;; DEPRECATED: Remove fallback when 27.x support is dropped.
+             (let ((input (buffer-substring-no-properties (point-min) (point-max))))
+               (with-current-buffer old-buffer
+                 (insert input))))
+           t)
+          ('buffer-string
+           (buffer-substring-no-properties (point-min) (point-max)))
+          ('read
+           (condition-case _ (read (current-buffer)) (end-of-file)))
+          ('(read . ,i)
+           (let (forms)
+             (condition-case _
+                 (dotimes (_ i) (push (read (current-buffer)) forms))
+               (end-of-file))
+             (nreverse forms)))
+          ('read*
+           (let (forms)
+             (condition-case _
+                 (while t (push (read (current-buffer)) forms))
+               (end-of-file))
+             (nreverse forms)))
+          (fn (funcall fn)))))))
+
+;;;###autoload
+(cl-defun doom-file-write
+    (file contents
+          &key
+          append
+          (coding 'utf-8)  ; default: `utf-8'
+          mode             ; default: `default-file-modes' (#o755)
+          (mkdir    'parents)
+          (insertfn #'insert)
+          (printfn  #'prin1))
+  "Write CONTENTS (a string or list of forms) to FILE (a string path).
+
+If CONTENTS is list of forms. Any literal strings in the list are inserted
+verbatim, as text followed by a newline, with `insert'. Sexps are inserted with
+`prin1'. BY is the function to use to emit
+
+MODE dictates the permissions of the file. If FILE already exists, its
+permissions will be changed.
+
+CODING dictates the encoding to read/write with (see `coding-system-for-write').
+If set to nil, `binary' is used.
+
+APPEND dictates where CONTENTS will be written. If neither is set,
+the file will be overwritten. If both are, the contents will be written to both
+ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
+  (doom--with-prepared-file-buffer file coding mode
+    (let ((contents (ensure-list contents))
+          datum)
+      (while (setq datum (pop contents))
+        (cond ((stringp datum)
+               (funcall
+                insertfn (if (or (string-suffix-p "\n" datum)
+                                 (stringp (cadr contents)))
+                             datum
+                           (concat datum "\n"))))
+              ((bufferp datum)
+               (insert-buffer-substring datum))
+              ((let ((standard-output (current-buffer))
+                     (print-quoted t)
+                     (print-level nil)
+                     (print-length nil))
+                 (funcall printfn datum))))))
+    (let (write-region-annotate-functions
+          write-region-post-annotation-function)
+      (when mkdir
+        (make-directory (file-name-directory buffer-file-name)
+                        (eq mkdir 'parents)))
+      (write-region nil nil buffer-file-name append :silent))
+    buffer-file-name))
+
+;;;###autoload
+(defmacro with-file-contents! (file &rest body)
+  "Create a temporary buffer with FILE's contents and execute BODY in it.
+
+The point is at the beginning of the buffer afterwards.
+
+A convenience macro to express the common `with-temp-buffer' +
+`insert-file-contents' idiom more succinctly, enforce `utf-8', and perform some
+optimizations for `binary' IO."
+  (declare (indent 1))
+  `(doom--with-prepared-file-buffer ,file (or coding-system-for-read 'utf-8) nil
+     (doom-file-read buffer-file-name :by 'insert :coding coding-system-for-read)
+     (goto-char (point-min))
+     ,@body))
+
+;;;###autoload
+(defmacro with-file! (file &rest body)
+  "Evaluate BODY in a temp buffer, then write its contents to FILE.
+
+Unlike `with-temp-file', this uses the `utf-8' encoding by default and performs
+some optimizations for `binary' IO."
+  (declare (indent 1))
+  `(doom--with-prepared-file-buffer ,file (or coding-system-for-read 'utf-8) nil
+     (prog1 (progn ,@body)
+       (doom-file-write buffer-file-name (current-buffer)
+                        :coding (or coding-system-for-write 'utf-8)))))
+
+
+;;
 ;;; Helpers
 
-(defun doom--update-files (&rest files)
+(defun doom-files--update-refs (&rest files)
   "Ensure FILES are updated in `recentf', `magit' and `save-place'."
   (let (toplevels)
     (dolist (file files)
@@ -238,8 +405,8 @@ If FORCE-P, delete without confirmation."
    (list (buffer-file-name (buffer-base-buffer))
          current-prefix-arg))
   (let* ((path (or path (buffer-file-name (buffer-base-buffer))))
-         (short-path (abbreviate-file-name path)))
-    (unless (and path (file-exists-p path))
+         (short-path (and path (abbreviate-file-name path))))
+    (unless path
       (user-error "Buffer is not visiting any file"))
     (unless (file-exists-p path)
       (error "File doesn't exist: %s" path))
@@ -253,7 +420,7 @@ If FORCE-P, delete without confirmation."
           ;; Ensures that windows displaying this buffer will be switched to
           ;; real buffers (`doom-real-buffer-p')
           (doom/kill-this-buffer-in-all-windows buf t)
-          (doom--update-files path)
+          (doom-files--update-refs path)
           (message "Deleted %S" short-path))))))
 
 ;;;###autoload
@@ -270,7 +437,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
         (new-path (expand-file-name new-path)))
     (make-directory (file-name-directory new-path) 't)
     (copy-file old-path new-path (or force-p 1))
-    (doom--update-files old-path new-path)
+    (doom-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
 ;;;###autoload
@@ -290,7 +457,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (make-directory (file-name-directory new-path) 't)
     (rename-file old-path new-path (or force-p 1))
     (set-visited-file-name new-path t t)
-    (doom--update-files old-path new-path)
+    (doom-files--update-refs old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
 
 (defun doom--sudo-file-path (file)
@@ -348,3 +515,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (setq recentf-list (delete file recentf-list))
   (recentf-save-list)
   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
+
+(provide 'doom-lib '(files))
+;;; files.el ends here

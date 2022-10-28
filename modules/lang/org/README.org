@@ -18,7 +18,7 @@ intuitive out of the box:
 - A configuration for using org-mode for slide-show presentations or exporting
   org files to reveal.js slideshows.
 - Drag-and-drop support for images (with inline preview) and media files (drops
-  a file icon and a short link) (requires [[doom-module:][+dragndrop]] flag).
+  a file icon and a short link) (requires [[doom-module:+dragndrop]] flag).
 - Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
   (requires flags).
 - Export-to-clipboard functionality, for copying text into formatted html,
@@ -43,6 +43,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 ** Module flags
 - +brain ::
   Enable [[https://github.com/Kungsgeten/org-brain][org-brain]] integration.
+- +contacts ::
+  Enable [[https://gitlab.com/aimebertrand/org-mac-link/][org-contacts]] integration.
 - +dragndrop ::
   Enable drag-and-drop support for images and files; inserts inline previews
   for images and an icon+link for other media types.
@@ -56,14 +58,16 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - +ipython ::
   (**DEPRECATED**) Enable ipython integration for babel.
 - +journal ::
-  Enable [[doom-package:][org-journal]] integration.
+  Enable [[doom-package:org-journal]] integration.
 - +jupyter ::
   Enable Jupyter integration for babel.
 - +noter ::
-  Enable [[doom-package:][org-noter]] integration. Keeps notes in sync with a document. Requires
-  [[doom-module:][:tools pdf]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]], or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
+  Enable [[doom-package:org-noter]] integration. Keeps notes in sync with a document. Requires
+  [[doom-module::tools pdf]], [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]], or [[https://github.com/wasamasa/nov.el][nov.el]] to be enabled.
 - +pandoc ::
   Enable pandoc integration into the Org exporter.
+- +passwords ::
+  Enable [[https://github.com/alfaromurillo/org-passwords.el][org-passwords]] integration.
 - +pomodoro ::
   Enable a pomodoro timer for clocking time on tasks.
 - +present ::
@@ -75,10 +79,10 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   too slow, it'd be wise to disable this flag.
 - +roam ::
   Enable integration with [[https://github.com/org-roam/org-roam-v1][org-roam v1]]. This requires ~sqlite3~ to be installed
-  on your system. /Incompatible with [[doom-module:][+roam2]]./
+  on your system. /Incompatible with [[doom-module:+roam2]]./
 - +roam2 ::
   Enable integration with [[https://github.com/org-roam/org-roam][org-roam v2]]. This requires ~sqlite3~ to be installed
-  on your system. /Incompatible with [[doom-module:][+roam]]./
+  on your system. /Incompatible with [[doom-module:+roam]]./
 
 ** Packages
 - [[doom-package:][evil-org]] if [[doom-package:][:editor evil]]
@@ -93,12 +97,14 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - [[doom-package:][ob-racket]] if [[doom-package:][:lang racket]]
 - [[doom-package:][ob-restclient]] if [[doom-package:][:lang rest]]
 - [[doom-package:][ob-rust]] if [[doom-package:][:lang rust]]
+- [[doom-package:][org-contacts]] if [[doom-package:][+contacts]]
 - [[doom-package:][org-cliplink]]
 - [[doom-package:][org-download]] if [[doom-package:][+dragndrop]]
 - [[doom-package:][orgit]]
 - [[doom-package:][org-noter]] if [[doom-package:][+noter]]
 - [[doom-package:][org-pdftools]] if [[doom-package:][:tools pdf]]
 - [[doom-package:][org-plus-contrib]]
+- [[doom-package:][org-passwords]] if [[doom-package:][+passwords]]
 - [[doom-package:][org-pomodoro]] if [[doom-package:][+pomodoro]]
 - [[doom-package:][org-roam]] (v1) if [[doom-package:][+roam]]
 - [[doom-package:][org-roam]] (v2) if [[doom-package:][+roam2]]
@@ -122,16 +128,16 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 ** Hacks
 - Adds support for a ~:sync~ parameter for org src blocks. This overrides
   ~:async~.
-- Gracefully degrades ~:async~ babel blocks to ~:sync~ when [[doom-package:][ob-async]] would cause
-  errors or issues (such as with a ~:session~ parameter, which [[doom-package:][ob-async]] does not
+- Gracefully degrades ~:async~ babel blocks to ~:sync~ when [[doom-package:ob-async]] would cause
+  errors or issues (such as with a ~:session~ parameter, which [[doom-package:ob-async]] does not
   support, or when exporting org documents).
 - The window is recentered when following links.
 - The breadcrumbs displayed in eldoc when hovering over an org headline has been
   reworked to strip out link syntax and normalize font-size disparities.
-- If [[doom-module:][:ui workspaces]] is enabled, persp-mode won't register org agenda buffers
+- If [[doom-module::ui workspaces]] is enabled, persp-mode won't register org agenda buffers
   that are temporarily opened in the background.
 - Temporary org agenda files aren't added to recentf.
-- =file:= links are highlighted with the ~error~ face if they are broken.
+- =file:= links are highlighted with the [[face:error]] face if they are broken.
 - TAB was changed to toggle only the visibility state of the current subtree,
   rather than cycle through it recursively. This can be reversed with:
 
@@ -140,19 +146,19 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
     (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
   #+end_src
 - (Evil users) Nearby tables are formatted when exiting insert or replace mode
-  (see ~+org-enable-auto-reformat-tables-h~).
+  (see [[fn:+org-enable-auto-reformat-tables-h]]).
 - Statistics cookies are updated when saving the buffer of exiting insert mode
-  (see ~+org-enable-auto-update-cookies-h~).
-- Org-protocol has been lazy loaded (see ~+org-init-protocol-lazy-loader-h~);
-  loaded when the server receives a request for an org-protocol:// url.
+  (see [[fn:+org-enable-auto-update-cookies-h]]).
+- Org-protocol has been lazy loaded (see [[fn:+org-init-protocol-lazy-loader-h]]);
+  loaded when the server receives a request for an =org-protocol://= url.
 - Babel and babel plugins are now lazy loaded (see
-  ~+org-init-babel-lazy-loader-h~); loaded when a src block is executed. No need
-  to use ~org-babel-do-load-languages~ in your config, just install your babel
+  [[fn:+org-init-babel-lazy-loader-h]]); loaded when a src block is executed. No need
+  to use [[fn:org-babel-do-load-languages]] in your config, just install your babel
   packages to extend language support (and ensure its ~org-babel-execute:*~
   function is autoloaded).
-- If a variable is used as a file path in ~org-capture-template~, it will be
-  resolved relative to ~org-directory~, instead of ~default-directory~ (see
-  ~+org-capture-expand-variable-file-a~).
+- If a variable is used as a file path in [[var:org-capture-template]], it will be
+  resolved relative to [[var:org-directory]], instead of [[var:default-directory]] (see
+  [[fn:+org--capture-expand-variable-file-a]]).
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -163,14 +169,14 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 
 This module has no hard requirements, but these soft requirements are needed to
 use Org's more esoteric features:
-- For inline LaTeX previews, ~latex~ and ~dvipng~ is needed.
-- To render GNUPlot images (with [[doom-module:][+gnuplot]] flag) the ~gnuplot~ program is needed.
+- For inline LaTeX previews, [[doom-executable:latex]] and [[doom-executable:dvipng]] is needed.
+- To render GNUPlot images (with [[doom-module:+gnuplot]] flag) the [[doom-executable:gnuplot]] program is needed.
 - To execute babel code blocks, you need whatever dependencies those languages
-  need. It is recommended you enable the associated [[doom-module:][:lang]] module and ensure its
-  dependencies are met, e.g. install the =ruby= executable for ruby support. To
-  use ~jupyter kernels~ you need the [[doom-module:][+jupyter]] flag, the associated kernel as
-  well as the ~jupyter~ program.
-- [[doom-package:][org-roam]] (with [[doom-module:][+roam]] or [[doom-module:][+roam2]] flag) requires =sqlite3= to be installed.
+  need. It is recommended you enable the associated [[doom-module::lang]] module and ensure its
+  dependencies are met, e.g. install the [[doom-executable:ruby]] executable for ruby support. To
+  use ~jupyter kernels~ you need the [[doom-module:+jupyter]] flag, the associated kernel as
+  well as the [[doom-executable:jupyter]] program.
+- [[doom-package:org-roam]] (with [[doom-module:+roam]] or [[doom-module:+roam2]] flag) requires [[doom-executable:sqlite3]] to be installed.
 
 ** MacOS
 #+begin_src sh
@@ -240,7 +246,7 @@ For =evil-mode= users, an overview of org-mode keybindings is provided [[https:/
 #+end_quote
 
 ** Changing ~org-directory~
-~org-directory~ must be set /before/ [[doom-package:][org]] has loaded:
+~org-directory~ must be set /before/ [[doom-package:org]] has loaded:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (setq org-directory "~/new/org/location/")
@@ -257,9 +263,9 @@ For =evil-mode= users, an overview of org-mode keybindings is provided [[https:/
 
 ** =org-roam=
 *** Should I go with =+roam= (v1) or =+roam2= (v2)?
-Long story short: if you're new to [[doom-package:][org-roam]] and haven't used it, then you should
-go with [[doom-module:][+roam2]]; if you already have an ~org-roam-directory~ with the v1 files in
-it, then you can keep use [[doom-module:][+roam]] for a time being.
+Long story short: if you're new to [[doom-package:org-roam]] and haven't used it, then you should
+go with [[doom-module:+roam2]]; if you already have an ~org-roam-directory~ with the v1 files in
+it, then you can keep use [[doom-module:+roam]] for a time being.
 
 V1 isn't actively maintained anymore and is now basically EOL. This means that
 the feature disparity between the both will continue to grow, while its existing
@@ -283,7 +289,7 @@ appear during the migration process. Because of that, *don't forget to backup*
 your ~org-roam-directory~ before attempting to migrate.
 
 In order to migrate from v1 to v2 using Doom follow the next steps:
-1. Enable [[doom-module:][+roam2]] flag (and disable [[doom-module:][+roam]] if it was previously enabled) in your
+1. Enable [[doom-module:+roam2]] flag (and disable [[doom-module:+roam]] if it was previously enabled) in your
    =init.el=.
 2. Ensure your ~org-roam-directory~ points to a directory with your v1 files.
 3. Run ~$ doom sync -u~ in your shell.

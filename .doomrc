@@ -19,7 +19,7 @@
 
 (after! doom-cli-make
   ;;; Codeowners
-  (dolist (path (cdr (doom-module-load-path (list doom-modules-dir))))
+  (dolist (path (doom-module-load-path (list doom-modules-dir)))
     ;; I will be the default owner for everything in the repo unless a later
     ;; match takes precedence.
     (add-to-list 'doom-make-codeowners "# The default owner(s) unless another takes precedence")
@@ -35,16 +35,13 @@
               doom-make-codeowners)))))
 
 ;;; Helpers
-(cl-defun ci-check-module-scope (scope (&key type &allow-other-keys))
+(defun ci-check-module-scope (scope _plist)
   "Only allow :CATEGORY or MODULE scopes if they actually exist."
-  (seq-find (doom-rpartial
-             #'doom-glob (if (string-prefix-p ":" scope)
-                             (format "%s" (substring scope 1))
-                           (format "*/%s" scope)))
-            (list (doom-dir (dir!) "../modules/")
-                  (doom-dir doom-user-dir "modules/"))))
+  (doom-glob (dir!) "modules" (if (string-prefix-p ":" scope)
+                                  (format "%s" (substring scope 1))
+                                (format "*/%s" scope))))
 
-(defun ci-check-docs-scope (scope _)
+(defun ci-check-docs-scope (scope _plist)
   "Allow any filename in docs/* as a scope for docs commits."
   (member
    scope (doom-files-in (doom-path (dir!) "../docs")

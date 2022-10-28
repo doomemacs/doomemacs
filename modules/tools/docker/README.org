@@ -10,7 +10,7 @@ Emacs.
 Provides a major ~dockerfile-mode~ to edit =Dockerfiles=. Additional convenience
 functions allow images to be built easily.
 
-[[doom-package:][docker-tramp]] offers [[https://www.gnu.org/software/tramp/][TRAMP]] support for Docker containers.
+[[doom-package:docker-tramp]] offers [[https://www.gnu.org/software/tramp/][TRAMP]] support for Docker containers.
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -20,9 +20,9 @@ functions allow images to be built easily.
   Enable integration for the Dockerfile Language Server.
 
 ** Packages
-- [[doom-package:][docker]]
-- [[doom-package:][docker-tramp]]
-- [[doom-package:][dockerfile-mode]]
+- [[doom-package:docker]]
+- [[doom-package:docker-tramp]]
+- [[doom-package:dockerfile-mode]]
 
 ** Hacks
 /No hacks documented for this module./

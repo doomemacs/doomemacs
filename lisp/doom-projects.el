@@ -1,4 +1,6 @@
-;;; doom-projects.el -*- lexical-binding: t; -*-
+;;; doom-projects.el --- defaults for project management in Doom -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-projectile-cache-limit 10000
   "If any project cache surpasses this many files it is purged when quitting
@@ -44,13 +46,19 @@ debian, and derivatives). On most it's 'fd'.")
   (global-set-key [remap find-tag]         #'projectile-find-tag)
 
   :config
-  (projectile-mode +1)
-
-  ;; Auto-discovery on `projectile-mode' is slow and premature. Let's defer it
-  ;; until it's actually needed. Also clean up non-existing projects too!
+  ;; HACK: Projectile cleans up the known projects list at startup. If this list
+  ;;   contains tramp paths, the `file-remote-p' calls will pull in tramp via
+  ;;   its `file-name-handler-alist' entry, which is expensive. Since Doom
+  ;;   already cleans up the project list on kill-emacs-hook, it's simplest to
+  ;;   inhibit this cleanup process at startup (see bbatsov/projectile#1649).
+  (letf! ((#'projectile--cleanup-known-projects #'ignore))
+    (projectile-mode +1))
+  ;; HACK: Auto-discovery and cleanup on `projectile-mode' is slow and
+  ;;   premature. Let's try to defer it until it's needed.
   (add-transient-hook! 'projectile-relevant-known-projects
-    (projectile-cleanup-known-projects)
-    (projectile-discover-projects-in-search-path))
+    (projectile--cleanup-known-projects)
+    (when projectile-auto-discover
+      (projectile-discover-projects-in-search-path)))
 
   ;; Projectile runs four functions to determine the root (in this order):
   ;;
@@ -171,22 +179,20 @@ And if it's a function, evaluate it."
           ;; program that is significantly faster than git ls-files or find, and
           ;; it respects .gitignore. This is recommended in the projectile docs.
           (cond
-           ((when-let
-                (bin (if (ignore-errors (file-remote-p default-directory nil t))
-                         (cl-find-if (doom-rpartial #'executable-find t)
-                                     (list "fdfind" "fd"))
-                       doom-projectile-fd-binary))
-              ;; REVIEW Temporary fix for #6618. Improve me later.
-              (let ((version (or doom-projects--fd-version
-                                 (cadr (split-string (cdr (doom-call-process bin "--version"))
-                                                     " " t)))))
-                (when version
-                  (setq doom-projects--fd-version version))
+           ((when-let*
+                ((bin (if (ignore-errors (file-remote-p default-directory nil t))
+                          (cl-find-if (doom-rpartial #'executable-find t)
+                                      (list "fdfind" "fd"))
+                        doom-projectile-fd-binary))
+                 ;; REVIEW Temporary fix for #6618. Improve me later.
+                 (version (with-memoization doom-projects--fd-version
+                            (cadr (split-string (cdr (doom-call-process bin "--version"))
+                                                " " t))))
+                 ((ignore-errors (version-to-list version))))
                 (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git %s"
-                                bin (if (and (stringp version)
-                                             (version< version "8.3.0"))
+                                bin (if (version< version "8.3.0")
                                         "" "--strip-cwd-prefix"))
-                        (if IS-WINDOWS " --path-separator=/")))))
+                        (if IS-WINDOWS " --path-separator=/"))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
            ((executable-find "rg" t)
             (concat "rg -0 --files --follow --color=never --hidden -g!.git"

@@ -41,7 +41,7 @@ and your private config files, respectively. To recompile your packages, use
               ;; Only compile Doom's modules
               (doom-rpartial #'file-in-directory-p doom-emacs-dir)
               ;; Omit `doom-user-dir', which is always first
-              (cdr (doom-module-load-path)))))
+              (doom-module-load-path))))
    recompile-p
    verbose-p))
 
@@ -94,11 +94,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (doom-log "Reloading Doom in preparation for byte-compilation")
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
-      (let ((load-prefer-newer t)
-            (noninteractive t))
-        (require 'doom-start)
-        (quiet! (doom-initialize-packages))
-        (quiet! (doom-initialize-modules))))
+      (let ((load-prefer-newer t))
+        (require 'doom-start)))
 
     (if (null targets)
         (print! (item "No targets to %scompile" (if recompile-p "re" "")))
@@ -183,7 +180,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 (defun doom-compile--ignore-file-p (path)
   (let ((filename (file-name-nondirectory path)))
     (or (not (equal (file-name-extension path) "el"))
-        (member filename (list "packages.el" "doctor.el"))
+        (member filename (list doom-module-packages-file "doctor.el"))
         (string-prefix-p "." filename)
         (string-prefix-p "test-" filename)
         (string-prefix-p "flycheck_" filename)

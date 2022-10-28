@@ -16,11 +16,11 @@ This module has no dedicated maintainers.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][crystal-mode]]
-- [[doom-package:][inf-crystal]]
-- if [[doom-module:][:checkers syntax]]
-  - [[doom-package:][flycheck-ameba]]
-  - [[doom-package:][flycheck-crystal]]
+- [[doom-package:crystal-mode]]
+- [[doom-package:inf-crystal]]
+- if [[doom-module::checkers syntax]]
+  - [[doom-package:flycheck-ameba]]
+  - [[doom-package:flycheck-crystal]]
 
 ** Hacks
 /No hacks documented for this module./

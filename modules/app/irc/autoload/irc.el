@@ -13,8 +13,7 @@
           (require 'circe)
           (delete-other-windows)
           (switch-to-buffer (doom-fallback-buffer))
-          t)
-      (user-error "IRC buffer is already active and selected"))))
+          t))))
 
 ;;;###autoload
 (defun =irc (&optional inhibit-workspace)

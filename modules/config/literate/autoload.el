@@ -2,8 +2,7 @@
 
 ;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
-(defvar +literate-config-file
-  (concat doom-user-dir "config.org")
+(defvar +literate-config-file (file-name-concat doom-user-dir "config.org")
   "The file path of your literate config file.")
 
 (defvar +literate-tangle--async-proc nil)
@@ -51,7 +50,7 @@
   "Tangles `+literate-config-file' if it has changed."
   (or (getenv "__NOTANGLE")
       (and (+literate-tangle +literate-config-file
-                             (concat doom-module-config-file ".el")
+                             doom-module-config-file
                              doom-user-dir)
            (or (not noninteractive)
                (exit! "__NOTANGLE=1 $@")))))
@@ -68,15 +67,19 @@
           +literate-tangle--async-proc
           ;; See `+literate-tangle--sync' for an explanation of the (progn ...) below.
           (start-process "tangle-config"
-                         (get-buffer-create " *tangle config*")
+                         (with-current-buffer
+                             (get-buffer-create " *tangle config*")
+                           (erase-buffer)
+                           (current-buffer))
                          "emacs" "--batch"
+                         "-L" (file-name-directory (locate-library "org"))
                          "--load" (doom-path doom-core-dir "doom")
                          "--load" (doom-path doom-core-dir "lib/print")
                          "--eval"
                          (prin1-to-string
                           `(funcall #',(symbol-function #'+literate-tangle)
                                     ,+literate-config-file
-                                    ,(concat doom-module-config-file ".el")
+                                    ,doom-module-config-file
                                     ,doom-user-dir))))
     (add-hook 'kill-emacs-hook #'+literate-tangle-check-finished-h)
     (set-process-sentinel +literate-tangle--async-proc #'+literate-tangle--async-sentinel)
@@ -140,3 +143,5 @@ config, and should trigger a recompile if changed."
         (buffer-file-name (buffer-base-buffer))
         (file-name-directory +literate-config-file))
        (+literate-tangle-h)))
+
+;;; autoload.el ends here

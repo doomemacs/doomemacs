@@ -6,21 +6,23 @@
   :config
   (setq hl-todo-highlight-punctuation ":"
         hl-todo-keyword-faces
-        '(;; For missing features or functionality that should be added at a
-          ;; later date.
+        '(;; For reminders to change or add something at a later date.
           ("TODO" warning bold)
-          ;; For code (or code paths) that are broken or slow, and may become
-          ;; bigger problems later.
+          ;; For code (or code paths) that are broken, unimplemented, or slow,
+          ;; and may become bigger problems later.
           ("FIXME" error bold)
-          ;; For code smells, where questionable coding practices are
-          ;; intentionally used, and/or may break in a future update.
-          ("HACK" font-lock-constant-face bold)
-          ;; For things that need confirmation that they work or more testing.
+          ;; For code that needs to be revisited later, either to upstream it,
+          ;; improve it, or address non-critical issues.
           ("REVIEW" font-lock-keyword-face bold)
-          ;; For things that just gotta go and will soon be gone.
+          ;; For code smells where questionable practices are used
+          ;; intentionally, and/or is likely to break in a future update.
+          ("HACK" font-lock-constant-face bold)
+          ;; For sections of code that just gotta go, and will be gone soon.
+          ;; Specifically, this means the code is deprecated, not necessarily
+          ;; the feature it enables.
           ("DEPRECATED" font-lock-doc-face bold)
-          ;; These are extra, commonly seen annotation keywords. What they mean
-          ;; or  are for depend on the project.
+          ;; Extra keywords commonly found in the wild, whose meaning may vary
+          ;; from project to project.
           ("NOTE" success bold)
           ("BUG" error bold)
           ("XXX" font-lock-constant-face bold)))

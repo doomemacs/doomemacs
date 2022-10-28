@@ -27,11 +27,11 @@ rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
 ** Module flags
 - +onsave ::
   Enable reformatting of a buffer when it is saved. See
-  [[var:][+format-on-save-enabled-modes]] to control what major modes to (or not to)
+  [[var:+format-on-save-enabled-modes]] to control what major modes to (or not to)
   format on save.
 
 ** Packages
-- [[doom-package:][format-all]]
+- [[doom-package:format-all]]
 
 ** Hacks
 - format-all has been heavily modified to suit Doom's goals for this module:
@@ -39,7 +39,7 @@ rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
     affect on cursor position.
   - Adds partial formatting, i.e. you can now reformat a subset of the buffer.
   - Adds the ability to use any arbitrary formatter on the current buffer if you
-    pass the universal argument to [[fn:][+format/buffer]] or [[fn:][+format/region]] (i.e.
+    pass the universal argument to [[fn:+format/buffer]] or [[fn:+format/region]] (i.e.
     removes the major-mode lock on formatters).
 
 ** TODO Changelog
@@ -51,7 +51,7 @@ rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
 
 This module has no direct requirements, but each language will need one of their
 supported formatter programs in order for this to work. In their absence,
-[[doom-package:][format-all]] will fail silently.
+[[doom-package:format-all]] will fail silently.
 
 Supported formatters:
 - Angular/Vue (prettier)
@@ -137,7 +137,7 @@ default value:
 
 If you want to format code when you save a buffer, but want more granular
 control over which major modes this behavior is enabled in, there is an
-alternative. Make sure [[doom-module:][+onsave]] is disabled before you try this:
+alternative. Make sure [[doom-module:+onsave]] is disabled before you try this:
 #+begin_src emacs-lisp
 (add-hook 'python-mode-hook #'format-all-mode)
 (add-hook 'js2-mode-hook #'format-all-mode)
@@ -145,7 +145,7 @@ alternative. Make sure [[doom-module:][+onsave]] is disabled before you try this
 
 ** Disabling the LSP formatter
 If you are in a buffer with ~lsp-mode~ enabled and a server that supports
-=textDocument/formatting=, it will be used instead of [[doom-package:][format-all]]'s formatter.
+=textDocument/formatting=, it will be used instead of [[doom-package:format-all]]'s formatter.
 
 + To disable this behavior universally use: ~(setq +format-with-lsp nil)~
 + To disable this behavior in one mode: ~(setq-hook! 'python-mode-hook

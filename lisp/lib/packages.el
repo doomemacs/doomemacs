@@ -48,7 +48,10 @@
                  (buffer-file-name
                   (or buffer-file-name
                       (bound-and-true-p org-src-source-file-name)))
-                 (package (eval (sexp-at-point) t)))
+                 (package
+                  (doom-context-with 'packages
+                    (doom-module-context-with (doom-module-from-path buffer-file-name)
+                      (eval (sexp-at-point) t)))))
             (list :beg beg
                   :end end
                   :package (car package)
@@ -154,8 +157,7 @@ each package."
                                (if (listp m)
                                    (format "%s %s" (car m) (cdr m))
                                  (format "%s" m)))
-                             (append '(:user :core)
-                                     (delete-dups (mapcar #'car modules))
+                             (append (delete-dups (mapcar #'car modules))
                                      modules)))
                    nil t nil nil))
           (module (split-string module " " t)))
@@ -163,11 +165,7 @@ each package."
            (ignore-errors (intern (cadr module)))
            current-prefix-arg)))
   (mapc (lambda! ((cat . mod))
-          (if-let (packages-file
-                   (pcase cat
-                     (:user (car (doom-glob doom-user-dir "packages.el")))
-                     (:core (car (doom-glob doom-core-dir "packages.el")))
-                     (_ (doom-module-locate-path cat mod "packages.el"))))
+          (if-let (packages-file (doom-module-locate-path cat mod doom-module-packages-file))
               (with-current-buffer
                   (or (get-file-buffer packages-file)
                       (find-file-noselect packages-file))
@@ -177,8 +175,7 @@ each package."
         (if module
             (list (cons category module))
           (cl-remove-if-not (lambda (m) (eq (car m) category))
-                            (append '((:core) (:user))
-                                    (doom-module-list 'all))))))
+                            (doom-module-list 'all)))))
 
 ;;;###autoload
 (defun doom/bump-package (package)
@@ -191,7 +188,7 @@ each package."
     (unless modules
       (user-error "This package isn't installed by any Doom module"))
     (dolist (module modules)
-      (when-let (packages-file (doom-module-locate-path (car module) (cdr module)))
+      (when (doom-module-locate-path (car module) (cdr module) doom-module-packages-file)
         (doom/bump-module (car module) (cdr module))))))
 
 

@@ -17,15 +17,10 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "fed215348076ba9182f634e0770a175220474b5a")
-
-;; doom-modules.el
-(package! use-package
-  :type 'core
-  :pin "0ad5d9d5d8a61517a207ab04bf69e71c081149eb")
+  :pin "e20a44c4ac5c04896aecd43a5fdd12c67527c69e")
 
 ;; doom-ui.el
-(package! all-the-icons :pin "b18db6be0a290e8f91fd8d8340b2b44c8b75049a")
+(package! all-the-icons :pin "4a4d6269b8b85b0b15954f063e6ce378630d80c0")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "a32b39bdfe6c61c322c37226d66e1b6d4f107ed0")
@@ -34,7 +29,7 @@
 ;; doom-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
 (package! dtrt-indent :pin "d4fd1b4977eb0d534844fddf01c3c51c70c57205")
-(package! helpful :pin "94a07d49a80f66f8ebc54a49a4b4f6899a65fbe3")
+(package! helpful :pin "6633d82c6e3c921c486ec284cb6542f33278b605")
 (package! pcre2el :pin "0b5b2a2c173aab3fd14aac6cf5e90ad3bf58fa7d")
 (package! smartparens :pin "8b6a3c3b31afd5b3f846e09859b5fc62eb06e7c1")
 (package! ws-butler
@@ -44,9 +39,9 @@
   :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
 
 ;; doom-projects.el
-(package! projectile :pin "dc6e7ff658789e4c6cf7c32a4b4fdf22ef9bc5a3")
+(package! projectile :pin "20aa2adccc1ecb19f54f2fbc428b4904071fcab8")
 (package! project :pin "2e8da1b811d5213bd143d9d036bf7ea14741a1ae")
 
 ;; doom-keybinds.el
 (package! general :pin "9651024e7f40a8ac5c3f31f8675d3ebe2b667344")
-(package! which-key :pin "1ab1d0cc88843c9a614ed3226c5a1070e32e4823")
+(package! which-key :pin "8093644032854b1cdf3245ce4e3c7b6673f741bf")

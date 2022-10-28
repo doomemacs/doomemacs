@@ -13,8 +13,8 @@ This module adds support for the [[https://www.raku.org/][Raku programming langu
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][raku-mode]]
-- [[doom-package:][flycheck-raku]] if [[doom-module:][:checkers syntax]]
+- [[doom-package:raku-mode]]
+- [[doom-package:flycheck-raku]] if [[doom-module::checkers syntax]]
 
 ** Hacks
 /No hacks documented for this module./

@@ -29,9 +29,9 @@ This modules enables the following features:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][evil-ledger]] if [[doom-module:][:editor evil +everywhere]]
-- [[doom-package:][flycheck-ledger]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][ledger-mode]]
+- [[doom-package:evil-ledger]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:flycheck-ledger]] if [[doom-module::checkers syntax]]
+- [[doom-package:ledger-mode]]
 
 ** Hacks
 - This module sets ~ledger-clear-whole-transactions~ to ~t~ (default value is

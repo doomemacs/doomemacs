@@ -29,7 +29,7 @@ When this module is enabled:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][unicode-fonts]]
+- [[doom-package:unicode-fonts]]
 
 ** Hacks
 /No hacks documented for this module./

@@ -1,4 +1,6 @@
-;;; lisp/cli/autoloads.el -*- lexical-binding: t; -*-
+;;; lisp/lib/autoloads.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-autoloads-excluded-packages ()
   "Which packages to exclude from Doom's autoloads files.
@@ -10,12 +12,11 @@ hoist buggy forms into autoloads.")
   "List of regexps whose matching files won't be indexed for autoloads.")
 
 (defvar doom-autoloads-cached-vars
-  '(doom-modules
-    doom-disabled-packages
-    native-comp-deferred-compilation-deny-list
-    load-path
+  '(load-path
     auto-mode-alist
     interpreter-mode-alist
+    magic-mode-alist
+    magic-fallback-mode-alist
     Info-directory-list)
   "A list of variables to be cached in `doom-autoloads-file'.")
 
@@ -25,63 +26,6 @@ hoist buggy forms into autoloads.")
 
 ;;
 ;;; Library
-
-(defun doom-autoloads-reload (&optional file)
-  "Regenerates Doom's autoloads and writes them to FILE."
-  (unless file
-    ;; TODO Uncomment when profile system is implemented
-    ;; (make-directory doom-profile-dir t)
-    ;; (setq file (expand-file-name "init.el" doom-profile-dir))
-    (setq file doom-autoloads-file))
-  (print! (start "(Re)generating autoloads file..."))
-  (print-group!
-   (cl-check-type file string)
-   (doom-initialize-packages)
-   (and (print! (start "Generating autoloads file..."))
-        (doom-autoloads--write
-         file
-         `((unless (equal doom-version ,doom-version)
-             (signal 'doom-error
-                     (list "The installed version of Doom has changed since last 'doom sync' ran"
-                           "Run 'doom sync' to bring Doom up to speed"))))
-         ;; HACK If the bundled elisp for this Emacs install isn't
-         ;;   byte-compiled, disengage the `file-name-handler-alist'
-         ;;   optimization early to prevent encoding errors when Emacs tries to
-         ;;   read gzipped elisp.
-         ;;
-         ;;   calc-loaddefs.el is a good heuristic for this because calc.el
-         ;;   explicitly tries to load the un-compiled calc-loaddefs.el. If it
-         ;;   doesn't exist, it'll go for calc-loaddefs.el.gz instead.
-         (unless (locate-file "calc-loaddefs.el" (get 'load-path 'initial-value) nil)
-           `((when (fboundp 'doom-reset-file-handler-alist-h)
-               (doom-reset-file-handler-alist-h)
-               (remove-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h))))
-         (cl-loop for var in doom-autoloads-cached-vars
-                  when (boundp var)
-                  collect `(set ',var ',(symbol-value var)))
-         (doom-autoloads--scan
-          (append (doom-glob doom-core-dir "lib/*.el")
-                  (cl-loop for dir
-                           in (append (cdr (doom-module-load-path 'all-p))
-                                      (list doom-user-dir))
-                           if (doom-glob dir "autoload.el") collect (car it)
-                           if (doom-glob dir "autoload/*.el") append it)
-                  (mapcan #'doom-glob doom-autoloads-files))
-          nil)
-         (doom-autoloads--scan
-          (mapcar #'straight--autoloads-file
-                  (seq-difference (hash-table-keys straight--build-cache)
-                                  doom-autoloads-excluded-packages))
-          doom-autoloads-excluded-files
-          'literal)
-         ;; TODO Uncomment when profile system is implemented
-         ;; `((unless noninteractive (require 'doom-start)))
-         )
-        (print! (start "Byte-compiling autoloads file..."))
-        (doom-autoloads--compile-file file)
-        (print! (success "Generated %s")
-                (relpath (byte-compile-dest-file file)
-                         doom-emacs-dir)))))
 
 (defun doom-autoloads--write (file &rest forms)
   (make-directory (file-name-directory file) 'parents)
@@ -111,7 +55,7 @@ hoist buggy forms into autoloads.")
 
 (defun doom-autoloads--cleanup-form (form &optional expand)
   (let ((func (car-safe form)))
-    (cond ((memq func '(provide custom-autoload))
+    (cond ((memq func '(provide custom-autoload register-definition-prefixes))
            nil)
           ((and (eq func 'add-to-list)
                 (memq (doom-unquote (cadr form))
@@ -147,7 +91,7 @@ hoist buggy forms into autoloads.")
               ((memq definer '(defun defmacro cl-defun cl-defmacro))
                (print
                 (if module-enabled-p
-                    (make-autoload form file)
+                    (make-autoload form (abbreviate-file-name file))
                   (seq-let (_ _ arglist &rest body) form
                     (if altform
                         (read altform)
@@ -200,12 +144,12 @@ hoist buggy forms into autoloads.")
          (version-control 'never)
          case-fold-search    ; reduce magic
          autoload-timestamps ; reduce noise in generated files
+         autoload-compute-prefixes
          ;; So `autoload-generate-file-autoloads' knows where to write it
-         (generated-autoload-load-name (file-name-sans-extension file))
          (target-buffer (current-buffer))
          (module (doom-module-from-path file))
-         (module-enabled-p (and (or (memq (car module) '(:core :user))
-                                    (doom-module-p (car module) (cdr module)))
+         (generated-autoload-load-name (abbreviate-file-name (file-name-sans-extension file)))
+         (module-enabled-p (and (doom-module-p (car module) (cdr module))
                                 (doom-file-cookie-p file "if" t))))
     (save-excursion
       (when module-enabled-p
@@ -224,7 +168,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
     (dolist (file files (nreverse (delq nil autoloads)))
       (when (and (not (seq-find (doom-rpartial #'string-match-p file) exclude))
                  (file-readable-p file))
-        (doom-log "Scanning %s" file)
+        (doom-log "loaddefs:scan: %s" file)
         (setq file (file-truename file))
         (with-temp-buffer
           (if literal
@@ -238,7 +182,7 @@ non-nil, treat FILES as pre-generated autoload files instead."
               (let ((ppss (save-excursion (syntax-ppss))))
                 (or (nth 3 ppss)
                     (nth 4 ppss)
-                    (replace-match (prin1-to-string file) t t)))))
+                    (replace-match (prin1-to-string (abbreviate-file-name file)) t t)))))
           (let ((load-file-name file)
                 (load-path
                  (append (list doom-user-dir)
@@ -250,3 +194,6 @@ non-nil, treat FILES as pre-generated autoload files instead."
                                                       (not literal))
                         autoloads))
               (end-of-file))))))))
+
+(provide 'doom-lib '(autoloads))
+;;; autoloads.el end here

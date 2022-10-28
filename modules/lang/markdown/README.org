@@ -35,14 +35,14 @@ for Markdown's syntax is the format of plain text email. -- John Gruber
   previews of your markdown (or org) files.
 
 ** Packages
-- [[doom-package:][edit-indirect]]
-- [[doom-package:][evil-markdown]] if [[doom-module:][:editor evil +everywhere]]
-- [[doom-package:][grip-mode]] if [[doom-module:][+grip]]
-- [[doom-package:][markdown-mode]]
-- [[doom-package:][markdown-toc]]
+- [[doom-package:edit-indirect]]
+- [[doom-package:evil-markdown]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:grip-mode]] if [[doom-module:+grip]]
+- [[doom-package:markdown-mode]]
+- [[doom-package:markdown-toc]]
 
 ** Hacks
-- [[doom-package:][flyspell]] has been configured not to spell check in code blocks, links, HTML
+- [[doom-package:flyspell]] has been configured not to spell check in code blocks, links, HTML
   tags or references.
 
 ** TODO Changelog
@@ -53,7 +53,7 @@ for Markdown's syntax is the format of plain text email. -- John Gruber
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 This module requires:
-- A linter (requires [[doom-module:][:checkers syntax]])
+- A linter (requires [[doom-module::checkers syntax]])
 - A markdown compiler, for previewing Markdown
 
 ** Linters
@@ -124,7 +124,7 @@ installed through your OS's package manager:
 ~markdown-preview~ is bound to [[kbd:][<localleader> p]]. This will open a preview of your
 compiled markdown document in your browser.
 
-Alternatively, you can use ~grip-mode~ through [[doom-module:][+grip]].
+Alternatively, you can use ~grip-mode~ through [[doom-module:+grip]].
 
 * Configuration
 #+begin_quote

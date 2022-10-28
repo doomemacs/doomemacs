@@ -103,10 +103,11 @@ is non-nil."
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
-        mu4e-headers-thread-orphan-prefix '("┬>" . "┬▶ ")
-        mu4e-headers-thread-last-child-prefix '("└>" . "╰▶")
-        mu4e-headers-thread-child-prefix '("├>" . "├▶")
-        mu4e-headers-thread-connection-prefix '("│" . "│ ")
+        mu4e-headers-thread-orphan-prefix        '("┬>" . "┬▶ ")
+        mu4e-headers-thread-connection-prefix    '("│ " . "│ ")
+        mu4e-headers-thread-first-child-prefix   '("├>" . "├▶")
+        mu4e-headers-thread-child-prefix         '("├>" . "├▶")
+        mu4e-headers-thread-last-child-prefix    '("└>" . "╰▶")
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account-stripe . 1)
@@ -244,9 +245,12 @@ is non-nil."
   ;; so if the header view is entered from a narrow frame,
   ;; it's probably worth trying to expand it
   (defun +mu4e-widen-frame-maybe ()
-    "Expand the frame with if it's less than `+mu4e-min-header-frame-width'."
-    (when (< (frame-width) +mu4e-min-header-frame-width)
-      (set-frame-width (selected-frame) +mu4e-min-header-frame-width)))
+    "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
+    (dolist (frame (frame-list))
+      (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
+                          mu4e-headers-buffer-name)
+                 (< (frame-width) +mu4e-min-header-frame-width))
+        (set-frame-width frame +mu4e-min-header-frame-width))))
   (add-hook 'mu4e-headers-mode-hook #'+mu4e-widen-frame-maybe)
 
   (when (fboundp 'imagemagick-register-types)
@@ -421,6 +425,15 @@ Usefull for affecting HTML export config.")
         :desc "attach" "C-c C-a" #'+mu4e/attach-files
         :localleader
         :desc "attach" "a" #'+mu4e/attach-files)
+
+  ;; I feel like it's reasonable to expect files to be attached
+  ;; in the order you attach them, not the reverse.
+  (defadvice! +org-msg-attach-attach-in-order-a (file &rest _args)
+    "Link FILE into the list of attachment."
+    :override #'org-msg-attach-attach
+    (interactive (list (read-file-name "File to attach: ")))
+    (let ((files (org-msg-get-prop "attachment")))
+      (org-msg-set-prop "attachment" (nconc files (list file)))))
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")

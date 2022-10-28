@@ -12,11 +12,11 @@ engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mo
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~gdscript-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~gdscript-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (Godot ~3.2.1~ or newer).
 
 ** Packages
-- [[doom-package:][gdscript-mode]]
+- [[doom-package:gdscript-mode]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -47,7 +47,7 @@ pip3 install gdtoolkit
 
 ** LSP support
 The language server support for GDScript is built into by lsp-mode. As long as
-you have [[doom-module:][+lsp]] and [[doom-module:][:tools lsp]] enabled, and Godot 3.2.1+ installed, it should work
+you have [[doom-module:+lsp]] and [[doom-module::tools lsp]] enabled, and Godot 3.2.1+ installed, it should work
 out of the box.
 
 Godot's language server is built into the game engine, so you need to open your
@@ -67,7 +67,7 @@ available commands.
 [[doom-report:][Report an issue?]]
 
 - The GDScript language server has known issues causing some errors with
-  [[doom-package:][lsp-mode]]. They should be addressed in future releases.
+  [[doom-package:lsp-mode]]. They should be addressed in future releases.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

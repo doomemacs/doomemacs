@@ -7,13 +7,17 @@
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
-(defvar +emacs-lisp-disable-flycheck-in-dirs
-  (list doom-emacs-dir doom-user-dir)
-  "List of directories to disable `emacs-lisp-checkdoc' in.
+(defvar +emacs-lisp-linter-warnings
+  '(not free-vars    ; don't complain about unknown variables
+        noruntime    ; don't complain about unknown function calls
+        unresolved)  ; don't complain about undefined functions
+  "The value for `byte-compile-warnings' in non-packages.
 
-This checker tends to produce a lot of false positives in your .emacs.d and
-private config, so it is mostly useless there. However, special hacks are
-employed so that flycheck still does *some* helpful linting.")
+This reduces the verbosity of flycheck in Emacs configs and scripts, which are
+so stateful that the deluge of false positives (from the byte-compiler,
+package-lint, and checkdoc) can be more overwhelming than helpful.
+
+See `+emacs-lisp-non-package-mode' for details.")
 
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
@@ -56,9 +60,10 @@ employed so that flycheck still does *some* helpful linting.")
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp +emacs-lisp-outline-regexp
-    ;; Fixed indenter that intends plists sensibly.
-    lisp-indent-function #'+emacs-lisp-indent-function)
+    outline-regexp +emacs-lisp-outline-regexp)
+
+  ;; Fixed indenter that intends plists sensibly.
+  (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
   ;; variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
   ;; and `editorconfig' would force fixed indentation on elisp.
@@ -76,10 +81,11 @@ employed so that flycheck still does *some* helpful linting.")
              ;; Ensure straight sees modifications to installed packages
              #'+emacs-lisp-init-straight-maybe-h)
 
-  ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
-  ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
-  ;; `emacs-lisp' checker's verbosity.
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp-reduce-flycheck-errors-in-emacs-config-h)
+  ;; UX: Flycheck's two emacs-lisp checkers produce a *lot* of false positives
+  ;;   in non-packages (like Emacs configs or elisp scripts), so I disable
+  ;;   `emacs-lisp-checkdoc' and set `byte-compile-warnings' to a subset of the
+  ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
 
   ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
   ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
@@ -187,27 +193,10 @@ employed so that flycheck still does *some* helpful linting.")
 (use-package! elisp-demos
   :defer t
   :init
-  (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
+  (advice-add #'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+  (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (defadvice! +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
-    "Add Doom's own demos to help buffers."
-    :around #'elisp-demos--search
-    (or (funcall fn symbol)
-        (when-let (demos-file (doom-module-locate-path :lang 'emacs-lisp "demos.org"))
-          (with-temp-buffer
-            (insert-file-contents demos-file)
-            (goto-char (point-min))
-            (when (re-search-forward
-                   (format "^\\*\\* %s$" (regexp-quote (symbol-name symbol)))
-                   nil t)
-              (let (beg end)
-                (forward-line 1)
-                (setq beg (point))
-                (if (re-search-forward "^\\*" nil t)
-                    (setq end (line-beginning-position))
-                  (setq end (point-max)))
-                (string-trim (buffer-substring-no-properties beg end)))))))))
+  (advice-add #'elisp-demos--search :around #'+emacs-lisp--add-doom-elisp-demos-a))
 
 
 (use-package! buttercup

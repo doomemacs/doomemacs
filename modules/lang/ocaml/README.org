@@ -4,45 +4,45 @@
 #+since:    2.0.4 (#128)
 
 * Description :unfold:
-This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[doom-package:][tuareg-mode]].
+This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[doom-package:tuareg-mode]].
 
 - Code completion, documentation look-up, code navigation and refactoring
-  ([[doom-package:][merlin]])
-- Type, documentation and function argument display on idle ([[doom-package:][merlin-eldoc]])
-- REPL ([[doom-package:][utop]])
-- Syntax-checking ([[doom-package:][merlin]] with [[doom-package:][flycheck-ocaml]])
-- Auto-indentation ([[doom-package:][ocp-indent]])
-- Code formatting ([[doom-package:][ocamlformat]])
-- Dune file format ([[doom-package:][dune]])
+  ([[doom-package:merlin]])
+- Type, documentation and function argument display on idle ([[doom-package:merlin-eldoc]])
+- REPL ([[doom-package:utop]])
+- Syntax-checking ([[doom-package:merlin]] with [[doom-package:flycheck-ocaml]])
+- Auto-indentation ([[doom-package:ocp-indent]])
+- Code formatting ([[doom-package:ocamlformat]])
+- Dune file format ([[doom-package:dune]])
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
 - +lsp ::
-  Enable LSP support for ~tuareg-mode~. Requires [[doom-module:][:tools lsp]] and a langserver
+  Enable LSP support for ~tuareg-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/freebroccolo/ocaml-language-server][ocaml-language-server]]).
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
-  editing. Requires [[doom-module:][:tools tree-sitter]].
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:][dune]]
-- [[doom-package:][ocamlformat]] if [[doom-module:][:editor format]]
-- [[doom-package:][ocp-indent]]
-- [[doom-package:][tuareg]]
-- [[doom-package:][utop]] if [[doom-module:][:tools eval]]
-- unless [[doom-module:][+lsp]]
-  - [[doom-package:][flycheck-ocaml]] if [[doom-module:][:checkers syntax]]
-  - [[doom-package:][merlin]]
-  - [[doom-package:][merlin-company]]
-  - [[doom-package:][merlin-eldoc]]
+- [[doom-package:dune]]
+- [[doom-package:ocamlformat]] if [[doom-module::editor format]]
+- [[doom-package:ocp-indent]]
+- [[doom-package:tuareg]]
+- [[doom-package:utop]] if [[doom-module::tools eval]]
+- unless [[doom-module:+lsp]]
+  - [[doom-package:flycheck-ocaml]] if [[doom-module::checkers syntax]]
+  - [[doom-package:merlin]]
+  - [[doom-package:merlin-company]]
+  - [[doom-package:merlin-eldoc]]
 
 ** Hacks
 - ~set-ligatures!~ is called with the full tuareg prettify symbol list, this can
   cause columns to change as certain keywords are shortened (e.g. =fun= becomes
   \lambda).
-- ~tuareg-opam-update-env~ is called the first time [[doom-package:][tuareg]] is loaded
+- ~tuareg-opam-update-env~ is called the first time [[doom-package:tuareg]] is loaded
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -86,16 +86,16 @@ This module requires the following packages available through [[http://opam.ocam
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-- If [[doom-module:][:completion company]] is enabled then autocomplete is provided by [[doom-package:][merlin]]
-- When [[doom-module:][:checkers syntax]] is enabled then [[doom-package:][flycheck-ocaml]] is activated to do
-  on-the-fly syntax/type checking via [[doom-package:][merlin]], otherwise this is only done when
+- If [[doom-module::completion company]] is enabled then autocomplete is provided by [[doom-package:merlin]]
+- When [[doom-module::checkers syntax]] is enabled then [[doom-package:flycheck-ocaml]] is activated to do
+  on-the-fly syntax/type checking via [[doom-package:merlin]], otherwise this is only done when
   the file is saved.
-- Spell checking is activated in comments if [[doom-module:][:checkers spell]] is active
-- A REPL is provided if [[doom-package:][utop]] is installed and [[doom-module:][:tools eval]] is active
-- If [[doom-module:][:editor format]] is enabled, the =ocamlformat= executable is available and
+- Spell checking is activated in comments if [[doom-module::checkers spell]] is active
+- A REPL is provided if [[doom-package:utop]] is installed and [[doom-module::tools eval]] is active
+- If [[doom-module::editor format]] is enabled, the =ocamlformat= executable is available and
   there is an =.ocamlformat= file present then ~format-all-buffer~ is bound to
   =ocamlformat=, otherwise to =ocp-indent=
-- If [[doom-module:][:editor multiple-cursors]] is enabled then identifiers can be refactored with
+- If [[doom-module::editor multiple-cursors]] is enabled then identifiers can be refactored with
   [[kbd:][v R]] and multiple cursors (this correctly matches identifier occurrences
   according to scope, it is not purely a textual match)
 

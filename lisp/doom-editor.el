@@ -1,4 +1,6 @@
-;;; doom-editor.el -*- lexical-binding: t; -*-
+;;; doom-editor.el --- defaults for text editing in Doom -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 (defvar doom-detect-indentation-excluded-modes
   '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
@@ -307,8 +309,12 @@ tell you about it. Very annoying. This prevents that."
   (defun doom--recentf-file-truename-fn (file)
     (if (or (not (file-remote-p file))
             (equal "sudo" (file-remote-p file 'method)))
-        (abbreviate-file-name (file-truename (tramp-file-name-localname tfile)))
+        (abbreviate-file-name (file-truename (tramp-file-name-localname file)))
       file))
+
+  ;; REVIEW: Use this in lieu of `doom--recentf-file-truename-fn' when we drop
+  ;;   28 support. See emacs-mirror/emacs@32906819addd.
+  ;; (setq recentf-show-abbreviated t)
 
   ;; Anything in runtime folders
   (add-to-list 'recentf-exclude
@@ -407,12 +413,10 @@ files, so this replace calls to `pp' with the much faster `prin1'."
 (use-package! server
   :when (display-graphic-p)
   :after-call doom-first-input-hook doom-first-file-hook focus-out-hook
-  :custom (server-auth-dir (concat doom-emacs-dir "server/"))
   :defer 1
-  :init
+  :config
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
-  :config
   (unless (server-running-p)
     (server-start)))
 

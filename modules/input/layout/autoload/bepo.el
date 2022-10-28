@@ -167,6 +167,8 @@ See `+layout-bepo-cr-rotation-style' for the meaning of CR-STYLE."
       "É" "W"
       "w" (kbd "C-w"))))
 
+;; TODO: Use a macro to DRY +layout-bepo-rotate-{keymaps,minor-modes}
+
 ;;;###autoload
 (defun +layout-bepo-rotate-keymaps (keymaps &optional cr-style)
   "Remap evil-collection keybinds in KEYMAPS for Bépo keyboard keyboard layouts.
@@ -210,7 +212,8 @@ Remappings are done according to CR-STYLE (see
       (kbd "M-j") (kbd "M-t")
       (kbd "M-J") (kbd "M-T")
       (kbd "M-k") (kbd "M-s")
-      (kbd "M-K") (kbd "M-S"))
+      (kbd "M-K") (kbd "M-S")
+      :destructive nil)
     (if (eq cr-style 'ergodis)
         (evil-collection-translate-key '(normal motion visual operator) keymaps
           "h" "r"
@@ -224,7 +227,8 @@ Remappings are done according to CR-STYLE (see
           (kbd "M-h") (kbd "M-r")
           (kbd "M-H") (kbd "M-R")
           (kbd "M-l") (kbd "M-c")
-          (kbd "M-L") (kbd "M-C"))
+          (kbd "M-L") (kbd "M-C")
+          :destructive nil)
       (evil-collection-translate-key '(normal motion visual operator) keymaps
         "h" "c"
         "H" "C"
@@ -237,7 +241,8 @@ Remappings are done according to CR-STYLE (see
         (kbd "M-h") (kbd "M-c")
         (kbd "M-H") (kbd "M-C")
         (kbd "M-l") (kbd "M-r")
-        (kbd "M-L") (kbd "M-R")))
+        (kbd "M-L") (kbd "M-R")
+        :destructive nil))
 
     (evil-collection-translate-key '(insert) keymaps
       (kbd "M-c") (kbd "M-h")
@@ -251,32 +256,161 @@ Remappings are done according to CR-STYLE (see
       (kbd "M-j") (kbd "M-t")
       (kbd "M-J") (kbd "M-T")
       (kbd "M-k") (kbd "M-s")
-      (kbd "M-K") (kbd "M-S"))
+      (kbd "M-K") (kbd "M-S")
+      :destructive nil)
     (if (eq cr-style 'ergodis)
         (evil-collection-translate-key '(insert) keymaps
           (kbd "M-h") (kbd "M-r")
           (kbd "M-H") (kbd "M-R")
           (kbd "M-l") (kbd "M-c")
-          (kbd "M-L") (kbd "M-C"))
+          (kbd "M-L") (kbd "M-C")
+          :destructive nil)
       (evil-collection-translate-key '(insert) keymaps
         (kbd "M-h") (kbd "M-c")
         (kbd "M-H") (kbd "M-C")
         (kbd "M-l") (kbd "M-r")
-        (kbd "M-L") (kbd "M-R")))
+        (kbd "M-L") (kbd "M-R")
+        :destructive nil))
 
     ;; <> en direct
     (evil-collection-translate-key '(normal motion visual operator) keymaps
       "«" "<"
-      "»" ">")
+      "»" ">"
+      :destructive nil)
 
     ;; è pour aller au début de ligne
     (evil-collection-translate-key '(normal motion visual operator) keymaps
       "è" "^"
-      "È" "0")
+      "È" "0"
+      :destructive nil)
 
     ;; [W] -> [É]
     ;; [C-W] -> [W]
     (evil-collection-translate-key '(normal motion operator visual) keymaps
       "é" "w"
       "É" "W"
-      "w" (kbd "C-w"))))
+      "w" (kbd "C-w")
+      :destructive nil)))
+
+;;;###autoload
+(defun +layout-bepo-rotate-minor-modes (modes &optional cr-style)
+  "Remap evil-collection keybinds in MODES for Bépo keyboard keyboard layouts.
+
+Remappings are done according to CR-STYLE (see
+`+layout-bepo-cr-rotation-style')."
+  (let ((cr-style (or cr-style +layout-bepo-cr-rotation-style)))
+    (evil-collection-translate-minor-mode-key '(normal motion visual operator) modes
+      "c" "h"
+      "C" "H"
+      "t" "j"
+      "T" "J"
+      "s" "k"
+      "S" "K"
+      "r" "l"
+      "R" "L"
+      "j" "t"
+      "J" "T"
+      "k" "s"
+      "K" "S"
+      (kbd "C-c") (kbd "C-h")
+      (kbd "C-C") (kbd "C-H")
+      (kbd "C-t") (kbd "C-j")
+      (kbd "C-T") (kbd "C-J")
+      (kbd "C-s") (kbd "C-k")
+      (kbd "C-S") (kbd "C-K")
+      (kbd "C-r") (kbd "C-l")
+      (kbd "C-R") (kbd "C-L")
+      (kbd "C-j") (kbd "C-t")
+      (kbd "C-J") (kbd "C-T")
+      (kbd "C-k") (kbd "C-s")
+      (kbd "C-K") (kbd "C-S")
+      (kbd "M-c") (kbd "M-h")
+      (kbd "M-C") (kbd "M-H")
+      (kbd "M-t") (kbd "M-j")
+      (kbd "M-T") (kbd "M-J")
+      (kbd "M-s") (kbd "M-k")
+      (kbd "M-S") (kbd "M-K")
+      (kbd "M-r") (kbd "M-l")
+      (kbd "M-R") (kbd "M-L")
+      (kbd "M-j") (kbd "M-t")
+      (kbd "M-J") (kbd "M-T")
+      (kbd "M-k") (kbd "M-s")
+      (kbd "M-K") (kbd "M-S")
+      :destructive nil)
+    (if (eq cr-style 'ergodis)
+        (evil-collection-translate-minor-mode-key '(normal motion visual operator) modes
+          "h" "r"
+          "H" "R"
+          "l" "c"
+          "L" "C"
+          (kbd "C-h") (kbd "C-r")
+          (kbd "C-H") (kbd "C-R")
+          (kbd "C-l") (kbd "C-c")
+          (kbd "C-L") (kbd "C-C")
+          (kbd "M-h") (kbd "M-r")
+          (kbd "M-H") (kbd "M-R")
+          (kbd "M-l") (kbd "M-c")
+          (kbd "M-L") (kbd "M-C")
+          :destructive nil)
+      (evil-collection-translate-minor-mode-key '(normal motion visual operator) modes
+        "h" "c"
+        "H" "C"
+        "l" "r"
+        "L" "R"
+        (kbd "C-h") (kbd "C-c")
+        (kbd "C-H") (kbd "C-C")
+        (kbd "C-l") (kbd "C-r")
+        (kbd "C-L") (kbd "C-R")
+        (kbd "M-h") (kbd "M-c")
+        (kbd "M-H") (kbd "M-C")
+        (kbd "M-l") (kbd "M-r")
+        (kbd "M-L") (kbd "M-R")
+        :destructive nil))
+
+    (evil-collection-translate-minor-mode-key '(insert) modes
+      (kbd "M-c") (kbd "M-h")
+      (kbd "M-C") (kbd "M-H")
+      (kbd "M-t") (kbd "M-j")
+      (kbd "M-T") (kbd "M-J")
+      (kbd "M-s") (kbd "M-k")
+      (kbd "M-S") (kbd "M-K")
+      (kbd "M-r") (kbd "M-l")
+      (kbd "M-R") (kbd "M-L")
+      (kbd "M-j") (kbd "M-t")
+      (kbd "M-J") (kbd "M-T")
+      (kbd "M-k") (kbd "M-s")
+      (kbd "M-K") (kbd "M-S")
+      :destructive nil)
+    (if (eq cr-style 'ergodis)
+        (evil-collection-translate-minor-mode-key '(insert) modes
+          (kbd "M-h") (kbd "M-r")
+          (kbd "M-H") (kbd "M-R")
+          (kbd "M-l") (kbd "M-c")
+          (kbd "M-L") (kbd "M-C")
+          :destructive nil)
+      (evil-collection-translate-minor-mode-key '(insert) modes
+        (kbd "M-h") (kbd "M-c")
+        (kbd "M-H") (kbd "M-C")
+        (kbd "M-l") (kbd "M-r")
+        (kbd "M-L") (kbd "M-R")
+        :destructive nil))
+
+    ;; <> en direct
+    (evil-collection-translate-minor-mode-key '(normal motion visual operator) modes
+      "«" "<"
+      "»" ">"
+      :destructive nil)
+
+    ;; è pour aller au début de ligne
+    (evil-collection-translate-minor-mode-key '(normal motion visual operator) modes
+      "è" "^"
+      "È" "0"
+      :destructive nil)
+
+    ;; [W] -> [É]
+    ;; [C-W] -> [W]
+    (evil-collection-translate-minor-mode-key '(normal motion operator visual) modes
+      "é" "w"
+      "É" "W"
+      "w" (kbd "C-w")
+      :destructive nil)))

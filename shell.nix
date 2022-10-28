@@ -26,19 +26,22 @@
 #   nix-shell --argstr emacs ci-27.2   # 27.2    (barebones; no GUI)
 #   nix-shell --argstr emacs ci-HEAD   # 28.0.50 (barebones; no GUI)
 
-# nixpkgs: provides Emacs 26.3 and 27.1
-{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/20.09.tar.gz")
+{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/22.05.tar.gz")
   {
     overlays = [
-      # emacs-overlay: provides Emacs 28, native-comp, and pgtk
-      (import (fetchTarball "https://github.com/nix-community/emacs-overlay/archive/85cc3a1fd067440181a4902455912e7c08ec26c8.tar.gz"))
-      # nix-emacs-ci: provides CI versions of Emacs 26.3, 27.1, 27.2, and 28.0.50
+      # emacs-overlay: provides EmacsGit, EmacsNativeComp, and EmacsPgtkNativeComp
+      (import (fetchTarball "https://github.com/nix-community/emacs-overlay/archive/ae5528c72a1e1afbbcb7be7e813f4b3598f919ed.tar.gz"))
+      # nix-emacs-ci: provides CI versions of Emacs 26.3, 27.1, 27.2, 28.1, and snapshot
       (_: _: (import (fetchTarball "https://github.com/purcell/nix-emacs-ci/archive/master.tar.gz")))
-      # Pull Emacs 27.2 from later version of nixpkgs
-      (_: _: { emacs27-2 = (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/4c87cb87a2db6b9eb43541c1cf83f2a2f725fa25.tar.gz") {}).emacs; })
+      # emacs{26,27-{1,2}}
+      (_: _: {
+        emacs26   = (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/11264a390b197b80edeffac6f20e582f3ea318bd.tar.gz") {}).emacs26;
+        emacs27-1 = (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/11264a390b197b80edeffac6f20e582f3ea318bd.tar.gz") {}).emacs;
+        emacs27-2 = (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/4c87cb87a2db6b9eb43541c1cf83f2a2f725fa25.tar.gz") {}).emacs;
+      })
     ];
   }
-, emacs ? "27"
+, emacs ? "28"
 , emacsdir ? "$(pwd)"
 , doomdir ? ""
 , doomlocaldir ? "$EMACSDIR/.local" }:
@@ -48,13 +51,17 @@ let emacsPkg = (if      emacs == "26"       then pkgs.emacs26
                 else if emacs == "27"       then pkgs.emacs27-2
                 else if emacs == "27.1"     then pkgs.emacs27
                 else if emacs == "27.2"     then pkgs.emacs27-2
-                else if emacs == "28"       then pkgs.emacsGit
-                else if emacs == "gcc"      then pkgs.emacsGcc
-                else if emacs == "pgtk+gcc" then pkgs.emacsPgtkGcc
+                else if emacs == "28"       then pkgs.emacs
+                else if emacs == "28.1"     then pkgs.emacs
+                else if emacs == "head"     then pkgs.emacsGit
+                else if emacs == "gcc"      then pkgs.emacsNativeComp
+                else if emacs == "pgtk+gcc" then pkgs.emacsPgtkNativeComp
                 else if emacs == "ci-26.3"  then pkgs.emacs-26-3
                 else if emacs == "ci-27.1"  then pkgs.emacs-27-1
                 else if emacs == "ci-27.2"  then pkgs.emacs-27-2
-                else if emacs == "ci-28"    then pkgs.emacs-snapshot
+                else if emacs == "ci-28"    then pkgs.emacs-28-1
+                else if emacs == "ci-28.1"  then pkgs.emacs-28-1
+                else if emacs == "ci-head"  then pkgs.emacs-snapshot
                 else pkgs.emacs);
 in pkgs.stdenv.mkDerivation {
   name = "doom-emacs";
@@ -68,9 +75,15 @@ in pkgs.stdenv.mkDerivation {
   shellHook = ''
     export EMACS="${emacsPkg}/bin/emacs"
     export EMACSVERSION="$($EMACS --no-site-file --batch --eval '(princ emacs-version)')"
-    export EMACSDIR="$(readlink -f "${emacsdir}")/"
-    export DOOMDIR="$(readlink -f "${doomdir}")/"
-    export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
+    if [[ -n "${emacsdir}" ]]; then
+      export EMACSDIR="$(readlink -f "${emacsdir}")/"
+    fi
+    if [[ -n "${doomdir}" ]]; then
+      export DOOMDIR="$(readlink -f "${doomdir}")/"
+    fi
+    if [[ -n "${doomlocaldir}" ]]; then
+      export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}").$EMACSVERSION/"
+    fi
     export DOOMNOCOMPILE=1
     export PATH="$EMACSDIR/bin:$PATH"
 
@@ -84,7 +97,7 @@ in pkgs.stdenv.mkDerivation {
     mkdir -p "$DOOMLOCALDIR/straight"
     pushd "$DOOMLOCALDIR/straight" >/dev/null
     if [[ -d "$EMACSDIR/.local/straight/repos" && ! -d ./repos ]]; then
-      echo "Copying '$EMACSDIR/.local/straight/repos' to './$(basename $DOOMLOCALDIR)straight/repos' to save time"
+      echo "Copying '$EMACSDIR/.local/straight/repos' to './$(basename $DOOMLOCALDIR)/straight/repos' to save time"
       cp -r "$EMACSDIR/.local/straight/repos" ./repos
     fi
     popd >/dev/null

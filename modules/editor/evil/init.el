@@ -20,7 +20,7 @@
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
 (when (and (not noninteractive)
-           (not doom-reloading-p)
+           (not (doom-context-p 'reload))
            (modulep! +everywhere))
 
   (setq evil-collection-company-use-tng (modulep! :completion company +tng)
@@ -94,6 +94,7 @@ variable for an explanation of the defaults (in comments). See
       atomic-chrome
       auto-package-update
       beginend
+      bluetooth
       bm
       bookmark
       (buff-menu "buff-menu")
@@ -273,7 +274,7 @@ variable for an explanation of the defaults (in comments). See
 Unlike `evil-collection-init', this respects `+evil-collection-disabled-list',
 and complains if a module is loaded too early (during startup)."
     (unless (memq (or (car-safe module) module) disabled-list)
-      (doom-log "Initialized evil-collection-%s %s"
+      (doom-log "editor:evil: loading evil-collection-%s %s"
                 (or (car-safe module) module)
                 (if doom-init-time "" "(too early!)"))
       (with-demoted-errors "evil-collection error: %s"

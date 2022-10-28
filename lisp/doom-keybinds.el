@@ -1,9 +1,12 @@
-;;; doom-keybinds.el -*- lexical-binding: t; -*-
-
+;;; doom-keybinds.el --- defaults for Doom's keybinds -*- lexical-binding: t; -*-
+;;; Commentary:
+;;
 ;; A centralized keybinds system, integrated with `which-key' to preview
 ;; available keybindings. All built into one powerful macro: `map!'. If evil is
 ;; never loaded, then evil bindings set with `map!' are ignored (i.e. omitted
 ;; entirely for performance reasons).
+;;
+;;; Code:
 
 (defvar doom-leader-key "SPC"
   "The leader prefix key for Evil users.")
@@ -24,7 +27,7 @@ and Emacs states, and for non-evil users.")
 
 
 ;;
-;;; Keybind settings
+;;; Global keybind settings
 
 (cond
  (IS-MAC
@@ -41,7 +44,14 @@ and Emacs states, and for non-evil users.")
   (setq w32-lwindow-modifier 'super
         w32-rwindow-modifier 'super)))
 
-;; HACK Fixes Emacs' disturbing inability to distinguish C-i from TAB.
+;; HACK: Emacs cannot distinguish between C-i from TAB. This is largely a
+;;   byproduct of its history in the terminal, which can't distinguish them
+;;   either, however, when GUIs came about Emacs greated separate input events
+;;   for more contentious keys like TAB and RET. Therefore [return] != RET,
+;;   [tab] != TAB, and [backspace] != DEL.
+;;
+;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it.
+;;   Otherwise, it falls back to regular C-i keybinds.
 (define-key key-translation-map [?\C-i]
   (cmd! (if (let ((keys (this-single-command-raw-keys)))
               (and keys
@@ -106,18 +116,15 @@ all hooks after it are ignored.")
 ;;
 ;;; General + leader/localleader keys
 
-(use-package general
-  :init
-  ;; Convenience aliases
-  (defalias 'define-key! #'general-def)
-  (defalias 'undefine-key! #'general-unbind)
-  :config
-  ;; Prevent "X starts with non-prefix key Y" errors except at startup.
-  (add-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys))
+(require 'general)
+;; Convenience aliases
+(defalias 'define-key! #'general-def)
+(defalias 'undefine-key! #'general-unbind)
+;; Prevent "X starts with non-prefix key Y" errors except at startup.
+(add-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys)
 
-
-;; HACK `map!' uses this instead of `define-leader-key!' because it consumes
-;; 20-30% more startup time, so we reimplement it ourselves.
+;; HACK: `map!' uses this instead of `define-leader-key!' because it consumes
+;;   20-30% more startup time, so we reimplement it ourselves.
 (defmacro doom--define-leader-key (&rest keys)
   (let (prefix forms wkforms)
     (while keys
@@ -184,15 +191,16 @@ localleader prefix."
       :prefix doom-localleader-alt-key
       ,@args)))
 
-;; We use a prefix commands instead of general's :prefix/:non-normal-prefix
-;; properties because general is incredibly slow binding keys en mass with them
-;; in conjunction with :states -- an effective doubling of Doom's startup time!
+;; PERF: We use a prefix commands instead of general's
+;;   :prefix/:non-normal-prefix properties because general is incredibly slow
+;;   binding keys en mass with them in conjunction with :states -- an effective
+;;   doubling of Doom's startup time!
 (define-prefix-command 'doom/leader 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
 ;; the user a chance to modify them.
-(add-hook! 'doom-after-init-modules-hook
+(add-hook! 'doom-after-init-hook
   (defun doom-init-leader-keys-h ()
     "Bind `doom-leader-key' and `doom-leader-alt-key'."
     (let ((map general-override-mode-map))
@@ -456,7 +464,9 @@ States
   Don't
     (map! :n :leader :desc \"Description\" \"C-c\" #'dosomething)
     (map! :leader :n :desc \"Description\" \"C-c\" #'dosomething)"
-  (doom--map-process rest))
+  (when (or (bound-and-true-p byte-compile-current-file)
+            (not noninteractive))
+    (doom--map-process rest)))
 
 (provide 'doom-keybinds)
 ;;; doom-keybinds.el ends here

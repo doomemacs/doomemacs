@@ -109,9 +109,12 @@
                              :path (doom-module-locate-path (car key) (cdr key))))
                           doom-modules)
                  (--run--)
+                 (doom-run-hooks 'doom-before-modules-init-hook)
                  (maphash (doom-module-loader doom-module-init-file) doom-modules)
+                 (doom-run-hooks 'doom-after-modules-init-hook)
+                 (doom-run-hooks 'doom-before-modules-config-hook)
                  (maphash (doom-module-loader doom-module-config-file) doom-modules)
-                 (doom-run-hooks 'doom-init-modules-hook)))
+                 (doom-run-hooks 'doom-after-modules-config-hook)))
              (`vanilla-doom  ; only Doom core
               `(progn
                  (load-file ,(expand-file-name "doom.el" doom-core-dir))

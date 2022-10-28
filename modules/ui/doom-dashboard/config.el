@@ -445,14 +445,15 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
                            ?\n)))))
 
 (defun doom-dashboard-widget-loaded ()
-  (insert
-   "\n\n"
-   (propertize
-    (+doom-dashboard--center
-     +doom-dashboard--width
-     (doom-display-benchmark-h 'return))
-    'face 'doom-dashboard-loaded)
-   "\n"))
+  (when doom-init-time
+    (insert
+     "\n\n"
+     (propertize
+      (+doom-dashboard--center
+       +doom-dashboard--width
+       (doom-display-benchmark-h 'return))
+      'face 'doom-dashboard-loaded)
+     "\n")))
 
 (defun doom-dashboard-widget-shortmenu ()
   (let ((all-the-icons-scale-factor 1.45)

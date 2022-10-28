@@ -40,6 +40,95 @@ exist, and `org-link' otherwise."
                            'error)))
            (plist-put plist :requires nil))))
 
+;;;###autoload
+(defun +org-link-read-desc-at-point (&optional default context)
+  "TODO"
+  (if (and (stringp default) (not (string-empty-p default)))
+      (string-trim default)
+    (if-let* ((context (or context (org-element-context)))
+              (context (org-element-lineage context '(link) t))
+              (beg (org-element-property :contents-begin context))
+              (end (org-element-property :contents-end context)))
+        (unless (= beg end)
+          (replace-regexp-in-string
+           "[ \n]+" " " (string-trim (buffer-substring-no-properties beg end)))))))
+
+;;;###autoload
+(defun +org-link-read-kbd-at-point (&optional default context)
+  "TODO"
+  (+org-link--describe-kbd
+   (+org-link-read-desc-at-point default context)))
+
+(defun +org-link--describe-kbd (keystr)
+  (dolist (key `(("<leader>" . ,doom-leader-key)
+                 ("<localleader>" . ,doom-localleader-key)
+                 ("<prefix>" . ,(if (bound-and-true-p evil-mode)
+                                    (concat doom-leader-key " u")
+                                  "C-u"))
+                 ("<help>" . ,(if (bound-and-true-p evil-mode)
+                                  (concat doom-leader-key " h")
+                                "C-h"))
+                 ("\\<M-" . "alt-")
+                 ("\\<S-" . "shift-")
+                 ("\\<s-" . "super-")
+                 ("\\<C-" . "ctrl-")))
+    (setq keystr
+          (replace-regexp-in-string (car key) (cdr key)
+                                    keystr t t)))
+  keystr)
+
+(defun +org-link--read-module-spec (module-spec-str)
+  (if (string-prefix-p "+" (string-trim-left module-spec-str))
+      (let ((title (cadar (org-collect-keywords '("TITLE")))))
+        (if (and title (string-match-p "\\`:[a-z]+ [a-z]+\\'" title))
+            (+org-link--read-module-spec (concat title " " module-spec-str))
+          (list :category nil :module nil :flag (intern module-spec-str))))
+    (cl-destructuring-bind (category &optional module flag)
+        (mapcar #'intern (split-string
+                          (if (string-prefix-p ":" module-spec-str)
+                              module-spec-str
+                            (concat ":" module-spec-str))
+                          "[ \n]+" nil))
+      (list :category category
+            :module module
+            :flag flag))))
+
+;;;###autoload
+(defun +org-link--doom-module-link-face-fn (module-path)
+  (cl-destructuring-bind (&key category module flag)
+      (+org-link--read-module-spec module-path)
+    (if (doom-module-locate-path category module)
+        `(:inherit org-priority
+          :weight bold)
+      'error)))
+
+;;;###autoload
+(defun +org-link-follow-doom-module-fn (module-path _prefixarg)
+  "TODO"
+  (cl-destructuring-bind (&key category module flag)
+      (+org-link--read-module-spec module-path)
+    (when category
+      (let ((doom-modules-dirs (list doom-modules-dir)))
+        (if-let* ((path (doom-module-locate-path category module))
+                  (path (or (car (doom-glob path "README.org"))
+                            path)))
+            (find-file path)
+          (user-error "Can't find Doom module '%s'" module-path))))
+    (when flag
+      (goto-char (point-min))
+      (when (and (re-search-forward "^\\*+ \\(?:TODO \\)?Module flags")
+                 (re-search-forward (format "^\\s-*- \\+%s ::[ \n]"
+                                            (substring (symbol-name flag) 1))
+                                    (save-excursion (org-get-next-sibling)
+                                                    (point))))
+        (org-show-entry)
+        (recenter)))))
+
+;;;###autoload
+(defun +org-link-follow-doom-package-fn (pkg _prefixarg)
+  "TODO"
+  (doom/describe-package (intern-soft pkg)))
+
 
 ;;
 ;;; Image data functions (for custom inline images)

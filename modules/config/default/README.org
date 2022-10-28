@@ -8,7 +8,7 @@ This module provides a set of reasonable defaults, including:
 
 - A Spacemacs-inspired keybinding scheme
 - A configuration for (almost) universally repeating searches with [[kbd:][;]] and [[kbd:][,]]
-- A [[doom-package:][smartparens]] configuration for smart completion of certain delimiters, like
+- A [[doom-package:smartparens]] configuration for smart completion of certain delimiters, like
   ~/* */~ command blocks in C-languages, ~<?php ?>~ tags in PHP, or ~def end~ in
   Ruby/Crystal/etc.
 
@@ -23,10 +23,10 @@ This module provides a set of reasonable defaults, including:
 - +smartparens :: ...
 
 ** Packages
-- [[doom-package:][avy]]
-- [[doom-package:][drag-stuff]]
-- [[doom-package:][link-hint]]
-- [[doom-package:][expand-region]] unless [[doom-module:][:editor evil]]
+- [[doom-package:avy]]
+- [[doom-package:drag-stuff]]
+- [[doom-package:link-hint]]
+- [[doom-package:expand-region]] unless [[doom-module::editor evil]]
 
 ** Hacks
 - ~epa-pinentry-mode~ is set to ~'loopback~, forcing gpg-agent to use the Emacs

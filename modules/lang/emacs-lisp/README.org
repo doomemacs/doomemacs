@@ -9,7 +9,7 @@ This module extends support for Emacs Lisp in Doom Emacs.
 - Macro expansion
 - Go-to-definitions or references functionality
 - Syntax highlighting for defined and quoted symbols
-- Replaces the built-in help with the more powerful [[doom-package:][helpful]]
+- Replaces the built-in help with the more powerful [[doom-package:helpful]]
 - Adds function example uses to documentation
 
 ** Maintainers
@@ -21,14 +21,14 @@ This module extends support for Emacs Lisp in Doom Emacs.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][buttercup]]
-- [[doom-package:][elisp-def]]
-- [[doom-package:][elisp-demos]]
-- [[doom-package:][flycheck-cask]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][flycheck-package]] if [[doom-module:][:checkers syntax]]
-- [[doom-package:][highlight-quoted]]
-- [[doom-package:][macrostep]]
-- [[doom-package:][overseer]]
+- [[doom-package:buttercup]]
+- [[doom-package:elisp-def]]
+- [[doom-package:elisp-demos]]
+- [[doom-package:flycheck-cask]] if [[doom-module::checkers syntax]]
+- [[doom-package:flycheck-package]] if [[doom-module::checkers syntax]]
+- [[doom-package:highlight-quoted]]
+- [[doom-package:macrostep]]
+- [[doom-package:overseer]]
 
 ** Hacks
 - Symbols that are defined in the current session are highlighted with

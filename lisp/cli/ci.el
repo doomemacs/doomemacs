@@ -251,6 +251,7 @@ Note: warnings are not considered failures.")
   "Commands that automate development processes."
   :partial t)
 
+;; TODO Move to 'doom install --git-hooks'
 (defcli! (ci deploy-hooks) ((force ("--force")))
   "TODO"
   (let* ((repo-path (sh! "git" "rev-parse" "--show-toplevel"))
@@ -283,6 +284,7 @@ Note: warnings are not considered failures.")
                  (if overwrite-p "Overwrote" "Created")
                  (path hook)))))))
 
+;; TODO Move to 'doom lint commits'
 (defcli! (ci lint-commits) (from &optional to)
   "TODO"
   (with-temp-buffer
@@ -305,10 +307,7 @@ Note: warnings are not considered failures.")
                commits))
        commits))))
 
-;;; TODO
-(defstub! (ci run-tests))
-
-;;; doom ci hook
+;; TODO Move to 'doom lint hook:commit-msg'
 (defcli! (ci hook commit-msg) (file)
   "Run git commit-msg hook.
 
@@ -323,6 +322,7 @@ Lints the current commit message."
               (match-beginning 0)
             (point-max))))))))
 
+;; TODO Move to 'doom lint hook:pre-push'
 (defcli! (ci hook pre-push) (remote url)
   "Run git pre-push hook.
 

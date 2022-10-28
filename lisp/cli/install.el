@@ -61,22 +61,28 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
 
       ;; Create init.el, config.el & packages.el
       (print-group!
-       (mapc (lambda (file)
-               (cl-destructuring-bind (filename . template) file
-                 (if (file-exists-p! filename doom-user-dir)
-                     (print! (item "Skipping %s (already exists)")
-                             (path filename))
-                   (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
-                   (with-temp-file (doom-path doom-user-dir filename)
-                     (insert-file-contents template))
-                   (print! (success "Done!")))))
-             `(("init.el" . ,(doom-path doom-emacs-dir "templates/init.example.el"))
-               ("config.el" . ,(doom-path doom-emacs-dir "templates/config.example.el"))
-               ("packages.el" . ,(doom-path doom-emacs-dir "templates/packages.example.el"))))))
+        (mapc (lambda (file)
+                (cl-destructuring-bind (filename . template) file
+                  (if (file-exists-p! filename doom-user-dir)
+                      (print! (item "Skipping %s (already exists)")
+                              (path filename))
+                    (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
+                    (with-temp-file (doom-path doom-user-dir filename)
+                      (insert-file-contents template))
+                    (print! (success "Done!")))))
+              (let ((template-dir (doom-path doom-emacs-dir "templates")))
+                `((,doom-module-init-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-init-file)
+                                                ".example.el"))
+                  (,doom-module-config-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-config-file)
+                                                ".example.el"))
+                  (,doom-module-packages-file
+                   . ,(file-name-with-extension (doom-path template-dir doom-module-packages-file)
+                                                ".example.el")))))))
 
-    ;; In case no init.el was present the first time `doom-initialize-modules' was
-    ;; called in core.el (e.g. on first install)
-    (doom-initialize-modules 'force 'no-config)
+    ;; In case no init.el was present the first time it was loaded.
+    (doom-load (doom-path doom-user-dir doom-module-init-file) t)
 
     ;; Ask if user would like an envvar file generated
     (if (eq envfile? :no)
@@ -93,7 +99,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
       (doom-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-autoloads-reload)
+    (doom-profile-generate)
 
     (if (eq hooks? :no)
         (print! (warn "Not deploying commit-msg and pre-push git hooks, as requested"))

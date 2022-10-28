@@ -14,9 +14,9 @@ support.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][calfw]]
-- [[doom-package:][calfw-org]]
-- [[doom-package:][org-gcal]]
+- [[doom-package:calfw]]
+- [[doom-package:calfw-org]]
+- [[doom-package:org-gcal]]
   
 ** Hacks
 /No hacks documented for this module./
@@ -30,7 +30,7 @@ support.
 
 This module requires:
 - A Google Calendar account.
-- [[https://github.com/kidd/org-gcal.el#installation][An OAuth client ID]], for syncing said account with [[doom-package:][org-gcal]].
+- [[https://github.com/kidd/org-gcal.el#installation][An OAuth client ID]], for syncing said account with [[doom-package:org-gcal]].
 
 * TODO Usage
 #+begin_quote

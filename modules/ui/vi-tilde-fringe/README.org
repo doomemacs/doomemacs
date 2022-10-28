@@ -15,7 +15,7 @@ Displays a tilde(~) in the left fringe to indicate an empty line, similar to Vi.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][vi-tilde-fringe]]
+- [[doom-package:vi-tilde-fringe]]
 
 ** Hacks
 /No hacks documented for this module./

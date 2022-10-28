@@ -24,8 +24,8 @@ languages:
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][lispy]]
-- [[doom-package:][lispyville]] if [[doom-module:][:editor evil +everywhere]]
+- [[doom-package:lispy]]
+- [[doom-package:lispyville]] if [[doom-module::editor evil +everywhere]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -44,8 +44,8 @@ languages:
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-If [[doom-module:][:editor evil]] is enabled, [[doom-package:][lispyville]] would also be activated for every mode
-where [[doom-package:][lispy]] is active.
+If [[doom-module::editor evil]] is enabled, [[doom-package:lispyville]] would also be activated for every mode
+where [[doom-package:lispy]] is active.
 
 * TODO Configuration
 #+begin_quote

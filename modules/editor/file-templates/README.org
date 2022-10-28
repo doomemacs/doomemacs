@@ -4,7 +4,7 @@
 #+since:    2.0.0
 
 * Description :unfold:
-This module adds file templates for blank files, powered by [[doom-package:][yasnippet]].
+This module adds file templates for blank files, powered by [[doom-package:yasnippet]].
 
 ** Maintainers
 - [[doom-user:][@hlissner]]
@@ -18,7 +18,7 @@ This module adds file templates for blank files, powered by [[doom-package:][yas
 /This module doesn't install any packages./
 
 ** Hacks
-- [[doom-package:][yasnippet]]
+- [[doom-package:yasnippet]]
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -60,13 +60,13 @@ A special command is available for inserting software licenses: ~M-x
 New file templates can be added to
 =$DOOMDIR/snippets/{major-mode}/{snippet-name}=. The yasnippet documentation
 covers [[https://joaotavora.github.io/yasnippet/snippet-development.html][how to write a snippet]]. You can map a snippet to a file path, major mode,
-or another arbitrary predicate using [[fn:][set-file-template!]].
+or another arbitrary predicate using [[fn:set-file-template!]].
 
 Look into its documentation with [[kbd:][<help> f set-file-template\!]].
 
 ** Adding new OSS licenses
 Add snippet files to =$DOOMDIR/snippets/text-mode/= with the =__licenses-=
-prefix and [[fn:][+file-templates/insert-license]] will recognize them. E.g.
+prefix and [[fn:+file-templates/insert-license]] will recognize them. E.g.
 =$DOOMDIR/snippets/text-mode/__license-mit=.
 
 * Troubleshooting

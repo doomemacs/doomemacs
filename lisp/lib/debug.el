@@ -1,57 +1,64 @@
 ;;; lisp/lib/debug.el -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
 
 ;;
 ;;; Doom's debug mode
 
 ;;;###autoload
 (defvar doom-debug-variables
-  '(async-debug
+  `(;; Doom variables
+    (doom-print-minimum-level . debug)
+    (doom-inhibit-log . nil)
+
+    ;; Emacs variables
+    async-debug
     debug-on-error
-    (debugger . doom-debugger)
-    (doom-print-level . debug)
-    garbage-collection-messages
     gcmh-verbose
     init-file-debug
     jka-compr-verbose
     (message-log-max . 16384)
-    (warning-suppress-types . nil)
+    (native-comp-async-report-warnings-errors . silent)
+    (native-comp-warning-on-missing-source . t)
     url-debug
-    use-package-verbose)
+    use-package-verbose
+    (warning-suppress-types . nil))
   "A list of variable to toggle on `doom-debug-mode'.
 
 Each entry can be a variable symbol or a cons cell whose CAR is the variable
 symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
 
-(defvar doom-debug--undefined-vars nil)
+(defvar doom-debug--unbound-vars nil)
 
 (defun doom-debug--watch-vars-h (&rest _)
-  (when-let (bound-vars (cl-delete-if-not #'boundp doom-debug--undefined-vars))
-    (doom-log "New variables available: %s" bound-vars)
-    (let ((message-log-max nil))
-      (doom-debug-mode -1)
-      (doom-debug-mode +1))))
+  (when-let (vars (copy-sequence doom-debug--unbound-vars))
+    (setq doom-debug--unbound-vars nil)
+    (mapc #'doom-debug--set-var vars)))
+
+(defun doom-debug--set-var (spec)
+  (cond ((listp spec)
+         (pcase-let ((`(,var . ,val) spec))
+           (if (boundp var)
+               (set-default
+                var (if (not doom-debug-mode)
+                        (prog1 (get var 'initial-value)
+                          (put var 'initial-value nil))
+                      (doom-log "debug:vars: %s = %S" var (default-toplevel-value var))
+                      (put var 'initial-value (default-toplevel-value var))
+                      val))
+             (add-to-list 'doom-debug--unbound-vars spec))))
+        ((boundp spec)
+         (doom-log "debug:vars: %s = %S" spec doom-debug-mode)
+         (set-default-toplevel-value spec doom-debug-mode))
+        ((add-to-list 'doom-debug--unbound-vars (cons spec t)))))
 
 ;;;###autoload
 (define-minor-mode doom-debug-mode
   "Toggle `debug-on-error' and `init-file-debug' for verbose logging."
-  :init-value init-file-debug
   :global t
   (let ((enabled doom-debug-mode))
-    (setq doom-debug--undefined-vars nil)
-    (dolist (var doom-debug-variables)
-      (cond ((listp var)
-             (pcase-let ((`(,var . ,val) var))
-               (if (boundp var)
-                   (set-default
-                    var (if (not enabled)
-                            (prog1 (get var 'initial-value)
-                              (put var 'initial-value nil))
-                          (put var 'initial-value (symbol-value var))
-                          val))
-                 (add-to-list 'doom-debug--undefined-vars var))))
-            ((if (boundp var)
-                 (set-default var enabled)
-               (add-to-list 'doom-debug--undefined-vars var)))))
+    (doom-log "debug: enabled!")
+    (mapc #'doom-debug--set-var doom-debug-variables)
     (when (called-interactively-p 'any)
       (when (fboundp 'explain-pause-mode)
         (explain-pause-mode (if enabled +1 -1))))
@@ -59,28 +66,58 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
     ;; potentially define one of `doom-debug-variables'), in case some of them
     ;; aren't defined when `doom-debug-mode' is first loaded.
     (cond (enabled
-           (message "Debug mode enabled! (Run 'M-x view-echo-area-messages' to open the log buffer)")
+           (unless noninteractive
+             (message "Debug mode enabled! (Run 'M-x view-echo-area-messages' to open the log buffer)"))
            ;; Produce more helpful (and visible) error messages from errors
            ;; emitted from hooks (particularly mode hooks), that usually go
            ;; unnoticed otherwise.
            (advice-add #'run-hooks :override #'doom-run-hooks)
            ;; Add time stamps to lines in *Messages*
            (advice-add #'message :before #'doom--timestamped-message-a)
+           ;; The constant debug output from GC is mostly unhelpful. I still
+           ;; want it logged to *Messages*, just out of the echo area.
+           (advice-add #'gcmh-idle-garbage-collect :around #'doom-debug-shut-up-a)
            (add-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
            (add-hook 'after-load-functions #'doom-debug--watch-vars-h))
           (t
            (advice-remove #'run-hooks #'doom-run-hooks)
            (advice-remove #'message #'doom--timestamped-message-a)
+           (advice-remove #'gcmh-idle-garbage-collect #'doom-debug-shut-up-a)
            (remove-variable-watcher 'doom-debug-variables #'doom-debug--watch-vars-h)
            (remove-hook 'after-load-functions #'doom-debug--watch-vars-h)
+           (doom-log "debug: disabled")
            (message "Debug mode disabled!")))))
+
+(defun doom-debug-shut-up-a (fn &rest args)
+  "Suppress output from FN, even in debug mode."
+  (let (init-file-debug)
+    (apply #'doom-shut-up-a fn args)))
 
 
 ;;
-;;; Custom debuggers
+;;; Custom debugger
+
+;; HACK: I advise `debug' instead of changing `debugger' to hide the debugger
+;;   itself from the backtrace. Doing it manually would require reimplementing
+;;   most of `debug', which is a lot of unnecessary work, when I only want to
+;;   decorate the original one slightly.
+(defadvice! doom-debugger-a (fn &rest args)
+  :around #'debug
+  ;; Without `doom-debug-mode', be as vanilla as possible.
+  (if (not doom-debug-mode)
+      (apply fn args)
+    ;; Work around Emacs's heuristic (in eval.c) for detecting errors in the
+    ;; debugger, which would run this handler again on subsequent calls. Taken
+    ;; from `ert--run-test-debugger'.
+    (if (and noninteractive (fboundp 'doom-cli-debugger))
+        (apply #'doom-cli-debugger args)
+      ;; TODO: Write backtraces to file
+      ;; TODO: Write backtrace to a buffer in case recursive error interupts the
+      ;;   debugger (happens more often than it should).
+      (apply fn args))))
 
 (autoload 'backtrace-get-frames "backtrace")
-
+;;;###autoload
 (defun doom-backtrace ()
   "Return a stack trace as a list of `backtrace-frame' objects."
   ;; (let* ((n 0)
@@ -127,33 +164,19 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
               backtrace))
       file)))
 
-(defun doom-debugger (&rest args)
-  "Enter `debugger' in interactive sessions, `doom-cli-debugger' otherwise.
-
-Writes backtraces to file and ensures the backtrace is recorded, so the user can
-always access it."
-  (let ((backtrace (doom-backtrace)))
-    ;; Work around Emacs's heuristic (in eval.c) for detecting errors in the
-    ;; debugger, which would run this handler again on subsequent calls. Taken
-    ;; from `ert--run-test-debugger'.
-    (cl-incf num-nonmacro-input-events)
-    ;; TODO Write backtraces to file
-    ;; TODO Write backtrace to a buffer in case recursive error interupts the
-    ;;   debugger (happens more often than it should).
-    (apply #'debug args)))
-
 
 ;;
 ;;; Time-stamped *Message* logs
 
-(defun doom--timestamped-message-a (format-string &rest args)
+(defun doom--timestamped-message-a (format-string &rest _args)
   "Advice to run before `message' that prepends a timestamp to each message.
 
 Activate this advice with:
 (advice-add 'message :before 'doom--timestamped-message-a)"
   (when (and (stringp format-string)
-             message-log-max
-             (not (string-equal format-string "%s%s")))
+             message-log-max  ; if nil, logging is disabled
+             (not (equal format-string "%s%s"))
+             (not (equal format-string "\n")))
     (with-current-buffer "*Messages*"
       (let ((timestamp (format-time-string "[%F %T] " (current-time)))
             (deactivate-mark nil))
@@ -223,8 +246,9 @@ ready to be pasted in a bug report on github."
                (abbreviate-file-name path)))
             (defun symlink-path (file)
               (format "%s%s" (abbrev-path file)
-                      (if (file-symlink-p file) ""
-                        (concat " -> " (abbrev-path (file-truename file)))))))
+                      (if (file-symlink-p file)
+                          (concat " -> " (abbrev-path (file-truename file)))
+                        ""))))
       `((generated . ,(format-time-string "%b %d, %Y %H:%M:%S"))
         (system . ,(delq
                     nil (list (doom-system-distro-version)
@@ -238,6 +262,11 @@ ready to be pasted in a bug report on github."
                                   (substring emacs-repository-version 0 9))
                              (symlink-path doom-emacs-dir))))
         (doom . ,(list doom-version
+                       (if doom-profile
+                           (format "PROFILE=%s@%s"
+                                   (car doom-profile)
+                                   (cdr doom-profile))
+                         "PROFILE=_@0")
                        (sh "git" "log" "-1" "--format=%D %h %ci")
                        (symlink-path doom-user-dir)))
         (shell  . ,(abbrev-path shell-file-name))
@@ -265,11 +294,12 @@ ready to be pasted in a bug report on github."
                             'symlinked-doomdir)
                         (if (and (stringp custom-file) (file-exists-p custom-file))
                             'custom-file)
-                        (if (doom-files-in `(,@doom-modules-dirs
-                                             ,doom-core-dir
-                                             ,doom-user-dir)
-                                           :type 'files :match "\\.elc$")
-                            'byte-compiled-config)))))
+                        (if (doom-files-in doom-user-dir :type 'files :match "\\.elc$")
+                            'compiled-user-config)
+                        (if (doom-files-in doom-core-dir :type 'files :match "\\.elc$")
+                            'compiled-core)
+                        (if (doom-files-in doom-modules-dirs :type 'files :match "\\.elc$")
+                            'compiled-modules)))))
         (custom
          ,@(when (and (stringp custom-file)
                       (file-exists-p custom-file))
@@ -277,15 +307,15 @@ ready to be pasted in a bug report on github."
                       if (eq type 'theme-value)
                       collect var)))
         (modules
-         ,@(or (cl-loop with cat = nil
-                        for key being the hash-keys of doom-modules
-                        if (or (not cat)
-                               (not (eq cat (car key))))
-                        do (setq cat (car key))
-                        and collect cat
+         ,@(or (cl-loop with lastcat = nil
+                        for (cat . mod) in (seq-filter #'cdr (doom-module-list))
+                        if (or (not lastcat)
+                               (not (eq lastcat cat)))
+                        do (setq lastcat cat)
+                        and collect lastcat
                         collect
-                        (let* ((flags (doom-module-get cat (cdr key) :flags))
-                               (path  (doom-module-get cat (cdr key) :path))
+                        (let* ((flags (doom-module-get lastcat mod :flags))
+                               (path  (doom-module-get lastcat mod :path))
                                (module
                                 (append
                                  (cond ((null path)
@@ -293,8 +323,8 @@ ready to be pasted in a bug report on github."
                                        ((not (file-in-directory-p path doom-modules-dir))
                                         (list '&user)))
                                  (if flags
-                                     `(,(cdr key) ,@flags)
-                                   (list (cdr key))))))
+                                     `(,mod ,@flags)
+                                   (list mod)))))
                           (if (= (length module) 1)
                               (car module)
                             module)))
@@ -303,7 +333,7 @@ ready to be pasted in a bug report on github."
          ,@(condition-case e
                (mapcar
                 #'cdr (doom--collect-forms-in
-                       (doom-path doom-user-dir "packages.el")
+                       (doom-path doom-user-dir doom-module-packages-file)
                        "package!"))
              (error (format "<%S>" e))))
         (unpin
@@ -311,7 +341,7 @@ ready to be pasted in a bug report on github."
                (mapcan #'identity
                        (mapcar
                         #'cdr (doom--collect-forms-in
-                               (doom-path doom-user-dir "packages.el")
+                               (doom-path doom-user-dir doom-module-packages-file)
                                "unpin!")))
              (error (list (format "<%S>" e)))))
         (elpa
@@ -363,7 +393,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                   "Doom core"
                   doom-version
                   (or (cdr (doom-call-process
-                            "git" "-C" doom-emacs-dir
+                            "git" "-C" (expand-file-name doom-emacs-dir)
                             "log" "-1" "--format=%D %h %ci"))
                       "n/a"))
           ;; NOTE This is a placeholder. Our modules will be moved to its own
@@ -373,7 +403,7 @@ FILL-COLUMN determines the column at which lines will be broken."
                   "Doom modules"
                   doom-modules-version
                   (or (cdr (doom-call-process
-                            "git" "-C" doom-modules-dir
+                            "git" "-C" (expand-file-name doom-modules-dir)
                             "log" "-1" "--format=%D %h %ci"))
                       "n/a"))))
 
@@ -407,3 +437,6 @@ copies it to your clipboard, ready to be pasted into bug reports!"
     (profiler-report)
     (profiler-stop))
   (setq doom--profiler (not doom--profiler)))
+
+(provide 'doom-lib '(debug))
+;;; debug.el ends here

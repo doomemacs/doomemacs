@@ -7,12 +7,12 @@
 This module improves support for reading and interacting with PDF files in
 Emacs.
 
-It uses [[doom-package:][pdf-tools]], which is a replacement for the built-in ~doc-view-mode~ for
+It uses [[doom-package:pdf-tools]], which is a replacement for the built-in ~doc-view-mode~ for
 PDF files. The key difference being pages are not pre-rendered, but instead
 rendered on-demand and stored in memory; a much faster approach, especially for
 larger PDFs.
 
-Displaying PDF files is just one function of [[doom-package:][pdf-tools]]. See [[https://github.com/politza/pdf-tools][its project website]]
+Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/politza/pdf-tools][its project website]]
 for details and videos.
 
 ** Maintainers
@@ -22,8 +22,8 @@ for details and videos.
 /This module has no flags./
 
 ** Packages
-- [[doom-package:][pdf-tools]]
-- [[doom-package:][saveplace-pdf-view]]
+- [[doom-package:pdf-tools]]
+- [[doom-package:saveplace-pdf-view]]
 
 ** TODO Hacks
 #+begin_quote
@@ -37,11 +37,10 @@ for details and videos.
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires =epdfinfo=, a program the the [[doom-package:][pdf-tools]] plugin will build
-automatically when you open your first pdf file, unless you're on Windows.
-Windows users must build it themselves.
-
-You can (re)build =epdfinfo= yourself with ~M-x pdf-tools-install~.
+This module requires the =epdfinfo= program. Unless you're on Windows, the
+[[doom-package:pdf-tools]] plugin will (re)build this program for you, if you issue the ~M-x
+pdf-tools-install~ command. See the next section for instructions on how to
+build the =epdfinfo= program on Windows.
 
 ** Building =epdfinfo= on Windows
 1. [[https://www.msys2.org/][Install MSYS2]] and update the package database and core packages using the
