@@ -259,10 +259,10 @@ Each of these variables accept one of:
 For example:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(setq doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13)
+(setq doom-font (font-spec :family "JetBrainsMono" :size 12.0 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13.0)
       doom-unicode-font (font-spec :family "Symbola")
-      doom-big-font (font-spec :family "JetBrainsMono" :size 24))
+      doom-big-font (font-spec :family "JetBrainsMono" :size 24.0))
 #+end_src
 
 #+begin_quote
