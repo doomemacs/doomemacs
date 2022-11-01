@@ -83,6 +83,10 @@ debian, and derivatives). On most it's 'fd'.")
                   ".git")        ; Git VCS root dir
                 (when (executable-find "hg")
                   '(".hg"))      ; Mercurial VCS root dir
+                (when (executable-find "fossil")
+                  '(".fslckout")); Fossil VCS root dir
+                (when (executable-find "pijul")
+                  '(".pijul"))   ; Pijul VCS root dir
                 (when (executable-find "bzr")
                   '(".bzr")))    ; Bazaar VCS root dir
         ;; This will be filled by other modules. We build this list manually so
