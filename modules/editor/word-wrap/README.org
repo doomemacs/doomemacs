@@ -17,6 +17,7 @@ lines in the buffer without modifying the buffer content.
 
 ** Packages
 - [[doom-package:adaptive-wrap]]
+- [[doom-package:visual-fill-column]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -46,8 +47,8 @@ Word wrapping is not enabled by default.
 Wrapping can be toggled in the current buffer with ~M-x +word-wrap-mode~. The
 default doom bindings bind this to [[kbd:][SPC t w]] for ~evil~ users.
 
-To enable wrapping in a specific mode, add it to the appropriate hook in your
-~config.el~:
+To enable wrapping in a specific mode, add it to the appropriate hook in
+~$DOOMDIR/config.el~:
 #+begin_src emacs-lisp
 ;; enable word-wrap in C/C++/ObjC/Java
 (add-hook 'c-mode-common-hook #'+word-wrap-mode)
@@ -55,9 +56,10 @@ To enable wrapping in a specific mode, add it to the appropriate hook in your
 
 To customize the behaviour in a specific mode:
 #+begin_src emacs-lisp
-;; use a single indent in json-mode
+;; use a single indent and wrap at fill-column in json-mode
 (add-hook! 'json-mode-hook
-  (setq-local +word-wrap-extra-indent 'single)
+  (setq-local +word-wrap-extra-indent 'single
+              +word-wrap-fill-style 'soft)
   (+word-wrap-mode +1))
 #+end_src
 
@@ -85,6 +87,13 @@ The ~+word-wrap-extra-indent~ variable supports the following values:
 - a positive integer: indent by this fixed amount
 - a negative integer: dedent by this fixed amount
 - ~nil~: no extra indent
+
+Long lines are wrapped at the window margin by default, however soft-wrapping at
+~fill-column~ is supported by setting ~+word-wrap-fill-style~. When set to
+~auto~, if ~auto-fill-mode~ is enabled in the buffer, its behavior will not be
+affected. This allows hard and soft wrapping methods to co-exist, with
+hard-wrapping for new lines and soft-wrapping for existing lines. To disable
+hard-wrapping entirely, set ~+word-wrap-fill-style~ to ~soft~.
 
 This module also includes a global minor-mode ~+global-word-wrap-mode~ to
 automatically enable wrapping in most buffers. Wrapping will not be enabled in

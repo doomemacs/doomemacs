@@ -10,6 +10,18 @@ When a negative integer, dedent by this fixed amount.
 
 Otherwise no extra indentation will be used.")
 
+(defvar +word-wrap-fill-style nil
+  "How to handle `fill-column' in `+word-wrap-mode'.
+
+When 'auto, long lines will soft-wrap at `fill-column'. If `auto-fill-mode' is
+enabled, its behaviour will not be affected.
+
+When 'soft, long lines will soft-wrap at `fill-column' and `auto-fill-mode' will
+be forcibly disabled.
+
+Otherwise long lines will soft-wrap at the window margin and `auto-fill-mode'
+will not be affected.")
+
 (defvar +word-wrap-disabled-modes
   '(fundamental-mode so-long-mode)
   "Major-modes where `+global-word-wrap-mode' should not enable
