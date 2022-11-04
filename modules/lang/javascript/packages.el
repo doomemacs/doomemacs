@@ -4,6 +4,8 @@
 ;; Major modes
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
 (package! typescript-mode :pin "88f317f0b6aef8f8d232e912fdbc679799580c56")
+(when (modulep! +coffeescript)
+  (package! coffee-mode :pin "35a41c7d8233eac0b267d9593e67fb8b6235e134"))
 
 ;; Tools
 (package! js2-refactor :pin "a0977c4ce1918cc266db9d6cd7a2ab63f3a76b9a")

@@ -11,7 +11,8 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 - Refactoring commands ([[doom-package:js2-refactor]])
 - Syntax checking ([[doom-package:flycheck]])
 - Browser code injection with [[doom-package:skewer-mode]]
-- Coffeescript & JSX support
+- Coffeescript ([[doom-package:coffee-mode]])
+- JSX support
 - Jump-to-definitions and references support ([[doom-package:xref]])
 
 ** Maintainers
@@ -29,8 +30,10 @@ This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.t
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
+- +coffeescript :: Enables support for [[https://coffeescript.org/][Coffeescript]].
 
 ** Packages
+- [[doom-package:coffee-mode]]* if [[doom-module::+coffeescript]]
 - [[doom-package:js2-refactor]]
 - [[doom-package:nodejs-repl]]
 - [[doom-package:npm-mode]]

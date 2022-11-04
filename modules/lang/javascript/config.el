@@ -162,6 +162,9 @@
     ;; `emmet-mode' is used.
     emmet-expand-jsx-className? t))
 
+(use-package! coffee-mode
+  :when (modulep! +coffeescript)
+  :hook (coffee-mode . rainbow-delimiters-mode))
 
 ;;
 ;;; Tools
