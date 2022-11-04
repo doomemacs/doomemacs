@@ -29,16 +29,17 @@ falling back on searching your PATH."
     (user-error "`python-shell-interpreter' isn't set"))
   (pop-to-buffer
    (process-buffer
-    (if-let* ((pipenv (+python-executable-find "pipenv"))
-              (pipenv-project (pipenv-project-p)))
-        (let ((default-directory pipenv-project)
-              (python-shell-interpreter-args
-               (format "run %s %s"
-                       python-shell-interpreter
-                       python-shell-interpreter-args))
-              (python-shell-interpreter pipenv))
-          (run-python nil nil t))
-      (run-python nil nil t)))))
+    (let ((dedicated (bound-and-true-p python-shell-dedicated)))
+      (if-let* ((pipenv (+python-executable-find "pipenv"))
+                (pipenv-project (pipenv-project-p)))
+          (let ((default-directory pipenv-project)
+                (python-shell-interpreter-args
+                 (format "run %s %s"
+                         python-shell-interpreter
+                         python-shell-interpreter-args))
+                (python-shell-interpreter pipenv))
+            (run-python nil dedicated t))
+        (run-python nil dedicated t))))))
 
 ;;;###autoload
 (defun +python/open-ipython-repl ()
