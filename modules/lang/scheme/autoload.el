@@ -69,5 +69,5 @@ property lists and names starting with 'default'."
 (defun +scheme/open-repl ()
   "Open the Scheme REPL."
   (interactive)
-  (call-interactively #'switch-to-geiser)
+  (call-interactively #'geiser-repl-switch)
   (current-buffer))
