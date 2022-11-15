@@ -29,9 +29,8 @@
                        "(provide 'org-version)\n"))))
   :pin "bed47b437d8cde7a98bafdb07996e248b40f70e6")
 (package! org-contrib
-  :recipe (:host github
-           :repo "emacsmirror/org-contrib")
-  :pin "aa104c0bbc3113f6d3d167b20bd8d6bf6a285f0f")
+  :recipe (:repo "https://git.sr.ht/~bzg/org-contrib")
+  :pin "6422b265f1150204f024e33d54f2dcfd8323005c")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
