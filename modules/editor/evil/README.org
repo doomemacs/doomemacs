@@ -222,6 +222,24 @@ modify the syntax-table in all buffers of some mode, e.g.
 (add-hook! 'js2-mode-hook (modify-syntax-entry ?_ "w"))
 #+end_src
 
+** How do I disable the synchronization between the kill ring and the system clipboard?
+
+In vim, operations that put or delete text (kill and yank in Emacs terminology) act on the
+unnamed register by default. The unnamed register unrelated the system clipboard. Evil
+uses the kill ring instead of the unnamed register. As the kill ring is synchronized with
+the system clipboard by default, operations like [[kbd:][dd]] or [[kbd:][cw]] place the
+killed text in the system clipboard, surprisingly so for users who are used to the vim
+behavior.
+
+The synchronization between the system clipboard and kill ring can be disabled, making
+these operations behave closer to their vim counterparts:
+#+begin_src emacs-lisp
+(setq select-enable-clipboard nil)
+#+end_src
+
+Like in vim, the clipboard can still be accessed by using the [[kbd:][+]] register,
+e.g. [[kbd:]["+dd]] or [[kbd:]["+cw]].
+
 * TODO Appendix
 #+begin_quote
  🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
