@@ -30,7 +30,7 @@
   
   (map! :localleader
         (:map (scheme-mode-map geiser-repl-mode-map)
-         :desc "Toggle REPL"                  "'"  #'switch-to-geiser
+         :desc "Toggle REPL"                  "'"  #'geiser-repl-switch
          :desc "Connect to external Scheme"   "\"" #'geiser-connect
          :desc "Toggle type of brackets"      "["  #'geiser-squarify
          :desc "Insert lambda"                "\\" #'geiser-insert-lambda
