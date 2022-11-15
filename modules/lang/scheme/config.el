@@ -23,7 +23,7 @@
   (set-popup-rules!
     '(("^\\*[gG]eiser \\(dbg\\|xref\\|messages\\)\\*$" :slot 1 :vslot -1)
       ("^\\*Geiser documentation\\*$" :slot 2 :vslot 2 :select t :size 0.35)
-      ("^\\* [A-Za-z0-9_-]+ REPL \\*" :size 0.3 :quit nil :ttl nil)))
+      ("^\\*Geiser .+ REPL" :size 0.3 :quit nil :ttl nil)))
   
   (map! :localleader
         (:map (scheme-mode-map geiser-repl-mode-map)
