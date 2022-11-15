@@ -14,7 +14,10 @@
         geiser-repl-history-filename (concat doom-cache-dir "geiser-history"))
 
   (after! scheme  ; built-in
-    (set-repl-handler! 'scheme-mode #'+scheme/open-repl)
+    (set-repl-handler! 'scheme-mode #'+scheme/open-repl
+      :persist t
+      :send-region #'geiser-eval-region
+      :send-buffer #'geiser-eval-buffer)
     (set-eval-handler! 'scheme-mode #'geiser-eval-region)
     (set-lookup-handlers! '(scheme-mode geiser-repl-mode)
       :definition #'geiser-edit-symbol-at-point
