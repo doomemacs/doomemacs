@@ -52,7 +52,7 @@ default/fallback account."
 (add-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
 ;;;###autoload
-(defun =mu4e ()
+(defun =mu4e (&optional background)
   "Start email client."
   (interactive)
   (require 'mu4e)
@@ -91,7 +91,7 @@ default/fallback account."
           (switch-to-buffer view-buffer)
         (if (and headers-buffer (not (eq headers-buffer (current-buffer))))
             (switch-to-buffer headers-buffer)
-          (mu4e))))))
+          (mu4e background))))))
 
 ;;;###autoload
 (defun +mu4e/compose ()
