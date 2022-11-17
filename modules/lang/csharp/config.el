@@ -3,11 +3,7 @@
 (use-package! csharp-mode
   :hook (csharp-mode . rainbow-delimiters-mode)
   :config
-  (when (and (file-exists-p (expand-file-name "~/.dotnet/tools/dotnet-csharpier"))
-             (file-exists-p ".config/dotnet-tools.json")
-             (eq 0 (call-process-shell-command
-                    (format "grep -q 'dotnet-csharpier' %s" (expand-file-name ".config/dotnet-tools.json")) nil nil)))
-    (set-formatter! 'csharpier '("dotnet" "tool" "run" "dotnet-csharpier") :modes '(csharp-mode)))
+  (set-formatter! 'csharpier '("dotnet-csharpier") :modes '(csharp-mode))
   (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
