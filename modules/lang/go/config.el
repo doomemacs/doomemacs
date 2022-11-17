@@ -11,14 +11,6 @@
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
 
-  ;; Redefines default formatter to *not* use goimports if reformatting a
-  ;; region; as it doesn't play well with partial code.
-  (set-formatter! 'gofmt
-    '(("%s" (if (or +format-region-p
-                    (not (executable-find "goimports")))
-                "gofmt"
-              "goimports"))))
-
   (if (modulep! +lsp)
       (add-hook 'go-mode-local-vars-hook #'lsp! 'append)
     (add-hook 'go-mode-hook #'go-eldoc-setup))
