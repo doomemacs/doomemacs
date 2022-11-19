@@ -1,5 +1,17 @@
 ;;; editor/format/config.el -*- lexical-binding: t; -*-
 
+(defvar +format-on-save-disabled-modes
+  '(sql-mode           ; sqlformat is currently broken
+    tex-mode           ; latexindent is broken
+    latex-mode
+    org-msg-edit-mode) ; doesn't need a formatter
+  "A list of major modes in which to reformat the buffer upon saving.
+If this list begins with `not', then it negates the list.
+If it is `t', it is enabled in all modes.
+If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
+  used at all.
+Irrelevant if you do not have the +onsave flag enabled for this module.")
+
 (defvar +format-preserve-indentation t
   "If non-nil, the leading indentation is preserved when formatting the whole
 buffer. This is particularly useful for partials.
@@ -22,6 +34,15 @@ select buffers.")
 (when (modulep! +onsave)
   (add-hook 'doom-first-file-hook #'apheleia-global-mode))
 
+(defun +format-enable-on-save-maybe-h ()
+  "Enable formatting on save in certain major modes.
+This is controlled by `+format-on-save-disabled-modes'."
+  (setq-local apheleia-inhibit (or (eq major-mode 'fundamental-mode)
+                                   (string-empty-p (string-trim (buffer-name)))
+                                   (not (null (memq major-mode +format-on-save-disabled-modes))))))
+
+(when (modulep! +onsave)
+  (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
 
 ;;
 ;;; Hacks
