@@ -27,6 +27,10 @@ This module adds [[https://docutils.sourceforge.io/rst.html][ReStructured Text]]
 
 This module requires [[https://www.sphinx-doc.org/en/master/usage/installation.html][sphinx]] to build RST documents.
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/dzhu/rstfmt#usage][rstfmt]].
+
 * TODO Usage
 #+begin_quote
 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
