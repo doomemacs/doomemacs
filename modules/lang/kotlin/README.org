@@ -25,12 +25,22 @@ This module adds [[https://kotlinlang.org/][Kotlin]] support to Doom Emacs.
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
 
-* TODO Installation
+* Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-#+begin_quote
- 🔨 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
-#+end_quote
+Install kotlin through your distribution's package manager, eg:
+
+#+begin_src shell
+sudo apt install kotlin # Ubuntu
+sudo pacman -S kotlin   # Arch Linux
+brew install kotlin     # MacOS
+#+end_src
+
+or by getting the [[https://github.com/JetBrains/kotlin/releases/latest][latest]] release and adding to your =$PATH= manually.
+
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://pinterest.github.io/ktlint/install/cli/][ktlint]].
 
 * TODO Usage
 #+begin_quote
