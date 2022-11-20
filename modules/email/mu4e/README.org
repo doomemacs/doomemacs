@@ -11,9 +11,9 @@ This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/cod
 - Prettified =mu4e:main= view.
 - Cooperative locking of the =mu= process. Another Emacs instance may request
   access, or grab the lock when it's available.
-- [[doom-package:org-msg]] integration with [[doom-module:+org]], which can be toggled per-message, with revamped
+- [[doom-package:org-msg]] integration with [[doom-module::+org]], which can be toggled per-message, with revamped
   style and an accent color.
-- Gmail integrations with the [[doom-module:+gmail]] flag.
+- Gmail integrations with the [[doom-module::+gmail]] flag.
 - Email notifications with [[doom-package:mu4e-alert]], and (on Linux) a customised notification
   style.
 
@@ -43,7 +43,7 @@ This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/cod
 
 ** Packages
 - [[doom-package:mu4e-alert]]
-- [[doom-package:org-msg]] if [[doom-module:+org]]
+- [[doom-package:org-msg]] if [[doom-module::+org]]
 
 ** TODO Hacks
 #+begin_quote
@@ -64,12 +64,12 @@ This module requires:
   (recommended, default) or [[http://www.offlineimap.org/][offlineimap]] but you can sync mail in other ways too.
 
 #+name: Install Matrix
-| Platform      | Install command            | Base packages           |
-|---------------+----------------------------+-------------------------|
-| MacOS         | ~$ brew install <pkgs>~    | =mu=                    |
+| Platform      | Install command          | Base packages       |
+|---------------+--------------------------+---------------------|
+| MacOS         | ~$ brew install <pkgs>~    | =mu=                  |
 | Arch          | ~$ pacman -S <pkgs>~       | (AUR, ~$ yay -S~) =mu=  |
 | openSUSE      | ~$ zypper install <pkgs>~  | =maildir-utils=, =mu4e= |
-| Fedora        | ~$ dnf install <pkgs>~     | =maildir-utils=         |
+| Fedora        | ~$ dnf install <pkgs>~     | =maildir-utils=       |
 | Debian/Ubuntu | ~$ apt-get install <pkgs>~ | =maildir-utils=, =mu4e= |
 
 Then install either the =isync= (=mbsync=) or =offlineimap= package.
@@ -90,7 +90,7 @@ If you use =msmtp=:
 #+end_src
 
 ** NixOS
-#+begin_src nix
+#+begin_src sh
 environment.systemPackages = with pkgs; [
     mu
     # And one of the following
@@ -214,7 +214,7 @@ you are not replying to an email to or from one of the specified aliases, you
 will be prompted for an alias to send from.
 
 *** Gmail
-With the [[doom-module:+gmail]] flag, integrations are applied which account for the different
+With the [[doom-module::+gmail]] flag, integrations are applied which account for the different
 behaviour of Gmail.
 
 The integrations are applied to addresses with /both/ "@gmail.com" in the
@@ -243,7 +243,7 @@ as deleted: Auto-Expunge off - Wait for the client to update the server." and
 folder: Move the message to the trash" for the integrations to work as expected.
 
 ** OrgMsg
-With the [[doom-module:+org]] flag, [[doom-package:org-msg]] is installed, and ~org-msg-mode~ is enabled before
+With the [[doom-module::+org]] flag, [[doom-package:org-msg]] is installed, and ~org-msg-mode~ is enabled before
 composing the first message. To disable ~org-msg-mode~ by default:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
