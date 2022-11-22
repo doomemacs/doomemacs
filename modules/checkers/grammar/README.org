@@ -33,6 +33,14 @@ It is available from either https://languagetool.org/ or your OS's package
 manager. E.g.
 - macOS: ~$ brew install languagetool~
 - Arch Linux: ~$ pacman -S languagetool~
+- NixOS:
+#+begin_src nix
+{
+  environment.systemPackages = with pkgs; [
+    languagetool
+  ];
+}
+#+end_src
 
 This module tries to guess the location of =languagetool-commandline.jar=. If
 you get a warning that Doom ~couldn't find languagetool-commandline.jar~, you
@@ -60,8 +68,14 @@ This minor mode highlights weasel words, duplication and passive voice.
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
+
+** NixOS
+#+begin_src elisp
+(after! langtool
+  (setq langtool-bin (executable-find "languagetool-commandline")))
+#+end_src
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
