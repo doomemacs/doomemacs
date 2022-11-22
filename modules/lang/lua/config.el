@@ -79,7 +79,7 @@ lua-language-server.")
 
 (def-project-mode! +lua-love-mode
   :modes '(moonscript-mode lua-mode markdown-mode json-mode)
-  :when #'+lua-love-project-root
+  :when (+lua-love-project-root)
   :on-load
   (progn
     (set-project-type! 'love2d
