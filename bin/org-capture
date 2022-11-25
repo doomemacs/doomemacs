@@ -34,6 +34,9 @@ case "$str" in
   -) str=$(cat) ;;
 esac
 
+# escape any double quotes in the string
+str=$(echo $str | sed -e 's/"/\\"/g')
+
 # Fix incompatible terminals that cause odd 'not a valid terminal' errors
 [ "$TERM" = "alacritty" ] && export TERM=xterm-256color
 
