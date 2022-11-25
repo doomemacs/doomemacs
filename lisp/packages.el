@@ -17,7 +17,7 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "e20a44c4ac5c04896aecd43a5fdd12c67527c69e")
+  :pin "3eca39dfc6797243ec7d1c6a7d45142407f73f88")
 
 ;; doom-ui.el
 (package! all-the-icons :pin "4a4d6269b8b85b0b15954f063e6ce378630d80c0")
