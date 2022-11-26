@@ -441,6 +441,15 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
 ;;;###autoload
+(defun doom/copy-this-file-and-open (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH, and then open the file."
+  (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
+  (doom/copy-this-file new-path force-p)
+  (find-file (expand-file-name new-path)))
+
+;;;###autoload
 (defun doom/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
 
