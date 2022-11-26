@@ -111,14 +111,14 @@ doctor` to check for any that you may have missed.
 
 # Install
 ``` sh
-git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
-~/.emacs.d/bin/doom install
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
 ```
 
 Then [read our Getting Started guide][getting-started] to be walked through
 installing, configuring and maintaining Doom Emacs.
 
-It's a good idea to add `~/.emacs.d/bin` to your `PATH`! Other `bin/doom`
+It's a good idea to add `~/.config/emacs/bin` to your `PATH`! Other `bin/doom`
 commands you should know about:
 
 + `doom sync` to synchronize your private config with Doom by installing missing
