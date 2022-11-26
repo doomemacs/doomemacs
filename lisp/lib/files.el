@@ -442,7 +442,9 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
 
 ;;;###autoload
 (defun doom/copy-this-file-and-open (new-path &optional force-p)
-  "Copy current buffer's file to NEW-PATH, and then open the file."
+  "Copy current buffer's file to NEW-PATH, and then open the file.
+
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (interactive
    (list (read-file-name "Copy file to: ")
          current-prefix-arg))
