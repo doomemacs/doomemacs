@@ -103,6 +103,7 @@ installed with `dash-docs-install-docset'."
         (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
     (cond ((modulep! :completion vertico)
+           (require 'consult)
            (dash-docs-initialize-debugging-buffer)
            (dash-docs-create-buffer-connections)
            (dash-docs-create-common-connections)
