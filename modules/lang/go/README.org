@@ -96,6 +96,16 @@ go install github.com/fatih/gomodifytags@latest
  🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
+* Keybindings
+| Keys               | Description                   |
+|--------------------+-------------------------------|
+| =SPC c d=          | jump to definition            |
+| =SPC m r i a=      | search imports to add         |
+| =SPC m b b=        | run =go build=                |
+| =SPC m t f=        | run all tests in current file |
+| =SPC m t a=        | run all tests in current file |
+| =SPC m t s=        | run test under cursor         |
+
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
 
