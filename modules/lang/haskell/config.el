@@ -27,6 +27,9 @@
              #'haskell-collapse-mode ; support folding haskell code blocks
              #'interactive-haskell-mode)
 
+  (when (modulep! +tree-sitter)
+    (add-hook 'haskell-mode-local-vars-hook #'tree-sitter! 'append))
+
   (add-to-list 'completion-ignored-extensions ".hi")
 
   (map! :map haskell-mode-map
