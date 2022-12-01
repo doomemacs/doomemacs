@@ -80,7 +80,7 @@ exist, and `org-link' otherwise."
 (defun +org-link--read-module-spec (module-spec-str)
   (if (string-prefix-p "+" (string-trim-left module-spec-str))
       (let ((title (cadar (org-collect-keywords '("TITLE")))))
-        (if (and title (string-match-p "\\`:[a-z]+ [a-z]+\\'" title))
+        (if (and title (string-match-p "\\`:[a-z]+ [A-Za-z0-9]+\\'" title))
             (+org-link--read-module-spec (concat title " " module-spec-str))
           (list :category nil :module nil :flag (intern module-spec-str))))
     (cl-destructuring-bind (category &optional module flag)
@@ -167,7 +167,7 @@ exist, and `org-link' otherwise."
 (defun +org-link--doom-module-link-face-fn (module-path)
   (cl-destructuring-bind (&key category module flag)
       (+org-link--read-module-spec module-path)
-    (if (doom-module-locate-path category module)
+    (if (and category (doom-module-locate-path category module))
         `(:inherit org-priority
           :weight bold)
       'error)))
