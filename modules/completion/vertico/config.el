@@ -292,12 +292,6 @@ orderless."
             '(projectile-switch-project . project-file)))
 
 
-(use-package! embark-consult
-  :after (embark consult)
-  :config
-  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
-
-
 (use-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
