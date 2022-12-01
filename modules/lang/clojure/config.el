@@ -130,7 +130,7 @@
       (defun +clojure--cider-connected-update-modeline ()
         "Update modeline with cider connection state."
         (let* ((connected (cider-connected-p))
-               (face (if connected 'warning 'breakpoint-disabled))
+               (face (if connected 'warning 'shadow))
                (label (if connected "Cider connected" "Cider disconnected")))
           (+clojure--cider-set-modeline face label))))
 
