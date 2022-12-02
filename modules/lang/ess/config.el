@@ -91,8 +91,11 @@
                             (apply-partially
                              #'company--multi-backend-adapter
                              '(company-R-args company-R-objects company-R-library company-dabbrev-code)))))
-      (add-hook! 'ess-mode-hook (defun +corfu--ess-set-capfs ()
-                                  (add-to-list 'completion-at-point-functions #'cape-ess)))))
+      (defun +corfu--ess-set-capfs ()
+        (add-to-list 'completion-at-point-functions #'cape-ess))
+
+      (add-hook! 'ess-mode-hook '+corfu--ess-set-capfs )
+      (add-hook! 'inferior-ess-mode-hook '+corfu--ess-set-capfs)))
 
   (setq-hook! 'ess-r-mode-hook
     ;; HACK Fix #2233: Doom continues comments on RET, but ess-r-mode doesn't
