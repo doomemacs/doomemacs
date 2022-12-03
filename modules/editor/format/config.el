@@ -34,15 +34,15 @@ select buffers.")
 (when (modulep! +onsave)
   (add-hook 'doom-first-file-hook #'apheleia-global-mode))
 
-(defun +format-enable-on-save-maybe-h ()
+(defun +format-inhibit-maybe-h ()
   "Enable formatting on save in certain major modes.
 This is controlled by `+format-on-save-disabled-modes'."
-  (setq-local apheleia-inhibit (or (eq major-mode 'fundamental-mode)
-                                   (string-empty-p (string-trim (buffer-name)))
-                                   (not (null (memq major-mode +format-on-save-disabled-modes))))))
+  (or (eq major-mode 'fundamental-mode)
+      (string-empty-p (string-trim (buffer-name)))
+      (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
 (when (modulep! +onsave)
-  (add-hook 'after-change-major-mode-hook #'+format-enable-on-save-maybe-h))
+  (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h))
 
 ;;
 ;;; Hacks
