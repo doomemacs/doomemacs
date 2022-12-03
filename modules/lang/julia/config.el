@@ -5,6 +5,12 @@
   :config
   (set-repl-handler! 'julia-mode #'+julia/open-repl)
 
+  (when (modulep! +lsp)
+    (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'julia-mode-local-vars-hook #'tree-sitter! 'append))
+
   ;; Borrow matlab.el's fontification of math operators. From
   ;; <https://web.archive.org/web/20170326183805/https://ogbe.net/emacsconfig.html>
   (dolist (mode '(julia-mode ess-julia-mode))
@@ -48,7 +54,7 @@
   :config
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
 
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (defadvice! +julia--namespace-repl-buffer-to-workspace-a (&optional executable-key suffix)
       "Name for a Julia REPL inferior buffer. Uses workspace name for doom emacs"
       :override #'julia-repl--inferior-buffer-name
@@ -65,13 +71,9 @@
     (term-set-escape-char ?\C-c)))
 
 
-(when (featurep! +lsp)
-  (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
-
-
 (use-package! lsp-julia
-  :when (featurep! +lsp)
-  :unless (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :after lsp-mode
   :preface (setq lsp-julia-default-environment nil)
   :init
@@ -84,8 +86,8 @@
 
 
 (use-package! eglot-jl
-  :when (featurep! +lsp)
-  :when (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :when (modulep! :tools lsp +eglot)
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl
@@ -94,7 +96,3 @@
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'julia-mode-local-vars-hook #'tree-sitter!))

@@ -11,12 +11,12 @@
 ;;; Packages
 
 (use-package! evil-multiedit
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :defer t)
 
 
 (use-package! iedit
-  :when (featurep! :completion vertico)
+  :when (modulep! :completion vertico)
   :defer t
   :init
   ;; Fix conflict with embark.
@@ -24,7 +24,7 @@
 
 
 (use-package! evil-mc
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :commands (evil-mc-make-cursor-here
              evil-mc-make-all-cursors
              evil-mc-undo-all-cursors
@@ -74,7 +74,8 @@
       (apply fn args)))
 
   ;; REVIEW This is tremendously slow on macos and windows for some reason.
-  (setq evil-mc-enable-bar-cursor (not (or IS-MAC IS-WINDOWS)))
+  (setq evil-mc-enable-bar-cursor (not (or IS-MAC
+                                           IS-WINDOWS)))
 
   (after! smartparens
     ;; Make evil-mc cooperate with smartparens better
@@ -161,7 +162,7 @@
 
 
 (after! multiple-cursors-core
-  (setq mc/list-file (concat doom-etc-dir "mc-lists.el"))
+  (setq mc/list-file (concat doom-data-dir "mc-lists.el"))
 
   ;; Can't use `mc/cmds-to-run-once' because mc-lists.el overwrites it
   (add-to-list 'mc--default-cmds-to-run-once 'swiper-mc)
@@ -171,7 +172,7 @@
   ;; mc doesn't play well with evil, this attempts to assuage some of its
   ;; problems so that any plugins that depend on multiple-cursors (which I have
   ;; no control over) can still use it in relative safety.
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
 
     (defvar +mc--compat-evil-prev-state nil)

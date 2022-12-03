@@ -2,8 +2,8 @@
 
 (after! idris-mode
   (add-hook 'idris-mode-hook #'turn-on-idris-simple-indent)
-  (when (featurep! +lsp)
-    (add-hook 'idris-mode-hook #'lsp!))
+  (when (modulep! +lsp)
+    (add-hook 'idris-mode-hook #'lsp! 'append))
   (set-repl-handler! 'idris-mode 'idris-pop-to-repl)
   (set-lookup-handlers! 'idris-mode
     :documentation #'idris-docs-at-point)

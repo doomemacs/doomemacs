@@ -1,82 +1,81 @@
-#+TITLE:   app/irc
-#+DATE:    June 11, 2017
-#+SINCE:   v2.0.3
-#+STARTUP: inlineimages
+#+title:    :app irc
+#+subtitle: How neckbeards socialize
+#+created:  June 11, 2017
+#+since:    2.0.3
 
-* Table of Contents :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#macos][macOS]]
-  - [[#debian--ubuntu][Debian / Ubuntu]]
-  - [[#arch-linux][Arch Linux]]
-  - [[#nixos][NixOS]]
-- [[#features][Features]]
-  - [[#an-irc-client-in-emacs][An IRC Client in Emacs]]
-- [[#configuration][Configuration]]
-  - [[#pass-the-unix-password-manager][Pass: the unix password manager]]
-  - [[#emacs-auth-source-api][Emacs' auth-source API]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module turns Emacs into an IRC client, capable of OS notifications.
 
-** Module Flags
-This module provides no flags.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/jorgenschaefer/circe][circe]]
-+ [[https://github.com/eqyiel/circe-notifications][circe-notifications]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module requires =gnutls= for secure IRC connections to work.
+** Packages
+- [[doom-package:circe]]
+- [[doom-package:circe-notifications]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires:
+- [[https://www.gnutls.org/][GnuTLS]], for secure IRC connections to work.
+
+This should be available through your OS package manager.
 
 ** macOS
-#+BEGIN_SRC sh
+#+begin_src sh
 brew install gnutls
-#+END_SRC
+#+end_src
 
 ** Debian / Ubuntu
-#+BEGIN_SRC sh
+#+begin_src sh
 apt install gnutls-bin
-#+END_SRC
+#+end_src
 
 ** Arch Linux
-#+BEGIN_SRC sh
+#+begin_src sh
 pacman -S gnutls
-#+END_SRC
+#+end_src
 ** NixOS
-#+BEGIN_SRC nix
+#+begin_src nix
 environment.systemPackages = [ pkgs.gnutls ];
-#+END_SRC
+#+end_src
 
-* Features
-** An IRC Client in Emacs
-To connect to IRC you can invoke the ~=irc~ function using =M-x= or your own
-custom keybinding.
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-| command | description                               |
-|---------+-------------------------------------------|
-| ~=irc~  | Connect to IRC and all configured servers |
+To connect to IRC use ~M-x =irc~.
 
-When in a circe buffer these keybindings will be available.
+When in a circe buffer these keybindings will be available:
+| command                     | key             | description                                  |
+|-----------------------------+-----------------+----------------------------------------------|
+| ~+irc/tracking-next-buffer~ | [[kbd:][<localleader> a]] | Switch to the next active buffer             |
+| ~circe-command-JOIN~        | [[kbd:][<localleader> j]] | Join a channel                               |
+| ~+irc/send-message~         | [[kbd:][<localleader> m]] | Send a private message                       |
+| ~circe-command-NAMES~       | [[kbd:][<localleader> n]] | List the names of the current channel        |
+| ~circe-command-PART~        | [[kbd:][<localleader> p]] | Part the current channel                     |
+| ~+irc/quit~                 | [[kbd:][<localleader> Q]] | Kill the current circe session and workgroup |
+| ~circe-reconnect~           | [[kbd:][<localleader> R]] | Reconnect the current server                 |
 
-| command                     | key       | description                                  |
-|-----------------------------+-----------+----------------------------------------------|
-| ~+irc/tracking-next-buffer~ | =SPC m a= | Switch to the next active buffer             |
-| ~circe-command-JOIN~        | =SPC m j= | Join a channel                               |
-| ~+irc/send-message~         | =SPC m m= | Send a private message                       |
-| ~circe-command-NAMES~       | =SPC m n= | List the names of the current channel        |
-| ~circe-command-PART~        | =SPC m p= | Part the current channel                     |
-| ~+irc/quit~                 | =SPC m Q= | Kill the current circe session and workgroup |
-| ~circe-reconnect~           | =SPC m R= | Reconnect the current server                 |
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Configuration
-Use ~set-irc-server! SERVER PLIST~ to configure IRC servers. Its second argument (a plist)
-takes the same arguments as ~circe-network-options~.
-
-#+BEGIN_SRC emacs-lisp :tangle no
+Use ~set-irc-server! SERVER PLIST~ to configure IRC servers. Its second argument
+(a plist) takes the same arguments as ~circe-network-options~:
+#+begin_src emacs-lisp
 ;; if you omit =:host=, ~SERVER~ will be used instead.
 (after! circe
   (set-irc-server! "irc.libera.chat"
@@ -86,20 +85,23 @@ takes the same arguments as ~circe-network-options~.
       :sasl-username "myusername"
       :sasl-password "mypassword"
       :channels ("#emacs"))))
-#+END_SRC
+#+end_src
 
 However, *it is a obviously a bad idea to store your password in plaintext,* so
 here are ways to avoid that:
 
-** Pass: the unix password manager
+** TODO Pass: the unix password manager
+#+begin_quote
+ 🔨 /This section is outdated and needs to be rewritten./ [[doom-contrib-module:][Rewrite it?]]
+#+end_quote
+
 [[https://www.passwordstore.org/][Pass]] is my tool of choice. I use it to manage my passwords. If you activate the
-[[../../../modules/tools/pass/README.org][:tools pass]] module you get an elisp API through which to access your
-password store.
+[[doom-module::tools pass]] module you get an elisp API through which to access your password
+store.
 
 ~set-irc-server!~ accepts a plist can use functions instead of strings.
 ~+pass-get-user~ and ~+pass-get-secret~ can help here:
-
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (set-irc-server! "irc.libera.chat"
   `(:tls t
     :port 6697
@@ -107,12 +109,11 @@ password store.
     :sasl-username ,(+pass-get-user   "irc/libera.chat")
     :sasl-password ,(+pass-get-secret "irc/libera.chat")
     :channels ("#emacs")))
-#+END_SRC
+#+end_src
 
 But wait, there's more! This stores your password in a public variable which
 could be accessed or appear in backtraces. Not good! So we go a step further:
-
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (set-irc-server! "irc.libera.chat"
   `(:tls t
     :port 6697
@@ -120,12 +121,12 @@ could be accessed or appear in backtraces. Not good! So we go a step further:
     :sasl-username ,(+pass-get-user "irc/libera.chat")
     :sasl-password (lambda (&rest _) (+pass-get-secret "irc/libera.chat"))
     :channels ("#emacs")))
-#+END_SRC
+#+end_src
 
 And you're good to go!
 
-Note that =+pass-get-user= tries to find your username by looking for the fields
-listed in =+pass-user-fields= (by default =login=, =user==, =username== and
+Note that ~+pass-get-user~ tries to find your username by looking for the fields
+listed in ~+pass-user-fields~ (by default =login=, =user==, =username== and
 =email=)=). An example configuration looks like
 
 #+begin_example
@@ -136,8 +137,7 @@ username: myusername
 ** Emacs' auth-source API
 ~auth-source~ is built into Emacs. As suggested [[https://github.com/jorgenschaefer/circe/wiki/Configuration#safer-password-management][in the circe wiki]], you can store
 (and retrieve) encrypted passwords with it.
-
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (setq auth-sources '("~/.authinfo.gpg"))
 
 (defun my-fetch-password (&rest params)
@@ -159,6 +159,15 @@ username: myusername
     :nick "doom"
     :sasl-password my-nickserver-password
     :channels ("#emacs")))
-#+END_SRC
+#+end_src
 
 * TODO Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

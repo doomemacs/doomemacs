@@ -1,0 +1,207 @@
+:PROPERTIES:
+:ID:       ca20678f-0f1a-4462-a599-da03f0e16330
+:END:
+#+title:    Appendix
+#+subtitle: A glossary of (Doom) Emacs terms, acronyms, & concepts
+#+startup:  nonum show2levels*
+
+* Glossary
+** General :category:
+- Calendar Version, Calendar Versioning :: See https://calver.org.
+- Semantic Version, Semantic Versioning :: See https://semver.org.
+
+** Vim/Evil :category:
+- leader key :: TODO
+- localleader key :: TODO
+
+** Environment Variables :category:
+- $DOOMDIR :: The location of the user's private configuration for Doom Emacs;
+  usually found in =~/.config/doom= or =~/.doom.d=.
+
+- $EMACSDIR :: The location of your Emacs initfile. This is where Doom users
+  will have cloned Doom's core to (=~/.config/emacs= or =~/.emacs.d=).
+
+** Doom Emacs :category:
+- Doom module :: A toggle-able collection of configuration, packages, and
+  functions, made for Doom Emacs.
+
+** Emacs :category:
+- ELPA :: Emacs-Lisp Package Archive. Used either to refer to the
+  GNU package repository or to all ELPA repositories as an ecosystem (e.g.
+  MELPA, Marmalade, etc).
+- MELPA :: ELPA
+- GNU ELPA :: ELPA
+
+*** Configurations :category:
+- Emacs bankruptcy :: To reset your Emacs configuration from scratch, usually
+  because the old one has gotten too messy or complicated, and working backwards
+  would be too much hassle.
+
+- Emacs framework :: A foundation for your own Emacs Lisp projects, offering
+  tools to make it easier to build on top of it.
+
+- Starter kit :: A library of preconfiguration for Emacs, intended to spare you
+  the time and effort of configuring Emacs yourself.
+
+*** User Interface :category:
+- Emacs buffer :: A [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Buffers.html#Buffers][buffer]] is a space in Emacs memory containing text to be edited.
+  Buffers are used to hold the contents of files that are being edited or
+  opened; there may also be buffers that are not visiting files they display
+  other information like Dired that shows the content of a directory. Each
+  buffer, including the current buffer, may or may not be displayed in any
+  windows.
+
+- Echo area :: The [[https://www.gnu.org/software/emacs/manual/html_node/elisp/The-Echo-Area.html#The-Echo-Area][echo area]] is the last line of the frame. Unless the
+  minibuffer is active, this is the zone that shows all the messages Emacs sends
+  to the user
+
+  #+begin_quote
+  The *echo area* is used for displaying error messages (see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Errors.html#Errors][Errors]]), for
+  messages made with the `message` primitive, and for echoing keystrokes. It is
+  not the same as the minibuffer, despite the fact that the minibuffer appears
+  (when active) in the same place on the screen as the echo area.
+  #+end_quote
+
+- Emacs frame :: What the rest of the world calls windows. [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Frames.html][Source]].
+
+- Emacs fringe :: On graphical displays, Emacs draws [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Fringes.html][fringes]] next to each window: thin
+  vertical strips down the sides which can display bitmaps indicating
+  truncation, continuation, horizontal scrolling, and so on.
+
+- Header line :: The [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Header-Lines.html][header line]] is like a modeline (extra information line
+  about Emacs current state), that is displayed at the top of each window
+  instead of the bottom of them.
+
+  Notable examples include N. Rougier displaying filename [[https://github.com/rougier/elegant-emacs][in the header line]],
+  and LSP-mode powered context information ([[https://emacs-lsp.github.io/lsp-mode/page/main-features/#breadcrumb-on-headerline]["breadcrumbs"]])
+
+  #+begin_quote
+  A window can have a *header line* at the top, just as it can have a mode line
+  at the bottom. The header line feature works just like the mode line
+  feature[…]
+  #+end_quote
+
+- Display margins :: A buffer can have blank areas called [[https://emacsdocs.org/docs/elisp/Display-Margins][display margins]] on the
+  left and on the right. Ordinary text never appears in these areas, but you can
+  put things into the display margins using the `display` property.
+
+  Margins tend to be a lot larger than fringes, as margins are at least as wide
+  as characters that you'd want to display there. It is almost always disabled:
+  relevant information can be almost always also be shown in fringes, and
+  fringes take way less screen real estate.
+
+- Minibuffer :: The [[https://emacsdocs.org/docs/emacs/Minibuffer][minibuffer]] is the buffer that takes over the last line of
+  your Emacs frame whenever Emacs prompts you (the user) for input.
+
+  #+begin_quote
+  A *minibuffer* is a special buffer that Emacs commands use to read arguments
+  more complicated than the single numeric prefix argument. These arguments
+  include file names, buffer names, and command names (as in <kbd>M-x</kbd>).
+  The minibuffer is displayed on the bottom line of the frame, in the same place
+  as the echo area (see [[https://emacsdocs.org/docs/elisp/The-Echo-Area][The Echo Area]]), but only while it is in use for reading
+  an argument.
+  #+end_quote
+
+- The Mode line :: The Emacs [[https://emacsdocs.org/docs/emacs/Mode-Line][mode line]] is the status bar displayed under each
+  Emacs window. It's what vimmers know as the status line.
+
+  #+begin_quote
+  Each Emacs window (aside from minibuffer windows) typically has a mode line at
+  the bottom, which displays status information about the buffer displayed in
+  the window. The mode line contains information about the buffer, such as its
+  name, associated file, depth of recursive editing, and major and minor modes.
+  #+end_quote
+
+- Emacs window :: A [[https://emacsdocs.org/docs/elisp/Windows][window]] is an area of the screen that is used to display a
+  buffer (see Emacs buffer).
+
+*** Editing :category:
+- Kill :: Cut (in the Cut/Copy/Paste sense)
+
+  #+begin_quote
+  *Kill functions* delete text like the deletion functions, but save it so that
+  the user can reinsert it by *yanking* . Most of these functions have ‘kill-'
+  in their name. […] Killed text is saved for later yanking in the *kill ring*.
+  #+end_quote
+
+- Major mode :: A [[https://emacsdocs.org/docs/emacs/Major-Modes][major mode]] is akin to file types/modes to vimmers/others. They
+  specialize Emacs for editing or interacting with particular kinds of text.
+  Each buffer has exactly one major mode at a time.
+
+- Minor mode :: A [[https://emacsdocs.org/docs/emacs/Minor-Modes][minor mode]] provides optional features that users may enable or
+  disable independently of the choice of major mode. Minor modes can be enabled
+  individually or in combination.
+
+  Most minor modes implement features that are independent of the major mode,
+  and can thus be used with most major modes. For example, Auto Fill mode works
+  with any major mode that permits text insertion.
+
+- Yank :: Paste (contrary to vim). The most common pitfall to avoid when coming
+  from Vim, is that in Emacs, yanking_ is _pasting_.
+
+  #+begin_quote
+  Yanking means inserting text from the kill ring
+  #+end_quote
+
+*** Emacs Lisp :category:
+- Alist :: An [[https://emacsdocs.org/docs/elisp/Association-Lists][association list]] is one of the main datatype used in Emacs Lisp.
+  It's a list of key-value cons cells (essentially tuples).
+
+- Association list :: Alist
+
+- Interactive command :: https://emacsdocs.org/docs/elisp/Defining-Commands
+
+- Doc string :: Short for [[https://emacsdocs.org/docs/elisp/Function-Documentation][documentation string]] is information that is embedded
+  in a variable or function. Their docstring can be read when looking up
+  functions with [[kbd:][C-h f]] or variables with [[kbd:][C-h v]].
+
+*** Keybinds :category:
+- Universal argument :: See
+  https://emacsdocs.org/docs/elisp/Prefix-Command-Arguments. This is a special
+  key you use to modify the command you invoke directly afterwards.
+
+  For example, if you take a command called ~delete-stuff~, bound to [[kbd:][C-c d]] that
+  tells you it will "delete the current line, or delete the whole buffer if
+  prefix argument is set"; then
+
+  - [[kbd:][C-c d]] will delete a line
+  - [[kbd:][M-x delete-stuff RET]] will delete a line
+  - [[kbd:][C-u C-c d]] will delete the whole buffer
+  - [[kbd:][C-u M-x delete-stuff RET]] will delete the whole buffer.
+
+  The goal of the universal/prefix argument is to get a slightly different
+  behaviour for known commands.
+  
+  #+begin_quote
+   📌 Doom users with evil enabled will find the universal argument on [[kbd:][SPC u]]
+      instead than [[kbd:][C-u]].
+  #+end_quote
+
+- Prefix argument :: Universal argument
+
+- Prefix key :: A "prefix" is a key that begins a key sequence. For instance,
+  the key sequence [[kbd:][C-x C-k b]] is comprised of three distinct input events. Both
+  [[kbd:][C-x]] and [[kbd:][C-x C-k]] can be considered prefixes.
+
+  Prefix keys allow to store and move keybindings in groups. For example by
+  default all [[doom-package:lsp-mode]] commands are under ~SPC c l ...~, but if you want to
+  change that prefix to ~SPC L ...~ for all [[doom-package:lsp-mode]] commands, it is a one liner
+  in your configuration; you do _not_ have to rebind each command manually to
+  its new ~SPC L ...~ variant.
+
+** Repositories :category:
+- doomemacs/core :: https://git.doomemacs.org/core
+- doomemacs/modules :: https://git.doomemacs.org/modules
+- doomemacs/contrib-modules :: https://git.doomemacs.org/contrib-modules
+- doomemacs/themes :: https://git.doomemacs.org/themes
+- doomemacs/snippets :: https://git.doomemacs.org/snippets
+
+* Acronyms
+- CD :: Continuous Delivery
+- CI :: Continuous Integration
+- CLI :: Command-Line Interface
+- PR :: (Github) Pull Request
+- PRed :: PR
+- YMMV :: Your mileage may vary
+
+* Text Substitutions

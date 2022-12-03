@@ -290,7 +290,7 @@ For Emacs itself, these three formulas are the best options, ordered from most
 to least recommended for Doom (based on compatibility).
 
 - [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]]. It offers good integration
-  with macOS, native emojis and better childframe support. 
+  with macOS, native emojis and better childframe support.
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac --with-modules
@@ -363,7 +363,7 @@ Before moving on to installing Emacs et co, a few steps to prepare Windows for
 Emacs are necessary:
 
 1. Create a ~HOME~ [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][system environment variable]].
-  
+
    Set it to =C:\Users\USERNAME\=, otherwise Emacs will treat
    =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which will cause issues
    later.

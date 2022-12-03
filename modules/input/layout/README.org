@@ -1,140 +1,138 @@
-#+TITLE:   input/layout
-#+DATE:    Jun 29, 2020
-#+SINCE:   v3.0
-#+STARTUP: inlineimages nofold
+#+title:    :input layout
+#+subtitle: auie,ctsrnm is the superior home row
+#+created:  Jun 29, 2020
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#bépo][Bépo]]
-    - [[#easymotion][Easymotion]]
-    - [[#leaving-mnemonics-alone-when-possible][Leaving mnemonics alone when possible]]
-    - [[#possible-contributions][Possible contributions]]
-    - [[#org-mode][Org-mode]]
-- [[#configuration][Configuration]]
-  - [[#bépo-1][Bépo]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#outstanding-issues-contributions-welcome][Outstanding issues (contributions welcome)]]
-    - [[#bépo-2][Bépo]]
-  - [[#how-to-investigate-an-issue-][How to investigate an issue ?]]
-  - [[#how-to-deactivate-the-new-bindings-and-go-back-to-the-old-ones-][How to deactivate the new bindings and go back to the old ones ?]]
-
-* Description
-This module provides barebones support for using Doom with non-qwerty layouts.
+* Description :unfold:
+This module provides barebones support for using Doom with non-qwerty keyboard
+layouts.
 
 ** Maintainers
-+ @gagbo (Author, Bépo)
+- [[doom-user:][@gagbo]] ([[kbd:][+bepo]])
 
-** Module Flags
-+ =+azerty= Remaps keybinds to accommodate the
-  [[https://en.wikipedia.org/wiki/AZERTY][Azerty keyboard layout]].
-+ =+bepo= Remaps keybinds to accommodate the
-  [[https://en.wikipedia.org/wiki/B%C3%89PO][BÉPO keyboard layout]] (version
-  1.1, in particualr).
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-None
+** Module flags
+- +azerty ::
+  Remap keybinds to accommodate the [[https://en.wikipedia.org/wiki/AZERTY][Azerty keyboard layout]].
+- +bepo ::
+  Remap keybinds to accommodate the [[https://en.wikipedia.org/wiki/B%C3%89PO][BÉPO keyboard layout]] (version 1.1, in
+  particular).
 
-* Prerequisites
-If you are using =:editor evil=, you should use =(evil +everywhere)=, as the
-module uses =evil-collection= utilities to do the remapping.
+** Packages
+/This module doesn't install any packages./
 
-If you are not using =:editor evil=, then you have nothing to do.
+** TODO Hacks
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Bépo
 Support for the bépo layout includes:
 - Setting Avy keys to the correct home row keys
-- Changing navigation keys to =ctsr=
-  + old =t= is mapped to =j=
-  + old =s= is mapped to =k= (i.e. staging in the magit status buffer is done
-    with =k=)
-  + See [[*Configuration][Configuration]] to see where old =c= and =r= functions
+- Changing navigation keys to [[kbd:][c]], [[kbd:][t]], [[kbd:][s]], and [[kbd:][r]]
+  + old [[kbd:][t]] is mapped to [[kbd:][j]]
+  + old [[kbd:][s]] is mapped to [[kbd:][k]] (i.e. staging in the magit status buffer is done with
+    [[kbd:][k]])
+  + See [[*Configuration][Configuration]] to see where old [[kbd:][c]] and [[kbd:][r]] functions
     are remapped
-- Bind =<>= functions to =«»= keys when possible
-- Bind =[]= functions to =()= keys when possible (the "unimpaired-like"
-  bindings)
-- Bind =é= key to =w= functions when possible
-- Bind =è= key to useful functions when possible
-- Bind =`~= functions to =$#= keys when possible
+- Bind [[kbd:][<>]] functions to [[kbd:][«»]] keys when possible
+- Bind [[kbd:][[]]] functions to [[kbd:][()]] keys when possible (the "unimpaired-like" bindings)
+- Bind [[kbd:][é]] key to [[kbd:][w]] functions when possible
+- Bind [[kbd:][è]] key to useful functions when possible
+- Bind [[kbd:][`~]] functions to [[kbd:][$#]] keys when possible
 
 *** Easymotion
-If you use =evil-easymotion=, then all the bindings that were on =gs= have been
-moved to =gé=.
+If you use [[doom-package:evil-easymotion]], then all the bindings that were on [[kbd:][gs]] have been
+moved to [[kbd:][gé]].
 
-In short : =g s j= -> =g é t= (evilem-motion-next-line). And so on.
+In short : [[kbd:][g s j]] -> [[kbd:][g é t]] (~evilem-motion-next-line~). And so on.
 
 *** Leaving mnemonics alone when possible
-Exchanging =hjkl= to =ctsr= has the effect of destroying a few mnemonics: the
-change operator becomes =l= for example, or the window split becomes =SPC é k=.
+Exchanging [[kbd:][h]]/[[kbd:][j]]/[[kbd:][k]]/[[kbd:][l]] to [[kbd:][c]]/[[kbd:][t]]/[[kbd:][s]]/[[kbd:][r]] has the effect of destroying a few mnemonics: the
+change operator becomes [[kbd:][l]] for example, or the window split becomes [[kbd:][SPC é k]].
 
 The module tries to limit those changes to the minimum, especially in special
 buffers. A concrete example is magit.
 
-As the =magit: project= buffer (obtained with =magit-status=) does not need
-left-right navigation, keys =c=, =r=, =h=, and =l= keep their "expected" bindings,
-while =t=, =s=, =j=, and =k= are flipped:
-- checking the log from a magit buffer is still on =l=
-- staging a file/region has been moved to =k=
+As the =magit: project= buffer (obtained with ~M-x magit-status~) does not need
+left-right navigation, keys [[kbd:][c]], [[kbd:][r]], [[kbd:][h]], and [[kbd:][l]] keep their "expected" bindings, while
+[[kbd:][t]], [[kbd:][s]], [[kbd:][j]], and [[kbd:][k]] are flipped:
+- checking the log from a magit buffer is still on [[kbd:][l]]
+- staging a file/region has been moved to [[kbd:][k]]
 
 *** Possible contributions
-**** Avoid =g= and =z= to be used too often
+**** Avoid [[kbd:][g]] and [[kbd:][z]] to be used too often
 A nice addition in the future might be to have all the normal mode bindings that
-start with =g= start with =,= instead to avoid the curl on these common
-bindings. This is *not* implemented for the time being.
+start with [[kbd:][g]] start with [[kbd:][,]] instead to avoid the curl on these common bindings.
+This is *not* implemented for the time being.
 
-The same thing could be done to =z=, potentially using =à= instead.
+The same thing could be done to [[kbd:][z]], potentially using [[kbd:][à]] instead.
 
 **** Proper minor mode
 Also, implementing all those changes as a minor we could flip on and off would
 help with adoption
 
 **** Put "word" text objects to é instead of w
-"inside word" and "around word" are =iw= and =aw=, which use the very poorly
-rated =w= key in the bépo layout. Finding a way to use =é= or even =è= more for
-these would be a welcome change
+"inside word" and "around word" are [[kbd:][iw]] and [[kbd:][aw]], which use the very poorly rated [[kbd:][w]]
+key in the bépo layout. Finding a way to use [[kbd:][é]] or even [[kbd:][è]] more for these would be
+a welcome change
 
 *** Org-mode
-=evil-org= allows to define =evil-org-movement-bindings= to automatically map
-movement bindings on non-hjkl keys. It maps automatically keys to =C-c= and
-=C-r= in normal and insert states though, and it's not really user friendly in
-Emacs to remap those.
+[[doom-package:evil-org]] allows to define ~evil-org-movement-bindings~ to automatically map
+movement bindings on non-hjkl keys. It maps automatically keys to [[kbd:][C-c]] and [[kbd:][C-r]] in
+normal and insert states though, and it's not really user friendly in Emacs to
+remap those.
 
-Therefore, in org-mode:
-- =org-shiftright= is bound to =C-»=
-- =org-shiftleft= is bound to =C-«=
+Therefore, in ~org-mode~:
+- ~org-shiftright~ is bound to [[kbd:][C-»]]
+- ~org-shiftleft~ is bound to [[kbd:][C-«]]
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Bépo
 =+layout-bepo-cr-rotation-style= controls whether:
 - =qwerty-c= functions are mapped on =bépo-l= key, and =qwerty-r= functions on
-  =bépo-h= key (='ergodis=), or
+  =bépo-h= key (~'ergodis~), or
 - =qwerty-c= functions are mapped on =bépo-h= key, and =qwerty-r= functions on
-  =bépo-l= key (='strict=)
+  =bépo-l= key (~'strict~)
  
-='strict= would be the logical choice but the =c= functions are used more often
-than the =r= ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to actually put all the =c= functions on
-the key that does not need a curl.
+~'strict~ would be the logical choice but the [[kbd:][c]] functions are used more often
+than the [[kbd:][r]] ones so [[https://bepo.fr/wiki/Vim#Principe][Ergodis]] advises to actually put all the [[kbd:][c]] functions on the
+key that does not need a curl.
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
+[[doom-report:][Report an issue?]]
+
 ** Outstanding issues (contributions welcome)
 *** Bépo
-- in eshell, the key `c` is still bound to
-  `evil-collection-eshell-evil-change` in normal mode
+- In [[doom-package:eshell]], the key [[kbd:][c]] is still bound to ~evil-collection-eshell-evil-change~ in
+  normal mode.
   
 ** How to investigate an issue ?
-If a key is misbehaving, use =describe-key= (=C-h k= or =SPC h k= or =F1 k=) to
-see the functions bound to the key, and more importantly in which map it is
+If a key is misbehaving, use ~M-x describe-key~ ([[kbd:][C-h k]] or [[kbd:][SPC h k]] or [[kbd:][F1 k]]) to
+see the command bound to the key, and more importantly in which keymap it is
 bound.
 
-You should ignore all =evil-collection-...-backup-map= keymaps, as they are
-artifacts from =evil-collection-translate-key= and those maps are actually not
+You should ignore all ~evil-collection-*-backup-map~ keymaps, as they are
+artifacts from ~evil-collection-translate-key~ and those maps are actually not
 active.
 
 Most likely the solution is to call one of the "key rotation" functions on the
@@ -142,8 +140,16 @@ relevant keymaps.
 
 ** How to deactivate the new bindings and go back to the old ones ?
 If you are learning a new layout you might want to go back to tho old one to
-"get work done". Sadly the only way is to comment out the module, run =doom
-sync= and restart emacs.
+"get work done". Sadly the only way is to comment out the module, run ~$ doom
+sync~ and restart emacs.
 
-Restoring the session =SPC q l= by default helps to lower the impact of the
+Restoring the session [[kbd:][SPC q l]] by default helps to lower the impact of the
 restart.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

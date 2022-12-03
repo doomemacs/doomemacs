@@ -76,9 +76,9 @@
   (when (and unset (not (gethash name format-all--format-table)))
     (error "'%s' formatter does not exist to be unset" name))
   (puthash name function format-all--format-table)
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (cl-destructuring-bind (m &optional probe)
-        (doom-enlist mode)
+        (ensure-list mode)
       (if unset
           (puthash m (assq-delete-all name (gethash key format-all-mode-table))
                    format-all-mode-table)

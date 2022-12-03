@@ -34,6 +34,6 @@ windows."
 
 
 (use-package! flycheck-nim
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after nim-mode)
 

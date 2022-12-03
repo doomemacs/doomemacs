@@ -1,147 +1,163 @@
-#+TITLE:   tools/tree-sitter
-#+DATE:    August 17, 2021
-#+SINCE:   3.0.0
-#+STARTUP: inlineimages nofold
+#+title:    :tools tree-sitter
+#+subtitle: Syntax and parsing, sitting in a tree...
+#+created:  August 17, 2021
+#+since:    22.06.0 (#5401)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#language-support][Language support]]
-  - [[#text-objects][Text Objects]]
-  - [[#goto-certain-nodes][Goto certain nodes]]
-- [[#configuration][Configuration]]
-  - [[#disable-text-objects-for-certain-modes][Disable text objects for certain modes]]
-  - [[#rebinding-text-objects][Rebinding text objects]]
-  - [[#adding-your-own-text-objects][Adding your own text objects]]
-  - [[#disabling-highlighting-for-certain-modes][Disabling highlighting for certain modes]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#error-bad-bounding-indices-0-1][=(error "Bad bounding indices: 0, 1")=]]
-
-* Description
-This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to doom:
+* Description :unfold:
+This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to Doom Emacs.
 
 #+begin_quote
-Tree sitter is a parser generator tool and an incremental parsing library. It
-can build a concrete syntax tree for a source file and efficiently update the
-syntax tree as the source file is edited. This allows for features of the editor
-  to become syntax aware.
+ 💬 Tree sitter is a parser generator tool and an incremental parsing library.
+    It can build a concrete syntax tree for a source file and efficiently update
+    the syntax tree as the source file is edited. This allows for features of
+    the editor to become syntax aware.
 #+end_quote
 
 It includes:
-+ Better syntax highlighting of supported languages
-+ Structural text objects to manipulate functions statements and other code
-  structures like any other text object
+- Better syntax highlighting of supported languages.
+- Structural text objects to manipulate functions statements and other code
+  structures like any other text object.
 
 ** Maintainers
-- @jeetelongname
+- [[doom-user:][@jeetelongname]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/emacs-tree-sitter/elisp-tree-sitter][tree-sitter]]
-+ [[https://github.com/emacs-tree-sitter/tree-sitter-langs][tree-sitter-langs]]
-+ [[https://github.com/meain/evil-textobj-tree-sitter][evil-textobj-tree-sitter]]* (=:editor evil +everywhere=)
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites. 
+** Packages
+- [[doom-package:evil-textobj-tree-sitter]] if [[doom-module::editor evil +everywhere]]
+- [[doom-package:tree-sitter]]
+- [[doom-package:tree-sitter-langs]]
 
-* Features
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module has no direct requirements, but some languages may have their own to
+fulfill before tree-sitter support works for them. Run ~$ doom doctor~ to find
+out what you're missing.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Language support
-Currently Emacs tree sitter has got [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]] with syntax
-highlighting support for [[https://emacs-tree-sitter.github.io/syntax-highlighting/][these languages]] as well as ~typescript-tsx-mode~
-To enable tree sitter for individual languages add the =+tree-sitter= flag.
-Check the module readme of your language for support.
+Currently Emacs tree sitter has [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/repos][parsers for these languages]], and syntax
+highlighting support for [[https://github.com/emacs-tree-sitter/tree-sitter-langs/tree/master/queries][these languages]] as well as ~typescript-tsx-mode~.
+
+To enable tree-sitter support for specific languages, add the =+tree-sitter=
+flag to their respective Doom modules. Check the module readme of your language
+for support.
 
 ** Text Objects
-Not all language support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
-objects languages support]]
-Note: only languages with parsers in emacs have text object support currently.
+Not all languages support all text objects (yet). [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects#built-in-textobjects][Here is a table of the text
+object languages support]].
+
+#+begin_quote
+ 🚧 Only languages with parsers in Emacs have text object support at the moment.
+#+end_quote
+
 Currently text objects are bound to:
 | key | text object         |
 |-----+---------------------|
-| =A= | parameter list      |
-| =f= | function definition |
-| =F= | function call       |
-| =C= | class               |
-| =c= | comment             |
-| =v= | conditional         |
-| =l= | loop                |
+| [[kbd:][A]]   | parameter list      |
+| [[kbd:][f]]   | function definition |
+| [[kbd:][F]]   | function call       |
+| [[kbd:][C]]   | class               |
+| [[kbd:][c]]   | comment             |
+| [[kbd:][v]]   | conditional         |
+| [[kbd:][l]]   | loop                |
 
-They are used in a container context (not =vf= but =vaf= or =vif=)
+They are used in a container context (not [[kbd:][vf]], but [[kbd:][vaf]] or [[kbd:][vif]]).
 
 ** Goto certain nodes
-you can also jump to the next / previous node type in a buffer by using =[g=
-or =]g= respectfully, the following key will correspond to the text object you
-want to jump to
+To jump to the next/previous node, type in a buffer by using [[kbd:][[g]] or [[kbd:][]g]]
+respectfully, the following key will correspond to the text object you want to
+jump to.
+
 Currently keys are bound to:
 | key | text object    |
 |-----+----------------|
-| =a= | parameter list |
-| =f= | function       |
-| =F= | function call  |
-| =c= | comment        |
-| =C= | class          |
-| =v= | conditional    |
-| =l= | loop           |
+| [[kbd:][a]]   | parameter list |
+| [[kbd:][f]]   | function       |
+| [[kbd:][F]]   | function call  |
+| [[kbd:][c]]   | comment        |
+| [[kbd:][C]]   | class          |
+| [[kbd:][v]]   | conditional    |
+| [[kbd:][l]]   | loop           |
 
-* Configuration
-** Disable text objects for certain modes
-If you wish to disable tree sitter text objects then you can just remove
-=+tree-sitter-keys-mode= from the language mode hook, for example if we did not
-want it for ruby we would use this snippet
-#+begin_src emacs-lisp
-(remove-hook 'ruby-mode-hook #'+tree-sitter-keys-mode)
-#+end_src
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-** Rebinding text objects
-Rebinding keys is the same as any other key but do notes they need to be bound 
-to the keymaps ~+tree-sitter-inner-text-object-map~ or
-~+tree-sitter-outer-text-object-map~
+** Rebind text objects
+Rebinding keys works the same as rebinding any other key, but text-object keys
+must be bound on one or both of the ~+tree-sitter-inner-text-object-map~ or
+~+tree-sitter-outer-text-object-map~ keymaps:
 #+begin_src emacs-lisp
 (map! (:map +tree-sitter-outer-text-objects-map
-       "f" nil
        "f" (evil-textobj-tree-sitter-get-textobj "call.inner")
-       "F" nil
        "F" (evil-textobj-tree-sitter-get-textobj "function.inner"))
       (:map +tree-sitter-inner-text-objects-map
-       "f" nil
        "f" (evil-textobj-tree-sitter-get-textobj "call.inner")
-       "F" nil
        "F" (evil-textobj-tree-sitter-get-textobj "function.inner")))
 #+end_src
 
-** Adding your own text objects
-If you wish to [[https://github.com/meain/evil-textobj-tree-sitter#custom-textobjects][add your own custom text objects]] then you need to bind them and
-add them to the ~+tree-sitter-{inner, outer}-text-objects-map~
-for example:
+** Add your own text objects
+To [[https://github.com/meain/evil-textobj-tree-sitter#custom-textobjects][add your own custom text objects]], bind them to ~+tree-sitter-{inner,
+outer}-text-objects-map~:
 #+begin_src emacs-lisp
-(map! (:map +tree-sitter-outer-text-objects-map
-       "m" (evil-textobj-tree-sitter-get-textobj "import"
-             '((python-mode . [(import_statement) @import])
-               (rust-mode . [(use_declaration) @import])))))
+(map! :map +tree-sitter-outer-text-objects-map
+      "m" (evil-textobj-tree-sitter-get-textobj "import"
+            '((python-mode . [(import_statement) @import])
+              (rust-mode . [(use_declaration) @import]))))
 #+end_src
 
-** Disabling highlighting for certain modes
-If you want to disable highlighting by default you can add a 
+** Configuring Tree sitter highlighting
+Highlighting is controlled by the variable =+tree-sitter-hl-enabled-modes=
+This list allows you to whitelist, blacklist, fully enable or fully disable
+tree-sitter highlighting for all major modes
+
+To use highlighting in select modes add major-modes to
+~+tree-sitter-hl-enabled-modes~. This disables highlighting in all other modes.
+The symbol that should be used is the major mode symbol, *not the package
+symbol*.
 #+begin_src emacs-lisp
-(after! MODE-PACKAGE
-  (tree-sitter-hl-mode -1))
+(setq +tree-sitter-hl-enabled-modes '(python-mode go-mode))
 #+end_src
 
-If you only want it for certain modes then
+If you want to disallow highlighting in certain modes then the car of
+~+tree-sitter-hl-enabled-modes~ should be =not=. This enables highlighting in
+all modes except the ones disallowed.
 #+begin_src emacs-lisp
-(remove-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-
-(add-hook 'MAJOR-MODE-HOOK #'tree-sitter-hl-mode)
+(setq +tree-sitter-hl-enabled-modes '(not web-mode typescript-tsx-mode))
 #+end_src
+
+If ~+tree-sitter-hl-enabled-modes~ is set to ~nil~ or ~t~ it will fully disable
+or fully enable highlighting in every tree sitter enabled language respectively.
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 ** =(error "Bad bounding indices: 0, 1")=
-This means that the text object does not have the underlying query needed, this can be
-fixed by either adding in a custom query (which would override the current key
-bound.) or [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects/][contributing upstream!]]
+This means that the text object does not have the underlying query needed. This
+can be fixed by either adding in a custom query (which would override the
+current key bound) or [[https://github.com/nvim-treesitter/nvim-treesitter-textobjects/][contributing upstream!]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

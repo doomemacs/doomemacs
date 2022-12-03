@@ -1,47 +1,77 @@
-#+TITLE: :lang solidity
+#+title:    :lang solidity
+#+subtitle: Do you need a blockchain? No.
+#+created:  May 19, 2018
+#+since:    21.12.0 (#599)
 
-This module adds [[https://github.com/ethereum/solidity][Solidity]] support through [[https://github.com/ethereum/emacs-solidity][solidity-mode]]
+* Description :unfold:
+This module adds [[https://github.com/ethereum/solidity][Solidity]] support to Doom Emacs.
 
-+ Syntax-checking (~flycheck~)
-+ Code completion ([[https://github.com/ssmolkin1/company-solidity][company-solidity]])
-+ Gas estimation (~C-c C-g~)
+- Syntax-checking ([[doom-package:flycheck]])
+- Code completion ([[doom-package:company-solidity]])
+- Gas estimation (~C-c C-g~)
 
-* Table of Contents :TOC:
-- [[#module-flags][Module Flags]]
-- [[#prerequisites][Prerequisites]]
-  - [[#solc][Solc]]
-  - [[#solium][Solium]]
-- [[#todo][TODO]]
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-* Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-* Prerequisites
+** Packages
+- [[doom-package:company-solidity]] if [[doom-module::completion company]]
+- [[doom-package:solidity-flycheck]] if [[doom-module::checkers syntax]]
+- [[doom-package:solidity-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module requires one or both linters for syntax checking:
-
-+ [[https://github.com/ethereum/solc-js][Solc]]
-+ [[http://solium.readthedocs.io/en/latest/user-guide.html#installation][Solium]]
+- [[https://github.com/ethereum/solc-js][Solc]]
+- [[http://solium.readthedocs.io/en/latest/user-guide.html#installation][Solium]]
 
 If both are enabled *Solc* is run first, then *Solium* if *Solc* catches no
 errors.
 
 ** Solc
-#+BEGIN_SRC sh
+#+begin_src sh
 npm install -g solc
-#+END_SRC
+#+end_src
 
 ** Solium
-#+BEGIN_SRC sh
+#+begin_src sh
 npm install -g solium
-#+END_SRC
+#+end_src
 
-By default *solium* looks for ~.soliumrc.json~ in the project directory, but you
-can set it to your own ~.soliumrc.json~ with this in your private doom
-~config.el~
-
-#+BEGIN_SRC emacs-lisp
+By default *solium* looks for =.soliumrc.json= in the project directory, but you
+can set it to your own =.soliumrc.json= with:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (setq flycheck-solidity-solium-soliumrcfile "~/.soliumrc.json")
-#+END_SRC
+#+end_src
 
-* TODO
-+ Snippets
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -3,6 +3,7 @@
 # uuid: __license-mozilla-bp
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/mpl-2.0
+# expand-env: ((yas-indent-line 'fixed))
 # --
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this

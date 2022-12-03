@@ -15,7 +15,7 @@
   ;; than js2-mode, and its extra features aren't needed there.
   (add-to-list 'auto-mode-alist
                (cons "/flake\\.lock\\'"
-                     (if (featurep! :lang json)
+                     (if (modulep! :lang json)
                          'json-mode
                        'js-mode)))
   :config
@@ -29,6 +29,11 @@
   ;; dreadfully slow. It can still be invoked manually..
   (setq-hook! 'nix-mode-hook company-idle-delay nil)
 
+  (when (modulep! +lsp)
+    (add-hook 'nix-mode-local-vars-hook #'lsp! 'append))
+  (when (modulep! +tree-sitter)
+    (add-hook 'nix-mode-local-vars-hook #'tree-sitter! 'append))
+
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
@@ -39,15 +44,10 @@
         "u" #'nix-unpack
         "o" #'+nix/lookup-option))
 
-(use-package! nix-drv-mode
-  :mode "\\.drv\\'")
 
 (use-package! nix-update
   :commands nix-update-fetch)
 
+
 (use-package! nix-repl
   :commands nix-repl-show)
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'nix-mode-local-vars-hook #'tree-sitter!))

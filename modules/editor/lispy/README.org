@@ -1,18 +1,12 @@
-#+TITLE:   editor/lispy
-#+DATE:    October 27, 2018
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+#+title:    :editor lispy
+#+subtitle: Vim for lisp, for people who don't like vim
+#+created:  October 27, 2018
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-- [[#prerequisites][Prerequisites]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#mouse-wheel-and-wrapadditional-wrap-key-themes-in-tty-emacs-2573][Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs (#2573)]]
-
-* Description
-This module adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
-
-This includes:
+* Description :unfold:
+This module adds a keybind scheme for navigating and editing S-expressions in
+Lisps; including S-exp awareness for Evil users. This affects the following
+languages:
 
 - Common Lisp
 - Emacs Lisp
@@ -23,12 +17,43 @@ This includes:
 - Clojure
 - [[https://fennel-lang.org][Fennel]]
 
-If evil is enabled, lispyville would also be activated for every mode where
-lispy is active
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:lispy]]
+- [[doom-package:lispyville]] if [[doom-module::editor evil +everywhere]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+If [[doom-module::editor evil]] is enabled, [[doom-package:lispyville]] would also be activated for every mode
+where [[doom-package:lispy]] is active.
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
 The default key themes that are set are as follows:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 '((operators normal)
   c-w
   (prettify insert)
@@ -36,18 +61,25 @@ The default key themes that are set are as follows:
   slurp/barf-lispy
   additional
   additional-insert)
-#+END_SRC
+#+end_src
 
 To change the key themes set ~lispyville-key-theme~. Think of
 ~lispyville-key-theme~ as the equivalent of ~parinfer-extensions~. See
 lispyville's [[https://github.com/noctuid/lispyville/blob/master/README.org][README]] for more info on the specific keybindings of each key theme
 (starting [[https://github.com/noctuid/lispyville#operators-key-theme][here]]).
 
-* Prerequisites
-This module has no prerequisites.
-
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 ** Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs ([[https://github.com/hlissner/doom-emacs/issues/2573][#2573]])
-lispyville binds =M-[= to ~lispyville-wrap-brackets~ when the =wrap= or
-=additional-wrap= key theme are enabled. In terminal Emacs, this is the key
+lispyville binds [[kbd:][M-[]] to ~lispyville-wrap-brackets~ when the =wrap= or
+=additional-wrap= key themes are enabled. In terminal Emacs, this is the key
 Emacs receives when you scroll with your mouse wheel.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

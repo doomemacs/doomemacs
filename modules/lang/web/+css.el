@@ -46,14 +46,14 @@ If set to `nil', disable all the above behaviors.")
         "rb" #'+css/toggle-inline-or-block)
 
   (use-package! counsel-css
-    :when (featurep! :completion ivy)
+    :when (modulep! :completion ivy)
     :hook (css-mode . counsel-css-imenu-setup)
     :init
     (map! :map (css-mode-map scss-mode-map less-css-mode-map)
           :localleader ";" #'counsel-css))
 
   (use-package! helm-css-scss
-    :when (featurep! :completion helm)
+    :when (modulep! :completion helm)
     :defer t
     :init
     (map! :map (css-mode-map scss-mode-map less-css-mode-map)
@@ -71,9 +71,12 @@ If set to `nil', disable all the above behaviors.")
 ;;
 ;;; Tools
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (add-hook! '(css-mode-local-vars-hook
                scss-mode-local-vars-hook
                sass-mode-local-vars-hook
                less-css-mode-local-vars-hook)
-             #'lsp!))
+             :append #'lsp!))
+
+(when (modulep! +tree-sitter)
+  (add-hook 'css-mode-local-vars-hook #'tree-sitter! 'append))

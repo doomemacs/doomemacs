@@ -17,8 +17,8 @@
 
   (setq wl-demo nil
         wl-stay-folder-window t
-        wl-init-file (expand-file-name "wl.el" doom-private-dir)
-        wl-folders-file (expand-file-name "folders.wl" doom-private-dir))
+        wl-init-file (expand-file-name "wl.el" doom-user-dir)
+        wl-folders-file (expand-file-name "folders.wl" doom-user-dir))
 
   (setq wl-message-truncate-lines t
         wl-summary-width 120
@@ -47,7 +47,7 @@
           "^X-Mailer:"
           "^X-Face:"))
 
-  (when (featurep! +gmail)
+  (when (modulep! +gmail)
     (setq elmo-imap4-default-server "imap.gmail.com"
           elmo-imap4-default-port 993
           elmo-imap4-default-authenticate-type 'clear ; CRAM-MD5
@@ -70,7 +70,7 @@
 
   (setq wl-message-id-domain wl-local-domain)
 
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     ;; Neither `wl-folder-mode' nor `wl-summary-mode' are correctly defined as
     ;; major modes, so we cannot use `set-evil-initial-state!' here.
     ;; In addition, `wl-folder-mode' won't start in `evil-emacs-state' through

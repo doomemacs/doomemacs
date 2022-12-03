@@ -3,9 +3,10 @@
 ;;
 ;;; Packages
 
-(when (featurep! +lsp)
-  (add-hook! '(tuareg-mode-local-vars-hook reason-mode-local-vars-hook)
-             #'lsp!))
+(when (modulep! +lsp)
+  (add-hook! '(tuareg-mode-local-vars-hook
+               reason-mode-local-vars-hook)
+             :append #'lsp!))
 
 
 (after! tuareg
@@ -28,7 +29,7 @@
         "a" #'tuareg-find-alternate-file)
 
   (use-package! utop
-    :when (featurep! :tools eval)
+    :when (modulep! :tools eval)
     :hook (tuareg-mode-local-vars . +ocaml-init-utop-h)
     :init
     (set-repl-handler! 'tuareg-mode #'utop)
@@ -41,7 +42,7 @@
 
 
 (use-package! merlin
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :hook (tuareg-mode-local-vars . +ocaml-init-merlin-h)
   :init
   (defun +ocaml-init-merlin-h ()
@@ -63,7 +64,7 @@
         "t" #'merlin-type-enclosing)
 
   (use-package! flycheck-ocaml
-    :when (featurep! :checkers syntax)
+    :when (modulep! :checkers syntax)
     :hook (merlin-mode . +ocaml-init-flycheck-h)
     :config
     (defun +ocaml-init-flycheck-h ()
@@ -77,14 +78,14 @@
     :hook (merlin-mode . merlin-eldoc-setup))
 
   (use-package! merlin-iedit
-    :when (featurep! :editor multiple-cursors)
+    :when (modulep! :editor multiple-cursors)
     :defer t
     :init
     (map! :map tuareg-mode-map
           :v "R" #'merlin-iedit-occurrences))
 
   (use-package! merlin-imenu
-    :when (featurep! :emacs imenu)
+    :when (modulep! :emacs imenu)
     :hook (merlin-mode . merlin-use-merlin-imenu)))
 
 
@@ -100,7 +101,7 @@
 
 
 (use-package! ocamlformat
-  :when (featurep! :editor format)
+  :when (modulep! :editor format)
   :commands ocamlformat
   :hook (tuareg-mode-local-vars . +ocaml-init-ocamlformat-h)
   :config
@@ -120,5 +121,5 @@
       (setq +format-with 'ocamlformat))))
 
 ;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'tuareg-mode-local-vars-hook #'tree-sitter))
+(eval-when! (modulep! +tree-sitter)
+  (add-hook! 'tuareg-mode-local-vars-hook #'tree-sitter!))

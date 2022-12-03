@@ -8,7 +8,7 @@
   (warn! "Couldn't find mbsync or offlineimap command. \
 You may not have a way of fetching mail."))
 
-(when (and (featurep! +org)
+(when (and (modulep! +org)
            (not IS-WINDOWS))
   (unless (executable-find "identify")
     (warn! "Couldn't find the identify command from imagemagick. \

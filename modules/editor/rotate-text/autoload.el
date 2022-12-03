@@ -11,7 +11,7 @@
   "Declare :symbols, :words or :patterns (all lists of strings) that
 `rotate-text' will cycle through."
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (let ((fn-name (intern (format "+rotate-text-init-%s-h" mode))))
       (fset fn-name
             (lambda ()

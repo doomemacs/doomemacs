@@ -1,52 +1,73 @@
-#+TITLE: :lang Nim
+#+title:    :lang nim
+#+subtitle: Python + lisp at the speed of C
+#+created:  May 08, 2018
+#+since:    21.12.0 (#568)
 
-#+begin_quote
-This module is a work in progress.
-#+end_quote
+* Description :unfold:
+This module adds [[https://nim-lang.org][Nim]] support to Doom Emacs.
 
-This module adds [[https://nim-lang.org][Nim]] support to Emacs.
+- Code completion ([[doom-package:nimsuggest]] + [[doom-package:company]])
+- Syntax checking ([[doom-package:nimsuggest]] + [[doom-package:flycheck]])
+- Org babel support ([[doom-package:ob-nim]])
 
-+ Code completion (nimsuggest + company)
-+ Syntax checking (nimsuggest + flycheck)
-+ Babel support (~ob-nim~)
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-* Table of Contents :TOC:
-- [[#module-flags][Module Flags]]
-- [[#prerequisites][Prerequisites]]
-  - [[#nim][Nim]]
-- [[#configuration][Configuration]]
+** Module flags
+/This module has no flags./
 
-* Module Flags
-This module provides no flags.
+** Packages
+- [[doom-package:flycheck-nim]] if [[doom-module::checkers syntax]]
+- [[doom-package:nim-mode]]
 
-* Prerequisites
-+ ~nim~ (for building & evaluation)
-+ ~nimsuggest~ (for code completion, syntax checking & jump-to-definition functionality)
+** Hacks
+- [[doom-package:nimsuggest]] was modified to strip invalid characters from its temp file paths
+  (which would break nimsuggest on Windows systems).
+- [[doom-package:nim-mode]] was modified to fail gracefully if =nimsuggest= (the executable)
+  isn't available.
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires:
+- ~nim~, for building & evaluation.
+- ~nimsuggest~, for code completion, syntax checking, and jump-to-definition
+  functionality.
 
 ** Nim
 =choosenim= is an installer and version manager for the Nim programming
 language. You can install the latest stable release of Nim by running the
 following in your terminal and following the onscreen instructions:
-
-#+BEGIN_SRC bash
+#+begin_src sh
 curl https://nim-lang.org/choosenim/init.sh -sSf | sh
-#+END_SRC
+#+end_src
 
 Alternatively, nim is usually available through your OS's package manager:
+- MacOS: ~$ brew install nim~
+- Arch Linux: ~$ pacman --needed --noconfirm -S nim nimble~
+- openSUSE: ~$ zypper install nim~
 
-*** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew install nim
-#+END_SRC
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-*** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S nim nimble
-#+END_SRC
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-*** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
-sudo zypper install nim
-#+END_SRC
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
 
-* Configuration
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

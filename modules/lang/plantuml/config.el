@@ -3,7 +3,7 @@
 (use-package! plantuml-mode
   :commands plantuml-download-jar
   :init
-  (setq plantuml-jar-path (concat doom-etc-dir "plantuml.jar")
+  (setq plantuml-jar-path (concat doom-data-dir "plantuml.jar")
         org-plantuml-jar-path plantuml-jar-path)
   :config
   (set-popup-rule! "^\\*PLANTUML" :size 0.4 :select nil :ttl 0)
@@ -15,7 +15,7 @@
 
 
 (use-package! flycheck-plantuml
-  :when (featurep! :checkers syntax)
+  :when (modulep! :checkers syntax)
   :after plantuml-mode
   :config (flycheck-plantuml-setup))
 

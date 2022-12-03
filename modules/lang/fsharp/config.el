@@ -3,7 +3,7 @@
 (after! fsharp-mode
   (when (executable-find "dotnet")
     (setq inferior-fsharp-program "dotnet fsi --readline-"))
-  (if (featurep! +lsp)
+  (if (modulep! +lsp)
       (progn
         (setq fsharp-ac-intellisense-enabled nil)
         (add-hook 'fsharp-mode-local-vars-hook #'lsp! 'append))
@@ -16,6 +16,6 @@
         "b" #'fsharp-ac/pop-gotodefn-stack ; Useful for re-tracing your steps
         "e" #'fsharp-eval-region
         "l" #'fsharp-load-buffer-file
-        (:unless (featurep! +lsp)
+        (:unless (modulep! +lsp)
          "q" #'fsharp-ac/stop-process
          "t" #'fsharp-ac/show-tooltip-at-point)))

@@ -1,5 +1,5 @@
 ;;; emacs/vc/autoload/hydra.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :ui hydra)
+;;;###if (modulep! :ui hydra)
 
 ;;;###autoload (autoload '+vc/smerge-hydra/body "emacs/vc/autoload/hydra" nil t)
 (defhydra +vc/smerge-hydra (:hint nil
@@ -14,7 +14,7 @@
      ^_g_^       [_b_] base       [_<_] upper/base    [_C_] Combine
      ^_C-k_^     [_u_] upper      [_=_] upper/lower   [_r_] resolve
      ^_k_ ↑^     [_l_] lower      [_>_] base/lower    [_R_] remove
-     ^_j_ ↓^     [_a_] all        [_H_] hightlight
+     ^_j_ ↓^     [_a_] all        [_H_] hightlight    [_n_] next in project
      ^_C-j_^     [_RET_] current  [_E_] ediff                 ╭──────────
      ^_G_^                                                │ [_q_] quit
 "
@@ -38,4 +38,7 @@
     ("C" smerge-combine-with-next)
     ("r" smerge-resolve)
     ("R" smerge-kill-current)
+    ;; Often after calling `smerge-vc-next-conflict', the cursor will land at
+    ;; the bottom of the window
+    ("n" (progn (smerge-vc-next-conflict) (recenter-top-bottom (/ (window-height) 8))))
     ("q" nil :color blue))

@@ -1,0 +1,18 @@
+#+title:   :completion
+#+created: July 29, 2021
+#+since:   21.12.0
+
+* Description
+These modules provide interfaces and frameworks completion, including code
+completion.
+
+* Frequently asked questions
+** Should I choose Ivy, Helm, Vertico, or Ido?
+:PROPERTIES:
+:ID:       4f36ae11-1da8-4624-9c30-46b764e849fc
+:END:
+Vertico is Doom's default and comes highly recommended of the four. It is the
+fastest, best integrated in Doom's ecosystem, and its module is the most
+actively maintained of the four. It also has the cleanest codebase and ties into
+native functionality already existing in Emacs, rather than reinventing the
+wheel.

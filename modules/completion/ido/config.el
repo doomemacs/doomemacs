@@ -9,7 +9,6 @@
 
 (use-package! ido
   :hook (doom-first-input . ido-mode)
-  :hook (ido-mode . ido-everywhere)
   :hook (ido-mode . ido-ubiquitous-mode)
   :preface
   ;; HACK `ido' is a really old package. It defines `ido-mode' manually and
@@ -29,7 +28,8 @@
         ido-confirm-unique-completion t
         ido-case-fold t
         ido-create-new-buffer 'always
-        ido-enable-flex-matching t)
+        ido-enable-flex-matching t
+        ido-everywhere t)
 
   (map! :map (ido-common-completion-map ido-file-completion-map)
         "C-w"  #'ido-delete-backward-word-updir

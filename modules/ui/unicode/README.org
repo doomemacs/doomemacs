@@ -1,77 +1,96 @@
-#+TITLE:   ui/unicode
-#+DATE:    June 8, 2020
-#+SINCE:   v2.0
-#+STARTUP: inlineimages nofold
+#+title:    :ui unicode
+#+subtitle: Extended unicode support for various languages
+#+created:  June 08, 2020
+#+since:    2.0.0
 
+* Description :unfold:
+This module extends Doom's ability to display non-English unicode. It is
+primarily useful for non-English Emacs users, for whom Doom's built-in unicode
+support in insufficient.
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#getting-fonts-with-good-coverage][Getting fonts with good coverage]]
-  - [[#advanced-configuration][Advanced configuration]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#emacs-daemon-mode][Emacs daemon mode]]
+This module relies on the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package. It tries to setup the default
+emacs fontset to cover as many unicode glyphs as possible by scanning all
+available glyphs from all available fonts.
 
-* Description
-This module extends Doom's ability to display non-English unicode.
-It is primarily useful for non-English Emacs users, for whom Doom's built-in unicode support in insufficient.
-
-This module relies on the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package. It tries to setup the default emacs fontset to cover as many unicode glyphs as possible by scanning all available glyphs from all available fonts.
-
-When this module is enabled...
-
-+ Emacs will prefer to use the ~doom-unicode-font~ font to display non-latin glyphs if it provides coverage for them.
-+ The first time you run Emacs a unicode cache will be generated -- this will take a while!
-+ The cache will be regenerated every time Emacs is made aware of new fonts or you change the font configuration e.g. by modifying ~doom-unicode-font~.
-+ The cache will be stored and should not be regenerated unless font-related configuration or the versions of relevant packages changes.
-
+When this module is enabled:
+- Emacs will prefer to use the ~doom-unicode-font~ font to display non-latin
+  glyphs if it provides coverage for them.
+- The first time you run Emacs a unicode cache will be generated -- this will
+  take a while!
+- The cache will be regenerated every time Emacs is made aware of new fonts or
+  you change the font configuration e.g. by modifying ~doom-unicode-font~.
+- The cache will be stored and should not be regenerated unless font-related
+  configuration or the versions of relevant packages changes.
 
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]]
+** Packages
+- [[doom-package:unicode-fonts]]
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Configuration
-The first font that will be analyzed to see if it contains the glyphs of non-latin characters will be ~doom-unicode-font~. To set this font place
-#+BEGIN_SRC elisp
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+The first font that will be analyzed to see if it contains the glyphs of
+non-latin characters will be ~doom-unicode-font~:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (setq doom-unicode-font (font-spec :family "Fira Mono"))
-#+END_SRC
-in your private =config.el= file. If your ~doom-font~ provides good unicode coverage you just set
-#+BEGIN_SRC elisp
+#+end_src
+
+If your ~doom-font~ provides good unicode coverage use:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (setq doom-unicode-font doom-font)
-#+END_SRC
-If your font does not provide some glyphs, this package will try its best to find another font that does.
+#+end_src
+
+If your font does not provide some glyphs, this package will try its best to
+find another font that does.
 
 ** Getting fonts with good coverage
-A list of fonts with good unicode coverage can be found on the page of the [[https://github.com/rolandwalker/unicode-fonts#minimum-useful-fonts][unicode-fonts]] package.
+A list of fonts with good unicode coverage can be found on the page of the
+[[https://github.com/rolandwalker/unicode-fonts#minimum-useful-fonts][unicode-fonts]] package.
 
 ** Advanced configuration
-Consult the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package documentation for a description of more advanced configuration. The configuration should be placed, as usual, in your private =config.el= wrapped in an ~(after! unicode-fonts)~ block. The variable ~unicode-fonts-blocks~ contains a list of all unicode block names and their character ranges. The default fonts to search for glyphs are in the variable ~unicode-fonts-block-font-mapping~.
+Consult the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package documentation for a description of more
+advanced configuration. The configuration should be placed, as usual, in
+=$DOOMDIR/config.el= wrapped in an ~(after! unicode-fonts)~ block. The variable
+~unicode-fonts-blocks~ contains a list of all unicode block names and their
+character ranges. The default fonts to search for glyphs are in the variable
+~unicode-fonts-block-font-mapping~.
 
-If you want to use the font =Symbola= for =Miscellaneous Symbols=  by default you could add
-#+BEGIN_SRC elisp
+If you want to use the font =Symbola= for =Miscellaneous Symbols= by default
+use:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (after! unicode-fonts
   (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
-#+END_SRC
-to your =config.el=.
+#+end_src
 
-If you want to redefine several blocks an efficient way would be
-#+BEGIN_SRC elisp
+If you want to redefine several blocks an efficient way would be:
+#+begin_src emacs-lisp
 (after! unicode-fonts
   (dolist (unicode-block '("Mathematical Alphanumeric Symbols"
                            "Mathematical Operators"
@@ -81,12 +100,20 @@ If you want to redefine several blocks an efficient way would be
                            "Miscellaneous Symbols and Arrows"
                            "Miscellaneous Symbols and Pictographs"))
       (push "DejaVu Math TeX Gyre" (cadr (assoc unicode-block unicode-fonts-block-font-mapping)))))
-#+END_SRC
+#+end_src
 
 You can find a list of fonts available to emacs using ~M-x counsel-fonts~.
 
-
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
-** TODO Emacs daemon mode
-Currently this module may fail setup fonts when emacs is run in daemon mode. See [[https://github.com/hlissner/doom-emacs/issues/3328][Bug 3328]].
+[[doom-report:][Report an issue?]]
+
+** TODO Emacs daemon mode ([[doom-ref:][#3328]])
+This module may fail to setup fonts when emacs is run in a daemon session.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -26,6 +26,7 @@
           (cons pid process)
         (delete-file +mu4e-lock-file) nil))))
 
+;;;###autoload
 (defun +mu4e-lock-available (&optional strict)
   "If the `+mu4e-lock-file' is available (unset or owned by this emacs) return t.
 If STRICT only accept an unset lock file."
@@ -55,10 +56,11 @@ Else, write to this process' PID to the lock file"
     (delete-file +mu4e-lock-request-file)
     (call-process "touch" nil nil nil +mu4e-lock-request-file)
     (funcall orig-fun callback)
-    (setq +mu4e-lock--request-watcher
-          (file-notify-add-watch +mu4e-lock-request-file
-                                 '(change)
-                                 #'+mu4e-lock-request))))
+    (when +mu4e-lock--request-watcher
+      (file-notify-rm-watch +mu4e-lock--request-watcher))
+    (file-notify-add-watch +mu4e-lock-request-file
+                           '(change)
+                           #'+mu4e-lock--request)))
 
 (defvar +mu4e-lock--file-watcher nil)
 (defvar +mu4e-lock--file-just-deleted nil)
@@ -70,24 +72,25 @@ Else, write to this process' PID to the lock file"
   (setq +mu4e-lock--file-watcher
         (file-notify-add-watch +mu4e-lock-file
                                '(change)
-                               #'+mu4e-lock-file-updated)))
+                               #'+mu4e-lock--file-updated)))
 
-(defun +mu4e-lock-request (event)
+(defun +mu4e-lock--request (event)
   "Handle another process requesting the Mu4e lock."
-  (when (equal (nth 1 event) 'created)
+  (when (eq (nth 1 event) 'created)
     (when +mu4e-lock-relaxed
-      (mu4e~stop)
+      (mu4e--stop)
       (file-notify-rm-watch +mu4e-lock--file-watcher)
+      (file-notify-rm-watch +mu4e-lock--request-watcher)
       (message "Someone else wants to use Mu4e, releasing lock")
       (delete-file +mu4e-lock-file)
       (run-at-time 0.2 nil #'+mu4e-lock-add-watcher))
     (delete-file +mu4e-lock-request-file)))
 
-(defun +mu4e-lock-file-updated (event)
+(defun +mu4e-lock--file-updated (event)
   (if +mu4e-lock--file-just-deleted
       (+mu4e-lock-add-watcher)
-    (when (equal (nth 1 event) 'deleted)
+    (when (eq (nth 1 event) 'deleted)
       (setq +mu4e-lock--file-just-deleted t)
       (when (and +mu4e-lock-greedy (+mu4e-lock-available t))
         (message "Noticed Mu4e lock was available, grabbed it")
-        (run-at-time 0.2 nil #'mu4e~start)))))
+        (run-at-time 0.2 nil #'mu4e)))))

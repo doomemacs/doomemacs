@@ -1,5 +1,5 @@
 ;;; completion/vertico/autoload/workspaces.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :ui workspaces)
+;;;###if (modulep! :ui workspaces)
 
 (defun +vertico--workspace-buffer-state ()
   (let ((preview

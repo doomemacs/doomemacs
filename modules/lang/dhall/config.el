@@ -4,7 +4,7 @@
   :defer t
   :config
   (set-repl-handler! 'dhall-mode #'dhall-repl-show)
-  (setq dhall-format-at-save (featurep! :editor format +onsave))
+  (setq dhall-format-at-save (modulep! :editor format +onsave))
   (map! :map dhall-mode-map
         :localleader
         "l" #'dhall-lint

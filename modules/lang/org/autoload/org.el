@@ -90,6 +90,7 @@
             (org-back-to-heading)
             (insert (make-string level ?*) " ")
             (save-excursion (insert "\n"))))
+         (run-hooks 'org-insert-heading-hook)
          (when-let* ((todo-keyword (org-element-property :todo-keyword context))
                      (todo-type    (org-element-property :todo-type context)))
            (org-todo
@@ -437,7 +438,7 @@ Made for `org-tab-first-hook' in evil-mode."
 (defun +org-yas-expand-maybe-h ()
   "Expand a yasnippet snippet, if trigger exists at point or region is active.
 Made for `org-tab-first-hook'."
-  (when (and (featurep! :editor snippets)
+  (when (and (modulep! :editor snippets)
              (require 'yasnippet nil t)
              (bound-and-true-p yas-minor-mode))
     (and (let ((major-mode (cond ((org-in-src-block-p t)

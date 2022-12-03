@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/journal.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +journal)
+;;;###if (modulep! +journal)
 
 (use-package! org-journal
   :defer t

@@ -56,7 +56,7 @@ default/fallback account."
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       ;; delete current workspace if empty
       ;; this is useful when mu4e is in the daemon
       ;; as otherwise you can accumulate empty workspaces
@@ -67,10 +67,31 @@ default/fallback account."
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
     (switch-to-buffer (doom-fallback-buffer)))
-  (mu4e~start 'mu4e~main-view)
-  ;; (save-selected-window
-  ;;   (prolusion-mail-show))
-  )
+  ;; At this point, we're going to guess what the user wants to do.
+  ;; To help with this, we'll collect potentially-useful buffers.
+  ;; Then we'll try to jump to in order of preference:
+  ;; 1. A draft message buffer
+  ;; 2. A viewed message buffer
+  ;; 3. A headers buffer
+  ;; If none of those exist and are appropiate to jump to,
+  ;; `mu4e' will be called.
+  (let (compose-buffer view-buffer headers-buffer)
+    (dolist (buf (buffer-list))
+      (pcase (buffer-local-value 'major-mode buf)
+        ((and (or 'org-msg-edit-mode 'mu4e-compose-mode)
+              (guard (not compose-buffer)))
+         (setq compose-buffer buf))
+        ((and 'mu4e-view-mode (guard (not view-buffer)))
+         (setq view-buffer buf))
+        ((and 'mu4e-headers-mode (guard (not headers-buffer)))
+         (setq headers-buffer buf))))
+    (if (and compose-buffer (not (eq compose-buffer (current-buffer))))
+        (switch-to-buffer compose-buffer)
+      (if (and view-buffer (not (eq view-buffer (current-buffer))))
+          (switch-to-buffer view-buffer)
+        (if (and headers-buffer (not (eq headers-buffer (current-buffer))))
+            (switch-to-buffer headers-buffer)
+          (mu4e))))))
 
 ;;;###autoload
 (defun +mu4e/compose ()
@@ -113,13 +134,16 @@ will also be the width of all other printable characters."
         mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "flag"))
         mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
         mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "arrow-right"))
-        mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "arrow-right"))
+        mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "reply"))
         mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :color "dsilver"))
         mu4e-headers-trashed-mark    (cons "T" (+mu4e-normalised-icon "trash"))
         mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :color "silver"))
         mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "lock"))
         mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :color "dpurple"))
-        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))))
+        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))
+        mu4e-headers-list-mark       (cons "l" (+mu4e-normalised-icon "sitemap" :set "faicon"))
+        mu4e-headers-personal-mark   (cons "p" (+mu4e-normalised-icon "user"))
+        mu4e-headers-calendar-mark   (cons "c" (+mu4e-normalised-icon "calendar"))))
 
 (defun +mu4e-colorize-str (str &optional unique herring)
   "Apply a face from `+mu4e-header-colorized-faces' to STR.
@@ -131,7 +155,8 @@ a quoted symbol for a alist of current strings and faces provided."
   (put-text-property
    0 (length str)
    'face
-   (if (not unique)
+   (list
+    (if (not unique)
        (+mu4e--str-color-face herring str)
      (let ((unique-alist (eval unique)))
        (unless (assoc herring unique-alist)
@@ -149,6 +174,7 @@ a quoted symbol for a alist of current strings and faces provided."
              (push (cons herring color) unique-alist)))
          (set unique unique-alist))
        (cdr (assoc herring unique-alist))))
+    'default)
    str)
   str)
 
@@ -188,6 +214,10 @@ is tomorrow.  With two prefixes, select the deadline."
                   (lev (org-outline-level))
                   (folded-p (invisible-p (point-at-eol)))
                   (from (plist-get msg :from)))
+              (when (consp (car from)) ; Occurs when using mu4e 1.8+.
+                (setq from (car from)))
+              (unless (keywordp (car from)) ; If using mu4e <= 1.6.
+                (setq from (list :name (or (caar from) (cdar from)))))
               ;; place the subheader
               (when folded-p (show-branches))    ; unfold if necessary
               (org-end-of-meta-data) ; skip property drawer
@@ -199,7 +229,7 @@ is tomorrow.  With two prefixes, select the deadline."
                               "[[mu4e:msgid:"
                               (plist-get msg :message-id) "]["
                               (truncate-string-to-width
-                               (or (caar from) (cdar from)) 25 nil nil t)
+                               (plist-get from :name) 25 nil nil t)
                               " - "
                               (truncate-string-to-width
                                (plist-get msg :subject) 40 nil nil t)
@@ -242,7 +272,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
   (pcase major-mode
     ((or 'mu4e-compose-mode 'org-msg-edit-mode)
      (let ((mail-buffer (current-buffer))
-           (location (read-file-name "Attach: ")))
+           (location (read-file-name "Attach: " nil nil t "")))
        (if (not (file-directory-p location))
            (pcase major-mode
              ('mu4e-compose-mode
@@ -321,7 +351,7 @@ When otherwise called, open a dired buffer and enable `dired-mu4e-attach-ctrl-c-
 (defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
   (cond
-   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
+   ((and (modulep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
     (+workspace/delete +mu4e-workspace-name))
 
    (+mu4e--old-wconf

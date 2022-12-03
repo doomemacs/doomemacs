@@ -18,7 +18,10 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/docker-compose\\.yml$" :mode yaml-mode)
     ("/Makefile$"             :mode makefile-gmake-mode)
     ;; elisp
-    ("/.dir-locals.el$")
+    ("/\\.dir-locals\\.el$")
+    ("/\\.doomrc$"
+     :trigger "__doomrc"
+     :mode emacs-lisp-mode)
     ("/packages\\.el$" :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-packages"
      :mode emacs-lisp-mode)
@@ -71,9 +74,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/shell\\.nix$" :trigger "__shell.nix")
     (nix-mode)
     ;; Org
-    ("/README\\.org$"
-     :when +file-templates-in-emacs-dirs-p
-     :trigger "__doom-readme"
+    (doom-docs-org-mode
+     :trigger +file-templates-insert-doom-docs-fn
      :mode org-mode)
     (org-journal-mode :ignore t)
     (org-mode)
@@ -94,7 +96,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/Rakefile$"         :trigger "__Rakefile" :mode ruby-mode :project t)
     (ruby-mode)
     ;; Rust
-    ("/Cargo.toml$" :trigger "__Cargo.toml" :mode rust-mode)
+    ("/Cargo\\.toml$" :trigger "__Cargo.toml" :mode rust-mode)
     ("/main\\.rs$" :trigger "__main.rs" :mode rust-mode)
     ;; Slim
     ("/\\(?:index\\|main\\)\\.slim$" :mode slim-mode)
@@ -114,7 +116,7 @@ information.")
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
-  (or (file-in-directory-p file doom-private-dir)
+  (or (file-in-directory-p file doom-user-dir)
       (file-in-directory-p file doom-emacs-dir)))
 
 (defun +file-template-p (rule)
@@ -151,7 +153,7 @@ must be non-read-only, empty, and there must be a rule in
 ;;; Bootstrap
 
 (after! yasnippet
-  (if (featurep! :editor snippets)
+  (if (modulep! :editor snippets)
       (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
     (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
           yas-snippet-dirs '(+file-templates-dir))

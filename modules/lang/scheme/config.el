@@ -9,6 +9,7 @@
   :defer t
   :init
   (setq geiser-autodoc-identifier-format "%s → %s"
+        geiser-repl-per-project-p t
         geiser-repl-current-project-function #'doom-project-root
         geiser-repl-history-filename (concat doom-cache-dir "geiser-history"))
 
@@ -70,12 +71,12 @@
 
 
 (use-package! flycheck-guile
-  :when (featurep! +guile)
-  :when (featurep! :checkers syntax)
+  :when (modulep! +guile)
+  :when (modulep! :checkers syntax)
   :after geiser)
 
 ;; Add Guix channels to Guile load path
-(when (and (featurep! +guile) (executable-find "guix"))
+(when (and (modulep! +guile) (executable-find "guix"))
   (after! geiser-guile
     (add-to-list 'geiser-guile-load-path
                  (expand-file-name "~/.config/guix/current/share/guile/site/3.0"))))

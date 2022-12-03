@@ -22,11 +22,19 @@
       (local-set-key (vector 'remap (lookup-key lispy-mode-map (kbd "TAB"))) #'completion-at-point)))
   :config
   (setq lispy-close-quotes-at-end-p t)
-  (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode))
+  (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode)
+
+  (when (modulep! :lang emacs-lisp)
+    (setq lispy-outline
+          (concat
+           ;; `lispy-mode' requires `lispy-outline' start with ^
+           (unless (string-prefix-p "^" +emacs-lisp-outline-regexp) "^")
+           +emacs-lisp-outline-regexp))
+    (advice-add #'lispy-outline-level :override #'+emacs-lisp-outline-level)))
 
 
 (use-package! lispyville
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :hook (lispy-mode . lispyville-mode)
   :init
   (setq lispyville-key-theme

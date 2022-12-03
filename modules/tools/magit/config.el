@@ -22,9 +22,9 @@ Only has an effect in GUI Emacs.")
   :init
   (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
   ;; Must be set early to prevent ~/.emacs.d/transient from being created
-  (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
-        transient-values-file  (concat doom-etc-dir "transient/values")
-        transient-history-file (concat doom-etc-dir "transient/history"))
+  (setq transient-levels-file  (concat doom-data-dir "transient/levels")
+        transient-values-file  (concat doom-data-dir "transient/values")
+        transient-history-file (concat doom-data-dir "transient/history"))
   :config
   (add-to-list 'doom-debug-variables 'magit-refresh-verbose)
 
@@ -145,17 +145,21 @@ Only has an effect in GUI Emacs.")
 
 
 (use-package! forge
-  :when (featurep! +forge)
+  :when (modulep! +forge)
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
   :commands forge-create-pullreq forge-create-issue
   :preface
-  (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
-  (setq forge-add-default-bindings (not (featurep! :editor evil +everywhere)))
+  (setq forge-database-file (concat doom-data-dir "forge/forge-database.sqlite"))
+  (setq forge-add-default-bindings (not (modulep! :editor evil +everywhere)))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
+  (when (not forge-add-default-bindings)
+    (map! :map magit-mode-map [remap magit-browse-thing] #'forge-browse-dwim
+          :map magit-remote-section-map [remap magit-browse-thing] #'forge-browse-remote
+          :map magit-branch-section-map [remap magit-browse-thing] #'forge-browse-branch))
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
   (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
 
@@ -189,7 +193,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! code-review
-  :when (featurep! +forge)
+  :when (modulep! +forge)
   :after magit
   :init
   ;; TODO This needs to either a) be cleaned up or better b) better map things
@@ -200,9 +204,9 @@ ensure it is built when we actually use Forge."
         (dolist (state states)
           (evil-collection-define-key state 'code-review-mode-map evil-binding fn))))
     (evil-set-initial-state 'code-review-mode evil-default-state))
-  (setq code-review-db-database-file (concat doom-etc-dir "code-review/code-review-db-file.sqlite")
-        code-review-log-file (concat doom-etc-dir "code-review/code-review-error.log")
-        code-review-download-dir (concat doom-etc-dir "code-review/"))
+  (setq code-review-db-database-file (concat doom-data-dir "code-review/code-review-db-file.sqlite")
+        code-review-log-file (concat doom-data-dir "code-review/code-review-error.log")
+        code-review-download-dir (concat doom-data-dir "code-review/"))
   :config
   (transient-append-suffix 'magit-merge "i"
     '("y" "Review pull request" +magit/start-code-review))
@@ -223,7 +227,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! evil-collection-magit
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init (defvar evil-collection-magit-use-z-for-folds t)
   :config
@@ -238,7 +242,7 @@ ensure it is built when we actually use Forge."
 
   ;; Some extra vim-isms I thought were missing from upstream
   (evil-define-key* '(normal visual) magit-mode-map
-    "%"  #'magit-gitflow-popup
+    "*"  #'magit-worktree
     "zt" #'evil-scroll-line-to-top
     "zz" #'evil-scroll-line-to-center
     "zb" #'evil-scroll-line-to-bottom
@@ -279,15 +283,14 @@ ensure it is built when we actually use Forge."
       "gk" #'git-rebase-move-line-up))
 
   (after! magit-gitflow
-    (transient-replace-suffix 'magit-dispatch 'magit-worktree
-      '("%" "Gitflow" magit-gitflow-popup)))
-
-  (transient-append-suffix 'magit-dispatch '(0 -1 -1)
-    '("*" "Worktree" magit-worktree)))
+    (evil-define-key* '(normal visual) magit-mode-map
+      "%" #'magit-gitflow-popup)
+    (transient-append-suffix 'magit-dispatch 'magit-worktree
+      '("%" "Gitflow" magit-gitflow-popup))))
 
 
 (use-package! evil-collection-magit-section
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init
   (defvar evil-collection-magit-section-use-z-for-folds evil-collection-magit-use-z-for-folds)

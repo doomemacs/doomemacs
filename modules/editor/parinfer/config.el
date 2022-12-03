@@ -10,7 +10,7 @@
           hy-mode) . parinfer-rust-mode)
   :init
   (setq parinfer-rust-library
-        (concat doom-etc-dir "parinfer-rust/"
+        (concat doom-data-dir "parinfer-rust/"
                 (cond (IS-MAC "parinfer-rust-darwin.so")
                       (IS-LINUX "parinfer-rust-linux.so")
                       (IS-WINDOWS "parinfer-rust-windows.dll")

@@ -1,55 +1,64 @@
-#+TITLE:   tools/pass
-#+DATE:    May 4, 2020
-#+SINCE:   V2.0.9
-#+STARTUP: inlineimages nofold
+#+title:    :tools pass
+#+subtitle: A password manager for nerds
+#+created:  May 04, 2020
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
-+ Manage passwords on ~pass~ with power of ~doom~.
-+ You can open ~pass~ by =M-x pass=
+* Description :unfold:
+This module provides an Emacs interface to [[https://www.passwordstore.org/][Pass]].
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ ~+auth~ to enable ~auth-source-pass~
+** Module flags
+- +auth ::
+  Allow Emacs to use pass for authentication (via ~auth-source-pass~).
 
-** Plugins
-# A list of linked plugins
-+ [[https://github.com/NicolasPetton/pass][pass]]
-+ [[https://github.com/zx2c4/password-store][password-store]]
-+ [[https://github.com/volrath/password-store-otp.el][password-store-otp]]
-+ [[https://github.com/DamienCassou/auth-password-store][auth-source-pass (auth-password-store)]]
-+ =:completion ivy=
-  + [[https://github.com/ecraven/ivy-pass][ivy-pass]]
-+ =:completion helm=
-  + [[https://github.com/emacs-helm/helm-pass][helm-pass]]
+** Packages
+- [[doom-package:helm-pass]] if [[doom-module::completion helm]]
+- [[doom-package:ivy-pass]] if [[doom-module::completion ivy]]
+- [[doom-package:pass]]
+- [[doom-package:password-store]]
+- [[doom-package:password-store-otp]]
 
 ** Hacks
-In ~pass-mode~ ~evil~ is put into ~emacs~ state so shown keybindings works correctly, but some keybindings is more ~evil~.
-| keybinding | action                  |
-|------------+-------------------------|
-| j          | pass-next-entry         |
-| k          | pass-previous-entry     |
-| d          | pass-kill               |
-| C-j        | pass-next-directory     |
-| C-k        | pass-previous-directory |
-* Prerequisites
-+ This module requires that [[https://www.passwordstore.org/][pass]] is installed and setup correctly.
+/No hacks documented for this module./
 
-* TODO Features
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires [[https://www.passwordstore.org/][pass]], [[https://gnupg.org/][GnuPG]], and a password library.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+Start using this module with ~M-x pass~.
+
+| keybinding | command                   |
+|------------+---------------------------|
+| =j=        | ~pass-next-entry~         |
+| =k=        | ~pass-previous-entry~     |
+| =d=        | ~pass-kill~               |
+| =C-j=      | ~pass-next-directory~     |
+| =C-k=      | ~pass-previous-directory~ |
 
 * TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-No known issues.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

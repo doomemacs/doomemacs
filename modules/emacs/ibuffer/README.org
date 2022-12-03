@@ -1,36 +1,57 @@
-#+TITLE:   emacs/ibuffer
-#+DATE:    October 20, 2019
-#+SINCE:   v2.1.0
-#+STARTUP: inlineimages
+#+title:    :emacs ibuffer
+#+subtitle: Edit me like one of your French buffers
+#+created:  October 20, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
+* Description :unfold:
+This module augments the built-in [[doom-package:ibuffer]] package.
 
-* Description
-This module augments ibuffer.
+- Adds project-based grouping of buffers
+- Support for file-type icons
+- Uses human-readable file-size
 
-+ Adds project-based grouping of buffers
-+ Support for file-type icons
-+ Uses human-readable file-size
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+icons= Enables filetype icons for buffers
+** Module flags
+- +icons ::
+  Enable filetype icons for buffers using [[doom-package:all-the-icons]].
 
-** Plugins
-+ [[https://github.com/purcell/ibuffer-projectile][ibuffer-projectile]]
-+ [[https://github.com/purcell/ibuffer-vc][ibuffer-vc]]
+** Packages
+- [[doom-package:ibuffer-projectile]]
+- [[doom-package:ibuffer-vc]]
 
-* Prerequisites
-This module has no prerequisites.
+** TODO Hacks
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
 
-* TODO Features
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* TODO Troubleshooting
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

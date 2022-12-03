@@ -1,33 +1,22 @@
-#+TITLE:   ui/zen
-#+DATE:    December 20, 2019
-#+SINCE:   v3.0.0
-#+STARTUP: inlineimages
+#+title:    :ui zen
+#+subtitle: Distraction-free mode for the eternally distracted
+#+created:  December 20, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#usage][Usage]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#distractions-free-mode][Distractions-free mode]]
-- [[#configuration][Configuration]]
-  - [[#enable-fullscreen-on-activation][Enable fullscreen on activation]]
-
-* Description
+* Description :unfold:
 This module provides two minor modes that make Emacs into a more comfortable
 writing or coding environment. Folks familiar with "distraction-free" or "zen"
-modes from other editors -- or [[https://github.com/rnkn/olivetti][olivetti]], [[https://github.com/zk-phi/sublimity][sublimity]], and [[https://github.com/IdoMagal/Tabula-Rasa][tabula-rasa]] (Emacs
+modes from other editors -- or [[doom-package:olivetti]], [[doom-package:sublimity]], and [[doom-package:tabula-rasa]] (Emacs
 plugins) -- will feel right at home.
 
 These modes are:
-
-+ ~mixed-pitch-mode~ :: Which renders (most) text in a variable pitch font (see
+- ~mixed-pitch-mode~ ::
+  Which renders (most) text in a variable pitch font (see
   ~doom-variable-pitch-font~). Unlike ~variable-pitch-mode~, this will not
   affect segments of text that are intended to remain in a fixed pitch font,
   such as code blocks or ASCII tables.
-+ ~writeroom-mode~ :: Our all-in-one "zen" mode that will:
+- ~writeroom-mode~ ::
+  Our all-in-one "zen" mode that will:
   1. Center the current buffer.
   2. Remove superfluous UI elements (like the modeline).
   3. Activate ~mixed-pitch-mode~.
@@ -35,22 +24,17 @@ These modes are:
   5. And make the window's borders slightly thicker (see
      ~+zen-window-divider-size~).
      
-** Usage
-This module provides two entry points:
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-+ ~M-x +zen/toggle~ :: toggles ~writeroom-mode~ (restricted to the current
-  buffer).
-+ ~M-x +zen/toggle-fullscreen~ :: toggles zen mode in full-screen mode (deletes
-  other windows and full screens the Emacs frame).
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-Invoke either command again to undo the change.
+** Module flags
+/This module has no flags./
 
-** Module Flags
-This module provides no flags.
-
-** Plugins
-+ [[https://github.com/joostkremers/writeroom-mode][writeroom-mode]]
-+ [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]]
+** Packages
+- [[doom-package:mixed-pitch]]
+- [[doom-package:writeroom-mode]]
 
 ** Hacks
 + Doom has disabled all of writeroom-mode's "global" effects
@@ -61,18 +45,37 @@ This module provides no flags.
 + ~text-scale~ has been advised to adjust ~visual-fill-column~'s margins, so its
   text won't "squeeze" as you scale it up (or "spill" when scaled down).
 
-* Prerequisites
-This module has no prerequisites.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Features
-** Distractions-free mode
-This can be activated with =SPC t z= for evil users.
-Non-evil users can use =C-c t z= or 'M-x writeroom-mode'.
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Configuration
-** Enable fullscreen on activation
-#+BEGIN_SRC elisp
-(setq writeroom-fullscreen-effect t)
-#+END_SRC
+/This module has no external requirements./
 
-Or fullscreen manually with =SPC t F= (or =F11= for non-evil users).
+* Usage
+This module provides two entry points:
+
+- ~M-x +zen/toggle~ (on [[kbd:][<leader> t z]]): toggles ~writeroom-mode~ (restricted to
+  the current buffer).
+- ~M-x +zen/toggle-fullscreen~ (on [[kbd:][<leader> t Z]]): toggles zen mode in
+  full-screen mode (deletes other windows and full screens the Emacs frame).
+
+Invoke either command again to undo the change.
+
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

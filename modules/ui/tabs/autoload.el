@@ -1,5 +1,5 @@
 ;;; ui/tabs/autoload.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+tabs:next-or-goto "ui/tabs/autoload" nil t)
 (evil-define-command +tabs:next-or-goto (index)

@@ -58,7 +58,7 @@
 
 ;;;###autoload
 (defun +vertico/project-search (&optional arg initial-query directory)
-  "Peforms a live project search from the project root using ripgrep.
+  "Performs a live project search from the project root using ripgrep.
 If ARG (universal argument), include all files, even hidden or compressed ones,
 in the search."
   (interactive "P")
@@ -73,6 +73,7 @@ If ARG (universal argument), include all files, even hidden or compressed ones."
 
 ;;;###autoload
 (defun +vertico/search-symbol-at-point ()
+  "Performs a search in the current buffer for thing at point."
   (interactive)
   (consult-line (thing-at-point 'symbol)))
 
@@ -211,7 +212,7 @@ targets."
   (pcase-let* ((cmd (split-string-and-unquote +vertico-consult-fd-args))
                (`(,arg . ,opts) (consult--command-split input))
                (`(,re . ,hl) (funcall consult--regexp-compiler
-                                      arg 'extended)))
+                                      arg 'extended t)))
     (when re
       (list :command (append cmd
                              (list (consult--join-regexps re 'extended))

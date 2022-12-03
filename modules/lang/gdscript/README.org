@@ -1,55 +1,78 @@
-#+TITLE:   lang/gdscript
-#+DATE:    May 27, 2020
-#+SINCE:   v2.0.9
+#+title:    :lang gdscript
+#+subtitle: the language you waited for
+#+created:  June 01, 2020
+#+since:    21.12.0 (#3239)
 
-* Table of Contents                                                     :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
-
-* Description
+* Description :unfold:
 This module adds support for GDScript, the scripting language of the [[http://godotengine.org/][Godot]] game
 engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mode][gdscript-mode]].
 
-** Module Flags
-+ =+lsp= Enables LSP support for gdscript-mode. This requires the =:tools lsp=
-  module to be enabled and you need to open your project in Godot ~3.2.1~ or
-  above to run the language server.
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-This module provides no plugins.
+** Module flags
+- +lsp ::
+  Enable LSP support for ~gdscript-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (Godot ~3.2.1~ or newer).
 
-* Prerequisites
-To format your GDScript code, you need to install [[https://github.com/Scony/godot-gdscript-toolkit/][gdtoolkit]]:
+** Packages
+- [[doom-package:gdscript-mode]]
 
-#+BEGIN_SRC shell
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires Godot 3.2.1+ to be installed to make use of any of its
+features (beyond syntax highlighting).
+
+To format your GDScript code, you will need [[https://github.com/Scony/godot-gdscript-toolkit/][gdtoolkit]]:
+#+begin_src sh
 # On Windows
 pip install gdtoolkit
 
 # On MacOS and Linux
 pip3 install gdtoolkit
-#+END_SRC
+#+end_src
 
-* Features
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+** LSP support
 The language server support for GDScript is built into by lsp-mode. As long as
-you have the ~lsp~ module installed, you should be able to use the language
-server.
+you have [[doom-module:+lsp]] and [[doom-module::tools lsp]] enabled, and Godot 3.2.1+ installed, it should work
+out of the box.
 
 Godot's language server is built into the game engine, so you need to open your
 project in Godot ~3.2.1~ or above for the GDScript language server to be
 available.
 
-/Note that the GDScript language server has known issues causing some errors
-with lsp-mode. They should be addressed in future releases./
-
-* Configuration
-This module provides no configuration.
-
-* Appendix
 ** Commands
-Press ~SPC m~ (local leader key) to explore available commands.
+Press the localleader key ([[kbd:][SPC m]] for evil users, [[kbd:][C-c l]] otherwise) to explore
+available commands.
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+- The GDScript language server has known issues causing some errors with
+  [[doom-package:lsp-mode]]. They should be addressed in future releases.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

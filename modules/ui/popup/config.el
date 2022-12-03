@@ -41,7 +41,7 @@ adjustment.")
 
 (defvar +popup-buffer-mode-map
   (let ((map (make-sparse-keymap)))
-    (when (featurep! :editor evil)
+    (when (modulep! :editor evil)
       ;; For maximum escape coverage in emacs state buffers; this only works in
       ;; GUI Emacs, in tty Emacs use C-g instead
       (define-key map [escape] #'doom/escape))
@@ -127,10 +127,10 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 ;; Default popup rules & bootstrap
 
 (set-popup-rules!
-  (when (featurep! +all)
+  (when (modulep! +all)
     '(("^\\*"  :slot 1 :vslot -1 :select t)
       ("^ \\*" :slot 1 :vslot -1 :size +popup-shrink-to-fit)))
-  (when (featurep! +defaults)
+  (when (modulep! +defaults)
     '(("^\\*Completions" :ignore t)
       ("^\\*Local variables\\*$"
        :vslot -1 :slot 1 :size +popup-shrink-to-fit)

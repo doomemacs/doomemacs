@@ -1,7 +1,7 @@
 ;;; ui/window-select/config.el -*- lexical-binding: t; -*-
 
 (use-package! switch-window
-  :when (featurep! +switch-window)
+  :when (modulep! +switch-window)
   :defer t
   :init
   (global-set-key [remap other-window] #'switch-window)
@@ -10,22 +10,25 @@
 
 
 (use-package! ace-window
-  :unless (featurep! +switch-window)
+  :unless (modulep! +switch-window)
   :defer t
   :init
   (global-set-key [remap other-window] #'ace-window)
   :config
-  (unless (featurep! +numbers)
+  (unless (modulep! +numbers)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
   (setq aw-scope 'frame
         aw-background t))
 
 
 (use-package! winum
-  :when (featurep! +numbers)
+  :when (modulep! +numbers)
   :after-call doom-switch-window-hook
   :config
   (winum-mode +1)
+  ;; winum modifies `mode-line-format' in a destructive manner. I'd rather leave
+  ;; it to modeline plugins (or the user) to add this if they want it.
+  (setq winum-auto-setup-mode-line nil)
   (map! :map evil-window-map
         "0" #'winum-select-window-0-or-10
         "1" #'winum-select-window-1

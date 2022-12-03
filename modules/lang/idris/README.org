@@ -1,30 +1,54 @@
-#+TITLE:   lang/idris
-#+DATE:    October 6, 2020
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+#+title:    :lang idris
+#+subtitle: A language you can depend on
+#+created:  August 21, 2018
+#+since:    21.12.0 (#822)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
+* Description :unfold:
+This module adds rudimentary [[https://www.idris-lang.org/][Idris]] support to Doom Emacs.
 
-* Description
-This module adds rudimentary Idris support.
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-# A list of linked plugins
-+ [[https://github.com/idris-hackers/idris-mode/][idris-mode]]
+** Packages
+- [[doom-package:idris-mode]]
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
 
-* Features
-In addition to =idris-mode= goodness, adds frequently used functions under the localleader key.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_quote
+ 🔨 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+In addition to ~idris-mode~ goodness, adds frequently used functions under the
+[[kbd:][<localleader>]] key.
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

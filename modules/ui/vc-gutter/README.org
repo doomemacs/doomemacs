@@ -1,0 +1,84 @@
+#+title:    :ui vc-gutter
+#+subtitle: Get your diff out of the gutter
+#+created:  June 26, 2018
+#+since:    21.12.0
+
+* Description :unfold:
+This module displays a diff of the current file (against HEAD) in the fringe.
+Supports Git, Svn, Hg, and Bzr.
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +diff-hl ::
+  Use [[doom-package:diff-hl]] instead of git-gutter to power the VC gutter. It is a little
+  faster, but is slightly more prone to visual glitching. [[doom-package:diff-hl]] is intended to
+  replace git-gutter at some point in the future.
+- +pretty ::
+  Apply some stylistic defaults to the fringe, enabling thin bars in the fringe.
+  This look takes after the modern look of git-gutter in VSCode and Sublime
+  Text, without sacrificing on fringe width (which squeeze other indicators,
+  like flycheck's, flymake's, or flyspell's). However, this will look bad with
+  themes that invert the foreground/background of either git-gutter's or
+  diff-hl's faces (like modus-themes does).
+
+** Packages
+- [[doom-package:git-gutter-fringe]] unless [[doom-module:+diff-hl]]
+- [[doom-package:diff-hl]] if [[doom-module:+diff-hl]]
+
+** Hacks
+- The VC gutter will be updated when pressing ESC, leaving insert mode (evil
+  users), or refocusing the frame or window where it is active.
+- If [[doom-module:+pretty]] is enabled
+  - The fringes that both git-gutter-fringe and diff-hl define will be replaced
+    with a set of thin bars. This achieves a slicker look closer to git-gutter's
+    appearance in VSCode or Sublime Text, but may look weird for themes that
+    swap their faces' :foreground and :background (like modus-themes).
+  - The fringes are moved to the outside of the margins (closest to the frame
+    edge), so they have some breathing space away from the buffer's contents.
+- If [[doom-package:+diff-hl]] is enabled:
+  - ~diff-hl-revert-hunk~ displays a preview popup of the hunk being reverted.
+    It takes up ~50% of the frame, by default, whether you're reverting 2 lines
+    or 20. Since this isn't easily customized, it has been advised to shrink
+    this popup to the side of its contents.
+  - ~diff-hl-revert-hunk~ will sometimes move the cursor to an unexpected
+    location (the bounds of hunks, is my guess), but this is not intuitive and
+    often unexpected. Cursor movements have been suppressed for it.
+- If +diff-hl is *not* enabled:
+  - Sometimes, ~git-gutter:next-hunk~ and ~git-gutter:previous-hunk~ get
+    confused about the order of hunks. They have been advised to fix this
+    (although the hack is a little inefficient).
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires any of Git, Svn, Hg, and/or Bazaar to get gutter diffs in
+projects version controlled by them.
+
+* TODO Usage
+#+begin_quote
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

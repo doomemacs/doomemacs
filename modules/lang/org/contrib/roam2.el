@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/roam2.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +roam2)
+;;;###if (modulep! +roam2)
 
 (defvar +org-roam-auto-backlinks-buffer nil
   "If non-nil, open and close the org-roam backlinks buffer automatically.
@@ -160,7 +160,7 @@ In case of failure, fail gracefully."
          "r" #'org-roam-ref-add
          "R" #'org-roam-ref-remove))
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (add-hook! 'org-roam-mode-hook
       (defun +org-roam-detach-magit-section-mode-map-h ()
         "Detach `magit-section-mode-map' from `org-roam-mode-map'.

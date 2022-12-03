@@ -1,0 +1,60 @@
+#+title:    :term shell
+#+subtitle: A REPL for your shell
+#+created:  August 01, 2021
+#+since:    21.12.0
+
+* Description :unfold:
+Provides a REPL for your shell.
+
+#+begin_quote
+ 💡 =shell= is more REPL than terminal emulator. You can edit your command line
+    like you would any ordinary text in Emacs -- something you can't do in [[doom-package:term]]
+    (without ~term-line-mode~, which can be unstable) or [[doom-package:vterm]].
+
+    Due to =shell='s simplicity, you're less likely to encounter edge cases
+    (e.g. against your shell config), but it's also the least capable. TUI
+    programs like =htop= or =vim= won't work in shell directly, but will be
+    launched in a =term= buffer -- which handles them reasonably well.
+#+end_quote
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+/This module doesn't install any packages./
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

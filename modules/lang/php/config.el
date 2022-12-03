@@ -49,7 +49,7 @@
     :return "return"
     :yield "use")
 
-  (if (not (featurep! +lsp))
+  (if (not (modulep! +lsp))
       ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
       ;; `company-dabbrev-code', in that order.
       (when +php--company-backends
@@ -59,6 +59,9 @@
     (when (executable-find "php-language-server.php")
       (setq lsp-clients-php-server-command "php-language-server.php"))
     (add-hook 'php-mode-local-vars-hook #'lsp! 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'php-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
   (setq-hook! 'php-mode-hook sp-max-pair-length 5)
@@ -76,7 +79,7 @@
 
 
 (use-package! phpactor
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :after php-mode
   :init
   (add-to-list '+php--company-backends #'company-phpactor nil 'eq)
@@ -114,7 +117,7 @@
   (add-to-list '+php--company-backends #'php-extras-company)
   :config
   (setq php-extras-eldoc-functions-file
-        (concat doom-etc-dir "php-extras-eldoc-functions"))
+        (concat doom-data-dir "php-extras-eldoc-functions"))
   ;; Silence warning if `php-extras-eldoc-functions-file' hasn't finished
   ;; generating yet.
   (defun php-extras-load-eldoc ()
@@ -133,7 +136,7 @@
 
 
 (use-package! hack-mode
-  :when (featurep! +hack)
+  :when (modulep! +hack)
   :mode "\\.hh$")
 
 
@@ -176,7 +179,3 @@
   :on-exit
   (setq phpunit-args nil
         phpunit-executable nil))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'php-mode-local-vars-hook #'tree-sitter!))

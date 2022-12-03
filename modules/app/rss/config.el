@@ -56,7 +56,7 @@ easier to scroll through.")
     (define-key! elfeed-show-mode-map
       [remap next-buffer]     #'+rss/next
       [remap previous-buffer] #'+rss/previous))
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     (evil-define-key 'normal elfeed-search-mode-map
       "q" #'elfeed-kill-buffer
       "r" #'elfeed-search-update--force
@@ -68,7 +68,7 @@ easier to scroll through.")
 
 
 (use-package! elfeed-org
-  :when (featurep! +org)
+  :when (modulep! +org)
   :after elfeed
   :preface
   (setq rmh-elfeed-org-files (list "elfeed.org"))

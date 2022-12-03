@@ -1,66 +1,87 @@
-#+TITLE:   lang/zig
-#+DATE:    March 18, 2021
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages nofold
+#+title:    :lang zig
+#+subtitle: C, but simpler
+#+created:  April 05, 2021
+#+since:    21.12.0 (#4827)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#lsp-support][LSP support]]
-  - [[#keybinds][Keybinds]]
-- [[#configuration][Configuration]]
-  - [[#customize-zls-path][Customize zls path]]
-
-* Description
+* Description :unfold:
 This module adds [[https://ziglang.org/][Zig]] support, with optional (but recommended) LSP support via
 [[https://github.com/zigtools/zls][zls]].
 
-+ Syntax highlighting
-+ Syntax-checking (~flycheck~)
-+ Code completion and LSP integration (~zls~)
+- Syntax highlighting
+- Syntax-checking ([[doom-package:flycheck]])
+- Code completion and LSP integration (~zls~)
 
 ** Maintainers
-+ [[https://github.com/bnjmnt4n][@bnjmnt4n]] (Author)
+- [[doom-user:][@bnjmnt4n]]
 
-** Module Flags
-+ =+lsp= Enables integration for the zls LSP server. It is highly recommended
-  you use this.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/ziglang/zig-mode][zig-mode]]
+** Module flags
+- +lsp ::
+  Enables integration for the zls LSP server. It is highly recommended you use
+  this.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
-* Prerequisites
+** Packages
+- [[doom-package:zig-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 To get started with Zig, you need the ~zig~ tool. Pre-built binaries for most
 systems are available for download from [[https://ziglang.org/download/]] or from
 [[https://github.com/ziglang/zig/wiki/Install-Zig-from-a-Package-Manager][system package managers]].
 
-zls is a language server for Zig, which provides code completion,
+=zls= is a language server for Zig, which provides code completion,
 
-* Features
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** LSP support
 This module supports LSP integration. For it to work you'll need:
 
-1. zls installed.
-2. The =:tools lsp= module enabled. Only =lsp-mode= is supported for now.
-3. The ~+lsp~ flag on this module enabled.
+1. zls installed,
+2. The [[doom-module::tools lsp]] module enabled. Only [[doom-package:lsp-mode]] is supported for now,
+3. The [[doom-module:+lsp]] flag on this module enabled.
 
 ** Keybinds
 | Binding           | Description         |
 |-------------------+---------------------|
-| ~<localleader> b~ | ~zig-compile~       |
-| ~<localleader> f~ | ~zig-format-buffer~ |
-| ~<localleader> r~ | ~zig-run~           |
-| ~<localleader> t~ | ~zig-test-buffer~   |
+| [[kbd:][<localleader> b]] | ~zig-compile~       |
+| [[kbd:][<localleader> f]] | ~zig-format-buffer~ |
+| [[kbd:][<localleader> r]] | ~zig-run~           |
+| [[kbd:][<localleader> t]] | ~zig-test-buffer~   |
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Customize zls path
-To customize the path of the =zls= executable, modify ~lsp-zig-zls-executable~.
-
-#+BEGIN_SRC elisp
+To customize the path of the =zls= executable, modify ~lsp-zig-zls-executable~:
+#+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 (setq lsp-zig-zls-executable "~/path/to/zls")
-#+END_SRC
+#+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

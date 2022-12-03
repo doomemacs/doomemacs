@@ -1,5 +1,5 @@
 ;; email/mu4e/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload
 (defun +mu4e/mark (&optional beg end)

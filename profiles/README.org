@@ -1,0 +1,154 @@
+#+title: Doom's profile directory
+
+* Introduction
+In order to power Doom's soon-to-be generational package manager, I wrote a
+profile system. This system can effectively replace [[https://github.com/plexus/chemacs2][Chemacs]]; permitting you to
+switch between multiple Emacs configs on-demand (and those configs don't have to
+be Doom configs).
+
+While I work on the formal documentation for this system, I've created this
+brief guide to walk users through their use. *However, for this to work, Doom
+must live in =~/.emacs.d= or =~/.config/emacs=.* I'll refer to this as
+=$EMACSDIR= (and your private Doom config, in =~/.doom.d= or =~/.config/doom=,
+as =$DOOMDIR=).
+
+* How use profiles
+1. Declare all your profiles in either:
+   - One or multiple profile files at:
+     - =$DOOMDIR/profiles.el=
+     - =$EMACSDIR/profiles.el=
+     - =~/.config/doom-profiles.el=
+     - =~/.doom-profiles.el=
+
+     [[id:f9bce7da-d155-4727-9b6f-b566b5b8d824][Example profiles.el file]].
+
+   - Or an implicit profile, which are inferred from the sub-directories of:
+     - =$DOOMDIR/profiles/=
+     - =$EMACSDIR/profiles/=
+
+     Implicit profiles may have a =.doomprofile= file to apply additional
+     settings. [[id:ac37ac6f-6082-4c34-b98c-962bc1e528c9][Example .doomprofile]].
+
+2. To run ~$ doom sync~ whenever you change the above, to regenerate Doom's
+   cached profile loader (generated at =$EMACSDIR/profiles/init.X.elc=, where X
+   is your major Emacs version).
+
+3. To launch a profile:
+   - Launch the profile you want: ~$ emacs --profile FOO~
+   - Use ~bin/doom~ on the profile you want: ~$ doom sync --profile FOO~
+     
+* Auto-generated profiles
+Doom v3's sandbox and transactional package manager are capable of generating
+profiles on-the-fly. The former for rapid, isolated testing, and the latter for
+rollback/snapshot traversal for disaster recovery purposes.
+
+These auto-generated profiles will be stored and versioned in:
+=$XDG_DATA_HOME/doom/$PROFILE_NAME/@/$PROFILE_VERSION/=
+
+* Fallback profile
+Unlike Chemacs, Doom's profiles has no notion of a "default"/fallback profile.
+The fallback profile is the Doom installation doing the bootloading. This 
+"global" profile is unique in that it won't respect a =.doomprofile= -- in other
+words, it's not treated as a normal profile. 
+
+It is this way so that the profiles system imposes no overhead on users that 
+aren't interested in the profile system (or prefer to use Chemacs).
+
+However, you can emulate this behavior by registering the "global" profile as a 
+profile, and setting ~$DOOMPROFILE~ or aliasing ~emacs~, like so:
+
+#+begin_src emacs-lisp
+;; in a profiles.el file
+((default)
+
+ ...)
+#+end_src
+
+#+begin_src bash
+# in .zshrc or .bash_profile
+export DOOMPROFILE=default
+
+# Or
+alias emacs='emacs --profile default'
+#+end_src
+
+* Gotchas
+There are two caveats with this profile system:
+
+- It requires that Doom live in =~/.config/emacs= or =~/.emacs.d=. A
+  non-standard install location won't work, unless you use Emacs 29's new
+  =--init-directory DIR= switch and launch Emacs with ~emacs --init-directory
+  ~/nonstandard/emacs.d --profile NAME~. =bin/doom= is fine with it, though.
+
+- The profile system can be storage-inefficient. A barebones Doom config
+  averages at ~1mb without installed packages and ~3.75mb /with/ (straight alone
+  is 2.6m). A fully-fledged Doom config can average 500mb-1.4gb; the majority of
+  which are packages, but include server binaries, elisp+native bytecode, and
+  caches add up too.
+
+  To mitigate this, Doom dedups packages across snapshots of a single profile
+  (e.g. =profile@23= -> =profile@24=), but it cannot (yet) do this across
+  profiles (e.g. if =profile1= and =profile2= both install =org=). Even then,
+  packages whose recipes change (either locally or upstream) may dodge this
+  deduplication and get cloned anew (to ensure historical integrity) -- though
+  this shouldn't happen often, but can build up over time.
+
+  So v3 will introduce a ~doom gc~ command, which offers a couple nix.gc-esque
+  switches to control it. E.g.
+
+  - Acts on the "global" profile:
+    - ~doom gc --older-than 21d~
+    - ~doom gc --keep 10~
+  - Act on a specific profile:
+    - ~doom gc --profile foo ...~
+  - Act on all known profiles
+    - ~doom gc --profiles '*' ...~
+
+  Users can change defaults from their =init.el= or =cli.el=, or configure ~doom
+  sync~ to auto-GC by whatever rules they like. And the good doctor will warn
+  you if you haven't GCed in a while, or you're in excess of some threshold
+  (which I haven't decided yet).
+
+* How to switch from Chemacs
+1. Delete [[https://github.com/plexus/chemacs2][Chemacs]] from =$EMACSDIR=.
+
+2. Install Doom there: ~$ git clone https://github.com/doomemacs/doomemacs
+   ~/.config/emacs~
+
+3. Move =~/.emacs-profiles.el= to =~/.config/doom/profiles.el= and transform the
+   string keys to symbols and adapt =env= entries like so:
+   
+   #+begin_src emacs-lisp
+   ;; ~/.emacs-profiles.el
+   (("default"   (user-emacs-directory . "~/.emacs.default")
+                 (env ("DOOMDIR" . "~/.doom.private")))
+    ("spacemacs" (user-emacs-directory . "~/spacemacs"))
+    ("prelude"   (user-emacs-directory . "~/prelude")))
+   
+   ;; ~/.config/emacs/profiles.el
+   ((default   (user-emacs-directory . "~/.emacs.default")
+               ("DOOMDIR" . "~/.doom.private"))
+    (spacemacs (user-emacs-directory . "~/spacemacs"))
+    (prelude   (user-emacs-directory . "~/prelude")))
+   #+end_src
+
+   A comprehensive example of Doom's profiles.el file can be found
+   [[id:f9bce7da-d155-4727-9b6f-b566b5b8d824][in docs/examples.org]].
+
+   *Differences with Chemacs profiles:*
+   - Keys are symbols, not strings.
+   - Doom's profiles.el has a syntax for evaluating code, expanding paths, and
+     appending/prepending to variables (with deferral). See the examples.org
+     link above.
+   - Doom's profile system won't install [[https://github.com/raxod502/straight.el][Straight.el]] for you.
+   - Doom does not have a special "default" profile. If you don't specify a
+     --profile, it will simply start up the Doom config living in
+     =~/.config/emacs=. See the "Fallback profile" section below for a
+     workaround.
+
+4. Then launch a profile. E.g. ~$ emacs --profile prelude~.
+
+* But Doom is kinda heavy to be a bootloader...
+I agree! To remedy that, I'll soon split Doom up into three projects: its core
+(where its bootloader lives), its official modules, and its community
+contributed modules. At that point, Doom will be much lighter!

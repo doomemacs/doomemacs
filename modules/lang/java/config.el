@@ -26,9 +26,12 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
-(cond ((featurep! +meghanada) (load! "+meghanada"))
-      ((featurep! :tools lsp +eglot))
-      ((featurep! +lsp)       (load! "+lsp")))
+(cond ((modulep! +meghanada) (load! "+meghanada"))
+      ((modulep! :tools lsp +eglot))
+      ((modulep! +lsp)       (load! "+lsp")))
+
+(when (modulep! +tree-sitter)
+  (add-hook 'java-mode-local-vars-hook #'tree-sitter! 'append))
 
 
 ;;
@@ -49,7 +52,3 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
   (set-docsets! 'groovy-mode "Groovy" "Groovy_JDK")
   (set-eval-handler! 'groovy-mode "groovy")
   (set-repl-handler! 'groovy-mode #'+java/open-groovy-repl))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'java-mode-local-vars-hook #'tree-sitter!))

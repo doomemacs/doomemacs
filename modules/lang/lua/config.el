@@ -18,11 +18,11 @@
   (set-repl-handler! 'lua-mode #'+lua/open-repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'lua-mode-local-vars-hook #'lsp! 'append)
 
-    (when (featurep! :tools lsp +eglot)
-      (defvar +lua-lsp-dir (concat doom-etc-dir "lsp/lua-language-server/")
+    (when (modulep! :tools lsp +eglot)
+      (defvar +lua-lsp-dir (concat doom-data-dir "lsp/lua-language-server/")
         "Absolute path to the directory of sumneko's lua-language-server.
 
 This directory MUST contain the 'main.lua' file and be the in-source build of
@@ -45,7 +45,7 @@ lua-language-server.")
 
 
 (use-package! moonscript
-  :when (featurep! +moonscript)
+  :when (modulep! +moonscript)
   :defer t
   :config
   (setq-hook! 'moonscript-mode-hook
@@ -53,12 +53,12 @@ lua-language-server.")
   (add-hook! 'moonscript-mode-hook
              #'+lua-moonscript-fix-single-quotes-h
              #'+lua-moonscript-fontify-interpolation-h)
-  (when (featurep! :checkers syntax)
+  (when (modulep! :checkers syntax)
     (require 'flycheck-moonscript nil t)))
 
 
 (use-package! fennel-mode
-  :when (featurep! +fennel)
+  :when (modulep! +fennel)
   :defer t
   :config
   (set-lookup-handlers! 'fennel-mode

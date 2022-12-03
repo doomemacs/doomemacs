@@ -3,6 +3,7 @@
 # uuid: __license-apache-bp
 # group: Licenses
 # contributor: https://choosealicense.com/licenses/apache-2.0/
+# expand-env: ((yas-indent-line 'fixed))
 # --
 Copyright ${1:`(format-time-string "%Y")` `user-full-name`}
 

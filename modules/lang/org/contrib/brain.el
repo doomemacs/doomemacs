@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/brain.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +brain)
+;;;###if (modulep! +brain)
 
 (use-package! org-brain
   :defer t
@@ -18,7 +18,7 @@
               org-capture-templates
               :key #'car :test #'equal)
 
-  (when (featurep! :editor evil +everywhere)
+  (when (modulep! :editor evil +everywhere)
     ;; TODO Make a proper evil keybind scheme for org-brain
     ;; REVIEW This should be handled upstream by evil-collection
     (set-evil-initial-state!

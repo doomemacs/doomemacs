@@ -1,0 +1,74 @@
+#+title:    :lang web
+#+subtitle: The tubes
+#+created:  June 15, 2015
+#+since:    0.7
+
+* Description :unfold:
+This module adds support for various web languages, including HTML5, CSS,
+SASS/SCSS, Pug/Jade/Slim, and HAML, as well as various web frameworks, like
+ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
+
+** Maintainers
+- @hlissner
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +lsp ::
+  Enable LSP support for ~web-mode~ and ~css-mode~. Requires [[doom-module::tools lsp]] and a
+  langserver.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
+
+** Packages
+- [[doom-package:company-web]] if [[doom-module::completion company]]
+- [[doom-package:counsel-css]] if [[doom-module::completion ivy]]
+- [[doom-package:emmet-mode]]
+- [[doom-package:haml-mode]]
+- [[doom-package:helm-css-scss]] if [[doom-module::completion helm]]
+- [[doom-package:less-css-mode]]
+- [[doom-package:pug-mode]]
+- [[doom-package:rainbow-mode]]
+- [[doom-package:sass-mode]]
+- [[doom-package:slim-mode]]
+- [[doom-package:stylus-mode]]
+- [[doom-package:sws-mode]]
+- [[doom-package:web-mode]]
+
+** TODO Hacks
+#+begin_quote
+ 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_quote
+ 🔨 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

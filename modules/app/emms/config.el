@@ -3,7 +3,7 @@
 (use-package! emms
   :defer t
   :init
-  (setq emms-directory (concat doom-etc-dir "emms")
+  (setq emms-directory (concat doom-data-dir "emms")
         emms-cache-file (concat doom-cache-dir "emms"))
   :config
   (emms-all)

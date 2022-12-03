@@ -2,8 +2,7 @@
 
 ;;;###autoload (add-hook 'org-mode-hook #'+literate-enable-recompile-h)
 
-(defvar +literate-config-file
-  (concat doom-private-dir "config.org")
+(defvar +literate-config-file (file-name-concat doom-user-dir "config.org")
   "The file path of your literate config file.")
 
 (defvar +literate-tangle--async-proc nil)
@@ -19,7 +18,7 @@
        (let* ((default-directory (or dir default-directory))
               (target (expand-file-name target))
               (dest   (expand-file-name dest)))
-         (print! (start "Compiling your literate config..."))
+         (print! (start "Tangling your literate config..."))
          (print-group!
           (let (;; Do as little unnecessary work as possible in these org files.
                 (org-startup-indented nil)
@@ -39,18 +38,22 @@
                 ;; Allow evaluation of src blocks at tangle-time (would abort
                 ;; them otherwise). This is a security hazard, but Doom will
                 ;; trust that you know what you're doing!
-                (org-confirm-babel-evaluate nil))
-            (org-babel-tangle-file target dest))
-          t))))
+                (org-confirm-babel-evaluate nil)
+                ;; Say a little more
+                (doom-print-message-level 'info))
+            (if-let (files (org-babel-tangle-file target dest))
+                (always (print! (success "Done tangling %d file(s)!" (length files))))
+              (print! (error "Failed to tangle any blocks from your config."))
+              nil))))))
 
 (defun +literate-tangle--sync ()
   "Tangles `+literate-config-file' if it has changed."
-  (and (not (getenv "__NOTANGLE"))
-       (+literate-tangle +literate-config-file
-                         (concat doom-module-config-file ".el")
-                         doom-private-dir)
-       (always (print! "Restarting..."))
-       (exit! "__DOOMRESTART=1 __NOTANGLE=1 $@")))
+  (or (getenv "__NOTANGLE")
+      (and (+literate-tangle +literate-config-file
+                             doom-module-config-file
+                             doom-user-dir)
+           (or (not noninteractive)
+               (exit! "__NOTANGLE=1 $@")))))
 
 (defun +literate-tangle--async ()
   "Tangles `+literate-config-file' using an async Emacs process."
@@ -64,18 +67,20 @@
           +literate-tangle--async-proc
           ;; See `+literate-tangle--sync' for an explanation of the (progn ...) below.
           (start-process "tangle-config"
-                         (get-buffer-create " *tangle config*")
+                         (with-current-buffer
+                             (get-buffer-create " *tangle config*")
+                           (erase-buffer)
+                           (current-buffer))
                          "emacs" "--batch"
+                         "-L" (file-name-directory (locate-library "org"))
+                         "--load" (doom-path doom-core-dir "doom")
+                         "--load" (doom-path doom-core-dir "lib/print")
                          "--eval"
                          (prin1-to-string
-                          `(progn
-                             (require 'cl-lib)
-                             (require 'subr-x)
-                             (load ,(doom-path doom-core-dir "autoload/print"))
-                             (funcall #',(symbol-function #'+literate-tangle)
+                          `(funcall #',(symbol-function #'+literate-tangle)
                                     ,+literate-config-file
-                                    ,(concat doom-module-config-file ".el")
-                                    ,doom-private-dir)))))
+                                    ,doom-module-config-file
+                                    ,doom-user-dir))))
     (add-hook 'kill-emacs-hook #'+literate-tangle-check-finished-h)
     (set-process-sentinel +literate-tangle--async-proc #'+literate-tangle--async-sentinel)
     (run-at-time nil nil (lambda () (message "Tangling config.org"))) ; ensure shown after a save message
@@ -111,7 +116,8 @@
 This is performed with an asyncronous Emacs process, except when
 `noninteractive' is nil."
   (if noninteractive
-      (+literate-tangle--sync)
+      (unless (+literate-tangle--sync)
+        (kill-emacs 3))
     (+literate-tangle--async)))
 
 ;;;###autoload
@@ -129,11 +135,13 @@ This is performed with an asyncronous Emacs process, except when
 
 ;;;###autoload
 (defun +literate-recompile-maybe-h ()
-  "Recompile literate config to `doom-private-dir'.
+  "Recompile literate config to `doom-user-dir'.
 
-We assume any org file in `doom-private-dir' is connected to your literate
+We assume any org file in `doom-user-dir' is connected to your literate
 config, and should trigger a recompile if changed."
   (and (file-in-directory-p
         (buffer-file-name (buffer-base-buffer))
         (file-name-directory +literate-config-file))
        (+literate-tangle-h)))
+
+;;; autoload.el ends here

@@ -1,56 +1,73 @@
-#+TITLE:   lang/fstar
-#+DATE:    February 2, 2020
-#+SINCE:   2.0.10
-#+STARTUP: inlineimages nofold
+#+title:    :lang fstar
+#+subtitle: (Dependent) types and (monadic) effects and Z3
+#+created:  February 02, 2020
+#+since:    21.12.0 (#2473)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#f][F*]]
-    - [[#macos][macOS]]
-    - [[#arch-linux][Arch Linux]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds [[https://fstar-lang.org/][F*]] support, powered by [[https://github.com/FStarLang/fstar-mode.el][fstar-mode.el]].
 
-+ Syntax highlighting
-+ Interactively process F* files one definition at a time
-+ Query the running F* process to look up definitions, documentation, and
+- Syntax highlighting
+- Interactively process F* files one definition at a time
+- Query the running F* process to look up definitions, documentation, and
   theorems
 
 ** Maintainers
-+ [[https://github.com/tchajed][@tchajed]] (Author)
+- [[doom-user:][@tchajed]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/FStarLang/fstar-mode.el][fstar-mode]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-** F*
-While fstar-mode supports the latest release of F*, you may have a better
-experience installing a more recent version from source. See F*'s [[https://github.com/FStarLang/FStar/blob/master/INSTALL.md][INSTALL.md]].
-*** macOS
-#+BEGIN_SRC sh
+** Packages
+- [[doom-package:fstar-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires [[https://github.com/FStarLang/FStar/blob/master/INSTALL.md][F*]].
+
+While ~fstar-mode~ supports the latest release of F*, you may have a better
+experience installing a more recent version from source.
+
+** macOS
+#+begin_src sh
 brew install fstar
-#+END_SRC
-*** Arch Linux
-Install ~fstar~ from the AUR:
-#+BEGIN_SRC sh
+#+end_src
+
+** Arch Linux
+~fstar~ is available in the AUR:
+#+begin_src sh
 yaourt -S fstar
-#+END_SRC
+#+end_src
 
-* Features
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-If you're having trouble getting F* to start correctly, you may need to
-configure a few variables in fstar-mode; see its [[https://github.com/FStarLang/fstar-mode.el][README]] for more details.
+[[doom-report:][Report an issue?]]
+
+- If you're having trouble getting F* to start correctly, you may need to
+  configure a few variables in ~fstar-mode~; see its [[https://github.com/FStarLang/fstar-mode.el][README]] for more details.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -1,47 +1,35 @@
-#+TITLE:   input/bidi
-#+DATE:    April 22, 2022
-#+SINCE:   v3.0.0
-#+STARTUP: inlineimages nofold
+#+title:    :input bidi
+#+subtitle: (tfel ot) thgir etirw uoy gnipleh
+#+created:  April 22, 2022
+#+since:    22.04.0 (#5526)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#using-bidi-mode][Using ~+bidi-mode~]]
-  - [[#force-rtl-text-alignment][Force RTL text alignment]]
-  - [[#input-methods][Input Methods]]
-  - [[#fonts][Fonts]]
-    - [[#smart-fontify][Smart Fontify]]
-  - [[#change-dictionary-language-on-bidi-buffers][Change Dictionary Language On Bidi Buffers]]
-  - [[#automatic-input-mode-switching][Automatic input mode switching]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#nastaliq-font-display-bug][Nastaliq font display bug]]
-
-* Description
-
-This module improves support for bidi (bidirectional text). It should be enabled
-if you regularly write in languages that write right-to-left. It also provides
-some added configuration instructions in the README, since a lot of it is user
-specific.
+* Description :unfold:
+This module improves support for bidirectional text (bidi). Enable it if you
+regularly write with languages that read right-to-left. As bidi support is
+exceptionally user-specific, read on for additional instructions to customize it
+to your needs.
 
 ** Maintainers
-+ [[https://github.com/iyefrat][@iyefrat]]
-+ [[https://github.com/ymarco][@ymarco]]
+- [[doom-user:][@iyefrat]]
+- [[doom-user:][@ymarco]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module Flags
-This module provides no flags.
+/This module has no flags./
 
-** Plugins
-This module provides no plugins.
+** Packages
+/This module doesn't install any packages./
 
-* Prerequisites
-This module has no prerequisites.
+** Hacks
+/No hacks documented for this module./
 
-* Features
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
 This module provides ~+bidi-mode~, a minor mode that improves the display of RTL
 text by right-aligning lines that start with an RTL language, on a per-line
 basis. Since exact use cases vary, turning on this mode is left to the user.
@@ -57,15 +45,13 @@ these characters, open an issue requesting support for it.
 basis.
 
 If you want to have it on for all buffers, use ~+bidi-global-mode~:
-
 #+begin_src emacs-lisp
-;; ~/.doom.d/config.el
+;; in $DOOMDIR/config.el
 (+bidi-global-mode 1)
 #+end_src
 
-If you only need it for specific purposes, e.g. editing LaTeX
-documents, you probably want to enable it through a hook:
-
+If you only need it for specific purposes, e.g. editing LaTeX documents, you
+probably want to enable it through a hook:
 #+begin_src emacs-lisp
 (add-hook 'TeX-mode-hook #'+bidi-mode)
 #+end_src
@@ -76,81 +62,88 @@ This is also useful for adding specific functionality for when ~+bidi-mode~ is o
 By default, ~+bidi-mode~ will align paragraphs by the first character with
 strong directionality. If you want to force all paragraphs to be aligned
 right-to-left when ~+bidi-mode~ is on, add the following to your config:
-
 #+begin_src emacs-lisp
 (setq +bidi-paragraph-direction 'right-to-left)
 #+end_src
 
-*Warning:* do not do this if you are using ~+bidi-global-mode~, it will mess up
-all of the buffers in Emacs that use English, including things like the =M-x= buffer.
+#+begin_quote
+ 🚧 Do not do this if you are using ~+bidi-global-mode~, it will mess up all of
+    the buffers in Emacs that use English, including things like the =M-x=
+    buffer.
+#+end_quote
 
 ** Input Methods
-If you need bidi support, it's likely that you want to easily switch between
-English and your favorite RTL language. In order to be able to do this without
-losing access to all of the keybindings require English letters, you should use
-[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Input-Methods.html][input methods]] to switch languages instead of changing the system keyboard
-language. If you use a non-qwerty layout, you will need extra configuration to
-keep the input method consistent, see [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/dvorak-config.el#L3-L18][here]] for an example for dvorak.
+If bidi support is needed, it's likely that you want to easily switch between
+English and your favorite RTL language. To do this without losing access to all
+of the keybindings require English letters, you should use [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Input-Methods.html][input methods]] to
+switch languages instead of changing the system keyboard language. If you use a
+non-qwerty layout, you will need extra configuration to keep the input method
+consistent, see [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/dvorak-config.el#L3-L18][here]] for an example for dvorak.
 
-Toggling the input method bound to =C-\=. It prompts you to choose an input
-method the first time you do this in a session, but you bypass this by setting
-the default input method:
-
+Toggling the input method bound to [[kbd:][C-\]]. It prompts you to choose an input method
+the first time you do this in a session, but you bypass this by setting the
+default input method:
 #+begin_src emacs-lisp
 (setq default-input-method "hebrew")
 #+end_src
 
 ** Fonts
-Many good English fonts do not have great coverage for RTL languages, especially
-for Hebrew and monospace fonts. To this end, we provide ~+bidi-hebrew-font~ and
-~+bidi-arabic-font~ as an easy way to override the default fonts but only for
-Hebrew and Arabic characters. They are set by default to =DejaVu Sans=, since
-it has pretty decent looking Hebrew and Arabic characters.
+Many good English fonts lack good coverage for RTL languages, especially for
+Hebrew and monospace fonts. To this end, we provide [[var:+bidi-hebrew-font]] and
+[[var:+bidi-arabic-font]] as an easy way to override the default fonts, but only for
+Hebrew and Arabic characters. They are set by default to =DejaVu Sans=, since it
+has decent looking Hebrew and Arabic character support.
 
-Note, that if you are writing in an Arabic-derived script, such as Persian,
-Urdu, or Pashto, you may want to change ~+bidi-arabic-font~ to one specific to
-your language, especially if you want your script to be written in the Nastaliq
-style.
+#+begin_quote
+ 📌 If you are writing in an Arabic-derived script, such as Persian, Urdu, or
+    Pashto, you may want to change ~+bidi-arabic-font~ to one specific to your
+    language, especially if you want your script to be written in the Nastaliq
+    style.
+#+end_quote
 
 If you use an RTL language the script of which isn't covered by the =hebrew= or
 =arabic= unicode blocks, you can set a font override manually. For example:
-
 #+begin_src emacs-lisp
-(add-hook 'after-setting-font-hook
-          (lambda () (set-fontset-font t 'syriac (font-spec :family "DejaVu Sans"))))
+(add-hook! 'after-setting-font-hook :append
+  (set-fontset-font t 'syriac (font-spec :family "DejaVu Sans")))
 #+end_src
 
 Make sure to use the correct unicode block name, see the documentation of
-~set-fontset-font~ for more details.
+[[fn:set-fontset-font]] for more details.
 
 *** Smart Fontify
 Since good bidi fonts are often not monospace (as is the default =DejaVu Sans=),
 It usually looks better to have the surrounding spaces and punctuation in the
 use the bidi font as well. This is the default behaviour, but you can turn this
 off by setting:
-
 #+begin_src emacs-lisp
 (setq +bidi-want-smart-fontify nil)
 #+end_src
 
 ** Change Dictionary Language On Bidi Buffers
-If you are only using ~+bidi-mode~ in specific buffers, you might want to
+If you only use ~+bidi-mode~ in specific buffers, you might want to
 automatically change the dictionary language there. For example:
-
 #+begin_src emacs-lisp
 (add-hook! '+bidi-mode-hook
-  (if +bidi-mode
-      (ispell-change-dictionary "hebrew")
-    (ispell-change-dictionary "default")))
+  (ispell-change-dictionary (if +bidi-mode "hebrew" "default")))
 #+end_src
 
 ** Automatic input mode switching
-You may want to Emacs to try and guess when you want it to switch input methods.
-See [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L7-L21][here]] and [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L99-L102][here]] for an example of how to get Emacs to switch to hebrew when
-entering insert mode after a hebrew character, in LaTeX buffers.
+You may want Emacs to guess when you want it to switch input methods. See [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L7-L21][here]]
+and [[https://github.com/ymarco/doom-emacs-config/blob/2d655adb6a35c5cd3afcba24e76327f5444cf774/hebrew-latex-config.el#L99-L102][here]] for an example of how to get Emacs to switch to hebrew when entering
+insert mode after a hebrew character, in LaTeX buffers.
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
 
 ** Nastaliq font display bug
 If Emacs is having trouble properly displaying a Nastaliq font, try using one of
-[[https://urdufonts.net/fonts/jameel-noori-nastaleeq-regular][these]] [[https://urdufonts.net/fonts/alvi-nastaleeq-regular][two]] fonts for ~+bidi-arabic-font~.
+[[https://urdufonts.net/fonts/jameel-noori-nastaleeq-regular][these]] [[https://urdufonts.net/fonts/alvi-nastaleeq-regular][two]] fonts for [[var:+bidi-arabic-font]].
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

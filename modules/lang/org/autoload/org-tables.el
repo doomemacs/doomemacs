@@ -47,7 +47,7 @@ re-align the table if necessary. (Necessary because org-mode has a
 ;;;###autoload
 (defun +org-realign-table-maybe-h ()
   "Auto-align table under cursor."
-  (when (and (org-at-table-p) org-table-may-need-update)
+  (when (and org-table-automatic-realign (org-at-table-p) org-table-may-need-update)
     (let ((pt (point))
           (inhibit-message t))
       (if org-table-may-need-update (org-table-align))

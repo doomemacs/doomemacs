@@ -1,6 +1,6 @@
 ;;; editor/snippets/config.el -*- lexical-binding: t; -*-
 
-(defvar +snippets-dir (expand-file-name "snippets/" doom-private-dir)
+(defvar +snippets-dir (expand-file-name "snippets/" doom-user-dir)
   "Directory where `yasnippet' will search for your private snippets.")
 
 
@@ -20,6 +20,10 @@
              yas-deactivate-extra-mode
              yas-maybe-expand-abbrev-key-filter)
   :init
+  ;; Reduce default verbosity. 3 is too chatty about initializing yasnippet. 2
+  ;; is just right (only shows errors).
+  (defvar yas-verbosity 2)
+
   ;; Remove default ~/.emacs.d/snippets
   (defvar yas-snippet-dirs nil)
 
@@ -31,10 +35,6 @@
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir)
-
-  ;; Reduce verbosity. 3 is too chatty about initializing yasnippet. 2 is just
-  ;; right (only shows errors).
-  (setq yas-verbosity (if init-file-debug 3 0))
 
   ;; default snippets library, if available
   (add-to-list 'load-path +snippets-dir)

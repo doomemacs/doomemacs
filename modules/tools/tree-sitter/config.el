@@ -1,7 +1,17 @@
 ;;; tools/tree-sitter/config.el -*- lexical-binding: t; -*-
 
+(defvar +tree-sitter-hl-enabled-modes '(not web-mode typescript-tsx-mode)
+  "A list of major modes which should be highlighted by tree-sitter.
+
+If this list begins with `not', then it negates the list.
+If it is t, it is enabled in all modes.
+If nil, it is disabled in all modes")
+
+;;
+;;; Packages
+
 (use-package! tree-sitter
-  :hook (tree-sitter-after-on . tree-sitter-hl-mode)
+  :defer t
   :config
   (require 'tree-sitter-langs)
   ;; This makes every node a link to a section of code
@@ -11,7 +21,7 @@
 
 
 (use-package! evil-textobj-tree-sitter
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :defer t
   :init (after! tree-sitter (require 'evil-textobj-tree-sitter))
   :config

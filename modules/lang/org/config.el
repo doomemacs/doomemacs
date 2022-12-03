@@ -182,29 +182,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
           ("NO"   . +org-todo-cancel)
           ("KILL" . +org-todo-cancel)))
 
-  (defadvice! +org-display-link-in-eldoc-a (&rest _)
-    "Display full link in minibuffer when cursor/mouse is over it."
-    :before-until #'org-eldoc-documentation-function
-    (when-let* ((context (org-element-context))
-                (path (org-element-property :path context)))
-      (pcase (org-element-property :type context)
-        ("kbd"
-         (format "%s %s"
-                 (propertize "Key sequence:" 'face 'bold)
-                 (propertize (+org-read-kbd-at-point path context)
-                             'face 'help-key-binding)))
-        ("doom-module"
-         (format "%s %s"
-                 (propertize "Doom module:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
-        ("doom-package"
-         (format "%s %s"
-                 (propertize "Doom package:" 'face 'bold)
-                 (propertize (+org-read-link-description-at-point path)
-                             'face 'org-priority)))
-        (type (format "Link: %s" (org-element-property :raw-link context))))))
-
   ;; Automatic indent detection in org files is meaningless
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
 
@@ -493,7 +470,7 @@ relative to `org-directory', unless it is an absolute path."
     :after #'org-capture-refile
     (+org-capture-cleanup-frame-h))
 
-  (when (featurep! :ui doom-dashboard)
+  (when (modulep! :ui doom-dashboard)
     (add-hook '+doom-dashboard-inhibit-functions #'+org-capture-frame-p)))
 
 
@@ -525,14 +502,13 @@ relative to `org-directory', unless it is an absolute path."
 (defun +org-init-custom-links-h ()
   ;; Modify default file: links to colorize broken file links red
   (org-link-set-parameters
-   "file"
-   :face (lambda (path)
-           (if (or (file-remote-p path)
-                   ;; filter out network shares on windows (slow)
-                   (and IS-WINDOWS (string-prefix-p "\\\\" path))
-                   (file-exists-p path))
-               'org-link
-             '(warning org-link))))
+   "file" :face (lambda (path)
+                  (if (or (file-remote-p path)
+                          ;; filter out network shares on windows (slow)
+                          (if IS-WINDOWS (string-prefix-p "\\\\" path))
+                          (file-exists-p path))
+                      'org-link
+                    '(warning org-link))))
 
   ;; Additional custom links for convenience
   (pushnew! org-link-abbrev-alist
@@ -544,12 +520,120 @@ relative to `org-directory', unless it is an absolute path."
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
-            '("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s"))
+            '("doom-repo"   . "https://github.com/doomemacs/doomemacs/%s")
+            `("emacsdir"    . ,(doom-path doom-emacs-dir "%s"))
+            `("doomdir"     . ,(doom-path doom-user-dir "%s")))
 
   (+org-define-basic-link "org" 'org-directory)
   (+org-define-basic-link "doom" 'doom-emacs-dir)
   (+org-define-basic-link "doom-docs" 'doom-docs-dir)
   (+org-define-basic-link "doom-modules" 'doom-modules-dir)
+
+  (defadvice! +org-display-link-in-eldoc-a (&rest _)
+    "Display full link in minibuffer when cursor/mouse is over it."
+    :before-until #'org-eldoc-documentation-function
+    (when-let (context (org-element-context))
+      (if-let ((type (org-element-property :type context))
+               (eldocfn (org-link-get-parameter type :eldoc)))
+          (funcall eldocfn context)
+        (when-let (raw-link (org-element-property :raw-link context))
+          (format "Link: %s" raw-link)))))
+
+  ;; Add "lookup" links for packages and keystrings; useful for Emacs
+  ;; documentation -- especially Doom's!
+  (letf! ((defun -call-interactively (fn)
+            (lambda (path _prefixarg)
+              (funcall
+               fn (or (intern-soft path)
+                      (user-error "Can't find documentation for %S" path)))))
+          (defun -eldoc-fn (label face)
+            (lambda (context)
+              (format "%s %s"
+                      (propertize (format "%s:" label) 'face 'bold)
+                      (propertize (+org-link-read-desc-at-point
+                                   (org-element-property :path context) context)
+                                  'face face)))))
+    (org-link-set-parameters
+     "kbd"
+     :follow (lambda (_) (minibuffer-message "%s" (+org-display-link-in-eldoc-a)))
+     :help-echo #'+org-link-read-kbd-at-point
+     :face 'help-key-binding
+     :eldoc (-eldoc-fn "Key sequence" 'help-key-binding))
+    (org-link-set-parameters
+     "var"
+     :follow (-call-interactively #'helpful-variable)
+     :face '(font-lock-variable-name-face underline))
+    (org-link-set-parameters
+     "fn"
+     :follow (-call-interactively #'helpful-callable)
+     :face '(font-lock-function-name-face underline))
+    (org-link-set-parameters
+     "face"
+     :follow (-call-interactively #'describe-face)
+     :face '(font-lock-type-face underline))
+    (org-link-set-parameters
+     "doom-package"
+     :follow #'+org-link-follow-doom-package-fn
+     :face (lambda (_) '(:inherit org-priority :slant italic))
+     :eldoc (-eldoc-fn "Doom package" 'org-priority))
+    (org-link-set-parameters
+     "doom-module"
+     :follow #'+org-link-follow-doom-module-fn
+     :face #'+org-link--doom-module-link-face-fn
+     :eldoc (-eldoc-fn "Doom module" 'org-priority))
+    (org-link-set-parameters
+     "doom-ref"
+     :follow (lambda (link)
+               (let ((link (+org-link-read-desc-at-point link))
+                     (url "https://github.com")
+                     (doom-repo "doomemacs/doomemacs"))
+                 (save-match-data
+                   (browse-url
+                    (cond ((string-match "^\\([^/]+\\(?:/[^/]+\\)?\\)?#\\([0-9]+\\(?:#.*\\)?\\)" link)
+                           (format "%s/%s/issues/%s" url
+                                   (or (match-string 1 link)
+                                       doom-repo)
+                                   (match-string 2 link)))
+                          ((string-match "^\\([^/]+\\(?:/[^/]+\\)?@\\)?\\([a-z0-9]\\{7,\\}\\(?:#.*\\)?\\)" link)
+                           (format "%s/%s/commit/%s" url
+                                   (or (match-string 1 link)
+                                       doom-repo)
+                                   (match-string 2 link)))
+                          ((user-error "Invalid doom-ref link: %S" link)))))))
+     :face (lambda (link)
+             (let ((link (+org-link-read-desc-at-point link)))
+               (if (or (string-match "^\\([^/]+\\(?:/[^/]+\\)?\\)?#\\([0-9]+\\(?:#.*\\)?\\)" link)
+                       (string-match "^\\([^/]+\\(?:/[^/]+\\)?@\\)?\\([a-z0-9]\\{7,\\}\\(?:#.*\\)?\\)" link))
+                   'org-link
+                 'error))))
+    (org-link-set-parameters
+     "doom-user"
+     :follow (lambda (link)
+               (browse-url
+                (format "https://github.com/%s"
+                        (string-remove-prefix
+                         "@" (+org-link-read-desc-at-point link)))))
+     :face (lambda (_) 'org-priority))
+    (org-link-set-parameters
+     "doom-source"
+     :follow (lambda (link)
+               (user-error "-- %S %S %S" source url link)
+               (cl-destructuring-bind (source . url)
+                   (save-match-data
+                     (and (string-match "^\\([^:]+\\):\\(.+\\)$" link)
+                          (cons (match-string 1) (match-string 2))))
+                 (pcase source
+                   ("doom"
+                    (org-link-open (expand-file-name url doom-modules-dir)))
+                   ("contrib"
+                    (browse-url (format "https://docs.doomemacs.org/modules/"
+                                        (replace-regexp-in-string "::\\(.+\\)$" "#\\1" url))))
+                   (_ (user-error "%s is not a valid module source" source))))))
+    (org-link-set-parameters
+     "doom-changelog"
+     :follow (lambda (link)
+               (find-file (doom-path doom-docs-dir "changelog.org"))
+               (org-match-sparse-tree nil link))))
 
   ;; TODO PR this upstream
   (defadvice! +org--follow-search-string-a (fn link &optional arg)
@@ -576,19 +660,6 @@ relative to `org-directory', unless it is an absolute path."
 
   ;; Add "lookup" links for packages and keystrings; useful for Emacs
   ;; documentation -- especially Doom's!
-  (org-link-set-parameters
-   "kbd"
-   :follow (lambda (_) (minibuffer-message "%s" (+org-display-link-in-eldoc-a)))
-   :help-echo #'+org-read-kbd-at-point
-   :face 'help-key-binding)
-  (org-link-set-parameters
-   "doom-package"
-   :follow #'+org-link--doom-package-follow-fn
-   :face (lambda (_) '(:inherit org-priority :slant italic)))
-  (org-link-set-parameters
-   "doom-module"
-   :follow #'+org-link--doom-module-follow-fn
-   :face #'+org-link--doom-module-face-fn)
 
   ;; Allow inline image previews of http(s)? urls or data uris.
   ;; `+org-http-image-data-fn' will respect `org-display-remote-inline-images'.
@@ -612,15 +683,15 @@ relative to `org-directory', unless it is an absolute path."
         org-html-validation-link nil
         org-latex-prefer-user-labels t)
 
-  (when (featurep! :lang markdown)
+  (when (modulep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
   (use-package! ox-hugo
-    :when (featurep! +hugo)
+    :when (modulep! +hugo)
     :after ox)
 
   (use-package! ox-pandoc
-    :when (featurep! +pandoc)
+    :when (modulep! +pandoc)
     :when (executable-find "pandoc")
     :after ox
     :init
@@ -641,16 +712,17 @@ mutating hooks on exported output, like formatters."
     :around '(org-export-to-file org-export-as)
     (let ((old-async-init-file org-export-async-init-file)
           (org-export-async-init-file (make-temp-file "doom-org-async-export")))
-      (with-temp-file org-export-async-init-file
-        (prin1 `(progn (setq org-export-async-debug
-                             ,(or org-export-async-debug
-                                  debug-on-error)
-                             load-path ',load-path)
-                       (unwind-protect
-                           (load ,(or old-async-init-file user-init-file)
-                                 nil t)
-                         (delete-file load-file-name)))
-               (current-buffer)))
+      (doom-file-write
+       org-export-async-init-file
+       `((setq org-export-async-debug ,(or org-export-async-debug debug-on-error)
+               load-path ',load-path)
+         (unwind-protect
+             (let ((init-file ,old-async-init-file))
+               (if init-file
+                   (load init-file nil t)
+                 (load ,early-init-file nil t)
+                 (require 'doom-start)))
+           (delete-file load-file-name))))
       (apply fn args))))
 
 
@@ -693,17 +765,28 @@ mutating hooks on exported output, like formatters."
             '("show4levels*" org-startup-folded show4levels*)
             '("show5levels*" org-startup-folded show5levels*))
 
+  ;; TODO Upstream this.
+  (defadvice! +org--recursive-org-persist-mkdir-a (fn &rest args)
+    "`org-persist-write:index' does not recursively create
+`org-persist-directory', which causes an error if it's a parent doesn't exist."
+    :before #'org-persist-write:index
+    (make-directory org-persist-directory t))
+
   (defadvice! +org--more-startup-folded-options-a ()
     "Adds support for 'showNlevels*' startup options.
 Unlike showNlevels, this will also unfold parent trees."
-    :before #'org-set-startup-visibility
+    :before-until #'org-cycle-set-startup-visibility
     (when-let (n (pcase org-startup-folded
                    (`show2levels* 2)
                    (`show3levels* 3)
                    (`show4levels* 4)
                    (`show5levels* 5)))
-      (org-show-all '(headings drawers))
+      (org-fold-show-all '(headings))
       (save-excursion
+        (goto-char (point-max))
+        (save-restriction
+          (narrow-to-region (point-min) (or (re-search-forward org-outline-regexp-bol nil t) (point-max)))
+          (org-fold-hide-drawer-all))
         (goto-char (point-max))
         (let ((regexp (if (and (wholenump n) (> n 0))
                           (format "^\\*\\{%d,%d\\} " (1- n) n)
@@ -712,8 +795,9 @@ Unlike showNlevels, this will also unfold parent trees."
           (while (re-search-backward regexp nil t)
             (when (or (not (wholenump n))
                       (= (org-current-level) n))
-              (org-flag-region (line-end-position) last t 'outline))
-            (setq last (line-end-position 0)))))))
+              (org-fold-core-region (line-end-position) last t 'outline))
+            (setq last (line-end-position 0)))))
+      t))
 
   ;; Some uses of `org-fix-tags-on-the-fly' occur without a check on
   ;; `org-auto-align-tags', such as in `org-self-insert-command' and
@@ -864,13 +948,13 @@ between the two."
         "," #'org-switchb
         "." #'org-goto
         "@" #'org-cite-insert
-        (:when (featurep! :completion ivy)
+        (:when (modulep! :completion ivy)
          "." #'counsel-org-goto
          "/" #'counsel-org-goto-all)
-        (:when (featurep! :completion helm)
+        (:when (modulep! :completion helm)
          "." #'helm-org-in-buffer-headings
          "/" #'helm-org-agenda-files-headings)
-        (:when (featurep! :completion vertico)
+        (:when (modulep! :completion vertico)
          "." #'consult-org-heading
          "/" #'consult-org-agenda)
         "A" #'org-archive-subtree
@@ -901,7 +985,7 @@ between the two."
          "u" #'org-attach-url
          "s" #'org-attach-set-directory
          "S" #'org-attach-sync
-         (:when (featurep! +dragndrop)
+         (:when (modulep! +dragndrop)
           "c" #'org-download-screenshot
           "p" #'org-download-clipboard
           "P" #'org-download-yank))
@@ -927,7 +1011,7 @@ between the two."
          (:prefix ("t" . "toggle")
           "f" #'org-table-toggle-formula-debugger
           "o" #'org-table-toggle-coordinate-overlays)
-         (:when (featurep! +gnuplot)
+         (:when (modulep! +gnuplot)
           "p" #'org-plot/gnuplot))
         (:prefix ("c" . "clock")
          "c" #'org-clock-cancel
@@ -952,13 +1036,13 @@ between the two."
          "T" #'org-time-stamp-inactive)
         (:prefix ("g" . "goto")
          "g" #'org-goto
-         (:when (featurep! :completion ivy)
+         (:when (modulep! :completion ivy)
           "g" #'counsel-org-goto
           "G" #'counsel-org-goto-all)
-         (:when (featurep! :completion helm)
+         (:when (modulep! :completion helm)
           "g" #'helm-org-in-buffer-headings
           "G" #'helm-org-agenda-files-headings)
-         (:when (featurep! :completion vertico)
+         (:when (modulep! :completion vertico)
           "g" #'consult-org-heading
           "G" #'consult-org-agenda)
          "c" #'org-clock-goto
@@ -975,7 +1059,9 @@ between the two."
          "L" #'org-insert-all-links
          "s" #'org-store-link
          "S" #'org-insert-last-stored-link
-         "t" #'org-toggle-link-display)
+         "t" #'org-toggle-link-display
+         (:when (modulep! :os macos)
+          "g" #'org-mac-link-get-link))
         (:prefix ("P" . "publish")
          "a" #'org-publish-all
          "f" #'org-publish-current-file
@@ -990,7 +1076,8 @@ between the two."
          "o" #'+org/refile-to-other-window
          "O" #'+org/refile-to-other-buffer
          "v" #'+org/refile-to-visible
-         "r" #'org-refile) ; to all `org-refile-targets'
+         "r" #'org-refile
+         "R" #'org-refile-reverse) ; to all `org-refile-targets'
         (:prefix ("s" . "tree/subtree")
          "a" #'org-toggle-archive-tag
          "b" #'org-tree-to-indirect-buffer
@@ -1087,7 +1174,7 @@ between the two."
 (use-package! org-clock ; built-in
   :commands org-clock-save
   :init
-  (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  (setq org-clock-persist-file (concat doom-data-dir "org-clock-save.el"))
   (defadvice! +org--clock-load-a (&rest _)
     "Lazy load org-clock until its commands are used."
     :before '(org-clock-in
@@ -1108,7 +1195,7 @@ between the two."
 
 
 (use-package! org-pdftools
-  :when (featurep! :tools pdf)
+  :when (modulep! :tools pdf)
   :commands org-pdftools-export
   :init
   (after! org
@@ -1138,9 +1225,10 @@ between the two."
 
 
 (use-package! evil-org
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :hook (org-capture-mode . evil-insert-state)
+  :hook (doom-docs-org-mode . evil-org-mode)
   :init
   (defvar evil-org-retain-visual-state-on-shift t)
   (defvar evil-org-special-o/O '(table-row))
@@ -1219,7 +1307,7 @@ between the two."
 
 
 (use-package! evil-org-agenda
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (org-agenda-mode . evil-org-agenda-mode)
   :config
   (evil-org-agenda-set-keys)
@@ -1243,9 +1331,9 @@ between the two."
   (defvar org-attach-id-dir nil)
   (defvar org-babel-python-command nil)
 
-  (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
-        org-persist-directory (concat doom-cache-dir "org-persist/")
+  (setq org-persist-directory (concat doom-cache-dir "org/persist/")
+        org-publish-timestamp-directory (concat doom-cache-dir "org/timestamps/")
+        org-preview-latex-image-directory (concat doom-cache-dir "org/latex/")
         ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
         org-list-allow-alphabetical t)
 
@@ -1265,7 +1353,7 @@ between the two."
       ))
 
   ;;; Custom org modules
-  (dolist (flag doom--current-flags)
+  (dolist (flag (doom-module-context-get 'flags))
     (load! (concat "contrib/" (substring (symbol-name flag) 1)) nil t))
 
   ;; Add our general hooks after the submodules, so that any hooks the
@@ -1331,7 +1419,7 @@ between the two."
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
              (not byte-compile-current-file))
-    (unless doom-reloading-p
+    (unless (doom-context-p 'reload)
       (message "`org' was already loaded by the time lang/org loaded, this may cause issues"))
     (run-hooks 'org-load-hook))
 

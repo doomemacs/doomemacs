@@ -42,6 +42,6 @@ killing and opening many LSP/eglot-powered buffers.")
 ;;
 ;;; Implementations
 
-(if (featurep! +eglot)
+(if (modulep! +eglot)
     (load! "+eglot")
   (load! "+lsp"))

@@ -13,7 +13,7 @@
           '(all-the-icons-fileicon "graphql" :v-adjust -0.05 :face all-the-icons-rhodamine))
     (setf (alist-get 'graphql-mode all-the-icons-mode-icon-alist)
           '(all-the-icons-fileicon "graphql" :v-adjust -0.05 :face all-the-icons-rhodamine)))
-  (if (featurep! +lsp)
+  (if (modulep! +lsp)
       (add-hook 'graphql-mode-local-vars-hook #'lsp! 'append)
     (set-company-backend! 'graphql-mode 'company-graphql))
 

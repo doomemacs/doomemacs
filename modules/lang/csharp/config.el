@@ -32,8 +32,11 @@
                  :when '(+csharp-sp-point-in-type-p)
                  :post-handlers '(("| " "SPC")))
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'csharp-mode-local-vars-hook #'lsp! 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'csharp-mode-local-vars-hook #'tree-sitter! 'append))
 
   (defadvice! +csharp-disable-clear-string-fences-a (fn &rest args)
     "This turns off `c-clear-string-fences' for `csharp-mode'. When
@@ -46,7 +49,7 @@ or terminating simple string."
 
 ;; Unity shaders
 (use-package! shader-mode
-  :when (featurep! +unity)
+  :when (modulep! +unity)
   :mode "\\.shader\\'"
   :config
   (def-project-mode! +csharp-unity-mode
@@ -55,7 +58,7 @@ or terminating simple string."
 
 
 (use-package! sharper
-  :when (featurep! +dotnet)
+  :when (modulep! +dotnet)
   :general ("C-c d" #'sharper-main-transient)
   :config
   (map! (:map sharper--solution-management-mode-map
@@ -72,7 +75,3 @@ or terminating simple string."
 
 
 (use-package! sln-mode :mode "\\.sln\\'")
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'csharp-mode-local-vars-hook #'tree-sitter!))

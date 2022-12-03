@@ -1,71 +1,74 @@
-#+TITLE:   app/emms
-#+DATE:    March 6, 2021
-#+SINCE:   v3.0.0
-#+STARTUP: inlineimages nofold
+#+title:    :app emms
+#+subtitle: A media player for music no one's heard of
+#+created:  March 06, 2021
+#+since:    21.12.0 (#3581)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#arch-linux][Arch Linux]]
-  - [[#nixos][NixOS]]
-  - [[#ubuntu][Ubuntu]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#new-music-files-not-showing-up-in-database][New music files not showing up in database]]
-- [[#appendix][Appendix]]
-  - [[#keybinds][Keybinds]]
-
-* Description
+* Description :unfold:
 This module enables Emacs to be used as a music player. It uses [[https://www.musicpd.org/][mpd]] as a backend
 server and [[https://musicpd.org/clients/mpc/][mpc]] to update your music database.
 
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://git.savannah.gnu.org/git/emms.git/][emms]]
+** Packages
+- [[doom-package:emms]]
 
-* Prerequisites
-This module requires an active MPD server, the MPC utility, and a music library.
+** Hacks
+/No hacks documented for this module./
 
-** Arch Linux
-#+BEGIN_SRC bash
-pacman -S mpd mpc
-#+END_SRC
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-** NixOS
-#+BEGIN_SRC nix
-services.mpd.enable = true;
-environment.systemPackages = [ pkgs.mpc_cli ];
-#+END_SRC
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-** Ubuntu
-#+BEGIN_SRC bash
-apt install mpd mpc
-#+END_SRC
+This module requires:
+- [[https://mpd.readthedocs.io/en/stable/user.html#installation][mpd]] (and a running mpd server)
+- [[https://www.musicpd.org/clients/mpc/][mpc]]
+
+These should be available through your OS package manager.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+** Keybinds
+- [[kbd:][<localleader> l]] Toggles whether or not the player repeats the playlist.
+- [[kbd:][<localleader> m]] Mixes the playlist.
+- [[kbd:][<localleader> i]] Insert specific song
+- [[kbd:][<localleader> s]] Save the current playlist to a file
+- [[kbd:][<localleader> p]] Insert playlist save into current playlist
+- [[kbd:][g a]] Sort the browser by artists
+- [[kbd:][g b]] Sort the browser by genre
+- [[kbd:][X]] Stops the player
+- [[kbd:][x]] pauses the player
+- [[kbd:][D]] in the playlist window removes that item
+- [[kbd:][C]] clears the playlist
+- [[kbd:][>]] move five seconds forward in the current track
+- [[kbd:][<]] Opposite five back
+- [[kbd:][RET]] In browser adds the artist's songs to the playlist, in the playlist starts
+  playlist.
+  
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-** New music files not showing up in database
-Try =M-x +emms/mpd-restart-music-daemon=. If that doesn't work restart emacs.
+[[doom-report:][Report an issue?]]
 
-* Appendix
-** Keybinds
-+ =SPC m l= Toggles whether or not the player repeats the playlist.
-+ =SPC m m= Mixes the playlist.
-+ =SPC m i= Insert specific song
-+ =SPC m s= Save the current playlist to a file
-+ =SPC m p= Insert playlist save into current playlist
-+ =g a= Sort the browser by artists
-+ =g b= Sort the browser by genre
-+ =X= Stops the player
-+ =x= pauses the player
-+ =D= in the playlist window removes that item
-+ =C= clears the playlist
-+ =>= move five seconds forward in the current track
-+ =<= Opposite five back
-+ =RET= In browser adds the artist's songs to the playlist, in the playlist starts playlist.
+** New music files not showing up in database
+Try [[kbd:][M-x +emms/mpd-restart-music-daemon]] then restart emacs.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

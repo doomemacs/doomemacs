@@ -1,5 +1,5 @@
 ;;; lang/lua/autoload/moonscript.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +moonscript)
+;;;###if (modulep! +moonscript)
 
 ;;;###autoload
 (defun +lua-moonscript-fix-single-quotes-h ()

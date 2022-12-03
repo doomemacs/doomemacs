@@ -71,16 +71,8 @@ Fixes #3939: unsortable dired entries on Windows."
   :hook (dired-mode . diredfl-mode))
 
 
-(use-package! diff-hl
-  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
-  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
-  :config
-  ;; use margin instead of fringe
-  (diff-hl-margin-mode))
-
-
 (use-package! ranger
-  :when (featurep! +ranger)
+  :when (modulep! +ranger)
   :after dired
   :init (setq ranger-override-dired t)
   :config
@@ -137,7 +129,7 @@ we have to clean it up ourselves."
 
 
 (use-package! dirvish
-  :when (featurep! +dirvish)
+  :when (modulep! +dirvish)
   :defer t
   :init (after! dired (dirvish-override-dired-mode))
   :hook (dired-mode . dired-omit-mode)
@@ -146,7 +138,7 @@ we have to clean it up ourselves."
         dirvish-hide-details nil
         dirvish-attributes '(git-msg)
         dired-omit-files (concat dired-omit-files "\\|^\\..*$"))
-  (when (featurep! +icons)
+  (when (modulep! +icons)
     (push 'all-the-icons dirvish-attributes))
   (map! :map dirvish-mode-map
         :n "b" #'dirvish-goto-bookmark
@@ -160,8 +152,8 @@ we have to clean it up ourselves."
 
 
 (use-package! all-the-icons-dired
-  :when (featurep! +icons)
-  :unless (featurep! +dirvish)
+  :when (modulep! +icons)
+  :unless (modulep! +dirvish)
   :hook (dired-mode . all-the-icons-dired-mode)
   :config
   ;; HACK Fixes #1929: icons break file renaming in Emacs 27+, because the icon
@@ -184,8 +176,8 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-x
-  :unless (featurep! +dirvish)
-  :unless (featurep! +ranger)
+  :unless (modulep! +dirvish)
+  :unless (modulep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil

@@ -7,7 +7,7 @@
   :config
   (setq ansible-section-face 'font-lock-variable-name-face
         ansible-task-label-face 'font-lock-doc-face)
-  (when (featurep! :completion company)
+  (when (modulep! :completion company)
     (set-company-backend! 'ansible 'company-ansible))
   (map! :map ansible-key-map
         :localleader
@@ -32,4 +32,4 @@
 (def-project-mode! +ansible-yaml-mode
   :modes '(yaml-mode)
   :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
-  :files (or "roles/" "tasks/main.yml"))
+  :files (or "roles/" "tasks/main.yml" "tasks/main.yaml"))

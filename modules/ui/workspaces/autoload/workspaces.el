@@ -318,7 +318,7 @@ workspace, otherwise the new workspace is blank."
 end of the workspace list."
   (interactive
    (list (or current-prefix-arg
-             (if (featurep! :completion ivy)
+             (if (modulep! :completion ivy)
                  (ivy-read "Switch to workspace: "
                            (+workspace-list-names)
                            :caller #'+workspace/switch-to
@@ -572,6 +572,20 @@ This be hooked to `projectile-after-switch-project-hook'."
         (run-hooks 'projectile-after-switch-project-hook)
         (setq +workspaces--project-dir nil)))))
 
+;;;###autoload
+(defun +workspaces-save-tab-bar-data-h (_)
+  "Save the current workspace's tab bar data."
+  (when (get-current-persp)
+    (set-persp-parameter
+     'tab-bar-tabs (tab-bar-tabs))
+    (set-persp-parameter 'tab-bar-closed-tabs tab-bar-closed-tabs)))
+
+;;;###autoload
+(defun +workspaces-load-tab-bar-data-h (_)
+  "Restores the tab bar data of the workspace we have just switched to."
+  (tab-bar-tabs-set (persp-parameter 'tab-bar-tabs))
+  (setq tab-bar-closed-tabs (persp-parameter 'tab-bar-closed-tabs))
+  (tab-bar--update-tab-bar-lines t))
 
 ;;
 ;;; Advice

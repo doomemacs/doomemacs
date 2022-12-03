@@ -1,5 +1,5 @@
 ;;; lang/python/autoload/pyenv.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +pyenv)
+;;;###if (modulep! +pyenv)
 
 ;;;###autoload
 (defvar +pyenv--version nil)

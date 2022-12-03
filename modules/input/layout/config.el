@@ -1,8 +1,8 @@
 ;;; input/layout/config.el -*- lexical-binding: t; -*-
 
-(add-hook! 'doom-init-modules-hook
+(add-hook! 'doom-after-modules-config-hook
   (defun +layout-init-h ()
-    (cond ((featurep! +bepo)
+    (cond ((modulep! +bepo)
            (load! "+bepo"))
-          ((featurep! +azerty)
+          ((modulep! +azerty)
            (load! "+azerty")))))

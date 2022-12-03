@@ -1,0 +1,10 @@
+#+title:   :ui
+#+created: July 29, 2021
+#+since:   21.12.0
+
+* Description
+For modules concerned with changing Emacs' appearance or providing interfaces
+for its features, like sidebars, tabs, or fonts.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

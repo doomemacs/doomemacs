@@ -1,83 +1,96 @@
-#+TITLE:   editor/file-templates
-#+DATE:    February 11, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+#+title:    :editor file-templates
+#+subtitle: Fill the void in your empty files
+#+created:  February 11, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC_2:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#usage][Usage]]
-  - [[#inserting-oss-licenses][Inserting OSS licenses]]
-- [[#configuration][Configuration]]
-  - [[#registering-a-new-file-template][Registering a new file template]]
-  - [[#changing-existing-file-templates][Changing existing file templates]]
-  - [[#adding-new-oss-licenses][Adding new OSS licenses]]
-- [[#troubleshooting][Troubleshooting]]
-- [[#appendix][Appendix]]
-  - [[#api][API]]
-  - [[#commands][Commands]]
-  - [[#variables][Variables]]
+* Description :unfold:
+This module adds file templates for blank files, powered by [[doom-package:yasnippet]].
 
-* Description
-This module adds file templates for blank files, powered by yasnippet.
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-This module installs no plugins.
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites.
+** Packages
+/This module doesn't install any packages./
 
-* Usage
-File templates are automatically expanded when opening empty files.
+** Hacks
+- [[doom-package:yasnippet]]
 
-They are also regular yasnippet snippets, which can be expanded by typing their
-trigger and pressing =TAB=. By convention, the triggers for file templates are
-prefixed with two underscores ~__~.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+File templates are automatically expanded when opening empty files who match one
+of the rules in the ~+file-templates-alist~ variable.
+
+These templates are simply yasnippet snippets, which can also be expanded by
+typing their trigger and pressing [[kbd:][TAB]]. By convention, the triggers for file
+templates are prefixed with two underscores ~__~ (the trigger for the default
+file template of a major mode is almost always ~__~).
 
 ** Inserting OSS licenses
 A special command is available for inserting software licenses: ~M-x
 +file-templates/insert-license~.
 
 #+begin_quote
-Licenses with a ~-bp~ suffix are boilerplate templates; shorter versions meant
-for comment headers in code.
+ 📌 Licenses with a ~-bp~ suffix are boilerplate templates; i.e. shorter
+    versions intended for comment headers in code files.
 #+end_quote
 
-* Configuration
-** Registering a new file template
-Look into the documentation of ~set-file-template!~ and ~set-file-templates!~.
-** Changing existing file templates
-Simply register a new template (using ~set-file-template!~) that matches the same
-file. The new template would be pushed to the top of ~+file-template-alist~ and
-thus would take priority while searching for a template to insert.
-** Adding new OSS licenses
-The ~+file-templates/insert-license~ command searches for snippets under
-~text-mode~ that are named ~__license-ABC~, where ABC is the short name of the
-license. e.g. ~__license-mit~.
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-So long as these files exist, ~+file-templates/insert-license~ will recognize
-them.
+** Adding new or changing existing file templates
+New file templates can be added to
+=$DOOMDIR/snippets/{major-mode}/{snippet-name}=. The yasnippet documentation
+covers [[https://joaotavora.github.io/yasnippet/snippet-development.html][how to write a snippet]]. You can map a snippet to a file path, major mode,
+or another arbitrary predicate using [[fn:set-file-template!]].
+
+Look into its documentation with [[kbd:][<help> f set-file-template\!]].
+
+** Adding new OSS licenses
+Add snippet files to =$DOOMDIR/snippets/text-mode/= with the =__licenses-=
+prefix and [[fn:+file-templates/insert-license]] will recognize them. E.g.
+=$DOOMDIR/snippets/text-mode/__license-mit=.
 
 * Troubleshooting
-If a file template isn't expanding where you expect it to, run ~M-x
-+file-templates/debug~. This will report to you what file template rule would
-apply for the correct file.
+- If a file template isn't expanding where you expect it to, run ~M-x
+  +file-templates/debug~. This will report to you what file template rule would
+  apply for the correct file.
 
-* Appendix
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+#+end_quote
+
 ** API
-+ ~set-file-template! PRED &rest PLIST~
-+ ~set-file-templates! &rest TEMPLATES~
+- ~set-file-template! PRED &rest PLIST~
+- ~set-file-templates! &rest TEMPLATES~
 
 ** Commands
-+ ~+file-templates/insert-license~
-+ ~+file-templates/debug~
+- ~+file-templates/insert-license~
+- ~+file-templates/debug~
 
 ** Variables
-+ ~+file-templates-dir~
-+ ~+file-templates-default-trigger~
-+ ~+file-templates-alist~
+- ~+file-templates-dir~
+- ~+file-templates-default-trigger~
+- ~+file-templates-alist~

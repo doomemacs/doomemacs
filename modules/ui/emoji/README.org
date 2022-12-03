@@ -1,40 +1,39 @@
-#+TITLE:   ui/emoji
-#+DATE:    September 30, 2020
-#+SINCE:   v3.0
-#+STARTUP: inlineimages nofold
+#+title:    :ui emoji
+#+subtitle: 💩
+#+created:  September 30, 2020
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
-Displays and inserts emojis (ASCII, Github style, unicode).
-
-+ Converts recognized text to emojis.
-+ Enables inserting emojis.
+* Description :unfold:
+This module gives Emacs the ability to display and insert emojis (ASCII, Github
+style, or unicode styles), as well as convert certain text patterns (e.g.
+=:smile:=) into emojis.
 
 ** Maintainers
-This module has no dedicated maintainers.
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+ascii= Include plain text emojis like =:)=.
-+ =+github= Include Github-style emojis like =:smile:=.
-+ =+unicode= Include unicode emojis like 🙂.
+** Module flags
+- +ascii ::
+  Include plain text emojis like =:)=.
+- +github ::
+  Include Github-style emojis like =:smile:=.
+- +unicode ::
+  Include unicode emojis like 🙂.
 
-** Plugins
-+ [[https://github.com/iqbalansari/emacs-emojify][emojify]] by @iqbalansari
+** Packages
+- [[doom-package:emojify]]
  
-* Prerequisites
+** Hacks
+/No hacks documented for this module./
 
-See the [[https://github.com/iqbalansari/emacs-emojify/blob/master/README.org#requirements][emojify requirements]] docs:
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-#+BEGIN_QUOTE
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+From the [[https://github.com/iqbalansari/emacs-emojify/blob/master/README.org#requirements][emojify requirements]] docs:
+#+begin_quote
 The [[https://github.com/iqbalansari/emacs-emojify][emojify]] package requires Emacs *v24.3* and above. Emacs should be compiled
 with support for *PNG* images to display emojis as images. It is *recommended*
 that Emacs is compiled with *ImageMagick* support. ~emojify~ will use it to
@@ -44,13 +43,25 @@ color for emojis to workaround the bug described in [[https://github.com/iqbalan
 
 PNG support might require some additional steps to on Windows, you might find
 [[http://stackoverflow.com/questions/2650041/emacs-under-windows-and-png-files][this]] stackoverflow answer helpful.
-#+END_QUOTE
+#+end_quote
 
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * TODO Configuration
-# How to configure this module, including common problems and how to address them.
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

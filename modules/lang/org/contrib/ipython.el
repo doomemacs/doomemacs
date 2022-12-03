@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/babel.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +ipython)
+;;;###if (modulep! +ipython)
 
 (use-package! ob-ipython
   :defer t

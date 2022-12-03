@@ -67,6 +67,11 @@ This is ignored by ccls.")
     :return "return"
     :yield "#require")
 
+  (when (modulep! +tree-sitter)
+    (add-hook! '(c-mode-local-vars-hook
+                 c++-mode-local-vars-hook)
+               :append #'tree-sitter!))
+
   ;; HACK Suppress 'Args out of range' error in when multiple modifications are
   ;;      performed at once in a `c++-mode' buffer, e.g. with `iedit' or
   ;;      multiple cursors.
@@ -120,7 +125,7 @@ This is ignored by ccls.")
 
 
 (use-package! irony
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   :commands irony-install-server
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
@@ -128,7 +133,7 @@ This is ignored by ccls.")
   ;; Only initialize `irony-mode' if the server is available. Otherwise fail
   ;; quietly and gracefully.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-irony-mode-maybe-h)
-  :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
+  :preface (setq irony-server-install-prefix (concat doom-data-dir "irony-server/"))
   :config
   (defun +cc-init-irony-mode-maybe-h ()
     (if (file-directory-p irony-server-install-prefix)
@@ -141,11 +146,11 @@ This is ignored by ccls.")
     :hook (irony-mode . irony-eldoc))
 
   (use-package! flycheck-irony
-    :when (featurep! :checkers syntax)
+    :when (modulep! :checkers syntax)
     :config (flycheck-irony-setup))
 
   (use-package! company-irony
-    :when (featurep! :completion company)
+    :when (modulep! :completion company)
     :init (set-company-backend! 'irony-mode '(:separate company-irony-c-headers company-irony))
     :config (require 'company-irony-c-headers)))
 
@@ -161,7 +166,7 @@ This is ignored by ccls.")
 
 
 (use-package! company-cmake  ; for `cmake-mode'
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after cmake-mode
   :config (set-company-backend! 'cmake-mode 'company-cmake))
 
@@ -171,7 +176,7 @@ This is ignored by ccls.")
 
 
 (use-package! company-glsl  ; for `glsl-mode'
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :after glsl-mode
   :config (set-company-backend! 'glsl-mode 'company-glsl))
 
@@ -180,10 +185,10 @@ This is ignored by ccls.")
 ;; Rtags Support
 
 (use-package! rtags
-  :unless (featurep! +lsp)
+  :unless (modulep! +lsp)
   ;; Only initialize rtags-mode if rtags and rdm are available.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-rtags-maybe-h)
-  :preface (setq rtags-install-path (concat doom-etc-dir "rtags/"))
+  :preface (setq rtags-install-path (concat doom-data-dir "rtags/"))
   :config
   (defun +cc-init-rtags-maybe-h ()
     "Start an rtags server in c-mode and c++-mode buffers.
@@ -196,8 +201,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
         rtags-use-bookmarks nil
         rtags-completions-enabled nil
         rtags-display-result-backend
-        (cond ((featurep! :completion ivy)  'ivy)
-              ((featurep! :completion helm) 'helm)
+        (cond ((modulep! :completion ivy)  'ivy)
+              ((modulep! :completion helm) 'helm)
               ('default))
         ;; These executables are named rtags-* on debian
         rtags-rc-binary-name
@@ -230,12 +235,12 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 ;;
 ;; LSP
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (add-hook! '(c-mode-local-vars-hook
                c++-mode-local-vars-hook
                objc-mode-local-vars-hook
                cmake-mode-local-vars-hook)
-             #'lsp!)
+             :append #'lsp!)
 
   (map! :after ccls
         :map (c-mode-map c++-mode-map)
@@ -256,7 +261,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
           :desc "References (Read)"     "r" #'+cc/ccls-show-references-read
           :desc "References (Write)"    "w" #'+cc/ccls-show-references-write)))
 
-  (when (featurep! :tools lsp +eglot)
+  (when (modulep! :tools lsp +eglot)
     ;; Map eglot specific helper
     (map! :localleader
           :after cc-mode
@@ -265,7 +270,6 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
 
     ;; NOTE : This setting is untested yet
     (after! eglot
-      ;; IS-MAC custom configuration
       (when IS-MAC
         (add-to-list 'eglot-workspace-configuration
                      `((:ccls . ((:clang . ,(list :extraArgs ["-isystem/Library/Developer/CommandLineTools/usr/include/c++/v1"
@@ -274,8 +278,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))))))
 
 (use-package! ccls
-  :when (featurep! +lsp)
-  :unless (featurep! :tools lsp +eglot)
+  :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :defer t
   :init
   (defvar ccls-sem-highlight-method 'font-lock)
@@ -293,7 +297,8 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   (setq-hook! 'lsp-configure-hook
     ccls-sem-highlight-method (if lsp-enable-semantic-highlighting
                                   ccls-sem-highlight-method))
-  (when (or IS-MAC IS-LINUX)
+  (when (or IS-MAC
+            IS-LINUX)
     (setq ccls-initialization-options
           `(:index (:trackDependency 1
                     :threads ,(max 1 (/ (doom-system-cpus) 2))))))
@@ -304,9 +309,3 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
                                               "-isystem/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
                                               "-isystem/usr/local/include"]
                                   :resourceDir (cdr (doom-call-process "clang" "-print-resource-dir"))))))))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! '(c-mode-local-vars-hook
-               c++-mode-local-vars-hook)
-             #'tree-sitter!))

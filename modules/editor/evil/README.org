@@ -1,114 +1,113 @@
-#+TITLE:   editor/evil
-#+DATE:    February 2, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages nofold
+#+title:    :editor evil
+#+subtitle: The text editor Emacs was missing
+#+created:  April 08, 2020
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#ported-vim-plugins][Ported vim plugins]]
-  - [[#custom-text-objects][Custom Text Objects]]
-  - [[#custom-ex-commands][Custom Ex Commands]]
-- [[#configuration][Configuration]]
-  - [[#removing-evil-mode][Removing evil-mode]]
-  - [[#restoring-old-substitution-behavior-on-ss][Restoring old substitution behavior on s/S]]
-  - [[#restoring-old-y-behavior-yank-the-whole-line][Restoring old Y behavior (yank the whole line)]]
-  - [[#disabling-cursor-movement-when-exiting-insert-mode][Disabling cursor movement when exiting insert mode]]
+* Description :unfold:
+This holy module brings the Vim editing model to Emacs.
 
-* Description
-This holy module brings the vim experience to Emacs.
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-+ =+everywhere= Enables evilified keybinds everywhere possible. Uses the
-  [[https://github.com/emacs-evil/evil-collection][evil-collection]] plugin as a foundation.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/emacs-evil/evil][evil]]
-+ [[https://github.com/wcsmith/evil-args][evil-args]]
-+ [[https://github.com/PythonNut/evil-easymotion][evil-easymotion]]
-+ [[https://github.com/cute-jumper/evil-embrace.el][evil-embrace]]
-+ [[https://github.com/syl20bnr/evil-escape][evil-escape]]
-+ [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
-+ [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
-+ [[https://github.com/edkolev/evil-lion][evil-lion]]
-+ [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
-+ [[https://github.com/cofi/evil-numbers][evil-numbers]]
-+ [[https://github.com/noctuid/evil-textobj-anyblock][evil-textobj-anyblock]]
-+ [[https://github.com/hlissner/evil-snipe][evil-snipe]]
-+ [[https://github.com/emacs-evil/evil-surround][evil-surround]]
-+ [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
-+ [[https://github.com/bling/evil-visualstar][evil-visualstar]]
-+ [[https://github.com/ninrod/exato][exato]]
-+ [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
-+ [[https://www.github.com/rgrinberg/evil-quick-diff][evil-quick-diff]]
+** Module flags
+- +everywhere ::
+  Enable evilified keybinds everywhere possible. Uses the [[https://github.com/emacs-evil/evil-collection][evil-collection]] plugin
+  as a foundation.
+
+** Packages
+- [[doom-package:evil]]
+- [[doom-package:evil-args]]
+- [[doom-package:evil-collection]] if [[doom-module:+everywhere]]
+- [[doom-package:evil-easymotion]]
+- [[doom-package:evil-embrace]]
+- [[doom-package:evil-escape]]
+- [[doom-package:evil-exchange]]
+- [[doom-package:evil-indent-plus]]
+- [[doom-package:evil-lion]]
+- [[doom-package:evil-nerd-commentary]]
+- [[doom-package:evil-numbers]]
+- [[doom-package:evil-quick-diff]]
+- [[doom-package:evil-snipe]]
+- [[doom-package:evil-surround]]
+- [[doom-package:evil-textobj-anyblock]]
+- [[doom-package:evil-vimish-fold]]
+- [[doom-package:evil-visualstar]]
+- [[doom-package:exato]]
 
 ** Hacks
-+ The o/O keys will respect and continue commented lines (can be disabled by
+- The o/O keys will respect and continue commented lines (can be disabled by
   setting ~+evil-want-o/O-to-continue-comments~ to ~nil~).
-+ In visual mode, =*= and =#= will search for the current selection instead of
-  the word-at-point.
-+ The ~:g[lobal]~ ex command has been modified to highlight matches.
-+ More of vim's filename modifiers are supported in ex commands (like ~:p~,
+- In visual mode, [[kbd:][*]] and [[kbd:][#]] will search for the current selection instead of the
+  word-at-point.
+- The ~:g[lobal]~ ex command has been modified to highlight matches.
+- More of vim's filename modifiers are supported in ex commands (like ~:p~,
   ~:p:h~ or ~:t~) than vanilla evil-mode offers.
-+ A custom filename modifier is available in Doom: ~:P~, which expands to the
+- A custom filename modifier is available in Doom: ~:P~, which expands to the
   project root (throws an error if not in a project).
 
-* Prerequisites
-This module has no external prerequisites.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Features
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Ported vim plugins
 The following vim plugins have been ported to evil:
 
-| Vim Plugin            | Emacs Plugin                   | Keybind(s)                                 |
-|-----------------------+--------------------------------+--------------------------------------------|
-| vim-commentary        | evil-nerd-commenter            | omap =gc=                                  |
-| vim-easymotion        | evil-easymotion                | omap =gs=                                  |
-| vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
-| vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
-| vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
-| vim-unimpaired        | (provided by Doom)             | [[https://github.com/hlissner/doom-emacs/blob/develop/modules/editor/evil/config.el#L413-L460][see the list]]                               |
+| Vim Plugin            | Emacs Plugin                   | Keybind(s)                     |
+|-----------------------+--------------------------------+--------------------------------|
+| vim-commentary        | evil-nerd-commenter            | omap [[kbd:][gc]]                        |
+| vim-easymotion        | evil-easymotion                | omap [[kbd:][gs]]                        |
+| vim-lion              | evil-lion                      | omap [[kbd:][gl]] / [[kbd:][gL]]                   |
+| vim-seek or vim-sneak | evil-snipe                     | mmap [[kbd:][s]] / [[kbd:][S]], omap [[kbd:][z]] / [[kbd:][Z]] & [[kbd:][x]] / [[kbd:][X]] |
+| vim-surround          | evil-embrace and evil-surround | vmap [[kbd:][S]], omap [[kbd:][ys]]                |
+| vim-unimpaired        | (provided by Doom)             | [[https://github.com/hlissner/doom-emacs/blob/develop/modules/editor/evil/config.el#L413-L460][see the list]]                   |
 
 This module has also ported vim-unimpaired keybinds to Emacs.
 
 In other modules:
-+ The tools/neotree & tools/treemacs modules provide a =NERDTree= equivalent.
-+ The editor/multiple-cursors module contains functionality equal to the
+- The [[doom-module::ui neotree]] & [[doom-module::ui treemacs]] modules provide a =NERDTree= equivalent.
+- The [[doom-module::editor multiple-cursors]] module contains functionality equal to the
   following vim plugins:
-  + evil-multiedit => vim-multiedit
-  + evil-mc => vim-multiple-cursors
+  - [[doom-package:evil-multiedit]] => [[github:hlissner/vim-multiedit][vim-multiedit]]
+  - [[doom-package:evil-mc]] => [[https://github.com/terryma/vim-multiple-cursors][vim-multiple-cursors]]
 
 ** Custom Text Objects
 This module provides a couple extra text objects, along with the built-in ones.
 For posterity, here are the built-in ones:
 
-+ =w W= words
-+ =s= sentences
-+ =p= paragraphs
-+ =b= parenthesized blocks
-+ =b ( ) { } [ ] < >= braces, parentheses and brackets
-+ =' " `= quotes
-+ =t= tags
-+ =o= symbols
+- [[kbd:][w W]] words
+- [[kbd:][s]] sentences
+- [[kbd:][p]] paragraphs
+- [[kbd:][b]] parenthesized blocks
+- [[kbd:][b ( ) { } [ ] < >]] braces, parentheses and brackets
+- [[kbd:][' " `]] quotes
+- [[kbd:][t]] tags
+- [[kbd:][o]] symbols
 
 And these are text objects added by this module:
-
-+ =a= C-style function arguments (provided by ~evil-args~)
-+ =B= any block delimited by braces, parentheses or brackets (provided by
+- [[kbd:][a]] C-style function arguments (provided by ~evil-args~)
+- [[kbd:][B]] any block delimited by braces, parentheses or brackets (provided by
   ~evil-textobj-anyblock~)
-+ =c= Comments
-+ =f= For functions (but relies on the major mode to have sane definitions for
+- [[kbd:][c]] Comments
+- [[kbd:][f]] For functions (but relies on the major mode to have sane definitions for
   ~beginning-of-defun-function~ and ~end-of-defun-function~)
-+ =g= The entire buffer
-+ =i j k= by indentation (=k= includes one line above; =j= includes one line
-  above and below) (provided by ~evil-indent-plus~)
-+ =q= For quotes (any kind)
-+ =u= For URLs
-+ =x= XML attributes (provided by ~exato~)
+- [[kbd:][g]] The entire buffer
+- [[kbd:][i j k]] by indentation ([[kbd:][k]] includes one line above; [[kbd:][j]] includes one line above and
+  below) (provided by ~evil-indent-plus~)
+- [[kbd:][q]] For quotes (any kind)
+- [[kbd:][u]] For URLs
+- [[kbd:][x]] XML attributes (provided by ~exato~)
 
 ** Custom Ex Commands
 | Ex Command            | Description                                                                          |
@@ -137,64 +136,92 @@ And these are text objects added by this module:
 | ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
 | ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
 
-* Configuration
-** Removing evil-mode
-You must do two things to remove Evil:
-
-1. Remove =:editor evil= from =~/.doom.d/init.el=,
-2. Run ~doom sync~ to clean up lingering dependencies and regenerate your
-   autoloads files.
-3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
-   ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.
-
+* TODO Configuration
 #+begin_quote
-Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
-non-evil sessions.
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
-Evil-specific configuration and keybindings (defined with ~map!~) will be
-ignored without =:editor evil= present (and omitted when byte-compiling).
+* Troubleshooting
+[[doom-report:][Report an issue?]]
 
-Keep in mind that, at the time of this writing, Doom was designed by a vimmer,
-for vimmers. Little consideration has been put into designing a keybind scheme
-for vanilla Emacs users (though it's being worked on!).
+** Can't access the universal argument key ([[kbd:][C-u]])
+For maximum Vim emulation, this module commandeers the C-u key for scrolling (as
+it does in Vim). The same goes for [[kbd:][C-u]] in insert mode (which deletes to BOL). In
+both cases the universal argument has been moved to [[kbd:][<leader> u]].
 
-That means that much of Doom's functionality will be orphaned in an evil-less
-setup. You'll have to set your own keybinds.
+To undo this, use:
+#+begin_src emacs-lisp
+;; add to $DOOMDIR/config.el
+(setq! evil-want-C-u-scroll nil
+       evil-want-C-u-delete nil)
+#+end_src
 
-I suggest studying [[file:../../config/default/+emacs-bindings.el][config/default/+emacs-bindings.el]] to see what keybinds are
-available for non-evil users. Otherwise, you may find inspiration [[file:../../../docs/example_configs.org][on the example
-Doom configurations page]].
-
-** Restoring old substitution behavior on s/S
-Doom replaces the =s= and =S= keys with the =evil-snipe= package (a port of
+** The [[kbd:][s]]/[[kbd:][S]] keys behave differently from Vim
+Doom replaces the [[kbd:][s]] and [[kbd:][S]] keys with the [[doom-package:evil-snipe]] package (a port of
 vim-seek/vim-sneak for 2-character versions of f/F/t/T).
 
 To disable evil-snipe on s/S, you can either:
-
 1. Disable ~evil-snipe-mode~ by adding ~(remove-hook 'doom-first-input-hook
    #'evil-snipe-mode)~ to =$DOOMDIR/config.el=,
-2. Or disable =evil-snipe= completely with ~(package! evil-snipe :disable t)~
+2. Or disable [[doom-package:evil-snipe]] completely with ~(package! evil-snipe :disable t)~
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
-3. Or use =cl= and =cc=, respectively; they do the same thing.
-** Restoring old Y behavior (yank the whole line)
-Doom changes the behavior of the =Y= key in normal mode to yank-to-EOL
-(equivalent to =y$=). This was to make it consistent with the =C= and =D=
-capital operators, and because it was redundant with =yy=, which is easier to
-type than =y$=.
+3. Or use [[kbd:][cl]] and [[kbd:][cc]], respectively; they do the same thing.
+
+** The [[kbd:][Y]] key behaves differently from Vim (should yank the whole line)
+Doom changes the behavior of the [[kbd:][Y]] key in normal mode to yank-to-EOL (equivalent
+to [[kbd:][y$]]). This was to make it consistent with the [[kbd:][C]] and [[kbd:][D]] capital operators, and
+because it was redundant with [[kbd:][yy]], which is easier to type than [[kbd:][y$]].
 
 If you prefer the old behavior, it can be reversed with:
-
-#+BEGIN_SRC elisp
-;; add to ~/.doom.d/config.el
+#+begin_src emacs-lisp
+;; add to $DOOMDIR/config.el
 (setq! evil-want-Y-yank-to-eol nil)
-#+END_SRC
-** Disabling cursor movement when exiting insert mode
-Vim (and evil) move the cursor one character back when exiting insert mode. If
-you prefer that it didn't, set:
+#+end_src
 
-#+BEGIN_SRC elisp
-;; add to ~/.doom.d/config.el
-(setq evil-move-cursor-back nil)
-#+END_SRC
+* Frequently asked questions
+[[doom-suggest-faq:][Ask a question?]]
+
+** How do I remove evil?
+:PROPERTIES:
+:ID:       f3925da6-5f0b-4d11-aa08-7bb58bea1982
+:END:
+1. [[id:01cffea4-3329-45e2-a892-95a384ab2338][Disable this module]].
+2. Run ~$ doom sync~ to clean up lingering dependencies and regenerate your
+   autoloads files.
+3. [OPTIONAL] Change ~doom-leader-alt-key~ and ~doom-localleader-alt-key~. These
+   are bound to [[kbd:][C-c]] and [[kbd:][C-c l]] by default.
+
+#+begin_quote
+ 🚧 Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
+    non-evil sessions.
+#+end_quote
+
+Evil-specific configuration and keybindings (defined with ~map!~) will be
+ignored without [[doom-module::editor evil]] present (and omitted when byte-compiling).
+
+** Include underscores in evil word motions?
+A more in-depth answer and explanation for this can be found [[https://evil.readthedocs.io/en/latest/faq.html#underscore-is-not-a-word-character][in Evil's
+documentation]].
+
+TL;DR If you want the underscore to be recognized as word character, you can
+modify its entry in the syntax-table:
+#+begin_src emacs-lisp
+(modify-syntax-entry ?_ "w")
+#+end_src
+
+This gives the underscore the word syntax-class. You can use a mode-hook to
+modify the syntax-table in all buffers of some mode, e.g.
+#+begin_src emacs-lisp
+;; For python
+(add-hook! 'python-mode-hook (modify-syntax-entry ?_ "w"))
+;; For ruby
+(add-hook! 'ruby-mode-hook (modify-syntax-entry ?_ "w"))
+;; For Javascript
+(add-hook! 'js2-mode-hook (modify-syntax-entry ?_ "w"))
+#+end_src
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -1,5 +1,5 @@
 ;;; term/eshell/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
+;;;###if (modulep! :editor evil)
 
 ;;;###autoload (autoload '+eshell:run "term/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)

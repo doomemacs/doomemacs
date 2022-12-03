@@ -2,6 +2,7 @@
 # name: 2-clause BSD License
 # uuid: __license-bsd2
 # group: Licenses
+# expand-env: ((yas-indent-line 'fixed))
 # --
 Copyright (c) ${1:`(format-time-string "%Y")`} ${2:`user-full-name`}
 All rights reserved.

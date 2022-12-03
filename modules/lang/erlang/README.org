@@ -1,39 +1,60 @@
-#+TITLE:   lang/erlang
-#+DATE:    January 14, 2020
-#+SINCE:   {replace with next tagged release version}
-#+STARTUP: inlineimages nofold
+#+title:    :lang erlang
+#+subtitle: an elegant language for a more civilized age
+#+created:  April 07, 2018
+#+since:    21.12.0 (#497)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-
-* Description
-
+* Description :unfold:
 This module provides support [[https://www.erlang.org/][Erlang programming language]]. Support for the
 [[https://github.com/erlang/sourcer][sourcer]] language server is optional.
 
+Includes:
+- Code completion ([[doom-module:+lsp]], [[doom-module::completion company]], & [[doom-module::completion ivy]])
+- Syntax checking ([[doom-module::checkers syntax]])
+
 ** Maintainers
-This module has no dedicated maintainers.
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ ~+lsp~ Enable LSP Support. Requires [[https://github.com/erlang/sourcer][sourcer]].
+** Module flags
+- +lsp ::
+  Enable LSP support for ~erlang-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports [[https://github.com/erlang/sourcer][sourcer]]).
 
+** Packages
+- [[doom-package:flycheck-rebar3]]
+- [[doom-package:ivy-erlang-complete]]
 
-** Plugins
-+ Erlang Mode (bundled with Erlang installations)
-+ [[https://github.com/joedevivo/flycheck-rebar3][flycheck-rebar3]]
-+ [[https://github.com/s-kostyaev/ivy-erlang-complete][ivy-erlang-complete]]
+** Hacks
+/No hacks documented for this module./
 
-* Prerequisites
-You should have Erlang installed. Check your distribution's package manager or a
-version management tool such as [[https://github.com/kerl/kerl][kerl]].
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-If you want LSP support, install [[https://github.com/erlang/sourcer][sourcer]].
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Features
-- Code completion (~+lsp~, ~:completion company~, and ~:completion ivy~)
-- Syntax checking (~:checkers syntax~)
+This module requires Erlang be installed (which includes ~erlang-mode~). Check
+your distribution's package manager or a version management tool such as [[https://github.com/kerl/kerl][kerl]].
+
+For LSP support, install [[https://github.com/erlang/sourcer][sourcer]].
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

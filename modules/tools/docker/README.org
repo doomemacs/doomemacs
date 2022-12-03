@@ -1,139 +1,148 @@
-#+TITLE:   tools/docker
-#+DATE:    April 30, 2019
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages
+#+title:    :tools docker
+#+subtitle: Yo dawg, I heard you like OSes, so I…
+#+created:  September 06, 2018
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-  - [[#docker-control][Docker control]]
-    - [[#supported-commands][Supported commands]]
-  - [[#tramp][TRAMP]]
-- [[#configuration][Configuration]]
-  - [[#popups][Popups]]
-    - [[#other-useful-variables][Other useful variables]]
-  - [[#completion-in-dockerfiles][Completion in Dockerfiles]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#tramp-hangs-on-alpine-container][Tramp hangs on Alpine container]]
-
-* Description
-This module allows you to manipulate Docker images, containers & more from
+* Description :unfold:
+This module allows you to manipulate Docker images, containers, and more from
 Emacs.
 
-Provides a major =dockerfile-mode= to edit =Dockerfiles=. Additional
-convenience functions allow images to be built easily.
+Provides a major ~dockerfile-mode~ to edit =Dockerfiles=. Additional convenience
+functions allow images to be built easily.
 
-=docker-tramp.el= offers a [[https://www.gnu.org/software/tramp/][TRAMP]] method for Docker containers.
+[[doom-package:docker-tramp]] offers [[https://www.gnu.org/software/tramp/][TRAMP]] support for Docker containers.
 
-** Module Flags
-+ =+lsp= Enables integration for the Dockerfile Language Server.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
- + [[https://github.com/Silex/docker.el][docker]]
- + [[https://github.com/emacs-pe/docker-tramp.el][docker-tramp]]
- + [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]]
+** Module flags
+- +lsp ::
+  Enable integration for the Dockerfile Language Server.
 
-* Prerequisites
-This module assumes =docker=, =docker-compose= and =docker-machine= binaries
-are installed and accessible from your PATH.
+** Packages
+- [[doom-package:docker]]
+- [[doom-package:docker-tramp]]
+- [[doom-package:dockerfile-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module assumes =docker=, =docker-compose= and =docker-machine= binaries are
+installed and accessible from your PATH.
 
 Optionally, this module also uses the following programs:
+- =docker-langserver= (for LSP users): ~$ npm install -g
+  dockerfile-language-server-nodejs~
 
-+ =docker-langserver= (for LSP users): ~npm install -g dockerfile-language-server-nodejs~
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Features
 ** Docker control
-Use =M-x docker=, select a resource, and then mark or unmark items using the
+Use ~M-x docker~, select a resource, and then mark or unmark items using the
 following keybindings (for more marking possibilities, check out
-https://github.com/politza/tablist):
-
+[[github:politza/tablist][politza/tablist]]):
 | Binding   | Description          |
 |-----------+----------------------|
-| =?=       | List actions         |
-| =l=       | Configure listing    |
-| =m=       | Mark item            |
-| =u=       | Unmark item          |
-| =t=       | Toggle marks         |
-| =U=       | Unmark all           |
-| =s=       | Sort                 |
-| =* r=     | Mark items by regexp |
-| =<=       | Shrink column        |
-| =>=       | Enlarge column       |
-| =C-c C-e= | Export to csv        |
+| [[kbd:][?]]       | List actions         |
+| [[kbd:][l]]       | Configure listing    |
+| [[kbd:][m]]       | Mark item            |
+| [[kbd:][u]]       | Unmark item          |
+| [[kbd:][t]]       | Toggle marks         |
+| [[kbd:][U]]       | Unmark all           |
+| [[kbd:][s]]       | Sort                 |
+| [[kbd:][* r]]     | Mark items by regexp |
+| [[kbd:][<]]       | Shrink column        |
+| [[kbd:][>]]       | Enlarge column       |
+| [[kbd:][C-c C-e]] | Export to csv        |
 
 *** Supported commands
-- =docker container=: =attach=, =cp=, =diff=, =inspect=, =kill=, =logs=,
-  =pause=, =rename=, =restart=, =rm=, =start=, =stop=, =unpause=
-- =docker image=: =inspect=, =pull=, =push=, =rm=, =run=, =tag=
-- =docker network=: =rm=
-- =docker volume=: =rm=
-- =docker-machine=: =create=, =env=, =restart=, =rm=, =start=, =stop=
-- =docker-compose=: =build=, =config=, =create=, =down=, =exec=, =logs=,
-  =pull=, =push=, =remove=, =restart=, =run=, =start=, =stop=, =up=
+- ~docker container~: ~attach~, ~cp~, ~diff~, ~inspect~, ~kill~, ~logs~,
+  ~pause~, ~rename~, ~restart~, ~rm~, ~start~, ~stop~, ~unpause~
+- ~docker image~: ~inspect~, ~pull~, ~push~, ~rm~, ~run~, ~tag~
+- ~docker network~: ~rm~
+- ~docker volume~: ~rm~
+- ~docker-machine~: ~create~, ~env~, ~restart~, ~rm~, ~start~, ~stop~
+- ~docker-compose~: ~build~, ~config~, ~create~, ~down~, ~exec~, ~logs~, ~pull~,
+  ~push~, ~remove~, ~restart~, ~run~, ~start~, ~stop~, ~up~
 
   You can also enter =dired= or open a file inside a container or volume.
 
 ** TRAMP
-Offers the [[https://www.gnu.org/software/tramp/][TRAMP]] method =docker= to access running containers.
+Offers the [[https://www.gnu.org/software/tramp/][TRAMP]] method =docker= to access running containers:
+#+begin_example
+C-x C-f /docker:$USER@$CONTAINER:/path/to/file
+#+end_example
 
-#+BEGIN_EXAMPLE
-C-x C-f /docker:user@container:/path/to/file
-#+END_EXAMPLE
+| =$USER=      | the user that you want to use (optional) |
+| =$CONTAINER= | the id or name of the container          |
 
-| =user=      | the user that you want to use (optional) |
-| =container= | the id or name of the container          |
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Configuration
 ** Popups
 Thanks to [[https://github.com/magit/magit-popup][magit-popup]], all the popups default arguments can be customized. For
 example, here is how to customize the arguments for =docker-image-run-popup=:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq docker-image-run-arguments '("-i" "-t" "--rm"))
-#+END_SRC
+#+end_src
 
 or inside a =use-package= declaration:
-
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package! docker
   :bind ("C-c d" . docker)
   :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
-#+END_SRC
-
-You can also customize these using =M-x customize-variable=.
+#+end_src
 
 *** Other useful variables
 | Variable                            | Description                           | Default          |
 |-------------------------------------+---------------------------------------+------------------|
-| =docker-command=                    | The docker binary to use              | =docker=         |
-| =docker-container-default-sort-key= | Sort key for docker containers        | =("Image")=      |
-| =docker-container-shell-file-name=  | Shell to use when entering containers | =/bin/bash=      |
-| =docker-image-default-sort-key=     | Sort key for docker images            | =("Repository")= |
-| =docker-machine-default-sort-key=   | Sort key for docker machines          | =("Name")=       |
-| =docker-network-default-sort-key=   | Sort key for docker networks          | =("Name")=       |
-| =docker-run-as-root=                | Run docker as root                    | =nil=            |
-| =docker-volume-default-sort-key=    | Sort key for docker volumes           | =("Driver")=     |
+| ~docker-command~                    | The docker binary to use              | ~docker~         |
+| ~docker-container-default-sort-key~ | Sort key for docker containers        | ~("Image")~      |
+| ~docker-container-shell-file-name~  | Shell to use when entering containers | ~/bin/bash~      |
+| ~docker-image-default-sort-key~     | Sort key for docker images            | ~("Repository")~ |
+| ~docker-machine-default-sort-key~   | Sort key for docker machines          | ~("Name")~       |
+| ~docker-network-default-sort-key~   | Sort key for docker networks          | ~("Name")~       |
+| ~docker-run-as-root~                | Run docker as root                    | ~nil~            |
+| ~docker-volume-default-sort-key~    | Sort key for docker volumes           | ~("Driver")~     |
 
 ** Completion in Dockerfiles
-By default, the keyword completion function detects the =docker-compose=
-version of the current buffer and suggests the appropriate keywords.
+By default, the keyword completion function detects the =docker-compose= version
+of the current buffer and suggests the appropriate keywords.
 
 You can change the candidates offered by the backend by customizing
 =docker-compose-keywords=.
 
 * Troubleshooting
+[[doom-report:][Report an issue?]]
+
 ** Tramp hangs on Alpine container
 Busyboxes built with the =ENABLE_FEATURE_EDITING_ASK_TERMINAL= config option
 also send escape sequences, which =tramp-wait-for-output= doesn't ignore
 correctly. This was [[http://git.savannah.gnu.org/cgit/tramp.git/commit/?id=98a511248a9405848ed44de48a565b0b725af82c][fixed in TRAMP upstream]] and is available since TRAMP 2.3.
 
 For older versions of TRAMP you can dump [[https://github.com/emacs-pe/docker-tramp.el/blob/master/docker-tramp-compat.el][docker-tramp-compat.el]] in your
-=load-path= somewhere and add the following to your =init.el= to overwrite
-=tramp-wait-for-output= with the patch applied:
+~load-path~ somewhere and add the following to =$DOOMDIR/config.el= to overwrite
+~tramp-wait-for-output~ with the patch applied:
+#+begin_src emacs-lisp
+(after! tramp
+  (require 'docker-tramp-compat))
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
-(require 'docker-tramp-compat)
-#+END_SRC
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

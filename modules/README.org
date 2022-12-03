@@ -1,0 +1,1492 @@
+:PROPERTIES:
+:ID:       12d2de30-c569-4b8e-bbc7-85dd5ccc4afa
+:END:
+#+title:    Official modules
+#+subtitle: Doom Emacs' official module repository
+#+startup:  nonum
+
+* Description :unfold:
+This is a repository of official modules for [[https://github.com/doomemacs/core][Doom Emacs]]. They are more closely
+looked after by Doom's author. If a module you want isn't here, check our
+sibling repository for community-maintained modules: [[https://github.com/doomemacs/contrib-modules][doomemacs/contrib-modules]],
+which also serves as a staging ground for new modules.
+
+#+begin_quote
+ 📌 Technical documentation on the anatomy of Doom modules can be found in [[id:72d8e438-a224-421a-b6a9-43d7dcebe0bb][the
+    official developer's manual]].
+#+end_quote
+
+** Maintainers
+- @hlissner
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+This module repository is included with Doom Emacs (for now). No additional
+setup is needed to add them. However, [[id:01cffea4-3329-45e2-a892-95a384ab2338][the modules themselves can be toggled in
+your ~doom!~ block.]]
+
+Remember to check their documentation (listed and linked below) for additional
+setup instructions.
+
+* Module list (150) :unfold:
+# Do not edit this list by hand; run 'doom make-index path/to/modules'
+** [[doom-module::app][:app]] (6) :unfold:
+Application modules are complex and opinionated modules that transform Emacs
+toward a specific purpose. They may have additional dependencies and *should be
+loaded last* (but before [[doom-module::config]] modules).
+
+*** [[doom-module::app calendar][calendar]]:                                                          -
+: Watch your missed deadlines in real time
+
+This module adds a calendar view for Emacs, with org and google calendar sync
+support.
+
+*** [[doom-module::app emms][emms]]:                                                              -
+: A media player for music no one's heard of
+
+This module enables Emacs to be used as a music player. It uses [[https://www.musicpd.org/][mpd]] as a backend
+server and [[https://musicpd.org/clients/mpc/][mpc]] to update your music database.
+
+*** [[doom-module::app everywhere][everywhere]]:                                                        -
+: *leave* Emacs!? You must be joking
+
+This module adds system-wide popup Emacs windows for quick edits.
+
+*** [[doom-module::app irc][irc]]:                                                               -
+: How neckbeards socialize
+
+This module turns Emacs into an IRC client, capable of OS notifications.
+
+*** [[doom-module::app rss][rss]]:                                                            [[doom-module::app rss +org][+org]]
+: An RSS reader that Google can't shut down
+
+Read RSS feeds in the comfort of Emacs.
+
+*** [[doom-module::app twitter][twitter]]:                                                           -
+: Be superficial in plain text
+
+Enjoy twitter from emacs.
+
+- View various timelines side by side, e.g. user's timeline, home, etc.
+- Post new tweets
+- Send direct messages
+- Retweet
+- Follow and un-follow users
+- Favorite tweets
+
+
+** [[doom-module::checkers][:checkers]] (3) :unfold:
+For modules dedicated to linting plain text (primarily code and prose).
+
+*** [[doom-module::checkers grammar][grammar]]:                                                           -
+: Tasing grammar mistake every you make
+
+This module adds grammar checking to Emacs to aid your writing by combining
+[[doom-package:lang-tool]] and [[doom-package:writegood-mode]].
+
+*** [[doom-module::checkers spell][spell]]:              [[doom-module::checkers spell +aspell][+aspell]] [[doom-module::checkers spell +enchant][+enchant]] [[doom-module::checkers spell +everywhere][+everywhere]] [[doom-module::checkers spell +flyspell][+flyspell]] [[doom-module::checkers spell +hunspell][+hunspell]]
+: Tasing you for misspelling mispelling
+
+This modules provides spellchecking powered by =aspell=, =hunspell= or
+=enchant=.
+
+Spellcheck is automatically loaded in many ~text-mode~ derivatives, which
+includes ~org-mode~, ~markdown-mode~, the Git Commit buffer (from magit),
+~mu4e-compose-mode~, and others.
+
+- Spell checking and correction using =aspell=, =hunspell= or =enchant=.
+- Ignores source code inside org or markdown files.
+- Lazily spellchecking recent changes only when idle.
+- Choosing suggestions using completion interfaces ([[doom-package:ivy]] or [[doom-package:helm]]).
+
+*** [[doom-module::checkers syntax][syntax]]:                                                  [[doom-module::checkers syntax +childframe][+childframe]]
+: Tasing you for every semicolon you forget
+
+This module provides syntax checking and error highlighting, powered by
+[[doom-package:flycheck]].
+
+
+** [[doom-module::completion][:completion]] (5) :unfold:
+These modules provide interfaces and frameworks completion, including code
+completion.
+
+*** [[doom-module::completion company][company]]:                                            [[doom-module::completion company +childframe][+childframe]] [[doom-module::completion company +tng][+tng]]
+: The ultimate code completion backend
+
+This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. Many of Doom's
+[[doom-module::lang]] modules require it for "intellisense" functionality.
+
+https://assets.doomemacs.org/completion/company/overlay.png
+
+*** [[doom-module::completion helm][helm]]:                                      [[doom-module::completion helm +childframe][+childframe]] [[doom-module::completion helm +fuzzy][+fuzzy]] [[doom-module::completion helm +icons][+icons]]
+: A tank for hunting a house fly
+
+This module provides Helm integration for a variety of Emacs commands, as well
+as a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep][Ripgrep]].
+
+*** [[doom-module::completion ido][ido]]:                                                               -
+: A foil for other search engines
+
+Interactive DO things. The completion engine that is /mostly/ built-into Emacs.
+
+*** [[doom-module::completion ivy][ivy]]:                            [[doom-module::completion ivy +childframe][+childframe]] [[doom-module::completion ivy +fuzzy][+fuzzy]] [[doom-module::completion ivy +icons][+icons]] [[doom-module::completion ivy +prescient][+prescient]]
+: Yesterday's lightest search engine
+
+This module provides Ivy integration for a variety of Emacs commands, as well as
+a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
+
+#+begin_quote
+I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
+lighter, simpler and faster in many cases.
+#+end_quote
+
+*** [[doom-module::completion vertico][vertico]]:                                                      [[doom-module::completion vertico +icons][+icons]]
+: Tomorrow's search engine
+
+This module enhances the Emacs search and completion experience, and also
+provides a united interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep/][ripgrep]].
+
+It does this with several modular packages focused on enhancing the built-in
+~completing-read~ interface, rather than replacing it with a parallel ecosystem
+like [[doom-package:ivy]] and [[doom-package:helm]] do. The primary packages are:
+
+- Vertico, which provides the vertical completion user interface
+- Consult, which provides a suite of useful commands using ~completing-read~
+- Embark, which provides a set of minibuffer actions
+- Marginalia, which provides annotations to completion candidates
+- Orderless, which provides better filtering methods
+
+
+** [[doom-module::config][:config]] (2) :unfold:
+Modules in this category provide sane defaults or improve your ability to
+configure Emacs. It is best to load these last.
+
+*** [[doom-module::config default][default]]:                                      [[doom-module::config default +bindings][+bindings]] [[doom-module::config default +smartparens][+smartparens]]
+: Reasonable defaults for reasonable people
+
+This module provides a set of reasonable defaults, including:
+
+- A Spacemacs-inspired keybinding scheme
+- A configuration for (almost) universally repeating searches with [[kbd:][;]] and [[kbd:][,]]
+- A [[doom-package:smartparens]] configuration for smart completion of certain delimiters, like
+  ~/* */~ command blocks in C-languages, ~<?php ?>~ tags in PHP, or ~def end~ in
+  Ruby/Crystal/etc.
+
+*** [[doom-module::config literate][literate]]:                                                          -
+: Disguise your config as poor documentation
+
+This module enables support for a literate config.
+
+A literate config consists of a =$DOOMDIR/config.org=. All src blocks within are
+tangled =$DOOMDIR/config.el=, by default, when ~$ doom sync~ is executed.
+
+
+** [[doom-module::editor][:editor]] (12) :unfold:
+For modules concerned with the insertion and editing of text. Amen.
+
+*** [[doom-module::editor evil][evil]]:                                                    [[doom-module::editor evil +everywhere][+everywhere]]
+: The text editor Emacs was missing
+
+This holy module brings the Vim editing model to Emacs.
+
+*** [[doom-module::editor file-templates][file-templates]]:                                                    -
+: Fill the void in your empty files
+
+This module adds file templates for blank files, powered by [[doom-package:yasnippet]].
+
+*** [[doom-module::editor fold][fold]]:                                                              -
+: What you can't see won't hurt you
+
+This module marries [[doom-package:hideshow]], [[doom-package:vimish-fold]], and ~outline-minor-mode~ to bring you
+marker, indent and syntax-based code folding for as many languages as possible.
+
+*** [[doom-module::editor format][format]]:                                                      [[doom-module::editor format +onsave][+onsave]]
+: Standardize your ugly code
+
+This module integrates code formatters into Emacs. Here are some of the
+formatters that it currently supports:
+
+#+begin_quote
+asmfmt, black, brittany, cabal-fmt, clang-format, cmake-format, dartfmt, dfmt,
+dhall format, dockfmt, elm-format, emacs, fish_indent, fprettify, gleam format,
+gofmt, iStyle, jsonnetfmt, ktlint, latexindent, ledger-mode, lua-fmt, mix
+format, nixfmt, node-cljfmt, ocp-indent, perltidy, prettier, purty, rufo,
+rustfmt, scalafmt, script shfmt, snakefmt, sqlformat, styler, swiftformat, tidy
+#+end_quote
+
+*** [[doom-module::editor god][god]]:                                                               -
+: IDDQD
+
+Adds [[doom-package:god-mode]] support to Doom Emacs, allowing for entering commands without
+modifier keys, similar to Vim's modality, separating command mode and insert
+mode.
+
+*** [[doom-module::editor lispy][lispy]]:                                                             -
+: Vim for lisp, for people who don't like vim
+
+This module adds a keybind scheme for navigating and editing S-expressions in
+Lisps; including S-exp awareness for Evil users. This affects the following
+languages:
+
+- Common Lisp
+- Emacs Lisp
+- Scheme
+- Racket
+- [[http://docs.hylang.org/en/stable/][Hy]]
+- [[http://lfe.io/][LFE]]
+- Clojure
+- [[https://fennel-lang.org][Fennel]]
+
+*** [[doom-module::editor multiple-cursors][multiple-cursors]]:                                                  -
+: Make all your mistakes at once
+
+This module adds a multiple cursors implementation to Emacs (two, if you use
+evil) that loosely take after multi-cursors in Atom or Sublime Text.
+
+*** [[doom-module::editor objed][objed]]:                                                       [[doom-module::editor objed +manual][+manual]]
+: Text object editing for the innocent
+
+This modules adds [[doom-package:objed]], a global minor-mode for navigating and manipulating
+text objects. It combines the ideas of ~versor-mode~ and other editors like Vim
+or Kakoune and tries to align them with regular Emacs conventions.
+
+[[https://github.com/clemera/objed][See the objed project README]] for information on keybinds and usage.
+
+*** [[doom-module::editor parinfer][parinfer]]:                                                          -
+: For lispers that like Python more (i.e. nobody)
+
+Parinfer is a minor mode that aids the writing of Lisp code. It automatically
+infers parenthesis matching and indentation alignment, keeping your code
+balanced and beautiful.
+
+*** [[doom-module::editor rotate-text][rotate-text]]:                                                       -
+: The only back'n'forth nerds will ever know
+
+This module adds text rotation to Doom Emacs. I.e. The ability to cycle through
+keywords or text patterns at point, like ~true~ and ~false~, or ~public~,
+~protected~, and ~private~ (in ~c++-mode~).
+
+*** [[doom-module::editor snippets][snippets]]:                                                          -
+: My elves type so I don't have to
+
+This module adds snippet expansions to Emacs, powered by [[doom-package:yasnippet]].
+
+*** [[doom-module::editor word-wrap][word-wrap]]:                                                         -
+: Soft-wrapping with language-aware indent
+
+This module adds a minor-mode [[fn:+word-wrap-mode]], which intelligently wraps long
+lines in the buffer without modifying the buffer content.
+
+
+** [[doom-module::emacs][:emacs]] (6) :unfold:
+Modules in this category augment and extend the built-in features of Emacs.
+
+*** [[doom-module::emacs dired][dired]]:                                                [[doom-module::emacs dired +icons][+icons]] [[doom-module::emacs dired +ranger][+ranger]]
+: Making dired pretty [functional]
+
+This module provides reasonable defaults and augmentations for dired.
+
+*** [[doom-module::emacs electric][electric]]:                                                          -
+: Shocking keyword-based electric-indent
+
+This module augments the built-in [[doom-package:electric]] package with keyword-based
+indentation (as opposed to character-based).
+
+*** [[doom-module::emacs ibuffer][ibuffer]]:                                                      [[doom-module::emacs ibuffer +icons][+icons]]
+: Edit me like one of your French buffers
+
+This module augments the built-in [[doom-package:ibuffer]] package.
+
+- Adds project-based grouping of buffers
+- Support for file-type icons
+- Uses human-readable file-size
+
+*** tramp:                                                             -
+/(No description)/
+
+*** [[doom-module::emacs undo][undo]]:                                                          [[doom-module::emacs undo +tree][+tree]]
+: Persistent, smarter undo for your inevitable mistakes
+
+This module augments Emacs' built-in undo system to be more intuitive and to
+persist across Emacs sessions.
+
+*** [[doom-module::emacs vc][vc]]:                                                                -
+: Be the difference you want to see in the fringe
+
+This module augments Emacs builtin version control support and provides better
+integration with =git=.
+
+
+** [[doom-module::email][:email]] (3) :unfold:
+Modules that turn Emacs in an email client.
+
+*** [[doom-module::email mu4e][mu4e]]:                                                    [[doom-module::email mu4e +gmail][+gmail]] [[doom-module::email mu4e +org][+org]]
+: The great filter Hanson hadn't anticipated
+
+This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
+
+- Tidied mu4e headers view, with flags from [[doom-package:all-the-icons]].
+- Consistent coloring of reply depths (across compose and gnus modes).
+- Prettified =mu4e:main= view.
+- Cooperative locking of the =mu= process. Another Emacs instance may request
+  access, or grab the lock when it's available.
+- [[doom-package:org-msg]] integration with [[doom-module:+org]], which can be toggled per-message, with revamped
+  style and an accent color.
+- Gmail integrations with the [[doom-module:+gmail]] flag.
+- Email notifications with [[doom-package:mu4e-alert]], and (on Linux) a customised notification
+  style.
+
+#+begin_quote
+ 💡 I want to live in Emacs, but as we all know, living is incomplete without
+    email. So I prayed to the text editor gods and they (I) answered.
+    Emacs+evil's editing combined with org-mode for writing emails? /Yes
+    please./
+
+    It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my
+    email via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can
+    understand).
+#+end_quote
+
+*** [[doom-module::email notmuch][notmuch]]:                                                  [[doom-module::email notmuch +afew][+afew]] [[doom-module::email notmuch +org][+org]]
+: Closest Emacs will ever be to multi-threaded
+
+This module turns Emacs into an email client using [[doom-package:notmuch]].
+
+*** [[doom-module::email wanderlust][wanderlust]]:                                                   [[doom-module::email wanderlust +gmail][+gmail]]
+: To boldly go where no mail has gone before
+
+#+begin_quote
+ 🔨 This module has no description. [[doom-contrib-module:][Write one?]]
+#+end_quote
+
+
+** [[doom-module::input][:input]] (3) :unfold:
+Modules in this category extend Emacs support for additional keyboard layouts
+and input methods for non-English languages.
+
+*** [[doom-module::input chinese][chinese]]:                                                           -
+: Spend your 3 hours a week in Emacs
+
+This module adds support for traditional Chinese script by introducing two input
+methods: Pinyin and Wubi.
+
+*** [[doom-module::input japanese][japanese]]:                                                          -
+: Ah, a man of culture
+
+This module adds support for Japanese script.
+
+*** [[doom-module::input layout][layout]]:                                                [[doom-module::input layout +azerty][+azerty]] [[doom-module::input layout +bepo][+bepo]]
+: auie,ctsrnm is the superior home row
+
+This module provides barebones support for using Doom with non-qwerty keyboard
+layouts.
+
+
+** [[doom-module::lang][:lang]] (60) :unfold:
+These modules specialize in integration particular languages and their
+ecosystems into (Doom) Emacs.
+
+*** [[doom-module::lang agda][agda]]:                                                              -
+: Types of types of types of types...
+
+This module adds support for the [[http://wiki.portal.chalmers.se/agda/pmwiki.php][agda]] programming language. The Emacs support
+exists directly in the agda repository, but not in melpa.
+
+*** [[doom-module::lang beancount][beancount]]:                                                      [[doom-module::lang beancount +lsp][+lsp]]
+: Mind the GAAP
+
+This module adds support for [[https://beancount.github.io/][Beancount]] to Emacs. Beancount, like ledger, lets
+you [[https://plaintextaccounting.org/][manage your money in plain text]].
+
+*** [[doom-module::lang cc][cc]]:                                                             [[doom-module::lang cc +lsp][+lsp]]
+: C > C++ == 1
+
+This module adds support for the C-family of languages: C, C++, and Objective-C.
+
+- Code completion (~company-irony~)
+- eldoc support (~irony-eldoc~)
+- Syntax-checking (~flycheck-irony~)
+- Code navigation (~rtags~)
+- File Templates ([[../../editor/file-templates/templates/c-mode][c-mode]], [[../../editor/file-templates/templates/c++-mode][c++-mode]])
+- Snippets ([[https://github.com/hlissner/doom-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c++-mode][c++-mode]])
+- Several improvements to C++11 indentation and syntax highlighting.
+
+*** [[doom-module::lang clojure][clojure]]:                                                        [[doom-module::lang clojure +lsp][+lsp]]
+: Java with a lisp
+
+This module adds support for the Clojure(Script) language.
+
+- Interactive development environment (~cider~): REPL, compilation, debugging,
+  running tests, definitions & documentation lookup, code completion, and much
+  more
+- Refactoring (~clj-refactor~)
+- Linting (~clj-kondo~), requires ~:checkers syntax~
+- LSP support (~clojure-lsp~)
+
+*** [[doom-module::lang common-lisp][common-lisp]]:                                                       -
+: If you've seen one lisp, you've seen them all
+
+This module provides support for [[https://lisp-lang.org/][Common Lisp]] and the [[doom-package:Sly]] development
+environment. Common Lisp is not a single language but a specification, with many
+competing compiler implementations. By default, [[http://www.sbcl.org/][Steel Bank Common Lisp]] (SBCL) is
+assumed to be installed, but this can be configured.
+
+Common Lisp benefits from a mature specification and rich standard library.
+Thanks to its powerful REPL and debugger, it boasts an "interactive programming"
+style often unseen in other languages. Compiled Common Lisp programs are trusted
+to run unmodified for a long time.
+
+*** [[doom-module::lang coq][coq]]:                                                               -
+: Proofs as programs
+
+This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://proofgeneral.github.io][Proof General]].
+
+- Code completion ([[https://github.com/cpitclaudel/company-coq][company-coq]])
+- [[https://github.com/hlissner/doom-snippets/tree/master/coq-mode][Snippets]]
+
+*** [[doom-module::lang crystal][crystal]]:                                                           -
+: Ruby at the speed of C
+
+This modules adds [[https://crystal-lang.org/][crystal]] support.
+
+- Syntax-checking (~flycheck~)
+- REPL (~inf-crystal~)
+
+*** [[doom-module::lang csharp][csharp]]:                                          [[doom-module::lang csharp +dotnet][+dotnet]] [[doom-module::lang csharp +lsp][+lsp]] [[doom-module::lang csharp +unity][+unity]]
+: Unity, .NET, and Mono shenanigans
+
+This module adds C# support to Emacs, powered by Omnisharp (directly or through
+LSP).
+
+*** [[doom-module::lang dart][dart]]:                                                  [[doom-module::lang dart +flutter][+flutter]] [[doom-module::lang dart +lsp][+lsp]]
+: Paint ui and not much else
+
+[[https://dart.dev/][Dart]] is a client-optimized language by Google for fast apps on any platform. It
+is fast and optimized for UI, famous for the [[https://flutter.io/][Flutter]] framework, also made by
+Google. Both Flutter and Dart are free and open-source.
+
+This module wraps ~dart-mode~, with [[https://microsoft.github.io/language-server-protocol/][LSP]] features like code completion for
+=.dart= files, syntax highlighting, debugging, closing labels, etc.
+
+*** [[doom-module::lang data][data]]:                                                              -
+: A dumping ground for data formats
+
+This module adds Emacs support for CSV and XML files.
+
+*** [[doom-module::lang dhall][dhall]]:                                                             -
+: Config as code
+
+This module adds [[https://dhall-lang.org/][Dhall]] language support to Emacs.
+
+Dhall is a programmable configuration language that you can think of as: JSON +
+functions + types + imports.
+
+*** [[doom-module::lang elixir][elixir]]:                                                         [[doom-module::lang elixir +lsp][+lsp]]
+: Erlang done right
+
+This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[doom-package:alchemist]] or
+[[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
+
+*** [[doom-module::lang elm][elm]]:                                                            [[doom-module::lang elm +lsp][+lsp]]
+: Care for a cup of TEA?
+
+This module adds [[https://elm-lang.org/][Elm]] support to Doom Emacs.
+
+*** [[doom-module::lang emacs-lisp][emacs-lisp]]:                                                        -
+: A parsel-tongue for the oldest serpent
+
+This module extends support for Emacs Lisp in Doom Emacs.
+
+- Macro expansion
+- Go-to-definitions or references functionality
+- Syntax highlighting for defined and quoted symbols
+- Replaces the built-in help with the more powerful [[doom-package:helpful]]
+- Adds function example uses to documentation
+
+*** [[doom-module::lang erlang][erlang]]:                                                         [[doom-module::lang erlang +lsp][+lsp]]
+: An elegant language for a more civilized age
+
+This module provides support [[https://www.erlang.org/][Erlang programming language]]. Support for the
+[[https://github.com/erlang/sourcer][sourcer]] language server is optional.
+
+Includes:
+- Code completion ([[doom-module:+lsp]], [[doom-module::completion company]], & [[doom-module::completion ivy]])
+- Syntax checking ([[doom-module::checkers syntax]])
+
+*** [[doom-module::lang ess][ess]]:                                                           [[doom-module::lang ess +stan][+stan]]
+: 73.6% of all statistics are made up
+
+This module adds support for various statistics languages, including R, S-Plus,
+SAS, Julia and Stata.
+
+*** [[doom-module::lang factor][factor]]:                                                            -
+: ...
+
+This module adds support to the [[https://github.com/factor/factor][factor]] programming language and its associated
+[[doom-package:fuel]] emacs plugin.
+
+*** [[doom-module::lang faust][faust]]:                                                             -
+: DSP, but you can keep your soul
+
+Add support to [[https://faust.grame.fr/][Faust language]] inside emacs.
+
+- Faust code syntax highlighting and indentation
+- Project-based (inter-linked Faust files)
+- Build/compile with output window
+- Graphic diagrams generation and visualization in the (default) browser
+- Browse generated C++ code inside Emacs
+- Inter-linked files/buffers :
+  - From "component" to Faust file
+  - From "include" to Faust library file
+- From error to file:line number
+- From function name to online documentation
+- Fully configurable (build type/target/architecture/toolkit, keyboard
+  shortcuts, etc.)
+- Automatic keyword completion (if Auto-Complete is installed)
+- Automatic objets (functions, operators, etc.) template insertion with default
+  sensible values (if [[doom-module::editor snippets]] is enabled)
+- Modeline indicator of the state of the code
+
+*** [[doom-module::lang fsharp][fsharp]]:                                                         [[doom-module::lang fsharp +lsp][+lsp]]
+: ML stands for Microsoft's Language
+
+This module adds [[https://fsharp.org/][F#]] support to Doom Emacs.
+
+*** [[doom-module::lang fstar][fstar]]:                                                             -
+: (Dependent) types and (monadic) effects and Z3
+
+This module adds [[https://fstar-lang.org/][F*]] support, powered by [[https://github.com/FStarLang/fstar-mode.el][fstar-mode.el]].
+
+- Syntax highlighting
+- Interactively process F* files one definition at a time
+- Query the running F* process to look up definitions, documentation, and
+  theorems
+
+*** [[doom-module::lang gdscript][gdscript]]:                                                       [[doom-module::lang gdscript +lsp][+lsp]]
+: the language you waited for
+
+This module adds support for GDScript, the scripting language of the [[http://godotengine.org/][Godot]] game
+engine, to Doom Emacs, powered by [[https://github.com/GDQuest/emacs-gdscript-mode][gdscript-mode]].
+
+*** [[doom-module::lang go][go]]:                                                             [[doom-module::lang go +lsp][+lsp]]
+: The hipster dialect
+
+This module adds [[https://golang.org][Go]] support, with optional (but recommended) LSP support via
+[[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]].
+
+- Code completion (~gocode~)
+- Documentation lookup (~godoc~)
+- Eldoc support (~go-eldoc~)
+- REPL (~gore~)
+- Syntax-checking (~flycheck~)
+- Auto-formatting on save (~gofmt~) (requires [[doom-module::editor format +onsave]])
+- Code navigation & refactoring (~go-guru~)
+- [[../../editor/file-templates/templates/go-mode][File templates]]
+- [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
+- Generate testing code (~go-gen-test~)
+- Code checking (~flycheck-golangci-lint~)
+
+*** [[doom-module::lang haskell][haskell]]:                                                        [[doom-module::lang haskell +lsp][+lsp]]
+: A language that's lazier than I am
+
+This module adds Haskell support to Doom Emacs.
+
+*** [[doom-module::lang hy][hy]]:                                                                -
+: Lisp is better than ugly
+
+/(No description yet)/
+
+*** [[doom-module::lang idris][idris]]:                                                             -
+: A language you can depend on
+
+This module adds rudimentary [[https://www.idris-lang.org/][Idris]] support to Doom Emacs.
+
+*** [[doom-module::lang java][java]]:                                                [[doom-module::lang java +lsp][+lsp]] [[doom-module::lang java +meghanada][+meghanada]]
+: The poster child for carpal tunnel syndrome
+
+This module adds [[https://www.java.com][Java]] support to Doom Emacs, including ~android-mode~ and
+~groovy-mode~.
+
+*** [[doom-module::lang javascript][javascript]]:                                                     [[doom-module::lang javascript +lsp][+lsp]]
+: all(hope(abandon(ye(who(enter(here))))))
+
+This module adds [[https://www.javascript.com/][JavaScript]] and [[https://www.typescriptlang.org/][TypeScript]] support to Doom Emacs.
+
+- Code completion ([[doom-package:tide]])
+- REPL support ([[doom-package:nodejs-repl]])
+- Refactoring commands ([[doom-package:js2-refactor]])
+- Syntax checking ([[doom-package:flycheck]])
+- Browser code injection with [[doom-package:skewer-mode]]
+- Coffeescript & JSX support
+- Jump-to-definitions and references support ([[doom-package:xref]])
+
+*** [[doom-module::lang json][json]]:                                                           [[doom-module::lang json +lsp][+lsp]]
+: At least it ain't XML
+
+This module adds [[https://www.json.org/json-en.html][JSON]] support to Doom Emacs.
+
+*** [[doom-module::lang julia][julia]]:                                                          [[doom-module::lang julia +lsp][+lsp]]
+: A better, faster MATLAB
+
+This module adds support for [[https://julialang.org/][the Julia language]] to Doom Emacs.
+
+- Syntax highlighting and latex symbols from [[doom-package:julia-mode]]
+- REPL integration from [[doom-package:julia-repl]]
+- Code completion and syntax checking, requires [[doom-module::tools lsp]] and [[doom-module:+lsp]]
+
+*** [[doom-module::lang kotlin][kotlin]]:                                                         [[doom-module::lang kotlin +lsp][+lsp]]
+: A Java(Script) that won't depress you
+
+This module adds [[https://kotlinlang.org/][Kotlin]] support to Doom Emacs.
+
+*** [[doom-module::lang latex][latex]]:                                  [[doom-module::lang latex +cdlatex][+cdlatex]] [[doom-module::lang latex +fold][+fold]] [[doom-module::lang latex +latexmk][+latexmk]] [[doom-module::lang latex +lsp][+lsp]]
+: Writing papers in Emacs has never been so fun
+
+Provide a helping hand when working with LaTeX documents.
+
+- Sane defaults
+- Fontification of many popular commands
+- Pretty indentation of wrapped lines using the [[doom-package:adaptive-wrap]] package
+- Spell checking with [[doom-package:flycheck]]
+- Change PDF viewer to Okular or [[doom-package:latex-preview-pane]]
+- Bibtex editor
+- Autocompletion using [[doom-package:company-mode]]
+- Compile your =.tex= code only once using LatexMk
+
+*** [[doom-module::lang lean][lean]]:                                                              -
+: For folks with too much to prove
+
+This module adds support for the [[https://leanprover.github.io/about/][Lean programming language]] to Doom Emacs.
+
+*** [[doom-module::lang ledger][ledger]]:                                                            -
+: Be audit you can be
+
+This module adds support for [[https://www.ledger-cli.org/][ledger]] files. Ledger is a command line double-entry
+accounting system that works with simple text files holding transactions in the
+following format:
+#+begin_src ledger
+2015/10/12 Exxon
+    Expenses:Auto:Gas                         $10.00
+    Liabilities:MasterCard                   $-10.00
+#+end_src
+
+This modules enables the following features:
+- Syntax and indentation support for ledger files
+- Add, edit, and delete transactions
+- Generate reports
+- Schedule transactions
+- Sort transactions
+- Display statistics about transactions
+- Display balance up to a point
+
+*** [[doom-module::lang lua][lua]]:                                        [[doom-module::lang lua +fennel][+fennel]] [[doom-module::lang lua +lsp][+lsp]] [[doom-module::lang lua +moonscript][+moonscript]]
+: One-based indices? one-based indices
+
+This module adds Lua support to Doom Emacs.
+
+- REPL
+- Love2D specific functions
+- Moonscript support
+- Fennel support
+
+*** [[doom-module::lang markdown][markdown]]:                                                      [[doom-module::lang markdown +grip][+grip]]
+: Write docs for people to ignore
+
+This module provides Markdown support for Emacs.
+
+#+begin_quote
+Markdown is a text-to-HTML conversion tool for web writers. Markdown allows you
+to write using an easy-to-read, easy-to-write plain text format, then convert it
+to structurally valid XHTML (or HTML).
+
+Thus, “Markdown” is two things: (1) a plain text formatting syntax; and (2) a
+software tool, written in Perl, that converts the plain text formatting to HTML.
+See the Syntax page for details pertaining to Markdown's formatting syntax. You
+can try it out, right now, using the online Dingus.
+
+The overriding design goal for Markdown's formatting syntax is to make it as
+readable as possible. The idea is that a Markdown-formatted document should be
+publishable as-is, as plain text, without looking like it's been marked up with
+tags or formatting instructions. While Markdown's syntax has been influenced by
+several existing text-to-HTML filters, the single biggest source of inspiration
+for Markdown's syntax is the format of plain text email. -- John Gruber
+#+end_quote
+
+*** [[doom-module::lang nim][nim]]:                                                               -
+: Python + lisp at the speed of C
+
+This module adds [[https://nim-lang.org][Nim]] support to Doom Emacs.
+
+- Code completion ([[doom-package:nimsuggest]] + [[doom-package:company]])
+- Syntax checking ([[doom-package:nimsuggest]] + [[doom-package:flycheck]])
+- Org babel support ([[doom-package:ob-nim]])
+
+*** [[doom-module::lang nix][nix]]:                                                               -
+: I hereby declare "nix geht mehr!"
+
+This module adds support for the Nix language to Doom Emacs, along with tools
+for managing [[https://nixos.org/][Nix(OS)]].
+
+Includes:
+- Syntax highlighting
+- Completion through [[doom-package:company]] and/or [[doom-package:helm]]
+- Nix option lookup
+- Formatting (~nixfmt~)
+
+*** [[doom-module::lang ocaml][ocaml]]:                                                          [[doom-module::lang ocaml +lsp][+lsp]]
+: An objective camel
+
+This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[doom-package:tuareg-mode]].
+
+- Code completion, documentation look-up, code navigation and refactoring
+  ([[doom-package:merlin]])
+- Type, documentation and function argument display on idle ([[doom-package:merlin-eldoc]])
+- REPL ([[doom-package:utop]])
+- Syntax-checking ([[doom-package:merlin]] with [[doom-package:flycheck-ocaml]])
+- Auto-indentation ([[doom-package:ocp-indent]])
+- Code formatting ([[doom-package:ocamlformat]])
+- Dune file format ([[doom-package:dune]])
+
+*** [[doom-module::lang org][org]]: [[doom-module::lang org +brain][+brain]] [[doom-module::lang org +dragndrop][+dragndrop]] [[doom-module::lang org +gnuplot][+gnuplot]] [[doom-module::lang org +hugo][+hugo]] [[doom-module::lang org +ipython][+ipython]] [[doom-module::lang org +journal][+journal]] [[doom-module::lang org +jupyter][+jupyter]] [[doom-module::lang org +noter][+noter]] [[doom-module::lang org +pandoc][+pandoc]] [[doom-module::lang org +pomodoro][+pomodoro]] [[doom-module::lang org +present][+present]] [[doom-module::lang org +pretty][+pretty]] [[doom-module::lang org +roam][+roam]] [[doom-module::lang org +roam2][+roam2]]
+: Organize your plain life in plain text
+
+This module adds org-mode support to Doom Emacs, along with a number of
+adjustments, extensions and reasonable defaults to make it more performant and
+intuitive out of the box:
+
+- A custom, centralized attachment system that stores files in one place, rather
+  than in the same directory as the input file(s) (only applies to attachments
+  from files in/under ~org-directory~).
+- Executable code blocks with support for a variety of languages and tools
+  (depending on what :lang modules are enabled).
+- Supports an external org-capture workflow through the =bin/org-capture= shell
+  script and ~+org-capture/open-frame~.
+- A configuration for using org-mode for slide-show presentations or exporting
+  org files to reveal.js slideshows.
+- Drag-and-drop support for images (with inline preview) and media files (drops
+  a file icon and a short link) (requires [[doom-module:+dragndrop]] flag).
+- Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
+  (requires flags).
+- Export-to-clipboard functionality, for copying text into formatted html,
+  markdown or rich text to the clipboard (see ~+org/export-to-clipboard~ and
+  ~+org/export-to-clipboard-as-rich-text~).
+
+#+begin_quote
+Org is a system for writing plain text notes with syntax highlighting, code
+execution, task scheduling, agenda management, and many more. The whole idea is
+that you can write notes and mix them with references to things like articles,
+images, and example code combined with the output of that code after it is
+executed.
+
+https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode/
+#+end_quote
+
+*** [[doom-module::lang php][php]]:                                                      [[doom-module::lang php +hack][+hack]] [[doom-module::lang php +lsp][+lsp]]
+: Perl's insecure younger brother
+
+This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
+
+- ctags-based code completion (~company-php~ and ~phpctags~)
+- eldoc support (~ac-php~ and ~php-extras~)
+- REPL (~php-boris~)
+- Code refactoring commands (~php-refactor-mode~)
+- Unit-test commands (~phpunit~)
+- Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
+- [[../../editor/file-templates/templates/php-mode][File templates]]
+- [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
+
+#+begin_quote
+ 💡 PHP was the first programming language I got paid to code in, back in the
+    Cretaceous period (2003). My sincerest apologies go out to all the
+    programmers who inherited my earliest PHP work. I know you're out there,
+    writhing in your straitjackets.
+
+    Save a programmer today. Stop a friend from choosing PHP as their first
+    language.
+#+end_quote
+
+*** [[doom-module::lang plantuml][plantuml]]:                                                          -
+: Diagrams to confuse people more
+
+This module adds plantuml support to Emacs; allowing you to generate diagrams
+from plain text.
+
+*** [[doom-module::lang purescript][purescript]]:                                                     [[doom-module::lang purescript +lsp][+lsp]]
+: Javascript, but functional
+
+This module adds [[https://www.purescript.org/][Purescript]] support to Doom Emacs.
+
+*** [[doom-module::lang python][python]]:                  [[doom-module::lang python +conda][+conda]] [[doom-module::lang python +cython][+cython]] [[doom-module::lang python +lsp][+lsp]] [[doom-module::lang python +poetry][+poetry]] [[doom-module::lang python +pyenv][+pyenv]] [[doom-module::lang python +pyright][+pyright]]
+: Beautiful is better than ugly
+
+This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
+
+- Syntax checking ([[doom-package:flycheck]])
+- Snippets
+- Run tests ([[doom-package:nose]], [[doom-package:pytest]])
+- Auto-format (with ~black~, requires [[doom-module::editor format]])
+- LSP integration (=mspyls=, =pyls=, or =pyright=)
+
+*** [[doom-module::lang qt][qt]]:                                                                -
+: The cutest GUI framework ever
+
+This module provides language functionality for [[https://qt.io][Qt]] specific files.
+
+- Syntax highlighting for [[https:://en.wikipedia.org/wiki/QML][qml]] files
+- Syntax highlighting for =.pro= and =.pri= files used by [[https://doc.qt.io/qt-5/qmake-project-files.html][qmake]]
+
+*** [[doom-module::lang racket][racket]]:                                                     [[doom-module::lang racket +lsp][+lsp]] [[doom-module::lang racket +xp][+xp]]
+: The DSL for DSLs
+
+This module adds support for the [[https://www.racket-lang.org/][Racket programming language]] to Doom Emacs.
+
+*** [[doom-module::lang raku][raku]]:                                                              -
+: The artist formerly known as perl6
+
+This module adds support for the [[https://www.raku.org/][Raku programming language]] to Doom Emacs.
+
+*** [[doom-module::lang rest][rest]]:                                                              -
+: Emacs as a REST client
+
+This module turns Emacs into a [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] client.
+
+- Code-completion (~company-restclient~)
+- Code evaluation
+- Imenu support for ~restclient-mode~
+- org-mode: babel support (~ob-restclient~)
+
+#+begin_quote
+ 💡 ~restclient-mode~ is tremendously useful for automated or quick testing REST
+    APIs. My workflow is to open an ~org-mode~ buffer, create a restclient
+    source block and hack away. ~restclient-mode~ and ~company-restclient~ power
+    this arcane wizardry.
+#+end_quote
+
+*** [[doom-module::lang rst][rst]]:                                                               -
+: ReST in peace
+
+This module adds [[https://docutils.sourceforge.io/rst.html][ReStructured Text]] support to Doom Emacs.
+
+*** [[doom-module::lang ruby][ruby]]:                                [[doom-module::lang ruby +chruby][+chruby]] [[doom-module::lang ruby +lsp][+lsp]] [[doom-module::lang ruby +rails][+rails]] [[doom-module::lang ruby +rbenv][+rbenv]] [[doom-module::lang ruby +rvm][+rvm]]
+: 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+
+This module add Ruby and optional Ruby on Rails support to Emacs.
+
+- Code completion ([[doom-package:robe]])
+- Syntax checking ([[doom-package:flycheck]])
+- Jump-to-definitions ([[doom-package:robe]])
+- Bundler
+- Rubocop integration ([[doom-package:flycheck]])
+
+*** [[doom-module::lang rust][rust]]:                                                           [[doom-module::lang rust +lsp][+lsp]]
+: Fe2O3.unwrap().unwrap().unwrap().unwrap()
+
+This module adds support for the Rust language and integration for its tools,
+e.g. ~cargo~.
+
+- Code completion ([[doom-package:racer]] or an LSP server)
+- Syntax checking ([[doom-package:flycheck]])
+- LSP support (for rust-analyzer and rls) ([[doom-package:rustic]])
+- Snippets
+
+*** [[doom-module::lang scala][scala]]:                                                          [[doom-module::lang scala +lsp][+lsp]]
+: Java, but good
+
+This module adds [[https://www.scala-lang.org][scala]] and [[https://www.scala-sbt.org/][sbt]] support to Doom Emacs.
+
+Through the power of [[https://scalameta.org/metals/docs/editors/overview.html][Metals]] (LSP) this module offers:
+- Goto Definition
+- Completions
+- Hover
+- Paremeter Hints
+- Find References
+- Run/Debug
+- Find Implementations
+- Rename Symbol
+- Code Actions
+- Document Symbols
+- Formatting
+- Folding
+- Organize Imports
+
+*** [[doom-module::lang scheme][scheme]]: [[doom-module::lang scheme +chez][+chez]] [[doom-module::lang scheme +chibi][+chibi]] [[doom-module::lang scheme +chicken][+chicken]] [[doom-module::lang scheme +gambit][+gambit]] [[doom-module::lang scheme +gauche][+gauche]] [[doom-module::lang scheme +guile][+guile]] [[doom-module::lang scheme +kawa][+kawa]] [[doom-module::lang scheme +mit][+mit]] [[doom-module::lang scheme +racket][+racket]]
+: A fully conniving family of lisps
+
+This module provides support for the Scheme family of Lisp languages, powered by
+[[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
+
+*** [[doom-module::lang sh][sh]]:                                           [[doom-module::lang sh +fish][+fish]] [[doom-module::lang sh +lsp][+lsp]] [[doom-module::lang sh +powershell][+powershell]]
+: She sells {ba,z,fi}sh shells on the C xor
+
+This module adds support for shell scripting languages (including Powershell and
+Fish script) to Doom Emacs.
+
+- Code completion ([[doom-package:company-shell]])
+- Syntax Checking ([[doom-package:flycheck]])
+
+*** [[doom-module::lang sml][sml]]:                                                               -
+: ...
+
+THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming language]] support to Doom Emacs.
+
+*** [[doom-module::lang solidity][solidity]]:                                                          -
+: Do you need a blockchain? No.
+
+This module adds [[https://github.com/ethereum/solidity][Solidity]] support to Doom Emacs.
+
+- Syntax-checking ([[doom-package:flycheck]])
+- Code completion ([[doom-package:company-solidity]])
+- Gas estimation (~C-c C-g~)
+
+*** [[doom-module::lang swift][swift]]:                                                          [[doom-module::lang swift +lsp][+lsp]]
+: We asked for emoji variables?
+
+This module adds support for the [[https://developer.apple.com/swift/][Swift programming language]] to Doom Emacs.
+
+*** [[doom-module::lang terra][terra]]:                                                             -
+: Earth and Moon in alignment for performance.
+
+/(No description)/
+
+*** [[doom-module::lang web][web]]:                                                            [[doom-module::lang web +lsp][+lsp]]
+: The tubes
+
+This module adds support for various web languages, including HTML5, CSS,
+SASS/SCSS, Pug/Jade/Slim, and HAML, as well as various web frameworks, like
+ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
+
+*** [[doom-module::lang yaml][yaml]]:                                                           [[doom-module::lang yaml +lsp][+lsp]]
+: JSON, but readable
+
+This module provides support for the [[https://yaml.org/][YAML file format]] to Doom Emacs.
+
+*** [[doom-module::lang zig][zig]]:                                                            [[doom-module::lang zig +lsp][+lsp]]
+: C, but simpler
+
+This module adds [[https://ziglang.org/][Zig]] support, with optional (but recommended) LSP support via
+[[https://github.com/zigtools/zls][zls]].
+
+- Syntax highlighting
+- Syntax-checking ([[doom-package:flycheck]])
+- Code completion and LSP integration (~zls~)
+
+
+** [[doom-module::os][:os]] (2) :unfold:
+Modules in this category are designed to improve compatibility with certain
+operating systems or OS features (like the shell).
+
+*** [[doom-module::os macos][macos]]:                                                             -
+: Compatibility for our favorite walled garden
+
+This module provides extra functionality for macOS.
+
+*** [[doom-module::os tty][tty]]:                                                            [[doom-module::os tty +osc][+osc]]
+: Make TTY Emacs suck less
+
+This module configures Emacs for use in the terminal, by providing:
+
+- System clipboard integration (through an external clipboard program or OSC-52
+  escape codes in supported terminals).
+- Cursor-shape changing across evil states (requires a terminal that supports
+  it).
+- Mouse support in the terminal.
+
+
+** [[doom-module::term][:term]] (4) :unfold:
+What's an operating system without a terminal? The modules in this category
+bring varying degrees of terminal emulation into Emacs.
+
+If you can't decide which to choose, I recommend [[doom-package:vterm]] or [[doom-package:eshell]]. [[doom-module::term vterm]]
+offers that best terminal emulation available but requires a few extra steps to
+get going. [[doom-module::term eshell]] works everywhere that Emacs runs, even Windows, and
+provides a shell entirely implemented in Emacs Lisp.
+
+*** [[doom-module::term eshell][eshell]]:                                                            -
+: The elisp shell that works everywhere
+
+This module provides additional features for the built-in [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][Emacs Shell]]
+
+The Emacs Shell or [[doom-package:eshell]] is a shell-like command interpreter implemented in
+Emacs Lisp. It is an alternative to traditional shells such as =bash=, =zsh=,
+=fish=, etc. that is built into Emacs and entirely cross-platform.
+
+*** [[doom-module::term shell][shell]]:                                                             -
+: A REPL for your shell
+
+Provides a REPL for your shell.
+
+#+begin_quote
+ 💡 =shell= is more REPL than terminal emulator. You can edit your command line
+    like you would any ordinary text in Emacs -- something you can't do in [[doom-package:term]]
+    (without ~term-line-mode~, which can be unstable) or [[doom-package:vterm]].
+
+    Due to =shell='s simplicity, you're less likely to encounter edge cases
+    (e.g. against your shell config), but it's also the least capable. TUI
+    programs like =htop= or =vim= won't work in shell directly, but will be
+    launched in a =term= buffer -- which handles them reasonably well.
+#+end_quote
+
+*** [[doom-module::term term][term]]:                                                              -
+: It's terminal
+
+/(No description)/
+
+*** [[doom-module::term vterm][vterm]]:                                                             -
+: As good as terminal emulation gets in Emacs
+
+This module provides a terminal emulator powered by libvterm. It is still in
+alpha and requires a component be compiled (=vterm-module.so=).
+
+#+begin_quote
+ 💡 [[doom-package:vterm]] is as good as terminal emulation gets in Emacs (at the time of
+    writing) and the most performant, as it is implemented in C. However, it
+    requires extra steps to set up:
+
+    - Emacs must be built with dynamic modules support,
+    - and =vterm-module.so= must be compiled, which depends on =libvterm=,
+      =cmake=, and =libtool-bin=.
+
+    [[doom-package:vterm]] will try to automatically build =vterm-module.so= when you first open
+    it, but this will fail on Windows, NixOS and Guix out of the box. Install
+    instructions for nix/guix can be found in the [[doom-module::term vterm]] module's
+    documentation. There is no way to install vterm on Windows that I'm aware of
+    (but perhaps with WSL?).
+#+end_quote
+
+
+** [[doom-module::tools][:tools]] (21) :unfold:
+Modules that integrate external tools into Emacs.
+
+*** [[doom-module::tools ansible][ansible]]:                                                           -
+: Allow silly people to focus on silly things
+
+/(No description)/
+
+*** biblio:                                                            -
+/(No description)/
+
+*** [[doom-module::tools debugger][debugger]]:                                                       [[doom-module::tools debugger +lsp][+lsp]]
+: Step through code to help you add bugs
+
+Introduces a code debugger to Emacs, powered by [[doom-package:realgud]] or [[doom-package:dap-mode]] (LSP).
+
+This document will help you to configure [[doom-package:dap-mode]] [[https://emacs-lsp.github.io/dap-mode/page/configuration/#native-debug-gdblldb][Native Debug(GDB/LLDB)]] as
+there is still not *enough* documentation for it.
+
+*** [[doom-module::tools direnv][direnv]]:                                                            -
+: Save (or destroy) the environment at your leisure
+
+This module integrates direnv into Emacs.
+
+#+begin_quote
+ 📌 direnv is an environment switcher for the shell. It knows how to hook into
+    bash, zsh, tcsh, fish shell and elvish to load or unload environment
+    variables depending on the current directory. This allows project-specific
+    environment variables without cluttering the ~/.profile file.
+
+    Before each prompt, direnv checks for the existence of a ".envrc" file in
+    the current and parent directories. If the file exists (and is authorized),
+    it is loaded into a bash sub-shell and all exported variables are then
+    captured by direnv and then made available to the current shell.
+#+end_quote
+
+*** [[doom-module::tools docker][docker]]:                                                         [[doom-module::tools docker +lsp][+lsp]]
+: Yo dawg, I heard you like OSes, so I…
+
+This module allows you to manipulate Docker images, containers, and more from
+Emacs.
+
+Provides a major ~dockerfile-mode~ to edit =Dockerfiles=. Additional convenience
+functions allow images to be built easily.
+
+[[doom-package:docker-tramp]] offers [[https://www.gnu.org/software/tramp/][TRAMP]] support for Docker containers.
+
+*** [[doom-module::tools editorconfig][editorconfig]]:                                                      -
+: Let someone else argue tabs and spaces
+
+This module integrates [[https://editorconfig.org/][EditorConfig]] into Emacs, allowing users to dictate code
+style on a per-project basis with an =.editorconfig= file ([[https://editorconfig-specification.readthedocs.io/][formal
+specification]]).
+
+*** [[doom-module::tools ein][ein]]:                                                               -
+: Tame Jupyter notebooks with emacs
+
+Adds [[https://jupyter.org/][Jupyter]] notebook integration into Emacs.
+
+*** [[doom-module::tools eval][eval]]:                                                       [[doom-module::tools eval +overlay][+overlay]]
+: Run code, run (also, repls)
+
+This modules adds inline code evaluation support to Emacs and a universal
+interface for opening and interacting with REPLs.
+
+*** [[doom-module::tools gist][gist]]:                                                              -
+: A pastebin for Githubsters
+
+Adds the ability to manage, pull from, or push to your [[https://gist.github.com][Gists]] from within Emacs.
+
+*** [[doom-module::tools lookup][lookup]]:                                [[doom-module::tools lookup +dictionary][+dictionary]] [[doom-module::tools lookup +docsets][+docsets]] [[doom-module::tools lookup +offline][+offline]]
+: Navigate your labyrinthine code and docs
+
+This module adds code navigation and documentation lookup tools to help you
+quickly look up definitions, references, documentation, dictionary definitions
+or synonyms.
+
+- Jump-to-definition and find-references implementations that just work.
+- Powerful xref integration for languages that support it.
+- Search online providers like [[https://devdocs.io][devdocs.io]], [[https://stackoverflow.com][stackoverflow]], [[https://google.com][google]], [[https://duckduckgo.com][duckduckgo]], or
+  [[https://youtube.com][youtube]] (duckduckgo and google have live suggestions).
+- Integration with [[https://github.com/Kapeli/feeds][Dash.app docsets]].
+- Support for online (and offline) dictionaries and thesauruses.
+
+*** [[doom-module::tools lsp][lsp]]:                                                    [[doom-module::tools lsp +eglot][+eglot]] [[doom-module::tools lsp +peek][+peek]]
+: M-x vscode
+
+This module integrates [[https://langserver.org/][language servers]] into Doom Emacs. They provide features
+you'd expect from IDEs, like code completion, realtime linting, language-aware
+[[doom-package:imenu]]/[[doom-package:xref]] integration, jump-to-definition/references support, and more.
+
+As of this writing, this is the state of LSP support in Doom Emacs:
+
+| Module           | Major modes                                             | Default language server                                       |
+|------------------+---------------------------------------------------------+---------------------------------------------------------------|
+| [[doom-module::lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls, clangd                                                  |
+| [[doom-module::lang clojure]]    | clojure-mode                                            | clojure-lsp                                                   |
+| [[doom-module::lang csharp]]     | csharp-mode                                             | omnisharp                                                     |
+| [[doom-module::lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
+| [[doom-module::lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
+| [[doom-module::lang go]]         | go-mode                                                 | go-langserver                                                 |
+| [[doom-module::lang haskell]]    | haskell-mode                                            | haskell-language-server                                       |
+| [[doom-module::lang java]]       | java-mode                                               | lsp-java                                                      |
+| [[doom-module::lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | ts-ls, deno-ls                                                |
+| [[doom-module::lang julia]]      | julia-mode                                              | LanguageServer.jl                                             |
+| [[doom-module::lang ocaml]]      | tuareg-mode                                             | ocaml-language-server                                         |
+| [[doom-module::lang php]]        | php-mode                                                | php-language-server                                           |
+| [[doom-module::lang purescript]] | purescript-mode                                         | purescript-language-server                                    |
+| [[doom-module::lang python]]     | python-mode                                             | lsp-python-ms                                                 |
+| [[doom-module::lang ruby]]       | ruby-mode                                               | solargraph                                                    |
+| [[doom-module::lang rust]]       | rust-mode                                               | rls                                                           |
+| [[doom-module::lang scala]]      | scala-mode                                              | metals                                                        |
+| [[doom-module::lang sh]]         | sh-mode                                                 | bash-language-server                                          |
+| [[doom-module::lang swift]]      | swift-mode                                              | sourcekit                                                     |
+| [[doom-module::lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
+| [[doom-module::lang zig]]        | zig-mode                                                | zls                                                           |
+
+*** [[doom-module::tools magit][magit]]:                                                        [[doom-module::tools magit +forge][+forge]]
+: Wield git like a wizard
+
+This module provides Magit, an interface to the Git version control system.
+
+*** [[doom-module::tools make][make]]:                                                              -
+: The discount build system
+
+This module adds commands for executing Makefile targets.
+
+*** [[doom-module::tools pass][pass]]:                                                          [[doom-module::tools pass +auth][+auth]]
+: A password manager for nerds
+
+This module provides an Emacs interface to [[https://www.passwordstore.org/][Pass]].
+
+*** [[doom-module::tools pdf][pdf]]:                                                               -
+: Emacs, your next PDF reader
+
+This module improves support for reading and interacting with PDF files in
+Emacs.
+
+It uses [[doom-package:pdf-tools]], which is a replacement for the built-in ~doc-view-mode~ for
+PDF files. The key difference being pages are not pre-rendered, but instead
+rendered on-demand and stored in memory; a much faster approach, especially for
+larger PDFs.
+
+Displaying PDF files is just one function of [[doom-package:pdf-tools]]. See [[https://github.com/politza/pdf-tools][its project website]]
+for details and videos.
+
+*** [[doom-module::tools prodigy][prodigy]]:                                                           -
+: No sweatshop is complete without child processes
+
+This module provides an interface for managing external services from within
+Emacs.
+
+*** [[doom-module::tools rgb][rgb]]:                                                               -
+: Creating color strings
+
+Highlights color hex values and names with the color itself, and provides tools
+to easily modify color values or formats.
+
+*** [[doom-module::tools taskrunner][taskrunner]]:                                                        -
+: Taskrunner for all your projects
+
+This module integrates [[doom-package:taskrunner]] into Doom Emacs, which scraps runnable tasks
+from build systems like make, gradle, npm and the like.
+
+*** [[doom-module::tools terraform][terraform]]:                                                         -
+: Infrastructure as code
+
+This module adds support for working with [[https://www.terraform.io][Terraform]] files within Emacs. This
+includes syntax highlighting, intelligent code completion, and the ability to
+run Terraform commands directly from Emacs.
+
+*** [[doom-module::tools tmux][tmux]]:                                                              -
+: From one multiplexer to another
+
+This module provides an API for talking to Tmux sessions.
+
+*** [[doom-module::tools upload][upload]]:                                                            -
+: Map local directories to remotes via ssh/ftp
+
+Uses ~ssh-deploy~ to map a local folder to a remote one.
+
+From the [[https://github.com/cjohansson/emacs-ssh-deploy/blob/master/README.md][ssh-deploy README]]:
+#+begin_quote
+The ssh-deploy plug-in for Emacs makes it possible to effortlessly deploy local files and directories to remote hosts via Tramp (including but not limited to SSH, SFTP, FTP). It tries to provide functions that can be easily used by custom scripts.
+
+The idea for this plug-in was to mimic the behavior of PhpStorm deployment functionality.
+#+end_quote
+
+
+** [[doom-module::ui][:ui]] (23) :unfold:
+For modules concerned with changing Emacs' appearance or providing interfaces
+for its features, like sidebars, tabs, or fonts.
+
+*** [[doom-module::ui deft][deft]]:                                                              -
+: Notational velocity for Emacs
+
+[[https://jblevins.org/projects/deft/][Deft]] is a major mode for creating, browsing, and filtering notes written in
+plain text formats, such as org-mode, markdown, and LaTeX. It enables you to
+quickly jot down thoughts and easily retrieve them later.
+
+*** [[doom-module::ui doom][doom]]:                                                              -
+: Make Doom fabulous again
+
+This module gives Doom its signature look: powered by the [[doom-package:doom-themes][doom-one]] theme
+(loosely inspired by [[https://github.com/atom/one-dark-syntax][Atom's One Dark theme]]) and [[doom-package:solaire-mode]]. Includes:
+
+- A custom folded-region indicator for [[doom-package:hideshow]].
+- "Thin bar" fringe bitmaps for [[doom-package:git-gutter-fringe]].
+- File-visiting buffers are slightly brighter (thanks to [[doom-package:solaire-mode]]).
+
+*** [[doom-module::ui doom-dashboard][doom-dashboard]]:                                                    -
+: Welcome to your doom
+
+This module adds a minimalistic, Atom-inspired dashboard to Emacs.
+
+Besides eye candy, the dashboard serves two other purposes:
+
+1. To improve Doom's startup times (the dashboard is lighter than the scratch
+   buffer in many cases).
+
+2. And to preserve the "last open directory" you were in. Occasionally, I kill
+   the last buffer in my project and I end up who-knows-where (in the working
+   directory of another buffer/project). It can take some work to find my way
+   back to where I was. Not with the Dashboard.
+
+   Since the dashboard cannot be killed, and it remembers the working directory
+   of the last open buffer, ~M-x find-file~ will work from the directory I
+   expect.
+
+*** [[doom-module::ui doom-quit][doom-quit]]:                                                         -
+: One does not simply quit Emacs
+
+A silly module that throws cute confirmation prompts at you when you exit Emacs,
+like DOOM (the game) did. Some quotes are from the classic games, others are
+random, nerdy references that no decent human being has any business
+recognizing.
+
+*** [[doom-module::ui emoji][emoji]]:                                       [[doom-module::ui emoji +ascii][+ascii]] [[doom-module::ui emoji +github][+github]] [[doom-module::ui emoji +unicode][+unicode]]
+: 💩
+
+This module gives Emacs the ability to display and insert emojis (ASCII, Github
+style, or unicode styles), as well as convert certain text patterns (e.g.
+=:smile:=) into emojis.
+
+*** [[doom-module::ui hl-todo][hl-todo]]:                                                           -
+: TODO FIXME NOTE DEPRECATED HACK REVIEW
+
+This module adds syntax highlighting for various tags in code comments, such as
+=TODO=, =FIXME=, and =NOTE=, among others.
+
+*** [[doom-module::ui hydra][hydra]]:                                                             -
+: Discount modality for mythological beast hunters
+
+This module adds hydra to Doom Emacs, as well as a few custom built hydras to
+start with:
+
+- A hydra to control windows ~+hydra/window-nav/body~.
+- A hydra to control text zoom level ~+hydra/text-zoom/body~.
+
+*** [[doom-module::ui indent-guides][indent-guides]]:                                                     -
+: Line up them indent columns
+
+/(No description)/
+
+*** [[doom-module::ui ligatures][ligatures]]:              [[doom-module::ui ligatures +extra][+extra]] [[doom-module::ui ligatures +fira][+fira]] [[doom-module::ui ligatures +hasklig][+hasklig]] [[doom-module::ui ligatures +iosevka][+iosevka]] [[doom-module::ui ligatures +pragmata-pro][+pragmata-pro]]
+: Distract folks from your code
+
+This module enables ligatures and arbitrary symbol substitutions with
+~mac-auto-operator-composition-mode~ (on supported macOS systems) or composition
+tables (harfbuzz on Emacs 28), falling back on ~prettify-symbols-mode~
+otherwise.
+
+*** [[doom-module::ui minimap][minimap]]:                                                           -
+: A map for lost programmers
+
+This module displays a minimap of the buffer in a sidebar, similar to the
+feature found in many other editors.
+
+*** [[doom-module::ui modeline][modeline]]:                                                     [[doom-module::ui modeline +light][+light]]
+: Snazzy, Atom-inspired modeline, plus API
+
+This module provides an Atom-inspired, minimalistic modeline for Doom Emacs,
+powered by the [[doom-package:doom-modeline]] package (where you can find screenshots).
+
+*** [[doom-module::ui nav-flash][nav-flash]]:                                                         -
+: Blink after big motions
+
+This module flashes the line around the cursor after any significant motion, to
+make it easy to follow after big operations.
+
+#+begin_quote
+ 💡 Tremendously helpful on large, 1600p+ or 4K displays.
+#+end_quote
+
+*** [[doom-module::ui neotree][neotree]]:                                                           -
+: NERDTree for evil nerds
+
+This module brings a side panel for browsing project files, inspired by vim's
+NERDTree.
+
+#+begin_quote
+ 💡 Sure, there's [[doom-package:dired]] and [[doom-package:projectile]], but sometimes I'd like a bird's eye view
+    of a project.
+#+end_quote
+
+*** [[doom-module::ui ophints][ophints]]:                                                           -
+: An indicator for “what did I just do?”
+
+This module provides op-hints (operation hinting), i.e. visual feedback for
+certain operations. It highlights regions of text that the last operation (like
+yank) acted on.
+
+Uses [[doom-package:evil-goggles]] for evil users and [[doom-package:volatile-highlights]] otherwise.
+
+*** [[doom-module::ui popup][popup]]:                                                [[doom-module::ui popup +all][+all]] [[doom-module::ui popup +defaults][+defaults]]
+: Tame sudden yet inevitable temporary windows
+
+This module provides a customizable popup window management system.
+
+Not all windows are created equally. Some are less important. Some I want gone
+once they have served their purpose, like code output or a help buffer. Others I
+want to stick around, like a scratch buffer or org-capture popup.
+
+More than that, popups ought to be the second class citizens of my editor;
+spawned off to the side, discarded with the push of a button (e.g. [[kbd:][ESC]] or [[kbd:][C-g]]),
+and easily restored if I want to see them again. Of course, this system should
+clean up after itself and kill off buffers I mark as transient.
+
+*** [[doom-module::ui tabs][tabs]]:                                                              -
+: Keep tabs on your buffers, literally
+
+This module adds an Atom-esque tab bar to the Emacs UI.
+
+*** [[doom-module::ui treemacs][treemacs]]:                                                       [[doom-module::ui treemacs +lsp][+lsp]]
+: A sidebar for all the things
+
+[[doom-package:treemacs][Treemacs]] is a file and project explorer similar to NeoTree or vim's NerdTree,
+but largely inspired by the Project Explorer in Eclipse. It shows the file
+system outlines of your projects in a simple tree layout allowing quick
+navigation and exploration, while also possessing basic file management
+utilities. It includes:
+
+- Integration with Git (if [[doom-module::tools magit]] is enabled)
+- Integration with Evil (if [[doom-module::editor evil +everywhere]] is enabled)
+- Workspace awareness (if [[doom-module::ui workspaces]] is enabled)
+
+*** [[doom-module::ui unicode][unicode]]:                                                           -
+: Extended unicode support for various languages
+
+This module extends Doom's ability to display non-English unicode. It is
+primarily useful for non-English Emacs users, for whom Doom's built-in unicode
+support in insufficient.
+
+This module relies on the [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]] package. It tries to setup the default
+emacs fontset to cover as many unicode glyphs as possible by scanning all
+available glyphs from all available fonts.
+
+When this module is enabled:
+- Emacs will prefer to use the ~doom-unicode-font~ font to display non-latin
+  glyphs if it provides coverage for them.
+- The first time you run Emacs a unicode cache will be generated -- this will
+  take a while!
+- The cache will be regenerated every time Emacs is made aware of new fonts or
+  you change the font configuration e.g. by modifying ~doom-unicode-font~.
+- The cache will be stored and should not be regenerated unless font-related
+  configuration or the versions of relevant packages changes.
+
+*** [[doom-module::ui vc-gutter][vc-gutter]]:                                                         -
+: Get your diff out of the gutter
+
+This module displays a diff of the current file (against HEAD) in the fringe.
+Supports Git, Svn, Hg, and Bzr.
+
+*** [[doom-module::ui vi-tilde-fringe][vi-tilde-fringe]]:                                                   -
+: Fringe tildes beyond EOB
+
+Displays a tilde(~) in the left fringe to indicate an empty line, similar to Vi.
+
+*** [[doom-module::ui window-select][window-select]]:                               [[doom-module::ui window-select +numbers][+numbers]] [[doom-module::ui window-select +switch-window][+switch-window]]
+: Visually switch windows
+
+This module provides several methods for selecting windows without the use of
+the mouse or spatial navigation (e.g. [[kbd:][C-w {h,j,k,l}]]).
+
+The command ~other-window~ is remapped to either [[doom-package:switch-window]] or [[doom-package:ace-window]],
+depending on which backend you've enabled. It is bound to [[kbd:][C-x o]] (and [[kbd:][C-w C-w]] for
+evil users).
+
+It also provides numbered windows and selection with the [[doom-package:winum]] package, if
+desired. Evil users can jump to window N in [[kbd:][C-w <N>]] (where N is a number between
+0 and 9). Non evil users have [[kbd:][C-x w <N>]] instead.
+
+*** [[doom-module::ui workspaces][workspaces]]:                                                        -
+: Tab emulation, persistence, & separate workspaces
+
+This module adds support for workspaces, powered by [[doom-package:persp-mode]], as well as a API
+for manipulating them.
+
+#+begin_quote
+ 💡 There are many ways to use workspaces. I spawn a workspace per task. Say I'm
+    working in the main workspace, when I realize there is a bug in another part
+    of my project. I open a new workspace and deal with it in there. In the
+    meantime, I need to check my email, so mu4e gets its own workspace.
+
+    Once I've completed the task, I close the workspace and return to main.
+#+end_quote
+
+*** [[doom-module::ui zen][zen]]:                                                               -
+: Distraction-free mode for the eternally distracted
+
+This module provides two minor modes that make Emacs into a more comfortable
+writing or coding environment. Folks familiar with "distraction-free" or "zen"
+modes from other editors -- or [[doom-package:olivetti]], [[doom-package:sublimity]], and [[doom-package:tabula-rasa]] (Emacs
+plugins) -- will feel right at home.
+
+These modes are:
+- ~mixed-pitch-mode~ ::
+  Which renders (most) text in a variable pitch font (see
+  ~doom-variable-pitch-font~). Unlike ~variable-pitch-mode~, this will not
+  affect segments of text that are intended to remain in a fixed pitch font,
+  such as code blocks or ASCII tables.
+- ~writeroom-mode~ ::
+  Our all-in-one "zen" mode that will:
+  1. Center the current buffer.
+  2. Remove superfluous UI elements (like the modeline).
+  3. Activate ~mixed-pitch-mode~.
+  4. Scale up the buffer's text slightly (see ~+zen-text-scale~).
+  5. And make the window's borders slightly thicker (see
+     ~+zen-window-divider-size~).
+
+

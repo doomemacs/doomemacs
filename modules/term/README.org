@@ -1,0 +1,15 @@
+#+title:   :term
+#+created: August 01, 2021
+#+since:   21.12.0
+
+* Description
+What's an operating system without a terminal? The modules in this category
+bring varying degrees of terminal emulation into Emacs.
+
+If you can't decide which to choose, I recommend [[doom-package:vterm]] or [[doom-package:eshell]]. [[doom-module::term vterm]]
+offers that best terminal emulation available but requires a few extra steps to
+get going. [[doom-module::term eshell]] works everywhere that Emacs runs, even Windows, and
+provides a shell entirely implemented in Emacs Lisp.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

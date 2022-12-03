@@ -1,37 +1,63 @@
-#+TITLE:   ui/nav-flash
-#+DATE:    June 4, 2017
-#+SINCE:   v2.0
-#+STARTUP: inlineimages
+#+title:    :ui nav-flash
+#+subtitle: Blink after big motions
+#+created:  June 04, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC:
-- [[#description][Description]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#configuration][Configuration]]
-
-* Description
+* Description :unfold:
 This module flashes the line around the cursor after any significant motion, to
 make it easy to follow after big operations.
 
 #+begin_quote
-Tremendously helpful on large, 1600p+ or 4K displays.
+ 💡 Tremendously helpful on large, 1600p+ or 4K displays.
 #+end_quote
 
-** Plugins
-+ [[https://github.com/rolandwalker/nav-flash][nav-flash]]
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-* Prerequisites
-This module has no dependencies.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-* Configuration
-By default, ~nav-flash~ will be triggered whenever ~recenter~ is called or an
-entry is added to the jump-list (managed by better-jumper).
+** Module flags
+/This module has no flags./
 
-~recenter~ is called after many hooks and commands, such as:
+** Packages
+- [[doom-package:nav-flash]]
 
-+ better-jumper-post-jump-hook
-+ rtags-after-find-file-hook
-+ org-follow-link-hook
-+ imenu-after-jump-hook
-+ counsel-grep-post-action-hook
-+ dumb-jump-after-jump-hook
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
+By default, [[doom-package:nav-flash]] will be triggered whenever [[fn:recenter]] is called or an entry
+is added to the jump-list (managed by [[doom-package:better-jumper]]).
+
+[[fn:recenter]] is called after many hooks and commands, such as:
+- [[var:better-jumper-post-jump-hook]]
+- [[var:rtags-after-find-file-hook]]
+- [[var:org-follow-link-hook]]
+- [[var:imenu-after-jump-hook]]
+- [[var:counsel-grep-post-action-hook]]
+- [[var:dumb-jump-after-jump-hook]]
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -1,5 +1,5 @@
 ;;; lang/org/contrib/noter.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +noter)
+;;;###if (modulep! +noter)
 
 (use-package! org-noter
   :defer t

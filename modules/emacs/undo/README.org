@@ -1,68 +1,83 @@
-#+TITLE:   emacs/undo
-#+DATE:    April 13, 2020
-#+SINCE:   v3.0.0
-#+STARTUP: inlineimages nofold
+#+title:    :emacs undo
+#+subtitle: Persistent, smarter undo for your inevitable mistakes
+#+created:  April 14, 2020
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-  - [[#disabling-persistent-undo-history][Disabling persistent undo history]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module augments Emacs' built-in undo system to be more intuitive and to
 persist across Emacs sessions.
 
 ** Maintainers
-This module has no dedicated maintainers.
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-+ =+tree= Uses ~undo-tree~ instead of ~undo-fu~, which is a little less stable,
-  but offers branching undo history and a visualizer for navigating it.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://gitlab.com/ideasman42/emacs-undo-fu][undo-fu]]
-+ [[https://gitlab.com/ideasman42/emacs-undo-fu-session][undo-fu-session]]
-+ [[https://github.com/emacsmirror/undo-tree][undo-tree]] (=+tree=)
+** Module flags
+- +tree ::
+  Uses [[doom-package:undo-tree]] instead of [[doom-package:undo-fu]], which is a little less stable, but offers
+  branching undo history and a visualizer for navigating it.
+
+** Packages
+- [[doom-package:undo-fu]]
+- [[doom-package:undo-fu-session]]
+- [[doom-package:undo-tree]] if [[doom-module:+tree]]
 
 ** Hacks
-+ Both undo-fu and undo-tree have been modified to use zstd to compress undo
+- Both undo-fu and undo-tree have been modified to use =zstd= to compress undo
   history if it is available.
-+ undo-tree only
-  + Text properties are stripped from undo history to shrink it.
-  + Undo-tree is too chatty about saving its history files. This has be
+- undo-tree only
+  - Text properties are stripped from undo history to shrink it.
+  - Undo-tree is too chatty about saving its history files. This has be
     "silenced". i.e. It's visible in \*Messages\*, but won't appear in your
     minibuffer.
-+ unfo-fu only
-  + Doom defines =undo-fu-mode= to make it easier to add hooks/mode-local
+- unfo-fu only
+  - Doom defines ~undo-fu-mode~ to make it easier to add hooks/mode-local
     keybinds.
 
-* Prerequisites
-This module has no prerequisites.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* TODO Features
-# An in-depth list of features, how to use them, and their dependencies.
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Configuration
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Disabling persistent undo history
-+ If you are using =+tree=:
-
-  #+BEGIN_SRC elisp
+- If you are using [[doom-module:+tree]]:
+  #+begin_src emacs-lisp
   (after! undo-tree
     (setq undo-tree-auto-save-history nil))
-  #+END_SRC
+  #+end_src
 
-+ If you aren't:
-
-  #+BEGIN_SRC elisp
+- If you aren't:
+  #+begin_src emacs-lisp
   (remove-hook 'undo-fu-mode-hook #'global-undo-fu-session-mode)
-  #+END_SRC
+  #+end_src
 
-* TODO Troubleshooting
-# Common issues and their solution, or places to look for help.
+* Troubleshooting
+[[doom-report:][Report an issue?]]
+
+** undo-tree
+- Has been known to truncate undo history unpredictably, due to Emacs' undo
+  cleanup imposing linear undo limits on non-linear undo tree data. Doom already
+  sets ~undo-limit~, ~undo-strong-limit~, and ~undo-outer-limit~ absurdly high
+  to mitigate this somewhat.
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

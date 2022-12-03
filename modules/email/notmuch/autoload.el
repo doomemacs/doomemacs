@@ -1,18 +1,21 @@
 ;;; email/notmuch/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +notmuch-workspace-name "*notmuch*"
+  "Name of the workspace created by `=notmuch', dedicated to notmuch.")
+
 ;;;###autoload
 (defun =notmuch ()
   "Activate (or switch to) `notmuch' in its workspace."
   (interactive)
   (condition-case-unless-debug e
       (progn
-        (when (featurep! :ui workspaces)
-          (+workspace-switch "*MAIL*" t))
+        (when (modulep! :ui workspaces)
+          (+workspace-switch +notmuch-workspace-name t))
         (if-let* ((win (cl-find-if (lambda (it) (string-match-p "^\\*notmuch" (buffer-name (window-buffer it))))
                                    (doom-visible-windows))))
             (select-window win)
           (funcall +notmuch-home-function))
-        (when (featurep! :ui workspaces)
+        (when (modulep! :ui workspaces)
           (+workspace/display)))
     ('error
      (+notmuch/quit)
@@ -28,8 +31,8 @@
   (interactive)
   ;; (+popup/close (get-buffer-window "*notmuch-hello*"))
   (doom-kill-matching-buffers "^\\*notmuch")
-  (when (featurep! :ui workspaces)
-    (+workspace/delete "*MAIL*")))
+  (when (modulep! :ui workspaces)
+    (+workspace/delete +notmuch-workspace-name)))
 
 (defun +notmuch-get-sync-command ()
   "Return a shell command string to synchronize your notmuch mail with."
@@ -52,7 +55,7 @@
             ((and (pred stringp) it) it)
             (_ (user-error "Invalid notmuch backend specified: %S"
                            +notmuch-sync-backend)))))
-    (if (featurep! +afew)
+    (if (modulep! +afew)
         (format "%s && %s" sync-cmd afew-cmd)
       sync-cmd)))
 
@@ -60,18 +63,20 @@
 (defun +notmuch/update ()
   "Sync notmuch emails with server."
   (interactive)
-  (with-current-buffer (compile (+notmuch-get-sync-command))
-    (add-hook
-     'compilation-finish-functions
-     (lambda (buf status)
-       (if (equal status "finished\n")
-           (progn
-             (kill-buffer buf)
-             (notmuch-refresh-all-buffers)
-             (message "Notmuch sync successful"))
-         (user-error "Failed to sync notmuch data")))
-     nil
-     'local)))
+  (let ((compilation-buffer-name-function (lambda (_) (format "*notmuch update*"))))
+   (with-current-buffer (compile (+notmuch-get-sync-command))
+     (add-hook
+      'compilation-finish-functions
+      (lambda (buf status)
+        (if (equal status "finished\n")
+            (progn
+              (delete-windows-on buf)
+              (bury-buffer buf)
+              (notmuch-refresh-all-buffers)
+              (message "Notmuch sync successful"))
+          (user-error "Failed to sync notmuch data")))
+      nil
+      'local))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()

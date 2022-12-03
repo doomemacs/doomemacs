@@ -1,5 +1,5 @@
 ;;; app/irc/autoload/ivy.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :completion ivy)
+;;;###if (modulep! :completion ivy)
 
 ;;;###autoload
 (defun +irc/ivy-jump-to-channel (&optional this-server)

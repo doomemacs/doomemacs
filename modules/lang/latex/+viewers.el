@@ -14,7 +14,7 @@
                                    "~/Applications/Skim.app"))))
        (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
        (add-to-list 'TeX-view-program-list
-                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -b %%n %%o %%b"
+                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -r -b %%n %%o %%b"
                                          app-path)))))
 
     (`sumatrapdf
@@ -38,7 +38,7 @@
        (add-to-list 'TeX-view-program-selection '(output-pdf "Evince"))))
 
     (`pdf-tools
-     (when (featurep! :tools pdf)
+     (when (modulep! :tools pdf)
        (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
        (when IS-MAC
          ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs.

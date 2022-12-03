@@ -15,9 +15,12 @@
   (setq-hook! 'scala-mode-hook
     comment-line-break-function #'+scala-comment-indent-new-line-fn)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (setq-hook! 'scala-mode-hook lsp-enable-indentation nil)
     (add-hook 'scala-mode-local-vars-hook #'lsp! 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'scala-mode-local-vars-hook #'tree-sitter! 'append))
 
   (set-ligatures! 'scala-mode
     ;; Functional
@@ -50,7 +53,3 @@
 (use-package! sbt-mode
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'+scala/open-repl :persist t))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'scala-mode-local-vars-hook #'tree-sitter!))

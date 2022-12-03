@@ -1,91 +1,121 @@
-#+TITLE:   lang/ruby
-#+DATE:    January 16, 2007
-#+SINCE:   v1.3
-#+STARTUP: inlineimages
+#+title:    :lang ruby
+#+subtitle: 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+#+created:  January 16, 2007
+#+since:    1.3
 
-* Table of contents :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#packages][Packages]]
-- [[#prerequisites][Prerequisites]]
-  - [[#ubuntu][Ubuntu]]
-  - [[#macos][MacOS]]
-  - [[#windows][Windows]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
-
-* Description
+* Description :unfold:
 This module add Ruby and optional Ruby on Rails support to Emacs.
 
-+ Code completion (robe)
-+ Syntax checking (flycheck)
-+ Jump-to-definitions (robe)
-+ Bundler
-+ Rubocop integration (flycheck)
+- Code completion ([[doom-package:robe]])
+- Syntax checking ([[doom-package:flycheck]])
+- Jump-to-definitions ([[doom-package:robe]])
+- Bundler
+- Rubocop integration ([[doom-package:flycheck]])
 
-** Module Flags
-+ =+lsp= Enables LangServer support for ruby. You must have =:tools lsp= enabled
-  for this to work, as well as the langserver (solargraph) installed on your
-  system.
-+ =+rvm= Enables RVM (Ruby Version Manager) integration.
-+ =+rbenv= Enables rbenv integration.
-+ =+chruby= Enables chruby integration.
-+ =+rails= Enables rails navigational commands, plus server+console integration.
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+- +chruby ::
+  Enable chruby integration.
+- +lsp ::
+  Enable LSP support for ~ruby-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports solargraph).
+- +rails ::
+  Enable rails navigational commands, plus server+console integration.
+- +rbenv ::
+  Enable rbenv integration.
+- +rvm ::
+  Enable RVM (Ruby Version Manager) integration.
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-+ [[https://github.com/endofunky/bundler.el][bundler]]
-+ [[https://github.com/plexus/chruby.el][chruby]] (=+chruby=)
-+ [[https://github.com/company-mode/company-inf-ruby][company-inf-ruby]]
-+ [[https://github.com/eschulte/jump.el][inflections]]
-+ [[https://github.com/nonsequitur/inf-ruby][inf-ruby]]
-+ [[https://github.com/arthurnn/minitest-emacs][minitest]]
-+ [[https://github.com/asok/projectile-rails][projectile-rails]] (=+rails=)
-+ [[https://github.com/asok/rake][rake]]
-+ [[https://github.com/senny/rbenv.el][rbenv]] (=+rbenv=)
-+ [[https://github.com/dgutov/robe][robe]]
-+ [[https://github.com/pezra/rspec-mode][rspec-mode]]
-+ [[https://github.com/rubocop-hq/rubocop-emacs][rubocop]]
-+ [[https://github.com/senny/rvm.el][rvm]] (=+rvm=)
+- [[doom-package:bundler]]
+- [[doom-package:chruby]] if [[doom-module:+chruby]]
+- [[doom-package:company-inf-ruby]] if :completion company
+- [[doom-package:inf-ruby]]
+- [[doom-package:minitest]]
+- [[doom-package:rake]]
+- [[doom-package:rbenv]] if [[doom-module:+rbenv]]
+- [[doom-package:robe]]
+- [[doom-package:rspec-mode]]
+- [[doom-package:rubocop]]
+- [[doom-package:rvm]] if [[doom-module:+rvm]]
+- if [[doom-module:+rails]]
+  - [[doom-package:inflections]]
+  - [[doom-package:projectile-rails]]
 
-* Prerequisites
-Many of this modules plugins require ruby with some version manager (RVM or
-Rbenv) and the rubocop gem.
+** Hacks
+/No hacks documented for this module./
 
-** Ubuntu
-You can follow [[https://gorails.com/setup/ubuntu/18.04][this guide]]. After ruby installation, run ~gem install rubocop~.
-** MacOS
-You can follow [[https://gorails.com/setup/osx/10.15-catalina][this guide]]. After ruby installation, run ~gem install rubocop~.
-** Windows
-You can follow [[https://gorails.com/setup/windows/10][this guide]]. After ruby installation, run ~gem install rubocop~.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Appendix
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires Ruby and the Rubocop gem. It is recommended you install
+both with some version manager (RVM or Rbenv).
+
+These guides will help you install Ruby:
+- [[https://gorails.com/setup/ubuntu/18.04][Ubuntu]]
+- [[https://gorails.com/setup/osx/10.15-catalina][MacOS]]
+- [[https://gorails.com/setup/windows/10][Windows]]
+
+Then run ~$ gem install rubocop~ to install rubocop.
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
 ** Commands
 *** robe
-| command              | key / ex command | description                                                        |
-|----------------------+------------------+--------------------------------------------------------------------|
-| ~robe-start~         | =SPC m \'=       | Open ruby lang server for auto-completions and jump to definitions |
-| ~robe-rails-refresh~ | =SPC m R=        | Refresh the lang server.                                           |
+| command              | key / ex command   | description                                                        |
+|----------------------+--------------------+--------------------------------------------------------------------|
+| ~robe-start~         | [[kbd:][<localleader> ']]  | Open ruby lang server for auto-completions and jump to definitions |
+| ~robe-rails-refresh~ | [[kbd:][<localleader> R]]  | Refresh the lang server.                                           |
 
 *** projectile-rails
-The projectile-rails prefix is =SPC m r=.  Here is some examples:
+The projectile-rails prefix is [[kbd:][<localleader> r]]:
+| command                       | key / ex command  | description                                       |
+|-------------------------------+-------------------+---------------------------------------------------|
+| ~projectile-rails-console~    | [[kbd:][<localleader> r r]] | Open Rails console                                |
+| ~projectile-rails-server~     | [[kbd:][<localleader> r R]] | Open Rails server                                 |
+| ~projectile-rails-find-model~ | [[kbd:][<localleader> r m]] | Find any model of the project                     |
+| ~projectile-rails-find-model~ | [[kbd:][<localleader> r M]] | Find the model related of currently open resource |
 
-| command                       | key / ex command | description                                       |
-|-------------------------------+------------------+---------------------------------------------------|
-| ~projectile-rails-console~    | =SPC m r r=      | Open Rails console                                |
-| ~projectile-rails-server~     | =SPC m r R=      | Open Rails server                                 |
-| ~projectile-rails-find-model~ | =SPC m r m=      | Find any model of the project                     |
-| ~projectile-rails-find-model~ | =SPC m r M=      | Find the model related of currently open resource |
 *** bundler
-The bundler prefix is =SPC m b=.  Here is some examples:
+The bundler prefix is [[kbd:][<localleader> b]]:
+| command          | key / ex command  | description         |
+|------------------+-------------------+---------------------|
+| ~bundle-install~ | [[kbd:][<localleader> b i]] | Runs bundle install |
+| ~bundle-update~  | [[kbd:][<localleader> b u]] | Runs bundle update  |
 
-| command          | key / ex command | description         |
-|------------------+------------------+---------------------|
-| ~bundle-install~ | =SPC m b i=      | Runs bundle install |
-| ~bundle-update~  | =SPC m b u=      | Runs bundle update  |
 *** rspec-mode
-The rspec-mode prefix is =SPC m t=.  Here is some examples:
-|                       |                  |                                   |
+The rspec-mode prefix is [[kbd:][<localleader> t]]:
 | command               | key / ex command | description                       |
 |-----------------------+------------------+-----------------------------------|
 | ~rspec-verify~        | =SPC m t v=      | Runs rspec on current file        |
 | ~rspec-verify-method~ | =SPC m t s=      | Runs rspec for the item on cursor |
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

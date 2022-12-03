@@ -14,7 +14,8 @@
   :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
-  (when (or (not (require 'mu4e-meta nil t))
+  (when (or (not (or (require 'mu4e-config nil t)
+                     (require 'mu4e-meta nil t)))
             (version< mu4e-mu-version "1.4"))
     (setq mu4e-maildir "~/.mail"
           mu4e-user-mail-address-list nil))
@@ -22,6 +23,49 @@
         (lambda (&rest _)
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  (when (version< mu4e-mu-version "1.8")
+    ;; Define aliases to maintain backwards compatibility. The list of suffixes
+    ;; were obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
+    (dolist (transferable-suffix
+             '("check-requirements" "contains-line-matching" "context-ask-user"
+               "context-autoswitch" "default-handler" "get-folder" "get-log-buffer"
+               "get-mail-process-filter" "guess-maildir" "key-val"
+               "longest-of-maildirs-and-bookmarks" "maildirs-with-query"
+               "main-action-str" "main-bookmarks" "main-maildirs" "main-menu"
+               "main-queue-size" "main-redraw-buffer"
+               "main-toggle-mail-sending-mode" "main-view" "main-view-queue"
+               "main-view-real" "main-view-real-1" "mark-ask-target"
+               "mark-check-target" "mark-clear" "mark-find-headers-buffer"
+               "mark-get-dyn-target" "mark-get-markpair" "mark-get-move-target"
+               "mark-in-context" "mark-initialize" "org-store-link-message"
+               "org-store-link-query" "pong-handler" "read-char-choice"
+               "read-patch-directory" "replace-first-line-matching"
+               "request-contacts-maybe" "rfc822-phrase-type" "start" "stop"
+               "temp-window" "update-contacts" "update-mail-and-index-real"
+               "update-mail-mode" "update-sentinel-func"))
+      (defalias (intern (concat "mu4e--" transferable-suffix))
+        (intern (concat "mu4e~" transferable-suffix))
+        "Alias to provide the API of mu4e 1.8 (mu4e~ ⟶ mu4e--).")
+      (dolist (transferable-proc-suffixes
+               '("add" "compose" "contacts" "eat-sexp-from-buf" "filter"
+                 "find" "index" "kill" "mkdir" "move" "ping" "remove"
+                 "sent" "sentinel" "start" "view"))
+        (defalias (intern (concat "mu4e--server-" transferable-proc-suffixes))
+          (intern (concat "mu4e~proc-" transferable-proc-suffixes))
+          "Alias to provide the API of mu4e 1.8 (mu4e~proc ⟶ mu4e--server)."))
+      (defalias 'mu4e-search-rerun #'mu4e-headers-rerun-search
+        "Alias to provide the API of mu4e 1.8.")
+      (defun mu4e (&optional background)
+        "If mu4e is not running yet, start it.
+Then, show the main window, unless BACKGROUND (prefix-argument)
+is non-nil."
+        (interactive "P")
+        (mu4e--start (and (not background) #'mu4e--main-view))))
+    (setq mu4e-view-show-addresses t
+          mu4e-view-show-images t
+          mu4e-view-image-max-width 800
+          mu4e-view-use-gnus t))
+
   (pcase +mu4e-backend
     (`mbsync
      (setq mu4e-get-mail-command "mbsync -a"
@@ -30,13 +74,8 @@
      (setq mu4e-get-mail-command "offlineimap -o -q")))
 
   (setq mu4e-update-interval nil
-        mu4e-view-show-addresses t
         mu4e-sent-messages-behavior 'sent
         mu4e-hide-index-messages t
-        ;; try to show images
-        mu4e-view-show-images t
-        mu4e-view-image-max-width 800
-        mu4e-view-use-gnus t ; the way of the future: https://github.com/djcb/mu/pull/1442#issuecomment-591695814
         ;; configuration for sending mail
         message-send-mail-function #'smtpmail-send-it
         smtpmail-stream-type 'starttls
@@ -47,9 +86,9 @@
         mu4e-compose-context-policy 'ask-if-none
         ;; use helm/ivy/vertico
         mu4e-completing-read-function
-        (cond ((featurep! :completion ivy)     #'ivy-completing-read)
-              ((featurep! :completion helm)    #'completing-read)
-              ((featurep! :completion vertico) #'completing-read)
+        (cond ((modulep! :completion ivy)     #'ivy-completing-read)
+              ((modulep! :completion helm)    #'completing-read)
+              ((modulep! :completion vertico) #'completing-read)
               (t #'ido-completing-read))
         mu4e-attachment-dir
         (concat
@@ -64,10 +103,11 @@
         ;; no need to ask
         mu4e-confirm-quit nil
         mu4e-headers-thread-single-orphan-prefix '("─>" . "─▶")
-        mu4e-headers-thread-orphan-prefix '("┬>" . "┬▶ ")
-        mu4e-headers-thread-last-child-prefix '("└>" . "╰▶")
-        mu4e-headers-thread-child-prefix '("├>" . "├▶")
-        mu4e-headers-thread-connection-prefix '("│" . "│ ")
+        mu4e-headers-thread-orphan-prefix        '("┬>" . "┬▶ ")
+        mu4e-headers-thread-connection-prefix    '("│ " . "│ ")
+        mu4e-headers-thread-first-child-prefix   '("├>" . "├▶")
+        mu4e-headers-thread-child-prefix         '("├>" . "├▶")
+        mu4e-headers-thread-last-child-prefix    '("└>" . "╰▶")
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account-stripe . 1)
@@ -175,7 +215,7 @@
 
   ;; Marks usually affect the current view
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
-    :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
+    :after #'mu4e-mark-execute-all (mu4e-search-rerun))
 
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
@@ -183,7 +223,7 @@
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
   (when (fboundp 'make-xwidget)
-    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-with-xwidget)))
+    (add-to-list 'mu4e-view-actions '("xwidgets view" . mu4e-action-view-in-xwidget)))
 
   ;; Detect empty subjects, and give users an opotunity to fill something in
   (defun +mu4e-check-for-subject ()
@@ -205,15 +245,18 @@
   ;; so if the header view is entered from a narrow frame,
   ;; it's probably worth trying to expand it
   (defun +mu4e-widen-frame-maybe ()
-    "Expand the frame with if it's less than `+mu4e-min-header-frame-width'."
-    (when (< (frame-width) +mu4e-min-header-frame-width)
-      (set-frame-width (selected-frame) +mu4e-min-header-frame-width)))
+    "Expand the mu4e-headers containing frame's width to `+mu4e-min-header-frame-width'."
+    (dolist (frame (frame-list))
+      (when (and (string= (buffer-name (window-buffer (frame-selected-window frame)))
+                          mu4e-headers-buffer-name)
+                 (< (frame-width) +mu4e-min-header-frame-width))
+        (set-frame-width frame +mu4e-min-header-frame-width))))
   (add-hook 'mu4e-headers-mode-hook #'+mu4e-widen-frame-maybe)
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (map! :map mu4e-main-mode-map
           :ne "h" #'+workspace/other))
 
@@ -298,7 +341,7 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
   ;; Due to evil, none of the marking commands work when making a visual selection in
   ;; the headers view of mu4e. Without overriding any evil commands we may actually
   ;; want to use in and evil selection, this can be easily fixed.
-  (when (featurep! :editor evil)
+  (when (modulep! :editor evil)
     (map! :map mu4e-headers-mode-map
           :v "*" #'mu4e-headers-mark-for-something
           :v "!" #'mu4e-headers-mark-for-read
@@ -321,9 +364,9 @@ This should already be the case yet it does not always seem to be."
 This is enacted by `+mu4e~main-action-str-prettier-a' and
 `+mu4e~main-keyval-str-prettier-a'.")
 
-  (advice-add #'mu4e~key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
-  (advice-add #'mu4e~main-action-str :override #'+mu4e~main-action-str-prettier-a)
-  (when (featurep! :editor evil)
+  (advice-add #'mu4e--key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
+  (advice-add #'mu4e--main-action-str :override #'+mu4e~main-action-str-prettier-a)
+  (when (modulep! :editor evil)
     ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
     (setq evil-collection-mu4e-end-region-misc "quit"))
 
@@ -334,10 +377,10 @@ This is enacted by `+mu4e~main-action-str-prettier-a' and
      +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
 
   (add-hook 'kill-emacs-hook #'+mu4e-lock-file-delete-maybe)
-  (advice-add 'mu4e~start :around #'+mu4e-lock-start)
+  (advice-add 'mu4e--start :around #'+mu4e-lock-start)
   (advice-add 'mu4e-quit :after #'+mu4e-lock-file-delete-maybe))
 
-(unless (featurep! +org)
+(unless (modulep! +org)
   (after! mu4e
     (defun org-msg-mode (&optional _)
       "Dummy function."
@@ -349,7 +392,7 @@ Ignores all arguments and returns nil."
 
 (use-package! org-msg
   :after mu4e
-  :when (featurep! +org)
+  :when (modulep! +org)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"
@@ -382,6 +425,15 @@ Usefull for affecting HTML export config.")
         :desc "attach" "C-c C-a" #'+mu4e/attach-files
         :localleader
         :desc "attach" "a" #'+mu4e/attach-files)
+
+  ;; I feel like it's reasonable to expect files to be attached
+  ;; in the order you attach them, not the reverse.
+  (defadvice! +org-msg-attach-attach-in-order-a (file &rest _args)
+    "Link FILE into the list of attachment."
+    :override #'org-msg-attach-attach
+    (interactive (list (read-file-name "File to attach: ")))
+    (let ((files (org-msg-get-prop "attachment")))
+      (org-msg-set-prop "attachment" (nconc files (list file)))))
 
   (defvar +mu4e-compose-org-msg-toggle-next t ; t to initialise org-msg
     "Whether to toggle ")
@@ -544,7 +596,7 @@ Must be set before org-msg is loaded to take effect.")
 ;;
 ;;; Gmail integration
 
-(when (featurep! +gmail)
+(when (modulep! +gmail)
   (after! mu4e
     (defvar +mu4e-gmail-accounts nil
       "Gmail accounts that do not contain \"gmail\" in address and maildir.
@@ -575,7 +627,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
     ;;
     ;; Gmail will handle the rest.
     (defun +mu4e--mark-seen (docid _msg target)
-      (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
+      (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))
 
     (defvar +mu4e--last-invalid-gmail-action 0)
 
@@ -592,7 +644,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                                 (when (< 2 (- (float-time) +mu4e--last-invalid-gmail-action))
                                   (sit-for 1))
                                 (setq +mu4e--last-invalid-gmail-action (float-time)))
-                       (mu4e~proc-remove docid))))
+                       (mu4e--server-remove docid))))
           (alist-get 'trash mu4e-marks)
           (list :char '("d" . "▼")
                 :prompt "dtrash"
@@ -600,7 +652,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "+T-N"))))
+                            (mu4e--server-move docid (mu4e--mark-check-target target) "+T-N"))))
           ;; Refile will be my "archive" function.
           (alist-get 'refile mu4e-marks)
           (list :char '("r" . "▼")
@@ -609,7 +661,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                 :action (lambda (docid msg target)
                           (if (+mu4e-msg-gmail-p msg)
                               (+mu4e--mark-seen docid msg target)
-                            (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+                            (mu4e--server-move docid (mu4e--mark-check-target target) "-N")))
                 #'+mu4e--mark-seen))
 
     ;; This hook correctly modifies gmail flags on emails when they are marked.

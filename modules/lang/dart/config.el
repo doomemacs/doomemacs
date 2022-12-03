@@ -1,9 +1,9 @@
 ;;; lang/dart/config.el -*- lexical-binding: t; -*-
 
 (use-package! dart-mode
-  :defer t
+  :hook (dart-mode . rainbow-delimiters-mode)
   :config
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'dart-mode-local-vars-hook #'lsp! 'append))
   (set-ligatures! '(dart-mode)
     ;; Functional
@@ -27,17 +27,21 @@
 
 
 (use-package! flutter
-  :when (featurep! +flutter)
+  :when (modulep! +flutter)
   :defer t
   :init
   (map! :after dart-mode
         :map dart-mode-map
         :localleader
-        "r" #'flutter-run-or-hot-reload))
+         (:prefix ("f" . "flutter")
+          "f" #'flutter-run
+          "q" #'flutter-quit
+          "r" #'flutter-hot-reload
+          "R" #'flutter-hot-restart)))
 
 
 (use-package! lsp-dart
-  :when (featurep! +lsp)
+  :when (modulep! +lsp)
   :defer t
   :config
   (map! :map dart-mode-map
@@ -51,7 +55,7 @@
 
 
 (use-package! hover
-  :when (featurep! +flutter)
+  :when (modulep! +flutter)
   :defer t
   :config
   (map! :map dart-mode-map

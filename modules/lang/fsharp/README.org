@@ -1,58 +1,70 @@
-#+TITLE:   lang/fsharp
-#+DATE:    May 22, 2019
-#+SINCE:   {replace with next tagged release version}
-#+STARTUP: inlineimages
+#+title:    :lang fsharp
+#+subtitle: ML stands for Microsoft's Language
+#+created:  May 23, 2019
+#+since:    21.12.0 (#1327)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-  - [[#mono][Mono]]
-    - [[#osx][OSX]]
-    - [[#arch-linux][Arch Linux]]
-  - [[#lsp][LSP]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
+* Description :unfold:
+This module adds [[https://fsharp.org/][F#]] support to Doom Emacs.
 
-* Description
-# A summary of what this module does.
+*Includes:*
+- Code completion
+- eldoc support
+- Syntax checking
 
-# + If possible, include a brief list of feature highlights here
-# + Like code completion, syntax checking or available snippets
-# + Include links to packages & external things where possible
-This module adds [[https://fsharp.org/][F#]] support.
-+ Code completion
-+ eldoc support
-+ Syntax checking
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+lsp= Enables lsp-fsharp (this requires ~:tools lsp~ to be enabled).
-** Plugins
-+ [[https://github.com/fsharp/emacs-fsharp-mode][fsharp-mode]]
-+ =+lsp=
-  + [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]]
+** Module flags
+- +lsp ::
+  Enable LSP support for ~fsharp-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]].).
+
+** Packages
+- [[doom-package:fsharp-mode]]
+- [[doom-package:lsp-fsharp]] if [[doom-package:+lsp]]
+
 ** Hacks
-None so far.
+/No hacks documented for this module./
 
-* Prerequisites
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+To get code completion/syntax checking when not using lsp, you will need to
+install [[https://www.mono-project.com/][mono]].
+
 ** Mono
-To get code completion/syntax checking when not using lsp, you will need to install [[https://www.mono-project.com/][mono]].
 *** OSX
-Do *NOT* install mono via brew. See this [[https://github.com/fsharp/FsAutoComplete/issues/331][issue]].
+*Do NOT install mono via brew.* See this [[https://github.com/fsharp/FsAutoComplete/issues/331][issue]].
+
 *** Arch Linux
-#+BEGIN_SRC sh
-sudo pacman -S mono
-#+END_SRC
+#+begin_src sh
+pacman -S mono
+#+end_src
+
 ** LSP
 The language server is automatically installed by [[https://github.com/emacs-lsp/lsp-mode/blob/master/clients/lsp-fsharp.el][lsp-fsharp]].
-* Features
-An in-depth list of features, how to use them, and their dependencies.
 
-* Configuration
-How to configure this module, including common problems and how to address them.
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-Common issues and their solution, or places to look for help.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

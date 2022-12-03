@@ -1,58 +1,72 @@
-#+title:   app/everywhere
-#+date:    February 7, 2021
-#+since:   v3.0
-#+startup: inlineimages nofold
+#+title:    :app everywhere
+#+subtitle: *leave* Emacs!? You must be joking
+#+created:  February 07, 2021
+#+since:    21.12.0 (#4630)
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-
-* Description
+* Description :unfold:
 This module adds system-wide popup Emacs windows for quick edits.
 
 ** Maintainers
-+ [[https://github.com/tecosaur][@tecosaur]]
+- [[doom-user:][@tecosaur]]
 
-** Module Flags
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-This module provides no flags.
+** Module flags
+/This module has no flags./
 
-** Plugins
-+ [[https://github.com/tecosaur/emacs-everywhere][emacs-everywhere]]
+** Packages
+- [[doom-package:emacs-everywhere]]
 
-* Prerequisites
+** Hacks
+/No hacks documented for this module./
 
-On Linux =xclip=, =xdotool=, =xprop=, and =xwininfo= are needed.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-On MacOS, Emacs must be allowed to "control your computer" under *Settings > Accessibility*.
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Features
+This module requires:
+- *On Linux:* (these should be available through your OS package manager)
+  - =xclip=
+  - =xdotool=
+  - =xprop=
+  - =xwininfo=
+- *On MacOS:* that Emacs is allowed to "control your computer" under *System
+  Preferences > Accessibility*.
 
+* Usage
 To use this, invoke the =emacs-everywhere= executable. This can be done in two
 ways:
-+ ~emacsclient --eval "(emacs-everywhere)"~
-+ ~doom everywhere~
+- ~$ emacsclient --eval "(emacs-everywhere)"~
+- ~$ doom +everywhere~
 
 It is recommended that you add a keybinding for this.
 
 From here, you can edit away to your hearts content in the created frame, then
-return to the original window and paste the content with =C-c C-c= or =SPC q f=.
-To exit without pasting, use =C-c C-k=.
+return to the original window and paste the content with [[kbd:][C-c C-c]] or [[kbd:][SPC q f]]. To
+exit without pasting, use [[kbd:][C-c C-k]].
 
 * Configuration
-
-=emacs-everywhere= likes to guess if you triggered it from an application which
+[[doom-package:emacs-everywhere]] likes to guess if you triggered it from an application which
 supports markdown. Configure ~emacs-everywhere-markdown-windows~ and
 ~emacs-everywhere-markdown-apps~ to improve how accurate this is on your system.
 
-By default, when markdown is detected, ~markdown-mode~ is used. It is possible to
-instead use pandoc to convert the content to Org (and export to markdown when
+By default, when markdown is detected, ~markdown-mode~ is used. It is possible
+to instead use pandoc to convert the content to Org (and export to markdown when
 closing the frame) by setting ~emacs-everywhere-major-mode-function~ to
-=#'org-mode=.
+~#'org-mode~.
 
-Most other behaviour is implemented as hooks on ~emacs-everywhere-init-hooks~.
+Most other behavior is implemented as hooks on ~emacs-everywhere-init-hooks~.
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

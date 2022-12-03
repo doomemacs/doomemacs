@@ -1,0 +1,10 @@
+#+title:   :input
+#+created: May 13, 2019
+#+since:   2.0.9
+
+* Description
+Modules in this category extend Emacs support for additional keyboard layouts
+and input methods for non-English languages.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

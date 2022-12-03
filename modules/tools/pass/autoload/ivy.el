@@ -1,5 +1,5 @@
 ;;; tools/pass/autoload/ivy.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :completion ivy)
+;;;###if (modulep! :completion ivy)
 
 ;;;###autoload
 (defun +pass/ivy (arg)

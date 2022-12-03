@@ -5,7 +5,6 @@
   :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
   :mode "\\.erb\\'"
   :mode "\\.[lh]?eex\\'"
-  :mode "\\.sface\\'"
   :mode "\\.jsp\\'"
   :mode "\\.as[cp]x\\'"
   :mode "\\.ejs\\'"
@@ -163,8 +162,13 @@
   (set-company-backend! 'slim-mode 'company-web-slim))
 
 
-(when (featurep! +lsp)
+(when (modulep! +lsp)
   (add-hook! '(html-mode-local-vars-hook
                web-mode-local-vars-hook
                nxml-mode-local-vars-hook)
-             #'lsp!))
+             :append #'lsp!))
+
+(when (modulep! +tree-sitter)
+  (add-hook! '(html-mode-local-vars-hook
+               mhtml-mode-local-vars-hook)
+             :append #'tree-sitter!))

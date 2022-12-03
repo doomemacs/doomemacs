@@ -1,81 +1,75 @@
-#+TITLE: lang/go
-#+DATE:  January 16, 2017
-#+SINCE: v2.0
-#+STARTUP: inlineimages
+#+title:    :lang go
+#+subtitle: The hipster dialect
+#+created:  June 15, 2015
+#+since:    0.7
 
-* Table of Contents :TOC:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#go][Go]]
-  - [[#dependencies][Dependencies]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
-
-* Description
+* Description :unfold:
 This module adds [[https://golang.org][Go]] support, with optional (but recommended) LSP support via
 [[https://github.com/golang/tools/blob/master/gopls/README.md][gopls]].
 
-+ Code completion (~gocode~)
-+ Documentation lookup (~godoc~)
-+ Eldoc support (~go-eldoc~)
-+ REPL (~gore~)
-+ Syntax-checking (~flycheck~)
-+ Auto-formatting on save (~gofmt~) (requires =:editor (format +onsave)=)
-+ Code navigation & refactoring (~go-guru~)
-+ [[../../editor/file-templates/templates/go-mode][File templates]]
-+ [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
-+ Generate testing code (~go-gen-test~)
-+ Code checking (~flycheck-golangci-lint~)
+- Code completion (~gocode~)
+- Documentation lookup (~godoc~)
+- Eldoc support (~go-eldoc~)
+- REPL (~gore~)
+- Syntax-checking (~flycheck~)
+- Auto-formatting on save (~gofmt~) (requires [[doom-module::editor format +onsave]])
+- Code navigation & refactoring (~go-guru~)
+- [[../../editor/file-templates/templates/go-mode][File templates]]
+- [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
+- Generate testing code (~go-gen-test~)
+- Code checking (~flycheck-golangci-lint~)
 
-** Module Flags
-+ =+lsp= Enables integration for the gopls LSP server. It is highly recommended
-  you use this, as the non-LSP experience is deprecated (and poor).
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/dominikh/go-mode.el][go-mode]]
-+ [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]]
-+ [[https://github.com/dominikh/go-mode.el][go-guru]]
-+ [[https://github.com/manute/gorepl-mode][gorepl-mode]]
-+ [[https://github.com/brantou/emacs-go-tag][go-tag]]
-+ [[https://github.com/mdempsky/gocode][company-go]]* =DEPRECATED=
-+ [[https://github.com/s-kostyaev/go-gen-test][go-gen-test]]
-+ [[https://github.com/weijiangan/flycheck-golangci-lint][flycheck-golangci-lint]] (if =:checkers syntax= is enabled)
+** Module flags
+- +lsp ::
+  Enable LSP support for ~go-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports gopls). Highly recommended, as the non-LSP experience is deprecated
+  (and poor).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
-* Prerequisites
+** Packages
+- [[doom-package:company-go]] if [[doom-module::completion company]] (DEPRECATED)
+- [[doom-package:flycheck-golangci-lint]] if [[doom-module::checkers syntax]]
+- [[doom-package:go-eldoc]]
+- [[doom-package:go-gen-test]]
+- [[doom-package:go-guru]]
+- [[doom-package:go-mode]]
+- [[doom-package:gorepl-mode]]
+- [[doom-package:go-tag]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires Go, a valid =$GOPATH=, and a number of go packages, listed
+below.
+
 ** Go
-To get started with Go, you need the ~go~ tool:
-
-*** MacOS
-#+BEGIN_SRC bash
-brew install go
-#+END_SRC
-
-*** Arch Linux
-#+BEGIN_SRC bash
-sudo pacman -S go
-#+END_SRC
-
-*** openSUSE
-#+BEGIN_SRC sh :dir /sudo::
-sudo zypper install go
-#+END_SRC
+- macOS: ~$ brew install go~
+- Arch Linux: ~$ pacman -S go~
+- openSUSE: ~$ zypper install go~
 
 ** Dependencies
-This module requires a valid ~GOPATH~, and the following Go packages:
+- ~gocode~ (for code completion & eldoc support)
+- ~godoc~ (for documentation lookup)
+- ~gorename~ (for extra refactoring commands)
+- ~gore~ (for the REPL)
+- ~guru~ (for code navigation & refactoring commands)
+- ~goimports~ (/optional/: for auto-formatting code on save & fixing imports)
+- ~gotests~ (for generate test code)
+- ~gomodifytags~ (for manipulating tags)
 
-+ ~gocode~ (for code completion & eldoc support)
-+ ~godoc~ (for documentation lookup)
-+ ~gorename~ (for extra refactoring commands)
-+ ~gore~ (for the REPL)
-+ ~guru~ (for code navigation & refactoring commands)
-+ ~goimports~ (optional: for auto-formatting code on save & fixing imports)
-+ ~gotests~ (for generate test code)
-+ ~gomodifytags~ (for manipulating tags)
-
-#+BEGIN_SRC sh
+#+begin_src sh
 export GOPATH=~/work/go
 
 go install github.com/x-motemen/gore/cmd/gore@latest
@@ -86,14 +80,29 @@ go install golang.org/x/tools/cmd/gorename@latest
 go install golang.org/x/tools/cmd/guru@latest
 go install github.com/cweill/gotests/gotests@latest
 go install github.com/fatih/gomodifytags@latest
-#+END_SRC
+#+end_src
 
-+ ~golangci-lint~ (optional: for flycheck to integrate golangci-lint results)
-  it is recommended to *not* use ~go get~ to install this one, check the
+- ~golangci-lint~ (optional: for flycheck to integrate golangci-lint results) it
+  is recommended to *not* use ~$ go get~ to install this one, check the
   [[https://github.com/golangci/golangci-lint#binary-release][documentation]].
 
-* TODO Features
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
-* TODO Troubleshooting
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -98,10 +98,10 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
       ;; quotes or not, via `+latex-enable-plain-double-quotes'.
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p))))
   ;; Hook LSP, if enabled.
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
-               #'lsp!))
+               :append #'lsp!))
   (map! :localleader
         :map latex-mode-map
         :desc "View"          "v" #'TeX-view
@@ -116,7 +116,7 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
 
 
 (use-package! tex-fold
-  :when (featurep! +fold)
+  :when (modulep! +fold)
   :hook (TeX-mode . +latex-TeX-fold-buffer-h)
   :hook (TeX-mode . TeX-fold-mode)
   :config
@@ -128,7 +128,7 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
   (advice-add #'cdlatex-math-symbol :after #'+latex-fold-last-macro-a)
   (advice-add #'cdlatex-math-modify :after #'+latex-fold-last-macro-a)
   ;; Fold after snippets.
-  (when (featurep! :editor snippets)
+  (when (modulep! :editor snippets)
     (add-hook! 'TeX-fold-mode-hook
       (defun +latex-fold-snippet-contents-h ()
         (add-hook! 'yas-after-exit-snippet-hook :local
@@ -207,7 +207,7 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
 
 
 (use-package! cdlatex
-  :when (featurep! +cdlatex)
+  :when (modulep! +cdlatex)
   :hook (LaTeX-mode . cdlatex-mode)
   :hook (org-mode . org-cdlatex-mode)
   :config
@@ -225,7 +225,7 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
         "<" nil
         ;; TAB is used for CDLaTeX's snippets and navigation. But we have
         ;; Yasnippet for that.
-        (:when (featurep! :editor snippets)
+        (:when (modulep! :editor snippets)
           "TAB" nil)
         ;; AUCTeX takes care of auto-inserting {} on _^ if you want, with
         ;; `TeX-electric-sub-and-superscript'.
@@ -242,7 +242,7 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
 
 
 (use-package! auctex-latexmk
-  :when (featurep! +latexmk)
+  :when (modulep! +latexmk)
   :after latex
   :init
   ;; Pass the -pdf flag when TeX-PDF-mode is active.
@@ -255,12 +255,12 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
 
 
 (use-package! evil-tex
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (LaTeX-mode . evil-tex-mode))
 
 
 (use-package! company-auctex
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :defer t
   :init
   (add-to-list '+latex--company-backends #'company-auctex-environments nil #'eq)
@@ -268,7 +268,7 @@ Math faces should stay fixed by the mixed-pitch blacklist, this is mostly for
 
 
 (use-package! company-math
-  :when (featurep! :completion company)
+  :when (modulep! :completion company)
   :defer t
   :init
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))

@@ -9,7 +9,7 @@ Enables `electric-indent-local-mode' in MODES.
 
 \(fn MODES &key WORDS CHARS)"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+electric--init-%s-h" mode))))
       (cond ((null (car-safe plist))

@@ -68,7 +68,7 @@ capture, the end position, and the output buffer.")
                  :unless '(:add sp-point-before-word-p sp-point-before-same-p))
 
   ;; Highly rust blocks correctly
-  (when (featurep! :lang rust)
+  (when (modulep! :lang rust)
     (add-to-list 'markdown-code-lang-modes '("rust" . rustic-mode)))
 
   ;; Don't trigger autofill in code blocks (see `auto-fill-mode')
@@ -89,7 +89,7 @@ capture, the end position, and the output buffer.")
         "o" #'markdown-open
         "p" #'markdown-preview
         "e" #'markdown-export
-        (:when (featurep! +grip)
+        (:when (modulep! +grip)
          "p" #'grip-mode)
         (:prefix ("i" . "insert")
          :desc "Table Of Content"  "T" #'markdown-toc-generate-toc
@@ -117,10 +117,19 @@ capture, the end position, and the output buffer.")
          :desc "New blockquote"    "q" #'markdown-insert-blockquote
          :desc "Strike through"    "s" #'markdown-insert-strike-through
          :desc "Table"             "t" #'markdown-insert-table
-         :desc "Wiki link"         "w" #'markdown-insert-wiki-link)))
+         :desc "Wiki link"         "w" #'markdown-insert-wiki-link)
+        (:prefix ("t" . "toggle")
+         :desc "Inline LaTeX"      "e" #'markdown-toggle-math
+         :desc "Code highlights"   "f" #'markdown-toggle-fontify-code-blocks-natively
+         :desc "Inline images"     "i" #'markdown-toggle-inline-images
+         :desc "URL hiding"        "l" #'markdown-toggle-url-hiding
+         :desc "Markup hiding"     "m" #'markdown-toggle-markup-hiding
+         :desc "Wiki links"        "w" #'markdown-toggle-wiki-links
+         :desc "GFM checkbox"      "x" #'markdown-toggle-gfm-checkbox)))
+
 
 (use-package! evil-markdown
-  :when (featurep! :editor evil +everywhere)
+  :when (modulep! :editor evil +everywhere)
   :hook (markdown-mode . evil-markdown-mode)
   :config
   (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)

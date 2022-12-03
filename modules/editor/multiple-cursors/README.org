@@ -1,0 +1,78 @@
+#+title:    :editor multiple-cursors
+#+subtitle: Make all your mistakes at once
+#+created:  October 13, 2021
+#+since:    21.12.0
+
+* Description :unfold:
+This module adds a multiple cursors implementation to Emacs (two, if you use
+evil) that loosely take after multi-cursors in Atom or Sublime Text.
+
+** Maintainers
+- [[doom-user:][@hlissner]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- if [[doom-module::editor evil]]
+  - [[doom-package:evil-multiedit]]
+  - [[doom-package:evil-mc]]
+- else
+  - [[doom-package:multiple-cursors]]
+
+** Hacks
+- Attempts to smooth over [[doom-package:multiple-cursors]]' incompatibilities with [[doom-package:evil]], which
+  is used internally in some third party plugins.
+- Attempts to smooth over [[doom-package:evil-mc]]'s incompatibilities with other packages, like
+  [[doom-package:lispy]].
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+** evil-mc
+- The [[doom-package:evil-mc]] keys are under the [[kbd:][gz]] prefix, e.g.
+  - [[kbd:][gzz]] to toggle new (frozen) cursors at point.
+  - [[kbd:][gzt]] to toggle mirroring on and off (or switch to insert mode to activate
+    them).
+  - [[kbd:][gzA]] to place cursors at the end of each selected line.
+  - [[kbd:][gzI]] will place them at the beginning.
+- There's also the ex command ~:mc/REGEXP/FLAGS~, for laying down cursors by
+  regex.
+
+** evil-multiedit
+Designates "interactive edit" regions. Only the textual changes to them are mirrored.
+
+- [[kbd:][M-d]] to iedit the symbol at point. Again to iedit its next match.
+- [[kbd:][M-S-d]] to do it backwards.
+- [[kbd:][R]] (in visual mode) to iedit all matches of the selection at point in the
+  buffer.
+- Or ~:iedit/REGEX~ to iedit all matches of REGEX.
+
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

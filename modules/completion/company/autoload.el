@@ -30,7 +30,7 @@ Examples:
 
   (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (if (null (car backends))
         (setq +company-backend-alist
               (delq (assq mode +company-backend-alist)
@@ -155,3 +155,18 @@ C-x C-l."
   (let ((company-selection-wrap-around t))
     (call-interactively #'+company/dabbrev)
     (company-select-previous-or-abort)))
+
+;;;###autoload
+(defun +company/completing-read ()
+  "Complete current company candidates in minibuffer.
+
+Uses ivy, helm, vertico, or ido, if available."
+  (interactive)
+  (cond ((modulep! :completion ivy)
+         (call-interactively #'counsel-company))
+        ((modulep! :completion helm)
+         (call-interactively #'helm-company))
+        ((not company-candidates)
+         (user-error "No company candidates available"))
+        ((when-let (cand (completing-read "Candidate: " company-candidates))
+           (company-finish cand)))))

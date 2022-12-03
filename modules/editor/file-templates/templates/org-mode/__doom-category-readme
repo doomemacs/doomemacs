@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Doom category readme
+# --
+:PROPERTIES:
+:ID:       `(doom-docs-generate-id)`
+:END:
+#+title:   `(+file-templates-module-for-path)`
+#+created: `(format-time-string "%B %d, %Y")`
+#+since:   `(car (split-string doom-version "-"))`
+$0
+* Description
+Replace this with a description of what modules in this category are for,
+including any important information (like load order constraints).

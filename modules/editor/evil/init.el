@@ -20,10 +20,10 @@
 ;;    `evil-collection-list' (now I can just copy it from time to time).
 
 (when (and (not noninteractive)
-           (not doom-reloading-p)
-           (featurep! +everywhere))
+           (not (doom-context-p 'reload))
+           (modulep! +everywhere))
 
-  (setq evil-collection-company-use-tng (featurep! :completion company +tng)
+  (setq evil-collection-company-use-tng (modulep! :completion company +tng)
         ;; must be set before evil/evil-collection is loaded
         evil-want-keybinding nil)
 
@@ -94,6 +94,7 @@ variable for an explanation of the defaults (in comments). See
       atomic-chrome
       auto-package-update
       beginend
+      bluetooth
       bm
       bookmark
       (buff-menu "buff-menu")
@@ -136,7 +137,7 @@ variable for an explanation of the defaults (in comments). See
       elisp-slime-nav
       embark
       emms
-      ,@(when EMACS29+ '(emoji))
+      ,@(if (> emacs-major-version 28) '(emoji))
       epa
       ert
       eshell
@@ -226,7 +227,7 @@ variable for an explanation of the defaults (in comments). See
       scroll-lock
       selectrum
       sh-script
-      ,@(when EMACS28+ '(shortdoc))
+      ,@(if (> emacs-major-version 27) '(shortdoc))
       simple
       simple-mpc
       slime
@@ -273,7 +274,7 @@ variable for an explanation of the defaults (in comments). See
 Unlike `evil-collection-init', this respects `+evil-collection-disabled-list',
 and complains if a module is loaded too early (during startup)."
     (unless (memq (or (car-safe module) module) disabled-list)
-      (doom-log "Initialized evil-collection-%s %s"
+      (doom-log "editor:evil: loading evil-collection-%s %s"
                 (or (car-safe module) module)
                 (if doom-init-time "" "(too early!)"))
       (with-demoted-errors "evil-collection error: %s"
@@ -293,9 +294,9 @@ and complains if a module is loaded too early (during startup)."
           (append (list doom-leader-key doom-localleader-key
                         doom-leader-alt-key)
                   evil-collection-key-blacklist
-                  (when (featurep! :tools lookup)
+                  (when (modulep! :tools lookup)
                     '("gd" "gf" "K"))
-                  (when (featurep! :tools eval)
+                  (when (modulep! :tools eval)
                     '("gr" "gR"))
                   '("[" "]" "gz" "<escape>")))
 

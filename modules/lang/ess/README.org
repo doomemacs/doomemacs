@@ -1,34 +1,65 @@
-#+TITLE: :lang ess
+#+title:    :lang ess
+#+subtitle: 73.6% of all statistics are made up
+#+created:  February 05, 2018
+#+since:    21.12.0 (#410)
 
+* Description :unfold:
 This module adds support for various statistics languages, including R, S-Plus,
 SAS, Julia and Stata.
 
-* Table of Contents :TOC:
-- [[#prequisites][Prequisites]]
-- [[#appendix][Appendix]]
-  - [[#keybindings][Keybindings]]
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-* Prequisites
+** Module flags
+- +stan ::
+  Enable support for ~stan-mode~, including code completion and syntax checking.
+
+** Packages
+- [[doom-package:ess]]
+- [[doom-package:ess-R-data-view]]
+- [[doom-package:polymode]]
+- [[doom-package:poly-R]]
+- if [[doom-module:+stan]]
+  - [[doom-package:company-stan]] if [[doom-module::completion company]]
+  - [[doom-package:eldoc-stan]]
+  - [[doom-package:flycheck-stan]] if [[doom-module::checkers syntax]]
+  - [[doom-package:stan-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
 This module has several optional dependencies:
 
-+ [[https://github.com/jimhester/lintr][lintr]]: Enables R linting.
-+ [[https://github.com/REditorSupport/languageserver][languageserver]]: Enables LSP support in an R buffer (with =+lsp= flag).
- 
-* Appendix
-** Keybindings
-*** :map ess-doc-map
+- [[https://github.com/jimhester/lintr][lintr]]: for R linting.
+- [[https://github.com/REditorSupport/languageserver][languageserver]]: for LSP support in an R buffer (with [[doom-module:+lsp]] flag).
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+** :map ess-doc-map
 | key | command                    |
 |-----+----------------------------|
 | "h" | ess-display-help-on-object |
 | "p" | ess-R-dv-pprint            |
 | "t" | ess-R-dv-ctable            |
-*** :map ess-mode-map
+
+** :map ess-mode-map
 | key          | command               |
 |--------------+-----------------------|
 | "<s-return>" | ess-eval-line         |
 | "<up>"       | comint-next-input     |
 | "<down>"     | comint-previous-input |
-**** :localleader
+
+** :localleader
 | state | key         | command                                           |
 |-------+-------------+---------------------------------------------------|
 | :nv   | ","         | ess-eval-region-or-function-or-paragraph-and-step |
@@ -55,3 +86,19 @@ This module has several optional dependencies:
 | :n    | "cm"        | ess-noweb-mark-chunk                              |
 | :n    | "cp"        | ess-noweb-previous-chunk                          |
 | :n    | "cn"        | ess-noweb-next-chunk                              |
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

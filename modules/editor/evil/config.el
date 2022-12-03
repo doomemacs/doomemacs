@@ -23,14 +23,13 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-i-jump nil)  ; we do this ourselves
 (defvar evil-want-C-u-scroll t)  ; moved the universal arg to <leader> u
 (defvar evil-want-C-u-delete t)
-(defvar evil-want-C-w-scroll t)
 (defvar evil-want-C-w-delete t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)
 (defvar evil-respect-visual-line-mode nil)
 
 (use-package! evil
-  :hook (doom-init-modules . evil-mode)
+  :hook (doom-after-modules-config . evil-mode)
   :demand t
   :preface
   (setq evil-ex-search-vim-style-regexp t
@@ -52,9 +51,9 @@ directives. By default, this only recognizes C directives.")
         ;; errors will abort macros, so suppress them:
         evil-kbd-macro-suppress-motion-error t
         evil-undo-system
-        (cond ((featurep! :emacs undo +tree) 'undo-tree)
-              ((featurep! :emacs undo) 'undo-fu)
-              (EMACS28+ 'undo-redo)))
+        (cond ((modulep! :emacs undo +tree) 'undo-tree)
+              ((modulep! :emacs undo) 'undo-fu)
+              ((> emacs-major-version 27) 'undo-redo)))
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
@@ -64,17 +63,21 @@ directives. By default, this only recognizes C directives.")
   :config
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  ;; stop copying each visual state move to the clipboard:
-  ;; https://github.com/emacs-evil/evil/issues/336
-  ;; grokked from:
-  ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
-  (advice-add #'evil-visual-update-x-selection :override #'ignore)
+  ;; PERF: Stop copying the selection to the clipboard each time the cursor
+  ;; moves in visual mode. Why? Because on most non-X systems (and in terminals
+  ;; with clipboard plugins like xclip.el active), Emacs will spin up a new
+  ;; process to communicate with the clipboard for each movement. On Windows,
+  ;; older versions of macOS (pre-vfork), and Waylang (without pgtk), this is
+  ;; super expensive and can lead to freezing and/or zombie processes.
+  ;;
+  ;; UX: It also clobbers clipboard managers (see emacs-evil/evil#336).
+  (setq evil-visual-update-x-selection-p nil)
 
   ;; Start help-with-tutorial in emacs state
   (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
 
   ;; Done in a hook to ensure the popup rules load as late as possible
-  (add-hook! 'doom-init-modules-hook
+  (add-hook! 'doom-after-modules-config-hook
     (defun +evil--init-popup-rules-h ()
       (set-popup-rules!
         '(("^\\*evil-registers" :size 0.3)
@@ -82,7 +85,7 @@ directives. By default, this only recognizes C directives.")
 
   ;; Change the cursor color in emacs state. We do it this roundabout way
   ;; to ensure changes in theme doesn't break these colors.
-  (add-hook! '(doom-load-theme-hook doom-init-modules-hook)
+  (add-hook! '(doom-load-theme-hook doom-after-modules-config-hook)
     (defun +evil-update-cursor-color-h ()
       (put 'cursor 'evil-emacs-color  (face-foreground 'warning))
       (put 'cursor 'evil-normal-color (face-background 'cursor))))
@@ -425,7 +428,7 @@ directives. By default, this only recognizes C directives.")
 
       ;; implement dictionary keybinds
       ;; evil already defines 'z=' to `ispell-word' = correct word at point
-      (:when (featurep! :checkers spell)
+      (:when (modulep! :checkers spell)
        :n  "zg"   #'+spell/add-word
        :n  "zw"   #'+spell/remove-word
        :m  "[s"   #'+spell/previous-error
@@ -442,21 +445,21 @@ directives. By default, this only recognizes C directives.")
       :m  "[u"    #'+evil:url-decode
       :m  "]y"    #'+evil:c-string-encode
       :m  "[y"    #'+evil:c-string-decode
-      (:when (featurep! :lang web)
+      (:when (modulep! :lang web)
        :m "]x"   #'+web:encode-html-entities
        :m "[x"   #'+web:decode-html-entities)
-      (:when (featurep! :ui vc-gutter)
-       :m "]d"   #'git-gutter:next-hunk
-       :m "[d"   #'git-gutter:previous-hunk)
-      (:when (featurep! :ui hl-todo)
+      (:when (modulep! :ui vc-gutter)
+       :m "]d"   #'+vc-gutter/next-hunk
+       :m "[d"   #'+vc-gutter/previous-hunk)
+      (:when (modulep! :ui hl-todo)
        :m "]t"   #'hl-todo-next
        :m "[t"   #'hl-todo-previous)
-      (:when (featurep! :ui workspaces)
+      (:when (modulep! :ui workspaces)
        :n "gt"   #'+workspace:switch-next
        :n "gT"   #'+workspace:switch-previous
        :n "]w"   #'+workspace/switch-right
        :n "[w"   #'+workspace/switch-left)
-      (:when (featurep! :ui tabs)
+      (:when (modulep! :ui tabs)
        :n "gt"   #'+tabs:next-or-goto
        :n "gT"   #'+tabs:previous-or-goto)
 
@@ -491,14 +494,14 @@ directives. By default, this only recognizes C directives.")
       :v  "g="    #'evil-numbers/inc-at-pt-incremental
       :v  "g-"    #'evil-numbers/dec-at-pt-incremental
       :v  "g+"    #'evil-numbers/inc-at-pt
-      (:when (featurep! :tools lookup)
+      (:when (modulep! :tools lookup)
        :nv "K"   #'+lookup/documentation
        :nv "gd"  #'+lookup/definition
        :nv "gD"  #'+lookup/references
        :nv "gf"  #'+lookup/file
        :nv "gI"  #'+lookup/implementations
        :nv "gA"  #'+lookup/assignments)
-      (:when (featurep! :tools eval)
+      (:when (modulep! :tools eval)
        :nv "gr"  #'+eval:region
        :n  "gR"  #'+eval/buffer
        :v  "gR"  #'+eval:replace-region
@@ -607,7 +610,7 @@ directives. By default, this only recognizes C directives.")
       :v "gL" #'evil-lion-right
 
       ;; Omni-completion
-      (:when (featurep! :completion company)
+      (:when (modulep! :completion company)
        (:prefix "C-x"
         :i "C-l"    #'+company/whole-lines
         :i "C-k"    #'+company/dict-or-keywords

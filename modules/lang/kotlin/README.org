@@ -1,36 +1,54 @@
-#+TITLE:   lang/kotlin
-#+DATE:    March 28, 2019
-#+SINCE:   v3.0.0
-#+STARTUP: inlineimages
+#+title:    :lang kotlin
+#+subtitle: A Java(Script) that won't depress you
+#+created:  March 28, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
+* Description :unfold:
+This module adds [[https://kotlinlang.org/][Kotlin]] support to Doom Emacs.
 
-* Description
-This module adds Kotlin support to Emacs.
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Module Flags
-+ =+lsp= Enables integration with [[https://github.com/emacs-lsp/lsp-mode][kotlin-language-server]]. This requires the
-  =:tools lsp= module.
+** Module flags
+- +lsp ::
+  Enable LSP support for ~kotlin-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports [[https://github.com/emacs-lsp/lsp-mode][kotlin-language-server]]).
 
-** Plugins
-+ kotlin-mode
-+ flycheck-kotlin
+** Packages
+- [[doom-package:flycheck-kotlin]] if [[doom-module::checkers syntax]]
+- [[doom-package:kotlin-mode]]
 
-* Prerequisites
-TODO
+** Hacks
+/No hacks documented for this module./
 
-* Features
-TODO
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Configuration
-TODO
+* TODO Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+#+begin_quote
+ 🔨 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
+#+end_quote
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-TODO
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

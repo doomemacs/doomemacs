@@ -89,7 +89,6 @@ Modules that reconfigure or augment packages or features built into Emacs.
 + wanderlust =+gmail= - TODO
 
 * :input
-+ [[file:../modules/input/bidi/README.org][bidi]] - (tfel ot) thgir etirw uoy gnipleh
 + [[file:../modules/input/chinese/README.org][chinese]] - TODO
 + [[file:../modules/input/japanese/README.org][japanese]] - TODO
 + [[file:../modules/input/layout/README.org][layout]] =+azerty +bepo= - TODO
@@ -195,7 +194,6 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/taskrunner/README.org][taskrunner]] - TODO
 + [[file:../modules/tools/terraform/README.org][terraform]] - TODO
 + tmux - TODO
-+ [[file:../modules/tools/tree-sitter/README.org][tree-sitter]]  - syntax and parsing, sitting in a tree...
 + [[file:../modules/tools/upload/README.org][upload]] - TODO
 
 * :ui

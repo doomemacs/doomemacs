@@ -66,7 +66,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
 \(fn MODES &key DEFINITION IMPLEMENTATIONS TYPE-DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC)"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
+  (dolist (mode (ensure-list modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup--init-%s-handlers-h" mode))))
       (if (null (car plist))
@@ -106,7 +106,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 (defun +lookup--set-handler (spec functions-var &optional async enable)
   (when spec
     (cl-destructuring-bind (fn . plist)
-        (doom-enlist spec)
+        (ensure-list spec)
       (if (not enable)
           (remove-hook functions-var fn 'local)
         (put fn '+lookup-async (or (plist-get plist :async) async))
@@ -240,13 +240,13 @@ Will return nil if neither is available. These require ripgrep to be installed."
   (unless identifier
     (let ((query (rxt-quote-pcre identifier)))
       (ignore-errors
-        (cond ((featurep! :completion ivy)
+        (cond ((modulep! :completion ivy)
                (+ivy-file-search :query query)
                t)
-              ((featurep! :completion helm)
+              ((modulep! :completion helm)
                (+helm-file-search :query query)
                t)
-              ((featurep! :completion vertico)
+              ((modulep! :completion vertico)
                (+vertico-file-search :query query)
                t))))))
 
@@ -278,10 +278,10 @@ otherwise falling back to ffap.el (find-file-at-point)."
                 (or (file-exists-p guess)
                     (ffap-url-p guess)))
            (find-file-at-point guess))
-          ((and (featurep! :completion ivy)
+          ((and (modulep! :completion ivy)
                 (doom-project-p))
            (counsel-file-jump guess (doom-project-root)))
-          ((and (featurep! :completion vertico)
+          ((and (modulep! :completion vertico)
                 (doom-project-p))
            (+vertico/find-file-in (doom-project-root) guess))
           ((find-file-at-point (ffap-prompter guess))))

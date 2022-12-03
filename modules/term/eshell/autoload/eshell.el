@@ -148,7 +148,7 @@ Once the eshell process is killed, the previous frame layout is restored."
 (defun +eshell/search-history ()
   "Search the eshell command history with helm, ivy or `eshell-list-history'."
   (interactive)
-  (cond ((featurep! :completion ivy)
+  (cond ((modulep! :completion ivy)
          (require 'em-hist)
          (let* ((ivy-completion-beg (eshell-bol))
                 (ivy-completion-end (point-at-eol))
@@ -163,9 +163,9 @@ Once the eshell process is killed, the previous frame layout is restored."
                         (ring-elements eshell-history-ring)))
                      :initial-input input
                      :action #'ivy-completion-in-region-action)))
-        ((featurep! :completion helm)
+        ((modulep! :completion helm)
          (helm-eshell-history))
-        ((featurep! :completion vertico)
+        ((modulep! :completion vertico)
          (forward-char 1) ;; Move outside of read only prompt text.
          (consult-history))
         ((eshell-list-history))))

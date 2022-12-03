@@ -1,7 +1,7 @@
 ;;; emacs/undo/config.el -*- lexical-binding: t; -*-
 
 (use-package! undo-fu
-  :unless (featurep! +tree)
+  :unless (modulep! +tree)
   :hook (doom-first-buffer . undo-fu-mode)
   :config
   ;; Increase undo history limits to reduce likelihood of data loss
@@ -25,7 +25,7 @@
 
 
 (use-package! undo-fu-session
-  :unless (featurep! +tree)
+  :unless (modulep! +tree)
   :hook (undo-fu-mode . global-undo-fu-session-mode)
   :custom (undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/"))
   :config
@@ -52,7 +52,7 @@
 
 
 (use-package! undo-tree
-  :when (featurep! +tree)
+  :when (modulep! +tree)
   ;; Branching & persistent undo
   :hook (doom-first-buffer . global-undo-tree-mode)
   :custom (undo-tree-history-directory-alist `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))

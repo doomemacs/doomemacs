@@ -1,130 +1,155 @@
-#+TITLE:   lang/python
-#+DATE:    Oct, 2019
-#+SINCE:   v2.0.9
-#+STARTUP: inlineimages
+#+title:    :lang python
+#+subtitle: Beautiful is better than ugly
+#+created:  June 15, 2015
+#+since:    0.7
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-  - [[#language-server-protocol-support][Language Server Protocol Support]]
-- [[#features][Features]]
-  - [[#keybindings][Keybindings]]
-- [[#configuration][Configuration]]
+* Description :unfold:
+This module adds [[https://www.python.org/][Python]] support to Doom Emacs.
 
-* Description
-Adds Python support to Doom Emacs.
+- Syntax checking ([[doom-package:flycheck]])
+- Snippets
+- Run tests ([[doom-package:nose]], [[doom-package:pytest]])
+- Auto-format (with ~black~, requires [[doom-module::editor format]])
+- LSP integration (=mspyls=, =pyls=, or =pyright=)
 
-+ Syntax checking (~flycheck~)
-+ Snippets
-+ Run tests (~nose~, ~pytest~)
-+ Auto-format (~black~), requires ~:editor format~
-+ LSP integration (mspyls, pyls, or pyright)
+** Maintainers
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-+ ~+lsp~ Language Server Protocol support
-+ ~+pyright~ Use the pyright LSP server instead of mspyls or pyls (requires
-  ~+lsp~).
-+ ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
-+ ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
-+ ~+poetry~ Python packaging, dependency management, and virtual environment
-  support via [[https://python-poetry.org/][Poetry]]
-+ ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
-+ [[https://github.com/Wilfred/pyimport][pyimport]]*
-+ [[https://github.com/paetzke/py-isort.el][py-isort]]*
-+ [[https://github.com/emacsattic/nose/][nose]]*
-+ [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]*
-+ [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]*
-+ [[https://github.com/pwalsh/pipenv.el][pipenv]]*
-+ if ~+conda~
-  + [[https://github.com/necaris/conda.el][conda]]*
-+ if ~+pyenv~
-  + [[https://github.com/pythonic-emacs/pyenv-mode][pyenv]]*
-+ if ~+poetry~
-  + [[https://github.com/galaunay/poetry.el][poetry]]*
-+ if ~+lsp~ and ~:tools lsp~
-  + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
-  + if ~+pyright~
-    + [[https://github.com/emacs-lsp/lsp-pyright][lsp-pyright]]
-  + else
-    + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]
-+ if ~+cython~
-  + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][cython-mode]]
-  + if ~:checkers syntax~: [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][flycheck-cython]]
+** Module flags
+- +conda ::
+  Enable python virtual environment support via [[https://conda.io/en/latest/][Conda]].
+- +cython ::
+  Enable support for Cython files support.
+- +lsp ::
+  Enable LSP support for ~python-mode~. Requires [[doom-module::tools lsp]] and a langserver
+  (supports mspyls, pyls, and pyright).
+- +poetry ::
+  Enable Python packaging, dependency management, and virtual environment
+  support via [[https://python-poetry.org/][Poetry]].
+- +pyenv ::
+  Enable Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
+- +pyright ::
+  Use the pyright LSP server instead of mspyls or pyls (requires [[doom-module:+lsp]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
-* Prerequisites
-This module has no hard prerequisites, but a few soft ones:
+** Packages
+- [[doom-package:anaconda-mode]]
+- [[doom-package:conda]]
+- [[doom-package:nose]]
+- [[doom-package:pipenv]]
+- [[doom-package:pip-requirements]]
+- [[doom-package:poetry]] if [[doom-module:+poetry]]
+- [[doom-package:pyenv]]
+- [[doom-package:pyimport]]
+- [[doom-package:py-isort]]
+- [[doom-package:python-pytest]]
+- if [[doom-module:+cython]]
+  - [[doom-package:cython-mode]]
+  - [[doom-package:flycheck-cython]] if [[doom-module::checkers syntax]]
+- if [[doom-module:+lsp]]
+  - if [[doom-module:+pyright]]
+    - [[doom-package:lsp-pyright]]
+  - else
+    - [[doom-package:lsp-python-ms]]
 
-+ For this module's supported test runners:
-  + ~pip install pytest~
-  + ~pip install nose~
-+ The ~:editor format~ module uses [[https://github.com/psf/black][Black]] for python files :: ~pip install black~
-+ ~pyimport~ requires Python's module ~pyflakes~ :: ~pip install pyflakes~
-+ ~py-isort~ requires [[https://github.com/timothycrosley/isort][isort]] to be installed :: ~pip install isort~
-+ Python virtual environments install instructions at:
-  + [[https://github.com/pyenv/pyenv][pyenv]]
-  + [[https://conda.io/en/latest/][Conda]]
-  + [[https://python-poetry.org/][Poetry]]
-  + [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
-+ ~cython~ requires [[https://cython.org/][Cython]]
+** Hacks
+- [[doom-package:anaconda-mode]] is configured to activate when [[doom-package:lsp-mode]] (or [[doom-package:eglot]]) don't -- or
+  fail to.
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module has no hard requirements, but softly depends on:
+- For this module's supported test runners:
+  - ~$ pip install pytest~
+  - ~$ pip install nose~
+- The [[doom-module::editor format]] module uses Black for python files: ~$ pip install black~
+- [[doom-package:pyimport]] requires Python's module ~pyflakes~: ~$ pip install pyflakes~
+- [[doom-package:py-isort]] requires [[https://github.com/timothycrosley/isort][isort]] to be installed: ~pip install isort~
+- Python virtual environments install instructions at:
+  - [[https://github.com/pyenv/pyenv][pyenv]]
+  - [[https://conda.io/en/latest/][Conda]]
+  - [[https://python-poetry.org/][Poetry]]
+  - [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
+- ~cython~ requires [[https://cython.org/][Cython]]
 
 ** Language Server Protocol Support
-For LSP support the =:tools lsp= module must be enabled, along with this
-module's =+lsp= flag. By default, it supports =mspyls= and =pyls=, in that
-order. With the =+pyright= flag, it will try Pyright first.
+For LSP support the [[doom-module::tools lsp]] module must be enabled, along with this module's
+[[doom-module:+lsp]] flag. By default, it supports [[doom-package:mspyls]] and [[doom-package:pyls]], in that order. With the
+[[doom-module:+pyright]] flag, it will try Pyright first.
 
 Each of these servers must be installed on your system via your OS package
 manager or manually:
+- [[https://pypi.org/project/python-language-server/][*pyls*]] can be installed with ~$ pip install python-language-server[all]~.
+- *mspyls* can be installed by typing ~M-x lsp-install-server RET mspyls~.
+- *pyright* can be installed with ~$ pip install pyright~ or ~$ npm i -g
+  pyright~.
 
-+ [[https://pypi.org/project/python-language-server/][*pyls*]] can be installed with ~pip install python-language-server[all]~.
-+ *mspyls* can be installed by typing =M-x lsp-install-server RET mspyls=.
-+ *pyright* can be installed with ~pip install pyright~ or ~npm i -g pyright~.
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Features
-This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
-Server]], [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
+This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language Server]],
+[[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], or [[https://github.com/microsoft/pyright][pyright]], see [[Language Server Protocol Support][LSP Support]].
 
-To enable support for auto-formatting with black enable ~:editor format~ in
-~init.el~ file.
+To enable support for auto-formatting with black enable [[doom-module::editor format]].
 
 ** Keybindings
+| Binding           | Description                      |
+|-------------------+----------------------------------|
+| [[kbd:][<localleader> c c]] | ~Compile Cython buffer~          |
+| [[kbd:][<localleader> i i]] | ~Insert mising imports~          |
+| [[kbd:][<localleader> i r]] | ~Remove unused imports~          |
+| [[kbd:][<localleader> i s]] | ~Sort imports~                   |
+| [[kbd:][<localleader> i o]] | ~Optimize imports~               |
+| [[kbd:][<localleader> t r]] | ~nosetests-again~                |
+| [[kbd:][<localleader> t a]] | ~nosetests-all~                  |
+| [[kbd:][<localleader> t s]] | ~nosetests-one~                  |
+| [[kbd:][<localleader> t v]] | ~nosetests-module~               |
+| [[kbd:][<localleader> t A]] | ~nosetests-pdb-all~              |
+| [[kbd:][<localleader> t O]] | ~nosetests-pdb-one~              |
+| [[kbd:][<localleader> t V]] | ~nosetests-pdb-module~           |
+| [[kbd:][<localleader> t f]] | ~python-pytest-file~             |
+| [[kbd:][<localleader> t k]] | ~python-pytest-file-dwim~        |
+| [[kbd:][<localleader> t t]] | ~python-pytest-function~         |
+| [[kbd:][<localleader> t m]] | ~python-pytest-function-dwim~    |
+| [[kbd:][<localleader> t r]] | ~python-pytest-repeat~           |
+| [[kbd:][<localleader> t p]] | ~python-pytest-popup~            |
+| [[kbd:][<localleader> g d]] | ~anaconda-mode-find-definitions~ |
+| [[kbd:][<localleader> g h]] | ~anaconda-mode-show-doc~         |
+| [[kbd:][<localleader> g a]] | ~anaconda-mode-find-assignments~ |
+| [[kbd:][<localleader> g f]] | ~anaconda-mode-find-file~        |
+| [[kbd:][<localleader> g u]] | ~anaconda-mode-find-references~  |
 
-| Binding             | Description                      |
-|---------------------+----------------------------------|
-| ~<localleader> c c~ | ~Compile Cython buffer~          |
-| ~<localleader> i i~ | ~Insert mising imports~          |
-| ~<localleader> i r~ | ~Remove unused imports~          |
-| ~<localleader> i s~ | ~Sort imports~                   |
-| ~<localleader> i o~ | ~Optimize imports~               |
-| ~<localleader> t r~ | ~nosetests-again~                |
-| ~<localleader> t a~ | ~nosetests-all~                  |
-| ~<localleader> t s~ | ~nosetests-one~                  |
-| ~<localleader> t v~ | ~nosetests-module~               |
-| ~<localleader> t A~ | ~nosetests-pdb-all~              |
-| ~<localleader> t O~ | ~nosetests-pdb-one~              |
-| ~<localleader> t V~ | ~nosetests-pdb-module~           |
-| ~<localleader> t f~ | ~python-pytest-file~             |
-| ~<localleader> t k~ | ~python-pytest-file-dwim~        |
-| ~<localleader> t t~ | ~python-pytest-function~         |
-| ~<localleader> t m~ | ~python-pytest-function-dwim~    |
-| ~<localleader> t r~ | ~python-pytest-repeat~           |
-| ~<localleader> t p~ | ~python-pytest-popup~            |
-| ~<localleader> g d~ | ~anaconda-mode-find-definitions~ |
-| ~<localleader> g h~ | ~anaconda-mode-show-doc~         |
-| ~<localleader> g a~ | ~anaconda-mode-find-assignments~ |
-| ~<localleader> g f~ | ~anaconda-mode-find-file~        |
-| ~<localleader> g u~ | ~anaconda-mode-find-references~  |
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
 
-* Configuration
 This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
 [[https://jupyter.org/][jupyter]] shells:
-
-#+BEGIN_SRC elisp
-;; ~/.doom.d/config.el
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el
 (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 (setq +python-jupyter-repl-args '("--simple-prompt"))
-#+END_SRC
+#+end_src
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

@@ -11,7 +11,7 @@
 (defun +modeline--set-var-and-refresh-bars-fn (&optional symbol value)
   (when symbol
     (set-default symbol value))
-  (when doom-init-time
+  (when (fboundp '+modeline-refresh-bars-h)
     (+modeline-refresh-bars-h)))
 
 
@@ -143,7 +143,7 @@ If DEFAULT is non-nil, apply to all future buffers. Modelines are defined with
   "Set the modeline to NAME on HOOKS.
 See `def-modeline!' on how modelines are defined."
   (let ((fn (intern (format "+modeline-set-%s-format-h" name))))
-    (dolist (hook (doom-enlist hooks))
+    (dolist (hook (ensure-list hooks))
       (when after-init-time
         (dolist (name (mapcar #'car +modeline-format-alist))
           (remove-hook hook (intern (format "+modeline-set-%s-format-h" name)))))
@@ -242,7 +242,7 @@ LHS and RHS will accept."
           anzu--last-isearch-string anzu--overflow-p)))
 
 (use-package! evil-anzu
-  :when (featurep! :editor evil)
+  :when (modulep! :editor evil)
   :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight
   :config (global-anzu-mode +1))
 

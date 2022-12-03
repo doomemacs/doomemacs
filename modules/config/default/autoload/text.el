@@ -44,11 +44,14 @@
   (interactive)
   (if-let (filename (or (buffer-file-name (buffer-base-buffer))
                         (bound-and-true-p list-buffers-directory)))
-      (message "Copied path to clipboard: %s"
-               (kill-new (abbreviate-file-name
-                          (if root
-                              (file-relative-name filename root)
-                            filename))))
+      (let ((path (abbreviate-file-name
+                   (if root
+                       (file-relative-name filename root)
+                     filename))))
+        (kill-new path)
+        (if (string= path (car kill-ring))
+            (message "Copied path: %s" path)
+          (user-error "Couldn't copy filename in current buffer")))
     (error "Couldn't find filename in current buffer")))
 
 ;;;###autoload
@@ -142,7 +145,7 @@ possible, or just one char if that's not possible."
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
         ((= n 1)
-         (cond ((or (not (featurep! +smartparens))
+         (cond ((or (not (modulep! +smartparens))
                     (not (bound-and-true-p smartparens-mode))
                     (and (memq (char-before) (list ?\  ?\t))
                          (save-excursion

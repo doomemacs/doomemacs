@@ -27,6 +27,7 @@
     (defalias 'org-babel-execute:rust #'org-babel-execute:rustic)
     (add-to-list 'org-src-lang-modes '("rust" . rustic)))
   :config
+  (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
   (set-docsets! 'rustic-mode "Rust")
   (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
@@ -39,14 +40,17 @@
   (setq rustic-babel-format-src-block nil
         rustic-format-trigger nil)
 
-  (if (not (featurep! +lsp))
+  (if (not (modulep! +lsp))
       (after! rustic-flycheck
         (add-to-list 'flycheck-checkers 'rustic-clippy))
     (setq rustic-lsp-client
-          (if (featurep! :tools lsp +eglot)
+          (if (modulep! :tools lsp +eglot)
               'eglot
             'lsp-mode))
     (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'rustic-mode-local-vars-hook #'tree-sitter! 'append))
 
   ;; HACK If lsp/eglot isn't available, it attempts to install lsp-mode via
   ;;   package.el. Doom manages its own dependencies through straight so disable
@@ -72,16 +76,3 @@
         (:prefix ("t" . "cargo test")
           :desc "all"              "a" #'rustic-cargo-test
           :desc "current test"     "t" #'rustic-cargo-current-test)))
-
-
-(use-package! racer
-  :unless (featurep! +lsp)
-  :hook (rustic-mode-local-vars . racer-mode)
-  :config
-  (set-lookup-handlers! 'rustic-mode
-    :definition '(racer-find-definition :async t)
-    :documentation '+rust-racer-lookup-documentation))
-
-;; Tree sitter
-(eval-when! (featurep! +tree-sitter)
-  (add-hook! 'rustic-mode-local-vars-hook #'tree-sitter!))

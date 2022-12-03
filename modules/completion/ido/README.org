@@ -1,0 +1,56 @@
+#+title:    :completion ido
+#+subtitle: A foil for other search engines
+#+created:  February 20, 2017
+#+since:    2.0.0
+
+* Description :unfold:
+Interactive DO things. The completion engine that is /mostly/ built-into Emacs.
+
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:crm-custom]]
+- [[doom-package:flx-ido]]
+- [[doom-package:ido-completing-read+]]
+- [[doom-package:ido-sort-mtime]]
+- [[doom-package:ido-vertical-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* Usage
+#+begin_quote
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+[[doom-suggest-faq:][Ask a question?]]
+
+** Helm vs Ivy vs Ido vs Vertico
+See [[id:4f36ae11-1da8-4624-9c30-46b764e849fc][this answer]].
+
+* Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

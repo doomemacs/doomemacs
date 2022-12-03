@@ -209,7 +209,7 @@ the command buffer."
 
 ;;;###package helm
 ;;;###package helm-ag
-(when (featurep! :completion helm)
+(when (modulep! :completion helm)
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window-fn))
 
   ;; Fix #897: "cannot open side window" error when TAB-completing file links

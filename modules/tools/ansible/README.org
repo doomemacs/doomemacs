@@ -1,0 +1,53 @@
+#+title:    :tools ansible
+#+subtitle: Allow silly people to focus on silly things
+#+created:  September 11, 2018
+#+since:    21.12.0 (#881)
+
+* Description :unfold:
+/(No description)/
+
+** Maintainers
+*This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+
+** Packages
+- [[doom-package:ansible]]
+- [[doom-package:ansible-doc]]
+- [[doom-package:company-ansible]] if [[doom-module::completion company]]
+- [[doom-package:jinja2-mode]]
+- [[doom-package:yaml-mode]]
+
+** Hacks
+/No hacks documented for this module./
+
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+This module requires [[https://www.ansible.com/][Ansible]].
+
+* TODO Usage
+#+begin_quote
+🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

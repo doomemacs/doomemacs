@@ -22,5 +22,5 @@
 ;;
 ;;; Keybinds
 
-(when (featurep! +bindings)
+(when (modulep! +bindings)
   (load! "+emacs-bindings"))

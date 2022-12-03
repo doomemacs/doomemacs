@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Doom documentation
+# --
+:PROPERTIES:
+:ID:       `(doom-docs-generate-id)`
+:END:
+#+title:    ${1:Title}
+#+subtitle: ${2:Subtitle}
+
+$0

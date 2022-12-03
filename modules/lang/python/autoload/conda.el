@@ -1,5 +1,5 @@
 ;;; lang/python/autoload/conda.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +conda)
+;;;###if (modulep! +conda)
 
 ;;;###autoload
 (defun +python/set-conda-home ()

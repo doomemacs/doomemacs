@@ -1,58 +1,71 @@
-#+TITLE:   lang/rest
-#+DATE:    March 17, 2017
-#+SINCE:   v1.3
-#+STARTUP: inlineimages nofold
+#+title:    :lang rest
+#+subtitle: Emacs as a REST client
+#+created:  February 20, 2017
+#+since:    2.0.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#maintainers][Maintainers]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
+* Description :unfold:
+This module turns Emacs into a [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] client.
 
-* Description
-This module adds [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] support.
-
-+ Code-completion (~company-restclient~)
-+ Code evaluation
-+ Imenu support for ~restclient-mode~
-+ org-mode: babel support (~ob-restclient~)
+- Code-completion (~company-restclient~)
+- Code evaluation
+- Imenu support for ~restclient-mode~
+- org-mode: babel support (~ob-restclient~)
 
 #+begin_quote
-~restclient-mode~ is tremendously useful for automated or quick testing REST
-APIs. My workflow is to open an ~org-mode~ buffer, create a restclient source
-block and hack away. ~restclient-mode~ and ~company-restclient~ power this
-arcane wizardry.
+ 💡 ~restclient-mode~ is tremendously useful for automated or quick testing REST
+    APIs. My workflow is to open an ~org-mode~ buffer, create a restclient
+    source block and hack away. ~restclient-mode~ and ~company-restclient~ power
+    this arcane wizardry.
 #+end_quote
 
 ** Maintainers
-This module has no dedicated maintainers.
+- [[doom-user:][@hlissner]]
 
-** Module Flags
-This module provides no flags.
+[[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/pashky/restclient.el][restclient]]
-+ =:completion company=
-  + [[https://github.com/iquiw/company-restclient][company-restclient]]
+** Module flags
+- +jq ::
+  Enable native support for reading and processing REST responses with jq.
+  *Requires the =jq= command line utility.*
+
+** Packages
+- [[doom-package:company-restclient]] if [[doom-module::completion company]]
+- [[doom-package:restclient]]
+- if [[doom-module:+jq]]
+  - [[doom-package:restclient-jq]]
+  - [[doom-package:jq-mode]]
 
 ** Hacks
-+ restclient has been modified not to silently reject self-signed or invalid
+- Adds imenu support to ~restclient-mode~.
+- [[doom-package:restclient]] has been modified not to silently reject self-signed or invalid
   certificates.
-+ Adds imenu support to ~restclient-mode~.
 
-* Prerequisites
-This module has no prerequisites.
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
 
-* Features
-# An in-depth list of features, how to use them, and their dependencies.
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-* Configuration
-# How to configure this module, including common problems and how to address them.
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
+
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
-# Common issues and their solution, or places to look for help.
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

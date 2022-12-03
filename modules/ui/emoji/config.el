@@ -5,8 +5,8 @@
   :config
   (setq emojify-styles
         (delq
-         nil (list (if (featurep! +ascii) 'ascii)
-                   (if (featurep! +github) 'github)
-                   (if (featurep! +unicode) 'unicode))))
+         nil (list (if (modulep! +ascii) 'ascii)
+                   (if (modulep! +github) 'github)
+                   (if (modulep! +unicode) 'unicode))))
 
   (emojify-set-emoji-styles emojify-styles))

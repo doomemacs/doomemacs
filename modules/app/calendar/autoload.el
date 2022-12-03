@@ -1,6 +1,8 @@
 ;;; app/calendar/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +calendar--wconf nil)
+(defvar +calendar-workspace-name "*calendar*"
+  "Name of the workspace created by `=calendar', dedicated to calfw.")
 
 (defun +calendar--init ()
   (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
@@ -13,11 +15,15 @@
 (defun =calendar ()
   "Activate (or switch to) `calendar' in its workspace."
   (interactive)
-  (if (featurep! :ui workspaces)
+  (if (modulep! :ui workspaces)
       (progn
-        (+workspace-switch "Calendar" t)
-        (doom/switch-to-scratch-buffer)
-        (+calendar--init)
+        (+workspace-switch +calendar-workspace-name t)
+        (unless (memq (buffer-local-value 'major-mode
+                                          (window-buffer (selected-window)))
+                      '(cfw:details-mode
+                        cfw:calendar-mode))
+          (doom/switch-to-scratch-buffer)
+          (+calendar--init))
         (+workspace/display))
     (setq +calendar--wconf (current-window-configuration))
     (delete-other-windows)
@@ -28,9 +34,9 @@
 (defun +calendar/quit ()
   "TODO"
   (interactive)
-  (if (featurep! :ui workspaces)
-      (when (+workspace-exists-p "Calendar")
-        (+workspace/delete "Calendar"))
+  (if (modulep! :ui workspaces)
+      (when (+workspace-exists-p +calendar-workspace-name)
+        (+workspace/delete +calendar-workspace-name))
     (when (window-configuration-p +calendar--wconf)
       (set-window-configuration +calendar--wconf))
     (setq +calendar--wconf nil))

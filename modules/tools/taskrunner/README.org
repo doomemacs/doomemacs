@@ -1,38 +1,61 @@
-#+TITLE:   tools/taskrunner
-#+DATE:    November 9, 2019
-#+SINCE:   {replace with next tagged release version}
-#+STARTUP: inlineimages
+#+title:    :tools taskrunner
+#+subtitle: Taskrunner for all your projects
+#+created:  November 09, 2019
+#+since:    21.12.0
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-  - [[#module-flags][Module Flags]]
-  - [[#plugins][Plugins]]
-- [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
-- [[#configuration][Configuration]]
-- [[#troubleshooting][Troubleshooting]]
+#+begin_quote
+ 🚧 *This module is deprecated.* The module is too trivial and taskrunner is no
+    longer maintained.
+#+end_quote
 
-* Description
-This module integrates [[https://github.com/emacs-taskrunner/emacs-taskrunner][Taskrunner]] into Doom Emacs, which scraps runnable tasks
+* Description :unfold:
+This module integrates [[doom-package:taskrunner]] into Doom Emacs, which scraps runnable tasks
 from build systems like make, gradle, npm and the like.
 
-** Module Flags
-This module provides no flags.
+** Maintainers
+/This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
 
-** Plugins
-+ [[https://github.com/emacs-taskrunner/emacs-taskrunner][emacs-taskrunner]]
-+ [[https://github.com/emacs-taskrunner/ivy-taskrunner][ivy-taskrunner]]
-+ [[https://github.com/emacs-taskrunner/helm-taskrunner][helm-taskrunner]]
+** Module flags
+/This module has no flags./
 
-* Prerequisites
-This module has no prerequisites.
+** Packages
+- [[doom-package:emacs-taskrunner]]
+- [[doom-package:helm-taskrunner]] if [[doom-module::completion helm]]
+- [[doom-package:ivy-taskrunner]] if [[doom-module::completion ivy]]
 
-* Features
-Keybindings
+** Hacks
+/No hacks documented for this module./
 
+** TODO Changelog
+# This section will be machine generated. Don't edit it by hand.
+/This module does not have a changelog yet./
+
+* Installation
+[[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
+
+/This module has no external requirements./
+
+* TODO Usage
+#+begin_quote
+ 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+Keybindings:
 | Binding | Description          |
 | ~p z~   | ~List project tasks~ |
 
-* Configuration
+* TODO Configuration
+#+begin_quote
+ 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+#+end_quote
 
 * Troubleshooting
+/There are no known problems with this module./ [[doom-report:][Report one?]]
+
+* Frequently asked questions
+/This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
+
+* TODO Appendix
+#+begin_quote
+ 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+#+end_quote

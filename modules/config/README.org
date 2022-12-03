@@ -1,0 +1,10 @@
+#+title:   :config
+#+created: July 29, 2021
+#+since:   21.12.0
+
+* Description
+Modules in this category provide sane defaults or improve your ability to
+configure Emacs. It is best to load these last.
+
+* Frequently asked questions
+/This category has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]

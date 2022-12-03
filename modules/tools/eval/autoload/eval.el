@@ -24,11 +24,33 @@
 (defun +eval-display-results-in-overlay (output &optional source-buffer)
   "Display OUTPUT in a floating overlay next to the cursor."
   (require 'eros)
-  (let ((this-command #'+eval/buffer-or-region)
-        eros-overlays-use-font-lock)
+  (let* ((this-command #'+eval/buffer-or-region)
+         (prefix eros-eval-result-prefix)
+         (lines (split-string output "\n"))
+         (prefixlen (length prefix))
+         (len (+ (apply #'max (mapcar #'length lines))
+                 prefixlen))
+         (col (- (current-column) (window-hscroll)))
+         (next-line? (or (cdr lines)
+                         (< (- (window-width)
+                               (save-excursion (goto-char (point-at-eol))
+                                               (- (current-column)
+                                                  (window-hscroll))))
+                            len)))
+         (pad (if next-line?
+                  (+ (window-hscroll) prefixlen)
+                0))
+         (where (if next-line?
+                    (line-beginning-position 2)
+                  (line-end-position)))
+         eros-eval-result-prefix
+         eros-overlays-use-font-lock)
     (with-current-buffer (or source-buffer (current-buffer))
-      (eros--make-result-overlay output
-        :where (line-end-position)
+      (eros--make-result-overlay
+          (concat (make-string (max 0 (- pad prefixlen)) ?\s)
+                  prefix
+                  (string-join lines (concat "\n" (make-string pad ?\s))))
+        :where where
         :duration eros-eval-result-duration))))
 
 ;;;###autoload

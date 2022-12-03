@@ -17,7 +17,9 @@
     (transient . t)
     ,@(when IS-LINUX
         `((window-system . ,(if (boundp 'pgtk-initialized) 'pgtk 'x))
-          (display . ,(or (getenv "DISPLAY") ":0"))))
+          (display . ,(or (getenv "WAYLAND_DISPLAY")
+                          (getenv "DISPLAY")
+                          ":0"))))
     ,(if IS-MAC '(menu-bar-lines . 1)))
   "TODO")
 

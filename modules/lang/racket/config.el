@@ -26,20 +26,20 @@
              #'rainbow-delimiters-mode
              #'highlight-quoted-mode)
 
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'racket-mode-local-vars-hook #'lsp! 'append))
 
-  (when (featurep! +xp)
+  (when (modulep! +xp)
     (add-hook 'racket-mode-local-vars-hook #'racket-xp-mode)
     ;; Both flycheck and racket-xp produce error popups, but racket-xp's are
     ;; higher quality so disable flycheck's:
-    (when (featurep! :checkers syntax)
+    (when (modulep! :checkers syntax)
       (add-hook! 'racket-xp-mode-hook
         (defun +racket-disable-flycheck-h ()
           (cl-pushnew 'racket flycheck-disabled-checkers)))))
 
-  (unless (or (featurep! :editor parinfer)
-              (featurep! :editor lispy))
+  (unless (or (modulep! :editor parinfer)
+              (modulep! :editor lispy))
     (add-hook 'racket-mode-hook #'racket-smart-open-bracket-mode))
 
   (map! (:map racket-xp-mode-map

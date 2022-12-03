@@ -5,5 +5,5 @@
   :mode ("/rebar\\.config\\(?:\\.script\\)?\\'" . erlang-mode)
   :mode ("/\\(?:app\\|sys\\)\\.config\\'" . erlang-mode)
   :config
-  (when (featurep! +lsp)
+  (when (modulep! +lsp)
     (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)))
