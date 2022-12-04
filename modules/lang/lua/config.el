@@ -41,7 +41,10 @@ lua-language-server.")
               "-E" "-e" "LANG=en"
               (doom-path +lua-lsp-dir "main.lua")))
 
-      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))))
+      (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))
+
+    (when (modulep! +tree-sitter!)
+      (add-hook 'lua-mode-local-vars-hook #'tree-sitter! 'append))))
 
 
 (use-package! moonscript
