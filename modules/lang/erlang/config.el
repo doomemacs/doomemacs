@@ -6,4 +6,7 @@
   :mode ("/\\(?:app\\|sys\\)\\.config\\'" . erlang-mode)
   :config
   (when (modulep! +lsp)
-    (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append)))
+    (add-hook 'erlang-mode-local-vars-hook #'lsp! 'append))
+
+  (when (modulep! +tree-sitter)
+    (add-hook 'erlang-mode-local-vars-hook #'tree-sitter! 'append)))

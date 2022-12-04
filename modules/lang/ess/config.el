@@ -23,6 +23,9 @@
   (when (modulep! +lsp)
     (add-hook 'ess-r-mode-local-vars-hook #'lsp! 'append))
 
+  (when (modulep! +tree-sitter)
+    (add-hook 'ess-r-mode-local-vars-hook #'tree-sitter! 'append))
+
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
   (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
