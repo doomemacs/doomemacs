@@ -18,6 +18,9 @@ Includes:
 - +lsp ::
   Enable LSP support for ~erlang-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://github.com/erlang/sourcer][sourcer]]).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:flycheck-rebar3]]
