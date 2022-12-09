@@ -114,7 +114,7 @@ in."
     (explain! "Users will see a substantial performance gain by building Emacs with "
               "native compilation support, availible in emacs 28+."
               "You must install a prebuilt Emacs binary with this included, or compile "
-              "Emacs with the --with-native-compilation option."))
+              "Emacs with the --with-native-comp option."))
 
   (print! (start "Checking for private config conflicts..."))
   (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
