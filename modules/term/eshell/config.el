@@ -294,9 +294,10 @@ when inhibited to show history matches."
 
     (defun +eshell-fish-capf ()
       "A a capf for fish-completion."
-      (when-let ((args (ignore-errors (eshell-complete-parse-arguments)))
+      (when-let (((not (file-remote-p default-directory)))
+                 (args (ignore-errors (eshell-complete-parse-arguments)))
                  (table (+eshell-fish-completion-list
-                         (buffer-substring (cadr args) (point))))
+                         (buffer-substring (or (cadr args) (point)) (point))))
                  ((not (file-exists-p (car table)))))
         (list (car (last args)) (point) table
               :exclusive 'no
