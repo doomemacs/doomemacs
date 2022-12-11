@@ -93,8 +93,14 @@ You should use `set-eshell-alias!' to change this.")
   ;; UI enhancements
   (add-hook! 'eshell-mode-hook
     (defun +eshell-remove-fringes-h ()
-      (set-window-fringes nil 0 0)
-      (set-window-margins nil 1 nil))
+      (setq-local left-margin-width 1
+                  right-margin-width nil
+                  left-fringe-width 0
+                  right-fringe-width 0)
+      (dolist (window (get-buffer-window-list))
+        (set-window-fringes window 0 0)
+        (set-window-margins window 1 nil)))
+
     (defun +eshell-enable-text-wrapping-h ()
       (visual-line-mode +1)
       (set-display-table-slot standard-display-table 0 ?\ )))
