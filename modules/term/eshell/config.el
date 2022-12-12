@@ -226,10 +226,10 @@ But uses `completion-styles' to find the mathces."
     "Don't try to parse man output unless a manpage exists."
     :around #'esh-help-eldoc-man-minibuffer-string
     (if-let ((cache-result (gethash cmd esh-help-man-cache)))
-        (unless (eql 'none cache-result)
+        (unless (eq 'none cache-result)
           cache-result)
       (if (Man-completion-table cmd nil nil)
-          (funcall func cmd)
+          (or (ignore-errors (funcall func cmd)) "")
         (prog1 nil
           (puthash cmd 'none esh-help-man-cache))))))
 
