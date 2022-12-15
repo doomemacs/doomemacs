@@ -125,7 +125,7 @@ This is ignored by ccls.")
 
 
 (use-package! irony
-  :unless (modulep! +lsp)
+  :unless (or (modulep! +lsp) (modulep! +nortags))
   :commands irony-install-server
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
@@ -185,7 +185,7 @@ This is ignored by ccls.")
 ;; Rtags Support
 
 (use-package! rtags
-  :unless (modulep! +lsp)
+  :unless (or (modulep! +lsp) (modulep! +nortags))
   ;; Only initialize rtags-mode if rtags and rdm are available.
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc-init-rtags-maybe-h)
   :preface (setq rtags-install-path (concat doom-data-dir "rtags/"))
