@@ -116,6 +116,23 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
       (let ((embark-quit-after-action nil))
         (embark-dwim)))))
 
+;;;###autoload
+(defun +vertico/directory-enter ()
+  "Enter directory or embark preview on current candidate."
+  (interactive)
+  (if (>= vertico--index 0)
+      (if (and (let ((cand (vertico--candidate)))
+                 (or (string-suffix-p "/" cand)
+                     (and (vertico--remote-p cand)
+                          (string-suffix-p ":" cand))))
+               (not (equal vertico--base ""))
+               (eq 'file (vertico--metadata-get 'category)))
+          (vertico-insert)
+        (unless (bound-and-true-p consult--preview-function)
+          (save-selected-window
+            (let ((embark-quit-after-action nil))
+              (embark-dwim)))))))
+
 (defvar +vertico/find-file-in--history nil)
 ;;;###autoload
 (defun +vertico/find-file-in (&optional dir initial)

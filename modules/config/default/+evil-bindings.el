@@ -216,7 +216,10 @@
          "C-j"   #'vertico-next
          "C-M-j" #'vertico-next-group
          "C-k"   #'vertico-previous
-         "C-M-k" #'vertico-previous-group)))
+         "C-M-k" #'vertico-previous-group
+         (:when (modulep! :editor evil +everywhere)
+          "C-h"  #'vertico-directory-up
+          "C-l"  #'+vertico/directory-enter))))
 
 
 ;;; :ui
