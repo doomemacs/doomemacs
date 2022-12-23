@@ -581,10 +581,24 @@ This be hooked to `projectile-after-switch-project-hook'."
     (set-persp-parameter 'tab-bar-closed-tabs tab-bar-closed-tabs)))
 
 ;;;###autoload
+(defun +workspaces-save-tab-bar-data-to-file-h (&rest _)
+  "Save the current workspace's tab bar data to file."
+  (when (get-current-persp)
+    ;; HACK: Remove fields (for window-configuration) that cannot be serialized.
+    (set-persp-parameter 'tab-bar-tabs
+                         (frameset-filter-tabs (tab-bar-tabs) nil nil t))))
+
+;;;###autoload
 (defun +workspaces-load-tab-bar-data-h (_)
   "Restores the tab bar data of the workspace we have just switched to."
   (tab-bar-tabs-set (persp-parameter 'tab-bar-tabs))
   (setq tab-bar-closed-tabs (persp-parameter 'tab-bar-closed-tabs))
+  (tab-bar--update-tab-bar-lines t))
+
+;;;###autoload
+(defun +workspaces-load-tab-bar-data-from-file-h (&rest _)
+  "Restores the tab bar data from file."
+  (tab-bar-tabs-set (persp-parameter 'tab-bar-tabs))
   (tab-bar--update-tab-bar-lines t))
 
 ;;
