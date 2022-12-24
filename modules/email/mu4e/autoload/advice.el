@@ -12,7 +12,7 @@ clicked."
           "\\[\\(..?\\)\\]"
           (lambda(m)
             (format "%s"
-                    (propertize (match-string 1 m) 'face '(mode-line-emphasis bold))))
+                    (propertize (match-string 1 m) 'face 'mu4e-highlight-face)))
           (replace-regexp-in-string "\t\\*" (format "\t%s" +mu4e-main-bullet) str)))
         (map (make-sparse-keymap))
         (func (if (functionp func-or-shortcut)
