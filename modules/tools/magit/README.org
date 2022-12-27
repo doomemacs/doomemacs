@@ -15,13 +15,15 @@ This module provides Magit, an interface to the Git version control system.
 - +forge ::
   Enable Forge; a porcelain for managing Github issues and PRs from within
   Emacs. Will take a while on first run to build =emacsql-sqlite=.
+- +gitflow ::
+  Enable GitFlow integration with Magit.
 
 ** Packages
 - [[doom-package:evil-magit]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:forge]] if [[doom-module:+forge]]
 - [[doom-package:code-review]] if [[doom-module:+forge]]
 - [[doom-package:magit]]
-- [[doom-package:magit-gitflow]]
+- [[doom-package:magit-gitflow]] if [[doom-module:+gitflow]]
 - [[doom-package:magit-todos]]
 
 ** Hacks

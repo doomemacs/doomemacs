@@ -223,6 +223,7 @@ ensure it is built when we actually use Forge."
 
 
 (use-package! magit-gitflow
+  :when (modulep! +gitflow)
   :hook (magit-mode . turn-on-magit-gitflow))
 
 
