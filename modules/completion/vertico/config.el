@@ -101,7 +101,6 @@ orderless."
   :defer t
   :preface
   (define-key!
-    [remap apropos]                       #'consult-apropos
     [remap bookmark-jump]                 #'consult-bookmark
     [remap evil-show-marks]               #'consult-mark
     [remap evil-show-jumps]               #'+vertico/jump-list
