@@ -21,6 +21,9 @@ e.g. ~cargo~.
 - +lsp ::
   Enable LSP support for ~rustic-mode~. Requires [[doom-module::tools lsp]] and a langserver
   (supports [[https://rust-analyzer.github.io/][rust-analyzer]] and rls).
+- +tree-sitter ::
+  Leverages tree-sitter for better syntax highlighting and structural text
+  editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
 - [[doom-package:rustic]]
