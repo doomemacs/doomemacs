@@ -238,7 +238,7 @@
        :g "M-8"   #'+workspace/switch-to-7
        :g "M-9"   #'+workspace/switch-to-8
        :g "M-0"   #'+workspace/switch-to-final
-       (:when IS-MAC
+       (:when (and IS-MAC (not (modulep! +no-OS-specific-bindings)))
         :g "s-t"   #'+workspace/new
         :g "s-T"   #'+workspace/display
         :n "s-1"   #'+workspace/switch-to-0

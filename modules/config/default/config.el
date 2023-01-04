@@ -295,7 +295,7 @@ Continues comments if executed from a commented line. Consults
   (define-key tabulated-list-mode-map "q" #'quit-window))
 
 ;; OS specific fixes
-(when IS-MAC
+(when (and IS-MAC (not (modulep! +no-OS-specific-bindings)))
   ;; Fix MacOS shift+tab
   (define-key key-translation-map [S-iso-lefttab] [backtab])
   ;; Fix conventional OS keys in Emacs
@@ -482,7 +482,7 @@ Continues comments if executed from a commented line. Consults
         :gi "C-S-RET"       #'+default/newline-above
         :gn [C-S-return]    #'+default/newline-above
 
-        (:when IS-MAC
+        (:when (and IS-MAC (not (modulep! +no-OS-specific-bindings)))
          :gn "s-RET"        #'+default/newline-below
          :gn [s-return]     #'+default/newline-below
          :gn "S-s-RET"      #'+default/newline-above

@@ -21,6 +21,7 @@ This module provides a set of reasonable defaults, including:
 ** Module flags
 - +bindings :: ...
 - +smartparens :: ...
+- +no-OS-specific-bindings :: Disable introduction of any OS-specific keybindings that this module would otherwise introduce.
 
 ** Packages
 - [[doom-package:avy]]
