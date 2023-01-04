@@ -28,3 +28,8 @@ For folks with a habit of using \"emacs\" to open files, even in eshell."
   "Create a directory then cd into it."
   (make-directory dir t)
   (eshell/cd dir))
+
+;;;###autoload
+(defun eshell/help (cmd)
+  "Get help for command from tldr, man or helpful."
+  (+eshell-help-run-help cmd))
