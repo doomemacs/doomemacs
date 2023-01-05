@@ -221,7 +221,7 @@ line to beginning of line. Same as `evil-delete-back-to-indentation'."
 (defun doom/delete-backward-word (arg)
   "Like `backward-kill-word', but doesn't affect the kill-ring."
   (interactive "p")
-  (let (kill-ring)
+  (let ((kill-ring nil) (kill-ring-yank-pointer nil))
     (ignore-errors (backward-kill-word arg))))
 
 ;;;###autoload
