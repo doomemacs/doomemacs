@@ -66,7 +66,7 @@
 
 (use-package! git-gutter
   :unless (modulep! +diff-hl)
-  :commands git-gutter:revert-hunk git-gutter:stage-hunk
+  :commands git-gutter:revert-hunk git-gutter:stage-hunk git-gutter:previous-hunk git-gutter:next-hunk
   :init
   (add-hook! 'find-file-hook
     (defun +vc-gutter-init-maybe-h ()
@@ -150,6 +150,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   :hook (vc-dir-mode  . diff-hl-dir-mode)
   :hook (dired-mode   . diff-hl-dired-mode)
   :hook (diff-hl-mode . diff-hl-flydiff-mode)
+  :commands diff-hl-stage-current-hunk diff-hl-revert-hunk diff-hl-next-hunk diff-hl-previous-hunk
   :config
   (set-popup-rule! "^\\*diff-hl" :select nil :size '+popup-shrink-to-fit)
 
