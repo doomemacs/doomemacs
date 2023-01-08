@@ -41,8 +41,9 @@ This is controlled by `+format-on-save-disabled-modes'."
       (string-empty-p (string-trim (buffer-name)))
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
-(when (modulep! +onsave)
-  (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h))
+(after! apheleia
+  (when (modulep! +onsave)
+    (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h)))
 
 ;;
 ;;; Hacks
