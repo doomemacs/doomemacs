@@ -5,4 +5,4 @@
 
 (when (and (modulep! +lsp)
            (not (modulep! :tools lsp +eglot)))
-  (package! lsp-haskell :pin "485c1148ce4d27030bb95b21c7289809294e7d31"))
+  (package! lsp-haskell :pin "3249cde75fb411f95fe173c222b848182fd0b752"))
