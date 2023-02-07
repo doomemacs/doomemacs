@@ -54,7 +54,7 @@
                                    "%")
                      :type perl)
                    consult-async-split-style 'perlalt))))))
-    (consult--grep prompt #'consult--ripgrep-builder directory query)))
+    (consult--grep prompt (consult--ripgrep-make-builder) directory query)))
 
 ;;;###autoload
 (defun +vertico/project-search (&optional arg initial-query directory)

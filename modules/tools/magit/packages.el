@@ -2,7 +2,7 @@
 ;;; tools/magit/packages.el
 
 (when (package! magit :pin "0ef98ef51811807952a4c3c677cbf3dfb269de2e")
-  (package! compat :pin "cc1924fd8b3f9b75b26bf93f084ea938c06f9615")
+  (package! compat :pin "7ca7d300d1d256f674f83932d2918d8e70cd28f6")
   (when (modulep! +forge)
     (package! forge :pin "ce212f8f95838889c51d0327eb8c3979bec6665c")
     (package! code-review
