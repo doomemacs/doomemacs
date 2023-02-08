@@ -146,7 +146,7 @@ orderless."
    +default/search-notes-for-symbol-at-point
    +default/search-emacsd
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-   :preview-key (kbd "C-SPC"))
+   :preview-key "C-SPC")
   (consult-customize
    consult-theme
    :preview-key (list (kbd "C-SPC") :debounce 0.5 'any))
@@ -252,12 +252,13 @@ orderless."
         cons
         '+vertico-embark-target-package-fn
         (nthcdr pos embark-target-finders)))
-  (embark-define-keymap +vertico/embark-doom-package-map
-    "Keymap for Embark package actions for packages installed by Doom."
-    ("h" doom/help-packages)
-    ("b" doom/bump-package)
-    ("c" doom/help-package-config)
-    ("u" doom/help-package-homepage))
+  (defvar-keymap +vertico/embark-doom-package-map
+    :doc "Keymap for Embark package actions for packages installed by Doom."
+    :parent embark-general-map
+    "h" #'doom/help-packages
+    "b" #'doom/bump-package
+    "c" #'doom/help-package-config
+    "u" #'doom/help-package-homepage)
   (setf (alist-get 'package embark-keymap-alist) #'+vertico/embark-doom-package-map)
   (map! (:map embark-file-map
          :desc "Open target with sudo"        "s"   #'doom/sudo-find-file
