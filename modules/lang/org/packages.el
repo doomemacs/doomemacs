@@ -80,7 +80,7 @@
 (when (modulep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "7d20c0aee2f9c896215f35232905b23532ef04c5"))
+  (package! jupyter :pin "bc3b78be4333bb7a51e262018f7e6dcded621c41"))
 (when (modulep! +journal)
   (package! org-journal :pin "1ea9e3b672ed384922ede6af96598446f3691873"))
 (when (modulep! +noter)
