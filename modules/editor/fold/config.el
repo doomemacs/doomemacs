@@ -92,7 +92,7 @@
   :config
   ;; we want to use our own face so we nullify this one to have no effect and
   ;; make it more similar to hideshows
-  (custom-set-faces! '(ts-fold-replacement-face :foreground nil
+  (custom-set-faces! '(ts-fold-replacement-face :foreground unspecified
                                                 :box nil
                                                 :inherit font-lock-comment-face
                                                 :weight light))
