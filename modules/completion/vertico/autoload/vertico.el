@@ -208,16 +208,17 @@ targets."
                    (not (string-suffix-p "-argument" (cdr binding))))))))
 
 ;;;###autoload
-(defun +vertico--consult--fd-builder (input)
-  (pcase-let* ((cmd (split-string-and-unquote +vertico-consult-fd-args))
-               (`(,arg . ,opts) (consult--command-split input))
-               (`(,re . ,hl) (funcall consult--regexp-compiler
-                                      arg 'extended t)))
-    (when re
-      (list :command (append cmd
-                             (list (consult--join-regexps re 'extended))
-                             opts)
-            :highlight hl))))
+(defun +vertico--consult--fd-make-builder ()
+  (let ((cmd (split-string-and-unquote +vertico-consult-fd-args)))
+    (lambda (input)
+      (pcase-let* ((`(,arg . ,opts) (consult--command-split input))
+                   (`(,re . ,hl) (funcall consult--regexp-compiler
+                                          arg 'extended t)))
+        (when re
+          (cons (append cmd
+                        (list (consult--join-regexps re 'extended))
+                        opts)
+                hl))))))
 
 (autoload #'consult--directory-prompt "consult")
 ;;;###autoload
@@ -226,7 +227,7 @@ targets."
   (if doom-projectile-fd-binary
       (let* ((prompt-dir (consult--directory-prompt "Fd" dir))
              (default-directory (cdr prompt-dir)))
-        (find-file (consult--find (car prompt-dir) #'+vertico--consult--fd-builder initial)))
+        (find-file (consult--find (car prompt-dir) (+vertico--consult--fd-make-builder) initial)))
     (consult-find dir initial)))
 
 ;;;###autoload
