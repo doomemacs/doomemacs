@@ -107,12 +107,12 @@ When this module is enabled, the `SPC l` leader keymap becomes available, making
 This list is not exhaustive; for the full list of config options, type =SPC h V
 crdt-= after loading the module.
 
-| Custom variable             | Default            | Function                                                                                  |
-|-----------------------------+--------------------+-------------------------------------------------------------------------------------------|
-| crdt-ask-for-name           | t                  | Set to nil to always use =crdt-default-name= as your name without asking                  |
-| crdt-default-name           | ~(user-full-name)~ | Your display name in collaboration sessions                                               |
-| crdt-tuntox-executable      | "tuntox"           | Path to the tuntox binary                                                                 |
-| crdt-tuntox-password-in-url | nil                | Set to t to put your session password (in plaintext) into the URL made by =crdt-copy-url= |
+| Custom variable             | Default                  | Function                                                                                  |
+|-----------------------------+--------------------------+-------------------------------------------------------------------------------------------|
+| crdt-ask-for-name           | t                        | Set to nil to always use =crdt-default-name= as your name without asking                  |
+| crdt-default-name           | ~(user-full-name)~       | Your display name in collaboration sessions                                               |
+| crdt-tuntox-executable      | "tuntox"                 | Path to the tuntox binary                                                                 |
+| crdt-tuntox-password-in-url | t if =+tunnel=, else nil | Set to t to put your session password (in plaintext) into the URL made by =crdt-copy-url= |
 
 
 * Troubleshooting
