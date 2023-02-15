@@ -3,4 +3,4 @@
 
 (package! crdt
   :recipe (:host nil :repo "https://code.librehq.com/qhong/crdt.el")
-  :pin "e6d42f42c5dedb73560048f4bf6263c63ffa21bb")
+  :pin "3ba890658d657db5d6aaedd5c2a78b6f93a5f139")
