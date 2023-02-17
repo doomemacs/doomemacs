@@ -370,9 +370,20 @@ preferred alias"
                           (mu4e-personal-addresses))))
     (setq user-mail-address
           (if mu4e-compose-parent-message
-              (let ((to (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :to)))
-                    (from (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :from))))
-                (or (car (seq-intersection to addresses))
-                   (car (seq-intersection from addresses))
-                   (completing-read "From: " addresses)))
+              (if (version<= "1.8" mu4e-mu-version)
+                  (let ((to (mu4e-message-field mu4e-compose-parent-message :to))
+                        (cc (mu4e-message-field mu4e-compose-parent-message :cc))
+                        (from (mu4e-message-field mu4e-compose-parent-message :from)))
+                    (or (car (cl-intersection
+                              (mapcar (lambda (adr) (plist-get adr :email))
+                                      (append to from cc))
+                              addresses
+                              :test #'equal))
+                        (completing-read "From: " addresses)))
+                (let ((to (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :to)))
+                      (cc (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :cc)))
+                      (from (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :from))))
+                  (or (car (cl-intersection (append to from cc) addresses
+                                            :test #'equal))
+                      (completing-read "From: " addresses))))
             (completing-read "From: " addresses)))))
