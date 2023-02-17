@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; app/emms/packages.el
 
-(package! emms :pin "b55bc4fe185799e7821322b60d1707cba2adddfc")
+(package! emms :pin "43c61412492229eb641fe572c89c826d8fcf64d9")
