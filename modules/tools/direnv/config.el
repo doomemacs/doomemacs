@@ -1,7 +1,6 @@
 ;;; tools/direnv/config.el -*- lexical-binding: t; -*-
 
 (use-package! envrc
-  :when (executable-find "direnv")
   :hook (doom-first-file . envrc-global-mode)
   :config
   (add-to-list 'doom-debug-variables 'envrc-debug)
@@ -25,10 +24,9 @@
 
   (defadvice! +direnv--fail-gracefully-a (&rest _)
     "Don't try to use direnv if the executable isn't present."
-    :before-while #'envrc-mode
-    (or (get 'envrc-mode 'direnv-executable)
-        (put 'envrc-mode 'direnv-executable (executable-find "direnv" t))
-        (ignore (doom-log "Couldn't find direnv executable"))))
+    :before-while #'envrc-global-mode
+    (or (executable-find envrc-direnv-executable)
+        (ignore (doom-log "Failed to locate direnv executable; aborting envrc-global-mode"))))
 
   ;; Ensure babel's execution environment matches the host buffer's.
   (advice-add #'org-babel-execute-src-block :around #'envrc-propagate-environment)
