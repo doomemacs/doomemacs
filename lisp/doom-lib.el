@@ -619,7 +619,7 @@ This is a variadic `cl-pushnew'."
 (defmacro add-load-path! (&rest dirs)
   "Add DIRS to `load-path', relative to the current file.
 The current file is the file from which `add-to-load-path!' is used."
-  `(let ((default-directory ,(dir!))
+  `(let ((default-directory (dir!))
          file-name-handler-alist)
      (dolist (dir (list ,@dirs))
        (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
