@@ -9,7 +9,7 @@
 (package! orderless :pin "ae849b3d9f8c8a777e05816321ed2b00e8304447")
 
 (package! consult :pin "b22a7de62ee4adf766be2f867dee8b6980902bba")
-(package! compat :pin "2bedcb5ea91914e75d4905bc53e537b33f8f51e9")
+(package! compat :pin "01fdf316a44eac9a7f6ab7e0983427a702ffd04d")
 (package! consult-dir :pin "ed8f0874d26f10f5c5b181ab9f2cf4107df8a0eb")
 (when (modulep! :checkers syntax)
   (package! consult-flycheck :pin "51b1b48e8dad314f9c9d963376f2ea8de94b97f2"))
