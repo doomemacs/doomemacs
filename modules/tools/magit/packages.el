@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/magit/packages.el
 
-(when (package! magit :pin "6d325d90ba1374d48c4c7088f96864b678155f48")
-  (package! compat :pin "2bedcb5ea91914e75d4905bc53e537b33f8f51e9")
+(when (package! magit :pin "30b0debaaadadec6103a8d7eab92322fd9d30a15")
+  (package! compat :pin "01fdf316a44eac9a7f6ab7e0983427a702ffd04d")
   (when (modulep! +forge)
     (package! forge :pin "ce212f8f95838889c51d0327eb8c3979bec6665c")
     (package! code-review
