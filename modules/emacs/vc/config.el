@@ -133,6 +133,10 @@ otherwise in default state."
   ;; using commit hashes rather than branch names.
   (setq browse-at-remote-prefer-symbolic nil)
 
+  ;; Add codeberg.org support
+  ;; TODO: PR this upstream?
+  (add-to-list 'browse-at-remote-remote-type-regexps '("^codeberg\\.org$" . "codeberg"))
+
   ;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo is
   ;;      detached. This creates broken links. I think it is more sensible to
   ;;      fall back to master in those cases.

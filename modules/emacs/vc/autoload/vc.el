@@ -1,10 +1,32 @@
 ;;; emacs/vc/autoload/vc.el -*- lexical-binding: t; -*-
 
+;;
+;;; Helpers
+
 (defun +vc--remote-homepage ()
   (require 'browse-at-remote)
   (or (let ((url (browse-at-remote--remote-ref)))
         (cdr (browse-at-remote--get-url-from-remote (car url))))
       (user-error "Can't find homepage for current project")))
+
+;; TODO: PR these upstream?
+;;;###autoload
+(defun browse-at-remote--format-region-url-as-codeberg (repo-url location filename &optional linestart lineend)
+  "URL formatted for codeberg."
+  (cond
+   ((and linestart lineend)
+    (format "%s/src/%s/%s#L%d-L%d" repo-url location filename linestart lineend))
+   (linestart (format "%s/src/%s/%s#L%d" repo-url location filename linestart))
+   (t (format "%s/src/%s/%s" repo-url location filename))))
+
+;;;###autoload
+(defun browse-at-remote--format-commit-url-as-codeberg (repo-url commithash)
+  "Commit URL formatted for codeberg"
+  (format "%s/src/commit/%s" repo-url commithash))
+
+
+;;
+;;; Commands
 
 (defvar browse-at-remote-prefer-symbolic)
 ;;;###autoload
