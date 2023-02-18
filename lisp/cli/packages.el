@@ -690,7 +690,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
     ("^In repository \"[^\"]+\", [^ ]+ (on branch \"[^\"]+\") is ahead of default branch \"[^\"]+\""
      . "^Checkout branch \"")
     ("^In repository "
-     . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL"))
+     . "^Reset branch \\|^Delete remote [^,]+, re-create it with correct URL\\|^Checkout \"main\""))
   "A list of regexps, mapped to regexps.
 
 Their CAR is tested against the prompt, and CDR is tested against the presented
