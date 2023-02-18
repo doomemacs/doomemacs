@@ -1,19 +1,19 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/helm/packages.el
 
-(package! helm :pin "1003539c2ec66e7697903f4b4cb354adea70040e")
+(package! helm :pin "dfd6403947c5cd9f32afcd6bc92a1756cc958c82")
 (package! helm-rg :pin "ee0a3c09da0c843715344919400ab0a0190cc9dc")
 (package! helm-c-yasnippet :pin "e214eec8b2875d8a7cd09006dfb6a8e15e9e4079")
 (package! helm-company :pin "6eb5c2d730a60e394e005b47c1db018697094dde")
 (package! helm-describe-modes
   :recipe (:host github :repo "emacs-helm/helm-describe-modes")
   :pin "11fb36af119b784539d31c6160002de1957408aa")
-(package! helm-projectile :pin "58123f14c392021714fc5d23b9f95c7f95ce07f1")
+(package! helm-projectile :pin "35a2111d00c0c0c9d8743280d3f1243bb217118a")
 (package! swiper-helm :pin "93fb6db87bc6a5967898b5fd3286954cc72a0008")
 (when (modulep! +fuzzy)
-  (package! helm-flx :pin "27dd9e3ce385a3ca15092150e65781de14b5b00b"))
+  (package! helm-flx :pin "5220099e695a3586dba2d59640217fe378e66310"))
 (when (modulep! +childframe)
-  (package! posframe :pin "c91d4d53fa479ceb604071008ce0a901770eff57"))
+  (package! posframe :pin "06b939cfb06168782fc378043ff35bd7fec203b8"))
 (when (modulep! :lang org)
   (package! helm-org :pin "d67186d3a64e610c03a5f3d583488f018fb032e4"))
 (when (modulep! +icons)
