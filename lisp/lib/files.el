@@ -425,7 +425,7 @@ If FORCE-P, delete without confirmation."
 
 ;;;###autoload
 (defun doom/copy-this-file (new-path &optional force-p)
-  "Copy current buffer's file to NEW-PATH.
+  "Copy current buffer's file to NEW-PATH then open NEW-PATH.
 
 If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (interactive
@@ -437,6 +437,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
         (new-path (expand-file-name new-path)))
     (make-directory (file-name-directory new-path) 't)
     (copy-file old-path new-path (or force-p 1))
+    (find-file new-path)
     (doom-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
