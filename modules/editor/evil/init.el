@@ -102,11 +102,13 @@ variable for an explanation of the defaults (in comments). See
       calendar
       cider
       cmake-mode
+      color-rg
       comint
       company
       compile
       consult
       corfu
+      crdt
       (custom cus-edit)
       cus-theme
       daemons
@@ -153,6 +155,7 @@ variable for an explanation of the defaults (in comments). See
       geiser
       ggtags
       git-timemachine
+      gited
       gnus
       go-mode
       grep
