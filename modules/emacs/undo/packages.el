@@ -2,6 +2,6 @@
 ;;; emacs/undo/packages.el
 
 (if (modulep! +tree)
-    (package! undo-tree :pin "e326c6135e62f5fe8536528d3acd5e798f847407")
-  (package! undo-fu :pin "ab8bc10e424bccc847800c31ab41888db789d55d")
-  (package! undo-fu-session :pin "3e810c7c9ab75d2b6f92c7c876290abbc164e750"))
+    (package! undo-tree :pin "16f4121032d09ef44b3d7d02c4d02c3c2f18041f")
+  (package! undo-fu :pin "0e22308de8337a9291ddd589edae167d458fbe77")
+  (package! undo-fu-session :pin "7b3fd0647dd1fbd02101eec61440e6d44953bcd9"))
