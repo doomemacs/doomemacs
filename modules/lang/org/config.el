@@ -476,7 +476,7 @@ relative to `org-directory', unless it is an absolute path."
 
 (defun +org-init-attachments-h ()
   "Sets up org's attachment system."
-  (setq org-attach-store-link-p t     ; store link after attaching files
+  (setq org-attach-store-link-p 'attached     ; store link after attaching files
         org-attach-use-inheritance t) ; inherit properties from parent nodes
 
   ;; Autoload all these commands that org-attach doesn't autoload itself
