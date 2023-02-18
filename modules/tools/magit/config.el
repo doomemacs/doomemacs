@@ -222,10 +222,6 @@ ensure it is built when we actually use Forge."
   (define-key magit-todos-section-map "j" nil))
 
 
-(use-package! magit-gitflow
-  :hook (magit-mode . turn-on-magit-gitflow))
-
-
 (use-package! evil-collection-magit
   :when (modulep! :editor evil +everywhere)
   :defer t
@@ -280,13 +276,7 @@ ensure it is built when we actually use Forge."
         (setcar desc (cdr key))))
     (evil-define-key* evil-collection-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up))
-
-  (after! magit-gitflow
-    (evil-define-key* '(normal visual) magit-mode-map
-      "%" #'magit-gitflow-popup)
-    (transient-append-suffix 'magit-dispatch 'magit-worktree
-      '("%" "Gitflow" magit-gitflow-popup))))
+      "gk" #'git-rebase-move-line-up)))
 
 
 (use-package! evil-collection-magit-section

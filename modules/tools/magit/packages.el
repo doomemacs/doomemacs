@@ -8,5 +8,4 @@
     (package! code-review
       :recipe (:files ("graphql" "code-review*.el"))
       :pin "95b36ec8e7935f96b2f3c6c9086d49cf4a72cbff"))
-  (package! magit-gitflow :pin "cc41b561ec6eea947fe9a176349fb4f771ed865b")
   (package! magit-todos :pin "c5030cc27c7c1a48db52b0134bf2648a59a43176"))
