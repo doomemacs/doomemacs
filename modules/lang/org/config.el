@@ -560,6 +560,12 @@ relative to `org-directory', unless it is an absolute path."
      :activate-func #'+org-link--face-link-activate-face
      :face '(font-lock-type-face underline))
     (org-link-set-parameters
+     "cmd"
+     :follow (-call-interactively #'describe-command)
+     :activate-func #'+org-link--command-link-activate-command
+     :face 'help-key-binding
+     :help-echo #'+org-link-doom--help-echo-from-textprop)
+    (org-link-set-parameters
      "doom-package"
      :follow #'+org-link-follow-doom-package-fn
      :activate-func #'+org-link--doom-package-link-activate-fn

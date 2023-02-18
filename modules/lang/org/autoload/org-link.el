@@ -142,6 +142,25 @@ exist, and `org-link' otherwise."
             #(" " 0 1 (face (:underline nil)))
             face)))))
 
+(defun +org-link--command-keys (command)
+  "Convert command reference TEXT to key binding representation."
+  (let* ((cmd-prefix (mapcar #'reverse
+                             (split-string (reverse command) " ")))
+         (cmd (intern-soft (car cmd-prefix)))
+         (prefix (and (cdr cmd-prefix)
+                      (string-join (reverse (cdr cmd-prefix)) " ")))
+         (key-binding (where-is-internal cmd nil t))
+         (key-text (if key-binding
+                       (key-description key-binding)
+                     (format "M-x %s" cmd))))
+    (concat prefix (and prefix " ") key-text)))
+
+;;;###autoload
+(defun +org-link--command-link-activate-command (start end command _bracketed-p)
+  (when buffer-read-only
+    (add-text-properties
+     start end (list 'display (+org-link--command-keys command)))))
+
 ;;;###autoload
 (defun +org-link--doom-module-link-follow-fn (module-path _arg)
   (cl-destructuring-bind (&key category module flag)
@@ -281,6 +300,13 @@ exist, and `org-link' otherwise."
        (concat
         "The key sequence "
         (propertize (+org-link--describe-kbd (org-element-property :path link))
+                    'face 'help-key-binding)))
+      ("cmd"
+       (concat
+        "The command "
+        (propertize (org-element-property :path link) 'face 'font-lock-function-name-face)
+        " can be invoked with the key sequence "
+        (propertize (+org-link--command-keys (org-element-property :path link))
                     'face 'help-key-binding)))
       ("doom-package"
        (concat
