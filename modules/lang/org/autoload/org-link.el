@@ -277,6 +277,11 @@ exist, and `org-link' otherwise."
   (if (not buffer-read-only)
       (format "LINK: %s" (org-element-property :raw-link link))
     (pcase (org-element-property :type link)
+      ("kbd"
+       (concat
+        "The key sequence "
+        (propertize (+org-link--describe-kbd (org-element-property :path link))
+                    'face 'help-key-binding)))
       ("doom-package"
        (concat
         (propertize "Emacs package " 'face 'bold)

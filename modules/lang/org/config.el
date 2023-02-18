@@ -529,36 +529,21 @@ relative to `org-directory', unless it is an absolute path."
   (+org-define-basic-link "doom-docs" 'doom-docs-dir)
   (+org-define-basic-link "doom-modules" 'doom-modules-dir)
 
-  (defadvice! +org-display-link-in-eldoc-a (&rest _)
-    "Display full link in minibuffer when cursor/mouse is over it."
-    :before-until #'org-eldoc-documentation-function
-    (when-let (context (org-element-context))
-      (if-let ((type (org-element-property :type context))
-               (eldocfn (org-link-get-parameter type :eldoc)))
-          (funcall eldocfn context)
-        (when-let (raw-link (org-element-property :raw-link context))
-          (format "Link: %s" raw-link)))))
-
   ;; Add "lookup" links for packages and keystrings; useful for Emacs
   ;; documentation -- especially Doom's!
   (letf! ((defun -call-interactively (fn)
             (lambda (path _prefixarg)
               (funcall
                fn (or (intern-soft path)
-                      (user-error "Can't find documentation for %S" path)))))
-          (defun -eldoc-fn (label face)
-            (lambda (context)
-              (format "%s %s"
-                      (propertize (format "%s:" label) 'face 'bold)
-                      (propertize (+org-link-read-desc-at-point
-                                   (org-element-property :path context) context)
-                                  'face face)))))
+                      (user-error "Can't find documentation for %S" path))))))
     (org-link-set-parameters
      "kbd"
-     :follow (lambda (_) (minibuffer-message "%s" (+org-display-link-in-eldoc-a)))
-     :help-echo #'+org-link-read-kbd-at-point
-     :face 'help-key-binding
-     :eldoc (-eldoc-fn "Key sequence" 'help-key-binding))
+     :follow (lambda (ev)
+               (interactive "e")
+               (minibuffer-message "%s" (+org-link-doom--help-echo-from-textprop
+                                         nil (current-buffer) (posn-point (event-start ev)))))
+     :help-echo #'+org-link-doom--help-echo-from-textprop
+     :face 'help-key-binding)
     (org-link-set-parameters
      "var"
      :follow (-call-interactively #'helpful-variable)
