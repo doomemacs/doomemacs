@@ -16,36 +16,145 @@
 (defvar doom-docs-dir (file-name-concat doom-emacs-dir "docs/")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
-;; DEPRECATED Will be renamed once docs "framework" is generalized
-(defvar doom-docs-header-alist
-  `(("/docs/index\\.org$"
-     (left ("↖ FAQ" . "doom-faq:")))
+(defvar doom-docs-header-specs
+  '(("/docs/index\\.org$"
+     (:label "FAQ"
+      :icon "question_answer"
+      :link "doom-faq:"
+      :help-echo "Open the FAQ document"))
     (("/docs/[^/]+\\.org$" "/modules/README\\.org$")
-     (left ("← Back to index" . "doom-index:")))
+     (:label "Back to index"
+      :icon "arrow_back"
+      :link ("doom-index" . "")
+      :help-echo "Navigate to the root index"))
     ("/modules/[^/]+/README\\.org$"
-     (left ("← Back to module index" . "doom-module-index:")))
+     (:label "Back to module index"
+      :icon "arrow_back"
+      :link "doom-module-index:"))
     ("/modules/[^/]+/[^/]+/README\\.org$"
-     (left ("← Back to module index" . "doom-module-index:"))
-     (right ("↖ History"
-             . ,(lambda (file)
-                  (cl-destructuring-bind (category . module) (doom-module-from-path file)
-                    (format "doom-module-history:%s/%s" (doom-keyword-name category) module))))
-            ("! Issues"
-             . ,(lambda (file)
-                  (cl-destructuring-bind (category . module) (doom-module-from-path file)
-                    (format "doom-module-issues::%s %s" category module)))))))
-  "TODO")
+     (:label "Back to module index"
+      :icon "arrow_back"
+      :link "doom-module-index:")
+     (:label "History"
+      :icon "history"
+      :icon-face font-lock-variable-name-face
+      :link (lambda ()
+              (cl-destructuring-bind (category . module) (doom-module-from-path (buffer-file-name))
+                (format "doom-module-history:%s/%s" (doom-keyword-name category) module)))
+      :help-echo "View the module history"
+      :align right)
+     (:label "Issues"
+      :icon "error_outline"
+      :icon-face error
+      :link (lambda ()
+              (cl-destructuring-bind (category . module) (doom-module-from-path (buffer-file-name))
+                (format "doom-module-issues::%s %s" category module)))
+      :align right))
+     (t
+      (:label "Suggest edits"
+       :icon "edit"
+       :icon-face warning
+       :link "doom-suggest-edit"
+       :align right)
+      (:label "Help"
+       :icon "help_outline"
+       :icon-face font-lock-function-name-face
+       :link (lambda ()
+               (let ((title (cadar (org-collect-keywords '("TITLE")))))
+                 (cond ((equal title "Changelog") "doom-help-changelog:")
+                       ((string-prefix-p ":" title) "doom-help-modules:")
+                       (t "doom-help:"))))
+       :align right))))
 
-;; DEPRECATED Will be renamed once docs "framework" is generalized
-(defvar doom-docs-header-common-alist
-  `(("± Suggest edits" . "doom-suggest-edit:")
-    ("? Help"
-     . ,(lambda (_file)
-          (let ((title (cadar (org-collect-keywords '("TITLE")))))
-            (cond ((equal title "Changelog")   "doom-help-changelog:")
-                  ((string-prefix-p ":" title) "doom-help-modules:")
-                  ("doom-help:"))))))
-  "TODO")
+(defun doom-docs--make-header ()
+  "Create a header string for the current buffer."
+  (let* ((applicable-specs
+          (cl-loop for (condition . specs) in doom-docs-header-specs
+                   when (if (symbolp condition)
+                            (symbol-value condition)
+                          (seq-some (doom-rpartial #'string-match-p (buffer-file-name))
+                                    (ensure-list condition)))
+                   append specs))
+         (left-specs
+          (cl-remove-if-not
+           (lambda (s) (memq (plist-get s :align) '(nil left)))
+           applicable-specs))
+         (right-specs
+          (cl-remove-if-not
+           (lambda (s) (eq (plist-get s :align) 'right))
+           applicable-specs))
+         (left-string
+          (mapconcat #'doom-docs--make-header-link left-specs " "))
+         (right-string
+          (mapconcat #'doom-docs--make-header-link right-specs " ")))
+    (if (string-empty-p right-string)
+        (concat " " left-string)
+      (concat " " left-string
+              (make-string (max (- (window-width)
+                                   (length left-string)
+                                   (length right-string)
+                                   4)
+                                1)
+                           ?\s)
+              right-string))))
+
+(defun doom-docs--make-header-link (spec)
+  "Create a header link according to SPEC."
+  (let ((icon (and (plist-get spec :icon)
+                   (funcall (or (plist-get spec :icon-function)
+                                #'all-the-icons-material)
+                            (plist-get spec :icon))))
+        (label (pcase (plist-get spec :label)
+                 ((and (pred functionp) lab)
+                  (funcall lab))
+                 ((and (pred stringp) lab)
+                  lab)))
+        (link (pcase (plist-get spec :link)
+                ((and (pred functionp) link)
+                 (funcall link))
+                ((and (pred stringp) link)
+                 link))))
+    (propertize
+     (concat
+      (and icon
+           (propertize icon 'face
+                       (cadr (or (plist-member spec :icon-face)
+                                 (plist-member spec :face)))))
+      (and icon label " ")
+      (and label
+           (propertize label 'face (cadr (or (plist-get spec :face)
+                                             '(nil link))))))
+     'doom-docs-link link
+     'keymap doom-docs--header-link-keymap
+     'help-echo (or (plist-get spec :help-echo)
+                    (format "LINK: %s" link))
+     'mouse-face 'highlight)))
+
+(setq doom-docs--header-link-keymap
+  (let ((km (make-sparse-keymap)))
+    (define-key km [header-line mouse-2] 'doom-docs--open-header-link)
+    (define-key km [mouse-2] 'doom-docs--open-header-link)
+    (define-key km [follow-link] 'mouse-face)
+    km))
+
+(defun doom-docs--open-header-link (ev)
+  "Open the header link which is the target of the event EV."
+  (interactive "e")
+  (let* ((string-and-pos (posn-string (event-start ev)))
+         (docs-buf (window-buffer (posn-window (event-start ev))))
+         (link (get-pos-property (cdr string-and-pos)
+                                 'doom-docs-link
+                                 (car string-and-pos)))
+         (parent-link-abbrevs
+          (buffer-local-value 'org-link-abbrev-alist-local docs-buf)))
+    (with-temp-buffer
+      (setq buffer-file-name (buffer-file-name docs-buf))
+      (let ((org-inhibit-startup t))
+        (org-mode))
+      (setq-local org-link-abbrev-alist-local parent-link-abbrevs)
+      (insert "[[" link "]]")
+      (set-buffer-modified-p nil)
+      (org-link-open (org-element-context)))))
 
 ;; DEPRECATED Will be renamed once docs "framework" is generalized
 (defvar doom-docs-link-alist
@@ -90,56 +199,10 @@
 
 (defun doom-docs--display-menu-h ()
   "Toggle virtual menu line at top of buffer."
-  (let ((beg (point-min))
-        end)
-    (org-with-wide-buffer
-     (goto-char beg)
-     (when (looking-at-p "^# -\\*- ")
-       (goto-char (line-beginning-position 2))
-       (setq beg (point)))
-     (when (looking-at-p org-drawer-regexp)
-       (re-search-forward org-drawer-regexp nil t 2)
-       (goto-char (setq beg (1+ (line-end-position)))))
-     (with-silent-modifications
-       (let ((inhibit-modification-hooks nil)
-             (menu (cl-loop for (regexp . rules) in doom-docs-header-alist
-                            if (seq-find (doom-rpartial #'string-match-p (buffer-file-name))
-                                         (ensure-list regexp))
-                            return rules)))
-         (when (re-search-forward "^-\\{80\\}" 512 t)
-           (delete-region beg (1+ (line-end-position))))
-         (when (and menu doom-docs-mode)
-           (let* ((fn
-                   (lambda (menu)
-                     (cl-destructuring-bind (icon . label)
-                         (split-string (car menu) " ")
-                       (if (cdr menu)
-                           (format "%s [[%s][%s]]"
-                                   icon
-                                   (cond ((functionp (cdr menu))
-                                          (funcall (cdr menu) (buffer-file-name)))
-                                         ((file-name-absolute-p (cdr menu))
-                                          (concat "file:"
-                                                  (file-relative-name (file-truename (cdr menu)))))
-                                         ((cdr menu)))
-                                   (string-join label " "))
-                         (format "%s+ %s+" icon (string-join label " "))))))
-                  (lenfn
-                   (lambda (link)
-                     (length (replace-regexp-in-string org-link-any-re "\\3" link))))
-                  (sep  "  ")
-                  (lhs  (mapconcat fn (alist-get 'left menu) sep))
-                  (rhs  (mapconcat fn (append (alist-get 'right menu)
-                                              doom-docs-header-common-alist)
-                                   sep))
-                  (llen (funcall lenfn lhs))
-                  (rlen (funcall lenfn rhs))
-                  (pad  (max 0 (- 80 llen rlen))))
-             (insert lhs
-                     (if (zerop rlen) ""
-                       (format "%s%s" (make-string pad 32) rhs))
-                     "\n" (make-string 80 ?-) "\n")))))
-     (org-element-cache-refresh (point-min)))))
+  (setq header-line-format
+        (and buffer-read-only
+             (doom-docs--make-header)))
+  (add-hook 'window-state-change-hook #'doom-docs--display-menu-h nil t))
 
 (defun doom-docs--hide-meta-h ()
   "Hide all meta or comment lines."
