@@ -224,8 +224,12 @@ with ARGS to get its return value."
 
 ;;;###autoload
 (defun +popup-windows ()
-  "Returns a list of all popup windows."
-  (cl-remove-if-not #'+popup-window-p (window-list)))
+  "Returns a list of all popup windows in all frames."
+  (apply #'append (mapcar
+                   (lambda (frame)
+                     (when frame
+                       (cl-remove-if-not #'+popup-window-p (window-list frame))))
+                   (frame-list))))
 
 ;;;###autoload
 (defun +popup-shrink-to-fit (&optional window)
