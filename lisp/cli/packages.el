@@ -266,7 +266,10 @@ list remains lean."
              if (and (file-exists-p (byte-compile-dest-file file))
                      (not (doom-packages--find-eln-file (doom-packages--eln-file-name file)))
                      (not (cl-some (fn! (string-match-p % file))
-                                   native-comp-deferred-compilation-deny-list))) do
+                                  (if (> emacs-major-version 28)
+                                    native-comp-jit-compilation-deny-list
+                                    native-comp-deferred-compilation-deny-list
+                                  )))) do
              (doom-log "Compiling %s" file)
              (native-compile-async file))))
 

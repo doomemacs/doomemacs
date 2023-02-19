@@ -139,7 +139,11 @@ uses a straight or package.el command directly).")
 (when (featurep 'native-compile)
   (after! comp
     ;; HACK Disable native-compilation for some troublesome packages
-    (mapc (doom-partial #'add-to-list 'native-comp-deferred-compilation-deny-list)
+    (mapc (doom-partial #'add-to-list 
+                        (if (> emacs-major-version 28)
+                          'native-comp-jit-compilation-deny-list
+                          'native-comp-deferred-compilation-deny-list
+                        ))
           (list "/emacs-jupyter.*\\.el\\'"
                 "/evil-collection-vterm\\.el\\'"
                 "/vterm\\.el\\'"
