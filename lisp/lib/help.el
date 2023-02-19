@@ -699,29 +699,10 @@ config blocks in your private config."
          (consult--grep
           prompt
           (lambda (input)
-            (pcase-let* ((cmd (split-string-and-unquote consult-ripgrep-args))
-                         (`(,arg . ,opts) (consult--command-split query))
-                         (flags (append cmd opts))
-                         (ignore-case (if (or (member "-S" flags) (member "--smart-case" flags))
-                                          (let (case-fold-search)
-                                            ;; Case insensitive if there are no uppercase letters
-                                            (not (string-match-p "[[:upper:]]" arg)))
-                                        (or (member "-i" flags) (member "--ignore-case" flags)))))
-              (if (or (member "-F" flags) (member "--fixed-strings" flags))
-                  `(:command (,@cmd "-e" ,arg ,@opts ,@dirs) :highlight
-                    ,(apply-partially #'consult--highlight-regexps
-                                      (list (regexp-quote arg)) ignore-case))
-                (pcase-let* ((type (or consult--ripgrep-regexp-type
-                                       (setq consult--ripgrep-regexp-type
-                                             (if (consult--grep-lookahead-p (car cmd) "-P") 'pcre 'extended))))
-                             (`(,re . ,hl) (funcall consult--regexp-compiler arg type ignore-case)))
-                  (when re
-                    `(:command
-                      (,@cmd ,@(and (eq type 'pcre) '("-P"))
-                             "-e" ,(consult--join-regexps re type)
-                             ,@opts
-                             ,@dirs)
-                      :highlight ,hl))))))
+            ;; PERF: avoid converting dirs to string and back when adding them to ripgrep args.
+            (letf! (defun consult--command-split (fn &rest args)
+                     (append (apply consult--command-split args) dirs))
+              (funcall (consult--ripgrep-make-builder) input)))
           data-directory query))
         ((fboundp 'counsel-rg)
          (let ((counsel-rg-base-command
@@ -760,4 +741,3 @@ Uses the symbol at point or the current selection, if available."
                                    (format "%s.el" filebase)))
             collect it)
    query "Search loaded files: "))
-

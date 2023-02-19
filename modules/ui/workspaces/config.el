@@ -282,4 +282,7 @@ stored in `persp-save-dir'.")
   (add-hook! 'tab-bar-mode-hook
     (defun +workspaces-set-up-tab-bar-integration-h ()
       (add-hook 'persp-before-deactivate-functions #'+workspaces-save-tab-bar-data-h)
-      (add-hook 'persp-activated-functions #'+workspaces-load-tab-bar-data-h))))
+      (add-hook 'persp-activated-functions #'+workspaces-load-tab-bar-data-h)
+      ;; Load and save configurations for tab-bar.
+      (add-hook 'persp-before-save-state-to-file-functions #'+workspaces-save-tab-bar-data-to-file-h)
+      (+workspaces-load-tab-bar-data-from-file-h))))
