@@ -168,6 +168,8 @@
             "C"  #'cider-connect-cljs
             "m"  #'cider-macroexpand-1
             "M"  #'cider-macroexpand-all
+            "j"  #'jet
+            "f"  #'neil-find-clojure-package
             (:prefix ("d" . "debug")
              "d" #'cider-debug-defun-at-point)
             (:prefix ("e" . "eval")
@@ -259,3 +261,14 @@
   :when (and (modulep! :checkers syntax)
              (not (modulep! +lsp)))
   :after flycheck)
+
+
+(use-package! neil
+  :commands (neil-find-clojure-package)
+  :config
+  (setq neil-prompt-for-version-p nil
+        neil-inject-dep-to-project-p t))
+
+
+(use-package! jet
+  :commands (jet))

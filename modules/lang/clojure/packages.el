@@ -19,3 +19,7 @@
 (package! cider :pin "92c1b6de20805a9caa556cc671ac39080e4e89cc")
 (when (modulep! :checkers syntax)
   (package! flycheck-clj-kondo :pin "ff7bed2315755cfe02ef471edf522e27b78cd5ca"))
+(package! jet :pin "f007660c568e924e32d486a02aa4cd18203313cc")
+(package! neil
+  :recipe (:host github :repo "babashka/neil" :files ("*.el"))
+  :pin "1dbac785cee4af8ad499839adbb83a8a297e7c70")
