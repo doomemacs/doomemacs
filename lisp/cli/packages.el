@@ -476,14 +476,34 @@ declaration) or dependency thereof that hasn't already been."
                        (print-group! (print! (item "%s" output))))
                      (cl-return)))
                (puthash local-repo t repos-to-rebuild)
-               (puthash package t packages-to-rebuild)
-               (print! (success "\033[K(%d/%d) %s: %s -> %s%s")
-                       i total local-repo
-                       (doom-packages--abbrev-commit ref)
-                       (doom-packages--abbrev-commit target-ref)
-                       (if (and (integerp commits) (> commits 0))
-                           (format " [%d commit(s)]" commits)
-                         ""))
+               ;; HACK: Rebuild all packages that depend on PACKAGE after
+               ;;   updating it. This ensures their bytecode don't contain stale
+               ;;   references to symbols in silent dependencies.
+               ;; TODO: Allow `package!' to control this.
+               ;; TODO: Add cache+optimization step for this rebuild table.
+               (letf! ((dependents (straight-dependents package))
+                       (n 0)
+                       (defun* add-to-rebuild (tree)
+                         (cond ((null tree) nil)
+                               ((stringp tree)
+                                (unless (gethash tree packages-to-rebuild)
+                                  (cl-incf n 1)
+                                  (puthash tree t packages-to-rebuild)))
+                               ((listp tree)
+                                (add-to-rebuild (car tree))
+                                (add-to-rebuild (cdr tree))))))
+                 (add-to-rebuild dependents)
+                 (puthash package t packages-to-rebuild)
+                 (print! (success "\033[K(%d/%d) %s: %s -> %s%s%s")
+                         i total local-repo
+                         (doom-packages--abbrev-commit ref)
+                         (doom-packages--abbrev-commit target-ref)
+                         (if (and (integerp commits) (> commits 0))
+                             (format " [%d commit(s)]" commits)
+                           "")
+                         (if (> n 0)
+                             (format " (w/ %d dependents)" n)
+                           "")))
                (unless (string-empty-p output)
                  (let ((lines (split-string output "\n")))
                    (setq output
