@@ -583,6 +583,14 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
   (setq native-comp-async-report-warnings-errors init-file-debug
         native-comp-warning-on-missing-source init-file-debug)
 
+  ;; HACK: native-comp-deferred-compilation-deny-list is replaced in later
+  ;;   versions of Emacs 29, and with no deprecation warning. I alias them to
+  ;;   ensure backwards compatibility for packages downstream that may have not
+  ;;   caught up yet. I avoid marking it obsolete because obsolete warnings are
+  ;;   unimportant to end-users. It's the package devs that should be informed.
+  (unless (boundp 'native-comp-deferred-compilation-deny-list)
+    (defvaralias 'native-comp-deferred-compilation-deny-list 'native-comp-jit-compilation-deny-list))
+
   ;; UX: By default, native-comp uses 100% of half your cores. If you're
   ;;   expecting this this should be no issue, but the sudden (and silent) spike
   ;;   of CPU and memory utilization can alarm folks, overheat laptops, or
