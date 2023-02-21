@@ -3,7 +3,7 @@
 
 ;; Major modes
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
-(package! typescript-mode :pin "88f317f0b6aef8f8d232e912fdbc679799580c56")
+(package! typescript-mode :pin "4fcb4594819caf472ae42ea068a1c7795cf07f46")
 
 ;; Tools
 (package! js2-refactor :pin "a0977c4ce1918cc266db9d6cd7a2ab63f3a76b9a")
@@ -14,6 +14,6 @@
 (package! skewer-mode :pin "e5bed351939c92a1f788f78398583c2f83f1bb3c")
 
 ;; Programming environment
-(package! tide :pin "b93e555858edc331ba33d1d8bd4582d578c7ca31")
+(package! tide :pin "29475d9eee26f4101322209e9b6b199df5386094")
 (when (modulep! :tools lookup)
   (package! xref-js2 :pin "fd6b723e7f1f9793d189a815e1904364dc026b03"))
