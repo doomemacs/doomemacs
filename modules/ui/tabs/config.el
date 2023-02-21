@@ -19,20 +19,7 @@
     (defun +tabs-disable-centaur-tabs-mode-maybe-h ()
       "Disable `centaur-tabs-mode' in current buffer."
       (when (centaur-tabs-mode-on-p)
-        (centaur-tabs-local-mode))))
-
-  (defadvice! +tabs--fixed-centaur-tabs-project-name-a ()
-    :override #'centaur-tabs-project-name
-    (let ((project-name (cdr (project-current))))
-      ;; In earlier versions of project.el, `project-current' returned a cons
-      ;; cell (VCBACKEND . PROJECTROOT). In more recent versions it returns
-      ;; (TYPE VCBACKEND PROJECTROOT), which throws an error.
-      ;; REVIEW This should be upstreamed.
-      (when (listp project-name)
-        (setq project-name (cadr project-name)))
-      (if project-name
-          (format "Project: %s" (expand-file-name project-name))
-        centaur-tabs-common-group-name))))
+        (centaur-tabs-local-mode)))))
 
 
 ;; TODO tab-bar-mode (emacs 27)

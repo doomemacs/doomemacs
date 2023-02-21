@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/unicode/packages.el
 
-(package! unicode-fonts :pin "47f2397ade28eba621baa865fd69e4efb71407a5")
+(package! unicode-fonts :pin "44d0a22420c39709d1e1fa659a3f135facf3c986")
