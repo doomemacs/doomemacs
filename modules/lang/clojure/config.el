@@ -27,7 +27,14 @@
                    clojurec-mode
                    clojurescript-mode
                    clojurex-mode))
-        (add-to-list 'lsp-language-id-configuration (cons m "clojure"))))))
+        (add-to-list 'lsp-language-id-configuration (cons m "clojure")))))
+
+  (when (modulep! +tree-sitter)
+    (add-hook! '(clojure-mode-local-vars-hook
+                 clojurec-mode-local-vars-hook
+                 clojurescript-mode-local-vars-hook)
+               :append
+               #'tree-sitter!)))
 
 
 (use-package! cider
