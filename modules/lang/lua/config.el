@@ -74,7 +74,10 @@ lua-language-server.")
     tab-width 2
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp "[ \t]*;;;;* [^ \t\n]"))
+    outline-regexp "[ \t]*;;;;* [^ \t\n]")
+
+  (when (modulep! +tree-sitter)
+    (add-hook! 'fennel-mode-local-vars-hook 'tree-sitter! 'append)))
 
 
 ;;
