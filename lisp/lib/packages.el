@@ -206,50 +206,62 @@ Must be run from a magit diff buffer."
     (unless (eq major-mode 'magit-diff-mode)
       (user-error "Not in a magit diff buffer"))
     (goto-char (point-min))
-    (let (targets lines)
-      (save-excursion
-        (while (re-search-forward "^modified +\\(.+\\)$" nil t)
-          (cl-pushnew (doom-module-from-path (match-string 1)) targets
-                      :test #'equal)))
-      (while (re-search-forward "^-" nil t)
-        (let ((file (magit-file-at-point))
-              before after)
-          (and (save-window-excursion
-                 (call-interactively #'magit-diff-visit-file)
-                 (when (or (looking-at-p "(package!")
-                           (re-search-forward "(package! " (line-end-position) t)
-                           (re-search-backward "(package! " nil t))
-                   (let ((buffer-file-name file))
-                     (cl-destructuring-bind (&key package plist _beg _end)
-                         (doom--package-at-point)
-                       (setq before (doom--package-to-bump-string package plist))))))
-               (re-search-forward "^+" nil t)
+    (letf! (defun read-package ()
+             (let* ((file (magit-file-at-point))
+                    (visited? (if file (get-file-buffer file))))
                (save-window-excursion
                  (call-interactively #'magit-diff-visit-file)
-                 (or (looking-at-p "(package!")
-                     (re-search-forward "(package! " (line-end-position) t)
-                     (re-search-backward "(package! "))
-                 (let ((buffer-file-name file))
-                   (cl-destructuring-bind (&key package plist _beg _end)
-                       (doom--package-at-point)
-                     (setq after (doom--package-to-bump-string package plist)))))
-               (cl-pushnew (format "%s -> %s" before after) lines))))
-      (if (null lines)
-          (user-error "No bumps to bumpify")
-        (prog1 (funcall (if interactive #'kill-new #'identity)
-                        (format "bump: %s\n\n%s"
-                                (mapconcat (lambda (x)
-                                             (mapconcat #'symbol-name x " "))
-                                           (cl-loop with alist = ()
-                                                    for (category . module) in (reverse targets)
-                                                    do (setf (alist-get category alist)
-                                                             (append (alist-get category alist) (list module)))
-                                                    finally return alist)
-                                           " ")
-                                (string-join (sort (reverse lines) #'string-lessp)
-                                             "\n")))
-          (when interactive
-            (message "Copied to clipboard")))))))
+                 (unwind-protect
+                     (and (or (looking-at-p "(package!")
+                              (re-search-forward "(package! " (line-end-position) t)
+                              (re-search-backward "(package! " nil t))
+                          (let* ((buffer-file-name file)
+                                 (plist (doom--package-at-point)))
+                            (cons (plist-get plist :package)
+                                  plist)))
+                   (unless visited?
+                     (kill-current-buffer))))))
+      (let (targets
+            before
+            after
+            lines
+            errors)
+        (save-excursion
+          (while (re-search-forward "^modified +\\(.+\\)$" nil t)
+            (cl-pushnew (doom-module-from-path (match-string 1)) targets
+                        :test #'equal)))
+        (save-excursion
+          (while (re-search-forward "^-" nil t)
+            (cl-pushnew (read-package) before :test #'equal)))
+        (save-excursion
+          (while (re-search-forward "^+" nil t)
+            (cl-pushnew (read-package) after :test #'equal)))
+        (unless (= (length before) (length after))
+          (user-error "Uneven number of packages being bumped"))
+        (dolist (p1 before)
+          (cl-destructuring-bind (package &key plist _beg _end &allow-other-keys) p1
+            (let ((p2 (cdr (assq package after))))
+              (if (null p2)
+                  (push package errors)
+                (let ((bstr1 (doom--package-to-bump-string package plist))
+                      (bstr2 (doom--package-to-bump-string package (plist-get p2 :plist))))
+                  (cl-pushnew (format "%s -> %s" bstr1 bstr2) lines))))))
+        (if (null lines)
+            (user-error "No bumps to bumpify")
+          (prog1 (funcall (if interactive #'kill-new #'identity)
+                          (format "bump: %s\n\n%s"
+                                  (mapconcat (lambda (x)
+                                               (mapconcat #'symbol-name x " "))
+                                             (cl-loop with alist = ()
+                                                      for (category . module) in (reverse targets)
+                                                      do (setf (alist-get category alist)
+                                                               (append (alist-get category alist) (list module)))
+                                                      finally return alist)
+                                             " ")
+                                  (string-join (sort (reverse lines) #'string-lessp)
+                                               "\n")))
+            (when interactive
+              (message "Copied to clipboard"))))))))
 
 ;;;###autoload
 (defun doom/commit-bumps ()
