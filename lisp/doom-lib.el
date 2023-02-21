@@ -303,7 +303,8 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
 
 (defmacro dir! ()
   "Return the directory of the file this macro was called."
-  (file-name-directory (macroexpand '(file!))))
+   (let (file-name-handler-alist)
+     (file-name-directory (macroexpand '(file!)))))
 
 ;; REVIEW Should I deprecate this? The macro's name is so long...
 (defalias 'letenv! 'with-environment-variables)
