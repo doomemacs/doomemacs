@@ -184,7 +184,7 @@ orderless."
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file))
   :config
-  (when (modulep! :tools docker)
+  (when (and (< emacs-major-version 29) (modulep! :tools docker))
     (defun +vertico--consult-dir-docker-hosts ()
       "Get a list of hosts from docker."
       (when (require 'docker-tramp nil t)
