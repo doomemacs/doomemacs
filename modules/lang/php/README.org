@@ -4,11 +4,11 @@
 #+since:    1.3
 
 * Description :unfold:
-This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
+This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
 
 - ctags-based code completion (~company-php~ and ~phpctags~)
 - eldoc support (~ac-php~ and ~php-extras~)
-- REPL (~php-boris~)
+- REPL (~psysh~)
 - Code refactoring commands (~php-refactor-mode~)
 - Unit-test commands (~phpunit~)
 - Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
@@ -40,7 +40,7 @@ This module adds support for PHP 5.3+ (including PHP7) to Doom Emacs.
 ** Packages
 - [[doom-package:async]]
 - [[doom-package:hack-mode]] if [[doom-module:+hack]]
-- [[doom-package:php-boris]]
+- [[doom-package:psysh]]
 - [[doom-package:php-cs-fixer]] if [[doom-package::editor format]]
 - [[doom-package:php-extras]]
 - [[doom-package:php-mode]]
@@ -73,7 +73,7 @@ provided for reference:
 
 #+begin_src sh
 brew tap homebrew/homebrew-php
-brew install php71  # or php53, php54, php55
+brew install php@8.0  # or php53, php54, php55
 brew install composer
 
 # If you use intelephense:
@@ -96,7 +96,13 @@ sudo zypper install php-composer
 # If you use intelephense:
 sudo zypper install nodejs npm
 #+end_src
+*** Debian
+#+begin_src sh
+sudo apt-get install php php-common
 
+# If you use intelephense:
+sudo apt-get install nodejs npm
+#+end_src
 ** LSP Support
 There are a number of currently supported LSP servers:
 
@@ -112,7 +118,7 @@ which will trigger either when you open a PHP project or manually invoke
 The others have to be installed manually and added to your =$PATH=.
 
 ** Dependencies
-- ~boris~ (REPL)
+- ~pysh~ (REPL)
 - ~phpctags~ (better code completion)
 - ~phpunit~ (unit test commands)
 - ~php-cs-fixer~ and ~@prettier/plugin-php~ (for code formatting)
@@ -120,7 +126,7 @@ The others have to be installed manually and added to your =$PATH=.
 
 #+begin_src sh
 composer global require \
-    d11wtq/boris \
+    psy/psysh \
     phpunit/phpunit \
     techlivezheng/phpctags \
     friendsofphp/php-cs-fixer \
@@ -143,6 +149,8 @@ command line.
 
 *NOTE* phpactor doesn't have to be installed via =composer=, just has to exist in
 your =$PATH=.
+
+*NOTE* Phpactor cannot be installed, globally at least, with PHP ^8.
 
 * TODO Usage
 #+begin_quote
@@ -181,7 +189,7 @@ commands:
 | [[kbd:][<localleader> m c o]] | ~composer-find-json-file~         |
 | [[kbd:][<localleader> m c l]] | ~composer-view-lock-file~         |
 
-These are all invokable via [[kbd:][M-x]] too.
+These are all run via [[kbd:][M-x]] too.
 
 * TODO Configuration
 #+begin_quote
