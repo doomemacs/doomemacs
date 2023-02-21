@@ -2,6 +2,6 @@
 ;;; email/mu4e/packages.el
 
 (when (modulep! +org)
-  (package! org-msg :pin "60e22e446325a9b3387396459d98be7c1c52579d"))
+  (package! org-msg :pin "7b1dfb96d558f6e5626e96d4f4a5150d55cb7eb2"))
 
-(package! mu4e-alert :pin "b34d0ea7b75709cc25d842a783cebea855dc9f7d")
+(package! mu4e-alert :pin "3c9af8c7994df0a1a4f0703552ea3beffb485ace")
