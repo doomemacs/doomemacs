@@ -150,7 +150,7 @@ orderless."
    :preview-key "C-SPC")
   (consult-customize
    consult-theme
-   :preview-key (list (kbd "C-SPC") :debounce 0.5 'any))
+   :preview-key (list "C-SPC" :debounce 0.5 'any))
   (when (modulep! :lang org)
     (defvar +vertico--consult-org-source
       (list :name     "Org Buffer"
