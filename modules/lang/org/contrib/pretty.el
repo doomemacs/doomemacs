@@ -22,3 +22,7 @@
   :hook (org-mode . org-fancy-priorities-mode)
   :hook (org-agenda-mode . org-fancy-priorities-mode)
   :config (setq org-fancy-priorities-list '("⚑" "⬆" "■")))
+
+
+(use-package! org-appear ; better markup edit
+  :hook (org-mode . org-appear-mode))
