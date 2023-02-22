@@ -2,10 +2,10 @@
 ;;; lang/sh/packages.el
 
 (when (modulep! :completion company)
-  (package! company-shell :pin "a77f4de75912aa87314cde92c603b831d5050246"))
+  (package! company-shell :pin "5f959a63a6e66eb0cbdac3168cad523a62cc2ccd"))
 
 (when (modulep! +fish)
-  (package! fish-mode :pin "a7c953b1491ac3a3e00a7b560f2c9f46b3cb5c04"))
+  (package! fish-mode :pin "d04478c0aba018cb789d77d591bfe315cb25132a"))
 
 (when (modulep! +powershell)
-  (package! powershell :pin "ce1f0ae0b2e41cd0934a9dfbf2ff016b1d14e9c0"))
+  (package! powershell :pin "f2da15857e430206e215a3c65289b4058ae3c976"))

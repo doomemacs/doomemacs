@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/rst/packages.el
 
-(package! sphinx-mode :pin "9d4075c106fc837006394c4c803281383f2ec6f3")
+(package! sphinx-mode :pin "77ca51adf9ee877f3a8f43e744f59e650772f121")

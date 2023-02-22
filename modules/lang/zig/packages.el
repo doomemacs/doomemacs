@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/zig/packages.el
 
-(package! zig-mode :pin "aa20d630b8c413dab8d6bd120ec3ed5db5c9da70")
+(package! zig-mode :pin "9c5e41d6a0a8d8e081dd2dc9b57696435eebbc30")

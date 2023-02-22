@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/kotlin/packages.el
 
-(package! kotlin-mode :pin "3e0c34087ba4965a8bf08d3f27325f0a1e631bfb")
+(package! kotlin-mode :pin "fddd747e5b4736e8b27a147960f369b86179ddff")
 
 (when (modulep! :checkers syntax)
-  (package! flycheck-kotlin :pin "bf1b398bdde128806a0a7479ebbe369bbaa40dae"))
+  (package! flycheck-kotlin :pin "a2a6abb9a7f85c6fb15ce327459ec3c8ff780188"))

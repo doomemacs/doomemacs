@@ -2,7 +2,7 @@
 ;;; lang/csharp/packages.el
 
 (package! csharp-mode
-  :pin "856ecbc0a78ae3bdc2db2ae4d16be43e2d9d9c5e"
+  :pin "02c61c219b2c22491eff9b7315fed661fab423d4"
   :built-in 'prefer)  ; Built-in as of Emacs 29
 
 (package! csproj-mode :pin "a7f0f4610c976a28c41b9b8299892f88b5d0336c")
@@ -10,6 +10,6 @@
 ;; sln-mode depends on font-lock-ext
 (package! font-lock-ext :pin "b6c82e8ac7996d96494a54454015a98ceb883feb")
 (when (modulep! +unity)
-  (package! shader-mode :pin "d7dc8d0d6fe8914e8b6d5cf2081ad61e6952359c"))
+  (package! shader-mode :pin "fe5a1982ba69e4a98b834141a46a1908f132df15"))
 (when (modulep! +dotnet)
-  (package! sharper :pin "96edd4a1dbc267afdff0cb97298d1b05b7c2080c"))
+  (package! sharper :pin "496e90e337cb09329d85a6d171c0953a85e918fe"))

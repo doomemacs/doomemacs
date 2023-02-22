@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/fstar/packages.el
 
-(package! fstar-mode :pin "c95c2a61a6c42a1fa8bab9a8eb812a41be3e6f69")
+(package! fstar-mode :pin "ab0697b9474f36942a12a4b2a75251c247c18e9e")
