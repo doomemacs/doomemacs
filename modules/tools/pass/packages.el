@@ -2,7 +2,7 @@
 ;;; tools/pass/packages.el
 
 (package! pass :pin "5651da53137db9adcb125b4897c2fe27eeb4368d")
-(package! password-store :pin "c4d8a1d815e79ddd89a85d3e36a41d29f0475771")
+(package! password-store :pin "26d2dae04bb76a87be6960861c10432820cd5d55")
 (package! password-store-otp :pin "be3a00a981921ed1b2f78012944dc25eb5a0beca")
 
 (when (modulep! :completion ivy)
