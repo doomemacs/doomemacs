@@ -6,7 +6,7 @@
 (package! smerge-mode :built-in t)
 
 (package! browse-at-remote :pin "c020975a891438e278ad1855213d4f3d62c9fccb")
-(package! git-commit :pin "30b0debaaadadec6103a8d7eab92322fd9d30a15")
+(package! git-commit :pin "97a95f70079b6613bf98d2306279d3e03fe51234")
 (package! git-timemachine
   ;; The original lives on codeberg.org; which has uptime issues.
   :recipe (:host github :repo "emacsmirror/git-timemachine")
