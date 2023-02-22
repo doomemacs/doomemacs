@@ -135,7 +135,7 @@ otherwise in default state."
 
   ;; Add codeberg.org support
   ;; TODO: PR this upstream?
-  (add-to-list 'browse-at-remote-remote-type-regexps '(:host "^codeberg\\.org$" :type "github"))
+  (add-to-list 'browse-at-remote-remote-type-regexps '(:host "^codeberg\\.org$" :type "codeberg"))
 
   ;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo is
   ;;      detached. This creates broken links. I think it is more sensible to
