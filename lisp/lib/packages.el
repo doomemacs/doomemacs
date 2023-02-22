@@ -245,7 +245,7 @@ Must be run from a magit diff buffer."
                   (push package errors)
                 (let ((bstr1 (doom--package-to-bump-string package plist))
                       (bstr2 (doom--package-to-bump-string package (plist-get p2 :plist))))
-                  (cl-pushnew (format "%s -> %s" bstr1 bstr2) lines))))))
+                  (cl-pushnew (format "%s -> %s" bstr1 bstr2) lines :test #'equal))))))
         (if (null lines)
             (user-error "No bumps to bumpify")
           (prog1 (funcall (if interactive #'kill-new #'identity)
