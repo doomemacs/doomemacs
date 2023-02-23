@@ -41,8 +41,12 @@
 (defun +sh-lookup-documentation-handler ()
   "Look up documentation in `man' or `woman'."
   (interactive)
-  (call-interactively
-   (if (executable-find "man")
-       #'man
-     #'woman))
-  (current-buffer))
+  (require 'man)
+  (let ((input (Man-default-man-entry)))
+    (if (executable-find "man")
+        (let* ((input (Man-translate-references input))
+               (buffer (Man-getpage-in-background input)))
+          (when (buffer-live-p buffer)
+            (switch-to-buffer buffer)))
+      (woman input t)
+      (current-buffer))))
