@@ -13,6 +13,8 @@ methods: Pinyin and Wubi.
 ** Module flags
 - +rime ::
   Enables the [[https://rime.im/][rime]] backend for pyim.
+- +childframe ::
+  Display pyim candidates in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than overlay or tooltip.
 
 ** Packages
 - [[doom-package:ace-pinyin]]
@@ -21,6 +23,7 @@ methods: Pinyin and Wubi.
 - [[doom-package:fcitx]]
 - [[doom-package:liberime]] if [[doom-module:+rime]]
 - [[doom-package:pangu-spacing]]
+- [[doom-package:posframe]] if [[doom-module:+childframe]]
 - [[doom-package:pyim]] unless [[doom-module:+wubi]]
 
 ** Hacks

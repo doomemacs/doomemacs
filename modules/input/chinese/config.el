@@ -13,6 +13,9 @@
       current-input-method)
     (add-to-list 'evil-escape-inhibit-functions #'+chinese--input-method-p))
 
+  (when (modulep! +childframe)
+    (setq pyim-page-tooltip 'posframe))
+
   ;; allow vertico/selectrum search with pinyin
   (cond ((modulep! :completion vertico)
          (advice-add #'orderless-regexp
