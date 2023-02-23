@@ -8,6 +8,11 @@
   (setq pyim-page-tooltip t
         default-input-method "pyim")
 
+  (after! evil-escape
+    (defun +chinese--input-method-p ()
+      current-input-method)
+    (add-to-list 'evil-escape-inhibit-functions #'+chinese--input-method-p))
+
   ;; allow vertico/selectrum search with pinyin
   (cond ((modulep! :completion vertico)
          (advice-add #'orderless-regexp
