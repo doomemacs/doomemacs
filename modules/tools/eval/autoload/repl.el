@@ -48,42 +48,51 @@
                        (point-max)))))
       buffer)))
 
-(defun +eval-open-repl (prompt-p &optional displayfn)
-  (cl-destructuring-bind (_mode fn . plist)
-      (or (assq major-mode +eval-repls)
-          (list nil nil))
-    (when (or (not fn) prompt-p)
-      (let* ((choices (or (cl-loop for sym being the symbols
-                                   for sym-name = (symbol-name sym)
-                                   if (string-match "^\\(?:\\+\\)?\\([^/]+\\)/open-\\(?:\\(.+\\)-\\)?repl$" sym-name)
-                                   collect
-                                   (format "%s (%s)"
-                                           (match-string-no-properties 1 sym-name)
-                                           (or (match-string-no-properties 2 sym-name) "default")))
-                          (user-error "There are no known available REPLs")))
-             (choice (or (completing-read "Open a REPL for: " choices)
-                         (user-error "Aborting")))
-             (choice-split (split-string choice " " t))
-             (module (car choice-split))
-             (repl (substring (cadr choice-split) 1 -1)))
-        (setq fn
-              (intern-soft
-               (format "+%s/open-%srepl" module
-                       (if (string= repl "default")
-                           ""
-                         (concat repl "-")))))))
-    (let ((region (if (use-region-p)
-                      (buffer-substring-no-properties (region-beginning)
-                                                      (region-end)))))
-      (unless (commandp fn)
-        (error "Couldn't find a valid REPL for %s" major-mode))
-      (with-current-buffer (+eval--ensure-in-repl-buffer fn plist displayfn)
-        (when (bound-and-true-p evil-mode)
-          (call-interactively #'evil-append-line))
-        (when region
-          (insert region))
-        t))))
+(defun +eval-repl-known-repls ()
+  "Yield the available repl functions as a list of symbols."
+  (seq-uniq (mapcar #'cl-second +eval-repls)))
 
+(defun +eval-repl-found-repls ()
+  "Search the interned symbol list for functions that looks like
+repl openers."
+  (cl-loop for sym being the symbols
+           for sym-name = (symbol-name sym)
+           if (string-match "^\\(?:\\+\\)?\\([^/]+\\)/open-\\(?:\\(.+\\)-\\)?repl$" sym-name)
+           collect
+           sym))
+
+(defun +eval-repl-prompt ()
+  "Prompt the user for the choice of a repl to open."
+  (let* ((repls (seq-uniq (append (+eval-repl-known-repls)
+                                  (+eval-repl-found-repls))))
+         (choice (or (completing-read "Open a REPL for: " repls)
+                     (user-error "Aborting"))))
+    (intern-soft choice)))
+
+(defun +eval-repl-from-major-mode ()
+  "Fetch the repl associated with the current major mode, if there
+is one."
+  (pcase-let ((`(_ ,fn . ,plist) (assq major-mode +eval-repls)))
+    (list fn plist)))
+
+(defun +eval-open-repl (prompt-p &optional displayfn)
+  "Open a repl via the given DISPLAYFN. If PROMPT-P, the user will be
+prompted for a repl choice, even if the major mode they're in
+already has a known one."
+  (pcase-let* ((`(,fn ,plist) (+eval-repl-from-major-mode))
+               (fn (cond ((or prompt-p (not fn)) (+eval-repl-prompt))
+                         (t fn)))
+               (region (when (use-region-p)
+                         (buffer-substring-no-properties (region-beginning)
+                                                         (region-end)))))
+    (unless (commandp fn)
+      (error "Couldn't find a valid REPL for %s" major-mode))
+    (with-current-buffer (+eval--ensure-in-repl-buffer fn plist displayfn)
+      (when (bound-and-true-p evil-mode)
+        (call-interactively #'evil-append-line))
+      (when region
+        (insert region))
+      t)))
 
 ;;
 ;;; Commands
