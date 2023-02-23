@@ -138,13 +138,14 @@ information.")
 must be non-read-only, empty, and there must be a rule in
 `+file-templates-alist' that applies to it."
   (and (not +file-templates-inhibit)
-       buffer-file-name
-       (not buffer-read-only)
-       (bobp) (eobp)
-       (not (member (substring (buffer-name) 0 1) '("*" " ")))
-       (not (file-exists-p buffer-file-name))
-       (not (buffer-modified-p))
-       (null (buffer-base-buffer))
+       buffer-file-name        ; this buffer represents a file and
+       (not buffer-read-only)  ; ...isn't read-only
+       (bobp) (eobp)           ; ...is empty
+       (not (member (substring (buffer-name) 0 1) '("*" " ")))  ; ...isn't a "special" buffer
+       (not (bound-and-true-p org-capture-current-plist))  ; ...isn't an org-capture buffer
+       (not (file-exists-p buffer-file-name))  ; ...is a new file
+       (not (buffer-modified-p))    ; ...hasn't been modified
+       (null (buffer-base-buffer))  ; ...isn't an indirect clone
        (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
          (apply #'+file-templates--expand rule))))
 
