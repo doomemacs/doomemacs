@@ -11,12 +11,14 @@ methods: Pinyin and Wubi.
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +rime ::
+  Enables the [[https://rime.im/][rime]] backend for pyim.
 
 ** Packages
 - [[doom-package:ace-pinyin]]
 - [[doom-package:chinese-wbim]] if [[doom-module:+wubi]]
 - [[doom-package:fcitx]]
+- [[doom-package:liberime]] if [[doom-module:+rime]]
 - [[doom-package:pangu-spacing]]
 - [[doom-package:pyim]] unless [[doom-module:+wubi]]
 
@@ -34,6 +36,13 @@ methods: Pinyin and Wubi.
 #+begin_quote
  🔨 This module is missing install instructions. [[doom-contrib-module:][Write some?]]
 #+end_quote
+
+If you want to use rime as the input method engine:
+- Emacs must be built with dynamic module support, i.e. compiled with the
+  =--with-modules= option.
+- You need =librime= installed on your system.
+- You need =make=, =cmake= and a C compiler such as =gcc= so that liberime can
+  build =liberime-core.so=.
 
 * TODO Usage
 #+begin_quote

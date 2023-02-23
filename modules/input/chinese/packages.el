@@ -5,3 +5,5 @@
 (package! fcitx :pin "12dc2638ddd15c8f6cfaecb20e1f428ab2bb5624")
 (package! ace-pinyin :pin "47662c0b05775ba353464b44c0f1a037c85e746e")
 (package! pangu-spacing :pin "2303013e5cd7852136f1429162fea0e1c8cb0221")
+(when (modulep! +rime)
+  (package! liberime :pin "8291e22cd0990a99cb2f88ca67a9065a157f39af"))

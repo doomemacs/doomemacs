@@ -9,6 +9,20 @@
         default-input-method "pyim"))
 
 
+(use-package! liberime
+  :when (modulep! +rime)
+  :init
+  (setq liberime-auto-build t
+        liberime-user-data-dir (file-name-concat doom-cache-dir "rime")))
+
+
+(use-package! pyim-liberime
+  :when (modulep! +rime)
+  :after liberime
+  :config
+  (setq pyim-default-scheme 'rime))
+
+
 (use-package! pangu-spacing
   :hook (text-mode . pangu-spacing-mode)
   :config
