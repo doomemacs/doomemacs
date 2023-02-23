@@ -10,7 +10,9 @@
   (unless (or langtool-bin
               langtool-language-tool-jar
               langtool-java-classpath)
-    (cond ((setq langtool-bin (executable-find "languagetool")))
+    (cond ((setq langtool-bin
+                 (or (executable-find "languagetool-commandline")
+                     (executable-find "languagetool"))))  ; for nixpkgs.languagetool
           (IS-MAC
            (cond
             ;; is user using home brew?
