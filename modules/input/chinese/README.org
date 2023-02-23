@@ -17,6 +17,7 @@ methods: Pinyin and Wubi.
 ** Packages
 - [[doom-package:ace-pinyin]]
 - [[doom-package:chinese-wbim]] if [[doom-module:+wubi]]
+- [[doom-package:evil-pinyin]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:fcitx]]
 - [[doom-package:liberime]] if [[doom-module:+rime]]
 - [[doom-package:pangu-spacing]]

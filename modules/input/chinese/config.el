@@ -10,7 +10,11 @@
 
   ;; allow vertico/selectrum search with pinyin
   (cond ((modulep! :completion vertico)
-         (advice-add #'orderless-regexp :filter-return #'pyim-cregexp-build-regexp-string))
+         (advice-add #'orderless-regexp
+                     :filter-return
+                     (if (modulep! :editor evil +everywhere)
+                         #'evil-pinyin--build-regexp-string
+                       #'pyim-cregexp-build-regexp-string)))
         ((modulep! :completion ivy)
          (setq ivy-re-builders-alist '((t . pyim-cregexp-ivy))))))
 
@@ -49,6 +53,14 @@
   :after avy
   :init (setq ace-pinyin-use-avy t)
   :config (ace-pinyin-global-mode t))
+
+
+(use-package! evil-pinyin
+  :when (modulep! :editor evil +everywhere)
+  :after evil
+  :config
+  (setq-default evil-pinyin-with-search-rule 'always)
+  (global-evil-pinyin-mode 1))
 
 
 ;;
