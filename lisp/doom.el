@@ -487,7 +487,7 @@ All valid contexts:
   sandbox    -- This session was launched from Doom's sandbox.
   packages   -- when packagedefs are being read
   reload     -- while reloading doom")
-(put 'doom-context 'valid-values '(cli compile eval init modules packages reload sandbox))
+(put 'doom-context 'valid-values '(cli compile eval init modules packages reload doctor sandbox))
 (put 'doom-context 'risky-local-variable t)
 
 (defun doom-context--check (context)

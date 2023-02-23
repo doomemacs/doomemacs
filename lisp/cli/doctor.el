@@ -238,41 +238,42 @@ in."
           (print! (start "Checking your enabled modules..."))
           (advice-add #'require :around #'doom-shut-up-a)
           (pcase-dolist (`(,group . ,name) (doom-module-list))
-            (let (doom-local-errors
-                  doom-local-warnings)
-              (let (doom-doctor--errors
-                    doom-doctor--warnings)
-                (condition-case-unless-debug ex
-                    (doom-module-context-with (cons group name)
-                      (let ((doctor-file   (doom-module-expand-path group name "doctor.el"))
-                            (packages-file (doom-module-expand-path group name doom-module-packages-file)))
-                        (when packages-file
-                          (cl-loop with doom-output-indent = 6
-                                   for name in (doom-context-with 'packages
-                                                 (let* (doom-packages
-                                                        doom-disabled-packages)
-                                                   (load packages-file 'noerror 'nomessage)
-                                                   (mapcar #'car doom-packages)))
-                                   unless (or (doom-package-get name :disable)
-                                              (eval (doom-package-get name :ignore))
-                                              (plist-member (doom-package-get name :recipe) :local-repo)
-                                              (locate-library (symbol-name name))
-                                              (doom-package-built-in-p name)
-                                              (doom-package-installed-p name))
-                                   do (print! (error "Missing emacs package: %S") name)))
-                        (when doctor-file
-                          (let ((inhibit-message t))
-                            (load doctor-file 'noerror 'nomessage)))))
-                  (file-missing (error! "%s" (error-message-string ex)))
-                  (error (error! "Syntax error: %s" ex)))
-                (when (or doom-doctor--errors doom-doctor--warnings)
-                  (print-group!
-                    (print! (start (bold "%s %s")) group name)
-                    (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
-                  (setq doom-local-errors doom-doctor--errors
-                        doom-local-warnings doom-doctor--warnings)))
-              (appendq! doom-doctor--errors doom-local-errors)
-              (appendq! doom-doctor--warnings doom-local-warnings)))))
+            (doom-context-with 'doctor
+              (let (doom-local-errors
+                    doom-local-warnings)
+                (let (doom-doctor--errors
+                      doom-doctor--warnings)
+                  (condition-case-unless-debug ex
+                      (doom-module-context-with (cons group name)
+                        (let ((doctor-file   (doom-module-expand-path group name "doctor.el"))
+                              (packages-file (doom-module-expand-path group name doom-module-packages-file)))
+                          (when packages-file
+                            (cl-loop with doom-output-indent = 6
+                                     for name in (doom-context-with 'packages
+                                                   (let* (doom-packages
+                                                          doom-disabled-packages)
+                                                     (load packages-file 'noerror 'nomessage)
+                                                     (mapcar #'car doom-packages)))
+                                     unless (or (doom-package-get name :disable)
+                                                (eval (doom-package-get name :ignore))
+                                                (plist-member (doom-package-get name :recipe) :local-repo)
+                                                (locate-library (symbol-name name))
+                                                (doom-package-built-in-p name)
+                                                (doom-package-installed-p name))
+                                     do (print! (error "Missing emacs package: %S") name)))
+                          (when doctor-file
+                            (let ((inhibit-message t))
+                              (load doctor-file 'noerror 'nomessage)))))
+                    (file-missing (error! "%s" (error-message-string ex)))
+                    (error (error! "Syntax error: %s" ex)))
+                  (when (or doom-doctor--errors doom-doctor--warnings)
+                    (print-group!
+                      (print! (start (bold "%s %s")) group name)
+                      (print! "%s" (string-join (append doom-doctor--errors doom-doctor--warnings) "\n")))
+                    (setq doom-local-errors doom-doctor--errors
+                          doom-local-warnings doom-doctor--warnings)))
+                (appendq! doom-doctor--errors doom-local-errors)
+                (appendq! doom-doctor--warnings doom-local-warnings))))))
     (error
      (warn! "Attempt to load DOOM failed\n  %s\n"
             (or (cdr-safe ex) (car ex)))
