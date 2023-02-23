@@ -91,6 +91,39 @@ go install github.com/fatih/gomodifytags@latest
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
+** Keybinds
+| Keys                | Description                                           |
+|---------------------+-------------------------------------------------------|
+| [[kbd:][<localleader> a]]     | Add field tags to a struct                            |
+| [[kbd:][<localleader> d]]     | Remove field tags from a struct                       |
+| [[kbd:][<localleader> e]]     | Evaluate buffer or selection in the Go playground     |
+| [[kbd:][<localleader> i]]     | Go to imports                                         |
+| [[kbd:][<localleader> b c]]   | run ~$ go clean~                                      |
+| [[kbd:][<localleader> b b]]   | run ~$ go build~                                      |
+| [[kbd:][<localleader> b r]]   | run ~$ go run .~                                      |
+| [[kbd:][<localleader> h .]]   | lookup symbol at point in godoc                       |
+| [[kbd:][<localleader> h d]]   | describe symbol at point                              |
+| [[kbd:][<localleader> h v]]   | list free variables                                   |
+| [[kbd:][<localleader> h i]]   | list implements relations for package types           |
+| [[kbd:][<localleader> h p]]   | list peers for channel                                |
+| [[kbd:][<localleader> h P]]   | "what does this point to"                             |
+| [[kbd:][<localleader> h r]]   | list references to object                             |
+| [[kbd:][<localleader> h e]]   | which errors                                          |
+| [[kbd:][<localleader> h w]]   | what query                                            |
+| [[kbd:][<localleader> h c]]   | show callers of function at point                     |
+| [[kbd:][<localleader> h C]]   | show callees of function at point                     |
+| [[kbd:][<localleader> t t]]   | rerun last test                                       |
+| [[kbd:][<localleader> t a]]   | run all tests in project                              |
+| [[kbd:][<localleader> t f]]   | run all tests in current file                         |
+| [[kbd:][<localleader> t s]]   | run single test at point                              |
+| [[kbd:][<localleader> t g]]   | Generate tests for all exported or selected functions |
+| [[kbd:][<localleader> t G]]   | Generate tests for all functions                      |
+| [[kbd:][<localleader> t e]]   | Generate tests for all exported functions             |
+| [[kbd:][<localleader> t b s]] | go test.bench single                                  |
+| [[kbd:][<localleader> t b a]] | go test.bench all                                     |
+| [[kbd:][<localleader> r i a]] | search imports to add                                 |
+| [[kbd:][<localleader> r i r]] | reimove unused imports                                |
+
 * TODO Configuration
 #+begin_quote
  🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]

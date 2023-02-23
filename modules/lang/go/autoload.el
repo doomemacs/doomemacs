@@ -17,6 +17,7 @@
 
 ;;;###autoload
 (defun +go/test-rerun ()
+  "Rerun last run test."
   (interactive)
   (if +go-test-last
       (+go--spawn +go-test-last)
@@ -24,16 +25,19 @@
 
 ;;;###autoload
 (defun +go/test-all ()
+  "Run all tests for this project."
   (interactive)
   (+go--run-tests ""))
 
 ;;;###autoload
 (defun +go/test-nested ()
+  "Run all tests in current directory and below, recursively."
   (interactive)
   (+go--run-tests "./..."))
 
 ;;;###autoload
 (defun +go/test-single ()
+  "Run single test at point."
   (interactive)
   (if (string-match "_test\\.go" buffer-file-name)
       (save-excursion
@@ -43,6 +47,7 @@
 
 ;;;###autoload
 (defun +go/test-file ()
+  "Run all tests in current file."
   (interactive)
   (if (string-match "_test\\.go" buffer-file-name)
       (save-excursion
@@ -55,11 +60,13 @@
 
 ;;;###autoload
 (defun +go/bench-all ()
+  "Run all benchmarks in project."
   (interactive)
   (+go--run-tests "-test.run=NONE -test.bench=\".*\""))
 
 ;;;###autoload
 (defun +go/bench-single ()
+  "Run benchmark at point."
   (interactive)
   (if (string-match "_test\\.go" buffer-file-name)
       (save-excursion
@@ -70,7 +77,7 @@
 
 ;;;###autoload
 (defun +go/play-buffer-or-region (&optional beg end)
-  "TODO"
+  "Evaluate active selection or buffer in the Go playground."
   (interactive "r")
   (if (use-region-p)
       (go-play-region beg end)
