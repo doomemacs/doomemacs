@@ -10,4 +10,6 @@
 (when (modulep! +childframe)
   (package! posframe :pin "0d23bc5f7cfac00277d83ae7ba52c48685bcbc68"))
 (when (modulep! :editor evil +everywhere)
-  (package! evil-pinyin :pin "3e9e501ded86f88e01a4edec5d526ab0fab879d7"))
+  (package! evil-pinyin
+    :recipe (:build (:not autoloads))
+    :pin "3e9e501ded86f88e01a4edec5d526ab0fab879d7"))
