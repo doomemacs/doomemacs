@@ -6,7 +6,13 @@
   (setq pyim-dcache-directory (concat doom-cache-dir "pyim/"))
   :config
   (setq pyim-page-tooltip t
-        default-input-method "pyim"))
+        default-input-method "pyim")
+
+  ;; allow vertico/selectrum search with pinyin
+  (cond ((modulep! :completion vertico)
+         (advice-add #'orderless-regexp :filter-return #'pyim-cregexp-build-regexp-string))
+        ((modulep! :completion ivy)
+         (setq ivy-re-builders-alist '((t . pyim-cregexp-ivy))))))
 
 
 (use-package! liberime
