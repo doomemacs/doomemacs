@@ -616,21 +616,6 @@ relative to `org-directory', unless it is an absolute path."
                          "@" (+org-link-read-desc-at-point link)))))
      :face (lambda (_) 'org-priority))
     (org-link-set-parameters
-     "doom-source"
-     :follow (lambda (link)
-               (user-error "-- %S %S %S" source url link)
-               (cl-destructuring-bind (source . url)
-                   (save-match-data
-                     (and (string-match "^\\([^:]+\\):\\(.+\\)$" link)
-                          (cons (match-string 1) (match-string 2))))
-                 (pcase source
-                   ("doom"
-                    (org-link-open (expand-file-name url doom-modules-dir)))
-                   ("contrib"
-                    (browse-url (format "https://docs.doomemacs.org/modules/"
-                                        (replace-regexp-in-string "::\\(.+\\)$" "#\\1" url))))
-                   (_ (user-error "%s is not a valid module source" source))))))
-    (org-link-set-parameters
      "doom-changelog"
      :follow (lambda (link)
                (find-file (doom-path doom-docs-dir "changelog.org"))
