@@ -90,8 +90,12 @@ Can be negative.")
     ;; However, do not add helm completion styles to the front of
     ;; `completion-styles', since that would be overly intrusive. E.g., it
     ;; results in `company-capf' returning far to many completion candidates.
-    ;; Instead, append those styles so that they act as a fallback.
+    ;; Instead, append those styles so that they act as a fallback.  Variable
+    ;; completion-styles is ignored unless helm-completion-style is customized
+    ;; to 'emacs.
+    (setq helm-completion-style 'emacs)
     (add-to-list 'completion-styles (if fuzzy 'flex 'helm) t))
+
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
