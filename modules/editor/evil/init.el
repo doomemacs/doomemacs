@@ -279,7 +279,7 @@ and complains if a module is loaded too early (during startup)."
     (unless (memq (or (car-safe module) module) disabled-list)
       (doom-log "editor:evil: loading evil-collection-%s %s"
                 (or (car-safe module) module)
-                (if doom-init-time "" "(too early!)"))
+                (if after-init-time "" "(too early!)"))
       (with-demoted-errors "evil-collection error: %s"
         (evil-collection-init (list module)))))
 
