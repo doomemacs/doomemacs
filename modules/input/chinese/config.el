@@ -22,7 +22,7 @@
                      :filter-return
                      (if (modulep! :editor evil +everywhere)
                          #'evil-pinyin--build-regexp-string
-                       #'pyim-cregexp-build-regexp-string)))
+                       #'pyim-cregexp-build)))
         ((modulep! :completion ivy)
          (setq ivy-re-builders-alist '((t . pyim-cregexp-ivy))))))
 
