@@ -47,6 +47,7 @@ This module requires:
 - [[https://clojure-lsp.github.io/clojure-lsp/][clojure-lsp]], for LSP support (if [[doom-module:+lsp]])
 - [[https://github.com/babashka/neil][neil]] for the ability to add packages to your Clojure project from Emacs
 - [[https://github.com/borkdude/jet][jet]] for jet integration
+- [[https://github.com/weavejester/cljfmt][cljfmt]], for formatting code (if [[doom-module::editor format]])
 
 * Usage
 
