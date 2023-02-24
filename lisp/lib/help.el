@@ -700,7 +700,7 @@ config blocks in your private config."
           prompt
           (lambda (input)
             ;; PERF: avoid converting dirs to string and back when adding them to ripgrep args.
-            (letf! (defun consult--command-split (fn &rest args)
+            (letf! (defun consult--command-split (&rest args)
                      (append (apply consult--command-split args) dirs))
               (funcall (consult--ripgrep-make-builder) input)))
           data-directory query))
