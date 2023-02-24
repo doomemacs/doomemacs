@@ -1,11 +1,15 @@
 #+title:    :completion helm
-#+subtitle: A tank for hunting a house fly
+#+subtitle: A bazooka for hunting house flies
 #+created:  February 20, 2017
 #+since:    2.0.0
 
 * Description :unfold:
-This module provides Helm integration for a variety of Emacs commands, as well
-as a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep][Ripgrep]].
+This module provides Helm integration to a variety of Emacs commands, as well as
+a unified interface for project search and replace, powered by [[https://github.com/BurntSushi/ripgrep][Ripgrep]].
+
+For official documentation about Helm, see:
+- [[https://rnchzn.github.io/helm/doc/helm-manual.html]]
+- [[https://tuhdo.github.io/helm-intro.html]]
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -49,39 +53,43 @@ as a unified interface for project search and replace, powered by [[https://gith
 This module has only one requirement: [[https://github.com/BurntSushi/ripgrep][Ripgrep]], which is a hard dependency of
 Doom itself, so you should already have it installed.
 
-Otherwise, Helm provides many commands to interface with a variety of programs
-from [[https://github.com/junegunn/fzf][fzf]] to [[https://kapeli.com/dash][Dash docsets]] to [[https://www.passwordstore.org/][pass]] and /much/ more. These programs are optional
-for this module, but must be installed if you intend to use their associated
-Helm command or plugin.
+By enabling this module, it will enable helm-mode and remap many commands to
+their helm equivalents, such as:
+
+- [[cmd:][find-file]] ([[kbd:][C-c C-f]] or [[kbd:][<leader> f f]]) -> [[cmd:][helm-find-files]]
+- [[cmd:][execute-extended-command]] ([[kbd:][M-x]]) -> [[cmd:][helm-M-x]]
+- [[cmd:][switch-to-buffer]] ([[kbd:][C-x b]] or [[kbd:][<leader> b b]]) -> [[cmd:][helm-buffers-list]]
+- ...among others
+
+No setup is required on your part. Helm provides many commands to interface with
+a variety of programs from [[https://github.com/junegunn/fzf][fzf]] to [[https://kapeli.com/dash][Dash docsets]] to [[https://www.passwordstore.org/][pass]] and /much/ more. These
+programs are optional for this module, but must be installed if you intend to
+use their associated Helm command or package.
 
 * TODO Usage
-#+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
-#+end_quote
-
-Much like [[doom-package:ivy]] and [[doom-package:vertico]], [[doom-package:helm]] is a /large/ framework. Covering all its
-features is not within the scope of this module's documentation, so only its
-highlights will be covered here.
+Much like [[doom-package:ivy]] and [[doom-package:vertico]], [[doom-package:helm]] is a /large/ framework. Covering
+all its features is not within the scope of this module's documentation, so only
+its highlights will be covered here.
 
 ** Jump-to navigation
 Similar to Ivy, this module provides an interface to navigate within a project
 using [[doom-package:projectile]]:
-| Keybind          | Description                         |
-|------------------+-------------------------------------|
-| [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Jump to file in project             |
-| [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Jump to file from current directory |
-| [[kbd:][SPC s i]]          | Jump to symbol in file              |
+| Keybind          | Description                                             |
+|------------------+---------------------------------------------------------|
+| [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Jump to file in project (~+helm/projectile-find-file~)  |
+| [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Jump to file from current directory (~helm-find-files~) |
+| [[kbd:][SPC s i]]          | Jump to symbol in file (~helm-semantic-or-imenu~)       |
 
 ** Project search & replace
-This module also provides interactive text search and replace using ripgrep.
+This module also provides interactive text search and replace using [[https://github.com/BurntSushi/ripgrep][Ripgrep]].
 
 *** Search
-| Keybind | Description              |
-|---------+--------------------------|
-| [[kbd:][SPC s p]] | Search project           |
-| [[kbd:][SPC s P]] | Search another project   |
-| [[kbd:][SPC s d]] | Search this directory    |
-| [[kbd:][SPC s D]] | Search another directory |
+| Keybind | Description                                               |
+|---------+-----------------------------------------------------------|
+| [[kbd:][SPC s p]] | Search project (~+default/search-project~)                |
+| [[kbd:][SPC s P]] | Search another project  (~+default/search-other-project~) |
+| [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)             |
+| [[kbd:][SPC s D]] | Search another directory (~+default/search-other-cwd~)    |
 
 Prefixing these keys with the universal argument ([[kbd:][SPC u]] for evil users; [[kbd:][C-u]]
 otherwise) changes the behavior of these commands, instructing the underlying
@@ -105,18 +113,19 @@ These keybindings are available while a search is active:
 | [[kbd:][C-SPC]]   | Preview the current candidate                 |
 | [[kbd:][C-RET]]   | Open the selected candidate in other-window   |
 
-Changes to the resulting wgrep buffer (opened by [[kbd:][C-c C-e]]) can be committed with
-[[kbd:][C-c C-c]] and aborted with [[kbd:][C-c C-k]] (alternatively [[kbd:][ZZ]] and [[kbd:][ZQ]], for evil users).
+Changes to the resulting [[doom-package:wgrep]] buffer (opened by [[kbd:][C-c C-e]]) can be
+committed with [[kbd:][C-c C-c]] and aborted with [[kbd:][C-c C-k]] (alternatively [[kbd:][ZZ]] and [[kbd:][ZQ]], for
+evil users).
 
 ** In-buffer searching
 The [[doom-package:swiper]] package provides an interactive buffer search powered by helm. It can
 be invoked with:
-- [[kbd:][SPC s s]] (~swiper-isearch~)
-- [[kbd:][SPC s S]] (~swiper-isearch-thing-at-point~)
-- [[kbd:][SPC s b]] (~swiper~)
+- [[kbd:][SPC s s]] ([[cmd:][swiper-isearch]])
+- [[kbd:][SPC s S]] ([[cmd:][swiper-isearch-thing-at-point]])
+- [[kbd:][SPC s b]] ([[cmd:][swiper]])
 - ~:sw[iper] [QUERY]~
 
-A wgrep buffer can be opened from swiper with [[kbd:][C-c C-e]].
+A [[doom-package:wgrep]] buffer can be opened from swiper with [[kbd:][C-c C-e]].
 
 ** Helm integration for various completing commands
 Helm also has a number of overrides for built-in functionality:
@@ -128,44 +137,59 @@ Helm also has a number of overrides for built-in functionality:
 | [[kbd:][SPC ']]      | Resume last ivy session   |
 
 *** Jump to files, buffers or projects
-| Keybind          | Description                           |
-|------------------+---------------------------------------|
-| [[kbd:][SPC RET]]          | Find bookmark                         |
-| [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Browse from current directory         |
-| [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Find file in project                  |
-| [[kbd:][SPC f r]]          | Find recently opened file             |
-| [[kbd:][SPC p p]]          | Open another project                  |
-| [[kbd:][SPC b b]], [[kbd:][SPC ,]]   | Switch to buffer in current workspace |
-| [[kbd:][SPC b B]], [[kbd:][SPC <]]   | Switch to buffer                      |
+| Keybind | Description                                                          |
+|---------+----------------------------------------------------------------------|
+| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                      |
+| [[kbd:][SPC s b]] | Search the current buffer (~+default/search-buffer~)                 |
+| [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)                        |
+| [[kbd:][SPC s D]] | Search another directory (~+default/search-other-cwd~)               |
+| [[kbd:][SPC s i]] | Search for symbol in current buffer                                  |
+| [[kbd:][SPC s p]] | Search project (~+default/search-project~)                           |
+| [[kbd:][SPC s P]] | Search another project (~+default/search-other-project~)             |
+| [[kbd:][SPC s s]] | Search the current buffer (incrementally) (~+default/search-buffer~) |
 
 *** Search
-| Keybind | Description                               |
-|---------+-------------------------------------------|
-| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project           |
-| [[kbd:][SPC s b]] | Search the current buffer                 |
-| [[kbd:][SPC s d]] | Search this directory                     |
-| [[kbd:][SPC s D]] | Search another directory                  |
-| [[kbd:][SPC s i]] | Search for symbol in current buffer       |
-| [[kbd:][SPC s p]] | Search project                            |
-| [[kbd:][SPC s P]] | Search another project                    |
-| [[kbd:][SPC s s]] | Search the current buffer (incrementally) |
+| Keybind | Description                                                          |
+|---------+----------------------------------------------------------------------|
+| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                      |
+| [[kbd:][SPC s b]] | Search the current buffer (~+default/search-buffer~)                 |
+| [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)                        |
+| [[kbd:][SPC s D]] | Search another directory (~+default/search-other-cwd~)               |
+| [[kbd:][SPC s i]] | Search for symbol in current buffer                                  |
+| [[kbd:][SPC s p]] | Search project (~+default/search-project~)                           |
+| [[kbd:][SPC s P]] | Search another project (~+default/search-other-project~)             |
+| [[kbd:][SPC s s]] | Search the current buffer (incrementally) (~+default/search-buffer~) |
 
 * TODO Configuration
 #+begin_quote
  🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-** Icons
-Icon support is now included, through one of two providers: [[doom-package:all-the-icons]] and
-[[doom-package:treemacs]]. By default, to maintain consistency we use [[doom-package:all-the-icons]]; however if
-you wish to modify this you can do so using the below snippet:
+** helm-mode
+This module enables helm-mode by default, which will force any functions that
+call ~completing-read~, ~read-file-name~, ~completion-in-region~ and friends to
+use Helm's completion interface instead. Any function listed in the
+[[var:][helm-completing-read-handlers-alist]] variable will be exempt from this.
 
+For example, an emacs command ~foo~ in package ~bar~ that uses a completion
+framework other than helm, say company, may break if handed off to Helm, so it
+makes sense to exempt ~foo~ with the following:
 #+begin_src emacs-lisp
+;; add to $DOOMDIR/config.el
+(after! helm
+  (add-to-list 'helm-completing-read-handlers-alist (cons #'foo nil)))
+#+end_src
+
+** Icons
+There are two icon "themes" available for this module:
+[[doom-package:all-the-icons]] and [[doom-package:treemacs]]. By default, and to
+maintain consistency with other icons across Doom's modules,
+[[doom-package:all-the-icons]] is used. To change this:
+#+begin_src emacs-lisp
+;; add to $DOOMDIR/config.el
 (after! helm
   (setq helm-icons-provider 'treemacs))
 #+end_src
-
-** TODO Posframe
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
