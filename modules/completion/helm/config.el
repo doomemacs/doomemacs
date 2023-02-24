@@ -197,4 +197,5 @@ Can be negative.")
   :init
   (setq helm-icons-provider 'all-the-icons)
   :config
-  (helm-icons-enable))
+  (when (eq helm-icons-provider 'all-the-icons)
+    (setq helm-icons-mode->icon nil)))
