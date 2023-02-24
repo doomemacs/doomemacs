@@ -31,7 +31,7 @@ Can be negative.")
 (use-package! helm
   :after helm-mode
   :preface
-  (setq helm-candidate-number-limit 50
+  (setq helm-candidate-number-limit 150
         ;; Remove extraineous helm UI elements
         helm-display-header-line nil
         helm-ff-auto-update-initial-value nil
