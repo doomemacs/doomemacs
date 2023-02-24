@@ -52,6 +52,11 @@ system package manager, cabal, or stack.
 formatters such as [[https://github.com/lspitzner/brittany][brittany]], [[https://github.com/ennocramer/floskell][floskell]], [[https://github.com/tweag/ormolu][ormolu]], [[https://github.com/fourmolu/fourmolu][fourmolu]], and [[https://github.com/haskell/stylish-haskell][stylish-haskell]],
 which can be installed through system package manager, cabal, or stack.
 
+** Formatter
+
+[[doom-module::editor format]] by default uses [[https://github.com/fourmolu/fourmolu#installation][fourmolu]] to format code when not
+relying on hls, follow the linked install instructions.
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
@@ -61,12 +66,12 @@ This module integrates the haskell packages into Doom by providing things such
 as REPL support, project root recognition, etc. It also provide the following
 keybindings:
 
-| Keybinding      | Description                                   |
-|-----------------+-----------------------------------------------|
-| [[kbd:][<localleader> b]] | Build the current cabal project               |
+| Keybinding      | Description                                 |
+|-----------------+---------------------------------------------|
+| [[kbd:][<localleader> b]] | Build the current cabal project             |
 | [[kbd:][<localleader> c]] | Visit the =.cabal= file of the current buffer |
-| [[kbd:][<localleader> h]] | Toggle visibility of the form at point        |
-| [[kbd:][<localleader> H]] | hides all top level functions                 |
+| [[kbd:][<localleader> h]] | Toggle visibility of the form at point      |
+| [[kbd:][<localleader> H]] | hides all top level functions               |
 
 * TODO Configuration
 #+begin_quote
