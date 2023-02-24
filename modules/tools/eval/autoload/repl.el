@@ -50,7 +50,16 @@
 
 (defun +eval-repl-known-repls ()
   "Yield the available repl functions as a list of symbols."
-  (seq-uniq (mapcar #'cl-second +eval-repls)))
+  (seq-uniq (mapcar (pcase-lambda (`(,mode ,fn . _)) (list mode fn)) +eval-repls)))
+
+(defun +doom-pretty-mode-name (mode)
+  "Convert a mode name into a variant nicer for human eyes."
+  (let ((mode (if (symbolp mode) (symbol-name mode) mode)))
+    (if (not (string-match "^\\([a-z-]+\\)-mode$" mode))
+        (error "Given string/symbol is not a major mode: %s" mode)
+      (string-join (split-string (capitalize (match-string-no-properties 1 mode))
+                                 "-")
+                   " "))))
 
 (defun +eval-repl-found-repls ()
   "Search the interned symbol list for functions that looks like
@@ -61,13 +70,27 @@ repl openers."
            collect
            sym))
 
+(defun +eval-pretty-mode-name-from-fn (fn)
+  "Given a symbol name of a repl-opening function, extract a
+human-readable variant of its associated major mode name."
+  (let ((name (symbol-name fn)))
+    (if (not (string-match "^\\(?:\\+\\)?\\([^/]+\\)/open-\\(?:\\(.+\\)-\\)?repl$" name))
+        (error "Given symbol is not a repl function: %s" name)
+      (string-join (split-string (capitalize (match-string-no-properties 1 name))
+                                 "-")
+                   " "))))
+
 (defun +eval-repl-prompt ()
   "Prompt the user for the choice of a repl to open."
-  (let* ((repls (seq-uniq (append (+eval-repl-known-repls)
-                                  (+eval-repl-found-repls))))
-         (choice (or (completing-read "Open a REPL for: " repls)
+  (let* ((knowns (mapcar (pcase-lambda (`(,mode ,fn)) (list (+doom-pretty-mode-name mode) fn))
+                         (+eval-repl-known-repls)))
+         (founds (mapcar (lambda (fn) (list (+eval-pretty-mode-name-from-fn fn) fn))
+                         (+eval-repl-found-repls)))
+         (repls (seq-uniq (append knowns founds)))
+         (names (mapcar #'cl-first repls))
+         (choice (or (completing-read "Open a REPL for: " names)
                      (user-error "Aborting"))))
-    (intern-soft choice)))
+    (cl-second (assoc choice repls))))
 
 (defun +eval-repl-from-major-mode ()
   "Fetch the repl associated with the current major mode, if there
