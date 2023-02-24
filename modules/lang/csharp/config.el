@@ -48,8 +48,7 @@ or terminating simple string."
   :when (modulep! +tree-sitter)
   :defer t
   :init
-  (add-hook 'csharp-mode-local-vars-hook #'tree-sitter! 'append)
-  (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+  (add-hook 'csharp-mode-local-vars-hook #'tree-sitter! 'append))
 
 
 ;; Unity shaders
