@@ -5,6 +5,7 @@
 
 (use-package! f90
   :defer t
+  :mode ("\\.F90" . f90-mode)
   :config
   ;; --- Compilation --- ;;
   ;; Used by `compile' (SPC c c)
