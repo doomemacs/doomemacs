@@ -51,7 +51,6 @@ Can be negative.")
   (setq helm-candidate-number-limit 50
         ;; Remove extraineous helm UI elements
         helm-display-header-line nil
-        helm-mode-line-string nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Default helm window sizes
@@ -99,15 +98,6 @@ Can be negative.")
     (add-to-list 'completion-styles (if fuzzy 'flex 'helm) t))
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
-
-  ;; Hide the modeline in helm windows as it serves little purpose.
-  (defun +helm--hide-mode-line (&rest _)
-    (with-current-buffer (helm-buffer-get)
-      (unless helm-mode-line-string
-        (hide-mode-line-mode +1))))
-  (add-hook 'helm-after-initialize-hook #'+helm--hide-mode-line)
-  (advice-add #'helm-display-mode-line :override #'+helm--hide-mode-line)
-  (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   ;; Hide minibuffer if `helm-echo-input-in-header-line'
   (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe)
