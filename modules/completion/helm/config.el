@@ -66,12 +66,6 @@ Can be negative.")
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
   :init
-  (when (modulep! +childframe)
-    ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
-    ;; helm completion.
-    (setq iconify-child-frame 'make-invisible)
-    (setq helm-display-function #'+helm-posframe-display-fn))
-
   (let ((fuzzy (modulep! +fuzzy)))
     (setq helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
@@ -105,6 +99,19 @@ Can be negative.")
   ;; Use helpful instead of describe-* to display documentation
   (dolist (fn '(helm-describe-variable helm-describe-function))
     (advice-add fn :around #'doom-use-helpful-a)))
+
+
+(use-package! helm-posframe
+  :when (modulep! +childframe)
+  :hook (helm-mode . helm-posframe-enable)
+  :config
+  (setq helm-posframe-poshandler #'posframe-poshandler-frame-center
+        helm-posframe-width 0.65
+        helm-posframe-height 0.35
+        helm-posframe-min-width 80
+        helm-posframe-min-height 16
+        helm-posframe-border-width 8))
+
 
 (use-package! helm-flx
   :when (modulep! +fuzzy)

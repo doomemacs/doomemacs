@@ -10,10 +10,11 @@
   :pin "11fb36af119b784539d31c6160002de1957408aa")
 (package! helm-projectile :pin "35a2111d00c0c0c9d8743280d3f1243bb217118a")
 (package! swiper-helm :pin "93fb6db87bc6a5967898b5fd3286954cc72a0008")
+
+(when (modulep! +childframe)
+  (package! helm-posframe :pin "87461b52b6f3f378c63642a33f584d4a4ba28351"))
 (when (modulep! +fuzzy)
   (package! helm-flx :pin "5220099e695a3586dba2d59640217fe378e66310"))
-(when (modulep! +childframe)
-  (package! posframe :pin "06b939cfb06168782fc378043ff35bd7fec203b8"))
 (when (modulep! :lang org)
   (package! helm-org :pin "d67186d3a64e610c03a5f3d583488f018fb032e4"))
 (when (modulep! +icons)
