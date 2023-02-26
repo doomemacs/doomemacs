@@ -164,3 +164,17 @@ Updates the date to today"
         (delete-blank-lines)
         (beancount-insert-date)
         (insert transaction)))))
+
+;;;###autoload
+(defun +beancount/next-transaction (&optional count)
+  "Jump to the start of the next COUNT-th transaction."
+  (interactive "p")
+  (dotimes (_ (or count 1))
+    (beancount-goto-next-transaction)))
+
+;;;###autoload
+(defun +beancount/previous-transaction (&optional count)
+  "Jump to the start of current or previous COUNT-th transaction."
+  (interactive "p")
+  (re-search-backward
+   beancount-transaction-regexp nil t (or count 1)))
