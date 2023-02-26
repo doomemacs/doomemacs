@@ -221,7 +221,7 @@ PLIST can have the following properties:
   [remap evil-insert]         #'ignore
   [remap evil-append]         #'ignore
   [remap evil-replace]        #'ignore
-  [remap evil-replace-state]  #'ignore
+  [remap evil-enter-replace-state] #'ignore
   [remap evil-change]         #'ignore
   [remap evil-change-line]    #'ignore
   [remap evil-visual-char]    #'ignore
