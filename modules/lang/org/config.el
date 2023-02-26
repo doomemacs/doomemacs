@@ -1350,8 +1350,8 @@ between the two."
              #'doom-disable-show-paren-mode-h
              ;; disable `show-trailing-whitespace'; shows a lot of false positives
              #'doom-disable-show-trailing-whitespace-h
-             #'+org-enable-auto-reformat-tables-h
-             #'+org-enable-auto-update-cookies-h
+             ;; #'+org-enable-auto-reformat-tables-h
+             ;; #'+org-enable-auto-update-cookies-h
              #'+org-make-last-point-visible-h)
 
   (add-hook! 'org-load-hook
