@@ -30,6 +30,7 @@
 (defun +sh/open-repl ()
   "Open a shell REPL."
   (interactive)
+  (require 'sh-script)
   (let* ((dest-sh (symbol-name sh-shell))
          (sh-shell-file dest-sh))
     (sh-shell-process t)
