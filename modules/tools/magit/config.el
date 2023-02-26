@@ -21,7 +21,7 @@ Only has an effect in GUI Emacs.")
   :defer-incrementally (dash f s with-editor git-commit package eieio transient)
   :init
   (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
-  ;; Must be set early to prevent ~/.emacs.d/transient from being created
+  ;; Must be set early to prevent ~/.config/emacs/transient from being created
   (setq transient-levels-file  (concat doom-data-dir "transient/levels")
         transient-values-file  (concat doom-data-dir "transient/values")
         transient-history-file (concat doom-data-dir "transient/history"))

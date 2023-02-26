@@ -26,9 +26,9 @@
 
 This command does the following:
 
-  1. Creates `$DOOMDIR' at ~/.doom.d,
-  2. Copies ~/.emacs.d/templates/init.example.el to `$DOOMDIR'/init.el (if it
-     doesn't exist),
+  1. Creates `$DOOMDIR' at ~/.config/doom (if it or ~/.doom.d doesn't exist),
+  2. Copies ~/.config/emacs/templates/init.example.el to `$DOOMDIR'/init.el (if
+     it doesn't exist),
   3. Creates dummy files for `$DOOMDIR'/{config,packages}.el,
   4. Prompts you to generate an envvar file (same as `$ doom env`),
   5. Installs any dependencies of enabled modules (specified by `$DOOMDIR'/init.el),

@@ -89,9 +89,9 @@
   (user-error (message "Error: %s" (cadr e))
               (kill-emacs 2)))
 
-;; UX: Abort if the user is using 'doom' as root, unless ~/.emacs.d is owned by
-;;   root, in which case we assume the user genuinely wants root to be their
-;;   primary user account for Emacs.
+;; UX: Abort if the user is using 'doom' as root, unless ~/.config/emacs is
+;;   owned by root, in which case we assume the user genuinely wants root to be
+;;   their primary user account for Emacs.
 (when (equal 0 (user-real-uid))
   (unless (equal 0 (file-attribute-user-id (file-attributes doom-emacs-dir)))
     (message

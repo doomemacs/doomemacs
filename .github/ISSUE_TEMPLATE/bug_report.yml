@@ -94,7 +94,7 @@ body:
   attributes:
     label: System Information
     description: |
-      Upload the contents of `M-x doom/info` or `$ ~/.emacs.d/bin/doom info` to [pastebin](https://pastebin.com), [gist](https://gist.github.com), or a similar service, then paste the link to it here.
+      Upload the contents of `M-x doom/info` or `$ ~/.config/emacs/bin/doom info` to [pastebin](https://pastebin.com), [gist](https://gist.github.com), or a similar service, then paste the link to it here.
     placeholder: https://pastebin.com/fakeurl
   validations:
     required: true
