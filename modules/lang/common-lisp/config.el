@@ -24,7 +24,7 @@
     (remove-hook 'lisp-mode-hook #'sly-editing-mode))
 
   (after! lisp-mode
-    (set-repl-handler! 'lisp-mode #'sly-mrepl)
+    (set-repl-handler! 'lisp-mode #'+lisp/open-repl)
     (set-eval-handler! 'lisp-mode #'sly-eval-region)
     (set-lookup-handlers! 'lisp-mode
       :definition #'sly-edit-definition

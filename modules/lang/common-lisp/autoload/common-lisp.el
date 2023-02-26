@@ -3,3 +3,17 @@
 ;; HACK Fix #1772: void-variable sly-contribs errors due to sly packages (like
 ;; `sly-macrostep') trying to add to `sly-contribs' before it is defined.
 ;;;###autoload (defvar sly-contribs '(sly-fancy))
+
+;;;###autoload
+(defun +lisp/open-repl ()
+  "Open the Sly REPL."
+  (interactive)
+  (require 'sly)
+  (if (sly-connected-p) (sly-mrepl)
+    (sly nil nil t)
+    (cl-labels ((recurse (attempt)
+                  (sleep-for 1)
+                  (cond ((sly-connected-p) (sly-mrepl))
+                        ((> attempt 5) (error "Failed to start Slynk process."))
+                        (t (recurse (1+ attempt))))))
+      (recurse 1))))
