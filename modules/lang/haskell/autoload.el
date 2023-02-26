@@ -4,6 +4,7 @@
 (defun +haskell/open-repl (&optional arg)
   "Opens a Haskell REPL."
   (interactive "P")
+  (require 'haskell-interactive-mode)
   (if-let (window
            (display-buffer
             (haskell-session-interactive-buffer (haskell-session))))
