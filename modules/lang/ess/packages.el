@@ -2,7 +2,7 @@
 ;;; lang/ess/packages.el
 
 (package! ess :pin "8b4664e4a76a573b76ab3cf7a467d5e20fd5a6de")
-(package! ess-R-data-view :pin "d6e98d3ae1e2a2ea39a56eebcdb73e99d29562e9")
+(package! ess-view-data :pin "6277684e06d5c3a2cbd340f656b7ffca4046e45b")
 (package! ess-smart-equals :pin "fea9eea4b59c3e9559b379508e3500076ca99ef1")
 (package! polymode :pin "15b6c1e94a450a65a0e32096855c31f4390a3963")
 (package! poly-R :pin "e4a39caaf48e1c2e5afab3865644267b10610537")
