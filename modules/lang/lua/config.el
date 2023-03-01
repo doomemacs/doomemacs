@@ -43,7 +43,7 @@ lua-language-server.")
 
       (set-eglot-client! 'lua-mode (+lua-generate-lsp-server-command)))
 
-    (when (modulep! +tree-sitter!)
+    (when (modulep! +tree-sitter)
       (add-hook 'lua-mode-local-vars-hook #'tree-sitter! 'append))))
 
 
