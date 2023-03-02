@@ -14,6 +14,9 @@ easier to scroll through.")
 (defvar +rss-workspace-name "*rss*"
   "Name of the workspace that contains the elfeed buffer.")
 
+(defvar +rss-auto-db-compact t
+  "Automatically run `elfeed-db-compact' when killing the *elfeed-search* buffer.")
+
 ;;
 ;; Packages
 
