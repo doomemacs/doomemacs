@@ -29,6 +29,7 @@ This must be set before `treemacs' has loaded.")
   ;; Don't follow the cursor
   (treemacs-follow-mode -1)
 
+  (set-popup-rule! "^ ?\\*Treemacs" :ignore t)
   (when +treemacs-git-mode
     ;; If they aren't supported, fall back to simpler methods
     (when (and (memq +treemacs-git-mode '(deferred extended))
