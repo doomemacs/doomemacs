@@ -7,8 +7,6 @@
 ;; it should have a lower threshold too.
 (add-to-list 'doom-large-file-size-alist '("\\.\\(?:clj[sc]?\\|dtm\\|edn\\)\\'" . 0.5))
 
-(defvar +clojure-load-clj-refactor-with-lsp nil
-  "Whether or not to include clj-refactor along with clojure-lsp.")
 
 ;;
 ;;; Packages
@@ -252,15 +250,16 @@
 
 
 (use-package! clj-refactor
+  :hook (clojure-mode . clj-refactor-mode)
   :config
-  (when (or (not (modulep! +lsp))
-            +clojure-load-clj-refactor-with-lsp)
-    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+  (unless (modulep! +lsp)
     (set-lookup-handlers! 'clj-refactor-mode
-      :references #'cljr-find-usages)
-    (map! :map clojure-mode-map
-          :localleader
-          :desc "refactor" "R" #'hydra-cljr-help-menu/body)))
+      :references #'cljr-find-usages))
+  (when (modulep! +lsp)
+    (setq cljr-add-ns-to-blank-clj-files nil))
+  (map! :map clojure-mode-map
+        :localleader
+        :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
 ;; clojure-lsp already uses clj-kondo under the hood
