@@ -252,15 +252,15 @@
 
 
 (use-package! clj-refactor
-  :config
-  (when (or (not (modulep! +lsp))
+  :when (or (not (modulep! +lsp))
             +clojure-load-clj-refactor-with-lsp)
-    (add-hook 'clojure-mode-hook #'clj-refactor-mode)
-    (set-lookup-handlers! 'clj-refactor-mode
-      :references #'cljr-find-usages)
-    (map! :map clojure-mode-map
-          :localleader
-          :desc "refactor" "R" #'hydra-cljr-help-menu/body)))
+  :hook (clojure-mode . clj-refactor-mode)
+  :config
+  (set-lookup-handlers! 'clj-refactor-mode
+    :references #'cljr-find-usages)
+  (map! :map clojure-mode-map
+        :localleader
+        :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
 ;; clojure-lsp already uses clj-kondo under the hood
