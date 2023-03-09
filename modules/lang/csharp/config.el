@@ -49,7 +49,8 @@ or terminating simple string."
   :defer t
   :init
   (add-hook 'csharp-mode-local-vars-hook #'tree-sitter! 'append)
-  (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+  (if (fboundp #'csharp-tree-sitter-mode)
+      (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode))))
 
 
 ;; Unity shaders
