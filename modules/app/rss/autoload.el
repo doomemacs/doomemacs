@@ -81,14 +81,18 @@
     (setq-local shr-width 85)
     (set-buffer-modified-p nil)))
 
+(defun +rss--cleanup-on-kill-h ()
+  "Run `elfeed-db-compact'. See `+rss-cleanup-h'."
+  ;; `delete-file-projectile-remove-from-cache' slows down `elfeed-db-compact'
+  ;; tremendously, so we disable the projectile cache:
+  (let (projectile-enable-caching)
+    (elfeed-db-compact)))
+
 ;;;###autoload
 (defun +rss-cleanup-h ()
   "Clean up after an elfeed session. Kills all elfeed and elfeed-org files."
   (interactive)
-  ;; `delete-file-projectile-remove-from-cache' slows down `elfeed-db-compact'
-  ;; tremendously, so we disable the projectile cache:
-  (let (projectile-enable-caching)
-    (elfeed-db-compact))
+  (add-hook 'kill-emacs-hook #'+rss--cleanup-on-kill-h)
   (let ((buf (previous-buffer)))
     (when (or (null buf) (not (doom-real-buffer-p buf)))
       (switch-to-buffer (doom-fallback-buffer))))
