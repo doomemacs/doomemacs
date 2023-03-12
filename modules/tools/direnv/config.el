@@ -7,13 +7,12 @@
 
   (set-popup-rule! "^\\*envrc\\*" :quit t :ttl 0)
 
-  ;; A globalized minor mode triggers on `after-change-major-mode-hook'
-  ;; normally, which runs after a major mode's body and hooks. If those hooks do
-  ;; any initialization work that's sensitive to environmental state set up by
-  ;; direnv, then you're gonna have a bad time, so I move the trigger to
-  ;; `change-major-mode-after-body-hook' instead. This runs before said hooks
-  ;; (but not the body; fingers crossed that no major mode does important env
-  ;; initialization there).
+  ;; HACK: Normally, envrc updates on `after-change-major-mode-hook' (runs after
+  ;;   a major mode's body and hooks). IMHO, this is too late; a mode's hooks
+  ;;   might depend on environmental state that direnv sets up (e.g. starting an
+  ;;   LSP server that expects project-specific envvars), so I move it to
+  ;;   `change-major-mode-after-body-hook' instead, which runs before said
+  ;;   hooks, but not the body.
   (add-hook! 'envrc-global-mode-hook
     (defun +direnv-init-global-mode-earlier-h ()
       (let ((fn #'envrc-global-mode-enable-in-buffers))
@@ -21,6 +20,13 @@
             (remove-hook 'change-major-mode-after-body-hook fn)
           (remove-hook 'after-change-major-mode-hook fn)
           (add-hook 'change-major-mode-after-body-hook fn 100)))))
+
+  ;; ...However, the above hack causes envrc to trigger in its own, internal
+  ;; buffers, causing extra direnv errors.
+  (defadvice! +direnv--debounce-update-a (&rest _)
+    "Prevent direnv from running multiple times, consecutively in a buffer."
+    :before-while #'envrc--update
+    (not (string-prefix-p "*envrc" (buffer-name))))
 
   (defadvice! +direnv--fail-gracefully-a (&rest _)
     "Don't try to use direnv if the executable isn't present."
