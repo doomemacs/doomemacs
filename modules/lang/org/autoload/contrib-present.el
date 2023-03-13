@@ -22,10 +22,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^[[:space:]]*\\(#\\+\\)\\(\\(?:BEGIN\\|END\\|ATTR\\)[^[:space:]]+\\).*" nil t)
-      (org-flag-region (match-beginning 1)
+      (org-fold-region (match-beginning 1)
                        (match-end 0)
                        org-tree-slide-mode
-                       t))))
+                       'block))))
 
 ;;;###autoload
 (defun +org-present-hide-leading-stars-h ()
@@ -33,10 +33,10 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward "^\\(\\*+\\)" nil t)
-      (org-flag-region (match-beginning 1)
+      (org-fold-region (match-beginning 1)
                        (match-end 1)
                        org-tree-slide-mode
-                       t))))
+                       'headline))))
 
 ;;;###autoload
 (defun +org-present-detect-slide-h ()
