@@ -4,7 +4,7 @@
 (defun lsp! ()
   "Dispatch to call the currently used lsp client entrypoint"
   (interactive)
-  (if (modulep! +eglot)
-      (eglot-ensure)
-    (unless (bound-and-true-p lsp-mode)
-      (lsp-deferred))))
+  (cond
+   ((modulep! +lsp-bridge) nil)
+   ((modulep! +eglot) (eglot-ensure))
+   ((unless (bound-and-true-p lsp-mode) (lsp-deferred)))))

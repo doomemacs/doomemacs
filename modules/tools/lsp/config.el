@@ -42,6 +42,7 @@ killing and opening many LSP/eglot-powered buffers.")
 ;;
 ;;; Implementations
 
-(if (modulep! +eglot)
-    (load! "+eglot")
-  (load! "+lsp"))
+(cond
+  ((modulep! +eglot) (load! "+eglot"))
+  ((modulep! +lsp-bridge) (load! "+lsp-bridge"))
+  (t (load! "+lsp")))

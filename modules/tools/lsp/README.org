@@ -40,6 +40,8 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 ** Module flags
 - +eglot ::
   Use [[https://elpa.gnu.org/packages/eglot.html][Eglot]] instead of [[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] to implement the LSP client in Emacs.
+- +lsp-bridge ::
+  Use [[https://github.com/manateelazycat/lsp-bridge][LSP-bridge]] instead of [[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] to implement the LSP client in Emacs.
 - +peek ::
   Use ~lsp-ui-peek~ when looking up definitions and references with
   functionality from the [[doom-module::tools lookup]] module.
@@ -108,6 +110,10 @@ it can only be compared in (very) broad strokes:
   you, and is more performant than lsp-mode (again, at baseline). It also works
   with TRAMP out-of-the-box (lsp-mode needs some extra configuration).
 
+- doom-package:lsp-bridge strives to be an incomplete but performant implementation of the LSP
+  protocol. This is achieved by calling out to python for multi-threading support. It also relies
+  on built-in Emacs functionality to fill the gaps for the missing parts of the LSP implementation.
+
 #+begin_quote
  💬 I recommend beginners use lsp-mode. More experienced users may also opt to
     disable many of [[https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/][its inessential features]] to gain back some ground on
@@ -134,7 +140,7 @@ them off.
 Check the entry in the [[../../../docs/faq.org][FAQ]] about "Doom can't find my executables/doesn't inherit
 the correct ~PATH~"
 
-** LSP/Eglot is not started automatically in my buffer
+** LSP/Eglot/LSP-Bridge is not started automatically in my buffer
 Make sure that you have enabled the [[doom-module:+lsp]] flag on the appropriate module(s) (in
 your ~doom!~ block in =$DOOMDIR/init.el=):
 #+begin_src diff

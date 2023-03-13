@@ -380,7 +380,8 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-       (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
+       (:when (and (modulep! :tools lsp)
+                   (not (or (modulep! :tools lsp +eglot) (modulep! :tools lsp +lsp-bridge))))
         :desc "LSP Execute code action" "a" #'lsp-execute-code-action
         :desc "LSP Organize imports" "o" #'lsp-organize-imports
         (:when (modulep! :completion ivy)
@@ -398,14 +399,18 @@
          :desc "Outgoing call hierarchy"             "Y"   (cmd!! #'lsp-treemacs-call-hierarchy t)
          :desc "References tree"                     "R"   (cmd!! #'lsp-treemacs-references t)
          :desc "Symbols"                             "S"   #'lsp-treemacs-symbols)
-         :desc "LSP"                                 "l"   #'+default/lsp-command-map
-         :desc "LSP Rename"                          "r"   #'lsp-rename)
+        :desc "LSP"                                 "l"   #'+default/lsp-command-map
+        :desc "LSP Rename"                          "r"   #'lsp-rename)
        (:when (modulep! :tools lsp +eglot)
         :desc "LSP Execute code action" "a" #'eglot-code-actions
         :desc "LSP Rename" "r" #'eglot-rename
         :desc "LSP Find declaration"                 "j"   #'eglot-find-declaration
         (:when (modulep! :completion vertico)
          :desc "Jump to symbol in current workspace" "j"   #'consult-eglot-symbols))
+       (:when (modulep! :tools lsp +lsp-bridge)
+         :desc "LSP Execute code action"             "a"   #'lsp-bridge-code-action
+         :desc "LSP Rename"                          "r"   #'lsp-bridge-rename
+         :desc "LSP Find declaration"                "j"   #'lsp-bridge-find-def)
        :desc "Compile"                               "c"   #'compile
        :desc "Recompile"                             "C"   #'recompile
        :desc "Jump to definition"                    "d"   #'+lookup/definition

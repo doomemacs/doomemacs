@@ -7,3 +7,8 @@
 (unless (executable-find "npm")
   (warn! "Couldn't find npm, most server installers won't work and will have to be installed manually.
 For more information, see https://emacs-lsp.github.io/lsp-mode/page/languages/."))
+
+(when (and (modulep! +lsp-bridge) (not (executable-find "python3")))
+  (warn! "Couldn't find python3, lsp-bridge requires python3 to function.
+It also requires package depedencies for python which are listed in the documentation.
+For more information, see https://github.com/manateelazycat/lsp-bridge#installation"))
