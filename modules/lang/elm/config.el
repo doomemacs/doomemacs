@@ -15,10 +15,16 @@
     :int "Int" :str "String"
     :float "Float"
     :bool "Bool"
-
     :not "not"
-    :and "&&" :or "||"))
+    :and "&&" :or "||")
 
+  (map! :map elm-mode-map
+        :localleader
+        (:prefix ("m" . "elm make")
+         :desc "Compile HTML" "m" #'+elm/compile-html
+         :desc "Compile HTML (optimized)" "M" #'+elm/compile-html-optimized
+         :desc "Compile JS" "j" #'+elm/compile-js
+         :desc "Compile JS (optimized)" "J" #'+elm/compile-js-optimized)))
 
 (use-package! flycheck-elm
   :when (modulep! :checkers syntax)
