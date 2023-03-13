@@ -8,19 +8,19 @@
 (defcustom doom-first-input-hook ()
   "Transient hooks run before the first user input."
   :type 'hook
-  :local 'permanant-local
+  :local 'permanent-local
   :group 'doom)
 
 (defcustom doom-first-file-hook ()
   "Transient hooks run before the first interactively opened file."
   :type 'hook
-  :local 'permanant-local
+  :local 'permanent-local
   :group 'doom)
 
 (defcustom doom-first-buffer-hook ()
   "Transient hooks run before the first interactively opened buffer."
   :type 'hook
-  :local 'permanant-local
+  :local 'permanent-local
   :group 'doom)
 
 
