@@ -268,9 +268,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; UX: Favor vertical splits over horizontal ones. Monitors are trending toward
 ;;   wide, rather than tall.
-(setq split-width-threshold 160
-      split-height-threshold nil)
-
+(setq split-width-threshold nil)
 
 ;;
 ;;; Minibuffer
