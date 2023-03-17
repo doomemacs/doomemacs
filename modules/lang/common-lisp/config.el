@@ -94,9 +94,10 @@
 
         (:localleader
          :map lisp-mode-map
-         :desc "Sly"          "'" #'sly
-         :desc "Sly (ask)"    ";" (cmd!! #'sly '-)
-         :desc "Expand macro" "m" #'macrostep-expand
+         :desc "Sly"                       "'" #'sly
+         :desc "Sly (ask)"                 ";" (cmd!! #'sly '-)
+         :desc "Expand macro"              "m" #'macrostep-expand
+         :desc "Find local Quicklisp file" "f" #'+lisp/find-file-in-quicklisp
          (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file
           :desc "Compile/load file"     "C" #'sly-compile-and-load-file
@@ -136,8 +137,10 @@
           :desc "Who sets"                "S" #'sly-who-sets)
          (:prefix ("r" . "repl")
           :desc "Clear REPL"         "c" #'sly-mrepl-clear-repl
+          :desc "Load Project"       "l" #'+lisp/load-project-systems
           :desc "Quit connection"    "q" #'sly-quit-lisp
           :desc "Restart connection" "r" #'sly-restart-inferior-lisp
+          :desc "Reload Project"     "R" #'+lisp/reload-project
           :desc "Sync REPL"          "s" #'sly-mrepl-sync)
          (:prefix ("s" . "stickers")
           :desc "Toggle breaking stickers" "b" #'sly-stickers-toggle-break-on-stickers
@@ -146,7 +149,9 @@
           :desc "Fetch stickers"           "f" #'sly-stickers-fetch
           :desc "Replay stickers"          "r" #'sly-stickers-replay
           :desc "Add/remove sticker"       "s" #'sly-stickers-dwim)
-         (:prefix ("t" . "trace")
+         (:prefix ("t" . "test")
+          :desc "Test System" "s" #'+lisp/test-system)
+         (:prefix ("T" . "trace")
           :desc "Toggle"         "t" #'sly-toggle-trace-fdefinition
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
           :desc "Untrace all"    "u" #'sly-untrace-all)))
