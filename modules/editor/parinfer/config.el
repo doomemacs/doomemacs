@@ -7,6 +7,7 @@
           scheme-mode
           lisp-mode
           racket-mode
+          fennel-mode
           hy-mode) . parinfer-rust-mode)
   :init
   (setq parinfer-rust-library
