@@ -1,7 +1,7 @@
 But before you doom yourself, here are some things you should know:
 
-1. Don't forget to run 'doom sync', then restart Emacs, after modifying
-   ~/.doom.d/init.el or ~/.doom.d/packages.el.
+1. Don't forget to run 'doom sync', then restart Emacs, after modifying init.el
+   or packages.el in ~/.config/doom.
 
    This command ensures needed packages are installed, orphaned packages are
    removed, and your autoloads/cache files are up to date. When in doubt, run
