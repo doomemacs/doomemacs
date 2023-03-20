@@ -5,7 +5,7 @@
 :; tmpdir=`$emacs --eval '(princ (temporary-file-directory))' 2>/dev/null`
 :; [ -z "$tmpdir" ] && { >&2 echo "Error: failed to run Emacs with command '$EMACS'"; >&2 echo; >&2 echo "Are you sure Emacs is installed and in your \$PATH?"; exit 1; }
 :; export __DOOMPID="${__DOOMPID:-$$}"
-:; export __DOOMSTEP="$((__DOOMSTEP+1))"
+:; export __DOOMSTEP="${__DOOMSTEP:-0}"
 :; export __DOOMGEOM="${__DOOMGEOM:-`tput cols 2>/dev/null`x`tput lines 2>/dev/null`}"
 :; export __DOOMGPIPE=${__DOOMGPIPE:-$__DOOMPIPE}
 :; export __DOOMPIPE=; [ -t 0 ] || __DOOMPIPE="${__DOOMPIPE}0"; [ -t 1 ] || __DOOMPIPE="${__DOOMPIPE}1"
