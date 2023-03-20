@@ -6,7 +6,7 @@
 (package! yard-mode :pin "ef3426ff55b6e91d581c8da12f5f64855d932527")
 
 ;; REPL
-(package! inf-ruby :pin "0ce7f4049edcae188b4643b3163e5301f9ef09cc")
+(package! inf-ruby :pin "6f1df882ab319758af43877fa20465f6566efbf3")
 (when (modulep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
