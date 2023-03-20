@@ -2,8 +2,8 @@
 ;;; checkers/spell/packages.el
 
 (if (not (modulep! +flyspell))
-    (package! spell-fu :pin "8185467b24f05bceb428a0e9909651ec083cc54e")
-  (package! flyspell-correct :pin "e9fde6f93af991b0528d6ed47d44bed470dc70af")
+    (package! spell-fu :pin "aed6e87aa31013534b7a6cbedb26e4f29ccea735")
+  (package! flyspell-correct :pin "7d7b6b01188bd28e20a13736ac9f36c3367bd16e")
   (cond ((modulep! :completion ivy)
          (package! flyspell-correct-ivy))
         ((modulep! :completion helm)
