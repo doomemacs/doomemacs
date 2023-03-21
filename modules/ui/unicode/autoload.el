@@ -5,8 +5,7 @@
   (defun +unicode-init-fonts-h ()
     "Set up `unicode-fonts' to eventually run; accommodating the daemon, if
 necessary."
-    (setq-default bidi-display-reordering t
-                  doom-unicode-font nil)
+    (setq-default bidi-display-reordering t)
     (if (display-graphic-p)
         (+unicode-setup-fonts-h (selected-frame))
       (add-hook 'after-make-frame-functions #'+unicode-setup-fonts-h))))
