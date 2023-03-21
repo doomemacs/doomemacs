@@ -1233,7 +1233,7 @@ Emacs' batch library lacks an implementation of the exec system call."
                                     ("EMACSDIR" . ,doom-emacs-dir)
                                     ("DOOMDIR" . ,doom-user-dir)
                                     ("DEBUG" . ,(if init-file-debug "1"))
-                                    ("__DOOMSTEP" . ,(doom-cli-context-step context))
+                                    ("__DOOMSTEP" . ,(number-to-string (doom-cli-context-step context)))
                                     ("__DOOMCONTEXT" . ,context-file))
                                if val
                                concat (format "%s=%s \\\n" envvar (shell-quote-argument val)))
