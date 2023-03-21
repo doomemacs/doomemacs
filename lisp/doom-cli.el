@@ -20,7 +20,8 @@
   (mapc (doom-rpartial #'make-directory 'parents)
         (list doom-local-dir
               doom-data-dir
-              doom-cache-dir))
+              doom-cache-dir
+              doom-state-dir))
 
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
@@ -229,7 +230,7 @@ If nil, falls back to less.")
 Only applies if (exit! :pager) or (exit! :pager?) are called.")
 
 ;;; Logger settings
-(defvar doom-cli-log-file-format (expand-file-name "logs/cli.%s.%s.%s" doom-local-dir)
+(defvar doom-cli-log-file-format (expand-file-name "logs/cli.%s.%s.%s" doom-state-dir)
   "Where to write any output/log file to.
 
 Must have two arguments, one for session id and the other for log type.")
