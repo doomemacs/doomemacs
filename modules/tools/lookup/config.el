@@ -15,7 +15,8 @@
 ;; `dumb-jump' to find what you want.
 
 (defvar +lookup-provider-url-alist
-  (append '(("Doom Emacs issues" "https://github.com/hlissner/doom-emacs/issues?q=is%%3Aissue+%s")
+  (append '(("Doom issues"       "https://github.com/orgs/doomemacs/projects/2/views/30?filterQuery=%s")
+            ("Doom discourse"    "https://discourse.doomemacs.org/search?q=%s")
             ("Google"            +lookup--online-backend-google "https://google.com/search?q=%s")
             ("Google images"     "https://www.google.com/images?q=%s")
             ("Google maps"       "https://maps.google.com/maps?q=%s")
@@ -27,7 +28,8 @@
             ("Youtube"           "https://youtube.com/results?aq=f&oq=&search_query=%s")
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
             ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
-            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s"))
+            ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s")
+            ("Internet archive"  "https://web.archive.org/web/*/%s"))
           (when (modulep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
