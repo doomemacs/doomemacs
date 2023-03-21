@@ -345,7 +345,7 @@ without needing to check if they are available."
   (cl-loop for (cat . mod) in (doom-module-list 'all)
            for readme-path = (or (doom-module-locate-path cat mod "README.org")
                                  (doom-module-locate-path cat mod))
-           for format = (format "%s %s" cat mod)
+           for format = (if mod (format "%s %s" cat mod) (format "%s" cat))
            if (doom-module-p cat mod)
            collect (list format readme-path)
            else if (and cat mod)
