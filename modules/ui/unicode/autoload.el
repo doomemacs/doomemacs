@@ -22,5 +22,6 @@ If doom-unicode-font is set, add it as preferred font for all unicode blocks."
         (let ((doom-unicode-font-family (plist-get (font-face-attributes doom-unicode-font) :family)))
           (dolist (unicode-block unicode-fonts-block-font-mapping)
             (push doom-unicode-font-family (cadr unicode-block)))))
-      ;; NOTE will impact startup time on first run
-      (unicode-fonts-setup))))
+      ;; NOTE: will impact startup time on first run
+      (let (inhibit-redisplay inhibit-message)
+        (unicode-fonts-setup)))))
