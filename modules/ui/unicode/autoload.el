@@ -1,21 +1,19 @@
 ;;; ui/unicode/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(add-hook! 'doom-init-ui-hook
+(add-hook! 'after-setting-font-hook :depth -90
   (defun +unicode-init-fonts-h ()
     "Set up `unicode-fonts' to eventually run; accommodating the daemon, if
 necessary."
     (setq-default bidi-display-reordering t)
-    (if (display-graphic-p)
-        (+unicode-setup-fonts-h (selected-frame))
-      (add-hook 'after-make-frame-functions #'+unicode-setup-fonts-h))))
+    (+unicode-setup-fonts-h (selected-frame))))
 
 ;;;###autoload
 (defun +unicode-setup-fonts-h (&optional frame)
   "Initialize `unicode-fonts', if in a GUI session.
 
 If doom-unicode-font is set, add it as preferred font for all unicode blocks."
-  (when (and frame (display-graphic-p frame))
+  (when (and frame (display-multi-font-p frame))
     (with-selected-frame frame
       (require 'unicode-fonts)
       (when doom-unicode-font
