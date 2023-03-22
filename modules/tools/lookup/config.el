@@ -29,7 +29,8 @@
             ("Wolfram alpha"     "https://wolframalpha.com/input/?i=%s")
             ("Wikipedia"         "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
             ("MDN"               "https://developer.mozilla.org/en-US/search?q=%s")
-            ("Internet archive"  "https://web.archive.org/web/*/%s"))
+            ("Internet archive"  "https://web.archive.org/web/*/%s")
+            ("Sourcegraph"       "https://sourcegraph.com/search?q=context:global+%s&patternType=literal"))
           (when (modulep! :lang rust)
             '(("Rust Docs" "https://doc.rust-lang.org/std/?search=%s"))))
   "An alist that maps online resources to either:
