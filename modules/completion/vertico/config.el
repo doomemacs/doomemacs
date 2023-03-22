@@ -34,6 +34,12 @@ overrides `completion-styles' during company completion sessions.")
                              #'consult-completion-in-region
                            #'completion--in-region)
                          args)))
+
+  (map! :when (modulep! :editor evil +everywhere)
+        :map vertico-map
+        "C-h" (cmds! (eq 'file (vertico--metadata-get 'category)) #'vertico-directory-up)
+        "C-l" (cmds! (eq 'file (vertico--metadata-get 'category)) #'+vertico/enter-or-preview))
+
   ;; Cleans up path when moving directories with shadowed paths syntax, e.g.
   ;; cleans ~/foo/bar/// to /, and ~/foo/bar/~/ to ~/.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)

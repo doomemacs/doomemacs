@@ -112,9 +112,28 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
   "Previews candidate in vertico buffer, unless it's a consult command"
   (interactive)
   (unless (bound-and-true-p consult--preview-function)
-    (save-selected-window
-      (let ((embark-quit-after-action nil))
-        (embark-dwim)))))
+    (if (fboundp 'embark-dwim)
+        (save-selected-window
+          (let (embark-quit-after-action)
+            (embark-dwim)))
+      (user-error "Embark not installed, aborting..."))))
+
+;;;###autoload
+(defun +vertico/enter-or-preview ()
+  "Enter directory or embark preview on current candidate."
+  (interactive)
+  (when (> 0 vertico--index)
+    (user-error "No vertico session is currently active"))
+  (if (and (let ((cand (vertico--candidate)))
+             (or (string-suffix-p "/" cand)
+                 (and (vertico--remote-p cand)
+                      (string-suffix-p ":" cand))))
+           (not (equal vertico--base ""))
+           (eq 'file (vertico--metadata-get 'category)))
+      (vertico-insert)
+    (condition-case _
+        (+vertico/embark-preview)
+      (user-error (vertico-directory-enter)))))
 
 (defvar +vertico/find-file-in--history nil)
 ;;;###autoload
