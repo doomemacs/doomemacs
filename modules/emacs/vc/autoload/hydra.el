@@ -20,7 +20,7 @@
 "
     ("g" (progn (goto-char (point-min)) (smerge-next)))
     ("G" (progn (goto-char (point-max)) (smerge-prev)))
-    ("C-j" smerge-next)
+    ("C-j" smerge-vc-next-conflict)
     ("C-k" smerge-prev)
     ("j" next-line)
     ("k" previous-line)
