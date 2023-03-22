@@ -4,8 +4,7 @@
 #+since:    2.0.3 (#83)
 
 * Description :unfold:
-This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[doom-package:alchemist]] or
-[[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
+This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/elixir-lsp/elixir-ls/][elixir-ls]].
 
 ** Maintainers
 /This module has no dedicated maintainers./ [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -19,7 +18,6 @@ This module provides support for [[https://elixir-lang.org/][Elixir programming 
   editing. Requires [[doom-module::tools tree-sitter]].
 
 ** Packages
-- [[doom-package:alchemist]]
 - [[doom-package:elixir-mode]]
 - [[doom-package:exunit]]
 - [[doom-package:flycheck-credo]] if [[doom-module::checkers syntax]]
