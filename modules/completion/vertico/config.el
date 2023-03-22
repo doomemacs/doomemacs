@@ -175,7 +175,13 @@ orderless."
                          (lambda (x)
                            (eq (buffer-local-value 'major-mode x) 'org-mode))
                          (buffer-list)))))))
-    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append)))
+    (add-to-list 'consult-buffer-sources '+vertico--consult-org-source 'append))
+
+  (defadvice! evil-ex-store-pattern-a (_ _)
+    "Remember the search pattern after consult-line."
+    :after #'consult-line
+    (setq evil-ex-search-pattern
+          (list (car consult--line-history) t t))))
 
 
 (use-package! consult-dir
