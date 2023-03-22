@@ -21,6 +21,7 @@ persist across Emacs sessions.
 - [[doom-package:undo-fu]]
 - [[doom-package:undo-fu-session]]
 - [[doom-package:undo-tree]] if [[doom-module:+tree]]
+- [[doom-package:vundo]]
 
 ** Hacks
 - Both undo-fu and undo-tree have been modified to use =zstd= to compress undo
