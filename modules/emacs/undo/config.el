@@ -48,6 +48,15 @@
             (undo-fu-session--file-name-ext))))
 
 
+(use-package! vundo
+  :unless (modulep! +tree)
+  :defer t
+  :config
+  (setq vundo-glyph-alist vundo-unicode-symbols
+        vundo-compact-display t)
+  (define-key vundo-mode-map [remap doom/escape] #'vundo-quit))
+
+
 (use-package! undo-tree
   :when (modulep! +tree)
   ;; Branching & persistent undo

@@ -739,7 +739,9 @@
              ((modulep! :completion ivy)       #'swiper-isearch-thing-at-point)
              ((modulep! :completion helm)      #'swiper-isearch-thing-at-point))
        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
-       :desc "Thesaurus"                    "T" #'+lookup/synonyms)
+       :desc "Thesaurus"                    "T" #'+lookup/synonyms
+       (:when (fboundp 'vundo)
+         :desc "Undo history"               "u" #'vundo))
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
