@@ -206,17 +206,7 @@
        (:after helm-occur :map helm-occur-map
         [C-return] #'helm-occur-run-goto-line-ow)
        (:after helm-grep :map helm-grep-map
-        [C-return] #'helm-grep-run-other-window-action))
-
-      (:when (modulep! :completion vertico)
-        (:after vertico
-         :map vertico-map
-         "M-RET" #'vertico-exit-input
-         "C-SPC" #'+vertico/embark-preview
-         "C-j"   #'vertico-next
-         "C-M-j" #'vertico-next-group
-         "C-k"   #'vertico-previous
-         "C-M-k" #'vertico-previous-group)))
+        [C-return] #'helm-grep-run-other-window-action)))
 
 
 ;;; :ui

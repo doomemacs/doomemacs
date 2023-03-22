@@ -37,6 +37,12 @@ overrides `completion-styles' during company completion sessions.")
 
   (map! :when (modulep! :editor evil +everywhere)
         :map vertico-map
+        "M-RET" #'vertico-exit-input
+        "C-SPC" #'+vertico/embark-preview
+        "C-j"   #'vertico-next
+        "C-M-j" #'vertico-next-group
+        "C-k"   #'vertico-previous
+        "C-M-k" #'vertico-previous-group
         "C-h" (cmds! (eq 'file (vertico--metadata-get 'category)) #'vertico-directory-up)
         "C-l" (cmds! (eq 'file (vertico--metadata-get 'category)) #'+vertico/enter-or-preview))
 
