@@ -107,12 +107,17 @@
                 emacs-version old-version)))
 
 ;;; Custom features
-;; Since `system-configuration-features's docs state not to rely on it to test
-;; for features, let's give users an easier way to detect them.
+;; Emacs needs a more consistent way to detect build features, and the docs
+;; claim `system-configuration-features' is not da way. Some features (that
+;; don't represent packages) can be found in `features' (which `featurep'
+;; consults), but aren't consistent, so I'll impose some consistency:
 (if (bound-and-true-p module-file-suffix)
     (push 'dynamic-modules features))
 (if (fboundp #'json-parse-string)
     (push 'jansson features))
+(let ((inhibit-changing-match-data t))
+  (if (string-match "HARFBUZZ" system-configuration-features) ; no alternative
+      (push 'harfbuzz features)))
 ;; `native-compile' exists whether or not it is functional (e.g. libgcc is
 ;; available or not). This seems silly, so pretend it doesn't exist if it
 ;; isn't available.
