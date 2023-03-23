@@ -30,7 +30,8 @@
   :config (citar-embark-mode))
 
 (use-package! citar-org-roam
-  :when (modulep! :completion vertico)
+  :when (and (modulep! +roam2)
+             (modulep! :completion vertico))
   :after citar org-roam
   :config (citar-org-roam-mode))
 
