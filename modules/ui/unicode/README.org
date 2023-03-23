@@ -110,6 +110,25 @@ You can find a list of fonts available to emacs using ~M-x counsel-fonts~.
 ** TODO Emacs daemon mode ([[doom-ref:][#3328]])
 This module may fail to setup fonts when emacs is run in a daemon session.
 
+** Common error: ~void-variable \.\.\.~ ([[doom-ref:][#7164]])
+Users for this module may see the error similar to:
+
+#+begin_src
+Debugger entered--Lisp error: (void-variable \.\.\.)
+  (progn (set-fontset-font "fontset-default" '(64256 . 64335) (font-spec :name "Arial Unicode MS:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(65856 . 65935) (font-spec :name "Apple Symbols:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Courier New:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Geeza Pro:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Baghdad:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Damascus:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Al Bayan:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Arial Unicode MS:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Nadeem:" :registry "iso10646-1") nil 'append) \.\.\.)
+  eval((progn (set-fontset-font "fontset-default" '(64256 . 64335) (font-spec :name "Arial Unicode MS:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(65856 . 65935) (font-spec :name "Apple Symbols:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Courier New:" :registry "iso10646-1")) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Geeza Pro:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Baghdad:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Damascus:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Al Bayan:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Arial Unicode MS:" :registry "iso10646-1") nil 'append) (set-fontset-font "fontset-default" '(1536 . 1791) (font-spec :name "Nadeem:" :registry "iso10646-1") nil 'append) \.\.\.))
+  unicode-fonts--setup-1("fontset-default" nil)
+  unicode-fonts-setup()
+#+end_src
+
+This is a known issue with an unidentified cause. See
+[[doom-ref:][rolandwalker/unicode-fonts#36]]. A workaround is to delete your
+unicode-fonts cache and restart Emacs:
+#+begin_src bash
+# $EMACSDIR == where you cloned Doom Emacs
+rm -f $EMACSDIR/.local/cache/pcache/unicode-fonts
+#+end_src
+
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
