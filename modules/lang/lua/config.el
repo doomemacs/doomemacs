@@ -62,7 +62,7 @@ lua-language-server.")
 
 (use-package! fennel-mode
   :when (modulep! +fennel)
-  :defer t
+  :mode "\\.fenneldoc\\'"
   :config
   (set-lookup-handlers! 'fennel-mode
     :definition #'fennel-find-definition
