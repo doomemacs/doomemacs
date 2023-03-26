@@ -9,7 +9,7 @@
 
 (package! amx :pin "37f9c7ae55eb0331b27200fb745206fc58ceffc0")
 (package! counsel-projectile :pin "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b")
-(package! ivy-rich :pin "600b8183ed0be8668dcc548cc2c8cb94b001363b")
+(package! ivy-rich :pin "4fdd4669d69c9e8248b361b6e069b27d10e809e4")
 (package! wgrep :pin "edf768732a56840db6879706b64c5773c316d619")
 
 (if (modulep! +prescient)
