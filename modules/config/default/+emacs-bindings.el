@@ -506,8 +506,9 @@
       "C-x K"       #'doom/kill-this-buffer-in-all-windows
 
       ;;; company-mode
-      "C-;" #'+company/complete
-      (:after company
+      (:when (modulep! :completion company)
+       "C-;" #'+company/complete
+       (:after company
         :map company-active-map
         "C-o"        #'company-search-kill-others
         "C-n"        #'company-select-next
@@ -528,7 +529,7 @@
         :map company-search-map
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
-        "C-s"        (cmd! (company-search-abort) (company-filter-candidates)))
+        "C-s"        (cmd! (company-search-abort) (company-filter-candidates))))
 
       ;;; ein notebooks
       (:after ein:notebook-multilang
