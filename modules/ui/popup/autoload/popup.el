@@ -355,7 +355,8 @@ Any non-nil value besides the above will be used as the raw value for
                                    ;; parameter, since `other-window' won't.
                                    (window-parameter w 'no-other-window)))
                    (window-list)))
-      (select-window (if (+popup-window-p)
+      (select-window (if (or (+popup-window-p)
+                             (window-parameter nil 'no-other-window))
                          (let ((window (selected-window)))
                            (or (car-safe (cdr (memq window popups)))
                                (car (delq window popups))
