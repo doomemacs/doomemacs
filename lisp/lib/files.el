@@ -480,15 +480,36 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (find-file (doom--sudo-file-path file)))
 
 ;;;###autoload
-(defun doom/sudo-this-file ()
-  "Open the current file as root."
-  (interactive)
-  (find-file
-   (doom--sudo-file-path
-    (or buffer-file-name
-        (when (or (derived-mode-p 'dired-mode)
-                  (derived-mode-p 'wdired-mode))
-          default-directory)))))
+(defun doom/sudo-this-file (&optional copy-cursor-position)
+  "Open the current file as root.
+
+If COPY-CURSOR-POSITION is non-nil (as when called interactively),
+matches the cursor and window position in the sudo'd buffer with that of the
+current buffer. Additionally, push a mark ring entry for the old position of
+the sudo buffer should it be updating from a position other than the start of
+the buffer."
+  (interactive "p")
+  (let ((nonsudo-window-start (window-start))
+        (nonsudo-point (point))
+        (nonsudo-buffer (current-buffer))
+        (result (find-file
+                 (doom--sudo-file-path
+                  (or buffer-file-name
+                      (when (or (derived-mode-p 'dired-mode)
+                                (derived-mode-p 'wdired-mode))
+                        default-directory))))))
+    (when (and
+           copy-cursor-position
+           (= 0 (compare-buffer-substrings nonsudo-buffer 1 nonsudo-point nil 1 nonsudo-point)))
+      (unless (or (= 1 (point)) (= nonsudo-point (point)))
+        ;; The intent here is to keep a record of the cursor's old position in
+        ;; in case the user wishes to recover it. If the point is at the start
+        ;; of the file, the sudo buffer is probably newly opened. If the point
+        ;; doesn't move, there's no need to keep a record.
+        (push-mark (point) t nil))
+      (goto-char nonsudo-point)
+      (set-window-start (selected-window) nonsudo-window-start))
+    result))
 
 ;;;###autoload
 (defun doom/sudo-save-buffer ()
