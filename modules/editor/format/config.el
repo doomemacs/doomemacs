@@ -41,7 +41,7 @@ This is controlled by `+format-on-save-disabled-modes'."
       (string-empty-p (string-trim (buffer-name)))
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
-(after! apheleia
+(after! apheleia-core
   (when (modulep! +onsave)
     (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h)))
 
@@ -70,7 +70,7 @@ This is controlled by `+format-on-save-disabled-modes'."
 ;;
 ;;; Additional formatters
 
-(after! apheleia
+(after! apheleia-core
   ;; TODO html-tidy
   (cl-defun apheleia--indent-lisp-buffer
       (&key buffer scratch callback &allow-other-keys)

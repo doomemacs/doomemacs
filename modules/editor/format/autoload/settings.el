@@ -71,7 +71,7 @@ Advanced examples:
 "
   (declare (indent defun))
   (cl-check-type name symbol)
-  (after! apheleia
+  (after! apheleia-core
     (if (null args)
         (progn
           (setq apheleia-formatters
