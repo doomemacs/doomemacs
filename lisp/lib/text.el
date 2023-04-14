@@ -78,6 +78,7 @@ Detects evil visual mode as well."
 Uses `evil-visual-beginning' if available."
   (declare (side-effect-free t))
   (or (and (bound-and-true-p evil-local-mode)
+           (evil-visual-state-p)
            (markerp evil-visual-beginning)
            (marker-position evil-visual-beginning))
       (region-beginning)))
@@ -87,7 +88,8 @@ Uses `evil-visual-beginning' if available."
   "Return end position of selection.
 Uses `evil-visual-end' if available."
   (declare (side-effect-free t))
-  (if (bound-and-true-p evil-local-mode)
+  (if (and (bound-and-true-p evil-local-mode)
+           (evil-visual-state-p))
       evil-visual-end
     (region-end)))
 
