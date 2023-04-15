@@ -26,9 +26,8 @@
          :desc "Run current scene" "s" #'gdscript-godot-run-current-scene)
 
         (:prefix ("d" . "debug")
-         :desc "Add breakpoint" "a"  #'gdscript-debug-add-breakpoint
+         :desc "Toggle breakpoint" "d" #'gdscript-debug-toggle-breakpoint
          :desc "Display breakpoint buffer" "b" #'gdscript-debug-display-breakpoint-buffer
-         :desc "Remove breakpoint" "d" #'gdscript-debug-remove-breakpoint
          :desc "Continue execution" "c" #'gdscript-debug-continue
          :desc "Next" "n" #'gdscript-debug-next
          :desc "Step" "s" #'gdscript-debug-step)
