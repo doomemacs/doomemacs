@@ -175,12 +175,12 @@
   (when (modulep! :editor evil)
     (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
 
-    (defvar +mc--compat-evil-prev-state nil)
-    (defvar +mc--compat-mark-was-active nil)
+    (defvar-local +mc--compat-evil-prev-state nil)
+    (defvar-local +mc--compat-mark-was-active nil)
 
     (add-hook! 'multiple-cursors-mode-enabled-hook
       (defun +multiple-cursors-compat-switch-to-emacs-state-h ()
-        (when (and (bound-and-true-p evil-mode)
+        (when (and (bound-and-true-p evil-local-mode)
                    (not (memq evil-state '(insert emacs))))
           (setq +mc--compat-evil-prev-state evil-state)
           (when (region-active-p)
@@ -210,7 +210,7 @@
     ;; how evil deals with regions
     (defadvice! +multiple--cursors-adjust-mark-for-evil-a (&rest _)
       :before #'mc/edit-lines
-      (when (and (bound-and-true-p evil-mode)
+      (when (and (bound-and-true-p evil-local-mode)
                  (not (memq evil-state '(insert emacs))))
         (if (> (point) (mark))
             (goto-char (1- (point)))
