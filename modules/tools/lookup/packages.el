@@ -28,7 +28,8 @@
   (if IS-MAC
       (package! osx-dictionary :pin "0715e5a3ac659df32a0f0fabfbbeef0228fbd9a9")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
-    (package! powerthesaurus :pin "88bc5229cba1604c8f74db0a1456d99259d538cc")
+    (package! lv)
+    (package! powerthesaurus :pin "cd739ccb5a2b6f2a24ee9dd07d19ba64ae2553af")
     (when (modulep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")
       (package! synosaurus :pin "14d34fc92a77c3a916b4d58400424c44ae99cd81"))))
