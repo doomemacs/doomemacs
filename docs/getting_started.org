@@ -293,7 +293,7 @@ to least recommended for Doom (based on compatibility).
   with macOS, native emojis and better childframe support.
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
-  brew install emacs-mac --with-modules
+  brew install emacs-mac --with-modules --with-native-compilation
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
