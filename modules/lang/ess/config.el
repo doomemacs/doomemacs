@@ -80,9 +80,9 @@
   (set-eval-handler! 'ess-r-help-mode #'ess-eval-region-and-go)
 
   (when (modulep! :completion company)
-    (set-company-backend! 'ess-r-mode
-                          '(company-R-args company-R-objects
-                            company-R-library company-dabbrev-code :separate)))
+    (set-company-backend! '(ess-r-mode inferior-ess-r-mode)
+      '(company-R-args company-R-objects
+        company-R-library company-dabbrev-code :separate)))
 
   (when (modulep! :completion corfu)
     (progn
