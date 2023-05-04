@@ -4,8 +4,16 @@
   :commands eglot eglot-ensure
   :hook (eglot-managed-mode . +lsp-optimization-mode)
   :init
+  (defadvice! +eglot--ensure-available-mode (fn)
+    "Run `eglot-ensure' if the current mode has support."
+    :around #'eglot-ensure
+    (when (alist-get major-mode eglot-server-programs nil nil
+                     (lambda (modes key)
+                       (if (listp modes)
+                           (member key modes)
+                         (eq key modes))))
+      (funcall fn)))
   (setq eglot-sync-connect 1
-        eglot-connect-timeout 10
         eglot-autoshutdown t
         eglot-send-changes-idle-time 0.5
         ;; NOTE We disable eglot-auto-display-help-buffer because :select t in
