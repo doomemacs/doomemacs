@@ -65,26 +65,3 @@ This is controlled by `+format-on-save-disabled-modes'."
                    (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end)))))
            (defun +format--refresh-git-gutter-h ()
              (+vc-gutter-init-maybe-h)))
-
-
-;;
-;;; Additional formatters
-
-(after! apheleia-core
-  ;; TODO html-tidy
-  (cl-defun apheleia--indent-lisp-buffer
-      (&key buffer scratch callback &allow-other-keys)
-    "Format a Lisp BUFFER. Use SCRATCH as a temporary buffer and CALLBACK to
-apply the transformation. For more implementation detail, see
-`apheleia--run-formatter-function'."
-    (with-current-buffer scratch
-      (setq-local indent-line-function
-                  (buffer-local-value 'indent-line-function buffer))
-      (setq-local lisp-indent-function
-                  (buffer-local-value 'lisp-indent-function buffer))
-      (funcall (with-current-buffer buffer major-mode))
-      (goto-char (point-min))
-      (let ((inhibit-message t)
-            (message-log-max nil))
-        (indent-region (point-min) (point-max)))
-      (funcall callback))))
