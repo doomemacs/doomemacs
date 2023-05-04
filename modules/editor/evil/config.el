@@ -533,7 +533,11 @@ directives. By default, this only recognizes C directives.")
        (:after elfeed
         :map elfeed-search-mode-map
         :n "gr" #'elfeed-search-update--force
-        :n "gR" #'elfeed-search-fetch))
+        :n "gR" #'elfeed-search-fetch)
+       (:after eglot
+        :map eglot-mode-map
+        :nv "gd" #'+lookup/definition
+        :nv "gD" #'+lookup/references))
 
       ;; custom evil keybinds
       :nv "zn"    #'+evil:narrow-buffer
