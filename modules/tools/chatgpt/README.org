@@ -1,0 +1,45 @@
+#+title:    :tools chatgpt
+#+subtitle: Your own personal assistant
+#+created: May 11, 2023
+
+* 1 Description :unfold:
+This module enables [[https://github.com/iwahbe/chat.el][chat.el]] and provides a chatgpt mode. It makes interacting
+with chatgpt as easy as using a REPL (almost). You can send regions or open a
+chat buffer to chat with chatGPT.
+** Maintainers
+- [[doom-user:][@brorbw]]
+
+[[doom-contrib-maintainer:][Become a maintainer?]]
+
+** Module flags
+/This module has no flags./
+** Hacks
+/This modules has no hacks./
+* Installation
+This modules requires
+- A paid OpenAI account and an [[https://platform.openai.com/account/api-keys][OpenAI API key]]
+
+Use [[https://www.emacswiki.org/emacs/GnusAuthinfo][authinfo]] to define your API key:
+#+begin_src authinfo
+machine api.openai.com password your-api-key
+#+end_src
+Manually set the API:
+#+begin_src emacs-lisp
+;; in $DOOMDIR/config.el (setq chat-api-key "your-api-key")
+#+end_src
+* Usage
+This module provides two entry points:
+
+- ~M-x chat-query-dwim~ (on [[kbd:][g s c]]): will either send current region to chatgpt or prompt for a query in the minibuffer
+- ~M-x chat~ (on [[kbd:][<leader> o c]]): opens a chatgpt buffer for querying
+
+ When opening a query buffer use [[kbd:][<localleader> r]] to reply.
+* TODO Configuration
+#+begin_quote
+ 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+#+end_quote
+
+* TODOs
+** TODO Add different backends and a unified frontend
+It should be possible to change the backends in the same way as we can change
+LSP's.
