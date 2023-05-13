@@ -44,7 +44,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 - +brain ::
   Enable [[https://github.com/Kungsgeten/org-brain][org-brain]] integration.
 - +contacts ::
-  Enable [[https://gitlab.com/aimebertrand/org-mac-link/][org-contacts]] integration.
+  Enable [[https://repo.or.cz/org-contacts.git][org-contacts]] integration.
 - +dragndrop ::
   Enable drag-and-drop support for images and files; inserts inline previews
   for images and an icon+link for other media types.
