@@ -26,7 +26,7 @@
 (when (modulep! +pyenv)
   (package! pyenv-mode :pin "b818901b8eac0e260ced66a6a5acabdbf6f5ba99"))
 (when (modulep! +conda)
-  (package! conda :pin "28f51e49fd25abff14c1b46dea196a90a77ced64"))
+  (package! conda :pin "f90598f54af78469e61497560ddad05344810a35"))
 (when (modulep! +poetry)
   (package! poetry :pin "5a8575bc78d7fc5a39b2ba4665a909e36961fceb"))
 
