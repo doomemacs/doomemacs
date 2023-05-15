@@ -76,21 +76,25 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
 (defun +evil/window-move-left ()
   "Swap windows to the right"
   (interactive)
-  (if (window-at-side-p nil 'left)
+  (if (and (window-at-side-p nil 'left)
+           (not (or (window-in-direction 'above)
+                    (window-in-direction 'below))))
       (evil-window-move-far-right)
     (+evil--window-swap 'left)))
 ;;;###autoload
 (defun +evil/window-move-right ()
   "Swap windows to the right"
   (interactive)
-  (if (window-at-side-p nil 'right)
+  (if (and (window-at-side-p nil 'right)
+           (not (or (window-in-direction 'above)
+                    (window-in-direction 'below))))
       (evil-window-move-far-left)
     (+evil--window-swap 'right)))
 ;;;###autoload
 (defun +evil/window-move-up ()
   "Swap windows upward."
   (interactive)
-  (if (window-at-side-p nil 'top)
+  (if (and (window-at-side-p nil 'top))
       (evil-window-move-very-bottom)
     (+evil--window-swap 'up)))
 ;;;###autoload
