@@ -87,7 +87,7 @@ coursier bootstrap \
   org.scalameta:metals_2.12:0.9.4 \
   -r bintray:scalacenter/releases \
   -r sonatype:snapshots \
-  -o /usr/local/bin/metals-emacs -f
+  -o /usr/local/bin/metals -f
 #+end_src
 
 **** Arch Linux
