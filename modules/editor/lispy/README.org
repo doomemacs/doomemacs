@@ -68,6 +68,32 @@ To change the key themes set ~lispyville-key-theme~. Think of
 lispyville's [[https://github.com/noctuid/lispyville/blob/master/README.org][README]] for more info on the specific keybindings of each key theme
 (starting [[https://github.com/noctuid/lispyville#operators-key-theme][here]]).
 
+** Working with Brackets
+
+By default, =[= and =]= are [[https://github.com/noctuid/lispyville/tree/master#additional-movement-key-theme][bound]] to =lispyville-previous-opening= and =lispyville-next-closing= respectively. If you use a language which makes frequent use of brackets (e.g. Clojure, Racket, Scheme), you can insert a bracket pair =[]= by typing ={=. If you prefer to use the bracket keys for input, you can rebind them like below:
+
+#+begin_src emacs-lisp
+;; config.el
+
+;; unbind individual bracket keys
+(map! :after (lispy lispyville)
+      :map lispy-mode-map-lispy
+      "[" nil)
+
+(map! :after (lispy lispyville)
+      :map lispy-mode-map-lispy
+      "]" nil)
+
+;; re-bind commands bound to bracket keys by default
+(map! :after (lispy lispyville)
+      :map lispy-mode-map-lispy
+      "M-[" #'lispyville-previous-opening)
+
+(map! :after (lispy lispyville)
+      :map lispy-mode-map-lispy
+      "M-]" #'lispyville-next-closing)
+#+end_src
+
 * Troubleshooting
 [[doom-report:][Report an issue?]]
 
