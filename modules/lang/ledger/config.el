@@ -61,6 +61,10 @@
          :m "[[" #'ledger-navigate-prev-xact-or-directive)
 
         (:localleader
+         :map ledger-report-mode-map
+         "r" #'ledger-report)
+
+        (:localleader
          :map ledger-mode-map
          "a" #'ledger-add-transaction
          "e" #'ledger-post-edit-amount
