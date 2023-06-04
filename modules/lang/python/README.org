@@ -107,7 +107,7 @@ To enable support for auto-formatting with black enable [[doom-module::editor fo
 | Binding           | Description                      |
 |-------------------+----------------------------------|
 | [[kbd:][<localleader> c c]] | ~Compile Cython buffer~          |
-| [[kbd:][<localleader> i i]] | ~Insert mising imports~          |
+| [[kbd:][<localleader> i i]] | ~Insert missing imports~          |
 | [[kbd:][<localleader> i r]] | ~Remove unused imports~          |
 | [[kbd:][<localleader> i s]] | ~Sort imports~                   |
 | [[kbd:][<localleader> i o]] | ~Optimize imports~               |
