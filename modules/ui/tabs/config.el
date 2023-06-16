@@ -28,7 +28,7 @@
     (defun centaur-tabs--daemon-mode (frame)
 	    (unless (and (featurep 'centaur-tabs) (centaur-tabs-mode-on-p))
 		    (run-at-time nil nil (lambda () (centaur-tabs-mode)))))
-    (add-hook 'after-make-frame-functions #'centaur-tabs-daemon-mode))
+    (add-hook 'after-make-frame-functions #'centaur-tabs--daemon-mode))
 
 
 ;; TODO tab-bar-mode (emacs 27)
