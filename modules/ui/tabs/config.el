@@ -1,7 +1,7 @@
 ;;; ui/tabs/config.el -*- lexical-binding: t; -*-
 
 (use-package! centaur-tabs
-  :hook (doom-first-file . centaur-tabs-mode)
+  :hook (server-after-make-frame . centaur-tabs-mode)
   :init
   (setq centaur-tabs-set-icons t
         centaur-tabs-gray-out-icons 'buffer
@@ -20,6 +20,15 @@
       "Disable `centaur-tabs-mode' in current buffer."
       (when (centaur-tabs-mode-on-p)
         (centaur-tabs-local-mode)))))
+
+  ;; When started in daemon mode, centaur tabs does not work at all, so here is a fix
+  (if (not (daemonp))
+	    (centaur-tabs-mode)
+
+    (defun centaur-tabs--daemon-mode (frame)
+	    (unless (and (featurep 'centaur-tabs) (centaur-tabs-mode-on-p))
+		    (run-at-time nil nil (lambda () (centaur-tabs-mode)))))
+    (add-hook 'after-make-frame-functions #'centaur-tabs-daemon-mode))
 
 
 ;; TODO tab-bar-mode (emacs 27)
