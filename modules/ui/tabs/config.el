@@ -23,11 +23,11 @@
 
   ;; When started in daemon mode, centaur tabs does not work at all, so here is a fix
   (if (not (daemonp))
-	    (centaur-tabs-mode)
+      (centaur-tabs-mode)
 
     (defun centaur-tabs--daemon-mode (frame)
-	    (unless (and (featurep 'centaur-tabs) (centaur-tabs-mode-on-p))
-		    (run-at-time nil nil (lambda () (centaur-tabs-mode)))))
+      (unless (and (featurep 'centaur-tabs) (centaur-tabs-mode-on-p))
+        (run-at-time nil nil (lambda () (centaur-tabs-mode)))))
     (add-hook 'after-make-frame-functions #'centaur-tabs--daemon-mode))
 
 
