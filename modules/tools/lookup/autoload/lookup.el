@@ -410,8 +410,6 @@ Otherwise, falls back on `find-file-at-point'."
    (list (or (doom-thing-at-point-or-region 'word)
              (read-string "Look up in dictionary: "))
          current-prefix-arg))
-  (if (equal major-mode 'pdf-view-mode)
-      (setq identifier (car (pdf-view-active-region-text))))
   (message "Looking up dictionary definition for %S" identifier)
   (cond ((and IS-MAC (require 'osx-dictionary nil t))
          (osx-dictionary--view-result identifier))
