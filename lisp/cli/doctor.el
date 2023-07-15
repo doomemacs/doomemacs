@@ -96,10 +96,15 @@ in."
      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
 
   (print! (start "Checking for Emacs config conflicts..."))
-  (when (file-exists-p "~/.emacs")
-    (warn! "Detected an ~/.emacs file, which may prevent Doom from loading")
-    (explain! "If Emacs finds an ~/.emacs file, it will ignore ~/.emacs.d, where Doom is "
-              "typically installed. If you're seeing a vanilla Emacs splash screen, this "
+  (when-let* ((superseding-files (append (when (file-exists-p "~/.emacs.el") '("~/.emacs.el file"))
+                                         (when (file-exists-p "~/.emacs") '("~/.emacs file"))
+                                         (when (and (not (file-equal-p doom-emacs-dir "~/.emacs.d"))
+                                                    (file-directory-p "~/.emacs.d")) '("~/.emacs.d directory"))))
+              (files-with-and (mapconcat 'identity superseding-files " and "))
+              (files-with-or (mapconcat 'identity superseding-files " or ")))
+    (warn! (format "Detected an %s, which may prevent Doom from loading" files-with-and))
+    (explain! (format "If Emacs finds an %s, it will ignore %s, where Doom is " files-with-or doom-emacs-dir)
+              "installed. If you're seeing a vanilla Emacs splash screen, this "
               "may explain why. If you use Chemacs, you may ignore this warning."))
 
   (print! (start "Checking for great Emacs features..."))
