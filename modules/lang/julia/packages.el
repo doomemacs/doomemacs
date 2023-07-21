@@ -9,5 +9,5 @@
       (package! eglot-jl :pin "7dc604fe42a459a987853d065cd6d0f3c4cbc02a")
     (package! lsp-julia :pin "c584f79c7fee6176bbb6120f4cb0f1001bcf8113")))
 
-(when (featurep! +snail)
+(when (modulep! +snail)
   (package! julia-snail :pin "18b891b4569096d541e996cf7e24da01efdf2e03"))
