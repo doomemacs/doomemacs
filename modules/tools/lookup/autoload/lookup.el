@@ -408,6 +408,8 @@ Otherwise, falls back on `find-file-at-point'."
   "Look up the definition of the word at point (or selection)."
   (interactive
    (list (or (doom-thing-at-point-or-region 'word)
+             (if (equal major-mode 'pdf-view-mode)
+                 (car (pdf-view-active-region-text)))
              (read-string "Look up in dictionary: "))
          current-prefix-arg))
   (message "Looking up dictionary definition for %S" identifier)
