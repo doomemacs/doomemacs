@@ -56,6 +56,7 @@ This module add Ruby and optional Ruby on Rails support to Emacs.
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
 
+
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
@@ -111,6 +112,36 @@ The rspec-mode prefix is [[kbd:][<localleader> t]]:
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
+
+** Known imenu issues
+These are recorded issues with ruby-mode's imenu integration that need to be
+addressed upstream. PRs to fix them locally are welcome.
+
+- Incorrectly parses methods/items after an array accessor [[https://github.com/ruby/ruby/pull/2996/files][endless method]]
+  definition (Ruby 3+):
+  #+begin_src ruby
+  class Foo
+    def bar; end
+    def baz; end
+    def [](key) = x + x
+    def wop; end
+    def gop; end
+  end
+  #+end_src
+
+  Imenu will list =Foo#bar=, =Foo#baz=, and =Foo#[]= but stops there, sometimes
+  listing the rest as if there were top-level.
+
+- Does not recognize inline Struct definitions as classes:
+  #+begin_src ruby
+  Foo = Struct.new(:a, :b, :c) do
+    def test; end
+  end
+  #+end_src
+
+  Imenu should recognize this method as =Foo#test=, not =test=. ~class Foo <
+  Struct.new(...)~ is not an acceptable workaround because it creates an
+  intermediary class (i.e. has side-effects).
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
