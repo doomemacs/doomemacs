@@ -8,7 +8,7 @@
   (package! helm))
 
 ;;
-(package! dumb-jump :pin "0a783d1db610ff1dc4e1b7869589cff16ff92f7a")
+(package! dumb-jump :pin "d9503c157ab88f0ed2fa1301aeb57e95ac564760")
 (when (modulep! :completion ivy)
   (package! ivy-xref :pin "a82e8e117d2dd62c28b6a3e3d6e4cfb11c0bda38"))
 (when (modulep! :completion helm)
@@ -28,7 +28,7 @@
   (if IS-MAC
       (package! osx-dictionary :pin "0715e5a3ac659df32a0f0fabfbbeef0228fbd9a9")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
-    (package! powerthesaurus :pin "88bc5229cba1604c8f74db0a1456d99259d538cc")
+    (package! powerthesaurus :pin "4b97797cf789aaba411c61a85fe23474ebc5bedc")
     (when (modulep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")
       (package! synosaurus :pin "14d34fc92a77c3a916b4d58400424c44ae99cd81"))))
