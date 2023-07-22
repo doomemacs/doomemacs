@@ -82,6 +82,7 @@
 (defun doom-system-cpus ()
   "Return the max number of processing units on this system.
 Tries to be portable. Returns 1 if cannot be determined."
+  ;; REVIEW: Replace with `num-processors' once 27.x support is dropped.
   (with-memoization (get 'doom-system-cpus 'cached-value)
     (if (fboundp 'num-processors)
         (num-processors) ; added in Emacs 28.1

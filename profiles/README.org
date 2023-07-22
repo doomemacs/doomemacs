@@ -36,7 +36,7 @@ as =$DOOMDIR=).
 3. To launch a profile:
    - Launch the profile you want: ~$ emacs --profile FOO~
    - Use ~bin/doom~ on the profile you want: ~$ doom sync --profile FOO~
-     
+
 * Auto-generated profiles
 Doom v3's sandbox and transactional package manager are capable of generating
 profiles on-the-fly. The former for rapid, isolated testing, and the latter for
@@ -46,15 +46,15 @@ These auto-generated profiles will be stored and versioned in:
 =$XDG_DATA_HOME/doom/$PROFILE_NAME/@/$PROFILE_VERSION/=
 
 * Fallback profile
-Unlike Chemacs, Doom's profiles has no notion of a "default"/fallback profile.
-The fallback profile is the Doom installation doing the bootloading. This 
-"global" profile is unique in that it won't respect a =.doomprofile= -- in other
-words, it's not treated as a normal profile. 
+Unlike Chemacs, Doom's profiles has no notion of a "default"/fallback profile --
+rather, the fallback profile is the Doom installation doing the bootloading.
+This "global" profile is unique in that it won't respect a =.doomprofile= -- in
+other words, it's not treated as a normal profile.
 
-It is this way so that the profiles system imposes no overhead on users that 
+It is this way so that the profiles system imposes no overhead on users that
 aren't interested in the profile system (or prefer to use Chemacs).
 
-However, you can emulate this behavior by registering the "global" profile as a 
+However, this behavior can be emulated by registering the "global" profile as a
 profile, and setting ~$DOOMPROFILE~ or aliasing ~emacs~, like so:
 
 #+begin_src emacs-lisp
@@ -117,19 +117,19 @@ There are two caveats with this profile system:
 
 3. Move =~/.emacs-profiles.el= to =~/.config/doom/profiles.el= and transform the
    string keys to symbols and adapt =env= entries like so:
-   
+
    #+begin_src emacs-lisp
    ;; ~/.emacs-profiles.el
-   (("default"   (user-emacs-directory . "~/.emacs.default")
-                 (env ("DOOMDIR" . "~/.doom.private")))
-    ("spacemacs" (user-emacs-directory . "~/spacemacs"))
-    ("prelude"   (user-emacs-directory . "~/prelude")))
-   
+   (("default"   (user-emacs-directory . "~/.emacs.default/")
+                 (env ("DOOMDIR" . "~/.doom.private/")))
+    ("spacemacs" (user-emacs-directory . "~/spacemacs/"))
+    ("prelude"   (user-emacs-directory . "~/prelude/")))
+
    ;; ~/.config/emacs/profiles.el
-   ((default   (user-emacs-directory . "~/.emacs.default")
-               ("DOOMDIR" . "~/.doom.private"))
-    (spacemacs (user-emacs-directory . "~/spacemacs"))
-    (prelude   (user-emacs-directory . "~/prelude")))
+   ((default   (user-emacs-directory . "~/.emacs.default/")
+               ("DOOMDIR" . "~/.doom.private/"))
+    (spacemacs (user-emacs-directory . "~/spacemacs/"))
+    (prelude   (user-emacs-directory . "~/prelude/")))
    #+end_src
 
    A comprehensive example of Doom's profiles.el file can be found

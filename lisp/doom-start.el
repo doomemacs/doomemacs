@@ -274,19 +274,23 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 
 ;;
-;;; Let 'er rip!
+;;; Load Doom's defaults and DSL
 
 ;;; Load core modules and set up their autoloads
 (require 'doom-modules)
-(autoload 'doom-initialize-packages "doom-packages")
 ;; TODO (autoload 'doom-profiles-initialize "doom-profiles")
 ;; TODO (autoload 'doom-packages-initialize "doom-packages")
 
 ;; UX: There's a chance the user will later use package.el or straight in this
 ;;   interactive session. If they do, make sure they're properly initialized
 ;;   when they do.
+(autoload 'doom-initialize-packages "doom-packages")
 (with-eval-after-load 'package (require 'doom-packages))
 (with-eval-after-load 'straight (doom-initialize-packages))
+
+
+;;
+;;; Let 'er rip!
 
 ;; A last ditch opportunity to undo dodgy optimizations or do extra
 ;; configuration before the session is complicated by user config and packages.

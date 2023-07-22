@@ -64,9 +64,10 @@
 ;; offensive) optimizations, and load the minimum for all Doom sessions.
 ;;
 ;;; Code:
+
+;; For `when-let' and `if-let' on versions of Emacs before they were autoloaded.
 (eval-when-compile (require 'subr-x))
 
-;;; Version checks
 (eval-and-compile  ; Check version at both compile and runtime.
   ;; Doom's minimum supported version of Emacs is 27.1. Its my goal to support
   ;; one major version below the stable release, for about a year or until
@@ -160,7 +161,8 @@
 
 (defgroup doom nil
   "An Emacs framework for the stubborn martian hacker."
-  :link '(url-link "https://doomemacs.org"))
+  :link '(url-link "https://doomemacs.org")
+  :group 'emacs)
 
 (defconst doom-version "3.0.0-pre"
   "Current version of Doom Emacs core.")
@@ -677,7 +679,7 @@ but long before your modules and $DOOMDIR/config.el are loaded."
 (defcustom doom-after-init-hook ()
   "A hook run once Doom's core and modules, and the user's config are loaded.
 
-This triggers at the absolutel atest point in the eager startup process, and
+This triggers at the absolute latest point in the eager startup process, and
 runs in both interactive and non-interactive sessions, so guard hooks
 appropriately against `noninteractive' or the `cli' context."
   :group 'doom
