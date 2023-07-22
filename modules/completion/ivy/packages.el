@@ -1,19 +1,19 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/ivy/packages.el
 
-(package! swiper :pin "b8be4913a661b557e0d3275726e36871556569d3")
+(package! swiper :pin "9d630d800e856a2c984c5a62a6f0ad313a9d2228")
 (package! ivy)
 (package! ivy-hydra)
 (package! ivy-avy)
 (package! counsel)
 
-(package! amx :pin "37f9c7ae55eb0331b27200fb745206fc58ceffc0")
+(package! amx :pin "5b3aa1aae84f4a225cb8d26ab79a32f97693f023")
 (package! counsel-projectile :pin "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b")
-(package! ivy-rich :pin "600b8183ed0be8668dcc548cc2c8cb94b001363b")
-(package! wgrep :pin "edf768732a56840db6879706b64c5773c316d619")
+(package! ivy-rich :pin "aff9b6bd53e0fdcf350ab83c90e64e651b47dba4")
+(package! wgrep :pin "3132abd3750b8c87cbcf6942db952acfab5edccd")
 
 (if (modulep! +prescient)
-    (package! ivy-prescient :pin "35cf5d36132c3e96db9a9e4d1902dcfa207e7baa")
+    (package! ivy-prescient :pin "d7cc55dad453c465af9ececbab94426202b5b32b")
   (when (modulep! +fuzzy)
     (package! flx :pin "7b44a5abb254bbfbeca7a29336f7f4ebd8aabbf2")))
 
