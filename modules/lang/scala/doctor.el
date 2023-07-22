@@ -9,5 +9,5 @@
          "This module requires (:tools tree-sitter)")
 
 (if (and (modulep! +lsp)
-         (not (executable-find "metals-emacs")))
-    (warn! "metals-emacs isn't installed"))
+         (not (executable-find "metals")))
+    (warn! "metals isn't installed"))
