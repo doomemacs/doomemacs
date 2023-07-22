@@ -31,10 +31,10 @@
         (format "Windows %s" "Unknown")) ; TODO
        ((eq distro 'macos)
         (format "MacOS %s" (sh "sw_vers" "-productVersion")))
-       ((executable-find "lsb_release")
-        (sh "lsb_release" "-s" "-d"))
        ((executable-find "nixos-version")
         (format "NixOS %s" (sh "nixos-version")))
+       ((executable-find "lsb_release")
+        (sh "lsb_release" "-s" "-d"))
        ((ignore-errors
           (with-file-contents! "/etc/os-release"
             (when (re-search-forward "^PRETTY_NAME=\"?\\([^\"\n]+\\)\"?" nil t)
