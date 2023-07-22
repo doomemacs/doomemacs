@@ -40,22 +40,33 @@ e.g. ~cargo~.
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module requires ~rust~, which can be acquired through =rustup=:
+This module requires a working installation of [[https://www.rust-lang.org/][Rust]] for its more advanced
+features, and offer only syntax highlighting otherwise. The simplest way to
+install it is through [[https://rustup.rs][rustup]]:
 #+begin_src sh
-curl https://sh.rustup.rs -sSf | sh
+$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# And can be updated later with:
+$ rustup update --no-self-update
 #+end_src
 
-Note that when the Rust /language/ has updates, you are to run =rustup= such
-that it doesn't upgrade itself:
-#+begin_src sh
-rustup update --no-self-update
-#+end_src
+To install and manage Rust on Windows, consult [[https://forge.rust-lang.org/infra/other-installation-methods.html][Rust's official documentation]].
+
+#+begin_quote
+ 📌 Once installed, I recommended that you add Cargo's executable to your
+    ~$PATH~, so that the Emacs utilities that depend on it -- or any tools
+    installed through it -- can easily locate them (without any added
+    configuration on your part).
+
+    Also, if you have used ~$ doom env~ in the past, changes to your ~$PATH~
+    won't be visible to Doom until you run it (or ~$ doom sync~) again.
+#+end_quote
 
 ** Other Requirements
 - If [[doom-module::editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
   rustfmt-preview~.
-- Users with [[doom-module:+lsp]] enabled will need [[https://rust-analyzer.github.io/][rust-analyzer]] (rls is supported, but
-  [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
+- Users with [[doom-module:+lsp]] enabled will need [[github:rust-analyzer/rust-analyzer][rust-analyzer]] (rls is supported,
+  but [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
 - Using the following commands requires:
   - ~cargo-process-check~: ~$ cargo install cargo-check~
   - ~cargo-process-clippy~: ~$ rustup component add clippy-preview~
@@ -65,17 +76,23 @@ rustup update --no-self-update
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-** LSP support (rls or rust-analyzer)
-This module supports LSP integration. For it to work you'll need:
+** LSP support (rust-analyzer)
+This module supports [[https://github.com/rust-lang/rust-analyzer][rust-analyzer]] ([[https://github.com/rust-lang/rls][RLS]] too, but it is [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]), which must be installed outside of Emacs, typically with rustup or your OS package manager.
 
-1. To install [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] through your OS package manager ([[https://github.com/rust-lang/rls][RLS]] is supported
-   too, but it is [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
-2. To enable the [[doom-module::tools lsp]] module.
-3. To enable the [[doom-module:+lsp]] flag on this module.
+Installation through rustup is simplest:
+#+begin_src sh
+$ rustup component add rust-analyzer rust-src
+#+end_src
+
+If your needs are more complex, consult [[https://rust-analyzer.github.io/manual.html#installation][rust-analyzer's documentation]].
+
+Finally, enable Doom's [[doom-module::tools lsp]] module, and this module's
+[[doom-module:+lsp]] flag ([[id:01cffea4-3329-45e2-a892-95a384ab2338][how to enable modules and their flags]]), and you're good
+to go!
 
 ** Format on save
-Enable [[doom-module::editor format +onsave]] to get formatting on save with =rustfmt=. No
-additional configuration is necessary.
+Enable [[doom-module::editor format +onsave]] to get formatting on save with
+=rustfmt=. No additional configuration is necessary.
 
 ** Keybinds
 | Binding             | Description                 |
