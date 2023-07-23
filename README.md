@@ -209,7 +209,7 @@ kind!
 
 
 [contribute]: docs/contributing.org
-[discord]: https://discord.gg/qvGgnVx
+[discord]: https://doomemacs.org/discord
 [discourse]: https://discourse.doomemacs.org
 [discourse-faq]: https://discourse.doomemacs.org/tag/faq
 [documentation]: docs/index.org
