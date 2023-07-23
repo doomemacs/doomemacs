@@ -74,7 +74,7 @@ apt-get install texlive
 
 ** Arch Linux
 #+begin_src sh
-pacman -S texlive-core
+pacman -S texlive-basic texlive-latexrecommended texlive-plaingeneric
 #+end_src
 
 ** TODO macOS
