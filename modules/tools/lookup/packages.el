@@ -28,7 +28,11 @@
   (if IS-MAC
       (package! osx-dictionary :pin "0715e5a3ac659df32a0f0fabfbbeef0228fbd9a9")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
-    (package! powerthesaurus :pin "4b97797cf789aaba411c61a85fe23474ebc5bedc")
+    ;; REVIEW: This fork fixes SavchenkoValeriy/emacs-powerthesaurus#40.
+    (package! powerthesaurus
+      :recipe (:host github
+               :repo "doomelpa/powerthesaurus")
+      :pin "d9ebb866f6fce469102665f187266f0a041cfc4b")
     (when (modulep! +offline)
       (package! wordnut :pin "feac531404041855312c1a046bde7ea18c674915")
       (package! synosaurus :pin "14d34fc92a77c3a916b4d58400424c44ae99cd81"))))
