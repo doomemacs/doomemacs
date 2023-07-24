@@ -22,6 +22,8 @@
   (when (modulep! +tree-sitter)
     (add-hook 'scala-mode-local-vars-hook #'tree-sitter! 'append))
 
+  (set-formatter! 'scalafmt '("scalafmt" "--stdin") :modes '(scala-mode))
+
   (set-ligatures! 'scala-mode
     ;; Functional
     :def "def"
