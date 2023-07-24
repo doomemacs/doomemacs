@@ -3,7 +3,8 @@
 (use-package! julia-mode
   :interpreter "julia"
   :config
-  (set-repl-handler! 'julia-mode #'+julia/open-repl)
+  (unless (modulep! +snail)
+    (set-repl-handler! 'julia-mode #'+julia/open-repl))
 
   (when (modulep! +lsp)
     (add-hook 'julia-mode-local-vars-hook #'lsp! 'append))
@@ -91,8 +92,46 @@
   :after eglot
   :preface
   ;; Prevent auto-install of LanguageServer.jl
-  (setq eglot-jl-language-server-project "~/.julia/environments/v1.6")
+  (setq eglot-jl-language-server-project
+        (or (car (last (doom-glob "~/.julia/environments/v*")))
+            "~/.julia/environments/v1.6"))
   :init
   ;; Prevent timeout while installing LanguageServer.jl
   (setq-hook! 'julia-mode-hook eglot-connect-timeout (max eglot-connect-timeout 60))
   :config (eglot-jl-init))
+
+
+(use-package! julia-snail
+  :when (modulep! +snail)
+  :when (modulep! :term vterm)
+  :hook (julia-mode . julia-snail-mode)
+  :config
+  (setq julia-snail-popup-display-eval-results :command)
+  (setq julia-snail-multimedia-enable t)
+  (setq julia-snail-popup-display-face '(:background base3 :box `(:line-width -1 :color base5)))
+
+  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+
+  (after! julia-mode
+    (set-repl-handler! 'julia-mode #'+julia/open-snail-repl
+      :persist t
+      ;; FIXME These aren't working as expected
+      :send-region #'julia-snail-send-region
+      :send-buffer #'julia-snail-send-buffer-file))
+
+  (map! (:localleader
+         (:map (julia-snail-mode-map)
+               "'" #'julia-snail
+               "a" #'julia-snail-package-activate
+               "r" #'julia-snail-update-module-cache
+               "d" #'julia-snail-doc-lookup
+               (:prefix ("e" . "eval")
+                        "b" #'julia-snail-send-buffer-file
+                        "l" #'julia-snail-send-line
+                        "r" #'julia-snail-send-region
+                        "e" #'julia-snail-send-dwim))
+         (:map (julia-snail-repl-mode-map)
+               "a" #'julia-snail-package-activate
+               "d" #'julia-snail-doc-lookup
+               "m" #'julia-snail-repl-go-back
+               "r" #'julia-snail-update-module-cache))))

@@ -20,6 +20,9 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
 - +tree-sitter ::
   Leverages tree-sitter for better syntax highlighting and structural text
   editing. Requires [[doom-module::tools tree-sitter]].
+- +snail :: Use Snail, a development environment and REPL interaction package
+  for Julia in the spirit of Common Lisp’s SLIME and Clojure’s CIDER. It enables
+  convenient and dynamic REPL-driven development.
 
 ** Packages
 - [[doom-package:julia-mode]]
@@ -31,6 +34,8 @@ This module adds support for [[https://julialang.org/][the Julia language]] to D
   - if [[doom-module::tools lsp +eglot]]
     - [[doom-package:eglot-jl]]
     - [[doom-package:eglot]]
+- if [[doom-package:][+snail]]
+  - [[doom-package:][julia-snail]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -103,6 +108,19 @@ But to let [[doom-package:eglot-jl]] use the environment bundled with it, set it
 [[doom-module:+lsp]] adds code completion, syntax checking, formatting and other [[doom-package:lsp-mode]] or
 [[doom-package:eglot]] features. It requires ~LanguageServer.jl~, the installation of which is
 described above.
+
+** Snail
+
+| Keybind                     | Command                           |
+|-----------------------------+-----------------------------------|
+| [[kbd:][<localleader> ']]   | ~julia-snail~                     |
+| [[kbd:][<localleader> a]]   | ~julia-snail-package-activate~    |
+| [[kbd:][<localleader> r]]   | ~julia-snail-update-module-cache~ |
+| [[kbd:][<localleader> d]]   | ~julia-snail-doc-lookup~          |
+| [[kbd:][<localleader> e b]] | ~julia-snail-send-buffer-file~    |
+| [[kbd:][<localleader> e l]] | ~julia-snail-send-line~           |
+| [[kbd:][<localleader> e r]] | ~julia-snail-send-region~         |
+| [[kbd:][<localleader> e e]] | ~julia-snail-send-dwim~           |
 
 * TODO Configuration
 #+begin_quote
