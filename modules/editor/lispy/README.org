@@ -79,23 +79,14 @@ them like below:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
 
-;; unbind individual bracket keys
 (map! :after (lispy lispyville)
       :map lispy-mode-map-lispy
-      "[" nil)
-
-(map! :after (lispy lispyville)
-      :map lispy-mode-map-lispy
-      "]" nil)
-
-;; re-bind commands bound to bracket keys by default
-(map! :after (lispy lispyville)
-      :map lispy-mode-map-lispy
-      "M-[" #'lispyville-previous-opening)
-
-(map! :after (lispy lispyville)
-      :map lispy-mode-map-lispy
-      "M-]" #'lispyville-next-closing)
+      ;; unbind individual bracket keys
+      "[" nil
+      "]" nil
+      ;; re-bind commands bound to bracket keys by default
+      "M-[" #'lispyville-previous-opening
+      "M-]" #'lispyville.next-opening)
 #+end_src
 
 * Troubleshooting
