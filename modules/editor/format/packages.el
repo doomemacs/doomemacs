@@ -1,5 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/format/packages.el
 
-;; TODO Pin when this is close to finish
-(package! apheleia)
+(package! apheleia :pin "c222927f7086d407dad01b2609ff68768e9adddb")
