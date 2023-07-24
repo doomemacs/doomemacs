@@ -64,7 +64,7 @@ To install and manage Rust on Windows, consult [[https://forge.rust-lang.org/inf
 
 ** Other Requirements
 - If [[doom-module::editor format]] is enabled, you'll need =rustfmt=: ~$ rustup component add
-  rustfmt-preview~.
+  rustfmt~.
 - Users with [[doom-module:+lsp]] enabled will need [[github:rust-analyzer/rust-analyzer][rust-analyzer]] (rls is supported,
   but [[https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html][deprecated]]).
 - Using the following commands requires:
