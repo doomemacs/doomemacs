@@ -77,7 +77,7 @@ by typing ={=. If you prefer to use the bracket keys for input, you can rebind
 them like below:
 
 #+begin_src emacs-lisp
-;; config.el
+;; in $DOOMDIR/config.el
 
 ;; unbind individual bracket keys
 (map! :after (lispy lispyville)
