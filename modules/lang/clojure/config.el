@@ -16,8 +16,8 @@
 (use-package! clojure-mode
   :hook (clojure-mode . rainbow-delimiters-mode)
   :config
-  (when (executable-find "zprint")
-    (set-formatter! 'zprint '("zprint") :modes '(clojure-mode clojurec-mode clojurescript-mode)))
+  (when (executable-find "cljfmt")
+    (set-formatter! 'cljfmt '("cljfmt" "fix" "-") :modes '(clojure-mode clojurec-mode clojurescript-mode)))
 
   (when (modulep! +lsp)
     (add-hook! '(clojure-mode-local-vars-hook
