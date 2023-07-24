@@ -34,11 +34,6 @@
 
   (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 0))
 
-  (when (and (modulep! :checkers syntax)
-             (not (modulep! :checkers syntax +flymake)))
-    (after! flycheck
-      (load! "autoload/flycheck-eglot")))
-
   (defadvice! +lsp--defer-server-shutdown-a (fn &optional server)
     "Defer server shutdown for a few seconds.
 This gives the user a chance to open other project files before the server is
@@ -68,5 +63,6 @@ server getting expensively restarted when reverting buffers."
 
 
 (use-package! flycheck-eglot
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :hook (eglot-managed-mode . flycheck-eglot-mode))
