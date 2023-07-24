@@ -36,7 +36,11 @@
                  clojurec-mode-local-vars-hook
                  clojurescript-mode-local-vars-hook)
                :append
-               #'tree-sitter!)))
+               #'tree-sitter!)
+    ;; TODO: PR this upstream
+    (after! tree-sitter-langs
+      (add-to-list 'tree-sitter-major-mode-language-alist '(clojurec-mode . clojure))
+      (add-to-list 'tree-sitter-major-mode-language-alist '(clojurescript-mode . clojure)))))
 
 
 ;; `cider-mode' is used instead of the typical `cider' package due to the main
