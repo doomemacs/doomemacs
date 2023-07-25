@@ -106,7 +106,8 @@
                          #'typescript-tsx-mode
                        #'typescript-mode)))
 
-  (when (modulep! :checkers syntax)
+  (when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
     (after! flycheck
       (flycheck-add-mode 'javascript-eslint 'web-mode)
       (flycheck-add-mode 'javascript-eslint 'typescript-mode)

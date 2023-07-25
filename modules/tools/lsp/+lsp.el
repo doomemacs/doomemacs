@@ -34,6 +34,11 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   ;; Make breadcrumbs opt-in; they're redundant with the modeline and imenu
   (setq lsp-headerline-breadcrumb-enable nil)
 
+  ;; Explicitly tell lsp to use flymake; Lsp will default to flycheck if found
+  ;; even if its a dependency
+  (when (modulep! :checkers syntax +flymake)
+    (setq lsp-diagnostics-provider :flymake))
+
   ;; Let doom bind the lsp keymap.
   (when (modulep! :config default +bindings)
     (setq lsp-keymap-prefix nil))
@@ -66,6 +71,7 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
     :documentation '(lsp-describe-thing-at-point :async t)
     :implementations '(lsp-find-implementation :async t)
     :type-definition #'lsp-find-type-definition)
+
 
   (defadvice! +lsp--respect-user-defined-checkers-a (fn &rest args)
     "Ensure user-defined `flycheck-checker' isn't overwritten by `lsp'."

@@ -16,12 +16,14 @@
 
 
 (use-package! flycheck-crystal
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :after crystal-mode)
 
 
 (use-package! flycheck-ameba
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :after crystal-mode
   :config (flycheck-ameba-setup))
 

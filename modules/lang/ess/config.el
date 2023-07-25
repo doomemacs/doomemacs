@@ -14,7 +14,8 @@
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
   (setq ess-offset-continued 'straight
-        ess-use-flymake (not (modulep! :checkers syntax))
+        ess-use-flymake (or (not (modulep! :checkers syntax))
+                            (modulep! :checkers syntax +flymake))
         ess-nuke-trailing-whitespace-p t
         ess-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
@@ -104,6 +105,7 @@
     :hook (stan-mode . company-stan-setup))
 
   (use-package! flycheck-stan
-    :when (modulep! :checkers syntax)
+    :when (and  (modulep! :checkers syntax)
+                (not (modulep! :checkers syntax +flymake)))
     :hook (stan-mode . flycheck-stan-stanc2-setup)
     :hook (stan-mode . flycheck-stan-stanc3-setup)))

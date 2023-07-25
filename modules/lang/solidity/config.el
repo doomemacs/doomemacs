@@ -9,7 +9,8 @@
   (set-company-backend! 'solidity-mode 'company-solidity)
 
   (use-package! solidity-flycheck  ; included with solidity-mode
-    :when (modulep! :checkers syntax)
+    :when (and (modulep! :checkers syntax)
+               (not (modulep! :checkers syntax +flymake)))
     :config
     (setq flycheck-solidity-solc-addstd-contracts t)
     (when (funcall flycheck-executable-find solidity-solc-path)

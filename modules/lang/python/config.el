@@ -310,7 +310,8 @@
 
 (use-package! flycheck-cython
   :when (modulep! +cython)
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :after cython-mode)
 
 

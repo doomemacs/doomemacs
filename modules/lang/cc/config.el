@@ -35,7 +35,7 @@ This is ignored by ccls.")
 (use-package! cc-mode
   :mode ("\\.mm\\'" . objc-mode)
   ;; Use `c-mode'/`c++-mode'/`objc-mode' depending on heuristics
-  :mode ("\\.h\\'" . +cc-c-c++-objc-mode) 
+  :mode ("\\.h\\'" . +cc-c-c++-objc-mode)
   ;; Ensure find-file-at-point recognize system libraries in C modes. It must be
   ;; set up before the likes of irony/lsp are initialized. Also, we use
   ;; local-vars hooks to ensure these only run in their respective major modes,
@@ -146,7 +146,8 @@ This is ignored by ccls.")
     :hook (irony-mode . irony-eldoc))
 
   (use-package! flycheck-irony
-    :when (modulep! :checkers syntax)
+    :when (and (modulep! :checkers syntax)
+               (not (modulep! :checkers syntax +flymake)))
     :config (flycheck-irony-setup))
 
   (use-package! company-irony

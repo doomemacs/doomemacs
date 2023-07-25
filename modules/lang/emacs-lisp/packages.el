@@ -11,7 +11,8 @@
 (package! overseer :pin "02d49f582e80e36b4334c9187801c5ecfb027789")
 (package! elisp-def :pin "1d2e88a232ec16bce036b49577c4d4d96035f9f7")
 (package! elisp-demos :pin "792be709c82101aea0585ece7429e2fdded74494")
-(when (modulep! :checkers syntax)
+(when (and (modulep! :checkers syntax)
+           (not (modulep! :checkers syntax +flymake)))
   (package! flycheck-package :pin "3a6aaed29ff61418c48c0251e1432c30748ae739")
   (package! flycheck-cask :pin "4b2ede6362ded4a45678dfbef1876faa42edbd58"))
 

@@ -78,5 +78,6 @@
   (setq company-go-show-annotation t))
 
 (use-package! flycheck-golangci-lint
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :hook (go-mode . flycheck-golangci-lint-setup))

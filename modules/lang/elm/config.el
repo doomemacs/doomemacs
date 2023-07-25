@@ -27,6 +27,7 @@
          :desc "Compile JS (optimized)" "J" #'+elm/compile-js-optimized)))
 
 (use-package! flycheck-elm
-  :when (modulep! :checkers syntax)
+  :when (and (modulep! :checkers syntax)
+             (not (modulep! :checkers syntax +flymake)))
   :after elm-mode
   :config (add-to-list 'flycheck-checkers 'elm))
