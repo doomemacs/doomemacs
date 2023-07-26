@@ -33,6 +33,7 @@ utilities for fine-tuning. Only some of common behaviors are documented here.
 - [[doom-package:nerd-icons-corfu]] if [[doom-module::completion corfu +icons]]
 - [[doom-package:orderless]] if [[doom-module::completion corfu +orderless]]
 - [[doom-package:corfu-terminal]] if [[doom-module::os tty]]
+- [[doom-package:yasnippet-capf]] if [[doom-module::editor snippets]]
 
 ** Hacks
 /No hacks documented for this module./
@@ -50,7 +51,7 @@ languages may lack code completion support altogether). Run ~$ doom doctor~ to
 find out if you're missing any dependencies. Note that Corfu may have support
 for completions in languages that have no development intelligence, since it
 supports generic, context insensitive candidates such as file names or recurring
-words.
+words. Snippets may also appear in the candidate list if available.
 
 * TODO Usage
 #+begin_quote

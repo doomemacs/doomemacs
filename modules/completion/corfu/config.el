@@ -67,6 +67,14 @@ Possible values are:
     (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
     (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)))
 
+(use-package! yasnippet-capf
+  :when (modulep! :editor snippets)
+  :defer t
+  :init
+  (add-hook! 'yas-minor-mode-hook
+    (defun +corfu-add-yasnippet-capf-h ()
+      (add-hook 'completion-at-point-functions #'yasnippet-capf 30 t))))
+
 (use-package! corfu-terminal
   :when (not (display-graphic-p))
   :hook ((corfu-mode . corfu-terminal-mode)))
