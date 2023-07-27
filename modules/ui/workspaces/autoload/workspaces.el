@@ -221,7 +221,7 @@ workspace."
 ;;;###autoload
 (defun +workspace/rename (new-name)
   "Rename the current workspace."
-  (interactive (list (read-from-minibuffer "New workspace name: ")))
+  (interactive (list (completing-read "New workspace name: " (list (+workspace-current-name)))))
   (condition-case-unless-debug ex
       (let* ((current-name (+workspace-current-name))
              (old-name (+workspace-rename current-name new-name)))
