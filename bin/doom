@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+:; # To prevent non-English output from Doom leading to garbled text, set LC_ALL=C.UTF-8.
+:; export LC_ALL=C.UTF-8
 :; # -*- mode: emacs-lisp; lexical-binding: t -*-
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; emacs="$EMACS ${DEBUG:+--debug-init} -q --no-site-file --batch"
