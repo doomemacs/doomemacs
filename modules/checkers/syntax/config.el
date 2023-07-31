@@ -84,7 +84,7 @@
 
 ;;
 ;;; Flymake
-(use-package flymake
+(use-package! flymake
   :when (modulep! +flymake)
   :defer t
   :init
@@ -94,7 +94,7 @@
   (setq flymake-fringe-indicator-position 'right-fringe))
 
 
-(use-package flymake-popon
+(use-package! flymake-popon
   :when (modulep! +flymake)
   :hook (flymake-mode . flymake-popon-mode)
   :config
