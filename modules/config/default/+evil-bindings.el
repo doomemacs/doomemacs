@@ -762,7 +762,8 @@
        :desc "Big mode"                     "b" #'doom-big-font-mode
        :desc "Fill Column Indicator"        "c" #'global-display-fill-column-indicator-mode
        :desc "Flymake"                      "f" #'flymake-mode
-       (:when (modulep! :checkers syntax)
+       (:when (and (modulep! :checkers syntax)
+                   (not (modulep! :checkers syntax +flymake)))
         :desc "Flycheck"                   "f" #'flycheck-mode)
        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
        :desc "Evil goggles"                 "g" #'evil-goggles-mode
