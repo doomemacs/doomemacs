@@ -10,5 +10,5 @@
   (package! treemacs-magit))
 (when (modulep! :ui workspaces)
   (package! treemacs-persp))
-(when (modulep! +lsp)
+(when (modulep! :tools lsp)
   (package! lsp-treemacs :pin "a48763ba5d1c024426e237ce65926db849d3ae6f"))
