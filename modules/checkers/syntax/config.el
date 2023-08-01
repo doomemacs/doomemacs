@@ -99,5 +99,5 @@
   :hook (flymake-mode . flymake-popon-mode)
   :config
   (setq flymake-popon-method (if (modulep! +childframe)
-                                 'postframe
+                                 'posframe
                                'popon)))
