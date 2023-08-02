@@ -74,6 +74,8 @@
 ;; - The user may have a noexec flag set on /tmp, so pass the exit script to
 ;;   /bin/sh rather than executing them directly.
 
+(set-language-environment "UTF-8")
+
 ;; In CLI sessions, prefer correctness over performance.
 (setq load-prefer-newer t)
 
