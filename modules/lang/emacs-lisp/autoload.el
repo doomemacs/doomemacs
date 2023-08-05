@@ -290,39 +290,49 @@ Essentially, this means in any elisp file that either:
 This generally applies to your private config (`doom-user-dir') or Doom's source
 \(`doom-emacs-dir')."
   :since "3.0.0"
-  (unless (and (bound-and-true-p flycheck-mode)
-               (not (+emacs-lisp--in-package-buffer-p)))
+  (unless (and (or (bound-and-true-p flycheck-mode)
+                   (bound-and-true-p flymake-mode))
+           (not (+emacs-lisp--in-package-buffer-p)))
     (setq +emacs-lisp-non-package-mode nil))
   (when (derived-mode-p 'emacs-lisp-mode)
     (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
   (if (not +emacs-lisp-non-package-mode)
-      (when (get 'flycheck-disabled-checkers 'initial-value)
-        (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
-        (kill-local-variable 'flycheck-emacs-lisp-check-form))
-    (with-memoization (get 'flycheck-disabled-checkers 'initial-value)
-      flycheck-disabled-checkers)
-    (setq-local flycheck-emacs-lisp-check-form
-                (prin1-to-string
-                 `(progn
-                    (setq doom-modules ',doom-modules
-                          doom-disabled-packages ',doom-disabled-packages
-                          byte-compile-warnings ',+emacs-lisp-linter-warnings)
-                    (condition-case e
-                        (progn
-                          (require 'doom)
-                          (require 'doom-cli)
-                          (require 'doom-start))
-                      (error
-                       (princ
-                        (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
-                                (or ,(ignore-errors
-                                       (file-name-nondirectory
-                                        (buffer-file-name (buffer-base-buffer))))
-                                    (car command-line-args-left))
-                                0 0 (error-message-string e)))))
-                    ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
-                flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
-                                                 flycheck-disabled-checkers))))
+      (if (modulep! :checkers syntax +flymake)
+          ;; flymake
+          (progn
+            (add-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc nil t))
+          ;; flycheck
+          (when (get 'flycheck-disabled-checkers 'initial-value)
+            (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
+            (kill-local-variable 'flycheck-emacs-lisp-check-form)))
+    (if (modulep! :checkers syntax +flymake)
+      ;; flymake
+        (remove-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc t)
+      ;; flycheck
+      (with-memoization (get 'flycheck-disabled-checkers 'initial-value)
+        flycheck-disabled-checkers)
+      (setq-local flycheck-emacs-lisp-check-form
+                  (prin1-to-string
+                   `(progn
+                      (setq doom-modules ',doom-modules
+                            doom-disabled-packages ',doom-disabled-packages
+                            byte-compile-warnings ',+emacs-lisp-linter-warnings)
+                      (condition-case e
+                          (progn
+                            (require 'doom)
+                            (require 'doom-cli)
+                            (require 'doom-start))
+                        (error
+                         (princ
+                          (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
+                                  (or ,(ignore-errors
+                                         (file-name-nondirectory
+                                          (buffer-file-name (buffer-base-buffer))))
+                                      (car command-line-args-left))
+                                  0 0 (error-message-string e)))))
+                      ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
+                  flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
+                                                   flycheck-disabled-checkers)))))
 
 
 ;;
