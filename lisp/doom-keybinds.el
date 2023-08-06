@@ -145,11 +145,8 @@ all hooks after it are ignored.")
                     forms))
             (when-let (desc (cadr (memq :which-key udef)))
               (prependq!
-               wkforms `((which-key-add-key-based-replacements
-                           (general--concat t doom-leader-alt-key ,key)
-                           ,desc)
-                         (which-key-add-key-based-replacements
-                           (general--concat t doom-leader-key ,key)
+               wkforms `((which-key-add-keymap-based-replacements doom-leader-map
+                           ,key
                            ,desc))))))))
     (macroexp-progn
      (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
@@ -195,7 +192,7 @@ localleader prefix."
 ;;   :prefix/:non-normal-prefix properties because general is incredibly slow
 ;;   binding keys en mass with them in conjunction with :states -- an effective
 ;;   doubling of Doom's startup time!
-(define-prefix-command 'doom/leader 'doom-leader-map)
+(define-prefix-command 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
@@ -210,9 +207,9 @@ localleader prefix."
                    (set-keymap-parent doom-leader-map mode-specific-map))
                   ((equal doom-leader-alt-key "C-x")
                    (set-keymap-parent doom-leader-map ctl-x-map)))
-            (define-key map (kbd doom-leader-alt-key) 'doom/leader))
-        (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
-        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
+            (define-key map (kbd doom-leader-alt-key) #'doom-leader-map))
+        (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) #'doom-leader-map)
+        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) #'doom-leader-map))
       (general-override-mode +1))))
 
 
@@ -317,6 +314,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                           :prefix prefix)
                                     rest))
                       (push `(defvar ,keymap (make-sparse-keymap))
+                            doom--map-forms)
+                      (push `(define-prefix-command ',keymap)
                             doom--map-forms))))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc)
