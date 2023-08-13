@@ -25,6 +25,14 @@ and Emacs states, and for non-evil users.")
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
+(defvar doom-localleader-map-alist nil
+  "An alist mapping major modes to their localleader keymaps.")
+
+(defvar doom-localleader-map (make-sparse-keymap)
+  "The current major mode's localleader keymap.")
+
+(defvar doom-localleader-current-major-mode nil
+  "The major mode of the current localleader keymap.")
 
 ;;
 ;;; Global keybind settings
@@ -165,6 +173,43 @@ See `doom-leader-key' and `doom-leader-alt-key' to change the leader prefix."
     :keymaps 'doom-leader-map
     ,@args))
 
+(defmacro doom--define-localleader-leader-key (&rest keys)
+  (let ((modes (cl-mapcar #'general--remove-map
+                          (doom-unquote (progn (pop keys) (pop keys)))))
+        prefix forms wkforms result)
+    (macroexp-progn (dolist (mode modes result)
+                      (unless (keymapp (alist-get mode doom-localleader-map-alist))
+                        (setf (alist-get mode doom-localleader-map-alist)
+                              (make-sparse-keymap)))
+                      (let ((keys keys))
+                        (while keys
+                          (let ((key (pop keys))
+                                (def (pop keys)))
+                            (if (keywordp key)
+                                (when (memq key '(:prefix :infix))
+                                  (setq prefix def))
+                              (when prefix
+                                (setq key `(general--concat t ,prefix ,key)))
+                              (let* ((udef (cdr-safe (doom-unquote def)))
+                                     (bdef (if (general--extended-def-p udef)
+                                               (general--extract-def (general--normalize-extended-def udef))
+                                             def)))
+                                (unless (eq bdef :ignore)
+                                  (push `(define-key
+                                           (alist-get ',mode doom-localleader-map-alist)
+                                           (general--kbd ,key)
+                                           ,bdef)
+                                        forms))
+                                (when-let (desc (cadr (memq :which-key udef)))
+                                  (prependq!
+                                   wkforms `((which-key-add-keymap-based-replacements
+                                               (alist-get ',mode doom-localleader-map-alist)
+                                               ,key
+                                               ,desc))))))))
+                        (prependq! result
+                                   (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+                                           (nreverse forms))))))))
+
 (defmacro define-localleader-key! (&rest args)
   "Define <localleader> key.
 
@@ -192,8 +237,23 @@ localleader prefix."
 ;;   :prefix/:non-normal-prefix properties because general is incredibly slow
 ;;   binding keys en mass with them in conjunction with :states -- an effective
 ;;   doubling of Doom's startup time!
-(define-prefix-command 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
+(define-prefix-command 'doom-leader-map)
+(define-prefix-command 'doom-localleader-map)
+
+(add-hook! '(after-change-major-mode-hook
+             doom-switch-buffer-hook
+             doom-switch-window-hook
+             doom-switch-frame-hook)
+  (defun doom-init-localleader-key-h ()
+    "Set the localleader keys for the current major-mode."
+    (unless (or (derived-mode-p 'special-mode)
+                (derived-mode-p 'minibuffer-inactive-mode)
+                (derived-mode-p 'minibuffer-mode)
+                (derived-mode-p 'compilation-mode))
+      (setq doom-localleader-current-major-mode major-mode)
+      (set-keymap-parent doom-localleader-map
+                         (cdr (assq major-mode doom-localleader-map-alist))))))
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
 ;; the user a chance to modify them.
@@ -207,9 +267,12 @@ localleader prefix."
                    (set-keymap-parent doom-leader-map mode-specific-map))
                   ((equal doom-leader-alt-key "C-x")
                    (set-keymap-parent doom-leader-map ctl-x-map)))
-            (define-key map (kbd doom-leader-alt-key) #'doom-leader-map))
+            (define-key map (kbd doom-leader-alt-key) #'doom-leader-map)
+            (define-key map (kbd doom-localleader-alt-key) #'doom-localleader-map))
         (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) #'doom-leader-map)
-        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) #'doom-leader-map))
+        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) #'doom-leader-map)
+        (evil-define-key* '(normal visual motion) map (kbd doom-localleader-key) #'doom-localleader-map)
+        (evil-define-key* '(emacs insert) map (kbd doom-localleader-alt-key) #'doom-localleader-map))
       (general-override-mode +1))))
 
 
@@ -280,7 +343,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
       (let ((key (pop rest)))
         (cond ((listp key)
                (doom--map-nested nil key))
-
               ((keywordp key)
                (pcase key
                  (:leader
@@ -288,7 +350,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (setq doom--map-fn 'doom--define-leader-key))
                  (:localleader
                   (doom--map-commit)
-                  (setq doom--map-fn 'define-localleader-key!))
+                  (setq doom--map-fn 'doom--define-localleader-leader-key))
                  (:after
                   (doom--map-nested (list 'after! (pop rest)) rest)
                   (setq rest nil))
