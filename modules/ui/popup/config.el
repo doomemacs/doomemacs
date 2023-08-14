@@ -1,6 +1,6 @@
 ;;; ui/popup/config.el -*- lexical-binding: t; -*-
 
-(defconst +popup-window-parameters '(ttl quit select modeline popup)
+(defconst +popup-window-parameters '(ttl quit select modeline autosave popup)
   "A list of custom parameters to be added to `window-persistent-parameters'.
 Modifying this has no effect, unless done before ui/popup loads.")
 
