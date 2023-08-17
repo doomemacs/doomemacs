@@ -315,7 +315,7 @@ These builds/forks have known compatibility issues with Doom and are *very
 likely* to cause issues later on. They are not recommended:
 
 + emacsformacosx.com
-+ ~brew cask install emacs~ (installs from emacsformacosx.com)
++ ~brew install --cask emacs~ (installs from emacsformacosx.com)
 + AquaMacs
 + XEmacs
 
