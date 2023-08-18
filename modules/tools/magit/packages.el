@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/magit/packages.el
 
-(when (package! magit :pin "97a95f70079b6613bf98d2306279d3e03fe51234")
+(when (package! magit :pin "48818355728c48d986d74dde8b1e9fba25f0fd53")
   (when (modulep! +forge)
     (package! forge :pin "ba35ffc9bafc6457cc95633904e53e34e544543f")
     (package! code-review
@@ -11,4 +11,4 @@
     ; and the current forge commit (but forge does have an upstream fix),
     ; pinned as a temporary measure to prevent user breakages
     (package! closql :pin "0a7226331ff1f96142199915c0ac7940bac4afdd"))
-  (package! magit-todos :pin "c6f3fd03aa5b750636c2647253f21cc03329566c"))
+  (package! magit-todos :pin "cadf29d1cc410c71a0020c7f83999d9f61721b90"))
