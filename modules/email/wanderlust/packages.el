@@ -5,7 +5,7 @@
 ;;      depends on flim, flim on apel), but they all have non-standard default
 ;;      branches which straight cannot detect without our help.
 (package! apel :recipe (:branch "apel-wl") :pin "82eb2325bd149dc57b43a9ce9402c6c6183e4052")
-(package! flim :recipe (:branch "flim-1_14-wl") :pin "2cf5a7891090faca8de725b1d3743dcedf233ea2")
-(package! semi :recipe (:branch "semi-1_14-wl") :pin "7d8df0ef2f483e2dc063a72099295f467e6bc2c8")
+(package! flim :recipe (:branch "flim-1_14-wl") :pin "80b8121f05a5a0d7fcfe3e54085467a646dd2028")
+(package! semi :recipe (:branch "semi-1_14-wl") :pin "9370961ddcee78e389e44b36d38c3d93f8351619")
 
-(package! wanderlust :pin "77662986fd91cff991f502b19262227227740d52")
+(package! wanderlust :pin "8369b2d5170a174652294835dd9a18ed21a38cb2")
