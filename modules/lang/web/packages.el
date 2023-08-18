@@ -3,10 +3,10 @@
 
 ;; +html.el
 (package! emmet-mode :pin "63b6932603184956b5ea8919036d2b307b48d7fd")
-(package! haml-mode :pin "bf5b6c11b1206759d2b28af48765e04882dd1fc4")
+(package! haml-mode :pin "fe83c65c1f002f7c36480b758727c1afbad9a1b2")
 (package! pug-mode :pin "73f8c2f95eba695f701df20c8436f49abadebdc1")
 (package! slim-mode :pin "3636d18ab1c8b316eea71c4732eb44743e2ded87")
-(when (package! web-mode :pin "df97ab62c94826a84adbde060a4111ca91deda8e")
+(when (package! web-mode :pin "57856ba64b9382811b35df0d9ab0a24aede0c1f0")
   (when (modulep! :completion company)
     (package! company-web :pin "863fb84b81ed283474e50330cd8d27b1ca0d74f1")))
 
@@ -21,4 +21,4 @@
 (when (modulep! :completion ivy)
   (package! counsel-css :pin "8e9c0515fc952452eee786d8ebb43d48ea86c9f8"))
 (when (modulep! :completion helm)
-  (package! helm-css-scss :pin "48b996f73af1fef8d6e88a1c545d98f8c50b0cf3"))
+  (package! helm-css-scss :pin "2169d83d8fdc661241df208cb3235112735d936e"))
