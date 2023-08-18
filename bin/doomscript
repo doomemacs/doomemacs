@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# -*- coding: utf-8-unix -*-
 # This is a shebang interpreter for launching Emacs Lisp scripts with Doom's CLI
 # framework preloaded, plus any environment variables it needs. Use it like so:
 #
@@ -18,6 +19,9 @@ if [ "$#" -eq 0 ]; then
     >&2 echo "Error: missing required file argument"
     exit 1
 fi
+
+# Prevent garbled non-English output from child processes
+export LC_ALL=C.UTF-8
 
 case "$EMACS" in
     *term*) EMACS=emacs ;;   # in {ansi-,v}term
