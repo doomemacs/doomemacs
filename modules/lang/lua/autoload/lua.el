@@ -9,27 +9,28 @@
             (shell-quote-argument root))))
 
 ;;;###autoload
-(defun +lua-love-project-root ()
-  "Returns the directory where a main.lua or main.moon exists.
+(defun +lua-love-project-root (&optional dir)
+  "Return directory (up from DIR) where a main.lua or main.moon exists.
 
 Returns nil if 'love' executable can't be found."
   (when (executable-find "love")
-    (if (doom-project-p)
-        (file-name-directory
-         (or (project-file-exists-p! (or "main.lua" "src/main.lua"))
-             (and (modulep! +moonscript)
-                  (project-file-exists-p! (or "main.moon" "src/main.moon")))
-             ""))
-      ;; Since Love2D games are likely to be prototypes, they may not be in a
-      ;; well-formed project as far as projecitle is concerned, so we search for
-      ;; main.lua/main.moon up the file tree as a backup.
-      (or (projectile-locate-dominating-file default-directory "main.lua")
-          (when-let (root (projectile-locate-dominating-file default-directory "src/main.lua"))
-            (expand-file-name "src" root))
-          (and (modulep! +moonscript)
-               (or (projectile-locate-dominating-file default-directory "main.moon")
-                   (when-let (root (projectile-locate-dominating-file default-directory "src/main.moon"))
-                     (expand-file-name "src" root))))))))
+    (when-let ((dir (or dir (doom-project-root))))
+      (if (doom-project-p dir)
+          (file-name-directory
+           (or (file-exists-p! (or "main.lua" "src/main.lua") dir)
+               (and (modulep! +moonscript)
+                    (file-exists-p! (or "main.moon" "src/main.moon") dir))
+               ""))
+        ;; Since Love2D games are likely to be prototypes, they may not be in a
+        ;; well-formed project as far as projecitle is concerned, so we search for
+        ;; main.lua/main.moon up the file tree as a backup.
+        (or (projectile-locate-dominating-file dir "main.lua")
+            (when-let (root (projectile-locate-dominating-file dir "src/main.lua"))
+              (expand-file-name "src" root))
+            (and (modulep! +moonscript)
+                 (or (projectile-locate-dominating-file dir "main.moon")
+                     (when-let (root (projectile-locate-dominating-file dir "src/main.moon"))
+                       (expand-file-name "src" root)))))))))
 
 
 ;;
