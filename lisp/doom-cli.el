@@ -56,6 +56,9 @@
   (require 'seq)
   (require 'map)
 
+  ;; Suppress any possible coding system prompts during CLI sessions.
+  (set-language-environment "UTF-8")
+
   ;; Load and set up our debugger first, so backtraces can be made more
   ;; presentable and logged to file.
   (doom-require 'doom-lib 'debug)
