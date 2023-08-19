@@ -34,7 +34,7 @@
 The project's root is determined by `projectile', starting from BASE-DIRECTORY
 (defaults to `default-directory'). FILES are paths relative to the project root,
 unless they begin with a slash."
-  `(file-exists-p! ,files (doom-project-root base-directory)))
+  `(file-exists-p! ,files (doom-project-root ,base-directory)))
 
 
 ;;
