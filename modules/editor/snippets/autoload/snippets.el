@@ -67,16 +67,14 @@ Finds correctly active snippets from parent modes (based on Yas' logic)."
     (alist-get completion completion-uuid-alist nil nil #'string=)))
 
 (defun +snippets--snippet-mode-name-completing-read (&optional all-modes)
-  (if all-modes
-      (completing-read
-       "Select snippet mode: "
-       obarray
-       (lambda (sym)
-         (string-match-p "-mode\\'" (symbol-name sym))))
-    (if (not (null yas--extra-modes))
-        (completing-read "Select snippet mode: "
-                         (cons major-mode yas--extra-modes))
-      (symbol-name major-mode))))
+  (cond (all-modes (completing-read
+                    "Select snippet mode: "
+                    obarray
+                    (lambda (sym)
+                      (string-match-p "-mode\\'" (symbol-name sym)))))
+        ((not (null yas--extra-modes)) (completing-read "Select snippet mode: "
+                                                        (cons major-mode yas--extra-modes)))
+        (t (symbol-name major-mode))))
 
 (defun +snippet--abort ()
   (interactive)
