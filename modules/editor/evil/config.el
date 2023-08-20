@@ -202,34 +202,6 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
 
-  ;; --- custom interactive codes -----------
-  ;; These arg types will highlight matches in the current buffer
-  (evil-ex-define-argument-type regexp-match
-    :runner (lambda (flag &optional arg) (+evil-ex-regexp-match flag arg 'inverted)))
-  (evil-ex-define-argument-type regexp-global-match
-    :runner +evil-ex-regexp-match)
-
-  (defun +evil--regexp-match-args (arg)
-    (when (evil-ex-p)
-      (cl-destructuring-bind (&optional arg flags)
-          (evil-delimited-arguments arg 2)
-        (list arg (string-to-list flags)))))
-
-  ;; Other commands can make use of this
-  (evil-define-interactive-code "<//>"
-    :ex-arg regexp-match
-    (+evil--regexp-match-args evil-ex-argument))
-
-  (evil-define-interactive-code "<//!>"
-    :ex-arg regexp-global-match
-    (+evil--regexp-match-args evil-ex-argument))
-
-  ;; Forward declare these so that ex completion works, even if the autoloaded
-  ;; functions aren't loaded yet.
-  (evil-add-command-properties '+evil:align :ex-arg 'regexp-match)
-  (evil-add-command-properties '+evil:align-right :ex-arg 'regexp-match)
-  (evil-add-command-properties '+multiple-cursors:evil-mc :ex-arg 'regexp-global-match)
-
   ;; Lazy load evil ex commands
   (delq! 'evil-ex features)
   (add-transient-hook! 'evil-ex (provide 'evil-ex))
@@ -403,9 +375,16 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-traces
   :after evil-ex
   :config
+  ;; HACK: Temporary workaround for upstream incompatibility. See
+  ;;   mamapanda/evil-traces#5.
+  (defadvice! +evil--set-evil-ex-current-buffer-a (&rest _)
+    :before #'evil-ex-setup
+    (with-current-buffer evil-ex-current-buffer
+      (setq-local evil-ex-current-buffer (current-buffer))))
   (pushnew! evil-traces-argument-type-alist
             '(+evil:align . evil-traces-global)
-            '(+evil:align-right . evil-traces-global))
+            '(+evil:align-right . evil-traces-global)
+            '(+multiple-cursors:evil-mc . evil-traces-substitute))
   (evil-traces-mode))
 
 

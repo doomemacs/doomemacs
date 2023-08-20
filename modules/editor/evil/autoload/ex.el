@@ -64,7 +64,7 @@ PATTERN is a vim-style regexp. FLAGS is an optional string of characters.
 Supports the following flags:
 
 g   Repeat alignment on all matches in each line"
-  (interactive "<r><//>")
+  (interactive "<r></>")
   (align-regexp
    beg end
    (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
@@ -78,7 +78,7 @@ PATTERN is a vim-style regexp. FLAGS is an optional string of characters.
 Supports the following flags:
 
 g   Repeat alignment on all matches in each line"
-  (interactive "<r><//>")
+  (interactive "<r></>")
   (align-regexp
    beg end
    (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
@@ -86,7 +86,7 @@ g   Repeat alignment on all matches in each line"
 
 ;; ;;;###autoload (autoload '+evil:sort "editor/evil/autoload/ex" nil nil)
 ;; (evil-define-command +evil:sort (beg end &optional pattern flags reverse)
-;;   (interactive "<r><//><!>"))
+;;   (interactive "<r></><!>"))
 
 ;;;###autoload (autoload '+evil:open-scratch-buffer "editor/evil/autoload/ex" nil t)
 (evil-define-operator +evil:open-scratch-buffer (bang)
