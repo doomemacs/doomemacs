@@ -33,7 +33,13 @@ ignored. This makes it easy to override built-in snippets with private ones."
   (unless (file-directory-p dir)
     (if (y-or-n-p (format "%S doesn't exist. Create it?" (abbreviate-file-name dir)))
         (make-directory dir t)
-      (error "%S doesn't exist" (abbreviate-file-name dir)))))
+      (error "%S doesn't exist" (abbreviate-file-name dir))))
+  dir)
+
+(defun +snippets--use-snippet-file-name-p (snippet-file-name)
+  (or (not (file-exists-p snippet-file-name))
+      (y-or-n-p (format "%s exists. Overwrite it?"
+                        (abbreviate-file-name snippet-file-name)))))
 
 (defun +snippet--get-template-by-uuid (uuid &optional mode)
   "Look up the template by uuid in child-most to parent-most mode order.
@@ -191,22 +197,25 @@ buggy behavior when <delete> is pressed in an empty field."
 (defun +snippets/new ()
   "Create a new snippet in `+snippets-dir'."
   (interactive)
-  (let ((default-directory
-          (expand-file-name (symbol-name major-mode)
-                            +snippets-dir)))
-    (+snippet--ensure-dir default-directory)
-    (with-current-buffer (switch-to-buffer "untitled-snippet")
-      (snippet-mode)
-      (erase-buffer)
-      (yas-expand-snippet (concat "# -*- mode: snippet -*-\n"
-                                  "# name: $1\n"
-                                  "# uuid: $2\n"
-                                  "# key: ${3:trigger-key}${4:\n"
-                                  "# condition: t}\n"
-                                  "# --\n"
-                                  "$0"))
-      (when (bound-and-true-p evil-local-mode)
-        (evil-insert-state)))))
+  (let* ((default-directory (+snippet--ensure-dir (expand-file-name
+                                                   (symbol-name major-mode)
+                                                   +snippets-dir)))
+         (snippet-key (read-string "Enter a key for the snippet: "))
+         (snippet-file-name (expand-file-name snippet-key)))
+    (when (+snippets--use-snippet-file-name-p snippet-file-name)
+      (with-current-buffer (switch-to-buffer snippet-key)
+        (snippet-mode)
+        (erase-buffer)
+        (set-visited-file-name snippet-file-name)
+        (yas-expand-snippet (concat "# -*- mode: snippet -*-\n"
+                                    "# name: $1\n"
+                                    "# uuid: $2\n"
+                                    "# key: ${3:" snippet-key "}${4:\n"
+                                    "# condition: t}\n"
+                                    "# --\n"
+                                    "$0"))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-insert-state))))))
 
 ;;;###autoload
 (defun +snippets/new-alias (template-uuid)
@@ -219,21 +228,26 @@ You will be prompted for a snippet to alias."
                                     current-prefix-arg)))
   (unless (require 'doom-snippets nil t)
     (user-error "This command requires the `doom-snippets' library bundled with Doom Emacs"))
-  (let ((default-directory (expand-file-name (symbol-name major-mode) +snippets-dir)))
-    (+snippet--ensure-dir default-directory)
-    (with-current-buffer (switch-to-buffer "untitled-snippet")
-      (snippet-mode)
-      (erase-buffer)
-      (yas-expand-snippet
-       (concat "# -*- mode: snippet -*-\n"
-               "# name: $1\n"
-               "# key: ${2:trigger-key}${3:\n"
-               "# condition: t}\n"
-               "# type: command\n"
-               "# --\n"
-               "(%alias \"${4:" (or template-uuid "uuid") "}\")"))
-      (when (bound-and-true-p evil-local-mode)
-        (evil-insert-state)))))
+  (let* ((default-directory (+snippet--ensure-dir (expand-file-name
+                                                   (symbol-name major-mode)
+                                                   +snippets-dir)))
+         (alias-key (read-string "Enter a key for the alias: "))
+         (alias-file-name (expand-file-name alias-key)))
+    (when (+snippets--use-snippet-file-name-p alias-file-name)
+      (with-current-buffer (switch-to-buffer alias-key)
+        (snippet-mode)
+        (erase-buffer)
+        (set-visited-file-name alias-file-name)
+        (yas-expand-snippet
+         (concat "# -*- mode: snippet -*-\n"
+                 "# name: $1\n"
+                 "# key: ${2:" alias-key "}${3:\n"
+                 "# condition: t}\n"
+                 "# type: command\n"
+                 "# --\n"
+                 "(doom-snippets-expand :uuid \"${4:" (or template-uuid "uuid") "}\")"))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-insert-state))))))
 
 ;;;###autoload
 (defun +snippets/edit (template-uuid)
