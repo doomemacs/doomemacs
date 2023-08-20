@@ -5,7 +5,7 @@
 [Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
 
 ![Made with Doom Emacs](https://img.shields.io/github/tag/doomemacs/doomemacs.svg?style=flat-square&label=release&color=58839b)
-![Supports Emacs 27.1 - 28.1](https://img.shields.io/badge/Supports-Emacs_27.1--28.1-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
+![Supports Emacs 27.1–29.1](https://img.shields.io/badge/Supports-Emacs_27.1–29.1-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)
 ![Latest commit](https://img.shields.io/github/last-commit/doomemacs/doomemacs/master?style=flat-square)
 ![Build status: master](https://img.shields.io/github/workflow/status/doomemacs/doomemacs/CI/master?style=flat-square)
 [![Discord Server](https://img.shields.io/discord/406534637242810369?color=738adb&label=Discord&logo=discord&logoColor=white&style=flat-square)][Discord]
@@ -99,7 +99,12 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 # Prerequisites
 + Git 2.23+
-+ Emacs 27.1+ (*28.1 is recommended*, or [native-comp](https://www.emacswiki.org/emacs/GccEmacs). **29+ is not supported**).
++ Emacs 27.1–29.1 (**Recommended: 29.1 +
+  [native-comp](https://www.emacswiki.org/emacs/GccEmacs)**)
+  > :warning: Unstable and pre-release builds of Emacs -- which end in `.50`,
+  > `.60`, or `.9X` (e.g. `28.1.91`) -- **are not officially supported**. There
+  > *is* some effort to support Emacs HEAD, however. [Follow this Discourse
+  > post](https://discourse.doomemacs.org/t/3241) for details.
 + [ripgrep] 11.0+
 + GNU `find`
 + *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
