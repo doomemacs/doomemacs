@@ -45,25 +45,20 @@ Finds correctly active snippets from parent modes (based on Yas' logic)."
            return it))
 
 (defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
-  (plist-get
-   (text-properties-at
-    0 (apply #'completing-read prompt
-             (cl-loop for (_ . tpl) in (mapcan #'yas--table-templates (if all-snippets
-                                                                          (hash-table-values yas--tables)
-                                                                        (yas--get-snippet-tables)))
+  (let* ((completion-uuid-alist
+          (cl-loop for (_ . tpl) in (mapcan #'yas--table-templates
+                                            (if all-snippets
+                                                (hash-table-values yas--tables)
+                                              (yas--get-snippet-tables)))
 
-                      for txt = (format "%-25s%-30s%s"
-                                        (yas--template-key tpl)
-                                        (yas--template-name tpl)
-                                        (abbreviate-file-name (yas--template-load-file tpl)))
-                      collect
-                      (progn
-                        (set-text-properties 0 (length txt) `(uuid ,(yas--template-uuid tpl)
-                                                                   path ,(yas--template-load-file tpl))
-                                             txt)
-                        txt))
-             args))
-   'uuid))
+                   for txt = (format "%-25s%-30s%s"
+                                     (yas--template-key tpl)
+                                     (yas--template-name tpl)
+                                     (abbreviate-file-name (yas--template-load-file tpl)))
+                   collect
+                   (cons txt (yas--template-uuid tpl))))
+         (completion (apply #'completing-read prompt completion-uuid-alist args)))
+    (alist-get completion completion-uuid-alist nil nil #'string=)))
 
 (defun +snippet--abort ()
   (interactive)
