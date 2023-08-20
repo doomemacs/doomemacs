@@ -66,6 +66,18 @@ Finds correctly active snippets from parent modes (based on Yas' logic)."
          (completion (apply #'completing-read prompt completion-uuid-alist args)))
     (alist-get completion completion-uuid-alist nil nil #'string=)))
 
+(defun +snippets--snippet-mode-name-completing-read (&optional all-modes)
+  (if all-modes
+      (completing-read
+       "Select snippet mode: "
+       obarray
+       (lambda (sym)
+         (string-match-p "-mode\\'" (symbol-name sym))))
+    (if (not (null yas--extra-modes))
+        (completing-read "Select snippet mode: "
+                         (cons major-mode yas--extra-modes))
+      (symbol-name major-mode))))
+
 (defun +snippet--abort ()
   (interactive)
   (set-buffer-modified-p nil)
@@ -194,12 +206,14 @@ buggy behavior when <delete> is pressed in an empty field."
     (user-error "Cannot find template with UUID %S" template-uuid)))
 
 ;;;###autoload
-(defun +snippets/new ()
-  "Create a new snippet in `+snippets-dir'."
-  (interactive)
-  (let* ((default-directory (+snippet--ensure-dir (expand-file-name
-                                                   (symbol-name major-mode)
-                                                   +snippets-dir)))
+(defun +snippets/new (&optional all-modes)
+  "Create a new snippet in `+snippets-dir'.
+
+If there are extra yasnippet modes active, or if ALL-MODES is non-nil, you will
+be prompted for the mode for which to create the snippet."
+  (interactive "P")
+  (let* ((mode (+snippets--snippet-mode-name-completing-read all-modes))
+         (default-directory (+snippet--ensure-dir (expand-file-name mode +snippets-dir)))
          (snippet-key (read-string "Enter a key for the snippet: "))
          (snippet-file-name (expand-file-name snippet-key)))
     (when (+snippets--use-snippet-file-name-p snippet-file-name)
