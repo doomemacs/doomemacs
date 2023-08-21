@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 :; # -*- mode: emacs-lisp; lexical-binding: t -*-
-:; export LC_ALL=C.UTF-8
 :; case "$EMACS" in *term*) EMACS=emacs ;; *) EMACS="${EMACS:-emacs}" ;; esac
 :; emacs="$EMACS ${DEBUG:+--debug-init} -q --no-site-file --batch"
 :; tmpdir=`$emacs --eval '(princ (temporary-file-directory))' 2>/dev/null`

@@ -20,9 +20,6 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
-# Prevent garbled non-English output from child processes
-export LC_ALL=C.UTF-8
-
 case "$EMACS" in
     *term*) EMACS=emacs ;;   # in {ansi-,v}term
     *) EMACS="${EMACS:-emacs}" ;;
