@@ -552,7 +552,8 @@ doom env
 
 # Lastly, install the icon fonts Doom uses:
 emacs --batch -f all-the-icons-install-fonts
-# On Windows, `all-the-icons-install-fonts` will only download the fonts, you'll
+emacs --batch -f nerd-icons-install-fonts
+# On Windows, `all-the-icons-install-fonts` and `nerd-icons-install-fonts` will only download the fonts, you'll
 # have to install them by hand afterwards!
 #+END_SRC
 
