@@ -375,12 +375,6 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-traces
   :after evil-ex
   :config
-  ;; HACK: Temporary workaround for upstream incompatibility. See
-  ;;   mamapanda/evil-traces#5.
-  (defadvice! +evil--set-evil-ex-current-buffer-a (&rest _)
-    :before #'evil-ex-setup
-    (with-current-buffer evil-ex-current-buffer
-      (setq-local evil-ex-current-buffer (current-buffer))))
   (pushnew! evil-traces-argument-type-alist
             '(+evil:align . evil-traces-global)
             '(+evil:align-right . evil-traces-global)

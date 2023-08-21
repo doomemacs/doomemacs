@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "60ba716bf500ca21cdf5a8f83101449a1cbe3413")
+(package! evil :pin "9eb69b7f5b3c72cfc66f69b3242e935015780654")
 (package! evil-args :pin "2671071a4a57eaee7cc8c27b9e4b6fc60fd2ccd3")
 (package! evil-easymotion :pin "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 (package! evil-embrace :pin "3081d37811b6a3dfaaf01d578c7ab7a746c6064d")
@@ -10,17 +10,17 @@
   :pin "819f1ee1cf3f69a1ae920e6004f2c0baeebbe077")
 (package! evil-exchange :pin "5f0a2d41434c17c6fb02e4f744043775de1c63a2")
 (package! evil-indent-plus :pin "b4dacbfdb57f474f798bfbf5026d434d549eb65c")
-(package! evil-lion :pin "a55eb647422342f6b1cf867f797b060b3645d9d8")
+(package! evil-lion :pin "1e838a53b8f18a3c8bdf3e952186abc2ee9cb98e")
 (package! evil-nerd-commenter :pin "3b197a2b559b06a7cf39978704b196f53dac802a")
 (package! evil-numbers :pin "7a1b62afc12da2b582bf84d722e7b10ca8b97065")
-(package! evil-snipe :pin "c07788c35cf8cd8e652a494322fdc0643e30a89f")
+(package! evil-snipe :pin "c2108d3932fcd2f75ac3e48250d6badd668f5b4f")
 (package! evil-surround :pin "8fad8540c490d94a820004f227552ca08e3e3857")
 (package! evil-textobj-anyblock
   :recipe (:host github
            :repo "willghatch/evil-textobj-anyblock"
            :branch "fix-inner-block")
   :pin "29280cd71a05429364cdceef2ff595ae8afade4d")
-(package! evil-traces :pin "d4c53bd6addbe1bce7c77fdc10314f24451a2ecf")
+(package! evil-traces :pin "82e8a7b4213aed140f6eb5f2cc33a09bb5587166")
 (package! evil-visualstar :pin "06c053d8f7381f91c53311b1234872ca96ced752")
 (package! exato :pin "aee7af7b7a0e7551478f453d1de7d5b9cb2e06c4")
 (package! evil-quick-diff
