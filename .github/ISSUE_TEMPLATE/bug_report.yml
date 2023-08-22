@@ -33,9 +33,8 @@ body:
           Doom.
         required: true
       - label: >
-          The issue can be reproduced on a stable release of Emacs, such as 27
-          or 28. *(Doom does not support development builds like 29+ or any
-          version ending in .50 or .9x)*
+          The issue can be reproduced on a stable release of Emacs, such as 27,
+          28, or 29. *(Unstable versions end in .50, .60, or .9x)*
         required: true
 - type: markdown
   attributes:
