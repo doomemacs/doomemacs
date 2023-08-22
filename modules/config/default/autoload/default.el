@@ -25,7 +25,8 @@ generate `completing-read' candidates."
   (interactive)
   (call-interactively
    (if (and (not IS-MAC) (executable-find "man"))
-       #'man
+       (or (command-remapping #'man)
+           #'man)
      #'woman)))
 
 ;;;###autoload
