@@ -1,5 +1,7 @@
 ;;; input/chinese/config.el -*- lexical-binding: t; -*-
 
+(require 'pyim-cregexp-utils)
+
 (use-package! pyim
   :after-call after-find-file pre-command-hook
   :init
