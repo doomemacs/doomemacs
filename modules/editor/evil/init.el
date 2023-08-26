@@ -123,6 +123,7 @@ variable for an explanation of the defaults (in comments). See
       dired
       dired-sidebar
       disk-usage
+      distel
       doc-view
       docker
       ebib
@@ -131,6 +132,8 @@ variable for an explanation of the defaults (in comments). See
       edebug
       ediff
       eglot
+      elpaca
+      ement
       explain-pause-mode
       elfeed
       eldoc
@@ -139,7 +142,7 @@ variable for an explanation of the defaults (in comments). See
       elisp-slime-nav
       embark
       emms
-      ,@(if (> emacs-major-version 28) '(emoji))
+      ,@(when (>= emacs-major-version 29) '(emoji))
       epa
       ert
       eshell
@@ -179,6 +182,7 @@ variable for an explanation of the defaults (in comments). See
       js2-mode
       leetcode
       lispy
+      lms
       log-edit
       log-view
       lsp-ui-imenu
@@ -190,8 +194,10 @@ variable for an explanation of the defaults (in comments). See
       magit-section
       magit-todos
       markdown-mode
+      ,@(when evil-collection-setup-minibuffer '(minibuffer))
       monky
       mpc
+      mpdel
       mu4e
       mu4e-conversation
       neotree
@@ -207,9 +213,10 @@ variable for an explanation of the defaults (in comments). See
       p4
       (package-menu package)
       pass
-      (pdf pdf-tools)
+      (pdf pdf-view)
       popup
       proced
+      (process-menu simple)
       prodigy
       profiler
       python
@@ -218,7 +225,7 @@ variable for an explanation of the defaults (in comments). See
       racket-describe
       realgud
       reftex
-      replace
+      replace ;; For `occur'.
       restclient
       rg
       ripgrep
@@ -230,7 +237,7 @@ variable for an explanation of the defaults (in comments). See
       scroll-lock
       selectrum
       sh-script
-      ,@(if (> emacs-major-version 27) '(shortdoc))
+      ,@(when (>= emacs-major-version 28) '(shortdoc))
       simple
       simple-mpc
       slime
@@ -238,12 +245,14 @@ variable for an explanation of the defaults (in comments). See
       snake
       so-long
       speedbar
+      ,@(when (>= emacs-major-version 27) '(tab-bar))
       tablist
+      tabulated-list
       tar-mode
       telega
       (term term ansi-term multi-term)
       tetris
-      thread
+      ,@(when (>= emacs-major-version 27) '(thread))
       tide
       timer-list
       transmission
@@ -269,7 +278,7 @@ variable for an explanation of the defaults (in comments). See
       yaml-mode
       youtube-dl
       zmusic
-      (ztree ztree-diff)))
+      (ztree ztree-diff ztree-dir)))
 
   (defun +evil-collection-init (module &optional disabled-list)
     "Initialize evil-collection-MODULE.
