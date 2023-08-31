@@ -247,11 +247,8 @@ localleader prefix."
              doom-switch-frame-hook)
   (defun doom-init-localleader-key-h ()
     "Set the localleader keys for the current major-mode."
-    (unless (or (derived-mode-p 'special-mode)
-                (derived-mode-p 'minibuffer-inactive-mode)
-                (derived-mode-p 'minibuffer-mode)
-                (derived-mode-p 'compilation-mode)
-                (eq major-mode 'fundamental-mode))
+    (unless (and (doom-unreal-buffer-p (current-buffer))
+                 (not (derived-mode-p 'text-mode 'prog-mode 'conf-mode)))
       (setq doom-localleader-current-major-mode major-mode)
       (set-keymap-parent doom-localleader-map
                          (cdr (assq major-mode doom-localleader-map-alist))))))
