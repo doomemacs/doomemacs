@@ -250,7 +250,8 @@ localleader prefix."
     (unless (or (derived-mode-p 'special-mode)
                 (derived-mode-p 'minibuffer-inactive-mode)
                 (derived-mode-p 'minibuffer-mode)
-                (derived-mode-p 'compilation-mode))
+                (derived-mode-p 'compilation-mode)
+                (eq major-mode 'fundamental-mode))
       (setq doom-localleader-current-major-mode major-mode)
       (set-keymap-parent doom-localleader-map
                          (cdr (assq major-mode doom-localleader-map-alist))))))
