@@ -168,7 +168,8 @@ selection of all minor-modes, active or not."
                   (location
                    (goto-char location)))
             (ignore-errors
-              (when (outline-invisible-p)
+              (when (memq (get-char-property (point) 'invisible)
+                          '(outline org-fold-outline))
                 (save-excursion
                   (outline-previous-visible-heading 1)
                   (org-show-subtree))))))
