@@ -6,7 +6,7 @@
 * Description :unfold:
 This module adds support for various web languages, including HTML5, CSS,
 SASS/SCSS, Pug/Jade/Slim, and HAML, as well as various web frameworks, like
-ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
+ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Django, and more.
 
 ** Maintainers
 - @hlissner
