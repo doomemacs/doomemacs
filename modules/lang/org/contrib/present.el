@@ -22,7 +22,7 @@ headings as titles, and you have more freedom to place them wherever you like.")
 (use-package! org-re-reveal
   :after ox
   :config
-  (setq org-re-reveal-root (expand-file-name "../../" (locate-library "dist/reveal.js" t))
+  (setq org-re-reveal-root (concat "file://" (expand-file-name "../../" (locate-library "dist/reveal.js" t)))
         org-re-reveal-revealjs-version "4"))
 
 
