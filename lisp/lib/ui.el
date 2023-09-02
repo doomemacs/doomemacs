@@ -177,9 +177,13 @@ Use `winner-undo' to undo this. Alternatively, use
 OPACITY is an integer between 0 to 100, inclusive."
   (interactive
    (list (read-number "Opacity (0-100): "
-                      (or (frame-parameter nil 'alpha)
+                      (or (frame-parameter
+                           nil (if (> emacs-major-version 28)
+                                   'alpha-background 'alpha))
                           100))))
-  (set-frame-parameter nil 'alpha opacity))
+  (set-frame-parameter nil (if (> emacs-major-version 28)
+                               'alpha-background 'alpha)
+                       opacity))
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
