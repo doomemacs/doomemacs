@@ -84,7 +84,7 @@ If it is an absolute path return `+org-capture-todo-file' verbatim."
 ;;;###autoload
 (defun +org-capture-notes-file ()
   "Expand `+org-capture-notes-file' from `org-directory'.
-If it is an absolute path return `+org-capture-todo-file' verbatim."
+If it is an absolute path return `+org-capture-notes-file' verbatim."
   (expand-file-name +org-capture-notes-file org-directory))
 
 (defun +org--capture-local-root (path)
