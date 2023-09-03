@@ -375,6 +375,12 @@ Ugh, such an ugly hack."
     (letf! ((#'switch-to-buffer-other-window #'pop-to-buffer))
       (apply fn args))))
 
+;;;###package wdired
+(progn
+  ;; close the popup after you're done with a wdired buffer
+  (advice-add #'wdired-abort-changes :after #'+popup-close-a)
+  (advice-add #'wdired-finish-edit :after #'+popup-close-a))
+
 ;;;###package wgrep
 (progn
   ;; close the popup after you're done with a wgrep buffer
