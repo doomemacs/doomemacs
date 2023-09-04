@@ -98,9 +98,24 @@ in."
   (print! (start "Checking for Emacs config conflicts..."))
   (when (file-exists-p "~/.emacs")
     (warn! "Detected an ~/.emacs file, which may prevent Doom from loading")
-    (explain! "If Emacs finds an ~/.emacs file, it will ignore ~/.emacs.d, where Doom is "
-              "typically installed. If you're seeing a vanilla Emacs splash screen, this "
+    (explain! "If Emacs finds an ~/.emacs file, it will ignore ~/.emacs.d or ~/.config/emacs, "
+              "where Doom is typically installed. If you're seeing a vanilla Emacs splash screen, this "
               "may explain why. If you use Chemacs, you may ignore this warning."))
+  (when (and (file-exists-p "~/.emacs.d")
+             (file-exists-p "~/.config/emacs"))
+    (if (file-equal-p doom-emacs-dir "~/.emacs.d")
+        (progn
+          (warn! "Detected an ~/.config/emacs directory, which may prevent Doom from loading")
+          (explain! "Emacs will prefer a ~/.emacs.d directory over a ~/.config/emacs when one "
+                    "exists. As Doom is usually cloned to ~/.config/emacs, it may prevent Doom "
+                    "from loading. If you are seeing a vanilla Emacs splash screen, this "
+                    "may be why. If you use Chemacs 2, you may ignore this warning."))
+      (warn! "Detected an ~/.emacs.d directory, which may prevent Doom from loading")
+      (explain! "If Emacs finds a ~/.emacs.d file when Doom is installed in ~/.config/emacs, "
+                "it will ignore Doom in favour of whatever is in ~/.emacs.d. "
+                "If you are seeing a vanilla Emacs splash screen, this may explain why. "
+                "If Doom is installed in ~/.emacs.d then you can ignore this warning. "
+                "If not you need to backup or remove ~/.emacs.d.")))
 
   (print! (start "Checking for great Emacs features..."))
   (unless (functionp 'json-serialize)
