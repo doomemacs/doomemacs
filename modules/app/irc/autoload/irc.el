@@ -55,7 +55,8 @@ workspace for it."
         circe-server-killed-confirmation)
     (when +irc--defer-timer
       (cancel-timer +irc--defer-timer))
-    (disable-circe-notifications)
+    (when (fboundp #'disable-circe-notifications)
+      (disable-circe-notifications))
     (mapc #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
     (when (modulep! :ui workspaces)
       (when (equal (+workspace-current-name) +irc--workspace-name)
