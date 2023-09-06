@@ -126,6 +126,9 @@
        :desc "Search .emacs.d"              "e" #'+default/search-emacsd
        :desc "Locate file"                  "f" #'+lookup/file
        :desc "Jump to symbol"               "i" #'imenu
+       :desc "Jump to symbol in open buffers" "I"
+       (cond ((modulep! :completion vertico)   #'consult-imenu-multi)
+             ((modulep! :completion helm)      #'helm-imenu-in-all-buffers))
        :desc "Jump to visible link"         "l" #'link-hint-open-link
        :desc "Jump to link"                 "L" #'ffap-menu
        :desc "Jump to bookmark"             "m" #'bookmark-jump
@@ -145,7 +148,10 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
-       :desc "Emoji"                         "e"   #'emojify-insert-emoji
+       (:when (> emacs-major-version 28)
+         :desc "Emoji"                       "e"   #'emoji-search)
+       (:when (modulep! :ui emoji)
+         :desc "Emoji"                       "e"   #'emojify-insert-emoji)
        :desc "Current file name"             "f"   #'+default/insert-file-path
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Snippet"                       "s"   #'yas-insert-snippet

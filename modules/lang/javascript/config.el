@@ -299,7 +299,6 @@ to tide."
         "e" #'skewer-html-eval-tag))
 
 
-;;;###package npm-mode
 (use-package! npm-mode
   :hook ((js-mode typescript-mode) . npm-mode)
   :config

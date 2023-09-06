@@ -148,7 +148,6 @@ the command buffer."
   (advice-add #'evil-window-move-far-right   :around #'+popup-save-a))
 
 
-;;;###package help-mode
 (after! help-mode
   (defun +popup--switch-from-popup (location)
     (let (origin enable-local-variables)
@@ -254,7 +253,6 @@ the command buffer."
     (apply fn args)))
 
 
-;;;###package org
 (after! org
   (defadvice! +popup--suppress-delete-other-windows-a (fn &rest args)
     "Org has a scorched-earth window management policy I'm not fond of. i.e. it
@@ -344,7 +342,6 @@ Ugh, such an ugly hack."
       (+popup--init window nil))))
 
 
-;;;###package pdf-tools
 (after! pdf-tools
   (setq tablist-context-window-display-action
         '((+popup-display-buffer-stacked-side-window-fn)
@@ -382,7 +379,6 @@ Ugh, such an ugly hack."
   (advice-add #'wgrep-finish-edit :after #'+popup-close-a))
 
 
-;;;###package which-key
 (after! which-key
   (when (eq which-key-popup-type 'side-window)
     (setq which-key-popup-type 'custom

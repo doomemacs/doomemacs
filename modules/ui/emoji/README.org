@@ -4,9 +4,14 @@
 #+since:    21.12.0
 
 * Description :unfold:
-This module gives Emacs the ability to display and insert emojis (ASCII, Github
-style, or unicode styles), as well as convert certain text patterns (e.g.
-=:smile:=) into emojis.
+This module can redisplay ASCII/GitHub emoticon strings as corresponding Unicode
+emoji. In addition, a completion command is provided to insert these strings as
+well as the typical Unicode representations.
+
+Note: Emacs 29 provides [[https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-29.1#n884][native support]] for inserting Unicode emojis. This module
+only remains useful if you want ASCII/GitHub emoticon string
+insertion/conversion or need PNG/ASCII emoji rendering on a system with limited
+font configuration.
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
