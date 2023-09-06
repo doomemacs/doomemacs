@@ -371,7 +371,9 @@ see how ARG affects this command."
         (goto-char (point-min))
         (while (not (eobp))
           (org-next-visible-heading 1)
-          (when (outline-invisible-p (line-end-position))
+          (when (memq (get-char-property (line-end-position)
+                                         'invisible)
+                      '(outline org-fold-outline))
             (let ((level (org-outline-level)))
               (when (> level max)
                 (setq max level))))))
@@ -489,7 +491,10 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
                    (or org-cycle-open-archived-trees
                        (not (member org-archive-tag (org-get-tags))))
                    (or (not arg)
-                       (setq invisible-p (outline-invisible-p (line-end-position)))))
+                       (setq invisible-p
+                             (memq (get-char-property (line-end-position)
+                                                      'invisible)
+                                   '(outline org-fold-outline)))))
           (unless invisible-p
             (setq org-cycle-subtree-status 'subtree))
           (org-cycle-internal-local)
