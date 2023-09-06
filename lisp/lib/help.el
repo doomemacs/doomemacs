@@ -576,7 +576,10 @@ If prefix arg is present, refresh the cache."
                                         (pp-to-string recipe))))
 
            (package--print-help-section "Homepage")
-           (doom--help-insert-button (doom-package-homepage package)))
+           (let ((homepage (doom-package-homepage package)))
+             (if homepage
+                 (doom--help-insert-button homepage)
+               (insert "n/a"))))
 
           (`elpa (insert "[M]ELPA ")
                  (doom--help-insert-button (doom-package-homepage package))
