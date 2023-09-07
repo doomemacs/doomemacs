@@ -1,7 +1,5 @@
 ;;; input/chinese/config.el -*- lexical-binding: t; -*-
 
-(require 'pyim-cregexp-utils)
-
 (use-package! pyim
   :after-call after-find-file pre-command-hook
   :init
@@ -26,6 +24,7 @@
                          #'evil-pinyin--build-regexp-string
                        #'pyim-cregexp-build)))
         ((modulep! :completion ivy)
+         (autoload 'pyim-cregexp-ivy "pyim-cregexp-utils")
          (setq ivy-re-builders-alist '((t . pyim-cregexp-ivy))))))
 
 
