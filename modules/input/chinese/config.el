@@ -24,6 +24,7 @@
                          #'evil-pinyin--build-regexp-string
                        #'pyim-cregexp-build)))
         ((modulep! :completion ivy)
+         (autoload 'pyim-cregexp-ivy "pyim-cregexp-utils")
          (setq ivy-re-builders-alist '((t . pyim-cregexp-ivy))))))
 
 
