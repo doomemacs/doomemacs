@@ -27,7 +27,8 @@
         (:prefix ("f" . "fpm")
          :desc "fpm build" "b" #'+fortran/fpm-build
          :desc "fpm run"   "r" #'+fortran/fpm-run
-         :desc "fpm test"  "t" #'+fortran/fpm-test)
+         :desc "fpm test"  "t" #'+fortran/fpm-test
+         :desc "Open project config" "o" #'+fortran/fpm-open-project-toml)
         (:prefix ("g" . "gfortran")
          :desc "compile" "c" #'+fortran/gfortran-compile
          :desc "run"     "r" #'+fortran/gfortran-run)
