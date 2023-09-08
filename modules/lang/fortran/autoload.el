@@ -63,7 +63,7 @@ or gfortran, depending on what feature flags are set."
     (_ "")))
 
 ;;;###autoload
-(defun +fortran-compilation-buffer-name-fn (mode)
+(defun +fortran-compilation-buffer-name-fn (_mode)
   "The name of the buffer produced by `compile'."
   "*fortran-compilation*")
 
@@ -115,3 +115,13 @@ or gfortran, depending on what feature flags are set."
   "Test the current project using fpm."
   (interactive)
   (compile "fpm test"))
+
+;;;###autoload
+(defun +fortran/fpm-open-project-toml (project-root)
+  "Open fpm.toml at PROJECT-ROOT (defaults to the open project)."
+  (interactive (list (doom-project-root)))
+  (let ((file (file-name-concat project-root "fpm.toml")))
+    (cond ((file-exists-p file) (find-file file))
+          ((null project-root) (user-error "Not in a project"))
+          (t (user-error "No fpm.toml found at project root (%s)"
+                         (abbreviate-file-name project-root))))))
