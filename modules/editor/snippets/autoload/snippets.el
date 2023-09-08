@@ -33,7 +33,13 @@ ignored. This makes it easy to override built-in snippets with private ones."
   (unless (file-directory-p dir)
     (if (y-or-n-p (format "%S doesn't exist. Create it?" (abbreviate-file-name dir)))
         (make-directory dir t)
-      (error "%S doesn't exist" (abbreviate-file-name dir)))))
+      (error "%S doesn't exist" (abbreviate-file-name dir))))
+  dir)
+
+(defun +snippets--use-snippet-file-name-p (snippet-file-name)
+  (or (not (file-exists-p snippet-file-name))
+      (y-or-n-p (format "%s exists. Overwrite it?"
+                        (abbreviate-file-name snippet-file-name)))))
 
 (defun +snippet--get-template-by-uuid (uuid &optional mode)
   "Look up the template by uuid in child-most to parent-most mode order.
@@ -45,25 +51,30 @@ Finds correctly active snippets from parent modes (based on Yas' logic)."
            return it))
 
 (defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
-  (plist-get
-   (text-properties-at
-    0 (apply #'completing-read prompt
-             (cl-loop for (_ . tpl) in (mapcan #'yas--table-templates (if all-snippets
-                                                                          (hash-table-values yas--tables)
-                                                                        (yas--get-snippet-tables)))
+  (let* ((completion-uuid-alist
+          (cl-loop for (_ . tpl) in (mapcan #'yas--table-templates
+                                            (if all-snippets
+                                                (hash-table-values yas--tables)
+                                              (yas--get-snippet-tables)))
 
-                      for txt = (format "%-25s%-30s%s"
-                                        (yas--template-key tpl)
-                                        (yas--template-name tpl)
-                                        (abbreviate-file-name (yas--template-load-file tpl)))
-                      collect
-                      (progn
-                        (set-text-properties 0 (length txt) `(uuid ,(yas--template-uuid tpl)
-                                                                   path ,(yas--template-load-file tpl))
-                                             txt)
-                        txt))
-             args))
-   'uuid))
+                   for txt = (format "%-25s%-30s%s"
+                                     (yas--template-key tpl)
+                                     (yas--template-name tpl)
+                                     (abbreviate-file-name (yas--template-load-file tpl)))
+                   collect
+                   (cons txt (yas--template-uuid tpl))))
+         (completion (apply #'completing-read prompt completion-uuid-alist args)))
+    (alist-get completion completion-uuid-alist nil nil #'string=)))
+
+(defun +snippets--snippet-mode-name-completing-read (&optional all-modes)
+  (cond (all-modes (completing-read
+                    "Select snippet mode: "
+                    obarray
+                    (lambda (sym)
+                      (string-match-p "-mode\\'" (symbol-name sym)))))
+        ((not (null yas--extra-modes)) (completing-read "Select snippet mode: "
+                                                        (cons major-mode yas--extra-modes)))
+        (t (symbol-name major-mode))))
 
 (defun +snippet--abort ()
   (interactive)
@@ -193,25 +204,30 @@ buggy behavior when <delete> is pressed in an empty field."
     (user-error "Cannot find template with UUID %S" template-uuid)))
 
 ;;;###autoload
-(defun +snippets/new ()
-  "Create a new snippet in `+snippets-dir'."
-  (interactive)
-  (let ((default-directory
-          (expand-file-name (symbol-name major-mode)
-                            +snippets-dir)))
-    (+snippet--ensure-dir default-directory)
-    (with-current-buffer (switch-to-buffer "untitled-snippet")
-      (snippet-mode)
-      (erase-buffer)
-      (yas-expand-snippet (concat "# -*- mode: snippet -*-\n"
-                                  "# name: $1\n"
-                                  "# uuid: $2\n"
-                                  "# key: ${3:trigger-key}${4:\n"
-                                  "# condition: t}\n"
-                                  "# --\n"
-                                  "$0"))
-      (when (bound-and-true-p evil-local-mode)
-        (evil-insert-state)))))
+(defun +snippets/new (&optional all-modes)
+  "Create a new snippet in `+snippets-dir'.
+
+If there are extra yasnippet modes active, or if ALL-MODES is non-nil, you will
+be prompted for the mode for which to create the snippet."
+  (interactive "P")
+  (let* ((mode (+snippets--snippet-mode-name-completing-read all-modes))
+         (default-directory (+snippet--ensure-dir (expand-file-name mode +snippets-dir)))
+         (snippet-key (read-string "Enter a key for the snippet: "))
+         (snippet-file-name (expand-file-name snippet-key)))
+    (when (+snippets--use-snippet-file-name-p snippet-file-name)
+      (with-current-buffer (switch-to-buffer snippet-key)
+        (snippet-mode)
+        (erase-buffer)
+        (set-visited-file-name snippet-file-name)
+        (yas-expand-snippet (concat "# -*- mode: snippet -*-\n"
+                                    "# name: $1\n"
+                                    "# uuid: $2\n"
+                                    "# key: ${3:" snippet-key "}${4:\n"
+                                    "# condition: t}\n"
+                                    "# --\n"
+                                    "$0"))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-insert-state))))))
 
 ;;;###autoload
 (defun +snippets/new-alias (template-uuid)
@@ -224,21 +240,26 @@ You will be prompted for a snippet to alias."
                                     current-prefix-arg)))
   (unless (require 'doom-snippets nil t)
     (user-error "This command requires the `doom-snippets' library bundled with Doom Emacs"))
-  (let ((default-directory (expand-file-name (symbol-name major-mode) +snippets-dir)))
-    (+snippet--ensure-dir default-directory)
-    (with-current-buffer (switch-to-buffer "untitled-snippet")
-      (snippet-mode)
-      (erase-buffer)
-      (yas-expand-snippet
-       (concat "# -*- mode: snippet -*-\n"
-               "# name: $1\n"
-               "# key: ${2:trigger-key}${3:\n"
-               "# condition: t}\n"
-               "# type: command\n"
-               "# --\n"
-               "(%alias \"${4:" (or template-uuid "uuid") "}\")"))
-      (when (bound-and-true-p evil-local-mode)
-        (evil-insert-state)))))
+  (let* ((default-directory (+snippet--ensure-dir (expand-file-name
+                                                   (symbol-name major-mode)
+                                                   +snippets-dir)))
+         (alias-key (read-string "Enter a key for the alias: "))
+         (alias-file-name (expand-file-name alias-key)))
+    (when (+snippets--use-snippet-file-name-p alias-file-name)
+      (with-current-buffer (switch-to-buffer alias-key)
+        (snippet-mode)
+        (erase-buffer)
+        (set-visited-file-name alias-file-name)
+        (yas-expand-snippet
+         (concat "# -*- mode: snippet -*-\n"
+                 "# name: $1\n"
+                 "# key: ${2:" alias-key "}${3:\n"
+                 "# condition: t}\n"
+                 "# type: command\n"
+                 "# --\n"
+                 "(doom-snippets-expand :uuid \"${4:" (or template-uuid "uuid") "}\")"))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-insert-state))))))
 
 ;;;###autoload
 (defun +snippets/edit (template-uuid)
