@@ -247,7 +247,7 @@ directives. By default, this only recognizes C directives.")
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
   :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode hy-mode)
          . +evil-embrace-lisp-mode-hook-h)
-  :hook ((c++-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+  :hook ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
          . +evil-embrace-angle-bracket-modes-hook-h)
   :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
   :init
