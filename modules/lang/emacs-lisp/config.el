@@ -101,6 +101,13 @@ See `+emacs-lisp-non-package-mode' for details.")
   ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
   (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
 
+  (defadvice! +syntax--fix-elisp-flymake-load-path (orig-fn &rest args)
+    "Set load path for elisp byte compilation Flymake backend"
+    :around #'elisp-flymake-byte-compile
+    (let ((elisp-flymake-byte-compile-load-path
+           (append elisp-flymake-byte-compile-load-path load-path)))
+      (apply orig-fn args)))
+
   ;; Enhance elisp syntax highlighting, by highlighting Doom-specific
   ;; constructs, defined symbols, and truncating :pin's in `package!' calls.
   (font-lock-add-keywords
