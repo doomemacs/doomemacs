@@ -338,6 +338,47 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
                  (ignore-errors (delete-file tmp-file))
                  (kill-buffer out-buf))))))))
 
+(define-minor-mode +emacs-lisp--flymake-non-package-mode
+  ""
+  :since "3.0.0"
+  (if +emacs-lisp--flymake-non-package-mode
+      (progn
+        (remove-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
+        (add-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile nil t))
+    (add-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
+    (remove-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile t)))
+
+(define-minor-mode +emacs-lisp--flycheck-non-package-mode
+  ""
+  :since "3.0.0"
+  (if (not +emacs-lisp--flycheck-non-package-mode)
+      (when (get 'flycheck-disabled-checkers 'initial-value)
+        (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
+        (kill-local-variable 'flycheck-emacs-lisp-check-form))
+    (with-memoization (get 'flycheck-disabled-checkers 'initial-value)
+      flycheck-disabled-checkers)
+    (setq-local flycheck-emacs-lisp-check-form
+                (prin1-to-string
+                 `(progn
+                    (setq doom-modules ',doom-modules
+                          doom-disabled-packages ',doom-disabled-packages
+                          byte-compile-warnings ',+emacs-lisp-linter-warnings)
+                    (condition-case e
+                        (progn
+                          (require 'doom)
+                          (require 'doom-cli)
+                          (require 'doom-start))
+                      (error
+                       (princ
+                        (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
+                                (or ,(ignore-errors
+                                       (file-name-nondirectory
+                                        (buffer-file-name (buffer-base-buffer))))
+                                    (car command-line-args-left))
+                                0 0 (error-message-string e)))))
+                    ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
+                flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
+                                                 flycheck-disabled-checkers))))
 ;;;###autoload
 (define-minor-mode +emacs-lisp-non-package-mode
   "Reduce flycheck/flymake verbosity where it is appropriate.
@@ -357,46 +398,10 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
     (setq +emacs-lisp-non-package-mode nil))
   (when (derived-mode-p 'emacs-lisp-mode)
     (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
-  (if (not +emacs-lisp-non-package-mode)
-      (if (modulep! :checkers syntax +flymake)
-          ;; flymake
-          (progn
-            (add-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
-            (remove-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile))
-        ;; flycheck
-        (when (get 'flycheck-disabled-checkers 'initial-value)
-          (setq-local flycheck-disabled-checkers (get 'flycheck-disabled-checkers 'initial-value))
-          (kill-local-variable 'flycheck-emacs-lisp-check-form)))
+  (let ((toggle (if +emacs-lisp-non-package-mode +1 -1)))
     (if (modulep! :checkers syntax +flymake)
-        ;; flymake
-        (progn
-          (remove-hook! 'flymake-diagnostic-functions :local #'elisp-flymake-checkdoc #'elisp-flymake-byte-compile)
-          (add-hook 'flymake-diagnostic-functions #'+emacs-lisp-reduced-flymake-byte-compile))
-      ;; flycheck
-      (with-memoization (get 'flycheck-disabled-checkers 'initial-value)
-        flycheck-disabled-checkers)
-      (setq-local flycheck-emacs-lisp-check-form
-                  (prin1-to-string
-                   `(progn
-                      (setq doom-modules ',doom-modules
-                            doom-disabled-packages ',doom-disabled-packages
-                            byte-compile-warnings ',+emacs-lisp-linter-warnings)
-                      (condition-case e
-                          (progn
-                            (require 'doom)
-                            (require 'doom-cli)
-                            (require 'doom-start))
-                        (error
-                         (princ
-                          (format "%s:%d:%d:Error:Failed to load Doom: %s\n"
-                                  (or ,(ignore-errors
-                                         (file-name-nondirectory
-                                          (buffer-file-name (buffer-base-buffer))))
-                                      (car command-line-args-left))
-                                  0 0 (error-message-string e)))))
-                      ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
-                  flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
-                                                   flycheck-disabled-checkers)))))
+        (+emacs-lisp--flymake-non-package-mode toggle)
+      (+emacs-lisp--flycheck-non-package-mode toggle))))
 
 
 ;;
