@@ -280,10 +280,10 @@ https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
 (defvar-local +emacs-lisp-reduced-flymake-byte-compile--process nil)
 
 (defun +emacs-lisp-reduced-flymake-byte-compile (report-fn &rest _args)
-  "A Flymake backend for warnings from the elisp byte compiler
+  "A Flymake backend for byte compilation in non-package elisp files.
 
 This checker reduces the amount of false positives the byte compiler throws off
-compared too `elisp-flymake-byte-compile'. The linter warnings that are enabled
+compared to `elisp-flymake-byte-compile'. The linter warnings that are enabled
 are set by `+emacs-lisp-linter-warnings'
 
 This backend does not need to be added directly
@@ -304,7 +304,7 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
           (make-process
            :name "+emacs-reduced-flymake"
            :noquery t
-           :connetion-type 'pipe
+           :connection-type 'pipe
            :buffer out-buf
            :command `(,(expand-file-name invocation-name invocation-directory)
                       "-Q"
@@ -313,8 +313,7 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
                       ;; this is what silences the byte compiler
                       "--eval" ,(prin1-to-string `(setq doom-modules ',doom-modules
                                                         doom-disabled-packages ',doom-disabled-packages
-                                                        byte-compile-warnings ',+emacs-lisp-linter-warnings)
-)
+                                                        byte-compile-warnings ',+emacs-lisp-linter-warnings))
                       "-f" "elisp-flymake--batch-compile-for-flymake"
                       ,tmp-file)
            :stderr "*stderr of +elisp-flymake-byte-compile-out*"
