@@ -3,14 +3,6 @@
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
-  :init
-  ;; REVIEW Remove once domtronn/all-the-icons.el#272 is merged
-  (after! all-the-icons
-    (add-to-list 'all-the-icons-icon-alist
-                 '("\\.beancount\\'" all-the-icons-material "attach_money" :face all-the-icons-lblue))
-    (add-to-list 'all-the-icons-mode-icon-alist
-                 '(beancount-mode all-the-icons-material "attach_money" :face all-the-icons-lblue)))
-
   :config
   (setq beancount-electric-currency t)
 
