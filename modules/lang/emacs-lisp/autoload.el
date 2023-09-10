@@ -392,7 +392,7 @@ Intended as :around advice for `elisp-demos--search'."
     (or (funcall fn symbol)
         (with-file-contents! (doom-path doom-docs-dir "examples.org")
           (save-excursion
-            (when (re-search-backward
+            (when (re-search-forward
                    (format "^\\*+[ \t]+\\(?:TODO \\)?%s$"
                            (regexp-quote (symbol-name symbol)))
                    nil t)
