@@ -147,7 +147,8 @@ orderless."
         consult-async-min-input 2
         consult-async-refresh-delay  0.15
         consult-async-input-throttle 0.2
-        consult-async-input-debounce 0.1)
+        consult-async-input-debounce 0.1
+        projectile-completion-system '+vertico/projectile-completion-fn)
   (unless +vertico-consult-fd-args
     (setq +vertico-consult-fd-args
           (if doom-projectile-fd-binary

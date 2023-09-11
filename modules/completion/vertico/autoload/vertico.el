@@ -259,3 +259,17 @@ targets."
 (defun +vertico-basic-remote-all-completions (string table pred point)
   (and (vertico--remote-p string)
        (completion-basic-all-completions string table pred point)))
+
+(autoload #'consult--read "consult")
+;;;###autoload
+(defun +vertico/projectile-completion-fn (prompt choices)
+  "Given a PROMPT and a list of CHOICES, filter a list of files for
+`projectile-find-file'."
+  (interactive)
+  (consult--read
+   choices
+   :prompt prompt
+   :sort nil
+   :add-history (thing-at-point 'filename)
+   :category 'file
+   :history '(:input +vertico/find-file-in--history)))
