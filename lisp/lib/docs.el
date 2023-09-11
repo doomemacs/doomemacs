@@ -467,10 +467,10 @@ This primes `org-mode' for reading."
         (org-id-locations doom-docs--id-locations)
         (org-id-files doom-docs--id-files))
     (doom/reload-docs)
-    (let ((id (org-id-new)))
-      (org-id-add-location
-       id (buffer-file-name (buffer-base-buffer)))
-      id)))
+    (when-let (fname (buffer-file-name (buffer-base-buffer)))
+      (let ((id (org-id-new)))
+        (org-id-add-location id fname)
+        id))))
 
 ;;;###autoload
 (define-derived-mode doom-docs-org-mode org-mode "Doom Docs"
