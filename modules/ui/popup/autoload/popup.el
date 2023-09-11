@@ -437,9 +437,10 @@ window and return that window."
         (+popup--inhibit-transient t)
         +popup--remember-last)
     (+popup/close window 'force)
-    (if arg
-        (pop-to-buffer buffer)
-      (switch-to-buffer buffer))
+    (let (display-buffer-alist)
+      (if arg
+          (pop-to-buffer buffer)
+        (switch-to-buffer buffer)))
     (selected-window)))
 
 ;;;###autoload
