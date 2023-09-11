@@ -426,13 +426,13 @@ This primes `org-mode' for reading."
 
 (defvar doom-docs--id-locations nil)
 (defvar doom-docs--id-files nil)
+(defvar doom-docs--id-location-file (file-name-concat doom-cache-dir "doom-docs-org-ids"))
 ;;;###autoload
 (defun doom/reload-docs (&optional force)
   "Reload the ID locations in Doom's documentation and open docs buffers."
   (interactive (list 'interactive))
   (with-temp-buffer
-    (let ((org-id-locations-file
-           (doom-path (file-truename doom-cache-dir) "doom-docs-org-ids"))
+    (let ((org-id-locations-file doom-docs--id-location-file)
           (org-id-track-globally t)
           org-agenda-files
           org-id-extra-files
@@ -463,7 +463,7 @@ This primes `org-mode' for reading."
   (let ((org-id-link-to-org-use-id t)
         (org-id-method 'uuid)
         (org-id-track-globally t)
-        (org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids"))
+        (org-id-locations-file doom-docs--id-location-file)
         (org-id-locations doom-docs--id-locations)
         (org-id-files doom-docs--id-files))
     (doom/reload-docs)
@@ -486,7 +486,7 @@ Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
     (setq-local org-id-link-to-org-use-id t
                 org-id-method 'uuid
                 org-id-track-globally t
-                org-id-locations-file (doom-path doom-cache-dir "doom-docs-org-ids")
+                org-id-locations-file doom-docs--id-location-file
                 org-id-locations doom-docs--id-locations
                 org-id-files doom-docs--id-files
                 org-num-max-level 3
