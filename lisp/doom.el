@@ -607,7 +607,15 @@ Otherwise, `en/disable-command' (in novice.el.gz) is hardcoded to write them to
     (and (null comp-num-cpus)
          (zerop native-comp-async-jobs-number)
          (setq comp-num-cpus
-               (max 1 (/ (num-processors) (if noninteractive 1 4)))))))
+               (max 1 (/ (num-processors) (if noninteractive 1 4))))))
+
+  (define-advice comp-run-async-workers (:around (fn &rest args) dont-litter-tmpdir)
+    "Normally, native-comp writes a ton to /tmp. This advice forces it to write
+to `doom-cache-dir'/comp/ instead, so that Doom can safely clean it up as part
+of 'doom sync' or 'doom gc'."
+    (let ((temporary-file-directory (expand-file-name "comp/" doom-profile-cache-dir)))
+      (make-directory temporary-file-directory t)
+      (apply fn args))))
 
 ;;; Suppress package.el
 ;; Since Emacs 27, package initialization occurs before `user-init-file' is
