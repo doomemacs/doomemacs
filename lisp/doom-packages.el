@@ -119,11 +119,11 @@ uses a straight or package.el command directly).")
   (append (apply fn args) ; lockfiles still take priority
           (doom-package-pinned-list)))
 
-;; HACK: This fixes an issue present in recent builds of Emacs 29. See
-;;   emacs-mirror/emacs@0d383b592c2f. Straight.el uses `loaddefs-generate' if it
-;;   is available, which activates `emacs-lisp-mode' to read autoloads files,
-;;   but does so without suppressing its hooks. Some packages (like overseer)
-;;   add hooks to `emacs-lisp-mode-hook' in their autoloads, and once triggered,
+;; HACK: This fixes an issue introduced in emacs-mirror/emacs@0d383b592c2f and
+;;   is present in >=29: Straight.el uses `loaddefs-generate' if it is
+;;   available, which activates `emacs-lisp-mode' to read autoloads files, but
+;;   does so without suppressing its hooks. Some packages (like overseer) add
+;;   hooks to `emacs-lisp-mode-hook' in their autoloads, and once triggered,
 ;;   they will try to load their dependencies (like dash or pkg-info), causing
 ;;   file errors.
 ;; REVIEW: Report this upstream.
