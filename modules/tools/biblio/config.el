@@ -26,36 +26,36 @@
   (when (modulep! :completion vertico +icons)
     (defvar citar-indicator-files-icons
       (citar-indicator-create
-       :symbol (all-the-icons-faicon
-                "file-o"
-                :face 'all-the-icons-green
+       :symbol (nerd-icons-faicon
+                "nf-fa-file_o"
+                :face 'nerd-icons-green
                 :v-adjust -0.1)
        :function #'citar-has-files
        :padding "  " ; need this because the default padding is too low for these icons
        :tag "has:files"))
     (defvar citar-indicator-links-icons
       (citar-indicator-create
-       :symbol (all-the-icons-octicon
-                "link"
-                :face 'all-the-icons-orange
+       :symbol (nerd-icons-faicon
+                "nf-fa-link"
+                :face 'nerd-icons-orange
                 :v-adjust 0.01)
        :function #'citar-has-links
        :padding "  "
        :tag "has:links"))
     (defvar citar-indicator-notes-icons
       (citar-indicator-create
-       :symbol (all-the-icons-material
-                "speaker_notes"
-                :face 'all-the-icons-blue
+       :symbol (nerd-icons-codicon
+                "nf-cod-note"
+                :face 'nerd-icons-blue
                 :v-adjust -0.3)
        :function #'citar-has-notes
        :padding "    "
        :tag "has:notes"))
     (defvar citar-indicator-cited-icons
       (citar-indicator-create
-       :symbol (all-the-icons-faicon
-                "circle-o"
-                :face 'all-the-icon-green)
+       :symbol (nerd-icons-faicon
+                "nf-fa-circle_o"
+                :face 'nerd-icon-green)
        :function #'citar-is-cited
        :padding "  "
        :tag "is:cited"))

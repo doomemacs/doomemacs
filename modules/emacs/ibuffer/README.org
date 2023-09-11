@@ -15,7 +15,7 @@ This module augments the built-in [[doom-package:ibuffer]] package.
 
 ** Module flags
 - +icons ::
-  Enable filetype icons for buffers using [[doom-package:all-the-icons]].
+  Enable filetype icons for buffers using [[doom-package:nerd-icons]].
 
 ** Packages
 - [[doom-package:ibuffer-projectile]]

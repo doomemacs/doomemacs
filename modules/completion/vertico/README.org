@@ -31,7 +31,7 @@ like [[doom-package:ivy]] and [[doom-package:helm]] do. The primary packages are
   Add icons to =file= and =buffer= category completion selections.
 
 ** Packages
-- [[doom-package:all-the-icons-completion]] if [[doom-module:+icons]]
+- [[doom-package:nerd-icons-completion]] if [[doom-module:+icons]]
 - [[doom-package:consult]]
 - [[doom-package:consult-flycheck]] if [[doom-module::checkers syntax]]
 - [[doom-package:embark]]
@@ -76,16 +76,16 @@ Doom-specific additions:
 When in an active Vertico completion session, the following doom added
 keybindings are available:
 
-| Keybind           | Description                                                    |
-|-------------------+----------------------------------------------------------------|
-| [[kbd:][C-k]]               | (evil) Go to previous candidate                                |
-| [[kbd:][C-j]]               | (evil) Go to next candidate                                    |
-| [[kbd:][C-M-k]]             | (evil) Go to previous group                                    |
-| [[kbd:][C-M-j]]             | (evil) Go to next group                                        |
+| Keybind                               | Description                                                  |
+|---------------------------------------+--------------------------------------------------------------|
+| [[kbd:][C-k]]                         | (evil) Go to previous candidate                              |
+| [[kbd:][C-j]]                         | (evil) Go to next candidate                                  |
+| [[kbd:][C-M-k]]                       | (evil) Go to previous group                                  |
+| [[kbd:][C-M-j]]                       | (evil) Go to next group                                      |
 | [[kbd:][C-;]] or [[kbd:][<leader> a]] | Open an ~embark-act~ menu to chose a useful action             |
-| [[kbd:][C-c C-;]]           | export the current candidate list to a buffer                  |
-| [[kbd:][C-c C-l]]           | ~embark-collect~ the current candidate list (collect verbatim) |
-| [[kbd:][C-SPC]]             | Preview the current candidate                                  |
+| [[kbd:][C-c C-;]]                     | export the current candidate list to a buffer                |
+| [[kbd:][C-c C-l]]                     | ~embark-collect~ the current candidate list (collect verbatim) |
+| [[kbd:][C-SPC]]                       | Preview the current candidate                                |
 
 ~embark-act~ will prompt you with a =which-key= menu with useful commands on the
 selected candidate or candidate list, depending on the completion category. Note
@@ -99,17 +99,17 @@ This module provides an interface to navigate within a project using
 
 https://assets.doomemacs.org/completion/vertico/projectile.png
 
-| Keybind          | Description                         |
-|------------------+-------------------------------------|
+| Keybind                              | Description                         |
+|--------------------------------------+-------------------------------------|
 | [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Jump to file in project             |
 | [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Jump to file from current directory |
-| [[kbd:][SPC s i]]          | Jump to symbol in file              |
+| [[kbd:][SPC s i]]                    | Jump to symbol in file              |
 
 ** Project search & replace
 This module provides interactive text search and replace using ripgrep.
 
-| Keybind | Description              |
-|---------+--------------------------|
+| Keybind                | Description              |
+|------------------------+--------------------------|
 | [[kbd:][<leader> s p]] | Search project           |
 | [[kbd:][<leader> s P]] | Search another project   |
 | [[kbd:][<leader> s d]] | Search this directory    |
@@ -153,19 +153,19 @@ An ~occur-edit~ buffer can be opened from ~consult-line~ with [[kbd:][C-c C-e]].
 
 ** Vertico integration for various completing commands
 *** General
-| Keybind    | Description                 |
-|------------+-----------------------------|
+| Keybind                        | Description                 |
+|--------------------------------+-----------------------------|
 | [[kbd:][M-x]], [[kbd:][SPC :]] | Enhanced M-x                |
-| [[kbd:][SPC ']]      | Resume last Vertico session |
+| [[kbd:][SPC ']]                | Resume last Vertico session |
 
 *** Jump to files, buffers or projects
-| Keybind          | Description                           |
-|------------------+---------------------------------------|
-| [[kbd:][SPC RET]]          | Find bookmark                         |
+| Keybind                              | Description                           |
+|--------------------------------------+---------------------------------------|
+| [[kbd:][SPC RET]]                    | Find bookmark                         |
 | [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Browse from current directory         |
 | [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Find file in project                  |
-| [[kbd:][SPC f r]]          | Find recently opened file             |
-| [[kbd:][SPC p p]]          | Open another project                  |
+| [[kbd:][SPC f r]]                    | Find recently opened file             |
+| [[kbd:][SPC p p]]                    | Open another project                  |
 | [[kbd:][SPC b b]], [[kbd:][SPC ,]]   | Switch to buffer in current workspace |
 | [[kbd:][SPC b B]], [[kbd:][SPC <]]   | Switch to buffer                      |
 
@@ -177,8 +177,8 @@ the last workspace by typing [[kbd:][0 SPC]].
 [[kbd:][SPC f f]] and [[kbd:][SPC .]] support exporting to a [[kbd:][wdired]] buffer using [[kbd:][C-c C-e]].
 
 *** Search
-| Keybind | Description                               |
-|---------+-------------------------------------------|
+| Keybind           | Description                               |
+|-------------------+-------------------------------------------|
 | [[kbd:][SPC p t]] | List all TODO/FIXMEs in project           |
 | [[kbd:][SPC s b]] | Search the current buffer                 |
 | [[kbd:][SPC s d]] | Search this directory                     |
@@ -200,10 +200,10 @@ to =~/=.
 *** Multiple candidate search
 This module modifies the default keybindings used in
 ~consult-completing-read-multiple~:
-| Keybind | Description                                                 |
-|---------+-------------------------------------------------------------|
-| [[kbd:][TAB]]     | Select or deselect current candidate                        |
-| [[kbd:][RET]]     | Enters selected candidates (also toggles current candidate) |
+| Keybind       | Description                                                 |
+|---------------+-------------------------------------------------------------|
+| [[kbd:][TAB]] | Select or deselect current candidate                        |
+| [[kbd:][RET]] | Enters selected candidates (also toggles current candidate) |
 
 *** Async search commands
 :PROPERTIES:
@@ -226,9 +226,9 @@ filtering should be done after a second =#=.
 For more information [[https://github.com/minad/consult#asynchronous-search][see here]].
 
 ** Marginalia
-| Keybind | Description                     |
-|---------+---------------------------------|
-| [[kbd:][M-A]]     | Cycle between annotation levels |
+| Keybind       | Description                     |
+|---------------+---------------------------------|
+| [[kbd:][M-A]] | Cycle between annotation levels |
 
 Marginalia annotations for symbols (e.g. [[kbd:][SPC h f]] and [[kbd:][SPC h v]]) come with extra
 information the nature of the symbol. For the meaning of the annotations see

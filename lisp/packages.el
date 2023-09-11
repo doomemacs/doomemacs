@@ -21,6 +21,7 @@
 
 ;; doom-ui.el
 (package! all-the-icons :pin "be9d5dcda9c892e8ca1535e288620eec075eb0be")
+(package! nerd-icons :pin "619a0382d2e159f3142c4200fe4cfc2e89247ef1")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f40ece58df8b2f0fb6c8576b527755a552a5e763")

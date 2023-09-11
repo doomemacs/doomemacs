@@ -41,9 +41,9 @@ Besides eye candy, the dashboard serves two other purposes:
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-This module only requires that ~all-the-icons~'s icon fonts are installed, which
+This module only requires that ~nerd-icons~'s icon fonts are installed, which
 should've been installed when you ran ~$ doom install~. Otherwise, use ~M-x
-all-the-icons-install-fonts~ to install them.
+nerd-icons-install-fonts~ to install them.
 
 * Usage
 Once this module is enabled, the dashboard will present itself after opening a
@@ -88,7 +88,7 @@ color from the theme) you can make use of ~custom-set-faces!~ or
 (custom-set-faces!
   '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
   '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-footer-icon :inherit nerd-icons-red)
   '(doom-dashboard-loaded :inherit font-lock-warning-face)
   '(doom-dashboard-menu-desc :inherit font-lock-string-face)
   '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
@@ -99,7 +99,7 @@ or for a per-theme setting
 (custom-theme-set-faces! 'doom-tomorrow-night
   '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
   '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-footer-icon :inherit nerd-icons-red)
   '(doom-dashboard-loaded :inherit font-lock-warning-face)
   '(doom-dashboard-menu-desc :inherit font-lock-string-face)
   '(doom-dashboard-menu-title :inherit font-lock-function-name-face))

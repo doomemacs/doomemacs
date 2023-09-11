@@ -316,7 +316,7 @@ orderless."
         :desc "Cycle marginalia views" "M-A" #'marginalia-cycle)
   :config
   (when (modulep! +icons)
-    (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
   (advice-add #'marginalia--project-root :override #'doom-project-root)
   (pushnew! marginalia-command-categories
             '(+default/find-file-under-here . file)

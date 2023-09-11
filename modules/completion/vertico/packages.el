@@ -21,7 +21,7 @@
 (package! wgrep :pin "3132abd3750b8c87cbcf6942db952acfab5edccd")
 
 (when (modulep! +icons)
-  (package! all-the-icons-completion :pin "8eb3e410d63f5d0657b41829e7898793e81f31c0"))
+  (package! nerd-icons-completion :pin "c2db8557a3c1a9588d111f8c8e91cae96ee85010"))
 
 (when (modulep! +childframe)
   (package! vertico-posframe

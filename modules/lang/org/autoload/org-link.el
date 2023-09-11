@@ -257,13 +257,11 @@ exist, and `org-link' otherwise."
        start end
        (list 'display
              (concat
-              (propertize
-               ""
-               'rear-nonsticky t
-               'display '(raise -0.02)
-               'face (list :family "all-the-icons"
-                           :height 1.0
-                           :inherit (if found 'success 'error)))
+              (nerd-icons-devicon "nf-dev-terminal_badge"
+                                  :rear-nonsticky t
+                                  :display '(raise -0.02)
+                                  :face (list :height 1.0
+                                              :inherit (if found 'success 'error)))
               " "
               (propertize
                executable

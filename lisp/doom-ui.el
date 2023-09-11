@@ -419,41 +419,17 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;
 ;;; Third party packages
 
-(use-package! all-the-icons
-  :commands (all-the-icons-octicon
-             all-the-icons-faicon
-             all-the-icons-fileicon
-             all-the-icons-wicon
-             all-the-icons-material
-             all-the-icons-alltheicon)
-  :preface
-  (add-hook! 'after-setting-font-hook
-    (defun doom-init-all-the-icons-fonts-h ()
-      (when (fboundp 'set-fontset-font)
-        (dolist (font (list "Weather Icons"
-                            "github-octicons"
-                            "FontAwesome"
-                            "all-the-icons"
-                            "file-icons"
-                            "Material Icons"))
-          (set-fontset-font t 'unicode font nil 'append)))))
-  :config
-  (cond ((daemonp)
-         (defadvice! doom--disable-all-the-icons-in-tty-a (fn &rest args)
-           "Return a blank string in tty Emacs, which doesn't support multiple fonts."
-           :around '(all-the-icons-octicon all-the-icons-material
-                     all-the-icons-faicon all-the-icons-fileicon
-                     all-the-icons-wicon all-the-icons-alltheicon)
-           (if (or (not after-init-time) (display-multi-font-p))
-               (apply fn args)
-             "")))
-        ((not (display-graphic-p))
-         (defadvice! doom--disable-all-the-icons-in-tty-a (&rest _)
-           "Return a blank string for tty users."
-           :override '(all-the-icons-octicon all-the-icons-material
-                       all-the-icons-faicon all-the-icons-fileicon
-                       all-the-icons-wicon all-the-icons-alltheicon)
-           ""))))
+(use-package! nerd-icons
+  :commands (nerd-icons-octicon
+             nerd-icons-faicon
+             nerd-icons-flicon
+             nerd-icons-wicon
+             nerd-icons-mdicon
+             nerd-icons-codicon
+             nerd-icons-devicon
+             nerd-icons-ipsicon
+             nerd-icons-pomicon
+             nerd-icons-powerline))
 
 ;; Hide the mode line in completion popups and MAN pages because they serve
 ;; little purpose there, and is better hidden.

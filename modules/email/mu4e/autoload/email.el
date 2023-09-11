@@ -115,11 +115,11 @@ will also be the width of all other printable characters."
 
 (cl-defun +mu4e-normalised-icon (name &key set color height v-adjust)
   "Convert :icon declaration to icon"
-  (let* ((icon-set (intern (concat "all-the-icons-" (or set "faicon"))))
+  (let* ((icon-set (intern (concat "nerd-icons-" (or set "faicon"))))
          (v-adjust (or v-adjust 0.02))
          (height (or height 0.8))
          (icon (if color
-                   (apply icon-set `(,name :face ,(intern (concat "all-the-icons-" color)) :height ,height :v-adjust ,v-adjust))
+                   (apply icon-set `(,name :face ,(intern (concat "nerd-icons-" color)) :height ,height :v-adjust ,v-adjust))
                  (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
          (icon-width (+mu4e--get-string-width icon))
          (space-width (+mu4e--get-string-width " "))
@@ -130,20 +130,20 @@ will also be the width of all other printable characters."
 ;;;###autoload
 (defun +mu4e-initialise-icons ()
   (setq mu4e-use-fancy-chars t
-        mu4e-headers-draft-mark      (cons "D" (+mu4e-normalised-icon "pencil"))
-        mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "flag"))
-        mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "sync" :set "material" :height 0.8 :v-adjust -0.10))
-        mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "arrow-right"))
-        mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "reply"))
+        mu4e-headers-draft-mark      (cons "D" (+mu4e-normalised-icon "nf-fa-pencil"))
+        mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "nf-fa-flag"))
+        mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "nf-md-sync" :set "material" :height 0.8 :v-adjust -0.10))
+        mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "nf-fa-arrow_right"))
+        mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "nf-fa-reply"))
         mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :color "dsilver"))
-        mu4e-headers-trashed-mark    (cons "T" (+mu4e-normalised-icon "trash"))
-        mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "file-text-o" :color "silver"))
-        mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "lock"))
-        mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "certificate" :height 0.7 :color "dpurple"))
-        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "eye-slash" :v-adjust 0.05))
-        mu4e-headers-list-mark       (cons "l" (+mu4e-normalised-icon "sitemap" :set "faicon"))
-        mu4e-headers-personal-mark   (cons "p" (+mu4e-normalised-icon "user"))
-        mu4e-headers-calendar-mark   (cons "c" (+mu4e-normalised-icon "calendar"))))
+        mu4e-headers-trashed-mark    (cons "T" (+mu4e-normalised-icon "nf-fa-trash"))
+        mu4e-headers-attach-mark     (cons "a" (+mu4e-normalised-icon "nf-fa-file_text_o" :color "silver"))
+        mu4e-headers-encrypted-mark  (cons "x" (+mu4e-normalised-icon "nf-fa-lock"))
+        mu4e-headers-signed-mark     (cons "s" (+mu4e-normalised-icon "nf-fa-certificate" :height 0.7 :color "dpurple"))
+        mu4e-headers-unread-mark     (cons "u" (+mu4e-normalised-icon "nf-fa-eye_slash" :v-adjust 0.05))
+        mu4e-headers-list-mark       (cons "l" (+mu4e-normalised-icon "nf-fa-sitemap" :set "faicon"))
+        mu4e-headers-personal-mark   (cons "p" (+mu4e-normalised-icon "nf-fa-user"))
+        mu4e-headers-calendar-mark   (cons "c" (+mu4e-normalised-icon "nf-fa-calendar"))))
 
 (defun +mu4e-colorize-str (str &optional unique herring)
   "Apply a face from `+mu4e-header-colorized-faces' to STR.

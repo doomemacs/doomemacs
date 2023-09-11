@@ -47,32 +47,31 @@ Possible values:
 
 (defvar +doom-dashboard-menu-sections
   '(("Recently opened files"
-     :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
-     :face (:inherit (doom-dashboard-menu-title bold))
+     :icon (nerd-icons-faicon "nf-fa-file_text" :face 'doom-dashboard-menu-title)
      :action recentf-open-files)
     ("Reload last session"
-     :icon (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-history" :face 'doom-dashboard-menu-title)
      :when (cond ((modulep! :ui workspaces)
                   (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                  ((require 'desktop nil t)
                   (file-exists-p (desktop-full-file-name))))
      :action doom/quickload-session)
     ("Open org-agenda"
-     :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-calendar" :face 'doom-dashboard-menu-title)
      :when (fboundp 'org-agenda)
      :action org-agenda)
     ("Open project"
-     :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-briefcase" :face 'doom-dashboard-menu-title)
      :action projectile-switch-project)
     ("Jump to bookmark"
-     :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-bookmark" :face 'doom-dashboard-menu-title)
      :action bookmark-jump)
     ("Open private configuration"
-     :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-tools" :face 'doom-dashboard-menu-title)
      :when (file-directory-p doom-user-dir)
      :action doom/open-private-config)
     ("Open documentation"
-     :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+     :icon (nerd-icons-octicon "nf-oct-book" :face 'doom-dashboard-menu-title)
      :action doom/help))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
@@ -97,9 +96,6 @@ PLIST can have the following properties:
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
 (defvar +doom-dashboard--pwd-alist ())
 (defvar +doom-dashboard--reload-timer nil)
-
-(defvar all-the-icons-scale-factor)
-(defvar all-the-icons-default-adjust)
 
 
 ;;
@@ -151,7 +147,7 @@ PLIST can have the following properties:
   "Face used for the footer on the dashboard"
   :group 'doom-dashboard)
 
-(defface doom-dashboard-footer-icon '((t (:inherit all-the-icons-green)))
+(defface doom-dashboard-footer-icon '((t (:inherit nerd-icons-green)))
   "Face used for the icon of the footer on the dashboard"
   :group 'doom-dashboard)
 
@@ -456,60 +452,58 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
      "\n")))
 
 (defun doom-dashboard-widget-shortmenu ()
-  (let ((all-the-icons-scale-factor 1.45)
-        (all-the-icons-default-adjust -0.02))
-    (insert "\n")
-    (dolist (section +doom-dashboard-menu-sections)
-      (cl-destructuring-bind (label &key icon action when face key) section
-        (when (and (fboundp action)
-                   (or (null when)
-                       (eval when t)))
-          (insert
-           (+doom-dashboard--center
-            (- +doom-dashboard--width 1)
-            (let ((icon (if (stringp icon) icon (eval icon t))))
-              (format (format "%s%%s%%-10s" (if icon "%3s\t" "%3s"))
-                      (or icon "")
-                      (with-temp-buffer
-                        (insert-text-button
-                         label
-                         'action
-                         `(lambda (_)
-                            (call-interactively (or (command-remapping #',action)
-                                                    #',action)))
-                         'face (or face 'doom-dashboard-menu-title)
-                         'follow-link t
-                         'help-echo
-                         (format "%s (%s)" label
-                                 (propertize (symbol-name action) 'face 'doom-dashboard-menu-desc)))
-                        (format "%-37s" (buffer-string)))
-                      ;; Lookup command keys dynamically
-                      (propertize
-                       (or key
-                           (when-let*
-                               ((keymaps
-                                 (delq
-                                  nil (list (when (bound-and-true-p evil-local-mode)
-                                              (evil-get-auxiliary-keymap +doom-dashboard-mode-map 'normal))
-                                            +doom-dashboard-mode-map)))
-                                (key
-                                 (or (when keymaps
-                                       (where-is-internal action keymaps t))
-                                     (where-is-internal action nil t))))
-                             (with-temp-buffer
-                               (save-excursion (insert (key-description key)))
-                               (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                 (let ((str (match-string 1)))
-                                   (replace-match
-                                    (upcase (if (< (length str) 3)
-                                                str
-                                              (substring str 0 3))))))
-                               (buffer-string)))
-                           "")
-                       'face 'doom-dashboard-menu-desc))))
-           (if (display-graphic-p)
-               "\n\n"
-             "\n")))))))
+  (insert "\n")
+  (dolist (section +doom-dashboard-menu-sections)
+    (cl-destructuring-bind (label &key icon action when face key) section
+      (when (and (fboundp action)
+                 (or (null when)
+                     (eval when t)))
+        (insert
+         (+doom-dashboard--center
+          (- +doom-dashboard--width 1)
+          (let ((icon (if (stringp icon) icon (eval icon t))))
+            (format (format "%s%%s%%-10s" (if icon "%3s\t" "%3s"))
+                    (or icon "")
+                    (with-temp-buffer
+                      (insert-text-button
+                       label
+                       'action
+                       `(lambda (_)
+                          (call-interactively (or (command-remapping #',action)
+                                                  #',action)))
+                       'face (or face 'doom-dashboard-menu-title)
+                       'follow-link t
+                       'help-echo
+                       (format "%s (%s)" label
+                               (propertize (symbol-name action) 'face 'doom-dashboard-menu-desc)))
+                      (format "%-37s" (buffer-string)))
+                    ;; Lookup command keys dynamically
+                    (propertize
+                     (or key
+                         (when-let*
+                             ((keymaps
+                               (delq
+                                nil (list (when (bound-and-true-p evil-local-mode)
+                                            (evil-get-auxiliary-keymap +doom-dashboard-mode-map 'normal))
+                                          +doom-dashboard-mode-map)))
+                              (key
+                               (or (when keymaps
+                                     (where-is-internal action keymaps t))
+                                   (where-is-internal action nil t))))
+                           (with-temp-buffer
+                             (save-excursion (insert (key-description key)))
+                             (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                               (let ((str (match-string 1)))
+                                 (replace-match
+                                  (upcase (if (< (length str) 3)
+                                              str
+                                            (substring str 0 3))))))
+                             (buffer-string)))
+                         "")
+                     'face 'doom-dashboard-menu-desc))))
+         (if (display-graphic-p)
+             "\n\n"
+           "\n"))))))
 
 (defun doom-dashboard-widget-footer ()
   (insert
@@ -517,7 +511,7 @@ What it is set to is controlled by `+doom-dashboard-pwd-policy'."
    (+doom-dashboard--center
     (- +doom-dashboard--width 2)
     (with-temp-buffer
-      (insert-text-button (or (all-the-icons-octicon "octoface" :face 'doom-dashboard-footer-icon :height 1.3 :v-adjust -0.15)
+      (insert-text-button (or (nerd-icons-codicon "nf-cod-octoface" :face 'doom-dashboard-footer-icon :height 1.3 :v-adjust -0.15)
                               (propertize "github" 'face 'doom-dashboard-footer))
                           'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
                           'follow-link t

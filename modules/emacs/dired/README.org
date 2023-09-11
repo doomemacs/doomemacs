@@ -16,7 +16,7 @@ This module provides reasonable defaults and augmentations for dired.
   Enables dired to be more like [[https://github.com/ranger/ranger][ranger]].
 
 ** Packages
-- [[doom-package:all-the-icons-dired]] if [[doom-module:+icons]]
+- [[doom-package:nerd-icons-dired]] if [[doom-module:+icons]]
 - [[doom-package:diff-hl]]
 - [[doom-package:diredfl]]
 - [[doom-package:dired-rsync]]
@@ -43,10 +43,10 @@ This module has no requirements *except on BSDs* like MacOS or FreeBSD, where
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
-| Keybind | Description                |
-|---------+----------------------------|
-| [[kbd:][SPC f d]] | Find directory with dired  |
-| [[kbd:][q]]       | Exit dired buffer          |
+| Keybind           | Description                                 |
+|-------------------+---------------------------------------------|
+| [[kbd:][SPC f d]] | Find directory with dired                   |
+| [[kbd:][q]]       | Exit dired buffer                           |
 | [[kbd:][C-c C-r]] | Run [[doom-package:dired-rsync]]            |
 | [[kbd:][C-c C-e]] | Rename entries with [[doom-package:wdired]] |
 

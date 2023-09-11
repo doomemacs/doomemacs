@@ -551,9 +551,7 @@ doom sync
 doom env
 
 # Lastly, install the icon fonts Doom uses:
-emacs --batch -f all-the-icons-install-fonts
-# On Windows, `all-the-icons-install-fonts` will only download the fonts, you'll
-# have to install them by hand afterwards!
+emacs --batch -f nerd-icons-install-fonts
 #+END_SRC
 
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=

@@ -3,6 +3,13 @@
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode)
+  :init
+  (after! nerd-icons
+    (add-to-list 'nerd-icons-extension-icon-alist
+                 '("beancount" nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue))
+    (add-to-list 'nerd-icons-mode-icon-alist
+                 '(beancount-mode nerd-icons-faicon "nf-fa-money" :face nerd-icons-lblue)))
+
   :config
   (setq beancount-electric-currency t)
 

@@ -127,13 +127,13 @@ is non-nil."
             (cons (make-help-button text1 help-echo)
                   (make-help-button text2 help-echo))))
     (setq mu4e-headers-threaded-label
-          (make-help-button-cons "T" (concat " " (all-the-icons-octicon "git-branch" :v-adjust 0.05))
+          (make-help-button-cons "T" (concat " " (nerd-icons-octicon "nf-oct-git_branch" :v-adjust 0.05))
                                  "Thread view")
           mu4e-headers-related-label
-          (make-help-button-cons "R" (concat " " (all-the-icons-material "link" :v-adjust -0.1))
+          (make-help-button-cons "R" (concat " " (nerd-icons-mdicon "nf-md-link" :v-adjust -0.1))
                                  "Showing related emails")
           mu4e-headers-full-label
-          (make-help-button-cons "F" (concat " " (all-the-icons-material "disc_full"))
+          (make-help-button-cons "F" (concat " " (nerd-icons-mdicon "nf-md-disc"))
                                  "Search is full!")))
 
   ;; set mail user agent
@@ -156,14 +156,14 @@ is non-nil."
   (add-to-list 'mu4e-bookmarks
                '("flag:flagged" "Flagged messages" ?f) t)
 
-  ;; TODO avoid assuming that all-the-icons is present
+  ;; TODO avoid assuming that nerd-icons is present
   (defvar +mu4e-header-colorized-faces
-    '(all-the-icons-green
-      all-the-icons-lblue
-      all-the-icons-purple-alt
-      all-the-icons-blue-alt
-      all-the-icons-purple
-      all-the-icons-yellow)
+    '(nerd-icons-green
+      nerd-icons-lblue
+      nerd-icons-purple-alt
+      nerd-icons-blue-alt
+      nerd-icons-purple
+      nerd-icons-yellow)
     "Faces to use when coloring folders and account stripes.")
 
   (defvar +mu4e-min-header-frame-width 120
@@ -321,8 +321,8 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
                   sizefmt (format "%%-%ds " maxsizelen))
             (dolist (pinfo partinfo)
               (push (cons (concat (propertize (format "%-2s " (plist-get pinfo :index)) 'face '(bold font-lock-type-face))
-                                  (when (featurep 'all-the-icons)
-                                    (all-the-icons-icon-for-file (or (plist-get pinfo :filename) "")))
+                                  (when (featurep 'nerd-icons)
+                                    (nerd-icons-icon-for-file (or (plist-get pinfo :filename) "")))
                                   (format fnamefmt (or (plist-get pinfo :filename)
                                                        (propertize (plist-get pinfo :type) 'face '(italic font-lock-doc-face))))
                                   (format sizefmt (propertize (plist-get pinfo :size) 'face 'font-lock-builtin-face))

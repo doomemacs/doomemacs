@@ -205,13 +205,13 @@ in."
           ;; Check for fonts
           (if (not (executable-find "fc-list"))
               (warn! "Warning: unable to detect fonts because fontconfig isn't installed")
-            ;; all-the-icons fonts
+            ;; nerd-icons fonts
             (when (and (pcase system-type
                          (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")
                                                  "~/.local/share")
                                              "/fonts/"))
                          (`darwin "~/Library/Fonts/"))
-                       (require 'all-the-icons nil t))
+                       (require 'nerd-icons nil t))
               (with-temp-buffer
                 (let ((errors 0))
                   (cl-destructuring-bind (status . output)
@@ -219,13 +219,13 @@ in."
                     (if (not (zerop status))
                         (print! (error "There was an error running `fc-list'. Is fontconfig installed correctly?"))
                       (insert (cdr (doom-call-process "fc-list" "" "file")))
-                      (dolist (font all-the-icons-font-names)
+                      (dolist (font nerd-icons-font-names)
                         (if (save-excursion (re-search-backward font nil t))
                             (success! "Found font %s" font)
                           (print! (warn "Warning: couldn't find %S font") font)))
                       (when (> errors 0)
-                        (explain! "Some all-the-icons fonts were missing.\n\n"
-                                  "You can install them by running `M-x all-the-icons-install-fonts' within Emacs.\n"
+                        (explain! "Some nerd-icons fonts were missing.\n\n"
+                                  "You can install them by running `M-x nerd-icons-install-fonts' within Emacs.\n"
                                   "This could also mean you've installed them in non-standard locations, in which "
                                   "case feel free to ignore this warning.")))))))))
 

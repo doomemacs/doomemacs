@@ -330,7 +330,7 @@ Modules that turn Emacs in an email client.
 
 This module makes Emacs an email client, using [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
-- Tidied mu4e headers view, with flags from [[doom-package:all-the-icons]].
+- Tidied mu4e headers view, with flags from [[doom-package:nerd-icons]].
 - Consistent coloring of reply depths (across compose and gnus modes).
 - Prettified =mu4e:main= view.
 - Cooperative locking of the =mu= process. Another Emacs instance may request
@@ -1152,8 +1152,8 @@ you'd expect from IDEs, like code completion, realtime linting, language-aware
 
 As of this writing, this is the state of LSP support in Doom Emacs:
 
-| Module           | Major modes                                             | Default language server                                       |
-|------------------+---------------------------------------------------------+---------------------------------------------------------------|
+| Module                           | Major modes                                             | Default language server                                       |
+|----------------------------------+---------------------------------------------------------+---------------------------------------------------------------|
 | [[doom-module::lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls, clangd                                                  |
 | [[doom-module::lang clojure]]    | clojure-mode                                            | clojure-lsp                                                   |
 | [[doom-module::lang csharp]]     | csharp-mode                                             | omnisharp                                                     |

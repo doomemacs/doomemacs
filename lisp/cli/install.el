@@ -19,7 +19,7 @@
      (config?  ("--config" :yes)  "Create `$DOOMDIR' or dummy files therein?")
      (envfile? ("--env" :yes)     "(Re)generate an envvars file? (see `$ doom help env`)")
      (install? ("--install" :yes) "Auto-install packages?")
-     (fonts?   ("--fonts" :yes)   "Install (or prompt to install) all-the-icons fonts?")
+     (fonts?   ("--fonts" :yes)   "Install (or prompt to install) nerd-icons fonts?")
      (hooks?   ("--hooks" :yes)   "Deploy Doom's git hooks to itself?")
      &context context)
   "Installs and sets up Doom Emacs for the first time.
@@ -32,7 +32,7 @@ This command does the following:
   3. Creates dummy files for `$DOOMDIR'/{config,packages}.el,
   4. Prompts you to generate an envvar file (same as `$ doom env`),
   5. Installs any dependencies of enabled modules (specified by `$DOOMDIR'/init.el),
-  6. And prompts to install all-the-icons' fonts
+  6. And prompts to install nerd-icons' fonts
 
 This command is idempotent and safe to reuse.
 
@@ -109,22 +109,6 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
            (call! `(ci deploy-hooks ,@(if yes? '("--force"))))
          ('user-error
           (print! (warn "%s") (error-message-string e))))))
-
-    (cond ((eq fonts? :no))
-          (IS-WINDOWS
-           (print! (warn "Doom cannot install all-the-icons' fonts on Windows!\n"))
-           (print-group!
-            (print!
-             (concat "You'll have to do so manually:\n\n"
-                     "  1. Launch Doom Emacs\n"
-                     "  2. Execute 'M-x all-the-icons-install-fonts' to download the fonts\n"
-                     "  3. Open the download location in windows explorer\n"
-                     "  4. Open each font file to install them"))))
-          ((or yes? (y-or-n-p "Download and install all-the-icon's fonts?"))
-           (require 'all-the-icons)
-           (let ((window-system (cond (IS-MAC 'ns)
-                                      (IS-LINUX 'x))))
-             (all-the-icons-install-fonts 'yes))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))

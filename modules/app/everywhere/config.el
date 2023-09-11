@@ -20,7 +20,7 @@
        (doom-modeline-spc)
        (when (emacs-everywhere-markdown-p)
          (concat
-          (all-the-icons-octicon "markdown" :face 'all-the-icons-green :v-adjust 0.02)
+          (nerd-icons-octicon "nf-oct-markdown" :face 'nerd-icons-green :v-adjust 0.02)
           (doom-modeline-spc)))
        (propertize (emacs-everywhere-app-class emacs-everywhere-current-app)
                    'face 'doom-modeline-project-dir)
