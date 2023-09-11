@@ -48,7 +48,7 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
     (user-error "Cannot swap a dedicated window"))
   (let* ((this-window (selected-window))
          (this-buffer (current-buffer))
-         (that-window (windmove-find-other-window direction nil this-window))
+         (that-window (window-in-direction direction nil this-window))
          (that-buffer (window-buffer that-window)))
     (when (or (minibufferp that-buffer)
               (window-dedicated-p this-window))
