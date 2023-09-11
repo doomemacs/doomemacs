@@ -229,8 +229,7 @@ If rtags or rdm aren't available, fail silently instead of throwing a breaking e
   ;; than display a jarring confirmation prompt for killing it.
   (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
-  (add-hook 'rtags-jump-hook #'better-jumper-set-jump)
-  (add-hook 'rtags-after-find-file-hook #'recenter))
+  (add-hook 'rtags-jump-hook #'better-jumper-set-jump))
 
 
 ;;

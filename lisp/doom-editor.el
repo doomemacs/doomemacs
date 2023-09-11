@@ -586,10 +586,6 @@ current buffer."
               (with-current-buffer buf (goto-char pos)))))))))
 
 
-;;;###package imenu
-(add-hook 'imenu-after-jump-hook #'recenter)
-
-
 (use-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
