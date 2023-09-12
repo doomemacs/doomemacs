@@ -102,15 +102,18 @@ if it's callable, `apropos' otherwise."
   (cond ((when-let (module (+emacs-lisp--module-at-point))
            (doom/help-modules (car module) (cadr module))
            (when (eq major-mode 'org-mode)
+             (goto-char (point-min))
              (with-demoted-errors "%s"
                (re-search-forward
                 (if (caddr module)
-                    "\\* Module flags$"
-                  "\\* Description$"))
+                    "^\\*+ Module flags"
+                  "^\\* Description"))
                (when (caddr module)
                  (re-search-forward (format "=\\%s=" (caddr module))
                                     nil t))
-               (when (invisible-p (point))
+               (when (memq (get-char-property (line-end-position)
+                                              'invisible)
+                           '(outline org-fold-outline))
                  (org-show-hidden-entry))))
            'deferred))
         (thing (helpful-symbol (intern thing)))
