@@ -130,7 +130,8 @@ or file path may exist now."
       (let ((buffer (or (buffer-base-buffer) (current-buffer))))
         (and (buffer-file-name buffer)
              (eq buffer (window-buffer (selected-window))) ; only visible buffers
-             (set-auto-mode))))))
+             (set-auto-mode)
+             (not (eq major-mode 'fundamental-mode)))))))
 
 (defadvice! doom--shut-up-autosave-a (fn &rest args)
   "If a file has autosaved data, `after-find-file' will pause for 1 second to
