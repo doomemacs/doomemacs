@@ -96,11 +96,30 @@ in."
      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
 
   (print! (start "Checking for Emacs config conflicts..."))
-  (when (file-exists-p "~/.emacs")
-    (warn! "Detected an ~/.emacs file, which may prevent Doom from loading")
-    (explain! "If Emacs finds an ~/.emacs file, it will ignore ~/.emacs.d, where Doom is "
-              "typically installed. If you're seeing a vanilla Emacs splash screen, this "
-              "may explain why. If you use Chemacs, you may ignore this warning."))
+  (print-group!
+    (unless (or (file-equal-p doom-emacs-dir "~/.emacs.d")
+                (file-equal-p doom-emacs-dir "~/.config/emacs"))
+      (print! (warn "Doom is installed in a non-standard location"))
+      (explain! "The standard locations are ~/.config/emacs or ~/.emacs.d. Emacs will fail "
+                "to load Doom if it is not explicitly told where to look for it. In Emacs 29+, "
+                "this is possible with the --init-directory option:\n\n"
+                "  $ emacs --init-directory '" (abbreviate-file-name doom-emacs-dir) "'\n\n"
+                "However, Emacs 27-28 users have no choice but to move Doom to a standard "
+                "location.\n\n"
+                "Chemacs users may ignore this warning, however."))
+    (let (found?)
+      (dolist (file '("~/_emacs" "~/.emacs" "~/.emacs.el" "~/.emacs.d" "~/.config/emacs"))
+        (when (and (file-exists-p file)
+                   (not (file-equal-p file doom-emacs-dir)))
+          (setq found? t)
+          (print! (warn "Found another Emacs config: %s (%s)")
+                  file (if (file-directory-p file) "directory" "file"))))
+      (when found?
+        (explain! "Having multiple Emacs configs may prevent Doom from loading properly. Emacs "
+                  "will load the first it finds and ignore the rest. If Doom isn't starting up "
+                  "correctly (e.g. you get a vanilla splash screen), make sure that only one of "
+                  "these exist.\n\n"
+                  "Chemacs users may ignore this warning."))))
 
   (print! (start "Checking for great Emacs features..."))
   (unless (functionp 'json-serialize)
