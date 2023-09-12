@@ -149,7 +149,7 @@ In all cases, 'h' functions go to 'c' and 'l' ones go to 'r' so the navigation k
       "»" ">"))
   (after! lsp-ui
     (+layout-bepo-rotate-ts-bare-keymap '(lsp-ui-peek-mode-map)))
-  (after! org
+  (after! org-capture
     (defadvice! doom-bepo--org-completing-read (&rest args)
       "Completing-read with SPACE being a normal character, and C-c mapping left alone."
       :override #'org-completing-read
