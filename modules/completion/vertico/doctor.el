@@ -1,4 +1,10 @@
-;;; completion/vertico/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; completion/vertico/doctor.el
+
+(dolist (module '(ivy helm ido))
+  (when (doom-module-p :completion module)
+    (error! "This module is incompatible with :completion %s; disable one or the other"
+            module)))
 
 (when (require 'consult nil t)
   ;; FIXME: This throws an error if grep is missing.
