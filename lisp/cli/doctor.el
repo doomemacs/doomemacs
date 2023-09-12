@@ -121,42 +121,44 @@ in."
                   "these exist.\n\n"
                   "Chemacs users may ignore this warning."))))
 
-  (print! (start "Checking for great Emacs features..."))
-  (unless (functionp 'json-serialize)
-    (warn! "Emacs was not built with native JSON support")
-    (explain! "Users will see a substantial performance gain by building Emacs with "
-              "jansson support (i.e. a native JSON library), particularly LSP users. "
-              "You must install a prebuilt Emacs binary with this included, or compile "
-              "Emacs with the --with-json option."))
-  (unless (featurep 'native-compile)
-    (warn! "Emacs was not built with native compilation support")
-    (explain! "Users will see a substantial performance gain by building Emacs with "
-              "native compilation support, availible in emacs 28+."
-              "You must install a prebuilt Emacs binary with this included, or compile "
-              "Emacs with the --with-native-compilation option."))
+  (print! (start "Checking for missing Emacs features..."))
+  (print-group!
+    (unless (functionp 'json-serialize)
+      (warn! "Emacs was not built with native JSON support")
+      (explain! "Users will see a substantial performance gain by building Emacs with "
+                "jansson support (i.e. a native JSON library), particularly LSP users. "
+                "You must install a prebuilt Emacs binary with this included, or compile "
+                "Emacs with the --with-json option."))
+    (unless (featurep 'native-compile)
+      (warn! "Emacs was not built with native compilation support")
+      (explain! "Users will see a substantial performance gain by building Emacs with "
+                "native compilation support, availible in emacs 28+."
+                "You must install a prebuilt Emacs binary with this included, or compile "
+                "Emacs with the --with-native-compilation option.")))
 
   (print! (start "Checking for private config conflicts..."))
-  (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
-                              "~/.config")
-                          "/doom/"))
-         (doom-dir (or (getenv "DOOMDIR")
-                       "~/.doom.d/"))
-         (dir (if (file-directory-p xdg-dir)
-                  xdg-dir
-                doom-dir)))
-    (when (file-equal-p dir doom-emacs-dir)
-      (print! (error "Doom was cloned to %S, not ~/.emacs.d or ~/.config/emacs"
-                     (path dir)))
-      (explain! "Doom's source and your private Doom config have to live in separate directories. "
-                "Putting them in the same directory (without changing the DOOMDIR environment "
-                "variable) will cause errors on startup."))
-    (when (and (not (file-equal-p xdg-dir doom-dir))
-               (file-directory-p xdg-dir)
-               (file-directory-p doom-dir))
-      (print! (warn "Detected two private configs, in %s and %s")
-              (abbreviate-file-name xdg-dir)
-              doom-dir)
-      (explain! "The second directory will be ignored, as it has lower precedence.")))
+  (print-group!
+    (let* ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
+                                "~/.config")
+                            "/doom/"))
+           (doom-dir (or (getenv "DOOMDIR")
+                         "~/.doom.d/"))
+           (dir (if (file-directory-p xdg-dir)
+                    xdg-dir
+                  doom-dir)))
+      (when (file-equal-p dir doom-emacs-dir)
+        (print! (error "Doom was cloned to %S, not ~/.emacs.d or ~/.config/emacs"
+                       (path dir)))
+        (explain! "Doom's source and your private Doom config have to live in separate directories. "
+                  "Putting them in the same directory (without changing the DOOMDIR environment "
+                  "variable) will cause errors on startup."))
+      (when (and (not (file-equal-p xdg-dir doom-dir))
+                 (file-directory-p xdg-dir)
+                 (file-directory-p doom-dir))
+        (print! (warn "Detected two private configs, in %s and %s")
+                (abbreviate-file-name xdg-dir)
+                doom-dir)
+        (explain! "The second directory will be ignored, as it has lower precedence."))))
 
   (print! (start "Checking for stale elc files..."))
   (elc-check-dir doom-core-dir)
