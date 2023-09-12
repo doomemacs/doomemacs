@@ -25,7 +25,7 @@
     (("/docs/[^/]+\\.org$" "/modules/README\\.org$")
      (:label "Back to index"
       :icon "arrow_back"
-      :link ("doom-index" . "")
+      :link "doom-index"
       :help-echo "Navigate to the root index"))
     ("/modules/[^/]+/README\\.org$"
      (:label "Back to module index"
