@@ -195,7 +195,4 @@ Can be negative.")
   :when (modulep! +icons)
   :hook (helm-mode . helm-icons-enable)
   :init
-  (setq helm-icons-provider 'all-the-icons)
-  :config
-  (when (eq helm-icons-provider 'all-the-icons)
-    (setq helm-icons-mode->icon nil)))
+  (setq helm-icons-provider 'nerd-icons))

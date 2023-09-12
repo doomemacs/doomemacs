@@ -22,7 +22,7 @@ For official documentation about Helm, see:
   Enable fuzzy completion for Helm searches.
 - +icons ::
   Display icons on completion results (where possible) using either
-  [[doom-package:all-the-icons]] or [[doom-package:treemacs]] iconsets.
+  [[doom-package:nerd-icons]] or [[doom-package:treemacs]] iconsets.
 
 ** Packages
 - [[doom-package:helm]]
@@ -74,18 +74,18 @@ its highlights will be covered here.
 ** Jump-to navigation
 Similar to Ivy, this module provides an interface to navigate within a project
 using [[doom-package:projectile]]:
-| Keybind          | Description                                             |
-|------------------+---------------------------------------------------------|
+| Keybind                              | Description                                           |
+|--------------------------------------+-------------------------------------------------------|
 | [[kbd:][SPC p f]], [[kbd:][SPC SPC]] | Jump to file in project (~+helm/projectile-find-file~)  |
 | [[kbd:][SPC f f]], [[kbd:][SPC .]]   | Jump to file from current directory (~helm-find-files~) |
-| [[kbd:][SPC s i]]          | Jump to symbol in file (~helm-semantic-or-imenu~)       |
+| [[kbd:][SPC s i]]                    | Jump to symbol in file (~helm-semantic-or-imenu~)       |
 
 ** Project search & replace
 This module also provides interactive text search and replace using [[https://github.com/BurntSushi/ripgrep][Ripgrep]].
 
 *** Search
-| Keybind | Description                                               |
-|---------+-----------------------------------------------------------|
+| Keybind           | Description                                             |
+|-------------------+---------------------------------------------------------|
 | [[kbd:][SPC s p]] | Search project (~+default/search-project~)                |
 | [[kbd:][SPC s P]] | Search another project  (~+default/search-other-project~) |
 | [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)             |
@@ -96,8 +96,8 @@ otherwise) changes the behavior of these commands, instructing the underlying
 search engine to include ignored files.
 
 This module also provides Ex Commands for evil users:
-| Ex command             | Description                                                      |
-|------------------------+------------------------------------------------------------------|
+| Ex command           | Description                                                    |
+|----------------------+----------------------------------------------------------------|
 | ~:pg[rep][!] [QUERY]~  | Search project (if ~!~, include hidden files)                    |
 | ~:pg[rep]d[!] [QUERY]~ | Search from current directory (if ~!~, don't search recursively) |
 
@@ -106,8 +106,8 @@ commands.
 
 *** Replace
 These keybindings are available while a search is active:
-| Keybind | Description                                   |
-|---------+-----------------------------------------------|
+| Keybind           | Description                                   |
+|-------------------+-----------------------------------------------|
 | [[kbd:][C-c C-o]] | Open a buffer with your search results        |
 | [[kbd:][C-c C-e]] | Open a writable buffer of your search results |
 | [[kbd:][C-SPC]]   | Preview the current candidate                 |
@@ -131,31 +131,31 @@ A [[doom-package:wgrep]] buffer can be opened from swiper with [[kbd:][C-c C-e]]
 Helm also has a number of overrides for built-in functionality:
 
 *** General
-| Keybind    | Description               |
-|------------+---------------------------|
+| Keybind                        | Description               |
+|--------------------------------+---------------------------|
 | [[kbd:][M-x]], [[kbd:][SPC :]] | Smarter, smex-powered M-x |
-| [[kbd:][SPC ']]      | Resume last ivy session   |
+| [[kbd:][SPC ']]                | Resume last ivy session   |
 
 *** Jump to files, buffers or projects
-| Keybind | Description                                                          |
-|---------+----------------------------------------------------------------------|
-| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                      |
+| Keybind           | Description                                                        |
+|-------------------+--------------------------------------------------------------------|
+| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                    |
 | [[kbd:][SPC s b]] | Search the current buffer (~+default/search-buffer~)                 |
 | [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)                        |
 | [[kbd:][SPC s D]] | Search another directory (~+default/search-other-cwd~)               |
-| [[kbd:][SPC s i]] | Search for symbol in current buffer                                  |
+| [[kbd:][SPC s i]] | Search for symbol in current buffer                                |
 | [[kbd:][SPC s p]] | Search project (~+default/search-project~)                           |
 | [[kbd:][SPC s P]] | Search another project (~+default/search-other-project~)             |
 | [[kbd:][SPC s s]] | Search the current buffer (incrementally) (~+default/search-buffer~) |
 
 *** Search
-| Keybind | Description                                                          |
-|---------+----------------------------------------------------------------------|
-| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                      |
+| Keybind           | Description                                                        |
+|-------------------+--------------------------------------------------------------------|
+| [[kbd:][SPC p t]] | List all TODO/FIXMEs in project                                    |
 | [[kbd:][SPC s b]] | Search the current buffer (~+default/search-buffer~)                 |
 | [[kbd:][SPC s d]] | Search this directory (~+default/search-cwd~)                        |
 | [[kbd:][SPC s D]] | Search another directory (~+default/search-other-cwd~)               |
-| [[kbd:][SPC s i]] | Search for symbol in current buffer                                  |
+| [[kbd:][SPC s i]] | Search for symbol in current buffer                                |
 | [[kbd:][SPC s p]] | Search project (~+default/search-project~)                           |
 | [[kbd:][SPC s P]] | Search another project (~+default/search-other-project~)             |
 | [[kbd:][SPC s s]] | Search the current buffer (incrementally) (~+default/search-buffer~) |
@@ -182,9 +182,9 @@ makes sense to exempt ~foo~ with the following:
 
 ** Icons
 There are two icon "themes" available for this module:
-[[doom-package:all-the-icons]] and [[doom-package:treemacs]]. By default, and to
+[[doom-package:nerd-icons]] and [[doom-package:treemacs]]. By default, and to
 maintain consistency with other icons across Doom's modules,
-[[doom-package:all-the-icons]] is used. To change this:
+[[doom-package:nerd-icons]] is used. To change this:
 #+begin_src emacs-lisp
 ;; add to $DOOMDIR/config.el
 (after! helm

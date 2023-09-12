@@ -15,6 +15,6 @@
 (when (modulep! +fuzzy)
   (package! helm-flx :pin "5220099e695a3586dba2d59640217fe378e66310"))
 (when (modulep! +icons)
-  (package! helm-icons :pin "8d2f5e705c8b78a390677cf242024739c932fc95"))
+  (package! helm-icons :pin "53349000b114b2dfc874252de6605e3bafa435e2"))
 (when (modulep! :lang org)
   (package! helm-org :pin "d67186d3a64e610c03a5f3d583488f018fb032e4"))
