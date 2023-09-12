@@ -160,6 +160,23 @@ in."
                 doom-dir)
         (explain! "The second directory will be ignored, as it has lower precedence."))))
 
+  (print! (start "Checking for common environmental issues..."))
+  (when (string-match-p "/fish$" shell-file-name)
+    (print! (warn "Detected Fish as your $SHELL"))
+    (explain! "Fish (and possibly other non-POSIX shells) is known to inject garbage "
+              "output into some of the child processes that Emacs spawns. Many Emacs "
+              "packages/utilities will choke on this output, causing unpredictable issues. "
+              "To get around this, either:\n\n"
+              "  - Add the following to $DOOMDIR/config.el:\n\n"
+              "    (setq shell-file-name (executable-find \"bash\"))\n\n"
+              "  - Or change your default shell to a POSIX shell (like bash or zsh) "
+              "    and explicitly configure your terminal apps to use the shell you "
+              "    want.\n\n"
+              "If you opt for option 1 and use one of Emacs' terminal emulators, you "
+              "will also need to configure them to use Fish, e.g.\n\n"
+              "  (setq-default vterm-shell (executable-find \"fish\"))\n\n"
+              "  (setq-default explicit-shell-file-name (executable-find \"fish\"))\n"))
+
   (print! (start "Checking for stale elc files..."))
   (elc-check-dir doom-core-dir)
   (elc-check-dir doom-modules-dir)
