@@ -35,22 +35,6 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
           (candidate))))
 
 ;;;###autoload
-(defun +ivy-rich-buffer-icon (candidate)
-  "Display the icon for CANDIDATE buffer."
-  ;; NOTE This is inspired by `all-the-icons-ivy-buffer-transformer', minus the
-  ;; buffer name and extra padding as those are handled by `ivy-rich'.
-  (propertize "\t" 'display
-              (if-let* ((buffer (get-buffer candidate))
-                        (mode (buffer-local-value 'major-mode buffer)))
-                  (or
-                   (all-the-icons-ivy--icon-for-mode mode)
-                   (all-the-icons-ivy--icon-for-mode (get mode 'derived-mode-parent))
-                   (funcall
-                    all-the-icons-ivy-family-fallback-for-buffer
-                    all-the-icons-ivy-name-fallback-for-buffer))
-                (all-the-icons-icon-for-file candidate))))
-
-;;;###autoload
 (defun +ivy-rich-describe-variable-transformer (cand)
   "Previews the value of the variable in the minibuffer"
   (let* ((sym (intern cand))
