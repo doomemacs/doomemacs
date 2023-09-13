@@ -10,15 +10,6 @@
   :hook (doom-modeline-mode . size-indication-mode) ; filesize in modeline
   :hook (doom-modeline-mode . column-number-mode)   ; cursor column in modeline
   :init
-  (when (>= emacs-major-version 29)
-    ;; HACK: Emacs 29 treats `nil' for :background as invalid, and complains.
-    ;;   `doom-modeline' hasn't updated its face to address this yet.
-    ;; REVIEW: PR this fix to doom-modeline
-    (defface doom-modeline-buffer-modified
-      '((t (:inherit (error bold) :background unspecified)))
-      "Face used for the \\='unsaved\\=' symbol in the mode-line."
-      :group 'doom-modeline-faces))
-
   ;; We display project info in the modeline ourselves
   (setq projectile-dynamic-mode-line nil)
   ;; Set these early so they don't trigger variable watchers
