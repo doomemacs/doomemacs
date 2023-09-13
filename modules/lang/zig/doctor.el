@@ -12,7 +12,7 @@
 (unless (executable-find "zig")
   (warn! "Couldn't find zig binary")
 
-  (when (modulep! :editor format)
+  (unless (modulep! :editor format)
     (warn! "Formatting will be disabled")))
 
 (when (modulep! +lsp)
