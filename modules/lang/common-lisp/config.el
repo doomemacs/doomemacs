@@ -31,8 +31,8 @@
       :definition #'sly-edit-definition
       :documentation #'sly-describe-symbol))
 
-  (add-hook! 'lisp-mode
-    (after! sly (sly-lisp-indent-compatibility-mode)))
+  ;; This needs to be appended so it fires later than `sly-editing-mode'
+  (add-hook 'lisp-mode-local-vars-hook #'sly-lisp-indent-compatibility-mode 'append)
 
   ;; HACK Ensures that sly's contrib modules are loaded as soon as possible, but
   ;;      also as late as possible, so users have an opportunity to override
