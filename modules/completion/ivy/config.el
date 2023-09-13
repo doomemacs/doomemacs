@@ -116,12 +116,6 @@ results buffer.")
   :config
   (setq ivy-rich-parse-remote-buffer nil)
 
-  (when (modulep! +icons)
-    (cl-pushnew '(+ivy-rich-buffer-icon)
-                (cadr (plist-get ivy-rich-display-transformers-list
-                                 'ivy-switch-buffer))
-                :test #'equal))
-
   (defun ivy-rich-bookmark-filename-or-empty (candidate)
     (let ((filename (ivy-rich-bookmark-filename candidate)))
       (if (not filename) "" filename)))
@@ -155,25 +149,15 @@ results buffer.")
               (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (setcar switch-buffer-alist '+ivy-rich-buffer-name))
 
+  (nerd-icons-ivy-rich-mode +1)
   (ivy-rich-mode +1)
   (ivy-rich-project-root-cache-mode +1))
 
 
-(use-package! all-the-icons-ivy
+(use-package! nerd-icons-ivy-rich
   :when (modulep! +icons)
-  :after ivy
-  :config
-  ;; `all-the-icons-ivy' is incompatible with ivy-rich's switch-buffer
-  ;; modifications, so we disable them and merge them ourselves
-  (setq all-the-icons-ivy-buffer-commands nil)
-
-  (all-the-icons-ivy-setup)
-  (after! counsel-projectile
-    (let ((all-the-icons-ivy-file-commands
-           '(counsel-projectile
-             counsel-projectile-find-file
-             counsel-projectile-find-dir)))
-      (all-the-icons-ivy-setup))))
+  :commands (nerd-icons-ivy-rich-mode)
+  :after counsel-projectile)
 
 
 (use-package! counsel
@@ -314,7 +298,7 @@ results buffer.")
 
 
 (use-package! counsel-projectile
-  :defer t
+  :after ivy-rich
   :init
   (define-key!
     [remap projectile-find-file]        #'+ivy/projectile-find-file

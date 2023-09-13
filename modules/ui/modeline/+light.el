@@ -113,11 +113,9 @@ side of the modeline, and whose CDR is the right-hand side.")
   "Build from ICON-SET the ICON with LABEL.
 Using optionals attributes FACE, HELP-ECHO and VOFFSET."
   (let ((icon-set-fn (pcase icon-set
-                       ('octicon #'all-the-icons-octicon)
-                       ('faicon #'all-the-icons-faicon)
-                       ('material #'all-the-icons-material)
-                       ('alltheicon #'all-the-icons-alltheicon)
-                       ('fileicon #'all-the-icons-fileicon))))
+                       ('octicon #'nerd-icons-octicon)
+                       ('faicon #'nerd-icons-faicon)
+                       ('material #'nerd-icons-mdicon))))
     (propertize (concat (funcall icon-set-fn
                                  icon
                                  :face face
@@ -290,7 +288,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                           (evil-mc-frozen 'doom-modeline-highlight)
                           ('doom-modeline-alternate-highlight))))
           (concat (propertize " " 'face face)
-                  (all-the-icons-faicon "i-cursor" :face face :v-adjust -0.0575)
+                  (nerd-icons-faicon "nf-fa-i_cursor" :face face :v-adjust -0.0575)
                   (propertize " " 'face `(:inherit (variable-pitch ,face)))
                   (propertize (format "%d " count)
                               'face face)))))))
@@ -332,7 +330,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                             "Macro")
                           'face 'doom-modeline-highlight)
               sep
-              (all-the-icons-octicon "triangle-right"
+              (nerd-icons-octicon "nf-oct-triangle_right"
                                      :face 'doom-modeline-highlight
                                      :v-adjust -0.05)
               sep))))
@@ -532,7 +530,7 @@ lines are selected, or the NxM dimensions of a block selection.")
     mode-line-misc-info
     +modeline-modes
     (vc-mode ("  "
-              ,(all-the-icons-octicon "git-branch" :v-adjust 0.0)
+              ,(nerd-icons-octicon "nf-oct-git_branch" :v-adjust 0.0)
               vc-mode " "))
     "  "
     +modeline-encoding
@@ -540,8 +538,8 @@ lines are selected, or the NxM dimensions of a block selection.")
 
 (def-modeline! 'project
   `(" "
-    ,(all-the-icons-octicon
-      "file-directory"
+    ,(nerd-icons-octicon
+      "nf-oct-file_directory"
       :face 'bold
       :v-adjust -0.06
       :height 1.1)

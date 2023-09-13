@@ -73,11 +73,11 @@ I rarely need to know what minor modes are active, so I removed them. ~M-x
 doom/describe-active-minor-mode~ was written to substitute for it.
 
 ** Icons in my modeline look strange
-1. Check whether ~all-the-icons~ are installed. Run ~M-x
-   all-the-icons-install-fonts~ to install the resource fonts. Note that
-   ~all-the-icons~ only support GUI. See [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] for details.
+1. Check whether ~nerd-icons~ are installed. Run ~M-x
+   nerd-icons-install-fonts~ to install the resource fonts. Note that
+   ~nerd-icons~ only support GUI. See [[https://github.com/domtronn/nerd-icons.el][nerd-icons]] for details.
 
-2. ~cnfonts~ will conflict with ~all-the-icons~. You can refer the following
+2. ~cnfonts~ will conflict with ~nerd-icons~. You can refer the following
    workaround:
     #+begin_src emacs-lisp
     ;; See https://github.com/seagle0128/doom-modeline/issues/278#issuecomment-569510336
@@ -87,18 +87,11 @@ doom/describe-active-minor-mode~ was written to substitute for it.
     (add-hook 'after-setting-font-hook #'cnfonts-set-font)
     #+end_src
 
-3. If ~all-the-icons~ fonts are installed while the icons cannot display
-   correctly, please install the non-free font [[https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip][Symbola]]. This issue usually
-   occurs on Windows.
-
 ** The right side of the modeline is cut off
 I believe the consensus is: this is due to oversized icons, i.e. a font issue.
 Some possible solutions:
 
-1. Tweak ~all-the-icons-scale-factor~ (1.2 by default): ~(setq
-   all-the-icons-scale-factor 1.1)~
-
-2. Add some padding to the modeline definition:
+1. Add some padding to the modeline definition:
     #+begin_src emacs-lisp
     (after! doom-modeline
       (doom-modeline-def-modeline 'main
@@ -106,7 +99,7 @@ Some possible solutions:
         '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
     #+end_src
 
-3. Use another font for the mode line (or a different ~:height~) (source)
+2. Use another font for the mode line (or a different ~:height~) (source)
     #+begin_src emacs-lisp
     (custom-set-faces!
       '(mode-line :family "Noto Sans" :height 0.9)

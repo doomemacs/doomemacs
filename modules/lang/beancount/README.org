@@ -22,7 +22,7 @@ you [[https://plaintextaccounting.org/][manage your money in plain text]].
 
 ** Hacks
 - Associates the material =attach_money= icon with =*.beancount= files in the
-  [[doom-package:all-the-icons]] package.
+  [[doom-package:nerd-icons]] package.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.

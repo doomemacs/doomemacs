@@ -52,8 +52,8 @@
   (with-memoization (get 'doom-system-distro-icon 'cached-value)
     (propertize
      (pcase (doom-system-distro)
-       (`windows (all-the-icons-faicon "windows"))
-       (`macos (all-the-icons-faicon "apple"))
+       (`windows (nerd-icons-faicon "nf-fa-windows"))
+       (`macos (nerd-icons-faicon "nf-fa-apple"))
        (`arch "\uF303")
        (`debian "\uF306")
        (`raspbian "\uF315")
@@ -74,7 +74,7 @@
        (`devuan "\uF307")
        (`manjaro "\uF312")
        ((or `void `artix) "\uF17c")
-       (_ (all-the-icons-faicon "linux")))
+       (_ (nerd-icons-faicon "nf-fa-linux")))
      'face '(:height 1)
      'display '(raise 0))))
 

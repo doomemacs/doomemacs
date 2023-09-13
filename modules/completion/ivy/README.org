@@ -27,7 +27,7 @@ lighter, simpler and faster in many cases.
   Enable prescient filtering and sorting for Ivy searches.
 
 ** Packages
-- [[doom-package:all-the-icons-ivy]]* if [[doom-module:+icons]]
+- [[doom-package:nerd-icons-ivy]]* if [[doom-module:+icons]]
 - [[doom-package:amx]]
 - [[doom-package:counsel]]
 - [[doom-package:counsel-projectile]]
