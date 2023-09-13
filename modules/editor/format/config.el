@@ -41,8 +41,9 @@ This is controlled by `+format-on-save-disabled-modes'."
       (string-empty-p (string-trim (buffer-name)))
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
-(after! apheleia-core
-  (when (modulep! +onsave)
+
+(when (modulep! +onsave)
+  (after! apheleia-core
     (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h)))
 
 ;;
@@ -54,14 +55,17 @@ This is controlled by `+format-on-save-disabled-modes'."
   (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
     (funcall orig-fn)))
 
-(add-hook! 'apheleia-post-format-hook
-           ;; HACK `web-mode' doesn't update syntax highlighting after arbitrary buffer
-           ;;      modifications, so we must trigger refontification manually.
-           (defun +format--fix-web-mode-fontification-h ()
-             (when (eq major-mode 'web-mode)
-               (setq web-mode-fontification-off nil)
-               (when (and web-mode-scan-beg web-mode-scan-end global-font-lock-mode)
-                 (save-excursion
-                   (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end)))))
-           (defun +format--refresh-git-gutter-h ()
-             (+vc-gutter-init-maybe-h)))
+(add-hook!
+ 'apheleia-post-format-hook
+ ;; HACK `web-mode' doesn't update syntax highlighting after arbitrary buffer
+ ;;      modifications, so we must trigger refontification manually.
+ (defun +format--fix-web-mode-fontification-h ()
+   (when (eq major-mode 'web-mode)
+     (setq web-mode-fontification-off nil)
+     (when (and web-mode-scan-beg web-mode-scan-end global-font-lock-mode)
+       (save-excursion
+         (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end)))))
+
+ (defun +format--refresh-git-gutter-h ()
+   (when (fboundp '+vc-gutter-update-h)
+     (+vc-gutter-init-maybe-h))))
