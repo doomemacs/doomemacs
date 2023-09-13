@@ -11,3 +11,7 @@
 (if (and (modulep! +lsp)
          (not (executable-find "metals")))
     (warn! "metals isn't installed"))
+
+(when (modulep! :editor format)
+  (unless (executable-find "scalafmt")
+    (warn! "Couldn't find scalafmt. Formatting will be disabled.")))

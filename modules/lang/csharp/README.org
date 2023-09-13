@@ -45,15 +45,22 @@ This module requires:
 - .NET SDKs (on Windows)
 - .NET Core 1.X - 3.X or .NET 5 for cross platform
 - omnisharp-rosyln (if [[doom-module:+lsp]])
+- [[doom-executable:csharpier]] (if [[doom-module::editor format]])
 
-** TODO MacOS
+** mono
+*** TODO MacOS
 
-** Arch Linux
+*** Arch Linux
 #+begin_src sh
 pacman --needed --noconfirm -S mono
 #+end_src
 
-** TODO NixOS
+*** TODO NixOS
+
+** csharpier
+#+begin_src shell
+dotnet tool install csharpier -g
+#+end_src
 
 * TODO Usage
 #+begin_quote

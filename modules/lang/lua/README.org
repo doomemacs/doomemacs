@@ -75,6 +75,10 @@ Eglot currently only supports one of the above servers out of the box:
   =$EMACSDIR/.local/etc/lsp/lua-language-server/=. See ~+lua-lsp-dir~ variable
   to change this.
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/JohnnyMorganz/StyLua#installation][Stylua]].
+
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]

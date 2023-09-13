@@ -21,6 +21,7 @@
     :dot     ".")
   (set-rotate-patterns! 'racket-mode
     :symbols '(("#true" "#false")))
+  (set-formatter! 'raco-fmt '("raco" "fmt") :modes '(racket-mode))
 
   (add-hook! 'racket-mode-hook
              #'rainbow-delimiters-mode

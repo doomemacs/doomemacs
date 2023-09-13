@@ -40,6 +40,7 @@ installed and accessible from your PATH.
 Optionally, this module also uses the following programs:
 - =docker-langserver= (for LSP users): ~$ npm install -g
   dockerfile-language-server-nodejs~
+- =dockfmt= for [[doom-module::editor format]]: https://github.com/jessfraz/dockfmt#installation
 
 * TODO Usage
 #+begin_quote

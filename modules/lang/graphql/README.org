@@ -43,8 +43,14 @@ It includes:
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
+** LSP
+
 This module has no direct requirements, but the +lsp flag requires a [[https://emacs-lsp.github.io/lsp-mode/page/lsp-graphql/][supported
 LSP server]].
+
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
 
 * Usage
 ** Sending queries

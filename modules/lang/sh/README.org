@@ -49,6 +49,8 @@ This module has several optional dependencies:
 - With the [[doom-module::tools debugger]] module
   - [[http://bashdb.sourceforge.net/][bashdb]]: Enables debugging for bash scripts
   - [[https://github.com/rocky/zshdb][zshdb]]: Enables debugging for zsh scripts
+- With the [[doom-module::editor format]] module
+  - [[https://github.com/patrickvane/shfmt][shfmt]]: Enables formatting for {posix,ba,mk}sh scripts
 
 * TODO Usage
 #+begin_quote

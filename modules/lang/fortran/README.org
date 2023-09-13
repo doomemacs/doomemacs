@@ -97,6 +97,11 @@ your Bash Profile, etc., and log out and in again._ Now Doom will be able to use
 
 Good luck and happy computing!
 
+** efmt
+When [[doom-module::editor format]] is enabled and [[doom-executable:fprettify]] is installed, buffers can be formatted with [[fn:apheleia-format-buffer]].
+
+Enable [[doom-module::editor format +onsave]] to format the buffer on save.
+
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]

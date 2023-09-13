@@ -115,6 +115,10 @@ installed through your OS's package manager:
 + MacOS: ~$ brew install multimarkdown~
 + Arch Linux: [[https://aur.archlinux.org/packages/multimarkdown/][multimarkdown]] is available on the AUR
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]

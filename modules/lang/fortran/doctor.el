@@ -18,6 +18,8 @@
 
 (when (modulep! +lsp)
   (unless (executable-find "fortls")
-    (warn! "Couldn't find fortls."))
+    (warn! "Couldn't find fortls. Language features will be disabled.")))
+
+(when (modulep! :editor format)
   (unless (executable-find "fprettify")
-    (warn! "Couldn't find fprettify.")))
+    (warn! "Couldn't find fprettify. Formatting will be disabled.")))

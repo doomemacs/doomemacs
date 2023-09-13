@@ -58,6 +58,10 @@ This module requires [[https://nodejs.org/en/][NodeJS]] and one of [[https://www
 - Arch Linux: ~$ pacman --needed --noconfirm -S nodejs npm~
 - openSUSE: ~$ zypper install nodejs npm~
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]

@@ -3,7 +3,9 @@
 (use-package! scheme
   :interpreter ("scsh" . scheme-mode)
   :hook (scheme-mode . rainbow-delimiters-mode)
-  :config (advice-add #'scheme-indent-function :override #'+scheme-indent-function-a))
+  :config
+  (set-formatter! 'lisp-indent #'apheleia--indent-lisp-buffer :modes '(scheme-mode))
+  (advice-add #'scheme-indent-function :override #'+scheme-indent-function-a))
 
 
 (use-package! geiser

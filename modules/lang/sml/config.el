@@ -4,6 +4,7 @@
   :mode "\\.s\\(?:ml\\|ig\\)\\'"
   :config
   (set-repl-handler! 'sml-mode #'run-sml)
+  (set-formatter! 'smlformat '("smlformat") :modes '(sml-mode))
 
   ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
   (sp-with-modes 'sml-mode

@@ -8,6 +8,8 @@
              #'purescript-indentation-mode
              #'rainbow-delimiters-mode)
 
+  (set-formatter! 'purs-tidy '("purs-tidy" "format") :modes '(purescript-mode))
+
   (map! :localleader
         :map purescript-mode-map
         "t" #'psc-ide-show-type

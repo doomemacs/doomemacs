@@ -48,6 +48,10 @@ ReactJS, Wordpress, Jekyll, Phaser, AngularJS, Djano, and more.
 * TODO Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
+
 #+begin_quote
  🔨 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote

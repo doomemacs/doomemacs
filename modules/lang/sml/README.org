@@ -28,6 +28,10 @@ THis module adds [[https://smlfamily.github.io/][SML (Standard ML) programming l
 
 This module requires =sml= and =MLton=.
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/jluningp/smlformat#installation][smlformat]].
+
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]

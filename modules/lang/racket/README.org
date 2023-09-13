@@ -43,6 +43,10 @@ Or, for fewer dependencies:
 pacman -S racket-minimal
 #+end_src
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://docs.racket-lang.org/fmt/][fmt]].
+
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]

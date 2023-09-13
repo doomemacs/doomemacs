@@ -8,7 +8,8 @@
   (setq nxml-slash-auto-complete-flag t
         nxml-auto-insert-xml-declaration-flag t)
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet))
-  (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent))
+  (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent)
+  (set-formatter! 'xmllint '("xmllint" "--format" "-") :modes '(nxml-mode)))
 
 
 ;;;###package csv-mode

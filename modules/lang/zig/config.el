@@ -11,6 +11,7 @@
   :hook (zig-mode . rainbow-delimiters-mode)
   :config
   (setq zig-format-on-save nil) ; rely on :editor format instead
+  (set-formatter! 'zigfmt '("zig" "fmt" "--stdin") :modes '(zig-mode))
 
   (when (modulep! +lsp)
     (add-hook 'zig-mode-local-vars-hook #'lsp! 'append))

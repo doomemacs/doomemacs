@@ -98,6 +98,18 @@ JAVA_HOME=~/.jabba/jdk/adopt@1.11.0-3
 And then run ~$ direnv allow .~ in the project directory. The [[doom-module::tools direnv]]
 module will automatically source this environment before activating LSP servers.
 
+** Formatter
+
+[[doom-module::editor format]] uses [[https://github.com/google/google-java-format][google-java-format]] to handle formatting.
+
+To install, grab the latest =all-deps.jar= release from the above, put it
+somewhere and create a script similar to the below:
+
+=/usr/local/bin/google-java-format=
+#+begin_src shell
+java -jar /path/to/google-java-format-all-deps.jar
+#+end_src
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]

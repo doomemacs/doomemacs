@@ -35,6 +35,8 @@
         :desc "build" "b" #'+fortran/build
         :desc "run"   "r" #'+fortran/run)
 
+  (set-formatter! 'fprettify '("fprettify" "-") :modes '(f90-mode fortran-mode))
+
   (when (modulep! +intel)
     (map! :map f90-mode-map
           :localleader

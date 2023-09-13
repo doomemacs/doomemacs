@@ -17,10 +17,10 @@
   :config
   (set-docsets! 'sh-mode "Bash")
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
-  (set-formatter! 'shfmt
-    '("shfmt" "-ci"
-      ("-i" "%d" (unless indent-tabs-mode tab-width))
-      ("-ln" "%s" (pcase sh-shell (`bash "bash") (`mksh "mksh") (_ "posix")))))
+  (set-formatter! 'shfmt '("shfmt" "-ci"
+                           (unless indent-tabs-mode
+                             (list "-i" (number-to-string tab-width)))))
+
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
   (set-lookup-handlers! 'sh-mode :documentation #'+sh-lookup-documentation-handler)
   (set-ligatures! 'sh-mode
@@ -85,10 +85,6 @@
         ;; whatis lookups are exceptionally slow on macOS (#5860)
         company-shell-dont-fetch-meta IS-MAC))
 
-(use-package! fish-mode
-  :when (modulep! +fish)
-  :defer t
-  :config (set-formatter! 'fish-mode #'fish_indent))
 
 (use-package! powershell
   :when (modulep! +powershell)

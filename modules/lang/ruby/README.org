@@ -70,6 +70,10 @@ These guides will help you install Ruby:
 
 Then run ~$ gem install rubocop~ to install rubocop.
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]

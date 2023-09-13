@@ -30,7 +30,9 @@ This module provides support for the [[https://yaml.org/][YAML file format]] to 
 * Installation
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
-/This module has no external requirements./
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://prettier.io/docs/en/install.html][prettier]].
 
 * TODO Usage
 #+begin_quote

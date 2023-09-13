@@ -11,6 +11,7 @@
     (set-lookup-handlers! 'fsharp-mode :async t :definition #'fsharp-ac/gotodefn-at-point)
     (set-company-backend! 'fsharp-mode 'fsharp-ac/company-backend))
   (set-repl-handler! 'fsharp-mode #'run-fsharp)
+  (set-formatter! 'fantomas '("fantomas" "--stdin") :modes '(fsharp-mode))
   (map! :localleader
         :map fsharp-mode-map
         "b" #'fsharp-ac/pop-gotodefn-stack ; Useful for re-tracing your steps

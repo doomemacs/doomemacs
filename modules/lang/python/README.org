@@ -92,6 +92,10 @@ An alternative LSP server can be used by installing them through the
 - To install *mspyls*: ~M-x lsp-install-server RET mspyls~.
 - To install *pyright*: ~$ pip install pyright~ or ~$ npm i -g pyright~.
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://black.readthedocs.io/en/stable/getting_started.html#installation][black]].
+
 * TODO Usage
 #+begin_quote
  🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]

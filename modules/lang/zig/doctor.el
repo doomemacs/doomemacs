@@ -10,7 +10,10 @@
          "This module requires (:tools tree-sitter)")
 
 (unless (executable-find "zig")
-  (warn! "Couldn't find zig binary"))
+  (warn! "Couldn't find zig binary")
+
+  (unless (modulep! :editor format)
+    (warn! "Formatting will be disabled")))
 
 (when (modulep! +lsp)
   (unless (executable-find "zls")

@@ -1,7 +1,9 @@
 ;;; lang/rst/config.el -*- lexical-binding: t; -*-
 
 (use-package! sphinx-mode
-  :hook (rst-mode . sphinx-mode))
+  :hook (rst-mode . sphinx-mode)
+  :config
+  (set-formatter! 'rstfmt '("rstfmt") :modes '(rst-mode)))
 
 (use-package! rst
   :defer t

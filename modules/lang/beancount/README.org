@@ -34,6 +34,7 @@ you [[https://plaintextaccounting.org/][manage your money in plain text]].
 This module requires:
 - [[https://github.com/beancount/beancount][beancount]], for generating reports
 - [[https://beancount.github.io/fava/][fava]], for a web interface for your ledgers
+- [[doom-executable:bean-format]], if [[doom-module::editor format]]
 
 * TODO Usage
 #+begin_quote

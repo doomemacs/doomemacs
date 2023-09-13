@@ -51,6 +51,10 @@ Alternatively, nim is usually available through your OS's package manager:
 - Arch Linux: ~$ pacman --needed --noconfirm -S nim nimble~
 - openSUSE: ~$ zypper install nim~
 
+** Formatter
+
+Formatting is handled using the [[doom-module::editor format]] module via [[https://github.com/FedericoCeratto/nimfmt#installation][nimfmt]].
+
 * TODO Usage
 #+begin_quote
  🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
