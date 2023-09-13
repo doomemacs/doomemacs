@@ -1,7 +1,7 @@
 ;;; editor/format/autoload/settings.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
-(cl-defun set-formatter! (name args &key modes filter)
+(cl-defun set-formatter! (name args &key modes)
   "Define (or modify) a formatter named NAME.
 
 Supported keywords: :modes :filter
