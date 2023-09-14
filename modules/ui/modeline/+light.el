@@ -115,6 +115,7 @@ Using optionals attributes FACE, HELP-ECHO and VOFFSET."
   (let ((icon-set-fn (pcase icon-set
                        ('octicon #'nerd-icons-octicon)
                        ('faicon #'nerd-icons-faicon)
+                       ('codicon #'nerd-icons-codicon)
                        ('material #'nerd-icons-mdicon))))
     (propertize (concat (funcall icon-set-fn
                                  icon
@@ -416,7 +417,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                    (let ((error (or .error 0))
                          (warning (or .warning 0))
                          (info (or .info 0)))
-                     (+modeline-format-icon 'material "do_not_disturb_alt"
+                     (+modeline-format-icon 'codicon "nf-cod-error"
                                             (number-to-string (+ error warning info))
                                             (cond ((> error 0)   'error)
                                                   ((> warning 0) 'warning)
@@ -425,11 +426,11 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                                                     error
                                                     warning
                                                     info))))
-               (+modeline-format-icon 'material "check" "" 'success)))
-            (`running     (+modeline-format-icon 'material "access_time" "*" 'mode-line-inactive "Running..."))
-            (`errored     (+modeline-format-icon 'material "sim_card_alert" "!" 'error "Errored!"))
-            (`interrupted (+modeline-format-icon 'material "pause" "!" 'mode-line-inactive "Interrupted"))
-            (`suspicious  (+modeline-format-icon 'material "priority_high" "!" 'error "Suspicious"))))))
+               (+modeline-format-icon 'material "nf-md-check" "" 'success)))
+            (`running     (+modeline-format-icon 'faicon "nf-fa-hourglass" "*" 'mode-line-inactive "Running..."))
+            (`errored     (+modeline-format-icon 'material "nf-md-sim_alert" "!" 'error "Errored!"))
+            (`interrupted (+modeline-format-icon 'material "nf-md-pause" "!" 'mode-line-inactive "Interrupted"))
+            (`suspicious  (+modeline-format-icon 'material "nf-md-priority_high" "!" 'error "Suspicious"))))))
 
 
 

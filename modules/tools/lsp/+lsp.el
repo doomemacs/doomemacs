@@ -134,7 +134,7 @@ server getting expensively restarted when reverting buffers."
                (label (if workspaces "LSP Connected" "LSP Disconnected")))
           (setq lsp-modeline-icon (concat
                                    " "
-                                   (+modeline-format-icon 'faicon "rocket" "" face label -0.0575)
+                                   (+modeline-format-icon 'faicon "nf-fa-rocket" "" face label -0.0575)
                                    " "))
           (add-to-list 'global-mode-string
                        '(t (:eval lsp-modeline-icon))
