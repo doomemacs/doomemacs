@@ -652,6 +652,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
   (doom-initialize-packages)
   (doom-packages--barf-if-incomplete)
   (print! (start "Purging orphaned packages (for the emperor)..."))
+  (quiet! (straight-prune-build-cache))
   (cl-destructuring-bind (&optional builds-to-purge repos-to-purge repos-to-regraft)
       (let ((rdirs
              (and (or repos-p regraft-repos-p)
@@ -672,8 +673,7 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
       nil (list
            (if (not builds-p)
                (ignore (print! (item "Skipping builds")))
-             (and (/= 0 (doom-packages--purge-builds builds-to-purge))
-                  (quiet! (straight-prune-build-cache))))
+             (/= 0 (doom-packages--purge-builds builds-to-purge)))
            (if (not elpa-p)
                (ignore (print! (item "Skipping elpa packages")))
              (/= 0 (doom-packages--purge-elpa)))
