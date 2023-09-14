@@ -5,5 +5,5 @@
   :interpreter "hy"
   :config
   (set-repl-handler! 'hy-mode #'hy-shell-start-or-switch-to-shell)
-  (set-formatter! 'lisp-indent #'apheleia--indent-lisp-buffer :modes '(hy-mode))
+  (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(hy-mode))
   (set-company-backend! 'hy-mode 'company-hy))
