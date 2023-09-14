@@ -4,7 +4,7 @@
 (cl-defun set-formatter! (name args &key modes)
   "Define (or modify) a formatter named NAME.
 
-Supported keywords: :modes :filter
+Supported keywords: :modes
 
 NAME is a symbol that identifies this formatter.
 
@@ -19,6 +19,10 @@ nested list.
     element is either a string or list (STRING ARG) where STRING is a format
     string and ARG is both a predicate and argument for STRING. If ARG is nil,
     STRING will be omitted from the vector.
+
+If you're trying to override this, ensure that you wrap the call in `after!' and
+whichever package sets the initial formatter. See the ':editor format' README
+for more.
 
 For more information on how to structure the list to be
 compatible, see `apheleia--run-formatter-function'.

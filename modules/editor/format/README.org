@@ -68,6 +68,15 @@ provide a simple macro that looks like the below:
 (set-formatter! 'unique-name '("command" "line" "here") :modes '(name-of-major-mode))
 #+end_src
 
+If you're trying to override a formatter that has previously been defined by
+Doom, you will need to ensure that the call in your config is contained within
+an =after!= form, eg below to override Clojure's with =zprint=:
+
+#+begin_src emacs-lisp
+(after! clojure-mode
+  (set-formatter! 'zprint '("zprint" "-") :modes '(clojure-mode)))
+#+end_src
+
 There are a few bonus symbols that apheleia uses (for example =npx= will be
 replaced by a correct path to npx) which are all documented in the link above.
 
