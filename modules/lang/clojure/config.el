@@ -136,7 +136,7 @@
       "Update repl icon on modeline with cider information."
       (setq cider-modeline-icon (concat
                                  " "
-                                 (+modeline-format-icon 'faicon "terminal" "" face label -0.0575)
+                                 (+modeline-format-icon 'faicon "nf-fa-terminal" "" face label -0.0575)
                                  " "))
       (add-to-list 'global-mode-string
                    '(t (:eval cider-modeline-icon))
