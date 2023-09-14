@@ -102,7 +102,7 @@
   "Create a header link according to SPEC."
   (let ((icon (and (plist-get spec :icon)
                    (funcall (or (plist-get spec :icon-function)
-                                #'nerd-icons-material)
+                                #'nerd-icons-mdicon)
                             (plist-get spec :icon))))
         (label (pcase (plist-get spec :label)
                  ((and (pred functionp) lab)
