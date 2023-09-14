@@ -39,7 +39,7 @@ See `+emacs-lisp-non-package-mode' for details.")
     :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! '(emacs-lisp-mode lisp-interaction-mode) "Emacs Lisp")
   (set-ligatures! 'emacs-lisp-mode :lambda "lambda")
-  (set-formatter! 'lisp-indent #'apheleia--indent-lisp-buffer :modes '(emacs-lisp-mode))
+  (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(emacs-lisp-mode))
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")

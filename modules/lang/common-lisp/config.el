@@ -26,7 +26,7 @@
   (after! lisp-mode
     (set-repl-handler! 'lisp-mode #'+lisp/open-repl)
     (set-eval-handler! 'lisp-mode #'sly-eval-region)
-    (set-formatter! 'lisp-indent #'apheleia--indent-lisp-buffer :modes '(lisp-mode))
+    (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(lisp-mode))
     (set-lookup-handlers! 'lisp-mode
       :definition #'sly-edit-definition
       :documentation #'sly-describe-symbol))
