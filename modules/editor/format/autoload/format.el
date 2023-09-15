@@ -8,7 +8,7 @@
 
 (defun +format-region (start end &optional callback)
   "Format from START to END with `apheleia'."
-  (when-let* ((command (apheleia--get-formatter-command
+  (when-let* ((command (apheleia--get-formatters
                         (if current-prefix-arg
                             'prompt
                           'interactive)))
@@ -23,7 +23,7 @@
       ;; Ensure this temp buffer seems as much like the origin buffer as
       ;; possible, in case the formatter is an elisp function, like `gofmt'.
       (cl-loop for (var . val)
-               in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
+               in (cl-remove-if-not #'listp (buffer-local-variables cur-buffer))
                ;; Making enable-multibyte-characters buffer-local causes an
                ;; error.
                unless (eq var 'enable-multibyte-characters)
@@ -45,7 +45,8 @@
              ;; restore indentation without affecting new
              ;; indentation
              (indent-rigidly (point-min) (point-max)
-                             (max 0 (- indent (+format--current-indentation))))))
+                             (max 0 (- indent (+format--current-indentation)))))
+           (set-buffer-modified-p nil))
          (with-current-buffer cur-buffer
            (delete-region start end)
            (insert-buffer-substring-no-properties formatted-buffer)
