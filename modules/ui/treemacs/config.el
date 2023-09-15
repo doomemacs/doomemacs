@@ -41,6 +41,10 @@ This must be set before `treemacs' has loaded.")
               3
             0))))
 
+(use-package! treemacs-nerd-icons
+  :after (nerd-icons treemacs)
+  :config
+  (setq doom-themes-treemacs-theme "nerd-icons"))
 
 (use-package! treemacs-evil
   :when (modulep! :editor evil +everywhere)

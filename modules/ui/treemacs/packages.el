@@ -6,6 +6,7 @@
 (when (modulep! :editor evil +everywhere)
   (package! treemacs-evil))
 (package! treemacs-projectile)
+(package! treemacs-nerd-icons)
 (when (modulep! :tools magit)
   (package! treemacs-magit))
 (when (modulep! :ui workspaces)
