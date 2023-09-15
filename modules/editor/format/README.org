@@ -35,6 +35,10 @@ be formatted and returned to the buffer using
 As of writing this, apheleia doesn't /yet/ support regions or similar kinds of
 buffers, so there are a couple of hacks to attempt to rectify this.
 
+For the most part, things should work as expected. However, because the
+formatting occurs on an isolated version of the buffer; lisp/scheme or similarly
+indentation-based languages may produce poor results.
+
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
 /This module does not have a changelog yet./
