@@ -42,6 +42,11 @@ This must be set before `treemacs' has loaded.")
             0))))
 
 
+(use-package! treemacs-nerd-icons
+  :after treemacs
+  :config (treemacs-load-theme "nerd-icons"))
+
+
 (use-package! treemacs-evil
   :when (modulep! :editor evil +everywhere)
   :defer t
