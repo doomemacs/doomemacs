@@ -260,12 +260,13 @@ in."
                       (dolist (font nerd-icons-font-names)
                         (if (save-excursion (re-search-backward font nil t))
                             (success! "Found font %s" font)
-                          (print! (warn "Warning: couldn't find %S font") font)))
+                          (print! (warn "%S font is not installed on your system") font)
+                          (cl-incf errors)))
                       (when (> errors 0)
-                        (explain! "Some nerd-icons fonts were missing.\n\n"
-                                  "You can install them by running `M-x nerd-icons-install-fonts' within Emacs.\n"
-                                  "This could also mean you've installed them in non-standard locations, in which "
-                                  "case feel free to ignore this warning.")))))))))
+                        (explain! "Some needed fonts are not properly installed on your system. To download and "
+                                  "install them, run `M-x nerd-icons-install-fonts' from within Doom Emacs. "
+                                  "However, on Windows this command will only download them; the fonts must "
+                                  "be installed manually afterwards.")))))))))
 
         (print! (start "Checking for stale elc files in your DOOMDIR..."))
         (when (file-directory-p doom-user-dir)
