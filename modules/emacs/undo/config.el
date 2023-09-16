@@ -50,6 +50,7 @@
 
 (use-package! vundo
   :unless (modulep! +tree)
+  :when (> emacs-major-version 27)
   :defer t
   :config
   (setq vundo-glyph-alist vundo-unicode-symbols
