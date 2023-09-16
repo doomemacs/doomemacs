@@ -98,20 +98,23 @@ Check out [the FAQ][FAQ] for answers to common questions about the project.
 
 
 # Prerequisites
-+ Git 2.23+
-+ Emacs 27.1–29.1 (**Recommended: 29.1 +
+- Git 2.23+
+- Emacs 27.1–29.1 (**Recommended: 29.1 +
   [native-comp](https://www.emacswiki.org/emacs/GccEmacs)**)
-  > :warning: Unstable and pre-release builds of Emacs -- which end in `.50`,
-  > `.60`, or `.9X` (e.g. `28.1.91`) -- **are not officially supported**. There
-  > *is* some effort to support Emacs HEAD, however. [Follow this Discourse
-  > post](https://discourse.doomemacs.org/t/3241) for details.
-+ [ripgrep] 11.0+
-+ GNU `find`
-+ *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
-  
-Doom is comprised of [~150 optional modules][Modules], some of which may have
-additional dependencies. [Visit their documentation][Modules] or run `bin/doom
-doctor` to check for any that you may have missed.
+- [ripgrep] 11.0+
+- GNU `find`
+- *OPTIONAL:* [fd] 7.3.0+ (improves file indexing performance for some commands)
+
+> [!WARNING]
+> Unstable and pre-release builds of Emacs -- which end in `.50`, `.60`, or
+> `.9X` (e.g. `28.1.91`) -- **are not officially supported**. There *is* some
+> effort to support Emacs HEAD, however. [Follow this Discourse
+> post](https://discourse.doomemacs.org/t/3241) for details.
+ 
+> [!IMPORTANT]
+> Doom is comprised of [~150 optional modules][Modules], some of which may have
+> additional dependencies. [Visit their documentation][Modules] or run `bin/doom
+> doctor` to check for any that you may have missed.
 
 
 # Install
