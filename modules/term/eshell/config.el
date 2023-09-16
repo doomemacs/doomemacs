@@ -120,7 +120,51 @@ You should use `set-eshell-alias!' to change this.")
     (setq +eshell--default-aliases eshell-command-aliases-list
           eshell-command-aliases-list
           (append eshell-command-aliases-list
-                  +eshell-aliases))))
+                  +eshell-aliases)))
+
+  ;; HACK: Fixes #3817, where eshell completion after quotes is broken on Emacs
+  ;;   28 and older.
+  ;; CREDIT: Extracted from `cape''s cape-wrap-silent and cape-wrap-purify.
+  ;; REVIEW: Remove when Doom drops 28 support.
+  (when (< emacs-major-version 29)
+    (defadvice! +eshell--silent-a (capf)
+      "Call CAPF and silence it (no messages, no errors).
+This function can be used as an advice around an existing Capf."
+      :around #'pcomplete-completions-at-point
+      (letf! ((defmacro silent (&rest body) `(quiet! (ignore-errors ,@body)))
+              (defmacro wrapped-table (wrap body)
+                `(lambda (str pred action)
+                   (,@body
+                    (let ((result (complete-with-action action table str pred)))
+                      (when
+                          (and (eq action 'completion--unquote)
+                               (functionp (cadr result)))
+                        (cl-callf ,wrap (cadr result)))
+                      result))))
+              (defun* silent-table (table) (wrapped-table silent-table (silent))))
+        (pcase (silent (funcall capf))
+          (`(,beg ,end ,table . ,plist)
+           `(,beg ,end ,(silent-table table) ,@plist)))))
+
+    (defadvice! +eshell--purify-a (capf)
+      "Call CAPF and ensure that it does not illegally modify the buffer. This
+function can be used as an advice around an existing Capf. It has been
+introduced mainly to fix the broken `pcomplete-completions-at-point' function in
+Emacs versions < 29."
+      ;; bug#50470: Fix Capfs which illegally modify the buffer or which
+      ;; illegally call `completion-in-region'. The workaround here was proposed
+      ;; by @jakanakaevangeli and is used in his capf-autosuggest package.
+      :around #'pcomplete-completions-at-point
+      (catch 'illegal-completion-in-region
+        (condition-case nil
+            (let ((buffer-read-only t)
+                  (inhibit-read-only nil)
+                  (completion-in-region-function
+                   (lambda (beg end coll pred)
+                     (throw 'illegal-completion-in-region
+                            (list beg end coll :predicate pred)))))
+              (funcall capf))
+          (buffer-read-only nil))))))
 
 
 (after! esh-mode
