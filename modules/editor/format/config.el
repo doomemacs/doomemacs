@@ -68,4 +68,4 @@ This is controlled by `+format-on-save-disabled-modes'."
 
  (defun +format--refresh-git-gutter-h ()
    (when (fboundp '+vc-gutter-update-h)
-     (+vc-gutter-init-maybe-h))))
+     (+vc-gutter-update-h))))
