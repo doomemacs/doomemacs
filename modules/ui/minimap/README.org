@@ -27,7 +27,7 @@ feature found in many other editors.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 A minimap which provides an overview of the current buffer to the side,
@@ -36,7 +36,7 @@ and drag to scroll along the buffer, or right-click anywhere to jump to there.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 There are a number of options provided by the =minimap.el= package this module
@@ -55,5 +55,5 @@ Disable the minimap using [[kbd:][SPC t m]].
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

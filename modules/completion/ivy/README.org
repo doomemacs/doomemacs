@@ -64,7 +64,7 @@ use their associated Helm command or plugin.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 [[doom-package:ivy]] is a /large/ framework for completing things. Covering all its features is
@@ -169,7 +169,7 @@ A wgrep buffer can be opened from swiper with [[kbd:][C-c C-e]].
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** TODO Enable fuzzy/non-fuzzy search for specific commands
@@ -186,5 +186,5 @@ See [[id:4f36ae11-1da8-4624-9c30-46b764e849fc][this answer]].
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

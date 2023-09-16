@@ -20,7 +20,7 @@ In particular, this module features:
 - Optional Intel Fortran support via the [[doom-module:+intel]] flag.
 
 #+begin_quote
- 💬 After a career of writing Fortran on Mainframes and Windows machines, my
+ 󰟶 After a career of writing Fortran on Mainframes and Windows machines, my
     now-retired Dad is switching to Linux. Imagine my surprise when I learned
     that off-the-shelf setups for Fortran on Linux basically don't exist! Well,
     until now... Cheers Dad, hope this helps. --[[doom-user:][fosskers]]
@@ -104,12 +104,12 @@ Enable [[doom-module::editor format +onsave]] to format the buffer on save.
 
 * TODO Usage
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -120,5 +120,5 @@ Enable [[doom-module::editor format +onsave]] to format the buffer on save.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

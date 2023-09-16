@@ -38,7 +38,7 @@ The idea for this plug-in was to mimic the behavior of PhpStorm deployment funct
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 Uses ~ssh-deploy~ to map a local folder to a remote one. Set
@@ -51,13 +51,13 @@ to establish this mapping. E.g.
 #+end_src
 
 #+begin_quote
- 📌 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~
+ 󰐃 ~ssh-deploy-root-local~ is optional, and will resort to ~doom-project-root~
     if unspecified.
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 Check out [[https://github.com/cjohansson/emacs-ssh-deploy#deployment-configuration-examples][Deployment configuration examples]] for some ideas of what's possible.
@@ -75,5 +75,5 @@ The final directory names much match:
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

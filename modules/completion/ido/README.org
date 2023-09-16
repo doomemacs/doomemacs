@@ -33,12 +33,12 @@ Interactive DO things. The completion engine that is /mostly/ built-into Emacs.
 
 * Usage
 #+begin_quote
-🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Configuration
 #+begin_quote
-🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -52,5 +52,5 @@ See [[id:4f36ae11-1da8-4624-9c30-46b764e849fc][this answer]].
 
 * Appendix
 #+begin_quote
-🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

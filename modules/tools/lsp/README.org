@@ -80,7 +80,7 @@ including instructions to register your own.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** LSP-powered project search
@@ -109,7 +109,7 @@ it can only be compared in (very) broad strokes:
   with TRAMP out-of-the-box (lsp-mode needs some extra configuration).
 
 #+begin_quote
- 💬 I recommend beginners use lsp-mode. More experienced users may also opt to
+ 󰟶 I recommend beginners use lsp-mode. More experienced users may also opt to
     disable many of [[https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/][its inessential features]] to gain back some ground on
     performance and complexity costs.
 #+end_quote
@@ -119,7 +119,7 @@ in/out the [[doom-module:+lsp]] or [[doom-module:+eglot]] flag when [[id:01cffea
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Turn off lsp-mode's intrusive features
@@ -151,5 +151,5 @@ Follow [[https://emacs-lsp.github.io/lsp-mode/page/performance/#tuning][lsp-tuni
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

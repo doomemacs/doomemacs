@@ -35,7 +35,7 @@ there is still not *enough* documentation for it.
 
 * TODO Installation
 #+begin_quote
- 🔨 /This module's prerequisites documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's prerequisites documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
@@ -127,7 +127,7 @@ using the mode-specific way.
 
 ** TODO realgud
 #+begin_quote
- 🔨 Instructions for realgud haven't been written yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 Instructions for realgud haven't been written yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 ** dap-mode
@@ -198,7 +198,7 @@ The hydra is defined as follows:
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -213,5 +213,5 @@ This currently is not supported by realgud.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

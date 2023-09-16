@@ -26,19 +26,19 @@ Adds [[https://jupyter.org/][Jupyter]] notebook integration into Emacs.
 [[id:01cffea4-3329-45e2-a892-95a384ab2338][Enable this module in your ~doom!~ block.]]
 
 #+begin_quote
- 🔨 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
+ 󱌣 /This module's prerequisites are not documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 Refer to [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook's README]].
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -49,5 +49,5 @@ Refer to [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ip
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

@@ -121,7 +121,7 @@ Formatting is handled using the [[doom-module::editor format]] module via [[http
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Markdown preview
@@ -132,7 +132,7 @@ Alternatively, you can use ~grip-mode~ through [[doom-module:+grip]].
 
 * Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Changing how markdown is compiled
@@ -173,5 +173,5 @@ Otherwise, you can change ~markdown-command~ directly:
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

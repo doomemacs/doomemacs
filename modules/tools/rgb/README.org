@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 #+begin_quote
- 🚧 *This module is deprecated.* The module is too trivial to warrant a module.
+  *This module is deprecated.* The module is too trivial to warrant a module.
 #+end_quote
 
 * Description :unfold:
@@ -57,5 +57,5 @@ disable it only when =rainbow-mode= is active, you can add the following hook:
 
 * TODO Appendix
 #+begin_quote
-🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

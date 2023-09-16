@@ -173,7 +173,7 @@
   behaviour for known commands.
   
   #+begin_quote
-   📌 Doom users with evil enabled will find the universal argument on [[kbd:][SPC u]]
+   󰐃 Doom users with evil enabled will find the universal argument on [[kbd:][SPC u]]
       instead than [[kbd:][C-u]].
   #+end_quote
 

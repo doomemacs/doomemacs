@@ -19,24 +19,24 @@
 (defvar doom-docs-header-specs
   '(("/docs/index\\.org$"
      (:label "FAQ"
-      :icon "question_answer"
+      :icon "nf-md-message_question_outline"
       :link "doom-faq:"
       :help-echo "Open the FAQ document"))
     (("/docs/[^/]+\\.org$" "/modules/README\\.org$")
      (:label "Back to index"
-      :icon "arrow_back"
+      :icon "nf-md-arrow_left"
       :link "doom-index"
       :help-echo "Navigate to the root index"))
     ("/modules/[^/]+/README\\.org$"
      (:label "Back to module index"
-      :icon "arrow_back"
+      :icon "nf-md-arrow_left"
       :link "doom-module-index:"))
     ("/modules/[^/]+/[^/]+/README\\.org$"
      (:label "Back to module index"
-      :icon "arrow_back"
+      :icon "nf-md-arrow_left"
       :link "doom-module-index:")
      (:label "History"
-      :icon "history"
+      :icon "nf-md-history"
       :icon-face font-lock-variable-name-face
       :link (lambda ()
               (cl-destructuring-bind (category . module) (doom-module-from-path (buffer-file-name))
@@ -44,7 +44,7 @@
       :help-echo "View the module history"
       :align right)
      (:label "Issues"
-      :icon "error_outline"
+      :icon "nf-md-flag"
       :icon-face error
       :link (lambda ()
               (cl-destructuring-bind (category . module) (doom-module-from-path (buffer-file-name))
@@ -52,12 +52,12 @@
       :align right))
      (t
       (:label "Suggest edits"
-       :icon "edit"
+       :icon "nf-md-account_edit"
        :icon-face warning
        :link "doom-suggest-edit"
        :align right)
       (:label "Help"
-       :icon "help_outline"
+       :icon "nf-md-timeline_help_outline"
        :icon-face font-lock-function-name-face
        :link (lambda ()
                (let ((title (cadar (org-collect-keywords '("TITLE")))))
@@ -101,9 +101,10 @@
 (defun doom-docs--make-header-link (spec)
   "Create a header link according to SPEC."
   (let ((icon (and (plist-get spec :icon)
-                   (funcall (or (plist-get spec :icon-function)
-                                #'nerd-icons-mdicon)
-                            (plist-get spec :icon))))
+                   (with-demoted-errors "DOCS ERROR: %s"
+                     (funcall (or (plist-get spec :icon-function)
+                                  #'nerd-icons-mdicon)
+                              (plist-get spec :icon)))))
         (label (pcase (plist-get spec :label)
                  ((and (pred functionp) lab)
                   (funcall lab))
@@ -472,6 +473,18 @@ This primes `org-mode' for reading."
         (org-id-add-location id fname)
         id))))
 
+(defconst doom-docs-org-font-lock-keywords
+  '(("^\\( *\\)#\\+begin_quote\n\\1 \\([󰝗󱌣󰐃󰔓󰟶󰥔]\\) "
+     2 (pcase (match-string 2)
+         ("󰝗" 'font-lock-comment-face)
+         ("󱌣" 'font-lock-comment-face)
+         ("󰐃" 'error)
+         ("󰔓" 'success)
+         ("󰟶" 'font-lock-keyword-face)
+         ("󰥔" 'font-lock-constant-face)
+         ("" 'warning))))
+  "Extra font-lock keywords for Doom documentation.")
+
 ;;;###autoload
 (define-derived-mode doom-docs-org-mode org-mode "Doom Docs"
   "A derivative of `org-mode' for Doom's documentation files.
@@ -479,6 +492,7 @@ This primes `org-mode' for reading."
 Keeps track of its own IDs in `doom-docs-dir' and toggles `doom-docs-mode' when
 `read-only-mode' is activated."
   :after-hook (visual-line-mode -1)
+  (font-lock-add-keywords nil doom-docs-org-font-lock-keywords)
   (let ((gc-cons-threshold most-positive-fixnum)
         (gc-cons-percentage 1.0))
     (require 'org-id)

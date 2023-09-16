@@ -218,7 +218,7 @@ Emacs):
 #+end_src
 
 #+begin_quote
- 📌 ~+lookup/in-docsets~ consults ~dash-docs-browser-func~ instead, which is
+ 󰐃 ~+lookup/in-docsets~ consults ~dash-docs-browser-func~ instead, which is
     already set to ~#'eww~ by default.
 #+end_quote
 
@@ -241,7 +241,7 @@ with Xwidgets support):
 
 * TODO Appendix
 #+begin_quote
- 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+ 󱌣 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
 #+end_quote
 
 ** Commands

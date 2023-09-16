@@ -112,7 +112,7 @@ java -jar /path/to/google-java-format-all-deps.jar
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** [[doom-module:+lsp]] features
@@ -154,7 +154,7 @@ According to [[https://github.com/mopemope/meghanada-emacs/]], you get:
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** [[doom-module:+lsp]]
@@ -178,5 +178,5 @@ Enable the [[doom-module::tools debugger +lsp]] module to get test runner suppor
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

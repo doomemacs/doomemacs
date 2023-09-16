@@ -33,7 +33,7 @@ keywords or text patterns at point, like ~true~ and ~false~, or ~public~,
 
 * TODO Usage
 #+begin_quote
-🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 For evil users: [[kbd:][[r]] and [[kbd:][]r]] will cycle back and forward (respectively) through
@@ -42,7 +42,7 @@ through them.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 To enable a set of items to cycle through globally:
@@ -73,5 +73,5 @@ described above.
 
 * Appendix
 #+begin_quote
-🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

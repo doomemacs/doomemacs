@@ -53,7 +53,7 @@ You can forcibly open the dashboard with ~M-x +doom-dashboard/open~.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** A custom banner
@@ -63,7 +63,7 @@ To use a custom image as your banner, change ~fancy-splash-image~:
 #+end_src
 
 #+begin_quote
- 📌 Doom will fall back to its ASCII banner in Terminal Emacs. To replace the
+ 󰐃 Doom will fall back to its ASCII banner in Terminal Emacs. To replace the
     ASCII banner, replace the ~doom-dashboard-widget-banner~ function in
     ~+doom-dashboard-functions~ with a function that inserts your new banner
     into the current file.
@@ -75,7 +75,7 @@ redraw. Add your own functions to operate on the buffer and potentially add
 whatever you like to Doom's splash screen.
 
 #+begin_quote
- 🚧 Keep in mind that inserting text from expensive sources, e.g. your org
+  Keep in mind that inserting text from expensive sources, e.g. your org
     agenda, will negate most of Doom's startup benefits.
 #+end_quote
 
@@ -113,5 +113,5 @@ or for a per-theme setting
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

@@ -31,7 +31,7 @@ This module adds file templates for blank files, powered by [[doom-package:yasni
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 File templates are automatically expanded when opening empty files who match one
@@ -47,13 +47,13 @@ A special command is available for inserting software licenses: ~M-x
 +file-templates/insert-license~.
 
 #+begin_quote
- 📌 Licenses with a ~-bp~ suffix are boilerplate templates; i.e. shorter
+ 󰐃 Licenses with a ~-bp~ suffix are boilerplate templates; i.e. shorter
     versions intended for comment headers in code files.
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Adding new or changing existing file templates
@@ -79,7 +79,7 @@ prefix and [[fn:+file-templates/insert-license]] will recognize them. E.g.
 
 * TODO Appendix
 #+begin_quote
- 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+ 󱌣 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
 #+end_quote
 
 ** API

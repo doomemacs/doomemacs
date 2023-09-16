@@ -46,7 +46,7 @@ status for files.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 The project bar can be opened using [[kbd:][SPC o p]].
@@ -58,7 +58,7 @@ The project bar can be opened using [[kbd:][SPC o p]].
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 The variable ~+treemacs-git-mode~ sets the type of git integration that treemacs
@@ -72,7 +72,7 @@ There are 3 possible values:
 3. ~'deferred~, same as extended, but highlights asynchronously.
 
 #+begin_quote
- 🚧 ~+treemacs-git-mode~ must be set before treemacs is loaded.
+ 󰐃 ~+treemacs-git-mode~ must be set before treemacs is loaded.
 #+end_quote
 
 * Troubleshooting
@@ -83,5 +83,5 @@ There are 3 possible values:
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

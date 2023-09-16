@@ -58,7 +58,7 @@ your system and in your =$PATH=. They also need dictionaries for your
 language(s).
 
 #+begin_quote
- 🚧 If you *are not* using [[doom-module:+flyspell]], you will need =aspell= (and a dictionary)
+  If you *are not* using [[doom-module:+flyspell]], you will need =aspell= (and a dictionary)
     installed whether or not you have [[doom-module:+hunspell]] or [[doom-module:+enchant]] enabled. This is
     because [[doom-package:spell-fu]] does not support generating the word list with anything
     other than =aspell= yet.
@@ -108,7 +108,7 @@ language(s).
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 When using [[doom-module:+everywhere]], spell checking is performed for as many major modes as
@@ -117,7 +117,7 @@ major modes.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 Dictionary is set by ~ispell-dictionary~ variable. Can be changed locally with
@@ -231,5 +231,5 @@ After the file is created, restart emacs and adding words should work.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

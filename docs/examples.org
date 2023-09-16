@@ -5,6 +5,12 @@
 #+subtitle: Samples of Emacs/Doom dotfiles, concepts, and sub-projects
 #+property: header-args:elisp :results pp
 
+#+begin_quote
+ 󰐃 Our documentation was designed to be read in Doom Emacs ([[kbd:][M-x doom/help]]) or
+    online at https://docs.doomemacs.org. Avoid reading it elsewhere (like
+    Github), where it will be rendered incorrectly.
+#+end_quote
+
 * Introduction
 Examples speak louder than technical explanations, so this file exists to house
 examples of Doom's (and Emacs') concepts, libraries, dotfiles, and more, for

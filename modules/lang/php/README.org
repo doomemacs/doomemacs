@@ -16,7 +16,7 @@ This module adds support for PHP 5.3+ (including PHP8) to Doom Emacs.
 - [[https://github.com/hlissner/doom-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote
- 💬 PHP was the first programming language I got paid to code in, back in the
+ 󰟶 PHP was the first programming language I got paid to code in, back in the
     Cretaceous period (2003). My sincerest apologies go out to all the
     programmers who inherited my earliest PHP work. I know you're out there,
     writhing in your straitjackets.
@@ -154,7 +154,7 @@ your =$PATH=.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** PHPUnit
@@ -193,7 +193,7 @@ These are all run via [[kbd:][M-x]] too.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Docker Compose
@@ -252,5 +252,5 @@ And add the following to your config:
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

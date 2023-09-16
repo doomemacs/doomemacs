@@ -34,7 +34,7 @@ This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://pro
   
 * TODO Usage
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Configuration
@@ -49,5 +49,5 @@ See [[https://github.com/hlissner/doom-emacs/issues?q=is%3Aissue+is%3Aopen+label
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

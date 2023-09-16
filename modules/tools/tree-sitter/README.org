@@ -7,7 +7,7 @@
 This module adds [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] support to Doom Emacs.
 
 #+begin_quote
- 💬 Tree sitter is a parser generator tool and an incremental parsing library.
+ 󰟶 Tree sitter is a parser generator tool and an incremental parsing library.
     It can build a concrete syntax tree for a source file and efficiently update
     the syntax tree as the source file is edited. This allows for features of
     the editor to become syntax aware.
@@ -47,7 +47,7 @@ out what you're missing.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Language support
@@ -63,7 +63,7 @@ Not all languages support all text objects (yet). [[https://github.com/nvim-tree
 object languages support]].
 
 #+begin_quote
- 🚧 Only languages with parsers in Emacs have text object support at the moment.
+  Only languages with parsers in Emacs have text object support at the moment.
 #+end_quote
 
 Currently text objects are bound to:
@@ -97,7 +97,7 @@ Currently keys are bound to:
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Rebind text objects
@@ -159,5 +159,5 @@ current key bound) or [[https://github.com/nvim-treesitter/nvim-treesitter-texto
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

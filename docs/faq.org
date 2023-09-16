@@ -5,6 +5,12 @@
 #+subtitle: Answers to common issues and questions
 #+startup:  nonum show2levels*
 
+#+begin_quote
+ 󰐃 Our documentation was designed to be read in Doom Emacs ([[kbd:][M-x doom/help]]) or
+    online at https://docs.doomemacs.org. Avoid reading it elsewhere (like
+    Github) where it will be rendered incorrectly.
+#+end_quote
+
 * General
 :PROPERTIES:
 :ID:       3c17177d-8ba9-4d1a-a279-b6dea21c8a9a
@@ -266,7 +272,7 @@ For example:
 #+end_src
 
 #+begin_quote
- 🚧 If you or Emacs can't find your font, use ~M-x describe-font~ to look them
+ 󰐃 If you or Emacs can't find your font, use ~M-x describe-font~ to look them
     up, or run ~$ fc-list~ to see all the available fonts on your system. *Font
     issues are /rarely/ Doom issues!*
 #+end_quote
@@ -618,7 +624,7 @@ keybinds to work:
 #+end_src
 
 #+begin_quote
- 📌 I use [C-left] because it is easier to type than "<C-left>", but they are
+ 󰐃 I use [C-left] because it is easier to type than "<C-left>", but they are
     equivalent; two different ways to refer to the same key.
 #+end_quote
 ** Recursive load error on startup
@@ -638,7 +644,7 @@ Then these are the three most common explanations:
 - *GNU* =tar= and/or =gzip= are not installed on your system.
 
   #+begin_quote
-   🚧 *Warning macOS and *BSD distro users:* you likely have BSD variants of
+    *Warning macOS and *BSD distro users:* you likely have BSD variants of
       =tar= and =gzip= installed by default. Emacs requires the GNU variants!
   #+end_quote
 
@@ -833,13 +839,13 @@ There's more about quoting [[https://emacsdocs.org/docs/elisp/Quoting][in the Em
 
 ** TODO How does Doom Emacs start up so quickly?
 #+begin_quote
- 🔨 *This post is a work in progress!* However, there's a post on our Discourse
+ 󱌣 *This post is a work in progress!* However, there's a post on our Discourse
     that outlines [[https://discourse.doomemacs.org/t/how-does-doom-start-up-so-quickly/163/1][some of our older techniques]].
 #+end_quote
 
 ** TODO How does Doom Emacs improve runtime performance?
 #+begin_quote
- 🔨 *This post is a work in progress!*
+ 󱌣 *This post is a work in progress!*
 #+end_quote
 
 ** Why does Doom not use dash, f, s, or similar libraries?
@@ -911,7 +917,7 @@ you, a combination of [[kbd:][o]] (swaps your cursor between the two ends of the
 and motion keys can adjust the ends of your selection.
 
 #+begin_quote
- 📌 There are also text objects for xml tags ([[kbd:][x]]), C-style function arguments
+ 󰐃 There are also text objects for xml tags ([[kbd:][x]]), C-style function arguments
     ([[kbd:][a]]), angle brackets, and single/double quotes.
 #+end_quote
 

@@ -61,12 +61,12 @@ clean up after itself and kill off buffers I mark as transient.
 
 * TODO Usage
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** ~set-popup-rule!~ and ~set-popup-rules!~
@@ -81,7 +81,7 @@ buffer's name. You'll find comprehensive documentation on the other keywords in
 ~set-popup-rule!~'s docstring ([[kbd:][SPC h f set-popup-rule!]]).
 
 #+begin_quote
- 📌 Popup rules end up in ~display-buffer-alist~, which instructs
+ 󰐃 Popup rules end up in ~display-buffer-alist~, which instructs
     ~display-buffer~ calls on how to set up windows for buffers that meet
     certain conditions. However, some plugins can avoid it entirely if they use
     ~set-buffer~ or ~switch-to-buffer~, which don't obey ~display-buffer-alist~.
@@ -128,7 +128,7 @@ By default, the mode-line is hidden in popups. To disable this, you can either:
 
 * TODO Appendix
 #+begin_quote
- 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+ 󱌣 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
 #+end_quote
 
 ** Commands

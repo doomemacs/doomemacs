@@ -53,7 +53,7 @@ $ rustup update --no-self-update
 To install and manage Rust on Windows, consult [[https://forge.rust-lang.org/infra/other-installation-methods.html][Rust's official documentation]].
 
 #+begin_quote
- 📌 Once installed, I recommended that you add Cargo's executable to your
+ 󰐃 Once installed, I recommended that you add Cargo's executable to your
     ~$PATH~, so that the Emacs utilities that depend on it -- or any tools
     installed through it -- can easily locate them (without any added
     configuration on your part).
@@ -73,7 +73,7 @@ To install and manage Rust on Windows, consult [[https://forge.rust-lang.org/inf
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** LSP support (rust-analyzer)
@@ -111,7 +111,7 @@ Enable [[doom-module::editor format +onsave]] to get formatting on save with
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Enabling eglot support for Rust
@@ -134,5 +134,5 @@ To fix this your project needs a =rustfmt.toml= with ~edition = "2018"~ in it.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

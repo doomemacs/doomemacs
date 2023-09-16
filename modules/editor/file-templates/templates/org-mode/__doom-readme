@@ -48,7 +48,7 @@ the purpose of the module and the features/technology(ies) it provides.
 # If this module has flags but you can't document them now, add a TODO to the
 # heading and use:
 #+begin_quote
- 🔨 This module has flags, but they aren't documented yet. [[doom-contrib-module:][Document them?]]
+ 󱌣 This module has flags, but they aren't documented yet. [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 ** Packages
@@ -66,7 +66,7 @@ the purpose of the module and the features/technology(ies) it provides.
 # If this module installs packages, but you can't document them now, add a TODO
 # to the heading and use:
 #+begin_quote
- 🔨 This module installs packages, but they aren't documented yet. [[doom-contrib-module:][Document
+ 󱌣 This module installs packages, but they aren't documented yet. [[doom-contrib-module:][Document
     them?]]
 #+end_quote
 
@@ -83,7 +83,7 @@ the purpose of the module and the features/technology(ies) it provides.
 # If this module contains hacks, but you can't document them now, add a TODO to
 # the heading and use:
 #+begin_quote
- 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+ 󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 ** TODO Changelog
@@ -122,7 +122,7 @@ This module requires:
 # If there are prerequisites but you can't document them yet, add TODO to the
 # heading and use:
 #+begin_quote
- 🔨 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
+ 󱌣 /No installation steps have been documented./ [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 * Usage
@@ -130,12 +130,12 @@ This module requires:
 
 # If this is left empty, add TODO to the heading and use:
 #+begin_quote
- 🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 # If this section has incomplete content, add TODO to the heading and use:
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 * TODO Configuration
@@ -144,12 +144,12 @@ This module requires:
 
 # If this is left empty, add TODO to the heading and use:
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 # If this section has incomplete content, add TODO to the heading and use:
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 * Troubleshooting
@@ -188,10 +188,10 @@ Answer
 
 # If this is left empty, add TODO to the heading and use:
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote
 
 # If this section has incomplete content, add TODO to the heading and use:
 #+begin_quote
- 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+ 󱌣 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
 #+end_quote

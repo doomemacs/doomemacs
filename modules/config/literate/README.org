@@ -32,13 +32,13 @@ This module only requires a =$DOOMDIR/config.org=, which will be tangled into
 =$DOOMDIR/config.el= when you run ~$ doom sync~.
 
 #+begin_quote
- 🚧 *Be careful!* Enabling this module will overwrite =$DOOMDIR/config.el=! If
+  *Be careful!* Enabling this module will overwrite =$DOOMDIR/config.el=! If
     you are only trying out the module, *back up this file first!*
 #+end_quote
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 - Automatically tangles =$DOOMDIR/config.org= to =$DOOMDIR/config.el= when
@@ -46,7 +46,7 @@ This module only requires a =$DOOMDIR/config.org=, which will be tangled into
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Change the location of config.org
@@ -120,5 +120,5 @@ your =$DOOMDIR=). This behavior can be disabled with:
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

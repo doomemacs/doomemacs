@@ -4,7 +4,7 @@
 #+since:    2.0.3
 
 #+begin_quote
- 🚧 *This module is deprecated.* gist.el has been abandoned and is generally
+  *This module is deprecated.* gist.el has been abandoned and is generally
     buggy. This may be replaced by a more general pastebin module that
     interfaces with various pastebin servers.
 #+end_quote
@@ -35,12 +35,12 @@ Adds the ability to manage, pull from, or push to your [[https://gist.github.com
 
 * TODO Usage
 #+begin_quote
-🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * TODO Configuration
 #+begin_quote
-🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -51,5 +51,5 @@ Adds the ability to manage, pull from, or push to your [[https://gist.github.com
 
 * TODO Appendix
 #+begin_quote
-🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

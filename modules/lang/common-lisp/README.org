@@ -39,7 +39,7 @@ This module requires [[http://www.sbcl.org/][SBCL]].
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 This module does not integrate with [[doom-module::tools lsp]]. Sly (and SLIME before it) is
@@ -67,7 +67,7 @@ Enable [[doom-module::editor format +onsave]] to format the buffer on save.
 
 * TODO Configuration
 #+begin_quote
- 🔨 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's configuration documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 If you don't want Sly to use SBCL, you can configure the variable
@@ -81,5 +81,5 @@ If you don't want Sly to use SBCL, you can configure the variable
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

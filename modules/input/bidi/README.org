@@ -67,7 +67,7 @@ right-to-left when ~+bidi-mode~ is on, add the following to your config:
 #+end_src
 
 #+begin_quote
- 🚧 Do not do this if you are using ~+bidi-global-mode~, it will mess up all of
+  Do not do this if you are using ~+bidi-global-mode~, it will mess up all of
     the buffers in Emacs that use English, including things like the =M-x=
     buffer.
 #+end_quote
@@ -95,7 +95,7 @@ Hebrew and Arabic characters. They are set by default to =DejaVu Sans=, since it
 has decent looking Hebrew and Arabic character support.
 
 #+begin_quote
- 📌 If you are writing in an Arabic-derived script, such as Persian, Urdu, or
+ 󰐃 If you are writing in an Arabic-derived script, such as Persian, Urdu, or
     Pashto, you may want to change ~+bidi-arabic-font~ to one specific to your
     language, especially if you want your script to be written in the Nastaliq
     style.
@@ -145,5 +145,5 @@ If Emacs is having trouble properly displaying a Nastaliq font, try using one of
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

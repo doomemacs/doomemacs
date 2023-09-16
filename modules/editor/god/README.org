@@ -4,7 +4,7 @@
 #+since:    21.12.0
 
 #+begin_quote
- 🚧 *This module is deprecated.* ~god-mode~ is EOL and no longer maintained.
+  *This module is deprecated.* ~god-mode~ is EOL and no longer maintained.
 #+end_quote
 
 * Description :unfold:
@@ -35,12 +35,12 @@ mode.
 
 * Usage
 #+begin_quote
-🔨 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Configuration
 #+begin_quote
-🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -51,5 +51,5 @@ mode.
 
 * Appendix
 #+begin_quote
-🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

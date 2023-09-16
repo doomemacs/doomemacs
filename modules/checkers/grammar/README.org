@@ -41,7 +41,7 @@ will need to set ~langtool-language-tool-jar~ to its location.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Language Tool
@@ -49,7 +49,7 @@ will need to set ~langtool-language-tool-jar~ to its location.
 stylistic issues in your writing. This requires Java 1.8+.
 
 #+begin_quote
- 🚧 This requires Java 1.8+
+  This requires Java 1.8+
 #+end_quote
 
 *** Commands
@@ -61,7 +61,7 @@ This minor mode highlights weasel words, duplication and passive voice.
 
 * TODO Configuration
 #+begin_quote
- 🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -72,5 +72,5 @@ This minor mode highlights weasel words, duplication and passive voice.
 
 * TODO Appendix
 #+begin_quote
- 🔨 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
+ 󱌣 This module has no appendix yet. [[doom-contrib-module:][Write one?]]
 #+end_quote

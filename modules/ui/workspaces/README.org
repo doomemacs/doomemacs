@@ -29,7 +29,7 @@ for manipulating them.
 
 ** TODO Hacks
 #+begin_quote
- 🔨 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
+ 󱌣 This module's hacks haven't been documented yet. [[doom-contrib-module:][Document them?]]
 #+end_quote
 
 ** TODO Changelog
@@ -43,7 +43,7 @@ for manipulating them.
 
 * TODO Usage
 #+begin_quote
- 🔨 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
+ 󱌣 /This module's usage documentation is incomplete./ [[doom-contrib-module:][Complete it?]]
 #+end_quote
 
 ** Isolated buffer-list
@@ -91,7 +91,7 @@ in [[../../editor/evil/+commands.el][config/default/+evil-commands.el]]).
 
 * TODO Configuration
 #+begin_quote
-🔨 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
+ 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
 * Troubleshooting
@@ -102,7 +102,7 @@ in [[../../editor/evil/+commands.el][config/default/+evil-commands.el]]).
 
 * TODO Appendix
 #+begin_quote
- 🔨 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
+ 󱌣 /This module's appendix is incomplete./ [[doom-contrib-module:][Write more?]]
 #+end_quote
 
 ** API
