@@ -72,7 +72,7 @@ There are 3 possible values:
 3. ~'deferred~, same as extended, but highlights asynchronously.
 
 #+begin_quote
- 󰐃 ~+treemacs-git-mode~ must be set before treemacs is loaded.
+  ~+treemacs-git-mode~ must be set before treemacs is loaded.
 #+end_quote
 
 * Troubleshooting

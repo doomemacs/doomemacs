@@ -61,7 +61,7 @@ This module requires ghostscript and a latex compiler. These are provided by the
 =texlive= bundle, available through many OS package managers.
 
 #+begin_quote
- 󰐃 Ghostscript <= 9.27 is [[/auctex/manual/preview-latex/No-images-are-displayed-with-gs-9_002e27-and-earlier.html][reportedly buggy]] and doesn't work with auctex's math
+  Ghostscript <= 9.27 is [[/auctex/manual/preview-latex/No-images-are-displayed-with-gs-9_002e27-and-earlier.html][reportedly buggy]] and doesn't work with auctex's math
     previews. (You can check you ghostscript version with ~$ gs --version~.)
     Most package managers already have newer versions, but if not you might have
     to build gs from source.

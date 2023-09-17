@@ -119,7 +119,7 @@ There are several ways to manually install the module:
    #+end_src
 
    #+begin_quote
-    󰐃 Emacs will hang during the compilation. It may take a while.
+     Emacs will hang during the compilation. It may take a while.
    #+end_quote
 
 2. You can compile and install the module yourself. Go to the vterm installation

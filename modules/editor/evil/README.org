@@ -193,7 +193,7 @@ If you prefer the old behavior, it can be reversed with:
    are bound to [[kbd:][C-c]] and [[kbd:][C-c l]] by default.
 
 #+begin_quote
- 󰐃 Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
+  Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
     non-evil sessions.
 #+end_quote
 
