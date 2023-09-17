@@ -73,4 +73,4 @@ Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
     (after! ligature
        (dolist (mode (ensure-list modes))
          (setq ligature-ignored-major-modes (delq mode ligature-ignored-major-modes)))
-       (ligature-set-ligatures (ensure-list modes) font-ligatures))))
+       (ligature-set-ligatures (ensure-list modes) ligatures))))
