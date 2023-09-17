@@ -10,5 +10,5 @@
   (package! dirvish :pin "4fe9c00894304e99aca22ae4b6b656fe94b8f927"))
 (when (and (modulep! +icons)
            (not (modulep! +dirvish)))
-  (package! nerd-icons-dired :pin "b7605208215194fb97da703dff8c1a71738a6533"))
+  (package! nerd-icons-dired :pin "4a068884bf86647d242c3adc8320cd603e15dac3"))
 (package! fd-dired :pin "458464771bb220b6eb87ccfd4c985c436e57dc7e")
