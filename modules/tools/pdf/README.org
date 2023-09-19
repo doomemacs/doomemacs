@@ -42,6 +42,16 @@ This module requires the =epdfinfo= program. Unless you're on Windows, the
 pdf-tools-install~ command. See the next section for instructions on how to
 build the =epdfinfo= program on Windows.
 
+Some Linux distributions package [[doom-package:pdf-tools]] with a prebuilt
+=epdfinfo= program.
+- NixOS (home-manager):
+  #+begin_src nix
+  programs.emacs = {
+    enable = true;
+    extraPackages = epkgs: [ epkgs.pdf-tools ];
+  };
+  #+end_src
+
 ** Building =epdfinfo= on Windows
 1. [[https://www.msys2.org/][Install MSYS2]] and update the package database and core packages using the
    instructions provided.
