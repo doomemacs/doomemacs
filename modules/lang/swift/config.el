@@ -3,6 +3,8 @@
 (after! swift-mode
   (set-repl-handler! 'swift-mode #'run-swift)
 
+  (when (modulep! +lsp)
+    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append))
   (when (modulep! +tree-sitter)
     (add-hook 'swift-mode-local-vars-hook #'tree-sitter! 'append)))
 
