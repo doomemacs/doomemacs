@@ -42,6 +42,7 @@
 
 (use-package! lsp-dart
   :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :defer t
   :config
   (map! :map dart-mode-map
