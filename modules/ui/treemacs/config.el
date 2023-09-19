@@ -80,4 +80,5 @@ This must be set before `treemacs' has loaded.")
 
 (use-package! lsp-treemacs
   :when (modulep! +lsp)
+  :unless (modulep! :tools lsp +eglot)
   :after (treemacs lsp))
