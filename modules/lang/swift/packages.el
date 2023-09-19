@@ -3,7 +3,7 @@
 
 (package! swift-mode :pin "1244ee48de1895d33f55fed81fc90acda0c901f1")
 
-(if (modulep! +lsp)
+(if (and (modulep! +lsp) (modulep! :tools lsp +eglot))
     (package! lsp-sourcekit :pin "468c641e35877e4e843f6b7c52a35937de562995")
   (when (modulep! :completion company)
     (package! company-sourcekit :pin "a1860ad4dd3a542acd2fa0dfac2a388cbdf4af0c"))
