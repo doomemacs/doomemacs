@@ -548,12 +548,12 @@ relative to `org-directory', unless it is an absolute path."
      "var"
      :follow (-call-interactively #'helpful-variable)
      :activate-func #'+org-link--var-link-activate-fn
-     :face 'org-code)
+     :face '(font-lock-variable-name-face underline))
     (org-link-set-parameters
      "fn"
      :follow (-call-interactively #'helpful-callable)
      :activate-func #'+org-link--fn-link-activate-fn
-     :face 'org-code)
+     :face '(font-lock-function-name-face underline))
     (org-link-set-parameters
      "face"
      :follow (-call-interactively #'describe-face)
@@ -569,13 +569,11 @@ relative to `org-directory', unless it is an absolute path."
      "doom-package"
      :follow #'+org-link--doom-package-link-follow-fn
      :activate-func #'+org-link--doom-package-link-activate-fn
-     :face (lambda (_) '(:inherit org-priority :slant italic))
      :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-module"
      :follow #'+org-link--doom-module-link-follow-fn
      :activate-func #'+org-link--doom-module-link-activate-fn
-     :face #'+org-link--doom-module-link-face-fn
      :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-executable"
@@ -614,7 +612,7 @@ relative to `org-directory', unless it is an absolute path."
                 (format "https://github.com/%s"
                         (string-remove-prefix
                          "@" (+org-link-read-desc-at-point link)))))
-     :face (lambda (_) 'org-priority))
+     :face 'org-priority)
     (org-link-set-parameters
      "doom-changelog"
      :follow (lambda (link)
