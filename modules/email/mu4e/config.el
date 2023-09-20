@@ -42,7 +42,8 @@
                "read-patch-directory" "replace-first-line-matching"
                "request-contacts-maybe" "rfc822-phrase-type" "start" "stop"
                "temp-window" "update-contacts" "update-mail-and-index-real"
-               "update-mail-mode" "update-sentinel-func"))
+               "update-mail-mode" "update-sentinel-func" "view-gather-mime-parts"
+               "view-open-file" "view-mime-part-to-temp-file"))
       (defalias (intern (concat "mu4e--" transferable-suffix))
         (intern (concat "mu4e~" transferable-suffix))
         "Alias to provide the API of mu4e 1.8 (mu4e~ ⟶ mu4e--).")
@@ -272,7 +273,7 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
                                  (lambda (part)
                                    (when (assoc "attachment" (cdr part))
                                      part))
-                                 (mu4e~view-gather-mime-parts))))
+                                 (mu4e--view-gather-mime-parts))))
                (files (+mu4e-part-selectors parts)))
           (cdr (assoc (completing-read "Select attachment: " (mapcar #'car files)) files))
         (user-error (mu4e-format "No attached files found"))))
@@ -280,13 +281,13 @@ Acts like a singular `mu4e-view-save-attachments', without the saving."
     (defun +mu4e-view-open-attachment ()
       "Select an attachment, and open it."
       (interactive)
-      (mu4e~view-open-file
-       (mu4e~view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
+      (mu4e--view-open-file
+       (mu4e--view-mime-part-to-temp-file (cdr (+mu4e-view-select-attachment)))))
 
     (defun +mu4e-view-select-mime-part-action ()
       "Select a MIME part, and perform an action on it."
       (interactive)
-      (let ((labeledparts (+mu4e-part-selectors (mu4e~view-gather-mime-parts))))
+      (let ((labeledparts (+mu4e-part-selectors (mu4e--view-gather-mime-parts))))
         (if labeledparts
             (mu4e-view-mime-part-action
              (cadr (assoc (completing-read "Select part: " (mapcar #'car labeledparts))
@@ -361,13 +362,14 @@ This should already be the case yet it does not always seem to be."
 
   (defvar +mu4e-main-bullet "⚫"
     "Prefix to use instead of \"	*\" in the mu4e main view.
-This is enacted by `+mu4e~main-action-str-prettier-a' and
-`+mu4e~main-keyval-str-prettier-a'.")
+This is enacted by `+mu4e--main-action-str-prettier-a' and
+`+mu4e--main-keyval-str-prettier-a'.")
 
-  (advice-add #'mu4e--key-val :filter-return #'+mu4e~main-keyval-str-prettier-a)
-  (advice-add #'mu4e--main-action-str :override #'+mu4e~main-action-str-prettier-a)
+  (advice-add #'mu4e--key-val :filter-return #'+mu4e--main-keyval-str-prettier-a)
+  (advice-add #'mu4e--main-action-str :override #'+mu4e--main-action-str-prettier-a)
   (when (modulep! :editor evil)
-    ;; As +mu4e~main-action-str-prettier replaces [k]ey with key q]uit should become quit
+    ;; As +mu4e--main-action-str-prettier replaces [k]ey with key [q]uit should
+    ;; become quit
     (setq evil-collection-mu4e-end-region-misc "quit"))
 
   ;; process lock control
