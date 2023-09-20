@@ -567,7 +567,7 @@ relative to `org-directory', unless it is an absolute path."
      :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-package"
-     :follow #'+org-link-follow-doom-package-fn
+     :follow #'+org-link--doom-package-link-follow-fn
      :activate-func #'+org-link--doom-package-link-activate-fn
      :face (lambda (_) '(:inherit org-priority :slant italic))
      :help-echo #'+org-link-doom--help-echo-from-textprop)

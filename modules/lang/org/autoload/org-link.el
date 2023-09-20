@@ -245,7 +245,7 @@ exist, and `org-link' otherwise."
               " " package))))))
 
 ;;;###autoload
-(defun +org-link-follow-doom-package-fn (pkg _prefixarg)
+(defun +org-link--doom-package-link-follow-fn (pkg _prefixarg)
   "TODO"
   (doom/describe-package (intern-soft pkg)))
 
