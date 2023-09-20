@@ -3,7 +3,7 @@
 ;;
 ;;; Helpers
 
-;; Lifted from ledger
+;; Lifted from ledger-mode
 (defconst +beancount--payee-any-status-regex
   "^[0-9]+[-/][-/.=0-9]+\\(\\s-+\\*\\)?\\(\\s-+(.*?)\\)?\\s-+\\(.+?\\)\\s-*\\(;\\|$\\)")
 
@@ -111,9 +111,9 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
         (let ((inhibit-field-text-motion t))
           (sort-subr
            reverse
-           '+beancount--navigate-next-xact
-           '+beancount--navigate-end-of-xact
-           '+beancount--sort-startkey))))
+           #'+beancount--navigate-next-xact
+           #'+beancount--navigate-end-of-xact
+           #'+beancount--sort-startkey))))
     (goto-char (point-min))
     (re-search-forward (regexp-quote target-xact))
     (goto-char (+ (match-beginning 0) point-delta))))
@@ -121,14 +121,16 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
 (defvar compilation-read-command)
 ;;;###autoload
 (defun +beancount/balance ()
-  "Run 'bean-report bal'."
+  "Display a balance report with bean-report (bean-report bal)."
   (interactive)
   (let (compilation-read-command)
     (beancount--run "bean-report" buffer-file-name "bal")))
 
 ;;;###autoload
 (defun +beancount/clone-transaction ()
-  "TODO"
+  "Clones a transaction from (and to the bottom of) the current ledger buffer.
+
+Updates the date to today."
   (interactive)
   (save-restriction
     (widen)
@@ -144,8 +146,9 @@ If REVERSE (the prefix arg) is non-nil, sort the transactions in reverst order."
 
 ;;;###autoload
 (defun +beancount/clone-this-transaction (&optional arg)
-  "Copy the current transaction to the bottom of the ledger.
-Updates the date to today"
+  "Clones the transaction at point to the bottom of the ledger.
+
+Updates the date to today."
   (interactive "P")
   (if (and (not arg) (looking-at-p "^$"))
       (call-interactively #'+beancount/clone-transaction)
