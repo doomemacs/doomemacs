@@ -182,9 +182,18 @@ Updates the date to today."
 
 ;;;###autoload
 (defun +beancount/previous-transaction (&optional count)
-  "Jump to the start of current or previous COUNT-th transaction."
+  "Jump to the start of current or previous COUNT-th transaction.
+
+Return non-nil if successful."
   (interactive "p")
-  (re-search-backward
-   (concat beancount-timestamped-directive-regexp
-           "\\|" beancount-transaction-regexp)
-   nil t))
+  (let ((pos (point)))
+    (condition-case e
+        (progn
+          ;; Ensures "jump to top of current transaction" behavior that is
+          ;; common for jump-to-previous commands like this in other Emacs modes
+          ;; (like org-mode).
+          (or (bolp) (goto-char (eol)))
+          (re-search-backward
+           (concat beancount-timestamped-directive-regexp
+                   "\\|" beancount-transaction-regexp)))
+      ('search-failed (goto-char pos) nil))))
