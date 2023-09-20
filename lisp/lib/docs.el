@@ -372,7 +372,7 @@ depending.")
 (defvar doom-docs--cookies nil)
 ;;;###autoload
 (define-minor-mode doom-docs-mode
-  "Hides metadata, tags, & drawers and activates all org-mode pretiffications.
+  "Hides metadata, tags, & drawers and activates all org-mode prettifications.
 This primes `org-mode' for reading."
   :lighter " Doom Docs"
   :after-hook (org-restart-font-lock)
@@ -386,7 +386,7 @@ This primes `org-mode' for reading."
           (if doom-docs-mode
               (set (make-local-variable sym) t)
             (kill-local-variable sym)))
-        `(org-pretty-entities
+        '(org-pretty-entities
           org-hide-emphasis-markers
           org-hide-macro-markers))
   (when doom-docs-mode
