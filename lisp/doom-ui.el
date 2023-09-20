@@ -529,7 +529,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (when-let (font (cl-find-if fn doom-symbol-fallback-font-families))
         (set-fontset-font t 'symbol font))
       (when-let (font (cl-find-if fn doom-emoji-fallback-font-families))
-        (set-fontset-font t 'unicode font))
+        (set-fontset-font t 'emoji font))
       (when doom-unicode-font
         (set-fontset-font t 'unicode doom-unicode-font)))
     ;; Nerd Fonts use these Private Use Areas
