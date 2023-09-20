@@ -172,12 +172,19 @@ Updates the date to today."
 (defun +beancount/next-transaction (&optional count)
   "Jump to the start of the next COUNT-th transaction."
   (interactive "p")
-  (dotimes (_ (or count 1))
-    (beancount-goto-next-transaction)))
+  (let ((beancount-transaction-regexp
+         ;; Don't skip over timestamped directives (like balance or event
+         ;; declarations).
+         (concat beancount-timestamped-directive-regexp
+                 "\\|" beancount-transaction-regexp)))
+    (dotimes (_ (or count 1))
+      (beancount-goto-next-transaction))))
 
 ;;;###autoload
 (defun +beancount/previous-transaction (&optional count)
   "Jump to the start of current or previous COUNT-th transaction."
   (interactive "p")
   (re-search-backward
-   beancount-transaction-regexp nil t (or count 1)))
+   (concat beancount-timestamped-directive-regexp
+           "\\|" beancount-transaction-regexp)
+   nil t))
