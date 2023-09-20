@@ -573,7 +573,7 @@ relative to `org-directory', unless it is an absolute path."
      :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
      "doom-module"
-     :follow #'+org-link-follow-doom-module-fn
+     :follow #'+org-link--doom-module-link-follow-fn
      :activate-func #'+org-link--doom-module-link-activate-fn
      :face #'+org-link--doom-module-link-face-fn
      :help-echo #'+org-link-doom--help-echo-from-textprop)
