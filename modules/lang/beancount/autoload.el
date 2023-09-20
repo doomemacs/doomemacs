@@ -169,6 +169,40 @@ Updates the date to today."
         (insert transaction)))))
 
 ;;;###autoload
+(defun +beancount/occur (account &optional disable?)
+  "Hide transactions that don't involve ACCOUNT.
+
+If DISABLE? (universal arg), reveal hidden accounts without prompting."
+  (interactive
+   (list (unless current-prefix-arg
+           ;; REVIEW: Could/should this be generalized to search for arbitrary
+           ;;   regexps, if desired?
+           (completing-read "Account: " #'beancount-account-completion-table))
+         current-prefix-arg))
+  (with-silent-modifications
+    (save-excursion
+      (setq header-line-format nil)
+      ;; TODO: Namespace these text-properties, in case of conflicts
+      (remove-text-properties (point-min) (point-max) '(invisible nil display nil))
+      (unless disable?
+        ;; TODO: Prettier header-line display
+        (setq header-line-format `("" "Filtering by account: " ,account))
+        (let ((start (point-min))
+              (placeholder (propertize "[...]\n" 'face 'shadow)))
+          (goto-char start)
+          (while (re-search-forward (concat "\\_<" (regexp-quote account) "\\_>") nil t)
+            (save-excursion
+              (seq-let (beg end) (beancount-find-transaction-extents (point))
+                ;; TODO: Highlight entry (ala org-occur)
+                (if (= beg end)
+                    (setq end (save-excursion (goto-char end) (1+ (eol)))))
+                (put-text-property start beg 'invisible t)
+                (put-text-property start beg 'display placeholder)
+                (setq start end))))
+          (put-text-property start (point-max) 'invisible t)
+          (put-text-property start (point-max) 'display placeholder))))))
+
+;;;###autoload
 (defun +beancount/next-transaction (&optional count)
   "Jump to the start of the next COUNT-th transaction."
   (interactive "p")

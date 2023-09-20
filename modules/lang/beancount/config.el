@@ -25,6 +25,7 @@
         :localleader
         "b" #'+beancount/balance
         "c" #'beancount-check
+        "s" #'+beancount/occur
         "l" #'beancount-linked
         "q" #'beancount-query
         "x" #'beancount-context
