@@ -42,8 +42,10 @@ This is controlled by `+format-on-save-disabled-modes'."
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
 
-(when (modulep! +onsave)
-  (after! apheleia-core
+(after! apheleia-core
+  (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
+
+  (when (modulep! +onsave)
     (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h)))
 
 
