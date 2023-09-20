@@ -36,7 +36,7 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-unicode-font (font-spec :family "Symbols Nerd Font Mono")
+(defvar doom-unicode-font nil
   "Fallback font for Unicode glyphs.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
@@ -531,7 +531,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (when-let (font (cl-find-if fn doom-emoji-fallback-font-families))
         (set-fontset-font t 'unicode font))
       (when doom-unicode-font
-        (set-fontset-font t 'unicode doom-unicode-font))))
+        (set-fontset-font t 'unicode doom-unicode-font)))
+    ;; Nerd Fonts use these Private Use Areas
+    (dolist (range '((#xe000 . #xf8ff) (#xf0000 . #xfffff)))
+      (set-fontset-font t range "Symbols Nerd Font Mono")))
   ;; Users should inject their own font logic in `after-setting-font-hook'
   (run-hooks 'after-setting-font-hook))
 
