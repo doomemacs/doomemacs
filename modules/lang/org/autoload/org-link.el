@@ -124,7 +124,7 @@ exist, and `org-link' otherwise."
             fn)))))
 
 ;;;###autoload
-(defun +org-link--face-link-activate-face (start end face _bracketed-p)
+(defun +org-link--face-link-activate-fn (start end face _bracketed-p)
   (when buffer-read-only
     (add-text-properties
      start end
@@ -156,7 +156,7 @@ exist, and `org-link' otherwise."
     (concat prefix (and prefix " ") key-text)))
 
 ;;;###autoload
-(defun +org-link--command-link-activate-command (start end command _bracketed-p)
+(defun +org-link--command-link-activate-fn (start end command _bracketed-p)
   (when buffer-read-only
     (add-text-properties
      start end (list 'display (+org-link--command-keys command)))))

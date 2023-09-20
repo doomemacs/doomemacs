@@ -557,12 +557,12 @@ relative to `org-directory', unless it is an absolute path."
     (org-link-set-parameters
      "face"
      :follow (-call-interactively #'describe-face)
-     :activate-func #'+org-link--face-link-activate-face
+     :activate-func #'+org-link--face-link-activate-fn
      :face '(font-lock-type-face underline))
     (org-link-set-parameters
      "cmd"
      :follow (-call-interactively #'describe-command)
-     :activate-func #'+org-link--command-link-activate-command
+     :activate-func #'+org-link--command-link-activate-fn
      :face 'help-key-binding
      :help-echo #'+org-link-doom--help-echo-from-textprop)
     (org-link-set-parameters
