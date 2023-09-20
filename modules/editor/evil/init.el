@@ -43,12 +43,13 @@
       indent
       image
       kotlin-mode
+      lispy
       outline
       replace
       shortdoc
       simple
       slime
-      lispy)
+      tab-bar)
     "A list of `evil-collection' modules to ignore. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
