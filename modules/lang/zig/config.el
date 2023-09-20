@@ -21,12 +21,13 @@
 
   (when (and (modulep! :checkers syntax)
              (not (modulep! :checkers syntax +flymake)))
-    (flycheck-define-checker zig
-      "A zig syntax checker using zig's `ast-check` command."
-      :command ("zig" "ast-check" (eval (buffer-file-name)))
-      :error-patterns
-      ((error line-start (file-name) ":" line ":" column ": error: " (message) line-end))
-      :modes zig-mode)
+    (eval '(flycheck-define-checker zig
+             "A zig syntax checker using zig's `ast-check` command."
+             :command ("zig" "ast-check" (eval (buffer-file-name)))
+             :error-patterns
+             ((error line-start (file-name) ":" line ":" column ": error: " (message) line-end))
+             :modes zig-mode)
+          t)
     (add-to-list 'flycheck-checkers 'zig))
 
   (map! :localleader
