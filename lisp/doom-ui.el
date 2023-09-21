@@ -39,9 +39,7 @@ An omitted font size means to inherit `doom-font''s size.")
 (defvar doom-unicode-font nil
   "Fallback font for Unicode glyphs.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
-`doom-font' for examples.
-
-The defaults on macOS and Linux are Apple Color Emoji and Symbola, respectively.
+`doom-font' for examples. Emacs defaults to Symbola.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!")

@@ -248,8 +248,8 @@ Doom exposes a couple variables for setting fonts. They are:
 - [[var:doom-variable-pitch-font]]: used for non-monospace fonts (e.g. when using
   variable-pitch-mode or mixed-pitch-mode). Popular for text modes, like Org or
   Markdown.
-- [[var:doom-unicode-font]]: used for rendering unicode glyphs. This is ~Symbola~ by
-  default. It is ignored if the [[doom-module::ui unicode]] module is enabled.
+- [[var:doom-unicode-font]]: used for rendering unicode glyphs. Emacs defaults to
+  Symbola. It is ignored if the [[doom-module::ui unicode]] module is enabled.
 - [[var:doom-serif-font]]: the sans-serif font to use wherever the [[face:fixed-pitch-serif]]
   face is used.
 - [[var:doom-big-font]]: the large font to use when [[fn:doom-big-font-mode]] is active.
