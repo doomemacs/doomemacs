@@ -481,7 +481,9 @@ relative to `org-directory', unless it is an absolute path."
 
   ;; Autoload all these commands that org-attach doesn't autoload itself
   (use-package! org-attach
-    :commands (org-attach-new
+    :commands (org-attach-delete-one
+               org-attach-delete-all
+               org-attach-new
                org-attach-open
                org-attach-open-in-emacs
                org-attach-reveal-in-emacs
