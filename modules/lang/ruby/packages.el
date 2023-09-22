@@ -3,16 +3,16 @@
 
 ;; Major modes
 (package! ruby-mode :built-in t)
-(package! yard-mode :pin "ef3426ff55b6e91d581c8da12f5f64855d932527")
+(package! yard-mode :pin "de1701753a64544c3376b015805f3661136d8038")
 
 ;; REPL
-(package! inf-ruby :pin "6f1df882ab319758af43877fa20465f6566efbf3")
+(package! inf-ruby :pin "03475ac1cca410ee63a523f5c63f859cfafe1aeb")
 (when (modulep! :completion company)
   (package! company-inf-ruby :pin "fe3e4863bc971fbb81edad447efad5795ead1b17"))
 
 ;; Programming environment
 (package! rubocop :pin "f5fd18aa810c3d3269188cbbd731ddc09006f8f5")
-(package! robe :pin "b9d5ab549f73c5587415f538303fa76e0833354d")
+(package! robe :pin "912ae2ba1f467bd55b2da64bfec9db3f8a723916")
 
 ;; Project tools
 (package! bundler :pin "43efb6be4ed118b06d787ce7fbcffd68a31732a7")
@@ -27,7 +27,7 @@
   (package! chruby :pin "42bc6d521f832eca8e2ba210f30d03ad5529788f"))
 
 ;; Testing frameworks
-(package! rspec-mode :pin "62853a428b416e6a5fd3d8f57ff83a1798188a3f")
+(package! rspec-mode :pin "29df3d081c6a1cbdf840cd13d45ea1c100c5bbaa")
 (package! minitest :pin "ddd152c990a528ad09a696bfad23afa4330ea4d7")
 
 ;; Rails
