@@ -229,8 +229,8 @@ kind!
 [package-management]: docs/getting_started.org#package-management
 [bin/doom]: docs/getting_started.org#the-bindoom-utility
 [common-mistakes]: docs/getting_started.org#common-mistakes-when-configuring-doom-emacs
-[change-theme]: docs/faq.org#how-do-i-change-the-theme
-[change-font]: docs/faq.org#how-do-i-change-the-fonts
+[change-theme]: docs/faq.org#change-customize-or-make-themes
+[change-font]: docs/faq.org#change-my-fonts
 [modules]: docs/modules.org
 [popup-system]: modules/ui/popup/README.org
 [screenshots]: https://github.com/doomemacs/doomemacs/tree/screenshots#emacsd-screenshots
