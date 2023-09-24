@@ -32,10 +32,14 @@
   (doom-project-find-file org-directory))
 
 ;;;###autoload
-(defun +default/find-file-under-here ()
-  "Perform a recursive file search from the current directory."
-  (interactive)
-  (doom-project-find-file default-directory))
+(defun +default/find-file-under-here (&optional prefix)
+  "Perform a recursive file search from the current directory.
+Prompt for directory if PREFIX."
+  (interactive "P")
+  (let ((dir (if prefix
+                 (read-directory-name "Directory: ")
+               default-directory)))
+    (doom-project-find-file dir)))
 
 ;;;###autoload
 (defun +default/discover-projects (arg)
