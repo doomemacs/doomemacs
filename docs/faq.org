@@ -248,6 +248,8 @@ Doom exposes a couple variables for setting fonts. They are:
 - [[var:doom-variable-pitch-font]]: used for non-monospace fonts (e.g. when using
   variable-pitch-mode or mixed-pitch-mode). Popular for text modes, like Org or
   Markdown.
+- [[var:doom-emoji-font]]: used for rendering emoji. Only needed if you want to use
+  a font other than your operating system’s default.
 - [[var:doom-symbol-font]]: used for rendering symbols.
 - [[var:doom-serif-font]]: the sans-serif font to use wherever the [[face:fixed-pitch-serif]]
   face is used.
