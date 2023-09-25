@@ -120,7 +120,7 @@ were followed."
       (setq-local evil-command-window-execute-fn execute-fn)
       (setq-local evil-command-window-cmd-key cmd-key)
       (evil-command-window-mode)
-      (evil-command-window-insert-commands hist)))
+      (evil--command-window-insert-commands hist)))
 
   (defadvice! +popup--evil-command-window-execute-a ()
     "Execute the command under the cursor in the appropriate buffer, rather than
