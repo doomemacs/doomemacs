@@ -54,17 +54,21 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!")
 
-(defvar doom-emoji-fallback-font-families
+(defconst doom-emoji-fallback-font-families
   '("Apple Color Emoji"
     "Segoe UI Emoji"
     "Noto Color Emoji"
     "Noto Emoji")
-  "A list of fallback font families to use for emojis.")
+  "A list of fallback font families to use for emojis.
+These are platform-specific fallbacks for internal use. If you
+want to change your emoji font, use `doom-emoji-font'.")
 
-(defvar doom-symbol-fallback-font-families
+(defconst doom-symbol-fallback-font-families
   '("Segoe UI Symbol"
     "Apple Symbols")
-  "A list of fallback font families for general symbol glyphs.")
+  "A list of fallback font families for general symbol glyphs.
+These are platform-specific fallbacks for internal use. If you
+want to change your symbol font, use `doom-symbol-font'.")
 
 
 ;;
