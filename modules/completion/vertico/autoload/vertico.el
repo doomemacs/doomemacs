@@ -137,26 +137,6 @@ Supports exporting consult-grep to wgrep, file to wdeired, and consult-location 
         (+vertico/embark-preview)
       (user-error (vertico-directory-enter)))))
 
-(defvar +vertico/find-file-in--history nil)
-;;;###autoload
-(defun +vertico/find-file-in (&optional dir initial)
-  "Jump to file under DIR (recursive).
-If INITIAL is non-nil, use as initial input."
-  (interactive)
-  (require 'consult)
-  (let* ((default-directory (or dir default-directory))
-         (prompt-dir (consult--directory-prompt "Find" default-directory))
-         (cmd (split-string-and-unquote +vertico-consult-fd-args " ")))
-    (find-file
-     (consult--read
-      (split-string (cdr (apply #'doom-call-process cmd)) "\n" t)
-      :prompt default-directory
-      :sort nil
-      :initial (if initial (shell-quote-argument initial))
-      :add-history (thing-at-point 'filename)
-      :category 'file
-      :history '(:input +vertico/find-file-in--history)))))
-
 ;;;###autoload
 (defun +vertico/jump-list (jump)
   "Go to an entry in evil's (or better-jumper's) jumplist."
@@ -229,27 +209,10 @@ targets."
                    (not (string-suffix-p "-argument" (cdr binding))))))))
 
 ;;;###autoload
-(defun +vertico--consult--fd-make-builder ()
-  (let ((cmd (split-string-and-unquote +vertico-consult-fd-args)))
-    (lambda (input)
-      (pcase-let* ((`(,arg . ,opts) (consult--command-split input))
-                   (`(,re . ,hl) (funcall consult--regexp-compiler
-                                          arg 'extended t)))
-        (when re
-          (cons (append cmd
-                        (list (consult--join-regexps re 'extended))
-                        opts)
-                hl))))))
-
-(autoload #'consult--directory-prompt "consult")
-;;;###autoload
-(defun +vertico/consult-fd (&optional dir initial)
+(defun +vertico/consult-fd-or-find (&optional dir initial)
   (interactive "P")
   (if doom-projectile-fd-binary
-      (pcase-let* ((`(,prompt ,paths ,dir) (consult--directory-prompt "Fd" dir))
-                   (default-directory dir)
-                   (builder (consult--find-make-builder paths)))
-        (find-file (consult--find prompt builder initial)))
+      (consult-fd dir initial)
     (consult-find dir initial)))
 
 ;;;###autoload

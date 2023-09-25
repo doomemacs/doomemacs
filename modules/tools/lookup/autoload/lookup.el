@@ -283,7 +283,7 @@ otherwise falling back to ffap.el (find-file-at-point)."
            (counsel-file-jump guess (doom-project-root)))
           ((and (modulep! :completion vertico)
                 (doom-project-p))
-           (+vertico/find-file-in (doom-project-root) guess))
+           (+vertico/consult-fd-or-find (doom-project-root) guess))
           ((find-file-at-point (ffap-prompter guess))))
     t))
 

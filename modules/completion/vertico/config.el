@@ -7,9 +7,6 @@ The completion/vertico module uses the orderless completion style by default,
 but this returns too broad a candidate set for company completion. This variable
 overrides `completion-styles' during company completion sessions.")
 
-(defvar +vertico-consult-fd-args nil
-  "Shell command and arguments the vertico module uses for fd.")
-
 (defvar +vertico-consult-dir-container-executable "docker"
   "Command to call for listing container hosts.")
 
@@ -149,13 +146,11 @@ orderless."
         consult-async-refresh-delay  0.15
         consult-async-input-throttle 0.2
         consult-async-input-debounce 0.1)
-  (unless +vertico-consult-fd-args
-    (setq +vertico-consult-fd-args
-          (if doom-projectile-fd-binary
-              (format "%s --color=never -i -H -E .git --regex %s"
-                      doom-projectile-fd-binary
-                      (if IS-WINDOWS "--path-separator=/" ""))
-            consult-find-args)))
+  (if doom-projectile-fd-binary
+      (setq consult-fd-args
+            '(doom-projectile-fd-binary
+              "--full-path --color=never -i -H -E .git --regex"
+              (when IS-WINDOWS "--path-separator=/"))))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
@@ -305,9 +300,9 @@ orderless."
   (map! (:map embark-file-map
          :desc "Open target with sudo"        "s"   #'doom/sudo-find-file
          (:when (modulep! :tools magit)
-          :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
+           :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (modulep! :ui workspaces)
-          :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace))))
+           :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia

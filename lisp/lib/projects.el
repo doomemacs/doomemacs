@@ -150,8 +150,8 @@ If DIR is not a project, it will be indexed (but not cached)."
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
           ((and (bound-and-true-p vertico-mode)
-                (fboundp '+vertico/find-file-in))
-           (+vertico/find-file-in default-directory))
+                (fboundp '+vertico/consult-fd-or-find))
+           (+vertico/consult-fd-or-find default-directory))
           ((and (bound-and-true-p ivy-mode)
                 (fboundp 'counsel-file-jump))
            (call-interactively #'counsel-file-jump))
