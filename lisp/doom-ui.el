@@ -5,13 +5,13 @@
 ;;
 ;;; Variables
 
-(defvar doom-theme nil
+(defcustom doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
 Set to `nil' to load no theme at all. This variable is changed by
 `load-theme'.")
 
-(defvar doom-font nil
+(defcustom doom-font nil
   "The default font to use.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string.
 
@@ -22,21 +22,21 @@ Examples:
   (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")
   (setq doom-font \"Fira Code-14\")")
 
-(defvar doom-variable-pitch-font nil
+(defcustom doom-variable-pitch-font nil
   "The default font to use for variable-pitch text.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-serif-font nil
+(defcustom doom-serif-font nil
   "The default font to use for the `fixed-pitch-serif' face.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-symbol-font nil
+(defcustom doom-symbol-font nil
   "Fallback font for symbols.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples. Emacs defaults to Symbola.
@@ -46,7 +46,7 @@ font to that size. It's rarely a good idea to do so!")
 
 (define-obsolete-variable-alias 'doom-unicode-font 'doom-symbol-font "3.0.0")
 
-(defvar doom-emoji-font nil
+(defcustom doom-emoji-font nil
   "Fallback font for emoji.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples.
@@ -74,20 +74,20 @@ want to change your symbol font, use `doom-symbol-font'.")
 ;;
 ;;; Custom hooks
 
-(defvar doom-init-ui-hook nil
+(defcustom doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 
-(defvar doom-load-theme-hook nil
+(defcustom doom-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme' or reloaded with
 `doom/reload-theme'.")
 
-(defvar doom-switch-buffer-hook nil
+(defcustom doom-switch-buffer-hook nil
   "A list of hooks run after changing the current buffer.")
 
-(defvar doom-switch-window-hook nil
+(defcustom doom-switch-window-hook nil
   "A list of hooks run after changing the focused windows.")
 
-(defvar doom-switch-frame-hook nil
+(defcustom doom-switch-frame-hook nil
   "A list of hooks run after changing the focused frame.")
 
 (defun doom-run-switch-buffer-hooks-h (&optional _)
