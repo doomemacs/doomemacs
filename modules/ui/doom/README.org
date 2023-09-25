@@ -71,13 +71,13 @@ core/core-ui.el has four relevant variables:
 - ~doom-big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
 - ~doom-variable-pitch-font~ :: the font to use when ~variable-pitch-mode~ is active
   (or where the ~variable-pitch~ face is used).
-- ~doom-unicode-font~ :: the font used to display unicode symbols. This is
+- ~doom-symbol-font~ :: the font used to display unicode symbols. This is
   ignored if the [[doom-module::ui unicode]] module is enabled.
 
 #+begin_src emacs-lisp
 (setq doom-font (font-spec :family "Fira Mono" :size 12)
       doom-variable-pitch-font (font-spec :family "Fira Sans")
-      doom-unicode-font (font-spec :family "DejaVu Sans Mono")
+      doom-symbol-font (font-spec :family "JuliaMono")
       doom-big-font (font-spec :family "Fira Mono" :size 19))
 #+end_src
 

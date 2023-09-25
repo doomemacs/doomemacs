@@ -13,12 +13,12 @@ emacs fontset to cover as many unicode glyphs as possible by scanning all
 available glyphs from all available fonts.
 
 When this module is enabled:
-- Emacs will prefer to use the ~doom-unicode-font~ font to display non-latin
+- Emacs will prefer to use the ~doom-symbol-font~ font to display non-latin
   glyphs if it provides coverage for them.
 - The first time you run Emacs a unicode cache will be generated -- this will
   take a while!
 - The cache will be regenerated every time Emacs is made aware of new fonts or
-  you change the font configuration e.g. by modifying ~doom-unicode-font~.
+  you change the font configuration e.g. by modifying ~doom-symbol-font~.
 - The cache will be stored and should not be regenerated unless font-related
   configuration or the versions of relevant packages changes.
 
@@ -54,16 +54,16 @@ When this module is enabled:
 #+end_quote
 
 The first font that will be analyzed to see if it contains the glyphs of
-non-latin characters will be ~doom-unicode-font~:
+non-latin characters will be ~doom-symbol-font~:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(setq doom-unicode-font (font-spec :family "Fira Mono"))
+(setq doom-symbol-font (font-spec :family "JuliaMono"))
 #+end_src
 
 If your ~doom-font~ provides good unicode coverage use:
 #+begin_src emacs-lisp
 ;; in $DOOMDIR/config.el
-(setq doom-unicode-font doom-font)
+(setq doom-symbol-font doom-font)
 #+end_src
 
 If your font does not provide some glyphs, this package will try its best to

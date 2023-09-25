@@ -36,13 +36,15 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 
 An omitted font size means to inherit `doom-font''s size.")
 
-(defvar doom-unicode-font nil
-  "Fallback font for Unicode glyphs.
+(defvar doom-symbol-font nil
+  "Fallback font for symbols.
 Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 `doom-font' for examples. Emacs defaults to Symbola.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!")
+
+(define-obsolete-variable-alias 'doom-unicode-font 'doom-symbol-font "3.0.0")
 
 (defvar doom-emoji-fallback-font-families
   '("Apple Color Emoji"
@@ -524,11 +526,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (when (fboundp 'set-fontset-font)
     (let ((fn (doom-rpartial #'member (font-family-list))))
       (when-let (font (cl-find-if fn doom-symbol-fallback-font-families))
-        (set-fontset-font t 'symbol font))
+        (dolist (script '(symbol mathematical))
+          (set-fontset-font t script font)))
       (when-let (font (cl-find-if fn doom-emoji-fallback-font-families))
-        (set-fontset-font t 'emoji font))
-      (when doom-unicode-font
-        (set-fontset-font t 'unicode doom-unicode-font)))
+        (set-fontset-font t 'emoji font)))
+    (when doom-symbol-font
+      (dolist (script '(symbol mathematical))
+        (set-fontset-font t script doom-symbol-font)))
     ;; Nerd Fonts use these Private Use Areas
     (dolist (range '((#xe000 . #xf8ff) (#xf0000 . #xfffff)))
       (set-fontset-font t range "Symbols Nerd Font Mono")))

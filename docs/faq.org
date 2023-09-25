@@ -248,8 +248,7 @@ Doom exposes a couple variables for setting fonts. They are:
 - [[var:doom-variable-pitch-font]]: used for non-monospace fonts (e.g. when using
   variable-pitch-mode or mixed-pitch-mode). Popular for text modes, like Org or
   Markdown.
-- [[var:doom-unicode-font]]: used for rendering unicode glyphs. Emacs defaults to
-  Symbola. It is ignored if the [[doom-module::ui unicode]] module is enabled.
+- [[var:doom-symbol-font]]: used for rendering symbols.
 - [[var:doom-serif-font]]: the sans-serif font to use wherever the [[face:fixed-pitch-serif]]
   face is used.
 - [[var:doom-big-font]]: the large font to use when [[fn:doom-big-font-mode]] is active.
@@ -267,7 +266,7 @@ For example:
 ;; in $DOOMDIR/config.el
 (setq doom-font (font-spec :family "JetBrainsMono" :size 12 :weight 'light)
       doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 13)
-      doom-unicode-font (font-spec :family "Symbola")
+      doom-symbol-font (font-spec :family "JuliaMono")
       doom-big-font (font-spec :family "JetBrainsMono" :size 24))
 #+end_src
 
@@ -524,7 +523,7 @@ Here are a few common causes for random crashes:
 
 - Some fonts cause Emacs to crash when they lack support for a particular glyph
   (typically symbols). Try changing your font by changing ~doom-font~ or
-  ~doom-unicode-font~.
+  ~doom-symbol-font~.
 
 - Ligatures can cause Emacs to crash. Try a different [[doom-module::ui ligatures +fira][ligature font]] or disable
   the [[doom-module::ui ligatures]] module altogether.

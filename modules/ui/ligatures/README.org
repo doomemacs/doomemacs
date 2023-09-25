@@ -247,10 +247,9 @@ happen in all modes, you can use
 ** Some symbols are not rendering correctly
 This can usually be fixed by doing one of the following:
 
-- Make sure Symbola (the font) is installed on your system.
-- Otherwise, change [[var:doom-unicode-font]] (set to Symbola by default).
-- Disable the [[doom-module::ui unicode]] module. It not only overrides [[var:doom-unicode-font]], but
-  should only be used as a last resort.
+- Set [[var:doom-symbol-font]].
+- Disable the [[doom-module::ui unicode]] module. It overrides [[var:doom-symbol-font]]
+  and should only be used as a last resort.
 
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
