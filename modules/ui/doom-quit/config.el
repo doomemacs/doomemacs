@@ -5,12 +5,9 @@
     "Please don't leave, there's more demons to toast!"
     "Let's beat it -- This is turning into a bloodbath!"
     ,(format "I wouldn't leave if I were you. %s is much worse."
-             (cl-case system-type
-               ((gnu gnu/linux gnu/kfreebsd darwin aix
-                     berkeley-unix hpux usg-unix-v)
-                "UNIX")
-               ((ms-dos windows-nt cygwin haiku)
-                "DOS")))
+             (if (member system-type '(ms-dos-windows-nt cygwin))
+                 "DOS"
+               "UNIX"))
     "Don't leave yet -- There's a demon around that corner!"
     "Ya know, next time you come in here I'm gonna toast ya."
     "Go ahead and leave. See if I care."
