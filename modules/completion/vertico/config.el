@@ -136,9 +136,10 @@ orderless."
     [remap yank-pop]                      #'consult-yank-pop
     [remap persp-switch-to-buffer]        #'+vertico/switch-workspace-buffer)
   :config
-  (defadvice! +vertico--consult-recent-file-a (&rest _args)
-    "`consult-recent-file' needs to have `recentf-mode' on to work correctly"
-    :before #'consult-recent-file
+  (defadvice! +vertico--consult-recentf-a (&rest _args)
+    "`consult-recent-file' needs to have `recentf-mode' on to work correctly.
+`consult-buffer' needs `recentf-mode' to show file candidates."
+    :before (list #'consult-recent-file #'consult-buffer)
     (recentf-mode +1))
 
   (setq consult-project-root-function #'doom-project-root
