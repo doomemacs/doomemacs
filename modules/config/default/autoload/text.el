@@ -173,3 +173,10 @@ possible, or just one char if that's not possible."
                         ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
         ((delete-char (- n) killflag))))
+
+;;;###autoload
+(defun +default/insert-snippet ()
+  (interactive)
+  (cond ((modulep! :completion vertico)
+         (call-interactively #'consult-yasnippet))
+        (t (call-interactively #'yas-insert-snippet))))

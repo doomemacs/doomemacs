@@ -504,7 +504,7 @@
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
        :desc "Evil ex path"                  "p"   (cmd! (evil-ex "R!echo "))
        :desc "From evil register"            "r"   #'evil-show-registers
-       :desc "Snippet"                       "s"   #'yas-insert-snippet
+       :desc "Snippet"                       "s"   #'+default/insert-snippet
        :desc "Unicode"                       "u"   #'insert-char
        :desc "From clipboard"                "y"   #'+default/yank-pop)
 

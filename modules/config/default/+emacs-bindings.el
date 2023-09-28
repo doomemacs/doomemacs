@@ -154,7 +154,7 @@
          :desc "Emoji"                       "e"   #'emojify-insert-emoji)
        :desc "Current file name"             "f"   #'+default/insert-file-path
        :desc "Current file path"             "F"   (cmd!! #'+default/insert-file-path t)
-       :desc "Snippet"                       "s"   #'yas-insert-snippet
+       :desc "Snippet"                       "s"   #'+default/insert-snippet
        :desc "Unicode"                       "u"   #'insert-char
        :desc "From clipboard"                "y"   #'+default/yank-pop)
 

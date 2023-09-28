@@ -27,3 +27,7 @@
   (package! vertico-posframe
     :recipe (:host github :repo "tumashu/vertico-posframe")
     :pin "7da6d648ff4202a48eb6647ee7dce8d65de48779"))
+
+(when (modulep! :editor snippets)
+  (package! consult-yasnippet
+    :pin "ae0450889484f23dc4ec37518852a2c61b89f184"))
