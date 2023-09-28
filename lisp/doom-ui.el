@@ -542,7 +542,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (dolist (script '(symbol mathematical))
           (set-fontset-font t script symbol-font)))
       (when emoji-font
-        (set-fontset-font t 'emoji emoji-font)))
+        (set-fontset-font t 'emoji emoji-font)
+        ;; some characters in the Emacs symbol script are often covered by emoji
+        ;; fonts
+        (set-fontset-font t 'symbol emoji-font nil 'append)))
     ;; Nerd Fonts use these Private Use Areas
     (dolist (range '((#xe000 . #xf8ff) (#xf0000 . #xfffff)))
       (set-fontset-font t range "Symbols Nerd Font Mono")))
