@@ -134,6 +134,12 @@ will also be the width of all other printable characters."
 ;;;###autoload
 (defun +mu4e-initialise-icons ()
   (setq mu4e-use-fancy-chars t
+
+        mu4e-modeline-all-clear      (cons "C:" (+mu4e-normalised-icon "nf-md-check" :set "mdicon" :height 1.0 :space-right t)) ;;󰄬
+        mu4e-modeline-all-read       (cons "R:" (+mu4e-normalised-icon "nf-md-email_check" :set "mdicon" :height 1.0 :space-right t)) ;;󰪱
+        mu4e-modeline-unread-items   (cons "U:" (+mu4e-normalised-icon "nf-md-email_alert" :set "mdicon" :height 1.0 :space-right t)) ;;󰛏
+        mu4e-modeline-new-items      (cons "N:" (+mu4e-normalised-icon "nf-md-sync" :set "mdicon" :height 1.0 :space-right t)) ;;󰓦
+
         mu4e-headers-draft-mark      (cons "D" (+mu4e-normalised-icon "nf-fa-pencil"))
         mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "nf-fa-flag"))
         mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "nf-md-sync" :set "mdicon" :v-adjust -0.10))
