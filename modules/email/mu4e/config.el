@@ -221,6 +221,9 @@ is non-nil."
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
+  ;; mu4e now uses `display-buffer-alist' so we need to add some rules of our own
+  (set-popup-rule! "^\\*mu4e-\\(main\\|headers\\)\\*" :ignore t)
+
   ;; Html mails might be better rendered in a browser
   (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser))
   (when (fboundp 'make-xwidget)
