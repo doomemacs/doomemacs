@@ -123,8 +123,10 @@ will also be the width of all other printable characters."
                  (apply icon-set `(,name  :height ,height :v-adjust ,v-adjust))))
          (icon-width (+mu4e--get-string-width icon))
          (space-width (+mu4e--get-string-width " "))
-         (space-factor (- 2 (/ (float icon-width) space-width))))
-    (concat (propertize " " 'display `(space . (:width ,space-factor))) icon)))
+         (space-factor (- 2 (/ (float icon-width) space-width)))
+         ;; always pad the left
+         (space-left (propertize " " 'display `(space . (:width ,space-factor)))))
+    (format "%s%s" space-left icon)))
 
 ;; Set up all the fancy icons
 ;;;###autoload
