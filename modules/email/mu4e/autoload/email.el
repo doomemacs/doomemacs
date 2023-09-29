@@ -113,7 +113,7 @@ will also be the width of all other printable characters."
       (insert str)
       (car (window-text-pixel-size)))))
 
-(cl-defun +mu4e-normalised-icon (name &key set color height v-adjust)
+(cl-defun +mu4e-normalised-icon (name &key set color height v-adjust space-right)
   "Convert :icon declaration to icon"
   (let* ((icon-set (intern (concat "nerd-icons-" (or set "faicon"))))
          (v-adjust (or v-adjust 0.02))
@@ -125,8 +125,10 @@ will also be the width of all other printable characters."
          (space-width (+mu4e--get-string-width " "))
          (space-factor (- 2 (/ (float icon-width) space-width)))
          ;; always pad the left
-         (space-left (propertize " " 'display `(space . (:width ,space-factor)))))
-    (format "%s%s" space-left icon)))
+         (space-left (propertize " " 'display `(space . (:width ,space-factor))))
+         ;; optionally pad the right
+         (space-right (if space-right space-left "")))
+    (format "%s%s%s" space-left icon space-right)))
 
 ;; Set up all the fancy icons
 ;;;###autoload
