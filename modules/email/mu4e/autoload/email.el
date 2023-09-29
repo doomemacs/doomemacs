@@ -132,7 +132,7 @@ will also be the width of all other printable characters."
   (setq mu4e-use-fancy-chars t
         mu4e-headers-draft-mark      (cons "D" (+mu4e-normalised-icon "nf-fa-pencil"))
         mu4e-headers-flagged-mark    (cons "F" (+mu4e-normalised-icon "nf-fa-flag"))
-        mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "nf-md-sync" :set "mdicon" :height 0.8 :v-adjust -0.10))
+        mu4e-headers-new-mark        (cons "N" (+mu4e-normalised-icon "nf-md-sync" :set "mdicon" :v-adjust -0.10))
         mu4e-headers-passed-mark     (cons "P" (+mu4e-normalised-icon "nf-fa-arrow_right"))
         mu4e-headers-replied-mark    (cons "R" (+mu4e-normalised-icon "nf-fa-reply"))
         mu4e-headers-seen-mark       (cons "S" "") ;(+mu4e-normalised-icon "eye" :height 0.6 :v-adjust 0.07 :color "dsilver"))
