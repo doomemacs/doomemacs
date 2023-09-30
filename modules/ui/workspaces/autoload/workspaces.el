@@ -598,8 +598,9 @@ This be hooked to `projectile-after-switch-project-hook'."
 ;;;###autoload
 (defun +workspaces-load-tab-bar-data-from-file-h (&rest _)
   "Restores the tab bar data from file."
-  (tab-bar-tabs-set (persp-parameter 'tab-bar-tabs))
-  (tab-bar--update-tab-bar-lines t))
+  (when-let ((persp-tab-data (persp-parameter 'tab-bar-tabs)))
+    (tab-bar-tabs-set persp-tab-data)
+    (tab-bar--update-tab-bar-lines t)))
 
 ;;
 ;;; Advice
