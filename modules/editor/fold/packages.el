@@ -7,5 +7,5 @@
 (when (modulep! :editor evil)
   (package! evil-vimish-fold :pin "b6e0e6b91b8cd047e80debef1a536d9d49eef31a"))
 (when (modulep! :tools tree-sitter)
-  (package! ts-fold :pin "9d9e0c5cf7b5397e06571bb6bf497598dc8796a8"
+  (package! ts-fold :pin "c408ef1165bccb6c7e881d9940f87f6456d3ca1d"
     :recipe (:host github :repo "emacs-tree-sitter/ts-fold")))
