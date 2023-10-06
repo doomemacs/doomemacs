@@ -232,7 +232,7 @@ Everything you need is in Gentoo's official =::gentoo= repository.
 
 ***** Emacs
 To use Emacs graphically, enable the =gui= USE flag. And enable the =xft= USE flag to render fonts correctly (see
-[[https://github.com/hlissner/doom-emacs/issues/4876][issue #4876]])
+[[https://github.com/doomemacs/doom-emacs/issues/4876][issue #4876]])
 #+begin_src sh
 echo "app-editors/emacs gui xft" >> /etc/portage/package.use/emacs
 #+end_src
@@ -465,7 +465,7 @@ With Emacs and Doom's dependencies installed, next is to install Doom Emacs
 itself:
 
 #+BEGIN_SRC bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+git clone https://github.com/doomemacs/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 #+END_SRC
 
@@ -519,7 +519,7 @@ directly and from anywhere. Accomplish this by adding this to your .bashrc or
 *** Install Doom Manually
 If you'd rather install Doom yourself, instead of rely on the magic of =doom
 install=, here is its equivalent in bash shell commands (assuming
-=hlissner/doom-emacs= has been cloned to =~/.emacs.d=):
+=doomemacs/doom-emacs= has been cloned to =~/.emacs.d=):
 
 #+BEGIN_SRC bash
 # So we don't have to write ~/.emacs.d/bin/doom every time
@@ -564,7 +564,7 @@ the default config:
 
 1. First, install Doom somewhere:
    #+BEGIN_SRC sh :eval no
-   git clone https://github.com/hlissner/doom-emacs ~/doom-emacs
+   git clone https://github.com/doomemacs/doom-emacs ~/doom-emacs
    ~/doom-emacs/bin/doom install
    #+END_SRC
 
@@ -1500,7 +1500,7 @@ provide tools to make this easier. Here are a few things you can try, first:
 + Investigate the =*Messages*= log for warnings or error messages. This log can
   be opened with =SPC h e=, =C-h e= or =M-x view-echo-area-messages=.
 
-+ Look up errors/warnings [[file:faq.org::Common Issues][on the FAQ]] and [[https://github.com/hlissner/doom-emacs/issues][Doom's issue tracker]]. It is possible
++ Look up errors/warnings [[file:faq.org::Common Issues][on the FAQ]] and [[https://github.com/doomemacs/doom-emacs/issues][Doom's issue tracker]]. It is possible
   that a solution for your issue already exists. The FAQ can be searched from
   inside Doom with =SPC h d f= (or =C-h d f= for non-evil users).
 
