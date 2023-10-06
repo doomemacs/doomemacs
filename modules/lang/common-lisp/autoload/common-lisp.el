@@ -42,11 +42,11 @@
   "Given a path to an ASDF project definition, extract the names of
 the systems defined therein."
   (let ((file (doom-file-read asdf))
-        (patt "defsystem \"\\([a-z-/]+\\)"))
+        (patt "defsystem \\(\"\\|#?:\\)\\([a-z-/]+\\)"))
     (when (not (string-match patt file))
       (error "No systems defined in: %s" asdf))
     (thread-last (s-match-strings-all patt file)
-                 (mapcar #'cl-second))))
+                 (mapcar #'cl-third))))
 
 ;; TODO Get this to run in a comint buffer?
 ;;;###autoload
