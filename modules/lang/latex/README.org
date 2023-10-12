@@ -67,7 +67,7 @@ This module requires ghostscript and a latex compiler. These are provided by the
     to build gs from source.
 #+end_quote
 
-** Ubuntu
+** Debian/Ubuntu
 #+begin_src sh
 apt-get install texlive
 #+end_src
