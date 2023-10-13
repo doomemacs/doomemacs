@@ -3,7 +3,7 @@
 #+since:   21.12.0
 
 * Description
-These modules specialize in integration particular languages and their
+These modules specialize in the integration of particular languages and their
 ecosystems into (Doom) Emacs.
 
 * Frequently asked questions
