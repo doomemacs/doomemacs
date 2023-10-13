@@ -138,7 +138,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + plantuml - TODO
 + purescript =+lsp= - TODO
 + [[file:../modules/lang/python/README.org][python]] =+cython +lsp +pyright +pyenv +conda +poetry= - TODO
-+ qt - TODO
++ [[file:../modules/lang/qt/README.org][qt]] - TODO
 + [[file:../modules/lang/racket/README.org][racket]] =+lsp +xp= - TODO
 + [[file:../modules/lang/raku/README.org][raku]] - TODO
 + [[file:../modules/lang/rest/README.org][rest]] - TODO
