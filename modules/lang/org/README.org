@@ -187,7 +187,12 @@ brew install gnuplot
 #+begin_src sh
 pacman -S texlive-core texlive-bin texlive-science texlive-latexextra
 pacman -S gnuplot
-pacman -S jupyter # required by +jupyter
+#+end_src
+
+** Debian & Ubuntu
+#+begin_src sh
+apt-get install texlive dvipng
+apt-get install gnuplot
 #+end_src
 
 ** NixOS
