@@ -210,10 +210,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 `kill-current-buffer'."
   :before-until #'kill-current-buffer
   (let ((buf (current-buffer)))
-    (cond ((window-dedicated-p)
-           (delete-window)
-           t)
-          ((eq buf (doom-fallback-buffer))
+    (cond ((eq buf (doom-fallback-buffer))
            (message "Can't kill the fallback buffer.")
            t)
           ((doom-real-buffer-p buf)
