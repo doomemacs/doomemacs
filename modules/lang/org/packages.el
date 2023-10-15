@@ -86,7 +86,7 @@
 (when (modulep! +jupyter)
   (package! jupyter :pin "1baabc8f2d0631f8f4308400f9a53f1aadd58d14"))
 (when (modulep! +journal)
-  (package! org-journal :pin "18df4d5ae5e15580df42562c143d007c6d28d75f"))
+  (package! org-journal :pin "ac0832f02a1259c10d3691b35496a01b54f0a3b9"))
 (when (modulep! +noter)
   (package! org-noter :pin "ab838691f0d6ae281597451de311f71a50ba8da6"))
 (when (modulep! +pomodoro)
