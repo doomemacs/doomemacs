@@ -33,6 +33,7 @@ This must be set before `treemacs' has loaded.")
   (when +treemacs-git-mode
     ;; If they aren't supported, fall back to simpler methods
     (when (and (memq +treemacs-git-mode '(deferred extended))
+               (not treemacs-python-executable)
                (not (executable-find "python3")))
       (setq +treemacs-git-mode 'simple))
     (treemacs-git-mode +treemacs-git-mode)
