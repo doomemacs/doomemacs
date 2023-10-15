@@ -309,7 +309,7 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
            :command `(,(expand-file-name invocation-name invocation-directory)
                       "-Q"
                       "--batch"
-                      ,@(mapcan (fn! (list "-L" %)) elisp-flymake-byte-compile-load-path)
+                      ,@(mapcan (lambda (p) (list "-L" p)) elisp-flymake-byte-compile-load-path)
                       ;; this is what silences the byte compiler
                       "--eval" ,(prin1-to-string `(setq doom-modules ',doom-modules
                                                         doom-disabled-packages ',doom-disabled-packages
