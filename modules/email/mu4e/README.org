@@ -93,10 +93,22 @@ If you use =msmtp=:
 #+begin_src nix
 environment.systemPackages = with pkgs; [
     mu
+    # For nixpkgs versions after 23.05: this installs Emacs with mu4e already
+    # included (you still need mu above; it just doesn't ship with mu4e anymore)
+    ((emacsPackagesFor emacs).emacsWithPackages (epkgs: [ epkgs.mu4e ]))
     # And one of the following
     isync
     offlineimap
 ];
+#+end_src
+
+If you use ~home-manager~ you should specify ~mu4e~ as an additionally included
+package as follows (requires ~nixpkgs~ > 23.05):
+#+begin_src nix
+programs.emacs = {
+  enable = true;
+  extraPackages = epkgs: [ epkgs.mu4e ];
+}
 #+end_src
 
 [[https://github.com/Emiller88/dotfiles/blob/5eaabedf1b141c80a8d32e1b496055231476f65e/modules/shell/mail.nix][An example of setting up mbsync and mu with home-manager]]
@@ -280,9 +292,9 @@ mail retrieval/indexing, change the value of ~mu4e-update-interval~:
 You will get =No such file or directory, mu4e= errors if you don't run ~$ doom
 sync~ after installing =mu= through your package manager.
 
-Some times the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*). if
-that's the case you will need to [[https://github.com/djcb/mu][install]] it and add it to your ~load-path~ you
-can do that by:
+Sometimes the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*). If that's
+the case you will need to [[https://github.com/djcb/mu][install]] it and add it to your ~load-path~. You can
+do that by:
 #+begin_src emacs-lisp
 (add-to-list 'load-path "your/path/to/mu4e")
 ;; if you installed it using your package manager
