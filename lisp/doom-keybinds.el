@@ -240,6 +240,7 @@ localleader prefix."
 (define-key doom-leader-map [override-state] 'all)
 (define-prefix-command 'doom-leader-map)
 (define-prefix-command 'doom-localleader-map)
+(fset 'doom/leader doom-leader-map)     ; For backwards compatibility.
 
 (add-hook! '(after-change-major-mode-hook
              doom-switch-buffer-hook
