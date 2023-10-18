@@ -31,9 +31,6 @@ and Emacs states, and for non-evil users.")
 (defvar doom-localleader-map (make-sparse-keymap)
   "The current major mode's localleader keymap.")
 
-(defvar doom-localleader-current-major-mode nil
-  "The major mode of the current localleader keymap.")
-
 ;;
 ;;; Global keybind settings
 
@@ -242,17 +239,12 @@ localleader prefix."
 (define-prefix-command 'doom-localleader-map)
 (fset 'doom/leader doom-leader-map)     ; For backwards compatibility.
 
-(add-hook! '(after-change-major-mode-hook
-             doom-switch-buffer-hook
-             doom-switch-window-hook
-             doom-switch-frame-hook)
-  (defun doom-init-localleader-key-h ()
-    "Set the localleader keys for the current major-mode."
-    (unless (and (doom-unreal-buffer-p (current-buffer))
-                 (not (derived-mode-p 'text-mode 'prog-mode 'conf-mode)))
-      (setq doom-localleader-current-major-mode major-mode)
-      (set-keymap-parent doom-localleader-map
-                         (cdr (assq major-mode doom-localleader-map-alist))))))
+(defun doom-update-localleader-key-h ()
+  "Set the localleader keys for the current major-mode."
+  (set-keymap-parent doom-localleader-map
+                     (cdr (assq major-mode doom-localleader-map-alist))))
+
+(add-hook 'post-command-hook #'doom-update-localleader-key-h)
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
 ;; the user a chance to modify them.
