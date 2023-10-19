@@ -37,7 +37,7 @@
   (add-hook! 'after-save-hook
     (defun +upload-init-after-save-h ()
       (when (and (bound-and-true-p ssh-deploy-root-remote)
-                 ssh-deploy-on-explicit-save)
+                 (> ssh-deploy-on-explicit-save 0))
         (ssh-deploy-upload-handler ssh-deploy-force-on-explicit-save))))
 
   ;; Enable ssh-deploy if variables are set, and check for changes on open file
