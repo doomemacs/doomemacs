@@ -122,13 +122,34 @@
            (with-current-buffer nrepl-server-buffer
              (buffer-string)))))))
 
-  ;; When in cider-debug-mode, override evil keys to not interfere with debug keys
   (after! evil
-    (add-hook! cider--debug-mode
-      (defun +clojure--cider-setup-debug ()
-        "Setup cider debug to override evil keys cleanly"
-        (evil-make-overriding-map cider--debug-mode-map 'normal)
-        (evil-normalize-keymaps))))
+    (if (modulep! :editor evil +everywhere)
+        ;; Match evil-collection keybindings to debugging overlay
+        (after! (cider-debug evil-collection-cider)
+          (mapc
+           (lambda (replacement)
+             (let* ((from (car replacement))
+                    (to (cadr replacement))
+                    (item (assoc from cider-debug-prompt-commands)))
+               ;; Position matters, hence the update-in-place
+               (setf (car item) (car to))
+               (setf (cdr item) (cdr to))))
+           '((?h (?H "here" "Here"))
+             (?i (?I "in" "In"))
+             (?j (?J "inject" "inJect"))
+             (?l (?L "locals" "Locals"))))
+
+          ;; Prevent evil-snipe from overriding evil-collection
+          (add-hook! cider--debug-mode
+                     'turn-off-evil-snipe-mode
+                     'turn-off-evil-snipe-override-mode))
+
+      ;; When in cider-debug-mode, override evil keys to not interfere with debug keys
+      (add-hook! cider--debug-mode
+        (defun +clojure--cider-setup-debug ()
+          "Setup cider debug to override evil keys cleanly"
+          (evil-make-overriding-map cider--debug-mode-map 'normal)
+          (evil-normalize-keymaps)))))
 
   (when (modulep! :ui modeline +light)
     (defvar-local cider-modeline-icon nil)
