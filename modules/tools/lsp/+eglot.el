@@ -16,6 +16,12 @@
   (setq eglot-sync-connect 1
         eglot-autoshutdown t
         eglot-send-changes-idle-time 0.5
+        ;; NOTE This setting disable the eglot-events-buffer enabling more
+        ;;      consistent performance on long running emacs instance.
+        ;;      Default is 2000000 lines. After each new event the whole buffer
+        ;;      is pretty printed which causes steady performance decrease over time.
+        ;;      CPU is spent on pretty priting and Emacs GC is put under high pressure.
+        eglot-events-buffer-size 0
         ;; NOTE We disable eglot-auto-display-help-buffer because :select t in
         ;;      its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
@@ -32,7 +38,7 @@
     :type-definition #'eglot-find-typeDefinition
     :documentation   #'+eglot-lookup-documentation)
 
-  (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 0))
+  (add-to-list 'doom-debug-variables '(eglot-events-buffer-size . 2000000))
 
   (defadvice! +lsp--defer-server-shutdown-a (fn &optional server)
     "Defer server shutdown for a few seconds.
