@@ -584,7 +584,9 @@ current buffer."
                    filename))
           (prog1 (apply fn args)
             (when (buffer-live-p buf)
-              (with-current-buffer buf (goto-char pos)))))))))
+              (with-current-buffer buf (goto-char pos))))))))
+  :config
+  (setq helpful-set-variable-function #'setq!))
 
 
 (use-package! smartparens
