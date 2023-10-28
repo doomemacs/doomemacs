@@ -105,6 +105,12 @@ You should use `set-eshell-alias!' to change this.")
   ;; cursor comes close to the left/right edges of the window.
   (setq-hook! 'eshell-mode-hook hscroll-margin 0)
 
+  ;; Recognize prompts as Imenu entries.
+  (setq-hook! 'eshell-mode-hook
+    imenu-generic-expression
+    `((,(propertize "λ" 'face 'eshell-prompt)
+       ,(concat eshell-prompt-regexp "\\(.*\\)") 1)))
+
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
   ;; or configure `+eshell-aliases' via elisp.
   (advice-add #'eshell-write-aliases-list :override #'ignore)
