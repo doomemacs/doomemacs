@@ -46,6 +46,7 @@ Possible values are:
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-auto-commands #'lispy-colon)
   (add-to-list 'corfu-continue-commands #'+corfu-move-to-minibuffer)
+  (add-to-list 'corfu-continue-commands #'+corfu-smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit))
 
 (use-package! cape
@@ -118,3 +119,15 @@ Possible values are:
   :init
   (after! corfu
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)))
+
+;; If vertico is not enabled, orderless will be installed but not configured.
+;; That may break smart separator behavior, so we conditionally configure it.
+(use-package! orderless
+  :when (and (not (modulep! :completion vertico))
+             (modulep! +orderless))
+  :config
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles orderless partial-completion)))
+        orderless-component-separator #'orderless-escapable-split-on-space)
+  (set-face-attribute 'completions-first-difference nil :inherit nil))

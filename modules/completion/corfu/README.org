@@ -148,7 +148,10 @@ completing inserts a space as separator. This allows searching with
 space-separated terms; each piece will match individually and in any order, with
 smart casing. Pressing just [[kbd:][SPC]] acts as normal and quits completion, so that
 when typing sentences it doesn't try to complete the whole sentence instead of
-just the word.
+just the word. Pressing [[kdb:][C-SPC]] with point after a separator escapes it with a
+backslash, including the space in the search term, and pressing it with an
+already escaped separator before point deletes it. Thus, you can cycle back if
+you accidentaly press more than needed.
 
 | Keybind | Description                                     |
 |---------+-------------------------------------------------|
