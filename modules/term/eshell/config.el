@@ -229,8 +229,10 @@ Emacs versions < 29."
   (eshell-did-you-mean-output-filter "catt: command not found"))
 
 
-(use-package eshell-syntax-highlighting
-  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+(use-package! eshell-syntax-highlighting
+  :hook (eshell-mode . eshell-syntax-highlighting-mode)
+  :init
+  (add-hook 'eshell-syntax-highlighting-elisp-buffer-setup-hook #'highlight-quoted-mode))
 
 
 (use-package! fish-completion

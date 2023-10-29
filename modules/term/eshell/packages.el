@@ -6,7 +6,7 @@
 (package! shrink-path :pin "c14882c8599aec79a6e8ef2d06454254bb3e1e41")
 (package! esh-help :pin "417673ed18a983930a66a6692dbfb288a995cb80")
 (package! eshell-did-you-mean :pin "80cd8c4b186a2fb29621cf634bcf2bcd914f1e3d")
-(package! eshell-syntax-highlighting :pin "8bf0494ca71944b9d4bfb8ec3c93ea29d46bc2f9")
+(package! eshell-syntax-highlighting :pin "4ac27eec6595ba116a6151dfaf0b0e0440101e10")
 
 (unless IS-WINDOWS
   (package! fish-completion :pin "10384881817b5ae38cf6197a077a663420090d2c")
