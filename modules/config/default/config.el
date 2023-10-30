@@ -468,7 +468,13 @@ Continues comments if executed from a commented line. Consults
          [backtab] #'corfu-previous
          "TAB" #'corfu-next
          [tab] #'corfu-next))
-  (let ((cmds-ret
+  (let ((cmds-del
+         `(menu-item "Reset completion" corfu-reset
+           :filter ,(lambda (cmd)
+                      (when (and (>= corfu--index 0)
+                                 (eq corfu-preview-current 'insert))
+                        cmd))))
+         (cmds-ret
           `(menu-item "Insert completion DWIM" corfu-insert
              :filter ,(lambda (cmd)
                         (interactive)
@@ -488,6 +494,8 @@ Continues comments if executed from a commented line. Consults
                               (t cmd))))))
     (map! :when (modulep! :completion corfu)
           :map corfu-map
+          [backspace] cmds-del
+          "DEL" cmds-del
           :gi [return] cmds-ret
           :gi "RET" cmds-ret))
 

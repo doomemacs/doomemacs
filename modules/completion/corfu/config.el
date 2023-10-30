@@ -8,6 +8,9 @@ Possible values are:
               and immediatelly exit if in the minibuffer;
 - nil: Pass-through without inserting.")
 
+(defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
+  "Size limit for a buffer to be scanned by `cape-dabbrev'.")
+
 ;;
 ;;; Packages
 (use-package! corfu
@@ -50,10 +53,27 @@ Possible values are:
   :init
   (add-hook! prog-mode
     (defun +corfu-add-cape-file-h ()
-      (add-to-list 'completion-at-point-functions #'cape-file)))
+      (add-hook 'completion-at-point-functions #'cape-file -10 t)))
   (add-hook! (org-mode markdown-mode)
     (defun +corfu-add-cape-elisp-block-h ()
       (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t)))
+  ;; Enable Dabbrev completion basically everywhere as a fallback.
+  (when (modulep! +dabbrev)
+    (setq cape-dabbrev-check-other-buffers t)
+    ;; Set up `cape-dabbrev' options.
+    (defun +dabbrev-friend-buffer-p (other-buffer)
+      (< (buffer-size other-buffer) +corfu-buffer-scanning-size-limit))
+    (add-hook! (prog-mode text-mode conf-mode comint-mode minibuffer-setup
+                          eshell-mode)
+      (defun +corfu-add-cape-dabbrev-h ()
+        (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t)))
+    (after! dabbrev
+      (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
+            dabbrev-ignored-buffer-regexps
+            '("^ "
+              "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?")
+            dabbrev-upcase-means-case-search t)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)))
 
   ;; Make these capfs composable.
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
