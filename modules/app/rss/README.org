@@ -78,7 +78,7 @@ configure feeds to follow:
 - You can "name" feeds as you please with ~org-mode~ ~org-insert-link~ ([[kbd:][C-c C-l]])
   and put name as you want into ~description~.
 - If you don't want to use ~org-directory/elfeed.org~ file you can specify it
-  with ~(setq rmh-elfeed-org-files '("path/to/your/elfeed/file.org))~
+  with ~(setq rmh-elfeed-org-files '("path/to/your/elfeed/file.org"))~
 
 ** Keybindings
 + General
