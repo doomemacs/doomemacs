@@ -17,7 +17,11 @@
 (use-package! flycheck-plantuml
   :when (modulep! :checkers syntax)
   :after plantuml-mode
-  :config (flycheck-plantuml-setup))
+  :config
+  (flycheck-plantuml-setup)
+  (when (eq plantuml-default-exec-mode 'executable)
+    ;; Surprisingly, this works, even though flycheck-plantuml specifies -Djava.awt...
+    (setq-default flycheck-plantuml-executable plantuml-executable-path)))
 
 
 (after! ob-plantuml
