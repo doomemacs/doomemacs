@@ -60,8 +60,9 @@ When this flag is enabled, you shouldn't need to do anything other than write
 code and save it.
 
 ** Without +onsave
-Without the flag, formatting will only occur when either =apheleia-format-buffer=
-or =+format/buffer= is called.
+Without the flag, formatting will only occur when either =+format/buffer=
+or =apheleia-format-buffer= is called. The difference between them is
+=+format/buffer= will use a LSP server if configured and available.
 
 * Configuration
 
@@ -113,7 +114,7 @@ This behaviour is controlled via [[var:+format-on-save-disabled-modes]] thus;
 
 In this case, =emacs-lisp-mode=, =sql-mode=, =tex-mode= and =latex-mode= will not be
 formatted on save, but can still be formatted by manually invoking the commands
-=apheleia-format-buffer= or =+format/buffer=.
+=+format/buffer= or =apheleia-format-buffer=.
 
 ** Disabling the LSP formatter
 If you are in a buffer with ~lsp-mode~ enabled and a server that supports
