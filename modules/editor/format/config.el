@@ -21,7 +21,8 @@ Indentation is always preserved when formatting regions.")
   "If non-nil, format with LSP formatter if it's available.
 
 This can be set buffer-locally with `setq-hook!' to disable LSP formatting in
-select buffers.")
+select buffers.
+This has no effect on the +onsave flag, apheleia will always be used there.")
 
 (defvaralias '+format-with 'apheleia-formatter
   "Set this to explicitly use a certain formatter for the current buffer.")
