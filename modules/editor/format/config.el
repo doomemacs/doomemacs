@@ -5,11 +5,10 @@
     tex-mode           ; latexindent is broken
     latex-mode
     org-msg-edit-mode) ; doesn't need a formatter
-  "A list of major modes in which to reformat the buffer upon saving.
-If this list begins with `not', then it negates the list.
-If it is `t', it is enabled in all modes.
-If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
-  used at all.
+  "A list of major modes in which to not reformat the buffer upon saving.
+If it is t, it is disabled in all modes, the same as if the +onsave flag
+  wasn't used at all.
+If nil, formatting is enabled in all modes.
 Irrelevant if you do not have the +onsave flag enabled for this module.")
 
 (defvar +format-preserve-indentation t
@@ -39,6 +38,7 @@ select buffers.")
 This is controlled by `+format-on-save-disabled-modes'."
   (or (eq major-mode 'fundamental-mode)
       (string-blank-p (buffer-name))
+      (eq +format-on-save-disabled-modes t)
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
 
