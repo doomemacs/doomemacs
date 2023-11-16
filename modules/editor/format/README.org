@@ -25,8 +25,8 @@ be formatted and returned to the buffer using
 ** Module flags
 - +onsave ::
   Enable reformatting of a buffer when it is saved. See
-  [[var:+format-on-save-disabled-modes]] to control what major modes to (or not to)
-  format on save.
+  [[var:+format-on-save-disabled-modes]] to disable format on save for certain
+  major modes.
 
 ** Packages
 - [[doom-package:apheleia]]
