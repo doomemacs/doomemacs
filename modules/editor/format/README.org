@@ -117,7 +117,7 @@ formatted on save, but can still be formatted by manually invoking the commands
 
 ** Disabling the LSP formatter
 If you are in a buffer with ~lsp-mode~ enabled and a server that supports
-=textDocument/formatting=, it will be used instead of [[doom-package:format-all]]'s formatter.
+=textDocument/formatting=, it will be used instead of [[doom-package:apheleia]]'s formatter.
 
 + To disable this behavior universally use: ~(setq +format-with-lsp nil)~
 + To disable this behavior in one mode: ~(setq-hook! 'python-mode-hook
