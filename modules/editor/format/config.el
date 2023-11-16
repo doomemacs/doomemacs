@@ -33,8 +33,8 @@ select buffers.")
 (when (modulep! +onsave)
   (add-hook 'doom-first-file-hook #'apheleia-global-mode))
 
-(defun +format-inhibit-maybe-h ()
-  "Enable formatting on save in certain major modes.
+(defun +format-maybe-inhibit-h ()
+  "Check if formatting should be disabled for current buffer.
 This is controlled by `+format-on-save-disabled-modes'."
   (or (eq major-mode 'fundamental-mode)
       (string-blank-p (buffer-name))
@@ -46,7 +46,7 @@ This is controlled by `+format-on-save-disabled-modes'."
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
 
   (when (modulep! +onsave)
-    (add-to-list 'apheleia-inhibit-functions #'+format-inhibit-maybe-h)))
+    (add-to-list 'apheleia-inhibit-functions #'+format-maybe-inhibit-h)))
 
 
 ;;
