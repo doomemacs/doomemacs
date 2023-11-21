@@ -43,7 +43,7 @@ This is controlled by `+format-on-save-disabled-modes'."
       (not (null (memq major-mode +format-on-save-disabled-modes)))))
 
 
-(after! apheleia-core
+(after! apheleia
   (add-to-list 'doom-debug-variables '(apheleia-log-only-errors . nil))
 
   (when (modulep! +onsave)
