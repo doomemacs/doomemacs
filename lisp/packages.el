@@ -17,11 +17,11 @@
             :branch ,straight-repository-branch
             :local-repo "straight.el"
             :files ("straight*.el"))
-  :pin "5e84c4e2cd8ca79560477782ee4c9e5187725def")
+  :pin "b3760f5829dba37e855add7323304561eb57a3d4")
 
 ;; doom-ui.el
 (package! all-the-icons :pin "be9d5dcda9c892e8ca1535e288620eec075eb0be")
-(package! nerd-icons :pin "619a0382d2e159f3142c4200fe4cfc2e89247ef1")
+(package! nerd-icons :pin "e109d09b95706bb93c821b1229ca09cf00195690")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
 (package! rainbow-delimiters :pin "f40ece58df8b2f0fb6c8576b527755a552a5e763")
@@ -30,9 +30,9 @@
 ;; doom-editor.el
 (package! better-jumper :pin "47622213783ece37d5337dc28d33b530540fc319")
 (package! dtrt-indent :pin "e0630f74f915c6cded05f76f66d66e540fcc37c3")
-(package! helpful :pin "66ba816b26b68dd7df08e86f8b96eaae16c8d6a2")
+(package! helpful :pin "a32a5b3d959a7fccf09a71d97b3d7c888ac31c69")
 (package! pcre2el :pin "018531ba0cf8e2b28d1108136a0e031b6a45f1c1")
-(package! smartparens :pin "79a338db115f441cd47bb91e6f75816c5e78a772")
+(package! smartparens :pin "0778a8a84064cf2bc3a9857bd0e7a4619cc1e5c3")
 (package! ws-butler
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
@@ -40,8 +40,8 @@
   :pin "572a10c11b6cb88293de48acbb59a059d36f9ba5")
 
 ;; doom-projects.el
-(package! projectile :pin "971cd5c4f25ff1f84ab7e8337ffc7f89f67a1b52")
-(package! project :pin "ce140cdb70138a4938c999d4606a52dbeced4676")
+(package! projectile :pin "9446ea92d28462aeb37846a8be0a0c97a7bc0cee")
+(package! project :pin "f64bcf065c0731caecbdcff5ca1c7f2d711b5b1e")
 
 ;; doom-keybinds.el
 (package! general :pin "833dea2c4a60e06fcd552b653dfc8960935c9fb4")
@@ -49,4 +49,4 @@
 
 (package! compat
   :recipe (:host github :repo "emacs-compat/compat")
-  :pin "ecf53005abf6f0325d14e0e024222e22e982c8dd")
+  :pin "ea8de2ea18cf7c348aadb6eb2aeb2a9d840bd064")
