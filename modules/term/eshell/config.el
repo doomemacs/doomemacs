@@ -230,7 +230,9 @@ Emacs versions < 29."
 
 
 (use-package eshell-syntax-highlighting
-  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+  :hook (eshell-mode . eshell-syntax-highlighting-mode)
+  :init
+  (add-hook 'eshell-syntax-highlighting-elisp-buffer-setup-hook #'highlight-quoted-mode))
 
 
 (use-package! fish-completion
