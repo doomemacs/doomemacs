@@ -102,16 +102,23 @@ If no viewer is found, `latex-preview-pane-mode' is used.")
     (add-hook! '(tex-mode-local-vars-hook
                  latex-mode-local-vars-hook)
                :append #'lsp!))
+  ;; Define a function to compile the project.
+  (defun +latex/compile ()
+    (interactive)
+    (TeX-save-document (TeX-master-file))
+    (TeX-command TeX-command-default 'TeX-master-file -1))
   (map! :localleader
         :map latex-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master)
   (map! :after latex
         :localleader
         :map LaTeX-mode-map
         :desc "View"          "v" #'TeX-view
-        :desc "Compile"       "c" #'TeX-command-run-all
+        :desc "Compile"       "c" #'+latex/compile
+        :desc "Run all"       "a" #'TeX-command-run-all
         :desc "Run a command" "m" #'TeX-command-master))
 
 
