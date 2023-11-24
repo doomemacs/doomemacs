@@ -26,10 +26,6 @@ capture, the end position, and the output buffer.")
         markdown-make-gfm-checkboxes-buttons t
         markdown-fontify-whole-heading-line t
 
-        ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
-        ;;      'wrong-type-argument consp nil' error if you use native-comp.
-        markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p)))
-
         ;; `+markdown-compile' offers support for many transpilers (see
         ;; `+markdown-compile-functions'), which it tries until one succeeds.
         markdown-command #'+markdown-compile
