@@ -508,7 +508,11 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
        ;; Must be done on a timer because `org-show-set-visibility' (used by
        ;; `org-reveal') relies on overlays that aren't immediately available
        ;; when `org-mode' first initializes.
-       (run-at-time 0.1 nil #'org-reveal '(4))))
+       (let ((buf (current-buffer)))
+         (unless (doom-temp-buffer-p buf)
+           (run-at-time 0.1 nil (lambda ()
+                                  (with-current-buffer buf
+                                    (org-reveal '(4)))))))))
 
 ;;;###autoload
 (defun +org-remove-occur-highlights-h ()
