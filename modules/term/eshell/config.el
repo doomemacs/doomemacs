@@ -69,7 +69,7 @@ You should use `set-eshell-alias!' to change this.")
         ;; TODO Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
         eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
-        eshell-prompt-regexp "^.* λ "
+        eshell-prompt-regexp "^[^#$\n]* [#$λ] "
         eshell-prompt-function #'+eshell-default-prompt-fn
         ;; em-glob
         eshell-glob-case-insensitive t
