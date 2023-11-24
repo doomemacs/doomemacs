@@ -245,8 +245,6 @@ directives. By default, this only recognizes C directives.")
   :hook (org-mode . embrace-org-mode-hook)
   :hook (ruby-mode . embrace-ruby-mode-hook)
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
-  :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode hy-mode)
-         . +evil-embrace-lisp-mode-hook-h)
   :hook ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
          . +evil-embrace-angle-bracket-modes-hook-h)
   :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
@@ -283,16 +281,6 @@ directives. By default, this only recognizes C directives.")
                               :right-regexp (regexp-quote (cddr pair))))
             embrace--pairs-list))
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
-
-  (defun +evil-embrace-lisp-mode-hook-h ()
-    ;; Avoid `embrace-add-pair-regexp' because it would overwrite the default
-    ;; `f' rule, which we want for other modes
-    (push (cons ?f (make-embrace-pair-struct
-                    :key ?f
-                    :read-function #'+evil--embrace-elisp-fn
-                    :left-regexp "([^ ]+ "
-                    :right-regexp ")"))
-          embrace--pairs-list))
 
   (defun +evil-embrace-angle-bracket-modes-hook-h ()
     (let ((var (make-local-variable 'evil-embrace-evil-surround-keys)))
