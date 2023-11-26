@@ -3,7 +3,9 @@
 
 (if (modulep! +eglot)
     (progn
-      (package! eglot :pin "2b145778ba5e57f393e50aea76b28e518c401828")
+      (package! eglot
+        :pin "2b145778ba5e57f393e50aea76b28e518c401828"
+        :built-in 'prefer)  ; Built-in as of Emacs 29
       (when (modulep! :completion vertico)
         (package! consult-eglot :pin "db9d41c9812a5a8a7b9a22fa7f3c314e37584d41"))
       (when (and (modulep! :checkers syntax)
