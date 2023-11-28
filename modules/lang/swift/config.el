@@ -4,7 +4,9 @@
   (set-repl-handler! 'swift-mode #'run-swift)
 
   (when (modulep! +lsp)
-    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append))
+    (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
+    (when (modulep! :tools lsp +eglot)
+      (set-eglot-client! swift-mode 'swift-mode '("sourcekit-lsp"))))
   (when (modulep! +tree-sitter)
     (add-hook 'swift-mode-local-vars-hook #'tree-sitter! 'append)))
 
@@ -25,7 +27,7 @@
 
 
 (use-package! lsp-sourcekit
-  :when (modulep! +lsp)
+  :when (and (modulep! +lsp) (not (modulep! :tools lsp +eglot)))
   :after swift-mode
   :init (add-hook 'swift-mode-local-vars-hook #'lsp! 'append)
   :config
