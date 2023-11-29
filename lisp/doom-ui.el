@@ -201,6 +201,9 @@ or if the current buffer is read-only or not file-visiting."
 ;;
 ;;; Buffers
 
+(use-package! buffer-name-relative
+  :hook (doom-first-buffer . buffer-name-relative-mode))
+
 (defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
