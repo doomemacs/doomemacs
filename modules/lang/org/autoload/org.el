@@ -511,8 +511,9 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
        (let ((buf (current-buffer)))
          (unless (doom-temp-buffer-p buf)
            (run-at-time 0.1 nil (lambda ()
-                                  (with-current-buffer buf
-                                    (org-reveal '(4)))))))))
+                                  (when (buffer-live-p buf)
+                                    (with-current-buffer buf
+                                      (org-reveal '(4))))))))))
 
 ;;;###autoload
 (defun +org-remove-occur-highlights-h ()
