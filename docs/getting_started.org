@@ -279,7 +279,7 @@ MacPorts package manager installed (you only need one):
 First, Doom's dependencies:
 #+BEGIN_SRC bash
 # required dependencies
-brew install git ripgrep
+brew install git ripgrep gcc libgccjit
 # optional dependencies
 brew install coreutils fd
 # Installs clang
