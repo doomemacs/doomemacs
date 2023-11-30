@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/ivy/packages.el
 
-(package! swiper :pin "9d630d800e856a2c984c5a62a6f0ad313a9d2228")
+(package! swiper :pin "8c30f4cab5948aa8d942a3b2bbf5fb6a94d9441d")
 (package! ivy)
 (package! ivy-hydra)
 (package! ivy-avy)
@@ -13,7 +13,7 @@
 (package! wgrep :pin "3132abd3750b8c87cbcf6942db952acfab5edccd")
 
 (if (modulep! +prescient)
-    (package! ivy-prescient :pin "d7cc55dad453c465af9ececbab94426202b5b32b")
+    (package! ivy-prescient :pin "707c25c947a9f17a1d43f97b3b28aba91ec9addb")
   (when (modulep! +fuzzy)
     (package! flx :pin "7b44a5abb254bbfbeca7a29336f7f4ebd8aabbf2")))
 
