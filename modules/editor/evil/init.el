@@ -40,8 +40,8 @@
       free-keys
       helm
       help
-      indent
       image
+      indent
       kotlin-mode
       lispy
       outline

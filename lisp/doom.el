@@ -119,9 +119,9 @@
 (let ((inhibit-changing-match-data t))
   (if (string-match "HARFBUZZ" system-configuration-features) ; no alternative
       (push 'harfbuzz features)))
-;; `native-compile' exists whether or not it is functional (e.g. libgcc is
-;; available or not). This seems silly, so pretend it doesn't exist if it
-;; isn't available.
+;; The `native-compile' feature exists whether or not it is functional (e.g.
+;; libgcc is available or not). This seems silly, so pretend it doesn't exist if
+;; it isn't functional.
 (if (featurep 'native-compile)
     (if (not (native-comp-available-p))
         (delq 'native-compile features)))
