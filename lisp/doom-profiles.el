@@ -449,8 +449,8 @@ Defaults to the profile at `doom-profile-default'."
 (defun doom-profile--generate-package-autoloads ()
   (doom-autoloads--scan
    (mapcar #'straight--autoloads-file
-           (seq-difference (hash-table-keys straight--build-cache)
-                           doom-autoloads-excluded-packages))
+           (nreverse (seq-difference (hash-table-keys straight--build-cache)
+                                     doom-autoloads-excluded-packages)))
    doom-autoloads-excluded-files
    'literal))
 

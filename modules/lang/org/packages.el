@@ -31,11 +31,11 @@
                          (format "(defun org-git-version (&rest _) \"%s-??-%s\")\n"
                                  version (cdr (doom-call-process "git" "rev-parse" "--short" "HEAD")))
                          "(provide 'org-version)\n")))))
-  :pin "e90a8a69a7fa2d83c995b5d32bc0b24a68218ed3")
+  :pin "57b94f3447b9046dac2f9238e24ad902510056cc")
 (package! org-contrib
   :recipe (:host github
            :repo "emacsmirror/org-contrib")
-  :pin "dc59cdd46be8f6854c5d6e9252263d0e4e62e896")
+  :pin "79286861ae3f4a47fbc66ce97cd527196f60c4a8")
 
 (package! avy)
 (package! htmlize :pin "dd27bc3f26efd728f2b1f01f9e4ac4f61f2ffbf9")
@@ -56,7 +56,7 @@
 
 (when (and IS-MAC
            (modulep! :os macos))
-  (package! org-mac-link :pin "3a30a937e135a6637a5126e2ac096b6c90584045"))
+  (package! org-mac-link :pin "e30171a6e98db90787ab8a23b3a7dc4fd13b10f9"))
 
 (when (modulep! +passwords)
   (package! org-passwords
@@ -71,9 +71,9 @@
 (when (modulep! :tools pdf)
   (package! org-pdftools :pin "4e420233a153a9c4ab3d1a7e1d7d3211c836f0ac"))
 (when (modulep! :tools magit)
-  (package! orgit :pin "4a585029875a1dbbe96d8ac157bd2fd02875f289")
+  (package! orgit :pin "b60efabc4a1b15d7eacaabc5bdfe6f3c20fee161")
   (when (modulep! :tools magit +forge)
-    (package! orgit-forge :pin "8ba92a54aee9693b1bf03baf14f83550a7c89b18")))
+    (package! orgit-forge :pin "f595a30aa75af55522b1203cd29198fb9aa3a0a5")))
 (when (modulep! +brain)
   (package! org-brain :pin "2bad7732aae1a3051e2a14de2e30f970bbe43c25"))
 (when (modulep! +dragndrop)
@@ -84,15 +84,15 @@
 (when (modulep! +ipython) ; DEPRECATED
   (package! ob-ipython :pin "7147455230841744fb5b95dcbe03320313a77124"))
 (when (modulep! +jupyter)
-  (package! jupyter :pin "1baabc8f2d0631f8f4308400f9a53f1aadd58d14"))
+  (package! jupyter :pin "0a92c0c978ab12bd31a50a7e8b1295f5d1767e20"))
 (when (modulep! +journal)
-  (package! org-journal :pin "18df4d5ae5e15580df42562c143d007c6d28d75f"))
+  (package! org-journal :pin "a306f76ee2b0292946a20530bd9114aefc85a263"))
 (when (modulep! +noter)
-  (package! org-noter :pin "ab838691f0d6ae281597451de311f71a50ba8da6"))
+  (package! org-noter :pin "a4296d8338d46b5c863d3d339b50e201172f218c"))
 (when (modulep! +pomodoro)
   (package! org-pomodoro :pin "3f5bcfb80d61556d35fc29e5ddb09750df962cc6"))
 (when (modulep! +pretty)
-  (package! org-appear :pin "eb9f9db40aa529fe4b977235d86494b115281d17")
+  (package! org-appear :pin "81eba5d7a5b74cdb1bad091d85667e836f16b997")
   (package! org-superstar :pin "54c81c27dde2a6dc461bb064e79a8b2089093a2e")
   (package! org-fancy-priorities :pin "7f677c6c14ecf05eab8e0efbfe7f1b00ae68eb1d"))
 (when (modulep! +present)
@@ -100,11 +100,11 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "80965f6c6afe8d918481433984b493de72af5399")
   (package! org-tree-slide :pin "e2599a106a26ce5511095e23df4ea04be6687a8a")
-  (package! org-re-reveal :pin "93396b531ba13219bdbb968c197d5c44535ce1cd")
+  (package! org-re-reveal :pin "e7895dae9807df38b6e17b6c24e1e824caad6c46")
   (package! revealjs
     :recipe (:host github :repo "hakimel/reveal.js"
              :files ("css" "dist" "js" "plugin"))
-    :pin "07a6cf1249e40164705713ed9ad60f13846789fb"))
+    :pin "d5896c968b2406126ca0beafecdffe219230b6b4"))
 (cond
  ((modulep! +roam)
   (package! org-roam
@@ -152,7 +152,7 @@
     :recipe (:host github :repo "DEADB17/ob-racket")
     :pin "d8fd51bddb019b0eb68755255f88fc800cfe03cb"))
 (when (modulep! :lang rest)
-  (package! ob-restclient :pin "ded3b7eb7b0592328a7a08ecce6f25278cba4a1d"))
+  (package! ob-restclient :pin "1a127eb0165f10bb9d33606aa8529051118805e7"))
 (when (modulep! :lang scala)
   (package! ob-ammonite :pin "39937dff395e70aff76a4224fa49cf2ec6c57cca"))
 

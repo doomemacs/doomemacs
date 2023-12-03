@@ -1,22 +1,5 @@
 ;;; lang/scheme/autoload.el -*- lexical-binding: t; -*-
 
-;; HACK `geiser' has poor autoload etiquette. It calls
-;;      `geiser-activate-implementation' and `geiser-implementation-extension'
-;;      in their autoloads files. Sure, these functions are autoloaded, but this
-;;      needlessly (and unavoidably) pulls in the `geiser-impl' package (et co)
-;;      when geiser-X's autoloads are read (i.e. at startup).
-;;
-;;      I rectify this by inlining calls to these two functions (and the
-;;      `geiser-impl--add-to-alist' sub-call in
-;;      `geiser-implementation-extension'), and autoloading the two variables
-;;      they operate on. I do this from our autoloads file (which is
-;;      byte-compiled and read at startup before package autoloads).
-;; TODO At some point, PR this behavior upstream (but not verbatim!)
-;;;###autoload (defvar geiser-active-implementations ())
-;;;###autoload (defvar geiser-implementations-alist ())
-;;;###autoload (eval-and-compile (dolist (sym '(geiser-impl--add-to-alist geiser-activate-implementation geiser-implementation-extension)) (put sym 'byte-optimizer 'byte-compile-inline-expand)))
-
-
 (defvar calculate-lisp-indent-last-sexp)
 ;; Adapted from https://github.com/alezost/emacs-config/blob/master/utils/al-scheme.el#L76-L123
 ;;;###autoload
