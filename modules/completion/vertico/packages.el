@@ -1,19 +1,19 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/vertico/packages.el
 
-(package! vertico  :pin "03bfb71a2b5db296a93eeb0752bd934d112e0792")
+(package! vertico  :pin "e8edac107df5883f2fa8690356a8d8deee1a83de")
 
-(package! orderless :pin "d6b402a89e234d0e6166247ed6025f9acc8b4d9a")
+(package! orderless :pin "b24748093b00b37c3a572c4909f61c08fa27504f")
 
-(package! consult :pin "43380042daaaf57f60aa22962a97ed904a7d56ce")
+(package! consult :pin "9c7dbbe4d626987e40d7a157430021e13a6906bd")
 (package! consult-dir :pin "3f5f4b71ebe819392cb090cda71bd39a93bd830a")
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
-  (package! consult-flycheck :pin "3f2a7c17cc2fe64e0c07e3bf90e33c885c0d7062"))
-(package! embark :pin "7758a1ac64d784fa71f14b202b7a26c27f29d03e")
-(package! embark-consult :pin "7758a1ac64d784fa71f14b202b7a26c27f29d03e")
+  (package! consult-flycheck :pin "0662839aa5db429130f5ffd15c14d4a980b2e694"))
+(package! embark :pin "b9f2b3b9a5b9c72cf1416097b9941c4f275dae94")
+(package! embark-consult :pin "b9f2b3b9a5b9c72cf1416097b9941c4f275dae94")
 
-(package! marginalia :pin "f1734375a5d8fa18e9cecb47ae4b5ae86c72399f")
+(package! marginalia :pin "27ccfd2213bb9432883427cf058c63af10196aa6")
 
 (package! wgrep :pin "3132abd3750b8c87cbcf6942db952acfab5edccd")
 
@@ -23,4 +23,4 @@
 (when (modulep! +childframe)
   (package! vertico-posframe
     :recipe (:host github :repo "tumashu/vertico-posframe")
-    :pin "db9fbc95bb8316165ec74e500a76d6857e6ced1a"))
+    :pin "15168c92ca06a39fbf84ac27d4e2ae02216300b5"))
