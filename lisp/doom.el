@@ -411,23 +411,23 @@ users).")
       (define-advice startup--load-user-init-file (:before (&rest _) undo-silence)
         (advice-remove #'load-file #'load-file@silence))
 
-      ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on each
-      ;;   `require' and `load'. Doom won't load any dmodules this early, so omit
-      ;;   .so for a small startup boost. This is later restored in doom-start.
+      ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on
+      ;;   each `require' and `load'. Doom won't load any modules this early, so
+      ;;   omit .so for a tiny startup boost. Is later restored in doom-start.
       (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
       (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
       (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
       (set-default-toplevel-value 'load-file-rep-suffixes '(""))
-      ;; COMPAT: Undo any problematic startup optimizations; from this point, I make
-      ;;   no assumptions about what might be loaded in userland.
+      ;; COMPAT: Undo any problematic startup optimizations; from this point, I
+      ;;   make no assumptions about what might be loaded in userland.
       (add-hook! 'doom-before-init-hook
         (defun doom--reset-load-suffixes-h ()
           (setq load-suffixes (get 'load-suffixes 'initial-value)
                 load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
 
-      ;; PERF: Doom uses `defcustom' to indicate variables that users are expected
-      ;;   to reconfigure. Trouble is it fires off initializers meant to
-      ;;   accommodate any user attempts to configure them before they were
+      ;; PERF: Doom uses `defcustom' to indicate variables that users are
+      ;;   expected to reconfigure. Trouble is it fires off initializers meant
+      ;;   to accommodate any user attempts to configure them before they were
       ;;   defined. This is unnecessary before $DOOMDIR/init.el is loaded, so I
       ;;   disable them until it is.
       (setq custom-dont-initialize t)
@@ -436,8 +436,8 @@ users).")
           (setq custom-dont-initialize nil)))
 
       ;; PERF: The mode-line procs a couple dozen times during startup. This is
-      ;;   normally quite fast, but disabling the default mode-line and reducing the
-      ;;   update delay timer seems to stave off ~30-50ms.
+      ;;   normally quite fast, but disabling the default mode-line and reducing
+      ;;   the update delay timer seems to stave off ~30-50ms.
       (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
       (setq-default mode-line-format nil)
       (dolist (buf (buffer-list))
@@ -446,8 +446,8 @@ users).")
       ;;   produce ugly flashes of unstyled Emacs.
       (setq-default inhibit-redisplay t
                     inhibit-message t)
-      ;; COMPAT: Then reset it with advice, because `startup--load-user-init-file'
-      ;;   will never be interrupted by errors. And if these settings are left
+      ;; COMPAT: Then reset with advice, because `startup--load-user-init-file'
+      ;;   will never be interrupted by errors.  And if these settings are left
       ;;   set, Emacs could appear frozen or garbled.
       (defun doom--reset-inhibited-vars-h ()
         (setq-default inhibit-redisplay nil
@@ -461,8 +461,8 @@ users).")
         (unless (default-toplevel-value 'mode-line-format)
           (setq-default mode-line-format (get 'mode-line-format 'initial-value))))
 
-      ;; PERF: Doom disables the UI elements by default, so that there's less for
-      ;;   the frame to initialize. However, the toolbar is still populated
+      ;; PERF: Doom disables the UI elements by default, so that there's less
+      ;;   for the frame to initialize. However, the toolbar is still populated
       ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
       (advice-add #'tool-bar-setup :override #'ignore)
       (define-advice startup--load-user-init-file (:before (&rest _) defer-tool-bar-setup)
@@ -499,7 +499,7 @@ All valid contexts:
 (put 'doom-context 'valid-values '(cli compile eval init modules packages reload doctor sandbox))
 (put 'doom-context 'risky-local-variable t)
 
-(defun doom-context--check (context)
+(defun doom-context--assert (context)
   (let ((valid (get 'doom-context 'valid-values)))
     (unless (memq context valid)
       (signal 'doom-context-error
@@ -514,7 +514,7 @@ All valid contexts:
 
 Return non-nil if successful. Throws an error if CONTEXT is invalid."
   (unless (memq context doom-context)
-    (doom-context--check context)
+    (doom-context--assert context)
     (doom-log ":context: +%s %s" context doom-context)
     (push context doom-context)))
 
