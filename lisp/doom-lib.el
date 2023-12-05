@@ -801,7 +801,7 @@ This macro accepts, in order:
               func-forms)))
     `(progn
        ,@defn-forms
-       (dolist (hook (nreverse ',hook-forms))
+       (dolist (hook ',(nreverse hook-forms))
          (dolist (func (list ,@func-forms))
            ,(if remove-p
                 `(remove-hook hook func ,local-p)
