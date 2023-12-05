@@ -1050,9 +1050,9 @@ considered as well."
               "\n")))
       (print! (warn "Wrote extended straight log to %s")
               (path (let ((coding-system-for-write 'utf-8-auto))
-                      (with-temp-file error-file
-                        (insert-buffer-substring (straight--process-buffer)))
-                      (set-file-modes error-file #o600)
+                      (with-file-modes #o600
+                        (with-temp-file error-file
+                          (insert-buffer-substring (straight--process-buffer))))
                       error-file))))
      ((eq type 'error)
       (let* ((generic? (eq (car data) 'error))
@@ -1123,11 +1123,12 @@ See `doom-cli-log-file-format' for details."
     (let* ((buffer (doom-cli-context-stderr context))
            (file (doom-cli--output-file "log" context)))
       (when (> (buffer-size buffer) 0)
-        (make-directory (file-name-directory file) t)
-        (with-temp-file file
-          (insert-buffer-substring buffer)
-          (ansi-color-filter-region (point-min) (point-max)))
-        (set-file-modes file #o600)))))
+        (with-file-modes #o700
+          (make-directory (file-name-directory file) t))
+        (with-file-modes #o600
+          (with-temp-file file
+            (insert-buffer-substring buffer)
+            (ansi-color-filter-region (point-min) (point-max))))))))
 
 (defun doom-cli--output-benchmark-h (context)
   "Write this session's benchmark to stdout or stderr, depending.
@@ -1351,10 +1352,11 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
 
           ((let ((tmpfile (doom-cli--output-file 'output context))
                  (coding-system-for-write 'utf-8-auto))
-             (make-directory (file-name-directory tmpfile) t)
-             (with-temp-file tmpfile
-               (insert-buffer-substring (doom-cli-context-stdout context)))
-             (set-file-modes tmpfile #o600)
+             (with-file-modes #o700
+               (make-directory (file-name-directory tmpfile) t))
+             (with-file-modes #o600
+               (with-temp-file tmpfile
+                 (insert-buffer-substring (doom-cli-context-stdout context))))
              (doom-cli--restart
               (format "%s <%s; rm -f%s %s"
                       (or pager
