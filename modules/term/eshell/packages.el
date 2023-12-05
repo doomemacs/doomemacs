@@ -8,6 +8,6 @@
 (package! eshell-did-you-mean :pin "80cd8c4b186a2fb29621cf634bcf2bcd914f1e3d")
 (package! eshell-syntax-highlighting :pin "4ac27eec6595ba116a6151dfaf0b0e0440101e10")
 
-(unless IS-WINDOWS
+(unless (featurep :system 'windows)
   (package! fish-completion :pin "d34d0b96fde63feedf13c4288183d8d4d4d748cf")
   (package! bash-completion :pin "f1daac0386c24cbe8a244a62c7588cc6847b07ae"))

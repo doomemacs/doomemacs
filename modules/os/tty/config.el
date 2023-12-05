@@ -19,8 +19,8 @@
 (add-hook 'tty-setup-hook #'xterm-mouse-mode)
 
 ;; Windows terminals don't support what I'm about to do, but best not to wrap
-;; this in a IS-WINDOWS check, in case you're using WSL or Cygwin, which do and
-;; *might* support it.
+;; this in an OS check, in case you're using WSL or Cygwin, which *might*
+;; support it.
 (add-hook! 'tty-setup-hook
   (defun doom-init-clipboard-in-tty-emacs-h ()
     ;; Fix the clipboard in tty Emacs by...

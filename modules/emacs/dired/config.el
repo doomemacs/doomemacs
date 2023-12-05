@@ -29,7 +29,7 @@
   (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
 
   (let ((args (list "-ahl" "-v" "--group-directories-first")))
-    (when IS-BSD
+    (when (featurep :system 'bsd)
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
       ;; when not using GNU ls.
@@ -188,9 +188,9 @@ we have to clean it up ourselves."
   ;; deleted directory. Of course I do!
   (setq dired-clean-confirm-killing-deleted-buffers nil)
   ;; Let OS decide how to open certain files
-  (when-let (cmd (cond (IS-MAC "open")
-                       (IS-LINUX "xdg-open")
-                       (IS-WINDOWS "start")))
+  (when-let (cmd (cond ((featurep :system 'macos) "open")
+                       ((featurep :system 'linux) "xdg-open")
+                       ((featurep :system 'windows) "start")))
     (setq dired-guess-shell-alist-user
           `(("\\.\\(?:docx\\|pdf\\|djvu\\|eps\\)\\'" ,cmd)
             ("\\.\\(?:jpe?g\\|png\\|gif\\|xpm\\)\\'" ,cmd)

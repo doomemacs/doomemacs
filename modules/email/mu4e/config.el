@@ -365,7 +365,7 @@ This should already be the case yet it does not always seem to be."
     (read-only-mode -1))
 
   ;; process lock control
-  (when IS-WINDOWS
+  (when (featurep :system 'windows)
     (setq
      +mu4e-lock-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock")
      +mu4e-lock-request-file (expand-file-name "~/AppData/Local/Temp/mu4e_lock_request")))
@@ -696,7 +696,7 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
                                  t)))
                     mails)))
 
-  (when IS-LINUX
+  (when (featurep :system 'linux)
     (mu4e-alert-set-default-style 'libnotify)
 
     (defvar +mu4e-alert-bell-cmd '("paplay" . "/usr/share/sounds/freedesktop/stereo/message.oga")

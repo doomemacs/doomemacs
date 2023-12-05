@@ -157,7 +157,8 @@ and cannot run in."
  ;; using the same composition-function-table method
  ;; https://bitbucket.org/mituharu/emacs-mac/src/26c8fd9920db9d34ae8f78bceaec714230824dac/lisp/term/mac-win.el?at=master#lines-345:805
  ;; so use that instead if this module is enabled.
- ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
+ ((if (featurep :system 'macos)
+      (fboundp 'mac-auto-operator-composition-mode))
   (add-hook 'doom-init-ui-hook #'mac-auto-operator-composition-mode 'append))
 
  ;; NOTE: the module does not support Emacs 27 and less, but if we still try to enable ligatures,

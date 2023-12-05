@@ -25,7 +25,7 @@
     (package! counsel-dash :pin "8decb980f111ebe7027361ee252279a9076da261")))
 
 (when (modulep! +dictionary)
-  (if IS-MAC
+  (if (featurep :system 'macos)
       (package! osx-dictionary :pin "0715e5a3ac659df32a0f0fabfbbeef0228fbd9a9")
     (package! define-word :pin "31a8c67405afa99d0e25e7c86a4ee7ef84a808fe")
     ;; REVIEW: This fork fixes SavchenkoValeriy/emacs-powerthesaurus#40.

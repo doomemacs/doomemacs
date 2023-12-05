@@ -32,8 +32,8 @@ capture, the end position, and the output buffer.")
         ;; This is set to `nil' by default, which causes a wrong-type-arg error
         ;; when you use `markdown-open'. These are more sensible defaults.
         markdown-open-command
-        (cond (IS-MAC "open")
-              (IS-LINUX "xdg-open"))
+        (cond ((featurep :system 'macos) "open")
+              ((featurep :system 'linux) "xdg-open"))
 
         ;; A sensible and simple default preamble for markdown exports that
         ;; takes after the github asthetic (plus highlightjs syntax coloring).

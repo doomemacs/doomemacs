@@ -148,7 +148,7 @@ Can be negative.")
 
 (defvar helm-generic-files-map (make-sparse-keymap))
 (after! helm-locate
-  (when (and IS-MAC
+  (when (and (featurep :system 'macos)
              (null helm-locate-command)
              (executable-find "mdfind"))
     (setq helm-locate-command "mdfind -name %s"))

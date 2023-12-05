@@ -17,7 +17,7 @@
               (indent 0))
     (with-current-buffer formatted-buffer
       (erase-buffer)
-      (unless IS-WINDOWS
+      (unless (featurep :system 'windows)
         (setq-local coding-system-for-read 'utf-8)
         (setq-local coding-system-for-write 'utf-8))
       ;; Ensure this temp buffer seems as much like the origin buffer as

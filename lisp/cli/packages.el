@@ -297,7 +297,7 @@ declaration) or dependency thereof that hasn't already been."
                       ;;      variables entry is missing the suffix" errors when
                       ;;      installing them (see hlissner/doom-emacs#2637), so
                       ;;      have git handle conversion by force.
-                      (when (and IS-WINDOWS (stringp local-repo))
+                      (when (and doom--system-windows-p (stringp local-repo))
                         (let ((default-directory (straight--repos-dir local-repo)))
                           (when (file-in-directory-p default-directory straight-base-dir)
                             (straight--process-run "git" "config" "core.autocrlf" "true")))))

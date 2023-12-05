@@ -11,12 +11,13 @@
           hy-mode) . parinfer-rust-mode)
   :init
   (setq parinfer-rust-library
-        (concat doom-data-dir "parinfer-rust/"
-                (cond (IS-MAC "parinfer-rust-darwin.so")
-                      (IS-LINUX "parinfer-rust-linux.so")
-                      (IS-WINDOWS "parinfer-rust-windows.dll")
-                      (IS-BSD "libparinfer_rust.so")))
-        parinfer-rust-auto-download (not IS-BSD))
+        (file-name-concat
+         doom-data-dir "parinfer-rust/"
+         (cond ((featurep :system 'macos)   "parinfer-rust-darwin.so")
+               ((featurep :system 'linux)   "parinfer-rust-linux.so")
+               ((featurep :system 'windows) "parinfer-rust-windows.dll")
+               ((featurep :system 'bsd)     "libparinfer_rust.so")))
+        parinfer-rust-auto-download (not (featurep :system 'bsd)))
   :config
   (map! :map parinfer-rust-mode-map
         :localleader

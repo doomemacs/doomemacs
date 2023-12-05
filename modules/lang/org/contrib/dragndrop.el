@@ -26,8 +26,8 @@
   (setq org-download-method 'attach
         org-download-timestamp "_%Y%m%d_%H%M%S"
         org-download-screenshot-method
-        (cond (IS-MAC "screencapture -i %s")
-              (IS-LINUX
+        (cond ((featurep :system 'macos) "screencapture -i %s")
+              ((featurep :system 'linux)
                (cond ((executable-find "maim")  "maim -s %s")
                      ((executable-find "scrot") "scrot -s %s")
                      ((executable-find "gnome-screenshot") "gnome-screenshot -a -f %s"))))

@@ -4,8 +4,8 @@
 (defun doom-system-distro ()
   "Return a symbol representing the installed distro."
   (with-memoization (get 'doom-system-distro 'cached-value)
-    (cond (IS-WINDOWS 'windows)
-          (IS-MAC     'macos)
+    (cond (doom--system-windows-p 'windows)
+          (doom--system-macos-p     'macos)
           ((ignore-errors
              (with-file-contents! "/etc/os-release"
                (when (re-search-forward "^ID=\"?\\([^\"\n]+\\)\"?" nil t)

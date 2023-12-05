@@ -83,7 +83,7 @@
   (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t
         ;; whatis lookups are exceptionally slow on macOS (#5860)
-        company-shell-dont-fetch-meta IS-MAC))
+        company-shell-dont-fetch-meta (featurep :system 'macos)))
 
 
 (use-package! powershell

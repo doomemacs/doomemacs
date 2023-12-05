@@ -120,7 +120,7 @@
 ;;   focus when it is started, among other things, so enable the menu-bar for
 ;;   GUI frames, but keep it disabled in terminal frames because there it
 ;;   activates an ugly, in-frame menu bar.
-(eval-when! IS-MAC
+(eval-when! doom--system-macos-p
   (add-hook! '(window-setup-hook after-make-frame-functions)
     (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
       (when-let (frame (or frame (selected-frame)))
@@ -137,7 +137,7 @@
 (setq default-input-method nil)
 ;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
 ;; leave Emacs to its own devices.
-(eval-when! IS-WINDOWS
+(eval-when! (not doom--system-windows-p)
   (setq selection-coding-system 'utf-8))
 
 

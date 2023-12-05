@@ -48,6 +48,6 @@
   (when (not (fboundp 'system-move-file-to-trash))
     (defun system-move-file-to-trash (file)
       "Move FILE to trash."
-      (when (and (not IS-LINUX)
+      (when (and (not (featurep :system 'linux))
                  (not (file-remote-p default-directory)))
         (osx-trash-move-file-to-trash file)))))

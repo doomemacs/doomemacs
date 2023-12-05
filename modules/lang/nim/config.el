@@ -14,7 +14,7 @@ nimsuggest isn't installed."
 
   (set-formatter! 'nmfmt '("nimfmt" filepath) :modes '(nim-mode))
 
-  (when IS-WINDOWS
+  (when (featurep :system 'windows)
     ;; TODO File PR/report upstream (https://github.com/nim-lang/nim-mode)
     (defadvice! +nim--suggest-get-temp-file-name-a (path)
       "Removes invalid characters from the temp file path, including the unicode

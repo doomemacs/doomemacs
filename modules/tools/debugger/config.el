@@ -27,7 +27,7 @@
     ((:lang rust +lsp)       :after rustic-mode :require (dap-lldb dap-cpptools))
     ((:lang javascript +lsp)
      :after (js2-mode typescript-mode)
-     :require (dap-node dap-chrome dap-firefox ,@(if IS-WINDOWS '(dap-edge)))))
+     :require (dap-node dap-chrome dap-firefox ,@(if (featurep :system 'windows) '(dap-edge)))))
   "TODO")
 
 

@@ -379,7 +379,7 @@ Or to create aliases for functions that behave differently:
       "C-x C-r" 'a-global-keybind
       :g "C-x C-r" 'another-global-keybind  ; same as above
 
-      (:when IS-MAC
+      (:when (featurep :system 'macos)
         :n "M-s" 'some-fn
         :i "M-o" (cmd! (message "Hi"))))
 
@@ -604,7 +604,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
        ;;helm
 
        :tools
-       (:if IS-MAC macos)
+       (:if (featurep :system 'macos) macos)
        docker
        lsp
 
@@ -617,7 +617,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
               ((string= system-name "writing-pc")
                (org +dragndrop)
                ruby))
-       (:if IS-LINUX
+       (:if (featurep :system 'linux)
            (web +lsp)
          web)
 

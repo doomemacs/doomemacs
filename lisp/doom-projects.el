@@ -147,7 +147,7 @@ c) are not valid projectile projects."
         (projectile-serialize-cache))))
 
   ;; Some MSYS utilities auto expanded the `/' path separator, so we need to prevent it.
-  (when IS-WINDOWS
+  (when doom--system-windows-p
     (setenv "MSYS_NO_PATHCONV" "1") ; Fix path in Git Bash
     (setenv "MSYS2_ARG_CONV_EXCL" "--path-separator")) ; Fix path in MSYS2
 
@@ -192,11 +192,11 @@ And if it's a function, evaluate it."
                 (concat (format "%s . -0 -H --color=never --type file --type symlink --follow --exclude .git %s"
                                 bin (if (version< version "8.3.0")
                                         "" "--strip-cwd-prefix"))
-                        (if IS-WINDOWS " --path-separator=/"))))
+                        (if doom--system-windows-p " --path-separator=/"))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
            ((executable-find "rg" t)
             (concat "rg -0 --files --follow --color=never --hidden -g!.git"
-                    (if IS-WINDOWS " --path-separator=/")))
+                    (if doom--system-windows-p " --path-separator=/")))
            ("find . -type f -print0"))))
 
   (defadvice! doom--projectile-default-generic-command-a (fn &rest args)

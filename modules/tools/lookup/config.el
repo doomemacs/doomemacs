@@ -216,7 +216,7 @@ Dictionary.app behind the scenes to get definitions.")
 
 (use-package! define-word
   :when (modulep! +dictionary)
-  :unless IS-MAC
+  :unless (featurep :system 'macos)
   :defer t
   :config
   (setq define-word-displayfn-alist

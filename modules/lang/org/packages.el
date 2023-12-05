@@ -54,7 +54,7 @@
              :type git
              :repo "https://repo.or.cz/org-contacts.git")))
 
-(when (and IS-MAC
+(when (and (featurep :system 'macos)
            (modulep! :os macos))
   (package! org-mac-link :pin "e30171a6e98db90787ab8a23b3a7dc4fd13b10f9"))
 

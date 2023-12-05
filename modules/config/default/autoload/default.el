@@ -24,7 +24,7 @@ If ARG (universal argument), runs `compile' from the current directory."
 generate `completing-read' candidates."
   (interactive)
   (call-interactively
-   (if (and (not IS-MAC) (executable-find "man"))
+   (if (and (not (featurep :system 'macos)) (executable-find "man"))
        (or (command-remapping #'man)
            #'man)
      #'woman)))

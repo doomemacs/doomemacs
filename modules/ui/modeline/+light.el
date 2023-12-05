@@ -489,7 +489,7 @@ lines are selected, or the NxM dimensions of a block selection.")
   `(:eval
     (let ((sys (coding-system-plist buffer-file-coding-system))
           (eol (coding-system-eol-type-mnemonic buffer-file-coding-system)))
-      (concat (unless (equal eol ,(if IS-WINDOWS "CRLF" "LF"))
+      (concat (unless (equal eol ,(if (featurep :system 'windows) "CRLF" "LF"))
                 (concat "  " eol " "))
               (if (memq (plist-get sys :category)
                         '(coding-category-undecided coding-category-utf-8))

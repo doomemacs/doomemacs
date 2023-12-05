@@ -30,7 +30,7 @@ and Emacs states, and for non-evil users.")
 ;;; Global keybind settings
 
 (cond
- (IS-MAC
+ (doom--system-macos-p
   ;; mac-* variables are used by the special emacs-mac build of Emacs by
   ;; Yamamoto Mitsuharu, while other builds use ns-*.
   (setq mac-command-modifier      'super
@@ -40,7 +40,7 @@ and Emacs states, and for non-evil users.")
         ;; Free up the right option for character composition
         mac-right-option-modifier 'none
         ns-right-option-modifier  'none))
- (IS-WINDOWS
+ (doom--system-windows-p
   (setq w32-lwindow-modifier 'super
         w32-rwindow-modifier 'super)))
 

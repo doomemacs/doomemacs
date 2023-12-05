@@ -107,7 +107,30 @@
                         "recompile it.")
                 emacs-version old-version)))
 
-;;; Custom features
+;;; Custom features & global constants
+;; Doom has its own features that its modules, CLI, and user extensions can
+;; announce, and don't belong in `features', so they are stored here, which can
+;; include information about the external system environment.
+(defconst doom-features
+  (pcase system-type
+    ('darwin                           '(macos bsd))
+    ((or 'cygwin 'windows-nt 'ms-dos)  '(windows))
+    ((or 'gnu 'gnu/linux)              '(linux))
+    ((or 'gnu/kfreebsd 'berkeley-unix) '(linux bsd)))
+  "A list of symbols denoting available features in the active Doom profile.")
+
+;; Convenience aliases for internal use only (may be removed later).
+(defconst doom-system            (car doom-features))
+(defconst doom--system-windows-p (eq 'windows doom-system))
+(defconst doom--system-macos-p   (eq 'macos doom-system))
+(defconst doom--system-linux-p   (eq 'linux doom-system))
+
+;; `system-type' is esoteric, so I create a pseudo feature as a stable and
+;; consistent alternative, and all while using the same `featurep' interface
+;; we're already familiar with.
+(push :system features)
+(put :system 'subfeatures doom-features)
+
 ;; Emacs needs a more consistent way to detect build features, and the docs
 ;; claim `system-configuration-features' is not da way. Some features (that
 ;; don't represent packages) can be found in `features' (which `featurep'
@@ -126,25 +149,30 @@
     (if (not (native-comp-available-p))
         (delq 'native-compile features)))
 
-;;; Global constants
 ;; DEPRECATED remove in v3
-(defconst IS-MAC      (eq system-type 'darwin))
-(defconst IS-LINUX    (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix)))
-(defconst IS-WINDOWS  (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD      (memq system-type '(darwin berkeley-unix gnu/kfreebsd)))
-(defconst EMACS28+    (> emacs-major-version 27))
-(defconst EMACS29+    (> emacs-major-version 28))
-(defconst MODULES     (featurep 'dynamic-modules))
-(defconst NATIVECOMP  (featurep 'native-compile))
+(with-no-warnings
+  (defconst IS-MAC      doom--system-macos-p)
+  (defconst IS-LINUX    doom--system-linux-p)
+  (defconst IS-WINDOWS  doom--system-windows-p)
+  (defconst IS-BSD      (memq 'bsd doom-features))
+  (defconst EMACS28+    (> emacs-major-version 27))
+  (defconst EMACS29+    (> emacs-major-version 28))
+  (defconst MODULES     (featurep 'dynamic-modules))
+  (defconst NATIVECOMP  (featurep 'native-compile))
 
-(make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
-(make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
-(make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
-(make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0")
+  (make-obsolete-variable 'IS-MAC     "Use (featurep :system 'macos) instead" "3.0.0")
+  (make-obsolete-variable 'IS-LINUX   "Use (featurep :system 'linux) instead" "3.0.0")
+  (make-obsolete-variable 'IS-WINDOWS "Use (featurep :system 'windows) instead" "3.0.0")
+  (make-obsolete-variable 'IS-BSD     "Use (featurep :system 'bsd) instead" "3.0.0")
+  (make-obsolete-variable 'EMACS28+   "Use (>= emacs-major-version 28) instead" "3.0.0")
+  (make-obsolete-variable 'EMACS29+   "Use (>= emacs-major-version 29) instead" "3.0.0")
+  (make-obsolete-variable 'MODULES    "Use (featurep 'dynamic-modules) instead" "3.0.0")
+  (make-obsolete-variable 'NATIVECOMP "Use (featurep 'native-compile) instead" "3.0.0"))
+
 
 ;;; Fix $HOME on Windows
 ;; $HOME isn't normally defined on Windows, but many unix tools expect it.
-(when IS-WINDOWS
+(when doom--system-windows-p
   (when-let (realhome
              (and (null (getenv-internal "HOME"))
                   (getenv "USERPROFILE")))
@@ -228,7 +256,7 @@ These files should not be shared across systems. By default, it is used by
 (define-obsolete-variable-alias 'doom-etc-dir 'doom-data-dir "3.0.0")
 (defvar doom-data-dir
   (if doom-profile
-      (if IS-WINDOWS
+      (if doom--system-windows-p
           (expand-file-name "doomemacs/data/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_DATA_HOME") "~/.local/share")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
@@ -247,7 +275,7 @@ For profile-local data files, use `doom-profile-data-dir' instead.")
 
 (defvar doom-cache-dir
   (if doom-profile
-      (if IS-WINDOWS
+      (if doom--system-windows-p
           (expand-file-name "doomemacs/cache/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_CACHE_HOME") "~/.cache")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
@@ -266,7 +294,7 @@ For profile-local cache files, use `doom-profile-cache-dir' instead.")
 
 (defvar doom-state-dir
   (if doom-profile
-      (if IS-WINDOWS
+      (if doom--system-windows-p
           (expand-file-name "doomemacs/state/" (getenv-internal "APPDATA"))
         (expand-file-name "doom/" (or (getenv-internal "XDG_STATE_HOME") "~/.local/state")))
     ;; DEPRECATED: .local will be removed entirely in 3.0
@@ -470,8 +498,8 @@ users).")
         (add-transient-hook! 'tool-bar-mode (tool-bar-setup)))
 
       ;; PERF: Unset a non-trivial list of command line options that aren't
-      ;;   relevant to our current OS, but `command-line-1' still processes.
-      (unless IS-MAC
+      ;;   relevant to this session, but `command-line-1' still processes.
+      (unless doom--system-macos-p
         (setq command-line-ns-option-alist nil))
       (unless (memq initial-window-system '(x pgtk))
         (setq command-line-x-option-alist nil)))))
@@ -649,7 +677,7 @@ of 'doom sync' or 'doom gc'."
       gnutls-algorithm-priority
       (when (boundp 'libgnutls-version)
         (concat "SECURE128:+SECURE192:-VERS-ALL"
-                (if (and (not IS-WINDOWS)
+                (if (and (not doom--system-windows-p)
                          (>= libgnutls-version 30605))
                     ":+VERS-TLS1.3")
                 ":+VERS-TLS1.2"))
@@ -713,6 +741,8 @@ appropriately against `noninteractive' or the `cli' context."
   (defun doom--begin-init-h ()
     "Begin the startup process."
     (when (doom-context-push 'init)
+      ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
+      (setq features (cons :system (delq :system features)))
       ;; Remember these variables' initial values, so we can safely reset them at
       ;; a later time, or consult them without fear of contamination.
       (dolist (var '(exec-path load-path process-environment))

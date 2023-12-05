@@ -153,7 +153,7 @@ orderless."
               ;; https://github.com/sharkdp/fd/issues/839
               "--full-path --absolute-path"
               "--hidden --exclude .git"
-              (when IS-WINDOWS "--path-separator=/"))))
+              (if (featurep :system 'windows) "--path-separator=/"))))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep

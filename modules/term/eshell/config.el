@@ -242,7 +242,7 @@ Emacs versions < 29."
 
 
 (use-package! fish-completion
-  :unless IS-WINDOWS
+  :unless (featurep :system 'windows)
   :hook (eshell-mode . fish-completion-mode)
   :init (setq fish-completion-fallback-on-bash-p t
               fish-completion-inhibit-missing-fish-command-warning t))

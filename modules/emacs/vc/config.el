@@ -5,7 +5,7 @@
 ;; 2021, amirite?
 (setq-default vc-handled-backends '(SVN Git Hg))
 
-(when IS-WINDOWS
+(when (featurep :system 'windows)
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
 ;; In case the user is using `bug-reference-mode'
