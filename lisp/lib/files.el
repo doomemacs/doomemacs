@@ -302,8 +302,10 @@ If CONTENTS is list of forms. Any literal strings in the list are inserted
 verbatim, as text followed by a newline, with `insert'. Sexps are inserted with
 `prin1'. BY is the function to use to emit
 
-MODE dictates the permissions of the file. If FILE already exists, its
-permissions will be changed.
+MODE dictates the permissions of created file and directories. MODE is either an
+integer or a cons cell whose car is the mode for files and cdr the mode for
+directories. If FILE already exists, its permissions will be changed. The
+permissions of existing directories will never be changed.
 
 CODING dictates the encoding to read/write with (see `coding-system-for-write').
 This defaults to `utf-8'. If set to nil, `binary' is used.
@@ -311,9 +313,10 @@ This defaults to `utf-8'. If set to nil, `binary' is used.
 APPEND dictates where CONTENTS will be written. If neither is set,
 the file will be overwritten. If both are, the contents will be written to both
 ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
-  (doom--with-prepared-file-buffer file coding mode
-    (let ((contents (ensure-list contents))
-          datum)
+  (let ((mode (ensure-list mode))
+        (contents (ensure-list contents))
+        datum)
+    (doom--with-prepared-file-buffer file coding (car mode)
       (while (setq datum (pop contents))
         (cond ((stringp datum)
                (funcall
@@ -332,14 +335,15 @@ ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
                      (print-escape-control-characters t)
                      (print-escape-nonascii t)
                      (print-escape-multibyte t))
-                 (funcall printfn datum))))))
-    (let (write-region-annotate-functions
-          write-region-post-annotation-function)
-      (when mkdir
-        (make-directory (file-name-directory buffer-file-name)
-                        (eq mkdir 'parents)))
-      (write-region nil nil buffer-file-name append :silent))
-    buffer-file-name))
+                 (funcall printfn datum)))))
+      (let (write-region-annotate-functions
+            write-region-post-annotation-function)
+        (when mkdir
+          (with-file-modes (or (cdr mode) (default-file-modes))
+            (make-directory (file-name-directory buffer-file-name)
+                            (eq mkdir 'parents))))
+        (write-region nil nil buffer-file-name append :silent))
+      buffer-file-name)))
 
 ;;;###autoload
 (defmacro with-file-contents! (file &rest body)
