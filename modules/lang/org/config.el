@@ -614,7 +614,9 @@ relative to `org-directory', unless it is an absolute path."
                 (format "https://github.com/%s"
                         (string-remove-prefix
                          "@" (+org-link-read-desc-at-point link)))))
-     :face 'org-priority)
+     :face (lambda (_)
+             ;; Avoid confusion with function `org-priority'
+             'org-priority))
     (org-link-set-parameters
      "doom-changelog"
      :follow (lambda (link)
