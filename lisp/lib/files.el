@@ -245,7 +245,8 @@ special values:
 'read*       -- read all forms in FILE and return it as a list of S-exps.
 '(read . N)  -- read the first N (an integer) S-exps in FILE.
 
-CODING dictates the encoding of the buffer. This defaults to `utf-8'.
+CODING dictates the encoding of the buffer. This defaults to `utf-8'. If set to
+nil, `binary' is used.
 
 If NOERROR is non-nil, don't throw an error if FILE doesn't exist. This will
 still throw an error if FILE is unreadable, however.
@@ -305,7 +306,7 @@ MODE dictates the permissions of the file. If FILE already exists, its
 permissions will be changed.
 
 CODING dictates the encoding to read/write with (see `coding-system-for-write').
-If set to nil, `binary' is used.
+This defaults to `utf-8'. If set to nil, `binary' is used.
 
 APPEND dictates where CONTENTS will be written. If neither is set,
 the file will be overwritten. If both are, the contents will be written to both
