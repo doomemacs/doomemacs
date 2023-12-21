@@ -220,7 +220,7 @@ single file or nested compound statement of `and' and `or' statements."
              (let* ((buffer-file-name (doom-path ,file))
                     (coding-system-for-read  (or ,coding 'binary))
                     (coding-system-for-write (or coding-system-for-write coding-system-for-read 'binary)))
-               (unless (eq coding-system-for-read 'binary)
+               (when (eq coding-system-for-read 'binary)
                  (set-buffer-multibyte nil)
                  (setq-local buffer-file-coding-system 'binary))
                ,@body))
