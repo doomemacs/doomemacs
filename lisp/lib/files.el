@@ -326,7 +326,12 @@ ends. Set either APPEND or PREPEND to `noerror' to silently ignore read errors."
               ((let ((standard-output (current-buffer))
                      (print-quoted t)
                      (print-level nil)
-                     (print-length nil))
+                     (print-length nil)
+                     ;; Escape special chars to avoid any shenanigans
+                     (print-escape-newlines t)
+                     (print-escape-control-characters t)
+                     (print-escape-nonascii t)
+                     (print-escape-multibyte t))
                  (funcall printfn datum))))))
     (let (write-region-annotate-functions
           write-region-post-annotation-function)
