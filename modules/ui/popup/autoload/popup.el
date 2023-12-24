@@ -505,11 +505,22 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
           ((not (numberp vslot))
            (error "Invalid vslot %s specified" vslot)))
 
-    (let* ((major (get-window-with-predicate
+    (let* ((live (get-window-with-predicate
                    (lambda (window)
                      (and (eq (window-parameter window 'window-side) side)
                           (eq (window-parameter window 'window-vslot) vslot)))
                    nil))
+           ;; As opposed to the `window-side' property, the `window-vslot'
+           ;; property is set only on a single live window and never on internal
+           ;; windows. Moreover, as opposed to `window-with-parameter' (as used
+           ;; by the original `display-buffer-in-side-window'),
+           ;; `get-window-with-predicate' only returns live windows anyway. In
+           ;; any case, we will have missed the major side window and got a
+           ;; child instead if the major side window happens to be an internal
+           ;; window. In that case, the major side window is the parent of the
+           ;; live window.
+           (major (and live
+                       (if (window-next-sibling live) (window-parent live) live)))
            (reversed (window--sides-reverse-on-frame-p (selected-frame)))
            (windows
             (cond ((window-live-p major)
