@@ -16,7 +16,7 @@
       (package! lsp-python-ms :pin "f8e7c4bcaefbc3fd96e1ca53d17589be0403b828"))))
 
 ;; Programming environment
-(package! anaconda-mode :pin "1fd13a0f20fcc9e841e2d5c9af73c0b23f09cf39")
+(package! anaconda-mode :pin "92a6295622df7fae563d6b599e2dc8640e940ddf")
 (when (modulep! :completion company)
   (package! company-anaconda :pin "da1566db41a68809ef7f91ebf2de28118067c89b"))
 
