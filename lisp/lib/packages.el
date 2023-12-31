@@ -239,7 +239,7 @@ Must be run from a magit diff buffer."
         (unless (= (length before) (length after))
           (user-error "Uneven number of packages being bumped"))
         (dolist (p1 before)
-          (when (and (listp p1) (eq (car p1) 'package!))
+          (when (and (listp p1) (plist-get (cdr p1) :package))
             (cl-destructuring-bind (package &key plist _beg _end &allow-other-keys) p1
               (let ((p2 (cdr (assq package after))))
                 (if (null p2)
