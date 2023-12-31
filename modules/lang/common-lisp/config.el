@@ -141,7 +141,7 @@
           :desc "Who sets"                "S" #'sly-who-sets)
          (:prefix ("r" . "repl")
           :desc "Clear REPL"         "c" #'sly-mrepl-clear-repl
-          :desc "Load Project"       "l" #'+lisp/load-project-systems
+          :desc "Load System"        "l" #'sly-asdf-load-system
           :desc "Quit connection"    "q" #'sly-quit-lisp
           :desc "Restart connection" "r" #'sly-restart-inferior-lisp
           :desc "Reload Project"     "R" #'+lisp/reload-project
@@ -154,7 +154,7 @@
           :desc "Replay stickers"          "r" #'sly-stickers-replay
           :desc "Add/remove sticker"       "s" #'sly-stickers-dwim)
          (:prefix ("t" . "test")
-          :desc "Test System" "s" #'+lisp/test-system)
+          :desc "Test System" "s" #'sly-asdf-test-system)
          (:prefix ("T" . "trace")
           :desc "Toggle"         "t" #'sly-toggle-trace-fdefinition
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
@@ -168,3 +168,8 @@
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-repl-ansi-color))
+
+(use-package! sly-asdf
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-asdf 'append))
