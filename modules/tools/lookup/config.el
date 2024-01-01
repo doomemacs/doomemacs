@@ -20,6 +20,7 @@
             ("Google"            +lookup--online-backend-google "https://google.com/search?q=%s")
             ("Google images"     "https://www.google.com/images?q=%s")
             ("Google maps"       "https://maps.google.com/maps?q=%s")
+            ("Kagi"              "https://kagi.com/search?q=%s")
             ("Project Gutenberg" "http://www.gutenberg.org/ebooks/search/?query=%s")
             ("DuckDuckGo"        +lookup--online-backend-duckduckgo "https://duckduckgo.com/?q=%s")
             ("DevDocs.io"        "https://devdocs.io/#q=%s")
