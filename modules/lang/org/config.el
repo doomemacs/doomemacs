@@ -517,6 +517,7 @@ relative to `org-directory', unless it is an absolute path."
             '("google"      . "https://google.com/search?q=")
             '("gimages"     . "https://google.com/images?q=%s")
             '("gmap"        . "https://maps.google.com/maps?q=%s")
+            '("kagi"        . "https://kagi.com/search?q=%s")
             '("duckduckgo"  . "https://duckduckgo.com/?q=%s")
             '("wikipedia"   . "https://en.wikipedia.org/wiki/%s")
             '("wolfram"     . "https://wolframalpha.com/input/?i=%s")
