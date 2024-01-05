@@ -89,3 +89,16 @@ easier to scroll through.")
   :after elfeed
   :config
   (elfeed-goodies/setup))
+
+(use-package! elfeed-tube
+  :after elfeed
+  :config
+  (elfeed-tube-setup)
+  :bind (:map elfeed-show-mode-map
+         ("F" . elfeed-tube-fetch)
+         ([remap save-buffer] . elfeed-tube-save)
+         :map elfeed-search-mode-map
+         ("F" . elfeed-tube-fetch)
+         ([remap save-buffer] . elfeed-tube-save)
+         ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+         ("C-c C-w" . elfeed-tube-mpv-where)))
