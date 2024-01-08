@@ -7,7 +7,7 @@
 ;; Example:
 ;;   ((nil . ((ssh-deploy-root-local . "/local/path/to/project")
 ;;            (ssh-deploy-root-remote . "/ssh:user@server:/remote/project/")
-;;            (ssh-deploy-on-explicit-save . t))))
+;;            (ssh-deploy-on-explicit-save . 1))))
 ;;
 ;; Note: `ssh-deploy-root-local' is optional, and will resort to
 ;; `doom-project-root' if unspecified.
@@ -20,7 +20,7 @@
              ssh-deploy-remote-changes-handler)
   :init
   (setq ssh-deploy-revision-folder (concat doom-cache-dir "ssh-revisions/")
-        ssh-deploy-on-explicit-save t
+        ssh-deploy-on-explicit-save 1
         ssh-deploy-automatically-detect-remote-changes nil)
 
   ;; Make these safe as file-local variables
