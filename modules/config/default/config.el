@@ -59,11 +59,16 @@
 (after! woman
   ;; The woman-manpath default value does not necessarily match man. If we have
   ;; man available but aren't using it for performance reasons, we can extract
-  ;; it's manpath.
-  (when (executable-find "man")
-    (setq woman-manpath
-          (split-string (cdr (doom-call-process "man" "--path"))
-                        path-separator t))))
+  ;; its manpath.
+  (let ((manpath (cond
+                  ((executable-find "manpath")
+                   (split-string (cdr (doom-call-process "manpath"))
+                                 path-separator t))
+                  ((executable-find "man")
+                   (split-string (cdr (doom-call-process "man" "--path"))
+                                 path-separator t)))))
+    (when manpath
+      (setq woman-manpath manpath))))
 
 
 (use-package! drag-stuff
