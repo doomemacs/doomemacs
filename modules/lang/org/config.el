@@ -852,6 +852,17 @@ can grow up to be fully-fledged org-mode buffers."
             (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
                       nil 'local))))))
 
+  (defadvice! +org--restart-mode-before-indirect-buffer-a (base-buffer &rest _)
+    "Restart `org-mode' in buffers in which the mode has been deferred (see
+`+org-defer-mode-in-agenda-buffers-h') before they become the base buffer for an
+indirect buffer. This ensures that the buffer is fully functional not only when
+the *user* visits it, but also when some code interacts with it via an indirect
+buffer as done, e.g., by `org-capture'."
+    :before #'make-indirect-buffer
+    (with-current-buffer base-buffer
+     (when (memq #'+org--restart-mode-h doom-switch-buffer-hook)
+       (+org--restart-mode-h))))
+
   (defvar recentf-exclude)
   (defadvice! +org--optimize-backgrounded-agenda-buffers-a (fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
