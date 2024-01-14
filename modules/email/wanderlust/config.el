@@ -24,8 +24,8 @@
   ;; use half of that size as threshold to switch to hashing
   (setq elmo-msgdb-path-encode-threshold 128)
 
-  (setq wl-message-truncate-lines t
-        wl-summary-width 120
+  (setq wl-message-truncate-lines nil
+        wl-summary-width nil
         wl-message-ignored-field-list
         '(".*Received:"
           ".*Path:"
