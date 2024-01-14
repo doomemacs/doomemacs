@@ -78,9 +78,9 @@
           wl-draft-folder "%[Gmail]/Drafts"
           wl-trash-folder "%[Gmail]/Trash"
           wl-fcc-force-as-read t
-          wl-default-spec "%"))
+          wl-default-spec "%")
 
-  (setq wl-message-id-domain wl-local-domain)
+    (setq wl-message-id-domain wl-local-domain))
 
   ;; Use alert for alerting
   (when (fboundp 'alert)
