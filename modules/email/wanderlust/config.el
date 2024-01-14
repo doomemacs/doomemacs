@@ -70,6 +70,10 @@
 
   (setq wl-message-id-domain wl-local-domain)
 
+  ;; Use alert for alerting
+  (when (fboundp 'alert)
+    (setq wl-biff-notify-hook '((lambda () (alert "You have new mail!" :title "Wanderlust")))))
+
   (when (modulep! :editor evil)
     ;; Neither `wl-folder-mode' nor `wl-summary-mode' are correctly defined as
     ;; major modes, so we cannot use `set-evil-initial-state!' here.
