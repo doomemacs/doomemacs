@@ -29,6 +29,7 @@
           "^References:"
           "^Replied:"
           "^Errors-To:"
+          "^Mail-.*-To:"
           "^Lines:"
           "^Sender:"
           ".*Host:"
@@ -40,7 +41,14 @@
           "^MIME.*:"
           "^In-Reply-To:"
           "^Content-Transfer-Encoding:"
-          "^List-.*:")
+          "^Content-Disposition:"
+          "^List-.*:"
+          "^Received-SPF:"
+          "^DKIM-.*:"
+          "^SPF-.*:"
+          "^Autocrypt:"
+          "^ARC-.*:"
+          "^Authentication-Results:")
         wl-message-visible-field-list
         '("^Message-Id:"
           "^User-Agent:"
