@@ -82,6 +82,11 @@
 
     (setq wl-message-id-domain wl-local-domain))
 
+  ;; Use x-face only when compface installed
+  (when (modulep! +xface)
+    (autoload 'x-face-decode-message-header "x-face-e21")
+    (setq wl-highlight-x-face-function 'x-face-decode-message-header))
+
   ;; Use alert for alerting
   (when (fboundp 'alert)
     (setq wl-biff-notify-hook '((lambda () (alert "You have new mail!" :title "Wanderlust")))))
