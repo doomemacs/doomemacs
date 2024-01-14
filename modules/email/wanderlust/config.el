@@ -20,6 +20,10 @@
         wl-init-file (expand-file-name "wl.el" doom-user-dir)
         wl-folders-file (expand-file-name "folders.wl" doom-user-dir))
 
+  ;; macOS allows file names up to 255 characters,
+  ;; use half of that size as threshold to switch to hashing
+  (setq elmo-msgdb-path-encode-threshold 128)
+
   (setq wl-message-truncate-lines t
         wl-summary-width 120
         wl-message-ignored-field-list
