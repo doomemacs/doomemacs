@@ -28,6 +28,7 @@
        vertico           ; the search engine of the future
 
        :ui
+       ;;alert             ; stop to be slience, start alerting
        ;;deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
