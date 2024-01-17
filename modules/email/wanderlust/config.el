@@ -26,6 +26,7 @@
 
   (setq wl-message-truncate-lines nil
         wl-summary-width nil
+        wl-forward-subject-prefix "Fwd: "
         wl-message-ignored-field-list
         '(".*Received:"
           ".*Path:"
