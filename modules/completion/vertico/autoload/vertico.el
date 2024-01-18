@@ -13,7 +13,9 @@
 :in PATH
   Sets what directory to base the search out of. Defaults to the current project's root.
 :recursive BOOL
-  Whether or not to search files recursively from the base directory."
+  Whether or not to search files recursively from the base directory.
+:args LIST
+  Arguments to be appended to `consult-ripgrep-args'."
   (declare (indent defun))
   (unless (executable-find "rg")
     (user-error "Couldn't find ripgrep in your PATH"))
