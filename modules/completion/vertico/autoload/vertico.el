@@ -31,7 +31,7 @@
                   "--path-separator /   --smart-case --no-heading "
                   "--with-filename --line-number --search-zip "
                   "--hidden -g !.git -g !.svn -g !.hg "
-                  (mapconcat #'shell-quote-argument args " ")))
+                  (mapconcat #'identity args " ")))
          (prompt (if (stringp prompt) (string-trim prompt) "Search"))
          (query (or query
                     (when (doom-region-active-p)
