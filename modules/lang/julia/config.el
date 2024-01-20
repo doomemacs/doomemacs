@@ -107,8 +107,10 @@
   :hook (julia-mode . julia-snail-mode)
   :config
   (setq julia-snail-popup-display-eval-results :command)
-  (setq julia-snail-multimedia-enable t)
-  (setq julia-snail-popup-display-face '(:background base3 :box `(:line-width -1 :color base5)))
+  (setq-default julia-snail-multimedia-enable t)
+  (setq julia-snail-popup-display-face
+        `(:background ,(doom-color 'base3)
+          :foreground ,(doom-color 'base8)))
 
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
 
