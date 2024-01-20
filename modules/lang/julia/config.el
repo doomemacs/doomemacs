@@ -110,7 +110,8 @@
   (setq-default julia-snail-multimedia-enable t)
   (setq julia-snail-popup-display-face
         `(:background ,(doom-color 'base3)
-          :foreground ,(doom-color 'base8)))
+          :foreground ,(doom-color 'base8)
+          :weight regular))
 
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
 
