@@ -2,7 +2,7 @@
 
 (defvar +lsp-company-backends
   (if (modulep! :editor snippets)
-      '(:separate company-capf company-yasnippet)
+      '(:separate company-files company-capf company-yasnippet)
     'company-capf)
   "The backends to prepend to `company-backends' in `lsp-mode' buffers.
 Can be a list of backends; accepts any value `company-backends' accepts.")

@@ -2,9 +2,9 @@
 
 ;;;###autoload
 (defvar +company-backend-alist
-  '((text-mode (:separate company-dabbrev company-yasnippet company-ispell))
-    (prog-mode company-capf company-yasnippet)
-    (conf-mode company-capf company-dabbrev-code company-yasnippet))
+  '((text-mode (:separate company-files company-dabbrev company-yasnippet company-ispell))
+    (prog-mode company-files company-capf company-yasnippet)
+    (conf-mode company-files company-capf company-dabbrev-code company-yasnippet))
   "An alist matching modes to company backends. The backends for any mode is
 built from this.")
 
