@@ -244,12 +244,5 @@ Emacs versions < 29."
 (use-package! fish-completion
   :unless IS-WINDOWS
   :hook (eshell-mode . fish-completion-mode)
-  :init (setq fish-completion-fallback-on-bash-p t)
-  :config
-  ;; HACK Even with `fish-completion-fallback-on-bash-p' non-nil,
-  ;;      `fish-completion--list-completions-with-desc' will throw an error if
-  ;;      fish isn't installed (and so, will fail to fall back to bash), so we
-  ;;      advise it to fail silently.
-  (defadvice! +eshell--fallback-to-bash-a (&rest _)
-    :before-until #'fish-completion--list-completions-with-desc
-    (unless (executable-find "fish") "")))
+  :init (setq fish-completion-fallback-on-bash-p t
+              fish-completion-inhibit-missing-fish-command-warning t))
