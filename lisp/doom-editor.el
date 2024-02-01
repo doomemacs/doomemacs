@@ -486,6 +486,9 @@ files, so this replace calls to `pp' with the much faster `prin1'."
   ;; I'm not advising `kill-buffer' because I only want this to affect
   ;; interactively killed buffers.
   (advice-add #'kill-current-buffer :around #'doom-set-jump-a)
+  (advice-add #'doom/kill-this-buffer-in-all-windows :around #'doom-set-jump-a)
+  (advice-add #'kill-buffer-and-window :around #'doom-set-jump-a)
+  (advice-add #'kill-this-buffer :around #'doom-set-jump-a)
 
   ;; Create a jump point before jumping with imenu.
   (advice-add #'imenu :around #'doom-set-jump-a))
