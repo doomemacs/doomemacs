@@ -379,6 +379,7 @@ as `+emacs-lisp-non-package-mode' will enable it and disable the other checkers.
                     ,(read (default-toplevel-value 'flycheck-emacs-lisp-check-form))))
                 flycheck-disabled-checkers (cons 'emacs-lisp-checkdoc
                                                  flycheck-disabled-checkers))))
+
 ;;;###autoload
 (define-minor-mode +emacs-lisp-non-package-mode
   "Reduce flycheck/flymake verbosity where it is appropriate.
@@ -394,15 +395,19 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
   :since "3.0.0"
   (unless (and (or (bound-and-true-p flycheck-mode)
                    (bound-and-true-p flymake-mode))
+               (derived-mode-p 'emacs-lisp-mode)
                (not (+emacs-lisp--in-package-buffer-p)))
     (setq +emacs-lisp-non-package-mode nil))
-  (when (derived-mode-p 'emacs-lisp-mode)
-    (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
-  (let ((toggle (if +emacs-lisp-non-package-mode +1 -1)))
-    (cond ((modulep! :checkers syntax +flymake)
-           (+emacs-lisp--flymake-non-package-mode toggle))
-          ((modulep! :checkers syntax)
-           (+emacs-lisp--flycheck-non-package-mode toggle)))))
+  (when-let ((modesym (cond ((modulep! :checkers syntax +flymake)
+                             #'+emacs-lisp--flymake-non-package-mode)
+                            ((modulep! :checkers syntax)
+                             #'+emacs-lisp--flycheck-non-package-mode))))
+    (if (not +emacs-lisp-non-package-mode)
+        (when (symbol-value modesym)
+          (funcall modesym -1))
+      (when (derived-mode-p 'emacs-lisp-mode)
+        (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
+      (funcall modesym +1))))
 
 
 ;;

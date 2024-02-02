@@ -95,10 +95,11 @@ See `+emacs-lisp-non-package-mode' for details.")
              ;; Ensure straight sees modifications to installed packages
              #'+emacs-lisp-init-straight-maybe-h)
 
-  ;; UX: Both Flycheck's and Flymake's two
-  ;;    emacs-lisp checkers produce a *lot* of false positives in non-packages
-  ;;    (like Emacs configs or elisp scripts), so I disable `checkdoc' (`emacs-lisp-checkdoc', `elisp-flymake-checkdoc')
-  ;;    and set `byte-compile-warnings' to a subset that makes more sense (see `+emacs-lisp-linter-warnings')
+  ;; UX: Both Flycheck's and Flymake's two emacs-lisp checkers produce a *lot*
+  ;;    of false positives in non-packages (like Emacs configs or elisp
+  ;;    scripts), so I disable `checkdoc' (`emacs-lisp-checkdoc',
+  ;;    `elisp-flymake-checkdoc') and set `byte-compile-warnings' to a subset
+  ;;    that makes more sense (see `+emacs-lisp-linter-warnings')
   (add-hook! '(flycheck-mode-hook flymake-mode-hook) #'+emacs-lisp-non-package-mode)
 
   (defadvice! +syntax--fix-elisp-flymake-load-path (orig-fn &rest args)
