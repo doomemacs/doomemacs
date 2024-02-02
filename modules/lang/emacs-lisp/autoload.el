@@ -399,9 +399,10 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
   (when (derived-mode-p 'emacs-lisp-mode)
     (add-hook 'after-save-hook #'+emacs-lisp-non-package-mode nil t))
   (let ((toggle (if +emacs-lisp-non-package-mode +1 -1)))
-    (if (modulep! :checkers syntax +flymake)
-        (+emacs-lisp--flymake-non-package-mode toggle)
-      (+emacs-lisp--flycheck-non-package-mode toggle))))
+    (cond ((modulep! :checkers syntax +flymake)
+           (+emacs-lisp--flymake-non-package-mode toggle))
+          ((modulep! :checkers syntax)
+           (+emacs-lisp--flycheck-non-package-mode toggle)))))
 
 
 ;;
