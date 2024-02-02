@@ -394,6 +394,7 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
   :since "3.0.0"
   (unless (and (or (bound-and-true-p flycheck-mode)
                    (bound-and-true-p flymake-mode))
+               (derived-mode-p 'emacs-lisp-mode)
                (not (+emacs-lisp--in-package-buffer-p)))
     (setq +emacs-lisp-non-package-mode nil))
   (when (derived-mode-p 'emacs-lisp-mode)
