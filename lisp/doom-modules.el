@@ -8,10 +8,18 @@
 (defvar doom-modules (make-hash-table :test 'equal)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
-(defvar doom-modules-dirs
-  (list (expand-file-name "modules/" doom-user-dir)
-        doom-modules-dir)
-  "A list of module root directories. Order determines priority.")
+(defvar doom-module-load-path
+  (list (file-name-concat doom-user-dir "modules")
+        (file-name-concat doom-emacs-dir "modules"))
+  "A list of paths where Doom should search for modules.
+
+Order determines priority (from highest to lowest).
+
+Each entry is a string; an absolute path to the root directory of a module tree.
+In other words, they should contain a two-level nested directory structure,
+where the module's group and name was deduced from the first and second level of
+directories. For example: if $DOOMDIR/modules/ is an entry, a
+$DOOMDIR/modules/lang/ruby/ directory represents a ':lang ruby' module.")
 
 ;;; Module file variables
 (defvar doom-module-init-file "init.el"
@@ -40,6 +48,12 @@ uses a straight or package.el command directly).")
 NOT IMPLEMENTED YET. This file contains a module's metadata: their version,
 maintainers, checks, features, submodules, debug information, etc. And are used
 to locate modules in the user's file tree.")
+
+
+;;
+;;; Obsolete variables
+
+(define-obsolete-variable-alias 'doom-modules-dirs 'doom-module-load-path "3.0.0")
 
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
@@ -342,14 +356,15 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
             ((file-in-directory-p path doom-user-dir)
              (cons :user nil))))))
 
-(defun doom-module-load-path (&optional module-dirs)
+(defun doom-module-load-path (&optional module-load-path)
   "Return a list of file paths to activated modules.
 
 The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
 those directories."
   (declare (pure t) (side-effect-free t))
-  (cl-loop for (cat . mod) in (doom-module-list module-dirs)
+  (cl-loop with module-load-path = (or module-load-path doom-module-load-path)
+           for (cat . mod) in (doom-module-list module-load-path)
            collect (doom-module-locate-path cat mod)))
 
 (defun doom-module-mplist-map (fn mplist)
