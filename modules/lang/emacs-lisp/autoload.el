@@ -469,31 +469,6 @@ library/userland functions"
 ;;
 ;;; Advice
 
-;;;###autoload
-(defun +emacs-lisp--add-doom-elisp-demos-a (fn symbol)
-  "Add Doom's own demos to `elisp-demos'.
-
-Intended as :around advice for `elisp-demos--search'."
-  (let ((org-inhibit-startup t)
-        enable-dir-local-variables
-        org-mode-hook)
-    (or (funcall fn symbol)
-        (with-file-contents! (doom-path doom-docs-dir "examples.org")
-          (save-excursion
-            (when (re-search-forward
-                   (format "^\\*+[ \t]+\\(?:TODO \\)?%s$"
-                           (regexp-quote (symbol-name symbol)))
-                   nil t)
-              (forward-line 1)
-              (let ((demos
-                     (string-trim
-                      (buffer-substring-no-properties
-                       (point) (if (re-search-forward "^\\*+ " nil t)
-                                   (line-beginning-position)
-                                 (point-max))))))
-                (unless (string-blank-p demos)
-                  demos))))))))
-
 ;;;###autoload (put 'map! 'indent-plists-as-data t)
 ;;;###autoload
 (defun +emacs-lisp--calculate-lisp-indent-a (&optional parse-start)

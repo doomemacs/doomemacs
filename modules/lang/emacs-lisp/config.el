@@ -217,7 +217,26 @@ See `+emacs-lisp-non-package-mode' for details.")
   (advice-add #'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
   (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)
   :config
-  (advice-add #'elisp-demos--search :around #'+emacs-lisp--add-doom-elisp-demos-a))
+  ;; Add Doom's core and module demo files, so additional demos can be specified
+  ;; by end-users (in $DOOMDIR/demos.org), by modules (modules/X/Y/demos.org),
+  ;; or Doom's core (lisp/demos.org).
+  (dolist (file (doom-module-locate-paths (doom-module-list) "demos.org"))
+    (add-to-list 'elisp-demos-user-files file))
+
+  ;; HACK: These functions open Org files non-interactively without any
+  ;;   performance optimizations. Given how prone org-mode is to being tied to
+  ;;   expensive functionality, this will often introduce unexpected freezes
+  ;;   without this advice.
+  ;; TODO: PR upstream?
+  (defadvice! +emacs-lisp--optimize-org-init-a (fn &rest args)
+    "Disable unrelated functionality to optimize calls to `org-mode'."
+    :around #'elisp-demos--export-json-file
+    :around #'elisp-demos--symbols
+    :around #'elisp-demos--syntax-highlight
+    (let ((org-inhibit-startup t)
+          enable-dir-local-variables
+          org-mode-hook)
+      (apply fn args))))
 
 
 (use-package! buttercup
