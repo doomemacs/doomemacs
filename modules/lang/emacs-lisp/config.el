@@ -76,10 +76,10 @@ See `+emacs-lisp-non-package-mode' for details.")
                                     face warning
                                     mouse-face mode-line-highlight)))))
 
-  ;; Fixed indenter that intends plists sensibly.
+  ;; Introduces logic to improve plist indentation in emacs-lisp-mode.
   (advice-add #'calculate-lisp-indent :override #'+emacs-lisp--calculate-lisp-indent-a)
 
-  ;; variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
+  ;; Variable-width indentation is superior in elisp. Otherwise, `dtrt-indent'
   ;; and `editorconfig' would force fixed indentation on elisp.
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode)
 
@@ -96,10 +96,10 @@ See `+emacs-lisp-non-package-mode' for details.")
              #'+emacs-lisp-init-straight-maybe-h)
 
   ;; UX: Both Flycheck's and Flymake's two emacs-lisp checkers produce a *lot*
-  ;;    of false positives in non-packages (like Emacs configs or elisp
-  ;;    scripts), so I disable `checkdoc' (`emacs-lisp-checkdoc',
-  ;;    `elisp-flymake-checkdoc') and set `byte-compile-warnings' to a subset
-  ;;    that makes more sense (see `+emacs-lisp-linter-warnings')
+  ;;   of false positives in non-packages (like Emacs configs or elisp scripts),
+  ;;   so I disable `checkdoc' (`emacs-lisp-checkdoc', `elisp-flymake-checkdoc')
+  ;;   and set `byte-compile-warnings' to a subset that makes more sense (see
+  ;;   `+emacs-lisp-linter-warnings')
   (add-hook! '(flycheck-mode-hook flymake-mode-hook) #'+emacs-lisp-non-package-mode)
 
   (defadvice! +syntax--fix-elisp-flymake-load-path (orig-fn &rest args)
