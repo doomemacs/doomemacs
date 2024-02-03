@@ -38,6 +38,9 @@ Can be a list of backends; accepts any value `company-backends' accepts.")
   ;; even if its a dependency
   (when (modulep! :checkers syntax +flymake)
     (setq lsp-diagnostics-provider :flymake))
+  ;; Better breadcrumbs default, if enabled
+  (setq lsp-headerline-breadcrumb-enable-diagnostics nil
+        lsp-headerline-breadcrumb-segments '(symbols))
 
   ;; Let doom bind the lsp keymap.
   (when (modulep! :config default +bindings)
@@ -179,6 +182,53 @@ instead is more sensible."
         "k"   #'lsp-ui-peek--select-prev
         "C-k" #'lsp-ui-peek--select-prev-file
         "C-j" #'lsp-ui-peek--select-next-file))
+
+
+(use-package! lsp-icons
+  :config
+  ;; based on Doom's config of company-box
+  (when (modulep! :completion company +childframe)
+    (defun +lsp-symbol-kind->icon (kind)
+      (cl-case kind
+        (1 'Unknown)
+        (2  'Module)
+        (3  'Module)
+        (4  'Module)
+        (5  'Class)
+        (6  'Method)
+        (7  'Property)
+        (8  'Field)
+        (9  'Method)
+        (10 'Enum)
+        (11 'Interface)
+        (12 'Method )
+        (13 'Variable)
+        (14 'Constant)
+        (15 'string)
+        (16 'numeric)
+        (17 'boolean-data)
+        (18 'boolean-data)
+        (19 'Module)
+        (20 'indexer)
+        (21 'boolean-data)
+        (22 'EnumMember)
+        (23 'Struct)
+        (24 'Event)
+        (25 'Operator)
+        (26 'Template)
+        (t 'Event)))
+
+    (defun lsp-icons-get-by-symbol-kind (kind &optional feature)
+      (when (and kind
+                 (lsp-icons--enabled-for-feature feature))
+        (lsp-icons--fix-image-background (alist-get (+lsp-symbol-kind->icon kind)
+                                                    (symbol-value company-box-icons-alist)))))
+
+    (defun lsp-icons-get-by-file-ext (file-ext &optional feature)
+      (when (and file-ext
+                 (lsp-icons--enabled-for-feature feature))
+        (lsp-icons--fix-image-background
+         (all-the-icons-icon-for-file (concat "foo." file-ext) :v-adjust 0.02))))))
 
 
 (use-package! helm-lsp
