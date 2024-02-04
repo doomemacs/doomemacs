@@ -160,12 +160,11 @@ you accidentaly press more than needed.
 | [[kbd:][SPC]]     | (when completing) Quit autocompletion           |
 | [[kbd:][SPC]]     | (when completing with separators) Self-insert   |
 
-** Exporting to the minibuffer (requires [[doom-module::completion vertico]])
-When using the [[doom-module::completion vertico]] module, which pulls in the
-[[doom-package:consult]] package, the entries shown in the completion popup can be
-exported to a consult minibuffer, giving access to all the manipulations the
-Vertico suite allows. For instance, one could use this to export with
-[[doom-package:embark]] via [[kbd:][C-c C-l]] and get a buffer with all candidates.
+** Exporting to the minibuffer
+The entries shown in the completion popup can be exported to a ~completing-read~
+minibuffer, giving access to all the manipulations that suite allows. Using
+Vertico for instance, one could use this to export with [[doom-package:embark]] via
+[[kbd:][C-c C-l]] and get a buffer with all candidates.
 
 * Configuration
 A few variables may be set to change behavior of this module:
