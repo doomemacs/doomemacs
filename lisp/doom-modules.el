@@ -8,6 +8,7 @@
 (defvar doom-modules (make-hash-table :test 'equal)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
+(define-obsolete-variable-alias 'doom-modules-dirs 'doom-module-load-path "3.0.0")
 (defvar doom-module-load-path
   (list (file-name-concat doom-user-dir "modules")
         (file-name-concat doom-emacs-dir "modules"))
@@ -49,12 +50,8 @@ NOT IMPLEMENTED YET. This file contains a module's metadata: their version,
 maintainers, checks, features, submodules, debug information, etc. And are used
 to locate modules in the user's file tree.")
 
-
-;;
-;;; Obsolete variables
-
-(define-obsolete-variable-alias 'doom-modules-dirs 'doom-module-load-path "3.0.0")
-
+;; DEPRECATED: Module warnings will be rewritten in v3, and this variable will no longer be needed.
+(make-obsolete-variable 'doom-obsolete-modules nil "3.0.0")
 (defconst doom-obsolete-modules
   '((:feature (version-control  (:emacs vc) (:ui vc-gutter))
               (spellcheck       (:checkers spell))
@@ -97,6 +94,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
+(make-obsolete-variable 'doom-inhibit-module-warnings nil "3.0.0")
 (defvar doom-inhibit-module-warnings (not noninteractive)
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
