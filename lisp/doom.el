@@ -99,7 +99,7 @@
 
 ;; Doom needs to be synced/rebuilt if either Doom or Emacs has been
 ;; up/downgraded. This is because byte-code isn't backwards compatible, and many
-;; packages (including Doom), make in absolute paths into their caches that need
+;; packages (including Doom), bake in absolute paths into their caches that need
 ;; to be refreshed.
 (let ((old-version (eval-when-compile emacs-version)))
   (unless (equal emacs-version old-version)
