@@ -260,7 +260,8 @@ ready to be pasted in a bug report on github."
                              (bound-and-true-p emacs-repository-branch)
                              (and (stringp emacs-repository-version)
                                   (substring emacs-repository-version 0 9))
-                             (symlink-path doom-emacs-dir))))
+                             (format "EMACSDIR=%s" (symlink-path doom-emacs-dir))
+                             (format "EMACS=%s" (expand-file-name invocation-name invocation-directory)))))
         (doom . ,(list doom-version
                        (if doom-profile
                            (format "PROFILE=%s@%s"
