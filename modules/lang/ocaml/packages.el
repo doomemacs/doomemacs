@@ -19,8 +19,8 @@
 (when (modulep! :editor format)
   (package! ocamlformat
     :recipe (:host github :repo "ocaml-ppx/ocamlformat" :files ("emacs/*.el"))
-    :pin "7db948a8946e589edd11334dda56505f8d826dca"))
+    :pin "b8b09566904cf290cca294d3bf06a4f51793dfb7"))
 
 (package! dune
   :recipe (:host github :repo "ocaml/dune" :files ("editor-integration/emacs/*.el"))
-  :pin "360b00027166473a01a9010a04fc30af3ee883a0")
+  :pin "64d19876ad6d2ca8b36d6158d5ac58c6eae8bc9a")

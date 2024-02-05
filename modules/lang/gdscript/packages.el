@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/gdscript/packages.el
 
-(package! gdscript-mode :pin "d392e8aa7e7c6dd79ce52fb55d78f7acfa443194")
+(package! gdscript-mode :pin "8a28276daaa23f10e986367b80dc751c5d26829e")

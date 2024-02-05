@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/dhall/packages.el
 
-(package! dhall-mode :pin "c77f1c1e75b6d2725019c5275fc102ae98d25628")
+(package! dhall-mode :pin "87ab69fe765d87b3bb1604a306a8c44d6887681d")

@@ -14,7 +14,7 @@
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
   (package! flycheck-package :pin "75efa098cf17dc14c363e2ca9b68afdac7766b5b")
-  (package! flycheck-cask :pin "4b2ede6362ded4a45678dfbef1876faa42edbd58"))
+  (package! flycheck-cask :pin "0eeec5197e9d31bfcfc39380b262d65259a87d91"))
 
 ;; Libraries
 (package! buttercup :pin "24d43b2ce262faf59e5ff9f72466efb293aa6154")

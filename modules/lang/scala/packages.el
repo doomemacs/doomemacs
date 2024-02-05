@@ -2,7 +2,7 @@
 ;;; lang/scala/packages.el
 
 (package! sbt-mode :pin "9fe1e8807c22cc1dc56a6233e000969518907f4d")
-(package! scala-mode :pin "5d7cf21c37e345c49f921fe5111a49fd54efd1e0")
+(package! scala-mode :pin "4c6d636b86e3bb1d95de819dc48dda92abdfbcf4")
 
 (when (and (modulep! +lsp)
            (not (modulep! :tools lsp +eglot)))
