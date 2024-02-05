@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/word-wrap/packages.el
 
-(package! adaptive-wrap :pin "fc9f0306f14c3859c9903b0a0336478bf070c943")
-(package! visual-fill-column :pin "695a59789209c42fa08a5bce92963ee32f4455be")
+(package! adaptive-wrap :pin "70005d2012ab57c20be03c05aebd49318fe49c99")
+(package! visual-fill-column :pin "db7c7c236555c9c684e1294a277efefdc25fa5c4")
