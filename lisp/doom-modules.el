@@ -335,8 +335,7 @@ returns nil, otherwise an absolute path."
 
 MODULE-LIST is a list of cons cells (GROUP . NAME). See `doom-module-list' for
 an example."
-  (cl-loop with file = (file-name-sans-extension file)
-           for (group . name) in module-list
+  (cl-loop for (group . name) in (or module-list (doom-module-list))
            if (doom-module-locate-path group name file)
            collect it))
 
