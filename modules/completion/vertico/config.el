@@ -304,7 +304,8 @@ orderless."
          (:when (modulep! :tools magit)
            :desc "Open magit-status of target" "g"   #'+vertico/embark-magit-status)
          (:when (modulep! :ui workspaces)
-           :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace))))
+           :desc "Open in new workspace"       "TAB" #'+vertico/embark-open-in-new-workspace
+           :desc "Open in new workspace"       "<tab>" #'+vertico/embark-open-in-new-workspace))))
 
 
 (use-package! marginalia
