@@ -267,7 +267,7 @@ If PLIST consists of a single nil, the module is purged from memory instead."
 
 PATHS-OR-ALL can either be a non-nil value or a list of directories. If given a
 list of directories, return a list of module keys for all modules present
-underneath it.  If non-nil, return the same, but search `doom-modules-dirs'
+underneath it.  If non-nil, return the same, but search `doom-module-load-path'
 (includes :core and :user). Modules that are enabled are sorted first by their
 :depth, followed by disabled modules in lexicographical order (unless a :depth
 is specified in their .doommodule).
@@ -279,7 +279,7 @@ configdepth. See `doom-module-set' for details."
              (append (seq-remove #'cdr (doom-module-list nil initorder?))
                      (doom-files-in (if (listp paths-or-all)
                                         paths-or-all
-                                      doom-modules-dirs)
+                                      doom-modules-load-path)
                                     :map #'doom-module-from-path
                                     :type 'dirs
                                     :mindepth 1
@@ -309,7 +309,7 @@ If the category isn't enabled this returns nil. For finding disabled modules use
       path)))
 
 (defun doom-module-locate-path (category &optional module file)
-  "Searches `doom-modules-dirs' to find the path to a module.
+  "Searches `doom-module-load-path' to find the path to a module.
 
 CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g. 'python). FILE
 is a string that will be appended to the resulting path. If no path exists, this
@@ -325,8 +325,8 @@ returns nil, otherwise an absolute path."
         (if file
             ;; PERF: locate-file-internal is a little faster for finding files,
             ;;   but its interface for finding directories is clumsy.
-            (locate-file-internal path doom-modules-dirs '("" ".elc" ".el"))
-          (cl-loop for default-directory in doom-modules-dirs
+            (locate-file-internal path doom-module-load-path '("" ".elc" ".el"))
+          (cl-loop for default-directory in doom-module-load-path
                    if (file-exists-p path)
                    return (expand-file-name path)))))))
 

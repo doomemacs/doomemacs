@@ -439,7 +439,7 @@ Defaults to the profile at `doom-profile-default'."
   (doom-autoloads--scan
    (append (doom-glob doom-core-dir "lib/*.el")
            (cl-loop for dir
-                    in (append (doom-module-load-path doom-modules-dirs)
+                    in (append (doom-module-load-path)
                                (list doom-user-dir))
                     if (doom-glob dir "autoload.el") collect (car it)
                     if (doom-glob dir "autoload/*.el") append it)

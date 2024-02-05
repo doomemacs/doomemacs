@@ -199,7 +199,7 @@ module. This does not include your byte-compiled, third party packages.'"
             in (append (doom-glob doom-emacs-dir "*.elc")
                        (doom-files-in doom-user-dir :match "\\.elc$" :depth 1)
                        (doom-files-in doom-core-dir :match "\\.elc$")
-                       (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
+                       (doom-files-in doom-module-load-path :match "\\.elc$" :depth 4))
             if (file-exists-p path)
             do (delete-file path)
             and do (print! (success "\033[KDeleted %s%s") (relpath path) esc)
