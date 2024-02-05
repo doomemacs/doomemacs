@@ -99,6 +99,7 @@ variable for an explanation of the defaults (in comments). See
       bm
       bookmark
       (buff-menu "buff-menu")
+      bufler
       calc
       calendar
       cider
@@ -112,8 +113,8 @@ variable for an explanation of the defaults (in comments). See
       crdt
       (custom cus-edit)
       cus-theme
-      daemons
       dashboard
+      daemons
       deadgrep
       debbugs
       debug
@@ -197,6 +198,7 @@ variable for an explanation of the defaults (in comments). See
       markdown-mode
       monky
       mpc
+      mpdel
       mu4e
       mu4e-conversation
       neotree
