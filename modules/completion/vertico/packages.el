@@ -1,17 +1,17 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; completion/vertico/packages.el
 
-(package! vertico  :pin "cf8b2abf5207696c054c33214c86e3969d415054")
+(package! vertico  :pin "4a7da56b02c6aefff8f6b4574a530a7cb54bc21a")
 
 (package! orderless :pin "b24748093b00b37c3a572c4909f61c08fa27504f")
 
-(package! consult :pin "e4d371235647a7f4967f093eff2125652796957c")
+(package! consult :pin "9463146ba754103db9475ae56e46561366ba4773")
 (package! consult-dir :pin "3f5f4b71ebe819392cb090cda71bd39a93bd830a")
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
   (package! consult-flycheck :pin "d83f87581af74f7a2739d8b1b90c37da5ae3d310"))
-(package! embark :pin "33c392cf3ce5b92ad73ed5c4f44dbca5d0741cde")
-(package! embark-consult :pin "33c392cf3ce5b92ad73ed5c4f44dbca5d0741cde")
+(package! embark :pin "60139db8794f7e4a08076d9f7597d08f6c8083d1")
+(package! embark-consult :pin "60139db8794f7e4a08076d9f7597d08f6c8083d1")
 
 (package! marginalia :pin "ea356ebb1ddb8d6da78574b517155475cf52d46f")
 
@@ -23,4 +23,4 @@
 (when (modulep! +childframe)
   (package! vertico-posframe
     :recipe (:host github :repo "tumashu/vertico-posframe")
-    :pin "bc0e67cbbba4daaf6ce7b8701a0dc7797d468752"))
+    :pin "2e0e09e5bbd6ec576ddbe566ab122575ef051fab"))
