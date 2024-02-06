@@ -51,14 +51,14 @@
  ;;   notable saving in startup time. This let-binding is just a stopgap though,
  ;;   a more complete version of this optimization can be found in lisp/doom.el.
  (let (file-name-handler-alist)
-   (let* (;; FIX: Unset `command-line-args' in noninteractive sessions, to
-          ;;   ensure upstream switches aren't misinterpreted.
-          (command-line-args (unless noninteractive command-line-args))
-          ;; I avoid using `command-switch-alist' to process --profile (and
-          ;; --init-directory) because it is processed too late to change
-          ;; `user-emacs-directory' in time.
-          (profile (or (cadr (member "--profile" command-line-args))
-                       (getenv-internal "DOOMPROFILE"))))
+   (let (;; FIX: Unset `command-line-args' in noninteractive sessions, to
+         ;;   ensure upstream switches aren't misinterpreted.
+         (command-line-args (unless noninteractive command-line-args))
+         ;; I avoid using `command-switch-alist' to process --profile (and
+         ;; --init-directory) because it is processed too late to change
+         ;; `user-emacs-directory' in time.
+         (profile (or (cadr (member "--profile" command-line-args))
+                      (getenv-internal "DOOMPROFILE"))))
      (if (null profile)
          ;; REVIEW: Backported from Emacs 29. Remove when 28 support is dropped.
          (let ((init-dir (or (cadr (member "--init-directory" command-line-args))
