@@ -110,12 +110,13 @@
           :desc "Remove notes"          "n" #'sly-remove-notes
           :desc "Compile region"        "r" #'sly-compile-region)
          (:prefix ("e" . "evaluate")
-          :desc "Evaluate buffer"     "b" #'sly-eval-buffer
-          :desc "Evaluate last"       "e" #'sly-eval-last-expression
-          :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
-          :desc "Evaluate defun"      "f" #'sly-eval-defun
-          :desc "Undefine function"   "F" #'sly-undefine-function
-          :desc "Evaluate region"     "r" #'sly-eval-region)
+          :desc "Evaluate buffer"        "b" #'sly-eval-buffer
+          :desc "Evaluate defun"         "d" #'sly-overlay-eval-defun
+          :desc "Evaluate last"          "e" #'sly-eval-last-expression
+          :desc "Evaluate/print last"    "E" #'sly-eval-print-last-expression
+          :desc "Evaluate defun (async)" "f" #'sly-eval-defun
+          :desc "Undefine function"      "F" #'sly-undefine-function
+          :desc "Evaluate region"        "r" #'sly-eval-region)
          (:prefix ("g" . "goto")
           :desc "Go back"              "b" #'sly-pop-find-definition-stack
           :desc "Go to"                "d" #'sly-edit-definition
