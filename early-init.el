@@ -84,7 +84,10 @@
        (or (load (expand-file-name
                   (format (let ((lfile (getenv-internal "DOOMPROFILELOADFILE")))
                             (if lfile
-                                (concat (string-remove-suffix ".el" lfile)
+                                (concat (let ((suffix ".el"))
+                                          (if (string-suffix-p suffix lfile)
+                                              (substring lfile 0 (- (length lfile) (length suffix)))
+                                            lfile))
                                         ".%d.elc")
                               "profiles/load.%d.elc"))
                           emacs-major-version)
