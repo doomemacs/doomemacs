@@ -20,7 +20,6 @@
   :pin "b3760f5829dba37e855add7323304561eb57a3d4")
 
 ;; doom-ui.el
-(package! all-the-icons :pin "ee414384938ccf2ce93c77d717b85dc5538a257d")
 (package! nerd-icons :pin "c6a4acf19454b415cba1c43daf4bfca8fccdd9ba")
 (package! hide-mode-line :pin "bc5d293576c5e08c29e694078b96a5ed85631942")
 (package! highlight-numbers :pin "8b4744c7f46c72b1d3d599d4fb75ef8183dee307")
