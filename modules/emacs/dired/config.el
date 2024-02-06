@@ -137,6 +137,7 @@ we have to clean it up ourselves."
   :init (after! dired (dirvish-override-dired-mode))
   :hook (dired-mode . dired-omit-mode)
   :config
+  (require 'dired-x)
   (setq dirvish-cache-dir (concat doom-cache-dir "dirvish/")
         dirvish-hide-details nil
         dirvish-attributes '(git-msg)
@@ -171,7 +172,6 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-x
-  :unless (modulep! +dirvish)
   :unless (modulep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
