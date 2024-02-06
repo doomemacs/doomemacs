@@ -20,8 +20,13 @@
         wl-init-file (expand-file-name "wl.el" doom-user-dir)
         wl-folders-file (expand-file-name "folders.wl" doom-user-dir))
 
-  (setq wl-message-truncate-lines t
-        wl-summary-width 120
+  ;; macOS allows file names up to 255 characters,
+  ;; use half of that size as threshold to switch to hashing
+  (setq elmo-msgdb-path-encode-threshold 128)
+
+  (setq wl-message-truncate-lines nil
+        wl-summary-width nil
+        wl-forward-subject-prefix "Fwd: "
         wl-message-ignored-field-list
         '(".*Received:"
           ".*Path:"
@@ -29,6 +34,7 @@
           "^References:"
           "^Replied:"
           "^Errors-To:"
+          "^Mail-.*-To:"
           "^Lines:"
           "^Sender:"
           ".*Host:"
@@ -40,7 +46,14 @@
           "^MIME.*:"
           "^In-Reply-To:"
           "^Content-Transfer-Encoding:"
-          "^List-.*:")
+          "^Content-Disposition:"
+          "^List-.*:"
+          "^Received-SPF:"
+          "^DKIM-.*:"
+          "^SPF-.*:"
+          "^Autocrypt:"
+          "^ARC-.*:"
+          "^Authentication-Results:")
         wl-message-visible-field-list
         '("^Message-Id:"
           "^User-Agent:"
@@ -66,9 +79,18 @@
           wl-draft-folder "%[Gmail]/Drafts"
           wl-trash-folder "%[Gmail]/Trash"
           wl-fcc-force-as-read t
-          wl-default-spec "%"))
+          wl-default-spec "%")
 
-  (setq wl-message-id-domain wl-local-domain)
+    (setq wl-message-id-domain wl-local-domain))
+
+  ;; Use x-face only when compface installed
+  (when (modulep! +xface)
+    (autoload 'x-face-decode-message-header "x-face-e21")
+    (setq wl-highlight-x-face-function 'x-face-decode-message-header))
+
+  ;; Use alert for alerting
+  (when (fboundp 'alert)
+    (setq wl-biff-notify-hook '((lambda () (alert "You have new mail!" :title "Wanderlust")))))
 
   (when (modulep! :editor evil)
     ;; Neither `wl-folder-mode' nor `wl-summary-mode' are correctly defined as
