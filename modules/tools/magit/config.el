@@ -157,35 +157,7 @@ Only has an effect in GUI Emacs.")
           :map magit-remote-section-map [remap magit-browse-thing] #'forge-browse-remote
           :map magit-branch-section-map [remap magit-browse-thing] #'forge-browse-branch))
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
-  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
-
-  (defadvice! +magit--forge-get-repository-lazily-a (&rest _)
-    "Make `forge-get-repository' return nil if the binary isn't built yet.
-This prevents emacsql getting compiled, which appears to come out of the blue
-and blocks Emacs for a short while."
-    :before-while #'forge-get-repository
-    (file-executable-p emacsql-sqlite-executable))
-
-  (defadvice! +magit--forge-build-binary-lazily-a (&rest _)
-    "Make `forge-dispatch' only build emacsql if necessary.
-Annoyingly, the binary gets built as soon as Forge is loaded. Since we've
-disabled that in `+magit--forge-get-repository-lazily-a', we must manually
-ensure it is built when we actually use Forge."
-    :before #'forge-dispatch
-    (unless (file-executable-p emacsql-sqlite-executable)
-      (emacsql-sqlite-compile 2)
-      (if (not (file-executable-p emacsql-sqlite-executable))
-          (message (concat "Failed to build emacsql; forge may not work correctly.\n"
-                           "See *Compile-Log* buffer for details"))
-        ;; HACK Due to changes upstream, forge doesn't initialize completely if
-        ;;      it doesn't find `emacsql-sqlite-executable', so we have to do it
-        ;;      manually after installing it.
-        (setq forge--sqlite-available-p t)
-        (magit-add-section-hook 'magit-status-sections-hook 'forge-insert-pullreqs nil t)
-        (magit-add-section-hook 'magit-status-sections-hook 'forge-insert-issues   nil t)
-        (after! forge-topic
-          (dolist (hook forge-bug-reference-hooks)
-            (add-hook hook #'forge-bug-reference-setup)))))))
+  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
 
 
 (use-package! code-review
