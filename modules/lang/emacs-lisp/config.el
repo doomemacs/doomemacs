@@ -228,6 +228,8 @@ See `+emacs-lisp-non-package-mode' for details.")
   ;;   expensive functionality, this will often introduce unexpected freezes
   ;;   without this advice.
   ;; TODO: PR upstream?
+  (defvar org-inhibit-startup)
+  (defvar org-mode-hook)
   (defadvice! +emacs-lisp--optimize-org-init-a (fn &rest args)
     "Disable unrelated functionality to optimize calls to `org-mode'."
     :around #'elisp-demos--export-json-file
