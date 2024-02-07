@@ -279,7 +279,7 @@ configdepth. See `doom-module-set' for details."
              (append (seq-remove #'cdr (doom-module-list nil initorder?))
                      (doom-files-in (if (listp paths-or-all)
                                         paths-or-all
-                                      doom-modules-load-path)
+                                      doom-module-load-path)
                                     :map #'doom-module-from-path
                                     :type 'dirs
                                     :mindepth 1
