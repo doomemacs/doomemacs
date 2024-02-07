@@ -139,6 +139,8 @@ the buffer is visible, then set another timer and try again later."
 (defun +popup--maybe-select-window (window origin)
   "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
   (unless +popup--inhibit-select
+    ;; REVIEW: Once our minimum version is bumped up to Emacs 30.x, replace this
+    ;;   with `post-command-select-window' window parameter.
     (let ((select (+popup-parameter 'select window)))
       (if (functionp select)
           (funcall select window origin)
