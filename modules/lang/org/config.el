@@ -105,7 +105,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
   (setq org-indirect-buffer-display 'current-window
-        org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
         org-entities-user
         '(("flat"  "\\flat" nil "" "" "266D" "♭")
@@ -814,14 +813,6 @@ Unlike showNlevels, this will also unfold parent trees."
                               :weight bold))))
       (apply fn args)))
 
-  (after! org-eldoc
-    ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or
-    ;;      'python' src blocks.
-    ;; TODO Should be reported upstream!
-    (puthash "org" #'ignore org-eldoc-local-functions-cache)
-    (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
-    (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
-
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
     (quiet! (org-mode-restart))
@@ -1192,6 +1183,20 @@ between the two."
         ;; The default value (5) is too conservative.
         org-clock-history-length 20)
   (add-hook 'kill-emacs-hook #'org-clock-save))
+
+
+(use-package! org-eldoc
+  ;; HACK: Fix #7633: this hook is no longer autoloaded by org-eldoc (in
+  ;;   org-contrib), so we have to add it ourselves.
+  :hook (org-mode . org-eldoc-load)
+  :init (setq org-eldoc-breadcrumb-separator " → ")
+  :config
+  ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or 'python'
+  ;;   src blocks.
+  ;; TODO Should be reported upstream!
+  (puthash "org" #'ignore org-eldoc-local-functions-cache)
+  (puthash "plantuml" #'ignore org-eldoc-local-functions-cache)
+  (puthash "python" #'python-eldoc-function org-eldoc-local-functions-cache))
 
 
 (use-package! org-pdftools
