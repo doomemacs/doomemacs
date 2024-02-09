@@ -97,20 +97,28 @@ your Bash Profile, etc., and log out and in again._ Now Doom will be able to use
 
 Good luck and happy computing!
 
-** efmt
+** Auto-formatting
 When [[doom-module::editor format]] is enabled and [[doom-executable:fprettify]] is installed, buffers can be formatted with [[fn:apheleia-format-buffer]].
 
 Enable [[doom-module::editor format +onsave]] to format the buffer on save.
+
+See below for advanced configuration.
 
 * TODO Usage
 #+begin_quote
  󱌣 This module has no usage documentation yet. [[doom-contrib-module:][Write some?]]
 #+end_quote
 
-* TODO Configuration
-#+begin_quote
- 󱌣 This module has no configuration documentation yet. [[doom-contrib-module:][Write some?]]
-#+end_quote
+* Configuration
+
+** Customising fprettier
+
+If you want different arguments to be passed to =fprettier=, follow this example:
+
+#+begin_src emacs-lisp
+(after! f90
+  (set-formatter! 'fprettify '("fprettify" "--enable-decl" "-w" "4" "-") :modes '(f90-mode fortran-mode)))
+#+end_src
 
 * Troubleshooting
 /There are no known problems with this module./ [[doom-report:][Report one?]]
