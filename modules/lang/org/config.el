@@ -957,7 +957,7 @@ between the two."
         (:when (modulep! :completion vertico)
          "." #'consult-org-heading
          "/" #'consult-org-agenda)
-        "A" #'org-archive-subtree
+        "A" #'org-archive-subtree-default
         "e" #'org-export-dispatch
         "f" #'org-footnote-action
         "h" #'org-toggle-heading
@@ -1090,7 +1090,7 @@ between the two."
          "n" #'org-narrow-to-subtree
          "r" #'org-refile
          "s" #'org-sparse-tree
-         "A" #'org-archive-subtree
+         "A" #'org-archive-subtree-default
          "N" #'widen
          "S" #'org-sort)
         (:prefix ("p" . "priority")
