@@ -487,7 +487,7 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
 (defun doom/sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
-  (find-file (doom--sudo-file-path file)))
+  (find-file (doom--sudo-file-path (expand-file-name file))))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
