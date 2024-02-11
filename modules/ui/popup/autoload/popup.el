@@ -512,17 +512,24 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                      (and (eq (window-parameter window 'window-side) side)
                           (eq (window-parameter window 'window-vslot) vslot)))
                    nil))
-           ;; As opposed to the `window-side' property, the `window-vslot'
-           ;; property is set only on a single live window and never on internal
+           ;; As opposed to the `window-side' property, our `window-vslot'
+           ;; parameter is set only on a single live window and never on internal
            ;; windows. Moreover, as opposed to `window-with-parameter' (as used
            ;; by the original `display-buffer-in-side-window'),
            ;; `get-window-with-predicate' only returns live windows anyway. In
            ;; any case, we will have missed the major side window and got a
            ;; child instead if the major side window happens to be an internal
-           ;; window. In that case, the major side window is the parent of the
-           ;; live window.
+           ;; window with multiple children. In that case, all childen should
+           ;; have the same `window-vslot' parameter, and the major side window
+           ;; is the parent of the live window.
+           (prev (and live (window-prev-sibling live)))
+           (next (and live (window-next-sibling live)))
+           (prev-vslot (and prev (window-parameter prev 'window-vslot)))
+           (next-vslot (and next (window-parameter next 'window-vslot)))
            (major (and live
-                       (if (window-next-sibling live) (window-parent live) live)))
+                       (if (or (eq prev-vslot vslot) (eq next-vslot vslot))
+                           (window-parent live)
+                         live)))
            (reversed (window--sides-reverse-on-frame-p (selected-frame)))
            (windows
             (cond ((window-live-p major)
@@ -614,6 +621,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                                  (setq window
                                        (ignore-errors (split-window prev-window nil prev-side))))))
                       (set-window-parameter window 'window-slot slot)
+                      (set-window-parameter window 'window-vslot vslot)
                       (with-current-buffer buffer
                         (setq window--sides-shown t))
                       (window--display-buffer
