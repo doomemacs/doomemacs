@@ -2,10 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar doom-detect-indentation-excluded-modes
-  '(fundamental-mode pascal-mode so-long-mode doom-docs-org-mode)
-  "A list of major modes in which indentation should be automatically
-detected.")
+(defvar doom-detect-indentation-excluded-modes '(pascal-mode so-long-mode)
+  "A list of major modes where indentation shouldn't be auto-detected.")
 
 (defvar-local doom-inhibit-indent-detection nil
   "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
@@ -502,8 +500,9 @@ files, so this replace calls to `pp' with the much faster `prin1'."
     (unless (or (not after-init-time)
                 doom-inhibit-indent-detection
                 doom-large-file-p
-                (memq major-mode doom-detect-indentation-excluded-modes)
-                (member (substring (buffer-name) 0 1) '(" " "*")))
+                (eq major-mode 'fundamental-mode)
+                (member (substring (buffer-name) 0 1) '(" " "*"))
+                (apply #'derived-mode-p doom-detect-indentation-excluded-modes))
       ;; Don't display messages in the echo area, but still log them
       (let ((inhibit-message (not init-file-debug)))
         (dtrt-indent-mode +1))))
