@@ -95,17 +95,19 @@ is selected)."
 
 Does nothing if `+format-with-lsp' is nil or the active server doesn't support
 the requested feature."
-  (when (and +format-with-lsp
-             (bound-and-true-p lsp-mode)
-             (lsp-feature?
-              (if (eq op 'buffer)
-                  "textDocument/formatting"
-                "textDocument/rangeFormatting")))
-    (call-interactively
-     (if (eq op 'buffer)
-         #'lsp-format-buffer
-       #'lsp-format-region))
-    t))
+  (and +format-with-lsp
+       (bound-and-true-p lsp-mode)
+       (pcase op
+         ('buffer (condition-case _
+                      ;; Avoid lsp-feature? checks for this, since
+                      ;; `lsp-format-buffer' does its own, and allows clients
+                      ;; without formatting support (but with rangeFormatting,
+                      ;; for some reason) to work.
+                      (always (lsp-format-buffer))
+                    ('lsp-capability-not-supported nil)))
+         ('region (if (lsp-feature? "textDocument/rangeFormatting")
+                      (always (lsp-format-region beg end))))
+         (_ (error "Invalid formatter operation: %s" op)))))
 
 ;;;###autoload
 (defun +format-with-eglot-fn (beg end op)
@@ -113,16 +115,14 @@ the requested feature."
 
 Does nothing if `+format-with-lsp' is nil or the active server doesn't support
 the requested feature."
-  (when (and +format-with-lsp
-             (bound-and-true-p eglot-managed-mode)
-             (eglot--server-capable
-              (if (eq op 'buffer)
-                  :documentFormattingProvider
-                :documentRangeFormattingProvider)))
-    (if (eq op 'buffer)
-        (eglot-format-buffer)
-      (eglot-format beg end))
-    t))
+  (and +format-with-lsp
+       (bound-and-true-p eglot-managed-mode)
+       (pcase op
+         ('buffer (if (eglot--server-capable :documentFormattingProvider)
+                      (always (eglot-format-buffer))))
+         ('region (if (eglot--server-capable :documentRangeFormattingProvider)
+                      (always (eglot-format beg end))))
+         (_ (error "Invalid formatter operation: %s" op)))))
 
 ;;;###autoload
 (defun +format-in-org-src-blocks-fn (beg end _op)
