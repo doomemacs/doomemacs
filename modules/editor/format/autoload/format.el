@@ -108,6 +108,23 @@ the requested feature."
     t))
 
 ;;;###autoload
+(defun +format-with-eglot-fn (beg end op)
+  "Format the region/buffer using any available eglot formatter.
+
+Does nothing if `+format-with-lsp' is nil or the active server doesn't support
+the requested feature."
+  (when (and +format-with-lsp
+             (bound-and-true-p eglot-managed-mode)
+             (eglot--server-capable
+              (if (eq op 'buffer)
+                  :documentFormattingProvider
+                :documentRangeFormattingProvider)))
+    (if (eq op 'buffer)
+        (eglot-format-buffer)
+      (eglot-format beg end))
+    t))
+
+;;;###autoload
 (defun +format-in-org-src-blocks-fn (beg end _op)
   "TODO"
   (when (derived-mode-p 'org-mode)

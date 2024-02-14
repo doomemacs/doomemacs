@@ -29,7 +29,8 @@ This has no effect on the +onsave flag, apheleia will always be used there.")
 
 (defvar +format-functions
   '(+format-in-org-src-blocks-fn
-    +format-with-lsp-fn)
+    +format-with-lsp-fn
+    +format-with-eglot-fn)
   "A list of functions to run when formatting a buffer or region.
 
 Each function is given three arguments: the starting point, end point, and a
