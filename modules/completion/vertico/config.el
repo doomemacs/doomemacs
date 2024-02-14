@@ -145,15 +145,14 @@ orderless."
         consult-async-min-input 2
         consult-async-refresh-delay  0.15
         consult-async-input-throttle 0.2
-        consult-async-input-debounce 0.1)
-  (if doom-projectile-fd-binary
-      (setq consult-fd-args
-            '(doom-projectile-fd-binary
-              "--color=never"
-              ;; https://github.com/sharkdp/fd/issues/839
-              "--full-path --absolute-path"
-              "--hidden --exclude .git"
-              (if (featurep :system 'windows) "--path-separator=/"))))
+        consult-async-input-debounce 0.1
+        consult-fd-args
+        '((if (executable-find "fdfind" 'remote) "fdfind" "fd")
+          "--color=never"
+          ;; https://github.com/sharkdp/fd/issues/839
+          "--full-path --absolute-path"
+          "--hidden --exclude .git"
+          (if (featurep :system 'windows) "--path-separator=/")))
 
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
