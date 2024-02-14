@@ -209,10 +209,8 @@ orderless."
                               (apply #'process-lines +vertico-consult-dir-container-executable
                                      (append +vertico-consult-dir-container-args (list "ps")))))
                for cand = (split-string line "[[:space:]]+" t)
-               collect (let ((user (unless (string-empty-p (car cand))
-                                     (concat (car cand) "@")))
-                             (hostname (car (last cand))))
-                         (format "/%s:%s%s:/" host user hostname))))
+               collect (let ((hostname (car (last cand))))
+                         (format "/%s:root@%s:/" host hostname))))
 
     (defun +vertico--consult-dir-podman-hosts ()
       (let ((+vertico-consult-dir-container-executable "podman"))
