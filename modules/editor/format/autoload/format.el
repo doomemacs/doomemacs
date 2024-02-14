@@ -61,12 +61,8 @@
 (defun +format/buffer (&optional arg)
   "Reformat the current buffer using LSP or `format-all-buffer'."
   (interactive "P")
-  (call-interactively
-   (if (and +format-with-lsp
-            (bound-and-true-p lsp-mode)
-            (lsp-feature? "textDocument/formatting"))
-       #'lsp-format-buffer
-     #'apheleia-format-buffer)))
+  (or (run-hook-with-args-until-success '+format-functions (point-min) (point-max) 'buffer)
+      (call-interactively #'apheleia-format-buffer)))
 
 ;;;###autoload
 (defun +format/region (beg end &optional arg)
@@ -76,11 +72,8 @@ WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "rP")
-  (if (and +format-with-lsp
-           (bound-and-true-p lsp-mode)
-           (lsp-feature? "textDocument/rangeFormatting"))
-      (call-interactively #'lsp-format-region)
-    (+format-region beg end)))
+  (or (run-hook-with-args-until-success '+format-functions beg end 'region)
+      (+format-region beg end)))
 
 ;;;###autoload
 (defun +format/region-or-buffer ()
@@ -91,3 +84,55 @@ is selected)."
    (if (doom-region-active-p)
        #'+format/region
      #'+format/buffer)))
+
+
+;;
+;;; Specialized formatters
+
+;;;###autoload
+(defun +format-with-lsp-fn (beg end op)
+  "Format the region/buffer using any available lsp-mode formatter.
+
+Does nothing if `+format-with-lsp' is nil or the active server doesn't support
+the requested feature."
+  (when (and +format-with-lsp
+             (bound-and-true-p lsp-mode)
+             (lsp-feature?
+              (if (eq op 'buffer)
+                  "textDocument/formatting"
+                "textDocument/rangeFormatting")))
+    (call-interactively
+     (if (eq op 'buffer)
+         #'lsp-format-buffer
+       #'lsp-format-region))
+    t))
+
+;;;###autoload
+(defun +format-in-org-src-blocks-fn (beg end _op)
+  "TODO"
+  (when (derived-mode-p 'org-mode)
+    (goto-char beg)
+    (while (re-search-forward org-babel-src-block-regexp end t)
+      (let* ((element (org-element-at-point))
+             (block-beg (save-excursion
+                          (goto-char (org-babel-where-is-src-block-head element))
+                          (line-beginning-position 2)))
+             (block-end (save-excursion
+                          (goto-char (org-element-property :end element))
+                          (skip-chars-backward " \t\n")
+                          (line-beginning-position)))
+             (beg (if beg (max beg block-beg) block-beg))
+             (end (if end (min end block-end) block-end))
+             (lang (org-element-property :language element))
+             (major-mode (org-src-get-lang-mode lang)))
+        (save-excursion
+          (if (eq major-mode 'org-mode)
+              (user-error "Cannot reformat an org src block in org-mode")
+            ;; Determine formatter based on language and format the region
+            (let ((formatter (apheleia--get-formatters 'interactive)))
+              (unless formatter
+                (setq formatter (apheleia--get-formatters 'prompt))
+                (unless formatter
+                  (user-error "No formatter configured for language: %s" lang)))
+              (let ((apheleia-formatter formatter))
+                (+format-region beg end)))))))))
