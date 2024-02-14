@@ -50,6 +50,7 @@
           "^List-.*:"
           "^Received-SPF:"
           "^DKIM-.*:"
+          "^DomainKey-Signature:"
           "^SPF-.*:"
           "^Autocrypt:"
           "^ARC-.*:"
