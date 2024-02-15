@@ -5,7 +5,7 @@
 
 (when (and (modulep! +lsp)
            (not (modulep! :tools lsp +eglot)))
-  (package! lsp-dart :pin "e7ee6afc2e165291360fd35d16648307920837c7"))
+  (package! lsp-dart :pin "f51c80f5458d8ba4db9dd3781d190c6c32213250"))
 
 (when (modulep! +flutter)
   (package! flutter :pin "004c91e070a9b4a2a5042f5bb20015ec65453acf")
