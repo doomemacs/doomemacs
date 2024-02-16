@@ -126,7 +126,7 @@ the requested feature."
 
 ;;;###autoload
 (defun +format-in-org-src-blocks-fn (beg end _op)
-  "TODO"
+  "Reformat org src blocks with apheleia as if they were independent buffers."
   (when (derived-mode-p 'org-mode)
     (goto-char beg)
     (while (re-search-forward org-babel-src-block-regexp end t)
