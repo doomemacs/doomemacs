@@ -138,8 +138,8 @@ the requested feature."
                           (goto-char (org-element-property :end element))
                           (skip-chars-backward " \t\n")
                           (line-beginning-position)))
-             (beg (if beg (max beg block-beg) block-beg))
-             (end (if end (min end block-end) block-end))
+             (beg (max beg block-beg))
+             (end (min end block-end))
              (lang (org-element-property :language element))
              (major-mode (org-src-get-lang-mode lang)))
         (save-excursion
@@ -152,4 +152,5 @@ the requested feature."
                 (unless formatter
                   (user-error "No formatter configured for language: %s" lang)))
               (let ((apheleia-formatter formatter))
-                (+format-region beg end)))))))))
+                (+format-region beg end)))))))
+    t))
