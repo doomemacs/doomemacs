@@ -272,12 +272,11 @@ If on a:
                 (org-element-property :end lineage))
              (org-open-at-point arg))))
 
+        ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+         (org-toggle-checkbox))
+
         (`paragraph
          (+org--toggle-inline-images-in-subtree))
-
-        ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
-         (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-           (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
         (_
          (if (or (org-in-regexp org-ts-regexp-both nil t)
