@@ -64,7 +64,26 @@ use the minibuffer such as `query-replace'.")
   (add-to-list 'corfu-auto-commands #'lispy-colon)
   (add-to-list 'corfu-continue-commands #'+corfu-move-to-minibuffer)
   (add-to-list 'corfu-continue-commands #'+corfu-smart-sep-toggle-escape)
-  (add-hook 'evil-insert-state-exit-hook #'corfu-quit))
+  (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
+
+  ;; If you want to update the visual hints after completing minibuffer commands
+  ;; with Corfu and exiting, you have to do it manually.
+  (defadvice! +corfu--insert-before-exit-minibuffer-a ()
+    :before #'exit-minibuffer
+    (when (or (and (frame-live-p corfu--frame)
+                   (frame-visible-p corfu--frame))
+              (and (featurep 'corfu-terminal)
+                   (popon-live-p corfu-terminal--popon)))
+      (when (member isearch-lazy-highlight-timer timer-idle-list)
+        (apply (timer--function isearch-lazy-highlight-timer)
+               (timer--args isearch-lazy-highlight-timer)))
+      (when (member (bound-and-true-p anzu--update-timer) timer-idle-list)
+        (apply (timer--function anzu--update-timer)
+               (timer--args anzu--update-timer)))
+      (when (member (bound-and-true-p evil--ex-search-update-timer)
+                    timer-idle-list)
+        (apply (timer--function evil--ex-search-update-timer)
+               (timer--args evil--ex-search-update-timer))))))
 
 (use-package! cape
   :defer t
