@@ -1,5 +1,7 @@
 ;;; lang/data/config.el -*- lexical-binding: t; -*-
 
+(defvar +data-xmllint-binary "xmllint")
+
 (use-package! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'" ; plist, pom
   :mode "\\.xs\\(?:d\\|lt\\)\\'"   ; xslt, xsd
@@ -12,7 +14,7 @@
     (sp-local-pair 'nxml-mode "<" ">" :post-handlers '(("[d1]" "/"))))
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet))
   (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent)
-  (set-formatter! 'xmllint '("xmllint" "--format" "-") :modes '(nxml-mode)))
+  (set-formatter! 'xmllint `(+data-xmllint-binary "--format" "-") :modes '(nxml-mode)))
 
 
 ;;;###package csv-mode
