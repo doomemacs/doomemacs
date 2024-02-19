@@ -694,7 +694,7 @@ config blocks in your private config."
 (defvar counsel-rg-base-command)
 (defun doom--help-search (dirs query prompt)
   ;; REVIEW Replace with deadgrep
-  (unless (executable-find "rg")
+  (unless (executable-find doom-rg-binary)
     (user-error "Can't find ripgrep on your system"))
   (cond ((fboundp 'consult--grep)
          (consult--grep prompt #'consult--ripgrep-make-builder (cons data-directory dirs) query))
@@ -708,7 +708,7 @@ config blocks in your private config."
         ;; () TODO Helm support?
         ((grep-find
           (string-join
-           (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never"
+           (append (list doom-rg-binary "-L" "--search-zip" "--no-heading" "--color=never"
                          (shell-quote-argument query))
                    (mapcar #'shell-quote-argument dirs))
            " ")))))

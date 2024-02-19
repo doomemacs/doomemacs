@@ -19,6 +19,8 @@ debian, and derivatives). On most it's 'fd'.")
 
 (defvar doom-projects--fd-version nil)
 
+(defvar doom-rg-binary "rg")
+
 
 ;;
 ;;; Packages
@@ -198,8 +200,8 @@ And if it's a function, evaluate it."
                                         "" "--strip-cwd-prefix"))
                         (if doom--system-windows-p " --path-separator=/"))))
            ;; Otherwise, resort to ripgrep, which is also faster than find
-           ((executable-find "rg" t)
-            (concat "rg -0 --files --follow --color=never --hidden -g!.git"
+           ((executable-find doom-rg-binary t)
+            (concat doom-rg-binary " -0 --files --follow --color=never --hidden -g!.git"
                     (if doom--system-windows-p " --path-separator=/")))
            ("find . -type f -print0"))))
 

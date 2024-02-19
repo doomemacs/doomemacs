@@ -13,6 +13,6 @@
     (explain! "Some advanced consult filtering features will not work as a result, see the module readme."))
 
   ;; TODO: Move this to core in v3.0
-  (unless (consult--grep-lookahead-p "rg" "-P")
+  (unless (consult--grep-lookahead-p doom-rg-binary "-P")
     (warn! "The installed ripgrep binary was not built with support for PCRE lookaheads.")
     (explain! "Some advanced consult filtering features will not work as a result, see the module readme.")))
