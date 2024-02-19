@@ -6,6 +6,8 @@
     "sleep" "sudo" "touch")
   "A list of common shell commands to be fontified especially in `sh-mode'.")
 
+(defvar +sh-shfmt-binary "shfmt")
+
 
 ;;
 ;;; Packages
@@ -17,7 +19,7 @@
   :config
   (set-docsets! 'sh-mode "Bash")
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
-  (set-formatter! 'shfmt '("shfmt" "-ci"
+  (set-formatter! 'shfmt `(,+sh-shfmt-binary "-ci"
                            (unless indent-tabs-mode
                              (list "-i" (number-to-string tab-width)))))
 

@@ -5,7 +5,7 @@
   (warn! "Couldn't find shellcheck. Shell script linting will not work")))
 
 (when (modulep! :editor format)
-  (unless (executable-find "shfmt")
+  (unless (executable-find +sh-shfmt-binary)
     (warn! "Couldn't find shfmt. Code formatting will not work.")))
 
 (assert! (or (not (modulep! +tree-sitter))
