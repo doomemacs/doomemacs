@@ -44,7 +44,7 @@ This must be set before `treemacs' has loaded.")
 
 
 (use-package! treemacs-nerd-icons
-  :after treemacs
+  :after ( treemacs  lsp-treemacs nerd-icons)
   :config (treemacs-load-theme "nerd-icons"))
 
 
