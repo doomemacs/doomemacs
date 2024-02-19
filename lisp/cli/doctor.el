@@ -92,7 +92,7 @@ in."
                        version))
            (warn! "Cannot determine Git version. Doom requires git 2.23 or newer!")))))
 
-   (unless (executable-find "rg")
+   (unless (executable-find doom-rg-binary)
      (error! "Couldn't find the `rg' binary; this a hard dependecy for Doom, file searches may not work at all")))
 
   (print! (start "Checking for Emacs config conflicts..."))
