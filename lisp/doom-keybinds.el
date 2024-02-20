@@ -242,7 +242,8 @@ localleader prefix."
 (defun doom-update-localleader-key-h ()
   "Set the localleader keys for the current major-mode."
   (set-keymap-parent doom-localleader-map
-                     (cdr (assq major-mode doom-localleader-map-alist))))
+                     (cdr (assq (buffer-local-value 'major-mode (window-buffer))
+                                doom-localleader-map-alist))))
 
 (add-hook 'post-command-hook #'doom-update-localleader-key-h)
 
