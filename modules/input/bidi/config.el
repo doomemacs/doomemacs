@@ -8,7 +8,9 @@
 Must be a `font-spec', see `doom-font' for examples.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
-font to that size. It's rarely a good idea to do so!")
+font to that size. It's rarely a good idea to do so! If you want a different
+size for this font use `face-font-rescale-alist' e.g.
+(pushnew! face-font-rescale-alist `(\"FONT FAMILY NAME\" . 1.2))")
 
 (defface +bidi-hebrew-face `((t :font ,+bidi-hebrew-font)) "")
 
@@ -17,7 +19,9 @@ font to that size. It's rarely a good idea to do so!")
 Must be a `font-spec', see `doom-font' for examples.
 
 WARNING: if you specify a size for this font it will hard-lock any usage of this
-font to that size. It's rarely a good idea to do so!")
+font to that size. It's rarely a good idea to do so! If you want a different
+size for this font use `face-font-rescale-alist' e.g.
+(pushnew! face-font-rescale-alist `(\"FONT FAMILY NAME\" . 1.2))")
 
 (defface +bidi-arabic-face `((t :font ,+bidi-arabic-font)) "")
 
