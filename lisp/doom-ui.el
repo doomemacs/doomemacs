@@ -524,18 +524,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                  (fixed-pitch . ,doom-font)
                  (fixed-pitch-serif . ,doom-serif-font)
                  (variable-pitch . ,doom-variable-pitch-font)))
-    (when-let* ((face (car map))
-                (font (cdr map)))
-      (dolist (frame (frame-list))
-        (when (display-multi-font-p frame)
-          (set-face-attribute face frame
-                              :width 'normal :weight 'normal
-                              :slant 'normal :font font)))
-      (let ((new-specs (doom--make-font-specs face font)))
-        ;; Don't save to `customized-face' so it's omitted from `custom-file'
-        ;;(put face 'customized-face new-specs)
-        (custom-push-theme 'theme-face face 'user 'set new-specs)
-        (put face 'face-modified nil))))
+    (condition-case e
+        (when-let* ((face (car map))
+                    (font (cdr map)))
+          (dolist (frame (frame-list))
+            (when (display-multi-font-p frame)
+              (set-face-attribute face frame
+                                  :width 'normal :weight 'normal
+                                  :slant 'normal :font font)))
+          (let ((new-specs (doom--make-font-specs face font)))
+            ;; Don't save to `customized-face' so it's omitted from `custom-file'
+            ;;(put face 'customized-face new-specs)
+            (custom-push-theme 'theme-face face 'user 'set new-specs)
+            (put face 'face-modified nil)))
+      ('error
+       (ignore-errors (doom--reset-inhibited-vars-h))
+       (if (string-prefix-p "Font not available" (error-message-string e))
+           (signal 'doom-font-error (list (font-get (cdr map) :family)))
+         (signal (car e) (cdr e))))))
   (when (fboundp 'set-fontset-font)
     (let* ((fn (doom-rpartial #'member (font-family-list)))
            (symbol-font (or doom-symbol-font
