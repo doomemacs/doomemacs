@@ -128,21 +128,19 @@ the requested feature."
 (defun +format-in-org-src-blocks-fn (beg end _op)
   "Reformat org src blocks with apheleia as if they were independent buffers."
   (when (derived-mode-p 'org-mode)
-    (goto-char beg)
-    (while (re-search-forward org-babel-src-block-regexp end t)
-      (let* ((element (org-element-at-point))
-             (block-beg (save-excursion
-                          (goto-char (org-babel-where-is-src-block-head element))
-                          (line-beginning-position 2)))
-             (block-end (save-excursion
-                          (goto-char (org-element-property :end element))
-                          (skip-chars-backward " \t\n")
-                          (line-beginning-position)))
-             (beg (max beg block-beg))
-             (end (min end block-end))
-             (lang (org-element-property :language element))
-             (major-mode (org-src-get-lang-mode lang)))
-        (save-excursion
+    (let ((element (org-element-at-point)))
+      (save-excursion
+        (let* ((block-beg (save-excursion
+                            (goto-char (org-babel-where-is-src-block-head element))
+                            (line-beginning-position 2)))
+               (block-end (save-excursion
+                            (goto-char (org-element-property :end element))
+                            (skip-chars-backward " \t\n")
+                            (line-beginning-position)))
+               (beg (max beg block-beg))
+               (end (min end block-end))
+               (lang (org-element-property :language element))
+               (major-mode (org-src-get-lang-mode lang)))
           (if (eq major-mode 'org-mode)
               (user-error "Cannot reformat an org src block in org-mode")
             ;; Determine formatter based on language and format the region
