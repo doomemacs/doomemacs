@@ -1,0 +1,98 @@
+{
+    "emacs-overlay": {
+        "branch": "master",
+        "description": "Bleeding edge emacs overlay [maintainer=@adisbladis] ",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "emacs-overlay",
+        "rev": "88e410d7f1ddef554b40f66755626e5c883487d9",
+        "sha256": "00l8wnnk1c7zd0asngsby56sqqvc4cky636agkd3zy5zcwlzl3pa",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/emacs-overlay/archive/88e410d7f1ddef554b40f66755626e5c883487d9.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nix-emacs-ci": {
+        "branch": "master",
+        "description": "Emacs builds for continuous integration",
+        "homepage": "",
+        "owner": "purcell",
+        "repo": "nix-emacs-ci",
+        "rev": "f43aa08ced1d5895a6082469947712b0d48af618",
+        "sha256": "1pz1gzy9czdrzphjm0nx27hc6s17mbwjvahlrl85crb470ixai8x",
+        "type": "tarball",
+        "url": "https://github.com/purcell/nix-emacs-ci/archive/f43aa08ced1d5895a6082469947712b0d48af618.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-23.11",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5bf1cadb72ab4e77cb0b700dab76bcdaf88f706b",
+        "sha256": "0zjwk71lsri9zmlmhwgz1ny9dv91kaznii2wjff4g2d3w47gy8nj",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/5bf1cadb72ab4e77cb0b700dab76bcdaf88f706b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgsEmacs27-1": {
+        "branch": "master",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "11264a390b197b80edeffac6f20e582f3ea318bd",
+        "sha256": "1hm3c62zwp937nisiyy3wy5lxjkr4jv5rhwa5yzz25y2dyw42f51",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/11264a390b197b80edeffac6f20e582f3ea318bd.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgsEmacs27-2": {
+        "branch": "master",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4c87cb87a2db6b9eb43541c1cf83f2a2f725fa25",
+        "sha256": "0jjnj05fav5b0rynz6y2fx223rljbqd3myjr8lm22sj46y1sv0zw",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/4c87cb87a2db6b9eb43541c1cf83f2a2f725fa25.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgsEmacs28-1": {
+        "branch": "master",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "54e795706d9fa90004ed1274af639a717f04a2aa",
+        "sha256": "1vkqllcaxlz5yf98iy5hiwcl2j0q7xcw36mqqbki7l12xaj79zxk",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/54e795706d9fa90004ed1274af639a717f04a2aa.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgsEmacs28-2": {
+        "branch": "master",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c434383f2a4866a7c674019b4cdcbfc55db3c4ab",
+        "sha256": "072c46gnmzyphbm1y5iq75k9x4d9g59n4jyivmlg63j0w022v2mb",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/c434383f2a4866a7c674019b4cdcbfc55db3c4ab.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgsEmacs29-1": {
+        "branch": "master",
+        "description": "Nix Packages collection & NixOS",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c434383f2a4866a7c674019b4cdcbfc55db3c4ab",
+        "sha256": "072c46gnmzyphbm1y5iq75k9x4d9g59n4jyivmlg63j0w022v2mb",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/c434383f2a4866a7c674019b4cdcbfc55db3c4ab.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}
