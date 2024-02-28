@@ -198,6 +198,9 @@ A few variables may be set to change behavior of this module:
 - [[var:+corfu-buffer-scanning-size-limit]]  ::
   Sets the maximum buffer size to be scanned by ~cape-dabbrev~. Defaults to 1 MB.
   Set this if you are having performance problems using the CAPF.
+- [[var:+corfu-want-minibuffer-completion]] ::
+  Whether to enable Corfu in the minibuffer. See its documentation for
+  additional tweaks.
 
 ** Adding CAPFs to a mode
 To add other CAPFs on a mode-per-mode basis, put either of the following in your
