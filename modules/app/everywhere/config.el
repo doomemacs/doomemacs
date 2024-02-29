@@ -14,6 +14,10 @@
   ;;   buffers anyway.
   (setq-hook! 'emacs-everywhere-init-hooks doom-inhibit-local-var-hooks t)
 
+  ;; REVIEW: Fixes tecosaur/emacs-everywhere#75. Remove when dealt with
+  ;;   upstream.
+  (define-key emacs-everywhere-mode-map "\C-c\C-c" #'emacs-everywhere-finish)
+
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
       (concat
