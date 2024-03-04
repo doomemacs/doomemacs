@@ -340,3 +340,38 @@ orderless."
   :hook (vertico-mode . vertico-posframe-mode)
   :config
   (add-hook 'doom-after-reload-hook #'posframe-delete-all))
+
+;; From https://github.com/minad/vertico/wiki#candidate-display-transformations-custom-candidate-highlighting
+(use-package! vertico-multiform
+  :hook (vertico-mode . vertico-multiform-mode)
+  :config
+  (defvar +vertico-transform-functions nil)
+
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((not +vertico-transform-functions) null))
+    (dolist (fun (ensure-list +vertico-transform-functions))
+      (setq cand (funcall fun cand)))
+    (cl-call-next-method cand prefix suffix index start))
+
+  (defun +vertico-highlight-directory (file)
+    "If FILE ends with a slash, highlight it as a directory."
+    (if (string-suffix-p "/" file)
+        (propertize file 'face 'marginalia-file-priv-dir)
+      file))
+
+  (defun +vertico-highlight-enabled-mode (cmd)
+    "If MODE is enabled, highlight it as font-lock-constant-face."
+    (let ((sym (intern cmd)))
+      (if (or (eq sym major-mode)
+              (and
+               (memq sym minor-mode-list)
+               (boundp sym)))
+          (propertize cmd 'face 'font-lock-constant-face)
+        cmd)))
+
+  (add-to-list 'vertico-multiform-categories
+               '(file
+                 (+vertico-transform-functions . +vertico-highlight-directory)))
+  (add-to-list 'vertico-multiform-commands
+               '(execute-extended-command
+                 (+vertico-transform-functions . +vertico-highlight-enabled-mode))))
