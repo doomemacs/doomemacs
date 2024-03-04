@@ -17,6 +17,7 @@ utilities for fine-tuning. Only some of common behaviors are documented here.
 
 ** Maintainers
 - [[doom-user:][@LuigiPiucco]]
+- [[doom-user:][@LemonBreezes]]
 
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
