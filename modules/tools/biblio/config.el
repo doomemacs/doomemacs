@@ -81,7 +81,6 @@
 ;; oc-csl requires citeproc, which requires the top-level org, so loading oc-csl
 ;; after oc interferes with incremental loading of Org
 (use-package! oc-csl :after org)
-(use-package! oc-natbib :after oc)
 
 
 ;;
