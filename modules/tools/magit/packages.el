@@ -8,5 +8,5 @@
       :recipe (:host github
                :repo "doomelpa/code-review"
                :files ("graphql" "code-review*.el"))
-      :pin "2670a4beb6636e6ee596c5b7cb5e784cf33d5a98"))
+      :pin "e4c34fa284da25d8e0bafbae4300f1db5bdcda44"))
   (package! magit-todos :pin "1e9acc0ba63fbc297001bf334d63cb4326be80df"))
