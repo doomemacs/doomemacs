@@ -222,6 +222,7 @@ intervals."
             (condition-case-unless-debug e
                 (and
                  (or (null (setq idle-time (current-idle-time)))
+                     (null doom-incremental-first-idle-timer)
                      (< (float-time idle-time) doom-incremental-first-idle-timer)
                      (not
                       (while-no-input
