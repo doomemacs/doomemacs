@@ -199,7 +199,7 @@ in daemon sessions (they are loaded immediately at startup).")
 (defvar doom-incremental-first-idle-timer (if (daemonp) 0 2.0)
   "How long (in idle seconds) until incremental loading starts.
 
-Set this to nil to disable incremental loading.
+Set this to nil to disable incremental loading at startup.
 Set this to 0 to load all incrementally deferred packages immediately at
 `emacs-startup-hook'.")
 
@@ -222,7 +222,7 @@ intervals."
             (condition-case-unless-debug e
                 (and
                  (or (null (setq idle-time (current-idle-time)))
-                     (< (float-time idle-time) doom-incremental-first-idle-timer)
+                     (< (float-time idle-time) (or doom-incremental-first-idle-timer 0.0))
                      (not
                       (while-no-input
                         (doom-log "start:iloader: Loading %s (%d left)" req (length packages))
