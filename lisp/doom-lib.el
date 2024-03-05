@@ -4,6 +4,7 @@
 
 ;;; Custom error types
 (define-error 'doom-error "An unexpected Doom error")
+(define-error 'doom-font-error "Could not find a font on your system" 'doom-error)
 (define-error 'doom-nosync-error "Doom hasn't been initialized yet; did you remember to run 'doom sync' in the shell?" 'doom-error)
 (define-error 'doom-core-error "Unexpected error in Doom's core" 'doom-error)
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
