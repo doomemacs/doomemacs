@@ -79,6 +79,7 @@
         nrepl-log-messages nil
         cider-font-lock-dynamically '(macro core function var deprecated)
         cider-overlays-use-font-lock t
+        cider-print-options '(("length" 100))
         cider-prompt-for-symbol nil
         cider-repl-history-display-duplicates nil
         cider-repl-history-display-style 'one-line
@@ -88,7 +89,6 @@
         cider-repl-history-highlight-inserted-item t
         cider-repl-history-size 1000
         cider-repl-result-prefix ";; => "
-        cider-repl-print-length 100
         cider-repl-use-clojure-font-lock t
         cider-repl-use-pretty-printing t
         cider-repl-wrap-history nil

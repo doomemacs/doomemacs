@@ -181,9 +181,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
           ("NO"   . +org-todo-cancel)
           ("KILL" . +org-todo-cancel)))
 
-  ;; Automatic indent detection in org files is meaningless
-  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode)
-
   (set-ligatures! 'org-mode
     :name "#+NAME:"
     :name "#+name:"
@@ -1437,6 +1434,11 @@ between the two."
     :definition #'+org-lookup-definition-handler
     :references #'+org-lookup-references-handler
     :documentation #'+org-lookup-documentation-handler)
+
+  ;; HACK: Somehow, users/packages still find a way to modify tab-width in
+  ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
+  ;;   state, I use this hook to makes it much harder to change by accident.
+  (add-hook! 'org-mode-hook :depth 110 (setq-local tab-width 8))
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)

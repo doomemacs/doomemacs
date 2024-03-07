@@ -2,7 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar doom-detect-indentation-excluded-modes '(pascal-mode so-long-mode)
+(defvar doom-detect-indentation-excluded-modes
+  '(pascal-mode
+    so-long-mode
+    ;; Automatic indent detection in org files is meaningless. Not to mention, a
+    ;; non-standard `tab-width' causes an error in org-mode.
+    org-mode)
   "A list of major modes where indentation shouldn't be auto-detected.")
 
 (defvar-local doom-inhibit-indent-detection nil
