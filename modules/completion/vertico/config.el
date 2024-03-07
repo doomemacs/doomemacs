@@ -362,12 +362,13 @@ orderless."
   (defun +vertico-highlight-enabled-mode (cmd)
     "If MODE is enabled, highlight it as font-lock-constant-face."
     (let ((sym (intern cmd)))
-      (if (or (eq sym major-mode)
-              (and
-               (memq sym minor-mode-list)
-               (boundp sym)))
-          (propertize cmd 'face 'font-lock-constant-face)
-        cmd)))
+      (with-current-buffer (nth 1 (buffer-list))
+        (if (or (eq sym major-mode)
+                (and
+                 (memq sym minor-mode-list)
+                 (boundp sym)))
+            (propertize cmd 'face 'font-lock-constant-face)
+          cmd))))
 
   (add-to-list 'vertico-multiform-categories
                '(file
