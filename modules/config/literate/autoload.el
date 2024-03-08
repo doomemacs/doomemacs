@@ -144,4 +144,40 @@ config, and should trigger a recompile if changed."
         (file-name-directory +literate-config-file))
        (+literate-tangle-h)))
 
+(defun flatten-imenu-index (index &optional prefix)
+  "Flatten an org-mode imenu index."
+  (let ((flattened '()))
+    (dolist (item index flattened)
+      (let* ((name (propertize (car item) 'face (intern (format "org-level-%d" (if prefix (+ 2 (cl-count ?/ prefix)) 1)))))
+             (prefix (if prefix (concat prefix "/" name) name)))
+        (if (imenu--subalist-p item)
+            (setq flattened (append flattened (flatten-imenu-index (cdr item) prefix)))
+          (push (cons prefix (cdr item)) flattened))))
+    (nreverse flattened)))
+
+;;;###autoload
+(defun +literate-jump-heading ()
+  "Jump to a heading in the literate org file."
+  (interactive)
+  (let* ((buffer (or (find-buffer-visiting +literate-config-file)
+                     (find-file-noselect +literate-config-file t))))
+    (with-current-buffer buffer
+      (let* ((imenu-auto-rescan t)
+             (org-imenu-depth 8)
+             (index (flatten-imenu-index (imenu--make-index-alist))))
+        (let ((c (current-window-configuration))
+              (result nil))
+          (unwind-protect
+              (progn
+                (switch-to-buffer buffer)
+                (cond
+                 ((modulep! :completion vertico)
+                  (setq result (consult-org-heading)))
+                 (t
+                  (let ((entry (assoc (completing-read "Go to heading: " index nil t) index)))
+                    (setq result entry)
+                    (imenu entry)))))
+            (unless result
+              (set-window-configuration c))))))))
+
 ;;; autoload.el ends here
