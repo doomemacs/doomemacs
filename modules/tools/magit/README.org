@@ -16,10 +16,14 @@ This module provides Magit, an interface to the Git version control system.
   Enable Forge; a porcelain for managing Github issues and PRs from within
   Emacs. Will take a while on first run to build =emacsql-sqlite=.
 
+- +childframe ::
+  Display magit (transient.el) prompts in a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Child-Frames.html][child frame]] rather than the minibuffer. *Requires GUI Emacs.*
+
 ** Packages
 - [[doom-package:evil-magit]] if [[doom-module::editor evil +everywhere]]
 - [[doom-package:forge]] if [[doom-module:+forge]]
 - [[doom-package:code-review]] if [[doom-module:+forge]]
+- [[doom-package:transient-posframe]] if [[doom-module:+childframe]]
 - [[doom-package:magit]]
 - [[doom-package:magit-todos]]
 
@@ -31,6 +35,9 @@ This module provides Magit, an interface to the Git version control system.
   when you later switch to them, rather than all at once.
 - [[doom-package:forge]] was modified to defer compilation of emacsql-sqlite until you try to use
   forge, rather than when magit first loads (which could be as soon as startup).
+- [[doom-package:transient-posframe]] currently [[https://github.com/yanghaoxie/transient-posframe/issues/5][doesn't set the correct height]] in some
+  versions of emacs, so =transient-posframe--show-buffer= is overridden to set the
+  height correctly.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
