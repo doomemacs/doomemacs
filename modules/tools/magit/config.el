@@ -261,6 +261,7 @@ Only has an effect in GUI Emacs.")
     (map! :map magit-section-mode-map :n "1" nil :n "2" nil :n "3" nil :n "4" nil)))
 
 (use-package! transient-posframe
+  :when (modulep! +childframe)
   :after transient
   :config
   ;; From https://github.com/yanghaoxie/transient-posframe/issues/5#issuecomment-1974871665
