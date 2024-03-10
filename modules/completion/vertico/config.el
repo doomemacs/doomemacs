@@ -372,7 +372,7 @@ orderless."
               (and
                (memq sym minor-mode-list)
                (boundp sym)
-               (eval sym)))
+               (symbol-value sym)))
           (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
         cmd))
 
