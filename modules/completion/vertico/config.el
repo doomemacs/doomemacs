@@ -341,3 +341,43 @@ orderless."
   :hook (vertico-mode . vertico-posframe-mode)
   :config
   (add-hook 'doom-after-reload-hook #'posframe-delete-all))
+
+;; From https://github.com/minad/vertico/wiki#candidate-display-transformations-custom-candidate-highlighting
+;;
+;; Uses `add-face-text-property' instead of `propertize' unlike the above snippet
+;; because `'append' is necessary to not override the match font lock
+;; See: https://github.com/minad/vertico/issues/389
+(use-package! vertico-multiform
+  :hook (vertico-mode . vertico-multiform-mode)
+  :config
+  (defvar +vertico-transform-functions nil)
+
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((not +vertico-transform-functions) null))
+    (dolist (fun (ensure-list +vertico-transform-functions))
+      (setq cand (funcall fun cand)))
+    (cl-call-next-method cand prefix suffix index start))
+
+  (defun +vertico-highlight-directory (file)
+    "If FILE ends with a slash, highlight it as a directory."
+    (when (string-suffix-p "/" file)
+      (add-face-text-property 0 (length file) 'marginalia-file-priv-dir 'append file))
+    file)
+
+  (defun +vertico-highlight-enabled-mode (cmd)
+    "If MODE is enabled, highlight it as font-lock-constant-face."
+    (let ((sym (intern cmd)))
+      (with-current-buffer (nth 1 (buffer-list))
+      (if (or (eq sym major-mode)
+              (and
+               (memq sym minor-mode-list)
+               (boundp sym)))
+          (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
+        cmd))
+
+  (add-to-list 'vertico-multiform-categories
+               '(file
+                 (+vertico-transform-functions . +vertico-highlight-directory)))
+  (add-to-list 'vertico-multiform-commands
+               '(execute-extended-command
+                 (+vertico-transform-functions . +vertico-highlight-enabled-mode))))
