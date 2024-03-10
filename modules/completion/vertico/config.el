@@ -371,7 +371,8 @@ orderless."
       (if (or (eq sym major-mode)
               (and
                (memq sym minor-mode-list)
-               (boundp sym)))
+               (boundp sym)
+               (symbol-value sym)))
           (add-face-text-property 0 (length cmd) 'font-lock-constant-face 'append cmd)))
         cmd))
 
