@@ -33,6 +33,9 @@
 (after! auth-source
   (pushnew! auth-sources 'macos-keychain-internet 'macos-keychain-generic))
 
+;; Integrate with notification
+(after! alert
+  (setq alert-default-style 'osx-notifier))
 
 ;;
 ;;; Packages
