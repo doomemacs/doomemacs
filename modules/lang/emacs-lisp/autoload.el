@@ -66,7 +66,7 @@ Intended to replace `lisp-outline-level'."
                           (re-search-backward
                            "\\_<:\\(?:\\sw\\|\\s_\\)+\\_>" ;; Find a keyword.
                            doom-start 'noerror))
-                (unless (looking-back "(")
+                (unless (looking-back "(" (bol))
                   (let ((kw-syntax (syntax-ppss)))
                     (when (and (= (ppss-depth kw-syntax) doom-depth)
                                (not (ppss-string-terminator kw-syntax))
