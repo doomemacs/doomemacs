@@ -25,22 +25,22 @@
 
   ;; HACK: Load `cl' and site files manually to prevent polluting logs and
   ;;   stdout with deprecation and/or file load messages.
-  (let ((inhibit-message (not init-file-debug)))
-    (require 'cl nil t)
-    (unless site-run-file
-      (let ((site-run-file "site-start")
-            (tail load-path)
-            (lispdir (expand-file-name "../lisp" data-directory))
-            dir)
-        (while tail
-          (setq dir (car tail))
-          (let ((default-directory dir))
-            (load (expand-file-name "subdirs.el") t inhibit-message t))
-          (unless (string-prefix-p lispdir dir)
-            (let ((default-directory dir))
-              (load (expand-file-name "leim-list.el") t inhibit-message t)))
-          (setq tail (cdr tail)))
-        (load site-run-file t inhibit-message))))
+  (quiet!
+   (require 'cl nil t)
+   (unless site-run-file
+     (let ((site-run-file "site-start")
+           (tail load-path)
+           (lispdir (expand-file-name "../lisp" data-directory))
+           dir)
+       (while tail
+         (setq dir (car tail))
+         (let ((default-directory dir))
+           (load (expand-file-name "subdirs.el") t inhibit-message t))
+         (unless (string-prefix-p lispdir dir)
+           (let ((default-directory dir))
+             (load (expand-file-name "leim-list.el") t inhibit-message t)))
+         (setq tail (cdr tail)))
+       (load site-run-file t inhibit-message))))
 
   (setq-default
    ;; PERF: Don't generate superfluous files when writing temp buffers.
