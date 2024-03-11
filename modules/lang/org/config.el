@@ -1438,7 +1438,12 @@ between the two."
   ;; HACK: Somehow, users/packages still find a way to modify tab-width in
   ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
   ;;   state, I use this hook to makes it much harder to change by accident.
-  (add-hook! 'org-mode-hook :depth 110 (setq-local tab-width 8))
+  (add-hook! 'org-mode-hook
+    (add-hook! 'after-change-major-mode-hook :local
+      ;; The second check is necessary, in case of `org-edit-src-code' which
+      ;; clones a buffer and changes its major-mode.
+      (when (derived-mode-p 'org-mode)
+        (setq tab-width 8))))
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)
