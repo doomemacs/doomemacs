@@ -303,9 +303,9 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
    (error "file!: cannot deduce the current file path")))
 
 (defmacro dir! ()
-  "Return the directory of the file this macro was called."
-   (let (file-name-handler-alist)
-     (file-name-directory (macroexpand '(file!)))))
+  "Return the directory of the file in which this macro was called."
+  (let (file-name-handler-alist)
+    (file-name-directory (macroexpand '(file!)))))
 
 ;; REVIEW Should I deprecate this? The macro's name is so long...
 (defalias 'letenv! 'with-environment-variables)
@@ -883,15 +883,15 @@ testing advice (when combined with `rotate-text').
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
 
+
+;;
+;;; Backports
+
 (defmacro defbackport! (type symbol &rest body)
   "Backport a function/macro/alias from later versions of Emacs."
   (declare (indent defun) (doc-string 4))
   (unless (fboundp (doom-unquote symbol))
     `(,type ,symbol ,@body)))
-
-
-;;
-;;; Backports
 
 ;; `format-spec' wasn't autoloaded until 28.1
 (defbackport! autoload 'format-spec "format-spec")

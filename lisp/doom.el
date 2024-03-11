@@ -59,9 +59,13 @@
 ;;     - On first switched-to buffer: `doom-first-buffer-hook'
 ;;     - On first opened file:        `doom-first-file-hook'
 ;;
-;; This is Doom's heart, where I define all its major constants and variables,
-;; set only its sanest global defaults, employ its hackiest (and least
-;; offensive) optimizations, and load the minimum for all Doom sessions.
+;; This file is Doom's heart, where I define all its major constants and
+;; variables, set only its sanest global defaults, employ its hackiest (and
+;; least offensive) optimizations, and load the minimum needed for all Doom
+;; sessions, interactive or otherwise.
+;;
+;; See doom-start.el for initialization intended solely for interactive
+;; sessions, and doom-cli.el for non-interactive sessions.
 ;;
 ;;; Code:
 
@@ -110,7 +114,8 @@
 ;;; Custom features & global constants
 ;; Doom has its own features that its modules, CLI, and user extensions can
 ;; announce, and don't belong in `features', so they are stored here, which can
-;; include information about the external system environment.
+;; include information about the external system environment. Module-specific
+;; features are kept elsewhere, however.
 (defconst doom-features
   (pcase system-type
     ('darwin                           '(macos bsd))
@@ -410,8 +415,9 @@ users).")
 
     ;; PERF: Shave seconds off startup time by starting the scratch buffer in
     ;;   `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
-    ;;   pull in a ton of packages. `doom/open-scratch-buffer' provides a better
-    ;;   scratch buffer anyway.
+    ;;   pull in a ton of packages. This buffer is created whether or not we're
+    ;;   in an interactive session. Plus, `doom/open-scratch-buffer' provides a
+    ;;   better scratch buffer, so keep the initial one blank.
     (setq initial-major-mode 'fundamental-mode
           initial-scratch-message nil)
 

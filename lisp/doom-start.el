@@ -100,13 +100,15 @@
 
 ;;; Disable UI elements early
 ;; PERF,UI: Doom strives to be keyboard-centric, so I consider these UI elements
-;;   clutter. Initializing them also costs a morsel of startup time. Whats more,
-;;   the menu bar exposes functionality that Doom doesn't endorse. Perhaps one
-;;   day Doom will support these, but today is not that day.
-;;
+;;   clutter. Initializing them also costs a morsel of startup time. What's
+;;   more, the menu bar exposes functionality that Doom doesn't endorse. Perhaps
+;;   one day Doom will support these, but today is not that day. By disabling
+;;   them early, we save Emacs some time.
+
 ;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
-;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
-;;   that isn't necessary this early in the startup process.
+;;   `scroll-bar-mode' because their manipulation of frame parameters can
+;;   trigger/queue a superfluous (and expensive, depending on the window system)
+;;   frame redraw at startup.
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -119,7 +121,7 @@
 ;;   non-application window -- which means it doesn't automatically capture
 ;;   focus when it is started, among other things, so enable the menu-bar for
 ;;   GUI frames, but keep it disabled in terminal frames because there it
-;;   activates an ugly, in-frame menu bar.
+;;   unavoidably activates an ugly, in-frame menu bar.
 (eval-when! doom--system-macos-p
   (add-hook! '(window-setup-hook after-make-frame-functions)
     (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
@@ -136,7 +138,7 @@
 ;; a step too opinionated.
 (setq default-input-method nil)
 ;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
-;; leave Emacs to its own devices.
+;; leave Emacs to its own devices there.
 (eval-when! (not doom--system-windows-p)
   (setq selection-coding-system 'utf-8))
 
@@ -180,7 +182,7 @@
 (defvar doom-incremental-packages '(t)
   "A list of packages to load incrementally after startup. Any large packages
 here may cause noticeable pauses, so it's recommended you break them up into
-sub-packages. For example, `org' is comprised of many packages, and can be
+sub-packages. For example, `org' is comprised of many packages, and might be
 broken up into:
 
   (doom-load-packages-incrementally
@@ -192,7 +194,7 @@ broken up into:
 This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
-`doom-load-packages-incrementally-h' from `emacs-startup-hook' or set
+`doom-load-packages-incrementally-h' from `doom-after-init-hook' or set
 `doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
 in daemon sessions (they are loaded immediately at startup).")
 
@@ -201,7 +203,7 @@ in daemon sessions (they are loaded immediately at startup).")
 
 Set this to nil to disable incremental loading at startup.
 Set this to 0 to load all incrementally deferred packages immediately at
-`emacs-startup-hook'.")
+`doom-after-init-hook'.")
 
 (defvar doom-incremental-idle-timer 0.75
   "How long (in idle seconds) in between incrementally loading packages.")

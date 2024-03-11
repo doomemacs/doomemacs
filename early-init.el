@@ -106,9 +106,9 @@
    ;;   this early -- I remove `.so' from `load-suffixes' and pass the
    ;;   `must-suffix' arg to `load'. See the docs of `load' for details.
    (if (let ((load-suffixes '(".elc" ".el")))
-         ;; I avoid `load's NOERROR argument because other, legitimate errors
-         ;; (like permission or IO errors) should not be suppressed or
-         ;; interpreted as "this is not a Doom config".
+         ;; I avoid `load's NOERROR argument because it suppresses other,
+         ;; legitimate errors (like permission or IO errors), which gets
+         ;; incorrectly interpreted as "this is not a Doom config".
          (condition-case _
              ;; Load the heart of Doom Emacs.
              (load (expand-file-name "lisp/doom" user-emacs-directory)

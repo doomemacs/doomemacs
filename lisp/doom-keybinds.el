@@ -46,12 +46,12 @@ and Emacs states, and for non-evil users.")
 
 ;; HACK: Emacs cannot distinguish between C-i from TAB. This is largely a
 ;;   byproduct of its history in the terminal, which can't distinguish them
-;;   either, however, when GUIs came about Emacs greated separate input events
+;;   either, however, when GUIs came about Emacs created separate input events
 ;;   for more contentious keys like TAB and RET. Therefore [return] != RET,
 ;;   [tab] != TAB, and [backspace] != DEL.
 ;;
-;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it.
-;;   Otherwise, it falls back to regular C-i keybinds.
+;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it
+;;   independently of TAB. Otherwise, it falls back to keys bound to C-i.
 (define-key key-translation-map [?\C-i]
   (cmd! (if (let ((keys (this-single-command-raw-keys)))
               (and keys
