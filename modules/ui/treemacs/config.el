@@ -44,7 +44,12 @@ This must be set before `treemacs' has loaded.")
 
 
 (use-package! treemacs-nerd-icons
-  :after treemacs
+  :defer t
+  ;; HACK: Because `lsp-treemacs' mutates Treemacs' default theme, and
+  ;;   `treemacs-nerd-icons' reads from it to populate its nerd-icons theme,
+  ;;   load order is important to ensure they don't step on each other's toes.
+  :init (with-eval-after-load (if (modulep! +lsp) 'lsp-treemacs 'treemacs)
+          (require 'treemacs-nerd-icons))
   :config (treemacs-load-theme "nerd-icons"))
 
 
