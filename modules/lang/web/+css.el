@@ -8,13 +8,7 @@ be aligned.
 
 If set to `nil', disable all the above behaviors.")
 
-(after! projectile
-  (pushnew! projectile-other-file-alist
-            '("css"  "scss" "sass" "less" "styl")
-            '("scss" "css")
-            '("sass" "css")
-            '("less" "css")
-            '("styl" "css")))
+(add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.\\(\\(s[ac]\\|le\\)ss\\|styl\\)\\'" "\\1\\.css"))
 
 
 ;;

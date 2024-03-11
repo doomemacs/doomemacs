@@ -527,5 +527,77 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (recentf-save-list)
   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
 
+
+;;
+;;; Backports
+
+;; Introduced in Emacs 29.
+;;;###autoload
+(eval-when! (not (fboundp 'find-sibling-file))
+  (defvar find-sibling-rules nil)
+
+  (defun find-sibling-file (file)
+    "Visit a \"sibling\" file of FILE.
+When called interactively, FILE is the currently visited file.
+
+The \"sibling\" file is defined by the `find-sibling-rules' variable."
+    (interactive (progn
+                   (unless buffer-file-name
+                     (user-error "Not visiting a file"))
+                   (list buffer-file-name)))
+    (unless find-sibling-rules
+      (user-error "The `find-sibling-rules' variable has not been configured"))
+    (let ((siblings (find-sibling-file-search (expand-file-name file)
+                                              find-sibling-rules)))
+      (cond
+       ((null siblings)
+        (user-error "Couldn't find any sibling files"))
+       ((length= siblings 1)
+        (find-file (car siblings)))
+       (t
+        (let ((relatives (mapcar (lambda (sibling)
+                                   (file-relative-name
+                                    sibling (file-name-directory file)))
+                                 siblings)))
+          (find-file
+           (completing-read (format-prompt "Find file" (car relatives))
+                            relatives nil t nil nil (car relatives))))))))
+
+  (defun find-sibling-file-search (file &optional rules)
+    "Return a list of FILE's \"siblings\".
+RULES should be a list on the form defined by `find-sibling-rules' (which
+see), and if nil, defaults to `find-sibling-rules'."
+    (let ((results nil))
+      (pcase-dolist (`(,match . ,expansions) (or rules find-sibling-rules))
+        ;; Go through the list and find matches.
+        (when (string-match match file)
+          (let ((match-data (match-data)))
+            (dolist (expansion expansions)
+              (let ((start 0))
+                ;; Expand \\1 forms in the expansions.
+                (while (string-match "\\\\\\([&0-9]+\\)" expansion start)
+                  (let ((index (string-to-number (match-string 1 expansion))))
+                    (setq start (match-end 0)
+                          expansion
+                          (replace-match
+                           (substring file
+                                      (elt match-data (* index 2))
+                                      (elt match-data (1+ (* index 2))))
+                           t t expansion)))))
+              ;; Then see which files we have that are matching.  (And
+              ;; expand from the end of the file's match, since we might
+              ;; be doing a relative match.)
+              (let ((default-directory (substring file 0 (car match-data))))
+                ;; Keep the first matches first.
+                (setq results
+                      (nconc
+                       results
+                       (mapcar #'expand-file-name
+                               (file-expand-wildcards expansion nil t)))))))))
+      ;; Delete the file itself (in case it matched), and remove
+      ;; duplicates, in case we have several expansions and some match
+      ;; the same subsets of files.
+      (delete file (delete-dups results)))))
+
 (provide 'doom-lib '(files))
 ;;; files.el ends here

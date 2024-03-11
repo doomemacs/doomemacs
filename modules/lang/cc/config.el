@@ -78,6 +78,8 @@ This is ignored by ccls.")
     :return "return"
     :yield "#require")
 
+  (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.c\\(c\\|pp\\)\\'" "\\1.\\(h\\|hh\\|hpp\\)"))
+
   (when (modulep! +tree-sitter)
     (add-hook! '(c-mode-local-vars-hook
                  c++-mode-local-vars-hook)
