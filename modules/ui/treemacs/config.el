@@ -84,6 +84,7 @@ This must be set before `treemacs' has loaded.")
   :after treemacs
   :config (treemacs-set-scope-type 'Perspectives))
 
+
 (use-package! lsp-treemacs
   :when (modulep! +lsp)
-  :after (treemacs lsp))
+  :after treemacs)
