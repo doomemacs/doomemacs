@@ -211,9 +211,13 @@ Set this to 0 to load all incrementally deferred packages immediately at
 (defun doom-load-packages-incrementally (packages &optional now)
   "Registers PACKAGES to be loaded incrementally.
 
-If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
-intervals."
-  (let ((gc-cons-threshold most-positive-fixnum))
+If NOW is non-nil, PACKAGES will be marked for incremental loading next time
+Emacs is idle for `doom-incremental-first-idle-timer' seconds (falls back to
+`doom-incremental-idle-timer'), then in `doom-incremental-idle-timer' intervals
+afterwards."
+  (let* ((gc-cons-threshold most-positive-fixnum)
+         (first-idle-timer (or doom-incremental-first-idle-timer
+                               doom-incremental-idle-timer)))
     (if (not now)
         (cl-callf append doom-incremental-packages packages)
       (while packages
@@ -224,7 +228,7 @@ intervals."
             (condition-case-unless-debug e
                 (and
                  (or (null (setq idle-time (current-idle-time)))
-                     (< (float-time idle-time) (or doom-incremental-first-idle-timer 0.0))
+                     (< (float-time idle-time) first-idle-timer)
                      (not
                       (while-no-input
                         (doom-log "start:iloader: Loading %s (%d left)" req (length packages))
@@ -244,7 +248,7 @@ intervals."
                 (doom-log "start:iloader: Finished!")
               (run-at-time (if idle-time
                                doom-incremental-idle-timer
-                             doom-incremental-first-idle-timer)
+                             first-idle-timer)
                            nil #'doom-load-packages-incrementally
                            packages t)
               (setq packages nil))))))))
