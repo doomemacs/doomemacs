@@ -59,9 +59,6 @@ symbol and CDR is the value to set it to when `doom-debug-mode' is activated.")
   (let ((enabled doom-debug-mode))
     (doom-log "debug: enabled!")
     (mapc #'doom-debug--set-var doom-debug-variables)
-    (when (called-interactively-p 'any)
-      (when (fboundp 'explain-pause-mode)
-        (explain-pause-mode (if enabled +1 -1))))
     ;; Watch for changes in `doom-debug-variables', or when packages load (and
     ;; potentially define one of `doom-debug-variables'), in case some of them
     ;; aren't defined when `doom-debug-mode' is first loaded.
