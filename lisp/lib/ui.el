@@ -175,15 +175,18 @@ Use `winner-undo' to undo this. Alternatively, use
   "Interactively change the current frame's opacity.
 
 OPACITY is an integer between 0 to 100, inclusive."
-  (interactive
-   (list (read-number "Opacity (0-100): "
-                      (or (frame-parameter
-                           nil (if (> emacs-major-version 28)
-                                   'alpha-background 'alpha))
-                          100))))
-  (set-frame-parameter nil (if (> emacs-major-version 28)
-                               'alpha-background 'alpha)
-                       opacity))
+  (interactive '(interactive))
+  (let* ((parameter
+          (if (eq window-system 'pgtk)
+              'alpha-background
+            'alpha))
+         (opacity
+          (if (eq opacity 'interactive)
+              (read-number "Opacity (0-100): "
+                           (or (frame-parameter nil parameter)
+                               100))
+            opacity)))
+    (set-frame-parameter nil parameter opacity)))
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
