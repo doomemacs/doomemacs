@@ -116,7 +116,7 @@ the requested feature."
 Does nothing if `+format-with-lsp' is nil or the active server doesn't support
 the requested feature."
   (and +format-with-lsp
-       (bound-and-true-p eglot-managed-mode)
+       (bound-and-true-p eglot--managed-mode)
        (pcase op
          ('buffer (if (eglot--server-capable :documentFormattingProvider)
                       (always (eglot-format-buffer))))
