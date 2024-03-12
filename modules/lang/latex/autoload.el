@@ -4,7 +4,7 @@
 (defun +latex-indent-item-fn ()
   "Indent LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
 
-\"\\item\" is indented `LaTeX-indent-level' spaces relative to the the beginning
+\"\\item\" is indented `LaTeX-indent-level' spaces relative to the beginning
 of the environment.
 
 See `LaTeX-indent-level-item-continuation' for the indentation strategy this
