@@ -498,7 +498,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-(defun doom--make-font-specs (face font)
+(defun doom--make-font-specs (face font frame)
   (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
          (base-specs (or base-specs '((t nil))))
          (attrs '(:family :foundry :slant :weight :height :width))
@@ -509,36 +509,37 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
             (plist   (copy-tree (nth 1 spec))))
         ;; Alter only DISPLAY conditions matching this frame.
         (when (or (memq display '(t default))
-                  (face-spec-set-match-display display this-frame))
+                  (face-spec-set-match-display display frame))
           (dolist (attr attrs)
             (setq plist (plist-put plist attr (face-attribute face attr)))))
         (push (list display plist) new-specs)))
     (nreverse new-specs)))
 
-(defun doom-init-fonts-h (&optional reload)
-  "Loads `doom-font'."
-  (dolist (map `((default . ,doom-font)
-                 (fixed-pitch . ,doom-font)
-                 (fixed-pitch-serif . ,doom-serif-font)
-                 (variable-pitch . ,doom-variable-pitch-font)))
-    (condition-case e
-        (when-let* ((face (car map))
-                    (font (cdr map)))
-          (dolist (frame (frame-list))
-            (when (display-multi-font-p frame)
-              (set-face-attribute face frame
-                                  :width 'normal :weight 'normal
-                                  :slant 'normal :font font)))
-          (let ((new-specs (doom--make-font-specs face font)))
-            ;; Don't save to `customized-face' so it's omitted from `custom-file'
-            ;;(put face 'customized-face new-specs)
-            (custom-push-theme 'theme-face face 'user 'set new-specs)
-            (put face 'face-modified nil)))
-      ('error
-       (ignore-errors (doom--reset-inhibited-vars-h))
-       (if (string-prefix-p "Font not available" (error-message-string e))
-           (signal 'doom-font-error (list (font-get (cdr map) :family)))
-         (signal (car e) (cdr e))))))
+(defun doom-init-fonts-h (&optional _reload)
+  "Loads `doom-font', `doom-serif-font', and `doom-variable-pitch-font'."
+  (let ((this-frame (selected-frame)))
+    (dolist (map `((default . ,doom-font)
+                   (fixed-pitch . ,doom-font)
+                   (fixed-pitch-serif . ,doom-serif-font)
+                   (variable-pitch . ,doom-variable-pitch-font)))
+      (condition-case e
+          (when-let* ((face (car map))
+                      (font (cdr map)))
+            (dolist (frame (frame-list))
+              (when (display-multi-font-p frame)
+                (set-face-attribute face frame
+                                    :width 'normal :weight 'normal
+                                    :slant 'normal :font font)))
+            (let ((new-specs (doom--make-font-specs face font this-frame)))
+              ;; Don't save to `customized-face' so it's omitted from `custom-file'
+              ;;(put face 'customized-face new-specs)
+              (custom-push-theme 'theme-face face 'user 'set new-specs)
+              (put face 'face-modified nil)))
+        ('error
+         (ignore-errors (doom--reset-inhibited-vars-h))
+         (if (string-prefix-p "Font not available" (error-message-string e))
+             (signal 'doom-font-error (list (font-get (cdr map) :family)))
+           (signal (car e) (cdr e)))))))
   (when (fboundp 'set-fontset-font)
     (let* ((fn (doom-rpartial #'member (font-family-list)))
            (symbol-font (or doom-symbol-font
