@@ -1368,7 +1368,7 @@ between the two."
              #'doom-disable-show-trailing-whitespace-h
              ;; #'+org-enable-auto-reformat-tables-h
              ;; #'+org-enable-auto-update-cookies-h
-             #'+org-make-last-point-visible-h)
+             )
 
   (add-hook! 'org-load-hook
              #'+org-init-org-directory-h
@@ -1435,15 +1435,20 @@ between the two."
     :references #'+org-lookup-references-handler
     :documentation #'+org-lookup-documentation-handler)
 
-  ;; HACK: Somehow, users/packages still find a way to modify tab-width in
-  ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
-  ;;   state, I use this hook to makes it much harder to change by accident.
   (add-hook! 'org-mode-hook
+    ;; HACK: Somehow, users/packages still find a way to modify tab-width in
+    ;;   org-mode. Since org-mode treats a non-standerd tab-width as an error
+    ;;   state, I use this hook to makes it much harder to change by accident.
     (add-hook! 'after-change-major-mode-hook :local
       ;; The second check is necessary, in case of `org-edit-src-code' which
       ;; clones a buffer and changes its major-mode.
       (when (derived-mode-p 'org-mode)
-        (setq tab-width 8))))
+        (setq tab-width 8)))
+
+    ;; HACK: `save-place' can position the cursor in an invisible region. This
+    ;;   makes it visible unless `org-inhibit-startup' or
+    ;;   `org-inhibit-startup-visibility-stuff' is non-nil.
+    (add-hook 'save-place-after-find-file-hook #'+org-make-last-point-visible-h nil t))
 
   ;; Save target buffer after archiving a node.
   (setq org-archive-subtree-save-file-p t)
