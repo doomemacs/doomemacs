@@ -19,12 +19,6 @@
         ;; NOTE: We disable eglot-auto-display-help-buffer because :select t in
         ;;   its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
-  ;; NOTE: This setting disable the eglot-events-buffer enabling more consistent
-  ;;   performance on long running emacs instance. Default is 2000000 lines.
-  ;;   After each new event the whole buffer is pretty printed which causes
-  ;;   steady performance decrease over time. CPU is spent on pretty priting and
-  ;;   Emacs GC is put under high pressure.
-  (cl-callf plist-put eglot-events-buffer-config :size 0)
   (when (and (modulep! :checkers syntax)
              (not (modulep! :checkers syntax +flymake)))
     (setq eglot-stay-out-of '(flymake)))
@@ -37,6 +31,13 @@
     :implementations #'eglot-find-implementation
     :type-definition #'eglot-find-typeDefinition
     :documentation   #'+eglot-lookup-documentation)
+
+  ;; NOTE: This setting disable the eglot-events-buffer enabling more consistent
+  ;;   performance on long running emacs instance. Default is 2000000 lines.
+  ;;   After each new event the whole buffer is pretty printed which causes
+  ;;   steady performance decrease over time. CPU is spent on pretty priting and
+  ;;   Emacs GC is put under high pressure.
+  (cl-callf plist-put eglot-events-buffer-config :size 0)
 
   (add-to-list 'doom-debug-variables '(eglot-events-buffer-config :size 2000000 :format full))
 
