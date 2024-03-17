@@ -14,4 +14,10 @@
 
 (when (modulep! +lsp)
   (unless (modulep! :tools lsp +eglot)
+    ;; HACK: lsp-java depends on lsp-treemacs without declaring it as a
+    ;;   dependency, thereby throwing errors if :ui (treemacs +lsp) isn't
+    ;;   enabled (i.e. lsp-treemacs isn't installed). This needs to be tackled
+    ;;   upstream, but for now:
+    (unless (alist-get 'lsp-treemacs doom-packages)
+      (package! lsp-treemacs :pin "e54e74deb8150964e3c3024e1ec14295a34e2a3b"))
     (package! lsp-java :pin "c962a3b3ac2beabdf1ce83b815396d6c38e3cefa")))
