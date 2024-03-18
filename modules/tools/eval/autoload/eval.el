@@ -40,9 +40,10 @@
          (pad (if next-line?
                   (+ (window-hscroll) prefixlen)
                 0))
-         (where (if next-line?
-                    (line-beginning-position 2)
-                  (line-end-position)))
+         (where (with-current-buffer (or source-buffer (current-buffer))
+                  (if next-line?
+                      (line-beginning-position 2)
+                    (line-end-position))))
          eros-eval-result-prefix
          eros-overlays-use-font-lock)
     (with-current-buffer (or source-buffer (current-buffer))
