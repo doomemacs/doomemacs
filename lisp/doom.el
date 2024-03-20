@@ -437,13 +437,10 @@ users).")
       ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
       ;;   messages in the echo area. Writing to the echo-area triggers a
       ;;   redisplay, which can be expensive during startup. This may also cause
-      ;;   an flash of white when creating the first frame.
+      ;;   an flash of white when creating the first frame. Needs to be undo
+      ;;   later, though.
       (define-advice load-file (:override (file) silence)
         (load file nil 'nomessage))
-      ;; COMPAT: But undo our `load-file' advice later, as to limit the scope of
-      ;;   any edge cases it could induce.
-      (define-advice startup--load-user-init-file (:before (&rest _) undo-silence)
-        (advice-remove #'load-file #'load-file@silence))
 
       ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on
       ;;   each `require' and `load'. Doom won't load any modules this early, so
@@ -462,12 +459,17 @@ users).")
       ;; PERF: Doom uses `defcustom' to indicate variables that users are
       ;;   expected to reconfigure. Trouble is it fires off initializers meant
       ;;   to accommodate any user attempts to configure them before they were
-      ;;   defined. This is unnecessary before $DOOMDIR/init.el is loaded, so I
-      ;;   disable them until it is.
+      ;;   defined. This is unnecessary work before $DOOMDIR/init.el is loaded,
+      ;;   so I disable them until it is.
       (setq custom-dont-initialize t)
       (add-hook! 'doom-before-init-hook
         (defun doom--reset-custom-dont-initialize-h ()
           (setq custom-dont-initialize nil)))
+
+      ;; PERF: Doom disables the UI elements by default, so that there's less
+      ;;   for the frame to initialize. However, the toolbar is still populated
+      ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
+      (advice-add #'tool-bar-setup :override #'ignore)
 
       ;; PERF: The mode-line procs a couple dozen times during startup. This is
       ;;   normally quite fast, but disabling the default mode-line and reducing
@@ -476,8 +478,8 @@ users).")
       (setq-default mode-line-format nil)
       (dolist (buf (buffer-list))
         (with-current-buffer buf (setq mode-line-format nil)))
-      ;; PERF,UX: Premature redisplays can substantially affect startup times and
-      ;;   produce ugly flashes of unstyled Emacs.
+      ;; PERF,UX: Premature redisplays can substantially affect startup times
+      ;;   and/or produce ugly flashes of unstyled Emacs.
       (setq-default inhibit-redisplay t
                     inhibit-message t)
       ;; COMPAT: Then reset with advice, because `startup--load-user-init-file'
@@ -502,11 +504,17 @@ users).")
         (let (--init--)
           (unwind-protect
               (progn
+                ;; COMPAT: Onces startup is sufficiently complete, undo some
+                ;;   optimizations to reduce the scope of potential edge cases.
+                (advice-remove #'load-file #'load-file@silence)
+                (advice-remove #'tool-bar-setup #'ignore)
+                (add-transient-hook! 'tool-bar-mode (tool-bar-setup))
                 (when (setq site-run-file (get 'site-run-file 'initial-value))
                   (let ((inhibit-startup-screen inhibit-startup-screen))
                     (letf! (defun load (file &optional noerror _nomessage &rest args)
                              (apply load file noerror t args))
                       (load site-run-file t t))))
+                ;; Then startup as normal.
                 (apply fn args)
                 (setq --init-- t))
             (when (or (not --init--) init-file-had-error)
@@ -515,14 +523,6 @@ users).")
               (doom--reset-inhibited-vars-h))
             (unless (default-toplevel-value 'mode-line-format)
               (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))
-
-      ;; PERF: Doom disables the UI elements by default, so that there's less
-      ;;   for the frame to initialize. However, the toolbar is still populated
-      ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
-      (advice-add #'tool-bar-setup :override #'ignore)
-      (define-advice startup--load-user-init-file (:before (&rest _) defer-tool-bar-setup)
-        (advice-remove #'tool-bar-setup #'ignore)
-        (add-transient-hook! 'tool-bar-mode (tool-bar-setup)))
 
       ;; PERF: Unset a non-trivial list of command line options that aren't
       ;;   relevant to this session, but `command-line-1' still processes.
