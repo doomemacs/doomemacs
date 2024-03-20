@@ -201,7 +201,8 @@ orderless."
          ("C-x C-j" . consult-dir-jump-file))
   :config
   (when (modulep! :tools docker)
-    ;; TODO Replace with `tramp-container--completion-function' when we drop support for <29
+    ;; TODO: Replace with `tramp-container--completion-function' when we drop
+    ;;   support for <29
     (defun +vertico--consult-dir-container-hosts (host)
       "Get a list of hosts from HOST."
       (cl-loop for line in (cdr
@@ -209,10 +210,7 @@ orderless."
                               (apply #'process-lines +vertico-consult-dir-container-executable
                                      (append +vertico-consult-dir-container-args (list "ps")))))
                for cand = (split-string line "[[:space:]]+" t)
-               collect (let ((user (unless (string-empty-p (car cand))
-                                     (concat (car cand) "@")))
-                             (hostname (car (last cand))))
-                         (format "/%s:%s%s:/" host user hostname))))
+               collect (format "/%s:%s:/" host (car (last cand)))))
 
     (defun +vertico--consult-dir-podman-hosts ()
       (let ((+vertico-consult-dir-container-executable "podman"))
