@@ -106,11 +106,9 @@
   :when (modulep! :term vterm)
   :hook (julia-mode . julia-snail-mode)
   :config
-  (setq julia-snail-popup-display-eval-results :command)
-  (setq julia-snail-multimedia-enable t)
-  (setq julia-snail-popup-display-face '(:background base3 :box `(:line-width -1 :color base5)))
-
   (set-popup-rule! "^\\*julia.*\\*$" :ttl nil :select nil :quit nil)
+
+  (setq-default julia-snail-multimedia-enable t)
 
   (after! julia-mode
     (set-repl-handler! 'julia-mode #'+julia/open-snail-repl
