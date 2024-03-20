@@ -489,10 +489,24 @@ users).")
                       inhibit-message nil)
         (redraw-frame))
       (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
+
+      ;; PERF,UX: An annoying aspect of site-lisp files is that they're often
+      ;;   noisy (they emit load messages or other output to stdout). These
+      ;;   queue unnecessary redraws at startup, cost startup time, and pollute
+      ;;   the logs. I get around it by suppressing it until we can load it
+      ;;   manually, later (in the `startup--load-user-init-file' advice below).
+      (put 'site-run-file 'initial-value site-run-file)
+      (setq site-run-file nil)
+
       (define-advice startup--load-user-init-file (:around (fn &rest args) undo-inhibit-vars)
         (let (--init--)
           (unwind-protect
               (progn
+                (when (setq site-run-file (get 'site-run-file 'initial-value))
+                  (let ((inhibit-startup-screen inhibit-startup-screen))
+                    (letf! (defun load (file &optional noerror _nomessage &rest args)
+                             (apply load file noerror t args))
+                      (load site-run-file t t))))
                 (apply fn args)
                 (setq --init-- t))
             (when (or (not --init--) init-file-had-error)
