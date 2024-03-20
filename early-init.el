@@ -109,7 +109,7 @@
          ;; I avoid `load's NOERROR argument because it suppresses other,
          ;; legitimate errors (like permission or IO errors), which gets
          ;; incorrectly interpreted as "this is not a Doom config".
-         (condition-case _
+         (condition-case-unless-debug _
              ;; Load the heart of Doom Emacs.
              (load (expand-file-name "lisp/doom" user-emacs-directory)
                    nil (not init-file-debug) nil 'must-suffix)
