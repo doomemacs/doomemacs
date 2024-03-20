@@ -51,7 +51,6 @@ use the minibuffer such as `query-replace'.")
                               vterm-mode)
                              t)
         corfu-cycle t
-        corfu-separator (when (modulep! +orderless) ?\s)
         corfu-preselect 'prompt
         corfu-count 16
         corfu-max-width 120
