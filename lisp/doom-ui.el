@@ -498,23 +498,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-(defun doom--make-font-specs (face font frame)
-  (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
-         (base-specs (or base-specs '((t nil))))
-         (attrs '(:family :foundry :slant :weight :height :width))
-         (new-specs nil))
-    (dolist (spec base-specs)
-      ;; Each SPEC has the form (DISPLAY ATTRIBUTE-PLIST)
-      (let ((display (car spec))
-            (plist   (copy-tree (nth 1 spec))))
-        ;; Alter only DISPLAY conditions matching this frame.
-        (when (or (memq display '(t default))
-                  (face-spec-set-match-display display frame))
-          (dolist (attr attrs)
-            (setq plist (plist-put plist attr (face-attribute face attr)))))
-        (push (list display plist) new-specs)))
-    (nreverse new-specs)))
-
 (defun doom-init-fonts-h (&optional _reload)
   "Loads `doom-font', `doom-serif-font', and `doom-variable-pitch-font'."
   (let ((this-frame (selected-frame)))
@@ -530,11 +513,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                 (set-face-attribute face frame
                                     :width 'normal :weight 'normal
                                     :slant 'normal :font font)))
-            (let ((new-specs (doom--make-font-specs face font this-frame)))
-              ;; Don't save to `customized-face' so it's omitted from `custom-file'
-              ;;(put face 'customized-face new-specs)
-              (custom-push-theme 'theme-face face 'user 'set new-specs)
-              (put face 'face-modified nil)))
+            (custom-push-theme
+             'theme-face face 'user 'set
+             (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
+                    (base-specs (or base-specs '((t nil))))
+                    (attrs '(:family :foundry :slant :weight :height :width))
+                    (new-specs nil))
+               (dolist (spec base-specs)
+                 ;; Each SPEC has the form (DISPLAY ATTRIBUTE-PLIST)
+                 (let ((display (car spec))
+                       (plist   (copy-tree (nth 1 spec))))
+                   ;; Alter only DISPLAY conditions matching this frame.
+                   (when (or (memq display '(t default))
+                             (face-spec-set-match-display display this-frame))
+                     (dolist (attr attrs)
+                       (setq plist (plist-put plist attr (face-attribute face attr)))))
+                   (push (list display plist) new-specs)))
+               (nreverse new-specs)))
+            (put face 'face-modified nil))
         ('error
          (ignore-errors (doom--reset-inhibited-vars-h))
          (if (string-prefix-p "Font not available" (error-message-string e))
