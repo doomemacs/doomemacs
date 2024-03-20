@@ -489,11 +489,18 @@ users).")
                       inhibit-message nil)
         (redraw-frame))
       (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
-      (define-advice startup--load-user-init-file (:after (&rest _) undo-inhibit-vars)
-        (when init-file-had-error
-          (doom--reset-inhibited-vars-h))
-        (unless (default-toplevel-value 'mode-line-format)
-          (setq-default mode-line-format (get 'mode-line-format 'initial-value))))
+      (define-advice startup--load-user-init-file (:around (fn &rest args) undo-inhibit-vars)
+        (let (--init--)
+          (unwind-protect
+              (progn
+                (apply fn args)
+                (setq --init-- t))
+            (when (or (not --init--) init-file-had-error)
+              ;; If we don't undo our inhibit-{message,redisplay} and there's an
+              ;; error, we'll see nothing but a blank Emacs frame.
+              (doom--reset-inhibited-vars-h))
+            (unless (default-toplevel-value 'mode-line-format)
+              (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))
 
       ;; PERF: Doom disables the UI elements by default, so that there's less
       ;;   for the frame to initialize. However, the toolbar is still populated
