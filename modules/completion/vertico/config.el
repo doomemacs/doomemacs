@@ -251,6 +251,11 @@ orderless."
              (not (modulep! :checkers syntax +flymake)))
   :after (consult flycheck))
 
+(use-package! consult-yasnippet
+  :when (modulep! :editor snippets)
+  :defer t
+  :init (map! [remap yas-insert-snippet] #'consult-yasnippet))
+
 
 (use-package! embark
   :defer t
