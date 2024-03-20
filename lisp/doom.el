@@ -433,103 +433,102 @@ users).")
                   (doom-partial #'tty-run-terminal-initialization
                                 (selected-frame) nil t))))
 
-    (unless init-file-debug
-      ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
-      ;;   messages in the echo area. Writing to the echo-area triggers a
-      ;;   redisplay, which can be expensive during startup. This may also cause
-      ;;   an flash of white when creating the first frame. Needs to be undo
-      ;;   later, though.
-      (define-advice load-file (:override (file) silence)
-        (load file nil 'nomessage))
+    ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
+    ;;   messages in the echo area. Writing to the echo-area triggers a
+    ;;   redisplay, which can be expensive during startup. This may also cause
+    ;;   an flash of white when creating the first frame. Needs to be undo
+    ;;   later, though.
+    (define-advice load-file (:override (file) silence)
+      (load file nil 'nomessage))
 
-      ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on
-      ;;   each `require' and `load'. Doom won't load any modules this early, so
-      ;;   omit .so for a tiny startup boost. Is later restored in doom-start.
-      (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
-      (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
-      (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
-      (set-default-toplevel-value 'load-file-rep-suffixes '(""))
-      ;; COMPAT: Undo any problematic startup optimizations; from this point, I
-      ;;   make no assumptions about what might be loaded in userland.
-      (add-hook! 'doom-before-init-hook
-        (defun doom--reset-load-suffixes-h ()
-          (setq load-suffixes (get 'load-suffixes 'initial-value)
-                load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
+    ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on
+    ;;   each `require' and `load'. Doom won't load any modules this early, so
+    ;;   omit .so for a tiny startup boost. Is later restored in doom-start.
+    (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
+    (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
+    (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
+    (set-default-toplevel-value 'load-file-rep-suffixes '(""))
+    ;; COMPAT: Undo any problematic startup optimizations; from this point, I
+    ;;   make no assumptions about what might be loaded in userland.
+    (add-hook! 'doom-before-init-hook
+      (defun doom--reset-load-suffixes-h ()
+        (setq load-suffixes (get 'load-suffixes 'initial-value)
+              load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
 
-      ;; PERF: Doom uses `defcustom' to indicate variables that users are
-      ;;   expected to reconfigure. Trouble is it fires off initializers meant
-      ;;   to accommodate any user attempts to configure them before they were
-      ;;   defined. This is unnecessary work before $DOOMDIR/init.el is loaded,
-      ;;   so I disable them until it is.
-      (setq custom-dont-initialize t)
-      (add-hook! 'doom-before-init-hook
-        (defun doom--reset-custom-dont-initialize-h ()
-          (setq custom-dont-initialize nil)))
+    ;; PERF: Doom uses `defcustom' to indicate variables that users are
+    ;;   expected to reconfigure. Trouble is it fires off initializers meant
+    ;;   to accommodate any user attempts to configure them before they were
+    ;;   defined. This is unnecessary work before $DOOMDIR/init.el is loaded,
+    ;;   so I disable them until it is.
+    (setq custom-dont-initialize t)
+    (add-hook! 'doom-before-init-hook
+      (defun doom--reset-custom-dont-initialize-h ()
+        (setq custom-dont-initialize nil)))
 
-      ;; PERF: Doom disables the UI elements by default, so that there's less
-      ;;   for the frame to initialize. However, the toolbar is still populated
-      ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
-      (advice-add #'tool-bar-setup :override #'ignore)
+    ;; PERF: Doom disables the UI elements by default, so that there's less
+    ;;   for the frame to initialize. However, the toolbar is still populated
+    ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
+    (advice-add #'tool-bar-setup :override #'ignore)
 
-      ;; PERF: The mode-line procs a couple dozen times during startup. This is
-      ;;   normally quite fast, but disabling the default mode-line and reducing
-      ;;   the update delay timer seems to stave off ~30-50ms.
-      (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
-      (setq-default mode-line-format nil)
-      (dolist (buf (buffer-list))
-        (with-current-buffer buf (setq mode-line-format nil)))
-      ;; PERF,UX: Premature redisplays can substantially affect startup times
-      ;;   and/or produce ugly flashes of unstyled Emacs.
-      (setq-default inhibit-redisplay t
-                    inhibit-message t)
-      ;; COMPAT: Then reset with advice, because `startup--load-user-init-file'
-      ;;   will never be interrupted by errors.  And if these settings are left
-      ;;   set, Emacs could appear frozen or garbled.
-      (defun doom--reset-inhibited-vars-h ()
-        (setq-default inhibit-redisplay nil
-                      ;; Inhibiting `message' only prevents redraws and
-                      inhibit-message nil)
-        (redraw-frame))
-      (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
+    ;; PERF: The mode-line procs a couple dozen times during startup. This is
+    ;;   normally quite fast, but disabling the default mode-line and reducing
+    ;;   the update delay timer seems to stave off ~30-50ms.
+    (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
+    (setq-default mode-line-format nil)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf (setq mode-line-format nil)))
+    ;; PERF,UX: Premature redisplays can substantially affect startup times
+    ;;   and/or produce ugly flashes of unstyled Emacs.
+    (setq-default inhibit-redisplay t
+                  inhibit-message t)
+    ;; COMPAT: Then reset with advice, because `startup--load-user-init-file'
+    ;;   will never be interrupted by errors.  And if these settings are left
+    ;;   set, Emacs could appear frozen or garbled.
+    (defun doom--reset-inhibited-vars-h ()
+      (setq-default inhibit-redisplay nil
+                    ;; Inhibiting `message' only prevents redraws and
+                    inhibit-message nil)
+      (redraw-frame))
+    (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
 
-      ;; PERF,UX: An annoying aspect of site-lisp files is that they're often
-      ;;   noisy (they emit load messages or other output to stdout). These
-      ;;   queue unnecessary redraws at startup, cost startup time, and pollute
-      ;;   the logs. I get around it by suppressing it until we can load it
-      ;;   manually, later (in the `startup--load-user-init-file' advice below).
-      (put 'site-run-file 'initial-value site-run-file)
-      (setq site-run-file nil)
+    ;; PERF,UX: An annoying aspect of site-lisp files is that they're often
+    ;;   noisy (they emit load messages or other output to stdout). These
+    ;;   queue unnecessary redraws at startup, cost startup time, and pollute
+    ;;   the logs. I get around it by suppressing it until we can load it
+    ;;   manually, later (in the `startup--load-user-init-file' advice below).
+    (put 'site-run-file 'initial-value site-run-file)
+    (setq site-run-file nil)
 
-      (define-advice startup--load-user-init-file (:around (fn &rest args) undo-inhibit-vars)
-        (let (--init--)
-          (unwind-protect
-              (progn
-                ;; COMPAT: Onces startup is sufficiently complete, undo some
-                ;;   optimizations to reduce the scope of potential edge cases.
-                (advice-remove #'load-file #'load-file@silence)
-                (advice-remove #'tool-bar-setup #'ignore)
-                (add-transient-hook! 'tool-bar-mode (tool-bar-setup))
-                (when (setq site-run-file (get 'site-run-file 'initial-value))
-                  (let ((inhibit-startup-screen inhibit-startup-screen))
-                    (letf! (defun load (file &optional noerror _nomessage &rest args)
-                             (apply load file noerror t args))
-                      (load site-run-file t t))))
-                ;; Then startup as normal.
-                (apply fn args)
-                (setq --init-- t))
-            (when (or (not --init--) init-file-had-error)
-              ;; If we don't undo our inhibit-{message,redisplay} and there's an
-              ;; error, we'll see nothing but a blank Emacs frame.
-              (doom--reset-inhibited-vars-h))
-            (unless (default-toplevel-value 'mode-line-format)
-              (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))
+    (define-advice startup--load-user-init-file (:around (fn &rest args) undo-inhibit-vars)
+      (let (--init--)
+        (unwind-protect
+            (progn
+              ;; COMPAT: Onces startup is sufficiently complete, undo some
+              ;;   optimizations to reduce the scope of potential edge cases.
+              (advice-remove #'load-file #'load-file@silence)
+              (advice-remove #'tool-bar-setup #'ignore)
+              (add-transient-hook! 'tool-bar-mode (tool-bar-setup))
+              (when (setq site-run-file (get 'site-run-file 'initial-value))
+                (let ((inhibit-startup-screen inhibit-startup-screen))
+                  (letf! (defun load (file &optional noerror _nomessage &rest args)
+                           (apply load file noerror t args))
+                    (load site-run-file t t))))
+              ;; Then startup as normal.
+              (apply fn args)
+              (setq --init-- t))
+          (when (or (not --init--) init-file-had-error)
+            ;; If we don't undo our inhibit-{message,redisplay} and there's an
+            ;; error, we'll see nothing but a blank Emacs frame.
+            (doom--reset-inhibited-vars-h))
+          (unless (default-toplevel-value 'mode-line-format)
+            (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))
 
-      ;; PERF: Unset a non-trivial list of command line options that aren't
-      ;;   relevant to this session, but `command-line-1' still processes.
-      (unless doom--system-macos-p
-        (setq command-line-ns-option-alist nil))
-      (unless (memq initial-window-system '(x pgtk))
-        (setq command-line-x-option-alist nil)))))
+    ;; PERF: Unset a non-trivial list of command line options that aren't
+    ;;   relevant to this session, but `command-line-1' still processes.
+    (unless doom--system-macos-p
+      (setq command-line-ns-option-alist nil))
+    (unless (memq initial-window-system '(x pgtk))
+      (setq command-line-x-option-alist nil))))
 
 
 ;;
