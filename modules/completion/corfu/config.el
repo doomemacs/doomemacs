@@ -54,7 +54,6 @@ use the minibuffer such as `query-replace'.")
         corfu-preselect 'prompt
         corfu-count 16
         corfu-max-width 120
-        corfu-preview-current 'insert
         corfu-on-exact-match nil
         corfu-quit-at-boundary (if (modulep! +orderless) 'separator t)
         corfu-quit-no-match (if (modulep! +orderless) 'separator t)
