@@ -133,8 +133,10 @@ use the minibuffer such as `query-replace'.")
       (add-hook 'completion-at-point-functions #'yasnippet-capf 30 t))))
 
 (use-package! corfu-terminal
+  :when (modulep! :os tty)
   :when (not (display-graphic-p))
   :hook ((corfu-mode . corfu-terminal-mode)))
+
 
 ;;
 ;;; Extensions
