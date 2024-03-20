@@ -4,7 +4,7 @@
   :commands eglot eglot-ensure
   :hook (eglot-managed-mode . +lsp-optimization-mode)
   :init
-  (defadvice! +eglot--ensure-available-mode (fn)
+  (defadvice! +eglot--ensure-available-mode-a (fn)
     "Run `eglot-ensure' if the current mode has support."
     :around #'eglot-ensure
     (when (alist-get major-mode eglot-server-programs nil nil
@@ -15,7 +15,6 @@
       (funcall fn)))
   (setq eglot-sync-connect 1
         eglot-autoshutdown t
-        eglot-send-changes-idle-time 0.5
         ;; NOTE: We disable eglot-auto-display-help-buffer because :select t in
         ;;   its popup rule causes eglot to steal focus too often.
         eglot-auto-display-help-buffer nil)
@@ -44,8 +43,8 @@
   (defadvice! +lsp--defer-server-shutdown-a (fn &optional server)
     "Defer server shutdown for a few seconds.
 This gives the user a chance to open other project files before the server is
-auto-killed (which is a potentially expensive process). It also prevents the
-server getting expensively restarted when reverting buffers."
+auto-killed (which is a potentially expensive process). It also spares the
+server an expensive restart when its buffer is reverted."
     :around #'eglot--managed-mode
     (letf! (defun eglot-shutdown (server)
              (if (or (null +lsp-defer-shutdown)
