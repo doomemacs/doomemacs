@@ -83,7 +83,21 @@ use the minibuffer such as `query-replace'.")
       (when (member (bound-and-true-p evil--ex-search-update-timer)
                     timer-idle-list)
         (apply (timer--function evil--ex-search-update-timer)
-               (timer--args evil--ex-search-update-timer))))))
+               (timer--args evil--ex-search-update-timer)))))
+
+  ;; HACK: If your dictionaries aren't set up in text-mode buffers, ispell will
+  ;;   continuously pester you about errors. This ensures it only happens once
+  ;;   per session.
+  (defadvice! +corfu--auto-disable-ispell-capf-a (fn &rest args)
+    "If ispell isn't properly set up, only complain once per session."
+    :around #'ispell-completion-at-point
+    (condition-case-unless-debug e
+        (apply fn args)
+     ('error
+      (message "Error: %s" (error-message-string e))
+      (message "Auto-disabling `text-mode-ispell-word-completion'")
+      (setq text-mode-ispell-word-completion nil)
+      (remove-hook 'completion-at-point-functions #'ispell-completion-at-point t)))))
 
 (use-package! cape
   :defer t
