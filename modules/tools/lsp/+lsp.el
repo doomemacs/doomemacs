@@ -138,8 +138,11 @@ server getting expensively restarted when reverting buffers."
                                    " "))
           (add-to-list 'global-mode-string
                        '(t (:eval lsp-modeline-icon))
-                       'append))))))
+                       'append)))))
 
+  (when (modulep! :completion corfu)
+    (setq lsp-completion-provider :none)
+    (add-hook 'lsp-mode-hook #'lsp-completion-mode)))
 
 (use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)

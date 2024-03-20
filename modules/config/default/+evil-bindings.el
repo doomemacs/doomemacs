@@ -43,7 +43,10 @@
                       #'yas-expand
                       (and (bound-and-true-p company-mode)
                            (modulep! :completion company +tng))
-                      #'company-indent-or-complete-common)
+                      #'company-indent-or-complete-common
+                      (and (bound-and-true-p corfu-mode)
+                           (modulep! :completion corfu))
+                      #'completion-at-point)
       :m [tab] (cmds! (and (modulep! :editor snippets)
                            (evil-visual-state-p)
                            (or (eq evil-visual-selection 'line)
@@ -127,7 +130,7 @@
 ;;
 ;;; Module keybinds
 
-;;; :completion
+;;; :completion (in-buffer)
 (map! (:when (modulep! :completion company)
        :i "C-@"    (cmds! (not (minibufferp)) #'company-complete-common)
        :i "C-SPC"  (cmds! (not (minibufferp)) #'company-complete-common)
@@ -156,7 +159,38 @@
          "C-s"     #'company-filter-candidates
          [escape]  #'company-search-abort)))
 
-      (:when (modulep! :completion ivy)
+      (:when (modulep! :completion corfu)
+       (:after corfu
+        (:map corfu-mode-map
+         :i "C-SPC" #'completion-at-point
+         :n "C-SPC" (cmd! (call-interactively #'evil-insert-state)
+                          (call-interactively #'completion-at-point))
+         :v "C-SPC" (cmd! (call-interactively #'evil-change)
+                          (call-interactively #'completion-at-point)))
+        (:map corfu-map
+         :i "C-SPC" #'corfu-insert-separator
+         "C-k" #'corfu-previous
+         "C-j" #'corfu-next
+         "C-u" (cmd! (let (corfu-cycle)
+                       (funcall-interactively #'corfu-next (- corfu-count))))
+         "C-d" (cmd! (let (corfu-cycle)
+                       (funcall-interactively #'corfu-next corfu-count)))))
+       (:after corfu-popupinfo
+        :map corfu-popupinfo-map
+        "C-h"      #'corfu-popupinfo-toggle
+        ;; Reversed because popupinfo assumes opposite of what feels intuitive
+        ;; with evil.
+        "C-S-k"    #'corfu-popupinfo-scroll-down
+        "C-S-j"    #'corfu-popupinfo-scroll-up
+        "C-<up>"   #'corfu-popupinfo-scroll-down
+        "C-<down>" #'corfu-popupinfo-scroll-up
+        "C-S-p"    #'corfu-popupinfo-scroll-down
+        "C-S-n"    #'corfu-popupinfo-scroll-up
+        "C-S-u"    (cmd!! #'corfu-popupinfo-scroll-down nil corfu-popupinfo-min-height)
+        "C-S-d"    (cmd!! #'corfu-popupinfo-scroll-up nil corfu-popupinfo-min-height))))
+
+;;; :completion (separate)
+(map! (:when (modulep! :completion ivy)
        (:after ivy
         :map ivy-minibuffer-map
         "C-SPC" #'ivy-call-and-recenter  ; preview file
@@ -169,7 +203,8 @@
         [C-return] #'+ivy/git-grep-other-window-action))
 
       (:when (modulep! :completion helm)
-       (:after helm :map helm-map
+       (:after helm
+        :map helm-map
         [remap next-line]     #'helm-next-line
         [remap previous-line] #'helm-previous-line
         [left]     #'left-char
@@ -387,9 +422,9 @@
          :desc "Incoming call hierarchy"             "y"   #'lsp-treemacs-call-hierarchy
          :desc "Outgoing call hierarchy"             "Y"   (cmd!! #'lsp-treemacs-call-hierarchy t)
          :desc "References tree"                     "R"   (cmd!! #'lsp-treemacs-references t)
-         :desc "Symbols"                             "S"   #'lsp-treemacs-symbols)
+         :desc "Symbols"                             "S"   #'lsp-treemacs-symbols
          :desc "LSP"                                 "l"   #'+default/lsp-command-map
-         :desc "LSP Rename"                          "r"   #'lsp-rename)
+         :desc "LSP Rename"                          "r"   #'lsp-rename))
        (:when (modulep! :tools lsp +eglot)
         :desc "LSP Execute code action" "a" #'eglot-code-actions
         :desc "LSP Rename" "r" #'eglot-rename
