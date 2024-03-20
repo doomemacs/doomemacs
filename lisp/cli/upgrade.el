@@ -15,6 +15,8 @@
 (defvar doom-upgrade-remote "_upgrade"
   "The name to use as our staging remote.")
 
+(defvar doom-upgrade-before-sync-hook ()
+  "Hooks run between upgrading Doom itself and performing an upgrading sync.")
 
 ;;
 ;;; Commands
@@ -57,6 +59,8 @@ following shell commands:
       (exit! "doom" "upgrade" "-p"
              (if force? "--force")
              (if jobs (format "--jobs=%d" jobs))))
+
+     (run-hooks 'doom-upgrade-before-sync-hook)
 
      ((print! "Doom is up-to-date!")
       (call! sync-cmd)))))
