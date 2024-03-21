@@ -83,6 +83,9 @@ orderless."
      ((string= "!" pattern) `(orderless-literal . ""))
      ;; Without literal
      ((string-prefix-p "!" pattern) `(orderless-without-literal . ,(substring pattern 1)))
+     ;; Annotation
+     ((string-prefix-p "&" pattern) `(orderless-annotation . ,(substring pattern 1)))
+     ((string-suffix-p "&" pattern) `(orderless-annotation . ,(substring pattern 0 -1)))
      ;; Character folding
      ((string-prefix-p "%" pattern) `(char-fold-to-regexp . ,(substring pattern 1)))
      ((string-suffix-p "%" pattern) `(char-fold-to-regexp . ,(substring pattern 0 -1)))
