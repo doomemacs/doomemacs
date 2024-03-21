@@ -54,6 +54,10 @@ Must be a `font-spec', a font object, an XFT font string, or an XLFD string. See
 WARNING: if you specify a size for this font it will hard-lock any usage of this
 font to that size. It's rarely a good idea to do so!")
 
+(defcustom doom-elide-string
+  (if (char-displayable-p ?…) "…" "...")
+  "String to represent, usually one-line, elided text, e.g. c1e7b6190b00….")
+
 (defconst doom-emoji-fallback-font-families
   '("Apple Color Emoji"
     "Segoe UI Emoji"

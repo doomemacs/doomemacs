@@ -424,7 +424,7 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
                (finish (and (re-search-forward "\"" (line-end-position) t)
                             (match-beginning 0))))
            (when (and start finish)
-             (put-text-property start finish 'display "...")))))
+             (put-text-property start finish 'display doom-elide-string)))))
   nil)
 
 (defvar +emacs-lisp--face nil)
