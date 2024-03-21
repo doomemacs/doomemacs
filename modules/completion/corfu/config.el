@@ -55,8 +55,10 @@ use the minibuffer such as `query-replace'.")
         corfu-count 16
         corfu-max-width 120
         corfu-on-exact-match nil
-        corfu-quit-at-boundary (if (modulep! +orderless) 'separator t)
-        corfu-quit-no-match (if (modulep! +orderless) 'separator t)
+        corfu-quit-at-boundary (if (or (modulep! :completion vertico)
+                                       (modulep! +orderless))
+                                   'separator t)
+        corfu-quit-no-match corfu-quit-at-boundary
         tab-always-indent 'complete)
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-auto-commands #'lispy-colon)
