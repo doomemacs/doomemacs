@@ -1,5 +1,13 @@
 ;;; editor/fold/config.el -*- lexical-binding: t; -*-
 
+(defvar +fold-elide-string
+  (format " [%s]" (if (char-displayable-p ?…) "…" "..."))
+  "String to represent folded elided text, e.g. […].
+
+This differs from `doom-elide-string' because folded text often
+implies multiple lines and some users might want this to be, for
+example, \"[...]\" or might even prefer a fancy downwards arrow.")
+
 (when (modulep! :editor evil)
   ;; Add vimish-fold, outline-mode & hideshow support to folding commands
   (define-key! 'global
@@ -96,5 +104,5 @@
                                                 :box nil
                                                 :inherit font-lock-comment-face
                                                 :weight light))
-  (setq ts-fold-replacement "  [...]  ")
+  (setq ts-fold-replacement +fold-elide-string)
   (ts-fold-mode +1))
