@@ -230,7 +230,7 @@ orderless."
         :face     consult-file
         :history  file-name-history
         :items    ,#'+vertico--consult-dir-podman-hosts)
-      "Podman candiadate source for `consult-dir'.")
+      "Podman candidate source for `consult-dir'.")
 
     (defvar +vertico--consult-dir-source-tramp-docker
       `(:name     "Docker"
@@ -239,7 +239,7 @@ orderless."
         :face     consult-file
         :history  file-name-history
         :items    ,#'+vertico--consult-dir-docker-hosts)
-      "Docker candiadate source for `consult-dir'.")
+      "Docker candidate source for `consult-dir'.")
 
     (add-to-list 'consult-dir-sources '+vertico--consult-dir-source-tramp-podman t)
     (add-to-list 'consult-dir-sources '+vertico--consult-dir-source-tramp-docker t))
