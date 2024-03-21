@@ -244,6 +244,22 @@ doing is to look at the list of buffers Dabbrev is scanning:
 ... and modify ~dabbrev-ignored-buffer-regexps~ or ~dabbrev-ignored-buffer-modes~
 accordingly.
 
+If you see garbage completion candidates, you can use the following command to
+debug the issue:
+
+#+begin_src emacs-lisp
+;;;###autoload
+(defun search-in-dabbrev-buffers (search-string)
+  "Search for SEARCH-STRING in all buffers returned by `dabbrev--select-buffers'."
+  (interactive "sSearch string: ")
+  (let ((buffers (dabbrev--select-buffers)))
+    (multi-occur buffers search-string)))
+
+;; Example usage:
+;; Why are these weird characters appearing in my completions?
+(search-in-dabbrev-buffers "\342\200\231")
+#+end_src
+
 * Frequently asked questions
 /This module has no FAQs yet./ [[doom-suggest-faq:][Ask one?]]
 
