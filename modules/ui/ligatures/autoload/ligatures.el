@@ -70,7 +70,7 @@ Note that this will keep all ligatures in `+ligatures-prog-mode-list' active, as
   ;; NOTE: Doom enforces `ligature-composition-table' to have a single mode per key in the alist.
   ;; This is less efficient than what ligature.el can do (i.e. use a list of modes, or `t' as a key),
   ;; but holding this invariant allows resetting with `(set-font-ligatures! 'mode nil)` to work reliably.
-  (if (null ligatures)
+  (if (or (null ligatures) (equal ligatures '(nil)))
       (dolist (mode (ensure-list modes))
         (delq! mode ligature-composition-table 'assq))
     (after! ligature
