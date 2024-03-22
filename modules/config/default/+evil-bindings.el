@@ -405,7 +405,7 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
-       (:when (modulep! :tools lsp -eglot)
+       (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
         :desc "LSP Execute code action"              "a"   #'lsp-execute-code-action
         :desc "LSP Organize imports"                 "o"   #'lsp-organize-imports
         :desc "LSP"                                  "l"   #'+default/lsp-command-map
