@@ -406,8 +406,10 @@
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
        (:when (and (modulep! :tools lsp) (not (modulep! :tools lsp +eglot)))
-        :desc "LSP Execute code action" "a" #'lsp-execute-code-action
-        :desc "LSP Organize imports" "o" #'lsp-organize-imports
+         :desc "LSP Execute code action"             "a"   #'lsp-execute-code-action
+         :desc "LSP Organize imports"                "o"   #'lsp-organize-imports
+         :desc "LSP Rename"                          "r"   #'lsp-rename
+         :desc "LSP"                                 "l"   #'+default/lsp-command-map
         (:when (modulep! :completion ivy)
          :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
@@ -422,9 +424,7 @@
          :desc "Incoming call hierarchy"             "y"   #'lsp-treemacs-call-hierarchy
          :desc "Outgoing call hierarchy"             "Y"   (cmd!! #'lsp-treemacs-call-hierarchy t)
          :desc "References tree"                     "R"   (cmd!! #'lsp-treemacs-references t)
-         :desc "Symbols"                             "S"   #'lsp-treemacs-symbols
-         :desc "LSP"                                 "l"   #'+default/lsp-command-map
-         :desc "LSP Rename"                          "r"   #'lsp-rename))
+         :desc "Symbols"                             "S"   #'lsp-treemacs-symbols))
        (:when (modulep! :tools lsp +eglot)
         :desc "LSP Execute code action" "a" #'eglot-code-actions
         :desc "LSP Rename" "r" #'eglot-rename
