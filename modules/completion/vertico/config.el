@@ -198,10 +198,13 @@ orderless."
 
 
 (use-package! consult-dir
-  :bind (([remap list-directory] . consult-dir)
+  :defer t
+  :init
+  (map! [remap list-directory] #'consult-dir
+        (:after vertico
          :map vertico-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file))
+         "C-x C-d" #'consult-dir
+         "C-x C-j" #'consult-dir-jump-file))
   :config
   (when (modulep! :tools docker)
     ;; TODO: Replace with `tramp-container--completion-function' when we drop
