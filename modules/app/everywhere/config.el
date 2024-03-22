@@ -36,7 +36,7 @@
     (doom-modeline-def-modeline 'emacs-everywhere
       '(bar modals emacs-everywhere buffer-position
         word-count parrot selection-info)
-      '(input-method major-mode checker
+      '(input-method major-mode check
         #("  " 0 1 ; "Exit to app" icon + a little padding
           (rear-nonsticky t
            display (raise -0.25)
