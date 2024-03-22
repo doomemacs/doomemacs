@@ -273,8 +273,6 @@ SEE ALSO:
     (defcli-autoload! (env))
     (defcli-autoload! ((build b purge p rollback)) "packages")
     (defcli-autoload! ((install i)))
-    (defcli-autoload! ((compile c)))
-    (defcli-autoload! (clean) "compile")
 
     ;; TODO Post-3.0 commands
     ;; (load! "gc" dir)
@@ -282,7 +280,6 @@ SEE ALSO:
     ;; (load! "nuke" dir)
     ;; (load! "package" dir)
     ;; (load! "profile" dir)
-    ;; (defcli-obsolete! ((compile c)) (sync "--compile") "v3.0.0")
     ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
     )
 

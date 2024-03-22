@@ -3,7 +3,6 @@
 ;;; Code:
 
 (load! "packages")
-(load! "compile")
 
 
 ;;
