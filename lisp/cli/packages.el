@@ -283,26 +283,42 @@ declaration) or dependency thereof that hasn't already been."
      (if-let (built
               (doom-packages--with-recipes (doom-package-recipe-list)
                   (recipe package type local-repo)
-                (unless (file-directory-p (straight--repos-dir local-repo))
-                  (doom-packages--cli-recipes-update))
-                (condition-case-unless-debug e
-                    (let ((straight-use-package-pre-build-functions
-                           (cons (lambda (pkg &rest _)
-                                   (when-let (commit (cdr (assoc pkg pinned)))
-                                     (print! (item "Checked out %s: %s") pkg commit)))
-                                 straight-use-package-pre-build-functions)))
-                      (straight-use-package (intern package))
-                      ;; HACK Line encoding issues can plague repos with dirty
-                      ;;      worktree prompts when updating packages or "Local
-                      ;;      variables entry is missing the suffix" errors when
-                      ;;      installing them (see hlissner/doom-emacs#2637), so
-                      ;;      have git handle conversion by force.
-                      (when (and doom--system-windows-p (stringp local-repo))
-                        (let ((default-directory (straight--repos-dir local-repo)))
-                          (when (file-in-directory-p default-directory straight-base-dir)
-                            (straight--process-run "git" "config" "core.autocrlf" "true")))))
-                  (error
-                   (signal 'doom-package-error (list package e))))))
+                (let ((repo-dir (straight--repos-dir local-repo)))
+                  (unless (file-directory-p repo-dir)
+                    (doom-packages--cli-recipes-update))
+                  (condition-case-unless-debug e
+                      (let ((straight-use-package-pre-build-functions
+                             (cons (lambda (pkg &rest _)
+                                     (when-let (commit (cdr (assoc pkg pinned)))
+                                       (print! (item "Checked out %s: %s") pkg commit)))
+                                   straight-use-package-pre-build-functions)))
+                        ;; HACK: Straight can sometimes fail to clone a repo,
+                        ;;   leaving behind an empty directory which, in future
+                        ;;   invocations, it will assume indicates a successful
+                        ;;   clone (causing load errors later).
+                        (let ((try 0))
+                          (while (or (not (file-directory-p repo-dir))
+                                     (directory-empty-p repo-dir))
+                            (if (= try 3)
+                                (error "Failed to clone package")
+                              (when (> try 0)
+                                (print! "Failed to clone %S, trying again (attempt #%d)..." package (1+ try))))
+                            (delete-file (file-name-concat (straight--modified-dir) package))
+                            (delete-directory repo-dir t)
+                            (delete-directory (straight--build-dir package) t)
+                            (straight-use-package (intern package))
+                            (cl-incf try)))
+                        ;; HACK: Line encoding issues can plague repos with
+                        ;;   dirty worktree prompts when updating packages or
+                        ;;   "Local variables entry is missing the suffix"
+                        ;;   errors when installing them (see #2637), so have
+                        ;;   git handle conversion by force.
+                        (when (and doom--system-windows-p (stringp local-repo))
+                          (let ((default-directory (straight--repos-dir local-repo)))
+                            (when (file-in-directory-p default-directory straight-base-dir)
+                              (straight--process-run "git" "config" "core.autocrlf" "true")))))
+                    (error
+                     (signal 'doom-package-error (list package e)))))))
          (progn
            (when (featurep 'native-compile)
              (doom-packages--compile-site-files)
