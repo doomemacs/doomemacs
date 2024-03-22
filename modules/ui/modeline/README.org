@@ -96,7 +96,7 @@ Some possible solutions:
     (after! doom-modeline
       (doom-modeline-def-modeline 'main
         '(bar matches buffer-info remote-host buffer-position parrot selection-info)
-        '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
+        '(misc-info minor-modes check input-method buffer-encoding major-mode process vcs "  "))) ; <-- added padding here
     #+end_src
 
 2. Use another font for the mode line (or a different ~:height~) (source)
