@@ -37,3 +37,21 @@
          (save-excursion (backward-char 1)
                          (insert-char ?\\)))
         (t (call-interactively #'corfu-insert-separator))))
+
+;;;###autoload
+(defun +corfu-popup-and-first ()
+  "Trigger corfu popup and select the first candidate."
+  (interactive)
+  (let ((corfu-auto-prefix 1))
+    (when (completion-at-point)
+      (corfu--exhibit)
+      (corfu--goto 0))))
+
+;;;###autoload
+(defun +corfu-popup-and-last ()
+  "Trigger corfu popup and select the last candidate."
+  (interactive)
+  (let ((corfu-auto-prefix 1))
+    (when (completion-at-point)
+      (corfu--exhibit)
+      (corfu-last))))
