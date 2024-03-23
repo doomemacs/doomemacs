@@ -203,6 +203,15 @@ A few variables may be set to change behavior of this module:
   Whether to enable Corfu in the minibuffer. See its documentation for
   additional tweaks.
 
+** Turning off auto-completion
+To disable auto-completion, add this to your ~config.el~:
+#+begin_src emacs-lisp
+(after! corfu
+  (setq corfu-auto nil)
+  (setq corfu-auto-commands
+        (delete "self-insert-command\\'" corfu-auto-commands)))
+#+end_src
+
 ** Adding CAPFs to a mode
 To add other CAPFs on a mode-per-mode basis, put either of the following in your
 ~config.el~:
