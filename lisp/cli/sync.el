@@ -81,9 +81,7 @@ OPTIONS:
                 (exit! 0))
             (setq rebuild? t)))
         (when (and (not noenvvar?)
-                   (file-exists-p
-                    (file-name-concat doom-profile-dir
-                                      doom-profile-env-file-name)))
+                   (file-exists-p doom-env-file))
           (call! '(env)))
         (doom-packages-ensure rebuild?)
         (unless noupdate? (doom-packages-update (not update?)))
