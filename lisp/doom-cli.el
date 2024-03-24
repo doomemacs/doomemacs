@@ -1783,7 +1783,7 @@ See `defcli!' for information about COMMANDSPEC.
 TARGET is simply a command list.
 WHEN specifies what version this command was rendered obsolete."
   `(let ((ncommand (doom-cli-command-normalize (backquote ,target) doom-cli--group-plist)))
-     (defcli! ,commandspec (&context context &cli cli &rest args)
+     (defcli! ,commandspec (&context _context &cli cli &rest args)
        :docs (format "An obsolete alias for '%s'." (doom-cli-command-string ncommand))
        :hide t
        (print! (warn "'%s' was deprecated in %s")
