@@ -402,14 +402,13 @@ This command is never needed for changes to =$DOOMDIR/config.el=.
 
 ** Copy or sync my config to another system?
 *Short answer:* it is safe to sync =$DOOMDIR= across systems, but not
-=$EMACSDIR=. Once moved, use ~$ doom sync && doom build~ to ensure everything is
-set up correctly.
+=$EMACSDIR=. Once moved, use ~$ doom sync~ to ensure everything is set up
+correctly.
 
 *Long answer:* packages can contain baked-in absolute paths and non-portable
 byte-code. It is never a good idea to mirror it across multiple systems, unless
 they are all the same (same OS, same version of Emacs, same paths). Most issues
-should be solved by running ~$ doom sync && doom build~ on the other end, once
-moved.
+should be solved by running ~$ doom sync~ on the other end, once moved.
 
 ** Start over, in case something went terribly wrong?
 Delete =$EMACSDIR/.local/straight= and run ~$ doom sync~.

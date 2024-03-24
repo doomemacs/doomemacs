@@ -280,7 +280,6 @@ SEE ALSO:
     ;; (load! "nuke" dir)
     ;; (load! "package" dir)
     ;; (load! "profile" dir)
-    ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
     )
 
   (defcli-group! "Diagnostics"

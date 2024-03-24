@@ -32,7 +32,7 @@ following shell commands:
     doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
-         (sync-cmd (append '("sync" "-u") (if jobs `("-j" ,num)))))
+         (sync-cmd (append '("sync" "-u" "-B") (if jobs `("-j" ,num)))))
     (cond
      (packages?
       ;; HACK It's messy to use straight to upgrade straight, due to the

@@ -138,8 +138,6 @@ commands you should know about:
 + `doom env` to dump a snapshot of your shell environment to a file that Doom
   will load at startup. This allows Emacs to inherit your `PATH`, among other
   things.
-+ `doom build` to recompile all installed packages (use this if you up/downgrade
-  Emacs).
 
 
 # Roadmap

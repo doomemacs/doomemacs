@@ -13,25 +13,8 @@
 ;;
 ;;; Commands
 
-(defcli! (:before (build b purge p)) (&context context)
-  (require 'comp nil t)
-  (doom-initialize-core-packages))
+(defcli-obsolete! ((build b)) (sync "--rebuild") "v3.0.0")
 
-;; DEPRECATED Replace with "doom sync --rebuild"
-(defcli! ((build b))
-    ((rebuild-p ("-r") "Only rebuild packages that need rebuilding")
-     (jobs      ("-j" "--jobs" num) "How many CPUs to use for native compilation"))
-  "Byte-compiles & symlinks installed packages.
-
-This ensures that all needed files are symlinked from their package repo and
-their elisp files are byte-compiled. This is especially necessary if you upgrade
-Emacs (as byte-code is generally not forward-compatible)."
-  :benchmark t
-  (when jobs
-    (setq native-comp-async-jobs-number (truncate jobs)))
-  (when (doom-packages-build (not rebuild-p))
-    (doom-profile-generate))
-  t)
 
 ;; TODO Rename to "doom gc" and move to its own file
 (defcli! ((purge p))
@@ -50,6 +33,8 @@ possible.
 It is a good idea to occasionally run this doom purge -g to ensure your package
 list remains lean."
   :benchmark t
+  (require 'comp nil t)
+  (doom-initialize-core-packages)
   (straight-check-all)
   (when (doom-packages-purge
          (not noelpa-p)
@@ -242,170 +227,149 @@ list remains lean."
 
 (defun doom-packages--write-missing-eln-errors ()
   "Write .error files for any expected .eln files that are missing."
-  (when (featurep 'native-compile)
-    (cl-loop for file in doom-packages--eln-output-expected
-             for eln-name = (doom-packages--eln-file-name file)
-             for eln-file = (doom-packages--eln-output-file eln-name)
-             for error-file = (doom-packages--eln-error-file eln-name)
-             for error-dir = (file-name-directory error-file)
-             unless (or (file-exists-p eln-file)
-                        (file-newer-than-file-p error-file file)
-                        (not (file-writable-p error-dir)))
-             do (make-directory error-dir 'parents)
-             (write-region "" nil error-file)
-             (doom-log "Wrote %s" error-file))
-    (setq doom-packages--eln-output-expected nil)))
+  (cl-loop for file in doom-packages--eln-output-expected
+           for eln-name = (doom-packages--eln-file-name file)
+           for eln-file = (doom-packages--eln-output-file eln-name)
+           for error-file = (doom-packages--eln-error-file eln-name)
+           for error-dir = (file-name-directory error-file)
+           unless (or (file-exists-p eln-file)
+                      (file-newer-than-file-p error-file file)
+                      (not (file-writable-p error-dir)))
+           do (make-directory error-dir 'parents)
+           (write-region "" nil error-file)
+           (doom-log "Wrote %s" error-file))
+  (setq doom-packages--eln-output-expected nil))
 
 (defun doom-packages--compile-site-files ()
   "Queue async compilation for all non-doom Elisp files."
-  (when (featurep 'native-compile)
-    (cl-loop with paths = (cl-loop for path in load-path
-                                   unless (file-in-directory-p path doom-local-dir)
-                                   collect path)
-             for file in (doom-files-in paths :match "\\.el\\(?:\\.gz\\)?$")
-             if (and (file-exists-p (byte-compile-dest-file file))
-                     (not (doom-packages--find-eln-file (doom-packages--eln-file-name file)))
-                     (not (cl-some (fn! (string-match-p % file))
-                                   native-comp-deferred-compilation-deny-list))) do
-             (doom-log "Compiling %s" file)
-             (native-compile-async file))))
+  (cl-loop with paths = (cl-loop for path in load-path
+                                 unless (file-in-directory-p path doom-local-dir)
+                                 collect path)
+           for file in (doom-files-in paths :match "\\.el\\(?:\\.gz\\)?$")
+           if (and (file-exists-p (byte-compile-dest-file file))
+                   (not (doom-packages--find-eln-file (doom-packages--eln-file-name file)))
+                   (not (cl-some (fn! (string-match-p % file))
+                                 native-comp-deferred-compilation-deny-list))) do
+           (doom-log "Compiling %s" file)
+           (native-compile-async file)))
 
-(defun doom-packages-install ()
-  "Installs missing packages.
-
-This function will install any primary package (i.e. a package with a `package!'
-declaration) or dependency thereof that hasn't already been."
+(defun doom-packages-ensure (&optional force-p)
+  "Ensure packages are installed, built"
   (doom-initialize-packages)
-  (print! (start "Installing packages..."))
-  (let ((pinned (doom-package-pinned-list)))
-    (print-group!
-     (add-hook 'native-comp-async-cu-done-functions #'doom-packages--native-compile-done-h)
-     (if-let (built
-              (doom-packages--with-recipes (doom-package-recipe-list)
-                  (recipe package type local-repo)
-                (let ((repo-dir (straight--repos-dir local-repo)))
-                  (unless (file-directory-p repo-dir)
-                    (doom-packages--cli-recipes-update))
-                  (condition-case-unless-debug e
-                      (let ((straight-use-package-pre-build-functions
-                             (cons (lambda (pkg &rest _)
-                                     (when-let (commit (cdr (assoc pkg pinned)))
-                                       (print! (item "Checked out %s: %s") pkg commit)))
-                                   straight-use-package-pre-build-functions)))
-                        ;; HACK: Straight can sometimes fail to clone a repo,
-                        ;;   leaving behind an empty directory which, in future
-                        ;;   invocations, it will assume indicates a successful
-                        ;;   clone (causing load errors later).
-                        (let ((try 0))
-                          (while (or (not (file-directory-p repo-dir))
-                                     (directory-empty-p repo-dir))
-                            (if (= try 3)
-                                (error "Failed to clone package")
-                              (when (> try 0)
-                                (print! "Failed to clone %S, trying again (attempt #%d)..." package (1+ try))))
-                            (delete-file (file-name-concat (straight--modified-dir) package))
-                            (delete-directory repo-dir t)
-                            (delete-directory (straight--build-dir package) t)
-                            (straight-use-package (intern package))
-                            (cl-incf try)))
-                        ;; HACK: Line encoding issues can plague repos with
-                        ;;   dirty worktree prompts when updating packages or
-                        ;;   "Local variables entry is missing the suffix"
-                        ;;   errors when installing them (see #2637), so have
-                        ;;   git handle conversion by force.
-                        (when (and doom--system-windows-p (stringp local-repo))
-                          (let ((default-directory (straight--repos-dir local-repo)))
-                            (when (file-in-directory-p default-directory straight-base-dir)
-                              (straight--process-run "git" "config" "core.autocrlf" "true")))))
-                    (error
-                     (signal 'doom-package-error (list package e)))))))
-         (progn
-           (when (featurep 'native-compile)
-             (doom-packages--compile-site-files)
-             (doom-packages--wait-for-native-compile-jobs)
-             (doom-packages--write-missing-eln-errors))
-           (print! (success "\033[KInstalled %d packages") (length built)))
-       (print! (item "No packages need to be installed"))
-       nil))))
-
-
-(defun doom-packages-build (&optional force-p)
-  "(Re)build all packages."
-  (doom-initialize-packages)
-  (print! (start "(Re)building %spackages...") (if force-p "all " ""))
+  (if (not (file-directory-p (straight--repos-dir)))
+      (print! (start "Installing all packages for the first time (this may take a while)..."))
+    (if force-p
+        (print! (start "Rebuilding all packages (this may take a while)..."))
+      (print! (start "Ensuring packages are installed and built..."))))
   (print-group!
-   (let ((straight-check-for-modifications
-          (when (file-directory-p (straight--modified-dir))
-            '(find-when-checking)))
-         (straight--allow-find
-          (and straight-check-for-modifications
-               (executable-find straight-find-executable)
-               t))
-         (straight--packages-not-to-rebuild
-          (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-         (straight--packages-to-rebuild
-          (or (if force-p :all straight--packages-to-rebuild)
-              (make-hash-table :test #'equal)))
-         (recipes (doom-package-recipe-list)))
-     (add-hook 'native-comp-async-cu-done-functions #'doom-packages--native-compile-done-h)
-     (unless force-p
-       (straight--make-build-cache-available))
-     (if-let (built
-              (doom-packages--with-recipes recipes (package local-repo recipe)
-                (unless force-p
-                  ;; Ensure packages with outdated files/bytecode are rebuilt
-                  (let* ((build-dir (straight--build-dir package))
-                         (repo-dir  (straight--repos-dir local-repo))
-                         (build (if (plist-member recipe :build)
-                                    (plist-get recipe :build)
-                                  t))
-                         (want-byte-compile
-                          (or (eq build t)
-                              (memq 'compile build)))
-                         (want-native-compile
-                          (or (eq build t)
-                              (memq 'native-compile build))))
-                    (and (eq (car-safe build) :not)
-                         (setq want-byte-compile (not want-byte-compile)
-                               want-native-compile (not want-native-compile)))
-                    (unless (featurep 'native-compile)
-                      (setq want-native-compile nil))
-                    (and (or want-byte-compile want-native-compile)
-                         (or (file-newer-than-file-p repo-dir build-dir)
-                             (file-exists-p (straight--modified-dir (or local-repo package)))
-                             (cl-loop with outdated = nil
-                                      for file in (doom-files-in build-dir :match "\\.el$" :full t)
-                                      if (or (if want-byte-compile   (doom-packages--elc-file-outdated-p file))
-                                             (if want-native-compile (doom-packages--eln-file-outdated-p file)))
-                                      do (setq outdated t)
+    (let ((straight-check-for-modifications
+           (when (file-directory-p (straight--modified-dir))
+             '(find-when-checking)))
+          (straight--allow-find
+           (and straight-check-for-modifications
+                (executable-find straight-find-executable)
+                t))
+          (straight--packages-not-to-rebuild
+           (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+          (straight--packages-to-rebuild
+           (or (if force-p :all straight--packages-to-rebuild)
+               (make-hash-table :test #'equal)))
+          (recipes (doom-package-recipe-list))
+          (pinned (doom-package-pinned-list)))
+      (add-hook 'native-comp-async-cu-done-functions #'doom-packages--native-compile-done-h)
+      (straight--make-build-cache-available)
+      (if-let (built
+               (doom-packages--with-recipes recipes (package local-repo recipe)
+                 (let ((repo-dir (straight--repos-dir (or local-repo package)))
+                       (build-dir (straight--build-dir package)))
+                   (unless force-p
+                     ;; Ensure packages with outdated files/bytecode are rebuilt
+                     (let* ((build (if (plist-member recipe :build)
+                                       (plist-get recipe :build)
+                                     t))
+                            (want-byte-compile
+                             (or (eq build t)
+                                 (memq 'compile build)))
+                            (want-native-compile
+                             (or (eq build t)
+                                 (memq 'native-compile build))))
+                       (and (eq (car-safe build) :not)
+                            (setq want-byte-compile (not want-byte-compile)
+                                  want-native-compile (not want-native-compile)))
+                       (unless (featurep 'native-compile)
+                         (setq want-native-compile nil))
+                       (and (or want-byte-compile want-native-compile)
+                            (or (file-newer-than-file-p repo-dir build-dir)
+                                (file-exists-p (straight--modified-dir (or local-repo package)))
+                                (cl-loop with outdated = nil
+                                         for file in (doom-files-in build-dir :match "\\.el$" :full t)
+                                         if (or (if want-byte-compile   (doom-packages--elc-file-outdated-p file))
+                                                (if want-native-compile (doom-packages--eln-file-outdated-p file)))
+                                         do (setq outdated t)
                                          (when want-native-compile
                                            (push file doom-packages--eln-output-expected))
-                                      finally return outdated))
-                         (puthash package t straight--packages-to-rebuild))))
-                (straight-use-package (intern package))))
-         (progn
-           (when (featurep 'native-compile)
-             (doom-packages--compile-site-files)
-             (doom-packages--wait-for-native-compile-jobs)
-             (doom-packages--write-missing-eln-errors))
-           ;; HACK Every time you save a file in a package that straight tracks,
-           ;;      it is recorded in ~/.emacs.d/.local/straight/modified/.
-           ;;      Typically, straight will clean these up after rebuilding, but
-           ;;      Doom's use-case circumnavigates that, leaving these files
-           ;;      there and causing a rebuild of those packages each time `doom
-           ;;      sync' or similar is run, so we clean it up ourselves:
-           (delete-directory (straight--modified-dir) 'recursive)
-           (print! (success "\033[KRebuilt %d package(s)") (length built)))
-       (print! (item "No packages need rebuilding"))
-       nil))))
+                                         finally return outdated))
+                            (puthash package t straight--packages-to-rebuild))))
+                   (unless (file-directory-p repo-dir)
+                     (doom-packages--cli-recipes-update))
+                   (condition-case-unless-debug e
+                       (let ((straight-vc-git-post-clone-hook
+                              (cons (lambda! (&key repo-dir commit)
+                                      (print-group!
+                                        (if-let (pin (cdr (assoc package pinned)))
+                                            (print! (item "Pinned to %s") pin)
+                                          (print! (item "Checked out %s") commit)))
+                                      ;; HACK: Line encoding issues can plague
+                                      ;;   repos with dirty worktree prompts
+                                      ;;   when updating packages or "Local
+                                      ;;   variables entry is missing the
+                                      ;;   suffix" errors when installing them
+                                      ;;   (see #2637), so have git handle
+                                      ;;   conversion by force.
+                                      (when (and doom--system-windows-p (stringp repo-dir))
+                                        (let ((default-directory repo-dir))
+                                          (when (file-in-directory-p default-directory straight-base-dir)
+                                            (straight--process-run "git" "config" "core.autocrlf" "true")))))
+                                    straight-vc-git-post-clone-hook)))
+                         (straight-use-package (intern package))
+                         ;; HACK: Straight can sometimes fail to clone a repo,
+                         ;;   leaving behind an empty directory which, in future
+                         ;;   invocations, it will assume indicates a successful
+                         ;;   clone (causing load errors later).
+                         (let ((try 0))
+                           (while (or (not (file-directory-p repo-dir))
+                                      (directory-empty-p repo-dir))
+                             (when (= try 3)
+                               (error "Failed to clone package"))
+                             (print! "Failed to clone %S, trying again (attempt #%d)..." package (1+ try))
+                             (delete-directory repo-dir t)
+                             (delete-directory build-dir t)
+                             (straight-use-package (intern package))
+                             (cl-incf try))))
+                     (error
+                      (signal 'doom-package-error (list package e)))))))
+          (progn
+            (when (featurep 'native-compile)
+              (doom-packages--compile-site-files)
+              (doom-packages--wait-for-native-compile-jobs)
+              (doom-packages--write-missing-eln-errors))
+            ;; HACK: Every time you save a file in a package that straight
+            ;;   tracks, it is recorded in ~/.emacs.d/.local/straight/modified/.
+            ;;   Typically, straight will clean these up after rebuilding, but
+            ;;   Doom's use-case circumnavigates that, leaving these files there
+            ;;   and causing a rebuild of those packages each time `doom sync'
+            ;;   or similar is run, so we clean it up ourselves:
+            (delete-directory (straight--modified-dir) 'recursive)
+            (print! (success "\033[KBuilt %d package(s)") (length built)))
+        (print! (item "No packages need attention"))
+        nil))))
 
 
 
-(defun doom-packages-update ()
+(defun doom-packages-update (&optional pinned-only-p)
   "Updates packages."
   (doom-initialize-packages)
   (doom-packages--barf-if-incomplete)
-  (doom-packages--cli-recipes-update)
   (let* ((repo-dir (straight--repos-dir))
          (pinned (doom-package-pinned-list))
          (recipes (doom-package-recipe-list))
@@ -413,9 +377,10 @@ declaration) or dependency thereof that hasn't already been."
          (repos-to-rebuild (make-hash-table :test 'equal))
          (total (length recipes))
          (esc (unless init-file-debug "\033[1A"))
-         (i 0)
-         errors)
-    (print! (start "Updating packages (this may take a while)..."))
+         (i 0))
+    (if pinned-only-p
+        (print! (start "Updating pinned packages..."))
+      (print! (start "Updating all packages (this may take a while)...")))
     (doom-packages--with-recipes recipes (recipe package type local-repo)
       (cl-incf i)
       (print-group!
@@ -428,11 +393,13 @@ declaration) or dependency thereof that hasn't already been."
          (cl-return))
        (let ((default-directory (straight--repos-dir local-repo)))
          (unless (file-in-directory-p default-directory repo-dir)
-           (print! (warn "(%d/%d) Skipping %s because it is local") i total package)
+           (print! (warn "(%d/%d) Skipping %s because it is out-of-tree...") i total package)
            (cl-return))
          (when (eq type 'git)
            (unless (file-exists-p ".git")
              (error "%S is not a valid repository" package)))
+         (when (and pinned-only-p (not (assoc local-repo pinned)))
+           (cl-return))
          (condition-case-unless-debug e
              (let ((ref (straight-vc-get-commit type local-repo))
                    (target-ref
@@ -446,13 +413,6 @@ declaration) or dependency thereof that hasn't already been."
                      (doom-packages--straight-with (straight-vc-fetch-from-remote recipe)
                        (when .it
                          (straight-merge-package package)
-                         ;; (condition-case e
-                         ;;     (straight-merge-package package)
-                         ;;   (wrong-type-argument
-                         ;;    (if (not (equal (cdr e) '(arrayp nil)))
-                         ;;        (signal (car e) (cdr e))
-                         ;;      (delete-directory (straight--build-dir local-repo) t)
-                         ;;      (straight-use-package (intern package)))))
                          (setq target-ref (straight-vc-get-commit type local-repo))
                          (setq output (doom-packages--commit-log-between ref target-ref)
                                commits (length (split-string output "\n" t)))
@@ -480,7 +440,7 @@ declaration) or dependency thereof that hasn't already been."
                            (straight-vc-git-default-clone-depth 'full))
                        (delete-directory repo 'recursive)
                        (print-group!
-                        (straight-use-package (intern package) nil 'no-build))
+                         (straight-use-package (intern package) nil 'no-build))
                        (prog1 (file-directory-p repo)
                          (or (not (eq type 'git))
                              (setq output (doom-packages--commit-log-between ref target-ref)
@@ -536,13 +496,14 @@ declaration) or dependency thereof that hasn't already been."
      (princ "\033[K")
      (if (hash-table-empty-p packages-to-rebuild)
          (ignore (print! (success "All %d packages are up-to-date") total))
+       (doom-packages--cli-recipes-update)
        (straight--transaction-finalize)
        (let ((default-directory (straight--build-dir)))
          (mapc (doom-rpartial #'delete-directory 'recursive)
                (hash-table-keys packages-to-rebuild)))
        (print! (success "Updated %d package(s)")
                (hash-table-count packages-to-rebuild))
-       (doom-packages-build)
+       (doom-packages-ensure)
        t))))
 
 
