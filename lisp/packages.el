@@ -2,8 +2,13 @@
 ;;; lisp/packages.el
 
 ;; doom.el
-(package! auto-minor-mode :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
-(package! gcmh :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
+(package! auto-minor-mode
+  :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
+(package! compat
+  :recipe (:host github :repo "emacs-compat/compat")
+  :pin "eb8fbfa5582a8e5880e2eaa66d15d498bca6a45a")
+(package! gcmh
+  :pin "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
 
 ;; doom-packages.el
 (package! straight
@@ -41,7 +46,3 @@
 ;; doom-keybinds.el
 (package! general :pin "bda777cd303db217fd2fbf2087eff40ec4aafda1")
 (package! which-key :pin "4d20bc852545a2e602f59084a630f888542052b1")
-
-(package! compat
-  :recipe (:host github :repo "emacs-compat/compat")
-  :pin "eb8fbfa5582a8e5880e2eaa66d15d498bca6a45a")
