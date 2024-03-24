@@ -24,7 +24,7 @@
     ((noenvvar? ("-e") "Don't regenerate the envvar file")
      (update?   ("-u") "Update all installed packages after syncing")
      (noupdate? ("-U") "Don't update any packages")
-     (purge?    ("-p") "Purge orphaned package repos & regraft them")
+     (purge?    ("--gc") "Purge orphaned package repos & regraft them")
      (jobs      ("-j" "--jobs" num) "How many threads to use for native compilation")
      (rebuild?  ("-b" "--rebuild") "Rebuild, compile, & symlink installed packages")
      (auto?     ("-B") "Rebuild packages, but only if necessary")

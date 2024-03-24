@@ -15,9 +15,10 @@
 
 (defcli-obsolete! ((build b)) (sync "--rebuild") "v3.0.0")
 
+(defcli-obsolete! ((purge p)) (gc) "v3.0.0")
 
 ;; TODO Rename to "doom gc" and move to its own file
-(defcli! ((purge p))
+(defcli! (gc)
     ((nobuilds-p  ("-b" "--no-builds")  "Don't purge unneeded (built) packages")
      (noelpa-p    ("-p" "--no-elpa")    "Don't purge ELPA packages")
      (norepos-p   ("-r" "--no-repos")   "Don't purge unused straight repos")
