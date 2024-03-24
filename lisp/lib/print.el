@@ -84,7 +84,8 @@ and `format!' into colored output, where COLOR is any car of this list (or
                  (doom-print--indent
                   (if args (apply #'format str args) str)
                   "> ")))
-    (path    . abbreviate-file-name)
+    (path    . (lambda (&rest segments)
+                 (abbreviate-file-name (apply #'doom-path segments))))
     (symbol  . symbol-name)
     (relpath . (lambda (str &optional dir)
                  (if (or (not str)
