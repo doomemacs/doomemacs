@@ -96,7 +96,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
     (if (eq install? :no)
         (print! (warn "Not installing plugins, as requested"))
       (print! "Installing plugins")
-      (doom-packages-install))
+      (doom-packages-ensure))
 
     (print! "Regenerating autoloads files")
     (doom-profile-generate)
