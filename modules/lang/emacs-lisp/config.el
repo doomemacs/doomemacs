@@ -127,14 +127,14 @@ See `+emacs-lisp-non-package-mode' for details.")
     (when-let (ret (funcall fn sym))
       (if (boundp sym)
           (concat ret " "
-                  (let* ((truncated " [...]")
-                         (print-escape-newlines t)
+                  (let* ((print-escape-newlines t)
                          (str (symbol-value sym))
                          (str (prin1-to-string str))
-                         (limit (- (frame-width) (length ret) (length truncated) 1)))
+                         (limit (- (frame-width) (length ret)
+                                   (length doom-elide-string) 1)))
                     (format (format "%%0.%ds%%s" (max limit 0))
                             (propertize str 'face 'warning)
-                            (if (< (length str) limit) "" truncated))))
+                            (if (< (length str) limit) "" doom-elide-string))))
         ret)))
 
   (map! :localleader

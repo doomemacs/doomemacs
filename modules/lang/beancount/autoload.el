@@ -188,7 +188,7 @@ If DISABLE? (universal arg), reveal hidden accounts without prompting."
         ;; TODO: Prettier header-line display
         (setq header-line-format `("" "Filtering by account: " ,account))
         (let ((start (point-min))
-              (placeholder (propertize "[...]\n" 'face 'shadow)))
+              (placeholder (propertize (concat doom-elide-string "\n") 'face 'shadow)))
           (goto-char start)
           (while (re-search-forward (concat "\\_<" (regexp-quote account) "\\_>") nil t)
             (save-excursion
