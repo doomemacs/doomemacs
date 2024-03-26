@@ -152,7 +152,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/solidity/README.org][solidity]] - TODO
 + swift =+lsp= - TODO
 + terra - TODO
-+ web =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
++ [[file:../modules/lang/web/README.org][web]] =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
 + [[file:../modules/lang/yaml/README.org][yaml]] =+lsp= - TODO
 + [[file:../modules/lang/zig/README.org][zig]] =+lsp= - Zig support.
 
