@@ -7,5 +7,5 @@
     (warn! "Couldn't find clj-kondo. flycheck-clj-kondo will not work.")))
 
 (when (modulep! :editor format)
-  (unless (executable-find "cljfmt")
+  (unless +clojure-cljfmt-binary
     (warn! "Couldn't find cljfmt. Formatting will be disabled.")))

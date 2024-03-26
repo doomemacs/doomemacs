@@ -277,8 +277,8 @@ results buffer.")
                                   collect "--exclude"
                                   collect dir)
                          (if (featurep :system 'windows) '("--path-separator=/")))))
-              ((executable-find "rg" t)
-               (append (list "rg" "--hidden" "--files" "--follow" "--color=never" "--no-messages")
+              ((executable-find doom-rg-binary t)
+               (append (list doom-rg-binary "--hidden" "--files" "--follow" "--color=never" "--no-messages")
                        (cl-loop for dir in projectile-globally-ignored-directories
                                 collect "--glob"
                                 collect (concat "!" dir))
