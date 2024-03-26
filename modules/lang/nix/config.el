@@ -11,8 +11,6 @@
   :interpreter ("\\(?:cached-\\)?nix-shell" . +nix-shell-init-mode)
   :mode "\\.nix\\'"
   :init
-  ;; Treat flake.lock files as json. Fall back to js-mode because it's faster
-  ;; than js2-mode, and its extra features aren't needed there.
   (add-to-list 'auto-mode-alist
                (cons "/flake\\.lock\\'"
                      (if (modulep! :lang json)
