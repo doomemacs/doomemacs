@@ -206,13 +206,6 @@ stored in `persp-save-dir'.")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
-  (when (modulep! :completion ivy)
-    (after! ivy-rich
-      (cl-callf plist-put ivy-rich-display-transformers-list
-        '+workspace/switch-to
-        '(:columns ((ivy-rich-candidate (:width 50))
-                    (+workspace--ivy-rich-preview))))))
-
   (when (modulep! :completion helm)
     (after! helm-projectile
       (setcar helm-source-projectile-projects-actions
