@@ -810,10 +810,10 @@ However, in batch mode, print to stdout instead of stderr."
 ;; explanation.
 (defadvice! doom-cli--straight-throw-error-on-no-branch-a (fn &rest args)
   :around #'straight--process-log
-  (letf! ((defun shell-quote-argument (arg &optional posix)
-            (when (null arg)
+  (letf! ((defun shell-quote-argument (&rest args)
+            (unless (car args)
               (error "Package was not properly cloned due to a connection failure, please try again later"))
-            (funcall shell-quote-argument arg posix)))
+            (apply shell-quote-argument args)))
     (apply fn args)))
 
 (defadvice! doom-cli--straight-regurgitate-empty-string-error-a (fn &rest args)
