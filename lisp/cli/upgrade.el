@@ -30,7 +30,6 @@ following shell commands:
 
     cd ~/.emacs.d
     git pull --rebase
-    doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
          (sync-cmd (append '("sync" "-u")
@@ -140,7 +139,6 @@ following shell commands:
                     (ignore (print! (error "Aborted")))
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
-                   (doom-compile-clean)
                    (doom-cli-context-put context 'straight-recipe (doom-upgrade--get-straight-recipe))
                    (or (and (zerop (car (sh! "git" "reset" "--hard" target-remote)))
                             (equal (cdr (sh! "git" "rev-parse" "HEAD")) new-rev))
