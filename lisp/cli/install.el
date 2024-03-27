@@ -67,7 +67,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
                   (if (file-exists-p filename)
                       (print! (item "Skipping %s (already exists)...") (path filename))
                     (print! (item "Creating %s...") (path filename))
-                    (doom-file-write filename template)
+                    (with-temp-file template (insert-file-contents template))
                     (print! (success "Done!")))))
               (let ((template-dir (doom-path doom-emacs-dir "templates")))
                 `((,doom-module-init-file
