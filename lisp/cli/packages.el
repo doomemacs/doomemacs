@@ -799,5 +799,31 @@ However, in batch mode, print to stdout instead of stderr."
                                      "/dev/null")))
     (apply fn args)))
 
+;; If the repo failed to clone correctly (usually due to a connection failure),
+;; straight proceeds as normal until a later call produces a garbage result
+;; (typically, when it fails to fetch the remote branch of the empty directory).
+;; This causes Straight to throw an otherwise cryptic type error when it tries
+;; to sanitize the result for its log buffer.
+;;
+;; This error is a common source of user confusion and false positive bug
+;; reports, so this advice catches them to regurgitates a more cogent
+;; explanation.
+(defadvice! doom-cli--straight-throw-error-on-no-branch-a (fn &rest args)
+  :around #'straight--process-log
+  (letf! ((defun shell-quote-argument (arg &optional posix)
+            (when (null arg)
+              (error "Package was not properly cloned due to a connection failure, please try again later"))
+            (funcall shell-quote-argument arg posix)))
+    (apply fn args)))
+
+(defadvice! doom-cli--straight-regurgitate-empty-string-error-a (fn &rest args)
+  :around #'straight-vc-git-local-repo-name
+  (condition-case-unless-debug e
+      (apply fn args)
+    (wrong-type-argument
+   (if (eq (cadr e) 'stringp)
+       (error "Package was not properly cloned due to a connection failure, please try again later")
+     (signal (car e) (cdr e))))))
+
 (provide 'doom-cli-packages)
 ;;; packages.el ends here
