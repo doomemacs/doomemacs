@@ -74,13 +74,14 @@ OPTIONS:
             (print! (warn "Your system has changed since last sync"))
             (setq to-rebuild t))
           (when (and to-rebuild (not (doom-cli-context-suppress-prompts-p context)))
-            (if nobuild?
-                (print! (warn "Packages need to be recompiled, but -B has prevented it. Skipping..."))
-              (or (not (doom-cli-context-get context 'upgrading))
-                  (y-or-n-p
-                   (format! "  %s" "Your installed packages will need to be recompiled. Do so now?"))
-                  (exit! 0))
-              (setq rebuild? t))))
+            (cond (nobuild?
+                   (print! (warn "Packages must be rebuilt, but -B has prevented it. Skipping...")))
+                  ((doom-cli-context-get context 'upgrading)
+                   (print! (warn "Packages will be rebuilt"))
+                   (setq rebuild? t))
+                  ((y-or-n-p (format! "  %s" "Installed packages must be rebuilt. Do so now?"))
+                   (setq rebuild? t))
+                  ((exit! 0)))))
         (when (and (not noenvvar?)
                    (file-exists-p doom-env-file))
           (call! '(env)))
