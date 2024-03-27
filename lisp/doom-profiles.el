@@ -368,7 +368,8 @@ Defaults to the profile at `doom-profile-default'."
   ;; FIX: Make sure this only runs at startup to protect us Emacs' interpreter
   ;;   re-evaluating this file when lazy-loading dynamic docstrings from the
   ;;   byte-compiled init file.
-  `((when (doom-context-p 'init)
+  `((when (or (doom-context-p 'init)
+              (doom-context-p 'reload))
       ,@(cl-loop for var in doom-autoloads-cached-vars
                  if (boundp var)
                  collect `(set-default ',var ',(symbol-value var)))
