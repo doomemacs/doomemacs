@@ -26,8 +26,8 @@
      (noupdate? ("-U") "Don't update any packages")
      (purge?    ("--gc") "Purge orphaned package repos & regraft them")
      (jobs      ("-j" "--jobs" num) "How many threads to use for native compilation")
-     (rebuild?  ("-b" "--rebuild") "Rebuild, compile, & symlink installed packages")
-     (auto?     ("-B") "Rebuild packages, but only if necessary")
+     (rebuild?  ("-b" "--rebuild") "Rebuild all installed packages, unconditionally")
+     (nobuild?  ("-B") "Don't rebuild packages when hostname or Emacs version has changed")
      &context context)
   "Synchronize your config with Doom Emacs.
 
@@ -52,8 +52,6 @@ OPTIONS:
   :benchmark t
   (when (doom-profiles-bootloadable-p)
     (call! '(profiles sync "--reload")))
-  (when (doom-cli-context-suppress-prompts-p context)
-    (setq auto? t))
   (when jobs
     (setq native-comp-async-jobs-number (truncate jobs)))
   (run-hooks 'doom-before-sync-hook)
@@ -75,11 +73,14 @@ OPTIONS:
           (when (and old-host (not (equal old-host (system-name))))
             (print! (warn "Your system has changed since last sync"))
             (setq to-rebuild t))
-          (when (and to-rebuild (not auto?))
-            (or (y-or-n-p
-                 (format! "  %s" "Your installed packages will need to be recompiled. Do so now?"))
-                (exit! 0))
-            (setq rebuild? t)))
+          (when (and to-rebuild (not (doom-cli-context-suppress-prompts-p context)))
+            (if nobuild?
+                (print! (warn "Packages need to be recompiled, but -B has prevented it. Skipping..."))
+              (or (not (doom-cli-context-get context 'upgrading))
+                  (y-or-n-p
+                   (format! "  %s" "Your installed packages will need to be recompiled. Do so now?"))
+                  (exit! 0))
+              (setq rebuild? t))))
         (when (and (not noenvvar?)
                    (file-exists-p doom-env-file))
           (call! '(env)))
@@ -89,7 +90,9 @@ OPTIONS:
         (when (doom-profile-generate)
           (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
           (run-hooks 'doom-after-sync-hook))
-        (with-temp-file doom-cli-sync-info-file (prin1 (cons emacs-version (system-name)) (current-buffer)))
+        (when (and (not rebuild?) (not nobuild?))
+          (with-temp-file doom-cli-sync-info-file
+            (prin1 (cons emacs-version (system-name)) (current-buffer))))
         t)
     (remove-hook 'kill-emacs-hook #'doom-sync--abort-warning-h)))
 

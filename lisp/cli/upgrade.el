@@ -32,7 +32,7 @@ following shell commands:
     doom clean
     doom sync -u"
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
-         (sync-cmd (append '("sync" "-u" "-B") (if jobs `("-j" ,num)))))
+         (sync-cmd (append '("sync" "-u") (if jobs `("-j" ,num)))))
     (cond
      (packages?
       ;; HACK It's messy to use straight to upgrade straight, due to the
@@ -53,6 +53,7 @@ following shell commands:
       ;; Reload Doom's CLI & libraries, in case there were any upstream changes.
       ;; Major changes will still break, however
       (print! (item "Reloading Doom Emacs"))
+      (doom-cli-context-put context 'upgrading t)
       (exit! "doom" "upgrade" "-p"
              (if force? "--force")
              (if jobs (format "--jobs=%d" jobs))))
