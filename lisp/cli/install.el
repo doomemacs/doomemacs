@@ -65,8 +65,8 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
                 (cl-destructuring-bind (filename . template) file
                   (if (file-exists-p! filename doom-user-dir)
                       (print! (item "Skipping %s (already exists)")
-                              (path filename))
-                    (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
+                              (relpath (doom-path doom-user-dir filename)))
+                    (print! (item "Creating %s") (relpath (doom-path doom-user-dir filename)))
                     (with-temp-file (doom-path doom-user-dir filename)
                       (insert-file-contents template))
                     (print! (success "Done!")))))
