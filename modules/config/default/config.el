@@ -482,16 +482,23 @@ Continues comments if executed from a commented line. Consults
                         (cond ((null +corfu-want-ret-to-confirm)
                                (corfu-quit)
                                nil)
-                              ((eq +corfu-want-ret-to-confirm 'minibuffer)
+                              ((eq +corfu-want-ret-to-confirm t)
+                                 (if (>= corfu--index 0)
+                                     cmd
+                                   nil))
+                              ((eq +corfu-want-ret-to-confirm 'both)
                                (funcall-interactively cmd)
                                nil)
-                              ((and (or (not (minibufferp nil t))
-                                        (eq +corfu-want-ret-to-confirm t))
-                                    (>= corfu--index 0))
-                               cmd)
-                              ((or (not (minibufferp nil t))
-                                   (eq +corfu-want-ret-to-confirm t))
-                               nil)
+                              ((eq +corfu-want-ret-to-confirm 'minibuffer)
+                               (if (minibufferp nil t)
+                                   ;; 'both' behavior
+                                   (progn
+                                     (funcall-interactively cmd)
+                                     nil)
+                                 ;; 't' behavior
+                                 (if (>= corfu--index 0)
+                                     cmd
+                                   nil)))
                               (t cmd))))))
     (map! :when (modulep! :completion corfu)
           :map corfu-map
