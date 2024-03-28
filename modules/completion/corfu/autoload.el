@@ -37,3 +37,23 @@
          (save-excursion (backward-char 1)
                          (insert-char ?\\)))
         (t (call-interactively #'corfu-insert-separator))))
+
+;;;###autoload
+(defun +corfu-popup-and-first ()
+  "Trigger corfu popup and select the first candidate."
+;; HACK using `corfu--auto-complete-deferred' to trigger the completion popup
+;; without explicitly inserting any candidate
+  (interactive)
+  (corfu--auto-complete-deferred)
+  (when (> corfu--total 0)
+    (corfu--goto 0)))
+
+;;;###autoload
+(defun +corfu-popup-and-last ()
+  "Trigger corfu popup and select the last candidate."
+;; HACK using `corfu--auto-complete-deferred' to trigger the completion popup
+;; without explicitly inserting any candidate
+  (interactive)
+  (corfu--auto-complete-deferred)
+  (when (> corfu--total 0)
+    (corfu-last)))
