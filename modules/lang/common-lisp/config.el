@@ -174,3 +174,8 @@
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-asdf 'append))
+
+(use-package! sly-stepper
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-stepper))
