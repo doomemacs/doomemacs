@@ -20,9 +20,6 @@ OPTIONAL:
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   (after! mu4e
-    (when (version< mu4e-mu-version "1.4")
-      (when-let (address (cdr (assq 'user-mail-address letvars)))
-        (add-to-list 'mu4e-user-mail-address-list address)))
     ;; remove existing context with same label
     (setq mu4e-contexts
           (cl-loop for context in mu4e-contexts
@@ -380,20 +377,13 @@ preferred alias"
                           (mu4e-personal-addresses))))
     (setq user-mail-address
           (if mu4e-compose-parent-message
-              (if (version<= "1.8" mu4e-mu-version)
-                  (let ((to (mu4e-message-field mu4e-compose-parent-message :to))
-                        (cc (mu4e-message-field mu4e-compose-parent-message :cc))
-                        (from (mu4e-message-field mu4e-compose-parent-message :from)))
-                    (or (car (cl-intersection
-                              (mapcar (lambda (adr) (plist-get adr :email))
-                                      (append to from cc))
-                              addresses
-                              :test #'equal))
-                        (completing-read "From: " addresses)))
-                (let ((to (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :to)))
-                      (cc (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :cc)))
-                      (from (mapcar #'cdr (mu4e-message-field mu4e-compose-parent-message :from))))
-                  (or (car (cl-intersection (append to from cc) addresses
-                                            :test #'equal))
-                      (completing-read "From: " addresses))))
+              (let ((to (mu4e-message-field mu4e-compose-parent-message :to))
+                    (cc (mu4e-message-field mu4e-compose-parent-message :cc))
+                    (from (mu4e-message-field mu4e-compose-parent-message :from)))
+                (or (car (cl-intersection
+                          (mapcar (lambda (adr) (plist-get adr :email))
+                                  (append to from cc))
+                          addresses
+                          :test #'equal))
+                    (completing-read "From: " addresses)))
             (completing-read "From: " addresses)))))
