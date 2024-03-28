@@ -202,6 +202,15 @@ A few variables may be set to change behavior of this module:
 - [[var:+corfu-want-minibuffer-completion]] ::
   Whether to enable Corfu in the minibuffer. See its documentation for
   additional tweaks.
+- [[var:+corfu-want-tab-prefer-expand-snippets]] ::
+  Whether to prefer expanding snippets over cycling candidates when pressing
+  [[kbd:][TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-snippets]] ::
+  Whether to prefer navigating snippets over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
+- [[var:+corfu-want-tab-prefer-navigating-org-tables]] ::
+  Whether to prefer navigating org tables over cycling candidates when pressing
+  [[kbd:][TAB]] and [[kbd:][S-TAB]].
 
 ** Adding CAPFs to a mode
 To add other CAPFs on a mode-per-mode basis, put either of the following in your

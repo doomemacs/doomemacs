@@ -16,6 +16,18 @@ Possible values are:
 Setting this to `aggressive' will enable Corfu in more commands which
 use the minibuffer such as `query-replace'.")
 
+(defvar +corfu-want-tab-prefer-expand-snippets nil
+  "If non-nil, prefer expanding snippets over cycling candidates with
+TAB.")
+
+(defvar +corfu-want-tab-prefer-navigating-snippets nil
+  "If non-nil, prefer navigating snippets over cycling candidates with
+TAB/S-TAB.")
+
+(defvar +corfu-want-tab-prefer-navigating-org-tables nil
+  "If non-nil, prefer navigating org tables over cycling candidates with
+TAB/S-TAB.")
+
 ;;
 ;;; Packages
 (use-package! corfu
