@@ -74,20 +74,36 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
 
 ;;;###autoload
 (defun +evil/window-move-left ()
-  "Swap windows to the left."
-  (interactive) (+evil--window-swap 'left))
+  "Swap windows to the right"
+  (interactive)
+  (if (and (window-at-side-p nil 'left)
+           (not (or (window-in-direction 'above)
+                    (window-in-direction 'below))))
+      (evil-window-move-far-right)
+    (+evil--window-swap 'left)))
 ;;;###autoload
 (defun +evil/window-move-right ()
   "Swap windows to the right"
-  (interactive) (+evil--window-swap 'right))
+  (interactive)
+  (if (and (window-at-side-p nil 'right)
+           (not (or (window-in-direction 'above)
+                    (window-in-direction 'below))))
+      (evil-window-move-far-left)
+    (+evil--window-swap 'right)))
 ;;;###autoload
 (defun +evil/window-move-up ()
   "Swap windows upward."
-  (interactive) (+evil--window-swap 'up))
+  (interactive)
+  (if (and (window-at-side-p nil 'top))
+      (evil-window-move-very-bottom)
+    (+evil--window-swap 'up)))
 ;;;###autoload
 (defun +evil/window-move-down ()
   "Swap windows downward."
-  (interactive) (+evil--window-swap 'down))
+  (interactive)
+  (if (window-at-side-p nil 'bottom)
+      (evil-window-move-very-top)
+    (+evil--window-swap 'down)))
 
 ;;;###autoload
 (defun +evil/window-split-and-follow ()
