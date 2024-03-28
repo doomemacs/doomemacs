@@ -79,6 +79,18 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
           ((+fold--ts-fold-p) (ts-fold-toggle)))))
 
 ;;;###autoload
+(defun +fold/open-rec ()
+  "Recursively open the folded region at point.
+
+Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
+  (interactive)
+  (save-excursion
+    (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
+          ((+fold--outline-fold-p) (outline-show-subtree))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
+          ((+fold--ts-fold-p) (ts-fold-open)))))
+
+;;;###autoload
 (defun +fold/open ()
   "Open the folded region at point.
 
@@ -87,7 +99,7 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
           ((+fold--outline-fold-p)
-           (outline-show-children)
+           (outline-show-branches)
            (outline-show-entry))
           ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
           ((+fold--ts-fold-p) (ts-fold-open)))))
@@ -111,7 +123,7 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
   (cond ((+fold--ts-fold-p)
          (ts-fold-open-all))
-        ((featurep 'vimish-fold)
+        ((and (featurep 'vimish-fold) (+fold--vimish-fold-p))
          (vimish-fold-unfold-all))
         ((save-excursion
            (+fold--ensure-hideshow-mode)
@@ -138,8 +150,12 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
         (+fold--ensure-hideshow-mode)
         (hs-life-goes-on
          (if (integerp level)
-             (hs-hide-level-recursive (1- level) (point-min) (point-max))
-           (hs-hide-all)))))))
+             (progn
+               (outline--show-headings-up-to-level (1+ level))
+               (hs-hide-level-recursive (1- level) (point-min) (point-max)))
+           (hs-hide-all)
+           (when (fboundp 'outline-hide-sublevels)
+             (outline-show-only-headings))))))))
 
 ;;;###autoload
 (defun +fold/next (count)

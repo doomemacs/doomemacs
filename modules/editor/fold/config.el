@@ -6,7 +6,7 @@
     [remap evil-toggle-fold]   #'+fold/toggle
     [remap evil-close-fold]    #'+fold/close
     [remap evil-open-fold]     #'+fold/open
-    [remap evil-open-fold-rec] #'+fold/open
+    [remap evil-open-fold-rec] #'+fold/open-rec
     [remap evil-close-folds]   #'+fold/close-all
     [remap evil-open-folds]    #'+fold/open-all)
   (after! evil
