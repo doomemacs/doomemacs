@@ -99,6 +99,8 @@ following shell commands:
           (sh! "git" "reset" "--hard" (format "origin/%s" branch))
           (sh! "git" "clean" "-ffd")))
 
+      ;; In case of leftover state from a partial/incomplete 'doom upgrade'
+      (sh! "git" "branch" "-D" target-remote)
       (sh! "git" "remote" "remove" doom-upgrade-remote)
       (unwind-protect
           (let (result)
