@@ -50,6 +50,34 @@
             'lsp-mode))
     (add-hook 'rustic-mode-local-vars-hook #'rustic-setup-lsp 'append))
 
+  ;; HACK Add @scturtle fix for signatures on hover on LSP mode.
+  ;;   This code has not been upstreamed because it depends on the
+  ;;   exact format of the response of Rust Analyzer, which is not
+  ;;   stable enough for lsp-mode maintainers.
+  ;; Ref: https://github.com/emacs-lsp/lsp-mode/pull/1740
+  (when (and (modulep! +lsp) (not (modulep! tools lsp +eglot)))
+    ;; do not cache results from rust-analyzer
+    (advice-add #'lsp-eldoc-function :after (lambda (&rest _) (setq lsp--hover-saved-bounds nil)))
+
+    ;; extract and show short signature for rust-analyzer
+    (cl-defmethod lsp-clients-extract-signature-on-hover (contents (_server-id (eql rust-analyzer)))
+      (let* ((value (if lsp-use-plists (plist-get contents :value) (gethash "value" contents)))
+             (groups (--partition-by (s-blank? it) (s-lines (s-trim value))))
+             (mod-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-third-item groups))
+                              ((s-equals? "```rust" (car (-third-item groups))) (-first-item groups))
+                              (t nil)))
+             (cmt (if (null mod-group) "" (concat " // " (cadr mod-group))))
+             (sig-group (cond ((s-equals? "```rust" (car (-fifth-item groups))) (-fifth-item groups))
+                              ((s-equals? "```rust" (car (-third-item groups))) (-third-item groups))
+                              (t (-first-item groups))))
+             (sig (->> sig-group
+                       (--drop-while (s-equals? "```rust" it))
+                       (--take-while (not (s-equals? "```" it)))
+                       (--map (s-replace-regexp "//.*" "" it))
+                       (--map (s-trim it))
+                       (s-join " "))))
+        (lsp--render-element (concat "```rust\n" sig cmt "\n```")))))
+
   (when (modulep! +tree-sitter)
     (add-hook 'rustic-mode-local-vars-hook #'tree-sitter! 'append))
 
