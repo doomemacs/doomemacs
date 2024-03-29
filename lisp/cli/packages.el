@@ -319,7 +319,8 @@ list remains lean."
                                       (print-group!
                                         (if-let (pin (cdr (assoc package pinned)))
                                             (print! (item "Pinned to %s") pin)
-                                          (print! (item "Checked out %s") commit)))
+                                          (when commit
+                                            (print! (item "Checked out %s") commit))))
                                       ;; HACK: Line encoding issues can plague
                                       ;;   repos with dirty worktree prompts
                                       ;;   when updating packages or "Local
