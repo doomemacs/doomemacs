@@ -91,7 +91,7 @@ OPTIONS:
         (when (doom-profile-generate)
           (print! (item "Restart Emacs or use 'M-x doom/reload' for changes to take effect"))
           (run-hooks 'doom-after-sync-hook))
-        (when (and (not rebuild?) (not nobuild?))
+        (when (or rebuild? (not (file-exists-p doom-cli-sync-info-file)))
           (with-temp-file doom-cli-sync-info-file
             (prin1 (cons emacs-version (system-name)) (current-buffer))))
         t)
