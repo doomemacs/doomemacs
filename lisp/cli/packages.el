@@ -339,8 +339,7 @@ list remains lean."
                          ;;   invocations, it will assume indicates a successful
                          ;;   clone (causing load errors later).
                          (let ((try 0))
-                           (while (or (not (file-directory-p repo-dir))
-                                      (directory-empty-p repo-dir))
+                           (while (not (file-directory-p (doom-path repo-dir ".git")))
                              (when (= try 3)
                                (error "Failed to clone package"))
                              (print! "Failed to clone %S, trying again (attempt #%d)..." package (1+ try))
