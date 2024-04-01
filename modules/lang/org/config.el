@@ -1188,7 +1188,7 @@ between the two."
   :hook (org-mode . org-eldoc-load)
   :init (setq org-eldoc-breadcrumb-separator " → ")
   :config
-  ;; HACK Fix #2972: infinite recursion when eldoc kicks in in 'org' or 'python'
+  ;; HACK Fix #2972: infinite recursion when eldoc kicks in 'org' or 'python'
   ;;   src blocks.
   ;; TODO Should be reported upstream!
   (puthash "org" #'ignore org-eldoc-local-functions-cache)
