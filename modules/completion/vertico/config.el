@@ -206,6 +206,9 @@ orderless."
          "C-x C-d" #'consult-dir
          "C-x C-j" #'consult-dir-jump-file))
   :config
+  ;; DEPRECATED: Remove when Doom core replaces projectile with project.el
+  (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
+
   (when (modulep! :tools docker)
     ;; TODO: Replace with `tramp-container--completion-function' when we drop
     ;;   support for <29
