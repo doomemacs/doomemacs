@@ -315,38 +315,36 @@ list remains lean."
                      (doom-packages--cli-recipes-update))
                    (condition-case-unless-debug e
                        (let ((straight-vc-git-post-clone-hook
-                              (cons (lambda! (&key repo-dir commit)
+                              (cons (lambda! (&key commit)
                                       (print-group!
                                         (if-let (pin (cdr (assoc package pinned)))
                                             (print! (item "Pinned to %s") pin)
                                           (when commit
-                                            (print! (item "Checked out %s") commit))))
-                                      ;; HACK: Line encoding issues can plague
-                                      ;;   repos with dirty worktree prompts
-                                      ;;   when updating packages or "Local
-                                      ;;   variables entry is missing the
-                                      ;;   suffix" errors when installing them
-                                      ;;   (see #2637), so have git handle
-                                      ;;   conversion by force.
-                                      (when (and doom--system-windows-p (stringp repo-dir))
-                                        (let ((default-directory repo-dir))
-                                          (when (file-in-directory-p default-directory straight-base-dir)
-                                            (straight--process-run "git" "config" "core.autocrlf" "true")))))
+                                            (print! (item "Checked out %s") commit)))))
                                     straight-vc-git-post-clone-hook)))
                          (straight-use-package (intern package))
-                         ;; HACK: Straight can sometimes fail to clone a repo,
-                         ;;   leaving behind an empty directory which, in future
-                         ;;   invocations, it will assume indicates a successful
-                         ;;   clone (causing load errors later).
-                         (let ((try 0))
-                           (while (not (file-directory-p (doom-path repo-dir ".git")))
-                             (when (= try 3)
-                               (error "Failed to clone package"))
-                             (print! "Failed to clone %S, trying again (attempt #%d)..." package (1+ try))
-                             (delete-directory repo-dir t)
-                             (delete-directory build-dir t)
-                             (straight-use-package (intern package))
-                             (cl-incf try))))
+                         (when (file-in-directory-p repo-dir straight-base-dir)
+                           ;; HACK: Straight can sometimes fail to clone a repo,
+                           ;;   leaving behind an empty directory which, in
+                           ;;   future invocations, it will assume indicates a
+                           ;;   successful clone (causing load errors later).
+                           (let ((try 0))
+                             (while (not (file-directory-p (doom-path repo-dir ".git")))
+                               (when (= try 3)
+                                 (error "Failed to clone package"))
+                               (print! (warn "Failed to clone %S, trying again (attempt #%d)...") package (1+ try))
+                               (delete-directory repo-dir t)
+                               (delete-directory build-dir t)
+                               (straight-use-package (intern package))
+                               (cl-incf try)))
+                           ;; HACK: Line encoding issues can plague repos with
+                           ;;   dirty worktree prompts when updating packages or
+                           ;;   "Local variables entry is missing the suffix"
+                           ;;   errors when installing them (see #2637), so have
+                           ;;   git handle conversion by force.
+                           (when doom--system-windows-p
+                             (let ((default-directory repo-dir))
+                               (straight--process-run "git" "config" "core.autocrlf" "true")))))
                      (error
                       (signal 'doom-package-error (list package e)))))))
           (progn
