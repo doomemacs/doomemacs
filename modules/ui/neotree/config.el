@@ -15,7 +15,7 @@
         neo-mode-line-type 'none
         neo-window-width 30
         neo-show-updir-line nil
-        neo-theme 'icons
+        neo-theme 'nerd
         neo-banner-message nil
         neo-confirm-create-file #'off-p
         neo-confirm-create-directory #'off-p
