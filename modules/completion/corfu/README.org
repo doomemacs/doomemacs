@@ -203,6 +203,14 @@ A few variables may be set to change behavior of this module:
   Whether to enable Corfu in the minibuffer. See its documentation for
   additional tweaks.
 
+** Turning off auto-completion
+To disable idle (as-you-type) completion, unset ~corfu-auto~:
+#+begin_src emacs-lisp
+;;; in $DOOMDIR/config.el
+(after! corfu
+  (setq corfu-auto nil))
+#+end_src
+
 ** Adding CAPFs to a mode
 To add other CAPFs on a mode-per-mode basis, put either of the following in your
 ~config.el~:
