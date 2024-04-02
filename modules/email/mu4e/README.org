@@ -242,6 +242,82 @@ as deleted: Auto-Expunge off - Wait for the client to update the server." and
 "When a message is marked as deleted and expunged from the last visible IMAP
 folder: Move the message to the trash" for the integrations to work as expected.
 
+** Sending mail (SMTP)
+Once you're able to fetch your mail, the next step is to configure =mu4e= to
+send mail via SMTP. All of the following snippets are meant to be part of your
+~set-email-account!~ block:
+
+*** SMTP server configuration
+#+begin_src emacs-lisp
+;; In `set-email-account!'
+(smtpmail-smtp-user . "foo@bar.com") ; or just 'foo', depending on your provider
+(smtpmail-smtp-server   . "smtp.bar.com") ; depends on your provider
+#+end_src
+
+*** Authentication
+Most SMTP servers require you to authenticate with your username and a password
+before sending mail. Emacs will prompt you for this password when you attempt to
+send mail. You can store this password as described in [[elisp:(info "(emacs) Authentication")][the relevant info node]].
+
+Alternately, if you're already using =pass= to store your passwords, you can use
+the [[doom-module::tools pass +auth]] module as an auth source. The corresponding
+entry in your password store should have the same name as your SMTP server (for
+example, it might be called =smtp.bar.com=). You may also need to run the function
+~auth-source-pass-enable~ at some point.
+
+Emacs will first attempt to send mail without supplying credentials, and expects
+the server to communicate that needs credentials. Some servers (eg. Gmail) will
+instead abort with an error if they don't recieve credentials on the first
+attempt. To get around this, you can set
+~smtpmail-servers-requiring-authorization~ to a regex matching the name of your
+server:
+#+begin_src emacs-lisp
+;; In `set-email-account!'
+(smtpmail-servers-requiring-authorization . "smtp\\.bar\\.com")
+#+end_src
+
+**** Gmail
+Gmail does not support standard SMTP authentication by default, instead
+expecting applications to perform OAuth. However, it still supports a much
+simpler method - it allows you to generate an 'app password', which can be used
+as a regular SMTP password. You will need to generate an app password in Gmail's
+settings.
+
+*** Connection type
+Emacs supports three types of SMTP connections: ~plain~ (unencrypted,
+conventionally port 25), ~ssl~ (conventionally port 465), and ~starttls~
+(conventionally port 587). This module defaults to ~starttls~, which is the most
+modern and recommended option. However, some servers may not support it (you'll
+usually get a 'connection closed' or 'connection reset' error in this case), or
+a firewall somewhere in your network may be blocking the port (you'll get a
+'network unreachable' error, or similar). In such a case, you may want to change
+the defaults:
+#+begin_src emacs-lisp
+;; In `set-email-account!'
+;; example: ssl on port 465
+(smtpmail-smtp-service . 465)
+(smtpmail-stream-type . ssl)
+#+end_src
+
+*** Sending mail asynchronously
+Normally, =mu4e= will block Emacs while sending mail, which can be annoying when
+you're on a slow connection and the mail takes a long time to send. There is a
+workaround [[elisp:(info "(mu4e) Writing messages")][in mu4e's manual]] that uses the [[doom-package:async]] library. To use it,
+you need to include it in your ~set-email-account!~ block:
+#+begin_src emacs-lisp
+;; In `set-email-account!'
+(send-mail-function . async-smtpmail-send-it)
+(message-send-mail-function . async-smtpmail-send-it)
+#+end_src
+
+If you're using [[doom-module::tools pass +auth]], you also need to ensure that the child
+Emacs process can access your password-store:
+#+begin_src emacs-lisp
+;; This goes OUTSIDE your `set-email-account!' block!
+(require 'smtpmail-async)
+(add-hook 'async-smtpmail-before-send-hook #'auth-source-pass-enable)
+#+end_src
+
 ** OrgMsg
 With the [[doom-module:+org]] flag, [[doom-package:org-msg]] is installed, and ~org-msg-mode~ is enabled before
 composing the first message. To disable ~org-msg-mode~ by default:
