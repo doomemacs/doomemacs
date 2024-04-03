@@ -25,6 +25,9 @@
   :when (modulep! :completion company)
   :after ebuild-mode
   :config
+  ;; Make short words like "fi" compat with ebuild-completion
+  (if (< company-minimum-prefix-length 3)
+      (add-hook! ebuild-mode))
   (set-company-backend! 'ebuild-mode 'company-ebuild))
 
 (use-package! flycheck-pkgcheck
