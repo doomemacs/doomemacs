@@ -34,7 +34,7 @@ following shell commands:
   (let* ((force? (doom-cli-context-suppress-prompts-p context))
          (sync-cmd (append '("sync" "-u")
                            (if nobuild? '("-B"))
-                           (if jobs `("-j" ,num)))))
+                           (if jobs `("-j" ,jobs)))))
     (cond
      (packages?
       ;; HACK It's messy to use straight to upgrade straight, due to the
