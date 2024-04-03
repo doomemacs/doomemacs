@@ -54,35 +54,4 @@
         (lambda (path)
           (if (file-in-directory-p path org-download-image-dir)
               (file-relative-name path org-download-image-dir)
-            path)))
-
-  (defadvice! +org--fix-org-download-delete-a (fn beg end &optional times)
-    "Fix `org-download-delete' for a non-standard `org-download-link-format'."
-    :around #'org-download--delete
-    (save-excursion
-      (save-match-data
-        (goto-char beg)
-        (let ((times (or times most-positive-fixnum))
-              (linkname
-               (or (and (string-match "\\[\\[\\(\\w+\\):" org-download-link-format)
-                        (match-string 1 org-download-link-format))
-                   "file")))
-          (while (and (>= (cl-decf times) 0)
-                      (re-search-forward (format "\\[\\[%s:\\([^]]*\\)\\]\\]"
-                                                 (regexp-quote linkname))
-                                         end t))
-            (let ((str (match-string-no-properties 2)))
-              (delete-region beg (match-end 0))
-              (when (file-exists-p str)
-                (delete-file str))))))))
-
-  (defadvice! +org--dragndrop-then-display-inline-images-a (_link filename)
-    :after #'org-download-insert-link
-    (when (image-type-from-file-name filename)
-      (save-excursion
-        (org-display-inline-images
-         t t
-         (progn (org-back-to-heading-or-point-min t) (point))
-         (progn (org-end-of-subtree t t)
-                (when (and (org-at-heading-p) (not (eobp))) (backward-char 1))
-                (point)))))))
+            path))))
