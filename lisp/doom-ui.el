@@ -95,7 +95,6 @@ want to change your symbol font, use `doom-symbol-font'.")
         (inhibit-redisplay t))
     (run-hooks 'doom-switch-buffer-hook)))
 
-(defvar doom--last-frame nil)
 (defun doom-run-switch-window-or-frame-hooks-h (&optional _)
   (let ((gc-cons-threshold most-positive-fixnum)
         (inhibit-redisplay t))
