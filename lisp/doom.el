@@ -352,12 +352,12 @@ users).")
 ;;; Startup optimizations
 
 ;; Here are Doom's hackiest (and least offensive) startup optimizations. They
-;; exploit implementation details and unintended side-effects, and will change
-;; often between major Emacs releases. However, I disable them if this is a
-;; daemon session (where startup time matters less).
+;; exploit implementation details and unintended side-effects in Emacs' startup
+;; process, and will change often between major Emacs releases. However, I
+;; disable them if this is a daemon session (where startup time matters less).
 ;;
 ;; Most of these have been tested on Linux and on fairly fast machines (with
-;; SSDs), so your mileage may vary depending on your hardware.
+;; SSDs), so your mileage may vary depending on hardware and `window-system'.
 (unless (daemonp)
   ;; PERF: `file-name-handler-alist' is consulted on each call to `require',
   ;;   `load', or various file/io functions (like `expand-file-name' or
@@ -366,14 +366,13 @@ users).")
   (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
     (set-default-toplevel-value
      'file-name-handler-alist
-     ;; HACK: If the bundled elisp for this Emacs install isn't byte-compiled
-     ;;   (but is compressed), then leave the gzip file handler there so Emacs
-     ;;   won't forget how to read read them.
-     ;;
-     ;;   calc-loaddefs.el is our heuristic for this because it is built-in to
-     ;;   all supported versions of Emacs, and calc.el explicitly loads it
-     ;;   uncompiled. This ensures that the only other, possible fallback would
-     ;;   be calc-loaddefs.el.gz.
+     ;; HACK: The libraries bundled with Emacs can either be compiled,
+     ;;   compressed, or neither. We use calc-loaddefs.el as a heuristic to
+     ;;   guess what state all these libraries are in. If they're compressed, we
+     ;;   need to leave the gzip file handler in `file-name-handler-alist' so
+     ;;   Emacs knows how to load them. If they're compiled or neither, we can
+     ;;   omit the gzip handler altogether (at least during startup) for a boost
+     ;;   in startup and package load time.
      (if (eval-when-compile
            (locate-file-internal "calc-loaddefs.el" load-path))
          nil
@@ -395,55 +394,46 @@ users).")
   (unless noninteractive
     ;; PERF: Resizing the Emacs frame (to accommodate fonts that are smaller or
     ;;   larger than the system font) appears to impact startup time
-    ;;   dramatically. The larger the delta in font size, the greater the delay.
-    ;;   Even trivial deltas can yield a ~1000ms loss, though it varies wildly
-    ;;   depending on font size.
+    ;;   dramatically. The larger the delta, the greater the delay. Even trivial
+    ;;   deltas can yield up to a ~1000ms loss, depending on font size and
+    ;;   `window-system'. PGTK seems least affected and NS/MAC the most.
     (setq frame-inhibit-implied-resize t)
 
-    ;; PERF,UX: Reduce *Message* noise at startup. An empty scratch buffer (or
-    ;;   the dashboard) is more than enough, and faster to display.
+    ;; PERF: A fair bit of startup time goes into initializing the splash and
+    ;;   scratch buffers in the typical Emacs session (b/c they activate a
+    ;;   non-trivial major mode, generate the splash buffer, and trigger
+    ;;   premature frame redraws by writing to *Messages*). These hacks prevent
+    ;;   most of this work from happening for some decent savings in startup
+    ;;   time. Our dashboard and `doom/open-scratch-buffer' provide a faster
+    ;;   (and more useful) alternative anyway.
     (setq inhibit-startup-screen t
-          inhibit-startup-echo-area-message user-login-name)
-    ;; PERF,UX: Remove "For information about GNU Emacs..." message at startup.
-    ;;   It's redundant with our dashboard and incurs a premature redraw.
+          inhibit-startup-echo-area-message user-login-name
+          initial-major-mode 'fundamental-mode
+          initial-scratch-message nil)
+    ;; PERF,UX: Prevent "For information about GNU Emacs..." line in *Messages*.
     (advice-add #'display-startup-echo-area-message :override #'ignore)
     ;; PERF: Suppress the vanilla startup screen completely. We've disabled it
     ;;   with `inhibit-startup-screen', but it would still initialize anyway.
-    ;;   This involves some file IO and/or bitmap work (depending on the frame
-    ;;   type) that we can no-op for a free 50-100ms boost in startup time.
+    ;;   This involves file IO and/or bitmap work (depending on the frame type)
+    ;;   that we can no-op for a free 50-100ms saving in startup time.
     (advice-add #'display-startup-screen :override #'ignore)
 
-    ;; PERF: Shave seconds off startup time by starting the scratch buffer in
-    ;;   `fundamental-mode', rather than, say, `org-mode' or `text-mode', which
-    ;;   pull in a ton of packages. This buffer is created whether or not we're
-    ;;   in an interactive session. Plus, `doom/open-scratch-buffer' provides a
-    ;;   better scratch buffer, so keep the initial one blank.
-    (setq initial-major-mode 'fundamental-mode
-          initial-scratch-message nil)
-
     (unless initial-window-system
-      ;; PERF: Inexplicably, `tty-run-terminal-initialization' can sometimes
-      ;;   take 2-3s when starting up Emacs in the terminal. Whatever slows it
-      ;;   down at startup doesn't appear to affect it if it's called a little
-      ;;   later in the startup process, so that's what I do.
-      ;; REVIEW: This optimization is not well understood. Investigate it!
+      ;; PERF: `tty-run-terminal-initialization' can take 2-3s when starting up
+      ;;   TTY Emacs (non-daemon sessions), depending on your TERM, TERMINFO,
+      ;;   and TERMCAP, but this work isn't very useful on modern systems (the
+      ;;   type I expect Doom's users to be using). The function seems less
+      ;;   expensive if run later in the startup process, so I defer it.
+      ;; REVIEW: This may no longer be needed in 29+. Needs testing!
       (define-advice tty-run-terminal-initialization (:override (&rest _) defer)
         (advice-remove #'tty-run-terminal-initialization #'tty-run-terminal-initialization@defer)
         (add-hook 'window-setup-hook
                   (doom-partial #'tty-run-terminal-initialization
                                 (selected-frame) nil t))))
 
-    ;; PERF,UX: Site files tend to use `load-file', which emits "Loading X..."
-    ;;   messages in the echo area. Writing to the echo-area triggers a
-    ;;   redisplay, which can be expensive during startup. This may also cause
-    ;;   an flash of white when creating the first frame. Needs to be undo
-    ;;   later, though.
-    (define-advice load-file (:override (file) silence)
-      (load file nil 'nomessage))
-
-    ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on
-    ;;   each `require' and `load'. Doom won't load any modules this early, so
-    ;;   omit .so for a tiny startup boost. Is later restored in doom-start.
+    ;; PERF: `load-suffixes' and `load-file-rep-suffixes' are consulted on each
+    ;;   `require' and `load'. Doom won't load any modules this early, so omit
+    ;;   .so for a tiny startup boost. Is later restored in doom-start.
     (put 'load-suffixes 'initial-value (default-toplevel-value 'load-suffixes))
     (put 'load-file-rep-suffixes 'initial-value (default-toplevel-value 'load-file-rep-suffixes))
     (set-default-toplevel-value 'load-suffixes '(".elc" ".el"))
@@ -455,35 +445,34 @@ users).")
         (setq load-suffixes (get 'load-suffixes 'initial-value)
               load-file-rep-suffixes (get 'load-file-rep-suffixes 'initial-value))))
 
-    ;; PERF: Doom uses `defcustom' to indicate variables that users are
-    ;;   expected to reconfigure. Trouble is it fires off initializers meant
-    ;;   to accommodate any user attempts to configure them before they were
-    ;;   defined. This is unnecessary work before $DOOMDIR/init.el is loaded,
-    ;;   so I disable them until it is.
+    ;; PERF: Doom uses `defcustom' merely to announce variables that users may
+    ;;   reconfigure. Trouble is it fires off initializers meant to accommodate
+    ;;   any user attempts to configure them *before* they are defined, which
+    ;;   isn't possible since the user's first opportunity to modify them comes
+    ;;   long after they're defined (in $DOOMDIR/init.el), so this is
+    ;;   unnecessary work. To spare Emacs the startup time, I disable this
+    ;;   behavior until $DOOMDIR is loaded.
     (setq custom-dont-initialize t)
     (add-hook! 'doom-before-init-hook
       (defun doom--reset-custom-dont-initialize-h ()
         (setq custom-dont-initialize nil)))
 
-    ;; PERF: Doom disables the UI elements by default, so that there's less
-    ;;   for the frame to initialize. However, the toolbar is still populated
-    ;;   regardless, so I lazy load it until tool-bar-mode is actually used.
-    (advice-add #'tool-bar-setup :override #'ignore)
-
-    ;; PERF: The mode-line procs a couple dozen times during startup. This is
-    ;;   normally quite fast, but disabling the default mode-line and reducing
-    ;;   the update delay timer seems to stave off ~30-50ms.
+    ;; PERF: The mode-line procs a couple dozen times during startup, before the
+    ;;   user can even see the first mode-line. This is normally fast, but we
+    ;;   can't predict what the user (or packages) will put into the mode-line.
+    ;;   Also, mode-line packages have a bad habit of throwing performance to
+    ;;   the wind, so best we just disable the mode-line until we can see one.
     (put 'mode-line-format 'initial-value (default-toplevel-value 'mode-line-format))
     (setq-default mode-line-format nil)
     (dolist (buf (buffer-list))
       (with-current-buffer buf (setq mode-line-format nil)))
-    ;; PERF,UX: Premature redisplays can substantially affect startup times
-    ;;   and/or produce ugly flashes of unstyled Emacs.
+    ;; PERF,UX: Premature redisplays/redraws can substantially affect startup
+    ;;   times and/or flash a white/unstyled Emacs frame during startup, so I
+    ;;   try real hard to suppress them until we're sure the session is ready.
     (setq-default inhibit-redisplay t
                   inhibit-message t)
-    ;; COMPAT: Then reset with advice, because `startup--load-user-init-file'
-    ;;   will never be interrupted by errors.  And if these settings are left
-    ;;   set, Emacs could appear frozen or garbled.
+    ;; COMPAT: If the above vars aren't reset, Emacs could appear frozen or
+    ;;   garbled after startup (or in case of an startup error).
     (defun doom--reset-inhibited-vars-h ()
       (setq-default inhibit-redisplay nil
                     ;; Inhibiting `message' only prevents redraws and
@@ -491,35 +480,43 @@ users).")
       (redraw-frame))
     (add-hook 'after-init-hook #'doom--reset-inhibited-vars-h)
 
-    ;; PERF,UX: An annoying aspect of site-lisp files is that they're often
-    ;;   noisy (they emit load messages or other output to stdout). These
-    ;;   queue unnecessary redraws at startup, cost startup time, and pollute
-    ;;   the logs. I get around it by suppressing it until we can load it
-    ;;   manually, later (in the `startup--load-user-init-file' advice below).
+    ;; PERF: Doom disables the UI elements by default, so that there's less for
+    ;;   the frame to initialize. However, `tool-bar-setup' is still called and
+    ;;   it does some non-trivial work to set up the toolbar before we can
+    ;;   disable it. To side-step this work, I disable the function and call it
+    ;;   later (see `startup--load-user-init-file@undo-hacks').
+    (advice-add #'tool-bar-setup :override #'ignore)
+
+    ;; PERF,UX: site-lisp files are often obnoxiously noisy (emitting load
+    ;;   messages or other output to *Messages* or stdout). These queue
+    ;;   unnecessary redraws at startup which impact startup time depending on
+    ;;   window system. It also pollutes the logs. By suppressing it now, I can
+    ;;   load it myself, later, in a more controlled way (see
+    ;;   `startup--load-user-init-file@undo-hacks').
     (put 'site-run-file 'initial-value site-run-file)
     (setq site-run-file nil)
 
-    (define-advice startup--load-user-init-file (:around (fn &rest args) undo-inhibit-vars)
-      (let (--init--)
+    (define-advice startup--load-user-init-file (:around (fn &rest args) undo-hacks)
+      "Undo Doom's startup optimizations to prep for the user's session."
+      (let (init)
         (unwind-protect
             (progn
-              ;; COMPAT: Onces startup is sufficiently complete, undo some
-              ;;   optimizations to reduce the scope of potential edge cases.
-              (advice-remove #'load-file #'load-file@silence)
-              (advice-remove #'tool-bar-setup #'ignore)
-              (add-transient-hook! 'tool-bar-mode (tool-bar-setup))
               (when (setq site-run-file (get 'site-run-file 'initial-value))
                 (let ((inhibit-startup-screen inhibit-startup-screen))
-                  (letf! (defun load (file &optional noerror _nomessage &rest args)
-                           (apply load file noerror t args))
+                  (letf! ((defun load-file (file) (load file nil 'nomessage))
+                          (defun load (file &optional noerror _nomessage &rest args)
+                            (apply load file noerror t args)))
                     (load site-run-file t t))))
-              ;; Then startup as normal.
-              (apply fn args)
-              (setq --init-- t))
-          (when (or (not --init--) init-file-had-error)
+              (apply fn args)  ; start up as normal
+              (setq init t))
+          (when (or (not init) init-file-had-error)
             ;; If we don't undo our inhibit-{message,redisplay} and there's an
             ;; error, we'll see nothing but a blank Emacs frame.
             (doom--reset-inhibited-vars-h))
+          ;; COMPAT: Once startup is sufficiently complete, undo our earlier
+          ;;   optimizations to reduce the scope of potential edge cases.
+          (advice-remove #'tool-bar-setup #'ignore)
+          (add-transient-hook! 'tool-bar-mode (tool-bar-setup))
           (unless (default-toplevel-value 'mode-line-format)
             (setq-default mode-line-format (get 'mode-line-format 'initial-value))))))
 
