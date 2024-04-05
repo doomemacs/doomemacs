@@ -160,13 +160,16 @@ orderless."
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file
-   +default/search-project +default/search-other-project
-   +default/search-project-for-symbol-at-point
-   +default/search-cwd +default/search-other-cwd
-   +default/search-notes-for-symbol-at-point
-   +default/search-emacsd
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
    :preview-key "C-SPC")
+  (when (modulep! :config default)
+    (consult-customize
+     +default/search-project +default/search-other-project
+     +default/search-project-for-symbol-at-point
+     +default/search-cwd +default/search-other-cwd
+     +default/search-notes-for-symbol-at-point
+     +default/search-emacsd
+     :preview-key "C-SPC"))
   (consult-customize
    consult-theme
    :preview-key (list "C-SPC" :debounce 0.5 'any))
