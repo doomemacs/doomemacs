@@ -484,17 +484,50 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
                     file))))
 
 ;;;###autoload
-(defun doom/sudo-find-file (file)
-  "Open FILE as root."
-  (interactive "FOpen file as root: ")
-  ;; HACK: Disable auto-save in temporary tramp buffers because it could trigger
-  ;;   processes that hang silently in the background, making those buffers
-  ;;   inoperable for the rest of that session (Tramp caches them).
-  (let ((auto-save-default nil)
-        ;; REVIEW: use only these when we drop 28 support
-        (remote-file-name-inhibit-auto-save t)
-        (remote-file-name-inhibit-auto-save-visited t))
-    (find-file (doom--sudo-file-path (expand-file-name file)))))
+(defun doom/sudo-find-file (file &optional arg)
+  "Open FILE as root.
+
+This will prompt you to save the current buffer, unless prefix ARG is given, in
+which case it will save it without prompting."
+  (interactive
+   (list (read-file-name "Open file as root: ")
+         current-prefix-arg))
+  ;; HACK: Teach `save-place' to treat the new "remote" buffer as if it were
+  ;;   visiting the same local file (because it is), and preserve the cursor
+  ;;   position as usual.
+  (letf! ((defun remote-local-name (path)
+            (if path (or (file-remote-p path 'localname) path)))
+          (defmacro with-local-name (&rest body)
+            `(when save-place-mode
+               (let ((buffer-file-name (remote-local-name buffer-file-name))
+                     (default-directory (remote-local-name default-directory)))
+                 ,@body))))
+    (let ((window-start (window-start))
+          (buffer (current-buffer)))
+      (when (and buffer-file-name (file-equal-p buffer-file-name file))
+        (when (buffer-modified-p)
+          (save-some-buffers arg (lambda () (eq (current-buffer) buffer))))
+        (with-local-name (save-place-to-alist)))
+      (prog1
+          ;; HACK: Disable auto-save in temporary tramp buffers because it could
+          ;;   trigger processes that hang silently in the background, making
+          ;;   those buffers inoperable for the rest of that session (Tramp
+          ;;   caches them).
+          (let ((auto-save-default nil)
+                ;; REVIEW: use only these when we drop 28 support
+                (remote-file-name-inhibit-auto-save t)
+                (remote-file-name-inhibit-auto-save-visited t)
+                ;; Prevent redundant work
+                save-place-mode)
+            (find-file (doom--sudo-file-path (expand-file-name file))))
+        ;; Record of the cursor's old position if it isn't at BOB (indicating
+        ;; this buffer was already open), in case the user wishes to go to it.
+        (unless (bobp)
+          (doom-set-jump-h)
+          ;; save-place-find-file-hook requires point be a BOB to do its thang.
+          (goto-char (point-min)))
+        (with-local-name (save-place-find-file-hook))
+        (set-window-start nil window-start)))))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
