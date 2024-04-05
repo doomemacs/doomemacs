@@ -52,6 +52,10 @@
            "u" #'fuel-update-usings
            "r" #'fuel-refactor-rename-word)))
   :config
+  (set-popup-rules!
+    '(("^\\*fuel \\(debug\\|xref\\|messages\\)\\*$" :slot 1 :vslot -1)
+      ("^\\*fuel help\\*$" :slot 2 :vslot 2 :select t :size 0.35)
+      ("^\\*fuel listener\\*$" :size 0.3 :quit nil :ttl nil)))
 
   (map! :after fuel-help
         :map fuel-help-mode-map
