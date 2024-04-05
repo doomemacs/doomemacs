@@ -143,14 +143,8 @@
   (setq selection-coding-system 'utf-8))
 
 
-;;; Support for more file extensions
-;; Add support for additional file extensions.
-(dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
-                 ("/LICENSE\\'" . text-mode)
-                 ("\\.log\\'" . text-mode)
-                 ("rc\\'" . conf-mode)
-                 ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
-  (push entry auto-mode-alist))
+;;; Support for Doom-specific file extensions
+(add-to-list 'auto-mode-alist '("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode))
 
 
 ;;
