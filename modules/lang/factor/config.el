@@ -5,7 +5,10 @@
   :init
   (after! factor-mode
     (set-eval-handler! 'factor-mode #'fuel-eval-region)
-    (set-repl-handler! 'factor-mode #'run-factor))
+    (set-repl-handler! 'factor-mode #'+factor/open-repl
+      :persist t
+      :send-region #'fuel-eval-region
+      :send-buffer #'fuel-run-file))
   :config
   (set-lookup-handlers! 'factor-mode
     :definition #'fuel-edit-word-at-point
