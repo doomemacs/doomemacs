@@ -28,10 +28,13 @@
         "k" #'log-view-msg-prev))
 
 
-(after! vc-annotate
+(after! vc
   (set-popup-rules!
-    '(("^\\*vc-diff" :select nil)   ; *vc-diff*
-      ("^\\*vc-change" :select t))) ; *vc-change-log*
+    '(("^\\*vc-diff" :select nil :size '+popup-shrink-to-fit)
+      ("^\\*vc-change-log" :select t))))
+
+
+(after! vc-annotate
   (set-evil-initial-state! 'vc-annotate-mode 'normal)
 
   ;; Clean up after itself
