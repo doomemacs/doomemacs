@@ -561,9 +561,17 @@ which case it will save it without prompting."
 (defun doom/remove-recent-file (file)
   "Remove FILE from your recently-opened-files list."
   (interactive
-   (list (completing-read "Remove recent file: " recentf-list
+   (list (completing-read "Remove recent file: "
+                          (lambda (string predicate action)
+                            (if (eq action 'metadata)
+                                '(metadata
+                                  (display-sort-function . identity)
+                                  (cycle-sort-function . identity)
+                                  (category . file))
+                              (complete-with-action
+                               action recentf-list string predicate)))
                           nil t)))
-  (setq recentf-list (delete file recentf-list))
+  (setq recentf-list (delete (recentf-expand-file-name file) recentf-list))
   (recentf-save-list)
   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
 
