@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scala/packages.el
 
-(package! sbt-mode :pin "bcf8d6040021013430b39d6f6766ce1aab0b691a")
+(package! sbt-mode :pin "cc68728a6ef0600aad369157b3a2d0ce56afba9b")
 (package! scala-mode :pin "4c6d636b86e3bb1d95de819dc48dda92abdfbcf4")
 
 (when (and (modulep! +lsp)
