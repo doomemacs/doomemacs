@@ -84,9 +84,10 @@ stored in `persp-save-dir'.")
           ;; HACK Fix #319: the warnings buffer gets swallowed when creating
           ;;      `+workspaces-main', so display it ourselves, if it exists.
           (when-let (warnings (get-buffer "*Warnings*"))
-            (save-excursion
-              (display-buffer-in-side-window
-               warnings '((window-height . shrink-window-if-larger-than-buffer))))))))
+            (unless (get-buffer-window warnings)
+              (save-excursion
+                (display-buffer-in-side-window
+                 warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))
     (defun +workspaces-init-persp-mode-h ()
       (cond (persp-mode
              ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
