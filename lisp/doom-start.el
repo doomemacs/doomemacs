@@ -100,13 +100,15 @@
 
 ;;; Disable UI elements early
 ;; PERF,UI: Doom strives to be keyboard-centric, so I consider these UI elements
-;;   clutter. Initializing them also costs a morsel of startup time. Whats more,
-;;   the menu bar exposes functionality that Doom doesn't endorse. Perhaps one
-;;   day Doom will support these, but today is not that day.
-;;
+;;   clutter. Initializing them also costs a morsel of startup time. What's
+;;   more, the menu bar exposes functionality that Doom doesn't endorse. Perhaps
+;;   one day Doom will support these, but today is not that day. By disabling
+;;   them early, we save Emacs some time.
+
 ;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
-;;   `scroll-bar-mode' because they do extra work to manipulate frame variables
-;;   that isn't necessary this early in the startup process.
+;;   `scroll-bar-mode' because their manipulation of frame parameters can
+;;   trigger/queue a superfluous (and expensive, depending on the window system)
+;;   frame redraw at startup.
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -119,7 +121,7 @@
 ;;   non-application window -- which means it doesn't automatically capture
 ;;   focus when it is started, among other things, so enable the menu-bar for
 ;;   GUI frames, but keep it disabled in terminal frames because there it
-;;   activates an ugly, in-frame menu bar.
+;;   unavoidably activates an ugly, in-frame menu bar.
 (eval-when! doom--system-macos-p
   (add-hook! '(window-setup-hook after-make-frame-functions)
     (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
@@ -136,19 +138,13 @@
 ;; a step too opinionated.
 (setq default-input-method nil)
 ;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
-;; leave Emacs to its own devices.
+;; leave Emacs to its own devices there.
 (eval-when! (not doom--system-windows-p)
   (setq selection-coding-system 'utf-8))
 
 
-;;; Support for more file extensions
-;; Add support for additional file extensions.
-(dolist (entry '(("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode)
-                 ("/LICENSE\\'" . text-mode)
-                 ("\\.log\\'" . text-mode)
-                 ("rc\\'" . conf-mode)
-                 ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
-  (push entry auto-mode-alist))
+;;; Support for Doom-specific file extensions
+(add-to-list 'auto-mode-alist '("/\\.doom\\(?:rc\\|project\\|module\\|profile\\)\\'" . emacs-lisp-mode))
 
 
 ;;
@@ -180,7 +176,7 @@
 (defvar doom-incremental-packages '(t)
   "A list of packages to load incrementally after startup. Any large packages
 here may cause noticeable pauses, so it's recommended you break them up into
-sub-packages. For example, `org' is comprised of many packages, and can be
+sub-packages. For example, `org' is comprised of many packages, and might be
 broken up into:
 
   (doom-load-packages-incrementally
@@ -192,16 +188,16 @@ broken up into:
 This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
-`doom-load-packages-incrementally-h' from `emacs-startup-hook' or set
+`doom-load-packages-incrementally-h' from `doom-after-init-hook' or set
 `doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
 in daemon sessions (they are loaded immediately at startup).")
 
 (defvar doom-incremental-first-idle-timer (if (daemonp) 0 2.0)
   "How long (in idle seconds) until incremental loading starts.
 
-Set this to nil to disable incremental loading.
+Set this to nil to disable incremental loading at startup.
 Set this to 0 to load all incrementally deferred packages immediately at
-`emacs-startup-hook'.")
+`doom-after-init-hook'.")
 
 (defvar doom-incremental-idle-timer 0.75
   "How long (in idle seconds) in between incrementally loading packages.")
@@ -209,9 +205,13 @@ Set this to 0 to load all incrementally deferred packages immediately at
 (defun doom-load-packages-incrementally (packages &optional now)
   "Registers PACKAGES to be loaded incrementally.
 
-If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
-intervals."
-  (let ((gc-cons-threshold most-positive-fixnum))
+If NOW is non-nil, PACKAGES will be marked for incremental loading next time
+Emacs is idle for `doom-incremental-first-idle-timer' seconds (falls back to
+`doom-incremental-idle-timer'), then in `doom-incremental-idle-timer' intervals
+afterwards."
+  (let* ((gc-cons-threshold most-positive-fixnum)
+         (first-idle-timer (or doom-incremental-first-idle-timer
+                               doom-incremental-idle-timer)))
     (if (not now)
         (cl-callf append doom-incremental-packages packages)
       (while packages
@@ -222,7 +222,7 @@ intervals."
             (condition-case-unless-debug e
                 (and
                  (or (null (setq idle-time (current-idle-time)))
-                     (< (float-time idle-time) doom-incremental-first-idle-timer)
+                     (< (float-time idle-time) first-idle-timer)
                      (not
                       (while-no-input
                         (doom-log "start:iloader: Loading %s (%d left)" req (length packages))
@@ -242,7 +242,7 @@ intervals."
                 (doom-log "start:iloader: Finished!")
               (run-at-time (if idle-time
                                doom-incremental-idle-timer
-                             doom-incremental-first-idle-timer)
+                             first-idle-timer)
                            nil #'doom-load-packages-incrementally
                            packages t)
               (setq packages nil))))))))

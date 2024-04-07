@@ -88,10 +88,11 @@ Uses `evil-visual-beginning' if available."
   "Return end position of selection.
 Uses `evil-visual-end' if available."
   (declare (side-effect-free t))
-  (if (and (bound-and-true-p evil-local-mode)
-           (evil-visual-state-p))
-      evil-visual-end
-    (region-end)))
+  (or (and (bound-and-true-p evil-local-mode)
+           (evil-visual-state-p)
+           (markerp evil-visual-end)
+           (marker-position evil-visual-end))
+      (region-end)))
 
 ;;;###autoload
 (defun doom-thing-at-point-or-region (&optional thing prompt)

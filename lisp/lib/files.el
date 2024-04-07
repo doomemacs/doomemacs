@@ -484,27 +484,67 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
                     file))))
 
 ;;;###autoload
-(defun doom/sudo-find-file (file)
-  "Open FILE as root."
-  (interactive "FOpen file as root: ")
-  (find-file (doom--sudo-file-path (expand-file-name file))))
+(defun doom/sudo-find-file (file &optional arg)
+  "Open FILE as root.
+
+This will prompt you to save the current buffer, unless prefix ARG is given, in
+which case it will save it without prompting."
+  (interactive
+   (list (read-file-name "Open file as root: ")
+         current-prefix-arg))
+  ;; HACK: Teach `save-place' to treat the new "remote" buffer as if it were
+  ;;   visiting the same local file (because it is), and preserve the cursor
+  ;;   position as usual.
+  (letf! ((defun remote-local-name (path)
+            (if path (or (file-remote-p path 'localname) path)))
+          (defmacro with-local-name (&rest body)
+            `(when save-place-mode
+               (let ((buffer-file-name (remote-local-name buffer-file-name))
+                     (default-directory (remote-local-name default-directory)))
+                 ,@body))))
+    (let ((window-start (window-start))
+          (buffer (current-buffer)))
+      (when (and buffer-file-name (file-equal-p buffer-file-name file))
+        (when (buffer-modified-p)
+          (save-some-buffers arg (lambda () (eq (current-buffer) buffer))))
+        (with-local-name (save-place-to-alist)))
+      (prog1
+          ;; HACK: Disable auto-save in temporary tramp buffers because it could
+          ;;   trigger processes that hang silently in the background, making
+          ;;   those buffers inoperable for the rest of that session (Tramp
+          ;;   caches them).
+          (let ((auto-save-default nil)
+                ;; REVIEW: use only these when we drop 28 support
+                (remote-file-name-inhibit-auto-save t)
+                (remote-file-name-inhibit-auto-save-visited t)
+                ;; Prevent redundant work
+                save-place-mode)
+            (find-file (doom--sudo-file-path (expand-file-name file))))
+        ;; Record of the cursor's old position if it isn't at BOB (indicating
+        ;; this buffer was already open), in case the user wishes to go to it.
+        (unless (bobp)
+          (doom-set-jump-h)
+          ;; save-place-find-file-hook requires point be a BOB to do its thang.
+          (goto-char (point-min)))
+        (with-local-name (save-place-find-file-hook))
+        (set-window-start nil window-start)))))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
   "Open the current file as root."
   (interactive)
-  (find-file
-   (doom--sudo-file-path
-    (or buffer-file-name
-        (when (or (derived-mode-p 'dired-mode)
-                  (derived-mode-p 'wdired-mode))
-          default-directory)))))
+  (doom/sudo-find-file
+   (or (buffer-file-name (buffer-base-buffer))
+       (when (or (derived-mode-p 'dired-mode)
+                 (derived-mode-p 'wdired-mode))
+         default-directory)
+       (user-error "Cannot determine the file path of the current buffer"))))
 
 ;;;###autoload
 (defun doom/sudo-save-buffer ()
   "Save this file as root."
   (interactive)
-  (let ((file (doom--sudo-file-path buffer-file-name)))
+  (let ((file (doom--sudo-file-path (buffer-file-name (buffer-base-buffer)))))
     (if-let (buffer (find-file-noselect file))
         (let ((origin (current-buffer)))
           (copy-to-buffer buffer (point-min) (point-max))
@@ -521,11 +561,96 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
 (defun doom/remove-recent-file (file)
   "Remove FILE from your recently-opened-files list."
   (interactive
-   (list (completing-read "Remove recent file: " recentf-list
+   (list (completing-read "Remove recent file: "
+                          (lambda (string predicate action)
+                            (if (eq action 'metadata)
+                                '(metadata
+                                  (display-sort-function . identity)
+                                  (cycle-sort-function . identity)
+                                  (category . file))
+                              (complete-with-action
+                               action recentf-list string predicate)))
                           nil t)))
-  (setq recentf-list (delete file recentf-list))
+  (setq recentf-list (delete (recentf-expand-file-name file) recentf-list))
   (recentf-save-list)
   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
+
+
+;;
+;;; Backports
+
+;; Introduced in Emacs 29.
+;;;###autoload
+(eval-when! (not (fboundp 'find-sibling-file))
+  (defvar find-sibling-rules nil)
+
+  (defun find-sibling-file (file)
+    "Visit a \"sibling\" file of FILE.
+When called interactively, FILE is the currently visited file.
+
+The \"sibling\" file is defined by the `find-sibling-rules' variable."
+    (interactive (progn
+                   (unless buffer-file-name
+                     (user-error "Not visiting a file"))
+                   (list buffer-file-name)))
+    (unless find-sibling-rules
+      (user-error "The `find-sibling-rules' variable has not been configured"))
+    (let ((siblings (find-sibling-file-search (expand-file-name file)
+                                              find-sibling-rules)))
+      (cond
+       ((null siblings)
+        (user-error "Couldn't find any sibling files"))
+       ((length= siblings 1)
+        (find-file (car siblings)))
+       (t
+        (let ((relatives (mapcar (lambda (sibling)
+                                   (file-relative-name
+                                    sibling (file-name-directory file)))
+                                 siblings)))
+          (find-file
+           (completing-read (format-prompt "Find file" (car relatives))
+                            relatives nil t nil nil (car relatives))))))))
+
+  (defun find-sibling-file-search (file &optional rules)
+    "Return a list of FILE's \"siblings\".
+RULES should be a list on the form defined by `find-sibling-rules' (which
+see), and if nil, defaults to `find-sibling-rules'."
+    (let ((results nil))
+      (pcase-dolist (`(,match . ,expansions) (or rules find-sibling-rules))
+        ;; Go through the list and find matches.
+        (when (string-match match file)
+          (let ((match-data (match-data)))
+            (dolist (expansion expansions)
+              (let ((start 0))
+                ;; Expand \\1 forms in the expansions.
+                (while (string-match "\\\\\\([&0-9]+\\)" expansion start)
+                  (let ((index (string-to-number (match-string 1 expansion))))
+                    (setq start (match-end 0)
+                          expansion
+                          (replace-match
+                           (substring file
+                                      (elt match-data (* index 2))
+                                      (elt match-data (1+ (* index 2))))
+                           t t expansion)))))
+              ;; Then see which files we have that are matching.  (And
+              ;; expand from the end of the file's match, since we might
+              ;; be doing a relative match.)
+              (let ((default-directory (substring file 0 (car match-data))))
+                ;; Keep the first matches first.
+                (setq results
+                      (nconc
+                       results
+                       (mapcar #'expand-file-name
+                               ;; `file-expand-wildcards' has a new REGEXP
+                               ;; argument in 29+ that is needed here. This swap
+                               ;; makes it behave as if REGEXP == t.
+                               (letf! (defun wildcard-to-regexp (wildcard)
+                                        (concat "\\`" wildcard "\\'"))
+                                 (file-expand-wildcards expansion nil))))))))))
+      ;; Delete the file itself (in case it matched), and remove
+      ;; duplicates, in case we have several expansions and some match
+      ;; the same subsets of files.
+      (delete file (delete-dups results)))))
 
 (provide 'doom-lib '(files))
 ;;; files.el ends here

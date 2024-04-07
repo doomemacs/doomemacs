@@ -66,7 +66,7 @@ Intended to replace `lisp-outline-level'."
                           (re-search-backward
                            "\\_<:\\(?:\\sw\\|\\s_\\)+\\_>" ;; Find a keyword.
                            doom-start 'noerror))
-                (unless (looking-back "(")
+                (unless (looking-back "(" (bol))
                   (let ((kw-syntax (syntax-ppss)))
                     (when (and (= (ppss-depth kw-syntax) doom-depth)
                                (not (ppss-string-terminator kw-syntax))
@@ -412,20 +412,6 @@ This generally applies to your private config (`doom-user-dir') or Doom's source
 
 ;;
 ;;; Fontification
-
-;;;###autoload
-(defun +emacs-lisp-truncate-pin ()
-  "Truncates long SHA1 hashes in `package!' :pin's."
-  (save-excursion
-    (goto-char (match-beginning 0))
-    (and (stringp (plist-get (sexp-at-point) :pin))
-         (search-forward ":pin" nil t)
-         (let ((start (re-search-forward "\"[^\"\n]\\{12\\}" nil t))
-               (finish (and (re-search-forward "\"" (line-end-position) t)
-                            (match-beginning 0))))
-           (when (and start finish)
-             (put-text-property start finish 'display "...")))))
-  nil)
 
 (defvar +emacs-lisp--face nil)
 ;;;###autoload

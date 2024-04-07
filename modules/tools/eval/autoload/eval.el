@@ -24,34 +24,33 @@
 (defun +eval-display-results-in-overlay (output &optional source-buffer)
   "Display OUTPUT in a floating overlay next to the cursor."
   (require 'eros)
-  (let* ((this-command #'+eval/buffer-or-region)
-         (prefix eros-eval-result-prefix)
-         (lines (split-string output "\n"))
-         (prefixlen (length prefix))
-         (len (+ (apply #'max (mapcar #'length lines))
-                 prefixlen))
-         (col (- (current-column) (window-hscroll)))
-         (next-line? (or (cdr lines)
-                         (< (- (window-width)
-                               (save-excursion (goto-char (point-at-eol))
-                                               (- (current-column)
-                                                  (window-hscroll))))
-                            len)))
-         (pad (if next-line?
-                  (+ (window-hscroll) prefixlen)
-                0))
-         (where (if next-line?
-                    (line-beginning-position 2)
-                  (line-end-position)))
-         eros-eval-result-prefix
-         eros-overlays-use-font-lock)
-    (with-current-buffer (or source-buffer (current-buffer))
+  (with-current-buffer (or source-buffer (current-buffer))
+    (let* ((this-command #'+eval/buffer-or-region)
+           (prefix eros-eval-result-prefix)
+           (lines (split-string output "\n"))
+           (prefixlen (length prefix))
+           (len (+ (apply #'max (mapcar #'length lines))
+                   prefixlen))
+           (col (- (current-column) (window-hscroll)))
+           (next-line? (or (cdr lines)
+                           (< (- (window-width)
+                                 (save-excursion (goto-char (line-end-position))
+                                                 (- (current-column)
+                                                    (window-hscroll))))
+                              len)))
+           (pad (if next-line?
+                    (+ (window-hscroll) prefixlen)
+                  0))
+           eros-overlays-use-font-lock)
       (eros--make-result-overlay
           (concat (make-string (max 0 (- pad prefixlen)) ?\s)
                   prefix
-                  (string-join lines (concat "\n" (make-string pad ?\s))))
-        :where where
-        :duration eros-eval-result-duration))))
+                  (string-join lines (concat hard-newline (make-string pad ?\s))))
+        :where (if next-line?
+                   (line-beginning-position 2)
+                 (line-end-position))
+        :duration eros-eval-result-duration
+        :format "%s"))))
 
 ;;;###autoload
 (defun +eval-display-results (output &optional source-buffer)

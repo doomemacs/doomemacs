@@ -95,14 +95,8 @@ C-x C-f /docker:$USER@$CONTAINER:/path/to/file
 Thanks to [[https://github.com/magit/magit-popup][magit-popup]], all the popups default arguments can be customized. For
 example, here is how to customize the arguments for =docker-image-run-popup=:
 #+begin_src emacs-lisp
-(setq docker-image-run-arguments '("-i" "-t" "--rm"))
-#+end_src
-
-or inside a =use-package= declaration:
-#+begin_src emacs-lisp
-(use-package! docker
-  :bind ("C-c d" . docker)
-  :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
+(after! docker
+  (setq docker-image-run-arguments '("-i" "-t" "--rm")))
 #+end_src
 
 *** Other useful variables

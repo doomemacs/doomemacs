@@ -33,17 +33,20 @@
 (after! auth-source
   (pushnew! auth-sources 'macos-keychain-internet 'macos-keychain-generic))
 
+;; Delete files to trash on macOS, as an extra layer of precaution against
+;; accidentally deleting wanted files.
+(setq delete-by-moving-to-trash t)
+
 
 ;;
 ;;; Packages
 
 (use-package! osx-trash
+  ;; DEPRECATED: Not needed on Emacs 29+. Remove when dropping 28 support.
+  ;;   Fixed by https://debbugs.gnu.org/cgi/bugreport.cgi?bug=21340.
+  :when (< emacs-major-version 29)
   :commands osx-trash-move-file-to-trash
   :init
-  ;; Delete files to trash on macOS, as an extra layer of precaution against
-  ;; accidentally deleting wanted files.
-  (setq delete-by-moving-to-trash t)
-
   ;; Lazy load `osx-trash'
   (when (not (fboundp 'system-move-file-to-trash))
     (defun system-move-file-to-trash (file)

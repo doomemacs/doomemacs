@@ -23,6 +23,10 @@ debian, and derivatives). On most it's 'fd'.")
 ;;
 ;;; Packages
 
+(after! project
+  (setq project-list-file (file-name-concat doom-data-dir "projects")))
+
+;; DEPRECATED: Will be replaced with project.el
 (use-package! projectile
   :commands (projectile-project-root
              projectile-project-name

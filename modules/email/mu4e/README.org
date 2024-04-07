@@ -280,7 +280,7 @@ mail retrieval/indexing, change the value of ~mu4e-update-interval~:
 You will get =No such file or directory, mu4e= errors if you don't run ~$ doom
 sync~ after installing =mu= through your package manager.
 
-Some times the the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*). if
+Some times the ~mu~ package does not include ~mu4e~ (*cough Ubuntu*). if
 that's the case you will need to [[https://github.com/djcb/mu][install]] it and add it to your ~load-path~ you
 can do that by:
 #+begin_src emacs-lisp

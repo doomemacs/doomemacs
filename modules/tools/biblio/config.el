@@ -29,12 +29,6 @@
         org-cite-activate-processor 'citar)
 
   :config
-  (after! embark
-    (citar-embark-mode))
-
-  (after! org-roam
-    (citar-org-roam-mode))
-
   (when (modulep! :completion vertico +icons)
     (defvar citar-indicator-files-icons
       (citar-indicator-create
@@ -80,6 +74,20 @@
 
 ;;
 ;;; Third-party
+
+(use-package! citar-embark
+  :defer t
+  :init
+  (after! (citar embark)
+    (citar-embark-mode)))
+
+
+(use-package! citar-org-roam
+  :defer t
+  :init
+  (after! (citar org-roam)
+    (citar-org-roam-mode)))
+
 
 (use-package! bibtex-completion
   :when (or (modulep! :completion ivy)

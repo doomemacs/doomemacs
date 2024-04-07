@@ -250,8 +250,7 @@ tell you about it. Very annoying. This prevents that."
  auto-mode-alist
  '(("/LICENSE\\'" . text-mode)
    ("\\.log\\'" . text-mode)
-   ("rc\\'" . conf-mode)
-   ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
+   ("rc\\'" . conf-mode)))
 
 
 ;;
@@ -405,6 +404,11 @@ the unwritable tidbits."
     :around #'save-place-to-alist
     (unless doom-large-file-p
       (apply fn args)))
+
+  (defadvice! doom--inhibit-saveplace-if-point-not-at-bol-a (&rest _)
+    "If something else has moved point, don't try to move it again."
+    :before-while #'save-place-find-file-hook
+    (bobp))
 
   (defadvice! doom--dont-prettify-saveplace-cache-a (fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
