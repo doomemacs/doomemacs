@@ -125,10 +125,12 @@ use the minibuffer such as `query-replace'.")
     (after! dabbrev
       (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
             dabbrev-ignored-buffer-regexps
-            '("^ "
+            '("\\` "
               "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?")
             dabbrev-upcase-means-case-search t)
-      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)))
+      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)))
 
   ;; Make these capfs composable.
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
