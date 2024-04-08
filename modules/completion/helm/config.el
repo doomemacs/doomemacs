@@ -188,7 +188,13 @@ Can be negative.")
 
 
 (use-package! helm-descbinds
-  :hook (helm-mode . helm-descbinds-mode))
+  :hook (helm-mode . helm-descbinds-mode)
+  :config
+  ;; HACK: Upstream claims that the two packages are incompatible, but changing
+  ;;   `prefix-help-command' seems to smooth the incompatibility over. More
+  ;;   testing is needed...
+  (setq helm-descbinds-disable-which-key nil
+        prefix-help-command #'helm-descbinds))
 
 
 (use-package! helm-icons
