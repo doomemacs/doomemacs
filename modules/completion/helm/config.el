@@ -43,7 +43,9 @@ Can be negative.")
         ;; symbol at point.
         helm-imenu-execute-action-at-once-if-one nil
         ;; Disable special behavior for left/right, M-left/right keys.
-        helm-ff-lynx-style-map nil)
+        helm-ff-lynx-style-map nil
+        ;; Don't commandeer the entire frame for helm commands.
+        helm-always-two-windows nil)
 
   (map! [remap apropos]                   #'helm-apropos
         [remap find-library]              #'helm-locate-library
