@@ -3,6 +3,8 @@
 
 (package! tuareg :pin "1d53723e39f22ab4ab76d31f2b188a2879305092")
 
+(package! opam-switch-mode :pin "1069e56a662f23ea09d4e05611bdedeb99257012")
+
 (unless (modulep! +lsp)
   (package! merlin :pin "8404f96693727f7b0edc0d0b14db57843d79e27b")
   (package! merlin-eldoc :pin "bf8edc63d85b35e4def352fa7ce4ea39f43e1fd8")
