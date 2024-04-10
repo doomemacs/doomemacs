@@ -4,7 +4,7 @@
 #+since:    2.0.4 (#128)
 
 * Description :unfold:
-This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[doom-package:tuareg-mode]].
+This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by [[doom-package:tuareg]].
 
 - Code completion, documentation look-up, code navigation and refactoring
   ([[doom-package:merlin]])
