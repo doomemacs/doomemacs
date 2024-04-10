@@ -14,6 +14,7 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 - Auto-indentation ([[doom-package:ocp-indent]])
 - Code formatting ([[doom-package:ocamlformat]])
 - Dune file format ([[doom-package:dune]])
+- Opam switch selection ([[doom-package:opam-switch-mode]])
 
 ** Maintainers
 *This module needs a maintainer.* [[doom-contrib-maintainer:][Become a maintainer?]]
@@ -31,6 +32,7 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 - [[doom-package:ocamlformat]] if [[doom-module::editor format]]
 - [[doom-package:ocp-indent]]
 - [[doom-package:tuareg]]
+- [[doom-package:opam-switch-mode]]
 - [[doom-package:utop]] if [[doom-module::tools eval]]
 - unless [[doom-module:+lsp]]
   - [[doom-package:flycheck-ocaml]] if [[doom-module::checkers syntax]]
@@ -42,7 +44,7 @@ This module adds [[https://ocaml.org/][OCaml]] support to Doom Emacs, powered by
 - ~set-ligatures!~ is called with the full tuareg prettify symbol list, this can
   cause columns to change as certain keywords are shortened (e.g. =fun= becomes
   \lambda).
-- ~tuareg-opam-update-env~ is called the first time [[doom-package:tuareg]] is loaded
+- ~opam-switch-set-switch~ is called the first time [[doom-package:tuareg]] and subsequently [[doom-package:opam-switch-mode]] are loaded
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.
@@ -80,6 +82,7 @@ This module requires the following packages available through [[http://opam.ocam
 | ~merlin-iedit-occurrences~   | [[kbd:][v R]]             | visual refactor identifier under point (multiple cursors) |
 | ~utop~                       | [[kbd:][SPC o r]]         | open =utop= as REPL                                       |
 | ~utop-eval-region~           | [[kbd:][SPC c e]]         | evaluate selected region in =utop=                        |
+| ~opam-switch-set-switch~     | [[kbd:][<localleader> w]] | evaluate selected region in =utop=                        |
 
 * TODO Configuration
 #+begin_quote

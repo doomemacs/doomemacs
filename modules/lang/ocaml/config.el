@@ -20,10 +20,6 @@
   ;; harmless if `prettify-symbols-mode' isn't active
   (setq tuareg-prettify-symbols-full t)
 
-  ;; Use opam to set environment
-  (setq tuareg-opam-insinuate t)
-  (tuareg-opam-update-env (tuareg-opam-current-compiler))
-
   (setq-hook! 'tuareg-mode-hook
     comment-line-break-function #'+ocaml/comment-indent-new-line)
 
@@ -122,6 +118,22 @@
                 ((equal ext ".eliomi")
                  (setq-local ocamlformat-file-kind 'interface)))))
       (setq-local +format-with 'ocamlformat))))
+
+(use-package! opam-switch-mode
+  :hook (tuareg-mode-local-vars . +ocaml-init-opam-switch-h)
+  :init
+  (map! :localleader
+        :map tuareg-mode-map
+        "w" #'opam-switch-set-switch)
+
+  (defun +ocaml-init-opam-switch-h ()
+    "Activate `opam-switch-mode' if the opam executable exists."
+    (when (executable-find "opam")
+      (opam-switch-mode)))
+  :config
+  ;; Use opam to set environment
+  (setq tuareg-opam-insinuate t)
+  (opam-switch-set-switch (tuareg-opam-current-compiler)))
 
 ;; Tree sitter
 (eval-when! (modulep! +tree-sitter)
