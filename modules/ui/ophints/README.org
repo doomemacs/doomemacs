@@ -16,11 +16,13 @@ Uses [[doom-package:evil-goggles]] for evil users and [[doom-package:volatile-hi
 [[doom-contrib-maintainer:][Become a maintainer?]]
 
 ** Module flags
-/This module has no flags./
+- +goggles ::
+  Use doom-package:goggles instead of doom-package:volatile-highlights. Only works when [[doom-module::editor evil]] is off.
 
 ** Packages
 - [[doom-package:evil-goggles]] if [[doom-module::editor evil]]
-- [[doom-package:volatile-highlights]] unless [[doom-module::editor evil]]
+- [[doom-package:volatile-highlights]] unless [[doom-module::editor evil]] or [[doom-module:+goggles]]
+- doom-package:goggles if doom-module:+goggles unless [[doom-module::editor evil]]
 
 ** Hacks
 /No hacks documented for this module./

@@ -63,9 +63,12 @@
                 :switch evil-goggles-enable-join
                 :advice evil-goggles--join-advice))))
 
+(use-package! goggles
+  :if (and (modulep! +goggles) (not (modulep! :editor evil)))
+  :hook ((prog-mode text-mode) . goggles-mode))
 
 (use-package! volatile-highlights
-  :unless (modulep! :editor evil)
+  :unless (or (modulep! :editor evil) (modulep! +goggles))
   :hook (doom-first-input . volatile-highlights-mode)
   :config
   (after! undo-fu
