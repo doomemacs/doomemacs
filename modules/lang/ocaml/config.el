@@ -17,6 +17,24 @@
   (set-ligatures! 'tuareg-mode :alist
     (append tuareg-prettify-symbols-basic-alist
             tuareg-prettify-symbols-extra-alist))
+  ;; some extra ligatures
+  ;; unfortunately, ocaml does not have many keywords
+  ;; that can't be used as identifiers, so in theory
+  ;; some user defined variables could be prettified.
+  ;; However, naming your function "string" is probably
+  ;; as confusing with and without ligatures.
+  (set-ligatures! 'tuareg-mode :alist
+    :true "true"
+    :false "false"
+    :null "[]"
+    :int "int"
+    :float "float"
+    :str "string"
+    :bool "bool"
+    :list "list"
+    :pipe "|>"
+    :tuple ", "
+    :dot "*")
   ;; harmless if `prettify-symbols-mode' isn't active
   (setq tuareg-prettify-symbols-full t)
 
