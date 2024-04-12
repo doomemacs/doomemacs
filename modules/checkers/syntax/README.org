@@ -25,6 +25,9 @@ This module provides syntax checking and error highlighting, powered by
 ** Hacks
 - If ~lsp-ui-mode~ is active, most of the aesthetic functionality of this module
   is turned off, as they show the same information.
+- If child frames are enabled, a post command hook has to be added to ensure
+  that the flycheck frame goes away instantly, or else it will linger for a
+  couple of seconds.
 
 ** TODO Changelog
 # This section will be machine generated. Don't edit it by hand.

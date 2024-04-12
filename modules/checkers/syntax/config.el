@@ -69,6 +69,19 @@
 (use-package! flycheck-posframe
   :when (modulep! +childframe)
   :unless (modulep! +flymake)
+  :preface
+  ;; Fix bug where the child frame doesn't disappear immediately.
+  ;; See #6416
+  ;; Thanks to jadestrong for the fix:
+  ;; https://github.com/doomemacs/doomemacs/issues/6416#issuecomment-1156164346
+  (defun +flycheck-posframe-monitor-post-command ()
+    (unless (flycheck-posframe-check-position)
+      (posframe-hide flycheck-posframe-buffer)))
+  (defun +fix-flycheck-posframe-not-hide-immediately ()
+    (if flycheck-posframe-mode
+        (add-hook! post-command :local #'+flycheck-posframe-monitor-post-command)
+      (remove-hook! post-command :local #'+flycheck-posframe-monitor-post-command t)))
+  :hook (flycheck-posframe-mode . +fix-flycheck-posframe-not-hide-immediately)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
   (setq flycheck-posframe-warning-prefix "! "
