@@ -106,7 +106,7 @@ the buffer is visible, then set another timer and try again later."
                   (param (if (memq side '(left right))
                              'window-width
                            'window-height)))
-        (setq list (assq-delete-all 'size alist))
+        (setq alist (assq-delete-all 'size alist))
         (setf (alist-get param alist) size))
       (setf (alist-get 'window-parameters alist)
             parameters)

@@ -40,7 +40,8 @@ TAB/S-TAB.")
               ('aggressive
                (not (or (bound-and-true-p mct--active)
                         (bound-and-true-p vertico--input)
-                        (eq (current-local-map) read-passwd-map)
+                        (and (featurep 'auth-source)
+                             (eq (current-local-map) read-passwd-map))
                         (and (featurep 'helm-core) (helm--alive-p))
                         (and (featurep 'ido) (ido-active))
                         (where-is-internal 'minibuffer-complete
@@ -53,7 +54,7 @@ TAB/S-TAB.")
         (corfu-mode +1))))
   :config
   (setq corfu-auto t
-        corfu-auto-delay 0.1
+        corfu-auto-delay 0.18
         corfu-auto-prefix 2
         global-corfu-modes '((not
                               erc-mode
@@ -67,8 +68,10 @@ TAB/S-TAB.")
         corfu-count 16
         corfu-max-width 120
         corfu-on-exact-match nil
-        corfu-quit-at-boundary (if (modulep! +orderless) 'separator t)
-        corfu-quit-no-match (if (modulep! +orderless) 'separator t)
+        corfu-quit-at-boundary (if (or (modulep! :completion vertico)
+                                       (modulep! +orderless))
+                                   'separator t)
+        corfu-quit-no-match corfu-quit-at-boundary
         tab-always-indent 'complete)
   (add-to-list 'completion-category-overrides `(lsp-capf (styles ,@completion-styles)))
   (add-to-list 'corfu-auto-commands #'lispy-colon)
@@ -112,10 +115,10 @@ TAB/S-TAB.")
 (use-package! cape
   :defer t
   :init
-  (add-hook! prog-mode
+  (add-hook! 'prog-mode-hook
     (defun +corfu-add-cape-file-h ()
       (add-hook 'completion-at-point-functions #'cape-file -10 t)))
-  (add-hook! (org-mode markdown-mode)
+  (add-hook! '(org-mode-hook markdown-mode-hook)
     (defun +corfu-add-cape-elisp-block-h ()
       (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t)))
   ;; Enable Dabbrev completion basically everywhere as a fallback.
@@ -124,17 +127,23 @@ TAB/S-TAB.")
     ;; Set up `cape-dabbrev' options.
     (defun +dabbrev-friend-buffer-p (other-buffer)
       (< (buffer-size other-buffer) +corfu-buffer-scanning-size-limit))
-    (add-hook! (prog-mode text-mode conf-mode comint-mode minibuffer-setup
-                          eshell-mode)
+    (add-hook! '(prog-mode-hook
+                 text-mode-hook
+                 conf-mode-hook
+                 comint-mode-hook
+                 minibuffer-setup-hook
+                 eshell-mode-hook)
       (defun +corfu-add-cape-dabbrev-h ()
         (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t)))
     (after! dabbrev
       (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
             dabbrev-ignored-buffer-regexps
-            '("^ "
+            '("\\` "
               "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?")
             dabbrev-upcase-means-case-search t)
-      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)))
+      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)))
 
   ;; Make these capfs composable.
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)

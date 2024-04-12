@@ -51,16 +51,19 @@
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
   (setq flycheck-popup-tip-error-prefix "X ")
-  (after! evil
-    ;; Don't display popups while in insert or replace mode, as it can affect
-    ;; the cursor's position or cause disruptive input delays.
-    (add-hook! '(evil-insert-state-entry-hook evil-replace-state-entry-hook)
-               #'flycheck-popup-tip-delete-popup)
-    (defadvice! +syntax--disable-flycheck-popup-tip-maybe-a (&rest _)
-      :before-while #'flycheck-popup-tip-show-popup
-      (if evil-local-mode
-          (eq evil-state 'normal)
-        (not (bound-and-true-p company-backend))))))
+
+  ;; HACK: Only display the flycheck popup if we're in normal mode (for evil
+  ;;   users) or if no selection or completion is active. This popup can
+  ;;   interfere with the active evil mode, clear active regions, and other
+  ;;   funny business (see #7242).
+  (defadvice! +syntax--disable-flycheck-popup-tip-maybe-a (&rest _)
+    :before-while #'flycheck-popup-tip-show-popup
+    (if (and (bound-and-true-p evil-local-mode)
+             (not (evil-emacs-state-p)))
+        (evil-normal-state-p)
+      (and (not (region-active-p))
+           (not (bound-and-true-p company-backend))
+           (not (ignore-errors (>= corfu--index 0)))))))
 
 
 (use-package! flycheck-posframe

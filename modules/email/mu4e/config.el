@@ -75,6 +75,7 @@ is non-nil."
      (setq mu4e-get-mail-command "offlineimap -o -q")))
 
   (setq mu4e-update-interval nil
+        mu4e-notification-support t
         mu4e-sent-messages-behavior 'sent
         mu4e-hide-index-messages t
         ;; configuration for sending mail
@@ -671,77 +672,3 @@ See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
             (`refile (mu4e-action-retag-message msg "-\\Inbox"))
             (`flag   (mu4e-action-retag-message msg "+\\Starred"))
             (`unflag (mu4e-action-retag-message msg "-\\Starred"))))))))
-
-;;
-;;; Alerts
-
-(use-package! mu4e-alert
-  :after mu4e
-  :config
-  (setq doom-modeline-mu4e t)
-
-  (mu4e-alert-enable-mode-line-display)
-  (mu4e-alert-enable-notifications)
-
-  (when (version<= "1.6" mu4e-mu-version)
-    (defadvice! +mu4e-alert-filter-repeated-mails-fixed-a (mails)
-      "Filters the MAILS that have been seen already\nUses :message-id not :docid."
-      :override #'mu4e-alert-filter-repeated-mails
-      (cl-remove-if (lambda (mail)
-                      (prog1 (and (not mu4e-alert-notify-repeated-mails)
-                                  (ht-get mu4e-alert-repeated-mails
-                                          (plist-get mail :message-id)))
-                        (ht-set! mu4e-alert-repeated-mails
-                                 (plist-get mail :message-id)
-                                 t)))
-                    mails)))
-
-  (when (featurep :system 'linux)
-    (mu4e-alert-set-default-style 'libnotify)
-
-    (defvar +mu4e-alert-bell-cmd '("paplay" . "/usr/share/sounds/freedesktop/stereo/message.oga")
-      "Cons list with command to play a sound, and the sound file to play.
-Disabled when set to nil.")
-
-    (setq mu4e-alert-email-notification-types '(subjects))
-    (defun +mu4e-alert-grouped-mail-notification-formatter-with-bell (mail-group _all-mails)
-      "Default function to format MAIL-GROUP for notification.
-ALL-MAILS are the all the unread emails"
-      (when +mu4e-alert-bell-cmd
-        (start-process "mu4e-alert-bell" nil (car +mu4e-alert-bell-cmd) (cdr +mu4e-alert-bell-cmd)))
-      (if (> (length mail-group) 1)
-          (let* ((mail-count (length mail-group))
-                 (first-mail (car mail-group))
-                 (title-prefix (format "You have %d unread emails"
-                                       mail-count))
-                 (field-value (mu4e-alert--get-group first-mail))
-                 (title-suffix (format (pcase mu4e-alert-group-by
-                                         (`:from "from %s:")
-                                         (`:to "to %s:")
-                                         (`:maildir "in %s:")
-                                         (`:priority "with %s priority:")
-                                         (`:flags "with %s flags:"))
-                                       field-value))
-                 (title (format "%s %s" title-prefix title-suffix)))
-            (list :title title
-                  :body (s-join "\n"
-                                (mapcar (lambda (mail)
-                                          (format "%s<b>%s</b> • %s"
-                                                  (cond
-                                                   ((plist-get mail :in-reply-to) "⮩ ")
-                                                   ((string-match-p "\\`Fwd:"
-                                                                    (plist-get mail :subject)) " ⮯ ")
-                                                   (t "  "))
-                                                  (truncate-string-to-width (or (caar (plist-get mail :from))
-                                                                                (cdar (plist-get mail :from)))
-                                                                            20 nil nil t)
-                                                  (truncate-string-to-width
-                                                   (replace-regexp-in-string "\\`Re: \\|\\`Fwd: " ""
-                                                                             (plist-get mail :subject))
-                                                   40 nil nil t)))
-                                        mail-group))))
-        (let* ((new-mail (car mail-group))
-               (subject (plist-get new-mail :subject))
-               (sender (caar (plist-get new-mail :from))))
-          (list :title sender :body subject))))
-    (setq mu4e-alert-grouped-mail-notification-formatter #'+mu4e-alert-grouped-mail-notification-formatter-with-bell)))

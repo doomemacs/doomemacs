@@ -89,9 +89,9 @@
   (user-error (message "Error: %s" (cadr e))
               (kill-emacs 2)))
 
-;; UX: Abort if the user is using 'doom' as root, unless ~/.config/emacs is
-;;   owned by root, in which case we assume the user genuinely wants root to be
-;;   their primary user account for Emacs.
+;; UX: Abort if the user is using 'doom' as root, unless $EMACSDIR is owned by
+;;   root, in which case we can safely assume the user genuinely wants root to
+;;   be their primary user account for this session.
 (when (equal 0 (user-real-uid))
   (unless (equal 0 (file-attribute-user-id (file-attributes doom-emacs-dir)))
     (message
@@ -271,10 +271,8 @@ SEE ALSO:
     (defcli-autoload! ((profiles profile)))
     (defcli-autoload! ((upgrade up)))
     (defcli-autoload! (env))
-    (defcli-autoload! ((build b purge p rollback)) "packages")
+    (defcli-autoload! ((build b purge p gc rollback)) "packages")
     (defcli-autoload! ((install i)))
-    (defcli-autoload! ((compile c)))
-    (defcli-autoload! (clean) "compile")
 
     ;; TODO Post-3.0 commands
     ;; (load! "gc" dir)
@@ -282,8 +280,6 @@ SEE ALSO:
     ;; (load! "nuke" dir)
     ;; (load! "package" dir)
     ;; (load! "profile" dir)
-    ;; (defcli-obsolete! ((compile c)) (sync "--compile") "v3.0.0")
-    ;; (defcli-obsolete! ((build b))   (sync "--rebuild") "v3.0.0")
     )
 
   (defcli-group! "Diagnostics"

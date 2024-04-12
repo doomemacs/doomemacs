@@ -8,15 +8,11 @@
   :config
   (set-yas-minor-mode! 'emacs-everywhere-mode)
 
-  ;; HACK Inhibit MAJOR-MODE-local-vars-hook in emacs-everywhere buffers,
+  ;; HACK: Inhibit MAJOR-MODE-local-vars-hook in emacs-everywhere buffers,
   ;;   because Doom commonly starts servers and other extraneous services on
   ;;   this hook, which will rarely work well in emacs-everywhere's temporary
   ;;   buffers anyway.
   (setq-hook! 'emacs-everywhere-init-hooks doom-inhibit-local-var-hooks t)
-
-  ;; REVIEW: Fixes tecosaur/emacs-everywhere#75. Remove when dealt with
-  ;;   upstream.
-  (define-key emacs-everywhere-mode-map "\C-c\C-c" #'emacs-everywhere-finish)
 
   (after! doom-modeline
     (doom-modeline-def-segment emacs-everywhere
@@ -36,7 +32,7 @@
     (doom-modeline-def-modeline 'emacs-everywhere
       '(bar modals emacs-everywhere buffer-position
         word-count parrot selection-info)
-      '(input-method major-mode checker
+      '(input-method major-mode check
         #("  " 0 1 ; "Exit to app" icon + a little padding
           (rear-nonsticky t
            display (raise -0.25)

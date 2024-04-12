@@ -15,6 +15,12 @@
   "An alternative leader prefix key, used for Insert and Emacs states, and for
 non-evil users.")
 
+(defvar doom-leader-key-states '(normal visual motion)
+  "which evil modes to activate the leader key for")
+
+(defvar doom-leader-alt-key-states '(emacs insert)
+  "which evil modes to activate the alternative leader key for")
+
 (defvar doom-localleader-key "SPC m"
   "The localleader prefix key, for major-mode specific commands.")
 
@@ -212,8 +218,8 @@ localleader prefix."
                   ((equal doom-leader-alt-key "C-x")
                    (set-keymap-parent doom-leader-map ctl-x-map)))
             (define-key map (kbd doom-leader-alt-key) 'doom/leader))
-        (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
-        (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
+        (evil-define-key* doom-leader-key-states map (kbd doom-leader-key) 'doom/leader)
+        (evil-define-key* doom-leader-alt-key-states map (kbd doom-leader-alt-key) 'doom/leader))
       (general-override-mode +1))))
 
 

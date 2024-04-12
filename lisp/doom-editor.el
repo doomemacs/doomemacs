@@ -250,8 +250,7 @@ tell you about it. Very annoying. This prevents that."
  auto-mode-alist
  '(("/LICENSE\\'" . text-mode)
    ("\\.log\\'" . text-mode)
-   ("rc\\'" . conf-mode)
-   ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)))
+   ("rc\\'" . conf-mode)))
 
 
 ;;

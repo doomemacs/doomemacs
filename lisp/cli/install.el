@@ -55,20 +55,19 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
             (setq doom-user-dir (expand-file-name "doom/" xdg-config-dir)))))
 
       (if (file-directory-p doom-user-dir)
-          (print! (item "Skipping %s (already exists)") (relpath doom-user-dir))
+          (print! (item "Skipping %s (already exists)") (path doom-user-dir))
         (make-directory doom-user-dir 'parents)
-        (print! (success "Created %s") (relpath doom-user-dir)))
+        (print! (success "Created %s") (path doom-user-dir)))
 
       ;; Create init.el, config.el & packages.el
       (print-group!
         (mapc (lambda (file)
                 (cl-destructuring-bind (filename . template) file
-                  (if (file-exists-p! filename doom-user-dir)
-                      (print! (item "Skipping %s (already exists)")
-                              (path filename))
-                    (print! (item "Creating %s%s") (relpath doom-user-dir) filename)
-                    (with-temp-file (doom-path doom-user-dir filename)
-                      (insert-file-contents template))
+                  (setq filename (doom-path doom-user-dir filename))
+                  (if (file-exists-p filename)
+                      (print! (item "Skipping %s (already exists)...") (path filename))
+                    (print! (item "Creating %s...") (path filename))
+                    (with-temp-file filename (insert-file-contents template))
                     (print! (success "Done!")))))
               (let ((template-dir (doom-path doom-emacs-dir "templates")))
                 `((,doom-module-init-file
@@ -96,7 +95,7 @@ Change `$DOOMDIR' with the `--doomdir' option, e.g.
     (if (eq install? :no)
         (print! (warn "Not installing plugins, as requested"))
       (print! "Installing plugins")
-      (doom-packages-install))
+      (doom-packages-ensure))
 
     (print! "Regenerating autoloads files")
     (doom-profile-generate)

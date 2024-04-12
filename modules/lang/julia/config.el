@@ -53,7 +53,8 @@
   :hook (+julia-repl-start . +julia-override-repl-escape-char-h)
   :hook (+julia-repl-start . julia-repl-use-emacsclient)
   :config
-  (set-popup-rule! "^\\*julia.*\\*$" :ttl nil)
+  (unless (modulep! +snail)
+    (set-popup-rule! "^\\*julia.*\\*$" :ttl nil))
 
   (when (modulep! :ui workspaces)
     (defadvice! +julia--namespace-repl-buffer-to-workspace-a (&optional executable-key suffix)

@@ -50,7 +50,9 @@
 
 (defun +eval-repl-known-repls ()
   "Yield the available repl functions as a list of symbols."
-  (seq-uniq (mapcar (pcase-lambda (`(,mode ,fn . _)) (list mode fn)) +eval-repls)))
+  (cl-delete-duplicates
+   (mapcar (lambda! ((mode fn &rest _)) (list mode fn))
+           +eval-repls)))
 
 (defun +doom-pretty-mode-name (mode)
   "Convert a mode name into a variant nicer for human eyes."
@@ -82,15 +84,15 @@ human-readable variant of its associated major mode name."
 
 (defun +eval-repl-prompt ()
   "Prompt the user for the choice of a repl to open."
-  (let* ((knowns (mapcar (pcase-lambda (`(,mode ,fn)) (list (+doom-pretty-mode-name mode) fn))
+  (let* ((knowns (mapcar (lambda! ((mode fn)) (list (+doom-pretty-mode-name mode) fn))
                          (+eval-repl-known-repls)))
          (founds (mapcar (lambda (fn) (list (+eval-pretty-mode-name-from-fn fn) fn))
                          (+eval-repl-found-repls)))
-         (repls (seq-uniq (append knowns founds)))
-         (names (mapcar #'cl-first repls))
+         (repls (cl-delete-duplicates (append knowns founds)))
+         (names (mapcar #'car repls))
          (choice (or (completing-read "Open a REPL for: " names)
                      (user-error "Aborting"))))
-    (cl-second (assoc choice repls))))
+    (cadr (assoc choice repls))))
 
 (defun +eval-repl-from-major-mode ()
   "Fetch the repl associated with the current major mode, if there
@@ -103,8 +105,7 @@ is one."
 prompted for a repl choice, even if the major mode they're in
 already has a known one."
   (pcase-let* ((`(,fn ,plist) (+eval-repl-from-major-mode))
-               (fn (cond ((or prompt-p (not fn)) (+eval-repl-prompt))
-                         (t fn)))
+               (fn (if (or prompt-p (not fn)) (+eval-repl-prompt) fn))
                (region (when (use-region-p)
                          (buffer-substring-no-properties (region-beginning)
                                                          (region-end)))))

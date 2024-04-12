@@ -95,7 +95,6 @@ want to change your symbol font, use `doom-symbol-font'.")
         (inhibit-redisplay t))
     (run-hooks 'doom-switch-buffer-hook)))
 
-(defvar doom--last-frame nil)
 (defun doom-run-switch-window-or-frame-hooks-h (&optional _)
   (let ((gc-cons-threshold most-positive-fixnum)
         (inhibit-redisplay t))
@@ -498,65 +497,69 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       (cons 'custom-theme-directory
             (delq 'custom-theme-directory custom-theme-load-path)))
 
-(defun doom-init-fonts-h (&optional _reload)
+(defun doom-init-fonts-h (&optional reload)
   "Loads `doom-font', `doom-serif-font', and `doom-variable-pitch-font'."
-  (let ((this-frame (selected-frame)))
-    (dolist (map `((default . ,doom-font)
-                   (fixed-pitch . ,doom-font)
-                   (fixed-pitch-serif . ,doom-serif-font)
-                   (variable-pitch . ,doom-variable-pitch-font)))
-      (condition-case e
-          (when-let* ((face (car map))
-                      (font (cdr map)))
-            (dolist (frame (frame-list))
-              (when (display-multi-font-p frame)
-                (set-face-attribute face frame
-                                    :width 'normal :weight 'normal
-                                    :slant 'normal :font font)))
-            (custom-push-theme
-             'theme-face face 'user 'set
-             (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
-                    (base-specs (or base-specs '((t nil))))
-                    (attrs '(:family :foundry :slant :weight :height :width))
-                    (new-specs nil))
-               (dolist (spec base-specs)
-                 ;; Each SPEC has the form (DISPLAY ATTRIBUTE-PLIST)
-                 (let ((display (car spec))
-                       (plist   (copy-tree (nth 1 spec))))
-                   ;; Alter only DISPLAY conditions matching this frame.
-                   (when (or (memq display '(t default))
-                             (face-spec-set-match-display display this-frame))
-                     (dolist (attr attrs)
-                       (setq plist (plist-put plist attr (face-attribute face attr)))))
-                   (push (list display plist) new-specs)))
-               (nreverse new-specs)))
-            (put face 'face-modified nil))
-        ('error
-         (ignore-errors (doom--reset-inhibited-vars-h))
-         (if (string-prefix-p "Font not available" (error-message-string e))
-             (signal 'doom-font-error (list (font-get (cdr map) :family)))
-           (signal (car e) (cdr e)))))))
-  (when (fboundp 'set-fontset-font)
-    (let* ((fn (doom-rpartial #'member (font-family-list)))
-           (symbol-font (or doom-symbol-font
-                            (cl-find-if fn doom-symbol-fallback-font-families)))
-           (emoji-font (or doom-emoji-font
-                           (cl-find-if fn doom-emoji-fallback-font-families))))
-      (when symbol-font
-        (dolist (script '(symbol mathematical))
-          (set-fontset-font t script symbol-font)))
-      (when emoji-font
-        ;; DEPRECATED: make unconditional when we drop 27 support
-        (when (version<= "28.1" emacs-version)
-          (set-fontset-font t 'emoji emoji-font))
-        ;; some characters in the Emacs symbol script are often covered by emoji
-        ;; fonts
-        (set-fontset-font t 'symbol emoji-font nil 'append)))
-    ;; Nerd Fonts use these Private Use Areas
-    (dolist (range '((#xe000 . #xf8ff) (#xf0000 . #xfffff)))
-      (set-fontset-font t range "Symbols Nerd Font Mono")))
-  ;; Users should inject their own font logic in `after-setting-font-hook'
-  (run-hooks 'after-setting-font-hook))
+  (let ((initialized-frames (unless reload (get 'doom-font 'initialized-frames))))
+    (dolist (frame (if reload (frame-list) (list (selected-frame))))
+      (unless (member frame initialized-frames)
+        (dolist (map `((default . ,doom-font)
+                       (fixed-pitch . ,doom-font)
+                       (fixed-pitch-serif . ,doom-serif-font)
+                       (variable-pitch . ,doom-variable-pitch-font)))
+          (condition-case e
+              (when-let* ((face (car map))
+                          (font (cdr map)))
+                (when (display-multi-font-p frame)
+                  (set-face-attribute face frame
+                                      :width 'normal :weight 'normal
+                                      :slant 'normal :font font))
+                (custom-push-theme
+                 'theme-face face 'user 'set
+                 (let* ((base-specs (cadr (assq 'user (get face 'theme-face))))
+                        (base-specs (or base-specs '((t nil))))
+                        (attrs '(:family :foundry :slant :weight :height :width))
+                        (new-specs nil))
+                   (dolist (spec base-specs)
+                     (let ((display (car spec))
+                           (plist (copy-tree (nth 1 spec))))
+                       (when (or (memq display '(t default))
+                                 (face-spec-set-match-display display frame))
+                         (dolist (attr attrs)
+                           (setq plist (plist-put plist attr (face-attribute face attr)))))
+                       (push (list display plist) new-specs)))
+                   (nreverse new-specs)))
+                (put face 'face-modified nil))
+            ('error
+             (ignore-errors (doom--reset-inhibited-vars-h))
+             (if (string-prefix-p "Font not available" (error-message-string e))
+                 (signal 'doom-font-error (list (font-get (cdr map) :family)))
+               (signal (car e) (cdr e))))))
+        (put 'doom-font 'initialized-frames
+             (cons frame (cl-delete-if-not #'frame-live-p initialized-frames))))))
+  ;; Only do this once per session (or on `doom/reload-fonts'); superfluous
+  ;; `set-fontset-font' calls may segfault in some contexts.
+  (when (or reload (not (get 'doom-font 'initialized)))
+    (when (fboundp 'set-fontset-font)  ; unavailable in emacs-nox
+      (let* ((fn (doom-rpartial #'member (font-family-list)))
+             (symbol-font (or doom-symbol-font
+                              (cl-find-if fn doom-symbol-fallback-font-families)))
+             (emoji-font (or doom-emoji-font
+                             (cl-find-if fn doom-emoji-fallback-font-families))))
+        (when symbol-font
+          (dolist (script '(symbol mathematical))
+            (set-fontset-font t script symbol-font)))
+        (when emoji-font
+          ;; DEPRECATED: make unconditional when we drop 27 support
+          (when (version<= "28.1" emacs-version)
+            (set-fontset-font t 'emoji emoji-font))
+          ;; some characters in the Emacs symbol script are often covered by
+          ;; emoji fonts
+          (set-fontset-font t 'symbol emoji-font nil 'append)))
+      ;; Nerd Fonts use these Private Use Areas
+      (dolist (range '((#xe000 . #xf8ff) (#xf0000 . #xfffff)))
+        (set-fontset-font t range "Symbols Nerd Font Mono")))
+    (run-hooks 'after-setting-font-hook))
+  (put 'doom-font 'initialized t))
 
 (defun doom-init-theme-h (&rest _)
   "Load the theme specified by `doom-theme' in FRAME."

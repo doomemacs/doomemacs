@@ -115,8 +115,6 @@ See `+emacs-lisp-non-package-mode' for details.")
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
              ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
-           ;; Shorten the :pin of `package!' statements to 10 characters
-           `(("(package!\\_>" (0 (+emacs-lisp-truncate-pin))))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
