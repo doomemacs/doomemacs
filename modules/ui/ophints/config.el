@@ -65,7 +65,11 @@
 
 (use-package! goggles
   :if (and (modulep! +goggles) (not (modulep! :editor evil)))
-  :hook ((prog-mode text-mode) . goggles-mode))
+  :hook ((prog-mode text-mode) . goggles-mode)
+  :config
+  (goggles-define goggles-general-undo undo) ; goggles only supports `primitive-undo' by default
+  (goggles-define goggles-register-paste insert-register)
+  (goggles-define goggles-kill-word backward-kill-word kill-word))
 
 (use-package! volatile-highlights
   :unless (or (modulep! :editor evil) (modulep! +goggles))
