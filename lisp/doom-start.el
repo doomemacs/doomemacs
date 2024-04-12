@@ -320,6 +320,25 @@ If RETURN-P, return the message as a string instead of displaying it."
     (add-hook 'after-change-major-mode-hook #'doom-run-local-var-hooks-h 100)
     (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)))
 
+;; fix bug in daemon mode where the scratch buffer is initializer too early
+;; HACK: for some reason `run-mode-hooks' does not work
+;; nor does calling `initial-major-mode' (although that
+;; does work interactively for some reason) so the buffer
+;; needs to be regenerated
+(when (daemonp)
+  (defun doom--fix-scratch-loading-h ()
+    (when (string= (buffer-name) "*scratch*")
+      (let ((scratch-string (with-current-buffer "*scratch*" (buffer-string))))
+        (kill-buffer "*scratch*")
+        (get-buffer-create "*scratch*")
+        (switch-to-buffer "*scratch*")
+        (insert scratch-string)
+        (set-buffer-modified-p nil)
+        (funcall initial-major-mode)
+        (remove-hook 'doom-switch-buffer-hook #'doom--fix-scratch-loading-h))))
+  (add-hook! 'doom-after-init-hook (when (get-buffer "*scratch*")
+                                     (add-hook! 'doom-switch-buffer-hook #'doom--fix-scratch-loading-h))))
+
 ;;; Load $DOOMDIR/init.el early
 ;; TODO: Catch errors
 (load! (string-remove-suffix ".el" doom-module-init-file) doom-user-dir t)
