@@ -50,8 +50,9 @@
   :commands flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-popup-tip-error-prefix "X ")
-
+  (setq flycheck-popup-tip-error-prefix (if (modulep! +icons)
+                                            "❌ "
+                                          "X "))
   ;; HACK: Only display the flycheck popup if we're in normal mode (for evil
   ;;   users) or if no selection or completion is active. This popup can
   ;;   interfere with the active evil mode, clear active regions, and other
@@ -71,9 +72,16 @@
   :unless (modulep! +flymake)
   :hook (flycheck-mode . +syntax-init-popups-h)
   :config
-  (setq flycheck-posframe-warning-prefix "! "
-        flycheck-posframe-info-prefix "··· "
-        flycheck-posframe-error-prefix "X ")
+  (set-face-attribute 'flycheck-posframe-info-face nil :inherit 'font-lock-variable-name-face)
+  (set-face-attribute 'flycheck-posframe-warning-face nil :inherit 'warning)
+  (set-face-attribute 'flycheck-posframe-error-face nil :inherit 'error)
+  (if (modulep! +icons)
+      (setq flycheck-posframe-warning-prefix "⚠ "
+            flycheck-posframe-error-prefix "❌ "
+            flycheck-posframe-info-prefix "ⓘ ")
+    (setq flycheck-posframe-warning-prefix "! "
+          flycheck-posframe-error-prefix "X "
+          flycheck-posframe-info-prefix "··· "))
   (after! company
     ;; Don't display popups if company is open
     (add-hook 'flycheck-posframe-inhibit-functions #'company--active-p))
