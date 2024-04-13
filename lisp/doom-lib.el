@@ -246,29 +246,29 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
-            (when (and after-init-time
-                       (not running?)
+            (when (and (not running?)
+                       (not (doom-context-p 'init))
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on
                            ;; buffers (such as when processing buffers
-                           ;; internally). In these cases we should assume this
-                           ;; hook wasn't invoked interactively.
+                           ;; internally). In that case assume this hook was
+                           ;; invoked non-interactively.
                            (and (boundp hook)
                                 (symbol-value hook))))
               (setq running? t)  ; prevent infinite recursion
               (doom-run-hooks hook-var)
               (set hook-var nil))))
-      (cond ((daemonp)
-             ;; In a daemon session we don't need all these lazy loading
-             ;; shenanigans. Just load everything immediately.
-             (add-hook 'after-init-hook fn 'append))
-            ((eq hook 'find-file-hook)
-             ;; Advise `after-find-file' instead of using `find-file-hook'
-             ;; because the latter is triggered too late (after the file has
-             ;; opened and modes are all set up).
-             (advice-add 'after-find-file :before fn '((depth . -101))))
-            ((add-hook hook fn -101)))
+      (when (daemonp)
+        ;; In a daemon session we don't need all these lazy loading shenanigans.
+        ;; Just load everything immediately.
+        (add-hook 'server-after-make-frame-hook fn 'append))
+      (if (eq hook 'find-file-hook)
+          ;; Advise `after-find-file' instead of using `find-file-hook' because
+          ;; the latter is triggered too late (after the file has opened and
+          ;; modes are all set up).
+          (advice-add 'after-find-file :before fn '((depth . -101)))
+        (add-hook hook fn -101))
       fn)))
 
 (defun doom-compile-functions (&rest fns)
