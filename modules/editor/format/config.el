@@ -11,6 +11,13 @@ If it is t, it is disabled in all modes, the same as if the +onsave flag
 If nil, formatting is enabled in all modes.
 Irrelevant if you do not have the +onsave flag enabled for this module.")
 
+(defvar +format-on-save-enabled-files-directories t
+  "A list of files or directories in which to reformat the buffer upon saving.
+Accepts both filenames and directories. The tilde (~) can be used to specify the
+current user's home directory
+If t, formatting is enabled in all directories.
+Irrelevant if you do not have the +onsave flag enabled for this module.")
+
 (defvar +format-preserve-indentation t
   "If non-nil, the leading indentation is preserved when formatting the whole
 buffer. This is particularly useful for partials.
@@ -48,11 +55,17 @@ including Apheleia itself.")
 
 (defun +format-maybe-inhibit-h ()
   "Check if formatting should be disabled for current buffer.
-This is controlled by `+format-on-save-disabled-modes'."
+This is controlled by `+format-on-save-disabled-modes' and
+`+format-on-save-enabled-files-directories'."
   (or (eq major-mode 'fundamental-mode)
       (string-blank-p (buffer-name))
       (eq +format-on-save-disabled-modes t)
-      (not (null (memq major-mode +format-on-save-disabled-modes)))))
+      (not (null (memq major-mode +format-on-save-disabled-modes)))
+      (cl-some
+       (lambda (f) (or
+               (file-in-directory-p buffer-file-truename f)
+               (file-equal-p buffer-file-truename f)))
+       +format-on-save-enabled-directories)))
 
 
 (after! apheleia
