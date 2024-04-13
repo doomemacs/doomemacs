@@ -143,11 +143,11 @@ tell you about it. Very annoying. This prevents that."
   (letf! ((#'sit-for #'ignore))
     (apply fn args)))
 
-;; HACK Emacs generates long file paths for its auto-save files; long =
-;;      `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
-;;      filesystem will murder your family. To appease it, I compress
-;;      `buffer-file-name' to a stable 40 characters.
-;; TODO PR this upstream; should be a universal issue!
+;; HACK: Emacs generates long file paths for its auto-save files; long =
+;;   `auto-save-list-file-prefix' + `buffer-file-name'. If too long, the
+;;   filesystem will murder your family. To appease it, I compress
+;;   `buffer-file-name' to a stable 40 characters.
+;; TODO: PR this upstream; should be a universal issue!
 (defadvice! doom-make-hashed-auto-save-file-name-a (fn)
   "Compress the auto-save file name so paths don't get too long."
   :around #'make-auto-save-file-name
@@ -156,7 +156,7 @@ tell you about it. Very annoying. This prevents that."
               ;; Don't do anything for non-file-visiting buffers. Names
               ;; generated for those are short enough already.
               (null buffer-file-name)
-              ;; If an alternate handler exists for this path, bow out.  Most of
+              ;; If an alternate handler exists for this path, bow out. Most of
               ;; them end up calling `make-auto-save-file-name' again anyway, so
               ;; we still achieve this advice's ultimate goal.
               (find-file-name-handler buffer-file-name
@@ -165,8 +165,8 @@ tell you about it. Very annoying. This prevents that."
            (sha1 buffer-file-name))))
     (funcall fn)))
 
-;; HACK ...does the same for Emacs backup files, but also packages that use
-;;      `make-backup-file-name-1' directly (like undo-tree).
+;; HACK: ...does the same for Emacs backup files, but also packages that use
+;;   `make-backup-file-name-1' directly (like undo-tree).
 (defadvice! doom-make-hashed-backup-file-name-a (fn file)
   "A few places use the backup file name so paths don't get too long."
   :around #'make-backup-file-name-1
@@ -191,7 +191,7 @@ tell you about it. Very annoying. This prevents that."
 
 ;; Favor spaces over tabs. Pls dun h8, but I think spaces (and 4 of them) is a
 ;; more consistent default than 8-space tabs. It can be changed on a per-mode
-;; basis anyway (and is, where tabs are the canonical style, like go-mode).
+;; basis anyway (and is, where tabs are the canonical style, like `go-mode').
 (setq-default indent-tabs-mode nil
               tab-width 4)
 
@@ -269,19 +269,20 @@ tell you about it. Very annoying. This prevents that."
         ;; Only prompts for confirmation when buffer is unsaved.
         revert-without-query (list "."))
 
-  ;; `auto-revert-mode' and `global-auto-revert-mode' would, normally, abuse the
-  ;; heck out of file watchers _or_ aggressively poll your buffer list every X
-  ;; seconds. Too many watchers can grind Emacs to a halt if you preform
-  ;; expensive or batch processes on files outside of Emacs (e.g. their mtime
-  ;; changes), and polling your buffer list is terribly inefficient as your
-  ;; buffer list grows into the hundreds.
+  ;; PERF: `auto-revert-mode' and `global-auto-revert-mode' would, normally,
+  ;;   abuse the heck out of file watchers _or_ aggressively poll your buffer
+  ;;   list every X seconds. Too many watchers can grind Emacs to a halt if you
+  ;;   preform expensive or batch processes on files outside of Emacs (e.g.
+  ;;   their mtime changes), and polling your buffer list is terribly
+  ;;   inefficient as your buffer list grows into the hundreds.
   ;;
-  ;; Doom does this lazily instead. i.e. All visible buffers are reverted
-  ;; immediately when a) a file is saved or b) Emacs is refocused (after using
-  ;; another app). Meanwhile, buried buffers are reverted only when they are
-  ;; switched to. This way, Emacs only ever has to operate on, at minimum, a
-  ;; single buffer and, at maximum, ~10 buffers (after all, when do you ever
-  ;; have more than 10 windows in any single frame?).
+  ;;   Doom does this lazily instead. i.e. All visible buffers are reverted
+  ;;   immediately when a) a file is saved or b) Emacs is refocused (after using
+  ;;   another app). Meanwhile, buried buffers are reverted only when they are
+  ;;   switched to. This way, Emacs only ever has to operate on, at minimum, a
+  ;;   single buffer and, at maximum, ~10 x F buffers, where F = number of open
+  ;;   frames (after all, when do you ever have more than 10 windows in any
+  ;;   single frame?).
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
