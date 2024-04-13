@@ -26,7 +26,8 @@ be formatted and returned to the buffer using
 - +onsave ::
   Enable reformatting of a buffer when it is saved. See
   [[var:+format-on-save-disabled-modes]] to disable format on save for certain
-  major modes.
+  major modes and var:+format-on-save-enabled-files-directories to only
+  format on save for specific files/directories.
 
 ** Packages
 - [[doom-package:apheleia]]
@@ -102,7 +103,9 @@ If you want to save more than a handful of time, you can set
 [[var:apheleia-inhibit]] to disable even if =apheleia-global-mode= is on.
 
 *** Onsave only
-This behaviour is controlled via [[var:+format-on-save-disabled-modes]] thus;
+This behaviour is controlled via two variables:
+- [[var:+format-on-save-disabled-modes]]
+- var:+format-on-save-enabled-files-directories
 
 #+begin_src emacs-lisp
 (setq +format-on-save-disabled-modes
@@ -115,6 +118,18 @@ This behaviour is controlled via [[var:+format-on-save-disabled-modes]] thus;
 In this case, =emacs-lisp-mode=, =sql-mode=, =tex-mode= and =latex-mode= will not be
 formatted on save, but can still be formatted by manually invoking the commands
 =+format/buffer= or =apheleia-format-buffer=.
+
+#+begin_src emacs-lisp
+(setq +format-on-save-enabled-files-directories
+      '("/usr/share/emacs/29.3/lisp/"
+        "~/my-dotfiles/"
+        "~/.config/doom/config.el"))
+#+end_src
+
+This will make the files in the =/usr/share/emacs/29.3/lisp/= and =~/my-dotfiles= folders
+format on save, as well as the =config.el= file; turning this on makes auto format disable
+on every other file. By default, the value of this is ~t~ which will format all files on save.
+Setting this option still requires the doom-module:+onsave flag to work.
 
 ** Disabling the LSP formatter
 If you are in a buffer with ~lsp-mode~ enabled and a server that supports
