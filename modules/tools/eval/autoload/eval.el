@@ -72,6 +72,38 @@
            output source-buffer)
   output)
 
+;;;###autoload
+(defun +eval-region-as-major-mode (beg end &optional runner-major-mode)
+  "Evaluate a region between BEG and END and display the output.
+
+Evaluate as in RUNNER-MAJOR-MODE. If RUNNER-MAJOR-MODE is nil, use major-mode
+of the buffer instead."
+  (let ((load-file-name buffer-file-name)
+        (load-true-file-name
+         (or buffer-file-truename
+             (if buffer-file-name
+                 (file-truename buffer-file-name))))
+        (runner-major-mode (or runner-major-mode major-mode)))
+    (cond ((if (fboundp '+eval--ensure-in-repl-buffer)
+               (ignore-errors
+                 (get-buffer-window (or (+eval--ensure-in-repl-buffer)
+                                        t))))
+           (funcall (or (plist-get (cdr (alist-get runner-major-mode +eval-repls)) :send-region)
+                        #'+eval/send-region-to-repl)
+                    beg end))
+          ((let (lang)
+             (if-let ((runner
+                       (or (alist-get runner-major-mode +eval-runners)
+                           (and (require 'quickrun nil t)
+                                (equal (setq
+                                        lang (quickrun--command-key
+                                              (buffer-file-name (buffer-base-buffer))))
+                                       "emacs")
+                                (alist-get 'emacs-lisp-mode +eval-runners)))))
+                 (funcall runner beg end)
+               (let ((quickrun-option-cmdkey lang))
+                 (quickrun-region beg end))))))))
+
 
 ;;
 ;;; Commands
@@ -103,31 +135,7 @@
 (defun +eval/region (beg end)
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
-  (let ((load-file-name buffer-file-name)
-        (load-true-file-name
-         (or buffer-file-truename
-             (if buffer-file-name
-                 (file-truename buffer-file-name)))))
-    (cond ((and (fboundp '+eval--ensure-in-repl-buffer)
-                (ignore-errors
-                  (get-buffer-window (or (+eval--ensure-in-repl-buffer)
-                                         t))))
-           (funcall (or (plist-get (cdr (alist-get major-mode +eval-repls)) :send-region)
-                        #'+eval/send-region-to-repl)
-                    beg end))
-          ((let ((runner
-                  (or (alist-get major-mode +eval-runners)
-                      (and (require 'quickrun nil t)
-                           (equal (setq
-                                   lang (quickrun--command-key
-                                         (buffer-file-name (buffer-base-buffer))))
-                                  "emacs")
-                           (alist-get 'emacs-lisp-mode +eval-runners))))
-                 lang)
-             (if runner
-                 (funcall runner beg end)
-               (let ((quickrun-option-cmdkey lang))
-                 (quickrun-region beg end))))))))
+  (+eval-region-as-major-mode beg end))
 
 ;;;###autoload
 (defun +eval/line-or-region ()

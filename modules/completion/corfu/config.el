@@ -44,12 +44,11 @@ use the minibuffer such as `query-replace'.")
   (setq corfu-auto t
         corfu-auto-delay 0.18
         corfu-auto-prefix 2
-        global-corfu-modes '((not
-                              erc-mode
-                              circe-mode
-                              help-mode
-                              gud-mode
-                              vterm-mode)
+        global-corfu-modes '((not erc-mode
+                                  circe-mode
+                                  help-mode
+                                  gud-mode
+                                  vterm-mode)
                              t)
         corfu-cycle t
         corfu-preselect 'prompt
@@ -67,8 +66,8 @@ use the minibuffer such as `query-replace'.")
   (add-to-list 'corfu-continue-commands #'+corfu-smart-sep-toggle-escape)
   (add-hook 'evil-insert-state-exit-hook #'corfu-quit)
 
-  ;; If you want to update the visual hints after completing minibuffer commands
-  ;; with Corfu and exiting, you have to do it manually.
+  ;; HACK: If you want to update the visual hints after completing minibuffer
+  ;;   commands with Corfu and exiting, you have to do it manually.
   (defadvice! +corfu--insert-before-exit-minibuffer-a ()
     :before #'exit-minibuffer
     (when (or (and (frame-live-p corfu--frame)
@@ -126,10 +125,12 @@ use the minibuffer such as `query-replace'.")
     (after! dabbrev
       (setq dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p
             dabbrev-ignored-buffer-regexps
-            '("^ "
+            '("\\` "
               "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?")
             dabbrev-upcase-means-case-search t)
-      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)))
+      (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+      (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)))
 
   ;; Make these capfs composable.
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
