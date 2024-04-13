@@ -61,11 +61,13 @@ This is controlled by `+format-on-save-disabled-modes' and
       (string-blank-p (buffer-name))
       (eq +format-on-save-disabled-modes t)
       (not (null (memq major-mode +format-on-save-disabled-modes)))
-      (cl-some
-       (lambda (f) (or
-               (file-in-directory-p buffer-file-truename f)
-               (file-equal-p buffer-file-truename f)))
-       +format-on-save-enabled-directories)))
+      (not (or
+            +format-on-save-enabled-files-directories
+            (cl-some
+             (lambda (f) (or
+                     (file-in-directory-p buffer-file-truename f)
+                     (file-equal-p buffer-file-truename f)))
+             +format-on-save-enabled-files-directories)))))
 
 
 (after! apheleia
