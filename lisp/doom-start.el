@@ -101,34 +101,40 @@
 ;;; Disable UI elements early
 ;; PERF,UI: Doom strives to be keyboard-centric, so I consider these UI elements
 ;;   clutter. Initializing them also costs a morsel of startup time. What's
-;;   more, the menu bar exposes functionality that Doom doesn't endorse. Perhaps
-;;   one day Doom will support these, but today is not that day. By disabling
-;;   them early, we save Emacs some time.
+;;   more, the menu bar exposes functionality that Doom doesn't endorse or
+;;   police. Perhaps one day Doom will support these, but today is not that day.
+;;   By disabling them early, we save Emacs some time.
 
 ;; HACK: I intentionally avoid calling `menu-bar-mode', `tool-bar-mode', and
 ;;   `scroll-bar-mode' because their manipulation of frame parameters can
 ;;   trigger/queue a superfluous (and expensive, depending on the window system)
-;;   frame redraw at startup.
+;;   frame redraw at startup. The variables must be set to `nil' as well so
+;;   users don't have to call the functions twice to re-enable them.
 (push '(menu-bar-lines . 0)   default-frame-alist)
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-;; And set these to nil so users don't have to toggle the modes twice to
-;; reactivate them.
 (setq menu-bar-mode nil
       tool-bar-mode nil
       scroll-bar-mode nil)
-;; FIX: On MacOS, disabling the menu bar makes MacOS treat Emacs as a
-;;   non-application window -- which means it doesn't automatically capture
-;;   focus when it is started, among other things, so enable the menu-bar for
-;;   GUI frames, but keep it disabled in terminal frames because there it
-;;   unavoidably activates an ugly, in-frame menu bar.
-(eval-when! doom--system-macos-p
-  (add-hook! '(window-setup-hook after-make-frame-functions)
-    (defun doom-restore-menu-bar-in-gui-frames-h (&optional frame)
-      (when-let (frame (or frame (selected-frame)))
-        (when (display-graphic-p frame)
-          (set-frame-parameter frame 'menu-bar-lines 1))))))
 
+;; HACK: The menu-bar needs special treatment on MacOS. On Linux and Windows
+;;   (and TTY frames in MacOS), the menu-bar takes up valuable in-frame real
+;;   estate -- so we disable it -- but on MacOS (GUI frames only) the menu bar
+;;   lives outside of the frame, on the MacOS menu bar, which is acceptable, but
+;;   disabling Emacs' menu-bar also makes MacOS treat Emacs GUI frames like
+;;   non-application windows (e.g. it won't capture focus on activation, among
+;;   other things), so the menu-bar should be preserved there.
+;;
+(when doom--system-macos-p
+  ;; NOTE: The correct way to disable this hack is to toggle `menu-bar-mode' (or
+  ;;   put it on a hook). Don't try to undo the hack below, as it may change
+  ;;   without warning, but will always respect `menu-bar-mode'.
+  (setcdr (assq 'menu-bar-lines default-frame-alist) 'tty)
+  (add-hook! 'after-make-frame-functions
+    (defun doom--init-menu-bar-on-macos-h (&optional frame)
+      (if (eq (frame-parameter frame 'menu-bar-lines) 'tty)
+          (set-frame-parameter frame 'menu-bar-lines
+                               (if (display-graphic-p frame) 1 0))))))
 
 ;;; Encodings
 ;; Contrary to what many Emacs users have in their configs, you don't need more

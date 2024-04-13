@@ -40,7 +40,7 @@
             ((user-error "Definition lookup in SRC blocks isn't supported yet"))))))
 
 ;;;###autoload
-(defun +org-lookup-references-handler (identifier)
+(defun +org-lookup-references-handler (_identifier)
   "TODO"
   (when (org-in-src-block-p t)
     (user-error "References lookup in SRC blocks isn't supported yet")))
