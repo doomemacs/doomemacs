@@ -430,8 +430,7 @@ bin/doom command.
 #+end_quote
 
 **** With WSL + Ubuntu 18.04 LTS
-(Credit goes to @lunias and [[https://ethanaa.com/blog/switching-to-doom-emacs/#installing-on-windows-10
-][his fantastic tutorial]] for informing this guide)
+(Credit goes to @lunias and [[https://ethanaa.com/blog/switching-to-doom-emacs/#installing-on-windows-10][his fantastic tutorial]] for informing this guide)
 
 1. Install Powershell as admin (Windows key + x) with:
    #+BEGIN_SRC
