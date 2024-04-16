@@ -256,7 +256,7 @@ uses a straight or package.el command directly).")
           (alist-get 'straight packages)
         (doom--ensure-straight recipe pin))
       (doom--ensure-core-packages
-       (seq-filter (fn! (eq (plist-get % :type) 'core))
+       (seq-filter (fn! (eq (plist-get (cdr %) :type) 'core))
                    packages)))))
 
 (defun doom-initialize-packages (&optional force-p)
