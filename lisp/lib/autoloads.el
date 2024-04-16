@@ -169,7 +169,6 @@ non-nil, treat FILES as pre-generated autoload files instead."
       (when (and (not (seq-find (doom-rpartial #'string-match-p file) exclude))
                  (file-readable-p file))
         (doom-log "loaddefs:scan: %s" file)
-        (setq file (file-truename file))
         (with-temp-buffer
           (if literal
               (insert-file-contents file)
