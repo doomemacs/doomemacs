@@ -301,7 +301,7 @@ list remains lean."
                          (setq want-native-compile nil))
                        (and (or want-byte-compile want-native-compile)
                             (or (file-newer-than-file-p repo-dir build-dir)
-                                (file-exists-p (straight--modified-dir (or local-repo package)))
+                                (file-exists-p (straight--modified-dir package))
                                 (cl-loop with outdated = nil
                                          for file in (doom-files-in build-dir :match "\\.el$" :full t)
                                          if (or (if want-byte-compile   (doom-packages--elc-file-outdated-p file))
