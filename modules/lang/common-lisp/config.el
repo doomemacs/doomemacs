@@ -179,3 +179,9 @@
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-stepper))
+
+(defvar +lisp-quicklisp-directory
+  (if (file-exists-p "~/.quicklisp")
+      "~/.quicklisp"
+    "~/quicklisp")
+  "Quicklisp install directory")
