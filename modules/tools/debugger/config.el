@@ -20,6 +20,7 @@
   `(((:lang cc +lsp)         :after ccls        :require (dap-lldb dap-gdb-lldb))
     ((:lang elixir +lsp)     :after elixir-mode :require dap-elixir)
     ((:lang go +lsp)         :after go-mode     :require dap-dlv-go)
+    ((:lang gdscript +lsp)   :after gdscript-mode :require dap-gdscript)
     ((:lang java +lsp)       :after java-mode   :require lsp-java)
     ((:lang php +lsp)        :after php-mode    :require dap-php)
     ((:lang python +lsp)     :after python      :require dap-python)
