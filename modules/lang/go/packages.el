@@ -13,4 +13,4 @@
 
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
-  (package! flycheck-golangci-lint :pin "9def093e416e9a6ddd3cae8590dbb7ff6314925a"))
+  (package! flycheck-golangci-lint :pin "91c59b128aa6f719069cfb3e5df77588691a3e14"))
