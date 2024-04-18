@@ -476,8 +476,6 @@
        (:when (modulep! :ui hydra)
         :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body)
        (:when (modulep! :ui vc-gutter)
-        (:when (modulep! :ui hydra)
-         :desc "VCGutter"                "."   #'+vc/gutter-hydra/body)
         :desc "Revert hunk at point"      "r"   #'+vc-gutter/revert-hunk
         :desc "stage hunk at point"       "s"   #'+vc-gutter/stage-hunk
         :desc "Git time machine"          "t"   #'git-timemachine-toggle
