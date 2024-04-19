@@ -9,4 +9,6 @@
                :repo "doomelpa/code-review"
                :files ("graphql" "code-review*.el"))
       :pin "e4c34fa284da25d8e0bafbae4300f1db5bdcda44"))
+  (when (modulep! +childframe)
+    (package! transient-posframe :pin "dcd898d1d35183a7d4f2c8f0ebcb43b4f8e70ebe"))
   (package! magit-todos :pin "332ce763f7336ea356964b92723678aa1ed4640f"))
