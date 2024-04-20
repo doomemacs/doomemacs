@@ -145,10 +145,10 @@ we have to clean it up ourselves."
   (when (modulep! +icons)
     (push +dired-dirvish-icon-provider dirvish-attributes))
   (map! :map dirvish-mode-map
-        :n "b" #'dirvish-goto-bookmark
-        :n "z" #'dirvish-show-history
+        :n "b" #'dirvish-quick-access
+        :n "z" #'dirvish-history-jump
         :n "f" #'dirvish-file-info-menu
-        :n "F" #'dirvish-toggle-fullscreen
+        :n "F" #'dirvish-layout-toggle
         :n "l" #'dired-find-file
         :n "h" #'dired-up-directory
         :localleader
