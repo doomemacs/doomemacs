@@ -151,6 +151,9 @@ we have to clean it up ourselves."
         :n "F" #'dirvish-layout-toggle
         :n "l" #'dired-find-file
         :n "h" #'dired-up-directory
+        :n "TAB" #'dirvish-subtree-toggle
+        :n "gh" #'dirvish-subtree-up
+        :n "gl" #'dirvish-subtree-down
         :localleader
         "h" #'dired-omit-mode))
 
