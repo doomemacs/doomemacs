@@ -26,7 +26,7 @@
           (cond (buffer-read-only +god-read-only-mode-color)
                 (is-fill-overflow +god-fill-overflow-color)
                 (overwrite-mode +god-overwrite-mode-color)
-                (t previous-cursor-color))))
+                (t (face-background 'highlight)))))
     (setq cursor-type next-cursor-type)
     (unless (eq previous-cursor-color next-cursor-and-modeline-color)
       (set-cursor-color next-cursor-and-modeline-color))
