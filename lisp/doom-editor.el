@@ -734,7 +734,12 @@ on."
   ;; the written file). While sometimes convenient, this behavior is not
   ;; intuitive. To the average user it looks like whitespace cleanup is failing,
   ;; which causes folks to redundantly install their own.
-  (setq ws-butler-keep-whitespace-before-point nil))
+
+  ;; However, users of `auto-save-visited-mode' will have to live with this
+  ;; effect, since the alternative is losing their space every time they stop to
+  ;; think for 5 seconds.
+  (unless auto-save-visited-mode
+    (setq ws-butler-keep-whitespace-before-point nil)))
 
 (provide 'doom-editor)
 ;;; doom-editor.el ends here
