@@ -30,6 +30,7 @@
 
 (use-package! liberime
   :when (modulep! +rime)
+  :after pyim
   :init
   (setq liberime-auto-build t
         liberime-user-data-dir (file-name-concat doom-cache-dir "rime")))
@@ -37,7 +38,7 @@
 
 (use-package! pyim-liberime
   :when (modulep! +rime)
-  :after liberime
+  :after (pyim liberime)
   :config
   (setq pyim-default-scheme 'rime))
 
