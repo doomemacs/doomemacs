@@ -86,6 +86,13 @@
 
     (setq wl-message-id-domain wl-local-domain))
 
+  ;; We're living in the world where UTF-8 is de facto default charset.
+  (setq-default mime-charset-for-write 'utf-8)
+  (setq-default mime-transfer-level 8)
+  (setq charsets-mime-charset-alist
+        '(((ascii) . us-ascii)
+          ((unicode) . utf-8)))
+
   ;; Use x-face only when compface installed
   (when (modulep! +xface)
     (autoload 'x-face-decode-message-header "x-face-e21")
