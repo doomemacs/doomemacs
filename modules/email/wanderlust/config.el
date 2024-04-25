@@ -50,11 +50,13 @@
           "^List-.*:"
           "^Received-SPF:"
           "^DKIM-.*:"
-          "^DomainKey-Signature:"
+          "^DomainKey-.*:"
           "^SPF-.*:"
           "^Autocrypt:"
           "^ARC-.*:"
-          "^Authentication-Results:")
+          "^Authentication-Results:"
+          "^UI-.*:"
+          "^IronPort.*:")
         wl-message-visible-field-list
         '("^Message-Id:"
           "^User-Agent:"
