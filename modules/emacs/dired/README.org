@@ -14,6 +14,8 @@ This module provides reasonable defaults and augmentations for dired.
   Enables the display of fancy icons depending on file types in dired buffers.
 - +ranger ::
   Enables dired to be more like [[https://github.com/ranger/ranger][ranger]].
+- +dirvish ::
+  Enables [[https://github.com/alexluigit/dirvish][dirvish]] integration
 
 ** Packages
 - [[doom-package:nerd-icons-dired]] if [[doom-module:+icons]]
