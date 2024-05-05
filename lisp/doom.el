@@ -686,7 +686,7 @@ of 'doom sync' or 'doom gc'."
 ;; defvaralias, which are done because ensuring aliases are created before
 ;; packages are loaded is an unneeded and unhelpful maintenance burden. Emacs
 ;; still aliases them fine regardless.
-(setq warning-suppress-types '((defvaralias)))
+(setq warning-suppress-types '((defvaralias) (lexical-binding)))
 
 ;; Reduce debug output unless we've asked for it.
 (setq debug-on-error init-file-debug
@@ -763,6 +763,12 @@ appropriately against `noninteractive' or the `cli' context."
 (add-hook! 'doom-before-init-hook :depth -105
   (defun doom--begin-init-h ()
     "Begin the startup process."
+    ;; HACK: Later versions of Emacs 30 emit warnings about missing
+    ;;   lexical-bindings directives at the top of loaded files. This is a good
+    ;;   thing, but it inundates users with unactionable warnings (from old
+    ;;   packages or internal subdirs.el files), which aren't useful.
+    (setq-default delayed-warnings-list
+                  (assq-delete-all 'lexical-binding delayed-warnings-list))
     (when (doom-context-push 'init)
       ;; HACK: Ensure OS checks are as fast as possible (given their ubiquity).
       (setq features (cons :system (delq :system features)))
