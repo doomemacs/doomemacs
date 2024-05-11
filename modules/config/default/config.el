@@ -496,13 +496,15 @@ Continues comments if executed from a commented line. Consults
                      (cond
                       ,@(when (modulep! :editor snippets)
                           '(((and +corfu-want-tab-prefer-navigating-snippets
-                                  (+yas-active-p))
+                                  (memq (bound-and-true-p yas--active-field-overlay)
+                                        (overlays-in (1- (point)) (1+ (point)))))
                              #'yas-next-field-or-maybe-expand)
                             ((and +corfu-want-tab-prefer-expand-snippets
                                   (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                              #'yas-expand)))
                       ,@(when (modulep! :lang org)
                           '(((and +corfu-want-tab-prefer-navigating-org-tables
+                                  (featurep 'org)
                                   (org-at-table-p))
                              #'org-table-next-field)))
                       (t cmd)))) )
@@ -513,10 +515,12 @@ Continues comments if executed from a commented line. Consults
                      (cond
                       ,@(when (modulep! :editor snippets)
                           '(((and +corfu-want-tab-prefer-navigating-snippets
-                                  (+yas-active-p))
+                                  (memq (bound-and-true-p yas--active-field-overlay)
+                                        (overlays-in (1- (point)) (1+ (point)))))
                              #'yas-prev-field)))
                       ,@(when (modulep! :lang org)
                           '(((and +corfu-want-tab-prefer-navigating-org-tables
+                                  (featurep 'org)
                                   (org-at-table-p))
                              #'org-table-previous-field)))
                       (t cmd))))))
