@@ -5,7 +5,7 @@
 
 (package! orderless :pin "ac4aeb66f331f4c4a430d5556071e33177304c37")
 
-(package! consult :pin "c87b0bf06de0c3cb60bc8d257c770cb981ddcd19")
+(package! consult :pin "6eba1a3fa8e13681091a30b2490a03bdce5f243a")
 (package! consult-dir :pin "3f5f4b71ebe819392cb090cda71bd39a93bd830a")
 (when (and (modulep! :checkers syntax)
            (not (modulep! :checkers syntax +flymake)))
