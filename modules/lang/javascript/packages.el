@@ -3,7 +3,7 @@
 
 ;; Major modes
 (package! rjsx-mode :pin "b697fe4d92cc84fa99a7bcb476f815935ea0d919")
-(package! typescript-mode :pin "4fcb4594819caf472ae42ea068a1c7795cf07f46")
+(package! typescript-mode :pin "1cf78d7ef8e0a1684a2cf265539c54ccff4068c0")
 
 ;; Tools
 (package! js2-refactor :pin "a0977c4ce1918cc266db9d6cd7a2ab63f3a76b9a")
