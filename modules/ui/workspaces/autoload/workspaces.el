@@ -123,6 +123,40 @@ Returns t on success, nil otherwise."
          t)))
 
 ;;;###autoload
+(defun read-from-file (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (read (current-buffer))))
+
+;;;###autoload
+(defun write-to-file (object file)
+  "Write OBJECT to FILE in its printed representation."
+  (with-temp-file file
+    (prin1 object (current-buffer))))
+
+;;;###autoload
+(defun pop-at-index ( idx list_tbd )
+  (if (and list_tbd (< 0 idx))
+      (cons (car list_tbd) (pop-at-index (1- idx) (cdr list_tbd)))
+    (cdr list_tbd)))
+
+;;;###autoload
+(defun +workspace-destroy (name)
+  "Destroys a single workspace. Can only
+destroy perspectives that were explicitly saved with `+workspace-destroy'.
+Returns t if successful, nil otherwise."
+  (let* ((fname (expand-file-name +workspaces-data-file persp-save-dir))
+         (workspace-names (persp-list-persp-names-in-file fname)))
+    (unless (and (member name workspace-names) t)
+      (error "'%s' is an invalid workspace" name))
+    (let* ((persp-data (read-from-file fname))
+           (workspace-idx (cl-position name workspace-names :test 'equal))
+           (modified-persp-data (pop-at-index workspace-idx persp-data))
+           )
+      (write-to-file modified-persp-data fname)
+      (not (member name (persp-list-persp-names-in-file fname))))))
+
+;;;###autoload
 (defun +workspace-new (name)
   "Create a new workspace named NAME. If one already exists, return nil.
 Otherwise return t on success, nil otherwise."
@@ -204,6 +238,21 @@ current workspace (by name) from session files."
       (+workspace-error (format "Couldn't load workspace %s" name))
     (+workspace/switch-to name)
     (+workspace/display)))
+
+;;;###autoload
+(defun +workspace/destroy (name)
+  "Destroy a saved workspace on disk."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (+workspace-current-name)
+      (completing-read
+       "Workspace to destroy: "
+       (persp-list-persp-names-in-file
+        (expand-file-name +workspaces-data-file persp-save-dir))))))
+  (if (not (+workspace-destroy name))
+      (+workspace-error (format "Couldn't destroy workspace %s" name))
+    (+workspace-message (format "Successfully destroyed workspace %s" name) 'success)))
 
 ;;;###autoload
 (defun +workspace/save (name)
