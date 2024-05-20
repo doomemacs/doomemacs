@@ -169,8 +169,9 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
                     (lambda ()
                       (when (featurep 'vimish-fold)
                         (if (> count 0)
-                            (evil-vimish-fold/next-fold count)
-                          (evil-vimish-fold/previous-fold (- count))))
+                            (dotimes (_ count) (vimish-fold-next-fold))
+                          (dotimes (_ count)
+                            (vimish-fold-previous-fold (- count)))))
                       (if (/= (point) orig-pt) (point)))
                     (lambda ()
                       ;; ts-fold does not define movement functions so we need to do it ourselves
