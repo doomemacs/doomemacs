@@ -219,7 +219,8 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
 
 ;;;###autoload
 (defun +fold/next (count)
-  "Jump to the next vimish fold, outline heading or folded region."
+  "Jump to the next vimish fold, folded outline heading or folded
+region."
   (interactive "p")
   (cl-loop with orig-pt = (point)
            for fn
@@ -233,6 +234,24 @@ Targets `vimmish-fold', `hideshow', `ts-fold' and `outline' folds."
                           (dotimes (_ count)
                             (vimish-fold-previous-fold (- count)))))
                       (if (/= (point) orig-pt) (point)))
+                    (lambda ()
+                      (when (or (bound-and-true-p outline-minor-mode)
+                                (derived-mode-p 'outline-mode))
+                        (cl-destructuring-bind
+                            (count fn bound-fn)
+                            (if (> count 0)
+                                (list count
+                                      #'outline-next-visible-heading #'eobp)
+                              (list (- count)
+                                    #'outline-previous-visible-heading #'bobp))
+                          (dotimes (_ count)
+                            (funcall fn 1)
+                            (outline-end-of-heading)
+                            (while (and (not (funcall bound-fn))
+                                        (not (outline-invisible-p)))
+                              (funcall fn 1)
+                              (outline-end-of-heading))))
+                        (point)))
                     (lambda ()
                       ;; ts-fold does not define movement functions so we need to do it ourselves
                       (when (+fold--ts-fold-p)
