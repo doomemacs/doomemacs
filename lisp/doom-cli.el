@@ -1350,7 +1350,7 @@ ARGS are options passed to less. If DOOMPAGER is set, ARGS are ignored."
            (doom-cli--exit 0 context))
 
           ((let ((tmpfile (doom-cli--output-file 'output context))
-                 (coding-system-for-write 'utf-8-auto))
+                 (coding-system-for-write 'utf-8))
              (with-file-modes #o700
                (make-directory (file-name-directory tmpfile) t))
              (with-file-modes #o600
