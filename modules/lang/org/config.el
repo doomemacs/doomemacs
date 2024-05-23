@@ -502,6 +502,10 @@ relative to `org-directory', unless it is an absolute path."
   (org-link-set-parameters
    "file" :face (lambda (path)
                   (if (or
+                       ;; file uris is not a valid path on windows
+                       ;; ref https://lists.gnu.org/archive/html/bug-gnu-emacs/2024-05/threads.html#00729
+                       ;; emacs <= 29 crashes for (file-exists-p "file://whatever")
+                       (if (featurep :system 'windows) (string-prefix-p "//" path))
                        (file-remote-p path)
                        ;; filter out network shares on windows (slow)
                        (if (featurep :system 'windows) (string-prefix-p "\\\\" path))
