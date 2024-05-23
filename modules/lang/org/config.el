@@ -501,10 +501,11 @@ relative to `org-directory', unless it is an absolute path."
   ;; Modify default file: links to colorize broken file links red
   (org-link-set-parameters
    "file" :face (lambda (path)
-                  (if (or (file-remote-p path)
-                          ;; filter out network shares on windows (slow)
-                          (if (featurep :system 'windows) (string-prefix-p "\\\\" path))
-                          (file-exists-p path))
+                  (if (or
+                       (file-remote-p path)
+                       ;; filter out network shares on windows (slow)
+                       (if (featurep :system 'windows) (string-prefix-p "\\\\" path))
+                       (file-exists-p path))
                       'org-link
                     '(warning org-link))))
 
