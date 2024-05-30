@@ -208,7 +208,7 @@ list remains lean."
   (cl-loop with previous = 0
            with timeout = 30
            with timer = 0
-           for pending = (+ (length comp-files-queue) (comp-async-runnings))
+           for pending = (+ (length comp-files-queue) (comp--async-runnings))
            while (not (zerop pending))
            if (/= previous pending) do
            (print! (start "\033[KNatively compiling %d files...\033[1A" pending))
