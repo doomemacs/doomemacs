@@ -17,7 +17,8 @@
                ((featurep :system 'linux)   "parinfer-rust-linux.so")
                ((featurep :system 'windows) "parinfer-rust-windows.dll")
                ((featurep :system 'bsd)     "libparinfer_rust.so")))
-        parinfer-rust-auto-download (not (featurep :system 'bsd)))
+        parinfer-rust-auto-download (not (featurep :system 'bsd))
+        parinfer-rust-disable-troublesome-modes t)
   :config
   (map! :map parinfer-rust-mode-map
         :localleader
