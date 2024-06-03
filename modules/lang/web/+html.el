@@ -142,7 +142,6 @@
             "p" #'web-mode-tag-previous
             "s" #'web-mode-tag-select))
 
-        :g  "M-/" #'web-mode-comment-or-uncomment
         :i  "SPC" #'self-insert-command
         :n  "za"  #'web-mode-fold-or-unfold
         :nv "]a"  #'web-mode-attribute-next
