@@ -4,11 +4,11 @@
 ;; HACK These are wanderlust's dependencies (wanderlust depends on semi, semi
 ;;      depends on flim, flim on apel), but they all have non-standard default
 ;;      branches which straight cannot detect without our help.
-(package! apel :recipe (:branch "apel-wl") :pin "82eb2325bd149dc57b43a9ce9402c6c6183e4052")
-(package! flim :recipe (:branch "flim-1_14-wl") :pin "abdd2315006eb31476249223569808adb1c0f7b2")
-(package! semi :recipe (:branch "semi-1_14-wl") :pin "9063a4485b148a767ea924f0e7cc78d3524ba256")
+(package! apel :recipe (:branch "apel-wl") :pin "1a6fd3bab2cc6b0a450c2d801f77a1c9da0f72fb")
+(package! flim :recipe (:branch "flim-1_14-wl") :pin "23bb29d70a13cada2eaab425ef80071564586a6d")
+(package! semi :recipe (:branch "semi-1_14-wl") :pin "85a52b899ac89be504d9e38d8d406bba98f4b0b3")
 
-(package! wanderlust :pin "c15e8ece4f34f10479e17cda19d10b98f6be3ec1")
+(package! wanderlust :pin "8a0ea2146ee919a5344bb25f198d45016bc716d9")
 
 (when (modulep! +xface)
   (package! x-face-e21
